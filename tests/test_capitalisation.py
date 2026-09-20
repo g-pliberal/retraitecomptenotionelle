@@ -9,6 +9,7 @@ ensuite des ordres de grandeur.
 
 from __future__ import annotations
 
+import contextlib
 import math
 
 import pytest
@@ -24,8 +25,7 @@ from retraite_notionnelle.donnees.frais import FraisEpargneRetraite
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque, TauxPlacement
 from retraite_notionnelle.moteur.capitalisation import (
-    HORIZON_LONG,
-    MATURITES,
+    MATURITE_MAXIMALE,
     ConstructeurCapitalisation,
     repartition,
 )
@@ -85,7 +85,7 @@ def test_la_courbe_lue_est_la_plus_recente_publiee(courbe):
     assert courbe.date.startswith("20")
     assert courbe.annee == int(courbe.date[:4])
     assert courbe.maturites[0] == 1
-    assert courbe.maturite_maximale >= HORIZON_LONG
+    assert courbe.maturite_maximale >= MATURITE_MAXIMALE
     assert courbe.fiabilite_publiee == Fiabilite.CERTIFIEE
 
 
@@ -124,7 +124,26 @@ def test_une_duree_nulle_est_refusee(courbe):
         courbe.forward_continu(0, 0)
 
 
-# -- l'échelle de maturités ---------------------------------------------------
+# -- l'allocation des maturités -----------------------------------------------
+
+
+@contextlib.contextmanager
+def _regle_d_allocation(regle):
+    """Substitue une règle d'allocation le temps d'un calcul.
+
+    Le constructeur appelle ``repartition`` par son nom de module : l'échanger
+    ici permet de comparer des allocations sans en garder aucune dans le
+    moteur, qui n'en porte qu'une.
+    """
+    from retraite_notionnelle.moteur import capitalisation as module
+    ancienne = module.repartition
+    module.repartition = regle
+    try:
+        yield
+    finally:
+        module.repartition = ancienne
+
+
 
 
 def test_la_repartition_est_une_repartition(courbe):
@@ -136,35 +155,141 @@ def test_la_repartition_est_une_repartition(courbe):
         assert max(maturite for maturite, _ in parts) <= horizon
 
 
-def test_l_allocation_glisse_du_long_vers_le_court():
-    """Principalement longue au début, principalement courte à la fin.
+def test_le_versement_est_adosse_a_l_horizon():
+    """Une seule ligne, qui tombe l'année du départ tant que la courbe la cote.
 
-    C'est la règle demandée, et elle se vérifie sur la part placée à plus de
-    dix ans : elle croît avec l'horizon, sans jamais atteindre la totalité —
-    une épargne obligatoire ne se concentre pas sur un seul point de la courbe.
+    C'est toute la règle : l'actif sans risque d'une dette datée est le
+    zéro-coupon qui arrive à échéance ce jour-là. Au-delà du bout de courbe, la
+    maturité est plafonnée — on n'achète pas un titre qui n'est pas coté — et
+    c'est le seul cas où un replacement subsiste.
     """
-    def part_longue(horizon: int) -> float:
-        return sum(p for maturite, p in repartition(horizon) if maturite > 10)
-
-    def part_courte(horizon: int) -> float:
-        return sum(p for maturite, p in repartition(horizon) if maturite <= 2)
-
-    longues = [part_longue(h) for h in range(1, 45)]
-    assert longues == sorted(longues), "la part longue doit croître avec l'horizon"
-    assert part_longue(40) == pytest.approx(0.75)
-    assert part_longue(40) < 1.0, "il reste d'autres maturités en début de carrière"
-    assert part_longue(10) == 0.0
-
-    courtes = [part_courte(h) for h in range(3, 45)]
-    assert courtes == sorted(courtes, reverse=True)
-    assert part_courte(2) == pytest.approx(1.0), "à deux ans, tout est court"
-    assert part_courte(1) == pytest.approx(1.0)
-
+    for horizon in range(1, MATURITE_MAXIMALE + 1):
+        assert repartition(horizon) == ((horizon, 1.0),), (
+            "sous le bout de courbe, la maturité EST l'horizon"
+        )
+    for horizon in range(MATURITE_MAXIMALE + 1, 60):
+        assert repartition(horizon) == ((MATURITE_MAXIMALE, 1.0),)
     assert repartition(0) == ()
 
 
-def test_les_maturites_de_l_echelle_sont_des_points_cotes(courbe):
-    assert set(MATURITES) <= set(courbe.maturites)
+def test_les_maturites_achetees_sont_des_points_cotes(courbe):
+    """L'adossement n'interpole ni n'extrapole en deçà du bout de courbe."""
+    cotees = set(courbe.maturites)
+    for horizon in range(1, 60):
+        for maturite, _ in repartition(horizon):
+            assert maturite in cotees
+
+
+def test_sous_les_anticipations_pures_l_echelle_est_sans_effet(mortalite, simulateur):
+    """Le capital ne dépend PAS de la façon dont les maturités coupent l'horizon.
+
+    C'est une identité, pas une approximation, et c'est elle qui a fait tomber
+    l'échelle glissante 2/10/30 : enchaîner des placements courts ou bloquer un
+    long accumule exactement ``exp(z(T)·T − z(t)·t)``, parce que c'est ce que
+    l'arbitrage impose au forward. Tant que ``prime_terme_trente_ans`` est nul,
+    toute règle qui pave l'horizon sans le dépasser donne le MÊME capital.
+
+    Le test le vérifie sur quatre règles que tout sépare — dont l'ancienne
+    échelle, reconstituée ici pour ne plus avoir à la garder dans le moteur.
+    """
+    def echelle_glissante(horizon: int) -> tuple[tuple[int, float], ...]:
+        """L'allocation par glide path, telle qu'elle servait jusqu'en 2026."""
+        if horizon <= 0:
+            return ()
+        borner = lambda v: min(1.0, max(0.0, v))  # noqa: E731
+        longue = 0.75 * borner((horizon - 10) / 20)
+        courte = 0.75 * borner((10 - horizon) / 8)
+        cumul: dict[int, float] = {}
+        for maturite, part in zip((2, 10, 30), (courte, 1.0 - courte - longue, longue)):
+            if part > 0:
+                effective = min(maturite, horizon)
+                cumul[effective] = cumul.get(effective, 0.0) + part
+        return tuple(sorted(cumul.items()))
+
+    def tout_court(horizon: int) -> tuple[tuple[int, float], ...]:
+        return ((1, 1.0),) if horizon > 0 else ()
+
+    def moitie_moitie(horizon: int) -> tuple[tuple[int, float], ...]:
+        if horizon <= 0:
+            return ()
+        if horizon == 1:
+            return ((1, 1.0),)
+        return ((1, 0.5), (min(horizon, MATURITE_MAXIMALE), 0.5))
+
+    assiettes = {annee: 30_000.0 for annee in range(2030, 2066)}
+    capitaux = []
+    for regle in (repartition, echelle_glissante, tout_court, moitie_moitie):
+        with _regle_d_allocation(regle):
+            pilier = ConstructeurCapitalisation(
+                simulateur.courbe_taux, mortalite,
+                Convertisseur(mortalite, simulateur.parametres), simulateur.parametres,
+            ).construire(assiettes, 1996, 64.0, 2060)
+        capitaux.append(pilier.capital)
+
+    assert capitaux[0] > 0
+    for capital in capitaux[1:]:
+        assert capital == pytest.approx(capitaux[0], abs=0.01), (
+            "sans prime de terme, l'allocation est un paramètre libre sans effet"
+        )
+
+
+def test_avec_une_prime_de_terme_l_adossement_domine(mortalite):
+    """Dès que la prime n'est plus ignorée, bloquer l'horizon rapporte.
+
+    Et c'est le SEUL réglage sous lequel l'allocation rapporte quelque chose :
+    la prime est ce que le roulement rachète à chaque échéance et que
+    l'adossement paie une fois. Le test l'exige contre l'ancienne échelle et
+    contre un roulement à un an, dans cet ordre-là — plus on roule, plus on
+    paie.
+    """
+    def tout_court(horizon: int) -> tuple[tuple[int, float], ...]:
+        return ((1, 1.0),) if horizon > 0 else ()
+
+    def echelle_glissante(horizon: int) -> tuple[tuple[int, float], ...]:
+        if horizon <= 0:
+            return ()
+        borner = lambda v: min(1.0, max(0.0, v))  # noqa: E731
+        longue = 0.75 * borner((horizon - 10) / 20)
+        courte = 0.75 * borner((10 - horizon) / 8)
+        cumul: dict[int, float] = {}
+        for maturite, part in zip((2, 10, 30), (courte, 1.0 - courte - longue, longue)):
+            if part > 0:
+                effective = min(maturite, horizon)
+                cumul[effective] = cumul.get(effective, 0.0) + part
+        return tuple(sorted(cumul.items()))
+
+    parametres = Parametres(prime_terme_trente_ans=0.005)
+    courbe = CourbeTauxSansRisque(RACINE_DONNEES, parametres.prime_terme_trente_ans)
+    assiettes = {annee: 30_000.0 for annee in range(2030, 2066)}
+
+    capitaux = {}
+    for nom, regle in (("adosse", repartition), ("echelle", echelle_glissante),
+                       ("roule", tout_court)):
+        with _regle_d_allocation(regle):
+            capitaux[nom] = ConstructeurCapitalisation(
+                courbe, mortalite, Convertisseur(mortalite, parametres), parametres,
+            ).construire(assiettes, 1996, 64.0, 2060).capital
+
+    assert capitaux["adosse"] > capitaux["echelle"] > capitaux["roule"]
+
+
+def test_la_prime_de_terme_ne_retouche_pas_la_courbe_du_jour():
+    """Un placement comptant rend le taux coté, prime ou pas.
+
+    C'est ce qui rend le paramètre honnête : il ne corrige que ce qui n'est pas
+    encore acheté. Ce qu'on achète aujourd'hui est un fait.
+    """
+    nue = CourbeTauxSansRisque(RACINE_DONNEES)
+    primee = CourbeTauxSansRisque(RACINE_DONNEES, 0.005)
+    for maturite in nue.maturites:
+        assert primee.placement(primee.annee, maturite).taux == pytest.approx(
+            nue.placement(nue.annee, maturite).taux, abs=1e-15
+        )
+        assert primee.zero_neutre(maturite) < nue.zero_continu(maturite)
+    assert nue.prime(30) == 0.0
+    assert primee.prime(30) == pytest.approx(0.005)
+    assert primee.prime(15) == pytest.approx(0.0025), "proportionnelle à la maturité"
+    assert primee.prime(60) == pytest.approx(0.005), "plafonnée au bout de courbe"
 
 
 # -- l'accumulation, sur une courbe plate -------------------------------------

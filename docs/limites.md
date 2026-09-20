@@ -6012,6 +6012,28 @@ une prime estimée — supposerait davantage et se vérifierait moins ; le choix
 est dit plutôt que corrigé. Ordre de grandeur : un demi-point de rendement sur
 quarante ans vaut une dizaine de pour cent de capital final.
 
+Depuis septembre 2026, le modèle **sait** la retirer :
+`Parametres.prime_terme_trente_ans` décompose le taux observé en une moyenne de
+taux courts attendus et une prime proportionnelle à la maturité, calcule les
+forwards sur la première et rajoute la seconde à la maturité achetée — de sorte
+qu'un placement comptant rend toujours le taux coté du jour. **Le paramètre vaut
+zéro, et le site publie à zéro** : la réserve ci-dessus tient donc entière, et
+ce qui change est qu'elle est désormais mesurable plutôt que seulement dite. À
+0,005 — le milieu de la fourchette — le capital d'une carrière de trente-six ans
+partant en 2060 recule de 4,8 %, et la rente de 23 € par mois.
+
+Cette réserve en portait une autre, restée invisible tant qu'elle n'était pas
+chiffrée : **sous les anticipations pures, l'allocation des maturités n'a
+aucune conséquence.** C'est une identité, pas une approximation — découper un
+horizon en un trente ans, en trois dix ans ou en quinze deux ans accumule
+exactement la même chose, parce que c'est ce que l'arbitrage impose au forward,
+et les frais annuels n'y changent rien. L'échelle glissante 2/10/30 que le
+pilier pratiquait jusque-là était donc un paramètre libre sans effet ; elle a
+été remplacée par l'adossement à l'horizon, qui est la bonne règle pour une
+autre raison — l'actif sans risque d'une dette datée est le titre qui tombe ce
+jour-là — et dont le changement n'a pas déplacé un centime de capital ni de
+rente. Voir `docs/methodologie.md`.
+
 **2. La courbe est celle d'un jour.** Elle est datée, publiée, recontrôlée,
 mais elle est un instantané : le 17 septembre 2026 et non un mois plus tôt. Un
 déplacement général de la courbe déplace tout le pilier, et rien dans le modèle
@@ -6781,7 +6803,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1246<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1249<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

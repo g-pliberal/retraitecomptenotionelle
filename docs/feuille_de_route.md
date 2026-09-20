@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 045<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 124<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -9562,3 +9562,67 @@ témoins régénérés, rendu vérifié sans débordement à 1440, 1024 et 390 p
 le test des cinq points volontaires exige l'étiquette, son unicité, le
 plancher et la condition ; README, `methodologie.md` et le parcours de
 présentation suivent.
+### 58. L'allocation des maturités : le pilier s'adosse à la date du départ — `fait`
+
+**Demande.** « J'aimerais jouer un peu plus sur la retraite par capitalisation.
+Il faudrait que l'on choisisse un peu mieux l'allocation des différents taux
+sans risque pour avoir une meilleure retraite par capitalisation. »
+
+**Ce qu'on a trouvé en cherchant, et qui règle la question avant de commencer.**
+L'échelle de maturités du pilier — 2, 10 et 30 ans, glissant du long vers le
+court, aucune ligne au-dessus de trois quarts — **n'avait aucun effet sur le
+résultat**. Pas « peu » : aucun, au centime. C'est une identité, et elle tient
+en une ligne : sous l'hypothèse des anticipations pures, qui est celle du
+modèle, découper `[t, T]` en un trente ans, en trois dix ans ou en quinze deux
+ans accumule exactement `exp(z(T)·T − z(t)·t)`, parce que c'est ce que
+l'arbitrage impose au forward. Les frais annuels n'y changent rien non plus :
+un prélèvement de `g` multiplie une ligne par `(1 − g)` autant de fois qu'elle
+passe d'années dans l'enveloppe, et ce compte-là ne dépend pas du découpage.
+Vérifié à la main sur quatre règles que tout sépare, puis figé en test.
+
+Accorder l'échelle était donc du temps perdu d'avance. Ce qui pouvait être fait,
+et qui l'a été, tient en deux pièces.
+
+**1. L'adossement à l'horizon remplace le glissement.** Chaque versement achète
+une seule maturité, `min(h, 30)` : celle qui arrive à échéance l'année du
+départ, plafonnée au bout de la courbe publiée. Les trente maturités de la BCE
+étant toutes cotées, rien n'est interpolé. La raison n'est pas le rendement,
+c'est le risque : le compte doit un capital à une **date**, et l'actif sans
+risque d'une dette datée est le zéro-coupon qui tombe ce jour-là. Raccourcir à
+l'approche du départ est le réflexe d'un portefeuille d'actions, dont le prix de
+vente est incertain ; ce compte ne vend rien, il attend. Ce dont il avait à se
+protéger était le taux de chaque replacement, et c'est l'échelle elle-même qui
+le créait. L'adossement le ramène à zéro sous trente ans d'horizon, et à un
+seul replacement au-delà.
+
+**2. La prime de terme devient un paramètre, à zéro.**
+`Parametres.prime_terme_trente_ans` décompose le taux observé en `z = z* + φ(m)`,
+calcule les forwards sur `z*` et rajoute la prime de la maturité **achetée** :
+à différé nul on retrouve donc exactement le taux coté du jour, et seul ce qui
+n'est pas encore acheté est corrigé. C'est le seul réglage sous lequel
+l'allocation pèse, et c'est la réserve n° 1 des limites du pilier — la prime de
+terme non retirée des forwards — qui devient mesurable au lieu d'être seulement
+dite. **Le site continue de publier à zéro** : mettre un chiffre par défaut
+serait remplacer une hypothèse par une autre, et c'est une décision, pas une
+correction.
+
+**Ce que ça déplace.** Rien, et c'était prévisible : capital et rente identiques
+au centime sur les 491 simulations témoins. Seule bouge l'espérance de capital
+transmis, +0,19 %, parce qu'elle seule dépend des encours **intermédiaires** —
+bloquer la maturité longue dès le premier versement fait valoir le compte un peu
+plus cher en milieu de carrière. La décomposition annuelle intérêts / frais se
+déplace aussi, à somme constante.
+
+Ce que l'allocation vaut se lit en revanche dès que la prime n'est plus nulle. À
+`prime_terme_trente_ans = 0,005`, milieu de la fourchette que la littérature
+retient, sur une carrière de trente-six ans partant en 2060 : l'adossement rend
+1,6 % de capital de plus que l'échelle glissante (7 € de rente mensuelle) et
+6,2 % de plus qu'un roulement à un an. Et le même réglage retire 4,8 % au pilier
+par rapport à ce qui est publié aujourd'hui, soit 23 € de rente par mois : la
+prime de terme coûte trois fois ce que la meilleure allocation rapporte. Le
+dire dans cet ordre est la seule façon honnête de le dire.
+
+**Ce qui reste ouvert.** Le chiffre par défaut de `prime_terme_trente_ans`. Le
+laisser à zéro garde le site sous les anticipations pures, hypothèse explicite,
+vérifiable et flatteuse ; le porter à 0,005 rend le pilier plus défendable et
+plus bas. La décision n'appartient pas au moteur.

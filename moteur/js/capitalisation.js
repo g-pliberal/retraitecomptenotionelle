@@ -22,6 +22,19 @@
  * proportionnel au taux. Ce qui les sépare est sur la fiche de paie, où
  * l'obligatoire est partagée avec l'employeur et la volontaire pas.
  *
+ * OÙ L'ARGENT EST PLACÉ : SUR UN TITRE ADOSSÉ À L'HORIZON. Chaque versement
+ * achète la maturité qui arrive à échéance l'année du départ, et rien d'autre.
+ * Le pilier pratiquait jusqu'en septembre 2026 une échelle glissante — 2, 10 et
+ * 30 ans, du long vers le court à l'approche du départ — et deux raisons l'ont
+ * fait tomber. D'abord elle ne servait à rien, au centime près : sous les
+ * anticipations pures, découper [t, T] en un 30 ans, en trois 10 ans ou en
+ * quinze 2 ans accumule exactement exp(z(T)·T − z(t)·t), parce que c'est ce que
+ * l'arbitrage impose au forward. Ensuite elle importait le raisonnement d'un
+ * portefeuille d'ACTIONS, dont le prix de vente est incertain : le pilier n'en
+ * détient pas, il doit un capital à une DATE, et rouler du court jusqu'au
+ * départ n'est pas plus prudent — c'est un pari répété sur le taux de chaque
+ * replacement, que l'adossement ramène à zéro.
+ *
  * CONVENTION DE DATE, ET POURQUOI C'EST CELLE DU COMPTE NOTIONNEL. Le versement
  * d'une année est crédité à la FIN de cette année : il rapporte de l'année
  * suivante jusqu'à l'année de liquidation incluse, soit exactement les années
@@ -38,21 +51,13 @@ import {
 } from "./config.js";
 import { Fiabilite } from "./serie.js";
 
-/** Les trois maturités de l'échelle : courte, moyenne, longue. */
-export const MATURITES = Object.freeze([2, 10, 30]);
-
-export const HORIZON_LONG = 30;
-export const HORIZON_PIVOT = 10;
-export const HORIZON_COURT = 2;
-
 /**
- * Part maximale d'une seule maturité — 3/4, et non 1 : une épargne obligatoire
- * ne se concentre pas sur un seul point de la courbe. En début de carrière
- * l'allocation est PRINCIPALEMENT longue, jamais exclusivement ; à l'approche
- * du départ elle est principalement courte, et de toute façon plafonnée par la
- * date de départ, qui ramène toutes les maturités à l'horizon restant.
+ * Plus longue maturité achetable : le bout de la courbe publiée, trente ans à
+ * la BCE. Au-delà, plus rien n'est coté, et un titre qu'on ne peut pas acheter
+ * ne s'adosse à rien : un horizon plus long se couvre en deux temps, et cette
+ * coupure est le SEUL replacement que la règle laisse subsister.
  */
-export const PART_MAXIMALE = 0.75;
+export const MATURITE_MAXIMALE = 30;
 
 /**
  * Fiabilité du barème de frais : saisi depuis le rapport de l'Observatoire des
@@ -61,37 +66,19 @@ export const PART_MAXIMALE = 0.75;
  */
 export const FIABILITE_FRAIS = Fiabilite.HAUTE;
 
-function borner(valeur) {
-  return Math.min(1.0, Math.max(0.0, valeur));
-}
-
 /**
  * Maturités et poids d'un versement placé à `horizon` années du départ.
  *
- * La part longue croît avec l'horizon, la part courte décroît, et aucune
- * maturité ne dépasse l'horizon — un titre qui arriverait à échéance après le
- * départ devrait être vendu avant terme, donc à un prix qui n'est plus sans
- * risque. Les poids sont rendus par maturité EFFECTIVE, donc fusionnés quand le
- * plafonnement fait coïncider deux maturités.
+ * Une seule ligne : la maturité de l'horizon, plafonnée à ce que la courbe
+ * cote. L'actif sans risque d'une dette datée est le zéro-coupon qui tombe ce
+ * jour-là ; aucune maturité ne dépasse l'horizon — il faudrait vendre avant
+ * terme, à un prix qui n'est plus sans risque — et aucune n'arrive à échéance
+ * avant lui tant que la courbe couvre l'horizon, si bien qu'il n'y a rien à
+ * replacer et aucun taux futur à deviner.
  */
 export function repartition(horizon) {
   if (horizon <= 0) return [];
-  const partLongue = PART_MAXIMALE * borner(
-    (horizon - HORIZON_PIVOT) / (HORIZON_LONG - HORIZON_PIVOT),
-  );
-  const partCourte = PART_MAXIMALE * borner(
-    (HORIZON_PIVOT - horizon) / (HORIZON_PIVOT - HORIZON_COURT),
-  );
-  const poids = [partCourte, 1.0 - partCourte - partLongue, partLongue];
-
-  const cumul = new Map();
-  MATURITES.forEach((maturite, indice) => {
-    const part = poids[indice];
-    if (part <= 0) return;
-    const effective = Math.min(maturite, horizon);
-    cumul.set(effective, (cumul.get(effective) || 0.0) + part);
-  });
-  return [...cumul.entries()].sort((a, b) => a[0] - b[0]);
+  return [[Math.min(horizon, MATURITE_MAXIMALE), 1.0]];
 }
 
 /**

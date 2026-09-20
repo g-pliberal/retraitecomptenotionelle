@@ -1415,8 +1415,8 @@ pilier de se construire une base à lui, plafonnée autrement, servie les année
 d'interruption, ou pleine l'année du départ. Il lit les assiettes que le compte
 notionnel a retenues, et rien d'autre.
 
-**Où il est placé.** Sur des titres sans risque portés jusqu'à leur échéance.
-La courbe retenue est la structure par terme des souverains **AAA de la zone
+**Où il est placé.** Sur des titres sans risque portés jusqu'à leur échéance,
+et choisis pour tomber l'année du départ. La courbe retenue est la structure par terme des souverains **AAA de la zone
 euro**, estimée et publiée chaque jour ouvré par la BCE
 (`data/reference/macro/courbe_taux_sans_risque.csv`, jeu `YC`, modèle de
 Svensson, composition continue). L'OAT française rend davantage — 51 points de
@@ -1445,32 +1445,81 @@ s'en trouve légèrement flatté. Au-delà de la dernière maturité publiée
 (trente ans), le taux zéro-coupon est prolongé à plat, et tout placement qui
 en dépend est déclaré `estimee`.
 
-**L'échelle de maturités.** Trois points cotés — 2, 10 et 30 ans —, et une
-règle d'horizon qui glisse du long vers le court :
+Elle a un second effet, moins visible et décisif pour ce qui suit : sous les
+anticipations pures, **le découpage des maturités n'a aucune conséquence**.
+Découper `[t, T]` en un trente ans, en trois dix ans ou en quinze deux ans
+accumule exactement `exp(z(T)·T − z(t)·t)` dans les trois cas, parce que c'est
+précisément ce que l'arbitrage impose au forward. Les frais n'y changent rien :
+un prélèvement annuel de `g` multiplie une ligne par `(1 − g)` autant de fois
+qu'elle passe d'années dans l'enveloppe, et ce nombre-là ne dépend pas non plus
+du découpage. Un test l'exige sur quatre règles d'allocation que tout sépare,
+et il conclut **à 0,01 € près sur une carrière de trente-six ans**.
+
+`Parametres.prime_terme_trente_ans` ouvre cette porte, et c'est le seul réglage
+sous lequel l'allocation pèse. Il décompose le taux observé en `z(T) = z*(T) +
+φ(T)`, où `z*` est la moyenne des taux courts attendus et `φ` le supplément
+exigé pour immobiliser son argent `T` années — proportionnel à la maturité,
+plafonné à trente ans, nul par défaut. Les forwards se calculent alors sur `z*`,
+et la prime de la maturité **achetée** se rajoute au résultat, si bien qu'un
+placement comptant rend toujours le taux coté du jour : le paramètre ne corrige
+que ce qui n'est pas encore acheté. **Le site publie à `0`**, sous les
+anticipations pures ; le paramètre sert à mesurer ce que cette hypothèse vaut,
+pas à la remplacer en douce.
+
+**L'adossement à l'horizon.** Chaque versement achète **une seule** maturité,
+celle qui arrive à échéance l'année du départ :
 
 ```
-part longue = 0,75 × borne₀₁((h − 10) / 20)
-part courte = 0,75 × borne₀₁((10 − h) / 8)
-part moyenne = 1 − part longue − part courte
+maturité = min(h, 30)
 ```
 
-où `h` est le nombre d'années restant jusqu'à la liquidation. Deux contraintes
-la ferment. Aucune maturité ne dépasse `h` : un titre arrivant à échéance après
-le départ devrait être vendu avant terme, donc à un prix qui n'est plus sans
-risque ; les maturités sont donc plafonnées, ce qui les fait coïncider à
-l'approche du départ. Et aucune ne dépasse les trois quarts du versement : en
-début de carrière l'allocation est *principalement* longue, jamais
-exclusivement. À l'échéance d'une ligne, son produit est replacé selon la même
-règle, pour l'horizon restant.
+où `h` est le nombre d'années restant jusqu'à la liquidation et `30` le bout de
+la courbe publiée. Deux propriétés la ferment, et un test tient chacune. Aucune
+maturité ne dépasse `h` : un titre arrivant à échéance après le départ devrait
+être vendu avant terme, donc à un prix qui n'est plus sans risque. Et aucune
+n'arrive à échéance **avant** `h` tant que la courbe couvre l'horizon : il n'y a
+alors rien à replacer, donc aucun taux futur à deviner. Les trente maturités de
+la BCE étant toutes cotées, l'adossement n'interpole ni n'extrapole en deçà de
+trente ans.
 
-| Années avant le départ | Répartition du versement |
+| Années avant le départ | Maturité achetée |
 |---:|---|
-| 40 | 25 % à 10 ans, 75 % à 30 ans |
-| 30 | 25 % à 10 ans, 75 % à 30 ans |
-| 20 | 62,5 % à 10 ans, 37,5 % à 20 ans |
-| 10 | 100 % à 10 ans |
-| 5 | 46,9 % à 2 ans, 53,1 % à 5 ans |
-| 2 | 100 % à 2 ans |
+| 40 | 30 ans, puis 10 ans à l'échéance |
+| 30 | 30 ans, qui tombe l'année du départ |
+| 20 | 20 ans, qui tombe l'année du départ |
+| 10 | 10 ans, qui tombe l'année du départ |
+| 5 | 5 ans, qui tombe l'année du départ |
+| 2 | 2 ans, qui tombe l'année du départ |
+
+**Ce que cette règle a remplacé, et pourquoi.** Jusqu'en septembre 2026, le
+pilier pratiquait une échelle de trois maturités — 2, 10 et 30 ans — glissant du
+long vers le court à l'approche du départ, aucune ligne ne dépassant les trois
+quarts du versement. Deux raisons l'ont fait tomber.
+
+La première est qu'elle **ne déplaçait rien** : c'est l'identité ci-dessus, et
+la bascule vers l'adossement l'a confirmée sur les témoins du portage — capital
+et rente identiques au centime sur l'ensemble des cas de référence, seule
+l'espérance de capital transmis bougeant de +0,19 %, parce qu'elle seule dépend
+des encours **intermédiaires**. L'échelle était donc un paramètre libre sans
+effet, qu'on pouvait accorder des heures durant sans déplacer un euro de rente.
+
+La seconde est qu'elle importait un raisonnement qui ne vaut pas ici.
+Raccourcir la maturité à l'approche du départ « dé-risque » un portefeuille
+d'**actions**, dont le prix de vente est incertain. Le pilier n'en détient pas :
+il doit un capital à une **date**, et l'actif sans risque d'une dette datée est
+le zéro-coupon qui tombe ce jour-là. Rouler du court jusqu'au départ n'est pas
+plus prudent — c'est un pari répété sur le taux de chaque replacement, un risque
+de réinvestissement que la règle **créait** au lieu de le couvrir, et que le
+modèle ne chiffrait nulle part. L'adossement le ramène à zéro tant que la courbe
+couvre l'horizon, et à un seul replacement au-delà de trente ans.
+
+Les deux raisons pointent dans le même sens, et la prime de terme donne le
+chiffre : à `prime_terme_trente_ans = 0,005` — le milieu de la fourchette que la
+littérature retient, voir `docs/limites.md` —, sur une carrière de trente-six
+ans partant en 2060, l'adossement rend **1,6 % de capital de plus** que
+l'échelle glissante — 7 € de rente mensuelle — et **6,2 % de plus** qu'un
+roulement à un an. C'est ce que l'allocation vaut, et elle ne vaut que cela :
+sans prime de terme, les trois règles donnent le même euro.
 
 **La convention de date, et pourquoi c'est celle du compte notionnel.** Le
 versement d'une année est crédité à la **fin** de cette année : il rapporte de
@@ -1584,7 +1633,10 @@ cotisation.
 
 **Ce que ce compartiment ne fait pas.** Il ne simule aucun risque de marché :
 il est placé sans risque par construction, et le seul aléa qui subsiste, celui
-de taux futurs s'écartant des forwards d'aujourd'hui, n'est pas chiffré. Il ne
+de taux futurs s'écartant des forwards d'aujourd'hui, n'est pas chiffré.
+L'adossement le réduit sans le supprimer : il ne porte plus que sur les
+versements à venir et, au-delà de trente ans d'horizon, sur le replacement du
+bout de courbe — les versements déjà faits, eux, sont bloqués jusqu'au départ. Il ne
 calcule aucune fiscalité, alors que les versements au PER sont déductibles et
 la rente imposable ; tous les montants du modèle sont bruts, ici comme
 ailleurs. Et il n'entre pas dans le bilan de la page Coût, parce qu'il ne

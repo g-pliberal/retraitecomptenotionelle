@@ -454,7 +454,7 @@ export class Simulateur {
     // l'alimente : ils n'entrent que dans la proposition. Son convertisseur est
     // celui du TAUX TECHNIQUE de la rente — nul par défaut, donc le même
     // diviseur que la pension notionnelle, ce qui rend les deux comparables.
-    this.courbeTaux = new CourbeTauxSansRisque(paquet);
+    this.courbeTaux = new CourbeTauxSansRisque(paquet, parametres.prime_terme_trente_ans);
     this.constructeurCapitalisation = new ConstructeurCapitalisation(
       this.courbeTaux, this.mortalite,
       new Convertisseur(this.mortalite, {

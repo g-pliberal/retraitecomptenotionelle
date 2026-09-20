@@ -32,12 +32,40 @@ n'intervient. Le capital et la rente se partagent donc entre les deux origines
 au prorata exact des taux, et un test l'exige : c'est ce qui autorise
 :attr:`Capitalisation.rente_volontaire` à diviser plutôt qu'à recalculer.
 
-**2. Où il est placé.** Sur des titres sans risque à plusieurs maturités, selon
-une règle d'horizon : longues tant que le départ est loin, courtes à l'approche
-— c'est l'allocation par « glide path » que toute épargne retraite à échéance
-pratique. Aucune ligne ne dépasse la date de départ (:func:`repartition`), et
-les taux sont ceux de la courbe et de ses forwards
-(:class:`~retraite_notionnelle.donnees.taux.CourbeTauxSansRisque`).
+**2. Où il est placé.** Sur un titre sans risque ADOSSÉ À L'HORIZON : chaque
+versement achète la maturité qui arrive à échéance l'année du départ, et rien
+d'autre (:func:`repartition`). Les taux sont ceux de la courbe et de ses
+forwards (:class:`~retraite_notionnelle.donnees.taux.CourbeTauxSansRisque`).
+
+C'est un changement de doctrine, et il faut dire contre quoi. Le pilier
+pratiquait jusqu'en septembre 2026 une échelle de trois maturités — 2, 10 et
+30 ans — glissant du long vers le court à l'approche du départ, en plafonnant
+chaque ligne aux trois quarts du versement : le « glide path » que toute
+épargne retraite à échéance affiche. Deux raisons l'ont fait tomber.
+
+**Elle ne servait à rien, au centime près.** Un test l'exige désormais
+(``test_sous_les_anticipations_pures_l_echelle_est_sans_effet``) : tant que
+les forwards sont pris pour les taux futurs, le capital final ne dépend PAS de
+la manière dont les maturités découpent l'horizon. Découper [t, T] en un 30
+ans, en trois 10 ans ou en quinze 2 ans accumule exactement
+:math:`e^{z(T)T - z(t)t}` dans les trois cas, parce que c'est précisément ce
+que l'arbitrage impose au forward. L'échelle était donc un paramètre libre
+sans effet : on pouvait l'accorder des heures sans déplacer un euro.
+
+**Elle importait un raisonnement qui ne vaut pas ici.** Raccourcir la maturité
+à l'approche du départ « dé-risque » un portefeuille d'ACTIONS, dont le prix
+de vente est incertain. Le pilier n'en détient pas : il doit un capital à une
+DATE, et l'actif sans risque d'une dette datée est le zéro-coupon qui tombe ce
+jour-là. Rouler du court jusqu'au départ n'est pas plus prudent, c'est un pari
+répété sur le taux de chaque replacement — un risque de réinvestissement que
+la règle créait au lieu de le couvrir, et que le modèle ne chiffrait nulle
+part. L'adossement le ramène à zéro tant que la courbe couvre l'horizon.
+
+Les deux raisons pointent dans le même sens, et la seconde donne le chiffre :
+dès que la prime de terme n'est plus ignorée
+(``Parametres.prime_terme_trente_ans``), bloquer la maturité de l'horizon la
+capte une fois pour toutes, là où le roulement la rachète à chaque échéance au
+prix du jour. C'est ce que l'allocation vaut, et elle ne vaut que cela.
 
 **3. Ce qu'il coûte.** Quatre frais, aux vraies moyennes du marché du PER
 l'année de la bascule : sur chaque versement, sur l'encours chaque année, sur
@@ -79,25 +107,12 @@ from ..donnees.mortalite import DonneesMortalite
 from ..donnees.taux import CourbeTauxSansRisque
 from .conversion import CoefficientConversion, Convertisseur
 
-#: Les trois maturités de l'échelle, en années : courte, moyenne, longue. Trois
-#: suffisent à porter la règle d'horizon, et chacune est un point coté de la
-#: courbe — ni interpolé, ni extrapolé, tant que l'horizon reste dans la courbe.
-MATURITES = (2, 10, 30)
-
-#: Horizon à partir duquel la part longue est à son maximum, et horizon en
-#: deçà duquel la part courte l'est. Entre les deux, les deux parts glissent
-#: linéairement, et la maturité moyenne prend ce qu'elles laissent.
-HORIZON_LONG = 30
-HORIZON_PIVOT = 10
-HORIZON_COURT = 2
-
-#: Part maximale d'une seule maturité. Elle vaut 3/4, et non 1 : une épargne
-#: obligatoire ne se concentre pas sur un seul point de la courbe, même quand
-#: l'horizon y invite. En début de carrière l'allocation est donc
-#: PRINCIPALEMENT longue, jamais exclusivement ; à l'approche du départ elle
-#: est principalement courte, et de toute façon plafonnée par la date de
-#: départ, qui ramène toutes les maturités à l'horizon restant.
-PART_MAXIMALE = 0.75
+#: Plus longue maturité achetable : le bout de la courbe publiée, trente ans à
+#: la BCE. Au-delà, plus rien n'est coté — le taux y est prolongé à plat et
+#: déclaré ``estimee`` —, et un titre qu'on ne peut pas acheter ne s'adosse à
+#: rien. Un horizon plus long se couvre donc en deux temps, et cette coupure
+#: est le SEUL replacement que la règle laisse subsister.
+MATURITE_MAXIMALE = 30
 
 #: Fiabilité du barème de frais. Les trois valeurs viennent du rapport annuel
 #: de l'Observatoire des produits d'épargne financière, que le dépôt n'a pas su
@@ -107,40 +122,30 @@ PART_MAXIMALE = 0.75
 FIABILITE_FRAIS = Fiabilite.HAUTE
 
 
-def _borner(valeur: float) -> float:
-    return min(1.0, max(0.0, valeur))
-
-
 def repartition(horizon: int) -> tuple[tuple[int, float], ...]:
     """Maturités et poids d'un versement placé à ``horizon`` années du départ.
 
-    La règle tient en trois lignes, et sa monotonie est vérifiée par un test :
-    la part longue croît avec l'horizon, la part courte décroît, et aucune
-    maturité ne dépasse l'horizon — un titre qui arriverait à échéance après le
-    départ devrait être vendu avant terme, donc à un prix qui n'est plus sans
-    risque.
+    Une seule ligne, et c'est tout le propos : la maturité de l'horizon,
+    plafonnée à ce que la courbe cote. Un versement à dix-sept ans du départ
+    achète du dix-sept ans ; à quarante ans du départ, il achète le trente ans
+    du bout de courbe, et les dix années qui restent seront couvertes à
+    l'échéance, par un dix ans, quand la courbe les cotera.
 
-    Les poids sont rendus par maturité EFFECTIVE, donc fusionnés lorsque le
-    plafonnement fait coïncider deux maturités : à deux ans du départ, les
-    trois lignes de l'échelle sont la même.
+    Deux propriétés la ferment, et un test tient chacune. **Aucune maturité ne
+    dépasse l'horizon** : un titre arrivant à échéance après le départ devrait
+    être vendu avant terme, donc à un prix qui n'est plus sans risque.
+    **Aucune ligne n'arrive à échéance avant le départ** tant que la courbe
+    couvre l'horizon : il n'y a alors rien à replacer, donc aucun taux futur à
+    deviner. C'est la définition même de l'adossement, et c'est ce qui manquait
+    à l'échelle de maturités qui la précédait — voir le docstring du module.
+
+    La maturité rendue est un ENTIER de la courbe publiée, comme avant : les
+    trente maturités de la BCE sont toutes cotées, et l'adossement ne demande
+    donc ni interpolation ni extrapolation en deçà de trente ans.
     """
     if horizon <= 0:
         return ()
-    part_longue = PART_MAXIMALE * _borner(
-        (horizon - HORIZON_PIVOT) / (HORIZON_LONG - HORIZON_PIVOT)
-    )
-    part_courte = PART_MAXIMALE * _borner(
-        (HORIZON_PIVOT - horizon) / (HORIZON_PIVOT - HORIZON_COURT)
-    )
-    poids = (part_courte, 1.0 - part_courte - part_longue, part_longue)
-
-    cumul: dict[int, float] = {}
-    for maturite, part in zip(MATURITES, poids):
-        if part <= 0:
-            continue
-        effective = min(maturite, horizon)
-        cumul[effective] = cumul.get(effective, 0.0) + part
-    return tuple(sorted(cumul.items()))
+    return ((min(horizon, MATURITE_MAXIMALE), 1.0),)
 
 
 @dataclass

@@ -630,8 +630,15 @@ class Simulateur:
 
     @cached_property
     def courbe_taux(self) -> CourbeTauxSansRisque:
-        """La courbe sans risque : elle n'alimente que le pilier capitalisé."""
-        return CourbeTauxSansRisque(self.parametres.racine_donnees)
+        """La courbe sans risque : le pilier capitalisé, et la dette du chiffrage.
+
+        ``prime_terme_trente_ans`` la traverse : à zéro — le réglage publié —
+        elle rend les forwards de la courbe observée, et rien d'autre.
+        """
+        return CourbeTauxSansRisque(
+            self.parametres.racine_donnees,
+            self.parametres.prime_terme_trente_ans,
+        )
 
     @cached_property
     def catalogue(self) -> CatalogueRegimes:
