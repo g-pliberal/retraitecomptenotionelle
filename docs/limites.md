@@ -526,6 +526,8 @@ résumé :
 | Retraités de droit direct, par caisse | 2004-2024, 28 caisses | **certifiée** | DREES, enquête annuelle auprès des caisses de retraite, fichier diffusé |
 | Retraités de droit direct, par caisse | hors 2004-2024 | estimée | la répartition du bord est reconduite — voir §5 bis |
 | Distribution des pensions mensuelles brutes de droit direct | fin 2020, 46 tranches | **certifiée** | DREES, échantillon interrégimes de retraités 2020, tableau 1 |
+| Patrimoine des ménages : déciles, moyennes et médianes par âge | début 2021 et début 2024 | **haute** | INSEE, enquête Histoire de vie et Patrimoine, Insee Focus n° 287 et page « Distribution du patrimoine des ménages », classeurs lus par script |
+| Patrimoine des ménages retraités selon leur revenu disponible | 2018, six valeurs | **saisie** | COR, « Le patrimoine des retraités », séance du 16 décembre 2021, sur l'enquête Patrimoine 2018 — les graphiques du PDF ne se lisent pas |
 | Hypothèses de projection | 2026-2100 | **saisie** | COR, rapport annuel de juin 2025, jeu reconduit en juin 2026 |
 | Emploi projeté (croissance de l'emploi, dérivée) | 2026-2070 | **saisie** | COR, rapport annuel de juin 2026, données de la partie 1 : population active et chômage du scénario de référence |
 | Espérance de vie à 0 et 60 ans | 1946-2025 | **certifiée** | INSEE BDM, quatre idbanks, annuel par sexe |
@@ -4989,14 +4991,22 @@ qu'au-delà d'un seuil d'actif net et a rendu 108,7 millions au Fonds de
 solidarité vieillesse en 2024 (rapport d'activité 2024), deux pour cent de ce
 qu'elle verse. La trajectoire suit ces avances par âge à compter de la
 bascule, au taux réel lu sur la courbe des taux, les libère au décès avec la
-mortalité du modèle, et les successions en rendent la part du réglage
-`reprise`, la moitié par défaut (`part_reprise_garantie`) : une hypothèse, non
-une donnée, le dépôt n'ayant pas de distribution de patrimoine par niveau de
-pension. Au réglage par défaut, en 2070 : 17,9 milliards versés, 11,9 repris,
-6,0 nets, 0,16 % du PIB ; de 2026 à 2070 : 849 versés, 344 repris, 505 nets,
-et un stock d'avances en cours de 383 milliards à l'horizon. La ligne « dont
-garantie » reste brute ; les lignes « dont reprises » et « garantie nette »
-disent le reste (action 47 de la feuille de route).
+mortalité du vingtile de niveau de vie où la pension moyenne des
+bénéficiaires les place — le premier, et une avance dure 19,6 ans —, et les
+successions en rendent une part CALCULÉE sur le patrimoine des ménages
+retraités selon leur revenu (COR, enquête Histoire de vie et Patrimoine 2018,
+`donnees/patrimoine.py`) : 43 % au réglage par défaut, les plus petites
+pensions rattachées au quart des ménages retraités le plus modeste (médiane
+36 800 €), les autres à l'ensemble (médiane 190 200 €), une avance par
+succession là où un couple en pèse deux, ce qui surestime la couverture. Le
+patrimoine des retraités selon leur PENSION n'est publié nulle part : c'est le
+fichier individuel de l'enquête qui le donnerait, et il se commande, action
+47. Le réglage `reprise` remplace la part calculée par un nombre. Au réglage
+par défaut, en 2070 : 17,7 milliards versés, 9,7 repris, 8,0 nets, 0,22 % du
+PIB ; de 2026 à 2070 : 849 versés, 310 repris, 539 nets, et un stock d'avances
+en cours de 320 milliards à l'horizon. La ligne « dont garantie » reste
+brute ; les lignes « dont reprises » et « garantie nette » disent le reste
+(action 47 de la feuille de route).
 
 Ce que chaque ligne suppose. **Les deux planchers** sont donnés parce que
 l'enquête dit la pension et non avec qui l'on vit : la garantie de base vaut
@@ -6755,7 +6765,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1226<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1227<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -143,7 +143,7 @@ from .donnees.distribution import DistributionPensions
 from .donnees.taux import CourbeTauxSansRisque
 from .donnees.equilibre import ORGANISMES, POSTES, ComptesRetraite
 from .donnees.population import Population
-from .garantie import cout_garantie
+from .garantie import _manque_moyen, cout_garantie
 from .simulateur import Simulateur
 
 #: Les six systèmes, dans l'ordre du tableau de comparaison. Ce sont les
@@ -1616,6 +1616,15 @@ class GarantieProjetee:
     stock_avances_constants: float = 0.0
     #: Le taux réel de l'année, lu sur la courbe des taux et déflaté.
     taux_reel: float = 0.0
+    #: La part de l'avance que la succession couvre, celle qui a servi :
+    #: calculée sur le patrimoine des retraités, ou réglée.
+    part_reprise: float = 0.0
+    #: La durée moyenne d'une avance : l'espérance de vie à 65 ans de la
+    #: population dont la mortalité a servi, en années.
+    duree_avances: float = 0.0
+    #: Cette population : le vingtile de niveau de vie où la pension moyenne
+    #: des bénéficiaires les place, ou ``None`` pour la population générale.
+    population_mortalite: str | None = None
 
 
 class GarantieDistribution:
@@ -1858,7 +1867,8 @@ def _rapports(masses: dict[str, float], garantie: GarantieProjetee,
     return rapports
 
 
-def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur) -> None:
+def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
+                          garantie: GarantieDistribution) -> None:
     """Les avances de la garantie, leur intérêt, et ce que les successions rendent.
 
     LA GARANTIE EST UNE AVANCE. Le programme la reprend sur la succession dès
@@ -1885,37 +1895,132 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur) ->
     succession en rend la part ``part_reprise_garantie``, et le reste est
     abandonné — c'est cette part-là que l'impôt finance pour de bon.
 
-    CE QUI EST FIGÉ. La couverture est une hypothèse, non une donnée : le
-    dépôt n'a pas de distribution de patrimoine par niveau de pension. Le
-    complément moyen tient lieu de chacun, la mortalité des bénéficiaires est
-    celle de tous, et rien n'est repris avant le décès — ni au premier décès
-    d'un couple, ni sur une donation : la règle les prévoit, le modèle ne les
-    distingue pas. Les lignes d'avant la bascule restent à zéro.
+    LA COUVERTURE EST CALCULÉE, sauf réglage. Ce qu'une succession couvre de
+    l'avance dépend du patrimoine des bénéficiaires, et le patrimoine des
+    retraités selon leur PENSION n'est publié nulle part ; ce qui l'est, chez
+    le COR sur l'enquête Patrimoine 2018, est le patrimoine des ménages
+    retraités selon leur REVENU DISPONIBLE : le quart le plus modeste, et
+    l'ensemble (``donnees/patrimoine.py``). La convention est celle-ci, et
+    elle est écrite pour être discutée : chaque tranche de pension de
+    l'enquête qui tombe sous le plancher reçoit une avance à la mort — son
+    complément annuel capitalisé au taux réel moyen sur la durée moyenne d'une
+    avance —, et la part que la succession en couvre est celle du quart le
+    plus modeste pour les pensions du premier quart des retraités, celle de
+    l'ensemble des retraités à partir de la médiane, et le mélange linéaire
+    entre les deux ; la couverture retenue est la moyenne de ces parts, pesée
+    par les avances. Une part réglée (``part_reprise_garantie``) remplace ce
+    calcul.
+
+    LA MORTALITÉ EST CELLE DES BÉNÉFICIAIRES, pas celle de tous : le vingtile
+    de niveau de vie où leur pension moyenne les place, par la convention
+    qui rattache déjà un cas type à un vingtile (``population_niveau_de_vie``
+    du module de mortalité, docs/methodologie.md §5). Les avances sont plus
+    courtes, et les décès les libèrent plus tôt.
+
+    CE QUI EST FIGÉ. Le patrimoine est celui d'un ménage, et un couple de
+    deux bénéficiaires pèse deux avances sur une succession, ce qui surestime
+    la couverture. Le complément moyen tient lieu de chacun, et rien n'est
+    repris avant le décès — ni au premier décès d'un couple, ni sur une
+    donation : la règle les prévoit, le modèle ne les distingue pas. Les
+    lignes d'avant la bascule restent à zéro.
     """
     parametres = simulateur.parametres
     bascule = parametres.annee_bascule
-    part = parametres.part_reprise_garantie
     annee_euros = parametres.annee_euros_constants
     macro = simulateur.macro
-    survie = [s for s in simulateur.mortalite.courbe_survie_unisexe(65, bascule)
+    mortalite = simulateur.mortalite
+    projetees = [ligne for ligne in lignes if ligne.annee >= bascule and ligne.garantie is not None]
+    if not projetees:
+        return
+
+    # 1. Le taux réel de chaque année : le forward à un an, déflaté.
+    taux_reels: dict[int, float] = {}
+    for ligne in projetees:
+        annee = ligne.annee
+        nominal = simulateur.courbe_taux.placement(annee - 1, 1).taux
+        inflation = (macro.coefficient_prix(annee - 1, annee_euros)
+                     / macro.coefficient_prix(annee, annee_euros) - 1.0)
+        taux_reels[annee] = (1.0 + nominal) / (1.0 + inflation) - 1.0
+    taux_moyen = sum(taux_reels.values()) / len(taux_reels)
+
+    # 2. Les bénéficiaires, tranche par tranche, à l'année de l'enquête : leur
+    # poids, leur complément annuel en euros constants, leur pension dans les
+    # euros de l'enquête, et leur rang parmi les retraités.
+    calage = garantie
+    distribution = calage.distribution
+    millesime = distribution.millesime
+    ligne_enquete = next((ligne for ligne in lignes if ligne.annee == millesime), None)
+    deplacement = (
+        ligne_enquete.garantie.facteur
+        if ligne_enquete is not None and ligne_enquete.garantie is not None
+        and ligne_enquete.garantie.facteur > 0.0 else 1.0
+    )
+    tranches: list[tuple[float, float, float, float]] = []
+    for tranche in distribution.tranches:
+        superieure = (None if tranche.borne_superieure is None
+                      else tranche.borne_superieure * deplacement)
+        concernee, manque = _manque_moyen(
+            tranche.borne_inferieure * deplacement, superieure, calage.plancher_mensuel)
+        if concernee <= 0.0:
+            continue
+        milieu = (tranche.borne_inferieure if tranche.borne_superieure is None
+                  else 0.5 * (tranche.borne_inferieure + tranche.borne_superieure))
+        tranches.append((
+            tranche.part * concernee,
+            manque / concernee * 12.0 * calage.vers_constants,
+            milieu * deplacement,
+            distribution.part_sous(milieu),
+        ))
+    poids_total = sum(poids for poids, _, _, _ in tranches)
+
+    # 3. La mortalité des bénéficiaires : le vingtile de niveau de vie le plus
+    # proche de leur pension moyenne, dans les euros de l'étude de l'INSEE.
+    population = None
+    if poids_total > 0.0 and mortalite.annee_niveaux_de_vie is not None:
+        pension_moyenne = sum(poids * pension for poids, _, pension, _ in tranches) / poids_total
+        population = mortalite.population_niveau_de_vie_euros(
+            pension_moyenne * macro.coefficient_prix(millesime, mortalite.annee_niveaux_de_vie))
+    survie = [s for s in mortalite.courbe_survie_unisexe(65, bascule, True, population)
               if s > 1e-9]
     if not survie:
         return
     total_survie = sum(survie)
     deces = [survie[k] - (survie[k + 1] if k + 1 < len(survie) else 0.0)
              for k in range(len(survie))]
+
+    # 4. La couverture : calculée sur le patrimoine des retraités, sauf réglage.
+    part = parametres.part_reprise_garantie
+    if part is None:
+        patrimoine = simulateur.patrimoine
+        bas = patrimoine.distribution("retraites_q1")
+        haut = patrimoine.distribution("retraites")
+        vers_bas = macro.coefficient_prix(annee_euros, bas.annee)
+        vers_haut = macro.coefficient_prix(annee_euros, haut.annee)
+        numerateur = 0.0
+        denominateur = 0.0
+        for poids, complement, _, rang in tranches:
+            avance = (complement * ((1.0 + taux_moyen) ** total_survie - 1.0) / taux_moyen
+                      if abs(taux_moyen) > 1e-12 else complement * total_survie)
+            couverture_bas = bas.couverture(avance * vers_bas)
+            couverture_haut = haut.couverture(avance * vers_haut)
+            if rang <= 0.25:
+                couverture = couverture_bas
+            elif rang >= 0.5:
+                couverture = couverture_haut
+            else:
+                couverture = couverture_bas + (couverture_haut - couverture_bas) * (rang - 0.25) / 0.25
+            numerateur += poids * avance * couverture
+            denominateur += poids * avance
+        part = numerateur / denominateur if denominateur > 0.0 else 0.0
+
+    # 5. Les avances, année par année.
     complements: dict[int, float] = {}
     croissance: dict[int, float] = {}
     facteur = 1.0
     stock = 0.0
-    for ligne in lignes:
-        if ligne.annee < bascule or ligne.garantie is None:
-            continue
+    for ligne in projetees:
         annee = ligne.annee
-        nominal = simulateur.courbe_taux.placement(annee - 1, 1).taux
-        inflation = (macro.coefficient_prix(annee - 1, annee_euros)
-                     / macro.coefficient_prix(annee, annee_euros) - 1.0)
-        taux_reel = (1.0 + nominal) / (1.0 + inflation) - 1.0
+        taux_reel = taux_reels[annee]
         facteur *= 1.0 + taux_reel
         croissance[annee] = facteur
         garantie = ligne.garantie
@@ -1938,6 +2043,9 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur) ->
             reprises_constants=part * liberees,
             stock_avances_constants=stock,
             taux_reel=taux_reel,
+            part_reprise=part,
+            duree_avances=total_survie,
+            population_mortalite=population,
         )
 
 
@@ -2033,7 +2141,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
         ))
-    _reprises_successions(lignes, simulateur)
+    _reprises_successions(lignes, simulateur, garantie)
 
     return Avenir(
         annees=lignes,

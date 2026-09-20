@@ -29,7 +29,7 @@
  * bénéficiaires : c'est lui qu'il faut multiplier par l'effectif de la tranche
  * pour obtenir la dépense.
  */
-function manqueMoyen(borneInferieure, borneSuperieure, plancher) {
+export function manqueMoyen(borneInferieure, borneSuperieure, plancher) {
   if (borneSuperieure === null || borneSuperieure === undefined) {
     const manque = Math.max(0, plancher - borneInferieure);
     return manque > 0 ? [1, manque] : [0, 0];

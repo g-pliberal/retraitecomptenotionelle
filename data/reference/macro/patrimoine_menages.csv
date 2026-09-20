@@ -1,0 +1,105 @@
+# Patrimoine des ménages : déciles, moyennes et médianes — et celui des retraités
+# source_id: insee_patrimoine_menages (INSEE, lignes 2021 et 2024)
+#            cor_patrimoine_retraites (COR, lignes 2018, populations retraites*)
+# unite: euros courants de l'année, par MÉNAGE
+# population: ensemble | age_<tranche> (âge de la personne de référence) |
+#             retraites (personne de référence retraitée) | retraites_q1 (le
+#             quart de ces ménages au revenu disponible le plus bas)
+# statistique: d1 … d9, p95, p99, mediane, moyenne
+# patrimoine: brut | net (l'INSEE) ; brut hors reste (le COR, écrit `brut`)
+# fiabilite:
+#   haute : valeur publiée, lue telle quelle dans le classeur de l'INSEE par
+#           scripts/fetch/insee_patrimoine_menages.py, ou recopiée du document
+#           du COR (16 décembre 2021) par le même script, qui la porte en dur.
+#           Aucune certification ne les recontrôle par un second chemin.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À la reprise sur succession de la garantie vieillesse (action 47) : la
+# succession d'un bénéficiaire couvre ce que son patrimoine vaut, et
+# `donnees/patrimoine.py` ajuste une distribution par population pour dire
+# quelle part d'une avance donnée est couverte. Les retraités du premier
+# quartile servent aux plus petites pensions, l'ensemble des retraités aux
+# autres ; les déciles INSEE de tous les ménages ne servent qu'au recoupement.
+#
+# Ne pas modifier à la main : le script réécrit le fichier en entier.
+# recupere_le: 2026-09-20
+annee,population,statistique,patrimoine,valeur,source_id,fiabilite
+2018,retraites,d2,brut,23000,cor_patrimoine_retraites,haute
+2018,retraites,mediane,brut,190200,cor_patrimoine_retraites,haute
+2018,retraites,d9,brut,622900,cor_patrimoine_retraites,haute
+2018,retraites,moyenne,brut,296600,cor_patrimoine_retraites,haute
+2018,retraites_q1,mediane,brut,36800,cor_patrimoine_retraites,haute
+2018,retraites_q1,moyenne,brut,110400,cor_patrimoine_retraites,haute
+2021,age_30_39,mediane,brut,117600,insee_patrimoine_menages,haute
+2021,age_30_39,moyenne,brut,225800,insee_patrimoine_menages,haute
+2021,age_30_39,mediane,net,49400,insee_patrimoine_menages,haute
+2021,age_30_39,moyenne,net,135500,insee_patrimoine_menages,haute
+2021,age_40_49,mediane,brut,194000,insee_patrimoine_menages,haute
+2021,age_40_49,moyenne,brut,334500,insee_patrimoine_menages,haute
+2021,age_40_49,mediane,net,110800,insee_patrimoine_menages,haute
+2021,age_40_49,moyenne,net,251000,insee_patrimoine_menages,haute
+2021,age_50_59,mediane,brut,224500,insee_patrimoine_menages,haute
+2021,age_50_59,moyenne,brut,401300,insee_patrimoine_menages,haute
+2021,age_50_59,mediane,net,178500,insee_patrimoine_menages,haute
+2021,age_50_59,moyenne,net,350400,insee_patrimoine_menages,haute
+2021,age_60_69,mediane,brut,232800,insee_patrimoine_menages,haute
+2021,age_60_69,moyenne,brut,378900,insee_patrimoine_menages,haute
+2021,age_60_69,mediane,net,214300,insee_patrimoine_menages,haute
+2021,age_60_69,moyenne,net,361400,insee_patrimoine_menages,haute
+2021,age_70_plus,mediane,brut,211500,insee_patrimoine_menages,haute
+2021,age_70_plus,moyenne,brut,346300,insee_patrimoine_menages,haute
+2021,age_70_plus,mediane,net,209900,insee_patrimoine_menages,haute
+2021,age_70_plus,moyenne,net,343800,insee_patrimoine_menages,haute
+2021,age_moins_30,mediane,brut,20400,insee_patrimoine_menages,haute
+2021,age_moins_30,moyenne,brut,71200,insee_patrimoine_menages,haute
+2021,age_moins_30,mediane,net,15800,insee_patrimoine_menages,haute
+2021,age_moins_30,moyenne,net,43200,insee_patrimoine_menages,haute
+2021,ensemble,d1,brut,4400,insee_patrimoine_menages,haute
+2021,ensemble,d2,brut,13400,insee_patrimoine_menages,haute
+2021,ensemble,d3,brut,33200,insee_patrimoine_menages,haute
+2021,ensemble,d4,brut,106200,insee_patrimoine_menages,haute
+2021,ensemble,mediane,brut,177200,insee_patrimoine_menages,haute
+2021,ensemble,mediane,brut,177200,insee_patrimoine_menages,haute
+2021,ensemble,d6,brut,246100,insee_patrimoine_menages,haute
+2021,ensemble,d7,brut,328400,insee_patrimoine_menages,haute
+2021,ensemble,d8,brut,447500,insee_patrimoine_menages,haute
+2021,ensemble,d9,brut,716300,insee_patrimoine_menages,haute
+2021,ensemble,p95,brut,1034600,insee_patrimoine_menages,haute
+2021,ensemble,p99,brut,2239200,insee_patrimoine_menages,haute
+2021,ensemble,moyenne,brut,317100,insee_patrimoine_menages,haute
+2021,ensemble,d1,net,3000,insee_patrimoine_menages,haute
+2021,ensemble,d2,net,10400,insee_patrimoine_menages,haute
+2021,ensemble,d3,net,26500,insee_patrimoine_menages,haute
+2021,ensemble,d4,net,67100,insee_patrimoine_menages,haute
+2021,ensemble,mediane,net,124800,insee_patrimoine_menages,haute
+2021,ensemble,mediane,net,124800,insee_patrimoine_menages,haute
+2021,ensemble,d6,net,192100,insee_patrimoine_menages,haute
+2021,ensemble,d7,net,274700,insee_patrimoine_menages,haute
+2021,ensemble,d8,net,394300,insee_patrimoine_menages,haute
+2021,ensemble,d9,net,633200,insee_patrimoine_menages,haute
+2021,ensemble,p95,net,956100,insee_patrimoine_menages,haute
+2021,ensemble,p99,net,2072600,insee_patrimoine_menages,haute
+2021,ensemble,moyenne,net,274000,insee_patrimoine_menages,haute
+2024,ensemble,d1,brut,6200,insee_patrimoine_menages,haute
+2024,ensemble,d2,brut,16500,insee_patrimoine_menages,haute
+2024,ensemble,d3,brut,40100,insee_patrimoine_menages,haute
+2024,ensemble,d4,brut,112100,insee_patrimoine_menages,haute
+2024,ensemble,mediane,brut,205100,insee_patrimoine_menages,haute
+2024,ensemble,d6,brut,283200,insee_patrimoine_menages,haute
+2024,ensemble,d7,brut,381800,insee_patrimoine_menages,haute
+2024,ensemble,d8,brut,530000,insee_patrimoine_menages,haute
+2024,ensemble,d9,brut,857700,insee_patrimoine_menages,haute
+2024,ensemble,p95,brut,1268200,insee_patrimoine_menages,haute
+2024,ensemble,p99,brut,3020900,insee_patrimoine_menages,haute
+2024,ensemble,d1,net,4600,insee_patrimoine_menages,haute
+2024,ensemble,d2,net,13200,insee_patrimoine_menages,haute
+2024,ensemble,d3,net,34100,insee_patrimoine_menages,haute
+2024,ensemble,d4,net,77900,insee_patrimoine_menages,haute
+2024,ensemble,mediane,net,148100,insee_patrimoine_menages,haute
+2024,ensemble,d6,net,224200,insee_patrimoine_menages,haute
+2024,ensemble,d7,net,317400,insee_patrimoine_menages,haute
+2024,ensemble,d8,net,457900,insee_patrimoine_menages,haute
+2024,ensemble,d9,net,750400,insee_patrimoine_menages,haute
+2024,ensemble,p95,net,1151500,insee_patrimoine_menages,haute
+2024,ensemble,p99,net,2728900,insee_patrimoine_menages,haute
