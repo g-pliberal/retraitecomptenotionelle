@@ -1429,13 +1429,19 @@ def _construction():
     return module
 
 
-def test_le_paquet_est_a_jour():
+def test_le_paquet_est_a_jour(contexte):
     """Le paquet et la feuille de style servis au site doivent refléter le dépôt.
 
     S'il échoue : ``python scripts/construire_donnees.py``.
+
+    Le contexte du module est passé au constructeur, et ce n'est pas une
+    élégance : depuis que le paquet embarque le bilan figé, le construire
+    suppose le coût agrégé, soit dix-huit secondes. Les autres tests de ce
+    module l'ont déjà calculé sous les mêmes réglages, et la mémoire du
+    contexte est partagée.
     """
     construction = _construction()
-    for chemin, contenu in construction.sorties().items():
+    for chemin, contenu in construction.sorties(contexte).items():
         assert chemin.exists(), f"{chemin.name} est absent"
         assert chemin.read_bytes() == contenu, (
             f"{chemin.name} est périmé — lancer python scripts/construire_donnees.py"
@@ -5023,8 +5029,12 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
     Le salaire net que le système laisse pendant la carrière a le droit de se
     tenir à côté de la pension : c'est une autre grandeur, elle porte son
     étiquette, et c'est même ce qui sépare les quatre systèmes avant la
-    retraite. Une seule chose reste exigée — un seul `chiffre principal`, celui
-    de la pension, et lui seul dans les euros de l'année de référence.
+    retraite. Ce que les comptes du système FINANCENT de cette pension y a
+    rejoint le salaire, pour la même raison et sous la même règle : une
+    étiquette, et l'unité des autres.
+
+    Une seule chose reste exigée — un seul `chiffre principal`, celui de la
+    pension, et lui seul dans les euros de l'année de référence.
     """
     corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
     depart = SIMULATION_TEMOIN["liquidation"][:4]
@@ -5034,13 +5044,22 @@ def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
         assert f"en euros de {depart}" not in entete
         # L'unité longue a quitté les cartes — deux mots suffisent sous chaque
         # nombre — et la clé de lecture la porte une fois pour toutes. Ce que
-        # la carte doit dire, c'est le MODE, et le même pour ses deux chiffres.
-        assert entete.count("€ net/mois") == 2
+        # la carte doit dire, c'est le MODE, et le même pour TOUS ses chiffres :
+        # le test compte donc les unités plutôt qu'il n'en fixe le nombre, et
+        # exige qu'aucune ne s'écarte des autres.
+        unites = re.findall(r'<span class="unite">([^<]*)</span>', entete)
+        assert unites
+        assert set(unites) == {"€ net/mois"}
         # Le second chiffre, s'il est là, dit de quoi il parle : sans son
         # étiquette, deux nombres se toucheraient sans que rien ne les sépare.
         if 'class="chiffre salaire"' in entete:
             assert ">salaire</span>" in entete
             assert "€ net/mois" in entete
+        # Le troisième, de même : il dit ce que les comptes financent de la
+        # pension promise, et il ne paraît que là où ils en financent moins
+        # qu'elle. Sans son étiquette, il se lirait comme un montant de plus.
+        if 'class="chiffre finance"' in entete:
+            assert ">financé</span>" in entete
     assert "Deux fois le même montant" not in corps
     assert "grand chiffre" not in corps
     assert f"en euros de {depart}" not in corps.split('<div class="carte">')[0]

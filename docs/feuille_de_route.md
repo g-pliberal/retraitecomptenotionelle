@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 910<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 357<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -1317,6 +1317,33 @@ mesure page par page — et change tout à ce que la page Coût affiche.
 
 **Fin.** La page Coût porte les deux lectures — système piloté, système non
 piloté — et dit laquelle répond à quelle question.
+
+**Un demi-pas fait le 20 septembre 2026, et ce n'est pas celui que l'action
+décrivait.** Le coefficient n'est toujours pas APPLIQUÉ — aucune courbe de la
+page Coût n'a bougé, aucun moteur de pension n'a été touché —, mais il est
+désormais LU là où le lecteur lit son propre chiffre : sous chaque montant du
+simulateur, un second chiffre dit ce que les comptes du système en financent,
+et un dépliant chiffre les trois façons de combler le manque. Ce qui a fait
+passer ce demi-pas devant l'autre est ce que l'action nommait déjà comme son
+piège : un facteur commun ne déplace AUCUN écart entre carrières, si bien que
+l'appliquer dans l'agrégat ne change rien à ce que le site mesure page par
+page. Le lecteur, lui, ne lit pas l'agrégat : il lit un montant, et ce montant
+se lisait comme une promesse tenue.
+
+La mécanique est décrite dans `src/retraite_notionnelle/donnees/bilan.py`, ses
+quatre réserves dans `docs/limites.md` § 5 bis. Une contrainte nouvelle en
+sort : le bilan des quatre systèmes est figé dans
+`data/derive/equilibre.json`, écrit par `scripts/construire_donnees.py` et
+embarqué dans le paquet, parce que la page d'entrée du site ne peut pas payer
+chez le lecteur les dix-huit secondes que coûte le coût agrégé. Le test de
+péremption du paquet les paie donc, une fois, et c'est ce qui interdit à la
+table de diverger du modèle.
+
+**Ce qui reste de l'action.** Le pilotage lui-même, c'est-à-dire l'agrégat :
+une variante de la page Coût où chaque système est ramené à l'équilibre, puis,
+si l'écart le justifie, l'ajustement porté à la pension individuelle. Le
+second chiffre du simulateur ne le remplace pas — il dit ce que le coefficient
+vaut, la page Coût continue de tracer des courbes qui ne s'en servent pas.
 
 ---
 
@@ -10032,3 +10059,39 @@ un que rien n'oblige.
 `moteur/js/pages.js` (les deux phrases, le rendu), les témoins.
 L'entrée `accueil.on_inscrit` de `data/reference/site/affirmations.yaml`
 nomme cette action : son contrôle tombe le jour où celle-ci est faite.
+
+---
+
+### 62. Le scénario 1 cesse d'être trop beau pour être vrai — `fait`
+
+**Demande.** « J'aimerais traiter le scénario 1 comme un scénario qui va
+changer. En l'état actuel, le scénario 1 est trop beau pour être vrai. Il y a
+un système qui est en déficit par construction. Je ne trouve pas ça honnête de
+dire qu'on va garder des salaires hauts et des retraites hautes pour les gens
+qui ne sont pas encore à la retraite. Est-ce qu'il y a moyen de montrer cela
+sans mentir au visiteur du site ? »
+
+**Ce qui a été fait.** La réponse tenait dans un chiffre que le dépôt
+calculait déjà, depuis l'action 6, sans jamais l'afficher à côté d'une
+pension — le coefficient d'équilibre, 0,99 en 2026 et 0,84 en 2070. Le montant du système 1 n'a pas
+bougé d'un euro, et ne devait pas bouger : il est le droit en vigueur, c'est
+sa définition. À côté de lui, un second chiffre dit ce que les comptes en
+financent, la barre montre la part qui manque, et un dépliant chiffre les
+trois façons de combler ce manque — rogner, lever, emprunter — en disant
+qu'aucune n'est une prévision.
+
+**La décision qui a coûté le plus à trancher** est de l'appliquer aux QUATRE
+systèmes et non au seul scénario 1. Le contraire aurait flatté la
+proposition, dont le coefficient est plus bas que celui du système actuel sur
+la plus grande partie de l'horizon — 0,79 contre 0,90 en 2054. Symétriquement,
+un coefficient supérieur à un n'est jamais converti en euros : les systèmes 2
+et 3 encaissent deux à trois fois ce qu'ils versent, et écrire « financé :
+927 € » sous une pension de 265 € ferait promettre ce que personne n'a décidé
+de servir. La marge est dite en toutes lettres.
+
+**Ce que ça déplace :** aucune pension calculée. Le portage JavaScript rend
+le même HTML que le Python, témoins compris, et les 491 simulations sont
+identiques au centime. Ce qui bouge est le poids du paquet — le bilan figé
+pèse 40 Ko — et le test de péremption du paquet, qui coûte désormais les
+dix-huit secondes du coût agrégé ; il reçoit le contexte du module pour ne
+pas les payer deux fois.

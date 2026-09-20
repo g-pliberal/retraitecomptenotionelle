@@ -34,6 +34,7 @@ from retraite_notionnelle.cout import (
     PREMIERE_GENERATION,
     SCENARIOS,
     calculer_cout,
+    financer,
     generations,
 )
 from retraite_notionnelle.cout import (
@@ -48,6 +49,7 @@ from retraite_notionnelle.donnees.assiette import (
     POSTES_ASSIETTE,
     AssietteActivite,
 )
+from retraite_notionnelle.donnees.bilan import charger_bilan
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.donnees.distribution import DistributionPensions
 from retraite_notionnelle.donnees.cotisants import (
@@ -2323,3 +2325,139 @@ def test_le_taux_de_frais_sur_l_encours_baisse_avec_les_paliers(cout):
     tot_2070 = avenir.annee(2070).pilier.taux_frais_encours
     assert 0.004 < tot_2030 < 0.008
     assert tot_2070 < tot_2030 / 2
+
+
+# -- ce que les comptes financent d'une pension promise -----------------------
+
+
+def _poids_plats(annees: int) -> tuple[float, ...]:
+    """Une courbe de survie qui ne décroît pas : chaque année pèse autant.
+
+    Elle isole ce que la fonction fait du BILAN de ce qu'elle fait de la
+    MORTALITÉ. Les tests qui portent sur la pondération se donnent une courbe
+    décroissante, et disent alors dans quel sens elle déplace le résultat.
+    """
+    return tuple(1.0 for _ in range(annees))
+
+
+def test_le_coefficient_servi_est_la_moyenne_des_annees_de_service(solde):
+    """Une pension se sert vingt ans : le coefficient de la seule année du
+    départ FLATTE qui part tôt, puisqu'il ignore les années où le déficit se
+    creuse. C'est exactement ce que la moyenne corrige, et le test le mesure
+    plutôt que de l'affirmer."""
+    assiette = AssietteActivite(RACINE_DONNEES)
+    part = financer(solde, assiette, "actuel", 2030, _poids_plats(20))
+    attendu = sum(solde.annee(annee).coefficient("actuel")
+                  for annee in range(2030, 2050)) / 20
+    assert part.coefficient == pytest.approx(attendu, rel=1e-12)
+    assert part.coefficient_depart == pytest.approx(
+        solde.annee(2030).coefficient("actuel"), rel=1e-12)
+    # Le déficit se creuse : la moyenne est sous le coefficient du départ.
+    assert part.coefficient < part.coefficient_depart
+    assert part.depart_couvert and part.entiere
+
+
+def test_la_survie_pese_les_premieres_annees_plus_que_les_dernieres(solde):
+    """Une courbe décroissante ramène le coefficient VERS celui du départ :
+    les années lointaines, où le manque est le plus grand, sont celles où il
+    reste le moins de monde pour le subir. Le sens de l'effet est le seul
+    résultat attendu ici, et il doit être celui-là."""
+    assiette = AssietteActivite(RACINE_DONNEES)
+    plats = financer(solde, assiette, "actuel", 2030, _poids_plats(20))
+    decroissants = financer(solde, assiette, "actuel", 2030,
+                            tuple(1.0 - rang / 20 for rang in range(20)))
+    assert plats.coefficient < decroissants.coefficient < plats.coefficient_depart
+
+
+def test_la_fenetre_s_arrete_a_l_horizon_du_COR_et_le_dit(solde):
+    """Une pension liquidée en 2060 se sert au-delà de 2070, que le COR ne
+    projette pas. Les années manquantes ne sont pas inventées : elles sortent
+    de la moyenne, et ``part_couverte`` dit combien de la rente elles pèsent —
+    sans quoi la page afficherait un coefficient tiré de trois années sur
+    trente sans le dire."""
+    assiette = AssietteActivite(RACINE_DONNEES)
+    part = financer(solde, assiette, "actuel", 2060, _poids_plats(30))
+    assert part.derniere_annee == solde.derniere_annee
+    assert part.part_couverte == pytest.approx(11 / 30, rel=1e-12)
+    assert not part.entiere
+
+
+def test_un_depart_anterieur_aux_comptes_ne_rend_rien_de_son_annee(solde):
+    """Les comptes du COR commencent en 2002. Un départ de 1990 n'a donc rien
+    à lire à sa date, et la fonction le dit de deux façons : la fenêtre
+    commence à la première année couverte, et ``depart_couvert`` est faux. Un
+    départ que même la fin du service ne rattrape pas ne rend rien du tout."""
+    assiette = AssietteActivite(RACINE_DONNEES)
+    part = financer(solde, assiette, "actuel", 1990, _poids_plats(30))
+    assert part.premiere_annee == solde.premiere_annee
+    assert not part.depart_couvert
+    assert financer(solde, assiette, "actuel", 1950, _poids_plats(20)) is None
+
+
+def test_les_trois_leviers_comblent_le_meme_trou(solde):
+    """Rogner les pensions, lever des cotisations, emprunter : trois lectures
+    d'un seul manque, et la page les affiche côte à côte. Ce test vérifie
+    qu'elles se déduisent bien l'une de l'autre, faute de quoi elles
+    diraient trois tailles différentes du même écart."""
+    assiette = AssietteActivite(RACINE_DONNEES)
+    part = financer(solde, assiette, "actuel", 2050, _poids_plats(20))
+    ligne = solde.annee(2050)
+    assert part.manque_pib == pytest.approx(-ligne.solde("actuel"), rel=1e-12)
+    # Le manque, ramené à la dépense, EST ce que le coefficient de l'année
+    # retire : c'est la même division, écrite dans l'autre sens.
+    assert part.manque_pib / ligne.depense("actuel") == pytest.approx(
+        1 - part.coefficient_depart, rel=1e-12)
+    assert part.points_assiette == pytest.approx(
+        part.manque_pib / assiette.part_pib(assiette.derniere_annee), rel=1e-12)
+    assert part.hausse_cotisations == pytest.approx(
+        part.manque_pib / (ligne.ressources_de("actuel") * ligne.part_contributive),
+        rel=1e-12)
+
+
+def test_la_capitalisation_ne_porte_pas_le_manque_de_la_repartition(solde):
+    """Une rente capitalisée sort d'un placement déjà constitué : un déficit
+    de la répartition ne l'atteint pas. La multiplier par le coefficient
+    ferait porter à l'épargne le manque du système qui ne la détient pas."""
+    assiette = AssietteActivite(RACINE_DONNEES)
+    part = financer(solde, assiette, "notionnel_liberal", 2050, _poids_plats(20))
+    assert part.servie(1000.0, 0.0) == pytest.approx(1000.0 * part.coefficient)
+    assert part.servie(1000.0, 1000.0) == pytest.approx(1000.0)
+    assert part.servie(1000.0, 400.0) == pytest.approx(
+        600.0 * part.coefficient + 400.0)
+
+
+def test_le_bilan_fige_dit_ce_que_le_modele_calcule(solde):
+    """La table de ``data/derive/equilibre.json`` est relue par les deux côtés
+    du portage, et le calcul complet ne se refait jamais chez le lecteur. Elle
+    doit donc dire EXACTEMENT ce que le modèle calcule — au dixième de
+    millième près, ce qui est la précision d'un JSON écrit puis relu.
+
+    Le solde de ce module suit la convention de recette par RAPPORT, celui du
+    site la convention par ASSIETTE : seule la colonne de la proposition en
+    dépend, et le test ne compare donc que les trois autres. Ce que la table
+    ne peut pas porter, un test de bout en bout le tient — le paquet est
+    reconstruit et comparé octet par octet dans ``tests/test_web.py``.
+    """
+    bilan = charger_bilan(RACINE_DONNEES)
+    assert bilan.premiere_annee == solde.premiere_annee
+    assert bilan.derniere_annee == solde.derniere_annee
+    assert bilan.premiere_annee_projetee == solde.premiere_annee_projetee
+    for scenario in ("actuel", "notionnel_retroactif",
+                     "notionnel_retroactif_employeur"):
+        for annee in (solde.premiere_annee, 2026, 2050, solde.derniere_annee):
+            attendu = solde.annee(annee).coefficient(scenario)
+            assert bilan.annee(annee).coefficient(scenario) == pytest.approx(
+                attendu, rel=1e-9), f"{scenario} en {annee}"
+
+
+def test_le_systeme_actuel_promet_plus_qu_il_n_encaisse_sur_tout_l_horizon(solde):
+    """Le fait que le site affiche, et qui a motivé le second chiffre : le
+    système actuel est en déficit toutes les années projetées, et le manque
+    grandit. Si cela cessait d'être vrai — un COR qui reviendrait à
+    l'équilibre —, la page dirait autre chose, et ce test doit tomber pour
+    qu'on s'en aperçoive plutôt que de le lire sur le site."""
+    projetees = solde.projetees()
+    assert all(ligne.coefficient("actuel") < 1.0 for ligne in projetees)
+    assert (projetees[-1].coefficient("actuel")
+            < projetees[0].coefficient("actuel"))
+    assert solde.premiere_annee_equilibree("actuel") is None

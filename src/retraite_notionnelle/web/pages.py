@@ -47,10 +47,13 @@ from ..avantages import (
 )
 from ..cout import (
     COMPOSANTE_GARANTIE,
+    PensionFinancee,
     calculer_cout,
     calculer_dette,
+    financer,
     masse_du_scenario,
 )
+from ..donnees.bilan import BilanFige, charger_bilan
 from ..donnees.assiette import AssietteActivite
 from ..donnees.distribution import DistributionPensions
 from ..garantie import cout_garantie
@@ -1651,6 +1654,20 @@ class Contexte:
         """
         return self._agregat("restitution", lambda: Restitution(
             self.base.racine_donnees, self.base.part_rendue_aux_salaires))
+
+    def bilan(self) -> BilanFige:
+        """Le bilan des quatre systèmes, figé — une DONNÉE, pas un agrégat.
+
+        La page des résultats en a besoin à chaque frappe, et le calculer
+        coûte dix-huit secondes : elle lit donc la table que
+        ``scripts/construire_donnees.py`` a écrite, celle-là même que le
+        navigateur reçoit dans son paquet. ``donnees/bilan.py`` dit ce que ce
+        figeage coûte — rien sur le système actuel, dont le coefficient est le
+        compte du COR, et une dépendance aux réglages de référence sur les
+        trois autres.
+        """
+        return self._donnee(
+            "bilan", lambda: charger_bilan(self.base.racine_donnees))
 
     def cout(self):
         """Le coût agrégé de tous les systèmes — deux secondes de calcul, une fois.
@@ -4136,6 +4153,220 @@ def _part_vivante(survie: tuple[float, ...], duree: float) -> float:
     return survie[rang] * (1 - fraction) + survie[rang + 1] * fraction
 
 
+#: Le scénario du modèle derrière chaque barre des résultats. Les clés sont
+#: celles des classes CSS, qui ne portent pas les noms du modèle ; elles se
+#: rencontrent ici et nulle part ailleurs.
+SCENARIOS_DES_BARRES: dict[str, str] = {
+    "actuel": "actuel",
+    "retroactif": "notionnel_retroactif",
+    "retroactif-employeur": "notionnel_retroactif_employeur",
+    "liberal": "notionnel_liberal",
+}
+
+
+def _financements(contexte: Contexte,
+                  comparaison: Comparaison) -> dict[str, PensionFinancee]:
+    """Ce que les comptes financent de chacun des quatre montants affichés.
+
+    Le coefficient d'équilibre ne dépend pas de la carrière — c'est une
+    grandeur du SYSTÈME, un rapport de masses. De la carrière, il ne prend que
+    deux choses : l'année du départ, et la courbe de survie qui dit combien de
+    temps la pension sera servie. C'est donc la même table pour tout le monde,
+    lue à des dates différentes.
+
+    Vide quand le départ précède les comptes du COR, qui commencent en 2002 :
+    afficher un coefficient tiré d'années postérieures au départ, sous un
+    montant qui est celui du premier mois de retraite, ferait dire à la page
+    ce qu'aucun compte ne dit.
+    """
+    carriere = comparaison.carriere
+    bilan = contexte.bilan()
+    if carriere.annee_liquidation < bilan.premiere_annee:
+        return {}
+    survie = _survie(contexte, carriere,
+                     comparaison.notionnel_retroactif.conversion.table)
+    # Le poids d'une année est la part des partants encore en vie EN SON
+    # MILIEU : une pension servie du 1er janvier au 31 décembre l'est à une
+    # population qui décroît pendant l'année, et prendre la part du 1er
+    # janvier la surestimerait d'une demi-année de mortalité.
+    poids = tuple(_part_vivante(survie, rang + 0.5)
+                  for rang in range(max(len(survie) - 1, 0)))
+    financements = {}
+    for cle, scenario in SCENARIOS_DES_BARRES.items():
+        part = financer(bilan, bilan.assiette, scenario,
+                        carriere.annee_liquidation, poids)
+        if part is not None:
+            financements[cle] = part
+    return financements
+
+def _glose_financement(finance: PensionFinancee | None) -> str:
+    """La clause que la glose gagne : ce que les comptes en financent.
+
+    Écrite dans les deux sens, parce que le coefficient se lit dans les deux —
+    un manque sous un, une marge au-dessus. La marge n'est jamais convertie en
+    euros : elle dit qu'un système AURAIT DE QUOI servir davantage, pas qu'il
+    servirait davantage, et la différence est tout ce qui sépare un fait d'une
+    promesse.
+    """
+    if finance is None:
+        return ""
+    if finance.manque > 0.0:
+        return (" · les comptes n'en financent que "
+                f"{g.pourcentage(finance.coefficient, decimales=0)}")
+    return (" · les comptes le financent, et au-delà : "
+            f"{g.pourcentage(finance.coefficient - 1.0, decimales=0)} de marge")
+
+
+def _financement(contexte: Contexte, comparaison: Comparaison,
+                 finances: dict[str, PensionFinancee]) -> str:
+    """Le dépliant qui dit d'où vient le second chiffre, et ce qu'il n'est pas.
+
+    C'est le seul endroit du simulateur où le site dit que le montant du
+    système 1 est une PROMESSE et non une prévision. Il faut donc qu'il dise
+    trois choses et qu'il les distingue : ce que les comptes portent
+    aujourd'hui, qui est un fait ; ce qu'il faudrait faire pour que l'année
+    tombe juste, qui est une arithmétique à trois branches dont aucune n'est
+    décidée ; et ce que l'histoire des réformes apprend de la branche qu'on
+    choisit, qui est une régularité observée, pas une loi.
+    """
+    if not finances:
+        return ""
+    bilan = contexte.bilan()
+    carriere = comparaison.carriere
+    depart = carriere.annee_liquidation
+    reference = finances.get("actuel")
+    if reference is None:
+        return ""
+
+    lignes = []
+    for cle, scenario in SCENARIOS_DES_BARRES.items():
+        finance = finances.get(cle)
+        if finance is None:
+            continue
+        lignes.append([
+            LIBELLES_SYSTEMES[scenario],
+            g.nombre(finance.coefficient_depart, 2),
+            g.nombre(finance.coefficient, 2),
+            (g.pourcentage(finance.manque, decimales=0) + " à rogner"
+             if finance.manque > 0.0
+             else g.pourcentage(-finance.manque, decimales=0) + " de marge"),
+        ])
+
+    leviers = []
+    for cle, scenario in SCENARIOS_DES_BARRES.items():
+        finance = finances.get(cle)
+        if finance is None:
+            continue
+        if finance.manque_pib <= 0.0:
+            leviers.append([
+                LIBELLES_SYSTEMES[scenario], "aucun manque", "aucune", "aucun",
+            ])
+            continue
+        leviers.append([
+            LIBELLES_SYSTEMES[scenario],
+            g.pourcentage(finance.manque, decimales=0),
+            f"+{g.nombre(finance.points_assiette * 100, 1)} pt",
+            g.pourcentage(finance.manque_pib, decimales=2) + " du PIB",
+        ])
+
+    horizon = ""
+    if not reference.entiere:
+        horizon = (
+            f"<p>Les comptes du COR s'arrêtent en {bilan.derniere_annee}. Ils "
+            f"couvrent {g.pourcentage(reference.part_couverte, decimales=0)} de "
+            "votre retraite — la part pondérée par la survie, celle qui pèse "
+            "dans la moyenne ci-dessus —, et le reste n'est pas projeté. Ce "
+            "n'est pas une réserve de prudence dans un sens neutre : le "
+            "coefficient du système actuel BAISSAIT encore à cet horizon, de "
+            f"{g.nombre(bilan.annee(bilan.derniere_annee_observee).coefficient('actuel'), 2)} "
+            f"en {bilan.derniere_annee_observee} à "
+            f"{g.nombre(bilan.annee(bilan.derniere_annee).coefficient('actuel'), 2)} "
+            f"en {bilan.derniere_annee}. Les années que la page ne compte pas "
+            "sont celles où le manque serait le plus grand, et la moyenne "
+            "affichée est donc un PLAFOND.</p>"
+        )
+
+    depart_dit = (
+        f"l'année de votre départ, {depart}" if reference.depart_couvert
+        else f"{reference.premiere_annee}, première année que les comptes couvrent"
+    )
+    return g.depliant(
+        "Ce que les comptes financent, et ce qui manque", f"""
+<p>Les quatre montants ci-dessus sont ceux que chaque système PROMET : le
+premier applique le droit en vigueur, les trois autres appliquent leurs propres
+règles à la même carrière. Savoir si le système a l'argent est une autre
+question, et les comptes y répondent. Le système actuel est en déficit, le
+Conseil d'orientation des retraites le projette en déficit jusqu'en
+{bilan.derniere_annee}, et rien dans le montant affiché ne le dit.</p>
+
+<p>Le <strong>coefficient d'équilibre</strong> est le facteur par lequel il
+faudrait multiplier toutes les pensions d'une année pour que cette année tombe
+juste : ressources divisées par dépenses. Il vaut un quand le système
+s'équilibre, moins de un quand il promet plus qu'il n'encaisse. Une pension se
+sert vingt ou trente ans : celui de la seule année du départ flatte qui part
+tôt, et la colonne qui compte est la moyenne sur la durée du service, chaque
+année pesant la part des partants encore en vie.</p>
+
+{g.tableau(
+    ["Système", f"À {depart_dit}", "Sur votre retraite", "Lecture"],
+    lignes,
+    ["", "nombre", "nombre", "nombre"],
+    titre="Coefficient d'équilibre de chaque système, aux dates de cette carrière",
+    entete_de_ligne=True,
+)}
+
+<p><strong>Rogner les pensions est UNE façon de combler le manque, et ce
+n'est pas une prévision.</strong> C'est celle que le second chiffre applique,
+parce que c'est la seule qui se lise sur le montant affiché. Il y en a deux
+autres, qui comblent exactement le même trou : lever davantage de cotisations
+sur les salaires, ou laisser le déficit et l'emprunter. Le tableau ci-dessous
+les chiffre toutes les trois à {depart_dit}, pour chaque système. Aucune n'est
+plus probable que les autres ; ce qu'elles disent ensemble, et qui est le seul
+fait, c'est la TAILLE de l'écart.</p>
+
+{g.tableau(
+    ["Système", "Rogner toutes les pensions de",
+     "Ou lever, sur l'assiette des salaires",
+     "Ou emprunter, chaque année"],
+    leviers,
+    ["", "nombre", "nombre", "nombre"],
+    titre=f"Les trois façons de combler le manque de {depart_dit}",
+    entete_de_ligne=True,
+)}
+
+<p class="discret">Les points d'assiette sont des points de prélèvement en plus
+sur l'ensemble des revenus d'activité — salaires et traitements bruts, plus le
+revenu mixte des non-salariés —, dont
+{g.pourcentage(bilan.assiette.part_pib(bilan.assiette.derniere_annee), decimales=1)}
+du PIB en {bilan.assiette.derniere_annee}. Le quatrième levier, reculer l'âge,
+n'est pas chiffré ici parce qu'il ne s'applique pas à une pension déjà
+liquidée : il déplace la date du départ, et cette page le mesure déjà —
+changez l'âge de liquidation, et les quatre montants bougent avec.</p>
+
+{horizon}
+
+<p><strong>Ce que l'histoire des réformes apprend de la branche qu'on
+choisit.</strong> Les réformes des pays du G7 dans les années 1990 ont eu « un
+impact majeur sur la valeur actualisée des prestations promises aux
+travailleurs d'âge moyen et jeunes », alors que « les prestations des retraités
+et de ceux proches de la retraite sont habituellement protégées »
+(McHale, 1999). Un coefficient appliqué à toutes les pensions de la même façon
+est donc la version DOUCE : dans les réformes observées, l'ajustement tombe sur
+qui n'a pas encore liquidé. <a href="{g.lien("/risque")}">La page Risque</a>
+rassemble ce que la recherche en sait.</p>
+
+<div class="note"><strong>D'où viennent ces chiffres, et ce qu'ils ne suivent
+pas.</strong> Les ressources et les dépenses sont celles que le COR consolide,
+observées jusqu'en {bilan.derniere_annee_observee} et projetées ensuite ;
+<a href="{g.lien("/cout")}">la page Coût</a> les montre poste par poste. Pour le
+système actuel, le coefficient est le rapport de ces deux séries et aucun
+réglage de ce simulateur ne le déplace. Pour les trois autres, la dépense est
+une masse de pensions que le modèle calcule, et elle dépend des règles : les
+coefficients de ce tableau sont ceux des réglages de RÉFÉRENCE, pas de ceux que
+vous avez cochés. La page Coût, elle, les recalcule sous les réglages qu'on lui
+demande.</div>
+""", identifiant="resultats-financement")
+
 def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     comparaison = contexte.simuler(saisie)
     carriere = comparaison.carriere
@@ -4175,6 +4406,14 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         comparaison.notionnel_liberal.rente_capitalisation_volontaire
     )
     reference = max(constants.values()) or 1.0
+
+    # Ce que les comptes du système financent de chacun de ces montants, à la
+    # date où celui qui lit partirait. Le montant reste celui de la règle —
+    # c'est ce que le système PROMET, et le scénario 1 est le droit en vigueur,
+    # rien d'autre ; ce second chiffre est ce que les recettes de ses années de
+    # retraite paient. Les afficher l'un sans l'autre serait mentir dans un
+    # sens ou dans l'autre.
+    finances = _financements(contexte, comparaison)
 
     montants = Montants.depuis(saisie, comparaison.parametres, comparaison)
     annee_depart = carriere.annee_liquidation
@@ -4240,7 +4479,18 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         # même promesse. La hachure se voit aussi en noir et blanc et sous une
         # deutéranopie, ce qu'une seconde teinte ne garantirait pas.
         repartition = montant - part_capitalisee
-        barre = f'<span style="width:{repartition / reference * 100:.1f}%"></span>'
+        # La barre montre ce que les comptes paient, puis ce qui manque pour
+        # tenir la promesse — même couleur, quasi effacée. Un système dont les
+        # comptes couvrent la promesse n'a pas de seconde tranche, et sa barre
+        # est celle qu'elle a toujours été.
+        finance = finances.get(cle)
+        manque = (repartition * finance.manque
+                  if finance is not None and finance.manque > 0.0 else 0.0)
+        barre = ('<span style="width:'
+                 f'{(repartition - manque) / reference * 100:.1f}%"></span>')
+        if manque > 0.0:
+            barre += ('<span class="manque" style="width:'
+                      f'{manque / reference * 100:.1f}%"></span>')
         partage = ""
         if part_capitalisee > 0:
             barre += (f'<span class="capitalise" '
@@ -4272,6 +4522,22 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             partage = f"""
       <span class="composition">{g.euros_centimes(montants.pension(repartition) / 12)}
         de pension par répartition +{detail}</span>"""
+        # Le troisième chiffre n'apparaît QUE là où le coefficient est sous un,
+        # c'est-à-dire là où le système promet plus que ses comptes ne
+        # rentrent. Au-dessus de un, il dirait « financé : 927 € » sous une
+        # pension de 265 € — or un coefficient supérieur à un ne promet aucune
+        # pension plus élevée : il dit qu'un système AURAIT DE QUOI servir
+        # davantage, ce que personne n'a décidé. La marge est donc écrite en
+        # toutes lettres dans la glose, et jamais convertie en euros.
+        chiffre_finance = ""
+        if finance is not None and finance.manque > 0.0:
+            servie = finance.servie(montant, part_capitalisee)
+            chiffre_finance = f"""
+      <span class="chiffre finance">
+        <span class="categorie">financé</span>
+        <span class="somme">{g.nombre(montants.pension(servie) / 12)}</span>
+        <span class="unite">{montants.unite_pension}</span>
+      </span>"""
         return f"""
 <div class="scenario">
   <div class="entete">
@@ -4282,13 +4548,13 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
                                  else "retraite"}</span>
         <span class="somme">{g.nombre(montants.pension(montant) / 12)}</span>
         <span class="unite">{montants.unite_pension}</span>
-      </span>
+      </span>{chiffre_finance}
     </span>
   </div>{partage}
   <div class="barre {cle}">{barre}</div>
   <div class="glose">{glose} · {g.terme("taux de remplacement")}
     {g.pourcentage(montants.taux_remplacement(taux_remplacement))} ·
-    écart au système actuel : {variation_html}</div>
+    écart au système actuel : {variation_html}{_glose_financement(finance)}</div>
 </div>"""
 
     # La glose porte ce que le titre ne dit plus : DEPUIS QUAND la carrière est
@@ -4437,6 +4703,7 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
 <p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
 suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
 voir.</p>
+{_financement(contexte, comparaison, finances)}
 {_trajectoire(contexte, comparaison, saisie)}
 {_fourchette(contexte, saisie, comparaison)}
 {_decomposition(contexte, saisie, comparaison)}

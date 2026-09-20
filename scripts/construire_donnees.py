@@ -82,10 +82,14 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
 DONNEES = RACINE / "data"
 PAQUET = RACINE / "moteur" / "donnees.json"
 STYLE = RACINE / "moteur" / "style.css"
+#: Le bilan des quatre systèmes, figé sous les réglages de référence. Versionné
+#: dans ``data/`` parce que le modèle Python le relit comme une donnée — voir
+#: ``donnees/bilan.py`` —, et embarqué tel quel dans le paquet du navigateur.
+EQUILIBRE = DONNEES / "derive" / "equilibre.json"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
-VERSION = 15
+VERSION = 16
 
 
 def _serie(serie: SerieAnnuelle) -> dict:
@@ -1001,8 +1005,61 @@ def _avantages() -> dict:
     }
 
 
-def construire() -> bytes:
-    """Paquet complet, à contenu identique pour des données identiques."""
+
+def _bilan(contexte=None) -> dict:
+    """Le bilan des quatre systèmes comparés, année par année, en part de PIB.
+
+    C'est la seule entrée du paquet qui coûte un calcul complet — dix-huit
+    secondes : le coefficient d'équilibre d'un système est un rapport de
+    masses, et une masse suppose la grille des cas types simulée sous chaque
+    système et pondérée par les effectifs. La page des résultats en a besoin
+    pour dire ce que les comptes financent de la pension qu'elle affiche, et
+    elle ne peut pas le calculer chez le lecteur : d'où cette table.
+
+    Elle est calculée sous les réglages de RÉFÉRENCE, et ``donnees/bilan.py``
+    dit ce que ce figeage coûte et ce qu'il ne coûte pas.
+    """
+    from retraite_notionnelle.web.pages import Contexte, SCENARIOS_COMPARES
+
+    # ``contexte`` n'est pas une option de commodité : c'est ce qui permet au
+    # test du paquet de réutiliser le coût que d'autres tests du même module
+    # ont déjà calculé, au lieu de payer les dix-huit secondes une seconde
+    # fois. Il doit porter les réglages de RÉFÉRENCE, comme celui-ci.
+    contexte = contexte or Contexte()
+    solde = contexte.cout().solde
+    assiette = contexte.assiette()
+    scenarios = [scenario for scenario, _ in SCENARIOS_COMPARES]
+    return {
+        "premiere_annee_projetee": solde.premiere_annee_projetee,
+        "annee_assiette": assiette.derniere_annee,
+        "part_pib_assiette": assiette.part_pib(assiette.derniere_annee),
+        "annees": [
+            {
+                "annee": ligne.annee,
+                "projete": ligne.projete,
+                "part_contributive": ligne.part_contributive,
+                "coefficients": {s: ligne.coefficient(s) for s in scenarios},
+                "soldes": {s: ligne.solde(s) for s in scenarios},
+                "ressources": {s: ligne.ressources_de(s) for s in scenarios},
+            }
+            for ligne in solde.annees
+        ],
+    }
+
+
+def construire_bilan(contexte=None) -> bytes:
+    """La table figée, écrite dans ``data/derive/`` et relue par le modèle."""
+    texte = json.dumps(_bilan(contexte), ensure_ascii=False, sort_keys=True,
+                       separators=(",", ":"))
+    return (texte + "\n").encode("utf-8")
+
+def construire(bilan: bytes) -> bytes:
+    """Paquet complet, à contenu identique pour des données identiques.
+
+    ``bilan`` est le contenu de ``data/derive/equilibre.json``, passé plutôt
+    que relu : ``--verifier`` ne doit rien écrire, et les deux fichiers
+    doivent porter les mêmes octets.
+    """
     paquet = {
         "version": VERSION,
         "series": _series(),
@@ -1060,6 +1117,11 @@ def construire() -> bytes:
         "distribution_pensions_sexes": _distribution_pensions_sexes(),
         "vie_en_couple": _vie_en_couple(),
         "certification": journal_certification(DONNEES),
+        # Le bilan tel que ``data/derive/equilibre.json`` le porte, jamais
+        # recalculé ici : les deux côtés du portage lisent alors les mêmes
+        # octets, et un écart de la table au modèle se voit à un seul
+        # endroit — le diff de ce fichier.
+        "bilan_equilibre": json.loads(bilan.decode("utf-8")),
     }
     texte = json.dumps(paquet, ensure_ascii=False, sort_keys=True,
                        separators=(",", ":"))
@@ -1077,8 +1139,16 @@ def construire_style() -> bytes:
     return (entete + gabarit.FEUILLE_DE_STYLE.lstrip("\n")).encode("utf-8")
 
 
-def sorties() -> dict[Path, bytes]:
-    return {PAQUET: construire(), STYLE: construire_style()}
+def sorties(contexte=None) -> dict[Path, bytes]:
+    """Les trois fichiers versionnés, dans l'ordre où ils se construisent.
+
+    Le bilan vient d'abord, et le paquet reçoit ses octets plutôt que de le
+    recalculer : la table de ``data/`` et celle du navigateur ne peuvent alors
+    pas diverger d'un chiffre.
+    """
+    bilan = construire_bilan(contexte)
+    return {EQUILIBRE: bilan, PAQUET: construire(bilan),
+            STYLE: construire_style()}
 
 
 def main(argv: list[str] | None = None) -> int:

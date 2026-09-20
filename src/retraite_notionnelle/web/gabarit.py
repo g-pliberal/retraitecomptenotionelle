@@ -1015,6 +1015,26 @@ tbody tr[hidden] { display: none; }
    et dans la couleur d'accent, qui ne sert nulle part ailleurs dans ce bloc. */
 .scenario .salaire .ecart { font-size: 0.95rem; font-weight: 700;
                             color: var(--accent); white-space: nowrap; }
+/* Ce que les comptes du système financent de la pension qu'il promet, à droite
+   d'elle et PLUS PETIT QU'ELLE. La taille dit son statut : ce n'est pas un
+   cinquième montant, c'est une lecture du quatrième — la promesse ramenée à ce
+   que les recettes des années de retraite paient. Le filet la sépare de la
+   pension comme celui du salaire sépare le salaire, dans l'autre sens.
+
+   Elle n'apparaît que sous un coefficient d'équilibre INFÉRIEUR À UN :
+   au-dessus, il n'y a pas de montant à écrire, seulement une marge, que la
+   glose dit en toutes lettres. */
+.scenario .finance { align-items: flex-end; padding-left: 1.1rem;
+                     box-shadow: -1px 0 0 var(--trait); }
+.scenario .finance .somme {
+  font-size: 1.375rem; font-weight: 800; letter-spacing: -0.02em;
+  color: var(--texte-doux);
+}
+.scenario .finance .unite { white-space: nowrap; text-align: right; }
+@media (max-width: 48rem) {
+  .scenario .finance { align-items: flex-start; padding-left: 0;
+                       box-shadow: none; }
+}
 @media (max-width: 48rem) {
   /* Deux grands nombres ne tiennent pas côte à côte sous 768 px : ils passent
      l'un sous l'autre, le filet vertical devient horizontal, et les étiquettes
@@ -1053,6 +1073,13 @@ tbody tr[hidden] { display: none; }
   background: repeating-linear-gradient(135deg, var(--liberal) 0 3px,
                                         var(--fond-carte) 3px 6px);
 }
+/* Ce que les comptes du système NE financent pas de la pension qu'il promet :
+   la fin de la barre, dans la couleur du système, presque effacée. La règle
+   vient après les quatre précédentes et n'en annule aucune — elle ne touche
+   que l'opacité, si bien qu'elle s'applique aussi à la tranche capitalisée
+   sans avoir à redire sa hachure. Un creux plutôt qu'une seconde teinte : la
+   promesse et son financement sont une seule grandeur, coupée en deux. */
+.barre > span.manque { opacity: 0.25; }
 /* De quoi le montant de la proposition est fait, sous le chiffre et aligné sur
    lui : le total se lit d'abord, sa composition juste après. Sur un téléphone,
    la ligne repasse à gauche avec le reste du bloc.

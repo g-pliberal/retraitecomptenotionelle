@@ -1208,6 +1208,101 @@ class Solde {
 }
 
 /**
+ * Ce que les comptes financent d'une pension promise, sur la durée du service.
+ * Portage de `PensionFinancee`.
+ *
+ * Le site affiche quatre pensions calculées sur une même carrière, et la
+ * première — le droit en vigueur — se lit comme une promesse tenue. Elle ne
+ * l'est pas : le système qui la sert est en déficit, et le COR projette ce
+ * déficit jusqu'en 2070. Le coefficient d'équilibre dit de combien ; celui de
+ * la seule année du départ flatte qui part tôt, puisqu'il ignore les années où
+ * le déficit se creuse, et le coefficient retenu est donc la moyenne des
+ * coefficients annuels PONDÉRÉE PAR LA SURVIE.
+ *
+ * Ce n'est pas une prévision : rogner toutes les pensions d'un même facteur est
+ * UNE façon d'équilibrer une année, et les deux autres — lever davantage de
+ * cotisations, emprunter — sont chiffrées à côté.
+ */
+export class PensionFinancee {
+  constructor(donnees) {
+    Object.assign(this, donnees);
+  }
+
+  /** De combien il faudrait rogner, en part de la pension. Négatif : une marge. */
+  get manque() {
+    return 1.0 - this.coefficient;
+  }
+
+  /** Les comptes couvrent-ils l'année du départ elle-même ? */
+  get departCouvert() {
+    return this.premiereAnnee === this.anneeLiquidation;
+  }
+
+  /** La fenêtre couvre-t-elle toute la durée de service de la pension ? */
+  get entiere() {
+    return this.partCouverte >= 0.999;
+  }
+
+  /**
+   * Le montant que les comptes financent, la capitalisation mise à part : une
+   * rente capitalisée sort d'un placement déjà constitué, qu'aucun déficit de
+   * la répartition n'atteint.
+   */
+  servie(montant, horsRepartition = 0.0) {
+    return (montant - horsRepartition) * this.coefficient + horsRepartition;
+  }
+}
+
+/**
+ * Ce que les comptes financent de la pension du scénario, à cette date.
+ * Portage de `financer`.
+ *
+ * `poids` porte, rang par rang à compter de l'année de liquidation, la part des
+ * partants encore en vie pendant l'année. `solde` est un `Solde` complet ou le
+ * bilan figé du paquet : les deux portent les mêmes accesseurs.
+ *
+ * Rend `null` quand aucune année du service n'est couverte par les comptes du
+ * COR : un départ de 1980 n'a rien à lire dans un bilan qui commence en 2002.
+ */
+export function financer(solde, assiette, scenario, anneeLiquidation, poids) {
+  if (!solde || !solde.annees.length) return null;
+  const debut = Math.max(anneeLiquidation, solde.premiereAnnee);
+  let numerateur = 0.0;
+  let couvert = 0.0;
+  let total = 0.0;
+  for (let rang = 0; rang < poids.length; rang += 1) {
+    const part = poids[rang];
+    if (part <= 0) continue;
+    const annee = anneeLiquidation + rang;
+    total += part;
+    const ligne = solde.annee(annee);
+    if (annee < debut || ligne === null) continue;
+    numerateur += part * ligne.coefficient(scenario);
+    couvert += part;
+  }
+  if (couvert <= 0 || total <= 0) return null;
+  const ligneDepart = solde.annee(debut);
+  if (ligneDepart === null) return null;
+  const manque = -ligneDepart.solde(scenario);
+  const anneeAssiette = assiette ? assiette.derniereAnnee : 0;
+  const partAssiette = assiette ? assiette.partPib(anneeAssiette) : 0.0;
+  const cotisees = ligneDepart.ressourcesDe(scenario) * ligneDepart.partContributive;
+  return new PensionFinancee({
+    scenario,
+    anneeLiquidation,
+    premiereAnnee: debut,
+    derniereAnnee: Math.min(anneeLiquidation + poids.length - 1, solde.derniereAnnee),
+    coefficientDepart: ligneDepart.coefficient(scenario),
+    coefficient: numerateur / couvert,
+    partCouverte: couvert / total,
+    manquePib: manque,
+    pointsAssiette: partAssiette > 0 ? manque / partAssiette : 0.0,
+    hausseCotisations: cotisees > 0 ? manque / cotisees : 0.0,
+    anneeAssiette,
+  });
+}
+
+/**
  * Une année du stock : ce que les soldes cumulés depuis le départ pèsent, en
  * part de PIB. Un stock POSITIF est une dette, un stock NÉGATIF une réserve :
  * le même calcul rend les deux. Portage de `DetteAnnuelle`.

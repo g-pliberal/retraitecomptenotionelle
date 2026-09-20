@@ -1396,3 +1396,39 @@ journal:
       lui-même (article 231 du code général des impôts), qu'il faudrait pour
       faire apparaître sa suppression sur la fiche de paie d'un employeur non
       assujetti à la TVA.
+  - date: "2026-09-20"
+    session: >-
+      le scénario 1 est une promesse, et le site dit ce que les comptes en
+      financent
+    consulte: >-
+      `python scripts/veille_droit.py` au début de la session : registre de
+      35 lignes, dernière veille consignée au 20 septembre 2026, six lignes à
+      revoir — dont `fin_de_la_suspension_2028`, `revalorisation_des_pensions`
+      et `majoration_duree_assurance_enfants`. Aucun texte nouveau n'a été
+      cherché : la session ne touche à aucune règle de calcul. Relu en
+      revanche, du côté des comptes et non du droit : les ressources et les
+      dépenses consolidées par le COR que porte `donnees/equilibre.py`, et la
+      revue de littérature de `docs/risque_de_defaut.md` — McHale (1999,
+      NBER WP 7031) pour la phrase sur qui supporte l'ajustement.
+    trouve: >-
+      Le coefficient d'équilibre du système actuel était CALCULÉ depuis
+      l'action 6 et n'était lu nulle part à côté d'une pension : il vaut 0,99
+      en 2026 et 0,84 en 2070, c'est-à-dire que le système promet, à l'horizon
+      des comptes, 16 % de plus qu'il n'encaisse. Un visiteur né en 1990 lisait
+      donc un montant de système 1 que les comptes de son année de départ ne
+      financent pas. Le site affiche désormais, à côté de chaque montant, ce
+      que les comptes en financent, et le dépliant chiffre les trois façons de
+      combler le manque. La proposition libérale y passe sous la même règle, et
+      son coefficient est plus bas que celui du système actuel sur la plus
+      grande partie de l'horizon : ne corriger que le système 1 l'aurait
+      flattée.
+    reste: >-
+      Aucune règle du scénario 1 n'est touchée : aucune pension calculée ne
+      bouge d'un euro, et aucune ligne du registre ci-dessus n'a changé d'état.
+      Ce qui a été ajouté est une LECTURE des montants déjà affichés, et ce
+      qu'elle suppose est écrit sur la page et dans `docs/limites.md` § 5 bis —
+      un facteur commun n'est qu'un levier sur trois, la pondération par la
+      survie joue dans le sens doux, les comptes s'arrêtent en 2070 alors que
+      le coefficient y baissait encore, et la table est figée sous les réglages
+      de référence. Restent à revoir, inchangées par cette session : les six
+      lignes que `veille_droit.py` signale.
