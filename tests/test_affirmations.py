@@ -20,6 +20,11 @@ Trois choses, et l'action 34 de la feuille de route dit pourquoi chacune :
   des ``<strong>`` d'au moins trois mots, ou qui fait une phrase — est dans le
   catalogue, ou déclarée ``sans_portee``. Une phrase nouvelle ne peut pas
   entrer sans qu'on ait dit ce qu'elle engage.
+* **Une affirmation sur le monde cite sa source.** La page Risque est une
+  revue de littérature : ce que la Grèce a coupé, ce que les juges en ont
+  fait. Aucun contrôle du modèle ne peut trancher cela, et ce n'est pas pour
+  autant sans portée. L'état ``hors_modele`` le dit, et le test exige alors
+  que la source soit citée dans la page même.
 
 Les contrôles sont écrits ici, sous le nom que le catalogue leur donne, et
 reçoivent le modèle chargé une fois pour le module. Un contrôle qui lit le
@@ -80,7 +85,7 @@ RACINE = Path(__file__).resolve().parents[1]
 CATALOGUE = RACINE / "data" / "reference" / "site" / "affirmations.yaml"
 TEMOINS = RACINE / "tests" / "temoins" / "pages.json"
 FEUILLE_DE_ROUTE = RACINE / "docs" / "feuille_de_route.md"
-ETATS = ("verifiee", "contredite", "sans_portee")
+ETATS = ("verifiee", "contredite", "hors_modele", "sans_portee")
 #: Longueur minimale d'un extrait. Elle ne vise pas la précision — c'est le
 #: test de présence qui la donne — mais le hasard : une poignée de caractères
 #: se retrouve dans n'importe quelle page, et l'entrée ne désignerait plus
@@ -512,9 +517,11 @@ def _(m: Modele):
     avenir = m.cout.avenir
     assert avenir.cumul_reprises() > 0
     ligne = avenir.annee(avenir.derniere_annee)
-    assert ligne.garantie.avances_liberees_constants > 0
-    assert _proche(ligne.reprises_constants() / ligne.garantie.avances_liberees_constants,
-                   m.base.part_reprise_garantie)
+    garantie = ligne.garantie
+    assert garantie.avances_liberees_constants > 0
+    assert _proche(ligne.reprises_constants() / garantie.avances_liberees_constants,
+                   garantie.part_reprise)
+    # Aucun seuil d'actif net : l'ASPA en a un, la garantie n'en a pas.
     assert not any("seuil" in nom for nom in _champs(Parametres))
 
 
@@ -528,8 +535,18 @@ def _(m: Modele):
 
 @controle("part_de_reprise_est_un_reglage")
 def _(m: Modele):
+    """La part couverte est LUE sur le patrimoine des retraités, ou posée.
+
+    Elle était un réglage à un demi jusqu'au 20 septembre 2026 ; elle se
+    calcule depuis sur la distribution de patrimoine, et le réglage la
+    remplace quand il est donné.
+    """
     assert "part_reprise_garantie" in _champs(Parametres)
-    assert 0 < m.base.part_reprise_garantie < 1
+    assert m.base.part_reprise_garantie is None
+    part = m.cout.avenir.annee(m.cout.avenir.derniere_annee).garantie.part_reprise
+    assert 0 < part < 1
+    force = replace(m.base, part_reprise_garantie=1.0)
+    assert force.part_reprise_garantie == 1.0
 
 
 @controle("recours_un_sur_deux")
@@ -689,18 +706,24 @@ def _(m: Modele):
 
 @controle("fiche_de_paie_ecart_net")
 def _(m: Modele):
+    """L'écart affiché est celui des deux nets, quel qu'en soit le signe.
+
+    Il était négatif tant que les cinq points volontaires sortaient du net
+    affiché ; ils en sont sortis le 20 septembre 2026, et le chiffre est
+    devenu positif. La phrase, elle, ne promet qu'une différence.
+    """
     remuneration = m.defaut.remuneration
     reference = remuneration.reference
     assert _proche(remuneration.gain_net_mensuel,
                    (reference.proposition.net - reference.droit_en_vigueur.net) / 12)
-    assert remuneration.gain_net_mensuel < 0
+    assert remuneration.gain_net_mensuel != 0.0
 
 
 @controle("epargne_a_votre_nom")
 def _(m: Modele):
     reference = m.defaut.remuneration.reference
     lignes = [l for l in reference.proposition.lignes
-              if l.code in AnneeComparee.CODES_CAPITALISATION]
+              if l.code == AnneeComparee.CODE_CAPITALISATION]
     assert lignes
     assert _proche(reference.epargne_a_votre_nom,
                    sum(l.salarie + l.employeur for l in lignes))
@@ -725,10 +748,22 @@ def _(m: Modele):
 
 @controle("volontaire_a_la_charge_de_l_assure")
 def _(m: Modele):
+    """Les cinq points rendus ne sont sur la fiche de personne, et pèsent leur montant.
+
+    Ils étaient une ligne de la fiche jusqu'au 20 septembre 2026 ; ils sont
+    devenus un virement que l'assuré décide, chiffré sur l'assiette de la
+    proposition. Ce qui n'a pas changé : personne ne les cofinance, et ils ne
+    déplacent ni le coût du travail, ni le brut, ni la CSG.
+    """
     for comparaison in (m.defaut, m.fonctionnaire):
-        ligne = next(l for l in comparaison.remuneration.reference.proposition.lignes
-                     if l.code == "capitalisation_volontaire")
-        assert ligne.salarie > 0 and ligne.employeur == 0.0
+        reference = comparaison.remuneration.reference
+        assert not any(l.code == "capitalisation_volontaire"
+                       for l in reference.proposition.lignes)
+        assert reference.epargne_volontaire > 0
+        assert _proche(reference.epargne_volontaire,
+                       reference.proposition.brut * reference.taux_epargne_volontaire)
+        assert _proche(reference.net_apres_volontaire,
+                       reference.proposition.net - reference.epargne_volontaire)
 
 
 @controle("allegement_recalcule_sous_la_proposition")
@@ -966,6 +1001,18 @@ def _(m: Modele):
     assert (marge in texte) == (coefficient >= 1.0)
     assert (manque in texte) == (coefficient < 1.0)
     assert g.nombre(coefficient, 2) in texte
+
+
+@controle("part_non_financee_a_l_horizon")
+def _(m: Modele):
+    """Ce que les recettes ne couvrent pas, à l'horizon : la page l'écrit en clair."""
+    ligne = m.horizon
+    part = -ligne.solde("actuel") / ligne.depense("actuel")
+    assert 0.10 < part < 0.25
+    # `normaliser` replie les blancs : l'espace fine insécable du pourcentage
+    # rendu devient une espace ordinaire, comme dans le texte de la page.
+    attendu = normaliser(f"il manquerait {g.pourcentage(part, decimales=0)}")
+    assert attendu in TEMOINS_PAR_NOM["risque"]["texte"]
 
 
 @controle("deficit_se_creuse")
@@ -1382,6 +1429,10 @@ def test_le_catalogue_est_bien_forme():
         if entree["etat"] == "sans_portee":
             assert "controle" not in entree and "action" not in entree, ident
             continue
+        if entree["etat"] == "hors_modele":
+            assert "controle" not in entree and "action" not in entree, ident
+            assert entree.get("source"), ident
+            continue
         assert entree["controle"] in CONTROLES, (ident, entree["controle"])
         if entree["etat"] == "contredite":
             action = entree["action"]
@@ -1405,7 +1456,8 @@ def test_l_extrait_est_encore_dans_la_page(ident):
 
 
 @pytest.mark.parametrize(
-    "ident", sorted(i for i, e in PAR_ID.items() if e["etat"] != "sans_portee"))
+    "ident",
+    sorted(i for i, e in PAR_ID.items() if e["etat"] in ("verifiee", "contredite")))
 def test_le_controle_passe(modele, ident):
     """``verifiee`` : le modèle fait ce que la phrase dit. ``contredite`` : il ne le fait toujours pas."""
     entree = PAR_ID[ident]
@@ -1430,6 +1482,18 @@ def test_rien_n_echappe_au_catalogue():
         "data/reference/site/affirmations.yaml, avec un contrôle ou en sans_portee :\n"
         + "\n".join(sorted(echappees))
     )
+
+
+@pytest.mark.parametrize(
+    "ident", sorted(i for i, e in PAR_ID.items() if e["etat"] == "hors_modele"))
+def test_l_affirmation_hors_modele_cite_sa_source(ident):
+    """Le modèle ne peut pas la trancher : la page doit au moins dire d'où elle vient."""
+    entree = PAR_ID[ident]
+    source = normaliser(entree["source"])
+    for chemin in pages_de(entree):
+        assert any(source in texte for texte in textes_de(chemin)), (
+            f"{ident} : « {entree['source']} » n'est pas cité dans {chemin}"
+        )
 
 
 def test_aucun_controle_orphelin():

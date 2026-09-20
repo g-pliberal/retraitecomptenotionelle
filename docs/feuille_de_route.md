@@ -3418,13 +3418,22 @@ corriger au passage, et `moteur/js/pages.js` en regard ; les témoins.
 Le portage JavaScript n'a pas à porter le test : le catalogue vise le texte,
 et les deux moteurs rendent le même.
 
-**Fait le 20 septembre 2026.** 185 entrées au catalogue — 167 vérifiées,
-5 contredites, 13 sans portée — et 115 contrôles, soit 360 tests de plus : un
-par entrée pour la présence de l'extrait, un par entrée qui engage quelque
-chose pour le contrôle, plus les quatre qui tiennent la forme, l'exhaustivité
-et l'absence de contrôle orphelin. La suite passe de 1 226 à 1 586 tests, et
-prend cinquante secondes de plus : le seul contrôle cher est celui de l'autre
-convention de recette, qui recalcule le coût agrégé.
+**Fait le 20 septembre 2026.** 195 entrées au catalogue — 171 vérifiées,
+6 contredites, 5 hors modèle, 13 sans portée — et 116 contrôles, soit 380
+tests de plus : un par entrée pour la présence de l'extrait, un par entrée qui
+engage quelque chose pour le contrôle, un par affirmation hors modèle pour sa
+source, plus les trois qui tiennent la forme, l'exhaustivité et l'absence de
+contrôle orphelin. La suite prend cinquante secondes de plus : le seul
+contrôle cher est celui de l'autre convention de recette, qui recalcule le
+coût agrégé.
+
+**Un quatrième état, `hors_modele`, et la page Risque l'a imposé.** Elle est
+une revue de littérature : ce que la Russie a cessé de payer en 1996, ce que
+la Grèce a coupé, ce que les juges en ont fait. Aucun contrôle du modèle ne
+tranche cela, et le déclarer `sans_portee` serait mentir — une affirmation sur
+le monde peut être fausse. Le test exige alors ce que le dépôt exige partout
+ailleurs : la source, citée dans la page même, et un test par entrée la
+cherche dans le texte rendu.
 
 *Les quatre phrases que le catalogue a fait tomber, et ce qu'elles sont
 devenues.*
@@ -3473,6 +3482,16 @@ catalogue, porte « au premier euro, sans plafond » face au plafond d'assiette
 de huit PASS. Le jour où l'une ou l'autre est faite, son contrôle tombe et la
 phrase revient sur l'établi : c'est ce que `test_le_catalogue_est_bien_forme`
 exige en refusant qu'une entrée `contredite` cite une action `fait`.
+
+**Ce qu'il a coûté au rebasage, et c'est la meilleure preuve qu'il sert.**
+Trois sessions avaient poussé entre-temps : la page Risque, la refonte des
+réserves de la page Coût, les cinq points rendus sortis de la fiche de paie,
+la part de reprise lue sur le patrimoine. Vingt et un tests du catalogue sont
+tombés d'un coup — douze extraits qui n'étaient plus dans la page, huit
+contrôles que le modèle avait déplacés, et la clause d'exhaustivité sur vingt-
+deux phrases neuves. Aucun n'était un faux positif : chacun nommait une phrase
+ou une propriété qui avait bougé sans que personne ait à s'en souvenir. C'est
+exactement ce que l'action demandait, et le coût de le tenir est celui-là.
 
 **Ce que le catalogue ne fait pas.** Il ne voit que les `<strong>` : une
 affirmation écrite sans emphase lui échappe, et c'est le prochain cran. Il ne
