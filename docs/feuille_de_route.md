@@ -6185,7 +6185,7 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   `scripts/construire_donnees.py` ; `docs/methodologie.md`, `docs/limites.md`
   §1 ; `tests/test_moteur.py`, `tests/test_donnees.py` ; les témoins.
 
-### 37. Chiffrer les trente-neuf avantages non contributifs, et les montrer — `en cours`
+### 37. Chiffrer les avantages non contributifs, et les montrer — `fait`
 
 **La demande.** « J'aimerais qu'on fasse la liste des avantages en retraite
 actuels qui ne sont pas contributifs dans le scénario 1. Le but serait de
@@ -6238,7 +6238,52 @@ inconnue :
   permettrait de le calculer. Reconstruire reste souhaitable, mais pour
   vérifier et projeter, non plus pour chiffrer.
 
-**Ce qui reste, dans l'ordre du gain.**
+**Ce que ça a déplacé.** Le chiffrage des avantages non contributifs est passé
+de **5,3 milliards, soit 1,2 % de la dépense**, à **95,2 milliards, soit
+22,3 %** — le COR chiffre les droits de solidarité à « de l'ordre d'un
+cinquième », et on y est. L'inventaire compte quarante-deux dispositifs, dont
+dix-huit portent un chiffre et vingt-quatre une raison écrite, et **aucun ne
+porte plus la mention « à certifier »** : les quarante-deux ont leur base légale
+lue dans LEGI, version par version. Le site a une page qui les nomme tous.
+
+Le chemin importe plus que le chiffre d'arrivée, et il tient en une phrase :
+**86 % du total est LU, non calculé.** Ce que le modèle apporte n'est pas le
+montant, c'est la LISTE et l'article sous lequel chercher. Les deux découvertes
+qui ont fait le gros du trajet sont de la même famille : les comptes de la
+protection sociale ventilent le risque vieillesse-survie en sous-postes depuis
+2020, et le jaune budgétaire détaille la fonction publique — deux publications
+que l'inventaire ignorait parce qu'il avait été bâti depuis les listes du
+dépôt, qui disent ce que le MODÈLE sait faire, au lieu de la nomenclature des
+producteurs, qui dit ce que le SYSTÈME verse. C'est la seconde qui fait foi sur
+l'exhaustivité, et c'est la leçon transposable de cette action.
+
+**Ce qui reste, et pourquoi ça reste.** Vingt-quatre dispositifs sans chiffre,
+en quatre tas de nature différente :
+
+- **cinq ne pourront jamais en avoir.** Deux ne paient qu'à compter de 2026
+  (surcote parentale, salaire de référence des parents) ; trois ne sont pas des
+  dispositifs mais des écarts de règle, mesurés ailleurs — la décote non
+  actuarielle au §4 ter, le rendement au scénario 2, le financement par l'impôt
+  dans les recettes.
+- **cinq attendent que le producteur les sépare** d'un poste fourre-tout :
+  l'allocation veuvage, la majoration forfaitaire de réversion, les points
+  gratuits de complémentaire, le service national, et la part vieillesse du
+  fonds amiante, que son compte mêle à l'allocation.
+- **cinq sont dénombrées mais pas valorisées** : les bonifications de service,
+  dont le jaune donne les bénéficiaires et les trimestres, et un ordre de
+  grandeur de 4,3 Md€ pour l'État qui croise deux millésimes et n'entre donc pas
+  dans le total.
+- **neuf attendent une saisie que le simulateur ne fait pas** — un taux
+  d'incapacité, un corps d'appartenance, une durée de congé parental. Elles ne
+  coûtent pas une source mais un champ de formulaire, et chacune élargirait la
+  saisie pour une population étroite.
+
+Une chose reste franchement ouverte et n'est bloquée par rien : **porter la
+décomposition sur la page Coût**. L'objection qui la retenait — elle mesurait
+1,2 % de ce qu'elle prétend mesurer — est levée. Reste à décider si la page Coût
+reprend la décomposition ou se contente d'y renvoyer. C'est l'action 44.
+
+**Ce qui restait à l'ouverture, dans l'ordre du gain.**
 
 1. *Une structure de population par nombre d'enfants*, par sexe et par
    génération. Sans elle, toute la famille des droits familiaux vaut zéro ou
@@ -7756,3 +7801,37 @@ l'enfant, c'est le compte lui-même, qui sert 30 % de moins à la salariée du
 privé sans enfant. Ce que le bilan ne compte pas : les cotisations de la mère,
 identiques par construction (18 + 5 + 5 contre 28) ; la réversion ; les
 allocations familiales et la PAJE, qui existent sous les deux systèmes.
+
+---
+
+### 44. La décomposition des avantages sur la page Coût — `à faire`
+
+**Pourquoi.** L'action 37 a chiffré les avantages non contributifs à 22,3 % de
+la dépense, et leur a donné une page. La page Coût, elle, décompose la dépense
+par régime et par recette, sans jamais dire quelle part n'a été cotisée par
+personne. Les deux pages parlent du même argent et ne se parlent pas.
+
+L'objection qui retenait ce portage est levée par l'action 37 : tant que la
+décomposition mesurait 1,2 % de ce qu'elle prétendait mesurer, l'afficher
+ailleurs aurait trompé.
+
+**La décision à prendre, et elle n'est pas technique.** Reprendre la
+décomposition sur la page Coût, ou n'y poser qu'un renvoi. Reprendre coûte un
+graphique de plus sur une page qui en porte déjà beaucoup, et fait cohabiter
+deux périmètres — la dépense du compte du système de retraite et celle du risque
+vieillesse-survie des comptes de la protection sociale — qui ne sont pas le
+même nombre. Renvoyer coûte un clic, et laisse la page Coût dire « voilà ce que
+ça coûte » sans dire « et voilà ce que personne n'a payé ».
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py` et `moteur/js/pages.js`
+en regard ; les témoins. Rien dans le modèle : `avantages.py` rend déjà tout ce
+qu'il faut, et `calculer_avantages` est appelable depuis la page Coût sans un
+calcul de plus.
+
+**Le piège à nommer d'avance.** Les deux pages n'ont pas le même dénominateur.
+Poser 22,3 % sous une courbe qui rapporte au PIB, ou à côté d'une dépense qui
+n'est pas celle du même compte, ferait un chiffre faux sans qu'une ligne de code
+soit fautive.
+
+**Fin.** Un lecteur de la page Coût sait quelle part de la dépense n'a été
+cotisée par personne, ou sait où aller le lire.
