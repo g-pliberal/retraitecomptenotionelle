@@ -858,6 +858,42 @@ système actuel. `limites.md` §5 porte les trois.
   relit avant publication : celle qui chiffre la parade du stock à l'âge
   légal sans dire si elle est retenue.
 
+- **20 septembre 2026, la convention `rapport` chiffrée, et ce qu'elle
+  n'est pas.** Demandé par l'utilisateur, à la suite du rechiffrage :
+  combien vaut le scénario 6 sous l'ancienne convention de recette, et
+  comment cela se compare au système actuel. *Mesuré*, en points de PIB :
+  solde moyen 2026-2070 de **−0,55** sous `rapport` contre −1,52 sous
+  `assiette`, soit **0,97 point d'écart** — environ 29 Md€ par an aux euros
+  de 2025, où un point de PIB vaut 29,9 Md€ ; coefficient de 2070 de 1,04
+  contre 0,92 ; dette accumulée de 36 % du PIB contre 103 %. L'écart est
+  stable — 0,92 point de 2030 à 2070 — sauf en 2026 et 2027, où il vaut
+  2,37 et 1,74 : c'est la marche de deux ans que `_rapports_recettes`
+  décrit déjà, le rapport valant 0,77 puis 0,71 avant de se poser à 0,638.
+  Les cinq autres systèmes ne bougent pas d'un millième, la convention ne
+  concernant que le scénario 6. *D'où vient l'écart*, poste par poste en
+  2030 : `rapport` reconduit 2,74 points de ressources non contributives
+  que la convention du programme ne reconduit pas — impôts et taxes
+  affectés 1,46, contribution d'équilibre de l'État 1,03, subventions
+  d'équilibre 0,25 —, et sa base cotisée est plus basse de 1,79 point, la
+  part contributive observée multipliée par 0,638 donnant 5,81 là où 18 %
+  de l'assiette mesurée donnent 7,60. Le solde net est de +0,95.
+  **Ce que cela ne dit pas, et il faut l'écrire ici** : ce n'est pas un
+  levier de réduction du déficit. La dépense est la même à l'euro près
+  dans les deux colonnes ; seule change la recette qu'on accepte de
+  compter. Les trois postes que `rapport` reconduit ont été écartés par
+  décision du Parti libéral le 19 septembre 2026, et pour un motif qui ne
+  se retourne pas : un compte notionnel ne crédite que ce qui est assis
+  sur un revenu d'activité. `rapport` répond donc à « que percevrait la
+  proposition si elle gardait les recettes du système actuel », pas à
+  « que coûte-t-elle ». *Ce qu'elle déplace quand même, et qui compte pour
+  l'arbitrage* : sous `assiette` le scénario 6 est 0,39 point SOUS le
+  système actuel (−1,13), sous `rapport` il est 0,58 point AU-DESSUS. Le
+  choix de convention retourne le sens de la comparaison avec le droit en
+  vigueur — c'est la raison pour laquelle la page n'en expose aucune et
+  s'en tient à celle du programme. Les deux conventions existent des deux
+  côtés du portage, `cout.py` et `cout.js` ; aucune n'est un réglage du
+  site.
+
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 
 **Pourquoi.** Le chemin le plus exact, `Carriere.depuis_lignes`, n'est
