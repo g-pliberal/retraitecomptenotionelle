@@ -1037,6 +1037,33 @@ def test_le_reglage_des_taux_est_ce_qui_fait_peser_l_allocation():
             assert adosse > roule
 
 
+def test_le_reglage_des_taux_ne_touche_pas_le_taux_d_emprunt_de_la_dette():
+    """« Système 4 seulement » : le menu le dit, et ce test l'exige.
+
+    La prime de terme portée sur la courbe COMMUNE déplaçait aussi le taux
+    auquel la page Coût finance les déficits, donc le stock de dette de tous
+    les systèmes — jusqu'à dix points de PIB sur le système actuel, qui n'a pas
+    de pilier capitalisé. Les deux courbes sont donc séparées, et ce test tient
+    la séparation : ``courbe_taux`` est celle que la BCE publie, ``courbe_taux_
+    pilier`` est la seule que le réglage traverse.
+    """
+    nu = Simulateur(Parametres())
+    for regime in ("forwards", "prime", "prime_haute"):
+        simulateur = Simulateur(Parametres().sous_regime_taux(regime))
+        assert simulateur.courbe_taux.prime_terme == 0.0, (
+            "la courbe du taux d'emprunt ne porte jamais de prime"
+        )
+        # Le forward à un an est ce que `cout.calculer_dette` consomme.
+        for annee in (2030, 2050, 2070):
+            assert (simulateur.courbe_taux.placement(annee - 1, 1).taux
+                    == pytest.approx(nu.courbe_taux.placement(annee - 1, 1).taux,
+                                     abs=1e-15))
+        attendu = Parametres().sous_regime_taux(regime).prime_terme_trente_ans
+        assert simulateur.courbe_taux_pilier.prime_terme == attendu
+        assert (simulateur.constructeur_capitalisation.courbe
+                is simulateur.courbe_taux_pilier)
+
+
 def test_les_regimes_de_frais_s_ordonnent_sur_la_rente():
     """Sans frais on sert le plus ; le PER vendu et figé, presque le moins
     pour qui a toute sa carrière après la bascule ; le plafond rend plus que

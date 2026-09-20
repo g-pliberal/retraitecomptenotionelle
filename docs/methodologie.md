@@ -1477,6 +1477,12 @@ régimes, et le portage les applique sans les redéfinir.
 | `prime` | 0,50 pt | La prime retirée, au milieu de la fourchette |
 | `prime_haute` | 1 pt | La prime retirée, au haut de la fourchette |
 
+Il ne traverse que la courbe du PILIER (`Simulateur.courbe_taux_pilier`). Celle
+que lit le taux d'emprunt de la dette du chiffrage reste la courbe publiée,
+sans retouche : portées sur une courbe commune, ces primes déplaçaient le stock
+de dette de tous les systèmes, jusqu'à dix points de PIB sur le système actuel,
+qui n'a pas de pilier du tout. Un test tient la séparation.
+
 Le menu ne sert pas qu'à borner une incertitude : il est le seul endroit d'où
 l'on voie que **l'allocation des maturités ne vaut rien sous le réglage par
 défaut**. Un lecteur qui bascule sur `prime` voit la rente baisser — c'est le

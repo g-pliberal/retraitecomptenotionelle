@@ -457,9 +457,19 @@ export class Simulateur {
     // l'alimente : ils n'entrent que dans la proposition. Son convertisseur est
     // celui du TAUX TECHNIQUE de la rente — nul par défaut, donc le même
     // diviseur que la pension notionnelle, ce qui rend les deux comparables.
-    this.courbeTaux = new CourbeTauxSansRisque(paquet, parametres.prime_terme_trente_ans);
+    // DEUX courbes, et la séparation est volontaire. `courbeTaux` est celle que
+    // la BCE publie, sans retouche : c'est elle que lit le taux d'emprunt de la
+    // dette du chiffrage. `courbeTauxPilier` porte le réglage des taux futurs
+    // du pilier, et lui seul. Les confondre faisait déplacer par ce réglage le
+    // stock de dette de TOUS les systèmes — jusqu'à dix points de PIB sur le
+    // système actuel, qui n'a pas de pilier capitalisé. À zéro, le réglage
+    // publié, les deux courbes rendent le même taux.
+    this.courbeTaux = new CourbeTauxSansRisque(paquet);
+    this.courbeTauxPilier = new CourbeTauxSansRisque(
+      paquet, parametres.prime_terme_trente_ans,
+    );
     this.constructeurCapitalisation = new ConstructeurCapitalisation(
-      this.courbeTaux, this.mortalite,
+      this.courbeTauxPilier, this.mortalite,
       new Convertisseur(this.mortalite, {
         ...parametres,
         taux_anticipe_conversion: parametres.taux_technique_rente_capitalisation,
