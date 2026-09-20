@@ -687,7 +687,7 @@ class Simulateur:
 
     @cached_property
     def convertisseur(self) -> Convertisseur:
-        return Convertisseur(self.mortalite, self.parametres)
+        return Convertisseur(self.mortalite, self.parametres, self.macro)
 
     @cached_property
     def age_reference(self) -> AgeReference:
@@ -786,6 +786,7 @@ class Simulateur:
                     self.parametres.taux_technique_rente_capitalisation
                 )
             ),
+            self.macro,
         )
 
     @cached_property

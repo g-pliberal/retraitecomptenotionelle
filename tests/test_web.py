@@ -1247,14 +1247,14 @@ def test_la_situation_de_foyer_traverse_l_adresse_et_le_modele():
 def test_la_page_detaille_la_garantie_vieillesse_du_scenario_6(page):
     """À 65 ans et à petit salaire, la garantie est servie et la page dit
     combien l'impôt en finance ; à 62 ans, elle dit pourquoi rien n'est servi."""
-    texte = page("/simuler", naissance=1958, liquidation=65, salaire=1500,
+    texte = page("/simuler", naissance=1958, liquidation=65, salaire=1300,
                  unite_revenu="euros_mois")
     assert "Le système 4 : un taux pour tous" in texte
     assert "Garantie vieillesse" in texte
     assert "rente du pilier capitalisé" in texte
     assert "l'impôt en finance" in texte
     assert "personne seule, 300\u00a0€" in texte
-    texte = page("/simuler", naissance=1958, liquidation=62, salaire=1500,
+    texte = page("/simuler", naissance=1958, liquidation=62, salaire=1300,
                  unite_revenu="euros_mois")
     assert "avant les 65 ans" in texte
 
@@ -3238,7 +3238,7 @@ def test_la_correction_des_trois_generations_se_retrouve(contexte):
     assert "un salarié du privé non cadre" in corps, (
         "la page doit dire sur quelle carrière ces points sont mesurés"
     )
-    for generation, attendu in ((1920, 5.2), (1945, 0.0), (1958, -0.5)):
+    for generation, attendu in ((1920, 5.0), (1945, 0.0), (1958, -0.5)):
         mesure = correction(generation)
         assert round(mesure, 1) == attendu, (
             f"génération {generation} : la page annonce {attendu:+.1f} point(s), "

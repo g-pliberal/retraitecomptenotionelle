@@ -693,7 +693,7 @@ def test_la_population_ne_change_rien_au_scenario_1_et_baisse_les_notionnels():
     from retraite_notionnelle.simulateur import Simulateur
 
     cas = next(c for c in CAS_TYPES if c.code == "fonctionnaire_sedentaire")
-    commun = Simulateur(Parametres())
+    commun = Simulateur(Parametres(population_conversion=None))
     corrige = Simulateur(Parametres(population_conversion="fonctionnaires_civils_etat"))
     carriere = cas.construire(commun, 1975)
     avec, sans = commun.simuler(carriere), corrige.simuler(carriere)

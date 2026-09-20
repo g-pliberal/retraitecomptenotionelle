@@ -115,6 +115,12 @@ export const AgeConversionDroitsAcquis = Object.freeze({
 });
 
 /** Table de mortalité servant au coefficient de conversion. */
+/**
+ * La valeur de `population_conversion` qui rattache chaque carrière au vingtile
+ * de niveau de vie où son salaire la place.
+ */
+export const POPULATION_PAR_NIVEAU_DE_VIE = "niveau_de_vie";
+
 export const TableConversion = Object.freeze({
   UNISEXE: "unisexe",
   PAR_SEXE: "par_sexe",
@@ -225,12 +231,12 @@ export const PARAMETRES_DEFAUT = Object.freeze({
 
   // --- Conversion en rente --------------------------------------------------
   table_conversion: TableConversion.UNISEXE,
-  //: Population dont la mortalité remplace celle de la population générale
-  //: dans le diviseur — une clé de `paquet.populations`, telle
-  //: `fonctionnaires_civils_etat`. `null`, le défaut, est la table commune ;
-  //: la variante mesure ce que le diviseur commun transfère à qui vit plus
-  //: longtemps (action 14).
-  population_conversion: null,
+  //: Population dont la mortalité entre dans le diviseur. C'EST L'INTERRUPTEUR :
+  //: `POPULATION_PAR_NIVEAU_DE_VIE` (le défaut) rattache chaque carrière au
+  //: vingtile de niveau de vie où son salaire la place ; `null` est la table
+  //: commune, la même pour tout le monde, et désactive la mesure ; une clé de
+  //: `paquet.populations` vaut pour toutes les carrières, pour mesurer.
+  population_conversion: "niveau_de_vie",
   //: Taux de préfinancement incorporé au diviseur. 0 : le diviseur est
   //: l'espérance de vie résiduelle actualisée au même taux que l'indexation,
   //: les deux se compensant exactement.

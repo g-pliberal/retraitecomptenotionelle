@@ -306,7 +306,9 @@ export const GLOSSAIRE = Object.freeze({
     "La table qui dit combien d'années il reste à vivre, en moyenne, à un "
     + "retraité de votre génération à l'âge du départ. Unisexe : la même "
     + "pour les femmes et les hommes, bien qu'elles vivent plus longtemps — "
-    + "un choix de non-discrimination, comme dans le système actuel.",
+    + "un choix de non-discrimination, comme dans le système actuel. Par "
+    + "niveau de vie, en revanche : celle du vingtile où votre salaire vous "
+    + "place, d'après l'INSEE, parce que qui gagne plus vit plus longtemps.",
   "taux de remplacement":
     "La première pension rapportée au dernier revenu d'activité : 60 % "
     + "veut dire que la pension vaut 60 % de ce que vous gagniez juste avant "

@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 163<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 214<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -1346,6 +1346,29 @@ posée qui reçoit sa réponse.**
   dont le signe est sûr et le niveau non : la grille pèse le cadre et le
   libéral à la part de leur caisse, plus que leur part réelle, et le
   rattachement par le salaire est une convention.
+
+**Puis, le 21 septembre 2026, la mesure devient le défaut — à la demande :
+« applique avec le stock compris sur tous les chiffres du site, fais en sorte
+que ce soit facile de désactiver ».**
+
+- *Un interrupteur, et un seul.* `Parametres.population_conversion` vaut
+  désormais `POPULATION_PAR_NIVEAU_DE_VIE` : le convertisseur rattache chaque
+  carrière — cas type, saisie du site ou relevé — au vingtile où son salaire
+  la place, par `niveau_relatif`, la somme des revenus cotisés rapportée à la
+  somme des salaires moyens des mêmes années, et lui sert le diviseur de ce
+  vingtile, pilier capitalisé compris. `None` rend la table commune partout ;
+  sur le site, « Population générale, la même pour tous ». Rien d'autre à
+  toucher, et les scripts de mesure posent `None` pour chiffrer ce que le
+  défaut déplace.
+- *Le stock est compris*, comme demandé : les scénarios rétroactifs
+  recalculent tout le monde ainsi, et les prospectifs convertissent les
+  droits acquis à la bascule avec le même diviseur. La page Coût suit, par
+  les pensions de ses cas types ; elle compte encore tout le monde à la
+  mortalité générale, ce qui déplace son rapport de masses de moins de 1 %.
+- *Ce qui a bougé.* Sans diviseur : rien, le scénario 1 est intact. Sous les
+  notionnels, le SMIC gagne 12 % de pension, le cadre en perd 10 %, la
+  proposition gagne quatre dixièmes de point de PIB de solde moyen. Les
+  témoins ont été régénérés, Python et JavaScript concordent au bit près.
 
 **Ce qui reste.** Le rattachement est le maillon faible : un salaire n'est pas
 un niveau de vie, et une carrière n'est pas un ménage. Une lecture de la

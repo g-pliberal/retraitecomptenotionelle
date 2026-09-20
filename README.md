@@ -140,8 +140,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->718<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 220<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->719<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 223<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Six pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -583,17 +583,17 @@ Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans
 Scénario                                                          Courants   Constants   Mensuel    Écart
 --------------------------------------------------------------------------------------------------------
 1. Système actuel                                                  35,435€     28,280€    2,357€     réf.
-2. Notionnel rétroactif, part salariale                             8,784€      7,010€      584€   -75.2%
-3. Notionnel dès 2026, part salariale                              28,157€     22,472€    1,873€   -20.5%
-4. Notionnel rétroactif, salariale + patronale                     51,616€     41,194€    3,433€   +45.7%
-5. Notionnel dès 2026, salariale + patronale                       33,232€     26,523€    2,210€    -6.2%
-6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        49,032€     39,132€    3,261€   +38.4%
+2. Notionnel rétroactif, part salariale                             8,438€      6,734€      561€   -76.2%
+3. Notionnel dès 2026, part salariale                              28,105€     22,430€    1,869€   -20.7%
+4. Notionnel rétroactif, salariale + patronale                     49,581€     39,570€    3,297€   +39.9%
+5. Notionnel dès 2026, salariale + patronale                       32,980€     26,321€    2,193€    -6.9%
+6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        47,099€     37,589€    3,132€   +32.9%
 --------------------------------------------------------------------------------------------------------
    hors répartition (RAFP), servi à part, identique aux 6           1,506€      1,202€      100€         
 --------------------------------------------------------------------------------------------------------
-   + rente capitalisée obligatoire, scénario 6                      1,633€      1,303€      109€         
-   + rente capitalisée volontaire, les 5 points rendus              1,633€      1,303€      109€         
-   = total servi par le scénario 6                                 52,298€     41,739€    3,478€   +47.6%
+   + rente capitalisée obligatoire, scénario 6                      1,569€      1,252€      104€         
+   + rente capitalisée volontaire, les 5 points rendus              1,569€      1,252€      104€         
+   = total servi par le scénario 6                                 50,236€     40,093€    3,341€   +41.8%
 
 Qui verse la cotisation, en euros courants cumulés :
   part salariale           139,912 €   scénarios 2 et 3
@@ -607,7 +607,7 @@ et c'est le taux, pas la garantie : jusqu'en 2025 son compte est celui du 4, aux
 taux réels, et ce n'est que sur les années 2026-2038, cotisées à 18 % au lieu
 des 82,28 % que l'État verse, qu'il s'en écarte. La pension contributive dépasse
 de toute façon le plancher. Les treize années cotisées au pilier capitalisé
-ajoutent 1 633 € par an au titre des 5 % obligatoires, et 1 633 € de plus si
+ajoutent 1 569 € par an au titre des 5 % obligatoires, et 1 569 € de plus si
 elle verse les 5 % rendus : le total du scénario 6 repasse ainsi au-dessus du
 scénario 4, mais les trois lignes ne promettent pas la même chose — la pension
 de répartition s'éteint avec sa titulaire, le capital des deux autres se serait
