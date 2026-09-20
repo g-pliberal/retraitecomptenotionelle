@@ -3408,6 +3408,42 @@ institutions:
           sur des primes petites ; le frais de gestion du fonds en euros est
           proche partout (0,67 % à 0,76 %). Le fichier cible porte ces trois
           lectures et leur portée pour un pilier obligatoire.
+          CE QUE CES MOYENNES SONT : versement et gestion sont des moyennes
+          PONDÉRÉES de tout le marché (par les primes, par l'encours moyen),
+          donc les vraies moyennes de ce qui est payé ; les arrérages, une
+          moyenne NON PONDÉRÉE des seuls facturants, dont on déduit 0,99 % sur
+          les vingt déclarants et une médiane nulle. Aucune médiane n'est
+          publiée pour les deux premiers.
+
+      - id: ccsf_rapport_per_2021
+        titre: >-
+          Rapport du CCSF sur les nouveaux plans d'épargne retraite, juillet
+          2021 (Corinne Dromer ; étude Sémaphore Conseil sur 36 contrats)
+        url: https://www.ccsfin.fr/evenement/rapport-sur-les-nouveaux-plans-depargne-retraite-2021
+        document: https://www.banque-france.fr/system/files/import/ccsf/medias/documents/rapport_per-2021.pdf
+        acces: document
+        statut_integration: controle
+        millesime: tarifs affichés entre décembre 2020 et mai 2021
+        note: >-
+          Aucune valeur du modèle n'en sort. Il CONTRÔLE la portée des
+          moyennes de l'OPEF (`opef_rapport_annuel`) par la seule autre mesure
+          publique du même marché : 34 PER assurance, tarifs affichés dans les
+          notices, moyennes arithmétiques non pondérées, minimum et maximum,
+          moyennes par catégorie de distributeur (tableau T4, page 27 ;
+          chapitre 2). Lu le 20 septembre 2026 sur le document.
+          CE QU'IL DONNE : frais sur versement MAXIMUM affichés 3,18 % en
+          moyenne (0 à 5 %, courtiers en ligne à 0, CGP et sociétés
+          d'assurance à 4,5 et 4,8 %, « bien plus faibles » en pratique selon
+          les CGP) ; gestion du fonds en euros 0,87 % (0,60 à 1 % hors un
+          fonds à 2 %) ; arrérages 1,18 % ZÉROS COMPRIS sur 30 contrats à
+          frais proportionnels, 0 à 3 %, onze contrats à zéro, de 0,60 %
+          (banques à réseau) à 2,30 % (mutuelles) par catégorie.
+          CE QU'IL RÉVÈLE, et que l'OPEF ne mesure pas : « 22 contrats
+          affichent également des frais sur encours de rentes, avec un minimum
+          de 0,60 % et un maximum de 1 % par an ». Un prélèvement annuel sur la
+          réserve de la rente, que le modèle ne compte pas, et qui vaut 9 à
+          15 % de rente au diviseur du modèle — quatre à sept fois les 2,20 %
+          d'arrérages. Il ne publie aucune médiane.
 
   frr:
     nom: Fonds de réserve pour les retraites

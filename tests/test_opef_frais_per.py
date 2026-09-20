@@ -76,6 +76,22 @@ def test_la_moyenne_des_arrerages_dit_sur_combien_d_organismes_elle_porte():
     assert table["arrerages_organismes_facturant"] == 9
 
 
+def test_la_moyenne_sur_tous_les_declarants_et_la_mediane_s_en_deduisent():
+    """Onze déclarants sur vingt ne facturent rien : la moyenne du marché est
+    la publiée fois 9/20, et la médiane est nulle."""
+    table = opef.lire_tableau(TABLEAU_PER, opef.TABLEAUX["per_individuel"])
+    assert table["arrerages_moyenne_tous_declarants"] == {2024: 0.009855, 2025: 0.0099}
+    assert table["arrerages_mediane_declarants"] == 0.0
+
+
+def test_la_mediane_n_est_pas_inventee_quand_les_facturants_sont_majoritaires():
+    majoritaires = TABLEAU_PER.replace("Sur les 20 organismes déclarants, 9 ont",
+                                       "Sur les 21 organismes déclarants, 14 ont")
+    table = opef.lire_tableau(majoritaires, opef.TABLEAUX["per_individuel"])
+    assert table["arrerages_mediane_declarants"] is None
+    assert table["arrerages_moyenne_tous_declarants"][2025] == round(0.022 * 14 / 21, 6)
+
+
 def test_chaque_tableau_est_lu_dans_sa_propre_fenetre():
     """Deux tableaux dans le même texte : chacun rend ses valeurs, pas celles de l'autre."""
     texte = TABLEAU_CAPITALISATION + "\n" + TABLEAU_PER

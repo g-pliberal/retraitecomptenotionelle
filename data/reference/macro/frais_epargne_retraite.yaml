@@ -114,3 +114,92 @@ frais:
       d'autant, et non le capital qui la constitue. Moyenne NON PONDÉRÉE des 9
       organismes qui facturent ces frais, sur 20 déclarants : les onze autres
       ne prélèvent rien sur la rente.
+
+# CE QUE VALENT CES MOYENNES, ET CE QU'ON SAIT DES MÉDIANES
+# ----------------------------------------------------------
+# Rien de ce bloc n'entre dans le calcul : il dit ce que les trois valeurs
+# ci-dessus représentent, et ce que d'autres mesures du même marché donnent.
+# Lu le 20 septembre 2026 sur les deux documents cités.
+#
+# Les frais sur versement et de gestion de l'OPEF sont des MOYENNES PONDÉRÉES
+# de tout le marché des PER individuels assurantiels remis à l'ACPR : par les
+# primes pour le versement, par l'encours moyen pour la gestion. Ce sont donc
+# les vraies moyennes du marché, un euro versé ou placé pesant un euro. Aucune
+# source publique n'en donne la médiane : ni l'OPEF, ni le CCSF, dont le
+# rapport de 2021 (Sémaphore Conseil, 34 PER assurance, tarifs affichés dans
+# les notices, moyennes arithmétiques non pondérées) donne le minimum, le
+# maximum, la moyenne et la moyenne par catégorie de distributeur.
+#
+# Les frais sur arrérages de l'OPEF sont une MOYENNE NON PONDÉRÉE DES SEULS
+# ORGANISMES QUI FACTURENT. Sur tous les déclarants, les autres prélevant zéro,
+# la moyenne non pondérée est la publiée fois la part des facturants, et la
+# médiane est nulle dès qu'ils sont moins de la moitié.
+distributions:
+  source_marche: opef_rapport_annuel
+  source_panel: ccsf_rapport_per_2021
+  versement:
+    opef_2025_moyenne_ponderee_primes: 0.0109
+    opef_mediane: non publiée
+    ccsf_2021_panel_34_contrats:
+      moyenne: 0.0318
+      minimum: 0.0
+      maximum: 0.05
+      note: >-
+        Frais MAXIMUM affichés dans les notices, avant négociation et
+        promotion : les courtiers en ligne du panel sont à 0 %, les banques à
+        réseau et mutuelles proches de 3 %, les CGP et sociétés d'assurance à
+        4,5 et 4,8 %. Les CGP indiquent que les frais réellement pratiqués
+        sont bien plus faibles. La moyenne pondérée par les primes de l'OPEF
+        (1,09 % en 2025, 1,20 % en 2023) est la mesure de ce qui est payé.
+  gestion:
+    opef_2025_moyenne_ponderee_encours: 0.0076
+    opef_mediane: non publiée
+    ccsf_2021_panel_34_contrats:
+      moyenne: 0.0087
+      minimum: 0.006
+      maximum: 0.02
+      note: >-
+        Le maximum de 2 % est un fonds en euros « nouvelle génération » d'un
+        seul contrat ; hors lui, le maximum est 1 %. Par catégorie : 0,66 %
+        (mutuelles) à 0,93 % (CGP). Frais en général non négociables. La
+        dispersion est étroite : la médiane ne peut pas s'écarter beaucoup de
+        la moyenne, entre 0,75 et 0,90 %.
+  arrerages:
+    opef_2025_moyenne_facturants: 0.0220
+    opef_2025_organismes_facturant: 9
+    opef_2025_organismes_declarants: 20
+    opef_2025_moyenne_tous_declarants: 0.0099
+    opef_2025_mediane_declarants: 0.0
+    opef_2025_assurance_vie: {moyenne_facturants: 0.0279, facturant: 14, declarants: 21, moyenne_tous: 0.0186}
+    opef_2025_capitalisation: {moyenne_facturants: 0.0294, facturant: 5, declarants: 18, moyenne_tous: 0.0082, mediane: 0.0}
+    ccsf_2021_panel_30_contrats_proportionnels:
+      moyenne_zeros_compris: 0.0118
+      minimum: 0.0
+      maximum: 0.03
+      contrats_a_zero: 11
+      par_categorie:
+        banques_a_reseau: 0.0060
+        courtiers_cgp: 0.0064
+        courtiers_en_ligne: 0.0125
+        societes_d_assurance: 0.0150
+        mutuelles_d_assurance: 0.0230
+      note: >-
+        Moyenne arithmétique des tarifs affichés, ZÉROS COMPRIS : onze
+        contrats sur trente ne prélèvent rien. La médiane n'est pas publiée ;
+        avec onze zéros sur trente, elle est strictement positive.
+  # UN FRAIS QUE LE MODÈLE NE COMPTE PAS. Le CCSF relève que « 22 contrats
+  # affichent également des frais sur encours de rentes, avec un minimum de
+  # 0,60 % et un maximum de 1 % par an ». C'est un prélèvement annuel sur la
+  # réserve qui porte la rente, distinct des frais sur arrérages, et l'OPEF ne
+  # le mesure pas. Sur la table du modèle, à taux technique nul, un tel frais
+  # équivaut à une rente réduite de 9 % (0,60 %) à 15 % (1 %), quelle que soit
+  # la génération : il pèse quatre à sept fois les 2,20 % d'arrérages. Le
+  # modèle ne le retient pas, comme il ne retient pas la table de mortalité
+  # prudente d'un assureur : sa rente est celle d'un régime qui convertit au
+  # diviseur du compte notionnel. docs/limites.md §5 ante le chiffre.
+  encours_de_rentes_non_modelise:
+    ccsf_2021_contrats_facturant: 22
+    ccsf_2021_contrats_panel: 34
+    minimum_annuel: 0.006
+    maximum_annuel: 0.010
+    effet_sur_la_rente_au_diviseur_du_modele: de -9 % à -15 %
