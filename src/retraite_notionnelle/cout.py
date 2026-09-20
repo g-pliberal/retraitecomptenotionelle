@@ -124,7 +124,7 @@ la seule chose qu'on emprunte à une série pour l'appliquer à l'autre.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Callable
 
 from .castypes import (
@@ -500,6 +500,21 @@ class AvenirAnnuel:
         """Part du PIB : deux grandeurs de la même année, donc deux euros courants."""
         return self.cout(scenario) / self.pib if self.pib else 0.0
 
+    def reprises_constants(self) -> float:
+        """Ce que les successions rendent de la garantie, en euros constants."""
+        return self.garantie.reprises_constants if self.garantie else 0.0
+
+    def reprises(self) -> float:
+        """Les mêmes reprises, en euros courants de l'année."""
+        return self.reprises_constants() / self.coefficient_constants
+
+    def part_pib_reprises(self) -> float:
+        return self.reprises() / self.pib if self.pib else 0.0
+
+    def garantie_nette_constants(self) -> float:
+        """La garantie versée moins ce que les successions en rendent."""
+        return self.cout_constants(COMPOSANTE_GARANTIE) - self.reprises_constants()
+
 
 @dataclass
 class Avenir:
@@ -542,6 +557,10 @@ class Avenir:
     def ecart_cumule(self, scenario: str) -> float:
         """Ce que le système ferait économiser (négatif) ou coûter en plus."""
         return self.cumul(scenario) - self.cumul("actuel")
+
+    def cumul_reprises(self) -> float:
+        """Ce que les successions rendent sur les années projetées, en euros constants."""
+        return sum(ligne.reprises_constants() for ligne in self.projetees())
 
 
 @dataclass
@@ -1586,6 +1605,17 @@ class GarantieProjetee:
     #: Part des ayants droit qui la réclament : ``beneficiaires`` sur
     #: ``ayants_droit``, et le coût dans la même proportion.
     taux_recours: float = 1.0
+    #: Les avances que les décès de l'année libèrent, avec leurs intérêts, en
+    #: millions d'euros constants : ce que les successions AURAIENT à rendre.
+    avances_liberees_constants: float = 0.0
+    #: Ce qu'elles rendent : la part ``part_reprise_garantie`` des avances
+    #: libérées. Zéro avant la bascule, les avances commençant avec elle.
+    reprises_constants: float = 0.0
+    #: Les avances en cours en fin d'année, intérêts compris, en millions
+    #: d'euros constants : la créance de l'État sur les bénéficiaires vivants.
+    stock_avances_constants: float = 0.0
+    #: Le taux réel de l'année, lu sur la courbe des taux et déflaté.
+    taux_reel: float = 0.0
 
 
 class GarantieDistribution:
@@ -1828,6 +1858,89 @@ def _rapports(masses: dict[str, float], garantie: GarantieProjetee,
     return rapports
 
 
+def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur) -> None:
+    """Les avances de la garantie, leur intérêt, et ce que les successions rendent.
+
+    LA GARANTIE EST UNE AVANCE. Le programme la reprend sur la succession dès
+    le premier euro, avec intérêts, dans la limite de ce que la succession
+    contient (action 47 de la feuille de route). Chaque euro versé à compter
+    de la bascule devient donc une créance, qui court jusqu'au décès du
+    bénéficiaire, et le coût net pour l'impôt est le versé moins ce que les
+    successions rendent.
+
+    LE TAUX EST LU, PAS CHOISI, comme celui de la dette : le forward à un an
+    de la courbe des taux sans risque, déflaté par l'indice des prix de la
+    projection — les avances sont tenues en euros constants, et un intérêt
+    nominal sur une créance indexée compterait l'inflation deux fois.
+
+    LES AVANCES SONT SUIVIES PAR ÂGE, PAS PAR TÊTE. La grille ne connaît pas
+    chaque bénéficiaire ; elle connaît la population des bénéficiaires, et la
+    table de mortalité dit comment elle se renouvelle. La population est
+    supposée stationnaire sur la courbe de survie à 65 ans de la génération
+    de la bascule : à chaque âge, sa part est proportionnelle aux survivants,
+    et sa part de décès à ce que la courbe perd d'un âge au suivant. Un
+    bénéficiaire d'un âge donné porte les compléments moyens des années
+    écoulées depuis la bascule, au plus autant que son âge lui en laisse,
+    capitalisés au taux réel. Les décès d'une année LIBÈRENT ces avances ; la
+    succession en rend la part ``part_reprise_garantie``, et le reste est
+    abandonné — c'est cette part-là que l'impôt finance pour de bon.
+
+    CE QUI EST FIGÉ. La couverture est une hypothèse, non une donnée : le
+    dépôt n'a pas de distribution de patrimoine par niveau de pension. Le
+    complément moyen tient lieu de chacun, la mortalité des bénéficiaires est
+    celle de tous, et rien n'est repris avant le décès — ni au premier décès
+    d'un couple, ni sur une donation : la règle les prévoit, le modèle ne les
+    distingue pas. Les lignes d'avant la bascule restent à zéro.
+    """
+    parametres = simulateur.parametres
+    bascule = parametres.annee_bascule
+    part = parametres.part_reprise_garantie
+    annee_euros = parametres.annee_euros_constants
+    macro = simulateur.macro
+    survie = [s for s in simulateur.mortalite.courbe_survie_unisexe(65, bascule)
+              if s > 1e-9]
+    if not survie:
+        return
+    total_survie = sum(survie)
+    deces = [survie[k] - (survie[k + 1] if k + 1 < len(survie) else 0.0)
+             for k in range(len(survie))]
+    complements: dict[int, float] = {}
+    croissance: dict[int, float] = {}
+    facteur = 1.0
+    stock = 0.0
+    for ligne in lignes:
+        if ligne.annee < bascule or ligne.garantie is None:
+            continue
+        annee = ligne.annee
+        nominal = simulateur.courbe_taux.placement(annee - 1, 1).taux
+        inflation = (macro.coefficient_prix(annee - 1, annee_euros)
+                     / macro.coefficient_prix(annee, annee_euros) - 1.0)
+        taux_reel = (1.0 + nominal) / (1.0 + inflation) - 1.0
+        facteur *= 1.0 + taux_reel
+        croissance[annee] = facteur
+        garantie = ligne.garantie
+        verse = garantie.cout_constants
+        complements[annee] = (
+            verse / garantie.beneficiaires if garantie.beneficiaires > 0.0 else 0.0
+        )
+        liberees = 0.0
+        for k, part_deces in enumerate(deces):
+            avance = 0.0
+            for j in range(min(k, annee - bascule) + 1):
+                avance += (complements.get(annee - j, 0.0)
+                           * facteur / croissance.get(annee - j, facteur))
+            liberees += part_deces / total_survie * avance
+        liberees *= garantie.beneficiaires
+        stock = stock * (1.0 + taux_reel) + verse - liberees
+        ligne.garantie = replace(
+            garantie,
+            avances_liberees_constants=liberees,
+            reprises_constants=part * liberees,
+            stock_avances_constants=stock,
+            taux_reel=taux_reel,
+        )
+
+
 def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             population: Population, simulateur: Simulateur,
             poids: Callable[[int], dict[str, float]],
@@ -1920,6 +2033,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
         ))
+    _reprises_successions(lignes, simulateur)
 
     return Avenir(
         annees=lignes,

@@ -5194,12 +5194,13 @@ def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(context
     cout = rendre(contexte, "/cout", {})[1]
     # Le nombre est dans le titre, et il doit suivre la liste : le volet C en a
     # ajouté une douzième, sur ce que les scénarios font de la réversion, et
-    # l'action 48 une treizième, sur le stock des pensions à la bascule.
-    assert "<span>Treize réserves à lire avant de citer ces chiffres</span>" in cout
+    # l'action 48 une treizième, sur le stock des pensions à la bascule, et
+    # l'action 47 une quatorzième, sur la reprise sur succession.
+    assert "<span>Quatorze réserves à lire avant de citer ces chiffres</span>" in cout
     assert "Une page de chiffres vaut par ce qu'elle laisse de côté" in cout
     debut = cout.index("Une page de chiffres vaut par ce qu'elle laisse de côté")
     liste = cout[debut:cout.index("</ul>", debut)]
-    assert liste.count("<li><strong>") == 13, liste.count("<li><strong>")
+    assert liste.count("<li><strong>") == 14, liste.count("<li><strong>")
 
 
 

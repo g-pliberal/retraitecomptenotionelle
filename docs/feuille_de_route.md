@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 215<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 394<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8547,6 +8547,41 @@ déplace, plancher majoré sur la trajectoire : la garantie de 2024 passe de
 ligne pour mémoire du tableau poste par poste de 30,5 à 15,0 Md€ (1,02 à 0,50 %
 du PIB) ; en 2070, 0,46 % du PIB au lieu de 0,92. Le simulateur d'une
 carrière ne connaît pas ce taux : qui réclame la reçoit en entier.
+
+**Le même jour, encore : la reprise dans le net, sur la page.** « Et avec la
+reprise sur succession dans le net ? », puis « oui, code-le sur la page
+Coût ». `_reprises_successions` dans `cout.py`, et `reprisesSuccessions` dans
+`moteur/js/cout.js`, suivent les avances de la garantie à compter de la
+bascule : chaque euro versé porte intérêt au taux réel que la courbe des taux
+sans risque implique (le forward à un an de la dette, déflaté par les prix de
+la projection), la population des bénéficiaires est supposée stationnaire sur
+la courbe de survie à 65 ans de la génération de la bascule, un bénéficiaire
+d'un âge donné porte les compléments moyens des années écoulées, au plus
+autant que son âge lui en laisse, et les décès libèrent ces avances ; la
+succession en rend la part `Parametres.part_reprise_garantie`, la moitié par
+défaut, réglage `reprise` du formulaire (0 à 100, page Coût seulement).
+`GarantieProjetee` porte `avances_liberees_constants`, `reprises_constants`,
+`stock_avances_constants` et `taux_reel` ; `AvenirAnnuel` expose
+`reprises_constants`, `part_pib_reprises` et `garantie_nette_constants`,
+`Avenir` un `cumul_reprises`. Sur la page : deux lignes de plus sous « dont
+garantie » dans le tableau de la projection, « dont reprises » (en moins) et
+« garantie nette » ; dans le dépliant, un paragraphe et le tableau « La
+reprise sur succession dans la trajectoire » (versé, avances libérées,
+reprises, net, part du PIB, avances en cours) ; une quatorzième réserve dit
+que la couverture est une hypothèse. Un test tient que rien n'est repris
+avant la bascule, que les reprises sont la part couverte des avances
+libérées, que le net est le versé moins les reprises, et que le stock monte.
+Ce que ça donne, au réglage par défaut, plancher majoré, diviseur par niveau
+de vie (le défaut depuis le même jour) : en 2070, 17,9 Md€ versés, 23,8
+libérés par les décès, 11,9 repris, 6,0 nets, 0,16 % du PIB contre 0,5 brut ;
+de 2026 à 2070, 849 versés, 344 repris, 505 nets ; un stock d'avances en
+cours de 383 Md€ à l'horizon, dix points de PIB, qui plafonne quand les décès
+libèrent autant que la bascule verse. Les vingt premières années restent
+presque brutes : 20,8 net en 2026, 12,5 en 2040. Ce
+que le modèle ne distingue pas, et que la règle prévoit : le report au décès
+du conjoint survivant, la donation réintégrée, l'assurance-vie. Ce qui reste
+du point 1 ci-dessus, la distribution de patrimoine des bénéficiaires, est
+désormais ce qui remplacerait le réglage par une donnée.
 
 **Fin.** La page Coût donne la garantie en trois lignes, brut, reprises et
 net, sur une distribution de patrimoine citée, et le programme dit en une

@@ -500,7 +500,8 @@ class GarantieDistribution {
   chiffrer(total, tetes) {
     const tetesGarantie = tetes[TETES_GARANTIE];
     const vide = { facteur: 0, effectif: 0, beneficiaires: 0, coutConstants: 0,
-                   ayantsDroit: 0, tauxRecours: 1.0 };
+                   ayantsDroit: 0, tauxRecours: 1.0, avancesLibereesConstants: 0,
+                   reprisesConstants: 0, stockAvancesConstants: 0, tauxReel: 0 };
     if (tetesGarantie <= 0 || this.pensionReference <= 0) return vide;
     const facteur = total[RESSOURCES_GARANTIE] / tetesGarantie / this.pensionReference;
     if (facteur <= 0) return vide;
@@ -513,6 +514,12 @@ class GarantieDistribution {
       coutConstants: chiffre.coutAnnuelMeur * this.versConstants * this.tauxRecours,
       ayantsDroit: chiffre.beneficiaires,
       tauxRecours: this.tauxRecours,
+      // Les avances, leurs reprises et leur stock : posés par
+      // `reprisesSuccessions`, une fois la trajectoire connue.
+      avancesLibereesConstants: 0,
+      reprisesConstants: 0,
+      stockAvancesConstants: 0,
+      tauxReel: 0,
     };
   }
 }
@@ -726,6 +733,24 @@ class AvenirAnnuel {
   partPib(scenario) {
     return this.pib ? this.cout(scenario) / this.pib : 0.0;
   }
+
+  /** Ce que les successions rendent de la garantie, en euros constants. */
+  reprisesConstants() {
+    return this.garantie ? this.garantie.reprisesConstants : 0.0;
+  }
+
+  reprises() {
+    return this.reprisesConstants() / this.coefficientConstants;
+  }
+
+  partPibReprises() {
+    return this.pib ? this.reprises() / this.pib : 0.0;
+  }
+
+  /** La garantie versée moins ce que les successions en rendent. */
+  garantieNetteConstants() {
+    return this.coutConstants(COMPOSANTE_GARANTIE) - this.reprisesConstants();
+  }
 }
 
 /** La trajectoire de la répartition, de 1990 à l'horizon des projections. */
@@ -764,6 +789,13 @@ class Avenir {
   /** Ce que le système ferait économiser (négatif) ou coûter en plus. */
   ecartCumule(scenario) {
     return this.cumul(scenario) - this.cumul("actuel");
+  }
+
+  /** Ce que les successions rendent sur les années projetées, en euros constants. */
+  cumulReprises() {
+    let somme = 0;
+    for (const ligne of this.projetees()) somme += ligne.reprisesConstants();
+    return somme;
   }
 }
 
@@ -1328,6 +1360,58 @@ class Cout {
  * produit, mise à l'échelle par un ancrage calculé sur cette même dernière
  * année : les deux expressions coïncident exactement à la jonction.
  */
+/**
+ * Les avances de la garantie, leur intérêt, et ce que les successions rendent.
+ * Copie de `_reprises_successions` dans `cout.py`, qui dit la méthode et ce
+ * qu'elle fige.
+ */
+function reprisesSuccessions(lignes, simulateur) {
+  const parametres = simulateur.parametres;
+  const bascule = parametres.annee_bascule;
+  const part = parametres.part_reprise_garantie;
+  const anneeEuros = parametres.annee_euros_constants;
+  const macro = simulateur.macro;
+  const survie = simulateur.mortalite.courbeSurvieUnisexe(65, bascule)
+    .filter((s) => s > 1e-9);
+  if (!survie.length) return;
+  let totalSurvie = 0;
+  for (const s of survie) totalSurvie += s;
+  const deces = survie.map((s, k) => s - (k + 1 < survie.length ? survie[k + 1] : 0.0));
+  const complements = new Map();
+  const croissance = new Map();
+  let facteur = 1.0;
+  let stock = 0.0;
+  for (const ligne of lignes) {
+    if (ligne.annee < bascule || !ligne.garantie) continue;
+    const annee = ligne.annee;
+    const nominal = simulateur.courbeTaux.placement(annee - 1, 1).taux;
+    const inflation = macro.coefficientPrix(annee - 1, anneeEuros)
+      / macro.coefficientPrix(annee, anneeEuros) - 1.0;
+    const tauxReel = (1.0 + nominal) / (1.0 + inflation) - 1.0;
+    facteur *= 1.0 + tauxReel;
+    croissance.set(annee, facteur);
+    const garantie = ligne.garantie;
+    const verse = garantie.coutConstants;
+    complements.set(annee, garantie.beneficiaires > 0 ? verse / garantie.beneficiaires : 0.0);
+    let liberees = 0.0;
+    deces.forEach((partDeces, k) => {
+      let avance = 0.0;
+      for (let j = 0; j <= Math.min(k, annee - bascule); j += 1) {
+        const c = complements.has(annee - j) ? complements.get(annee - j) : 0.0;
+        const g = croissance.has(annee - j) ? croissance.get(annee - j) : facteur;
+        avance += c * facteur / g;
+      }
+      liberees += partDeces / totalSurvie * avance;
+    });
+    liberees *= garantie.beneficiaires;
+    stock = stock * (1.0 + tauxReel) + verse - liberees;
+    garantie.avancesLibereesConstants = liberees;
+    garantie.reprisesConstants = part * liberees;
+    garantie.stockAvancesConstants = stock;
+    garantie.tauxReel = tauxReel;
+  }
+}
+
 function construireAvenir(liste, depenses, population, simulateur, poids, revalorisation,
                           reversionServie = false, poidsCotisants = null, garantie = null) {
   // `poids` pèse les cas types dans les masses de PENSIONS, `poidsCotisants`
@@ -1405,6 +1489,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
   // Une trajectoire ne peut pas valoir mieux qu'estimée : sa démographie est
   // projetée, sa macroéconomie est une hypothèse, et son contrefactuel n'a
   // jamais existé.
+  reprisesSuccessions(lignes, simulateur);
   return new Avenir(
     lignes, dernierePubliee + 1, simulateur.parametres.annee_bascule,
     anneeEuros, Fiabilite.ESTIMEE,

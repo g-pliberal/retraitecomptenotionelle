@@ -410,7 +410,7 @@ export class ErreurSaisie extends Error {}
 export const CLES_MODELISATION = Object.freeze([
   "indexation", "lissage", "age_reference", "table", "population",
   "conversion_acquis", "part_cotisation", "foyer", "projection", "emploi",
-  "stock", "bascule", "euros",
+  "stock", "reprise", "bascule", "euros",
 ]);
 
 const DEFAUTS = Object.freeze({
@@ -461,6 +461,8 @@ const DEFAUTS = Object.freeze({
   projection: "cor_reference",
   emploi: "cor_2026",
   stock: "prix",
+  // Part de l'avance de la garantie que la succession couvre, en pour cent.
+  reprise: 50,
   bascule: 2026,
   euros: 2026,
   //: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -529,6 +531,7 @@ export class Saisie {
       projection: parmi(parametres, "projection", PROJECTIONS, DEFAUTS.projection),
       emploi: parmi(parametres, "emploi", TRAJECTOIRES_EMPLOI, DEFAUTS.emploi),
       stock: parmi(parametres, "stock", REVALORISATIONS_STOCK, DEFAUTS.stock),
+      reprise: entier(parametres, "reprise", DEFAUTS.reprise),
       bascule: entier(parametres, "bascule", DEFAUTS.bascule),
       euros: entier(parametres, "euros", DEFAUTS.euros),
       // Une adresse qui ne porte QUE des réglages de modélisation ne demande
@@ -597,6 +600,11 @@ export class Saisie {
       throw new ErreurSaisie(
         `Année des euros constants attendue entre ${ANNEE_MINIMALE} et `
         + `${ANNEE_MAXIMALE}.`,
+      );
+    }
+    if (!(this.reprise >= 0 && this.reprise <= 100)) {
+      throw new ErreurSaisie(
+        "Part de l'avance couverte par la succession attendue entre 0 et 100.",
       );
     }
     if (!(this.lissage >= 1 && this.lissage <= LISSAGE_MAXIMUM)) {
@@ -817,6 +825,7 @@ export class Saisie {
       scenario_projection: this.projection,
       trajectoire_emploi: this.emploi,
       revalorisation_stock: this.stock,
+      part_reprise_garantie: this.reprise / 100,
       annee_bascule: this.bascule,
       annee_euros_constants: this.euros,
     });
@@ -1152,6 +1161,7 @@ export class Saisie {
       part_cotisation: this.part_cotisation,
       foyer: this.foyer,
       projection: this.projection, emploi: this.emploi, stock: this.stock,
+      reprise: this.reprise,
       bascule: this.bascule, euros: this.euros,
     };
     // L'unité s'écrit TOUJOURS, y compris quand c'est celle par défaut : c'est
@@ -2150,6 +2160,7 @@ const LIBELLES_MODELISATION = Object.freeze({
   projection: ["scénario macroéconomique", PROJECTIONS],
   emploi: ["emploi projeté", TRAJECTOIRES_EMPLOI],
   stock: ["pensions en cours à la bascule", REVALORISATIONS_STOCK],
+  reprise: ["part de l'avance couverte par la succession", null],
   bascule: ["année de bascule", null],
   euros: ["euros constants de", null],
 });
@@ -2287,6 +2298,10 @@ function champsModelisation(saisie) {
       + "règle du compte, comme les réformes réelles l'ont fait pour les prix "
       + "en 1987 : c'est la bosse de 2026-2040 sur la page Coût. Le système 1 "
       + "n'est pas concerné : il est le droit."),
+    g.champ("reprise", "Part de l'avance couverte par la succession",
+      saisie.reprise, "page Coût seulement, en pour cent", "number",
+      { min: "0", max: "100" },
+      "La garantie du système 4 est une avance reprise sur la succession, dès le premier euro et avec intérêts. Ce que les successions en rendent dépend du patrimoine des bénéficiaires, que le dépôt ne connaît pas : ce réglage dit quelle part de l'avance d'un bénéficiaire sa succession couvre, en moyenne. La moitié par défaut, l'ordre de grandeur que donne le patrimoine des ménages retraités publié par le COR ; 30 et 70 encadrent. Zéro éteint la reprise, cent suppose que toute avance est remboursée."),
     g.champ("bascule", "Année de bascule", saisie.bascule,
       "passage au régime unique", "number",
       { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),
@@ -6327,6 +6342,27 @@ function coutDetailScenarios(contexte) {
     "—",
     "—",
   ]);
+  // La garantie est une avance : ce que les successions en rendent vient en
+  // moins, et la ligne nette est ce que l'impôt finance pour de bon.
+  const reprisesHorizon = horizon.reprisesConstants();
+  const reprisesCumul = avenir.cumulReprises();
+  lignesAvenir.push([
+    "<em>dont reprises sur les successions, au décès des bénéficiaires</em>",
+    milliards(reprisesHorizon ? -reprisesHorizon : 0.0, 0),
+    g.pourcentage(reprisesHorizon ? -horizon.partPibReprises() : 0.0, false, 1),
+    milliards(reprisesCumul ? -reprisesCumul : 0.0, 0),
+    "—",
+    "—",
+  ]);
+  lignesAvenir.push([
+    "<em>garantie nette des reprises</em>",
+    milliards(horizon.garantieNetteConstants(), 0),
+    g.pourcentage(horizon.partPib(COMPOSANTE_GARANTIE) - horizon.partPibReprises(),
+                  false, 1),
+    milliards(avenir.cumul(COMPOSANTE_GARANTIE) - reprisesCumul, 0),
+    "—",
+    "—",
+  ]);
 
   const horizons = [];
   for (let millesime = 2030; millesime <= avenir.derniereAnnee; millesime += 10) {
@@ -7075,6 +7111,31 @@ function coutDetailGarantie(contexte) {
     g.pourcentage(ligne.partPib(COMPOSANTE_GARANTIE), false, 2),
   ]);
 
+  // La reprise sur succession, année par année : les avances que la garantie
+  // constitue à compter de la bascule, ce que les décès libèrent, ce que les
+  // successions rendent, et ce qui reste à l'impôt.
+  const etapesReprises = [];
+  for (const millesimeEtape of [base.annee_bascule, 2030, 2040, 2050, 2060,
+    c.avenir.derniereAnnee]) {
+    const ligne = c.avenir.annee(millesimeEtape);
+    if (ligne === null || !ligne.garantie || millesimeEtape < base.annee_bascule
+        || etapesReprises.some(([a]) => a === millesimeEtape)) {
+      continue;
+    }
+    etapesReprises.push([millesimeEtape, ligne]);
+  }
+  const lignesReprises = etapesReprises.map(([annee, ligne]) => [
+    String(annee),
+    milliards(ligne.coutConstants(COMPOSANTE_GARANTIE), 1),
+    milliards(ligne.garantie.avancesLibereesConstants, 1),
+    milliards(ligne.reprisesConstants(), 1),
+    milliards(ligne.garantieNetteConstants(), 1),
+    g.pourcentage(ligne.partPib(COMPOSANTE_GARANTIE) - ligne.partPibReprises(),
+                  false, 2),
+    milliards(ligne.garantie.stockAvancesConstants, 0),
+  ]);
+  const partReprise = base.part_reprise_garantie;
+
   // Ce que la garantie remplace : les quatre minima, tels qu'ils coûtent la
   // dernière année observée.
   const avantages = contexte.avantages().derniere;
@@ -7126,6 +7187,29 @@ ${g.tableau(
     ["nombre", "nombre", "nombre", "nombre", "nombre", "nombre", "nombre"],
     `La garantie vieillesse dans la trajectoire, plancher ${
       seul ? "majoré (personne seule)" : "de base (vie à deux)"}`,
+    true,
+  )}
+
+<p><strong>Ce que les successions rendent.</strong> La garantie est une
+avance : chaque euro versé depuis la bascule porte intérêt au taux réel que la
+courbe des taux sans risque implique, une fois l'inflation retirée, et devient
+une créance sur la succession. Le modèle suit ces avances par âge, avec sa
+table de mortalité, et les libère au décès ; la succession en couvre la part
+du réglage « Part de l'avance couverte par la succession », ${g.pourcentage(partReprise, false, 0)} par
+défaut. Ce taux de couverture est une hypothèse, non une donnée : le dépôt n'a
+pas de distribution de patrimoine par niveau de pension, et l'ordre de
+grandeur vient du patrimoine des ménages retraités que le COR publie. Les
+lignes « dont reprises » et « garantie nette » des tableaux du haut en
+viennent. Ce que la succession ne couvre pas est abandonné : c'est cette
+part-là, et elle seule, que l'impôt finance pour de bon.</p>
+
+${g.tableau(
+    ["Année", "Versé", "Avances libérées par les décès", "Reprises",
+      "Garantie nette", "Net en part du PIB", "Avances en cours"],
+    lignesReprises,
+    ["nombre", "nombre", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    `La reprise sur succession dans la trajectoire, milliards d'euros `
+      + `${c.anneeEuros}`,
     true,
   )}
 
@@ -7193,8 +7277,8 @@ guère. La pension majorée de référence n'est pas chiffrée, aucun code du
 moteur ne la servant. Le total est donc une borne basse, et l'écart une borne
 haute.</p>
 
-<div class="note"><strong>Deux corrections, et une seule est dans le
-tableau.</strong> L'ASPA est réclamée par <strong>une personne seule éligible
+<div class="note"><strong>Deux corrections, et les deux sont dans la
+page.</strong> L'ASPA est réclamée par <strong>une personne seule éligible
 sur deux</strong> : fin 2016, 321 200 personnes vivaient sous son plafond sans
 la demander, pour 790 millions d'euros non versés, soit 59 % des sommes servies
 (DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). Le tableau applique
@@ -7205,10 +7289,11 @@ premier euro et avec intérêts, là où l'ASPA n'est récupérée qu'au-delà d
 seuil d'actif net : le Fonds de solidarité vieillesse en a retiré 108,7
 millions d'euros en 2024 (143,9 en 2023, avant le relèvement du seuil), deux
 pour cent de ce qu'elle verse. La garantie touche une population bien plus
-large, et souvent propriétaire ; ce qu'elle rendrait ne se lit sur aucune
-donnée du dépôt, qui n'a pas de distribution de patrimoine par niveau de
-pension. Cette seconde correction n'est pas dans le tableau : le coût affiché
-est <strong>brut, avant reprise</strong>.</div>
+large, et souvent propriétaire : la trajectoire suit ces avances et ce que
+les successions en rendent, au taux de couverture du réglage, qui est une
+hypothèse et non une donnée. La ligne « dont garantie » reste
+<strong>brute, avant reprise</strong> ; les lignes « dont reprises » et
+« garantie nette » disent le reste.</div>
 
 <div class="note"><strong>La garantie n'est pas l'ASPA à un autre
 montant.</strong> L'ASPA regarde <em>toutes les ressources du foyer</em> et ne
@@ -7431,7 +7516,7 @@ function coutDetailLimites(contexte) {
   const solde = c.solde;
   const avenir = c.avenir;
   const observe = solde.annee(solde.derniereAnneeObservee);
-  return g.depliant("Treize réserves à lire avant de citer ces chiffres",  `
+  return g.depliant("Quatorze réserves à lire avant de citer ces chiffres",  `
 <p>Une page de chiffres vaut par ce qu'elle laisse de côté, et cette page en
 laisse treize, écrits ici plutôt qu'en note de bas de page.</p>
 <ul class="serree">
@@ -7519,6 +7604,12 @@ laisse treize, écrits ici plutôt qu'en note de bas de page.</p>
   vigueur. Les systèmes qui ne valent que pour l'avenir la servent jusqu'à leur
   bascule, n'étant jusque-là rien d'autre que le système actuel. Ensuite ils ne
   la servent plus, aux veuves d'avant comme à celles d'après.</li>
+  <li><strong>La reprise sur succession est une hypothèse, pas une
+  donnée.</strong> Les lignes « dont reprises » et « garantie nette » supposent
+  que la succession couvre ${g.pourcentage(contexte.base.part_reprise_garantie, false, 0)} de l'avance d'un bénéficiaire, un réglage,
+  faute de distribution de patrimoine par niveau de pension ; le taux réel est
+  lu sur la courbe des taux, la mortalité est celle du modèle, et les avances
+  ne commencent qu'à la bascule.</li>
   <li><strong>Rien de tout cela n'est certifié, et ne peut l'être.</strong> Une
   projection est une hypothèse : celle de l'INSEE pour la démographie, celle du
   COR pour la macroéconomie, celle du modèle pour les pensions — jusqu'en

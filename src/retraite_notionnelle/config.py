@@ -618,6 +618,16 @@ class Parametres:
     #: le recours complet.
     taux_recours_garantie: float = 0.5
 
+    #: Part de l'avance d'un bénéficiaire que sa SUCCESSION couvre. La garantie
+    #: est une avance reprise sur la succession dès le premier euro, avec
+    #: intérêts ; ce que les successions en rendent dépend du patrimoine des
+    #: bénéficiaires, que le dépôt ne connaît pas. La moitié est l'ordre de
+    #: grandeur que donne le patrimoine des ménages retraités publié par le COR
+    #: (action 47 de la feuille de route) ; 0,3 et 0,7 encadrent. Zéro éteint
+    #: la reprise, un suppose que toute avance est remboursée. Ne joue que sur
+    #: la page Coût, à partir de la bascule.
+    part_reprise_garantie: float = 0.5
+
     #: Seul ou à deux. Ne joue que sur l'allocation d'isolement : la garantie
     #: est individualisée, et le conjoint n'entre pas dans le calcul. Le défaut
     #: est la personne seule, comme pour l'ASPA du scénario 1, de sorte que les
