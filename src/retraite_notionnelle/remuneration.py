@@ -533,6 +533,11 @@ class PrelevementsPension:
     crds: float
     casa: float
     bareme_csg: tuple[TrancheCsgPension, ...]
+    #: Les points de CSG que l'article L. 131-8, 3° e reverse à la branche
+    #: vieillesse : 2,94 des 8,30 prélevés sur une pension. Ne sert à aucun
+    #: calcul de pension — une pension nette ne dépend pas de qui encaisse —,
+    #: mais au COMPTE : cette part de la recette est prélevée sur la dépense.
+    csg_affectee_vieillesse: float = 0.0
 
     @property
     def taux_total(self) -> float:
@@ -633,6 +638,8 @@ def _charger(chemin: str, signature: tuple) -> Prelevements:
             csg_taux_plein=float(pensions["csg_taux_plein"]),
             crds=float(pensions["crds"]),
             casa=float(pensions["casa"]),
+            csg_affectee_vieillesse=float(
+                pensions.get("csg_affectee_vieillesse", 0.0)),
             bareme_csg=tuple(
                 TrancheCsgPension(
                     libelle=tranche["libelle"],

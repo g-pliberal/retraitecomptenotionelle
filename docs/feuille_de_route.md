@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 141<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 181<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10474,3 +10474,79 @@ SEC 2010 demande.
 `moteur/js/macro.js`, `scripts/construire_donnees.py`, `tests/test_cout.py`,
 `tests/test_donnees.py`, `limites.md` § 5 bis et § 5 ter,
 `data/reference/prose/zones.yaml`.
+
+---
+
+### 66. Deux écarts de comptabilité : la convention qu'on ne disait pas, et le brut qu'on ne disait pas non plus — `fait`
+
+**Demande.** « Fais les trois écarts qui restent », à la suite de l'audit de
+l'action 65. Les deux premiers sont ici ; le troisième, les engagements acquis
+à date, a sa propre entrée.
+
+**La convention comptable, et pourquoi elle n'est pas un détail.** Le compte du
+COR est tenu sous convention EPR : ce que l'État verse au régime de ses
+fonctionnaires et aux régimes spéciaux y suit, année par année, ce qu'il faut
+pour les équilibrer. Ces régimes ne montrent donc JAMAIS de déficit, et le
+−2,4 points de PIB que le site affiche pour 2070 est le déficit de ce qui
+RESTE, une fois la fonction publique bouclée. La mention était dans l'en-tête de
+`comptes_retraite.csv` depuis que la série existe, et nulle part dans la prose :
+un lecteur qui ne la connaît pas lit le chiffre pour ce qu'il n'est pas.
+
+**Ce que l'autre convention donne, et le résultat qui surprend.** Le COR publie
+aussi l'effort de l'État figé en part de PIB (EEC), en données complémentaires
+de sa figure des ressources. On attend d'une hypothèse nommée « effort
+constant » qu'elle soit sévère ; elle ne l'est pas, et pas non plus l'inverse :
+**l'écart change de signe**. L'assiette de cotisation des trois fonctions
+publiques recule de 10,4 % du PIB à 8,9 % — moins de fonctionnaires, et des
+primes qui montent plus vite que le traitement indiciaire —, donc le besoin de
+ces régimes recule aussi ; l'effort figé est SOUS le besoin tant qu'ils pèsent,
+et au-dessus ensuite. EEC donne 0,67 point de moins en 2028, croise en 2047, et
+rend 0,49 point de plus en 2069. Sur 2026-2069 les deux moyennes ne diffèrent
+pas de deux centièmes de point. Aucune ne flatte : l'une creuse le déficit de
+demain, l'autre celui d'après-demain.
+
+**Ce qu'il a fallu écrire pour l'obtenir.** `_annees_en_tete` s'arrête au
+premier bloc d'une feuille, et c'est voulu — c'est celui que la figure trace.
+`lire_bloc_eec` lit le second, et rend les QUATRE variantes de productivité
+sous leur étiquette ; choisir celle du scénario de référence est le travail de
+`verifier_donnees.py`, qui la lit dans `hypotheses_projection.yaml`. Un
+récupérateur qui trancherait figerait un scénario dans une couche qui ne le
+connaît pas. La série entre tout entière au niveau `projetee`, y compris ses
+deux premières années : le bloc commence en 2024 et n'y écrit pas les valeurs
+observées, parce que sous EEC l'État ne verse pas ce qu'il a versé.
+
+**Le brut, et une recette qui sort de la dépense.** Les pensions du compte sont
+celles qui sont versées, avant CSG, CRDS et CASA : 13,68 % du PIB en 2024 en
+brut, **au plus 12,43 % en net**. Et l'article L. 131-8, 3° e affecte 2,94 des
+8,30 points de CSG d'une pension à la branche vieillesse : **un tiers de ce
+qu'une pension paie revient au système qui la verse**, soit au plus 11,8 Md€ en
+2024, le cinquième des impôts et taxes affectés qu'il encaisse. Le COR ne se
+trompe pas en portant les deux flux, un compte d'encaissements le doit ; mais
+qui lit ses deux colonnes comme deux grandeurs indépendantes se trompe de cette
+somme. Les scénarios notionnels, eux, retirent les impôts affectés en entier :
+la circularité disparaît avec, et ce n'est pas un hasard — un compte notionnel
+ne crédite que ce qui est assis sur un revenu d'activité.
+
+**Les deux chiffres sont des BORNES, et il faut le dire ainsi.** Le taux plein
+est appliqué à toute la masse, alors que L. 136-8 exonère les petites pensions
+et en soumet d'autres à un taux réduit. Les chiffrer juste demanderait la
+distribution des pensions croisée avec le revenu fiscal des foyers : la DREES
+publie la première, personne ne publie le croisement.
+
+**Ce que la page dit maintenant.** Le dépliant « D'où viennent ces chiffres »
+porte trois paragraphes de plus : la convention et les deux soldes, le brut et
+le net, la recette circulaire. L'année de croisement des deux conventions est
+CALCULÉE et non écrite — l'écrire en dur, c'était promettre le rapport de 2026.
+Trois entrées du catalogue des affirmations et deux contrôles tiennent les
+nombres ; `csg_affectee_vieillesse` est la seule donnée de droit ajoutée, elle
+ne sert à aucun calcul de pension, et le `journal` de `veille.yaml` porte sa
+ligne.
+
+**Fichiers.** `scripts/fetch/cor_comptes_retraite.py` (`lire_bloc_eec`),
+`scripts/verifier_donnees.py`, `data/reference/macro/ressources_eec_retraite.csv`,
+`data/reference/legislation/prelevements_remuneration.yaml`,
+`data/reference/legislation/veille.yaml`, `remuneration.py`,
+`donnees/equilibre.py`, `web/pages.py`, `moteur/js/equilibre.js`,
+`moteur/js/remuneration.js`, `moteur/js/pages.js`,
+`scripts/construire_donnees.py`, `data/reference/site/affirmations.yaml`,
+`tests/test_affirmations.py`, `tests/test_donnees.py`, `limites.md` § 5 bis.

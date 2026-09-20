@@ -9971,6 +9971,18 @@ def _cout_detail_sources(contexte: Contexte) -> str:
     ecarts = {annee: comptes.solde_eec(annee) - comptes.solde(annee)
               for annee in range(comptes.premiere_annee_eec, annee_eec + 1)}
     croisement = next((a for a in sorted(ecarts) if ecarts[a] >= 0), annee_eec)
+    # Le brut et le net, à l'échelle du compte. La masse des pensions est
+    # celle que la DREES ventile en droit direct et droit dérivé : le total du
+    # compte est plus large — frais de gestion, action sociale —, et la CSG ne
+    # porte que sur ce qui est versé à quelqu'un.
+    pensions_nettes = charger_prelevements(contexte.base.racine_donnees).pensions
+    annee_masse = min(depenses.pensions_droits["direct"].derniere_annee, derniere)
+    pib_masse = depenses.pib(annee_masse)
+    masse_pensions = sum(depenses.pensions_droit(categorie, annee_masse)
+                         for categorie in ("direct", "derive"))
+    masse_brute = masse_pensions / pib_masse
+    masse_nette = masse_brute * (1.0 - pensions_nettes.taux_total)
+    masse_circulaire = masse_pensions * pensions_nettes.csg_affectee_vieillesse
     return g.depliant("D'où viennent ces chiffres", f"""
 <p>Cette page croise deux producteurs de comptes, et ils ne comptent pas la
 même chose. Rien n'est mélangé pour autant : du modèle, les deux premières
@@ -10003,6 +10015,28 @@ PIB : le solde y serait de
 change de signe : l'effort figé est SOUS le besoin jusqu'en {croisement}, et
 au-dessus ensuite. Aucune des deux ne flatte ; elles déplacent
 le déficit dans le temps, et l'État n'a promis ni l'une ni l'autre.</p>
+<p class="discret"><strong>Et en BRUT, des deux côtés.</strong> Les pensions
+comptées ici sont celles qui sont versées, avant la contribution sociale
+généralisée, la CRDS et la CASA. Au taux plein, ces trois-là prélèvent
+{g.pourcentage(pensions_nettes.taux_total, decimales=1)} d'une pension : la
+masse nette vaut donc au plus
+{g.pourcentage(masse_nette, decimales=2)} du PIB en {annee_masse}, contre
+{g.pourcentage(masse_brute, decimales=2)} en brut. « Au plus », parce que les
+pensions modestes en sont exonérées ou au taux réduit, et que le dépôt ne sait
+pas dire combien le sont : il faudrait le revenu fiscal du foyer, que personne
+ne publie par tranche de pension.</p>
+<p class="discret"><strong>Et une part de la recette est prélevée sur la
+dépense.</strong> L'article L. 131-8 du code de la sécurité sociale reverse
+{g.nombre(pensions_nettes.csg_affectee_vieillesse * 100, 2)} des
+{g.nombre(pensions_nettes.csg_taux_plein * 100, 2)} points de CSG d'une pension
+à la branche vieillesse : un tiers de ce qu'une pension paie revient au système
+qui la verse. Au taux plein, cela fait au plus
+{_milliards(masse_circulaire)} en {annee_masse}, soit
+{g.pourcentage(masse_circulaire / pib_masse, decimales=2)} du PIB et le
+cinquième des impôts et taxes que le compte encaisse. Le COR ne se trompe pas
+en les comptant tous les deux, un compte d'encaissements le doit ; mais qui lit
+« dépenses » et « ressources » comme deux grandeurs indépendantes se trompe de
+cette somme-là.</p>
 
 <h4>Ce que d'autres caisses versent — rapports à la Commission des comptes de
 la Sécurité sociale</h4>

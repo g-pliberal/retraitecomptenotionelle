@@ -752,6 +752,23 @@ affirmations:
     etat: verifiee
     controle: convention_comptable_est_une_hypothese
 
+  # LE BRUT ET LA RECETTE CIRCULAIRE, dits le 20 septembre 2026. Le compte
+  # affichait des pensions avant CSG sans le dire, et encaissait une CSG
+  # prélevée sur ces mêmes pensions sans le dire non plus.
+  - id: cout.compte_en_brut
+    page: /cout
+    extrait: "Et en BRUT, des deux côtés."
+    porte: la masse des pensions est comptée avant CSG, CRDS et CASA, et la page chiffre la masse nette en borne
+    etat: verifiee
+    controle: compte_en_brut_et_recette_circulaire
+
+  - id: cout.recette_circulaire
+    page: /cout
+    extrait: "Et une part de la recette est prélevée sur la dépense."
+    porte: une part de la CSG prélevée sur les pensions revient à la branche vieillesse, et la page la chiffre
+    etat: verifiee
+    controle: compte_en_brut_et_recette_circulaire
+
   - id: reglages.avertissement
     page: [/cas-types, /cout, /avantages]
     extrait: "Ces chiffres ne sont pas ceux des réglages par défaut."

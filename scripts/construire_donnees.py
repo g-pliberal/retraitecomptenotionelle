@@ -987,6 +987,8 @@ def _prelevements_remuneration() -> dict:
             "csg_taux_plein": prelevements.pensions.csg_taux_plein,
             "crds": prelevements.pensions.crds,
             "casa": prelevements.pensions.casa,
+            "csg_affectee_vieillesse":
+                prelevements.pensions.csg_affectee_vieillesse,
             "bareme_csg": [
                 {"libelle": tranche.libelle, "taux": tranche.taux,
                  "revenu_fiscal_maximum": tranche.revenu_fiscal_maximum}

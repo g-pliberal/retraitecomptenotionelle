@@ -245,6 +245,11 @@ export class PrelevementsPension {
     this.csg_taux_plein = fiche.csg_taux_plein;
     this.crds = fiche.crds;
     this.casa = fiche.casa;
+    // Les points de CSG que L. 131-8, 3° e reverse à la branche vieillesse :
+    // 2,94 des 8,30 prélevés sur une pension. Ne touche à aucune pension
+    // nette — celle-ci ne dépend pas de qui encaisse — mais au COMPTE, où
+    // cette part de la recette est prélevée sur la dépense.
+    this.csg_affectee_vieillesse = fiche.csg_affectee_vieillesse ?? 0;
     this.bareme_csg = fiche.bareme_csg;
   }
 
