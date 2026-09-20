@@ -351,6 +351,78 @@ class Pensionne:
     #: barèmes de prélèvement. En euros courants de chaque année : seul le
     #: rapport des deux est lu, et il est sans dimension.
     cotisations: dict[str, dict[int, float]] = field(default_factory=dict)
+    #: Ce que le PILIER CAPITALISÉ de cette carrière encaisse, prélève et
+    #: détient, année par année, en euros courants : versement brut, frais sur
+    #: versement, frais de gestion, encours de fin d'année. Vide pour qui n'a
+    #: pas de pilier.
+    pilier: dict[int, tuple[float, float, float, float]] = field(default_factory=dict)
+    #: La rente du pilier, en euros courants de la liquidation : brute (le
+    #: capital divisé par le diviseur) et nette des frais sur la réserve et
+    #: sur arrérages. Le pilier sert une rente nominale constante.
+    rente_pilier: tuple[float, float] = (0.0, 0.0)
+
+
+@dataclass(frozen=True)
+class PilierAnnuel:
+    """Le pilier capitalisé de TOUS les cotisants, une année, PAR EURO VERSÉ.
+
+    Ce n'est ni une ressource ni une dépense de la répartition : le pilier
+    constitue un capital au nom de chacun. Ce qui compte ici est ce que
+    l'enveloppe prélève sur l'ensemble des cotisants, et ce qu'elle leur sert,
+    sous le régime de frais réglé.
+
+    LA GRILLE NE DONNE QUE DES RAPPORTS, JAMAIS UN NIVEAU : c'est la règle de
+    toute la page Coût, et elle vaut ici. Chaque grandeur est rapportée aux
+    versements de l'année sur la même grille, en euros courants de la même
+    année ; le niveau vient d'ailleurs — les versements du pilier sont les
+    cotisations du système 4, ancrées sur le compte du COR, multipliées par le
+    rapport des deux taux (10 points contre 18). :meth:`niveaux` fait le
+    produit.
+    """
+
+    annee: int
+    #: Frais sur versement de l'année, par euro versé.
+    frais_versement: float
+    #: Frais de gestion de l'année, par euro versé.
+    frais_gestion: float
+    #: Encours de fin d'année, par euro versé dans l'année.
+    encours: float
+    #: Rentes de l'année avant les frais qui les grèvent, par euro versé.
+    rentes_brutes: float
+    #: Rentes servies, nettes, par euro versé.
+    rentes: float
+
+    @property
+    def frais_accumulation(self) -> float:
+        return self.frais_versement + self.frais_gestion
+
+    @property
+    def frais_rentes(self) -> float:
+        return self.rentes_brutes - self.rentes
+
+    @property
+    def frais(self) -> float:
+        """Tout ce que l'enveloppe prélève dans l'année, par euro versé."""
+        return self.frais_accumulation + self.frais_rentes
+
+    @property
+    def taux_frais_encours(self) -> float:
+        """Les frais de gestion de l'année rapportés à l'encours."""
+        return self.frais_gestion / self.encours if self.encours > 0 else 0.0
+
+    def niveaux(self, versements: float) -> dict[str, float]:
+        """Chaque grandeur au niveau des ``versements`` donnés, même unité."""
+        return {
+            "versements": versements,
+            "frais_versement": self.frais_versement * versements,
+            "frais_gestion": self.frais_gestion * versements,
+            "frais_accumulation": self.frais_accumulation * versements,
+            "encours": self.encours * versements,
+            "rentes_brutes": self.rentes_brutes * versements,
+            "rentes": self.rentes * versements,
+            "frais_rentes": self.frais_rentes * versements,
+            "frais": self.frais * versements,
+        }
 
 
 @dataclass
@@ -485,6 +557,9 @@ class AvenirAnnuel:
     #: sont le système actuel avant elle et servent donc sa réversion ;
     #: après, elles ne la servent plus, à personne.
     reforme_en_vigueur: bool = True
+    #: Le pilier capitalisé de l'année, tous cotisants, par euro versé ;
+    #: ``None`` avant la bascule.
+    pilier: PilierAnnuel | None = None
 
     def cout_constants(self, scenario: str) -> float:
         """Coût du système, en millions d'euros constants de référence."""
@@ -1342,6 +1417,8 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                     for ligne in comparaison.notionnel_liberal.compte.cotisations
                 },
             },
+            pilier=_flux_pilier(comparaison),
+            rente_pilier=_rente_pilier(comparaison),
         )
         for (code, generation), comparaison in grille.resultats.items()
     ]
@@ -1349,6 +1426,26 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     for motif in grille.echecs.values():
         motifs[motif] = motifs.get(motif, 0) + 1
     return pensionnes, motifs
+
+
+def _flux_pilier(comparaison) -> dict[int, tuple[float, float, float, float]]:
+    """Les flux annuels du pilier capitalisé d'une carrière, en euros courants."""
+    pilier = comparaison.notionnel_liberal.capitalisation
+    if pilier is None or not pilier.actif:
+        return {}
+    return {
+        annee.annee: (annee.versement_brut, annee.frais_versement,
+                      annee.frais_gestion, annee.encours)
+        for annee in pilier.annees
+    }
+
+
+def _rente_pilier(comparaison) -> tuple[float, float]:
+    """La rente du pilier d'une carrière, brute puis nette de ses frais."""
+    pilier = comparaison.notionnel_liberal.capitalisation
+    if pilier is None or not pilier.actif:
+        return (0.0, 0.0)
+    return (pilier.capital / pilier.conversion.diviseur, pilier.rente_annuelle)
 
 
 #: Demi-largeur de la tranche d'âges qu'une génération de la grille représente.
@@ -1789,6 +1886,51 @@ def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
     return masses
 
 
+def _masses_pilier(pensionnes: list[Pensionne], population: Population,
+                   annee: int, poids_cotisants: dict[str, float],
+                   poids_retraites: dict[str, float]) -> dict[str, float]:
+    """Ce que le pilier capitalisé de TOUS les cotisants encaisse, prélève,
+    détient et sert une année donnée, en euros courants.
+
+    Bâti comme :func:`_masses_cotisations`, sur la même grille et les mêmes
+    effectifs de classe d'âge, à une différence près : les cinq cohortes
+    qu'une génération de la grille représente partagent l'ANNÉE CIVILE de son
+    pilier, et non son âge. Une cotisation dépend de l'âge, et la cohorte
+    voisine verse en ``t`` ce que la grille versait en ``t − 1`` ; un pilier
+    dépend de dates — la bascule, les paliers de frais —, et la cohorte née
+    deux ans plus tôt n'a pas deux ans d'encours de plus en 2026, elle en a
+    zéro comme tout le monde. Chaque cohorte accumule donc au calendrier de la
+    grille jusqu'à sa propre liquidation, décalée d'autant, et touche ensuite
+    la rente. Les flux d'accumulation pèsent les cotisants de chaque caisse,
+    les rentes pèsent ses retraités, comme les pensions ; la rente est
+    nominale et constante, comme le pilier la sert.
+    """
+    masses = {cle: 0.0 for cle in ("versements", "frais_versement", "frais_gestion",
+                                   "encours", "rentes_brutes", "rentes")}
+    for pensionne in pensionnes:
+        if not pensionne.pilier:
+            continue
+        part_cotisants = poids_cotisants.get(pensionne.code, 0.0)
+        part_retraites = poids_retraites.get(pensionne.code, 0.0)
+        for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
+            poids = population.effectif(annee - pensionne.generation - decalage, annee)
+            if poids <= 0.0:
+                continue
+            flux = pensionne.pilier.get(annee)
+            if (flux is not None and part_cotisants > 0.0
+                    and annee <= pensionne.annee_liquidation + decalage):
+                versement, frais_v, frais_g, encours = flux
+                masses["versements"] += part_cotisants * poids * versement
+                masses["frais_versement"] += part_cotisants * poids * frais_v
+                masses["frais_gestion"] += part_cotisants * poids * frais_g
+                masses["encours"] += part_cotisants * poids * encours
+            if annee > pensionne.annee_liquidation + decalage and part_retraites > 0.0:
+                brute, nette = pensionne.rente_pilier
+                masses["rentes_brutes"] += part_retraites * poids * brute
+                masses["rentes"] += part_retraites * poids * nette
+    return masses
+
+
 def _rapports_recettes(masses: dict[str, float], annee: int,
                        bascule: int) -> dict[str, float]:
     """Rapport de la recette de chaque système à celle du système actuel.
@@ -2117,6 +2259,16 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
                                           poids_cotisants(annee))
         projete = annee > derniere_publiee
         coefficient = macro.coefficient_prix(annee, annee_euros)
+        pilier = None
+        if annee >= simulateur.parametres.annee_debut_capitalisation:
+            flux = _masses_pilier(pensionnes, population, annee,
+                                  poids_cotisants(annee), poids_annee)
+            if flux["versements"] > 0.0:
+                pilier = PilierAnnuel(annee=annee, **{
+                    cle: flux[cle] / flux["versements"]
+                    for cle in ("frais_versement", "frais_gestion", "encours",
+                                "rentes_brutes", "rentes")
+                })
         base = (
             ancrage * masses["actuel"] if projete
             else depenses.repartition(annee) * coefficient
@@ -2140,6 +2292,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             part_derives=part_derives,
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
+            pilier=pilier,
         ))
     _reprises_successions(lignes, simulateur, garantie)
 

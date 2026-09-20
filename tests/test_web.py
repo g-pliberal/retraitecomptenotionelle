@@ -5667,3 +5667,22 @@ def test_le_script_de_la_page_s_analyse():
         fichier.write(script)
     resultat = subprocess.run(["node", "--check", fichier.name], capture_output=True, text=True)
     assert resultat.returncode == 0, resultat.stderr
+
+
+def test_le_reglage_des_frais_du_pilier_voyage_avec_les_autres():
+    """« frais=detail » se lit, s'applique aux paramètres et se réécrit dans
+    l'adresse ; le défaut ne s'écrit pas."""
+    from retraite_notionnelle.config import Parametres
+    from retraite_notionnelle.web.pages import CLES_MODELISATION, Saisie
+
+    assert "frais" in CLES_MODELISATION
+    defaut = Saisie.depuis_requete({})
+    assert defaut.frais == "paliers" and defaut.requete_modelisation() == ""
+    saisie = Saisie.modelisation({"frais": "detail", "naissance": "1980-01"})
+    assert saisie.frais == "detail" and not saisie.demandee
+    parametres = saisie.parametres(Parametres())
+    assert parametres.frais_arrerages_capitalisation == 0.0220
+    assert parametres.frais_gestion_paliers == ()
+    assert saisie.requete_modelisation() == "frais=detail"
+    # Une valeur inconnue retombe sur le défaut, sans erreur.
+    assert Saisie.depuis_requete({"frais": "gratuit"}).frais == "paliers"

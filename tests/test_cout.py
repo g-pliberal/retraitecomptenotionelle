@@ -2228,3 +2228,44 @@ def test_sans_solde_la_dette_est_vide(depenses, population):
     assert sans.dette.annees == []
     assert isinstance(sans.dette, Dette)
     assert sans.dette.horizon("actuel") == 0.0
+
+
+# -- le pilier capitalisé de tous les cotisants -------------------------------
+
+
+def test_le_pilier_de_tous_les_cotisants_est_donne_par_euro_verse(cout):
+    """Rien avant la bascule ; ensuite des rapports, jamais un niveau : les
+    frais sont une fraction des versements, l'encours grossit, les rentes
+    montent avec les liquidations."""
+    from retraite_notionnelle.config import Parametres
+    bascule = Parametres().annee_debut_capitalisation
+    avenir = cout.avenir
+    assert all(ligne.pilier is None for ligne in avenir.annees if ligne.annee < bascule)
+    lignes = [ligne for ligne in avenir.annees if ligne.annee >= bascule]
+    assert lignes and all(ligne.pilier is not None for ligne in lignes)
+    premier = lignes[0].pilier
+    assert 0.0 < premier.frais_versement < 0.02
+    assert premier.encours == pytest.approx(1.0 - premier.frais_versement, rel=1e-6)
+    # L'encours par euro versé grossit d'une décennie à l'autre — pas
+    # forcément d'une année à l'autre, la démographie des versements bouge.
+    encours = {ligne.annee: ligne.pilier.encours for ligne in lignes}
+    assert encours[2030] < encours[2040] < encours[2050] < encours[2060] < encours[2070]
+    assert encours[2070] > 20.0
+    rentes = [ligne.pilier.rentes for ligne in lignes]
+    assert rentes[0] < 0.01 and rentes[-1] > 1.0
+    for ligne in lignes:
+        pilier = ligne.pilier
+        assert 0.0 <= pilier.frais_rentes <= pilier.rentes_brutes
+        assert pilier.frais_gestion >= 0.0
+        assert pilier.niveaux(100.0)["versements"] == 100.0
+        assert pilier.niveaux(100.0)["frais"] == pytest.approx(100.0 * pilier.frais)
+
+
+def test_le_taux_de_frais_sur_l_encours_baisse_avec_les_paliers(cout):
+    """Par euro d'encours, la gestion coûte moins en 2070 qu'en 2030 : les
+    paliers et la convergence du stock font leur travail dans l'agrégat."""
+    avenir = cout.avenir
+    tot_2030 = avenir.annee(2030).pilier.taux_frais_encours
+    tot_2070 = avenir.annee(2070).pilier.taux_frais_encours
+    assert 0.004 < tot_2030 < 0.008
+    assert tot_2070 < tot_2030 / 2

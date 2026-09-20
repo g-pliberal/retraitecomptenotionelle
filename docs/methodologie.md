@@ -1525,6 +1525,16 @@ contrat, elle garde les frais du jour où elle est souscrite.
 rente = capital / G(a, L) × Σ p_t / Σ p_t (1 − f_réserve)^(−t) × (1 − f_arrérages)
 ```
 
+**Six régimes de frais, un réglage.** Le site propose ces frais comme un
+réglage des règles du calcul, « Frais du pilier capitalisé », qui voyage dans
+l'adresse et s'applique au simulateur comme aux pages qui agrègent :
+`Parametres.sous_regime_frais` définit une fois les six régimes (marché 2025
+et paliers, paliers avec plafond, paliers avec contrats, marché 2025 figé,
+PER vendu, aucun frais), et le portage les applique sans les redéfinir. La
+page Coût compte le pilier de tous les cotisants sous ce réglage, par euro
+versé : la grille ne lui donne que des rapports, le niveau vient des
+cotisations du système 4 ancrées sur le compte du COR.
+
 Prélever `f_réserve` par an sur la réserve d'une rente nivelée, à taux
 technique nul, revient à actualiser au taux `−f_réserve` : le facteur du
 milieu est le rapport de l'ancien diviseur au nouveau, sur la courbe de survie

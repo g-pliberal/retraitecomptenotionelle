@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 908<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 198<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -9045,3 +9045,42 @@ une mesure ; aucune série publique ne précède 2013 en Suède ni 2010 au Chili
 le modèle ne fait jamais remonter un frais alors que le Chili l'a vu ; le
 frais sur la réserve est estimé, sans mesure de l'OPEF. Tout se change en un
 endroit.
+
+### 53. Le système de frais partout où il compte : un réglage du simulateur, et le pilier de tous les cotisants sur la page Coût — `fait`
+
+**Demande.** « Je veux que tu mettes ce système partout où cela a de
+l'importance ; je pense surtout au simulateur et à la page Coût. »
+
+**Le réglage.** Les règles du calcul portent un réglage de plus, « Frais du
+pilier capitalisé », qui voyage dans l'adresse comme les autres
+(`frais=…`) et s'applique partout où le pilier est calculé : simulateur,
+cas types, coût. Six régimes, définis une seule fois dans
+`Parametres.sous_regime_frais` et portés tels quels en JavaScript : le
+marché de 2025 qui baisse par paliers (défaut) ; les mêmes paliers avec
+tout le stock qui suit, un plafond ; les mêmes paliers avec un stock qui
+garde son tarif, des contrats ; le marché de 2025 figé ; le PER tel qu'il est
+vendu, aux 2,20 % d'arrérages des seuls facturants, sans frais de réserve ni
+baisse, l'ancien réglage ; aucun frais. Un test tient l'ordre des rentes
+qu'ils servent, et un autre tient les 2,20 % égaux à la valeur publiée du
+fichier de frais.
+
+**La page Coût.** Elle disait que le pilier n'est ni une ressource ni une
+dépense de la répartition, et c'est toujours vrai ; elle le compte désormais
+pour lui-même. `cout.py` agrège le pilier de toutes les carrières types sur
+la population, comme il agrège les cotisations, à une différence près : les
+cohortes voisines partagent l'année civile du pilier et non son âge, parce
+qu'un pilier dépend de dates (la bascule, les paliers) et qu'une cohorte née
+deux ans plus tôt n'a pas deux ans d'encours de plus en 2026. Et la règle de
+la page tient : la grille ne fournit que des rapports par euro versé (frais,
+encours, rentes), le niveau vient des cotisations du système 4 ancrées sur le
+compte du COR, multipliées par le rapport des deux taux. Le dépliant du
+pilier gagne un tableau par décennie — versements, frais prélevés, frais de
+gestion en part de l'encours, encours en part de PIB, rentes servies — et
+ses cumuls jusqu'en 2070 : au réglage par défaut, 6 300 Md€ collectés, 760
+prélevés par l'enveloppe (12 % des versements), 3 460 de rentes servies, un
+encours qui atteint 146 % du PIB. Changer le réglage change ce tableau, et
+lui seul sur la page.
+
+**Ce que ça déplace.** Rien sur le solde, la dette, la garantie ni les six
+systèmes : le pilier reste hors bilan. Portage JavaScript, témoins, sept
+tests.
