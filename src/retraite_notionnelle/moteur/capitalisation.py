@@ -494,7 +494,8 @@ class ConstructeurCapitalisation:
     # -- transmission --------------------------------------------------------
 
     def _transmission(self, annees: list[AnneeCapitalisation], age_ouverture: float,
-                      annee_ouverture: int, sexe: str | None) -> tuple[float, float]:
+                      annee_ouverture: int, sexe: str | None,
+                      population: str | None = None) -> tuple[float, float]:
         """Probabilité de mourir avant le départ, et espérance du capital transmis.
 
         Vues de l'OUVERTURE du pilier, et non de la naissance : ce qui est en
@@ -509,8 +510,7 @@ class ConstructeurCapitalisation:
         """
         courbe = self.mortalite.courbe(
             age_ouverture, float(annee_ouverture), sexe,
-            self.parametres.table_generation,
-            self.parametres.population_conversion,
+            self.parametres.table_generation, population,
         )
         esperance = 0.0
         deces = 0.0
@@ -527,7 +527,8 @@ class ConstructeurCapitalisation:
 
     def construire(self, assiettes: dict[int, float], annee_naissance: int,
                    age_liquidation: float, annee_liquidation: int,
-                   mois_liquidation: int = 1, sexe: str | None = None) -> Capitalisation:
+                   mois_liquidation: int = 1, sexe: str | None = None,
+                   population: str | None = None) -> Capitalisation:
         """Le pilier d'une carrière, de son ouverture à sa rente.
 
         ``assiettes`` porte, année par année, l'assiette sur laquelle la
@@ -541,7 +542,7 @@ class ConstructeurCapitalisation:
         conversion = self.convertisseur.coefficient(
             age_liquidation, annee_liquidation,
             None if self.parametres.table_conversion is TableConversion.UNISEXE else sexe,
-            mois_liquidation,
+            mois_liquidation, population,
         )
 
         # Le pilier s'éteint quand il n'a plus rien à encaisser : ni les cinq
@@ -584,6 +585,7 @@ class ConstructeurCapitalisation:
         deces, transmis = self._transmission(
             annees, ouverture - annee_naissance, ouverture,
             None if self.parametres.table_conversion is TableConversion.UNISEXE else sexe,
+            population,
         )
 
         return Capitalisation(

@@ -351,7 +351,7 @@ class ScenarioNotionnel:
         )
         conversion = self.convertisseur.coefficient(
             age_liquidation, annee_liquidation, self._sexe(carriere),
-            carriere.mois_liquidation,
+            carriere.mois_liquidation, self.convertisseur.population_de(carriere),
         )
         pension = compte.capital / conversion.diviseur
 
@@ -434,6 +434,7 @@ class ScenarioNotionnel:
             annee_liquidation=carriere.annee_liquidation,
             mois_liquidation=carriere.mois_liquidation,
             sexe=carriere.sexe,
+            population=self.convertisseur.population_de(carriere),
         )
 
     def _garantie_vieillesse(self, carriere: Carriere,
@@ -537,7 +538,7 @@ class ScenarioNotionnel:
         )
         conversion = self.convertisseur.coefficient(
             age_liquidation, annee_liquidation, self._sexe(carriere),
-            carriere.mois_liquidation,
+            carriere.mois_liquidation, self.convertisseur.population_de(carriere),
         )
         capital_total = compte.capital + capital_acquis
         pension = capital_total / conversion.diviseur
@@ -562,7 +563,7 @@ class ScenarioNotionnel:
         actuel = self.scenario_actuel.calculer(carriere)
         conversion = self.convertisseur.coefficient(
             age_liquidation, annee_liquidation, self._sexe(carriere),
-            carriere.mois_liquidation,
+            carriere.mois_liquidation, self.convertisseur.population_de(carriere),
         )
         compte = self.constructeur.construire(
             carriere,
@@ -632,7 +633,8 @@ class ScenarioNotionnel:
         else:
             age_conversion = carriere.age_liquidation or self.age_reference.age(bascule)
         conversion = self.convertisseur.coefficient(
-            age_conversion, bascule, self._sexe(carriere)
+            age_conversion, bascule, self._sexe(carriere),
+            population=self.convertisseur.population_de(carriere),
         )
         capital_a_la_bascule = droits.pension_annuelle * conversion.diviseur
 

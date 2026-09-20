@@ -268,6 +268,13 @@ class RevalorisationStock(str, Enum):
     REINDEXE = "reindexe"
 
 
+#: La valeur de ``population_conversion`` qui rattache chaque carrière au
+#: vingtile de niveau de vie où son salaire la place : le diviseur suit alors
+#: la mortalité de ce vingtile (tables de l'INSEE), et non celle de la
+#: population générale.
+POPULATION_PAR_NIVEAU_DE_VIE = "niveau_de_vie"
+
+
 class SituationFoyer(str, Enum):
     """Situation de foyer retenue pour la garantie vieillesse du scénario 6.
 
@@ -483,14 +490,25 @@ class Parametres:
     # --- Conversion en rente ------------------------------------------------
     table_conversion: TableConversion = TableConversion.UNISEXE
 
-    #: Population dont la mortalité remplace celle de la population générale
-    #: dans le diviseur — une clé de
-    #: ``data/reference/mortalite/esperances_vie_populations.csv``, telle
-    #: ``fonctionnaires_civils_etat``. ``None``, le défaut, est la table
-    #: commune : un système qui trierait ses rentes par population ne serait
-    #: pas défendable. La variante existe pour MESURER ce que le diviseur
-    #: commun transfère à qui vit plus longtemps (action 14).
-    population_conversion: str | None = None
+    #: Population dont la mortalité entre dans le diviseur, à la place de
+    #: celle de la population générale. C'EST L'INTERRUPTEUR, et il n'y en a
+    #: qu'un :
+    #:
+    #: - ``POPULATION_PAR_NIVEAU_DE_VIE`` (le défaut depuis le 21 septembre
+    #:   2026) : chaque carrière est rattachée au vingtile de niveau de vie où
+    #:   son salaire la place, et son diviseur suit la mortalité de ce
+    #:   vingtile, lue chez l'INSEE. Le stock est compris : les scénarios
+    #:   rétroactifs recalculent tout le monde ainsi.
+    #: - ``None`` : la table COMMUNE, la même pour tout le monde. C'est ce
+    #:   qu'il faut poser pour désactiver la mesure, et ce que les scripts de
+    #:   mesure posent pour la chiffrer.
+    #: - une clé de ``esperances_vie_populations.csv`` ou un vingtile nommé
+    #:   (``fonctionnaires_civils_etat``, ``niveau_de_vie_v01``…) : la même
+    #:   population pour toutes les carrières, pour mesurer.
+    #:
+    #: Ce que la mesure vaut et ce qu'elle suppose est dans
+    #: ``docs/methodologie.md`` §5 et ``docs/limites.md`` §5 (action 14).
+    population_conversion: str | None = POPULATION_PAR_NIVEAU_DE_VIE
 
     #: Taux de préfinancement (« front-loading ») incorporé au diviseur.
     #: 0 signifie : le diviseur est l'espérance de vie résiduelle actualisée au

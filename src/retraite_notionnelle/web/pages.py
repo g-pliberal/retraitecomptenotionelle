@@ -125,13 +125,14 @@ AGES_REFERENCE = [
 
 TABLES = [("unisexe", "Unisexe (défaut)"), ("par_sexe", "Par sexe")]
 
-#: La population dont la mortalité entre dans le diviseur. « commune » est la
-#: table de population générale, servie par défaut ; l'autre clé est celle
-#: d'une population dont un régime publie l'espérance de vie
-#: (``mortalite/esperances_vie_populations.csv``), et sert à mesurer ce que
-#: le diviseur commun transfère à qui vit plus longtemps.
+#: La population dont la mortalité entre dans le diviseur. « niveau_de_vie »,
+#: le défaut, rattache la carrière au vingtile de niveau de vie où son salaire
+#: la place (tables de l'INSEE) ; « commune » est la table de population
+#: générale, la même pour tout le monde, et désactive la mesure ; les autres
+#: clés imposent une population à toute carrière, pour mesurer.
 POPULATIONS = [
-    ("commune", "Population générale (défaut)"),
+    ("niveau_de_vie", "Par niveau de vie (défaut)"),
+    ("commune", "Population générale, la même pour tous"),
     ("fonctionnaires_civils_etat", "Fonctionnaires civils de l'État"),
     ("niveau_de_vie_v01", "Les 5 % les plus modestes (INSEE)"),
     ("niveau_de_vie_v10", "Niveau de vie médian (INSEE)"),
@@ -532,7 +533,7 @@ class Saisie:
     lissage: int = 1
     age_reference: str = "fixe_apres_bascule"
     table: str = "unisexe"
-    population: str = "commune"
+    population: str = "niveau_de_vie"
     conversion_acquis: str = "reference"
     part_cotisation: str = "salariale"
     #: Seul ou en couple : la situation de foyer de la garantie vieillesse du
@@ -2770,13 +2771,13 @@ def _champs_modelisation(saisie: Saisie) -> str:
                 complement=g.GLOSSAIRE["table de conversion"]),
         g.liste("population", "Population de la table", POPULATIONS,
                 saisie.population,
-                complement="La table est celle de la population générale. "
-                "Choisir une population dont on connaît l'espérance de vie "
-                "— les fonctionnaires civils de l'État vivent un an de plus "
-                "à 65 ans, les 5 % les plus aisés sept ans de plus que les "
-                "5 % les plus modestes chez les hommes — mesure ce qu'un "
-                "diviseur commun lui transfère. C'est une mesure, pas une "
-                "règle : aucun système ne trie ses rentes par population."),
+                complement="Par défaut, le diviseur suit la mortalité du "
+                "vingtile de niveau de vie où votre salaire vous place, "
+                "d'après les tables de l'INSEE : les 5 % les plus aisés "
+                "vivent sept ans de plus à 65 ans que les 5 % les plus "
+                "modestes chez les hommes, et une table commune le leur "
+                "transférerait. « Population générale » revient à cette "
+                "table commune ; les autres imposent une population."),
         g.liste("part_cotisation", "Part de la cotisation portée au compte",
                 PARTS_COTISATION, saisie.part_cotisation,
                 "salariale seule, ou salariale et patronale",
@@ -8783,7 +8784,7 @@ jusqu'en 1986 et sur les prix seulement depuis 1987. C'est donc elle, plutôt qu
 « Indexation sur les prix », qui neutralise la question de l'indexation quand on
 veut isoler l'effet propre des comptes notionnels. Sur une carrière
 (un salarié du privé non cadre au salaire moyen, entré à 20 ans et parti
-à 62), la correction reste modeste : +5,2 points pour la génération 1920,
+à 62), la correction reste modeste : +5,0 points pour la génération 1920,
 +0,0 pour 1945, -0,5 pour 1958. Les cotisations se concentrent sur les dernières années, là où
 les deux règles coïncident.</p>
 

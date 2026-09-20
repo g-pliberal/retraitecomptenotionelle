@@ -240,8 +240,8 @@ def _deficit(mortalite, depuis: int | None = None) -> int:
               f"{rapports['notionnel_liberal']:+.1%} |")
     print()
     print("| Scénario | Année | Baisse de la dépense, survie du vingtile | Baisse si la page "
-          "l'appliquait sans corriger la survie | Solde, part de PIB | Solde avec le diviseur "
-          "par vingtile |")
+          "l'appliquait sans corriger la survie | Solde sous la table commune, part de PIB | "
+          "Solde avec le diviseur par vingtile (le défaut du site) |")
     print("|---|---:|---:|---:|---:|---:|")
     cumul = {s: [] for s in scenarios}
     for ligne in cout.solde.projetees():

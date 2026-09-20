@@ -445,13 +445,21 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   et italien. Une table sexuée est actuariellement exacte mais réduirait la
   pension des femmes de 5 à 10 % à capital identique, et serait contraire au
   principe de non-discrimination. `--table par_sexe` permet de mesurer l'écart.
-- **Table de population générale** par défaut, et c'est le second choix de
-  non-discrimination : la même espérance de vie pour l'ouvrier et pour le
-  cadre, pour le fonctionnaire et pour le manœuvre. Or les populations ne
-  vivent pas aussi longtemps les unes que les autres, et le diviseur commun
-  transfère à qui vit plus longtemps. Le dépôt le MESURE sans en faire une
-  règle : `population=fonctionnaires_civils_etat` remplace la table commune
-  par celle des pensionnés civils de l'État, dont le Service des retraites de
+- **Table par niveau de vie** par défaut, depuis le 21 septembre 2026, et
+  c'est un choix qui se désactive d'un mot. Une table de population générale
+  — la même espérance de vie pour l'ouvrier et pour le cadre — transfère à
+  qui vit plus longtemps, et qui vit plus longtemps est aussi qui a le plus
+  cotisé : le diviseur commun coûte au régime quatre à cinq dixièmes de point
+  de PIB, et les prend aux modestes. Le modèle rattache donc chaque carrière
+  au vingtile de niveau de vie où son salaire la place (bullet suivant) et
+  lui sert le diviseur de ce vingtile, stock compris : les scénarios
+  rétroactifs recalculent tout le monde ainsi. L'interrupteur est
+  `Parametres.population_conversion` : `None` rend la table commune partout,
+  sur le site sous « Population générale, la même pour tous », et les scripts
+  de mesure la posent pour chiffrer ce que le défaut déplace. Une population
+  nommée s'impose aussi à toute carrière, pour mesurer :
+  `population=fonctionnaires_civils_etat` remplace la table par celle des
+  pensionnés civils de l'État, dont le Service des retraites de
   l'État publie l'espérance de vie à 65 ans (24,68 ans pour les femmes, 21,16
   pour les hommes en 2024, un an de plus que l'INSEE à la population
   générale). La table n'est pas reconstruite : un facteur sur la force de
@@ -486,9 +494,13 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   les aisés : 12,5 % de pension notionnelle à capital égal pour le SMIC,
   11,7 % dans l'autre sens pour le libéral, et sur la vie 49 000 € retirés
   au premier et 173 000 € ajoutés au second sous le système actuel — qui
-  transfère autant que les autres, n'ayant aucun diviseur pour le savoir. Le
-  diviseur servi reste commun, par décision ; la mesure dit ce que cette
-  décision coûte, et à qui.
+  transfère autant que les autres, n'ayant aucun diviseur pour le savoir.
+  Cette mesure est celle que le défaut applique désormais ; ses chiffres
+  restent ceux de la table commune contre le vingtile, et
+  `scripts/mortalite_population.py` les recalcule en posant la table commune.
+  Ce que le défaut suppose est écrit avec lui : un salaire n'est pas un niveau
+  de vie de ménage, et le facteur de chaque vingtile est tenu constant dans
+  le temps.
 - **ν = 0** par défaut. La rente est actualisée au taux auquel elle sera ensuite
   revalorisée ; les deux étant identiques, ils se compensent et le diviseur se
   réduit à l'espérance de vie résiduelle. Le résultat est directement lisible.
@@ -1476,8 +1488,8 @@ frais.
 rente = capital / G(a, L) × (1 − f_arrérages)
 ```
 
-`G` est le diviseur du modèle, sur la même table de génération, unisexe par
-défaut, avec un taux technique nul
+`G` est le diviseur du modèle, sur la même table de génération, unisexe et
+au vingtile de niveau de vie de la carrière par défaut, avec un taux technique nul
 (`taux_technique_rente_capitalisation`) comme dans la plupart des contrats. Les
 deux lignes du scénario 6 partagent alors le **même diviseur** : à capital égal
 elles servent le même montant, et tout écart vient d'ailleurs. Un taux

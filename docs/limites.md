@@ -5495,10 +5495,11 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   propre régime ; les 5 % d'hommes les plus aisés vivent sept ans de plus à
   65 ans que les 5 % les plus modestes, d'après l'INSEE. Depuis le
   20 septembre 2026, les deux écarts sont MESURÉS
-  (`scripts/mortalite_population.py`, action 14), le diviseur servi restant
-  commun par décision — un système qui trierait ses rentes par population ne
-  serait pas défendable —, et la variante ne servant qu'à dire ce que ce
-  choix coûte, et à qui. Pour le fonctionnaire sédentaire né en 1975, la
+  (`scripts/mortalite_population.py`, action 14) — et, depuis le
+  21 septembre 2026, le diviseur par vingtile de niveau de vie est le DÉFAUT
+  du modèle, stock compris, sur tous les chiffres du site ;
+  `population_conversion=None` rend la table commune, et les chiffres
+  ci-dessous sont mesurés contre elle. Pour le fonctionnaire sédentaire né en 1975, la
   table de sa population lui donne 1,5 an de rente de plus que la table
   commune, soit 5,7 % de pension notionnelle à capital égal et 54 000 € sur
   la vie sous le système actuel, dont la pension ne bouge pas d'un euro parce
@@ -5518,10 +5519,12 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   ce transfert coûte au régime se mesure aussi (`--deficit`) : un diviseur
   par vingtile baisserait la dépense des scénarios notionnels de 3,6 à
   4,3 %, quatre à cinq dixièmes de point de PIB, parce que les gros capitaux
-  sont servis le plus longtemps. La page Coût ne l'applique pas — elle compte
-  tout le monde à la mortalité générale, et ne saurait le faire proprement
-  sans la distribution des pensions par niveau de vie —, et le diviseur servi
-  reste commun.
+  sont servis le plus longtemps. La page
+  Coût l'applique depuis lors par les pensions de ses cas types, mais compte
+  encore tout le monde à la mortalité générale : ce sous-compte déplace son
+  rapport de masses de moins de 1 %, un dixième de point de PIB au plus en
+  2070, et ne se corrigerait proprement qu'avec la distribution des pensions
+  par niveau de vie.
 
 - **La décote surpunit l'anticipation ordinaire et sous-punit l'extrême.**
   Mesuré en comparant ce que coûte une année d'anticipation sous le droit en

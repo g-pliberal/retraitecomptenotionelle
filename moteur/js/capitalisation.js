@@ -242,10 +242,10 @@ export class ConstructeurCapitalisation {
    * pour un assuré qui atteint son départ, et la compter ferait servir la rente
    * et transmettre le capital à la fois.
    */
-  _transmission(annees, ageOuverture, anneeOuverture, sexe) {
+  _transmission(annees, ageOuverture, anneeOuverture, sexe, population = null) {
     const courbe = this.mortalite.courbe(
       ageOuverture, anneeOuverture, sexe, this.parametres.table_generation,
-      this.parametres.population_conversion ?? null,
+      population,
     );
     let esperance = 0.0;
     let deces = 0.0;
@@ -266,7 +266,7 @@ export class ConstructeurCapitalisation {
    */
   construire({
     assiettes, anneeNaissance, ageLiquidation, anneeLiquidation,
-    moisLiquidation = 1, sexe = null,
+    moisLiquidation = 1, sexe = null, population = null,
   }) {
     const debutPossible = assiettes.size > 0
       ? Math.min(...assiettes.keys()) : this.parametres.annee_debut_capitalisation;
@@ -276,7 +276,7 @@ export class ConstructeurCapitalisation {
     const sexeTable = this.parametres.table_conversion === TableConversion.UNISEXE
       ? null : sexe;
     const conversion = this.convertisseur.coefficient(
-      ageLiquidation, anneeLiquidation, sexeTable, moisLiquidation,
+      ageLiquidation, anneeLiquidation, sexeTable, moisLiquidation, population,
     );
     const fraisArrerages = this.parametres.frais_arrerages_capitalisation;
 
@@ -318,7 +318,7 @@ export class ConstructeurCapitalisation {
     const rente = (capital / conversion.diviseur) * (1.0 - fraisArrerages);
 
     const [deces, transmis] = this._transmission(
-      annees, ouverture - anneeNaissance, ouverture, sexeTable,
+      annees, ouverture - anneeNaissance, ouverture, sexeTable, population,
     );
 
     return resultatCapitalisation({
