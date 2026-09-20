@@ -3346,7 +3346,7 @@ essayées : `loadscope` est deux fois pire (95 s, un worker hérite de tout
 
 ---
 
-### 34. Un test qui confronte les affirmations du site au modèle — `à faire`
+### 34. Un test qui confronte les affirmations du site au modèle — `fait`
 
 **Pourquoi.** Ouverte par le retrait de la note « aucun droit repris »
 (journal, septembre 2026). Elle a vécu deux jours en page d'accueil en
@@ -3417,6 +3417,68 @@ action.
 corriger au passage, et `moteur/js/pages.js` en regard ; les témoins.
 Le portage JavaScript n'a pas à porter le test : le catalogue vise le texte,
 et les deux moteurs rendent le même.
+
+**Fait le 20 septembre 2026.** 185 entrées au catalogue — 167 vérifiées,
+5 contredites, 13 sans portée — et 115 contrôles, soit 360 tests de plus : un
+par entrée pour la présence de l'extrait, un par entrée qui engage quelque
+chose pour le contrôle, plus les quatre qui tiennent la forme, l'exhaustivité
+et l'absence de contrôle orphelin. La suite passe de 1 226 à 1 586 tests, et
+prend cinquante secondes de plus : le seul contrôle cher est celui de l'autre
+convention de recette, qui recalcule le coût agrégé.
+
+*Les quatre phrases que le catalogue a fait tomber, et ce qu'elles sont
+devenues.*
+
+- **La jumelle, dans le dépliant de transition.** « La bascule ne reprend
+  aucun droit acquis et ne touche à aucune pension déjà versée », quatre
+  lignes au-dessus du tableau qui dit le contraire. Remplacée par ce que le
+  modèle fait : « La bascule recalcule tout, depuis la première cotisation »,
+  et l'étape 2 dit « y compris celles dont la pension est déjà liquidée ».
+  L'étape 6 suivait le même chemin — « la dernière pension calculée en partie
+  sous l'ancien barème » laissait croire à un barème conservé ; elle parle
+  maintenant de cotisations versées aux anciens taux, ce qui est ce que le
+  compte porte. Le contrôle `proposition_retroactive` le tient : la pension
+  d'une carrière liquidée en 2012 s'écarte de celle du droit en vigueur, et
+  aucun rapport du coût ne vaut un sur les années observées.
+- **« Ce facteur est supérieur à un chaque année »**, en tête des Cas types.
+  Faux depuis le 19 septembre, jour où la recette de la proposition est
+  devenue ses 18 % appliqués à l'assiette mesurée : le coefficient est passé
+  sous un sur toutes les années projetées, et vaut 0,92 en 2070. La clé de
+  lecture ne promet plus de signe, elle dit que le niveau des cases dépend du
+  facteur, dans les deux sens.
+- **« Lire les 0,92 comme une économie de −9 % »**, sur la page Coût. Le même
+  retournement, et il se lisait à l'écran : la note parlait d'une marge
+  au-dessus d'un coefficient inférieur à un, et écrivait un pourcentage
+  négatif. La note a maintenant deux branches, et `note_du_coefficient_suit_son_signe`
+  vérifie que celle qui s'affiche est celle du signe calculé — les deux sont
+  rendues par les témoins, la première sous les réglages par défaut, la
+  seconde sous ceux de `cout_regles`.
+- **« L'autre lecture, plus sévère d'un point de PIB. »** Elle est plus
+  GÉNÉREUSE d'un point : la convention « rapport » laisse au système 4 les
+  impôts affectés et les subventions d'équilibre que la lecture retenue ne
+  reconduit pas, et son solde moyen projeté vaut −0,55 % du PIB contre
+  −1,52 %. La page a retenu la plus sévère, et le dit.
+
+*Et un chiffre écrit en dur qui avait pourri* : « soit treize fois ce que les
+mêmes dispositifs ajoutent au montant des pensions », sur la page Avantages.
+Il vaut vingt-sept. Il est compté, désormais, sur les lignes d'âge que le
+modèle chiffre.
+
+*Deux entrées `contredite` sur des actions ouvertes.* L'action 11 porte les
+quatre phrases qui promettent un pilotage annuel — « L'écart se solde chaque
+année », l'étape 5 du programme, « Dépenser moins n'est pas économiser », « Un
+système notionnel n'accumule ni cette dette ni cette réserve » : le modèle
+calcule le coefficient et ne l'applique jamais. L'action 61, ouverte par ce
+catalogue, porte « au premier euro, sans plafond » face au plafond d'assiette
+de huit PASS. Le jour où l'une ou l'autre est faite, son contrôle tombe et la
+phrase revient sur l'établi : c'est ce que `test_le_catalogue_est_bien_forme`
+exige en refusant qu'une entrée `contredite` cite une action `fait`.
+
+**Ce que le catalogue ne fait pas.** Il ne voit que les `<strong>` : une
+affirmation écrite sans emphase lui échappe, et c'est le prochain cran. Il ne
+juge pas non plus la prose du dépôt — `docs/`, `README.md` —, que l'action 41
+tient par ses ancres. Les deux se complètent, comme elles le disaient déjà :
+l'une tient les chiffres, l'autre les affirmations.
 
 **Fin.** Le catalogue couvre les phrases fortes des six pages, la jumelle du
 dépliant de transition est corrigée, et les deux contradictions connues
@@ -9859,3 +9921,44 @@ patronales. Rien ne dit en combien d'années, et rien ne le mesure.
 dépôt ne modélise aucun budget de l'État : cette moitié est une affirmation du
 programme, pas un résultat du modèle, et rien ne tomberait en défaut si elle
 était fausse.
+### 61. « Au premier euro et sans plafond », sauf au-delà de huit plafonds — `à faire`
+
+**Pourquoi.** Ouverte par le catalogue des affirmations (action 34), qui l'a
+trouvée en cherchant ce que le code dément. L'accueil promet, en deuxième
+geste du calcul : « On inscrit chaque cotisation sur votre compte, au premier
+euro, sans plafond » ; la page Méthode redit « au premier euro et sans
+plafond ». Le modèle, lui, porte `plafond_assiette_en_pass = 8.0`
+(`config.py`) : au-delà de huit plafonds de la Sécurité sociale, rien n'entre
+plus au compte. À dix fois le salaire moyen — le plus haut revenu que le
+formulaire accepte — l'assiette retenue vaut 86 % du revenu en 2030 et 81 %
+en 2053, le plafond progressant moins vite que le salaire saisi. Personne ne
+le lit nulle part : ni la page de résultats, ni le dépliant du détail, ni la
+page Méthode ne disent qu'un revenu peut sortir de l'assiette.
+
+**Ce que ce n'est pas.** Ce n'est pas la règle d'un régime : les fiches
+portent leurs propres bornes, et celle-ci est un paramètre de SIMULATION,
+posé au-dessus d'elles. C'est pourquoi la phrase n'est pas simplement fausse :
+elle décrit la proposition, qui ne veut pas de plafond, et le modèle en pose
+un que rien n'oblige.
+
+**Trois issues, et il faut trancher.**
+
+1. *Le paramètre passe à `None` après la bascule.* La proposition dit
+   « déplafonné », le régime fusionné dit `assiette: deplafonnee` : le
+   modèle suivrait alors ce qu'il affirme. Coût : les hauts revenus voient
+   leur capital notionnel monter, leur pension avec, et la recette du
+   système 4 aussi — à chiffrer, c'est le seul des trois qui déplace des
+   nombres.
+2. *La phrase se borne.* « Au premier euro, et sans plafond jusqu'à huit
+   fois le plafond de la Sécurité sociale » : exact, plus long, et cela
+   avoue une limite du modèle au milieu d'une promesse politique.
+3. *La page le dit là où ça se voit.* Le paramètre reste, la phrase reste,
+   et la page de résultats affiche, quand l'assiette d'une année a été
+   rognée, de combien elle l'a été — comme elle affiche déjà
+   l'avertissement d'ouverture.
+
+**Fichiers.** `src/retraite_notionnelle/config.py` (le paramètre),
+`moteur/compte.py` (`_assiette_entre_bornes`), `web/pages.py` et
+`moteur/js/pages.js` (les deux phrases, le rendu), les témoins.
+L'entrée `accueil.on_inscrit` de `data/reference/site/affirmations.yaml`
+nomme cette action : son contrôle tombe le jour où celle-ci est faite.

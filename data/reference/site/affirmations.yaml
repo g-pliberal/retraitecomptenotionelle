@@ -1,0 +1,1358 @@
+# Ce que le site AFFIRME sur le modèle, phrase par phrase, et ce qu'un test en
+# exige. Lu par `tests/test_affirmations.py` ; l'action 34 de
+# `docs/feuille_de_route.md` dit pourquoi ce fichier existe.
+#
+# `tests/temoins/pages.json` fige le texte des pages : il rend visible une
+# modification, il ne valide aucune affirmation. Ce catalogue fait l'autre
+# moitié du travail, sur le modèle d'`inventaire.yaml` : chaque phrase forte
+# des pages y prend sa ligne, et le test l'exploite dans les deux sens.
+#
+#   1. L'extrait est encore dans la page rendue (les témoins, donc le site que
+#      le portage JavaScript rend caractère pour caractère). Une phrase
+#      réécrite sans repasser par ici fait échouer le test.
+#   2. Le contrôle passe. Une entrée `verifiee` nomme une fonction de
+#      `tests/test_affirmations.py` qui interroge le MODÈLE, jamais le texte.
+#      Une entrée `contredite` nomme l'action de la feuille de route qui la
+#      refermera, et un contrôle qui vérifie qu'elle est ENCORE contredite :
+#      il tombe le jour où l'action est faite, pour qu'on ne referme pas
+#      l'action en oubliant la phrase.
+#   3. Rien n'échappe au catalogue : toute phrase forte des pages — le contenu
+#      des `<strong>` d'au moins trois mots, ou qui fait une phrase — est ici,
+#      ou déclarée `sans_portee`.
+#
+# Champs :
+#   id        libre, unique
+#   page      le chemin de la page (`/`, `/cout`…), ou une liste de chemins ;
+#             `*` pour le pied de page, commun à toutes
+#   extrait   verbatim, balises retirées et blancs repliés, assez long pour
+#             ne pas se retrouver par hasard (huit caractères au moins) et
+#             assez court pour survivre à une retouche de mise en page
+#   porte     ce que la phrase affirme sur ce que le système FAIT, en une ligne
+#   etat      verifiee | contredite | sans_portee
+#   controle  (verifiee, contredite) le nom du contrôle
+#   action    (contredite) le numéro de l'action de la feuille de route
+#
+# Le piège, nommé d'avance : est `sans_portee` ce qui ne peut pas être faux —
+# un titre, une invitation, une transition, une opinion. Dès qu'une phrase dit
+# quelque chose sur ce que le système fait, elle a un contrôle ou une action.
+
+affirmations:
+
+  # ------------------------------------------------------------------------
+  # L'accueil : le programme
+  # ------------------------------------------------------------------------
+
+  - id: accueil.compte_a_votre_nom
+    page: /
+    extrait: "Un compte à votre nom, en euros."
+    porte: le compte notionnel est individuel et tenu en euros
+    etat: verifiee
+    controle: compte_notionnel_en_euros
+
+  - id: accueil.pas_de_trimestres
+    page: /
+    extrait: "Pas de trimestres, pas de barèmes, pas de surprise."
+    porte: la pension notionnelle ne dépend que du capital et du diviseur
+    etat: verifiee
+    controle: pension_egale_capital_sur_diviseur
+
+  - id: accueil.garantie_montants
+    page: /
+    extrait: "d'allocation d'isolement pour qui vit seul. Payés par l'impôt, dès 65 ans."
+    porte: le plancher est par personne, majoré pour qui vit seul, servi à 65 ans
+    etat: verifiee
+    controle: garantie_individualisee
+
+  - id: accueil.capital_a_votre_nom
+    page: /
+    extrait: "plus un capital à votre nom"
+    porte: la proposition ajoute un pilier capitalisé à la répartition
+    etat: verifiee
+    controle: pilier_capitalise_en_plus
+
+  - id: accueil.meme_taux
+    page: /
+    extrait: "le même taux pour tout le monde"
+    porte: après la bascule, tous les statuts cotisent au taux unique
+    etat: verifiee
+    controle: taux_unique_apres_bascule
+
+  - id: accueil.qui_vous_appartiennent
+    page: /
+    extrait: "qui vous appartiennent et se transmettent"
+    porte: le capital du pilier se transmet avant la liquidation
+    etat: verifiee
+    controle: capital_capitalise_transmissible
+
+  - id: accueil.effort_inchange
+    page: /
+    extrait: "à effort inchangé"
+    porte: 18 % + 5 % + 5 % rendus font l'effort d'aujourd'hui, 28 %
+    etat: verifiee
+    controle: effort_inchange
+
+  - id: accueil.solde_releve
+    page: /
+    extrait: "votre solde comme sur un relevé bancaire"
+    porte: le capital notionnel est un montant en euros, lisible à tout moment
+    etat: verifiee
+    controle: compte_notionnel_en_euros
+
+  - id: accueil.vous_revient
+    page: /
+    extrait: "de ce que vous avez cotisé vous revient"
+    porte: le capital entier est converti en pension, sans rien retenir
+    etat: verifiee
+    controle: pension_egale_capital_sur_diviseur
+
+  - id: accueil.rapport_exact
+    page: /
+    extrait: "dans le rapport exact de ce que ça coûte"
+    porte: le diviseur est l'espérance de vie résiduelle, sans autre barème
+    etat: verifiee
+    controle: diviseur_est_l_esperance_de_vie
+
+  - id: accueil.on_inscrit
+    page: /
+    extrait: "On inscrit chaque cotisation sur votre compte, au premier euro, sans plafond."
+    porte: aucun plancher ni plafond d'assiette sur ce que le compte inscrit
+    etat: contredite
+    action: 61
+    controle: plafond_d_assiette_apres_la_bascule
+
+  - id: accueil.on_revalorise
+    page: /
+    extrait: "On revalorise le compte chaque année, au rythme des salaires du pays."
+    porte: la règle d'indexation par défaut est la masse salariale
+    etat: verifiee
+    controle: indexation_masse_salariale_par_defaut
+
+  - id: accueil.on_divise
+    page: /
+    extrait: "On divise, au départ, par les années qu'il vous reste à vivre en moyenne."
+    porte: le diviseur est l'espérance de vie résiduelle à la liquidation
+    etat: verifiee
+    controle: diviseur_est_l_esperance_de_vie
+
+  - id: accueil.illisible
+    page: /
+    extrait: "Illisible, d'abord."
+    porte: un jugement sur le droit en vigueur, pas sur ce que le modèle fait
+    etat: sans_portee
+
+  - id: accueil.inegal
+    page: /
+    extrait: "Inégal, ensuite."
+    porte: à carrière égale, le système actuel sert une pension qui dépend du statut
+    etat: verifiee
+    controle: pension_actuelle_depend_du_statut
+
+  - id: accueil.personne_ne_pilote
+    page: /
+    extrait: "Et personne ne le pilote."
+    porte: un jugement sur le droit en vigueur, pas sur ce que le modèle fait
+    etat: sans_portee
+
+  - id: accueil.cotisation_egale
+    page: /
+    extrait: "À cotisation égale, pension égale."
+    porte: le diviseur ne dépend pas du statut, seul le capital compte
+    etat: verifiee
+    controle: a_capital_egal_pension_egale
+
+  - id: accueil.carriere_hachee
+    page: /
+    extrait: "Une carrière hachée n'est plus punie deux fois."
+    porte: une interruption retire les cotisations de ses années, et rien de plus
+    etat: verifiee
+    controle: interruption_ne_coute_que_ses_cotisations
+
+  - id: accueil.solidarite_visible
+    page: /
+    extrait: "La solidarité devient visible."
+    porte: la garantie est une ligne à part, financée par l'impôt et comptée hors du compte
+    etat: verifiee
+    controle: garantie_comptee_a_part
+
+  - id: accueil.rendement_meme_pour_tous
+    page: /
+    extrait: "Le rendement est le même pour tous"
+    porte: le taux d'indexation d'une année ne dépend pas de la carrière
+    etat: verifiee
+    controle: rendement_independant_de_la_carriere
+
+  - id: accueil.esperance_de_vie_propre
+    page: /
+    extrait: "Chacun est divisé par sa propre espérance de vie."
+    porte: la table est celle de la génération, et le diviseur change avec elle
+    etat: verifiee
+    controle: diviseur_par_generation
+
+  - id: accueil.taux_ne_bouge_pas
+    page: /
+    extrait: "Le taux ne bouge pas."
+    porte: après la bascule, le taux est le même chaque année
+    etat: verifiee
+    controle: taux_unique_apres_bascule
+
+  - id: accueil.ecart_se_solde
+    page: /
+    extrait: "L'écart se solde chaque année"
+    porte: le coefficient d'équilibre serait appliqué chaque année — le modèle le calcule sans l'appliquer
+    etat: contredite
+    action: 11
+    controle: coefficient_calcule_jamais_applique
+
+  - id: accueil.une_seule_prestation
+    page: /
+    extrait: "une seule prestation"
+    porte: la garantie remplace tous les minima, différentielle, à 65 ans, individualisée
+    etat: verifiee
+    controle: garantie_individualisee
+
+  - id: accueil.avance_pas_un_don
+    page: /
+    extrait: "Une avance, pas un don."
+    porte: la garantie est une créance reprise sur la succession
+    etat: verifiee
+    controle: garantie_est_une_avance_reprise
+
+  - id: accueil.reprise_premier_euro
+    page: /
+    extrait: "reprise sur la succession dès le premier euro"
+    porte: la reprise n'a pas de seuil, une part de chaque avance libérée est rendue
+    etat: verifiee
+    controle: garantie_est_une_avance_reprise
+
+  - id: accueil.cinq_points_volontaires
+    page: /
+    extrait: "que personne ne vous impose."
+    porte: cinq points volontaires distincts des cinq obligatoires, et retranchables
+    etat: verifiee
+    controle: cinq_points_volontaires_separes
+
+  - id: accueil.a_prix_egal
+    page: /
+    extrait: "se comparent enfin à prix égal"
+    porte: la comparaison se fait au même effort de cotisation qu'aujourd'hui
+    etat: verifiee
+    controle: effort_inchange
+
+  - id: accueil.il_vous_appartient
+    page: /
+    extrait: "Il vous appartient."
+    porte: le capital du pilier revient aux héritiers avant la liquidation
+    etat: verifiee
+    controle: capital_capitalise_transmissible
+
+  - id: accueil.il_ne_sort_qu_a_la_retraite
+    page: /
+    extrait: "Il ne sort qu'à la retraite."
+    porte: le pilier se convertit en rente viagère à la liquidation
+    etat: verifiee
+    controle: pilier_sort_en_rente
+
+  - id: accueil.place_sans_risque
+    page: /
+    extrait: "Il est placé sans risque."
+    porte: le pilier est placé sur la courbe des taux sans risque de la BCE
+    etat: verifiee
+    controle: pilier_place_sur_la_courbe_sans_risque
+
+  - id: accueil.il_ne_remplace_rien
+    page: /
+    extrait: "Il ne remplace rien."
+    porte: la répartition reste entière, la rente s'y ajoute
+    etat: verifiee
+    controle: pilier_capitalise_en_plus
+
+  - id: accueil.pourquoi_ce_site
+    page: /
+    extrait: "Pourquoi ce site."
+    porte: un titre
+    etat: sans_portee
+
+  - id: accueil.transition_recalcule
+    page: /
+    extrait: "La bascule recalcule tout, depuis la première cotisation."
+    porte: la proposition est rétroactive — les pensions déjà liquidées sont recalculées
+    etat: verifiee
+    controle: proposition_retroactive
+
+  - id: accueil.transition_bascule
+    page: /
+    extrait: "Chaque carrière est recalculée depuis sa première cotisation, y compris celles dont la pension est déjà liquidée"
+    porte: la proposition est rétroactive — les pensions déjà liquidées sont recalculées
+    etat: verifiee
+    controle: proposition_retroactive
+
+  - id: accueil.transition_taux_unique
+    page: /
+    extrait: "Toute cotisation postérieure à la bascule est prélevée à"
+    porte: après la bascule, tous les statuts cotisent au taux unique
+    etat: verifiee
+    controle: taux_unique_apres_bascule
+
+  - id: accueil.transition_garantie
+    page: /
+    extrait: "Elle remplace l'ASPA, le minimum contributif et le minimum garanti le jour de la bascule"
+    porte: le régime unique ne sert aucun minimum, la garantie les remplace
+    etat: verifiee
+    controle: garantie_remplace_les_minima
+
+  - id: accueil.transition_pilotage
+    page: /
+    extrait: "Le chiffre qui ramène l'année à zéro est publié et appliqué chaque année."
+    porte: le coefficient d'équilibre serait appliqué — le modèle le calcule sans l'appliquer
+    etat: contredite
+    action: 11
+    controle: coefficient_calcule_jamais_applique
+
+  - id: accueil.transition_regime_unique
+    page: /
+    extrait: "Après la bascule, un seul régime : départ possible à"
+    porte: le régime fusionné a un âge d'ouverture, une assiette déplafonnée et un taux
+    etat: verifiee
+    controle: regime_unique_apres_bascule
+
+  # ------------------------------------------------------------------------
+  # Simuler
+  # ------------------------------------------------------------------------
+
+  - id: simuler.quatre_calculs
+    page: /simuler
+    extrait: "Quatre calculs pour votre carrière."
+    porte: quatre systèmes calculés sur la même carrière, le premier servant de référence
+    etat: verifiee
+    controle: quatre_systemes_meme_carriere
+
+  - id: simuler.taux_de_remplacement
+    page: /simuler
+    extrait: "taux de remplacement rapporte la pension annuelle au dernier revenu d'activité"
+    porte: le taux de remplacement est la pension sur le dernier revenu annualisé
+    etat: verifiee
+    controle: taux_de_remplacement_definition
+
+  - id: simuler.au_moment_du_depart
+    page: /simuler
+    extrait: "au moment du départ"
+    porte: le moteur ne calcule qu'une pension à la liquidation, sans revalorisation ensuite
+    etat: verifiee
+    controle: pension_au_moment_du_depart
+
+  - id: simuler.ecart_fiche_de_paie
+    page: /simuler
+    extrait: "de MOINS sur votre fiche de paie"
+    porte: l'écart affiché est la différence des deux nets de la fiche de paie
+    etat: verifiee
+    controle: fiche_de_paie_ecart_net
+
+  - id: simuler.capitalisation_volontaire
+    page: /simuler
+    extrait: "de capitalisation volontaire"
+    porte: les cinq points volontaires sont retirés du net et comptés à part
+    etat: verifiee
+    controle: cinq_points_volontaires_separes
+
+  - id: simuler.epargne_a_votre_nom
+    page: /simuler
+    extrait: "par mois de ce prélèvement est de l'épargne à votre nom."
+    porte: l'épargne à votre nom est la somme des lignes de capitalisation de la fiche
+    etat: verifiee
+    controle: epargne_a_votre_nom
+
+  - id: simuler.cout_du_travail_fixe
+    page: /simuler
+    extrait: "Le coût du travail est tenu fixe."
+    porte: pour un salarié du privé, le coût du travail est identique sous les deux systèmes
+    etat: verifiee
+    controle: cout_du_travail_fixe
+
+  - id: simuler.partage_moitie_moitie
+    page: /simuler
+    extrait: "sont partagés moitié-moitié"
+    porte: la cotisation unique est portée pour moitié par le salarié
+    etat: verifiee
+    controle: partage_moitie_moitie
+
+  - id: simuler.volontaires_non_partages
+    page: /simuler
+    extrait: "volontaires, eux, ne sont partagés avec personne."
+    porte: la ligne volontaire ne porte aucune part employeur
+    etat: verifiee
+    controle: volontaire_a_la_charge_de_l_assure
+
+  - id: simuler.allegement_calcule
+    page: /simuler
+    extrait: "L'allègement sur les bas salaires est calculé, pas ignoré."
+    porte: la réduction générale est recalculée sous le taux de la proposition
+    etat: verifiee
+    controle: allegement_recalcule_sous_la_proposition
+
+  - id: simuler.allegement_au_smic
+    page: /simuler
+    extrait: "au SMIC, baisser la cotisation retraite de l'employeur ne rend rien"
+    porte: au SMIC, la réduction efface déjà les cotisations patronales qu'elle vise
+    etat: verifiee
+    controle: allegement_au_smic
+
+  - id: simuler.fiche_ne_porte_pas
+    page: /simuler
+    extrait: "Ce que la fiche ne porte pas"
+    porte: la fiche ne porte ni taxe d'apprentissage, ni formation, ni versement mobilité, ni prévoyance
+    etat: verifiee
+    controle: fiche_sans_prelevements_annexes
+
+  - id: simuler.vivre_plus_longtemps
+    page: [/simuler, /trajectoire]
+    extrait: "vivre plus longtemps que la moyenne, c'est toucher plus que ce que la carrière a financé"
+    porte: la pension servie sur l'espérance de vie rend exactement le capital
+    etat: verifiee
+    controle: cumul_sur_l_esperance_egale_le_capital
+
+  - id: simuler.rente_volontaire
+    page: /simuler
+    extrait: "que vous versez librement"
+    porte: la rente se partage dans le rapport exact des deux taux
+    etat: verifiee
+    controle: rente_volontaire_proportionnelle
+
+  - id: simuler.rendement_frais_compris
+    page: /simuler
+    extrait: "Ce que le pilier rapporte, frais compris :"
+    porte: le taux affiché est le taux interne qui mène des versements au capital
+    etat: verifiee
+    controle: rendement_du_pilier_est_le_taux_interne
+
+  - id: simuler.transmission
+    page: /simuler
+    extrait: "Ce qui se transmet, et ce qui ne se transmet pas."
+    porte: le capital se transmet avant la liquidation, la rente s'éteint
+    etat: verifiee
+    controle: capital_capitalise_transmissible
+
+  - id: simuler.pension_du_systeme_actuel
+    page: /simuler
+    extrait: "Pension du système actuel"
+    porte: le total est le sous-total contributif plus les avantages appliqués
+    etat: verifiee
+    controle: sous_total_contributif
+
+  - id: simuler.sous_total_contributif
+    page: /simuler
+    extrait: "Sous-total contributif"
+    porte: la part contributive est la pension moins les avantages non contributifs
+    etat: verifiee
+    controle: sous_total_contributif
+
+  - id: simuler.independant_assiette_fixe
+    page: /simuler
+    extrait: "est tenu fixe, et il n'y a pas de coût du travail à afficher"
+    porte: pour un indépendant, l'assiette est tenue fixe et rien n'est porté par un employeur
+    etat: verifiee
+    controle: independant_sans_employeur
+
+  - id: simuler.independant_charge_entiere
+    page: /simuler
+    extrait: "capitalisés sont à votre charge en entier."
+    porte: pour un indépendant, aucune ligne de la fiche ne porte de part employeur
+    etat: verifiee
+    controle: independant_sans_employeur
+
+  - id: simuler.allegement_absent
+    page: /simuler
+    extrait: "L'allègement sur les bas salaires ne joue pas ici."
+    porte: hors du régime général, la fiche ne porte aucune réduction générale
+    etat: verifiee
+    controle: allegement_absent_hors_prive
+
+  - id: simuler.fonctionnaire_assiette_fixe
+    page: /simuler
+    extrait: "est tenu fixe, et le site n'affiche pas de coût du travail pour votre statut."
+    porte: pour un agent public, le traitement brut est tenu fixe et le coût du travail n'est pas affiché
+    etat: verifiee
+    controle: fonctionnaire_assiette_fixe
+
+  - id: simuler.retenue_de_l_agent
+    page: /simuler
+    extrait: "ne portent que la retenue de l'agent"
+    porte: la part employeur d'un agent public vient d'une série à part, datée
+    etat: verifiee
+    controle: part_employeur_publique_serie_a_part
+
+  - id: simuler.inferieur_au_smic
+    page: /simuler
+    extrait: "inférieur au SMIC"
+    porte: l'avertissement paraît quand l'incidence ferait passer le brut sous le SMIC
+    etat: verifiee
+    controle: avertissement_smic
+
+  - id: simuler.premiere_ligne_indexation
+    page: /simuler
+    extrait: "première ligne est celle que la simulation applique"
+    porte: la première règle du tableau est la règle par défaut du modèle
+    etat: verifiee
+    controle: premiere_ligne_indexation_par_defaut
+
+  - id: simuler.liquidation_non_ouverte
+    page: /simuler
+    extrait: "n'ouvre pas cette liquidation"
+    porte: le modèle dit quand le droit n'ouvre pas la liquidation demandée
+    etat: verifiee
+    controle: liquidation_non_ouverte_signalee
+
+  - id: simuler.aucune_annee_projetee
+    page: /simuler
+    extrait: "Aucune année projetée n'entre dans ce calcul"
+    porte: une carrière achevée avant la dernière année observée ne dépend d'aucune projection
+    etat: verifiee
+    controle: carriere_passee_sans_annee_projetee
+
+  - id: simuler.lue_sur_un_releve
+    page: /simuler
+    extrait: "lue sur un relevé"
+    porte: un relevé collé remplace la carrière paramétrique, ligne pour ligne
+    etat: verifiee
+    controle: carriere_lue_sur_releve
+
+  - id: simuler.format_releve
+    page: /simuler
+    extrait: "année:régime:revenu"
+    porte: le format du relevé est lu tel quel
+    etat: verifiee
+    controle: carriere_lue_sur_releve
+
+  - id: simuler.pilier_sans_annee
+    page: /simuler
+    extrait: "Ce pilier n'a pas eu d'année pour rapporter :"
+    porte: un pilier ouvert l'année du départ ne produit aucun intérêt
+    etat: verifiee
+    controle: pilier_sans_annee_pour_rapporter
+
+  - id: simuler.saisie_refusee
+    page: /simuler
+    extrait: "Saisie refusée."
+    porte: une valeur hors bornes est refusée, jamais calculée
+    etat: verifiee
+    controle: saisie_hors_bornes_refusee
+
+  # ------------------------------------------------------------------------
+  # Cas types
+  # ------------------------------------------------------------------------
+
+  - id: cas_types.rouge_vert
+    page: /cas-types
+    extrait: "Rouge : moins qu'aujourd'hui. Vert : plus."
+    porte: la teinte d'une case suit le signe de l'écart
+    etat: verifiee
+    controle: legende_rouge_vert
+
+  - id: cas_types.pas_des_baisses
+    page: /cas-types
+    extrait: "Ces pourcentages ne sont pas des baisses de pension."
+    porte: le coefficient d'équilibre n'est pas appliqué, la grille mesure des écarts entre lignes
+    etat: verifiee
+    controle: coefficient_jamais_applique
+
+  - id: cas_types.niveau_depend_du_facteur
+    page: /cas-types
+    extrait: "Le niveau des cases dépend de ce facteur"
+    porte: le coefficient d'équilibre, calculé et non appliqué, déplacerait toutes les cases
+    etat: verifiee
+    controle: coefficient_jamais_applique
+
+  - id: reglages.avertissement
+    page: [/cas-types, /cout, /avantages]
+    extrait: "Ces chiffres ne sont pas ceux des réglages par défaut."
+    porte: l'avertissement paraît sous d'autres réglages, et seulement là
+    etat: verifiee
+    controle: avertissement_des_reglages
+
+  # ------------------------------------------------------------------------
+  # Coût
+  # ------------------------------------------------------------------------
+
+  - id: cout.ecart_va_se_creuser
+    page: /cout
+    extrait: "L'écart va se creuser"
+    porte: le solde du système actuel est plus négatif à l'horizon qu'aujourd'hui
+    etat: verifiee
+    controle: deficit_se_creuse
+
+  - id: cout.part_impot_doublee
+    page: /cout
+    extrait: "cette part a doublé en vingt ans"
+    porte: la part de l'impôt dans les ressources a doublé sur la fenêtre ventilée
+    etat: verifiee
+    controle: part_de_l_impot_doublee
+
+  - id: cout.depenser_moins
+    page: /cout
+    extrait: "Dépenser moins n'est pas économiser."
+    porte: un système notionnel remonterait les pensions jusqu'à l'équilibre — le modèle ne le fait pas
+    etat: contredite
+    action: 11
+    controle: coefficient_calcule_jamais_applique
+
+  - id: cout.vieillesse_survie_entier
+    page: /cout
+    extrait: "vieillesse-survie tout entier"
+    porte: la dépense totale dépasse la seule répartition obligatoire
+    etat: verifiee
+    controle: depense_totale_et_repartition
+
+  - id: cout.transferts_famille_ensemble
+    page: /cout
+    extrait: "Branche famille, ensemble"
+    porte: la ligne « ensemble » est la somme des postes de l'organisme
+    etat: verifiee
+    controle: transferts_ensemble_somme
+
+  - id: cout.transferts_chomage_ensemble
+    page: /cout
+    extrait: "Assurance chômage, ensemble"
+    porte: la ligne « ensemble » est la somme des postes de l'organisme
+    etat: verifiee
+    controle: transferts_ensemble_somme
+
+  - id: cout.transferts_fsv_ensemble
+    page: /cout
+    extrait: "Fonds de solidarité vieillesse, ensemble"
+    porte: la ligne « ensemble » est la somme des postes de l'organisme
+    etat: verifiee
+    controle: transferts_ensemble_somme
+
+  - id: cout.recettes_droits_supprimes
+    page: /cout
+    extrait: "Ces recettes financent des droits que les scénarios notionnels ne servent pas."
+    porte: le régime unique ne sert aucun avantage non contributif, et la recette est retirée
+    etat: verifiee
+    controle: retrait_des_transferts
+
+  - id: cout.coefficient_retire
+    page: /cout
+    extrait: "Le coefficient d'équilibre du dépliant suivant les leur retire"
+    porte: les ressources des scénarios notionnels sont celles du système actuel moins le retrait
+    etat: verifiee
+    controle: retrait_des_transferts
+
+  - id: cout.vigilance_cor
+    page: /cout
+    extrait: "Point de vigilance : notre projection s'écarte de celle du COR."
+    porte: la part de PIB projetée par le modèle à l'horizon diffère de celle du COR
+    etat: verifiee
+    controle: projection_s_ecarte_du_cor
+
+  - id: cout.pensions_repartition_obligatoire
+    page: /cout
+    extrait: "pensions de répartition obligatoire"
+    porte: la répartition obligatoire est une part de la dépense vieillesse-survie
+    etat: verifiee
+    controle: depense_totale_et_repartition
+
+  - id: cout.contrefactuels
+    page: /cout
+    extrait: "Les trois systèmes notionnels comparés ici sont des contrefactuels"
+    porte: les trois scénarios recalculent les pensions déjà liquidées
+    etat: verifiee
+    controle: proposition_retroactive
+
+  - id: cout.dix_huit_pour_cent
+    page: /cout
+    extrait: "Dix-huit pour cent de quoi ?"
+    porte: la recette de la proposition est son taux appliqué à l'assiette des revenus d'activité
+    etat: verifiee
+    controle: dix_huit_pour_cent_de_l_assiette
+
+  - id: cout.autre_lecture
+    page: /cout
+    extrait: "L'autre lecture, plus généreuse d'un point de PIB."
+    porte: l'autre convention de recette rend un solde meilleur d'environ un point
+    etat: verifiee
+    controle: autre_convention_de_recette
+
+  - id: cout.marge_se_sert
+    page: /cout
+    extrait: "Un coefficient supérieur à un est une marge, et une marge se sert."
+    porte: la note suit le signe du coefficient — cette branche s'écrit quand il vaut un ou plus
+    etat: verifiee
+    controle: note_du_coefficient_suit_son_signe
+
+  - id: cout.manque_se_regle
+    page: /cout
+    extrait: "Un coefficient inférieur à un est un manque, et un manque se règle."
+    porte: la note suit le signe du coefficient — cette branche s'écrit quand il est sous un
+    etat: verifiee
+    controle: note_du_coefficient_suit_son_signe
+
+  - id: cout.total_des_ressources
+    page: /cout
+    extrait: "Total des ressources"
+    porte: les postes somment exactement au total
+    etat: verifiee
+    controle: postes_somment_aux_totaux
+
+  - id: cout.total_des_depenses
+    page: /cout
+    extrait: "Total des dépenses"
+    porte: les postes somment exactement au total
+    etat: verifiee
+    controle: postes_somment_aux_totaux
+
+  - id: cout.ligne_a_ligne
+    page: /cout
+    extrait: "Ce que la proposition change, ligne à ligne."
+    porte: la proposition ne reconduit ni contribution d'équilibre, ni subventions, ni impôts affectés
+    etat: verifiee
+    controle: trois_postes_disparaissent
+
+  - id: cout.deficits_additionnes
+    page: /cout
+    extrait: "Les déficits du système actuel, simplement additionnés de"
+    porte: le cumul des soldes est la somme des soldes annuels
+    etat: verifiee
+    controle: dette_cumule_les_soldes
+
+  - id: cout.notionnel_n_accumule_pas
+    page: /cout
+    extrait: "Un système notionnel n'accumule ni cette dette ni cette réserve."
+    porte: un système notionnel se réglerait chaque année — le modèle accumule ses soldes
+    etat: contredite
+    action: 11
+    controle: coefficient_calcule_jamais_applique
+
+  - id: cout.dette_publique_observee
+    page: /cout
+    extrait: "La dette publique faisait"
+    porte: la dette de départ est la dette publique observée de l'INSEE
+    etat: verifiee
+    controle: dette_publique_observee
+
+  - id: cout.pas_une_prevision
+    page: /cout
+    extrait: "Ce n'est pas une prévision de la dette publique."
+    porte: la dette publique est tenue à plat, seul le stock de la retraite la déplace
+    etat: verifiee
+    controle: dette_publique_tenue_a_plat
+
+  - id: cout.taux_lu
+    page: /cout
+    extrait: "Le taux est lu, pas choisi."
+    porte: le taux de la dette est lu sur la courbe des taux sans risque de la BCE
+    etat: verifiee
+    controle: taux_de_la_dette_lu_sur_la_courbe
+
+  - id: cout.frise_rentre_sort
+    page: /cout
+    extrait: "ce qui rentre dans la caisse, à droite ce qui sort"
+    porte: les colonnes de la frise sont les ressources et la dépense de chaque système
+    etat: verifiee
+    controle: postes_somment_aux_totaux
+
+  - id: cout.queue_basse
+    page: /cout
+    extrait: "queue basse de la distribution"
+    porte: la garantie ne coûte que sur les pensions sous le plancher
+    etat: verifiee
+    controle: garantie_differentielle_sur_la_queue_basse
+
+  - id: cout.successions_rendent
+    page: /cout
+    extrait: "Ce que les successions rendent."
+    porte: les reprises sont une part des avances libérées par les décès
+    etat: verifiee
+    controle: garantie_est_une_avance_reprise
+
+  - id: cout.aux_pensions_d_aujourd_hui
+    page: /cout
+    extrait: "aux pensions d'aujourd'hui"
+    porte: la distribution est déplacée par le facteur du système 4, inférieur à un à l'enquête
+    etat: verifiee
+    controle: facteur_de_deplacement_inferieur_a_un
+
+  - id: cout.aux_pensions_du_systeme_4
+    page: /cout
+    extrait: "aux pensions du système 4"
+    porte: la distribution est déplacée par le facteur du système 4, inférieur à un à l'enquête
+    etat: verifiee
+    controle: facteur_de_deplacement_inferieur_a_un
+
+  - id: cout.un_ayant_droit_sur_deux
+    page: /cout
+    extrait: "Un ayant droit sur deux réclame."
+    porte: le taux de recours de la garantie est un réglage, à un demi par défaut
+    etat: verifiee
+    controle: recours_un_sur_deux
+
+  - id: cout.brutes_droit_direct
+    page: /cout
+    extrait: "brutes de droit direct"
+    porte: la distribution lue est celle des pensions brutes de droit direct
+    etat: verifiee
+    controle: distribution_brute_de_droit_direct
+
+  - id: cout.ce_qu_elle_remplace
+    page: /cout
+    extrait: "Ce qu'elle remplace."
+    porte: le système 4 ne sert ni minimum contributif, ni minimum garanti, ni ASPA
+    etat: verifiee
+    controle: garantie_remplace_les_minima
+
+  - id: cout.quatre_minima
+    page: /cout
+    extrait: "Ce que ces quatre minima coûtent"
+    porte: les quatre minima remplacés ont chacun une ligne, chiffrée ou déclarée
+    etat: verifiee
+    controle: garantie_remplace_les_minima
+
+  - id: cout.impot_en_plus
+    page: /cout
+    extrait: "Ce que l'impôt paierait en plus"
+    porte: l'écart est la garantie moins les quatre minima
+    etat: verifiee
+    controle: garantie_remplace_les_minima
+
+  - id: cout.deux_corrections
+    page: /cout
+    extrait: "Deux corrections, et les deux sont dans la page."
+    porte: le recours à un demi et la reprise sur succession entrent dans le chiffrage
+    etat: verifiee
+    controle: recours_un_sur_deux
+
+  - id: cout.eligible_sur_deux
+    page: /cout
+    extrait: "une personne seule éligible sur deux"
+    porte: le taux de recours de la garantie est un demi
+    etat: verifiee
+    controle: recours_un_sur_deux
+
+  - id: cout.avance_reprise
+    page: /cout
+    extrait: "avance reprise sur la succession"
+    porte: la trajectoire suit les avances et ce que les successions rendent
+    etat: verifiee
+    controle: garantie_est_une_avance_reprise
+
+  - id: cout.brute_avant_reprise
+    page: /cout
+    extrait: "brute, avant reprise"
+    porte: la ligne « dont garantie » est brute, la nette lui retire les reprises
+    etat: verifiee
+    controle: garantie_brute_et_nette
+
+  - id: cout.pas_l_aspa
+    page: /cout
+    extrait: "La garantie n'est pas l'ASPA à un autre montant."
+    porte: la garantie compare chacun à son propre plancher, sans la pension du conjoint
+    etat: verifiee
+    controle: garantie_individualisee
+
+  - id: cout.capitalisation_hors_bilan
+    page: /cout
+    extrait: "aucun des chiffres de cette page ne les compte"
+    porte: le pilier n'est ni une ressource ni une dépense du bilan
+    etat: verifiee
+    controle: capitalisation_hors_du_bilan
+
+  - id: cout.seconde_ligne_du_total
+    page: /cout
+    extrait: "Le simulateur, lui, montre la seconde ligne du total."
+    porte: le pilier du simulateur reçoit dix points, les cinq rendus compris
+    etat: verifiee
+    controle: cinq_points_volontaires_separes
+
+  - id: cout.ce_que_cela_ne_dit_pas
+    page: /cout
+    extrait: "Ce que cela ne dit pas."
+    porte: un titre de réserve
+    etat: sans_portee
+
+  - id: cout.deux_ponderations
+    page: /cout
+    extrait: "Deux pondérations se composent."
+    porte: les cas types sont pesés par les retraités de leur caisse et par leurs cotisants
+    etat: verifiee
+    controle: ponderation_par_les_effectifs
+
+  - id: cout.cps_ne_ventilent_pas
+    page: /cout
+    extrait: "Les comptes de la protection sociale ne ventilent pas leurs ressources par risque"
+    porte: décrit une publication extérieure, pas le modèle
+    etat: sans_portee
+
+  - id: cout.de_niveau_haut
+    page: /cout
+    extrait: "le compte du COR est de niveau haut"
+    porte: la dépense observée est certifiée, le compte du COR de niveau haut, le rapport estimé
+    etat: verifiee
+    controle: fiabilite_des_trois_sources
+
+  - id: cout.limite_recettes
+    page: /cout
+    extrait: "Les recettes réagissent sur trois points, et sur trois seulement."
+    porte: le retrait des transferts, le taux sur l'assiette, et trois postes non reconduits
+    etat: verifiee
+    controle: recettes_trois_reactions
+
+  - id: cout.limite_assiette
+    page: /cout
+    extrait: "L'assiette est supposée insensible au taux."
+    porte: aucune élasticité de l'assiette n'est paramétrée
+    etat: verifiee
+    controle: pas_d_elasticite_d_assiette
+
+  - id: cout.limite_stock
+    page: /cout
+    extrait: "Les pensions déjà servies à la bascule gardent les prix."
+    porte: la revalorisation du stock est sur les prix par défaut
+    etat: verifiee
+    controle: stock_sur_les_prix
+
+  - id: cout.limite_coefficient
+    page: /cout
+    extrait: "Le coefficient d'équilibre n'est jamais appliqué."
+    porte: le coefficient est calculé, et les dépenses de la page ne le portent pas
+    etat: verifiee
+    controle: coefficient_jamais_applique
+
+  - id: cout.limite_retour_equilibre
+    page: /cout
+    extrait: "L'année du retour à l'équilibre se lit à quelques années près."
+    porte: le déficit observé est de l'ordre du pas de la grille, quelques dixièmes de point
+    etat: verifiee
+    controle: deficit_observe_de_l_ordre_du_pas
+
+  - id: cout.limite_reserves
+    page: /cout
+    extrait: "Les réserves d'aujourd'hui ne sont pas comptées."
+    porte: la dette part de zéro à la dernière année observée
+    etat: verifiee
+    controle: dette_part_de_zero
+
+  - id: cout.limite_projection_cor
+    page: /cout
+    extrait: "La projection est celle du COR"
+    porte: le scénario de projection par défaut est celui du COR
+    etat: verifiee
+    controle: projection_du_cor
+
+  - id: cout.limite_couverture
+    page: /cout
+    extrait: "Le taux de couverture est supposé constant."
+    porte: aucun taux de couverture n'est paramétré, le modèle compte des générations
+    etat: verifiee
+    controle: pas_de_parametre_de_couverture
+
+  - id: cout.limite_effectifs
+    page: /cout
+    extrait: "Un effectif de caisse n'est pas un effectif de personnes."
+    porte: la somme des effectifs de caisse dépasse l'effectif tous régimes
+    etat: verifiee
+    controle: effectifs_de_caisse_se_recoupent
+
+  - id: cout.limite_avant_1975
+    page: /cout
+    extrait: "Avant 1975, la reconstitution est mince."
+    porte: les premières années reposent sur bien moins de couples cas type × génération
+    etat: verifiee
+    controle: reconstitution_mince_avant_1975
+
+  - id: cout.limite_grille
+    page: /cout
+    extrait: "La grille échantillonne une génération sur cinq."
+    porte: les générations vont de cinq en cinq
+    etat: verifiee
+    controle: pas_des_generations
+
+  - id: cout.limite_reversion
+    page: /cout
+    extrait: "Seul le système actuel sert la pension de réversion."
+    porte: les scénarios notionnels ne reconduisent pas la réversion
+    etat: verifiee
+    controle: reversion_servie_par_le_seul_systeme_actuel
+
+  - id: cout.limite_reprise
+    page: /cout
+    extrait: "La reprise sur succession est une hypothèse, pas une donnée."
+    porte: la part reprise est un paramètre
+    etat: verifiee
+    controle: part_de_reprise_est_un_reglage
+
+  - id: cout.limite_certification
+    page: /cout
+    extrait: "Rien de tout cela n'est certifié, et ne peut l'être."
+    porte: le coût agrégé est de fiabilité estimée
+    etat: verifiee
+    controle: cout_estime
+
+  - id: en_clair
+    page: [/cout, /avantages, /methode, /donnees]
+    extrait: "En clair."
+    porte: un titre
+    etat: sans_portee
+
+  # ------------------------------------------------------------------------
+  # Avantages
+  # ------------------------------------------------------------------------
+
+  - id: avantages.un_seul_a_l_origine
+    page: /avantages
+    extrait: "aujourd'hui, contre un seul en"
+    porte: un seul dispositif porte la date de création la plus ancienne
+    etat: verifiee
+    controle: un_seul_dispositif_a_l_origine
+
+  - id: avantages.part_de_la_depense
+    page: /avantages
+    extrait: "de la dépense"
+    porte: les avantages chiffrés pèsent de l'ordre d'un cinquième de la dépense
+    etat: verifiee
+    controle: part_des_avantages_chiffres_un_cinquieme
+
+  - id: avantages.deux_ne_s_additionnent_pas
+    page: /avantages
+    extrait: "Les deux ne s'additionnent pas et ne se comparent pas :"
+    porte: la série du modèle seul et le meilleur chiffre sont deux séries distinctes
+    etat: verifiee
+    controle: modele_et_postes_lus_distincts
+
+  - id: avantages.plus_grosses_lignes_lues
+    page: /avantages
+    extrait: "Les plus grosses lignes sont lues, pas calculées."
+    porte: la ligne la plus lourde vient d'un poste publié
+    etat: verifiee
+    controle: plus_grosse_ligne_lue
+
+  - id: avantages.poste_publie_remplace
+    page: /avantages
+    extrait: "Là où les deux existaient, le poste publié a remplacé la ligne calculée"
+    porte: une ligne lue l'emporte sur son calcul dans le meilleur chiffre
+    etat: verifiee
+    controle: poste_publie_remplace_le_calcul
+
+  - id: avantages.fenetre_courte
+    page: /avantages
+    extrait: "La fenêtre est courte parce que les postes publiés le sont."
+    porte: la fenêtre commence l'année où toutes les lignes lues sont publiées
+    etat: verifiee
+    controle: fenetre_des_postes_publies
+
+  - id: avantages.forme_longue
+    page: /avantages
+    extrait: "Et la forme longue parle."
+    porte: le minimum vieillesse pesait un tiers de la dépense et s'est éteint
+    etat: verifiee
+    controle: minimum_vieillesse_s_est_eteint
+
+  - id: avantages.total_plancher
+    page: /avantages
+    extrait: "Et ce total reste un plancher."
+    porte: des dispositifs restent sans chiffre
+    etat: verifiee
+    controle: des_dispositifs_restent_sans_chiffre
+
+  - id: avantages.servies_avant_l_age
+    page: /avantages
+    extrait: "de pensions servies avant l'âge légal en"
+    porte: les annuités anticipées sont rapportées au montant des mêmes dispositifs, compté
+    etat: verifiee
+    controle: annuites_anticipees_rapportees_au_montant
+
+  - id: avantages.decote_plafonnee
+    page: /avantages
+    extrait: "plafonnée à vingt trimestres"
+    porte: le barème d'anticipation s'arrête à vingt trimestres
+    etat: verifiee
+    controle: decote_plafonnee_a_vingt_trimestres
+
+  - id: avantages.reserve
+    page: /avantages
+    extrait: "Réserve."
+    porte: un titre de réserve
+    etat: sans_portee
+
+  - id: avantages.aucun_illegitime
+    page: /avantages
+    extrait: "Aucun de ces dispositifs n'est illégitime."
+    porte: une opinion
+    etat: sans_portee
+
+  - id: avantages.ne_dit_pas_economie
+    page: /avantages
+    extrait: "Elle ne dit pas ce que le système économiserait."
+    porte: dit ce que le chiffre ne prétend pas, rien à contrôler
+    etat: sans_portee
+
+  - id: avantages.pas_deux_fois
+    page: /avantages
+    extrait: "Elle ne compte pas deux fois la même chose."
+    porte: les écarts structurels sont hors du comptage des dispositifs
+    etat: verifiee
+    controle: ecarts_structurels_hors_comptage
+
+  - id: avantages.ne_remplace_pas_la_loi
+    page: /avantages
+    extrait: "Elle ne remplace pas la loi."
+    porte: une mise en garde
+    etat: sans_portee
+
+  # ------------------------------------------------------------------------
+  # Méthode
+  # ------------------------------------------------------------------------
+
+  - id: methode.essentiel_de_l_ecart
+    page: /methode
+    extrait: "C'est de là que vient l'essentiel de l'écart affiché par les scénarios rétroactifs"
+    porte: l'écart entre règles d'indexation dépasse de loin l'effet propre des comptes
+    etat: verifiee
+    controle: indexation_domine_l_ecart
+
+  - id: methode.triple_lock
+    page: /methode
+    extrait: "Le triple lock inversé"
+    porte: la règle retient le minimum des trois taux
+    etat: verifiee
+    controle: triple_lock_est_un_minimum
+
+  - id: methode.reval_pratiquee
+    page: /methode
+    extrait: "est la seule ligne qui ne soit pas une hypothèse"
+    porte: la revalorisation pratiquée vaut près de cinq fois les prix sur 1941-2025
+    etat: verifiee
+    controle: revalorisation_pratiquee_pres_de_cinq_fois_les_prix
+
+  - id: methode.masse_salariale
+    page: /methode
+    extrait: "« Masse salariale » est ce que la théorie désigne."
+    porte: la masse salariale vaut onze fois les prix sur 1941-2025
+    etat: verifiee
+    controle: masse_salariale_onze_fois_les_prix
+
+  - id: methode.pib_nominal
+    page: /methode
+    extrait: "Le PIB nominal pousse la même idée"
+    porte: le PIB nominal, brut et lissé, est une règle disponible
+    etat: verifiee
+    controle: lissage_absorbe_la_loterie
+
+  - id: methode.lissage_cinq_ans
+    page: /methode
+    extrait: "lissage sur cinq ans"
+    porte: le lissage à cinq ans absorbe le trou de 2020
+    etat: verifiee
+    controle: lissage_absorbe_la_loterie
+
+  - id: methode.lissage_reglage_a_part
+    page: /methode
+    extrait: "Le lissage est un réglage à part"
+    porte: le lissage s'ajoute à toute règle et absorbe la loterie de cohorte
+    etat: verifiee
+    controle: lissage_absorbe_la_loterie
+
+  - id: methode.loterie_de_cohorte
+    page: /methode
+    extrait: "loterie de cohorte"
+    porte: sans lissage, liquider en 2020 plutôt qu'en 2019 faisait perdre
+    etat: verifiee
+    controle: lissage_absorbe_la_loterie
+
+  - id: methode.replaces_sur_le_meme_compte
+    page: /methode
+    extrait: "replacés sur le même compte"
+    porte: le pilier reçoit dix points, les cinq rendus compris
+    etat: verifiee
+    controle: cinq_points_volontaires_separes
+
+  - id: methode.convention_de_comparaison
+    page: /methode
+    extrait: "convention de comparaison"
+    porte: l'effort total revient à celui d'aujourd'hui
+    etat: verifiee
+    controle: effort_inchange
+
+  - id: methode.rien_du_tout
+    page: /methode
+    extrait: "ne rapportent rien du tout en pension"
+    porte: la garantie compte la rente volontaire dans les ressources
+    etat: verifiee
+    controle: garantie_compte_la_rente_volontaire
+
+  - id: methode.ce_qu_il_suppose
+    page: /methode
+    extrait: "Ce qu'il suppose"
+    porte: un titre
+    etat: sans_portee
+
+  - id: methode.vraies_moyennes
+    page: /methode
+    extrait: "vraies moyennes du marché"
+    porte: les frais sont des paramètres sourcés à l'OPEF
+    etat: verifiee
+    controle: frais_du_pilier_sources
+
+  - id: methode.baissent_par_paliers
+    page: /methode
+    extrait: "Ils baissent ensuite, par paliers."
+    porte: les paliers de frais sont décroissants
+    etat: verifiee
+    controle: frais_baissent_par_paliers
+
+  - id: methode.baisse_nouveaux_depots
+    page: /methode
+    extrait: "La baisse porte surtout sur les nouveaux dépôts"
+    porte: le stock ne converge que d'une fraction de l'écart par an
+    etat: verifiee
+    controle: frais_baissent_par_paliers
+
+  - id: methode.avpf
+    page: /methode
+    extrait: "l'assurance vieillesse des parents au foyer, qui porte au compte"
+    porte: l'étalon applique cet avantage, et le modèle le chiffre
+    etat: verifiee
+    controle: etalon_applique_les_avantages
+
+  - id: methode.trimestres_enfants
+    page: /methode
+    extrait: "les trimestres accordés au titre des enfants"
+    porte: l'étalon applique cet avantage, et le modèle le chiffre
+    etat: verifiee
+    controle: etalon_applique_les_avantages
+
+  - id: methode.minimum_contributif
+    page: /methode
+    extrait: "le minimum contributif, réservé aux pensions liquidées"
+    porte: l'étalon applique cet avantage, et le modèle le chiffre
+    etat: verifiee
+    controle: etalon_applique_les_avantages
+
+  - id: methode.minimum_garanti
+    page: /methode
+    extrait: "le minimum garanti de la fonction publique"
+    porte: l'étalon applique cet avantage, et le modèle le chiffre
+    etat: verifiee
+    controle: etalon_applique_les_avantages
+
+  - id: methode.surcote_parentale
+    page: /methode
+    extrait: "la surcote parentale, créée par la loi"
+    porte: l'étalon applique cet avantage, et le modèle le chiffre
+    etat: verifiee
+    controle: etalon_applique_les_avantages
+
+  - id: methode.majoration_trois_enfants
+    page: /methode
+    extrait: "la majoration pour trois enfants, calculée"
+    porte: l'étalon applique cet avantage, et le modèle le chiffre
+    etat: verifiee
+    controle: etalon_applique_les_avantages
+
+  - id: methode.minimum_vieillesse
+    page: /methode
+    extrait: "le minimum vieillesse, allocation différentielle"
+    porte: l'étalon applique cet avantage, et le modèle le chiffre
+    etat: verifiee
+    controle: etalon_applique_les_avantages
+
+  - id: methode.suite_de_metiers
+    page: /methode
+    extrait: "suite de métiers"
+    porte: une carrière se décrit métier par métier, chaque année à un statut
+    etat: verifiee
+    controle: annee_civile_un_seul_statut
+
+  - id: methode.profil_de_carriere
+    page: /methode
+    extrait: "profil de carrière"
+    porte: le profil vaut pour la vie active entière
+    etat: verifiee
+    controle: annee_civile_un_seul_statut
+
+  - id: methode.annee_civile_un_statut
+    page: /methode
+    extrait: "année civile n'a qu'un statut"
+    porte: l'année d'un changement revient au métier qui en occupe le plus de mois
+    etat: verifiee
+    controle: annee_civile_un_seul_statut
+
+  - id: methode.dates_de_recrutement
+    page: /methode
+    extrait: "aux dates où son régime recrutait"
+    porte: un statut fermé à la date d'entrée est grisé
+    etat: verifiee
+    controle: statut_ferme_apres_son_recrutement
+
+  - id: methode.euros_d_aujourd_hui
+    page: /methode
+    extrait: "euros d'aujourd'hui"
+    porte: le revenu se saisit dans les euros de l'année courante du modèle
+    etat: verifiee
+    controle: revenu_saisi_en_euros_d_aujourd_hui
+
+  - id: methode.multiple_du_salaire_moyen
+    page: /methode
+    extrait: "multiple du salaire moyen"
+    porte: le niveau est le revenu mensuel fois douze sur le salaire moyen annuel
+    etat: verifiee
+    controle: conversion_en_multiple_du_salaire_moyen
+
+  - id: methode.ancrage_salaire_moyen
+    page: /methode
+    extrait: "bruts annuels en 2024"
+    porte: l'ancrage du salaire moyen est 40 000 € en 2024
+    etat: verifiee
+    controle: ancrage_du_salaire_moyen
+
+  - id: methode.portage_javascript
+    page: /methode
+    extrait: "portage en JavaScript"
+    porte: le portage est comparé au modèle sur les témoins, page par page
+    etat: verifiee
+    controle: portage_compare_aux_temoins
+
+  # ------------------------------------------------------------------------
+  # Données
+  # ------------------------------------------------------------------------
+
+  - id: donnees.series_certifiees
+    page: /donnees
+    extrait: "Les séries macroéconomiques sont certifiées de 1950 à 2025"
+    porte: la fiabilité des séries macro sur 1950-2025 est « certifiée »
+    etat: verifiee
+    controle: series_macro_certifiees
+
+  - id: donnees.deux_sources_pilier
+    page: /donnees
+    extrait: "Les deux sources du pilier capitalisé."
+    porte: la courbe des taux est une série certifiée, les frais des paramètres sourcés
+    etat: verifiee
+    controle: sources_du_pilier
+
+  - id: donnees.bce
+    page: /donnees
+    extrait: "Banque centrale européenne"
+    porte: la courbe des taux vient de la BCE et est recontrôlée
+    etat: verifiee
+    controle: sources_du_pilier
+
+  - id: donnees.opef
+    page: /donnees
+    extrait: "Observatoire des produits d'épargne financière"
+    porte: les frais viennent de l'OPEF
+    etat: verifiee
+    controle: sources_du_pilier
+
+  - id: donnees.citer_le_producteur
+    page: /donnees
+    extrait: "Qui reprend un chiffre d'ici cite le producteur, pas ce site."
+    porte: une règle de citation
+    etat: sans_portee
+
+  # ------------------------------------------------------------------------
+  # Le pied de page, commun à toutes
+  # ------------------------------------------------------------------------
+
+  - id: pied.aucune_valeur_officielle
+    page: "*"
+    extrait: "Ce simulateur n'a aucune valeur officielle."
+    porte: un avertissement légal
+    etat: sans_portee
