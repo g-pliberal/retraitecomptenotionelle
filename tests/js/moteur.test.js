@@ -19,6 +19,7 @@ import { dirname, join } from "node:path";
 import { Contexte, Saisie, rendre } from "../../moteur/js/pages.js";
 import { Affiliations } from "../../moteur/js/regimes.js";
 import * as gabarit from "../../moteur/js/gabarit.js";
+import { Fiabilite, SerieAnnuelle } from "../../moteur/js/serie.js";
 
 const RACINE = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 
@@ -153,6 +154,35 @@ test("le seuil d'affiliation de l'élu local est lu comme en Python", () => {
     affiliations.regimes("salarie_prive_non_cadre", 2020, null, 1, 41136),
     ["regime_general", "agirc_arrco"],
   );
+});
+
+/**
+ * Une année non mesurée ne se dit pas certifiée.
+ *
+ * Le paquet porte l'interpolation de chaque série, et le navigateur
+ * l'applique. Les témoins de pages ne peuvent pas couvrir ce chemin : le site
+ * n'affiche aucune des années absentes en question. Un portage qui lirait une
+ * série d'enquête en escalier rendrait la même VALEUR — donc le même HTML —
+ * sous un niveau de fiabilité que le producteur n'a jamais accordé.
+ */
+test("une année non mesurée ne se dit pas certifiée", () => {
+  const serie = paquet.depenses.droits_derives;
+  assert.equal(serie.interpolation, "ponctuelle");
+
+  // Un barème garde son niveau entre deux changements : c'est la loi qui le
+  // dit, pas une interpolation.
+  const barème = new SerieAnnuelle([2000, 2004], [1.0, 2.0], [3, 3], "barème");
+  assert.equal(barème.brut(2002).fiabilite, 3);
+  assert.equal(barème.brut(2002).valeur, 1.0);
+
+  // Une enquête, non : la valeur reconduite est la même, le niveau tombe.
+  const enquête = new SerieAnnuelle([2000, 2004], [1.0, 2.0], [3, 3], "enquête",
+    "ponctuelle");
+  assert.equal(enquête.brut(2002).valeur, 1.0);
+  assert.equal(enquête.brut(2002).fiabilite, Fiabilite.ESTIMEE);
+  // Les années publiées gardent le leur.
+  assert.equal(enquête.brut(2000).fiabilite, 3);
+  assert.equal(enquête.brut(2004).fiabilite, 3);
 });
 
 /**

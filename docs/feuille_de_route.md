@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 332<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 347<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10734,3 +10734,73 @@ leur.
 
 **Fichiers.** `donnees/population.py`, `moteur/js/population.js`, `cout.py`
 (docstring de `_courbes_survie`), `tests/test_cout.py`, `tests/js/moteur.test.js`.
+
+---
+
+### 70. Une année non mesurée ne se dit plus certifiée — `fait`
+
+**Demande.** « Cherche d'autres pièges du même genre dans le dépôt », après
+l'action 69. Le motif cherché : une valeur hors domaine, PLAUSIBLE, que rien ne
+signale, et dont la reconduction change l'identité de ce qu'on lit.
+
+**Ce que la recherche a passé en revue, et écarté.** Les clamps d'année de
+`equilibre.recette_non_acquise` et de `carriere` : déclarés, et à part
+constante. Le clamp d'âge de `vie_en_couple` : déclaré, et la table est
+complète sur sa plage — aucun triplet manquant qui rendrait zéro en silence.
+`valeur_par_generation` : rend `None` en deçà de la première génération, ce qui
+est honnête, et reconduit au-delà, ce qui est la convention du droit constant.
+Les six mémoires de fichiers : toutes indexées sur `st_mtime_ns` et la taille,
+donc insensibles à deux écritures dans la même seconde. Et le portage
+JavaScript de `SerieAnnuelle` reproduit exactement les branches du Python, y
+compris celle qui était en cause.
+
+**Ce qu'elle a trouvé.** `SerieAnnuelle` porte, deux lignes sous le commentaire
+qui écrit « une valeur interpolée n'est jamais *certifiée* », une branche qui
+rend la fiabilité de l'année précédente telle quelle. Pour un BARÈME c'est
+juste : l'année absente n'a pas changé, et la valeur de 2016 sous un seuil fixé
+en 2015 est aussi certifiée que lui, parce que c'est la loi qui le dit. Pour
+une ENQUÊTE, non : l'année absente n'a pas été MESURÉE.
+
+**Le cas réel.** La DREES dénombre les retraités caisse par caisse et ne publie
+pas la coordination RATP en 2022 — 2020, 2021, 2023, 2024, et rien entre les
+deux. Vérifié chez le producteur, le trou est réel et non un défaut de
+récupération. Le dépôt rendait **3 672 retraités en 2022, marqués `certifiee`**,
+c'est-à-dire « recontrôlés contre le fichier de l'institution qui les
+produit » — alors qu'il n'y a pas de fichier. Même chose, latente, dans
+`droits_derives.csv`, où seule une caisse non lue porte le trou.
+
+**Ce que le dépôt disait déjà, et que la branche démentait.** Hors de la
+fenêtre 2004-2024, la répartition du bord est reconduite « et la série tombe au
+niveau `estimee` pour le dire ». À l'intérieur, un trou gardait `certifiee` :
+la règle était écrite, et son exception ne l'était pas.
+
+**Le remède est un troisième mode d'interpolation, `ponctuelle`.** Il répond à
+la seule question qui compte — que veut dire une année absente ? `escalier`,
+elle n'a pas changé ; `lineaire`, la grandeur est continue et on interpole ;
+`ponctuelle`, elle n'a pas été mesurée, et la valeur du bord est reconduite
+comme dans l'escalier MAIS tombe à `estimee`. **La valeur ne change pas** : un
+effectif reconduit reste l'estimation raisonnable qu'il était. Ce qui change est
+qu'il se dit estimé, et la fiabilité se propage jusqu'au résultat affiché.
+
+**Le second piège, structurel.** Treize séries sont déclarées DEUX FOIS — une
+fois par le modèle, une fois par `construire_donnees.py` pour le paquet — et le
+paquet porte l'interpolation que le navigateur applique. Deux déclarations qui
+divergeraient feraient dire deux choses aux deux portages sur une année
+absente, et **aucun témoin ne le verrait** : le site n'affiche aucune de ces
+années-là. Les treize s'accordent aujourd'hui ; un test les apparie désormais
+par leurs VALEURS — un nom peut différer d'un côté à l'autre, une série
+d'années et de valeurs identiques ne trompe pas.
+
+**Une piste laissée ouverte.** `structure_financement.csv` et `cotisants.csv`
+portent les projections du COR par jalons — 2010, 2023, 2030, 2040, 2050, 2060,
+2070 — lues en escalier : 2029 y prend la valeur de 2023. Ce n'est pas une
+fausse certification, c'est une question d'exactitude sur une courbe de
+projection, où `lineaire` serait probablement plus juste. Elle n'est pas
+tranchée ici : elle déplacerait des valeurs, là où cette action n'en déplace
+aucune.
+
+**Fichiers.** `donnees/chargement.py`, `moteur/js/serie.js`,
+`donnees/effectifs.py`, `donnees/depenses.py`, `donnees/equilibre.py`,
+`scripts/construire_donnees.py`, `scripts/verifier_donnees.py`,
+`data/reference/regimes/effectifs_retraites.csv`, `tests/test_donnees.py`,
+`tests/js/moteur.test.js`.

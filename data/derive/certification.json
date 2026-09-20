@@ -219,7 +219,7 @@
    "niveau": "certifiee",
    "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
    "valeurs": 305,
-   "verifiee_le": "2026-09-19"
+   "verifiee_le": "2026-09-20"
   },
   "duree_assurance_requise": {
    "ajoutees": 0,
@@ -296,7 +296,7 @@
    "niveau": "certifiee",
    "source": "DREES, enquête annuelle auprès des caisses de retraite (EACR)",
    "valeurs": 334,
-   "verifiee_le": "2026-09-19"
+   "verifiee_le": "2026-09-20"
   },
   "employeur_public_cnracl": {
    "ajoutees": 0,
@@ -431,11 +431,11 @@
    "verifiee_le": "2026-09-17"
   },
   "engagements_retraite": {
-   "ajoutees": 6,
+   "ajoutees": 0,
    "colonne": "part_pib",
    "corrigees": 0,
    "empreinte": "5e0e4e97aded5479",
-   "identiques": 0,
+   "identiques": 6,
    "niveau": "haute",
    "source": "Eurostat, tableau supplémentaire sur les retraites du SEC 2010 (nasa_10_pens1, poste F63_LE)",
    "valeurs": 6,

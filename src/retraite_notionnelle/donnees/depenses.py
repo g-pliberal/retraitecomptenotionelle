@@ -168,9 +168,13 @@ class DepensesRetraite:
         # La réversion, lue et non modélisée : le modèle décrit une carrière,
         # pas un ménage. C'est la seule dépense non contributive dont le montant
         # vienne d'une publication plutôt que d'un calcul.
+        # PONCTUELLE : c'est la même enquête annuelle que les effectifs, et une
+        # année absente y est une année non mesurée. Le total « tous régimes »
+        # n'a pas de trou aujourd'hui ; d'autres caisses du fichier en ont, et
+        # le mode se déclare sur le FICHIER, pas sur la chance qu'on a eue.
         self.droits_derives = charger_serie_annuelle(
             macro / "droits_derives.csv", "masse_meur", nom="droits_derives",
-            filtre={"caisse": "tous_regimes"},
+            filtre={"caisse": "tous_regimes"}, interpolation="ponctuelle",
         )
         # Les prestations non contributives que les comptes isolent, poste par
         # poste, depuis 2020. Elles ne complètent pas le modèle : elles le

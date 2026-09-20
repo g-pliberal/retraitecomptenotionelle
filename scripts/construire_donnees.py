@@ -166,9 +166,15 @@ def _depenses() -> dict:
             macro / "pib_courant.csv", "pib_meur", nom="pib_courant"),
         # La réversion, lue et non modélisée : le modèle décrit une carrière,
         # pas un ménage. Elle voyage avec les dépenses parce qu'elle en est une.
+        # Le MODE suit celui de `donnees/depenses.py`, et il le faut : le
+        # paquet porte l'interpolation de chaque série, et le navigateur
+        # l'applique telle quelle. Deux déclarations du même fichier qui ne
+        # s'accorderaient pas feraient dire deux choses aux deux portages sur
+        # une année absente — et aucun témoin ne le verrait, le site n'en
+        # affichant aucune.
         "droits_derives": charger_serie_annuelle(
             macro / "droits_derives.csv", "masse_meur", nom="droits_derives",
-            filtre={"caisse": "tous_regimes"}),
+            filtre={"caisse": "tous_regimes"}, interpolation="ponctuelle"),
     }
     # Les postes non contributifs des comptes, sous leur propre clé : ils sont
     # LUS dans le fichier et non écrits ici, pour qu'un poste ajouté aux comptes
@@ -239,7 +245,10 @@ def _comptes_retraite() -> dict:
     for regime in ("tous_regimes", "repartition"):
         series[f"engagements_{regime}"] = charger_serie_annuelle(
             macro / "engagements_retraite.csv", "part_pib",
-            nom=f"engagements_{regime}", filtre={"regime": regime})
+            nom=f"engagements_{regime}", filtre={"regime": regime},
+            # Transmis tous les trois ans : deux années sur trois n'ont pas été
+            # mesurées. Même mode que `donnees/equilibre.py`.
+            interpolation="ponctuelle")
     # Ce que la branche famille et l'assurance chômage versent, en millions
     # d'euros : la ventilation du poste « transferts », lue chez celui qui paie.
     for poste in POSTES_TRANSFERTS:
