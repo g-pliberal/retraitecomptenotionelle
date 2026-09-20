@@ -5174,54 +5174,111 @@ def test_la_methode_dit_comment_le_site_est_construit(contexte):
     )
 
 
-def test_la_page_risque_repond_depuis_les_comptes_du_cor(contexte):
-    """Le risque de défaut, chiffré depuis le modèle et non écrit à la main.
+def test_la_page_risque_chiffre_le_prelevement_depuis_le_modele(contexte):
+    """Ce que la retraite prélève, recalculé ici plutôt que recopié.
 
-    La page répond d'abord à la question de l'électeur, en deux cartes : ce
-    qui s'est passé ailleurs, et de combien il s'agit en France. Les chiffres
-    de la seconde sont ceux du solde que la page Coût affiche, lus par le même
-    code ; ce test les recalcule depuis le modèle et les cherche dans la page,
-    pour qu'un compte du COR mis à jour ne laisse pas une phrase périmée.
-    Le reste est replié, et chaque dépliant est joignable depuis le plan.
+    La page tient trois chiffres qui ne viennent d'aucune source extérieure :
+    ce qu'un salarié du privé verse chaque mois pour sa retraite à trois
+    niveaux de salaire, la part de la pension promise que ses propres
+    cotisations ne financent pas, et le solde du système. Ce test les refait
+    depuis le modèle et les cherche dans la page : un taux de cotisation qui
+    change, un compte du COR mis à jour, et c'est ici que la phrase périmée
+    apparaît.
+    """
+    from retraite_notionnelle.web.pages import (
+        MOIS_PAR_AN, NIVEAUX_RISQUE, _risque_exemple,
+    )
+
+    corps = rendre(contexte, "/risque", {})[1]
+    exemples = [_risque_exemple(contexte, niveau) for _, niveau in NIVEAUX_RISQUE]
+
+    # Les trois lignes du tableau des salaires, au centime.
+    for comparaison in exemples:
+        fiche = comparaison.remuneration.reference.droit_en_vigueur
+        assert g.euros(fiche.retraite_totale / MOIS_PAR_AN) in corps
+        assert g.euros(fiche.brut / MOIS_PAR_AN) in corps
+    moyen = exemples[1]
+    fiche_moyen = moyen.remuneration.reference.droit_en_vigueur
+    verse = g.euros(fiche_moyen.retraite_totale / MOIS_PAR_AN)
+    # Le chiffre de tête est celui du salaire moyen, et il est aussi dans le
+    # chapeau de l'affiche : les deux doivent bouger ensemble.
+    assert corps.count(verse) >= 3, verse
+    # Au SMIC, la part du brut est plus faible qu'au salaire moyen : ce sont
+    # les allègements généraux, et la page l'explique.
+    parts = [c.remuneration.reference.droit_en_vigueur.retraite_totale
+             / c.remuneration.reference.droit_en_vigueur.brut for c in exemples]
+    assert parts[0] < parts[1] < parts[2]
+    assert "allègements généraux compris" in corps
+
+    # L'écart entre la promesse et ce que les cotisations financent.
+    constants = moyen.coefficient_euros_constants
+    promis = moyen.actuel.pension_annuelle * constants
+    finance = moyen.notionnel_retroactif_employeur.pension_annuelle * constants
+    assert finance < promis, "l'exemple ne montre plus d'écart à financer"
+    assert g.pourcentage(1 - finance / promis, decimales=0) in corps
+    assert g.pourcentage(finance / promis, decimales=0) in corps
+
+    # Le solde, lu dans les mêmes comptes que la page Coût.
+    solde = contexte.cout().solde
+    horizon = solde.annee(solde.derniere_annee)
+    assert g.pourcentage(
+        -horizon.solde("actuel") / horizon.depense("actuel"), decimales=0) in corps
+    assert f'scope="row">{solde.derniere_annee_observee} (observé)</th>' in corps
+
+
+def test_la_page_risque_cite_le_COR_mot_pour_mot(contexte):
+    """Les phrases du COR sont citées, pas résumées.
+
+    Elles portent l'essentiel de l'argumentaire, et elles valent parce
+    qu'elles viennent de l'institution qui projette : les paraphraser les
+    affaiblirait, et les déformer serait pire. Ce test tient les citations à
+    la lettre. Elles ont été relevées dans le rapport annuel de juin 2026.
     """
     corps = rendre(contexte, "/risque", {})[1]
-    solde = contexte.cout().solde
-    obs = solde.derniere_annee_observee
-    observe = solde.annee(obs)
-    horizon = solde.annee(solde.derniere_annee)
-    manque = -observe.solde_meur("actuel")
-    part_horizon = -horizon.solde("actuel") / horizon.depense("actuel")
+    # Sur la prose remise à plat : le gabarit coupe les lignes où il veut, et
+    # une citation ne doit pas dépendre de l'endroit où elle est coupée.
+    texte = _prose(corps)
+    for citation in (
+        "trois des quatre leviers étudiés",
+        "présentent un caractère récessif",
+        "renforcent les difficultés à financer les dépenses publiques autres "
+        "que les retraites, à l'instar de l'école, la santé ou la sécurité",
+        "54,6 % en 2025 à 45,3 % en 2070",
+        "demeurerait durablement en besoin de financement",
+        "qui conduit à abaisser le PIB par habitant",
+    ):
+        assert citation in texte, citation
+    # Les deux blocs de citation sont des citations, et le HTML le dit.
+    assert corps.count("<blockquote>") == 2
 
-    # Les deux cartes, et les chiffres de la seconde.
-    assert '<section class="cle" id="risque-paiement"' in corps
-    assert '<section class="cle" id="risque-france"' in corps
-    assert f"il a manqué {_milliards(manque, 1)}" in corps
-    assert (f"il manquerait {g.pourcentage(part_horizon, decimales=0)}\n"
-            f"en {solde.derniere_annee}") in corps
-    assert f'scope="row">{obs} (observé)</th>' in corps
-    assert f'scope="row">{solde.derniere_annee}</th>' in corps
 
-    # Le plan liste les deux cartes et les dix dépliants, dans l'ordre.
+def test_la_page_risque_range_ses_sections_et_se_relie(contexte):
+    """Le plan, l'ordre des sections, et les liens qui font le tour du site."""
+    corps = rendre(contexte, "/risque", {})[1]
     plan = re.search(r'<nav class="plan".*?</nav>', corps, re.S).group(0)
-    vers = re.findall(r'data-vers="([^"]+)"', plan)
-    assert vers == [
-        "risque-paiement", "risque-france", "risque-definition", "risque-dette",
-        "risque-projections", "risque-deja", "risque-ailleurs",
-        "risque-capitalisation", "risque-automatique", "risque-perception",
-        "risque-notionnel", "risque-sources",
+    assert re.findall(r'data-vers="([^"]+)"', plan) == [
+        "risque-prelevement", "risque-promesse", "risque-salaire",
+        "risque-croissance", "risque-pauvres", "risque-jeunes",
+        "risque-evince", "risque-deja", "risque-objections",
+        "risque-ailleurs", "risque-droit", "risque-sources",
     ]
-
-    # La page renvoie au Coût, qui porte le détail ; le programme y renvoie.
-    assert f'href="{g.lien("/cout")}"' in corps
+    for chemin in ("/simuler", "/cout", "/"):
+        assert f'href="{g.lien(chemin)}"' in corps, chemin
     assert f'href="{g.lien("/risque")}"' in rendre(contexte, "/", {})[1]
-    # Et la bibliographie complète est dans le dépôt, à l'adresse annoncée.
+
+    # La bibliographie est dans le dépôt, à l'adresse annoncée.
     from pathlib import Path
     assert f'href="{g.DEPOT}/blob/main/docs/risque_de_defaut.md"' in corps
     assert (Path(__file__).resolve().parents[1] / "docs" / "risque_de_defaut.md").exists()
-    # Aucune probabilité n'est inventée : le mot n'apparaît qu'au sujet des
-    # enquêtes d'opinion citées, jamais comme un chiffre de la page.
-    prose = _prose(corps)
-    assert not re.search(r"probabilité de \d", prose)
+
+    # La page reste un réquisitoire honnête : elle cite le travail qui
+    # contredit sa propre thèse générationnelle, et elle refuse d'affirmer une
+    # éviction que personne n'a démontrée.
+    texte = _prose(corps)
+    assert "cité contre notre propre thèse" in texte
+    assert "il ne démontre pas un mécanisme" in texte
+    # Aucune probabilité de défaut n'est inventée.
+    assert not re.search(r"probabilité de \d", _prose(corps))
 
 
 def test_la_page_donnees_se_lit_comme_une_base(contexte):

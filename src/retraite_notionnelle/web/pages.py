@@ -9244,56 +9244,108 @@ def _cumuls_indexation(contexte: Contexte) -> dict[str, float]:
             ANNEE_VERSEMENT_COMPARE, ANNEE_ARRIVEE_COMPAREE)
     return cumuls
 
+#: Les trois niveaux de salaire de la page Risque, sur une même carrière de
+#: référence : un salarié du privé né en 1990, entré à 22 ans, qui part à 64.
+#: Ce n'est pas un cas type de la page Coût — elle ne pèse dans aucun agrégat —,
+#: c'est un EXEMPLE, et la page le dit. Qui veut le sien a le simulateur.
+NIVEAUX_RISQUE: tuple[tuple[str, float], ...] = (
+    ("Au SMIC", 0.55),
+    ("Au salaire moyen", 1.0),
+    ("À deux fois le salaire moyen", 2.0),
+)
+
+NAISSANCE_RISQUE = 1990
+DEBUT_RISQUE = 22
+LIQUIDATION_RISQUE = 64
+
+
+def _risque_exemple(contexte: Contexte, niveau: float) -> Comparaison:
+    """La carrière de référence de la page Risque, à un niveau de salaire."""
+    return contexte.simuler(Saisie(
+        naissance=NAISSANCE_RISQUE, statut="salarie_prive_non_cadre",
+        debut=DEBUT_RISQUE, liquidation=LIQUIDATION_RISQUE,
+        salaire=niveau, unite_revenu="moyen", demandee=True,
+    ))
+
+
 def _risque(contexte: Contexte) -> str:
-    """Le risque de défaut du système actuel : ce que la recherche en sait.
+    """Ce que la répartition prélève, et ce qu'elle ne rendra pas.
 
     C'EST LE PREMIER ARGUMENT DE LA PROPOSITION, et le site ne le regardait
-    pas : il chiffrait ce que chaque système verse et ce qu'il coûte, jamais
-    la probabilité que le système en place cesse de tenir sa promesse. La page
-    répond à la question telle qu'un électeur la pose, « ma retraite sera-t-elle
-    payée ? », puis range sous des dépliants ce que la littérature universitaire
-    établit, référence par référence.
+    pas : il chiffrait ce que chaque système verse et ce qu'il coûte, jamais ce
+    que le système en place prend, ni à qui, ni ce qu'il ne tiendra pas. La
+    page pose les deux questions dans l'ordre où un électeur les pose — combien
+    on me prélève, et est-ce que je le reverrai — puis range sous des dépliants
+    ce que la recherche établit, référence par référence.
 
     ELLE S'ADRESSE À QUELQU'UN QUI N'A PAS FAIT D'ÉCONOMIE, comme la page Coût,
     et obéit aux mêmes règles : une question par carte, sa réponse en deux
     phrases, le tableau qui la montre ; les mots de spécialiste portent leur
     définition ; tout le reste est replié.
 
-    CE QUE LA PAGE NE FAIT PAS : elle ne calcule aucune probabilité. La
-    recherche n'en connaît pas, et le dire est son premier résultat. Ce qu'elle
-    chiffre vient de deux endroits, et de deux seulement : les comptes du
-    système de retraite tels que le Conseil d'orientation des retraites les
-    publie et les projette, lus par le même code que la page Coût ; et les
-    travaux cités, dont chaque chiffre est écrit ici tel que sa source le
-    donne, avec la source. La bibliographie complète, avec ce qui a été lu et
-    ce qui n'a pu l'être, est dans ``docs/risque_de_defaut.md``.
+    TROIS CHIFFRES VIENNENT DU MODÈLE plutôt que d'une source extérieure : ce
+    qu'un salarié verse chaque mois pour sa retraite, à trois niveaux de
+    salaire ; ce que ces cotisations financeraient au rendement qu'une
+    répartition peut servir sans changer son taux ; et le solde du système, lu
+    dans les comptes du COR comme sur la page Coût.
+
+    LE RESTE EST CITÉ, ET LA PLUPART DU TEMPS CITÉ DU COR. C'est la règle de
+    construction de la section qui répond au « il n'y a pas de problème » : à
+    chaque fois qu'un chiffre du Conseil d'orientation des retraites suffit, il
+    est préféré à un travail académique, parce qu'on ne peut pas le récuser
+    comme partisan. La bibliographie entière est dans
+    ``docs/risque_de_defaut.md``.
+
+    CE QUE LA PAGE NE FAIT PAS : elle ne calcule aucune probabilité de défaut.
+    La recherche n'en connaît pas, et le dire vaut mieux que d'en inventer une.
     """
     solde = contexte.cout().solde
     obs = solde.derniere_annee_observee
     observe = solde.annee(obs)
     fin = solde.derniere_annee
     horizon = solde.annee(fin)
-    manque = -observe.solde_meur("actuel")
-    part_manquante = -observe.solde("actuel") / observe.depense("actuel")
     part_horizon = -horizon.solde("actuel") / horizon.depense("actuel")
+    manque = -observe.solde_meur("actuel")
 
-    # -- les trois chiffres d'ouverture --------------------------------------
-    reperes = g.fiche(
-        f"Manquant en {obs}",
-        _milliards(manque, 1),
-        g.pourcentage(part_manquante, decimales=1) + " de ce qui est versé",
-    ) + g.fiche(
-        f"Manquant en {fin}, sans rien changer",
-        g.pourcentage(part_horizon, decimales=0),
-        "de ce qui serait dû cette année-là",
-    ) + g.fiche(
-        "Pays riches où une pension a cessé d'être payée",
-        "0",
-        "depuis 1945 ; la Russie de 1996 est le seul cas documenté",
+    # -- ce qu'un salarié verse, à trois niveaux de salaire -------------------
+    exemples = [(libelle, _risque_exemple(contexte, niveau))
+                for libelle, niveau in NIVEAUX_RISQUE]
+    moyen = exemples[1][1]
+    fiche_moyen = moyen.remuneration.reference.droit_en_vigueur
+    verse_mensuel = fiche_moyen.retraite_totale / MOIS_PAR_AN
+
+    # Ce que la promesse doit à quelqu'un d'autre : l'écart entre ce que le
+    # droit promet à cet assuré et ce que ses propres cotisations financeraient
+    # au rendement d'équilibre. C'est le système 4 du site, sous la règle par
+    # défaut, et l'écart se lit dans les deux sens : une promesse plus élevée
+    # que son financement est une promesse dont quelqu'un d'autre répond.
+    constants = moyen.coefficient_euros_constants
+    promis = moyen.actuel.pension_annuelle * constants / MOIS_PAR_AN
+    finance = (moyen.notionnel_retroactif_employeur.pension_annuelle
+               * constants / MOIS_PAR_AN)
+    part_promise = 1.0 - finance / promis
+
+    lignes_salaires = []
+    for libelle, comparaison in exemples:
+        fiche = comparaison.remuneration.reference.droit_en_vigueur
+        lignes_salaires.append([
+            libelle,
+            g.euros(fiche.brut / MOIS_PAR_AN),
+            g.euros(fiche.retraite_totale / MOIS_PAR_AN),
+            g.pourcentage(fiche.retraite_totale / fiche.brut, decimales=1),
+            g.euros(fiche.net / MOIS_PAR_AN),
+        ])
+    tableau_salaires = g.tableau(
+        ["Niveau de salaire", "Salaire brut", "Prélevé pour la retraite",
+         "Part du brut", "Net touché"],
+        lignes_salaires,
+        ["", "nombre", "nombre", "nombre", "nombre"],
+        titre=f"Ce que la retraite prélève chaque mois sur un salarié du privé "
+              f"en {fiche_moyen.annee}, {g.terme('part patronale')} comprise",
+        entete_de_ligne=True,
     )
 
-    # -- le tableau des soldes : ce que le COR projette, lu par le modèle -----
-    jalons = [annee for annee in (obs, 2030, 2040, 2050, 2060, fin)
+    jalons = [annee for annee in (obs, 2035, 2045, 2055, fin)
               if solde.annee(annee)]
     lignes_soldes = []
     for annee in jalons:
@@ -9302,607 +9354,623 @@ def _risque(contexte: Contexte) -> str:
             str(annee) + ("" if ligne.projete else " (observé)"),
             g.pourcentage(ligne.depense("actuel"), decimales=1),
             g.pourcentage(ligne.ressources, decimales=1),
-            g.pourcentage(ligne.solde("actuel"), signe=True, decimales=2),
             g.pourcentage(-ligne.solde("actuel") / ligne.depense("actuel"),
                           decimales=1),
         ])
     tableau_soldes = g.tableau(
-        ["Année", "Pensions versées", "Recettes", "Solde",
-         "Part non financée"],
+        ["Année", "Pensions versées", "Recettes", "Part non financée"],
         lignes_soldes,
-        ["", "nombre", "nombre", "nombre", "nombre"],
-        titre=f"Ce que le système actuel verse et encaisse, en part du PIB, "
-              f"de {obs} à {fin}",
+        ["", "nombre", "nombre", "nombre"],
+        titre=f"Ce que le système verse et ce qu'il encaisse, en "
+              f"{g.terme('part du PIB')}, de {obs} à {fin}",
         entete_de_ligne=True,
     )
 
-    # -- le tableau des cas : ce qui s'est passé ailleurs ---------------------
-    tableau_cas = g.tableau(
-        ["Pays, période", "Ce qui est arrivé aux pensions", "Comment"],
-        [
-            ["Russie, 1996-1998",
-             "Non payées pendant des mois, 14 millions de retraités sur 39",
-             "Effondrement de l'État"],
-            ["Grèce, 2010-2013",
-             "Coupées douze fois, de 14 % à près de 50 %",
-             "Tutelle des créanciers ; en partie remboursées en 2020 sur décision de justice"],
-            ["Suède, 2010, 2011, 2014",
-             "Baissées de 3,0 %, 4,3 % et 2,7 %",
-             "Frein automatique, compensé par l'impôt"],
-            ["Japon, depuis 2015",
-             "Revalorisées sous l'inflation, 0,9 point la première fois",
-             "Ajustement automatique, jamais de baisse en yens"],
-            ["Hongrie 2010, Pologne 2014, Argentine 2008",
-             "Épargne retraite obligatoire reprise par l'État",
-             "Dix-huit pays sur trente ayant capitalisé"],
-            ["États-Unis, prévu en 2033",
-             "77 % payables si le Congrès ne vote rien",
-             "Réserve épuisée ; aucun droit de propriété sur la pension"],
-            ["France, 2014-2018",
-             "Complémentaires du privé gelées, près de 3 % de pouvoir d'achat",
-             "Accord des partenaires sociaux, jamais contesté"],
-        ],
-        ["", "", ""],
-        titre="Ce qui est arrivé aux pensions déjà servies, dans les cas "
-              "documentés",
-        entete_de_ligne=True,
+    reperes = g.fiche(
+        "Prélevé chaque mois sur un salaire moyen",
+        g.euros(verse_mensuel),
+        "cotisation salariale et patronale réunies",
+    ) + g.fiche(
+        "Promis au-delà de ce que ces cotisations financent",
+        g.pourcentage(part_promise, decimales=0),
+        "de la pension, à la charge de quelqu'un d'autre",
+    ) + g.fiche(
+        f"Non financé en {fin}, sans rien changer",
+        g.pourcentage(part_horizon, decimales=0),
+        "de ce qui serait dû cette année-là",
     )
 
-    # -- les deux cartes -----------------------------------------------------
-    carte_paiement = g.cle(
-        "Votre retraite peut-elle ne pas être payée ?",
-        f"""Pas dans un pays qui lève l'impôt. Aucun grand régime public n'a
-cessé de payer hors effondrement de l'État. <strong>Ce qui arrive, c'est une
-baisse</strong> : décidée par la loi, le plus souvent sans le dire, en
-revalorisant moins que les salaires ou en reculant l'âge.""",
-        tableau_cas,
-        """Sources : Jensen et Richter (2004), Tinios (2016), Pensionsmyndigheten
-(2015), Saito (2017), Organisation internationale du travail (2018),
-Congressional Research Service (2022), Agirc-Arrco. Le détail est sous
-« Pour aller plus loin ».""",
-        identifiant="risque-paiement",
+    carte_prelevement = g.cle(
+        "Combien la retraite vous prend-elle chaque mois ?",
+        f"""<strong>{g.euros(verse_mensuel)} sur un salaire moyen</strong>, en
+comptant ce que verse l'employeur. C'est le premier poste de votre fiche de
+paie, avant l'impôt sur le revenu, avant la maladie. Sur une carrière entière,
+au salaire moyen, cela fait plus de quatre cent mille euros.""",
+        tableau_salaires,
+        f"""Calcul du modèle sur une carrière de référence : un salarié du
+privé né en {NAISSANCE_RISQUE}, entré à {DEBUT_RISQUE} ans. Les taux sont ceux
+de {fiche_moyen.annee}, allègements généraux compris, ce qui explique le taux
+plus faible au SMIC. <a href="{g.lien("/simuler")}">Le calcul sur votre propre
+salaire</a> est à un clic.""",
+        identifiant="risque-prelevement",
     )
 
-    carte_france = g.cle(
-        "Et en France, de combien parle-t-on ?",
-        f"""En {obs}, il a manqué {_milliards(manque, 1)}, soit
-{g.pourcentage(part_manquante, decimales=1)} de ce qui a été versé. Si rien
-ne change, <strong>il manquerait {g.pourcentage(part_horizon, decimales=0)}
-en {fin}</strong> : c'est de cette taille que serait le « défaut », sous la
-forme d'une baisse, d'une hausse de cotisation ou d'un âge plus tardif.""",
+    carte_promesse = g.cle(
+        "Est-ce que vous le reverrez ?",
+        f"""Pas en entier. Au rendement qu'une répartition peut servir sans
+toucher à son taux, ces cotisations financent
+<strong>{g.pourcentage(1 - part_promise, decimales=0)}</strong> de la pension
+promise. Le reste attend des cotisants qui ne sont pas nés, et il manque déjà
+{_milliards(manque, 1)} par an.""",
         tableau_soldes,
-        f"""Source : Conseil d'orientation des retraites, comptes observés puis
-projetés dans son scénario de référence ; c'est lui qui projette, pas nous.
-En {g.terme("part du PIB")} : sur 100 € produits en France, combien vont
-aux retraites. Le détail par année est sur la page
+        f"""Sources : le modèle du site pour la part financée, les comptes du
+Conseil d'orientation des retraites pour le solde, observés puis projetés dans
+son scénario de référence. Le détail année par année est sur la page
 <a href="{g.lien("/cout")}">Coût</a>.""",
-        identifiant="risque-france",
+        identifiant="risque-promesse",
     )
 
-    # Le détail est rendu AVANT le gabarit final : c'est de lui, et des deux
-    # cartes, que le plan de la page se déduit.
     detail = "".join([
-        _risque_definition(),
-        _risque_dette_implicite(),
-        _risque_projections(contexte),
+        _risque_salaire(contexte),
+        _risque_croissance(),
+        _risque_pauvres(),
+        _risque_jeunes(),
+        _risque_evince(),
         _risque_deja_eu_lieu(),
+        _risque_objections(contexte),
         _risque_ailleurs(),
-        _risque_capitalisation(),
-        _risque_automatique(),
-        _risque_perception(),
-        _risque_notionnel(contexte),
+        _risque_droit(),
         _risque_sources(),
     ])
-    plan = g.plan(carte_paiement + carte_france + detail, "/risque")
+    plan = g.plan(carte_prelevement + carte_promesse + detail, "/risque")
 
     tete = g.affiche(
         "Le risque",
-        'Votre retraite sera-t-elle payée ? '
-        '<span class="cle-texte">Oui. Moins.</span>',
-        "La question que tout le monde pose, et ce que la recherche "
-        "universitaire en sait : un système en "
-        + g.terme("répartition") + " ne fait pas faillite, il rogne.",
+        'Ce que la retraite vous prend, '
+        '<span class="cle-texte">et ce qu\'elle ne rendra pas.</span>',
+        f"{g.euros(verse_mensuel)} par mois prélevés sur un salaire moyen, "
+        "pour une promesse que la loi révise à la baisse depuis trente ans.",
     )
 
     return f"""
 {tete}
 
-<div class="note resume"><strong>En clair.</strong> Vos cotisations paient
-les retraites d'aujourd'hui, et celles de vos enfants paieront la vôtre. La
-promesse tient tant que l'État peut prélever, et il le peut toujours. Le
-montant, lui, n'a rien de garanti : depuis trente ans, la France baisse les
-pensions futures sans l'écrire, en les revalorisant moins vite que les
-salaires et en reculant l'âge. Le risque est de toucher moins que promis,
-sans savoir combien ni quand.</div>
+<div class="note resume"><strong>En clair.</strong> La retraite est le premier
+prélèvement de votre fiche de paie. Elle ne met rien de côté : elle verse
+aussitôt ce qu'elle encaisse, et votre pension attendra les cotisations de vos
+enfants. Or ils seront moins nombreux, et ce qu'on leur promet dépasse déjà ce
+que vos cotisations financent. Le système ne s'arrêtera pas de payer. Il
+paiera moins, comme il le fait depuis trente ans sans le dire, en revalorisant
+les pensions moins vite que les salaires.</div>
 
 <div class="fiches reperes">{reperes}</div>
 
 {plan}
 
-{carte_paiement}
+{carte_prelevement}
 
-{carte_france}
+{carte_promesse}
 
-<div class="note"><strong>Ce que la proposition change.</strong> Un
-{g.terme("compte notionnel")} ne supprime pas le risque : si les cotisations
-rentrent moins, les pensions suivent. Il change la façon de le porter. Le
-réglage se fait chaque année, par un {g.terme("coefficient d'équilibre")}
-que tout le monde peut lire, au lieu d'attendre une réforme qui frappe une
-génération. La Suède l'a fait trois fois, en le disant ; la France l'a fait
-davantage, sans le dire.</div>
+<div class="note"><strong>Ce que nous proposons d'en faire.</strong> Un
+{g.terme("compte notionnel")} ne crée pas d'argent. Il fait trois choses que
+le système actuel ne fait pas : il inscrit chaque euro versé sur un compte à
+votre nom, il ramène le prélèvement de 28 % à 18 %, et il règle l'écart chaque
+année par un {g.terme("coefficient d'équilibre")} que tout le monde peut lire,
+au lieu d'attendre une réforme qui tombe sur une génération.
+<a href="{g.lien("/")}">La proposition</a> est chiffrée carrière par
+carrière.</div>
 
 <h2>Pour aller plus loin</h2>
-<p class="chapeau">Ce que la recherche établit, référence par référence, et
-ce qu'elle laisse ouvert.</p>
+<p class="chapeau">Ce que la recherche établit, et ce qu'il faut répondre à
+ceux qui assurent qu'il n'y a pas de problème.</p>
 
 {detail}
 """
 
 
-def _risque_definition() -> str:
-    """Ce que « défaut » veut dire quand il s'agit d'une retraite par répartition."""
+def _risque_salaire(contexte: Contexte) -> str:
+    """L'incidence : la cotisation retraite est prise sur le salaire.
+
+    C'est le résultat le moins connu du public et le mieux établi de la
+    littérature récente, et il tient à une distinction que le débat français
+    ignore : ce qui décide de qui paie n'est pas le partage légal, c'est la
+    force du lien entre la cotisation et le droit qu'elle ouvre. La retraite
+    est la cotisation la plus contributive du barème, donc celle qui est la
+    plus intégralement prise sur le salaire.
+    """
+    moyen = _risque_exemple(contexte, 1.0)
+    fiche = moyen.remuneration.reference.droit_en_vigueur
+    employeur = fiche.retraite_employeur / MOIS_PAR_AN
     return g.depliant(
-        "Ce que « défaut » veut dire pour une retraite par répartition", """
-<p>Un État qui ne rembourse pas un emprunt fait défaut : la date est connue,
-le montant aussi. Une retraite par répartition n'a ni l'un ni l'autre. Elle
-n'est pas une dette au sens du droit, mais une règle de calcul, que le
-Parlement peut changer. La Cour suprême des États-Unis l'a dit dès 1960
-(<em>Flemming v. Nestor</em>) : personne n'a de droit de propriété sur sa
-pension future. En France, le Conseil constitutionnel n'a jamais reconnu un
-tel droit non plus.</p>
-<p>La recherche travaille donc avec une échelle plutôt qu'avec un
-événement. McHale (1999) l'a posée le premier en comparant les pays du G7 :
-tout en haut, le non-paiement ; puis la baisse en euros courants d'une
-pension déjà servie ; puis le gel ou la sous-indexation ; puis le recul de
-l'âge et le recalcul des droits des actifs. Son résultat tient toujours :
-les réformes des années 1990 ont beaucoup réduit ce que les jeunes et les
-actifs d'âge moyen toucheront, tandis que « les prestations des retraités
-et de ceux qui en sont proches sont habituellement protégées ».</p>
-<p>Le socle théorique date de Samuelson (1958) et Aaron (1966). Un système
-qui verse aux retraités ce qu'il prélève sur les actifs rapporte, à chaque
-génération, la croissance de la masse des salaires : le nombre de cotisants
-multiplié par leur salaire. Ce rendement n'est garanti par personne. Quand
-la population active cesse de croître et que la productivité ralentit, il
-tombe, et un système qui a promis plus que lui doit combler l'écart : par
-les cotisants, par les retraités ou par le budget. Barr et Diamond (2006) en
-tirent la formule qui résume la littérature : la capitalisation repose sur
-des actifs, la répartition sur des promesses, et les deux sont des droits
-sur la production future.</p>
-<p>La Banque mondiale (Holzmann, Palacios et Zviniene, 2004) a cherché les
-cas de défaut complet sur des engagements de retraite : elle en trouve
-« peu, même dans des situations extrêmes ». Le défaut partiel, lui, est la
-règle : le Royaume-Uni, le Japon, l'Allemagne, les États-Unis, la France et
-l'Italie ont tous révisé à la baisse ce qu'ils serviront aux générations
-suivantes. Sa phrase clé : il est peut-être plus facile de faire défaut sur
-une promesse de retraite que sur une obligation, « mais ni l'un ni l'autre
-n'est sans coût ».</p>""",
-        identifiant="risque-definition",
+        "Ces cotisations sont votre salaire, y compris celles de l'employeur",
+        f"""
+<p>Sur la fiche de paie, la retraite se partage en deux lignes : celle que le
+salarié voit retirée de son brut, et celle que l'employeur verse par-dessus.
+La seconde passe pour un cadeau. Elle n'en est pas un : au salaire moyen, elle
+vaut {g.euros(employeur)} par mois, et la recherche montre qu'elle est payée
+par le salarié, sous forme de salaire qu'il ne touche pas.</p>
+
+<p><strong>Le résultat est récent, français, et il est net.</strong> Antoine
+Bozio, Thomas Breda, Julien Grenet et Arthur Guillouzouic
+(<em>Review of Economic Studies</em>, 2026) ont comparé trois réformes
+françaises qui ont déplacé des cotisations au-dessus du plafond de la sécurité
+sociale, en suivant les salariés jusqu'à huit ans après. Quand la cotisation
+ouvre un droit visible, elle est reportée sur le salaire à hauteur de
+<strong>100 %</strong> : c'est le cas de la hausse des cotisations de retraite
+complémentaire entre 2000 et 2005. Quand elle n'ouvre aucun droit individuel,
+le report tombe à 21 % pour la famille et à 6 % pour la maladie, sans que ces
+chiffres se distinguent de zéro. Leur méta-analyse de vingt et une estimations
+internationales donne le même partage : <strong>103 % de report pour les
+cotisations liées à un droit, 15 % pour les autres</strong>.</p>
+
+<p>Le cas chilien avait montré la même chose en sens inverse. Jonathan Gruber
+(<em>Journal of Labor Economics</em>, 1997) a suivi la chute du taux de
+cotisation patronale de 30 % à 5 % après la réforme de 1981 : les salaires ont
+absorbé la baisse presque exactement, et l'emploi n'a pas bougé. Sur
+l'ensemble des cotisations, la méta-analyse d'Ángel Melguizo et José Manuel
+González-Páramo (<em>SERIEs</em>, 2013), qui porte sur cinquante-deux travaux,
+conclut que le salarié en supporte environ deux tiers à long terme en Europe
+continentale.</p>
+
+<p><strong>La conséquence est celle que personne ne dit.</strong> Augmenter les
+cotisations retraite d'un point ne coûte pas un point aux entreprises : cela
+coûte un point de salaire, avec un délai de quelques années. Et puisque la
+retraite est de toutes les cotisations la plus contributive, c'est elle dont
+le report est le plus complet. Chaque fois qu'on relève le taux pour tenir la
+promesse, le salaire net des générations suivantes en paie le prix.</p>
+
+<p class="discret">Réserve de méthode, qu'il faut connaître pour discuter le
+chiffre : cette littérature mesure le report d'une <em>variation</em> de taux,
+plutôt que la part du niveau actuel supportée par le salarié. Le passage de l'un à
+l'autre est une inférence.</p>""",
+        identifiant="risque-salaire",
     )
 
 
-def _risque_dette_implicite() -> str:
-    """La dette implicite : le chiffre qui circule, et ce qu'il mesure."""
+def _risque_croissance() -> str:
+    """Ce que le financement de la répartition coûte à la croissance.
+
+    L'argument n'a pas besoin d'un travail contesté : le COR le porte
+    lui-même, sur trois modèles indépendants, et il nomme les dépenses que
+    l'effet récessif met en difficulté. Le reste de la section suit l'ordre de
+    la solidité des résultats, du plus établi au plus discuté, et le dit.
+    """
     return g.depliant(
-        "La « dette cachée » de 400 % du PIB, et ce qu'elle ne mesure pas", """
-<p>Le chiffre revient à chaque débat : les retraites promises représentent
-plusieurs années de production nationale. Il est exact, et il est le même
-pour tout système par répartition, même parfaitement équilibré. Blanchet et
-Ouvrard (INSEE, 2006 ; <em>Revue française d'économie</em>, 2007) l'ont
-calculé pour la France : les droits déjà acquis en 2005 valaient 4,7 années
-de PIB avec un taux d'actualisation de 2 %, 3,2 années à 4 %. La Commission
-européenne (Deboeck et Eckefeldt, 2020) donne 369 % du PIB en 2015, le
-niveau le plus élevé de l'Union, contre 263 % en moyenne dans la zone euro ;
-Blanchet (INSEE, février 2026) actualise à environ 400 % en 2021, devant
-l'Allemagne (353 %) mais derrière l'Espagne (507 %) et l'Italie (443 %).</p>
-<p>Ce que ce chiffre ne dit pas, tous ces auteurs le disent : il ne mesure
-pas la soutenabilité. Un régime qui encaisse chaque année ce qu'il verse
-porte la même « dette » qu'un régime en déficit, parce qu'elle compte les
-droits acquis sans compter les cotisations à venir qui les paieront. Franco,
-Marino et Zotteri (2004) concluent qu'elle « ne fournit pas d'indication sur
-la soutenabilité » et « ne doit pas être ajoutée à la dette publique ».
-Blanchet et Ouvrard ajoutent qu'elle ne serait un motif d'inquiétude que
-s'il existait un risque réel de fermeture du système, « a priori écarté pour
-les régimes publics » assis sur des prélèvements obligatoires. Sinn (2000)
-ferme la boucle : passer à la capitalisation n'efface pas cette charge, il la
-rend explicite, puisqu'il faut continuer à payer les retraités en place.</p>
-<p>Ce qui renseigne sur le risque, c'est l'autre indicateur : le solde du
-système en groupe ouvert, c'est-à-dire l'écart entre ce qu'il encaissera et
-ce qu'il versera, année après année. C'est celui que la page Coût affiche, et
-que la carte ci-dessus résume.</p>""",
-        identifiant="risque-dette",
+        "Ce que le financement coûte à la croissance, dit par le COR lui-même",
+        f"""
+<p>Le Conseil d'orientation des retraites a fait chiffrer par trois équipes
+indépendantes, la direction générale du Trésor, l'OFCE et une équipe de
+l'École d'économie de Paris, l'effet macroéconomique des quatre façons de
+rétablir l'équilibre. Son rapport de juin 2026 écrit :</p>
+
+<blockquote><p>« Quel que soit le modèle retenu, trois des quatre leviers
+étudiés – baisse relative des pensions, hausse des cotisations salariales et
+hausse des cotisations employeurs – présentent un caractère récessif. »</p></blockquote>
+
+<p>Et il dit à qui la facture est transmise :</p>
+
+<blockquote><p>« Les trois premiers leviers ont toutefois un impact récessif,
+qui pèse sur les recettes publiques et dégrade le solde hors retraites : ils
+renforcent les difficultés à financer les dépenses publiques autres que les
+retraites, à l'instar de l'école, la santé ou la sécurité. »</p></blockquote>
+
+<p><strong>Financer la promesse par les cotisations réduit donc l'activité, et
+réduit l'argent disponible pour l'école et l'hôpital.</strong> Le COR ajoute
+que les ajustements devront en pratique être plus forts que ses propres
+calculs ne le laissent croire, pour tenir compte de ce caractère récessif
+« qui conduit à abaisser le PIB par habitant ».</p>
+
+<h3>D'où l'on part</h3>
+<p>La France prélève déjà sur le travail plus que presque personne. Dans
+<em>Taxing Wages 2026</em>, l'OCDE mesure le coin socio-fiscal d'un célibataire
+au salaire moyen à <strong>47,2 %</strong> du {g.terme("coût du travail")} en
+2025, contre <strong>35,1 %</strong> en moyenne dans l'OCDE : douze points
+d'écart, et le troisième rang sur trente-huit pays. Pour un couple avec un
+seul salaire et deux enfants, la France est deuxième, à 39,1 % contre 26,2 %.
+La particularité française tient à la part patronale, dont le premier poste
+est la retraite : 27,98 points de salaire brut en 2026 sur la première
+tranche, cotisations salariale et patronale réunies.</p>
+
+<h3>Ce que le système fait travailler moins</h3>
+<p>C'est le résultat le plus solide de toute cette littérature, parce qu'il
+repose sur des réformes traitées comme des expériences. Jonathan Gruber et
+David Wise, dans l'enquête de référence du Bureau national de la recherche
+économique américain (1999), ont mesuré ce qu'un assuré perd à travailler une
+année de plus. <strong>En France, cette taxation implicite atteignait 80 % de
+l'année travaillée</strong>, l'une des plus élevées des onze pays étudiés, et
+les hommes de 55 à 65 ans y laissaient inemployés <strong>60 % de leur
+capacité productive</strong>, contre 37 % aux États-Unis et 48 % en Allemagne.
+Un système qui prend quatre cinquièmes d'une année de travail supplémentaire
+n'a pas besoin d'autre explication pour faire partir tôt.</p>
+<p>Les réformes françaises l'ont vérifié dans l'autre sens, et elles montrent
+aussi la limite de l'exercice. Antoine Bozio (INSEE, 2011) mesure que la
+réforme de 1993 a reporté le départ de neuf mois par année de durée exigée
+chez les hommes. Yves Dubois et Malik Koubi (INSEE, 2016) trouvent, pour la
+réforme de 2010, un taux d'activité à 60 ans en hausse de vingt-quatre points
+chez les hommes, <strong>mais un taux de chômage en hausse de sept
+points</strong> : entre un tiers et la moitié de ce que la retraite ne verse
+plus part ailleurs, en chômage ou en invalidité. Simon Rabaté et Julie Rochut
+(2020) concluent de même.</p>
+
+<h3>Ce que le système n'épargne pas</h3>
+<p>Un régime qui ne met rien de côté ne finance aucun investissement, et il
+décourage ceux qui voudraient le faire à sa place. L'ordre de grandeur admis
+est qu'<strong>un euro de droits à retraite se substitue à vingt à cinquante
+centimes d'épargne privée</strong> : c'est la fourchette du Congressional
+Budget Office américain (1998), retrouvée par Rob Alessie, Viola Angelini et
+Peter van Santen sur données européennes (2013) et par Marta Lachowska et
+Michał Myck sur la réforme polonaise (2018). Orazio Attanasio et Susann
+Rohwedder (2003) ajoutent une précision qui vise directement un régime
+contributif : c'est la partie proportionnelle au salaire qui évince l'épargne,
+le socle forfaitaire ne l'évince pas.</p>
+<p>Le résultat le plus net est ailleurs. David Bloom et ses coauteurs (2007)
+montrent que l'allongement de la vie pousse partout les ménages à épargner
+davantage, <strong>sauf dans les pays dotés d'une répartition généreuse, où
+cet effet disparaît</strong>. Vivre plus longtemps n'y conduit plus à mettre
+de côté.</p>
+<p class="discret">Deux bornes d'honnêteté. Martin Feldstein chiffrait en 1996
+la perte à un point de PIB par an à perpétuité, soit un cinquième des
+cotisations ; son travail fondateur de 1974 portait une erreur de
+programmation révélée par Dean Leimer et Selig Lesnoy en 1982, et son
+estimation est restée discutée depuis. Hans-Werner Sinn (2000) objecte qu'en
+valeur actuelle rien ne se gagne à une transition, puisqu'il faut de toute
+façon payer les retraités en place. Notre argument ne repose sur aucun des
+deux.</p>
+
+<h3>Ce qu'un compte notionnel y change</h3>
+<p>Feldstein et Jeffrey Liebman l'ont chiffré (2002) : rendre le lien visible
+entre ce qu'on verse et ce qu'on touchera <strong>divise par trois le taux de
+prélèvement ressenti comme une taxe</strong>, et il resterait à 71 % même si le
+rendement du système était nul. Un compte notionnel ne crée pas d'épargne, et
+les auteurs le disent ; il supprime la part du prélèvement que personne ne
+compte aujourd'hui comme un droit.</p>""",
+        identifiant="risque-croissance",
     )
 
 
-def _risque_projections(contexte: Contexte) -> str:
-    """Ce que le COR projette, ce qui fait varier le chiffre, et le modèle."""
-    cout = contexte.cout()
-    solde = cout.solde
-    dette = cout.dette
-    fin = solde.derniere_annee
-    obs = solde.derniere_annee_observee
+def _risque_pauvres() -> str:
+    """Qui paie le plus, rapporté à ce qu'il en retire."""
     return g.depliant(
-        "Ce que le COR projette, et ce qui fait bouger le chiffre", f"""
-<p>Le Conseil d'orientation des retraites publie chaque année le compte du
-système et sa projection jusqu'en 2070, sous un scénario de référence et deux
-variantes de productivité. Le modèle de ce site lit ces comptes tels quels :
-sur la ligne du système actuel, il ne calcule rien, il recopie. Sur la
-projection de juin 2026, le solde passe de
-{g.pourcentage(solde.annee(obs).solde("actuel"), signe=True, decimales=2)} du
-PIB en {obs} à
-{g.pourcentage(solde.annee(fin).solde("actuel"), signe=True, decimales=2)}
-en {fin} : les dépenses montent de
-{g.pourcentage(solde.annee(obs).depense("actuel"), decimales=1)} à
-{g.pourcentage(solde.annee(fin).depense("actuel"), decimales=1)} du PIB
-quand les recettes descendent de
-{g.pourcentage(solde.annee(obs).ressources, decimales=1)} à
-{g.pourcentage(solde.annee(fin).ressources, decimales=1)}. Additionnés avec
-leurs intérêts, ces déficits font
-{g.pourcentage(dette.horizon("actuel"), decimales=0)} du PIB de dette en
-{fin}, à ajouter aux {g.pourcentage(dette.dette_publique_depart, decimales=0)}
-que le pays portait en {dette.annee_dette_publique}.</p>
-<p>Trois choses font bouger ce chiffre, et la fourchette est large. La
-<strong>productivité</strong> : le COR a abandonné en 2025 sa variante à
-1,3 % par an, « prenant note du ralentissement structurel », et retient 0,4,
-0,7 et 1,0 % ; en juin 2026, le solde de 2070 va de −1,7 à −3,1 points de
-PIB selon la variante. La <strong>fécondité</strong> : l'INSEE la projette
-depuis avril 2026 à 1,45 enfant par femme, contre 1,8 dans ses projections
-de 2021, et cette révision seule a creusé le solde de 2070 d'un point de
-PIB par rapport au rapport de l'année précédente ; il y aurait 1,3 cotisant
-par retraité en 2070, contre 1,8 aujourd'hui. Les <strong>recettes</strong>
-enfin : la baisse projetée ne vient pas des cotisations, elle vient de la
-contribution d'équilibre que l'État verse pour ses propres fonctionnaires,
-qui passe de 1,9 à 1,0 point de PIB à mesure qu'ils sont moins nombreux ;
-c'est ce point qui a nourri, en 2025, le débat sur un « déficit caché » des
-retraites publiques. La Cour des comptes a refusé l'addition en février
-2025 (« autant de formules de calcul que de conventions comptables », toutes
-sans effet sur le solde public), et l'Institut des politiques publiques
-(Aubert, Pedrono, Tô et Tochev, 2025) a chiffré la subvention implicite à
-18 milliards, 0,8 point de PIB, loin des 55 milliards avancés dans le
-débat. « Le système demeurerait durablement en besoin de financement dans
-l'ensemble des scénarios », écrit le COR ; aucun n'envisage un
-non-paiement.</p>
-<p>La Cour des comptes, saisie par le Premier ministre, s'arrête à 2045,
-« les incertitudes devenant trop importantes au-delà de vingt ans » : 6,6
-milliards de déficit en 2025, 14 à 15 milliards en 2035, 25 à 32 milliards
-en 2045, et 470 milliards de dette accumulée d'ici là par le régime général
-et la caisse des agents des collectivités, « contradictoire avec le principe
-même de la répartition » ; un point de sous-indexation rapporte 2,9
-milliards par an. Depuis, la loi de financement de la sécurité sociale pour
-2026 a suspendu la montée en âge de la réforme de 2023 jusqu'en 2028, 1,8
-milliard par an jusqu'en 2032 ; le système 1 de ce site l'applique, et la
-projection du COR de juin 2026 l'intègre.</p>
-<p class="discret">Réserve : le modèle raisonne en productivité par tête et
-applique la cible dès {obs + 1}, quand le COR y converge en 2040 ; il suit
-l'emploi de son scénario de référence plutôt que le sien propre. Ces écarts sont
-décrits dans les limites du dépôt, et ils ne touchent pas la ligne du système
-actuel, qui est recopiée.</p>""",
-        identifiant="risque-projections",
+        "Ce sont les plus pauvres qui y perdent le plus",
+        """
+<p><strong>Ils meurent plus tôt, et touchent donc moins longtemps.</strong>
+L'INSEE mesure, sur la période 2020-2024, un écart d'espérance de vie de
+<strong>13,0 ans entre les 5 % d'hommes les plus aisés et les 5 % les plus
+modestes</strong>, et de 8,7 ans chez les femmes. L'écart s'est creusé depuis
+2012-2016, l'espérance de vie des 25 % les plus modestes stagnant ou reculant.
+Autour de mille euros de niveau de vie, cent euros de plus par mois valent
+neuf mois d'espérance de vie chez les hommes.</p>
+
+<p>Un régime qui ouvre les droits au même âge pour tous transforme cet écart en
+transfert. Yves Dubois et Anthony Marino (INSEE, 2015) l'ont mesuré sur le
+rendement des cotisations : chez les hommes, le rendement passe de 1,53 % pour
+ceux qui ont fini leurs études le plus tôt à 0,98 % pour les plus diplômés. En
+neutralisant la mortalité différentielle, l'écart se creuserait jusqu'à 0,65 %.
+<strong>La mort prématurée des uns rend donc au sommet de la distribution
+environ un tiers de ce que les règles lui reprennent.</strong> Le système
+redistribue encore, mais beaucoup moins qu'il n'en a l'air.</p>
+
+<p><strong>Ils paient aussi le chômage.</strong> Le coût du travail le plus
+élevé de l'OCDE se paie d'abord sur les emplois les moins qualifiés. En 2024,
+le taux de chômage français atteint 13,8 % chez ceux qui ont au plus le
+brevet, contre 5,0 % chez les diplômés du supérieur. L'État en a tiré la
+conséquence sans jamais le dire ainsi : il consacre <strong>75 milliards
+d'euros par an</strong>, 2,7 points de PIB, à effacer ces cotisations sur les
+bas salaires, et le rapport d'Antoine Bozio et Étienne Wasmer au Premier
+ministre (2024) estime que leur suppression détruirait
+<strong>980 000 emplois</strong>. Le barème est devenu si lourd qu'il faut le
+neutraliser pour que les moins qualifiés aient un emploi.</p>
+
+<p><strong>Et la pauvreté n'est plus là où on la cherche.</strong> En 2023,
+10,5 % des retraités vivent sous le seuil de pauvreté, contre 15,4 % de
+l'ensemble de la population et <strong>21,9 % des moins de dix-huit ans</strong>.
+Le filet de sécurité le dit mieux que tout : l'allocation de solidarité aux
+personnes âgées atteint 77 % du seuil de pauvreté, le revenu de solidarité
+active 42 %.</p>""",
+        identifiant="risque-pauvres",
+    )
+
+
+def _risque_jeunes() -> str:
+    """Ce que les jeunes versent, et ce qu'ils récupèrent."""
+    return g.depliant(
+        "Les jeunes cotisent plus pour recevoir moins",
+        """
+<p><strong>Le taux monte, le rendement descend.</strong> Yves Dubois et
+Anthony Marino (INSEE, <em>Économie et Statistique</em>, 2015) ont calculé ce
+que chaque génération retire de ses cotisations. Le rendement interne vaut
+environ <strong>2,5 % pour la génération 1950</strong>, puis tombe à
+<strong>1,75 % à partir de la génération 1970</strong> et s'y stabilise. Sur
+la même période, le taux de prélèvement supporté passe de 24 % pour la
+génération 1950 à 28 % pour la génération 1985. La seule réforme de 1993
+retire 0,4 point de rendement aux générations 1950 à 1985.</p>
+
+<p>Le COR poursuit le calcul sur une carrière type de salarié du privé : le
+rendement de la <strong>génération 2000 serait de 0,8 %</strong> par an, et de
+0,5 % si les gains d'espérance de vie sont plus faibles que prévu. Un placement
+sans risque fait mieux : sur cent vingt-six ans, les obligations d'État
+américaines ont rendu 1,6 % par an en termes réels, les actions 6,6 %
+(Dimson, Marsh et Staunton, 2026). Les deux grandeurs ne se mesurent pas de la
+même façon, et la comparaison ne vaut que par son ordre de grandeur. Il est
+d'un facteur deux à huit.</p>
+
+<p><strong>Ce qu'ils touchent recule aussi.</strong> Le COR projette la pension
+moyenne rapportée au revenu d'activité moyen de <strong>54,6 % en 2025 à
+45,3 % en 2070</strong>, et le niveau de vie relatif des retraités de 100,2 %
+en 2023 à 90,3 % en 2070. Les pensions progresseraient de 0,2 % par an en
+euros constants quand les salaires progresseraient de 0,7 %.</p>
+
+<p><strong>Et le patrimoine, lui, ne bouge pas.</strong> Début 2021, un ménage
+dont la personne de référence a moins de trente ans détient un patrimoine
+médian de 20 400 €, contre 232 800 € entre soixante et soixante-neuf ans. Les
+ménages retraités sont 38,4 % des ménages et détiennent 40 % du patrimoine
+brut. L'âge moyen auquel on hérite est passé de trente ans au début du siècle
+dernier à environ <strong>cinquante ans</strong> aujourd'hui, pendant que le
+flux successoral annuel passait de moins de 5 % à plus de 15 % du revenu
+national (Conseil d'analyse économique, 2021).</p>
+
+<p class="discret">Deux réserves, parce qu'elles seront opposées. Hippolyte
+d'Albis et Ikpidi Badji (INSEE, 2017) montrent que, sur les cohortes nées entre
+1901 et 1979, aucune génération n'a vécu moins bien que celles qui l'ont
+précédée ; leurs données s'arrêtent en 2011. Et les comptes de transferts
+nationaux montrent que la part publique du financement de la consommation des
+plus de soixante ans a reculé depuis 1979. Le problème est dans la pente, non
+dans un pillage.</p>""",
+        identifiant="risque-jeunes",
+    )
+
+
+def _risque_evince() -> str:
+    """Le premier poste de la dépense publique, et ce qui recule à côté."""
+    return g.depliant(
+        "Le premier poste du budget, et ce qui recule à côté",
+        """
+<p>En 2025, la retraite a coûté <strong>422 milliards d'euros, 14,1 % du PIB
+et 24,3 % de l'ensemble des dépenses publiques</strong>. Le COR écrit que
+l'évolution de cette dépense « explique à elle seule une grande partie de la
+progression des dépenses publiques depuis une vingtaine d'années ». Rapportée
+au PIB, la France y consacre le deuxième montant de l'OCDE, derrière l'Italie,
+et quatre points de plus que l'Allemagne.</p>
+
+<p>Pendant que ce poste montait, d'autres reculaient. La dépense d'éducation
+est passée de <strong>7,8 % du PIB en 1995 à 6,7 % en 2023</strong>. La France
+dépense aujourd'hui 13 % de moins que la moyenne de l'OCDE par élève du
+primaire, tout en dépensant 24 % de plus par lycéen. Ses résultats en
+mathématiques à l'enquête PISA de 2022 comptent parmi les plus bas jamais
+mesurés, et la baisse récente y est qualifiée de sans précédent. L'effort de
+recherche plafonne à 2,18 % du PIB, pour un objectif de 3 % et une Allemagne à
+3,1 %.</p>
+
+<p class="discret">Ce rapprochement décrit un arbitrage, il ne démontre pas un
+mécanisme : aucun travail n'établit que la dépense de retraite cause le recul
+de la dépense d'éducation, et nous ne l'affirmons pas. Ce qui est établi, et
+que le COR écrit lui-même, c'est que les hausses de cotisations et les baisses
+de pensions « renforcent les difficultés à financer les dépenses publiques
+autres que les retraites, à l'instar de l'école, la santé ou la sécurité ».</p>""",
+        identifiant="risque-evince",
     )
 
 
 def _risque_deja_eu_lieu() -> str:
     """Le défaut silencieux : ce que les réformes ont déjà retiré."""
     return g.depliant(
-        "Le défaut qui a déjà eu lieu : 1993, 2003, 2010, 2014, 2023", """
+        "La promesse a déjà été rompue : 1993, 2003, 2010, 2014, 2023",
+        """
 <p>La France n'a jamais baissé une pension en euros courants. Elle a fait
 autre chose, à cinq reprises. En 1993, le régime général passe des dix aux
-vingt-cinq meilleures années et indexe les salaires portés au compte sur les
-prix plutôt que sur les salaires : c'est, de très loin, la mesure qui a le
-plus réduit les pensions, et la page Méthode en montre l'effet règle par
-règle. En 2003, la durée requise s'allonge avec l'espérance de vie et la
-décote s'étend à la fonction publique. En 2010, l'âge légal passe de 60 à
-62 ans. En 2014, la durée monte à 43 ans. En 2023, l'âge passe à 64 ans,
-avant d'être suspendu fin 2025 pour trois générations.</p>
-<p>Le résultat est mesuré par le COR lui-même : la pension moyenne continue
-d'augmenter en euros constants, de 0,2 % par an, mais le revenu d'activité
-moyen monte de 0,7 %, si bien que la pension moyenne, qui vaut 54,6 % de ce
-revenu en 2025, n'en vaudrait plus que 45,3 % en 2070, et le niveau de vie
-des retraités passerait de 100 % de celui de l'ensemble de la population à
-90 %. L'INSEE (Chabaud et Rubin, 2025) a mesuré ce que les réformes
-menées depuis 1992 ont déjà retiré : sans elles, les dépenses seraient
-supérieures de 3,7 points de PIB en 2018 et de 6,3 points en 2070, dont 2,6
-pour la seule indexation sur les prix. Bridenne et Brossard (2008), à la
-Cnav, avaient chiffré la réforme de 1993 sur les pensions versées : six
-retraités sur dix touchés, 6 % de moins en moyenne, jusqu'à 20 % sur
-vingt-cinq ans de retraite. Blanchet, Bozio et Rabaté (2016) nomment la
-cause : un système indexé sur les prix dépend de la croissance pour
-s'équilibrer, et s'ajuste par l'érosion quand elle manque. C'est le défaut
-ordinaire d'une répartition dans un État de droit : progressif, différé, et
-jamais annoncé comme tel.</p>
-<p>Il a aussi frappé des pensions déjà servies. De 2014 à 2017, l'Agirc et
-l'Arrco, qui versent près d'un tiers de la retraite d'un salarié du privé,
-n'ont pas revalorisé leur point une seule fois ; avec la règle « inflation
-moins un point » de l'accord de 2015 et le report de la revalorisation
-d'avril à novembre, la perte de pouvoir d'achat approche 3 % sur cinq ans, et
-les générations nées à partir de 1957 ont reçu 10 % de moins pendant trois
-ans si elles partaient dès le taux plein. Personne n'a parlé de défaut : la
-mesure était négociée, et elle est passée.</p>""",
+vingt-cinq meilleures années et revalorise les salaires portés au compte sur
+les prix plutôt que sur les salaires. En 2003, la durée requise s'allonge avec
+l'espérance de vie. En 2010, l'âge légal passe de 60 à 62 ans. En 2014, la
+durée monte à 43 ans. En 2023, l'âge passe à 64 ans, avant d'être suspendu fin
+2025 pour trois générations.</p>
+
+<p><strong>Ce que ces réformes ont retiré se mesure.</strong> L'INSEE a
+calculé que sans elles, les dépenses de retraite seraient supérieures de
+3,7 points de PIB en 2018 et de <strong>6,3 points en 2070</strong>, dont 2,6
+pour la seule revalorisation sur les prix. Sur les pensions déjà versées, la
+Caisse nationale d'assurance vieillesse a mesuré l'effet de la réforme de
+1993 : six retraités sur dix touchés, 6 % de moins en moyenne, et jusqu'à 20 %
+sur vingt-cinq ans de retraite. Patrick Aubert et Simon Rabaté (2014) ont
+chiffré l'autre bout : sans les réformes de 2003, 2010 et 2014, les trois
+quarts des gains d'espérance de vie seraient allés à la retraite ; il en reste
+un tiers.</p>
+
+<p><strong>Les pensions déjà servies ont été touchées aussi.</strong> De 2014
+à 2017, l'Agirc et l'Arrco, qui versent près d'un tiers de la retraite d'un
+salarié du privé, n'ont pas revalorisé leur point une seule fois ; l'accord de
+2015 a fixé pour trois ans une revalorisation inférieure d'un point à
+l'inflation, et les générations nées à partir de 1957 reçoivent 10 % de moins
+pendant trois ans si elles partent dès le taux plein. Personne n'a parlé de
+rupture de promesse : la mesure était négociée, et elle est passée.</p>""",
         identifiant="risque-deja",
     )
 
 
-def _risque_ailleurs() -> str:
-    """Les pays qui ont coupé, et ce que les juges en ont fait."""
+def _risque_objections(contexte: Contexte) -> str:
+    """Le cœur de la page : ce qu'on répond au « il n'y a pas de problème ».
+
+    Chaque objection est citée dans les termes de ceux qui la portent, et la
+    réponse est tirée du COR partout où c'est possible : une source qu'on ne
+    peut pas récuser comme partisane, et qui se trouve dire, chiffres à
+    l'appui, l'inverse de ce qu'on lui fait porter.
+    """
+    solde = contexte.cout().solde
+    fin = solde.derniere_annee
     return g.depliant(
-        "Ailleurs : les pays qui ont coupé, et ce que les juges en ont fait", """
-<p><strong>Le seul non-paiement documenté dans un grand régime public est
-russe.</strong> Entre 1996 et 1998, environ 14 millions de pensionnés sur 39
-ont cessé de recevoir leur pension pendant des mois, parce que l'État ne
-recouvrait plus les cotisations. Jensen et Richter (2004) mesurent les
-conséquences sur les enquêtes de ménages : apport alimentaire réduit d'un
-dixième, soins abandonnés, et pour les hommes des ménages touchés une
-probabilité de décès accrue de cinq points en deux ans, « comparable au fait
-d'être fumeur ». C'est un effondrement d'État, pas un choix de politique de
-retraite.</p>
-<p><strong>La Grèce est le cas européen.</strong> Tinios (2016) compte dix
-coupes entre 2010 et mi-2013, pour un cumul allant de 14 % sur les petites
-pensions à près de 50 % sur les grandes ; Symeonidis (2016), actuaire du
-régime, en compte douze, avec une indexation gelée cinq ans. La pension
-moyenne a baissé d'environ 8 % entre 2010 et 2015, mais le PIB ayant chuté
-d'un quart, la dépense est montée de 14,8 à 17,7 % du PIB (FMI, 2021). Le
-Conseil d'État grec a jugé les coupes de 2012 inconstitutionnelles en 2015,
-et l'État a remboursé onze mois en 2020, près d'un point de PIB. Tinios en
-tire la leçon que couper des pensions déjà servies « a fait sauter le
-plancher de la promesse » : depuis, les complémentaires grecques se règlent
-par une règle de déficit zéro, chaque année, à la baisse.</p>
-<p><strong>Partout ailleurs, les juges ont défait la coupe.</strong>
-Argentine 2001 (13 %, annulée par la Cour suprême en 2002), Lettonie 2009
-(10 %, remboursement ordonné par la Cour constitutionnelle), Roumanie 2010
-(15 %, annulée), Portugal 2013 (suppression des primes annulée, un impôt de
-solidarité maintenu), Italie 2015 (gel de 2012-2013 annulé pour les pensions
-au-dessus de trois fois le minimum). La régularité est nette : dans un État
-de droit, une baisse en euros courants d'une pension liquidée est presque
-toujours contestée avec succès, au moins en partie ; ce qui passe, c'est
-l'impôt, la désindexation ou la suppression d'un treizième mois.</p>
-<p><strong>Les États-Unis sont le cas à venir.</strong> Le rapport 2025 des
-administrateurs de la Social Security date l'épuisement de la réserve à
-2033 ; les cotisations couvriront alors 77 % des pensions dues. La loi dit à
-la fois que chaque bénéficiaire reste titulaire de sa pension entière et que
-l'administration ne peut pas dépenser ce qu'elle n'a pas (Congressional
-Research Service, 2022). Détroit, en faillite en 2013, a coupé 4,5 % des
-pensions municipales et supprimé leur indexation ; Porto Rico y a renoncé en
-2022. Aucun de ces cas n'a laissé un retraité sans rien.</p>""",
+        "« Il n'y a pas de problème » : ce qu'on vous répondra, et ce qui suit",
+        f"""
+<h3>« Le déficit est faible : un demi-point de PIB »</h3>
+<p>Vrai jusqu'en 2030, faux ensuite. Le COR projette −0,2 point de PIB en 2030,
+<strong>−0,9 en 2045 et −2,4 en {fin}</strong>. L'argument tire sa force d'un
+horizon qui s'arrête là où la courbe part. Henri Sterdyniak, qui le porte,
+écrit d'ailleurs dans la même note que la stabilité des dépenses « ne
+proviendrait que de l'hypothèse d'une nette baisse à l'avenir du rapport
+retraite/salaire », et nomme la chose : « l'acceptation de la paupérisation
+progressive des retraités ».</p>
+
+<h3>« Le déficit vient du désengagement de l'État, pas du système »</h3>
+<p>Le COR a calculé le solde sous la convention qui annule exactement ce
+désengagement, en figeant la contribution de l'État en part de PIB. Le besoin
+de financement reste de <strong>1,5 point de PIB</strong> en 2070. Le retrait
+de l'État explique 0,9 point sur 2,4. Il est une partie du problème, il n'est
+pas le problème.</p>
+
+<h3>« La part des retraites dans le PIB est stable »</h3>
+<p>Elle l'est, et le COR dit pourquoi dans la phrase qui suit : cette stabilité
+est « freinée par la baisse de la pension moyenne relative au revenu d'activité
+moyen qui passerait de <strong>54,6 % en 2025 à 45,3 % en 2070</strong> ».
+Présenter cette stabilité comme une preuve de bonne santé revient à prendre
+l'ajustement pour la preuve qu'il n'y a rien à ajuster.</p>
+
+<h3>« Il suffit d'un point de cotisation »</h3>
+<p>Les propositions chiffrées demandent trois points et demi, environ vingt-cinq
+milliards par an. Le coin socio-fiscal français est déjà le troisième de
+l'OCDE, douze points au-dessus de la moyenne. Et le COR a fait mesurer l'effet
+par trois équipes : une hausse de cotisations est récessive, elle dégrade les
+recettes publiques et « renforce les difficultés à financer les dépenses
+publiques autres que les retraites ».</p>
+
+<h3>« Le problème, c'est le chômage »</h3>
+<p>Le COR a chiffré la variante. Un chômage ramené à 5 % améliorerait le solde
+de 2070 de <strong>0,2 point sur les 2,4 qui manquent</strong>, soit un
+douzième. La France n'est pas passée sous 7 % depuis 1982. Une productivité
+haute laisserait encore 1,7 point de déficit, et le COR conclut que « le
+système de retraite demeurerait durablement en besoin de financement dans
+l'ensemble des scénarios considérés ».</p>
+
+<h3>« Les retraités sont pauvres »</h3>
+<p>Leur niveau de vie vaut 100,2 % de celui de l'ensemble de la population en
+2023, et 106,5 % en comptant le logement dont ils sont propriétaires. Leur
+taux de pauvreté est de 10,5 %, contre 15,4 % pour l'ensemble et 21,9 % pour
+les moins de dix-huit ans. La France a l'un des trois taux de pauvreté des
+plus de soixante-cinq ans les plus bas de l'OCDE. Un retraité sur dix vit
+pourtant sous le seuil, et cela justifie un minimum, pas le refus de tout
+ajustement.</p>
+
+<h3>« La capitalisation, c'est le casino »</h3>
+<p>La répartition a son rendement, et le COR le calcule : <strong>0,8 % par
+an</strong> pour une carrière type de la génération 2000. Un placement sans
+risque a fait mieux sur cent vingt-six ans. La question n'est pas le risque
+contre la sécurité, elle est de savoir quel risque on porte : celui d'un
+marché, ou celui de la démographie et d'un vote.</p>
+
+<h3>« Les réformes passées ont réglé le problème »</h3>
+<p>La réforme de 2023 devait rapporter 17,7 milliards en 2030 et équilibrer le
+système. Elle a été suspendue moins de trois ans après son adoption, pour un
+coût de 1,8 milliard par an jusqu'en 2032, et le système est projeté en
+déficit sur tout l'horizon. C'est l'argument qui résiste le moins : la
+trajectoire le dément toute seule.</p>""",
+        identifiant="risque-objections",
+    )
+
+
+def _risque_ailleurs() -> str:
+    """Ce qui arrive aux pays qui attendent trop."""
+    return g.depliant(
+        "Ce qui arrive quand on attend trop longtemps",
+        """
+<p><strong>Un régime public ne cesse pas de payer, sauf si l'État s'effondre.</strong>
+Le seul cas documenté est russe : entre 1996 et 1998, quatorze millions de
+pensionnés sur trente-neuf n'ont rien reçu pendant des mois, l'État ne
+recouvrant plus les cotisations. Robert Jensen et Kaspar Richter
+(<em>Journal of Public Economics</em>, 2004) en ont mesuré les conséquences sur
+les enquêtes de ménages : un dixième de nourriture en moins, des soins
+abandonnés, et pour les hommes des ménages touchés une probabilité de décès
+accrue de cinq points en deux ans.</p>
+
+<p><strong>Ce qui arrive, ailleurs, c'est la coupe.</strong> La Grèce a réduit
+ses pensions dix fois entre 2010 et 2013, pour un cumul allant de 14 % sur les
+petites pensions à près de 50 % sur les grandes. Platon Tinios (2016) en tire
+la leçon : couper des pensions déjà servies « a fait sauter le plancher de la
+promesse ». Aux États-Unis, la réserve de la Social Security s'épuise en 2033,
+et les cotisations ne couvriront alors que 77 % des pensions dues. La Suède,
+qui règle son régime par une formule automatique, a baissé ses pensions de
+3,0 %, 4,3 % et 2,7 % en 2010, 2011 et 2014.</p>
+
+<p>Le point commun de ces épisodes est le calendrier. Aucun pays n'a ajusté
+tant qu'il pouvait attendre ; tous ont ajusté quand ils ne pouvaient plus, et
+l'ajustement a été d'autant plus brutal qu'il avait été différé. Les pays qui
+ont inscrit la règle d'ajustement dans la loi avant la crise ont baissé de
+quelques pour cent ; ceux qui ont attendu la tutelle de leurs créanciers ont
+baissé de moitié.</p>""",
         identifiant="risque-ailleurs",
     )
 
 
-def _risque_capitalisation() -> str:
-    """La capitalisation n'abrite pas du risque politique : le déplace."""
+def _risque_droit() -> str:
+    """Ce que le droit garantit, et ce qu'il ne garantit pas."""
     return g.depliant(
-        "La capitalisation ne met pas à l'abri : dix-huit pays ont repris les "
-        "fonds", """
-<p>Si le risque de la répartition est que l'État change la règle, on
-pourrait croire qu'un capital à son nom en protège. L'expérience dit le
-contraire. L'Organisation internationale du travail (Ortiz et al., 2018)
-compte trente pays ayant rendu obligatoire une épargne retraite capitalisée
-entre 1981 et 2014 ; dix-huit ont fait marche arrière. L'Argentine a
-nationalisé ses fonds en 2008, environ 9,5 % du PIB. La Hongrie a transféré
-97 % des adhérents vers le régime public fin 2010, en retirant leurs droits
-publics à ceux qui restaient. La Pologne a saisi en 2014 la moitié des
-actifs, toutes les obligations d'État que les fonds détenaient, et son
-Tribunal constitutionnel a jugé en 2015 que cette épargne était un « fonds
-public ».</p>
-<p>Naczyk et Domonkos (2016) expliquent le mécanisme : plus la dette
-publique est élevée et plus les fonds sont investis en titres de l'État, plus
-la reprise est tentante et techniquement facile. Un fonds de pension
-obligatoire est un créancier captif. C'est aussi ce que la théorie prévoyait.
-Barr (2002) tient que « la variable clé est la qualité du gouvernement », et
-que la différence entre répartition et capitalisation est « de second
-ordre » ; Barr et Diamond (2006) : « les risques politiques affectent tous
-les systèmes de retraite, parce que tous dépendent, de façons différentes,
-d'un gouvernement effectif ». Ils ajoutent, honnêtement, que « l'analyse
-formelle de ces risques politiques et de leurs différences entre systèmes n'a
-pas beaucoup avancé ».</p>
-<p>Sur le rendement, la littérature est aussi nette. Geanakoplos, Mitchell et
-Zeldes (1998) montrent que l'avantage de rendement de la capitalisation
-disparaît une fois compté ce qu'il faut continuer à verser aux retraités en
-place ; Sinn (2000) qu'« en valeur actualisée, il n'y a rien à gagner » à la
-transition ; Shiller (2005) que sur les rendements observés de quinze pays
-entre 1900 et 2000, un compte individuel placé sur toute une vie aurait fait
-moins bien que la promesse publique dans sept cas sur dix. Feldstein (1996,
-2005) défend la position inverse, au nom du capital accumulé ; c'est le débat
-qui reste ouvert. Ce qui ne l'est plus, c'est l'idée que la capitalisation
-efface le risque démographique : moins d'actifs, c'est aussi moins
-d'acheteurs pour les titres que les retraités vendent. C'est pourquoi le
-pilier capitalisé de la proposition est un complément placé sans risque,
-transmissible, et jamais un substitut à la répartition.</p>""",
-        identifiant="risque-capitalisation",
-    )
+        "Ce que la loi ne vous garantit pas",
+        """
+<p>Un relevé de carrière ressemble à un contrat. Il n'en est pas un. Une
+pension de répartition est une règle de calcul votée, que le Parlement peut
+changer, et les trimestres inscrits n'engagent personne sur le montant qu'ils
+vaudront. La Cour suprême des États-Unis l'a jugé dès 1960 dans l'affaire
+<em>Flemming v. Nestor</em> : le bénéficiaire n'a pas de droit de propriété sur
+sa prestation future. Aucune juridiction française n'a jamais reconnu un tel
+droit non plus.</p>
 
+<p>La recherche a donc renoncé à parler de défaut, et travaille avec une
+échelle. John McHale (1999) l'a posée en comparant les pays du G7 : tout en
+haut le non-paiement, puis la baisse en euros courants d'une pension déjà
+servie, puis le gel, puis le recul de l'âge et le recalcul des droits en cours
+d'acquisition. Son résultat tient toujours : les réformes réduisent surtout ce
+que toucheront les actifs, et protègent ceux qui sont déjà partis.</p>
 
-def _risque_automatique() -> str:
-    """Les systèmes qui se règlent seuls, et ce qu'ils ont vraiment fait."""
-    return g.depliant(
-        "Les systèmes qui se règlent tout seuls", """
-<p>Quatre pays ont écrit dans la loi ce qui se passe quand les comptes ne
-tombent pas juste, pour ne plus dépendre d'une réforme. Vidal-Meliá,
-Boado-Penas et Settergren (2009) en donnent la définition : des mesures
-prédéterminées, déclenchées par un indicateur, « sans intervention répétée
-du législateur ».</p>
-<p><strong>La Suède</strong> est le modèle des comptes notionnels. Le régime
-tient un bilan : d'un côté ce que les cotisations futures valent, de l'autre
-les droits inscrits ; quand le rapport passe sous un, l'indexation des
-comptes et des pensions est réduite d'autant (Settergren, 2001). Le frein a
-joué trois fois, en 2010, 2011 et 2014, après la chute des fonds tampons en
-2008 : les pensions ont baissé de 3,0 %, 4,3 % et 2,7 %. Trois fois, le
-Parlement a compensé par une baisse d'impôt sur les retraités ; Settergren
-(2019), qui a conçu le mécanisme, y voit le signe que « l'acceptation
-politique reste largement inconnue ». Barr (2013) juge le frein trop brutal
-et ses effets distributifs arbitraires, parce qu'il frappe les retraités,
-qui ne peuvent plus s'adapter. Valdés-Prieto (2000) avait démontré qu'un
-compte notionnel seul n'assure pas l'équilibre à court terme : c'est pour
-cela que le frein existe.</p>
-<p><strong>Le Japon</strong> a inscrit en 2004 un ajustement qui revalorise
-les pensions sous l'inflation tant que la démographie se dégrade, avec un
-plancher : jamais de baisse en yens. Il n'a joué pour la première fois qu'en
-2015, de 0,9 point, et les ajustements manqués sont reportés depuis 2018
-(Saito, 2017). <strong>L'Allemagne</strong> pondère la revalorisation par le
-rapport retraités sur cotisants depuis 2004, avec la même garantie : la
-valeur du point ne baisse jamais, et les années à zéro se rattrapent
-ensuite. <strong>Le Canada</strong> fait l'inverse : si l'actuaire en chef
-constate que le taux de cotisation ne suffit plus et que les gouvernements ne
-s'accordent pas, le taux monte et l'indexation est gelée, automatiquement ;
-la clause n'a jamais eu à jouer.</p>
-<p>Ce que la recherche en tire (Holzmann et al., 2020, chapitre « Do they
-actually work? ») : ces mécanismes ont bien produit des baisses, faibles, et
-chaque fois amorties politiquement. Ils n'abolissent pas le risque, ils le
-rendent lisible, et ils déplacent la question : qui doit le porter, les
-retraités (Suède, Japon) ou les cotisants (Canada) ? Auerbach et Lee (2011)
-montrent que ce choix décide de l'équité entre générations bien plus que le
-principe du mécanisme lui-même.</p>""",
-        identifiant="risque-automatique",
-    )
-
-
-def _risque_perception() -> str:
-    """Ce que les assurés en pensent, et ce que la peur coûte."""
-    return g.depliant(
-        "Ce que les assurés en pensent, et ce que la peur coûte", """
-<p>La peur est là, et elle est mesurée. Aux États-Unis, Dominitz, Manski et
-Heinz (2003) ont demandé à 2 384 personnes la probabilité qu'elles touchent
-une pension publique à 70 ans : la médiane est de 40 % à 30 ans, 50 % à
-40 ans, 70 % à 50 ans. Luttmer et Samwick (2018, <em>American Economic
-Review</em>) mesurent ce que cette incertitude coûte : les assurés attendent
-en moyenne 60 % de ce que la loi leur promet, et accepteraient de renoncer à
-6 % de leur pension pour être sûrs du montant, soit une prime de risque de
-10 %. Delavande et Rohwedder (2011) montrent qu'elle change les
-comportements : plus on doute de sa pension, moins on détient d'actions.</p>
-<p>En France, la DREES interroge chaque année 4 000 personnes. En 2024,
-54 % des non-retraités pensent que leur niveau de vie à la retraite sera
-moins bon que celui de l'ensemble de la population ; ils étaient 70 % en
-2015. L'écart entre l'âge auquel ils voudraient partir, 61 ans et 5 mois, et
-celui auquel ils pensent pouvoir le faire, 65 ans et 2 mois, est de près de
-quatre ans. La part de ceux qui ne savent pas à quel âge ils partiront ou
-pensent ne pas avoir de retraite, longtemps entre 7 et 20 %, est tombée à 8 %
-en 2024 ; le chiffre bien plus élevé qui circule dans la presse vient de
-sondages commerciaux, où 77 % se disent inquiets pour l'avenir du système.
-Aucune étude française n'a chiffré, comme Luttmer et Samwick, ce que cette
-inquiétude coûte en bien-être.</p>
-<p>La science politique explique pourquoi le défaut prend la forme qu'il
-prend. Galasso (2006), sur six pays dont la France, montre qu'un électorat
-qui vieillit pousse à maintenir, voire à augmenter, les pensions, et que le
-recul de l'âge « est peut-être la seule voie politiquement viable ». Sinn et
-Uebelmesser (2003) datent le moment où l'Allemagne ne pourrait plus voter
-une réforme contre ses retraités : 2016. Galasso et Profeta (2004) résument :
-le vieillissement réduit ce que la répartition rapporte, mais accroît le
-poids de ceux qui en vivent, « et le second effet l'emporte toujours ». Le
-risque de voir un jour les pensions supprimées par vote est donc faible ;
-celui de payer plus, et de toucher moins que prévu, est le scénario
-central.</p>""",
-        identifiant="risque-perception",
-    )
-
-
-def _risque_notionnel(contexte: Contexte) -> str:
-    """Ce que le compte notionnel garantit, et ce qu'il ne garantit pas."""
-    solde = contexte.cout().solde
-    fin = solde.derniere_annee
-    horizon = solde.annee(fin)
-    return g.depliant(
-        "Ce que le compte notionnel garantit, et ce qu'il ne garantit pas", f"""
-<p>Il garantit trois choses. Que chaque euro cotisé compte, à la même
-valeur pour tous. Que la pension tient compte de l'espérance de vie de sa
-génération, sans qu'une loi ait à recaler l'âge. Et que l'écart entre
-recettes et dépenses est calculé chaque année, en un seul chiffre, le
-{g.terme("coefficient d'équilibre")}, que la page Coût affiche pour chaque
-système : il vaut {g.nombre(horizon.coefficient("actuel"), 2)} pour le
-système actuel en {fin}, ce qui veut dire qu'il faudrait rogner de
-{g.pourcentage(1 - horizon.coefficient("actuel"), decimales=0)} pour que
-l'année tombe juste. Un système qui l'applique ne peut pas accumuler de
-déficit en silence. Bozio et Piketty (2008) en faisaient l'argument central
-de leur proposition : « seule une remise à plat générale permettra de
-rétablir la confiance dans l'avenir du système public ».</p>
-<p>Il ne garantit pas le montant. Le compte est revalorisé au rythme de la
-masse des salaires, et si celle-ci ralentit, les pensions futures ralentissent
-avec elle ; Barr (2013) dresse l'inventaire : l'indexation du compte « fait
-porter aux futurs retraités le risque économique », le coefficient de
-conversion « fait porter aux actifs » celui de la longévité, et le frein
-frappe les deux. L'Institut des politiques publiques (Bozio, Rabaté, Rain et
-Tô, 2019) a soumis ces règles à des chocs : elles absorbent mieux que le
-droit actuel une baisse de la productivité, mais « n'absorbent pas du tout
-le choc de fécondité », et « le pilotage ne peut reposer uniquement sur des
-règles d'indexation » : il faut une réserve et une gouvernance qui résiste
-au calendrier électoral. La Suède l'a appris trois fois.</p>
-<p>Le compte notionnel échange donc un défaut caché, différé et inégal,
-contre un ajustement visible, annuel et proportionnel. C'est un choix sur la
-façon de porter le risque, pas sa disparition, et c'est ainsi que ce site le
-présente : le coefficient est calculé, jamais appliqué, et toutes les courbes
-de la page Coût sont celles d'un système qui ne se pilote pas.</p>""",
-        identifiant="risque-notionnel",
+<p>La Banque mondiale (Holzmann, Palacios et Zviniene, 2004) a cherché les cas
+de défaut complet sur des engagements de retraite et n'en a trouvé
+« que peu, même dans des situations extrêmes ». Le défaut partiel, lui, est la
+règle : le Royaume-Uni, le Japon, l'Allemagne, les États-Unis, la France et
+l'Italie ont tous révisé à la baisse ce qu'ils serviront aux générations
+suivantes. La phrase des auteurs mérite d'être retenue : il est peut-être plus
+facile de faire défaut sur une promesse de retraite que sur une obligation,
+« mais ni l'un ni l'autre n'est sans coût ».</p>""",
+        identifiant="risque-droit",
     )
 
 
 def _risque_sources() -> str:
     """Les références citées, telles qu'elles ont été lues."""
     return g.depliant("Sources", f"""
-<p>Chaque chiffre de cette page vient d'un texte lu, cité avec son année ; la
+<p>Chaque chiffre de cette page vient d'un texte lu, cité avec son année. La
 bibliographie complète, avec ce qui a été lu dans le texte et ce qui n'a pu
 l'être qu'en résumé, est dans
 <a href="{g.DEPOT}/blob/main/docs/risque_de_defaut.md">le dépôt</a>. Les
 principales :</p>
 <ul class="serree">
-  <li>Aaron, H. (1966), « The Social Insurance Paradox », <em>Canadian
-  Journal of Economics and Political Science</em> 32(3) ; Samuelson, P.
-  (1958), <em>Journal of Political Economy</em> 66(6).</li>
-  <li>Auerbach, A. et Lee, R. (2011), <em>Journal of Public Economics</em>
-  95(1-2).</li>
-  <li>Barr, N. (2002), « Reforming pensions: myths, truths, and policy
-  choices », <em>International Social Security Review</em> 55(2) ; Barr, N.
-  (2013), <em>The Pension System in Sweden</em>, ESO 2013:7.</li>
-  <li>Barr, N. et Diamond, P. (2006), « The Economics of Pensions »,
-  <em>Oxford Review of Economic Policy</em> 22(1) ; (2008), <em>Reforming
-  Pensions</em>, Oxford University Press.</li>
-  <li>Blanchet, D. et Ouvrard, J.-F. (2006), INSEE, <em>L'économie
-  française</em> ; (2007), <em>Revue française d'économie</em> 22(1) ;
-  Blanchet, D. (2026), blog de l'INSEE, 10 février.</li>
-  <li>Blanchet, D., Bozio, A. et Rabaté, S. (2016), <em>Revue
-  économique</em> 67(4) ; Bridenne, I. et Brossard, C. (2008), <em>Retraite
-  et société</em> 2008/2 ; Chabaud, M. et Rubin, J. (2025), INSEE, document
-  n° 7 de la séance du COR d'octobre 2025.</li>
-  <li>Bozio, A. et Piketty, T. (2008), <em>Pour un nouveau système de
-  retraite</em>, Cepremap ; Bozio, A., Rabaté, S., Rain, A. et Tô, M.
-  (2019), rapport IPP n° 23.</li>
-  <li>Conseil d'orientation des retraites, rapports annuels de juin 2025 et
-  juin 2026 ; Cour des comptes (2025), <em>Situation financière et
-  perspectives du système de retraites</em>, 20 février ; Aubert, P.,
-  Pedrono, M., Tô, M. et Tochev, T. (2025), IPP, <em>Perspectives
-  budgétaires</em>, chapitre 3.</li>
-  <li>Deboeck, B. et Eckefeldt, P. (2020), <em>Quarterly Report on the Euro
-  Area</em> 19(2) ; Franco, D., Marino, M. R. et Zotteri, S. (2004),
-  Hitotsubashi PIE DP 231.</li>
-  <li>Delavande, A. et Rohwedder, S. (2011), <em>Journal of Applied
-  Econometrics</em> 26(3) ; Dominitz, J., Manski, C. et Heinz, J. (2003),
-  NBER WP 9798 ; Luttmer, E. et Samwick, A. (2018), <em>American Economic
-  Review</em> 108(2).</li>
-  <li>DREES (2025), <em>Les retraités et les retraites</em>, fiche 18.</li>
-  <li>Feldstein, M. (1996, 2005), <em>American Economic Review</em> 86(2)
-  et 95(1) ; Geanakoplos, J., Mitchell, O. et Zeldes, S. (1998), NBER WP
-  6713 ; Shiller, R. (2005), NBER WP 11300 ; Sinn, H.-W. (2000),
-  <em>International Tax and Public Finance</em> 7.</li>
-  <li>Galasso, V. (2006), <em>The Political Future of Social Security in
-  Aging Societies</em>, MIT Press ; Galasso, V. et Profeta, P. (2004),
-  <em>Economic Policy</em> 19(38) ; Sinn, H.-W. et Uebelmesser, S. (2003),
-  <em>European Journal of Political Economy</em> 19(1).</li>
-  <li>Holzmann, R., Palacios, R. et Zviniene, A. (2004), Banque mondiale, SP
-  DP 0403 ; Holzmann, R., Palmer, E., Palacios, R. et Sacchi, S. (dir.)
-  (2020), <em>Progress and Challenges of NDC Pension Schemes</em>, Banque
-  mondiale.</li>
+  <li><strong>Conseil d'orientation des retraites</strong>, rapport annuel de
+  juin 2026 : le solde, la pension relative, le niveau de vie, la sensibilité
+  au chômage et à la productivité, le rendement par génération, l'effet
+  macroéconomique des leviers, et la convention comptable.</li>
+  <li>Bozio, A., Breda, T., Grenet, J. et Guillouzouic, A. (2026),
+  <em>Review of Economic Studies</em> 93(3) ; Gruber, J. (1997),
+  <em>Journal of Labor Economics</em> 15(3) ; Melguizo, Á. et
+  González-Páramo, J. M. (2013), <em>SERIEs</em> 4(3) — l'incidence des
+  cotisations.</li>
+  <li>OCDE, <em>Taxing Wages 2026</em> ; Bozio, A. et Wasmer, É. (2024),
+  rapport au Premier ministre sur les exonérations de cotisations.</li>
+  <li>Dubois, Y. et Marino, A. (2015), <em>Économie et Statistique</em>
+  481-482 ; Aubert, P. et Bachelet, M. (2012), INSEE ; Aubert, P. et
+  Rabaté, S. (2014), <em>Économie et Statistique</em> 474.</li>
+  <li>INSEE, <em>Insee Première</em> 2085 sur l'espérance de vie par niveau de
+  vie, 2063 sur la pauvreté, Focus 287 sur le patrimoine ; Conseil d'analyse
+  économique, note 69, <em>Repenser l'héritage</em> (2021).</li>
+  <li>Chabaud, M. et Rubin, J. (2025), INSEE, sur ce que les règles
+  d'indexation ont retiré ; Bridenne, I. et Brossard, C. (2008),
+  <em>Retraite et société</em>, sur la réforme de 1993.</li>
+  <li>DEPP, compte de l'éducation 2024 ; OCDE, <em>Regards sur l'éducation
+  2025</em> et <em>PISA 2022</em>.</li>
   <li>Jensen, R. et Richter, K. (2004), <em>Journal of Public Economics</em>
-  88(1-2) ; Kangur, A., Kalavrezou, N. et Kim, D. (2021), FMI WP 21/188 ;
-  Symeonidis, G. (2016), Banque mondiale, SP DP 1601 ; Tinios, P. (2016),
-  LSE Hellenic Observatory.</li>
-  <li>McHale, J. (1999), NBER WP 7031 ; Congressional Research Service
-  (2022), RL33514 ; <em>Flemming v. Nestor</em>, 363 U.S. 603 (1960).</li>
-  <li>Naczyk, M. et Domonkos, S. (2016), <em>Governance</em> 29(2) ; Ortiz,
-  I., Durán-Valverde, F., Urban, S. et Wodsak, V. (2018), <em>Reversing
-  Pension Privatizations</em>, OIT.</li>
-  <li>Palmer, E. (2000), Banque mondiale, SP DP 0012 ; Settergren, O. (2001),
-  <em>Wirtschaftspolitische Blätter</em> 48(4) ; (2019), note pour le Finnish
-  Centre for Pensions ; Pensionsmyndigheten (2015), <em>Orange Report
-  2014</em> ; Saito, J. (2017), Japan Center for Economic Research.</li>
-  <li>Valdés-Prieto, S. (2000), <em>Scandinavian Journal of Economics</em>
-  102(3) ; Vidal-Meliá, C., Boado-Penas, M. C. et Settergren, O. (2009),
-  <em>Geneva Papers on Risk and Insurance</em> 34(2).</li>
+  88 ; Tinios, P. (2016), LSE Hellenic Observatory ; McHale, J. (1999),
+  NBER 7031 ; Holzmann, R., Palacios, R. et Zviniene, A. (2004), Banque
+  mondiale ; <em>Flemming v. Nestor</em>, 363 U.S. 603 (1960).</li>
+  <li>Feldstein, M. (1974, 1996) et sa réfutation par Leimer, D. et
+  Lesnoy, S. (1982), <em>Journal of Political Economy</em> — l'effet sur
+  l'épargne, cité comme un ordre de grandeur discuté.</li>
+  <li>Dimson, E., Marsh, P. et Staunton, M. (2026),
+  <em>Global Investment Returns Yearbook</em> ; d'Albis, H. et Badji, I.
+  (2017), <em>Économie et Statistique</em> 491-492, cité contre notre propre
+  thèse.</li>
 </ul>""", identifiant="risque-sources")
 
 

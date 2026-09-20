@@ -569,15 +569,376 @@ de cette incertitude **[non vérifié]**.
 5. L'ampleur du besoin de financement français, très sensible à la
    productivité, et la convention comptable des retraites publiques.
 
-## 9. Ce que la page en retient
+## 9. Ce que la répartition coûte pendant qu'elle promet
 
-La page **Risque** répond d'abord à la question posée : non, une retraite par
-répartition ne cesse pas d'être payée dans un pays qui lève l'impôt ; oui,
-elle baisse, par la loi, le plus souvent sans le dire. Elle chiffre ensuite,
-depuis les comptes que le modèle lit, la taille de ce « défaut » à venir en
-France : ce qui a manqué à la dernière année observée, ce qui manquerait à
-l'horizon de la projection si rien ne change. Elle dit enfin ce que le compte
-notionnel change à la manière de porter ce risque, et ce qu'il ne change pas.
+Le risque ne se joue pas seulement à la liquidation. Il se paie pendant toute
+la carrière, et quatre mécanismes en sont établis.
+
+### L'incidence : la cotisation retraite est prise sur le salaire
+
+Bozio, Breda, Grenet & Guillouzouic (2026, *Review of Economic Studies* 93(3),
+1536-1573) **[version de travail PSE 2019-43 lue ; valeurs de la version
+publiée non vérifiées]** comparent trois réformes françaises autour du plafond
+de la sécurité sociale, sur le panel DADS, jusqu'à huit ans après. Le report
+sur les salaires dépend du **lien entre la cotisation et le droit qu'elle
+ouvre** : environ **100 %** pour la hausse des cotisations de retraite
+complémentaire de 2000-2005, 21 % pour le déplafonnement famille de 1989-1990
+et 6 % pour le déplafonnement maladie de 1981-1983, ces deux derniers ne se
+distinguant pas de zéro. Leur méta-analyse de 21 estimations internationales
+recodées donne **103 % de report pour les cotisations à fort lien contre 15 %
+pour les autres**. Les auteurs citent le régime suédois en comptes notionnels
+comme le cas limite d'actuariat parfait.
+
+Gruber (1997, *Journal of Labor Economics* 15(3), S72-S101) **[résumé]** : au
+Chili, la cotisation patronale tombe de 30 % à 5 % en six ans ; le report
+standardisé vaut **1,022 (0,180)**, sans effet sur l'emploi. Melguizo &
+González-Páramo (2013, *SERIEs* 4(3), 247-271) **[résumé]**, méta-régression
+sur 52 travaux : le salarié supporte **environ deux tiers** de la charge à
+long terme en Europe continentale, près de 90 % dans les pays nordiques,
+moins de 50 % à court terme. À l'inverse, Saez, Matsaganis & Tsakloglou (2012,
+*QJE* 127(1)) trouvent un report patronal de 0,295 en Grèce, Saez, Schoefer &
+Seim (2019, *AER* 109(5)) un report individuel de 0,085 en Suède, et Lehmann,
+Marical & Rioux (2013, *Journal of Public Economics* 99) une élasticité nulle
+en France — tous sur des cotisations à lien faible ou nul, ce que la
+décomposition de Bozio et al. explique.
+
+**Réserve de méthode, à dire avec le chiffre** : cette littérature mesure le
+report d'une *variation* de taux, non la part du niveau actuel supportée par
+le salarié. Le passage de l'un à l'autre est une inférence.
+
+### Le coin socio-fiscal, et l'emploi peu qualifié
+
+OCDE, *Taxing Wages 2026* (données 2025), note France **[lue]** : coin fiscal
+du célibataire au salaire moyen **47,2 %** du coût du travail, **3e rang sur
+38**, moyenne OCDE **35,1 %** ; couple mono-actif avec deux enfants 39,1 %
+contre 26,2 %, 2e rang. L'impôt et les cotisations patronales font 82 % du
+coin français contre 77 % en moyenne : la particularité est la part patronale.
+Le bloc retraite pèse **27,98 points de salaire brut** en tranche 1 en 2026
+(CNAV plafonnée 6,90 + 8,55 ; déplafonnée 0,40 + 2,11 depuis le décret
+n° 2025-1446 du 31 décembre 2025 ; Agirc-Arrco 3,15 + 4,72 ; CEG 0,86 + 1,29).
+
+Bozio & Wasmer (2024, rapport au Premier ministre, 304 p.) **[lu]** : les
+exonérations coûtent **75 Md€ en 2023**, 2,7 points de PIB ; leur suppression
+totale détruirait **980 000 ETP**. Élasticité de demande de travail à
+production constante entre −0,75 et −0,15, totale entre −1,5 et −1,0, les
+méta-analyses récentes descendant jusqu'à −0,1. Kramarz & Philippon (2001,
+*Journal of Public Economics* 82(1)) et Cahuc, Carcillo & Le Barbanchon (2019,
+*Review of Economic Studies* 86(2)) complètent.
+
+### Le travail découragé
+
+C'est le résultat le plus robuste de la littérature, parce qu'il repose sur
+des quasi-expériences. Gruber & Wise (dir., 1999, NBER) **[introduction
+lue]**, table 1 : en **France**, la taxation implicite d'une année de travail
+supplémentaire atteignait **80 %**, la « tax force to retire » 7,25 (Belgique
+8,87, Allemagne 3,45, États-Unis 1,57), et les hommes de 55 à 65 ans y
+laissaient inemployés **60 % de leur capacité productive** (États-Unis 37 %,
+Allemagne 48 %). Taux de remplacement à l'âge d'ouverture 91 %, taux de sortie
+à 60 ans 65 %. Gruber & Wise (2005, NBER WP 11290) : trois ans d'âge
+d'éligibilité en plus valent 20 à 40 % des coûts du programme, **1 % du PIB ou
+davantage**.
+
+Côté français : Bozio (2011, *Économie et Statistique* 441-442, 39-53)
+**[lu]**, la réforme de 1993 reporte le départ de **neuf mois par année de
+durée requise** chez les hommes, cinq chez les femmes, sur la population
+réellement à l'arbitrage. Dubois & Koubi (2016, *Insee Analyses* 30)
+**[lu]**, la réforme de 2010 élève le taux d'activité à 60 ans de **24 points**
+chez les hommes et 22 chez les femmes, l'emploi de 17 et 16, **mais le chômage
+de 7 et 6 points** et l'inactivité hors retraite de 3. Rabaté & Rochut (2020,
+*Journal of Pension Economics and Finance* 19(3)) **[résumé]** : « despite a
+sizable effect on the employment rate, the reform also strongly increased
+unemployment and disability rates ». Un tiers à la moitié de ce que la
+retraite cesse de verser part ailleurs.
+
+### L'épargne et le capital
+
+L'énoncé défendable est qu'**un euro de droits à retraite se substitue à 0,2
+à 0,5 euro d'épargne privée**. Sources : CBO (1998) **[résumé]**, « each
+dollar of Social Security wealth most likely reduces private wealth by between
+zero and 50 cents », point médian au milieu de la fourchette ; Alessie,
+Angelini & van Santen (2013, *European Economic Review* 63, 308-328)
+**[résumé]**, 47 centimes en régression robuste, borne inférieure solide entre
+17 % et 30 % ; Lachowska & Myck (2018, *AEJ: Economic Policy* 10(3)), 0,3
+zloty sur la réforme polonaise. Attanasio & Rohwedder (2003, *AER* 93(5))
+**[lu]** apportent la précision qui vise un régime contributif : élasticité de
+substitution de −0,65 à −0,75 pour l'étage proportionnel au salaire, **effet
+non significatif pour le socle forfaitaire**. Wroński (2023, *Journal of
+Economic Analysis* 2(4)) : sur plus de cent travaux, environ 70 % trouvent un
+effet significatif, majoritairement négatif.
+
+Le résultat le plus net est celui de Bloom, Canning, Mansfield & Moore (2007,
+*Journal of Monetary Economics* 54(1), 92-114) **[résumé]** : l'allongement de
+la vie élève l'épargne partout, **sauf dans les pays à répartition généreuse,
+où l'effet disparaît**.
+
+**Ce qu'il ne faut pas citer sans sa contradiction.** Feldstein (1974,
+*Journal of Political Economy* 82(5)) avançait une baisse de 30 à 50 % de
+l'épargne des ménages ; Leimer & Lesnoy (1982, *JPE* 90(3)) y ont trouvé une
+**erreur de programmation** et montré que le résultat bascule avec les
+hypothèses d'anticipation. Feldstein (1982, NBER WP 579) corrige et maintient
+environ 50 % ; Feldstein (1996, *National Tax Journal* 49(2)) porte
+l'estimation à « nearly 60 percent », et Feldstein & Liebman (2002,
+*Handbook of Public Economics* vol. 4) concèdent que 56 observations ne
+suffisent pas à établir la causalité. Aaron (1982), cité par Engen & Gale :
+« essentially nothing can be learned about the effects of social security on
+saving from time series analysis. » La perte sèche de **1 % du PIB par an à
+perpétuité**, soit 20 % des cotisations (Feldstein 1996, *AER* 86(2)), est
+exacte telle qu'il la publie, et Sinn (2000) lui oppose qu'en valeur actuelle
+rien ne se gagne à une transition.
+
+**Sur les comptes notionnels en particulier**, Feldstein (2005, *AER* 95(1))
+**[lu]** et Feldstein & Liebman (2002) chiffrent ce que la transparence du
+lien change : le taux marginal ressenti comme une taxe passe de θ à **≈ 0,30 θ**
+avec un rendement net de 4,25 % et un rendement implicite de 3 %, et à
+**0,71 θ** même à rendement implicite nul. Le compte notionnel ne crée aucune
+épargne réelle et ne change pas la perte de consommation actualisée.
+
+**Contre-arguments à connaître.** Barro (1974, *JPE* 82(6)) : équivalence
+ricardienne. Zhang & Zhang (2004, *Journal of Population Economics* 17) :
+effet **positif** de la sécurité sociale sur la croissance et l'éducation, via
+l'arbitrage quantité-qualité des enfants. Sala-i-Martin (1996, *Journal of
+Economic Growth* 1(2)) **[résumé]** : la retraite publique achète la sortie
+d'activité des âgés et est favorable à la production. Kotlikoff (1996,
+*Tax Policy and the Economy* 10) **[lu]** : à long terme, capital +52,2 %,
+production +15,9 %, salaire +9,5 % — mais le gain d'efficience pur va de
+**+4,5 % à −3,1 %** selon la fiscalité de départ et le lien perçu.
+
+### Ce que le COR dit lui-même du coût macroéconomique
+
+C'est la source la plus utile, parce qu'elle est institutionnelle. Rapport
+annuel de juin 2026, sur les travaux de la direction générale du Trésor, de
+l'OFCE et d'une équipe PSE-Cepremap **[citations vérifiées sur le texte du
+rapport]** :
+
+> « Quel que soit le modèle retenu, trois des quatre leviers étudiés – baisse
+> relative des pensions, hausse des cotisations salariales et hausse des
+> cotisations employeurs – présentent un caractère récessif. Seul le recul de
+> l'âge de départ à la retraite apparaît, dans les modèles étudiés, comme
+> expansionniste pour garantir la soutenabilité du système de retraite. »
+
+> « Les trois premiers leviers ont toutefois un impact récessif, qui pèse sur
+> les recettes publiques et dégrade le solde hors retraites : ils renforcent
+> les difficultés à financer les dépenses publiques autres que les retraites,
+> à l'instar de l'école, la santé ou la sécurité. »
+
+Et sur la sous-estimation de ses propres ajustements : ils « devront être en
+pratique plus élevés que les calculs présentés pour tenir compte du caractère
+récessif de ces mesures, qui conduisent à abaisser le PIB par habitant ».
+
+## 10. Qui paie, qui reçoit, et ce qui recule à côté
+
+### Le rendement par génération
+
+Dubois & Marino (2015, *Économie et Statistique* 481-482, INSEE, modèle
+Destinie 2, salariés du privé) **[résumé détaillé]** : le taux de rendement
+interne vaut environ **2,5 % pour la génération 1950**, tombe à **1,75 % à
+partir de la génération 1970** et s'y stabilise. Sans les réformes depuis
+1993, la génération 1975 aurait eu « proche de 2,6 % » ; la seule réforme de
+1993 retire **0,4 point** aux générations 1950-1985. Le taux de prélèvement
+supporté passe de **24 % (génération 1950) à 28 % (génération 1985)**.
+**Limite à dire** : l'étude couvre 1950-1985 ; le rendement des générations
+1930-1940 et 1990-2000 n'existe pas sous forme publiée vérifiable. La pente
+établie est d'environ −0,75 point entre 1950 et 1970, puis une stabilisation.
+
+Le COR (juin 2026) poursuit sur son cas type n° 2 : le rendement de la
+**génération 2000 serait de 0,8 %** avec une actualisation selon le salaire
+moyen par tête, 0,5 % en espérance de vie basse et 1,1 % en productivité
+haute **[citation vérifiée]**. Les deux calculs n'ont pas la même
+méthodologie : ils ne s'enchaînent pas.
+
+Pour l'ordre de grandeur du rendement d'un placement sans risque : Dimson,
+Marsh & Staunton, *Global Investment Returns Yearbook 2026* (résumé public)
+**[lu]** : États-Unis 1900-2025, en termes réels, actions **6,6 %/an**,
+obligations **1,6 %**, bons du Trésor 0,5 %. Les séries France et monde ne
+figurent pas dans l'édition publique **[non vérifiées]**. Les deux grandeurs
+ne sont pas homogènes : le rendement interne intègre la redistribution et les
+droits non contributifs, le rendement d'actif est brut de frais et d'impôt.
+
+### La mortalité différentielle
+
+INSEE, *Insee Première* 2085 **[lu]** : écart d'espérance de vie entre les 5 %
+d'hommes les plus aisés et les 5 % les plus modestes, **13,0 ans en
+2020-2024** contre 12,7 en 2012-2016 ; femmes 8,7 ans contre 8,3. L'écart se
+creuse, les 25 % les plus modestes stagnant ou reculant. Blanpain (2018,
+*Insee Première* 1687) : niveau de vie moyen des 5 % les plus modestes
+470 €/mois ; autour de 1 000 €, **100 € de plus valent 0,9 an d'espérance de
+vie** chez les hommes.
+
+Ce que cela fait au rendement : Dubois & Marino mesurent, chez les hommes de
+la génération 1960-1970, un rendement de 1,53 / 1,46 / 1,44 / **0,98 %** du
+plus précoce au plus tardif en âge de fin d'études ; en neutralisant la
+mortalité différentielle, 1,64 / 1,47 / 1,38 / **0,65 %**. La mortalité
+différentielle rend donc au sommet de la distribution environ un tiers de ce
+que les règles lui retirent. Le système reste redistributif net — Aubert &
+Bachelet (2012, INSEE) mesurent un rapport interdécile de 5,8 sur les salaires
+cumulés contre 4,1 sur les pensions — mais beaucoup moins qu'il n'en a l'air.
+
+Aubert & Rabaté (2014, *Économie et Statistique* 474, 69-95) **[résumé]** :
+sans les réformes de 2003, 2010 et 2014, environ les **trois quarts** des
+gains d'espérance de vie seraient allés à la durée de retraite ; avec elles,
+**un tiers**.
+
+### Le niveau de vie et la pauvreté
+
+COR, document n° 2 de la séance du 5 février 2026, sur l'enquête Revenus
+fiscaux et sociaux 2023 **[résumé]** : niveau de vie moyen des retraités
+**100,2 %** de celui de l'ensemble de la population (2 473 € contre 2 468 € par
+mois et par unité de consommation) ; **+6,5 %** au-dessus en comptant les
+loyers imputés ; actifs en emploi 111,9 %. Projection : 89,3 % en 2070 selon
+le rapport de juin 2025, 90,3 % selon celui de juin 2026.
+
+Pauvreté 2023 (INSEE, seuil à 60 %, 1 288 €) **[via le COR, p. 172, citation
+vérifiée]** : retraités **10,5 %**, « son niveau le plus haut depuis 1996,
+tout en demeurant sensiblement inférieur à celui de l'ensemble de la
+population (15,4 %) et encore plus à celui des moins de 18 ans (21,9 %) ».
+Au seuil OCDE de 50 %, la pauvreté des plus de 65 ans est de 6,2 %, la
+troisième plus basse. Rapport interdécile de 3,0 chez les retraités contre 3,5
+dans l'ensemble. **ASPA à 935 € = 77 % du seuil de pauvreté ; RSA à 514 €
+après forfait logement = 42 %.**
+
+### Le patrimoine et l'héritage
+
+INSEE, *Insee Focus* 287 (enquête Histoire de vie et Patrimoine 2020-2021),
+patrimoine brut médian **[résumé ; réserve sur les niveaux exacts, le rapport
+d'ordre étant robuste]** : moins de 30 ans **20 400 €**, 30-39 ans 117 600 €,
+50-59 ans 224 500 €, 60-69 ans **232 800 €**, 70 ans et plus 211 500 €. COR,
+document n° 3 de la séance du 16 décembre 2021 : les ménages retraités, 38,4 %
+des ménages, détiennent **40 % du patrimoine brut** ; 69,5 % sont
+propriétaires contre 54 % des actifs. Le pic de patrimoine est passé de 55 ans
+en 1998 à 60 ans en 2010.
+
+Conseil d'analyse économique, note 69, *Repenser l'héritage* (2021)
+**[résumé]** : patrimoine total de 300 % du revenu national en 1970 à **600 %**
+en 2020 ; flux successoral annuel de moins de 5 % à **plus de 15 %** du revenu
+national ; part héritée du patrimoine de 35 % à 60 % ; **âge moyen des
+héritiers passé d'environ 30 ans au début du siècle dernier à environ 50 ans**.
+
+### Le poids budgétaire, et ce qui recule à côté
+
+COR, juin 2026 **[citation vérifiée]** : **422 Md€ en 2025, 14,1 % du PIB et
+24,3 % de l'ensemble des dépenses publiques** ; l'évolution de cette dépense
+« explique à elle seule une grande partie de la progression des dépenses
+publiques depuis une vingtaine d'années ». Comparaisons, à ne pas mélanger
+parce que les périmètres diffèrent : OCDE *Pensions at a Glance 2023*, fiche
+France, dépenses publiques de retraite **13,4 % du PIB contre 7,7 % en moyenne
+OCDE** ; OCDE base SOCX 2021, dépenses publiques et privées, Italie 17,0 %,
+France 14,3 %, Allemagne 12,3 % ; *Ageing Report 2024*, 14,4 % en 2022 et
+13,6 % en 2070.
+
+Éducation : la dépense intérieure d'éducation passe de **7,8 % du PIB au pic
+de 1995-1996 à 6,7 % en 2023** (INSEE, DEPP) ; 197,1 Md€ et 6,8 % du PIB en
+2024. Par élève du primaire, l'OCDE mesure **11 135 $ PPA en France contre
+12 730 $ en moyenne** (données 2022), soit 13 % de moins, quand le lycée
+français est 24 % au-dessus. La part de l'éducation dans les budgets publics
+passe de 8,3 % (2015) à 8,0 % (2022). PISA 2022 : 458 points en mathématiques
+contre 463 en moyenne OCDE, parmi les plus bas jamais mesurés. Recherche :
+DIRD à **2,18 % du PIB en 2023** pour un objectif de 3 %, contre 3,1 % en
+Allemagne.
+
+**Ce qu'on ne peut pas affirmer** : aucune des sources lues n'établit que la
+dépense de retraite *cause* le recul de la dépense d'éducation. La
+littérature sur ce point est divisée : Poterba (1997, *Journal of Policy
+Analysis and Management* 16(1)) trouve une élasticité de la dépense
+d'éducation par enfant à la part des plus de 65 ans d'environ **−0,25** sur
+les États américains, et Cattaneo & Wolter (2009, *European Journal of
+Political Economy* 25(2)) montrent sur données suisses que les personnes âgées
+préfèrent explicitement la santé et la sécurité sociale à l'éducation ; mais
+Ladd & Murray (2001, *Economics of Education Review* 20(4)) ne trouvent
+**aucun effet** au niveau des comtés, et Harris, Evans & Schwab (2001) un
+effet faible. Ce qui est établi, et écrit par le COR, c'est que les hausses de
+cotisations et les baisses de pensions « renforcent les difficultés à financer
+les dépenses publiques autres que les retraites ».
+
+### Trois résultats qui contredisent la thèse du sacrifice, et qu'il faut citer
+
+1. **Les transferts publics vers les seniors reculent.** D'Albis, Navaux &
+   Pelletan (2023, document n° 4 de la séance du COR du 23 novembre 2023, base
+   des comptes de transferts nationaux) : la part des transferts publics dans
+   le financement de la consommation des 60 ans et plus passe de **70 % en
+   1979 et 77 % en 1984 à 56 % en 2019** ; pour les 65 ans et plus, de 82 % et
+   90 % à 69 %. La hausse de leur consommation « ne s'explique pas par des
+   transferts publics plus généreux mais par une moindre épargne aux âges
+   élevés ». Cusset, d'Albis, Navaux & Pelletan (2021, France Stratégie,
+   *La Note d'analyse* 103) : les transferts nets par tête des 60-79 ans ont
+   **reculé de 11 points de PIB par tête entre 2008 et 2019**, et la retraite
+   par tête des 60 ans et plus est passée de 55,6 % à 51,5 % du PIB par tête.
+2. **Aucune cohorte née entre 1901 et 1979 n'a vécu moins bien que la
+   précédente.** D'Albis & Badji (2017, *Économie et Statistique* 491-492,
+   71-92, pseudo-panel sur les enquêtes Budget de famille 1979-2011) :
+   « Considering all cohorts born between 1901 and 1979, no generation has
+   been less fortunate than its ancestors. » Limite : les données s'arrêtent
+   en 2011 et la cohorte la plus jeune est celle de 1979.
+3. **Le COR réfute l'idée d'une dérive non maîtrisée** : ses projections « ne
+   corroborent pas l'idée d'une progression des dépenses de retraite qui
+   échapperait à toute maîtrise en raison du vieillissement démographique ».
+
+## 11. Les huit objections du discours rassuriste, et ce qu'on leur oppose
+
+Chaque objection est donnée dans les termes de ceux qui la portent, et la
+réponse est tirée du COR partout où c'est possible.
+
+1. **« Le déficit est faible, un demi-point de PIB »** (Sterdyniak, note des
+   Économistes atterrés du 18 juin 2025, p. 2 : « un déficit dont la prévision
+   est très fragile et en tout état de cause, très faible : de l'ordre de
+   0,5 % du PIB dans les 25 années à venir »). Réponse : le COR projette
+   −0,2 point en 2030, **−0,9 en 2045 et −2,4 en 2070**. L'auteur écrit dans
+   la même note que la stabilité de la dépense « ne proviendrait que de
+   l'hypothèse d'une nette baisse à l'avenir du rapport retraite/salaire », et
+   qualifie la chose d'« acceptation de la paupérisation progressive des
+   retraités ».
+2. **« Le déficit vient du désengagement de l'État »**. Réponse : le COR
+   calcule le solde sous la convention qui fige la contribution de l'État en
+   part de PIB, et trouve encore **−1,5 point de PIB en 2070** **[vérifié]**.
+   Le désengagement explique 0,9 point sur 2,4.
+3. **« La part des retraites dans le PIB est stable »**. Réponse : le COR dit
+   pourquoi dans la phrase suivante — la stabilité est « freinée par la baisse
+   de la pension moyenne relative au revenu d'activité moyen qui passerait de
+   **54,6 % en 2025 à 45,3 % en 2070** » **[vérifié]**.
+4. **« Il suffit d'un point de cotisation »** (Sterdyniak chiffre 3,5 points,
+   soit environ 25 Md€/an). Réponse : le coin français est déjà le 3e de
+   l'OCDE, 12 points au-dessus de la moyenne, et le COR juge la hausse de
+   cotisations récessive.
+5. **« C'est une convention comptable »** (Beaufret, Fondapol, février 2025 :
+   « −69 Mds d'euros en 2023 et −81 Mds d'euros prévus en 2024 »). Réponse :
+   l'IPP (Aubert, Pedrono, Tô & Tochev, juin 2025) chiffre le taux d'équilibre
+   à **34,7 %** contre 74,28 % affiché et la subvention implicite à 18 Md€,
+   en concluant que ces financements « sont donc "vrais" et ne constituent pas
+   un "déficit caché" » ; le CAE (Focus 121) et la Cour des comptes vont dans
+   le même sens ; et le COR rappelle que « quelle que soit la convention
+   adoptée, le solde global des finances publiques n'en est pas affecté ».
+6. **« Les retraités sont pauvres »**. Réponse : les chiffres du § 10.
+7. **« La capitalisation, c'est le casino »**. Réponse : le rendement de la
+   répartition pour la génération 2000 est de 0,8 % ; les obligations d'État
+   américaines ont rendu 1,6 % réel sur 126 ans.
+8. **« Le problème, c'est le chômage »**. Réponse : le COR chiffre la
+   variante — « en 2070, le solde du système de retraite serait dégradé de
+   − 0,3 point de PIB dans le scénario de chômage à 10 % et, au contraire,
+   amélioré de + 0,2 point dans celui à 5 % » **[vérifié]**. Un douzième du
+   déficit, pour un taux que la France n'a plus connu depuis 1982. Et « le
+   système de retraite demeurerait durablement en besoin de financement dans
+   l'ensemble des scénarios considérés ».
+9. **« Les réformes passées ont réglé le problème »**. Réponse : la réforme de
+   2023 devait rapporter 17,7 Md€ en 2030 et équilibrer le système ; elle a
+   été suspendue moins de trois ans après par l'article 105 de la loi
+   n° 2025-1403 du 30 décembre 2025, pour un coût de **1,8 Md€ par an en
+   moyenne jusqu'en 2032** **[chiffrage Drees cité par le COR]**.
+
+## 12. Ce que la page en retient
+
+La page **Risque** est un réquisitoire, et elle le dit. Elle pose les deux
+questions dans l'ordre où un électeur les pose : combien la retraite prélève
+chaque mois, et ce qu'elle en rendra. Les trois chiffres de tête viennent du
+modèle — ce qu'un salarié du privé verse à trois niveaux de salaire, la part
+de sa pension que ses propres cotisations ne financent pas, la part non
+financée du système à l'horizon de la projection. Le reste est cité, et le
+plus souvent cité du COR, parce qu'une source institutionnelle ne se récuse
+pas comme partisane.
+
+Elle garde les résultats qui contredisent sa thèse plutôt que de les taire :
+le recul des transferts publics vers les seniors, le travail de d'Albis et
+Badji sur les cohortes 1901-1979, le refus du COR de parler de dérive, et
+l'absence de toute démonstration causale entre dépense de retraite et recul de
+la dépense d'éducation. Une page qui les omettrait se ferait démonter sur eux.
 
 ## Bibliographie
 
