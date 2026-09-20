@@ -4219,7 +4219,7 @@ function salaireNetEpargne(epargne, remuneration, parametres, saisie) {
  */
 function salaireNetMethode(comparaison, remuneration) {
   const parametres = comparaison.parametres;
-  const part = g.pourcentage(parametres.part_salariale_taux_unique, false, 0);
+  const part = parametres.part_salariale_taux_unique;
   const assiette = echapper(remuneration.libelleAssiette.toLowerCase());
   return `
 <h3>Comment ce chiffre est calculé, et ce qu'il suppose</h3>
@@ -4306,22 +4306,30 @@ revenu net, à votre charge en entier, et pour une autre raison — personne ne
 cofinance une épargne qu'on décide seul. Votre profil est le seul où les trois
 taux pèsent de la même façon.</p>`;
   }
+  const total = parametres.taux_cotisation_liberal
+    + parametres.taux_capitalisation_obligatoire;
+  const votrePart = g.pourcentage(total * part, false, 2);
+  const partEmployeur = g.pourcentage(total * (1 - part), false, 2);
   if (!remuneration.afficheCoutDuTravail) {
-    return `<p><strong>Les ${repartition} sont partagés moitié-moitié</strong> entre
-vous et votre employeur, comme les ${capitalise} capitalisés : votre part est
-donc de ${part} de chacun. La proposition ne dit pas
-qui porte quoi, et ce partage commande directement le chiffre ci-dessus —
-puisque seule votre part y figure, tout déplacer vers l'employeur ferait
-disparaître la hausse, et tout déplacer vers vous la doublerait.</p>${horsPartage}`;
+    return `<p><strong>Votre part des ${repartition} et des ${capitalise} capitalisés
+est de ${votrePart} au total</strong>, contre ${partEmployeur} pour votre
+employeur. La proposition dit « salariale et patronale additionnées » sans dire
+qui porte quoi ; le choix est de laisser la part patronale où elle est
+aujourd'hui et de faire porter toute la baisse par la vôtre. C'est ce partage
+qui commande le chiffre ci-dessus, puisque seule votre part y figure.</p>${horsPartage}`;
   }
-  return `<p><strong>Les ${repartition}
-sont partagés moitié-moitié</strong> entre vous et votre employeur, comme les
-${capitalise}
-capitalisés. La proposition ne dit pas qui porte quoi, et ce partage n'est pas
-neutre : la CSG est assise sur le brut, et l'allègement sur les bas salaires ne
-porte que sur la part patronale. Tout mettre côté employeur donnerait un gain
-bien plus gros, tout mettre côté salarié le rendrait négatif. Le chiffre affiché
-est le partage du milieu (${part} pour vous).</p>${horsPartage}`;
+  return `<p><strong>Sur les ${repartition} et les ${capitalise} capitalisés, vous
+portez ${votrePart} et votre employeur ${partEmployeur}.</strong> La proposition
+dit « salariale et patronale additionnées » sans dire qui porte quoi, et le
+choix n'est pas neutre : la CSG est assise sur le brut, et l'allègement sur les
+bas salaires ne porte que sur la part patronale. Celui-ci laisse à votre
+employeur les 16,67 points qu'il verse aujourd'hui et ramène votre retenue de
+11,31 à 6,33. Deux raisons, et la première est la plus importante : la baisse
+arrive <strong>tout de suite</strong>, sans qu'il faille attendre qu'un
+employeur rende son économie ; et elle ne fuit pas, parce que votre brut ne
+bouge pas et que ni la CSG ni les autres cotisations ne grossissent avec lui.
+Le partage inverse ferait monter votre brut de près de 3 %, donc aussi ce qui
+est porté à votre compte, mais des années plus tard et amputé du quart.</p>${horsPartage}`;
 }
 
 /** L'allègement sur les bas salaires — quand il s'applique, et sinon pourquoi. */

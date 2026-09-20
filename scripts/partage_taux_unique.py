@@ -12,10 +12,12 @@ La proposition prélève 23 points sur la rémunération — 18 de répartition,
 5 capitalisés — là où un salarié du privé en verse aujourd'hui 27,98 : 11,31
 sur sa fiche, 16,67 chez son employeur, contributions d'équilibre comprises.
 Elle dit « salariale et patronale additionnées » et ne dit pas qui porte quoi.
-Le modèle partage moitié-moitié (``Parametres.part_salariale_taux_unique``),
-et ``remuneration.py`` a montré que ce partage n'est pas neutre. Ce script
-répond à la question suivante : **quel partage sert le mieux le salaire, de
-façon réaliste, sans promettre ce qu'on ne peut pas tenir ?**
+``remuneration.py`` a montré que ce partage n'est pas neutre. Ce script répond
+à la question suivante : **quel partage sert le mieux le salaire, de façon
+réaliste, sans promettre ce qu'on ne peut pas tenir ?** Il a servi à trancher
+le 20 septembre 2026, et c'est le partage **A** qui a été retenu :
+``Parametres.part_salariale_taux_unique`` vaut désormais ``0,0633 / 0,23``. Le
+script reste, parce que la décision se rediscute et que ses termes sont ici.
 
 DEUX HORIZONS, ET LES DEUX SONT VRAIS
 --------------------------------------
@@ -38,12 +40,13 @@ LE COULOIR
 Quatre partages, bornés par deux évidences :
 
     A  la part patronale ne bouge pas (16,67 points), toute la baisse va au
-       salarié, dont la part tombe de 11,31 à 6,33 ;
+       salarié, dont la part tombe de 11,31 à 6,33 — **c'est le partage
+       retenu** ;
     B  la clé d'aujourd'hui, 40,4 % : chaque part baisse d'un cinquième ;
     C  la part salariale ne bouge pas (11,31), toute la baisse va à
        l'employeur, dont la part tombe de 16,67 à 11,69 ;
-    D  moitié-moitié, le défaut du dépôt : la part salariale MONTE de 11,31
-       à 11,50, et la fiche de paie du jour 1 baisse.
+    D  moitié-moitié, l'ancien défaut du dépôt : la part salariale MONTE de
+       11,31 à 11,50, et la fiche de paie du jour 1 baisse.
 
 En deçà de A l'employeur paie plus qu'aujourd'hui ; au-delà de C le salarié
 paie plus qu'aujourd'hui. Pour A, B et C, une variante ``'`` porte les cinq
@@ -163,10 +166,11 @@ def main() -> None:
     part_employeur = temoin.retraite_employeur / temoin.brut
 
     partages = [
-        ("A  part patronale inchangée", 1.0 - part_employeur / total, None),
+        ("A  part patronale inchangée — LE PARTAGE RETENU",
+         1.0 - part_employeur / total, None),
         ("B  clé d'aujourd'hui", part_salarie / (part_salarie + part_employeur), None),
         ("C  part salariale inchangée", part_salarie / total, None),
-        ("D  moitié-moitié (défaut du dépôt)", 0.5, None),
+        ("D  moitié-moitié (l'ancien défaut du dépôt)", 0.5, None),
     ]
     variantes = []
     for nom, part, _ in partages[:3]:

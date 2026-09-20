@@ -103,6 +103,24 @@ Scénario                                                          Courants   Co
 > un détail de présentation : une pension de répartition s'éteint avec son
 > titulaire, un capital se transmet.
 >
+> **Qui porte ces 23 points, et c'est ce qui décide du salaire net.** La
+> proposition les annonce « salariale et patronale additionnées » sans dire qui
+> paie quoi, et le partage n'est pas neutre : la CSG est assise sur le brut,
+> que le partage déplace, et l'allègement sur les bas salaires n'efface que des
+> cotisations patronales. Le choix retenu est de **laisser la part patronale où
+> elle est** — 16,67 points, ce qu'un employeur du privé verse aujourd'hui — et
+> de faire porter toute la baisse par la part salariale, qui tombe de 11,31 à
+> **6,33**. C'est le seul partage dont la baisse arrive sur la fiche le
+> lendemain de la réforme, sans supposer qu'un employeur rende son économie, et
+> le seul qui rende quelque chose au voisinage du SMIC : +182 € par mois au
+> salaire moyen dès le premier mois, +91 € au SMIC. Le prix à payer est que le
+> salaire **brut** ne monte pas, donc ni les droits qui en dépendent, ni le
+> crédit au compte notionnel ; le partage inverse le ferait monter de 2,9 %,
+> mais des années plus tard et amputé du quart par la CSG et les autres
+> branches. `part_salariale_taux_unique` le rend réglable, et
+> `scripts/partage_taux_unique.py` chiffre les quatre partages possibles aux
+> deux horizons.
+>
 > Restent **cinq points rendus**, et c'est la question que tout le monde pose
 > ensuite : et si on les remettait au même endroit ? Le modèle suppose que oui
 > — une **capitalisation volontaire de 5 %**, sur la même assiette, aux mêmes
@@ -145,8 +163,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->761<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 357<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->762<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 358<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Sept pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -1259,7 +1277,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1265<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1266<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

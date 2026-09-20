@@ -5574,21 +5574,28 @@ volontaires, eux, ne sont pas sur la fiche : c'est un placement pris sur votre
 revenu net, à votre charge en entier, et pour une autre raison — personne ne
 cofinance une épargne qu'on décide seul. Votre profil est le seul où les trois
 taux pèsent de la même façon.</p>"""
+    total = parametres.taux_cotisation_liberal + parametres.taux_capitalisation_obligatoire
+    votre_part = g.pourcentage(total * part, decimales=2)
+    part_employeur = g.pourcentage(total * (1.0 - part), decimales=2)
     if not remuneration.affiche_cout_du_travail:
-        return f"""<p><strong>Les {repartition} sont partagés moitié-moitié</strong> entre
-vous et votre employeur, comme les {capitalise} capitalisés : votre part est
-donc de {g.pourcentage(part, decimales=0)} de chacun. La proposition ne dit pas
-qui porte quoi, et ce partage commande directement le chiffre ci-dessus —
-puisque seule votre part y figure, tout déplacer vers l'employeur ferait
-disparaître la hausse, et tout déplacer vers vous la doublerait.</p>{hors_partage}"""
-    return f"""<p><strong>Les {repartition}
-sont partagés moitié-moitié</strong> entre vous et votre employeur, comme les
-{capitalise}
-capitalisés. La proposition ne dit pas qui porte quoi, et ce partage n'est pas
-neutre : la CSG est assise sur le brut, et l'allègement sur les bas salaires ne
-porte que sur la part patronale. Tout mettre côté employeur donnerait un gain
-bien plus gros, tout mettre côté salarié le rendrait négatif. Le chiffre affiché
-est le partage du milieu ({g.pourcentage(part, decimales=0)} pour vous).</p>{hors_partage}"""
+        return f"""<p><strong>Votre part des {repartition} et des {capitalise} capitalisés
+est de {votre_part} au total</strong>, contre {part_employeur} pour votre
+employeur. La proposition dit « salariale et patronale additionnées » sans dire
+qui porte quoi ; le choix est de laisser la part patronale où elle est
+aujourd'hui et de faire porter toute la baisse par la vôtre. C'est ce partage
+qui commande le chiffre ci-dessus, puisque seule votre part y figure.</p>{hors_partage}"""
+    return f"""<p><strong>Sur les {repartition} et les {capitalise} capitalisés, vous
+portez {votre_part} et votre employeur {part_employeur}.</strong> La proposition
+dit « salariale et patronale additionnées » sans dire qui porte quoi, et le
+choix n'est pas neutre : la CSG est assise sur le brut, et l'allègement sur les
+bas salaires ne porte que sur la part patronale. Celui-ci laisse à votre
+employeur les 16,67 points qu'il verse aujourd'hui et ramène votre retenue de
+11,31 à 6,33. Deux raisons, et la première est la plus importante : la baisse
+arrive <strong>tout de suite</strong>, sans qu'il faille attendre qu'un
+employeur rende son économie ; et elle ne fuit pas, parce que votre brut ne
+bouge pas et que ni la CSG ni les autres cotisations ne grossissent avec lui.
+Le partage inverse ferait monter votre brut de près de 3 %, donc aussi ce qui
+est porté à votre compte, mais des années plus tard et amputé du quart.</p>{hors_partage}"""
 
 
 def _salaire_net_allegement(remuneration) -> str:

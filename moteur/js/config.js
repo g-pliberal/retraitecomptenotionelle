@@ -282,11 +282,15 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   taux_cotisation_liberal: 0.18,
   //: Partage du taux unique entre l'assuré et son employeur. La proposition
   //: dit « 18 %, salariale et patronale additionnées » et ne dit pas qui porte
-  //: quoi ; le dépôt partage MOITIÉ-MOITIÉ. Ce paramètre ne touche à AUCUNE
-  //: pension — le compte porte la somme des deux parts — mais il compte dans
-  //: la fiche de paie : la CSG est assise sur le BRUT, que le partage déplace,
-  //: et la réduction générale n'efface que des cotisations PATRONALES.
-  part_salariale_taux_unique: 0.5,
+  //: quoi ; le programme a tranché le 20 septembre 2026 : la part PATRONALE ne
+  //: bouge pas — 16,67 points, ce qu'elle vaut aujourd'hui — et toute la
+  //: baisse va au salarié, dont la part tombe de 11,31 à 6,33 points sur 23.
+  //: D'où `0.0633 / 0.23`, écrit ainsi pour qu'on lise d'où il vient. Ce
+  //: paramètre ne touche à AUCUNE pension — le compte porte la somme des deux
+  //: parts — mais il compte dans la fiche de paie : la CSG est assise sur le
+  //: BRUT, que le partage déplace, et la réduction générale n'efface que des
+  //: cotisations PATRONALES.
+  part_salariale_taux_unique: 0.0633 / 0.23,
   //: Ce que la proposition REND aux salaires sur ce qu'elle cesse d'affecter à
   //: la retraite. Décision du Parti libéral, 20 septembre 2026 : la moitié est
   //: rendue aux salaires, la moitié éteint de la dette. Elle s'applique deux

@@ -216,32 +216,78 @@ def test_les_trois_premiers_systemes_ont_la_meme_fiche_de_paie():
 # -- le résultat inattendu est bien celui du modèle --------------------------
 
 
-def test_le_gain_net_est_negatif_au_smic_et_positif_au_salaire_moyen(pieces):
-    """Le résultat que ce module a servi à trouver.
+def _gain(pieces, propose, niveau: float, incidence: Incidence) -> float:
+    """L'écart de net à un niveau de salaire, sous l'un ou l'autre horizon."""
+    constructeur = ConstructeurFiche(pieces["bareme"])
+    actuel, _ = _blocs(pieces)
+    brut = niveau * pieces["smic"]
+    avant = constructeur.fiche(
+        ANNEE, brut, pieces["plafond"], pieces["smic"], actuel)
+    brut_apres = (
+        brut if incidence is Incidence.ASSIETTE
+        else constructeur.brut_a_cout_donne(
+            avant.cout_du_travail, pieces["plafond"], pieces["smic"], propose))
+    apres = constructeur.fiche(
+        ANNEE, brut_apres, pieces["plafond"], pieces["smic"], propose)
+    return apres.net - avant.net
 
-    Au SMIC, l'assuré ne supporte aujourd'hui que 11,3 points de retraite, la
-    part patronale étant intégralement effacée par la réduction générale. La
-    proposition en prélève 23, dont 9 seulement sont effacés : elle prélève
-    donc PLUS. Le croisement se fait un peu au-dessus de 1,2 SMIC.
+
+def test_le_gain_net_est_positif_a_tous_les_salaires_sous_le_partage_retenu(pieces):
+    """Le résultat du partage que le programme a tranché le 20 septembre 2026.
+
+    Il a longtemps été l'inverse, et c'est ce que ce module a servi à trouver :
+    sous le partage moitié-moitié d'alors, la proposition prélevait PLUS que le
+    droit en vigueur au voisinage du SMIC, et le gain n'y était positif qu'un
+    peu au-dessus de 1,2 SMIC. La raison tenait à la réduction générale, qui
+    efface au SMIC la totalité de la part patronale : l'assuré n'y supporte que
+    11,3 points, et moitié-moitié lui en demandait 11,5.
+
+    Le partage retenu laisse à l'employeur les 16,67 points qu'il verse
+    aujourd'hui et ramène l'assuré à 6,33. Il ne peut donc plus prélever
+    davantage à personne, et le gain est positif partout — au jour 1 comme au
+    long terme, ce que les deux boucles vérifient séparément.
+    """
+    _, propose = _blocs(pieces)
+    for incidence in (Incidence.ASSIETTE, Incidence.COUT_DU_TRAVAIL):
+        for niveau in (1.0, 1.2, 2.0, 5.0):
+            assert _gain(pieces, propose, niveau, incidence) > 0, (
+                f"{incidence.value} à {niveau} SMIC")
+    # Le gain croît avec le salaire : la retenue baisse de cinq points, et
+    # cinq points d'un gros salaire font plus que cinq points d'un petit.
+    assert (_gain(pieces, propose, 5.0, Incidence.COUT_DU_TRAVAIL)
+            > _gain(pieces, propose, 2.0, Incidence.COUT_DU_TRAVAIL))
+
+
+def test_le_partage_retenu_laisse_la_part_patronale_ou_elle_est(pieces):
+    """Ce que le partage veut dire, et qui est sa raison d'être.
+
+    16,67 points aujourd'hui, 16,67 sous la proposition : l'employeur ne verse
+    ni plus ni moins, et c'est ce qui rend la baisse immédiate plutôt que
+    promise. Le test lit les deux blocs plutôt que de croire le paramètre —
+    c'est le rapprochement qui compte, pas le nombre.
+
+    **Deux millièmes de point d'écart subsistent, et ils sont voulus.** La part
+    patronale d'aujourd'hui vaut exactement 16,6720 points — 10,66 au régime
+    général, 4,7220 à l'Agirc-Arrco, 1,29 de contribution d'équilibre général —
+    quand le paramètre est écrit sur les 16,67 qu'une proposition politique
+    énonce. L'employeur verse donc 0,002 point de moins, soit cinq centimes par
+    mois à un salaire et demi le SMIC. Le test borne cet écart plutôt que de
+    l'ignorer : s'il grossissait, c'est qu'un taux de régime aurait bougé sans
+    que le partage suive.
     """
     actuel, propose = _blocs(pieces)
     constructeur = ConstructeurFiche(pieces["bareme"])
-
-    def gain(niveau: float) -> float:
-        brut = niveau * pieces["smic"]
-        avant = constructeur.fiche(
-            ANNEE, brut, pieces["plafond"], pieces["smic"], actuel)
-        apres = constructeur.fiche(
-            ANNEE,
-            constructeur.brut_a_cout_donne(
-                avant.cout_du_travail, pieces["plafond"], pieces["smic"], propose),
-            pieces["plafond"], pieces["smic"], propose,
-        )
-        return apres.net - avant.net
-
-    assert gain(1.0) < 0
-    assert gain(2.0) > 0
-    assert gain(5.0) > gain(2.0)
+    brut = 1.5 * pieces["smic"]  # sous le plafond, hors tranche 2
+    avant = constructeur.fiche(
+        ANNEE, brut, pieces["plafond"], pieces["smic"], actuel)
+    apres = constructeur.fiche(
+        ANNEE, brut, pieces["plafond"], pieces["smic"], propose)
+    ecart = abs(apres.retraite_employeur - avant.retraite_employeur)
+    assert ecart < brut * 5e-5, "la part patronale a bougé"
+    # Toute la baisse est passée côté salarié : 11,31 points deviennent 6,33.
+    assert avant.retraite_salarie / brut == pytest.approx(0.1131, abs=5e-5)
+    assert apres.retraite_salarie / brut == pytest.approx(0.0633, abs=5e-5)
+    assert avant.retraite_employeur / brut == pytest.approx(0.16672, abs=5e-6)
 
 
 def test_sans_le_pilier_capitalise_le_gain_est_positif_partout(pieces):
@@ -503,12 +549,20 @@ def test_le_net_d_un_fonctionnaire_vaut_environ_79_pour_cent_du_traitement(piece
     assert avant.retraite_salarie == pytest.approx(0.111 * avant.brut)
 
 
-def test_la_retenue_d_un_fonctionnaire_passe_de_11_10_a_11_50_pour_cent(pieces):
-    """Ce que la proposition PRÉLÈVE sur un agent : 11,10 points, puis 11,50.
+def test_la_retenue_d_un_fonctionnaire_passe_de_11_10_a_6_33_pour_cent(pieces):
+    """Ce que la proposition PRÉLÈVE sur un agent : 11,10 points, puis 6,33.
 
-    9 % de répartition et 2,5 % de capitalisation, la moitié salariale de
-    18 + 5. C'était tout le mouvement de sa fiche jusqu'au 20 septembre 2026 ;
-    depuis, le partage y ajoute le traitement, et le test suivant le mesure.
+    Sa retenue suit la part salariale du taux unique, la même pour tous les
+    statuts. Elle valait 11,50 points sous le partage moitié-moitié, soit
+    quatre dixièmes de PLUS qu'aujourd'hui, et le 20 septembre 2026 le
+    programme a décidé de laisser la part patronale où elle est : elle tombe
+    donc à 6,33, et l'agent reçoit la même baisse que tout le monde.
+
+    Ce n'est plus tout le mouvement de sa fiche. La moitié de ce que l'État
+    cesse de verser remonte dans son traitement depuis le même jour — c'est
+    `Incidence.PARTAGEE`, et deux tests plus haut la mesurent. Les deux
+    décisions se cumulent sur son net, et aucune des deux ne se lit sur la
+    part patronale d'un employeur privé.
     """
     _, avant, apres = _fiches_du_statut(pieces, "fonctionnaire_etat")
     part = (PARAMETRES.taux_cotisation_liberal
