@@ -487,13 +487,8 @@ class MetierSaisi:
 #: portent le leur.
 CLES_MODELISATION = (
     "indexation", "lissage", "age_reference", "table", "population",
-<<<<<<< HEAD
-    "conversion_acquis", "part_cotisation", "foyer", "projection", "emploi",
-    "stock", "reprise", "bascule", "euros",
-=======
     "rattachement", "conversion_acquis", "part_cotisation", "foyer",
-    "projection", "emploi", "stock", "bascule", "euros",
->>>>>>> a5b531f (Le rattachement au vingtile par la pension, en option : le rang parmi les retraités, résolu par point fixe)
+    "projection", "emploi", "stock", "reprise", "bascule", "euros",
 )
 
 
