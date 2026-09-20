@@ -349,9 +349,9 @@ class ScenarioNotionnel:
             annee_debut=carriere.premiere_annee,
             regime_fusionne=regime_fusionne,
         )
-        conversion = self.convertisseur.coefficient(
-            age_liquidation, annee_liquidation, self._sexe(carriere),
-            carriere.mois_liquidation, self.convertisseur.population_de(carriere),
+        conversion, _ = self.convertisseur.resoudre(
+            compte.capital, age_liquidation, annee_liquidation, self._sexe(carriere),
+            carriere.mois_liquidation, carriere,
         )
         pension = compte.capital / conversion.diviseur
 
@@ -434,7 +434,8 @@ class ScenarioNotionnel:
             annee_liquidation=carriere.annee_liquidation,
             mois_liquidation=carriere.mois_liquidation,
             sexe=carriere.sexe,
-            population=self.convertisseur.population_de(carriere),
+            population=self.convertisseur.population_pour_pension(
+                resultat.pension_annuelle, carriere.annee_liquidation, carriere),
         )
 
     def _garantie_vieillesse(self, carriere: Carriere,
@@ -536,11 +537,11 @@ class ScenarioNotionnel:
             annee_debut=bascule,
             regime_fusionne=regime_fusionne,
         )
-        conversion = self.convertisseur.coefficient(
-            age_liquidation, annee_liquidation, self._sexe(carriere),
-            carriere.mois_liquidation, self.convertisseur.population_de(carriere),
-        )
         capital_total = compte.capital + capital_acquis
+        conversion, _ = self.convertisseur.resoudre(
+            capital_total, age_liquidation, annee_liquidation, self._sexe(carriere),
+            carriere.mois_liquidation, carriere,
+        )
         pension = capital_total / conversion.diviseur
 
         return ResultatNotionnel(
@@ -563,7 +564,9 @@ class ScenarioNotionnel:
         actuel = self.scenario_actuel.calculer(carriere)
         conversion = self.convertisseur.coefficient(
             age_liquidation, annee_liquidation, self._sexe(carriere),
-            carriere.mois_liquidation, self.convertisseur.population_de(carriere),
+            carriere.mois_liquidation,
+            self.convertisseur.population_pour_pension(
+                actuel.pension_annuelle, annee_liquidation, carriere),
         )
         compte = self.constructeur.construire(
             carriere,
@@ -634,7 +637,8 @@ class ScenarioNotionnel:
             age_conversion = carriere.age_liquidation or self.age_reference.age(bascule)
         conversion = self.convertisseur.coefficient(
             age_conversion, bascule, self._sexe(carriere),
-            population=self.convertisseur.population_de(carriere),
+            population=self.convertisseur.population_pour_pension(
+                droits.pension_annuelle, bascule, carriere),
         )
         capital_a_la_bascule = droits.pension_annuelle * conversion.diviseur
 

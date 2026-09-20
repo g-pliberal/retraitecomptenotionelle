@@ -498,6 +498,23 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   Cette mesure est celle que le défaut applique désormais ; ses chiffres
   restent ceux de la table commune contre le vingtile, et
   `scripts/mortalite_population.py` les recalcule en posant la table commune.
+  Le rattachement peut aussi se faire **par la pension**
+  (`rattachement_niveau_de_vie="pension"`, sur le site « Rattachement au
+  niveau de vie ») : le RANG de la pension brute parmi les retraités, lu
+  dans la distribution des pensions de la DREES
+  (`macro/distribution_pensions.csv`, la pension ramenée aux euros du
+  millésime au rythme du salaire moyen), le vingtile étant celui de ce rang.
+  Comparer une pension aux niveaux de vie de la population entière l'aurait
+  classée presque toujours en bas, une pension étant plus petite qu'un
+  salaire ; le rang parmi les retraités suppose, lui, que le niveau de vie
+  d'un retraité suit sa pension, ce qui néglige le conjoint et le
+  patrimoine. C'est circulaire sous un compte notionnel, la pension
+  dépendant du diviseur, et le modèle itère jusqu'au point fixe, six tours
+  au plus. Par la pension, le SMIC à carrière complète monte au sixième
+  vingtile — six retraités sur dix touchent moins de 1 500 € —, le salaire
+  moyen au onzième, le cadre reste au dix-neuvième, et les régimes à départ
+  précoce descendent, leur pension étant plus petite que leur salaire ne
+  le laissait croire.
   Ce que le défaut suppose est écrit avec lui : un salaire n'est pas un niveau
   de vie de ménage, et le facteur de chaque vingtile est tenu constant dans
   le temps.

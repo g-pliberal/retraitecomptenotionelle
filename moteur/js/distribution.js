@@ -33,6 +33,30 @@ export class DistributionPensions {
    * L'écart est réel et ne se corrige pas — redresser les parts inventerait une
    * précision que la source ne donne pas.
    */
+  /**
+   * La part des retraités dont la pension est inférieure à un montant, en euros
+   * du millésime : le rang d'une pension parmi les retraités. Portage de
+   * `part_sous` — linéaire dans la tranche, le seuil de la dernière au-delà.
+   */
+  partSous(montantMensuel) {
+    let cumul = 0.0;
+    for (const tranche of this.tranches) {
+      if (montantMensuel < tranche.borneInferieure) {
+        return cumul;
+      }
+      const ouverte = tranche.borneSuperieure === null || tranche.borneSuperieure === undefined;
+      if (ouverte || montantMensuel < tranche.borneSuperieure) {
+        if (ouverte) {
+          return cumul;
+        }
+        const largeur = tranche.borneSuperieure - tranche.borneInferieure;
+        return cumul + tranche.part * (montantMensuel - tranche.borneInferieure) / largeur;
+      }
+      cumul += tranche.part;
+    }
+    return cumul;
+  }
+
   get sommeDesParts() {
     return this.tranches.reduce((somme, tranche) => somme + tranche.part, 0);
   }

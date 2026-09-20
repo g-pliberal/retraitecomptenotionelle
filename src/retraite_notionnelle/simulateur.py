@@ -687,7 +687,8 @@ class Simulateur:
 
     @cached_property
     def convertisseur(self) -> Convertisseur:
-        return Convertisseur(self.mortalite, self.parametres, self.macro)
+        return Convertisseur(self.mortalite, self.parametres, self.macro,
+                             self.distribution)
 
     @cached_property
     def age_reference(self) -> AgeReference:
@@ -787,6 +788,7 @@ class Simulateur:
                 )
             ),
             self.macro,
+            self.distribution,
         )
 
     @cached_property

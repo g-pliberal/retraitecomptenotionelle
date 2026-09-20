@@ -17,7 +17,9 @@
  */
 
 import { salaireMoyenAnnuel } from "./carriere.js";
-import { POPULATION_PAR_NIVEAU_DE_VIE, TableConversion } from "./config.js";
+import {
+  POPULATION_PAR_NIVEAU_DE_VIE, RATTACHEMENT_PENSION, TableConversion,
+} from "./config.js";
 
 /**
  * Le niveau de salaire d'une carrière, en multiples du salaire moyen : la
@@ -38,12 +40,75 @@ export function niveauRelatif(carriere, macro) {
 }
 
 export class Convertisseur {
-  constructor(mortalite, parametres, macro = null) {
+  /** Tours de point fixe entre la pension et son vingtile, au plus. */
+  static TOURS_POINT_FIXE = 6;
+
+  constructor(mortalite, parametres, macro = null, distribution = null) {
     this.mortalite = mortalite;
     this.parametres = parametres;
     // Les séries macroéconomiques, pour rattacher une carrière à son vingtile
     // de niveau de vie ; sans elles, le rattachement retombe sur la table commune.
     this.macro = macro;
+    // La distribution des pensions de la DREES, pour rattacher une carrière
+    // par le rang de sa pension parmi les retraités.
+    this.distribution = distribution;
+  }
+
+  get rattacheParPension() {
+    return (this.parametres.population_conversion ?? null) === POPULATION_PAR_NIVEAU_DE_VIE
+      && this.parametres.rattachement_niveau_de_vie === RATTACHEMENT_PENSION
+      && this.macro !== null && this.distribution !== null;
+  }
+
+  /**
+   * Le vingtile où une pension brute annuelle place son titulaire : son rang
+   * parmi les retraités, dans la distribution des pensions de la DREES,
+   * ramenée aux euros du millésime au rythme du salaire moyen. Portage de
+   * `population_par_pension`.
+   */
+  populationParPension(pensionAnnuelle, annee) {
+    if (this.macro === null || this.distribution === null) {
+      return null;
+    }
+    const mensuelle = pensionAnnuelle / 12.0;
+    const ramenee = mensuelle * (salaireMoyenAnnuel(this.macro, this.distribution.millesime)
+      / salaireMoyenAnnuel(this.macro, annee));
+    const rang = this.distribution.partSous(ramenee);
+    const vingtile = Math.min(20, Math.trunc(rang * 20.0) + 1);
+    return `niveau_de_vie_v${String(vingtile).padStart(2, "0")}`;
+  }
+
+  /** La population d'une carrière dont la pension est connue. */
+  populationPourPension(pensionAnnuelle, annee, carriere) {
+    if (this.rattacheParPension) {
+      return this.populationParPension(pensionAnnuelle, annee);
+    }
+    return this.populationDe(carriere);
+  }
+
+  /**
+   * Le coefficient d'un capital notionnel, et la population retenue — par point
+   * fixe quand le rattachement se fait par la pension. Portage de `resoudre`.
+   */
+  resoudre(capital, ageLiquidation, anneeLiquidation, sexe, moisLiquidation, carriere) {
+    if (!this.rattacheParPension) {
+      const population = this.populationDe(carriere);
+      return [this.coefficient(ageLiquidation, anneeLiquidation, sexe, moisLiquidation, population),
+        population];
+    }
+    let population = null;
+    for (let tour = 0; tour < Convertisseur.TOURS_POINT_FIXE; tour += 1) {
+      const conversion = this.coefficient(
+        ageLiquidation, anneeLiquidation, sexe, moisLiquidation, population,
+      );
+      const suivante = this.populationParPension(capital / conversion.diviseur, anneeLiquidation);
+      if (suivante === population) {
+        break;
+      }
+      population = suivante;
+    }
+    return [this.coefficient(ageLiquidation, anneeLiquidation, sexe, moisLiquidation, population),
+      population];
   }
 
   /**

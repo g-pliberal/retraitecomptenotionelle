@@ -341,6 +341,7 @@ def _populations() -> dict:
             if f"{population}|{sexe}" in donnees.facteurs_populations()
         },
         "niveaux_de_vie": {str(v): n for v, n in sorted(donnees._niveaux_de_vie.items())},
+        "annee_niveaux_de_vie": donnees.annee_niveaux_de_vie,
     }
 
 

@@ -371,6 +371,10 @@ def _cas() -> list[dict]:
     # le facteur est calé sur le rapport à l'ensemble de l'étude — le seul
     # chemin de calibration qui passe par cette règle.
     cas.append(("population_niveau_de_vie_modeste", {"population": "niveau_de_vie_v01"}))
+    # Le rattachement par la pension : circulaire sous un compte notionnel, et
+    # résolu par point fixe — le chemin que le témoin doit tenir des deux côtés.
+    cas.append(("rattachement_pension", {"rattachement": "pension"}))
+    cas.append(("rattachement_pension_smic", {"rattachement": "pension", "salaire": "0.55"}))
     for projection in ("cor_productivite_basse", "cor_productivite_haute"):
         cas.append((f"projection_{projection}", {"projection": projection}))
     # L'emploi constant après 2025 : la convention d'avant la trajectoire du

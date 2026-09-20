@@ -294,7 +294,22 @@ class DonneesMortalite:
                     )
                     if l["niveau_de_vie_mensuel"]:
                         self._niveaux_de_vie[vingtile] = float(l["niveau_de_vie_mensuel"])
+                self._annee_niveaux_de_vie = derniere
         return table
+
+    @property
+    def annee_niveaux_de_vie(self) -> int | None:
+        """L'année dont les niveaux de vie des vingtiles sont les euros."""
+        return getattr(self, "_annee_niveaux_de_vie", None)
+
+    def population_niveau_de_vie_euros(self, montant_mensuel: float) -> str | None:
+        """Le vingtile dont le niveau de vie mensuel moyen publié est le plus
+        proche d'un montant, en euros de :attr:`annee_niveaux_de_vie`."""
+        if not self._niveaux_de_vie:
+            return None
+        vingtile = min(self._niveaux_de_vie,
+                       key=lambda v: abs(self._niveaux_de_vie[v] - montant_mensuel))
+        return f"niveau_de_vie_v{vingtile:02d}"
 
     @property
     def populations(self) -> tuple[str, ...]:
@@ -343,9 +358,7 @@ class DonneesMortalite:
         if not self._niveaux_de_vie:
             return None
         moyen = sum(self._niveaux_de_vie.values()) / len(self._niveaux_de_vie)
-        niveau = rapport_au_moyen * moyen
-        vingtile = min(self._niveaux_de_vie, key=lambda v: abs(self._niveaux_de_vie[v] - niveau))
-        return f"niveau_de_vie_v{vingtile:02d}"
+        return self.population_niveau_de_vie_euros(rapport_au_moyen * moyen)
 
     def facteur_population(self, population: str, sexe: str) -> float:
         """Le facteur sur la force de mortalité qui donne à cette population

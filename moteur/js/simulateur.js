@@ -411,7 +411,9 @@ export class Simulateur {
     this.baremePrelevements = new BaremePrelevements(paquet.prelevements_remuneration);
 
     this.indexation = new Indexation(this.macro, parametres);
-    this.convertisseur = new Convertisseur(this.mortalite, parametres, this.macro);
+    this.convertisseur = new Convertisseur(
+      this.mortalite, parametres, this.macro, this.distribution,
+    );
     this.ageReference = new AgeReference(paquet, parametres, this.mortalite);
     this.constructeur = new ConstructeurCompte(
       this.macro, this.catalogue, this.affiliations, this.indexation, parametres,
@@ -452,7 +454,7 @@ export class Simulateur {
       new Convertisseur(this.mortalite, {
         ...parametres,
         taux_anticipe_conversion: parametres.taux_technique_rente_capitalisation,
-      }, this.macro),
+      }, this.macro, this.distribution),
       parametres,
     );
     // Scénario 6 : le constructeur du scénario 4 jusqu'à la bascule — taux

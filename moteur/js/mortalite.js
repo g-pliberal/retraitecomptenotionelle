@@ -184,6 +184,7 @@ export class DonneesMortalite {
     this._facteursPaquet = populations.facteurs || {};
     this._esperancesPubliees = populations.esperances || {};
     this._niveauxDeVie = populations.niveaux_de_vie || {};
+    this._anneeNiveauxDeVie = populations.annee_niveaux_de_vie ?? null;
     this._facteurs = new Map();
   }
 
@@ -245,11 +246,30 @@ export class DonneesMortalite {
       return null;
     }
     const moyen = entrees.reduce((somme, [, n]) => somme + n, 0) / entrees.length;
-    const niveau = rapportAuMoyen * moyen;
+    return this.populationNiveauDeVieEuros(rapportAuMoyen * moyen);
+  }
+
+  /** L'année dont les niveaux de vie des vingtiles sont les euros. */
+  get anneeNiveauxDeVie() {
+    return this._anneeNiveauxDeVie;
+  }
+
+  /**
+   * Le vingtile dont le niveau de vie mensuel moyen publié est le plus proche
+   * d'un montant, en euros de `anneeNiveauxDeVie`. Portage de
+   * `population_niveau_de_vie_euros` ; l'ordre de parcours est celui des
+   * vingtiles croissants, comme le `min` de Python garde le premier des ex æquo.
+   */
+  populationNiveauDeVieEuros(montantMensuel) {
+    const entrees = Object.entries(this._niveauxDeVie)
+      .map(([v, n]) => [Number(v), n]).sort((a, b) => a[0] - b[0]);
+    if (entrees.length === 0) {
+      return null;
+    }
     let meilleur = null;
     for (const [vingtile, montant] of entrees) {
-      if (meilleur === null || Math.abs(montant - niveau) < Math.abs(meilleur[1] - niveau)) {
-        meilleur = [Number(vingtile), montant];
+      if (meilleur === null || Math.abs(montant - montantMensuel) < Math.abs(meilleur[1] - montantMensuel)) {
+        meilleur = [vingtile, montant];
       }
     }
     return `niveau_de_vie_v${String(meilleur[0]).padStart(2, "0")}`;

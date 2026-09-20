@@ -86,6 +86,28 @@ class DistributionPensions:
             for rang, borne in enumerate(bornes)
         )
 
+    def part_sous(self, montant_mensuel: float) -> float:
+        """La part des retraités dont la pension est inférieure à un montant,
+        en euros du millésime : le rang d'une pension parmi les retraités.
+
+        Linéaire à l'intérieur d'une tranche de cent euros. Dans la dernière,
+        ouverte, le rang est celui de son seuil : au-delà, la distribution ne
+        dit plus rien, et personne ne saurait dire si 6 000 € est au-dessus
+        de 5 000. Vaut zéro sous la première borne, un au-dessus de la dernière
+        tranche fermée plus sa part.
+        """
+        cumul = 0.0
+        for tranche in self.tranches:
+            if montant_mensuel < tranche.borne_inferieure:
+                return cumul
+            if tranche.borne_superieure is None or montant_mensuel < tranche.borne_superieure:
+                if tranche.borne_superieure is None:
+                    return cumul
+                largeur = tranche.borne_superieure - tranche.borne_inferieure
+                return cumul + tranche.part * (montant_mensuel - tranche.borne_inferieure) / largeur
+            cumul += tranche.part
+        return cumul
+
     @property
     def somme_des_parts(self) -> float:
         """Doit valoir un, aux arrondis de publication près.
