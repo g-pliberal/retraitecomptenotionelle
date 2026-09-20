@@ -5573,8 +5573,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   | | Solde moyen 2026-2070 | Coefficient 2040 | Équilibre atteint |
   |---|---|---|---|
-  | Scénario 6, convention `assiette` (affichée) | **−1,67 % du PIB** | **0,80** | jamais |
-  | Scénario 6, convention `rapport` | −0,89 % | 0,87 | 2026 |
+  | Scénario 6, convention `assiette` (affichée) | **−2,16 % du PIB** | **0,76** | jamais |
+  | Scénario 6, convention `rapport` | −1,47 % | 0,82 | 2026 |
   | Système actuel | −1,13 % | — | jamais |
 
   Deux effets de sens contraire séparent ces deux lignes, et il faut les
@@ -5657,14 +5657,28 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   `cout.py`, et deux tests le tiennent.
 
   *Ce que la sortie coûte* : **1,395 point de solde moyen**. Sur 2026-2070, le
-  scénario 6 passe de −0,28 % du PIB, poste reconduit, à **−1,67 %**, contre
+  scénario 6 passe de −0,76 % du PIB, poste reconduit, à **−2,16 %**, contre
   −1,13 % pour le système actuel : il est désormais plus déficitaire que lui
-  dans 33 des 45 années, et ne revient à l'équilibre sur aucune. Son
+  dans 38 des 45 années, et ne revient à l'équilibre sur aucune. Son
   coefficient d'équilibre de 2040 — ce que le système peut servir rapporté à ce
-  qu'il promet — descend de 0,94 à **0,80**. *(Le soir de la décision, ces deux
-  niveaux étaient −1,12 % et −2,51 % ; ils ont monté depuis, la réversion ayant
-  quitté les cinq scénarios notionnels. Le COÛT de la sortie, lui, n'a pas
-  bougé : c'est le même 1,395 point.)* Les
+  qu'il promet — descend de 0,90 à **0,76**.
+
+  *Et ce coût est le seul chiffre de ce paragraphe qui n'ait jamais bougé.* Les
+  NIVEAUX, eux, ont changé deux fois depuis la décision, chaque fois pour une
+  raison qui n'a rien à voir avec l'impôt :
+
+  | Mesuré le | Poste reconduit | Poste sorti | Coût |
+  |---|---|---|---|
+  | 19 septembre au soir, à la décision | −1,12 % | −2,51 % | 1,395 |
+  | après que la réversion eut quitté les cinq scénarios notionnels | −0,28 % | −1,67 % | 1,395 |
+  | après que le profil de carrière fut lu chez l'INSEE | −0,76 % | −2,16 % | 1,395 |
+
+  Trois mesures, trois niveaux, un seul coût. C'est ce qu'on attend d'une
+  grandeur qui est une PART des ressources : elle ne dépend pas de ce que les
+  pensions coûtent. Que la table ci-dessus existe est aussi un aveu — ces
+  niveaux sont restés faux dans ce fichier entre chaque déplacement du modèle
+  et la passe qui l'a rattrapé, et c'est la faute que ce dépôt commet le plus
+  souvent. Les
   trois décisions du 19 septembre, prises ensemble, retirent au scénario 6 les
   27 % de ressources qui n'acquièrent de droits à personne, et le chiffre qui
   reste est celui d'un système qui ne vit que de ses cotisations.

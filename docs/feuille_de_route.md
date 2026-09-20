@@ -4016,14 +4016,19 @@ toucher aux moteurs de pension.
    les quatre autres scénarios notionnels, qui encaissent toujours les impôts
    affectés, gardent le retrait entier.
 
-   **Ce que la sortie coûte, remesuré le 19 septembre 2026 au soir** :
-   **1,395 point de solde moyen**. Sur 2026-2070, le scénario 6 passe de
-   −0,28 % du PIB, poste reconduit, à **−1,67 %**, contre −1,13 % pour le
-   système actuel ; il est plus déficitaire que lui dans 33 des 45 années, ne
-   revient à l'équilibre sur aucune, et son coefficient de 2040 descend de 0,94
-   à 0,80. *Le jour de la décision, ces deux niveaux étaient −1,12 % et
-   −2,51 % : ils ont monté depuis, la réversion ayant quitté les cinq scénarios
-   notionnels. Le COÛT de la sortie, lui, n'a pas bougé.*
+   **Ce que la sortie coûte, remesuré le 20 septembre 2026** : **1,395 point de
+   solde moyen**. Sur 2026-2070, le scénario 6 passe de −0,76 % du PIB, poste
+   reconduit, à **−2,16 %**, contre −1,13 % pour le système actuel ; il est
+   plus déficitaire que lui dans 38 des 45 années, ne revient à l'équilibre sur
+   aucune, et son coefficient de 2040 descend de 0,90 à 0,76.
+
+   *Les NIVEAUX ont bougé deux fois depuis la décision, le COÛT jamais* :
+   −1,12 % et −2,51 % le 19 au soir, −0,28 % et −1,67 % une fois la réversion
+   sortie des cinq scénarios notionnels, −0,76 % et −2,16 % depuis que le
+   profil de carrière est lu chez l'INSEE (37e9bb4). Le coût est resté
+   1,395 point aux trois mesures, à un millième près : c'est une PART des
+   ressources, elle ne dépend pas de ce que les pensions coûtent.
+   `docs/limites.md` § 5 bis porte la même table, et dit pourquoi elle existe.
 
    **Les trois décisions prises ensemble** retirent au scénario 6 les 27 % de
    ressources qui n'acquièrent de droits à personne. Ce qui reste reconduit, et
@@ -4188,6 +4193,15 @@ attendait de lui : il n'infirme pas le rapport, il l'ENCADRE.**
   de 0,94 à 0,83, et il ne repasse plus jamais à l'équilibre — contre −1,13 %
   pour le système actuel. **Sous sa propre convention, la proposition est
   légèrement moins bien financée que le système qu'elle remplace.**
+
+  [Deux corrections, et l'entrée reste telle quelle pour le reste, parce
+  qu'elle date un déplacement. La RAISON écrite ici est fausse : ce poste ne
+  compense pas les allègements, la TVA qui le fait finance la branche maladie,
+  et le compte de la Cnav n'en porte aucune ligne. La décision tient par
+  l'argument des 18 % — un impôt affecté n'ouvre de droit à personne — et le
+  point 4 du volet A le dit. Les NIVEAUX, eux, ont bougé deux fois depuis :
+  au 20 septembre 2026, c'est −0,76 % et −2,16 %, coefficient 2040 de 0,90 à
+  0,76. Le coût de la sortie n'a pas bougé d'un millième.]
 - *La ventilation du poste a été cherchée, et trouvée — pas où on l'attendait,
   et pas ce qu'on attendait.* Elle n'est pas dans les annexes du projet de loi
   de financement : elle est dans le rapport à la Commission des comptes de la
