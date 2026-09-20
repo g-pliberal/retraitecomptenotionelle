@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 744<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 785<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -6833,6 +6833,18 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   défaut, et le dire est son premier résultat ; le seul chiffre que la page
   calcule est celui que le modèle lit déjà dans les comptes du COR, et il dit
   la taille de l'ajustement à venir, pas sa forme.
+
+- **21 septembre 2026, action 59.** Faite. La page Risque cesse d'être une
+  revue équilibrée pour devenir le réquisitoire qu'elle devait être, à la
+  demande. Trois choses à en retenir. **Le meilleur argument contre le système
+  est écrit par le COR** : c'est lui qui dit que financer la promesse par les
+  cotisations est récessif et prend l'argent de l'école et de l'hôpital, et
+  une citation institutionnelle ne se récuse pas comme partisane. **La part
+  patronale est du salaire**, et c'est démontré précisément pour la retraite,
+  parce que c'est la cotisation la plus contributive du barème. Et **garder
+  les contre-arguments renforce la page** : les trois résultats qui
+  contredisent la thèse générationnelle y sont cités, ce qui ôte à un
+  contradicteur son seul angle d'attaque.
 
 ### 37. Chiffrer les avantages non contributifs, et les montrer — `fait`
 
