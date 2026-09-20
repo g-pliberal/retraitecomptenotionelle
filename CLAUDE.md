@@ -68,14 +68,27 @@ pas, et la branche locale n'a aucun amont. Le compteur compare donc à un point
 fixe : il monte d'un cran à chaque commit alors que `origin/main` les porte
 déjà tous. Des sessions entières y ont dépensé, chacune à son tour, un
 paragraphe d'explication à l'utilisateur, qui n'en peut plus. `scripts/pousser.sh`
-y met fin des deux côtés : après le push sur `main`, il fait suivre la
+y met fin des trois côtés. Après le push sur `main`, il fait suivre la
 référence de branche — qui ne porte alors jamais que ce que `main` porte déjà,
 et se supprime comme les autres — et donne `origin/main` pour amont à la
 branche locale. Il ne crée jamais cette référence si elle n'existe pas : une
-session ne saurait pas la supprimer (403). **Si un compteur monte quand même,
-relancer le script et ne rien écrire là-dessus** : une ligne au plus, jamais
-une explication. C'est du temps et des jetons dépensés pour un chiffre qui se
-trompe.
+session ne saurait pas la supprimer (403).
+
+Le troisième côté est venu le 20 septembre 2026, et c'est lui qui faisait
+remonter le compteur malgré le script. **Une branche `claude/*` supprimée
+depuis GitHub laisse derrière elle sa référence de SUIVI locale**, figée sur le
+commit du clone : `git ls-remote` ne trouve plus rien, le script s'interdit à
+juste titre de recréer la branche, et le compteur continue de lire
+`origin/<branche>..HEAD` — trente-cinq commits de retard sur quelque chose qui
+n'existe plus. Le script supprime maintenant ce pointeur, geste purement local
+qui ne touche à rien sur GitHub. Il distingue les trois cas par le code de
+sortie de `ls-remote` : 0 la branche est là, 2 elle n'y est pas, autre chose le
+réseau a lâché et l'on ne conclut rien de son silence. `tests/test_pousser.py`
+tient les huit comportements du script, celui-ci compris.
+
+**Si un compteur monte quand même, relancer le script et ne rien écrire
+là-dessus** : une ligne au plus, jamais une explication. C'est du temps et des
+jetons dépensés pour un chiffre qui se trompe.
 
 Un hook `Stop` lancerait le script tout seul à la fin de chaque tour, et
 `main` serait à jour sans que personne ait à y penser. **Il n'est pas dans le

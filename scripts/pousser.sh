@@ -83,18 +83,38 @@ if [ "$avance" -gt 0 ]; then
         echo "pousser: push vers main impossible après 5 essais" >&2; exit 1; }
 fi
 
-# Faire suivre la référence de la branche de session, si elle existe déjà, pour
-# que le compteur de commits non poussés lise zéro. Jamais de création.
-if git ls-remote --exit-code --heads origin "$branche" >/dev/null 2>&1; then
-    distant=$(git rev-parse --quiet --verify "refs/remotes/origin/$branche" 2>/dev/null || echo "")
-    if [ "$distant" != "$tete" ]; then
-        # --force-with-lease : après un rebasage, la référence de session ne
-        # descend plus de ce qu'elle portait. Elle ne porte que ce que main
-        # porte, et n'appartient qu'à cette session : rien à perdre. Le bail
-        # refuse quand même si elle a bougé sous nos pieds.
-        avec_reprises git push --quiet --force-with-lease origin "HEAD:refs/heads/$branche" >/dev/null 2>&1 || true
-    fi
-fi
+# Faire suivre la référence de la branche de session, pour que le compteur de
+# commits non poussés lise zéro. Jamais de création. `ls-remote` distingue les
+# trois cas par son code de sortie, et c'est ce qui rend ce bloc sûr : 0 la
+# référence est sur GitHub, 2 elle n'y est pas, autre chose le réseau a lâché.
+git ls-remote --exit-code --heads origin "$branche" >/dev/null 2>&1
+case $? in
+    0)
+        distant=$(git rev-parse --quiet --verify "refs/remotes/origin/$branche" 2>/dev/null || echo "")
+        if [ "$distant" != "$tete" ]; then
+            # --force-with-lease : après un rebasage, la référence de session ne
+            # descend plus de ce qu'elle portait. Elle ne porte que ce que main
+            # porte, et n'appartient qu'à cette session : rien à perdre. Le bail
+            # refuse quand même si elle a bougé sous nos pieds.
+            avec_reprises git push --quiet --force-with-lease origin "HEAD:refs/heads/$branche" >/dev/null 2>&1 || true
+        fi
+        ;;
+    2)
+        # La branche n'est pas, ou n'est plus, sur GitHub — supprimée à la main
+        # depuis l'onglet Branches, comme CLAUDE.md le demande. Le script ne la
+        # recrée pas : une session ne saurait pas la supprimer (403). Mais le
+        # POINTEUR DE SUIVI local, lui, survit à la suppression et reste figé
+        # sur le commit du clone ; tout ce qui compte « origin/$branche..HEAD »
+        # lit alors une branche entière de retard sur un fantôme. C'est ce qui
+        # faisait remonter le compteur malgré le script. On le supprime : le
+        # geste est PUREMENT LOCAL, il ne crée ni n'efface rien sur GitHub, et
+        # c'est ce que ferait `git fetch --prune`.
+        git update-ref -d "refs/remotes/origin/$branche" >/dev/null 2>&1 || true
+        ;;
+    *)
+        : # ls-remote a échoué : ne rien conclure de son silence, ne rien toucher.
+        ;;
+esac
 
 # Et donner à la branche locale l'amont qu'elle n'a pas : sans lui, le compteur
 # compare à un point fixe et remonte à chaque commit.
