@@ -631,10 +631,32 @@ class Simulateur:
 
     @cached_property
     def courbe_taux(self) -> CourbeTauxSansRisque:
-        """La courbe sans risque : le pilier capitalisé, et la dette du chiffrage.
+        """La courbe sans risque telle que la BCE la publie, sans retouche.
 
-        ``prime_terme_trente_ans`` la traverse : à zéro — le réglage publié —
-        elle rend les forwards de la courbe observée, et rien d'autre.
+        C'est elle que lit le TAUX D'EMPRUNT du chiffrage : la dette de la page
+        Coût se finance au forward à un an, déflaté. Elle ne porte donc aucune
+        prime de terme, quel que soit le réglage — voir
+        :attr:`courbe_taux_pilier`, qui dit pourquoi les deux sont séparées.
+        """
+        return CourbeTauxSansRisque(self.parametres.racine_donnees)
+
+    @cached_property
+    def courbe_taux_pilier(self) -> CourbeTauxSansRisque:
+        """La même courbe, sous le réglage des taux du PILIER capitalisé.
+
+        ``prime_terme_trente_ans`` ne traverse que celle-ci. La séparation est
+        volontaire, et elle corrige une erreur : la prime portée sur la courbe
+        commune déplaçait aussi le taux d'emprunt de la dette, donc le stock
+        accumulé par TOUS les systèmes — jusqu'à dix points de PIB sur le
+        système actuel, qui n'a pas de pilier capitalisé et que le réglage
+        annonçait pourtant ne pas toucher.
+
+        Le coût de rouler une dette courte est une question réelle, et elle se
+        pose dans les mêmes termes ; mais c'est une AUTRE question, qui a ses
+        propres réserves dans ``docs/limites.md``, et un réglage nommé « taux
+        futurs du pilier capitalisé » n'est pas l'endroit d'où la trancher.
+        À zéro, le réglage publié, les deux courbes sont le même objet à un
+        identifiant près.
         """
         return CourbeTauxSansRisque(
             self.parametres.racine_donnees,
@@ -821,7 +843,7 @@ class Simulateur:
     def constructeur_capitalisation(self) -> ConstructeurCapitalisation:
         """Le pilier obligatoire de la proposition — et d'elle seule."""
         return ConstructeurCapitalisation(
-            self.courbe_taux, self.mortalite,
+            self.courbe_taux_pilier, self.mortalite,
             self.convertisseur_rente_capitalisee, self.parametres,
         )
 

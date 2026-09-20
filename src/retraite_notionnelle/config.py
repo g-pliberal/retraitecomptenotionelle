@@ -962,9 +962,15 @@ class Parametres:
     #: les anticipations pures, aucune allocation n'en vaut une autre : c'est
     #: l'arbitrage qui fixe le forward, et un test l'exige.
     #:
-    #: Elle porte sur la COURBE, et donc sur tout ce qui la lit — le pilier
-    #: capitalisé et le taux d'emprunt de la dette du chiffrage. C'est voulu :
-    #: la prime est une propriété du marché, pas du compartiment qui s'y place.
+    #: Elle ne porte QUE sur la courbe du pilier capitalisé
+    #: (``Simulateur.courbe_taux_pilier``), et non sur celle que lit le taux
+    #: d'emprunt de la dette du chiffrage. La prime est bien une propriété du
+    #: marché, et le coût de rouler une dette courte se pose dans les mêmes
+    #: termes ; mais c'est une AUTRE question, qui a ses propres réserves, et
+    #: un réglage nommé « taux futurs du pilier capitalisé » n'est pas
+    #: l'endroit d'où la trancher. Portée sur la courbe commune, elle
+    #: déplaçait le stock de dette de TOUS les systèmes, jusqu'à dix points de
+    #: PIB sur le système actuel, qui n'a pas de pilier du tout.
     prime_terme_trente_ans: float = 0.0
 
     # --- Neutralisations ----------------------------------------------------

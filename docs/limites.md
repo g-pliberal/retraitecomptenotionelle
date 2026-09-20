@@ -6033,6 +6033,14 @@ ce qui change est qu'elle est désormais mesurable plutôt que seulement dite. �
 0,005 — le milieu de la fourchette — le capital d'une carrière de trente-six ans
 partant en 2060 recule de 4,8 %, et la rente de 23 € par mois.
 
+Il ne porte que sur le **pilier**, et c'est une correction : portée sur la
+courbe commune, la prime déplaçait aussi le taux auquel la page Coût finance
+les déficits, donc le stock de dette de TOUS les systèmes — jusqu'à dix points
+de PIB sur le système actuel, qui n'a pas de pilier capitalisé. Le coût de
+rouler une dette courte se pose dans les mêmes termes et reste une question
+ouverte, mais c'en est une autre, et un réglage du pilier n'est pas l'endroit
+d'où la trancher. Un test tient la séparation.
+
 Depuis, il est un **réglage du site** : « Taux futurs du pilier capitalisé »,
 à côté de celui des frais, avec trois positions — les taux à terme de la
 courbe (défaut), la prime retirée au milieu de la fourchette (0,50 point à
@@ -6983,7 +6991,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1776<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1777<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
