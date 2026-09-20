@@ -114,8 +114,10 @@ Scénario                                                          Courants   Co
 > imposés, et les cinq points rendus sont écrits sous lui comme un placement
 > pris sur ce net, **entièrement à la charge de l'assuré** — aucun employeur
 > ne cofinance une épargne qu'on décide seul —, avec ce qui lui reste s'il le
-> fait. La rente qu'elle sert est nommée à part partout où le total paraît,
-> pour que qui ne la verserait pas puisse la retrancher.
+> fait. La rente qu'elle sert est nommée à part partout où le total paraît :
+> sur le simulateur, ce total est annoncé « retraite **jusqu'à** », et la
+> ligne sous lui écrit le plancher qu'on touche sans rien ajouter, pour que
+> qui ne la verserait pas n'ait rien à retrancher lui-même.
 > `capitalisation_volontaire=False` la retire, et la proposition redevient
 > 18 + 5.
 
@@ -144,7 +146,7 @@ Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses don
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
 chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->749<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 318<!--/--> Ko bruts) et prend quelques dixièmes
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 320<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Sept pages. **Programme** est l'accueil : la proposition du Parti libéral

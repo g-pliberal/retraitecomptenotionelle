@@ -1265,17 +1265,24 @@ def test_la_page_ecrit_les_cinq_points_volontaires_partout_ou_ils_pesent(page):
     """Les cinq points rendus se lisent sur la pension ET sur la fiche de paie.
 
     La règle de ce bloc : nulle part le site n'additionne en silence une
-    épargne facultative à une cotisation obligatoire. Partout où le total du
-    système 4 paraît, la part volontaire est nommée à côté ; et sur la fiche de
-    paie, le net affiché est le net PLEIN — la fiche ne retient pas ce que
-    personne n'impose —, puis le placement et ce qui reste à qui le fait.
+    épargne facultative à une cotisation obligatoire. Le total du système 4
+    est annoncé comme un PLAFOND — « retraite jusqu'à » —, la ligne sous lui
+    écrit le plancher qu'on touche sans rien ajouter et ce que les cinq points
+    rendus ajoutent si on les place ; et sur la fiche de paie, le net affiché
+    est le net PLEIN — la fiche ne retient pas ce que personne n'impose —,
+    puis le placement et ce qui reste à qui le fait.
     """
     texte = page("/simuler", naissance=1995, liquidation=64, salaire=3000,
                  unite_revenu="euros_mois")
     plat = " ".join(texte.split())
-    # Sous la barre du système 4, la rente est coupée en deux lignes nommées.
+    # Le grand nombre du système 4 dit qu'il est un plafond, et lui seul : les
+    # trois premiers systèmes ne dépendent d'aucune décision de l'assuré.
+    assert "retraite jusqu'à" in texte
+    assert texte.count("retraite jusqu'à") == 1
+    # Sous la barre, le plancher puis ce qui s'y ajoute, et à quelle condition.
     assert "de rente capitalisée obligatoire" in texte
-    assert "de rente des cinq points volontaires" in plat
+    assert "par mois sans rien ajouter" in plat
+    assert "de plus si vous placez les cinq points rendus, sans risque" in plat
     # Le dépliant du pilier dit ce que chacune des deux sert.
     assert "que vous versez librement" in texte
     # Le chiffre de tête est le net plein, et la phrase le dit.
@@ -2073,15 +2080,29 @@ def test_les_selecteurs_du_resume_vocal_existent_dans_le_html(contexte):
 
 
 def test_le_resume_vocal_annonce_bien_les_montants(contexte):
-    """Et le sélecteur doit trouver quelque chose, pas seulement exister."""
+    """Et le sélecteur doit trouver quelque chose, pas seulement exister.
+
+    L'étiquette compte autant que le montant : le système 4 annonce
+    « retraite jusqu'à », et `resume()` dans ``index.html`` reprend ce qui
+    suit le mot « retraite » pour que l'annonce vocale dise le plafond comme
+    un plafond. Un scénario dont l'étiquette ne commencerait plus par
+    « retraite » ferait dire à l'oreille autre chose qu'à l'œil.
+    """
     corps = rendre(contexte, "/simuler", {"naissance": "1975"})[1]
     blocs = re.findall(r'<div class="scenario">(.*?)<div class="barre', corps, re.S)
     assert len(blocs) == 4
+    etiquettes = []
     for bloc in blocs:
         assert re.search(r'class="titre">[^<]+<', bloc), "système sans titre"
-        assert re.search(r'class="chiffre principal">\s*<span class="categorie">'
-                         r'retraite</span>\s*<span class="somme">[^<]+<',
-                         bloc), "scénario sans montant mis en avant"
+        trouve = re.search(r'class="chiffre principal">\s*<span class="categorie">'
+                           r'(retraite[^<]*)</span>\s*<span class="somme">[^<]+<',
+                           bloc)
+        assert trouve, "scénario sans montant mis en avant"
+        etiquettes.append(trouve.group(1))
+    # Un seul plafond, et c'est celui de la proposition : les trois autres
+    # systèmes ne dépendent d'aucune décision de l'assuré.
+    assert etiquettes[:3] == ["retraite"] * 3
+    assert etiquettes[3] == "retraite jusqu'à"
 
 
 def test_le_portage_javascript_arrondit_comme_python():

@@ -189,7 +189,17 @@ function resume(titre, contenu) {
   const scenarios = [...contenu.querySelectorAll(".scenario")].map((bloc) => {
     const nom = bloc.querySelector(".titre")?.textContent.trim();
     const mensuel = bloc.querySelector(".principal .somme")?.textContent.trim();
-    return nom && mensuel ? `${nom} : ${mensuel} par mois` : null;
+    // L'ÉTIQUETTE EST LUE, ELLE AUSSI. Le système 4 annonce « retraite
+    // jusqu'à » : son montant est un plafond, qu'on n'atteint qu'en plaçant
+    // les cinq points rendus. Sans ce mot, l'annonce vocale donnait pour
+    // acquis ce que l'œil lit comme conditionnel — un écart de sens entre
+    // deux lectures de la même page, et c'est précisément ce que cette
+    // région est là pour éviter. Le mot « retraite » lui-même ne se dit pas :
+    // le titre du scénario vient de le dire.
+    const nuance = (bloc.querySelector(".principal .categorie")?.textContent
+      .trim() ?? "").replace(/^retraite\s*/i, "");
+    return nom && mensuel
+      ? `${nom} : ${nuance ? `${nuance} ` : ""}${mensuel} par mois` : null;
   }).filter(Boolean);
 
   return scenarios.length

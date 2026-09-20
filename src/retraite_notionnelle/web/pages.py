@@ -4086,15 +4086,24 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             barre += (f'<span class="capitalise" '
                       f'style="width:{part_capitalisee / reference * 100:.1f}%"></span>')
             # Trois montants nommés plutôt que deux dès qu'il y a du
-            # volontaire : additionner en silence une épargne facultative à une
-            # cotisation obligatoire ferait promettre au lecteur un montant
-            # qu'il n'aura que s'il la verse.
+            # volontaire, ET LE PLANCHER ÉCRIT ENTRE LES DEUX : additionner en
+            # silence une épargne facultative à une cotisation obligatoire
+            # ferait promettre au lecteur un montant qu'il n'aura que s'il la
+            # verse. Le grand nombre dit donc « jusqu'à », et cette ligne dit
+            # ce qu'il touche sans rien ajouter, puis ce que les cinq points
+            # rendus lui ajoutent s'il les place. « Sans risque » n'est pas un
+            # argument de vente : c'est le placement du pilier, des titres
+            # d'État portés jusqu'à leur échéance, et c'est ce qui autorise le
+            # mot « jusqu'à » — le montant du haut s'atteint par une décision,
+            # pas par un coup de bourse.
             detail = (
                 f"""
         {g.euros_centimes(montants.pension(part_capitalisee - part_volontaire) / 12)}
-        de rente capitalisée obligatoire +
-        {g.euros_centimes(montants.pension(part_volontaire) / 12)} de rente
-        des cinq points volontaires, par mois"""
+        de rente capitalisée obligatoire — soit
+        {g.euros_centimes(montants.pension(montant - part_volontaire) / 12)} par
+        mois sans rien ajouter — et
+        {g.euros_centimes(montants.pension(part_volontaire) / 12)} de plus si
+        vous placez les cinq points rendus, sans risque"""
                 if part_volontaire > 0 else
                 f"""
         {g.euros_centimes(montants.pension(part_capitalisee) / 12)} de rente
@@ -4109,7 +4118,8 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     <span class="titre">{escape(titre)}</span>
     <span class="montant">{salaire(cle)}
       <span class="chiffre principal">
-        <span class="categorie">retraite</span>
+        <span class="categorie">{"retraite jusqu'à" if part_volontaire > 0
+                                 else "retraite"}</span>
         <span class="somme">{g.nombre(montants.pension(montant) / 12)}</span>
         <span class="unite">{montants.unite_pension}</span>
       </span>
@@ -4150,7 +4160,8 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
                f"{g.pourcentage(comparaison.parametres.taux_capitalisation_volontaire_applique, decimales=0)} "
                f"que vous ajoutez librement pour cotiser autant qu'aujourd'hui "
                f"({g.pourcentage(comparaison.parametres.taux_retraite_propose, decimales=0)} "
-               "en tout) — plus une garantie vieillesse payée par l'impôt",
+               "en tout), les uns comme les autres placés sans risque — plus "
+               "une garantie vieillesse payée par l'impôt",
                comparaison.variation_totale("notionnel_liberal"),
                comparaison.taux_remplacement_total("notionnel_liberal"),
                part_capitalisee=capitalise,

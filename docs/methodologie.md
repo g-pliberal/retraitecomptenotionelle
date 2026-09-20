@@ -1402,7 +1402,10 @@ l'assuré — personne ne cofinance une épargne qu'on décide seul —, si bien
 qu'activer la cotisation volontaire ne change ni le coût du travail, ni le
 brut, ni la CSG qui est assise dessus, ni le net : seulement ce qui reste à
 qui place, d'exactement son montant. Dans les **résultats**, la rente qu'elle
-sert est écrite sur sa propre ligne, partout où le total du scénario 6 paraît.
+sert est écrite sur sa propre ligne, partout où le total du scénario 6 paraît,
+et ce total est annoncé comme un plafond — « retraite jusqu'à » — avec le
+plancher écrit sous lui : sans quoi le site montrerait à la fois le salaire de
+qui ne place rien et la pension de qui place.
 
 Les années antérieures à la bascule ne versent rien, et qui a liquidé avant n'a
 pas de pilier du tout.
