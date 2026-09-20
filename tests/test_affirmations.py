@@ -64,7 +64,7 @@ from retraite_notionnelle.donnees.chargement import Fiabilite, journal_certifica
 from retraite_notionnelle.donnees.distribution import DistributionPensions
 from retraite_notionnelle.garantie import cout_garantie
 from retraite_notionnelle.moteur.indexation import Indexation
-from retraite_notionnelle.remuneration import AnneeComparee
+from retraite_notionnelle.remuneration import AnneeComparee, charger_prelevements
 from retraite_notionnelle.scenarios.actuel import MinimumVieillesse, _coefficient_anticipation
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web import gabarit as g
@@ -74,6 +74,7 @@ from retraite_notionnelle.web.pages import (
     INDEXATIONS,
     LIGNES_DEPENSES,
     LIGNES_RECETTES,
+    MODES_MONTANT,
     NATURES_PART_EMPLOYEUR,
     ORGANISMES,
     POSTES_TRANSFERTS,
@@ -1639,6 +1640,26 @@ def _(m: Modele):
             coefficients[lissage, arrivee] = indexation.coefficient(1980, arrivee)
     assert coefficients[1, 2020] < coefficients[1, 2019]
     assert coefficients[5, 2020] >= coefficients[5, 2019]
+
+
+@controle("montants_au_net_ou_au_brut")
+def _(m: Modele):
+    """Le pied affirme que le lecteur choisit son unité : les deux existent.
+
+    Il affirmait « Les montants sont bruts » alors que le défaut est le NET
+    depuis la bascule, et rien ne tenait la phrase : elle était fausse en bas
+    de chaque page, y compris celles qu'on projette. Ce contrôle exige les
+    deux modes, le net par défaut, et une conversion qui fasse bien descendre
+    un brut vers un net.
+    """
+    assert [code for code, _ in MODES_MONTANT] == ["net", "brut"]
+    assert Saisie().montants == "net"
+    assert Saisie(montants="net").en_net
+    assert not Saisie(montants="brut").en_net
+    pensions = charger_prelevements(m.contexte.base.racine_donnees).pensions
+    assert 0.0 < pensions.taux_total < 0.2
+    assert pensions.net(1_000.0) < 1_000.0
+    assert _proche(pensions.brut(pensions.net(1_000.0)), 1_000.0)
 
 
 @controle("series_macro_certifiees")
