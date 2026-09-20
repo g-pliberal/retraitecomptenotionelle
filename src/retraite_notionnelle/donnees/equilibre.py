@@ -395,6 +395,11 @@ class ComptesRetraite:
             regime: charger_serie_annuelle(
                 macro / "engagements_retraite.csv", "part_pib",
                 nom=f"engagements_{regime}", filtre={"regime": regime},
+                # PONCTUELLE, et la raison est dans la périodicité : le tableau
+                # supplémentaire est transmis tous les TROIS ANS, si bien que
+                # deux années sur trois n'ont pas été mesurées. Les dire au
+                # niveau du producteur ferait de 2016 une transmission.
+                interpolation="ponctuelle",
             )
             for regime in ("tous_regimes", "repartition")
         }

@@ -61,8 +61,16 @@ class EffectifsRetraites:
                 )
         if not valeurs:
             raise ValueError(f"aucune ligne exploitable dans {chemin}")
+        # PONCTUELLE, et non escalier : c'est une ENQUÊTE annuelle, où une
+        # année absente est une année non mesurée et non une année sans
+        # changement. La DREES ne publie pas la coordination RATP en 2022 —
+        # 2020, 2021, 2023 et 2024, et rien entre les deux — et reconduire 2021
+        # au niveau `certifiee` lui prêterait un chiffre qu'elle n'a pas
+        # publié. La valeur reconduite reste la même ; ce qui change est
+        # qu'elle se dit estimée.
         self._series = {
-            caisse: SerieAnnuelle(points, nom=f"effectifs_{caisse}")
+            caisse: SerieAnnuelle(points, nom=f"effectifs_{caisse}",
+                                  interpolation="ponctuelle")
             for caisse, points in sorted(valeurs.items())
         }
 

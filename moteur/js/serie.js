@@ -44,10 +44,15 @@ export class DonneeInsuffisante extends Error {}
 /**
  * Série indexée par année, avec fiabilité et interpolation contrôlée.
  *
- * ``escalier`` — la valeur d'une année absente est celle de la dernière année
- * renseignée : c'est le comportement correct pour un paramètre juridique, qui
- * reste en vigueur jusqu'à sa modification. ``lineaire`` — interpolation entre
- * les deux années encadrantes, pour les grandeurs continues.
+ * Le mode répond à une seule question : QUE VEUT DIRE UNE ANNÉE ABSENTE ?
+ *
+ * ``escalier`` — elle n'a pas changé. La valeur est celle de la dernière année
+ * renseignée et garde sa fiabilité : c'est le comportement correct pour un
+ * paramètre juridique, qui reste en vigueur jusqu'à sa modification.
+ * ``lineaire`` — la grandeur est continue et on n'en tient que des points : on
+ * interpole, jamais au-dessus de `haute`. ``ponctuelle`` — elle n'a pas été
+ * MESURÉE : la valeur du bord est reconduite, mais elle tombe à `estimee`,
+ * parce que le producteur ne l'a pas publiée.
  */
 export class SerieAnnuelle {
   /**
@@ -109,8 +114,18 @@ export class SerieAnnuelle {
 
     const avantValeur = this.valeurs[indice];
     const avantFiabilite = this.fiabilites[indice];
-    if (this.interpolation === "escalier") {
-      return { valeur: avantValeur, fiabilite: avantFiabilite };
+    if (this.interpolation === "escalier" || this.interpolation === "ponctuelle") {
+      // ESCALIER : le fichier décrit un BARÈME, et une année absente est une
+      // année sans changement — aussi certifiée que celle qui la précède,
+      // parce que c'est la loi qui le dit.
+      // PONCTUELLE : le fichier décrit des MESURES, et une année absente n'a
+      // pas été mesurée. La valeur ne change pas, la fiabilité tombe : la dire
+      // certifiée prêterait au producteur un chiffre qu'il n'a pas publié.
+      return {
+        valeur: avantValeur,
+        fiabilite: this.interpolation === "escalier"
+          ? avantFiabilite : Fiabilite.ESTIMEE,
+      };
     }
 
     const precedente = this.annees[indice];

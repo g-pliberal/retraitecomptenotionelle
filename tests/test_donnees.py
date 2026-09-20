@@ -4,9 +4,20 @@ from __future__ import annotations
 
 import pytest
 
+from pathlib import Path
+
 from retraite_notionnelle.castypes import CAS_TYPES
 from retraite_notionnelle.config import RACINE_DONNEES
-from retraite_notionnelle.donnees.chargement import DonneeInsuffisante, Fiabilite
+from retraite_notionnelle.donnees.chargement import (
+    DonneeInsuffisante,
+    Fiabilite,
+    SerieAnnuelle,
+    charger_serie_annuelle,
+)
+from retraite_notionnelle.donnees.depenses import DepensesRetraite
+from retraite_notionnelle.donnees.effectifs import EffectifsRetraites
+from retraite_notionnelle.donnees.equilibre import ComptesRetraite
+from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.donnees.macro import DonneesMacro
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.regimes import (
@@ -289,6 +300,102 @@ def test_les_tables_observees_reproduisent_les_esperances_publiees(mortalite, es
             assert recalculee == pytest.approx(
                 esperances[(annee, sexe, "e60")], abs=0.1
             ), (annee, sexe)
+
+
+def test_une_annee_non_mesuree_ne_se_dit_pas_certifiee():
+    """Un TROU dans une enquête n'est pas une année sans changement.
+
+    La DREES dénombre les retraités caisse par caisse, chaque année, et ne
+    publie pas la coordination RATP en 2022 : 2020, 2021, 2023, 2024, et rien
+    entre les deux. Reconduire 2021 est une estimation raisonnable — c'est ce
+    que le dépôt fait, et la valeur ne change pas. La dire ``certifiee`` serait
+    autre chose : ce niveau veut dire « recontrôlée contre le fichier de
+    l'institution qui la produit », et il n'y a pas de fichier.
+
+    C'est pourquoi les séries d'ENQUÊTE se chargent en ``ponctuelle`` et non en
+    escalier. La distinction tient à ce qu'une année absente veut dire : rien
+    n'a changé pour un barème, rien n'a été mesuré pour une enquête. Elle n'est
+    pas décorative, la fiabilité se propageant jusqu'au résultat affiché.
+    """
+    effectifs = EffectifsRetraites(RACINE_DONNEES)
+    # Les années publiées gardent leur niveau, y compris de part et d'autre.
+    assert effectifs.fiabilite("ratp_coordination", 2021) == Fiabilite.CERTIFIEE
+    assert effectifs.fiabilite("ratp_coordination", 2023) == Fiabilite.CERTIFIEE
+    # Le trou, lui, se déclare — et la valeur reconduite ne bouge pas.
+    assert effectifs.fiabilite("ratp_coordination", 2022) == Fiabilite.ESTIMEE
+    assert effectifs.effectif("ratp_coordination", 2022) == effectifs.effectif(
+        "ratp_coordination", 2021)
+    # Une caisse sans trou n'est pas touchée : le mode ne dégrade que ce qui
+    # n'a pas été publié.
+    assert effectifs.fiabilite("cnav", 2022) == Fiabilite.CERTIFIEE
+
+    # Et un BARÈME garde son niveau entre deux changements : la loi de 2016 est
+    # celle de 2015, et c'est la loi qui le dit, pas une interpolation.
+    minimum = charger_serie_annuelle(
+        RACINE_DONNEES / "reference" / "legislation" / "minimum_vieillesse.csv",
+        "valeur", nom="minimum_vieillesse")
+    annees = list(minimum.annees())
+    trou = next(a + 1 for a, b in zip(annees, annees[1:]) if b - a > 1)
+    assert minimum.fiabilite(trou) == minimum.fiabilite(trou - 1)
+
+
+def test_le_paquet_et_le_modele_lisent_les_series_de_la_meme_facon():
+    """Une série déclarée deux fois doit l'être deux fois pareil.
+
+    Treize séries sont chargées DEUX FOIS : une fois par le modèle, une fois
+    par ``construire_donnees.py`` pour le paquet du navigateur. Le paquet porte
+    l'interpolation de chacune, et le portage JavaScript l'applique telle
+    quelle. Deux déclarations qui ne s'accorderaient pas feraient dire deux
+    choses aux deux portages sur une année absente.
+
+    AUCUN TÉMOIN NE LE VERRAIT. Les témoins comparent le HTML des pages, et le
+    site n'affiche aucune des années absentes en question : la divergence
+    resterait invisible jusqu'à ce que quelqu'un lise une de ces années-là.
+    D'où ce test, qui apparie les séries par leurs VALEURS — un nom peut
+    différer d'un côté à l'autre, une série d'années et de valeurs identiques
+    ne trompe pas.
+    """
+    import json
+
+    # Le paquet VERSIONNÉ, et non un paquet reconstruit : le reconstruire
+    # coûterait trente secondes, et `test_le_paquet_est_a_jour` garantit déjà
+    # qu'il reflète le dépôt.
+    paquet = json.loads(
+        (Path(__file__).resolve().parents[1] / "moteur" / "donnees.json")
+        .read_text(encoding="utf-8"))
+    du_paquet: dict[tuple, set[str]] = {}
+    for groupe in ("series", "depenses", "comptes_retraite"):
+        for entree in paquet.get(groupe, {}).values():
+            if not isinstance(entree, dict) or "interpolation" not in entree:
+                continue
+            cle = (tuple(entree["annees"]), tuple(entree["valeurs"]))
+            du_paquet.setdefault(cle, set()).add(entree["interpolation"])
+
+    racine = RACINE_DONNEES
+    objets = [DepensesRetraite(racine), ComptesRetraite(racine),
+              Population(racine), EffectifsRetraites(racine)]
+    vues = 0
+    for objet in objets:
+        candidates = []
+        for valeur in vars(objet).values():
+            if isinstance(valeur, SerieAnnuelle):
+                candidates.append(valeur)
+            elif isinstance(valeur, dict):
+                candidates.extend(v for v in valeur.values()
+                                  if isinstance(v, SerieAnnuelle))
+        for serie in candidates:
+            annees = tuple(serie.annees())
+            cle = (annees, tuple(serie.brut(a).valeur for a in annees))
+            modes = du_paquet.get(cle)
+            if not modes:
+                continue
+            vues += 1
+            assert modes == {serie.interpolation}, (
+                f"{serie.nom} : le modèle lit en {serie.interpolation!r}, "
+                f"le paquet en {sorted(modes)}")
+    # Le test ne vaut que s'il apparie vraiment : une refonte des noms ou des
+    # groupes du paquet le viderait sans rien casser.
+    assert vues >= 8, f"seulement {vues} séries appariées"
 
 
 def test_journal_de_certification_decrit_les_series_certifiees():

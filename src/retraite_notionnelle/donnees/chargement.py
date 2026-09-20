@@ -63,15 +63,27 @@ class ValeurAnnuelle:
 class SerieAnnuelle:
     """Série indexée par année, avec fiabilité et interpolation contrôlée.
 
-    Deux comportements sont distingués :
+    Trois comportements sont distingués, et le choix répond à une seule
+    question : QUE VEUT DIRE UNE ANNÉE ABSENTE ?
 
-    * ``escalier`` (défaut) — la valeur d'une année absente est celle de la
-      dernière année renseignée. C'est le comportement correct pour des
-      paramètres juridiques : un taux reste en vigueur jusqu'à sa modification.
-    * ``lineaire`` — interpolation entre les deux années encadrantes. Correct
-      pour des grandeurs continues : l'espérance de vie à 60 ans est désormais
-      renseignée chaque année, celle à 65 ans ne l'est qu'avant 1986 par points
-      espacés, et c'est là que l'interpolation sert encore.
+    * ``escalier`` (défaut) — elle n'a pas changé. La valeur est celle de la
+      dernière année renseignée, et elle garde sa fiabilité. C'est le
+      comportement correct pour des paramètres juridiques : un taux reste en
+      vigueur jusqu'à sa modification, et c'est la loi qui le dit.
+    * ``lineaire`` — la grandeur est continue et on n'en tient que des points.
+      On interpole, et jamais au-dessus de ``haute`` : l'espérance de vie à
+      60 ans est désormais renseignée chaque année, celle à 65 ans ne l'est
+      qu'avant 1986 par points espacés.
+    * ``ponctuelle`` — elle n'a pas été MESURÉE. La valeur du bord est
+      reconduite comme dans l'escalier, mais elle tombe à ``estimee``. C'est le
+      comportement des séries d'ENQUÊTE, où un trou est un trou : la DREES ne
+      publie pas la coordination RATP en 2022, et reconduire 2021 sous le
+      niveau ``certifiee`` prêterait au producteur un chiffre qu'il n'a pas
+      publié.
+
+    La distinction n'est pas décorative : la fiabilité se propage jusqu'au
+    résultat affiché, et c'est elle qui dit au lecteur ce qui est recontrôlé
+    contre le fichier d'une institution et ce qui ne l'est pas.
     """
 
     def __init__(
@@ -131,8 +143,21 @@ class SerieAnnuelle:
         precedente, suivante = self._annees[rang - 1], self._annees[rang]
         avant, apres = self._valeurs[precedente], self._valeurs[suivante]
 
-        if self.interpolation == "escalier":
-            return ValeurAnnuelle(annee, avant.valeur, avant.fiabilite)
+        if self.interpolation in ("escalier", "ponctuelle"):
+            # ESCALIER : le fichier décrit un BARÈME, et une année absente est
+            # une année sans changement. La valeur de 2016 sous un seuil fixé
+            # en 2015 est celle de 2015, et elle est aussi certifiée qu'elle :
+            # c'est la loi qui le dit, pas une interpolation.
+            #
+            # PONCTUELLE : le fichier décrit des MESURES, et une année absente
+            # est une année non mesurée. La DREES ne publie pas la coordination
+            # RATP en 2022 ; reconduire 2021 est une estimation raisonnable, et
+            # la dire « certifiée » serait prêter au producteur un chiffre
+            # qu'il n'a pas publié. La valeur ne change donc pas, la fiabilité
+            # si — et c'est ce qui la rend discernable.
+            fiabilite = (avant.fiabilite if self.interpolation == "escalier"
+                         else Fiabilite.ESTIMEE)
+            return ValeurAnnuelle(annee, avant.valeur, fiabilite)
 
         poids = (annee - precedente) / (suivante - precedente)
         valeur = avant.valeur + poids * (apres.valeur - avant.valeur)
@@ -199,6 +224,22 @@ def charger_serie_annuelle(
 
     Les lignes commençant par ``#`` sont des commentaires : elles portent la
     documentation de provenance et sont ignorées à la lecture.
+
+    ``interpolation`` DIT CE QU'UNE ANNÉE ABSENTE VEUT DIRE, et c'est le seul
+    endroit où cette question se tranche :
+
+    * ``escalier`` — un BARÈME. L'année absente n'a pas changé, et la valeur
+      reconduite est aussi fiable que celle qui la précède.
+    * ``lineaire`` — une grandeur CONTINUE, dont on tient deux points. On
+      interpole, et jamais au-dessus de ``haute``.
+    * ``ponctuelle`` — des MESURES. L'année absente n'a pas été mesurée : la
+      valeur du bord est reconduite comme dans l'escalier, mais elle tombe à
+      ``estimee``, parce que le producteur ne l'a pas publiée.
+
+    Le défaut est ``escalier`` parce que la plupart des fichiers du dépôt sont
+    des barèmes. Une série d'ENQUÊTE laissée au défaut prête au producteur des
+    chiffres qu'il n'a pas publiés, et c'était le cas de la coordination RATP
+    en 2022 jusqu'au 20 septembre 2026.
     """
     try:
         etat = chemin.stat()
