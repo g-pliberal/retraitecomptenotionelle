@@ -5191,6 +5191,11 @@ def test_le_programme_casse_ses_triades_et_porte_une_voix(contexte):
     assert "sur des données publiques" in visible
 
 
+#: Réserves au plus sur la page Coût. Il y en a cinq ; à quatorze, la liste
+#: disait surtout que personne n'y avait fait le tri.
+RESERVES_MAXIMUM = 8
+
+
 def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(contexte):
     """« Ce que cette page ne dit pas » était un titre de gabarit, le même
     d'une page à l'autre ; celui de Coût dit ce qu'il contient, et une phrase
@@ -5200,15 +5205,24 @@ def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(context
         assert "<span>Ce que cette page ne dit pas</span>" not in corps, chemin
         assert "ne dit pas</span>" not in corps, chemin
     cout = rendre(contexte, "/cout", {})[1]
-    # Le nombre est dans le titre, et il doit suivre la liste : le volet C en a
-    # ajouté une douzième, sur ce que les scénarios font de la réversion, et
-    # l'action 48 une treizième, sur le stock des pensions à la bascule, et
-    # l'action 47 une quatorzième, sur la reprise sur succession.
-    assert "<span>Quatorze réserves à lire avant de citer ces chiffres</span>" in cout
+    # Le titre ne compte plus. Il disait « Dix » le 17 septembre et « Quatorze »
+    # le 20 : chaque chantier de la page y ajoutait sa ligne, et le compteur
+    # était devenu un aveu. Ce qui se règle est dit sous son réglage, ce qui
+    # décrit un système dans le dépliant de ce système, et la liste ne garde
+    # que ce que le lecteur ne peut ni changer ni lire ailleurs. Le plafond
+    # oblige la prochaine réserve à en fusionner une plutôt que de s'ajouter.
+    assert "<span>À lire avant de citer ces chiffres</span>" in cout
+    assert "réserves à lire avant de citer" not in cout
     assert "Une page de chiffres vaut par ce qu'elle laisse de côté" in cout
     debut = cout.index("Une page de chiffres vaut par ce qu'elle laisse de côté")
     liste = cout[debut:cout.index("</ul>", debut)]
-    assert liste.count("<li><strong>") == 14, liste.count("<li><strong>")
+    assert 3 <= liste.count("<li><strong>") <= RESERVES_MAXIMUM, liste.count("<li><strong>")
+    # Les réserves déplacées sont lues là où elles se règlent ou se décrivent.
+    assert "La recette réagit sur trois points" in cout[cout.index('id="cout-postes"'):]
+    assert "Seul le système actuel sert la pension de" in cout[cout.index('id="cout-postes"'):]
+    assert "sans toucher aux écarts entre carrières" in cout[cout.index('id="cout-equilibre"'):]
+    simuler = rendre(contexte, "/simuler", {})[1]
+    assert "où ce stock est éteint" in simuler
 
 
 

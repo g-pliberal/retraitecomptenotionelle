@@ -2929,8 +2929,10 @@ def _champs_modelisation(saisie: Saisie) -> str:
                 "cotisé. En variante, la réforme réindexe tout le stock sur "
                 "la règle du compte, comme les réformes réelles l'ont fait "
                 "pour les prix en 1987 : c'est la bosse de 2026-2040 sur la "
-                "page Coût. Le système 1 n'est pas concerné : il est le "
-                "droit."),
+                "page Coût, le stock recevant alors un demi-point par an que "
+                "personne n'a cotisé, et rien ne change à l'horizon, où ce "
+                "stock est éteint. Le système 1 n'est pas concerné : il est "
+                "le droit."),
         g.champ("reprise", "Part de l'avance couverte par la succession",
                 "" if saisie.reprise is None else saisie.reprise,
                 "page Coût seulement, en pour cent ; vide : calculée",
@@ -7513,7 +7515,9 @@ une économie de {g.pourcentage(
 contresens : à ces recettes-là, ce système servirait davantage que ce que la
 colonne « dépense » lui prête, et autrement réparti entre les carrières. Le
 modèle calcule ce facteur ; il ne l'applique jamais, et toutes les courbes de
-coût de cette page sont celles d'un système qui ne se pilote pas.</div>
+coût de cette page sont celles d'un système qui ne se pilote pas. L'appliquer changerait toutes les pensions par un même facteur, donc
+tous les niveaux de cette page, sans toucher aux écarts entre carrières,
+qui sont la seule chose que ce site mesure.</div>
 """, identifiant="cout-equilibre")
 
 
@@ -7706,12 +7710,35 @@ n'acquièrent de droits à personne. Des transferts, seule reste la part qui ne
 paie pas un droit supprimé : la branche famille et l'assurance chômage
 financent des droits que le compte notionnel ne sert plus. Côté dépenses, les
 pensions sont recalculées au franc le franc des cotisations, et la réversion
-n'est plus servie : c'est ce que dit le dépliant sur les conventions du
-modèle. La garantie vieillesse qui remplace l'ASPA est financée par l'impôt,
+n'est plus servie, ce que la dernière note détaille. La garantie vieillesse qui remplace l'ASPA est financée par l'impôt,
 hors du compte des cotisants ; le dépliant qui lui est consacré en donne
 quatre lectures, et la ligne pour mémoire porte la plus basse. Le pilier
 capitalisé ne passe pas par les caisses et n'est ni une ressource ni une
 dépense du système : il est rappelé pour que rien ne manque.</div>
+
+<div class="note"><strong>La recette réagit sur trois points, et sur trois
+seulement.</strong> Elle suit le droit : ce que la branche famille, l'assurance
+chômage et le fonds de solidarité vieillesse versent pour des droits que les
+systèmes notionnels ne servent pas leur est retiré, un peu plus d'un point de
+PIB. Elle suit le taux : le système 4 prélève ses {g.pourcentage(base.taux_cotisation_liberal, decimales=0)} sur
+l'assiette mesurée des revenus d'activité au lieu de la part cotisée des
+ressources d'aujourd'hui. Elle suit enfin le principe, et pour le seul
+système 4 : un compte notionnel ne crédite que ce qui est assis sur un revenu
+d'activité, et ce système ne reconduit donc aucune des trois ressources qui
+n'acquièrent de droits à personne, celles que la note du dessus nomme. Trois
+postes : 27 % des ressources en 2024, 29 % en 2070. Les cinq autres systèmes
+les encaissent tous, faute qu'aucun programme dise ce qu'il en ferait.</div>
+
+<div class="note"><strong>Seul le système actuel sert la pension de
+réversion.</strong> Une réversion est ce qu'un conjoint survivant reçoit de la
+carrière d'un autre : la première dépense non contributive du système, un
+dixième environ de tout ce qui est versé. Les systèmes notionnels comparés ici
+retirent tous les avantages non contributifs, et celui-là comme les autres :
+ils ne rendent que ce qui a été cotisé, et c'est précisément ce qu'ils servent
+à mesurer. Le système actuel, lui, la sert, puisqu'il est le droit en vigueur.
+Les systèmes qui ne valent que pour l'avenir la servent jusqu'à leur bascule,
+n'étant jusque-là rien d'autre que le système actuel. Ensuite ils ne la
+servent plus, aux veuves d'avant comme à celles d'après.</div>
 """, identifiant="cout-postes")
 
 
@@ -8659,33 +8686,39 @@ def part_reprise_bascule(contexte: Contexte) -> float:
 
 
 def _cout_detail_limites(contexte: Contexte) -> str:
-    """Tout ce que cette page ne dit pas, en une seule liste."""
+    """Ce que cette page laisse de côté, et que le lecteur ne peut ni régler ni
+    lire ailleurs. Ce qui se règle est dit sous son réglage, ce qui décrit un
+    système est dans le dépliant de ce système ; un test plafonne la liste,
+    pour que la prochaine réserve en fusionne une plutôt que d'en ajouter une.
+    Le titre ne compte plus : à quatorze, le compteur était devenu un aveu."""
     cout = contexte.cout()
     solde = cout.solde
     avenir = cout.avenir
     observe = solde.annee(solde.derniere_annee_observee)
-    return g.depliant("Quatorze réserves à lire avant de citer ces chiffres",  f"""
-<p>Une page de chiffres vaut par ce qu'elle laisse de côté, et cette page en
-laisse treize, écrits ici plutôt qu'en note de bas de page.</p>
+    return g.depliant("À lire avant de citer ces chiffres", f"""
+<p>Une page de chiffres vaut par ce qu'elle laisse de côté. Rien de ce qui
+suit n'est certifié, et ne peut l'être : une projection est une hypothèse,
+celle de l'INSEE pour la démographie, celle du COR pour la macroéconomie,
+celle du modèle pour les pensions, jusqu'en {avenir.derniere_annee}, horizon des
+projections de population, et pas un an de plus. Ce qui se règle est dit sous
+son réglage : les pensions en cours à la bascule, la part de l'avance que la
+succession couvre. Ce qui décrit un système est dans le dépliant de ce
+système : ce que la recette suit, à qui la réversion est servie, ce que le
+coefficient d'équilibre ferait. Restent ici les réserves que le lecteur ne
+peut ni changer ni lire ailleurs.</p>
 <ul class="serree">
-  <li><strong>Les recettes réagissent sur trois points, et sur trois
-  seulement.</strong> La recette suit le droit : ce que la branche famille,
-  l'assurance chômage et le fonds de solidarité vieillesse versent pour des
-  droits que les systèmes notionnels ne servent pas leur est retiré, un peu
-  plus d'un point de PIB. La recette suit le taux : le système 4, qui pose un
-  taux unique de 18 %, prélève ce taux sur l'assiette mesurée des revenus
-  d'activité au lieu de la part cotisée des ressources d'aujourd'hui. La
-  recette suit enfin le PRINCIPE, et pour le seul système 4 : un compte
-  notionnel ne crédite que ce qui est assis sur un revenu d'activité, et ce
-  système ne reconduit donc aucune des trois ressources qui n'acquièrent de
-  droits à personne. La contribution d'équilibre de l'État s'en va parce que
-  les 18 % s'appliquent aussi aux traitements des fonctionnaires, et que la
-  reconduire la compterait deux fois. Les subventions d'équilibre aux régimes
-  en extinction s'en vont parce que la fusion de tous les régimes supprime la
-  catégorie même du retraité sans cotisants. Les impôts et taxes affectés s'en
-  vont parce qu'un impôt n'ouvre de droit à personne. Trois postes : 27 % des
-  ressources en 2024, 29 % en 2070. Les cinq autres systèmes les encaissent
-  tous, faute qu'aucun programme dise ce qu'il en ferait.</li>
+  <li><strong>La projection est celle du COR</strong>, scénario de référence,
+  avec ses hypothèses : démographie de l'INSEE, productivité, chômage. Ses
+  ressources reculent en part de PIB parce que l'assiette des cotisations y
+  progresse moins vite que le PIB : cette hypothèse est la sienne, et personne
+  ne l'a mesurée. Seize autres scénarios démographiques existent, dont l'écart
+  mesurerait l'incertitude ; cette page n'en montre aucun.</li>
+  <li><strong>Les réserves d'aujourd'hui ne sont pas comptées.</strong> Le
+  système de retraite détient des réserves financières que le COR chiffre à
+  part ; un solde annuel négatif peut être couvert par elles pendant des
+  années. La dette de la section « ce que le déficit accumule » part de zéro à
+  {solde.derniere_annee_observee} : elle dit ce que les soldes à venir
+  ajoutent, jamais ce que le système détient.</li>
   <li><strong>L'assiette est supposée insensible au taux.</strong> Un taux de
   cotisation plus bas déforme l'offre de travail et la structure des
   rémunérations ; aucune élasticité n'est posée ici, et le sens de l'effet
@@ -8694,80 +8727,26 @@ laisse treize, écrits ici plutôt qu'en note de bas de page.</p>
   non la part de PIB de l'assiette : celle-ci suit alors les ressources
   projetées par le COR, dont la baisse en part de PIB tient précisément à une
   assiette qui progresse moins vite que le PIB.</li>
-  <li><strong>Les pensions déjà servies à la bascule gardent les prix.</strong>
-  Une pension liquidée sous le système actuel est revalorisée sur les prix, et
-  la réforme ne la touche pas : seuls les comptes ouverts sous le nouveau
-  régime suivent sa règle. C'est un choix, et il se règle : la variante
-  « réindexées » fait passer tout le stock à la règle du compte le jour de la
-  bascule, ce qui creuse une bosse de dépense jusque vers 2040 — le stock
-  reçoit alors un demi-point par an que personne n'a cotisé — sans rien
-  changer à l'horizon, où ce stock est éteint.</li>
-  <li><strong>Le coefficient d'équilibre n'est jamais appliqué.</strong>
-  L'appliquer changerait toutes les pensions par un même facteur, donc tous les
-  niveaux de cette page, sans toucher aux écarts entre carrières, qui sont la
-  seule chose que ce site mesure.</li>
-  <li><strong>L'année du retour à l'équilibre se lit à quelques années
-  près.</strong> Le déficit actuel vaut
-  {g.pourcentage(abs(observe.solde("actuel")), decimales=2)} du PIB, c'est-à-dire
-  l'ordre de grandeur de l'écart que le pas de la grille des générations
-  introduit à lui seul autour de la bascule.</li>
-  <li><strong>Les réserves d'aujourd'hui ne sont pas comptées.</strong> Le
-  système de retraite détient des réserves financières que le COR chiffre à
-  part ; un solde annuel négatif peut être couvert par elles pendant des
-  années. La dette de la section « ce que le déficit accumule » part de zéro à
-  {solde.derniere_annee_observee} : elle dit ce que les soldes à venir
-  ajoutent, jamais ce que le système détient.</li>
-  <li><strong>La projection est celle du COR</strong>, scénario de référence,
-  avec ses hypothèses : démographie de l'INSEE, productivité, chômage. Ses
-  ressources reculent en part de PIB parce que l'assiette des cotisations y
-  progresse moins vite que le PIB : cette hypothèse est la sienne, et personne
-  ne l'a mesurée. Seize autres scénarios démographiques existent, dont l'écart
-  mesurerait l'incertitude ; cette page n'en montre aucun.</li>
-  <li><strong>Le taux de couverture est supposé constant.</strong> Le modèle
-  compte des générations, non des cotisants : il suppose que la même proportion
-  de chaque génération perçoit une pension, et que la carrière type ne change
-  pas. Un recul de l'âge de départ, une carrière plus longue ou plus hachée
-  déplaceraient la trajectoire.</li>
-  <li><strong>Un effectif de caisse n'est pas un effectif de personnes.</strong>
-  Un polypensionné compte dans chacune de ses caisses, ce qui gonfle le poids
-  des régimes dont les affiliés ont typiquement aussi une carrière au régime
-  général.</li>
-  <li><strong>Avant 1975, la reconstitution est mince.</strong> La répartition
-  ne commence qu'en {contexte.base.annee_debut_repartition} : les générations
-  antérieures à {cout.generations[0]} n'ont, dans ce modèle, aucune pension, et
-  plusieurs régimes n'existaient pas encore. Les premières années reposent donc
-  sur deux ou trois générations et la moitié des cas types.</li>
-  <li><strong>La grille échantillonne une génération sur cinq.</strong> Une
-  cohorte qui part juste avant la bascule est donc représentée par une
-  génération qui part juste après : les courbes de réforme s'écartent d'un ou
-  deux dixièmes de point avant même la bascule. Un test borne l'effet à un
-  demi-point.</li>
-  <li><strong>Seul le système actuel sert la pension de réversion.</strong>
-  Une réversion est ce qu'un conjoint survivant reçoit de la carrière d'un
-  autre : c'est la première dépense non contributive du système, un dixième
-  environ de tout ce qui est versé. Les systèmes notionnels comparés ici
-  retirent tous les avantages non contributifs, et celui-là comme les autres :
-  ils ne rendent que ce qui a été cotisé, et c'est précisément ce qu'ils
-  servent à mesurer. Le système actuel, lui, la sert, puisqu'il est le droit en
-  vigueur. Les systèmes qui ne valent que pour l'avenir la servent jusqu'à leur
-  bascule, n'étant jusque-là rien d'autre que le système actuel. Ensuite ils ne
-  la servent plus, aux veuves d'avant comme à celles d'après.</li>
-  <li><strong>La reprise sur succession repose sur le patrimoine des
-  retraités selon leur revenu, faute de le connaître selon leur
-  pension.</strong> Les lignes « dont reprises » et « garantie nette » supposent
-  que la succession couvre {g.pourcentage(part_reprise_bascule(contexte), decimales=0)} de l'avance d'un bénéficiaire : une part
-  calculée sur ce que le COR a publié de l'enquête Patrimoine 2018, par une
-  convention qui rattache les plus petites pensions au quart des ménages
-  retraités le plus modeste, et qui compte une avance par succession là où un
-  couple en pèse deux. Le taux réel est lu sur la courbe des taux, la mortalité
-  est celle du vingtile de niveau de vie des bénéficiaires, et les avances ne
-  commencent qu'à la bascule. Le réglage « Part de l'avance couverte par la
-  succession » remplace la part calculée par un nombre.</li>
-  <li><strong>Rien de tout cela n'est certifié, et ne peut l'être.</strong> Une
-  projection est une hypothèse : celle de l'INSEE pour la démographie, celle du
-  COR pour la macroéconomie, celle du modèle pour les pensions — jusqu'en
-  {avenir.derniere_annee}, horizon des projections de population, et pas un an
-  de plus.</li>
+  <li><strong>La grille échantillonne une génération sur cinq, et l'année du
+  retour à l'équilibre se lit à quelques années près.</strong> Une cohorte qui
+  part juste avant la bascule est représentée par une génération qui part
+  juste après : les courbes de réforme s'écartent d'un ou deux dixièmes de
+  point avant même la bascule, et un test borne l'effet à un demi-point. Le
+  déficit actuel vaut {g.pourcentage(abs(observe.solde("actuel")), decimales=2)} du PIB, c'est-à-dire
+  l'ordre de grandeur de l'écart que ce pas introduit à lui seul autour de la
+  bascule : l'année où une courbe repasse zéro en dépend.</li>
+  <li><strong>Le modèle compte des générations, non des personnes.</strong> Il
+  suppose que la même proportion de chaque génération perçoit une pension, et
+  que la carrière type ne change pas : un recul de l'âge de départ, une
+  carrière plus longue ou plus hachée déplaceraient la trajectoire. Ses
+  effectifs sont ceux des caisses, où un polypensionné compte dans chacune des
+  siennes, ce qui gonfle le poids des régimes dont les affiliés ont
+  typiquement aussi une carrière au régime général. Et avant 1975 la
+  reconstitution est mince : la répartition ne commence qu'en
+  {contexte.base.annee_debut_repartition} ; les générations antérieures à
+  {cout.generations[0]} n'ont, dans ce modèle, aucune pension, plusieurs
+  régimes n'existaient pas encore, et les premières années reposent sur deux
+  ou trois générations et la moitié des cas types.</li>
 </ul>
 <p class="discret">Les limites du modèle dans son ensemble sont dans
 <a href="{g.DEPOT}/blob/main/docs/limites.md">docs/limites.md</a>, et la
