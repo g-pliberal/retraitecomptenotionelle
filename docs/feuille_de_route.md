@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 986<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 010<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -4423,7 +4423,11 @@ lus et cités, non appliqués, parce qu'aucun des deux ne se transporte tel quel
 dans le tableau : le premier vient du *Dossier de la DREES* n° 97 (mai 2022),
 une personne seule éligible sur deux, 321 200 personnes fin 2016, 790 millions
 non versés ; le second du rapport d'activité 2024 du FSV, 108,7 millions
-récupérés en 2024. Les deux sont au manifeste des sources, `saisi`.
+récupérés en 2024. Les deux sont au manifeste des sources, `saisi`. *Le même
+jour, plus tard* : le programme a tranché que la garantie se reprend sur la
+succession, dès le premier euro et avec intérêts ; la note du dépliant, celle
+de `limites.md` et le dépliant du programme ont été retournés en conséquence,
+et ce que la reprise rendrait est l'objet de l'action 47.
 
 *Ce qui reste une limite, et est écrit comme telle* : la forme de la
 distribution est celle de 2020, déplacée sans être déformée ; le déplacement
@@ -8174,3 +8178,118 @@ structurel, et un choc d'emploi n'est pas un supplément de productivité.
 `moteur/js/pages.js` (champ `emploi`), `construire_donnees.py`,
 `construire_temoins.py` (cas `emploi_constant`), `tests/test_donnees.py`,
 `tests/test_simulateur.py`, `limites.md` § 1 et § 5 ter, `sources.yaml`.
+
+---
+
+### 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage — `en cours`
+
+**Demande.** « Dans notre cas, la reprise sur succession est dès le premier
+euro + on prend des intérêts pour ne pas y perdre au niveau des finances
+publiques. » Puis, sur la règle proposée : « Tout me va là-dedans. Il faut
+juste faire attention à ce que les héritiers enfants ne paient pas plus que ce
+qui est compris dans l'héritage. Il faudrait aussi faire attention aux
+personnes qui feraient des dons pour éviter la reprise sur héritage ; c'est
+une vraie stratégie d'évitement qu'il faut prendre en compte dans la règle. »
+
+**Ce que ça change de nature.** Jusqu'ici la garantie était décrite comme une
+allocation financée par l'impôt, et le 20 septembre au matin le dépliant du
+coût, `limites.md` et le point 3 de l'action 35 disaient même qu'elle n'était
+pas récupérable, à la différence de l'ASPA. Reprise dès le premier euro avec
+intérêts, elle devient une AVANCE de l'État gagée sur le patrimoine, un prêt
+viager public. Le coût net pour les finances publiques se réduit à ce qui est
+servi à ceux qui meurent sans rien laisser, plus le portage entre le versement
+et la succession, que l'intérêt annule en valeur actuelle si son taux est au
+moins celui auquel l'État emprunte et si la succession couvre la dette.
+
+**La règle, telle que le programme l'écrit désormais** (dépliant « Le plancher,
+et ce qu'il change pour les petites pensions », `_programme_garantie` et
+`programmeGarantie`) :
+
+1. Ce que la garantie verse est une créance de l'État sur le bénéficiaire ;
+   elle porte intérêt au taux auquel l'État emprunte, capitalisé.
+2. Elle est reprise sur la succession dès le premier euro : ni seuil d'actif
+   net, ni plafond par année servie, à la différence de l'ASPA.
+3. **Premier garde-fou, les héritiers.** La créance ne s'exerce que sur ce que
+   la succession contient. Les héritiers ne sont jamais tenus sur leurs biens
+   propres ; ce que l'actif ne couvre pas est abandonné, et c'est cette part-là,
+   et elle seule, que l'impôt finance. C'est déjà la construction de
+   `L. 815-13` CSS, où la récupération porte sur « la fraction de l'actif net
+   qui excède un seuil ».
+4. Le logement est repris comme le reste, mais la reprise attend le décès du
+   conjoint survivant qui l'occupe, les intérêts courant entre-temps. *Point
+   posé par la session, à retourner si le programme en décide autrement.*
+5. **Second garde-fou, les donations.** Les donations faites depuis
+   l'ouverture de la garantie, ou dans les dix ans qui l'ont précédée, sont
+   réintégrées : la créance se poursuit contre le donataire, à hauteur de ce
+   qu'il a reçu et jamais au-delà. Les primes d'assurance-vie versées après
+   65 ans sont traitées de même, contre leur bénéficiaire. Et la créance est
+   garantie par une hypothèque légale inscrite dès le premier versement, de
+   sorte qu'un bien donné la porte avec lui : pour l'immobilier, c'est la
+   parade la plus simple, la charge suit le bien. *Le délai de dix ans et le
+   seuil de 65 ans pour l'assurance-vie sont posés par la session.*
+
+**Ce que le droit fait déjà, lu dans l'index LEGI le 20 septembre 2026.**
+`L. 815-13` CSS (LEGIARTI000048697753, en vigueur depuis le 1er janvier
+2024) : les sommes servies au titre de l'ASPA « sont récupérées après le
+décès du bénéficiaire dans la limite d'un montant fixé par décret », sur « la
+fraction de l'actif net qui excède un seuil dont le montant est fixé à
+100 000 euros au 1er septembre 2023 et revalorisé » ; hypothèque légale ;
+prescription de cinq ans ; pour un couple, l'allocation « est réputée avoir
+été perçue pour moitié par chacun ». Le recours contre le donataire existe
+pour l'aide sociale départementale : l'article 146 du code de la famille et de
+l'aide sociale (LEGIARTI000006681336, version 1997) ouvrait le recours
+« contre le donataire lorsque la donation est intervenue postérieurement à la
+demande d'aide sociale ou dans les dix ans qui ont précédé cette demande » et
+« contre le légataire » ; il est codifié depuis 2000 à `L. 132-8` CASF, que
+l'index thématique ne porte pas et qu'il faudra lire sur Légifrance pour la
+version en vigueur (le recours contre le bénéficiaire d'un contrat
+d'assurance-vie y a été ajouté depuis, à confirmer). Les montants 2026 de
+l'ASPA lus sur service-public le même jour : seuil de récupération
+108 586,14 € en métropole, 150 000 € outre-mer, plafond de reprise 8 463,42 €
+par an pour une personne seule et 11 322,77 € pour un couple ; environ
+120 millions d'euros récupérés par an.
+
+**Le contexte à assumer par écrit.** Le 11 juin 2026, l'Assemblée nationale a
+adopté à l'unanimité, en première lecture, une proposition de loi qui supprime
+la récupération de l'ASPA pour les propriétaires et la remplace par un forfait
+logement d'environ 40 € par mois ; le texte est au Sénat, et les débats ont
+cité 300 000 ayants droit qui renoncent à l'ASPA par crainte de la reprise. La
+proposition du dépôt va à rebours, et il faudra le dire sur la page.
+
+**Ce qui est fait le 20 septembre 2026.** La règle est écrite dans le dépliant
+du programme, dans les deux moteurs. La note « Deux corrections » du dépliant
+« Ce que coûte la garantie vieillesse » ne dit plus que la garantie ne se
+récupère pas : elle dit que le coût affiché est brut, avant reprise, et que ce
+que la reprise rendrait n'est pas chiffré. `limites.md`, section « Le scénario
+6, et ce que sa garantie ne voit pas », dit la même chose. Aucun paramètre n'a
+été ajouté à `config.py` : un réglage que rien ne calcule serait un réglage
+qui n'existe pas (action 40).
+
+**Ce qui reste : chiffrer le net.** Le modèle n'a ni distribution de
+patrimoine par niveau de pension, ni mortalité selon le patrimoine. Il faut :
+
+1. *Une distribution de patrimoine des retraités par tranche de pension.*
+   INSEE, enquête Histoire de vie et Patrimoine (patrimoine net des ménages
+   retraités par décile de revenu) ; à défaut, DGFiP, statistiques des
+   successions déclarées (actif net par tranche). Chaque série au manifeste
+   des sources avec son `source_id`.
+2. *Un stock d'avances avec intérêts.* La page Coût sait déjà tenir un stock
+   qui porte intérêt, celui de la dette du système (`_cout_detail_dette` et sa
+   jumelle) : la même mécanique, alimentée par le flux brut de la garantie et
+   vidée au décès par ce que la succession couvre, donne la ligne « avances en
+   cours » et la ligne « reprises de l'année ».
+3. *Le net.* Flux brut moins reprises de l'année, en part de PIB, sur la
+   trajectoire ; et dans le tableau poste par poste, la ligne « pour mémoire »
+   de la garantie en deux lignes, brut et reprises.
+4. *Le non-recours de la reprise.* Une reprise dès le premier euro dissuade
+   plus qu'un seuil à 108 586 € : la part des ayants droit qui refuseraient la
+   garantie est un paramètre à afficher, pas une hypothèse cachée.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py` et `moteur/js/pages.js`
+(dépliant du programme, note du coût) ; `docs/limites.md` ; à venir,
+`src/retraite_notionnelle/cout.py` et `moteur/js/cout.js` (le stock),
+`data/reference/macro/` (le patrimoine), `data/sources.yaml`.
+
+**Fin.** La page Coût donne la garantie en trois lignes, brut, reprises et
+net, sur une distribution de patrimoine citée, et le programme dit en une
+phrase pourquoi il reprend là où le Parlement renonce.

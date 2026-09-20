@@ -4952,14 +4952,17 @@ calculés sur la grille, qui n'est pas une population et les sous-estime, et
 une pension majorée de référence non chiffrée — contre 39,0 milliards de
 garantie aux pensions du scénario 6 la même année : **31 milliards de plus pour
 l'impôt**, borne haute puisque le total remplacé est une borne basse. Deux
-corrections de sens opposé restent hors du tableau, et il faut les deux : une
+corrections restent hors du tableau, et il faut les deux : une
 personne seule éligible sur deux ne réclame pas l'ASPA — 321 200 personnes fin
 2016, 790 millions non versés, 59 % des sommes servies (DREES, *Les dossiers de
 la DREES* n° 97, mai 2022) —, si bien qu'une garantie automatique paie pour
-partie une dépense aujourd'hui non réclamée ; et l'ASPA est récupérable sur
-succession, ce qui a rendu 108,7 millions au Fonds de solidarité vieillesse en
-2024 (rapport d'activité 2024), deux pour cent de ce qu'elle verse, qu'une
-garantie non récupérable ne rendrait plus.
+partie une dépense aujourd'hui non réclamée ; et la garantie est une avance
+reprise sur la succession dès le premier euro et avec intérêts, là où l'ASPA
+n'est récupérée qu'au-delà d'un seuil d'actif net et a rendu 108,7 millions au
+Fonds de solidarité vieillesse en 2024 (rapport d'activité 2024), deux pour
+cent de ce qu'elle verse. Ce que la garantie rendrait n'est pas chiffré : le
+dépôt n'a pas de distribution de patrimoine par niveau de pension, et le coût
+affiché est brut, avant reprise (action 47 de la feuille de route).
 
 Ce que chaque ligne suppose. **Les deux planchers** sont donnés parce que
 l'enquête dit la pension et non avec qui l'on vit : la garantie de base vaut

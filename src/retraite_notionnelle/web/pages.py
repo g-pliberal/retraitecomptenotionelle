@@ -2287,6 +2287,26 @@ que la pension du conjoint entre dans le calcul.</p>
   <li>en euros de {base.annee_euros_garantie_vieillesse}, revalorisés sur les
   prix.</li>
 </ul>
+<p><strong>Une avance, pas un don.</strong> Ce que la garantie verse est une
+créance de l'État sur celui qui la reçoit. Elle porte intérêt au taux auquel
+l'État emprunte, pour que les finances publiques n'y perdent rien, et elle est
+<strong>reprise sur la succession dès le premier euro</strong>, là où l'ASPA
+n'est récupérée qu'au-delà d'un seuil d'actif net. Quatre règles l'encadrent
+:</p>
+<ul class="serree">
+  <li>elle ne s'exerce que sur ce que la succession contient : les héritiers
+  ne paient jamais de leur poche, et ce que l'actif ne couvre pas est
+  abandonné — c'est cette part-là, et elle seule, que l'impôt finance ;</li>
+  <li>le logement est repris comme le reste, mais la reprise attend le décès
+  du conjoint survivant qui l'occupe, les intérêts courant entre-temps ;</li>
+  <li>les donations faites depuis l'ouverture de la garantie, ou dans les dix
+  ans qui l'ont précédée, sont réintégrées : la créance se poursuit contre le
+  donataire, à hauteur de ce qu'il a reçu et jamais au-delà, comme l'aide
+  sociale départementale le fait déjà ; les primes d'assurance-vie versées
+  après 65 ans de même, contre leur bénéficiaire ;</li>
+  <li>la créance est garantie par une hypothèque légale inscrite dès le
+  premier versement, de sorte qu'un bien donné la porte avec lui.</li>
+</ul>
 <p>Le tableau du haut de page le montre : l'ASPA regarde les ressources du
 foyer, et à 300 € et 1 500 € le couple dépasse son plafond et ne reçoit rien.
 La garantie regarde chacun, et sert 500 € au premier. C'est ce changement
@@ -7985,18 +8005,22 @@ guère. La pension majorée de référence n'est pas chiffrée, aucun code du
 moteur ne la servant. Le total est donc une borne basse, et l'écart une borne
 haute.</p>
 
-<div class="note"><strong>Deux corrections de sens opposé, et il faut les
-deux.</strong> L'ASPA est réclamée par <strong>une personne seule éligible sur
+<div class="note"><strong>Deux corrections, et il faut les deux.</strong> L'ASPA est réclamée par <strong>une personne seule éligible sur
 deux</strong> : fin 2016, 321 200 personnes vivaient sous son plafond sans la
 demander, pour 790 millions d'euros non versés, soit 59 % des sommes servies
 (DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). Une garantie
 individualisée et automatique n'a pas de non-recours : une part de ce qu'elle
-coûte en plus existe donc déjà, sans être réclamée. En sens inverse, l'ASPA est récupérable sur la succession, et le
-Fonds de solidarité vieillesse en a retiré 108,7 millions d'euros en 2024 (143,9
-en 2023, avant le relèvement du seuil) ; une garantie qui ne se récupère pas
-rend ces deux pour cent-là au contribuable. Le premier effet se compte en
-centaines de millions par an, le second en une centaine, et ni l'un ni l'autre
-n'est dans le tableau.</div>
+coûte en plus existe donc déjà, sans être réclamée. Dans le même sens, la
+garantie est une <strong>avance reprise sur la succession</strong>, dès le
+premier euro et avec intérêts, là où l'ASPA n'est récupérée qu'au-delà d'un
+seuil d'actif net : le Fonds de solidarité vieillesse en a retiré 108,7
+millions d'euros en 2024 (143,9 en 2023, avant le relèvement du seuil), deux
+pour cent de ce qu'elle verse. La garantie touche une population bien plus
+large, et souvent propriétaire ; ce qu'elle rendrait ne se lit sur aucune
+donnée du dépôt, qui n'a pas de distribution de patrimoine par niveau de
+pension. Le premier effet se compte en centaines de millions par an, le second
+n'est pas chiffré, et ni l'un ni l'autre n'est dans le tableau : le coût
+affiché est <strong>brut, avant reprise</strong>.</div>
 
 <div class="note"><strong>La garantie n'est pas l'ASPA à un autre
 montant.</strong> L'ASPA regarde <em>toutes les ressources du foyer</em> et ne
