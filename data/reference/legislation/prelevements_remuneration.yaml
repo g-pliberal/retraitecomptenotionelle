@@ -215,9 +215,11 @@ reduction_generale: &reduction_generale
 #
 # `retraite: true` marque les prélèvements retraite que les fiches de régime ne
 # portent PAS, parce qu'ils n'acquièrent aucun droit : la contribution
-# d'équilibre général, la contribution d'équilibre technique, l'APEC. Ils sont
-# bel et bien prélevés, et un scénario qui remplace le financement de la
-# retraite les remplace eux aussi. Ce que les fiches portent — vieillesse de
+# d'équilibre général et la contribution d'équilibre technique. Ils sont bel et
+# bien prélevés, et un scénario qui remplace le financement de la retraite les
+# remplace eux aussi. L'APEC, que l'Agirc-Arrco recouvre avec elles, n'en est
+# pas : elle finance le service de l'emploi des cadres, et un scénario qui
+# change la retraite la laisse en place. Ce que les fiches portent — vieillesse de
 # base, Agirc-Arrco, Ircantec, retenue pour pension — n'est PAS répété ici : le
 # modèle le lit là où il le lisait déjà, pour que la fiche de paie et le compte
 # notionnel ne puissent pas diverger.
@@ -380,7 +382,10 @@ postes_regime_general: &postes_regime_general
 
   - code: apec
     libelle: "Association pour l'emploi des cadres (APEC)"
-    retraite: true
+    # Recouvrée par l'Agirc-Arrco, mais elle ne finance pas la retraite : elle
+    # finance l'Apec. Elle reste donc due sous un système qui remplace la
+    # retraite, comme le chômage ou la maladie.
+    retraite: false
     dans_la_reduction_generale: false
     cadres_seulement: true
     salarie:
@@ -389,7 +394,10 @@ postes_regime_general: &postes_regime_general
     employeur:
       - {jusqu_en_plafonds: 4, taux: 0.00036}
       - {jusqu_en_plafonds: null, taux: 0.0000}
-    note: "Due par les seuls cadres. N'acquiert aucun droit à retraite."
+    note: >-
+      Due par les seuls cadres. Ce n'est pas un prélèvement retraite : l'Apec
+      est le service de l'emploi des cadres, et l'Agirc-Arrco ne fait que
+      recouvrer sa cotisation avec les siennes.
     textes:
       - "Convention nationale du 12 juillet 2011 relative à l'Apec"
 
@@ -397,8 +405,8 @@ postes_regime_general: &postes_regime_general
 # cadre valent tels quels pour un agent non titulaire de la fonction publique :
 # il relève du régime général pour la base, et de l'Ircantec — que sa fiche de
 # régime porte — pour la complémentaire. Ce que la liste précédente porte en
-# plus et qu'il ne doit PAS : la CEG, la CET et l'APEC, qui sont des
-# contributions de l'Agirc-Arrco.
+# plus et qu'il ne doit PAS : la CEG, la CET et l'APEC, que l'Agirc-Arrco
+# recouvre.
 postes_regime_general_sans_agirc: &postes_regime_general_sans_agirc
 
   - code: maladie

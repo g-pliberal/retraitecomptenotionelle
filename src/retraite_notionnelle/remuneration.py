@@ -316,8 +316,11 @@ class Poste:
 
     code: str
     libelle: str
-    #: Finance-t-il la retraite ? Vrai pour la CEG, la CET et l'APEC, que les
-    #: fiches de régime ne portent pas parce qu'elles n'acquièrent aucun droit.
+    #: Finance-t-il la retraite ? Vrai pour la CEG et la CET, que les fiches
+    #: de régime ne portent pas parce qu'elles n'acquièrent aucun droit. Faux
+    #: pour l'APEC, que l'Agirc-Arrco recouvre avec elles mais qui finance le
+    #: service de l'emploi des cadres : un scénario qui remplace la retraite
+    #: la laisse en place.
     retraite: bool
     #: Entre-t-il dans le périmètre de la réduction générale (L. 241-13) ?
     dans_la_reduction_generale: bool
@@ -633,7 +636,7 @@ class ComposanteRetraite:
 class BlocRetraite:
     """Ce qu'un système prélève pour la retraite, étage par étage.
 
-    Les contributions d'équilibre — CEG, CET, APEC —, qui n'acquièrent aucun
+    Les contributions d'équilibre — CEG, CET —, qui n'acquièrent aucun
     droit et que les fiches de régime ne portent donc pas, viennent du profil
     plutôt que d'ici. Un système qui remplace le financement de la retraite les
     remplace aussi, et c'est ce que dit

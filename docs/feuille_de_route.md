@@ -7393,6 +7393,15 @@ Les systèmes 1, 2 et 3 partagent la même fiche de paie, au centime : ils ne
 changent pas ce qui est PRÉLEVÉ, seulement ce qui est PORTÉ AU COMPTE. Seul le
 système 4 y touche.
 
+Le 20 septembre 2026, l'APEC est sortie des prélèvements que la proposition
+remplace : l'Agirc-Arrco la recouvre avec la CEG et la CET, mais elle finance
+le service de l'emploi des cadres, pas la retraite, et un scénario qui change la
+retraite la laisse en place, comme le chômage ou la maladie. La proposition ne
+retire donc que ce qu'elle remplace — CNAV, Agirc-Arrco, CEG, CET —, et rien
+d'autre : maladie, famille, AT-MP, autonomie, chômage, AGS, FNAL, dialogue
+social, CSG et CRDS restent sur la fiche. L'effet est de 65 € par an pour un
+cadre à deux fois et demie le salaire moyen.
+
 **Trois décisions, prises par le programme et écrites plutôt que devinées.**
 
 - **L'incidence est intégrale.** Le coût du travail est tenu fixe — c'est ce que
