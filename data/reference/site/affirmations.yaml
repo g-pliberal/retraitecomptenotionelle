@@ -1833,3 +1833,10 @@ affirmations:
     extrait: "Ce simulateur n'a aucune valeur officielle."
     porte: un avertissement légal
     etat: sans_portee
+
+  - id: pied.net_ou_brut
+    page: "*"
+    extrait: "s'affichent au net ou au brut, à votre choix"
+    porte: les deux unités existent, le lecteur choisit, et le défaut est le net
+    etat: verifiee
+    controle: montants_au_net_ou_au_brut

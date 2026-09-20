@@ -175,7 +175,8 @@ export function pied() {
   <p>Modèle ouvert, code et données sur <a href="${DEPOT}">GitHub</a> (code sous licence
   Apache 2.0, infographies et textes sous
   <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.fr">CC BY-SA 4.0</a>).
-  Les montants sont bruts, exprimés en euros constants de l'année de référence.
+  Pensions et salaires s'affichent au net ou au brut, à votre choix, par la
+  bascule « Montants » ; le tout en euros constants de l'année de référence.
   Les séries d'avant 1950 et les paramètres de régime restent saisis à la main :
   <a href="${DEPOT}/blob/main/docs/limites.md">lire les limites</a> avant de citer un chiffre.</p>
   <p class="retour-site">Un outil du <a href="${SITE_PARENT}" target="_top">Parti libéral français</a>.</p>
