@@ -2722,12 +2722,13 @@ def _courbes_survie(mortalite, cohortes: set[int], depart: int,
                     horizon: int) -> dict[int, tuple[float, ...]]:
     """Survie de chaque cohorte à partir de ``depart``, table unisexe.
 
-    L'INSEE ne projette sa pyramide que jusqu'en 2070, et ``Population``
-    RECOPIE cette année-là au-delà : demander l'effectif des 85 ans en 2085 y
-    rend celui des 85 ans de 2070, qui sont d'une tout autre cohorte. Pour une
-    cohorte DÉJÀ NÉE, l'extrapolation juste est sa propre survie, et le dépôt
-    porte la table qu'il faut. C'est la même table unisexe que le diviseur des
-    comptes notionnels, prise en génération.
+    L'INSEE ne projette sa pyramide que jusqu'en 2070, et ``Population`` REFUSE
+    au-delà depuis le 20 septembre 2026 : elle recopiait l'année de bord, si
+    bien que l'effectif des 85 ans de 2085 était celui des 85 ans de 2070, nés
+    quinze ans plus tôt. C'est ici qu'est l'extrapolation juste, et elle est la
+    seule : pour une cohorte DÉJÀ NÉE, on prolonge par sa propre survie. La
+    table est l'unisexe du dépôt, celle qui sert déjà de diviseur aux comptes
+    notionnels, prise en génération.
     """
     courbes: dict[int, tuple[float, ...]] = {}
     for cohorte in cohortes:

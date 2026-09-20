@@ -303,6 +303,42 @@ def test_les_effectifs_hors_plage_sont_nuls(population: Population):
     assert population.effectif(200, 2024) == 0.0
 
 
+def test_la_pyramide_emprunte_avant_1962_et_refuse_apres_l_horizon(
+        population: Population):
+    """La borne basse emprunte, la haute REFUSE, et l'asymétrie est le sujet.
+
+    EN DEÇÀ, la dépense observée commence trois ans avant la pyramide, et ces
+    trois années empruntent celle de 1962 : une approximation assumée, sur des
+    années dont la dépense pèse un demi pour cent de celle d'aujourd'hui.
+
+    AU-DELÀ, emprunter changerait de COHORTE. La pyramide s'indexe par âge :
+    rendre l'effectif des 85 ans de 2070 sous le nom des 85 ans de 2085, c'est
+    rendre des gens nés quinze ans plus tôt, et morts. Reconduire la valeur de
+    bord d'une série annuelle ne change qu'un niveau ; reconduire un âge change
+    de population.
+
+    CE QUI REND LE REFUS NÉCESSAIRE, c'est que le chiffre emprunté est
+    PLAUSIBLE. Le 20 septembre 2026, il a fait tomber l'engagement acquis du
+    dépôt de 579 à 478 % du PIB, et rien ne l'a signalé sinon une incohérence
+    interne du calcul. Une cohorte déjà née se prolonge par sa propre survie,
+    et ``cout._courbes_survie`` fait ce geste-là.
+    """
+    assert population.effectif(80, 1959) == population.effectif(80, 1962)
+    assert population.effectif_tranche(65, 80, 1959) == pytest.approx(
+        population.effectif_tranche(65, 80, 1962))
+    assert population.effectif(80, HORIZON) > 0.0
+
+    with pytest.raises(ValueError, match="au-delà"):
+        population.effectif(85, HORIZON + 15)
+    # La tranche refuse aussi, et pour la même raison : elle lit la même
+    # pyramide. Une tranche VIDE refuse également, sans quoi l'année passerait
+    # sans être regardée.
+    with pytest.raises(ValueError, match="au-delà"):
+        population.effectif_tranche(65, 80, HORIZON + 1)
+    with pytest.raises(ValueError, match="au-delà"):
+        population.effectif_tranche(80, 65, HORIZON + 1)
+
+
 # -- la trajectoire projetée -------------------------------------------------
 
 

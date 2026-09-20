@@ -19,6 +19,9 @@ Deux séries en sont tirées, qui ne servent pas à la même chose :
   en deçà duquel aucune pension de droit direct n'est servie ;
 * ``actifs(annee)`` compte les **20-64 ans**, et ne sert qu'à projeter le
   dénominateur d'une part de PIB.
+
+La pyramide s'arrête en 2070, et cette borne REFUSE plutôt qu'elle n'emprunte :
+``_annee_bornee`` dit pourquoi, et ce que le refus a coûté d'apprendre.
 """
 
 from __future__ import annotations
@@ -67,17 +70,50 @@ class Population:
     # -- accès ---------------------------------------------------------------
 
     def _annee_bornee(self, annee: int) -> int:
-        """Année ramenée dans la plage publiée.
+        """Année ramenée dans la plage publiée, et la borne haute REFUSE.
 
-        La série commence en 1962, la dépense observée en 1959 : les trois
-        premières années empruntent la pyramide de 1962. C'est une approximation
-        assumée, et elle porte sur trois années dont la dépense pèse un demi
-        pour cent de celle d'aujourd'hui.
+        EN DEÇÀ, ON EMPRUNTE. La série commence en 1962, la dépense observée en
+        1959 : les trois premières années empruntent la pyramide de 1962. C'est
+        une approximation assumée, et elle porte sur trois années dont la
+        dépense pèse un demi pour cent de celle d'aujourd'hui.
+
+        AU-DELÀ, ON REFUSE, et l'asymétrie est le sujet de cette méthode.
+        Emprunter la pyramide de 2070 pour 2085 ne décale pas une population de
+        quinze ans : cela rend, sous le nom des 85 ans de 2085, l'effectif des
+        85 ans de 2070, qui sont nés quinze ans plus tôt et qui seront morts.
+        Une pyramide s'indexe par ÂGE, et reconduire un âge d'une année à
+        l'autre change de cohorte — là où reconduire la valeur de bord d'une
+        série annuelle, ce que fait ``SerieAnnuelle``, ne change rien qu'un
+        niveau.
+
+        Le refus est d'autant plus nécessaire que le chiffre emprunté est
+        PLAUSIBLE : il a le bon ordre de grandeur, et rien ne le signale. Le
+        20 septembre 2026, il a fait tomber l'engagement acquis du dépôt de 579
+        à 478 % du PIB ; c'est une incohérence interne — la part extrapolée
+        dépassait le total — qui l'a trahi, et non le chiffre lui-même.
+
+        CE QU'IL FAUT FAIRE À LA PLACE. Une cohorte DÉJÀ NÉE se prolonge par sa
+        propre survie : effectif à l'âge ``a + k`` en ``T + k`` égale effectif à
+        l'âge ``a`` en ``T`` multiplié par la survie de cette cohorte-là. Le
+        dépôt porte la table qu'il faut, et ``cout._courbes_survie`` fait
+        exactement ce geste, avec la table unisexe qui sert déjà de diviseur aux
+        comptes notionnels.
         """
-        return min(max(annee, self.premiere_annee), self.derniere_annee)
+        if annee > self.derniere_annee:
+            raise ValueError(
+                f"pyramide des âges demandée en {annee}, au-delà de "
+                f"{self.derniere_annee} que l'INSEE projette. Emprunter la "
+                f"dernière pyramide changerait de cohorte sans le dire : une "
+                f"cohorte déjà née se prolonge par sa propre survie, voir "
+                f"cout._courbes_survie."
+            )
+        return max(annee, self.premiere_annee)
 
     def effectif(self, age: int, annee: int) -> float:
-        """Effectif d'un âge une année donnée ; zéro hors de la plage d'âges."""
+        """Effectif d'un âge une année donnée ; zéro hors de la plage d'âges.
+
+        Refuse au-delà de la dernière année projetée : voir ``_annee_bornee``.
+        """
         return self._effectifs[self._annee_bornee(annee)].get(age, 0.0)
 
     def effectif_tranche(self, age_debut: int, age_fin: int, annee: int) -> float:
