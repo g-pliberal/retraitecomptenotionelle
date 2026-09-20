@@ -7359,16 +7359,16 @@ function coutDetailGarantie(contexte) {
   const modestes = patrimoine.statistiques("retraites_q1");
   const retraites = patrimoine.statistiques("retraites");
 
-  // Ce que la garantie remplace : les trois minima, tels qu'ils coûtent la
-  // dernière année observée. Le minimum garanti de la fonction publique n'y
-  // est pas : il est payé par les régimes de la fonction publique, dans la
-  // dépense que la trajectoire remplace, pas par un transfert de l'impôt.
+  // Ce que la garantie remplace : les quatre minima, tels qu'ils coûtent la
+  // dernière année observée. Les quatre sont ceux du système actuel : le
+  // programme les supprime tous et n'en laisse qu'un, la garantie.
   const avantages = contexte.avantages().derniere;
   const montants = avantages ? avantages.lignes : {};
   const anneeMinima = avantages ? avantages.annee : derniere;
   const remplaces = [
     ["Minimum vieillesse (ASPA)", "minimum_vieillesse", "lu dans les comptes"],
     ["Minimum contributif", "minimum_contributif", "calculé sur la grille"],
+    ["Minimum garanti de la fonction publique", "minimum_garanti", "calculé sur la grille"],
     ["Pension majorée de référence des exploitants", "pension_majoree_reference",
       "non chiffrée"],
   ];
@@ -7378,7 +7378,7 @@ function coutDetailGarantie(contexte) {
     libelle, source, montants[code] ? milliards(montants[code], 2) : "—",
   ]);
   const garantieBrute = c.annee(anneeMinima).cout(COMPOSANTE_GARANTIE);
-  lignesRemplaces.push(["<strong>Ce que ces trois minima coûtent</strong>", "",
+  lignesRemplaces.push(["<strong>Ce que ces quatre minima coûtent</strong>", "",
     `<strong>${milliards(totalRemplace, 1)}</strong>`]);
   lignesRemplaces.push([`Garantie vieillesse, aux pensions du système 4 en ${anneeMinima}`,
     "distribution, ci-dessus", milliards(garantieBrute, 1)]);
@@ -7498,13 +7498,14 @@ passé comme l'avenir. Ce tableau applique le barème à tous les retraités de
 ${millesime} ; la trajectoire ne l'applique qu'à ceux de 65 ans et plus, d'où un
 coût plus bas la même année.</p>
 
-<p><strong>Ce qu'elle remplace.</strong> La garantie succède à l'ASPA, et le
-système 4 ne sert plus le minimum contributif ni la pension majorée de
-référence : trois planchers que l'impôt et les caisses paient déjà. Ce que
-l'impôt paierait <em>en plus</em> est la garantie moins ces trois-là. Le
-minimum garanti de la fonction publique disparaît aussi, mais il n'est pas
-compté ici : les régimes de la fonction publique le servent dans leur dépense
-de pensions, que la trajectoire remplace déjà.</p>
+<p><strong>Ce qu'elle remplace.</strong> <strong>La garantie est le seul
+plancher du système 4</strong>, et c'est tout ce qu'il y a à retenir : elle
+succède à l'ASPA, et le minimum contributif, le minimum garanti de la fonction
+publique et la pension majorée de référence disparaissent avec elle. Quatre
+planchers aujourd'hui, un seul demain. Le minimum garanti n'est gardé dans ce
+tableau que pour montrer le système actuel : un fonctionnaire le perçoit, la
+proposition le supprime comme les trois autres. Ce que l'impôt paierait
+<em>en plus</em> est la garantie moins ces quatre-là.</p>
 
 ${g.tableau(
     ["Ligne", "D'où vient le chiffre", `En ${anneeMinima}`],
@@ -7515,10 +7516,10 @@ ${g.tableau(
   )}
 
 <p class="discret">Le minimum vieillesse est le poste des comptes de la
-protection sociale ; le minimum contributif est calculé sur la grille des cas
-types, qui n'est pas une population et le sous-estime : il est réclamé par des
-carrières courtes que la grille ne compte guère. La pension majorée de
-référence n'est pas chiffrée, aucun code du
+protection sociale ; les deux minima de pension sont calculés sur la grille des
+cas types, qui n'est pas une population et les sous-estime : le minimum
+contributif est réclamé par des carrières courtes que la grille ne compte
+guère. La pension majorée de référence n'est pas chiffrée, aucun code du
 moteur ne la servant. Le total est donc une borne basse, et l'écart une borne
 haute.</p>
 
@@ -10161,9 +10162,12 @@ function programmeTransition(contexte) {
         + "soit le statut. Les taux qui dépassaient ce niveau baissent, ceux "
         + "qui restaient en deçà montent."],
       ["4. La garantie vieillesse",
-        "Elle remplace l'ASPA, le minimum contributif et le minimum "
-        + "garanti le jour de la bascule, et passe au budget de l'État. "
-        + "Aucun minimum ne se calcule plus dans le barème de la pension."],
+        "Elle est le seul plancher du système, et remplace le jour de "
+        + "la bascule les quatre d'aujourd'hui : l'ASPA, le minimum "
+        + "contributif, le minimum garanti de la fonction publique et la "
+        + "pension majorée de référence. Elle passe au budget de l'État, "
+        + "et aucun minimum ne se calcule plus dans le barème de la "
+        + "pension."],
       ["5. Le pilotage",
         "Le chiffre qui ramène l'année à zéro est publié et appliqué "
         + "chaque année. C'est ce qui remplace les réformes."],
