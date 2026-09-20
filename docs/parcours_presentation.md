@@ -1,10 +1,17 @@
-# Présenter le site en vingt minutes — parcours du 20 septembre 2026
+# Présenter le site en vingt minutes
 
 Ce document est écrit pour quelqu'un qui présente le site sans l'avoir vu.
 Il dit dans quel ordre ouvrir les pages, ce qu'il y a à montrer sur chacune,
-ce qu'il faut dire, et ce qu'on va vous demander. Les chiffres sont ceux que
-le site affichait le 20 septembre 2026 au matin : ils bougent quand le modèle
-bouge, et c'est la page qui fait foi, pas ce texte.
+ce qu'il faut dire, et ce qu'on va vous demander.
+
+**Ses chiffres sont ceux que le site affiche**, et `tests/test_parcours.py`
+l'exige : il rejoue les adresses données plus bas, rend chaque page, et
+compare tout montant et tout pourcentage écrits ici à ce que le lecteur verra.
+Le document a d'abord porté les chiffres d'une matinée, figés dans un fichier
+que rien ne relisait ; le modèle a bougé quatre fois dans la journée, et le
+parcours annonçait une baisse de salaire là où l'écran montrait une hausse de
+trois cents euros. Un chiffre qui dérive fait donc échouer la suite, et
+nomme sa ligne.
 
 ## Avant de partir
 
@@ -32,6 +39,12 @@ matin et, sous chaque diapositive, les notes du présentateur : ce qu'il faut
 dire, et la réponse aux questions attendues. Il ne dépend d'aucun réseau.
 Ouvrir en mode présentateur pour lire les notes.
 
+**Ses chiffres, eux, sont ceux de cette matinée-là**, et aucun test ne les
+relit : un fichier binaire ne se compare pas à une page. Il porte sa date
+dans son nom pour cette raison. Avant de le projeter, ouvrir le site à côté
+et vérifier les quatre montants de la page Simuler ; s'ils ont bougé, c'est
+ce document-ci qui fait foi, puisque son test le tient.
+
 ## L'idée en une phrase
 
 Un compte à votre nom, en euros. Chaque cotisation y est inscrite, le compte
@@ -44,11 +57,11 @@ Pologne et de la Lettonie.
 
 ## Le parcours, page par page
 
-La barre du haut porte neuf onglets, groupés en quatre : **le programme**
-(Programme), **la preuve** (Simuler, Trajectoire, Cas types, Coût,
+La barre du haut porte dix onglets, groupés en quatre : **le programme**
+(Programme), **la preuve** (Simuler, Trajectoire, Cas types, Coût, Risque,
 Avantages), **la confiance** (Méthode, Données), **faire connaître**
 (Partager). Le parcours ci-dessous en montre six, dans l'ordre, et laisse
-les trois autres pour les questions.
+les quatre autres pour les questions.
 
 ### 1. Programme — trois minutes
 
@@ -88,14 +101,18 @@ tout en euros d'aujourd'hui, par mois. Ce que l'exemple donnait le
 | Système | Pension nette par mois | Écart au système actuel |
 |---|---|---|
 | 1. Système de répartition actuel | 2 807 € | référence |
-| 2. Compte notionnel, part salariale seule | 775 € | -72 % |
-| 3. Compte notionnel, part salariale + patronale | 1 926 € | -31 % |
-| 4. La proposition du Parti libéral français | 1 975 € | -30 % |
+| 2. Ce que vous avez cotisé, part salariale seule | 775 € | -72,4 % |
+| 3. Ce que vous avez cotisé, part salariale + patronale | 1 926 € | -31,4 % |
+| 4. La proposition du Parti libéral français | 1 967 € | -29,9 % |
 
 Comment les lire, et c'est la chose la plus importante de la présentation :
 
 - **Le système 1 est la référence** : le droit en vigueur, minima et
-  majorations compris, recalculé règle par règle sur cette carrière.
+  majorations compris, recalculé règle par règle sur cette carrière. Sa ligne
+  porte un troisième chiffre, plus récent que le reste de ce parcours, et il
+  vaut d'être lu à voix haute : **financé, 2 556 €**, soit 91 % de ce qu'il
+  promet. Le reste attend des cotisations que personne n'a versées. La barre
+  sous la ligne le montre, et la page Risque le chiffre.
 - **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
   contrefactuels : la même carrière recalculée depuis 1941 comme si le compte
   avait toujours existé, avec la seule part salariale (2), puis les deux parts
@@ -118,9 +135,13 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 
 Puis, sous les quatre lignes, le bloc **« Et pendant que vous cotisez »** :
 une réforme change aussi la fiche de paie. Sur l'exemple, le salaire net
-baisse de 117 € par mois si on verse les 5 % volontaires, et monte de 134 €
-si on ne les verse pas. C'est un argument que personne n'attend d'un
-simulateur de retraite : le montrer.
+mensuel passe de 3 840 € à 4 137 €, soit **+297 € par mois** à coût du
+travail inchangé pour l'employeur, et +48 916 € sur les treize années qui
+restent avant le départ. C'est le net plein : la proposition prélève 23 %
+pour la retraite et rien d'autre, quand le droit en vigueur en prélève 28.
+Celui qui verse en plus les 5 % volontaires retrouve l'effort d'aujourd'hui,
+et c'est l'hypothèse que la ligne 4 retient. C'est un argument que personne
+n'attend d'un simulateur de retraite : le montrer.
 
 Tout ce qui suit sur la page est replié sous « Pour aller plus loin » : le
 détail du calcul, d'où vient l'écart, qui verse la cotisation, le pilier
@@ -144,8 +165,8 @@ net :
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 1 243 € | référence |
-| 3. Notionnel, deux parts | 970 € | -22 % |
-| 4. La proposition | 995 € | -20 % |
+| 3. Ce qui a été cotisé, deux parts | 970 € | -22,0 % |
+| 4. La proposition | 992 € | -20,3 % |
 
 À montrer avec le plancher en tête : la garantie vieillesse, 1 050 € pour
 une personne seule dès 65 ans, passe au-dessus de cette pension. Elle n'est
@@ -159,8 +180,8 @@ garantie payée par l'impôt », sous les résultats, en donne la règle.
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 2 755 € | référence |
-| 3. Notionnel, deux parts | 3 344 € | +21 % |
-| 4. La proposition | 3 389 € | +23 % |
+| 3. Ce qui a été cotisé, deux parts | 3 344 € | +21,4 % |
+| 4. La proposition | 3 382 € | +22,8 % |
 
 C'est le cas qui surprend, et il faut savoir le dire : l'État employeur
 cotise pour ses fonctionnaires bien au-delà de ce qu'un employeur privé verse
@@ -175,8 +196,8 @@ septembre 2022, départ en janvier 2064 à 64 ans :
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 2 462 € | référence |
-| 3. Notionnel, deux parts | 1 593 € | -35 % |
-| 4. La proposition | 1 800 € | -27 % |
+| 3. Ce qui a été cotisé, deux parts | 1 593 € | -35,3 % |
+| 4. La proposition | 1 838 € | -25,3 % |
 
 C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large
@@ -200,11 +221,11 @@ moins. Vert : plus.
 Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (chef d'exploitation
-  agricole, +7 % pour la génération 2000) et la moins bien traitée (militaire
-  non officier, -44 %), et les 51 points qui les séparent à carrière et à
+  agricole, +10 % pour la génération 2000) et la moins bien traitée (militaire
+  non officier, -45 %), et les 54 points qui les séparent à carrière et à
   durée identiques.
 - La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -57 %
-  pour la génération 1940 à +36 % pour la génération 1970 : la même règle
+  pour la génération 1940 à +35 % pour la génération 1970 : la même règle
   donne des résultats opposés selon ce que l'État a réellement cotisé à
   chaque époque.
 - Le sélecteur « Système affiché » : la grille se réécrit pour le système 2
@@ -258,15 +279,47 @@ coefficient d'équilibre, la dette, ce que coûte la garantie vieillesse,
 les réserves à lire avant de citer ces chiffres. Ouvrir « Ce que coûte la
 garantie vieillesse » seulement si on demande combien coûte le plancher.
 
+### 4 bis. Risque — deux minutes, si on a le temps
+
+Onglet **Risque**. La page est arrivée après ce parcours, et elle change
+l'ordre des arguments : elle ne compare pas deux systèmes, elle dit ce que le
+système actuel prend et ce qu'il ne rendra pas. Trois chiffres en tête, dans
+cet ordre :
+
+| | |
+|---|---|
+| Prélevé chaque mois sur un salaire moyen | 940 €, cotisation salariale et patronale réunies |
+| Promis au-delà de ce que ces cotisations financent | 34 % de la pension |
+| Non financé en 2070, sans rien changer | 16 % |
+
+Le 940 € est le chiffre qui porte : c'est le premier poste de la fiche de
+paie, avant l'impôt sur le revenu et avant la maladie, et plus de quatre cent
+mille euros sur une carrière au salaire moyen. Le tableau qui suit le décline
+du SMIC au double du salaire moyen.
+
+Le reste de la page est replié, et deux dépliants valent d'être nommés si la
+question vient : « La promesse a déjà été rompue », qui aligne 1993, 2003,
+2010, 2014 et 2023, et « Il n'y a pas de problème », qui répond une par une
+aux huit objections du discours rassuriste. La page cite ses sources en bas.
+
+Si le temps manque, garder cette page pour les questions : elle répond seule
+à « pourquoi changer ? ».
+
 ### 5. Avantages — deux minutes
 
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
-43 dispositifs recensés, du minimum vieillesse à la bonification du
-cinquième ; 96,2 Md € en 2024 pour les 18 que le modèle sait chiffrer ;
-12,8 Md € de pensions servies avant l'âge légal. La page dit que ces deux
-montants sont des planchers. Le graphique du haut compte les dispositifs
-année par année depuis 1831, où il n'y en avait qu'un.
+37 dispositifs en vigueur, du minimum vieillesse à la bonification du
+cinquième ; 96,2 Md € en 2024 pour les 18 que le modèle sait chiffrer, dont
+38,3 Md € de réversion, qui est lue et non calculée ; 12,8 Md € de pensions
+servies avant l'âge légal. La page dit que ces deux montants sont des
+planchers. Le graphique du haut compte les dispositifs année par année depuis
+1831, où il n'y en avait qu'un.
+
+Deux comptes se croisent sur cette page, et il vaut mieux le savoir avant
+qu'on le demande : **37 dispositifs sont en vigueur aujourd'hui**, et le
+tableau du bas en recense **43 dispositifs** depuis 1831, ceux d'hier
+compris. Les 18 que le modèle chiffre se comptent sur les 43.
 
 ### 6. Méthode et Données — deux minutes, pour finir
 
@@ -274,13 +327,16 @@ Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
 « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
-croire sur parole. » 41 271 valeurs recontrôlées automatiquement contre le
-fichier de l'institution qui les produit, sur 96 séries ; 89 régimes
-recensés dont 72 calculés ; 28 institutions citées. Le code et les données
-sont publics sur GitHub, sous licence libre. La phrase de fin : vérifiez
-plutôt que de nous croire.
+croire sur parole. » 41 527 valeurs recontrôlées automatiquement contre le
+fichier de l'institution qui les produit, sur 98 séries ; 89 régimes
+recensés dont 72 calculés ; 28 institutions citées. Ce compte mesure la
+fidélité de la recopie, non la justesse des pensions : si on vous le demande,
+la réponse est que les pensions se contrôlent ailleurs, sur les exemples
+publiés par les caisses, et que `docs/limites.md` dit lesquels. Le code et
+les données sont publics sur GitHub, sous licence libre. La phrase de fin :
+vérifiez plutôt que de nous croire.
 
-### Les trois pages qu'on garde pour les questions
+### Les pages qu'on garde pour les questions
 
 - **Trajectoire** : la même carrière suivie année après année, en cumul, ce
   qu'on aura réellement touché à 75, 86 et 95 ans. Utile si quelqu'un objecte
