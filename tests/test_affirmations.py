@@ -742,6 +742,27 @@ def _(m: Modele):
 # .. la fiche de paie ...........................................................
 
 
+@controle("prelevement_mensuel_du_salaire_moyen")
+def _(m: Modele):
+    """Ce que la retraite prélève chaque mois : les deux parts de la fiche."""
+    from retraite_notionnelle.web.pages import (
+        DEBUT_RISQUE, LIQUIDATION_RISQUE, NAISSANCE_RISQUE, NIVEAUX_RISQUE,
+    )
+
+    _, niveau = NIVEAUX_RISQUE[1]
+    comparaison = m.simuler(naissance=NAISSANCE_RISQUE,
+                            statut="salarie_prive_non_cadre", debut=DEBUT_RISQUE,
+                            liquidation=LIQUIDATION_RISQUE, salaire=niveau,
+                            unite_revenu="moyen")
+    fiche = comparaison.remuneration.reference.droit_en_vigueur
+    prelevement = fiche.retraite_totale / 12.0
+    assert prelevement > 0
+    # Les deux parts, et c'est ce que la phrase dit : ce que verse l'employeur
+    # y est. Seule la réduction générale les sépare du total prélevé.
+    assert fiche.retraite_salarie > 0 and fiche.retraite_employeur > 0
+    assert normaliser(g.euros(prelevement)) in TEMOINS_PAR_NOM["risque"]["texte"]
+
+
 @controle("fiche_de_paie_ecart_net")
 def _(m: Modele):
     """L'écart affiché est celui des deux nets, quel qu'en soit le signe.
@@ -845,11 +866,17 @@ def _(m: Modele):
 
 @controle("fonctionnaire_assiette_fixe")
 def _(m: Modele):
+    """Aucun coût du travail affiché : ce que verse l'État est un taux d'équilibre.
+
+    Le traitement lui-même ne se tient plus fixe depuis le 20 septembre 2026 :
+    l'État cotisant 18 % comme tout employeur, la moitié de ce qu'il cesse de
+    verser revient au traitement. Ce que la phrase engage, et qui n'a pas
+    bougé, est le refus d'afficher un coût du travail pour ce statut.
+    """
     remuneration = m.fonctionnaire.remuneration
     assert remuneration.profil == "agent_seul"
     assert not remuneration.affiche_cout_du_travail
-    reference = remuneration.reference
-    assert _proche(reference.proposition.brut, reference.droit_en_vigueur.brut)
+    assert remuneration.libelle_assiette.lower().startswith("traitement")
 
 
 @controle("allegement_absent_hors_prive")
@@ -1062,21 +1089,17 @@ def _(m: Modele):
             assert str(reglage["annee_minimum"]) in texte, nom
 
 
-@controle("part_non_financee_a_l_horizon")
-def _(m: Modele):
-    """Ce que les recettes ne couvrent pas, à l'horizon : la page l'écrit en clair."""
-    ligne = m.horizon
-    part = -ligne.solde("actuel") / ligne.depense("actuel")
-    assert 0.10 < part < 0.25
-    # `normaliser` replie les blancs : l'espace fine insécable du pourcentage
-    # rendu devient une espace ordinaire, comme dans le texte de la page.
-    attendu = normaliser(f"il manquerait {g.pourcentage(part, decimales=0)}")
-    assert attendu in TEMOINS_PAR_NOM["risque"]["texte"]
-
-
 @controle("deficit_se_creuse")
 def _(m: Modele):
+    """Le solde du système actuel se creuse, et les pages écrivent ses nombres."""
     assert m.horizon.solde("actuel") < m.observe.solde("actuel") < 0
+    risque = TEMOINS_PAR_NOM["risque"]["texte"]
+    for annee in (2030, 2045, m.solde.derniere_annee):
+        ligne = m.solde.annee(annee)
+        # La page écrit ces soldes en POINTS de PIB, sans le signe pour cent :
+        # « −0,2 point de PIB en 2030, −0,9 en 2045 et −2,4 en 2070 ».
+        points = normaliser(g.nombre(abs(ligne.solde("actuel")) * 100, 1))
+        assert points in risque, (annee, points)
 
 
 @controle("deficit_observe_de_l_ordre_du_pas")
@@ -1273,6 +1296,56 @@ def _(m: Modele):
 
 
 # .. la dette ...................................................................
+
+
+@controle("impots_abandonnes_partages_en_deux")
+def _(m: Modele):
+    """La recette abandonnée va moitié aux salaires, moitié à la dette."""
+    from retraite_notionnelle.restitution import _restitution
+
+    assert m.base.part_rendue_aux_salaires == 0.5
+    restitution = _restitution(m.base.racine_donnees, m.base.part_rendue_aux_salaires)
+    ligne = restitution.annuelle(restitution.derniere_annee)
+    assert ligne.poste_abandonne > 0
+    assert _proche(ligne.rendu, ligne.poste_abandonne * m.base.part_rendue_aux_salaires)
+    assert _proche(ligne.rendu + ligne.eteint_de_dette, ligne.poste_abandonne)
+
+
+@controle("deux_impots_sur_la_remuneration_supprimes")
+def _(m: Modele):
+    """Les deux impôts assis sur une rémunération sont supprimés, pas rendus par un détour."""
+    from retraite_notionnelle.restitution import POSTES_REMUNERATION, _restitution
+
+    codes = {code for code, _ in POSTES_REMUNERATION}
+    assert codes == {"taxe_sur_les_salaires", "forfait_social"}
+    restitution = _restitution(m.base.racine_donnees, m.base.part_rendue_aux_salaires)
+    ligne = restitution.annuelle(restitution.derniere_annee)
+    assert 0 < ligne.supprime_sur_la_remuneration < ligne.rendu
+
+
+@controle("points_de_csg_rendus")
+def _(m: Modele):
+    """Le solde de la moitié rendue passe par la CSG d'activité, en points d'assiette."""
+    from retraite_notionnelle.restitution import _restitution, points_csg_rendus
+
+    restitution = _restitution(m.base.racine_donnees, m.base.part_rendue_aux_salaires)
+    annee = restitution.derniere_annee
+    points = points_csg_rendus(m.base.racine_donnees, annee,
+                               m.base.part_rendue_aux_salaires)
+    assert 0.005 < points < 0.02
+    assert _proche(points, restitution.annuelle(annee).points_csg)
+    attendu = normaliser(f"baisse de {g.nombre(points * 100, 2)} point")
+    assert attendu in TEMOINS_PAR_NOM["programme"]["texte"], attendu
+
+
+@controle("restitution_hors_du_solde")
+def _(m: Modele):
+    """Le partage ne touche ni les ressources ni les dépenses du bilan."""
+    ligne = m.horizon
+    for scenario in ("actuel", "notionnel_liberal"):
+        cles = set(ligne.postes_ressources(scenario)) | set(ligne.postes_depenses(scenario))
+        assert not any("restitution" in cle or "csg" in cle for cle in cles)
+    assert ligne.postes_ressources("notionnel_liberal")["impots_et_taxes"] == 0.0
 
 
 @controle("dette_cumule_les_soldes")
