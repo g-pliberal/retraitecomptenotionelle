@@ -712,6 +712,79 @@ Ils déplacent tout de même quelque chose. L'inventaire disait de ces lignes
 où la bonification est la règle et non l'exception. Une ligne sans chiffre
 invite à la croire petite.
 
+### L'édition 2026, lue par-dessus l'épaule
+
+Le jaune récent est arrivé par l'utilisateur, qui l'a téléchargé depuis son
+propre navigateur et en a montré les pages. Le dépôt ne sait pas le récupérer :
+`budget.gouv.fr` refuse les adresses de sortie du proxy, page comme fichier,
+`curl` comme navigateur — ce n'est pas le fingerprint du client qui est en
+cause mais son adresse IP, et la déguiser serait d'une autre nature que
+naviguer. Ces valeurs sont donc **saisies et non certifiées** : aucun script ne
+peut les revérifier, et chacune porte son numéro de tableau pour qu'un lecteur
+la retrouve.
+
+**Tableau A-7 — bénéficiaires et durée moyenne, pensions en paiement en 2024.**
+C'est un *stock*, là où l'édition 2012 ne donnait qu'un flux d'entrée.
+
+| | FPE civiles | FPE militaires | FPT | FPH |
+|---|---|---|---|---|
+| *Effectif du régime* | *1 654 863* | *406 645* | *800 833* | *630 149* |
+| Dépaysement | 180 010 — 17,3 tr. | 447 — 4,2 | 39 933 — 18,7 | 23 874 — 22,1 |
+| Enfant | 786 167 — 8,3 | 24 603 — 7,7 | 341 086 — 8,1 | 415 564 — 8,6 |
+| Campagne ou cinquième | 88 932 — 4,9 | **404 478 — 27,4** | 6 559 — 3,2 | 2 339 — 3,1 |
+| Services aériens ou sous-marins | 8 415 — 7,0 | 202 113 — 16,9 | 2 708 — 9,0 | 54 — 5,6 |
+| Enseignement technique | 13 893 — 16,1 | 39 — 12,9 | n.d. | n.d. |
+| Hors article L. 12 | 108 453 — 19,1 | 8 126 — 5,5 | n.d. | n.d. |
+
+Le chiffre de 2010 se confirme sur le stock, et en pire : **404 478 des 406 645
+pensions militaires en paiement portent une bonification de campagne ou du
+cinquième, pour 27,4 trimestres** — près de sept annuités, sur la quasi-totalité
+du régime.
+
+**Tableau 50 — le gain sur le montant mensuel de la pension**, flux des
+liquidants de 2023. C'est la seule valorisation en euros que le producteur
+publie, et elle manquait à tout ce chantier.
+
+| | Dépaysement | Enfant | Campagne | Aérien/SM | Ens. tech. | Cinquième | Non L12 | **Ensemble** |
+|---|---|---|---|---|---|---|---|---|
+| FPE civils | 266 € | 195 € | 56 € | 157 € | 330 € | n.p. | 312 € | **246 €** |
+| Militaires | n.p. | 59 € | 101 € | 69 € | n.p. | 146 € | 59 € | **315 €** |
+
+La colonne « Ensemble » n'est pas une somme : c'est le gain TOTAL des personnes
+portant au moins une bonification, dédoublonné par le producteur. C'est elle
+qu'il faut prendre, une même pension pouvant en porter plusieurs.
+
+### L'ordre de grandeur, et pourquoi ce n'est pas un coût certifié
+
+En appliquant au stock la proportion de bénéficiaires et le gain par tête :
+
+| | Effectif | Bénéficiaires | Gain mensuel | Masse annuelle |
+|---|---|---|---|---|
+| FPE civils | 1 654 863 | 56,9 % | 246 € | **2,8 Md€** |
+| FPE militaires | 406 645 | 99,6 % | 315 € | **1,5 Md€** |
+| | | | | **≈ 4,3 Md€** |
+
+La CNRACL n'est pas valorisable : le tableau 50 y porte « n.d. » pour les
+euros, alors que ses effectifs sont connus. Le chiffre ne couvre donc que la
+fonction publique d'État.
+
+**Trois réserves, et la première suffit à interdire la certification.** Le
+produit croise un STOCK de 2024 avec un gain par tête mesuré sur le FLUX de
+2023 : c'est une déduction posée sur deux tableaux, non une valeur lue. Le
+dépôt sait faire la différence, et la page n'affiche donc pas ces 4,3 milliards
+dans sa colonne de coût, où ils voisineraient des postes publiés qui, eux,
+comptent des euros versés.
+
+Le sens du biais se dit tout de même. Le jaune note lui-même « un recul des
+bonifications » sur la période récente : les pensions anciennes en portent donc
+plutôt plus que celles qui entrent, et 4,3 milliards est un **plancher** pour
+le stock. Enfin, un gain de pension n'est pas un surcoût net pour le système —
+la même réserve que pour les départs anticipés, écrite au §4 bis.
+
+Ce que la page dit désormais, à défaut d'un montant : sur chacune de ces cinq
+lignes, la colonne « pourquoi il manque » porte le dénombrement. « Un militaire
+retraité sur deux, 16,9 trimestres » vaut mieux qu'un tiret.
+
 ### Il a fallu écrire le lecteur
 
 Le tableur est un classeur Excel 97, et le dépôt en a un lecteur, sans

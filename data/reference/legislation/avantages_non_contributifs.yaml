@@ -866,19 +866,19 @@ avantages:
       que le simulateur ne saisit pas. `Neutralisations` le range explicitement
       dans « ce que le scénario 1 ne sert pas ».
     sans_chiffre: >-
-      suppose la durée de services militaires effectifs, que le simulateur ne
-      saisit pas, et aucun poste des comptes ne l'isole
+      la durée de services militaires effectifs n'est pas saisie ; le jaune la
+      donne à 98,4 % des liquidants, 146 € par mois
     cout:
       mesurable_par: aucune
       note: >-
         Chiffrable dès qu'une carrière porte une durée de services militaires
         effectifs — l'information est déjà dans
         `legislation/duree_services_militaires.csv`, mais pour l'ouverture du
-        droit, pas pour la bonification. Dénombrée en attendant, et c'est le
-        chiffre le plus lourd du tableau : 12 817 des 12 912 pensions militaires
-        entrées en paiement en 2010, soit 99,3 %, pour 16,4 trimestres en
-        moyenne — plus de quatre annuités que personne n'a cotisées (même
-        source).
+        droit, pas pour la bonification. Dénombrée en attendant : le tableau A-7
+        du jaune budgétaire la confond avec les bénéfices de campagne, 404 478
+        pensions militaires sur 406 645 en paiement en 2024 pour 27,4
+        trimestres. Le tableau 50 l'isole sur le flux 2023 : 98,4 % des
+        militaires liquidants, 16,4 trimestres, 146 € de gain mensuel.
 
   - code: bonification_cinquieme_services_actifs
     libelle: Bonification du cinquième des policiers, pompiers et surveillants
@@ -904,19 +904,18 @@ avantages:
       été lue — l'écrire ici sans l'avoir lue serait une déduction, pas une
       source.
     sans_chiffre: >-
-      suppose le corps d'appartenance, que le simulateur ne saisit pas ; et
-      aucune publication n'en donne la masse, le rapport du Service des
-      retraites de l'État n'étant pas un document statistique
+      le corps d'appartenance n'est pas saisi ; le jaune en compte 108 453, à
+      19,1 trimestres, la plus longue
     cout:
       mesurable_par: aucune
       note: >-
-        Les textes de la police sont lus (loi n° 57-444) ; ceux des autres corps
-        restent à trouver. Dénombrée sous l'intitulé « bonifications ne relevant
-        pas de l'article L. 12 du CPCMR », que la note du tableau dit
-        principalement attribuées aux policiers et aux agents de
-        l'administration pénitentiaire : 3 477 pensions civiles de l'État
-        entrées en paiement en 2010 pour 19,1 trimestres en moyenne, la plus
-        longue de toutes (même source).
+        Les textes des quatre corps sont lus (lois de 1957 pour la police, 1989
+        pour les contrôleurs aériens, 1996 pour les surveillants pénitentiaires,
+        2003 pour les douanes). Dénombrée sous l'intitulé « bonifications ne
+        relevant pas de l'article L. 12 du CPCMR » : 108 453 pensions civiles de
+        l'État en paiement en 2024 pour 19,1 trimestres, la plus longue de
+        toutes (jaune budgétaire, tableau A-7), et 312 € de gain mensuel par
+        tête sur le flux 2023 (tableau 50).
 
   - code: bonification_depaysement
     libelle: Bonification de dépaysement
@@ -934,16 +933,17 @@ avantages:
     ligne_cascade: null
     pourquoi_pas_chiffre: Suppose de connaître le lieu d'affectation, que le simulateur ne saisit pas.
     sans_chiffre: >-
-      suppose le lieu d'affectation, que le simulateur ne saisit pas
+      le lieu d'affectation n'est pas saisi ; le jaune en compte 180 010, à
+      266 € par mois
     cout:
       mesurable_par: aucune
       note: >-
-        Population étroite. Dénombrée pour la première fois : sur les 70 095
-        pensions civiles de l'État entrées en paiement en 2010, 7 442 portaient
-        une bonification pour services hors d'Europe, de 17,7 trimestres en
-        moyenne (jaune budgétaire du PLF 2012, tableau des bonifications,
-        chiffres 2010 provisoires). Des bénéficiaires et des trimestres, non des
-        euros, et sur un flux d'entrée.
+        Dénombrée sur le stock : 180 010 des 1 654 863 pensions civiles de
+        l'État en paiement en 2024 portent une bonification pour services hors
+        d'Europe, de 17,3 trimestres en moyenne, et 39 933 pensions de la FPT
+        pour 18,7 trimestres (jaune budgétaire, tableau A-7). Le gain mensuel
+        par tête est de 266 € chez les civils de l'État (tableau 50, flux 2023).
+        Quasi nulle chez les militaires : 447 bénéficiaires.
 
   - code: benefices_campagne
     libelle: Bénéfices de campagne
@@ -961,15 +961,18 @@ avantages:
     ligne_cascade: null
     pourquoi_pas_chiffre: Suppose le détail des services, que le simulateur ne saisit pas.
     sans_chiffre: >-
-      suppose le détail des services, que le simulateur ne saisit pas
+      le détail des services n'est pas saisi ; le jaune la confond avec le
+      cinquième : 404 478 militaires sur 406 645, à 27,4 trimestres
     cout:
       mesurable_par: aucune
       note: >-
-        Série décroissante ; les générations concernées sortent des effectifs.
-        Dénombrée : 1 290 pensions civiles de l'État entrées en paiement en 2010
-        pour 3,1 trimestres en moyenne, et 10 173 pensions militaires sur 12 912
-        pour 12,8 trimestres — quatre militaires sur cinq (même source). Des
-        bénéficiaires et des trimestres, non des euros, et sur un flux d'entrée.
+        Dénombrée sur le stock, et confondue par le producteur avec la
+        bonification du cinquième : 404 478 des 406 645 pensions militaires en
+        paiement en 2024 portent l'une ou l'autre, pour 27,4 trimestres en
+        moyenne — près de sept annuités sur la quasi-totalité du régime. Chez
+        les civils de l'État, 88 932 pour 4,9 trimestres (jaune budgétaire,
+        tableau A-7). Gain mensuel par tête, sur le flux 2023 : 101 € pour la
+        campagne des militaires, 56 € pour celle des civils (tableau 50).
 
   - code: bonification_service_aerien_sous_marin
     libelle: Bonification pour service aérien ou sous-marin commandé
@@ -987,16 +990,16 @@ avantages:
     ligne_cascade: null
     pourquoi_pas_chiffre: Suppose le détail des services, que le simulateur ne saisit pas.
     sans_chiffre: >-
-      suppose les heures de vol ou la durée des services sous-marins, que le
-      simulateur ne saisit pas
+      les heures de vol et les services sous-marins ne sont pas saisis ; le
+      jaune en compte un militaire sur deux, à 16,9 trimestres
     cout:
       mesurable_par: aucune
       note: >-
-        Population étroite chez les civils, courante chez les militaires : 250
-        pensions civiles de l'État entrées en paiement en 2010 pour 5,2
-        trimestres, mais 7 188 pensions militaires sur 12 912 pour 12,8
-        trimestres (même source). Des bénéficiaires et des trimestres, non des
-        euros, et sur un flux d'entrée.
+        Dénombrée sur le stock : 202 113 des 406 645 pensions militaires en
+        paiement en 2024, soit une sur deux, pour 16,9 trimestres en moyenne ; 8
+        415 pensions civiles de l'État pour 7,0 trimestres (jaune budgétaire,
+        tableau A-7). Gain mensuel par tête sur le flux 2023 : 69 € chez les
+        militaires, 157 € chez les civils (tableau 50).
 
   - code: retraite_anticipee_handicap
     libelle: Retraite anticipée des travailleurs handicapés

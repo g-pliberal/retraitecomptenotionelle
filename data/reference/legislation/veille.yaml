@@ -1038,3 +1038,43 @@ journal:
       \ vides par le producteur. Une édition récente du jaune reste à obtenir,\
       \ et budget.gouv.fr ne se laisse pas lire. Les reprises de veille du\
       \ 17 septembre 2026 restent ouvertes."
+  - date: '2026-09-19'
+    session: "action 37 : le jaune budgétaire 2026, lu par l'utilisateur"
+    consulte: "Le « Rapport sur les pensions de retraite de la fonction\
+      \ publique », annexe au projet de loi de finances pour 2026, apporté par\
+      \ l'utilisateur qui l'a téléchargé depuis son propre navigateur — le\
+      \ dépôt ne sait pas le récupérer, budget.gouv.fr refusant les adresses de\
+      \ sortie du proxy. Tableaux A-7 (bénéficiaires et durées des\
+      \ bonifications, stock en paiement 2024), 50 (proportion, gain en\
+      \ trimestres et GAIN MENSUEL EN EUROS, flux 2023) et B-1 (flux). Puis,\
+      \ dans l'index LEGI, les quatre textes que la note du tableau A-7 nomme,\
+      \ en version en vigueur : loi n° 57-444 du 8 avril 1957 art. 1er pour les\
+      \ policiers, loi n° 89-1007 du 31 décembre 1989 art. 5 pour les\
+      \ contrôleurs aériens, loi n° 96-452 du 28 mai 1996 art. 24 II pour les\
+      \ surveillants pénitentiaires, loi n° 2003-1312 du 30 décembre 2003\
+      \ art. 93 I pour les douaniers."
+    trouve: "LE PRODUCTEUR VALORISE LES BONIFICATIONS EN EUROS, et c'est ce qui\
+      \ manquait : le gain sur le montant mensuel de la pension vaut 246 € pour\
+      \ l'ensemble des civils de l'État et 315 € pour les militaires. Appliqué\
+      \ au stock, cela donne environ 4,3 Md€ par an pour la seule fonction\
+      \ publique d'État, la CNRACL portant « n.d. » en euros. Le chiffre n'est\
+      \ PAS certifié et n'entre pas dans le total de la page : il croise un\
+      \ stock de 2024 avec un gain mesuré sur le flux 2023, ce qui est une\
+      \ déduction et non une lecture. Le jaune notant lui-même un recul des\
+      \ bonifications, c'est un plancher.\
+      \ \
+      \ Sur le stock, le dénombrement est plus lourd encore qu'en 2010 :\
+      \ 404 478 des 406 645 pensions militaires en paiement portent une\
+      \ bonification de campagne ou du cinquième, pour 27,4 trimestres en\
+      \ moyenne. Un militaire retraité sur deux porte en outre une bonification\
+      \ pour services aériens ou sous-marins. Les quatre textes des corps\
+      \ actifs, cherchés depuis le début de l'inventaire, sont enfin posés :\
+      \ il ne reste qu'une ligne « à certifier », celle de l'amiante."
+    reste: "Le fichier n'est pas récupérable depuis une session, et ses valeurs\
+      \ sont donc SAISIES : aucun script ne les revérifiera, et chacune porte\
+      \ son numéro de tableau pour qu'un lecteur la retrouve. Le millésime est\
+      \ à surveiller : le fichier s'appelle Jaune2026 et ses données vont\
+      \ jusqu'aux pensions en paiement en 2024, ce qui en fait bien l'annexe au\
+      \ PLF 2026, mais l'en-tête courant de ses pages porte encore « PLF 2025 ».\
+      \ La CNRACL reste sans valorisation en euros chez le producteur. Les\
+      \ reprises de veille du 17 septembre 2026 restent ouvertes."

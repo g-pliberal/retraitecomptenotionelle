@@ -817,33 +817,40 @@ institutions:
 
       - id: sre_jaune_pensions
         titre: >-
-          Jaune budgétaire « Pensions de retraite de la fonction publique »,
-          tableur des données, annexe au projet de loi de finances
-        url: https://www.data.gouv.fr/datasets/plf2012-jaune-donnees-pensions-de-retraite-de-la-fonction-publique/
+          Rapport sur les pensions de retraite de la fonction publique, annexe
+          au projet de loi de finances (« jaune budgétaire »)
+        url: https://www.budget.gouv.fr/documentation/file-download/31546
         acces: document
-        statut_integration: lu
+        statut_integration: saisi
         cible: data/reference/legislation/avantages_non_contributifs.yaml
         note: >-
           LE SEUL DOCUMENT PUBLIC QUI DÉNOMBRE LES BONIFICATIONS DE SERVICE, et
           il a fallu le chercher : le rapport annuel du Service des retraites de
           l'État, qu'on croyait les porter, est un rapport d'activité et n'en
-          dit rien. Le tableur du jaune porte une feuille « bonifications » qui
-          donne, pour les pensions entrées en paiement dans l'année, le nombre
-          de bénéficiaires et la durée moyenne en trimestres de chacune des
-          sept bonifications, séparément pour les pensions civiles et
-          militaires de l'État.
+          dit rien.
 
-          DEUX RÉSERVES, et elles interdisent d'en faire un coût. C'est un FLUX
-          d'entrée, non un stock de pensions servies ; et ce sont des
-          bénéficiaires et des trimestres, jamais des euros. Les colonnes CNRACL
-          de la fonction publique territoriale et hospitalière sont d'ailleurs
-          déclarées dans l'en-tête et laissées vides.
+          Trois tableaux servent ici. Le A-7 donne, pour les pensions EN
+          PAIEMENT en 2024 — un stock, donc —, le nombre de bénéficiaires et la
+          durée moyenne en trimestres de six bonifications, séparément pour les
+          pensions civiles et militaires de l'État et pour la CNRACL. Le 50
+          donne, sur le FLUX des liquidants de 2023, la proportion de
+          bénéficiaires, le gain en trimestres et surtout LE GAIN SUR LE MONTANT
+          MENSUEL DE LA PENSION, en euros — la seule valorisation publiée de ces
+          dispositifs. Le B-1 donne les caractéristiques du flux.
 
-          Seule l'édition du PLF 2012 est accessible, sur data.gouv.fr, avec des
-          chiffres 2010 provisoires. Les éditions récentes vivent sur
-          budget.gouv.fr, derrière un pare-feu anti-robot que le dépôt ne
-          contourne pas. Les valeurs sont donc citées avec leur date, dans les
-          notes de l'inventaire, et ne sont pas certifiées.
+          LE FICHIER N'EST PAS RÉCUPÉRABLE DEPUIS UNE SESSION : budget.gouv.fr
+          refuse les adresses de sortie du proxy, page comme fichier, curl comme
+          navigateur (voir `docs/outillage_interface.md`). Les valeurs ont donc
+          été SAISIES à la lecture du document, apporté par l'utilisateur, et
+          non certifiées : aucun script ne peut les revérifier. Elles portent
+          leur numéro de tableau pour qu'un lecteur retrouve chacune.
+
+          Millésime : le fichier s'appelle `Jaune2026_Pensions…` et ses données
+          vont jusqu'aux pensions en paiement en 2024, ce qui en fait l'annexe
+          au PLF 2026 ; l'en-tête courant de ses pages porte pourtant encore
+          « PLF 2025 ». L'édition du PLF 2012, seule accessible en ligne hors de
+          budget.gouv.fr, est sur data.gouv.fr sous « PLF2012-Jaune-Données » ;
+          c'est elle qui avait servi d'abord, avec des chiffres de 2010.
 
       - id: sre_historique_taux
         titre: Historique des taux de cotisations appelés par le CAS « Pensions »
