@@ -295,11 +295,22 @@ def telecharger_par_navigateur(page: str, document: str) -> bytes:
     User-Agent (qui dit « HeadlessChrome »), ni les signaux d'automatisation.
     Le site veut un navigateur, en voici un. On ouvre d'abord la page qui
     présente le document, pour que le site y pose ce qu'il pose, puis on
-    demande le fichier depuis cet onglet — par une requête du contexte,
-    qui porte ses cookies, et sinon par une navigation qui devient un
-    téléchargement.
+    demande le fichier depuis cet onglet : par une requête du contexte, qui
+    porte ses cookies ; sinon en cliquant le lien de la page qui mène au
+    document, comme un lecteur ; sinon en naviguant vers son adresse. Un
+    refus est rendu avec ce que le site a répondu — code et titre de la
+    page —, pour que le journal du workflow dise qui a refusé quoi.
     """
     from playwright.sync_api import sync_playwright
+
+    def _refus(quoi: str, reponse) -> RuntimeError:
+        titre = ""
+        try:
+            titre = " — " + " ".join(reponse.text().split())[:160] if reponse is not None else ""
+        except Exception:  # noqa: BLE001 — le diagnostic ne doit pas cacher le refus
+            pass
+        code = reponse.status if reponse is not None else "?"
+        return RuntimeError(f"{quoi} : {code}{titre}")
 
     with sync_playwright() as pw:
         navigateur = pw.chromium.launch()
@@ -308,20 +319,32 @@ def telecharger_par_navigateur(page: str, document: str) -> bytes:
         try:
             if page != document:
                 try:
-                    onglet.goto(page, wait_until="load", timeout=90_000)
+                    reponse = onglet.goto(page, wait_until="load", timeout=90_000)
+                    print(f"page {page} : {reponse.status if reponse else '?'}, "
+                          f"« {' '.join(onglet.title().split())[:80]} »", file=sys.stderr)
                 except Exception as erreur:  # noqa: BLE001 — la page n'est qu'un préalable
                     print(f"page {page} : {erreur.__class__.__name__}, on demande le "
                           "document directement", file=sys.stderr)
-            reponse = onglet.request.get(document, timeout=180_000)
+            reponse = onglet.request.get(document, timeout=120_000)
             if reponse.ok and not reponse.headers.get("content-type", "").startswith("text/html"):
                 return reponse.body()
-            print(f"{document} : {reponse.status} à la requête du contexte, on navigue",
-                  file=sys.stderr)
-            with onglet.expect_download(timeout=180_000) as attente:
+            print(f"{document} : {reponse.status} à la requête du contexte, on clique", file=sys.stderr)
+            nom = nom_du_document(document) or ""
+            lien = onglet.locator(f'a[href$="{nom}"]') if nom and page != document else None
+            if lien is not None and lien.count():
                 try:
-                    onglet.goto(document, timeout=180_000)
+                    with onglet.expect_download(timeout=60_000) as attente:
+                        lien.first.click()
+                    return Path(attente.value.path()).read_bytes()
+                except Exception as erreur:  # noqa: BLE001 — on tente encore la navigation
+                    print(f"clic sur le lien : {erreur.__class__.__name__}, on navigue", file=sys.stderr)
+            with onglet.expect_download(timeout=60_000) as attente:
+                try:
+                    reponse = onglet.goto(document, timeout=60_000)
                 except Exception:  # noqa: BLE001 — Chromium annule la navigation devenue téléchargement
-                    pass
+                    reponse = None
+                else:
+                    raise _refus(f"navigation vers {document}", reponse)
             return Path(attente.value.path()).read_bytes()
         finally:
             navigateur.close()
