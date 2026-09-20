@@ -1464,6 +1464,12 @@ que ce soit facile de désactiver ».**
   +2,20 % et +1,74 %. Le défaut reste le salaire : le rang parmi les
   retraités suppose que le niveau de vie suit la pension, ce qui néglige le
   conjoint et le patrimoine, et rien ne dit qu'il vaut mieux.
+- *Décision du 21 septembre 2026 : le défaut reste le salaire.* Le patrimoine
+  a été demandé et ne se chiffre pas : aucun producteur ne publie de table de
+  mortalité par patrimoine en France — le niveau de vie de l'INSEE en porte
+  les revenus, pas le stock —, et le modèle ne connaît le patrimoine de
+  personne. Si une telle table paraît, elle entre comme une population de
+  plus, un facteur par sexe et un rattachement à écrire.
 
 **Ce qui reste.** Le rattachement est le maillon faible : un salaire n'est pas
 un niveau de vie, et une carrière n'est pas un ménage. Une lecture de la
