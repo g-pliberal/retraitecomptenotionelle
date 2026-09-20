@@ -327,6 +327,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # fichier, comme les deux colonnes du compte.
         "taux_prelevement_retraite": "macro/taux_prelevement_retraite.csv",
         "taux_prelevement_retraite_projete": "macro/taux_prelevement_retraite.csv",
+        # Les mêmes ressources sous l'autre convention du COR : un fichier à
+        # elles, et tout entier projeté.
+        "ressources_eec_retraite": "macro/ressources_eec_retraite.csv",
         # La ventilation du poste « transferts » de ce compte, lue chez celui
         # qui paie : rapports à la CCSS, fiches CNAF, Agirc-Arrco, Ircantec.
         "transferts_retraite": "macro/transferts_retraite.csv",

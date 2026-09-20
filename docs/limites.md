@@ -6760,6 +6760,56 @@ voisines ne se disputent pas le même rôle.
 
 ---
 
+### La convention comptable : le déficit affiché est d'APRÈS bouclage
+
+Le compte du COR est tenu sous une convention, et le dépôt la stockait depuis
+toujours dans l'en-tête de `comptes_retraite.csv` sans jamais la dire au
+lecteur. Elle décide pourtant de ce que « déficit » veut dire.
+
+**Ce que la convention EPR fait.** Sous « équilibre permanent des régimes », les
+contributions et subventions d'équilibre « évoluent de manière à équilibrer
+chaque année le solde » des régimes de fonctionnaires et des régimes spéciaux
+— c'est la note du COR, mot pour mot. Ces régimes ne montrent donc **jamais**
+de déficit : l'État y verse exactement ce qu'il faut, par construction. Le
+−2,4 points de PIB que le site affiche pour 2070 est le déficit de ce qui
+RESTE, une fois la fonction publique et les régimes spéciaux bouclés. Ce n'est
+pas un artefact, c'est une convention, et le COR la retient parce que c'est sous
+elle qu'il suit son objectif de pérennité financière. Mais un lecteur qui ne
+la connaît pas lit le chiffre pour ce qu'il n'est pas.
+
+**Ce que l'autre convention donne, et pourquoi elle surprend.** Le COR publie
+aussi l'« effort de l'État constant » (EEC), où sa contribution est figée en
+part de PIB, en données complémentaires de la figure des ressources
+(`ressources_eec_retraite.csv` depuis le 20 septembre 2026). On s'attend à ce
+qu'une hypothèse nommée « effort constant » soit plus sévère. Elle ne l'est pas,
+et pas non plus l'inverse : **l'écart change de signe.** L'assiette de cotisation
+des trois fonctions publiques recule de 10,4 % du PIB à 8,9 % sur l'horizon —
+moins de fonctionnaires, et des primes qui montent plus vite que le traitement
+indiciaire — si bien que le besoin de ces régimes recule aussi. L'effort figé
+est donc SOUS le besoin tant qu'ils pèsent, et au-dessus ensuite :
+
+| | EPR (ce que le site calcule) | EEC | écart |
+|---|---|---|---|
+| 2028 | −0,24 % du PIB | −0,91 % | −0,67 pt |
+| 2047 | croisement | | 0,00 pt |
+| 2069 | −2,35 % | −1,86 % | +0,49 pt |
+
+Sur 2026-2069, les deux moyennes ne diffèrent pas de deux centièmes de point.
+**Aucune des deux ne flatte** : l'une creuse le déficit de demain, l'autre celui
+d'après-demain, et l'État n'a promis ni l'une ni l'autre. Le dépliant « D'où
+viennent ces chiffres » de la page Coût le dit maintenant, chiffres compris, et
+un contrôle du catalogue des affirmations tient les trois nombres ainsi que
+l'année de croisement, qui est calculée et non écrite.
+
+**Ce que ça ne règle pas.** Le dépôt CALCULE toujours sous EPR, et les scénarios
+notionnels héritent donc de ressources dont une part est un solde endogène :
+la contribution d'équilibre de l'État vaut 11,7 % des ressources, et les
+scénarios 2 à 5 la reconduisent telle quelle alors qu'elle n'existe que pour
+boucler un régime qu'ils remplacent. Le scénario 6, lui, la supprime et la
+remplace par ses 18 % sur les traitements (§ 5 bis, `ressources_de`). Rendre les
+quatre autres cohérents demanderait de décider ce que l'État verserait sous
+chacun, ce que le programme ne dit pas.
+
 ### L'assiette projetée : une déduction que le COR démentait, et un demi-point de PIB
 
 La recette de la proposition est un taux appliqué à une assiette : 18 % des
@@ -7109,7 +7159,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1818<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1820<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

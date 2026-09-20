@@ -229,6 +229,12 @@ def _comptes_retraite() -> dict:
     series["taux_prelevement"] = charger_serie_annuelle(
         macro / "taux_prelevement_retraite.csv", "taux",
         nom="taux_prelevement_retraite")
+    # Les mêmes ressources sous l'autre convention comptable du COR : ce qui
+    # permet à la page de dire que sa convention est une hypothèse, et ce
+    # qu'elle vaut.
+    series["ressources_eec"] = charger_serie_annuelle(
+        macro / "ressources_eec_retraite.csv", "part_pib",
+        nom="ressources_eec_retraite")
     # Ce que la branche famille et l'assurance chômage versent, en millions
     # d'euros : la ventilation du poste « transferts », lue chez celui qui paie.
     for poste in POSTES_TRANSFERTS:

@@ -1224,6 +1224,38 @@ def _(m: Modele):
             assert str(reglage["annee_minimum"]) in texte, nom
 
 
+@controle("convention_comptable_est_une_hypothese")
+def _(m: Modele):
+    """Le déficit publié est d'APRÈS bouclage, et l'autre convention le dit.
+
+    Sous EPR, ce que l'État verse aux régimes de fonctionnaires et aux régimes
+    spéciaux suit chaque année ce qu'il faut pour les équilibrer : ces régimes
+    ne montrent jamais de déficit, et le solde du système est celui des autres.
+    Sous EEC, son effort est figé en part de PIB. Le COR publie les deux, et
+    c'est la seule mesure française de ce qu'une convention comptable déplace.
+
+    Trois choses tenues ici. Que l'écart CHANGE DE SIGNE : l'effort figé est
+    sous le besoin tant que les régimes de fonctionnaires pèsent, au-dessus
+    ensuite. Que la page écrive les deux soldes de l'année où les deux
+    conventions se rejoignent. Et qu'elle nomme l'année du croisement, qui est
+    ce qui empêche de lire l'écart comme un biais constant.
+    """
+    comptes = m.contexte.comptes()
+    debut, fin = comptes.premiere_annee_eec, comptes.derniere_annee_eec
+    ecarts = {annee: comptes.solde_eec(annee) - comptes.solde(annee)
+              for annee in range(debut, fin + 1)}
+    assert min(ecarts.values()) < 0 < max(ecarts.values()), "l'écart ne change pas de signe"
+    croisement = next(annee for annee in sorted(ecarts) if ecarts[annee] >= 0)
+
+    cout = TEMOINS_PAR_NOM["cout"]["texte"]
+    assert str(croisement) in cout, croisement
+    for valeur in (comptes.solde(fin), comptes.solde_eec(fin)):
+        assert normaliser(g.pourcentage(valeur, signe=True, decimales=1)) in cout, valeur
+    # La convention du compte principal est nommée, faute de quoi le lecteur ne
+    # saurait pas laquelle des deux il lit.
+    assert "équilibre permanent des régimes" in cout
+
+
 @controle("deficit_se_creuse")
 def _(m: Modele):
     """Le solde du système actuel se creuse, et les pages écrivent ses nombres."""

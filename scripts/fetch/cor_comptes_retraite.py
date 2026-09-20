@@ -266,6 +266,85 @@ def _par_marqueur(series: list[dict],
     return rangees
 
 
+#: Titre du SECOND bloc de la figure des ressources : la même grandeur sous
+#: l'autre convention comptable du COR. Comparé sans accents ni casse.
+TITRE_EEC = "donnees complementaires : convention eec"
+
+
+def lire_bloc_eec(grille: dict) -> dict[str, dict[str, float]]:
+    """Les ressources sous la convention EEC, variante de productivité par variante.
+
+    POURQUOI CE SECOND LECTEUR EXISTE. ``_annees_en_tete`` s'arrête au premier
+    bloc de la feuille, et c'est voulu : c'est celui que la figure trace. Mais
+    la feuille des ressources en porte un second, sous l'autre convention du
+    COR, et c'est la seule publication française qui chiffre ce que la
+    convention comptable déplace. Le premier bloc ne peut pas le donner.
+
+    CE QUE LES DEUX CONVENTIONS SONT. Sous **EPR**, les contributions et
+    subventions d'équilibre « évoluent de manière à équilibrer chaque année le
+    solde » des régimes de fonctionnaires et des régimes spéciaux : l'État paie
+    exactement ce qu'il faut, et ces régimes ne montrent jamais de déficit.
+    Sous **EEC**, son effort est figé en part de PIB. Les besoins de ces
+    régimes reculant en projection, l'État y paie plus que nécessaire, et les
+    ressources du système sont plus hautes : c'est pourquoi le solde EEC est le
+    plus favorable des deux, ce qui surprend qui lit « effort constant » comme
+    une hypothèse sévère.
+
+    CE QUE LE LECTEUR REND, ET CE QU'IL NE CHOISIT PAS. Les quatre lignes
+    projetées du bloc sont étiquetées par leur hypothèse de productivité, et
+    non par un nom. Le script les rend TOUTES, sous leur étiquette ; choisir
+    celle du scénario de référence est le travail de ``verifier_donnees.py``,
+    qui lit cette hypothèse dans le fichier du dépôt. Un récupérateur qui
+    trancherait ici figerait un scénario dans une couche qui ne le connaît pas.
+    """
+    lignes = sorted({l for l, _ in grille})
+    depart = next(
+        (l for l in lignes
+         if isinstance(grille.get((l, 0)) or grille.get((l, 1)), str)
+         and _sans_accents(grille.get((l, 0)) or grille.get((l, 1))).startswith(TITRE_EEC)),
+        None,
+    )
+    if depart is None:
+        raise LookupError("bloc « convention EEC » introuvable dans la figure")
+
+    colonnes: dict[int, int] = {}
+    for ligne in lignes:
+        if ligne <= depart:
+            continue
+        trouvees = {
+            c: int(v) for (l, c), v in grille.items()
+            if l == ligne and isinstance(v, float)
+            and PREMIERE_ANNEE_PLAUSIBLE <= v <= DERNIERE_ANNEE_PLAUSIBLE
+            and v == int(v)
+        }
+        if len(trouvees) >= 8:
+            colonnes = trouvees
+            entete = ligne
+            break
+    if not colonnes:
+        raise LookupError("aucune ligne d'années sous le bloc « convention EEC »")
+
+    variantes: dict[str, dict[str, float]] = {}
+    for ligne in lignes:
+        if ligne <= entete:
+            continue
+        etiquette = grille.get((ligne, 2))
+        if not isinstance(etiquette, float):
+            continue
+        valeurs = {
+            str(annee): grille[(ligne, c)] for c, annee in sorted(colonnes.items())
+            if isinstance(grille.get((ligne, c)), float)
+        }
+        if len(valeurs) >= 8:
+            # L'étiquette est une hypothèse de productivité — 0,007 pour le
+            # scénario de référence de 2026 —, écrite telle que le classeur la
+            # porte, à l'arrondi du millième près.
+            variantes[f"{round(etiquette, 4):g}"] = valeurs
+    if not variantes:
+        raise LookupError("aucune variante chiffrée sous le bloc « convention EEC »")
+    return variantes
+
+
 def blocs(adresses: list[str]) -> dict[str, list[dict]]:
     """Cherche chaque figure par son titre, dans tous les classeurs de la page."""
     trouves: dict[str, list[dict]] = {}
@@ -292,6 +371,27 @@ def blocs(adresses: list[str]) -> dict[str, list[dict]]:
             + ", ".join(manquantes)
         )
     return trouves
+
+
+def bloc_eec(adresses: list[str]) -> dict[str, dict[str, float]]:
+    """Cherche la figure des ressources et y lit son second bloc."""
+    for adresse in adresses:
+        try:
+            classeur = feuilles(_recuperer(adresse))
+        except (urllib.error.HTTPError, urllib.error.URLError, ValueError):
+            continue
+        for grille in classeur.values():
+            titre = grille.get((0, 0)) or grille.get((0, 1)) or ""
+            if not isinstance(titre, str):
+                continue
+            plie = _sans_accents(titre)
+            if "ressources du systeme de retraite en %" not in plie:
+                continue
+            if TITRE_EEC not in _sans_accents(" ".join(
+                    v for v in grille.values() if isinstance(v, str))):
+                continue
+            return lire_bloc_eec(grille)
+    raise LookupError("figure des ressources sans bloc « convention EEC »")
 
 
 def pages_annuelles() -> list[str]:
@@ -378,7 +478,9 @@ def ventilations(pages: list[str]) -> dict[str, dict[str, float]]:
 def main() -> int:
     try:
         page = page_du_rapport()
-        lus = blocs(classeurs(page))
+        adresses = classeurs(page)
+        lus = blocs(adresses)
+        eec = bloc_eec(adresses)
         ventilation = ventilations(pages_annuelles())
     except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
         print(f"COR indisponible : {erreur}", file=sys.stderr)
@@ -407,6 +509,10 @@ def main() -> int:
         # ressources reculent parce que l'assiette rétrécit ou parce que le
         # taux baisse. Voir INTITULE_TAUX.
         "taux_prelevement": _par_marqueur(lus["determinants"], INTITULE_TAUX),
+        # Les ressources sous l'AUTRE convention du COR, variante de
+        # productivité par variante : la seule publication française qui
+        # chiffre ce qu'une convention comptable déplace. Voir lire_bloc_eec.
+        "ressources_eec": eec,
         # En MILLIONS d'euros, contrairement au reste : c'est un contrôle de la
         # série des rapports à la CCSS, qui sont écrits dans cette unité.
         "ventilation_transferts": ventilation,

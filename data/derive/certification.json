@@ -826,6 +826,17 @@
    "valeurs": 18466,
    "verifiee_le": "2026-09-13"
   },
+  "ressources_eec_retraite": {
+   "ajoutees": 0,
+   "colonne": "part_pib",
+   "corrigees": 0,
+   "empreinte": "4fee85cc3f1a2134",
+   "identiques": 46,
+   "niveau": "projetee",
+   "source": "COR, rapport annuel, ressources du système de retraite, données complémentaires sous convention EEC",
+   "valeurs": 46,
+   "verifiee_le": "2026-09-20"
+  },
   "salaire_moyen": {
    "ajoutees": 0,
    "colonne": "variation_nominale",
@@ -926,22 +937,22 @@
    "verifiee_le": "2026-09-15"
   },
   "taux_prelevement_retraite": {
-   "ajoutees": 24,
+   "ajoutees": 0,
    "colonne": "taux",
    "corrigees": 0,
    "empreinte": "3e75b26026f10e0f",
-   "identiques": 0,
+   "identiques": 24,
    "niveau": "haute",
    "source": "COR, rapport annuel, déterminants de l'évolution des ressources du système de retraite",
    "valeurs": 24,
    "verifiee_le": "2026-09-20"
   },
   "taux_prelevement_retraite_projete": {
-   "ajoutees": 45,
+   "ajoutees": 0,
    "colonne": "taux",
    "corrigees": 0,
    "empreinte": "1b9e29fbe6638df8",
-   "identiques": 0,
+   "identiques": 45,
    "niveau": "projetee",
    "source": "COR, rapport annuel, scénario de référence",
    "valeurs": 45,

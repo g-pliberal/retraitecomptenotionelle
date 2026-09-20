@@ -383,6 +383,11 @@ class ComptesRetraite:
         self.taux_prelevement = charger_serie_annuelle(
             macro / "taux_prelevement_retraite.csv", "taux",
             nom="taux_prelevement_retraite")
+        # Les mêmes ressources sous l'AUTRE convention comptable du COR, toutes
+        # années au niveau projeté : ``ressource_eec`` dit ce qu'elle est.
+        self.ressources_eec = charger_serie_annuelle(
+            macro / "ressources_eec_retraite.csv", "part_pib",
+            nom="ressources_eec_retraite")
         self.pib = charger_serie_annuelle(
             macro / "pib_courant.csv", "pib_meur", nom="pib_courant")
         # La dette de TOUTES les administrations publiques, au sens de
@@ -436,6 +441,49 @@ class ComptesRetraite:
         que le COR publie séparément.
         """
         return self.ressources(annee) - self.depenses(annee)
+
+    @property
+    def premiere_annee_eec(self) -> int:
+        return self.ressources_eec.premiere_annee
+
+    @property
+    def derniere_annee_eec(self) -> int:
+        return self.ressources_eec.derniere_annee
+
+    def ressource_eec(self, annee: int) -> float:
+        """Les ressources sous la convention EEC, en part de PIB.
+
+        CE QU'UNE CONVENTION DÉCIDE, ET QUE LE RESTE DU DÉPÔT TAIT. Tout ce que
+        ce module porte est sous convention **EPR** : les contributions et
+        subventions d'équilibre y « évoluent de manière à équilibrer chaque
+        année le solde » des régimes de fonctionnaires et des régimes spéciaux.
+        L'État y verse exactement ce qu'il faut, ces régimes ne montrent jamais
+        de déficit, et le solde publié est donc celui des AUTRES régimes — un
+        déficit d'après bouclage, et non d'avant.
+
+        Sous **EEC**, l'effort de l'État est figé en part de PIB. Le COR publie
+        les deux ; le dépôt calcule sous la première, qui est celle de son
+        objectif de pérennité financière, et lit la seconde pour dire ce que le
+        choix vaut.
+
+        IL VAUT JUSQU'À 0,67 POINT DE PIB, ET IL CHANGE DE SIGNE. EEC donne
+        moins de ressources à court terme — l'effort figé est sous le besoin
+        tant que les régimes de fonctionnaires pèsent —, passe au-dessus en
+        2047, et rend 0,49 point de plus en 2069. Sur toute la fenêtre
+        projetée, les deux moyennes ne diffèrent pas de deux centièmes de
+        point : aucune des deux conventions ne flatte, elles déplacent le
+        déficit dans le temps.
+        """
+        return self.ressources_eec(annee)
+
+    def solde_eec(self, annee: int) -> float:
+        """Le solde sous la convention EEC : les mêmes dépenses, l'autre recette.
+
+        La convention ne touche qu'aux ressources — ce que l'État verse —, et
+        jamais aux pensions servies. Retrancher les dépenses du compte
+        principal est donc exact, et non un mélange de deux périmètres.
+        """
+        return self.ressources_eec(annee) - self.depenses(annee)
 
     def profil_taux(self, annee: int, reference: int) -> float:
         """Ce que le taux de prélèvement de ``annee`` vaut, rapporté à celui de

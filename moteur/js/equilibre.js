@@ -284,6 +284,10 @@ export class ComptesRetraite {
     // l'assiette rétrécit. `profilTaux` dit ce qu'on en prend.
     this.tauxPrelevement = SerieAnnuelle.depuisPaquet("taux_prelevement_retraite",
                                                       brut.taux_prelevement);
+    // Les mêmes ressources sous l'AUTRE convention comptable du COR, toutes
+    // années au niveau projeté : `ressourceEec` dit ce qu'elle est.
+    this.ressourcesEec = SerieAnnuelle.depuisPaquet("ressources_eec_retraite",
+                                                    brut.ressources_eec);
     this.pib = SerieAnnuelle.depuisPaquet("pib_courant", paquet.depenses.pib_courant);
     // La dette de TOUTES les administrations publiques, au sens de Maastricht,
     // en part de PIB : ce que le pays porte déjà. Elle ne sert à aucun calcul ;
@@ -337,6 +341,27 @@ export class ComptesRetraite {
    * le rapport d'une année à l'autre n'emprunte que la FORME de la
    * trajectoire. Vaut un sur toute année où l'assiette est publiée.
    */
+  /**
+   * Les ressources sous la convention EEC, en part de PIB. Tout le reste du
+   * compte est sous EPR, où les contributions d'équilibre suivent le besoin
+   * des régimes de fonctionnaires : le déficit publié est donc un déficit
+   * APRÈS que l'État a bouclé ces régimes. Sous EEC son effort est figé en
+   * part de PIB. L'écart change de signe — moins à court terme, 0,49 point de
+   * plus en 2069 — et les deux moyennes ne diffèrent pas de deux centièmes.
+   */
+  ressourceEec(annee) {
+    return this.ressourcesEec.valeur(annee);
+  }
+
+  /** Le solde sous EEC : les mêmes dépenses, l'autre recette. */
+  soldeEec(annee) {
+    return this.ressourcesEec.valeur(annee) - this.depenses.valeur(annee);
+  }
+
+  get premiereAnneeEec() { return this.ressourcesEec.premiereAnnee; }
+
+  get derniereAnneeEec() { return this.ressourcesEec.derniereAnnee; }
+
   profilTaux(annee, reference) {
     const base = this.tauxPrelevement.valeur(reference);
     return base ? this.tauxPrelevement.valeur(annee) / base : 1.0;

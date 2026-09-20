@@ -91,6 +91,13 @@ fichiers:
       # vaut aujourd'hui, `test_l_assiette_projetee_garde_sa_part_de_pib` le
       # tient, et il tomberait si elle repartait à la dérive.
       "L'assiette projetée : une déduction que le COR démentait, et un demi-point de PIB": recit
+      # Elle décrit ce que la convention EPR fait, et chiffre ce que l'autre
+      # donnerait : des valeurs du rapport de juin 2026, sous une convention
+      # que le dépôt ne calcule pas. Les ancrer supposerait une sonde qui
+      # recalcule un solde EEC dont rien d'autre ne se sert ; le contrôle
+      # `convention_comptable_est_une_hypothese` tient déjà les trois nombres
+      # que la PAGE affiche, et c'est là qu'ils comptent.
+      "La convention comptable : le déficit affiché est d'APRÈS bouclage": recit
       # Elle dit ce que le troisième chiffre du simulateur suppose, le jour où
       # a été posé. Ses nombres sont ceux de ce jour-là — le coefficient d'un
       # départ en 2054, les deux montants qui montrent pourquoi une marge ne
