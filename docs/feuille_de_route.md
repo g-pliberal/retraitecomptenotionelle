@@ -815,6 +815,32 @@ système actuel. `limites.md` §5 porte les trois.
   proposition reste rétroactive ; le script demeure, comme mesure de ce
   que la rétroactivité finance.*
 
+- **20 septembre 2026, `main` réparé une seconde fois, et le solde du
+  scénario 6 rechiffré.** Demandé par l'utilisateur : le solde du scénario 6
+  « n'est toujours pas bon », mettre à jour les graphiques de la page Coût et
+  le rechiffrer. Trouvé en chemin : le commit qui a porté le réglage des frais
+  du pilier sur `main` (3d2f8bb) avait été rebasé sur celui de la reprise
+  calculée sur le patrimoine (53a7c44) sans que ses cinq conflits soient
+  résolus — `moteur/js/pages.js` et `web/pages.py` portaient encore leurs
+  marqueurs, le site ne se chargeait plus depuis ce commit, et le site publié
+  en était resté au commit d'avant. C'est la seconde fois (voir 2e2ab09).
+  Réparé en gardant les deux côtés — la reprise calculée sur le patrimoine
+  (`reprise` vide) ET le réglage `frais` — par deux sessions à la fois, à
+  l'identique : celle des frais a poussé la sienne (22b5def) pendant que
+  celle-ci faisait la même, et le rebasage n'a laissé que le rechiffrage.
+  Témoins régénérés — ceux du commit fautif avaient été produits avant le
+  rebasage et ne portaient pas le champ des frais. *Rechiffré*,
+  Python et JavaScript à l'identique, sous la convention de la page : solde du
+  scénario 6 de −0,90 en 2026, −1,12 en 2030, −1,79 en 2040, −2,03 en 2050,
+  −1,52 en 2060, −0,63 en 2070, **−1,52 point de PIB en moyenne 2026-2070**,
+  jamais à l'équilibre, coefficient de 2070 de 0,92, dette accumulée de 103 %
+  du PIB en 2070 contre 66 % pour le système actuel (−1,13 en moyenne). Rien
+  n'a bougé dans le modèle : les graphiques de la page Coût étaient déjà
+  ceux-là, c'est le site qui ne les montrait plus. Le tableau du README, qui
+  portait encore les −1,93 et 0,89 du 18 septembre, est remis aux valeurs du
+  jour. Ce qui reste, et que l'utilisateur veut voir ensuite : ce qui peut
+  réduire ce déficit.
+
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 
 **Pourquoi.** Le chemin le plus exact, `Carriere.depuis_lignes`, n'est

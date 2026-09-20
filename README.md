@@ -825,11 +825,16 @@ contrôle et non identité.
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
 | 1. Système actuel | −0,17 % du PIB | **−1,13 %** | **0,84** |
-| 2. Notionnel rétroactif, part salariale | +8,97 % | +7,78 % | 2,50 |
-| 3. Notionnel dès 2026, part salariale | −1,34 % | +1,32 % | **1,64** |
-| 4. Notionnel rétroactif, salariale + patronale | +3,58 % | +1,74 % | 1,12 |
-| 5. Notionnel dès 2026, salariale + patronale | −1,34 % | −0,34 % | 1,05 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +3,59 % | **−1,93 %** | **0,89** |
+| 2. Notionnel rétroactif, part salariale | +9,15 % | +7,96 % | 2,60 |
+| 3. Notionnel dès 2026, part salariale | −1,34 % | +1,38 % | **1,67** |
+| 4. Notionnel rétroactif, salariale + patronale | +4,02 % | +2,20 % | 1,16 |
+| 5. Notionnel dès 2026, salariale + patronale | −1,34 % | −0,21 % | 1,08 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,02 % | **−1,52 %** | **0,92** |
+
+Chiffres du 20 septembre 2026, ceux que la page Coût affiche, Python et
+JavaScript à l'identique. Le scénario 6 ne s'équilibre jamais sur la fenêtre :
+−0,90 point de PIB en 2026, −2,03 en 2050, −0,63 en 2070, et il accumule
+103 % du PIB de dette en 2070, contre 66 % pour le système actuel.
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 5,1 milliards de besoin de financement en 2025. C'est la vérification que le
@@ -875,10 +880,12 @@ le plafond, chiffre que le COR publie dans son rapport annuel et que le modèle
 retrouve à huit dixièmes de point, et bien davantage pour un fonctionnaire,
 dont l'employeur verse 74,28 % du traitement. La part cotisée des ressources,
 77 % du total, est donc multipliée par **0,63** à compter de la bascule. Cela
-change le sens du tableau pour ce scénario : son solde moyen passe de
-−0,96 % du PIB à −1,93 %, et son coefficient de 2070 de 1,00 à 0,89. Il est le
-seul des trois systèmes rétroactifs à ne pas afficher de marge, et il passe
-sous le système actuel, qui est à −1,13 % — de huit dixièmes de point. Ce
+change le sens du tableau pour ce scénario : le jour où la recette a suivi le
+taux, son solde moyen est passé de −0,96 % du PIB à −1,93 % ; au 20 septembre
+2026, après tout ce qui a été corrigé depuis, il est à −1,52 % et son
+coefficient de 2070 à 0,92. Il est le seul des trois systèmes rétroactifs à
+ne pas afficher de marge, et il passe sous le système actuel, qui est à
+−1,13 % — de quatre dixièmes de point. Ce
 déficit est le coût de transition du taux unique : pendant trente ans, la
 caisse paie les pensions de l'ancien système avec dix points de cotisation en
 moins, et aucune règle d'indexation ne le règle. Les quatre autres scénarios notionnels ne changent que ce qui
