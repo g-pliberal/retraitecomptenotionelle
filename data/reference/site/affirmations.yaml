@@ -125,9 +125,8 @@ affirmations:
     page: /
     extrait: "On inscrit chaque cotisation sur votre compte, au premier euro, sans plafond."
     porte: aucun plancher ni plafond d'assiette sur ce que le compte inscrit
-    etat: contredite
-    action: 61
-    controle: plafond_d_assiette_apres_la_bascule
+    etat: verifiee
+    controle: assiette_deplafonnee_apres_la_bascule
 
   - id: accueil.on_revalorise
     page: /
@@ -1353,6 +1352,13 @@ affirmations:
     porte: l'écart entre règles d'indexation dépasse de loin l'effet propre des comptes
     etat: verifiee
     controle: indexation_domine_l_ecart
+
+  - id: methode.premier_euro_sans_plafond
+    page: /methode
+    extrait: "Chaque cotisation retraite réellement versée est portée au compte, au premier euro et sans plafond."
+    porte: après la bascule, l'assiette du compte est le revenu entier, sans borne haute ni basse
+    etat: verifiee
+    controle: assiette_deplafonnee_apres_la_bascule
 
   - id: methode.triple_lock
     page: /methode
