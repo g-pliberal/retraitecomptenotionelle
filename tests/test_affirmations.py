@@ -54,7 +54,12 @@ from retraite_notionnelle.config import (
     Parametres,
     RevalorisationStock,
 )
-from retraite_notionnelle.cout import CONVENTION_RAPPORT, calculer_cout
+from retraite_notionnelle.cout import (
+    CONVENTION_RAPPORT,
+    calculer_cout,
+    financer,
+)
+from retraite_notionnelle.donnees.bilan import charger_bilan
 from retraite_notionnelle.donnees.chargement import Fiabilite, journal_certification
 from retraite_notionnelle.donnees.distribution import DistributionPensions
 from retraite_notionnelle.garantie import cout_garantie
@@ -1274,6 +1279,45 @@ def _(m: Modele):
     generations = m.cout.generations
     assert {b - a for a, b in zip(generations, generations[1:])} == {5}
     assert len(generations) > len(GENERATIONS)
+
+
+@controle("trois_leviers_du_meme_manque")
+def _(m: Modele):
+    """Les trois façons de combler le manque d'une année disent la même taille.
+
+    La page en affiche trois — rogner les pensions, lever sur l'assiette,
+    emprunter — et la phrase qu'elle met en gras promet qu'aucune n'est une
+    prévision, c'est-à-dire qu'elles ne se distinguent que par l'unité. Si
+    elles cessaient de se déduire l'une de l'autre, la page chiffrerait trois
+    écarts différents sous un seul mot.
+    """
+    part = financer(m.solde, m.contexte.assiette(), "actuel", 2050,
+                    tuple(1.0 for _ in range(20)))
+    ligne = m.solde.annee(2050)
+    assert part.manque_pib == pytest.approx(-ligne.solde("actuel"), rel=1e-12)
+    assert part.manque_pib / ligne.depense("actuel") == pytest.approx(
+        1 - part.coefficient_depart, rel=1e-12)
+    assert part.points_assiette > part.manque_pib > 0.0
+    assert part.hausse_cotisations > 0.0
+
+
+@controle("bilan_fige_egale_le_modele")
+def _(m: Modele):
+    """La table que la page lit dit ce que le modèle calcule.
+
+    Le coefficient d'équilibre coûte dix-huit secondes : la page des
+    résultats lit une table figée plutôt que de le recalculer chez le lecteur.
+    La note que ce contrôle tient dit d'où viennent ces chiffres — et ce
+    serait une fausse déclaration si la table s'écartait du modèle.
+    """
+    bilan = charger_bilan(m.base.racine_donnees)
+    assert bilan.premiere_annee == m.solde.premiere_annee
+    assert bilan.derniere_annee == m.solde.derniere_annee
+    for annee in (bilan.premiere_annee, 2026, 2050, bilan.derniere_annee):
+        for scenario in ("actuel", "notionnel_retroactif",
+                         "notionnel_retroactif_employeur", "notionnel_liberal"):
+            assert bilan.annee(annee).coefficient(scenario) == pytest.approx(
+                m.solde.annee(annee).coefficient(scenario), rel=1e-9)
 
 
 @controle("reversion_servie_par_le_seul_systeme_actuel")

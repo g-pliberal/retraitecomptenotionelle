@@ -6652,6 +6652,55 @@ pour qui a liquidé avant la bascule. La page ne l'écrit pas en dur : elle test
 l'identité des courbes année par année, et les séparerait si la bascule était
 avancée avant la dernière année publiée.
 
+### Le second chiffre du simulateur : ce qu'il dit, et les quatre choses qu'il suppose
+
+Depuis le 20 septembre 2026, chaque montant du simulateur porte à côté de lui
+ce que les comptes du système en FINANCENT, quand ils en financent moins que la
+règle n'en promet. Le montant affiché reste celui de la règle — le scénario 1
+est le droit en vigueur et rien d'autre, c'est sa définition —, et le second
+chiffre est le même montant multiplié par le coefficient d'équilibre du
+système, moyenné sur les années où la pension est servie et pondéré par la
+survie. Quatre choses s'y supposent, et aucune ne va de soi.
+
+**Un facteur commun appliqué à toutes les pensions est UNE façon d'équilibrer
+une année, pas une prévision.** Le Parlement peut aussi lever des cotisations,
+reculer l'âge, ou laisser courir le déficit. Le dépliant chiffre les deux
+premières branches à côté de la troisième, et le simulateur mesure la
+quatrième : il suffit de changer l'âge de départ. Ce que les trois chiffres
+disent ensemble, et qui est le seul fait, est la TAILLE de l'écart.
+
+**La pondération par la survie n'est pas neutre, et elle joue dans le sens
+doux.** Le manque grandit avec les années ; les années lointaines sont celles
+où il reste le moins de monde pour le subir. Une moyenne pondérée par la survie
+est donc plus haute qu'une moyenne simple, et un test le mesure plutôt que de
+l'affirmer.
+
+**Les comptes s'arrêtent en 2070, et le coefficient y baissait encore.** Pour
+qui part après 2040, une partie du service n'est pas couverte — 40 % de la
+rente pour un départ en 2054. Ces années-là ne sont pas prolongées : elles
+sortent de la moyenne, la page dit quelle part elles pèsent, et la moyenne
+affichée est donc un PLAFOND, les années écartées étant celles où le manque
+serait le plus grand.
+
+**La table est figée sous les réglages de référence.** Le coefficient est un
+rapport de masses : le calculer suppose la grille des cas types simulée sous
+chaque système, année par année, soit dix-huit secondes — ce que la page
+d'entrée du site ne peut pas payer chez le lecteur. Elle lit donc une table
+écrite une fois par `scripts/construire_donnees.py`, versionnée dans
+`data/derive/equilibre.json` et embarquée dans le paquet du navigateur. Pour le
+système actuel, cela ne coûte rien : son coefficient est le rapport des
+ressources aux dépenses que le COR publie, et aucun réglage ne le déplace. Pour
+les trois autres, la dépense est une masse de pensions notionnelles, qui bouge
+avec la règle d'indexation ou la table de mortalité : les coefficients affichés
+sous le simulateur sont ceux des réglages de référence, la page le dit, et la
+page Coût les recalcule sous les réglages qu'on lui demande.
+
+**Enfin, un coefficient supérieur à un n'est jamais converti en euros.** Les
+systèmes 2 et 3 encaissent deux à trois fois ce qu'ils versent, parce qu'ils ne
+versent presque rien : écrire « financé : 927 € » sous une pension de 265 €
+ferait promettre au lecteur une pension que personne n'a décidé de servir. La
+marge est dite en toutes lettres, jamais chiffrée en montant.
+
 ---
 
 ## 5 ter. La trajectoire projetée : ce qu'elle suppose, et ce qu'elle vaut
@@ -6926,7 +6975,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1744<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1760<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

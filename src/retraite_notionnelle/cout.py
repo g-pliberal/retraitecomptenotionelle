@@ -125,7 +125,7 @@ la seule chose qu'on emprunte à une série pour l'appliquer à l'autre.
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace
-from typing import Callable
+from typing import Callable, Sequence
 
 from .castypes import (
     CAS_TYPES,
@@ -1023,6 +1023,153 @@ class Solde:
                 return ligne.annee
         return None
 
+
+
+@dataclass(frozen=True)
+class PensionFinancee:
+    """Ce que les comptes financent d'une pension promise, sur la durée du service.
+
+    LE PROBLÈME QUE CETTE CLASSE RÉSOUT. Le site affiche quatre pensions
+    calculées sur une même carrière, et la première — le droit en vigueur — se
+    lit comme une promesse tenue. Elle ne l'est pas : le système qui la sert
+    est en déficit, et le COR projette ce déficit jusqu'en 2070. Un visiteur
+    qui partira dans vingt ans lit donc un montant que les comptes de son
+    année de départ ne financent pas. Le dire est la seule façon de ne pas
+    mentir ; l'écrire en toutes lettres sans le chiffrer serait à peine mieux.
+
+    CE QU'ELLE CALCULE. Le coefficient d'équilibre de ``SoldeAnnuel`` est déjà
+    le facteur qui fait tomber une année juste. Il change d'une année à
+    l'autre, et une pension se sert vingt ou trente ans : le coefficient de
+    l'année du départ FLATTE donc qui part tôt, puisqu'il ignore les années où
+    le déficit se creuse. Le coefficient retenu ici est la moyenne des
+    coefficients annuels PONDÉRÉE PAR LA SURVIE — ce que le système finance
+    sur la durée où la pension est effectivement servie, chaque année comptant
+    pour la part des partants encore en vie.
+
+    CE QU'ELLE N'EST PAS. Ce n'est pas une prévision, et le mot « prévision »
+    n'a rien à faire ici : rogner toutes les pensions d'un même facteur est
+    UNE façon d'équilibrer une année, ce n'est pas celle que le Parlement
+    choisira. Les deux autres sont chiffrées à côté — la hausse de cotisation
+    qui financerait le même manque, et le déficit laissé tel quel, c'est-à-dire
+    emprunté. Aucune des trois n'est plus probable que les autres ; elles
+    disent ensemble la TAILLE de l'écart, qui est le seul fait.
+
+    CE QU'ELLE IGNORE. Le quatrième levier — reculer l'âge — ne se chiffre pas
+    ici, parce qu'il ne s'applique pas à une pension déjà liquidée : il déplace
+    la date du départ, et le simulateur le mesure déjà, en changeant l'âge.
+    """
+
+    scenario: str
+    #: L'année du départ demandée, telle que la carrière la porte.
+    annee_liquidation: int
+    #: Première année du service que les comptes du COR couvrent. Elle vaut
+    #: ``annee_liquidation`` sauf pour un départ antérieur à ces comptes.
+    premiere_annee: int
+    #: Dernière année du service couverte : l'horizon du COR, ou la fin de la
+    #: courbe de survie quand celle-ci s'éteint avant.
+    derniere_annee: int
+    #: Coefficient d'équilibre de ``premiere_annee``, le seul qui se vérifie
+    #: ligne à ligne dans le tableau de la page Coût.
+    coefficient_depart: float
+    #: La moyenne pondérée par la survie, sur la fenêtre couverte.
+    coefficient: float
+    #: Part de la rente — pondérée par la survie, elle aussi — que la fenêtre
+    #: couvre. Moins de un quand la pension se sert au-delà de l'horizon du
+    #: COR, et la page le dit plutôt que de prolonger une projection.
+    part_couverte: float
+    #: Le manque de ``premiere_annee``, en part de PIB. Positif quand le
+    #: système est en déficit, négatif quand il a une marge.
+    manque_pib: float
+    #: Le même manque, en points de l'assiette des revenus d'activité.
+    points_assiette: float
+    #: Le même manque, en hausse relative des ressources cotisées.
+    hausse_cotisations: float
+    #: L'année de l'assiette qui a servi à convertir le manque en points.
+    annee_assiette: int
+
+    @property
+    def manque(self) -> float:
+        """De combien il faudrait rogner, en part de la pension. Négatif : une marge."""
+        return 1.0 - self.coefficient
+
+    @property
+    def depart_couvert(self) -> bool:
+        """Les comptes couvrent-ils l'année du départ elle-même ?"""
+        return self.premiere_annee == self.annee_liquidation
+
+    @property
+    def entiere(self) -> bool:
+        """La fenêtre couvre-t-elle toute la durée de service de la pension ?"""
+        return self.part_couverte >= 0.999
+
+    def servie(self, montant: float, hors_repartition: float = 0.0) -> float:
+        """Le montant que les comptes financent, la capitalisation mise à part.
+
+        Le coefficient est celui de la RÉPARTITION : il dit ce que les
+        cotisations de l'année paient. Une rente capitalisée sort d'un
+        placement déjà constitué, qu'aucun déficit de la répartition
+        n'atteint — la multiplier reviendrait à faire porter à l'épargne le
+        manque du système qui ne la détient pas.
+        """
+        return (montant - hors_repartition) * self.coefficient + hors_repartition
+
+
+def financer(solde: Solde, assiette: AssietteActivite | None, scenario: str,
+             annee_liquidation: int,
+             poids: Sequence[float]) -> PensionFinancee | None:
+    """Ce que les comptes financent de la pension du scénario, à cette date.
+
+    ``poids`` porte, rang par rang à compter de l'année de liquidation, la
+    part des partants encore en vie pendant l'année — la courbe de survie de
+    la table qui a servi à convertir le capital, prise au milieu de chaque
+    année. La pondération ne sort donc pas d'une convention de plus : c'est
+    exactement la courbe dont le diviseur a été tiré.
+
+    Rend ``None`` quand aucune année du service n'est couverte par les comptes
+    du COR : un départ de 1980 n'a rien à lire dans un bilan qui commence en
+    2002, et une page qui afficherait quand même un coefficient inventerait
+    une lecture.
+    """
+    if not solde.annees:
+        return None
+    debut = max(annee_liquidation, solde.premiere_annee)
+    numerateur = 0.0
+    couvert = 0.0
+    total = 0.0
+    for rang, part in enumerate(poids):
+        if part <= 0.0:
+            continue
+        annee = annee_liquidation + rang
+        total += part
+        ligne = solde.annee(annee)
+        if annee < debut or ligne is None:
+            continue
+        numerateur += part * ligne.coefficient(scenario)
+        couvert += part
+    if couvert <= 0.0 or total <= 0.0:
+        return None
+    ligne_depart = solde.annee(debut)
+    if ligne_depart is None:
+        return None
+    manque = -ligne_depart.solde(scenario)
+    annee_assiette = assiette.derniere_annee if assiette is not None else 0
+    part_assiette = (assiette.part_pib(annee_assiette)
+                     if assiette is not None else 0.0)
+    cotisees = ligne_depart.ressources_de(scenario) * ligne_depart.part_contributive
+    return PensionFinancee(
+        scenario=scenario,
+        annee_liquidation=annee_liquidation,
+        premiere_annee=debut,
+        derniere_annee=min(annee_liquidation + len(poids) - 1,
+                           solde.derniere_annee),
+        coefficient_depart=ligne_depart.coefficient(scenario),
+        coefficient=numerateur / couvert,
+        part_couverte=couvert / total,
+        manque_pib=manque,
+        points_assiette=manque / part_assiette if part_assiette > 0.0 else 0.0,
+        hausse_cotisations=manque / cotisees if cotisees > 0.0 else 0.0,
+        annee_assiette=annee_assiette,
+    )
 
 @dataclass
 class DetteAnnuelle:

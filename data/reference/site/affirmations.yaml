@@ -398,6 +398,30 @@ affirmations:
     etat: verifiee
     controle: quatre_systemes_meme_carriere
 
+  # Le second chiffre des résultats : ce que les comptes financent de la
+  # pension que la règle promet. Les trois phrases fortes de son dépliant
+  # affirment trois choses différentes, et n'ont donc pas le même régime.
+  - id: simuler.trois_leviers
+    page: /simuler
+    extrait: "Rogner les pensions est UNE façon de combler le manque, et ce n'est pas une prévision."
+    porte: le manque d'une année se comble de trois façons chiffrées, qui disent toutes la même taille
+    etat: verifiee
+    controle: trois_leviers_du_meme_manque
+
+  - id: simuler.coefficients_de_reference
+    page: /simuler
+    extrait: "D'où viennent ces chiffres, et ce qu'ils ne suivent pas."
+    porte: les coefficients affichés sont ceux de la table figée, qui dit ce que le modèle calcule
+    etat: verifiee
+    controle: bilan_fige_egale_le_modele
+
+  - id: simuler.ajustement_sur_les_actifs
+    page: /simuler
+    extrait: "Ce que l'histoire des réformes apprend de la branche qu'on choisit."
+    porte: dans les réformes observées, l'ajustement a épargné les retraités et pesé sur les actifs
+    etat: hors_modele
+    source: "McHale, 1999"
+
   - id: simuler.taux_de_remplacement
     page: /simuler
     extrait: "taux de remplacement rapporte la pension annuelle au dernier revenu d'activité"
@@ -1126,6 +1150,17 @@ affirmations:
     porte: les générations vont de cinq en cinq
     etat: verifiee
     controle: pas_des_generations
+
+  # L'accueil dit la même chose que la limite de la page Coût, avec d'autres
+  # mots, et échappait au catalogue : elle a été prise au filet le
+  # 20 septembre 2026, par une session qui ne touchait pas à cette page. Le
+  # contrôle est le même — c'est la même affirmation sur le modèle.
+  - id: accueil.aucune_reversion
+    page: /
+    extrait: "Notre système ne sert aucune réversion"
+    porte: les scénarios notionnels ne reconduisent pas la réversion
+    etat: verifiee
+    controle: reversion_servie_par_le_seul_systeme_actuel
 
   - id: cout.limite_reversion
     page: /cout
