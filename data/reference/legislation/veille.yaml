@@ -1250,3 +1250,41 @@ journal:
       qui s'accroît. Le document de travail 2025-24 n'a pas été lu, seule sa
       référence l'a été. Les reprises de veille du 17 septembre 2026 restent
       ouvertes.
+  - date: "2026-09-20"
+    session: "les frais du pilier capitalisé, questionnés sur le document du producteur"
+    consulte: >-
+      Le rapport 2026 de l'Observatoire des produits d'épargne financière
+      (OPEF2026.pdf, sha256 eca04bb1…), obtenu par l'outil de lecture web de
+      Claude Code alors que curl et le runner sont refusés, tableaux T5 à T7
+      et le texte du chapitre 2 sur les frais ; le rapport 2025 (tableau T11,
+      exercice 2023) ; le rapport annuel 2024 du FRR (coûts du Fonds) ; la
+      page « pilotage technique » de l'ERAFP ; la page « avgifter och
+      rabatter » de Pensionsmyndigheten ; les reprises de presse
+      (Meilleurtaux Placement, Tout sur mes finances) qui avaient servi à la
+      saisie.
+    trouve: >-
+      Les trois frais saisis sont ceux du document, pour 2025 (1,09 / 0,76 /
+      2,20) comme pour 2024 (1,16 / 0,77 / 2,19), et 2023 donne 1,20 / 0,73.
+      Ce que la presse n'avait pas repris : la moyenne des arrérages est non
+      pondérée et ne porte que sur 9 assureurs sur 20, les onze autres ne
+      facturant rien ; le frais sur versement du PER est le double de
+      l'assurance-vie et six fois le contrat de capitalisation, écart que
+      l'OPEF attribue à des frais fixes sur des primes petites. Pour situer la
+      borne haute : prime de pension suédoise 0,11 % + 0,024 % des encours, FRR
+      0,41 % toutes charges (8,6 points de base de coûts fixes), ERAFP « au
+      moins 0,2 % ». Sensibilité mesurée sur le modèle : de + 1 % (sans frais
+      sur versement) à + 22 % (sans aucun frais) sur la rente d'une carrière
+      entière après la bascule ; le repère « environ 10 % » de limites.md pour
+      une gestion à 0,20 % était sous-estimé, c'est 13 %. Un récupérateur
+      (scripts/fetch/opef_frais_per.py) lit les trois tableaux et confronte.
+      Aucune règle du scénario 1 n'est touchée.
+    reste: >-
+      Le barème retenu est inchangé : la borne haute reste le choix par
+      défaut, et le passage à un barème de pilier obligatoire est une décision
+      de proposition, pas de lecture. Le document n'est pas sur le miroir du
+      dépôt : à déposer à la main sur la release documents-apportes, avec
+      l'empreinte inscrite au manifeste, pour que `--recuperer` le rapporte.
+      Le niveau reste `haute` : `certifiee` demanderait que
+      verifier_donnees.py lise le fichier de frais, qui n'est pas une série.
+      Les frais des PER d'entreprise (PERECO, PERO), exclus des statistiques
+      de l'OPEF, n'ont pas de source publique équivalente.

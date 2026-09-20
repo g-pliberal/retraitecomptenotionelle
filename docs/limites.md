@@ -5993,13 +5993,54 @@ qu'il a été publié.
 
 **3. Les frais sont ceux d'un produit vendu à des volontaires.** 1,09 % sur
 versement, 0,76 % par an sur encours, 2,20 % sur arrérages : ce sont les
-moyennes du PER individuel tel qu'il est commercialisé, et la commission du
-réseau distributeur en est l'essentiel. Une cotisation obligatoire n'a pas de
-réseau à rémunérer, et les frais d'un pilier obligatoire seraient
+moyennes 2025 du PER individuel tel qu'il est commercialisé, lues le
+20 septembre 2026 sur le rapport de l'OPEF lui-même (tableau T7), qui
+confirme la saisie faite depuis la presse. Une cotisation obligatoire n'a pas
+de réseau à rémunérer, et les frais d'un pilier obligatoire seraient
 vraisemblablement inférieurs. Le modèle retient donc une **borne haute**, qui
-sous-estime la rente. Le sens du biais est connu, sa taille ne l'est pas : à
-titre de repère, ramener les frais de gestion à 0,20 % relèverait le capital
-d'environ 10 % sur une carrière complète.
+sous-estime la rente. Trois choses que le rapport dit, et qui situent cette
+borne :
+
+- Le frais sur versement du PER (1,09 %) est le double de celui de
+  l'assurance-vie (0,55 %) et six fois celui du contrat de capitalisation
+  (0,19 %), pour les mêmes assureurs et les mêmes fonds en euros. L'OPEF
+  l'explique par des frais fixes qui pèsent sur des primes petites. Une
+  cotisation prélevée sur chaque paie n'a pas cette structure de coût.
+- La moyenne des frais sur arrérages est **non pondérée** et ne porte que sur
+  les 9 organismes, sur 20, qui les facturent : onze assureurs sur vingt ne
+  prélèvent rien sur la rente. Le 2,20 % est la moyenne de ceux qui facturent,
+  pas celle du marché.
+- Le frais de gestion du fonds en euros est le poste qui compte, parce qu'il
+  s'applique chaque année à tout l'encours, et c'est celui qu'un régime
+  obligatoire fait le plus baisser : la prime de pension suédoise, seul pilier
+  obligatoire capitalisé adossé à un compte notionnel, coûte 0,11 % des
+  encours en frais de fonds après remise et 0,024 % d'administration ; le
+  Fonds de réserve pour les retraites, 0,41 % toutes charges comprises, dont
+  8,6 points de base de coûts fixes, en gérant des actions ; l'ERAFP
+  provisionne « au moins 0,2 % des encours ». Aucun ne prélève sur les
+  versements ni sur les arrérages.
+
+La taille du biais se mesure sur le modèle. Rente mensuelle du pilier, les
+deux cotisations réunies, pour un non-cadre né en 2004 qui cotise de 22 à
+64 ans, donc toute sa carrière après la bascule (le 20 septembre 2026, courbe
+du 17) :
+
+| Barème de frais (versement / gestion / arrérages) | Rente | Écart |
+|---|---|---|
+| PER individuel 2025, retenu : 1,09 / 0,76 / 2,20 | 1 723 € | référence |
+| sans frais sur versement : 0 / 0,76 / 2,20 | 1 742 € | + 1 % |
+| ordre d'un PER d'entreprise : 0 / 0,50 / 1,50 | 1 857 € | + 8 % |
+| gestion ramenée à 0,20 % : 1,09 / 0,20 / 2,20 | 1 948 € | + 13 % |
+| ordre d'un fonds public : 0 / 0,15 / 0,50 | 2 027 € | + 18 % |
+| aucun frais | 2 106 € | + 22 % |
+
+Pour un assuré né en 1985, qui n'a que la moitié de sa carrière après la
+bascule, l'écart entre le barème retenu et l'absence de frais tombe à 14 % ;
+né en 1970, à 7 %. Sur le total servi par le scénario 6, dont le pilier pèse
+au plus deux cinquièmes, le barème déplace donc jusqu'à huit ou neuf points.
+Le sens est connu, la taille est encadrée, et le choix reste celui du
+paramètre : les trois frais se changent en un endroit
+(`frais_*_capitalisation` dans `Parametres`).
 
 **4. Aucun risque n'est simulé.** Le pilier est sans risque par construction,
 et c'est un choix de proposition autant que de modèle : un régime obligatoire
@@ -6650,7 +6691,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1185<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1192<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -1455,14 +1455,18 @@ aujourd'hui, mesurés pour 2025 par l'Observatoire des produits d'épargne
 financière (CCSF, Banque de France) sur les remises de l'ACPR, support en
 euros : 1,09 % sur chaque versement, 0,76 % par an sur l'encours, 2,20 % sur
 chaque arrérage de rente
-(`data/reference/macro/frais_epargne_retraite.yaml`). Ce sont les frais d'un
-produit vendu à des volontaires, contrat par contrat, dont la commission du
-réseau distributeur est l'essentiel ; elle n'aurait pas d'objet avec une
-cotisation obligatoire. Les retenir tels quels est donc une **borne haute**,
-assumée : le modèle dit ce que la proposition coûterait si rien ne bougeait
-dans la tarification. Le simulateur affiche le coût complet des frais, qui
-dépasse les frais prélevés, parce que ce qui est prélevé ne produit plus
-d'intérêts.
+(`data/reference/macro/frais_epargne_retraite.yaml`), saisis depuis la presse
+puis confrontés au rapport lui-même le 20 septembre 2026 par
+`scripts/fetch/opef_frais_per.py`. Ce sont les frais d'un produit vendu à des
+volontaires, contrat par contrat, dont la commission du réseau distributeur
+est l'essentiel ; elle n'aurait pas d'objet avec une cotisation obligatoire.
+Les retenir tels quels est donc une **borne haute**, assumée : le modèle dit
+ce que la proposition coûterait si rien ne bougeait dans la tarification. Le
+rapport précise que la moyenne des frais sur arrérages ne porte que sur les
+neuf assureurs, sur vingt, qui les facturent. Le simulateur affiche le coût
+complet des frais, qui dépasse les frais prélevés, parce que ce qui est
+prélevé ne produit plus d'intérêts ; `docs/limites.md` §5 ante mesure ce que
+d'autres barèmes déplaceraient.
 
 **Comment le capital devient une rente.** Par le mécanisme du PER : le capital
 est divisé par un coefficient actuariel, puis chaque arrérage supporte ses

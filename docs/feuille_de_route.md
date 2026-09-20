@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 158<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 163<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8598,3 +8598,55 @@ lignes qui existent, et chaque chiffre qu'une note cite du jaune est une
 valeur certifiée de ses lignes — la prose ne peut plus s'écarter du document.
 Le jeu `sre_jaune_pensions` passe à `certifie` dans le manifeste, et le
 journal de certification porte ses deux traces.
+
+### 50. Les frais du pilier capitalisé, questionnés sur le document du producteur — `fait`
+
+**Demande.** « Je souhaiterais qu'on questionne les frais de la capitalisation,
+cela influe beaucoup, il ne faut pas se tromper. »
+
+**Ce qui a été trouvé.** Les trois valeurs (1,09 % sur versement, 0,76 % par
+an sur encours, 2,20 % sur arrérages) avaient été saisies depuis la presse, le
+serveur de la Banque de France refusant le rapport de l'OPEF à la session comme
+au runner. Le rapport a été obtenu par l'outil de lecture web de Claude Code,
+qui sort par un autre chemin, et il confirme la saisie : tableau T7, exercices
+2024 et 2025, six valeurs identiques. Il dit aussi ce que la presse n'avait
+pas repris. La moyenne des frais sur arrérages est **non pondérée et ne porte
+que sur les neuf assureurs, sur vingt, qui les facturent** : onze ne prélèvent
+rien sur la rente. Le frais sur versement du PER est le double de celui de
+l'assurance-vie (0,55 %) et six fois celui du contrat de capitalisation
+(0,19 %), pour les mêmes fonds en euros : l'OPEF y voit des frais fixes sur des
+primes petites, ce qu'une cotisation sur chaque paie n'a pas. Et le frais de
+gestion du fonds en euros est proche partout (0,67 à 0,76 %) : c'est le prix
+d'un fonds en euros d'assureur, garantie comprise, pas celui d'une échelle de
+titres d'État.
+
+**Ce que coûte un régime obligatoire, pour situer la borne haute.** La prime
+de pension suédoise, seul pilier capitalisé obligatoire adossé à un compte
+notionnel, coûte 0,11 % des encours en frais de fonds après remise et 0,024 %
+d'administration ; le FRR, 0,41 % toutes charges comprises en gérant des
+actions, dont 8,6 points de base de coûts fixes ; l'ERAFP provisionne « au
+moins 0,2 % ». Aucun ne prélève sur les versements ni sur les arrérages. Trois
+jeux `controle` dans le manifeste les portent.
+
+**La taille du biais, mesurée.** Sur une carrière entière après la bascule, la
+rente du pilier serait supérieure de 1 % sans frais sur versement, de 13 % avec
+une gestion à 0,20 %, de 18 % au barème d'un fonds public, de 22 % sans aucun
+frais ; le repère « environ 10 % » de `limites.md` pour la gestion à 0,20 %
+était sous-estimé. Le frais de gestion est le poste qui compte, parce qu'il
+s'applique chaque année à tout l'encours. Le tableau est dans `limites.md`
+§5 ante, point 3.
+
+**Ce qui a été fait.** `scripts/fetch/opef_frais_per.py` lit les tableaux T5 à
+T7 du rapport avec pypdf (le lecteur du dépôt ne rend pas ses polices CFF), et
+`--confronter` compare le T7 au fichier de référence ; sept tests sur le texte
+rendu. Le fichier de frais, le manifeste (empreinte du document, confrontation,
+trois sources de contrôle), la page Méthode, la page du pilier, `limites.md` et
+`methodologie.md` disent ce que le document ajoute.
+
+**Ce qui n'a pas été changé, et pourquoi.** Le barème par défaut. Le remplacer
+par un barème de pilier obligatoire est une décision de proposition, pas une
+lecture : la borne haute reste le réglage, et les trois paramètres se changent
+en un endroit. Le niveau reste `haute` : `certifiee` demanderait que
+`verifier_donnees.py` lise ce fichier, qui n'est pas une série. Le document
+reste à déposer une fois, à la main, sur la release `documents-apportes`, avec
+l'empreinte inscrite au manifeste.
