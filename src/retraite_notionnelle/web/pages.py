@@ -5795,6 +5795,93 @@ def _nom_scenario(scenario: str, libelle: str) -> str:
     return escape(libelle) + (f" {badge}" if badge else "")
 
 
+def _reglage_proposition(solde) -> dict:
+    """Le coefficient d'équilibre de la proposition, sur les années projetées.
+
+    Les pages Cas types et Coût le lisaient dans une phrase FIXE, écrite un
+    soir où il dépassait un sur tout l'horizon ; le modèle de coût a changé le
+    lendemain matin, et la phrase est restée : Cas types promettait une marge
+    que le tableau de Coût, trois onglets plus loin, chiffrait en manque. Les
+    deux pages composent désormais leur lecture à partir de ces nombres, et un
+    test vérifie qu'elles disent ce que le solde dit.
+    """
+    debut, fin = solde.premiere_annee_projetee, solde.derniere_annee
+    annees = [(annee, solde.annee(annee).coefficient("notionnel_liberal"))
+              for annee in range(debut, fin + 1)]
+    annee_minimum, minimum = min(annees, key=lambda couple: couple[1])
+    return {
+        "debut": debut, "fin": fin,
+        "premier": annees[0][1], "dernier": annees[-1][1],
+        "minimum": minimum, "annee_minimum": annee_minimum,
+        "sous_un": sum(1 for _, coefficient in annees if coefficient < 1.0),
+        "total": len(annees),
+    }
+
+
+def _lecture_reglage_proposition(reglage: dict) -> str:
+    """La phrase de Cas types : de quel côté de un, et de combien."""
+    r = reglage
+    if r["sous_un"] == 0:
+        return (
+            "Pour la proposition, ce facteur est supérieur à un sur chacune "
+            f"des années projetées, de {r['debut']} à {r['fin']} : à "
+            "prélèvement égal, le système aurait de quoi servir davantage que "
+            "ces cases n'affichent. <strong>Un coefficient supérieur à un est "
+            "une marge</strong>, de quoi relever toutes les cases d'autant."
+        )
+    if r["sous_un"] == r["total"]:
+        return (
+            "Pour la proposition, ce facteur est inférieur à un de "
+            f"{r['debut']} à {r['fin']} : {g.nombre(r['minimum'], 2)} au plus "
+            f"bas en {r['annee_minimum']}, {g.nombre(r['dernier'], 2)} en "
+            f"{r['fin']}. Appliqué, il aurait abaissé les cases d'autant, "
+            f"jusqu'à {g.pourcentage(1 - r['minimum'], decimales=0)} en "
+            f"{r['annee_minimum']}. <strong>Un coefficient inférieur à un est "
+            "un manque</strong>, le coût de la transition au taux unique."
+        )
+    return (
+        f"Pour la proposition, ce facteur est inférieur à un {r['sous_un']} "
+        f"années sur {r['total']} entre {r['debut']} et {r['fin']}, au plus "
+        f"bas {g.nombre(r['minimum'], 2)} en {r['annee_minimum']}, et "
+        "supérieur à un les autres. Au-dessus de un, le système aurait de quoi "
+        "relever toutes les cases d'autant ; au-dessous, il aurait fallu les "
+        "abaisser, ou financer la différence autrement."
+    )
+
+
+def _note_lecture_coefficient(reglage: dict) -> str:
+    """La note de Coût : le coefficient se lit dans les deux sens, jamais en économie."""
+    r = reglage
+    dernier = g.nombre(r["dernier"], 2)
+    if r["dernier"] >= 1.0:
+        lecture = (f"Les {dernier} de la proposition en {r['fin']} disent une "
+                   f"marge de {g.pourcentage(r['dernier'] - 1, decimales=0)}")
+    else:
+        lecture = (f"Les {dernier} de la proposition en {r['fin']} disent un "
+                   f"manque de {g.pourcentage(1 - r['dernier'], decimales=0)}")
+    if r["sous_un"] == r["total"]:
+        lecture += (f", et son plus bas, {g.nombre(r['minimum'], 2)} en "
+                    f"{r['annee_minimum']}, un manque de "
+                    f"{g.pourcentage(1 - r['minimum'], decimales=0)} : le coût "
+                    "de transition du taux unique.")
+    elif r["minimum"] < 1.0:
+        lecture += (f", et son plus bas, {g.nombre(r['minimum'], 2)} en "
+                    f"{r['annee_minimum']}, un manque de "
+                    f"{g.pourcentage(1 - r['minimum'], decimales=0)}.")
+    else:
+        lecture += "."
+    return f"""<div class="note"><strong>Le coefficient se lit dans les deux sens,
+jamais comme une économie.</strong> Au-dessus de un, une marge, et une marge se
+sert : à ces recettes-là, le système servirait davantage que ce que la colonne
+« dépense » lui prête, autrement réparti entre les carrières. Au-dessous de un,
+un manque : il faudrait abaisser toutes les pensions d'autant, ou financer la
+différence autrement. {lecture} Le modèle calcule ce facteur ; il ne l'applique
+jamais, et toutes les courbes de coût de cette page sont celles d'un système
+qui ne se pilote pas. L'appliquer changerait toutes les pensions par un même
+facteur, donc tous les niveaux de cette page, sans toucher aux écarts entre carrières,
+qui sont la seule chose que ce site mesure.</div>"""
+
+
 def _cas_types(contexte: Contexte) -> str:
     """Treize carrières types croisées avec sept générations.
 
@@ -5823,11 +5910,14 @@ def _cas_types(contexte: Contexte) -> str:
     resultat = calculer_cas_types(simulateur)
     montre = GRILLES_CAS_TYPES[0][0]
     # Le solde du système actuel, observé puis projeté par le COR : il est
-    # dans les comptes, et ne coûte rien — à la différence du coût agrégé,
-    # que cette page ne calcule pas.
+    # dans les comptes, et ne coûte rien. Le coût agrégé, lui, coûte deux
+    # secondes une fois, et la page le demande pour une seule phrase : celle
+    # qui dit de quel côté de un se trouve le réglage de la proposition. Elle
+    # était fixe, et fausse ; elle est calculée, et la page Coût la retrouve.
     comptes = contexte.comptes()
     obs = comptes.derniere_annee_observee
     horizon = comptes.derniere_annee
+    reglage = _reglage_proposition(contexte.cout().solde)
 
     def grille(scenario: str, intitule: str) -> str:
         lignes = []
@@ -5957,13 +6047,10 @@ def _cas_types(contexte: Contexte) -> str:
 pension.</strong> Chaque case compare deux carrières calculées sous la même
 règle, et ce que la grille mesure est l'écart entre ses lignes : ce qu'un
 militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
-niveau général, lui, dépend d'un
+niveau général dépend d'un
 {g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle calcule
-mais n'applique jamais : il multiplierait toutes les cases par le même facteur.
-Pour la proposition, ce facteur est supérieur à un chaque année : à
-prélèvement égal, le système aurait de quoi servir davantage que ces cases
-n'affichent. <strong>Un coefficient supérieur à un est une marge</strong>,
-de quoi relever toutes les cases d'autant.
+mais n'applique jamais : il multiplierait les cases par le même facteur.
+{_lecture_reglage_proposition(reglage)}
 <a href="{g.lien("/cout")}" data-vers="cout-equilibre">La page Coût le chiffre</a>.</div>
 
 <div class="fiches reperes">{reperes}</div>
@@ -7622,17 +7709,7 @@ garde la même architecture d'exonérations, ce que son texte ne dit pas. Les de
 lectures se défendent, elles sont toutes deux calculées, et la page a retenu la
 première.</div>
 
-<div class="note"><strong>Un coefficient supérieur à un est une marge, et
-une marge se sert.</strong> Lire les
-{g.nombre(horizon.coefficient("notionnel_liberal"), 2)} de la proposition comme
-une économie de {g.pourcentage(
-    1 - 1 / horizon.coefficient("notionnel_liberal"), decimales=0)} serait un
-contresens : à ces recettes-là, ce système servirait davantage que ce que la
-colonne « dépense » lui prête, et autrement réparti entre les carrières. Le
-modèle calcule ce facteur ; il ne l'applique jamais, et toutes les courbes de
-coût de cette page sont celles d'un système qui ne se pilote pas. L'appliquer changerait toutes les pensions par un même facteur, donc
-tous les niveaux de cette page, sans toucher aux écarts entre carrières,
-qui sont la seule chose que ce site mesure.</div>
+{_note_lecture_coefficient(_reglage_proposition(solde))}
 """, identifiant="cout-equilibre")
 
 

@@ -111,10 +111,10 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
   points rendus ajoutent si on les place, sur un pilier sans risque.
 - **Pourquoi la proposition sert moins que le système actuel sur cet
   exemple :** parce que le système actuel sert à ce salarié plus que ce qu'il
-  a cotisé — c'est ce que la page Avantages chiffre —, et parce que ces
-  pensions sont calculées avant le réglage annuel qui rééquilibre le système,
-  que la page Cas types explique. Cette question viendra, elle est traitée
-  plus bas.
+  a cotisé — c'est ce que la page Avantages chiffre. Ces pensions sont
+  calculées avant le réglage annuel du système, que la page Cas types
+  explique, et ce réglage ne joue pas en faveur de la proposition : voir plus
+  bas, la question viendra.
 
 Puis, sous les quatre lignes, le bloc **« Et pendant que vous cotisez »** :
 une réforme change aussi la fiche de paie. Sur l'exemple, le salaire net
@@ -217,9 +217,16 @@ compare deux carrières calculées sous la même règle, et la grille mesure
 l'écart entre ses lignes : ce qu'un militaire touche de plus ou de moins
 qu'un artisan, à cotisation égale. Le niveau général dépend d'un réglage
 annuel, le coefficient d'équilibre, que le modèle calcule mais n'applique
-jamais : pour la proposition il est supérieur à un chaque année, c'est-à-dire
-qu'à prélèvement égal le système aurait de quoi relever toutes les cases
-d'autant. La page Coût le chiffre.
+jamais. **Ne pas promettre de marge** : pour la proposition, ce coefficient
+est inférieur à un sur toute la projection (0,90 en 2026, 0,79 au plus bas en
+2049, 0,92 en 2070), et la page le dit dans la phrase qui suit. C'est le coût
+de transition du taux unique : pendant trente ans, la caisse paie les
+pensions de l'ancien système avec dix points de cotisation en moins. Ce qu'on
+peut dire, et qui est vrai : le système actuel est à 0,84 en 2070 et ne se
+règle jamais, la proposition se règle chaque année et son manque se résorbe
+à mesure que les pensions de l'ancien système s'éteignent. La page Coût le
+chiffre. Jusqu'au 20 septembre au matin, la page affirmait l'inverse, en
+texte fixe ; la phrase est désormais calculée.
 
 ### 4. Coût — trois minutes
 
@@ -290,8 +297,10 @@ plutôt que de nous croire.
   risque, transmissible. Programme, dépliant « La part capitalisée ».
 - **« Les pensions baissent de 30 % ? »** Voir la section Cas types plus
   haut : les écarts mesurent la redistribution entre carrières, avant le
-  réglage annuel qui rééquilibre. Le système actuel, lui, est projeté en
-  déficit de 16 % de la facture en 2070.
+  réglage annuel. Ne pas laisser entendre que ce réglage relèverait les
+  cases : pour la proposition, il les abaisserait, de 8 % en 2070 et
+  davantage avant. Le système actuel, lui, est projeté en déficit de 16 % de
+  la facture en 2070, sans règle qui le règle.
 - **« Et les petites pensions ? »** Le plancher : 800 € par personne plus
   250 € pour qui vit seul, dès 65 ans, individualisé, payé par l'impôt.
   Programme, tableau du plancher, et Coût, dépliant « Ce que coûte la
