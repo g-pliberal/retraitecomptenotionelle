@@ -936,6 +936,37 @@ def test_la_garantie_decroit_quand_les_pensions_montent_face_au_plancher(cout, a
     assert 0.003 < premiere.part_pib(COMPOSANTE_GARANTIE) < 0.02
 
 
+def test_les_reprises_sur_succession_suivent_les_avances(cout):
+    """La garantie est une avance : rien n'est repris avant la bascule, les
+    reprises sont la part couverte des avances que les décès libèrent, le net
+    est le versé moins les reprises, et le stock d'avances monte avec les
+    générations servies avant que les reprises ne rattrapent le versé."""
+    avenir = cout.avenir
+    bascule = avenir.annee_bascule
+    part = Parametres().part_reprise_garantie
+    assert 0.0 < part <= 1.0
+    for ligne in avenir.annees:
+        projetee = ligne.garantie
+        if ligne.annee < bascule:
+            assert projetee.reprises_constants == 0.0
+            assert projetee.stock_avances_constants == 0.0
+            continue
+        assert projetee.avances_liberees_constants >= 0.0
+        assert projetee.reprises_constants == pytest.approx(
+            part * projetee.avances_liberees_constants)
+        assert ligne.garantie_nette_constants() == pytest.approx(
+            ligne.cout_constants(COMPOSANTE_GARANTIE) - projetee.reprises_constants)
+        assert -0.05 < projetee.taux_reel < 0.05
+    premiere = avenir.annee(bascule)
+    derniere = avenir.annees[-1]
+    # La première année, les décès ne libèrent presque rien : personne n'a
+    # encore d'avance. À l'horizon, les reprises sont une part sensible du versé.
+    assert premiere.reprises_constants() < 0.05 * premiere.cout_constants(COMPOSANTE_GARANTIE)
+    assert derniere.reprises_constants() > 0.3 * derniere.cout_constants(COMPOSANTE_GARANTIE)
+    assert derniere.garantie.stock_avances_constants > premiere.garantie.stock_avances_constants > 0.0
+    assert 0.0 < avenir.cumul_reprises() < avenir.cumul(COMPOSANTE_GARANTIE)
+
+
 def test_le_recours_reduit_le_cout_de_la_garantie_dans_la_meme_proportion(cout, distribution):
     """Un recours complet doublerait le coût du réglage par défaut, un sur deux ;
     les ayants droit, eux, ne bougent pas, et un taux hors de ]0, 1] est refusé."""

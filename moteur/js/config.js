@@ -287,6 +287,9 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   // Part des ayants droit qui réclament la garantie : l'hypothèse de l'ASPA,
   // un sur deux. Ne joue que sur le coût lu sur la distribution.
   taux_recours_garantie: 0.5,
+  // Part de l'avance d'un bénéficiaire que sa succession couvre : une
+  // hypothèse, la moitié, faute de distribution de patrimoine.
+  part_reprise_garantie: 0.5,
   annee_euros_garantie_vieillesse: 2026,
   //: Seul ou à deux : ne joue que sur l'allocation d'isolement. Le défaut est
   //: la personne seule, comme pour l'ASPA du scénario 1.

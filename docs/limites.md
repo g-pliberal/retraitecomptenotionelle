@@ -4983,13 +4983,20 @@ le 20 septembre 2026 le même recours pour la garantie, un sur deux
 (`taux_recours_garantie`), parce qu'une avance reprise sur la succession ne se
 réclame pas plus que l'ASPA : la page compte les bénéficiaires et le coût
 ainsi, et donne à côté tous ceux qui sont sous le plancher. L'autre correction
-n'y est pas : la garantie est une avance reprise sur la succession dès le
-premier euro et avec intérêts, là où l'ASPA n'est récupérée qu'au-delà d'un
-seuil d'actif net et a rendu 108,7 millions au Fonds de solidarité vieillesse
-en 2024 (rapport d'activité 2024), deux pour cent de ce qu'elle verse. Ce que
-la garantie rendrait n'est pas chiffré : le dépôt n'a pas de distribution de
-patrimoine par niveau de pension, et le coût affiché est brut, avant reprise
-(action 47 de la feuille de route).
+y est aussi, depuis le même jour : la garantie est une avance reprise sur la
+succession dès le premier euro et avec intérêts, là où l'ASPA n'est récupérée
+qu'au-delà d'un seuil d'actif net et a rendu 108,7 millions au Fonds de
+solidarité vieillesse en 2024 (rapport d'activité 2024), deux pour cent de ce
+qu'elle verse. La trajectoire suit ces avances par âge à compter de la
+bascule, au taux réel lu sur la courbe des taux, les libère au décès avec la
+mortalité du modèle, et les successions en rendent la part du réglage
+`reprise`, la moitié par défaut (`part_reprise_garantie`) : une hypothèse, non
+une donnée, le dépôt n'ayant pas de distribution de patrimoine par niveau de
+pension. Au réglage par défaut, en 2070 : 17,9 milliards versés, 11,9 repris,
+6,0 nets, 0,16 % du PIB ; de 2026 à 2070 : 849 versés, 344 repris, 505 nets,
+et un stock d'avances en cours de 383 milliards à l'horizon. La ligne « dont
+garantie » reste brute ; les lignes « dont reprises » et « garantie nette »
+disent le reste (action 47 de la feuille de route).
 
 Ce que chaque ligne suppose. **Les deux planchers** sont donnés parce que
 l'enquête dit la pension et non avec qui l'on vit : la garantie de base vaut
@@ -6728,7 +6735,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1210<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1211<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
