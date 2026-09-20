@@ -114,6 +114,10 @@ fichiers:
       "Ce qu'un navigateur ne débloque pas": recit
   docs/integration-partiliberalfrancais.md:
     defaut: a_declarer
+  # Un parcours de présentation, daté dans son titre : ses chiffres sont ceux
+  # que le site affichait ce matin-là, et la page fait foi, pas lui.
+  docs/parcours_presentation.md:
+    defaut: recit
   CLAUDE.md:
     defaut: a_declarer
 

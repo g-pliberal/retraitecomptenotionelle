@@ -6537,6 +6537,16 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   `scripts/construire_donnees.py` ; `docs/methodologie.md`, `docs/limites.md`
   §1 ; `tests/test_moteur.py`, `tests/test_donnees.py` ; les témoins.
 
+- **20 septembre 2026, parcours de présentation.** Une présentation du site
+  à 13 h 30 le jour même, par quelqu'un qui ne l'avait pas vu. La version
+  publiée sur GitHub Pages était identique à `main`, sans erreur sur les neuf
+  onglets, la suite verte ; la copie sous `partiliberalfrancais.fr/retraite/`
+  datait du 19 au matin, cinquante commits en arrière, sans le pilier
+  capitalisé. `docs/parcours_presentation.md` dit dans quel ordre montrer les
+  pages, ce que l'exemple pré-rempli et trois carrières adressées donnaient ce
+  matin-là, et les questions à attendre avec la page qui y répond. Déclaré
+  `recit` dans `zones.yaml` : ses chiffres sont ceux d'un matin.
+
 ### 37. Chiffrer les avantages non contributifs, et les montrer — `fait`
 
 **La demande.** « J'aimerais qu'on fasse la liste des avantages en retraite
