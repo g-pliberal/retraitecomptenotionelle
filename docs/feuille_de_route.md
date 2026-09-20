@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 993<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 035<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8944,6 +8944,28 @@ versés, 9,7 repris, 8,0 nets, 0,22 % du PIB ; de 2026 à 2070, 849 versés, 310
 repris, 539 nets ; un stock d'avances de 320 Md€ à l'horizon. Les deux
 mouvements se compensent en partie : la couverture est plus basse que la
 moitié, mais les avances plus courtes se reprennent plus tôt.
+
+**Le même jour, encore : les femmes.** « Est-ce que tu peux prendre en compte
+le facteur que ce sont principalement des femmes qui vont demander ce minimum
+vieillesse ? » Mesuré sur l'EIR 2020 par sexe, plancher majoré, pensions du
+système 4 : 72 % des femmes sont sous le plancher contre 42 % des hommes (46 %
+et 18 % aux pensions d'aujourd'hui), et les femmes font 68 % des
+bénéficiaires, pesées par la part des femmes parmi les 65 ans et plus que les
+courbes de survie du modèle donnent en population stationnaire — le dépôt n'a
+pas d'effectif de retraités par sexe. Codé : `_reprises_successions` mélange
+les deux courbes de survie du vingtile dans cette proportion au lieu de
+moitié-moitié (`GarantieProjetee.part_femmes`), le paquet porte la
+distribution de l'EIR par sexe (`distribution_pensions_sexes`), et la page
+écrit la part des femmes. Ce que ça déplace : une avance dure 20,5 ans au lieu
+de 19,6, la couverture passe de 43 à 42 %, le net de 2070 de 8,0 à 8,2 Md€,
+le stock de 320 à 331 : peu, parce que la longévité des femmes allonge les
+avances et rapproche la couverture de celle d'un homme, mais c'est le bon
+chiffre. Ce que le sexe change au PATRIMOINE ne peut pas être codé sans le
+fichier de l'enquête : les femmes sous le plancher vivent souvent dans un
+ménage moins pauvre que leur pension, et beaucoup sont veuves, dont la
+succession porte tout le patrimoine du couple pour une seule avance ; les
+deux vont dans le sens d'une couverture plus haute que le calcul, et la
+quatorzième réserve le dit.
 
 **Ce qui reste du point 1, et demande une personne.** Le fichier individuel
 de l'enquête Histoire de vie et Patrimoine 2020-2021 ou 2023-2024 : le

@@ -14,10 +14,13 @@
 
 /** Répartition des pensions brutes de droit direct, pour un millésime d'EIR. */
 export class DistributionPensions {
-  constructor(paquet) {
-    const brut = paquet.distribution_pensions;
+  constructor(paquet, sexe = "ensemble") {
+    // Femmes et hommes à part, pour peser les sexes parmi les bénéficiaires
+    // de la garantie ; l'ensemble, sinon.
+    const brut = sexe === "ensemble" ? paquet.distribution_pensions
+      : paquet.distribution_pensions_sexes[sexe];
     this.millesime = brut.millesime;
-    this.sexe = brut.sexe;
+    this.sexe = sexe;
     this.fiabilite = brut.fiabilite;
     this.tranches = brut.parts.map((part, rang) => ({
       borneInferieure: brut.bornes_inferieures[rang],

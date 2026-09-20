@@ -42,6 +42,7 @@ import {
   CAS_TYPES, VARIANTES_LIQUIDATION, calculerCasTypes, poidsEffectifs, poidsEgaux,
 } from "./castypes.js";
 import { coutGarantie, manqueMoyen } from "./garantie.js";
+import { DistributionPensions } from "./distribution.js";
 import { Fiabilite } from "./serie.js";
 import { ORGANISMES, POSTES } from "./equilibre.js";
 
@@ -603,7 +604,8 @@ class GarantieDistribution {
     const vide = { facteur: 0, effectif: 0, beneficiaires: 0, coutConstants: 0,
                    ayantsDroit: 0, tauxRecours: 1.0, avancesLibereesConstants: 0,
                    reprisesConstants: 0, stockAvancesConstants: 0, tauxReel: 0,
-                   partReprise: 0, dureeAvances: 0, populationMortalite: null };
+                   partReprise: 0, dureeAvances: 0, populationMortalite: null,
+                   partFemmes: 0 };
     if (tetesGarantie <= 0 || this.pensionReference <= 0) return vide;
     const facteur = total[RESSOURCES_GARANTIE] / tetesGarantie / this.pensionReference;
     if (facteur <= 0) return vide;
@@ -625,6 +627,7 @@ class GarantieDistribution {
       partReprise: 0,
       dureeAvances: 0,
       populationMortalite: null,
+      partFemmes: 0,
     };
   }
 }
@@ -1533,8 +1536,35 @@ function reprisesSuccessions(lignes, simulateur, calage) {
       pensionMoyenne * macro.coefficientPrix(millesime, mortalite.anneeNiveauxDeVie),
     );
   }
-  const survie = mortalite.courbeSurvieUnisexe(65, bascule, true, population)
-    .filter((s) => s > 1e-9);
+  // Et les deux sexes, pesés comme ils le sont sous le plancher.
+  const courbeH = mortalite.courbeSurvie(65, bascule, "H", true, population);
+  const courbeF = mortalite.courbeSurvie(65, bascule, "F", true, population);
+  let partFemmes = 0.5;
+  if (poidsTotal > 0) {
+    let femmes65 = 0.0;
+    for (const s of courbeF) femmes65 += s;
+    let hommes65 = 0.0;
+    for (const s of courbeH) hommes65 += s;
+    const sousPlancher = {};
+    for (const sexe of ["F", "H"]) {
+      const parSexe = new DistributionPensions(simulateur.paquet, sexe);
+      sousPlancher[sexe] = coutGarantie(
+        parSexe, 1.0, calage.plancherMensuel, deplacement,
+      ).partBeneficiaires;
+    }
+    const beneficiairesF = femmes65 * sousPlancher.F;
+    const beneficiairesH = hommes65 * sousPlancher.H;
+    if (beneficiairesF + beneficiairesH > 0) {
+      partFemmes = beneficiairesF / (beneficiairesF + beneficiairesH);
+    }
+  }
+  const longueur = Math.max(courbeH.length, courbeF.length);
+  const survie = [];
+  for (let t = 0; t < longueur; t += 1) {
+    const s = (1.0 - partFemmes) * (t < courbeH.length ? courbeH[t] : 0.0)
+      + partFemmes * (t < courbeF.length ? courbeF[t] : 0.0);
+    if (s > 1e-9) survie.push(s);
+  }
   if (!survie.length) return;
   let totalSurvie = 0;
   for (const s of survie) totalSurvie += s;
@@ -1598,6 +1628,7 @@ function reprisesSuccessions(lignes, simulateur, calage) {
     garantie.partReprise = part;
     garantie.dureeAvances = totalSurvie;
     garantie.populationMortalite = population;
+    garantie.partFemmes = partFemmes;
   }
 }
 
