@@ -1109,6 +1109,38 @@ institutions:
         acces: document
         statut_integration: saisi
         cible: data/reference/regimes/taux_cotisation.csv
+      - id: dss_ccss_impots_retraite
+        titre: >-
+          Rapports à la Commission des comptes de la Sécurité sociale — les
+          impôts de la retraite assis sur une rémunération (taxe sur les
+          salaires et forfait social, section CNAV)
+        url: https://www.securite-sociale.fr/home/la-secu-en-detail/comptes-statistiques-et-etudes-de-la-sécurité-sociale/rapports-a-la-commission-des-comptes-de-la-securite-sociale.html
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/ccss_impots_retraite.py
+        cible: data/reference/macro/impots_retraite_remuneration.csv
+        millesime: rapports de mai 2020 à mai 2026
+        note: >-
+          Le poste « impôts et taxes affectés » du compte du COR est un
+          agrégat, et la proposition du Parti libéral ne le reconduit pas.
+          Rendre aux salaires la moitié de ce qu'elle n'encaisse plus suppose
+          de savoir ce qui, dans ce poste, est PRÉLEVÉ SUR UNE RÉMUNÉRATION.
+          Le droit en désigne deux : la taxe sur les salaires, dont l'article
+          L. 131-8, 1° du code de la sécurité sociale verse 58,35 % à la
+          branche vieillesse, et le forfait social, dont l'article L. 241-3,
+          1° donne le produit entier à l'assurance vieillesse. Cette série
+          porte ce que la CNAV encaisse de chacun, lu dans la fiche
+          « contributions sociales et recettes fiscales brutes » du rapport,
+          qui ventile ces recettes par affectataire. La lecture suit les
+          SECTIONS du tableau : « taxe sur les salaires » y figure une fois
+          par branche, et prendre la première ligne donnerait la part de la
+          branche maladie. La série commence en 2019 parce que le fonds de
+          solidarité vieillesse recevait jusque-là sa propre fraction de ces
+          deux impôts ; depuis le 1er janvier 2019, l'article L. 135-3 ne lui
+          laisse que de la CSG, et la section CNAV porte donc tout. Même
+          règle de millésime que les transferts : un rapport n'est retenu que
+          pour ses comptes arrêtés, et le premier qui arrête une année
+          l'emporte.
       - id: dss_ccss_transferts_retraite
         titre: >-
           Rapports à la Commission des comptes de la Sécurité sociale — ce que
