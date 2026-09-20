@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 128<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 158<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8427,6 +8427,61 @@ patrimoine par niveau de pension, ni mortalité selon le patrimoine. Il faut :
 (dépliant du programme, note du coût) ; `docs/limites.md` ; à venir,
 `src/retraite_notionnelle/cout.py` et `moteur/js/cout.js` (le stock),
 `data/reference/macro/` (le patrimoine), `data/sources.yaml`.
+
+**Le même jour, plus tard : le recours, tranché à un sur deux.** Trois
+questions posées de suite — « ça donne quoi sur notre scénario 6 ? », « on
+serait à 9,2 % de personnes qui rentrent dans les critères actuels de l'ASPA »,
+« le but était d'estimer le coût de notre mesure par rapport aux statistiques
+actuelles de non-recours » — puis la décision : « on prend l'hypothèse que
+seulement un sur deux réclame ». Ce qui a été établi en chemin, hors du modèle
+et à hypothèses affichées :
+
+- *Les 9,2 %.* Source exacte non retrouvée, chiffre cohérent : 723 020
+  allocataires fin 2023 (DREES, fiche 26 de l'édition 2025), 4,3 % des 62 ans
+  ou plus ; avec un non-recours de moitié, 1,05 à 1,45 million de personnes
+  remplissent les critères, 7 à 10 % des 65 ans et plus. Sur la seule pension
+  directe de l'EIR 2020, 32 % des retraités sont sous le plafond d'une
+  personne seule et 23 % sous la moitié du plafond d'un couple : ce sont les
+  ressources du foyer qui ramènent ces 23 à 32 % vers 9 %. La garantie
+  individualisée sur les pensions du système 4 en touche 41 %, soit quatre à
+  cinq fois plus, et le coût suit la population, non le montant du plancher.
+- *L'avance à la mort d'un bénéficiaire.* Complément moyen 372 € par mois,
+  servi 24,2 ans (espérance de vie à 65 ans du modèle, génération 2026) :
+  108 k€ sans intérêt réel, 122 k€ à 1 %, 138 k€ à 2 % ; en régime permanent,
+  un stock d'avances de l'ordre de 370 Md€, douze points de PIB.
+- *Ce que la succession couvre.* Patrimoine brut des ménages retraités selon
+  le COR (16 décembre 2021, sur l'enquête Histoire de vie et Patrimoine 2018) :
+  médiane 190 200 €, deuxième décile 23 000 €, sept sur dix propriétaires ;
+  pour le quart aux revenus les plus bas, médiane 36 800 € et moyenne triple.
+  Sur la distribution basse, la succession couvre 40 % de l'avance d'une
+  personne seule et 26 % de deux avances d'un couple ; sur la distribution de
+  tous les retraités, 75 % et 65 %.
+- *Le net, en régime permanent, brut 30,5 Md€ au plancher de base.* Tous
+  réclament : reprises 12 à 20 Md€, net 10 à 19. Un sur deux réclame, comme
+  l'ASPA : versé 15,3, reprises 6 à 10, net 5 à 9. Renoncent ceux dont la
+  succession couvrirait l'avance : versé 15 à 25, reprises 5 à 6, net 10 à
+  19 — le même net que « tous », parce que qui refuse est qui aurait remboursé
+  en entier. Le coût net de la mesure est donc la garantie servie à ceux dont
+  la succession ne peut pas la couvrir, et le non-recours uniforme est le seul
+  à faire baisser ce net, pour une mauvaise raison : il suppose que les plus
+  pauvres aussi renoncent, ce que la DREES observe. Les vingt premières
+  années, l'État verse sans reprendre. Script d'estimation non versionné, hors
+  du modèle ; la distribution de patrimoine des bénéficiaires reste la donnée
+  qui manque.
+
+**Ce qui est codé.** `Parametres.taux_recours_garantie = 0.5` et son jumeau
+dans `config.js` ; `GarantieDistribution` prend le taux, `GarantieProjetee`
+porte `ayants_droit` et `taux_recours` à côté des bénéficiaires et du coût,
+qui sont ceux qui réclament ; la ligne « dont garantie » de la trajectoire, le
+dépliant de la garantie (colonne « Sous le plancher » ajoutée, paragraphe
+« Un ayant droit sur deux réclame ») et la ligne pour mémoire du tableau poste
+par poste suivent ; le dépliant du programme dit que la garantie se demande et
+se refuse. Un test tient le taux et refuse une part hors de ]0, 1]. Ce que ça
+déplace, plancher majoré sur la trajectoire : la garantie de 2024 passe de
+39,0 à 19,5 Md€ et le surcoût pour l'impôt de 31 à 11,7 Md€ ; en 2026, la
+ligne pour mémoire du tableau poste par poste de 30,5 à 15,0 Md€ (1,02 à 0,50 %
+du PIB) ; en 2070, 0,46 % du PIB au lieu de 0,92. Le simulateur d'une
+carrière ne connaît pas ce taux : qui réclame la reçoit en entier.
 
 **Fin.** La page Coût donne la garantie en trois lignes, brut, reprises et
 net, sur une distribution de patrimoine citée, et le programme dit en une

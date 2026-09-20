@@ -4972,20 +4972,24 @@ minimum garanti ni la pension majorée de référence. En 2024, ces quatre minim
 coûtent 7,8 milliards — 4,94 de minimum vieillesse lus dans les comptes de la
 protection sociale, 2,18 de minimum contributif et 0,72 de minimum garanti
 calculés sur la grille, qui n'est pas une population et les sous-estime, et
-une pension majorée de référence non chiffrée — contre 39,0 milliards de
-garantie aux pensions du scénario 6 la même année : **31 milliards de plus pour
-l'impôt**, borne haute puisque le total remplacé est une borne basse. Deux
-corrections restent hors du tableau, et il faut les deux : une
-personne seule éligible sur deux ne réclame pas l'ASPA — 321 200 personnes fin
-2016, 790 millions non versés, 59 % des sommes servies (DREES, *Les dossiers de
-la DREES* n° 97, mai 2022) —, si bien qu'une garantie automatique paie pour
-partie une dépense aujourd'hui non réclamée ; et la garantie est une avance
-reprise sur la succession dès le premier euro et avec intérêts, là où l'ASPA
-n'est récupérée qu'au-delà d'un seuil d'actif net et a rendu 108,7 millions au
-Fonds de solidarité vieillesse en 2024 (rapport d'activité 2024), deux pour
-cent de ce qu'elle verse. Ce que la garantie rendrait n'est pas chiffré : le
-dépôt n'a pas de distribution de patrimoine par niveau de pension, et le coût
-affiché est brut, avant reprise (action 47 de la feuille de route).
+une pension majorée de référence non chiffrée — contre 19,5 milliards de
+garantie aux pensions du scénario 6 la même année, à un ayant droit sur deux :
+**11,7 milliards de plus pour l'impôt**, borne haute puisque le total remplacé
+est une borne basse. Deux corrections se présentent, et une seule est dans le
+tableau. Une personne seule éligible sur deux ne réclame pas l'ASPA — 321 200
+personnes fin 2016, 790 millions non versés, 59 % des sommes servies (DREES,
+*Les dossiers de la DREES* n° 97, mai 2022) —, et le programme retient depuis
+le 20 septembre 2026 le même recours pour la garantie, un sur deux
+(`taux_recours_garantie`), parce qu'une avance reprise sur la succession ne se
+réclame pas plus que l'ASPA : la page compte les bénéficiaires et le coût
+ainsi, et donne à côté tous ceux qui sont sous le plancher. L'autre correction
+n'y est pas : la garantie est une avance reprise sur la succession dès le
+premier euro et avec intérêts, là où l'ASPA n'est récupérée qu'au-delà d'un
+seuil d'actif net et a rendu 108,7 millions au Fonds de solidarité vieillesse
+en 2024 (rapport d'activité 2024), deux pour cent de ce qu'elle verse. Ce que
+la garantie rendrait n'est pas chiffré : le dépôt n'a pas de distribution de
+patrimoine par niveau de pension, et le coût affiché est brut, avant reprise
+(action 47 de la feuille de route).
 
 Ce que chaque ligne suppose. **Les deux planchers** sont donnés parce que
 l'enquête dit la pension et non avec qui l'on vit : la garantie de base vaut
@@ -6646,7 +6650,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1179<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1180<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

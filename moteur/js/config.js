@@ -278,6 +278,9 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: 800 € par personne à deux.
   garantie_vieillesse_mensuelle: 800.0,
   allocation_isolement_mensuelle: 250.0,
+  // Part des ayants droit qui réclament la garantie : l'hypothèse de l'ASPA,
+  // un sur deux. Ne joue que sur le coût lu sur la distribution.
+  taux_recours_garantie: 0.5,
   annee_euros_garantie_vieillesse: 2026,
   //: Seul ou à deux : ne joue que sur l'allocation d'isolement. Le défaut est
   //: la personne seule, comme pour l'ASPA du scénario 1.

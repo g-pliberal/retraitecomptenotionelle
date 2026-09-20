@@ -901,11 +901,16 @@ def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distrib
         parametres.annee_euros_garantie_vieillesse, millesime)
     attendu = cout_garantie(distribution, projetee.effectif,
                             plancher * vers_enquete, projetee.facteur)
-    assert projetee.beneficiaires == pytest.approx(attendu.beneficiaires)
+    # Un ayant droit sur deux réclame : les bénéficiaires et le coût sont
+    # ceux qui réclament, les ayants droit tous ceux qui sont sous le plancher.
+    taux = parametres.taux_recours_garantie
+    assert projetee.taux_recours == taux
+    assert projetee.ayants_droit == pytest.approx(attendu.beneficiaires)
+    assert projetee.beneficiaires == pytest.approx(attendu.beneficiaires * taux)
     vers_constants = simulateur.macro.coefficient_prix(
         millesime, parametres.annee_euros_constants)
     assert projetee.cout_constants == pytest.approx(
-        attendu.cout_annuel_meur * vers_constants)
+        attendu.cout_annuel_meur * vers_constants * taux)
     # Et c'est ce coût que le rapport de la composante redonne, appliqué aux
     # droits directs de la dépense observée.
     assert ligne.cout_constants(COMPOSANTE_GARANTIE) == pytest.approx(
@@ -925,10 +930,24 @@ def test_la_garantie_decroit_quand_les_pensions_montent_face_au_plancher(cout, a
     assert derniere.garantie.facteur > premiere.garantie.facteur
     assert derniere.garantie.beneficiaires < premiere.garantie.beneficiaires
     assert derniere.part_pib(COMPOSANTE_GARANTIE) < premiere.part_pib(COMPOSANTE_GARANTIE)
-    assert derniere.part_pib(COMPOSANTE_GARANTIE) > 0.005
+    assert derniere.part_pib(COMPOSANTE_GARANTIE) > 0.002
     # Et l'ordre de grandeur est celui du barème appliqué à la distribution,
-    # non plus celui d'une grille sans queue basse.
-    assert 0.005 < premiere.part_pib(COMPOSANTE_GARANTIE) < 0.02
+    # non plus celui d'une grille sans queue basse — à un ayant droit sur deux.
+    assert 0.003 < premiere.part_pib(COMPOSANTE_GARANTIE) < 0.02
+
+
+def test_le_recours_reduit_le_cout_de_la_garantie_dans_la_meme_proportion(cout, distribution):
+    """Un recours complet doublerait le coût du réglage par défaut, un sur deux ;
+    les ayants droit, eux, ne bougent pas, et un taux hors de ]0, 1] est refusé."""
+    from retraite_notionnelle.cout import GarantieDistribution
+    millesime = distribution.millesime
+    projetee = cout.annee(millesime).garantie
+    assert projetee.taux_recours == 0.5
+    assert projetee.beneficiaires == pytest.approx(projetee.ayants_droit * 0.5)
+    with pytest.raises(ValueError):
+        GarantieDistribution(distribution, 800.0, 1000.0, 1.0, 1.0, taux_recours=0.0)
+    with pytest.raises(ValueError):
+        GarantieDistribution(distribution, 800.0, 1000.0, 1.0, 1.0, taux_recours=1.5)
 
 
 # -- le solde : ce qui rentre, face à ce qui sort ----------------------------

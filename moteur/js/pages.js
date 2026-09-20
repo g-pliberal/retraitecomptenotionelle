@@ -6633,7 +6633,8 @@ function coutDetailPostes(contexte) {
     simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
     base.garantie_vieillesse_mensuelle * versEnquete, facteurContributif,
   );
-  const garantieMeur = garantie.coutAnnuelMeur / versEnquete;
+  // Un ayant droit sur deux réclame : le même recours que le dépliant.
+  const garantieMeur = garantie.coutAnnuelMeur * base.taux_recours_garantie / versEnquete;
   // Le pilier capitalisé : 5 % de la même assiette que les 18 %.
   const capitalise = ligne.recetteParAssiette
     ? recettes.notionnel_liberal.cotisations
@@ -7017,6 +7018,7 @@ function coutDetailGarantie(contexte) {
   );
   const anneeEnquete = c.annee(millesime);
   const facteur = anneeEnquete && anneeEnquete.garantie ? anneeEnquete.garantie.facteur : 1.0;
+  const taux = base.taux_recours_garantie;
   const seul = base.situation_foyer === "seul";
   const planchers = [
     ["Plancher de base, 800 € (vie à deux)", base.garantie_vieillesse_mensuelle],
@@ -7036,9 +7038,9 @@ function coutDetailGarantie(contexte) {
       lignes.push([
         echapper(`${titreAssiette} — ${titrePlancher}`),
         g.pourcentage(chiffre.partBeneficiaires, false, 1),
-        `${g.nombre(chiffre.beneficiaires / 1e6, 1)} M`,
+        `${g.nombre(chiffre.beneficiaires * taux / 1e6, 1)} M`,
         g.euros(chiffre.complementMoyenMensuel / versEnquete),
-        milliards(chiffre.coutAnnuelMeur / versEnquete, 1),
+        milliards(chiffre.coutAnnuelMeur * taux / versEnquete, 1),
       ]);
     }
   }
@@ -7066,6 +7068,7 @@ function coutDetailGarantie(contexte) {
     String(annee),
     g.nombre(ligne.garantie.facteur, 2),
     `${g.nombre(ligne.garantie.effectif / 1e6, 1)} M`,
+    `${g.nombre(ligne.garantie.ayantsDroit / 1e6, 1)} M`,
     `${g.nombre(ligne.garantie.beneficiaires / 1e6, 1)} M`,
     milliards(ligne.coutConstants(COMPOSANTE_GARANTIE), 1),
     g.pourcentage(ligne.partPib(COMPOSANTE_GARANTIE), false, 2),
@@ -7115,10 +7118,11 @@ salaires, face à un plancher indexé sur les prix, et la garantie décroît.</p
 
 ${g.tableau(
     ["Année", "Facteur de déplacement", "Retraités de 65 ans et plus",
-      "Bénéficiaires", `Coût annuel, milliards d'euros ${c.anneeEuros}`,
+      "Sous le plancher", "Bénéficiaires",
+      `Coût annuel, milliards d'euros ${c.anneeEuros}`,
       "Part du PIB"],
     lignesEtapes,
-    ["nombre", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    ["nombre", "nombre", "nombre", "nombre", "nombre", "nombre", "nombre"],
     `La garantie vieillesse dans la trajectoire, plancher ${
       seul ? "majoré (personne seule)" : "de base (vie à deux)"}`,
     true,
@@ -7134,8 +7138,19 @@ réel est entre les deux. La trajectoire retient
 ${seul ? "le plancher majoré" : "le plancher de base"}, celui que le
 simulateur applique.</p>
 
+<p><strong>Un ayant droit sur deux réclame.</strong> La garantie se demande,
+comme l'ASPA, et le programme retient l'hypothèse que la DREES mesure sur
+celle-ci : une personne seule éligible sur deux ne la réclame pas, la crainte
+de la reprise sur succession étant le premier motif donné. Une avance reprise
+dès le premier euro ne se réclamera pas davantage. Les bénéficiaires et les
+coûts de ce dépliant, la ligne « dont garantie » des tableaux du haut et le
+tableau poste par poste comptent donc ${g.pourcentage(taux, false, 0)} des ayants droit ; la part des
+retraités sous le plancher, elle, est donnée entière. Le paramètre
+<code>taux_recours_garantie</code> porte cette hypothèse, et un rend le recours
+complet.</p>
+
 ${g.tableau(
-    ["Assiette et plancher", "Part des retraités", "Bénéficiaires",
+    ["Assiette et plancher", "Sous le plancher", "Bénéficiaires",
       "Complément moyen",
       `Coût annuel, milliards d'euros ${base.annee_euros_garantie_vieillesse}`],
     lignes,
@@ -7177,33 +7192,33 @@ guère. La pension majorée de référence n'est pas chiffrée, aucun code du
 moteur ne la servant. Le total est donc une borne basse, et l'écart une borne
 haute.</p>
 
-<div class="note"><strong>Deux corrections, et il faut les deux.</strong> L'ASPA est réclamée par <strong>une personne seule éligible sur
-deux</strong> : fin 2016, 321 200 personnes vivaient sous son plafond sans la
-demander, pour 790 millions d'euros non versés, soit 59 % des sommes servies
-(DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). Une garantie
-individualisée et automatique n'a pas de non-recours : une part de ce qu'elle
-coûte en plus existe donc déjà, sans être réclamée. Dans le même sens, la
-garantie est une <strong>avance reprise sur la succession</strong>, dès le
+<div class="note"><strong>Deux corrections, et une seule est dans le
+tableau.</strong> L'ASPA est réclamée par <strong>une personne seule éligible
+sur deux</strong> : fin 2016, 321 200 personnes vivaient sous son plafond sans
+la demander, pour 790 millions d'euros non versés, soit 59 % des sommes servies
+(DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). Le tableau applique
+le même recours à la garantie, un ayant droit sur deux : ce qu'elle coûte en
+plus est compté ainsi, et le recours complet le doublerait. Dans le même sens,
+la garantie est une <strong>avance reprise sur la succession</strong>, dès le
 premier euro et avec intérêts, là où l'ASPA n'est récupérée qu'au-delà d'un
 seuil d'actif net : le Fonds de solidarité vieillesse en a retiré 108,7
 millions d'euros en 2024 (143,9 en 2023, avant le relèvement du seuil), deux
 pour cent de ce qu'elle verse. La garantie touche une population bien plus
 large, et souvent propriétaire ; ce qu'elle rendrait ne se lit sur aucune
 donnée du dépôt, qui n'a pas de distribution de patrimoine par niveau de
-pension. Le premier effet se compte en centaines de millions par an, le second
-n'est pas chiffré, et ni l'un ni l'autre n'est dans le tableau : le coût
-affiché est <strong>brut, avant reprise</strong>.</div>
+pension. Cette seconde correction n'est pas dans le tableau : le coût affiché
+est <strong>brut, avant reprise</strong>.</div>
 
 <div class="note"><strong>La garantie n'est pas l'ASPA à un autre
 montant.</strong> L'ASPA regarde <em>toutes les ressources du foyer</em> et ne
 sert rien à un couple à 300 € et 1 500 € ; la garantie ne regarde que la pension
 d'une personne, et sert 500 € au premier. C'est ce changement d'assiette, plus
 encore que le montant, qui fait passer d'une allocation servie à quelques
-centaines de milliers de personnes à une allocation servie à
+centaines de milliers de personnes à une allocation ouverte à
 ${g.nombre(garantieBasse.beneficiaires / 1e6, 1)} millions de retraités aux
 pensions d'aujourd'hui, et à
 ${g.nombre(garantieScenario.beneficiaires / 1e6, 1)} millions à celles du
-système 4.</div>
+système 4, dont la moitié la réclamerait.</div>
 `, "cout-garantie");
 }
 
@@ -8955,6 +8970,9 @@ n'est récupérée qu'au-delà d'un seuil d'actif net. Quatre règles l'encadren
   <li>la créance est garantie par une hypothèque légale inscrite dès le
   premier versement, de sorte qu'un bien donné la porte avec lui.</li>
 </ul>
+<p>Elle se demande, comme l'ASPA, et se refuse : personne ne se voit imposer
+une dette. Le programme retient qu'un ayant droit sur deux la réclame, ce que
+la DREES observe sur l'ASPA, et chiffre son coût ainsi.</p>
 <p>Le tableau du haut de page le montre : l'ASPA regarde les ressources du
 foyer, et à 300 € et 1 500 € le couple dépasse son plafond et ne reçoit rien.
 La garantie regarde chacun, et sert 500 € au premier. C'est ce changement

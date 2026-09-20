@@ -483,8 +483,13 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
  */
 class GarantieDistribution {
   constructor(distribution, plancherMensuel, pensionReference, effectifParTete,
-              versConstants) {
+              versConstants, tauxRecours = 1.0) {
+    if (!(tauxRecours > 0 && tauxRecours <= 1)) {
+      throw new RangeError("le taux de recours est une part, entre zéro exclu et un");
+    }
     this.distribution = distribution;
+    // Part des ayants droit qui réclament la garantie.
+    this.tauxRecours = tauxRecours;
     this.plancherMensuel = plancherMensuel;
     this.pensionReference = pensionReference;
     this.effectifParTete = effectifParTete;
@@ -494,7 +499,8 @@ class GarantieDistribution {
   /** La garantie d'une année, d'après les masses et les têtes de la grille. */
   chiffrer(total, tetes) {
     const tetesGarantie = tetes[TETES_GARANTIE];
-    const vide = { facteur: 0, effectif: 0, beneficiaires: 0, coutConstants: 0 };
+    const vide = { facteur: 0, effectif: 0, beneficiaires: 0, coutConstants: 0,
+                   ayantsDroit: 0, tauxRecours: 1.0 };
     if (tetesGarantie <= 0 || this.pensionReference <= 0) return vide;
     const facteur = total[RESSOURCES_GARANTIE] / tetesGarantie / this.pensionReference;
     if (facteur <= 0) return vide;
@@ -503,8 +509,10 @@ class GarantieDistribution {
     return {
       facteur,
       effectif,
-      beneficiaires: chiffre.beneficiaires,
-      coutConstants: chiffre.coutAnnuelMeur * this.versConstants,
+      beneficiaires: chiffre.beneficiaires * this.tauxRecours,
+      coutConstants: chiffre.coutAnnuelMeur * this.versConstants * this.tauxRecours,
+      ayantsDroit: chiffre.beneficiaires,
+      tauxRecours: this.tauxRecours,
     };
   }
 }
@@ -526,6 +534,7 @@ function garantieDistribution(simulateur, liste, population, poids, revalorisati
     toutes > 0 ? total.actuel / toutes : 0,
     toutes > 0 ? simulateur.effectifs.effectif("tous_regimes", millesime) / toutes : 0,
     macro.coefficientPrix(millesime, parametres.annee_euros_constants),
+    parametres.taux_recours_garantie,
   );
 }
 

@@ -1576,10 +1576,16 @@ class GarantieProjetee:
     #: Retraités auxquels le barème est appliqué : ceux qui ont atteint
     #: soixante-cinq ans, sur l'échelle de l'enquête.
     effectif: float
-    #: Ceux d'entre eux qui tombent sous le plancher.
+    #: Ceux d'entre eux qui tombent sous le plancher ET la réclament.
     beneficiaires: float
-    #: Coût annuel, en millions d'euros CONSTANTS de l'année de référence.
+    #: Coût annuel, en millions d'euros CONSTANTS de l'année de référence,
+    #: pour ceux qui la réclament.
     cout_constants: float
+    #: Ceux qui tombent sous le plancher, qu'ils la réclament ou non.
+    ayants_droit: float = 0.0
+    #: Part des ayants droit qui la réclament : ``beneficiaires`` sur
+    #: ``ayants_droit``, et le coût dans la même proportion.
+    taux_recours: float = 1.0
 
 
 class GarantieDistribution:
@@ -1626,12 +1632,22 @@ class GarantieDistribution:
     l'année de l'enquête, le même déplacement est appliqué à rebours, ce qui
     fait du passé une extrapolation au même titre que l'avenir. Une seule
     méthode sur toute la série, plutôt qu'une falaise entre deux.
+
+    LE RECOURS. La garantie se demande, comme l'ASPA, et le programme retient
+    l'hypothèse que la DREES mesure sur celle-ci : un ayant droit sur deux la
+    réclame (``Parametres.taux_recours_garantie``). Les bénéficiaires et le
+    coût sont ceux qui réclament ; ``ayants_droit`` garde le compte de tous
+    ceux qui tombent sous le plancher.
     """
 
     def __init__(self, distribution: DistributionPensions, plancher_mensuel: float,
                  pension_reference: float, effectif_par_tete: float,
-                 vers_constants: float) -> None:
+                 vers_constants: float, taux_recours: float = 1.0) -> None:
+        if not 0.0 < taux_recours <= 1.0:
+            raise ValueError("le taux de recours est une part, entre zéro exclu et un")
         self.distribution = distribution
+        #: Part des ayants droit qui réclament la garantie.
+        self.taux_recours = taux_recours
         #: Le plancher, dans les euros de l'enquête.
         self.plancher_mensuel = plancher_mensuel
         #: Pension moyenne du système actuel l'année de l'enquête, par tête et
@@ -1655,8 +1671,10 @@ class GarantieDistribution:
         return GarantieProjetee(
             facteur=facteur,
             effectif=effectif,
-            beneficiaires=chiffre.beneficiaires,
-            cout_constants=chiffre.cout_annuel_meur * self.vers_constants,
+            beneficiaires=chiffre.beneficiaires * self.taux_recours,
+            cout_constants=chiffre.cout_annuel_meur * self.vers_constants * self.taux_recours,
+            ayants_droit=chiffre.beneficiaires,
+            taux_recours=self.taux_recours,
         )
 
 
@@ -1690,6 +1708,7 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
         ),
         vers_constants=macro.coefficient_prix(
             millesime, parametres.annee_euros_constants),
+        taux_recours=parametres.taux_recours_garantie,
     )
 
 

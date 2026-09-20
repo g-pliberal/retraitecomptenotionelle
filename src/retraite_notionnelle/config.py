@@ -589,6 +589,17 @@ class Parametres:
     #: Année dans les euros de laquelle les deux montants ci-dessus sont fixés.
     annee_euros_garantie_vieillesse: int = 2026
 
+    #: Part des ayants droit qui RÉCLAMENT la garantie. Le programme retient,
+    #: depuis le 20 septembre 2026, l'hypothèse que la DREES mesure sur l'ASPA :
+    #: une personne seule éligible sur deux ne la demande pas (dossier n° 97,
+    #: mai 2022, sur 2016), la crainte de la reprise sur succession étant le
+    #: premier motif donné à la Cnav. La garantie étant une avance reprise dès
+    #: le premier euro, elle ne se réclamera pas davantage. Ne joue que sur le
+    #: COÛT lu sur la distribution (page Coût) : qui réclame la reçoit en
+    #: entier, et le simulateur d'une carrière ne connaît pas ce taux. Un rend
+    #: le recours complet.
+    taux_recours_garantie: float = 0.5
+
     #: Seul ou à deux. Ne joue que sur l'allocation d'isolement : la garantie
     #: est individualisée, et le conjoint n'entre pas dans le calcul. Le défaut
     #: est la personne seule, comme pour l'ASPA du scénario 1, de sorte que les

@@ -2325,6 +2325,9 @@ n'est récupérée qu'au-delà d'un seuil d'actif net. Quatre règles l'encadren
   <li>la créance est garantie par une hypothèque légale inscrite dès le
   premier versement, de sorte qu'un bien donné la porte avec lui.</li>
 </ul>
+<p>Elle se demande, comme l'ASPA, et se refuse : personne ne se voit imposer
+une dette. Le programme retient qu'un ayant droit sur deux la réclame, ce que
+la DREES observe sur l'ASPA, et chiffre son coût ainsi.</p>
 <p>Le tableau du haut de page le montre : l'ASPA regarde les ressources du
 foyer, et à 300 € et 1 500 € le couple dépasse son plafond et ne reçoit rien.
 La garantie regarde chacun, et sert 500 € au premier. C'est ce changement
@@ -7408,7 +7411,8 @@ def _cout_detail_postes(contexte: Contexte) -> str:
         simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
         base.garantie_vieillesse_mensuelle * vers_enquete, facteur_contributif,
     )
-    garantie_meur = garantie.cout_annuel_meur / vers_enquete
+    # Un ayant droit sur deux réclame : le même recours que le dépliant.
+    garantie_meur = garantie.cout_annuel_meur * base.taux_recours_garantie / vers_enquete
     # Le pilier capitalisé : 5 % de la même assiette que les 18 %, donc les
     # cotisations de la proposition multipliées par le rapport des deux taux.
     capitalise = (
@@ -7878,6 +7882,7 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
         base.annee_euros_garantie_vieillesse, millesime)
     annee_enquete = cout.annee(millesime)
     facteur = annee_enquete.garantie.facteur if annee_enquete.garantie else 1.0
+    taux = base.taux_recours_garantie
     seul = base.situation_foyer is SituationFoyer.SEUL
     planchers = (
         ("Plancher de base, 800 € (vie à deux)", base.garantie_vieillesse_mensuelle),
@@ -7896,9 +7901,9 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
             lignes.append([
                 escape(f"{titre_assiette} — {titre_plancher}"),
                 g.pourcentage(chiffre.part_beneficiaires, decimales=1),
-                g.nombre(chiffre.beneficiaires / 1e6, 1) + " M",
+                g.nombre(chiffre.beneficiaires * taux / 1e6, 1) + " M",
                 g.euros(chiffre.complement_moyen_mensuel / vers_enquete),
-                _milliards(chiffre.cout_annuel_meur / vers_enquete, 1),
+                _milliards(chiffre.cout_annuel_meur * taux / vers_enquete, 1),
             ])
     garantie_basse = cout_garantie(
         distribution, effectif_retraites,
@@ -7920,6 +7925,7 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
         [str(annee),
          g.nombre(ligne.garantie.facteur, 2),
          g.nombre(ligne.garantie.effectif / 1e6, 1) + " M",
+         g.nombre(ligne.garantie.ayants_droit / 1e6, 1) + " M",
          g.nombre(ligne.garantie.beneficiaires / 1e6, 1) + " M",
          _milliards(ligne.cout_constants(COMPOSANTE_GARANTIE), 1),
          g.pourcentage(ligne.part_pib(COMPOSANTE_GARANTIE), decimales=2)]
@@ -7975,10 +7981,11 @@ salaires, face à un plancher indexé sur les prix, et la garantie décroît.</p
 
 {g.tableau(
     ["Année", "Facteur de déplacement", "Retraités de 65 ans et plus",
-     "Bénéficiaires", "Coût annuel, milliards d'euros " + str(cout.annee_euros),
+     "Sous le plancher", "Bénéficiaires",
+     "Coût annuel, milliards d'euros " + str(cout.annee_euros),
      "Part du PIB"],
     lignes_etapes,
-    ["nombre", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    ["nombre", "nombre", "nombre", "nombre", "nombre", "nombre", "nombre"],
     titre=f"La garantie vieillesse dans la trajectoire, plancher "
           f"{'majoré (personne seule)' if seul else 'de base (vie à deux)'}",
     entete_de_ligne=True,
@@ -7994,8 +8001,19 @@ réel est entre les deux. La trajectoire retient
 {'le plancher majoré' if seul else 'le plancher de base'}, celui que le
 simulateur applique.</p>
 
+<p><strong>Un ayant droit sur deux réclame.</strong> La garantie se demande,
+comme l'ASPA, et le programme retient l'hypothèse que la DREES mesure sur
+celle-ci : une personne seule éligible sur deux ne la réclame pas, la crainte
+de la reprise sur succession étant le premier motif donné. Une avance reprise
+dès le premier euro ne se réclamera pas davantage. Les bénéficiaires et les
+coûts de ce dépliant, la ligne « dont garantie » des tableaux du haut et le
+tableau poste par poste comptent donc {g.pourcentage(taux, decimales=0)} des ayants droit ; la part des
+retraités sous le plancher, elle, est donnée entière. Le paramètre
+<code>taux_recours_garantie</code> porte cette hypothèse, et un rend le recours
+complet.</p>
+
 {g.tableau(
-    ["Assiette et plancher", "Part des retraités", "Bénéficiaires",
+    ["Assiette et plancher", "Sous le plancher", "Bénéficiaires",
      "Complément moyen",
      f"Coût annuel, milliards d'euros {base.annee_euros_garantie_vieillesse}"],
     lignes,
@@ -8037,33 +8055,33 @@ guère. La pension majorée de référence n'est pas chiffrée, aucun code du
 moteur ne la servant. Le total est donc une borne basse, et l'écart une borne
 haute.</p>
 
-<div class="note"><strong>Deux corrections, et il faut les deux.</strong> L'ASPA est réclamée par <strong>une personne seule éligible sur
-deux</strong> : fin 2016, 321 200 personnes vivaient sous son plafond sans la
-demander, pour 790 millions d'euros non versés, soit 59 % des sommes servies
-(DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). Une garantie
-individualisée et automatique n'a pas de non-recours : une part de ce qu'elle
-coûte en plus existe donc déjà, sans être réclamée. Dans le même sens, la
-garantie est une <strong>avance reprise sur la succession</strong>, dès le
+<div class="note"><strong>Deux corrections, et une seule est dans le
+tableau.</strong> L'ASPA est réclamée par <strong>une personne seule éligible
+sur deux</strong> : fin 2016, 321 200 personnes vivaient sous son plafond sans
+la demander, pour 790 millions d'euros non versés, soit 59 % des sommes servies
+(DREES, <em>Les dossiers de la DREES</em> n° 97, mai 2022). Le tableau applique
+le même recours à la garantie, un ayant droit sur deux : ce qu'elle coûte en
+plus est compté ainsi, et le recours complet le doublerait. Dans le même sens,
+la garantie est une <strong>avance reprise sur la succession</strong>, dès le
 premier euro et avec intérêts, là où l'ASPA n'est récupérée qu'au-delà d'un
 seuil d'actif net : le Fonds de solidarité vieillesse en a retiré 108,7
 millions d'euros en 2024 (143,9 en 2023, avant le relèvement du seuil), deux
 pour cent de ce qu'elle verse. La garantie touche une population bien plus
 large, et souvent propriétaire ; ce qu'elle rendrait ne se lit sur aucune
 donnée du dépôt, qui n'a pas de distribution de patrimoine par niveau de
-pension. Le premier effet se compte en centaines de millions par an, le second
-n'est pas chiffré, et ni l'un ni l'autre n'est dans le tableau : le coût
-affiché est <strong>brut, avant reprise</strong>.</div>
+pension. Cette seconde correction n'est pas dans le tableau : le coût affiché
+est <strong>brut, avant reprise</strong>.</div>
 
 <div class="note"><strong>La garantie n'est pas l'ASPA à un autre
 montant.</strong> L'ASPA regarde <em>toutes les ressources du foyer</em> et ne
 sert rien à un couple à 300 € et 1 500 € ; la garantie ne regarde que la pension
 d'une personne, et sert 500 € au premier. C'est ce changement d'assiette, plus
 encore que le montant, qui fait passer d'une allocation servie à quelques
-centaines de milliers de personnes à une allocation servie à
+centaines de milliers de personnes à une allocation ouverte à
 {g.nombre(garantie_basse.beneficiaires / 1e6, 1)} millions de retraités aux
 pensions d'aujourd'hui, et à
 {g.nombre(garantie_scenario.beneficiaires / 1e6, 1)} millions à celles du
-système 4.</div>
+système 4, dont la moitié la réclamerait.</div>
 """, identifiant="cout-garantie")
 
 
