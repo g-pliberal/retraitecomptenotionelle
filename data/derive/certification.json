@@ -430,6 +430,17 @@
    "valeurs": 5,
    "verifiee_le": "2026-09-17"
   },
+  "engagements_retraite": {
+   "ajoutees": 6,
+   "colonne": "part_pib",
+   "corrigees": 0,
+   "empreinte": "5e0e4e97aded5479",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "Eurostat, tableau supplémentaire sur les retraites du SEC 2010 (nasa_10_pens1, poste F63_LE)",
+   "valeurs": 6,
+   "verifiee_le": "2026-09-20"
+  },
   "esperance_65_derivee": {
    "ajoutees": 0,
    "colonne": "valeur",

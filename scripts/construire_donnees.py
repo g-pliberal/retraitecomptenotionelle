@@ -235,6 +235,11 @@ def _comptes_retraite() -> dict:
     series["ressources_eec"] = charger_serie_annuelle(
         macro / "ressources_eec_retraite.csv", "part_pib",
         nom="ressources_eec_retraite")
+    # Les droits à pension acquis à date : le stock, à côté des flux.
+    for regime in ("tous_regimes", "repartition"):
+        series[f"engagements_{regime}"] = charger_serie_annuelle(
+            macro / "engagements_retraite.csv", "part_pib",
+            nom=f"engagements_{regime}", filtre={"regime": regime})
     # Ce que la branche famille et l'assurance chômage versent, en millions
     # d'euros : la ventilation du poste « transferts », lue chez celui qui paie.
     for poste in POSTES_TRANSFERTS:

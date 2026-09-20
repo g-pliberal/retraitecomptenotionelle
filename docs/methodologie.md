@@ -1749,10 +1749,12 @@ Deux précisions d'unité, parce qu'elles sont la source d'erreur la plus facile
 La série projetée est tenue en euros **constants** — les pensions du modèle le
 sont déjà, et mêler les deux unités déflaterait deux fois, ce qui fait fondre la
 projection d'un tiers. Et le PIB qui sert de dénominateur suit les hypothèses du
-COR **corrigées du recul de la population d'âge actif** : une part de PIB met en
-rapport deux grandeurs de la même année, dont le numérateur suit une démographie
-qui vieillit ; laisser le dénominateur croître comme si l'emploi était constant
-mettrait de la démographie d'un côté et pas de l'autre.
+COR **composées avec sa trajectoire d'emploi** : une part de PIB met en rapport
+deux grandeurs de la même année, dont le numérateur suit une démographie qui
+vieillit ; laisser le dénominateur croître comme si l'emploi était constant
+mettrait de la démographie d'un côté et pas de l'autre. C'est la même série que
+lit l'indexation des comptes : la page se fabriquait auparavant son propre PIB,
+corrigé par la population des 20-64 ans, et le dépôt en portait trois.
 
 Ce que la projection suppose, et ce qu'elle vaut face au COR, est écrit dans
 `limites.md` §5 ter.
