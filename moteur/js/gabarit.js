@@ -133,10 +133,7 @@ export function navigation(cheminActif = "/") {
 export function entete(cheminActif = "/") {
   return `<a class="evitement" href="#contenu">Aller au contenu</a>
 <header class="bandeau"><div class="interieur">
-  <div class="marque">
-    <a class="retour" href="${SITE_PARENT}" target="_top">${icone("arrow-left")}<span>Parti libéral français</span></a>
-    <p class="nom"><a href="${lien("/")}">${icone("trending-up")}<span>Retraite à comptes notionnels</span></a></p>
-  </div>
+  <p class="nom"><a href="${lien("/")}">${icone("trending-up")}<span>Retraite à comptes notionnels</span></a></p>
   <nav aria-label="Navigation principale">${navigation(cheminActif)}</nav>
 </div></header>`;
 }

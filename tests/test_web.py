@@ -3682,25 +3682,27 @@ def test_les_deux_portages_dessinent_les_memes_pictogrammes():
 
 
 def test_le_pont_vers_le_site_parent_ressort_de_tout_cadre():
-    """Un seul pont, en tête et en pied, et rien d'autre du site parent.
+    """Un seul pont, en pied de page, et rien du site parent dans l'en-tête.
 
     ``target="_top"`` : ouvert dans le cadre que la page d'accueil du site
     ouvre sur le simulateur, un lien ordinaire chargerait le site DANS le
-    cadre. Hors cadre, l'attribut ne change rien. Le lien est la seule adresse
-    extérieure de l'en-tête : la navigation du site n'est pas recopiée, elle
-    se périmerait à sa prochaine mise en page.
+    cadre. Hors cadre, l'attribut ne change rien. L'en-tête, lui, ne porte
+    aucune adresse extérieure : il a porté le pont, en petites capitales
+    au-dessus du nom du site, et c'était une rangée de plus sur chacune des
+    neuf pages pour dire d'où l'on vient ; la navigation du site n'y est pas
+    recopiée non plus, elle se périmerait à sa prochaine mise en page.
     """
     import re
 
     pont = (f'href="{g.SITE_PARENT}" target="_top"')
     entete = g.entete("/")
-    assert pont in entete
     assert pont in g.pied()
+    assert pont not in entete
     exterieures = set(re.findall(r'href="(https?://[^"]+)"', entete))
-    assert exterieures == {g.SITE_PARENT}, exterieures
+    assert exterieures == set(), exterieures
     # Dans le cadre, le site pose ``plf-embedded`` sur ``<body>`` ; sa propre
     # navigation est alors juste au-dessus, et le pont ferait doublon.
-    assert "body.plf-embedded .marque .retour" in g.FEUILLE_DE_STYLE
+    assert "body.plf-embedded footer .retour-site" in g.FEUILLE_DE_STYLE
 
 
 def test_la_coquille_est_la_meme_des_deux_cotes_du_portage():

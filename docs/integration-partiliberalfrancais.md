@@ -159,11 +159,14 @@ ou, pour le programme, `<a href="/retraite/">Retraites notionnelles</a>`.
 C'est tout. Le simulateur porte lui-même, depuis le 17 septembre 2026, ce qui
 faisait l'objet des deux modifications côté hôte :
 
-- **Le retour au site.** Un lien « Parti libéral français » en tête de chaque
-  page, au-dessus du titre, et une ligne en pied. Il porte `target="_top"` :
-  dans un cadre, il ressort du cadre au lieu d'ouvrir le site dedans ; hors
-  cadre, l'attribut ne change rien. **Le bandeau `plf-back-link` inséré par
-  l'hôte fait désormais doublon et peut être retiré.**
+- **Le retour au site.** Une ligne en pied de chaque page, « Un outil du
+  Parti libéral français ». Elle porte `target="_top"` : dans un cadre, elle
+  ressort du cadre au lieu d'ouvrir le site dedans ; hors cadre, l'attribut ne
+  change rien. Le bandeau de tête, lui, ne renvoie plus au site depuis le
+  20 septembre 2026 : il tient sur une rangée, le nom du simulateur et ses
+  onglets, et le pied suffit pour dire d'où l'on vient. **Le bandeau
+  `plf-back-link` inséré par l'hôte fait désormais doublon et peut être
+  retiré.**
 - **L'air de famille.** Bandeau sombre bleu-vert souligné d'or, accent de la
   même teinte, pile de polices du système : le simulateur ressemble au site
   sans rien lui emprunter. **La feuille `plf-theme.css` n'est plus nécessaire**,
@@ -185,10 +188,10 @@ routage par `#` du simulateur ne touche pas celui du site.
 Ce qui est garanti côté simulateur si l'hôte garde ce mode :
 
 - **`body.plf-embedded`** : quand l'hôte pose cette classe (même origine), le
-  simulateur masque lui-même son lien de retour en tête et en pied — c'est la
-  seule chose qu'il sache de son hôte, et elle ne coûte rien si l'hôte cesse de
-  la poser. Le titre de la page reste visible : il dit quelle page du
-  simulateur est ouverte.
+  simulateur masque lui-même sa ligne de retour en pied — c'est la seule chose
+  qu'il sache de son hôte, et elle ne coûte rien si l'hôte cesse de la poser.
+  Le bandeau de tête reste tel quel : il ne porte rien du site, et le titre de
+  la page dit quelle page du simulateur est ouverte.
 - Le lien de retour ressort du cadre (`target="_top"`).
 - **Le défilement après un clic.** Dans un cadre de même origine, le
   simulateur règle lui-même la hauteur du cadre à chaque rendu, puis fait
@@ -264,8 +267,10 @@ Ce que l'hôte n'a **pas** besoin de connaître, et ne doit pas citer :
 
 À faire depuis un navigateur ordinaire, sur le site, en cinq minutes.
 
-1. `/retraite/` s'ouvre, affiche le programme, et le bandeau porte le lien
-   « Parti libéral français » qui ramène à la racine du site.
+1. `/retraite/` s'ouvre, affiche le programme, et le pied de page porte le
+   lien « Parti libéral français » qui ramène à la racine du site. Le bandeau
+   de tête tient sur une rangée au large : le nom du simulateur, puis les
+   neuf onglets.
 2. `/retraite/#/simuler` ouvre le formulaire ; « Calculer les six scénarios »
    affiche six montants et fait défiler jusqu'à eux.
 3. L'adresse d'exemple ci-dessus, collée dans la barre, affiche six scénarios
@@ -277,8 +282,9 @@ Ce que l'hôte n'a **pas** besoin de connaître, et ne doit pas citer :
    origine que le site.
 6. En thème sombre du système, la page est sombre ; en clair, claire ; le
    bandeau est le même dans les deux cas.
-7. Si `/#simulateur` est encore un cadre : le simulateur s'y affiche sans son
-   lien de retour, et le titre « Retraite à comptes notionnels » reste lisible.
+7. Si `/#simulateur` est encore un cadre : le simulateur s'y affiche sans sa
+   ligne de retour en pied, et le titre « Retraite à comptes notionnels »
+   reste lisible.
 8. Aucun fichier de ce dépôt n'a été modifié dans la copie ; s'il en reste un
    (`plf-theme.css`, `plf-back-link`), il est signalé comme dette dans ce
    fichier.

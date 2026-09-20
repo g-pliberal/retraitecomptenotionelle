@@ -204,50 +204,41 @@ main { max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge); }
    tout entier n'apprendrait rien. */
 main:focus { outline: none; }
 
-/* Le bandeau : le même vert que la page, séparé par un simple filet, et collé
-   en haut. Collé parce que la navigation est devenue une barre d'onglets de
-   huit entrées : sur les pages longues — Coût, Données —, la reperdre au
-   premier défilement obligeait à remonter de six écrans pour changer de page.
-   Il porte le carré d'or et le nom du parti, puis les onglets. */
+/* Le bandeau : une seule rangée, le nom du site à gauche, les onglets à
+   droite, le tout sur le même vert que la page et fermé par un simple filet.
+   Il est collé en haut parce que la navigation est une barre de neuf onglets :
+   sur les pages longues — Coût, Données —, la reperdre au premier défilement
+   obligeait à remonter de six écrans pour changer de page. Il ne porte plus
+   de lien de retour vers le site du parti : le pied de page l'a, et le
+   bandeau n'a pas à dire d'où l'on vient sur chacune des neuf pages. */
 header.bandeau {
   border-bottom: 1px solid var(--trait);
   background: var(--fond);
   color: var(--bandeau-texte);
-  padding: 1rem 0;
+  padding: 0;
   margin-bottom: 0;
   position: sticky; top: 0; z-index: 20;
 }
 header.bandeau .interieur {
   max-width: var(--largeur); margin: 0 auto; padding: 0 var(--marge);
-  display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem;
-  align-items: center; justify-content: space-between;
+  display: flex; flex-wrap: wrap; gap: 0 1.5rem;
+  align-items: stretch; justify-content: space-between;
 }
-.marque { display: flex; flex-direction: column; gap: 0.25rem; min-width: 0; }
-.marque .retour {
-  /* 24 px de haut au moins (WCAG 2.5.8) : à la seule hauteur de son texte, ce
-     lien faisait 18 points, et c'est le premier qu'on touche en arrivant du
-     site du parti. Le padding est vertical seulement, pour que le libellé
-     reste aligné à gauche sur le nom du site, en dessous. */
-  align-self: flex-start; display: inline-flex; align-items: center; gap: 0.35rem;
-  min-height: 1.5rem; padding: 0.2rem 0;
-  color: var(--texte-tres-doux); text-decoration: none;
-  font-size: 0.8rem; letter-spacing: 0.06em; text-transform: uppercase;
-  line-height: 1.4;
-}
-.marque .retour:hover { color: var(--bandeau-texte); }
-.marque .retour .icone { width: 1em; height: 1em; }
 /* Le nom du site, en capitales serrées, précédé du carré d'or : c'est la
    marque de l'affiche, et elle tient en douze pixels de côté. Le carré est
    décoratif — il est dessiné par le style, pas écrit dans le HTML, et aucune
-   synthèse vocale n'a à l'annoncer. */
+   synthèse vocale n'a à l'annoncer. Il a la hauteur de la rangée, comme les
+   onglets, pour que la rangée n'ait qu'une hauteur : celle de la barre. */
 header.bandeau .nom {
-  font-size: 0.9375rem; margin: 0; font-weight: 900;
-  letter-spacing: 0.12em; text-transform: uppercase; line-height: 1;
+  font-size: 0.8125rem; margin: 0; font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.3;
+  display: flex; align-items: center; min-height: 3.5rem; min-width: 0;
 }
 header.bandeau .nom a {
   color: inherit; text-decoration: none;
-  display: inline-flex; align-items: center; gap: 0.7rem;
+  display: inline-flex; align-items: center; gap: 0.75rem;
 }
+header.bandeau .nom a:hover span { color: var(--or); }
 header.bandeau .nom a::before {
   content: ""; flex: none; width: 0.75rem; height: 0.75rem; background: var(--or);
 }
@@ -256,18 +247,22 @@ header.bandeau .nom a::before {
 header.bandeau .nom .icone { display: none; }
 /* Dans le cadre que le site parent ouvre sur sa page d'accueil — même
    origine, classe posée par lui sur `<body>` —, sa navigation est juste
-   au-dessus, et le lien de retour ferait doublon. C'est la seule chose que la
-   page sache de son hôte, et elle ne coûte rien s'il cesse de la poser. */
-body.plf-embedded .marque .retour, body.plf-embedded footer .retour-site {
-  display: none;
-}
+   au-dessus, et la ligne de pied qui y renvoie ferait doublon. C'est la seule
+   chose que la page sache de son hôte, et elle ne coûte rien s'il cesse de la
+   poser. */
+body.plf-embedded footer .retour-site { display: none; }
 /* Les onglets. Ils ont remplacé les trois groupes étiquetés — « le programme,
    la preuve, la confiance » —, non parce que ces groupes disaient faux, mais
    parce que huit pages sous trois intertitres prenaient deux fois la hauteur
    du bandeau collé, et qu'un bandeau collé qui mange un quart de l'écran ne
    colle plus rien d'utile. L'étiquette de groupe subsiste dans le HTML, pour
-   les synthèses vocales, et se lit à l'écran comme une simple pause. */
-header.bandeau nav { display: flex; flex-wrap: wrap; gap: 0.35rem 0.25rem; }
+   les synthèses vocales, et se lit à l'écran comme une simple pause.
+   La marge négative d'un pixel pose le filet des onglets SUR le filet du
+   bandeau : l'onglet courant s'y accroche, comme l'onglet d'un classeur. */
+header.bandeau nav {
+  display: flex; flex-wrap: wrap; gap: 0; margin-bottom: -1px;
+  margin-right: -0.55rem;
+}
 nav .groupe { display: contents; }
 /* L'étiquette de groupe : lue par les synthèses vocales, invisible à l'œil.
    `clip-path` plutôt que `display:none`, qui la retirerait aussi de l'arbre
@@ -282,22 +277,37 @@ nav .etiquette {
    en prenaient trois. Les liens sont les enfants directs du `<nav>`, et se
    replient un par un. */
 nav .liens { display: contents; }
-/* Un onglet. Cible tactile de 44 px de haut (WCAG 2.5.8), capitales serrées,
-   et un filet sous chacun : c'est ce filet qui épaissit sur l'onglet courant.
-   L'ACTIF NE SE SIGNALE PAS QUE PAR LA COULEUR — un fond d'or seul ne se voit
-   ni en niveaux de gris, ni pour une vision basse, et ne s'annonce pas ; il
-   porte donc un soulignement de 3 px ET `aria-current="page"`. */
-nav a {
+/* Un onglet. Toute la hauteur de la barre — 56 px, bien plus que les 44 de la
+   cible tactile (WCAG 2.5.8) —, capitales serrées, et un filet sous chacun :
+   c'est ce filet qui prend l'or sur l'onglet courant. L'ACTIF NE SE SIGNALE
+   PAS QUE PAR LA COULEUR — un fond d'or seul ne se voit ni en niveaux de
+   gris, ni pour une vision basse, et ne s'annonce pas ; il porte donc un
+   soulignement de 2 px ET `aria-current="page"`. Les règles sont ancrées
+   sur `header.bandeau` : le plan d'une page longue est un `<nav>` lui aussi,
+   et un `nav a` nu lui donnait la hauteur des onglets. */
+header.bandeau nav a {
   color: var(--texte-doux); text-decoration: none;
-  font-size: 0.875rem; font-weight: 700; letter-spacing: 0.04em;
-  text-transform: uppercase;
-  display: inline-flex; align-items: center; min-height: 2.75rem;
-  padding: 0 0.7rem;
-  border-bottom: 3px solid transparent;
+  font-size: 0.8125rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; white-space: nowrap;
+  display: inline-flex; align-items: center; min-height: 3.5rem;
+  padding: 0 0.55rem;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
 }
-nav a:hover { color: var(--bandeau-texte); border-bottom-color: var(--trait-champ); }
-nav a[aria-current="page"] {
+header.bandeau nav a:hover {
+  color: var(--bandeau-texte); border-bottom-color: var(--trait-champ);
+}
+header.bandeau nav a[aria-current="page"] {
   color: var(--or); border-bottom-color: var(--or);
+}
+/* Sous 78 rem — le nom, les neuf onglets et leur jour font 1 168 px —, la
+   rangée unique ne tient plus : le nom prend sa propre rangée, plus basse,
+   et les onglets passent dessous, sur toute la largeur. Deux rangées de
+   44 px : la barre reste collée sans manger l'écran. */
+@media (max-width: 78rem) {
+  header.bandeau .nom { flex: 1 1 100%; min-height: 2.75rem; padding-top: 0.25rem; }
+  header.bandeau nav { width: 100%; margin-left: -0.55rem; }
+  header.bandeau nav a { min-height: 2.75rem; }
 }
 
 /* Les titres de l'affiche. Le premier de chaque page est massif, en capitales,
@@ -852,8 +862,16 @@ tbody tr[hidden] { display: none; }
   margin: 0; padding: 0; list-style: none;
   display: flex; flex-wrap: wrap; gap: 0.25rem 1.1rem;
 }
-.plan a { color: var(--texte); text-decoration: none;
-          border-bottom: 1px solid var(--trait-champ); }
+/* Les entrées du plan ont la composition des onglets d'avant la barre — elles
+   l'héritaient d'un `nav a` nu, elles la portent maintenant en propre. */
+.plan a {
+  color: var(--texte); text-decoration: none;
+  font-size: 0.875rem; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase;
+  display: inline-flex; align-items: center; min-height: 2.75rem;
+  padding: 0 0.7rem;
+  border-bottom: 1px solid var(--trait-champ);
+}
 .plan a:hover { color: var(--or); border-bottom-color: var(--or); }
 /* Les onglets d'une grille : des boutons radio, dont le libellé fait
    l'onglet. Le clavier les parcourt aux flèches, comme tout groupe de radios,
@@ -1511,16 +1529,13 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
 }
 @media (max-width: 34rem) {
   body { font-size: 1rem; }
-  header.bandeau { padding: 0.75rem 0; }
-  /* Le nom prend toute la largeur et les onglets passent dessous : côte à
-     côte, les deux se partageaient 358 points et le nom se coupait en deux. */
-  .marque { flex: 1 1 100%; }
-  header.bandeau nav { width: 100%; }
-  /* Le bandeau ne colle plus : à huit onglets sur deux rangées, il mangeait un
-     tiers de la hauteur d'un téléphone, et c'est cette hauteur qu'on vient
-     chercher. */
+  /* Le bandeau ne colle plus : à neuf onglets sur deux ou trois rangées, il
+     mangeait un tiers de la hauteur d'un téléphone, et c'est cette hauteur
+     qu'on vient chercher. */
   header.bandeau { position: static; }
-  nav a { padding: 0 0.5rem; font-size: 0.8125rem; }
+  header.bandeau nav { margin-left: -0.5rem; margin-right: -0.5rem; }
+  header.bandeau nav a { padding: 0 0.5rem; font-size: 0.75rem; }
+  .plan a { padding: 0 0.5rem; font-size: 0.8125rem; }
   .affiche { padding: 2rem 0 1.5rem; }
   .scenario .entete { flex-direction: column; gap: 0.15rem; }
   /* L'intitulé reprend sa hauteur de texte. En colonne, `flex: 1 1 14rem` ne
@@ -1636,7 +1651,7 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
     --accent: #000; --or: #000; --creme: #fff; --sur-creme: #000;
     --sur-creme-doux: #333; --sur-creme-accent: #000; --creme-trait: #999;
   }
-  header.bandeau nav, .evitement, .marque .retour { display: none; }
+  header.bandeau nav, .evitement { display: none; }
   header.bandeau {
     background: #fff; color: #000; border-bottom: 1px solid #000;
     margin-bottom: 1rem; position: static;

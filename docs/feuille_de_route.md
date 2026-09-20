@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 186<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 183<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -9084,3 +9084,26 @@ lui seul sur la page.
 **Ce que ça déplace.** Rien sur le solde, la dette, la garantie ni les six
 systèmes : le pilier reste hors bilan. Portage JavaScript, témoins, sept
 tests.
+
+### 54. Le bandeau sur une rangée, sans le lien vers le site du parti — `fait`
+
+**Demande.** « Le bandeau en haut ne me plaît plus trop. Je veux enlever le
+fait de revenir sur le site du Parti libéral français. De plus, il faut qu'il
+soit plus élégant et en raccord avec le site. Je n'aime pas que ce soit sur
+deux lignes, le titre et en dessous les pages : je préfère avec une seule
+ligne. »
+
+**Ce qui a été fait, le 20 septembre 2026.** Le lien « ← Parti libéral
+français » qui coiffait le nom du site a disparu du bandeau ; la ligne de pied
+« Un outil du Parti libéral français » reste le seul pont vers le site, et le
+test qui imposait un pont en tête impose désormais qu'il n'y en ait aucun. Le
+bandeau est une barre de 56 px : le carré d'or et le nom à gauche, les neuf
+onglets à droite, sur une seule rangée dès 1 248 px de large — le nom, les
+onglets et leur jour font 1 168 px. Les onglets prennent toute la hauteur de la
+barre et leur filet se pose sur le filet du bandeau, si bien que l'onglet
+courant s'y accroche en or comme l'onglet d'un classeur. Sous 78 rem, le nom
+prend sa rangée et les onglets la leur, deux rangées de 44 px ; sous 34 rem,
+la barre cesse de coller, comme avant. Les deux portages sont alignés, les
+témoins de page n'ont pas bougé — ils ne comparent que le corps —, et
+`docs/integration-partiliberalfrancais.md` ne promet plus de lien en tête.
+Le pictogramme `arrow-left` reste dans le jeu d'icônes, sans emploi.
