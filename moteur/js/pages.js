@@ -480,17 +480,12 @@ const DEFAUTS = Object.freeze({
   projection: "cor_reference",
   emploi: "cor_2026",
   stock: "prix",
-<<<<<<< HEAD
   // Part de l'avance de la garantie que la succession couvre, en pour cent ;
   // null, elle est calculée sur le patrimoine des ménages retraités.
   reprise: null,
-=======
-  // Part de l'avance de la garantie que la succession couvre, en pour cent.
-  reprise: 50,
   // Les frais du pilier capitalisé : marché 2025 et baisse par paliers, ou
   // l'une des variantes qui disent ce que chaque hypothèse déplace.
   frais: "paliers",
->>>>>>> 089142d (Le système de frais partout où il compte : un réglage « Frais du pilier capitalisé » dans le simulateur, et le pilier de tous les cotisants sur la page Coût)
   bascule: 2026,
   euros: 2026,
   //: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -1193,11 +1188,8 @@ export class Saisie {
       part_cotisation: this.part_cotisation,
       foyer: this.foyer,
       projection: this.projection, emploi: this.emploi, stock: this.stock,
-<<<<<<< HEAD
       reprise: this.reprise === null ? "" : this.reprise,
-=======
-      reprise: this.reprise, frais: this.frais,
->>>>>>> 089142d (Le système de frais partout où il compte : un réglage « Frais du pilier capitalisé » dans le simulateur, et le pilier de tous les cotisants sur la page Coût)
+      frais: this.frais,
       bascule: this.bascule, euros: this.euros,
     };
     // L'unité s'écrit TOUJOURS, y compris quand c'est celle par défaut : c'est
@@ -2346,10 +2338,7 @@ function champsModelisation(saisie) {
       saisie.reprise === null ? "" : saisie.reprise,
       "page Coût seulement, en pour cent ; vide : calculée", "number",
       { min: "0", max: "100" },
-<<<<<<< HEAD
       "La garantie du système 4 est une avance reprise sur la succession, dès le premier euro et avec intérêts. Ce que les successions en rendent dépend du patrimoine des bénéficiaires. Vide, la part est calculée sur le patrimoine des ménages retraités selon leur revenu (COR, enquête Patrimoine 2018) : les plus petites pensions au quart le plus modeste, les autres à l'ensemble des retraités. Un nombre remplace ce calcul : zéro éteint la reprise, cent suppose que toute avance est remboursée."),
-=======
-      "La garantie du système 4 est une avance reprise sur la succession, dès le premier euro et avec intérêts. Ce que les successions en rendent dépend du patrimoine des bénéficiaires, que le dépôt ne connaît pas : ce réglage dit quelle part de l'avance d'un bénéficiaire sa succession couvre, en moyenne. La moitié par défaut, l'ordre de grandeur que donne le patrimoine des ménages retraités publié par le COR ; 30 et 70 encadrent. Zéro éteint la reprise, cent suppose que toute avance est remboursée."),
     g.liste("frais", "Frais du pilier capitalisé", REGIMES_FRAIS, saisie.frais,
       "système 4 seulement", {},
       "Ce que l'enveloppe du pilier prélève, et comment cela bouge. Par "
@@ -2364,7 +2353,6 @@ function champsModelisation(saisie) {
       + "« PER vendu » est l'ancien réglage, aux 2,20 % d'arrérages des seuls "
       + "assureurs qui facturent. La page Méthode et les limites disent d'où "
       + "viennent les paliers."),
->>>>>>> 089142d (Le système de frais partout où il compte : un réglage « Frais du pilier capitalisé » dans le simulateur, et le pilier de tous les cotisants sur la page Coût)
     g.champ("bascule", "Année de bascule", saisie.bascule,
       "passage au régime unique", "number",
       { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),

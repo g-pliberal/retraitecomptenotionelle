@@ -565,17 +565,12 @@ class Saisie:
     emploi: str = "cor_2026"
     #: Les pensions déjà servies à la bascule : sur les prix, ou réindexées.
     stock: str = "prix"
-<<<<<<< HEAD
     #: Part de l'avance de la garantie que la succession couvre, en pour cent ;
     #: vide, elle est calculée sur le patrimoine des ménages retraités.
     reprise: int | None = None
-=======
-    #: Part de l'avance de la garantie que la succession couvre, en pour cent.
-    reprise: int = 50
     #: Les frais du pilier capitalisé : marché 2025 et baisse par paliers, ou
     #: l'une des variantes qui disent ce que chaque hypothèse déplace.
     frais: str = "paliers"
->>>>>>> 089142d (Le système de frais partout où il compte : un réglage « Frais du pilier capitalisé » dans le simulateur, et le pilier de tous les cotisants sur la page Coût)
     bascule: int = 2026
     euros: int = 2026
     #: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -1230,12 +1225,9 @@ class Saisie:
             "part_cotisation": self.part_cotisation,
             "foyer": self.foyer,
             "projection": self.projection, "emploi": self.emploi,
-<<<<<<< HEAD
             "stock": self.stock,
             "reprise": "" if self.reprise is None else self.reprise,
-=======
-            "stock": self.stock, "reprise": self.reprise, "frais": self.frais,
->>>>>>> 089142d (Le système de frais partout où il compte : un réglage « Frais du pilier capitalisé » dans le simulateur, et le pilier de tous les cotisants sur la page Coût)
+            "frais": self.frais,
             "bascule": self.bascule, "euros": self.euros,
         }
         # L'unité s'écrit TOUJOURS, y compris quand c'est celle par défaut :
