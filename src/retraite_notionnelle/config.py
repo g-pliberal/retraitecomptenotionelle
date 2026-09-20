@@ -375,6 +375,17 @@ FRAIS_ARRERAGES_VENDU = 0.0220
 #: est le défaut ; ``Parametres.sous_regime_frais`` dit ce que chacun fait.
 REGIMES_FRAIS: tuple[str, ...] = ("paliers", "plafond", "contrats", "figes", "detail", "aucun")
 
+#: La prime de terme à trente ans sous les deux régimes qui la retirent : le
+#: milieu et le haut de la fourchette que la littérature retient pour les
+#: maturités longues quand la courbe est ascendante (0,3 à 1 point), et que
+#: ``docs/limites.md`` porte en réserve n° 1 du pilier capitalisé.
+PRIME_TERME_MILIEU = 0.005
+PRIME_TERME_HAUTE = 0.010
+
+#: Les régimes de taux que le site propose, dans l'ordre du menu. Le premier
+#: est le défaut ; ``Parametres.sous_regime_taux`` dit ce que chacun fait.
+REGIMES_TAUX: tuple[str, ...] = ("forwards", "prime", "prime_haute")
+
 
 def taux_au(niveau: float, paliers: tuple[tuple[int, float], ...], annee: int) -> float:
     """Le taux en vigueur en ``annee`` : ``niveau`` avant le premier palier,
@@ -862,6 +873,38 @@ class Parametres:
             raise ValueError(f"régime de frais inconnu : {regime!r} "
                              f"(attendu : {tuple(regimes)})")
         return self.avec(**regimes[regime])
+
+    def sous_regime_taux(self, regime: str) -> "Parametres":
+        """Les mêmes paramètres, sous l'un des régimes de taux du site.
+
+        C'est le réglage « Taux futurs du pilier capitalisé », et il n'existe
+        qu'ici : les deux portages l'appliquent, aucun ne le redéfinit. Il ne
+        touche qu'une chose, ``prime_terme_trente_ans``, mais cette chose
+        gouverne à elle seule ce que l'ALLOCATION des maturités peut valoir.
+
+        ``forwards`` est le défaut et vaut zéro : les versements futurs se
+        placent aux taux à terme que la courbe du jour implique, hypothèse des
+        anticipations pures. Elle est explicite, arbitrée, et elle flatte le
+        pilier. Elle a surtout un effet que ce menu est fait pour montrer :
+        sous elle, **aucune allocation de maturités n'en vaut une autre**, et
+        le titre adossé à la date du départ rapporte exactement ce que
+        rapporterait un roulement à un an.
+
+        ``prime`` et ``prime_haute`` la retirent, au milieu puis au haut de la
+        fourchette de la littérature. Le pilier baisse — c'est le prix de
+        l'hypothèse — et l'adossement se met à rapporter, parce qu'il capte la
+        prime une fois pour toutes là où un roulement la rachète à chaque
+        échéance.
+        """
+        regimes = {
+            "forwards": 0.0,
+            "prime": PRIME_TERME_MILIEU,
+            "prime_haute": PRIME_TERME_HAUTE,
+        }
+        if regime not in regimes:
+            raise ValueError(f"régime de taux inconnu : {regime!r} "
+                             f"(attendu : {tuple(regimes)})")
+        return self.avec(prime_terme_trente_ans=regimes[regime])
 
     # --- Capitalisation volontaire : les cinq points rendus ------------------
     #: Le quatrième terme, et le seul que personne n'impose. Le système actuel

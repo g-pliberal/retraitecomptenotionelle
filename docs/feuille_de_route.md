@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 357<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 426<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -9922,10 +9922,23 @@ par rapport à ce qui est publié aujourd'hui, soit 23 € de rente par mois : l
 prime de terme coûte trois fois ce que la meilleure allocation rapporte. Le
 dire dans cet ordre est la seule façon honnête de le dire.
 
-**Ce qui reste ouvert.** Le chiffre par défaut de `prime_terme_trente_ans`. Le
-laisser à zéro garde le site sous les anticipations pures, hypothèse explicite,
-vérifiable et flatteuse ; le porter à 0,005 rend le pilier plus défendable et
-plus bas. La décision n'appartient pas au moteur.
+**Ce qui restait ouvert, et comment c'est tranché.** Le chiffre par défaut de
+`prime_terme_trente_ans` : à zéro le site reste sous les anticipations pures,
+hypothèse explicite, vérifiable et flatteuse ; à 0,005 le pilier devient plus
+défendable et plus bas. Plutôt que de trancher pour le lecteur, le paramètre
+est devenu un **réglage du site**, « Taux futurs du pilier capitalisé », à côté
+de celui des frais, à trois positions : les taux à terme de la courbe (défaut,
+zéro), la prime retirée au milieu de la fourchette (0,50 point à trente ans),
+la prime retirée au haut (1 point). Il voyage dans l'adresse, s'applique au
+simulateur comme aux pages qui agrègent, et `Parametres.sous_regime_taux` le
+définit une fois pour les deux portages.
+
+C'est le seul endroit d'où l'on voie que l'allocation des maturités ne vaut
+rien sous le réglage par défaut : qui bascule sur `prime` voit la rente baisser
+— c'est le prix de l'hypothèse — et voit du même coup apparaître l'écart entre
+l'adossement et un roulement, qui était nul l'instant d'avant. Une réserve
+qu'un lecteur peut chiffrer lui-même cesse d'être une réserve qu'on lui demande
+de croire. Aucun chiffre publié ne bouge : le défaut est inchangé.
 
 ### 59. Les impôts que la proposition n'encaisse plus sont rendus pour moitié aux salaires, et pour moitié à la dette — `fait`
 

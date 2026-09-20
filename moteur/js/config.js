@@ -403,6 +403,37 @@ export const REGIMES_FRAIS = Object.freeze(
 );
 
 /**
+ * La prime de terme à trente ans sous les deux régimes qui la retirent : le
+ * milieu et le haut de la fourchette que la littérature retient pour les
+ * maturités longues quand la courbe est ascendante (0,3 à 1 point).
+ */
+export const PRIME_TERME_MILIEU = 0.005;
+export const PRIME_TERME_HAUTE = 0.010;
+
+/** Les régimes de taux du site, dans l'ordre du menu ; le premier est le défaut. */
+export const REGIMES_TAUX = Object.freeze(["forwards", "prime", "prime_haute"]);
+
+/**
+ * Les mêmes paramètres, sous l'un des régimes de taux du site. Portage de
+ * `Parametres.sous_regime_taux`. Il ne touche que `prime_terme_trente_ans`,
+ * mais cette chose gouverne à elle seule ce que l'allocation des maturités
+ * peut valoir : sous `forwards`, qui est le défaut et vaut zéro, aucune
+ * allocation n'en vaut une autre.
+ */
+export function sousRegimeTaux(parametres, regime) {
+  const regimes = {
+    forwards: 0.0,
+    prime: PRIME_TERME_MILIEU,
+    prime_haute: PRIME_TERME_HAUTE,
+  };
+  if (!(regime in regimes)) {
+    throw new Error(`régime de taux inconnu : ${regime} `
+      + `(attendu : ${Object.keys(regimes)})`);
+  }
+  return { ...parametres, prime_terme_trente_ans: regimes[regime] };
+}
+
+/**
  * Les mêmes paramètres, sous l'un des régimes de frais du site. Portage de
  * `Parametres.sous_regime_frais`, qui dit ce que chacun fait.
  */

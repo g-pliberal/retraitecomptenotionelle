@@ -972,6 +972,71 @@ def test_chaque_regime_de_frais_dit_ce_qu_il_fait():
         base.sous_regime_frais("gratuit")
 
 
+def test_chaque_regime_de_taux_dit_ce_qu_il_fait():
+    from retraite_notionnelle.config import (
+        PRIME_TERME_HAUTE, PRIME_TERME_MILIEU, REGIMES_TAUX,
+    )
+    base = Parametres()
+    assert base.sous_regime_taux("forwards") == base
+    assert base.prime_terme_trente_ans == 0.0, "le site publie sous les forwards"
+    assert base.sous_regime_taux("prime").prime_terme_trente_ans == PRIME_TERME_MILIEU
+    assert (base.sous_regime_taux("prime_haute").prime_terme_trente_ans
+            == PRIME_TERME_HAUTE)
+    assert REGIMES_TAUX[0] == "forwards"
+    assert 0.003 <= PRIME_TERME_MILIEU <= PRIME_TERME_HAUTE <= 0.010, (
+        "les deux primes restent dans la fourchette que docs/limites.md cite"
+    )
+    with pytest.raises(ValueError):
+        base.sous_regime_taux("gratuit")
+
+
+def test_les_regimes_de_taux_s_ordonnent_sur_la_rente():
+    """Plus la prime retirée est forte, plus la rente est basse.
+
+    C'est le sens du réglage : il ne rend rien, il retire une hypothèse. Le
+    montant est le prix de cette hypothèse, et le menu existe pour qu'il soit
+    lu plutôt que caché.
+    """
+    carriere = dict(annee_naissance=2004, sexe="H",
+                    affiliation="salarie_prive_non_cadre", age_debut=22, age_liquidation=64)
+    rentes = {}
+    for regime in ("forwards", "prime", "prime_haute"):
+        simulateur = Simulateur(Parametres().sous_regime_taux(regime))
+        comparaison = simulateur.simuler(simulateur.carriere_simple(**carriere))
+        rentes[regime] = comparaison.notionnel_liberal.capitalisation.rente_annuelle
+    assert rentes["forwards"] > rentes["prime"] > rentes["prime_haute"] > 0
+
+
+def test_le_reglage_des_taux_est_ce_qui_fait_peser_l_allocation():
+    """Sous « forwards », adossement et roulement rendent le MÊME euro.
+
+    C'est ce que le menu du site est fait pour montrer, et c'est la raison
+    d'être des deux autres réglages : sans eux, aucune allocation n'en vaut
+    une autre, et l'adossement à la date du départ ne se justifie que par le
+    risque de réinvestissement qu'il supprime.
+    """
+    def roulement(horizon: int) -> tuple[tuple[int, float], ...]:
+        return ((1, 1.0),) if horizon > 0 else ()
+
+    carriere = dict(annee_naissance=2004, sexe="H",
+                    affiliation="salarie_prive_non_cadre", age_debut=22, age_liquidation=64)
+    for regime, attendu in (("forwards", "identique"), ("prime", "adossement gagne")):
+        parametres = Parametres().sous_regime_taux(regime)
+        simulateur = Simulateur(parametres)
+        adosse = simulateur.simuler(
+            simulateur.carriere_simple(**carriere)
+        ).notionnel_liberal.capitalisation.capital
+        with _regle_d_allocation(roulement):
+            simulateur = Simulateur(parametres)
+            roule = simulateur.simuler(
+                simulateur.carriere_simple(**carriere)
+            ).notionnel_liberal.capitalisation.capital
+        if attendu == "identique":
+            assert adosse == pytest.approx(roule, abs=0.01)
+        else:
+            assert adosse > roule
+
+
 def test_les_regimes_de_frais_s_ordonnent_sur_la_rente():
     """Sans frais on sert le plus ; le PER vendu et figé, presque le moins
     pour qui a toute sa carrière après la bascule ; le plafond rend plus que

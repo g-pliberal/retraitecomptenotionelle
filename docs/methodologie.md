@@ -1463,8 +1463,25 @@ plafonné à trente ans, nul par défaut. Les forwards se calculent alors sur `z
 et la prime de la maturité **achetée** se rajoute au résultat, si bien qu'un
 placement comptant rend toujours le taux coté du jour : le paramètre ne corrige
 que ce qui n'est pas encore acheté. **Le site publie à `0`**, sous les
-anticipations pures ; le paramètre sert à mesurer ce que cette hypothèse vaut,
-pas à la remplacer en douce.
+anticipations pures.
+
+**Trois régimes de taux, un réglage.** Le site propose ce paramètre comme un
+réglage des règles du calcul, « Taux futurs du pilier capitalisé », qui voyage
+dans l'adresse et s'applique au simulateur comme aux pages qui agrègent, à côté
+de celui des frais : `Parametres.sous_regime_taux` définit une fois les trois
+régimes, et le portage les applique sans les redéfinir.
+
+| Réglage | Prime à 30 ans | Ce qu'il dit |
+|---|---:|---|
+| `forwards` (défaut) | 0 | Les taux à terme de la courbe, tels qu'elle les implique |
+| `prime` | 0,50 pt | La prime retirée, au milieu de la fourchette |
+| `prime_haute` | 1 pt | La prime retirée, au haut de la fourchette |
+
+Le menu ne sert pas qu'à borner une incertitude : il est le seul endroit d'où
+l'on voie que **l'allocation des maturités ne vaut rien sous le réglage par
+défaut**. Un lecteur qui bascule sur `prime` voit la rente baisser — c'est le
+prix de l'hypothèse — et voit du même coup apparaître l'écart entre
+l'adossement et un roulement, qui était nul l'instant d'avant.
 
 **L'adossement à l'horizon.** Chaque versement achète **une seule** maturité,
 celle qui arrive à échéance l'année du départ :

@@ -6033,6 +6033,14 @@ ce qui change est qu'elle est désormais mesurable plutôt que seulement dite. �
 0,005 — le milieu de la fourchette — le capital d'une carrière de trente-six ans
 partant en 2060 recule de 4,8 %, et la rente de 23 € par mois.
 
+Depuis, il est un **réglage du site** : « Taux futurs du pilier capitalisé »,
+à côté de celui des frais, avec trois positions — les taux à terme de la
+courbe (défaut), la prime retirée au milieu de la fourchette (0,50 point à
+trente ans), la prime retirée au haut (1 point). Une réserve qu'un lecteur peut
+chiffrer lui-même cesse d'être une réserve qu'on lui demande de croire, et le
+choix de publier sous les anticipations pures redevient ce qu'il est : un
+choix, pas un impensé.
+
 Cette réserve en portait une autre, restée invisible tant qu'elle n'était pas
 chiffrée : **sous les anticipations pures, l'allocation des maturités n'a
 aucune conséquence.** C'est une identité, pas une approximation — découper un
@@ -6975,7 +6983,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1760<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1763<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
