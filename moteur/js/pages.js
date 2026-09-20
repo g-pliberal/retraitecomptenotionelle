@@ -10475,8 +10475,8 @@ function programmeRestitution(contexte) {
     + "rendus aux salaires",
     `
 <p>La retraite est financée à ${g.pourcentage(poids, false, 0)} par des
-<strong>impôts</strong> — ${milliards(part.posteAbandonne * pib, 0)} en
-${annee} — qui n'ouvrent de droit à personne. Un compte notionnel ne sait pas les porter au crédit de qui que ce
+<strong>impôts</strong> (${milliards(part.posteAbandonne * pib, 0)} en
+${annee}) qui n'ouvrent de droit à personne. Un compte notionnel ne sait pas les porter au crédit de qui que ce
 soit : il ne rend que ce qui a été cotisé. <strong>Nous cessons donc de les
 affecter à la retraite.</strong></p>
 <p><strong>Et nous ne les gardons pas.</strong> Ne rien dire de cette recette
@@ -10486,7 +10486,7 @@ déficit. Nous la partageons en deux :
 pour <strong>éteindre de la dette</strong>.</p>
 <ul class="serree">
   <li><strong>La taxe sur les salaires est supprimée</strong>, pour la part qui
-  finance la retraite — ${g.pourcentage(0.5835, false, 2)} de son produit. La
+  finance la retraite, soit ${g.pourcentage(0.5835, false, 2)} de son produit. La
   paient les employeurs qui ne sont pas assujettis à la TVA : hôpitaux,
   cliniques, banques, assurances, associations.</li>
   <li><strong>Le forfait social est supprimé</strong> : il est assis sur
@@ -10505,7 +10505,7 @@ l'autonomie. Nous ne vous rendons donc pas une cotisation : nous supprimons un
 impôt, avec de l'argent que la retraite n'encaisse plus.</p>
 <p><strong>Les employeurs publics suivent la même règle.</strong> L'État verse
 aujourd'hui, pour la retraite de ses fonctionnaires, un taux qui n'est pas un
-prix du travail mais un solde — celui qui équilibre le régime. Il cotisera
+prix du travail mais le solde qui équilibre le régime. Il cotisera
 ${g.pourcentage(base.taux_cotisation_liberal, false, 0)} comme tout
 employeur, et la moitié de ce qu'il cesse de verser ira au traitement des
 agents ; l'autre moitié paiera les pensions déjà promises, qui restent dues.
