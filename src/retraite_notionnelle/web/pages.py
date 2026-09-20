@@ -7278,9 +7278,10 @@ def _cout_detail_postes(contexte: Contexte) -> str:
     vers_enquete = simulateur.macro.coefficient_prix(
         base.annee_euros_garantie_vieillesse, distribution.millesime)
     rapports_liberal = cout.annee(distribution.millesime).rapports
-    facteur_contributif = (
-        rapports_liberal["notionnel_liberal"] - rapports_liberal[COMPOSANTE_GARANTIE]
-    )
+    # La masse du scénario 6 est déjà sa seule part contributive (la garantie
+    # est sous COMPOSANTE_GARANTIE) : le rapport se prend tel quel, sans lui
+    # retirer la garantie une seconde fois.
+    facteur_contributif = rapports_liberal["notionnel_liberal"]
     garantie = cout_garantie(
         distribution,
         simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
@@ -7746,9 +7747,10 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
     vers_enquete = simulateur.macro.coefficient_prix(
         contexte.base.annee_euros_garantie_vieillesse, distribution.millesime)
     rapports_liberal = cout.annee(distribution.millesime).rapports
-    facteur_contributif = (
-        rapports_liberal["notionnel_liberal"] - rapports_liberal[COMPOSANTE_GARANTIE]
-    )
+    # La masse du scénario 6 est déjà sa seule part contributive (la garantie
+    # est sous COMPOSANTE_GARANTIE) : le rapport se prend tel quel, sans lui
+    # retirer la garantie une seconde fois.
+    facteur_contributif = rapports_liberal["notionnel_liberal"]
     planchers = (
         ("Plancher de base, 800 € (vie à deux)",
          contexte.base.garantie_vieillesse_mensuelle),

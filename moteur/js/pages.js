@@ -6530,8 +6530,10 @@ function coutDetailPostes(contexte) {
     base.annee_euros_garantie_vieillesse, distribution.millesime,
   );
   const rapportsLiberal = c.annee(distribution.millesime).rapports;
-  const facteurContributif = rapportsLiberal.notionnel_liberal
-    - rapportsLiberal[COMPOSANTE_GARANTIE];
+  // La masse du scénario 6 est déjà sa seule part contributive (la garantie
+  // est sous COMPOSANTE_GARANTIE) : le rapport se prend tel quel, sans lui
+  // retirer la garantie une seconde fois.
+  const facteurContributif = rapportsLiberal.notionnel_liberal;
   const garantie = coutGarantie(
     distribution,
     simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
@@ -6920,8 +6922,10 @@ function coutDetailGarantie(contexte) {
     contexte.base.annee_euros_garantie_vieillesse, distribution.millesime,
   );
   const rapportsLiberal = c.annee(distribution.millesime).rapports;
-  const facteurContributif = rapportsLiberal.notionnel_liberal
-    - rapportsLiberal[COMPOSANTE_GARANTIE];
+  // La masse du scénario 6 est déjà sa seule part contributive (la garantie
+  // est sous COMPOSANTE_GARANTIE) : le rapport se prend tel quel, sans lui
+  // retirer la garantie une seconde fois.
+  const facteurContributif = rapportsLiberal.notionnel_liberal;
   const planchers = [
     ["Plancher de base, 800 € (vie à deux)",
       contexte.base.garantie_vieillesse_mensuelle],

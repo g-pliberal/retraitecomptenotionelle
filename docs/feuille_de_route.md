@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 539<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 543<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -4438,13 +4438,24 @@ de cotisations à 18 % ; 422,5 Md€ de dépenses (14,13 %) contre 276,9 (9,26 %
 un solde de −0,16 point de PIB contre −1,34. Pour mémoire et hors du compte,
 la garantie vieillesse lue sur la distribution des pensions, 35,6 Md€ au
 plancher de base, et le pilier capitalisé, 63,6 Md€. *Une chose vue en
-chemin, non corrigée* : le dépliant de la garantie déplace la distribution du
-facteur `rapports["notionnel_liberal"] − rapports[COMPOSANTE_GARANTIE]`, alors
-que depuis le 19 septembre la masse du scénario 6 est déjà sa seule part
-contributive — la soustraction retire la garantie une seconde fois, et
-abaisse le facteur de quelques centièmes ; le tableau reprend le même facteur
-pour rester cohérent avec ce dépliant, et il faudra trancher aux deux endroits
-à la fois.
+chemin, corrigée le jour même* : le dépliant de la garantie déplaçait la
+distribution du facteur `rapports["notionnel_liberal"] −
+rapports[COMPOSANTE_GARANTIE]`, alors que depuis le 19 septembre la masse du
+scénario 6 est déjà sa seule part contributive (`_pensionnes` y porte
+`garantie_vieillesse.pension_contributive`, et le complément sous
+`COMPOSANTE_GARANTIE`) — la soustraction retirait la garantie une seconde
+fois. Le facteur est désormais `rapports["notionnel_liberal"]` tel quel, aux
+deux endroits (`_cout_detail_garantie` et `_cout_detail_postes`, et leurs
+jumelles en JavaScript). Ce que ça déplace, sur la distribution de l'EIR :
+le facteur passe de 55 % à 63 % au réglage du programme, et le coût annuel de
+la garantie aux pensions du système 4 de 35,6 à 30,5 Md€ au plancher de base
+(47,6 % à 41,0 % des retraités, 7,9 à 6,8 millions), de 63,6 à 54,6 Md€ au
+plancher majoré ; la ligne « pour mémoire » du tableau poste par poste suit,
+de 1,19 à 1,02 % du PIB. Sur la variante des témoins qui indexe sur les prix,
+bascule en 2030 et prend la cotisation totale, l'écart est plus grand parce
+que la garantie y pèse plus : le facteur passe de 28 % à 43 %, et le coût de
+73,7 à 47,0 Md€ au plancher de base. Le cumul de la garantie lu sur les cas
+types, lui, ne bouge pas : il ne passait pas par ce facteur.
 
 **Sources à lire.** INSEE, comptes nationaux annuels, salaires et traitements
 bruts par branche (D11, niveau) et revenu mixte des entrepreneurs individuels ;
