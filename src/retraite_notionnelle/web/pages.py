@@ -124,6 +124,16 @@ AGES_REFERENCE = [
 
 TABLES = [("unisexe", "Unisexe (défaut)"), ("par_sexe", "Par sexe")]
 
+#: La population dont la mortalité entre dans le diviseur. « commune » est la
+#: table de population générale, servie par défaut ; l'autre clé est celle
+#: d'une population dont un régime publie l'espérance de vie
+#: (``mortalite/esperances_vie_populations.csv``), et sert à mesurer ce que
+#: le diviseur commun transfère à qui vit plus longtemps.
+POPULATIONS = [
+    ("commune", "Population générale (défaut)"),
+    ("fonctionnaires_civils_etat", "Fonctionnaires civils de l'État"),
+]
+
 PARTS_COTISATION = [
     ("salariale", "Part salariale seule (défaut)"),
     ("totale", "Salariale et patronale"),
@@ -449,8 +459,9 @@ class MetierSaisi:
 #: et sur les majorations pour enfants, deux réglages individuels. Les cas types
 #: portent le leur.
 CLES_MODELISATION = (
-    "indexation", "lissage", "age_reference", "table", "conversion_acquis",
-    "part_cotisation", "foyer", "projection", "bascule", "euros",
+    "indexation", "lissage", "age_reference", "table", "population",
+    "conversion_acquis", "part_cotisation", "foyer", "projection", "bascule",
+    "euros",
 )
 
 
@@ -501,6 +512,7 @@ class Saisie:
     lissage: int = 1
     age_reference: str = "fixe_apres_bascule"
     table: str = "unisexe"
+    population: str = "commune"
     conversion_acquis: str = "reference"
     part_cotisation: str = "salariale"
     #: Seul ou en couple : la situation de foyer de la garantie vieillesse du
@@ -565,6 +577,7 @@ class Saisie:
                 parametres, "age_reference", AGES_REFERENCE, defauts.age_reference
             ),
             table=_parmi(parametres, "table", TABLES, defauts.table),
+            population=_parmi(parametres, "population", POPULATIONS, defauts.population),
             conversion_acquis=_parmi(
                 parametres, "conversion_acquis", CONVERSIONS_ACQUIS,
                 defauts.conversion_acquis,
@@ -882,6 +895,9 @@ class Saisie:
             lissage_indexation=self.lissage,
             mode_age_reference=ModeAgeReference(self.age_reference),
             table_conversion=TableConversion(self.table),
+            population_conversion=(
+                None if self.population == "commune" else self.population
+            ),
             age_conversion_droits_acquis=AgeConversionDroitsAcquis(
                 self.conversion_acquis
             ),
@@ -1138,6 +1154,7 @@ class Saisie:
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,
+            "population": self.population,
             "conversion_acquis": self.conversion_acquis,
             "part_cotisation": self.part_cotisation,
             "foyer": self.foyer,
@@ -2588,6 +2605,7 @@ LIBELLES_MODELISATION = {
     "lissage": ("lissage de l'indexation, en années", None),
     "age_reference": ("âge de référence", AGES_REFERENCE),
     "table": ("table de conversion", TABLES),
+    "population": ("population de la table de conversion", POPULATIONS),
     "conversion_acquis": ("âge de conversion des droits acquis", CONVERSIONS_ACQUIS),
     "part_cotisation": ("part de la cotisation portée au compte", PARTS_COTISATION),
     "foyer": ("situation de foyer", SITUATIONS_FOYER),
@@ -2695,6 +2713,14 @@ def _champs_modelisation(saisie: Saisie) -> str:
                 type_="number", min="1", max=str(LISSAGE_MAXIMUM), step="1"),
         g.liste("table", "Table de conversion", TABLES, saisie.table,
                 complement=g.GLOSSAIRE["table de conversion"]),
+        g.liste("population", "Population de la table", POPULATIONS,
+                saisie.population,
+                complement="La table est celle de la population générale. "
+                "Choisir une population dont le régime publie l'espérance de "
+                "vie — les fonctionnaires civils de l'État vivent un an de "
+                "plus à 65 ans — mesure ce qu'un diviseur commun leur "
+                "transfère. C'est une mesure, pas une règle : aucun système "
+                "ne trie ses rentes par population."),
         g.liste("part_cotisation", "Part de la cotisation portée au compte",
                 PARTS_COTISATION, saisie.part_cotisation,
                 "salariale seule, ou salariale et patronale",

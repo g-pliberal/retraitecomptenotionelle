@@ -1,0 +1,44 @@
+# Espérances de vie de POPULATIONS particulières, telles que leur régime les
+# publie — là où esperances_vie.csv porte la population générale
+# source_id: db_cas_pensions
+# unite: années
+# sexe: H | F
+# mesure: e65 (à 65 ans)
+# fiabilite:
+#   moyenne : valeur SAISIE à la lecture d'un document budgétaire apporté par
+#             l'utilisateur ; aucun script ne la revérifie.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# Au diviseur de conversion des comptes notionnels, qui est une espérance de
+# vie de population GÉNÉRALE : la même pour l'ouvrier et pour le cadre, pour
+# le fonctionnaire et pour le manœuvre. Cette série dit de combien une
+# population particulière s'en écarte, et le modèle en tire une VARIANTE —
+# `population_conversion` dans `config.py` — qui mesure ce que le diviseur
+# commun transfère à qui vit plus longtemps (action 14 de la feuille de
+# route). Le diviseur servi par défaut reste commun : un système qui
+# trierait ses rentes par population ne serait pas défendable.
+#
+# COMMENT LE MODÈLE S'EN SERT
+# ----------------------------
+# Il ne construit pas une table complète : il cale, pour chaque sexe, un
+# FACTEUR sur la force de mortalité de la table générale de l'année observée
+# — la survie de chaque cellule (âge, année) élevée à cette puissance — de
+# sorte que la table du moment ainsi corrigée reproduise l'espérance publiée
+# ici. Le facteur est ensuite tenu CONSTANT sur toutes les années, faute
+# d'observation ailleurs : c'est une hypothèse, écrite dans
+# docs/methodologie.md §5.
+#
+# D'OÙ VIENT LA PREMIÈRE POPULATION
+# ----------------------------------
+# fonctionnaires_civils_etat : le Service des retraites de l'État publie,
+# dans le projet annuel de performances du programme 741 annexé au PLF 2026
+# (page 5), l'espérance de vie à 65 ans de ses pensionnés civils en 2024 —
+# 24,68 ans pour les femmes, 21,16 pour les hommes — et la dit
+# « structurellement supérieure à celle de la population générale » : l'INSEE
+# donne 23,60 et 19,90 la même année. C'est la seule mesure par population
+# que le dépôt tienne d'un producteur ; les tables de l'INSEE par niveau de
+# vie, qui répondraient à la question sur l'axe du REVENU, restent à lire.
+annee,population,sexe,mesure,valeur,fiabilite
+2024,fonctionnaires_civils_etat,F,e65,24.68,moyenne
+2024,fonctionnaires_civils_etat,H,e65,21.16,moyenne

@@ -206,6 +206,12 @@ export const PARAMETRES_DEFAUT = Object.freeze({
 
   // --- Conversion en rente --------------------------------------------------
   table_conversion: TableConversion.UNISEXE,
+  //: Population dont la mortalité remplace celle de la population générale
+  //: dans le diviseur — une clé de `paquet.populations`, telle
+  //: `fonctionnaires_civils_etat`. `null`, le défaut, est la table commune ;
+  //: la variante mesure ce que le diviseur commun transfère à qui vit plus
+  //: longtemps (action 14).
+  population_conversion: null,
   //: Taux de préfinancement incorporé au diviseur. 0 : le diviseur est
   //: l'espérance de vie résiduelle actualisée au même taux que l'indexation,
   //: les deux se compensant exactement.

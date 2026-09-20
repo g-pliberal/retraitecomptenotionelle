@@ -1365,6 +1365,34 @@ def test_unisexe_est_entre_les_deux_sexes(mortalite):
     assert homme < unisexe < femme
 
 
+def test_une_population_reproduit_l_esperance_que_son_regime_publie(mortalite):
+    """La variante de l'action 14 : un facteur sur la force de mortalité, calé
+    sur la table du moment de l'année observée, qui rend à la population
+    l'espérance à 65 ans que son régime publie — et rien d'autre.
+
+    Le Service des retraites de l'État donne 24,68 ans aux femmes et 21,16 aux
+    hommes de ses pensionnés civils en 2024, un an de plus que l'INSEE à la
+    population générale. Le facteur est donc inférieur à un — on vit plus
+    longtemps —, et il est le même pour toutes les années, ce qui est une
+    hypothèse et non une observation.
+    """
+    assert "fonctionnaires_civils_etat" in mortalite.populations
+    for sexe in mortalite.SEXES:
+        annee, publiee = mortalite.esperance_publiee("fonctionnaires_civils_etat", sexe)
+        reproduite = mortalite.esperance_residuelle(
+            65, annee, sexe, generation=False, population="fonctionnaires_civils_etat",
+        )
+        assert reproduite == pytest.approx(publiee, abs=0.01), sexe
+        generale = mortalite.esperance_residuelle(65, annee, sexe, generation=False)
+        assert publiee > generale, sexe
+        assert 0.5 < mortalite.facteur_population("fonctionnaires_civils_etat", sexe) < 1.0
+    # La population générale n'a pas bougé : ``None`` est la table de toujours.
+    assert (mortalite.courbe(64, 2040.0, None, True, None)
+            == mortalite.courbe(64, 2040.0, None, True))
+    with pytest.raises(KeyError, match="population inconnue"):
+        mortalite.esperance_residuelle(65, 2024, "H", population="cadres")
+
+
 def test_e65_ancienne_derive_des_quotients_certifies(mortalite):
     """Avant 1960, l'espérance de vie à 65 ans n'est plus saisie mais calculée.
 

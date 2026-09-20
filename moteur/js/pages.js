@@ -89,6 +89,17 @@ export const AGES_REFERENCE = [
 
 export const TABLES = [["unisexe", "Unisexe (défaut)"], ["par_sexe", "Par sexe"]];
 
+/**
+ * La population dont la mortalité entre dans le diviseur. « commune » est la
+ * table de population générale, servie par défaut ; l'autre clé est celle d'une
+ * population dont un régime publie l'espérance de vie, et sert à mesurer ce que
+ * le diviseur commun transfère à qui vit plus longtemps.
+ */
+export const POPULATIONS = [
+  ["commune", "Population générale (défaut)"],
+  ["fonctionnaires_civils_etat", "Fonctionnaires civils de l'État"],
+];
+
 export const PARTS_COTISATION = [
   ["salariale", "Part salariale seule (défaut)"],
   ["totale", "Salariale et patronale"],
@@ -377,8 +388,9 @@ export class ErreurSaisie extends Error {}
  * portent le leur.
  */
 export const CLES_MODELISATION = Object.freeze([
-  "indexation", "lissage", "age_reference", "table", "conversion_acquis",
-  "part_cotisation", "foyer", "projection", "bascule", "euros",
+  "indexation", "lissage", "age_reference", "table", "population",
+  "conversion_acquis", "part_cotisation", "foyer", "projection", "bascule",
+  "euros",
 ]);
 
 const DEFAUTS = Object.freeze({
@@ -420,6 +432,7 @@ const DEFAUTS = Object.freeze({
   lissage: 1,
   age_reference: "fixe_apres_bascule",
   table: "unisexe",
+  population: "commune",
   conversion_acquis: "reference",
   part_cotisation: "salariale",
   // Seul ou en couple : la situation de foyer de la garantie vieillesse du
@@ -482,6 +495,7 @@ export class Saisie {
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
       age_reference: parmi(parametres, "age_reference", AGES_REFERENCE, DEFAUTS.age_reference),
       table: parmi(parametres, "table", TABLES, DEFAUTS.table),
+      population: parmi(parametres, "population", POPULATIONS, DEFAUTS.population),
       conversion_acquis: parmi(
         parametres, "conversion_acquis", CONVERSIONS_ACQUIS, DEFAUTS.conversion_acquis,
       ),
@@ -770,6 +784,7 @@ export class Saisie {
       lissage_indexation: this.lissage,
       mode_age_reference: ModeAgeReference[cleEnum(ModeAgeReference, this.age_reference)],
       table_conversion: TableConversion[cleEnum(TableConversion, this.table)],
+      population_conversion: this.population === "commune" ? null : this.population,
       age_conversion_droits_acquis:
         AgeConversionDroitsAcquis[cleEnum(AgeConversionDroitsAcquis, this.conversion_acquis)],
       part_cotisation: PartCotisation[
@@ -1106,6 +1121,7 @@ export class Saisie {
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,
+      population: this.population,
       conversion_acquis: this.conversion_acquis,
       part_cotisation: this.part_cotisation,
       foyer: this.foyer,
@@ -2100,6 +2116,7 @@ const LIBELLES_MODELISATION = Object.freeze({
   lissage: ["lissage de l'indexation, en années", null],
   age_reference: ["âge de référence", AGES_REFERENCE],
   table: ["table de conversion", TABLES],
+  population: ["population de la table de conversion", POPULATIONS],
   conversion_acquis: ["âge de conversion des droits acquis", CONVERSIONS_ACQUIS],
   part_cotisation: ["part de la cotisation portée au compte", PARTS_COTISATION],
   foyer: ["situation de foyer", SITUATIONS_FOYER],
@@ -2204,6 +2221,12 @@ function champsModelisation(saisie) {
       + "soit : 5 ans, c'est la fenêtre italienne."),
     g.liste("table", "Table de conversion", TABLES, saisie.table,
       "", {}, g.GLOSSAIRE["table de conversion"]),
+    g.liste("population", "Population de la table", POPULATIONS, saisie.population,
+      "", {}, "La table est celle de la population générale. Choisir une "
+      + "population dont le régime publie l'espérance de vie — les "
+      + "fonctionnaires civils de l'État vivent un an de plus à 65 ans — "
+      + "mesure ce qu'un diviseur commun leur transfère. C'est une mesure, "
+      + "pas une règle : aucun système ne trie ses rentes par population."),
     g.liste("part_cotisation", "Part de la cotisation portée au compte",
       PARTS_COTISATION, saisie.part_cotisation,
       "salariale seule, ou salariale et patronale", {},

@@ -441,6 +441,25 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   et italien. Une table sexuée est actuariellement exacte mais réduirait la
   pension des femmes de 5 à 10 % à capital identique, et serait contraire au
   principe de non-discrimination. `--table par_sexe` permet de mesurer l'écart.
+- **Table de population générale** par défaut, et c'est le second choix de
+  non-discrimination : la même espérance de vie pour l'ouvrier et pour le
+  cadre, pour le fonctionnaire et pour le manœuvre. Or les populations ne
+  vivent pas aussi longtemps les unes que les autres, et le diviseur commun
+  transfère à qui vit plus longtemps. Le dépôt le MESURE sans en faire une
+  règle : `population=fonctionnaires_civils_etat` remplace la table commune
+  par celle des pensionnés civils de l'État, dont le Service des retraites de
+  l'État publie l'espérance de vie à 65 ans (24,68 ans pour les femmes, 21,16
+  pour les hommes en 2024, un an de plus que l'INSEE à la population
+  générale). La table n'est pas reconstruite : un facteur sur la force de
+  mortalité de la table générale — la survie de chaque cellule élevée à cette
+  puissance, 0,85 pour les deux sexes — est calé sur l'année observée pour
+  reproduire l'espérance publiée, puis tenu constant sur toutes les années,
+  faute d'observation ailleurs. `scripts/mortalite_population.py` en tire le
+  transfert, cas type par cas type et sur les six scénarios : pour le
+  fonctionnaire sédentaire né en 1975, 1,5 an de rente de plus, soit 5,7 % de
+  pension notionnelle à capital égal, et 54 000 € sur la vie sous le système
+  actuel, qui ne connaît aucun diviseur et transfère donc autant. L'axe du
+  REVENU, où l'INSEE mesure des écarts bien plus grands, reste à lire.
 - **ν = 0** par défaut. La rente est actualisée au taux auquel elle sera ensuite
   revalorisée ; les deux étant identiques, ils se compensent et le diviseur se
   réduit à l'espérance de vie résiduelle. Le résultat est directement lisible.
@@ -1724,6 +1743,16 @@ propre cible et ne pouvait pas échouer.
 Ce partage donne la bonne mortalité aux âges qui pilotent le diviseur sans
 prétendre décrire la mortalité aux âges jeunes, qui n'entrent pas dans le
 calcul.
+
+**Une troisième source, pour les populations particulières.**
+`data/reference/mortalite/esperances_vie_populations.csv` porte l'espérance de
+vie à 65 ans que certains régimes publient pour leurs propres pensionnés — les
+fonctionnaires civils de l'État, par le Service des retraites de l'État,
+saisie depuis le projet annuel de performances du programme 741 annexé au
+PLF 2026. Le modèle n'en fait pas une table : il cale, sexe par sexe, un
+facteur sur la force de mortalité de la table générale de l'année observée,
+et le tient constant ailleurs. Elle ne sert qu'à la variante
+`population_conversion` du §5.
 
 **Les années projetées viennent de l'INSEE, année par année, jusqu'en 2125.**
 Ce sont les projections de population **2026**, qui publient les quotients de

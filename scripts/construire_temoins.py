@@ -356,6 +356,17 @@ def _cas() -> list[dict]:
         "conversion_acquis": "liquidation", "liquidation": "70",
     }))
     cas.append(("table_par_sexe_femme", {"table": "par_sexe", "sexe": "F"}))
+    # La population de la table : la mortalité des fonctionnaires civils de
+    # l'État, telle que leur régime la publie, à la place de celle de la
+    # population générale — sur la carrière qu'elle décrit, et croisée avec
+    # la table par sexe, puisque le facteur est calé sexe par sexe.
+    cas.append(("population_fonctionnaires_civils", {
+        "population": "fonctionnaires_civils_etat", "statut": "fonctionnaire_etat",
+    }))
+    cas.append(("population_fonctionnaires_civils_femme_par_sexe", {
+        "population": "fonctionnaires_civils_etat", "statut": "fonctionnaire_etat",
+        "table": "par_sexe", "sexe": "F",
+    }))
     for projection in ("cor_productivite_basse", "cor_productivite_haute"):
         cas.append((f"projection_{projection}", {"projection": projection}))
     for bascule in ("1980", "2000", "2026", "2040", "2060"):

@@ -48,6 +48,7 @@ from retraite_notionnelle.web.pages import (
     PROJECTIONS,
     RELEVE_MAXIMUM,
     SANS_EMPLOI,
+    POPULATIONS,
     TABLES,
     TITRES,
     Contexte,
@@ -1585,6 +1586,7 @@ def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
             "lissage": str(alea.randint(1, LISSAGE_MAXIMUM)),
             "age_reference": alea.choice([code for code, _ in AGES_REFERENCE]),
             "table": alea.choice([code for code, _ in TABLES]),
+            "population": alea.choice([code for code, _ in POPULATIONS]),
             "projection": alea.choice([code for code, _ in PROJECTIONS]),
             "bascule": str(alea.randint(1945, 2065)),
             "euros": str(alea.randint(1945, 2065)),
@@ -2876,6 +2878,11 @@ def test_le_sexe_ne_change_rien_par_defaut(contexte):
 
     assert resultat(sexe="H") == resultat(sexe="F")
     assert resultat(sexe="H", table="par_sexe") != resultat(sexe="F", table="par_sexe")
+    # La population de la table est un réglage de MODÉLISATION, pas
+    # d'identité : sans effet par défaut, et le même pour les deux sexes.
+    assert (resultat(sexe="H", population="fonctionnaires_civils_etat")
+            == resultat(sexe="F", population="fonctionnaires_civils_etat"))
+    assert resultat(population="fonctionnaires_civils_etat") != resultat()
     assert resultat(sexe="H", enfants="2") != resultat(sexe="F", enfants="2")
     # Et le champ n'est plus dans la grille d'identité : il est dans le
     # dépliant des options, avec la table et les enfants.

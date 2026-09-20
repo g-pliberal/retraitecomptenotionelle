@@ -177,10 +177,76 @@ export class DonneesMortalite {
     }
     this._lois = new Map();
     this._courbes = new Map();
+    // Les populations particulières : facteurs calibrés par
+    // `construire_donnees.py` et espérances publiées, sous la clé
+    // `population|sexe`. Le navigateur lit, il ne recalibre qu'à défaut.
+    const populations = paquet.populations || {};
+    this._facteursPaquet = populations.facteurs || {};
+    this._esperancesPubliees = populations.esperances || {};
+    this._facteurs = new Map();
   }
 
   get utiliseTablesReelles() {
     return Object.keys(this._quotients).length > 0;
+  }
+
+  // -- populations particulières ---------------------------------------------
+
+  /** Les populations dont une espérance de vie est publiée, triées. */
+  get populations() {
+    return [...new Set(Object.keys(this._esperancesPubliees).map((cle) => cle.split("|")[0]))]
+      .sort();
+  }
+
+  /** L'année d'observation et l'espérance à 65 ans publiées : `[annee, e65]`. */
+  esperancePubliee(population, sexe) {
+    const valeur = this._esperancesPubliees[`${population}|${sexe}`];
+    if (valeur === undefined) {
+      throw new Error(
+        `population inconnue : ${population} pour le sexe ${sexe} `
+        + `(connues : ${this.populations.join(", ")})`,
+      );
+    }
+    return valeur;
+  }
+
+  /**
+   * Le facteur sur la force de mortalité qui donne à cette population son
+   * espérance de vie publiée : la survie de chaque cellule est élevée à cette
+   * puissance. Calé sur la table du moment de l'année observée, tenu constant
+   * ailleurs. Portage de `facteur_population`.
+   */
+  facteurPopulation(population, sexe) {
+    const cle = `${population}|${sexe}`;
+    const memorise = this._facteurs.get(cle);
+    if (memorise !== undefined) {
+      return memorise;
+    }
+    const [annee, cible] = this.esperancePubliee(population, sexe);
+    let facteur = this._facteursPaquet[cle];
+    if (facteur === undefined) {
+      const esperance = (f) => {
+        const courbe = this._courbeBrute(65.0, annee, sexe, false, f);
+        let total = 0.0;
+        for (let t = 0; t < courbe.length - 1; t += 1) {
+          total += 0.5 * (courbe[t] + courbe[t + 1]);
+        }
+        return total;
+      };
+      let bas = 0.05;
+      let haut = 5.0;
+      for (let i = 0; i < 60; i += 1) {
+        const milieu = Math.sqrt(bas * haut);
+        if (esperance(milieu) > cible) {
+          bas = milieu;
+        } else {
+          haut = milieu;
+        }
+      }
+      facteur = Math.sqrt(bas * haut);
+    }
+    this._facteurs.set(cle, facteur);
+    return facteur;
   }
 
   // -- tables du moment ------------------------------------------------------
@@ -245,13 +311,14 @@ export class DonneesMortalite {
    * 1er janvier quand l'âge avançait mois par mois, et le diviseur REMONTAIT à
    * cette date.
    */
-  survieAnnuelle(age, annee, sexe) {
+  survieAnnuelle(age, annee, sexe, facteur = 1.0) {
     const ageEntier = Math.floor(age);
     const partAge = age - ageEntier;
     const anneeEntiere = Math.floor(annee);
     const partAnnee = annee - anneeEntiere;
     if (partAge <= 1e-9 && partAnnee <= 1e-9) {
-      return this._survieCellule(ageEntier, anneeEntiere, sexe);
+      const cellule = this._survieCellule(ageEntier, anneeEntiere, sexe);
+      return facteur === 1.0 ? cellule : cellule ** facteur;
     }
 
     // Les deux coordonnées avancent à la même vitesse : le trajet franchit
@@ -273,7 +340,7 @@ export class DonneesMortalite {
       );
       cumul += (fin - debut) * -Math.log(Math.max(cellule, 1e-300));
     }
-    return Math.exp(-cumul);
+    return Math.exp(-cumul * facteur);
   }
 
   // -- tables de génération --------------------------------------------------
@@ -286,13 +353,19 @@ export class DonneesMortalite {
    * voit appliquer la mortalité de l'année civile correspondante : l'ignorer
    * surestime la pension des générations récentes.
    */
-  courbeSurvie(ageDebut, anneeDebut, sexe, generation = true) {
-    const cle = `${ageDebut}|${anneeDebut}|${sexe}|${generation}`;
+  courbeSurvie(ageDebut, anneeDebut, sexe, generation = true, population = null) {
+    const cle = `${ageDebut}|${anneeDebut}|${sexe}|${generation}|${population}`;
     const memorisee = this._courbes.get(cle);
     if (memorisee !== undefined) {
       return memorisee;
     }
+    const facteur = population === null ? 1.0 : this.facteurPopulation(population, sexe);
+    const probabilites = this._courbeBrute(ageDebut, anneeDebut, sexe, generation, facteur);
+    this._courbes.set(cle, probabilites);
+    return probabilites;
+  }
 
+  _courbeBrute(ageDebut, anneeDebut, sexe, generation, facteur) {
     const probabilites = [1.0];
     let courante = 1.0;
     let duree = 0;
@@ -304,11 +377,10 @@ export class DonneesMortalite {
       // si bien qu'elle ne décrivait pas la même mortalité que celle du calcul
       // par défaut.
       const anneeLue = generation ? anneeDebut + duree : anneeDebut;
-      courante *= this.survieAnnuelle(ageDebut + duree, anneeLue, sexe);
+      courante *= this.survieAnnuelle(ageDebut + duree, anneeLue, sexe, facteur);
       probabilites.push(courante);
       duree += 1;
     }
-    this._courbes.set(cle, probabilites);
     return probabilites;
   }
 
@@ -319,15 +391,15 @@ export class DonneesMortalite {
    * pondération correcte pour une rente servie indifféremment aux hommes et aux
    * femmes à partir d'un même capital notionnel.
    */
-  courbeSurvieUnisexe(ageDebut, anneeDebut, generation = true) {
-    const cle = `unisexe|${ageDebut}|${anneeDebut}|${generation}`;
+  courbeSurvieUnisexe(ageDebut, anneeDebut, generation = true, population = null) {
+    const cle = `unisexe|${ageDebut}|${anneeDebut}|${generation}|${population}`;
     const memorisee = this._courbes.get(cle);
     if (memorisee !== undefined) {
       return memorisee;
     }
     const [poidsH, poidsF] = this.poidsUnisexe;
-    const ch = this.courbeSurvie(ageDebut, anneeDebut, "H", generation);
-    const cf = this.courbeSurvie(ageDebut, anneeDebut, "F", generation);
+    const ch = this.courbeSurvie(ageDebut, anneeDebut, "H", generation, population);
+    const cf = this.courbeSurvie(ageDebut, anneeDebut, "F", generation, population);
     const longueur = Math.max(ch.length, cf.length);
     const courbe = [];
     for (let t = 0; t < longueur; t += 1) {
@@ -338,12 +410,15 @@ export class DonneesMortalite {
     return courbe;
   }
 
-  /** Courbe de survie, unisexe si ``sexe`` vaut ``null``. */
-  courbe(ageDebut, anneeDebut, sexe, generation = true) {
+  /**
+   * Courbe de survie, unisexe si ``sexe`` vaut ``null``, population générale
+   * si ``population`` vaut ``null``.
+   */
+  courbe(ageDebut, anneeDebut, sexe, generation = true, population = null) {
     if (sexe === null || sexe === undefined) {
-      return this.courbeSurvieUnisexe(ageDebut, anneeDebut, generation);
+      return this.courbeSurvieUnisexe(ageDebut, anneeDebut, generation, population);
     }
-    return this.courbeSurvie(ageDebut, anneeDebut, sexe, generation);
+    return this.courbeSurvie(ageDebut, anneeDebut, sexe, generation, population);
   }
 
   survie(ageDebut, anneeDebut, duree, sexe, generation = true) {
@@ -352,8 +427,8 @@ export class DonneesMortalite {
   }
 
   /** Espérance de vie résiduelle en années, table de génération par défaut. */
-  esperanceResiduelle(age, annee, sexe = null, generation = true) {
-    const courbe = this.courbe(age, annee, sexe, generation);
+  esperanceResiduelle(age, annee, sexe = null, generation = true, population = null) {
+    const courbe = this.courbe(age, annee, sexe, generation, population);
     let total = 0.0;
     for (let t = 0; t < courbe.length - 1; t += 1) {
       total += 0.5 * (courbe[t] + courbe[t + 1]);

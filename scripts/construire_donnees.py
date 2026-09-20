@@ -323,6 +323,21 @@ def _calibrations() -> dict:
     return {cle: list(valeur) for cle, valeur in sorted(donnees._cache.items())}
 
 
+def _populations() -> dict:
+    """Les facteurs de mortalité des populations particulières, calibrés une
+    fois pour toutes : le navigateur les lit, il ne recalibre rien."""
+    donnees = DonneesMortalite(DONNEES, cache_disque=False)
+    return {
+        "facteurs": donnees.facteurs_populations(),
+        "esperances": {
+            f"{population}|{sexe}": list(donnees.esperance_publiee(population, sexe))
+            for population in donnees.populations
+            for sexe in DonneesMortalite.SEXES
+            if f"{population}|{sexe}" in donnees.facteurs_populations()
+        },
+    }
+
+
 def _regimes() -> list[dict]:
     catalogue = CatalogueRegimes(DONNEES)
     fiches = []
@@ -922,6 +937,7 @@ def construire() -> bytes:
         "prelevements_remuneration": _prelevements_remuneration(),
         "quotients": _quotients(),
         "calibrations": _calibrations(),
+        "populations": _populations(),
         "regimes": _regimes(),
         "inventaire": _inventaire(),
         "avantages": _avantages(),

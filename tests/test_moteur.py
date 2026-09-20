@@ -667,6 +667,42 @@ def test_table_par_sexe_exige_le_sexe(mortalite):
         convertisseur.coefficient(64, 2026, None)
 
 
+def test_la_table_d_une_population_allonge_le_diviseur(mortalite):
+    """Ce que le diviseur commun transfère (action 14) : à 64 ans, un
+    fonctionnaire civil de l'État a entre un et deux ans de rente de plus que
+    la population générale, et une table qui le saurait lui servirait 4 à 8 %
+    de moins par an à capital égal. La table commune reste le défaut."""
+    commun = Convertisseur(mortalite, Parametres()).coefficient(64, 2026)
+    corrige = Convertisseur(
+        mortalite, Parametres(population_conversion="fonctionnaires_civils_etat")
+    ).coefficient(64, 2026)
+    ecart = corrige.esperance_residuelle - commun.esperance_residuelle
+    assert 1.0 < ecart < 2.0
+    assert 0.04 < corrige.diviseur / commun.diviseur - 1 < 0.08
+    assert commun.table == "unisexe_generation"
+    assert corrige.table == "unisexe_generation_fonctionnaires_civils_etat"
+
+
+def test_la_population_ne_change_rien_au_scenario_1_et_baisse_les_notionnels():
+    """Le garde-fou de l'action 14 : le défaut n'appartient pas au notionnel.
+    Le scénario 1 sert la même pension quelle que soit la longévité — aucun
+    diviseur ne l'a calculée —, et c'est pourquoi le transfert y est du même
+    ordre. Les scénarios notionnels, eux, voient leur pension baisser sous la
+    table de la population, de l'ordre de l'écart de diviseur."""
+    from retraite_notionnelle.castypes import CAS_TYPES
+    from retraite_notionnelle.simulateur import Simulateur
+
+    cas = next(c for c in CAS_TYPES if c.code == "fonctionnaire_sedentaire")
+    commun = Simulateur(Parametres())
+    corrige = Simulateur(Parametres(population_conversion="fonctionnaires_civils_etat"))
+    carriere = cas.construire(commun, 1975)
+    avec, sans = commun.simuler(carriere), corrige.simuler(carriere)
+    assert sans.actuel.pension_annuelle == avec.actuel.pension_annuelle
+    rapport = (sans.notionnel_retroactif.pension_annuelle
+               / avec.notionnel_retroactif.pension_annuelle)
+    assert 0.92 < rapport < 0.97
+
+
 # -- fusion ------------------------------------------------------------------
 
 

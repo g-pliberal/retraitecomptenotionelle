@@ -245,6 +245,7 @@ export class ConstructeurCapitalisation {
   _transmission(annees, ageOuverture, anneeOuverture, sexe) {
     const courbe = this.mortalite.courbe(
       ageOuverture, anneeOuverture, sexe, this.parametres.table_generation,
+      this.parametres.population_conversion ?? null,
     );
     let esperance = 0.0;
     let deces = 0.0;

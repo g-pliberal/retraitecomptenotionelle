@@ -452,6 +452,15 @@ class Parametres:
     # --- Conversion en rente ------------------------------------------------
     table_conversion: TableConversion = TableConversion.UNISEXE
 
+    #: Population dont la mortalité remplace celle de la population générale
+    #: dans le diviseur — une clé de
+    #: ``data/reference/mortalite/esperances_vie_populations.csv``, telle
+    #: ``fonctionnaires_civils_etat``. ``None``, le défaut, est la table
+    #: commune : un système qui trierait ses rentes par population ne serait
+    #: pas défendable. La variante existe pour MESURER ce que le diviseur
+    #: commun transfère à qui vit plus longtemps (action 14).
+    population_conversion: str | None = None
+
     #: Taux de préfinancement (« front-loading ») incorporé au diviseur.
     #: 0 signifie : le diviseur est l'espérance de vie résiduelle actualisée au
     #: même taux que l'indexation, les deux se compensant exactement. C'est le

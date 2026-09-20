@@ -510,6 +510,7 @@ class ConstructeurCapitalisation:
         courbe = self.mortalite.courbe(
             age_ouverture, float(annee_ouverture), sexe,
             self.parametres.table_generation,
+            self.parametres.population_conversion,
         )
         esperance = 0.0
         deces = 0.0

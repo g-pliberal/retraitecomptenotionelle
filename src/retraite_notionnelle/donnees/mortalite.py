@@ -242,6 +242,87 @@ class DonneesMortalite:
                 filtre={"sexe": sexe, "mesure": "e65"},
             )
         self._quotients_observes = self._charger_quotients_observes()
+        self._populations = self._charger_populations()
+        self._facteurs: dict[tuple[str, str], float] = {}
+
+    # -- populations particulières ------------------------------------------
+
+    def _charger_populations(self) -> dict[str, dict[str, tuple[int, float]]]:
+        """Les espérances de vie à 65 ans publiées pour des populations
+        particulières : ``{population: {sexe: (annee, e65)}}``."""
+        chemin = self.racine / "reference" / "mortalite" / "esperances_vie_populations.csv"
+        if not chemin.exists():
+            return {}
+        table: dict[str, dict[str, tuple[int, float]]] = {}
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                if ligne["mesure"] != "e65":
+                    continue
+                table.setdefault(ligne["population"], {})[ligne["sexe"]] = (
+                    int(ligne["annee"]), float(ligne["valeur"]),
+                )
+        return table
+
+    @property
+    def populations(self) -> tuple[str, ...]:
+        """Les populations dont une espérance de vie est publiée."""
+        return tuple(sorted(self._populations))
+
+    def esperance_publiee(self, population: str, sexe: str) -> tuple[int, float]:
+        """L'année d'observation et l'espérance à 65 ans publiées pour une
+        population et un sexe."""
+        try:
+            return self._populations[population][sexe]
+        except KeyError:
+            raise KeyError(
+                f"population inconnue : {population!r} pour le sexe {sexe!r} "
+                f"(connues : {self.populations})"
+            ) from None
+
+    def facteur_population(self, population: str, sexe: str) -> float:
+        """Le facteur sur la force de mortalité qui donne à cette population
+        son espérance de vie publiée.
+
+        La survie de chaque cellule (âge, année) de la table générale est
+        élevée à cette puissance : un facteur inférieur à un allonge la vie.
+        Il est calé sur la table DU MOMENT de l'année observée, telle que le
+        modèle la lit — quotients observés compris —, pour que l'espérance à
+        65 ans de la table corrigée soit celle que le régime publie ; puis il
+        est tenu constant sur toutes les années, faute d'observation
+        ailleurs. La calibration est une bissection sur une fonction
+        monotone : plus le facteur est petit, plus on vit longtemps.
+        """
+        cle = (population, sexe)
+        memorise = self._facteurs.get(cle)
+        if memorise is not None:
+            return memorise
+        annee, cible = self.esperance_publiee(population, sexe)
+
+        def esperance(facteur: float) -> float:
+            courbe = self._courbe_brute(65.0, float(annee), sexe, False, facteur)
+            return sum(0.5 * (courbe[t] + courbe[t + 1]) for t in range(len(courbe) - 1))
+
+        bas, haut = 0.05, 5.0
+        for _ in range(60):
+            milieu = math.sqrt(bas * haut)
+            if esperance(milieu) > cible:
+                bas = milieu
+            else:
+                haut = milieu
+        facteur = math.sqrt(bas * haut)
+        self._facteurs[cle] = facteur
+        return facteur
+
+    def facteurs_populations(self) -> dict[str, float]:
+        """Tous les facteurs, sous la clé ``population|sexe`` — ce que le paquet
+        de données transporte pour que le navigateur ne recalibre rien."""
+        return {
+            f"{population}|{sexe}": self.facteur_population(population, sexe)
+            for population in self.populations
+            for sexe in self.SEXES
+            if sexe in self._populations[population]
+        }
 
     # -- tables réelles, si présentes ---------------------------------------
 
@@ -325,8 +406,13 @@ class DonneesMortalite:
                     return 1.0 - qx
         return self.loi(annee, sexe).survie(float(age), 1.0)
 
-    def survie_annuelle(self, age: float, annee: float, sexe: str) -> float:
+    def survie_annuelle(self, age: float, annee: float, sexe: str,
+                        facteur: float = 1.0) -> float:
         """Probabilité de survivre un an à partir de ``age`` en ``annee``.
+
+        ``facteur`` multiplie la force de mortalité de chaque cellule — la
+        survie est élevée à cette puissance. Il vaut un pour la population
+        générale ; voir :meth:`facteur_population`.
 
         **L'âge et la date sont fractionnaires, et tous deux comptent.** La
         méthode lisait ``quotients[int(age)]`` : la part OBSERVÉE de la table —
@@ -355,7 +441,8 @@ class DonneesMortalite:
         age_entier, part_age = math.floor(age), age - math.floor(age)
         annee_entiere, part_annee = math.floor(annee), annee - math.floor(annee)
         if part_age <= 1e-9 and part_annee <= 1e-9:
-            return self._survie_cellule(int(age_entier), int(annee_entiere), sexe)
+            cellule = self._survie_cellule(int(age_entier), int(annee_entiere), sexe)
+            return cellule if facteur == 1.0 else cellule ** facteur
 
         # Les deux coordonnées avancent à la même vitesse : le trajet franchit
         # l'âge entier suivant en ``1 - part_age`` et le 1er janvier suivant en
@@ -376,14 +463,20 @@ class DonneesMortalite:
             # Force de mortalité de la cellule, appliquée sur la durée du
             # tronçon : -ln p, puis somme, puis exponentielle.
             cumul += (fin - debut) * -math.log(max(cellule, 1e-300))
-        return math.exp(-cumul)
+        return math.exp(-cumul * facteur)
 
     # -- tables de génération ------------------------------------------------
 
     @lru_cache(maxsize=4096)
     def courbe_survie(self, age_debut: float, annee_debut: float, sexe: str,
-                      generation: bool = True) -> tuple[float, ...]:
+                      generation: bool = True,
+                      population: str | None = None) -> tuple[float, ...]:
         """Survie cumulée année par année à partir de ``age_debut``.
+
+        ``population`` désigne une population particulière de
+        ``esperances_vie_populations.csv`` : sa courbe est celle de la
+        population générale, corrigée du facteur que :meth:`facteur_population`
+        lui cale. ``None`` est la population générale.
 
         ``annee_debut`` peut porter une fraction : c'est la position de la
         liquidation dans son année civile, ``(mois - 1) / 12``. Elle dit sous
@@ -396,6 +489,11 @@ class DonneesMortalite:
         table de génération. L'ignorer surestime la pension des générations
         récentes, dont la longévité continue de progresser.
         """
+        facteur = 1.0 if population is None else self.facteur_population(population, sexe)
+        return self._courbe_brute(age_debut, annee_debut, sexe, generation, facteur)
+
+    def _courbe_brute(self, age_debut: float, annee_debut: float, sexe: str,
+                      generation: bool, facteur: float) -> tuple[float, ...]:
         probabilites = [1.0]
         courante = 1.0
         duree = 0
@@ -409,14 +507,14 @@ class DonneesMortalite:
             # censé confronter les deux chaînes comparait la calibration à sa
             # propre cible.
             annee = annee_debut + duree if generation else annee_debut
-            facteur = self.survie_annuelle(age_debut + duree, annee, sexe)
-            courante *= facteur
+            courante *= self.survie_annuelle(age_debut + duree, annee, sexe, facteur)
             probabilites.append(courante)
             duree += 1
         return tuple(probabilites)
 
     def courbe_survie_unisexe(self, age_debut: float, annee_debut: float,
-                              generation: bool = True) -> tuple[float, ...]:
+                              generation: bool = True,
+                              population: str | None = None) -> tuple[float, ...]:
         """Courbe de survie moyenne pondérée des deux sexes.
 
         On moyenne les FONCTIONS DE SURVIE, pas les espérances : c'est la
@@ -424,8 +522,8 @@ class DonneesMortalite:
         aux femmes à partir d'un même capital notionnel.
         """
         poids_h, poids_f = self.poids_unisexe
-        ch = self.courbe_survie(age_debut, annee_debut, "H", generation)
-        cf = self.courbe_survie(age_debut, annee_debut, "F", generation)
+        ch = self.courbe_survie(age_debut, annee_debut, "H", generation, population)
+        cf = self.courbe_survie(age_debut, annee_debut, "F", generation, population)
         longueur = max(len(ch), len(cf))
         return tuple(
             poids_h * (ch[t] if t < len(ch) else 0.0)
@@ -434,11 +532,13 @@ class DonneesMortalite:
         )
 
     def courbe(self, age_debut: float, annee_debut: float, sexe: str | None,
-               generation: bool = True) -> tuple[float, ...]:
-        """Courbe de survie, unisexe si ``sexe`` vaut ``None``."""
+               generation: bool = True,
+               population: str | None = None) -> tuple[float, ...]:
+        """Courbe de survie, unisexe si ``sexe`` vaut ``None``, population
+        générale si ``population`` vaut ``None``."""
         if sexe is None:
-            return self.courbe_survie_unisexe(age_debut, annee_debut, generation)
-        return self.courbe_survie(age_debut, annee_debut, sexe, generation)
+            return self.courbe_survie_unisexe(age_debut, annee_debut, generation, population)
+        return self.courbe_survie(age_debut, annee_debut, sexe, generation, population)
 
     def survie(self, age_debut: float, annee_debut: int, duree: int, sexe: str,
                generation: bool = True) -> float:
@@ -446,9 +546,10 @@ class DonneesMortalite:
         return courbe[duree] if duree < len(courbe) else 0.0
 
     def esperance_residuelle(self, age: float, annee: float, sexe: str | None = None,
-                             generation: bool = True) -> float:
+                             generation: bool = True,
+                             population: str | None = None) -> float:
         """Espérance de vie résiduelle en années, table de génération par défaut."""
-        courbe = self.courbe(age, annee, sexe, generation)
+        courbe = self.courbe(age, annee, sexe, generation, population)
         return sum(0.5 * (courbe[t] + courbe[t + 1]) for t in range(len(courbe) - 1))
 
     def fiabilite(self, annee: float) -> Fiabilite:

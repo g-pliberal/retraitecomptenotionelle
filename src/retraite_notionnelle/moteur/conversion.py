@@ -83,9 +83,10 @@ class Convertisseur:
         """
         sexe_table = self._sexe_table(sexe)
         generation = self.parametres.table_generation
+        population = self.parametres.population_conversion
         date_liquidation = annee_liquidation + (mois_liquidation - 1) / 12
         courbe = self.mortalite.courbe(
-            age_liquidation, date_liquidation, sexe_table, generation
+            age_liquidation, date_liquidation, sexe_table, generation, population
         )
 
         nu = self.parametres.taux_anticipe_conversion
@@ -111,7 +112,8 @@ class Convertisseur:
             annee_liquidation=annee_liquidation,
             esperance_residuelle=esperance,
             table=("unisexe" if sexe_table is None else sexe_table)
-            + ("_generation" if generation else "_moment"),
+            + ("_generation" if generation else "_moment")
+            + ("" if population is None else f"_{population}"),
             taux_anticipe=nu,
             fiabilite=self.mortalite.fiabilite(annee_liquidation),
         )

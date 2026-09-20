@@ -45,9 +45,10 @@ export class Convertisseur {
   coefficient(ageLiquidation, anneeLiquidation, sexe = null, moisLiquidation = 1) {
     const sexeTable = this._sexeTable(sexe);
     const generation = this.parametres.table_generation;
+    const population = this.parametres.population_conversion ?? null;
     const dateLiquidation = anneeLiquidation + (moisLiquidation - 1) / 12;
     const courbe = this.mortalite.courbe(
-      ageLiquidation, dateLiquidation, sexeTable, generation,
+      ageLiquidation, dateLiquidation, sexeTable, generation, population,
     );
 
     const nu = this.parametres.taux_anticipe_conversion;
@@ -77,7 +78,8 @@ export class Convertisseur {
       annee_liquidation: anneeLiquidation,
       esperance_residuelle: esperance,
       table: (sexeTable === null ? "unisexe" : sexeTable)
-        + (generation ? "_generation" : "_moment"),
+        + (generation ? "_generation" : "_moment")
+        + (population === null ? "" : `_${population}`),
       taux_anticipe: nu,
       fiabilite: this.mortalite.fiabilite(anneeLiquidation),
       /** Fraction du capital notionnel servie chaque année. */

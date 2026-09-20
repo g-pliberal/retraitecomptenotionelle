@@ -1433,7 +1433,9 @@ institutions:
         acces: document
         blocage: refus
         statut_integration: saisi
-        cible: data/reference/regimes/pap_regimes_subventionnes.csv
+        cible: >-
+          data/reference/regimes/pap_regimes_subventionnes.csv,
+          data/reference/mortalite/esperances_vie_populations.csv
         note: >-
           Lu le 20 septembre 2026, apporté par l'utilisateur comme le jaune :
           budget.gouv.fr refuse les adresses de sortie du proxy, et les
