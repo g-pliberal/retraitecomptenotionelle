@@ -538,7 +538,9 @@ def test_recuperer_cherche_la_release_quand_aucun_miroir_n_est_declare(tmp_path,
 
     assert module.recuperer([jeu], rien) == []
     assert appels == [ici]
-    assert "lancer le workflow documents-apportes.yml" in capsys.readouterr().out
+    sortie = capsys.readouterr().out
+    assert "lancer le workflow documents-apportes.yml" in sortie
+    assert "déposer OPEF2026.pdf sur la release à la main" in sortie
 
     def publie(url):
         return b"%PDF"

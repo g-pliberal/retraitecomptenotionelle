@@ -3355,6 +3355,16 @@ institutions:
           l'OPEF), et la règle du manifeste plafonne à `haute` ce qui n'a pas
           été lu sur le document du producteur. À recontrôler sur le rapport
           lui-même dès qu'une session peut l'ouvrir.
+          CE QUI A ÉTÉ ESSAYÉ, le 20 septembre 2026 : aucun autre site public
+          ne reprend l'édition 2026 (vie-publique porte la 2025, le CCSF
+          renvoie à la Banque de France) ; le runner GitHub Actions du
+          workflow documents-apportes.yml est refusé comme la session — 403
+          Akamai « Access Denied », sur la page comme sur le PDF, à la requête
+          simple comme à un Chromium headless ordinaire. Le document est donc
+          à déposer une fois, à la main, sur la release documents-apportes du
+          dépôt, sous le nom OPEF2026.pdf ; `--recuperer` le rapporte ensuite
+          dans toute session, et imprime l'empreinte à inscrire ici en
+          `miroir` et `sha256`.
 
   institutions:
     nom: Sites des institutions dont le régime n'est dans aucun texte de l'index

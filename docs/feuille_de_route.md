@@ -8228,6 +8228,28 @@ de police. C'est le pas suivant, et il ne demande plus rien à personne.
 **Fin.** Une commande dit ce que le dépôt ne peut pas aller chercher, une
 autre va le chercher là où on le sert quand même, et un fichier déposé au
 bon endroit est lu sans qu'on touche au script.
+
+**Le même jour, encore : le dépôt se fait son propre miroir.** Le rapport de
+l'OPEF n'a pas de miroir public (vie-publique porte l'édition 2025, le CCSF
+renvoie à la Banque de France). D'où `source_locale.py --publier` et le
+workflow `documents-apportes.yml` (à la main, et le 3 de chaque mois) : sur
+un runner GitHub, chaque jeu `refus` sans miroir est téléchargé depuis son
+adresse de document — nouveau champ `document` du manifeste quand `url` est
+une page —, par une requête simple puis, si le site refuse, par un Chromium
+Playwright headless ordinaire installé à ce moment-là seulement, sans rien
+maquiller ; le fichier est déposé sur la release `documents-apportes`, avec
+son empreinte et sa date dans le corps, et l'asset devient le `miroir` du
+jeu. `--recuperer` cherche déjà la release quand aucun miroir n'est déclaré.
+Vérifié de bout en bout ce jour : le workflow, déclenché trois fois par
+l'API, fait ses deux passes et a créé la release ; les trois annexes
+budgétaires se rapportent depuis la session ; un asset de release se
+télécharge par le même chemin. Ce qui ne passe pas : la Banque de France
+refuse le runner comme la session, 403 Akamai « Access Denied », page et
+PDF, requête simple et navigateur — une décision sur l'adresse du client,
+que le dépôt ne contourne pas. L'unique geste qui reste, une fois : déposer
+`OPEF2026.pdf` sur la release `documents-apportes` (onglet Releases) ; le
+workflow le conserve ensuite, et `--recuperer` imprime l'empreinte à
+inscrire dans le manifeste. Onze tests de plus, sans réseau.
 - **20 septembre 2026, action 46.** Faite. L'emploi projeté suit le scénario
   de référence du COR de juin 2026 pour les systèmes 2 à 6, par la masse
   salariale ; le système 1 ne le lit pas. Le détail est sous l'action. À

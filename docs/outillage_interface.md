@@ -162,16 +162,45 @@ le cas qu'on vise : zéro intervention.
 python scripts/fetch/source_locale.py --recuperer
 ```
 
-Ce qui n'a pas de miroir, on l'**apporte**. Un navigateur sur un poste
-ordinaire — le sien, Playwright ou pas — n'a rien à maquiller : il est ce que
-le site attend. Le fichier téléchargé se dépose dans
-`data/brut/` sous le nom que le site lui donne, ou sous le nom que le manifeste
-déclare en `fichier_local` quand l'adresse n'en porte pas ; les récupérateurs
-qui lisent un document le cherchent là avant de sortir, et acceptent aussi
-`--fichier CHEMIN`. `data/brut/` n'est pas versionné : ce qui est versionné,
-c'est ce que le récupérateur en tire, avec les mêmes contrôles qu'après un
-téléchargement. Au 20 septembre 2026, le seul document sans miroir est le
-rapport de l'OPEF, que la Banque de France ne sert qu'aux navigateurs.
+Ce qui n'a pas de miroir public, **le dépôt se le fabrique**. Le workflow
+`.github/workflows/documents-apportes.yml` — lancé à la main depuis l'onglet
+Actions, et le 3 de chaque mois — exécute `source_locale.py --publier` sur
+un runner GitHub : pour chaque jeu `refus` qui vise un fichier et n'a pas
+d'autre miroir, il télécharge l'adresse de document (`document` dans le
+manifeste quand `url` est une page, sinon `url`), d'abord par une requête
+simple sous l'identité du dépôt, puis, si le site la refuse, avec un Chromium
+Playwright headless ordinaire, installé seulement à ce moment-là. Rien n'y est
+maquillé : ni le User-Agent, qui dit « HeadlessChrome », ni les signaux
+d'automatisation. Le site veut un navigateur, en voici un ; il ouvre la page
+qui présente le document, clique son lien, ou navigue vers l'adresse. Le
+fichier obtenu est déposé sur la release `documents-apportes` du dépôt, l'asset
+du même nom remplacé, et le corps de la release reçoit une ligne par document
+avec son empreinte SHA-256 et sa date. L'adresse de l'asset devient le `miroir`
+du jeu, avec son `sha256`, et `--recuperer` le rapporte dans une session comme
+n'importe quel miroir ; tant que le manifeste ne le déclare pas, `--recuperer`
+cherche déjà la release et imprime l'empreinte à inscrire. Le jeton d'un
+workflow a le droit d'écrire les releases, celui d'une session ne l'a pas : la
+publication se fait là, jamais depuis un poste. Une édition qui aurait changé
+n'écrase pas l'asset dont le manifeste porte l'empreinte : l'écart est dit, et
+le job échoue pour qu'on le lise.
+
+Ce qui refuse **aussi le runner**, on l'apporte, une fois. Le 20 septembre 2026,
+le bord Akamai de la Banque de France a répondu 403 « Access Denied » au
+runner GitHub comme à la session, à la requête simple comme au Chromium
+ordinaire, sur la page du rapport de l'OPEF comme sur son PDF : c'est une
+décision sur l'adresse du client, pas un défi qu'un navigateur résout, et le
+dépôt ne se déguise pas pour passer. La release `documents-apportes` existe
+dès la première passe du workflow, même vide, précisément pour ce cas : le
+fichier téléchargé sur un poste ordinaire s'y dépose à la main (onglet
+Releases, modifier la release, glisser le fichier), sous le nom que le manifeste
+déclare en `fichier_local`. Dès lors, `--recuperer` le rapporte dans toute
+session, le workflow le conserve quand le site refuse encore, et le geste ne se
+refait pas. Un dépôt dans `data/brut/` d'une session — ou `--fichier CHEMIN`
+sur un récupérateur — sert aussi, mais à cette session seule : `data/brut/`
+n'est pas versionné, et ce qui est versionné, c'est ce que le récupérateur en
+tire, avec les mêmes contrôles qu'après un téléchargement. Au 20 septembre
+2026, le rapport de l'OPEF est le seul document dans ce cas ; vie-publique
+n'en porte que l'édition 2025.
 
 ## Web Interface Guidelines : règles figées
 

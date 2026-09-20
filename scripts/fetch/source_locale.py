@@ -506,7 +506,9 @@ def recuperer(jeux: list[dict], telecharger: Callable[[str], bytes] = telecharge
         except (OSError, ValueError) as erreur:
             if not declare and isinstance(erreur, urllib.error.HTTPError) and erreur.code == 404:
                 print(f"{jeu['id']} : rien sur la release {ETIQUETTE} — lancer le workflow "
-                      "documents-apportes.yml (onglet Actions, « Run workflow »)", file=sortie)
+                      "documents-apportes.yml (onglet Actions, « Run workflow ») ; si le site "
+                      f"refuse aussi le runner, déposer {cible.name} sur la release à la main, "
+                      "une fois", file=sortie)
             else:
                 print(f"{jeu['id']} : ÉCHEC — {erreur}", file=sortie)
             continue
