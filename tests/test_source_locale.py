@@ -182,3 +182,95 @@ def test_les_recuperateurs_de_documents_passent_par_le_module():
     for nom in LECTEURS_DE_DOCUMENTS:
         source = (FETCH / nom).read_text(encoding="utf-8")
         assert "lire_ou_telecharger(" in source, f"{nom} n'appelle pas lire_ou_telecharger"
+
+
+def test_un_miroir_nomme_son_fichier_et_son_empreinte_est_une_sha256():
+    """Sans nom, `--recuperer` ne saurait pas où écrire ; sans empreinte, il
+    ne saurait pas s'il a reçu le bon document."""
+    import re
+
+    module = _module()
+    for ident, jeu in _jeux().items():
+        if "miroir" not in jeu:
+            continue
+        assert "blocage" in jeu, f"{ident} : un miroir sans blocage n'a pas de raison d'être"
+        assert module.ou_deposer(jeu) is not None, (
+            f"{ident} : le miroir ne nomme pas de fichier et fichier_local est absent")
+        assert re.fullmatch(r"[0-9a-f]{64}", str(jeu.get("sha256", ""))), (
+            f"{ident} : un miroir se déclare avec l'empreinte SHA-256 du document")
+        assert jeu["miroir"] != jeu["url"], f"{ident} : le miroir est un autre hôte"
+
+
+def test_les_annexes_budgetaires_ont_leur_miroir_a_l_assemblee():
+    """budget.gouv.fr refuse la session ; l'Assemblée nationale sert le même
+    fichier. C'est ce qui rend ces trois documents récupérables sans personne."""
+    jeux = _jeux()
+    for ident in ("sre_jaune_pensions", "db_cas_pensions", "db_pap_regimes_sociaux"):
+        assert "assemblee-nationale.fr" in jeux[ident]["miroir"], ident
+
+
+def test_lire_ou_telecharger_essaie_le_miroir_avant_l_adresse(tmp_path, monkeypatch):
+    module = _module()
+    monkeypatch.setattr(module, "BRUT", tmp_path)
+    monkeypatch.setattr(module, "RACINE", tmp_path)
+    appels: list[str] = []
+
+    def telecharger(url: str) -> bytes:
+        appels.append(url)
+        return b"document"
+
+    url = "https://www.budget.gouv.fr/documentation/file-download/31546"
+    miroir = "https://questions.assemblee-nationale.fr/x/12-Jaune2026_Pensions.pdf"
+    bon = module.empreinte(b"document")
+    assert module.lire_ou_telecharger(url, telecharger, nom_local="j.pdf",
+                                      miroir=miroir, sha256=bon) == b"document"
+    assert appels == [miroir]
+    # Une empreinte qui ne correspond pas : on refuse, on ne devine pas.
+    with pytest.raises(ValueError):
+        module.lire_ou_telecharger(url, telecharger, miroir=miroir, sha256="0" * 64)
+    # Le fichier déposé sous son nom passe avant le miroir, et il est contrôlé aussi.
+    (tmp_path / "j.pdf").write_bytes(b"autre")
+    with pytest.raises(ValueError):
+        module.lire_ou_telecharger(url, telecharger, nom_local="j.pdf", miroir=miroir, sha256=bon)
+    assert module.lire_ou_telecharger(url, telecharger, nom_local="j.pdf", miroir=miroir,
+                                      sha256=module.empreinte(b"autre")) == b"autre"
+    assert appels == [miroir, miroir]
+
+
+def test_recuperer_ecrit_verifie_et_ne_refait_rien(tmp_path, monkeypatch, capsys):
+    module = _module()
+    monkeypatch.setattr(module, "BRUT", tmp_path)
+    monkeypatch.setattr(module, "RACINE", tmp_path)
+    contenu = b"%PDF le jaune"
+    jeux = [
+        {"id": "jaune", "blocage": "refus", "url": "https://budget.example/file-download/1",
+         "fichier_local": "jaune.pdf", "miroir": "https://an.example/jaune.pdf",
+         "sha256": module.empreinte(contenu)},
+        {"id": "faux", "blocage": "refus", "url": "https://budget.example/file-download/2",
+         "fichier_local": "faux.pdf", "miroir": "https://an.example/faux.pdf",
+         "sha256": "0" * 64},
+        {"id": "sans_miroir", "blocage": "refus", "url": "https://x.example/a.pdf"},
+        {"id": "eic", "blocage": "convention", "url": "https://drees.example/eic"},
+    ]
+    appels: list[str] = []
+
+    def telecharger(url: str) -> bytes:
+        appels.append(url)
+        return contenu
+
+    faits = module.recuperer(jeux, telecharger)
+    assert faits == [tmp_path / "jaune.pdf"]
+    assert (tmp_path / "jaune.pdf").read_bytes() == contenu
+    assert not (tmp_path / "faux.pdf").exists(), "un document non reconnu n'est pas déposé"
+    assert sorted(appels) == ["https://an.example/faux.pdf", "https://an.example/jaune.pdf"]
+    assert "faux : ÉCHEC" in capsys.readouterr().out
+
+    # Une seconde passe ne retélécharge pas ce qui est là et conforme.
+    appels.clear()
+    assert module.recuperer(jeux[:1], telecharger) == [tmp_path / "jaune.pdf"]
+    assert appels == []
+    # Un fichier présent mais différent est remplacé, et dit.
+    (tmp_path / "jaune.pdf").write_bytes(b"perime")
+    module.recuperer(jeux[:1], telecharger)
+    assert (tmp_path / "jaune.pdf").read_bytes() == contenu
+    assert "remplacé" in capsys.readouterr().out

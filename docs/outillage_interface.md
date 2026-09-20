@@ -149,17 +149,29 @@ de ce que le dépôt ne peut pas aller chercher lui-même se lit d'une commande 
 python scripts/fetch/source_locale.py
 ```
 
-Et ce que la session ne peut pas télécharger, on le lui **apporte**. Un
-navigateur sur un poste ordinaire — le sien, Playwright ou pas — n'a rien à
-maquiller : il est ce que le site attend. Le fichier téléchargé se dépose dans
+Avant d'apporter quoi que ce soit, **chercher le miroir**. Les annexes
+budgétaires que `budget.gouv.fr` refuse sont déposées au Parlement, et
+l'Assemblée nationale sert le même fichier, octet pour octet, à une session :
+le jaune pensions et les projets annuels de performances du PLF 2026 s'y
+téléchargent sans personne. Le manifeste porte cette adresse sous `miroir` et
+l'empreinte SHA-256 du document sous `sha256` ; `--recuperer` télécharge chaque
+miroir dans `data/brut/` et refuse un fichier dont l'empreinte diffère. C'est
+le cas qu'on vise : zéro intervention.
+
+```bash
+python scripts/fetch/source_locale.py --recuperer
+```
+
+Ce qui n'a pas de miroir, on l'**apporte**. Un navigateur sur un poste
+ordinaire — le sien, Playwright ou pas — n'a rien à maquiller : il est ce que
+le site attend. Le fichier téléchargé se dépose dans
 `data/brut/` sous le nom que le site lui donne, ou sous le nom que le manifeste
 déclare en `fichier_local` quand l'adresse n'en porte pas ; les récupérateurs
 qui lisent un document le cherchent là avant de sortir, et acceptent aussi
 `--fichier CHEMIN`. `data/brut/` n'est pas versionné : ce qui est versionné,
 c'est ce que le récupérateur en tire, avec les mêmes contrôles qu'après un
-téléchargement. Le premier document qui vaut le déplacement est le jaune
-pensions de `budget.gouv.fr` : il est le producteur, ses valeurs sont saisies
-sans qu'un script les revérifie, et le fichier permettrait de les certifier.
+téléchargement. Au 20 septembre 2026, le seul document sans miroir est le
+rapport de l'OPEF, que la Banque de France ne sert qu'aux navigateurs.
 
 ## Web Interface Guidelines : règles figées
 

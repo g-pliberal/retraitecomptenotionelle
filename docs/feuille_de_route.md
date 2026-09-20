@@ -8102,8 +8102,29 @@ sera renseigné. `data/brut/` reste hors de git — un PDF de plusieurs mégaoct
 n'a pas sa place dans l'historique — et c'est le lecteur, versionné, qui
 rendra la valeur recontrôlable.
 
-**Fin.** Une commande dit ce que le dépôt ne peut pas aller chercher, et un
-fichier déposé au bon endroit est lu sans qu'on touche au script.
+**Le même jour, la suite : le miroir.** « Je voudrais que tu puisses faire en
+automatique la récupération de tous les fichiers dont tu as besoin avec le
+moins d'interventions de ma part possible. » La pièce jointe ne passait pas,
+la release GitHub demandait un geste. Or les annexes budgétaires sont
+déposées au Parlement, et l'Assemblée nationale sert le même PDF, octet pour
+octet, à une session : le jaune pensions 2026 (349 pages, 5,7 Mo), le PAP du
+CAS Pensions et celui de la mission « Régimes sociaux et de retraite » se
+sont téléchargés d'ici. D'où deux champs de plus sur un jeu bloqué, `miroir`
+et `sha256`, une commande, `source_locale.py --recuperer`, qui dépose chaque
+miroir dans `data/brut/` et refuse un fichier dont l'empreinte diffère, et
+`lire_ou_telecharger` qui essaie le miroir avant l'adresse refusée. Quatre
+tests de plus. Le rapport de l'OPEF reste le seul sans miroir : vie-publique
+porte l'édition 2025, pas encore la 2026.
+
+**Ce qui s'ouvre.** Le jaune est là, mais sa police n'a pas de table
+Unicode : `lecture_pdf.py` en rend le titre comme « 5DSSRUW » — chaque lettre
+décalée de 29. Le lecteur qui certifiera les tableaux A-7, 50 et B-1 devra
+d'abord lever ce décalage, ou passer par un extracteur qui lit les tables
+de police. C'est le pas suivant, et il ne demande plus rien à personne.
+
+**Fin.** Une commande dit ce que le dépôt ne peut pas aller chercher, une
+autre va le chercher là où on le sert quand même, et un fichier déposé au
+bon endroit est lu sans qu'on touche au script.
 - **20 septembre 2026, action 46.** Faite. L'emploi projeté suit le scénario
   de référence du COR de juin 2026 pour les systèmes 2 à 6, par la masse
   salariale ; le système 1 ne le lit pas. Le détail est sous l'action. À
