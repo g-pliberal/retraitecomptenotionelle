@@ -623,3 +623,63 @@ def test_la_decomposition_du_modele_couvre_toute_la_fenetre(script_cout):
             f"{ligne} : le modèle ne remonte pas plus haut que la publication, "
             f"le graphique long n'y gagne rien"
         )
+
+
+def test_la_majoration_pour_enfants_se_recoupe_avec_le_jaune(script_cout):
+    """Le poste des comptes, confronté au détail de la fonction publique.
+
+    LA PAGE REPOSE SUR DES POSTES PUBLIÉS QU'ELLE NE VÉRIFIE PAS. Elle les
+    recopie, et c'est le prix de la règle « le producteur prime sur le
+    repreneur » : on prend le chiffre de celui qui compte des personnes
+    réelles. Mais une ligne recopiée peut être recopiée SOUS LA MAUVAISE
+    ÉTIQUETTE, et rien ne le dirait — un poste voisin mal mappé rendrait un
+    montant plausible.
+
+    Le jaune budgétaire permet un recoupement, parce qu'il détaille la
+    fonction publique là où les comptes agrègent tous les régimes. Pour les
+    pensions en paiement en 2024 (tableau A-7) et la part qui porte la
+    majoration avec son supplément moyen (tableau B-1, flux 2023) :
+
+        1 654 863 × 23,9 % × 276,2 € × 12 = 1,31 Md€   pensions civiles d'État
+          406 645 × 11,7 % × 332,8 € × 12 = 0,19 Md€   pensions militaires
+          800 833 × 26,8 % × 144,9 € × 12 = 0,37 Md€   FPT
+          630 149 × 24,4 % × 149,8 € × 12 = 0,28 Md€   FPH
+                                            ‾‾‾‾‾‾‾‾
+                                            2,15 Md€
+
+    La fonction publique ferait donc 28 % du poste des comptes. Elle pèse
+    environ un cinquième des retraités français, avec des pensions plus
+    élevées : l'écart est du bon côté et du bon ordre.
+
+    LA BANDE EST LARGE À DESSEIN. Les deux termes ne sont pas du même
+    millésime — un stock de 2024 et une part mesurée sur le flux de 2023 —, et
+    ce test ne prétend pas valider le poste au pourcent près. Il attrape une
+    ERREUR D'ÉTIQUETTE : un poste mal mappé sortirait de [15 %, 45 %] sans
+    qu'aucun autre garde-fou ne bronche.
+    """
+    from retraite_notionnelle import Parametres
+    from retraite_notionnelle.donnees.depenses import DepensesRetraite
+
+    # Jaune budgétaire, tableaux A-7 et B-1 : effectif du stock 2024, part des
+    # pensions majorées et supplément mensuel moyen, régime par régime.
+    JAUNE = {
+        "pensions civiles de l'État": (1_654_863, 0.239, 276.2),
+        "pensions militaires": (406_645, 0.117, 332.8),
+        "FPT (CNRACL)": (800_833, 0.268, 144.9),
+        "FPH (CNRACL)": (630_149, 0.244, 149.8),
+    }
+    fonction_publique = sum(
+        effectif * part * euro * 12 / 1e6 for effectif, part, euro in JAUNE.values()
+    )
+
+    depenses = DepensesRetraite(Parametres().racine_donnees)
+    tous_regimes = depenses.prestation("majoration_enfants", 2024)
+    assert tous_regimes, "le poste « majorations pour enfant » a disparu des comptes"
+
+    part = fonction_publique / tous_regimes
+    assert 0.15 <= part <= 0.45, (
+        f"la fonction publique ferait {part:.0%} du poste « majorations pour "
+        f"enfant » ({fonction_publique / 1000:.2f} sur "
+        f"{tous_regimes / 1000:.2f} Md€) : l'un des deux ne compte pas ce "
+        f"qu'on croit"
+    )

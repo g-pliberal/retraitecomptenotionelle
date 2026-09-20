@@ -785,6 +785,45 @@ Ce que la page dit désormais, à défaut d'un montant : sur chacune de ces cinq
 lignes, la colonne « pourquoi il manque » porte le dénombrement. « Un militaire
 retraité sur deux, 16,9 trimestres » vaut mieux qu'un tiret.
 
+### Le premier recoupement d'un poste publié
+
+La page repose sur des postes qu'elle **recopie sans les vérifier**. C'est le
+prix de la règle « le producteur prime sur le repreneur » : on prend le chiffre
+de celui qui compte des personnes réelles. Mais une ligne recopiée peut l'être
+sous la mauvaise étiquette, et rien ne le dirait — un poste voisin mal associé
+rendrait un montant parfaitement plausible.
+
+Le jaune permet le recoupement, parce qu'il détaille la fonction publique là où
+les comptes agrègent tous les régimes. Pour la majoration de pension pour
+enfants, en croisant le stock du tableau A-7 avec la part des pensions majorées
+et son supplément moyen du tableau B-1 :
+
+| | Stock 2024 | Part majorée | Supplément | Masse |
+|---|---|---|---|---|
+| Pensions civiles de l'État | 1 654 863 | 23,9 % | 276 € | 1,31 Md€ |
+| Pensions militaires | 406 645 | 11,7 % | 333 € | 0,19 Md€ |
+| FPT (CNRACL) | 800 833 | 26,8 % | 145 € | 0,37 Md€ |
+| FPH (CNRACL) | 630 149 | 24,4 % | 150 € | 0,28 Md€ |
+| **Fonction publique** | | | | **2,15 Md€** |
+
+**La fonction publique ferait 28 % du poste des comptes** (7,78 Md€ tous
+régimes). Elle pèse environ un cinquième des retraités français, avec des
+pensions plus élevées : l'écart est du bon côté et du bon ordre. Le poste
+compte bien ce qu'on croit qu'il compte.
+
+Un test tient ce recoupement, avec une bande large à dessein — de 15 à 45 %.
+Les deux termes ne sont pas du même millésime, et il ne s'agit pas de valider
+le poste au pourcent près : il s'agit d'attraper une erreur d'étiquette, qu'
+aucun autre garde-fou du dépôt ne verrait.
+
+C'est aussi la moitié de ce que le §6 réclamait. Il demandait une distribution
+des retraités par nombre d'enfants, pour deux usages : **vérifier** le poste
+publié, et **projeter** ce que ces droits deviennent. La vérification est faite,
+par un autre chemin. La projection reste à faire, et la distribution reste
+introuvable : le catalogue ouvert de la DREES ne croise nulle part les retraités
+et le nombre d'enfants.
+
+
 ### La dernière base légale, et ce qu'elle corrigeait
 
 L'inventaire portait depuis le début deux lignes dont la base légale disait
