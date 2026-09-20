@@ -48,7 +48,7 @@ import yaml
 from retraite_notionnelle.avantages import LIGNES_LUES
 from retraite_notionnelle.calendrier import DateMois
 from retraite_notionnelle.carriere import ANCRAGE_SALAIRE_MOYEN, salaire_moyen_annuel
-from retraite_notionnelle.castypes import GENERATIONS
+from retraite_notionnelle.castypes import GENERATIONS, calculer_cas_types
 from retraite_notionnelle.config import (
     ModeIndexation,
     Parametres,
@@ -88,6 +88,7 @@ from retraite_notionnelle.web.pages import (
     ErreurSaisie,
     Saisie,
     _cumuls_indexation,
+    _deplacement_des_ecarts,
     _libelles_cascade,
     _marches_cascade,
     _options_statuts,
@@ -246,6 +247,11 @@ class Modele:
         c = self.contexte
         return calculer_cout(self.sim, c.depenses(), c.population(), c.comptes(),
                              assiette=c.assiette(), convention_recette=CONVENTION_RAPPORT)
+
+    @cached_property
+    def grille_cas_types(self):
+        """Les treize carrières croisées avec sept générations, une fois."""
+        return calculer_cas_types(self.sim)
 
     @cached_property
     def avantages(self):
@@ -1115,6 +1121,54 @@ def _(m: Modele):
 
 
 # .. le coût, le solde, le coefficient ........................................
+
+
+@controle("deux_parts_non_financees_distinctes")
+def _(m: Modele):
+    """Les deux « non financé » de la page Risque ne sont pas la même grandeur.
+
+    L'un compare UNE PENSION à ce que les cotisations de cet assuré-là
+    achèteraient ; l'autre compare LES DÉPENSES du système à ses recettes, une
+    année donnée. Ils se lisaient tous deux « non financé », côte à côte, et
+    un lecteur pouvait les additionner. Ce contrôle tient la phrase qui
+    l'interdit : les deux parts existent, elles diffèrent, et la première est
+    la plus grosse parce qu'elle ne compte que les cotisations.
+    """
+    comparaison = m.defaut
+    promis = comparaison.actuel.pension_annuelle
+    finance = comparaison.notionnel_retroactif_employeur.pension_annuelle
+    part_promise = 1.0 - finance / promis
+    ligne = m.horizon
+    part_horizon = -ligne.solde("actuel") / ligne.depense("actuel")
+    assert 0.0 < part_horizon < part_promise
+    # Le second compte tout ce que le système encaisse, le premier les seules
+    # cotisations : la part non cotisée des ressources est ce qui les sépare.
+    assert ligne.part_contributive < 1.0
+
+
+@controle("les_ecarts_bougent_si_chaque_systeme_s_equilibre")
+def _(m: Modele):
+    """Les quatre systèmes n'ont pas le même coefficient, et les écarts bougent.
+
+    La page Cas types a affirmé pendant un temps que le coefficient
+    d'équilibre « multiplierait les cases par le même facteur », et le
+    catalogue la tenait pour vérifiée sous un contrôle qui vérifiait autre
+    chose — que le coefficient n'est pas appliqué. La phrase était fausse deux
+    fois : un facteur COMMUN laisserait ces cases inchangées, une case étant
+    déjà un rapport de deux pensions ; et il n'y a pas un facteur mais quatre.
+    Ce contrôle tient la phrase qui l'a remplacée.
+    """
+    ligne = m.horizon
+    coefficients = {scenario: ligne.coefficient(scenario)
+                    for scenario in SCENARIOS_MONTRES}
+    assert len(set(round(valeur, 6) for valeur in coefficients.values())) == len(
+        SCENARIOS_MONTRES), coefficients
+    deplacement, cases = _deplacement_des_ecarts(
+        m.grille_cas_types, m.solde, "notionnel_liberal")
+    assert cases > 50, cases
+    # « Déplacerait les écarts » n'est pas une figure de style : le
+    # déplacement médian se compte en points, pas en centièmes de point.
+    assert deplacement > 0.01, deplacement
 
 
 @controle("coefficient_jamais_applique", "coefficient_calcule_jamais_applique")

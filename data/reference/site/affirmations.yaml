@@ -706,12 +706,18 @@ affirmations:
     etat: verifiee
     controle: coefficient_jamais_applique
 
+  # Elle a dit « il multiplierait les cases par le même facteur », sous un
+  # contrôle qui vérifiait seulement que le coefficient n'est pas appliqué —
+  # c'est-à-dire pas la phrase. C'était faux deux fois : un facteur COMMUN
+  # laisserait ces cases inchangées, une case étant déjà un rapport, et il n'y
+  # a pas un facteur mais quatre. Corrigée le 20 septembre 2026, et son
+  # contrôle tient désormais ce qu'elle dit.
   - id: cas_types.niveau_depend_du_facteur
     page: /cas-types
-    extrait: "il multiplierait les cases par le même facteur"
-    porte: le coefficient d'équilibre, calculé et non appliqué, déplacerait toutes les cases
+    extrait: "chaque système a le sien"
+    porte: les quatre systèmes ont chacun leur coefficient d'équilibre, et les ramener chacun au sien déplace les écarts de la grille
     etat: verifiee
-    controle: coefficient_jamais_applique
+    controle: les_ecarts_bougent_si_chaque_systeme_s_equilibre
 
   - id: cas_types.facteur_inferieur_a_un
     page: /cas-types
@@ -1632,6 +1638,17 @@ affirmations:
   # ------------------------------------------------------------------------
   # Risque — une revue de littérature, et ce que le modèle en dit
   # ------------------------------------------------------------------------
+
+  # Deux pourcentages voisins se lisaient tous deux « non financé » : l'un
+  # compare une pension aux cotisations d'un assuré, l'autre les dépenses du
+  # système à ses recettes. La phrase qui interdit de les additionner est
+  # entrée au catalogue avec eux, le 20 septembre 2026.
+  - id: risque.deux_parts_ne_s_additionnent_pas
+    page: /risque
+    extrait: "Ces deux pourcentages ne s'additionnent pas."
+    porte: la part non financée d'une pension et le solde annuel du système sont deux grandeurs distinctes, qui ne se somment pas
+    etat: verifiee
+    controle: deux_parts_non_financees_distinctes
 
   - id: risque.prelevement_mensuel
     page: /risque

@@ -6455,6 +6455,51 @@ facteur, donc tous les niveaux de cette page, sans toucher aux écarts entre car
 qui sont la seule chose que ce site mesure.</div>"""
 
 
+def _deplacement_des_ecarts(resultat, solde, scenario: str) -> tuple[float, int]:
+    """De combien les écarts de la grille bougeraient si chaque système était
+    ramené à SON équilibre — déplacement médian en points, et cases mesurées.
+
+    LA PHRASE QUE CETTE FONCTION A FALLU ÉCRIRE POUR RÉPARER. La page Cas
+    types disait que le coefficient d'équilibre « multiplierait les cases par
+    le même facteur », et le catalogue des affirmations la tenait pour
+    vérifiée sous un contrôle qui vérifiait tout autre chose — que le
+    coefficient n'est pas appliqué. Or la phrase est fausse deux fois. Un même
+    facteur appliqué à tous les systèmes laisserait ces cases INCHANGÉES,
+    puisqu'une case est déjà un rapport de deux pensions et qu'un facteur
+    commun se simplifie. Et il n'y a pas un facteur mais quatre : chaque
+    système a son coefficient, et les ramener chacun à son équilibre déplace
+    les écarts du RAPPORT de ces coefficients.
+
+    Mesuré plutôt qu'argumenté, donc, et la page écrit le nombre.
+
+    LA MÉDIANE, ET NON LA MOYENNE : le déplacement est énorme sur les
+    générations déjà liquidées, où la proposition encaisse deux à trois fois ce
+    qu'elle verse parce qu'elle ne verse presque rien, et une moyenne n'y
+    dirait que ces cas-là. Médiane basse — l'élément de rang ``n // 2`` — pour
+    que le portage JavaScript retrouve le même nombre sans convention de
+    départage.
+    """
+    deplacements = []
+    for cas in CAS_TYPES:
+        for generation in GENERATIONS:
+            comparaison = resultat.resultats.get((cas.code, generation))
+            if comparaison is None:
+                continue
+            ligne = solde.annee(comparaison.carriere.annee_liquidation)
+            if ligne is None:
+                continue
+            reference = ligne.coefficient("actuel")
+            if reference <= 0.0:
+                continue
+            ecart = comparaison.variation_totale(scenario)
+            equilibre = (1.0 + ecart) * ligne.coefficient(scenario) / reference - 1.0
+            deplacements.append(abs(equilibre - ecart))
+    if not deplacements:
+        return 0.0, 0
+    deplacements.sort()
+    return deplacements[len(deplacements) // 2], len(deplacements)
+
+
 def _cas_types(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
     """Treize carrières types croisées avec sept générations.
 
@@ -6490,7 +6535,20 @@ def _cas_types(contexte: Contexte, regards: dict[str, str] | None = None) -> str
     comptes = contexte.comptes()
     obs = comptes.derniere_annee_observee
     horizon = comptes.derniere_annee
-    reglage = _reglage_proposition(contexte.cout().solde)
+    solde = contexte.cout().solde
+    reglage = _reglage_proposition(solde)
+    # Ce que la grille ne mesure pas, chiffré plutôt qu'affirmé : de combien
+    # ses écarts bougeraient si chaque système était ramené à son équilibre.
+    deplacement, cases = _deplacement_des_ecarts(resultat, solde, montre)
+    bulle_ecarts = g.bulle(
+        "Ce qu'un coefficient appliqué déplacerait",
+        f"""Un facteur commun laisserait ces cases inchangées, une case
+étant déjà un rapport de deux pensions. Mais il y a quatre coefficients, un par
+système : les ramener chacun à SON équilibre déplacerait les écarts, de {g.nombre(deplacement * 100, 0)}
+points en médiane sur les {cases} cases de cette grille, et bien plus sur les
+générations déjà liquidées, où la proposition encaisse plusieurs fois ce
+qu'elle verse. Le simulateur montre, carrière par carrière, ce que les recettes
+de chaque système paient de la pension qu'il promet.""")
 
     def grille(scenario: str, intitule: str) -> str:
         lignes = []
@@ -6620,11 +6678,13 @@ def _cas_types(contexte: Contexte, regards: dict[str, str] | None = None) -> str
 pension.</strong> Chaque case compare deux carrières calculées sous la même
 règle, et ce que la grille mesure est l'écart entre ses lignes : ce qu'un
 militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
-niveau général dépend d'un
+niveau général, lui, dépend d'un
 {g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle calcule
-mais n'applique jamais : il multiplierait les cases par le même facteur.
+mais n'applique jamais — et <strong>chaque système a le sien</strong>.\
+{bulle_ecarts}
 {_lecture_reglage_proposition(reglage)}
-<a href="{g.lien("/cout")}" data-vers="cout-equilibre">La page Coût le chiffre</a>.</div>
+<a href="{g.lien("/cout")}" data-vers="cout-equilibre">La page Coût le
+chiffre</a>.</div>
 
 <div class="fiches reperes">{reperes}</div>
 
@@ -10240,14 +10300,23 @@ def _risque(contexte: Contexte) -> str:
         g.euros(verse_mensuel),
         "cotisation salariale et patronale réunies",
     ) + g.fiche(
-        "Promis au-delà de ce que ces cotisations financent",
+        "Promis au-delà de ce que VOS cotisations achèteraient",
         g.pourcentage(part_promise, decimales=0),
-        "de la pension, à la charge de quelqu'un d'autre",
+        "de VOTRE pension, à la charge de quelqu'un d'autre",
     ) + g.fiche(
-        f"Non financé en {fin}, sans rien changer",
+        f"Que les recettes du SYSTÈME ne couvriront pas en {fin}",
         g.pourcentage(part_horizon, decimales=0),
-        "de ce qui serait dû cette année-là",
+        "des pensions dues cette année-là",
     )
+
+    bulle_parts = g.bulle(
+        "Pourquoi ces deux parts diffèrent",
+        """La première est une question de justice : ce que cet assuré
+reçoit au-delà de ce que ses propres cotisations achèteraient. La seconde est
+une question de solvabilité : ce que le système doit verser au-delà de ce
+qu'il encaisse, une année donnée. La première est la plus grosse parce qu'elle
+ne compte que les cotisations, quand la seconde compte tout ce que le système
+encaisse, impôts affectés compris.""")
 
     carte_prelevement = g.cle(
         "Combien la retraite vous prend-elle chaque mois ?",
@@ -10275,7 +10344,9 @@ promise. Le reste attend des cotisants qui ne sont pas nés, et il manque déjà
         f"""Sources : le modèle du site pour la part financée, les comptes du
 Conseil d'orientation des retraites pour le solde, observés puis projetés dans
 son scénario de référence. Le détail année par année est sur la page
-<a href="{g.lien("/cout")}">Coût</a>.""",
+<a href="{g.lien("/cout")}">Coût</a>. Ce que les recettes paient de VOTRE
+pension, à VOTRE date de départ, est sur
+<a href="{g.lien("/simuler")}">le simulateur</a>.""",
         identifiant="risque-promesse",
     )
 
@@ -10313,6 +10384,12 @@ paiera moins, comme il le fait depuis trente ans sans le dire, en revalorisant
 les pensions moins vite que les salaires.</div>
 
 <div class="fiches reperes">{reperes}</div>
+
+<p class="discret"><strong>Ces deux pourcentages ne s'additionnent
+pas.</strong> Les {g.pourcentage(part_promise, decimales=0)} comparent une
+pension aux cotisations de cet assuré ; les
+{g.pourcentage(part_horizon, decimales=0)}, les dépenses du système à ses
+recettes.{bulle_parts}</p>
 
 {plan}
 
