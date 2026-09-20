@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 427<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 435<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10108,3 +10108,36 @@ identiques au centime. Ce qui bouge est le poids du paquet — le bilan figé
 pèse 40 Ko — et le test de péremption du paquet, qui coûte désormais les
 dix-huit secondes du coût agrégé ; il reçoit le contexte du module pour ne
 pas les payer deux fois.
+
+---
+
+### 63. Les barres 2 et 3 de Simuler nomment ce que le lecteur a cotisé — `fait`
+
+**La demande.** « Il faudrait dire en gros "ce que vous avez cotisé avec la
+part salariale" et "ce que vous avez cotisé avec la part salariale +
+patronale" pour les scénarios 2 et 3. » Les titres disaient « Compte
+notionnel, part salariale seule » et « Compte notionnel, part salariale +
+patronale » : ils nommaient l'assiette sans dire qu'elle est ce que le lecteur
+a versé, et il fallait savoir qu'un compte notionnel est alimenté par les
+cotisations pour lire l'écart entre les deux barres — qui est, exactement, ce
+que l'employeur verse.
+
+**Ce qui a été fait.** `_titres_scenarios` et les gloses de la page Simuler,
+dans `web/pages.py` et son portage `moteur/js/pages.js` : « 2. Ce que vous
+avez cotisé, part salariale seule », « 3. Ce que vous avez cotisé, part
+salariale + patronale ». Les mêmes titres portent la légende du graphique de
+trajectoire, qui est sur la même page. Témoins régénérés, `test_web.py` suit.
+
+**Ce qui n'a pas bougé, et pourquoi.** `LIBELLES_SYSTEMES` — les libellés
+courts des tableaux de Coût, des grilles de Cas types et des légendes de leurs
+graphiques — garde sa forme impersonnelle (« 2. Compte notionnel, part
+salariale », « 3. Compte notionnel, les deux parts »). Ces pages montrent les
+carrières d'autres gens et une dépense nationale : le « vous » y désignerait
+quelqu'un qui n'est pas le lecteur. Simuler est la seule page où la carrière
+affichée est la sienne.
+
+**Au passage.** La phrase « Notre système ne sert aucune réversion », posée sur
+l'accueil la veille, échappait au catalogue des affirmations et laissait
+`test_rien_n_echappe_au_catalogue` rouge avant cette session. Elle y prend sa
+ligne (`accueil.pas_de_reversion`), sous le contrôle qui vérifie déjà la même
+affirmation sur la page Coût.

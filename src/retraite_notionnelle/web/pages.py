@@ -4132,18 +4132,30 @@ def _partager(contexte: Contexte) -> str:
 def _titres_scenarios(saisie: Saisie) -> tuple[tuple[str, str], ...]:
     """Le libellé de chaque système, dans l'ordre des barres.
 
-    Ces libellés ont été récrits : « Notionnel rétroactif » ne disait rien à
-    qui n'avait pas lu la page Méthode, et « Rétroactif, avec le patronal » ne
-    disait pas ce qui était rétroactif. Ils nomment maintenant ce qui change
-    d'un système à l'autre — l'assiette —, et la glose sous chaque barre porte
-    ce que le titre a cessé de dire : depuis quand la carrière est recalculée.
-    Sans elle on ne comprendrait pas pourquoi le 2 donne moins que le 4.
+    Ces libellés ont été récrits deux fois. « Notionnel rétroactif » ne disait
+    rien à qui n'avait pas lu la page Méthode ; « Compte notionnel, part
+    salariale seule » nommait bien l'assiette, mais en termes de cotisant, pas
+    de lecteur : il fallait savoir qu'un compte notionnel est alimenté par les
+    cotisations pour comprendre que la barre 2 montre la pension que rendrait
+    CE QU'ON A VERSÉ. Les titres le disent maintenant en toutes lettres — « ce
+    que vous avez cotisé », part salariale seule ou les deux parts —, et
+    l'écart entre les deux barres se lit alors pour ce qu'il est : ce que
+    l'employeur verse.
+
+    Cette formule ne vaut que sur Simuler, où la carrière affichée est celle du
+    lecteur. Cas types montre les carrières d'autres gens et Coût une dépense
+    nationale : ``LIBELLES_SYSTEMES`` y garde sa forme impersonnelle.
+
+    La glose sous chaque barre porte ce que le titre ne dit pas : depuis quand
+    la carrière est recalculée. Sans elle on ne comprendrait pas pourquoi le 2
+    donne moins que le 4.
     """
     return (
         ("actuel", "1. Système de répartition actuel"),
-        ("notionnel_retroactif", "2. Compte notionnel, part salariale seule"),
+        ("notionnel_retroactif",
+         "2. Ce que vous avez cotisé, part salariale seule"),
         ("notionnel_retroactif_employeur",
-         "3. Compte notionnel, part salariale + patronale"),
+         "3. Ce que vous avez cotisé, part salariale + patronale"),
         ("notionnel_liberal", "4. La proposition du Parti libéral français"),
     )
 
@@ -4599,13 +4611,13 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         bloc("actuel", "1. Système de répartition actuel",
              "le droit en vigueur, minima et majorations compris",
              None, comparaison.taux_remplacement_actuel)
-        + bloc("retroactif", "2. Compte notionnel, part salariale seule",
+        + bloc("retroactif", "2. Ce que vous avez cotisé, part salariale seule",
                "toute la carrière recalculée depuis 1941, sur la seule part "
                "salariale — 11,3 % du brut pour un salarié du privé",
                comparaison.variation("notionnel_retroactif"),
                comparaison.taux_remplacement_retroactif)
         + bloc("retroactif-employeur",
-               "3. Compte notionnel, part salariale + patronale",
+               "3. Ce que vous avez cotisé, part salariale + patronale",
                "la même carrière recalculée depuis 1941, les deux parts "
                "comprises — les 28 % prélevés aujourd'hui",
                comparaison.variation("notionnel_retroactif_employeur"),

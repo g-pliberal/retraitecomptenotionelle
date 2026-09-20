@@ -226,6 +226,13 @@ affirmations:
     etat: verifiee
     controle: garantie_est_une_avance_reprise
 
+  - id: accueil.pas_de_reversion
+    page: /
+    extrait: "Notre système ne sert aucune réversion"
+    porte: aucun scénario notionnel ne sert de droit dérivé, seul le système actuel en sert
+    etat: verifiee
+    controle: reversion_servie_par_le_seul_systeme_actuel
+
   - id: accueil.reprise_premier_euro
     page: /
     extrait: "reprise sur la succession dès le premier euro"

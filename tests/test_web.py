@@ -123,14 +123,15 @@ def test_simulation_affiche_les_quatre_systemes(page):
 
     Les libellés ont changé à la refonte : « Notionnel rétroactif » ne disait
     rien à qui n'avait pas lu la page Méthode. Ce qui distingue un système de
-    l'autre est maintenant dans son titre — l'assiette —, et depuis quand la
-    carrière est recalculée est dans la glose.
+    l'autre est maintenant dans son titre — l'assiette, dite du point de vue
+    du lecteur : ce qu'il a cotisé, sa part seule ou les deux —, et depuis
+    quand la carrière est recalculée est dans la glose.
     """
     texte = page("/simuler", naissance=1960, statut="agent_sncf",
                  debut=20, liquidation=52)
     for attendu in ("1. Système de répartition actuel",
-                    "2. Compte notionnel, part salariale seule",
-                    "3. Compte notionnel, part salariale + patronale",
+                    "2. Ce que vous avez cotisé, part salariale seule",
+                    "3. Ce que vous avez cotisé, part salariale + patronale",
                     "4. La proposition du Parti libéral français",
                     "recalculée depuis 1941", "Résultats"):
         assert attendu in texte
