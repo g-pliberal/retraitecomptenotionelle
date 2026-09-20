@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 195<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 265<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -840,6 +840,23 @@ système actuel. `limites.md` §5 porte les trois.
   portait encore les −1,93 et 0,89 du 18 septembre, est remis aux valeurs du
   jour. Ce qui reste, et que l'utilisateur veut voir ensuite : ce qui peut
   réduire ce déficit.
+- **21 septembre 2026, la justification sur le site : ce qui pouvait nous
+  arrêter.** Demandé par l'utilisateur, après la décision de garder le
+  scénario 6 : montrer sur le site que les principaux points de blocage ont
+  été regardés. Livré : un dépliant de plus sur la page Programme, « Ce qui
+  pouvait nous arrêter, et ce que nous en avons fait », entre les étapes de
+  la transition et « Tout vérifier » — un tableau à cinq lignes, la fusion
+  des régimes, les pensions déjà servies recalculées, le taux de 18 %, la
+  garantie vieillesse, le chemin législatif, avec pour chacune ce qui a été
+  mesuré et ce qu'on en retient —, dans les deux rendus, témoin de la page
+  régénéré. Ses chiffres sont DATÉS et la section le dit : ils viennent des
+  trois scripts des 20 et 21 septembre (`solde_fusion.py`,
+  `stock_age_legal.py`, `proposition_prospective.py`), que le portage ne
+  porte pas, et la page d'accueil ne calcule rien. À reprendre à la main si
+  l'un des trois est relancé sur une autre base : rien ne les tient. Une
+  phrase engage le parti au-delà de ce qui a été décidé en session et se
+  relit avant publication : celle qui chiffre la parade du stock à l'âge
+  légal sans dire si elle est retenue.
 
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 
