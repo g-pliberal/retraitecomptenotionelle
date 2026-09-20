@@ -894,6 +894,74 @@ système actuel. `limites.md` §5 porte les trois.
   côtés du portage, `cout.py` et `cout.js` ; aucune n'est un réglage du
   site.
 
+- **20 septembre 2026, les deux postes écartés chiffrés séparément : le
+  déficit tient-il dedans ?** Demandé par l'utilisateur, à la suite de la
+  convention `rapport`, qui les reconduisait en bloc : chiffrer les impôts
+  affectés et la contribution d'équilibre de l'État chacun de son côté, et
+  dire s'il en faut plus ou moins que ce que le système actuel y met.
+  Livré : `scripts/postes_ecartes.py`, qui reconduit un par un les trois
+  postes que la convention du programme écarte, sans toucher à la dépense
+  ni à aucun moteur ; huit tests dans `test_postes_ecartes.py`, dont celui
+  qui tient la référence du script égale au solde de la page à 1e-15 —
+  sans lui, une dérive d'un millième passerait dans chaque chiffrage sans
+  rien dire.
+
+  *Mesuré*, solde moyen 2026-2070 en points de PIB, la proposition étant à
+  −1,52 et le système actuel à −1,13 ; un point de PIB vaut 29,9 Md€ aux
+  euros de 2025 :
+
+  | chiffrage | moyenne | pire année | équilibre |
+  |---|---|---|---|
+  | Proposition, convention du programme | −1,52 | −2,03 en 2049 | jamais |
+  | + impôts et taxes affectés | −0,13 | −0,65 en 2049 | dès 2026 |
+  | + contribution d'équilibre de l'État | +0,03 | −0,50 en 2049 | dès 2026 |
+  | + subventions d'équilibre | −1,28 | −1,79 en 2049 | jamais |
+  | + les trois | +1,67 | +1,13 en 2049 | dès 2026 |
+
+  **La réponse à la question posée, et elle dépend d'une ligne.** Le poste
+  des impôts affectés vaut 2,14 points de PIB en 2026 et 1,98 en 2070 tel
+  que le COR le publie — mais un tiers en est la CSG du fonds de solidarité
+  vieillesse, 0,67 point, qui rentre avec le poste et ressort aussitôt par
+  le retrait, puisqu'elle paie des droits que la proposition ne sert plus.
+  Net, le poste ne vaut donc que 1,47 point, et les deux lectures ne
+  concluent pas pareil : **contre le poste publié, la proposition demande
+  75 % de ce que le système actuel y met — moins ; contre le poste net, elle
+  en demande 109 % — plus.** La contribution d'équilibre, elle, n'a pas ce
+  double compte : 1,63 point en 2026, 1,51 en 2070, et la proposition en
+  demande **98 %**, c'est-à-dire tout juste moins que ce que l'État y met
+  déjà. Les subventions d'équilibre ne pèsent rien à cette échelle : il en
+  faudrait 629 %.
+
+  *Ce qui tranche entre les deux lectures des impôts* : la garantie
+  vieillesse coûte 0,69 point en 2026 et 0,48 en 2070, contre 0,67 et 0,62
+  pour la CSG du fonds. Les deux sont du même ordre, et ce n'est pas un
+  hasard — la garantie REMPLACE les droits que le fonds finance. Cette CSG
+  est donc déjà promise, et la lecture nette est celle qui vaut : il faut à
+  la proposition un peu PLUS que les impôts affectés disponibles, un peu
+  MOINS que la contribution d'équilibre.
+
+  *Ce que le chiffrage de la contribution suppose, et qu'il faut dire* :
+  elle se SUPERPOSE aux 18 %, elle ne les remplace pas. L'assiette des 18 %
+  porte déjà les traitements de la fonction publique, si bien que ce
+  chiffrage fait payer à l'État 18 % comme tout employeur PLUS le
+  complément qu'il verse aujourd'hui. C'est bien la question posée — que
+  se passe-t-il si ce poste reste intact — et ce n'est pas une lecture du
+  taux d'employeur de l'État sous la proposition.
+
+  **Aucun des deux postes ne suffit chaque année.** Sur la moyenne ils y
+  sont presque ; sur le creux de 2049, où les pensions du baby-boom pèsent
+  le plus, il faudrait 147 % des impôts nets et 132 % de la contribution.
+  Un poste reconduit ramène donc la proposition à l'équilibre moyen, pas à
+  l'équilibre annuel : le creux des années 2040-2050 reste à financer
+  autrement — par la dette, qu'il reste alors 0,50 à 0,65 point de PIB à
+  creuser pendant une quinzaine d'années, ou par le coefficient
+  d'équilibre, que le modèle calcule et n'applique jamais.
+
+  Ce que le script ne dit pas : il ne pose aucune doctrine, et reconduire
+  un poste ne rend pas la proposition moins chère — la dépense est la même
+  à l'euro près dans toutes les colonnes, un test le tient. Rien n'est
+  porté dans `moteur/js/`, la page gardant la convention du programme.
+
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 
 **Pourquoi.** Le chemin le plus exact, `Carriere.depuis_lignes`, n'est
