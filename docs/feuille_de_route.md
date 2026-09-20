@@ -9356,3 +9356,128 @@ barre du système 4. Cinq tests réécrits dans `test_remuneration.py` — la
 fiche ne retient pas le volontaire, le placement vaut cinq points du brut
 pris sur le net, le retirer ne change pas la fiche au centime —, un dans
 `test_web.py` ; README et `methodologie.md` suivent.
+### 56. Le partage des 23 points entre le salarié et l'employeur : le couloir, et ce que chaque bord donne — `en cours`
+
+**Demande.** « Je veux calculer ce qui sera le mieux en termes de répartition
+des charges salariales et patronales. Je souhaite un meilleur salaire à long
+terme et pas forcément sur l'immédiat ; ce serait mentir aux gens. Il faut
+quelque chose de réaliste qui bénéficie premièrement les salaires. »
+
+**Ce qui existait.** L'action 38 avait trouvé que le partage des 23 points
+n'est pas neutre — −144, +73, +275 € par mois au salaire moyen selon qu'ils
+sont salariaux, moitié-moitié ou patronaux — et le dépôt avait gardé
+moitié-moitié, « le choix médian d'un paramètre que la proposition laisse
+ouvert ». Ce chiffre était celui du seul long terme, sous l'incidence
+intégrale, et il ne disait ni ce que la fiche de paie fait le lendemain de la
+réforme, ni ce que le brut devient, ni qui d'autre que le salarié gagne ou
+perd au passage. C'est ce que le calcul du 20 septembre 2026 ajoute.
+
+**Le calcul.** `scripts/partage_taux_unique.py` rejoue la fiche de paie de
+`remuneration.py` sous deux horizons, et les deux sont vrais : le **jour 1**,
+où le brut ne bouge pas et où chacun voit sa part changer et rien d'autre
+(`Incidence.ASSIETTE`), et le **long terme**, où c'est le coût du travail qui
+ne bouge pas et où ce que l'employeur ne verse plus a fini par remonter dans
+le brut (`Incidence.COUT_DU_TRAVAIL`, l'hypothèse du site). Quatre partages,
+bornés par les deux parts d'aujourd'hui — 11,31 points sur la fiche du
+salarié, 16,67 chez l'employeur, contributions d'équilibre comprises, 27,98 en
+tout : **A**, la part patronale ne bouge pas et toute la baisse va au salarié
+(6,33 / 16,67) ; **B**, la clé d'aujourd'hui, chaque part baisse d'un
+cinquième (9,30 / 13,70) ; **C**, la part salariale ne bouge pas et toute la
+baisse va à l'employeur (11,31 / 11,69) ; **D**, moitié-moitié, le défaut du
+dépôt (11,50 / 11,50). En deçà de A l'employeur paie plus qu'aujourd'hui ;
+au-delà de C, c'est le salarié — et D est au-delà de C. Salarié du privé non
+cadre, employeur de cinquante salariés et plus, barème 2026, montants
+mensuels.
+
+**Le tableau, à deux SMIC — 3 646 € bruts, à peu près le salaire moyen.**
+
+| Partage | Salarié / employeur | Jour 1 : net, coût du travail | Long terme : brut, net | Crédit au compte, long terme |
+|---|---|---|---|---|
+| A — part patronale inchangée | 6,33 / 16,67 | **+182 €**, +12 € | −0,2 %, **+175 €** | 837 € |
+| B — clé d'aujourd'hui | 9,30 / 13,70 | +73 €, −89 € | +1,6 %, +122 € | 852 € |
+| C — part salariale inchangée | 11,31 / 11,69 | 0 €, −157 € | **+2,9 %**, +85 € | **863 €** |
+| D — moitié-moitié (défaut) | 11,50 / 11,50 | **−7 €**, −164 € | +3,1 %, +81 € | 864 € |
+
+Au SMIC, le jour 1 donne +91 € sous A, +37 sous B, 0 sous C, −4 sous D ; et le
+long terme n'y existe pas : à coût du travail fixe, le brut devrait descendre
+de 2,4 à 3,4 % sous le SMIC, ce que la loi interdit, parce que la part
+patronale du pilier capitalisé n'entre pas dans le périmètre de la réduction
+générale et coûte à l'employeur ce que la réduction n'efface pas. Au SMIC, le
+seul chiffre honnête est celui du jour 1, et seule la part salariale le fait
+bouger.
+
+**Qui paie le net du long terme.** Sous D, la retraite prélève 156 € de moins
+et le salarié n'en garde que 81 : la CSG en reprend 11 et les autres branches
+29, parce que le brut a monté de 3,1 % et leur assiette avec lui, et l'État
+garde 35 € d'allègement qu'il ne verse plus. Plus de la moitié des cinq points
+fuit. Sous A, la retraite prélève 183 € de moins et le salarié en garde 175 :
+le brut n'a pas bougé, rien n'a grossi. La différence est mécanique : une
+baisse de la part salariale est nette de tout, une baisse de la part patronale
+remonte dans le brut, et le brut est l'assiette de la CSG (9,7 %) et de
+vingt-six points de cotisations des autres branches — un quart en fuit avant
+d'arriver au net, et pendant les années où elle n'est pas encore remontée,
+c'est l'employeur qui la garde.
+
+**Avec les cinq points rendus, replacés** — un placement pris sur le net depuis
+l'action 55, non une retenue : sous A, ce qui reste après le placement est le
+net d'aujourd'hui à un euro près (−1 € à deux SMIC), et le message tient en une
+phrase — même net qu'avant, et cinq points de votre fiche deviennent un capital
+à votre nom ; sous D, il manque 189 €. `--volontaire` le montre, et les deux
+chiffres du défaut recoupent l'action 55 : +81 € de net plein, −107 € une fois
+les cinq points placés.
+
+**Ce que le calcul dit, en quatre points.** *Un.* La baisse de la part
+salariale est la seule qui arrive le jour 1, la seule qui arrive au SMIC, et
+celle qui fuit le moins ; elle ne demande aucune hypothèse d'incidence. *Deux.*
+La baisse de la part patronale profite d'abord à l'employeur, puis remonte
+dans le brut sur plusieurs années, et c'est la seule qui fasse monter le brut
+et le crédit au compte : +2,9 % de pension et de capital sur les années
+d'après la bascule sous C, contre −0,2 % sous A. *Trois.* **Le défaut du
+dépôt, D, est hors du couloir** : il fait monter la part salariale de 0,19
+point, et c'est le seul des quatre partages où la fiche de paie du lendemain
+baisse. Il a été choisi comme milieu d'un paramètre ouvert, pas mesuré.
+*Quatre.* Le partage du pilier capitalisé compte aussi : porté au seul
+salarié — c'est son capital, transmissible, la même logique que les cinq
+points volontaires —, avec les 18 partagés pour garder la même part salariale
+totale (variantes A', B', C' du script), il retire le seul cas où le coût du
+travail monte le jour 1, au SMIC.
+
+**Ce que le calcul recommande, sous les trois critères de la demande.** Le
+partage **A'** : la part patronale reste ce qu'elle est, 16,67 points, en
+entier dans le périmètre de la réduction générale ; la part salariale tombe de
+11,31 à 6,33 points, dont 5 vont au compte capitalisé et 1,33 à la
+répartition. Réaliste : le coût du travail ne bouge pas d'un euro, à aucun
+niveau de salaire, et rien ne repose sur ce qu'un employeur rendra ou ne
+rendra pas. Les salaires d'abord : les cinq points arrivent en entier sur la
+fiche, le lendemain, du SMIC au plafond, et ils y restent. Sans mentir : rien
+n'est promis pour plus tard, parce que tout est déjà là — le « long terme » du
+site n'est plus une hypothèse à défendre, c'est le même chiffre. Ce que A' ne
+fait pas, et qu'il faut dire : il ne fait pas monter le **brut**. Si « un
+meilleur salaire » veut dire le salaire brut — celui des indemnités, des
+droits, du crédit au compte —, c'est C' qu'il faut : +3,1 % de brut et de
+crédit au long terme, au prix d'une hypothèse d'incidence, d'un délai de
+plusieurs années pendant lequel l'économie reste chez l'employeur, de zéro au
+SMIC pour toujours, et de 94 € de net par mois de moins que A' à deux SMIC
+une fois le long terme atteint. B' est entre les deux, et c'est le seul qui
+donne quelque chose à l'employeur.
+
+Une réserve sur ce que « long terme » suppose : l'incidence intégrale est
+l'hypothèse standard de l'économie du travail, et pour la France les travaux
+de Bozio, Breda et Grenet la trouvent pour les cotisations qui ouvrent des
+droits — ce qu'est chaque euro des 18 % — et pas pour les autres. C'est une
+lecture de mémoire, à confirmer sur le texte avant d'en faire une phrase du
+site.
+
+**Ce qui reste, et qui est au programme de trancher.** Adopter un partage,
+c'est changer `Parametres.part_salariale_taux_unique` (0,5 → 0,275 pour A ou
+A') et, pour les variantes primées, donner au pilier capitalisé son propre
+partage — un paramètre de plus dans `bloc_taux_unique`, dans son portage
+`moteur/js/remuneration.js` et dans `config.js` —, puis réécrire la prose qui
+dit « moitié-moitié » en toutes lettres : `_salaire_net_partage` dans
+`web/pages.py` et son portage, le README, les docstrings de `config.py` et de
+`remuneration.py`, `docs/limites.md` § 5 ante bis, et régénérer les témoins.
+Et donner à la page la ligne qui manque : le jour 1 à côté du long terme, pour
+que le lecteur voie les deux chiffres et sache lequel est promis.
+
+**Fichiers.** `scripts/partage_taux_unique.py` ; `docs/limites.md` § 5 ante
+bis, réserve 2 ; le docstring de `part_salariale_taux_unique` dans `config.py`.

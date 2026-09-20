@@ -6177,7 +6177,14 @@ réduction générale n'efface que des cotisations PATRONALES. Le gain net mensu
 au salaire moyen vaut **−144 € si les 23 points sont entièrement salariaux,
 +73 € moitié-moitié, +275 € s'ils sont entièrement patronaux**. Le paramètre
 laissé ouvert par la proposition pèse donc plus que la baisse de taux elle-même.
-C'est la réserve la plus lourde de ce bloc.
+C'est la réserve la plus lourde de ce bloc. Le 20 septembre 2026, `scripts/partage_taux_unique.py` a mis les
+quatre partages possibles en regard, au jour 1 (brut fixe) comme au long terme
+(coût du travail fixe), et l'action 54 de la feuille de route en tire une
+recommandation : le moitié-moitié est le seul des quatre où la fiche de paie du
+lendemain baisse, parce qu'il fait monter la part salariale de 11,31 à 11,50
+points ; porter toute la baisse sur la part salariale, l'employeur gardant ses
+16,67 points, rend +182 € par mois à deux SMIC dès le jour 1 et ne demande
+aucune hypothèse d'incidence. Le partage reste à trancher par le programme.
 
 **3. Le résultat au voisinage du SMIC est négatif, et il est juste.** La
 réduction générale dégressive unique efface depuis 2026 la totalité des
