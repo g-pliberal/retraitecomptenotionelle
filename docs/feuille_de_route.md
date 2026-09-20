@@ -1328,6 +1328,21 @@ posée qui reçoit sa réponse.**
   les 5 % les plus aisés —, trois témoins, et `limites.md` §5 qui porte le
   point de périmètre.
 
+- *Ce que le diviseur commun coûte au régime, par
+  `scripts/mortalite_population.py --deficit`.* Sur les têtes, les poids et
+  les pensions de la trajectoire de la page Coût, la survie de chaque cas type
+  corrigée de celle de son vingtile : un diviseur par vingtile baisserait la
+  dépense des scénarios notionnels de **3,6 à 4,3 %** selon le scénario et
+  l'année, soit quatre à cinq dixièmes de point de PIB — 12 à 15 milliards au
+  PIB de 2025. Le solde moyen 2026-2070 du scénario 6 passerait de −2,21 % à
+  −1,80 % du PIB, celui du scénario 4 de +1,47 % à +1,92 %. Sans corriger la
+  survie, comme la page compte aujourd'hui, le chiffre serait de 3,2 à 4,1 % :
+  la page sous-compte les rentes des vingtiles qui vivent longtemps. Le
+  scénario 1 n'a pas de diviseur, rien n'y bouge. C'est un ordre de grandeur
+  dont le signe est sûr et le niveau non : la grille pèse le cadre et le
+  libéral à la part de leur caisse, plus que leur part réelle, et le
+  rattachement par le salaire est une convention.
+
 **Ce qui reste.** Le rattachement est le maillon faible : un salaire n'est pas
 un niveau de vie, et une carrière n'est pas un ménage. Une lecture de la
 distribution des niveaux de vie des RETRAITÉS par vingtile — l'INSEE la

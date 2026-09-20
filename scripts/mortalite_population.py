@@ -7,6 +7,8 @@
                                                                  # sous la même mortalité
     python scripts/mortalite_population.py --niveau-de-vie       # les treize cas types, chacun
                                                                  # au vingtile où son salaire le place
+    python scripts/mortalite_population.py --deficit             # ce que le diviseur commun coûte
+                                                                 # au régime, en part de PIB
 
 CE QU'IL MESURE
 ---------------
@@ -38,6 +40,23 @@ pension notionnelle à capital égal, transfert sur la vie sous le système
 actuel et sous la proposition. C'est la réponse à l'objection « le notionnel
 fait payer les carrières courtes pour la longévité des autres » : le chiffre,
 scénario par scénario.
+
+CE QUE LE DIVISEUR COMMUN COÛTE AU RÉGIME
+-----------------------------------------
+``--deficit`` répond à la question suivante : si chaque assuré recevait le
+diviseur de son vingtile, de combien la dépense des scénarios notionnels
+baisserait-elle ? Sous un diviseur commun, chacun touche une rente calculée
+pour la durée moyenne et servie pendant SA durée ; la masse versée sur la
+vie vaut donc capital × (sa durée / durée moyenne), plus grande pour qui vit
+longtemps — et qui vit longtemps a les plus gros capitaux. Le diviseur par
+vingtile ramène chaque masse à son capital. L'écart est ce que le diviseur
+commun coûte, et il se lit sur les têtes de la trajectoire de la page Coût :
+les mêmes couples (cas type, génération), les mêmes effectifs INSEE par âge,
+les mêmes poids de caisse — la survie de chaque cas type étant corrigée de
+celle de son vingtile, ce que la page ne fait pas. La page compte tout le
+monde à la mortalité générale ; appliquer les diviseurs sans corriger la
+survie donnerait un chiffre plus grand et faux, imprimé ici en regard pour
+qu'on voie l'écart. Le scénario 1 n'a pas de diviseur : rien ne bouge.
 
 LE GARDE-FOU
 ------------
@@ -126,6 +145,97 @@ def _euros(montant: float) -> str:
     return f"{montant:,.0f}".replace(",", "\u202f")
 
 
+def _deficit(mortalite) -> int:
+    """Ce que le diviseur commun coûte au régime, sur la trajectoire de la page Coût."""
+    from retraite_notionnelle.cout import _pensionnes, calculer_cout
+    from retraite_notionnelle.donnees.assiette import AssietteActivite
+    from retraite_notionnelle.donnees.depenses import DepensesRetraite
+    from retraite_notionnelle.donnees.equilibre import ComptesRetraite
+    from retraite_notionnelle.donnees.population import Population
+
+    simulateur = _simulateur(None)
+    racine = simulateur.parametres.racine_donnees
+    population = Population(racine)
+    cout = calculer_cout(simulateur, DepensesRetraite(racine), population,
+                         ComptesRetraite(racine), assiette=AssietteActivite(racine))
+    pensionnes, _ = _pensionnes(simulateur, CAS_TYPES, cout.liquidation)
+    par_code = {cas.code: cas for cas in CAS_TYPES}
+    vingtiles = {cas.code: mortalite.population_niveau_de_vie(cas.niveau_salaire)
+                 for cas in CAS_TYPES}
+    scenarios = [cle for cle, _, _ in SCENARIOS_NOTIONNELS]
+
+    # Pour chaque couple : le rapport des diviseurs (ce que la pension devient
+    # sous le diviseur du vingtile) et les deux courbes de survie.
+    couples = []
+    for pensionne in pensionnes:
+        age = pensionne.annee_liquidation - pensionne.generation
+        commune = mortalite.courbe(age, float(pensionne.annee_liquidation), None, True)
+        propre = mortalite.courbe(age, float(pensionne.annee_liquidation), None, True,
+                                  vingtiles[pensionne.code])
+        e_commune = sum(0.5 * (commune[k] + commune[k + 1]) for k in range(len(commune) - 1))
+        e_propre = sum(0.5 * (propre[k] + propre[k + 1]) for k in range(len(propre) - 1))
+        couples.append((pensionne, e_commune / e_propre, commune, propre))
+
+    def masses(annee: int) -> dict[str, dict[str, float]]:
+        """Masses par scénario : page (survie générale) et vraies (survie du
+        vingtile), sous le diviseur commun et sous le diviseur propre."""
+        total = {s: {"page_commun": 0.0, "page_propre": 0.0,
+                     "vrai_commun": 0.0, "vrai_propre": 0.0} for s in scenarios}
+        for pensionne, rapport, commune, propre in couples:
+            part = cout.poids.get(pensionne.code, 0.0)
+            if part <= 0.0:
+                continue
+            for decalage in range(-2, 3):
+                liquidation = pensionne.annee_liquidation + decalage
+                if annee < liquidation:
+                    continue
+                effectif = population.effectif(annee - pensionne.generation - decalage, annee)
+                duree = annee - liquidation
+                survie = (propre[duree] / commune[duree]
+                          if duree < min(len(commune), len(propre)) and commune[duree] > 0
+                          else 0.0)
+                for s in scenarios:
+                    pension = pensionne.pensions.get(s, 0.0)
+                    base = part * effectif * pension
+                    total[s]["page_commun"] += base
+                    total[s]["page_propre"] += base * rapport
+                    total[s]["vrai_commun"] += base * survie
+                    total[s]["vrai_propre"] += base * survie * rapport
+        return total
+
+    print("Chaque cas type au vingtile où son salaire le place ; les têtes, les poids et les "
+          "pensions sont ceux de la trajectoire de la page Coût.\n")
+    print("| Scénario | Année | Baisse de la dépense, survie du vingtile | Baisse si la page "
+          "l'appliquait sans corriger la survie | Solde, part de PIB | Solde avec le diviseur "
+          "par vingtile |")
+    print("|---|---:|---:|---:|---:|---:|")
+    cumul = {s: [] for s in scenarios}
+    for ligne in cout.solde.projetees():
+        m = masses(ligne.annee)
+        for s in scenarios:
+            if m[s]["vrai_commun"] <= 0.0:
+                continue
+            vraie = 1.0 - m[s]["vrai_propre"] / m[s]["vrai_commun"]
+            page = 1.0 - m[s]["page_propre"] / m[s]["page_commun"]
+            gain = ligne.depense(s) * vraie
+            cumul[s].append((ligne.annee, vraie, page, ligne.solde(s), ligne.solde(s) + gain))
+    libelles = {cle: f"{n} · {lib}" for cle, n, lib in SCENARIOS_NOTIONNELS}
+    for s in scenarios:
+        for annee, vraie, page, avant, apres in cumul[s]:
+            if annee in (2030, 2050, 2070):
+                print(f"| {libelles[s].format(bascule=simulateur.parametres.annee_bascule)} | "
+                      f"{annee} | {vraie:.1%} | {page:.1%} | {avant:+.2%} | {apres:+.2%} |")
+        moyen_avant = sum(l[3] for l in cumul[s]) / len(cumul[s])
+        moyen_apres = sum(l[4] for l in cumul[s]) / len(cumul[s])
+        print(f"| {libelles[s].format(bascule=simulateur.parametres.annee_bascule)} | "
+              f"moyenne {cumul[s][0][0]}-{cumul[s][-1][0]} | | | {moyen_avant:+.2%} | {moyen_apres:+.2%} |")
+    pib = next((l.pib for l in reversed(cout.solde.annees) if l.pib > 0), 0.0)
+    annee_pib = next((l.annee for l in reversed(cout.solde.annees) if l.pib > 0), 0)
+    if pib:
+        print(f"\nUn point de PIB vaut {_euros(pib / 1000)} Md€ au PIB de {annee_pib}.")
+    return 0
+
+
 def _par_niveau_de_vie(mortalite, generations: list[int]) -> int:
     """Les treize cas types, chacun sous la mortalité de son vingtile."""
     for sexe in mortalite.SEXES:
@@ -165,9 +275,14 @@ def main() -> int:
     parseur.add_argument("--niveau-de-vie", action="store_true",
                          help="les treize cas types, chacun au vingtile de niveau de vie "
                               "où son salaire le place")
+    parseur.add_argument("--deficit", action="store_true",
+                         help="ce que le diviseur commun coûte au régime, sur la trajectoire "
+                              "de la page Coût")
     args = parseur.parse_args()
 
     mortalite = _simulateur(None).mortalite
+    if args.deficit:
+        return _deficit(mortalite)
     if args.niveau_de_vie:
         return _par_niveau_de_vie(mortalite, args.generations or [1975])
     if args.population not in mortalite.populations:
