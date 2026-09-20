@@ -7148,54 +7148,106 @@ chose autrement, par le diviseur d'espérance de vie, mais ils le font
 }
 
 /**
- * Les marches de la cascade, dans l'ordre où la proposition les applique :
- * code du rapport qui les porte, étiquette courte posée sous la colonne, et ce
- * que l'étiquette ne peut pas dire, redit dans le tableau des chiffres. Copie
- * de `MARCHES_CASCADE` dans `web/pages.py`, dont le commentaire dit pourquoi
- * l'ordre n'est ni indifférent ni arbitraire.
+ * Ce que chaque système AJOUTE à la cascade par rapport à celui qui le précède
+ * dans `SCENARIOS_MONTRES`. Copie de `MARCHES_SYSTEMES` dans `web/pages.py`.
+ *
+ * LA CHAÎNE N'EST PAS ÉCRITE ICI : l'ordre des marches est celui de
+ * `SCENARIOS_MONTRES`, seul endroit du site où les systèmes sont listés, et ce
+ * dictionnaire ne fait que les NOMMER. Les accolades sont remplies par
+ * `libellesCascade` — aucun nombre n'est écrit en toutes lettres, sous peine
+ * qu'un réglage de la page démente son étiquette.
  */
-const MARCHES_CASCADE = [
-  ["reversion", "Réversion supprimée",
-    "premier avantage non contributif du système, un dixième de la masse "
-    + "versée : les comptes notionnels ne rendent que ce que l'assuré a cotisé"],
-  ["notionnel_retroactif", "Pensions recalculées",
+const MARCHES_SYSTEMES = {
+  notionnel_retroactif: [
+    "Pensions recalculées",
     "la part salariale seule, rendue au franc le franc : diviseur "
     + "d'espérance de vie, indexation du capital sur les salaires, et retrait "
     + "de tous les autres avantages non contributifs — minimum contributif, "
-    + "trimestres gratuits, majorations pour enfants, départs anticipés"],
-  ["notionnel_retroactif_employeur", "Part patronale au compte",
+    + "trimestres gratuits, majorations pour enfants, départs anticipés",
+  ],
+  notionnel_retroactif_employeur: [
+    "Part patronale au compte",
     "ce que l'employeur verse ouvre désormais un droit à celui qui le voit "
-    + "passer ; c'est la seule chose qui sépare cette marche de la précédente"],
-  ["notionnel_liberal", "Cotisation unique de 18 %",
+    + "passer ; c'est la seule chose qui sépare cette marche de la précédente",
+  ],
+  notionnel_liberal: [
+    "Cotisation unique de {taux}",
     "un taux unique pour tous les statuts, parts salariale et patronale "
-    + "additionnées, sur les seuls droits acquis à compter de la bascule"],
-  [COMPOSANTE_GARANTIE, "Garantie vieillesse",
+    + "additionnées, sur les seuls droits acquis à compter de {bascule}",
+  ],
+};
+
+/** Les trois marches qui ne sont pas des systèmes, et leur place dans la chaîne. */
+const MARCHE_REVERSION = "reversion";
+const MARCHE_REPRISES = "reprises";
+const MARCHES_HORS_SYSTEMES = {
+  [MARCHE_REVERSION]: [
+    "Réversion supprimée",
+    "{reversion} de la masse versée cette année-là, et le premier avantage "
+    + "non contributif du système : les comptes notionnels ne rendent que ce "
+    + "que l'assuré a cotisé",
+  ],
+  [COMPOSANTE_GARANTIE]: [
+    "Garantie vieillesse",
     "le plancher individualisé qui remplace l'ASPA, financé par l'impôt et "
-    + "non par les cotisations : il s'AJOUTE à la dépense"],
-];
+    + "non par les cotisations : il s'AJOUTE à la dépense",
+  ],
+  [MARCHE_REPRISES]: [
+    "Reprises sur successions",
+    "la garantie est une avance, et le décès du bénéficiaire la rend sur sa "
+    + "succession : {reprise} de ce qu'elle a versé",
+  ],
+};
 
 /**
- * Les cinq marches qui vont du système actuel à la proposition. Elles sont
- * exactement additives — voir `_marches_cascade` dans `web/pages.py` —, et
- * `test_web` le vérifie plutôt que d'en croire ce commentaire.
+ * Ce que les accolades des étiquettes valent cette année-là. Tout nombre qu'une
+ * étiquette affiche passe par ici : le taux de la proposition est un réglage
+ * que l'adresse porte, et la part de réversion tombe d'un dixième aujourd'hui à
+ * un dix-huitième en 2070.
  */
-function marchesCascade(base, partDerives, rapports) {
+function libellesCascade(contexte, partDerives, partReprise) {
+  const base = contexte.base;
+  return {
+    taux: g.pourcentage(base.taux_cotisation_liberal, false, 0),
+    bascule: String(base.annee_bascule),
+    reversion: g.pourcentage(partDerives, false, 1),
+    reprise: g.pourcentage(partReprise, false, 0),
+  };
+}
+
+/** Remplit les accolades d'un gabarit d'étiquette. */
+function remplirLibelle(gabarit, libelles) {
+  return gabarit.replace(/\{(\w+)\}/g, (entier, cle) => (
+    cle in libelles ? libelles[cle] : entier));
+}
+
+/** Une marche nommée, ses accolades remplies, son montant en milliards. */
+function marcheCascade(code, valeur, libelles) {
+  const [gabarit, glose] = MARCHES_SYSTEMES[code] || MARCHES_HORS_SYSTEMES[code];
+  return new g.Marche(remplirLibelle(gabarit, libelles), valeur / 1000,
+                      false, "", remplirLibelle(glose, libelles));
+}
+
+/**
+ * Les marches qui vont du système actuel à la proposition, dans l'ordre de
+ * `SCENARIOS_MONTRES`. Voir `_marches_cascade` dans `web/pages.py` : elles sont
+ * exactement additives, et `test_web` le vérifie.
+ */
+function marchesCascade(base, partDerives, rapports, libelles, partReprise = 0.0) {
   const directe = base * (1.0 - partDerives);
+  const marches = [marcheCascade(MARCHE_REVERSION, -base * partDerives, libelles)];
   let precedent = 1.0;
-  const marches = [];
-  for (const [code, libelle, glose] of MARCHES_CASCADE) {
-    let valeur;
-    if (code === "reversion") {
-      valeur = -base * partDerives;
-    } else if (code === COMPOSANTE_GARANTIE) {
-      // La garantie n'est pas un système : elle ne REMPLACE pas le rapport
-      // précédent, elle s'ajoute par-dessus.
-      valeur = directe * rapports[code];
-    } else {
-      valeur = directe * (rapports[code] - precedent);
-      precedent = rapports[code];
-    }
-    marches.push(new g.Marche(libelle, valeur / 1000, false, "", glose));
+  for (const code of SCENARIOS_MONTRES.slice(1)) {
+    marches.push(marcheCascade(code, directe * (rapports[code] - precedent), libelles));
+    precedent = rapports[code];
+  }
+  // La garantie n'est pas un système : elle s'ajoute par-dessus, et le cumul
+  // ne repart donc pas d'elle. Les reprises viennent en moins de ce qu'elle a
+  // versé — une FRACTION, jamais un niveau emprunté à une autre série.
+  const garantie = directe * rapports[COMPOSANTE_GARANTIE];
+  marches.push(marcheCascade(COMPOSANTE_GARANTIE, garantie, libelles));
+  if (partReprise) {
+    marches.push(marcheCascade(MARCHE_REPRISES, -garantie * partReprise, libelles));
   }
   return marches;
 }
@@ -7225,7 +7277,8 @@ function coutDetailCascade(contexte) {
       + `mesurée en ${obs}`),
   ].concat(
     marchesCascade(observe.depenseMeur("actuel"), observe.partDerives,
-                   observe.rapports),
+                   observe.rapports,
+                   libellesCascade(contexte, observe.partDerives, 0.0)),
     [new g.Marche("La proposition", arrivee, true, "var(--liberal)",
       `${sansNumero(LIBELLES_SYSTEMES.notionnel_liberal)} : pensions `
       + "contributives et garantie vieillesse réunies")],
@@ -7238,6 +7291,8 @@ function coutDetailCascade(contexte) {
   const fin = avenir.derniereAnnee;
   const horizon = avenir.annee(fin);
   const departFin = horizon.coutConstants("actuel") / 1000;
+  const garantieFin = horizon.coutConstants(COMPOSANTE_GARANTIE);
+  const partReprise = garantieFin ? horizon.reprisesConstants() / garantieFin : 0.0;
   const arriveeFin = (horizon.coutConstants("notionnel_liberal")
     + horizon.garantieNetteConstants()) / 1000;
   const marchesFin = [
@@ -7246,12 +7301,10 @@ function coutDetailCascade(contexte) {
       + `projette pour ${fin}`),
   ].concat(
     marchesCascade(horizon.coutConstants("actuel"), horizon.partDerives,
-                   horizon.rapports),
+                   horizon.rapports,
+                   libellesCascade(contexte, horizon.partDerives, partReprise),
+                   partReprise),
     [
-      new g.Marche("Reprises sur successions",
-        -horizon.reprisesConstants() / 1000, false, "",
-        "la garantie est une avance, et le décès du bénéficiaire la rend sur "
-        + "sa succession, dans la limite de ce qu'elle a versé"),
       new g.Marche("La proposition", arriveeFin, true, "var(--liberal)",
         `${sansNumero(LIBELLES_SYSTEMES.notionnel_liberal)} : pensions `
         + "contributives et garantie nette des reprises"),

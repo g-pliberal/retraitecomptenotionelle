@@ -28,7 +28,13 @@ from retraite_notionnelle.donnees.chargement import (
 )
 from retraite_notionnelle.web.pages import (
     _date_en_clair,
+    _libelles_cascade,
+    _marches_cascade,
     _milliards,
+    COMPOSANTE_GARANTIE,
+    MARCHES_HORS_SYSTEMES,
+    MARCHES_SYSTEMES,
+    SCENARIOS_MONTRES,
     AGE_DEBUT_MINIMAL,
     AGE_LIQUIDATION_MAXIMAL,
     AGES_REFERENCE,
@@ -3120,6 +3126,51 @@ def test_le_tableau_d_un_graphique_nomme_ce_que_porte_son_axe():
     html = g.graphique("Un essai", (64, 65), series, nom_abscisse="Âge")
     assert "âge par âge (2 lignes)" in html
     assert '<th class="" scope="col">Âge</th>' in html
+
+
+def test_la_cascade_suit_la_liste_des_systemes():
+    """Aucun système ne peut entrer dans le site sans entrer dans la cascade.
+
+    ``SCENARIOS_MONTRES`` est le seul endroit où les systèmes sont listés, et
+    la cascade en déduit ses marches. Reste ce qu'une main doit écrire : le NOM
+    de chaque marche. Ce test tient les deux listes face à face, de sorte
+    qu'ajouter un système au site fasse tomber le test plutôt que sortir une
+    figure à qui il manque une marche — laquelle sommerait encore juste, ce qui
+    est le pire des cas : fausse et d'apparence intacte.
+    """
+    assert SCENARIOS_MONTRES[0] == "actuel", "l'étalon ouvre la chaîne"
+    assert set(MARCHES_SYSTEMES) == set(SCENARIOS_MONTRES[1:]), (
+        "MARCHES_SYSTEMES et SCENARIOS_MONTRES ont divergé : "
+        f"{set(MARCHES_SYSTEMES) ^ set(SCENARIOS_MONTRES[1:])}"
+    )
+    # Et l'ordre des marches est celui de la liste, non celui du dictionnaire.
+    libelles = _libelles_cascade(Contexte(), 0.1, 0.4)
+    rapports = {code: 1.0 for code in SCENARIOS_MONTRES}
+    rapports[COMPOSANTE_GARANTIE] = 0.0
+    marches = _marches_cascade(1000.0, 0.1, rapports, libelles)
+    attendus = ["Réversion supprimée"] + [
+        MARCHES_SYSTEMES[code][0].format(**libelles)
+        for code in SCENARIOS_MONTRES[1:]
+    ] + ["Garantie vieillesse"]
+    assert [marche.libelle for marche in marches] == attendus
+
+
+def test_aucune_etiquette_de_cascade_n_ecrit_un_nombre_en_dur(contexte):
+    """Un chiffre d'étiquette se recalcule, ou il ment au premier réglage.
+
+    Le taux de la proposition est un réglage que l'adresse porte, et la part de
+    réversion dans la masse versée tombe d'un dixième aujourd'hui à un
+    dix-huitième en 2070. Les gabarits d'étiquette ne portent donc aucun
+    chiffre : ils portent des accolades, que ``_libelles_cascade`` remplit.
+    """
+    chiffre = re.compile(r"\d")
+    for code, (libelle, glose) in {**MARCHES_SYSTEMES, **MARCHES_HORS_SYSTEMES}.items():
+        assert not chiffre.search(libelle), f"{code} : chiffre en dur dans « {libelle} »"
+        assert not chiffre.search(glose), f"{code} : chiffre en dur dans sa glose"
+    # Et le rendu, lui, en porte : les accolades ont bien été remplies.
+    corps = rendre(contexte, "/cout", {})[1]
+    taux = g.pourcentage(contexte.base.taux_cotisation_liberal, decimales=0)
+    assert f"Cotisation unique de {taux}" in corps
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
