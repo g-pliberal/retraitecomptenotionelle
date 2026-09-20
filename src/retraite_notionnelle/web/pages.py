@@ -8084,9 +8084,12 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
     La trajectoire de la page la porte déjà : c'est la ligne « dont garantie »
     des deux tableaux. Ce dépliant dit d'où elle vient — la distribution des
     pensions de l'EIR, déplacée année par année par la grille —, ce qu'elle
-    coûterait à pensions inchangées, et ce qu'elle REMPLACE : quatre minima
+    coûterait à pensions inchangées, et ce qu'elle REMPLACE : trois minima
     que l'impôt et les caisses paient déjà, dont le premier est réclamé par la
-    moitié seulement de ceux qui y ont droit.
+    moitié seulement de ceux qui y ont droit. Le minimum garanti de la
+    fonction publique n'y est pas : il est servi par les régimes de la
+    fonction publique, dans la dépense de pensions que la trajectoire
+    remplace déjà, et non par un transfert que l'impôt paierait à part.
     """
     cout = contexte.cout()
     distribution = contexte.distribution()
@@ -8187,18 +8190,19 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
     modestes = patrimoine.statistiques("retraites_q1")
     retraites = patrimoine.statistiques("retraites")
 
-    # Ce que la garantie remplace : les quatre minima, tels qu'ils coûtent la
+    # Ce que la garantie remplace : les trois minima, tels qu'ils coûtent la
     # dernière année observée. Le minimum vieillesse est LU dans les comptes,
-    # les deux suivants sont calculés par le modèle sur la grille, le dernier
-    # n'est pas chiffré — et la page le dit ligne par ligne.
+    # le minimum contributif est calculé par le modèle sur la grille, le
+    # dernier n'est pas chiffré — et la page le dit ligne par ligne. Le
+    # minimum garanti de la fonction publique n'est pas dans le tableau : il
+    # est payé par les régimes de la fonction publique, dans la dépense que
+    # la trajectoire remplace, pas par un transfert de l'impôt.
     avantages = contexte.avantages().derniere
     montants = avantages.lignes if avantages else {}
     annee_minima = avantages.annee if avantages else derniere
     remplaces = (
         ("Minimum vieillesse (ASPA)", "minimum_vieillesse", "lu dans les comptes"),
         ("Minimum contributif", "minimum_contributif", "calculé sur la grille"),
-        ("Minimum garanti de la fonction publique", "minimum_garanti",
-         "calculé sur la grille"),
         ("Pension majorée de référence des exploitants", "pension_majoree_reference",
          "non chiffrée"),
     )
@@ -8209,7 +8213,7 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
         for libelle, code, source in remplaces
     ]
     garantie_brute = cout.annee(annee_minima).cout(COMPOSANTE_GARANTIE)
-    lignes_remplaces.append(["<strong>Ce que ces quatre minima coûtent</strong>", "",
+    lignes_remplaces.append(["<strong>Ce que ces trois minima coûtent</strong>", "",
                              f"<strong>{_milliards(total_remplace, 1)}</strong>"])
     lignes_remplaces.append([f"Garantie vieillesse, aux pensions du système 4 en {annee_minima}",
                              "distribution, ci-dessus",
@@ -8324,9 +8328,12 @@ passé comme l'avenir. Ce tableau applique le barème à tous les retraités de
 coût plus bas la même année.</p>
 
 <p><strong>Ce qu'elle remplace.</strong> La garantie succède à l'ASPA, et le
-système 4 ne sert plus le minimum contributif, le minimum garanti ni la pension
-majorée de référence : quatre planchers que l'impôt et les caisses paient déjà.
-Ce que l'impôt paierait <em>en plus</em> est la garantie moins ces quatre-là.</p>
+système 4 ne sert plus le minimum contributif ni la pension majorée de
+référence : trois planchers que l'impôt et les caisses paient déjà. Ce que
+l'impôt paierait <em>en plus</em> est la garantie moins ces trois-là. Le
+minimum garanti de la fonction publique disparaît aussi, mais il n'est pas
+compté ici : les régimes de la fonction publique le servent dans leur dépense
+de pensions, que la trajectoire remplace déjà.</p>
 
 {g.tableau(
     ["Ligne", "D'où vient le chiffre", f"En {annee_minima}"],
@@ -8337,10 +8344,10 @@ Ce que l'impôt paierait <em>en plus</em> est la garantie moins ces quatre-là.<
 )}
 
 <p class="discret">Le minimum vieillesse est le poste des comptes de la
-protection sociale ; les deux minima de pension sont calculés sur la grille des
-cas types, qui n'est pas une population et les sous-estime : le minimum
-contributif est réclamé par des carrières courtes que la grille ne compte
-guère. La pension majorée de référence n'est pas chiffrée, aucun code du
+protection sociale ; le minimum contributif est calculé sur la grille des cas
+types, qui n'est pas une population et le sous-estime : il est réclamé par des
+carrières courtes que la grille ne compte guère. La pension majorée de
+référence n'est pas chiffrée, aucun code du
 moteur ne la servant. Le total est donc une borne basse, et l'écart une borne
 haute.</p>
 
