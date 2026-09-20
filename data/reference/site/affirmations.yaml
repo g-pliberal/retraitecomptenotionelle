@@ -1183,6 +1183,33 @@ affirmations:
     etat: verifiee
     controle: part_de_reprise_est_un_reglage
 
+  # .. la cascade : ce que chaque mesure déplace .............................
+
+  - id: cout.cascade_cotisation_unique_sans_effet
+    page: /cout
+    extrait: "La cotisation unique ne déplace rien en"
+    porte: >-
+      le taux unique ne vaut que pour les droits acquis à compter de la
+      bascule, et la marche de la cascade est donc nulle à l'année observée
+    etat: verifiee
+    controle: cascade_cotisation_unique_sans_effet_avant_la_bascule
+
+  - id: cout.cascade_ordre
+    page: /cout
+    extrait: "Une décomposition est séquentielle, et l'ordre compte."
+    porte: >-
+      chaque marche est l'effet de sa mesure sachant les précédentes, et la
+      somme des marches ne dépend pas de leur ordre
+    etat: verifiee
+    controle: cascade_somme_exactement
+
+  - id: cout.cascade_depense_pas_solde
+    page: /cout
+    extrait: "Une dépense n'est pas un solde."
+    porte: la cascade ne porte que la dépense, et jamais les ressources
+    etat: verifiee
+    controle: cascade_ne_porte_que_la_depense
+
   - id: cout.limite_certification
     page: /cout
     extrait: "Rien de ce qui suit n'est certifié, et ne peut l'être"

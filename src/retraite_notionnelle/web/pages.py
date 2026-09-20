@@ -6653,7 +6653,10 @@ def _cout(contexte: Contexte) -> str:
     * **Tout le reste est replié.** Le détail par régime, les six
       contrefactuels, les périmètres, les limites : rien n'est retiré — une page
       qui ne peut pas se justifier n'est pas honnête —, mais rien n'oblige à le
-      traverser pour atteindre le résultat.
+      traverser pour atteindre le résultat. Les cascades de
+      ``_cout_detail_cascade`` sont de celles-là : elles font le pont du
+      système actuel à la proposition, mesure par mesure, et ce pont est ce
+      qu'on vient chercher APRÈS avoir lu le résultat, jamais avant.
     * **Les phrases sont courtes, et les mots de spécialiste portent leur
       définition**, ouvrable sur place sans quitter la phrase.
 
@@ -6883,6 +6886,7 @@ plus large que les cartes).
         _cout_detail_ressources(contexte),
         _cout_detail_transferts(contexte),
         _cout_detail_scenarios(contexte),
+        _cout_detail_cascade(contexte),
         _cout_detail_equilibre(contexte),
         _cout_detail_postes(contexte),
         _cout_detail_dette(contexte),
@@ -8165,6 +8169,225 @@ des salaires, génération après génération. Les comptes notionnels font la m
 chose autrement, par le diviseur d'espérance de vie, mais ils le font
 <em>explicitement</em>, et à l'acquisition plutôt qu'au versement.</p>
 """, identifiant="cout-scenarios")
+
+
+#: Les marches de la cascade, dans l'ordre où la proposition les applique :
+#: code du rapport qui les porte, étiquette courte posée sous la colonne, et
+#: ce que l'étiquette ne peut pas dire, redit dans le tableau des chiffres.
+#:
+#: L'ORDRE N'EST PAS INDIFFÉRENT, et il n'est pas non plus arbitraire : c'est
+#: celui de la construction du compte notionnel. On retire d'abord ce que le
+#: système ne sert plus (la réversion), on recalcule ensuite ce qu'il sert au
+#: franc le franc de la part salariale, on y ajoute la part patronale, puis on
+#: remplace le barème par le taux unique, et l'on pose enfin la garantie
+#: par-dessus. Un autre ordre donnerait d'autres marches — c'est la limite de
+#: toute décomposition séquentielle, et la note sous le tracé l'écrit — mais
+#: jamais un autre total.
+MARCHES_CASCADE: tuple[tuple[str, str, str], ...] = (
+    ("reversion", "Réversion supprimée",
+     "premier avantage non contributif du système, un dixième de la masse "
+     "versée : les comptes notionnels ne rendent que ce que l'assuré a cotisé"),
+    ("notionnel_retroactif", "Pensions recalculées",
+     "la part salariale seule, rendue au franc le franc : diviseur "
+     "d'espérance de vie, indexation du capital sur les salaires, et retrait "
+     "de tous les autres avantages non contributifs — minimum contributif, "
+     "trimestres gratuits, majorations pour enfants, départs anticipés"),
+    ("notionnel_retroactif_employeur", "Part patronale au compte",
+     "ce que l'employeur verse ouvre désormais un droit à celui qui le voit "
+     "passer ; c'est la seule chose qui sépare cette marche de la précédente"),
+    ("notionnel_liberal", "Cotisation unique de 18 %",
+     "un taux unique pour tous les statuts, parts salariale et patronale "
+     "additionnées, sur les seuls droits acquis à compter de la bascule"),
+    ("garantie_vieillesse_liberal", "Garantie vieillesse",
+     "le plancher individualisé qui remplace l'ASPA, financé par l'impôt et "
+     "non par les cotisations : il s'AJOUTE à la dépense"),
+)
+
+
+def _marches_cascade(base: float, part_derives: float,
+                     rapports: dict[str, float]) -> list[g.Marche]:
+    """Les cinq marches qui vont du système actuel à la proposition.
+
+    Elles sont exactement additives, et ce n'est pas un hasard :
+    ``masse_du_scenario`` écrit la masse d'un système comme la part DIRECTE de
+    la base multipliée par son rapport, plus la réversion s'il la sert. Une
+    différence de deux rapports appliquée à la même part directe est donc la
+    contribution propre du changement qui les sépare, et la somme des cinq vaut
+    l'écart des deux totaux au centime. ``test_web`` le vérifie plutôt que d'en
+    croire ce commentaire.
+    """
+    directe = base * (1.0 - part_derives)
+    precedent = 1.0
+    marches = []
+    for code, libelle, glose in MARCHES_CASCADE:
+        if code == "reversion":
+            valeur = -base * part_derives
+        elif code == COMPOSANTE_GARANTIE:
+            # La garantie n'est pas un système : elle ne REMPLACE pas le
+            # rapport précédent, elle s'ajoute par-dessus. Le cumul ne repart
+            # donc pas de son rapport.
+            valeur = directe * rapports[code]
+        else:
+            valeur = directe * (rapports[code] - precedent)
+            precedent = rapports[code]
+        marches.append(g.Marche(libelle, valeur / 1000, glose=glose))
+    return marches
+
+
+def _cout_detail_cascade(contexte: Contexte) -> str:
+    """De la dépense d'aujourd'hui à celle de la proposition, mesure par mesure.
+
+    CE QUE CETTE SECTION AJOUTE AUX TABLEAUX QUI LA PRÉCÈDENT, c'est le
+    CHEMIN. Les quatre systèmes y sont comparés deux à deux, ce qui dit de
+    combien ils s'écartent et jamais par quoi ; le lecteur doit soustraire de
+    tête quatre fois pour savoir laquelle des décisions du programme pèse. Une
+    cascade le montre d'un coup, et elle porte en plus une vérification que le
+    tableau n'a pas : les marches somment exactement à l'écart des deux totaux,
+    ou la dernière barre ne retombe pas où elle devrait.
+
+    DEUX LECTURES, PARCE QU'UNE SEULE MENTIRAIT PAR OMISSION. À l'année
+    observée, la cotisation unique ne déplace rien — elle ne vaut que pour les
+    droits acquis à compter de la bascule, et aucun retraité de cette année-là
+    n'en a acquis un seul sous elle —, si bien qu'une cascade arrêtée là
+    montrerait la mesure centrale du programme à zéro. La seconde lecture est
+    prise à l'horizon du modèle, quand toutes les générations sont passées
+    sous la règle nouvelle, et la mesure y pèse ce qu'elle pèse.
+
+    LES DEUX N'ONT PAS LE MÊME PÉRIMÈTRE, et le dire est la condition pour
+    poser les deux côte à côte. La première suit les comptes du COR et ses
+    euros courants — c'est de là que vient le chiffre que tout le monde cite.
+    La seconde est la trajectoire du modèle, en euros constants, sur les
+    pensions de répartition obligatoire : le § de vigilance du dépliant
+    précédent dit de combien elle s'écarte de la projection du COR. On ne
+    soustrait jamais l'une de l'autre, et aucune marche ne traverse d'un
+    tableau à l'autre.
+    """
+    cout = contexte.cout()
+    solde = cout.solde
+    avenir = cout.avenir
+    base = contexte.base
+    bascule = base.annee_bascule
+    euros = cout.annee_euros
+
+    obs = solde.derniere_annee_observee
+    observe = solde.annee(obs)
+    depart = observe.depense_meur("actuel") / 1000
+    arrivee = (observe.depense_meur("notionnel_liberal")
+               + observe.depense_meur(COMPOSANTE_GARANTIE)) / 1000
+    marches_obs = (
+        [g.Marche("Système actuel", depart, total=True,
+                  couleur="var(--actuel)",
+                  glose=f"{_sans_numero(LIBELLES_SYSTEMES['actuel'])} : la "
+                        f"dépense de retraite mesurée en {obs}")]
+        + _marches_cascade(observe.depense_meur("actuel"), observe.part_derives,
+                           observe.rapports)
+        + [g.Marche("La proposition", arrivee,
+                    total=True, couleur="var(--liberal)",
+                    glose=f"{_sans_numero(LIBELLES_SYSTEMES['notionnel_liberal'])}"
+                          " : pensions contributives et garantie vieillesse "
+                          "réunies")]
+    )
+    cascade_obs = g.cascade(
+        f"De la dépense du système actuel à celle de la proposition en {obs}, "
+        f"mesure par mesure, en milliards d'euros",
+        tuple(marches_obs), unite=f"Md € {obs}", decimales=1,
+        libelle_marche="Mesure",
+    )
+
+    fin = avenir.derniere_annee
+    horizon = avenir.annee(fin)
+    depart_fin = horizon.cout_constants("actuel") / 1000
+    arrivee_fin = (horizon.cout_constants("notionnel_liberal")
+                   + horizon.garantie_nette_constants()) / 1000
+    marches_fin = (
+        [g.Marche("Système actuel", depart_fin, total=True,
+                  couleur="var(--actuel)",
+                  glose=f"{_sans_numero(LIBELLES_SYSTEMES['actuel'])} : la "
+                        f"dépense que le modèle projette pour {fin}")]
+        + _marches_cascade(horizon.cout_constants("actuel"), horizon.part_derives,
+                           horizon.rapports)
+        + [g.Marche("Reprises sur successions",
+                    -horizon.reprises_constants() / 1000,
+                    glose="la garantie est une avance, et le décès du "
+                          "bénéficiaire la rend sur sa succession, dans la "
+                          "limite de ce qu'elle a versé"),
+           g.Marche("La proposition", arrivee_fin, total=True,
+                    couleur="var(--liberal)",
+                    glose=f"{_sans_numero(LIBELLES_SYSTEMES['notionnel_liberal'])}"
+                          " : pensions contributives et garantie nette des "
+                          "reprises")]
+    )
+    cascade_fin = g.cascade(
+        f"De la dépense du système actuel à celle de la proposition en {fin}, "
+        f"mesure par mesure, en milliards d'euros constants de {euros}",
+        tuple(marches_fin), unite=f"Md € {euros}", decimales=1,
+        libelle_marche="Mesure",
+    )
+
+    ecart = depart - arrivee
+    ecart_fin = depart_fin - arrivee_fin
+    return g.depliant(
+        f"De {_milliards(observe.depense_meur('actuel'), 0)} à "
+        f"{_milliards(arrivee * 1000, 0)} : ce que chaque mesure déplace", f"""
+<p>Les tableaux du dessus comparent quatre systèmes deux à deux. Ils disent de
+combien ils s'écartent ; ils ne disent pas <em>par quoi</em>. Voici le chemin :
+on part de la dépense du système actuel, on applique les mesures de la
+proposition l'une après l'autre, et l'on arrive à la sienne. Une barre rouge
+ajoute à la dépense, une barre verte l'en retire, et la somme des marches vaut
+exactement l'écart des deux totaux : sans cela, la dernière barre ne retomberait
+pas où elle retombe.</p>
+
+<h4>En {obs}, la dernière année mesurée</h4>
+<p>Le point de départ est la dépense que le Conseil d'orientation des retraites
+a constatée : {_milliards(observe.depense_meur("actuel"), 0)}. Le point
+d'arrivée est ce que la proposition aurait coûté cette année-là si elle avait
+toujours été la règle : {_milliards(arrivee * 1000, 0)}, soit
+{_milliards(ecart * 1000, 0)} de moins, {g.pourcentage(ecart / depart, decimales=0)}
+de la facture.</p>
+
+{cascade_obs}
+
+<div class="note vigilance"><strong>La cotisation unique ne déplace rien en
+{obs}, et c'est normal.</strong> Elle ne vaut que pour les droits acquis à
+compter de la bascule, en {bascule} : aucun retraité de {obs} n'en a acquis un
+seul sous elle, et sa marche est donc plate. Le chiffre a été calculé, et il
+vaut zéro. C'est la mesure centrale du programme, et une cascade arrêtée à
+cette année-là la montrerait à zéro sans rien dire. D'où la seconde lecture, prise à l'horizon du
+modèle, quand toutes les générations sont passées sous la règle nouvelle. Les
+reprises sur successions sont dans le même cas, et n'ont pas de marche ici :
+le compte du COR ne les porte pas.</div>
+
+<h4>En {fin}, quand toutes les générations sont passées sous la règle</h4>
+<p>Le périmètre change, et la comparaison des deux cascades ne se fait donc pas
+marche à marche : celle-ci est la trajectoire du modèle, en euros constants de
+{euros}, sur les pensions de répartition obligatoire. Le point de vigilance du
+dépliant précédent dit de combien elle s'écarte de la projection du COR.
+Ce qu'elle apporte est ailleurs : ici, chacune des mesures pèse ce qu'elle
+pèse. La dépense passe de {_milliards(depart_fin * 1000, 0)} à
+{_milliards(arrivee_fin * 1000, 0)},
+{g.pourcentage(ecart_fin / depart_fin, decimales=0)} de moins.</p>
+
+{cascade_fin}
+
+<div class="note"><strong>Une décomposition est séquentielle, et l'ordre
+compte.</strong> Chaque marche est l'effet de sa mesure <em>sachant celles qui
+la précèdent</em>, jamais son effet prise seule : la part patronale portée au
+compte pèse d'autant plus que la part salariale a déjà été recalculée, et la
+garantie d'autant moins que les pensions contributives sont plus hautes. Un
+autre ordre donnerait d'autres marches, jamais un autre total. L'ordre retenu
+est celui de la construction du compte : on retire ce que le système ne sert
+plus, on recalcule ce qu'il sert, on dit avec quelles cotisations, puis on pose
+le plancher par-dessus.</div>
+
+<div class="note"><strong>Une dépense n'est pas un solde.</strong> Cette
+cascade ne montre qu'un côté du compte : ce qui sort. La proposition change
+aussi ce qui rentre : {g.pourcentage(base.taux_cotisation_liberal, decimales=0)}
+sur l'assiette des revenus d'activité, sans les impôts affectés ni les
+transferts qui payaient des droits supprimés. Et un système qui coûterait
+moitié moins servirait moitié moins, ce qui est une autre affaire. Le dépliant
+« recettes et dépenses, poste par poste » porte les deux côtés, et celui du
+coefficient d'équilibre dit ce qui manque.</div>
+""", identifiant="cout-cascade")
 
 
 def _cout_detail_equilibre(contexte: Contexte) -> str:
