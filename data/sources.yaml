@@ -1607,6 +1607,21 @@ institutions:
           1er avril — est rendue par la seconde, la règle du dépôt retenant la
           valeur en vigueur au 31 décembre.
 
+      - id: erafp_pilotage_technique
+        titre: Le pilotage technique du Régime — hypothèses de provisionnement
+        url: https://www.rafp.fr/connaitre/pilotage-technique-du-regime
+        acces: page
+        statut_integration: controle
+        millesime: 2026
+        note: >-
+          Aucune valeur du modèle n'en sort. Elle CONTRÔLE la borne haute des
+          frais du pilier capitalisé (`opef_rapport_annuel`) : le seul régime
+          français obligatoire en capitalisation provisionne ses engagements
+          « en anticipant des frais futurs de gestion d'au moins 0,2 % des
+          encours ». C'est une hypothèse de prudence de l'établissement, pas
+          un coût constaté, et elle vaut le quart des 0,76 % du fonds en euros
+          du PER. Lu le 20 septembre 2026.
+
   ircantec:
     nom: Ircantec
     role: Retraite complémentaire des agents non titulaires du public.
@@ -3351,6 +3366,7 @@ institutions:
         acces: document
         blocage: refus
         fichier_local: OPEF2026.pdf
+        sha256: eca04bb11f03cfd4b17d3d388d9d5b71a198b71d44f281676147188db15c260e
         statut_integration: saisi
         cible: data/reference/macro/frais_epargne_retraite.yaml
         note: >-
@@ -3366,18 +3382,84 @@ institutions:
           valeurs sont saisies depuis sa reprise par la presse spécialisée
           (Meilleurtaux Placement, 4 juillet 2026, citant les données ACPR de
           l'OPEF), et la règle du manifeste plafonne à `haute` ce qui n'a pas
-          été lu sur le document du producteur. À recontrôler sur le rapport
-          lui-même dès qu'une session peut l'ouvrir.
-          CE QUI A ÉTÉ ESSAYÉ, le 20 septembre 2026 : aucun autre site public
-          ne reprend l'édition 2026 (vie-publique porte la 2025, le CCSF
-          renvoie à la Banque de France) ; le runner GitHub Actions du
-          workflow documents-apportes.yml est refusé comme la session — 403
-          Akamai « Access Denied », sur la page comme sur le PDF, à la requête
-          simple comme à un Chromium headless ordinaire. Le document est donc
-          à déposer une fois, à la main, sur la release documents-apportes du
-          dépôt, sous le nom OPEF2026.pdf ; `--recuperer` le rapporte ensuite
-          dans toute session, et imprime l'empreinte à inscrire ici en
-          `miroir` et `sha256`.
+          été lu sur le document du producteur.
+          CONFRONTÉ AU DOCUMENT le 20 septembre 2026 : le rapport a été obtenu
+          par l'outil de lecture web de Claude Code, qui ne sort pas par le
+          proxy de la session et que la Banque de France ne refuse pas — le
+          seul chemin trouvé, curl et le runner GitHub Actions étant refusés
+          (403 Akamai « Access Denied », page et PDF, requête simple et
+          Chromium headless), et aucun autre site public ne reprenant
+          l'édition 2026. Son empreinte est le `sha256` ci-dessus.
+          scripts/fetch/opef_frais_per.py lit ses tableaux T5 à T7 avec pypdf
+          (le lecteur du dépôt ne rend pas ses polices CFF) et, avec
+          `--confronter`, compare le T7 au fichier cible : les trois valeurs
+          2025 et les trois valeurs 2024 sont celles du document. Le jeu reste
+          `saisi` et le niveau `haute` : la confrontation prouve la saisie,
+          elle ne la remplace pas par une lecture tenue par
+          scripts/verifier_donnees.py, et le document n'est pas sur le miroir
+          du dépôt — à déposer une fois, à la main, sur la release
+          documents-apportes sous le nom OPEF2026.pdf, avec cette empreinte ;
+          `--recuperer` le rapportera ensuite dans toute session.
+          CE QUE LE DOCUMENT AJOUTE À LA SAISIE : la moyenne des frais sur
+          arrérages est non pondérée et ne porte que sur les 9 organismes (sur
+          20) qui les facturent ; le frais sur versement du PER est le double
+          de celui de l'assurance-vie (0,55 %) et six fois celui du contrat de
+          capitalisation (0,19 %), écart que l'OPEF attribue à des frais fixes
+          sur des primes petites ; le frais de gestion du fonds en euros est
+          proche partout (0,67 % à 0,76 %). Le fichier cible porte ces trois
+          lectures et leur portée pour un pilier obligatoire.
+
+  frr:
+    nom: Fonds de réserve pour les retraites
+    role: >-
+      Le seul fonds public français qui gère une réserve de retraite de
+      plusieurs dizaines de milliards : ce que coûte, en France, la gestion
+      d'un capital de retraite hors réseau commercial.
+    jeux:
+      - id: frr_rapport_annuel_2024
+        titre: Rapport annuel 2024 du FRR — coûts du Fonds et actif net
+        url: https://www.fondsdereserve.fr/wp-content/uploads/2025/10/FRR-RA2024-FR-2.pdf
+        acces: document
+        statut_integration: controle
+        millesime: 2024
+        note: >-
+          Aucune valeur du modèle n'en sort. Il CONTRÔLE la borne haute des
+          frais du pilier capitalisé (`opef_rapport_annuel`) : « les charges
+          de l'exercice 2024 sont de 84,10 M€ », pour « un actif net [de]
+          20,4 Md€ en 2024 en valeur de marché », soit 0,41 % — mandats de
+          gestion active et frais de surperformance compris ; l'enveloppe
+          limitative (personnel, immobilier, informatique) « représente
+          environ 8,6 points de base de l'actif net ». Lu sur le document le
+          20 septembre 2026. Un fonds public gérant des actions et des
+          mandats coûte donc la moitié des 0,76 % de gestion du fonds en
+          euros du PER, et le modèle ne simule que des titres d'État portés à
+          l'échéance.
+
+  pensionsmyndigheten:
+    nom: Pensionsmyndigheten (Agence suédoise des pensions)
+    role: >-
+      Gestionnaire de la prime de pension suédoise (premiepension), pilier
+      capitalisé obligatoire de 2,5 % du salaire adossé au compte notionnel :
+      le seul régime en place qui soit exactement le montage du scénario 6.
+    jeux:
+      - id: premiepension_avgifter
+        titre: Frais et remises de la prime de pension (avgifter och rabatter)
+        url: https://www.pensionsmyndigheten.se/forsta-din-pension/valj-och-byt-fonder/avgifter-och-rabatter-inom-premiepensionen
+        acces: page
+        statut_integration: controle
+        millesime: 2026
+        note: >-
+          Aucune valeur du modèle n'en sort. Elle CONTRÔLE la borne haute des
+          frais du pilier capitalisé (`opef_rapport_annuel`) par le seul
+          pilier obligatoire comparable qui publie ses frais : « Den
+          rabatterade kapitalviktade avgiften år 2026 är 0,11 procent » — le
+          frais de fonds moyen pondéré par les encours, après la remise que
+          la plateforme impose aux gérants, est de 0,11 % en 2026 ; les
+          gérants rendent en moyenne les deux tiers de leurs frais, ce qui
+          relève la pension de 15 % ; l'administration coûte 0,024 % des
+          encours, plafonnée à 157 couronnes par an. Ni frais sur versement,
+          ni frais sur arrérages. Lu le 20 septembre 2026. Le tiers du niveau
+          que le modèle retient pour la seule gestion.
 
   institutions:
     nom: Sites des institutions dont le régime n'est dans aucun texte de l'index

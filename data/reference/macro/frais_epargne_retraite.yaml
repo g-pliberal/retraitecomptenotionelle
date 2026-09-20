@@ -25,17 +25,61 @@
 # que la proposition coûterait si rien ne bougeait dans la tarification. La page
 # Méthode le dit, et le paramètre se change en un endroit.
 #
-# NIVEAU DE FIABILITÉ. `haute`, et non `certifiee` : le rapport de l'OPEF est un
-# PDF que le dépôt ne sait pas récupérer automatiquement (le serveur de la
-# Banque de France refuse les requêtes non navigateur), et ces trois valeurs
-# sont donc SAISIES depuis sa reprise par la presse spécialisée. Le producteur
-# est l'OPEF, la transcription ne l'est pas : la règle du manifeste plafonne à
-# `haute` ce qui n'a pas été confronté au document lui-même.
+# CE QUE LE RAPPORT LUI-MÊME AJOUTE, lu le 20 septembre 2026 (tableaux T5 à
+# T7, pages 35 à 38 du rapport 2026) :
+#
+# - Le frais sur versement du PER est le double de celui de l'assurance-vie
+#   (1,09 % contre 0,55 %) et six fois celui du contrat de capitalisation
+#   (0,19 %) — les mêmes assureurs, les mêmes fonds en euros. L'OPEF l'explique
+#   par des FRAIS FIXES de construction de l'offre et de gestion des contrats,
+#   qui pèsent plus lourd sur des primes petites : 62 % des montants versés en
+#   assurance-vie viennent de versements de plus de 50 000 €, contre 12 % sur
+#   le PER. Une cotisation prélevée sur chaque paie, pour toute une population,
+#   n'a pas cette structure de coût.
+# - Le frais de gestion du fonds en euros varie peu d'un produit à l'autre :
+#   0,76 % sur le PER, 0,67 % en assurance-vie, 0,70 % en capitalisation. C'est
+#   le prix d'un fonds en euros géré par un assureur, garantie en capital et
+#   participation aux bénéfices comprises — pas celui d'une échelle de titres
+#   d'État portés à l'échéance, qui est ce que le modèle simule.
+# - La moyenne des frais sur arrérages est NON PONDÉRÉE et ne porte que sur
+#   les organismes qui les facturent : 9 sur 20 pour le PER individuel en
+#   2025. Les onze autres ne prélèvent rien sur la rente. La valeur ci-dessous
+#   est donc la moyenne de ceux qui facturent, pas celle du marché ; l'OPEF
+#   rappelle que le taux de 3 % vient d'une contrainte réglementaire abrogée en
+#   1993 et que ces frais couvrent des coûts en partie fixes (paiement,
+#   déclarations fiscales et sociales, options de réversion).
+#
+# CE QUE COÛTE UN RÉGIME OBLIGATOIRE, pour situer la borne haute (sources dans
+# data/sources.yaml et docs/limites.md §5 ante) : la prime de pension
+# suédoise, capitalisation obligatoire de 2,5 % du salaire, coûte 0,11 % des
+# encours de frais de fonds après remise et 0,024 % d'administration (2026) ;
+# le Fonds de réserve pour les retraites porte des coûts fixes de 8,6 points de
+# base de l'actif net, et des charges totales de 84 M€ pour 20,4 Md€ d'actif
+# net en 2024, soit 0,41 %, mandats de gestion active compris ; l'ERAFP
+# provisionne « des frais futurs de gestion d'au moins 0,2 % des encours ».
+# Aucune de ces enveloppes ne prélève de frais sur versement, ni sur arrérages.
+#
+# SENSIBILITÉ, mesurée sur le modèle le 20 septembre 2026 pour une carrière
+# entière cotisée après la bascule (né en 2004, 22-64 ans, non-cadre) : sans
+# aucun frais la rente serait supérieure de 22 % ; avec 0,20 % de gestion et
+# les deux autres postes inchangés, de 13 % ; sans frais sur versement seul,
+# de 1 %. Le frais de gestion est le poste qui compte, parce qu'il s'applique
+# chaque année à tout l'encours. docs/limites.md §5 ante donne le tableau.
+#
+# NIVEAU DE FIABILITÉ. `haute`, et non `certifiee` : les trois valeurs ont été
+# SAISIES depuis la reprise du rapport par la presse spécialisée, puis
+# CONFRONTÉES au document du producteur le 20 septembre 2026 par
+# scripts/fetch/opef_frais_per.py (tableau T7, valeurs 2024 et 2025 identiques
+# à la saisie). La confrontation prouve la saisie ; elle ne la remplace pas
+# par une lecture automatique tenue par scripts/verifier_donnees.py, seul
+# habilité à apposer `certifiee`, et le document n'est pas encore sur le
+# miroir du dépôt : la règle du manifeste plafonne donc à `haute`.
 
 source_id: opef_rapport_annuel
 annee_reference: 2025
 publication: Rapport annuel 2026 de l'Observatoire des produits d'épargne financière
 fiabilite: haute
+confronte_au_document_le: "2026-09-20"
 
 # Tous en fraction de l'assiette indiquée.
 frais:
@@ -45,18 +89,20 @@ frais:
     assiette: chaque versement
     libelle: Frais sur versement, support en euros
     note: >-
-      Moyenne des PER individuels assurantiels en 2025, en repli de 7 points de
-      base sur 2024. L'assurance vie, à barème comparable, est à 0,55 % : l'écart
-      tient au mode de commercialisation, non au produit.
+      Moyenne pondérée des PER individuels assurantiels en 2025, en repli de 7
+      points de base sur 2024 (1,16 %). L'assurance-vie, à barème comparable,
+      est à 0,55 % et le contrat de capitalisation à 0,19 % : l'écart tient au
+      mode de commercialisation et à la taille des primes, non au produit.
 
   gestion:
     valeur: 0.0076
     assiette: encours, par an
     libelle: Frais de gestion annuels sur encours, support en euros
     note: >-
-      Moyenne 2025, en repli d'un point de base. Les unités de compte sont à
-      0,91 % en moyenne, la gestion pilotée à 0,92 % : le pilier étant placé en
-      titres sans risque, c'est la ligne « euros » qui s'applique.
+      Moyenne pondérée 2025, en repli d'un point de base. Les unités de compte
+      sont à 0,91 % en moyenne, la gestion pilotée à 0,92 % : le pilier étant
+      placé en titres sans risque, c'est la ligne « euros » qui s'applique.
+      C'est le poste qui pèse : il s'applique chaque année à tout l'encours.
 
   arrerages:
     valeur: 0.0220
@@ -65,4 +111,6 @@ frais:
     note: >-
       Moyenne 2025, en hausse d'un point de base. C'est le prélèvement de
       l'assureur sur chaque versement de rente ; il réduit la rente servie
-      d'autant, et non le capital qui la constitue.
+      d'autant, et non le capital qui la constitue. Moyenne NON PONDÉRÉE des 9
+      organismes qui facturent ces frais, sur 20 déclarants : les onze autres
+      ne prélèvent rien sur la rente.
