@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 347<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 420<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10824,3 +10824,62 @@ un test qui tourne.
 `scripts/construire_donnees.py`, `scripts/verifier_donnees.py`,
 `data/reference/regimes/effectifs_retraites.csv`, `tests/test_donnees.py`,
 `tests/js/moteur.test.js`.
+
+### 71. « Dont » là où il fallait lire « en plus » : la garantie vieillesse manquait au total de la proposition — `fait`
+
+**Demande.** « Est-ce qu'on peut voir les dépenses et les recettes du scénario
+parti libéral français ? J'ai l'impression que ce qui est affiché dans la page
+coûts ne représente pas les vrais chiffres. » L'impression était juste, et pour
+une raison qui tient en un mot.
+
+**Ce que le modèle fait, et qui est juste.** La garantie vieillesse a quitté la
+masse contributive du scénario 6 le 19 septembre 2026 : elle est financée par
+l'impôt, et la compter dans la dépense d'un système qui ne l'encaisse pas
+l'aurait fait payer deux fois. `masse_du_scenario` ne la porte donc pas, et
+`postes_depenses` le dit — « elle n'entre pas dans `depense` ». Rien à changer
+de ce côté.
+
+**Ce que la page en disait, et qui ne l'était pas.** Les deux tableaux des
+quatre systèmes portaient la composante sous l'étiquette « **dont** garantie
+vieillesse du système 4 ». Un « dont » annonce une part d'un total qui la
+contient ; celui-là désignait une somme qui s'y AJOUTE. La preuve était sous
+les yeux du lecteur et personne ne l'avait lue : sur le passé observé, les
+systèmes 3 et 4 affichaient le même 7 046 Md € au centime près — or seule la
+garantie les sépare avant la bascule. Un « dont » de 1 930 Md € ne peut pas
+sortir de deux totaux identiques dont l'un n'a pas de garantie. Le dépliant de
+la cascade, lui, disait juste depuis toujours : « il s'AJOUTE à la dépense »,
+et arrivait à 283,0 Md € en 2025 quand la carte de tête en montrait 261,4.
+
+**Ce qui est fait.** Les deux lignes s'appellent « s'ajoute au système 4 », et
+les deux tableaux portent désormais le TOTAL — 8 977 Md € cumulés sur
+1959-2024 et 281,7 Md € en 2024 ; 381 Md € en 2070 et 16 656 Md € cumulés,
+garantie nette des reprises comprise. La courbe de tête porte sa glose, « hors
+garantie vieillesse », et le solde de la carte dit la même chose en trois mots.
+Le tableau poste par poste n'avait pas à changer : sa ligne « pour mémoire,
+hors du compte » était exacte.
+
+**Trois autres écarts, trouvés au passage sur les RECETTES.** Le dépliant des
+transferts additionnait trois payeurs et n'en nommait que deux : il écrivait
+que la branche famille et l'assurance chômage expliquaient « 8,5 % des
+ressources, sur les 4,8 % du poste transferts » — un sous-ensemble plus grand
+que son ensemble. Les deux caisses en font 3,7 % ; les 4,8 % qui manquaient
+sont ceux du fonds de solidarité vieillesse, dont la recette arrive par la CSG,
+c'est-à-dire par le poste « impôts et taxes affectés » et non par les
+transferts. Même omission dans la note qui suit — 10,9 + 3,9 milliards valent
+0,50 % du PIB, et non les 1,17 % annoncés, qui comptent les 19,6 milliards du
+fonds — et dans celle du coefficient d'équilibre. Le modèle, lui, retirait bien
+les trois, et `retrait_par_impot` évitait déjà le double retrait : c'est la
+prose qui nommait deux payeurs sur trois. Enfin, « le système de retraite y
+prélève **aujourd'hui** 30,7 % » lisait `horizon.taux_prelevement`, qui est le
+taux de 2070 ; celui de 2025 est 32,8 %. Les deux sont maintenant donnés, avec
+leur année.
+
+**Le contrôle qui manquait.** `garantie_hors_masse_contributive` tient
+l'affirmation : sur le passé observé, la masse du scénario 6 est égale à celle
+du scénario 4 au centime, et la garantie n'est pas nulle ; à l'horizon, le taux
+unique les sépare dans l'autre sens, la garantie restant par-dessus. Trois
+entrées du catalogue s'y accrochent.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
+`data/reference/site/affirmations.yaml`, `tests/test_affirmations.py`,
+`tests/temoins/pages.json`.

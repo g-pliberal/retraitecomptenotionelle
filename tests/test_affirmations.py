@@ -518,6 +518,34 @@ def _(m: Modele):
     assert "garantie_vieillesse" in m.horizon.postes_depenses("notionnel_liberal")
 
 
+@controle("garantie_hors_masse_contributive")
+def _(m: Modele):
+    """La dépense du scénario 6 ne porte pas sa garantie, qui s'y AJOUTE.
+
+    Financée par l'impôt, la garantie a quitté la masse contributive le
+    19 septembre 2026. La preuve tient en une égalité : sur le passé observé,
+    le scénario 6 et le scénario 4 prélèvent les mêmes taux et ne diffèrent
+    que par elle — si leurs masses sont égales au centime, c'est qu'elle n'est
+    dans ni l'une ni l'autre. Et elle n'est pas nulle pour autant.
+    """
+    passe = m.cout.annee(m.cout.derniere_annee)
+    assert passe.cout_constants("notionnel_liberal") == pytest.approx(
+        passe.cout_constants("notionnel_retroactif_employeur"))
+    assert passe.cout_constants(COMPOSANTE_GARANTIE) > 0.0
+    # À l'horizon, le taux unique les sépare — dans l'autre sens : le
+    # scénario 6 coûte MOINS, sa garantie restant par-dessus le marché.
+    horizon = m.cout.avenir.annee(m.cout.avenir.derniere_annee)
+    assert (horizon.cout_constants("notionnel_liberal")
+            < horizon.cout_constants("notionnel_retroactif_employeur"))
+    assert horizon.cout_constants(COMPOSANTE_GARANTIE) > 0.0
+    # Et le bilan dit la même chose de l'autre côté : la composante n'entre
+    # pas dans la dépense du système, elle est portée pour mémoire.
+    postes = m.horizon.postes_depenses("notionnel_liberal")
+    assert postes["garantie_vieillesse"] > 0.0
+    assert (postes["droits_directs"] + postes["droits_derives"]
+            == pytest.approx(m.horizon.depense("notionnel_liberal")))
+
+
 @controle("garantie_remplace_les_minima")
 def _(m: Modele):
     assert m.sim.regime_fusionne.avantages_non_contributifs == ()
