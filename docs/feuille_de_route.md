@@ -810,6 +810,10 @@ système actuel. `limites.md` §5 porte les trois.
   toujours 2,3 points par an. Ce que le script ne dit pas : la variante
   n'est pas portée dans `moteur/js/`, et la page garde son scénario 6
   rétroactif.
+  *Décision de l'utilisateur, le même jour : la variante prospective n'est
+  pas retenue — à −3,92 point de PIB par an elle n'est pas finançable. La
+  proposition reste rétroactive ; le script demeure, comme mesure de ce
+  que la rétroactivité finance.*
 
 ### 7. Saisir un relevé de carrière réel sur le site — `fait`
 
