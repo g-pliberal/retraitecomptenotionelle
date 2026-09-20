@@ -20,6 +20,14 @@
 #      des `<strong>` d'au moins trois mots, ou qui fait une phrase — est ici,
 #      ou déclarée `sans_portee`.
 #
+# Un quatrième état est venu avec la page Risque, qui est une revue de
+# littérature : `hors_modele`. La phrase affirme quelque chose sur le MONDE —
+# ce que la Grèce a coupé, ce que les juges en ont fait — et aucun contrôle du
+# modèle ne peut la trancher. Elle n'est pas pour autant `sans_portee` : elle
+# peut être fausse. Ce que le test exige alors est ce que le dépôt exige
+# partout ailleurs d'une affirmation sur le monde — sa source, citée dans la
+# page même, et le champ `source` porte de quoi la retrouver.
+#
 # Champs :
 #   id        libre, unique
 #   page      le chemin de la page (`/`, `/cout`…), ou une liste de chemins ;
@@ -28,9 +36,10 @@
 #             ne pas se retrouver par hasard (huit caractères au moins) et
 #             assez court pour survivre à une retouche de mise en page
 #   porte     ce que la phrase affirme sur ce que le système FAIT, en une ligne
-#   etat      verifiee | contredite | sans_portee
+#   etat      verifiee | contredite | hors_modele | sans_portee
 #   controle  (verifiee, contredite) le nom du contrôle
 #   action    (contredite) le numéro de l'action de la feuille de route
+#   source    (hors_modele) un fragment de la citation, cherché dans la page
 #
 # Le piège, nommé d'avance : est `sans_portee` ce qui ne peut pas être faux —
 # un titre, une invitation, une transition, une opinion. Dès qu'une phrase dit
@@ -342,7 +351,7 @@ affirmations:
 
   - id: simuler.ecart_fiche_de_paie
     page: /simuler
-    extrait: "de MOINS sur votre fiche de paie"
+    extrait: "sur votre fiche de paie"
     porte: l'écart affiché est la différence des deux nets de la fiche de paie
     etat: verifiee
     controle: fiche_de_paie_ecart_net
@@ -377,8 +386,8 @@ affirmations:
 
   - id: simuler.volontaires_non_partages
     page: /simuler
-    extrait: "volontaires, eux, ne sont partagés avec personne."
-    porte: la ligne volontaire ne porte aucune part employeur
+    extrait: "volontaires, eux, ne sont sur la fiche de paie de personne."
+    porte: les cinq points volontaires ne sont pas une ligne de la fiche, et rien ne les cofinance
     etat: verifiee
     controle: volontaire_a_la_charge_de_l_assure
 
@@ -798,10 +807,10 @@ affirmations:
     etat: verifiee
     controle: garantie_remplace_les_minima
 
-  - id: cout.quatre_minima
+  - id: cout.trois_minima
     page: /cout
-    extrait: "Ce que ces quatre minima coûtent"
-    porte: les quatre minima remplacés ont chacun une ligne, chiffrée ou déclarée
+    extrait: "Ce que ces trois minima coûtent"
+    porte: les minima remplacés ont chacun une ligne, chiffrée ou déclarée
     etat: verifiee
     controle: garantie_remplace_les_minima
 
@@ -867,6 +876,27 @@ affirmations:
     porte: un titre de réserve
     etat: sans_portee
 
+  - id: cout.ce_que_personne_n_a_cotise
+    page: /cout
+    extrait: "Ce que personne n'a cotisé."
+    porte: les avantages chiffrés pèsent de l'ordre d'un cinquième de la dépense
+    etat: verifiee
+    controle: part_des_avantages_chiffres_un_cinquieme
+
+  - id: cout.ensemble_des_avantages
+    page: /cout
+    extrait: "Ensemble des avantages chiffrés"
+    porte: le total est la somme des familles, et il vaut ce que la page Avantages annonce
+    etat: verifiee
+    controle: part_des_avantages_chiffres_un_cinquieme
+
+  - id: cout.pilier_collecte
+    page: /cout
+    extrait: "Ce que le pilier collecte, ce que l'enveloppe prélève, ce qu'il sert."
+    porte: le pilier est agrégé pour lui-même, hors du solde de la répartition
+    etat: verifiee
+    controle: capitalisation_hors_du_bilan
+
   - id: cout.deux_ponderations
     page: /cout
     extrait: "Deux pondérations se composent."
@@ -889,7 +919,7 @@ affirmations:
 
   - id: cout.limite_recettes
     page: /cout
-    extrait: "Les recettes réagissent sur trois points, et sur trois seulement."
+    extrait: "La recette réagit sur trois points, et sur trois seulement."
     porte: le retrait des transferts, le taux sur l'assiette, et trois postes non reconduits
     etat: verifiee
     controle: recettes_trois_reactions
@@ -903,21 +933,21 @@ affirmations:
 
   - id: cout.limite_stock
     page: /cout
-    extrait: "Les pensions déjà servies à la bascule gardent les prix."
+    extrait: "les pensions en cours à la bascule"
     porte: la revalorisation du stock est sur les prix par défaut
     etat: verifiee
     controle: stock_sur_les_prix
 
   - id: cout.limite_coefficient
     page: /cout
-    extrait: "Le coefficient d'équilibre n'est jamais appliqué."
+    extrait: "ce que le coefficient d'équilibre ferait"
     porte: le coefficient est calculé, et les dépenses de la page ne le portent pas
     etat: verifiee
     controle: coefficient_jamais_applique
 
   - id: cout.limite_retour_equilibre
     page: /cout
-    extrait: "L'année du retour à l'équilibre se lit à quelques années près."
+    extrait: "l'année du retour à l'équilibre se lit à quelques années près"
     porte: le déficit observé est de l'ordre du pas de la grille, quelques dixièmes de point
     etat: verifiee
     controle: deficit_observe_de_l_ordre_du_pas
@@ -938,28 +968,28 @@ affirmations:
 
   - id: cout.limite_couverture
     page: /cout
-    extrait: "Le taux de couverture est supposé constant."
+    extrait: "Le modèle compte des générations, non des personnes."
     porte: aucun taux de couverture n'est paramétré, le modèle compte des générations
     etat: verifiee
     controle: pas_de_parametre_de_couverture
 
   - id: cout.limite_effectifs
     page: /cout
-    extrait: "Un effectif de caisse n'est pas un effectif de personnes."
+    extrait: "Ses effectifs sont ceux des caisses"
     porte: la somme des effectifs de caisse dépasse l'effectif tous régimes
     etat: verifiee
     controle: effectifs_de_caisse_se_recoupent
 
   - id: cout.limite_avant_1975
     page: /cout
-    extrait: "Avant 1975, la reconstitution est mince."
+    extrait: "avant 1975 la reconstitution est mince"
     porte: les premières années reposent sur bien moins de couples cas type × génération
     etat: verifiee
     controle: reconstitution_mince_avant_1975
 
   - id: cout.limite_grille
     page: /cout
-    extrait: "La grille échantillonne une génération sur cinq."
+    extrait: "La grille échantillonne une génération sur cinq"
     porte: les générations vont de cinq en cinq
     etat: verifiee
     controle: pas_des_generations
@@ -973,14 +1003,14 @@ affirmations:
 
   - id: cout.limite_reprise
     page: /cout
-    extrait: "La reprise sur succession est une hypothèse, pas une donnée."
-    porte: la part reprise est un paramètre
+    extrait: "la part de l'avance que la succession couvre"
+    porte: la part reprise est lue sur le patrimoine des retraités, ou posée par un réglage
     etat: verifiee
     controle: part_de_reprise_est_un_reglage
 
   - id: cout.limite_certification
     page: /cout
-    extrait: "Rien de tout cela n'est certifié, et ne peut l'être."
+    extrait: "Rien de ce qui suit n'est certifié, et ne peut l'être"
     porte: le coût agrégé est de fiabilité estimée
     etat: verifiee
     controle: cout_estime
@@ -1346,6 +1376,60 @@ affirmations:
     extrait: "Qui reprend un chiffre d'ici cite le producteur, pas ce site."
     porte: une règle de citation
     etat: sans_portee
+
+  # ------------------------------------------------------------------------
+  # Risque — une revue de littérature, et ce que le modèle en dit
+  # ------------------------------------------------------------------------
+
+  - id: risque.part_non_financee
+    page: /risque
+    extrait: "il manquerait 16 % en 2070"
+    porte: la part de la dépense que les recettes ne couvrent pas à l'horizon
+    etat: verifiee
+    controle: part_non_financee_a_l_horizon
+
+  - id: risque.ce_qui_arrive
+    page: /risque
+    extrait: "Ce qui arrive, c'est une baisse"
+    porte: aucun grand régime public n'a cessé de payer hors effondrement de l'État
+    etat: hors_modele
+    source: "Jensen et Richter"
+
+  - id: risque.proposition_change
+    page: /risque
+    extrait: "Ce que la proposition change."
+    porte: le compte notionnel ne supprime pas le risque, il le règle par le coefficient
+    etat: contredite
+    action: 11
+    controle: coefficient_calcule_jamais_applique
+
+  - id: risque.russie
+    page: /risque
+    extrait: "Le seul non-paiement documenté dans un grand régime public est russe."
+    porte: un fait historique, appuyé sur la recherche citée
+    etat: hors_modele
+    source: "Jensen et Richter (2004)"
+
+  - id: risque.grece
+    page: /risque
+    extrait: "La Grèce est le cas européen."
+    porte: un fait historique, appuyé sur la recherche citée
+    etat: hors_modele
+    source: "Tinios (2016)"
+
+  - id: risque.juges
+    page: /risque
+    extrait: "Partout ailleurs, les juges ont défait la coupe."
+    porte: une revue de décisions de justice, pays par pays
+    etat: hors_modele
+    source: "Cour constitutionnelle"
+
+  - id: risque.etats_unis
+    page: /risque
+    extrait: "Les États-Unis sont le cas à venir."
+    porte: l'épuisement de la réserve de la Social Security, daté par ses administrateurs
+    etat: hors_modele
+    source: "administrateurs de la Social Security"
 
   # ------------------------------------------------------------------------
   # Le pied de page, commun à toutes
