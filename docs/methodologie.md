@@ -1475,7 +1475,12 @@ est l'essentiel ; elle n'aurait pas d'objet avec une cotisation obligatoire.
 Les retenir tels quels est donc une **borne haute**, assumée : le modèle dit
 ce que la proposition coûterait si rien ne bougeait dans la tarification. Le
 rapport précise que la moyenne des frais sur arrérages ne porte que sur les
-neuf assureurs, sur vingt, qui les facturent. Le simulateur affiche le coût
+neuf assureurs, sur vingt, qui les facturent : sur les vingt, la moyenne est
+de 0,99 % et la médiane nulle. Les frais sur versement et de gestion sont, eux,
+des moyennes pondérées de tout le marché, et aucune médiane n'en est publiée.
+Le modèle ne compte pas les frais sur encours de rentes que 22 contrats sur 34
+affichaient en 2021, de 0,60 à 1 % par an, parce que sa rente est celle d'un
+régime qui convertit au diviseur du compte notionnel. Le simulateur affiche le coût
 complet des frais, qui dépasse les frais prélevés, parce que ce qui est
 prélevé ne produit plus d'intérêts ; `docs/limites.md` §5 ante mesure ce que
 d'autres barèmes déplaceraient.

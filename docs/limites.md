@@ -6026,16 +6026,16 @@ borne :
 La taille du biais se mesure sur le modèle. Rente mensuelle du pilier, les
 deux cotisations réunies, pour un non-cadre né en 2004 qui cotise de 22 à
 64 ans, donc toute sa carrière après la bascule (le 20 septembre 2026, courbe
-du 17) :
+du 17, diviseur par niveau de vie) :
 
 | Barème de frais (versement / gestion / arrérages) | Rente | Écart |
 |---|---|---|
-| PER individuel 2025, retenu : 1,09 / 0,76 / 2,20 | 1 723 € | référence |
-| sans frais sur versement : 0 / 0,76 / 2,20 | 1 742 € | + 1 % |
-| ordre d'un PER d'entreprise : 0 / 0,50 / 1,50 | 1 857 € | + 8 % |
-| gestion ramenée à 0,20 % : 1,09 / 0,20 / 2,20 | 1 948 € | + 13 % |
-| ordre d'un fonds public : 0 / 0,15 / 0,50 | 2 027 € | + 18 % |
-| aucun frais | 2 106 € | + 22 % |
+| PER individuel 2025, retenu : 1,09 / 0,76 / 2,20 | 1 665 € | référence |
+| sans frais sur versement : 0 / 0,76 / 2,20 | 1 684 € | + 1 % |
+| ordre d'un PER d'entreprise : 0 / 0,50 / 1,50 | 1 794 € | + 8 % |
+| gestion ramenée à 0,20 % : 1,09 / 0,20 / 2,20 | 1 883 € | + 13 % |
+| ordre d'un fonds public : 0 / 0,15 / 0,50 | 1 958 € | + 18 % |
+| aucun frais | 2 035 € | + 22 % |
 
 Pour un assuré né en 1985, qui n'a que la moitié de sa carrière après la
 bascule, l'écart entre le barème retenu et l'absence de frais tombe à 14 % ;
@@ -6044,6 +6044,40 @@ au plus deux cinquièmes, le barème déplace donc jusqu'à huit ou neuf points.
 Le sens est connu, la taille est encadrée, et le choix reste celui du
 paramètre : les trois frais se changent en un endroit
 (`frais_*_capitalisation` dans `Parametres`).
+
+**Ce que ces moyennes sont, et ce qu'on sait des médianes.** Les frais sur
+versement et de gestion de l'OPEF sont des moyennes **pondérées** de tout le
+marché remis à l'ACPR, par les primes pour le premier, par l'encours moyen pour
+le second : un euro versé ou placé y pèse un euro, ce sont les vraies moyennes
+de ce qui est payé. Les frais sur arrérages sont une moyenne **non pondérée
+des seuls organismes qui facturent**. Aucune source publique ne donne de
+médiane pour les deux premiers ; la seule autre mesure du même marché est le
+rapport du CCSF de juillet 2021, sur 34 PER assurance et leurs tarifs affichés,
+en moyennes arithmétiques non pondérées. Ce que l'on a, le 20 septembre 2026 :
+
+| Poste | OPEF 2025, marché | Sur tous les déclarants | Médiane | CCSF 2021, 34 contrats affichés |
+|---|---|---|---|---|
+| Versement | 1,09 %, pondéré par les primes | idem | non publiée | maximum affiché 3,18 % en moyenne, 0 à 5 %, courtiers en ligne à 0 |
+| Gestion, fonds en euros | 0,76 %, pondéré par l'encours | idem | non publiée, entre 0,75 et 0,90 % à en juger par la dispersion | 0,87 % en moyenne, 0,60 à 1 % hors un fonds à 2 %, 0,66 à 0,93 % par catégorie |
+| Arrérages | 2,20 %, non pondéré, 9 facturants sur 20 | 0,99 % | nulle, onze déclarants sur vingt à zéro | 1,18 % zéros compris sur 30 contrats, 0 à 3 %, onze à zéro, 0,60 % (banques) à 2,30 % (mutuelles) |
+
+Les 2,20 % retenus sont donc, pour les arrérages, le tarif de ceux qui font
+payer, non celui du marché : la moyenne sur tous les déclarants est 0,99 %, la
+médiane est nulle, et le CCSF trouvait 1,18 % zéros compris. Sur la rente,
+l'écart entre 2,20 % et 0,99 % vaut 1,2 %.
+
+**Un frais que le modèle ne compte pas, et qui pèse davantage.** Le CCSF
+relève que « 22 contrats affichent également des frais sur encours de rentes,
+avec un minimum de 0,60 % et un maximum de 1 % par an » : un prélèvement
+annuel sur la réserve qui porte la rente, distinct des arrérages, que l'OPEF ne
+mesure pas. Sur la table du modèle, à taux technique nul, il équivaut à une
+rente réduite de 9 % (0,60 %) à 15 % (1 %), pour toutes les générations, soit
+quatre à sept fois l'effet des 2,20 % d'arrérages. Le modèle ne le retient
+pas, comme il ne retient pas la table de mortalité prudente d'un assureur ni
+son taux technique : sa rente est celle d'un régime qui convertit au diviseur
+du compte notionnel, et le PER n'est que l'enveloppe. Si le pilier devait être
+servi par un assureur aux conditions de 2021, c'est ce frais-là, et non les
+arrérages, qui ferait la différence.
 
 **4. Aucun risque n'est simulé.** Le pilier est sans risque par construction,
 et c'est un choix de proposition autant que de modèle : un régime obligatoire
@@ -6694,7 +6728,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1199<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1201<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

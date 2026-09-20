@@ -26,8 +26,11 @@ CE QUE LE DOCUMENT DIT ET QUE LA PRESSE NE DISAIT PAS. La moyenne des frais
 sur arrérages est « non pondérée » et « ne tient compte que » des organismes
 qui facturent effectivement ces frais — 9 sur 20 pour le PER individuel en
 2025. Les onze autres ne prélèvent rien sur la rente. La valeur du fichier de
-référence est donc la moyenne de ceux qui facturent, pas celle du marché ; le
-script imprime les deux effectifs pour que personne ne l'oublie.
+référence est donc la moyenne de ceux qui facturent, pas celle du marché. Le
+script imprime les deux effectifs et en déduit ce que le rapport ne dit pas :
+la moyenne non pondérée sur tous les déclarants (la publiée, multipliée par la
+part des facturants) et la médiane, nulle dès que les facturants sont moins de
+la moitié — 0,99 % et zéro pour le PER individuel en 2025.
 
 Le document se lit avec ``pypdf``, comme celui de l'ERAFP : le lecteur du
 dépôt (``lecture_pdf.py``) ne rend pas les polices CFF de ce rapport.
@@ -134,10 +137,27 @@ def lire_tableau(texte: str, titre: str) -> dict:
             "gestion": _fraction(euros[1][rang]),
             "arrerages": _fraction(arrerages.group(rang + 1)),
         }
+    n_declarants = int(declarants.group(1)) if declarants else None
+    n_facturant = int(declarants.group(2)) if declarants else None
+    # La moyenne publiée ne porte que sur ceux qui facturent. Sur TOUS les
+    # déclarants, les autres prélevant zéro, la moyenne non pondérée est la
+    # publiée multipliée par la part des facturants ; la médiane est nulle dès
+    # que les facturants sont moins de la moitié, et n'est pas déterminable
+    # autrement, le rapport ne donnant pas la distribution.
+    tous_declarants = None
+    mediane = None
+    if n_declarants:
+        tous_declarants = {
+            annee: round(frais["arrerages"] * n_facturant / n_declarants, 6)
+            for annee, frais in par_annee.items()
+        }
+        mediane = 0.0 if 2 * n_facturant < n_declarants else None
     return {
         "exercices": par_annee,
-        "arrerages_organismes_declarants": int(declarants.group(1)) if declarants else None,
-        "arrerages_organismes_facturant": int(declarants.group(2)) if declarants else None,
+        "arrerages_organismes_declarants": n_declarants,
+        "arrerages_organismes_facturant": n_facturant,
+        "arrerages_moyenne_tous_declarants": tous_declarants,
+        "arrerages_mediane_declarants": mediane,
     }
 
 
@@ -206,8 +226,12 @@ def main(argv: list[str] | None = None) -> int:
         print(f"PER individuel {annee} : versement {frais['versement']:.2%}, "
               f"gestion {frais['gestion']:.2%}, arrérages {frais['arrerages']:.2%}")
     if per["arrerages_organismes_declarants"]:
+        derniere = max(per["exercices"])
         print(f"arrérages : moyenne non pondérée sur {per['arrerages_organismes_facturant']} "
-              f"organismes qui facturent, sur {per['arrerages_organismes_declarants']} déclarants")
+              f"organismes qui facturent, sur {per['arrerages_organismes_declarants']} déclarants ; "
+              f"sur tous les déclarants, {per['arrerages_moyenne_tous_declarants'][derniere]:.2%} "
+              f"en moyenne, médiane "
+              + ("nulle" if per["arrerages_mediane_declarants"] == 0.0 else "non déterminable"))
     print(f"{SORTIE.relative_to(RACINE)} : {len(tables)} tableaux lus")
 
     if options.confronter:

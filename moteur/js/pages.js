@@ -7853,11 +7853,12 @@ volontaires, contrat par contrat, et la commission du réseau qui le place en es
 l'essentiel : elle n'aurait pas d'objet si la cotisation était obligatoire. Les
 retenir tels quels est donc une <strong>borne haute</strong>, assumée comme
 telle : le modèle dit ce que la proposition coûterait si rien ne bougeait dans
-la tarification. Le rapport précise que la moyenne des frais sur arrérages ne
-porte que sur les assureurs qui les facturent, neuf sur vingt ; et le frais de
-gestion est le poste qui pèse, parce qu'il s'applique chaque année à tout
-l'encours. Ce que d'autres barèmes déplaceraient est mesuré dans les limites
-du modèle.</p>
+la tarification. Les frais sur versement et de gestion sont des moyennes
+pondérées de tout le marché ; celui sur arrérages est la moyenne des seuls
+assureurs qui le facturent, neuf sur vingt, soit 0,99 % sur les vingt et une
+médiane nulle. Le frais de gestion est le poste qui pèse, parce qu'il
+s'applique chaque année à tout l'encours. Ce que d'autres barèmes
+déplaceraient est mesuré dans les limites du modèle.</p>
 
 <h3>Comment le capital devient une rente</h3>
 <p>Par le mécanisme du plan d'épargne retraite : le capital est divisé par un

@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 214<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 215<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8715,3 +8715,21 @@ en un endroit. Le niveau reste `haute` : `certifiee` demanderait que
 `verifier_donnees.py` lise ce fichier, qui n'est pas une série. Le document
 reste à déposer une fois, à la main, sur la release `documents-apportes`, avec
 l'empreinte inscrite au manifeste.
+
+**Le même jour, la suite : les vraies moyennes et les médianes.** « Je veux
+que l'on ait les chiffres des vraies moyennes et des vraies médianes ; pas
+seulement ceux qui font payer. » Ce que l'OPEF pondère et ce qu'il ne pondère
+pas a été relu : versement et gestion sont des moyennes pondérées de tout le
+marché, par les primes et par l'encours moyen, donc les vraies moyennes de ce
+qui est payé ; les arrérages, une moyenne non pondérée des seuls facturants,
+d'où 0,99 % sur les vingt déclarants et une médiane nulle, que le récupérateur
+déduit désormais. Aucune médiane n'est publiée pour les deux premiers, ni par
+l'OPEF ni par le CCSF, dont le rapport de 2021 sur 34 PER assurance a été
+obtenu et lu : versement maximum affiché 3,18 % (0 à 5), gestion 0,87 % (0,60
+à 1 hors un fonds à 2), arrérages 1,18 % zéros compris, onze contrats sur
+trente à zéro. Et une trouvaille : 22 contrats sur 34 prélèvent aussi 0,60 à
+1 % par an sur l'encours de rentes, un frais que l'OPEF ne mesure pas et que
+le modèle ne compte pas, qui vaut 9 à 15 % de rente au diviseur du modèle,
+quatre à sept fois l'effet des arrérages. Le fichier de frais porte un bloc
+`distributions` avec tout cela, le manifeste un jeu `controle` pour le CCSF,
+et `limites.md` §5 ante le tableau. Le barème du calcul reste inchangé.
