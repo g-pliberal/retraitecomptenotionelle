@@ -1370,16 +1370,21 @@ ul.legende .lu {
    à la distance qui sépare deux paragraphes : c'est la même figure, dite
    autrement. Déplié, il est borné en hauteur, et ses en-têtes de colonne
    restent visibles pendant qu'on le parcourt. */
-.donnees-graphique, .donnees-frise { margin: -1.4rem 0 1.7rem; }
-.donnees-graphique .defilant, .donnees-frise .defilant { max-height: 24rem; overflow-y: auto; }
-.donnees-graphique table, .donnees-frise table { font-size: 0.9rem; }
+.donnees-graphique, .donnees-frise, .donnees-cascade { margin: -1.4rem 0 1.7rem; }
+.donnees-graphique .defilant, .donnees-frise .defilant,
+.donnees-cascade .defilant { max-height: 24rem; overflow-y: auto; }
+.donnees-graphique table, .donnees-frise table,
+.donnees-cascade table { font-size: 0.9rem; }
 .donnees-graphique th, .donnees-graphique td,
-.donnees-frise th, .donnees-frise td { padding: 0.25rem 0.6rem; }
-.donnees-graphique thead th, .donnees-frise thead th {
+.donnees-frise th, .donnees-frise td,
+.donnees-cascade th, .donnees-cascade td { padding: 0.25rem 0.6rem; }
+.donnees-graphique thead th, .donnees-frise thead th,
+.donnees-cascade thead th {
   position: sticky; top: 0; background: var(--fond-defilant);
   box-shadow: inset 0 -2px 0 var(--or);
 }
-.donnees-graphique caption, .donnees-frise caption { padding-bottom: 0.35rem; }
+.donnees-graphique caption, .donnees-frise caption,
+.donnees-cascade caption { padding-bottom: 0.35rem; }
 /* La frise des flux : une colonne par année, lue de gauche à droite dans une
    boîte qui défile. Le SVG garde sa largeur en pixels — c'est la boîte qui
    défile, pas le dessin qui rétrécit —, sans quoi quarante-cinq années
@@ -1402,6 +1407,46 @@ ul.legende .lu {
 .frise .ruban { opacity: 0.45; }
 .frise .manque { fill: var(--manque); }
 .frise .reste { fill: var(--reste); }
+/* La cascade : le pont d'un total à un autre, marche par marche. Comme la
+   frise, elle DÉFILE dans sa boîte au lieu de rétrécir — huit colonnes et
+   leurs étiquettes en biais ne se lisent pas dans la largeur d'un téléphone —,
+   et sa légende reste dessous, hors de la boîte qui défile. */
+.cascade { margin: 1.5rem 0 1.75rem; }
+.cascade .defilant { padding-bottom: 0.5rem; }
+.cascade svg { display: block; width: 100%; height: auto; }
+.cascade .grille { stroke: var(--trait); stroke-width: 1; }
+.cascade .axe { stroke: var(--trait-champ); stroke-width: 1; }
+/* Le trait de liaison n'est pas une donnée : il relie le sommet d'une marche
+   au pied de la suivante, et le pointillé dit qu'il ne mesure rien. */
+.cascade .liaison {
+  stroke: var(--texte-tres-doux); stroke-width: 1; stroke-dasharray: 3 3;
+}
+.cascade .marche.monte { fill: var(--manque); }
+.cascade .marche.descend { fill: var(--reste); }
+/* Une marche nulle n'est ni l'un ni l'autre : elle est mesurée, et sans effet.
+   Peinte en vert, elle se serait lue comme une baisse. */
+.cascade .marche.nulle { fill: var(--texte-tres-doux); }
+.cascade .marche.total { fill: var(--serie-9); }
+.cascade .graduation {
+  fill: var(--texte-tres-doux); font-family: inherit; font-size: 12px;
+  font-weight: 600; font-variant-numeric: tabular-nums;
+}
+/* Le chiffre de la marche est posé hors de la barre, sur la grille : il porte
+   donc un liseré de la couleur du fond, faute de quoi une graduation lui
+   passait au travers. */
+.cascade .valeur {
+  fill: var(--texte); font-family: inherit; font-size: 14px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  paint-order: stroke; stroke: var(--fond); stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.cascade .valeur.monte { fill: var(--manque); }
+.cascade .valeur.descend { fill: var(--reste); }
+.cascade .valeur.nulle { fill: var(--texte-tres-doux); }
+.cascade .etiquette {
+  fill: var(--texte-doux); font-family: inherit; font-size: 13px;
+}
+.cascade .etiquette.total { fill: var(--texte); font-weight: 700; }
 ul.legende {
   list-style: none; margin: 0.75rem 0 0; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; font-size: 0.9375rem;
@@ -1662,6 +1707,16 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   .graphique .etiquette-serie { font-size: 20px; stroke-width: 7px; }
   .graphique .annee-lue { font-size: 18px; }
   .graphique .signature { font-size: 26px; }
+  /* La cascade suit la même règle, et pour la même raison : réduite à la
+     largeur d'un téléphone, treize unités de viewBox y feraient six pixels.
+     Elle défile donc à 40 rem — plus large que les 30 du graphique, parce
+     qu'elle porte huit colonnes ET huit étiquettes en biais —, et ses textes
+     ne sont grossis que du peu qui manque. MARGE_BAS_CASCADE est taillée pour
+     les loger à cette taille-là. */
+  .cascade svg { min-width: 40rem; }
+  .cascade .graduation { font-size: 16px; }
+  .cascade .valeur { font-size: 18px; stroke-width: 5px; }
+  .cascade .etiquette { font-size: 16px; }
 }
 
 /* Mouvement réduit : la jauge d'attente glisse sans fin, et une animation qui
@@ -1708,7 +1763,8 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   h2 { font-size: 15pt; }
   .chapeau, .affiche .chapeau { font-size: 12pt; }
   .defilant { overflow: visible; background: none; }
-  .carte, .note, table, .graphique, .scenario, section.cle, .encadre {
+  .carte, .note, table, .graphique, .cascade, .scenario, section.cle,
+  .encadre {
     break-inside: avoid;
   }
   /* Le mot du glossaire s'imprime comme le reste de la phrase : ni bouton, ni
@@ -3470,6 +3526,306 @@ def frise_flux(titre: str, annees: tuple[AnneeFrise, ...]) -> str:
         '<details class="donnees-frise">'
         + sommaire(f"Les chiffres de cette frise, année par année ({len(annees)} lignes)")
         + f"{grille}</details>"
+    )
+
+
+#: Géométrie de la cascade, en unités du ``viewBox`` — un repère, pas des
+#: pixels. Le cadre est plus haut que celui des courbes parce que les libellés
+#: sont posés en biais SOUS l'axe : une marche s'appelle « La part patronale
+#: portée au compte », et sept intitulés de cette longueur ne tiennent pas côte
+#: à côte à l'horizontale, fût-ce sur trois lignes.
+LARGEUR_CASCADE = 760
+HAUTEUR_CASCADE = 430
+MARGE_GAUCHE_CASCADE = 58
+MARGE_DROITE_CASCADE = 16
+MARGE_HAUT_CASCADE = 40
+#: Ce qui reste sous l'axe pour les libellés inclinés : de quoi loger trente
+#: caractères à trente-cinq degrés, la plus longue étiquette de la page Coût.
+MARGE_BAS_CASCADE = 150
+
+#: Inclinaison des libellés, en degrés. Trente-cinq est la pente où l'œil suit
+#: encore la ligne sans tourner la tête, et où huit étiquettes cessent de se
+#: chevaucher. La valeur passe telle quelle dans le SVG : aucune trigonométrie
+#: n'est calculée ici, et les deux portages ne peuvent donc pas diverger sur un
+#: dernier bit.
+PENTE_CASCADE = -35
+
+#: Part de la colonne qu'occupe la barre. Le reste est le blanc qui sépare deux
+#: marches, et par lequel passe le trait de liaison.
+PART_BARRE_CASCADE = 0.62
+
+#: Ce que les étiquettes inclinées débordent du cadre : à gauche, sous la
+#: première colonne, dont l'étiquette part vers l'extérieur ; en bas, sous la
+#: dernière ligne de texte. Le viewBox s'ouvre d'autant, plutôt que le dessin
+#: se rétrécisse pour faire de la place à du texte.
+#:
+#: Les deux nombres sont MESURÉS, au navigateur, à la taille de texte du
+#: TÉLÉPHONE — la plus grande des deux, où l'étiquette de la première colonne
+#: sortait de vingt-deux unités et la dernière ligne frôlait le bord à deux
+#: unités près. Les changer sans remesurer recoupe le texte.
+DEBORD_GAUCHE_CASCADE = 34
+DEBORD_BAS_CASCADE = 14
+
+
+@dataclass(frozen=True)
+class Marche:
+    """Une marche de la cascade : un libellé, un montant, et son rôle.
+
+    ``total`` distingue les deux barres qui partent de ZÉRO — le point de
+    départ et le point d'arrivée — des marches, qui ne font que déplacer le
+    cumul. C'est la seule chose qu'un lecteur ait besoin de savoir pour lire le
+    tracé, et c'est aussi ce qui décide de la couleur : un total porte celle de
+    son système, une marche celle de son signe.
+
+    ``couleur`` n'est donc lue que pour un total. Donner sa couleur à une
+    marche reviendrait à faire mentir la légende, qui ne connaît que deux
+    teintes : ce qui ajoute à la dépense, et ce qui l'en retire.
+    """
+
+    libelle: str
+    valeur: float
+    total: bool = False
+    couleur: str = ""
+    #: Ce que la marche recouvre, redit dans le tableau des chiffres. Une
+    #: étiquette de trente caractères ne peut pas porter une définition, et
+    #: c'est pourtant là que se cache ce qu'une cascade peut faire dire de
+    #: travers : « recalculées au franc le franc » bundle quatre règles.
+    glose: str = ""
+
+
+def _abscisse_cascade(rang: int, marches: int) -> float:
+    """Le centre de la colonne de rang ``rang``, sur ``marches`` colonnes."""
+    largeur = LARGEUR_CASCADE - MARGE_GAUCHE_CASCADE - MARGE_DROITE_CASCADE
+    return MARGE_GAUCHE_CASCADE + largeur * (rang + 0.5) / marches
+
+
+def _ordonnee_cascade(valeur: float, sommet: float, plancher: float) -> float:
+    hauteur = HAUTEUR_CASCADE - MARGE_HAUT_CASCADE - MARGE_BAS_CASCADE
+    if sommet <= plancher:
+        return HAUTEUR_CASCADE - MARGE_BAS_CASCADE
+    return (HAUTEUR_CASCADE - MARGE_BAS_CASCADE
+            - hauteur * (valeur - plancher) / (sommet - plancher))
+
+
+def signe_cascade(valeur: float, decimales: int) -> str:
+    """Un montant signé, au moins typographique, et jamais « −0,0 ».
+
+    Une marche plus petite qu'un demi-dixième s'écrit « 0,0 » sans signe :
+    « −0,0 » se lit comme une baisse, et ce n'en est pas une. Le test porte sur
+    le TEXTE et non sur le nombre — c'est le texte qui sera lu, et c'est le seul
+    essai que les deux portages font à coup sûr de la même façon.
+    """
+    texte = nombre(abs(valeur), decimales)
+    if texte == nombre(0.0, decimales):
+        return texte
+    return ("+" if valeur > 0 else "−") + texte
+
+
+def _sens_cascade(valeur: float, decimales: int) -> str:
+    """Le sens d'une marche, tel que son CHIFFRE l'écrit.
+
+    Le test porte sur le texte et non sur le nombre, exactement comme
+    :func:`signe_cascade`, et pour la même raison : une marche qui s'affiche
+    « 0,0 » ne doit pas être peinte en vert. Elle n'est pas une baisse, elle
+    est une mesure sans effet cette année-là, et c'est un troisième état.
+    """
+    if nombre(abs(valeur), decimales) == nombre(0.0, decimales):
+        return "nulle"
+    return "monte" if valeur > 0 else "descend"
+
+
+def cascade(titre: str, marches: tuple[Marche, ...], unite: str = "",
+            decimales: int = 1, decimales_axe: int = 0,
+            libelle_marche: str = "Étape") -> str:
+    """Le pont d'un total à un autre, marche par marche.
+
+    UNE CASCADE RÉPOND À UNE SEULE QUESTION, et c'est ce qui la rend meilleure
+    qu'un tableau ici : de tous les changements qui séparent ces deux nombres,
+    lequel pèse, et dans quel sens ? Deux colonnes de chiffres laissent ce
+    travail au lecteur — il doit soustraire de tête, et il ne le fait pas. La
+    cascade le montre : la première barre part de zéro, chaque marche reprend
+    le cumul où la précédente l'a laissé, et la dernière barre retombe sur
+    zéro.
+
+    LE DESSIN NE TIENT QUE SI LE COMPTE TOMBE JUSTE. Les marches somment
+    exactement à l'écart des deux totaux, ou la dernière barre ne retombe pas
+    où elle devrait — et cela se VOIT, ce qui est la propriété la plus utile de
+    cette figure. ``tests/test_web.py`` l'exige en plus du dessin, parce qu'un
+    écart d'un millième se verrait mal.
+
+    LA COULEUR DIT LE SENS, et pas toute seule : une marche qui monte est
+    rouge, une marche qui descend est verte, le signe est écrit contre le
+    chiffre, et l'ordre des marches est celui du tableau posé dessous. C'est la
+    paire du ruban d'écart du graphique de bilan — ``--manque`` et ``--reste``
+    —, pour qu'une couleur désigne partout la même chose : ce qui coûte, et ce
+    qui rend.
+
+    Les libellés sont posés en biais. À l'horizontale, chacun demanderait
+    quatre-vingts unités de large, qu'une cascade de huit colonnes n'a pas ; à
+    la verticale, ils se liraient la tête penchée.
+    """
+    if not marches:
+        return ""
+
+    # Les niveaux : le cumul AVANT et APRÈS chaque marche. Un total n'est pas un
+    # déplacement — il est posé sur zéro, et il REMET le cumul à sa valeur, de
+    # sorte qu'une cascade puisse en enchaîner plusieurs sans se décaler.
+    niveaux: list[tuple[float, float]] = []
+    cumul = 0.0
+    for marche in marches:
+        if marche.total:
+            niveaux.append((0.0, marche.valeur))
+            cumul = marche.valeur
+        else:
+            niveaux.append((cumul, cumul + marche.valeur))
+            cumul += marche.valeur
+
+    # L'échelle couvre TOUS les niveaux traversés, et pas seulement les totaux :
+    # une marche qui descend sous zéro avant de remonter sortirait du cadre.
+    bornes = [borne for paire in niveaux for borne in paire] + [0.0]
+    maximum = max(bornes)
+    minimum = min(bornes)
+    if minimum >= 0.0:
+        pas = pas_graduation(maximum)
+        sommet, plancher = pas * DIVISIONS_Y, 0.0
+    else:
+        pas = pas_graduation(maximum - minimum)
+        plancher = math.floor(minimum / pas) * pas
+        sommet = max(0.0, math.ceil(maximum / pas)) * pas
+
+    gauche = nombre_brut(MARGE_GAUCHE_CASCADE)
+    droite = nombre_brut(LARGEUR_CASCADE - MARGE_DROITE_CASCADE)
+    grille = []
+    for division in range(round((sommet - plancher) / pas) + 1):
+        valeur = plancher + pas * division
+        y = nombre_brut(_ordonnee_cascade(valeur, sommet, plancher))
+        grille.append(
+            f'<line class="grille" x1="{gauche}" y1="{y}" x2="{droite}" y2="{y}"/>'
+            f'<text class="graduation" x="{nombre_brut(MARGE_GAUCHE_CASCADE - 6)}" '
+            f'y="{y}" dy="0.32em" text-anchor="end">'
+            f"{nombre(valeur, decimales_axe)}</text>"
+        )
+
+    colonne = (
+        (LARGEUR_CASCADE - MARGE_GAUCHE_CASCADE - MARGE_DROITE_CASCADE)
+        / len(marches)
+    )
+    largeur_barre = colonne * PART_BARRE_CASCADE
+    bas_axe = nombre_brut(_ordonnee_cascade(plancher, sommet, plancher))
+    y_libelles = HAUTEUR_CASCADE - MARGE_BAS_CASCADE + 24
+
+    barres: list[str] = []
+    liaisons: list[str] = []
+    textes: list[str] = []
+    for rang, (marche, (debut, fin)) in enumerate(zip(marches, niveaux)):
+        centre = _abscisse_cascade(rang, len(marches))
+        x = centre - largeur_barre / 2
+        haut = _ordonnee_cascade(max(debut, fin), sommet, plancher)
+        pied = _ordonnee_cascade(min(debut, fin), sommet, plancher)
+        # Une marche nulle ne dessinerait rien, et une colonne vide se lit
+        # comme une colonne oubliée. Un filet d'une unité dit « mesuré, et
+        # nul », ce qui n'est pas la même chose que « pas mesuré » — et c'est
+        # justement ce que la cotisation unique vaut l'année d'avant sa
+        # bascule.
+        hauteur = max(pied - haut, 1.0)
+        sens = _sens_cascade(marche.valeur, decimales)
+        if marche.total:
+            classe = "total"
+            teinte = f' fill="{marche.couleur}"' if marche.couleur else ""
+        else:
+            classe = sens
+            teinte = ""
+        barres.append(
+            f'<rect class="marche {classe}"{teinte} x="{nombre_brut(x)}" '
+            f'y="{nombre_brut(haut)}" width="{nombre_brut(largeur_barre)}" '
+            f'height="{nombre_brut(hauteur)}"/>'
+        )
+        # Le trait de liaison part du sommet de la marche et rejoint la
+        # suivante : sans lui, huit barres flottantes ne se lisent pas comme
+        # une suite. Il s'arrête devant un total, qui repart de zéro et ne
+        # continue donc rien.
+        if rang + 1 < len(marches) and not marches[rang + 1].total:
+            y = nombre_brut(_ordonnee_cascade(fin, sommet, plancher))
+            suivante = _abscisse_cascade(rang + 1, len(marches)) - largeur_barre / 2
+            liaisons.append(
+                f'<line class="liaison" x1="{nombre_brut(x + largeur_barre)}" '
+                f'y1="{y}" x2="{nombre_brut(suivante)}" y2="{y}"/>'
+            )
+        # Le chiffre est posé DEHORS : au-dessus de ce qui monte, au-dessous de
+        # ce qui descend. Dedans, il tombait dans le vide dès qu'une marche
+        # valait moins d'un dixième de l'échelle.
+        montant = (nombre(marche.valeur, decimales) if marche.total
+                   else signe_cascade(marche.valeur, decimales))
+        classe_texte = "valeur" if marche.total else f"valeur {sens}"
+        y_valeur = (pied + 20) if sens == "descend" and not marche.total else haut - 9
+        textes.append(
+            f'<text class="{classe_texte}" x="{nombre_brut(centre)}" '
+            f'y="{nombre_brut(y_valeur)}" text-anchor="middle">{montant}</text>'
+        )
+        # Le libellé, en biais, ancré par sa FIN sous le centre de la colonne :
+        # c'est ce qui le fait finir sous sa propre barre plutôt que sous la
+        # voisine.
+        pivot_x = nombre_brut(centre)
+        pivot_y = nombre_brut(y_libelles)
+        textes.append(
+            f'<text class="etiquette{" total" if marche.total else ""}" '
+            f'x="{pivot_x}" y="{pivot_y}" text-anchor="end" '
+            f'transform="rotate({PENTE_CASCADE} {pivot_x} {pivot_y})">'
+            f"{escape(marche.libelle)}</text>"
+        )
+
+    unite_html = (
+        f'<text class="graduation" x="0" '
+        f'y="{nombre_brut(MARGE_HAUT_CASCADE - 18)}" text-anchor="start">'
+        f"{escape(unite)}</text>"
+        if unite else ""
+    )
+    legende_html = (
+        '<figcaption><ul class="legende">'
+        '<li><span class="pastille ecart-moins"></span>'
+        "<span>Ce qui ajoute à la dépense</span></li>"
+        '<li><span class="pastille ecart-plus"></span>'
+        "<span>Ce qui l'en retire</span></li>"
+        "</ul></figcaption>"
+    )
+
+    # Le tableau des chiffres, tiré des mêmes marches : un dessin est une
+    # image, et le RGAA demande pour une image complexe une description
+    # détaillée. Pour une cascade, cette description est la suite des marches
+    # ET le cumul qu'elles laissent — c'est le cumul qui dit que le compte
+    # tombe juste, et c'est lui qu'on ne peut pas lire sur le tracé.
+    en_tete = f" ({escape(unite)})" if unite else ""
+    lignes = []
+    for marche, (_, fin) in zip(marches, niveaux):
+        lignes.append([
+            escape(marche.libelle)
+            + (f' <span class="discret">{escape(marche.glose)}</span>'
+               if marche.glose else ""),
+            nombre(marche.valeur, decimales) if marche.total
+            else signe_cascade(marche.valeur, decimales),
+            nombre(fin, decimales),
+        ])
+    grille_html = tableau(
+        [libelle_marche, f"Effet{en_tete}", f"Cumul{en_tete}"],
+        lignes, ["", "nombre", "nombre"], titre=titre, entete_de_ligne=True,
+    )
+    return (
+        f'<figure class="cascade" role="group" aria-label="{escape(titre)}">'
+        f'<div class="defilant" tabindex="0" role="region" '
+        f'aria-label="{escape(titre)}">'
+        f'<svg viewBox="{-DEBORD_GAUCHE_CASCADE} 0 '
+        f'{LARGEUR_CASCADE + DEBORD_GAUCHE_CASCADE} '
+        f'{HAUTEUR_CASCADE + DEBORD_BAS_CASCADE}" role="img" '
+        f'aria-label="{escape(titre)}">'
+        f"{''.join(grille)}{''.join(liaisons)}{''.join(barres)}"
+        f'<line class="axe" x1="{gauche}" y1="{bas_axe}" x2="{droite}" '
+        f'y2="{bas_axe}"/>'
+        f"{unite_html}{''.join(textes)}</svg></div>"
+        f"{legende_html}</figure>"
+        '<details class="donnees-cascade">'
+        + sommaire(f"Les chiffres de cette cascade, marche par marche "
+                   f"({len(marches)} lignes)")
+        + f"{grille_html}</details>"
     )
 
 

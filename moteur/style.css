@@ -1357,16 +1357,21 @@ ul.legende .lu {
    à la distance qui sépare deux paragraphes : c'est la même figure, dite
    autrement. Déplié, il est borné en hauteur, et ses en-têtes de colonne
    restent visibles pendant qu'on le parcourt. */
-.donnees-graphique, .donnees-frise { margin: -1.4rem 0 1.7rem; }
-.donnees-graphique .defilant, .donnees-frise .defilant { max-height: 24rem; overflow-y: auto; }
-.donnees-graphique table, .donnees-frise table { font-size: 0.9rem; }
+.donnees-graphique, .donnees-frise, .donnees-cascade { margin: -1.4rem 0 1.7rem; }
+.donnees-graphique .defilant, .donnees-frise .defilant,
+.donnees-cascade .defilant { max-height: 24rem; overflow-y: auto; }
+.donnees-graphique table, .donnees-frise table,
+.donnees-cascade table { font-size: 0.9rem; }
 .donnees-graphique th, .donnees-graphique td,
-.donnees-frise th, .donnees-frise td { padding: 0.25rem 0.6rem; }
-.donnees-graphique thead th, .donnees-frise thead th {
+.donnees-frise th, .donnees-frise td,
+.donnees-cascade th, .donnees-cascade td { padding: 0.25rem 0.6rem; }
+.donnees-graphique thead th, .donnees-frise thead th,
+.donnees-cascade thead th {
   position: sticky; top: 0; background: var(--fond-defilant);
   box-shadow: inset 0 -2px 0 var(--or);
 }
-.donnees-graphique caption, .donnees-frise caption { padding-bottom: 0.35rem; }
+.donnees-graphique caption, .donnees-frise caption,
+.donnees-cascade caption { padding-bottom: 0.35rem; }
 /* La frise des flux : une colonne par année, lue de gauche à droite dans une
    boîte qui défile. Le SVG garde sa largeur en pixels — c'est la boîte qui
    défile, pas le dessin qui rétrécit —, sans quoi quarante-cinq années
@@ -1389,6 +1394,46 @@ ul.legende .lu {
 .frise .ruban { opacity: 0.45; }
 .frise .manque { fill: var(--manque); }
 .frise .reste { fill: var(--reste); }
+/* La cascade : le pont d'un total à un autre, marche par marche. Comme la
+   frise, elle DÉFILE dans sa boîte au lieu de rétrécir — huit colonnes et
+   leurs étiquettes en biais ne se lisent pas dans la largeur d'un téléphone —,
+   et sa légende reste dessous, hors de la boîte qui défile. */
+.cascade { margin: 1.5rem 0 1.75rem; }
+.cascade .defilant { padding-bottom: 0.5rem; }
+.cascade svg { display: block; width: 100%; height: auto; }
+.cascade .grille { stroke: var(--trait); stroke-width: 1; }
+.cascade .axe { stroke: var(--trait-champ); stroke-width: 1; }
+/* Le trait de liaison n'est pas une donnée : il relie le sommet d'une marche
+   au pied de la suivante, et le pointillé dit qu'il ne mesure rien. */
+.cascade .liaison {
+  stroke: var(--texte-tres-doux); stroke-width: 1; stroke-dasharray: 3 3;
+}
+.cascade .marche.monte { fill: var(--manque); }
+.cascade .marche.descend { fill: var(--reste); }
+/* Une marche nulle n'est ni l'un ni l'autre : elle est mesurée, et sans effet.
+   Peinte en vert, elle se serait lue comme une baisse. */
+.cascade .marche.nulle { fill: var(--texte-tres-doux); }
+.cascade .marche.total { fill: var(--serie-9); }
+.cascade .graduation {
+  fill: var(--texte-tres-doux); font-family: inherit; font-size: 12px;
+  font-weight: 600; font-variant-numeric: tabular-nums;
+}
+/* Le chiffre de la marche est posé hors de la barre, sur la grille : il porte
+   donc un liseré de la couleur du fond, faute de quoi une graduation lui
+   passait au travers. */
+.cascade .valeur {
+  fill: var(--texte); font-family: inherit; font-size: 14px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  paint-order: stroke; stroke: var(--fond); stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.cascade .valeur.monte { fill: var(--manque); }
+.cascade .valeur.descend { fill: var(--reste); }
+.cascade .valeur.nulle { fill: var(--texte-tres-doux); }
+.cascade .etiquette {
+  fill: var(--texte-doux); font-family: inherit; font-size: 13px;
+}
+.cascade .etiquette.total { fill: var(--texte); font-weight: 700; }
 ul.legende {
   list-style: none; margin: 0.75rem 0 0; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; font-size: 0.9375rem;
@@ -1649,6 +1694,16 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   .graphique .etiquette-serie { font-size: 20px; stroke-width: 7px; }
   .graphique .annee-lue { font-size: 18px; }
   .graphique .signature { font-size: 26px; }
+  /* La cascade suit la même règle, et pour la même raison : réduite à la
+     largeur d'un téléphone, treize unités de viewBox y feraient six pixels.
+     Elle défile donc à 40 rem — plus large que les 30 du graphique, parce
+     qu'elle porte huit colonnes ET huit étiquettes en biais —, et ses textes
+     ne sont grossis que du peu qui manque. MARGE_BAS_CASCADE est taillée pour
+     les loger à cette taille-là. */
+  .cascade svg { min-width: 40rem; }
+  .cascade .graduation { font-size: 16px; }
+  .cascade .valeur { font-size: 18px; stroke-width: 5px; }
+  .cascade .etiquette { font-size: 16px; }
 }
 
 /* Mouvement réduit : la jauge d'attente glisse sans fin, et une animation qui
@@ -1695,7 +1750,8 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
   h2 { font-size: 15pt; }
   .chapeau, .affiche .chapeau { font-size: 12pt; }
   .defilant { overflow: visible; background: none; }
-  .carte, .note, table, .graphique, .scenario, section.cle, .encadre {
+  .carte, .note, table, .graphique, .cascade, .scenario, section.cle,
+  .encadre {
     break-inside: avoid;
   }
   /* Le mot du glossaire s'imprime comme le reste de la phrase : ni bouton, ni

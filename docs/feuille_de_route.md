@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 435<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 839<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -5219,6 +5219,58 @@ Le fichier complet, hooks Impeccable compris, devient :
 commité, et rien d'autre. Un travail laissé non commité reste dans le
 conteneur, qui est jeté. Et le script ne touche jamais au `main` local, ce
 post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
+
+### 37. La cascade : ce que chaque mesure déplace, du scénario 1 au scénario 4 — `fait`
+
+**La demande.** « Je veux faire un graphique de ce style dans la page des
+coûts avec toutes les mesures que nous avons faites par rapport au scénario 1.
+Il faut mettre le scénario 1, 422 milliards, à gauche et le scénario 4 à
+droite. » Le modèle était une décomposition en cascade de la hausse des
+dépenses publiques françaises, en points de PIB, fonction par fonction.
+
+**Le diagnostic.** La page comparait bien les quatre systèmes, mais deux à
+deux : un tableau disait de combien ils s'écartent, et jamais PAR QUOI. Pour
+savoir laquelle des décisions du programme pèse, un lecteur devait soustraire
+de tête quatre fois, et personne ne le fait. Les chiffres, eux, étaient tous
+là : `masse_du_scenario` écrit la masse d'un système comme la part directe de
+la base multipliée par son rapport, si bien qu'une différence de deux rapports
+appliquée à la même part directe EST la contribution propre du changement qui
+les sépare. Les marches sont donc exactement additives, et leur somme vaut
+l'écart des deux totaux au centime.
+
+**Ce qui a été fait.** `gabarit.cascade` et sa `Marche`, du SVG écrit à la
+main comme le reste, portées dans `moteur/js/gabarit.js` et comparées
+caractère par caractère par les témoins. Une barre rouge ajoute à la dépense,
+une barre verte l'en retire, une barre grise est une mesure mesurée et nulle,
+et les deux totaux portent la couleur de leur système. Les libellés sont posés
+en biais à trente-cinq degrés : à l'horizontale, huit intitulés français ne
+tiennent pas côte à côte. Le dépliant `cout-cascade` de la page Coût en pose
+deux, et le docstring de `_cout_detail_cascade` dit pourquoi il en faut deux :
+à l'année observée, la cotisation unique ne déplace rien, puisqu'elle ne vaut
+que pour les droits acquis à compter de la bascule. Une cascade arrêtée là
+montrerait la mesure centrale du programme à zéro sans rien dire.
+
+**Ce que ça déplace.** En 2025, sur le compte du COR : 422,2 Md € de dépense,
+−43,6 pour la réversion qui n'est plus servie, −270,5 pour le recalcul de la
+part salariale, +153,3 pour la part patronale portée au compte, 0,0 pour la
+cotisation unique, +21,6 pour la garantie vieillesse, soit 283,0 Md €. À
+l'horizon 2070, sur la trajectoire du modèle et en euros constants : 714,2
+−40,5 −461,6 +262,9 −103,8 +17,7 −8,5 = 380,5 Md €. Les deux jeux de chiffres
+étaient déjà dans les tableaux de la page ; c'est le chemin qui ne l'était pas.
+
+**Ce qui le tient.** Trois entrées au catalogue des affirmations, avec leurs
+contrôles : `cascade_somme_exactement` refait la somme sur les deux lectures
+et vérifie que l'ordre des marches ne change pas le total,
+`cascade_cotisation_unique_sans_effet_avant_la_bascule` tient les deux bouts
+de la marche nulle, `cascade_ne_porte_que_la_depense` vérifie qu'aucune
+recette n'y entre. Et `test_aucun_graphique_n_est_livre_sans_ses_chiffres`
+compte désormais deux familles : un tableau de cascade ne peut plus couvrir un
+tracé de courbe manquant.
+
+**Ce que ça ne fait pas.** Une décomposition séquentielle : chaque marche est
+l'effet de sa mesure sachant les précédentes, et la page l'écrit. Et une
+dépense n'est pas un solde : la cascade ne montre qu'un côté du compte, ce que
+la dernière note dit en renvoyant au dépliant des postes.
 
 ## Ce qui est délibérément en bas
 

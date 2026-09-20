@@ -87,6 +87,7 @@ from retraite_notionnelle.web.pages import (
     ErreurSaisie,
     Saisie,
     _cumuls_indexation,
+    _marches_cascade,
     _options_statuts,
     _reglage_proposition,
 )
@@ -1372,6 +1373,82 @@ def _(m: Modele):
     ligne = m.horizon
     assert ligne.postes_depenses("actuel")["droits_derives"] > 0
     assert ligne.postes_depenses("notionnel_liberal")["droits_derives"] == 0.0
+
+
+# .. la cascade : le compte tombe-t-il juste ? ...............................
+#
+# C'est la propriété qui fait toute la valeur de cette figure : les marches
+# somment EXACTEMENT à l'écart des deux totaux, sinon la dernière barre ne
+# retombe pas où elle devrait. Le dessin le montre à l'œil, et un écart d'un
+# millième s'y verrait mal — d'où ces contrôles, qui refont la somme.
+
+
+def _somme_cascade(marches) -> float:
+    """Ce que les marches déplacent, totaux exclus."""
+    return sum(marche.valeur for marche in marches if not marche.total)
+
+
+@controle("cascade_somme_exactement")
+def _(m: Modele):
+    for ligne, base in ((m.observe, m.observe.depense_meur("actuel")),
+                        (m.horizon, m.horizon.depense_meur("actuel"))):
+        marches = _marches_cascade(base, ligne.part_derives, ligne.rapports)
+        arrivee = (ligne.depense_meur("notionnel_liberal")
+                   + ligne.depense_meur(COMPOSANTE_GARANTIE)) / 1000
+        assert _proche(base / 1000 + _somme_cascade(marches), arrivee)
+        # L'ordre ne change pas le total, et c'est ce que la page affirme :
+        # les marches sont additives, non composées.
+        assert _proche(_somme_cascade(marches),
+                       _somme_cascade(list(reversed(marches))))
+
+    # Et la même chose sur la trajectoire, où toutes les mesures mordent : la
+    # garantie y vient NETTE des reprises, qui sont une marche de plus.
+    horizon = m.cout.avenir.annee(m.cout.avenir.derniere_annee)
+    marches = _marches_cascade(horizon.cout_constants("actuel"),
+                               horizon.part_derives, horizon.rapports)
+    arrivee = (horizon.cout_constants("notionnel_liberal")
+               + horizon.garantie_nette_constants()) / 1000
+    depart = horizon.cout_constants("actuel") / 1000
+    reprises = horizon.reprises_constants() / 1000
+    assert reprises > 0
+    assert _proche(depart + _somme_cascade(marches) - reprises, arrivee)
+
+
+@controle("cascade_cotisation_unique_sans_effet_avant_la_bascule")
+def _(m: Modele):
+    bascule = m.base.annee_bascule
+    assert m.solde.derniere_annee_observee < bascule
+    # Ce que la marche vaut à l'année observée : rien, au dixième de milliard
+    # que la page écrit près. Aucun retraité de cette année-là n'a acquis un
+    # seul droit sous le taux unique.
+    marches = _marches_cascade(m.observe.depense_meur("actuel"),
+                               m.observe.part_derives, m.observe.rapports)
+    taux_unique = next(marche for marche in marches
+                       if marche.libelle == "Cotisation unique de 18 %")
+    assert g.signe_cascade(taux_unique.valeur, 1) == g.nombre(0.0, 1)
+    # Et ce qu'elle vaut à l'horizon, quand toutes les générations sont passées
+    # sous elle : la plus lourde des mesures après le recalcul lui-même.
+    horizon = m.cout.avenir.annee(m.cout.avenir.derniere_annee)
+    loin = _marches_cascade(horizon.cout_constants("actuel"),
+                            horizon.part_derives, horizon.rapports)
+    assert next(marche for marche in loin
+                if marche.libelle == "Cotisation unique de 18 %").valeur < -1.0
+
+
+@controle("cascade_ne_porte_que_la_depense")
+def _(m: Modele):
+    """Aucune marche ne vient des RESSOURCES, et le total est bien la dépense."""
+    marches = _marches_cascade(m.observe.depense_meur("actuel"),
+                               m.observe.part_derives, m.observe.rapports)
+    depart = m.observe.depense_meur("actuel") / 1000
+    assert not _proche(depart, m.observe.ressources_meur() / 1000)
+    # La somme rejoint la DÉPENSE de la proposition, jamais son solde : si la
+    # cascade portait un côté de recette, elle n'y retomberait pas.
+    arrivee = (m.observe.depense_meur("notionnel_liberal")
+               + m.observe.depense_meur(COMPOSANTE_GARANTIE)) / 1000
+    assert _proche(depart + _somme_cascade(marches), arrivee)
+    assert not _proche(arrivee, m.observe.ressources_de("notionnel_liberal")
+                       * m.observe.pib / 1000)
 
 
 @controle("cout_estime")

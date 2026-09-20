@@ -1547,6 +1547,226 @@ export function friseFlux(titre, annees) {
 }
 
 /**
+ * Géométrie de la cascade, en unités du `viewBox`. Portage de `cascade` dans
+ * `gabarit.py`, dont le docstring porte le raisonnement : le cadre est plus
+ * haut que celui des courbes parce que les libellés sont posés en biais sous
+ * l'axe, et le débord est mesuré au navigateur à la taille de texte du
+ * téléphone.
+ */
+const LARGEUR_CASCADE = 760;
+const HAUTEUR_CASCADE = 430;
+const MARGE_GAUCHE_CASCADE = 58;
+const MARGE_DROITE_CASCADE = 16;
+const MARGE_HAUT_CASCADE = 40;
+const MARGE_BAS_CASCADE = 150;
+const PENTE_CASCADE = -35;
+const PART_BARRE_CASCADE = 0.62;
+const DEBORD_GAUCHE_CASCADE = 34;
+const DEBORD_BAS_CASCADE = 14;
+
+/** Une marche de la cascade : un libellé, un montant, et son rôle. */
+export class Marche {
+  constructor(libelle, valeur, total = false, couleur = "", glose = "") {
+    this.libelle = libelle;
+    this.valeur = valeur;
+    this.total = total;
+    this.couleur = couleur;
+    this.glose = glose;
+  }
+}
+
+/** Le centre de la colonne de rang `rang`, sur `marches` colonnes. */
+function abscisseCascade(rang, marches) {
+  const largeur = LARGEUR_CASCADE - MARGE_GAUCHE_CASCADE - MARGE_DROITE_CASCADE;
+  return MARGE_GAUCHE_CASCADE + largeur * ((rang + 0.5) / marches);
+}
+
+function ordonneeCascade(valeur, sommet, plancher) {
+  const hauteur = HAUTEUR_CASCADE - MARGE_HAUT_CASCADE - MARGE_BAS_CASCADE;
+  if (sommet <= plancher) {
+    return HAUTEUR_CASCADE - MARGE_BAS_CASCADE;
+  }
+  return HAUTEUR_CASCADE - MARGE_BAS_CASCADE
+    - hauteur * ((valeur - plancher) / (sommet - plancher));
+}
+
+/**
+ * Un montant signé, au moins typographique, et jamais « −0,0 ». Le test porte
+ * sur le TEXTE et non sur le nombre : c'est le texte qui sera lu, et c'est le
+ * seul essai que les deux portages font à coup sûr de la même façon.
+ */
+export function signeCascade(valeur, decimales) {
+  const texte = nombre(Math.abs(valeur), decimales);
+  if (texte === nombre(0.0, decimales)) {
+    return texte;
+  }
+  return (valeur > 0 ? "+" : "−") + texte;
+}
+
+/**
+ * Le sens d'une marche, tel que son CHIFFRE l'écrit. Une marche qui s'affiche
+ * « 0,0 » n'est pas une baisse : elle est une mesure sans effet cette année-là,
+ * et c'est un troisième état.
+ */
+function sensCascade(valeur, decimales) {
+  if (nombre(Math.abs(valeur), decimales) === nombre(0.0, decimales)) {
+    return "nulle";
+  }
+  return valeur > 0 ? "monte" : "descend";
+}
+
+/**
+ * Le pont d'un total à un autre, marche par marche. Voir `cascade` dans
+ * `gabarit.py` : la première barre part de zéro, chaque marche reprend le cumul
+ * où la précédente l'a laissé, et la dernière retombe sur zéro. Le dessin ne
+ * tient que si le compte tombe juste, et c'est ce qui en fait une vérification
+ * autant qu'une figure.
+ */
+export function cascade(titre, marches, unite = "", decimales = 1,
+                        decimalesAxe = 0, libelleMarche = "Étape") {
+  if (!marches.length) {
+    return "";
+  }
+
+  // Les niveaux : le cumul AVANT et APRÈS chaque marche. Un total n'est pas un
+  // déplacement — il est posé sur zéro, et il REMET le cumul à sa valeur.
+  const niveaux = [];
+  let cumul = 0.0;
+  for (const marche of marches) {
+    if (marche.total) {
+      niveaux.push([0.0, marche.valeur]);
+      cumul = marche.valeur;
+    } else {
+      niveaux.push([cumul, cumul + marche.valeur]);
+      cumul += marche.valeur;
+    }
+  }
+
+  const bornes = niveaux.flat().concat([0.0]);
+  const maximum = Math.max(...bornes);
+  const minimum = Math.min(...bornes);
+  let pas;
+  let sommet;
+  let plancher;
+  if (minimum >= 0.0) {
+    pas = pasGraduation(maximum);
+    sommet = pas * DIVISIONS_Y;
+    plancher = 0.0;
+  } else {
+    pas = pasGraduation(maximum - minimum);
+    plancher = Math.floor(minimum / pas) * pas;
+    sommet = Math.max(0.0, Math.ceil(maximum / pas)) * pas;
+  }
+
+  const gauche = nombreBrut(MARGE_GAUCHE_CASCADE);
+  const droite = nombreBrut(LARGEUR_CASCADE - MARGE_DROITE_CASCADE);
+  const grille = [];
+  const divisions = Math.round((sommet - plancher) / pas) + 1;
+  for (let division = 0; division < divisions; division += 1) {
+    const valeur = plancher + pas * division;
+    const y = nombreBrut(ordonneeCascade(valeur, sommet, plancher));
+    grille.push(`<line class="grille" x1="${gauche}" y1="${y}" x2="${droite}" y2="${y}"/>`
+      + `<text class="graduation" x="${nombreBrut(MARGE_GAUCHE_CASCADE - 6)}" `
+      + `y="${y}" dy="0.32em" text-anchor="end">`
+      + `${nombre(valeur, decimalesAxe)}</text>`);
+  }
+
+  const colonne = (LARGEUR_CASCADE - MARGE_GAUCHE_CASCADE - MARGE_DROITE_CASCADE)
+    / marches.length;
+  const largeurBarre = colonne * PART_BARRE_CASCADE;
+  const basAxe = nombreBrut(ordonneeCascade(plancher, sommet, plancher));
+  const yLibelles = HAUTEUR_CASCADE - MARGE_BAS_CASCADE + 24;
+
+  const barres = [];
+  const liaisons = [];
+  const textes = [];
+  marches.forEach((marche, rang) => {
+    const [debut, fin] = niveaux[rang];
+    const centre = abscisseCascade(rang, marches.length);
+    const x = centre - largeurBarre / 2;
+    const haut = ordonneeCascade(Math.max(debut, fin), sommet, plancher);
+    const pied = ordonneeCascade(Math.min(debut, fin), sommet, plancher);
+    // Une marche nulle ne dessinerait rien, et une colonne vide se lit comme
+    // une colonne oubliée. Un filet d'une unité dit « mesuré, et nul ».
+    const hauteur = Math.max(pied - haut, 1.0);
+    const sens = sensCascade(marche.valeur, decimales);
+    let classe;
+    let teinte;
+    if (marche.total) {
+      classe = "total";
+      teinte = marche.couleur ? ` fill="${marche.couleur}"` : "";
+    } else {
+      classe = sens;
+      teinte = "";
+    }
+    barres.push(`<rect class="marche ${classe}"${teinte} x="${nombreBrut(x)}" `
+      + `y="${nombreBrut(haut)}" width="${nombreBrut(largeurBarre)}" `
+      + `height="${nombreBrut(hauteur)}"/>`);
+    // Le trait de liaison s'arrête devant un total, qui repart de zéro et ne
+    // continue donc rien.
+    if (rang + 1 < marches.length && !marches[rang + 1].total) {
+      const y = nombreBrut(ordonneeCascade(fin, sommet, plancher));
+      const suivante = abscisseCascade(rang + 1, marches.length) - largeurBarre / 2;
+      liaisons.push(`<line class="liaison" x1="${nombreBrut(x + largeurBarre)}" `
+        + `y1="${y}" x2="${nombreBrut(suivante)}" y2="${y}"/>`);
+    }
+    const montant = marche.total
+      ? nombre(marche.valeur, decimales)
+      : signeCascade(marche.valeur, decimales);
+    const classeTexte = marche.total ? "valeur" : `valeur ${sens}`;
+    const yValeur = (sens === "descend" && !marche.total) ? pied + 20 : haut - 9;
+    textes.push(`<text class="${classeTexte}" x="${nombreBrut(centre)}" `
+      + `y="${nombreBrut(yValeur)}" text-anchor="middle">${montant}</text>`);
+    // Le libellé, en biais, ancré par sa FIN sous le centre de la colonne.
+    const pivotX = nombreBrut(centre);
+    const pivotY = nombreBrut(yLibelles);
+    textes.push(`<text class="etiquette${marche.total ? " total" : ""}" `
+      + `x="${pivotX}" y="${pivotY}" text-anchor="end" `
+      + `transform="rotate(${PENTE_CASCADE} ${pivotX} ${pivotY})">`
+      + `${echapper(marche.libelle)}</text>`);
+  });
+
+  const uniteHtml = unite
+    ? `<text class="graduation" x="0" y="${nombreBrut(MARGE_HAUT_CASCADE - 18)}" `
+      + `text-anchor="start">${echapper(unite)}</text>`
+    : "";
+  const legendeHtml = '<figcaption><ul class="legende">'
+    + '<li><span class="pastille ecart-moins"></span>'
+    + "<span>Ce qui ajoute à la dépense</span></li>"
+    + '<li><span class="pastille ecart-plus"></span>'
+    + "<span>Ce qui l'en retire</span></li>"
+    + "</ul></figcaption>";
+
+  // Le tableau des chiffres, tiré des mêmes marches : la description détaillée
+  // qu'un dessin complexe doit au RGAA, et le seul endroit où le CUMUL se lit.
+  const enTete = unite ? ` (${echapper(unite)})` : "";
+  const lignes = marches.map((marche, rang) => [
+    echapper(marche.libelle)
+      + (marche.glose ? ` <span class="discret">${echapper(marche.glose)}</span>` : ""),
+    marche.total ? nombre(marche.valeur, decimales)
+      : signeCascade(marche.valeur, decimales),
+    nombre(niveaux[rang][1], decimales),
+  ]);
+  const grilleHtml = tableau(
+    [libelleMarche, `Effet${enTete}`, `Cumul${enTete}`],
+    lignes, ["", "nombre", "nombre"], titre, true);
+  return `<figure class="cascade" role="group" aria-label="${echapper(titre)}">`
+    + `<div class="defilant" tabindex="0" role="region" aria-label="${echapper(titre)}">`
+    + `<svg viewBox="${-DEBORD_GAUCHE_CASCADE} 0 `
+    + `${LARGEUR_CASCADE + DEBORD_GAUCHE_CASCADE} `
+    + `${HAUTEUR_CASCADE + DEBORD_BAS_CASCADE}" role="img" `
+    + `aria-label="${echapper(titre)}">`
+    + `${grille.join("")}${liaisons.join("")}${barres.join("")}`
+    + `<line class="axe" x1="${gauche}" y1="${basAxe}" x2="${droite}" y2="${basAxe}"/>`
+    + `${uniteHtml}${textes.join("")}</svg></div>`
+    + `${legendeHtml}</figure>`
+    + '<details class="donnees-cascade">'
+    + sommaire(`Les chiffres de cette cascade, marche par marche `
+      + `(${marches.length} lignes)`)
+    + `${grilleHtml}</details>`;
+}
+
+/**
  * Légende du graphique, posée en `<figcaption>`.
  *
  * Ce n'est pas un ornement : le SVG est annoncé comme une image, et la légende
