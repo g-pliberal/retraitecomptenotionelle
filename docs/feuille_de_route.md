@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->28 931<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 010<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -5274,6 +5274,68 @@ tracé de courbe manquant.
 l'effet de sa mesure sachant les précédentes, et la page l'écrit. Et une
 dépense n'est pas un solde : la cascade ne montre qu'un côté du compte, ce que
 la dernière note dit en renvoyant au dépliant des postes.
+
+### 38. La cascade devient dynamique : elle se tient à jour, se survole, et son année se choisit — `fait`
+
+**La demande.** « J'aimerais que ce graphique soit dynamique. En effet,
+beaucoup de choses changent souvent et c'est pas évident de tout mettre à jour
+car le site commence à devenir énorme. » Trois choses sous un seul mot, et
+l'utilisateur les a toutes retenues : qu'elle se tienne à jour seule, qu'elle
+réagisse au survol, et qu'on y choisisse l'année.
+
+**Ce qui était figé.** Tous les chiffres de la cascade venaient déjà du
+modèle ; trois choses ne venaient de nulle part. La CHAÎNE des systèmes était
+recopiée à la main, en double de `SCENARIOS_MONTRES`. L'étiquette écrivait
+« Cotisation unique de 18 % » quand le taux est un réglage que l'adresse porte,
+et une glose « un dixième de la masse versée » quand cette part tombe à 5,7 %
+en 2070. Les reprises sur successions entraient comme un MONTANT emprunté à la
+trajectoire, seul endroit de la page où un niveau traversait d'une série à
+l'autre.
+
+**Ce qui a été fait, et ce que ça retire.** La chaîne se déduit de
+`SCENARIOS_MONTRES` ; `MARCHES_SYSTEMES` ne fait plus que nommer. Les étiquettes
+portent des accolades, remplies à l'année et sous les réglages. Les reprises
+passent par une fraction de ce que la garantie a versé — un rapport, comme tout
+ce que cette page emprunte au modèle.
+
+Et surtout : **il n'y a plus qu'une cascade là où il y en avait deux.** La
+seconde existait parce qu'à l'année mesurée la cotisation unique ne déplace
+rien, n'ayant pas encore de droits acquis sous elle ; elle était prise sur la
+trajectoire du modèle, donc sur un autre périmètre et une autre unité, ce qui
+demandait un paragraphe pour prévenir qu'on ne pouvait pas les soustraire. Le
+compte du COR tient en réalité ses deux bouts de 2002 à 2070 : seul l'euro lui
+manque au-delà de l'année publiée, et le modèle en projette un qui coïncide
+exactement avec le sien à l'année de jonction. Un sélecteur d'année suffit donc,
+sur un seul périmètre, et le paragraphe de mise en garde disparaît avec la
+seconde figure.
+
+**Une vue n'est pas un réglage**, et `_VUES_DE_PAGE` porte la distinction. Un
+réglage change le modèle et voyage vers toutes les pages ; une vue choisit ce
+qu'on montre, ne change aucun chiffre, et ne vaut que pour sa page. L'année de
+la cascade est une vue : elle n'entre donc pas dans `Saisie`, où elle aurait
+voyagé jusqu'à Cas types et Avantages, qui n'en ont rien à faire. Elle survit en
+revanche au bouton « Recalculer cette page », en champ caché, comme les deux
+réglages sans champ.
+
+**Le survol** suit le contrat des courbes : les chiffres viennent du tableau
+posé sous la figure et de nulle part ailleurs. Ce qui change est la façon de
+viser — une cascade n'a pas d'abscisse continue mais des colonnes, et l'on
+cherche la barre dont le centre est le plus proche du pointeur, en coordonnées
+d'écran plutôt qu'en rejouant l'échelle du `viewBox`, ce qui tient dans une
+boîte qui défile. Flèches et Échap au clavier, lecture en région `aria-live`.
+
+**Ce qui le tient.** `test_la_cascade_suit_la_liste_des_systemes` tient les deux
+listes face à face : un système entré au site sans son nom fait tomber le test,
+plutôt que sortir une cascade à qui il manque une marche — laquelle sommerait
+encore juste, ce qui est le pire des cas.
+`test_aucune_etiquette_de_cascade_n_ecrit_un_nombre_en_dur` refuse le moindre
+chiffre dans un gabarit d'étiquette. Deux témoins de plus comparent les deux
+portages sur les branches du sélecteur que le défaut ne visite pas : l'horizon,
+où le PIB est projeté et où toutes les mesures mordent, et une année hors liste,
+qui doit retomber sur l'année mesurée des deux côtés. Et
+`test_une_page_agregee_au_defaut_ne_dit_rien_des_reglages` vérifie désormais ce
+qu'il voulait dire : un lien peut porter une vue, jamais un réglage que le
+lecteur n'a pas demandé.
 
 ## Ce qui est délibérément en bas
 

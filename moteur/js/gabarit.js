@@ -1699,8 +1699,9 @@ export function cascade(titre, marches, unite = "", decimales = 1,
       classe = sens;
       teinte = "";
     }
-    barres.push(`<rect class="marche ${classe}"${teinte} x="${nombreBrut(x)}" `
-      + `y="${nombreBrut(haut)}" width="${nombreBrut(largeurBarre)}" `
+    barres.push(`<rect class="marche ${classe}"${teinte} data-rang="${rang}" `
+      + `x="${nombreBrut(x)}" y="${nombreBrut(haut)}" `
+      + `width="${nombreBrut(largeurBarre)}" `
       + `height="${nombreBrut(hauteur)}"/>`);
     // Le trait de liaison s'arrête devant un total, qui repart de zéro et ne
     // continue donc rien.
@@ -1758,7 +1759,11 @@ export function cascade(titre, marches, unite = "", decimales = 1,
     + `aria-label="${echapper(titre)}">`
     + `${grille.join("")}${liaisons.join("")}${barres.join("")}`
     + `<line class="axe" x1="${gauche}" y1="${basAxe}" x2="${droite}" y2="${basAxe}"/>`
-    + `${uniteHtml}${textes.join("")}</svg></div>`
+    + `${uniteHtml}${textes.join("")}`
+    + '<g class="survol"></g></svg></div>'
+    + '<div class="lecture" role="status" aria-live="polite" hidden></div>'
+    + '<p class="aide-clavier">Flèches gauche et droite : parcourir les '
+    + "mesures. Échap : quitter.</p>"
     + `${legendeHtml}</figure>`
     + '<details class="donnees-cascade">'
     + sommaire(`Les chiffres de cette cascade, marche par marche `
