@@ -354,6 +354,15 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: le diviseur de la rente est alors EXACTEMENT celui de la pension
   //: notionnelle, et les deux compartiments deviennent comparables au centime.
   taux_technique_rente_capitalisation: 0.0,
+  //: Prime de terme retirée des forwards de la courbe sans risque, exprimée à
+  //: trente ans et en rythme continu. ZÉRO par défaut, et c'est le réglage sous
+  //: lequel le site publie : les versements futurs se placent aux forwards de
+  //: la courbe du jour, hypothèse des anticipations pures. La relever retire
+  //: cette hypothèse — le capital baisse — et fait travailler l'adossement à
+  //: l'horizon, qui capte la prime une fois pour toutes là où un roulement la
+  //: rachète à chaque échéance. Sous les anticipations pures, aucune allocation
+  //: n'en vaut une autre : c'est l'arbitrage qui fixe le forward.
+  prime_terme_trente_ans: 0.0,
 
   // --- Neutralisations ------------------------------------------------------
   neutralisations: NEUTRALISATIONS_DEFAUT,

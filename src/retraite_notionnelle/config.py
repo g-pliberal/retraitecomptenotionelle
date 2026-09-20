@@ -852,6 +852,26 @@ class Parametres:
     #: répartition.
     taux_technique_rente_capitalisation: float = 0.0
 
+    #: Prime de terme retirée des forwards de la courbe sans risque, exprimée à
+    #: trente ans et en rythme continu. **Zéro par défaut**, et c'est le
+    #: réglage sous lequel le site publie : les versements futurs se placent
+    #: aux forwards de la courbe du jour, hypothèse des anticipations pures.
+    #:
+    #: Ce que le paramètre ouvre. La littérature situe la prime de terme entre
+    #: 0,3 et 1 point sur les maturités longues quand la courbe est ascendante,
+    #: et le pilier est d'autant flatté (``docs/limites.md``, réserve 1 du
+    #: pilier capitalisé). La mettre à 0,005 retire donc une demi-hypothèse au
+    #: modèle : le capital baisse, et l'ADOSSEMENT À L'HORIZON se met à
+    #: rapporter, parce que bloquer la maturité du départ capte la prime une
+    #: fois pour toutes là où le roulement la rachète à chaque échéance. Sous
+    #: les anticipations pures, aucune allocation n'en vaut une autre : c'est
+    #: l'arbitrage qui fixe le forward, et un test l'exige.
+    #:
+    #: Elle porte sur la COURBE, et donc sur tout ce qui la lit — le pilier
+    #: capitalisé et le taux d'emprunt de la dette du chiffrage. C'est voulu :
+    #: la prime est une propriété du marché, pas du compartiment qui s'y place.
+    prime_terme_trente_ans: float = 0.0
+
     # --- Neutralisations ----------------------------------------------------
     neutralisations: Neutralisations = field(default_factory=Neutralisations)
 

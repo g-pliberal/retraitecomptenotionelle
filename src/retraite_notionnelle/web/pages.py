@@ -1423,6 +1423,13 @@ def _nombre(valeur: float) -> str:
     return f"{valeur:g}"
 
 
+#: Trois points de la courbe publiée, montrés pour en donner la forme. Ce ne
+#: sont plus les maturités d'une échelle — le pilier achète celle de son
+#: horizon, n'importe laquelle des trente que la BCE cote — mais trois repères
+#: de lecture : le court, le milieu, le bout.
+MATURITES_MONTREES = (2, 10, 30)
+
+
 def _date_en_clair(iso: str) -> str:
     """« 2026-09-13 » -> « 13 septembre 2026 », la date telle qu'on la lit."""
     annee, mois, jour = (int(morceau) for morceau in iso.split("-"))
@@ -9738,10 +9745,10 @@ def _methode_capitalisation(contexte: Contexte) -> str:
     répartition.
     """
     from ..donnees.taux import CourbeTauxSansRisque
-    from ..moteur.capitalisation import MATURITES, repartition
+    from ..moteur.capitalisation import repartition
 
     base = contexte.base
-    courbe = CourbeTauxSansRisque(base.racine_donnees)
+    courbe = CourbeTauxSansRisque(base.racine_donnees, base.prime_terme_trente_ans)
     taux = g.pourcentage(base.taux_capitalisation_obligatoire, decimales=0)
     volontaire = g.pourcentage(
         base.taux_capitalisation_volontaire_applique, decimales=0)
@@ -9752,25 +9759,31 @@ def _methode_capitalisation(contexte: Contexte) -> str:
         ["Maturité", "Taux zéro-coupon, en rythme annuel"],
         [[f"{maturite} ans",
           g.pourcentage(courbe.placement(courbe.annee, maturite).taux, decimales=2)]
-         for maturite in MATURITES],
+         for maturite in MATURITES_MONTREES],
         ["", "nombre"],
         titre=f"La courbe employée, au {_date_en_clair(courbe.date)}",
         entete_de_ligne=True,
     )
 
-    # L'allocation, telle que la règle la produit : ce sont les poids que le
-    # moteur applique, lus par le même code. Une table écrite à la main
+    # L'allocation, telle que la règle la produit : ce sont les maturités que
+    # le moteur achète, lues par le même code. Une table écrite à la main
     # pourrait se désaccorder du calcul ; celle-ci ne le peut pas.
+    def achat(horizon: int) -> str:
+        lignes = repartition(horizon)
+        if not lignes:
+            return "rien : le départ a lieu dans l'année"
+        maturite = lignes[0][0]
+        titre = f"{maturite} an{'s' if maturite > 1 else ''}"
+        if maturite == horizon:
+            return f"{titre}, qui tombe l'année du départ"
+        return f"{titre}, puis {horizon - maturite} ans à l'échéance"
+
     horizons = (40, 30, 20, 10, 5, 2)
     glissement = g.tableau(
-        ["Années avant le départ", "Répartition du versement par maturité"],
-        [[str(horizon),
-          ", ".join(f"{g.pourcentage(poids)} à {maturite} an"
-                    f"{'s' if maturite > 1 else ''}"
-                    for maturite, poids in repartition(horizon))]
-         for horizon in horizons],
+        ["Années avant le départ", "Maturité achetée"],
+        [[str(horizon), achat(horizon)] for horizon in horizons],
         ["nombre", ""],
-        titre="Où va un versement selon ce qu'il reste à courir",
+        titre="Ce qu'un versement achète selon ce qu'il reste à courir",
         entete_de_ligne=True,
     )
 
@@ -9800,7 +9813,7 @@ opposerait deux systèmes qui ne coûtent pas le même prix, et l'écart de pens
 se lirait pour partie comme un effet des règles alors qu'il viendrait d'un
 effort moindre.</p>
 <p>Le compartiment ne distingue ces points nulle part ailleurs qu'en proportion
-— même assiette, même échelle de maturités, mêmes frais, même table de
+— même assiette, même maturité, mêmes frais, même table de
 mortalité —, si bien que la rente se partage dans le rapport exact des deux
 taux. Deux endroits les séparent, et deux seulement. Sur la <strong>fiche de
 paie</strong>, les {volontaire} volontaires sont portés en entier par l'assuré,
@@ -9819,7 +9832,8 @@ pension : la garantie les reprend euro pour euro. Il leur reste ce que la
 répartition ne donne à personne, un capital qui se transmet.</p>
 
 <h3>Où l'argent est placé</h3>
-<p>Sur des titres sans risque, portés jusqu'à leur échéance. La courbe retenue
+<p>Sur des titres sans risque, portés jusqu'à leur échéance, et choisis pour
+tomber le jour du départ. La courbe retenue
 est celle des souverains les mieux notés de la zone euro, que la Banque centrale
 européenne publie chaque jour ouvré : c'est la définition opérationnelle du taux
 sans risque en euro. L'OAT française rend davantage : une cinquantaine de points
@@ -9835,19 +9849,38 @@ le forward n'est pas une opinion, il est arbitré. <strong>Ce qu'il suppose</str
 tient en une phrase : que le taux futur sera, en moyenne, le forward
 d'aujourd'hui. C'est l'hypothèse des anticipations pures, et elle ignore la
 prime de terme, c'est-à-dire le supplément qu'un prêteur exige pour immobiliser
-son argent. Quand la courbe monte, elle flatte donc légèrement le pilier.
-Au-delà de trente ans, la courbe ne dit plus rien : le taux est prolongé à plat,
-et tout résultat qui en dépend est déclaré « estimé ».</p>
+son argent. Quand la courbe monte, elle flatte donc légèrement le pilier, et
+c'est sous elle que les chiffres de ce site sont publiés. Elle a un second
+effet, moins visible : elle rend le choix des maturités
+<strong>sans conséquence</strong>, puisque c'est l'arbitrage qui détermine le
+forward. Le modèle sait retirer une prime de terme des taux à terme (le
+paramètre existe, il est à zéro), et c'est seulement alors que l'allocation
+se met à peser. Au-delà de trente ans, la courbe ne dit plus rien : le taux est
+prolongé à plat, et tout résultat qui en dépend est déclaré « estimé ».</p>
 
 <h3>Selon quelle règle les maturités sont choisies</h3>
-<p>Longues tant que le départ est loin, courtes à l'approche : c'est
-l'allocation par horizon que toute épargne à échéance pratique. Aucune ligne
-n'arrive à échéance après le départ, car il faudrait la vendre avant terme, à un
-prix qui n'est plus sans risque ; à l'échéance d'une ligne, son produit est
-replacé selon la même règle, pour ce qu'il reste à courir. Aucune maturité
-ne dépasse les trois quarts du versement : une épargne obligatoire ne se
-concentre pas sur un seul point de la courbe.</p>
+<p><strong>Chaque versement achète le titre qui arrive à échéance l'année du
+départ</strong>, et rien d'autre. Le compte doit un capital à une
+<strong>date</strong> ; le placement sans risque d'une dette datée est celui qui
+tombe ce jour-là. Aucune ligne n'arrive à échéance après le départ, car il
+faudrait la vendre avant terme, à un prix qui n'est plus sans risque ; aucune
+non plus avant lui, tant que la courbe va jusque-là. Il n'y a donc rien à
+replacer, et aucun taux futur à deviner. Au-delà de trente ans la courbe ne cote plus rien, et un versement
+fait si tôt se couvre en deux temps : trente ans, puis le reste à
+l'échéance.</p>
 {glissement}
+<p>Le pilier a longtemps fait autrement, et il vaut mieux le dire que de
+l'effacer : une échelle de trois maturités (deux, dix et trente ans) glissant
+du long vers le court à l'approche du départ, comme les fonds à échéance
+l'affichent. Deux choses l'ont fait tomber. La première est qu'elle
+<strong>ne changeait rien</strong> : tant que les taux futurs sont pris pour
+ceux que la courbe implique déjà, enchaîner des placements courts ou bloquer un
+long rapporte exactement la même chose, et le capital final était le même au
+centime, quelle que soit l'échelle. La seconde est qu'elle raccourcissait
+au nom d'une prudence qui n'était pas la bonne. Raccourcir protège d'un prix de
+vente incertain, et ce compte ne vend rien : il attend une date. Ce dont il
+avait à se protéger était l'inverse, le taux auquel chaque échéance serait
+replacée, et c'est l'échelle elle-même qui le créait.</p>
 
 <h3>Ce que l'enveloppe coûte</h3>
 <p>Quatre prélèvements, aux <strong>vraies moyennes du marché</strong> du plan
@@ -9902,7 +9935,10 @@ garanties serait plus faible, et le modèle ne la retient pas.</p>
 <h3>Ce que le modèle ne fait pas</h3>
 <p>Il ne simule aucun risque de marché : le pilier est placé sans risque par
 construction, et le seul aléa qui subsiste, celui de taux futurs s'écartant des
-forwards d'aujourd'hui, n'est pas chiffré. Il ne calcule aucune fiscalité :
+forwards d'aujourd'hui, n'est pas chiffré. L'adossement le réduit sans le
+supprimer : il ne porte plus que sur les versements à venir et, au-delà de
+trente ans d'horizon, sur le replacement du bout de courbe. Les versements
+déjà faits, eux, sont bloqués jusqu'au départ. Il ne calcule aucune fiscalité :
 tous les montants du site sont bruts, ici comme ailleurs, alors que les
 versements au plan sont déductibles et la rente imposable. Et la garantie
 vieillesse ne regarde pas cette rente : elle est servie sur la seule pension
