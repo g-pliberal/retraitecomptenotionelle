@@ -5489,7 +5489,14 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   le premier. Ce que la mesure suppose est écrit avec elle : un rattachement
   par le salaire là où l'INSEE mesure un niveau de vie de ménage, un facteur
   constant dans le temps, une espérance de stock appliquée à des liquidants
-  futurs, et une grille de cas types qui n'est pas une population.
+  futurs, et une grille de cas types qui n'est pas une population. Ce que
+  ce transfert coûte au régime se mesure aussi (`--deficit`) : un diviseur
+  par vingtile baisserait la dépense des scénarios notionnels de 3,6 à
+  4,3 %, quatre à cinq dixièmes de point de PIB, parce que les gros capitaux
+  sont servis le plus longtemps. La page Coût ne l'applique pas — elle compte
+  tout le monde à la mortalité générale, et ne saurait le faire proprement
+  sans la distribution des pensions par niveau de vie —, et le diviseur servi
+  reste commun.
 
 - **La décote surpunit l'anticipation ordinaire et sous-punit l'extrême.**
   Mesuré en comparant ce que coûte une année d'anticipation sous le droit en
