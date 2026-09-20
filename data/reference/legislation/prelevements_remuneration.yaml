@@ -56,16 +56,19 @@
 # pour payer les pensions d'aujourd'hui, et non parce que l'agent acquerrait
 # 82 % de son traitement en droits nouveaux. L'appeler « coût du travail » et
 # poser dessus l'incidence intégrale donnerait un gain net absurde : la baisse
-# de 82,28 % à 9 % se lirait comme une augmentation de salaire de soixante-dix
-# points, alors qu'elle ne libère rien — la dette de pensions qu'elle finance
-# reste à payer.
+# de 82,28 % à 11,50 % se lirait comme une augmentation de salaire de
+# soixante-dix points, alors que la dette de pensions qu'elle finance reste à
+# payer. Tenir le traitement fixe, à l'inverse, ne rendrait rien du tout,
+# comme si ce taux n'avait jamais rien coûté à l'employeur public.
 #
-# Le fichier retient donc la SECONDE branche de l'alternative, et le site
-# l'écrit : pour `agent_seul`, pas de ligne « coût du travail ». Le traitement
-# indiciaire brut est tenu fixe, seule la part de l'agent bouge, et le gain
-# affiché est celui-là. C'est la lecture prudente de l'incidence, celle que le
-# module appelle `assiette` ; elle n'est pas comparable, terme à terme, au gain
-# d'un salarié du privé, et `docs/limites.md` le dit.
+# Le fichier retenait la seconde branche ; il retient depuis le 20 septembre
+# 2026 une TROISIÈME, qui n'est pas un compromis mais une décision : la moitié
+# de ce que l'employeur cesse de verser remonte dans le traitement, l'autre
+# moitié paie la dette de pensions déjà promises. C'est l'incidence `partagee`,
+# et `Parametres.part_rendue_aux_salaires` la règle — à zéro, on retrouve
+# exactement l'ancienne convention. La ligne « coût du travail » reste absente :
+# un taux d'équilibre n'est toujours pas un prix du travail. `docs/limites.md`
+# dit ce que ce choix suppose, et ce qu'il laisse dehors.
 #
 # Le profil `independant` tient l'assiette fixe pour une autre raison, qui n'est
 # pas une hypothèse : il n'y a pas d'employeur, donc rien à répercuter.
@@ -614,7 +617,15 @@ profils:
     libelle_assiette: "Traitement indiciaire brut"
     libelle_net: "Traitement net"
     cout_du_travail: false
-    incidence: assiette
+    # `partagee` depuis le 20 septembre 2026, et c'est une DÉCISION, pas une
+    # correction : la moitié de ce que l'employeur public cesse de verser
+    # remonte dans le traitement, l'autre moitié paie la dette de pensions que
+    # sa contribution d'équilibre finançait. Voir `Incidence.PARTAGEE` dans
+    # `remuneration.py` et `part_rendue_aux_salaires` dans `config.py`. La
+    # ligne « coût du travail » reste absente : un taux d'équilibre n'est
+    # toujours pas un prix du travail, et l'afficher comme tel dirait le
+    # contraire de ce que ce partage suppose.
+    incidence: partagee
     # Rien d'autre que la retenue pour pension, que la fiche de régime porte, et
     # la CSG-CRDS. Un fonctionnaire titulaire ne cotise ni à la maladie — la
     # cotisation salariale a disparu en 2018 comme dans le privé —, ni au

@@ -58,6 +58,7 @@ from retraite_notionnelle.donnees.effectifs import EffectifsRetraites  # noqa: E
 from retraite_notionnelle.donnees.frais import FraisEpargneRetraite  # noqa: E402
 from retraite_notionnelle.donnees.mortalite import DonneesMortalite  # noqa: E402
 from retraite_notionnelle.remuneration import charger_prelevements  # noqa: E402
+from retraite_notionnelle.restitution import POSTES_REMUNERATION  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque  # noqa: E402
 from retraite_notionnelle.donnees.regimes import (  # noqa: E402
@@ -223,6 +224,14 @@ def _comptes_retraite() -> dict:
         series[f"transferts_{poste.code}"] = charger_serie_annuelle(
             macro / "transferts_retraite.csv", "montant_meur",
             nom=f"transferts_{poste.code}", filtre={"poste": poste.code})
+    # Les deux impôts du poste « impôts et taxes affectés » qui sont assis sur
+    # une rémunération — taxe sur les salaires et forfait social —, en millions
+    # d'euros : ce que la proposition SUPPRIME plutôt que de le rendre par la
+    # CSG. Voir `restitution.py`.
+    for code, _ in POSTES_REMUNERATION:
+        series[f"impots_remuneration_{code}"] = charger_serie_annuelle(
+            macro / "impots_retraite_remuneration.csv", "montant_meur",
+            nom=f"impots_remuneration_{code}", filtre={"poste": code})
     # L'assiette des revenus d'activité, en millions d'euros : ce sur quoi la
     # proposition prélève ses 18 %. Sans elle, un taux affiché ne se convertit
     # pas en recette.

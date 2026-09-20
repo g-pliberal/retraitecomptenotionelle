@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 285<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 744<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -9697,3 +9697,95 @@ dire dans cet ordre est la seule façon honnête de le dire.
 laisser à zéro garde le site sous les anticipations pures, hypothèse explicite,
 vérifiable et flatteuse ; le porter à 0,005 rend le pilier plus défendable et
 plus bas. La décision n'appartient pas au moteur.
+
+### 59. Les impôts que la proposition n'encaisse plus sont rendus pour moitié aux salaires, et pour moitié à la dette — `fait`
+
+**Demande.** « Je veux que l'on enlève certains impôts et taxes du salaire.
+Effectivement, on a enlevé les impôts et taxes affectées ainsi que les
+contributions de l'État. Il ne faut pas que ces baisses d'impôts servent
+uniquement à combler le déficit. Il faut aussi que les salaires soient
+augmentés. »
+
+**Ce que la lecture du droit a trouvé, et qui a changé la question.** Avant de
+rendre un impôt « du salaire », il fallait savoir lesquels, dans le poste
+« impôts et taxes affectés », sortent d'un salaire. L'index LEGI du dépôt
+répond, et la réponse est l'inverse de ce qu'on attendait.
+
+**La CSG sur les revenus d'ACTIVITÉ ne finance aucune retraite.** Ses 9,20
+points se répartissent, à l'article L. 131-8, 3° du code de la sécurité
+sociale dans sa rédaction en vigueur depuis le 1er février 2026 : Caisse
+nationale des allocations familiales 0,95, régimes obligatoires d'assurance
+maladie 4,25, Caisse d'amortissement de la dette sociale 0,45, Unédic 1,47,
+Caisse nationale de solidarité pour l'autonomie 2,08. Neuf virgule vingt
+exactement, et rien pour la branche vieillesse. Ce que la retraite encaisse en
+CSG est assis sur le capital (6,67 points sur 10,6, L. 131-8, 3° bis) et sur
+les pensions (2,94 points, L. 131-8, 3° e). Supprimer « la CSG retraite » de la
+fiche de paie n'avait donc aucun sens : elle n'y est pas.
+
+**Deux impôts du poste seulement sortent d'une rémunération.** La taxe sur les
+salaires, dont L. 131-8, 1° verse 58,35 % à la branche vieillesse — une
+fraction que la LFSS pour 2026 a fait passer de 63,25 à 58,35 % —, et le
+forfait social, dont L. 241-3, 1° donne le produit ENTIER à l'assurance
+vieillesse. Le compte de la CNAV les chiffre : 9 694 et 6 300 M€ en 2024,
+ensemble 28 % du poste.
+
+**Ce qui a été décidé.** Le partage, et il vaut deux fois :
+
+    la moitié est rendue aux salaires, la moitié éteint de la dette.
+
+`Parametres.part_rendue_aux_salaires`, à 0,5, et zéro rend l'ancienne
+convention, ce qu'un test vérifie. Premier volet, les impôts affectés : on
+supprime d'abord la taxe sur les salaires et le forfait social, puis le solde
+de la moitié rendue revient par une baisse de la CSG d'activité — 1,12 point en
+2026, 32 Md€ rendus, 32 éteints. Second volet, la contribution d'équilibre d'un
+employeur public : 82,28 % du traitement d'un fonctionnaire d'État en 2026,
+ramenés à la part patronale du taux unique, et la moitié de ce qui est libéré
+remonte dans le traitement. C'est `Incidence.PARTAGEE`, une troisième valeur à
+côté de l'incidence intégrale et de l'assiette fixe, et elle dit à quoi sert
+l'argent au lieu de choisir un bord.
+
+**Ce que ça déplace, sur la fiche de paie de 2026.** Le non-cadre au SMIC perd
+1,26 % au lieu de 2,61 % — le résultat reste négatif, la réduction générale
+effaçant déjà toute la part patronale à ce niveau. Le cadre à 2,5 SMIC gagne
+4,91 % au lieu de 3,47 %. Le fonctionnaire d'État gagne **32,9 %** — à tous les
+niveaux de traitement, ni réduction générale ni plafond ne courbant le calcul —,
+contre rien du tout auparavant : c'est le second volet, et de loin
+le plus lourd. **Aucun solde du système de retraite ne bouge d'un centime** :
+ces recettes en étaient déjà sorties, et ce que la décision ajoute est ce
+qu'elles deviennent.
+
+**La série qu'il a fallu certifier.** `scripts/fetch/ccss_impots_retraite.py`
+lit la taxe sur les salaires et le forfait social dans la section CNAV de la
+fiche « contributions sociales et recettes fiscales brutes » des rapports à la
+Commission des comptes de la Sécurité sociale. La SECTION compte : « taxe sur
+les salaires » figure une fois par branche dans le même tableau, et prendre la
+première ligne donnerait la part de la branche maladie. La série commence en
+2019 parce que le fonds de solidarité vieillesse recevait jusque-là sa propre
+fraction de ces deux impôts, et que depuis le 1er janvier 2019 l'article
+L. 135-3 ne lui laisse que de la CSG : quatorze valeurs au niveau `haute`,
+2019-2025. Au-delà, c'est la PART DU POSTE qui se reconduit — 26,6 à 28,9 %
+depuis 2019 — et non le montant, pour la même raison que l'assiette.
+
+**Ce qui reste, et c'est écrit.** Deux manques, sous `limites.md` § 5 ante bis
+et § 5 ante quater. La suppression de la taxe sur les salaires ne se voit sur
+aucune fiche du modèle : elle n'est due que par les employeurs non assujettis
+à la TVA — hôpitaux, banques, associations —, et le profil d'employeur du dépôt
+est une entreprise assujettie. Le dépôt COMPTE cette suppression dans
+l'enveloppe, il ne la RÉPARTIT sur personne. Et la pension reste calculée sur le
+revenu de la carrière, pas sur le brut que la fiche affiche : pour un agent
+public dont le traitement monte d'un tiers, le dépôt sous-estime désormais sa
+propre proposition d'autant. Le corriger demanderait de reboucler la fiche sur
+la carrière, ce qui est un point fixe et non un calcul de plus.
+
+**Et le partage est un état d'arrivée, pas un calendrier.** La demande le dit
+elle-même — « les entreprises vont augmenter au fur et à mesure les salaires ».
+Une baisse de CSG salariale tombe sur le net le mois suivant ; la suppression
+d'un impôt payé par l'employeur ne remonte dans les salaires que par la
+négociation, au fil des années. Le modèle montre le RÉGIME PERMANENT, ce qui
+est exactement l'hypothèse d'incidence qu'il assume déjà pour les cotisations
+patronales. Rien ne dit en combien d'années, et rien ne le mesure.
+
+**Ce qui n'est vérifié par rien.** La moitié qui « éteint de la dette ». Le
+dépôt ne modélise aucun budget de l'État : cette moitié est une affirmation du
+programme, pas un résultat du modèle, et rien ne tomberait en défaut si elle
+était fausse.

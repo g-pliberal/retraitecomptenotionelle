@@ -287,6 +287,15 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: la fiche de paie : la CSG est assise sur le BRUT, que le partage déplace,
   //: et la réduction générale n'efface que des cotisations PATRONALES.
   part_salariale_taux_unique: 0.5,
+  //: Ce que la proposition REND aux salaires sur ce qu'elle cesse d'affecter à
+  //: la retraite. Décision du Parti libéral, 20 septembre 2026 : la moitié est
+  //: rendue aux salaires, la moitié éteint de la dette. Elle s'applique deux
+  //: fois — aux impôts et taxes affectés, dont ce qui est assis sur une
+  //: rémunération est supprimé et le solde rendu en points de CSG d'activité
+  //: (`restitution.js`) ; et à la contribution d'équilibre d'un employeur
+  //: public, dont la moitié remonte dans le traitement (`Incidence.PARTAGEE`).
+  //: Zéro rend l'ancienne convention, où rien n'était rendu.
+  part_rendue_aux_salaires: 0.5,
   //: Montants MENSUELS, en euros de `annee_euros_garantie_vieillesse`, ramenés
   //: à l'année de liquidation par l'indice des prix. 800 + 250 = 1 050 € seul,
   //: 800 € par personne à deux.

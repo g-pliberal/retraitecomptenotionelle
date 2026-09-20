@@ -41,10 +41,12 @@ from retraite_notionnelle.remuneration import (
     bloc_taux_unique,
     bloc_taux_unique_sans_employeur,
     charger_prelevements,
+    contribution_equilibre,
     fiche_de_paie_possible,
     profil_de_la_fiche,
     smic_annuel,
 )
+from retraite_notionnelle.restitution import Restitution, points_csg_rendus
 from retraite_notionnelle.simulateur import Simulateur
 
 
@@ -373,23 +375,39 @@ def test_les_quatre_familles_couvertes_le_sont(pieces):
 # -- le fonctionnaire : pas de coût du travail, et le traitement tenu fixe ---
 
 
-def _fiches_du_statut(pieces, statut: str, niveau: float = 1.6):
-    """Les deux fiches d'un statut à un niveau de revenu, comme le site les fait."""
+def _fiches_du_statut(pieces, statut: str, niveau: float = 1.6,
+                      part_rendue: float | None = None):
+    """Les deux fiches d'un statut à un niveau de revenu, comme le site les fait.
+
+    ``part_rendue`` force le partage des impôts abandonnés ; à ``None``, c'est
+    celui des paramètres. Le mettre à zéro redonne l'ancienne convention, et
+    c'est ce dont un test se sert pour dire ce que la décision a déplacé.
+    """
+    rendue = (PARAMETRES.part_rendue_aux_salaires if part_rendue is None
+              else part_rendue)
     profil = pieces["prelevements"].profil(profil_de_la_fiche(
         pieces["affiliations"], pieces["catalogue"], statut, ANNEE))
     constructeur = ConstructeurFiche(profil)
     sans_employeur = pieces["affiliations"].sans_employeur(statut)
     actuel = bloc_droit_en_vigueur(
         pieces["catalogue"], pieces["affiliations"], statut, ANNEE)
+    csg = points_csg_rendus(PARAMETRES.racine_donnees, ANNEE, rendue)
     if sans_employeur:
         propose = bloc_taux_unique_sans_employeur(
             PARAMETRES.taux_cotisation_liberal,
-            PARAMETRES.taux_capitalisation_obligatoire)
+            PARAMETRES.taux_capitalisation_obligatoire,
+            csg_rendue=csg)
     else:
         propose = bloc_taux_unique(
             PARAMETRES.taux_cotisation_liberal,
             PARAMETRES.taux_capitalisation_obligatoire,
-            PARAMETRES.part_salariale_taux_unique)
+            PARAMETRES.part_salariale_taux_unique,
+            csg_rendue=csg,
+            part_rendue_aux_salaires=rendue,
+            contribution_equilibre_actuelle=contribution_equilibre(
+                PARAMETRES.racine_donnees, pieces["affiliations"], statut, ANNEE)
+            if profil.incidence is Incidence.PARTAGEE else 0.0,
+        )
     brut = niveau * pieces["smic"]
     avant = constructeur.fiche(
         ANNEE, brut, pieces["plafond"], pieces["smic"], actuel)
@@ -407,18 +425,65 @@ def test_le_fonctionnaire_n_a_pas_de_cout_du_travail_affichable(pieces):
 
     Ce que verse l'État est un taux d'ÉQUILIBRE — 82,28 % du traitement en 2026
     —, fixé pour payer les pensions d'aujourd'hui et non pour acheter des droits
-    nouveaux. Le profil ne l'affiche donc pas, et tient le traitement fixe.
+    nouveaux. La ligne « coût du travail » reste donc absente : l'afficher
+    dirait que ces 82 points sont un prix du travail, ce qu'ils ne sont pas.
+
+    Le traitement, lui, BOUGE depuis le 20 septembre 2026, et c'est le partage
+    qui le fait bouger — pas l'incidence intégrale. Les deux affirmations
+    tiennent ensemble, et ce test est là pour qu'on ne les confonde pas.
     """
     profil, avant, apres = _fiches_du_statut(pieces, "fonctionnaire_etat")
     assert profil.code == "agent_seul"
     assert profil.cout_du_travail is False
-    assert profil.incidence is Incidence.ASSIETTE
+    assert profil.incidence is Incidence.PARTAGEE
     # Rien du côté employeur sous le droit en vigueur : la fiche du régime ne
     # porte que la retenue, et c'est exactement ce qu'on voulait.
     assert avant.cout_du_travail == pytest.approx(avant.brut)
     assert avant.reduction_generale == 0.0
-    # Le traitement ne bouge pas d'un centime : c'est l'incidence sur l'assiette.
+    assert apres.brut > avant.brut
+
+
+def test_a_part_rendue_nulle_le_traitement_ne_bouge_plus(pieces):
+    """Le réglage tient ses deux bornes, et la borne basse est l'ancien dépôt.
+
+    À zéro, rien n'est rendu : le traitement est tenu fixe, la CSG reste
+    entière, et la fiche est CELLE D'AVANT la décision du 20 septembre 2026,
+    au centime. C'est ce qui permet de dire ce que la décision déplace sans
+    avoir à se fier à un commentaire.
+    """
+    _, avant, apres = _fiches_du_statut(pieces, "fonctionnaire_etat", part_rendue=0.0)
     assert apres.brut == pytest.approx(avant.brut)
+    csg_avant = next(l for l in avant.lignes if l.code == "csg_crds")
+    csg_apres = next(l for l in apres.lignes if l.code == "csg_crds")
+    assert csg_apres.salarie == pytest.approx(csg_avant.salarie)
+    assert csg_apres.libelle == csg_avant.libelle == "CSG et CRDS"
+
+
+def test_la_moitie_de_ce_que_l_etat_libere_remonte_dans_le_traitement(pieces):
+    """La formule du partage, vérifiée sur ses deux termes plutôt que sur un chiffre.
+
+    L'État verse 82,28 % du traitement en 2026 ; la proposition ramène sa part à
+    11,50 points — la moitié patronale de 18 + 5. La dépense publique par agent
+    baisse donc de la MOITIÉ de l'écart, l'autre moitié revenant au traitement.
+    """
+    _, avant, apres = _fiches_du_statut(pieces, "fonctionnaire_etat")
+    equilibre = contribution_equilibre(
+        PARAMETRES.racine_donnees, pieces["affiliations"],
+        "fonctionnaire_etat", ANNEE)
+    assert equilibre > 0.8
+    patronal = (PARAMETRES.taux_cotisation_liberal
+                + PARAMETRES.taux_capitalisation_obligatoire
+                ) * (1.0 - PARAMETRES.part_salariale_taux_unique)
+    attendu = avant.brut * (1.0 + patronal
+                            + PARAMETRES.part_rendue_aux_salaires
+                            * (equilibre - patronal)) / (1.0 + patronal)
+    assert apres.brut == pytest.approx(attendu, rel=1e-6)
+    # Et la dépense publique baisse bien de l'autre moitié.
+    depense_avant = avant.brut * (1.0 + equilibre)
+    depense_apres = apres.brut * (1.0 + patronal)
+    libere = avant.brut * (equilibre - patronal)
+    assert depense_avant - depense_apres == pytest.approx(
+        (1.0 - PARAMETRES.part_rendue_aux_salaires) * libere, rel=1e-6)
 
 
 def test_le_net_d_un_fonctionnaire_vaut_environ_79_pour_cent_du_traitement(pieces):
@@ -438,19 +503,19 @@ def test_le_net_d_un_fonctionnaire_vaut_environ_79_pour_cent_du_traitement(piece
     assert avant.retraite_salarie == pytest.approx(0.111 * avant.brut)
 
 
-def test_la_proposition_ne_deplace_presque_rien_pour_un_fonctionnaire(pieces):
-    """Et c'est le résultat : sa retenue passe de 11,10 % à 11,50 %.
+def test_la_retenue_d_un_fonctionnaire_passe_de_11_10_a_11_50_pour_cent(pieces):
+    """Ce que la proposition PRÉLÈVE sur un agent : 11,10 points, puis 11,50.
 
-    9 % de répartition et 2,5 % de capitalisation, à traitement inchangé. Le
-    reste du mouvement — la contribution de l'État, de 82,28 % à 9 % — ne se lit
-    pas sur une fiche de paie, mais sur la page « Coût ».
+    9 % de répartition et 2,5 % de capitalisation, la moitié salariale de
+    18 + 5. C'était tout le mouvement de sa fiche jusqu'au 20 septembre 2026 ;
+    depuis, le partage y ajoute le traitement, et le test suivant le mesure.
     """
     _, avant, apres = _fiches_du_statut(pieces, "fonctionnaire_etat")
     part = (PARAMETRES.taux_cotisation_liberal
             + PARAMETRES.taux_capitalisation_obligatoire
             ) * PARAMETRES.part_salariale_taux_unique
     assert apres.retraite_salarie == pytest.approx(part * apres.brut)
-    assert abs(apres.net - avant.net) / avant.net < 0.01
+    assert avant.retraite_salarie == pytest.approx(0.111 * avant.brut)
 
 
 def test_un_agent_non_titulaire_a_bien_un_cout_du_travail(pieces):

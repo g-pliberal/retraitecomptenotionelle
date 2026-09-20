@@ -6187,7 +6187,7 @@ deux chiffres décrivent deux futurs, et leur somme n'a pas de sens.
 
 ---
 
-## 5 ante bis. La fiche de paie : neuf réserves, dont trois décisives
+## 5 ante bis. La fiche de paie : neuf réserves, dont trois décisives, et deux que la restitution ajoute
 
 Le site affiche, sous les quatre pensions, ce qu'un actif touche PENDANT qu'il
 cotise : coût du travail, revenu brut, revenu net, sous le droit en vigueur et
@@ -6312,6 +6312,38 @@ allocations familiales (D. 613-1) et indemnités journalières (D. 621-3). C'est
 la réserve à surveiller en sens inverse : là où OpenFisca a du retard, le dépôt
 ne le voit que s'il va lire.
 
+**8. La suppression de la taxe sur les salaires ne se voit sur aucune fiche de
+paie du modèle, et c'est un manque, pas un oubli.** Depuis le 20 septembre
+2026, la proposition supprime les deux impôts du poste « impôts et taxes
+affectés » qui sortent d'une rémunération — la taxe sur les salaires, dont
+58,35 % va à la branche vieillesse (L. 131-8, 1°), et le forfait social, qui
+lui va en entier (L. 241-3, 1°). Or la taxe sur les salaires n'est due que par
+les employeurs NON assujettis à la TVA — hôpitaux, banques, assurances,
+associations —, et le profil d'employeur du dépôt est une entreprise de
+cinquante salariés et plus assujettie à la TVA : la ligne n'y est pas, et sa
+suppression n'y rend donc rien. Un salarié d'hôpital ou d'association verrait,
+lui, son coût du travail baisser d'autant, et sous l'hypothèse d'incidence du
+module cela remonterait dans son salaire. Le dépôt COMPTE cette suppression
+dans l'enveloppe rendue — c'est ce que la page Coût chiffre —, mais ne la
+RÉPARTIT sur personne. Le corriger demanderait un cinquième profil, celui de
+l'employeur non assujetti, et le barème de la taxe, qui est progressif par
+tranches. Même remarque pour le forfait social, assis sur l'intéressement et la
+participation, que la fiche du dépôt ne porte pas davantage.
+
+**9. La pension est calculée sur le revenu de la carrière, pas sur le brut que
+la fiche affiche.** C'est vrai depuis toujours et cela ne pesait presque rien :
+sous l'incidence intégrale, le brut d'un salarié du privé monte de quelques
+pour cent, et la pension calculée sur l'ancien brut est sous-estimée d'autant.
+Depuis que la contribution d'équilibre d'un employeur public est partagée, cela
+pèse beaucoup plus : le traitement d'un fonctionnaire d'État monte d'un tiers
+sur la fiche, et sa pension continue d'être calculée sur le traitement
+d'avant. **Le dépôt sous-estime donc la pension de la proposition pour les
+agents publics**, et l'écart est du même ordre que la hausse du traitement. Le
+corriger demanderait de reboucler la fiche de paie sur la carrière — le brut
+sous la proposition devenant l'assiette de la cotisation —, ce qui est une
+boucle de point fixe et non un calcul de plus. La fiche de paie et la pension
+restent, pour l'instant, deux lectures d'un même monde qui ne se parlent pas.
+
 Rien de tout cela ne touche une pension : retiré, le modèle calcule exactement
 les mêmes six scénarios.
 
@@ -6378,6 +6410,67 @@ pas une estimation, c'est l'inverse exact du calcul qui produit le net. Les
 statuts que le modèle ne sait pas décrire — exploitant agricole, élu,
 collectivités d'outre-mer — font exception : leur montant est lu tel quel, et le
 formulaire l'affiche plutôt que de le taire.
+
+---
+
+## 5 ante quater. Le partage « moitié aux salaires, moitié à la dette » : ce qu'il affirme et ce que rien ne vérifie
+
+La proposition ne reconduit pas les impôts et taxes affectés ni la contribution
+d'équilibre de l'État. Le dépôt ne disait pas ce que ces recettes devenaient,
+ce qui revenait à les laisser au budget. Depuis le 20 septembre 2026, il le
+dit : **la moitié est rendue aux salaires, la moitié éteint de la dette.**
+Cinq réserves, et la dernière est la plus importante.
+
+**1. La moitié qui « éteint de la dette » n'est vérifiée par rien.** Le dépôt
+ne modélise aucun budget de l'État et aucune trajectoire de dette publique : il
+porte la dette de toutes les administrations en part de PIB, mais comme un
+décor, pas comme un compte. Que 32 Md€ par an aillent effectivement à
+l'amortissement plutôt qu'à autre chose est une AFFIRMATION du programme, pas
+un résultat du modèle. Rien, dans le dépôt, ne tomberait en défaut si elle
+était fausse.
+
+**1 bis. Le partage est un ÉTAT D'ARRIVÉE, pas un calendrier.** La moitié
+rendue aux salaires ne l'est pas le lendemain de la bascule. Une baisse de CSG
+salariale, elle, tombe sur le net immédiatement ; mais la suppression d'un
+impôt payé par l'employeur — la taxe sur les salaires, le forfait social — ne
+remonte dans les salaires que par la négociation, au fil des années, et c'est
+la même hypothèse d'incidence de long terme que le module de la fiche de paie
+assume déjà pour les cotisations patronales (§ 5 ante bis, réserve 1). Le
+modèle montre donc le RÉGIME PERMANENT : ce que la fiche de paie vaut une fois
+la répercussion faite. Rien dans le dépôt ne dit en combien d'années, et rien
+ne le mesure : le chiffre affiché est un point d'arrivée, et le chemin n'est
+pas modélisé.
+
+**2. Le partage ne change aucun solde du système de retraite.** Ces recettes
+étaient déjà sorties de son compte, et les rendre aux salaires ou les garder ne
+déplace pas un centime du solde de la proposition. Ce qui bouge est la fiche de
+paie, et le budget de l'État — que le dépôt ne tient pas.
+
+**3. La part du poste assise sur une rémunération est mesurée de 2019 à 2025,
+et reconduite ensuite.** Les deux impôts sont lus dans la section CNAV de la
+fiche « contributions sociales et recettes fiscales brutes » des rapports à la
+Commission des comptes de la Sécurité sociale. La série commence en 2019 parce
+que le fonds de solidarité vieillesse recevait jusque-là sa propre fraction de
+ces deux impôts, et que la seule section CNAV aurait sous-estimé le total sans
+le dire ; depuis le 1er janvier 2019, l'article L. 135-3 ne laisse au fonds que
+de la CSG. Au-delà de 2025, c'est la PART DU POSTE qui est reconduite et non le
+montant : elle tient entre 26,6 et 28,9 % depuis 2019, mais rien ne garantit
+qu'une loi de financement ne la déplace pas — elle a bougé de 63,25 à 58,35 %
+pour la seule taxe sur les salaires entre 2025 et 2026.
+
+**4. La baisse de CSG d'activité est une décision politique, pas une
+restitution.** Il faut le dire dans ces termes parce que l'intuition dit le
+contraire. **La CSG sur les revenus d'activité ne finance aujourd'hui aucune
+retraite** : ses 9,20 points vont à la CNAF (0,95), aux régimes obligatoires
+d'assurance maladie (4,25), à la CADES (0,45), à l'Unédic (1,47) et à la CNSA
+(2,08) — 9,20 exactement, article L. 131-8, 3° du code de la sécurité sociale,
+version en vigueur au 1er février 2026. Ce que la branche vieillesse encaisse
+en CSG est assis sur le capital (6,67 points sur 10,6) et sur les pensions
+(2,94 points). Baisser la CSG d'activité, c'est donc dépenser au profit des
+salariés une recette que la retraite abandonne, et non leur rendre ce qu'on
+leur prenait. Le choix de ce canal plutôt qu'un autre — une baisse de
+cotisation maladie, un crédit d'impôt — n'est motivé par rien d'autre que sa
+simplicité et son assiette, la plus large qui porte sur le travail.
 
 ---
 
@@ -6814,7 +6907,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1253<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1263<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
