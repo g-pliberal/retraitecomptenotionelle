@@ -5453,6 +5453,30 @@ que de ${premiereVentilee} à ${derniereVentilee}.`,
 
   // Le détail est rendu AVANT le gabarit final : c'est de lui, et des deux
   // cartes, que le plan de la page se déduit.
+  // -- ce que personne n'a cotisé -------------------------------------------
+  //
+  // UN CHIFFRE, ET SON DÉNOMINATEUR AVEC LUI. La part des avantages non
+  // contributifs se lit sur le risque vieillesse-survie des comptes de la
+  // protection sociale, à la dernière année que la DREES publie ; les trois
+  // chiffres d'ouverture sont ceux du COR, à une autre année, sur un compte
+  // plus étroit. La phrase porte donc son propre total, et dit qu'il n'est
+  // pas celui des cartes. Le détail par famille est dans le dépliant des
+  // dépenses, sur ce même total, et le dispositif par dispositif sur la page
+  // Avantages.
+  const avantages = contexte.avantages().derniere;
+  let nonCotise = "";
+  if (avantages && avantages.observee > 0) {
+    nonCotise = `
+<div class="note"><strong>Ce que personne n'a cotisé.</strong> Réversion,
+minima, trimestres pour enfants : ${milliards(avantages.gratuit, 1)} en
+${avantages.annee}, soit
+${g.pourcentage(avantages.gratuit / avantages.observee, false, 1)} de la
+dépense vieillesse-survie (${milliards(avantages.observee, 1)}, un périmètre
+plus large que les cartes).
+<a href="${g.lien("/avantages")}">La page Avantages</a> les détaille.</div>
+`;
+  }
+
   const detail = [
     coutDetailDepense(contexte),
     coutDetailRessources(contexte),
@@ -5499,7 +5523,7 @@ ${plan}
 ${carteBilan}
 
 ${carteProvenance}
-
+${nonCotise}
 <div class="note"><strong>Dépenser moins n'est pas économiser.</strong> Un
 système en ${g.terme("comptes notionnels", "compte notionnel")} ne laisse pas d'argent
 dormir : il remonte les pensions jusqu'à l'équilibre. La courbe en pointillés
@@ -6121,6 +6145,65 @@ function coutDetailDepense(contexte) {
     "capitalisation, dépendance, minimum vieillesse",
   ));
 
+  // -- ce que personne n'a cotisé, par famille ------------------------------
+  //
+  // MÊME TOTAL QUE LE PREMIER PARAGRAPHE DU DÉPLIANT : `observee` est la
+  // dépense du risque vieillesse-survie de l'année, celle-là même que `total`
+  // porte. C'est ce qui autorise une part ici, et l'interdit sous les cartes
+  // du haut, qui suivent le périmètre du COR à une autre année.
+  const avantages = contexte.avantages().derniere;
+  const inventaire = contexte.inventaireAvantages();
+  let nonCotise = "";
+  if (avantages && avantages.observee > 0) {
+    const parFamille = {};
+    for (const [ligne, montant] of Object.entries(avantages.lignes)) {
+      const famille = inventaire.familleDeLigne(ligne);
+      if (famille !== null) {
+        parFamille[famille] = (parFamille[famille] || 0) + montant;
+      }
+    }
+    const ordonnees = [...inventaire.familles]
+      .filter((f) => (parFamille[f.code] || 0) > 0)
+      .sort((a, b) => (parFamille[b.code] || 0) - (parFamille[a.code] || 0)
+        || (a.code < b.code ? -1 : a.code > b.code ? 1 : 0));
+    const lignesFamilles = ordonnees.map((famille) => [
+      echapper(famille.libelle),
+      milliards(parFamille[famille.code], 1),
+      g.pourcentage(parFamille[famille.code] / avantages.observee, false, 1),
+    ]);
+    const partGratuite = g.pourcentage(avantages.gratuit / avantages.observee,
+                                       false, 1);
+    lignesFamilles.push([
+      "<strong>Ensemble des avantages chiffrés</strong>",
+      `<strong>${milliards(avantages.gratuit, 1)}</strong>`,
+      `<strong>${partGratuite}</strong>`,
+    ]);
+    nonCotise = `
+<h4>Ce que personne n'a cotisé</h4>
+<p>Sur ces ${milliards(avantages.observee, 1)} de ${avantages.annee},
+${milliards(avantages.gratuit, 1)}, soit ${partGratuite}, servent des droits
+qu'aucune cotisation n'a ouverts : la pension du conjoint survivant, les
+minima, les trimestres accordés pour un enfant ou une période de chômage, les
+départs avant l'âge. La part se lit sur ce total-là, le risque
+vieillesse-survie entier. Les cartes du haut suivent un autre compte, celui du
+COR, en ${c.solde.derniereAnneeObservee} : elle ne s'y rapporte pas.</p>
+${g.tableau(
+    ["Famille", `${avantages.annee}`, "Part de la dépense"],
+    lignesFamilles,
+    ["", "nombre", "nombre"],
+    `Avantages non contributifs chiffrés en ${avantages.annee}, par famille, `
+    + "et part de la dépense vieillesse-survie",
+    true,
+  )}
+<p class="discret">C'est un plancher : les plus grosses lignes sont lues dans
+les comptes de la protection sociale et l'enquête de la DREES auprès des
+caisses, les autres calculées sur la grille de cas types, et les dispositifs
+que ni l'un ni l'autre ne mesurent restent sans chiffre.
+<a href="${g.lien("/avantages")}">La page Avantages</a> les nomme un par un,
+dit d'où vient chaque montant et pourquoi une case reste vide.</p>
+`;
+  }
+
   const duree = derniere - premiereVentilee;
   const macro = contexte.simulateur().macro;
   const lignesSystemes = SYSTEMES.map((systeme) => {
@@ -6193,7 +6276,7 @@ Deux chiffres se lisent en connaissant le découpage : le régime général abso
 en 2020 les artisans et les commerçants, dont le régime a été adossé à la Cnav,
 et les « régimes spéciaux » de la comptabilité nationale contiennent la CNRACL,
 c'est-à-dire la fonction publique territoriale et hospitalière.</p>
-`, "cout-depenses");
+${nonCotise}`, "cout-depenses");
 }
 
 /** La ventilation des ressources au découpage du COR, poste par poste. */

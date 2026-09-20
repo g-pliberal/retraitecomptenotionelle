@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 244<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 327<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -6795,6 +6795,12 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   pages, ce que l'exemple pré-rempli et trois carrières adressées donnaient ce
   matin-là, et les questions à attendre avec la page qui y répond. Déclaré
   `recit` dans `zones.yaml` : ses chiffres sont ceux d'un matin.
+- **20 septembre 2026, action 44.** Faite. La page Coût dit quelle part de
+  la dépense n'a été cotisée par personne : une note de quarante mots en haut,
+  qui porte son propre total et renvoie à la page Avantages, et un tableau par
+  famille dans le dépliant des dépenses, sur le seul total où la part soit
+  juste, celui de la DREES. Aucun graphique de plus, rien dans le modèle. Le
+  détail est sous l'action.
 
 ### 37. Chiffrer les avantages non contributifs, et les montrer — `fait`
 
@@ -8456,7 +8462,7 @@ allocations familiales et la PAJE, qui existent sous les deux systèmes.
 
 ---
 
-### 44. La décomposition des avantages sur la page Coût — `à faire`
+### 44. La décomposition des avantages sur la page Coût — `fait`
 
 **Pourquoi.** L'action 37 a chiffré les avantages non contributifs à 22,3 % de
 la dépense, et leur a donné une page. La page Coût, elle, décompose la dépense
@@ -8487,6 +8493,40 @@ soit fautive.
 
 **Fin.** Un lecteur de la page Coût sait quelle part de la dépense n'a été
 cotisée par personne, ou sait où aller le lire.
+
+**Ce qui est fait, le 20 septembre 2026.** Les deux à la fois, chacun à sa
+place, et le piège tranche la question du dénominateur. La page Coût porte
+deux comptes : les cartes du haut suivent le COR, à la dernière année qu'il
+observe ; le dépliant « Le détail des dépenses » suit la DREES, risque
+vieillesse-survie entier, à la dernière année qu'elle publie — et c'est ce
+total-là, à cette année-là, que `calculer_avantages` prend pour `observee`.
+La part n'a donc qu'une place où elle soit juste : ce dépliant. Il gagne une
+section « Ce que personne n'a cotisé », un tableau par famille de
+l'inventaire, le même découpage que la page Avantages, avec le montant et la
+part de la dépense, et une ligne d'ensemble ; le paragraphe qui l'introduit
+nomme le total sur lequel la part se lit et dit qu'il n'est pas celui des
+cartes. En haut de page, entre la carte « Qui paie ? » et la note « Dépenser
+moins n'est pas économiser », une note de quarante mots donne le total, le
+montant, la part, et renvoie à la page Avantages — elle porte son propre
+dénominateur et son année, précisément pour ne pas se lire sous les trois
+chiffres d'ouverture. Pas de graphique : la page en a deux et n'en aura pas
+trois, et le dispositif par dispositif reste sur la page qui sait dire
+pourquoi une case est vide.
+
+**Ce que ça a déplacé.** Rien dans le modèle, rien dans `simulations.json` :
+`calculer_avantages` était déjà appelé par le dépliant de la garantie, la
+page ne calcule pas une seconde de plus. Sur la page, en 2024 : 96,2 Md€
+sur 426,7, soit 22,5 % — 46,0 de droits dérivés, 22,7 d'âge et de
+bonifications, 11,2 de droits familiaux, 7,8 de minima, 7,3 de périodes
+validées, 1,2 de majorations diverses. La page ouverte passe de 650 à 688
+mots, sur un budget de 700 : la prochaine phrase ajoutée en haut de Coût devra
+en déloger une autre. La page avait deux bornes, 650 dans son propre test et
+700 dans `BUDGETS_DE_LECTURE`, et se trouvait à 650 exactement ; le test de
+la page lit désormais le budget, une borne au lieu de deux.
+
+**Fichiers.** `web/pages.py` (`_cout`, `_cout_detail_depense`) et
+`moteur/js/pages.js` en regard ; `tests/test_web.py` ;
+`tests/temoins/pages.json`.
 
 ### 45. Les sources qui refusent la session se déclarent, et leur document s'apporte — `fait`
 
