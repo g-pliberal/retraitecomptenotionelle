@@ -8202,66 +8202,133 @@ chose autrement, par le diviseur d'espérance de vie, mais ils le font
 """, identifiant="cout-scenarios")
 
 
-#: Les marches de la cascade, dans l'ordre où la proposition les applique :
-#: code du rapport qui les porte, étiquette courte posée sous la colonne, et
-#: ce que l'étiquette ne peut pas dire, redit dans le tableau des chiffres.
+#: Ce que chaque système AJOUTE à la cascade par rapport à celui qui le précède
+#: dans ``SCENARIOS_MONTRES`` : son étiquette, posée sous la colonne, et ce que
+#: l'étiquette ne peut pas dire, redit dans le tableau des chiffres.
 #:
-#: L'ORDRE N'EST PAS INDIFFÉRENT, et il n'est pas non plus arbitraire : c'est
-#: celui de la construction du compte notionnel. On retire d'abord ce que le
-#: système ne sert plus (la réversion), on recalcule ensuite ce qu'il sert au
-#: franc le franc de la part salariale, on y ajoute la part patronale, puis on
-#: remplace le barème par le taux unique, et l'on pose enfin la garantie
-#: par-dessus. Un autre ordre donnerait d'autres marches — c'est la limite de
-#: toute décomposition séquentielle, et la note sous le tracé l'écrit — mais
-#: jamais un autre total.
-MARCHES_CASCADE: tuple[tuple[str, str, str], ...] = (
-    ("reversion", "Réversion supprimée",
-     "premier avantage non contributif du système, un dixième de la masse "
-     "versée : les comptes notionnels ne rendent que ce que l'assuré a cotisé"),
-    ("notionnel_retroactif", "Pensions recalculées",
-     "la part salariale seule, rendue au franc le franc : diviseur "
-     "d'espérance de vie, indexation du capital sur les salaires, et retrait "
-     "de tous les autres avantages non contributifs — minimum contributif, "
-     "trimestres gratuits, majorations pour enfants, départs anticipés"),
-    ("notionnel_retroactif_employeur", "Part patronale au compte",
-     "ce que l'employeur verse ouvre désormais un droit à celui qui le voit "
-     "passer ; c'est la seule chose qui sépare cette marche de la précédente"),
-    ("notionnel_liberal", "Cotisation unique de 18 %",
-     "un taux unique pour tous les statuts, parts salariale et patronale "
-     "additionnées, sur les seuls droits acquis à compter de la bascule"),
-    ("garantie_vieillesse_liberal", "Garantie vieillesse",
-     "le plancher individualisé qui remplace l'ASPA, financé par l'impôt et "
-     "non par les cotisations : il s'AJOUTE à la dépense"),
-)
+#: LA CHAÎNE N'EST PAS ÉCRITE ICI, et c'est tout l'objet de ce dictionnaire.
+#: L'ordre des marches est celui de ``SCENARIOS_MONTRES``, qui est le seul
+#: endroit du site où les systèmes sont listés ; ce dictionnaire ne fait que
+#: NOMMER chacun d'eux. Ajouter un système à la liste ajoute donc sa marche, et
+#: ``test_web`` refuse un système qui n'aurait pas son nom ici — c'est la seule
+#: chose qu'une main doive écrire.
+#:
+#: Les accolades sont remplies par ``_libelles_cascade`` : un taux, une année,
+#: une part qui change d'une année à l'autre. Aucun nombre n'est écrit en
+#: toutes lettres, sous peine qu'un réglage de la page démente son étiquette.
+MARCHES_SYSTEMES: dict[str, tuple[str, str]] = {
+    "notionnel_retroactif": (
+        "Pensions recalculées",
+        "la part salariale seule, rendue au franc le franc : diviseur "
+        "d'espérance de vie, indexation du capital sur les salaires, et retrait "
+        "de tous les autres avantages non contributifs — minimum contributif, "
+        "trimestres gratuits, majorations pour enfants, départs anticipés",
+    ),
+    "notionnel_retroactif_employeur": (
+        "Part patronale au compte",
+        "ce que l'employeur verse ouvre désormais un droit à celui qui le voit "
+        "passer ; c'est la seule chose qui sépare cette marche de la précédente",
+    ),
+    "notionnel_liberal": (
+        "Cotisation unique de {taux}",
+        "un taux unique pour tous les statuts, parts salariale et patronale "
+        "additionnées, sur les seuls droits acquis à compter de {bascule}",
+    ),
+}
+
+#: Les trois marches qui ne sont pas des systèmes, et leur place dans la
+#: chaîne : la réversion AVANT — le rapport des systèmes ne décrit que les
+#: droits directs —, la garantie et les reprises APRÈS, parce qu'elles ne
+#: remplacent aucun rapport mais s'ajoutent par-dessus.
+MARCHE_REVERSION = "reversion"
+MARCHE_REPRISES = "reprises"
+MARCHES_HORS_SYSTEMES: dict[str, tuple[str, str]] = {
+    MARCHE_REVERSION: (
+        "Réversion supprimée",
+        "{reversion} de la masse versée cette année-là, et le premier avantage "
+        "non contributif du système : les comptes notionnels ne rendent que ce "
+        "que l'assuré a cotisé",
+    ),
+    COMPOSANTE_GARANTIE: (
+        "Garantie vieillesse",
+        "le plancher individualisé qui remplace l'ASPA, financé par l'impôt et "
+        "non par les cotisations : il s'AJOUTE à la dépense",
+    ),
+    MARCHE_REPRISES: (
+        "Reprises sur successions",
+        "la garantie est une avance, et le décès du bénéficiaire la rend sur sa "
+        "succession : {reprise} de ce qu'elle a versé",
+    ),
+}
 
 
-def _marches_cascade(base: float, part_derives: float,
-                     rapports: dict[str, float]) -> list[g.Marche]:
-    """Les cinq marches qui vont du système actuel à la proposition.
+def _libelles_cascade(contexte: Contexte, part_derives: float,
+                      part_reprise: float) -> dict[str, str]:
+    """Ce que les accolades des étiquettes et des gloses valent cette année-là.
 
-    Elles sont exactement additives, et ce n'est pas un hasard :
+    Tout nombre qu'une étiquette affiche passe par ici. C'est une règle, et
+    elle a une raison : le taux de la proposition est un RÉGLAGE de la page —
+    l'adresse peut le changer —, et la part de réversion dans la masse versée
+    tombe d'un dixième aujourd'hui à un dix-huitième en 2070. Une étiquette qui
+    écrirait l'un ou l'autre en toutes lettres mentirait au premier changement,
+    sans qu'une ligne de code soit fautive.
+    """
+    base = contexte.base
+    return {
+        "taux": g.pourcentage(base.taux_cotisation_liberal, decimales=0),
+        "bascule": str(base.annee_bascule),
+        "reversion": g.pourcentage(part_derives, decimales=1),
+        "reprise": g.pourcentage(part_reprise, decimales=0),
+    }
+
+
+def _marche_cascade(code: str, valeur: float, libelles: dict[str, str]) -> g.Marche:
+    """Une marche nommée, ses accolades remplies, son montant en milliards."""
+    gabarit, glose = (MARCHES_SYSTEMES.get(code)
+                      or MARCHES_HORS_SYSTEMES[code])
+    return g.Marche(gabarit.format(**libelles), valeur / 1000,
+                    glose=glose.format(**libelles))
+
+
+def _marches_cascade(base: float, part_derives: float, rapports: dict[str, float],
+                     libelles: dict[str, str],
+                     part_reprise: float = 0.0) -> list[g.Marche]:
+    """Les marches qui vont du système actuel à la proposition, dans l'ordre.
+
+    ELLES SONT EXACTEMENT ADDITIVES, et ce n'est pas un hasard :
     ``masse_du_scenario`` écrit la masse d'un système comme la part DIRECTE de
     la base multipliée par son rapport, plus la réversion s'il la sert. Une
     différence de deux rapports appliquée à la même part directe est donc la
-    contribution propre du changement qui les sépare, et la somme des cinq vaut
+    contribution propre du changement qui les sépare, et leur somme vaut
     l'écart des deux totaux au centime. ``test_web`` le vérifie plutôt que d'en
     croire ce commentaire.
+
+    L'ORDRE EST CELUI DE ``SCENARIOS_MONTRES``, et il n'est écrit nulle part
+    ailleurs. C'est ce qui fait que la figure suit le site : le jour où un
+    système entre dans la liste ou en sort, la cascade gagne ou perd sa marche
+    sans qu'on ait à rouvrir cette fonction.
+
+    ``part_reprise`` est ce que les successions rendent de la garantie, en
+    fraction de ce qu'elle a versé. Une FRACTION, et non un montant : le compte
+    du COR ne porte pas les reprises, et le seul emprunt qu'on fasse au modèle
+    est celui qu'on lui fait partout ailleurs dans cette page — un rapport sans
+    dimension, jamais un niveau.
     """
     directe = base * (1.0 - part_derives)
+    marches = [_marche_cascade(MARCHE_REVERSION, -base * part_derives, libelles)]
     precedent = 1.0
-    marches = []
-    for code, libelle, glose in MARCHES_CASCADE:
-        if code == "reversion":
-            valeur = -base * part_derives
-        elif code == COMPOSANTE_GARANTIE:
-            # La garantie n'est pas un système : elle ne REMPLACE pas le
-            # rapport précédent, elle s'ajoute par-dessus. Le cumul ne repart
-            # donc pas de son rapport.
-            valeur = directe * rapports[code]
-        else:
-            valeur = directe * (rapports[code] - precedent)
-            precedent = rapports[code]
-        marches.append(g.Marche(libelle, valeur / 1000, glose=glose))
+    for code in SCENARIOS_MONTRES[1:]:
+        marches.append(_marche_cascade(code, directe * (rapports[code] - precedent),
+                                       libelles))
+        precedent = rapports[code]
+    # La garantie n'est pas un système : elle ne REMPLACE pas le rapport
+    # précédent, elle s'ajoute par-dessus, et le cumul ne repart donc pas
+    # d'elle. Les reprises viennent en moins de ce qu'elle a versé.
+    garantie = directe * rapports[COMPOSANTE_GARANTIE]
+    marches.append(_marche_cascade(COMPOSANTE_GARANTIE, garantie, libelles))
+    if part_reprise:
+        marches.append(_marche_cascade(MARCHE_REPRISES, -garantie * part_reprise,
+                                       libelles))
     return marches
 
 
@@ -8311,7 +8378,8 @@ def _cout_detail_cascade(contexte: Contexte) -> str:
                   glose=f"{_sans_numero(LIBELLES_SYSTEMES['actuel'])} : la "
                         f"dépense de retraite mesurée en {obs}")]
         + _marches_cascade(observe.depense_meur("actuel"), observe.part_derives,
-                           observe.rapports)
+                           observe.rapports,
+                           _libelles_cascade(contexte, observe.part_derives, 0.0))
         + [g.Marche("La proposition", arrivee,
                     total=True, couleur="var(--liberal)",
                     glose=f"{_sans_numero(LIBELLES_SYSTEMES['notionnel_liberal'])}"
@@ -8328,6 +8396,8 @@ def _cout_detail_cascade(contexte: Contexte) -> str:
     fin = avenir.derniere_annee
     horizon = avenir.annee(fin)
     depart_fin = horizon.cout_constants("actuel") / 1000
+    garantie_fin = horizon.cout_constants(COMPOSANTE_GARANTIE)
+    part_reprise = horizon.reprises_constants() / garantie_fin if garantie_fin else 0.0
     arrivee_fin = (horizon.cout_constants("notionnel_liberal")
                    + horizon.garantie_nette_constants()) / 1000
     marches_fin = (
@@ -8336,13 +8406,11 @@ def _cout_detail_cascade(contexte: Contexte) -> str:
                   glose=f"{_sans_numero(LIBELLES_SYSTEMES['actuel'])} : la "
                         f"dépense que le modèle projette pour {fin}")]
         + _marches_cascade(horizon.cout_constants("actuel"), horizon.part_derives,
-                           horizon.rapports)
-        + [g.Marche("Reprises sur successions",
-                    -horizon.reprises_constants() / 1000,
-                    glose="la garantie est une avance, et le décès du "
-                          "bénéficiaire la rend sur sa succession, dans la "
-                          "limite de ce qu'elle a versé"),
-           g.Marche("La proposition", arrivee_fin, total=True,
+                           horizon.rapports,
+                           _libelles_cascade(contexte, horizon.part_derives,
+                                             part_reprise),
+                           part_reprise)
+        + [g.Marche("La proposition", arrivee_fin, total=True,
                     couleur="var(--liberal)",
                     glose=f"{_sans_numero(LIBELLES_SYSTEMES['notionnel_liberal'])}"
                           " : pensions contributives et garantie nette des "
