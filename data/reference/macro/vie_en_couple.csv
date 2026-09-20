@@ -1,0 +1,165 @@
+# Mode de résidence des personnes de 65 ans et plus, par âge et par sexe
+# source_id: insee_vie_en_couple
+# unite: pour cent des personnes de cet âge et de ce sexe
+# mode: couple | seul
+# annee: 2021 (recensement de la population)
+# fiabilite:
+#   haute : valeur publiée, lue telle quelle dans le classeur `ip2040.xlsx` de
+#           l'*Insee Première* n° 2040 par scripts/fetch/insee_vie_en_couple.py.
+#           Aucune certification ne la recontrôle par un second chemin.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À la reprise sur succession de la garantie vieillesse (action 47) : deux
+# bénéficiaires en couple laissent DEUX avances sur UNE succession, celle du
+# survivant, et une avance deux fois plus grosse est bien moins couverte par
+# un patrimoine donné. `cout._reprises_successions` en tire le nombre moyen
+# d'avances par succession.
+#
+# Ne pas modifier à la main : le script réécrit le fichier en entier.
+# recupere_le: 2026-09-20
+annee,age,sexe,mode,part_pct,fiabilite
+2021,65,F,couple,61.8,haute
+2021,65,F,seul,29.5,haute
+2021,65,H,couple,72.7,haute
+2021,65,H,seul,21.0,haute
+2021,66,F,couple,61.3,haute
+2021,66,F,seul,30.3,haute
+2021,66,H,couple,72.8,haute
+2021,66,H,seul,21.1,haute
+2021,67,F,couple,61.1,haute
+2021,67,F,seul,31.0,haute
+2021,67,H,couple,73.4,haute
+2021,67,H,seul,20.7,haute
+2021,68,F,couple,60.1,haute
+2021,68,F,seul,32.0,haute
+2021,68,H,couple,74.0,haute
+2021,68,H,seul,20.5,haute
+2021,69,F,couple,59.7,haute
+2021,69,F,seul,32.7,haute
+2021,69,H,couple,74.2,haute
+2021,69,H,seul,20.4,haute
+2021,70,F,couple,58.8,haute
+2021,70,F,seul,33.5,haute
+2021,70,H,couple,74.7,haute
+2021,70,H,seul,20.0,haute
+2021,71,F,couple,57.9,haute
+2021,71,F,seul,34.5,haute
+2021,71,H,couple,75.2,haute
+2021,71,H,seul,19.9,haute
+2021,72,F,couple,56.6,haute
+2021,72,F,seul,35.4,haute
+2021,72,H,couple,75.1,haute
+2021,72,H,seul,19.9,haute
+2021,73,F,couple,55.4,haute
+2021,73,F,seul,36.6,haute
+2021,73,H,couple,75.4,haute
+2021,73,H,seul,19.8,haute
+2021,74,F,couple,53.9,haute
+2021,74,F,seul,37.7,haute
+2021,74,H,couple,75.7,haute
+2021,74,H,seul,19.3,haute
+2021,75,F,couple,52.8,haute
+2021,75,F,seul,38.7,haute
+2021,75,H,couple,75.6,haute
+2021,75,H,seul,19.4,haute
+2021,76,F,couple,50.3,haute
+2021,76,F,seul,40.1,haute
+2021,76,H,couple,75.0,haute
+2021,76,H,seul,19.4,haute
+2021,77,F,couple,48.4,haute
+2021,77,F,seul,41.4,haute
+2021,77,H,couple,74.6,haute
+2021,77,H,seul,19.7,haute
+2021,78,F,couple,46.4,haute
+2021,78,F,seul,42.7,haute
+2021,78,H,couple,74.0,haute
+2021,78,H,seul,20.1,haute
+2021,79,F,couple,44.0,haute
+2021,79,F,seul,44.6,haute
+2021,79,H,couple,73.6,haute
+2021,79,H,seul,20.1,haute
+2021,80,F,couple,41.5,haute
+2021,80,F,seul,46.0,haute
+2021,80,H,couple,72.4,haute
+2021,80,H,seul,20.9,haute
+2021,81,F,couple,38.2,haute
+2021,81,F,seul,48.1,haute
+2021,81,H,couple,71.5,haute
+2021,81,H,seul,21.2,haute
+2021,82,F,couple,35.1,haute
+2021,82,F,seul,50.2,haute
+2021,82,H,couple,70.0,haute
+2021,82,H,seul,22.3,haute
+2021,83,F,couple,32.6,haute
+2021,83,F,seul,51.4,haute
+2021,83,H,couple,69.0,haute
+2021,83,H,seul,22.4,haute
+2021,84,F,couple,29.4,haute
+2021,84,F,seul,52.9,haute
+2021,84,H,couple,66.7,haute
+2021,84,H,seul,23.6,haute
+2021,85,F,couple,26.1,haute
+2021,85,F,seul,54.4,haute
+2021,85,H,couple,65.3,haute
+2021,85,H,seul,24.5,haute
+2021,86,F,couple,23.0,haute
+2021,86,F,seul,55.2,haute
+2021,86,H,couple,62.8,haute
+2021,86,H,seul,25.3,haute
+2021,87,F,couple,19.8,haute
+2021,87,F,seul,56.4,haute
+2021,87,H,couple,60.5,haute
+2021,87,H,seul,26.4,haute
+2021,88,F,couple,16.8,haute
+2021,88,F,seul,56.9,haute
+2021,88,H,couple,57.5,haute
+2021,88,H,seul,27.7,haute
+2021,89,F,couple,14.1,haute
+2021,89,F,seul,56.6,haute
+2021,89,H,couple,54.1,haute
+2021,89,H,seul,29.8,haute
+2021,90,F,couple,11.5,haute
+2021,90,F,seul,55.8,haute
+2021,90,H,couple,50.7,haute
+2021,90,H,seul,30.8,haute
+2021,91,F,couple,9.5,haute
+2021,91,F,seul,54.8,haute
+2021,91,H,couple,47.1,haute
+2021,91,H,seul,31.4,haute
+2021,92,F,couple,7.1,haute
+2021,92,F,seul,53.2,haute
+2021,92,H,couple,44.3,haute
+2021,92,H,seul,31.8,haute
+2021,93,F,couple,5.7,haute
+2021,93,F,seul,51.6,haute
+2021,93,H,couple,39.4,haute
+2021,93,H,seul,33.5,haute
+2021,94,F,couple,4.5,haute
+2021,94,F,seul,49.1,haute
+2021,94,H,couple,37.0,haute
+2021,94,H,seul,33.6,haute
+2021,95,F,couple,3.5,haute
+2021,95,F,seul,45.6,haute
+2021,95,H,couple,32.5,haute
+2021,95,H,seul,35.5,haute
+2021,96,F,couple,2.6,haute
+2021,96,F,seul,43.9,haute
+2021,96,H,couple,29.5,haute
+2021,96,H,seul,34.1,haute
+2021,97,F,couple,1.8,haute
+2021,97,F,seul,41.1,haute
+2021,97,H,couple,25.2,haute
+2021,97,H,seul,35.7,haute
+2021,98,F,couple,1.5,haute
+2021,98,F,seul,38.0,haute
+2021,98,H,couple,23.1,haute
+2021,98,H,seul,38.0,haute
+2021,99,F,couple,1.5,haute
+2021,99,F,seul,36.8,haute
+2021,99,H,couple,21.4,haute
+2021,99,H,seul,36.3,haute
+2021,100,F,couple,1.3,haute
+2021,100,F,seul,35.8,haute
+2021,100,H,couple,18.8,haute
+2021,100,H,seul,35.5,haute

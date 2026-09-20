@@ -21,6 +21,7 @@ import { ConstructeurCapitalisation } from "./capitalisation.js";
 import { CourbeTauxSansRisque } from "./taux.js";
 import { DistributionPensions } from "./distribution.js";
 import { PatrimoineMenages } from "./patrimoine.js";
+import { VieEnCouple } from "./vie-en-couple.js";
 import { EffectifsCotisants, EffectifsRetraites } from "./effectifs.js";
 import { fusionner } from "./fusion.js";
 import { BaremePrelevements, remunerationDeLaCarriere } from "./remuneration.js";
@@ -411,6 +412,8 @@ export class Simulateur {
     // Le patrimoine des ménages retraités : ce qu'une succession couvre de
     // l'avance de la garantie, page Coût seulement.
     this.patrimoine = new PatrimoineMenages(paquet);
+    // Qui vit en couple après 65 ans : deux avances sur une succession.
+    this.vieEnCouple = new VieEnCouple(paquet);
     // Les prélèvements hors retraite : ils n'entrent dans AUCUNE pension. Ils
     // ne servent qu'à la fiche de paie, qui dit ce qu'un actif touche pendant
     // qu'il cotise.

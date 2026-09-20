@@ -763,6 +763,25 @@ institutions:
           sur succession de la garantie vieillesse (action 47) : le premier
           quartile tient lieu des plus petites pensions, l'ensemble des
           retraités des autres.
+      - id: insee_vie_en_couple
+        titre: >-
+          Mode de résidence des personnes de 65 ans ou plus, par âge et par sexe
+          (*Insee Première* n° 2040, recensement de la population 2021)
+        url: https://www.insee.fr/fr/statistiques/8349408
+        acces: fichier
+        statut_integration: automatise
+        cible: data/reference/macro/vie_en_couple.csv
+        recuperation: scripts/fetch/insee_vie_en_couple.py
+        millesime: 2021
+        note: >-
+          La figure 2 du classeur `ip2040.xlsx` donne, âge par âge de 65 à
+          100 ans et par sexe, la part des personnes vivant en couple, seules,
+          avec des proches ou hors logement ordinaire. Le dépôt en reprend les
+          deux premières, pour 2021. Elle sert à la reprise sur succession de
+          la garantie vieillesse (action 47) : deux bénéficiaires qui vivent
+          ensemble laissent DEUX avances sur UNE succession, celle du
+          survivant, et une avance deux fois plus grosse est moins bien
+          couverte par un patrimoine donné.
       - id: drees_non_recours_minimum_vieillesse
         titre: >-
           Le non-recours au minimum vieillesse des personnes seules (Les

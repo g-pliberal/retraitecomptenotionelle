@@ -936,6 +936,53 @@ def test_la_garantie_decroit_quand_les_pensions_montent_face_au_plancher(cout, a
     assert 0.003 < premiere.part_pib(COMPOSANTE_GARANTIE) < 0.02
 
 
+def test_regrouper_les_avances_par_succession_abaisse_la_couverture(cout):
+    """Deux avances sur une succession sont moins bien couvertes qu'une seule :
+    le patrimoine ne double pas avec elles. Le nombre d'avances par succession
+    doit donc faire baisser la part reprise, et un test le vérifie sur les
+    distributions du dépôt plutôt que sur le seul chiffre du jour."""
+    from retraite_notionnelle.donnees.patrimoine import PatrimoineMenages
+
+    projetee = cout.avenir.annee(cout.avenir.annee_bascule).garantie
+    patrimoine = PatrimoineMenages(RACINE_DONNEES)
+    for population in ("retraites_q1", "retraites"):
+        distribution = patrimoine.distribution(population)
+        seule = distribution.couverture(100_000.0)
+        groupee = distribution.couverture(100_000.0 * projetee.avances_par_succession)
+        assert groupee < seule
+
+
+def test_la_vie_en_couple_pese_les_avances_par_succession():
+    """Les parts publiées sont des pourcentages, les hommes vivent plus
+    souvent en couple que les femmes à tout âge, et la moyenne sur une
+    exposition reste entre le minimum et le maximum de la table."""
+    from retraite_notionnelle.donnees.vie_en_couple import VieEnCouple
+
+    couple = VieEnCouple(RACINE_DONNEES)
+    assert couple.annee >= 2021
+    assert couple.age_minimal == 65 and couple.age_maximal >= 95
+    assert couple.fiabilite == Fiabilite.HAUTE
+    for age in range(couple.age_minimal, couple.age_maximal + 1):
+        for sexe in ("F", "H"):
+            assert 0.0 <= couple.part(age, sexe) <= 1.0
+            assert 0.0 <= couple.part(age, sexe, "seul") <= 1.0
+            assert couple.part(age, sexe) + couple.part(age, sexe, "seul") <= 1.0
+        assert couple.part(age, "H") > couple.part(age, "F"), age
+    # Hors de la table, le bord est reconduit.
+    assert couple.part(50, "F") == couple.part(couple.age_minimal, "F")
+    assert couple.part(120, "H") == couple.part(couple.age_maximal, "H")
+    # Une exposition plate donne la moyenne simple des âges couverts.
+    plate = [1.0] * 5
+    attendue = sum(couple.part(65 + k, "F") for k in range(5)) / 5
+    assert couple.part_moyenne("F", plate) == pytest.approx(attendue)
+    # Et une exposition décroissante, celle d'une table de mortalité, reste
+    # entre les bornes de la table.
+    decroissante = [1.0, 0.8, 0.5, 0.2, 0.05]
+    moyenne = couple.part_moyenne("H", decroissante)
+    parts = [couple.part(65 + k, "H") for k in range(5)]
+    assert min(parts) <= moyenne <= max(parts)
+
+
 def test_les_reprises_sur_succession_suivent_les_avances(cout):
     """La garantie est une avance : rien n'est repris avant la bascule, les
     reprises sont la part couverte des avances que les décès libèrent, le net
@@ -968,6 +1015,10 @@ def test_les_reprises_sur_succession_suivent_les_avances(cout):
         # Les femmes ont les pensions les plus basses : elles sont la majorité
         # sous le plancher, et leur longévité allonge les avances.
         assert 0.55 < projetee.part_femmes < 0.8
+        # Un couple de deux bénéficiaires laisse deux avances sur une
+        # succession : le nombre moyen est entre un et deux, et strictement
+        # au-dessus de un puisque des bénéficiaires vivent en couple.
+        assert 1.0 < projetee.avances_par_succession < 2.0
     premiere = avenir.annee(bascule)
     derniere = avenir.annees[-1]
     # La première année, les décès ne libèrent presque rien : personne n'a

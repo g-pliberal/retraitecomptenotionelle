@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 207<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 285<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8994,6 +8994,41 @@ ménage moins pauvre que leur pension, et beaucoup sont veuves, dont la
 succession porte tout le patrimoine du couple pour une seule avance ; les
 deux vont dans le sens d'une couverture plus haute que le calcul, et la
 quatorzième réserve le dit.
+
+**Le même jour, la suite : deux avances sur une succession.** « Tu peux
+chercher ce que ça fait pour les héritages avec cette différence homme/femme ?
+», puis « vas-y, fais ça ». Ce que la recherche a établi : la femme est presque
+toujours le conjoint survivant — l'INED mesure que 70 % des femmes en couple à
+60 ans connaîtront le veuvage, pour treize ans en moyenne, et 81 % des 3,6
+millions de veufs de 60 ans et plus sont des femmes ; l'écart d'âge dans les
+couples est de 2,6 ans (INSEE, 2017), et le modèle donne 4,7 ans d'écart
+d'espérance de vie à 65 ans dans le premier vingtile. La règle reportant la
+reprise au décès du conjoint survivant, c'est la succession de la mère qui
+porte les deux avances, et le patrimoine du fichier étant celui d'un MÉNAGE,
+le calcul d'avant supposait que chaque bénéficiaire laissait seul sa
+succession. Codé : `scripts/fetch/insee_vie_en_couple.py` lit la figure 2 de
+l'*Insee Première* n° 2040 (recensement 2021) et écrit
+`data/reference/macro/vie_en_couple.csv` — part en couple et part seul(e), âge
+par âge de 65 à 100 ans et par sexe, 144 lignes, `haute` ;
+`donnees/vie_en_couple.py` et `moteur/js/vie-en-couple.js` la chargent et la
+moyennent sur les années vécues ; `_reprises_successions` en tire le nombre
+moyen d'avances par succession — la part de chaque sexe en couple, multipliée
+par la part de l'autre sexe sous le plancher, les pensions du couple étant
+supposées indépendantes —, et confronte au patrimoine l'avance MULTIPLIÉE par
+ce nombre. Résultat : 1,28 avance par succession, la couverture passe de 42 à
+37 %, le net de 2070 de 8,2 à 9,2 Md€, le cumul net de 549 à 582. Un homme de
+65 ans du premier vingtile passe 70 % du temps qui lui reste en couple, une
+femme 42 %. Ce que le dépliant dit en plus : la corrélation des revenus dans
+un couple rendrait ce nombre plus grand, et deux concubins que le recensement
+compte en couple ne se succèdent pas l'un à l'autre. Ordres de grandeur
+calculés en chemin, hors du modèle : l'avance d'une femme seule vaut 173 k€
+contre 94 k€ pour un homme (durée et complément), et 274 k€ pour un couple sur
+la succession de la veuve ; à ce niveau, la succession est absorbée en entier
+pour 91 % des ménages retraités modestes et 58 % de l'ensemble des ménages
+retraités. Le garde-fou « les héritiers ne paient jamais plus que l'héritage »
+n'est donc pas un cas limite : il est saturé le plus souvent. Et le scénario 6
+ne servant aucune réversion, ce que la réversion versait sans contrepartie
+devient une créance reprise sur le patrimoine du couple.
 
 **Ce qui reste du point 1, et demande une personne.** Le fichier individuel
 de l'enquête Histoire de vie et Patrimoine 2020-2021 ou 2023-2024 : le

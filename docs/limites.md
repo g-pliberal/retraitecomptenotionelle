@@ -527,6 +527,7 @@ résumé :
 | Retraités de droit direct, par caisse | hors 2004-2024 | estimée | la répartition du bord est reconduite — voir §5 bis |
 | Distribution des pensions mensuelles brutes de droit direct | fin 2020, 46 tranches | **certifiée** | DREES, échantillon interrégimes de retraités 2020, tableau 1 |
 | Patrimoine des ménages : déciles, moyennes et médianes par âge | début 2021 et début 2024 | **haute** | INSEE, enquête Histoire de vie et Patrimoine, Insee Focus n° 287 et page « Distribution du patrimoine des ménages », classeurs lus par script |
+| Mode de résidence après 65 ans, par âge et par sexe | 2021, 36 âges | **haute** | INSEE, recensement 2021, *Insee Première* n° 2040, figure 2, classeur lu par script |
 | Patrimoine des ménages retraités selon leur revenu disponible | 2018, six valeurs | **saisie** | COR, « Le patrimoine des retraités », séance du 16 décembre 2021, sur l'enquête Patrimoine 2018 — les graphiques du PDF ne se lisent pas |
 | Hypothèses de projection | 2026-2100 | **saisie** | COR, rapport annuel de juin 2025, jeu reconduit en juin 2026 |
 | Emploi projeté (croissance de l'emploi, dérivée) | 2026-2070 | **saisie** | COR, rapport annuel de juin 2026, données de la partie 1 : population active et chômage du scénario de référence |
@@ -5004,19 +5005,26 @@ bénéficiaires les place — le premier —, les deux sexes pesés comme ils le
 sont sous le plancher, 68 % de femmes, dont la longévité fait durer une avance
 20,5 ans, et les successions en rendent une part CALCULÉE sur le patrimoine
 des ménages retraités selon leur revenu (COR, enquête Histoire de vie et
-Patrimoine 2018, `donnees/patrimoine.py`) : 42 % au réglage par défaut, les plus petites
+Patrimoine 2018, `donnees/patrimoine.py`) : 37 % au réglage par défaut, les plus petites
 pensions rattachées au quart des ménages retraités le plus modeste (médiane
-36 800 €), les autres à l'ensemble (médiane 190 200 €), une avance par
-succession là où un couple en pèse deux, ce qui surestime la couverture. Le
+36 800 €), les autres à l'ensemble (médiane 190 200 €), et 1,28 avance par
+succession — la règle reporte la reprise au décès du conjoint survivant, et
+deux bénéficiaires qui vivent ensemble en laissent deux sur la même
+succession, presque toujours celle de la femme (INSEE, recensement 2021, part
+en couple par âge et par sexe, croisée avec la part de chaque sexe sous le
+plancher, les pensions du couple étant supposées indépendantes — elles ne le
+sont pas, et la corrélation rendrait ce nombre plus grand). Le
 patrimoine des retraités selon leur PENSION n'est publié nulle part : c'est le
 fichier individuel de l'enquête qui le donnerait, et il se commande, action
 47. Le réglage `reprise` remplace la part calculée par un nombre. Au réglage
-par défaut, en 2070 : 17,7 milliards versés, 9,5 repris, 8,2 nets, 0,22 % du
-PIB ; de 2026 à 2070 : 849 versés, 300 repris, 549 nets, et un stock d'avances
-en cours de 331 milliards à l'horizon. Les femmes sous le plancher vivent
-souvent dans un ménage moins pauvre que leur pension : le calcul le sait pour
-leur espérance de vie, non pour leur patrimoine, ce qui sous-estime la
-couverture. La ligne « dont garantie » reste
+par défaut, en 2070 : 17,7 milliards versés, 8,5 repris, 9,2 nets, 0,25 % du
+PIB ; de 2026 à 2070 : 849 versés, 267 repris, 582 nets, et un stock d'avances
+en cours de 331 milliards à l'horizon. Deux choses que le calcul ne voit
+toujours pas, et qui vont en sens inverse l'une de l'autre : les femmes sous
+le plancher vivent souvent dans un ménage moins pauvre que leur pension — le
+calcul le sait pour leur espérance de vie, non pour leur patrimoine —, et deux
+concubins que le recensement compte en couple ne se succèdent pas l'un à
+l'autre. La ligne « dont garantie » reste
 brute ; les lignes « dont reprises » et « garantie nette » disent le reste
 (action 47 de la feuille de route).
 
@@ -6806,7 +6814,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1251<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1253<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
