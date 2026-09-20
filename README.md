@@ -143,11 +143,11 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->735<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 277<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->748<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 314<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
-Six pages. **Programme** est l'accueil : la proposition du Parti libéral
+Sept pages. **Programme** est l'accueil : la proposition du Parti libéral
 français pour les retraites — ce qu'est le système actuel, ce qu'est un compte
 notionnel, en quoi il est plus juste et plus lisible, ce qu'il change à la
 justice entre générations, ce que devient la garantie vieillesse, et les étapes
@@ -157,7 +157,9 @@ détail du calcul, la décomposition de l'écart règle par règle et la cascade
 mène du scénario 1 au scénario 3), **Cas types** (la grille 13 carrières ×
 7 générations), **Coût** (ce qui rentre, ce qui sort et ce qui manque —
 trois chiffres et deux graphiques en tête de page, qui se lisent au survol et se
-téléchargent en image), **Méthode**, **Données** (l'état de fiabilité des
+téléchargent en image), **Risque** (votre retraite sera-t-elle payée, et ce que
+la recherche universitaire en sait, en deux cartes puis dix sections),
+**Méthode**, **Données** (l'état de fiabilité des
 séries). Chacune est bâtie de la même façon : ce qui répond à la question en
 tête de page, et tout ce qui la justifie dans des sections repliées qui se
 parcourent comme un sommaire. Le site ne porte aucune mention légale : il est
@@ -194,7 +196,7 @@ Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->491<!--/--> simulations complètes et
-<!--chiffre:entrees(tests/temoins/pages.json:)-->43<!--/--> rendus de page, dans `tests/temoins/`.
+<!--chiffre:entrees(tests/temoins/pages.json:)-->44<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
 <!--chiffre:a_verifier(le compte des nombres comparés demande de lancer node --test)-->10 615<!--/--> nombres,
 dont <!--chiffre:a_verifier(la part identique au bit près demande de lancer node --test)-->97,9<!--/--> % identiques
@@ -1168,7 +1170,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1234 tests Python
+tests/                          1246 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1217,7 +1219,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1234<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1246<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

@@ -28,6 +28,7 @@ from retraite_notionnelle.donnees.chargement import (
 )
 from retraite_notionnelle.web.pages import (
     _date_en_clair,
+    _milliards,
     AGE_DEBUT_MINIMAL,
     AGE_LIQUIDATION_MAXIMAL,
     AGES_REFERENCE,
@@ -3979,6 +3980,12 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     "/avantages": (2000, 4, 7),
     "/methode": (500, 0, 1),
     "/donnees": (300, 0, 0),
+    # Risque répond à la question d'un lecteur qui n'a pas fait d'économie
+    # en deux cartes, chacune avec le tableau qui la montre : les cas
+    # documentés à l'étranger, et le compte projeté du COR. Ce sont ces deux
+    # tableaux, et le plan de douze sections, qui portent le budget ; la
+    # prose ouverte tient en trois cents mots. Tout le reste est replié.
+    "/risque": (850, 0, 2),
 }
 
 
@@ -4062,7 +4069,7 @@ def test_la_page_de_resultats_replie_son_detail(contexte):
 #: paragraphes, la seconde quatre cartes. Leur imposer trois sections repliées
 #: reviendrait à leur demander d'abord d'en écrire le contenu.
 @pytest.mark.parametrize("chemin", ["/", "/cas-types", "/cout", "/methode",
-                                    "/donnees"])
+                                    "/donnees", "/risque"])
 def test_chaque_page_range_son_detail_dans_des_sections(contexte, chemin):
     """Replier n'est pas supprimer : ce qui sort du chemin doit y être rangé.
 
@@ -4987,13 +4994,13 @@ def test_la_navigation_est_groupee_par_fonction():
     pages = [re.findall(r'href="([^"]+)"', liens) for _, liens in groupes]
     assert pages == [["#/"],
                      ["#/simuler", "#/trajectoire", "#/cas-types", "#/cout",
-                      "#/avantages"],
+                      "#/risque", "#/avantages"],
                      ["#/methode", "#/donnees"],
                      ["#/partager"]]
     assert 'href="#/cout" aria-current="page"' in entete
     assert [chemin for chemin, _ in g.LIENS] == [
-        "/", "/simuler", "/trajectoire", "/cas-types", "/cout", "/avantages",
-        "/methode", "/donnees", "/partager"]
+        "/", "/simuler", "/trajectoire", "/cas-types", "/cout", "/risque",
+        "/avantages", "/methode", "/donnees", "/partager"]
     # Toute page de la barre est une page que le routeur sait rendre, et
     # réciproquement : depuis le retrait des mentions légales, le site n'a plus
     # aucune page hors barre.
@@ -5047,6 +5054,56 @@ def test_la_methode_dit_comment_le_site_est_construit(contexte):
     assert not re.search(r"\b\d{3,} (?:tests|témoins|carrières)", dedans), (
         "un nombre de tests ou de témoins écrit à la main dériverait"
     )
+
+
+def test_la_page_risque_repond_depuis_les_comptes_du_cor(contexte):
+    """Le risque de défaut, chiffré depuis le modèle et non écrit à la main.
+
+    La page répond d'abord à la question de l'électeur, en deux cartes : ce
+    qui s'est passé ailleurs, et de combien il s'agit en France. Les chiffres
+    de la seconde sont ceux du solde que la page Coût affiche, lus par le même
+    code ; ce test les recalcule depuis le modèle et les cherche dans la page,
+    pour qu'un compte du COR mis à jour ne laisse pas une phrase périmée.
+    Le reste est replié, et chaque dépliant est joignable depuis le plan.
+    """
+    corps = rendre(contexte, "/risque", {})[1]
+    solde = contexte.cout().solde
+    obs = solde.derniere_annee_observee
+    observe = solde.annee(obs)
+    horizon = solde.annee(solde.derniere_annee)
+    manque = -observe.solde_meur("actuel")
+    part_horizon = -horizon.solde("actuel") / horizon.depense("actuel")
+
+    # Les deux cartes, et les chiffres de la seconde.
+    assert '<section class="cle" id="risque-paiement"' in corps
+    assert '<section class="cle" id="risque-france"' in corps
+    assert f"il a manqué {_milliards(manque, 1)}" in corps
+    assert (f"il manquerait {g.pourcentage(part_horizon, decimales=0)}\n"
+            f"en {solde.derniere_annee}") in corps
+    assert f'scope="row">{obs} (observé)</th>' in corps
+    assert f'scope="row">{solde.derniere_annee}</th>' in corps
+
+    # Le plan liste les deux cartes et les dix dépliants, dans l'ordre.
+    plan = re.search(r'<nav class="plan".*?</nav>', corps, re.S).group(0)
+    vers = re.findall(r'data-vers="([^"]+)"', plan)
+    assert vers == [
+        "risque-paiement", "risque-france", "risque-definition", "risque-dette",
+        "risque-projections", "risque-deja", "risque-ailleurs",
+        "risque-capitalisation", "risque-automatique", "risque-perception",
+        "risque-notionnel", "risque-sources",
+    ]
+
+    # La page renvoie au Coût, qui porte le détail ; le programme y renvoie.
+    assert f'href="{g.lien("/cout")}"' in corps
+    assert f'href="{g.lien("/risque")}"' in rendre(contexte, "/", {})[1]
+    # Et la bibliographie complète est dans le dépôt, à l'adresse annoncée.
+    from pathlib import Path
+    assert f'href="{g.DEPOT}/blob/main/docs/risque_de_defaut.md"' in corps
+    assert (Path(__file__).resolve().parents[1] / "docs" / "risque_de_defaut.md").exists()
+    # Aucune probabilité n'est inventée : le mot n'apparaît qu'au sujet des
+    # enquêtes d'opinion citées, jamais comme un chiffre de la page.
+    prose = _prose(corps)
+    assert not re.search(r"probabilité de \d", prose)
 
 
 def test_la_page_donnees_se_lit_comme_une_base(contexte):
@@ -5132,7 +5189,7 @@ def _prose(corps: str) -> str:
 #: interdisent d'y revenir comme à un tic.
 INCISES_MAXIMUM = {
     "/": 3, "/simuler": 14, "/trajectoire": 5, "/cas-types": 9, "/cout": 22,
-    "/methode": 9, "/donnees": 6, "/partager": 4,
+    "/methode": 9, "/donnees": 6, "/partager": 4, "/risque": 4,
     # Celles qui restent sur Avantages sont citées et non rédigées : le
     # message de refus du garde-fou, et une énumération de choix que le dépôt
     # refuse de trancher à la place du lecteur.

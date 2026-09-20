@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 327<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->26 993<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -6801,6 +6801,17 @@ post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
   famille dans le dépliant des dépenses, sur le seul total où la part soit
   juste, celui de la DREES. Aucun graphique de plus, rien dans le modèle. Le
   détail est sous l'action.
+
+- **20 septembre 2026, action 56.** Faite. Le risque de défaut du système
+  actuel, premier argument de la proposition, n'avait pas de page. Quatre
+  revues de littérature (théorie et dette implicite ; projections
+  françaises ; défauts observés ; risque comparé et perception), une page
+  `Risque` en deux cartes et dix dépliants, un document `docs/risque_de_defaut.md`
+  qui porte l'état de l'art avec ce qui a été lu et ce qui ne l'a pas été.
+  Ce qu'il faut en retenir : la recherche ne connaît aucune probabilité de
+  défaut, et le dire est son premier résultat ; le seul chiffre que la page
+  calcule est celui que le modèle lit déjà dans les comptes du COR, et il dit
+  la taille de l'ajustement à venir, pas sa forme.
 
 ### 37. Chiffrer les avantages non contributifs, et les montrer — `fait`
 
