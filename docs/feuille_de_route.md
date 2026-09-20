@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 124<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 128<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8987,18 +8987,26 @@ net, sur le patrimoine des bénéficiaires selon leur pension lu dans le fichier
 de l'enquête, couples compris, et le programme dit en une phrase pourquoi il
 reprend là où le Parlement renonce.
 
-*Le 20 septembre 2026, plus tard.* **Le minimum garanti de la fonction publique
-sort du tableau « ce que la garantie remplace ».** Le tableau du dépliant
-compte désormais trois minima, non quatre : minimum vieillesse, minimum
-contributif, pension majorée de référence. Le minimum garanti disparaît bien
-sous le scénario 6, mais les régimes de la fonction publique le servent dans
-leur dépense de pensions, que la trajectoire remplace déjà ; il n'est pas un
-transfert que l'impôt paierait à part, et le compter là faisait baisser
-d'autant « ce que l'impôt paierait en plus ». Le total remplacé passe de 7,8 à
-7,1 milliards en 2024, l'écart monte de 0,7 milliard. Ses 0,72 milliard restent
-sur la page des avantages non contributifs, où il est un avantage du droit en
-vigueur, et le modèle continue de le servir dans le scénario 1. Python, JS,
-témoins et `limites.md`.
+*Le 20 septembre 2026, plus tard.* **La garantie vieillesse est annoncée comme
+le SEUL plancher du système 4, et le minimum garanti de la fonction publique
+reste dans le tableau « ce que la garantie remplace ».** Le tableau en était
+d'abord sorti le même jour, au motif que les régimes de la fonction publique
+servent ce minimum dans leur dépense de pensions, que la trajectoire remplace
+déjà, et non par un transfert que l'impôt paierait à part. Le programme a
+tranché dans l'autre sens : *on ne garde le minimum de la fonction publique
+que pour montrer le système actuel, et on le supprime dans la proposition.*
+Le tableau montre donc les quatre planchers d'aujourd'hui — 7,8 milliards en
+2024, dont 0,72 de minimum garanti — contre le seul de demain, et l'écart
+revient à 11,7 milliards. Le motif du retrait valait d'ailleurs pour le
+minimum contributif, que les régimes servent aussi et que le tableau gardait :
+le retirer seul était incohérent.
+
+Ce qui reste écrit de ce passage : la garantie est **le seul plancher** du
+système 4, et la ligne du programme le dit désormais en nommant les quatre
+qu'elle remplace. Le scénario 1 continue de servir le minimum garanti, parce
+qu'un fonctionnaire le perçoit aujourd'hui et que c'est ce qui permet de
+chiffrer ce que la proposition lui retire ; l'étalon est le droit en vigueur,
+et rien d'autre. Python, JS, témoins, `limites.md`.
 
 ### 48. Les pensions déjà servies à la bascule gardent les prix — `fait`
 

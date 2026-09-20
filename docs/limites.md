@@ -4968,21 +4968,24 @@ scénario 6 MOINS celui de la garantie, une soustraction juste tant que la
 garantie était dans la masse contributive et fausse depuis qu'elle l'a quittée,
 la veille. Le facteur est désormais celui de la trajectoire, 0,64.*
 
-**Ce qu'elle remplace, et ce que l'impôt paierait en plus.** La garantie
-succède à l'ASPA, et le scénario 6 ne sert plus le minimum contributif ni la
-pension majorée de référence. En 2024, ces trois minima coûtent 7,1 milliards
-— 4,94 de minimum vieillesse lus dans les comptes de la protection sociale,
-2,18 de minimum contributif calculé sur la grille, qui n'est pas une
-population et le sous-estime, et une pension majorée de référence non
-chiffrée — contre 19,5 milliards de garantie aux pensions du scénario 6 la
-même année, à un ayant droit sur deux : **12,4 milliards de plus pour
-l'impôt**, borne haute puisque le total remplacé est une borne basse. Le
-minimum garanti de la fonction publique disparaît lui aussi sous le scénario 6,
-mais il n'est pas dans ce tableau depuis le 20 septembre 2026 : les régimes de
-la fonction publique le servent dans leur dépense de pensions, que la
-trajectoire remplace déjà, et non par un transfert que l'impôt paierait à
-part ; ses 0,72 milliard de 2024, calculés sur la grille, restent sur la page
-des avantages non contributifs. Deux corrections se présentent, et une seule est dans le
+**Ce qu'elle remplace, et ce que l'impôt paierait en plus.** La garantie est
+le SEUL plancher du scénario 6 : elle succède à l'ASPA, et le minimum
+contributif, le minimum garanti de la fonction publique et la pension majorée
+de référence disparaissent avec elle. En 2024, ces quatre minima coûtent
+7,8 milliards — 4,94 de minimum vieillesse lus dans les comptes de la
+protection sociale, 2,18 de minimum contributif et 0,72 de minimum garanti
+calculés sur la grille, qui n'est pas une population et les sous-estime, et
+une pension majorée de référence non chiffrée — contre 19,5 milliards de
+garantie aux pensions du scénario 6 la même année, à un ayant droit sur deux :
+**11,7 milliards de plus pour l'impôt**, borne haute puisque le total remplacé
+est une borne basse. *Le 20 septembre 2026, le minimum garanti est sorti de ce
+tableau au motif que les régimes de la fonction publique le servent dans leur
+dépense de pensions, et il y a été remis le même jour : le programme le
+supprime comme les trois autres, et le tableau montre le système actuel
+plancher par plancher. Qui paie aujourd'hui ne change pas ce que le lecteur
+veut savoir, qui est ce que l'ensemble coûte avant et après ; et le motif
+valait d'ailleurs pour le minimum contributif, que les régimes servent aussi.*
+Deux corrections se présentent, et une seule est dans le
 tableau. Une personne seule éligible sur deux ne réclame pas l'ASPA — 321 200
 personnes fin 2016, 790 millions non versés, 59 % des sommes servies (DREES,
 *Les dossiers de la DREES* n° 97, mai 2022) —, et le programme retient depuis
