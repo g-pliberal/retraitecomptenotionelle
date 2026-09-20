@@ -527,6 +527,7 @@ résumé :
 | Retraités de droit direct, par caisse | hors 2004-2024 | estimée | la répartition du bord est reconduite — voir §5 bis |
 | Distribution des pensions mensuelles brutes de droit direct | fin 2020, 46 tranches | **certifiée** | DREES, échantillon interrégimes de retraités 2020, tableau 1 |
 | Hypothèses de projection | 2026-2100 | **saisie** | COR, rapport annuel de juin 2025, jeu reconduit en juin 2026 |
+| Emploi projeté (croissance de l'emploi, dérivée) | 2026-2070 | **saisie** | COR, rapport annuel de juin 2026, données de la partie 1 : population active et chômage du scénario de référence |
 | Espérance de vie à 0 et 60 ans | 1946-2025 | **certifiée** | INSEE BDM, quatre idbanks, annuel par sexe |
 | Espérance de vie à 65 ans | 1960-2024 | **certifiée** | OCDE `DSD_HEALTH_STAT@DF_LE` |
 | Espérance de vie à 65 ans | 1946-1959 | haute | **dérivée** des quotients INED, recalculée à chaque exécution |
@@ -650,6 +651,31 @@ prochain rapport autrement qu'à la main. Deux réserves s'y ajoutent : le taux
 est appliqué dès 2026 quand le COR ne l'atteint qu'en 2040, et l'inflation de
 1,75 % est une convention reconduite de ses rapports antérieurs, que les
 documents publics de juin 2025 et de juin 2026 ne restatent pas.
+
+**Ce que l'emploi projeté déplace.** Depuis le 20 septembre 2026, l'emploi
+au-delà de la dernière observation n'est plus supposé constant : il suit, par
+défaut, le scénario de référence du rapport annuel du COR de juin 2026, lu
+dans le classeur publié avec le rapport (`Données_RA2026_P1.xlsx`, figures
+1.6 et 1.11). La croissance de l'emploi est **dérivée** de deux séries
+publiées — la croissance de la population active, calculée par la DG Trésor
+sur les projections de population 2026 de l'INSEE, et le taux de chômage,
+ramené de 7,7 % à 7,0 % en 2040 —, et elle est recoupée sur le rapport
+lui-même, qui compte 30,6 millions de cotisants en 2025 et 28,9 millions en
+2070. La série dérivée donne −6,0 % là où le rapport donne −5,6 % : l'écart est
+un écart de champ, dit dans l'en-tête de `emploi_projete.csv`. Ce que la
+trajectoire touche est étroit et voulu : elle compose la masse salariale et le
+PIB projetés, que seule l'indexation des comptes notionnels lit. **Le système
+1 ne bouge donc pas d'un centime**, il revalorise sur les prix ; les systèmes
+2 à 6 montent pour qui liquide dans la bosse d'emploi des années 2030-2040 et
+baissent pour qui liquide après le recul. Mesuré le jour de la mise en place,
+sur un salarié non cadre entré à 22 ans et parti à 64 ou 65 ans : +3,7 % pour
+la génération 1975, −1,0 % pour 1990, −5,2 % pour 2000, sur les trois
+systèmes réformés. C'est le contraire d'un choc favorable de long terme : la
+population active du COR recule à partir de 2040, et la trajectoire le
+transmet aux comptes. La convention d'avant reste une variante du formulaire
+(« Emploi projeté : constant »), et la page de résultats dit ce que l'une
+vaut contre l'autre. Le PIB de la page Coût, lui, ne lit pas encore cette
+trajectoire : il suit la population des 20-64 ans, ce qui est dit au § 5 ter.
 
 **Deux niveaux, deux exigences.** `certifiee` suppose que la source soit le
 **producteur** de la donnée : INSEE, Eurostat, OCDE. Une transcription tierce,
@@ -1959,11 +1985,15 @@ même ordre :
   l'emploi salarié constant. L'hypothèse est fausse — l'emploi s'est effondré
   puis reconstitué — et elle porte sur les années les plus lourdes du scénario
   rétroactif ;
-- **la projection ne reconduit pas la croissance de l'emploi.** Au-delà de 2025,
-  l'emploi salarié est supposé constant. Le rendement projeté est donc celui du
-  seul salaire moyen : la règle est nettement moins généreuse en projection
-  qu'en rétrospective, et l'écart entre générations anciennes et récentes en
-  vient pour partie de là, non d'un effet de la réforme simulée.
+- **la projection ne reconduit pas la croissance passée de l'emploi.** Au-delà
+  de 2025, l'emploi suit par défaut le scénario de référence du COR de juin
+  2026 — +4,7 % cumulés en 2040, −6,0 % en 2070 —, et non plus l'emploi
+  constant d'avant le 20 septembre 2026, gardé en variante. Ni l'un ni l'autre
+  ne reconduit le point de croissance annuelle de 1950-2025 : le rendement
+  projeté reste celui du salaire moyen, à quelques dixièmes près, et la règle
+  est nettement moins généreuse en projection qu'en rétrospective. L'écart
+  entre générations anciennes et récentes en vient pour partie de là, non d'un
+  effet de la réforme simulée.
 
 Le **lissage pluriannuel** (`lissage=N`) s'applique à n'importe laquelle des
 neuf règles, et appelle deux réserves distinctes :
@@ -6300,13 +6330,17 @@ dans `data/reference/macro/hypotheses_projection.yaml`.
 **Ce qui est de nous, et qui se discute.** Le PIB projeté suit le rythme nominal
 du COR — 2,45 % par an dans le scénario de référence — **corrigé de l'évolution
 de la population d'âge actif**, qui recule de 10 % d'ici 2070. Cette correction
-est un écart assumé avec le fichier d'hypothèses, qui suppose l'emploi salarié
-constant au-delà de la dernière année observée. L'hypothèse d'emploi constant
-est effectivement neutre pour l'indexation des comptes, qui ne dépend que d'un
-taux de croissance ; elle ne l'est pas du tout pour une dépense rapportée au
-PIB, où elle prêterait à la France de 2070 douze pour cent d'actifs qu'aucune
-projection ne lui donne, et rendrait toutes les parts de PIB de la page
-flatteuses d'un point. C'est le paramètre le plus discutable de la section, et
+est un écart assumé avec le fichier d'hypothèses, dont les taux sont écrits à
+emploi constant. Un emploi constant est neutre pour l'indexation des comptes,
+qui ne dépend que d'un taux de croissance ; il ne l'est pas du tout pour une
+dépense rapportée au PIB, où il prêterait à la France de 2070 douze pour cent
+d'actifs qu'aucune projection ne lui donne, et rendrait toutes les parts de PIB
+de la page flatteuses d'un point. Depuis le 20 septembre 2026, le fichier
+d'hypothèses compose aussi ses assiettes avec la trajectoire d'emploi du COR
+(voir § 1, « Ce que l'emploi projeté déplace ») ; le PIB de cette page ne la lit
+pas encore et garde la population des 20-64 ans, qui recule de 10 % là où
+l'emploi du COR recule de 6 % — la substitution est la prochaine marche, et
+elle est notée dans la feuille de route. C'est le paramètre le plus discutable de la section, et
 il joue dans un sens connu : le COR, lui, fait remonter les taux d'emploi, ce
 qui explique une partie de l'écart entre ses 14,2 % et les nôtres en 2070 —
 chiffrés plus bas, au paragraphe « Le contrôle externe ».
@@ -6551,7 +6585,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1139<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1143<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

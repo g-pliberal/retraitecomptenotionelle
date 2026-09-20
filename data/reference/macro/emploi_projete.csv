@@ -1,0 +1,86 @@
+# Emploi projeté — la trajectoire du scénario de référence du COR, juin 2026
+# source_id: cor_projection_emploi (Données_RA2026_P1.xlsx, figures 1.6, 1.11 et 1.12)
+# unite: taux de variation annuel en fraction (croissances), fraction (taux)
+# fiabilite:
+#   estimee (2026-2070) : une projection n'est jamais une observation. Les
+#             taux OBSERVÉS de 2025 qui ancrent la première année projetée —
+#             chômage 7,7 %, taux d'emploi des 15-64 ans 69,3 % — ne sont pas
+#             repris en ligne : une ligne de ce fichier est une année projetée.
+#
+# CE QUE LES COLONNES SONT, ET D'OÙ ELLES VIENNENT
+# -------------------------------------------------
+# croissance_population_active : « taux de croissance de la population active
+#   sous-jacente projetée (scénario productivité 0,7 - chômage 7 %) », figure
+#   1.6 du rapport annuel du COR de juin 2026, calculs DG Trésor sur les
+#   projections de population 2026 de l'INSEE (fécondité 1,45, solde
+#   migratoire +150 000) et les taux d'activité par âge de l'exercice INSEE de
+#   2022, avec les effets de calendrier de la réforme de 2023 et de sa
+#   suspension par la LFSS 2026.
+# taux_chomage : figure 1.11, scénario de référence — 7,7 % observé en 2025,
+#   7,0 % atteint en 2040 et constant ensuite.
+# taux_emploi_15_64 : figure 1.12, scénario de référence — pour lecture ; le
+#   modèle ne s'en sert pas.
+# croissance_emploi : DÉRIVÉE des deux premières, et c'est la seule colonne
+#   que le modèle lit :
+#       (1 + croissance de la population active) × (1 − chômage de l'année)
+#       ÷ (1 − chômage de l'année précédente) − 1.
+#   Elle cumule +4,7 % en 2040 et −6,0 % en 2070 par rapport à 2025. Le rapport
+#   lui-même (partie 2, chapitre 2) compte 30,6 millions de cotisants en 2025,
+#   un maximum à la fin des années 2030 et 28,9 millions en 2070, soit −5,6 % :
+#   l'écart de 0,4 point vient du champ (emploi total des comptes nationaux
+#   chez le COR, enquête Emploi ici), et il est dit.
+#
+# À QUOI ELLE SERT
+# ----------------
+# À prolonger la MASSE SALARIALE et le PIB au-delà de 2025 : leur croissance
+# nominale est celle du salaire moyen composée avec celle de l'emploi, au lieu
+# de supposer l'emploi constant (voir hypotheses_projection.yaml). Le COR
+# s'arrête en 2070 : au-delà, l'emploi est supposé constant, faute de source.
+# Seuls les systèmes 2 à 6 lisent la masse salariale, par l'indexation des
+# comptes ; le système 1 n'en lit rien.
+annee,croissance_population_active,taux_chomage,taux_emploi_15_64,croissance_emploi,fiabilite
+2026,0.00440,0.0807,0.6785,0.00037,estimee
+2027,0.00290,0.0824,0.6784,0.00105,estimee
+2028,0.00250,0.0811,0.6815,0.00392,estimee
+2029,0.00280,0.0795,0.6849,0.00455,estimee
+2030,0.00380,0.0779,0.6884,0.00554,estimee
+2031,0.00396,0.0763,0.6918,0.00571,estimee
+2032,0.00360,0.0748,0.6952,0.00523,estimee
+2033,0.00334,0.0732,0.6988,0.00507,estimee
+2034,0.00224,0.0727,0.7007,0.00278,estimee
+2035,0.00233,0.0723,0.7030,0.00276,estimee
+2036,0.00163,0.0718,0.7056,0.00217,estimee
+2037,0.00107,0.0714,0.7073,0.00150,estimee
+2038,0.00123,0.0709,0.7093,0.00177,estimee
+2039,0.00137,0.0705,0.7121,0.00180,estimee
+2040,0.00075,0.0700,0.7144,0.00129,estimee
+2041,0.00030,0.0700,0.7156,0.00030,estimee
+2042,-0.00004,0.0700,0.7170,-0.00004,estimee
+2043,-0.00089,0.0700,0.7183,-0.00089,estimee
+2044,-0.00134,0.0700,0.7193,-0.00134,estimee
+2045,-0.00175,0.0700,0.7201,-0.00175,estimee
+2046,-0.00269,0.0700,0.7208,-0.00269,estimee
+2047,-0.00282,0.0700,0.7215,-0.00282,estimee
+2048,-0.00321,0.0700,0.7218,-0.00321,estimee
+2049,-0.00320,0.0700,0.7217,-0.00320,estimee
+2050,-0.00382,0.0700,0.7216,-0.00382,estimee
+2051,-0.00393,0.0700,0.7215,-0.00393,estimee
+2052,-0.00389,0.0700,0.7213,-0.00389,estimee
+2053,-0.00398,0.0700,0.7211,-0.00398,estimee
+2054,-0.00387,0.0700,0.7210,-0.00387,estimee
+2055,-0.00365,0.0700,0.7212,-0.00365,estimee
+2056,-0.00408,0.0700,0.7210,-0.00408,estimee
+2057,-0.00398,0.0700,0.7208,-0.00398,estimee
+2058,-0.00404,0.0700,0.7204,-0.00404,estimee
+2059,-0.00392,0.0700,0.7200,-0.00392,estimee
+2060,-0.00412,0.0700,0.7196,-0.00412,estimee
+2061,-0.00434,0.0700,0.7192,-0.00434,estimee
+2062,-0.00443,0.0700,0.7188,-0.00443,estimee
+2063,-0.00448,0.0700,0.7185,-0.00448,estimee
+2064,-0.00467,0.0700,0.7183,-0.00467,estimee
+2065,-0.00505,0.0700,0.7181,-0.00505,estimee
+2066,-0.00536,0.0700,0.7179,-0.00536,estimee
+2067,-0.00517,0.0700,0.7177,-0.00517,estimee
+2068,-0.00503,0.0700,0.7176,-0.00503,estimee
+2069,-0.00508,0.0700,0.7175,-0.00508,estimee
+2070,-0.00500,0.0700,0.7175,-0.00500,estimee

@@ -159,6 +159,14 @@ PROJECTIONS = [
     ("cor_productivite_haute", "COR variante haute — 1,0 %"),
 ]
 
+#: L'emploi au-delà de la dernière observation. Il ne compose que la masse
+#: salariale et le PIB projetés, donc l'indexation des comptes notionnels :
+#: les systèmes 2 à 6 le lisent, le système 1 ne lit ni l'une ni l'autre.
+TRAJECTOIRES_EMPLOI = [
+    ("cor_2026", "Trajectoire du COR — juin 2026 (défaut)"),
+    ("constant", "Emploi constant"),
+]
+
 
 #: Les deux façons d'écrire un revenu. Le modèle n'en connaît qu'une — le
 #: multiple du salaire moyen, seule qui garde son sens sur quatre-vingts ans —,
@@ -448,7 +456,7 @@ class MetierSaisi:
 
 #: Les clés de requête qui décrivent les RÈGLES, et non la carrière.
 #:
-#: Ce sont exactement les dix que ``Saisie.parametres`` lit pour fabriquer un
+#: Ce sont exactement les douze que ``Saisie.parametres`` lit pour fabriquer un
 #: jeu de :class:`Parametres` : tout le reste — naissance, statut, revenu,
 #: enfants, profil, interruptions — décrit un individu, et un individu n'a pas
 #: sa place dans un agrégat. C'est cette liste qui permet aux trois pages
@@ -460,8 +468,8 @@ class MetierSaisi:
 #: portent le leur.
 CLES_MODELISATION = (
     "indexation", "lissage", "age_reference", "table", "population",
-    "conversion_acquis", "part_cotisation", "foyer", "projection", "bascule",
-    "euros",
+    "conversion_acquis", "part_cotisation", "foyer", "projection", "emploi",
+    "bascule", "euros",
 )
 
 
@@ -520,6 +528,8 @@ class Saisie:
     #: système 1, de sorte que les deux planchers se comparent.
     foyer: str = "seul"
     projection: str = "cor_reference"
+    #: L'emploi projeté : la trajectoire du COR par défaut, ou constant.
+    emploi: str = "cor_2026"
     bascule: int = 2026
     euros: int = 2026
     #: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -588,6 +598,7 @@ class Saisie:
             ),
             foyer=_parmi(parametres, "foyer", SITUATIONS_FOYER, defauts.foyer),
             projection=_parmi(parametres, "projection", PROJECTIONS, defauts.projection),
+            emploi=_parmi(parametres, "emploi", TRAJECTOIRES_EMPLOI, defauts.emploi),
             bascule=_entier(parametres, "bascule", defauts.bascule),
             euros=_entier(parametres, "euros", defauts.euros),
             # Une adresse qui ne porte QUE des réglages de modélisation ne
@@ -906,6 +917,7 @@ class Saisie:
             ),
             situation_foyer=SituationFoyer(self.foyer),
             scenario_projection=self.projection,
+            trajectoire_emploi=self.emploi,
             annee_bascule=self.bascule,
             annee_euros_constants=self.euros,
         )
@@ -2610,6 +2622,7 @@ LIBELLES_MODELISATION = {
     "part_cotisation": ("part de la cotisation portée au compte", PARTS_COTISATION),
     "foyer": ("situation de foyer", SITUATIONS_FOYER),
     "projection": ("scénario macroéconomique", PROJECTIONS),
+    "emploi": ("emploi projeté", TRAJECTOIRES_EMPLOI),
     "bascule": ("année de bascule", None),
     "euros": ("euros constants de", None),
 }
@@ -2733,6 +2746,15 @@ def _champs_modelisation(saisie: Saisie) -> str:
                 "800 € par personne à deux."),
         g.liste("projection", "Scénario macroéconomique", PROJECTIONS, saisie.projection,
                 "au-delà de la dernière observation"),
+        g.liste("emploi", "Emploi projeté", TRAJECTOIRES_EMPLOI, saisie.emploi,
+                "systèmes 2 à 6 seulement",
+                complement="Au-delà de la dernière observation, la masse des "
+                "salaires — le rendement des comptes notionnels — est le "
+                "salaire moyen composé avec l'emploi. Par défaut, l'emploi "
+                "suit le scénario de référence du COR de juin 2026 : chômage "
+                "ramené à 7 % en 2040, population active en hausse jusque "
+                "vers 2040 puis en recul. Le système 1 n'en lit rien : il "
+                "revalorise sur les prix."),
         g.champ("bascule", "Année de bascule", saisie.bascule,
                 "passage au régime unique", type_="number",
                 min=str(ANNEE_MINIMALE), max=str(ANNEE_MAXIMALE)),
@@ -4127,6 +4149,25 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
     ecart_2 = (haute["notionnel_retroactif"] / basse["notionnel_retroactif"] - 1.0
                if basse["notionnel_retroactif"] > 0 else float("nan"))
 
+    # L'emploi projeté, rejoué sous l'autre trajectoire : il ne déplace que les
+    # systèmes 2 à 6, par l'indexation, et le lecteur doit le voir.
+    autre_emploi = "constant" if saisie.emploi != "constant" else "cor_2026"
+    try:
+        sous_autre = contexte.simuler(
+            Saisie(**{**saisie.__dict__, "emploi": autre_emploi}))
+    except (ErreurSaisie, DonneeInsuffisante, KeyError, ValueError):
+        poids_emploi = ""
+    else:
+        autre_2 = sous_autre.en_euros_constants(
+            sous_autre.notionnel_retroactif.pension_annuelle) / 12
+        ecart_emploi = autre_2 / reference - 1.0 if reference > 0 else float("nan")
+        poids_emploi = f"""
+<p>L'emploi projeté pèse à part. Avec un {"emploi constant" if autre_emploi == "constant" else "emploi suivant la trajectoire du COR"}
+après {derniere_observee}, au lieu de {"la trajectoire du COR" if autre_emploi == "constant" else "l'emploi constant"} retenu{"e" if autre_emploi == "constant" else ""} ici, le système 2
+donnerait {g.euros_centimes(autre_2)} par mois, soit
+{g.pourcentage(ecart_emploi, signe=True)}. Le système 1 ne bouge pas : il
+revalorise sur les prix et ne lit pas l'emploi.</p>"""
+
     return g.depliant("Ce que l'hypothèse pèse", f"""
 <p>La même carrière, rejouée sous les trois hypothèses du COR. Le système 2
 passe de {g.euros_centimes(basse["notionnel_retroactif"] / 12)} à
@@ -4141,9 +4182,11 @@ passe de {g.euros_centimes(basse["notionnel_retroactif"] / 12)} à
     "mesure, mais sur l'hypothèse de croissance de la productivité que le "
     "Conseil d'orientation des retraites fixe et révise : 0,4 %, 0,7 % et "
     "1,0 % par an, le jeu retenu depuis juin 2025. La fourchette laisse fixes "
-    "les autres hypothèses — inflation à 1,75 %, emploi salarié constant, "
-    "législation inchangée : c'est une mesure de sensibilité à un paramètre, "
-    "non un intervalle de confiance, et l'avenir peut en sortir.",
+    "les autres hypothèses — inflation à 1,75 %, "
+    + ("emploi constant" if saisie.emploi == "constant"
+       else "emploi suivant la trajectoire du COR")
+    + ", législation inchangée : c'est une mesure de sensibilité à un "
+    "paramètre, non un intervalle de confiance, et l'avenir peut en sortir.",
 )}</p>
 {g.tableau(
     ["Système", "Productivité 0,4 %", escape(retenu), "Productivité 1,0 %",
@@ -4153,7 +4196,7 @@ passe de {g.euros_centimes(basse["notionnel_retroactif"] / 12)} à
     titre="Pension mensuelle de chaque système sous les trois hypothèses de "
           "productivité du COR",
     entete_de_ligne=True,
-)}
+)}{poids_emploi}
 <p class="discret">Montants mensuels bruts, en euros constants de
 {saisie.euros}.</p>""")
 

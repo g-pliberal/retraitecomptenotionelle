@@ -328,9 +328,13 @@ chiffre**, et c'est la chose la plus utile qu'on puisse dire à un lecteur qui
 s'en méfie.
 
 Cette fourchette n'est **pas un intervalle de confiance** : elle ne fait varier
-que la productivité, laisse l'inflation à 1,75 %, l'emploi salarié constant et
-la législation inchangée. C'est une mesure de sensibilité à un paramètre, et la
-page l'écrit — l'avenir peut sortir de la fourchette.
+que la productivité, laisse l'inflation à 1,75 %, l'emploi sur la trajectoire
+retenue — celle du scénario de référence du COR par défaut, constant en
+variante — et la législation inchangée. C'est une mesure de sensibilité à un
+paramètre, et la page l'écrit — l'avenir peut sortir de la fourchette. Le
+même bloc dit ensuite ce que l'emploi projeté pèse à part, en rejouant le
+système 2 sous l'autre trajectoire ; le système 1 n'y bouge pas, puisqu'il
+ne lit pas l'emploi.
 
 La dernière année observée n'est pas codée en dur : elle est **déduite des
 séries**, comme la dernière que les trois assiettes portent au-dessus de

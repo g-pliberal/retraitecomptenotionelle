@@ -168,6 +168,10 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   annee_euros_constants: 2026,
   //: Scénario de projection macroéconomique au-delà de la dernière observation.
   scenario_projection: "cor_reference",
+  //: Trajectoire de l'emploi au-delà de la dernière observation. Elle ne
+  //: compose que la masse salariale et le PIB projetés, donc l'indexation des
+  //: comptes notionnels : les systèmes 2 à 6 la lisent, pas le système 1.
+  trajectoire_emploi: "cor_2026",
 
   // --- Indexation -----------------------------------------------------------
   //: Le défaut est la règle d'ÉQUILIBRE, pas le triple lock inversé qui a donné

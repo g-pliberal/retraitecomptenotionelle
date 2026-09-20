@@ -111,6 +111,11 @@ def _series() -> dict:
             nom="masse_salariale_nominale"),
         "pib_nominal": charger_serie_annuelle(
             macro / "pib_nominal.csv", "variation_nominale", nom="pib_nominal"),
+        # La croissance de l'emploi projetée par le COR, 2026-2070 : elle
+        # compose la masse salariale et le PIB au-delà de la dernière
+        # observation, sous la trajectoire `cor_2026`.
+        "emploi_projete": charger_serie_annuelle(
+            macro / "emploi_projete.csv", "croissance_emploi", nom="croissance_emploi"),
         "productivite": charger_serie_annuelle(
             macro / "productivite.csv", "variation_reelle", nom="productivite_reelle"),
         "pass": charger_serie_annuelle(
@@ -773,9 +778,14 @@ def _hypotheses() -> dict:
     contenu = charger_yaml(DONNEES / "reference" / "macro" / "hypotheses_projection.yaml")
     return {
         "annee_fin_projection": int(contenu.get("annee_fin_projection", 2100)),
+        # La première année projetée en dépend : c'est là que l'emploi entre.
+        "annee_derniere_observation": int(contenu["annee_derniere_observation"]),
         "scenario_par_defaut": contenu.get("scenario_par_defaut"),
         "plafond_suit_salaire_moyen": bool(contenu.get("plafond_suit_salaire_moyen", True)),
         "scenarios": contenu.get("scenarios", {}),
+        "trajectoire_emploi_par_defaut": contenu.get(
+            "trajectoire_emploi_par_defaut", "constant"),
+        "trajectoires_emploi": contenu.get("trajectoires_emploi", {}),
     }
 
 

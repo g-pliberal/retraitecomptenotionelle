@@ -263,6 +263,7 @@ export class Comparaison {
         euros_constants_de: this.parametres.annee_euros_constants,
         coefficient: this.coefficient_euros_constants,
         scenario_projection: this.parametres.scenario_projection,
+        trajectoire_emploi: this.parametres.trajectoire_emploi,
       },
       regime_fusionne: {
         annee_bascule: this.regime_fusionne.annee_bascule,
@@ -391,7 +392,8 @@ export class Simulateur {
     this.paquet = paquet;
     this.parametres = parametres;
 
-    this.macro = new DonneesMacro(paquet, parametres.scenario_projection);
+    this.macro = new DonneesMacro(
+      paquet, parametres.scenario_projection, parametres.trajectoire_emploi);
     this.mortalite = new DonneesMortalite(paquet);
     this.catalogue = new CatalogueRegimes(paquet);
     this.affiliations = new Affiliations(paquet);

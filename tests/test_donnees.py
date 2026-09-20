@@ -84,6 +84,53 @@ def test_projection_applique_le_scenario_choisi():
     assert basse.productivite(2050) == pytest.approx(0.004)
 
 
+def test_la_trajectoire_d_emploi_du_cor_compose_les_assiettes():
+    """L'emploi n'entre que dans la masse salariale et le PIB, par composition.
+
+    Sous ``constant`` la masse salariale projetée est le salaire moyen du
+    scénario ; sous ``cor_2026`` elle en est le composé avec la croissance de
+    l'emploi lue dans ``emploi_projete.csv`` — positive jusque vers 2040,
+    négative ensuite, nulle au-delà de 2070 où le COR s'arrête. Le salaire
+    moyen, l'inflation et la productivité ne bougent pas : le système 1, qui
+    ne lit qu'eux, ne peut pas voir la trajectoire.
+    """
+    cor = DonneesMacro(RACINE_DONNEES, scenario_projection="cor_reference",
+                       trajectoire_emploi="cor_2026")
+    constant = DonneesMacro(RACINE_DONNEES, scenario_projection="cor_reference",
+                            trajectoire_emploi="constant")
+    assert constant.masse_salariale(2040) == pytest.approx(0.0245)
+    assert constant.emploi(2040) == 0.0
+    assert cor.emploi(2033) > 0.0 > cor.emploi(2050)
+    assert cor.emploi(2071) == 0.0
+    assert cor.masse_salariale(2040) == pytest.approx(
+        1.0245 * (1 + cor.emploi(2040)) - 1)
+    assert cor.pib_nominal(2050) == pytest.approx(
+        1.0245 * (1 + cor.emploi(2050)) - 1)
+    assert cor.masse_salariale(2100) == pytest.approx(0.0245)
+    for annee in (2030, 2050, 2080):
+        assert cor.salaire_moyen(annee) == constant.salaire_moyen(annee)
+        assert cor.inflation(annee) == constant.inflation(annee)
+        assert cor.productivite(annee) == constant.productivite(annee)
+    # Le recoupement sur le rapport lui-même : 30,6 millions de cotisants en
+    # 2025, 28,9 en 2070, soit −5,6 % ; la série dérivée donne −6,0 %.
+    cumul = 1.0
+    for annee in range(2026, 2071):
+        cumul *= 1 + cor.emploi(annee)
+    assert cumul == pytest.approx(0.94, abs=0.01)
+    assert max(cor.emploi(a) for a in range(2026, 2071)) < 0.01
+
+
+def test_la_trajectoire_d_emploi_par_defaut_est_celle_du_cor(macro):
+    """Le défaut du fichier est lu, et il est nommé dans les hypothèses."""
+    assert macro.trajectoire["code"] == "cor_2026"
+    assert macro.emploi(2035) > 0.0
+
+
+def test_trajectoire_d_emploi_inconnue_est_rejetee():
+    with pytest.raises(KeyError):
+        DonneesMacro(RACINE_DONNEES, trajectoire_emploi="inexistante").masse_salariale(2050)
+
+
 def test_derniere_annee_observee_coincide_avec_la_declaration(macro):
     """La déclaration du fichier d'hypothèses doit dire vrai.
 

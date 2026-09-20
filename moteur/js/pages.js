@@ -125,6 +125,14 @@ export const PROJECTIONS = [
   ["cor_productivite_haute", "COR variante haute — 1,0 %"],
 ];
 
+// L'emploi au-delà de la dernière observation. Il ne compose que la masse
+// salariale et le PIB projetés, donc l'indexation des comptes notionnels : les
+// systèmes 2 à 6 le lisent, le système 1 ne lit ni l'une ni l'autre.
+export const TRAJECTOIRES_EMPLOI = [
+  ["cor_2026", "Trajectoire du COR — juin 2026 (défaut)"],
+  ["constant", "Emploi constant"],
+];
+
 // Les deux façons d'écrire un revenu. Le modèle n'en connaît qu'une — le
 // multiple du salaire moyen, seule qui garde son sens sur quatre-vingts ans —,
 // mais personne ne connaît son salaire dans cette unité-là : c'est l'euro qui
@@ -389,8 +397,8 @@ export class ErreurSaisie extends Error {}
  */
 export const CLES_MODELISATION = Object.freeze([
   "indexation", "lissage", "age_reference", "table", "population",
-  "conversion_acquis", "part_cotisation", "foyer", "projection", "bascule",
-  "euros",
+  "conversion_acquis", "part_cotisation", "foyer", "projection", "emploi",
+  "bascule", "euros",
 ]);
 
 const DEFAUTS = Object.freeze({
@@ -439,6 +447,7 @@ const DEFAUTS = Object.freeze({
   // système 4. Le défaut est la personne seule, comme pour l'ASPA.
   foyer: "seul",
   projection: "cor_reference",
+  emploi: "cor_2026",
   bascule: 2026,
   euros: 2026,
   //: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -505,6 +514,7 @@ export class Saisie {
       ),
       foyer: parmi(parametres, "foyer", SITUATIONS_FOYER, DEFAUTS.foyer),
       projection: parmi(parametres, "projection", PROJECTIONS, DEFAUTS.projection),
+      emploi: parmi(parametres, "emploi", TRAJECTOIRES_EMPLOI, DEFAUTS.emploi),
       bascule: entier(parametres, "bascule", DEFAUTS.bascule),
       euros: entier(parametres, "euros", DEFAUTS.euros),
       // Une adresse qui ne porte QUE des réglages de modélisation ne demande
@@ -791,6 +801,7 @@ export class Saisie {
         cleEnum(PartCotisation, this.part_cotisation)],
       situation_foyer: SituationFoyer[cleEnum(SituationFoyer, this.foyer)],
       scenario_projection: this.projection,
+      trajectoire_emploi: this.emploi,
       annee_bascule: this.bascule,
       annee_euros_constants: this.euros,
     });
@@ -2121,6 +2132,7 @@ const LIBELLES_MODELISATION = Object.freeze({
   part_cotisation: ["part de la cotisation portée au compte", PARTS_COTISATION],
   foyer: ["situation de foyer", SITUATIONS_FOYER],
   projection: ["scénario macroéconomique", PROJECTIONS],
+  emploi: ["emploi projeté", TRAJECTOIRES_EMPLOI],
   bascule: ["année de bascule", null],
   euros: ["euros constants de", null],
 });
@@ -2239,6 +2251,14 @@ function champsModelisation(saisie) {
       + "à deux."),
     g.liste("projection", "Scénario macroéconomique", PROJECTIONS, saisie.projection,
       "au-delà de la dernière observation"),
+    g.liste("emploi", "Emploi projeté", TRAJECTOIRES_EMPLOI, saisie.emploi,
+      "systèmes 2 à 6 seulement", {},
+      "Au-delà de la dernière observation, la masse des salaires — le "
+      + "rendement des comptes notionnels — est le salaire moyen composé avec "
+      + "l'emploi. Par défaut, l'emploi suit le scénario de référence du COR "
+      + "de juin 2026 : chômage ramené à 7 % en 2040, population active en "
+      + "hausse jusque vers 2040 puis en recul. Le système 1 n'en lit rien : "
+      + "il revalorise sur les prix."),
     g.champ("bascule", "Année de bascule", saisie.bascule,
       "passage au régime unique", "number",
       { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),
@@ -3554,6 +3574,26 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
     ? haute.notionnel_retroactif / basse.notionnel_retroactif - 1
     : NaN;
 
+  // L'emploi projeté, rejoué sous l'autre trajectoire : il ne déplace que les
+  // systèmes 2 à 6, par l'indexation, et le lecteur doit le voir.
+  const autreEmploi = saisie.emploi !== "constant" ? "constant" : "cor_2026";
+  let poidsEmploi = "";
+  try {
+    const sousAutre = contexte.simuler(new Saisie({ ...saisie, emploi: autreEmploi }));
+    const autre2 = sousAutre.enEurosConstants(
+      sousAutre.notionnel_retroactif.pension_annuelle,
+    ) / 12;
+    const ecartEmploi = reference > 0 ? autre2 / reference - 1 : NaN;
+    poidsEmploi = `
+<p>L'emploi projeté pèse à part. Avec un ${autreEmploi === "constant" ? "emploi constant" : "emploi suivant la trajectoire du COR"}
+après ${derniereObservee}, au lieu de ${autreEmploi === "constant" ? "la trajectoire du COR" : "l'emploi constant"} retenu${autreEmploi === "constant" ? "e" : ""} ici, le système 2
+donnerait ${g.eurosCentimes(autre2)} par mois, soit
+${g.pourcentage(ecartEmploi, true)}. Le système 1 ne bouge pas : il
+revalorise sur les prix et ne lit pas l'emploi.</p>`;
+  } catch (erreur) {
+    if (fauteDeProgramme(erreur)) throw erreur;
+  }
+
   return g.depliant("Ce que l'hypothèse pèse", `
 <p>La même carrière, rejouée sous les trois hypothèses du COR. Le système 2
 passe de ${g.eurosCentimes(basse.notionnel_retroactif / 12)} à
@@ -3568,8 +3608,10 @@ ${g.eurosCentimes(reference)} affichés plus haut.${g.bulle(
     + "mesure, mais sur l'hypothèse de croissance de la productivité que le "
     + "Conseil d'orientation des retraites fixe et révise : 0,4 %, 0,7 % et "
     + "1,0 % par an, le jeu retenu depuis juin 2025. La fourchette laisse "
-    + "fixes les autres hypothèses — inflation à 1,75 %, emploi salarié "
-    + "constant, législation inchangée : c'est une mesure de sensibilité à un "
+    + "fixes les autres hypothèses — inflation à 1,75 %, "
+    + (saisie.emploi === "constant"
+      ? "emploi constant" : "emploi suivant la trajectoire du COR")
+    + ", législation inchangée : c'est une mesure de sensibilité à un "
     + "paramètre, non un intervalle de confiance, et l'avenir peut en sortir.",
   )}</p>
 ${g.tableau(
@@ -3580,7 +3622,7 @@ ${g.tableau(
     "Pension mensuelle de chaque système sous les trois hypothèses de "
       + "productivité du COR",
     true,
-  )}
+  )}${poidsEmploi}
 <p class="discret">Montants mensuels bruts, en euros constants de
 ${saisie.euros}.</p>`);
 }

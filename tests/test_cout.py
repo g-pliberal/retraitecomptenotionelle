@@ -376,9 +376,18 @@ def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
     y ajoute sa part : moins pentu d'un tiers, il relève le salaire des
     premières années de carrière, donc les droits des cohortes qui basculent
     en cours de route. Le scénario 5, qui porte en plus la part patronale,
-    reçoit les deux et culmine à 3,4 % au-dessus du système actuel en 2036 ;
-    le 3 culmine à 1,6 % en 2031. Passé le sommet, la décroissance est stricte
+    reçoit les deux et culminait à 3,4 % au-dessus du système actuel en 2036 ;
+    le 3 culminait à 1,6 % en 2031. Passé le sommet, la décroissance est stricte
     jusqu'à l'horizon, et c'est elle que ce test garde.
+
+    DEPUIS LE 20 SEPTEMBRE 2026, L'EMPLOI PROJETÉ SUIT LE COR, et le sommet a
+    monté et reculé : la masse salariale, sur laquelle le stock est indexé,
+    croît d'un demi-point de plus par an jusqu'en 2040, le temps que le
+    chômage tombe à 7 % et que la population active atteigne son maximum. Le
+    scénario 5 culmine à 7,5 % au-dessus du système actuel en 2039, le 3 à
+    4,9 % en 2034 ; à emploi constant, les anciens sommets se retrouvent. Le
+    recul de l'emploi après 2040 fait ensuite tomber le rapport plus bas
+    qu'avant : 0,78 en 2070 pour le 5 contre 0,84 à emploi constant.
 
     Le sommet est donc CHERCHÉ et non supposé : fixer son année d'avance
     ferait passer le test pour un contrôle alors qu'il ne serait qu'un
@@ -387,11 +396,12 @@ def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
     for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
         lignes = [l for l in avenir.annees if l.annee >= avenir.annee_bascule]
         # Le sursaut initial existe, et il reste petit : la réforme ne coûte
-        # pas plus de cinq pour cent de plus que le système qu'elle remplace.
+        # pas plus de dix pour cent de plus que le système qu'elle remplace.
         sommet = max(lignes, key=lambda l: l.rapports[scenario])
-        assert sommet.rapports[scenario] < 1.05, scenario
-        # Et il est borné dans le temps : au plus deux pas de grille.
-        assert sommet.annee <= avenir.annee_bascule + 2 * PAS_GENERATIONS, scenario
+        assert sommet.rapports[scenario] < 1.10, scenario
+        # Et il est borné dans le temps : au plus trois pas de grille — la
+        # bosse d'emploi du COR s'achève en 2040, et le sommet avec elle.
+        assert sommet.annee <= avenir.annee_bascule + 3 * PAS_GENERATIONS, scenario
         precedent = None
         for ligne in lignes:
             if ligne.annee < sommet.annee:

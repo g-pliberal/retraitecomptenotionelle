@@ -1189,3 +1189,38 @@ journal:
       l'INSEE par vingtile de niveau de vie — reste à lire, et c'est lui que
       l'action 14 demande. Les reprises de veille du 17 septembre 2026
       restent ouvertes.
+  - date: "2026-09-20"
+    session: "l'emploi projeté suit le scénario de référence du COR"
+    consulte: >-
+      Rapport annuel du COR de juin 2026 (RA_2026_def_1.pdf) : introduction
+      (page 25, les cibles du scénario de référence — productivité horaire
+      0,7 %, chômage 7,0 %, « ces cibles étant atteintes en 2040 »), partie 1
+      chapitre 1 (pages 40-51 : la population active projetée par la DG Trésor
+      sur les projections de population 2026 de l'INSEE, figure 1.6 ; le
+      tableau 1.2 des rythmes décennaux, lu sur l'image de la page) et partie
+      2 chapitre 2 (page 73 : 30,6 millions de cotisants en 2025, 28,9 en
+      2070). Le classeur publié avec le rapport, Données_RA2026_P1.xlsx :
+      figures 1.6 (croissance annuelle de la population active, 2026-2070),
+      1.11 (taux de chômage) et 1.12 (taux d'emploi des 15-64 ans), scénario
+      de référence. La page de téléchargement du rapport pour la liste des
+      pièces.
+    trouve: >-
+      Le COR ne publie pas de série d'emploi annuelle en clair : il publie la
+      population active et le chômage, et compte les cotisants sur l'emploi
+      total des comptes nationaux. La croissance de l'emploi a donc été
+      DÉRIVÉE — (1 + population active) × (1 − chômage) ÷ (1 − chômage de
+      l'année d'avant) − 1 — et recoupée sur les cotisants du rapport : −6,0 %
+      en 2070 contre −5,6 %, écart de champ. Le chômage à 7 % est atteint en
+      2040 dans l'exercice 2026, non en 2032 comme le fichier d'hypothèses le
+      disait depuis l'exercice 2025 ; corrigé. Aucun texte de droit n'a été
+      lu : la session ne touche pas au scénario 1, dont aucune ligne du
+      registre ne change d'état, et c'est précisément ce que l'action vérifie
+      — le système 1 ne lit ni la masse salariale ni le PIB.
+    reste: >-
+      La série est `saisie`, pas certifiée : aucun producteur ne la publie
+      telle quelle, et `verifier_donnees.py` n'a rien à lui confronter hors
+      ses bornes. Le prochain rapport annuel du COR (juin 2027) la périmera,
+      comme il périme les hypothèses de productivité ; l'INSEE annonce un
+      nouvel exercice de projections de population active pour 2027, que la
+      DG Trésor a devancé ici. Le PIB de la page Coût ne lit pas encore la
+      trajectoire.

@@ -30,6 +30,9 @@ class DonneesMacro:
 
     racine: Path
     scenario_projection: str | None = None
+    #: Trajectoire de l'emploi au-delà de la dernière observation (clé de
+    #: ``trajectoires_emploi``) ; ``None`` prend le défaut du fichier.
+    trajectoire_emploi: str | None = None
 
     @cached_property
     def _hypotheses(self) -> dict:
@@ -50,8 +53,71 @@ class DonneesMacro:
         return {**scenarios[nom], "code": nom,
                 "fin": int(hypotheses.get("annee_fin_projection", 2100))}
 
+    @cached_property
+    def trajectoire(self) -> dict:
+        """La trajectoire d'emploi retenue, telle que le fichier la décrit."""
+        hypotheses = self._hypotheses
+        nom = self.trajectoire_emploi or hypotheses.get(
+            "trajectoire_emploi_par_defaut", "constant")
+        trajectoires = hypotheses.get("trajectoires_emploi", {})
+        if nom not in trajectoires:
+            raise KeyError(
+                f"trajectoire d'emploi inconnue : {nom!r}. Disponibles : "
+                + ", ".join(sorted(trajectoires))
+            )
+        return {**(trajectoires[nom] or {}), "code": nom}
+
     def _prolonger(self, serie: SerieAnnuelle, cle: str) -> SerieAnnuelle:
         return serie.prolongee(float(self.projection[cle]), self.projection["fin"])
+
+    @cached_property
+    def emploi(self) -> SerieAnnuelle:
+        """Croissance annuelle de l'EMPLOI, sur les seules années projetées.
+
+        Nulle partout sous la trajectoire ``constant`` ; lue dans le fichier de
+        la trajectoire sinon, et nulle au-delà de sa dernière année — 2070 pour
+        le COR, qui n'y projette rien. La série ne commence qu'à la première
+        année projetée : avant, l'emploi est dans les séries observées.
+        """
+        from .chargement import ValeurAnnuelle
+
+        debut = self.annee_derniere_observation_declaree + 1
+        fin = self.projection["fin"]
+        valeurs = {
+            annee: ValeurAnnuelle(annee, 0.0, Fiabilite.ESTIMEE)
+            for annee in range(debut, fin + 1)
+        }
+        fichier = self.trajectoire.get("fichier")
+        if fichier:
+            serie = charger_serie_annuelle(
+                self.racine / "reference" / "macro" / fichier,
+                colonne_valeur="croissance_emploi",
+                nom="croissance_emploi",
+            )
+            for annee in serie.annees():
+                if debut <= annee <= fin:
+                    valeurs[annee] = ValeurAnnuelle(
+                        annee, serie(annee), min(serie.fiabilite(annee),
+                                                 Fiabilite.ESTIMEE))
+        return SerieAnnuelle(valeurs, "croissance_emploi", "escalier")
+
+    def _prolonger_avec_emploi(self, serie: SerieAnnuelle, cle: str) -> SerieAnnuelle:
+        """Prolonge une assiette : le taux du scénario COMPOSÉ avec l'emploi.
+
+        ``(1 + taux) × (1 + emploi de l'année) − 1``, année par année. Le taux
+        du fichier d'hypothèses est celui du salaire moyen, à emploi constant ;
+        c'est ici que l'emploi entre, et nulle part ailleurs.
+        """
+        from .chargement import ValeurAnnuelle
+
+        valeurs = {annee: serie.brut(annee) for annee in serie.annees()}
+        base = float(self.projection[cle])
+        premiere_projetee = self.annee_derniere_observation_declaree + 1
+        for annee in range(serie.derniere_annee + 1, self.projection["fin"] + 1):
+            emploi = self.emploi(annee) if annee >= premiere_projetee else 0.0
+            valeurs[annee] = ValeurAnnuelle(
+                annee, (1 + base) * (1 + emploi) - 1, Fiabilite.ESTIMEE)
+        return SerieAnnuelle(valeurs, serie.nom, serie.interpolation)
 
     @cached_property
     def derniere_annee_observee(self) -> int:
@@ -103,13 +169,16 @@ class DonneesMacro:
         rendement qu'un système en répartition peut servir sans changer son
         taux de cotisation, et donc, dans la théorie des comptes notionnels, le
         taux d'indexation de référence.
+
+        Au-delà de la dernière observation, le salaire moyen du scénario est
+        composé avec la trajectoire d'emploi : voir :attr:`emploi`.
         """
         serie = charger_serie_annuelle(
             self.racine / "reference" / "macro" / "masse_salariale.csv",
             colonne_valeur="variation_nominale",
             nom="masse_salariale_nominale",
         )
-        return self._prolonger(serie, "masse_salariale_nominale")
+        return self._prolonger_avec_emploi(serie, "masse_salariale_nominale")
 
     @cached_property
     def pib_nominal(self) -> SerieAnnuelle:
@@ -120,6 +189,22 @@ class DonneesMacro:
         salariale subit. C'est celle que l'Italie retient pour revaloriser les
         comptes notionnels, lissée sur cinq ans — le lissage est appliqué par
         :class:`~retraite_notionnelle.moteur.indexation.Indexation`, pas ici.
+        """
+        serie = charger_serie_annuelle(
+            self.racine / "reference" / "macro" / "pib_nominal.csv",
+            colonne_valeur="variation_nominale",
+            nom="pib_nominal",
+        )
+        return self._prolonger_avec_emploi(serie, "pib_nominal")
+
+    @cached_property
+    def pib_nominal_hors_emploi(self) -> SerieAnnuelle:
+        """Le PIB prolongé au seul rythme du scénario, SANS la trajectoire d'emploi.
+
+        C'est ce que la page Coût lit : elle compose elle-même ce rythme avec
+        la population des 20-64 ans, et lui donner en plus l'emploi du COR
+        compterait deux fois la démographie. Lui substituer la trajectoire est
+        la marche suivante de la feuille de route (action 46).
         """
         serie = charger_serie_annuelle(
             self.racine / "reference" / "macro" / "pib_nominal.csv",

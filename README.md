@@ -140,8 +140,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->712<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 200<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->714<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 207<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Six pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -172,7 +172,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->2 982<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->2 983<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->72<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -190,7 +190,7 @@ poids de ce qu'on voulait exécuter.
 Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->487<!--/--> simulations complètes et
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->488<!--/--> simulations complètes et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->43<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
 <!--chiffre:a_verifier(le compte des nombres comparés demande de lancer node --test)-->10 615<!--/--> nombres,
@@ -583,17 +583,17 @@ Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans
 Scénario                                                          Courants   Constants   Mensuel    Écart
 --------------------------------------------------------------------------------------------------------
 1. Système actuel                                                  35,435€     28,280€    2,357€     réf.
-2. Notionnel rétroactif, part salariale                             8,483€      6,770€      564€   -76.1%
-3. Notionnel dès 2026, part salariale                              27,029€     21,571€    1,798€   -23.7%
-4. Notionnel rétroactif, salariale + patronale                     49,581€     39,570€    3,298€   +39.9%
-5. Notionnel dès 2026, salariale + patronale                       32,000€     25,539€    2,128€    -9.7%
-6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        47,051€     37,551€    3,129€   +32.8%
+2. Notionnel rétroactif, part salariale                             8,784€      7,010€      584€   -75.2%
+3. Notionnel dès 2026, part salariale                              28,157€     22,472€    1,873€   -20.5%
+4. Notionnel rétroactif, salariale + patronale                     51,616€     41,194€    3,433€   +45.7%
+5. Notionnel dès 2026, salariale + patronale                       33,232€     26,523€    2,210€    -6.2%
+6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        49,032€     39,132€    3,261€   +38.4%
 --------------------------------------------------------------------------------------------------------
    hors répartition (RAFP), servi à part, identique aux 6           1,506€      1,202€      100€         
 --------------------------------------------------------------------------------------------------------
    + rente capitalisée obligatoire, scénario 6                      1,633€      1,303€      109€         
    + rente capitalisée volontaire, les 5 points rendus              1,633€      1,303€      109€         
-   = total servi par le scénario 6                                 50,317€     40,157€    3,346€   +42.0%
+   = total servi par le scénario 6                                 52,298€     41,739€    3,478€   +47.6%
 
 Qui verse la cotisation, en euros courants cumulés :
   part salariale           139,912 €   scénarios 2 et 3
@@ -1150,7 +1150,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1139 tests Python
+tests/                          1143 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1199,7 +1199,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1139<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1143<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

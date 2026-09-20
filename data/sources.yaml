@@ -428,6 +428,26 @@ institutions:
         acces: document
         statut_integration: saisi
         cible: data/reference/regimes/*.yaml
+      - id: cor_projection_emploi
+        titre: >-
+          Rapport annuel du COR de juin 2026 — données de la partie 1 :
+          population active, chômage et taux d'emploi projetés (figures 1.6,
+          1.11 et 1.12)
+        url: https://www.cor-retraites.fr/sites/default/files/2026-07/Données_RA2026_P1.xlsx
+        acces: fichier
+        statut_integration: saisi
+        cible: data/reference/macro/emploi_projete.csv
+        millesime: juin 2026
+        note: >-
+          Le classeur publié avec le rapport. Trois séries annuelles du
+          scénario de référence, 2026-2070 : la croissance de la population
+          active (DG Trésor, sur les projections de population 2026 de
+          l'INSEE), le taux de chômage (7,7 % en 2025, 7,0 % en 2040 puis
+          constant) et le taux d'emploi des 15-64 ans. Le dépôt en DÉRIVE la
+          croissance de l'emploi, seule colonne que le modèle lise, et la
+          recoupe sur les cotisants du rapport (30,6 millions en 2025, 28,9 en
+          2070). Le rapport lui-même : RA_2026_def_1.pdf, partie 1 chapitre 1
+          (pages 40-51) et partie 2 chapitre 2 (page 73).
       - id: cor_hypotheses_projection
         titre: >-
           Hypothèses économiques de long terme du COR — scénario de référence et

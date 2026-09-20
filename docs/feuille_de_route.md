@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 867<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->24 986<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -4661,7 +4661,6 @@ commité, et rien d'autre. Un travail laissé non commité reste dans le
 conteneur, qui est jeté. Et le script ne touche jamais au `main` local, ce
 post-it périmé : il ne le nomme pas plus que la recette qu'il remplace.
 
-
 ## Ce qui est délibérément en bas
 
 - **Les 37 fiches partielles.** Chaque mur est documenté dans `regimes.md` ;
@@ -8105,3 +8104,52 @@ rendra la valeur recontrôlable.
 
 **Fin.** Une commande dit ce que le dépôt ne peut pas aller chercher, et un
 fichier déposé au bon endroit est lu sans qu'on touche au script.
+- **20 septembre 2026, action 46.** Faite. L'emploi projeté suit le scénario
+  de référence du COR de juin 2026 pour les systèmes 2 à 6, par la masse
+  salariale ; le système 1 ne le lit pas. Le détail est sous l'action. À
+  retenir : la trajectoire du COR n'est pas un choc favorable — +3,7 % pour
+  la génération 1975, −5,2 % pour la génération 2000 —, et le PIB de la page
+  Coût ne la lit pas encore.
+
+### 46. L'emploi projeté suit le scénario de référence du COR, pour les systèmes 2 à 6 — `fait`
+
+**Ce que c'est.** Jusqu'au 20 septembre 2026, l'emploi salarié était supposé
+constant au-delà de 2025 : la masse salariale projetée — le rendement des
+comptes notionnels — était le seul salaire moyen. L'action remplace cette
+convention par la trajectoire d'emploi du scénario de référence du rapport
+annuel du COR de juin 2026, dérivée de sa population active et de son taux de
+chômage (`data/reference/macro/emploi_projete.csv`, source
+`cor_projection_emploi`), et composée année par année avec le salaire moyen
+du scénario de productivité. La trajectoire ne touche que la masse salariale
+et le PIB projetés, que seule l'indexation des comptes lit : le système 1 ne
+bouge pas, les systèmes 2 à 6 la reçoivent. C'est ce qui a été demandé — un
+emploi qui bouge sous la réforme, pas sous le droit constant — et c'est
+écrit sur le formulaire (« Emploi projeté », systèmes 2 à 6 seulement) et
+dans le bloc « Ce que l'hypothèse pèse » de la page de résultats, qui rejoue
+le système 2 sous l'autre trajectoire.
+
+**Ce que ça a déplacé.** Mesuré le 20 septembre 2026 sur un salarié non cadre
+entré à 22 ans et parti à 64 ou 65 ans, systèmes 2 à 6 contre l'emploi
+constant : +3,7 % pour la génération 1975, −1,0 % pour 1990, −5,2 % pour 2000.
+Le COR fait monter l'emploi de 4,7 % jusqu'en 2040 puis reculer de 6,0 % en
+2070 : la trajectoire est favorable à qui liquide dans la bosse, défavorable
+ensuite. Elle n'est pas le choc d'offre du programme, elle est la projection
+à législation constante du COR ; le choc, s'il doit être chiffré, sera une
+trajectoire de plus dans `trajectoires_emploi`, avec sa source, et il faut
+savoir que le point de départ est déjà en dessous de la ligne d'emploi
+constant après 2050.
+
+**Ce qui reste.** Le PIB de la page Coût garde la population des 20-64 ans
+comme correction (`limites.md` § 5 ter) et ne lit pas la trajectoire ; y
+substituer l'emploi du COR, pour les systèmes réformés, est la marche
+suivante — elle touche `cout.py` et `cout.js`, où le PIB est unique par
+année. Une variante de productivité à 1,3 %, demandée pour le système 2, n'a
+pas été retenue : le COR l'a abandonnée en juin 2025 pour ralentissement
+structurel, et un choc d'emploi n'est pas un supplément de productivité.
+
+**Fichiers.** `data/reference/macro/emploi_projete.csv`,
+`hypotheses_projection.yaml` (`trajectoires_emploi`), `donnees/macro.py`,
+`moteur/js/macro.js`, `config.py`, `config.js`, `web/pages.py`,
+`moteur/js/pages.js` (champ `emploi`), `construire_donnees.py`,
+`construire_temoins.py` (cas `emploi_constant`), `tests/test_donnees.py`,
+`tests/test_simulateur.py`, `limites.md` § 1 et § 5 ter, `sources.yaml`.

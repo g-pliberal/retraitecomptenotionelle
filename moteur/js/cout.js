@@ -1324,12 +1324,13 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
   // Le PIB est publié jusqu'en 2025 ; au-delà il croît au rythme nominal des
   // hypothèses de projection, CORRIGÉ de l'évolution de la population d'âge
   // actif. Sans cette correction, la France de 2070 produirait avec douze pour
-  // cent d'actifs qu'aucune projection ne lui donne.
+  // cent d'actifs qu'aucune projection ne lui donne. Le rythme est pris HORS
+  // trajectoire d'emploi : la population d'âge actif en tient lieu ici.
   const dernierePib = depenses.pib.derniereAnnee;
   const pibProjete = new Map();
   let courant = depenses.pib.valeur(dernierePib);
   for (let annee = dernierePib + 1; annee <= HORIZON; annee += 1) {
-    courant *= (1.0 + macro.pib_nominal.valeur(annee))
+    courant *= (1.0 + macro.pib_nominal_hors_emploi.valeur(annee))
       * (population.actifs.valeur(annee) / population.actifs.valeur(annee - 1));
     pibProjete.set(annee, courant);
   }

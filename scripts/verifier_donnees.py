@@ -905,9 +905,9 @@ def source_population_active() -> dict[tuple, float]:
     """Population des 20-64 ans, 1962-2070 — le dénominateur du PIB projeté.
 
     Elle ne sert à compter aucun retraité. Elle sert à projeter la richesse
-    produite : l'hypothèse d'emploi constant que porte
-    `hypotheses_projection.yaml` est neutre pour l'indexation des comptes, et ne
-    l'est pas du tout pour une part de PIB, dont elle gonflerait le
+    produite : la trajectoire d'emploi que porte `hypotheses_projection.yaml`
+    n'entre que dans l'indexation des comptes, pas dans le PIB de la page
+    Coût, qui suivrait sans cette série un emploi constant et gonflerait son
     dénominateur de 12 % en 2070.
     """
     return {
@@ -4939,6 +4939,7 @@ def controle_coherence_interne() -> list[str]:
         "masse_salariale.csv": ("variation_nominale", -0.15, 0.70),
         "pib_nominal.csv": ("variation_nominale", -0.15, 0.70),
         "productivite.csv": ("variation_reelle", -0.15, 0.20),
+        "emploi_projete.csv": ("croissance_emploi", -0.03, 0.03),
     }
     for nom, (colonne, mini, maxi) in fichiers.items():
         lignes = charger_csv(REFERENCE / "macro" / nom)

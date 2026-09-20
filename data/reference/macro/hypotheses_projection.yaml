@@ -31,12 +31,15 @@
 #    certifie de 1950 à 2025. Les deux ne coïncident qu'à durée du travail
 #    constante.
 # 2. Le COR atteint sa cible PROGRESSIVEMENT — 0,7 % à partir de 2040, chômage
-#    à 7 % en 2032 ; le modèle applique le taux dès 2026, sans trajectoire de
+#    à 7 % en 2040 ; le modèle applique le taux dès 2026, sans trajectoire de
 #    convergence. Le raccord est donc brutal : 1,77 % de croissance du salaire
 #    moyen observée en 2025, 2,45 % l'année suivante dans le scénario de
 #    référence.
-# 3. Le COR projette l'emploi et la population active ; ici l'emploi salarié est
-#    supposé CONSTANT (voir la convention de masse salariale ci-dessous).
+# 3. Le COR projette l'emploi et la population active ; ici l'emploi suit, par
+#    défaut, la trajectoire de son scénario de référence (`trajectoires_emploi`
+#    ci-dessous), lue dans `emploi_projete.csv`, et reste constant au-delà de
+#    2070, où le COR s'arrête. Jusqu'au 20 septembre 2026 il était supposé
+#    CONSTANT, ce que la trajectoire `constant` conserve comme variante.
 #
 # L'INFLATION N'EST PAS UNE CIBLE DE BANQUE CENTRALE
 # ---------------------------------------------------
@@ -54,18 +57,32 @@
 # donc les salaires réels progressent au rythme de la productivité.
 #
 # Convention pour la MASSE SALARIALE : masse salariale = salaire moyen × emploi
-# salarié. Au-delà de 2025, l'emploi salarié est supposé CONSTANT — le COR ne
-# publie pas d'hypothèse d'emploi long terme dont on pourrait se réclamer ici,
-# et ses hypothèses de population active ont changé deux fois en deux ans
-# (fécondité 1,8 et solde migratoire +70 000 en juin 2025, fécondité 1,45 et
-# +150 000 en juin 2026). C'est une hypothèse neutre, et non un résultat : sur
-# 1950-2025 l'emploi salarié a été multiplié par 2,14, soit près d'un point de
-# croissance annuelle que la projection ne reconduit pas.
+# salarié. Les taux `masse_salariale_nominale` ci-dessous sont ceux du salaire
+# moyen, À EMPLOI CONSTANT ; le modèle les COMPOSE ensuite, année par année,
+# avec la croissance de l'emploi de la trajectoire retenue :
+#     (1 + salaire moyen) × (1 + emploi de l'année) − 1.
+# Sous la trajectoire `constant`, la composition ne change rien. Sous
+# `cor_2026`, la masse salariale progresse plus vite que le salaire moyen
+# jusqu'en 2040 (+4,7 % d'emploi cumulé) et moins vite ensuite (−6,0 % en
+# 2070) : c'est le scénario de référence du COR de juin 2026, population
+# active de la DG Trésor sur les projections de population 2026 de l'INSEE
+# (fécondité 1,45, solde migratoire +150 000) et chômage ramené à 7 % en 2040.
+# Sur 1950-2025 l'emploi salarié a été multiplié par 2,14, soit près d'un
+# point de croissance annuelle : ni l'une ni l'autre trajectoire ne le
+# reconduit.
 #
 # Le PIB nominal suit la même convention que la masse salariale : au-delà de
-# 2025, il croît au rythme du salaire moyen nominal. Supposer autre chose
-# reviendrait à projeter une déformation du partage de la valeur ajoutée, ce
-# qu'aucun des scénarios retenus ne fait.
+# 2025, il croît au rythme du salaire moyen nominal composé avec l'emploi.
+# Supposer autre chose reviendrait à projeter une déformation du partage de la
+# valeur ajoutée, ce qu'aucun des scénarios retenus ne fait.
+#
+# QUI LIT QUOI. Le salaire moyen, l'inflation et la productivité sont lus par
+# tous les systèmes. La masse salariale et le PIB ne sont lus que par
+# l'INDEXATION DES COMPTES NOTIONNELS, donc par les systèmes 2 à 6 : le
+# système 1, droit en vigueur, revalorise sur les prix et ne lit ni l'une ni
+# l'autre. La trajectoire d'emploi ne déplace donc que les systèmes réformés,
+# et c'est voulu : elle est l'hypothèse du programme, pas celle du droit
+# constant — voir docs/limites.md, « Ce que l'emploi projeté déplace ».
 
 annee_derniere_observation: 2025
 annee_fin_projection: 2100
@@ -79,7 +96,7 @@ scenarios:
     inflation: 0.0175
     productivite_reelle: 0.007
     salaire_moyen_nominal: 0.0245
-    masse_salariale_nominale: 0.0245   # emploi salarié supposé constant
+    masse_salariale_nominale: 0.0245   # à emploi constant, composé ensuite
     pib_nominal: 0.0245               # partage de la valeur ajoutée stable
 
   cor_productivite_basse:
@@ -87,7 +104,7 @@ scenarios:
     inflation: 0.0175
     productivite_reelle: 0.004
     salaire_moyen_nominal: 0.0215
-    masse_salariale_nominale: 0.0215   # emploi salarié supposé constant
+    masse_salariale_nominale: 0.0215   # à emploi constant, composé ensuite
     pib_nominal: 0.0215               # partage de la valeur ajoutée stable
 
   cor_productivite_haute:
@@ -95,8 +112,24 @@ scenarios:
     inflation: 0.0175
     productivite_reelle: 0.010
     salaire_moyen_nominal: 0.0275
-    masse_salariale_nominale: 0.0275   # emploi salarié supposé constant
+    masse_salariale_nominale: 0.0275   # à emploi constant, composé ensuite
     pib_nominal: 0.0275               # partage de la valeur ajoutée stable
+
+# L'emploi au-delà de la dernière observation. La trajectoire par défaut est
+# celle du scénario de référence du COR de juin 2026 ; `constant` est la
+# convention d'avant, gardée pour mesurer ce que la trajectoire déplace.
+# Chaque trajectoire nomme le fichier de `data/reference/macro/` qui la porte,
+# colonne `croissance_emploi` ; sans fichier, l'emploi est constant.
+trajectoire_emploi_par_defaut: cor_2026
+
+trajectoires_emploi:
+
+  constant:
+    libelle: Emploi constant après la dernière observation
+
+  cor_2026:
+    libelle: Emploi du scénario de référence du COR — juin 2026
+    fichier: emploi_projete.csv
 
 # Le plafond de la Sécurité sociale suit la croissance du salaire moyen, ce qui
 # est la règle en vigueur (article L. 241-3 du code de la sécurité sociale).

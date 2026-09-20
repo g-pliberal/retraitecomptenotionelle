@@ -475,6 +475,7 @@ class Comparaison:
                 "euros_constants_de": self.parametres.annee_euros_constants,
                 "coefficient": self.coefficient_euros_constants,
                 "scenario_projection": self.parametres.scenario_projection,
+                "trajectoire_emploi": self.parametres.trajectoire_emploi,
             },
             "regime_fusionne": {
                 "annee_bascule": self.regime_fusionne.annee_bascule,
@@ -617,6 +618,7 @@ class Simulateur:
         return DonneesMacro(
             self.parametres.racine_donnees,
             scenario_projection=self.parametres.scenario_projection,
+            trajectoire_emploi=self.parametres.trajectoire_emploi,
         )
 
     @cached_property

@@ -365,6 +365,15 @@ class Parametres:
     #: (clé de ``data/reference/macro/hypotheses_projection.yaml``).
     scenario_projection: str = "cor_reference"
 
+    #: Trajectoire de l'emploi au-delà de la dernière observation (clé de
+    #: ``trajectoires_emploi`` dans le même fichier). Elle ne touche que la
+    #: MASSE SALARIALE et le PIB projetés — salaire moyen composé avec
+    #: l'emploi — donc l'indexation des comptes notionnels, que seuls les
+    #: systèmes 2 à 6 lisent : le système 1 ne lit ni l'une ni l'autre. Le
+    #: défaut est le scénario de référence du COR de juin 2026 ; ``constant``
+    #: retrouve la convention d'avant le 20 septembre 2026.
+    trajectoire_emploi: str = "cor_2026"
+
     # --- Indexation ---------------------------------------------------------
     #: Le défaut est la règle d'ÉQUILIBRE — la croissance de l'assiette des
     #: cotisations —, et non le triple lock inversé qui a donné son cahier des

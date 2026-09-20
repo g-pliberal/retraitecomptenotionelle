@@ -19,9 +19,10 @@ import { Fiabilite, SerieAnnuelle } from "./serie.js";
 export const ANNEE_REVALORISATION_SUR_LES_PRIX = 1987;
 
 export class DonneesMacro {
-  constructor(paquet, scenarioProjection = null) {
+  constructor(paquet, scenarioProjection = null, trajectoireEmploi = null) {
     this.paquet = paquet;
     this.scenarioProjection = scenarioProjection;
+    this.trajectoireEmploi = trajectoireEmploi;
 
     const hypotheses = paquet.hypotheses;
     const nom = scenarioProjection || hypotheses.scenario_par_defaut;
@@ -38,13 +39,40 @@ export class DonneesMacro {
       fin: Number(hypotheses.annee_fin_projection ?? 2100),
     };
 
+    // La trajectoire d'emploi retenue, telle que le fichier la décrit.
+    const nomTrajectoire = trajectoireEmploi
+      || hypotheses.trajectoire_emploi_par_defaut || "constant";
+    const trajectoires = hypotheses.trajectoires_emploi || {};
+    if (!(nomTrajectoire in trajectoires)) {
+      throw new Error(
+        `trajectoire d'emploi inconnue : ${nomTrajectoire}. Disponibles : `
+        + Object.keys(trajectoires).sort().join(", "),
+      );
+    }
+    this.trajectoire = { ...(trajectoires[nomTrajectoire] || {}), code: nomTrajectoire };
+
     const serie = (cle) => SerieAnnuelle.depuisPaquet(cle, paquet.series[cle]);
     const prolonger = (s, cle) => s.prolongee(Number(this.projection[cle]), this.projection.fin);
 
+    /** Ce que le fichier d'hypothèses annonce, à confronter à l'observé. */
+    this.anneeDerniereObservationDeclaree =
+      Number(hypotheses.annee_derniere_observation);
+    /**
+     * Croissance annuelle de l'EMPLOI, sur les seules années projetées : nulle
+     * partout sous `constant`, lue dans le fichier de la trajectoire sinon, et
+     * nulle au-delà de sa dernière année — 2070 pour le COR.
+     */
+    this.emploi = this._emploi(serie);
+
     this.inflation = prolonger(serie("inflation"), "inflation");
     this.salaire_moyen = prolonger(serie("salaire_moyen"), "salaire_moyen_nominal");
-    this.masse_salariale = prolonger(serie("masse_salariale"), "masse_salariale_nominale");
-    this.pib_nominal = prolonger(serie("pib_nominal"), "pib_nominal");
+    this.masse_salariale = this._prolongeAvecEmploi(
+      serie("masse_salariale"), "masse_salariale_nominale");
+    this.pib_nominal = this._prolongeAvecEmploi(serie("pib_nominal"), "pib_nominal");
+    // Le PIB au seul rythme du scénario, SANS l'emploi : ce que la page Coût
+    // lit, parce qu'elle compose elle-même ce rythme avec la population des
+    // 20-64 ans.
+    this.pib_nominal_hors_emploi = prolonger(serie("pib_nominal"), "pib_nominal");
     this.productivite = prolonger(serie("productivite"), "productivite_reelle");
     this.plafond_securite_sociale = this._plafond(serie("pass"), hypotheses);
     this.smic_horaire = this._prolongeParSalaire(serie("smic_horaire"), "smic_horaire");
@@ -88,9 +116,51 @@ export class DonneesMacro {
       ),
     );
 
-    /** Ce que le fichier d'hypothèses annonce, à confronter à l'observé. */
-    this.anneeDerniereObservationDeclaree =
-      Number(hypotheses.annee_derniere_observation);
+  }
+
+  _emploi(serie) {
+    const debut = this.anneeDerniereObservationDeclaree + 1;
+    const fin = this.projection.fin;
+    const annees = [];
+    const valeurs = [];
+    const fiabilites = [];
+    for (let annee = debut; annee <= fin; annee += 1) {
+      annees.push(annee);
+      valeurs.push(0.0);
+      fiabilites.push(Fiabilite.ESTIMEE);
+    }
+    const fichier = this.trajectoire.fichier;
+    if (fichier) {
+      const lue = serie(fichier.replace(/\.csv$/, ""));
+      lue.annees.forEach((annee, rang) => {
+        if (annee >= debut && annee <= fin) {
+          valeurs[annee - debut] = lue.valeurs[rang];
+          fiabilites[annee - debut] = Math.min(lue.fiabilites[rang], Fiabilite.ESTIMEE);
+        }
+      });
+    }
+    return new SerieAnnuelle(annees, valeurs, fiabilites, "croissance_emploi", "escalier");
+  }
+
+  /**
+   * Prolonge une assiette : le taux du scénario COMPOSÉ avec l'emploi,
+   * `(1 + taux) × (1 + emploi de l'année) − 1`, année par année. Le taux du
+   * fichier d'hypothèses est celui du salaire moyen, à emploi constant ; c'est
+   * ici que l'emploi entre, et nulle part ailleurs.
+   */
+  _prolongeAvecEmploi(serie, cle) {
+    const annees = serie.annees.slice();
+    const valeurs = serie.valeurs.slice();
+    const fiabilites = serie.fiabilites.slice();
+    const base = Number(this.projection[cle]);
+    const premiereProjetee = this.anneeDerniereObservationDeclaree + 1;
+    for (let annee = serie.derniereAnnee + 1; annee <= this.projection.fin; annee += 1) {
+      const emploi = annee >= premiereProjetee ? this.emploi.valeur(annee) : 0.0;
+      annees.push(annee);
+      valeurs.push((1 + base) * (1 + emploi) - 1);
+      fiabilites.push(Fiabilite.ESTIMEE);
+    }
+    return new SerieAnnuelle(annees, valeurs, fiabilites, serie.nom, serie.interpolation);
   }
 
   /**

@@ -50,7 +50,7 @@ BASE = {
     "primes": "0", "enfants": "0", "interruptions": "",
     "indexation": "triple_lock_inverse", "age_reference": "fixe_apres_bascule",
     "table": "unisexe", "conversion_acquis": "reference",
-    "projection": "cor_reference",
+    "projection": "cor_reference", "emploi": "cor_2026",
     "bascule": "2026", "euros": "2026",
 }
 
@@ -369,6 +369,9 @@ def _cas() -> list[dict]:
     }))
     for projection in ("cor_productivite_basse", "cor_productivite_haute"):
         cas.append((f"projection_{projection}", {"projection": projection}))
+    # L'emploi constant après 2025 : la convention d'avant la trajectoire du
+    # COR, qui ne déplace que les systèmes 2 à 6, par l'indexation.
+    cas.append(("emploi_constant", {"emploi": "constant"}))
     for bascule in ("1980", "2000", "2026", "2040", "2060"):
         cas.append((f"bascule_{bascule}", {"bascule": bascule, "naissance": "1990"}))
     for euros in ("1980", "2000", "2050"):

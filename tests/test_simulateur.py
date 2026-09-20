@@ -33,6 +33,36 @@ def simulateur() -> Simulateur:
     return Simulateur(Parametres())
 
 
+def test_la_trajectoire_d_emploi_ne_deplace_que_les_systemes_reformes():
+    """Le système 1 ne lit ni la masse salariale ni le PIB : il ne bouge pas.
+
+    Les systèmes 2 à 6 sont indexés sur la masse salariale, que la trajectoire
+    d'emploi compose : pour une carrière qui s'achève dans la bosse d'emploi
+    du COR (années 2030-2040), leur pension monte ; elle monte moins, ou
+    baisse, pour qui liquide après le recul. Le système 1 est identique au
+    centime dans les deux cas.
+    """
+    cor = Simulateur(Parametres(trajectoire_emploi="cor_2026"))
+    constant = Simulateur(Parametres(trajectoire_emploi="constant"))
+    pensions = {}
+    for nom, sim in (("cor", cor), ("constant", constant)):
+        carriere = sim.carriere_simple(
+            annee_naissance=1975, sexe="H", affiliation="salarie_prive_non_cadre",
+            age_debut=22, age_liquidation=64,
+        )
+        comparaison = sim.simuler(carriere)
+        pensions[nom] = {
+            scenario: getattr(comparaison, scenario).pension_annuelle
+            for scenario in ("actuel", "notionnel_retroactif",
+                             "notionnel_retroactif_employeur", "notionnel_liberal")
+        }
+    assert pensions["cor"]["actuel"] == pensions["constant"]["actuel"]
+    for scenario in ("notionnel_retroactif", "notionnel_retroactif_employeur",
+                     "notionnel_liberal"):
+        assert pensions["cor"][scenario] > pensions["constant"][scenario]
+        assert pensions["cor"][scenario] / pensions["constant"][scenario] < 1.06
+
+
 @pytest.fixture(scope="module")
 def salarie_moyen(simulateur) -> Carriere:
     return simulateur.carriere_simple(

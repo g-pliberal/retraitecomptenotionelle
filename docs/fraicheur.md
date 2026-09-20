@@ -11,10 +11,10 @@ la main : la feuille de route donnait « plus de trois mille lignes » à
 `src/retraite_notionnelle/scenarios/actuel.py`, qui en fait
 <!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/-->,
 et « douze mille lignes » au portage, qui en fait
-<!--chiffre:lignes(moteur/js/*.js)-->24 867<!--/--> ; le README annonçait un
+<!--chiffre:lignes(moteur/js/*.js)-->24 986<!--/--> ; le README annonçait un
 premier chargement de 310 Ko quand il en transfère plus du double, et
 « 123 simulations » quand les témoins en figent
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->487<!--/-->.
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->488<!--/-->.
 
 Le mal est qu'on ne pouvait pas savoir. **Le dépôt écrit son ÉTAT et son
 HISTOIRE dans les mêmes fichiers, dans la même typographie, sans frontière.**
