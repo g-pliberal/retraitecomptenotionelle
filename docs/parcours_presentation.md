@@ -24,6 +24,14 @@ bouge, et c'est la page qui fait foi, pas ce texte.
 - **Le site n'a aucune valeur officielle**, et il le dit en bas de chaque
   page. Si quelqu'un veut ses droits réels, c'est info-retraite.fr.
 
+## Le même parcours en diaporama, hors ligne
+
+`docs/presentation_20_septembre_2026.pptx` reprend ce parcours en dix-huit
+diapositives, avec les captures des pages du site prises le 20 septembre au
+matin et, sous chaque diapositive, les notes du présentateur : ce qu'il faut
+dire, et la réponse aux questions attendues. Il ne dépend d'aucun réseau.
+Ouvrir en mode présentateur pour lire les notes.
+
 ## L'idée en une phrase
 
 Un compte à votre nom, en euros. Chaque cotisation y est inscrite, le compte
