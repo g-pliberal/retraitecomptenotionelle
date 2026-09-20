@@ -1075,6 +1075,49 @@ def source_taux_prelevement_projete() -> dict[tuple, float]:
     return _taux_prelevement("projete")
 
 
+def source_ressources_eec() -> dict[tuple, float]:
+    """Les ressources du système sous la convention EEC, scénario de référence.
+
+    LA CONVENTION EST UNE HYPOTHÈSE, ET ELLE VAUT UN DEMI-POINT DE PIB. Sous
+    **EPR**, celle de ``comptes_retraite.csv``, les contributions et
+    subventions d'équilibre « évoluent de manière à équilibrer chaque année le
+    solde » des régimes de fonctionnaires et des régimes spéciaux : l'État
+    verse exactement ce qu'il faut, ces régimes ne montrent jamais de déficit,
+    et le solde publié est celui des AUTRES régimes. Sous **EEC**, son effort
+    est figé en part de PIB ; les besoins de ces régimes reculant en
+    projection, l'État y verse plus que nécessaire et les ressources du système
+    sont plus hautes. Le COR publie les deux, la seconde en données
+    complémentaires de la figure des ressources, et personne d'autre ne le
+    fait.
+
+    QUELLE VARIANTE. Le bloc porte quatre lignes, étiquetées par leur
+    hypothèse de productivité et non par un nom. On prend celle du scénario de
+    référence du dépôt, lue dans ``hypotheses_projection.yaml`` — 0,7 % — de
+    sorte qu'un changement de scénario de référence déplace cette série avec
+    le reste, au lieu de la laisser sur une valeur écrite ici en dur.
+
+    TOUT ENTIÈRE AU NIVEAU ``projetee``, Y COMPRIS SES DEUX PREMIÈRES ANNÉES.
+    Le bloc commence en 2024, deux ans avant la frontière du compte principal,
+    et n'y écrit pas les valeurs observées : 13,54 % en 2024 quand le compte en
+    observe 13,81. C'est attendu — sous EEC l'État ne verse pas ce qu'il a
+    versé, mais un effort figé —, et c'est pourquoi aucune année de cette série
+    n'est une observation.
+    """
+    import yaml
+
+    variantes = _cor_comptes()["ressources_eec"]
+    hypotheses = yaml.safe_load(
+        (REFERENCE / "macro" / "hypotheses_projection.yaml").read_text(encoding="utf-8"))
+    reference = hypotheses["scenarios"][hypotheses["scenario_par_defaut"]]
+    cherche = f"{round(float(reference['productivite_reelle']), 4):g}"
+    if cherche not in variantes:
+        raise SourceAbsente(
+            f"aucune variante de productivité {cherche} dans le bloc EEC du COR ; "
+            f"publiées : {sorted(variantes)}"
+        )
+    return {(annee,): part for annee, part in sorted(variantes[cherche].items())}
+
+
 def source_structure_ressources() -> dict[tuple, float]:
     """Part de chaque poste dans les ressources du système de retraite.
 
@@ -3763,6 +3806,69 @@ CERTIFICATIONS = (
         decimales=5,
         tolerance=5.1e-6,
         niveau="projetee",
+    ),
+    Certification(
+        nom="ressources_eec_retraite",
+        chemin=REFERENCE / "macro" / "ressources_eec_retraite.csv",
+        cles=("annee",),
+        colonne="part_pib",
+        source=source_ressources_eec,
+        origine="COR, rapport annuel, ressources du système de retraite, "
+                "données complémentaires sous convention EEC",
+        decimales=6,
+        tolerance=5.1e-7,
+        niveau="projetee",
+        entete=(
+            "# Ressources du système de retraite sous la convention EEC, en part du PIB",
+            "# source_id: cor_comptes_systeme_retraite",
+            "# unite: part du produit intérieur brut, en fraction",
+            "# fiabilite:",
+            "#   projetee (2024-2069) : données complémentaires de la figure des",
+            "#             ressources du rapport annuel, variante de productivité du",
+            "#             scénario de référence, recontrôlées par",
+            "#             scripts/verifier_donnees.py contre le classeur.",
+            "#",
+            "# CE QUE CETTE SÉRIE SERT À DIRE : QU'UNE CONVENTION EST UNE HYPOTHÈSE",
+            "# ---------------------------------------------------------------------",
+            "# comptes_retraite.csv est sous convention EPR, et cette ligne-là de son",
+            "# en-tête est la plus lourde de conséquences : sous EPR, les",
+            "# contributions et subventions d'équilibre « évoluent de manière à",
+            "# équilibrer chaque année le solde » des régimes de fonctionnaires et",
+            "# des régimes spéciaux. L'État y verse exactement ce qu'il faut, ces",
+            "# régimes ne montrent JAMAIS de déficit, et le solde publié est celui",
+            "# des autres régimes — un déficit d'après bouclage, non d'avant.",
+            "#",
+            "# Sous EEC, l'effort de l'État est figé en part de PIB. Les besoins de",
+            "# ces régimes reculant en projection — moins de fonctionnaires, et des",
+            "# primes qui montent plus vite que le traitement, donc une assiette de",
+            "# cotisation qui passe de 10,4 % du PIB à 8,9 % —, l'État y verse à",
+            "# terme plus que nécessaire.",
+            "#",
+            "# L'ÉCART CHANGE DE SIGNE, ET C'EST CE QUI LE REND INTÉRESSANT. EEC",
+            "# donne MOINS de ressources à court terme — jusqu'à 0,67 point de PIB",
+            "# de moins en 2028, l'effort figé étant sous le besoin tant que les",
+            "# régimes de fonctionnaires pèsent encore —, passe au-dessus en 2047,",
+            "# et rend 0,49 point de plus en 2069 : 13,40 % contre 12,92 %. Sur",
+            "# 2026-2069 la moyenne des deux conventions ne diffère pas de deux",
+            "# centièmes de point. Aucune ne flatte : l'une creuse le déficit de",
+            "# demain, l'autre celui d'après-demain.",
+            "#",
+            "# Aucune des deux n'est plus vraie que l'autre : elles disent ce que",
+            "# l'État ferait, et l'État n'a rien promis. Le dépôt calcule sous EPR,",
+            "# qui est celle sous laquelle le COR suit son objectif de pérennité",
+            "# financière, et affiche ce que l'autre donnerait.",
+            "#",
+            "# POURQUOI AUCUNE ANNÉE N'EST OBSERVÉE, PAS MÊME 2024 ET 2025",
+            "# ------------------------------------------------------------",
+            "# Le bloc commence deux ans avant la frontière du compte principal et",
+            "# n'y écrit pas les valeurs observées : 13,54 % en 2024 quand le compte",
+            "# en observe 13,81. C'est attendu — sous EEC l'État ne verse pas ce",
+            "# qu'il a versé — et c'est pourquoi la série entre tout entière au",
+            "# niveau projetee.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
     ),
     Certification(
         nom="structure_ressources_retraite",

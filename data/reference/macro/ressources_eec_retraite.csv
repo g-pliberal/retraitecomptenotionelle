@@ -1,0 +1,90 @@
+# Ressources du système de retraite sous la convention EEC, en part du PIB
+# source_id: cor_comptes_systeme_retraite
+# unite: part du produit intérieur brut, en fraction
+# fiabilite:
+#   projetee (2024-2069) : données complémentaires de la figure des
+#             ressources du rapport annuel, variante de productivité du
+#             scénario de référence, recontrôlées par
+#             scripts/verifier_donnees.py contre le classeur.
+#
+# CE QUE CETTE SÉRIE SERT À DIRE : QU'UNE CONVENTION EST UNE HYPOTHÈSE
+# ---------------------------------------------------------------------
+# comptes_retraite.csv est sous convention EPR, et cette ligne-là de son
+# en-tête est la plus lourde de conséquences : sous EPR, les
+# contributions et subventions d'équilibre « évoluent de manière à
+# équilibrer chaque année le solde » des régimes de fonctionnaires et
+# des régimes spéciaux. L'État y verse exactement ce qu'il faut, ces
+# régimes ne montrent JAMAIS de déficit, et le solde publié est celui
+# des autres régimes — un déficit d'après bouclage, non d'avant.
+#
+# Sous EEC, l'effort de l'État est figé en part de PIB. Les besoins de
+# ces régimes reculant en projection — moins de fonctionnaires, et des
+# primes qui montent plus vite que le traitement, donc une assiette de
+# cotisation qui passe de 10,4 % du PIB à 8,9 % —, l'État y verse plus
+# que nécessaire, et les ressources du système sont PLUS HAUTES. Ce qui
+# surprend qui lit « effort constant » comme une hypothèse sévère :
+# c'est la convention la plus favorable des deux, et l'écart vaut
+# 0,49 point de PIB en 2069 — 13,40 % contre 12,92 %.
+#
+# Aucune des deux n'est plus vraie que l'autre : elles disent ce que
+# l'État ferait, et l'État n'a rien promis. Le dépôt calcule sous EPR,
+# qui est celle sous laquelle le COR suit son objectif de pérennité
+# financière, et affiche ce que l'autre donnerait.
+#
+# POURQUOI AUCUNE ANNÉE N'EST OBSERVÉE, PAS MÊME 2024 ET 2025
+# ------------------------------------------------------------
+# Le bloc commence deux ans avant la frontière du compte principal et
+# n'y écrit pas les valeurs observées : 13,54 % en 2024 quand le compte
+# en observe 13,81. C'est attendu — sous EEC l'État ne verse pas ce
+# qu'il a versé — et c'est pourquoi la série entre tout entière au
+# niveau projetee.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,part_pib,fiabilite
+2024,0.135380,projetee
+2025,0.134532,projetee
+2026,0.134143,projetee
+2027,0.133354,projetee
+2028,0.133239,projetee
+2029,0.132781,projetee
+2030,0.132435,projetee
+2031,0.132233,projetee
+2032,0.132097,projetee
+2033,0.131982,projetee
+2034,0.131883,projetee
+2035,0.131806,projetee
+2036,0.131807,projetee
+2037,0.131823,projetee
+2038,0.131848,projetee
+2039,0.131921,projetee
+2040,0.131972,projetee
+2041,0.132037,projetee
+2042,0.132085,projetee
+2043,0.132161,projetee
+2044,0.132254,projetee
+2045,0.132312,projetee
+2046,0.132391,projetee
+2047,0.132441,projetee
+2048,0.132518,projetee
+2049,0.132615,projetee
+2050,0.132670,projetee
+2051,0.132758,projetee
+2052,0.132830,projetee
+2053,0.132842,projetee
+2054,0.132903,projetee
+2055,0.132954,projetee
+2056,0.133025,projetee
+2057,0.133060,projetee
+2058,0.133102,projetee
+2059,0.133147,projetee
+2060,0.133198,projetee
+2061,0.133254,projetee
+2062,0.133326,projetee
+2063,0.133419,projetee
+2064,0.133525,projetee
+2065,0.133633,projetee
+2066,0.133710,projetee
+2067,0.133811,projetee
+2068,0.133927,projetee
+2069,0.134034,projetee

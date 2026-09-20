@@ -741,6 +741,17 @@ affirmations:
     etat: verifiee
     controle: note_du_coefficient_suit_son_signe
 
+  # LA CONVENTION COMPTABLE, DITE AU LECTEUR POUR LA PREMIÈRE FOIS le
+  # 20 septembre 2026. Elle était dans les en-têtes de données depuis toujours
+  # et nulle part dans la prose : le site affichait un déficit sans dire qu'il
+  # est mesuré APRÈS que l'État a bouclé les régimes de fonctionnaires.
+  - id: cout.convention_est_une_hypothese
+    page: /cout
+    extrait: "Et sous une convention, qui est une hypothèse."
+    porte: le solde publié est sous convention EPR, l'autre convention est chiffrée, et leur écart change de signe
+    etat: verifiee
+    controle: convention_comptable_est_une_hypothese
+
   - id: reglages.avertissement
     page: [/cas-types, /cout, /avantages]
     extrait: "Ces chiffres ne sont pas ceux des réglages par défaut."

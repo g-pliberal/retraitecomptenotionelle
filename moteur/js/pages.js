@@ -8699,6 +8699,17 @@ function coutDetailSources(contexte) {
   const c = contexte.cout();
   const solde = c.solde;
   const derniere = depenses.derniereAnnee;
+  // La dernière année que les DEUX conventions portent : le bloc
+  // complémentaire du COR s'arrête un an avant le compte principal, et
+  // comparer deux années différentes ne dirait rien.
+  const anneeEec = Math.min(comptes.derniereAnneeEec, comptes.derniereAnnee);
+  // L'année où l'effort figé passe au-dessus du besoin. Elle est ce qui
+  // empêche de lire l'écart entre conventions comme un biais constant, et elle
+  // se calcule : l'écrire en dur, c'est promettre le rapport de 2026.
+  let croisement = anneeEec;
+  for (let annee = comptes.premiereAnneeEec; annee <= anneeEec; annee += 1) {
+    if (comptes.soldeEec(annee) - comptes.solde(annee) >= 0) { croisement = annee; break; }
+  }
   return g.depliant("D'où viennent ces chiffres", `
 <p>Cette page croise deux producteurs de comptes, et ils ne comptent pas la
 même chose. Rien n'est mélangé pour autant : du modèle, les deux premières
@@ -8719,6 +8730,18 @@ pas. <strong>Les comptes de la protection sociale ne ventilent pas leurs
 ressources par risque</strong> — une « recette du risque vieillesse » est une
 donnée sans définition comptable, les cotisations d'un régime polyvalent
 n'étant affectées à aucun risque.</p>
+<p class="discret"><strong>Et sous une convention, qui est une hypothèse.</strong>
+Le compte est tenu en « équilibre permanent des régimes » : ce que l'État verse
+au régime de ses fonctionnaires et aux régimes spéciaux y suit, année par
+année, ce qu'il faut pour les équilibrer. Ces régimes ne montrent donc jamais
+de déficit, et le ${g.pourcentage(comptes.solde(anneeEec), true, 1)}
+du PIB affiché pour ${anneeEec} est un déficit APRÈS ce bouclage, non avant. Le
+COR publie aussi l'autre convention, où l'effort de l'État est figé en part de
+PIB : le solde y serait de
+${g.pourcentage(comptes.soldeEec(anneeEec), true, 1)}. L'écart
+change de signe : l'effort figé est SOUS le besoin jusqu'en ${croisement}, et
+au-dessus ensuite. Aucune des deux ne flatte ; elles déplacent
+le déficit dans le temps, et l'État n'a promis ni l'une ni l'autre.</p>
 
 <h4>Ce que d'autres caisses versent — rapports à la Commission des comptes de
 la Sécurité sociale</h4>
