@@ -310,6 +310,8 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
         comparaison.notionnel_liberal.garantie_vieillesse.annee_ouverture,
       pensions,
       cotisations: versements,
+      pilier: fluxPilier(comparaison),
+      rentePilier: rentePilier(comparaison),
     });
   }
   const motifs = new Map();
@@ -317,6 +319,105 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
     motifs.set(motif, (motifs.get(motif) || 0) + 1);
   }
   return { liste, motifs };
+}
+
+/** Les flux annuels du pilier capitalisé d'une carrière, en euros courants :
+ * versement brut, frais sur versement, frais de gestion, encours. */
+function fluxPilier(comparaison) {
+  const pilier = comparaison.notionnel_liberal.capitalisation;
+  const flux = {};
+  if (!pilier || !pilier.actif) return flux;
+  for (const annee of pilier.annees) {
+    flux[annee.annee] = [annee.versement_brut, annee.frais_versement,
+      annee.frais_gestion, annee.encours];
+  }
+  return flux;
+}
+
+/** La rente du pilier d'une carrière, brute puis nette de ses frais. */
+function rentePilier(comparaison) {
+  const pilier = comparaison.notionnel_liberal.capitalisation;
+  if (!pilier || !pilier.actif) return [0.0, 0.0];
+  return [pilier.capital / pilier.conversion.diviseur, pilier.rente_annuelle];
+}
+
+/**
+ * Le pilier capitalisé de TOUS les cotisants, une année, PAR EURO VERSÉ.
+ * Portage de `PilierAnnuel` dans `cout.py` : la grille ne donne que des
+ * rapports, le niveau vient des cotisations du système 4 ancrées sur le
+ * compte du COR, et `niveaux` fait le produit.
+ */
+export class PilierAnnuel {
+  constructor(annee, rapports) {
+    this.annee = annee;
+    this.frais_versement = rapports.frais_versement;
+    this.frais_gestion = rapports.frais_gestion;
+    this.encours = rapports.encours;
+    this.rentes_brutes = rapports.rentes_brutes;
+    this.rentes = rapports.rentes;
+  }
+
+  get frais_accumulation() { return this.frais_versement + this.frais_gestion; }
+
+  get frais_rentes() { return this.rentes_brutes - this.rentes; }
+
+  /** Tout ce que l'enveloppe prélève dans l'année, par euro versé. */
+  get frais() { return this.frais_accumulation + this.frais_rentes; }
+
+  /** Les frais de gestion de l'année rapportés à l'encours. */
+  get taux_frais_encours() {
+    return this.encours > 0 ? this.frais_gestion / this.encours : 0.0;
+  }
+
+  /** Chaque grandeur au niveau des `versements` donnés, même unité. */
+  niveaux(versements) {
+    return {
+      versements,
+      frais_versement: this.frais_versement * versements,
+      frais_gestion: this.frais_gestion * versements,
+      frais_accumulation: this.frais_accumulation * versements,
+      encours: this.encours * versements,
+      rentes_brutes: this.rentes_brutes * versements,
+      rentes: this.rentes * versements,
+      frais_rentes: this.frais_rentes * versements,
+      frais: this.frais * versements,
+    };
+  }
+}
+
+/**
+ * Ce que le pilier capitalisé de TOUS les cotisants encaisse, prélève, détient
+ * et sert une année donnée, en euros courants. Portage de `_masses_pilier`.
+ */
+function massesPilier(liste, population, annee, poidsCotisants, poidsRetraites) {
+  const total = {
+    versements: 0.0, frais_versement: 0.0, frais_gestion: 0.0, encours: 0.0,
+    rentes_brutes: 0.0, rentes: 0.0,
+  };
+  for (const pensionne of liste) {
+    if (!pensionne.pilier || Object.keys(pensionne.pilier).length === 0) continue;
+    const partCotisants = poidsCotisants[pensionne.code] || 0;
+    const partRetraites = poidsRetraites[pensionne.code] || 0;
+    for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
+      const poids = population.effectif(annee - pensionne.generation - decalage, annee);
+      if (poids <= 0) continue;
+      // L'année CIVILE de la grille, non son âge : un pilier dépend de dates
+      // (la bascule, les paliers), voir `_masses_pilier` dans cout.py.
+      const flux = pensionne.pilier[annee];
+      if (flux !== undefined && partCotisants > 0
+          && annee <= pensionne.anneeLiquidation + decalage) {
+        total.versements += partCotisants * poids * flux[0];
+        total.frais_versement += partCotisants * poids * flux[1];
+        total.frais_gestion += partCotisants * poids * flux[2];
+        total.encours += partCotisants * poids * flux[3];
+      }
+      if (annee > pensionne.anneeLiquidation + decalage && partRetraites > 0) {
+        total.rentes_brutes += partRetraites * poids * pensionne.rentePilier[0];
+        total.rentes += partRetraites * poids * pensionne.rentePilier[1];
+      }
+    }
+  }
+  return total;
 }
 
 /**
@@ -700,10 +801,13 @@ class CoutAnnuel {
 class AvenirAnnuel {
   constructor(annee, projete, base, coefficientConstants, pib, rapportsAnnee,
               dependance, recettes = {}, partDerives = 0.0,
-              reversionServie = false, reformeEnVigueur = true, garantie = null) {
+              reversionServie = false, reformeEnVigueur = true, garantie = null,
+              pilier = null) {
     this.annee = annee;
     // La garantie de l'année, lue sur la distribution des pensions.
     this.garantie = garantie;
+    // Le pilier capitalisé de l'année, tous cotisants ; null avant la bascule.
+    this.pilier = pilier;
     this.projete = projete;
     this.base = base;
     this.coefficientConstants = coefficientConstants;
@@ -1544,6 +1648,18 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
                                           poidsCotisants(annee));
     const projete = annee > dernierePubliee;
     const coefficient = macro.coefficientPrix(annee, anneeEuros);
+    let pilier = null;
+    if (annee >= simulateur.parametres.annee_debut_capitalisation) {
+      const flux = massesPilier(liste, population, annee, poidsCotisants(annee), poidsAnnee);
+      if (flux.versements > 0) {
+        const rapportsPilier = {};
+        for (const cle of ["frais_versement", "frais_gestion", "encours",
+          "rentes_brutes", "rentes"]) {
+          rapportsPilier[cle] = flux[cle] / flux.versements;
+        }
+        pilier = new PilierAnnuel(annee, rapportsPilier);
+      }
+    }
     const base = projete
       ? ancrage * total.actuel
       : depenses.repartition(annee) * coefficient;
@@ -1568,6 +1684,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       reversionServie,
       annee >= simulateur.parametres.annee_bascule,
       projetee,
+      pilier,
     ));
   }
 

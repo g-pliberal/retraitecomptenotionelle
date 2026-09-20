@@ -21,6 +21,7 @@ import {
   SituationFoyer, TableConversion, avec, cleParametres,
   tauxCapitalisationApplique, tauxCapitalisationVolontaireApplique,
   tauxRetraitePropose,
+  sousRegimeFrais,
 } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
 import {
@@ -149,6 +150,17 @@ export const TRAJECTOIRES_EMPLOI = [
 export const REVALORISATIONS_STOCK = [
   ["prix", "Gardent les prix (défaut)"],
   ["reindexe", "Réindexées sur la règle du compte"],
+];
+
+// Les frais du pilier capitalisé du système 4 : les codes sont ceux de
+// `sousRegimeFrais` (config.js), l'ordre est celui du menu.
+export const REGIMES_FRAIS = [
+  ["paliers", "Marché 2025, baisse par paliers (défaut)"],
+  ["plafond", "Paliers, et tout le stock suit : un plafond"],
+  ["contrats", "Paliers, le stock garde son tarif : des contrats"],
+  ["figes", "Marché 2025, sans baisse"],
+  ["detail", "PER vendu en 2025 : 2,20 % d'arrérages, sans frais de réserve, sans baisse"],
+  ["aucun", "Aucun frais"],
 ];
 
 // Les deux façons d'écrire un revenu. Le modèle n'en connaît qu'une — le
@@ -416,7 +428,7 @@ export class ErreurSaisie extends Error {}
 export const CLES_MODELISATION = Object.freeze([
   "indexation", "lissage", "age_reference", "table", "population",
   "rattachement", "conversion_acquis", "part_cotisation", "foyer",
-  "projection", "emploi", "stock", "reprise", "bascule", "euros",
+  "projection", "emploi", "stock", "reprise", "frais", "bascule", "euros",
 ]);
 
 const DEFAUTS = Object.freeze({
@@ -468,9 +480,17 @@ const DEFAUTS = Object.freeze({
   projection: "cor_reference",
   emploi: "cor_2026",
   stock: "prix",
+<<<<<<< HEAD
   // Part de l'avance de la garantie que la succession couvre, en pour cent ;
   // null, elle est calculée sur le patrimoine des ménages retraités.
   reprise: null,
+=======
+  // Part de l'avance de la garantie que la succession couvre, en pour cent.
+  reprise: 50,
+  // Les frais du pilier capitalisé : marché 2025 et baisse par paliers, ou
+  // l'une des variantes qui disent ce que chaque hypothèse déplace.
+  frais: "paliers",
+>>>>>>> 089142d (Le système de frais partout où il compte : un réglage « Frais du pilier capitalisé » dans le simulateur, et le pilier de tous les cotisants sur la page Coût)
   bascule: 2026,
   euros: 2026,
   //: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -541,6 +561,7 @@ export class Saisie {
       emploi: parmi(parametres, "emploi", TRAJECTOIRES_EMPLOI, DEFAUTS.emploi),
       stock: parmi(parametres, "stock", REVALORISATIONS_STOCK, DEFAUTS.stock),
       reprise: entier(parametres, "reprise", DEFAUTS.reprise),
+      frais: parmi(parametres, "frais", REGIMES_FRAIS, DEFAUTS.frais),
       bascule: entier(parametres, "bascule", DEFAUTS.bascule),
       euros: entier(parametres, "euros", DEFAUTS.euros),
       // Une adresse qui ne porte QUE des réglages de modélisation ne demande
@@ -820,7 +841,7 @@ export class Saisie {
   }
 
   parametres(base) {
-    return avec(base, {
+    const regle = avec(base, {
       mode_indexation: ModeIndexation[cleEnum(ModeIndexation, this.indexation)],
       lissage_indexation: this.lissage,
       mode_age_reference: ModeAgeReference[cleEnum(ModeAgeReference, this.age_reference)],
@@ -839,6 +860,7 @@ export class Saisie {
       annee_bascule: this.bascule,
       annee_euros_constants: this.euros,
     });
+    return sousRegimeFrais(regle, this.frais);
   }
 
   /**
@@ -1171,7 +1193,11 @@ export class Saisie {
       part_cotisation: this.part_cotisation,
       foyer: this.foyer,
       projection: this.projection, emploi: this.emploi, stock: this.stock,
+<<<<<<< HEAD
       reprise: this.reprise === null ? "" : this.reprise,
+=======
+      reprise: this.reprise, frais: this.frais,
+>>>>>>> 089142d (Le système de frais partout où il compte : un réglage « Frais du pilier capitalisé » dans le simulateur, et le pilier de tous les cotisants sur la page Coût)
       bascule: this.bascule, euros: this.euros,
     };
     // L'unité s'écrit TOUJOURS, y compris quand c'est celle par défaut : c'est
@@ -2172,6 +2198,7 @@ const LIBELLES_MODELISATION = Object.freeze({
   emploi: ["emploi projeté", TRAJECTOIRES_EMPLOI],
   stock: ["pensions en cours à la bascule", REVALORISATIONS_STOCK],
   reprise: ["part de l'avance couverte par la succession", null],
+  frais: ["frais du pilier capitalisé", REGIMES_FRAIS],
   bascule: ["année de bascule", null],
   euros: ["euros constants de", null],
 });
@@ -2319,7 +2346,25 @@ function champsModelisation(saisie) {
       saisie.reprise === null ? "" : saisie.reprise,
       "page Coût seulement, en pour cent ; vide : calculée", "number",
       { min: "0", max: "100" },
+<<<<<<< HEAD
       "La garantie du système 4 est une avance reprise sur la succession, dès le premier euro et avec intérêts. Ce que les successions en rendent dépend du patrimoine des bénéficiaires. Vide, la part est calculée sur le patrimoine des ménages retraités selon leur revenu (COR, enquête Patrimoine 2018) : les plus petites pensions au quart le plus modeste, les autres à l'ensemble des retraités. Un nombre remplace ce calcul : zéro éteint la reprise, cent suppose que toute avance est remboursée."),
+=======
+      "La garantie du système 4 est une avance reprise sur la succession, dès le premier euro et avec intérêts. Ce que les successions en rendent dépend du patrimoine des bénéficiaires, que le dépôt ne connaît pas : ce réglage dit quelle part de l'avance d'un bénéficiaire sa succession couvre, en moyenne. La moitié par défaut, l'ordre de grandeur que donne le patrimoine des ménages retraités publié par le COR ; 30 et 70 encadrent. Zéro éteint la reprise, cent suppose que toute avance est remboursée."),
+    g.liste("frais", "Frais du pilier capitalisé", REGIMES_FRAIS, saisie.frais,
+      "système 4 seulement", {},
+      "Ce que l'enveloppe du pilier prélève, et comment cela bouge. Par "
+      + "défaut, les vraies moyennes du marché du PER en 2025 (1,09 % sur "
+      + "versement, 0,76 % par an sur l'encours, 0,99 % sur arrérages, 0,52 % "
+      + "par an sur la réserve de la rente), qui baissent ensuite par paliers "
+      + "comme partout où une épargne retraite obligatoire a mis les gérants "
+      + "sous plafond ou en concurrence ; chaque versement entre au tarif de "
+      + "son année et le stock ne rejoint le tarif du jour que de 10 % de "
+      + "l'écart par an. « Plafond » fait suivre tout le stock d'un coup, "
+      + "« contrats » lui fait garder son tarif ; « sans baisse » fige 2025 ; "
+      + "« PER vendu » est l'ancien réglage, aux 2,20 % d'arrérages des seuls "
+      + "assureurs qui facturent. La page Méthode et les limites disent d'où "
+      + "viennent les paliers."),
+>>>>>>> 089142d (Le système de frais partout où il compte : un réglage « Frais du pilier capitalisé » dans le simulateur, et le pilier de tous les cotisants sur la page Coût)
     g.champ("bascule", "Année de bascule", saisie.bascule,
       "passage au régime unique", "number",
       { min: String(ANNEE_MINIMALE), max: String(ANNEE_MAXIMALE) }),
@@ -7366,6 +7411,92 @@ système 4, dont la moitié la réclamerait.</div>
  * finance aucune pension d'aujourd'hui : il constitue un capital, au nom de
  * celui qui verse. Copie de `_cout_detail_capitalisation` dans `web/pages.py`.
  */
+// Les années où la trajectoire du pilier est lue : la bascule, puis tous les
+// dix ans jusqu'à l'horizon.
+const ETAPES_PILIER = [0, 4, 14, 24, 34, 44];
+
+/**
+ * Ce que le pilier de TOUS les cotisants collecte, prélève, détient et sert,
+ * année par année, sous le régime de frais réglé. Portage de
+ * `_cout_pilier_trajectoire` : le niveau vient du compte du COR, la grille ne
+ * fournit que des rapports par euro versé.
+ */
+function coutPilierTrajectoire(contexte) {
+  const base = contexte.base;
+  const cout = contexte.cout();
+  const { avenir, solde } = cout;
+  const tauxLiberal = base.taux_cotisation_liberal;
+  if (!avenir.annees.length || !solde.annees.length || tauxLiberal <= 0) return "";
+  const facteur = tauxCapitalisationApplique(base) / tauxLiberal;
+  if (facteur <= 0) return "";
+
+  const niveaux = (ligne) => {
+    const bilan = solde.annee(ligne.annee);
+    if (!ligne.pilier || !bilan || ligne.pib <= 0) return null;
+    const part = bilan.postesRessources("notionnel_liberal").cotisations * facteur;
+    const montants = ligne.pilier.niveaux(part * ligne.pib * ligne.coefficientConstants);
+    montants.part_pib_versements = part;
+    montants.part_pib_encours = part * ligne.pilier.encours;
+    return montants;
+  };
+
+  const bascule = base.annee_debut_capitalisation;
+  const lignes = [];
+  for (const ecart of ETAPES_PILIER) {
+    const ligne = avenir.annee(bascule + ecart);
+    const montants = ligne ? niveaux(ligne) : null;
+    if (!montants) continue;
+    lignes.push([
+      String(ligne.annee),
+      milliards(montants.versements, 0),
+      milliards(montants.frais, 1),
+      g.pourcentage(ligne.pilier.taux_frais_encours, false, 2),
+      `${milliards(montants.encours, 0)} (${g.pourcentage(montants.part_pib_encours, false, 0)} du PIB)`,
+      milliards(montants.rentes, 0),
+    ]);
+  }
+  const cumuls = { versements: 0.0, frais: 0.0, frais_accumulation: 0.0,
+    frais_rentes: 0.0, rentes: 0.0 };
+  for (const ligne of avenir.projetees()) {
+    const montants = niveaux(ligne);
+    if (!montants) continue;
+    for (const cle of Object.keys(cumuls)) cumuls[cle] += montants[cle];
+  }
+  if (!lignes.length || cumuls.versements <= 0) return "";
+  const derniere = avenir.derniereAnnee;
+  const partFrais = cumuls.frais / cumuls.versements;
+  return `
+<p><strong>Ce que le pilier collecte, ce que l'enveloppe prélève, ce qu'il
+sert.</strong> Ce dépliant, lui, compte le pilier : pas dans le solde, qui
+reste celui de la répartition, mais pour lui-même. Les versements sont les
+cotisations du système 4 telles que le compte du COR les ancre, multipliées par
+le rapport des deux taux (${g.pourcentage(tauxCapitalisationApplique(base), false, 0)}
+contre ${g.pourcentage(tauxLiberal, false, 0)}) ; frais, encours et rentes
+viennent des carrières types, par euro versé, sous le réglage « Frais du
+pilier capitalisé » de cette page : chaque versement entre au tarif de son
+année, les paliers font baisser les tarifs, et la rente garde les frais de
+l'année où elle est souscrite.</p>
+
+${g.tableau(
+    ["Année", "Versements", "Frais prélevés dans l'année", "Frais de gestion, en part de l'encours", "Encours", "Rentes servies"],
+    lignes,
+    ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    `Le pilier de tous les cotisants, milliards d'euros de ${cout.anneeEuros}`,
+    true,
+  )}
+
+<p>De ${avenir.premiereAnneeProjetee} à ${derniere}, le pilier collecte
+${milliards(cumuls.versements, 0)} et l'enveloppe en prélève
+${milliards(cumuls.frais, 0)}, soit
+${g.pourcentage(partFrais, false, 1)} des versements :
+${milliards(cumuls.frais_accumulation, 0)} pendant l'accumulation, sur les
+versements et sur l'encours, et ${milliards(cumuls.frais_rentes, 0)} sur les
+rentes, qui totalisent ${milliards(cumuls.rentes, 0)} servis. Le taux de
+frais rapporté à l'encours baisse au fil du tableau : c'est la trajectoire des
+frais, et la part du stock qui la suit. Changer le réglage change ce tableau,
+et lui seul sur cette page.</p>`;
+}
+
 function coutDetailCapitalisation(contexte) {
   const base = contexte.base;
   const repartition_ = base.taux_cotisation_liberal;
@@ -7379,6 +7510,7 @@ function coutDetailCapitalisation(contexte) {
     ? [["Placé volontairement, les points rendus", "—",
       g.pourcentage(volontaire, false, 0)]]
     : [];
+  const trajectoire = coutPilierTrajectoire(contexte);
   return g.depliant(
     "Ce que le pilier capitalisé prélève, et pourquoi il n'est pas dans ce bilan",
     `
@@ -7435,6 +7567,8 @@ ${g.pourcentage(total, false, 0)} appartiennent au cotisant et se
 transmettent, contre rien aujourd'hui. Qui préfère garder ces points les garde,
 et sa rente baisse de ce qu'ils auraient rapporté : la page de résultats écrit
 les deux montants.</p>
+
+${trajectoire}
 
 <div class="note"><strong>Ce que cela ne dit pas.</strong> Le pilier est neutre
 pour les comptes publics au moment où il se remplit, mais il ne l'est pas pour

@@ -371,6 +371,45 @@ export const PARAMETRES_DEFAUT = Object.freeze({
  * Le taux en vigueur en `annee` : `niveau` avant le premier palier, puis le
  * taux du dernier palier atteint, les paliers étant lus dans l'ordre des années.
  */
+/** Le frais sur arrérages du PER tel qu'il est vendu en 2025 : la moyenne
+ * des seuls assureurs qui facturent, que le régime `detail` redit. */
+export const FRAIS_ARRERAGES_VENDU = 0.0220;
+
+/** Les régimes de frais du site, dans l'ordre du menu ; le premier est le défaut. */
+export const REGIMES_FRAIS = Object.freeze(
+  ["paliers", "plafond", "contrats", "figes", "detail", "aucun"],
+);
+
+/**
+ * Les mêmes paramètres, sous l'un des régimes de frais du site. Portage de
+ * `Parametres.sous_regime_frais`, qui dit ce que chacun fait.
+ */
+export function sousRegimeFrais(parametres, regime) {
+  const figes = {
+    frais_versement_paliers: [], frais_gestion_paliers: [],
+    frais_arrerages_paliers: [], frais_encours_rente_paliers: [],
+  };
+  const regimes = {
+    paliers: {},
+    plafond: { convergence_frais_stock: 1.0 },
+    contrats: { convergence_frais_stock: 0.0 },
+    figes,
+    detail: {
+      frais_arrerages_capitalisation: FRAIS_ARRERAGES_VENDU,
+      frais_encours_rente_capitalisation: 0.0, ...figes,
+    },
+    aucun: {
+      frais_versement_capitalisation: 0.0, frais_gestion_capitalisation: 0.0,
+      frais_arrerages_capitalisation: 0.0, frais_encours_rente_capitalisation: 0.0,
+      ...figes,
+    },
+  };
+  if (!(regime in regimes)) {
+    throw new Error(`régime de frais inconnu : ${regime}`);
+  }
+  return avec(parametres, regimes[regime]);
+}
+
 export function tauxAu(niveau, paliers, annee) {
   let taux = niveau;
   for (const [debut, valeur] of [...(paliers || [])].sort((a, b) => a[0] - b[0])) {

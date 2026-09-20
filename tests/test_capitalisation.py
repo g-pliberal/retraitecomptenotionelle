@@ -814,3 +814,49 @@ def test_seuls_les_cinq_points_volontaires_alimentent_un_pilier_sans_obligatoire
     assert pilier.capital > 0
     assert pilier.part_volontaire == pytest.approx(1.0)
     assert pilier.rente_obligatoire == pytest.approx(0.0)
+
+
+# -- les régimes de frais du site ---------------------------------------------
+
+
+def test_le_per_vendu_est_la_valeur_publiee_du_fichier_de_frais():
+    """Le régime « detail » redit la moyenne des seuls facturants, telle que
+    l'OPEF la publie et que le fichier de frais la porte."""
+    from retraite_notionnelle.config import FRAIS_ARRERAGES_VENDU
+    frais = FraisEpargneRetraite(RACINE_DONNEES)
+    assert FRAIS_ARRERAGES_VENDU == frais.valeur("arrerages")
+
+
+def test_chaque_regime_de_frais_dit_ce_qu_il_fait():
+    from retraite_notionnelle.config import REGIMES_FRAIS
+    base = Parametres()
+    assert base.sous_regime_frais("paliers") == base
+    assert base.sous_regime_frais("plafond").convergence_frais_stock == 1.0
+    assert base.sous_regime_frais("contrats").convergence_frais_stock == 0.0
+    figes = base.sous_regime_frais("figes")
+    assert figes.frais_gestion_paliers == () and figes.frais_gestion_capitalisation == 0.0076
+    detail = base.sous_regime_frais("detail")
+    assert detail.frais_arrerages_capitalisation == 0.0220
+    assert detail.frais_encours_rente_capitalisation == 0.0
+    assert detail.frais_versement_paliers == ()
+    aucun = base.sous_regime_frais("aucun")
+    assert all(aucun.frais_capitalisation(poste, 2070) == 0.0
+               for poste in ("versement", "gestion", "arrerages", "encours_rente"))
+    assert REGIMES_FRAIS[0] == "paliers"
+    with pytest.raises(ValueError):
+        base.sous_regime_frais("gratuit")
+
+
+def test_les_regimes_de_frais_s_ordonnent_sur_la_rente():
+    """Sans frais on sert le plus ; le PER vendu et figé, presque le moins
+    pour qui a toute sa carrière après la bascule ; le plafond rend plus que
+    les contrats."""
+    carriere = dict(annee_naissance=2004, sexe="H",
+                    affiliation="salarie_prive_non_cadre", age_debut=22, age_liquidation=64)
+    rentes = {}
+    for regime in ("paliers", "plafond", "contrats", "figes", "detail", "aucun"):
+        simulateur = Simulateur(Parametres().sous_regime_frais(regime))
+        comparaison = simulateur.simuler(simulateur.carriere_simple(**carriere))
+        rentes[regime] = comparaison.notionnel_liberal.capitalisation.rente_annuelle
+    assert rentes["aucun"] > rentes["plafond"] > rentes["paliers"] > rentes["contrats"]
+    assert rentes["contrats"] > rentes["detail"] > rentes["figes"]

@@ -186,6 +186,19 @@ REVALORISATIONS_STOCK = [
     ("reindexe", "Réindexées sur la règle du compte"),
 ]
 
+#: Les frais du pilier capitalisé du système 4 : ce que l'enveloppe prélève,
+#: et comment cela bouge avec le temps. Les codes sont ceux de
+#: ``Parametres.sous_regime_frais``, qui dit ce que chacun fait ; l'ordre est
+#: celui du menu, du réglage retenu à l'absence de frais.
+REGIMES_FRAIS = [
+    ("paliers", "Marché 2025, baisse par paliers (défaut)"),
+    ("plafond", "Paliers, et tout le stock suit : un plafond"),
+    ("contrats", "Paliers, le stock garde son tarif : des contrats"),
+    ("figes", "Marché 2025, sans baisse"),
+    ("detail", "PER vendu en 2025 : 2,20 % d'arrérages, sans frais de réserve, sans baisse"),
+    ("aucun", "Aucun frais"),
+]
+
 
 #: Les deux façons d'écrire un revenu. Le modèle n'en connaît qu'une — le
 #: multiple du salaire moyen, seule qui garde son sens sur quatre-vingts ans —,
@@ -488,7 +501,7 @@ class MetierSaisi:
 CLES_MODELISATION = (
     "indexation", "lissage", "age_reference", "table", "population",
     "rattachement", "conversion_acquis", "part_cotisation", "foyer",
-    "projection", "emploi", "stock", "reprise", "bascule", "euros",
+    "projection", "emploi", "stock", "reprise", "frais", "bascule", "euros",
 )
 
 
@@ -552,9 +565,17 @@ class Saisie:
     emploi: str = "cor_2026"
     #: Les pensions déjà servies à la bascule : sur les prix, ou réindexées.
     stock: str = "prix"
+<<<<<<< HEAD
     #: Part de l'avance de la garantie que la succession couvre, en pour cent ;
     #: vide, elle est calculée sur le patrimoine des ménages retraités.
     reprise: int | None = None
+=======
+    #: Part de l'avance de la garantie que la succession couvre, en pour cent.
+    reprise: int = 50
+    #: Les frais du pilier capitalisé : marché 2025 et baisse par paliers, ou
+    #: l'une des variantes qui disent ce que chaque hypothèse déplace.
+    frais: str = "paliers"
+>>>>>>> 089142d (Le système de frais partout où il compte : un réglage « Frais du pilier capitalisé » dans le simulateur, et le pilier de tous les cotisants sur la page Coût)
     bascule: int = 2026
     euros: int = 2026
     #: Vrai si la requête portait des paramètres, donc s'il faut calculer.
@@ -628,6 +649,7 @@ class Saisie:
             emploi=_parmi(parametres, "emploi", TRAJECTOIRES_EMPLOI, defauts.emploi),
             stock=_parmi(parametres, "stock", REVALORISATIONS_STOCK, defauts.stock),
             reprise=_entier(parametres, "reprise", defauts.reprise),
+            frais=_parmi(parametres, "frais", REGIMES_FRAIS, defauts.frais),
             bascule=_entier(parametres, "bascule", defauts.bascule),
             euros=_entier(parametres, "euros", defauts.euros),
             # Une adresse qui ne porte QUE des réglages de modélisation ne
@@ -957,7 +979,7 @@ class Saisie:
             part_reprise_garantie=None if self.reprise is None else self.reprise / 100,
             annee_bascule=self.bascule,
             annee_euros_constants=self.euros,
-        )
+        ).sous_regime_frais(self.frais)
 
     @classmethod
     def modelisation(cls, parametres: dict[str, str]) -> "Saisie":
@@ -1208,8 +1230,12 @@ class Saisie:
             "part_cotisation": self.part_cotisation,
             "foyer": self.foyer,
             "projection": self.projection, "emploi": self.emploi,
+<<<<<<< HEAD
             "stock": self.stock,
             "reprise": "" if self.reprise is None else self.reprise,
+=======
+            "stock": self.stock, "reprise": self.reprise, "frais": self.frais,
+>>>>>>> 089142d (Le système de frais partout où il compte : un réglage « Frais du pilier capitalisé » dans le simulateur, et le pilier de tous les cotisants sur la page Coût)
             "bascule": self.bascule, "euros": self.euros,
         }
         # L'unité s'écrit TOUJOURS, y compris quand c'est celle par défaut :
@@ -2689,6 +2715,7 @@ LIBELLES_MODELISATION = {
     "emploi": ("emploi projeté", TRAJECTOIRES_EMPLOI),
     "stock": ("pensions en cours à la bascule", REVALORISATIONS_STOCK),
     "reprise": ("part de l'avance couverte par la succession", None),
+    "frais": ("frais du pilier capitalisé", REGIMES_FRAIS),
     "bascule": ("année de bascule", None),
     "euros": ("euros constants de", None),
 }
@@ -2847,6 +2874,21 @@ def _champs_modelisation(saisie: Saisie) -> str:
                 type_="number",
                 complement="La garantie du système 4 est une avance reprise sur la succession, dès le premier euro et avec intérêts. Ce que les successions en rendent dépend du patrimoine des bénéficiaires. Vide, la part est calculée sur le patrimoine des ménages retraités selon leur revenu (COR, enquête Patrimoine 2018) : les plus petites pensions au quart le plus modeste, les autres à l'ensemble des retraités. Un nombre remplace ce calcul : zéro éteint la reprise, cent suppose que toute avance est remboursée.",
                 min="0", max="100"),
+        g.liste("frais", "Frais du pilier capitalisé", REGIMES_FRAIS, saisie.frais,
+                "système 4 seulement",
+                complement="Ce que l'enveloppe du pilier prélève, et comment "
+                "cela bouge. Par défaut, les vraies moyennes du marché du PER "
+                "en 2025 (1,09 % sur versement, 0,76 % par an sur l'encours, "
+                "0,99 % sur arrérages, 0,52 % par an sur la réserve de la "
+                "rente), qui baissent ensuite par paliers comme partout où une "
+                "épargne retraite obligatoire a mis les gérants sous plafond ou "
+                "en concurrence ; chaque versement entre au tarif de son année "
+                "et le stock ne rejoint le tarif du jour que de 10 % de l'écart "
+                "par an. « Plafond » fait suivre tout le stock d'un coup, "
+                "« contrats » lui fait garder son tarif ; « sans baisse » fige "
+                "2025 ; « PER vendu » est l'ancien réglage, aux 2,20 % "
+                "d'arrérages des seuls assureurs qui facturent. La page Méthode "
+                "et les limites disent d'où viennent les paliers."),
         g.champ("bascule", "Année de bascule", saisie.bascule,
                 "passage au régime unique", type_="number",
                 min=str(ANNEE_MINIMALE), max=str(ANNEE_MAXIMALE)),
@@ -8253,6 +8295,7 @@ def _cout_detail_capitalisation(contexte: Contexte) -> str:
         [["Placé volontairement, les points rendus", "—",
           g.pourcentage(volontaire, decimales=0)]] if volontaire else []
     )
+    trajectoire = _cout_pilier_trajectoire(contexte)
     return g.depliant(
         "Ce que le pilier capitalisé prélève, et pourquoi il n'est pas dans ce bilan",
         f"""
@@ -8310,6 +8353,8 @@ transmettent, contre rien aujourd'hui. Qui préfère garder ces points les garde
 et sa rente baisse de ce qu'ils auraient rapporté : la page de résultats écrit
 les deux montants.</p>
 
+{trajectoire}
+
 <div class="note"><strong>Ce que cela ne dit pas.</strong> Le pilier est neutre
 pour les comptes publics au moment où il se remplit, mais il ne l'est pas pour
 toujours : les versements sont déductibles à l'entrée et la rente imposable à la
@@ -8320,6 +8365,103 @@ c'est ce que ce prélèvement supplémentaire évite, puisqu'il ne prend rien à
 répartition.</div>""",
         identifiant="cout-capitalisation",
     )
+
+
+#: Les années où la trajectoire du pilier est lue : la bascule, puis tous les
+#: dix ans jusqu'à l'horizon.
+_ETAPES_PILIER = (0, 4, 14, 24, 34, 44)
+
+
+def _cout_pilier_trajectoire(contexte: Contexte) -> str:
+    """Ce que le pilier de TOUS les cotisants collecte, prélève, détient et
+    sert, année par année, sous le régime de frais réglé.
+
+    LE NIVEAU VIENT DU COMPTE DU COR, PAS DE LA GRILLE. Les versements du
+    pilier sont les cotisations du système 4 — 18 % de l'assiette, ancrés sur
+    les ressources publiées — multipliées par le rapport des deux taux ; la
+    grille ne fournit que des rapports par euro versé : frais, encours,
+    rentes. C'est la règle de toute la page, et le pilier ne la contourne pas.
+    """
+    base = contexte.base
+    cout = contexte.cout()
+    avenir, solde = cout.avenir, cout.solde
+    taux_liberal = base.taux_cotisation_liberal
+    if not avenir.annees or not solde.annees or taux_liberal <= 0:
+        return ""
+    facteur = base.taux_capitalisation_applique / taux_liberal
+    if facteur <= 0:
+        return ""
+
+    def niveaux(ligne):
+        """Les grandeurs de l'année en millions d'euros constants, et la part
+        de PIB des versements ; ``None`` si l'année n'a pas de pilier."""
+        bilan = solde.annee(ligne.annee)
+        if ligne.pilier is None or bilan is None or ligne.pib <= 0:
+            return None
+        part = bilan.postes_ressources("notionnel_liberal")["cotisations"] * facteur
+        montants = ligne.pilier.niveaux(part * ligne.pib * ligne.coefficient_constants)
+        montants["part_pib_versements"] = part
+        montants["part_pib_encours"] = part * ligne.pilier.encours
+        return montants
+
+    bascule = base.annee_debut_capitalisation
+    lignes = []
+    for ecart in _ETAPES_PILIER:
+        ligne = avenir.annee(bascule + ecart)
+        montants = niveaux(ligne) if ligne is not None else None
+        if montants is None:
+            continue
+        lignes.append([
+            str(ligne.annee),
+            _milliards(montants["versements"], 0),
+            _milliards(montants["frais"], 1),
+            g.pourcentage(ligne.pilier.taux_frais_encours, decimales=2),
+            _milliards(montants["encours"], 0)
+            + f" ({g.pourcentage(montants['part_pib_encours'], decimales=0)} du PIB)",
+            _milliards(montants["rentes"], 0),
+        ])
+    cumuls = {"versements": 0.0, "frais": 0.0, "frais_accumulation": 0.0,
+              "frais_rentes": 0.0, "rentes": 0.0}
+    for ligne in avenir.projetees():
+        montants = niveaux(ligne)
+        if montants is None:
+            continue
+        for cle in cumuls:
+            cumuls[cle] += montants[cle]
+    if not lignes or cumuls["versements"] <= 0:
+        return ""
+    derniere = avenir.derniere_annee
+    part_frais = cumuls["frais"] / cumuls["versements"]
+    return f"""
+<p><strong>Ce que le pilier collecte, ce que l'enveloppe prélève, ce qu'il
+sert.</strong> Ce dépliant, lui, compte le pilier : pas dans le solde, qui
+reste celui de la répartition, mais pour lui-même. Les versements sont les
+cotisations du système 4 telles que le compte du COR les ancre, multipliées par
+le rapport des deux taux ({g.pourcentage(base.taux_capitalisation_applique, decimales=0)}
+contre {g.pourcentage(taux_liberal, decimales=0)}) ; frais, encours et rentes
+viennent des carrières types, par euro versé, sous le réglage « Frais du
+pilier capitalisé » de cette page : chaque versement entre au tarif de son
+année, les paliers font baisser les tarifs, et la rente garde les frais de
+l'année où elle est souscrite.</p>
+
+{g.tableau(
+    ["Année", "Versements", "Frais prélevés dans l'année", "Frais de gestion, en part de l'encours", "Encours", "Rentes servies"],
+    lignes,
+    ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
+    titre=f"Le pilier de tous les cotisants, milliards d'euros de {cout.annee_euros}",
+    entete_de_ligne=True,
+)}
+
+<p>De {avenir.premiere_annee_projetee} à {derniere}, le pilier collecte
+{_milliards(cumuls["versements"], 0)} et l'enveloppe en prélève
+{_milliards(cumuls["frais"], 0)}, soit
+{g.pourcentage(part_frais, decimales=1)} des versements :
+{_milliards(cumuls["frais_accumulation"], 0)} pendant l'accumulation, sur les
+versements et sur l'encours, et {_milliards(cumuls["frais_rentes"], 0)} sur les
+rentes, qui totalisent {_milliards(cumuls["rentes"], 0)} servis. Le taux de
+frais rapporté à l'encours baisse au fil du tableau : c'est la trajectoire des
+frais, et la part du stock qui la suit. Changer le réglage change ce tableau,
+et lui seul sur cette page.</p>"""
 
 
 def _cout_detail_poids(contexte: Contexte) -> str:

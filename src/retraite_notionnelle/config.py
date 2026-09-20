@@ -364,6 +364,18 @@ class Neutralisations:
         return [nom for nom, valeur in self.__dict__.items() if valeur]
 
 
+#: Le frais sur arrérages du PER TEL QU'IL EST VENDU en 2025 : la moyenne
+#: publiée par l'OPEF, qui ne porte que sur les neuf assureurs sur vingt qui
+#: facturent. Le calcul retient la moyenne sur les vingt (0,99 %) ; celle-ci
+#: ne sert qu'au régime de frais ``detail``, qui redit l'ancien réglage. Un
+#: test la tient égale à la valeur publiée du fichier de frais.
+FRAIS_ARRERAGES_VENDU = 0.0220
+
+#: Les régimes de frais que le site propose, dans l'ordre du menu. Le premier
+#: est le défaut ; ``Parametres.sous_regime_frais`` dit ce que chacun fait.
+REGIMES_FRAIS: tuple[str, ...] = ("paliers", "plafond", "contrats", "figes", "detail", "aucun")
+
+
 def taux_au(niveau: float, paliers: tuple[tuple[int, float], ...], annee: int) -> float:
     """Le taux en vigueur en ``annee`` : ``niveau`` avant le premier palier,
     puis le taux du dernier palier atteint. Les paliers sont lus dans l'ordre
@@ -760,6 +772,39 @@ class Parametres:
     #: l'écart en sept ans. Zéro fige chaque cohorte à son tarif d'entrée, un
     #: aligne tout le stock sur le tarif du jour.
     convergence_frais_stock: float = 0.10
+
+    def sous_regime_frais(self, regime: str) -> "Parametres":
+        """Les mêmes paramètres, sous l'un des régimes de frais du site.
+
+        C'est le réglage « Frais du pilier capitalisé » du simulateur et des
+        pages qui agrègent, et il n'existe qu'ici : les deux portages
+        l'appliquent, aucun ne le redéfinit. ``paliers`` est le réglage par
+        défaut, tel quel. ``plafond`` et ``contrats`` gardent les paliers et
+        déplacent la convergence du stock aux deux bornes : tout le stock suit
+        d'un coup, ou chaque cohorte garde son tarif. ``figes`` fige les
+        moyennes de 2025 sans aucune baisse. ``detail`` est le PER tel qu'il
+        est vendu, sans baisse ni frais sur la réserve, et 2,20 % d'arrérages,
+        la moyenne des seuls assureurs qui facturent : l'ancien réglage du
+        modèle, gardé pour dire ce qu'il valait. ``aucun`` retire tout.
+        """
+        figes = dict(frais_versement_paliers=(), frais_gestion_paliers=(),
+                     frais_arrerages_paliers=(), frais_encours_rente_paliers=())
+        regimes = {
+            "paliers": {},
+            "plafond": dict(convergence_frais_stock=1.0),
+            "contrats": dict(convergence_frais_stock=0.0),
+            "figes": figes,
+            "detail": dict(frais_arrerages_capitalisation=FRAIS_ARRERAGES_VENDU,
+                           frais_encours_rente_capitalisation=0.0, **figes),
+            "aucun": dict(frais_versement_capitalisation=0.0,
+                          frais_gestion_capitalisation=0.0,
+                          frais_arrerages_capitalisation=0.0,
+                          frais_encours_rente_capitalisation=0.0, **figes),
+        }
+        if regime not in regimes:
+            raise ValueError(f"régime de frais inconnu : {regime!r} "
+                             f"(attendu : {tuple(regimes)})")
+        return self.avec(**regimes[regime])
 
     # --- Capitalisation volontaire : les cinq points rendus ------------------
     #: Le quatrième terme, et le seul que personne n'impose. Le système actuel
