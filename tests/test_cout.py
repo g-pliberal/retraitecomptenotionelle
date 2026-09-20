@@ -494,10 +494,17 @@ def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir):
     d'une indexation des pensions sur les prix quand les salaires montent plus
     vite.
 
+    UN POINT DE CET ÉCART ÉTAIT UN EFFET DE DÉNOMINATEUR, mesuré le 20 septembre
+    2026 : la page rapportait sa dépense à un PIB qu'elle se fabriquait — le
+    rythme du COR corrigé par la population des 20-64 ans, qui recule de 10 %
+    quand l'emploi projeté par le COR recule de 6 %. Elle lit maintenant le même
+    PIB que l'indexation des comptes, et la trajectoire 2070 passe de 19,4 à
+    18,35 % sans qu'une seule pension ait bougé.
+
     La fourchette reste un garde-fou : elle ne dit pas que la trajectoire est
     juste, elle dit qu'une trajectoire qui en sortirait relèverait d'une erreur
     de méthode et non d'un désaccord d'hypothèses. Elle n'a pas bougé — la
-    borne haute de 20 % tient encore, de sept dixièmes de point.
+    borne haute de 20 % tient de 1,65 point.
     """
     for ligne in avenir.annees:
         part = ligne.part_pib("actuel")
@@ -1456,6 +1463,53 @@ def test_l_assiette_se_recoupe_avec_celle_que_le_cor_implique(
     # dirait qu'un des deux postes a changé de définition.
     parts = [assiette.part_pib(a) for a in range(2016, 2025)]
     assert max(parts) - min(parts) < 0.012, parts
+
+
+def test_le_taux_projete_est_lu_chez_le_cor_et_non_gele_au_bord(
+        assiette: AssietteActivite, comptes: ComptesRetraite):
+    """Le profil du taux vient du COR ; le niveau reste celui que le dépôt mesure.
+
+    Sur les années où l'assiette est publiée, le profil vaut un : ces années-là
+    sont mesurées, et rien ne doit les déplacer. Au-delà, il suit la figure des
+    déterminants des ressources, que le COR projette — un taux qui BAISSE.
+    """
+    derniere = assiette.derniere_annee
+    for annee in range(derniere - 6, derniere + 1):
+        assert comptes.profil_taux(annee, annee) == 1.0, annee
+
+    # Le taux du COR baisse sur l'horizon : c'est le fait que cette série
+    # apporte, et le dépôt supposait l'inverse.
+    assert comptes.taux_prelevement(2070) < comptes.taux_prelevement(derniere)
+    profil = comptes.profil_taux(2070, derniere)
+    assert profil == pytest.approx(
+        comptes.taux_prelevement(2070) / comptes.taux_prelevement(derniere))
+    assert 0.90 < profil < 0.97, profil
+
+
+def test_l_assiette_projetee_garde_sa_part_de_pib(
+        assiette: AssietteActivite, comptes: ComptesRetraite):
+    """L'assiette que la projection implique ne doit pas fondre.
+
+    C'EST LE CONTRÔLE DE FOND DE CETTE SÉRIE. Les ressources du COR reculent en
+    part de PIB ; l'assiette sur laquelle la proposition prélève ses 18 % est
+    le quotient de ces ressources par le taux de prélèvement, et tout ce que le
+    taux ne porte pas, l'assiette le porte. En gelant le taux au bord, le dépôt
+    faisait tomber son assiette de 42,5 % du PIB à 39,3 % — une déformation du
+    partage de la valeur ajoutée que `hypotheses_projection.yaml` s'interdit
+    explicitement par ailleurs, et que le COR ne projette pas.
+
+    Le taux lu chez le producteur la rend stable. La borne est large — un point
+    et demi de PIB — parce que ce test n'a pas à reproduire la trajectoire du
+    COR, seulement à refuser qu'elle reparte à la dérive.
+    """
+    derniere = assiette.derniere_annee
+    mesuree = assiette.part_pib(derniere)
+    for annee in range(derniere + 1, 2071):
+        reference = assiette.annee_de_reference(annee)
+        taux = (assiette.taux_prelevement(comptes.ressource(reference), reference)
+                * comptes.profil_taux(annee, reference))
+        implicite = comptes.ressource(annee) / taux
+        assert abs(implicite - mesuree) < 0.015, (annee, implicite, mesuree)
 
 
 def test_l_assiette_porte_ses_deux_postes_sur_toute_la_fenetre(

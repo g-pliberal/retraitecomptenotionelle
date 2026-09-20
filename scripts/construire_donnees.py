@@ -222,6 +222,13 @@ def _comptes_retraite() -> dict:
         series[poste.code] = charger_serie_annuelle(
             macro / "structure_ressources_retraite.csv", "part",
             nom=f"structure_{poste.code}", filtre={"poste": poste.code})
+    # Le taux de prélèvement projeté par le COR, en part des revenus
+    # d'activité : ce qui dit que ses ressources reculent en part de PIB parce
+    # que le TAUX baisse, et non parce que l'assiette rétrécit. Sans lui, la
+    # recette de la proposition perd un demi-point de PIB en 2070.
+    series["taux_prelevement"] = charger_serie_annuelle(
+        macro / "taux_prelevement_retraite.csv", "taux",
+        nom="taux_prelevement_retraite")
     # Ce que la branche famille et l'assurance chômage versent, en millions
     # d'euros : la ventilation du poste « transferts », lue chez celui qui paie.
     for poste in POSTES_TRANSFERTS:

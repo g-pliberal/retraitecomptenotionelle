@@ -6760,6 +6760,68 @@ voisines ne se disputent pas le même rôle.
 
 ---
 
+### L'assiette projetée : une déduction que le COR démentait, et un demi-point de PIB
+
+La recette de la proposition est un taux appliqué à une assiette : 18 % des
+revenus d'activité. Sur les années où l'assiette est publiée, c'est une mesure.
+Au-delà, il faut dire ce que l'assiette devient, et la réponse n'est pas mince —
+elle vaut, à l'horizon, un demi-point de PIB de recette.
+
+**Ce que le dépôt supposait, et pourquoi c'était faux.** Les ressources que le
+COR projette reculent en part de PIB : 13,95 % en 2025, 12,91 % en 2070. Ce
+recul se partage entre un taux de prélèvement qui baisse et une assiette qui
+rétrécit, et les deux colonnes du compte ne disent pas lequel. Jusqu'au
+20 septembre 2026, le dépôt reconduisait le taux du bord et faisait donc porter
+tout le recul à l'assiette, qui tombait de 42,5 % du PIB à **39,3 %** en 2070.
+Il s'en justifiait ainsi : « c'est le COR qui tranche : ses ressources reculent
+en part de PIB parce que l'assiette y progresse moins vite que le PIB, et non
+parce qu'il baisserait les taux ».
+
+C'était une déduction tirée du TOTAL de ses ressources, et non une lecture de sa
+projection. Deux choses la démentaient, dont une dans le dépôt même :
+`hypotheses_projection.yaml` écrit que le PIB projeté suit la masse salariale,
+« supposer autre chose reviendrait à projeter une déformation du partage de la
+valeur ajoutée, ce qu'aucun des scénarios retenus ne fait » — et une assiette qui
+passe de 42,5 à 39,3 % du PIB est exactement cette déformation, de 7,4 %. Le
+dépôt se contredisait d'un fichier à l'autre.
+
+**Ce que le COR publie.** La figure « Les déterminants de l'évolution des
+ressources du système de retraite », partie 2 du rapport annuel, porte le taux de
+prélèvement en part des revenus d'activité, observé de 2002 à 2025 et projeté
+jusqu'en 2070. Il **baisse** : 32,14 % en 2025, 30,05 % en 2070. C'est donc le
+taux qui explique le recul des ressources, et l'assiette tient sa part de PIB à un
+point près. La série est lue depuis le 20 septembre 2026
+(`taux_prelevement_retraite.csv`), et un test refuse désormais que l'assiette
+implicite s'écarte de plus d'un point et demi de PIB de sa dernière mesure.
+
+**Le profil, jamais le niveau.** « Revenus d'activité » chez le COR n'est pas
+tout à fait l'assiette d'`assiette_activite.csv` — salaires et traitements bruts
+plus revenu mixte des ménages —, et les deux taux diffèrent de 2 % en 2025 :
+32,14 % contre 32,84 % mesuré ici. Le dépôt garde sa mesure pour l'année
+d'ancrage, la seule qu'il certifie, et n'emprunte au COR que le RAPPORT d'une
+année projetée à celle-là. Emprunter le niveau aurait déplacé la recette de 2 %
+sans que rien ne le dise.
+
+**Ce que la correction déplace.** Le solde de la proposition gagne **0,49 point
+de PIB en 2070** et 0,28 en moyenne sur 2026-2070 : le solde moyen projeté passe
+de −1,52 à −1,24 point, et l'année 2070 de −0,63 à −0,14, son coefficient
+d'équilibre de 0,92 à 0,98. Les années proches bougent à peine, et l'une d'elles
+dans l'autre sens — le COR fait légèrement MONTER son taux jusqu'en 2030, et la
+recette de 2030 baisse donc de trois millièmes de point. C'est ce qu'il faut
+attendre d'une série lue plutôt que supposée : elle ne va pas toujours dans le
+sens qui arrange. Aucune pension ne bouge, les 469 témoins de simulation sont
+identiques au bit près ; ce qui bouge est la part de ces pensions que les
+recettes financent.
+
+**Ce qui reste.** Le taux du COR est projeté sous SA convention EPR et sous son
+scénario de référence : c'est un cadre, pas une prévision. Et il décrit le
+système ACTUEL — un système à 18 % n'aurait pas la même assiette, les
+exonérations, les plafonds et les tranches qu'il supprime déplaçant ce sur quoi
+l'on prélève. Le dépôt emprunte la forme de la trajectoire à défaut de savoir
+produire la sienne, et c'est une hypothèse de plus, énoncée ici.
+
+---
+
 ## 5 ter. La trajectoire projetée : ce qu'elle suppose, et ce qu'elle vaut
 
 La seconde moitié de la page **Coût** projette les six systèmes de 2025 à 2070.
@@ -6775,22 +6837,31 @@ montre pas. Les hypothèses macroéconomiques sont celles du COR, déjà décrit
 dans `data/reference/macro/hypotheses_projection.yaml`.
 
 **Ce qui est de nous, et qui se discute.** Le PIB projeté suit le rythme nominal
-du COR — 2,45 % par an dans le scénario de référence — **corrigé de l'évolution
-de la population d'âge actif**, qui recule de 10 % d'ici 2070. Cette correction
-est un écart assumé avec le fichier d'hypothèses, dont les taux sont écrits à
-emploi constant. Un emploi constant est neutre pour l'indexation des comptes,
-qui ne dépend que d'un taux de croissance ; il ne l'est pas du tout pour une
-dépense rapportée au PIB, où il prêterait à la France de 2070 douze pour cent
-d'actifs qu'aucune projection ne lui donne, et rendrait toutes les parts de PIB
-de la page flatteuses d'un point. Depuis le 20 septembre 2026, le fichier
-d'hypothèses compose aussi ses assiettes avec la trajectoire d'emploi du COR
-(voir § 1, « Ce que l'emploi projeté déplace ») ; le PIB de cette page ne la lit
-pas encore et garde la population des 20-64 ans, qui recule de 10 % là où
-l'emploi du COR recule de 6 % — la substitution est la prochaine marche, et
-elle est notée dans la feuille de route. C'est le paramètre le plus discutable de la section, et
-il joue dans un sens connu : le COR, lui, fait remonter les taux d'emploi, ce
-qui explique une partie de l'écart entre ses 14,2 % et les nôtres en 2070 —
-chiffrés plus bas, au paragraphe « Le contrôle externe ».
+du COR — 2,45 % par an dans le scénario de référence — **composé avec sa
+trajectoire d'emploi**, qui recule de 6 % d'ici 2070. C'est la convention que
+`hypotheses_projection.yaml` énonce pour tout le dépôt (« le PIB nominal suit la
+même convention que la masse salariale »), et c'est la même série que lit
+l'indexation des comptes : la page n'a plus de PIB à elle.
+
+Elle en avait un jusqu'au 20 septembre 2026, et c'était le paramètre le plus
+discutable de la section : le rythme du COR corrigé par la **population des
+20-64 ans**, qui recule de 10 % là où son emploi recule de 6 %. Ce proxy avait
+été posé contre une hypothèse d'emploi constant, qui aurait prêté à la France de
+2070 douze pour cent d'actifs qu'aucune projection ne lui donne ; l'hypothèse a
+disparu le même mois (action 46), le proxy lui a survécu quelques jours, et le
+dépôt a porté pendant ce temps TROIS PIB projetés — celui-ci, celui de
+l'indexation, et celui qu'implique le compte du COR. Une part de PIB dont le
+dénominateur n'est pas celui du reste du dépôt ne se compare à rien. La
+substitution rend 1,05 point : la trajectoire 2070 passe de 19,4 à **18,35 %**,
+et c'est du dénominateur seul — aucune pension ne bouge.
+
+**Ce que la substitution laisse ouvert.** Le PIB reste UNIQUE PAR ANNÉE, commun
+aux six systèmes. C'est ce qui rend les six courbes comparables, et c'est aussi
+une hypothèse : la trajectoire d'emploi ne s'applique qu'aux systèmes 2 à 6
+(action 46, « un emploi qui bouge sous la réforme, pas sous le droit constant »),
+alors que le PIB qu'elle produit sert de dénominateur aux six. Un système qui
+déplacerait réellement l'emploi déplacerait son propre dénominateur, et la page
+ne sait pas le montrer.
 
 **Ce qui n'est pas modélisé.** Le taux de couverture est supposé constant : le
 modèle compte des générations, non des cotisants, et suppose que la même
@@ -6817,12 +6888,18 @@ trajectoire avancerait par marches de cinq ans.
 
 **Le contrôle externe, et ce qu'il dit.** Le COR projette la même grandeur avec
 un modèle de population complet et une méthode qui n'a rien de commun avec
-celle-ci : il trouve 13,9 % du PIB en 2024 et **14,2 % en 2070** (rapport annuel
-de juin 2025, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve 13,6 % et **19,4 %**. Trois dixièmes de point
+celle-ci : il trouve 13,9 % du PIB en 2024 et **15,3 % en 2070** (rapport annuel
+de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
+FSV, hors RAFP »). Le dépôt trouve 13,6 % et **18,35 %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
-Comptes de la protection sociale n'étant pas exactement celle du COR — et **cinq
+Comptes de la protection sociale n'étant pas exactement celle du COR — et **trois
 points à l'arrivée**.
+
+Cet écart d'arrivée valait cinq points jusqu'au 20 septembre 2026 ; un point en
+était un effet de DÉNOMINATEUR, et non de dépense — la page rapportait sa
+dépense à un PIB qu'elle se fabriquait, plus petit que celui du COR de 4 % en
+2070. Ce qui suit décrit les quatre points qui restaient alors, et dont trois
+restent.
 
 L'écart d'arrivée a une histoire, et elle vaut d'être lue dans l'ordre : deux
 points tant que les cas types pesaient d'un poids égal, quatre quand chacun a
@@ -7032,7 +7109,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1814<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1818<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

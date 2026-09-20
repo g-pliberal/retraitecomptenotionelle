@@ -163,8 +163,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->789<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 469<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->790<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 472<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Sept pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -197,7 +197,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->3 036<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->3 038<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->72<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -854,7 +854,7 @@ contrôle et non identité.
 | 3. Notionnel dès 2026, part salariale | −1,34 % | +1,38 % | **1,67** |
 | 4. Notionnel rétroactif, salariale + patronale | +4,02 % | +2,20 % | 1,16 |
 | 5. Notionnel dès 2026, salariale + patronale | −1,34 % | −0,21 % | 1,08 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,02 % | **−1,52 %** | **0,92** |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,02 % | **−1,24 %** | **0,98** |
 
 Chiffres du 20 septembre 2026, ceux que la page Coût affiche, Python et
 JavaScript à l'identique, et qu'un test y confronte ligne par ligne
@@ -909,10 +909,10 @@ retrouve à huit dixièmes de point, et bien davantage pour un fonctionnaire,
 dont l'employeur verse 74,28 % du traitement. La part cotisée des ressources,
 77 % du total, est donc multipliée par **0,63** à compter de la bascule. Cela
 change le sens du tableau pour ce scénario : son solde moyen s'établit à
-−1,52 % du PIB, et son coefficient est sous un sur chacune des années
-projetées, 0,79 au plus bas en 2049, 0,92 en 2070. Il est le seul des trois
+−1,24 % du PIB, et son coefficient est sous un sur chacune des années
+projetées, 0,82 au plus bas en 2046, 0,98 en 2070. Il est le seul des trois
 systèmes rétroactifs à ne pas afficher de marge, et il passe sous le système
-actuel, qui est à −1,13 % — de quatre dixièmes de point. Ce déficit est le
+actuel, qui est à −1,13 % — d'un dixième de point. Ce déficit est le
 coût de transition du taux unique : pendant trente ans, la
 caisse paie les pensions de l'ancien système avec dix points de cotisation en
 moins, et aucune règle d'indexation ne le règle. Les quatre autres scénarios notionnels ne changent que ce qui
@@ -1228,7 +1228,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1814 tests Python
+tests/                          1818 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1277,7 +1277,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1814<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1818<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

@@ -198,22 +198,6 @@ class DonneesMacro:
         return self._prolonger_avec_emploi(serie, "pib_nominal")
 
     @cached_property
-    def pib_nominal_hors_emploi(self) -> SerieAnnuelle:
-        """Le PIB prolongé au seul rythme du scénario, SANS la trajectoire d'emploi.
-
-        C'est ce que la page Coût lit : elle compose elle-même ce rythme avec
-        la population des 20-64 ans, et lui donner en plus l'emploi du COR
-        compterait deux fois la démographie. Lui substituer la trajectoire est
-        la marche suivante de la feuille de route (action 46).
-        """
-        serie = charger_serie_annuelle(
-            self.racine / "reference" / "macro" / "pib_nominal.csv",
-            colonne_valeur="variation_nominale",
-            nom="pib_nominal",
-        )
-        return self._prolonger(serie, "pib_nominal")
-
-    @cached_property
     def productivite(self) -> SerieAnnuelle:
         """Variation annuelle RÉELLE de la productivité du travail par tête."""
         serie = charger_serie_annuelle(

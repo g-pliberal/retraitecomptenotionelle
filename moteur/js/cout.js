@@ -1771,16 +1771,16 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
     * macro.coefficientPrix(dernierePubliee, anneeEuros) / ancrageMasses.actuel;
 
   // Le PIB est publié jusqu'en 2025 ; au-delà il croît au rythme nominal des
-  // hypothèses de projection, CORRIGÉ de l'évolution de la population d'âge
-  // actif. Sans cette correction, la France de 2070 produirait avec douze pour
-  // cent d'actifs qu'aucune projection ne lui donne. Le rythme est pris HORS
-  // trajectoire d'emploi : la population d'âge actif en tient lieu ici.
+  // hypothèses de projection, TRAJECTOIRE D'EMPLOI COMPRISE : `macro.pib_nominal`, la même série que lit
+  // l'indexation des comptes. La page se fabriquait son propre PIB jusqu'au
+  // 20 septembre 2026, corrigé par la population des 20-64 ans — un proxy qui
+  // recule de 10 % quand l'emploi projeté par le COR recule de 6 %, et un
+  // troisième dénominateur dans un dépôt qui en avait déjà deux.
   const dernierePib = depenses.pib.derniereAnnee;
   const pibProjete = new Map();
   let courant = depenses.pib.valeur(dernierePib);
   for (let annee = dernierePib + 1; annee <= HORIZON; annee += 1) {
-    courant *= (1.0 + macro.pib_nominal_hors_emploi.valeur(annee))
-      * (population.actifs.valeur(annee) / population.actifs.valeur(annee - 1));
+    courant *= 1.0 + macro.pib_nominal.valeur(annee);
     pibProjete.set(annee, courant);
   }
 
@@ -1859,13 +1859,17 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
                         tauxLiberal, anneeBascule, convention, depenses,
                         reversionServie = false) {
   const parAnnee = new Map(avenir.annees.map((ligne) => [ligne.annee, ligne]));
-  // Le taux de prélèvement de l'année, ou celui de la dernière connue : il
-  // faut le calculer sur une année où l'assiette est PUBLIÉE, reconduire un
-  // montant en euros courants n'ayant pas de sens.
+  // Le taux de prélèvement de l'année, mesuré puis suivi chez le COR. Le
+  // NIVEAU est mesuré sur une année où l'assiette est PUBLIÉE, seule chose que
+  // le dépôt certifie ; le PROFIL au-delà est lu chez le COR, qui projette ce
+  // taux. Le dépôt le tenait auparavant pour constant, et faisait donc porter
+  // tout le recul des ressources à l'assiette — l'inverse de ce que le COR
+  // projette, et 0,49 point de PIB de recette en moins en 2070.
   const tauxPrelevement = (annee) => {
     if (!assiette) return 0.0;
     const reference = assiette.anneeDeReference(annee);
-    return assiette.tauxPrelevement(comptes.ressource(reference), reference);
+    const mesure = assiette.tauxPrelevement(comptes.ressource(reference), reference);
+    return mesure * comptes.profilTaux(annee, reference);
   };
   const lignes = [];
   for (const annee of comptes.annees()) {

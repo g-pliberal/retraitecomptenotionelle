@@ -323,6 +323,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "comptes_retraite": "macro/comptes_retraite.csv",
         "comptes_retraite_projetes": "macro/comptes_retraite.csv",
         "structure_ressources_retraite": "macro/structure_ressources_retraite.csv",
+        # Le taux de prélèvement du COR : observé et projeté dans le même
+        # fichier, comme les deux colonnes du compte.
+        "taux_prelevement_retraite": "macro/taux_prelevement_retraite.csv",
+        "taux_prelevement_retraite_projete": "macro/taux_prelevement_retraite.csv",
         # La ventilation du poste « transferts » de ce compte, lue chez celui
         # qui paie : rapports à la CCSS, fiches CNAF, Agirc-Arrco, Ircantec.
         "transferts_retraite": "macro/transferts_retraite.csv",

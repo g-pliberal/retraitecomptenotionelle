@@ -35,11 +35,26 @@ Rapporter les ressources du système de retraite à cette assiette donne le taux
 de prélèvement global : 32,4 % en 2024, remarquablement stable depuis 2016. Ce
 taux est ce qui permet de passer d'un TAUX AFFICHÉ à une RECETTE — la
 proposition prélève 18 %, et 18 % d'une assiette connue est un montant, non un
-rapport. Au-delà de la dernière année où l'assiette est publiée, le taux du bord
-est reconduit : l'assiette suit alors les ressources projetées par le COR, ce
-qui est l'hypothèse qui n'en ajoute aucune autre — et surtout pas celle d'une
-assiette qui grandirait comme le PIB, que le COR dément dans sa propre
-projection.
+rapport.
+
+AU-DELÀ DE LA DERNIÈRE ANNÉE PUBLIÉE, LE TAUX EST LU ET NON SUPPOSÉ
+--------------------------------------------------------------------
+Ce module ne sait mesurer le taux que sur une année où l'assiette existe. Ce
+qu'il devient ensuite décide pourtant de tout : les ressources du COR reculent
+en part de PIB sur l'horizon projeté, et ce recul se partage entre un taux qui
+baisse et une assiette qui rétrécit, sans que les deux colonnes du compte
+disent lequel.
+
+Le dépôt a tranché par déduction jusqu'au 20 septembre 2026, et à l'envers. Il
+reconduisait le taux du bord, faisant porter tout le recul à l'assiette : 42,5 %
+du PIB en 2025, 39,3 % en 2070 — une déformation du partage de la valeur
+ajoutée que `hypotheses_projection.yaml` s'interdit explicitement par ailleurs.
+Il s'en justifiait en disant que « c'est le COR qui tranche ». Le COR tranche en
+effet, et dans l'autre sens : sa figure des déterminants des ressources projette
+un TAUX qui baisse, de 32,14 % en 2025 à 30,05 % en 2070, et une assiette qui
+tient sa part de PIB. Cette série est désormais lue
+(`taux_prelevement_retraite.csv`), et c'est `ComptesRetraite.profil_taux` qui
+dit ce que le dépôt lui emprunte : sa FORME, jamais son niveau.
 """
 
 from __future__ import annotations
@@ -118,14 +133,13 @@ class AssietteActivite:
         c'est lui qui convertit un taux affiché en recette. ``annee`` doit être
         une année où l'assiette est publiée — voir :meth:`annee_de_reference`.
 
-        Reconduire le TAUX plutôt que la part de PIB de l'assiette n'est pas
-        indifférent, et c'est le COR qui tranche : ses ressources reculent en
-        part de PIB sur l'horizon projeté parce que l'assiette y progresse
-        moins vite que le PIB, et non parce qu'il baisserait les taux. Un taux
-        constant fait donc suivre l'assiette aux ressources projetées, ce qui
-        est sa propre hypothèse ; une part de PIB constante lui en
-        substituerait une autre, qu'il dément, et qui flatterait un taux
-        unique en lui donnant une assiette plus large chaque année.
+        CE QUE CETTE MÉTHODE NE FAIT PAS, ET NE DOIT PAS FAIRE. Elle ne
+        projette rien. Reconduire ce taux tel quel au-delà de la fenêtre
+        publiée reviendrait à supposer que tout le recul des ressources du COR
+        vient de l'assiette, ce que sa propre projection dément — voir
+        l'en-tête du module. Le prolongement est le travail de
+        ``ComptesRetraite.profil_taux``, qui lit la trajectoire chez le
+        producteur ; ici, on mesure une année, et une année seulement.
         """
         part = self.part_pib(annee)
         return ressources_part_pib / part if part else 0.0
