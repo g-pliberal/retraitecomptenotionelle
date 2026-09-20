@@ -318,6 +318,8 @@ function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coeffici
         capital_hors_frais: resultat.capitalisation.capital_hors_frais,
         diviseur: resultat.capitalisation.conversion.diviseur,
         frais_arrerages: resultat.capitalisation.frais_arrerages,
+        frais_encours_rente: resultat.capitalisation.frais_encours_rente,
+        facteur_encours_rente: resultat.capitalisation.facteur_encours_rente,
         rente_annuelle: resultat.capitalisation.rente_annuelle,
         rente_mensuelle: resultat.capitalisation.rente_mensuelle,
         taux_cotisation_volontaire:

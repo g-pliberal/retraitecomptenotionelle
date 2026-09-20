@@ -1479,36 +1479,59 @@ admet alors une forme close que les tests vérifient :
 K = Σ_a  V_a (1 − f_versement) × [(1 + r)(1 − f_gestion)]^(L − a)
 ```
 
-**Ce qu'il coûte.** Trois prélèvements, ceux du PER tel qu'il est vendu
-aujourd'hui, mesurés pour 2025 par l'Observatoire des produits d'épargne
+**Ce qu'il coûte.** Quatre prélèvements, aux **vraies moyennes du marché** du
+PER individuel en 2025, mesurées par l'Observatoire des produits d'épargne
 financière (CCSF, Banque de France) sur les remises de l'ACPR, support en
-euros : 1,09 % sur chaque versement, 0,76 % par an sur l'encours, 2,20 % sur
-chaque arrérage de rente
-(`data/reference/macro/frais_epargne_retraite.yaml`), saisis depuis la presse
-puis confrontés au rapport lui-même le 20 septembre 2026 par
-`scripts/fetch/opef_frais_per.py`. Ce sont les frais d'un produit vendu à des
-volontaires, contrat par contrat, dont la commission du réseau distributeur
-est l'essentiel ; elle n'aurait pas d'objet avec une cotisation obligatoire.
-Les retenir tels quels est donc une **borne haute**, assumée : le modèle dit
-ce que la proposition coûterait si rien ne bougeait dans la tarification. Le
-rapport précise que la moyenne des frais sur arrérages ne porte que sur les
-neuf assureurs, sur vingt, qui les facturent : sur les vingt, la moyenne est
-de 0,99 % et la médiane nulle. Les frais sur versement et de gestion sont, eux,
-des moyennes pondérées de tout le marché, et aucune médiane n'en est publiée.
-Le modèle ne compte pas les frais sur encours de rentes que 22 contrats sur 34
-affichaient en 2021, de 0,60 à 1 % par an, parce que sa rente est celle d'un
-régime qui convertit au diviseur du compte notionnel. Le simulateur affiche le coût
-complet des frais, qui dépasse les frais prélevés, parce que ce qui est
-prélevé ne produit plus d'intérêts ; `docs/limites.md` §5 ante mesure ce que
-d'autres barèmes déplaceraient.
+euros, lues sur le rapport lui-même et confrontées par
+`scripts/fetch/opef_frais_per.py` : 1,09 % sur chaque versement et 0,76 % par
+an sur l'encours, moyennes pondérées par les primes et par l'encours ; 0,99 %
+sur chaque arrérage de rente, moyenne sur tous les assureurs déclarants et non
+sur les seuls neuf sur vingt qui facturent (2,20 %, médiane nulle) ; et
+0,52 % par an sur la réserve qui porte la rente, un frais que l'OPEF ne mesure
+pas et que le rapport du CCSF de 2021 relevait sur 22 contrats sur 34, de
+0,60 à 1 % par an (`data/reference/macro/frais_epargne_retraite.yaml`).
+
+**Ils baissent, par paliers, et d'abord sur les nouveaux dépôts.** Partout où
+une épargne retraite obligatoire existe, les frais sont tombés bien au-dessous
+de ceux d'un produit vendu au détail, et par à-coups : plafond de 0,75 % au
+Royaume-Uni en 2015 (0,48 % constatés en 2020), appel d'offres tous les deux
+ans au Chili (la commission du gagnant passe de 1,14 % à 0,77 %, 0,47 %,
+0,41 %, remonte à 0,69 % en 2018, puis 0,46 % en 2025), remise imposée aux
+gérants en Suède (0,31 % net en 2013, 0,11 % en 2026). Là où seule la
+concurrence joue, la baisse est continue : 1,04 % à 0,40 % pour les fonds
+actions américains en vingt-neuf ans, soit 3,3 % par an. Chaque poste a donc
+ses paliers `(année, taux)` dans `Parametres` : le frais de gestion suit le
+rythme américain par marches de dix ans jusqu'au plancher de l'ERAFP
+(0,20 %), le frais sur versement rejoint l'assurance-vie, le contrat de
+capitalisation puis zéro, le frais sur arrérages s'éteint en vingt ans. Un
+frais de gestion étant contractuel, chaque versement entre au tarif de son
+année et le garde : les lignes de l'échelle portent le tarif de leur cohorte,
+et ne referment chaque année qu'une fraction `convergence_frais_stock` (0,10)
+de leur écart avec le tarif des nouveaux dépôts. L'OPEF montre le mécanisme :
+en deux ans, le frais sur versement, mesuré sur les primes de l'année, a
+baissé de 1,20 % à 1,09 %, quand le frais de gestion, mesuré sur tout
+l'encours, n'a pas bougé. Le simulateur affiche le coût complet des frais, qui
+dépasse les frais prélevés, parce que ce qui est prélevé ne produit plus
+d'intérêts ; `docs/limites.md` §5 ante donne les sources de chaque palier et
+mesure ce que chaque hypothèse déplace.
 
 **Comment le capital devient une rente.** Par le mécanisme du PER : le capital
-est divisé par un coefficient actuariel, puis chaque arrérage supporte ses
-frais.
+est divisé par un coefficient actuariel, la rente est réduite de ce que le
+frais annuel sur sa réserve lui retire, puis chaque arrérage supporte ses
+frais. Les deux tarifs sont ceux de l'année de la liquidation : la rente est un
+contrat, elle garde les frais du jour où elle est souscrite.
 
 ```
-rente = capital / G(a, L) × (1 − f_arrérages)
+rente = capital / G(a, L) × Σ p_t / Σ p_t (1 − f_réserve)^(−t) × (1 − f_arrérages)
 ```
+
+Prélever `f_réserve` par an sur la réserve d'une rente nivelée, à taux
+technique nul, revient à actualiser au taux `−f_réserve` : le facteur du
+milieu est le rapport de l'ancien diviseur au nouveau, sur la courbe de survie
+du modèle à la liquidation, et il vaut exactement 1 sans frais. Il est appliqué
+au diviseur plutôt que substitué à lui, pour que la rente reste comparable au
+centime à la pension notionnelle. Au diviseur du modèle, 0,52 % par an valent
+8 % de rente.
 
 `G` est le diviseur du modèle, sur la même table de génération, unisexe et
 au vingtile de niveau de vie de la carrière par défaut, avec un taux technique nul

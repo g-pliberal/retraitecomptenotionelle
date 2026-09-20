@@ -317,13 +317,30 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: Première année de cotisation au pilier. Les années antérieures gardent
   //: leurs taux et ne versent rien : qui a liquidé avant n'a pas de pilier.
   annee_debut_capitalisation: 2026,
-  //: Les trois frais du PER, mesurés par l'Observatoire des produits d'épargne
-  //: financière pour 2025 sur le support en euros — le seul qui corresponde à
-  //: un placement sans risque. Ce sont les frais d'un produit vendu à des
-  //: volontaires : une borne haute, assumée comme telle.
+  //: Les frais du PER l'année de la bascule, aux vraies moyennes du marché de
+  //: 2025 (OPEF, support en euros) : sur versement et sur encours, les
+  //: moyennes pondérées ; sur arrérages, la moyenne sur TOUS les déclarants
+  //: (0,99 %) et non celle des seuls facturants (2,20 %) ; et le frais annuel
+  //: sur la réserve de la rente, que l'OPEF ne mesure pas et que le CCSF
+  //: relevait sur 22 contrats sur 34 (0,60 à 1 % par an) : 0,52 % estimés.
+  //: Sources, distributions et raisons : config.py et le fichier de frais.
   frais_versement_capitalisation: 0.0109,
   frais_gestion_capitalisation: 0.0076,
-  frais_arrerages_capitalisation: 0.0220,
+  frais_arrerages_capitalisation: 0.0099,
+  frais_encours_rente_capitalisation: 0.0052,
+  //: Les frais BAISSENT par paliers `[année, taux]` — le taux vaut de cette
+  //: année au palier suivant, le niveau ci-dessus avant le premier —, comme
+  //: partout où une épargne retraite obligatoire a mis les gérants sous
+  //: plafond ou en concurrence (Royaume-Uni, Chili, Suède, États-Unis ; voir
+  //: config.py). Un tableau vide fige le poste.
+  frais_versement_paliers: [[2031, 0.0055], [2036, 0.0019], [2046, 0.0]],
+  frais_gestion_paliers: [[2036, 0.0054], [2046, 0.0039], [2056, 0.0028], [2066, 0.0020]],
+  frais_arrerages_paliers: [[2036, 0.0050], [2046, 0.0]],
+  frais_encours_rente_paliers: [[2036, 0.0037], [2046, 0.0027], [2056, 0.0019], [2066, 0.0014]],
+  //: Fraction de l'écart entre le tarif d'une cohorte placée et celui des
+  //: nouveaux dépôts que le stock referme chaque année : la baisse porte
+  //: surtout sur les nouveaux dépôts, un peu sur le stock.
+  convergence_frais_stock: 0.10,
   // --- Capitalisation volontaire : les cinq points rendus ---------------------
   //: Le quatrième terme, et le seul que personne n'impose. Le système actuel
   //: prélève près de 28 % du salaire ; la proposition en prélève 23. Elle rend
@@ -350,6 +367,28 @@ export const PARAMETRES_DEFAUT = Object.freeze({
 
 /** Copie modifiée : les paramètres sont traités comme immuables. */
 /** Les cinq points volontaires, ou zéro quand on les a retirés. */
+/**
+ * Le taux en vigueur en `annee` : `niveau` avant le premier palier, puis le
+ * taux du dernier palier atteint, les paliers étant lus dans l'ordre des années.
+ */
+export function tauxAu(niveau, paliers, annee) {
+  let taux = niveau;
+  for (const [debut, valeur] of [...(paliers || [])].sort((a, b) => a[0] - b[0])) {
+    if (annee >= debut) taux = valeur;
+  }
+  return taux;
+}
+
+/** Le taux d'un poste de frais du pilier (`versement`, `gestion`, `arrerages`,
+ * `encours_rente`) l'année `annee`. */
+export function fraisCapitalisation(parametres, poste, annee) {
+  return tauxAu(
+    parametres[`frais_${poste}_capitalisation`],
+    parametres[`frais_${poste}_paliers`],
+    annee,
+  );
+}
+
 export function tauxCapitalisationVolontaireApplique(parametres) {
   return parametres.capitalisation_volontaire
     ? parametres.taux_capitalisation_volontaire : 0.0;

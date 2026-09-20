@@ -39,8 +39,15 @@ pratique. Aucune ligne ne dépasse la date de départ (:func:`repartition`), et
 les taux sont ceux de la courbe et de ses forwards
 (:class:`~retraite_notionnelle.donnees.taux.CourbeTauxSansRisque`).
 
-**3. Ce qu'il coûte.** Les trois frais du PER tel qu'il est vendu aujourd'hui :
-sur chaque versement, sur l'encours chaque année, sur chaque arrérage de rente.
+**3. Ce qu'il coûte.** Quatre frais, aux vraies moyennes du marché du PER
+l'année de la bascule : sur chaque versement, sur l'encours chaque année, sur
+la réserve de la rente chaque année, sur chaque arrérage. Et ils BAISSENT, par
+paliers, comme partout où une épargne retraite obligatoire a mis les gérants en
+concurrence ou sous plafond : chaque versement entre au tarif de son année,
+qu'il garde et qui ne se rapproche du tarif des nouveaux dépôts qu'à un rythme
+réglé (``Parametres.convergence_frais_stock``) ; la rente garde les frais de
+l'année où elle est souscrite. Les trajectoires et leurs sources sont dans
+``Parametres``.
 
 **4. Ce qu'il sert.** Une rente viagère, et rien d'autre : ni capital, ni sortie
 anticipée. Elle est calculée avec la table de mortalité du modèle et le même
@@ -145,6 +152,12 @@ class _Ligne:
     #: l'année suivante.
     annee_fin: int
     taux: float
+    #: Frais de gestion de la COHORTE dont la ligne vient : le tarif de l'année
+    #: du versement, que la ligne garde à chaque replacement et qui ne se
+    #: rapproche du tarif des nouveaux dépôts qu'au rythme de
+    #: ``convergence_frais_stock``. C'est ce qui fait que la baisse des frais
+    #: porte d'abord sur les nouveaux dépôts, et seulement un peu sur le stock.
+    frais_gestion: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -174,6 +187,11 @@ class AnneeCapitalisation:
     taux_moyen: float
     #: Répartition du versement de l'année par maturité, en euros.
     placements: tuple[tuple[int, float], ...] = ()
+    #: Taux du frais sur versement appliqué au versement de l'année.
+    taux_frais_versement: float = 0.0
+    #: Taux moyen du frais de gestion prélevé sur l'encours de l'année : la
+    #: moyenne des tarifs des cohortes, pondérée par leurs encours.
+    taux_frais_gestion: float = 0.0
 
     @property
     def capital_transmissible(self) -> float:
@@ -224,6 +242,14 @@ class Capitalisation:
     #: les cinq points que la proposition rend et que l'assuré choisit de
     #: remettre au compte. Zéro quand on la retire.
     taux_cotisation_volontaire: float = 0.0
+
+    #: Frais annuel prélevé sur la RÉSERVE qui porte la rente, l'année de la
+    #: liquidation, et facteur par lequel il réduit la rente : à taux technique
+    #: nul, un prélèvement de ``f`` par an sur la réserve équivaut à diviser le
+    #: capital par ``Σ p_t (1 − f)^(−t)`` au lieu de ``Σ p_t`` — le rapport des
+    #: deux est ce facteur, exactement 1 quand le frais est nul.
+    frais_encours_rente: float = 0.0
+    facteur_encours_rente: float = 1.0
 
     @property
     def taux_cotisation_obligatoire(self) -> float:
@@ -390,7 +416,8 @@ class ConstructeurCapitalisation:
     # -- placement -----------------------------------------------------------
 
     def placer(self, montant: float, annee: int, annee_liquidation: int,
-               lignes: list[_Ligne]) -> tuple[tuple[int, float], ...]:
+               lignes: list[_Ligne], frais_gestion: float = 0.0
+               ) -> tuple[tuple[int, float], ...]:
         """Place ``montant``, disponible à la fin de ``annee``, sur l'échelle.
 
         Rend la répartition en euros, par maturité, pour que la page puisse
@@ -402,7 +429,8 @@ class ConstructeurCapitalisation:
         if montant <= 0:
             return ()
         if horizon <= 0:
-            lignes.append(_Ligne(montant=montant, annee_fin=annee, taux=0.0))
+            lignes.append(_Ligne(montant=montant, annee_fin=annee, taux=0.0,
+                                 frais_gestion=frais_gestion))
             return ()
         detail: list[tuple[int, float]] = []
         for maturite, poids in repartition(horizon):
@@ -411,7 +439,8 @@ class ConstructeurCapitalisation:
                 continue
             taux = self.courbe.placement(annee, maturite)
             lignes.append(
-                _Ligne(montant=part, annee_fin=annee + maturite, taux=taux.taux)
+                _Ligne(montant=part, annee_fin=annee + maturite, taux=taux.taux,
+                       frais_gestion=frais_gestion)
             )
             detail.append((maturite, part))
         return tuple(detail)
@@ -430,19 +459,26 @@ class ConstructeurCapitalisation:
     def _accumuler(self, assiettes: dict[int, float], annee_ouverture: int,
                    annee_liquidation: int, annee_naissance: int,
                    avec_frais: bool) -> list[AnneeCapitalisation]:
-        frais_versement = (
-            self.parametres.frais_versement_capitalisation if avec_frais else 0.0
-        )
-        frais_gestion = (
-            self.parametres.frais_gestion_capitalisation if avec_frais else 0.0
-        )
-        taux_cotisation = self.parametres.taux_capitalisation_applique
+        parametres = self.parametres
+        taux_cotisation = parametres.taux_capitalisation_applique
+        convergence = min(1.0, max(0.0, parametres.convergence_frais_stock))
+
+        def frais(poste: str, annee: int) -> float:
+            return parametres.frais_capitalisation(poste, annee) if avec_frais else 0.0
 
         lignes: list[_Ligne] = []
         annees: list[AnneeCapitalisation] = []
 
         for annee in range(annee_ouverture, annee_liquidation + 1):
             ouverture = sum(l.montant for l in lignes)
+            frais_versement = frais("versement", annee)
+            frais_neuf = frais("gestion", annee)
+
+            # 0. Le tarif des cohortes déjà placées se rapproche de celui des
+            #    nouveaux dépôts, d'une fraction de l'écart par an : c'est la
+            #    part de la baisse qui atteint le stock.
+            for ligne in lignes:
+                ligne.frais_gestion += convergence * (frais_neuf - ligne.frais_gestion)
 
             # 1. Intérêts de l'année, ligne par ligne, au taux bloqué le jour
             #    du placement. C'est ce que « porter jusqu'à l'échéance » veut
@@ -451,27 +487,32 @@ class ConstructeurCapitalisation:
             for ligne in lignes:
                 ligne.montant *= 1.0 + ligne.taux
 
-            # 2. Frais de gestion, prélevés sur l'encours de fin d'année, au
-            #    prorata de chaque ligne. Le versement de l'année n'y est pas
-            #    encore : il n'a pas passé l'année dans l'enveloppe.
-            prelevement = (ouverture + interets) * frais_gestion
-            if prelevement:
-                for ligne in lignes:
-                    ligne.montant *= 1.0 - frais_gestion
+            # 2. Frais de gestion, prélevés sur l'encours de fin d'année, ligne
+            #    par ligne au tarif de sa cohorte. Le versement de l'année n'y
+            #    est pas encore : il n'a pas passé l'année dans l'enveloppe.
+            prelevement = sum(l.montant * l.frais_gestion for l in lignes)
+            for ligne in lignes:
+                ligne.montant *= 1.0 - ligne.frais_gestion
+            assiette_frais = ouverture + interets
+            taux_gestion = (prelevement / assiette_frais) if assiette_frais > 0 else frais_neuf
 
             # 3. Échéances : ce qui arrive à terme est replacé pour ce qu'il
-            #    reste d'horizon.
-            echues = sum(l.montant for l in lignes if l.annee_fin == annee)
+            #    reste d'horizon, cohorte par cohorte, chacune gardant son tarif.
+            echues: dict[float, float] = {}
+            for ligne in lignes:
+                if ligne.annee_fin == annee:
+                    echues[ligne.frais_gestion] = echues.get(ligne.frais_gestion, 0.0) + ligne.montant
             lignes = [l for l in lignes if l.annee_fin != annee]
-            if echues:
-                self.placer(echues, annee, annee_liquidation, lignes)
+            for tarif, montant in echues.items():
+                self.placer(montant, annee, annee_liquidation, lignes, tarif)
 
-            # 4. Versement de l'année, crédité en fin d'année.
+            # 4. Versement de l'année, crédité en fin d'année, au tarif de
+            #    l'année.
             assiette = assiettes.get(annee, 0.0)
             brut = assiette * taux_cotisation
-            frais = brut * frais_versement
-            net = brut - frais
-            placements = self.placer(net, annee, annee_liquidation, lignes)
+            frais_v = brut * frais_versement
+            net = brut - frais_v
+            placements = self.placer(net, annee, annee_liquidation, lignes, frais_neuf)
 
             encours = sum(l.montant for l in lignes)
             annees.append(AnneeCapitalisation(
@@ -480,7 +521,7 @@ class ConstructeurCapitalisation:
                 horizon=annee_liquidation - annee,
                 assiette=assiette,
                 versement_brut=brut,
-                frais_versement=frais,
+                frais_versement=frais_v,
                 versement_net=net,
                 encours_ouverture=ouverture,
                 interets=interets,
@@ -488,6 +529,8 @@ class ConstructeurCapitalisation:
                 encours=encours,
                 taux_moyen=(interets / ouverture) if ouverture > 0 else 0.0,
                 placements=placements,
+                taux_frais_versement=frais_versement,
+                taux_frais_gestion=taux_gestion,
             ))
         return annees
 
@@ -522,6 +565,30 @@ class ConstructeurCapitalisation:
             esperance += probabilite * moyen
             deces += probabilite
         return deces, esperance
+
+    def _facteur_encours_rente(self, frais: float, age_liquidation: float,
+                               annee_liquidation: int, sexe: str | None,
+                               population: str | None) -> float:
+        """Ce qu'un frais annuel sur la réserve de la rente lui retire.
+
+        La rente est nivelée et le taux technique nul : la réserve qui la
+        porte est ``R × Σ p_t``. Prélever ``f`` par an sur cette réserve
+        revient à actualiser au taux ``−f``, donc à diviser le capital par
+        ``Σ p_t (1 − f)^(−t)``. Le facteur rendu est le rapport de l'ancien
+        diviseur au nouveau, calculé sur la courbe de survie du modèle à la
+        liquidation ; il vaut exactement 1 sans frais, et il est appliqué au
+        diviseur de la conversion plutôt que substitué à lui, pour que la
+        rente reste comparable au centime à la pension notionnelle.
+        """
+        if frais <= 0:
+            return 1.0
+        courbe = self.mortalite.courbe(
+            age_liquidation, float(annee_liquidation), sexe,
+            self.parametres.table_generation, population,
+        )
+        sans = sum(courbe)
+        avec = sum(p / (1.0 - frais) ** t for t, p in enumerate(courbe))
+        return sans / avec if avec > 0 else 1.0
 
     # -- assemblage ----------------------------------------------------------
 
@@ -560,7 +627,7 @@ class ConstructeurCapitalisation:
                 capital=0.0,
                 capital_hors_frais=0.0,
                 conversion=conversion,
-                frais_arrerages=self.parametres.frais_arrerages_capitalisation,
+                frais_arrerages=self.parametres.frais_capitalisation("arrerages", annee_liquidation),
                 rente_annuelle=0.0,
                 probabilite_deces_avant_liquidation=0.0,
                 esperance_capital_transmis=0.0,
@@ -576,16 +643,23 @@ class ConstructeurCapitalisation:
         )
         capital = annees[-1].encours if annees else 0.0
 
-        # La rente du PER : capital divisé par le diviseur actuariel, puis
-        # amputé des frais sur arrérages, qui sont prélevés sur chaque
-        # versement de rente et non sur le capital qui la constitue.
-        frais_arrerages = self.parametres.frais_arrerages_capitalisation
-        rente = capital / conversion.diviseur * (1.0 - frais_arrerages)
+        # La rente du PER : capital divisé par le diviseur actuariel, réduit
+        # de ce que le frais annuel sur la réserve lui retire, puis amputé des
+        # frais sur arrérages, qui sont prélevés sur chaque versement de rente
+        # et non sur le capital qui la constitue. Les deux tarifs sont ceux de
+        # l'année de la liquidation : la rente est un contrat, elle garde les
+        # frais du jour où elle est souscrite.
+        sexe_table = (None if self.parametres.table_conversion is TableConversion.UNISEXE
+                      else sexe)
+        frais_arrerages = self.parametres.frais_capitalisation("arrerages", annee_liquidation)
+        frais_encours_rente = self.parametres.frais_capitalisation(
+            "encours_rente", annee_liquidation)
+        facteur = self._facteur_encours_rente(
+            frais_encours_rente, age_liquidation, annee_liquidation, sexe_table, population)
+        rente = capital / conversion.diviseur * facteur * (1.0 - frais_arrerages)
 
         deces, transmis = self._transmission(
-            annees, ouverture - annee_naissance, ouverture,
-            None if self.parametres.table_conversion is TableConversion.UNISEXE else sexe,
-            population,
+            annees, ouverture - annee_naissance, ouverture, sexe_table, population,
         )
 
         return Capitalisation(
@@ -599,6 +673,8 @@ class ConstructeurCapitalisation:
             capital_hors_frais=sans_frais[-1].encours if sans_frais else 0.0,
             conversion=conversion,
             frais_arrerages=frais_arrerages,
+            frais_encours_rente=frais_encours_rente,
+            facteur_encours_rente=facteur,
             rente_annuelle=rente,
             probabilite_deces_avant_liquidation=deces,
             esperance_capital_transmis=transmis,

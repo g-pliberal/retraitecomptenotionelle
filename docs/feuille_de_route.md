@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 534<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 662<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8874,3 +8874,67 @@ rend les mêmes six valeurs par les deux lecteurs.
 
 **Ce qui reste.** Les âges de départ des PAP, à lire dans leur tableau
 enchevêtré ou à laisser saisis. 
+
+### 52. Le pilier aux vraies moyennes du marché, et des frais qui baissent par paliers — `fait`
+
+**Demande.** « Prends en compte tous ces chiffres dans le pilier, il faut que
+l'on soit proche de la réalité pour être crédible. Par contre, on va ajouter
+un critère en plus : l'évolution des frais grâce au jeu de la concurrence. Les
+frais baissent au cours du temps, un peu sur le stock mais surtout sur les
+nouveaux dépôts, et la baisse n'est pas forcément linéaire, elle peut être
+brutale. Fais des recherches pour évaluer tous ces phénomènes. »
+
+**Ce que la recherche a trouvé.** Partout où une épargne retraite obligatoire
+existe, les frais sont tombés bien au-dessous de ceux d'un produit vendu au
+détail, et par à-coups. Royaume-Uni : plafond de 0,75 % en avril 2015, 0,48 %
+constatés en 2020, 0,29 % dans les régimes fiduciaires. Chili : les nouveaux
+entrants sont adjugés tous les deux ans à la caisse la moins chère, et la
+commission du gagnant passe de 1,14 % (2010) à 0,77, 0,47, 0,41 %, remonte à
+0,69 % en 2018, puis 0,58, 0,49, 0,46 % en 2025, contre 1,36 % avant ; et une
+caisse libérée de l'adjudication a remonté de 0,47 à 1,16 %. Suède : remise
+imposée aux gérants, 0,31 % net en 2013, 0,21 % en 2020, 0,13 % en 2022,
+0,11 % en 2026. États-Unis, où seule la concurrence joue : 1,04 % en 1996,
+0,40 % en 2025 pour les fonds actions pondérés par les encours, 3,3 % de
+baisse par an, et 0,76 % à 0,26 % dans les plans 401(k). Australie, plus
+lente : MySuper de 1,05 à 1,00 % en 2023. France : en deux ans, le frais sur
+versement du PER, mesuré sur les primes de l'année, passe de 1,20 à 1,09 %, et
+celui de l'assurance-vie de 0,75 à 0,55 %, quand le frais de gestion, mesuré
+sur tout l'encours, ne bouge pas : la baisse porte sur les nouveaux dépôts.
+Six jeux `controle` de plus au manifeste (ICI, DWP, Superintendencia de
+Pensiones et Bibliothèque du Congrès du Chili, Pensionsmyndigheten 2014).
+
+**Ce que le modèle fait désormais.** Quatre frais aux vraies moyennes du marché
+de 2025 : 1,09 % sur versement, 0,76 % sur encours, 0,99 % sur arrérages
+(tous les déclarants, et non 2,20 % des seuls facturants), et 0,52 % par an sur
+la réserve de la rente, le frais que l'OPEF ne mesure pas et que le CCSF
+relevait sur 22 contrats sur 34 (0,60 à 1 %), estimé au milieu de la
+fourchette sur la part des contrats qui facturent : 8 % de rente au diviseur du
+modèle, appliqué comme une actualisation négative de la réserve, par un
+facteur qui vaut exactement 1 sans frais. Chaque poste a ses paliers
+`(année, taux)` dans `Parametres` : la gestion suit le rythme américain par
+marches de dix ans (0,76, 0,54, 0,39, 0,28, 0,20 % en 2066, le plancher de
+l'ERAFP), le versement rejoint l'assurance-vie (2031), le contrat de
+capitalisation (2036) puis zéro (2046), les arrérages s'éteignent en 2046, la
+réserve suit la gestion. Les lignes de l'échelle portent le tarif de leur
+cohorte, gardé à chaque replacement, et referment chaque année 10 % de leur
+écart avec le tarif des nouveaux dépôts (`convergence_frais_stock`) ; la
+rente garde les frais de l'année où elle est souscrite. Python et portage,
+témoins régénérés, cascade de la page du pilier réécrite (« de 1,09 % à 0 %
+de chaque versement », une ligne pour la réserve), page Méthode, fichier de
+frais avec `valeur_retenue` et `paliers`, `methodologie.md`, `limites.md`
+§5 ante avec le tableau des marchés et celui des hypothèses. Sept tests de
+plus.
+
+**Ce que ça déplace.** Rien sur les scénarios 1 à 5, rien sur la répartition
+du 6. Sur la rente du pilier d'une carrière entière après la bascule, + 8 %
+par rapport à l'ancien réglage ; à moyennes figées elle serait 14 % plus
+basse ; le stock qui garde son tarif coûte 3 %, le stock qui suit tout rend
+2 %. Pour qui liquide en 2034, aucun palier n'est atteint et le frais sur la
+réserve fait perdre 7 % : la réalité de 2025 est moins bonne que l'ancien
+réglage pour les proches du départ, meilleure pour les jeunes.
+
+**Ce qui reste une hypothèse.** Les paliers, datés et sourcés, ne sont pas
+une mesure ; aucune série publique ne précède 2013 en Suède ni 2010 au Chili ;
+le modèle ne fait jamais remonter un frais alors que le Chili l'a vu ; le
+frais sur la réserve est estimé, sans mesure de l'OPEF. Tout se change en un
+endroit.

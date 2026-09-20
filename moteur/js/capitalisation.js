@@ -34,6 +34,7 @@ import {
   TableConversion,
   tauxCapitalisationApplique,
   tauxCapitalisationVolontaireApplique,
+  fraisCapitalisation,
 } from "./config.js";
 import { Fiabilite } from "./serie.js";
 
@@ -141,11 +142,11 @@ export class ConstructeurCapitalisation {
    * la liquidation ne se place plus : il n'a plus d'années devant lui, et le
    * compte notionnel ne revalorise pas davantage sa dernière cotisation.
    */
-  placer(montant, annee, anneeLiquidation, lignes) {
+  placer(montant, annee, anneeLiquidation, lignes, fraisGestion = 0.0) {
     const horizon = anneeLiquidation - annee;
     if (montant <= 0) return [];
     if (horizon <= 0) {
-      lignes.push({ montant, anneeFin: annee, taux: 0.0 });
+      lignes.push({ montant, anneeFin: annee, taux: 0.0, fraisGestion });
       return [];
     }
     const detail = [];
@@ -153,7 +154,10 @@ export class ConstructeurCapitalisation {
       const part = montant * poids;
       if (part <= 0) continue;
       const taux = this.courbe.placement(annee, maturite);
-      lignes.push({ montant: part, anneeFin: annee + maturite, taux: taux.taux });
+      // La ligne porte le frais de gestion de sa COHORTE : le tarif de l'année
+      // du versement, gardé à chaque replacement, qui ne se rapproche du tarif
+      // des nouveaux dépôts qu'au rythme de `convergence_frais_stock`.
+      lignes.push({ montant: part, anneeFin: annee + maturite, taux: taux.taux, fraisGestion });
       detail.push([maturite, part]);
     }
     return detail;
@@ -170,17 +174,27 @@ export class ConstructeurCapitalisation {
   }
 
   _accumuler(assiettes, anneeOuverture, anneeLiquidation, anneeNaissance, avecFrais) {
-    const fraisVersement = avecFrais
-      ? this.parametres.frais_versement_capitalisation : 0.0;
-    const fraisGestion = avecFrais
-      ? this.parametres.frais_gestion_capitalisation : 0.0;
-    const tauxCotisation = tauxCapitalisationApplique(this.parametres);
+    const parametres = this.parametres;
+    const tauxCotisation = tauxCapitalisationApplique(parametres);
+    const convergence = Math.min(1.0, Math.max(0.0, parametres.convergence_frais_stock));
+    const frais = (poste, annee) => (
+      avecFrais ? fraisCapitalisation(parametres, poste, annee) : 0.0
+    );
 
     let lignes = [];
     const annees = [];
 
     for (let annee = anneeOuverture; annee <= anneeLiquidation; annee += 1) {
       const ouverture = lignes.reduce((somme, l) => somme + l.montant, 0.0);
+      const fraisVersement = frais("versement", annee);
+      const fraisNeuf = frais("gestion", annee);
+
+      // 0. Le tarif des cohortes déjà placées se rapproche de celui des
+      //    nouveaux dépôts, d'une fraction de l'écart par an : c'est la part
+      //    de la baisse qui atteint le stock.
+      for (const ligne of lignes) {
+        ligne.fraisGestion += convergence * (fraisNeuf - ligne.fraisGestion);
+      }
 
       // 1. Intérêts de l'année, ligne par ligne, au taux bloqué le jour du
       //    placement : le taux d'une ligne portée jusqu'à l'échéance ne change
@@ -188,28 +202,36 @@ export class ConstructeurCapitalisation {
       const interets = lignes.reduce((somme, l) => somme + l.montant * l.taux, 0.0);
       for (const ligne of lignes) ligne.montant *= 1.0 + ligne.taux;
 
-      // 2. Frais de gestion sur l'encours de fin d'année, au prorata de chaque
-      //    ligne. Le versement de l'année n'y est pas encore : il n'a pas passé
-      //    l'année dans l'enveloppe.
-      const prelevement = (ouverture + interets) * fraisGestion;
-      if (prelevement) {
-        for (const ligne of lignes) ligne.montant *= 1.0 - fraisGestion;
-      }
+      // 2. Frais de gestion sur l'encours de fin d'année, ligne par ligne au
+      //    tarif de sa cohorte. Le versement de l'année n'y est pas encore :
+      //    il n'a pas passé l'année dans l'enveloppe.
+      const prelevement = lignes.reduce(
+        (somme, l) => somme + l.montant * l.fraisGestion, 0.0,
+      );
+      for (const ligne of lignes) ligne.montant *= 1.0 - ligne.fraisGestion;
+      const assietteFrais = ouverture + interets;
+      const tauxGestion = assietteFrais > 0 ? prelevement / assietteFrais : fraisNeuf;
 
       // 3. Échéances : ce qui arrive à terme est replacé pour ce qu'il reste
-      //    d'horizon.
-      const echues = lignes
-        .filter((l) => l.anneeFin === annee)
-        .reduce((somme, l) => somme + l.montant, 0.0);
+      //    d'horizon, cohorte par cohorte, chacune gardant son tarif. L'ordre
+      //    des cohortes est celui de leur première apparition, comme en Python.
+      const echues = new Map();
+      for (const l of lignes) {
+        if (l.anneeFin === annee) {
+          echues.set(l.fraisGestion, (echues.get(l.fraisGestion) || 0.0) + l.montant);
+        }
+      }
       lignes = lignes.filter((l) => l.anneeFin !== annee);
-      if (echues) this.placer(echues, annee, anneeLiquidation, lignes);
+      for (const [tarif, montant] of echues) {
+        this.placer(montant, annee, anneeLiquidation, lignes, tarif);
+      }
 
-      // 4. Versement de l'année, crédité en fin d'année.
+      // 4. Versement de l'année, crédité en fin d'année, au tarif de l'année.
       const assiette = assiettes.get(annee) || 0.0;
       const brut = assiette * tauxCotisation;
-      const frais = brut * fraisVersement;
-      const net = brut - frais;
-      const placements = this.placer(net, annee, anneeLiquidation, lignes);
+      const fraisV = brut * fraisVersement;
+      const net = brut - fraisV;
+      const placements = this.placer(net, annee, anneeLiquidation, lignes, fraisNeuf);
 
       const encours = lignes.reduce((somme, l) => somme + l.montant, 0.0);
       annees.push({
@@ -218,7 +240,7 @@ export class ConstructeurCapitalisation {
         horizon: anneeLiquidation - annee,
         assiette,
         versement_brut: brut,
-        frais_versement: frais,
+        frais_versement: fraisV,
         versement_net: net,
         encours_ouverture: ouverture,
         interets,
@@ -227,9 +249,34 @@ export class ConstructeurCapitalisation {
         capital_transmissible: encours,
         taux_moyen: ouverture > 0 ? interets / ouverture : 0.0,
         placements,
+        taux_frais_versement: fraisVersement,
+        taux_frais_gestion: tauxGestion,
       });
     }
     return annees;
+  }
+
+  /**
+   * Ce qu'un frais annuel sur la réserve de la rente lui retire : la rente
+   * est nivelée et le taux technique nul, prélever `f` par an sur la réserve
+   * revient à actualiser au taux `−f`, donc à diviser le capital par
+   * `Σ p_t (1 − f)^(−t)`. Le facteur rendu est le rapport de l'ancien
+   * diviseur au nouveau, sur la courbe de survie du modèle à la liquidation ;
+   * il vaut exactement 1 sans frais.
+   */
+  _facteurEncoursRente(frais, ageLiquidation, anneeLiquidation, sexe, population) {
+    if (frais <= 0) return 1.0;
+    const courbe = this.mortalite.courbe(
+      ageLiquidation, anneeLiquidation, sexe, this.parametres.table_generation,
+      population,
+    );
+    let sans = 0.0;
+    let avec = 0.0;
+    for (let t = 0; t < courbe.length; t += 1) {
+      sans += courbe[t];
+      avec += courbe[t] / (1.0 - frais) ** t;
+    }
+    return avec > 0 ? sans / avec : 1.0;
   }
 
   /**
@@ -278,7 +325,9 @@ export class ConstructeurCapitalisation {
     const conversion = this.convertisseur.coefficient(
       ageLiquidation, anneeLiquidation, sexeTable, moisLiquidation, population,
     );
-    const fraisArrerages = this.parametres.frais_arrerages_capitalisation;
+    const fraisArrerages = fraisCapitalisation(
+      this.parametres, "arrerages", anneeLiquidation,
+    );
 
     // Le pilier s'éteint quand il n'a plus rien à encaisser : ni les cinq
     // points obligatoires, ni les cinq points volontaires. Retirer l'un laisse
@@ -296,6 +345,8 @@ export class ConstructeurCapitalisation {
         capital_hors_frais: 0.0,
         conversion,
         frais_arrerages: fraisArrerages,
+        frais_encours_rente: 0.0,
+        facteur_encours_rente: 1.0,
         rente_annuelle: 0.0,
         probabilite_deces_avant_liquidation: 0.0,
         esperance_capital_transmis: 0.0,
@@ -312,10 +363,19 @@ export class ConstructeurCapitalisation {
     );
     const capital = annees.length ? annees[annees.length - 1].encours : 0.0;
 
-    // La rente du PER : capital divisé par le diviseur actuariel, puis amputé
-    // des frais sur arrérages, prélevés sur chaque versement de rente et non
-    // sur le capital qui la constitue.
-    const rente = (capital / conversion.diviseur) * (1.0 - fraisArrerages);
+    // La rente du PER : capital divisé par le diviseur actuariel, réduit de ce
+    // que le frais annuel sur la réserve lui retire, puis amputé des frais sur
+    // arrérages, prélevés sur chaque versement de rente et non sur le capital
+    // qui la constitue. Les deux tarifs sont ceux de l'année de la
+    // liquidation : la rente est un contrat, elle garde les frais du jour où
+    // elle est souscrite.
+    const fraisEncoursRente = fraisCapitalisation(
+      this.parametres, "encours_rente", anneeLiquidation,
+    );
+    const facteur = this._facteurEncoursRente(
+      fraisEncoursRente, ageLiquidation, anneeLiquidation, sexeTable, population,
+    );
+    const rente = (capital / conversion.diviseur) * facteur * (1.0 - fraisArrerages);
 
     const [deces, transmis] = this._transmission(
       annees, ouverture - anneeNaissance, ouverture, sexeTable, population,
@@ -333,6 +393,8 @@ export class ConstructeurCapitalisation {
         ? sansFrais[sansFrais.length - 1].encours : 0.0,
       conversion,
       frais_arrerages: fraisArrerages,
+      frais_encours_rente: fraisEncoursRente,
+      facteur_encours_rente: facteur,
       rente_annuelle: rente,
       probabilite_deces_avant_liquidation: deces,
       esperance_capital_transmis: transmis,

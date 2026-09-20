@@ -364,6 +364,17 @@ class Neutralisations:
         return [nom for nom, valeur in self.__dict__.items() if valeur]
 
 
+def taux_au(niveau: float, paliers: tuple[tuple[int, float], ...], annee: int) -> float:
+    """Le taux en vigueur en ``annee`` : ``niveau`` avant le premier palier,
+    puis le taux du dernier palier atteint. Les paliers sont lus dans l'ordre
+    des années, quel que soit celui du tuple."""
+    taux = niveau
+    for debut, valeur in sorted(paliers):
+        if annee >= debut:
+            taux = valeur
+    return taux
+
+
 @dataclass(frozen=True)
 class Parametres:
     """Jeu complet de paramètres d'une simulation."""
@@ -674,19 +685,79 @@ class Parametres:
     #: jour.
     annee_debut_capitalisation: int = 2026
 
-    #: Les trois frais du PER, tels que l'Observatoire des produits d'épargne
-    #: financière les mesure pour 2025 sur le support en euros — le seul qui
-    #: corresponde à un placement sans risque. Leur source et leurs réserves
-    #: sont dans ``data/reference/macro/frais_epargne_retraite.yaml``, et un
-    #: test refuse que les deux divergent.
+    #: Les frais du PER l'année de la bascule, tels que le marché les pratique
+    #: en 2025 d'après le rapport 2026 de l'Observatoire des produits d'épargne
+    #: financière, support en euros — le seul qui corresponde à un placement
+    #: sans risque. Leur source, leurs réserves et leur distribution sont dans
+    #: ``data/reference/macro/frais_epargne_retraite.yaml``, et un test refuse
+    #: que les deux divergent.
     #:
-    #: Ce sont les frais d'un produit VENDU À DES VOLONTAIRES, contrat par
-    #: contrat : la commission du réseau qui le place est l'essentiel du frais
-    #: sur versement, et elle n'a pas d'objet quand la cotisation est
-    #: obligatoire. Les retenir tels quels est donc une borne haute, assumée.
+    #: Quatre postes, et ce sont les VRAIES MOYENNES DU MARCHÉ, pas celles des
+    #: seuls assureurs qui facturent. Sur versement et sur encours, les
+    #: moyennes de l'OPEF sont déjà pondérées par les primes et par l'encours.
+    #: Sur arrérages, l'OPEF ne publie que la moyenne des neuf assureurs sur
+    #: vingt qui facturent (2,20 %) ; sur les vingt, c'est 0,99 %, et la
+    #: médiane est nulle. Le quatrième poste, que l'OPEF ne mesure pas, est le
+    #: prélèvement annuel sur la RÉSERVE de la rente, que le CCSF relevait sur
+    #: 22 contrats sur 34 en 2021, de 0,60 à 1 % par an : 0,80 % au milieu de
+    #: la fourchette, sur 22/34 des contrats, soit 0,52 % en moyenne. Il pèse
+    #: bien plus que les arrérages : au diviseur du modèle, 0,52 % par an sur
+    #: la réserve valent 8 % de rente.
     frais_versement_capitalisation: float = 0.0109
     frais_gestion_capitalisation: float = 0.0076
-    frais_arrerages_capitalisation: float = 0.0220
+    frais_arrerages_capitalisation: float = 0.0099
+    frais_encours_rente_capitalisation: float = 0.0052
+
+    #: LES FRAIS BAISSENT AVEC LE TEMPS, et pas en ligne droite. Partout où une
+    #: épargne retraite obligatoire existe, la concurrence ou la règle ont fait
+    #: tomber les frais bien au-dessous de ceux d'un produit vendu au détail,
+    #: et par à-coups : un plafond réglementaire (Royaume-Uni, 0,75 % en 2015,
+    #: 0,48 % constaté en 2020), un appel d'offres périodique (Chili, la
+    #: commission du gagnant passe de 1,14 % à 0,77 %, 0,47 %, 0,41 % d'une
+    #: adjudication à l'autre, et remonte en 2018), une remise imposée aux
+    #: gérants (Suède, 0,31 % net en 2013, 0,21 % en 2020, 0,11 % en 2026). Là
+    #: où seule la concurrence joue, la baisse est continue : les fonds
+    #: américains sont passés de 1,04 % à 0,40 % en vingt-neuf ans, soit 3,3 %
+    #: de baisse par an, et les fonds des plans 401(k) de 0,76 % à 0,26 %.
+    #:
+    #: Chaque poste a donc sa TRAJECTOIRE : des paliers ``(année, taux)``, le
+    #: taux valant de cette année jusqu'au palier suivant, et le niveau
+    #: ci-dessus valant avant le premier palier. Des paliers, et non une pente,
+    #: parce que c'est ainsi que les frais ont bougé ailleurs — une décision,
+    #: puis un plateau. Les paliers retenus suivent le rythme américain, le
+    #: seul observé sur trente ans, par marches de dix ans, jusqu'au plancher
+    #: que l'ERAFP retient pour ses propres frais (0,20 % des encours) ; le
+    #: frais sur versement rejoint l'assurance-vie d'aujourd'hui, puis le
+    #: contrat de capitalisation, puis zéro, comme partout où la cotisation
+    #: est prélevée sur la paie ; le frais sur arrérages, dont la médiane est
+    #: déjà nulle, s'éteint en vingt ans. Un tuple vide fige le poste à son
+    #: niveau de départ, et c'est ce que font les tests d'identité.
+    frais_versement_paliers: tuple[tuple[int, float], ...] = (
+        (2031, 0.0055), (2036, 0.0019), (2046, 0.0),
+    )
+    frais_gestion_paliers: tuple[tuple[int, float], ...] = (
+        (2036, 0.0054), (2046, 0.0039), (2056, 0.0028), (2066, 0.0020),
+    )
+    frais_arrerages_paliers: tuple[tuple[int, float], ...] = (
+        (2036, 0.0050), (2046, 0.0),
+    )
+    frais_encours_rente_paliers: tuple[tuple[int, float], ...] = (
+        (2036, 0.0037), (2046, 0.0027), (2056, 0.0019), (2066, 0.0014),
+    )
+
+    #: LA BAISSE PORTE SURTOUT SUR LES NOUVEAUX DÉPÔTS, un peu sur le stock.
+    #: Un frais de gestion est contractuel : le versement d'une année entre au
+    #: tarif de son année et le garde. L'OPEF le montre — en deux ans, le frais
+    #: sur versement du PER, mesuré sur les primes de l'année, a baissé de
+    #: 1,20 % à 1,09 %, et celui de l'assurance-vie de 0,75 % à 0,55 %, quand
+    #: le frais de gestion, mesuré sur tout l'encours, n'a pas bougé (0,73 %,
+    #: 0,77 %, 0,76 %). Mais un plafond ou une remise imposée touchent le stock
+    #: d'un coup, comme au Royaume-Uni et en Suède. Entre les deux, chaque
+    #: cohorte de versements referme chaque année cette fraction de l'écart
+    #: entre son tarif et celui des nouveaux dépôts : à 0,10, la moitié de
+    #: l'écart en sept ans. Zéro fige chaque cohorte à son tarif d'entrée, un
+    #: aligne tout le stock sur le tarif du jour.
+    convergence_frais_stock: float = 0.10
 
     # --- Capitalisation volontaire : les cinq points rendus ------------------
     #: Le quatrième terme, et le seul que personne n'impose. Le système actuel
@@ -745,6 +816,17 @@ class Parametres:
 
     # --- Chemins ------------------------------------------------------------
     racine_donnees: Path = RACINE_DONNEES
+
+    def frais_capitalisation(self, poste: str, annee: int) -> float:
+        """Le taux d'un poste de frais du pilier l'année ``annee``.
+
+        ``poste`` est ``versement``, ``gestion``, ``arrerages`` ou
+        ``encours_rente``. Le niveau de départ vaut avant le premier palier ;
+        ensuite, le dernier palier dont l'année est atteinte.
+        """
+        niveau = getattr(self, f"frais_{poste}_capitalisation")
+        paliers = getattr(self, f"frais_{poste}_paliers")
+        return taux_au(niveau, paliers, annee)
 
     @property
     def taux_capitalisation_volontaire_applique(self) -> float:
