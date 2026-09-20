@@ -104,9 +104,11 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 - **Le système 4 est la proposition**, et il se lit contre le 3 : même
   compte jusqu'à 2026, puis 18 % pour tous, 5 % capitalisés par-dessus, 5 %
   rendus que l'exemple suppose replacés au même endroit, et une garantie
-  vieillesse payée par l'impôt. Sa ligne détaille la pension en trois parts :
-  répartition, rente capitalisée obligatoire, rente des cinq points
-  volontaires.
+  vieillesse payée par l'impôt. Son grand nombre est annoncé « retraite
+  jusqu'à » : c'est le seul des quatre qui dépende d'une décision de
+  l'assuré. La ligne sous lui écrit le plancher — répartition plus rente
+  capitalisée obligatoire, touché sans rien ajouter — puis ce que les cinq
+  points rendus ajoutent si on les place, sur un pilier sans risque.
 - **Pourquoi la proposition sert moins que le système actuel sur cet
   exemple :** parce que le système actuel sert à ce salarié plus que ce qu'il
   a cotisé — c'est ce que la page Avantages chiffre —, et parce que ces

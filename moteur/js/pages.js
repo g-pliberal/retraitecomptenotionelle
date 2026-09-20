@@ -3416,15 +3416,23 @@ function resultats(contexte, saisie) {
     let partage = "";
     if (partCapitalisee > 0) {
       barre += `<span class="capitalise" style="width:${formatFixe(partCapitalisee / reference * 100, 1)}%"></span>`;
-      // Trois montants nommés plutôt que deux dès qu'il y a du volontaire :
-      // additionner en silence une épargne facultative à une cotisation
-      // obligatoire ferait promettre un montant que le lecteur n'aura que s'il
-      // la verse.
+      // Trois montants nommés plutôt que deux dès qu'il y a du volontaire, ET
+      // LE PLANCHER ÉCRIT ENTRE LES DEUX : additionner en silence une épargne
+      // facultative à une cotisation obligatoire ferait promettre un montant
+      // que le lecteur n'aura que s'il la verse. Le grand nombre dit donc
+      // « jusqu'à », et cette ligne dit ce qu'il touche sans rien ajouter,
+      // puis ce que les cinq points rendus lui ajoutent s'il les place.
+      // « Sans risque » est le placement du pilier, des titres d'État portés
+      // jusqu'à leur échéance, et c'est ce qui autorise le mot « jusqu'à » :
+      // le montant du haut s'atteint par une décision, pas par un coup de
+      // bourse.
       const detail = partVolontaire > 0 ? `
         ${g.eurosCentimes(montants.pension(partCapitalisee - partVolontaire) / 12)}
-        de rente capitalisée obligatoire +
-        ${g.eurosCentimes(montants.pension(partVolontaire) / 12)} de rente
-        des cinq points volontaires, par mois` : `
+        de rente capitalisée obligatoire — soit
+        ${g.eurosCentimes(montants.pension(montant - partVolontaire) / 12)} par
+        mois sans rien ajouter — et
+        ${g.eurosCentimes(montants.pension(partVolontaire) / 12)} de plus si
+        vous placez les cinq points rendus, sans risque` : `
         ${g.eurosCentimes(montants.pension(partCapitalisee) / 12)} de rente
         capitalisée, par mois`;
       partage = `
@@ -3437,7 +3445,8 @@ function resultats(contexte, saisie) {
     <span class="titre">${echapper(titre)}</span>
     <span class="montant">${salaire(cle)}
       <span class="chiffre principal">
-        <span class="categorie">retraite</span>
+        <span class="categorie">${partVolontaire > 0 ? "retraite jusqu'à"
+    : "retraite"}</span>
         <span class="somme">${g.nombre(montants.pension(montant) / 12)}</span>
         <span class="unite">${montants.unitePension}</span>
       </span>
@@ -3476,7 +3485,8 @@ function resultats(contexte, saisie) {
       + `${g.pourcentage(tauxCapitalisationVolontaireApplique(comparaison.parametres), false, 0)} `
       + "que vous ajoutez librement pour cotiser autant qu'aujourd'hui "
       + `(${g.pourcentage(tauxRetraitePropose(comparaison.parametres), false, 0)} `
-      + "en tout) — plus une garantie vieillesse payée par l'impôt",
+      + "en tout), les uns comme les autres placés sans risque — plus "
+      + "une garantie vieillesse payée par l'impôt",
       comparaison.variationTotale("notionnel_liberal"),
       comparaison.tauxRemplacementTotal("notionnel_liberal"),
       capitalise, capitaliseVolontaire);

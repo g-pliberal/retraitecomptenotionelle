@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 035<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 045<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -9514,3 +9514,51 @@ que le lecteur voie les deux chiffres et sache lequel est promis.
 
 **Fichiers.** `scripts/partage_taux_unique.py` ; `docs/limites.md` § 5 ante
 bis, réserve 2 ; le docstring de `part_salariale_taux_unique` dans `config.py`.
+
+
+### 57. Le total du système 4 est annoncé comme un plafond : « retraite jusqu'à », et le plancher sous lui — `fait`
+
+**Demande.** « Est-ce qu'on peut changer la retraite montrée pour le système 4
+par la répartition, la capitalisation obligatoire et facultative ? Pour ne pas
+mentir, on peut dire jusqu'à xxxx €/mois sans risque. Ça ne ment pas et ça
+peut montrer le gain potentiel d'une capitalisation facultative de 5 % sans
+risque. »
+
+**Ce que l'action 55 avait ouvert.** Depuis qu'elle a sorti les cinq points
+rendus de la fiche de paie, la ligne du système 4 montrait le salaire de qui
+ne place RIEN — le net plein — à côté de la pension de qui place TOUT : le
+total comprend la rente volontaire, et la comprenait déjà. Les deux chiffres
+sont vrais séparément et se contredisent ensemble. C'est cet écart que la
+demande nomme, et sa réponse est la bonne : un plafond n'est pas un mensonge
+tant qu'il est dit plafond.
+
+**Ce qui est fait.** Le grand nombre du système 4 porte désormais l'étiquette
+« RETRAITE JUSQU'À » au lieu de « RETRAITE », et lui seul — les trois autres
+systèmes ne dépendent d'aucune décision de l'assuré, et leur étiquette ne
+bouge pas. La ligne de composition sous lui passe de trois montants à quatre,
+avec le PLANCHER écrit au milieu : pension par répartition, plus rente
+capitalisée obligatoire, « soit X par mois sans rien ajouter », puis « et Y de
+plus si vous placez les cinq points rendus, sans risque ». La glose dit que
+les deux cotisations capitalisées sont « les unes comme les autres placées
+sans risque ». Sans le volontaire (`capitalisation_volontaire=False`),
+l'étiquette et la ligne retrouvent leur forme d'avant : rien de tout cela ne
+paraît.
+
+**Pourquoi « sans risque » ne se paie pas de mots.** C'est le placement que le
+modèle applique déjà, écrit sur la page Méthode et dans `methodologie.md` :
+des titres d'État portés jusqu'à leur échéance, sur la courbe des taux sans
+risque de la zone euro, à des maturités qui raccourcissent à l'approche du
+départ. C'est ce qui autorise le mot « jusqu'à » plutôt qu'une fourchette : le
+montant du haut s'atteint par une décision, pas par un coup de bourse. Le
+modèle ne simule aucun risque de marché, et la page le dit déjà.
+
+**Ce que ça déplace.** Aucun chiffre : ni le total, qui comprenait déjà la
+rente volontaire, ni la répartition, ni le taux de remplacement, ni l'écart au
+système actuel. Ce qui change est ce que le lecteur croit lire. Pour le
+non-cadre du privé né en 1990 à 3 000 € par mois, la ligne annonce « jusqu'à
+1 981,34 € », écrit « 1 663,91 € par mois sans rien ajouter » et « 317,43 € de
+plus si vous placez les cinq points rendus ». Portage JS à l'identique,
+témoins régénérés, rendu vérifié sans débordement à 1440, 1024 et 390 points ;
+le test des cinq points volontaires exige l'étiquette, son unicité, le
+plancher et la condition ; README, `methodologie.md` et le parcours de
+présentation suivent.
