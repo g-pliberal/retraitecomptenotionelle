@@ -145,8 +145,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->751<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 325<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->752<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 328<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Sept pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -839,7 +839,10 @@ contrôle et non identité.
 | 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,02 % | **−1,52 %** | **0,92** |
 
 Chiffres du 20 septembre 2026, ceux que la page Coût affiche, Python et
-JavaScript à l'identique. Le scénario 6 ne s'équilibre jamais sur la fenêtre :
+JavaScript à l'identique, et qu'un test y confronte ligne par ligne
+(`test_le_README_donne_le_solde_que_la_page_cout_calcule`) : elles ont été
+fausses plusieurs jours de suite, chaque fois que le modèle de coût a bougé.
+Le scénario 6 ne s'équilibre jamais sur la fenêtre :
 −0,90 point de PIB en 2026, −2,03 en 2050, −0,63 en 2070, et il accumule
 103 % du PIB de dette en 2070, contre 66 % pour le système actuel.
 
@@ -850,8 +853,8 @@ par construction, donc son solde doit être le solde publié, et il l'est.
 
 **Un coefficient supérieur à un n'est pas une économie, c'est une marge.** Un
 système notionnel réel *applique* son coefficient : il ne laisse pas dormir un
-excédent, il relève les pensions jusqu'à l'équilibre. Lire les 1,87 du
-scénario 3 en 2070 comme une économie de 46 % est donc un contresens : à
+excédent, il relève les pensions jusqu'à l'équilibre. Lire les 1,67 du
+scénario 3 en 2070 comme une économie de 40 % est donc un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, mais **autrement
 réparti entre les carrières** — ce qui est exactement ce que le reste de ce dépôt
 mesure. Le modèle calcule ce facteur ; il ne l'applique jamais, et toutes les
@@ -876,7 +879,7 @@ de chômage ; leur coefficient ne compte donc pas ces recettes : elles leur
 sont retirées, année par année de 2013 à 2024, à part constante des ressources
 avant et sur tout l'horizon projeté. C'est pourquoi les scénarios 3 et 5 sont
 déjà en déficit en 2025, où ils servent encore les pensions du système actuel,
-et pourquoi le scénario 3 vaut 1,64 en 2070 et non 1,79. Le système actuel,
+et pourquoi le scénario 3 vaut 1,67 en 2070, moins que sans ce retrait. Le système actuel,
 lui, encaisse tout, et son solde reste celui du COR.
 
 **La recette suit aussi le TAUX, et cela ne concerne que le scénario 6.** Il
@@ -887,13 +890,12 @@ le plafond, chiffre que le COR publie dans son rapport annuel et que le modèle
 retrouve à huit dixièmes de point, et bien davantage pour un fonctionnaire,
 dont l'employeur verse 74,28 % du traitement. La part cotisée des ressources,
 77 % du total, est donc multipliée par **0,63** à compter de la bascule. Cela
-change le sens du tableau pour ce scénario : le jour où la recette a suivi le
-taux, son solde moyen est passé de −0,96 % du PIB à −1,93 % ; au 20 septembre
-2026, après tout ce qui a été corrigé depuis, il est à −1,52 % et son
-coefficient de 2070 à 0,92. Il est le seul des trois systèmes rétroactifs à
-ne pas afficher de marge, et il passe sous le système actuel, qui est à
-−1,13 % — de quatre dixièmes de point. Ce
-déficit est le coût de transition du taux unique : pendant trente ans, la
+change le sens du tableau pour ce scénario : son solde moyen s'établit à
+−1,52 % du PIB, et son coefficient est sous un sur chacune des années
+projetées, 0,79 au plus bas en 2049, 0,92 en 2070. Il est le seul des trois
+systèmes rétroactifs à ne pas afficher de marge, et il passe sous le système
+actuel, qui est à −1,13 % — de quatre dixièmes de point. Ce déficit est le
+coût de transition du taux unique : pendant trente ans, la
 caisse paie les pensions de l'ancien système avec dix points de cotisation en
 moins, et aucune règle d'indexation ne le règle. Les quatre autres scénarios notionnels ne changent que ce qui
 est PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ : l'employeur verse sa part dans
@@ -1172,7 +1174,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1249 tests Python
+tests/                          1251 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1221,7 +1223,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1249<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1251<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

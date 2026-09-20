@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 128<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->27 207<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -3422,6 +3422,27 @@ et les deux moteurs rendent le même.
 dépliant de transition est corrigée, et les deux contradictions connues
 (étape 2 de la transition, écart soldé contre coefficient jamais appliqué) sont
 dans le fichier avec l'action qui les referme — 24 pour l'une, 11 pour l'autre.
+
+**Un troisième cas, refermé le 20 septembre 2026 sans le catalogue.** Cas
+types affirmait, en texte fixe, que le coefficient d'équilibre de la
+proposition « est supérieur à un chaque année ». La phrase a été écrite le 19
+au soir, quand c'était vrai ; le 20 au matin, quatre changements du modèle de
+coût (impôts affectés, garantie, recours, succession) l'avaient fait passer
+sous un sur les quarante-cinq années projetées, et la page Coût du même site
+chiffrait 0,92 en 2070 pendant que Cas types promettait une marge. Le parcours
+de présentation demandait de lire la phrase à voix haute en réponse à « tout
+est rouge, donc les pensions baissent ? ». C'est le mode de panne 2, une
+page qu'une autre dément, et il n'a tenu que douze heures. La phrase est
+désormais CALCULÉE depuis le solde, dans les deux moteurs
+(`_reglage_proposition`, `_lecture_reglage_proposition`), la note de Coût
+lit le coefficient dans les deux sens au lieu de supposer une marge, et
+`test_cas_types_dit_du_reglage_ce_que_le_solde_dit` exige que les deux pages
+disent ce que le solde dit. Le tableau des soldes du README, faux lui aussi
+(−1,93 % et 0,89 pour −1,52 % et 0,92), est tenu par
+`test_le_README_donne_le_solde_que_la_page_cout_calcule`. Le parcours de
+présentation dit maintenant de ne pas promettre de marge. Ce que l'action
+garde à faire : le catalogue, pour que la prochaine phrase fixe ne puisse pas
+entrer sans qu'on ait dit ce qu'elle engage.
 
 ---
 
@@ -8657,6 +8678,13 @@ inscrire dans le manifeste. Onze tests de plus, sans réseau.
   il montre, depuis l'action 31, le compte notionnel à deux parts et la
   proposition : les en-têtes disent désormais ce que les colonnes portent, sur
   les deux moteurs.
+- **20 septembre 2026, action 34, un cas refermé.** Cas types promettait en
+  texte fixe un coefficient d'équilibre « supérieur à un chaque année » pour
+  la proposition, quand Coût le chiffrait sous un sur toute la projection.
+  La phrase est calculée depuis le solde sur les deux moteurs, la note de
+  Coût lit le coefficient dans les deux sens, deux tests tiennent les pages
+  et le tableau du README, le parcours de présentation ne promet plus de
+  marge. Le détail est sous l'action, qui reste à faire pour le catalogue.
 
 ### 46. L'emploi projeté suit le scénario de référence du COR, pour les systèmes 2 à 6 — `fait`
 

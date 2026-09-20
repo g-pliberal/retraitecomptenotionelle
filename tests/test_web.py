@@ -4739,17 +4739,114 @@ def test_la_cle_de_lecture_des_cas_types_precede_les_chiffres(contexte):
     """Le scénario 6 affiche −28 % à −76 % : sans la clé, on lit une baisse.
 
     La clé était sur la page Coût ; elle est en tête de Cas types, AVANT les
-    trois chiffres d'ouverture et les grilles, et dit la phrase qui compte : un
-    coefficient supérieur à un n'est pas une économie, c'est une marge. Elle
-    renvoie à la section de Coût qui le chiffre.
+    trois chiffres d'ouverture et les grilles, et dit de quel côté de un se
+    trouve le réglage annuel de la proposition. Elle renvoie à la section de
+    Coût qui le chiffre.
     """
     corps = rendre(contexte, "/cas-types", {})[1]
     cle = corps.index("Ces pourcentages ne sont pas des baisses de")
     assert cle < corps.index('<div class="fiches reperes">')
     assert cle < corps.index('<div class="panneaux">')
-    assert "Un coefficient supérieur à un est une marge" in corps
+    assert "Pour la proposition, ce facteur est " in corps
     assert 'data-vers="cout-equilibre"' in corps
     assert "Ces pourcentages ne sont pas des baisses" in _hors_depliants(corps)
+
+
+def _reglage_proposition_attendu(contexte):
+    """Le coefficient de la proposition, recalculé ici sans passer par la page."""
+    solde = contexte.cout().solde
+    debut, fin = solde.premiere_annee_projetee, solde.derniere_annee
+    coefficients = {annee: solde.annee(annee).coefficient("notionnel_liberal")
+                    for annee in range(debut, fin + 1)}
+    annee_minimum = min(coefficients, key=coefficients.get)
+    return debut, fin, coefficients, annee_minimum
+
+
+def test_cas_types_dit_du_reglage_ce_que_le_solde_dit(contexte):
+    """La phrase de Cas types se calcule ; elle ne s'écrit plus.
+
+    Le 19 septembre 2026 au soir, la page affirmait en texte fixe que le
+    coefficient d'équilibre de la proposition « est supérieur à un chaque
+    année ». Le 20 au matin, quatre changements du modèle de coût l'avaient
+    fait passer sous un sur les quarante-cinq années projetées, et la page
+    Coût du même site le chiffrait à 0,92 en 2070 pendant que Cas types
+    promettait une marge. Le parcours de présentation demandait de lire la
+    phrase à voix haute. Ce test lit le solde, en déduit la phrase attendue,
+    et exige que Cas types et Coût la portent toutes les deux.
+    """
+    debut, fin, coefficients, annee_minimum = _reglage_proposition_attendu(contexte)
+    sous_un = sum(1 for c in coefficients.values() if c < 1.0)
+    cas_types = rendre(contexte, "/cas-types", {})[1]
+    cout = rendre(contexte, "/cout", {})[1]
+    minimum = g.nombre(coefficients[annee_minimum], 2)
+    dernier = g.nombre(coefficients[fin], 2)
+
+    if sous_un == 0:
+        assert (f"supérieur à un sur chacune des années projetées, de {debut} à {fin}"
+                in cas_types)
+        assert "Un coefficient supérieur à un est une marge" in cas_types
+        assert "inférieur à un" not in cas_types
+        assert f"Les {dernier} de la proposition en {fin} disent une marge" in cout
+    elif sous_un == len(coefficients):
+        assert f"inférieur à un de {debut} à {fin}" in cas_types
+        assert f"{minimum} au plus bas en {annee_minimum}" in cas_types
+        assert f"{dernier} en {fin}" in cas_types
+        assert "Un coefficient inférieur à un est un manque" in cas_types
+        assert "supérieur à un chaque année" not in cas_types
+        assert f"Les {dernier} de la proposition en {fin} disent un manque" in cout
+        assert f"son plus bas, {minimum} en {annee_minimum}" in cout
+    else:
+        assert f"inférieur à un {sous_un} années sur {len(coefficients)}" in cas_types
+        assert f"{minimum} en {annee_minimum}" in cas_types
+        assert f"son plus bas, {minimum} en {annee_minimum}" in cout
+    # Et dans aucun cas la page ne lit plus un coefficient comme une économie.
+    assert "comme\nune économie" not in cout
+    assert "Le coefficient se lit dans les deux sens" in cout
+
+
+def test_le_README_donne_le_solde_que_la_page_cout_calcule(contexte):
+    """Le tableau du README (section « Un coût n'est pas un solde ») est celui
+    de la page Coût, ligne par ligne.
+
+    Il a été faux plusieurs jours de suite : −1,93 % et 0,89 pour la
+    proposition quand le site affichait −1,52 % et 0,92, et 1,87 pour le
+    scénario 3 deux paragraphes après un tableau qui disait 1,64. Le README
+    est le document le plus lu du dépôt, et sa section 6 n'est pas encore une
+    zone `etat` de `zones.yaml` : ce test tient ses nombres en attendant.
+    """
+    from pathlib import Path
+
+    from retraite_notionnelle.cout import SCENARIOS
+
+    readme = (Path(__file__).resolve().parents[1] / "README.md").read_text(encoding="utf-8")
+    solde = contexte.cout().solde
+    observe = solde.annee(solde.derniere_annee_observee)
+    horizon = solde.annee(solde.derniere_annee)
+
+    def normaliser(texte: str) -> str:
+        return (texte.replace("**", "").replace("−", "-").replace(" du PIB", "")
+                .replace("\u202f", " ").replace("\u00a0", " ").strip())
+
+    for numero, (scenario, _libelle) in enumerate(SCENARIOS, start=1):
+        ligne = re.search(rf"^\| {numero}\. [^|]*\|([^|]*)\|([^|]*)\|([^|]*)\|$",
+                          readme, re.M)
+        assert ligne, f"le README n'a plus de ligne {numero} dans le tableau des soldes"
+        attendu = [
+            g.pourcentage(observe.solde(scenario), signe=True, decimales=2),
+            g.pourcentage(solde.solde_moyen(scenario, solde.premiere_annee_projetee,
+                                            solde.derniere_annee),
+                          signe=True, decimales=2),
+            g.nombre(horizon.coefficient(scenario), 2),
+        ]
+        assert [normaliser(c) for c in ligne.groups()] == [normaliser(a) for a in attendu], (
+            f"ligne {numero} du README : {ligne.groups()} ; la page Coût dit {attendu}")
+
+    coefficient_3 = g.nombre(horizon.coefficient("notionnel_prospectif"), 2)
+    economie_3 = g.pourcentage(1 - 1 / horizon.coefficient("notionnel_prospectif"), decimales=0)
+    assert normaliser(
+        f"Lire les {coefficient_3} du\nscénario 3 en {solde.derniere_annee} comme "
+        f"une économie de {economie_3}") in normaliser(readme), (
+        "la phrase du README sur le scénario 3 ne dit plus ce que dit le tableau")
 
 
 def test_les_comparaisons_rappellent_que_le_systeme_actuel_derive(contexte):

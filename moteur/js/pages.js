@@ -5074,15 +5074,107 @@ function nomScenario(scenario, libelle) {
   return echapper(libelle) + (badge ? ` ${badge}` : "");
 }
 
+/**
+ * Le coefficient d'équilibre de la proposition, sur les années projetées.
+ *
+ * Les pages Cas types et Coût le lisaient dans une phrase FIXE, écrite un soir
+ * où il dépassait un sur tout l'horizon ; le modèle de coût a changé le
+ * lendemain matin, et la phrase est restée. Les deux pages composent
+ * désormais leur lecture à partir de ces nombres.
+ */
+function reglageProposition(solde) {
+  const debut = solde.premiereAnneeProjetee;
+  const fin = solde.derniereAnnee;
+  const annees = [];
+  for (let annee = debut; annee <= fin; annee += 1) {
+    annees.push([annee, solde.annee(annee).coefficient("notionnel_liberal")]);
+  }
+  let [anneeMinimum, minimum] = annees[0];
+  for (const [annee, coefficient] of annees) {
+    if (coefficient < minimum) { anneeMinimum = annee; minimum = coefficient; }
+  }
+  return {
+    debut, fin,
+    premier: annees[0][1], dernier: annees[annees.length - 1][1],
+    minimum, anneeMinimum,
+    sousUn: annees.filter(([, coefficient]) => coefficient < 1.0).length,
+    total: annees.length,
+  };
+}
+
+/** La phrase de Cas types : de quel côté de un, et de combien. */
+function lectureReglageProposition(r) {
+  if (r.sousUn === 0) {
+    return "Pour la proposition, ce facteur est supérieur à un sur chacune "
+      + `des années projetées, de ${r.debut} à ${r.fin} : à `
+      + "prélèvement égal, le système aurait de quoi servir davantage que "
+      + "ces cases n'affichent. <strong>Un coefficient supérieur à un est "
+      + "une marge</strong>, de quoi relever toutes les cases d'autant.";
+  }
+  if (r.sousUn === r.total) {
+    return "Pour la proposition, ce facteur est inférieur à un de "
+      + `${r.debut} à ${r.fin} : ${g.nombre(r.minimum, 2)} au plus `
+      + `bas en ${r.anneeMinimum}, ${g.nombre(r.dernier, 2)} en `
+      + `${r.fin}. Appliqué, il aurait abaissé les cases d'autant, `
+      + `jusqu'à ${g.pourcentage(1 - r.minimum, false, 0)} en `
+      + `${r.anneeMinimum}. <strong>Un coefficient inférieur à un est `
+      + "un manque</strong>, le coût de la transition au taux unique.";
+  }
+  return `Pour la proposition, ce facteur est inférieur à un ${r.sousUn} `
+    + `années sur ${r.total} entre ${r.debut} et ${r.fin}, au plus `
+    + `bas ${g.nombre(r.minimum, 2)} en ${r.anneeMinimum}, et `
+    + "supérieur à un les autres. Au-dessus de un, le système aurait de quoi "
+    + "relever toutes les cases d'autant ; au-dessous, il aurait fallu les "
+    + "abaisser, ou financer la différence autrement.";
+}
+
+/** La note de Coût : le coefficient se lit dans les deux sens, jamais en économie. */
+function noteLectureCoefficient(r) {
+  const dernier = g.nombre(r.dernier, 2);
+  let lecture;
+  if (r.dernier >= 1.0) {
+    lecture = `Les ${dernier} de la proposition en ${r.fin} disent une `
+      + `marge de ${g.pourcentage(r.dernier - 1, false, 0)}`;
+  } else {
+    lecture = `Les ${dernier} de la proposition en ${r.fin} disent un `
+      + `manque de ${g.pourcentage(1 - r.dernier, false, 0)}`;
+  }
+  if (r.sousUn === r.total) {
+    lecture += `, et son plus bas, ${g.nombre(r.minimum, 2)} en `
+      + `${r.anneeMinimum}, un manque de `
+      + `${g.pourcentage(1 - r.minimum, false, 0)} : le coût `
+      + "de transition du taux unique.";
+  } else if (r.minimum < 1.0) {
+    lecture += `, et son plus bas, ${g.nombre(r.minimum, 2)} en `
+      + `${r.anneeMinimum}, un manque de `
+      + `${g.pourcentage(1 - r.minimum, false, 0)}.`;
+  } else {
+    lecture += ".";
+  }
+  return `<div class="note"><strong>Le coefficient se lit dans les deux sens,
+jamais comme une économie.</strong> Au-dessus de un, une marge, et une marge se
+sert : à ces recettes-là, le système servirait davantage que ce que la colonne
+« dépense » lui prête, autrement réparti entre les carrières. Au-dessous de un,
+un manque : il faudrait abaisser toutes les pensions d'autant, ou financer la
+différence autrement. ${lecture} Le modèle calcule ce facteur ; il ne l'applique
+jamais, et toutes les courbes de coût de cette page sont celles d'un système
+qui ne se pilote pas. L'appliquer changerait toutes les pensions par un même
+facteur, donc tous les niveaux de cette page, sans toucher aux écarts entre carrières,
+qui sont la seule chose que ce site mesure.</div>`;
+}
+
 function casTypes(contexte) {
   const simulateur = contexte.simulateur();
   const resultat = calculerCasTypes(simulateur);
   const montre = GRILLES_CAS_TYPES[0][0];
   // Le solde du système actuel, observé puis projeté par le COR : il est dans
-  // les comptes, et ne coûte rien — à la différence du coût agrégé.
+  // les comptes, et ne coûte rien. Le coût agrégé, lui, coûte deux secondes
+  // une fois, et la page le demande pour une seule phrase : celle qui dit de
+  // quel côté de un se trouve le réglage de la proposition.
   const comptes = contexte.comptes();
   const obs = comptes.derniereAnneeObservee;
   const horizon = comptes.derniereAnnee;
+  const reglage = reglageProposition(contexte.cout().solde);
 
   const grille = (scenario, intitule) => {
     const lignes = CAS_TYPES.map((cas) => {
@@ -5215,13 +5307,10 @@ ${tete}
 pension.</strong> Chaque case compare deux carrières calculées sous la même
 règle, et ce que la grille mesure est l'écart entre ses lignes : ce qu'un
 militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
-niveau général, lui, dépend d'un
+niveau général dépend d'un
 ${g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle calcule
-mais n'applique jamais : il multiplierait toutes les cases par le même facteur.
-Pour la proposition, ce facteur est supérieur à un chaque année : à
-prélèvement égal, le système aurait de quoi servir davantage que ces cases
-n'affichent. <strong>Un coefficient supérieur à un est une marge</strong>,
-de quoi relever toutes les cases d'autant.
+mais n'applique jamais : il multiplierait les cases par le même facteur.
+${lectureReglageProposition(reglage)}
 <a href="${g.lien("/cout")}" data-vers="cout-equilibre">La page Coût le chiffre</a>.</div>
 
 <div class="fiches reperes">${reperes}</div>
@@ -6749,17 +6838,7 @@ garde la même architecture d'exonérations, ce que son texte ne dit pas. Les de
 lectures se défendent, elles sont toutes deux calculées, et la page a retenu la
 première.</div>
 
-<div class="note"><strong>Un coefficient supérieur à un est une marge, et
-une marge se sert.</strong> Lire les
-${g.nombre(horizon.coefficient("notionnel_liberal"), 2)} de la proposition comme
-une économie de ${g.pourcentage(
-      1 - 1 / horizon.coefficient("notionnel_liberal"), false, 0)} serait un
-contresens : à ces recettes-là, ce système servirait davantage que ce que la
-colonne « dépense » lui prête, et autrement réparti entre les carrières. Le
-modèle calcule ce facteur ; il ne l'applique jamais, et toutes les courbes de
-coût de cette page sont celles d'un système qui ne se pilote pas. L'appliquer changerait toutes les pensions par un même facteur, donc
-tous les niveaux de cette page, sans toucher aux écarts entre carrières,
-qui sont la seule chose que ce site mesure.</div>
+${noteLectureCoefficient(reglageProposition(solde))}
 `, "cout-equilibre");
 }
 
