@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 010<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->25 060<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -1186,7 +1186,7 @@ du journal échoue si une fiche de série arrive sans date.
   ne réécrit que les fiches des séries qu'il a atteintes, et le diff montre
   exactement lesquelles — c'est même devenu sa vertu.
 
-### 14. La mortalité différentielle par revenu, que le diviseur ignore — `à faire`
+### 14. La mortalité différentielle par revenu, que le diviseur ignore — `fait`
 
 **Pourquoi.** Le diviseur du §5 de `methodologie.md` est une espérance de vie de
 population générale : la même pour l'ouvrier et pour le cadre. À capital
@@ -1254,6 +1254,90 @@ n'appartient pas au notionnel. Toute rente viagère à taux commun le porte, le
 système actuel le premier, et le calcul doit donc porter sur les six scénarios ;
 si l'écart s'y retrouve du même ordre, c'est un résultat, et il coupe
 l'objection au lieu de la nourrir.
+
+**Ce que ça a déplacé, 20 septembre 2026 — d'abord l'axe des POPULATIONS,
+avec la seule mesure qu'un producteur publie.** Le Service des retraites de
+l'État donne l'espérance de vie à 65 ans de ses pensionnés civils (PAP 741 du
+PLF 2026, apporté par l'utilisateur) : 24,68 ans pour les femmes, 21,16 pour
+les hommes en 2024, un an de plus que l'INSEE à la population générale.
+
+- *La mécanique, exactement celle que la marche prescrivait.* Un facteur sur
+  la force de mortalité de la table générale — la survie de chaque cellule
+  (âge, année) élevée à cette puissance —, calé par bissection sur la table
+  du moment de l'année observée pour reproduire l'espérance publiée, tenu
+  constant sur toutes les autres années en le disant. Il vaut 0,858 pour les
+  hommes et 0,852 pour les femmes des fonctionnaires civils. Python
+  (`facteur_population`) et JavaScript (`facteurPopulation`) concordent au
+  bit près, le paquet transportant les facteurs pour que le navigateur ne
+  recalibre pas. La donnée est dans
+  `mortalite/esperances_vie_populations.csv`, la variante dans
+  `Parametres.population_conversion`, lue par le convertisseur et le pilier
+  capitalisé, sur le site sous « Population de la table », dans les témoins.
+- *Le résultat, sur le fonctionnaire sédentaire, par
+  `scripts/mortalite_population.py`.* Né en 1975, parti à 65 ans en 2040 : la
+  table de sa population lui donne 26,39 ans de rente contre 24,88, soit
+  **1,5 an**, et une pension notionnelle inférieure de **5,7 %** à capital
+  égal — 44 243 € contre 46 925 € au scénario 4. Le transfert sur la vie vaut
+  71 000 € au scénario 4 et **54 000 € sous le système actuel**, dont la
+  pension ne bouge pas d'un euro : aucun diviseur ne l'a calculée. Sur les
+  générations 1960 à 2000, l'écart va de 1,6 à 1,3 an et de 6,1 à 5,0 %,
+  parce que la table générale rattrape peu à peu.
+
+**Puis l'axe du REVENU, par les tables de l'INSEE — et c'est la question
+posée qui reçoit sa réponse.**
+
+- *La donnée, lue chez le producteur et non saisie.*
+  `scripts/fetch/insee_mortalite_niveau_de_vie.py` télécharge le classeur des
+  *Insee Résultats* de mai 2025 (`morta_niv.xlsx`, insee.fr répond à la
+  session) et en reprend telles quelles e0, e60 et e65 de l'ensemble et des
+  vingt vingtiles, par sexe, pour 2012-2016 et 2020-2024, avec le niveau de
+  vie mensuel moyen de chaque vingtile. À 65 ans en 2020-2024 : 15,1 ans pour
+  les 5 % d'hommes les plus modestes, 22,1 pour les 5 % les plus aisés ; 20,2
+  et 25,2 chez les femmes. Le récupérateur contrôle l'ensemble de l'étude
+  contre la moyenne des cinq espérances annuelles certifiées, et trouve un à
+  trois dixièmes de moins, toujours du même signe — le champ et la méthode de
+  l'échantillon démographique permanent. **D'où une règle de calibration** :
+  un vingtile n'est pas calé sur sa valeur brute mais sur son rapport à cet
+  ensemble, appliqué à la table générale ; les facteurs vont de 1,75 (hommes
+  du premier vingtile) à 0,69 (dernier), et l'écart de sept ans se retrouve
+  dans le modèle à un dixième près. Portage JavaScript au bit près, cette
+  règle comprise.
+- *Le rattachement, une convention et non une mesure.* Un cas type est placé
+  au vingtile dont le niveau de vie moyen est le plus proche de son salaire
+  rapporté au salaire moyen, appliqué au niveau de vie moyen des vingt
+  vingtiles (`population_niveau_de_vie`) : le SMIC au quatrième, le salaire
+  moyen au treizième, le cadre au dix-neuvième, le libéral au vingtième. Le
+  niveau de vie est celui d'un ménage par unité de consommation, un salaire
+  n'en dit qu'une partie, et c'est écrit dans `methodologie.md` §5.
+- *Le résultat, treize cas types, génération 1975, par
+  `scripts/mortalite_population.py --niveau-de-vie`.* Le salarié au SMIC a
+  **3,0 ans de rente de moins** que la table commune ne lui en compte,
+  l'exploitant agricole 3,7 de moins ; le cadre **2,7 de plus**, le libéral
+  3,2 de plus, les fonctionnaires et agents des régimes spéciaux 1,4 à 2,0 de
+  plus. À capital égal, une table qui le saurait servirait 12,5 % de plus au
+  SMIC et 11,7 % de moins au libéral. Sur la vie, sous le système actuel :
+  49 000 € retirés au SMIC, 44 000 € à l'exploitant, 173 000 € ajoutés au
+  libéral, 154 000 € au cadre. Le diviseur commun transfère des modestes vers
+  les aisés, dans le sens qu'on craignait, et il le fait dans les six
+  scénarios : le système actuel, sans diviseur, autant que les autres.
+  L'objection est donc coupée comme l'action le demandait — non parce que
+  l'écart serait petit, il ne l'est pas, mais parce qu'il n'appartient pas au
+  notionnel.
+- *Sur le site.* Quatre populations sous « Population de la table » — les
+  fonctionnaires civils, les 5 % les plus modestes, le niveau de vie médian,
+  les 5 % les plus aisés —, trois témoins, et `limites.md` §5 qui porte le
+  point de périmètre.
+
+**Ce qui reste.** Le rattachement est le maillon faible : un salaire n'est pas
+un niveau de vie, et une carrière n'est pas un ménage. Une lecture de la
+distribution des niveaux de vie des RETRAITÉS par vingtile — l'INSEE la
+publie dans l'enquête Revenus fiscaux et sociaux — permettrait de rattacher
+par la pension plutôt que par le salaire. Le facteur reste constant dans le
+temps ; l'*Insee Première* note que l'écart s'est ACCRU entre les deux
+périodes, ce que les deux jeux du fichier permettent de mesurer et que le
+modèle ne fait pas encore. Et la grille de cas types n'est pas une population :
+le transfert agrégé, en milliards, demanderait la distribution des pensions
+par niveau de vie, que le dépôt n'a pas.
 
 ---
 

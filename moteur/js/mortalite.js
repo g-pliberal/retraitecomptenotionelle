@@ -183,6 +183,7 @@ export class DonneesMortalite {
     const populations = paquet.populations || {};
     this._facteursPaquet = populations.facteurs || {};
     this._esperancesPubliees = populations.esperances || {};
+    this._niveauxDeVie = populations.niveaux_de_vie || {};
     this._facteurs = new Map();
   }
 
@@ -200,6 +201,11 @@ export class DonneesMortalite {
 
   /** L'année d'observation et l'espérance à 65 ans publiées : `[annee, e65]`. */
   esperancePubliee(population, sexe) {
+    const [annee, valeur] = this._referencePopulation(population, sexe);
+    return [annee, valeur];
+  }
+
+  _referencePopulation(population, sexe) {
     const valeur = this._esperancesPubliees[`${population}|${sexe}`];
     if (valeur === undefined) {
       throw new Error(
@@ -208,6 +214,45 @@ export class DonneesMortalite {
       );
     }
     return valeur;
+  }
+
+  /**
+   * L'espérance que le facteur doit reproduire : la valeur publiée, ou, quand
+   * l'étude publie son propre ensemble, la valeur publiée dans le rapport où
+   * elle est à cet ensemble, appliqué à la table générale de l'année.
+   */
+  ciblePopulation(population, sexe) {
+    const [annee, valeur, ensemble] = this._referencePopulation(population, sexe);
+    if (ensemble === null || ensemble === undefined) {
+      return [annee, valeur];
+    }
+    const generale = this._courbeBrute(65.0, annee, sexe, false, 1.0);
+    let e65 = 0.0;
+    for (let t = 0; t < generale.length - 1; t += 1) {
+      e65 += 0.5 * (generale[t] + generale[t + 1]);
+    }
+    return [annee, valeur * e65 / ensemble];
+  }
+
+  /**
+   * Le vingtile de niveau de vie où un rapport au niveau moyen place
+   * quelqu'un — la convention qui rattache un cas type par son salaire.
+   * Portage de `population_niveau_de_vie`.
+   */
+  populationNiveauDeVie(rapportAuMoyen) {
+    const entrees = Object.entries(this._niveauxDeVie);
+    if (entrees.length === 0) {
+      return null;
+    }
+    const moyen = entrees.reduce((somme, [, n]) => somme + n, 0) / entrees.length;
+    const niveau = rapportAuMoyen * moyen;
+    let meilleur = null;
+    for (const [vingtile, montant] of entrees) {
+      if (meilleur === null || Math.abs(montant - niveau) < Math.abs(meilleur[1] - niveau)) {
+        meilleur = [Number(vingtile), montant];
+      }
+    }
+    return `niveau_de_vie_v${String(meilleur[0]).padStart(2, "0")}`;
   }
 
   /**
@@ -222,7 +267,7 @@ export class DonneesMortalite {
     if (memorise !== undefined) {
       return memorise;
     }
-    const [annee, cible] = this.esperancePubliee(population, sexe);
+    const [annee, cible] = this.ciblePopulation(population, sexe);
     let facteur = this._facteursPaquet[cle];
     if (facteur === undefined) {
       const esperance = (f) => {
@@ -234,7 +279,7 @@ export class DonneesMortalite {
         return total;
       };
       let bas = 0.05;
-      let haut = 5.0;
+      let haut = 8.0;
       for (let i = 0; i < 60; i += 1) {
         const milieu = Math.sqrt(bas * haut);
         if (esperance(milieu) > cible) {

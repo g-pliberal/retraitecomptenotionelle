@@ -132,6 +132,9 @@ TABLES = [("unisexe", "Unisexe (défaut)"), ("par_sexe", "Par sexe")]
 POPULATIONS = [
     ("commune", "Population générale (défaut)"),
     ("fonctionnaires_civils_etat", "Fonctionnaires civils de l'État"),
+    ("niveau_de_vie_v01", "Les 5 % les plus modestes (INSEE)"),
+    ("niveau_de_vie_v10", "Niveau de vie médian (INSEE)"),
+    ("niveau_de_vie_v20", "Les 5 % les plus aisés (INSEE)"),
 ]
 
 PARTS_COTISATION = [
@@ -2749,11 +2752,12 @@ def _champs_modelisation(saisie: Saisie) -> str:
         g.liste("population", "Population de la table", POPULATIONS,
                 saisie.population,
                 complement="La table est celle de la population générale. "
-                "Choisir une population dont le régime publie l'espérance de "
-                "vie — les fonctionnaires civils de l'État vivent un an de "
-                "plus à 65 ans — mesure ce qu'un diviseur commun leur "
-                "transfère. C'est une mesure, pas une règle : aucun système "
-                "ne trie ses rentes par population."),
+                "Choisir une population dont on connaît l'espérance de vie "
+                "— les fonctionnaires civils de l'État vivent un an de plus "
+                "à 65 ans, les 5 % les plus aisés sept ans de plus que les "
+                "5 % les plus modestes chez les hommes — mesure ce qu'un "
+                "diviseur commun lui transfère. C'est une mesure, pas une "
+                "règle : aucun système ne trie ses rentes par population."),
         g.liste("part_cotisation", "Part de la cotisation portée au compte",
                 PARTS_COTISATION, saisie.part_cotisation,
                 "salariale seule, ou salariale et patronale",

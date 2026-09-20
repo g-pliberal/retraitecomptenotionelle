@@ -5,6 +5,8 @@
     python scripts/mortalite_population.py --generations 1960 1990
     python scripts/mortalite_population.py --cas-type salaire_moyen  # une carrière du privé
                                                                  # sous la même mortalité
+    python scripts/mortalite_population.py --niveau-de-vie       # les treize cas types, chacun
+                                                                 # au vingtile où son salaire le place
 
 CE QU'IL MESURE
 ---------------
@@ -23,6 +25,19 @@ années de rente que la population reçoit en plus de la population générale.
 En euros constants, sans actualisation — ce que le diviseur fait lui-même,
 puisque la rente est actualisée au taux auquel elle est indexée (§5 de
 ``docs/methodologie.md``).
+
+L'AXE DU REVENU
+---------------
+``--niveau-de-vie`` prend les tables de l'INSEE par vingtile de niveau de vie
+(``mortalite/esperances_vie_niveau_de_vie.csv``) et rattache chaque cas type
+au vingtile où son salaire le place par rapport au salaire moyen — une
+convention, écrite dans ``DonneesMortalite.population_niveau_de_vie`` et dans
+``docs/methodologie.md`` §5. Le tableau donne alors, pour une génération, les
+treize cas types côte à côte : années de rente en plus ou en moins, écart de
+pension notionnelle à capital égal, transfert sur la vie sous le système
+actuel et sous la proposition. C'est la réponse à l'objection « le notionnel
+fait payer les carrières courtes pour la longévité des autres » : le chiffre,
+scénario par scénario.
 
 LE GARDE-FOU
 ------------
@@ -63,9 +78,19 @@ def cas_types_de(population: str):
     return [cas for cas in CAS_TYPES if any(c in caisses for c in cas.caisses)]
 
 
+_SIMULATEURS: dict[str | None, Simulateur] = {}
+
+
+def _simulateur(population: str | None) -> Simulateur:
+    """Un simulateur par population, gardé : ses données se chargent une fois."""
+    if population not in _SIMULATEURS:
+        _SIMULATEURS[population] = Simulateur(Parametres(population_conversion=population))
+    return _SIMULATEURS[population]
+
+
 def mesurer(population: str, cas_type, generation: int) -> dict | None:
-    commun = Simulateur(Parametres())
-    corrige = Simulateur(Parametres(population_conversion=population))
+    commun = _simulateur(None)
+    corrige = _simulateur(population)
     try:
         carriere = cas_type.construire(commun, generation)
         avec = commun.simuler(carriere)
@@ -101,15 +126,50 @@ def _euros(montant: float) -> str:
     return f"{montant:,.0f}".replace(",", "\u202f")
 
 
+def _par_niveau_de_vie(mortalite, generations: list[int]) -> int:
+    """Les treize cas types, chacun sous la mortalité de son vingtile."""
+    for sexe in mortalite.SEXES:
+        bas = mortalite.esperance_publiee("niveau_de_vie_v01", sexe)[1]
+        haut = mortalite.esperance_publiee("niveau_de_vie_v20", sexe)[1]
+        print(f"INSEE 2020-2024, {sexe} : e65 de {bas:.2f} ans (5 % les plus modestes) "
+              f"à {haut:.2f} ans (5 % les plus aisés)")
+    for generation in generations:
+        print(f"\n## Génération {generation}, chaque cas type au vingtile où son salaire le place")
+        print("  | Cas type | Salaire | Vingtile | Rente, table commune | Rente, son vingtile | Écart | "
+              "Pension notionnelle | Transfert, système actuel | Transfert, scénario 6 |")
+        print("  |---|---:|---:|---:|---:|---:|---:|---:|---:|")
+        for cas in CAS_TYPES:
+            population = mortalite.population_niveau_de_vie(cas.niveau_salaire)
+            resultat = mesurer(population, cas, generation)
+            if resultat is None or "erreur" in resultat:
+                print(f"  | {cas.libelle} | {cas.niveau_salaire:.2f} | {population[-2:]} | écarté |||||||")
+                continue
+            par_numero = {l["numero"]: l for l in resultat["scenarios"]}
+            print(f"  | {cas.libelle} | ×{cas.niveau_salaire:.2f} | {int(population[-2:])} | "
+                  f"{resultat['esperance_commune']:.1f} ans | {resultat['esperance_population']:.1f} ans | "
+                  f"{resultat['esperance_population'] - resultat['esperance_commune']:+.1f} an | "
+                  f"{par_numero[4]['ecart']:+.1%} | {_euros(par_numero[1]['transfert_vie'])} € | "
+                  f"{_euros(par_numero[6]['transfert_vie'])} € |")
+    print("\nLa colonne « Pension notionnelle » est l'écart de pension du scénario 4 sous la "
+          "table du vingtile, à capital égal ; les transferts sont la pension sous la table "
+          "commune multipliée par les années de rente en plus ou en moins, en euros constants.")
+    return 0
+
+
 def main() -> int:
     parseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parseur.add_argument("--population", default=POPULATION_DEFAUT)
     parseur.add_argument("--cas-type", action="append", dest="cas_types",
                          help="code de cas type ; par défaut ceux de la population")
     parseur.add_argument("--generations", nargs="*", type=int, default=list(GENERATIONS))
+    parseur.add_argument("--niveau-de-vie", action="store_true",
+                         help="les treize cas types, chacun au vingtile de niveau de vie "
+                              "où son salaire le place")
     args = parseur.parse_args()
 
-    mortalite = Simulateur(Parametres()).mortalite
+    mortalite = _simulateur(None).mortalite
+    if args.niveau_de_vie:
+        return _par_niveau_de_vie(mortalite, args.generations or [1975])
     if args.population not in mortalite.populations:
         parseur.error(f"population inconnue : {args.population} "
                       f"(connues : {mortalite.populations})")

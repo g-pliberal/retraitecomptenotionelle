@@ -703,6 +703,24 @@ def test_la_population_ne_change_rien_au_scenario_1_et_baisse_les_notionnels():
     assert 0.92 < rapport < 0.97
 
 
+def test_le_diviseur_commun_transfere_des_modestes_vers_les_aises(mortalite):
+    """L'axe du revenu : à 64 ans en 2026, la table des 5 % les plus modestes
+    donne trois ans de rente de MOINS que la table commune, celle des 5 % les
+    plus aisés trois ans de PLUS. Un diviseur commun sert donc au premier une
+    pension calculée pour une vie qu'il n'aura pas, et au second l'inverse —
+    ce que mesure `scripts/mortalite_population.py --niveau-de-vie`."""
+    commun = Convertisseur(mortalite, Parametres()).coefficient(64, 2026)
+    modeste = Convertisseur(
+        mortalite, Parametres(population_conversion="niveau_de_vie_v01")
+    ).coefficient(64, 2026)
+    aise = Convertisseur(
+        mortalite, Parametres(population_conversion="niveau_de_vie_v20")
+    ).coefficient(64, 2026)
+    assert -4.5 < modeste.esperance_residuelle - commun.esperance_residuelle < -2.0
+    assert 2.0 < aise.esperance_residuelle - commun.esperance_residuelle < 4.5
+    assert modeste.diviseur < commun.diviseur < aise.diviseur
+
+
 # -- fusion ------------------------------------------------------------------
 
 

@@ -462,8 +462,33 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   transfert, cas type par cas type et sur les six scénarios : pour le
   fonctionnaire sédentaire né en 1975, 1,5 an de rente de plus, soit 5,7 % de
   pension notionnelle à capital égal, et 54 000 € sur la vie sous le système
-  actuel, qui ne connaît aucun diviseur et transfère donc autant. L'axe du
-  REVENU, où l'INSEE mesure des écarts bien plus grands, reste à lire.
+  actuel, qui ne connaît aucun diviseur et transfère donc autant.
+- **L'axe du revenu, par les tables de l'INSEE.** L'INSEE publie des tables
+  de mortalité par VINGTILE de niveau de vie (Insee Résultats, mai 2025 ;
+  `mortalite/esperances_vie_niveau_de_vie.csv`, lu par
+  `scripts/fetch/insee_mortalite_niveau_de_vie.py`) : à 65 ans en 2020-2024,
+  15,1 ans pour les 5 % d'hommes les plus modestes contre 22,1 pour les 5 %
+  les plus aisés, 20,2 contre 25,2 chez les femmes. Chaque vingtile est une
+  population du diviseur, `niveau_de_vie_v01` à `_v20`, calée non sur sa
+  valeur brute mais sur son rapport à l'ensemble de l'étude — qui vit un à
+  trois dixièmes de moins que la population générale certifiée, par son champ
+  et sa méthode. Un cas type y est RATTACHÉ par une convention et non par une
+  mesure : son salaire rapporté au salaire moyen, appliqué au niveau de vie
+  mensuel moyen des vingt vingtiles, désigne le vingtile dont le niveau de vie
+  moyen est le plus proche (`population_niveau_de_vie`). Le niveau de vie est
+  celui d'un ménage par unité de consommation, et un salaire n'en dit qu'une
+  partie : la convention place le SMIC au quatrième vingtile, le salaire
+  moyen au treizième, le cadre au dix-neuvième. Le résultat, pour la
+  génération 1975 (`scripts/mortalite_population.py --niveau-de-vie`) : le
+  salarié au SMIC a 3,0 ans de rente de MOINS que la table commune ne lui
+  en compte, l'exploitant agricole 3,7 de moins, le cadre 2,7 de plus, le
+  libéral 3,2 de plus. Un diviseur commun transfère donc des modestes vers
+  les aisés : 12,5 % de pension notionnelle à capital égal pour le SMIC,
+  11,7 % dans l'autre sens pour le libéral, et sur la vie 49 000 € retirés
+  au premier et 173 000 € ajoutés au second sous le système actuel — qui
+  transfère autant que les autres, n'ayant aucun diviseur pour le savoir. Le
+  diviseur servi reste commun, par décision ; la mesure dit ce que cette
+  décision coûte, et à qui.
 - **ν = 0** par défaut. La rente est actualisée au taux auquel elle sera ensuite
   revalorisée ; les deux étant identiques, ils se compensent et le diviseur se
   réduit à l'espérance de vie résiduelle. Le résultat est directement lisible.
@@ -1753,10 +1778,12 @@ calcul.
 vie à 65 ans que certains régimes publient pour leurs propres pensionnés — les
 fonctionnaires civils de l'État, par le Service des retraites de l'État,
 saisie depuis le projet annuel de performances du programme 741 annexé au
-PLF 2026. Le modèle n'en fait pas une table : il cale, sexe par sexe, un
-facteur sur la force de mortalité de la table générale de l'année observée,
-et le tient constant ailleurs. Elle ne sert qu'à la variante
-`population_conversion` du §5.
+PLF 2026 — et, dans `esperances_vie_niveau_de_vie.csv`, les vingt vingtiles
+de niveau de vie de l'INSEE pour 2012-2016 et 2020-2024, avec l'ensemble de
+l'étude et le niveau de vie moyen de chaque vingtile. Le modèle n'en fait pas
+une table : il cale, sexe par sexe, un facteur sur la force de mortalité de
+la table générale de l'année observée, et le tient constant ailleurs. Elles
+ne servent qu'à la variante `population_conversion` du §5.
 
 **Les années projetées viennent de l'INSEE, année par année, jusqu'en 2125.**
 Ce sont les projections de population **2026**, qui publient les quotients de

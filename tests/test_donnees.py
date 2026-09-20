@@ -1440,6 +1440,57 @@ def test_une_population_reproduit_l_esperance_que_son_regime_publie(mortalite):
         mortalite.esperance_residuelle(65, 2024, "H", population="cadres")
 
 
+def test_les_vingtiles_de_niveau_de_vie_sont_cales_sur_leur_rapport_a_l_ensemble(mortalite):
+    """L'axe du revenu de l'action 14 : les vingt vingtiles de l'INSEE sont
+    des populations, et chacun est calé non sur sa valeur brute mais sur son
+    RAPPORT à l'ensemble de l'étude, appliqué à la table générale — parce que
+    cet ensemble vit un à trois dixièmes de moins que la population générale
+    certifiée (champ et méthode de l'échantillon démographique permanent).
+
+    Ce que le test tient : les vingt populations existent ; la cible est la
+    valeur publiée corrigée du rapport, et la table corrigée la reproduit ;
+    le facteur décroît du vingtile le plus modeste au plus aisé, au-dessus de
+    un pour les premiers (on y vit moins), au-dessous pour les derniers ; et
+    l'écart publié à 65 ans — sept ans chez les hommes, cinq chez les femmes —
+    se retrouve dans le modèle à un dixième près.
+    """
+    vingtiles = [f"niveau_de_vie_v{v:02d}" for v in range(1, 21)]
+    assert all(v in mortalite.populations for v in vingtiles)
+    for sexe in mortalite.SEXES:
+        annee, _ = mortalite.esperance_publiee(vingtiles[0], sexe)
+        assert annee == 2022
+        facteurs = [mortalite.facteur_population(v, sexe) for v in vingtiles]
+        assert facteurs == sorted(facteurs, reverse=True), sexe
+        assert facteurs[0] > 1.0 > facteurs[-1], sexe
+        for v in vingtiles:
+            annee, cible = mortalite.cible_population(v, sexe)
+            _, publiee = mortalite.esperance_publiee(v, sexe)
+            assert abs(cible - publiee) < 0.3, (v, sexe)
+            reproduite = mortalite.esperance_residuelle(65, annee, sexe, generation=False,
+                                                        population=v)
+            assert reproduite == pytest.approx(cible, abs=0.01), (v, sexe)
+        ecart_publie = (mortalite.esperance_publiee(vingtiles[-1], sexe)[1]
+                        - mortalite.esperance_publiee(vingtiles[0], sexe)[1])
+        ecart_modele = (mortalite.esperance_residuelle(65, 2022, sexe, False, vingtiles[-1])
+                        - mortalite.esperance_residuelle(65, 2022, sexe, False, vingtiles[0]))
+        assert ecart_modele == pytest.approx(ecart_publie, abs=0.1), sexe
+    assert (mortalite.esperance_publiee("niveau_de_vie_v20", "H")[1]
+            - mortalite.esperance_publiee("niveau_de_vie_v01", "H")[1]) > 6.5
+
+
+def test_le_rattachement_par_le_salaire_suit_le_niveau_de_vie_moyen(mortalite):
+    """La convention qui place un cas type dans un vingtile : son salaire
+    rapporté au salaire moyen, appliqué au niveau de vie moyen. Elle est
+    monotone, le salaire moyen tombe au-dessus de la médiane — le niveau de vie
+    moyen est tiré vers le haut par le dernier vingtile —, et les deux bouts de
+    la grille touchent les bouts de la distribution."""
+    rangs = [int(mortalite.population_niveau_de_vie(r)[-2:])
+             for r in (0.3, 0.5, 0.55, 0.85, 1.0, 1.2, 2.2, 2.5, 4.0)]
+    assert rangs == sorted(rangs)
+    assert rangs[0] == 1 and rangs[-1] == 20
+    assert 11 <= rangs[4] <= 14, "le salaire moyen tombe au-dessus de la médiane"
+
+
 def test_e65_ancienne_derive_des_quotients_certifies(mortalite):
     """Avant 1960, l'espérance de vie à 65 ans n'est plus saisie mais calculée.
 

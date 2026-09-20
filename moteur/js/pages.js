@@ -98,6 +98,9 @@ export const TABLES = [["unisexe", "Unisexe (défaut)"], ["par_sexe", "Par sexe"
 export const POPULATIONS = [
   ["commune", "Population générale (défaut)"],
   ["fonctionnaires_civils_etat", "Fonctionnaires civils de l'État"],
+  ["niveau_de_vie_v01", "Les 5 % les plus modestes (INSEE)"],
+  ["niveau_de_vie_v10", "Niveau de vie médian (INSEE)"],
+  ["niveau_de_vie_v20", "Les 5 % les plus aisés (INSEE)"],
 ];
 
 export const PARTS_COTISATION = [
@@ -2235,10 +2238,12 @@ function champsModelisation(saisie) {
       "", {}, g.GLOSSAIRE["table de conversion"]),
     g.liste("population", "Population de la table", POPULATIONS, saisie.population,
       "", {}, "La table est celle de la population générale. Choisir une "
-      + "population dont le régime publie l'espérance de vie — les "
-      + "fonctionnaires civils de l'État vivent un an de plus à 65 ans — "
-      + "mesure ce qu'un diviseur commun leur transfère. C'est une mesure, "
-      + "pas une règle : aucun système ne trie ses rentes par population."),
+      + "population dont on connaît l'espérance de vie — les fonctionnaires "
+      + "civils de l'État vivent un an de plus à 65 ans, les 5 % les plus "
+      + "aisés sept ans de plus que les 5 % les plus modestes chez les "
+      + "hommes — mesure ce qu'un diviseur commun lui transfère. C'est une "
+      + "mesure, pas une règle : aucun système ne trie ses rentes par "
+      + "population."),
     g.liste("part_cotisation", "Part de la cotisation portée au compte",
       PARTS_COTISATION, saisie.part_cotisation,
       "salariale seule, ou salariale et patronale", {},

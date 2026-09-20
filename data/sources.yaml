@@ -421,6 +421,34 @@ institutions:
           dénominateur d'une part de PIB. Seize autres scénarios sont publiés ;
           seul le central est repris, comme pour les quotients de mortalité.
 
+      - id: insee_mortalite_niveau_de_vie
+        titre: >-
+          Tables de mortalité par sexe, âge et niveau de vie, 2012-2016 et
+          2020-2024 (Insee Résultats, mai 2025)
+        url: https://www.insee.fr/fr/statistiques/8670202
+        acces: fichier
+        statut_integration: automatise
+        cible: data/reference/mortalite/esperances_vie_niveau_de_vie.csv
+        recuperation: scripts/fetch/insee_mortalite_niveau_de_vie.py
+        millesime: 2025
+        note: >-
+          Le classeur `morta_niv.xlsx` de l'*Insee Première* n° 2085 : pour
+          chaque sexe et chaque période, l'espérance de vie à chaque âge de
+          l'ensemble et de chacun des VINGT VINGTILES de niveau de vie, et
+          « pour information » le niveau de vie mensuel moyen de chaque
+          vingtile. La seule mesure publique de la mortalité par revenu en
+          France : à 65 ans en 2020-2024, 15,1 ans pour les 5 % d'hommes les
+          plus modestes contre 22,1 pour les 5 % les plus aisés, 20,2 contre
+          25,2 chez les femmes. Le dépôt en reprend e0, e60 et e65 telles
+          quelles, l'année portée étant le milieu de la période. L'ensemble
+          de l'étude vit un à trois dixièmes de moins que la population
+          générale certifiée — champ et méthode de l'échantillon
+          démographique permanent, document de travail 2025-24 —, ce que le
+          récupérateur contrôle et que le modèle absorbe en calant chaque
+          vingtile sur son rapport à l'ensemble. Sert à l'axe du revenu de
+          l'action 14 : populations `niveau_de_vie_v01` à `_v20` du diviseur,
+          rattachement d'un cas type par son niveau de salaire.
+
   cor:
     nom: Conseil d'orientation des retraites
     role: >-

@@ -247,21 +247,53 @@ class DonneesMortalite:
 
     # -- populations particulières ------------------------------------------
 
-    def _charger_populations(self) -> dict[str, dict[str, tuple[int, float]]]:
+    def _charger_populations(self) -> dict[str, dict[str, tuple[int, float, float | None]]]:
         """Les espérances de vie à 65 ans publiées pour des populations
-        particulières : ``{population: {sexe: (annee, e65)}}``."""
+        particulières : ``{population: {sexe: (annee, e65, e65_ensemble)}}``.
+
+        Deux fichiers. ``esperances_vie_populations.csv`` porte ce qu'un
+        régime publie pour ses pensionnés, sans ensemble de référence : la
+        valeur est calée telle quelle sur la table générale de l'année.
+        ``esperances_vie_niveau_de_vie.csv`` porte les vingtiles de niveau de
+        vie de l'INSEE, avec l'« ensemble » de la même étude : un vingtile
+        est calé sur son RAPPORT à cet ensemble, appliqué à la table
+        générale, parce que l'ensemble de l'étude vit un à trois dixièmes
+        de moins que la population générale certifiée (champ et méthode de
+        l'échantillon démographique permanent). Seule la dernière période
+        publiée sert de population.
+        """
+        table: dict[str, dict[str, tuple[int, float, float | None]]] = {}
         chemin = self.racine / "reference" / "mortalite" / "esperances_vie_populations.csv"
-        if not chemin.exists():
-            return {}
-        table: dict[str, dict[str, tuple[int, float]]] = {}
-        with chemin.open(encoding="utf-8") as flux:
-            lignes = (l for l in flux if not l.lstrip().startswith("#"))
-            for ligne in csv.DictReader(lignes):
-                if ligne["mesure"] != "e65":
-                    continue
-                table.setdefault(ligne["population"], {})[ligne["sexe"]] = (
-                    int(ligne["annee"]), float(ligne["valeur"]),
-                )
+        if chemin.exists():
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    if ligne["mesure"] != "e65":
+                        continue
+                    table.setdefault(ligne["population"], {})[ligne["sexe"]] = (
+                        int(ligne["annee"]), float(ligne["valeur"]), None,
+                    )
+        chemin = self.racine / "reference" / "mortalite" / "esperances_vie_niveau_de_vie.csv"
+        self._niveaux_de_vie: dict[int, float] = {}
+        if chemin.exists():
+            lues: list[dict] = []
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                lues = [l for l in csv.DictReader(lignes) if l["mesure"] == "e65"]
+            if lues:
+                derniere = max(int(l["annee"]) for l in lues)
+                recentes = [l for l in lues if int(l["annee"]) == derniere]
+                ensemble = {l["sexe"]: float(l["valeur"]) for l in recentes
+                            if int(l["vingtile"]) == 0}
+                for l in recentes:
+                    vingtile = int(l["vingtile"])
+                    if vingtile == 0:
+                        continue
+                    table.setdefault(f"niveau_de_vie_v{vingtile:02d}", {})[l["sexe"]] = (
+                        derniere, float(l["valeur"]), ensemble[l["sexe"]],
+                    )
+                    if l["niveau_de_vie_mensuel"]:
+                        self._niveaux_de_vie[vingtile] = float(l["niveau_de_vie_mensuel"])
         return table
 
     @property
@@ -272,6 +304,10 @@ class DonneesMortalite:
     def esperance_publiee(self, population: str, sexe: str) -> tuple[int, float]:
         """L'année d'observation et l'espérance à 65 ans publiées pour une
         population et un sexe."""
+        annee, valeur, _ = self._reference_population(population, sexe)
+        return annee, valeur
+
+    def _reference_population(self, population: str, sexe: str) -> tuple[int, float, float | None]:
         try:
             return self._populations[population][sexe]
         except KeyError:
@@ -279,6 +315,37 @@ class DonneesMortalite:
                 f"population inconnue : {population!r} pour le sexe {sexe!r} "
                 f"(connues : {self.populations})"
             ) from None
+
+    def cible_population(self, population: str, sexe: str) -> tuple[int, float]:
+        """L'espérance à 65 ans que le facteur doit reproduire sur la table
+        générale de l'année : la valeur publiée telle quelle, ou, quand
+        l'étude publie son propre ensemble, la valeur publiée dans le rapport
+        où elle est à cet ensemble."""
+        annee, valeur, ensemble = self._reference_population(population, sexe)
+        if ensemble is None:
+            return annee, valeur
+        generale = self._courbe_brute(65.0, float(annee), sexe, False, 1.0)
+        e65 = sum(0.5 * (generale[t] + generale[t + 1]) for t in range(len(generale) - 1))
+        return annee, valeur * e65 / ensemble
+
+    def population_niveau_de_vie(self, rapport_au_moyen: float) -> str | None:
+        """Le vingtile de niveau de vie où un rapport au niveau moyen place
+        quelqu'un — la convention qui rattache un cas type par son salaire.
+
+        Le cas type est placé au rang où son SALAIRE le place par rapport au
+        salaire moyen : son niveau de vie est supposé valoir ce rapport fois
+        le niveau de vie moyen (la moyenne des vingt vingtiles), et il reçoit
+        le vingtile dont le niveau de vie moyen publié est le plus proche.
+        C'est une convention, écrite dans docs/methodologie.md §5, pas une
+        mesure : le niveau de vie est celui d'un ménage, par unité de
+        consommation, et un salaire n'en dit qu'une partie.
+        """
+        if not self._niveaux_de_vie:
+            return None
+        moyen = sum(self._niveaux_de_vie.values()) / len(self._niveaux_de_vie)
+        niveau = rapport_au_moyen * moyen
+        vingtile = min(self._niveaux_de_vie, key=lambda v: abs(self._niveaux_de_vie[v] - niveau))
+        return f"niveau_de_vie_v{vingtile:02d}"
 
     def facteur_population(self, population: str, sexe: str) -> float:
         """Le facteur sur la force de mortalité qui donne à cette population
@@ -297,13 +364,13 @@ class DonneesMortalite:
         memorise = self._facteurs.get(cle)
         if memorise is not None:
             return memorise
-        annee, cible = self.esperance_publiee(population, sexe)
+        annee, cible = self.cible_population(population, sexe)
 
         def esperance(facteur: float) -> float:
             courbe = self._courbe_brute(65.0, float(annee), sexe, False, facteur)
             return sum(0.5 * (courbe[t] + courbe[t + 1]) for t in range(len(courbe) - 1))
 
-        bas, haut = 0.05, 5.0
+        bas, haut = 0.05, 8.0
         for _ in range(60):
             milieu = math.sqrt(bas * haut)
             if esperance(milieu) > cible:

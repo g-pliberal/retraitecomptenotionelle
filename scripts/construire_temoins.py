@@ -367,6 +367,10 @@ def _cas() -> list[dict]:
         "population": "fonctionnaires_civils_etat", "statut": "fonctionnaire_etat",
         "table": "par_sexe", "sexe": "F",
     }))
+    # Le vingtile de niveau de vie de l'INSEE : les 5 % les plus modestes, dont
+    # le facteur est calé sur le rapport à l'ensemble de l'étude — le seul
+    # chemin de calibration qui passe par cette règle.
+    cas.append(("population_niveau_de_vie_modeste", {"population": "niveau_de_vie_v01"}))
     for projection in ("cor_productivite_basse", "cor_productivite_haute"):
         cas.append((f"projection_{projection}", {"projection": projection}))
     # L'emploi constant après 2025 : la convention d'avant la trajectoire du

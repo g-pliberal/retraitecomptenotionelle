@@ -1224,3 +1224,29 @@ journal:
       nouvel exercice de projections de population active pour 2027, que la
       DG Trésor a devancé ici. Le PIB de la page Coût ne lit pas encore la
       trajectoire.
+  - date: '2026-09-20'
+    session: "action 14 : l'axe du revenu, par les tables de l'INSEE par vingtile de niveau de vie"
+    consulte: >-
+      Sur insee.fr, joignable depuis la session : l'Insee Première n° 2085
+      (page 8679561) et ses données (IP2085.xlsx), les Insee Résultats
+      « Tables de mortalité par niveau de vie jusqu'en 2020-2024 » (page
+      8670204) et leur classeur morta_niv.xlsx (page 8670202) — quatre
+      feuilles par sexe et période, une feuille « pour information » avec le
+      niveau de vie mensuel moyen des vingtiles — et la référence du document
+      de travail 2025-24 qui en décrit la méthode.
+    trouve: >-
+      Les espérances de vie à chaque âge par vingtile, publiées et non à
+      dériver ; l'ensemble de l'étude un à trois dixièmes sous la population
+      générale certifiée, ce qui a fixé la règle de calibration par le
+      rapport à l'ensemble. Un récupérateur, une série de 252 lignes, vingt
+      populations du diviseur, un rattachement par le salaire, et la mesure
+      sur les treize cas types : de moins trois à plus trois ans de rente
+      selon le vingtile, un transfert des modestes vers les aisés sous les
+      six scénarios. Aucune règle du scénario 1 n'est touchée.
+    reste: >-
+      Le rattachement par le salaire est une convention ; la distribution des
+      niveaux de vie des retraités permettrait de rattacher par la pension.
+      Le facteur est constant dans le temps alors que l'INSEE note un écart
+      qui s'accroît. Le document de travail 2025-24 n'a pas été lu, seule sa
+      référence l'a été. Les reprises de veille du 17 septembre 2026 restent
+      ouvertes.

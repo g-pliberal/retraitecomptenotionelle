@@ -532,6 +532,8 @@ résumé :
 | Espérance de vie à 65 ans | 1960-2024 | **certifiée** | OCDE `DSD_HEALTH_STAT@DF_LE` |
 | Espérance de vie à 65 ans | 1946-1959 | haute | **dérivée** des quotients INED, recalculée à chaque exécution |
 | Espérances de vie e0, e60, e65 | 2026-2125 | projetée | **dérivée** des quotients projetés par l'INSEE, projections 2026 |
+| Espérance de vie par vingtile de niveau de vie, e0, e60, e65 | 2012-2016 et 2020-2024 | haute | INSEE, tables de mortalité par niveau de vie (Insee Résultats 2025), lues telles quelles, l'ensemble contrôlé contre la série certifiée |
+| Espérance de vie à 65 ans des fonctionnaires civils de l'État | 2024 | **saisie** | Service des retraites de l'État, PAP 741 du PLF 2026, apporté par l'utilisateur |
 | Quotients de mortalité par âge | 1986-2024 | **certifiée** | Eurostat `demo_mlifetable`, âges 0-94 |
 | Quotients de mortalité par âge | 1899-1985 | **certifiée** | INED, tables de Vallin et Meslé, âges 0-104 |
 | Quotients de mortalité par âge | 1986-1997, 95 à 104 ans | **certifiée** | INED, là où Eurostat s'arrête |
@@ -5461,6 +5463,34 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   deux tracés qui ne s'additionnent pas : le NIVEAU sur cinq ans, la FORME sur
   soixante-six. Voir `docs/avantages_non_contributifs.md`.
 
+- **Le diviseur est le même pour tout le monde, et il transfère à qui vit
+  plus longtemps — le système actuel autant que les autres.** L'espérance de
+  vie du §5 de `methodologie.md` est celle de la population générale. Les
+  pensionnés civils de l'État vivent un an de plus à 65 ans, d'après leur
+  propre régime ; les 5 % d'hommes les plus aisés vivent sept ans de plus à
+  65 ans que les 5 % les plus modestes, d'après l'INSEE. Depuis le
+  20 septembre 2026, les deux écarts sont MESURÉS
+  (`scripts/mortalite_population.py`, action 14), le diviseur servi restant
+  commun par décision — un système qui trierait ses rentes par population ne
+  serait pas défendable —, et la variante ne servant qu'à dire ce que ce
+  choix coûte, et à qui. Pour le fonctionnaire sédentaire né en 1975, la
+  table de sa population lui donne 1,5 an de rente de plus que la table
+  commune, soit 5,7 % de pension notionnelle à capital égal et 54 000 € sur
+  la vie sous le système actuel, dont la pension ne bouge pas d'un euro parce
+  qu'aucun diviseur ne l'a calculée. Par le revenu, chaque cas type rattaché
+  au vingtile de niveau de vie où son salaire le place : le salarié au SMIC a
+  3,0 ans de rente de moins que la table commune ne lui en compte et
+  l'exploitant agricole 3,7 de moins, le cadre 2,7 de plus et le libéral 3,2
+  de plus — 49 000 € retirés au premier, 173 000 € ajoutés au dernier, sur la
+  vie et sous le système actuel. Le diviseur commun transfère donc des
+  modestes vers les aisés, dans le sens qu'on craignait, puisque qui vit
+  longtemps est aussi qui a le plus cotisé ; et ce n'est pas un défaut du
+  notionnel, toute rente viagère à taux commun le porte, le droit en vigueur
+  le premier. Ce que la mesure suppose est écrit avec elle : un rattachement
+  par le salaire là où l'INSEE mesure un niveau de vie de ménage, un facteur
+  constant dans le temps, une espérance de stock appliquée à des liquidants
+  futurs, et une grille de cas types qui n'est pas une population.
+
 - **La décote surpunit l'anticipation ordinaire et sous-punit l'extrême.**
   Mesuré en comparant ce que coûte une année d'anticipation sous le droit en
   vigueur et sous le coefficient de conversion notionnel, sur un fonctionnaire
@@ -6588,7 +6618,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1147<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1150<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
