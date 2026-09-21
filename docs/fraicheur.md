@@ -89,6 +89,11 @@ maximum(coefficient_minoration.csv:coefficient*100)               l'autre
 distinctes(revalorisation_salaires.csv:date_effet)                les valeurs différentes
 ```
 
+Ces sondes tiennent aussi les PÉRIODES : `minimum(…:annee?fiabilite=certifiee)`
+et son `maximum` disent de quand à quand une série est certifiée, et c'est le
+tableau du §1 de `limites.md` qui en vit — une série s'allonge d'une année, et
+la prose suivait autrefois de mémoire.
+
 Les critères se joignent par `&`, et une cellule doit tomber sur une ligne et
 une seule : deux lignes, c'est une désignation qui ne dit pas ce qu'elle croit
 dire. Une colonne porte au besoin son changement d'unité, `coefficient*100`

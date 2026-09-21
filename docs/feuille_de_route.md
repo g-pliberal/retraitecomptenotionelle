@@ -8361,6 +8361,38 @@ nombres, 7 603 et 41 : le motif ne prévoyait pas la décimale après le
 séparateur de milliers. L'ancre refusait donc tout montant de cette forme, et
 une correction automatique en aurait fait « 7 603 ».
 
+**Le §1 ne se produira pas : il se lit.** Le chantier annoncé était d'écrire
+son tableau depuis les données, comme `construire_regimes_md.py` écrit
+`regimes.md` depuis l'inventaire. La mesure l'a réfuté : sur les 95 lignes du
+tableau, **onze seulement** portent une source que le journal de certification
+porte au caractère près, et les périodes qu'il donne sont éditoriales — « ancres
+2007, 2016, 2017, depuis 2021 », « avant 1934 à 1948 », « le reste de
+1931-2001 ». Produire ce tableau ne serait pas le dériver, ce serait recopier
+sa prose dans un YAML : le même texte, ailleurs, plus une couche à tenir.
+
+Ce qui se dérive vraiment, ce sont les BORNES. **Trente et une lignes lisent
+maintenant leur période dans le fichier qu'elles décrivent**, par les sondes de
+l'étape précédente : `minimum(ipc_annuel.csv:annee?fiabilite=certifiee)` et son
+`maximum`. C'est la dérive la plus probable de ce tableau — une série
+s'allonge d'une année et la prose reste à l'ancienne —, et elle s'est produite
+sous la main : la complémentaire agricole était donnée certifiée jusqu'en 2024,
+le fichier porte 2025.
+
+Un test lie les deux colonnes, qui se modifient séparément : la période d'une
+ligne est lue sous un filtre de fiabilité, et la colonne « Niveau » doit dire
+ce niveau-là. Sans lui, une ligne pourrait annoncer « certifiée » en lisant les
+bornes des années estimées.
+
+**Deux choses trouvées en chemin, et laissées à qui sait.** Le tableau donne
+« **fausses** » aux taux du régime général de 1980 et 1981 — le décret du
+30 juillet 1979 les a relevés et la série ne l'a pas suivi — mais le fichier
+les porte au niveau `haute`, comme les années voisines. L'un des deux a tort,
+et le vocabulaire des fiabilités n'a pas de mot pour « fausse ». Et la page
+Données du site affiche « Institutions citées : 28 » en dur, quand
+`sources.yaml` en compte 36 : c'est le même chiffre que `methodologie.md`
+donnait en toutes lettres, et il est faux au même endroit du dépôt. Les deux
+sont dans `moteur/` et sur les pages, zone d'une autre session ce jour-là.
+
 **Ce qui reste — et c'est le travail, qui se fait section par section.**
 Soixante-douze sections, et elles ont toutes la même forme : elles disent ce
 que les chiffres du dépôt valent AUJOURD'HUI, et chacun de leurs chiffres est
