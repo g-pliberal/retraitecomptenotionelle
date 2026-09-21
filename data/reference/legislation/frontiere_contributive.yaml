@@ -1,0 +1,729 @@
+# Ce qui a changé de côté — la frontière contributive, datée
+# ==========================================================
+# source_id: legifrance_textes
+#
+# CE QUE CE FICHIER AJOUTE À L'INVENTAIRE
+# ---------------------------------------
+# `avantages_non_contributifs.yaml` dit CE QUI est non contributif aujourd'hui,
+# et porte pour chaque ligne une `creation` et une `fin`. Il décrit donc une
+# liste, avec ses bornes. Ce qu'il ne dit pas, c'est que la frontière
+# elle-même BOUGE entre ces bornes : un dispositif peut rester en place et
+# changer de côté, et il l'a fait des deux sens.
+#
+# Ce fichier est cette histoire-là. Une entrée par déplacement daté, avec la
+# version d'article qui en fait foi.
+#
+# TROIS FACES, ET ELLES BOUGENT SÉPARÉMENT — c'est tout le sujet
+# --------------------------------------------------------------
+# « Contributif » désigne trois choses qu'on confond, et dont l'histoire
+# montre qu'elles se déplacent l'une sans l'autre :
+#
+#   droit        Ce que l'assuré ACQUIERT sans avoir cotisé. C'est la face que
+#                l'inventaire décrit, et la seule que le modèle calcule.
+#   cotisation   Ce que l'assuré ou son employeur VERSE sans rien acquérir.
+#                C'est la face symétrique, et le dépôt ne la portait nulle
+#                part. Elle est non contributive au même titre, en sens
+#                inverse : le lien entre le versement et le droit est rompu
+#                du côté du versement.
+#   financement  QUI PAIE la charge non contributive, et si elle reste
+#                identifiable. Un droit gratuit pour l'assuré peut être payé
+#                par une cotisation d'un tiers (la CNAF, l'Unédic), par
+#                l'impôt, ou par le régime lui-même — et cela change à droit
+#                constant.
+#
+# La preuve que les trois sont distinctes tient en une ligne de ce fichier :
+# les indemnités journalières de maternité entrent au salaire de base en 2010
+# (face `droit`), le FSV en prend la charge la même année (face `financement`),
+# et cette prise en charge est abrogée en 2020 SANS QUE LE DROIT BOUGE — la
+# version de L. 351-1 qui les porte est toujours en vigueur. Un lecteur qui
+# ne suivrait que les comptes du FSV conclurait que l'avantage a disparu.
+#
+# SENS — fermé, deux valeurs par face
+# ------------------------------------
+#   face `droit`        ouvre      un droit gratuit apparaît ou s'élargit
+#                       ferme      il disparaît, se restreint, ou devient
+#                                  conditionné à une cotisation effective
+#   face `cotisation`   sterilise  un prélèvement cesse d'ouvrir des droits
+#                       fertilise  un prélèvement en rouvre
+#   face `financement`  identifie  la charge est isolée chez un payeur nommé,
+#                                  donc MESURABLE
+#                       fond       elle retourne dans les comptes du régime,
+#                                  donc INVISIBLE
+#
+# `identifie` et `fond` ne sont pas des jugements : ce sont les deux états qui
+# décident si une ligne de l'inventaire peut porter un chiffre. Les 87 % du
+# total chiffré qui viennent de séries publiées (docs/avantages_non_contributifs.md
+# § 4 quinquies) sont exactement des charges `identifie`.
+#
+# CE QUI FAIT FOI
+# ---------------
+# Chaque bascule porte `article`, `version` (l'identifiant LEGI de la version
+# LUE) et `version_precedente` quand la bascule est un changement et non une
+# création. `scripts/frontiere_contributive.py` rouvre l'index LEGI du dépôt et
+# vérifie que chaque version citée existe, à la date citée, sous l'article
+# cité. Une date écrite ici sans version opposable serait une mémoire, et le
+# test la refuse.
+#
+# CE QUE CE FICHIER N'EST PAS
+# ---------------------------
+# Il ne chiffre rien. Il dit quand la frontière a bougé, dans quel sens, et ce
+# que le modèle en fait. Ce que chaque dispositif coûte reste dans
+# `avantages_non_contributifs.yaml`.
+
+source_id: legifrance_textes
+
+# Les articles dont les versions font foi. Le script les relit tous.
+pivots:
+  - article: L. 135-1 CSS
+    num: L135-1
+    quoi: >-
+      Crée le Fonds de solidarité vieillesse et lui donne pour mission de
+      prendre en charge « les avantages d'assurance vieillesse à caractère non
+      contributif relevant de la solidarité nationale, tels qu'ils sont définis
+      par l'article L. 135-2 ». C'est la seule DÉFINITION LÉGALE de
+      l'expression, et elle a vécu de 1994 à 2025.
+  - article: L. 135-2 CSS
+    num: L135-2
+    quoi: >-
+      La liste que le législateur tient lui-même. Trente-sept versions de 1994
+      à 2025 : ce qui y entre est reconnu non contributif, ce qui en sort cesse
+      de l'être aux yeux du financement. C'est l'ossature de ce fichier.
+  - article: article 24 de la loi n° 2025-199 du 28 février 2025
+    num: "24"
+    titre_contient: "2025-199"
+    quoi: >-
+      La LFSS 2025. Son article 24 abroge le chapitre du FSV, dévolue ses
+      droits et obligations à la CNAV, et crée L. 222-2-1. Un numéro d'article
+      de loi ne vaut que dans son texte : le pivot dit donc ce que le titre
+      doit contenir, et le contrôle le vérifie.
+  - article: L. 222-2-1 CSS
+    num: L222-2-1
+    quoi: >-
+      Le successeur, en vigueur au 1er janvier 2026. Il reprend la liste dans
+      la branche vieillesse et garde l'expression « les avantages non
+      contributifs mentionnés aux 1° à 5° et 7° du présent article ».
+  - article: L. 223-1 CSS
+    num: L223-1
+    quoi: >-
+      Ce que la branche famille rembourse aux régimes de retraite. C'est par
+      lui que les droits familiaux ont quitté le FSV pour la CNAF.
+  - article: L. 241-3 CSS
+    num: L241-3
+    quoi: >-
+      Ce qui couvre les charges de l'assurance vieillesse : les cotisations
+      plafonnées, les cotisations DÉPLAFONNÉES — celles qui n'ouvrent aucun
+      droit — et les contributions des autres branches.
+  - article: D. 242-5 CSS
+    num: D242-5
+    quoi: >-
+      Le taux de la cotisation d'assurance veuvage, 0,10 % à la charge du seul
+      salarié. Sa disparition est la fin du seul droit dérivé qui ait jamais eu
+      sa propre cotisation.
+  - article: L. 351-1 CSS
+    num: L351-1
+    quoi: >-
+      Le salaire de base. C'est lui qui dit si les indemnités journalières y
+      entrent — et sa version de 2010 est toujours en vigueur, alors que le
+      financement correspondant a été abrogé en 2020.
+  - article: L. 351-3 CSS
+    num: L351-3
+    quoi: >-
+      Les périodes assimilées. Sa liste s'allonge par la fin, et chaque ajout
+      est un droit gratuit de plus.
+  - article: L. 161-22-1-1 CSS
+    num: L161-22-1-1
+    quoi: >-
+      La seconde pension du cumul emploi-retraite : la seule pension du droit
+      français dont un article dise qu'elle ne porte AUCUN avantage non
+      contributif.
+
+bascules:
+
+  # --- La face `financement` : le FSV, de sa création à sa disparition -----
+
+  - code: definition_legale_du_non_contributif
+    date: 1994-01-01
+    face: financement
+    sens: identifie
+    libelle: Le droit français définit pour la première fois l'avantage non contributif
+    quoi: >-
+      La loi n° 93-936 du 22 juillet 1993 crée un fonds « dont la mission est
+      de prendre en charge les avantages d'assurance vieillesse à caractère non
+      contributif relevant de la solidarité nationale, tels qu'ils sont définis
+      par l'article L. 135-2 ». C'est la seule DÉFINITION LÉGALE de
+      l'expression que porte le code, et elle est donnée par renvoi : n'est non
+      contributif que ce qu'une liste énumère. Cette phrase vivra trente-deux
+      ans, jusqu'au 1er janvier 2026.
+    dispositifs: []
+    article: L. 135-1 CSS
+    version: LEGIARTI000006740165
+    version_precedente: null
+    texte: loi n° 93-936 du 22 juillet 1993
+    lu_le: 2026-09-21
+    portee_modele: sans_objet
+    effet_modele: >-
+      Le dépôt emploie « non contributif » depuis toujours et n'en donnait
+      jusqu'ici aucune source. Elle existe, elle est datée, et elle est
+      énumérative : c'est l'écart entre cette liste-là et celle de
+      l'inventaire qui dit ce que le dépôt ajoute au législateur.
+
+  - code: fsv_premiere_liste
+    date: 1994-01-01
+    face: financement
+    sens: identifie
+    libelle: "La première liste : quatre postes sortent des comptes des régimes"
+    quoi: >-
+      L. 135-2 énumère ce que le fonds prend en charge : le minimum vieillesse,
+      l'allocation spéciale, les majorations de pension pour enfants et pour
+      conjoint à charge, et la prise en compte dans la durée d'assurance du
+      service national et du chômage indemnisé. Une charge qui entre dans cette
+      liste cesse d'être payée par le régime et devient un transfert — donc une
+      ligne comptable qu'on peut lire.
+    dispositifs: [minimum_vieillesse, majoration_enfants, majoration_conjoint_a_charge, periodes_assimilees, service_national]
+    article: L. 135-2 CSS
+    version: LEGIARTI000006740177
+    version_precedente: null
+    texte: loi n° 93-936 du 22 juillet 1993, article 2
+    lu_le: 2026-09-21
+    portee_modele: sans_objet
+    effet_modele: >-
+      Le modèle calcule des droits, pas des flux de financement. Cette bascule
+      ne change aucune pension : elle change qui la paie, et surtout elle rend
+      la dépense MESURABLE — c'est d'elle que descendent les séries publiées
+      dont l'inventaire tire 87 % de son total chiffré.
+
+  - code: majorations_agricoles_au_fsv
+    date: 1995-12-31
+    face: financement
+    sens: identifie
+    libelle: Les majorations pour enfants des non-salariés agricoles entrent au FSV
+    quoi: >-
+      Un 6° est ajouté : le paiement par les caisses de la mutualité sociale
+      agricole des majorations de pension pour enfants servies aux non-salariés
+      agricoles. Le même avantage était déjà pris en charge pour les autres
+      régimes ; l'agriculture rejoint la liste deux ans plus tard.
+    dispositifs: [majoration_enfants]
+    article: L. 135-2 CSS
+    version: LEGIARTI000006740180
+    version_precedente: LEGIARTI000006740179
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: sans_objet
+    effet_modele: >-
+      Aucun. La ligne est ici parce qu'une liste qui saute ses petits pas ne
+      permet plus de dater les grands.
+
+  - code: majorations_enfants_a_la_cnaf
+    date: 2000-12-24
+    face: financement
+    sens: identifie
+    libelle: La branche famille commence à payer la majoration de pension pour enfants
+    quoi: >-
+      La CNAF se voit chargée de « verser au Fonds de solidarité vieillesse un
+      montant égal aux dépenses prises en charge par ce fonds au titre des
+      majorations de pensions ». Le droit ne bouge pas d'un trimestre : c'est
+      le payeur qui change, et il change deux fois — d'abord la famille
+      rembourse le fonds, puis, dans la rédaction en vigueur, elle rembourse
+      directement les régimes.
+    dispositifs: [majoration_enfants]
+    article: L. 223-1 CSS
+    version: LEGIARTI000006741768
+    version_precedente: LEGIARTI000006741767
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: sans_objet
+    effet_modele: >-
+      C'est cette bascule qui rend la majoration pour enfants LISIBLE : les
+      7,78 Md€ que l'inventaire lui prête en 2024 sont un poste publié parce
+      qu'une caisse le rembourse et le compte. Le modèle, lui, la chiffrait à
+      zéro, faute de cas type ayant trois enfants.
+
+  - code: service_national_volontariat_au_fsv
+    date: 2000-03-15
+    face: financement
+    sens: identifie
+    libelle: Les périodes de volontariat du service national entrent au FSV
+    quoi: >-
+      Un 7° est ajouté pour les sommes représentatives de la prise en compte,
+      par les régimes de base, des périodes de volontariat du service national.
+      Le service national LÉGAL y était depuis 1994 ; le volontariat, qui lui
+      succède après la suspension de la conscription, obtient son financement
+      six ans plus tard.
+    dispositifs: [service_national]
+    article: L. 135-2 CSS
+    version: LEGIARTI000006740183
+    version_precedente: LEGIARTI000006740182
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: applique
+    effet_modele: >-
+      Le modèle valide les périodes de service national comme périodes
+      assimilées, sans distinguer l'appelé du volontaire. L'écart est celui
+      d'une génération de volontaires, dont aucun cas type ne porte la période.
+
+  - code: minimum_contributif_au_fsv
+    date: 2010-12-22
+    face: financement
+    sens: identifie
+    libelle: Le minimum contributif devient, pour partie, une charge de solidarité
+    quoi: >-
+      Un 2° est rétabli : « une partie, fixée par la loi de financement de la
+      sécurité sociale, des sommes correspondant au service […] de la
+      majoration mentionnée à l'article L. 351-10 ». Cette « majoration » EST
+      le minimum contributif : L. 351-10 dispose que « la pension de vieillesse
+      au taux plein est assortie, le cas échéant, d'une majoration permettant
+      de porter cette prestation […] à un montant minimum ». Le minimum
+      contributif — dont le nom dit le contraire — est donc reconnu non
+      contributif par le financement, et la fraction sera portée à « au moins
+      50 % » en 2016.
+    dispositifs: [minimum_contributif]
+    article: L. 135-2 CSS
+    version: LEGIARTI000023271661
+    version_precedente: LEGIARTI000023035693
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: applique
+    effet_modele: >-
+      Le modèle sert le minimum contributif et la cascade en isole le montant.
+      Cette bascule ne change pas la pension ; elle dit que le législateur
+      lui-même a rangé dans la solidarité un dispositif que son intitulé range
+      dans la cotisation.
+
+  - code: indemnites_journalieres_au_salaire_de_base
+    date: 2010-11-11
+    face: droit
+    sens: ouvre
+    libelle: Les indemnités journalières de maternité entrent au salaire de base
+    quoi: >-
+      L'article 98 de la loi n° 2010-1330 du 9 novembre 2010 fait entrer les
+      indemnités journalières dans le salaire de base de l'article L. 351-1,
+      pour les congés de maternité débutant à compter du 1er janvier 2012.
+      Jusque-là, le congé de maternité validait des trimestres sans porter
+      aucun salaire au compte : il relevait la durée et abaissait la moyenne.
+    dispositifs: [periodes_assimilees]
+    article: L. 351-1 CSS
+    version: LEGIARTI000023035688
+    version_precedente: null
+    texte: loi n° 2010-1330 du 9 novembre 2010, article 98
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Le modèle valide les périodes assimilées en DURÉE et ne leur porte aucun
+      salaire. L'effet de cette bascule sur le salaire annuel moyen d'une mère
+      lui échappe donc, et c'est un manque au droit positif — du bon côté pour
+      une fois : le modèle sous-estime l'avantage.
+
+  - code: indemnites_journalieres_au_fsv
+    date: 2010-11-11
+    face: financement
+    sens: identifie
+    libelle: Le FSV prend en charge les indemnités journalières portées au compte
+    quoi: >-
+      Le même texte crée, au 10° de L. 135-2, la prise en charge par le fonds
+      des sommes représentatives de cette entrée au salaire de base. Le droit
+      et son financement naissent le même jour, ce qui est l'exception.
+    dispositifs: [periodes_assimilees]
+    article: L. 135-2 CSS
+    version: LEGIARTI000023035693
+    version_precedente: LEGIARTI000021537978
+    texte: loi n° 2010-1330 du 9 novembre 2010
+    lu_le: 2026-09-21
+    portee_modele: sans_objet
+    effet_modele: >-
+      Sans objet côté pension. Cette ligne existe pour sa jumelle dix ans plus
+      tard, qui la défait sans défaire le droit.
+
+  - code: penibilite_a_la_branche_atmp
+    date: 2010-11-11
+    face: financement
+    sens: identifie
+    libelle: La branche accidents du travail paie les départs anticipés pour pénibilité
+    quoi: >-
+      L. 241-3 se voit ajouter une contribution de la branche accidents du
+      travail et maladies professionnelles « couvrant les dépenses
+      supplémentaires engendrées par les départs en retraite à l'âge fixé en
+      application de l'article L. 351-1-4 ». Un départ anticipé non cotisé
+      trouve un payeur nommé, et ce payeur n'est ni l'assuré ni l'impôt.
+    dispositifs: [incapacite_permanente_penibilite]
+    article: L. 241-3 CSS
+    version: LEGIARTI000023034915
+    version_precedente: LEGIARTI000019959598
+    texte: loi n° 2010-1330 du 9 novembre 2010
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      L'inventaire range `incapacite_permanente_penibilite` en `absent` et lui
+      donne pour raison qu'aucun poste ne l'isole. Cette lecture corrige la
+      raison : un payeur existe et il est nommé dans la loi. Ce qui manque
+      n'est pas la charge, c'est sa publication.
+
+  - code: minimum_contributif_hors_fsv
+    date: 2016-12-25
+    face: financement
+    sens: fond
+    libelle: Le minimum contributif retourne à la charge des régimes
+    quoi: >-
+      Six ans après y être entré, le minimum contributif quitte la liste du
+      FSV : la version en vigueur au 25 décembre 2016 ne porte plus aucune
+      mention de l'article L. 351-10. La charge n'a pas disparu — elle est
+      redevenue invisible, réglée par les régimes sur leurs propres comptes.
+    dispositifs: [minimum_contributif]
+    article: L. 135-2 CSS
+    version: LEGIARTI000033728251
+    version_precedente: LEGIARTI000031685302
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: applique
+    effet_modele: >-
+      Le modèle chiffre le minimum contributif par la cascade, et continue donc
+      de le voir. C'est le seul cas de ce fichier où le modèle sait MIEUX que
+      les comptes : la série publiée s'arrête en 2016, le calcul non.
+
+  - code: apprentis_au_fsv
+    date: 2014-01-01
+    face: financement
+    sens: identifie
+    libelle: La validation des trimestres d'apprentissage trouve un payeur
+    quoi: >-
+      Un 11° entre à L. 135-2 pour « les sommes correspondant à la prise en
+      charge mentionnée au dernier alinéa de l'article L. 6243-3 du code du
+      travail ». L'assiette forfaitaire de l'apprenti ne permettait pas de
+      valider quatre trimestres ; la différence est désormais prise en charge.
+      LA FACE EST `financement` ET NON `droit`, et la nuance est la règle de ce
+      fichier : la version citée prouve qui paie, pas ce qui est acquis. Le
+      droit lui-même est à l'article L. 6243-3 du code du travail, que ce
+      document n'a pas lu — et une déduction n'est pas une lecture.
+    dispositifs: [periodes_assimilees]
+    article: L. 135-2 CSS
+    version: LEGIARTI000029961245
+    version_precedente: LEGIARTI000025023016
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Aucun cas type de la grille n'est apprenti. Le dispositif est hors de
+      portée pour la même raison que la majoration pour trois enfants : la
+      grille est un instrument de rapport, pas une population.
+
+  - code: indemnites_journalieres_hors_fsv
+    date: 2020-12-16
+    face: financement
+    sens: fond
+    libelle: Le financement des indemnités journalières est abrogé, le droit reste
+    quoi: >-
+      Le 7° de L. 135-2 — la prise en charge des indemnités journalières
+      portées au salaire de base — devient « (Abrogé) ». La version de
+      L. 351-1 qui les y fait entrer, elle, est toujours en vigueur. C'est la
+      démonstration la plus nette que les deux faces se déplacent séparément :
+      l'avantage est intact, sa trace comptable a disparu.
+    dispositifs: [periodes_assimilees]
+    article: L. 135-2 CSS
+    version: LEGIARTI000042683484
+    version_precedente: LEGIARTI000037388252
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: sans_objet
+    effet_modele: >-
+      Un lecteur qui mesurerait les avantages non contributifs par les comptes
+      du FSV verrait ici une baisse qui n'existe pas. C'est le risque propre
+      aux lignes `serie_publiee` de l'inventaire, et la raison pour laquelle
+      une ligne ne doit jamais mélanger deux périmètres.
+
+  - code: fsv_supprime
+    date: 2026-01-01
+    face: financement
+    sens: fond
+    libelle: Le Fonds de solidarité vieillesse est supprimé et fondu dans la CNAV
+    quoi: >-
+      L'article 24 de la loi n° 2025-199 du 28 février 2025 abroge le chapitre
+      « Fonds de solidarité vieillesse » et les articles L. 135-1 à L. 135-5 ;
+      son XXII dispose que « les droits et obligations du Fonds de solidarité
+      vieillesse sont dévolus à la Caisse nationale d'assurance vieillesse à
+      compter du 1er janvier 2026 ». La définition légale de l'avantage
+      d'assurance vieillesse à caractère non contributif, portée par L. 135-1
+      depuis 1994, disparaît du code.
+    dispositifs: []
+    article: article 24 de la loi n° 2025-199 du 28 février 2025
+    version: LEGIARTI000051273754
+    date_preuve: 2025-03-01
+    article_precedent: L. 135-2 CSS
+    version_precedente: LEGIARTI000042683484
+    texte: loi n° 2025-199 du 28 février 2025, article 24, XXII
+    pourquoi_deux_dates: >-
+      La loi est en vigueur au 1er mars 2025 et supprime le fonds au 1er
+      janvier 2026. `date` est l'effet, `date_preuve` la version lue.
+    lu_le: 2026-09-21
+    portee_modele: sans_objet
+    effet_modele: >-
+      C'est la bascule la plus lourde de ce fichier pour le dépôt, et elle ne
+      touche aucune pension. Elle retire au chantier des avantages non
+      contributifs la source qui l'a rendu possible.
+
+  - code: liste_reprise_par_la_branche_vieillesse
+    date: 2026-01-01
+    face: financement
+    sens: identifie
+    libelle: La liste survit au fonds, sous L. 222-2-1
+    quoi: >-
+      La même loi crée L. 222-2-1 : « La branche mentionnée au 3° de l'article
+      L. 200-2 prend en charge : … », et reprend les postes un à un. Elle garde
+      l'expression du législateur — « des avantages non contributifs mentionnés
+      aux 1° à 5° et 7° du présent article ». La liste n'est donc pas perdue ;
+      elle change de porteur.
+    dispositifs: [minimum_vieillesse, periodes_assimilees, service_national]
+    article: L. 222-2-1 CSS
+    version: LEGIARTI000051288889
+    version_precedente: null
+    texte: loi n° 2025-199 du 28 février 2025, article 24
+    lu_le: 2026-09-21
+    portee_modele: sans_objet
+    effet_modele: >-
+      La liste reste opposable, et ce fichier peut donc continuer de la suivre
+      après 2026 : c'est L. 222-2-1 qu'il faudra relire, et non L. 135-2.
+
+  - code: regime_general_hors_de_la_liste
+    date: 2026-01-01
+    face: financement
+    sens: fond
+    libelle: Le régime général sort de la liste, parce qu'il en est devenu le payeur
+    quoi: >-
+      Le 2° de L. 135-2 visait « la prise en compte par LE RÉGIME GÉNÉRAL, le
+      régime des salariés agricoles, … » des périodes assimilées. Le 2° de
+      L. 222-2-1 vise « la prise en compte par le régime des salariés
+      agricoles, le régime des non-salariés agricoles, … » : le régime général
+      n'y est plus. Il n'a rien perdu — il a absorbé le fonds, et ne se
+      rembourse pas à lui-même.
+    dispositifs: [periodes_assimilees]
+    article: L. 222-2-1 CSS
+    version: LEGIARTI000051288889
+    article_precedent: L. 135-2 CSS
+    version_precedente: LEGIARTI000042683484
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: sans_objet
+    effet_modele: >-
+      Conséquence directe pour la mesure : à compter de 2026, le coût des
+      périodes assimilées du RÉGIME GÉNÉRAL — le plus gros contingent — cesse
+      d'être un transfert publié pour devenir une charge interne. Il reste
+      publié pour les régimes agricoles, libéraux et les avocats. La série
+      `periodes_assimilees` de l'inventaire a donc une date de péremption, et
+      c'est 2026.
+
+  # --- La face `droit` : ce qui s'est ouvert, et ce qui s'est fermé --------
+
+  - code: sportifs_de_haut_niveau
+    date: 2011-12-23
+    face: droit
+    sens: ouvre
+    libelle: L'inscription sur la liste des sportifs de haut niveau valide des trimestres
+    quoi: >-
+      Un 7° est ajouté à L. 351-3 : les périodes d'inscription comme sportif de
+      haut niveau, « sans condition d'affiliation préalable », valident des
+      trimestres qu'aucune cotisation n'a portés. C'est la première période
+      assimilée qui ne compense ni un risque social ni une contrainte publique,
+      mais une activité choisie.
+    dispositifs: [periodes_assimilees]
+    article: L. 351-3 CSS
+    version: LEGIARTI000025014498
+    version_precedente: null
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Le modèle ne construit pas de carrière sportive. Population étroite, mais
+      la ligne compte pour ce qu'elle montre : la liste des périodes assimilées
+      s'allonge par la fin, et chaque ajout est irréversible.
+
+  - code: stages_de_formation_professionnelle
+    date: 2014-01-22
+    face: droit
+    sens: ouvre
+    libelle: Les périodes de stage de formation professionnelle deviennent assimilées
+    quoi: >-
+      Un 8° est ajouté à L. 351-3, visant les périodes de stage de l'article
+      L. 6342-3 du code du travail.
+    dispositifs: [periodes_assimilees]
+    article: L. 351-3 CSS
+    version: LEGIARTI000028498769
+    version_precedente: LEGIARTI000025014498
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Hors de portée de la grille, comme l'apprentissage : aucun cas type ne
+      porte de période de formation.
+
+  - code: tuc_et_stages_d_insertion
+    date: 2023-09-01
+    face: droit
+    sens: ouvre
+    libelle: Les travaux d'utilité collective des années 1980 valident, quarante ans après
+    quoi: >-
+      Un 9° entre à L. 351-3 : « les périodes de stage dont les cotisations
+      sociales ont été prises en charge par l'État et ayant pour finalité
+      l'insertion dans l'emploi […] ainsi que celles mentionnées à l'article 3
+      de la loi n° 79-575 du 10 juillet 1979 et à l'article L. 980-9 du code du
+      travail, dans sa rédaction antérieure ». Ce sont les TUC et les stages
+      assimilés. Des périodes qui ne validaient rien en sont devenues
+      validantes RÉTROACTIVEMENT, pour des carrières commencées quarante ans
+      plus tôt.
+    dispositifs: [periodes_assimilees]
+    article: L. 351-3 CSS
+    version: LEGIARTI000047453382
+    version_precedente: LEGIARTI000042683463
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      C'est le contre-exemple le plus net à l'idée qu'un droit acquis se fige à
+      sa date : le droit applicable à une année de carrière a changé quarante
+      ans après cette année-là. Le modèle date ses règles par l'année de la
+      période, et ne sait donc pas rejouer une validation rétroactive.
+
+  - code: conge_supplementaire_de_naissance
+    date: 2025-12-31
+    face: droit
+    sens: ouvre
+    libelle: Le congé supplémentaire de naissance rejoint les périodes assimilées
+    quoi: >-
+      Le 1° de L. 351-3 est complété pour viser, à côté des prestations
+      maladie, maternité, invalidité et accident du travail, « le congé
+      supplémentaire de naissance ». La liste s'allonge encore, et c'est
+      l'ajout le plus récent que l'index du dépôt porte.
+    dispositifs: [periodes_assimilees]
+    article: L. 351-3 CSS
+    version: LEGIARTI000053279221
+    version_precedente: LEGIARTI000047453382
+    texte: loi n° 2025-1403 du 30 décembre 2025
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Trop récent pour peser sur une pension liquidée : le modèle n'a rien à en
+      faire aujourd'hui, et la ligne est ici pour que la prochaine session sache
+      où reprendre la lecture.
+
+  # --- La face `cotisation` : ce qui est versé sans rien ouvrir ------------
+
+  - code: cotisation_deplafonnee_employeur
+    date: 1991-01-20
+    face: cotisation
+    sens: sterilise
+    libelle: L'employeur cotise sur la totalité du salaire, et n'achète rien au-delà du plafond
+    quoi: >-
+      L. 241-3 se voit ajouter que « la couverture des charges de l'assurance
+      vieillesse est également assurée par des cotisations à la charge des
+      employeurs et assises sur la totalité des rémunérations ou gains ». Le
+      salaire au-delà du plafond ne peut pourtant entrer ni au salaire annuel
+      moyen ni dans aucun droit. C'est le premier prélèvement vieillesse
+      explicitement sans contrepartie, et il est toujours en vigueur.
+    dispositifs: []
+    article: L. 241-3 CSS
+    version: LEGIARTI000006741899
+    version_precedente: LEGIARTI000006741898
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: applique
+    effet_modele: >-
+      Le compte notionnel porte ce qui a été PRÉLEVÉ, part déplafonnée
+      comprise : `config.py` le dit en toutes lettres, et
+      `taux_cotisation_annuels.csv` sépare `taux_plafonne` et
+      `taux_deplafonne`. Les scénarios notionnels rendent donc contributif ce
+      que le droit actuel stérilise — c'est une partie de l'écart qu'ils
+      mesurent, et elle n'était nommée nulle part.
+
+  - code: cotisation_deplafonnee_salarie
+    date: 2003-08-22
+    face: cotisation
+    sens: sterilise
+    libelle: Le salarié y est ajouté
+    quoi: >-
+      La même phrase devient « à la charge des employeurs ET DES SALARIÉS ».
+      Depuis la loi du 21 août 2003, le salarié supporte lui aussi un
+      prélèvement vieillesse qui ne lui ouvre aucun droit, sur la totalité de
+      son salaire.
+    dispositifs: []
+    article: L. 241-3 CSS
+    version: LEGIARTI000006741901
+    version_precedente: LEGIARTI000006741900
+    texte: loi n° 2003-775 du 21 août 2003
+    lu_le: 2026-09-21
+    portee_modele: applique
+    effet_modele: >-
+      La part salariale déplafonnée entre au compte notionnel des scénarios 2
+      et 3, qui ne portent que la part de l'assuré. C'est donc une
+      non-contributivité que les scénarios notionnels EFFACENT, là où
+      l'inventaire n'en recense que des ajouts.
+
+  - code: cotisation_veuvage_supprimee
+    date: 2004-08-25
+    face: financement
+    sens: fond
+    libelle: Le seul droit dérivé qui avait sa propre cotisation la perd
+    quoi: >-
+      D. 242-5 fixait le taux de la cotisation d'assurance veuvage à 0,10 %, à
+      la charge du seul salarié, sur la totalité des rémunérations. Sa version
+      unique court de 1985 au 25 août 2004. L. 241-3 avait absorbé, dès le
+      22 août 2003, « les charges de l'assurance vieillesse ET DE L'ASSURANCE
+      VEUVAGE » dans les cotisations vieillesse. L'allocation veuvage perd
+      ainsi sa contrepartie nommée.
+    dispositifs: [allocation_veuvage]
+    article: D. 242-5 CSS
+    version: LEGIARTI000006735875
+    preuve: fin
+    version_precedente: null
+    texte: loi n° 2003-775 du 21 août 2003
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      L'inventaire range l'allocation veuvage en `absent` et dit qu'un poste
+      fourre-tout l'absorbe. La lecture explique POURQUOI : elle a eu sa
+      cotisation, donc sa ligne, et les a perdues ensemble. Un droit cesse
+      d'être mesurable le jour où il cesse d'avoir un payeur nommé.
+
+  - code: cumul_emploi_retraite_fertilise
+    date: 2023-09-01
+    face: cotisation
+    sens: fertilise
+    libelle: Les cotisations du retraité qui retravaille rouvrent des droits
+    quoi: >-
+      L. 161-22-1-1 est créé : les assurés en cumul emploi-retraite intégral
+      « se constituent de nouveaux droits à pension ». Jusque-là, leurs
+      cotisations étaient à fonds perdus. C'est le seul renversement de ce
+      fichier dans ce sens-là — un prélèvement stérile redevient acquisitif.
+    dispositifs: []
+    article: L. 161-22-1-1 CSS
+    version: LEGIARTI000047450790
+    version_precedente: null
+    texte: loi n° 2023-270 du 14 avril 2023
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Le modèle liquide une fois et ne connaît pas de reprise d'activité après
+      liquidation. La seconde pension lui échappe entièrement.
+
+  - code: seconde_pension_purement_contributive
+    date: 2023-09-01
+    face: droit
+    sens: ferme
+    libelle: Le droit français crée une pension dont la loi dit qu'elle ne porte aucun avantage
+    quoi: >-
+      Le même article ajoute deux phrases qui n'ont pas d'équivalent ailleurs :
+      « Seules sont retenues les périodes d'assurance ayant donné lieu à
+      cotisations à la charge de l'assuré, à l'exclusion des périodes
+      correspondant à des versements [rachats] » et « Aucune majoration, aucun
+      supplément ni aucun accessoire ne peut être octroyé au titre de cette
+      nouvelle pension ». C'est, en droit positif, la définition d'une pension
+      purement contributive — celle que les scénarios notionnels construisent.
+    dispositifs: []
+    article: L. 161-22-1-1 CSS
+    version: LEGIARTI000047450790
+    version_precedente: null
+    texte: loi n° 2023-270 du 14 avril 2023
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Le dépôt construit depuis le début un contrefactuel « et si la pension ne
+      servait que ce qui a été cotisé ». Le législateur l'a écrit, pour une
+      pension et une seule. Ce n'est pas une confirmation du modèle — le champ
+      n'est pas le même — mais c'est le seul point du droit où la question
+      posée par ce dépôt reçoit une réponse rédigée.

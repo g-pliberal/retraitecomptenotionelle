@@ -1477,3 +1477,55 @@ journal:
       encaisse — mais au seul compte. Restent à revoir, inchangées : les six
       lignes que `veille_droit.py` signale. Reste aussi, et c'est le troisième
       écart de l'audit, l'absence d'engagements de retraite acquis à date.
+
+  - date: "2026-09-21"
+    session: "ce qui a changé de côté : la frontière contributive, datée"
+    consulte: >-
+      Index LEGI du dépôt, dump du 13 juillet 2025 à jour des incréments au
+      20 septembre 2026. Toutes les VERSIONS, et non la seule en vigueur, des
+      articles L. 135-1 (définition du fonds), L. 135-2 (trente-sept versions,
+      1994-2025), L. 222-2-1, L. 223-1, L. 241-3, D. 242-5, L. 351-1, L. 351-3
+      et L. 161-22-1-1 du code de la sécurité sociale, comparées deux à deux
+      par appariement de contenu ; article 24 de la loi n° 2025-199 du
+      28 février 2025 (LEGIARTI000051273754), lu par `--motif`.
+    trouve: >-
+      L'article L. 135-1 porte la SEULE définition légale de l'avantage
+      d'assurance vieillesse « à caractère non contributif », et elle est
+      énumérative : n'est non contributif que ce que L. 135-2 énumère. Cette
+      liste a été révisée trente-sept fois en trente et un ans, et
+      l'article 24 de la LFSS 2025 l'abroge : « les droits et obligations du
+      Fonds de solidarité vieillesse sont dévolus à la Caisse nationale
+      d'assurance vieillesse à compter du 1er janvier 2026 ». Elle est reprise
+      par L. 222-2-1, DONT LE 2° NE VISE PLUS LE RÉGIME GÉNÉRAL — qui a absorbé
+      le fonds et ne se rembourse pas à lui-même. Vingt-quatre déplacements de
+      frontière ont été datés et consignés dans
+      `legislation/frontiere_contributive.yaml`, chacun avec l'identifiant de
+      version qui en fait foi ; `scripts/frontiere_contributive.py --verifier`
+      en revérifie quarante dans l'index. Les plus notables : les cotisations
+      vieillesse déplafonnées, qui n'ouvrent aucun droit, à la charge de
+      l'employeur depuis le 20 janvier 1991 et du salarié depuis le 22 août
+      2003 (L. 241-3) ; la validation rétroactive des travaux d'utilité
+      collective des années 1980, entrée au 9° de L. 351-3 le 1er septembre
+      2023 ; l'article L. 161-22-1-1, qui définit depuis la même date la seule
+      pension purement contributive du droit français (« aucune majoration,
+      aucun supplément ni aucun accessoire ») ; et les indemnités journalières
+      de maternité, entrées au salaire de base de L. 351-1 en 2010 — version
+      toujours en vigueur — dont le financement a été abrogé en 2020.
+    reste: >-
+      Le scénario 1 n'est pas modifié : aucune règle de calcul n'a été touchée,
+      et aucune ligne du registre ci-dessus n'a changé d'état. Ce qui a été
+      ajouté est une LECTURE, et elle corrige trois raisons écrites dans
+      l'inventaire des avantages non contributifs — la pénibilité a un payeur
+      nommé depuis 2010 (contribution de la branche AT-MP, L. 241-3),
+      l'allocation veuvage a eu sa propre cotisation de 1985 à 2004 (D. 242-5,
+      0,10 % à la charge du seul salarié), et le minimum contributif a été
+      rangé dans la solidarité de 2010 à 2016. Restent à lire à la source : le
+      dernier alinéa de l'article L. 6243-3 du code du travail, qui porte le
+      droit de l'apprenti quand L. 135-2 n'en portait que le financement ; les
+      articles L. 12 b et L. 12 bis du code des pensions, dont la restriction
+      aux enfants nés avant 2004 est une bascule de même nature non consignée ;
+      et l'article L. 222-2-1, à relire à chaque LFSS, puisque c'est lui qui
+      remplace désormais L. 135-2. À revoir aussi : la date à laquelle les
+      comptes cesseront de publier les périodes assimilées du régime général,
+      qui périmera une série de l'inventaire.
+    prochaine_veille: "2027-01-31"
