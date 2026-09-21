@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 910<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 948<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -11174,12 +11174,31 @@ sans être lues — fécondité, espérance de vie, solde migratoire, traitement
 indiciaires : le lecteur les prendrait sans une ligne de code nouvelle, il
 manque seulement les scénarios correspondants dans `hypotheses_projection.yaml`.
 
+**UN DÉFAUT QUE LES CHIFFRES NE MONTRAIENT PAS, ET QU'IL A FALLU REGARDER.**
+Une fois les variantes branchées, les nombres étaient justes et la suite
+verte. Le TRACÉ, non. L'axe de la carte du solde suivait ses données : 20 %
+du PIB sous la référence, 15 % sous la variante haute. L'écart de 2070 perd
+29 % de sa valeur entre les deux (2,39 point contre 1,69) et n'en perdait que
+5 % de sa hauteur à l'écran — 37 pixels contre 35. Le lecteur qui bascule d'un
+scénario à l'autre voyait une bande rouge presque inchangée alors que le
+déficit avait fondu d'un quart. Ce n'est pas une régression de cette action :
+l'axe s'adaptait déjà. Mais c'est elle qui rend ce graphique sensible au
+scénario, donc elle qui transforme un comportement dormant en piège actif.
+La carte porte maintenant le sommet de la variante la plus dépensière, commun
+aux trois scénarios ; `gabarit.graphique` prend un `sommet_minimal` et
+`depense_maximale_toutes_variantes` le LIT sur les variantes. Deux tests le
+tiennent, dont un qui lit les graduations rendues plutôt que le paramètre :
+ce qui doit tenir est ce que le lecteur voit. **La leçon vaut au-delà de cette
+action : une suite verte ne dit rien d'un dessin.**
+
 **Fichiers.** `scripts/fetch/cor_comptes_retraite.py` (`lire_sensibilite`,
 `sensibilites`), `scripts/verifier_donnees.py` (`source_comptes_variantes`),
 `data/reference/macro/comptes_retraite_variantes.csv` (nouveau, 360 valeurs),
 `data/reference/macro/hypotheses_projection.yaml` (`variantes_chomage`),
 `src/retraite_notionnelle/donnees/equilibre.py`,
-`src/retraite_notionnelle/web/pages.py`, `moteur/js/equilibre.js`,
+`src/retraite_notionnelle/web/pages.py`,
+`src/retraite_notionnelle/web/gabarit.py` (`sommet_minimal`),
+`moteur/js/equilibre.js`, `moteur/js/gabarit.js`,
 `moteur/js/pages.js`, `scripts/construire_donnees.py`,
 `scripts/construire_temoins.py` (témoin `cout_variante_productivite`),
 `scripts/sensibilite_comptes.py` (nouveau), `tests/test_cout.py`,

@@ -289,6 +289,28 @@ export function varianteDuScenario(scenario, paquet) {
   return VARIANTE_REFERENCE;
 }
 
+/**
+ * La dépense la plus haute qu'un scénario du COR atteigne, en part de PIB.
+ *
+ * À quoi cela sert : à figer l'axe de la carte du solde, que le lecteur
+ * redessine en changeant de scénario et qu'il lit en comparant deux réglages.
+ * Un axe qui suit ses données rendait les deux tracés incomparables. Le
+ * plafond est LU sur les variantes, jamais écrit : un nombre en dur tiendrait
+ * jusqu'au prochain rapport du COR, puis mentirait en silence.
+ */
+export function depenseMaximaleToutesVariantes(paquet) {
+  const brut = paquet.comptes_retraite;
+  const cles = ["depenses", ...variantesDisponibles(paquet).map(
+    (nom) => `variante_${nom}_depenses`)];
+  let sommet = 0.0;
+  for (const cle of cles) {
+    for (const valeur of (brut[cle] || {}).valeurs || []) {
+      if (valeur > sommet) sommet = valeur;
+    }
+  }
+  return sommet;
+}
+
 /** Le compte du système de retraite : dépenses, ressources, solde, structure. */
 export class ComptesRetraite {
   constructor(paquet, variante = VARIANTE_REFERENCE) {

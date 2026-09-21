@@ -71,6 +71,7 @@ from retraite_notionnelle.donnees.equilibre import (
     POSTES_TRANSFERTS,
     VARIANTE_REFERENCE,
     ComptesRetraite,
+    depense_maximale_toutes_variantes,
     variante_du_scenario,
     variantes_disponibles,
 )
@@ -2737,3 +2738,50 @@ def test_la_proposition_ne_perd_plus_un_point_a_la_croissance(
         soldes[scenario] = ligne.solde("notionnel_liberal")
     amplitude = soldes["cor_productivite_basse"] - soldes["cor_productivite_haute"]
     assert 0.0 < amplitude < 0.005, soldes
+
+
+def test_la_carte_du_solde_garde_le_meme_axe_sous_tous_les_scenarios():
+    """UN AXE QUI SUIT SES DONNÉES TROMPE L'ŒIL DÈS QU'ON COMPARE.
+
+    La carte du solde est la seule du site qu'un réglage redessine ET qu'on
+    lit en comparant deux réglages : l'écart entre les deux courbes EST son
+    sujet. Le 21 septembre 2026, elle montait à 20 % du PIB sous le scénario
+    de référence et à 15 % sous la variante haute de productivité. L'écart de
+    2070 perdait alors 29 % de sa valeur entre les deux tracés — 2,39 point
+    contre 1,69 — et 5 % seulement de sa hauteur à l'écran. Le chiffre disait
+    le vrai, le dessin le contredisait.
+
+    Le test lit les graduations rendues, et non le paramètre : ce qui doit
+    tenir est ce que le lecteur voit.
+    """
+    import re
+
+    from retraite_notionnelle.web.pages import Contexte, rendre
+
+    contexte = Contexte(Parametres())
+    axes = {}
+    for scenario in ("cor_reference", "cor_productivite_haute",
+                     "cor_productivite_basse"):
+        _, corps = rendre(contexte, "/cout", {"projection": scenario})
+        carte = next(
+            m.group(0) for m in re.finditer(r"<svg\b.*?</svg>", corps, re.S)
+            if "% du PIB" in m.group(0) and "projection" in m.group(0)
+        )
+        axes[scenario] = re.findall(
+            r'<text class="graduation"[^>]*>([^<]*)</text>', carte)[:6]
+    assert len(set(map(tuple, axes.values()))) == 1, axes
+
+
+def test_le_plafond_de_l_axe_est_lu_sur_les_variantes():
+    """Et non écrit en dur : un 20 % figé tiendrait jusqu'au prochain rapport
+    du COR, puis mentirait en silence. Le plafond doit couvrir la variante la
+    plus dépensière, et c'est elle qui le fixe."""
+    macro = RACINE_DONNEES / "reference" / "macro"
+    plafond = depense_maximale_toutes_variantes(RACINE_DONNEES)
+    comptes = ComptesRetraite(RACINE_DONNEES)
+    sommets = [comptes.depense(a) for a in comptes.annees()]
+    for nom in variantes_disponibles(macro):
+        variante = ComptesRetraite(RACINE_DONNEES, variante=nom)
+        sommets += [variante.depense(a) for a in comptes.annees()]
+    assert plafond == pytest.approx(max(sommets))
+    assert plafond > comptes.depense(comptes.derniere_annee)

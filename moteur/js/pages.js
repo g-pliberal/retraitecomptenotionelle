@@ -48,6 +48,7 @@ import {
   POSTES,
   POSTES_TRANSFERTS,
   ComptesRetraite,
+  depenseMaximaleToutesVariantes,
   varianteDuScenario,
 } from "./equilibre.js";
 import { Restitution } from "./restitution.js";
@@ -5977,6 +5978,12 @@ function cout(contexte, regards = null) {
     // Sans lui, l'écart entre les deux courbes — un point et demi de PIB, tout
     // le sujet de la carte — se lirait « 14 » contre « 13 ».
     1,
+    // LE MÊME AXE SOUS TOUS LES SCÉNARIOS. C'est la seule carte du site qu'un
+    // réglage redessine ET qu'on lit en comparant deux réglages : l'écart
+    // entre les deux courbes EST son sujet. Un axe qui suit ses données le
+    // rendait incomparable. Le plafond est celui de la variante la plus
+    // dépensière, lu et non écrit.
+    depenseMaximaleToutesVariantes(contexte.paquet) * 100,
   );
   const equilibre = solde.premiereAnneeEquilibree(reforme);
   // « en 2043 » et « jamais » ne se branchent pas au même endroit de la
