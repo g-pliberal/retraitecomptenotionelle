@@ -195,11 +195,14 @@ def calculer(parametres: Parametres | None = None,
     # 65 ans : c'est la proportion dans laquelle les deux planchers se
     # mélangent, et le mélange est ce que la trajectoire retient. Les deux
     # planchers purs restent parcourus comme BORNES.
+    # La MÊME table que le calage : celle des bénéficiaires.
+    bascule = cout.avenir.annee(parametres.annee_bascule)
+    population = bascule.garantie.population_mortalite if bascule is not None else None
     part_seule = {
         sexe: 1.0 - simulateur.vie_en_couple.part_moyenne(
             sexe,
             list(simulateur.mortalite.courbe_survie(
-                65, parametres.annee_bascule, sexe, True, None)),
+                65, parametres.annee_bascule, sexe, True, population)),
         )
         for sexe in ("F", "H")
     }

@@ -589,7 +589,8 @@ class GarantieDistribution {
   constructor(distribution, plancherMensuel, pensionReference, effectifParTete,
               versConstants, tauxRecours = 1.0, distributionsSexe = null,
               partFemmes = 0, rapportDeplacement = 1.0,
-              plancherMajore = null, partSeule = null) {
+              plancherMajore = null, partSeule = null,
+              populationMortalite = null) {
     if (!(tauxRecours > 0 && tauxRecours <= 1)) {
       throw new RangeError("le taux de recours est une part, entre zéro exclu et un");
     }
@@ -607,6 +608,9 @@ class GarantieDistribution {
     // qui vit seule : `plancherMensuel` est alors celui de qui vit à deux.
     this.plancherMajore = plancherMajore;
     this.partSeule = partSeule;
+    // Le vingtile de niveau de vie des bénéficiaires, dont la mortalité pèse
+    // les années vécues. Les reprises lisent la même table.
+    this.populationMortalite = populationMortalite;
     this.distribution = distribution;
     // Part des ayants droit qui réclament la garantie.
     this.tauxRecours = tauxRecours;
@@ -698,15 +702,51 @@ function garantieDistribution(simulateur, liste, population, poids, revalorisati
   // toujours été pour une CARRIÈRE, et ne décide plus pour tous.
   const plancher = parametres.garantie_vieillesse_mensuelle;
   const plancherMajore = plancher + parametres.allocation_isolement_mensuelle;
+  const versEnquete = macro.coefficientPrix(
+    parametres.annee_euros_garantie_vieillesse, millesime);
+  const toutesTetes = tetes[TETES_TOUTES];
+  const reference = toutesTetes > 0 ? total.actuel / toutesTetes : 0;
+  // LA TABLE QUI PÈSE LES ANNÉES VÉCUES EST CELLE DES BÉNÉFICIAIRES : qui vit
+  // seul dépend de l'âge, et combien d'années on passe à chaque âge dépend de
+  // la mortalité. Le vingtile est celui de la pension moyenne de ceux que le
+  // plancher majoré concerne, calculé ici une fois pour que les reprises
+  // lisent la même table que le coût.
+  const mortalite = simulateur.mortalite;
+  let populationMortalite = null;
+  const facteurEnquete = (tetes[TETES_GARANTIE] > 0 && reference > 0)
+    ? total[RESSOURCES_GARANTIE] / tetes[TETES_GARANTIE] / reference : 0;
+  if (facteurEnquete > 0 && mortalite.anneeNiveauxDeVie !== null
+      && mortalite.anneeNiveauxDeVie !== undefined) {
+    let poidsTranches = 0;
+    let sommePensions = 0;
+    for (const tranche of distribution.tranches) {
+      const ouverte = tranche.borneSuperieure === null || tranche.borneSuperieure === undefined;
+      const superieure = ouverte ? null : tranche.borneSuperieure * facteurEnquete;
+      const [concernee] = manqueMoyen(
+        tranche.borneInferieure * facteurEnquete, superieure,
+        plancherMajore * versEnquete,
+      );
+      if (concernee <= 0) continue;
+      const milieu = ouverte ? tranche.borneInferieure
+        : 0.5 * (tranche.borneInferieure + tranche.borneSuperieure);
+      poidsTranches += tranche.part * concernee;
+      sommePensions += tranche.part * concernee * milieu * facteurEnquete;
+    }
+    if (poidsTranches > 0) {
+      populationMortalite = mortalite.populationNiveauDeVieEuros(
+        sommePensions / poidsTranches
+        * macro.coefficientPrix(millesime, mortalite.anneeNiveauxDeVie),
+      );
+    }
+  }
   const couple = simulateur.vieEnCouple;
   const partSeule = {};
   for (const sexe of ["F", "H"]) {
     partSeule[sexe] = 1 - couple.partMoyenne(
       sexe,
-      simulateur.mortalite.courbeSurvie(65, parametres.annee_bascule, sexe, true, null),
+      mortalite.courbeSurvie(65, parametres.annee_bascule, sexe, true, populationMortalite),
     );
   }
-  const toutes = tetes[TETES_TOUTES];
   // LE RAPPORT DES DEUX SEXES EST LU, PAS SUPPOSÉ : l'enquête publie la part
   // de la durée validée qui n'a pas été cotisée, et un compte notionnel ne
   // crédite que ce qui l'a été. Un paramètre réglé remplace la lecture ; un le
@@ -722,16 +762,17 @@ function garantieDistribution(simulateur, liste, population, poids, revalorisati
   return new GarantieDistribution(
     distribution,
     plancher * macro.coefficientPrix(parametres.annee_euros_garantie_vieillesse, millesime),
-    toutes > 0 ? total.actuel / toutes : 0,
-    toutes > 0 ? simulateur.effectifs.effectif("tous_regimes", millesime) / toutes : 0,
+    reference,
+    toutesTetes > 0
+      ? simulateur.effectifs.effectif("tous_regimes", millesime) / toutesTetes : 0,
     macro.coefficientPrix(millesime, parametres.annee_euros_constants),
     parametres.taux_recours_garantie,
     distributionsSexe,
     caracteristiques.partFemmes,
     rapport,
-    plancherMajore * macro.coefficientPrix(
-      parametres.annee_euros_garantie_vieillesse, millesime),
+    plancherMajore * versEnquete,
     partSeule,
+    populationMortalite,
   );
 }
 
@@ -1681,54 +1722,72 @@ function reprisesSuccessions(lignes, simulateur, calage) {
   const ligneEnquete = lignes.find((ligne) => ligne.annee === millesime) || null;
   const deplacement = ligneEnquete && ligneEnquete.garantie && ligneEnquete.garantie.facteur > 0
     ? ligneEnquete.garantie.facteur : 1.0;
+  // LES BÉNÉFICIAIRES SONT CEUX QUE LA GARANTIE SERT : deux sexes, deux
+  // planchers. Chacun a son facteur — les pensions des femmes tombent plus —
+  // et son plancher, dans la proportion que le recensement mesure.
+  const poidsFemmes = calage.partFemmes;
+  const [facteurF, facteurH] = calage.facteursDesSexes(deplacement);
+  const parSexe = {
+    F: new DistributionPensions(simulateur.paquet, "F"),
+    H: new DistributionPensions(simulateur.paquet, "H"),
+  };
+  const majore = calage.plancherMajore === null || calage.plancherMajore === undefined
+    ? calage.plancherMensuel : calage.plancherMajore;
+  const cas = [];
+  for (const [sexe, poids, facteurSexe] of [["F", poidsFemmes, facteurF],
+                                            ["H", 1.0 - poidsFemmes, facteurH]]) {
+    const seule = calage.partSeule === null || calage.partSeule === undefined
+      ? 0 : calage.partSeule[sexe];
+    for (const [plancher, poidsPlancher] of [[calage.plancherMensuel, 1 - seule],
+                                             [majore, seule]]) {
+      if (poids * poidsPlancher > 0) cas.push([sexe, poids * poidsPlancher, facteurSexe, plancher]);
+    }
+  }
+
   const tranches = [];
-  for (const tranche of distribution.tranches) {
-    const ouverte = tranche.borneSuperieure === null || tranche.borneSuperieure === undefined;
-    const superieure = ouverte ? null : tranche.borneSuperieure * deplacement;
-    const [concernee, manque] = manqueMoyen(
-      tranche.borneInferieure * deplacement, superieure, calage.plancherMensuel,
-    );
-    if (concernee <= 0) continue;
-    const milieu = ouverte ? tranche.borneInferieure
-      : 0.5 * (tranche.borneInferieure + tranche.borneSuperieure);
-    tranches.push([
-      tranche.part * concernee,
-      manque / concernee * 12.0 * calage.versConstants,
-      milieu * deplacement,
-      distribution.partSous(milieu),
-    ]);
+  for (const [sexe, poidsCas, facteurSexe, plancher] of cas) {
+    for (const tranche of parSexe[sexe].tranches) {
+      const ouverte = tranche.borneSuperieure === null || tranche.borneSuperieure === undefined;
+      const superieure = ouverte ? null : tranche.borneSuperieure * facteurSexe;
+      const [concernee, manque] = manqueMoyen(
+        tranche.borneInferieure * facteurSexe, superieure, plancher,
+      );
+      if (concernee <= 0) continue;
+      const milieu = ouverte ? tranche.borneInferieure
+        : 0.5 * (tranche.borneInferieure + tranche.borneSuperieure);
+      tranches.push([
+        poidsCas * tranche.part * concernee,
+        manque / concernee * 12.0 * calage.versConstants,
+        milieu * facteurSexe,
+        // Le RANG reste celui de la distribution d'ensemble : le patrimoine
+        // n'est pas publié par sexe.
+        distribution.partSous(milieu),
+      ]);
+    }
   }
   let poidsTotal = 0.0;
   for (const [poids] of tranches) poidsTotal += poids;
 
-  // 3. La mortalité des bénéficiaires : le vingtile de niveau de vie le plus
-  // proche de leur pension moyenne, dans les euros de l'étude de l'INSEE.
-  let population = null;
-  if (poidsTotal > 0 && mortalite.anneeNiveauxDeVie !== null
-      && mortalite.anneeNiveauxDeVie !== undefined) {
-    let pensionMoyenne = 0.0;
-    for (const [poids, , pension] of tranches) pensionMoyenne += poids * pension;
-    pensionMoyenne /= poidsTotal;
-    population = mortalite.populationNiveauDeVieEuros(
-      pensionMoyenne * macro.coefficientPrix(millesime, mortalite.anneeNiveauxDeVie),
-    );
-  }
-  // Et les deux sexes, pesés comme ils le sont sous le plancher.
+  // 3. La mortalité des bénéficiaires : le vingtile que le calage a retenu,
+  // celui-là même qui a pesé les années vécues pour dire qui vit seul. Les
+  // deux moitiés lisent ainsi la même table.
+  const population = calage.populationMortalite;
   const courbeH = mortalite.courbeSurvie(65, bascule, "H", true, population);
   const courbeF = mortalite.courbeSurvie(65, bascule, "F", true, population);
   let partFemmes = 0.5;
   const sousPlancher = { F: 0.0, H: 0.0 };
   if (poidsTotal > 0) {
-    // LE POIDS DES DEUX SEXES EST CELUI DE L'ENQUÊTE, et non celui que les
-    // courbes de survie donnaient : voir `partFemmes` dans distribution.js.
-    const poidsFemmes = calage.partFemmes;
-    // CHAQUE SEXE SOUS SON PROPRE FACTEUR, comme le coût.
-    const [facteurF, facteurH] = calage.facteursDesSexes(deplacement);
     for (const [sexe, facteurSexe] of [["F", facteurF], ["H", facteurH]]) {
-      const parSexe = new DistributionPensions(simulateur.paquet, sexe);
-      sousPlancher[sexe] = coutGarantie(
-        parSexe, 1.0, calage.plancherMensuel, facteurSexe,
-      ).partBeneficiaires;
+      const seule = calage.partSeule === null || calage.partSeule === undefined
+        ? 0 : calage.partSeule[sexe];
+      let part = 0.0;
+      for (const [plancher, poidsPlancher] of [[calage.plancherMensuel, 1 - seule],
+                                               [majore, seule]]) {
+        if (poidsPlancher <= 0) continue;
+        part += poidsPlancher * coutGarantie(
+          parSexe[sexe], 1.0, plancher, facteurSexe).partBeneficiaires;
+      }
+      sousPlancher[sexe] = part;
     }
     const beneficiairesF = poidsFemmes * sousPlancher.F;
     const beneficiairesH = (1.0 - poidsFemmes) * sousPlancher.H;
