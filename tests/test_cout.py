@@ -1003,11 +1003,16 @@ def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distrib
     # 800 € par personne plus 250 € à qui vit seul, et le recensement dit qui
     # vit seul. ``plancher`` est donc celui de qui vit à deux, et le majoré
     # s'applique dans la proportion que le recensement mesure, sexe par sexe.
+    # La MÊME table que le calage : celle des bénéficiaires, et non celle de la
+    # population générale. Qui vit seul dépend de l'âge, et combien d'années
+    # on passe à chaque âge dépend de la mortalité.
+    bascule = cout.avenir.annee(parametres.annee_bascule)
+    population = bascule.garantie.population_mortalite if bascule is not None else None
     part_seule = {
         sexe: 1.0 - simulateur.vie_en_couple.part_moyenne(
             sexe,
             list(simulateur.mortalite.courbe_survie(
-                65, parametres.annee_bascule, sexe, True, None)),
+                65, parametres.annee_bascule, sexe, True, population)),
         )
         for sexe in ("F", "H")
     }

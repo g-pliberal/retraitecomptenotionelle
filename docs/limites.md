@@ -5082,12 +5082,12 @@ qu'elle verse. La trajectoire suit ces avances par âge à compter de la
 bascule, au taux réel lu sur la courbe des taux, les libère au décès avec la
 mortalité du vingtile de niveau de vie où la pension moyenne des
 bénéficiaires les place — le premier —, les deux sexes pesés comme ils le
-sont sous le plancher, 66 % de femmes, dont la longévité fait durer une avance
-20,4 ans, et les successions en rendent une part CALCULÉE sur le patrimoine
+sont sous le plancher, 75 % de femmes, dont la longévité fait durer une avance
+20,8 ans, et les successions en rendent une part CALCULÉE sur le patrimoine
 des ménages retraités selon leur revenu (COR, enquête Histoire de vie et
-Patrimoine 2018, `donnees/patrimoine.py`) : 37 % au réglage par défaut, les plus petites
+Patrimoine 2018, `donnees/patrimoine.py`) : 39 % au réglage par défaut, les plus petites
 pensions rattachées au quart des ménages retraités le plus modeste (médiane
-36 800 €), les autres à l'ensemble (médiane 190 200 €), et 1,29 avance par
+36 800 €), les autres à l'ensemble (médiane 190 200 €), et 1,21 avance par
 succession — la règle reporte la reprise au décès du conjoint survivant, et
 deux bénéficiaires qui vivent ensemble en laissent deux sur la même
 succession, presque toujours celle de la femme (INSEE, recensement 2021, part
@@ -5128,9 +5128,8 @@ seuls 65 ans et plus ferait bouger les deux ensemble.
 Le patrimoine des retraités selon leur PENSION n'est publié nulle part : c'est le
 fichier individuel de l'enquête qui le donnerait, et il se commande, action
 47. Le réglage `reprise` remplace la part calculée par un nombre. Au réglage
-par défaut, en 2070 : 17,7 milliards versés, 8,5 repris, 9,2 nets, 0,25 % du
-PIB ; de 2026 à 2070 : 849 versés, 268 repris, 581 nets, et un stock d'avances
-en cours de 329 milliards à l'horizon. Deux choses que le calcul ne voit
+par défaut, en 2070 : 15,3 milliards versés, 7,7 repris, 7,6 nets ; de 2026 à
+2070 : 729 versés, 243 repris, 486 nets. Deux choses que le calcul ne voit
 toujours pas, et qui vont en sens inverse l'une de l'autre : les femmes sous
 le plancher vivent souvent dans un ménage moins pauvre que leur pension — le
 calcul le sait pour leur espérance de vie, non pour leur patrimoine —, et deux
@@ -5145,8 +5144,8 @@ la trajectoire servait le plancher MAJORÉ — 1 050 €, celui de qui vit seul 
 la population entière, parce que l'enquête sur les pensions ne dit pas avec qui
 l'on vit. Le recensement le dit, lui, âge par âge et par sexe, et le dépôt le
 lisait DÉJÀ pour les reprises sur succession. Il le lit désormais ici aussi :
-pesé sur les années vécues après 65 ans, **61,8 % des femmes vivent seules
-contre 33,9 % des hommes**, et les deux planchers se mélangent dans cette
+pesé sur les années vécues après 65 ans, **57,9 % des femmes vivent seules
+contre 30,0 % des hommes**, et les deux planchers se mélangent dans cette
 proportion, sexe par sexe. Les deux se composent — les femmes vivent seules
 plus souvent ET tombent sous le plancher plus souvent —, si bien qu'un partage
 global les manquerait.
@@ -5154,17 +5153,26 @@ global les manquerait.
 | | Garantie 2024 | 2026, % du PIB | Cumul 2026-2070 |
 |---|---|---|---|
 | Plancher majoré pour tous *(jusqu'au 21 septembre 2026)* | 22,0 Md € | 0,74 % | 918 Md € |
-| **Pesé par le recensement** | **17,8 Md €** | **0,59 %** | **745 Md €** |
+| **Pesé par le recensement** | **17,4 Md €** | **0,58 %** | **729 Md €** |
 | Plancher de base pour tous | 12,5 Md € | 0,42 % | 525 Md € |
 
-La convention d'avant surestimait donc la garantie de **près d'un quart**, et
-ce n'était pas une prudence assumée : c'était une borne haute faute d'avoir
+La convention d'avant surestimait donc la garantie de **plus d'un cinquième**,
+et ce n'était pas une prudence assumée : c'était une borne haute faute d'avoir
 cherché la source. `situation_foyer` reste ce qu'il a toujours été pour une
 CARRIÈRE — le simulateur demande la vôtre, et un individu a une situation — et
-ne décide plus pour tous. L'exposition est pesée par la table de la population
-générale et non par le vingtile des bénéficiaires ; les plus modestes meurent
-plus tôt, donc pèsent moins les grands âges où l'on vit seul, et la correction
-serait un peu plus forte encore avec leur table.
+ne décide plus pour tous.
+
+**La table qui pèse les années vécues est celle des BÉNÉFICIAIRES**, et ce
+n'est pas un détail : qui vit seul dépend de l'âge, et combien d'années on
+passe à chaque âge dépend de la mortalité. Les plus modestes meurent plus tôt,
+pèsent donc moins les grands âges — ceux où l'on vit seul —, et le recensement
+ne dit pas la même chose selon la table qui le pèse : 61,8 % de femmes seules
+sous la table générale contre 57,9 % sous celle du premier vingtile, qui est
+celui des bénéficiaires. Le vingtile est calculé une fois, dans le calage, sur
+la pension moyenne de ceux que le plancher majoré concerne — le plus large des
+deux —, et les REPRISES lisent la même : une population décrite deux fois
+différemment dans le même calcul est exactement ce que ce module passe son
+temps à corriger.
 
 Ce que chaque ligne suppose. **Les deux planchers** sont donnés parce que
 l'enquête dit la pension et non avec qui l'on vit : ils ENCADRENT le coût, la

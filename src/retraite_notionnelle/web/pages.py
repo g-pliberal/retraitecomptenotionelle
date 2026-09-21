@@ -9541,14 +9541,18 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
                      + base.allocation_isolement_mensuelle) * vers_enquete
     caracteristiques = simulateur.caracteristiques
     rapport_mesure = caracteristiques.rapport_deplacement()
+    ligne_bascule = cout.avenir.annee(base.annee_bascule)
+    garantie_bascule = ligne_bascule.garantie if ligne_bascule is not None else None
     # Qui vit seul après 65 ans, lu au recensement et pesé sur les années
-    # vécues : c'est ce qui met le coût ENTRE les deux planchers du tableau
+    # vécues — avec la mortalité des BÉNÉFICIAIRES, celle que le calage a
+    # retenue : c'est ce qui met le coût ENTRE les deux planchers du tableau
     # plutôt que sur le plus haut.
     part_seule = {
         sexe: 1.0 - simulateur.vie_en_couple.part_moyenne(
             sexe,
             list(simulateur.mortalite.courbe_survie(
-                65, base.annee_bascule, sexe, True, None)),
+                65, base.annee_bascule, sexe, True,
+                garantie_bascule.population_mortalite if garantie_bascule else None)),
         )
         for sexe in ("F", "H")
     }
@@ -9668,8 +9672,6 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
     ]
     # La part que la succession couvre, telle que la trajectoire l'a retenue :
     # calculée sur le patrimoine des retraités, ou réglée.
-    ligne_bascule = cout.avenir.annee(base.annee_bascule)
-    garantie_bascule = ligne_bascule.garantie if ligne_bascule is not None else None
     part_reprise = garantie_bascule.part_reprise if garantie_bascule else 0.0
     duree_avances = garantie_bascule.duree_avances if garantie_bascule else 0.0
     part_femmes = garantie_bascule.part_femmes if garantie_bascule else 0.0

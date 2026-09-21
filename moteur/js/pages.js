@@ -8282,12 +8282,17 @@ function coutDetailGarantie(contexte) {
     + base.allocation_isolement_mensuelle) * versEnquete;
   const caracteristiques = new CaracteristiquesRetraites(contexte.paquet);
   const rapportMesure = caracteristiques.rapportDeplacement();
-  // Qui vit seul après 65 ans, lu au recensement et pesé sur les années vécues.
+  const ligneBascule = c.avenir.annee(base.annee_bascule);
+  const garantieBascule = ligneBascule !== null ? ligneBascule.garantie : null;
+  // Qui vit seul après 65 ans, lu au recensement et pesé sur les années vécues,
+  // avec la mortalité des BÉNÉFICIAIRES, celle que le calage a retenue.
   const partSeule = {};
   for (const sexe of ["F", "H"]) {
     partSeule[sexe] = 1 - simulateur.vieEnCouple.partMoyenne(
       sexe,
-      simulateur.mortalite.courbeSurvie(65, base.annee_bascule, sexe, true, null),
+      simulateur.mortalite.courbeSurvie(
+        65, base.annee_bascule, sexe, true,
+        garantieBascule ? garantieBascule.populationMortalite : null),
     );
   }
   const parSexe = new Map();
@@ -8408,8 +8413,6 @@ function coutDetailGarantie(contexte) {
   ]);
   // La part que la succession couvre, telle que la trajectoire l'a retenue :
   // calculée sur le patrimoine des retraités, ou réglée.
-  const ligneBascule = c.avenir.annee(base.annee_bascule);
-  const garantieBascule = ligneBascule !== null ? ligneBascule.garantie : null;
   const partReprise = garantieBascule ? garantieBascule.partReprise : 0.0;
   const dureeAvances = garantieBascule ? garantieBascule.dureeAvances : 0.0;
   const partFemmes = garantieBascule ? garantieBascule.partFemmes : 0.0;

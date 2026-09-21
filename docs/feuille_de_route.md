@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->30 000<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->30 062<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -11494,3 +11494,58 @@ court vers ce qui manque aux quarante-deux dispositifs.
 `docs/frontiere_contributive.md`, `docs/avantages_non_contributifs.md`,
 `data/reference/legislation/veille.yaml`, `data/reference/prose/zones.yaml`,
 `data/sources.yaml`.
+### 79. Le poids du recensement, mis en place jusqu'au bout — et une régression rattrapée — `fait`
+
+**Demande.** « Met le poids du recensement en place », après l'action 77 qui
+l'avait posé dans le coût mais laissé deux choses ouvertes.
+
+**Ce qui manquait, et ce n'était pas une finition.** L'action 77 pesait les
+deux planchers par le recensement, mais l'EXPOSITION — combien d'années on
+passe à chaque âge — venait de la table de la population générale. Or qui vit
+seul dépend de l'âge : les plus modestes meurent plus tôt, pèsent donc moins
+les grands âges, ceux où l'on vit seul. Le recensement ne dit pas la même
+chose selon la table qui le pèse : **61,8 % de femmes seules sous la table
+générale contre 57,9 % sous celle du premier vingtile**, qui est celui des
+bénéficiaires. Le vingtile est désormais calculé une fois, dans le calage, sur
+la pension moyenne de ceux que le plancher majoré concerne.
+
+**Une régression de l'action 77, trouvée en cherchant la première.** Cette
+action-là avait fait de `plancher_mensuel` le plancher de BASE, le majoré
+devenant un champ séparé. Or `_reprises_successions` lit `plancher_mensuel` —
+et décrivait donc, depuis la veille, les seuls retraités sous 800 €, un
+ensemble plus étroit, plus pauvre et plus féminin que celui que la garantie
+sert. Aucun test ne l'a vue : elle ne déplaçait que des grandeurs que rien
+n'épinglait.
+
+| | Avant l'action 77 | Après (la régression) | Corrigé |
+|---|---|---|---|
+| Part des femmes parmi les bénéficiaires | 70,2 % | 75,6 % | **74,7 %** |
+| Avances par succession | 1,270 | 1,181 | **1,212** |
+| Couverture par les successions | 37,4 % | 41,4 % | **38,9 %** |
+
+**Le remède est le même des deux côtés : décrire la même population.** Les
+reprises portent désormais sur les QUATRE cas que la garantie sert — deux
+sexes, deux planchers —, chacun sous son propre facteur de déplacement et son
+propre plancher, pondérés par le recensement. Elles lisaient le bon facteur
+depuis l'action 75 et le mauvais plancher depuis la 77 ; elles lisent
+maintenant les deux. Le rang qui rattache une pension au patrimoine de son
+quart reste celui de la distribution d'ensemble : le patrimoine n'est pas
+publié par sexe.
+
+**Ce que l'ensemble déplace**, par rapport à l'action 77 : la garantie de 2024
+passe de 17,8 à **17,4 milliards**, celle de 2026 de 0,59 à **0,58 % du PIB**,
+le cumulé de 745 à **729**. Par rapport à la convention d'avant le
+21 septembre — le plancher majoré pour tous —, la correction totale vaut **plus
+d'un cinquième** : 22,0 → 17,4 milliards.
+
+**La leçon, et elle est la même que celle des actions 72 et 75.** Un calcul qui
+décrit la même population deux fois de deux façons différentes finit toujours
+par se démentir. Ici il l'a fait trois fois : le poids des sexes (action 72),
+le facteur de déplacement (action 75), le plancher (celle-ci). À chaque fois le
+remède a été de faire lire aux deux moitiés la même chose, et à chaque fois un
+test l'a épinglé ensuite.
+
+**Fichiers.** `src/retraite_notionnelle/cout.py`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/cout.js`,
+`moteur/js/pages.js`, `scripts/garantie_par_sexe.py`, `tests/test_cout.py`,
+`docs/limites.md`, `tests/temoins/pages.json`.

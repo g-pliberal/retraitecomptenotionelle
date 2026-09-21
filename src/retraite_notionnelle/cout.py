@@ -1956,7 +1956,8 @@ class GarantieDistribution:
                  part_femmes: float = 0.0,
                  rapport_deplacement: float = 1.0,
                  plancher_majore: float | None = None,
-                 part_seule: dict[str, float] | None = None) -> None:
+                 part_seule: dict[str, float] | None = None,
+                 population_mortalite: str | None = None) -> None:
         if not 0.0 < taux_recours <= 1.0:
             raise ValueError("le taux de recours est une part, entre zéro exclu et un")
         if rapport_deplacement <= 0.0:
@@ -1979,6 +1980,11 @@ class GarantieDistribution:
         #: Part des bénéficiaires de chaque sexe qui vit seule, moyennée sur
         #: les années vécues après 65 ans (INSEE, recensement 2021).
         self.part_seule = part_seule
+        #: Le vingtile de niveau de vie des bénéficiaires, dont la mortalité
+        #: pèse ces années vécues. Les reprises lisent la même table : une
+        #: population décrite deux fois différemment dans le même calcul est
+        #: exactement ce que ce module passe son temps à corriger.
+        self.population_mortalite = population_mortalite
         self.distribution = distribution
         #: Part des ayants droit qui réclament la garantie.
         self.taux_recours = taux_recours
@@ -2077,16 +2083,53 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
     # CARRIÈRE — le simulateur demande la vôtre — et ne décide plus pour tous.
     plancher = parametres.garantie_vieillesse_mensuelle
     plancher_majore = plancher + parametres.allocation_isolement_mensuelle
+    vers_enquete = macro.coefficient_prix(
+        parametres.annee_euros_garantie_vieillesse, millesime)
+    toutes = tetes[TETES_TOUTES]
+    reference = masses["actuel"] / toutes if toutes > 0.0 else 0.0
+    # LA TABLE QUI PÈSE LES ANNÉES VÉCUES EST CELLE DES BÉNÉFICIAIRES, et non
+    # celle de la population générale. Qui vit seul dépend de l'âge, et
+    # combien d'années on passe à chaque âge dépend de la mortalité : les plus
+    # modestes meurent plus tôt, pèsent donc moins les grands âges — ceux où
+    # l'on vit seul —, et le recensement ne dit pas la même chose selon la
+    # table qui le pèse. Le vingtile est celui de la pension moyenne de ceux
+    # que le plancher MAJORÉ concerne : le plus large des deux, donc celui qui
+    # dit qui pourrait être servi, et il est calculé ici une fois pour que les
+    # reprises lisent la même table que le coût.
+    mortalite = simulateur.mortalite
+    population_mortalite = None
+    facteur_enquete = (
+        masses[RESSOURCES_GARANTIE] / tetes[TETES_GARANTIE] / reference
+        if tetes[TETES_GARANTIE] > 0.0 and reference > 0.0 else 0.0
+    )
+    if facteur_enquete > 0.0 and mortalite.annee_niveaux_de_vie is not None:
+        poids_tranches = 0.0
+        somme_pensions = 0.0
+        for tranche in distribution.tranches:
+            superieure = (None if tranche.borne_superieure is None
+                          else tranche.borne_superieure * facteur_enquete)
+            concernee, _ = _manque_moyen(
+                tranche.borne_inferieure * facteur_enquete, superieure,
+                plancher_majore * vers_enquete)
+            if concernee <= 0.0:
+                continue
+            milieu = (tranche.borne_inferieure if tranche.borne_superieure is None
+                      else 0.5 * (tranche.borne_inferieure + tranche.borne_superieure))
+            poids_tranches += tranche.part * concernee
+            somme_pensions += tranche.part * concernee * milieu * facteur_enquete
+        if poids_tranches > 0.0:
+            population_mortalite = mortalite.population_niveau_de_vie_euros(
+                somme_pensions / poids_tranches
+                * macro.coefficient_prix(millesime, mortalite.annee_niveaux_de_vie))
     couple = simulateur.vie_en_couple
     part_seule = {
         sexe: 1.0 - couple.part_moyenne(
             sexe,
-            list(simulateur.mortalite.courbe_survie(
-                65, parametres.annee_bascule, sexe, True, None)),
+            list(mortalite.courbe_survie(
+                65, parametres.annee_bascule, sexe, True, population_mortalite)),
         )
         for sexe in ("F", "H")
     }
-    toutes = tetes[TETES_TOUTES]
     # LE RAPPORT DES DEUX SEXES EST LU, PAS SUPPOSÉ, depuis le 21 septembre
     # 2026 : l'enquête publie la part de la durée validée qui n'a pas été
     # cotisée, et un compte notionnel ne crédite que ce qui l'a été. Un
@@ -2106,7 +2149,8 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
         plancher_majore=plancher_majore * macro.coefficient_prix(
             parametres.annee_euros_garantie_vieillesse, millesime),
         part_seule=part_seule,
-        pension_reference=masses["actuel"] / toutes if toutes > 0.0 else 0.0,
+        population_mortalite=population_mortalite,
+        pension_reference=reference,
         effectif_par_tete=(
             simulateur.effectifs.effectif("tous_regimes", millesime) / toutes
             if toutes > 0.0 else 0.0
@@ -2397,32 +2441,55 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
         if ligne_enquete is not None and ligne_enquete.garantie is not None
         and ligne_enquete.garantie.facteur > 0.0 else 1.0
     )
+    # LES BÉNÉFICIAIRES SONT CEUX QUE LA GARANTIE SERT, et il y en a quatre
+    # sortes : deux sexes, deux planchers. Chacun a son facteur de déplacement
+    # — les pensions des femmes tombent plus — et son plancher — 800 € à deux,
+    # 1 050 € seul, dans la proportion que le recensement mesure. Les décrire
+    # ici sous un seul facteur et un seul plancher ferait dire au suivi des
+    # avances autre chose que ce que la dépense dit, sur la même population.
+    poids_femmes = calage.part_femmes
+    facteur_f, facteur_h = calage.facteurs_des_sexes(deplacement)
+    par_sexe = {
+        sexe: DistributionPensions(parametres.racine_donnees, sexe=sexe)
+        for sexe in ("F", "H")
+    }
+    majore = (calage.plancher_majore if calage.plancher_majore is not None
+              else calage.plancher_mensuel)
+    cas: list[tuple[str, float, float, float]] = []
+    for sexe, poids, facteur_sexe in (("F", poids_femmes, facteur_f),
+                                      ("H", 1.0 - poids_femmes, facteur_h)):
+        seule = 0.0 if calage.part_seule is None else calage.part_seule[sexe]
+        for plancher, poids_plancher in ((calage.plancher_mensuel, 1.0 - seule),
+                                         (majore, seule)):
+            if poids * poids_plancher > 0.0:
+                cas.append((sexe, poids * poids_plancher, facteur_sexe, plancher))
+
     tranches: list[tuple[float, float, float, float]] = []
-    for tranche in distribution.tranches:
-        superieure = (None if tranche.borne_superieure is None
-                      else tranche.borne_superieure * deplacement)
-        concernee, manque = _manque_moyen(
-            tranche.borne_inferieure * deplacement, superieure, calage.plancher_mensuel)
-        if concernee <= 0.0:
-            continue
-        milieu = (tranche.borne_inferieure if tranche.borne_superieure is None
-                  else 0.5 * (tranche.borne_inferieure + tranche.borne_superieure))
-        tranches.append((
-            tranche.part * concernee,
-            manque / concernee * 12.0 * calage.vers_constants,
-            milieu * deplacement,
-            distribution.part_sous(milieu),
-        ))
+    for sexe, poids_cas, facteur_sexe, plancher in cas:
+        for tranche in par_sexe[sexe].tranches:
+            superieure = (None if tranche.borne_superieure is None
+                          else tranche.borne_superieure * facteur_sexe)
+            concernee, manque = _manque_moyen(
+                tranche.borne_inferieure * facteur_sexe, superieure, plancher)
+            if concernee <= 0.0:
+                continue
+            milieu = (tranche.borne_inferieure if tranche.borne_superieure is None
+                      else 0.5 * (tranche.borne_inferieure + tranche.borne_superieure))
+            tranches.append((
+                poids_cas * tranche.part * concernee,
+                manque / concernee * 12.0 * calage.vers_constants,
+                milieu * facteur_sexe,
+                # Le RANG reste celui de la distribution d'ensemble : c'est lui
+                # qui rattache une pension au patrimoine de son quart, et le
+                # patrimoine n'est pas publié par sexe.
+                distribution.part_sous(milieu),
+            ))
     poids_total = sum(poids for poids, _, _, _ in tranches)
 
-    # 3. La mortalité des bénéficiaires : le vingtile de niveau de vie le plus
-    # proche de leur pension moyenne, dans les euros de l'étude de l'INSEE.
-    population = None
-    if poids_total > 0.0 and mortalite.annee_niveaux_de_vie is not None:
-        pension_moyenne = sum(poids * pension for poids, _, pension, _ in tranches) / poids_total
-        population = mortalite.population_niveau_de_vie_euros(
-            pension_moyenne * macro.coefficient_prix(millesime, mortalite.annee_niveaux_de_vie))
-    # Et les deux sexes, pesés comme ils le sont sous le plancher.
+    # 3. La mortalité des bénéficiaires : le vingtile de niveau de vie que le
+    # calage a retenu, celui-là même qui a pesé les années vécues pour dire
+    # qui vit seul. Les deux moitiés lisent ainsi la même table.
+    population = calage.population_mortalite
     courbe_h = mortalite.courbe_survie(65, bascule, "H", True, population)
     courbe_f = mortalite.courbe_survie(65, bascule, "F", True, population)
     part_femmes = 0.5
@@ -2431,21 +2498,16 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
         # LE POIDS DES DEUX SEXES EST CELUI DE L'ENQUÊTE, et non celui que les
         # courbes de survie donnaient. Peser les femmes par leur espérance de
         # vie à 65 ans revenait à supposer la population stationnaire ET à
-        # ignorer que l'enquête publie sa propre composition : sa colonne
-        # « ensemble » est le mélange de ses deux colonnes de sexe, à un poids
-        # près qui s'en déduit exactement. Les deux lectures divergeaient d'un
-        # point de part sous le plancher — 58,99 % en recomposant contre
-        # 58,03 % dans la colonne dont le COÛT est tiré —, c'est-à-dire que le
-        # modèle disait deux choses de la même population.
-        poids_femmes = calage.part_femmes
-        # CHAQUE SEXE SOUS SON PROPRE FACTEUR, comme le coût : les déplacer
-        # tous deux du facteur d'ensemble ferait dire au suivi des avances une
-        # autre chose que ce que la dépense dit, sur la même population.
-        facteur_f, facteur_h = calage.facteurs_des_sexes(deplacement)
+        # ignorer que l'enquête publie sa propre composition.
         for sexe, facteur_sexe in (("F", facteur_f), ("H", facteur_h)):
-            par_sexe = DistributionPensions(parametres.racine_donnees, sexe=sexe)
-            sous_plancher[sexe] = cout_garantie(
-                par_sexe, 1.0, calage.plancher_mensuel, facteur_sexe).part_beneficiaires
+            seule = 0.0 if calage.part_seule is None else calage.part_seule[sexe]
+            sous_plancher[sexe] = sum(
+                poids_plancher * cout_garantie(
+                    par_sexe[sexe], 1.0, plancher, facteur_sexe).part_beneficiaires
+                for plancher, poids_plancher in (
+                    (calage.plancher_mensuel, 1.0 - seule), (majore, seule))
+                if poids_plancher > 0.0
+            )
         beneficiaires_f = poids_femmes * sous_plancher["F"]
         beneficiaires_h = (1.0 - poids_femmes) * sous_plancher["H"]
         if beneficiaires_f + beneficiaires_h > 0.0:
