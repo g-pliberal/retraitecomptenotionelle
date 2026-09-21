@@ -232,6 +232,45 @@ def test_un_commentaire_de_code_n_est_pas_un_titre_de_section():
         "En Python", "En bibliothèque"]
 
 
+def test_le_tableau_de_certification_dit_le_niveau_que_ses_sondes_lisent():
+    """La période et le niveau d'une série doivent parler du même fichier.
+
+    Le tableau du §1 de `limites.md` donne, série par série, la période
+    couverte et le niveau de fiabilité qui y règne. Les deux sont désormais
+    liés : la période se lit par une sonde qui filtre le fichier sur un
+    niveau, et la colonne « Niveau » doit dire ce niveau-là. Sans ce test, une
+    ligne pourrait annoncer « certifiée » en lisant les bornes des années
+    estimées, et personne ne le verrait — c'est même la forme la plus probable
+    de l'erreur, puisque les deux colonnes se modifient séparément.
+    """
+    import re
+
+    en_clair = {"certifiee": "certifiée", "haute": "haute", "moyenne": "moyenne",
+                "estimee": "estimée", "projetee": "projetée", "saisie": "saisie"}
+    texte = (RACINE / "docs" / "limites.md").read_text(encoding="utf-8").split("\n")
+    debut = next(i for i, l in enumerate(texte)
+                 if l.startswith("## 1. État de certification"))
+    fin = next(i for i, l in enumerate(texte) if i > debut and l.startswith("## 2."))
+
+    verifiees = 0
+    for ligne in texte[debut:fin]:
+        if not ligne.startswith("| ") or ligne.startswith("| Donnée"):
+            continue
+        cases = [c.strip() for c in ligne.strip("|").split("|")]
+        niveaux = set(re.findall(r"fiabilite=(\w+)", cases[1]))
+        if not niveaux:
+            continue
+        assert len(niveaux) == 1, f"deux niveaux dans une même période : {cases[0]}"
+        attendu = en_clair[niveaux.pop()]
+        assert cases[2].strip("*") == attendu, (
+            f"« {cases[0]} » annonce « {cases[2]} » et lit les années "
+            f"« {attendu} » : les deux colonnes ne parlent pas du même fichier")
+        verifiees += 1
+    assert verifiees >= 30, (
+        f"{verifiees} lignes du tableau lisent leur période dans les données ; "
+        "le compte ne doit pas reculer")
+
+
 def test_un_nombre_a_decimale_et_a_separateur_est_un_seul_nombre():
     """« 7 603,41 » se lisait comme deux nombres, 7 603 et 41.
 
