@@ -213,6 +213,38 @@ def test_les_sondes_comptent_ce_qu_elles_disent_compter():
     assert verifier_prose.sonde_poids("moteur/donnees.json") > 0
 
 
+def test_un_commentaire_de_code_n_est_pas_un_titre_de_section():
+    """Le README écrit ses exemples en Python, commentaires compris.
+
+    « # Le cas général : grille cas type × génération » est une ligne de
+    programme ; le découpage y voyait un titre, et ouvrait une section
+    fantôme. Elles gonflaient le cliquet — neuf pour le seul README — et
+    coupaient la section réelle qui les contient : un régime déclaré sur elle
+    ne valait plus que jusqu'au premier commentaire.
+    """
+    texte = ("## En Python\n"
+             "```python\n"
+             "# Le cas général : grille cas type × génération\n"
+             "print(calculer_cas_types(simulateur))\n"
+             "```\n"
+             "## En bibliothèque\n")
+    assert [s.titre for s in verifier_prose.decouper(texte)] == [
+        "En Python", "En bibliothèque"]
+
+
+def test_une_sonde_peut_traverser_un_cran_d_entrees():
+    """`institutions.*.jeux` réunit les jeux de toutes les institutions.
+
+    Le manifeste des sources range ses jeux par institution, et leur nombre —
+    le seul que la méthodologie cite — ne se lit nulle part sans ce passage :
+    elle en annonçait « cent vingt » en toutes lettres.
+    """
+    manifeste = "data/sources.yaml:institutions"
+    institutions = verifier_prose.sonde_entrees(manifeste)
+    jeux = verifier_prose.sonde_entrees(f"{manifeste}.*.jeux")
+    assert jeux > institutions > 0
+
+
 def test_une_ancre_citee_dans_un_bloc_de_code_n_est_pas_evaluee():
     """`docs/fraicheur.md` montre la forme de l'ancre dans un bloc de code.
 

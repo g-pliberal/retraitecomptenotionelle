@@ -133,7 +133,23 @@ def sonde_lignes_csv(chemin: str) -> float:
 
 
 def _descendre(donnees, chemin: str, origine: str):
-    for cle in chemin.split("."):
+    """``clé.sous_clé``, et ``*`` pour traverser toutes les entrées d'un cran.
+
+    ``institutions.*.jeux`` rend la réunion des jeux de toutes les
+    institutions : le manifeste des sources range ses jeux par institution, et
+    leur nombre — le seul qui intéresse le lecteur — ne se lit nulle part sans
+    ce passage. Il était écrit en toutes lettres, « cent vingt jeux », pour
+    161.
+    """
+    for rang, cle in enumerate(chemin.split(".")):
+        if cle == "*":
+            reste = ".".join(chemin.split(".")[rang + 1:])
+            suite = donnees.values() if isinstance(donnees, dict) else donnees
+            reuni = []
+            for branche in suite:
+                feuille = _descendre(branche, reste, origine) if reste else branche
+                reuni += list(feuille)
+            return reuni
         if isinstance(donnees, list):
             donnees = donnees[int(cle)]
         elif cle in donnees:
@@ -340,8 +356,19 @@ class Section:
 
 
 def decouper(texte: str) -> list[Section]:
+    """Les sections du document, titre par titre.
+
+    Un ``#`` dans un bloc de code clôturé est un commentaire de programme, pas
+    un titre : le README en porte neuf, qui ouvraient autant de sections
+    fantômes — « Le cas général : grille cas type × génération » est une ligne
+    de Python. Elles gonflaient le cliquet et, plus grave, coupaient la
+    section réelle qui les contient : un régime déclaré sur elle ne valait
+    alors que jusqu'au premier commentaire.
+    """
     lignes = texte.split("\n")
-    marques = [(i, re.match(r"(#{1,6}) (.+)", l)) for i, l in enumerate(lignes, 1)]
+    citations = _blocs_de_code(texte)
+    marques = [(i, re.match(r"(#{1,6}) (.+)", l)) for i, l in enumerate(lignes, 1)
+               if i not in citations]
     titres = [(i, m.group(2).strip()) for i, m in marques if m]
     sections, debut_corps = [], titres[0][0] if titres else len(lignes) + 1
     if debut_corps > 1:

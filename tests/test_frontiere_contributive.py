@@ -234,14 +234,17 @@ def test_le_renvoi_de_l_inventaire_annonce_le_bon_compte(donnees):
 
     Un compte écrit dans un document et tenu dans un autre est exactement ce
     qui se périme sans bruit : la session qui ajoutera une bascule n'ira pas
-    relire l'inventaire.
+    relire l'inventaire. Ce test exigeait la formule en toutes lettres,
+    « vingt-quatre fois depuis 1991 », et devait donc être réécrit à chaque
+    bascule. Le renvoi porte maintenant son ancre, et
+    `scripts/verifier_prose.py` recompte depuis ce fichier-ci : ce qui reste
+    à exiger, c'est que l'ancre soit là et qu'elle interroge la bonne liste.
     """
     prose = re.sub(r"\s+", " ", (RACINE / "docs" / "avantages_non_contributifs.md")
                    .read_text(encoding="utf-8"))
-    assert "vingt-quatre fois depuis 1991" in prose, (
-        "le renvoi de l'inventaire vers la frontière contributive a changé de "
-        "formulation : remettre le compte à jour avec lui")
-    assert len(donnees["bascules"]) == 24
+    assert "entrees(data/reference/legislation/frontiere_contributive.yaml:bascules)" \
+        in prose, ("le renvoi de l'inventaire vers la frontière contributive a "
+                   "perdu son ancre : sans elle, plus rien ne recompte ce nombre")
     assert min(str(b["date"]) for b in donnees["bascules"])[:4] == "1991"
 
 
