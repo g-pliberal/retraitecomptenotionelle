@@ -2760,7 +2760,7 @@ c'est de là que viennent les −7,2 % et +0,3 %.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-vingt-deux, chacun avec sa source et sa date de vérification, et
+vingt-huit, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -2772,8 +2772,11 @@ d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
 | fiches F21552 et F36464 | taux plein à 170, taux plein à 67 ans avec 158, taux minoré à 65 ans (45 %), proratisation 158/170 | **exact** |
 | actualité A15703 | minimum contributif 2026 : 170 trimestres dont 135 cotisés, 873,53 € par mois | **exact** au centime |
 | circulaire Cnav 2026-07 | âges légaux et durées de la suspension pour trois dates de naissance, décote d'un né en novembre 1961 (44,375 %) | **exact**, une fois les tables réécrites |
-| circulaire Cnav 2026-17 | carrière longue par génération, 1964 à 1971, ouverte à la borne et refusée un trimestre plus tôt | **exact**, une fois la borne lue par génération |
+| circulaire Cnav 2026-29 | carrière longue par génération, 1964 à 1971, ouverte à la borne et refusée un trimestre plus tôt | **exact**, une fois la borne lue par génération |
 | circulaire Cnav 2018-04 | surcote à un, deux et trois taux (2,5 %, 4,75 %, 10,25 %) | **exact**, une fois le barème daté |
+| fiche F16336 et circulaire carrière Cnav 2017-01, fiche 6.2b | huit trimestres par enfant au régime général — quatre de maternité, quatre d'éducation | **exact** |
+| fiche F37311 | bonification de la fonction publique : quatre trimestres par enfant né avant 2004, deux pour ceux nés depuis | **exact** |
+| circulaire Cnav 2022-26 | assiette de la majoration pour trois enfants : 10 % de la retraite telle qu'elle est servie, surcotée, décotée ou pile au taux plein | **exact** |
 
 **Ce que la confrontation a trouvé, dans l'ordre.** Le premier exemple lu
 contredisait les tables certifiées du dépôt : non que le récupérateur se soit
@@ -2793,19 +2796,58 @@ date. Puis la carrière longue, dont la borne des vingt ans n'avait jamais été
 lue par génération. Le minimum contributif, la décote, la proratisation, le
 taux plein sont tombés justes du premier coup — c'est aussi un résultat.
 
-**Ce que les exemples ne couvrent pas.** Ils sont courts par construction :
-une affiliation, pas de polypension, pas d'enfant sauf pour le minimum, pas
-de carrière hachée. Les vingt-quatre et vingt-trois années des parents, les
-deux trimestres d'enfants réputés cotisés, les âges des catégories actives
-n'ont pas d'exemple publié que le dépôt ait trouvé : ils sont transcrits du
-texte, et attendent le leur.
+**Six exemples de plus, le 21 septembre 2026, et ce qu'ils ont demandé de
+neuf.** Les enfants n'avaient aucun témoin — ni les trimestres qu'ils
+accordent, ni la majoration de 10 % —, et pour une raison de forme : aucune
+caisse ne publie une carrière entière dont elle donne la durée d'assurance.
+Ce qu'elle publie, c'est **le nombre de trimestres ajoutés par enfant**, et
+**le taux de la majoration**. Deux grandeurs neuves ont donc été ajoutées au
+banc, qui se mesurent l'une et l'autre sans rien recalculer du modèle :
+`trimestres_de_majoration_enfants` rejoue LA MÊME carrière sans enfant et
+compare les deux durées — l'écart, lui, ne dépend ni de l'âge d'entrée ni de
+la durée requise de la génération ; `majoration_enfants_sur_pensions` rapporte
+la majoration servie à la somme des pensions de régime. Les six exemples
+tombent justes : 16 trimestres pour deux enfants au régime général, 24 pour
+trois, 8 pour deux enfants nés avant 2004 dans la fonction publique et 4 pour
+deux enfants nés depuis — et 10 % exactement dans les trois cas, sur une
+carrière surcotée à 58,125 %, au taux plein, et minorée à 41,25 %.
+
+Ce dernier point est ce que la circulaire 2022-26 tient à dire et que le
+modèle aurait pu manquer : « la surcote majore la retraite et fait partie
+intégrante de l'avantage de base », si bien que la majoration pour enfants
+« est donc calculée sur la base du montant annuel de la retraite, majorée par
+la surcote ». Son exemple le chiffre — 10 % × (600 + 22,50) = 62,25 — et
+c'est un ordre d'opérations, pas un barème : appliquer les 10 % à la pension
+d'AVANT la surcote rendrait 9,52 % de celle d'après, et le témoin le verrait.
+
+**Une circulaire annulée ne certifie plus rien.** Les six témoins de carrière
+longue citaient la circulaire Cnav 2026-17 du 12 juin 2026, que la 2026-29 du
+4 septembre a annulée et remplacée. Ses âges et ses durées ont été relus ligne
+à ligne dans la circulaire en vigueur : aucun n'a bougé — 60 ans et 6 mois et
+170 trimestres pour 1964, 60 ans et 9 mois pour 1965, deux ans et six mois
+avant l'âge légal de 1966 à 1969 — mais les témoins citent désormais celle qui
+fait foi. C'est la même leçon qu'en juillet, d'un cran plus loin : une table
+certifiée l'est à une date, et une SOURCE aussi.
+
+**Ce que les exemples ne couvrent pas.** Ils restent courts par construction :
+une affiliation, pas de polypension, pas de carrière hachée. Les vingt-quatre
+et vingt-trois années des parents, les âges des catégories actives et leur
+durée requise propre n'ont pas d'exemple publié que le dépôt ait trouvé : ils
+sont transcrits du texte, et attendent le leur. Les trimestres réputés cotisés
+de la carrière longue en ont un, maintenant lu — les trois exemples du point
+1.2 de la circulaire 2026-29 —, mais il ne se rejoue pas : il arbitre entre
+des périodes assimilées de nature différente, maladie, chômage, service
+national, invalidité, maternité, que le modèle ne distingue pas dans une
+carrière qu'il synthétise. Le rejouer demanderait d'abord de porter ces
+natures, ce que l'entrée `carriere_longue_reputes_cotises_autres` du registre
+de veille dit toujours.
 
 **Ce que cette source vaut, et ce qu'elle ne vaut pas.** Un exemple de
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les vingt-deux tombent justes ensemble, sur
-sept sources et cinq règles, c'est le droit que le modèle applique, et non une
+par l'exemple seul. Mais quand les vingt-huit tombent justes ensemble, sur
+dix sources et sept règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
 
 ### La cotisation déplafonnée est portée au compte
@@ -7817,7 +7859,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1947<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1954<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -260,8 +260,11 @@ entrees:
       - {type: legifrance, reference: "L. 351-4 CSS", date: "2023-09-01"}
       - {type: legifrance, reference: "L. 12 CPCMR, version LEGIARTI000053280361", date: "2026-09-21"}
       - {type: legifrance, reference: "L. 12 bis CPCMR, version LEGIARTI000053280367", date: "2026-09-21"}
+      - {type: circulaire_cnav, reference: "circulaire carrière 2017-01 du 13 janvier 2017, fiche n° 6.2b, point 2 : « Quatre trimestres peuvent être attribués au titre de chaque majoration »", date: "2017-01-13"}
+      - {type: service_public, reference: "fiche F16336, quatre trimestres de maternité et quatre d'éducation par enfant", date: "2026-08-14"}
+      - {type: service_public, reference: "fiche F37311, bonification de la fonction publique : quatre trimestres par enfant né avant 2004, deux depuis", date: "2026-09-01"}
     verifie_le: "2026-09-21"
-    temoins: []
+    temoins: [sp_f16336_mda_deux_enfants, cnav_2017_01_mda_trois_enfants, sp_f37311_bonification_avant_2004, sp_f37311_bonification_depuis_2004]
     reformes: [parents_2026]
     etat: manque
     effet: "Toute mère ; commande la décote, la proratisation, la surcote parentale et le SAM des parents. Dans la fonction publique, un trimestre change de case sans changer de nombre."
@@ -285,6 +288,14 @@ entrees:
       `moteur/js/`.
       RESTE AUSSI À TRANCHER : l'attribution au père (partage des trimestres
       d'éducation depuis 2010) demeure une convention du dépôt.
+      CE QUE LES QUATRE TÉMOINS DU 21 SEPTEMBRE FIXENT, ET CE QU'ILS NE FIXENT
+      PAS : ils tiennent le NOMBRE de trimestres servis dans les quatre cas
+      courants — 8 par enfant au régime général, 4 puis 2 dans la fonction
+      publique —, en rejouant la même carrière sans enfant. Ils mesurent donc
+      la durée d'assurance, et resteront justes quand le partage entre services
+      et durée sera porté : c'est exactement la grandeur que ce partage ne
+      déplace pas. Ce partage, lui, n'aura de témoin que le jour où une fiche
+      de calcul publiée en donnera un prorata chiffré.
     prochaine_veille: "2026-12-31"
 
   - id: majoration_dix_pour_cent
@@ -292,12 +303,18 @@ entrees:
     textes: ["L. 351-12 CSS", "accord national interprofessionnel Agirc-Arrco"]
     sources:
       - {type: autre, reference: "Agirc-Arrco, plafond de la majoration familiale (novembre 2025)", date: "2025-11-01"}
-    verifie_le: "2026-09-17"
-    temoins: []
+      - {type: circulaire_cnav, reference: "circulaire 2022-26 du 14 octobre 2022, Majoration pour enfants, point 3.2 : l'assiette est la retraite majorée par la surcote, 10 % × (600 + 22,50) = 62,25", date: "2022-10-14"}
+      - {type: service_public, reference: "fiche F16336, majoration de 10 % pour trois enfants au régime général", date: "2026-08-14"}
+    verifie_le: "2026-09-21"
+    temoins: [cnav_2022_26_majoration_enfants_sur_surcote, cnav_2022_26_majoration_enfants_au_taux_plein, cnav_2022_26_majoration_enfants_sur_decote]
     reformes: []
-    etat: transcrit
+    etat: conforme
     effet: "Parents de trois enfants."
-    a_faire: "Chercher un exemple publié ; relire le plafond Agirc-Arrco chaque novembre."
+    a_faire: >-
+      Relire le plafond Agirc-Arrco chaque novembre — c'est la seule pièce du
+      dispositif qui ne soit tenue par aucun des trois témoins, ceux-ci
+      mesurant le TAUX et son assiette, pas l'écrêtement en euros de la
+      complémentaire.
     prochaine_veille: "2026-11-30"
 
   - id: minimum_garanti
@@ -346,11 +363,11 @@ entrees:
     regle: "Quatre bornes d'entrée (16, 18, 20, 21 ans), cinq trimestres avant la fin de l'année civile — quatre pour les nés au dernier trimestre —, durée requise cotisée ; la borne des vingt ans par génération ; portes lues à la date d'effet."
     textes: ["L. 351-1-1 CSS", "D. 351-1-1 CSS (décret n° 2026-345 du 7 mai 2026)"]
     sources:
-      - {type: circulaire_cnav, reference: "2026-17 du 12 juin 2026, point 1.1 et annexe 3 (remplacée par 2026-29 du 4 septembre 2026)", date: "2026-09-04"}
+      - {type: circulaire_cnav, reference: "2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3, relue ligne à ligne le 21 septembre 2026 : mêmes âges et mêmes durées que la 2026-17 qu'elle annule et remplace", date: "2026-09-04"}
       - {type: legifrance, reference: "D. 351-1-1 CSS, versions du 1er septembre 2023 (LEGIARTI000047634571), du 1er janvier 2026 (LEGIARTI000053356023, sans changement de valeur) et du 1er septembre 2026 (LEGIARTI000054059621), lues par le récupérateur dans l'index LEGI, I et II", date: "2026-09-17"}
       - {type: service_public, reference: "fiche F13845", date: "2026-09-01"}
     verifie_le: "2026-09-17"
-    temoins: [cnav_2026_17_racl_1964, cnav_2026_17_racl_1965_premier_trimestre, cnav_2026_17_racl_1965_apres_avril, cnav_2026_17_racl_1967, cnav_2026_17_racl_1970, cnav_2026_17_racl_1971]
+    temoins: [cnav_2026_29_racl_1964, cnav_2026_29_racl_1965_premier_trimestre, cnav_2026_29_racl_1965_apres_avril, cnav_2026_29_racl_1967, cnav_2026_29_racl_1970, cnav_2026_29_racl_1971]
     reformes: [reforme_2023, lfss_2026_suspension]
     etat: conforme
     effet: "Tout départ avant l'âge légal. Les quatre-vingts portes de 2004 à 2026 sont lues et certifiées (action 27) : celles de 2011 et de 2012 génération par génération dans les versions abrogées (LEGIARTI000023397567, LEGIARTI000026139949), celles de 2004 dans LEGIARTI000006736521. Le moteur retient désormais une porte par couple (borne d'entrée, supplément) et non plus par borne seule."
@@ -380,7 +397,15 @@ entrees:
     reformes: []
     etat: manque
     effet: "Le modèle ne compte que les trimestres réellement cotisés et ceux des enfants : quelques carrières hachées sont déclarées non ouvertes alors que le droit les ouvre."
-    a_faire: "Porter les limites par nature de période, la circulaire 2026-29 les donne toutes."
+    a_faire: >-
+      Porter les limites par nature de période, la circulaire 2026-29 les donne
+      toutes. Ses TROIS EXEMPLES du point 1.2 ont été lus le 21 septembre 2026
+      et ne se rejouent pas en l'état : ils arbitrent, année par année, entre
+      des périodes assimilées de nature différente — maladie, chômage, service
+      national, invalidité, maternité — et retiennent la combinaison la plus
+      favorable, quand le modèle synthétise une carrière sans distinguer ces
+      natures. L'exemple ne pourra donc servir de témoin qu'APRÈS le portage,
+      et non pour le guider.
     prochaine_veille: "2027-03-31"
 
   - id: categorie_active_super_active
@@ -1925,3 +1950,70 @@ journal:
       encore ouvertes ; et l'attribution au père des trimestres d'éducation
       depuis 2010, qui demeure une convention du dépôt.
     prochaine_veille: "2027-01-31"
+
+  - date: "2026-09-21"
+    session: "des exemples publiés pour les règles qui n'en avaient pas"
+    consulte: >-
+      Base documentaire de la Cnav (legislation.lassuranceretraite.fr), quatre
+      circulaires lues en entier dans leur PDF : 2022-26 du 14 octobre 2022
+      (Majoration pour enfants), 2026-07 du 5 mars 2026 (Âge légal et durée
+      d'assurance), 2026-17 du 12 juin 2026 et 2026-29 du 4 septembre 2026
+      (Retraite anticipée pour carrière longue), plus les fiches 6.2b et 6.3 de
+      la circulaire carrière 2017-01. Fiches service-public F16336 (retraite du
+      salarié et enfants, vérifiée le 14 août 2026) et F37311 (retraite de
+      l'agent public et enfants, vérifiée le 1er septembre 2026). Index LEGI du
+      dépôt, remis à jour au 20 septembre 2026 : article L. 161-17-2 du code de
+      la sécurité sociale, ses cinq versions, et le texte intégral de celle en
+      vigueur (LEGIARTI000053280889, 31 décembre 2025).
+    trouve: >-
+      SIX EXEMPLES DE PLUS, ET DEUX RÈGLES QUI N'AVAIENT AUCUN TÉMOIN. Les
+      enfants n'en avaient pas, faute de forme : aucune caisse ne publie une
+      carrière entière dont elle donne la durée d'assurance. Ce qu'elle publie,
+      c'est le nombre de trimestres ajoutés PAR ENFANT et le taux de la
+      majoration. Deux grandeurs neuves le mesurent sans rien recalculer du
+      modèle — l'écart avec la même carrière sans enfant, et le rapport de la
+      majoration servie à la somme des pensions. Les six tombent justes :
+      16 trimestres pour deux enfants au régime général, 24 pour trois, 8 pour
+      deux enfants nés avant 2004 dans la fonction publique, 4 pour deux nés
+      depuis ; et 10 % exactement sur une carrière surcotée à 58,125 %, au taux
+      plein, et minorée à 41,25 %. Ce dernier point est ce que la circulaire
+      2022-26 tient à dire et que le modèle aurait pu manquer : « la surcote
+      majore la retraite et fait partie intégrante de l'avantage de base », donc
+      la majoration pour enfants « est calculée sur la base du montant annuel de
+      la retraite, majorée par la surcote » — son exemple le chiffre,
+      10 % × (600 + 22,50) = 62,25. C'est un ordre d'opérations : appliquer les
+      10 % à la pension d'avant la surcote rendrait 9,52 % de celle d'après, et
+      le témoin le verrait. UNE CIRCULAIRE ANNULÉE NE CERTIFIE PLUS RIEN : les
+      six témoins de carrière longue citaient la 2026-17, que la 2026-29 du
+      4 septembre annule et remplace ; ses âges et ses durées ont été relus
+      ligne à ligne, aucun n'a bougé, et les témoins citent désormais celle qui
+      fait foi. UNE ALERTE LEVÉE, ENFIN : la fiche F16336 écrit que « l'âge
+      minimum à partir duquel vous pouvez partir à la retraite est abaissé d'un
+      an si vous êtes né à partir du 1er avril 1965 et si vous bénéficiez d'au
+      moins 1 trimestre de majoration d'assurance maternité, adoption ou
+      d'éducation ». Le texte a été lu : L. 161-17-2 en vigueur ne porte aucun
+      abaissement de ce genre, et son échelle par génération est exactement
+      celle du dépôt — 62 ans et 9 mois jusqu'au 31 mars 1965, 63 ans du
+      1er avril au 31 décembre 1965, 64 ans à compter de 1969 —, que la
+      circulaire 2026-07 reprend à l'identique. La phrase de la fiche vulgarise
+      l'effet des trimestres d'enfants sur la CARRIÈRE LONGUE, que le dépôt
+      porte déjà sous `carriere_longue_enfants_reputes_cotises`. Le texte
+      l'emporte sur la fiche, et rien n'a été modifié.
+    reste: >-
+      Les trois exemples de réputés cotisés du point 1.2 de la circulaire
+      2026-29 ne se rejouent pas en l'état : ils arbitrent entre des périodes
+      assimilées de nature différente — maladie, chômage, service national,
+      invalidité, maternité —, que le modèle ne distingue pas dans une carrière
+      qu'il synthétise. L'entrée `carriere_longue_reputes_cotises_autres` le
+      dit désormais : l'exemple servira de témoin APRÈS le portage, pas pour le
+      guider. Restent sans exemple publié que le dépôt ait trouvé : les
+      vingt-quatre et vingt-trois meilleures années des parents (la circulaire
+      d'application n'est pas parue), la durée requise propre aux catégories
+      actives, la liquidation unique des régimes alignés, le minimum garanti de
+      la fonction publique — aucune fiche de calcul du Service des retraites de
+      l'État n'a été trouvée qui en porte un — et la surcote parentale, dont
+      les fiches donnent le barème sans cas résolu. La majoration pour enfants
+      passe de `transcrit` à `conforme` ; la majoration de durée d'assurance
+      reste `a_verifier`, les quatre témoins fixant le nombre de trimestres
+      servis et non le sort du décret n° 2026-699 ni celui du père.
+    prochaine_veille: "2026-11-30"

@@ -1489,12 +1489,20 @@ def _mois(texte: str):
     return DateMois(int(annee), int(mois))
 
 
-def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int = 0):
+def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int = 0,
+                      sans_enfants: bool = False):
     """La carrière que l'exemple décrit, liquidée au mois voulu.
 
     Une seule affiliation, un salaire constant ou un profil, et — quand
     l'exemple ne donne que son nombre de trimestres — l'âge d'entrée qui rend
     exactement ce nombre à la liquidation, cherché au mois près.
+
+    ``sans_enfants`` rejoue LA MÊME carrière sans aucun enfant. C'est ce qui
+    rend la majoration de durée d'assurance mesurable sans la recalculer dans
+    le test : la caisse publie le nombre de trimestres qu'elle ajoute, et
+    l'écart entre les deux parcours doit valoir ce nombre. Un témoin qui
+    l'emploie fixe son ``age_debut`` — sans quoi les deux parcours ne
+    partiraient pas du même point.
     """
     c = exemple["carriere"]
     naissance = _mois(c["naissance"])
@@ -1506,7 +1514,7 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
         mois_naissance=naissance.mois,
         niveau_salaire=float(c.get("niveau_salaire", 1.0)),
         profil_carriere=c.get("profil_carriere", "ascendant"),
-        nombre_enfants=int(c.get("nombre_enfants", 0)),
+        nombre_enfants=0 if sans_enfants else int(c.get("nombre_enfants", 0)),
         interruptions={int(k): v for k, v in (c.get("interruptions") or {}).items()},
     )
     actuel = simulateur.scenario_actuel
@@ -1559,6 +1567,26 @@ def test_les_exemples_publies_par_les_caisses_sont_reproduits(simulateur, exempl
                 en_mois(actuel.age_ouverture_droit(carriere)))
             assert (atteint.annee, atteint.mois) == (
                 _mois(valeur).annee, _mois(valeur).mois), (cle, str(atteint))
+        elif cle == "trimestres_de_majoration_enfants":
+            # La caisse publie le nombre de trimestres qu'elle ajoute par
+            # enfant ; le test le mesure en rejouant la MÊME carrière sans
+            # enfant. C'est un écart, pas un total : il ne dépend ni de l'âge
+            # d'entrée ni de la durée requise de la génération.
+            _, sans = _carriere_exemple(simulateur, exemple, sans_enfants=True)
+            assert resultat.trimestres_valides - sans.trimestres_valides == valeur, (
+                cle, resultat.trimestres_valides - sans.trimestres_valides)
+        elif cle == "majoration_enfants_sur_pensions":
+            # L'assiette de la majoration pour enfants, mesurée sur ce que le
+            # modèle sert : la circulaire dit qu'elle porte sur la retraite
+            # TELLE QUE CALCULÉE, surcote comprise. Appliquer les 10 % à la
+            # pension d'avant la surcote rendrait ici moins que le taux publié.
+            majoration = next(
+                (a.montant for a in resultat.avantages_appliques
+                 if a.code == "majoration_enfants"), None)
+            assert majoration is not None, "aucune majoration pour enfants servie"
+            pensions = sum(p.montant for p in resultat.pensions_par_regime)
+            assert majoration / pensions == pytest.approx(valeur, abs=1e-9), (
+                cle, majoration / pensions)
         elif cle == "non_ouverte_un_trimestre_plus_tot":
             _, plus_tot = _carriere_exemple(simulateur, exemple, decalage_mois=-3)
             assert plus_tot.motif_ouverture == "non_ouverte", plus_tot.motif_ouverture
