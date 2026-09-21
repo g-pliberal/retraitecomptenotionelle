@@ -6218,12 +6218,39 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   dernière ; un régime qui prend les vingt-cinq meilleures années y voit une
   année faible de plus, exactement comme le droit.
 
-  L'impossibilité est l'IMPORT AUTOMATIQUE du relevé Info-Retraite, qui n'est
-  pas implémenté et ne peut pas l'être : le répertoire de gestion des carrières
-  uniques n'est pas ouvert au public, et son accès passe par une
-  authentification personnelle qu'un script ne saurait porter sans détenir les
-  identifiants de l'assuré. Le relevé se recopie donc à la main, dans un format
-  d'une ligne par année — `année:régime:revenu:trimestres`.
+  L'impossibilité reste l'INTERROGATION AUTOMATIQUE du répertoire de gestion
+  des carrières uniques : il n'est pas ouvert au public, et son accès passe par
+  une authentification personnelle qu'un script ne saurait porter sans détenir
+  les identifiants de l'assuré. Ce qui a cédé, en revanche, c'est la recopie à
+  la main : **le relevé se dépose maintenant en PDF sur le simulateur**, qui le
+  lit dans le navigateur — il est téléchargé par l'assuré sur son compte
+  retraite, et le fichier ne quitte pas la page. `moteur/js/lecture-pdf.js` en
+  tire les lignes de texte, `moteur/js/releve-lu.js` la carrière, et le champ
+  `releve` reçoit ce que l'un et l'autre ont compris. Restent quatre choses que
+  le document lui-même ne donne pas, et que le site dit à qui le dépose :
+
+  - **Le revenu est plafonné.** Le régime général ne reporte au compte que la
+    part du salaire brut qui tombe sous le plafond de la Sécurité sociale :
+    au-delà, le relevé n'affiche pas le salaire en entier, et la simulation lit
+    donc un revenu tronqué. La carrière paramétrique, elle, ne l'est pas.
+  - **Un régime qui compte en points ne porte aucun revenu.** Les professions
+    libérales depuis 2004, les exploitants agricoles : leur relevé donne des
+    points et des trimestres. La lecture prend les années et les trimestres,
+    laisse le revenu à zéro et le dit — déduire un revenu du barème de la
+    caisse serait écrire un chiffre que le document ne porte pas.
+  - **Un état de services couvrant plusieurs années n'est pas réparti.** « Du
+    01/09/1996 au 31/08/2001 », tel que la fonction publique l'écrit, ne dit ni
+    le revenu de chaque année ni leur partage : la ligne ressort telle quelle
+    et reste à saisir.
+  - **Le document doit se reconnaître.** Un fichier qui ne porte ni le titre
+    d'un relevé ni l'en-tête de la colonne des trimestres n'est pas lu du tout.
+    C'est un vrai document qui l'a imposé : le rapport de l'OPEF sur les frais
+    de l'épargne retraite, cent pages sans le moindre relevé, rendait
+    vingt-deux « années de carrière » qui n'avaient jamais existé.
+
+  Et un PDF qui n'est qu'une image — un scan, une photographie, une capture
+  d'écran — ne porte aucun texte : rien ne s'y lit, et la page le dit plutôt
+  que de rendre une carrière vide sans explication.
 
 - **La coordination interrégimes.** Chaque régime liquide sur ses seules
   années, et la durée acquise dans chacun est comptée séparément — c'est le
@@ -7654,7 +7681,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1915<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1933<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

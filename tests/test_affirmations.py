@@ -2196,6 +2196,86 @@ def _(m: Modele):
     assert m.sim.macro.fiabilite_sur(1950, 2025) is Fiabilite.CERTIFIEE
 
 
+# .. le relevé de carrière déposé .............................................
+
+
+@controle("le_releve_depose_devient_la_carriere")
+def _(m: Modele):
+    """Un relevé déposé donne une carrière que le simulateur calcule.
+
+    La promesse du formulaire est celle-là et pas une autre : on pose le
+    document, la carrière s'écrit. Le contrôle la refait de bout en bout — les
+    lignes du relevé, la saisie qu'elles rendent, la page qui la calcule — sur
+    un relevé à la forme de ceux des caisses.
+    """
+    from retraite_notionnelle.web.pages import rendre
+    from retraite_notionnelle.web.releve_lu import lire_releve
+
+    lecture = lire_releve([
+        "Relevé de carrière",
+        "Régime général",
+        "Année Employeur Revenu Trimestres retenus",
+        "2010 SOCIETE 29 500 4",
+        "2011 SOCIETE 30 100 4",
+    ])
+    assert [ligne.annee for ligne in lecture.lignes] == [2010, 2011]
+    parametres = lecture.parametres()
+    assert parametres["releve"].startswith("2010:salarie_prive_non_cadre:29500:4")
+    _, corps = rendre(m.contexte, "/simuler", {
+        "naissance": "1985-01-01", "depart": "2050-01-01",
+        "releve": parametres["releve"],
+    })
+    assert 'class="erreur"' not in corps
+
+
+#: Tout ce qui ferait sortir un octet de la page. Les formes sont celles d'un
+#: APPEL — « fetch( », « new WebSocket » — et non le mot seul : les
+#: commentaires de ces fichiers citent `scripts/fetch/lecture_pdf.py`, qui est
+#: un chemin et non une requête.
+SORTIES = ("fetch(", "XMLHttpRequest", "sendBeacon(", "new WebSocket",
+           "new EventSource", "new Image(", "location.href =", ".submit(",
+           "import(\"http", "src =")
+
+
+def _sans_commentaires(source: str) -> str:
+    """Le code seul : un commentaire peut nommer ce que le code s'interdit."""
+    sans_blocs = re.sub(r"/\*.*?\*/", " ", source, flags=re.S)
+    return "\n".join(ligne for ligne in sans_blocs.splitlines()
+                      if not ligne.lstrip().startswith(("//", "*")))
+
+
+@controle("le_releve_ne_quitte_pas_la_page")
+def _(m: Modele):
+    """Le fichier déposé est lu sur place, et rien ne l'envoie nulle part.
+
+    C'est la phrase la plus engageante du formulaire, et la seule qu'un lecteur
+    ne peut pas vérifier lui-même : un relevé de carrière est le document le
+    plus personnel qu'une administration française délivre. Le contrôle lit
+    donc le code qui le manipule — les deux modules de lecture, et la section
+    du dépôt dans `index.html` — et refuse tout ce qui ouvrirait une
+    connexion. Il refuse aussi un `name` sur le champ de fichier : un
+    formulaire en GET porterait sinon le nom du fichier dans l'adresse.
+    """
+    page = (RACINE / "index.html").read_text(encoding="utf-8")
+    debut = page.index("// -- le relevé de carrière déposé")
+    depot = page[debut:page.index("// -- navigation", debut)]
+    sources = {"index.html (dépôt)": depot}
+    for nom in ("lecture-pdf.js", "releve-lu.js"):
+        sources[nom] = (RACINE / "moteur" / "js" / nom).read_text(encoding="utf-8")
+    for nom, source in sources.items():
+        code = _sans_commentaires(source)
+        for sortie in SORTIES:
+            assert sortie not in code, f"{nom} : « {sortie} » y ouvrirait une sortie"
+
+    corps = next(temoin["corps"] for temoin in TEMOINS_PAR_NOM.values()
+                 if temoin["chemin"] == "/simuler")
+    champ = re.search(r'<input type="file"[^>]*>', corps)
+    assert champ is not None, "le champ de dépôt a disparu du formulaire"
+    assert "name=" not in champ.group(0), (
+        "le champ de fichier porte un `name` : son nom partirait dans l'adresse"
+    )
+
+
 # -- les tests ----------------------------------------------------------------
 
 

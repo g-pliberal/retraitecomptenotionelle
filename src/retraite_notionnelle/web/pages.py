@@ -3333,27 +3333,49 @@ def _releve(saisie: Saisie) -> str:
 
     Elle est repliée sous un dépliant, et non offerte d'emblée : la carrière
     paramétrique reste la porte d'entrée — on la remplit en trente secondes,
-    sans rien avoir sous les yeux. Le relevé, lui, demande d'avoir ouvert son
-    compte Info-Retraite, et il s'adresse à qui veut confronter le simulateur à
-    SON estimation plutôt qu'à une carrière type. Le dépliant s'ouvre de
-    lui-même quand un relevé est saisi : sinon, l'adresse porterait une carrière
-    que la page ne montrerait pas.
+    sans rien avoir sous les yeux. Le relevé, lui, demande d'avoir téléchargé
+    son document, et il s'adresse à qui veut confronter le simulateur à SON
+    relevé plutôt qu'à une carrière type. Le dépliant s'ouvre de lui-même quand
+    un relevé est saisi : sinon, l'adresse porterait une carrière que la page ne
+    montrerait pas.
+
+    LE DÉPÔT DU PDF VIENT EN PREMIER, et la saisie à la main derrière. Recopier
+    quarante-cinq lignes de chiffres est ce qui fermait ce chemin à presque
+    tout le monde : le document est déjà écrit, et le navigateur sait le lire.
+    Le champ de fichier n'a pas de ``name`` — un formulaire en GET porterait
+    sinon le nom du fichier dans l'adresse, et une adresse partagée dirait à
+    tous d'où vient la carrière.
     """
     bulle = g.bulle(
         "Ce que le relevé remplace, et comment il se lit",
         "Sans les trimestres, le modèle les déduit du montant. Le revenu est "
         "celui de l'année entière, en euros de cette année-là ; un relevé "
-        "antérieur à 2002 est en francs, à diviser par 6,55957. Les codes de "
-        "régime sont ceux du menu ci-dessus. Rempli, ce champ "
-        "<strong>remplace</strong> les métiers, le profil et le niveau de "
-        "revenu : rien n'est plus reconstitué. Naissance, date de départ, "
-        "enfants, primes et interruptions continuent de valoir.",
+        "antérieur à 2002 est en francs, à diviser par 6,55957 — le dépôt le "
+        "fait tout seul. Les codes de régime sont ceux du menu ci-dessus. "
+        "Rempli, ce champ <strong>remplace</strong> les métiers, le profil et "
+        "le niveau de revenu : rien n'est plus reconstitué. Naissance, date de "
+        "départ, enfants, primes et interruptions continuent de valoir.",
     )
     return f"""
 <details class="releve"{' open' if saisie.releve_actif else ''}>
-  {g.sommaire("Coller un relevé de carrière — la saisie exacte")}
-  <p class="discret">Une ligne par année : <strong>année:régime:revenu</strong>,
-  et <strong>:trimestres</strong> si le relevé les porte.{bulle}</p>
+  {g.sommaire("Déposer votre relevé de carrière — la saisie exacte")}
+  <div class="depot">
+    <p class="depot-appel"><strong>Déposez le PDF de votre relevé</strong> : le
+    simulateur le lit et écrit la carrière à votre place, année par année.</p>
+    <p class="depot-bouton"><label for="releve-fichier">Le fichier de votre relevé</label>
+    <input type="file" id="releve-fichier" class="releve-fichier"
+    accept="application/pdf,text/plain,.pdf,.txt"></p>
+    <p class="discret">Il se télécharge sur
+    <a href="https://www.info-retraite.fr/">info-retraite.fr</a> (« Mon compte
+    retraite », puis « Ma carrière ») : tous régimes, et à tout âge. Ou sur
+    <a href="https://www.lassuranceretraite.fr/">lassuranceretraite.fr</a>, pour
+    le seul régime général. Le fichier est lu <strong>dans votre navigateur</strong> :
+    il n'est envoyé nulle part, et rien n'en est conservé.</p>
+    <p class="rapport-releve" role="status"></p>
+  </div>
+  <p class="discret">Ou, à la main, une ligne par année :
+  <strong>année:régime:revenu</strong>, et <strong>:trimestres</strong> si le
+  relevé les porte.{bulle}</p>
   {g.zone("releve", "Relevé de carrière", saisie.releve,
           f"au plus {RELEVE_MAXIMUM} lignes ; vide, la carrière est celle des "
           "métiers ci-dessus", lignes=10, placeholder=EXEMPLE_RELEVE,

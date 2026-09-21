@@ -727,6 +727,40 @@ summary > .icone { color: var(--or); transition: transform 0.15s; }
 details[open] > summary > .icone { transform: rotate(180deg); }
 summary:hover { color: var(--texte); }
 details > .grille { margin-top: 1rem; }
+/* Le dépôt d'un relevé de carrière. L'encadré en pointillés dit ce qu'il est —
+   une zone où l'on pose un fichier — avant qu'on ait lu la phrase, et le
+   pointillé se ferme en trait plein quand un fichier passe au-dessus. Le champ
+   de fichier reste NATIF : le remplacer par un bouton et un champ masqué coûte
+   le nom du fichier choisi, que le navigateur affiche de lui-même, et met en
+   jeu le clavier et les lecteurs d'écran pour un gain de dessin. */
+.depot {
+  border: 1px dashed var(--trait); border-radius: 4px;
+  padding: 1rem 1.1rem; margin-top: 1rem; background: var(--fond-carte);
+}
+.depot.survol { border-style: solid; border-color: var(--or); }
+.depot > :first-child { margin-top: 0; }
+.depot > :last-child { margin-bottom: 0; }
+.depot-appel { font-size: 0.98rem; }
+.depot-bouton {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem;
+}
+.depot-bouton label { font-size: 0.92rem; color: var(--texte-doux); }
+.depot input[type="file"] { font: inherit; font-size: 0.88rem; max-width: 100%; }
+/* Le compte rendu de la lecture : ce qui a été lu, ce qui a été supposé, ce
+   qui n'a pas été compris. Vide, il ne prend pas de place — une bordure sans
+   texte se lirait comme un message qu'on n'arrive pas à afficher. */
+.rapport-releve:empty { display: none; }
+.rapport-releve {
+  border-left: 3px solid var(--reste); padding: 0.1rem 0 0.1rem 0.8rem;
+  font-size: 0.92rem; margin: 1rem 0 0;
+}
+.rapport-releve.echec { border-left-color: var(--manque); }
+.rapport-releve ul { margin: 0.4rem 0 0; padding-left: 1.1rem; }
+.rapport-releve li { margin: 0.2rem 0; color: var(--texte-doux); }
+.rapport-releve code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.85em;
+}
 /* Une section repliée. Son titre a le poids d'un intertitre, parce qu'il en
    tient lieu : c'est lui qu'on parcourt pour savoir ce que la page contient
    encore. Les sections se suivent sans espace entre elles, séparées par un

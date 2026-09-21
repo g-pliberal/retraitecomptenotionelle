@@ -114,7 +114,8 @@
 
 <script type="module">
 import {
-  CLES_MODELISATION, CODES_SANS_EMPLOI, Contexte, DESCRIPTIONS, TITRES, rendre,
+  CLES_MODELISATION, CODES_SANS_EMPLOI, Contexte, DESCRIPTIONS, RELEVE_MAXIMUM,
+  TITRES, rendre,
 } from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
 import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";
@@ -305,6 +306,7 @@ async function afficher() {
   if (nouveauDetails && optionsDepliees) { nouveauDetails.open = true; }
   daterStatuts(contenu);
   suivreLesDates(contenu);
+  brancherLeDepot(contenu);
   reprendre(contenu);
   for (const figure of contenu.querySelectorAll("figure.graphique")) {
     dimensionnerLecture(figure);
@@ -530,6 +532,205 @@ function reprendre(contenu) {
     window.scrollTo({ top: 0 });
   }
   contenu.focus({ preventScroll: true });
+}
+
+// -- le relevé de carrière déposé --------------------------------------------
+//
+// Recopier quarante-cinq lignes de chiffres est ce qui fermait la saisie exacte
+// à presque tout le monde. Le document existe pourtant déjà, en PDF, sur le
+// compte retraite de chacun : le navigateur le lit ici, `moteur/js/lecture-pdf.js`
+// en tire les lignes et `moteur/js/releve-lu.js` la carrière.
+//
+// LE FICHIER NE SORT PAS DE LA PAGE. Il n'est ni téléversé, ni conservé : il
+// est lu en mémoire, et ce qui en reste est la carrière écrite dans le champ,
+// que le lecteur voit et peut corriger. C'est la même promesse que le reste du
+// site, et c'est elle qui rend ce dépôt acceptable — un relevé de carrière est
+// le document le plus personnel qu'une administration française délivre.
+//
+// Les deux modules sont chargés À LA DEMANDE, et non préchargés avec le
+// moteur : ils ne servent qu'ici, et les faire partir avec le reste coûterait
+// à tous les lecteurs qui ne déposeront jamais rien.
+
+// « %PDF » : les quatre premiers octets de tout fichier PDF. Un relevé collé
+// dans un fichier texte se lit, lui, tel quel.
+function estUnPdf(octets) {
+  return octets.length > 4 && octets[0] === 0x25 && octets[1] === 0x50
+    && octets[2] === 0x44 && octets[3] === 0x46;
+}
+
+function brancherLeDepot(contenu) {
+  const champ = contenu.querySelector("input.releve-fichier");
+  const zone = contenu.querySelector(".depot");
+  if (!champ || !zone) { return; }
+  champ.addEventListener("change", () => {
+    const fichier = champ.files && champ.files[0];
+    if (fichier) { deposerLeReleve(contenu, fichier); }
+  });
+  // Le glisser-déposer par-dessus l'encadré, en plus du sélecteur : c'est le
+  // geste que fait quiconque vient de télécharger un fichier.
+  for (const nom of ["dragenter", "dragover"]) {
+    zone.addEventListener(nom, (evenement) => {
+      evenement.preventDefault();
+      zone.classList.add("survol");
+    });
+  }
+  for (const nom of ["dragleave", "drop"]) {
+    zone.addEventListener(nom, (evenement) => {
+      evenement.preventDefault();
+      zone.classList.remove("survol");
+    });
+  }
+  zone.addEventListener("drop", (evenement) => {
+    const fichier = evenement.dataTransfer && evenement.dataTransfer.files[0];
+    if (fichier) { deposerLeReleve(contenu, fichier); }
+  });
+}
+
+// Le libellé d'un champ, et lui seul : l'étiquette porte aussi le bouton du
+// glossaire et sa bulle, dont le texte entier se retrouvait dans la phrase.
+// Les nœuds de TEXTE de l'étiquette sont le libellé, le reste est du balisage.
+function nomDuChamp(formulaire, champ) {
+  const etiquette = formulaire.querySelector(`label[for="${champ.id}"]`);
+  if (!etiquette) { return champ.name; }
+  const mots = [...etiquette.childNodes]
+    .filter((noeud) => noeud.nodeType === Node.TEXT_NODE)
+    .map((noeud) => noeud.textContent.trim()).filter(Boolean).join(" ");
+  return mots || champ.name;
+}
+
+/**
+ * Ramène les dates du formulaire dans les bornes d'âge de la naissance lue.
+ *
+ * Elles ne sont pas libres : le début d'activité tombe entre 14 et 40 ans, le
+ * départ entre 40 et 75, et chaque champ porte ces deux âges. Rendre les champs
+ * qui ont bougé permet de le DIRE — déplacer une date sans le dire serait pire
+ * que de laisser le formulaire coincé.
+ */
+function recadrerLesDates(formulaire) {
+  const naissance = rangDeDate(formulaire.elements.naissance?.value);
+  if (naissance === null) { return []; }
+  const bouges = [];
+  for (const champ of formulaire.querySelectorAll("input[type=date][data-age-min]")) {
+    const rang = rangDeDate(champ.value);
+    if (rang === null) { continue; }
+    const plancher = naissance + Number(champ.dataset.ageMin) * 12;
+    const plafond = naissance + Number(champ.dataset.ageMax) * 12;
+    const dedans = Math.min(Math.max(rang, plancher), plafond);
+    if (dedans !== rang) {
+      champ.value = dateDeRang(dedans);
+      bouges.push(champ);
+    }
+  }
+  return bouges;
+}
+
+/** Les lignes que la lecture n'a pas comprises, montrées et non tues. */
+function lignesIgnorees(ignorees) {
+  if (!ignorees.length) { return ""; }
+  const montrees = ignorees.slice(0, 4).map(
+    (ligne) => `<li><code>${neutraliser(ligne)}</code></li>`).join("");
+  const reste = ignorees.length > 4
+    ? `<li>… et ${ignorees.length - 4} autres.</li>` : "";
+  return `<p>Lignes non comprises, à reporter à la main s'il le faut :</p>`
+    + `<ul>${montrees}${reste}</ul>`;
+}
+
+async function deposerLeReleve(contenu, fichier) {
+  const rapport = contenu.querySelector(".rapport-releve");
+  const champ = contenu.querySelector('textarea[name="releve"]');
+  const formulaire = contenu.querySelector("form");
+  if (!rapport || !champ || !formulaire) { return; }
+  const dire = (html, echec = false) => {
+    rapport.className = echec ? "rapport-releve echec" : "rapport-releve";
+    rapport.innerHTML = html;
+  };
+
+  dire(`Lecture de <code>${neutraliser(fichier.name)}</code>…`);
+  try {
+    const octets = new Uint8Array(await fichier.arrayBuffer());
+    let lignes;
+    if (estUnPdf(octets)) {
+      const { lignesPdf } = await import("./moteur/js/lecture-pdf.js");
+      lignes = await lignesPdf(octets);
+      if (lignes.length === 0) {
+        dire("Ce PDF ne porte aucun texte : c'est une image, un scan ou une "
+          + "capture d'écran. Rien ne s'y lit, et le relevé reste à saisir à "
+          + "la main. Retéléchargez-le depuis votre compte retraite plutôt que "
+          + "de le photographier.", true);
+        return;
+      }
+    } else {
+      lignes = new TextDecoder().decode(octets).split(/\r?\n/);
+    }
+
+    const { lireReleve, parametresDe } = await import("./moteur/js/releve-lu.js");
+    const lecture = lireReleve(lignes);
+    if (lecture.lignes.length === 0) {
+      dire("Aucune année de carrière n'a été reconnue dans ce fichier. "
+        + "S'il s'agit bien d'un relevé, sa mise en page est inconnue du "
+        + "simulateur : la saisie à la main, ci-dessous, reste ouverte."
+        + lignesIgnorees(lecture.ignorees), true);
+      return;
+    }
+    if (lecture.lignes.length > RELEVE_MAXIMUM) {
+      dire(`${lecture.lignes.length} années ont été lues, et le simulateur en `
+        + `accepte ${RELEVE_MAXIMUM} — une carrière n'en compte pas tant. La `
+        + "lecture s'est égarée dans ce document : rien n'a été rempli.", true);
+      return;
+    }
+
+    const parametres = parametresDe(lecture);
+    champ.value = parametres.releve;
+    const details = champ.closest("details");
+    if (details) { details.open = true; }
+
+    const faits = [];
+    const annees = lecture.lignes.map((ligne) => ligne.annee);
+    const statuts = [...new Set(lecture.lignes.map((ligne) => ligne.statut))];
+    const affiliations = contexte.simulateur().affiliations;
+    faits.push(`<strong>${annees.length} années lues</strong>, de `
+      + `${Math.min(...annees)} à ${Math.max(...annees)} : `
+      + `${neutraliser(statuts.map((code) => affiliations.libelle(code)).join(", "))}.`);
+
+    const naissance = formulaire.elements.naissance;
+    if (lecture.naissance && naissance) {
+      naissance.value = lecture.naissance;
+      faits.push("Date de naissance reprise du relevé.");
+      // Les autres dates sont des ÂGES déguisés : le formulaire les borne
+      // entre deux âges comptés depuis la naissance, et le navigateur refuse
+      // de soumettre une date qui en sort. Reprendre la naissance du relevé
+      // déplaçait donc ces bornes sous une date de départ que personne
+      // n'avait touchée : le bouton « Calculer » ne faisait plus rien, et
+      // une bulle du navigateur accusait un champ resté tel quel.
+      for (const champ of recadrerLesDates(formulaire)) {
+        faits.push(`La date « ${neutraliser(nomDuChamp(formulaire, champ))} » `
+          + "sortait des bornes de cette date de naissance : elle y a été "
+          + "ramenée, vérifiez-la.");
+      }
+    }
+    const interruptions = formulaire.elements.interruptions;
+    if (interruptions) {
+      interruptions.value = parametres.interruptions;
+      if (parametres.interruptions) {
+        faits.push(`${lecture.interruptions.length} période(s) non travaillée(s) `
+          + "reportée(s) dans les options de modélisation.");
+        const options = formulaire.querySelector("details.options");
+        if (options) { options.open = true; }
+      }
+    }
+    // Les champs viennent de changer sans qu'une touche ait été frappée : les
+    // écouteurs qui suivent la saisie — l'âge sous chaque date, les statuts
+    // fermés — ne se réveilleraient pas sans cela.
+    formulaire.dispatchEvent(new Event("input", { bubbles: true }));
+
+    const notes = lecture.notes.map((note) => `<li>${neutraliser(note)}</li>`).join("");
+    dire(`<p>${faits.join(" ")}</p>`
+      + (notes ? `<ul>${notes}</ul>` : "")
+      + lignesIgnorees(lecture.ignorees)
+      + "<p>Vérifiez la carrière ci-dessous, puis calculez.</p>");
+  } catch (erreur) {
+    dire(`La lecture a échoué : ${neutraliser(erreur)}`, true);
+  }
 }
 
 // -- navigation --------------------------------------------------------------
