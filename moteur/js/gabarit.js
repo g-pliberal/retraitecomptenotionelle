@@ -926,13 +926,25 @@ export const DIVISIONS_Y = 5;
 const PAS_RONDS = [1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0];
 
 /**
- * Écart minimal, en années, entre une décennie graduée et une borne de l'axe.
+ * Écart minimal entre une décennie graduée et une borne de l'axe, en fraction
+ * de l'amplitude de la série.
+ *
  * Les bornes sont graduées d'office — ce sont elles qui datent la série —, et
  * une décennie trop proche de l'une d'elles ne fait que chevaucher son
- * étiquette. Six ans : « 2020 » et « 2024 » ne tiennent pas côte à côte sur
- * l'écran d'un téléphone, où les textes du repère sont grossis.
+ * étiquette. Ce qui se chevauche est une largeur de texte, pas une durée : la
+ * règle doit donc s'exprimer en part de l'axe, et non en années. Écrite en
+ * années, elle était juste pour la longueur de série qui l'avait vue naître et
+ * fausse pour toutes les autres — elle amputait les séries courtes de toute
+ * graduation intermédiaire, et laissait « 2060 » toucher « 2070 » sur les
+ * longues.
+ *
+ * Le chiffre se mesure : l'axe fait 626 unités de repère, et une année à
+ * quatre chiffres en occupe 56 sur un téléphone, où la police est grossie —
+ * c'est déjà ce que dit `MARGE_DROITE`, qui en réserve la moitié. Onze pour
+ * cent laissent une étiquette et un quart entre deux graduations, et le blanc
+ * minimal tombe à 74 unités sur les séries que les deux sites tracent.
  */
-const ECART_MINIMAL_GRADUATIONS = 6;
+const PART_MINIMALE_GRADUATIONS = 0.11;
 
 /**
  * Pas admissibles de l'axe des abscisses, du plus fin au plus large. Ce sont des
@@ -1003,7 +1015,7 @@ function ordonnee(valeur, sommet, plancher = 0.0) {
 }
 
 /** Décennies comprises dans la plage, plus les deux bornes. */
-function graduationsX(premiere, derniere) {
+export function graduationsX(premiere, derniere) {
   // La décennie est le pas naturel, et il suffit tant que la plage est courte.
   // Cent onze ans en donneraient douze : le pas s'élargit jusqu'à ce que le
   // compte tienne.
@@ -1021,11 +1033,13 @@ function graduationsX(premiere, derniere) {
   if (!annees.includes(premiere)) annees.unshift(premiere);
   if (!annees.includes(derniere)) annees.push(derniere);
   // Deux graduations trop proches se chevauchent : on retire la décennie
-  // voisine plutôt que la borne, qui porte l'information.
+  // voisine plutôt que la borne, qui porte l'information. L'écart se mesure en
+  // part de l'amplitude, jamais en années : c'est une largeur de texte qu'on
+  // évite.
+  const ecartMinimal = (derniere - premiere) * PART_MINIMALE_GRADUATIONS;
   return annees.filter(
     (a) => a === premiere || a === derniere
-      || (a - premiere >= ECART_MINIMAL_GRADUATIONS
-        && derniere - a >= ECART_MINIMAL_GRADUATIONS),
+      || (a - premiere >= ecartMinimal && derniere - a >= ecartMinimal),
   );
 }
 
