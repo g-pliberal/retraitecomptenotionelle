@@ -540,6 +540,17 @@
    "valeurs": 76,
    "verifiee_le": "2026-09-19"
   },
+  "masse_salariale_privee": {
+   "ajoutees": 29,
+   "colonne": "montant_meur",
+   "corrigees": 0,
+   "empreinte": "5f1c6d45c61d9641",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "Urssaf, jeu open data « masse salariale du secteur privé, France entière »",
+   "valeurs": 29,
+   "verifiee_le": "2026-09-21"
+  },
   "minimum_contributif": {
    "ajoutees": 0,
    "colonne": "valeur",

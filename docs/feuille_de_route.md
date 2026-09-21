@@ -11605,3 +11605,83 @@ part de travers, là où celle-ci ne juge que leur somme.
 `scripts/age_conjoncturel.py`, `tests/test_age_conjoncturel.py`,
 `scripts/verifier_donnees.py`, `data/reference/macro/age_conjoncturel_depart.csv`,
 `data/sources.yaml`, `docs/limites.md` § 5 ter.
+
+### 80. Combien l'on cotise sans rien acquérir : 17,9 milliards, et une erreur corrigée — `fait`
+
+**Demande.** Une recherche documentaire sur trois axes, dont le premier :
+chiffrer les cotisations qui n'ouvrent aucun droit, et verser dans le dépôt ce
+qui est certifiable.
+
+**L'erreur d'abord, parce qu'elle était dans le dépôt.** L'action 78 avait
+laissé écrit, au § 7 de `frontiere_contributive.md`, que le chiffrage butait sur
+« la distribution des salaires au-dessus du plafond ». C'est faux. La cotisation
+déplafonnée de L. 241-3 porte sur la TOTALITÉ de la rémunération, dès le premier
+euro — l'assiette supra-plafond n'a rien à y faire, et la confusion valait un
+facteur dix. Elle n'ouvre aucun droit pour autant : le salaire annuel de base
+est borné au plafond par R. 351-29, les trimestres à quatre par an par R. 351-9.
+Aucune distribution n'est donc nécessaire, et la masse est un simple produit.
+
+**L'assiette vient de celui qui la recouvre.** Pas des comptes nationaux, qui
+couvrent toute l'économie, fonction publique comprise — laquelle ne relève pas
+de L. 241-3. L'Urssaf publie la bonne, et sa note méthodologique la DÉFINIT :
+« la masse salariale correspond à l'assiette déplafonnée des cotisations
+sociales ». Le portail était déclaré dans `sources.yaml` avec
+`statut_integration: a_faire` depuis toujours ; il est désormais certifié,
+vingt-neuf années de 1997 à 2025. L'écart avec les comptes nationaux n'est pas
+une nuance : 726 Md€ contre environ 1 050 Md€ en 2024, soit 45 % de trop si
+l'on prend l'une pour l'autre. Un test tient cet écart, parce qu'aucun autre ne
+le verrait : mêmes colonnes, même unité, même allure de série.
+
+**Le résultat : 17,9 Md€ en 2025**, dont 3,0 à la charge du salarié, pour le
+seul régime général. Et il monte plus vite que l'assiette, le taux ayant été
+relevé deux fois depuis 2023 — 2,42 % au 1er janvier 2024, 2,51 % au 1er janvier
+2026.
+
+**Un recoupement qui n'avait pas été cherché.** La part salariale du déplafonné
+est nulle jusqu'en 2004 et positive à partir de 2005 dans la table certifiée,
+construite depuis les DÉCRETS d'application. Or l'action 78 avait daté la
+bascule du 22 août 2003, par la version de L. 241-3 qui ajoute « et des
+salariés ». Les deux ne se contredisent pas : la loi autorise, le décret
+exécute. Deux chemins indépendants se rejoignent à dix-huit mois près, et un
+test tient désormais l'écart — il disparaîtrait sans bruit si quelqu'un alignait
+l'une sur l'autre.
+
+**La complémentaire est connue en proportion, pas en masse.** La fiche
+réglementaire de l'Agirc-Arrco écrit que « seule » la cotisation au taux de
+calcul des points est génératrice de droits, et que les deux contributions
+d'équilibre de l'article 37 de l'ANI ne le sont pas. Sur la tranche 1, un
+salarié verse 10,02 % et n'en acquiert que 6,20 : **38,1 % n'achète aucun
+point**, 40,2 % s'il dépasse le plafond. Trois fois plus, en proportion, que le
+régime de base. En faire une masse supposerait la répartition de l'assiette
+entre tranches, que le dépôt n'a pas ; le rapport, lui, est exact.
+
+**Le pourcentage d'appel a changé de signe**, et c'est le plus beau des trois
+axes. Instauré en 1952 à l'Agirc, il était INFÉRIEUR à 100 % — 78 % en 1952,
+95 % en 1965 — pour éviter de constituer des réserves : le cotisant versait
+moins que le taux contractuel et acquérait les points du taux entier. Le même
+instrument prélève aujourd'hui 27 % sans rien donner.
+
+**Ce que le dépôt ne saura jamais certifier, et qui bouge quand même.** Les
+régimes complémentaires vivent d'accords nationaux interprofessionnels, que le
+Journal officiel ne publie pas : l'index LEGI ne les porte pas, et la sonde de
+`--verifier` n'a rien à quoi les confronter. Les exclure aurait été absurde —
+le taux d'appel est, en proportion, le prélèvement sans contrepartie le plus
+lourd du système. D'où une section `bascules_hors_legi`, sous une preuve d'une
+autre nature : une adresse et une date de lecture, que deux tests exigent.
+
+**Ce que la recherche n'a pas donné, et il faut le dire.** Aucune masse de
+cotisation sans droits n'est publiée par un producteur, ni à la DSS ni à
+l'Agirc-Arrco : ils publient les taux et le mécanisme. Les 17,9 milliards sont
+donc un calcul du dépôt sur deux séries publiées. Sur l'axe des bascules du code
+des pensions, rien n'a été établi — ni la bonification pour enfants restreinte
+aux naissances d'avant 2004, ni l'arrêt Griesmar, ni la fermeture des catégories
+actives. Sur l'axe institutionnel, rien de postérieur au repère du COR de 2010
+n'a pu être confirmé. Ces deux axes restent ouverts, et le § 7 de
+`frontiere_contributive.md` les porte.
+
+**Fichiers.** `scripts/fetch/urssaf_masse_salariale.py`,
+`data/reference/macro/masse_salariale_privee.csv`, `scripts/verifier_donnees.py`,
+`data/sources.yaml`, `data/reference/legislation/frontiere_contributive.yaml`,
+`scripts/frontiere_contributive.py`, `tests/test_frontiere_contributive.py`,
+`tests/test_donnees.py`, `docs/frontiere_contributive.md`,
+`data/reference/legislation/veille.yaml`.

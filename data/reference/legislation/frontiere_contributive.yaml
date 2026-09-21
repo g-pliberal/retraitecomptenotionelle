@@ -641,6 +641,12 @@ bascules:
       Depuis la loi du 21 août 2003, le salarié supporte lui aussi un
       prélèvement vieillesse qui ne lui ouvre aucun droit, sur la totalité de
       son salaire.
+      LA LOI OUVRE, LE DÉCRET EXÉCUTE, ET LES DEUX DATES DIFFÈRENT. L'article
+      autorise le prélèvement au 22 août 2003 ; le taux salarié reste nul dans
+      `taux_cotisation_annuels.csv`, série certifiée, jusqu'en 2004, et ne
+      devient positif qu'en 2005. La `date` de cette bascule est celle de
+      l'autorisation — c'est elle que la version d'article prouve —, et non
+      celle du premier euro prélevé.
     dispositifs: []
     article: L. 241-3 CSS
     version: LEGIARTI000006741901
@@ -727,3 +733,121 @@ bascules:
       pension et une seule. Ce n'est pas une confirmation du modèle — le champ
       n'est pas le même — mais c'est le seul point du droit où la question
       posée par ce dépôt reçoit une réponse rédigée.
+
+# Les taux de l'Agirc-Arrco qui n'achètent aucun point
+# =====================================================
+# Lus le 21 septembre 2026 sur la fiche réglementaire « Taux de cotisations »
+# de la fédération, qui est le producteur de la règle. Elle écrit, mot pour
+# mot, « Seule cette cotisation est génératrice de droits à retraite
+# complémentaire auprès du régime Agirc-Arrco » en parlant de la cotisation au
+# taux de calcul des points, et qualifie les deux contributions d'équilibre de
+# « non génératrices de droits ». Le critère n'est donc pas une interprétation
+# du dépôt : c'est celui du régime.
+#
+# CES VALEURS NE SONT PAS CERTIFIÉES, et elles ne peuvent pas l'être : elles
+# viennent d'un accord national interprofessionnel, qui n'est pas publié au
+# Journal officiel et n'entre donc pas dans l'index LEGI. Aucun script ne peut
+# les revérifier. Elles sont au niveau d'une SAISIE, avec leur date de lecture
+# et l'article de l'ANI que la fiche cite.
+taux_agirc_arrco:
+  source: https://reglementation.agirc-arrco.fr/home/liste-fiche-reglementaires/listes-area/liste-de-fiches-reglementaires/taux-de-cotisations.html
+  lu_le: 2026-09-21
+  depuis: 2019-01-01
+  pourcentage_appel: 1.27
+  article_ani_appel: article 36 de l'ANI
+  article_ani_equilibre: article 37 de l'ANI
+  tranches:
+    - nom: Tranche 1
+      taux_calcul_des_points: 0.0620
+      taux_appele: 0.0787
+      contribution_equilibre_general: 0.0215
+    - nom: Tranche 2
+      taux_calcul_des_points: 0.1700
+      taux_appele: 0.2159
+      contribution_equilibre_general: 0.0270
+  #: 0,35 % « calculée sur les rémunérations dès le premier euro pour les
+  #: salariés dont les revenus excèdent le plafond de la sécurité sociale ».
+  #: Elle ne pèse donc que sur les salaires au-dessus du plafond, mais sur la
+  #: TOTALITÉ de leur rémunération — la même dissymétrie que la cotisation
+  #: déplafonnée du régime général.
+  contribution_equilibre_technique: 0.0035
+
+# Ce que le dépôt ne saura jamais certifier, et qui bouge quand même
+# ==================================================================
+# Les régimes complémentaires vivent d'accords nationaux interprofessionnels,
+# que le Journal officiel ne publie pas. L'index LEGI ne les porte pas, et la
+# sonde de `scripts/frontiere_contributive.py --verifier` n'a donc rien à quoi
+# les confronter. Les exclure serait pourtant absurde : le taux d'appel est,
+# de tout le système français, le prélèvement sans contrepartie le plus lourd
+# en proportion. Ils vivent donc ici, sous une preuve d'une autre nature —
+# une adresse et une date de lecture —, et un test exige les deux.
+bascules_hors_legi:
+
+  - code: taux_appel_rabais
+    date: 1952-01-01
+    face: cotisation
+    sens: fertilise
+    libelle: Le taux d'appel naît comme un RABAIS, et non comme un supplément
+    quoi: >-
+      Instauré dès 1952 à l'Agirc, le pourcentage d'appel était à l'origine
+      INFÉRIEUR à 100 % — 78 % en 1952, 95 % en 1965 — pour éviter de
+      constituer des réserves inutiles. Le cotisant versait alors MOINS que le
+      taux contractuel et acquérait les points de ce taux entier : le
+      mécanisme jouait en sa faveur. Il reste à 100 % jusqu'en 1978 à l'Agirc.
+      C'est le même instrument qui, quarante ans plus tard, prélève sans rien
+      donner.
+    dispositifs: []
+    source: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1073.pdf
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Le moteur porte la valeur d'achat du point et la valeur de service, non
+      le taux d'appel : il calcule les points à partir de la cotisation
+      appelée divisée par la valeur d'achat, et la fédération publie cette
+      valeur d'achat DÉJÀ nette du taux d'appel. Le résultat est juste ; ce
+      qui manque est la lecture — rien ne dit, dans le dépôt, quelle part du
+      versement n'achète rien.
+
+  - code: taux_appel_supplement
+    date: 1995-01-01
+    face: cotisation
+    sens: sterilise
+    libelle: À 125 %, il devient un prélèvement sans contrepartie
+    quoi: >-
+      Monté par paliers, le pourcentage d'appel atteint 125 % en 1992 à
+      l'Arrco et en 1995 à l'Agirc, et y demeure jusqu'à la fusion. Un
+      cinquième du versement cesse alors d'acheter quoi que ce soit. Le
+      secrétariat général du COR note que « ce mécanisme est peu connu des
+      cotisants ».
+    dispositifs: []
+    source: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1073.pdf
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Même remarque : le taux d'appel n'est nulle part dans les données du
+      dépôt. `reformes.yaml` le mentionne dans la note d'une réforme de 1994,
+      sans table ni valeur.
+
+  - code: contributions_equilibre_2019
+    date: 2019-01-01
+    face: cotisation
+    sens: sterilise
+    libelle: La fusion porte le taux d'appel à 127 % et généralise deux contributions sans droits
+    quoi: >-
+      Au 1er janvier 2019, le pourcentage d'appel passe à 127 % (article 36 de
+      l'ANI) et deux contributions d'équilibre « non génératrices de droits »
+      (article 37) s'y ajoutent : la CEG, 2,15 % sur la tranche 1 et 2,70 %
+      sur la tranche 2, et la CET, 0,35 % dès le premier euro pour les seuls
+      salariés dont les revenus excèdent le plafond. Elles étendent à tous les
+      salariés du privé ce qui se partageait auparavant entre l'AGFF et la CET
+      de l'Agirc, disparues au 31 décembre 2018. La fiche de la fédération
+      écrit les trois fois que ces versements n'ouvrent aucun droit.
+    dispositifs: []
+    source: https://reglementation.agirc-arrco.fr/home/liste-fiche-reglementaires/listes-area/liste-de-fiches-reglementaires/taux-de-cotisations.html
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Sur la tranche 1, un salarié sous le plafond verse 10,02 % et n'en
+      acquiert que 6,20 : 38 % du versement complémentaire n'achète aucun
+      point. C'est trois fois plus, en proportion, que la part sans
+      contrepartie du régime de base.
