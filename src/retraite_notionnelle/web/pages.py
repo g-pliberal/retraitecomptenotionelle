@@ -72,6 +72,7 @@ from ..donnees.equilibre import (
     POSTES,
     POSTES_TRANSFERTS,
     ComptesRetraite,
+    variante_du_scenario,
 )
 from ..donnees.regimes import charger_inventaire
 from ..donnees.population import Population
@@ -1647,9 +1648,22 @@ class Contexte:
             "depenses", lambda: DepensesRetraite(self.base.racine_donnees))
 
     def comptes(self) -> ComptesRetraite:
-        """Le second terme du bilan : ce que le système de retraite encaisse."""
+        """Le second terme du bilan : ce que le système de retraite encaisse.
+
+        SOUS LA VARIANTE DES RÈGLES DE ``base``, et c'est ce qui manquait
+        jusqu'au 21 septembre 2026 : la page lisait le scénario de référence du
+        COR quel que soit le scénario demandé, si bien que la croissance
+        déplaçait la dépense des systèmes notionnels, qui est calculée, sans
+        déplacer celle du droit en vigueur, qui est empruntée.
+
+        La mémoire porte le nom de la variante : deux jeux de règles qui ne
+        diffèrent que par leur scénario ne doivent pas se partager un compte.
+        """
+        racine = self.base.racine_donnees
+        variante = variante_du_scenario(
+            self.base.scenario_projection, racine / "reference" / "macro")
         return self._donnee(
-            "comptes", lambda: ComptesRetraite(self.base.racine_donnees))
+            f"comptes:{variante}", lambda: ComptesRetraite(racine, variante=variante))
 
     def population(self) -> Population:
         return self._donnee(

@@ -47,7 +47,11 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     journal_certification,
 )
 from retraite_notionnelle.donnees.depenses import CATEGORIES_DROITS, SYSTEMES  # noqa: E402
-from retraite_notionnelle.donnees.equilibre import POSTES, POSTES_TRANSFERTS  # noqa: E402
+from retraite_notionnelle.donnees.equilibre import (  # noqa: E402
+    POSTES,
+    POSTES_TRANSFERTS,
+    variantes_disponibles,
+)
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
 )
@@ -225,6 +229,17 @@ def _comptes_retraite() -> dict:
             filtre={"poste": poste})
         for poste in ("depenses", "ressources")
     }
+    # Le MÊME compte sous chaque variante du COR — productivité, chômage —,
+    # sur ses seules années projetées. Sans lui, le site lit le scénario de
+    # référence quel que soit le scénario demandé : la croissance déplace alors
+    # la dépense des systèmes notionnels, qui est calculée, sans déplacer celle
+    # du droit en vigueur, qui est empruntée.
+    for variante in variantes_disponibles(macro):
+        for poste in ("depenses", "ressources"):
+            series[f"variante_{variante}_{poste}"] = charger_serie_annuelle(
+                macro / "comptes_retraite_variantes.csv", "part_pib",
+                nom=f"comptes_variante_{variante}_{poste}",
+                filtre={"poste": poste, "variante": variante})
     for poste in POSTES:
         series[poste.code] = charger_serie_annuelle(
             macro / "structure_ressources_retraite.csv", "part",

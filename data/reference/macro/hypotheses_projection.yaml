@@ -131,6 +131,35 @@ trajectoires_emploi:
     libelle: Emploi du scénario de référence du COR — juin 2026
     fichier: emploi_projete.csv
 
+# LES VARIANTES DE CHÔMAGE SONT UNE AUTRE DIMENSION, ET LE COR LES SÉPARE
+# ------------------------------------------------------------------------
+# On croit volontiers qu'une croissance plus forte apporte moins de chômage.
+# Le COR ne le suppose pas : ses trois variantes de productivité tiennent
+# TOUTES le chômage à 7 % à partir de 2040, et il fait varier le chômage dans
+# une figure à part — la 2.21 du rapport de juin 2026, contre la 2.22 pour la
+# productivité. Les deux dimensions se croisent, elles ne se déduisent pas
+# l'une de l'autre.
+#
+# Ces variantes ne déplacent PAS les hypothèses ci-dessus : elles ne changent
+# ni le salaire moyen, ni l'inflation, ni la productivité. Ce qu'elles
+# changent est le COMPTE DU SYSTÈME — la dépense et le solde en part de PIB —,
+# que le COR publie variante par variante et que
+# `comptes_retraite_variantes.csv` porte. `etiquette_cor` est le libellé sous
+# lequel la figure les écrit ; c'est la clé du rapprochement, et elle est ici
+# pour que personne n'ait à la deviner dans un script.
+
+variantes_chomage:
+
+  cor_chomage_bas:
+    libelle: COR variante — chômage ramené à 5 % en 2040
+    etiquette_cor: var c5%
+    taux_cible: 0.05
+
+  cor_chomage_haut:
+    libelle: COR variante — chômage porté à 10 % en 2040
+    etiquette_cor: var c10%
+    taux_cible: 0.10
+
 # Le plafond de la Sécurité sociale suit la croissance du salaire moyen, ce qui
 # est la règle en vigueur (article L. 241-3 du code de la sécurité sociale).
 plafond_suit_salaire_moyen: true

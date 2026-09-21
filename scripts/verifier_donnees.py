@@ -1049,6 +1049,133 @@ def source_comptes_retraite_projetes() -> dict[tuple, float]:
     return _comptes_retraite("projete")
 
 
+#: Écart toléré entre la référence des figures de sensibilité et le compte
+#: principal. Les deux viennent du même exercice de projection et doivent
+#: coïncider ; ce qui les sépare est l'arrondi de publication du classeur, que
+#: le COR écrit au millionième.
+TOLERANCE_SENSIBILITE = 1e-6
+
+
+def _variantes_declarees() -> dict[str, dict[str, str]]:
+    """Le nom de chaque variante du dépôt, et l'étiquette du COR qui lui répond.
+
+    DEUX DIMENSIONS, DEUX CHEMINS DE RAPPROCHEMENT, ET AUCUN ÉCRIT EN DUR ICI.
+    Pour la PRODUCTIVITÉ, le COR étiquette ses lignes par l'hypothèse
+    elle-même — 0,01 et 0,004 —, et le dépôt porte cette hypothèse dans chacun
+    de ses scénarios : le rapprochement se fait sur le nombre, comme
+    ``source_ressources_eec`` le fait déjà, et le scénario par défaut est
+    exclu puisqu'il EST le compte principal. Pour le CHÔMAGE, le COR étiquette
+    par un libellé que rien ne calcule — « Var C5% » —, et
+    ``hypotheses_projection.yaml`` le nomme sous ``etiquette_cor``.
+
+    Rendu : ``{nom du dépôt: {"dimension": …, "etiquette": …}}``.
+    """
+    import yaml
+
+    hypotheses = yaml.safe_load(
+        (REFERENCE / "macro" / "hypotheses_projection.yaml").read_text(encoding="utf-8"))
+    declarees: dict[str, dict[str, str]] = {}
+    defaut = hypotheses["scenario_par_defaut"]
+    for nom, scenario in hypotheses["scenarios"].items():
+        if nom == defaut:
+            continue
+        declarees[nom] = {
+            "dimension": "productivite",
+            "etiquette": f"{round(float(scenario['productivite_reelle']), 4):g}",
+        }
+    for nom, variante in (hypotheses.get("variantes_chomage") or {}).items():
+        declarees[nom] = {
+            "dimension": "chomage",
+            "etiquette": _sans_accents(str(variante["etiquette_cor"])),
+        }
+    return declarees
+
+
+def source_comptes_variantes() -> dict[tuple, float]:
+    """Le compte du système sous chaque variante du COR, en part de PIB.
+
+    CE QUE CETTE SÉRIE APPORTE, ET QUI MANQUAIT. ``comptes_retraite.csv`` ne
+    porte que la colonne « Sc. Ref ». Le dépôt lisait donc le même compte quel
+    que soit le scénario demandé, si bien que la croissance déplaçait la
+    dépense de ses systèmes notionnels — qui est calculée — sans déplacer celle
+    du droit en vigueur, qui est empruntée. Un rapport qui monte à juste titre,
+    appliqué à un niveau gelé, comptait deux fois dans le même sens.
+
+    LE COR PUBLIE LA RÉPONSE, SOUS LA MÊME CONVENTION ET LE MÊME CHAMP. Ses
+    figures de sensibilité — 2.22 pour la productivité, 2.21 pour le chômage
+    dans le rapport de juin 2026 — republient la dépense et le solde du
+    système, variante par variante, avec la même note de bas de feuille que le
+    compte principal : convention EPR, hors produits et charges financières,
+    ensemble des régimes légalement obligatoires, FSV compris, hors RAFP.
+
+    LA RESSOURCE EST DÉRIVÉE, ET LA DÉRIVATION EST CONTRÔLÉE AVANT D'ÊTRE
+    UTILISÉE. Ces figures ne publient pas la ressource ; elle est la somme de
+    la dépense et du solde. On ne le suppose pas : la ligne de RÉFÉRENCE de
+    chaque figure est confrontée au compte principal, dépense contre dépense et
+    somme contre ressource, et un écart au-delà de l'arrondi de publication
+    arrête le script. Si la référence de la figure redonne le compte certifié,
+    la même arithmétique appliquée à ses autres lignes est légitime ; si elle
+    ne le redonne pas, c'est que les deux figures ne sont pas du même exercice,
+    et rien ne doit être écrit.
+
+    LES ANNÉES OBSERVÉES NE SONT PAS ÉCRITES. Une variante commence à la
+    dernière année observée, qu'elle partage avec toutes les autres : ce que
+    le passé a été ne dépend d'aucune hypothèse. Le fichier ne porte donc que
+    des années projetées, toutes au niveau ``projetee``.
+    """
+    sensibilite = _cor_comptes()["sensibilite"]
+    principal = _cor_comptes()["comptes"]
+    projete_depenses = principal["depenses"]["projete"]
+    projete_ressources = principal["ressources"]["projete"]
+
+    for dimension, grandeurs in sorted(sensibilite.items()):
+        reference_depenses = grandeurs["depenses"]["reference"]
+        reference_solde = grandeurs["solde"]["reference"]
+        communes = sorted(set(reference_depenses) & set(projete_depenses))
+        if not communes:
+            raise SourceAbsente(
+                f"la figure de sensibilité « {dimension} » ne recouvre aucune "
+                f"année projetée du compte principal"
+            )
+        for annee in communes:
+            ecart_depense = abs(reference_depenses[annee] - projete_depenses[annee])
+            derivee = reference_depenses[annee] + reference_solde[annee]
+            ecart_ressource = abs(derivee - projete_ressources[annee])
+            if max(ecart_depense, ecart_ressource) > TOLERANCE_SENSIBILITE:
+                raise SourceAbsente(
+                    f"la référence de la figure « {dimension} » ne redonne pas le "
+                    f"compte principal en {annee} : dépense {reference_depenses[annee]:.8f} "
+                    f"contre {projete_depenses[annee]:.8f}, ressource dérivée "
+                    f"{derivee:.8f} contre {projete_ressources[annee]:.8f}"
+                )
+
+    valeurs: dict[tuple, float] = {}
+    for nom, declaree in sorted(_variantes_declarees().items()):
+        grandeurs = sensibilite.get(declaree["dimension"])
+        if grandeurs is None:
+            raise SourceAbsente(
+                f"aucune figure de sensibilité « {declaree['dimension']} » dans le "
+                f"rapport du COR ; publiées : {sorted(sensibilite)}"
+            )
+        etiquette = declaree["etiquette"]
+        if etiquette not in grandeurs["depenses"]:
+            raise SourceAbsente(
+                f"aucune variante « {etiquette} » dans la figure "
+                f"« {declaree['dimension']} » du COR ; publiées : "
+                f"{sorted(grandeurs['depenses'])}"
+            )
+        depenses = grandeurs["depenses"][etiquette]
+        solde = grandeurs["solde"][etiquette]
+        for annee in sorted(set(depenses) & set(solde)):
+            if annee not in projete_depenses:
+                continue
+            valeurs[(annee, "depenses", nom)] = depenses[annee]
+            valeurs[(annee, "ressources", nom)] = depenses[annee] + solde[annee]
+    if not valeurs:
+        raise SourceAbsente("aucune variante lisible dans les figures du COR")
+    return dict(sorted(valeurs.items()))
+
+
 def _taux_prelevement(marqueur: str) -> dict[tuple, float]:
     """Le taux de prélèvement du système, en part des revenus d'activité.
 
@@ -3788,6 +3915,65 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5.1e-7,
         niveau="projetee",
+    ),
+    Certification(
+        nom="comptes_retraite_variantes",
+        chemin=REFERENCE / "macro" / "comptes_retraite_variantes.csv",
+        cles=("annee", "poste", "variante"),
+        colonne="part_pib",
+        source=source_comptes_variantes,
+        origine="COR, rapport annuel, figures de sensibilité de la dépense et "
+                "du solde aux hypothèses de productivité et de chômage",
+        decimales=6,
+        tolerance=5.1e-7,
+        niveau="projetee",
+        entete=(
+            "# Le compte du système de retraite sous chaque variante du COR, en part du PIB",
+            "# source_id: cor_comptes_systeme_retraite",
+            "# unite: part du produit intérieur brut, en fraction",
+            "# fiabilite:",
+            "#   projetee (2026-2070) : figures de sensibilité du rapport annuel. Une",
+            "#             variante est une projection de part en part ; aucune de ses",
+            "#             années n'est une observation.",
+            "#",
+            "# CE QUE CE FICHIER RÉPARE",
+            "# --------------------------",
+            "# comptes_retraite.csv ne porte que la colonne « Sc. Ref ». Le dépôt lisait",
+            "# donc le même compte quel que soit le scénario demandé : choisir la",
+            "# variante haute de productivité déplaçait la dépense des systèmes",
+            "# notionnels, qui est CALCULÉE, sans déplacer celle du droit en vigueur,",
+            "# qui est EMPRUNTÉE. Le rapport des deux montait à juste titre — un compte",
+            "# notionnel indexé sur la masse salariale profite moins de la croissance",
+            "# qu'un droit indexé sur les prix — mais il était appliqué à un niveau gelé,",
+            "# et comptait donc deux fois dans le même sens. La proposition perdait",
+            "# 0,58 point de PIB en 2070 pour la seule raison qu'on avait demandé plus",
+            "# de croissance.",
+            "#",
+            "# DEUX DIMENSIONS, QUE LE COR SÉPARE ET QUI NE SE DÉDUISENT PAS",
+            "# --------------------------------------------------------------",
+            "# Les variantes de PRODUCTIVITÉ tiennent toutes le chômage à 7 % ; les",
+            "# variantes de CHÔMAGE tiennent toutes la productivité à 0,7 %. Une",
+            "# croissance plus forte n'apporte pas moins de chômage dans l'exercice du",
+            "# COR, et le dépôt ne le suppose pas davantage. Les noms de variantes sont",
+            "# ceux de hypotheses_projection.yaml, qui porte aussi l'étiquette sous",
+            "# laquelle chaque figure les écrit.",
+            "#",
+            "# LA RESSOURCE EST DÉRIVÉE, ET LA DÉRIVATION EST CONTRÔLÉE",
+            "# ----------------------------------------------------------",
+            "# Ces figures publient la DÉPENSE et le SOLDE, jamais la ressource, qui est",
+            "# la somme des deux. La ligne de référence de chaque figure est confrontée",
+            "# au compte principal avant qu'une seule valeur ne soit écrite : si elle le",
+            "# redonne au millionième, la même arithmétique vaut pour ses autres lignes.",
+            "# Sur le rapport de juin 2026, elle le redonne.",
+            "#",
+            "# CE QUE CE FICHIER NE PORTE PAS. Le taux de prélèvement, que le COR ne",
+            "# publie que dans le scénario de référence (figure 2.9) : profil_taux garde",
+            "# donc la forme de la référence sous toutes les variantes. Et la STRUCTURE",
+            "# des ressources, publiée elle aussi pour la seule référence.",
+            "#",
+            "# Ne pas modifier ces valeurs à la main : elles seraient écrasées",
+            "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
     ),
     Certification(
         nom="taux_prelevement_retraite",

@@ -163,8 +163,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->802<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 511<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->805<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html)-->4 521<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Sept pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -197,7 +197,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->3 041<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->3 048<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->72<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -216,7 +216,7 @@ Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->492<!--/--> simulations complètes et
-<!--chiffre:entrees(tests/temoins/pages.json:)-->46<!--/--> rendus de page, dans `tests/temoins/`.
+<!--chiffre:entrees(tests/temoins/pages.json:)-->47<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
 <!--chiffre:a_verifier(le compte des nombres comparés demande de lancer node --test)-->10 615<!--/--> nombres,
 dont <!--chiffre:a_verifier(la part identique au bit près demande de lancer node --test)-->97,9<!--/--> % identiques
@@ -1228,7 +1228,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1850 tests Python
+tests/                          1858 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1277,7 +1277,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1850<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1858<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

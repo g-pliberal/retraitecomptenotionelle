@@ -77,6 +77,7 @@ définitions d'assiette ne coïncidant pas à 2 % près.
 
 from __future__ import annotations
 
+import csv
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -338,6 +339,54 @@ ORGANISMES: tuple[Organisme, ...] = (
 )
 
 
+def variantes_disponibles(macro: Path) -> tuple[str, ...]:
+    """Les variantes que ``comptes_retraite_variantes.csv`` porte, dans l'ordre.
+
+    Lues dans le fichier et jamais écrites ici : le rapport suivant du COR peut
+    en ajouter une, et une liste en dur la rendrait invisible. Le fichier est
+    produit par ``scripts/verifier_donnees.py`` depuis les noms que
+    ``hypotheses_projection.yaml`` déclare.
+    """
+    chemin = macro / "comptes_retraite_variantes.csv"
+    if not chemin.exists():
+        return ()
+    vues: dict[str, None] = {}
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
+        for enregistrement in csv.DictReader(lignes):
+            nom = enregistrement.get("variante")
+            if nom:
+                vues[nom] = None
+    return tuple(sorted(vues))
+
+
+#: Le nom du scénario de référence du COR, sous lequel le compte principal est
+#: publié. Ce n'est pas une variante : c'est le fichier ``comptes_retraite.csv``
+#: lui-même, et ``comptes_retraite_variantes.csv`` ne le porte pas.
+VARIANTE_REFERENCE = "reference"
+
+
+def variante_du_scenario(scenario: str | None, macro: Path) -> str:
+    """La variante de compte que réclame un scénario de projection.
+
+    LE RAPPROCHEMENT SE LIT DANS LE FICHIER, ET NON DANS UNE TABLE. Les noms
+    de variantes de ``comptes_retraite_variantes.csv`` SONT les noms de
+    scénarios de ``hypotheses_projection.yaml`` — c'est
+    ``scripts/verifier_donnees.py`` qui les y écrit. Un scénario qui n'y figure
+    pas est donc, par construction, celui sous lequel le compte principal est
+    publié : le scénario de référence, qui n'a pas de variante parce qu'il est
+    le fichier.
+
+    Elle tolère qu'aucune variante ne soit disponible — le fichier peut ne pas
+    avoir encore été produit — et rend alors la référence : le dépôt retrouve
+    exactement le comportement qu'il avait avant ce fichier, plutôt que de
+    refuser de calculer.
+    """
+    if scenario and scenario in variantes_disponibles(macro):
+        return scenario
+    return VARIANTE_REFERENCE
+
+
 class ComptesRetraite:
     """Le compte du système de retraite : dépenses, ressources, solde, structure.
 
@@ -349,9 +398,14 @@ class ComptesRetraite:
     de 2070 qui ne seraient qu'une hypothèse de croissance déguisée.
     """
 
-    def __init__(self, racine: Path) -> None:
+    def __init__(self, racine: Path,
+                 variante: str = VARIANTE_REFERENCE) -> None:
         macro = racine / "reference" / "macro"
         chemin = macro / "comptes_retraite.csv"
+        #: La variante du COR sous laquelle ce compte est lu. Voir
+        #: ``_charger_variante`` pour ce qu'elle déplace, et ce qu'elle ne
+        #: déplace pas.
+        self.variante = variante
         self.depenses = charger_serie_annuelle(
             chemin, "part_pib", nom="comptes_retraite_depenses",
             filtre={"poste": "depenses"},
@@ -360,6 +414,7 @@ class ComptesRetraite:
             chemin, "part_pib", nom="comptes_retraite_ressources",
             filtre={"poste": "ressources"},
         )
+        self.depenses_variante, self.ressources_variante = self._charger_variante(macro)
         self.structure: dict[str, SerieAnnuelle] = {
             poste.code: charger_serie_annuelle(
                 macro / "structure_ressources_retraite.csv", "part",
@@ -412,6 +467,71 @@ class ComptesRetraite:
         self.dette_publique = charger_serie_annuelle(
             macro / "dette_publique.csv", "part_pib", nom="dette_publique")
 
+    # -- la variante ------------------------------------------------------------
+
+    def _charger_variante(
+        self, macro: Path,
+    ) -> tuple[SerieAnnuelle | None, SerieAnnuelle | None]:
+        """Les deux séries de la variante demandée, ou deux ``None``.
+
+        CE QU'UNE VARIANTE DÉPLACE. La DÉPENSE et la RESSOURCE du système, sur
+        les seules années projetées, telles que le COR les republie dans ses
+        figures de sensibilité — même convention, même champ que le compte
+        principal. C'est ce qui manquait : le dépôt lisait le scénario de
+        référence quel que soit le scénario demandé, si bien que la croissance
+        déplaçait la dépense de ses systèmes notionnels, qui est calculée, sans
+        déplacer celle du droit en vigueur, qui est empruntée.
+
+        CE QU'ELLE NE DÉPLACE PAS, ET IL FAUT LE SAVOIR AVANT DE LIRE UN
+        COEFFICIENT. Le taux de prélèvement, que le COR ne projette que dans
+        son scénario de référence : ``profil_taux`` garde donc la même forme
+        sous toutes les variantes. La structure des ressources, publiée elle
+        aussi pour la seule référence, donc la part contributive et les parts
+        de postes. Les ressources sous convention EEC, dont le bloc ne porte
+        que la dimension de productivité. Et les transferts, que personne ne
+        projette dans aucun scénario. Ces quatre réserves empruntent à la
+        référence des FORMES et jamais des niveaux : ce sont des rapports, et
+        c'est ce qui les rend transportables.
+
+        LES ANNÉES OBSERVÉES NE SONT JAMAIS CELLES D'UNE VARIANTE. Le fichier
+        n'en porte aucune, et ``depense``/``ressource`` retombent donc sur le
+        compte principal partout avant la première année projetée : ce que le
+        passé a été ne dépend d'aucune hypothèse.
+        """
+        if self.variante == VARIANTE_REFERENCE:
+            return None, None
+        chemin = macro / "comptes_retraite_variantes.csv"
+        try:
+            return tuple(
+                charger_serie_annuelle(
+                    chemin, "part_pib",
+                    nom=f"comptes_variante_{self.variante}_{poste}",
+                    filtre={"poste": poste, "variante": self.variante},
+                )
+                for poste in ("depenses", "ressources")
+            )
+        except ValueError as erreur:
+            # Un nom de variante inconnu ne doit pas retomber en silence sur la
+            # référence : il rendrait deux courbes identiques sans que rien ne
+            # le dise, ce qui est exactement le défaut qu'on répare ici. Le
+            # chargeur refuse déjà ; on ne fait que nommer les variantes que le
+            # fichier porte, pour que le message dise quoi écrire à la place.
+            raise ValueError(
+                f"variante de compte inconnue : {self.variante!r} — "
+                f"{chemin.name} porte {', '.join(variantes_disponibles(macro))}"
+            ) from erreur
+
+    def _sous_variante(self, serie: SerieAnnuelle | None, annee: int) -> float | None:
+        """La valeur de la variante pour ``annee``, ou ``None`` hors de sa fenêtre.
+
+        La borne est lue dans la série et non écrite ici : le rapport suivant
+        décalera d'un an la frontière entre l'observé et le projeté, et le
+        fichier le dira tout seul.
+        """
+        if serie is None or not (serie.premiere_annee <= annee <= serie.derniere_annee):
+            return None
+        return serie(annee)
+
     # -- bornes --------------------------------------------------------------
 
     @property
@@ -443,10 +563,12 @@ class ComptesRetraite:
 
     def depense(self, annee: int) -> float:
         """Dépenses du système de retraite, en part du PIB de la même année."""
-        return self.depenses(annee)
+        variante = self._sous_variante(self.depenses_variante, annee)
+        return self.depenses(annee) if variante is None else variante
 
     def ressource(self, annee: int) -> float:
-        return self.ressources(annee)
+        variante = self._sous_variante(self.ressources_variante, annee)
+        return self.ressources(annee) if variante is None else variante
 
     def solde(self, annee: int) -> float:
         """Ressources moins dépenses, en part de PIB. Négatif : besoin de financement.
@@ -454,8 +576,12 @@ class ComptesRetraite:
         Le solde n'est pas stocké : il est la différence de deux séries écrites,
         et ``scripts/verifier_donnees.py`` confronte cette différence au solde
         que le COR publie séparément.
+
+        Il passe par ``ressource`` et ``depense``, et non par les deux séries :
+        sous une variante, c'est le seul chemin qui rende le solde de CETTE
+        variante. Le prendre aux séries redonnerait celui de la référence.
         """
-        return self.ressources(annee) - self.depenses(annee)
+        return self.ressource(annee) - self.depense(annee)
 
     @property
     def premiere_annee_eec(self) -> int:

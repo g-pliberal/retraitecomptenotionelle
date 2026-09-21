@@ -120,7 +120,7 @@
    "niveau": "haute",
    "source": "COR, rapport annuel, comptes du système de retraite (rapports à la CCSS consolidés)",
    "valeurs": 48,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-09-21"
   },
   "comptes_retraite_projetes": {
    "ajoutees": 0,
@@ -131,7 +131,18 @@
    "niveau": "projetee",
    "source": "COR, rapport annuel, scénario de référence",
    "valeurs": 90,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-09-21"
+  },
+  "comptes_retraite_variantes": {
+   "ajoutees": 360,
+   "colonne": "part_pib",
+   "corrigees": 0,
+   "empreinte": "ed23ee3fc046c6cb",
+   "identiques": 0,
+   "niveau": "projetee",
+   "source": "COR, rapport annuel, figures de sensibilité de la dépense et du solde aux hypothèses de productivité et de chômage",
+   "valeurs": 360,
+   "verifiee_le": "2026-09-21"
   },
   "cotisants_regimes": {
    "ajoutees": 1148,
@@ -857,7 +868,7 @@
    "niveau": "projetee",
    "source": "COR, rapport annuel, ressources du système de retraite, données complémentaires sous convention EEC",
    "valeurs": 46,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-09-21"
   },
   "salaire_moyen": {
    "ajoutees": 0,
@@ -912,7 +923,7 @@
    "niveau": "haute",
    "source": "COR, rapport annuel, structure des ressources du système de retraite",
    "valeurs": 132,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-09-21"
   },
   "taux_cotisation_alignes": {
    "ajoutees": 0,
@@ -967,7 +978,7 @@
    "niveau": "haute",
    "source": "COR, rapport annuel, déterminants de l'évolution des ressources du système de retraite",
    "valeurs": 24,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-09-21"
   },
   "taux_prelevement_retraite_projete": {
    "ajoutees": 0,
@@ -978,7 +989,7 @@
    "niveau": "projetee",
    "source": "COR, rapport annuel, scénario de référence",
    "valeurs": 45,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-09-21"
   },
   "transferts_retraite": {
    "ajoutees": 30,

@@ -72,6 +72,7 @@ from retraite_notionnelle.scenarios.actuel import MinimumVieillesse, _coefficien
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web import gabarit as g
 from retraite_notionnelle.web.pages import (
+    CLES_MODELISATION,
     COMPOSANTE_GARANTIE,
     COR_2070,
     INDEXATIONS,
@@ -146,6 +147,10 @@ def _charger_temoins() -> dict[str, dict]:
     temoins = {
         nom: {
             "chemin": page["chemin"],
+            # La saisie qui a produit le témoin : c'est elle qui dit si la page
+            # a été calculée sous d'autres règles que celles par défaut, et
+            # c'est plus sûr qu'une convention de nommage.
+            "parametres": page.get("parametres", {}),
             "corps": page["corps"],
             "texte": normaliser(page["corps"]),
         }
@@ -153,7 +158,8 @@ def _charger_temoins() -> dict[str, dict]:
     }
     # Le pied de page est commun à toutes et n'est pas dans les témoins : il
     # entre sous le chemin « * », que le catalogue emploie pour lui.
-    temoins["*pied"] = {"chemin": "*", "corps": g.pied(), "texte": normaliser(g.pied())}
+    temoins["*pied"] = {"chemin": "*", "parametres": {}, "corps": g.pied(),
+                        "texte": normaliser(g.pied())}
     return temoins
 
 
@@ -1179,11 +1185,23 @@ def _(m: Modele):
 
 @controle("avertissement_des_reglages")
 def _(m: Modele):
-    """L'avertissement paraît sous d'autres réglages, et seulement là."""
+    """L'avertissement paraît sous d'autres réglages, et seulement là.
+
+    LE CRITÈRE EST LA SAISIE, ET NON LE NOM DU TÉMOIN. Il l'a été jusqu'au
+    21 septembre 2026 — « le nom finit par `_regles` » —, et c'était un proxy
+    qui a tenu tant qu'un seul témoin agrégé portait d'autres règles. Le
+    témoin de la variante de compte en porte aussi, sous un autre nom, et le
+    proxy l'a dénoncé à tort. Ce qui décide est qu'une CLÉ DE MODÉLISATION
+    soit saisie : `cascade` n'en est pas une — elle choisit l'année qu'on
+    regarde, pas la règle qu'on applique —, et son témoin ne doit donc porter
+    aucun avertissement.
+    """
     extrait = PAR_ID["reglages.avertissement"]["extrait"]
     for nom, temoin in TEMOINS_PAR_NOM.items():
-        if temoin["chemin"] in ("/cas-types", "/cout", "/avantages"):
-            assert (extrait in temoin["texte"]) == nom.endswith("_regles"), nom
+        if temoin["chemin"] not in ("/cas-types", "/cout", "/avantages"):
+            continue
+        regles = set(temoin["parametres"]) & set(CLES_MODELISATION)
+        assert (extrait in temoin["texte"]) == bool(regles), nom
 
 
 @controle("portage_compare_aux_temoins")

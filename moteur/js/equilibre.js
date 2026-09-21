@@ -255,10 +255,45 @@ export const ORGANISMES = [
   },
 ];
 
+/**
+ * Le nom du scénario de référence du COR, sous lequel le compte principal est
+ * publié. Ce n'est pas une variante : c'est le compte lui-même.
+ */
+export const VARIANTE_REFERENCE = "reference";
+
+/**
+ * Les variantes que le paquet porte, lues dans ses clés et jamais écrites ici :
+ * le rapport suivant du COR peut en ajouter une.
+ */
+export function variantesDisponibles(paquet) {
+  const brut = paquet.comptes_retraite || {};
+  const vues = new Set();
+  for (const cle of Object.keys(brut)) {
+    const trouve = /^variante_(.+)_depenses$/.exec(cle);
+    if (trouve) vues.add(trouve[1]);
+  }
+  return [...vues].sort();
+}
+
+/**
+ * La variante de compte que réclame un scénario de projection.
+ *
+ * Le rapprochement se lit dans le paquet, et non dans une table : les noms de
+ * variantes SONT les noms de scénarios de `hypotheses_projection.yaml`. Un
+ * scénario qui n'y figure pas est donc celui sous lequel le compte principal
+ * est publié — le scénario de référence, qui n'a pas de variante parce qu'il
+ * est le compte.
+ */
+export function varianteDuScenario(scenario, paquet) {
+  if (scenario && variantesDisponibles(paquet).includes(scenario)) return scenario;
+  return VARIANTE_REFERENCE;
+}
+
 /** Le compte du système de retraite : dépenses, ressources, solde, structure. */
 export class ComptesRetraite {
-  constructor(paquet) {
+  constructor(paquet, variante = VARIANTE_REFERENCE) {
     const brut = paquet.comptes_retraite;
+    this.variante = variante;
     this.depenses = SerieAnnuelle.depuisPaquet("comptes_retraite_depenses",
                                                brut.depenses);
     this.ressources = SerieAnnuelle.depuisPaquet("comptes_retraite_ressources",
@@ -313,6 +348,36 @@ export class ComptesRetraite {
       if (this.depenses.fiabilite(annee) > Fiabilite.ESTIMEE) observee = annee;
     }
     this.derniereAnneeObservee = observee;
+    // La variante déplace la DÉPENSE et la RESSOURCE sur les seules années
+    // projetées, telles que le COR les republie dans ses figures de
+    // sensibilité — même convention, même champ. Ce qu'elle ne déplace pas :
+    // le taux de prélèvement, la structure des ressources, les ressources EEC
+    // et les transferts, que le COR ne publie que dans son scénario de
+    // référence. Ce sont des formes empruntées, jamais des niveaux.
+    this.depensesVariante = null;
+    this.ressourcesVariante = null;
+    if (variante !== VARIANTE_REFERENCE) {
+      if (brut[`variante_${variante}_depenses`] === undefined) {
+        throw new Error(
+          `variante de compte inconnue : ${variante} — le paquet porte `
+          + `${variantesDisponibles(paquet).join(", ")}`,
+        );
+      }
+      this.depensesVariante = SerieAnnuelle.depuisPaquet(
+        `comptes_variante_${variante}_depenses`, brut[`variante_${variante}_depenses`]);
+      this.ressourcesVariante = SerieAnnuelle.depuisPaquet(
+        `comptes_variante_${variante}_ressources`, brut[`variante_${variante}_ressources`]);
+    }
+  }
+
+  /**
+   * La valeur de la variante pour `annee`, ou `null` hors de sa fenêtre — les
+   * années observées, qu'aucune hypothèse ne déplace.
+   */
+  sousVariante(serie, annee) {
+    if (serie === null) return null;
+    if (annee < serie.premiereAnnee || annee > serie.derniereAnnee) return null;
+    return serie.valeur(annee);
   }
 
   annees() {
@@ -323,11 +388,13 @@ export class ComptesRetraite {
 
   /** Dépenses du système de retraite, en part du PIB de la même année. */
   depense(annee) {
-    return this.depenses.valeur(annee);
+    const variante = this.sousVariante(this.depensesVariante, annee);
+    return variante === null ? this.depenses.valeur(annee) : variante;
   }
 
   ressource(annee) {
-    return this.ressources.valeur(annee);
+    const variante = this.sousVariante(this.ressourcesVariante, annee);
+    return variante === null ? this.ressources.valeur(annee) : variante;
   }
 
   /**
@@ -336,7 +403,9 @@ export class ComptesRetraite {
    * le vérificateur confronte ce calcul au solde que le COR publie à part.
    */
   solde(annee) {
-    return this.ressources.valeur(annee) - this.depenses.valeur(annee);
+    // Par les accesseurs et non par les séries : sous une variante, c'est le
+    // seul chemin qui rende le solde de CETTE variante.
+    return this.ressource(annee) - this.depense(annee);
   }
 
   /** Part d'un poste dans les ressources de l'année. */

@@ -657,6 +657,64 @@ est appliqué dès 2026 quand le COR ne l'atteint qu'en 2040, et l'inflation de
 1,75 % est une convention reconduite de ses rapports antérieurs, que les
 documents publics de juin 2025 et de juin 2026 ne restatent pas.
 
+**Ce que le scénario de projection déplace dans le BILAN, depuis le
+21 septembre 2026.** Jusqu'à cette date, `comptes_retraite.csv` ne portait que
+la colonne « Sc. Ref » du COR, et le dépôt la lisait quel que soit le scénario
+demandé. Le défaut n'était pas qu'un chiffre manquât : c'est que la croissance
+traversait une moitié du bilan et pas l'autre. La dépense des systèmes
+notionnels est CALCULÉE, et elle réagissait ; celle du droit en vigueur est
+EMPRUNTÉE au COR, et elle ne réagissait pas. Le rapport des deux montait à
+juste titre — un compte indexé sur la masse salariale profite moins de la
+croissance qu'une pension indexée sur les prix — mais il était appliqué à un
+niveau gelé, et comptait donc deux fois dans le même sens. Le solde de la
+proposition en 2070 allait de +0,42 à −0,72 point de PIB entre les variantes
+basse et haute de productivité : **la croissance lui coûtait 1,14 point sans
+qu'aucun mécanisme économique le justifie.**
+
+Le COR publie la réponse, sous la même convention et le même champ : ses
+figures de sensibilité — 2.22 pour la productivité, 2.21 pour le chômage dans
+le rapport de juin 2026 — republient la dépense et le solde du système,
+variante par variante. `comptes_retraite_variantes.csv` les porte, et
+`ComptesRetraite` lit celle du scénario demandé. La ressource n'y est pas
+publiée : elle est la somme des deux, et `verifier_donnees.py` contrôle cette
+dérivation sur la ligne de référence de chaque figure avant d'écrire quoi que
+ce soit — elle redonne le compte certifié au millionième. **Le scénario de
+référence ne bouge pas d'un centime** : c'était déjà la colonne lue.
+
+Ce que la correction laisse, et qui est un résultat et non un artefact :
+l'amplitude résiduelle du solde de la proposition, 0,45 point au lieu de 1,14,
+et **dans le même sens**. Un compte notionnel indexé sur la masse salariale est
+neutre à la croissance en part de PIB ; le droit en vigueur, indexé sur les
+prix, en profite. La proposition gagne donc moins que le droit constant à ce
+que la croissance soit forte. Une part de ce résidu tient aussi à ce que la
+grille de cas types réagit plus fort à la croissance que le modèle de
+population du COR — c'est le même écart de méthode que le § 5 ter chiffre à
+trois points à l'horizon.
+
+**Ce que la variante ne déplace pas, et qu'il faut savoir avant de lire un
+coefficient.** Quatre séries restent celles du scénario de référence, parce que
+le COR ne les publie que là : le TAUX DE PRÉLÈVEMENT (figure 2.9), donc le
+profil qu'emprunte l'assiette de la proposition ; la STRUCTURE des ressources,
+donc la part contributive et les parts de postes ; les ressources sous
+convention EEC, dont le bloc ne porte que la dimension de productivité ; et les
+TRANSFERTS, que personne ne projette dans aucun scénario. Les quatre empruntent
+à la référence des FORMES et jamais des niveaux — ce sont des rapports, et
+c'est ce qui les rend transportables —, mais c'est une hypothèse, et elle est
+ici plutôt qu'ailleurs.
+
+**Le chômage est une autre dimension, et il n'a pas de bouton.** On attend
+volontiers d'une croissance plus forte qu'elle apporte moins de chômage : le
+COR ne le suppose pas, et ses trois variantes de productivité tiennent toutes
+le chômage à 7 % à partir de 2040. Le dépôt porte désormais ses deux variantes
+de chômage — 5 % et 10 % en 2040 —, et le compte sait les lire, mais **le
+formulaire du site ne les propose pas** : il n'offre que les trois scénarios de
+productivité. `python scripts/sensibilite_comptes.py` imprime les six
+variantes, les deux dimensions séparées. Ce qu'elles disent est contre-intuitif
+et vaut d'être lu : moins de chômage donne MOINS de recettes en part de PIB —
+12,86 % contre 12,91 % en 2070 —, et c'est la dépense qui recule, de
+15,30 % à 15,02 %. En part de PIB, une assiette plus large ne rapporte pas
+davantage : elle monte en même temps que son dénominateur.
+
 **Ce que l'emploi projeté déplace.** Depuis le 20 septembre 2026, l'emploi
 au-delà de la dernière observation n'est plus supposé constant : il suit, par
 défaut, le scénario de référence du rapport annuel du COR de juin 2026, lu
@@ -7417,7 +7475,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1850<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1858<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
