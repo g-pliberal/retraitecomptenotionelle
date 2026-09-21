@@ -49,16 +49,21 @@ Il fait trois choses qui, elles, ajoutent quelque chose :
 3. **LES DÉCRETS QUE LA SÉRIE IGNORE.** Le récupérateur interroge le JORF, sur
    la période que l'IPP couvre, pour les décrets qui annoncent dans leur titre
    des taux de cotisation du régime général, et signale ceux qu'aucune marche
-   ne rejoint. Il en trouve un, et il compte : le **décret n° 79-650 du
-   30 juillet 1979** a relevé « à titre exceptionnel, par dérogation aux
-   dispositions du décret n° 78-1213 » les taux du régime général « du 01-08 au
-   31-12-1979 et du 01-01-1980 au 31-01-1981 ». La fenêtre couvre DEUX premiers
-   janvier, 1980 et 1981, et ni l'IPP ni OpenFisca ne la portent : les taux que
-   le dépôt sert pour ces deux années sont donc trop bas, d'un montant que la
-   notice du *Journal officiel* n'écrit pas — elle ne nomme même aucun risque.
-   C'est pourquoi le garde-fou de ``dila_legi_taux_cotisation.py`` n'exige pas
-   le mot « vieillesse » : sur la période certifiée, un décret de cette forme ne
-   doit pas pouvoir passer.
+   ne rejoint. Chacun doit s'expliquer, et ``DECRETS_SANS_EFFET`` porte la
+   raison : la plupart ne touchent pas la vieillesse. Le plus long à établir a
+   été le **décret n° 79-650 du 30 juillet 1979**, qui a relevé « à titre
+   exceptionnel, par dérogation aux dispositions du décret n° 78-1213 » les
+   taux du régime général « du 01-08 au 31-12-1979 et du 01-01-1980 au
+   31-01-1981 » : sa fenêtre couvre DEUX premiers janvier, 1980 et 1981, et le
+   dépôt en a longtemps conclu que ses taux de ces deux années étaient trop
+   bas. **Ils ne le sont pas.** C'est le point exceptionnel du plan Barrot,
+   porté par la seule cotisation MALADIE du salarié — 3,50 % puis 4,50 % au
+   1er août 1979, ramenée à 4,50 % au 1er février 1981, dix-huit mois plus
+   tard —, et le recueil statistique de la Cnav écrit que la vieillesse
+   plafonnée vaut 12,90 % « du 1er janvier 1979 » jusqu'au 1er janvier 1984,
+   sans marche entre-temps. Le garde-fou de ``dila_legi_taux_cotisation.py``
+   n'exige pas pour autant le mot « vieillesse » : un décret de cette forme
+   doit être VU, quitte à s'expliquer ensuite.
 
 CE QU'IL NE COUVRE PAS. Les barèmes IPP de la CNAV ne commencent pas plus tôt
 qu'OpenFisca — 1er octobre 1967 —, et rien n'a été trouvé avant. Les années
@@ -165,6 +170,16 @@ DECRETS_SANS_EFFET = {
     "JORFTEXT000000859010": "décret n° 81-1014 du 13 novembre 1981 : idem",
     "JORFTEXT000000328902": "décret n° 80-298 du 24 avril 1980 : taux et "
                             "conditions d'exonération de l'assurance MALADIE",
+    # Le point exceptionnel du plan Barrot, du 1er août 1979 au 31 janvier
+    # 1981 : la seule cotisation MALADIE du salarié, 3,50 % portée à 4,50 %
+    # puis ramenée à 4,50 % au 1er février 1981 (recueil statistique de la
+    # Cnav, titre II, tableau T2-2). Le même recueil écrit que la vieillesse
+    # plafonnée vaut 12,90 % du 1er janvier 1979 au 1er janvier 1984 : la
+    # série du dépôt est donc juste sur 1980 et 1981, et ce décret ne la
+    # concerne pas. Lu le 21 septembre 2026.
+    "JORFTEXT000000518706": "décret n° 79-650 du 30 juillet 1979 : point "
+                            "exceptionnel du plan Barrot, sur la seule "
+                            "cotisation MALADIE du salarié",
     "JORFTEXT000000868863":
         "décret n° 68-579 du 29 juin 1968 : réduction du seul taux MALADIE, "
         "article 5 du décret n° 67-803",

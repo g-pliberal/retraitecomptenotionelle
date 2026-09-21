@@ -207,6 +207,11 @@ fichiers:
       "La clause du grand-père : six régimes fermés l'étaient pour tout le monde": recit
       "Le compte notionnel recevait une moyenne de période, et le droit changeait le taux chaque année": recit
       "La lecture des taux de cotisation, et les quatre choses qu'elle a trouvées": recit
+      # La correction datée de l'une de ces quatre choses : le décret de 1979
+      # que la série ignore ne rend pas ses années fausses, et trois lectures
+      # le montrent. Ses chiffres sont ceux des sources lues ce jour-là — les
+      # colonnes du tableau T2-2 de la Cnav, les versions de LEGI.
+      "Ils ne sont pas trop bas : ce décret ne touche pas la vieillesse": recit
       "Avant 1967, la cotisation vieillesse n'existait pas séparément — et le dépôt lui prêtait 8,6 %": recit
       "Le marin cotisait sur sa paie, et le régime ne connaît que vingt forfaits": recit
       "Un jeune d'aujourd'hui pouvait se déclarer mineur, et la page le laissait croire": recit

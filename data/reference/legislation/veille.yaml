@@ -1819,3 +1819,45 @@ journal:
       qui le met hors d'atteinte de la durée requise à tout âge — sa fiche date
       donc son départ sur l'ouverture, et la question de savoir si un libéral
       représentatif a une carrière antérieure reste ouverte.
+  - date: 2026-09-21
+    session: le décret de 1979 relisait la maladie, non la vieillesse
+    consulte: >-
+      La recherche que l'entrée précédente laissait ouverte. Index JORF du
+      dépôt : le décret n° 79-650 du 30 juillet 1979 (JORFTEXT000000518706) n'y
+      porte que sa notice, sans chiffre, et LEGI ne le connaît pas — il a
+      expiré. Index LEGI : le décret n° 67-803, qui porte les taux du régime
+      général jusqu'au 13 novembre 1981, article par article
+      (LEGIARTI000006761082 pour la maladie, LEGIARTI000006761083 pour sa
+      répartition, LEGIARTI000006761084 pour la vieillesse), puis le décret
+      n° 81-1013 qui lui succède. Barèmes de l'IPP, rejoués par
+      `scripts/fetch/ipp_taux_cotisation.py`. Et le recueil statistique de la
+      Cnav, titre II « Les cotisations et les cotisants », tableau T2-2
+      (statistiques-recherche.lassuranceretraite.fr, édition 2011), lu avec le
+      lecteur de PDF du dépôt.
+    trouve: >-
+      LE DÉCRET NE TOUCHE PAS LA VIEILLESSE, et les taux de 1980 et 1981 ne
+      sont donc pas trop bas. Le tableau T2-2 de la Cnav donne, pour le
+      salarié, la maladie à 3,50 % au 1er janvier 1979, 4,50 % au 1er août
+      1979, et le retour à 4,50 % au 1er février 1981 — la fenêtre exacte du
+      décret, dix-huit mois — pendant que la vieillesse reste à 4,70 % d'un
+      bout à l'autre ; côté employeur, 8,95 en maladie et 8,20 en vieillesse
+      ne bougent pas. Le même recueil écrit que « le taux de cotisation sur le
+      salaire plafonné de 12,90 % au 1er janvier 1979 est passé à 13,90 % au
+      1er janvier 1984 ». LEGI le confirme par son silence : les articles 1 et
+      2 du décret n° 67-803 ont une version qui s'ouvre au 1er janvier 1980,
+      seconde fenêtre du décret exceptionnel, et l'article 3, celui de la
+      vieillesse, n'en a aucune. C'est le point exceptionnel du plan Barrot,
+      à la charge des seuls salariés, décidé devant le dérapage des dépenses
+      d'assurance maladie. Le décret est rangé dans `DECRETS_SANS_EFFET` avec
+      sa raison : sur 1967-1981, plus un seul décret de taux du régime général
+      n'est inexpliqué.
+    reste: >-
+      LA LEÇON, plutôt qu'un travail : « un décret que la série ignore » ne
+      veut pas dire « les années qu'il couvre sont fausses », mais « personne
+      n'a encore dit ce que ce texte leur fait ». Le contrôle disait la
+      première phrase depuis deux passes, et le dépôt l'avait recopiée dans
+      quatre fichiers. Il dit maintenant la seconde. Le TEXTE du décret, lui,
+      reste introuvable : ni LEGI ni la notice du JORF ne le portent, et il
+      faudrait le Journal officiel papier du 31 juillet 1979 — ce qui ne
+      change plus rien au modèle, puisque la branche qu'il vise est hors de
+      son champ.
