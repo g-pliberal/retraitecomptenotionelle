@@ -5139,10 +5139,36 @@ l'autre. La ligne « s'ajoute au système 4 » reste
 brute ; les lignes « dont reprises » et « garantie nette » disent le reste
 (action 47 de la feuille de route).
 
+**Le plancher d'une population n'est pas celui d'une personne.** C'était la
+plus grosse convention du chiffrage, et elle a tenu jusqu'au 21 septembre 2026 :
+la trajectoire servait le plancher MAJORÉ — 1 050 €, celui de qui vit seul — à
+la population entière, parce que l'enquête sur les pensions ne dit pas avec qui
+l'on vit. Le recensement le dit, lui, âge par âge et par sexe, et le dépôt le
+lisait DÉJÀ pour les reprises sur succession. Il le lit désormais ici aussi :
+pesé sur les années vécues après 65 ans, **61,8 % des femmes vivent seules
+contre 33,9 % des hommes**, et les deux planchers se mélangent dans cette
+proportion, sexe par sexe. Les deux se composent — les femmes vivent seules
+plus souvent ET tombent sous le plancher plus souvent —, si bien qu'un partage
+global les manquerait.
+
+| | Garantie 2024 | 2026, % du PIB | Cumul 2026-2070 |
+|---|---|---|---|
+| Plancher majoré pour tous *(jusqu'au 21 septembre 2026)* | 22,0 Md € | 0,74 % | 918 Md € |
+| **Pesé par le recensement** | **17,8 Md €** | **0,59 %** | **745 Md €** |
+| Plancher de base pour tous | 12,5 Md € | 0,42 % | 525 Md € |
+
+La convention d'avant surestimait donc la garantie de **près d'un quart**, et
+ce n'était pas une prudence assumée : c'était une borne haute faute d'avoir
+cherché la source. `situation_foyer` reste ce qu'il a toujours été pour une
+CARRIÈRE — le simulateur demande la vôtre, et un individu a une situation — et
+ne décide plus pour tous. L'exposition est pesée par la table de la population
+générale et non par le vingtile des bénéficiaires ; les plus modestes meurent
+plus tôt, donc pèsent moins les grands âges où l'on vit seul, et la correction
+serait un peu plus forte encore avec leur table.
+
 Ce que chaque ligne suppose. **Les deux planchers** sont donnés parce que
-l'enquête dit la pension et non avec qui l'on vit : la garantie de base vaut
-pour qui vit à deux, la majorée pour qui vit seul, et le coût réel est entre les
-deux. **Les deux assiettes** ne répondent pas à la même question : à pensions
+l'enquête dit la pension et non avec qui l'on vit : ils ENCADRENT le coût, la
+garantie de base valant pour qui vit à deux et la majorée pour qui vit seul. **Les deux assiettes** ne répondent pas à la même question : à pensions
 inchangées, c'est ce que la garantie coûterait en remplacement de l'ASPA, et ce
 calcul-là ne doit rien au modèle ; aux pensions du scénario 6, toute la
 distribution est déplacée du rapport que le modèle donne à la part contributive
@@ -7492,7 +7518,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1860<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1863<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

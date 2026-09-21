@@ -9541,6 +9541,17 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
                      + base.allocation_isolement_mensuelle) * vers_enquete
     caracteristiques = simulateur.caracteristiques
     rapport_mesure = caracteristiques.rapport_deplacement()
+    # Qui vit seul après 65 ans, lu au recensement et pesé sur les années
+    # vécues : c'est ce qui met le coût ENTRE les deux planchers du tableau
+    # plutôt que sur le plus haut.
+    part_seule = {
+        sexe: 1.0 - simulateur.vie_en_couple.part_moyenne(
+            sexe,
+            list(simulateur.mortalite.courbe_survie(
+                65, base.annee_bascule, sexe, True, None)),
+        )
+        for sexe in ("F", "H")
+    }
     par_sexe = {
         rapport: cout_garantie_par_sexe(
             simulateur.distributions_par_sexe["F"],
@@ -9801,10 +9812,15 @@ coûterait <strong>aux pensions d'aujourd'hui</strong>, en remplacement de
 l'ASPA, est un calcul qui ne doit rien au modèle ; ce qu'elle coûterait
 <strong>aux pensions du système 4</strong> déplace toute la distribution du
 facteur ci-dessus. Le plancher de base vaut pour qui vit à deux, le plancher
-majoré pour qui vit seul, et l'enquête ne dit pas avec qui l'on vit : le coût
-réel est entre les deux. La trajectoire retient
-{'le plancher majoré' if seul else 'le plancher de base'}, celui que le
-simulateur applique.</p>
+majoré pour qui vit seul : <strong>ces deux lignes encadrent le coût sans le
+donner</strong>. L'enquête sur les pensions ne dit pas avec qui l'on vit ; le
+recensement le dit, et la trajectoire l'y lit depuis le 21 septembre 2026, âge
+par âge et sexe par sexe, sur les années vécues après 65 ans :
+{g.pourcentage(part_seule["F"], decimales=0)} des femmes vivent seules contre
+{g.pourcentage(part_seule["H"], decimales=0)} des hommes. Elle sert donc les
+deux planchers dans cette proportion, ce qui met le coût entre les deux bornes
+plutôt que sur la plus haute. <em>Jusqu'à cette date, elle servait le plancher
+majoré à tout le monde, et surestimait la garantie de près d'un quart.</em></p>
 
 <p><strong>Un ayant droit sur deux réclame.</strong> La garantie se demande,
 comme l'ASPA, et le programme retient l'hypothèse que la DREES mesure sur

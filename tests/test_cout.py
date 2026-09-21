@@ -991,8 +991,7 @@ def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distrib
     assert 0.5 < projetee.facteur < 0.9
     # Le plancher est celui des paramètres — majoré, le foyer par défaut étant
     # une personne seule —, dans les euros de l'enquête.
-    plancher = (parametres.garantie_vieillesse_mensuelle
-                + parametres.allocation_isolement_mensuelle)
+    plancher = parametres.garantie_vieillesse_mensuelle
     vers_enquete = simulateur.macro.coefficient_prix(
         parametres.annee_euros_garantie_vieillesse, millesime)
     # DEUX FACTEURS ET NON UN, depuis le 21 septembre 2026 : le scénario retire
@@ -1000,12 +999,26 @@ def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distrib
     # chaque sexe est déplacé du sien sous contrainte que la moyenne d'ensemble
     # bouge du facteur que la grille donne. Le test refait ce calcul-là.
     caracteristiques = simulateur.caracteristiques
+    # DEUX PLANCHERS AUSSI, depuis le 21 septembre 2026 : la garantie vaut
+    # 800 € par personne plus 250 € à qui vit seul, et le recensement dit qui
+    # vit seul. ``plancher`` est donc celui de qui vit à deux, et le majoré
+    # s'applique dans la proportion que le recensement mesure, sexe par sexe.
+    part_seule = {
+        sexe: 1.0 - simulateur.vie_en_couple.part_moyenne(
+            sexe,
+            list(simulateur.mortalite.courbe_survie(
+                65, parametres.annee_bascule, sexe, True, None)),
+        )
+        for sexe in ("F", "H")
+    }
     attendu = cout_garantie_par_sexe(
         simulateur.distributions_par_sexe["F"],
         simulateur.distributions_par_sexe["H"],
         caracteristiques.part_femmes, projetee.effectif,
         plancher * vers_enquete, projetee.facteur,
         caracteristiques.rapport_deplacement(),
+        (plancher + parametres.allocation_isolement_mensuelle) * vers_enquete,
+        part_seule,
     )
     # Un ayant droit sur deux réclame : les bénéficiaires et le coût sont
     # ceux qui réclament, les ayants droit tous ceux qui sont sous le plancher.

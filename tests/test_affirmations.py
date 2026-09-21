@@ -527,6 +527,47 @@ def _(m: Modele):
     assert "garantie_vieillesse" in m.horizon.postes_depenses("notionnel_liberal")
 
 
+@controle("planchers_encadrent_le_cout")
+def _(m: Modele):
+    """Le coût retenu est ENTRE les deux planchers, et non sur le plus haut.
+
+    La garantie vaut 800 € par personne, plus 250 € à qui vit seul : servir le
+    majoré à toute la population était une borne haute, pas un chiffrage. Le
+    calage mélange désormais les deux dans la proportion que le recensement
+    mesure, sexe par sexe, et ce contrôle tient l'encadrement sur la grandeur
+    qui compte — le coût de l'année de l'enquête, celui que la trajectoire
+    porte.
+    """
+    millesime = m.sim.distribution.millesime
+    ligne = m.cout.annee(millesime)
+    assert ligne is not None and ligne.garantie is not None
+    garantie = ligne.garantie
+    # Les femmes vivent seules bien plus souvent : sans cet écart, peser par
+    # sexe ne servirait à rien.
+    seule = {
+        sexe: 1.0 - m.sim.vie_en_couple.part_moyenne(
+            sexe,
+            list(m.sim.mortalite.courbe_survie(
+                65, m.base.annee_bascule, sexe, True, None)),
+        )
+        for sexe in ("F", "H")
+    }
+    assert seule["F"] > seule["H"]
+    vers_enquete = m.sim.macro.coefficient_prix(
+        m.base.annee_euros_garantie_vieillesse, millesime)
+    vers_constants = m.sim.macro.coefficient_prix(
+        millesime, m.base.annee_euros_constants)
+    base = m.base.garantie_vieillesse_mensuelle * vers_enquete
+    majore = base + m.base.allocation_isolement_mensuelle * vers_enquete
+    bornes = [
+        cout_garantie(m.sim.distribution, garantie.effectif, plancher,
+                      garantie.facteur).cout_annuel_meur
+        * vers_constants * m.base.taux_recours_garantie
+        for plancher in (base, majore)
+    ]
+    assert bornes[0] < garantie.cout_constants < bornes[1]
+
+
 @controle("deplacement_uniforme_borne_basse")
 def _(m: Modele):
     """Le rapport est lu sur l'enquête, il vaut moins de un, et le modèle l'applique.

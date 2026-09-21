@@ -57,9 +57,9 @@ def test_le_rapport_mesure_redonne_le_cout_que_la_page_affiche(
     facteur et le rapport que le modèle applique.
     """
     parametres, simulateur, garantie = garantie_de_l_enquete
-    majore = [l for l in lectures if l.plancher.startswith("plancher majoré")]
-    assert majore, "le plancher majoré doit être parcouru"
-    reference = next(l for l in majore if l.mesure)
+    retenu = [l for l in lectures if l.plancher.startswith("pesé par le recensement")]
+    assert retenu, "le plancher pesé par le recensement doit être parcouru"
+    reference = next(l for l in retenu if l.mesure)
     assert reference.rapport == pytest.approx(
         simulateur.caracteristiques.rapport_deplacement())
     # Le coût de la trajectoire est celui des 65 ans et plus ; celui du script,
@@ -103,15 +103,37 @@ def test_le_rapport_un_redonne_l_ancienne_convention(lectures):
                    "tous_regimes", simulateur.distribution.millesime)
                / ligne.garantie.effectif)
     uniforme = next(l for l in lectures
-                    if l.plancher.startswith("plancher majoré") and l.rapport == 1.0)
+                    if l.plancher.startswith("pesé par le recensement")
+                    and l.rapport == 1.0)
     # Le mélange des deux colonnes de sexe ne redonne la colonne « ensemble »
     # qu'à l'arrondi de publication près — voir le test précédent.
     assert uniforme.cout_mds == pytest.approx(attendu, rel=1e-3)
     # Et la mesure coûte PLUS que la convention qu'elle remplace : c'est tout
     # ce que la réserve des limites annonçait.
     mesure = next(l for l in lectures
-                  if l.plancher.startswith("plancher majoré") and l.mesure)
+                  if l.plancher.startswith("pesé par le recensement") and l.mesure)
     assert mesure.cout_mds > uniforme.cout_mds
+
+
+def test_les_deux_planchers_purs_encadrent_celui_que_la_page_retient(lectures):
+    """Le plancher d'une POPULATION est entre les deux planchers d'une personne.
+
+    La garantie vaut 800 € par personne, plus 250 € à qui vit seul : servir le
+    majoré à tout le monde est une borne haute, le base à tout le monde une
+    borne basse, et le coût est entre les deux. Le dépôt retenait la borne
+    haute jusqu'au 21 septembre 2026 ; il pèse désormais les deux par le
+    recensement, et ce test tient l'encadrement.
+    """
+    par_plancher = {}
+    for lecture in lectures:
+        if lecture.mesure:
+            par_plancher[lecture.plancher.split(" (")[0]] = lecture.cout_mds
+    retenu = par_plancher["pesé par le recensement"]
+    assert par_plancher["plancher de base pour tous"] < retenu
+    assert retenu < par_plancher["plancher majoré pour tous"]
+    # Et la correction vaut ce qu'elle annonce : près d'un quart de moins que
+    # la borne haute, qui était la convention retenue.
+    assert 0.75 < retenu / par_plancher["plancher majoré pour tous"] < 0.85
 
 
 def test_la_contrainte_de_masse_tient_sur_toute_la_colonne(lectures):
@@ -192,8 +214,9 @@ def test_les_minima_pesent_sur_les_femmes_et_restent_sous_le_pour_cent(lectures)
     # Et ce que cela ferait au coût reste sous le pour cent : c'est la mesure
     # qui justifie de laisser ce terme hors du rapport retenu.
     reference = next(l for l in lectures
-                     if l.plancher.startswith("plancher majoré") and l.mesure)
-    colonne = sorted((l for l in lectures if l.plancher.startswith("plancher majoré")),
+                     if l.plancher.startswith("pesé par le recensement") and l.mesure)
+    colonne = sorted((l for l in lectures
+                      if l.plancher.startswith("pesé par le recensement")),
                      key=lambda l: abs(l.rapport - mesure * principal.rapport))
     assert colonne[0].cout_mds / reference.cout_mds < 1.01
 

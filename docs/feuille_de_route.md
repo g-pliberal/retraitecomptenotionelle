@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 948<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->30 000<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -11325,3 +11325,58 @@ davantage.
 `moteur/js/pages.js`, `scripts/construire_donnees.py`,
 `scripts/garantie_par_sexe.py`, `tests/test_garantie_par_sexe.py`,
 `docs/limites.md`.
+
+### 77. Le plancher d'une population n'est pas celui d'une personne : un quart de la garantie — `fait`
+
+**Demande.** « Est-ce qu'il y a des choses à décider ? » — trois décisions
+posées, et celle-ci tranchée : « 1. Corrige. »
+
+**La convention qui restait, et c'était la plus grosse.** La trajectoire
+servait le plancher MAJORÉ — 1 050 €, celui de qui vit seul — à la population
+entière. Motif écrit sur la page : « l'enquête ne dit pas avec qui l'on vit ».
+C'est vrai de l'enquête sur les pensions, et faux du dépôt : le recensement le
+dit âge par âge et par sexe, `data/reference/macro/vie_en_couple.csv` le porte
+depuis l'action 47, et `_reprises_successions` le LISAIT DÉJÀ pour compter les
+avances par succession. La garantie le lit maintenant aussi.
+
+**Ce que dit le recensement**, pesé sur les années vécues après 65 ans :
+**61,8 % des femmes vivent seules contre 33,9 % des hommes**. Les deux
+planchers se mélangent donc dans cette proportion, SEXE PAR SEXE — et pas
+globalement, parce que les deux faits se composent : les femmes vivent seules
+plus souvent et tombent sous le plancher plus souvent.
+
+| | Garantie 2024 | 2026, % du PIB | Cumul 2026-2070 |
+|---|---|---|---|
+| Plancher majoré pour tous *(avant)* | 22,0 Md € | 0,74 % | 918 Md € |
+| **Pesé par le recensement** | **17,8 Md €** | **0,59 %** | **745 Md €** |
+| Plancher de base pour tous | 12,5 Md € | 0,42 % | 525 Md € |
+
+**Près d'un quart de moins**, et c'est de loin la plus grosse correction de la
+série — trente fois le terme des minima de l'action 76, cinq fois la mesure de
+`r` de l'action 75. Ce n'était pas une prudence assumée : une borne haute faute
+d'avoir cherché la source.
+
+**Un bogue introduit et rattrapé dans le même tour**, qui mérite sa ligne. Le
+raccourci de `chiffrer_distribution` — à rapport un, lire la colonne
+« ensemble », seule lecture exacte — court-circuitait le mélange des planchers,
+puisque cette colonne ne sait pas qui vit seul. Le test du script l'a attrapé
+en une minute : sa colonne `r = 1` ne redonnait plus la trajectoire calculée
+sous `rapport_deplacement_sexe = 1`. Le raccourci ne vaut désormais que s'il
+n'y a RIEN à mélanger, ni rapport ni plancher.
+
+**Ce qui ne change pas.** `situation_foyer` reste ce qu'il a toujours été pour
+une CARRIÈRE : le simulateur demande la vôtre, et un individu a une situation.
+Il ne décide simplement plus pour tous. Les deux planchers purs restent au
+tableau des quatre lectures, où ils sont désormais nommés pour ce qu'ils sont —
+les BORNES, pas le coût.
+
+**Une réserve, et elle va dans le même sens.** L'exposition est pesée par la
+table de la population générale et non par le vingtile des bénéficiaires ; les
+plus modestes meurent plus tôt, donc pèsent moins les grands âges où l'on vit
+seul, et la correction serait un peu plus forte avec leur table.
+
+**Fichiers.** `src/retraite_notionnelle/garantie.py`,
+`src/retraite_notionnelle/cout.py`, `src/retraite_notionnelle/web/pages.py`,
+`moteur/js/garantie.js`, `moteur/js/cout.js`, `moteur/js/pages.js`,
+`scripts/garantie_par_sexe.py`, `data/reference/site/affirmations.yaml`,
+`tests/`, `docs/limites.md`, `tests/temoins/pages.json`.

@@ -141,7 +141,7 @@ from .castypes import (
     poids_effectifs,
     poids_egaux,
 )
-from .config import RevalorisationStock, SituationFoyer
+from .config import RevalorisationStock
 from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite, SerieAnnuelle
 from .donnees.depenses import DepensesRetraite
@@ -1954,7 +1954,9 @@ class GarantieDistribution:
                  vers_constants: float, taux_recours: float = 1.0,
                  distributions_sexe: dict[str, DistributionPensions] | None = None,
                  part_femmes: float = 0.0,
-                 rapport_deplacement: float = 1.0) -> None:
+                 rapport_deplacement: float = 1.0,
+                 plancher_majore: float | None = None,
+                 part_seule: dict[str, float] | None = None) -> None:
         if not 0.0 < taux_recours <= 1.0:
             raise ValueError("le taux de recours est une part, entre zéro exclu et un")
         if rapport_deplacement <= 0.0:
@@ -1969,6 +1971,14 @@ class GarantieDistribution:
         #: ``r = f_F / f_H`` : de combien les pensions des femmes tombent plus
         #: que celles des hommes. Un pour la convention uniforme.
         self.rapport_deplacement = rapport_deplacement
+        #: Le plancher de qui vit SEUL — 800 + 250 €. ``plancher_mensuel`` est
+        #: alors celui de qui vit à deux, et ``part_seule`` dit, sexe par sexe,
+        #: dans quelle proportion les mélanger. ``None`` sert le plancher
+        #: unique à tout le monde, comme avant le 21 septembre 2026.
+        self.plancher_majore = plancher_majore
+        #: Part des bénéficiaires de chaque sexe qui vit seule, moyennée sur
+        #: les années vécues après 65 ans (INSEE, recensement 2021).
+        self.part_seule = part_seule
         self.distribution = distribution
         #: Part des ayants droit qui réclament la garantie.
         self.taux_recours = taux_recours
@@ -1997,13 +2007,21 @@ class GarantieDistribution:
         types a le dernier mot pour dire, et le rapport ne fait que le
         répartir.
         """
-        if self.rapport_deplacement == 1.0 or self.distributions_sexe is None:
+        # LE RACCOURCI NE VAUT QUE S'IL N'Y A RIEN À MÉLANGER. À rapport un ET
+        # sans mélange de planchers, la colonne « ensemble » suffit, et elle
+        # est la seule lecture exacte. Dès qu'un des deux mélanges est demandé,
+        # il faut passer par les sexes — les planchers se mélangent dans une
+        # proportion qui DÉPEND du sexe, et la colonne d'ensemble ne le sait
+        # pas.
+        if self.distributions_sexe is None or (
+            self.rapport_deplacement == 1.0 and self.part_seule is None
+        ):
             return cout_garantie(self.distribution, effectif,
                                  self.plancher_mensuel, facteur)
         return cout_garantie_par_sexe(
             self.distributions_sexe["F"], self.distributions_sexe["H"],
             self.part_femmes, effectif, self.plancher_mensuel, facteur,
-            self.rapport_deplacement,
+            self.rapport_deplacement, self.plancher_majore, self.part_seule,
         )
 
     def facteurs_des_sexes(self, facteur: float) -> tuple[float, float]:
@@ -2050,10 +2068,24 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
     millesime = distribution.millesime
     masses, _, tetes = _masses(pensionnes, population, millesime, poids(millesime),
                                revalorisation)
-    plancher = parametres.garantie_vieillesse_mensuelle + (
-        parametres.allocation_isolement_mensuelle
-        if parametres.situation_foyer is SituationFoyer.SEUL else 0.0
-    )
+    # LE PLANCHER D'UNE POPULATION N'EST PAS CELUI D'UNE PERSONNE, et le dépôt
+    # servait le majoré à tout le monde jusqu'au 21 septembre 2026. La garantie
+    # vaut 800 € par personne PLUS 250 € à qui vit seul : c'est un fait, pas
+    # une convention, et le recensement le mesure âge par âge et par sexe. Le
+    # dépôt le lit déjà pour les reprises sur succession ; il le lit désormais
+    # ici aussi. ``situation_foyer`` reste ce qu'il a toujours été pour une
+    # CARRIÈRE — le simulateur demande la vôtre — et ne décide plus pour tous.
+    plancher = parametres.garantie_vieillesse_mensuelle
+    plancher_majore = plancher + parametres.allocation_isolement_mensuelle
+    couple = simulateur.vie_en_couple
+    part_seule = {
+        sexe: 1.0 - couple.part_moyenne(
+            sexe,
+            list(simulateur.mortalite.courbe_survie(
+                65, parametres.annee_bascule, sexe, True, None)),
+        )
+        for sexe in ("F", "H")
+    }
     toutes = tetes[TETES_TOUTES]
     # LE RAPPORT DES DEUX SEXES EST LU, PAS SUPPOSÉ, depuis le 21 septembre
     # 2026 : l'enquête publie la part de la durée validée qui n'a pas été
@@ -2071,6 +2103,9 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
         rapport_deplacement=rapport,
         plancher_mensuel=plancher * macro.coefficient_prix(
             parametres.annee_euros_garantie_vieillesse, millesime),
+        plancher_majore=plancher_majore * macro.coefficient_prix(
+            parametres.annee_euros_garantie_vieillesse, millesime),
+        part_seule=part_seule,
         pension_reference=masses["actuel"] / toutes if toutes > 0.0 else 0.0,
         effectif_par_tete=(
             simulateur.effectifs.effectif("tous_regimes", millesime) / toutes
