@@ -11606,7 +11606,7 @@ part de travers, là où celle-ci ne juge que leur somme.
 `scripts/verifier_donnees.py`, `data/reference/macro/age_conjoncturel_depart.csv`,
 `data/sources.yaml`, `docs/limites.md` § 5 ter.
 
-### 80. Combien l'on cotise sans rien acquérir : 17,9 milliards, et une erreur corrigée — `fait`
+### 81. Combien l'on cotise sans rien acquérir : 17,9 milliards, et une erreur corrigée — `fait`
 
 **Demande.** Une recherche documentaire sur trois axes, dont le premier :
 chiffrer les cotisations qui n'ouvrent aucun droit, et verser dans le dépôt ce
@@ -11685,3 +11685,72 @@ n'a pu être confirmé. Ces deux axes restent ouverts, et le § 7 de
 `scripts/frontiere_contributive.py`, `tests/test_frontiere_contributive.py`,
 `tests/test_donnees.py`, `docs/frontiere_contributive.md`,
 `data/reference/legislation/veille.yaml`.
+### 82. Lequel des treize part de travers : l'âge de départ par catégorie socioprofessionnelle — `fait`
+
+**Pourquoi.** L'action 80 avait trouvé que la grille de cas types suivait
+l'âge conjoncturel tous régimes à moins d'une demi-année sur dix-neuf ans, et
+disait elle-même ce que ce résultat ne valait pas : une concordance d'ensemble
+ne juge que la SOMME. Treize cas types dont l'un partirait deux ans trop tard
+et l'autre deux ans trop tôt la donneraient tout aussi bien.
+
+**Marche.** La DREES publie le même indicateur ventilé par catégorie
+socioprofessionnelle, 2013 à 2020 : `scripts/fetch/drees_age_depart_csp.py` le
+dépose, `verifier_donnees.py` l'écrit dans
+`data/reference/macro/age_depart_csp.csv` au niveau `haute` — et non
+`certifiee`, la source étant un sondage dont la DREES avertit qu'il est bruité
+par catégorie. `data/reference/macro/cas_types_csp.yaml` écrit, cas type par
+cas type, à quels groupes de la nomenclature il se compare et pourquoi ;
+`scripts/age_depart_csp.py` fait la confrontation sur la moyenne pluriannuelle.
+
+**Ce que ça a déplacé.** **Les écarts individuels valent 1,17 an, et ils se
+compensent.** Pesés comme sur la page « Coût », les neuf cas types comparables
+s'écartent de 1,17 an en valeur absolue et de +0,45 an seulement en signé, là
+où le tous régimes donnait −0,10 an sur la même fenêtre. Un seul sur neuf tombe
+dans son couloir. Le contractuel public sort de +2,34 an, l'artisan de +2,09,
+le fonctionnaire sédentaire de +1,97 ; le salarié au SMIC de −1,59 et le chef
+d'exploitation de −1,21.
+
+Le sens des écarts désigne l'âge d'entrée, et c'est le mécanisme que
+`limites.md` § 5 ter supposait : ceux qui partent le plus tard sont ceux dont
+la fiche impose une entrée tardive — vingt-quatre ans pour le contractuel et
+l'artisan, vingt-trois pour le cadre —, et qui doivent donc attendre la durée
+requise ; le salarié au SMIC, entré à dix-huit ans, part à soixante ans tout du
+long. Le mécanisme était bien là ; il ne se voyait pas parce qu'il se
+compensait.
+
+**Le couloir, et pourquoi ce n'est pas un point.** La nomenclature classe des
+professions, la grille décrit des carrières par leur régime et leur niveau de
+revenu. « Salarié au salaire moyen » ne dit pas si l'intéressé est technicien,
+employé ou ouvrier : chaque cas type déclare donc TOUS les groupes où il peut
+tomber, et l'écart est nul dès qu'il y tombe. Déclarer large affaiblit le
+constat et ne le fausse jamais — le contractuel, qui réclame les quatre groupes
+salariés, en sort quand même de plus de deux ans.
+
+**Quatre cas types sont hors champ, avec leur motif écrit.** Le militaire,
+l'agent de conduite, l'agent des IEG, le fonctionnaire de catégorie active :
+leur départ n'est pas une sortie du marché du travail, et l'enquête Emploi
+compte retraité qui se déclare tel. Une radiation à quarante-quatre ans suivie
+d'un second emploi n'est pas l'événement que l'âge d'un groupe date. Ils pèsent
+8,3 % de la grille et partent entre 44,0 et 56,6 ans — c'est aussi ce qui,
+ajouté à la compensation, ramenait la somme à −0,10.
+
+Trois leçons. **Une concordance d'ensemble ne vaut jamais comme un accord terme
+à terme**, et le dépôt l'écrivait sans le vérifier : il a suffi d'un grain plus
+fin pour que la réserve devienne un constat. **Le couloir est la bonne forme
+quand la correspondance est incertaine** — il rend la déclaration large
+inoffensive, et laisse le constat à sa charge. Et **le classement des
+professions libérales compte** : la nomenclature les met dans le groupe 3 avec
+les cadres, non dans le groupe 2 avec les artisans, et un test le tient parce
+qu'on le suivrait mal de mémoire.
+
+**Ce qui reste.** Aucun écart n'est corrigé : la mesure dit lequel des cas
+types part de travers, elle ne réécrit aucune fiche — et le faire déplacerait
+la trajectoire, ce qui est un chantier et non une retouche. La série s'arrête
+en 2020, le jeu n'ayant pas été mis à jour depuis. Et la pondération reste un
+stock de retraités, comme pour l'action 80.
+
+**Fichiers.** `scripts/fetch/drees_age_depart_csp.py`,
+`scripts/age_depart_csp.py`, `tests/test_age_depart_csp.py`,
+`scripts/verifier_donnees.py`, `data/reference/macro/age_depart_csp.csv`,
+`data/reference/macro/cas_types_csp.yaml`, `data/sources.yaml`,
+`docs/limites.md` § 5 ter.

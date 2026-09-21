@@ -1,0 +1,147 @@
+# À quelle catégorie socioprofessionnelle chaque cas type appartient
+# =================================================================
+# source_id: insee_pcs
+#
+# CE QUE CE FICHIER TRANCHE, ET POURQUOI IL EXISTE
+# -------------------------------------------------
+# `age_depart_csp.csv` porte l'âge conjoncturel de départ par groupe de la
+# nomenclature des professions et catégories socioprofessionnelles de l'INSEE.
+# Pour le confronter à la grille, il faut dire quel cas type relève de quel
+# groupe — et ce n'est ni évident ni toujours possible. La correspondance est
+# donc ÉCRITE ICI, cas type par cas type, avec ce qui la justifie, plutôt que
+# décidée dans le code de la comparaison où personne n'irait la relire.
+#
+# UN CAS TYPE PEUT EN RÉCLAMER PLUSIEURS, ET C'EST VOULU
+# -------------------------------------------------------
+# La nomenclature classe des PROFESSIONS ; la grille décrit des carrières par
+# leur régime, leur niveau de revenu et leur âge d'entrée. Les deux ne se
+# recouvrent pas terme à terme : « salarié au salaire moyen » ne dit pas si
+# l'intéressé est technicien, employé ou ouvrier. Un cas type déclare donc
+# TOUS les groupes où il peut tomber, et la comparaison le confronte au
+# COULOIR qu'ils forment — l'écart est nul dès qu'il y tombe, et vaut la
+# distance à la borne la plus proche sinon. Déclarer large affaiblit donc le
+# constat, et ne le fausse jamais : un écart trouvé malgré un couloir large
+# est un écart que la correspondance ne peut pas expliquer.
+#
+# CE QUI SORT DU CHAMP, ET CE N'EST PAS UN DÉFAUT DE LA SOURCE
+# -------------------------------------------------------------
+# Quatre cas types n'ont pas de couloir, et la raison est la même pour tous :
+# leur départ n'est pas une SORTIE DU MARCHÉ DU TRAVAIL. L'âge de la DREES est
+# tiré de l'enquête Emploi, où l'on est retraité quand on se déclare tel ;
+# l'agent de conduite radié à cinquante-deux ans et le militaire radié à
+# quarante-quatre liquident une pension et prennent le plus souvent un second
+# emploi, où l'enquête les compte comme actifs. Comparer leur âge de
+# liquidation à l'âge de départ d'un groupe reviendrait à comparer deux
+# événements différents. Pour deux d'entre eux s'y ajoute que la nomenclature
+# ne les isole pas.
+#
+# Ce fichier ne porte AUCUNE donnée d'institution : c'est une convention du
+# dépôt sur sa propre grille, adossée à la nomenclature de l'INSEE. Il n'entre
+# dans aucun calcul du site.
+
+nomenclature:
+  reference: >-
+    INSEE, nomenclature des professions et catégories socioprofessionnelles
+    (PCS), niveau 1 : les groupes socioprofessionnels.
+  groupes:
+    "1": Agriculteurs exploitants
+    "2": Artisans, commerçants et chefs d'entreprise
+    "3": Cadres et professions intellectuelles supérieures
+    "4": Professions intermédiaires
+    "5": Employés
+    "6": Ouvriers
+  ensemble: "9"   # la ligne « toutes CSP confondues » de la DREES, hors nomenclature
+
+cas_types:
+
+  - code: exploitant_agricole
+    groupes: ["1"]
+    motif: >-
+      Le groupe 1 est celui des agriculteurs exploitants, et la fiche décrit un
+      chef d'exploitation agricole. La correspondance est directe.
+
+  - code: artisan
+    groupes: ["2"]
+    motif: >-
+      Le groupe 2 s'ouvre sur les artisans, et la fiche en décrit un. Directe
+      également — le groupe y ajoute les commerçants et les chefs d'entreprise,
+      dont la fiche ne dit rien, et c'est la seule imprécision.
+
+  - code: cadre
+    groupes: ["3"]
+    motif: >-
+      Les cadres d'entreprise sont dans le groupe 3, avec les professions
+      intellectuelles supérieures.
+
+  - code: profession_liberale
+    groupes: ["3"]
+    motif: >-
+      Les professions libérales sont dans le groupe 3, et non dans le groupe 2
+      avec les indépendants — c'est un classement de la nomenclature qu'on
+      suivrait mal de mémoire, et il compte ici : le groupe 3 part en moyenne
+      plus tôt que le groupe 2.
+
+  - code: fonctionnaire_sedentaire
+    groupes: ["4"]
+    motif: >-
+      La fiche dit « catégorie B », et le groupe 4 porte les professions
+      intermédiaires administratives de la fonction publique. Un agent de
+      catégorie A relèverait du groupe 3, un agent de catégorie C du groupe 5 :
+      c'est la catégorie écrite dans la fiche qui tranche, non l'employeur.
+
+  - code: smic_carriere_complete
+    groupes: ["5", "6"]
+    motif: >-
+      Un salarié non cadre au niveau du SMIC est employé ou ouvrier, et rien
+      dans la fiche ne dit lequel. Les deux groupes sont déclarés.
+
+  - code: salaire_moyen
+    groupes: ["4", "5", "6"]
+    motif: >-
+      Un niveau de revenu n'est pas une catégorie socioprofessionnelle. La
+      fiche dit seulement « salarié du privé non cadre » : profession
+      intermédiaire, employé ou ouvrier. Le couloir est large, et c'est la
+      mesure de ce que la fiche ne dit pas.
+
+  - code: carriere_interrompue
+    groupes: ["4", "5", "6"]
+    motif: >-
+      Même raison que le salaire moyen, dont cette fiche reprend l'affiliation
+      et le niveau de revenu à cinq années hors emploi près.
+
+  - code: contractuel_public
+    groupes: ["3", "4", "5", "6"]
+    motif: >-
+      « Agent contractuel » est un STATUT d'emploi, et la nomenclature ne
+      classe pas par statut : un contractuel peut être cadre, professionnel
+      intermédiaire, employé ou ouvrier. Le couloir couvre donc les quatre
+      groupes salariés — s'il est franchi, ce n'est pas la correspondance qui
+      l'explique.
+
+  - code: militaire
+    hors_champ: >-
+      La nomenclature les classerait dans le groupe 5, avec les policiers, et
+      ce n'est pas ce qui bloque : un militaire non officier radié après
+      vingt-cinq ans de services liquide sa pension vers quarante-quatre ans et
+      prend presque toujours un second emploi, où l'enquête Emploi le compte
+      comme actif et non comme retraité. Son âge de liquidation et l'âge de
+      départ d'un groupe ne datent pas le même événement.
+
+  - code: agent_sncf_conduite
+    hors_champ: >-
+      Même raison. La nomenclature les classerait parmi les conducteurs
+      d'engins de transport guidés, dans le groupe 6 ; mais une radiation à
+      cinquante-deux ans n'est pas une sortie du marché du travail.
+
+  - code: agent_ieg
+    hors_champ: >-
+      Aux deux raisons précédentes s'ajoute que la nomenclature ne les isole
+      pas : un agent des industries électriques et gazières est ouvrier,
+      technicien ou cadre selon son emploi, et le régime ne dit rien de son
+      groupe.
+
+  - code: fonctionnaire_actif
+    hors_champ: >-
+      La catégorie active traverse les groupes — infirmière, policier,
+      surveillant pénitentiaire, égoutier —, et la nomenclature ne la connaît
+      pas. S'y ajoute le départ anticipé, souvent suivi d'un second emploi.

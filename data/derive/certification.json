@@ -13,14 +13,25 @@
    "verifiee_le": "2026-09-14"
   },
   "age_conjoncturel_depart": {
-   "ajoutees": 57,
+   "ajoutees": 0,
    "colonne": "age",
    "corrigees": 0,
    "empreinte": "1a04519c9e9e0628",
-   "identiques": 0,
+   "identiques": 57,
    "niveau": "certifiee",
    "source": "DREES, panorama « Les retraités et les retraites »",
    "valeurs": 57,
+   "verifiee_le": "2026-09-21"
+  },
+  "age_depart_csp": {
+   "ajoutees": 56,
+   "colonne": "age",
+   "corrigees": 0,
+   "empreinte": "0d26a7daf9dbd7e0",
+   "identiques": 0,
+   "niveau": "haute",
+   "source": "DREES, enquête Emploi de l'INSEE (âge de départ par CSP)",
+   "valeurs": 56,
    "verifiee_le": "2026-09-21"
   },
   "age_ouverture_requis": {

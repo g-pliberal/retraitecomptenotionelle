@@ -7433,6 +7433,57 @@ population ; l'âge de la DREES est un comportement sous contrainte quand celui
 de la grille est mécanique ; et le sexe n'est pas comparé, la grille ne
 distinguant pas ses cas types par sexe.
 
+**La cinquième réserve a été levée, et c'est elle qui comptait : une
+concordance d'ensemble ne juge que la somme.** Treize cas types dont l'un
+partirait deux ans trop tard et l'autre deux ans trop tôt la donneraient tout
+aussi bien. La DREES publie le même indicateur ventilé par catégorie
+socioprofessionnelle — `data/reference/macro/age_depart_csp.csv`, 2013 à 2020,
+six groupes plus la ligne « toutes CSP » —, et
+`data/reference/macro/cas_types_csp.yaml` écrit, cas type par cas type, à
+quels groupes il se compare et pourquoi. `scripts/age_depart_csp.py` fait la
+confrontation.
+
+**Les écarts individuels valent 1,17 an, et ils se compensent.** Pesés comme
+sur la page « Coût », les neuf cas types comparables s'écartent de 1,17 an en
+valeur absolue et de +0,45 an seulement en signé, là où le tous régimes donne
+−0,10 an sur la même fenêtre. La concordance d'ensemble n'était donc pas un
+accord cas par cas : c'est une compensation, à laquelle s'ajoutent les quatre
+cas types laissés hors champ — militaire, agent de conduite, agent des IEG,
+catégorie active —, qui pèsent 8,3 % de la grille et partent entre 44,0 et
+56,6 ans.
+
+| Cas type | Grille | Couloir des catégories | Écart |
+|---|---:|---:|---:|
+| Agent contractuel de la fonction publique | 64,92 | 61,24 – 62,59 | **+2,34** |
+| Artisan | 64,92 | 62,84 | **+2,09** |
+| Fonctionnaire sédentaire (catégorie B) | 63,21 | 61,24 | **+1,97** |
+| Salarié au SMIC, carrière complète | 60,00 | 61,59 – 61,95 | **−1,59** |
+| Cadre du privé | 64,07 | 62,59 | +1,48 |
+| Chef d'exploitation agricole | 61,64 | 62,85 | −1,21 |
+| Profession libérale | 63,25 | 62,59 | +0,66 |
+| Salarié au salaire moyen | 62,33 | 61,24 – 61,95 | +0,38 |
+| Carrière interrompue | 61,64 | 61,24 – 61,95 | 0,00 |
+
+Un seul cas type sur neuf tombe dans son couloir. **Le sens des écarts est
+cohérent, et il désigne l'âge d'entrée** : les trois qui partent le plus tard —
+le contractuel et l'artisan entrent à vingt-quatre ans, le cadre à
+vingt-trois — sont ceux dont la fiche impose une entrée tardive, et qui doivent
+donc attendre la durée requise ; le salarié au SMIC, entré à dix-huit ans, part
+au contraire à soixante ans tout du long, plus tôt que n'importe quel groupe.
+C'est exactement le mécanisme que la section supposait, et il est bien là : il
+ne se voyait pas parce qu'il se compense.
+
+**Ce que le couloir vaut, et ce qu'il ne vaut pas.** La nomenclature classe des
+professions, la grille décrit des carrières par leur régime et leur niveau de
+revenu : un cas type déclare donc tous les groupes où il peut tomber, et
+l'écart est nul dès qu'il y tombe. Déclarer large affaiblit le constat sans le
+fausser — le contractuel, qui réclame les quatre groupes salariés, sort quand
+même de plus de deux ans. Et la source est un SONDAGE, l'enquête Emploi, dont
+la DREES avertit que les indicateurs par catégorie sont bruités : la
+comparaison se fait sur la moyenne 2013-2020, jamais sur une année. Les deux
+sources se recoupent là où elles se recouvrent — écart de −0,04 à +0,14 an sur
+la ligne « toutes CSP » —, ce qu'un test tient.
+
 ---
 
 ## 5 quater. Comparaison à la littérature : pourquoi les écarts d'ici sont plus grands
@@ -7558,7 +7609,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1887<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1894<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
