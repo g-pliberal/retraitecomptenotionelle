@@ -1085,7 +1085,9 @@ affirmations:
   - id: cout.brute_avant_reprise
     page: /cout
     extrait: "brute, avant reprise"
-    porte: la ligne « dont garantie » est brute, la nette lui retire les reprises
+    porte: >-
+      la ligne « s'ajoute au système 4 » est brute, la nette lui retire les
+      reprises
     etat: verifiee
     controle: garantie_brute_et_nette
 

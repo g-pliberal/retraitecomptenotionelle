@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 420<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 431<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10880,6 +10880,21 @@ du scénario 4 au centime, et la garantie n'est pas nulle ; à l'horizon, le tau
 unique les sépare dans l'autre sens, la garantie restant par-dessus. Trois
 entrées du catalogue s'y accrochent.
 
+**Ce que le premier passage avait laissé.** Quatre renvois de la page et des
+docs nommaient encore la ligne « dont garantie », qui n'existe plus, et le
+tableau « ce qui pousse la dépense » gardait la colonne de la proposition sans
+sa garantie sans le dire — il le dit maintenant, et donne le total, 10,0 % du
+PIB en 2070, 9,8 % net des reprises. Trois chiffres de `limites.md` avaient
+aussi cessé de suivre la page : la garantie de 2024 y valait 19,5 milliards et
+le surcoût pour l'impôt 11,7, quand la page calcule 20,7 et 12,9 ; et le
+tableau des quatre lectures du barème donnait les coûts d'AVANT le recours d'un
+ayant droit sur deux, adopté le 20 septembre — 18,4, 32,2, 30,0 et 53,7
+milliards là où la page en affiche 9,2, 16,1, 15,9 et 28,5. Les deux dernières
+lignes portaient en outre un facteur de déplacement périmé (0,64 pour 0,61), et
+donc une part de retraités sous le plancher trop basse. Le tableau porte
+désormais les deux populations — tous ceux qui sont sous le plancher, et ceux
+qui réclament — pour qu'on ne puisse plus confondre les deux comptes.
+
 **Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
 `data/reference/site/affirmations.yaml`, `tests/test_affirmations.py`,
-`tests/temoins/pages.json`.
+`docs/limites.md`, `tests/temoins/pages.json`.
