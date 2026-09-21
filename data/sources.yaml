@@ -140,6 +140,25 @@ institutions:
           base 2015 (à partir de 1990), raccordées sur 1990. L'API Melodi
           (DS_IPC_PRINC) ne remonte pas avant les années 1990 ; la BDM, si.
 
+      - id: insee_pcs
+        titre: >-
+          Nomenclature des professions et catégories socioprofessionnelles (PCS)
+        url: https://www.insee.fr/fr/information/2406153
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/macro/cas_types_csp.yaml
+        note: >-
+          Le classement des six groupes socioprofessionnels — niveau 1 de la
+          nomenclature —, sur lequel s'adosse la correspondance entre les cas
+          types du dépôt et les catégories de `drees_age_depart_csp`. Aucune
+          valeur n'en est tirée : la nomenclature dit dans quel groupe tombe
+          une profession, et le fichier cible écrit cas type par cas type ce
+          que le dépôt en conclut, avec la raison de chaque rattachement et de
+          chaque mise hors champ. Un classement y compte plus que les autres,
+          parce qu'on le suivrait mal de mémoire : les professions libérales
+          sont dans le groupe 3, avec les cadres, et non dans le groupe 2 avec
+          les artisans et les commerçants.
+
       - id: insee_ipc_long
         titre: Indice des prix à la consommation depuis 1901
         url: https://www.insee.fr/fr/information/2417794
@@ -759,6 +778,32 @@ institutions:
           est retrouvé par son TITRE et non par son identifiant : celui-ci
           porte le numéro de la figure dans l'édition (« Graphique-1 »), qu'une
           édition suivante renumérote.
+      - id: drees_age_depart_csp
+        titre: >-
+          Âge de départ à la retraite et conditions de fin de carrière selon la
+          catégorie socioprofessionnelle
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/departretraite_parcsp/
+        acces: api
+        statut_integration: automatise
+        recuperation: scripts/fetch/drees_age_depart_csp.py
+        cible: data/reference/macro/age_depart_csp.csv
+        note: >-
+          Le même indicateur que `drees_age_conjoncturel`, ventilé par groupe
+          de la nomenclature des professions et catégories
+          socioprofessionnelles : 2013 à 2020, six groupes plus la ligne
+          « toutes CSP confondues ». C'est le grain qui dit LEQUEL des treize
+          cas types part de travers, là où le tous régimes ne juge que leur
+          somme. Ce n'est PAS la même source : le tous régimes vient des
+          fichiers des caisses, celui-ci de l'enquête Emploi de l'INSEE — un
+          sondage, dont la DREES avertit que les indicateurs par catégorie sont
+          bruités et se lisent en moyenne pluriannuelle. D'où le niveau `haute`
+          et non `certifiee`, et une comparaison faite sur la moyenne 2013-2020.
+          Les deux se recoupent là où ils se recouvrent : 61,3 contre 61,23 en
+          2013, 62,4 contre 62,42 en 2020, ce qu'un test tient. Quatre
+          indicateurs du jeu ne sont pas repris — durées en emploi et hors
+          emploi entre cinquante ans et le départ, proportion de retraités à
+          soixante et un ans, part de personnes limitées la première année de
+          retraite : aucune page ne les demande.
       - id: drees_eir_distribution
         titre: Distribution des pensions mensuelles (échantillon interrégimes de retraités)
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/4178_distribution-des-pensions-mensuelles/

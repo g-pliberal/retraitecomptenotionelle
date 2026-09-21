@@ -1,0 +1,88 @@
+# Âge conjoncturel de départ à la retraite, par catégorie socioprofessionnelle
+# source_id: drees_age_depart_csp
+# unite: années
+# csp: numéro du groupe dans la nomenclature des professions et
+#      catégories socioprofessionnelles de l'INSEE ; 9 est la ligne
+#      « toutes CSP confondues », qui n'est pas un groupe.
+# fiabilite:
+#   haute : jeu « Âge de départ à la retraite et conditions de fin de
+#           carrière selon la catégorie socioprofessionnelle » du portail
+#           open data de la DREES, repris par
+#           scripts/fetch/drees_age_depart_csp.py et recontrôlé par
+#           scripts/verifier_donnees.py. Pas `certifiee` : la source est
+#           un SONDAGE — l'enquête Emploi de l'INSEE —, et la DREES
+#           avertit que ses indicateurs par catégorie sont bruités et se
+#           lisent en moyenne sur plusieurs années.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À dire LEQUEL des treize cas types part de travers. La série tous
+# régimes (age_conjoncturel_depart.csv) ne juge que leur somme, et un
+# cas type qui partirait deux ans trop tard compensé par un autre deux
+# ans trop tôt la laisserait juste. La correspondance entre cas types et
+# catégories est dans data/reference/macro/cas_types_csp.yaml, avec la
+# raison écrite de chaque cas type laissé hors champ ;
+# scripts/age_depart_csp.py fait la comparaison.
+#
+# Cette série ne porte aucune pension et n'entre dans aucun calcul du
+# site : elle mesure la grille, elle ne la corrige pas.
+#
+# Ne pas modifier les valeurs à la main : elles seraient écrasées au
+# prochain scripts/verifier_donnees.py --appliquer.
+annee,csp,age,fiabilite
+2013,1,62.10,haute
+2013,2,62.20,haute
+2013,3,62.00,haute
+2013,4,60.70,haute
+2013,5,61.30,haute
+2013,6,60.90,haute
+2013,9,61.30,haute
+2014,1,62.30,haute
+2014,2,62.40,haute
+2014,3,62.00,haute
+2014,4,60.80,haute
+2014,5,61.50,haute
+2014,6,61.20,haute
+2014,9,61.50,haute
+2015,1,62.50,haute
+2015,2,62.60,haute
+2015,3,62.30,haute
+2015,4,61.00,haute
+2015,5,61.80,haute
+2015,6,61.40,haute
+2015,9,61.70,haute
+2016,1,62.90,haute
+2016,2,62.60,haute
+2016,3,62.50,haute
+2016,4,61.10,haute
+2016,5,61.90,haute
+2016,6,61.60,haute
+2016,9,61.80,haute
+2017,1,63.00,haute
+2017,2,63.00,haute
+2017,3,62.80,haute
+2017,4,61.40,haute
+2017,5,62.10,haute
+2017,6,61.80,haute
+2017,9,62.10,haute
+2018,1,63.20,haute
+2018,2,63.00,haute
+2018,3,62.90,haute
+2018,4,61.40,haute
+2018,5,62.30,haute
+2018,6,61.90,haute
+2018,9,62.20,haute
+2019,1,63.60,haute
+2019,2,63.40,haute
+2019,3,63.10,haute
+2019,4,61.60,haute
+2019,5,62.30,haute
+2019,6,61.90,haute
+2019,9,62.30,haute
+2020,1,63.20,haute
+2020,2,63.50,haute
+2020,3,63.10,haute
+2020,4,61.90,haute
+2020,5,62.40,haute
+2020,6,62.00,haute
+2020,9,62.40,haute

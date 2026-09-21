@@ -1827,6 +1827,31 @@ def source_age_conjoncturel() -> dict[tuple, float]:
     }
 
 
+def source_age_depart_csp() -> dict[tuple, float]:
+    """L'âge conjoncturel de départ, par catégorie socioprofessionnelle.
+
+    Le grain en dessous du tous régimes. Celui-là ne juge que la somme des
+    treize cas types ; celui-ci dit lequel part de travers. La clé est le
+    NUMÉRO du groupe dans la nomenclature de l'INSEE, non son libellé, qui se
+    réécrit d'une édition à l'autre.
+
+    Le niveau accordé est ``haute`` et non ``certifiee`` : la DREES produit
+    bien ce chiffre, mais d'un SONDAGE — l'enquête Emploi —, et elle avertit
+    elle-même que ses indicateurs par catégorie sont bruités et se lisent en
+    moyenne pluriannuelle. Une valeur d'une année ne soutient pas ce que
+    ``certifiee`` promet ailleurs dans le dépôt.
+    """
+    charge = _lire_json(
+        "drees_age_depart_csp.json",
+        "scripts/fetch/drees_age_depart_csp.py",
+    )
+    return {
+        (annee, groupe): age
+        for groupe, serie in charge["valeurs"].items()
+        for annee, age in serie.items()
+    }
+
+
 def source_esperances() -> dict[tuple, float]:
     """Espérances de vie : e0 et e60 par l'INSEE, e65 par l'OCDE.
 
@@ -4888,6 +4913,52 @@ CERTIFICATIONS = (
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="age_depart_csp",
+        chemin=REFERENCE / "macro" / "age_depart_csp.csv",
+        cles=("annee", "csp"),
+        colonne="age",
+        source=source_age_depart_csp,
+        origine="DREES, enquête Emploi de l'INSEE (âge de départ par CSP)",
+        decimales=2,
+        tolerance=0.005,
+        unite=" ans",
+        niveau="haute",
+        entete=(
+            "# Âge conjoncturel de départ à la retraite, par catégorie "
+            "socioprofessionnelle",
+            "# source_id: drees_age_depart_csp",
+            "# unite: années",
+            "# csp: numéro du groupe dans la nomenclature des professions et",
+            "#      catégories socioprofessionnelles de l'INSEE ; 9 est la ligne",
+            "#      « toutes CSP confondues », qui n'est pas un groupe.",
+            "# fiabilite:",
+            "#   haute : jeu « Âge de départ à la retraite et conditions de fin de",
+            "#           carrière selon la catégorie socioprofessionnelle » du portail",
+            "#           open data de la DREES, repris par",
+            "#           scripts/fetch/drees_age_depart_csp.py et recontrôlé par",
+            "#           scripts/verifier_donnees.py. Pas `certifiee` : la source est",
+            "#           un SONDAGE — l'enquête Emploi de l'INSEE —, et la DREES",
+            "#           avertit que ses indicateurs par catégorie sont bruités et se",
+            "#           lisent en moyenne sur plusieurs années.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À dire LEQUEL des treize cas types part de travers. La série tous",
+            "# régimes (age_conjoncturel_depart.csv) ne juge que leur somme, et un",
+            "# cas type qui partirait deux ans trop tard compensé par un autre deux",
+            "# ans trop tôt la laisserait juste. La correspondance entre cas types et",
+            "# catégories est dans data/reference/macro/cas_types_csp.yaml, avec la",
+            "# raison écrite de chaque cas type laissé hors champ ;",
+            "# scripts/age_depart_csp.py fait la comparaison.",
+            "#",
+            "# Cette série ne porte aucune pension et n'entre dans aucun calcul du",
+            "# site : elle mesure la grille, elle ne la corrige pas.",
+            "#",
+            "# Ne pas modifier les valeurs à la main : elles seraient écrasées au",
+            "# prochain scripts/verifier_donnees.py --appliquer.",
         ),
     ),
     Certification(
