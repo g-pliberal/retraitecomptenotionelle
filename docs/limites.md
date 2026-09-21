@@ -7554,19 +7554,23 @@ dont le poids ou l'âge devrait alors être faux ; mais la mesure tient le
 constat et ne tranche pas son explication, les deux sources ne décrivant pas la
 même population.
 
-**Trois raisons font de ce contrefactuel une borne basse**, écrites en tête du
-script. Les quatre cas types hors champ ne sont pas touchés. **Un cas type ne
-répond pas du tout à son âge d'entrée** : la profession libérale, dont la fiche
-date le départ sur l'âge d'OUVERTURE et non sur le taux plein — son écart de
-+0,66 an vient donc d'ailleurs. L'exploitant agricole y répondait aussi
-jusqu'au 21 septembre 2026, et la raison en était un défaut du moteur : voir
-plus bas, « Une carrière tout en points partait au taux plein sans l'avoir ».
-Enfin un couloir réduit à une seule catégorie est un POINT, qu'un pas d'une
-demi-année n'atteint pas : le résidu subsiste, de 0,12 à 0,30 an pour trois cas
-types.
+**Deux raisons font de ce contrefactuel une borne basse**, écrites en tête du
+script. Les quatre cas types hors champ ne sont pas touchés ; et un couloir
+réduit à une seule catégorie est un POINT, qu'un pas d'une demi-année n'atteint
+pas — le résidu subsiste, de 0,12 à 0,30 an pour trois cas types. Elles étaient
+TROIS jusqu'au 21 septembre 2026, la troisième disant que deux cas types ne
+répondaient pas à leur âge d'entrée ; c'était un défaut du moteur, et il est
+corrigé — les neuf cas types comparables y répondent tous.
 
-**Une carrière tout en points partait au taux plein sans l'avoir.** C'est le
-défaut que la recherche d'âge d'entrée a fait voir, et il était plus précis que
+**Une carrière tout en points ne se voyait rien opposer.** C'est ce que la
+recherche d'âge d'entrée a fait voir, et le défaut avait trois faces. Toutes
+trois ont la même cause : le moteur ne lisait la durée requise, l'âge
+d'ouverture opposable et la carrière longue que sur les périodes en ANNUITÉS,
+et une carrière entière en points n'en a aucune. Les deux cas types concernés
+sont le chef d'exploitation agricole (MSA non-salariés, RCO) et la profession
+libérale (CNAVPL, Cipav).
+
+**Première face : le taux plein sans l'avoir.** Elle était plus précise que
 « la décote manque » : le coefficient de réduction était DÉJÀ appliqué —
 `_abattement_points` lit la décote de la fiche —, mais la règle qui DATE le
 départ ne le voyait pas. `age_taux_plein_droit` rendait l'âge d'ouverture dès
@@ -7587,10 +7591,56 @@ L. 732-24 du code rural** pour les non-salariés agricoles. La règle les suit
 depuis le 21 septembre 2026 ; sa ligne est dans
 `data/reference/legislation/veille.yaml`.
 
-**Ce que la correction a déplacé, et ce qu'elle a exposé.** Presque rien en
-chiffres : la trajectoire 2070 reste à 18,35 %, les 469 témoins de simulation
-ne bougent pas d'un bit, et l'exploitant agricole passe de 61,64 à 61,73 ans de
-moyenne. Mais elle a rendu FAUSSE une phrase de la fiche du libéral. Celle-ci
+**Le barème de ce coefficient est celui du régime général, et l'article le
+dit.** R. 643-7 du code de la sécurité sociale, dans sa version du 1er
+septembre 2023 : la réduction est fonction « soit du nombre de trimestres
+correspondant à la durée séparant l'âge auquel la pension de retraite prend
+effet du soixante-cinquième anniversaire […] ou, dans le cas contraire, de
+l'âge prévu au 1° de l'article L. 351-8, soit du nombre de trimestres
+supplémentaires qui serait nécessaire […] pour relever du deuxième alinéa du I
+de l'article L. 643-3 », « le plus petit de ces deux nombres est pris en
+considération », arrondi au chiffre supérieur, et « le coefficient de
+minoration est égal à 1,25 % par trimestre manquant dans la limite de vingt
+trimestres ». C'est mot pour mot ce que `_trimestres_de_decote` fait déjà — le
+plus petit des deux décomptes, l'arrondi de R. 351-27, le plafond de vingt — et
+ce que la fiche `cnavpl` portait : 1,25 % par trimestre. **La transcription est
+donc confirmée par le texte.** Côté agricole, R. 732-39 du code rural pose la
+même CONDITION — coefficient de minoration si l'assuré liquide avant l'âge du
+taux plein et sans la durée de L. 351-1 —, mais l'article qui en donne le TAUX
+n'est pas dans le champ social de l'index LEGI du dépôt : la fiche
+`msa_non_salaries` garde son 1,25 % sans l'avoir lu, et la ligne de veille le
+dit.
+
+**Deuxième face : aucun âge n'était opposé, et c'est la plus visible.**
+`calculer` ne lisait l'âge d'ouverture opposable que sur les périodes en
+annuités. Un chef d'exploitation ou un libéral pouvait donc liquider **à
+cinquante ans** sans que rien ne le refuse, quand l'artisan de la page voisine
+se le voyait refuser. Ce n'était pas qu'un défaut de cas type : c'est ce que le
+simulateur du site répondait à qui se déclarait exploitant agricole et
+demandait sa pension à cinquante ans. Au passage, `requis_reference` retombait
+pour eux sur 160 trimestres — une durée que plus aucune génération ne doit —,
+et c'est cette durée-là que leur abattement opposait.
+
+**Troisième face : la carrière longue leur était fermée.** Elle leur est
+pourtant ouverte : **L. 732-18-1 du code rural** abaisse l'âge « pour les
+personnes ayant exercé une activité non salariée agricole qui ont commencé leur
+activité avant un des quatre âges, dont le plus élevé ne peut excéder vingt et
+un ans », et **le II de L. 643-3** renvoie les professions libérales à
+L. 351-1-1, « les références au régime général […] étant remplacées par celles
+au régime d'assurance vieillesse de base des professions libérales ». Les deux
+règles d'âge du modèle la lisent désormais sur la même liste : ne l'ouvrir
+qu'au taux plein faisait rendre à celui-ci un âge ANTÉRIEUR à celui que
+l'ouverture accordait — soixante-trois ans contre soixante-quatre pour un chef
+d'exploitation né en 2000 —, c'est-à-dire deux règles du même droit qui se
+contredisent.
+
+**Ce que la correction a déplacé, et ce qu'elle a exposé.** Rien sur les
+agrégats : la trajectoire 2070 reste à 18,35 % du PIB et l'écart moyen à l'âge
+conjoncturel tous régimes à −0,07 an. Les témoins de SIMULATION, eux, bougent —
+ce sont les carrières tout en points, qui voient maintenant un âge, une durée
+et une carrière longue —, et l'exploitant agricole passe de 61,64 à 61,73 ans
+de moyenne sur 2013-2020, partant à soixante-trois ans au titre de la carrière
+longue pour les générations récentes au lieu de soixante-quatre. Mais elle a rendu FAUSSE une phrase de la fiche du libéral. Celle-ci
 disait « seul cas type à partir APRÈS l'âge d'ouverture : deux ans » et portait
 `regle_liquidation: taux_plein` — ce qui ne donnait « ouverture + deux ans »
 que par le défaut qu'on vient de corriger. La règle du taux plein, appliquée
@@ -7739,7 +7789,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1941<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1943<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

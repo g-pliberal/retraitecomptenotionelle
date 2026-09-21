@@ -163,8 +163,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->816<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 556<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->817<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 558<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Sept pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -853,8 +853,8 @@ contrôle et non identité.
 | 2. Notionnel rétroactif, part salariale | +9,15 % | +7,96 % | 2,60 |
 | 3. Notionnel dès 2026, part salariale | −1,34 % | +1,38 % | **1,67** |
 | 4. Notionnel rétroactif, salariale + patronale | +4,02 % | +2,20 % | 1,16 |
-| 5. Notionnel dès 2026, salariale + patronale | −1,34 % | −0,21 % | 1,08 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,02 % | **−1,24 %** | **0,98** |
+| 5. Notionnel dès 2026, salariale + patronale | −1,34 % | −0,20 % | 1,08 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,02 % | **−1,23 %** | **0,98** |
 
 Chiffres du 20 septembre 2026, ceux que la page Coût affiche, Python et
 JavaScript à l'identique, et qu'un test y confronte ligne par ligne
@@ -1228,7 +1228,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1941 tests Python
+tests/                          1943 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1277,7 +1277,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1941<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1943<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

@@ -2236,13 +2236,14 @@ class ScenarioActuel:
             return None
         ouverture = min(self._age_ouverture(periode, carriere)
                         for _, periode in retenues)
-        anticipe = self._age_carriere_longue(carriere, annuites)
+        anticipe = self._age_carriere_longue(
+            carriere, annuites or self._periodes_opposant_une_duree(autres))
         if anticipe is not None and anticipe < ouverture:
             return anticipe
         return ouverture
 
     def _age_carriere_longue(self, carriere: Carriere,
-                             annuites: list[tuple[str, PeriodeRegime]]
+                             periodes: list[tuple[str, PeriodeRegime]]
                              ) -> float | None:
         """L'âge que le départ anticipé pour carrière longue proposerait à
         cette carrière, ou ``None`` s'il ne lui ouvre rien.
@@ -2256,18 +2257,37 @@ class ScenarioActuel:
         légal à ceux-là mêmes que la loi en dispense. La durée requise et les
         trimestres cotisés sont ceux que :meth:`calculer` oppose au même
         départ.
+
+        ``periodes`` sont celles qui OPPOSENT une durée, et non les seules
+        périodes en annuités : **les deux régimes de base en points ouvrent la
+        carrière longue**, et le lire ailleurs serait une lecture de travers.
+        L'article L. 732-18-1 du code rural la donne aux non-salariés agricoles
+        — « l'âge prévu à l'article L. 732-18 est abaissé pour les personnes
+        ayant exercé une activité non salariée agricole qui ont commencé leur
+        activité avant un des quatre âges, dont le plus élevé ne peut excéder
+        vingt et un ans » —, et le II de l'article L. 643-3 du code de la
+        sécurité sociale la donne aux professions libérales par renvoi à
+        L. 351-1-1, « les références au régime général […] étant remplacées par
+        celles au régime d'assurance vieillesse de base des professions
+        libérales ».
+
+        Les deux règles d'âge doivent la lire sur la MÊME liste. Ne l'ouvrir
+        qu'au taux plein faisait rendre à celui-ci un âge antérieur à celui que
+        :meth:`age_ouverture_droit` accordait — soixante-trois ans contre
+        soixante-quatre pour un chef d'exploitation né en 2000 —, c'est-à-dire
+        deux règles du même droit qui se contredisent.
         """
-        if not annuites:
+        if not periodes:
             return None
         requis = max(self._duree_requise(periode, carriere)[0]
-                     for _, periode in annuites) or 160
+                     for _, periode in periodes) or 160
         annee_liquidation = carriere.annee_liquidation
         cotises = sum(
             carriere.trimestres_retenus(ligne) for ligne in carriere.lignes
             if ligne.cotise and ligne.annee <= annee_liquidation
         )
         majoration = self._majoration_pour_enfants(
-            carriere, {code: cotises for code, _ in annuites}, annee_liquidation
+            carriere, {code: cotises for code, _ in periodes}, annee_liquidation
         )
         cotises = self.carriere_longue.cotises_reputes(
             carriere, cotises, majoration.trimestres if majoration is not None else 0
@@ -2341,14 +2361,7 @@ class ScenarioActuel:
             acquis += majoration.trimestres
         duree = carriere.age_liquidation + (requis - acquis) / 4.0
         taux_plein = min(annulation, max(ouverture, duree))
-        # Le départ anticipé reste lu sur les seules périodes en ANNUITÉS, comme
-        # :meth:`age_ouverture_droit` le fait : l'étendre aux périodes en points
-        # ferait rendre ici un âge ANTÉRIEUR à celui que l'ouverture accorde —
-        # soixante-trois ans contre soixante-quatre pour un chef d'exploitation
-        # né en 2000 —, et les deux règles se contrediraient. Ce que la carrière
-        # longue ouvre à un régime en points est une question à part, et elle
-        # n'est pas tranchée ici.
-        anticipe = self._age_carriere_longue(carriere, annuites)
+        anticipe = self._age_carriere_longue(carriere, opposent)
         if anticipe is not None and anticipe < taux_plein:
             return anticipe
         return taux_plein
@@ -3389,21 +3402,42 @@ class ScenarioActuel:
                 codes, annee_liquidation, derniere_annee_par_regime
             ) if liquider_successions else {}
         )
-        for code in codes:
-            if groupes.get(code, (code,))[0] != code:
-                continue
-            regime = self.catalogue[code]
-            periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
-            if periode is None or periode.type_calcul != "annuites":
-                continue
-            requis_reference = max(
-                requis_reference, self._duree_requise(periode, carriere)[0]
-            )
-            age_regime = self._age_ouverture(periode, carriere)
-            age_ouverture_reference = (
-                age_regime if age_ouverture_reference is None
-                else min(age_ouverture_reference, age_regime)
-            )
+        # DEUX PASSES, ET LA SECONDE NE SERT QU'À QUI N'A QUE DES POINTS.
+        # Les régimes en ANNUITÉS commandent, comme partout ailleurs. Mais une
+        # carrière entière en points n'en a aucun, et la boucle laissait alors
+        # `age_ouverture_reference` à ``None`` : aucun âge ne lui était opposé,
+        # et un chef d'exploitation pouvait liquider à cinquante ans sans que
+        # rien ne le refuse, quand l'artisan de la grille se le voyait refuser
+        # à la même page. `requis_reference` retombait de son côté sur 160,
+        # c'est-à-dire sur une durée que plus aucune génération ne doit — et
+        # c'est cette durée-là que l'abattement du régime en points opposait.
+        #
+        # La seconde passe ne s'ouvre donc que si la première n'a rien trouvé,
+        # et les comportements des carrières en annuités ne bougent pas d'un
+        # trimestre. L'Agirc-Arrco et l'Ircantec en sont écartées comme
+        # ailleurs : elles n'opposent pas la durée du régime de base, et ne
+        # sont jamais seules sur une carrière.
+        for calculs in (("annuites",), ("points", "mixte")):
+            for code in codes:
+                if groupes.get(code, (code,))[0] != code:
+                    continue
+                regime = self.catalogue[code]
+                periode = regime.periode(
+                    min(annee_liquidation, _derniere_annee(regime)))
+                if periode is None or periode.type_calcul not in calculs:
+                    continue
+                if periode.abattement_points in ("agirc_arrco", "ircantec"):
+                    continue
+                requis_reference = max(
+                    requis_reference, self._duree_requise(periode, carriere)[0]
+                )
+                age_regime = self._age_ouverture(periode, carriere)
+                age_ouverture_reference = (
+                    age_regime if age_ouverture_reference is None
+                    else min(age_ouverture_reference, age_regime)
+                )
+            if age_ouverture_reference is not None:
+                break
         requis_reference = requis_reference or 160
 
         # Trimestres réellement COTISÉS, tous régimes : ils commandent la

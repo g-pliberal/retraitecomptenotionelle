@@ -618,9 +618,93 @@ entrees:
       soixante-six requis. Les deux articles ci-dessus disent que la durée
       s'oppose, et la règle les suit depuis le 21 septembre 2026.
     a_faire: >-
-      Les coefficients de réduction eux-mêmes ne sont pas lus dans leur décret
-      en Conseil d'État : la fiche porte 1,25 % par trimestre, aligné sur le
-      régime général. Lire R. 643-8 et D. 732-... et dire si le barème diffère.
+      Le barème agricole reste non lu : R. 732-39 du code rural pose la
+      CONDITION du coefficient de minoration, mais l'article qui en donne le
+      TAUX n'est pas dans le champ social de l'index LEGI du dépôt. La fiche
+      `msa_non_salaries` garde donc 1,25 % par trimestre sans l'avoir lu.
+    prochaine_veille: "2027-03-31"
+
+  - id: bareme_minoration_regimes_en_points
+    regle: >-
+      Le coefficient de minoration des professions libérales est celui du
+      régime général : le plus petit des deux décomptes — trimestres jusqu'à
+      l'âge d'annulation, trimestres manquants pour la durée requise —, arrondi
+      au chiffre supérieur, à 1,25 % par trimestre, dans la limite de vingt
+      trimestres.
+    textes:
+      - "R. 643-7 CSS, version du 1er septembre 2023"
+    sources:
+      - type: legifrance
+        reference: >-
+          R. 643-7 CSS, LEGIARTI000047633290, version du 1er septembre 2023,
+          lue dans l'index LEGI du dépôt : « La réduction prévue au troisième
+          alinéa du I de l'article L. 643-3 est fonction, soit du nombre de
+          trimestres correspondant à la durée séparant l'âge auquel la pension
+          de retraite prend effet du soixante-cinquième anniversaire […] ou,
+          dans le cas contraire, de l'âge prévu au 1° de l'article L. 351-8,
+          soit du nombre de trimestres supplémentaires qui serait nécessaire
+          […] pour relever du deuxième alinéa du I de l'article L. 643-3. Le
+          nombre de trimestres correspondant est éventuellement arrondi au
+          chiffre immédiatement supérieur. Le plus petit de ces deux nombres
+          est pris en considération. Le coefficient de minoration est égal à
+          1,25 % par trimestre manquant dans la limite de vingt trimestres. »
+        date: "2026-09-21"
+      - type: legifrance
+        reference: >-
+          R. 732-39 du code rural, LEGIARTI000024113166 : pose la CONDITION du
+          coefficient — liquidation avant l'âge de L. 732-25 et sans la durée
+          du deuxième alinéa de L. 351-1 — et non son taux.
+        date: "2026-09-21"
+    verifie_le: "2026-09-21"
+    temoins: []
+    reformes: []
+    etat: conforme
+    effet: >-
+      Le barème de la fiche `cnavpl` — 1,25 % par trimestre — est confirmé par
+      le texte, et `_trimestres_de_decote` appliquait déjà les trois règles de
+      l'article : plus petit des deux décomptes, arrondi de R. 351-27, plafond
+      de vingt trimestres. Aucune valeur n'a bougé.
+    a_faire: >-
+      Le taux agricole n'est pas lu : l'article qui le porte est hors du champ
+      social de l'index. La fiche `msa_non_salaries` garde 1,25 % par
+      transcription.
+    prochaine_veille: "2027-03-31"
+
+  - id: carriere_longue_regimes_en_points
+    regle: >-
+      Le départ anticipé pour carrière longue est ouvert aux deux régimes de
+      base en points, et le modèle le lit sur la même liste de périodes pour
+      l'âge d'ouverture et pour l'âge du taux plein.
+    textes:
+      - "L. 732-18-1 du code rural, version du 1er septembre 2023"
+      - "L. 643-3 II CSS, renvoi à L. 351-1-1"
+    sources:
+      - type: legifrance
+        reference: >-
+          L. 732-18-1 du code rural, LEGIARTI000047453049, version du
+          1er septembre 2023 : « L'âge prévu à l'article L. 732-18 est abaissé
+          pour les personnes ayant exercé une activité non salariée agricole
+          qui ont commencé leur activité avant un des quatre âges, dont le plus
+          élevé ne peut excéder vingt et un ans. »
+        date: "2026-09-21"
+      - type: legifrance
+        reference: >-
+          L. 643-3 II CSS, LEGIARTI000053280388 : « L'âge prévu au premier
+          alinéa du I est abaissé dans les conditions définies à l'article
+          L. 351-1-1, les références au régime général mentionnées au même
+          article L. 351-1-1 étant remplacées par celles au régime d'assurance
+          vieillesse de base des professions libérales. »
+        date: "2026-09-21"
+    verifie_le: "2026-09-21"
+    temoins: []
+    reformes: []
+    etat: conforme
+    effet: >-
+      Le chef d'exploitation agricole des générations récentes part à
+      soixante-trois ans au titre de la carrière longue, au lieu de
+      soixante-quatre. La lire sur deux listes différentes faisait rendre au
+      taux plein un âge antérieur à celui que l'ouverture accordait.
+    a_faire: null
     prochaine_veille: "2027-03-31"
 
 journal:
@@ -1702,3 +1786,36 @@ journal:
       inconnue : le décret a disparu de LEGI avec sa date d'expiration, sa
       notice ne chiffre pas la hausse, et il faudrait le Journal officiel
       papier du 1er août 1979.
+  - date: 2026-09-21
+    session: "ce que les régimes en points se voyaient opposer, et ce qu'ils ne se voyaient pas"
+    consulte: >-
+      Index LEGI du dépôt, incrément du 21 septembre 2026 appliqué : R. 643-7
+      CSS (quatre versions, la dernière du 1er septembre 2023) ; R. 732-39 du
+      code rural ; L. 732-18-1 du code rural (quatre versions) ; L. 643-3 II
+      CSS. Cherché sans le trouver l'article qui donne le TAUX du coefficient
+      de minoration agricole — D. 732-42 est la surcote, D. 732-45 et D. 732-46
+      autre chose, et le balayage de « minoration » dans le code rural ne rend
+      que des textes abrogés en 2004.
+    trouve: >-
+      LE BARÈME LIBÉRAL EST CELUI DU RÉGIME GÉNÉRAL, mot pour mot : R. 643-7
+      donne le plus petit des deux décomptes, l'arrondi au chiffre supérieur,
+      1,25 % par trimestre et le plafond de vingt trimestres — ce que
+      `_trimestres_de_decote` faisait déjà. LA CARRIÈRE LONGUE EST OUVERTE AUX
+      DEUX RÉGIMES EN POINTS : L. 732-18-1 pour les agricoles, L. 643-3 II par
+      renvoi à L. 351-1-1 pour les libéraux ; le moteur ne l'offrait qu'aux
+      périodes en annuités.
+      Et surtout, EN CHERCHANT CELA : `calculer` ne lisait l'âge d'ouverture
+      opposable que sur les périodes en annuités, si bien qu'une carrière
+      entière en points ne se voyait opposer AUCUN âge — le simulateur servait
+      une pension d'exploitant agricole à cinquante ans sans rien refuser,
+      quand il la refusait à l'artisan. `requis_reference` retombait pour eux
+      sur 160 trimestres, durée que plus aucune génération ne doit, et c'est
+      elle que leur abattement opposait. Les trois faces sont corrigées, en
+      Python et dans le portage JavaScript.
+    reste: >-
+      Le taux du coefficient agricole n'est pas lu, faute d'article dans le
+      champ social de l'index : la fiche garde 1,25 % par transcription. Le cas
+      type libéral n'a toujours aucune année salariée avant son installation, ce
+      qui le met hors d'atteinte de la durée requise à tout âge — sa fiche date
+      donc son départ sur l'ouverture, et la question de savoir si un libéral
+      représentatif a une carrière antérieure reste ouverte.
