@@ -6865,10 +6865,16 @@ def controle_ancrage_taux_cotisation() -> list[str]:
       officiel* vide et cite des accords collectifs. C'est la démonstration,
       mécanique et non affirmée, que ces taux ne se certifieront pas.
 
-    Et il compte les décrets que la série IGNORE. Il en reste un, et il est
-    lourd : le décret n° 79-650 du 30 juillet 1979 a relevé les taux du régime
-    général du 1er août 1979 au 31 janvier 1981, donc au 1er janvier 1980 ET au
-    1er janvier 1981, sans qu'aucune source ne porte la hausse.
+    Et il compte les décrets que la série IGNORE — ceux qu'aucune marche de
+    l'IPP ne rejoint. Chacun doit s'expliquer, et ``DECRETS_SANS_EFFET`` de
+    ``ipp_taux_cotisation.py`` porte la raison ; il n'en reste aucun. Le plus
+    long à établir a été le décret n° 79-650 du 30 juillet 1979, qui a relevé
+    les taux du régime général du 1er août 1979 au 31 janvier 1981, donc au
+    1er janvier 1980 ET au 1er janvier 1981 : le dépôt en a conclu deux ans
+    durant que ses taux de ces deux années étaient trop bas. Ils ne le sont
+    pas — c'est le point exceptionnel du plan Barrot, sur la seule cotisation
+    maladie du salarié, et le recueil statistique de la Cnav donne la
+    vieillesse plafonnée à 12,90 % du 1er janvier 1979 au 1er janvier 1984.
     """
     try:
         ipp = _lire_json("ipp_taux_cotisation.json",
@@ -6931,8 +6937,10 @@ def controle_ancrage_taux_cotisation() -> list[str]:
     if ignores:
         messages.append(
             f"        {len(ignores)} décret(s) du Journal officiel qu'aucune "
-            "marche ne rejoint, sur 1967-1981 — les années qu'ils couvrent sont "
-            "donc FAUSSES et non seulement incertaines :")
+            "marche ne rejoint, sur 1967-1981 — à expliquer un par un, dans "
+            "DECRETS_SANS_EFFET : un décret vu n'est pas une année fausse, "
+            "c'est une année dont personne n'a encore dit ce que le texte lui "
+            "fait :")
         messages.extend(f"        {ligne}" for ligne in ignores)
     return messages + anomalies
 

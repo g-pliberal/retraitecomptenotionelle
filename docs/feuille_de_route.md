@@ -296,6 +296,14 @@ article 2 du décret n° 50-444 puis `D. 741-35` du code rural.
     donc fausses**, et non seulement incertaines ; le tableau de certification
     l'écrit. C'est de là que vient une règle du garde-fou : il n'exige pas le
     mot « vieillesse », parce que ce décret ne nomme aucun risque.
+
+    **Démenti le 21 septembre 2026.** Ce décret ne touche pas la vieillesse :
+    c'est le point exceptionnel du plan Barrot, sur la seule cotisation maladie
+    du salarié. Les deux années sont justes, et la conclusion tirée ici était
+    une déduction faite sur un titre de décret. Le détail et ses trois sources
+    sont sous l'action 41 et au § 4 de `limites.md` ; la règle du garde-fou,
+    elle, reste bonne — un décret de cette forme doit être vu, quitte à
+    s'expliquer ensuite.
 - *Le bloc d'exemple du README ne dérivera plus.* Le §3 collait une sortie de
   `comparaison.tableau()` périmée — 1,7 % d'écart sur la pension du scénario 1,
   et +7,0 % au lieu de +9,0 % au scénario 4 — depuis une modification
@@ -8397,18 +8405,26 @@ endroit peut désormais le faire dériver, et c'est le manifeste lui-même.
 1980 et 1981* — le décret n° 79-650 du 30 juillet 1979 les a relevés « à titre
 exceptionnel » sur une fenêtre qui couvre deux 1er janvier, et ni l'IPP ni
 OpenFisca ne portent la hausse — quand `taux_cotisation_annuels.csv` les porte
-`haute`, au niveau de leurs voisines. La prose ne prétend plus au niveau que le
-fichier ne porte pas. Le déclassement des seize lignes, lui, n'a PAS été écrit,
-et la raison mérite d'être retenue : **une fiabilité ne se change pas dans le
-fichier seul.** Le journal `certification.json` dit, contrôle par contrôle,
-combien de valeurs ont été versées et à quel niveau, un test confronte ces
-comptes aux lignes du fichier, et ces traces ne s'écrivent que par
-`verifier_donnees.py --appliquer`, qui lit `data/brut/`, absent d'un dépôt
-cloné. Les forger à la main mettrait, dans la seule pièce qui dise d'où
-viennent les valeurs, une lecture qui n'a pas eu lieu. Le geste attend donc une
-session qui ait rejoué les récupérateurs — et une exception par clé dans
-`Certification`, que le journal devra savoir porter : deux niveaux pour un même
-contrôle, ce qu'il ne sait pas faire.
+`haute`, au niveau de leurs voisines. **La recherche que personne n'avait faite
+a tranché, et dans l'autre sens : ces taux sont justes.** Le décret est le point
+exceptionnel du plan Barrot, porté par la seule cotisation MALADIE du salarié —
+3,50 % puis 4,50 % au 1er août 1979, ramenée à 4,50 % au 1er février 1981,
+dix-huit mois plus tard —, et le recueil statistique de la Cnav écrit que la
+vieillesse plafonnée vaut 12,90 % du 1er janvier 1979 au 1er janvier 1984, sans
+marche entre-temps. LEGI le confirme par son silence : dans le décret
+n° 67-803, les articles de la maladie ont une version qui s'ouvre au 1er janvier
+1980, seconde fenêtre du texte, et celui de la vieillesse n'en a aucune. Le
+décret rejoint la liste des textes que la série ignore à bon droit, avec sa
+raison : sur 1967-1981, plus un seul décret de taux du régime général n'est
+inexpliqué.
+
+*Et la leçon vaut mieux que le chiffre.* Le contrôle qui avait trouvé ce décret
+était juste ; c'est la conclusion qu'on en tirait qui ne l'était pas, et elle
+avait été recopiée dans quatre fichiers — le tableau de `limites.md`, le
+manifeste des sources, le récupérateur et le vérificateur. « Un décret que la
+série ignore » ne veut pas dire « les années qu'il couvre sont fausses », mais
+« personne n'a encore dit ce que ce texte leur fait ». Le message du contrôle
+disait la première phrase ; il dit maintenant la seconde.
 
 **Ce qui reste — et c'est le travail, qui se fait section par section.**
 Soixante-douze sections, et elles ont toutes la même forme : elles disent ce

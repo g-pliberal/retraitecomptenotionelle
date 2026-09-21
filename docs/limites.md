@@ -572,7 +572,7 @@ résumé :
 | Revalorisation des salaires portés au compte | 10 colonnes, effets 2017-2026, perceptions depuis 1930 | haute | Cnav, circulaires de revalorisation, recoupées deux à deux |
 | Taux de cotisation, régime général | <!--chiffre:minimum(data/reference/regimes/taux_cotisation_annuels.csv:annee?regime=regime_general&fiabilite=certifiee)-->1982<!--/-->-<!--chiffre:maximum(data/reference/regimes/taux_cotisation_annuels.csv:annee?regime=regime_general&fiabilite=certifiee)-->2026<!--/--> | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 242-4` et décret n° 81-1013 du 13 novembre 1981, article 2 ; la hausse temporaire de 1987-1988, qui n'a pas réécrit l'article, est lue dans la base JORF |
 | Taux de cotisation, régime général | 1967-1979 | haute | OpenFisca-France, transcrit des barèmes IPP — l'article 3 du décret n° 67-803 n'a qu'une version dans LEGI, datée de 1967 et portant l'état de 1979. Chaque marche est **ancrée** à son décret, retrouvé au JORF au numéro et à la date que l'IPP annonce (35 sur 36 ; le n° 70-680 manque à l'index) |
-| Taux de cotisation, régime général | 1980 et 1981 | haute, **et le dépôt les sait trop basses** | le décret n° 79-650 du 30 juillet 1979 a relevé ces taux « à titre exceptionnel » du 1er août 1979 au 31 janvier 1981, sans qu'aucune source ne porte la hausse et sans que sa notice l'écrive. Le fichier les porte au niveau de leurs voisines, faute de pouvoir écrire la trace d'un déclassement sans rejouer les récupérateurs : voir plus bas |
+| Taux de cotisation, régime général | 1980 et 1981 | haute, **comme leurs voisines** | le décret n° 79-650 du 30 juillet 1979 a relevé des taux « à titre exceptionnel » du 1er août 1979 au 31 janvier 1981 : c'est le point du plan Barrot, porté par la seule cotisation MALADIE du salarié, et la vieillesse n'y est pas — voir plus bas |
 | Taux de cotisation, salariés agricoles | <!--chiffre:minimum(data/reference/regimes/taux_cotisation_annuels.csv:annee?regime=msa_salaries&fiabilite=certifiee)-->1980<!--/-->-<!--chiffre:maximum(data/reference/regimes/taux_cotisation_annuels.csv:annee?regime=msa_salaries&fiabilite=certifiee)-->2026<!--/--> | **certifiée** | DILA, base LEGI, décret n° 50-444 du 20 avril 1950, article 2, puis code rural `D. 741-35`, qui renvoie à `D. 242-4` depuis 2014 |
 | Taux de cotisation, salariés agricoles | 1967-1979 | moyenne | la série du régime général tenant lieu, faute d'une version antérieure de l'article 2 |
 | Taux de cotisation, cultes, Mayotte, Saint-Pierre-et-Miquelon | depuis 1979 et 1987 | haute | la série du régime général du dépôt, que ces trois régimes portent faute d'un barème propre : la valeur est certifiée, la substitution est une décision de modélisation |
@@ -4512,30 +4512,58 @@ et il est lourd : le **décret n° 79-650 du 30 juillet 1979** a relevé « à t
 exceptionnel, par dérogation aux dispositions du décret n° 78-1213 » les taux du
 régime général « du 01-08 au 31-12-1979 et du 01-01-1980 au 31-01-1981 ». La
 fenêtre couvre **deux premiers janvier**, 1980 et 1981. Ni l'IPP ni OpenFisca ne
-la portent : les taux que le dépôt sert pour ces deux années sont donc **trop
-bas**, d'un montant que la notice n'écrit pas — elle ne nomme même aucun risque,
-et le décret lui-même a disparu de LEGI avec sa date d'expiration.
+la portent, et le dépôt en a conclu que les taux servis pour ces deux années
+étaient **trop bas**, d'un montant que la notice n'écrit pas — elle ne nomme
+même aucun risque, et le décret lui-même a disparu de LEGI avec sa date
+d'expiration.
 
-*Le 21 septembre 2026, la contradiction a été vue, et à moitié réglée.* Le
-tableau de certification donnait ces deux années pour « fausses » quand
-`taux_cotisation_annuels.csv` les portait `haute`, au même niveau que leurs
-voisines. La prose ne prétend plus au niveau que le fichier ne porte pas ; le
-fichier, lui, garde `haute`, et voici pourquoi le déclassement n'a pas été
-écrit à la main.
+#### Ils ne sont pas trop bas : ce décret ne touche pas la vieillesse
 
-**Une fiabilité ne se change pas dans le fichier seul.** Le journal
-`data/derive/certification.json` dit, contrôle par contrôle, combien de valeurs
-ont été versées et à quel niveau, et `test_journal_de_certification_decrit_les_series_certifiees`
-confronte ces comptes aux lignes du fichier. Descendre seize lignes à `moyenne`
-— huit au régime général, huit à la CAVIMAC qui recopie sa série — oblige donc
-à réécrire deux traces du journal, avec leur date de lecture et leur empreinte.
-Or ces traces ne s'écrivent que par `verifier_donnees.py --appliquer`, qui lit
-`data/brut/`, absent d'un dépôt cloné : les forger à la main mettrait dans la
-seule pièce qui dise d'où viennent les valeurs une lecture qui n'a pas eu lieu.
-Le déclassement demande donc une session qui ait rejoué les récupérateurs, et
-il attend là. La mécanique, elle, tiendrait en une exception par clé dans
-`Certification` — à condition que le journal sache porter deux niveaux pour un
-même contrôle, ce qu'il ne sait pas encore.
+*Établi le 21 septembre 2026, après une recherche qui n'avait pas été faite.*
+Le raisonnement précédent tenait à une lecture du seul TITRE du décret —
+« augmentation du taux des cotisations d'assurances sociales et des allocations
+familiales » —, où « assurances sociales » couvre en principe la vieillesse
+comme la maladie. Trois lectures le démentent, et elles convergent.
+
+**Le recueil statistique de la Cnav**, titre II « Les cotisations et les
+cotisants », tableau T2-2, écrit la série complète des taux par branche et par
+date d'effet. Elle donne, pour le salarié : maladie **3,50 % au 1er janvier
+1979, 4,50 % au 1er août 1979**, et retour à **4,50 % au 1er février 1981** —
+la fenêtre exacte du décret, dix-huit mois — pendant que la colonne vieillesse
+reste à **4,70 %** d'un bout à l'autre. Du côté employeur, rien ne bouge : 8,95
+en maladie plafonnée et 8,20 en vieillesse, du 1er janvier 1979 au 13 novembre
+1981. Le texte du même recueil le dit en toutes lettres : « pour l'assurance
+vieillesse, le taux de cotisation sur le salaire plafonné de 12,90 % au
+1er janvier 1979 est passé à 13,90 % au 1er janvier 1984 » — sans marche
+entre-temps.
+
+**La chaîne des versions dans LEGI** dit la même chose par son silence. Le
+décret n° 67-803 porte les taux du régime général jusqu'en 1981 : son article
+premier (maladie) et son article 2 (la répartition plafonné/déplafonné de la
+maladie) ont une version qui s'ouvre au **1er janvier 1980**, c'est-à-dire à la
+seconde fenêtre du décret exceptionnel ; son **article 3, qui est celui de la
+vieillesse, n'en a aucune** — sa rédaction unique porte 12,90 %, soit 8,20 %
+employeur et 4,70 % salarié, jusqu'à son abrogation du 13 novembre 1981.
+
+**Et la mesure elle-même est documentée** : c'est le plan Barrot, présenté trois
+semaines après l'arrivée de Jacques Barrot au ministère, dont la pièce
+principale est une cotisation exceptionnelle d'un point à la charge des seuls
+salariés, pour dix-huit mois, décidée devant le dérapage des dépenses
+d'ASSURANCE MALADIE.
+
+**Ce qui change dans le dépôt.** Les taux de 1980 et 1981 restent ce qu'ils
+sont, et leur niveau `haute` est celui qu'ils méritent : ils ne sont ni faux ni
+plus incertains que leurs voisins. Le décret rejoint, dans
+`ipp_taux_cotisation.py`, la liste des textes que la série ignore À BON DROIT,
+avec sa raison écrite — il n'y a plus, sur 1967-1981, un seul décret de taux du
+régime général que personne n'ait expliqué.
+
+**Et une leçon, qui vaut plus que le chiffre.** Le contrôle qui a trouvé ce
+décret était juste ; c'est la conclusion qu'on en avait tirée qui ne l'était
+pas. « Un décret que la série ignore » ne veut pas dire « les années qu'il
+couvre sont fausses » : il veut dire que personne n'a encore dit ce que ce
+texte fait à ces années. Le message du contrôle disait la première phrase ; il
+dit maintenant la seconde.
 
 C'est de là que vient une règle du récupérateur qui lit les textes : son
 garde-fou **n'exige pas le mot « vieillesse »**. Un décret de la forme du
