@@ -11380,3 +11380,117 @@ seul, et la correction serait un peu plus forte avec leur table.
 `moteur/js/garantie.js`, `moteur/js/cout.js`, `moteur/js/pages.js`,
 `scripts/garantie_par_sexe.py`, `data/reference/site/affirmations.yaml`,
 `tests/`, `docs/limites.md`, `tests/temoins/pages.json`.
+
+### 78. Ce qui a changé de côté : la frontière contributive, datée et vérifiable — `fait`
+
+**Demande.** « Plus de recherches sur tout ce qui n'est pas contributif dans les
+retraites actuelles. Il y a sans doute des choses qui n'étaient pas
+contributives avant et qui le sont devenues depuis ; et inversement. »
+
+**Ce que l'inventaire ne pouvait pas dire.** `avantages_non_contributifs.yaml`
+porte quarante-deux dispositifs avec une `creation` et une `fin`. Il décrit donc
+une liste avec ses bornes, et rien entre les deux : un dispositif qui reste en
+place et change de côté n'y laisse aucune trace. C'est exactement ce que la
+demande visait, et la réponse n'était pas d'allonger l'inventaire mais de lui
+ajouter une dimension.
+
+**Le mot en cache trois, et elles bougent séparément.** « Non contributif »
+désigne ce que l'assuré ACQUIERT sans cotiser, ce qu'il VERSE sans acquérir, et
+QUI PAIE la charge. Le dépôt ne portait que la première ; la deuxième était
+absente de bout en bout. La preuve que les trois sont distinctes tient en une
+ligne : les indemnités journalières de maternité entrent au salaire de base en
+novembre 2010 (L. 351-1), le fonds en prend la charge le même jour (L. 135-2
+10°), et cette prise en charge est abrogée en décembre 2020 **sans que la
+version de L. 351-1 bouge** — elle est toujours en vigueur. Un lecteur qui
+mesurerait par les comptes verrait là une baisse qui n'existe pas.
+
+**La liste existait, et c'est le législateur qui la tenait.** L'article L. 135-1
+porte la seule définition légale de l'avantage « à caractère non contributif »,
+et elle est énumérative : n'est non contributif que ce que L. 135-2 énumère.
+Cette liste a été révisée **trente-sept fois de 1994 à 2025**. Chaque version est
+une photographie datée de la frontière, prise par celui qui la déplace — et
+elles sont toutes dans l'index LEGI du dépôt. L'appariement des points d'une
+version à l'autre se fait par contenu et non par numéro : la renumérotation
+complète de 2016 aurait sinon été lue comme neuf changements de fond.
+
+**Elle disparaît le 1er janvier 2026, et cela coûtera une série.** L'article 24
+de la LFSS 2025 abroge le chapitre du FSV — « les droits et obligations du Fonds
+de solidarité vieillesse sont dévolus à la Caisse nationale d'assurance
+vieillesse ». La liste survit sous L. 222-2-1, mais son 2° ne vise plus **le
+régime général** : il a absorbé le fonds et ne se rembourse pas à lui-même. Le
+coût des périodes assimilées du régime général cesse donc d'être un transfert
+publié pour devenir une charge interne. C'est le plus gros contingent de la
+ligne la plus lourde que le modèle calcule, et la série a désormais une date de
+péremption.
+
+**Le versant miroir, qui manquait.** Deux dates, lues dans L. 241-3 : les
+cotisations vieillesse déplafonnées — qui n'ouvrent aucun droit, le salaire
+au-delà du plafond n'entrant dans aucun calcul — sont à la charge de l'employeur
+depuis le 20 janvier 1991, et du salarié depuis le 22 août 2003. Cela change la
+lecture des scénarios : `config.py` porte au compte ce qui a été PRÉLEVÉ, taux
+d'appel compris, donc les scénarios notionnels **rendent contributif ce que le
+droit actuel stérilise**. Une part de l'écart qu'ils mesurent ne vient pas
+d'avantages gratuits en plus, mais de cotisations rendues à leur cotisant. Ce
+n'était nommé nulle part.
+
+**Et un renversement, en 2023.** L'article L. 161-22-1-1 rend acquisitives les
+cotisations du retraité qui reprend une activité, jusque-là à fonds perdus, et
+définit au passage la seule pension purement contributive du droit français :
+« seules sont retenues les périodes ayant donné lieu à cotisations à la charge
+de l'assuré […] aucune majoration, aucun supplément ni aucun accessoire ne peut
+être octroyé ». C'est l'objet que les scénarios 2 à 5 construisent par le
+calcul, écrit par le législateur pour une pension et une seule.
+
+**Ce qui tient le fichier.** Chaque bascule porte l'identifiant de la VERSION
+d'article qui en fait foi, et `scripts/frontiere_contributive.py --verifier`
+rouvre le dump LEGI pour confronter les quarante identifiants cités : le bon
+article, la bonne date d'entrée en vigueur — ou de FIN quand c'est la
+disparition d'une version qui fait l'événement, comme pour la cotisation
+d'assurance veuvage, dont l'unique version court de 1985 à 2004. Le contrôle a
+levé quatre écarts sur des lignes qui semblaient justes, et c'est lui qui a
+imposé les trois raffinements du modèle de données : `preuve: fin`,
+`date_preuve` — l'article 24 est en vigueur en mars 2025 et supprime le fonds en
+janvier 2026 — et `article_precedent`, pour une comparaison qui traverse une
+recodification.
+
+**Une règle de classement, plus sévère qu'il n'y paraît.** Une bascule est
+rangée sur la face que la version CITÉE prouve, non sur celle que son sujet
+suggère. La validation des trimestres d'apprentissage est un droit gratuit ;
+l'article lu ne dit que qui le paie, et la ligne est rangée en `financement`.
+C'est ce qui empêche un inventaire de lectures de redevenir un inventaire de
+souvenirs.
+
+**Trois corrections à l'inventaire, au passage.** La pénibilité a un payeur
+nommé depuis novembre 2010 — une contribution de la branche AT-MP inscrite à
+L. 241-3 —, là où la ligne disait qu'aucun poste ne l'isolait : ce qui manque
+n'est pas la charge, c'est sa publication. L'allocation veuvage a eu **sa propre
+cotisation**, 0,10 % à la charge du seul salarié (D. 242-5), de 1985 à 2004 :
+son invisibilité date du jour où elle a perdu son payeur nommé. Et le minimum
+contributif a été rangé dans la solidarité par le législateur de décembre 2010 à
+décembre 2016 — le seul cas où le modèle sait mieux que les comptes, la cascade
+continuant d'isoler ce que la série publiée a cessé de dire.
+
+**Ce que la chronologie montre.** Cinq ouvertures de droits gratuits contre une
+fermeture qui n'en est pas une ; dix charges isolées chez un payeur nommé, dont
+neuf avant 2015 ; cinq refondues dans les comptes, dont quatre depuis 2016. Le
+mouvement des trente premières années a rendu la dépense lisible ; celui des dix
+dernières la rend progressivement opaque. Et une bascule qu'aucun modèle
+historique n'attend : le 9° de L. 351-3, entré en septembre 2023, valide
+**rétroactivement** les travaux d'utilité collective des années 1980. Le droit
+applicable à une année de carrière a changé quarante ans après cette année-là ;
+le modèle date ses règles par l'année de la période et ne sait pas rejouer cela.
+
+**Ce qui reste.** Le versant `cotisation` n'est pas chiffré : on sait depuis
+quand la cotisation déplafonnée n'achète rien, pas combien elle pèse — il y
+faudrait la distribution des salaires au-dessus du plafond. Le taux d'appel des
+complémentaires relève du même chantier et n'est porté par aucune table. Les
+bascules du code des pensions manquent, à commencer par la bonification pour
+enfants restreinte aux naissances d'avant 2004. Et la liste légale n'a pas
+encore été confrontée poste par poste à l'inventaire : c'est le chemin le plus
+court vers ce qui manque aux quarante-deux dispositifs.
+
+**Fichiers.** `data/reference/legislation/frontiere_contributive.yaml`,
+`scripts/frontiere_contributive.py`, `tests/test_frontiere_contributive.py`,
+`docs/frontiere_contributive.md`, `docs/avantages_non_contributifs.md`,
+`data/reference/legislation/veille.yaml`, `data/reference/prose/zones.yaml`,
+`data/sources.yaml`.

@@ -143,6 +143,14 @@ fichiers:
       Les avantages non contributifs du scénario 1: a_declarer
       "2. L'état du modèle : quatre mots, et ils ne se valent pas": a_declarer
       3. La liste: a_declarer
+  # Des lectures de Légifrance, datées du jour où elles ont été faites et
+  # ancrées sur un identifiant de version. Les chiffres qu'il écrit sont des
+  # comptes de lignes du fichier de données, et
+  # `tests/test_frontiere_contributive.py` les recalcule phrase par phrase —
+  # c'est ce test qui le tient, et non une sonde de `verifier_prose.py`, qui ne
+  # sait pas lire un dump LEGI.
+  docs/frontiere_contributive.md:
+    defaut: recit
   docs/veille_droit.md:
     defaut: a_declarer
   # Le fichier entier reste à arbitrer, et le passer en `etat` a été essayé :

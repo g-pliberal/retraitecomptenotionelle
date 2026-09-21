@@ -1852,6 +1852,27 @@ institutions:
           ne sont plus ici : elles sont certifiées contre la base LEGI, voir
           dila_legi_parametres_retraite.
 
+      - id: legifrance_frontiere_contributive
+        titre: Les déplacements datés de la frontière contributive
+        url: https://www.legifrance.gouv.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/frontiere_contributive.yaml
+        note: >-
+          Comme les pivots des fiches de régime, ce n'est pas une donnée
+          chiffrée mais une carte : une entrée par déplacement de la frontière
+          entre le cotisé et le gratuit, avec sa date, sa face — ce que l'assuré
+          acquiert sans cotiser, ce qu'il verse sans acquérir, qui paie la
+          charge — et l'identifiant de la VERSION d'article qui en fait foi.
+          `scripts/frontiere_contributive.py --verifier` rouvre l'index LEGI et
+          confronte chaque identifiant à ce que le dump porte : le bon article,
+          la bonne date d'entrée en vigueur, ou de fin quand c'est la
+          disparition d'une version qui fait l'événement. L'ossature vient de
+          l'article L. 135-2, que le législateur a révisé trente-sept fois de
+          1994 à 2025 et qui est la seule liste légale de ce qui n'est pas
+          cotisé — abrogée au 1er janvier 2026, reprise par L. 222-2-1.
+          Voir `docs/frontiere_contributive.md`.
+
       - id: legifrance_pivots
         titre: Articles pivots des fiches de régime, lus dans l'index LEGI
         url: https://www.legifrance.gouv.fr/

@@ -12,6 +12,15 @@ L'inventaire est une donnée, pas une prose : il vit dans
 qu'il contient, comment on le chiffre, ce que le chiffrage a donné, et pourquoi
 ce résultat n'est pas celui qu'on croit.
 
+**Il décrit une liste À UNE DATE.** Ce que chaque ligne porte de `creation` et
+de `fin` ne dit pas que la frontière elle-même a bougé entre les deux, et elle
+l'a fait dans les deux sens — vingt-quatre fois depuis 1991, y compris pour des
+dispositifs qui n'ont ni commencé ni fini ce jour-là.
+`docs/frontiere_contributive.md` porte ce mouvement, et le versant que cette
+page n'a jamais porté : ce qui est **versé sans rien ouvrir**. Trois de ses
+lectures corrigent des raisons écrites ici — la pénibilité, l'allocation
+veuvage et le minimum contributif.
+
 ## 1. Pourquoi cette liste n'existait pas
 
 Le dépôt en portait trois, et aucune ne contenait les deux autres.
@@ -1008,6 +1017,8 @@ rôle —, mais l'inventaire la range sous `declare`, et dit pourquoi.
 
 ---
 
-Voir aussi : `docs/limites.md` pour les écarts au droit positif,
+Voir aussi : `docs/frontiere_contributive.md` pour les déplacements datés de la
+frontière et pour les cotisations sans contrepartie,
+`docs/limites.md` pour les écarts au droit positif,
 `docs/veille_droit.md` pour l'obligation de lecture des sources,
 `docs/methodologie.md` §6 pour ce que les scénarios notionnels retirent.
