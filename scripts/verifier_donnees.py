@@ -269,6 +269,43 @@ def source_assiette_salaires() -> dict[tuple, float]:
     }
 
 
+def source_masse_salariale_privee() -> dict[tuple, float]:
+    """Assiette DÉPLAFONNÉE des cotisations du secteur privé, en millions d'euros.
+
+    C'est l'assiette de la cotisation vieillesse déplafonnée de l'article
+    L. 241-3 CSS — celle qui n'ouvre aucun droit et qui porte pourtant sur la
+    TOTALITÉ de la rémunération. L'Urssaf la définit ainsi dans sa note
+    méthodologique, et c'est elle qui la produit, à partir des déclarations
+    sociales qu'elle recouvre.
+
+    Ne pas la confondre avec ``salaires_bruts`` de ``assiette_activite.csv`` :
+    celle-là est l'ensemble de l'économie au sens des comptes nationaux,
+    fonction publique comprise, qui ne relève pas de L. 241-3. Sur 2024, 726
+    milliards ici contre environ 1 050 là — l'écart n'est pas un désaccord,
+    c'est un champ différent.
+
+    Les années dont un trimestre n'est connu que par l'estimation précoce de
+    l'Urssaf (T+50 jours) sont écartées de la certification : une estimation
+    n'est pas une valeur du producteur au même titre qu'une autre, et le
+    fichier ne doit pas mêler les deux sous la même fiabilité.
+    """
+    chemin = RACINE / "data" / "brut" / "urssaf_masse_salariale.json"
+    if not chemin.exists():
+        raise SourceAbsente(
+            f"{chemin} absent "
+            f"(lancer scripts/fetch/urssaf_masse_salariale.py)"
+        )
+    sys.path.insert(0, str(RACINE / "scripts" / "fetch"))
+    from urssaf_masse_salariale import annuel  # noqa: PLC0415
+
+    charge = json.loads(chemin.read_text(encoding="utf-8"))
+    return {
+        (str(annee),): montant
+        for annee, (montant, precoce) in sorted(annuel(charge["trimestres"]).items())
+        if not precoce
+    }
+
+
 def source_assiette_revenu_mixte() -> dict[tuple, float]:
     """Revenu mixte brut des ménages (B3G du secteur S14), en millions d'euros.
 
@@ -3303,6 +3340,56 @@ CERTIFICATIONS = (
             "# française — 51 points de base au 10 ans en septembre 2026 — et c'est",
             "# voulu : cet écart rémunère un risque de crédit, qu'un régime obligatoire",
             "# ne peut pas promettre. Voir docs/methodologie.md.",
+            "#",
+            "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
+            "# scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="masse_salariale_privee",
+        chemin=REFERENCE / "macro" / "masse_salariale_privee.csv",
+        cles=("annee",),
+        colonne="montant_meur",
+        source=source_masse_salariale_privee,
+        origine="Urssaf, jeu open data « masse salariale du secteur privé, France entière »",
+        decimales=1,
+        tolerance=0.05,
+        unite=" M€",
+        entete=(
+            "# Masse salariale du secteur privé — l'assiette DÉPLAFONNÉE",
+            "# source_id: urssaf_masse_salariale",
+            "# unite: millions d'euros courants",
+            "# fiabilite:",
+            "#   certifiee (1997-) : somme des quatre trimestres de l'estimation",
+            "#             stabilisée de l'Urssaf (T+60 jours), recontrôlée par",
+            "#             scripts/verifier_donnees.py. Seules les années COMPLÈTES",
+            "#             entrent : une année à trois trimestres n'est pas une",
+            "#             année basse, c'est une année fausse.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À chiffrer ce que l'on cotise SANS RIEN ACQUÉRIR. La cotisation",
+            "# vieillesse déplafonnée de l'article L. 241-3 CSS n'ouvre aucun droit",
+            "# — le salaire annuel de base est borné au plafond par R. 351-29, les",
+            "# trimestres à quatre par an par R. 351-9 — et elle porte pourtant sur",
+            "# la TOTALITÉ de la rémunération, dès le premier euro. C'est le versant",
+            "# symétrique des avantages non contributifs, et le dépôt ne le portait",
+            "# nulle part : voir docs/frontiere_contributive.md.",
+            "#",
+            "# POURQUOI PAS `salaires_bruts` DE assiette_activite.csv",
+            "# -------------------------------------------------------",
+            "# Parce que ce n'est pas le même champ. Les comptes nationaux couvrent",
+            "# toute l'économie, fonction publique comprise, qui ne relève pas de",
+            "# L. 241-3 ; l'Urssaf ne couvre que le secteur privé du régime général,",
+            "# et sa note méthodologique DÉFINIT sa masse salariale comme",
+            "# « l'assiette déplafonnée des cotisations sociales ». Sur 2024, 726",
+            "# milliards ici contre environ 1 050 là. Prendre l'une pour l'autre",
+            "# surestimerait de 45 % toute masse de cotisation du privé.",
+            "#",
+            "# CE QU'ELLE NE COUVRE PAS. Rien avant 1997, l'Urssaf ne remontant pas",
+            "# plus haut ; et rien de la fonction publique, dont la contribution",
+            "# employeur relève d'une autre question — le taux du compte",
+            "# d'affectation spéciale est fixé pour ÉQUILIBRER, non pour acquérir.",
             "#",
             "# Ne pas modifier à la main : les valeurs seraient écrasées au prochain",
             "# scripts/verifier_donnees.py --appliquer.",

@@ -1833,8 +1833,30 @@ institutions:
         acces: fichier
         statut_integration: saisi
         cible: data/reference/regimes/taux_cotisation.csv
+      - id: urssaf_masse_salariale
+        titre: Masse salariale trimestrielle du secteur privé, France entière
+        url: https://open.urssaf.fr/explore/dataset/masse-salariale-du-secteur-prive-france-entiere/
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/macro/masse_salariale_privee.csv
+        note: >-
+          L'ASSIETTE DÉPLAFONNÉE, et c'est le producteur qui le dit : « la masse
+          salariale correspond à l'assiette déplafonnée des cotisations
+          sociales », champ secteur privé, régime général, France entière,
+          depuis 1997. Série labellisée par l'Autorité de la statistique
+          publique (avis du 14 avril 2020, JORF n° 0095 du 18 avril 2020).
+          C'est elle qui permet de chiffrer ce que l'on cotise SANS RIEN
+          ACQUÉRIR — la cotisation vieillesse déplafonnée de L. 241-3 CSS
+          n'ouvre aucun droit et porte pourtant sur la totalité de la
+          rémunération. Ne pas la confondre avec `salaires_bruts` de
+          `assiette_activite.csv`, qui est l'ensemble de l'économie au sens des
+          comptes nationaux : 726 Md€ ici contre environ 1 050 là en 2024.
+          `scripts/fetch/urssaf_masse_salariale.py` pagine le jeu trimestriel
+          et ne garde que les années complètes, dans l'estimation stabilisée à
+          T+60 jours ; les années qu'un trimestre laisse à l'estimation précoce
+          ne sont pas certifiées.
       - id: urssaf_open_data
-        titre: Open data Urssaf
+        titre: Open data Urssaf — le reste du portail
         url: https://open.urssaf.fr/
         acces: api
         statut_integration: a_faire

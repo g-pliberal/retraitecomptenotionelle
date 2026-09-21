@@ -1,0 +1,67 @@
+# Masse salariale du secteur privé — l'assiette DÉPLAFONNÉE
+# source_id: urssaf_masse_salariale
+# unite: millions d'euros courants
+# fiabilite:
+#   certifiee (1997-) : somme des quatre trimestres de l'estimation
+#             stabilisée de l'Urssaf (T+60 jours), recontrôlée par
+#             scripts/verifier_donnees.py. Seules les années COMPLÈTES
+#             entrent : une année à trois trimestres n'est pas une
+#             année basse, c'est une année fausse.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À chiffrer ce que l'on cotise SANS RIEN ACQUÉRIR. La cotisation
+# vieillesse déplafonnée de l'article L. 241-3 CSS n'ouvre aucun droit
+# — le salaire annuel de base est borné au plafond par R. 351-29, les
+# trimestres à quatre par an par R. 351-9 — et elle porte pourtant sur
+# la TOTALITÉ de la rémunération, dès le premier euro. C'est le versant
+# symétrique des avantages non contributifs, et le dépôt ne le portait
+# nulle part : voir docs/frontiere_contributive.md.
+#
+# POURQUOI PAS `salaires_bruts` DE assiette_activite.csv
+# -------------------------------------------------------
+# Parce que ce n'est pas le même champ. Les comptes nationaux couvrent
+# toute l'économie, fonction publique comprise, qui ne relève pas de
+# L. 241-3 ; l'Urssaf ne couvre que le secteur privé du régime général,
+# et sa note méthodologique DÉFINIT sa masse salariale comme
+# « l'assiette déplafonnée des cotisations sociales ». Sur 2024, 726
+# milliards ici contre environ 1 050 là. Prendre l'une pour l'autre
+# surestimerait de 45 % toute masse de cotisation du privé.
+#
+# CE QU'ELLE NE COUVRE PAS. Rien avant 1997, l'Urssaf ne remontant pas
+# plus haut ; et rien de la fonction publique, dont la contribution
+# employeur relève d'une autre question — le taux du compte
+# d'affectation spéciale est fixé pour ÉQUILIBRER, non pour acquérir.
+#
+# Ne pas modifier à la main : les valeurs seraient écrasées au prochain
+# scripts/verifier_donnees.py --appliquer.
+annee,montant_meur,fiabilite
+1997,305922.3,certifiee
+1998,320158.7,certifiee
+1999,333967.2,certifiee
+2000,354815.1,certifiee
+2001,375383.4,certifiee
+2002,386578.2,certifiee
+2003,393682.6,certifiee
+2004,405111.1,certifiee
+2005,418347.5,certifiee
+2006,436345.8,certifiee
+2007,456776.9,certifiee
+2008,473572.3,certifiee
+2009,466779.1,certifiee
+2010,476035.8,certifiee
+2011,493198.9,certifiee
+2012,503409.4,certifiee
+2013,509591.6,certifiee
+2014,517367.6,certifiee
+2015,526359.4,certifiee
+2016,539046.4,certifiee
+2017,558310.8,certifiee
+2018,577994.0,certifiee
+2019,595822.5,certifiee
+2020,561478.3,certifiee
+2021,612254.6,certifiee
+2022,665331.7,certifiee
+2023,703000.7,certifiee
+2024,726447.1,certifiee
+2025,740035.3,certifiee

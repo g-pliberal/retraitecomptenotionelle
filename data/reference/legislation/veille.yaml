@@ -1529,3 +1529,49 @@ journal:
       comptes cesseront de publier les périodes assimilées du régime général,
       qui périmera une série de l'inventaire.
     prochaine_veille: "2027-01-31"
+
+  - date: "2026-09-21"
+    session: "combien l'on cotise sans rien acquérir"
+    consulte: >-
+      Fiche réglementaire « Taux de cotisations » de la fédération Agirc-Arrco
+      (reglementation.agirc-arrco.fr), lue en entier ; note méthodologique du
+      jeu open data « Masse salariale trimestrielle du secteur privé, France
+      entière » de l'Urssaf (open.urssaf.fr, API Opendatasoft) ; document de
+      travail n° 1073 du secrétariat général du COR sur les contributions
+      obligatoires non génératrices de droits. Recoupé avec l'index LEGI du
+      dépôt pour L. 241-3, R. 351-29 et R. 351-9.
+    trouve: >-
+      LA COTISATION DÉPLAFONNÉE PORTE SUR LA TOTALITÉ DE LA RÉMUNÉRATION, dès
+      le premier euro, et non sur la seule fraction au-dessus du plafond : une
+      note antérieure de `docs/frontiere_contributive.md` disait le contraire,
+      et l'écart valait un facteur dix. Elle n'ouvre aucun droit pour autant,
+      le salaire annuel de base étant borné au plafond (R. 351-29) et les
+      trimestres à quatre par an (R. 351-9). L'assiette exacte est publiée par
+      l'Urssaf, dont la note méthodologique la DÉFINIT comme « l'assiette
+      déplafonnée des cotisations sociales » — champ secteur privé, régime
+      général, depuis 1997, série labellisée par l'Autorité de la statistique
+      publique. Le produit donne 17,9 Md€ en 2025, dont 3,0 à la charge du
+      salarié. Côté complémentaire, la fédération écrit elle-même que « seule »
+      la cotisation au taux de calcul des points est génératrice de droits et
+      que les deux contributions d'équilibre de l'article 37 de l'ANI ne le
+      sont pas : 38,1 % du versement de tranche 1 n'achète aucun point, 40,2 %
+      pour un salarié au-dessus du plafond. Le pourcentage d'appel a changé de
+      SIGNE : inférieur à 100 % de 1952 à 1978 (78 % en 1952), il est un rabais
+      avant de devenir un prélèvement, 125 % en 1992 à l'Arrco et 1995 à
+      l'Agirc, 127 % depuis la fusion.
+    reste: >-
+      Le scénario 1 n'est pas modifié : aucune règle de calcul n'a été touchée.
+      Un recoupement est tombé juste sans avoir été cherché — la part salariale
+      du déplafonné est nulle jusqu'en 2004 et positive à partir de 2005 dans
+      la table certifiée depuis les décrets, quand L. 241-3 l'autorise dès le
+      22 août 2003 : la loi ouvre, le décret exécute, et le dépôt garde les
+      deux dates. Restent à lire à la source : le taux d'appel année par année
+      avant 2019, qu'aucun document consulté ne donne en série ; la répartition
+      de l'assiette Agirc-Arrco entre tranches 1 et 2, sans laquelle la part
+      sans droits de la complémentaire reste un rapport de taux et non une
+      masse ; et les masses de cotisations non génératrices de droits, qu'AUCUN
+      producteur ne publie — ni la DSS, ni l'Agirc-Arrco. Le décret n° 2025-1446
+      du 31 décembre 2025 (taux patronal à 2,11 %) et le décret n° 2025-1341 du
+      26 décembre 2025 (CAS Pensions civils à 82,28 %) sont déjà dans les tables
+      certifiées du dépôt, qui les portait avant cette veille.
+    prochaine_veille: "2027-01-31"

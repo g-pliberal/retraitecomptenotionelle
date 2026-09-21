@@ -146,6 +146,136 @@ def verifier(donnees: dict, index: Path = INDEX_LEGI) -> list[str]:
     return ecarts
 
 
+#: Les deux séries que le chiffrage multiplie, et rien d'autre. Le produit est
+#: exact parce que les deux termes viennent de PRODUCTEURS et couvrent le MÊME
+#: champ : le taux de L. 241-3 s'applique au secteur privé du régime général,
+#: et l'assiette de l'Urssaf est celle-là même — sa note méthodologique la
+#: définit comme « l'assiette déplafonnée des cotisations sociales ».
+CHEMIN_ASSIETTE = RACINE / "data" / "reference" / "macro" / "masse_salariale_privee.csv"
+CHEMIN_TAUX = RACINE / "data" / "reference" / "regimes" / "taux_cotisation_annuels.csv"
+
+
+def cotisations_sans_contrepartie() -> dict[int, dict[str, float]]:
+    """Ce que le régime général prélève SANS rien ouvrir, année par année.
+
+    La cotisation vieillesse déplafonnée de l'article L. 241-3 CSS n'ouvre
+    aucun droit : le salaire annuel de base est borné au plafond par
+    R. 351-29, les trimestres à quatre par an par R. 351-9. Et elle porte sur
+    la TOTALITÉ de la rémunération, dès le premier euro — non, comme on le
+    croit, sur la seule fraction au-dessus du plafond. L'écart entre ces deux
+    lectures vaut un facteur dix, et c'est la première chose à fixer avant de
+    multiplier quoi que ce soit.
+
+    Le produit est donc direct : taux déplafonné × assiette déplafonnée. Aucune
+    distribution de salaires n'est nécessaire, et c'est ce qui rend ce chiffre
+    exact plutôt qu'estimé.
+
+    Ce qu'il NE COUVRE PAS, et il faut le dire avec le résultat : le taux
+    d'appel de l'Agirc-Arrco et ses contributions d'équilibre, qui relèvent
+    d'accords nationaux interprofessionnels que le dépôt ne sait pas certifier ;
+    et la fonction publique, dont la contribution employeur est fixée pour
+    équilibrer un compte, non pour acquérir un droit. Le total rendu ici est
+    donc un PLANCHER de la non-contributivité du versement.
+    """
+    from retraite_notionnelle.donnees.chargement import charger_serie_annuelle
+    from retraite_notionnelle.donnees.chargement import Fiabilite
+
+    assiette = charger_serie_annuelle(CHEMIN_ASSIETTE, "montant_meur",
+                                      interpolation="ponctuelle")
+    taux = charger_serie_annuelle(
+        CHEMIN_TAUX, "valeur", interpolation="escalier",
+        filtre={"regime": "regime_general", "mesure": "taux_deplafonne"})
+    part = charger_serie_annuelle(
+        CHEMIN_TAUX, "valeur", interpolation="escalier",
+        filtre={"regime": "regime_general", "mesure": "part_salariale_deplafonnee"})
+
+    resultat: dict[int, dict[str, float]] = {}
+    for annee in range(assiette.premiere_annee, assiette.derniere_annee + 1):
+        # On ne chiffre QUE les années que l'Urssaf a publiées. Hors de sa
+        # fenêtre, la série reconduit sa valeur de bord et retombe à `estimee` ;
+        # multiplier cela par un taux donnerait un milliard qui n'a pas de
+        # source, au milieu d'une colonne qui en a une.
+        observee = assiette.brut(annee)
+        if observee.fiabilite is not Fiabilite.CERTIFIEE:
+            continue
+        masse = observee.valeur / 1000.0            # Md€
+        t = taux(annee)
+        prelevee = masse * t
+        salariale = prelevee * part(annee)
+        resultat[annee] = {
+            "assiette_md": masse,
+            "taux": t,
+            "total_md": prelevee,
+            "salariale_md": salariale,
+            "patronale_md": prelevee - salariale,
+        }
+    return resultat
+
+
+def part_sans_contrepartie_complementaire(donnees: dict) -> list[dict]:
+    """Quelle FRACTION du versement Agirc-Arrco n'achète aucun point.
+
+    C'est un rapport de TAUX, pas une masse : le dépôt n'a pas la répartition
+    de l'assiette entre les deux tranches, et une masse supposerait de
+    l'inventer. Le rapport, lui, est exact — il ne met en jeu que des taux
+    publiés par la fédération.
+
+    Deux colonnes, parce qu'un même salarié ne subit pas les mêmes
+    prélèvements selon qu'il franchit le plafond : la CET ne pèse que sur ceux
+    qui le dépassent, mais alors sur la TOTALITÉ de leur rémunération, tranche
+    1 comprise.
+    """
+    baremes = donnees["taux_agirc_arrco"]
+    cet = baremes["contribution_equilibre_technique"]
+    lignes = []
+    for tranche in baremes["tranches"]:
+        acquisitif = tranche["taux_calcul_des_points"]
+        appele = tranche["taux_appele"] + tranche["contribution_equilibre_general"]
+        lignes.append({
+            "nom": tranche["nom"],
+            "acquisitif": acquisitif,
+            "verse_sous_plafond": appele,
+            "verse_au_dessus": appele + cet,
+            "part_sous_plafond": 1 - acquisitif / appele,
+            "part_au_dessus": 1 - acquisitif / (appele + cet),
+        })
+    return lignes
+
+
+def chiffrer(sortie=None) -> None:
+    sortie = sortie or sys.stdout
+    lignes = cotisations_sans_contrepartie()
+    print("\nCE QUE LE RÉGIME GÉNÉRAL PRÉLÈVE SANS RIEN OUVRIR", file=sortie)
+    print("cotisation vieillesse déplafonnée (L. 241-3 CSS) × assiette "
+          "déplafonnée (Urssaf)\n", file=sortie)
+    print(f"{'année':>6} {'assiette Md€':>13} {'taux':>7} "
+          f"{'total Md€':>10} {'dont salarié':>13} {'dont employeur':>15}",
+          file=sortie)
+    for annee, l in lignes.items():
+        print(f"{annee:>6} {l['assiette_md']:>13.1f} {l['taux']:>7.2%} "
+              f"{l['total_md']:>10.1f} {l['salariale_md']:>13.1f} "
+              f"{l['patronale_md']:>15.1f}", file=sortie)
+    dernier = max(lignes)
+    print(f"\n{lignes[dernier]['total_md']:.1f} Md€ en {dernier}, dont "
+          f"{lignes[dernier]['salariale_md']:.1f} à la charge du salarié.",
+          file=sortie)
+
+    print("\n\nCE QUE LA COMPLÉMENTAIRE PRÉLÈVE SANS ACHETER DE POINT",
+          file=sortie)
+    print("part du versement, faute d'une assiette par tranche qui en ferait "
+          "une masse\n", file=sortie)
+    print(f"{'tranche':>10} {'acquisitif':>11} {'versé':>8} {'sans droits':>12}   "
+          f"{'versé >PSS':>10} {'sans droits':>12}", file=sortie)
+    for t in part_sans_contrepartie_complementaire(charger()):
+        print(f"{t['nom']:>10} {t['acquisitif']:>11.2%} {t['verse_sous_plafond']:>8.2%} "
+              f"{t['part_sous_plafond']:>12.1%}   {t['verse_au_dessus']:>10.2%} "
+              f"{t['part_au_dessus']:>12.1%}", file=sortie)
+    print("\nLe total est un PLANCHER de la non-contributivité du VERSEMENT : la\n"
+          "complémentaire n'y entre qu'en proportion, et la fonction publique pas du\n"
+          "tout — le taux du compte d'affectation spéciale est fixé pour équilibrer,\n"
+          "non pour acquérir.", file=sortie)
+
+
 def carte(donnees: dict, sortie=None) -> None:
     """Les bascules par face, dans l'ordre du temps.
 
@@ -191,6 +321,8 @@ def main(arguments: list[str] | None = None) -> int:
                            help="rouvre l'index LEGI et confronte chaque version citée")
     analyseur.add_argument("--chronologie", action="store_true",
                            help="toutes faces mêlées, dans l'ordre du temps")
+    analyseur.add_argument("--chiffrer", action="store_true",
+                           help="ce que l'on cotise sans rien acquérir, en milliards")
     options = analyseur.parse_args(arguments)
     donnees = charger()
 
@@ -208,6 +340,10 @@ def main(arguments: list[str] | None = None) -> int:
         total = sum(1 for b in donnees["bascules"] for c in ("version", "version_precedente")
                     if b.get(c))
         print(f"{total} versions d'article vérifiées dans l'index LEGI, aucun écart.")
+        return 0
+
+    if options.chiffrer:
+        chiffrer()
         return 0
 
     if options.chronologie:

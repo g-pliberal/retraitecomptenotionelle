@@ -559,6 +559,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # Le seul qui vienne d'Eurostat : aucune source française ne ventile le
         # salaire par âge pour les régimes spéciaux.
         "profil_salaire_secteur": "macro/profil_salaire_secteur.csv",
+        # L'assiette DÉPLAFONNÉE, chez l'Urssaf qui la produit : le champ n'est
+        # pas celui des comptes nationaux ci-dessus — secteur privé du régime
+        # général seul, et c'est ce qui la rend opposable à un taux de L. 241-3.
+        "masse_salariale_privee": "macro/masse_salariale_privee.csv",
         "assiette_salaires": "macro/assiette_activite.csv",
         "assiette_revenu_mixte": "macro/assiette_activite.csv",
         "taux_cotisation_annuels": "regimes/taux_cotisation_annuels.csv",

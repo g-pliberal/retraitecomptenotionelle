@@ -213,12 +213,12 @@ s'arrête.
 
 ## 7. Ce qui reste à faire
 
-1. **Le versant `cotisation` n'est pas chiffré.** On sait depuis quand la
-   cotisation déplafonnée n'achète rien ; on ne sait pas combien elle pèse. Le
-   dépôt a les taux année par année (`taux_cotisation_annuels.csv`) et
-   l'assiette ; ce qui manque est la distribution des salaires au-dessus du
-   plafond, sans laquelle la masse reste une estimation. Le taux d'appel des
-   complémentaires relève du même chantier et n'est porté par aucune table.
+1. **Le versant `cotisation` est chiffré — voir le § 8**, qui a corrigé au
+   passage une erreur écrite ici : ce qui manquait n'était PAS la distribution
+   des salaires au-dessus du plafond. La cotisation déplafonnée porte sur la
+   totalité de la rémunération, et sa masse est un produit de deux séries
+   publiées. Reste à chiffrer la part sans droits de l'Agirc-Arrco, qui n'est
+   connue qu'en proportion.
 2. **La date de péremption de 2026 doit être inscrite.** Tant que les comptes
    de la protection sociale publient encore leurs sous-postes, rien ne bouge ;
    le jour où le régime général cesse d'apparaître comme bénéficiaire d'un
@@ -232,6 +232,123 @@ s'arrête.
    § 2 dit que les deux ne se recouvrent pas ; personne n'a encore fait le
    tableau des deux côtés, et c'est le moyen le plus court de trouver ce qui
    manque encore aux quarante-deux dispositifs.
+
+
+## 8. Combien : 17,9 milliards, et la correction d'une erreur écrite plus haut
+
+Le § 7 posait que le versant `cotisation` était daté mais non chiffré, et
+donnait pour obstacle la distribution des salaires au-dessus du plafond.
+**C'était faux, et l'erreur valait un facteur dix.**
+
+L'article D. 242-4 et la lettre même de L. 241-3 le disent : la cotisation
+déplafonnée est assise sur **la totalité de la rémunération, dès le premier
+euro** — et non sur la seule fraction supra-plafond. Elle n'ouvre aucun droit
+pour autant, le salaire annuel de base étant borné au plafond par R. 351-29 et
+les trimestres à quatre par an par R. 351-9. Aucune distribution n'est donc
+nécessaire : la masse est le produit d'un taux par une assiette, et les deux
+sont publiés.
+
+### L'assiette, chez celui qui la recouvre
+
+Elle ne pouvait pas venir des comptes nationaux, qui couvrent toute l'économie,
+fonction publique comprise — laquelle ne relève pas de L. 241-3. L'Urssaf
+publie la bonne, et sa note méthodologique la **définit** : « la masse salariale
+correspond à l'assiette déplafonnée des cotisations sociales », champ secteur
+privé, régime général, France entière, depuis 1997, série labellisée par
+l'Autorité de la statistique publique. `scripts/fetch/urssaf_masse_salariale.py`
+la récupère, et `data/reference/macro/masse_salariale_privee.csv` en porte
+vingt-neuf années certifiées.
+
+L'écart entre les deux séries n'est pas une nuance : 726 Md€ en 2024 chez
+l'Urssaf contre environ 1 050 Md€ aux comptes nationaux. Les confondre
+gonflerait la masse de 45 % sans que rien ne change d'allure, et un test du
+dépôt tient désormais cet écart pour cette raison précise.
+
+### Le résultat
+
+`python scripts/frontiere_contributive.py --chiffrer` :
+
+| Année | Assiette déplafonnée | Taux | Prélevé sans droits | dont salarié |
+|---|---|---|---|---|
+| 1997 | 305,9 Md€ | 1,60 % | **4,9 Md€** | 0,0 |
+| 2005 | 418,3 Md€ | 1,70 % | **7,1 Md€** | 0,4 |
+| 2015 | 526,4 Md€ | 2,10 % | **11,1 Md€** | 1,6 |
+| 2023 | 703,0 Md€ | 2,30 % | **16,2 Md€** | 2,8 |
+| 2025 | 740,0 Md€ | 2,42 % | **17,9 Md€** | 3,0 |
+
+**17,9 milliards d'euros en 2025**, dont 3,0 à la charge du salarié. Le taux a
+été relevé deux fois depuis 2023 — 2,42 % au 1er janvier 2024, 2,51 % au
+1er janvier 2026 —, si bien que la série continuera de monter plus vite que
+l'assiette.
+
+### Un recoupement que rien n'avait préparé
+
+La part salariale de ce prélèvement est **nulle jusqu'en 2004** et positive à
+partir de 2005, dans une table certifiée construite depuis les décrets
+d'application. Or la bascule du § 4 est datée du 22 août 2003, par la version de
+L. 241-3 qui ajoute « et des salariés ». Les deux dates ne se contredisent pas :
+**la loi autorise, le décret exécute**, et deux chemins indépendants — le texte
+d'un côté, les taux appliqués de l'autre — se rejoignent à dix-huit mois près.
+Le dépôt garde les deux, et un test tient l'écart, qui disparaîtrait sans bruit
+si quelqu'un alignait l'une sur l'autre.
+
+### La complémentaire : connue en proportion, pas en masse
+
+La fiche réglementaire de l'Agirc-Arrco est explicite, et c'est le producteur
+de la règle qui parle : « **Seule cette cotisation est génératrice de droits** »
+— celle calculée au taux de calcul des points — et les deux contributions
+d'équilibre de l'article 37 de l'ANI sont « **non génératrices de droits** ».
+
+| Tranche | Acquisitif | Versé | Sans droits | Versé au-dessus du plafond | Sans droits |
+|---|---|---|---|---|---|
+| Tranche 1 | 6,20 % | 10,02 % | **38,1 %** | 10,37 % | **40,2 %** |
+| Tranche 2 | 17,00 % | 24,29 % | **30,0 %** | 24,64 % | **31,0 %** |
+
+**Près de deux euros sur cinq versés à la complémentaire sur la tranche 1
+n'achètent aucun point** — le pourcentage d'appel de 127 % (article 36 de l'ANI)
+et la contribution d'équilibre général. C'est trois fois plus, en proportion,
+que la part sans contrepartie du régime de base. Le secrétariat général du COR
+note que « ce mécanisme est peu connu des cotisants ».
+
+Ce n'est pas une masse, et ce ne peut pas l'être ici : il faudrait la répartition
+de l'assiette entre les deux tranches, que le dépôt n'a pas. Le rapport, lui,
+est exact — il ne met en jeu que des taux publiés.
+
+### Le mécanisme a changé de signe
+
+Le pourcentage d'appel n'a pas toujours prélevé. Instauré en 1952 à l'Agirc, il
+était **inférieur à 100 %** — 78 % en 1952, 95 % en 1965 — pour éviter de
+constituer des réserves inutiles : le cotisant versait moins que le taux
+contractuel et acquérait les points du taux entier. Il joue en sa faveur
+jusqu'en 1978, atteint 125 % en 1992 à l'Arrco et en 1995 à l'Agirc, et 127 %
+à la fusion. **Le même instrument a fait les deux.**
+
+### Ce que ce total n'est pas
+
+Un **plancher**, et il faut le dire avec le chiffre. Il ne porte que le régime
+général : la complémentaire n'y entre qu'en proportion, et la fonction publique
+pas du tout — le taux du compte d'affectation spéciale des pensions, 82,28 %
+pour les civils au 1er janvier 2026 après deux relèvements de quatre points, est
+fixé par décret pour **équilibrer** un compte, non pour acquérir un droit ; la
+Commission des comptes de la sécurité sociale le nomme d'ailleurs « contribution
+d'équilibre ».
+
+Et il ne se soustrait de rien. Les 17,9 milliards ne viennent pas en déduction
+des avantages non contributifs de l'inventaire : ce sont deux grandeurs de sens
+opposé, sur deux faces différentes, et les compenser l'une par l'autre n'aurait
+aucun sens — l'une dit ce que le système donne sans qu'on ait payé, l'autre ce
+qu'on paie sans rien recevoir. Elles ne se rencontrent pas dans la même poche.
+
+### Ce qui manque encore
+
+Aucune **masse** de cotisation sans droits n'est publiée par les producteurs,
+ni au régime général ni à l'Agirc-Arrco : ils publient les taux et le mécanisme.
+Les 17,9 milliards sont donc un calcul du dépôt à partir de deux séries
+publiées, et non un chiffre repris. Le seul montant qu'un régime publie
+lui-même sur ce terrain est celui d'Agirc-Arrco — 27,6 Md€ de prestations
+servies « au titre de la solidarité » en 2024, près de 30 % de ses pensions —,
+mais il est de l'autre côté de la frontière, et il vient d'un communiqué, sans
+décomposition ni compte audité.
 
 ---
 

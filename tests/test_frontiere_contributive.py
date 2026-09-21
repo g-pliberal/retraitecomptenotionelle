@@ -243,3 +243,150 @@ def test_le_renvoi_de_l_inventaire_annonce_le_bon_compte(donnees):
         "formulation : remettre le compte à jour avec lui")
     assert len(donnees["bascules"]) == 24
     assert min(str(b["date"]) for b in donnees["bascules"])[:4] == "1991"
+
+
+# --- Ce que le dépôt ne saura jamais certifier -----------------------------
+
+def test_les_bascules_hors_legi_ont_le_meme_vocabulaire(donnees):
+    """Une preuve d'une autre nature ne donne pas droit à un autre vocabulaire.
+
+    Les accords nationaux interprofessionnels ne sont pas au Journal officiel
+    et n'entrent pas dans l'index LEGI : la sonde n'a rien à quoi les
+    confronter. Ce qui change est la PREUVE — une adresse et une date de
+    lecture —, pas la grammaire.
+    """
+    for bascule in donnees["bascules_hors_legi"]:
+        code, face = bascule["code"], bascule["face"]
+        assert face in frontiere.SENS_PAR_FACE, f"{code} : face inconnue « {face} »"
+        assert bascule["sens"] in frontiere.SENS_PAR_FACE[face], (
+            f"{code} : sens « {bascule['sens']} » impossible sur la face {face}")
+        assert bascule["portee_modele"] in frontiere.PORTEES, f"{code} : portée inconnue"
+
+
+def test_une_bascule_hors_legi_porte_une_adresse_et_une_date_de_lecture(donnees):
+    """C'est tout ce qui la sépare d'un souvenir.
+
+    Aucun script ne peut revérifier ces lignes. Le minimum exigible est donc
+    qu'un LECTEUR le puisse : l'adresse consultée, et le jour où elle l'a été.
+    """
+    for bascule in donnees["bascules_hors_legi"]:
+        code = bascule["code"]
+        assert str(bascule.get("source", "")).startswith("http"), (
+            f"{code} : pas d'adresse consultable")
+        assert bascule.get("lu_le"), f"{code} : pas de date de lecture"
+
+
+def test_aucun_code_ne_vit_des_deux_cotes(donnees):
+    codes = [b["code"] for b in donnees["bascules"] + donnees["bascules_hors_legi"]]
+    doublons = {c for c in codes if codes.count(c) > 1}
+    assert doublons == set(), f"codes en double : {', '.join(sorted(doublons))}"
+
+
+def test_les_taux_agirc_arrco_se_recomposent(donnees):
+    """Le taux appelé EST le taux de calcul des points multiplié par 1,27.
+
+    La fiche de la fédération le dit et le montre : « 6,20 x 1,27 = 7,87 % sur
+    la tranche 1 », les taux étant « arrondis au centième ». Ce contrôle n'est
+    donc pas une redondance : c'est ce qui attrape une faute de frappe dans
+    une table que nul script ne peut aller revérifier.
+    """
+    baremes = donnees["taux_agirc_arrco"]
+    appel = baremes["pourcentage_appel"]
+    for tranche in baremes["tranches"]:
+        attendu = round(tranche["taux_calcul_des_points"] * appel, 4)
+        assert tranche["taux_appele"] == attendu, (
+            f"{tranche['nom']} : {tranche['taux_calcul_des_points']:.4f} × {appel} "
+            f"donne {attendu}, non {tranche['taux_appele']}")
+
+
+def test_la_part_sans_droits_de_la_complementaire_est_celle_qu_on_annonce(donnees):
+    """38 % sur la tranche 1 : le chiffre le plus fort de ce chantier.
+
+    Il ne vaut que si l'on additionne au taux appelé la contribution
+    d'équilibre général, que la fédération qualifie elle-même de « non
+    génératrice de droits ». Le test fixe la convention autant que le nombre.
+    """
+    par_tranche = {t["nom"]: t for t in frontiere.part_sans_contrepartie_complementaire(donnees)}
+    assert round(par_tranche["Tranche 1"]["part_sous_plafond"], 3) == 0.381
+    assert round(par_tranche["Tranche 2"]["part_sous_plafond"], 3) == 0.300
+
+
+# --- Le chiffrage ----------------------------------------------------------
+
+@pytest.mark.skipif(not frontiere.CHEMIN_ASSIETTE.exists(),
+                    reason="assiette Urssaf absente du dépôt")
+def test_la_cotisation_sans_contrepartie_est_le_produit_de_ses_deux_termes():
+    """Taux déplafonné × assiette déplafonnée, et rien d'autre.
+
+    Le contrôle est tautologique par construction, et c'est voulu : il
+    attrape un refactor qui glisserait un facteur — une conversion d'unité,
+    une part salariale appliquée deux fois — au milieu du produit.
+    """
+    lignes = frontiere.cotisations_sans_contrepartie()
+    assert lignes, "aucune année chiffrée"
+    for annee, l in lignes.items():
+        assert l["total_md"] == pytest.approx(l["assiette_md"] * l["taux"]), annee
+        assert l["salariale_md"] + l["patronale_md"] == pytest.approx(l["total_md"]), annee
+        assert 0 <= l["salariale_md"] < l["patronale_md"], (
+            f"{annee} : la part salariale n'est plus la plus petite des deux")
+
+
+@pytest.mark.skipif(not frontiere.CHEMIN_ASSIETTE.exists(),
+                    reason="assiette Urssaf absente du dépôt")
+def test_le_salarie_n_entre_dans_le_deplafonne_qu_en_2005():
+    """Un recoupement que rien n'avait préparé, et qui tombe juste.
+
+    La bascule `cotisation_deplafonnee_salarie` est datée du 22 août 2003 par
+    la version de L. 241-3 qui ajoute « et des salariés ». La table des taux,
+    certifiée et construite par un tout autre chemin — les décrets
+    d'application, lus dans LEGI par `dila_legi_taux_cotisation.py` —, porte
+    une part salariale NULLE jusqu'en 2004 et positive à partir de 2005.
+
+    Les deux dates ne se contredisent pas : la loi autorise, le décret
+    exécute, et le dépôt garde les deux. Ce test tient l'écart, qui
+    disparaîtrait sans bruit si quelqu'un alignait l'une sur l'autre.
+    """
+    lignes = frontiere.cotisations_sans_contrepartie()
+    assert all(l["salariale_md"] == 0 for a, l in lignes.items() if a <= 2004)
+    assert all(l["salariale_md"] > 0 for a, l in lignes.items() if a >= 2005)
+
+
+@pytest.mark.skipif(not frontiere.CHEMIN_ASSIETTE.exists(),
+                    reason="assiette Urssaf absente du dépôt")
+def test_le_chiffrage_de_2025_est_celui_que_la_prose_annonce():
+    """Une année CLOSE ne bouge plus : on peut donc l'ancrer.
+
+    Ancrer « la dernière année » se périmerait à chaque trimestre publié par
+    l'Urssaf ; ancrer 2025 ne se périme jamais, et c'est ce que le document
+    imprime.
+    """
+    lignes = frontiere.cotisations_sans_contrepartie()
+    assert round(lignes[2025]["total_md"], 1) == 17.9
+    assert round(lignes[2025]["salariale_md"], 1) == 3.0
+    prose = re.sub(r"\s+", " ", (RACINE / "docs" / "frontiere_contributive.md")
+                   .read_text(encoding="utf-8"))
+    assert "17,9 milliards" in prose
+
+
+@pytest.mark.skipif(not frontiere.CHEMIN_ASSIETTE.exists(),
+                    reason="assiette Urssaf absente du dépôt")
+def test_l_assiette_deplafonnee_n_est_pas_celle_des_comptes_nationaux():
+    """Le piège qui coûterait le plus cher, et qu'aucun autre test ne verrait.
+
+    `assiette_activite.csv` porte les salaires bruts de TOUTE l'économie,
+    fonction publique comprise, qui ne relève pas de l'article L. 241-3.
+    Prendre l'une pour l'autre gonflerait la masse d'environ 45 % sans que
+    rien ne change de forme — mêmes colonnes, même unité, même allure de
+    série. Le test fixe l'ordre de grandeur de l'écart.
+    """
+    from retraite_notionnelle.donnees.chargement import charger_serie_annuelle
+
+    privee = charger_serie_annuelle(frontiere.CHEMIN_ASSIETTE, "montant_meur",
+                                    interpolation="ponctuelle")
+    nationale = charger_serie_annuelle(
+        RACINE / "data" / "reference" / "macro" / "assiette_activite.csv",
+        "montant_meur", interpolation="ponctuelle", filtre={"poste": "salaires_bruts"})
+    rapport = privee(2024) / nationale(2024)
+    assert 0.60 < rapport < 0.80, (
+        f"l'assiette privée vaut {rapport:.0%} des salaires bruts des comptes "
+        f"nationaux : l'une des deux séries a changé de champ")
