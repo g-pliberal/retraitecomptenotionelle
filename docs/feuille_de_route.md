@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 294<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 401<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 405<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -8383,15 +8383,32 @@ ligne est lue sous un filtre de fiabilité, et la colonne « Niveau » doit dire
 ce niveau-là. Sans lui, une ligne pourrait annoncer « certifiée » en lisant les
 bornes des années estimées.
 
-**Deux choses trouvées en chemin, et laissées à qui sait.** Le tableau donne
-« **fausses** » aux taux du régime général de 1980 et 1981 — le décret du
-30 juillet 1979 les a relevés et la série ne l'a pas suivi — mais le fichier
-les porte au niveau `haute`, comme les années voisines. L'un des deux a tort,
-et le vocabulaire des fiabilités n'a pas de mot pour « fausse ». Et la page
-Données du site affiche « Institutions citées : 28 » en dur, quand
-`sources.yaml` en compte 36 : c'est le même chiffre que `methodologie.md`
-donnait en toutes lettres, et il est faux au même endroit du dépôt. Les deux
-sont dans `moteur/` et sur les pages, zone d'une autre session ce jour-là.
+**Deux choses trouvées en chemin, et corrigées le jour même.**
+
+*Le compte des institutions était écrit en dur, « 28 », dans les deux
+portages* — `pages.py` et `pages.js` —, quand `sources.yaml` en porte 36. Le
+même chiffre était faux dans `methodologie.md`, en toutes lettres, et dans le
+parcours de présentation. Il se lit maintenant là où il vit :
+`compter_institutions()` pour le Python, et le paquet de données pour le
+JavaScript, que `construire_donnees.py` remplit de la même valeur. Un seul
+endroit peut désormais le faire dériver, et c'est le manifeste lui-même.
+
+*Le tableau de certification donnait « fausses » les taux du régime général de
+1980 et 1981* — le décret n° 79-650 du 30 juillet 1979 les a relevés « à titre
+exceptionnel » sur une fenêtre qui couvre deux 1er janvier, et ni l'IPP ni
+OpenFisca ne portent la hausse — quand `taux_cotisation_annuels.csv` les porte
+`haute`, au niveau de leurs voisines. La prose ne prétend plus au niveau que le
+fichier ne porte pas. Le déclassement des seize lignes, lui, n'a PAS été écrit,
+et la raison mérite d'être retenue : **une fiabilité ne se change pas dans le
+fichier seul.** Le journal `certification.json` dit, contrôle par contrôle,
+combien de valeurs ont été versées et à quel niveau, un test confronte ces
+comptes aux lignes du fichier, et ces traces ne s'écrivent que par
+`verifier_donnees.py --appliquer`, qui lit `data/brut/`, absent d'un dépôt
+cloné. Les forger à la main mettrait, dans la seule pièce qui dise d'où
+viennent les valeurs, une lecture qui n'a pas eu lieu. Le geste attend donc une
+session qui ait rejoué les récupérateurs — et une exception par clé dans
+`Certification`, que le journal devra savoir porter : deux niveaux pour un même
+contrôle, ce qu'il ne sait pas faire.
 
 **Ce qui reste — et c'est le travail, qui se fait section par section.**
 Soixante-douze sections, et elles ont toutes la même forme : elles disent ce

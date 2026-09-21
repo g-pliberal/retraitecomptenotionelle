@@ -414,6 +414,17 @@ def charger_yaml(chemin: Path) -> dict:
     return contenu
 
 
+def compter_institutions(racine: Path) -> int:
+    """Combien d'institutions le manifeste des sources cite.
+
+    La page Données l'affichait en dur — « 28 » — quand le manifeste en portait
+    36 : le compte était celui d'un jour de 2026, et rien ne le relisait.
+    `docs/methodologie.md` l'écrivait en toutes lettres, « vingt-huit », et
+    s'était trompé au même endroit. Il se lit maintenant là où il vit.
+    """
+    return len(charger_yaml(racine / "sources.yaml").get("institutions", {}))
+
+
 def journal_certification(racine: Path) -> dict:
     """Trace du dernier recontrôle des séries contre leurs sources.
 

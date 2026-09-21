@@ -64,6 +64,7 @@ from ..garantie import cout_garantie, cout_garantie_par_sexe
 from ..donnees.chargement import (
     DonneeInsuffisante,
     charger_periodes_non_travaillees,
+    compter_institutions,
     journal_certification,
 )
 from ..donnees.depenses import SYSTEMES, DepensesRetraite
@@ -12164,6 +12165,10 @@ def _donnees(contexte: Contexte) -> str:
     ]
 
     journal = journal_certification(macro.racine)
+    # Le compte des institutions était écrit en dur — « 28 » — quand le
+    # manifeste en portait 36. Il se lit là où il vit, des deux côtés du
+    # portage : ici le fichier, dans le moteur JavaScript le paquet.
+    institutions = str(compter_institutions(macro.racine))
     series = journal.get("series", {})
     certifications = [
         [escape(nom), f"{trace['valeurs']}",
@@ -12210,7 +12215,7 @@ def _donnees(contexte: Contexte) -> str:
             "Régimes recensés", str(inventaire),
             f"dont {len(simulateur.catalogue)} calculés",
         ) + g.fiche(
-            "Institutions citées", "28",
+            "Institutions citées", institutions,
             "INSEE, COR, DREES, Cnav, Légifrance…",
         )
         bandeau = f"""<div class="note"><strong>Les séries macroéconomiques sont
@@ -12232,7 +12237,7 @@ robustes encore.</div>"""
             "Régimes recensés", str(inventaire),
             f"dont {len(simulateur.catalogue)} calculés",
         ) + g.fiche(
-            "Institutions citées", "28",
+            "Institutions citées", institutions,
             "INSEE, COR, DREES, Cnav, Légifrance…",
         )
         bandeau = """<div class="note avertissement"><strong>Aucune série n'a
