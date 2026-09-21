@@ -42,7 +42,8 @@ import {
   CAS_TYPES, VARIANTES_LIQUIDATION, calculerCasTypes, poidsEffectifs, poidsEgaux,
 } from "./castypes.js";
 import { coutGarantie, manqueMoyen } from "./garantie.js";
-import { DistributionPensions } from "./distribution.js";
+import { DistributionPensions, partFemmes as partFemmesDistribution }
+  from "./distribution.js";
 import { Fiabilite } from "./serie.js";
 import { ORGANISMES, POSTES } from "./equilibre.js";
 
@@ -1638,18 +1639,17 @@ function reprisesSuccessions(lignes, simulateur, calage) {
   let partFemmes = 0.5;
   const sousPlancher = { F: 0.0, H: 0.0 };
   if (poidsTotal > 0) {
-    let femmes65 = 0.0;
-    for (const s of courbeF) femmes65 += s;
-    let hommes65 = 0.0;
-    for (const s of courbeH) hommes65 += s;
+    // LE POIDS DES DEUX SEXES EST CELUI DE L'ENQUÊTE, et non celui que les
+    // courbes de survie donnaient : voir `partFemmes` dans distribution.js.
+    const poidsFemmes = partFemmesDistribution(simulateur.paquet);
     for (const sexe of ["F", "H"]) {
       const parSexe = new DistributionPensions(simulateur.paquet, sexe);
       sousPlancher[sexe] = coutGarantie(
         parSexe, 1.0, calage.plancherMensuel, deplacement,
       ).partBeneficiaires;
     }
-    const beneficiairesF = femmes65 * sousPlancher.F;
-    const beneficiairesH = hommes65 * sousPlancher.H;
+    const beneficiairesF = poidsFemmes * sousPlancher.F;
+    const beneficiairesH = (1.0 - poidsFemmes) * sousPlancher.H;
     if (beneficiairesF + beneficiairesH > 0) {
       partFemmes = beneficiairesF / (beneficiairesF + beneficiairesH);
     }

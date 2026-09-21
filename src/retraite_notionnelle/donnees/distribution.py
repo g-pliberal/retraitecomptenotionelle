@@ -118,3 +118,68 @@ class DistributionPensions:
         ne donne pas — et il est trop petit pour peser sur quoi que ce soit.
         """
         return sum(tranche.part for tranche in self.tranches)
+
+
+def part_femmes(racine: Path, millesime: int | None = None,
+                tolerance: float = 5e-4) -> float:
+    """La part des femmes dans la population que l'enquête décrit, lue sur elle.
+
+    POURQUOI ELLE NE SE DEVINE PAS AILLEURS. Chiffrer la garantie par sexe
+    demande de peser les deux distributions l'une par rapport à l'autre, et le
+    dépôt ne porte aucun effectif de retraités par sexe : ni la pyramide des
+    âges de l'INSEE, qui ignore la retraite, ni les effectifs de la DREES, qui
+    ignorent le sexe. Le modèle prenait donc les courbes de survie à 65 ans et
+    en tirait, en population stationnaire, une part de femmes parmi les 65 ans
+    et plus — 56,0 %.
+
+    ELLE SE LIT POURTANT DANS LE FICHIER, et exactement. L'enquête publie TROIS
+    colonnes — les femmes, les hommes, et l'ensemble — et la troisième est le
+    mélange des deux premières : il existe un poids, et un seul, tel que
+    ``w·F + (1−w)·H`` redonne l'ensemble, tranche par tranche. Ce poids EST la
+    part des femmes dans la population de l'enquête. Les quarante-six tranches
+    de 2020 le donnent toutes entre 0,52 et 0,53, l'écart étant celui de
+    l'arrondi au centième de point de la publication ; les moindres carrés le
+    fixent à **52,8 %**.
+
+    ET L'ÉCART COMPTAIT. Peser les sexes à 56,0 % quand l'enquête dit 52,8 %
+    faisait dire au modèle deux choses différentes sur la même population :
+    58,99 % de retraités sous le plancher majoré aux pensions du scénario 6 en
+    recomposant les deux sexes, 58,03 % en lisant directement la colonne
+    « ensemble », qui est celle dont le coût est tiré. C'est cette
+    contradiction que ``tolerance`` interdit désormais — et non la valeur du
+    poids, qui n'est le sujet d'aucune hypothèse une fois le fichier lu.
+
+    ``tolerance`` borne le résidu du mélange, en fraction : 5·10⁻⁴ est cinq
+    fois l'arrondi de la source, assez large pour l'absorber et assez étroit
+    pour refuser un fichier dont les trois colonnes ne se répondraient plus.
+    """
+    colonnes = {
+        sexe: DistributionPensions(racine, sexe=sexe, millesime=millesime)
+        for sexe in ("F", "H", "ensemble")
+    }
+    femmes, hommes, ensemble = (
+        [tranche.part for tranche in colonnes[sexe].tranches]
+        for sexe in ("F", "H", "ensemble")
+    )
+    if not (len(femmes) == len(hommes) == len(ensemble)):
+        raise ValueError(
+            "les trois colonnes de la distribution n'ont pas le même découpage"
+        )
+    # Moindres carrés sur le seul inconnu : le poids qui mélange les deux sexes.
+    numerateur = sum((e - h) * (f - h)
+                     for e, f, h in zip(ensemble, femmes, hommes))
+    denominateur = sum((f - h) ** 2 for f, h in zip(femmes, hommes))
+    if denominateur <= 0.0:
+        raise ValueError(
+            "les distributions des deux sexes sont identiques : aucun poids "
+            "ne s'en déduit"
+        )
+    poids = numerateur / denominateur
+    residu = max(abs(poids * f + (1.0 - poids) * h - e)
+                 for e, f, h in zip(ensemble, femmes, hommes))
+    if residu > tolerance:
+        raise ValueError(
+            f"la colonne « ensemble » n'est pas le mélange des deux sexes : "
+            f"résidu de {residu:.2e}, au-delà de {tolerance:.0e}"
+        )
+    return poids

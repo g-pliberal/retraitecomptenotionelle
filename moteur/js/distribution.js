@@ -64,3 +64,59 @@ export class DistributionPensions {
     return this.tranches.reduce((somme, tranche) => somme + tranche.part, 0);
   }
 }
+
+/**
+ * La part des femmes dans la population que l'enquête décrit, lue sur elle.
+ * Portage de ``donnees.distribution.part_femmes``.
+ *
+ * Le dépôt ne porte aucun effectif de retraités par sexe — ni la pyramide des
+ * âges de l'INSEE, qui ignore la retraite, ni les effectifs de la DREES, qui
+ * ignorent le sexe. Mais l'enquête publie trois colonnes, et la troisième est
+ * le mélange des deux premières : il existe un poids, et un seul, tel que
+ * `w·F + (1−w)·H` redonne l'ensemble tranche par tranche. Ce poids EST la
+ * part des femmes dans sa population, et vaut 52,8 % en 2020.
+ *
+ * Le modèle prenait jusqu'au 21 septembre 2026 la part des femmes parmi les
+ * 65 ans et plus que les courbes de survie donnent en population
+ * stationnaire, 56,0 % : un poids qui ne recomposait pas la colonne dont le
+ * coût est tiré, et faisait dire au modèle deux choses de la même population.
+ *
+ * `tolerance` borne le résidu du mélange : cinq fois l'arrondi de la source.
+ */
+export function partFemmes(paquet, tolerance = 5e-4) {
+  const colonnes = ["F", "H", "ensemble"].map(
+    (sexe) => new DistributionPensions(paquet, sexe).tranches.map((t) => t.part),
+  );
+  const [femmes, hommes, ensemble] = colonnes;
+  if (femmes.length !== hommes.length || femmes.length !== ensemble.length) {
+    throw new Error(
+      "les trois colonnes de la distribution n'ont pas le même découpage",
+    );
+  }
+  // Moindres carrés sur le seul inconnu : le poids qui mélange les deux sexes.
+  let numerateur = 0.0;
+  let denominateur = 0.0;
+  for (let rang = 0; rang < femmes.length; rang += 1) {
+    const ecart = femmes[rang] - hommes[rang];
+    numerateur += (ensemble[rang] - hommes[rang]) * ecart;
+    denominateur += ecart * ecart;
+  }
+  if (denominateur <= 0) {
+    throw new Error(
+      "les distributions des deux sexes sont identiques : aucun poids ne s'en déduit",
+    );
+  }
+  const poids = numerateur / denominateur;
+  let residu = 0.0;
+  for (let rang = 0; rang < femmes.length; rang += 1) {
+    residu = Math.max(residu, Math.abs(
+      poids * femmes[rang] + (1.0 - poids) * hommes[rang] - ensemble[rang],
+    ));
+  }
+  if (residu > tolerance) {
+    throw new Error(
+      `la colonne « ensemble » n'est pas le mélange des deux sexes : résidu de ${residu}`,
+    );
+  }
+  return poids;
+}

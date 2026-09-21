@@ -145,7 +145,10 @@ from .config import RevalorisationStock, SituationFoyer
 from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite, SerieAnnuelle
 from .donnees.depenses import DepensesRetraite
-from .donnees.distribution import DistributionPensions
+from .donnees.distribution import (
+    DistributionPensions,
+    part_femmes as part_femmes_distribution,
+)
 from .donnees.taux import CourbeTauxSansRisque
 from .donnees.equilibre import ORGANISMES, POSTES, ComptesRetraite
 from .donnees.population import Population
@@ -2223,12 +2226,16 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
     courtes, et les décès les libèrent plus tôt. ET CE SONT SURTOUT DES
     FEMMES : leurs pensions sont plus basses, et l'enquête les distribue à
     part. La part des femmes parmi les bénéficiaires est celle des femmes
-    sous le plancher, pesée par la part des femmes parmi les 65 ans et plus
-    — que les courbes de survie du modèle donnent, en population
-    stationnaire, faute d'un effectif de retraités par sexe dans le dépôt —,
-    et les deux courbes de survie sont mélangées dans cette proportion, au
-    lieu de moitié-moitié. Les femmes vivant plus longtemps, les avances
-    s'allongent d'autant.
+    sous le plancher, pesée par la part des femmes dans la population que
+    l'enquête décrit — 52,8 %, que sa colonne « ensemble » donne exactement,
+    étant le mélange de ses deux colonnes de sexe (``donnees.distribution.
+    part_femmes``) —, et les deux courbes de survie sont mélangées dans cette
+    proportion, au lieu de moitié-moitié. Les femmes vivant plus longtemps,
+    les avances s'allongent d'autant. Ce poids venait des courbes de survie
+    jusqu'au 21 septembre 2026, qui en tiraient 56,0 % en population
+    stationnaire : un chiffre sur les 65 ans et plus, appliqué aux
+    distributions de TOUS les retraités, et qui ne recomposait donc pas la
+    colonne dont le coût est tiré.
 
     DEUX AVANCES SUR UNE SUCCESSION. Le patrimoine du fichier est celui d'un
     MÉNAGE, et une avance est celle d'une PERSONNE : confronter l'une à
@@ -2317,14 +2324,23 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
     part_femmes = 0.5
     sous_plancher = {"F": 0.0, "H": 0.0}
     if poids_total > 0.0:
-        femmes_65 = sum(courbe_f)
-        hommes_65 = sum(courbe_h)
+        # LE POIDS DES DEUX SEXES EST CELUI DE L'ENQUÊTE, et non celui que les
+        # courbes de survie donnaient. Peser les femmes par leur espérance de
+        # vie à 65 ans revenait à supposer la population stationnaire ET à
+        # ignorer que l'enquête publie sa propre composition : sa colonne
+        # « ensemble » est le mélange de ses deux colonnes de sexe, à un poids
+        # près qui s'en déduit exactement. Les deux lectures divergeaient d'un
+        # point de part sous le plancher — 58,99 % en recomposant contre
+        # 58,03 % dans la colonne dont le COÛT est tiré —, c'est-à-dire que le
+        # modèle disait deux choses de la même population.
+        poids_femmes = part_femmes_distribution(parametres.racine_donnees,
+                                                millesime)
         for sexe in ("F", "H"):
             par_sexe = DistributionPensions(parametres.racine_donnees, sexe=sexe)
             sous_plancher[sexe] = cout_garantie(
                 par_sexe, 1.0, calage.plancher_mensuel, deplacement).part_beneficiaires
-        beneficiaires_f = femmes_65 * sous_plancher["F"]
-        beneficiaires_h = hommes_65 * sous_plancher["H"]
+        beneficiaires_f = poids_femmes * sous_plancher["F"]
+        beneficiaires_h = (1.0 - poids_femmes) * sous_plancher["H"]
         if beneficiaires_f + beneficiaires_h > 0.0:
             part_femmes = beneficiaires_f / (beneficiaires_f + beneficiaires_h)
     longueur = max(len(courbe_h), len(courbe_f))
