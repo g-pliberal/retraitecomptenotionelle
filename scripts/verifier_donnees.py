@@ -1769,6 +1769,27 @@ def source_caracteristiques_retraites() -> dict[tuple, float]:
     }
 
 
+def source_age_conjoncturel() -> dict[tuple, float]:
+    """L'âge conjoncturel de départ à la retraite, par sexe, depuis 2004.
+
+    Un indicateur synthétique — les taux de liquidation par âge de l'année
+    appliqués à une génération fictive —, donc indépendant de la pyramide des
+    âges. C'est ce qui le rend comparable à l'âge de départ de la grille de
+    cas types, qui n'a pas de pyramide non plus : ``scripts/age_conjoncturel.py``
+    en tire le biais d'âge de la grille, que docs/limites.md § 5 ter énonçait
+    sans pouvoir le chiffrer.
+    """
+    charge = _lire_json(
+        "drees_age_conjoncturel.json",
+        "scripts/fetch/drees_age_conjoncturel.py",
+    )
+    return {
+        (annee, sexe): age
+        for annee, serie in charge["valeurs"].items()
+        for sexe, age in serie.items()
+    }
+
+
 def source_esperances() -> dict[tuple, float]:
     """Espérances de vie : e0 et e60 par l'INSEE, e65 par l'OCDE.
 
@@ -4733,6 +4754,50 @@ CERTIFICATIONS = (
             "# minimum de pension APPORTE à ses bénéficiaires. Le classeur en donne",
             "# la part — 46,5 % des femmes contre 26,1 % des hommes — et non le",
             "# montant. Le retirer creuserait l'écart davantage.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="age_conjoncturel_depart",
+        chemin=REFERENCE / "macro" / "age_conjoncturel_depart.csv",
+        cles=("annee", "sexe"),
+        colonne="age",
+        source=source_age_conjoncturel,
+        origine="DREES, panorama « Les retraités et les retraites »",
+        decimales=2,
+        tolerance=0.005,
+        unite=" ans",
+        entete=(
+            "# Âge conjoncturel moyen de départ à la retraite, par sexe",
+            "# source_id: drees_age_conjoncturel",
+            "# unite: années",
+            "# fiabilite:",
+            "#   certifiee : jeu « Âge conjoncturel moyen de départ à la retraite,",
+            "#             selon le sexe » du portail open data de la DREES, figure",
+            "#             du panorama « Les retraités et les retraites », recontrôlé",
+            "#             par scripts/verifier_donnees.py.",
+            "#",
+            "# CE QUE CET ÂGE EST, ET CE QU'IL N'EST PAS",
+            "# ------------------------------------------",
+            "# Ce n'est pas l'âge moyen de ceux qui ont liquidé dans l'année : celui-là",
+            "# suit la taille des générations qui se présentent, et monte quand une",
+            "# classe creuse arrive à l'âge de partir. C'est un indicateur SYNTHÉTIQUE,",
+            "# construit comme un indice conjoncturel de fécondité — les taux de",
+            "# liquidation par âge de l'année, appliqués à une génération fictive.",
+            "# Il ne dépend donc que des comportements et des règles de l'année.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À chiffrer le biais d'âge de la grille de cas types. docs/limites.md",
+            "# § 5 ter l'énonçait sans le mesurer : « la grille part donc, en moyenne,",
+            "# un peu plus tard que la France réelle ; l'âge conjoncturel de départ",
+            "# que publie la DREES permettrait de le chiffrer, et il n'est pas dans",
+            "# le dépôt. » scripts/age_conjoncturel.py fait la mesure.",
+            "#",
+            "# Cette série ne porte AUCUNE pension et n'entre dans aucun calcul du",
+            "# site : elle mesure la grille, elle ne la corrige pas.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

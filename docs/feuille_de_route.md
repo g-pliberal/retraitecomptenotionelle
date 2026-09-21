@@ -11549,3 +11549,59 @@ test l'a épinglé ensuite.
 `src/retraite_notionnelle/web/pages.py`, `moteur/js/cout.js`,
 `moteur/js/pages.js`, `scripts/garantie_par_sexe.py`, `tests/test_cout.py`,
 `docs/limites.md`, `tests/temoins/pages.json`.
+
+### 80. L'âge conjoncturel de la DREES, et le biais d'âge de la grille enfin mesuré — `fait`
+
+**Pourquoi.** `docs/limites.md` § 5 ter portait depuis des semaines une
+déduction non mesurée : les cas types entrant tard dans la vie active —
+vingt-quatre ans pour l'artisan, vingt-sept pour le libéral — partiraient à
+soixante-sept ans une fois la durée requise opposée, donc « la grille part, en
+moyenne, un peu plus tard que la France réelle ». La section nommait elle-même
+son instrument : « l'âge conjoncturel de départ que publie la DREES permettrait
+de le chiffrer, et il n'est pas dans le dépôt ».
+
+**Marche.** Le jeu est en open data, sur le portail que `drees_eacr.py` et
+`drees_caracteristiques_retraites.py` interrogent déjà —
+`scripts/fetch/drees_age_conjoncturel.py` le dépose, `verifier_donnees.py` le
+certifie dans `data/reference/macro/age_conjoncturel_depart.csv` (dix-neuf
+années, trois colonnes, cinquante-sept valeurs), et `scripts/age_conjoncturel.py`
+fait la mesure : pour chaque année, l'âge auquel chaque cas type part —
+interpolé entre les points de la grille, qui avance de cinq ans en cinq ans —,
+les treize pesés par les effectifs de caisse de la page « Coût ».
+
+**Ce que ça a déplacé.** La déduction était fausse, et c'est le résultat. **La
+grille suit l'âge réel à moins d'une demi-année sur dix-neuf ans**, écart moyen
+−0,08 an : elle part un peu plus TÔT, non plus tard. Aucun chiffre du site ne
+bouge — la série ne nourrit aucun calcul, elle mesure la grille sans la
+corriger —, et ce qui change est ce que le dépôt SAIT de sa propre grille : le
+contrôle le plus large qu'il ait jamais eu sur la date de départ de ses cas
+types, dix-neuf années au lieu d'une.
+
+Le défaut que la mesure trouve n'est pas celui qu'on cherchait : il est dans la
+PENTE. +0,26 an en 2010, −0,45 an en 2022 ; l'âge réel monte de 2,09 ans sur la
+période, la grille de 2,00, et tout l'écart se creuse après 2015. La grille ne
+connaît que ce que le droit ouvre, et la montée récente doit une part au
+comportement, qu'aucun cas type ne choisit. C'est une piste pour la trajectoire
+de 2070, pas une conclusion : une demi-année de départ ne referme pas quatre
+points de PIB.
+
+Trois leçons. **Une déduction écrite dans la prose reste une déduction**, même
+bien raisonnée, même publiée depuis des mois : celle-ci se tenait, et la source
+l'a démentie du premier coup. **Une source peut mesurer sans corriger**, et
+c'est un usage légitime — cette série n'entre dans aucun calcul, et son intérêt
+est entier. Et **le jeu est retrouvé par son titre, non par son identifiant** :
+celui-ci porte le numéro de la figure dans l'édition du panorama
+(« Graphique-1 »), qu'une édition suivante renumérotera.
+
+**Ce qui reste.** La pondération est un STOCK de retraités, pas un flux de
+liquidations — le dépôt n'a pas les seconds, et un régime dont les départs
+ralentissent garde ici le poids de ses retraités d'hier. Le sexe n'est pas
+comparé, la grille ne distinguant pas ses cas types. Et la DREES publie à côté
+`departretraite_parcsp`, l'âge de départ par catégorie socioprofessionnelle :
+c'est la comparaison cas type par cas type, celle qui dirait lequel des treize
+part de travers, là où celle-ci ne juge que leur somme.
+
+**Fichiers.** `scripts/fetch/drees_age_conjoncturel.py`,
+`scripts/age_conjoncturel.py`, `tests/test_age_conjoncturel.py`,
+`scripts/verifier_donnees.py`, `data/reference/macro/age_conjoncturel_depart.csv`,
+`data/sources.yaml`, `docs/limites.md` § 5 ter.
