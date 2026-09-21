@@ -82,9 +82,11 @@ from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.garantie import cout_garantie  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
 
-#: Les rapports parcourus. Un est la convention en vigueur ; en deçà, les
-#: pensions des femmes tombent davantage que celles des hommes. Au-delà de un
-#: il n'y a rien à explorer : le sens de l'écart n'est pas douteux.
+#: Les rapports parcourus. Un est l'ANCIENNE convention — un facteur unique
+#: pour tous —, gardée comme repère ; en deçà, les pensions des femmes tombent
+#: davantage que celles des hommes. Au-delà de un il n'y a rien à explorer : le
+#: sens de l'écart n'est pas douteux. Le rapport MESURÉ sur l'enquête s'insère
+#: dans cette liste à son rang, et c'est lui que le modèle applique.
 RAPPORTS: tuple[float, ...] = (1.00, 0.95, 0.90, 0.85, 0.80)
 
 
@@ -94,6 +96,8 @@ class Lecture:
 
     plancher: str
     rapport: float
+    #: Ce rapport est-il celui que l'enquête donne, et que le modèle applique ?
+    mesure: bool
     facteur_femmes: float
     facteur_hommes: float
     part_sous_plancher: float
@@ -138,6 +142,11 @@ def calculer(parametres: Parametres | None = None,
         for sexe in ("F", "H")
     }
     poids_femmes = part_femmes(racine, millesime)
+    # Le rapport MESURÉ prend sa place dans le parcours : c'est celui que le
+    # modèle applique depuis le 21 septembre 2026, et la colonne « 1,00 » n'est
+    # plus que le repère de ce que la convention uniforme valait.
+    mesure = simulateur.caracteristiques.rapport_deplacement()
+    rapports = tuple(sorted(set(rapports) | {mesure}, reverse=True))
     moyennes = {sexe: _moyenne(colonnes[sexe]) for sexe in ("F", "H")}
     ligne = cout.annee(millesime)
     if ligne is None or ligne.garantie is None:
@@ -184,6 +193,7 @@ def calculer(parametres: Parametres | None = None,
             lectures.append(Lecture(
                 plancher=libelle,
                 rapport=rapport,
+                mesure=abs(rapport - mesure) < 1e-12,
                 facteur_femmes=facteurs["F"],
                 facteur_hommes=facteurs["H"],
                 part_sous_plancher=part,
@@ -208,20 +218,22 @@ def tableau(lectures: list[Lecture], parametres: Parametres) -> str:
             plancher = lecture.plancher
             lignes += [
                 f"  {plancher}",
-                f"    {'r=fF/fH':>8} {'fF':>7} {'fH':>7} "
+                f"    {'r=fF/fH':>8}  {'fF':>6} {'fH':>7} "
                 f"{'sous le plancher':>17} {'coût':>10} {'écart':>9}",
             ]
         lignes.append(
-            f"    {lecture.rapport:>8.2f} {lecture.facteur_femmes:>7.4f} "
+            f"    {lecture.rapport:>8.3f}{'*' if lecture.mesure else ' '}"
+            f"{lecture.facteur_femmes:>7.4f} "
             f"{lecture.facteur_hommes:>7.4f} "
             f"{lecture.part_sous_plancher:>16.2%} "
             f"{lecture.cout_mds:>7.1f} Md {lecture.ecart_mds:>+6.1f} Md"
         )
     lignes += [
         "",
-        "r = 1 est la convention en vigueur : un seul facteur pour tous. En",
-        "deçà, les pensions des femmes tombent davantage que celles des",
-        "hommes, la moyenne d'ensemble restant déplacée du même facteur.",
+        "* le rapport MESURÉ sur l'enquête, celui que le modèle applique.",
+        "r = 1 est l'ancienne convention : un seul facteur pour tous. En deçà,",
+        "les pensions des femmes tombent davantage que celles des hommes, la",
+        "moyenne d'ensemble restant déplacée du même facteur.",
     ]
     return "\n".join(lignes)
 

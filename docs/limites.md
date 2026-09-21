@@ -5081,46 +5081,57 @@ plancher. **Une réserve sans remède dans cette source** : le tableau de l'EIR
 comprend la majoration pour trois enfants, que les scénarios notionnels ne
 servent pas.
 
-**Le déplacement uniforme est une borne basse, et voici de combien.** La
-réserve était écrite depuis que la garantie est lue sur la distribution ; elle
-n'était pas chiffrée. `scripts/garantie_par_sexe.py` la chiffre. Le facteur
-par sexe tiré de la grille n'était pas disponible — sur les treize cas types,
-**un seul est une femme**, et une carrière ne fait pas une population —, et le
-dépôt ne porte aucune ventilation par sexe du coût des avantages non
-contributifs. Le script ne suppose donc pas l'écart : il le PARAMÈTRE, par le
-seul rapport `r = f_F / f_H` des deux facteurs de déplacement, et impose que la
-moyenne d'ensemble bouge du même facteur qu'aujourd'hui —
-`w·μ_F·f_F + (1−w)·μ_H·f_H = f·(w·μ_F + (1−w)·μ_H)`, avec `w` la part des
-femmes dans l'enquête (52,8 %) et `μ` la pension moyenne de chaque sexe
-(1 120 € contre 1 749 € en 2020). C'est cette contrainte qui fait de
-l'exercice une RÉPARTITION et non une hypothèse de plus : la grille garde le
-dernier mot sur l'agrégat, et le script ne décide que du partage.
+**Le déplacement uniforme est une borne basse, et le rapport est MESURÉ depuis
+le 21 septembre 2026.** Le scénario 6 retire les droits non cotisés, et les
+femmes en détiennent plus souvent : leurs pensions tombent plus que la moyenne.
+Le dépôt le disait, et ne le chiffrait pas — faute d'une ventilation par sexe.
 
-| `r` = f_F/f_H | f_F | f_H | sous le plancher majoré | coût | écart |
-|---|---|---|---|---|---|
-| 1,00 *(convention)* | 0,606 | 0,606 | 58,03 % | **28,5 Md €** | réf. |
-| 0,95 | 0,588 | 0,619 | 58,04 % | 28,9 Md € | +0,3 |
-| 0,90 | 0,569 | 0,633 | 58,07 % | 29,3 Md € | +0,7 |
-| 0,85 | 0,550 | 0,647 | 58,19 % | 29,7 Md € | +1,2 |
-| 0,80 | 0,529 | 0,662 | 58,37 % | 30,3 Md € | +1,8 |
+*Le chemin direct restait fermé* : un facteur par sexe se tire de la grille
+comme le facteur d'ensemble s'en tire, et **un seul des treize cas types est
+une femme**. Mais l'échantillon qui porte la distribution porte aussi, dans un
+autre classeur du même millésime, les caractéristiques des retraités par sexe
+(`data/reference/macro/caracteristiques_retraites.csv`). Deux d'entre elles
+suffisent, et elles ne jouent pas dans le même sens.
 
-Au plancher de base, les mêmes rapports donnent 15,9, 16,2, 16,6, 16,9 et
-17,4 milliards. `r` se lit ainsi : si le scénario retire à chacun la part non
-contributive de sa pension, `f_s ≈ f·(1 − a_s)` et `r ≈ (1 − a_F)/(1 − a_H)`
-— un `r` de 0,90 dit que cette part dépasse d'environ dix points chez les
-femmes. Le dépôt ne mesure ni l'une ni l'autre, et `r` reste un paramètre.
+| | Femmes | Hommes | Ce que cela fait au rapport |
+|---|---|---|---|
+| Durée validée **non cotisée** | 26,0 % | 10,9 % | 0,740 / 0,891 = **0,831** |
+| Majoration pour enfants, en part de la pension | 2,60 % | 3,04 % | 0,974 / 0,970 = **1,005** |
+| | | | **r = 0,834** |
 
-**Ce que le tableau établit, et ce qu'il n'établit pas.** Il établit le SENS —
-le coût ne baisse jamais, quel que soit `r`, parce que déplacer davantage les
-pensions les plus basses fait passer plus de monde sous le plancher — et
-l'ORDRE DE GRANDEUR : **environ un milliard par quinze points d'écart, moins
-de 5 % du total au bout de la fourchette**. La réserve est donc réelle, son
-sens connu, et sa taille seconde ; elle ne renverse aucun des chiffres de la
-page. Il n'établit pas la valeur de `r`, que seule une ventilation par sexe
-des avantages non contributifs — ou une grille de cas types qui ne compte pas
-une femme sur treize — donnerait. `tests/test_garantie_par_sexe.py` tient le
-raccord : à `r = 1`, le script redonne le coût de la page à l'arrondi de
-publication près.
+**La durée non cotisée domine.** Un compte notionnel ne crédite que ce qui a
+été cotisé : une année validée sans cotisation n'y porte RIEN, qu'elle vienne
+de l'assurance vieillesse des parents au foyer, du chômage, de la maladie ou
+d'une majoration de durée. Le capital est donc proportionnel à la part cotisée
+de la carrière, et c'est le gros du déplacement différentiel.
+
+**La majoration pour enfants joue à l'envers, et de peu.** Elle vaut dix pour
+cent de la pension pour trois enfants, donc davantage d'euros à qui a la
+pension la plus haute : 3,0 % de celle des hommes contre 2,6 % de celle des
+femmes. La retirer coûte un peu plus aux hommes, et corrige le premier terme de
+moins d'un demi-point. C'est le genre de terme qu'on aurait supposé dans le
+mauvais sens, et c'est pourquoi il vaut mieux le lire.
+
+**Ce que la mesure déplace.** Le modèle applique désormais `r = 0,834` au lieu
+de 1 ; `Parametres.rapport_deplacement_sexe` le règle, et 1 restitue l'ancienne
+convention. La garantie de 2024 passe de 20,7 à **22,0 milliards**, celle de
+2026 de 0,69 à **0,74 % du PIB**, le versé de 2070 de 17,7 à **19,2
+milliards**, le cumulé 2026-2070 de 849 à **918**. La part des femmes parmi les
+bénéficiaires monte de 66 à **70 %**. Au barème appliqué à la distribution de
+l'enquête, plancher majoré, le coût passe de 28,5 à **29,9 milliards** : la
+convention uniforme sous-estimait de **5 %**.
+
+**Et la mesure est elle-même une borne basse**, par ce qu'elle laisse dehors.
+L'enquête publie la PART des bénéficiaires d'un minimum de pension — 46,5 % des
+femmes contre 26,1 % des hommes — et non ce que ce minimum leur apporte : le
+retirer creuserait l'écart davantage. Le rapport suppose en outre le salaire
+porté au compte constant d'une année cotisée à l'autre, faute de quoi la part
+cotisée de la carrière ne serait pas celle du capital.
+
+`scripts/garantie_par_sexe.py` imprime la sensibilité entière, le rapport
+mesuré à son rang ; `tests/test_garantie_par_sexe.py` tient les deux raccords :
+la ligne mesurée redonne le coût de la page, et la ligne `r = 1` redonne ce que
+le modèle donnait avant.
 
 Et le modèle ne dit rien de l'impôt lui-même : il compte ce qui est versé,
 jamais ce qui est prélevé.
@@ -7372,7 +7383,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1848<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1849<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

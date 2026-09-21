@@ -13,6 +13,8 @@ from pathlib import Path
 
 import pytest
 
+from dataclasses import replace
+
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.cout import calculer_cout
 from retraite_notionnelle.donnees.assiette import AssietteActivite
@@ -43,23 +45,23 @@ def garantie_de_l_enquete():
     return parametres, simulateur, ligne.garantie
 
 
-def test_le_rapport_un_redonne_le_cout_que_la_page_affiche(
+def test_le_rapport_mesure_redonne_le_cout_que_la_page_affiche(
         lectures, garantie_de_l_enquete):
-    """Un facteur par sexe, mais les deux égaux : c'est la convention en vigueur.
+    """La ligne marquée d'une étoile est celle que le modèle applique.
 
-    Le coût d'un plancher différentiel est LINÉAIRE en la distribution, et la
-    colonne « ensemble » de l'enquête est le mélange de ses deux colonnes de
-    sexe. Déplacer les deux du même facteur doit donc rendre, au centime, ce
-    que donne le déplacement de l'ensemble. Ce test est le raccord : il tombe
-    si le poids des sexes cesse d'être celui de l'enquête, si la contrainte de
-    masse est mal posée, ou si le script cesse de lire le facteur de la page.
+    Le script ne recalcule pas la trajectoire : il redéplace la distribution à
+    la main. Si sa ligne mesurée ne redonne pas le coût de la page, toute la
+    sensibilité porte à côté, et silencieusement. Ce test est le raccord : il
+    tombe si le poids des sexes cesse d'être celui de l'enquête, si la
+    contrainte de masse est mal posée, ou si le script cesse de lire le
+    facteur et le rapport que le modèle applique.
     """
     parametres, simulateur, garantie = garantie_de_l_enquete
     majore = [l for l in lectures if l.plancher.startswith("plancher majoré")]
     assert majore, "le plancher majoré doit être parcouru"
-    reference = next(l for l in majore if l.rapport == 1.0)
-    assert reference.facteur_femmes == pytest.approx(garantie.facteur)
-    assert reference.facteur_hommes == pytest.approx(garantie.facteur)
+    reference = next(l for l in majore if l.mesure)
+    assert reference.rapport == pytest.approx(
+        simulateur.caracteristiques.rapport_deplacement())
     # Le coût de la trajectoire est celui des 65 ans et plus ; celui du script,
     # celui de TOUS les retraités de l'enquête, comme le tableau des quatre
     # lectures de la page. Les deux se déduisent l'un de l'autre par le rapport
@@ -76,7 +78,40 @@ def test_le_rapport_un_redonne_le_cout_que_la_page_affiche(
     # fermer l'écart inventerait une précision que la source ne donne pas.
     # La borne reste assez étroite pour attraper toute dérive de structure.
     assert reference.cout_mds == pytest.approx(attendu, rel=1e-3)
-    assert reference.ecart_mds == pytest.approx(0.0)
+    # L'écart est compté depuis la convention uniforme, qui est en tête de
+    # colonne : celui de la ligne mesurée est donc ce que la mesure a coûté.
+    assert reference.ecart_mds > 0.0
+
+
+def test_le_rapport_un_redonne_l_ancienne_convention(lectures):
+    """La colonne « 1,00 » doit rendre ce que le modèle donnait avant la mesure.
+
+    Elle est le repère de ce que la convention uniforme valait, et elle ne vaut
+    que si elle le vaut exactement : ce test la confronte à une trajectoire
+    calculée sous ``rapport_deplacement_sexe = 1``, c'est-à-dire au modèle
+    d'avant le 21 septembre 2026.
+    """
+    parametres = replace(Parametres(), rapport_deplacement_sexe=1.0)
+    racine = parametres.racine_donnees
+    simulateur = Simulateur(parametres)
+    cout = calculer_cout(simulateur, DepensesRetraite(racine), Population(racine),
+                         ComptesRetraite(racine), assiette=AssietteActivite(racine))
+    ligne = cout.annee(simulateur.distribution.millesime)
+    assert ligne is not None and ligne.garantie is not None
+    attendu = (ligne.garantie.cout_constants / 1000.0
+               * simulateur.effectifs.effectif(
+                   "tous_regimes", simulateur.distribution.millesime)
+               / ligne.garantie.effectif)
+    uniforme = next(l for l in lectures
+                    if l.plancher.startswith("plancher majoré") and l.rapport == 1.0)
+    # Le mélange des deux colonnes de sexe ne redonne la colonne « ensemble »
+    # qu'à l'arrondi de publication près — voir le test précédent.
+    assert uniforme.cout_mds == pytest.approx(attendu, rel=1e-3)
+    # Et la mesure coûte PLUS que la convention qu'elle remplace : c'est tout
+    # ce que la réserve des limites annonçait.
+    mesure = next(l for l in lectures
+                  if l.plancher.startswith("plancher majoré") and l.mesure)
+    assert mesure.cout_mds > uniforme.cout_mds
 
 
 def test_la_contrainte_de_masse_tient_sur_toute_la_colonne(lectures):
@@ -99,11 +134,11 @@ def test_la_contrainte_de_masse_tient_sur_toute_la_colonne(lectures):
         for sexe in ("F", "H")
     }
     ensemble = poids * moyennes["F"] + (1.0 - poids) * moyennes["H"]
-    reference = next(l for l in lectures if l.rapport == 1.0)
+    uniforme = next(l for l in lectures if l.rapport == 1.0)
     for lecture in lectures:
         deplacee = (poids * moyennes["F"] * lecture.facteur_femmes
                     + (1.0 - poids) * moyennes["H"] * lecture.facteur_hommes)
-        assert deplacee / ensemble == pytest.approx(reference.facteur_femmes)
+        assert deplacee / ensemble == pytest.approx(uniforme.facteur_femmes)
 
 
 def test_l_ecart_uniforme_est_toujours_une_borne_basse(lectures):
@@ -118,6 +153,7 @@ def test_l_ecart_uniforme_est_toujours_une_borne_basse(lectures):
         colonne = sorted((l for l in lectures if l.plancher == plancher),
                          key=lambda l: -l.rapport)
         assert colonne[0].rapport == 1.0
+        assert sum(1 for lecture in colonne if lecture.mesure) == 1
         couts = [lecture.cout_mds for lecture in colonne]
         assert couts == sorted(couts), plancher
         assert couts[-1] > couts[0], plancher

@@ -30,6 +30,7 @@ from .carriere import (
 from .config import Parametres, PartCotisation, SourceCotisations
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
 from .donnees.cotisants import EffectifsCotisants
+from .donnees.caracteristiques import CaracteristiquesRetraites
 from .donnees.distribution import DistributionPensions
 from .donnees.patrimoine import PatrimoineMenages
 from .donnees.vie_en_couple import VieEnCouple
@@ -695,6 +696,30 @@ class Simulateur:
         pas sur treize carrières.
         """
         return DistributionPensions(self.parametres.racine_donnees)
+
+    @cached_property
+    def distributions_par_sexe(self) -> dict[str, DistributionPensions]:
+        """La même distribution, femmes et hommes à part.
+
+        L'enquête les publie séparément, et c'est ce qui permet de déplacer
+        chaque sexe de son propre facteur au lieu de déplacer l'ensemble du
+        même : le scénario 6 retire des droits non cotisés que les femmes
+        détiennent plus souvent.
+        """
+        return {
+            sexe: DistributionPensions(self.parametres.racine_donnees, sexe=sexe)
+            for sexe in ("F", "H")
+        }
+
+    @cached_property
+    def caracteristiques(self) -> CaracteristiquesRetraites:
+        """Ce que les carrières doivent aux droits non cotisés, par sexe.
+
+        Elle ne sert, elle non plus, qu'à la garantie : c'est d'elle que vient
+        le rapport des deux facteurs de déplacement, et le poids des deux sexes
+        parmi les retraités.
+        """
+        return CaracteristiquesRetraites(self.parametres.racine_donnees)
 
     @cached_property
     def patrimoine(self) -> PatrimoineMenages:

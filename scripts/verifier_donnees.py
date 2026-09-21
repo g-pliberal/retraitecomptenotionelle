@@ -1620,6 +1620,28 @@ def source_distribution_pensions() -> dict[tuple, float]:
     }
 
 
+def source_caracteristiques_retraites() -> dict[tuple, float]:
+    """Ce que les carrières doivent aux droits non cotisés, par sexe.
+
+    Le même échantillon interrégimes qui porte la distribution des pensions
+    porte, dans un autre classeur du même millésime, les caractéristiques des
+    retraités par sexe. Elles servent à mesurer de combien le scénario 6
+    déplace les pensions des femmes PLUS que celles des hommes : un compte
+    notionnel ne crédite que ce qui a été cotisé, et un quart de la durée
+    validée des femmes ne l'a pas été contre un dixième de celle des hommes.
+    """
+    charge = _lire_json(
+        "drees_caracteristiques_retraites.json",
+        "scripts/fetch/drees_caracteristiques_retraites.py",
+    )
+    annee = str(charge["millesime"])
+    return {
+        (annee, indicateur, sexe): valeur
+        for indicateur, serie in charge["valeurs"].items()
+        for sexe, valeur in serie.items()
+    }
+
+
 def source_esperances() -> dict[tuple, float]:
     """Espérances de vie : e0 et e60 par l'INSEE, e65 par l'OCDE.
 
@@ -4477,6 +4499,57 @@ CERTIFICATIONS = (
             "#",
             "# Ne pas modifier les années certifiées à la main : elles seraient écrasées",
             "# au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="caracteristiques_retraites",
+        chemin=REFERENCE / "macro" / "caracteristiques_retraites.csv",
+        cles=("annee", "indicateur", "sexe"),
+        colonne="valeur",
+        source=source_caracteristiques_retraites,
+        origine="DREES, échantillon interrégimes de retraités (EIR)",
+        decimales=1,
+        tolerance=0.05,
+        entete=(
+            "# Caractéristiques des retraités par sexe",
+            "# source_id: drees_eir_caracteristiques",
+            "# unite: milliers, euros par mois, pour cent, années — selon l'indicateur",
+            "# fiabilite:",
+            "#   certifiee : feuille « Quintiles », colonne « Ensemble », du",
+            "#             classeur « Caractéristiques de tous les retraités » de",
+            "#             l'EIR, diffusé par la DREES et recontrôlé par",
+            "#             scripts/verifier_donnees.py.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À mesurer de combien le scénario 6 déplace les pensions des femmes",
+            "# PLUS que celles des hommes. Le modèle déplaçait toute la",
+            "# distribution d'un facteur unique, en sachant que le scénario retire",
+            "# des droits non cotisés que les femmes détiennent plus souvent — donc",
+            "# que son coût était une borne basse, d'un montant que personne ne",
+            "# mesurait. Deux indicateurs suffisent :",
+            "#",
+            "#   duree_validee_non_cotisee  un compte notionnel ne crédite que ce",
+            "#       qui a été cotisé : une année validée sans cotisation n'y porte",
+            "#       RIEN, qu'elle vienne de l'AVPF, du chômage, de la maladie ou",
+            "#       d'une majoration de durée. C'est le terme qui domine.",
+            "#   pension_droit_direct et pension_droit_direct_majorations  leur",
+            "#       écart est la majoration pour enfants, proportionnelle à la",
+            "#       pension : elle pèse donc un peu MOINS chez les femmes, dont",
+            "#       les pensions sont plus basses. Ce terme joue à l'envers de",
+            "#       l'intuition, et c'est pourquoi il vaut mieux le lire.",
+            "#",
+            "# `effectifs` porte en outre le poids des deux sexes — 52,8 % de",
+            "# femmes en 2020 —, que le dépôt AJUSTAIT jusque-là sur les trois",
+            "# colonnes de la distribution faute de le lire quelque part.",
+            "#",
+            "# CE QUI N'Y EST PAS, ET QUI IRAIT DANS LE MÊME SENS : ce que le",
+            "# minimum de pension APPORTE à ses bénéficiaires. Le classeur en donne",
+            "# la part — 46,5 % des femmes contre 26,1 % des hommes — et non le",
+            "# montant. Le retirer creuserait l'écart davantage.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
         ),
     ),
     Certification(

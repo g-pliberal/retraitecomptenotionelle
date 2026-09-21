@@ -72,7 +72,10 @@ from retraite_notionnelle.donnees.equilibre import (
     ComptesRetraite,
 )
 from retraite_notionnelle.donnees.population import Population
-from retraite_notionnelle.garantie import cout_garantie
+from retraite_notionnelle.garantie import (
+    cout_garantie,
+    cout_garantie_par_sexe,
+)
 from retraite_notionnelle.simulateur import Simulateur
 
 
@@ -988,8 +991,18 @@ def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distrib
                 + parametres.allocation_isolement_mensuelle)
     vers_enquete = simulateur.macro.coefficient_prix(
         parametres.annee_euros_garantie_vieillesse, millesime)
-    attendu = cout_garantie(distribution, projetee.effectif,
-                            plancher * vers_enquete, projetee.facteur)
+    # DEUX FACTEURS ET NON UN, depuis le 21 septembre 2026 : le scénario retire
+    # les droits non cotisés, dont les femmes détiennent une part mesurée, et
+    # chaque sexe est déplacé du sien sous contrainte que la moyenne d'ensemble
+    # bouge du facteur que la grille donne. Le test refait ce calcul-là.
+    caracteristiques = simulateur.caracteristiques
+    attendu = cout_garantie_par_sexe(
+        simulateur.distributions_par_sexe["F"],
+        simulateur.distributions_par_sexe["H"],
+        caracteristiques.part_femmes, projetee.effectif,
+        plancher * vers_enquete, projetee.facteur,
+        caracteristiques.rapport_deplacement(),
+    )
     # Un ayant droit sur deux réclame : les bénéficiaires et le coût sont
     # ceux qui réclament, les ayants droit tous ceux qui sont sous le plancher.
     taux = parametres.taux_recours_garantie

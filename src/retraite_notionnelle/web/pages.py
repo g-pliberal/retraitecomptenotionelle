@@ -9516,16 +9516,21 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
     # sont calculées ici, sous le facteur et le plancher de la page.
     plancher_seul = (base.garantie_vieillesse_mensuelle
                      + base.allocation_isolement_mensuelle) * vers_enquete
-    poids_femmes = part_femmes_distribution(base.racine_donnees, millesime)
+    caracteristiques = simulateur.caracteristiques
+    rapport_mesure = caracteristiques.rapport_deplacement()
     par_sexe = {
         rapport: cout_garantie_par_sexe(
-            DistributionPensions(base.racine_donnees, sexe="F",
-                                 millesime=millesime),
-            DistributionPensions(base.racine_donnees, sexe="H",
-                                 millesime=millesime),
-            poids_femmes, effectif_retraites, plancher_seul, facteur, rapport)
-        for rapport in (1.0, 0.9, 0.8)
+            simulateur.distributions_par_sexe["F"],
+            simulateur.distributions_par_sexe["H"],
+            caracteristiques.part_femmes, effectif_retraites, plancher_seul,
+            facteur, rapport)
+        for rapport in (1.0, rapport_mesure)
     }
+    cout_uniforme = par_sexe[1.0].cout_annuel_meur
+    ecart_mesure = (
+        par_sexe[rapport_mesure].cout_annuel_meur / cout_uniforme - 1.0
+        if cout_uniforme > 0.0 else 0.0
+    )
 
     def _cout_par_sexe(rapport: float) -> str:
         return _milliards(
@@ -9781,20 +9786,30 @@ passé comme l'avenir. Ce tableau applique le barème à tous les retraités de
 {millesime} ; la trajectoire ne l'applique qu'à ceux de 65 ans et plus, d'où un
 coût plus bas la même année.</p>
 
-<div class="note"><strong>Le déplacement uniforme est une borne basse, et de
-peu.</strong> Le système 4 retire les droits non contributifs que les femmes
-détiennent plus souvent : majorations pour enfants, assurance vieillesse des
-parents au foyer, minimum contributif, trimestres assimilés. Leurs pensions
-tombent donc plus que la moyenne, et davantage d'entre elles passent sous le
-plancher que ce déplacement unique ne le dit. Un facteur par sexe n'est pas
-calculable ici, un seul des treize cas types étant une femme ; l'écart se
-mesure pourtant en le paramétrant, la moyenne d'ensemble restant déplacée du
-même facteur. Si les pensions des femmes tombaient un dixième de plus que
-celles des hommes, la dernière ligne de ce tableau passerait de
-{_cout_par_sexe(1.0)} à {_cout_par_sexe(0.9)} ; un cinquième de plus,
-{_cout_par_sexe(0.8)}. Le sens n'est pas douteux, l'ampleur reste seconde, et
-<a href="{g.DEPOT}/blob/main/scripts/garantie_par_sexe.py">un script du
-dépôt</a> porte le tableau entier.</div>
+<div class="note"><strong>Les pensions des femmes tombent plus que celles des
+hommes, et le modèle le mesure.</strong> Le système 4 retire les droits non
+cotisés : assurance vieillesse des parents au foyer, chômage, maladie,
+majorations de durée. Un compte notionnel ne crédite que ce qui a été cotisé,
+or l'enquête dit quelle part de la carrière ne l'a pas été :
+{g.pourcentage(caracteristiques.part_non_cotisee("F"), decimales=1)} chez les
+femmes contre
+{g.pourcentage(caracteristiques.part_non_cotisee("H"), decimales=1)} chez les
+hommes. La majoration pour enfants corrige dans l'autre sens, étant
+proportionnelle à la pension et donc un peu plus lourde chez les hommes
+({g.pourcentage(caracteristiques.part_majorations("H"), decimales=1)} contre
+{g.pourcentage(caracteristiques.part_majorations("F"), decimales=1)}). Reste un
+rapport de {g.nombre(rapport_mesure, 3)} : les pensions des femmes tombent d'un
+sixième de plus. Le tableau les déplace donc chacune du sien, la moyenne
+d'ensemble restant déplacée du facteur que la grille donne. La convention
+uniforme, celle d'avant le 21 septembre 2026, valait
+{_cout_par_sexe(1.0)} là où celle-ci donne {_cout_par_sexe(rapport_mesure)} :
+elle sous-estimait de {g.pourcentage(ecart_mesure, decimales=0)}. Et cette
+mesure est elle-même une borne basse : les minima de pension, que
+{g.pourcentage(caracteristiques.part_minimum_pension("F"), decimales=0)} des
+femmes touchent contre
+{g.pourcentage(caracteristiques.part_minimum_pension("H"), decimales=0)} des
+hommes, n'y sont pas : l'enquête en
+publie la part des bénéficiaires, pas ce qu'ils leur apportent.</div>
 
 <p><strong>Ce qu'elle remplace.</strong> <strong>La garantie est le seul
 plancher du système 4</strong>, et c'est tout ce qu'il y a à retenir : elle

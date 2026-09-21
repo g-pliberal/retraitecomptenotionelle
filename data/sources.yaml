@@ -717,6 +717,25 @@ institutions:
           c'est le millésime le plus récent qui est retenu ; les désaccords sont
           nuls pour la moitié des couples et de 2,5 % au pire. Cette série ne
           porte AUCUNE pension : elle pondère les cas types de la page « Coût ».
+      - id: drees_eir_caracteristiques
+        titre: Caractéristiques des retraités (échantillon interrégimes de retraités)
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/3013_donnees-statistiques-sur-les-caracteristiques-des-retraites/
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/drees_caracteristiques_retraites.py
+        cible: data/reference/macro/caracteristiques_retraites.csv
+        note: >-
+          Le même échantillon que la distribution, au même millésime, mais un
+          autre classeur : les caractéristiques des retraités PAR SEXE. Deux
+          d'entre elles chiffrent ce que le déplacement uniforme de la
+          distribution cachait — la part de la durée validée qui n'a pas été
+          cotisée, qu'un compte notionnel ne crédite pas (26,0 % chez les
+          femmes contre 10,9 % chez les hommes en 2020), et la pension de
+          droit direct avec et sans les majorations pour enfants, dont l'écart
+          joue à l'envers. Le classeur porte en outre les effectifs par sexe,
+          que le dépôt AJUSTAIT jusque-là sur les trois colonnes de la
+          distribution faute de les lire quelque part.
+
       - id: drees_eir_distribution
         titre: Distribution des pensions mensuelles (échantillon interrégimes de retraités)
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/4178_distribution-des-pensions-mensuelles/

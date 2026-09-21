@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-09-20",
+ "dernier_passage_le": "2026-09-21",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -77,6 +77,17 @@
    "source": "Direction du budget, jaune pensions annexé au PLF 2026, tableaux A-7 et 50 (durées et proportions)",
    "valeurs": 75,
    "verifiee_le": "2026-09-20"
+  },
+  "caracteristiques_retraites": {
+   "ajoutees": 3,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "7883f28e4b144d69",
+   "identiques": 18,
+   "niveau": "certifiee",
+   "source": "DREES, échantillon interrégimes de retraités (EIR)",
+   "valeurs": 21,
+   "verifiee_le": "2026-09-21"
   },
   "carriere_longue": {
    "ajoutees": 0,
@@ -450,7 +461,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-09-21"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -912,7 +923,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-09-20"
+   "verifiee_le": "2026-09-21"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,

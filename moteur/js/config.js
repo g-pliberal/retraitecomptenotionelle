@@ -311,6 +311,11 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   // Part des ayants droit qui réclament la garantie : l'hypothèse de l'ASPA,
   // un sur deux. Ne joue que sur le coût lu sur la distribution.
   taux_recours_garantie: 0.5,
+  // Rapport des deux facteurs de déplacement, r = fF / fH : le scénario 6
+  // retire les droits non cotisés, que les femmes détiennent plus souvent.
+  // null fait LIRE ce rapport sur l'enquête, où il vaut 0,834 en 2020 ; 1.0
+  // restitue l'ancienne convention, un facteur unique pour tous.
+  rapport_deplacement_sexe: null,
   // Part de l'avance d'un bénéficiaire que sa succession couvre : null la
   // fait calculer sur le patrimoine des ménages retraités selon leur revenu.
   part_reprise_garantie: null,

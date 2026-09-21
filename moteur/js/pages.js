@@ -38,8 +38,8 @@ import {
   masseDuScenario,
 } from "./cout.js";
 import { chargerBilan } from "./bilan.js";
-import { DistributionPensions, partFemmes as partFemmesDistribution }
-  from "./distribution.js";
+import { CaracteristiquesRetraites } from "./caracteristiques.js";
+import { DistributionPensions } from "./distribution.js";
 import { coutGarantie, coutGarantieParSexe } from "./garantie.js";
 import { SYSTEMES, DepensesRetraite } from "./depenses.js";
 import {
@@ -8259,15 +8259,20 @@ function coutDetailGarantie(contexte) {
   // nombre n'est écrit en toutes lettres dans la note.
   const plancherSeul = (base.garantie_vieillesse_mensuelle
     + base.allocation_isolement_mensuelle) * versEnquete;
-  const poidsFemmes = partFemmesDistribution(contexte.paquet);
+  const caracteristiques = new CaracteristiquesRetraites(contexte.paquet);
+  const rapportMesure = caracteristiques.rapportDeplacement();
   const parSexe = new Map();
-  for (const rapport of [1.0, 0.9, 0.8]) {
+  for (const rapport of [1.0, rapportMesure]) {
     parSexe.set(rapport, coutGarantieParSexe(
       new DistributionPensions(contexte.paquet, "F"),
       new DistributionPensions(contexte.paquet, "H"),
-      poidsFemmes, effectifRetraites, plancherSeul, facteur, rapport,
+      caracteristiques.partFemmes, effectifRetraites, plancherSeul, facteur,
+      rapport,
     ));
   }
+  const coutUniforme = parSexe.get(1.0).coutAnnuelMeur;
+  const ecartMesure = coutUniforme > 0
+    ? parSexe.get(rapportMesure).coutAnnuelMeur / coutUniforme - 1 : 0;
   const coutParSexe = (rapport) => milliards(
     parSexe.get(rapport).coutAnnuelMeur * taux / versEnquete, 1);
   const assiettes = [
@@ -8514,20 +8519,30 @@ passé comme l'avenir. Ce tableau applique le barème à tous les retraités de
 ${millesime} ; la trajectoire ne l'applique qu'à ceux de 65 ans et plus, d'où un
 coût plus bas la même année.</p>
 
-<div class="note"><strong>Le déplacement uniforme est une borne basse, et de
-peu.</strong> Le système 4 retire les droits non contributifs que les femmes
-détiennent plus souvent : majorations pour enfants, assurance vieillesse des
-parents au foyer, minimum contributif, trimestres assimilés. Leurs pensions
-tombent donc plus que la moyenne, et davantage d'entre elles passent sous le
-plancher que ce déplacement unique ne le dit. Un facteur par sexe n'est pas
-calculable ici, un seul des treize cas types étant une femme ; l'écart se
-mesure pourtant en le paramétrant, la moyenne d'ensemble restant déplacée du
-même facteur. Si les pensions des femmes tombaient un dixième de plus que
-celles des hommes, la dernière ligne de ce tableau passerait de
-${coutParSexe(1.0)} à ${coutParSexe(0.9)} ; un cinquième de plus,
-${coutParSexe(0.8)}. Le sens n'est pas douteux, l'ampleur reste seconde, et
-<a href="${g.DEPOT}/blob/main/scripts/garantie_par_sexe.py">un script du
-dépôt</a> porte le tableau entier.</div>
+<div class="note"><strong>Les pensions des femmes tombent plus que celles des
+hommes, et le modèle le mesure.</strong> Le système 4 retire les droits non
+cotisés : assurance vieillesse des parents au foyer, chômage, maladie,
+majorations de durée. Un compte notionnel ne crédite que ce qui a été cotisé,
+or l'enquête dit quelle part de la carrière ne l'a pas été :
+${g.pourcentage(caracteristiques.partNonCotisee("F"), false, 1)} chez les
+femmes contre
+${g.pourcentage(caracteristiques.partNonCotisee("H"), false, 1)} chez les
+hommes. La majoration pour enfants corrige dans l'autre sens, étant
+proportionnelle à la pension et donc un peu plus lourde chez les hommes
+(${g.pourcentage(caracteristiques.partMajorations("H"), false, 1)} contre
+${g.pourcentage(caracteristiques.partMajorations("F"), false, 1)}). Reste un
+rapport de ${g.nombre(rapportMesure, 3)} : les pensions des femmes tombent d'un
+sixième de plus. Le tableau les déplace donc chacune du sien, la moyenne
+d'ensemble restant déplacée du facteur que la grille donne. La convention
+uniforme, celle d'avant le 21 septembre 2026, valait
+${coutParSexe(1.0)} là où celle-ci donne ${coutParSexe(rapportMesure)} :
+elle sous-estimait de ${g.pourcentage(ecartMesure, false, 0)}. Et cette
+mesure est elle-même une borne basse : les minima de pension, que
+${g.pourcentage(caracteristiques.partMinimumPension("F"), false, 0)} des
+femmes touchent contre
+${g.pourcentage(caracteristiques.partMinimumPension("H"), false, 0)} des
+hommes, n'y sont pas : l'enquête en
+publie la part des bénéficiaires, pas ce qu'ils leur apportent.</div>
 
 <p><strong>Ce qu'elle remplace.</strong> <strong>La garantie est le seul
 plancher du système 4</strong>, et c'est tout ce qu'il y a à retenir : elle
