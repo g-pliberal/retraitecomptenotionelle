@@ -51,7 +51,7 @@ from retraite_notionnelle.donnees.assiette import (
 )
 from retraite_notionnelle.donnees.bilan import charger_bilan
 from retraite_notionnelle.donnees.chargement import Fiabilite
-from retraite_notionnelle.donnees.distribution import DistributionPensions
+from retraite_notionnelle.donnees.distribution import DistributionPensions, part_femmes
 from retraite_notionnelle.donnees.cotisants import (
     COTISANTS_ETAT_2024,
     EffectifsCotisants,
@@ -917,6 +917,50 @@ def test_deplacer_les_pensions_vers_le_bas_coute_plus_cher(distribution):
     assert reduit.beneficiaires > entier.beneficiaires
     with pytest.raises(ValueError, match="strictement positif"):
         cout_garantie(distribution, 16e6, 800.0, 0.0)
+
+
+def test_les_deux_sexes_recomposent_la_colonne_dont_le_cout_est_tire(distribution):
+    """Peser les sexes autrement que l'enquête, c'est parler d'une autre population.
+
+    Le coût de la garantie est lu sur la colonne « ensemble » de l'EIR ; les
+    avances, elles, sont suivies avec la mortalité des deux sexes, pesés par
+    une part de femmes. Si cette part n'est pas celle de l'enquête, le modèle
+    décrit deux populations différentes dans le même calcul — et c'est ce qu'il
+    faisait jusqu'au 21 septembre 2026, avec les 56,0 % que les courbes de
+    survie donnent en population stationnaire là où l'enquête dit 52,8 %.
+
+    Ce test refait le raccord : à ce poids-là, et à lui seul, le mélange des
+    deux colonnes de sexe redonne la colonne « ensemble », à l'arrondi de
+    publication près — sur les parts, et sur ce qui en découle, la part des
+    retraités sous le plancher.
+    """
+    racine = Parametres().racine_donnees
+    poids = part_femmes(racine, distribution.millesime)
+    assert 0.5 < poids < 0.6
+    colonnes = {
+        sexe: DistributionPensions(racine, sexe=sexe,
+                                   millesime=distribution.millesime)
+        for sexe in ("F", "H", "ensemble")
+    }
+    for rang, tranche in enumerate(colonnes["ensemble"].tranches):
+        melange = (poids * colonnes["F"].tranches[rang].part
+                   + (1.0 - poids) * colonnes["H"].tranches[rang].part)
+        # La DREES publie au centième de point : l'écart ne peut pas le dépasser.
+        assert abs(melange - tranche.part) <= 1e-4, tranche.borne_inferieure
+    # Et sur la grandeur qui sert : la part sous le plancher, aux pensions
+    # d'aujourd'hui comme à celles du scénario 6.
+    base = Parametres()
+    vers = Simulateur(base).macro.coefficient_prix(
+        base.annee_euros_garantie_vieillesse, distribution.millesime)
+    plancher = (base.garantie_vieillesse_mensuelle
+                + base.allocation_isolement_mensuelle) * vers
+    for facteur in (1.0, 0.6):
+        parts = {
+            sexe: cout_garantie(colonnes[sexe], 1.0, plancher, facteur).part_beneficiaires
+            for sexe in ("F", "H", "ensemble")
+        }
+        melange = poids * parts["F"] + (1.0 - poids) * parts["H"]
+        assert melange == pytest.approx(parts["ensemble"], abs=5e-4), facteur
 
 
 def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distribution):

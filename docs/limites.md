@@ -5007,24 +5007,55 @@ qu'elle verse. La trajectoire suit ces avances par âge à compter de la
 bascule, au taux réel lu sur la courbe des taux, les libère au décès avec la
 mortalité du vingtile de niveau de vie où la pension moyenne des
 bénéficiaires les place — le premier —, les deux sexes pesés comme ils le
-sont sous le plancher, 68 % de femmes, dont la longévité fait durer une avance
-20,5 ans, et les successions en rendent une part CALCULÉE sur le patrimoine
+sont sous le plancher, 66 % de femmes, dont la longévité fait durer une avance
+20,4 ans, et les successions en rendent une part CALCULÉE sur le patrimoine
 des ménages retraités selon leur revenu (COR, enquête Histoire de vie et
 Patrimoine 2018, `donnees/patrimoine.py`) : 37 % au réglage par défaut, les plus petites
 pensions rattachées au quart des ménages retraités le plus modeste (médiane
-36 800 €), les autres à l'ensemble (médiane 190 200 €), et 1,28 avance par
+36 800 €), les autres à l'ensemble (médiane 190 200 €), et 1,29 avance par
 succession — la règle reporte la reprise au décès du conjoint survivant, et
 deux bénéficiaires qui vivent ensemble en laissent deux sur la même
 succession, presque toujours celle de la femme (INSEE, recensement 2021, part
 en couple par âge et par sexe, croisée avec la part de chaque sexe sous le
 plancher, les pensions du couple étant supposées indépendantes — elles ne le
-sont pas, et la corrélation rendrait ce nombre plus grand). Le
-patrimoine des retraités selon leur PENSION n'est publié nulle part : c'est le
+sont pas, et la corrélation rendrait ce nombre plus grand).
+
+**Le poids des deux sexes est celui de l'enquête, et il ne se devinait
+pas.** Le dépôt ne porte aucun effectif de retraités par sexe : ni la pyramide
+des âges de l'INSEE, qui ignore la retraite, ni les effectifs de la DREES, qui
+ignorent le sexe. Le modèle prenait donc, jusqu'au 21 septembre 2026, la part
+des femmes parmi les 65 ans et plus que ses courbes de survie donnent en
+population stationnaire, 56,0 %. Ce poids était pourtant DANS le fichier :
+l'EIR publie trois colonnes — les femmes, les hommes, l'ensemble —, et la
+troisième est le mélange des deux premières. Il existe un poids, et un seul,
+tel que `w·F + (1−w)·H` redonne l'ensemble ; les quarante-six tranches de 2020
+le donnent toutes entre 0,52 et 0,53, l'écart étant celui de l'arrondi au
+centième de point, et les moindres carrés le fixent à **52,8 %**. L'écart
+comptait : à 56,0 %, recomposer les deux sexes donnait 58,99 % de retraités
+sous le plancher majoré aux pensions du scénario 6, quand la colonne
+« ensemble » — celle dont le COÛT est tiré — en donne 58,03 %. Le modèle
+décrivait deux populations différentes dans le même calcul.
+`donnees.distribution.part_femmes` lit ce poids sur le fichier et refuse un
+fichier dont les trois colonnes ne se répondraient plus ;
+`test_les_deux_sexes_recomposent_la_colonne_dont_le_cout_est_tire` tient le
+raccord. Ce que cela déplace : la part des femmes parmi les bénéficiaires passe
+de 68 à 66 %, la durée d'une avance de 20,5 à 20,4 ans, le nombre d'avances par
+succession de 1,28 à 1,29, et la couverture ne bouge pas, 37 % des deux côtés.
+**Le COÛT de la garantie ne dépend pas de ce poids** : il est lu directement
+sur la colonne « ensemble ». Une réserve demeure, et elle va dans l'autre
+sens : le poids lu est celui de TOUS les retraités de l'enquête, quand les
+bénéficiaires ont 65 ans et plus. C'est la convention que le modèle applique
+déjà à la FORME de la distribution — « les retraités de moins de 65 ans sont
+supposés répartis comme les autres » —, et la tenir aussi sur le sexe est la
+seule façon de ne pas mêler deux populations ; une distribution par sexe des
+seuls 65 ans et plus ferait bouger les deux ensemble.
+
+Le patrimoine des retraités selon leur PENSION n'est publié nulle part : c'est le
 fichier individuel de l'enquête qui le donnerait, et il se commande, action
 47. Le réglage `reprise` remplace la part calculée par un nombre. Au réglage
 par défaut, en 2070 : 17,7 milliards versés, 8,5 repris, 9,2 nets, 0,25 % du
-PIB ; de 2026 à 2070 : 849 versés, 267 repris, 582 nets, et un stock d'avances
-en cours de 331 milliards à l'horizon. Deux choses que le calcul ne voit
+PIB ; de 2026 à 2070 : 849 versés, 268 repris, 581 nets, et un stock d'avances
+en cours de 329 milliards à l'horizon. Deux choses que le calcul ne voit
 toujours pas, et qui vont en sens inverse l'une de l'autre : les femmes sous
 le plancher vivent souvent dans un ménage moins pauvre que leur pension — le
 calcul le sait pour leur espérance de vie, non pour leur patrimoine —, et deux
@@ -7300,7 +7331,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1841<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1842<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

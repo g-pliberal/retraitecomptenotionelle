@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 431<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 487<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10898,3 +10898,74 @@ qui réclament — pour qu'on ne puisse plus confondre les deux comptes.
 **Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
 `data/reference/site/affirmations.yaml`, `tests/test_affirmations.py`,
 `docs/limites.md`, `tests/temoins/pages.json`.
+
+### 72. Le poids des deux sexes était celui d'une autre population que celle dont le coût est tiré — `fait`
+
+**Demande.** « Tu es sûr que la garantie vieillesse a ce coût ? On a fait tout
+un travail de recherche avec la différence homme/femme dans des commits
+récents. Fouille bien et vérifie tout ça. »
+
+**Le coût brut, lui, tient.** Il a été refait de bout en bout hors du modèle,
+à partir du CSV de l'EIR seul, sans appeler aucune fonction du dépôt : 32,7 %
+des retraités sous le plancher majoré aux pensions de 2020 et 57,0 milliards
+d'euros de 2026 avant recours, 58,03 % et 28,5 milliards après recours aux
+pensions du scénario 6. Ce sont les quatre nombres que la page affiche, au
+dixième. `_manque_moyen` a été vérifié à la main sur une tranche pleine et sur
+la tranche qui chevauche le plancher. Rien à reprendre de ce côté.
+
+**Ce qui ne tenait pas est le POIDS DES DEUX SEXES.** L'action du 20 septembre
+avait fait entrer le sexe dans le suivi des avances : les bénéficiaires sont
+surtout des femmes, elles vivent plus longtemps, et leurs avances durent
+d'autant. Pour peser les deux courbes de survie, il fallait la part des femmes
+parmi les bénéficiaires, donc la part des femmes dans la population — et le
+dépôt n'en avait pas : ni la pyramide des âges de l'INSEE, qui ignore la
+retraite, ni les effectifs de la DREES, qui ignorent le sexe. Le modèle avait
+donc pris ses courbes de survie à 65 ans et en avait tiré, en population
+stationnaire, **56,0 %**.
+
+**Ce poids était dans le fichier, et exactement.** L'EIR publie trois
+colonnes — les femmes, les hommes, l'ensemble —, et la troisième est le mélange
+des deux premières : il existe un poids, et un seul, tel que `w·F + (1−w)·H`
+redonne l'ensemble tranche par tranche. Les quarante-six tranches de 2020 le
+donnent toutes entre 0,52 et 0,53 — l'écart est celui de l'arrondi au centième
+de point de la publication —, et les moindres carrés le fixent à **52,8 %**,
+avec un résidu de 8·10⁻⁵.
+
+**Et l'écart comptait, parce qu'il faisait parler de deux populations à la
+fois.** À 56,0 %, recomposer les deux sexes donnait 58,99 % de retraités sous
+le plancher majoré aux pensions du scénario 6 ; la colonne « ensemble » — celle
+dont le coût est tiré — en donne 58,03 %. Le même calcul disait donc deux
+choses de la même population, à un point près. Un poids sur les 65 ans et plus,
+appliqué à des distributions de TOUS les retraités.
+
+**Ce que le remède déplace.** La part des femmes parmi les bénéficiaires passe
+de 68 à 66 %, la durée d'une avance de 20,5 à 20,4 ans, le nombre d'avances par
+succession de 1,28 à 1,29, la couverture ne bouge pas (37 %), et le net de 2070
+reste à 9,2 milliards. **Le coût brut ne bouge pas d'un centime** : il est lu
+sur la colonne « ensemble », sans passer par le poids. C'était une
+contradiction interne, pas une erreur de niveau — et c'est bien pour cela
+qu'aucun chiffre affiché ne la trahissait.
+
+**Le test qui manquait.** `test_les_deux_sexes_recomposent_la_colonne_dont_le
+_cout_est_tire` refait le raccord : à ce poids-là, et à lui seul, le mélange
+des deux colonnes de sexe redonne la colonne « ensemble », sur les parts de
+chaque tranche et sur la part sous le plancher, aux pensions d'aujourd'hui
+comme à celles du scénario 6. `donnees.distribution.part_femmes` refuse par
+ailleurs un fichier dont les trois colonnes ne se répondraient plus.
+
+**Ce qui a été vérifié et laissé tel quel.** Les quatre chiffres par sexe de la
+page Programme (46 % des femmes contre 18 % des hommes sous le plancher
+aujourd'hui, 72 % contre 42 % aux pensions du scénario 6) sont calculés colonne
+par colonne et ne passent pas par le poids : ils sont justes. Le nombre
+d'avances par succession est correctement pondéré PAR AVANCE et non par
+succession — c'est bien ce que demande la boucle de couverture, qui parcourt
+les avances. Et la réserve de fond n'a pas changé de sens : le déplacement de
+la distribution est proportionnel et uniforme, alors que le scénario 6 retire
+surtout des droits non contributifs que les femmes détiennent plus souvent ;
+il fait donc tomber leurs pensions plus que la moyenne, et le coût affiché est
+à ce titre une borne basse.
+
+**Fichiers.** `src/retraite_notionnelle/donnees/distribution.py`,
+`src/retraite_notionnelle/cout.py`, `moteur/js/distribution.js`,
+`moteur/js/cout.js`, `tests/test_cout.py`, `docs/limites.md`,
+`moteur/donnees.json`, `tests/temoins/pages.json`.
