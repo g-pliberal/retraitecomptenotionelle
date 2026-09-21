@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 766<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 813<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -11218,3 +11218,57 @@ en découle une borne basse — plus étroite qu'avant, dans le même sens.
 `src/retraite_notionnelle/web/pages.py`, `moteur/js/caracteristiques.js`,
 `moteur/js/{config,cout,pages}.js`, `scripts/construire_donnees.py`,
 `scripts/garantie_par_sexe.py`, `index.html`, `tests/`, `docs/limites.md`.
+
+### 76. Ce que les minima apportent : mesuré, et laissé dehors pour une raison chiffrée — `fait`
+
+**Demande.** « Mesure aussi ce que les minima apportent », après l'action 75,
+qui avait laissé ce terme nommé faute que l'enquête publie autre chose que la
+part de ses bénéficiaires.
+
+**Une réserve qui se dissout par une lecture.** Le minimum vieillesse n'avait
+rien à faire dans cette discussion, et il suffisait de regarder : l'enquête le
+publie sur une ligne SÉPARÉE de la pension de droit direct, qui est l'assiette
+de la distribution. Il n'est donc pas dans les pensions que le barème déplace.
+Son chiffre par sexe est d'ailleurs instructif — 18 € par mois en moyenne chez
+les hommes contre 13 chez les femmes, parce qu'ils tombent sous le plancher par
+carrière très courte.
+
+**Le minimum de pension, lui, est dedans, et il se chiffre en deux pièces.**
+Les EFFECTIFS de bénéficiaires par sexe sont dans le classeur, feuille
+« Minima », qui croise le sexe et le statut au regard du minimum : 4,33 millions
+d'assurés au minimum de leur régime principal, dont **78 % de femmes**, et 6,10
+millions tous régimes confondus, dont 67 %. Ils rejoignent la série certifiée.
+La MASSE, en revanche, n'est publiée nulle part : elle est prise au modèle, qui
+l'isole dans la cascade du scénario 1 — 2 912 millions en 2020.
+
+**Le résultat.**
+
+| Qui l'on compte | Bénéficiaires | dont femmes | Par mois | Part de la pension, F / H | × r |
+|---|---|---|---|---|---|
+| Au minimum de leur régime principal | 4,33 M | 78 % | 56 € | 1,92 % / 0,39 % | 0,985 |
+| Tous régimes confondus | 6,10 M | 67 % | 40 € | 1,65 % / 0,58 % | 0,989 |
+
+Le terme va dans le même sens que les deux autres et mènerait `r` de 0,834 à
+0,821-0,825.
+
+**Pourquoi il reste dehors, et c'est une décision chiffrée, pas un scrupule.**
+Ce qu'il ferait au coût est **sous le pour cent** : 22,0 milliards de garantie
+en 2024 deviennent 22,1 ou 22,2, et la part de PIB de 2026 ne bouge pas au
+centième. Le retenir coûterait en revanche un couplage réel — la garantie
+dépendrait du chiffrage des avantages, quatre secondes de calcul, pour un terme
+dont le montant est pris au modèle là où les deux autres sont LUS sur la même
+enquête au même millésime. La page l'affiche, le script l'imprime, un test le
+tient ; `r` ne le porte pas.
+
+**Une hypothèse, et une seule.** Que le minimum apporte autant à un
+bénéficiaire qu'à un autre, quel que soit son sexe. L'enquête suggère que c'est
+prudent : sur le minimum vieillesse, qu'elle chiffre, les hommes touchent
+davantage.
+
+**Fichiers.** `scripts/fetch/drees_caracteristiques_retraites.py`,
+`data/reference/macro/caracteristiques_retraites.csv`,
+`src/retraite_notionnelle/donnees/caracteristiques.py`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/caracteristiques.js`,
+`moteur/js/pages.js`, `scripts/construire_donnees.py`,
+`scripts/garantie_par_sexe.py`, `tests/test_garantie_par_sexe.py`,
+`docs/limites.md`.

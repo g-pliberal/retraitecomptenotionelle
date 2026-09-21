@@ -29,7 +29,36 @@ la convention qu'il prétendrait corriger. Le dépôt ne porte par ailleurs
 aucune ventilation par sexe du coût des avantages non contributifs, qui
 serait l'autre chemin.
 
-CE QUE LE SCRIPT FAIT À LA PLACE : UNE SENSIBILITÉ, SOUS CONTRAINTE DE MASSE
+CE QU'IL MESURE AUSSI : CE QUE LES MINIMA APPORTENT
+-----------------------------------------------------
+``r`` retient deux termes, tous deux LUS sur l'enquête : la durée validée non
+cotisée et la majoration pour enfants. Un troisième restait nommé sans être
+chiffré — les minima de pension, que 46,5 % des femmes touchent contre 26,1 %
+des hommes. Le script le chiffre, et c'est la seule chose qu'il fasse en
+empruntant au modèle : l'enquête publie la part des bénéficiaires, jamais ce
+que le minimum leur apporte.
+
+Deux pièces, et une seule n'est pas lue. Les EFFECTIFS de bénéficiaires par
+sexe viennent de l'enquête (4,3 millions au minimum de leur régime principal,
+dont 78 % de femmes) ; la MASSE que les minima représentent vient du modèle,
+qui l'isole carrière par carrière dans la cascade du scénario 1 — 2,9 milliards
+en 2020, minimum contributif et minimum garanti réunis. Le dépôt dit lui-même
+que cette masse est une borne basse : la grille n'est pas une population, et le
+minimum contributif est réclamé par des carrières courtes qu'elle ne compte
+guère.
+
+Le partage suppose alors une chose, et une seule : que le minimum apporte
+autant à un bénéficiaire qu'à un autre, quel que soit son sexe. L'enquête
+suggère que c'est prudent — sur le MINIMUM VIEILLESSE, qu'elle chiffre, les
+hommes touchent davantage (18 € par mois en moyenne contre 13), parce qu'ils
+tombent sous le plancher par carrière très courte.
+
+LE MINIMUM VIEILLESSE, LUI, EST HORS SUJET, et il fallait le vérifier plutôt
+que le supposer : l'enquête le publie sur une ligne SÉPARÉE de la pension de
+droit direct, qui est l'assiette de la distribution. Il n'est donc pas dans
+les pensions que le barème déplace, et ne peut rien faire à ``r``.
+
+CE QUE LE SCRIPT FAIT POUR ``r`` : UNE SENSIBILITÉ, SOUS CONTRAINTE DE MASSE
 -----------------------------------------------------------------------------
 L'EIR publie la distribution des DEUX sexes à part. On peut donc déplacer
 chacune du sien — ``f_F`` et ``f_H`` — au lieu de déplacer l'ensemble du
@@ -70,6 +99,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from retraite_notionnelle.config import Parametres  # noqa: E402
+from retraite_notionnelle.avantages import calculer_avantages  # noqa: E402
 from retraite_notionnelle.cout import calculer_cout  # noqa: E402
 from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
@@ -203,6 +233,98 @@ def calculer(parametres: Parametres | None = None,
     return lectures
 
 
+@dataclass(frozen=True)
+class Minima:
+    """Ce que les minima de pension apportent à chaque sexe, et à ``r``."""
+
+    #: ``regime_principal`` ou ``tous`` : qui l'on compte comme bénéficiaire.
+    champ: str
+    beneficiaires: dict[str, float]
+    #: Masse annuelle des minima, en millions d'euros de l'année de l'enquête.
+    masse_meur: float
+    #: Ce que le minimum apporte, par an et par bénéficiaire.
+    montant_annuel: float
+    #: Part de la pension de chaque sexe que les minima portent.
+    part: dict[str, float]
+    #: Le facteur par lequel ce terme multiplie ``r``.
+    rapport: float
+
+
+def minima(parametres: Parametres | None = None) -> list[Minima]:
+    """Ce que les minima de pension apportent, par sexe, l'année de l'enquête.
+
+    Les effectifs de bénéficiaires sont LUS ; la masse vient du modèle, qui
+    l'isole dans la cascade du scénario 1, faute qu'aucune série ne la publie.
+    Le partage entre les sexes suppose le montant moyen identique de l'un à
+    l'autre — l'enquête suggère que c'est prudent, les hommes touchant
+    davantage de minimum vieillesse parce qu'ils y tombent par carrière très
+    courte.
+    """
+    parametres = parametres or Parametres()
+    simulateur = Simulateur(parametres)
+    caracteristiques = simulateur.caracteristiques
+    millesime = caracteristiques.millesime
+    racine = parametres.racine_donnees
+    avantages = calculer_avantages(simulateur, DepensesRetraite(racine),
+                                   Population(racine))
+    ligne = next((a for a in avantages.annees if a.annee == millesime), None)
+    if ligne is None:
+        raise RuntimeError(f"le chiffrage des avantages ne couvre pas {millesime}")
+    masse = sum(ligne.lignes.get(cle, 0.0)
+                for cle in ("minimum_contributif", "minimum_garanti"))
+    lectures: list[Minima] = []
+    for champ, principal in (("régime principal", True), ("tous régimes", False)):
+        nombres = {
+            sexe: caracteristiques.beneficiaires_minimum(
+                sexe, regime_principal=principal) * 1e3
+            for sexe in ("F", "H")
+        }
+        total = nombres["F"] + nombres["H"]
+        montant = masse * 1e6 / total if total > 0.0 else 0.0
+        part = {
+            sexe: nombres[sexe] * montant / (
+                caracteristiques.valeur("effectifs", sexe) * 1e3
+                * caracteristiques.valeur("pension_droit_direct", sexe) * 12.0)
+            for sexe in ("F", "H")
+        }
+        lectures.append(Minima(
+            champ=champ, beneficiaires=nombres, masse_meur=masse,
+            montant_annuel=montant, part=part,
+            rapport=(1.0 - part["F"]) / (1.0 - part["H"]),
+        ))
+    return lectures
+
+
+def tableau_minima(lectures: list[Minima], mesure: float) -> str:
+    lignes = [
+        "",
+        "Ce que les minima de pension apportent, et ce qu'ils feraient à r",
+        f"Masse du modèle : {lectures[0].masse_meur:.0f} M€ — minimum contributif",
+        "et minimum garanti, isolés dans la cascade du scénario 1. Aucune série",
+        "ne la publie ; le dépôt la dit lui-même borne basse.",
+        "",
+        f"    {'champ':<16} {'bénéf.':>9} {'dont F':>7} {'€/mois':>7} "
+        f"{'part F':>7} {'part H':>7} {'×r':>7} {'r total':>8}",
+    ]
+    for lecture in lectures:
+        total = lecture.beneficiaires["F"] + lecture.beneficiaires["H"]
+        lignes.append(
+            f"    {lecture.champ:<16} {total / 1e6:>7.2f} M "
+            f"{lecture.beneficiaires['F'] / total:>6.0%} "
+            f"{lecture.montant_annuel / 12.0:>7.0f} "
+            f"{lecture.part['F']:>7.2%} {lecture.part['H']:>7.2%} "
+            f"{lecture.rapport:>7.4f} {mesure * lecture.rapport:>8.4f}"
+        )
+    lignes += [
+        "",
+        "r retient les deux termes LUS, et pas celui-ci : son montant vient du",
+        "modèle là où les autres sont lus, et il vaut moins d'un pour cent du",
+        "coût. Le minimum vieillesse, lui, est hors de l'assiette : l'enquête le",
+        "publie sur une ligne séparée de la pension de droit direct.",
+    ]
+    return "\n".join(lignes)
+
+
 def tableau(lectures: list[Lecture], parametres: Parametres) -> str:
     lignes = [
         "Le coût de la garantie quand les deux sexes ne tombent pas du même "
@@ -245,11 +367,16 @@ def main(argv: list[str] | None = None) -> int:
     parametres = Parametres()
     lectures = calculer(parametres)
     print(tableau(lectures, parametres))
+    lectures_minima = minima(parametres)
+    print(tableau_minima(
+        lectures_minima,
+        Simulateur(parametres).caracteristiques.rapport_deplacement(),
+    ))
     if arguments.json:
-        arguments.json.write_text(json.dumps(
-            [lecture.__dict__ for lecture in lectures],
-            indent=1, ensure_ascii=False,
-        ), encoding="utf-8")
+        arguments.json.write_text(json.dumps({
+            "sensibilite": [lecture.__dict__ for lecture in lectures],
+            "minima": [lecture.__dict__ for lecture in lectures_minima],
+        }, indent=1, ensure_ascii=False), encoding="utf-8")
     return 0
 
 

@@ -9526,6 +9526,36 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
             facteur, rapport)
         for rapport in (1.0, rapport_mesure)
     }
+    # CE QUE LES MINIMA APPORTERAIENT À CE RAPPORT, chiffré plutôt que nommé.
+    # Les effectifs de bénéficiaires sont lus ; la masse vient du modèle, qui
+    # l'isole dans la cascade du scénario 1, faute qu'aucune série ne la
+    # publie — c'est pourquoi ce terme est chiffré et non retenu dans ``r``.
+    annee_enquete_avantages = next(
+        (ligne for ligne in contexte.avantages().annees
+         if ligne.annee == millesime), None)
+    masse_minima = sum(
+        annee_enquete_avantages.lignes.get(cle, 0.0)
+        for cle in ("minimum_contributif", "minimum_garanti")
+    ) if annee_enquete_avantages is not None else 0.0
+    beneficiaires_minima = {
+        sexe: caracteristiques.beneficiaires_minimum(sexe) * 1e3
+        for sexe in ("F", "H")
+    }
+    total_minima = sum(beneficiaires_minima.values())
+    montant_minima = masse_minima * 1e6 / total_minima if total_minima else 0.0
+    part_minima = {
+        sexe: beneficiaires_minima[sexe] * montant_minima / (
+            caracteristiques.valeur("effectifs", sexe) * 1e3
+            * caracteristiques.valeur("pension_droit_direct", sexe) * 12.0)
+        for sexe in ("F", "H")
+    }
+    rapport_minima = (1.0 - part_minima["F"]) / (1.0 - part_minima["H"])
+    par_sexe[rapport_mesure * rapport_minima] = cout_garantie_par_sexe(
+        simulateur.distributions_par_sexe["F"],
+        simulateur.distributions_par_sexe["H"],
+        caracteristiques.part_femmes, effectif_retraites, plancher_seul,
+        facteur, rapport_mesure * rapport_minima,
+    )
     cout_uniforme = par_sexe[1.0].cout_annuel_meur
     ecart_mesure = (
         par_sexe[rapport_mesure].cout_annuel_meur / cout_uniforme - 1.0
@@ -9803,13 +9833,19 @@ sixième de plus. Le tableau les déplace donc chacune du sien, la moyenne
 d'ensemble restant déplacée du facteur que la grille donne. La convention
 uniforme, celle d'avant le 21 septembre 2026, valait
 {_cout_par_sexe(1.0)} là où celle-ci donne {_cout_par_sexe(rapport_mesure)} :
-elle sous-estimait de {g.pourcentage(ecart_mesure, decimales=0)}. Et cette
-mesure est elle-même une borne basse : les minima de pension, que
+elle sous-estimait de {g.pourcentage(ecart_mesure, decimales=0)}. Les minima de
+pension n'entrent pas dans ce rapport, et c'est le seul terme qui manque :
+l'enquête en publie la part des bénéficiaires,
 {g.pourcentage(caracteristiques.part_minimum_pension("F"), decimales=0)} des
-femmes touchent contre
+femmes contre
 {g.pourcentage(caracteristiques.part_minimum_pension("H"), decimales=0)} des
-hommes, n'y sont pas : l'enquête en
-publie la part des bénéficiaires, pas ce qu'ils leur apportent.</div>
+hommes, mais jamais ce qu'ils apportent, qu'il faut prendre au modèle. Ce
+qu'ils pèsent est chiffré : {g.pourcentage(part_minima["F"], decimales=1)} de
+la pension des femmes contre
+{g.pourcentage(part_minima["H"], decimales=1)} de celle des hommes, ce qui
+mènerait ce tableau à {_cout_par_sexe(rapport_mesure * rapport_minima)}. Moins
+d'un pour cent de plus, et le minimum vieillesse ne fait rien du tout : il est
+sur une ligne à part de la pension de droit direct, que ce barème déplace.</div>
 
 <p><strong>Ce qu'elle remplace.</strong> <strong>La garantie est le seul
 plancher du système 4</strong>, et c'est tout ce qu'il y a à retenir : elle

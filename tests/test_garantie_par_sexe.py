@@ -162,7 +162,46 @@ def test_l_ecart_uniforme_est_toujours_une_borne_basse(lectures):
         assert couts[-1] / couts[0] < 1.10, plancher
 
 
+def test_les_minima_pesent_sur_les_femmes_et_restent_sous_le_pour_cent(lectures):
+    """Ce que les minima apportent : mesuré, signé, et petit.
+
+    Le troisième terme du rapport ne vient pas de la même étagère que les deux
+    autres : les effectifs de bénéficiaires sont LUS sur l'enquête, la masse
+    est prise au modèle, faute qu'aucune série ne la publie. Ce test tient ce
+    que la page en dit — qu'il pèse sur les femmes, que son sens est le même
+    que celui des deux autres, et qu'il reste sous le pour cent de coût, ce qui
+    est la raison de ne pas le retenir dans ``r``.
+    """
+    lectures_minima = garantie_par_sexe.minima(Parametres())
+    assert {l.champ for l in lectures_minima} == {"régime principal", "tous régimes"}
+    mesure = Simulateur(Parametres()).caracteristiques.rapport_deplacement()
+    for lecture in lectures_minima:
+        # Les bénéficiaires sont d'abord des femmes, et le minimum pèse donc
+        # plus lourd dans leur pension — davantage de têtes sur une pension
+        # moyenne plus basse.
+        assert lecture.beneficiaires["F"] > lecture.beneficiaires["H"]
+        assert lecture.part["F"] > lecture.part["H"]
+        # Le terme va donc dans le même sens que les deux autres.
+        assert 0.97 < lecture.rapport < 1.0
+        assert 0.5 < mesure * lecture.rapport < mesure
+    # Le champ le plus étroit — les bénéficiaires de leur régime principal —
+    # concentre le plus les femmes, et pèse donc le plus.
+    principal = next(l for l in lectures_minima if l.champ == "régime principal")
+    tous = next(l for l in lectures_minima if l.champ == "tous régimes")
+    assert principal.rapport < tous.rapport
+    # Et ce que cela ferait au coût reste sous le pour cent : c'est la mesure
+    # qui justifie de laisser ce terme hors du rapport retenu.
+    reference = next(l for l in lectures
+                     if l.plancher.startswith("plancher majoré") and l.mesure)
+    colonne = sorted((l for l in lectures if l.plancher.startswith("plancher majoré")),
+                     key=lambda l: abs(l.rapport - mesure * principal.rapport))
+    assert colonne[0].cout_mds / reference.cout_mds < 1.01
+
+
 def test_le_tableau_se_rend_sans_exploser(lectures):
     texte = garantie_par_sexe.tableau(lectures, Parametres())
     assert "r=fF/fH" in texte
     assert texte.count("Md") >= len(lectures)
+    lectures_minima = garantie_par_sexe.minima(Parametres())
+    rendu = garantie_par_sexe.tableau_minima(lectures_minima, 0.834)
+    assert "régime principal" in rendu and "tous régimes" in rendu

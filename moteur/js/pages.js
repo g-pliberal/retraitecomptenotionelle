@@ -8270,6 +8270,36 @@ function coutDetailGarantie(contexte) {
       rapport,
     ));
   }
+  // CE QUE LES MINIMA APPORTERAIENT À CE RAPPORT : les effectifs de
+  // bénéficiaires sont lus, la masse vient du modèle. C'est pourquoi ce terme
+  // est chiffré et non retenu dans r.
+  const anneeEnqueteAvantages = contexte.avantages().annees.find(
+    (ligne) => ligne.annee === millesime);
+  let masseMinima = 0;
+  if (anneeEnqueteAvantages) {
+    for (const cle of ["minimum_contributif", "minimum_garanti"]) {
+      masseMinima += anneeEnqueteAvantages.lignes[cle] || 0;
+    }
+  }
+  const beneficiairesMinima = {
+    F: caracteristiques.beneficiairesMinimum("F") * 1e3,
+    H: caracteristiques.beneficiairesMinimum("H") * 1e3,
+  };
+  const totalMinima = beneficiairesMinima.F + beneficiairesMinima.H;
+  const montantMinima = totalMinima ? masseMinima * 1e6 / totalMinima : 0;
+  const partMinima = {};
+  for (const sexe of ["F", "H"]) {
+    partMinima[sexe] = beneficiairesMinima[sexe] * montantMinima
+      / (caracteristiques.valeur("effectifs", sexe) * 1e3
+         * caracteristiques.valeur("pension_droit_direct", sexe) * 12);
+  }
+  const rapportMinima = (1 - partMinima.F) / (1 - partMinima.H);
+  parSexe.set(rapportMesure * rapportMinima, coutGarantieParSexe(
+    new DistributionPensions(contexte.paquet, "F"),
+    new DistributionPensions(contexte.paquet, "H"),
+    caracteristiques.partFemmes, effectifRetraites, plancherSeul, facteur,
+    rapportMesure * rapportMinima,
+  ));
   const coutUniforme = parSexe.get(1.0).coutAnnuelMeur;
   const ecartMesure = coutUniforme > 0
     ? parSexe.get(rapportMesure).coutAnnuelMeur / coutUniforme - 1 : 0;
@@ -8536,13 +8566,19 @@ sixième de plus. Le tableau les déplace donc chacune du sien, la moyenne
 d'ensemble restant déplacée du facteur que la grille donne. La convention
 uniforme, celle d'avant le 21 septembre 2026, valait
 ${coutParSexe(1.0)} là où celle-ci donne ${coutParSexe(rapportMesure)} :
-elle sous-estimait de ${g.pourcentage(ecartMesure, false, 0)}. Et cette
-mesure est elle-même une borne basse : les minima de pension, que
+elle sous-estimait de ${g.pourcentage(ecartMesure, false, 0)}. Les minima de
+pension n'entrent pas dans ce rapport, et c'est le seul terme qui manque :
+l'enquête en publie la part des bénéficiaires,
 ${g.pourcentage(caracteristiques.partMinimumPension("F"), false, 0)} des
-femmes touchent contre
+femmes contre
 ${g.pourcentage(caracteristiques.partMinimumPension("H"), false, 0)} des
-hommes, n'y sont pas : l'enquête en
-publie la part des bénéficiaires, pas ce qu'ils leur apportent.</div>
+hommes, mais jamais ce qu'ils apportent, qu'il faut prendre au modèle. Ce
+qu'ils pèsent est chiffré : ${g.pourcentage(partMinima.F, false, 1)} de
+la pension des femmes contre
+${g.pourcentage(partMinima.H, false, 1)} de celle des hommes, ce qui
+mènerait ce tableau à ${coutParSexe(rapportMesure * rapportMinima)}. Moins
+d'un pour cent de plus, et le minimum vieillesse ne fait rien du tout : il est
+sur une ligne à part de la pension de droit direct, que ce barème déplace.</div>
 
 <p><strong>Ce qu'elle remplace.</strong> <strong>La garantie est le seul
 plancher du système 4</strong>, et c'est tout ce qu'il y a à retenir : elle

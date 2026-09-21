@@ -66,6 +66,21 @@ SORTIE = Path("data/brut/drees_caracteristiques_retraites.json")
 #: seule qu'on lise — le quintile n'ajoute rien à la question posée.
 FEUILLE = "Quintiles"
 
+#: La seconde feuille lue. Elle croise le sexe et le fait de toucher un
+#: minimum de pension, et c'est d'elle que viennent les EFFECTIFS de
+#: bénéficiaires par sexe — ce que la première ne donne qu'en part.
+FEUILLE_MINIMA = "Minima"
+
+#: Les colonnes de la feuille des minima, sous le code que le dépôt leur donne
+#: et le début de l'en-tête que le classeur leur donne.
+COLONNES_MINIMA: dict[str, str] = {
+    "beneficiaires_minimum_pension":
+        "Retraités bénéficiaires d'un minimum de pension",
+    "beneficiaires_minimum_regime_principal":
+        "Retraités bénéficiaires d'un minimum de pension dans leur régime "
+        "principal",
+}
+
 #: Le classeur empile les millésimes dans le même jeu, et chacun en trois
 #: variantes : tous les retraités, ceux qui résident en France, une génération.
 #: On retient « tous les retraités », qui est le champ de la distribution.
@@ -153,6 +168,49 @@ def lire_caracteristiques(contenu: bytes) -> dict[str, dict[str, float]]:
     return valeurs
 
 
+def lire_beneficiaires(contenu: bytes) -> dict[str, dict[str, float]]:
+    """Les effectifs de bénéficiaires d'un minimum de pension, par sexe.
+
+    La feuille des minima croise le sexe et le statut au regard du minimum ;
+    la ligne des effectifs porte, colonne par colonne, combien de retraités
+    chaque case contient. Les deux colonnes retenues s'emboîtent — le régime
+    principal est une part de l'ensemble —, et leur en-tête commence pareil :
+    c'est la PLUS LONGUE qui gagne, sans quoi la seconde prendrait la première.
+    """
+    grille = feuilles(contenu)[FEUILLE_MINIMA]
+    derniere_colonne = max(colonne for _, colonne in grille)
+    colonnes: dict[str, int] = {}
+    for code, debut in sorted(COLONNES_MINIMA.items(),
+                              key=lambda paire: -len(paire[1])):
+        for colonne in range(derniere_colonne + 1):
+            entete = str(grille.get((0, colonne), "")).strip()
+            if entete.startswith(debut) and colonne not in colonnes.values():
+                colonnes[code] = colonne
+                break
+    manquantes = set(COLONNES_MINIMA) - set(colonnes)
+    if manquantes:
+        raise RuntimeError(
+            f"feuille {FEUILLE_MINIMA!r} : colonnes absentes — "
+            f"{', '.join(sorted(manquantes))}"
+        )
+
+    derniere_ligne = max(ligne for ligne, _ in grille)
+    valeurs: dict[str, dict[str, float]] = {code: {} for code in COLONNES_MINIMA}
+    for ligne in range(1, derniere_ligne + 1):
+        sexe = SEXES.get(str(grille.get((ligne, 0), "")).strip())
+        libelle = str(grille.get((ligne, 2), "")).strip()
+        if sexe is None or not libelle.startswith("Effectifs (en milliers)"):
+            continue
+        for code, colonne in colonnes.items():
+            valeur = grille.get((ligne, colonne))
+            if isinstance(valeur, (int, float)):
+                valeurs[code][sexe] = float(valeur)
+    manquants = [code for code, serie in valeurs.items() if len(serie) < 3]
+    if manquants:
+        raise RuntimeError(f"effectifs illisibles : {', '.join(manquants)}")
+    return valeurs
+
+
 def main() -> int:
     try:
         annee, titre, contenu = classeur_le_plus_recent()
@@ -161,6 +219,7 @@ def main() -> int:
         return 1
 
     valeurs = lire_caracteristiques(contenu)
+    valeurs.update(lire_beneficiaires(contenu))
     charge = {
         "source": BASE,
         "fichier": titre,
