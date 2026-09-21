@@ -11043,3 +11043,113 @@ page affirme : jamais moins, et moins d'un dixième de plus.
 `tests/test_garantie_par_sexe.py`, `tests/test_affirmations.py`,
 `data/reference/site/affirmations.yaml`, `docs/limites.md`,
 `tests/temoins/pages.json`.
+
+### 74. Le compte du COR est lu dans un seul scénario, et la croissance ne déplace qu'une moitié du bilan — `à faire`
+
+**Demande.** « Tu peux regarder si on n'a pas oublié des sources de recettes ?
+En effet, avec la croissance à 1 %, on devrait avoir moins de chômage et plus
+de recettes. » La question portait sur un poste manquant ; ce qui manque n'est
+pas un poste.
+
+**Aucune source de recette ne manque, et c'est tenu par un test.** Les six
+postes de `equilibre.POSTES` sont la ventilation entière du COR —
+`test_les_postes_couvrent_la_structure_des_ressources` exige que leurs parts
+somment à un, année par année. Les trois que la proposition n'encaisse pas
+sont chiffrés un par un par `scripts/postes_ecartes.py`. Ce qui reste dehors
+est hors périmètre et déclaré : les réserves financières (un stock, quand le
+solde est un flux), le RAFP, et les produits financiers que la convention EPR
+écarte.
+
+**Ce qui manque est la RÉACTION, et elle manque des deux côtés à la fois.**
+Mesuré aux trois variantes de productivité du COR — 0,4 %, 0,7 %, 1,0 % — sur
+la section « solde » de la page Coût :
+
+| en % du PIB, 2070 | 0,4 % | 0,7 % | 1,0 % |
+|---|---|---|---|
+| ressources | 12,910 | 12,910 | 12,910 |
+| dépense du système 1 | 15,300 | 15,300 | 15,300 |
+| solde du système 6 | +0,419 | −0,139 | −0,724 |
+
+Les deux premières lignes ne bougent pas d'un millième, ni entre les trois
+scénarios, ni entre les deux trajectoires d'emploi : `comptes_retraite.csv` ne
+porte que la colonne « Sc. Ref » du COR, et `ComptesRetraite` la lit quel que
+soit le scénario demandé. La troisième bouge de 1,14 point.
+
+**Sur les recettes, l'immobilité est JUSTE, et c'est la réponse à la question
+posée.** Une croissance plus forte donne plus de recettes en euros, et la même
+part de PIB : l'assiette et le PIB montent du même pas, et
+`hypotheses_projection.yaml` s'interdit explicitement de déformer le partage de
+la valeur ajoutée. Tout le bilan étant en part de PIB, une recette qui ne bouge
+pas est ce qu'il faut attendre. Le raisonnement vaut aussi pour l'emploi :
+rejouée sous `emploi=constant` au lieu de la trajectoire du COR, la recette de
+2070 vaut 12,9105 % des deux côtés, et c'est exact — moins d'emploi, moins de
+PIB, même rapport.
+
+**Sur les dépenses, l'immobilité est FAUSSE, et le dépôt le démontre contre
+lui-même.** La croissance travaille sur l'autre moitié du bilan : une pension
+indexée sur les prix décroche d'un PIB qui accélère. La trajectoire de la page
+Coût, elle, le mesure — c'est le modèle du dépôt, pas une série empruntée :
+
+| en % du PIB, 2070 | 0,4 % | 0,7 % | 1,0 % |
+|---|---|---|---|
+| système 1, trajectoire du dépôt | 19,735 | 18,347 | 17,086 |
+| système 6, trajectoire du dépôt | 9,540 | 9,537 | 9,536 |
+| système 6, section « solde » | 7,840 | 8,432 | 9,051 |
+
+La deuxième ligne est le comportement attendu d'un compte notionnel : des
+droits indexés sur la masse salariale coûtent la même part de PIB quelle que
+soit la croissance. La troisième est la même grandeur, calculée autrement —
+`dépense du COR × rapport` —, et elle monte de 1,21 point sur la même
+fourchette. Le rapport, lui, est bon (0,5124 → 0,5916 : le notionnel économise
+moins quand la croissance est forte, puisque c'est le droit en vigueur qui
+profite de l'indexation sur les prix) ; c'est le NIVEAU auquel on l'applique
+qui est gelé sur 0,7 %. Un rapport qui monte à juste titre, multiplié par une
+dépense qui devrait baisser et ne baisse pas : le produit compte deux fois dans
+le même sens.
+
+**Conséquence sur ce que le site affiche.** Le lecteur qui choisit la variante
+haute voit la proposition perdre 0,58 point de PIB en 2070 et 0,45 en 2050,
+sans qu'aucun mécanisme économique le justifie. C'est l'inverse du sens
+attendu, et c'est un artefact de raccord.
+
+**Le chômage ne se déduit pas de la productivité, et le COR ne le fait pas
+non plus.** Ses variantes de productivité tiennent le chômage à 7 % — l'en-tête
+de `emploi_projete.csv` nomme le scénario lu : « productivité 0,7 - chômage
+7 % ». Le chômage est chez lui une DIMENSION SÉPARÉE, avec ses propres
+variantes publiées (onglets `Chô_5%`, `Chô_7%`, `Chô_10%` de
+`hypo_cotisants_chômage_2025.xlsx`, repérés sous l'action 27). Le dépôt n'en
+porte aucune. Et quand bien même : en part de PIB, une variante de chômage
+déplacerait la dépense, pas la recette, pour la raison ci-dessus.
+
+**Ce qu'il faut faire, et la bonne nouvelle est que la moitié du chemin est
+faite.** `scripts/fetch/cor_comptes_retraite.py` lit DÉJÀ le compte variante de
+productivité par variante — c'est `lire_bloc_eec`, quatre lignes étiquetées par
+leur hypothèse —, et c'est `verifier_donnees.py` qui n'en retient qu'une, en la
+cherchant sur `scenario_par_defaut` plutôt que sur le scénario demandé. Reste :
+
+1. Établir si le bloc principal (convention EPR, celui que la section « solde »
+   lit) est lui aussi publié par variante dans le classeur du rapport de juin
+   2026. `_annees_en_tete` s'arrête au premier bloc de la feuille par choix, pas
+   par constat. Si oui, la suite est mécanique ; si non, il faut le dire et
+   s'arrêter là — une dépense de variante ne se déduit pas.
+2. Donner à `comptes_retraite.csv` et `taux_prelevement_retraite.csv` une
+   colonne `scenario`, et à `ComptesRetraite` le paramètre qui choisit la
+   colonne, comme `DonneesMacro` choisit déjà son jeu d'hypothèses.
+3. Porter dans `moteur/js/equilibre.js` et régénérer les témoins : leur diff
+   dira, chiffre par chiffre, ce que le raccord corrigé déplace.
+4. Écrire au § 5 de `limites.md` ce qui restera vrai ensuite : les variantes de
+   CHÔMAGE demeurent absentes, et c'est une autre dimension que la
+   productivité.
+
+**Ce que ça déplacerait.** Le solde du système 6 en 2070 sous la variante
+haute, aujourd'hui à −0,72 point de PIB, et le même sous la variante basse,
+aujourd'hui à +0,42. Les deux bords de la fourchette que le site publie, donc,
+et dans le sens qui les rapproche. Le scénario de référence ne bouge pas :
+c'est déjà la colonne lue.
+
+**Fichiers.** `data/reference/macro/comptes_retraite.csv`,
+`data/reference/macro/taux_prelevement_retraite.csv`,
+`src/retraite_notionnelle/donnees/equilibre.py`,
+`src/retraite_notionnelle/cout.py`, `scripts/verifier_donnees.py`,
+`scripts/fetch/cor_comptes_retraite.py`, `moteur/js/equilibre.js`,
+`tests/test_cout.py`, `docs/limites.md`, `tests/temoins/pages.json`.
