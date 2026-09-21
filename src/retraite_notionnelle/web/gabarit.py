@@ -2884,12 +2884,24 @@ PAS_GRADUATIONS_X = (10, 20, 25, 50, 100)
 #: tenait déjà.
 GRADUATIONS_X_MAXIMUM = 8
 
-#: Écart minimal, en années, entre une décennie graduée et une borne de l'axe.
+#: Écart minimal entre une décennie graduée et une borne de l'axe, en fraction
+#: de l'amplitude de la série.
+#:
 #: Les bornes sont graduées d'office — ce sont elles qui datent la série —, et
 #: une décennie trop proche de l'une d'elles ne fait que chevaucher son
-#: étiquette. Six ans : « 2020 » et « 2024 » ne tiennent pas côte à côte sur
-#: l'écran d'un téléphone, où les textes du repère sont grossis.
-ECART_MINIMAL_GRADUATIONS = 6
+#: étiquette. Ce qui se chevauche est une largeur de texte, pas une durée : la
+#: règle doit donc s'exprimer en part de l'axe, et non en années. Écrite en
+#: années, elle était juste pour la longueur de série qui l'avait vue naître et
+#: fausse pour toutes les autres — elle amputait les séries courtes de toute
+#: graduation intermédiaire, et laissait « 2060 » toucher « 2070 » sur les
+#: longues.
+#:
+#: Le chiffre se mesure : l'axe fait 626 unités de repère, et une année à
+#: quatre chiffres en occupe 56 sur un téléphone, où la police est grossie —
+#: c'est déjà ce que dit ``MARGE_DROITE``, qui en réserve la moitié. Onze pour
+#: cent laissent une étiquette et un quart entre deux graduations, et le blanc
+#: minimal tombe à 74 unités sur les séries que les deux sites tracent.
+PART_MINIMALE_GRADUATIONS = 0.11
 
 #: Écart vertical minimal, en unités du repère, entre deux étiquettes posées au
 #: bout des courbes. Les couleurs des six scénarios ne suffisent pas à les
@@ -2981,12 +2993,14 @@ def _graduations_x(premiere: int, derniere: int) -> list[int]:
     if derniere not in annees:
         annees.append(derniere)
     # Deux graduations trop proches se chevauchent : on retire la décennie
-    # voisine plutôt que la borne, qui porte l'information.
+    # voisine plutôt que la borne, qui porte l'information. L'écart se mesure
+    # en part de l'amplitude, jamais en années : c'est une largeur de texte
+    # qu'on évite.
+    ecart_minimal = (derniere - premiere) * PART_MINIMALE_GRADUATIONS
     return [
         a for a in annees
         if a in (premiere, derniere)
-        or (a - premiere >= ECART_MINIMAL_GRADUATIONS
-            and derniere - a >= ECART_MINIMAL_GRADUATIONS)
+        or (a - premiere >= ecart_minimal and derniere - a >= ecart_minimal)
     ]
 
 
