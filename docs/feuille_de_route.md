@@ -2804,6 +2804,63 @@ règle la plus mal comptée du système** : trois barèmes en cinq ans, une
 période de référence au trimestre civil, un rang qui court depuis 2004 — il
 fallait trois exemples pour la tenir.
 
+**Reprise du 21 septembre 2026 : six exemples de plus, et une leçon de plus.**
+Le compte passe de vingt-deux à vingt-huit, et deux règles qui n'avaient aucun
+témoin en ont maintenant : les trimestres accordés au titre des enfants et la
+majoration de 10 %. Elles n'en avaient pas pour une raison de FORME, et c'est
+ce qui a demandé le vrai travail : aucune caisse ne publie une carrière entière
+dont elle donne la durée d'assurance — ce qu'elle publie, c'est le nombre de
+trimestres ajoutés PAR ENFANT et le TAUX de la majoration. Deux grandeurs
+neuves les mesurent sans rien recalculer du modèle dans le test, ce qui aurait
+été circulaire : `trimestres_de_majoration_enfants` rejoue la MÊME carrière
+sans enfant et compare les deux durées — l'écart ne dépend ni de l'âge
+d'entrée ni de la durée requise de la génération —, et
+`majoration_enfants_sur_pensions` rapporte la majoration servie à la somme des
+pensions de régime. Les six tombent justes : 16 trimestres pour deux enfants au
+régime général (4 de maternité + 4 d'éducation, fiche Cnav 6.2b), 24 pour
+trois, 8 pour deux enfants nés avant 2004 dans la fonction publique, 4 pour
+deux nés depuis ; et 10 % exactement sur une carrière surcotée à 58,125 %, au
+taux plein, et minorée à 41,25 %.
+
+Ce dernier trio est ce que la circulaire 2022-26 tient à dire et que le modèle
+aurait pu manquer : « la surcote majore la retraite et fait partie intégrante
+de l'avantage de base », donc la majoration « est calculée sur la base du
+montant annuel de la retraite, majorée par la surcote » — 10 % × (600 + 22,50)
+= 62,25. C'est un ORDRE D'OPÉRATIONS et non un barème : appliquer les 10 % à
+la pension d'avant la surcote rendrait 9,52 % de celle d'après. Les deux
+grandeurs ont été mises à l'épreuve avant d'être crues — un chiffre faussé dans
+le témoin fait bien tomber le test, sans quoi elles n'auraient rien prouvé.
+
+**La leçon de plus : une circulaire annulée ne certifie plus rien.** Les six
+témoins de carrière longue citaient la circulaire Cnav 2026-17 du 12 juin 2026,
+que la 2026-29 du 4 septembre annule et remplace. Ses âges et ses durées ont
+été relus ligne à ligne dans la circulaire en vigueur — aucun n'a bougé — mais
+les témoins citent désormais celle qui fait foi. C'est la leçon de juillet d'un
+cran plus loin : une table certifiée l'est à une date, et une SOURCE aussi.
+
+**Et une alerte levée sans rien changer.** La fiche service-public F16336 écrit
+que « l'âge minimum […] est abaissé d'un an si vous êtes né à partir du 1er
+avril 1965 et si vous bénéficiez d'au moins 1 trimestre de majoration
+d'assurance maternité, adoption ou d'éducation » — une règle qui, prise au mot,
+déplacerait d'un an le départ de presque toutes les mères nées depuis 1965.
+L'article L. 161-17-2 a donc été lu dans sa version en vigueur
+(LEGIARTI000053280889) : il ne porte aucun abaissement de ce genre, et son
+échelle par génération est exactement celle du dépôt, que la circulaire 2026-07
+reprend à l'identique. La phrase vulgarise l'effet des trimestres d'enfants sur
+la carrière longue, que le dépôt porte déjà. **Le texte l'emporte sur la
+fiche** — et c'est le troisième cas où la vérification d'un écart apparent ne
+coûte que la lecture du texte, mais où ne pas la faire aurait coûté un an.
+
+**Ce qui reste sans exemple publié**, et qui est donc encore transcrit du seul
+texte : les vingt-quatre et vingt-trois meilleures années des parents (la
+circulaire d'application n'est pas parue), la durée requise propre aux
+catégories actives, la liquidation unique des régimes alignés, le minimum
+garanti de la fonction publique, la surcote parentale. Et les trois exemples de
+réputés cotisés de la circulaire 2026-29, qui sont publiés mais ne se rejouent
+pas : ils arbitrent entre des périodes assimilées de nature différente, que le
+modèle ne distingue pas dans une carrière qu'il synthétise — l'exemple servira
+de témoin APRÈS ce portage, pas pour le guider.
+
 ### 27. Relire dans LEGI ce que la suspension de 2026 a réécrit — `fait`
 
 **Pourquoi.** Les tables d'âge légal, de durée requise, de carrière longue et

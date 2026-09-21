@@ -21,7 +21,19 @@
 #   pension_base_sur_sam — pension du régime général rapportée au salaire
 #     annuel moyen (taux × prorata) ;
 #   pension_regime_general_mensuelle — pension du régime général après
-#     minimum, en euros par mois.
+#     minimum, en euros par mois ;
+#   trimestres_de_majoration_enfants — ÉCART de durée d'assurance entre cette
+#     carrière et la MÊME carrière sans enfant. La caisse publie le nombre de
+#     trimestres qu'elle ajoute par enfant, jamais le total d'une carrière :
+#     c'est donc l'écart qui se compare, et il ne dépend ni de l'âge d'entrée
+#     ni de la durée requise de la génération. Un témoin qui l'emploie fixe
+#     son `age_debut`, sans quoi les deux parcours ne partiraient pas du même
+#     point ;
+#   majoration_enfants_sur_pensions — montant de la majoration pour trois
+#     enfants rapporté à la somme des pensions de régime. La circulaire dit
+#     que l'assiette est la retraite TELLE QUE CALCULÉE : appliquer les 10 %
+#     à la pension d'avant la surcote, ou d'avant la majoration de durée
+#     d'assurance, rendrait ici moins que le taux publié.
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -153,49 +165,53 @@ exemples:
     carriere: {naissance: "1961-11", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-04", trimestres_valides: 160}
     attendu: {age_ouverture: 62.25, trimestres_requis: 169, taux_liquidation: 0.44375}
 
-  # ---- Cnav, circulaire 2026-17 du 12 juin 2026 (carrière longue) --------
-  - id: cnav_2026_17_racl_1964
-    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, Retraite anticipée pour carrière longue à compter du 1er septembre 2026, point 1.1 et annexe 3", verifie_le: "2026-06-12"}
+  # ---- Cnav, circulaire 2026-29 du 4 septembre 2026 (carrière longue) ----
+  # Elle annule et remplace celle du 12 juin 2026, que ces témoins citaient.
+  # Ses âges et ses durées ont été relus ligne à ligne le 21 septembre 2026 :
+  # aucun n'a bougé, mais c'est la circulaire EN VIGUEUR qui fait foi, et une
+  # circulaire annulée ne certifie plus rien.
+  - id: cnav_2026_29_racl_1964
+    source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, Retraite anticipée pour carrière longue à compter du 1er septembre 2026, point 1.1.1 et annexe 3", verifie_le: "2026-09-04"}
     enonce: >-
       Nés en 1964, début d'activité avant 20 ans : départ anticipé à
       compter de 60 ans et 6 mois, 170 trimestres cotisés.
     carriere: {naissance: "1964-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-09", age_debut: 17.75}
     attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
 
-  - id: cnav_2026_17_racl_1965_premier_trimestre
-    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, point 1.1 et annexe 3", verifie_le: "2026-06-12"}
+  - id: cnav_2026_29_racl_1965_premier_trimestre
+    source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3", verifie_le: "2026-09-04"}
     enonce: >-
       Nés du 1er janvier au 31 mars 1965, début avant 20 ans : 60 ans et
       9 mois, 170 trimestres cotisés.
     carriere: {naissance: "1965-02", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2025-11", age_debut: 17.75}
     attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
 
-  - id: cnav_2026_17_racl_1965_apres_avril
-    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, point 1.1 et annexe 3", verifie_le: "2026-06-12"}
+  - id: cnav_2026_29_racl_1965_apres_avril
+    source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3", verifie_le: "2026-09-04"}
     enonce: >-
       Nés du 1er avril au 30 novembre 1965, début avant 20 ans : 60 ans et
       9 mois, 171 trimestres cotisés.
     carriere: {naissance: "1965-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-04", age_debut: 17.75}
     attendu: {trimestres_requis: 171, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
 
-  - id: cnav_2026_17_racl_1967
-    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, point 1.1 et annexe 3", verifie_le: "2026-06-12"}
+  - id: cnav_2026_29_racl_1967
+    source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3", verifie_le: "2026-09-04"}
     enonce: >-
       Nés de 1966 à 1969, début avant 20 ans : deux ans et six mois avant
       l'âge légal — 61 ans pour 1967 —, 172 trimestres cotisés.
     carriere: {naissance: "1967-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2028-03", age_debut: 17.75}
     attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
 
-  - id: cnav_2026_17_racl_1970
-    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, point 1.1 et annexe 3", verifie_le: "2026-06-12"}
+  - id: cnav_2026_29_racl_1970
+    source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3", verifie_le: "2026-09-04"}
     enonce: >-
       Nés en 1970, début avant 20 ans : 61 ans et 9 mois, 172 trimestres
       cotisés.
     carriere: {naissance: "1970-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2031-12", age_debut: 17.75}
     attendu: {trimestres_requis: 172, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
 
-  - id: cnav_2026_17_racl_1971
-    source: {editeur: "Cnav", reference: "circulaire 2026-17 du 12 juin 2026, point 1.1", verifie_le: "2026-06-12"}
+  - id: cnav_2026_29_racl_1971
+    source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, point 1.1.1", verifie_le: "2026-09-04"}
     enonce: >-
       Nés à compter de 1971, début avant 20 ans : 62 ans, durée du taux
       plein cotisée.
@@ -232,3 +248,85 @@ exemples:
       10,25 %.
     carriere: {naissance: "1944-02", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2009-05", trimestres_valides: 171}
     attendu: {trimestres_requis: 160, taux_liquidation: 0.55125}
+
+  # ---- Les trimestres accordés au titre des enfants ----------------------
+  # Ni la caisse ni service-public ne publient une carrière entière dont ils
+  # donnent la durée d'assurance : ce qu'ils publient, c'est le NOMBRE DE
+  # TRIMESTRES AJOUTÉS par enfant. C'est donc un écart qui se rejoue ici, et
+  # non un total — la même carrière, avec et sans enfants.
+  - id: sp_f16336_mda_deux_enfants
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F16336, Comment les enfants sont-ils pris en compte pour la retraite du salarié ?", verifie_le: "2026-08-14"}
+    enonce: >-
+      Par enfant né ou adopté, la salariée reçoit 4 trimestres au titre de la
+      maternité et 4 au titre de l'éducation, soit 8 trimestres. Une mère de
+      deux enfants a donc 16 trimestres de plus que la même carrière sans
+      enfant.
+    carriere: {naissance: "1962-05", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2026-05", age_debut: 22, nombre_enfants: 2}
+    attendu: {trimestres_de_majoration_enfants: 16}
+
+  - id: cnav_2017_01_mda_trois_enfants
+    source: {editeur: "Cnav", reference: "circulaire carrière 2017-01 du 13 janvier 2017, fiche n° 6.2b, point 2 « Modalités de décompte »", verifie_le: "2017-01-13"}
+    enonce: >-
+      « Quatre trimestres peuvent être attribués au titre de chaque
+      majoration » — maternité et éducation —, le total au titre de
+      l'éducation ne pouvant dépasser quatre par enfant. Une mère de trois
+      enfants réunit donc 24 trimestres de majoration.
+    carriere: {naissance: "1962-05", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2026-05", age_debut: 22, nombre_enfants: 3}
+    attendu: {trimestres_de_majoration_enfants: 24}
+
+  - id: sp_f37311_bonification_avant_2004
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F37311, Comment les enfants sont-ils pris en compte pour la retraite de l'agent public ?", verifie_le: "2026-09-01"}
+    enonce: >-
+      Pour les enfants nés avant le 1er janvier 2004, la fonctionnaire reçoit
+      4 trimestres par enfant — et non les 8 du régime général. Une mère de
+      deux enfants nés avant 2004 réunit donc 8 trimestres.
+    carriere: {naissance: "1962-05", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2026-05", age_debut: 22, nombre_enfants: 2}
+    attendu: {trimestres_de_majoration_enfants: 8}
+
+  - id: sp_f37311_bonification_depuis_2004
+    source: {editeur: "service-public.gouv.fr", reference: "fiche F37311, Comment les enfants sont-ils pris en compte pour la retraite de l'agent public ?", verifie_le: "2026-09-01"}
+    enonce: >-
+      Pour les enfants nés à compter du 1er janvier 2004, la bonification d'un
+      an disparaît et laisse 2 trimestres par enfant. Une mère née en 1974 —
+      dont le modèle présume les enfants nés à ses trente ans, donc en 2004 —
+      réunit 4 trimestres pour deux enfants, et non 8.
+    carriere: {naissance: "1974-05", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2038-05", age_debut: 22, nombre_enfants: 2}
+    attendu: {trimestres_de_majoration_enfants: 4}
+
+  # ---- Cnav, circulaire 2022-26 du 14 octobre 2022 (majoration 10 %) -----
+  # L'assiette des 10 % est la retraite TELLE QUE CALCULÉE. La circulaire le
+  # dit de la surcote — « la surcote majore la retraite et fait partie
+  # intégrante de l'avantage de base. La majoration pour enfants est donc
+  # calculée sur la base du montant annuel de la retraite, majorée par la
+  # surcote » — et son exemple le chiffre : 10 % × (600 + 22,50) = 62,25. Le
+  # rapport est donc de 10 % exactement, que la carrière soit surcotée,
+  # décotée, ou pile au taux plein ; c'est ce que ces trois témoins fixent,
+  # chacun sur un taux de liquidation différent.
+  - id: cnav_2022_26_majoration_enfants_sur_surcote
+    source: {editeur: "Cnav", reference: "circulaire 2022-26 du 14 octobre 2022, Majoration pour enfants, point 3.2 « Le calcul de la majoration pour enfants en présence de la surcote »", verifie_le: "2022-10-14"}
+    enonce: >-
+      Point de départ au 01/01/2017, retraite de 600 euros, 3 trimestres de
+      surcote à 1,25 % : surcote de 22,50 euros, majoration pour enfants de
+      10 % × (600 + 22,50) = 62,25 euros. La majoration vaut donc 10 % de la
+      retraite SURCOTÉE, et non 10 % des 600 euros.
+    carriere: {naissance: "1962-05", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2028-05", age_debut: 22, nombre_enfants: 3}
+    attendu: {taux_liquidation: 0.58125, majoration_enfants_sur_pensions: 0.10}
+
+  - id: cnav_2022_26_majoration_enfants_au_taux_plein
+    source: {editeur: "Cnav", reference: "circulaire 2022-26 du 14 octobre 2022, point 3 « Le calcul de la majoration pour enfants »", verifie_le: "2022-10-14"}
+    enonce: >-
+      La majoration pour enfants est de 10 % du montant annuel de la retraite.
+      Sur une carrière ni décotée ni surcotée, elle vaut donc un dixième de la
+      pension servie — majoration de durée d'assurance comprise, celle-ci
+      étant entrée dans le calcul avant elle.
+    carriere: {naissance: "1962-05", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2026-05", age_debut: 22, nombre_enfants: 3}
+    attendu: {majoration_enfants_sur_pensions: 0.10}
+
+  - id: cnav_2022_26_majoration_enfants_sur_decote
+    source: {editeur: "Cnav", reference: "circulaire 2022-26 du 14 octobre 2022, point 3 « Le calcul de la majoration pour enfants »", verifie_le: "2022-10-14"}
+    enonce: >-
+      Même règle sur une carrière incomplète : la majoration est de 10 % de la
+      retraite telle qu'elle est servie, donc de la retraite MINORÉE. Ici 155
+      trimestres pour 169 requis, taux 41,25 %.
+    carriere: {naissance: "1962-05", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2025-05", age_debut: 30, nombre_enfants: 3}
+    attendu: {taux_liquidation: 0.4125, majoration_enfants_sur_pensions: 0.10}
