@@ -1397,6 +1397,57 @@ affirmations:
     etat: verifiee
     controle: modele_et_postes_lus_distincts
 
+  # ------------------------------------------------------------------------
+  # L'autre côté de la frontière : ce qu'on verse sans rien acquérir
+  # ------------------------------------------------------------------------
+
+  - id: avantages.part_sans_droits_complementaire
+    page: /avantages
+    extrait: "du versement n'achète"
+    porte: la part du versement Agirc-Arrco qui n'ouvre aucun droit, sur la tranche la plus forte
+    etat: verifiee
+    controle: part_sans_droits_de_la_tranche_1
+
+  - id: avantages.assiette_est_entiere
+    page: /avantages
+    extrait: "L'assiette est la totalité du salaire, pas la part au-dessus du plafond."
+    porte: la cotisation déplafonnée porte sur toute la rémunération, et le calcul la prend entière
+    etat: verifiee
+    controle: assiette_deplafonnee_est_entiere
+
+  - id: avantages.ecart_complementaire_deux_noms
+    page: /avantages
+    extrait: "prélève sans contrepartie porte deux noms"
+    porte: l'écart entre le versé et l'acquis se décompose en pourcentage d'appel et contribution d'équilibre
+    etat: verifiee
+    controle: ecart_de_la_complementaire_a_deux_noms
+
+  - id: avantages.cotisations_steriles_plancher
+    page: /avantages
+    extrait: "C'est un plancher."
+    porte: le total ne couvre que le régime général, sans la complémentaire ni le public
+    etat: verifiee
+    controle: cotisations_steriles_sont_un_plancher
+
+  - id: avantages.deux_versants_ne_se_soustraient_pas
+    page: /avantages
+    extrait: "Il ne se soustrait pas des avantages ci-dessus."
+    porte: les deux agrégats sont de part et d'autre de la frontière et ne partagent aucune ligne
+    etat: verifiee
+    controle: les_deux_versants_ne_se_soustraient_pas
+
+  # Une affirmation sur le MONDE, et non sur ce que le modèle calcule : le
+  # pourcentage d'appel valait 78 % en 1952, c'est-à-dire qu'il jouait en
+  # faveur du cotisant. Aucun contrôle du dépôt ne peut la trancher — le
+  # moteur ne porte pas le taux d'appel, seulement la valeur d'achat du point,
+  # qui en est déjà nette. La page cite donc sa source.
+  - id: avantages.taux_appel_a_change_de_signe
+    page: /avantages
+    extrait: "Le mécanisme a déjà changé de signe."
+    porte: le pourcentage d'appel fut un rabais avant d'être un prélèvement sans contrepartie
+    etat: hors_modele
+    source: "secrétariat général du Conseil d'orientation des retraites"
+
   - id: avantages.plus_grosses_lignes_lues
     page: /avantages
     extrait: "Les plus grosses lignes sont lues, pas calculées."

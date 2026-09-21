@@ -45,6 +45,7 @@ from ..avantages import (
     charger_avantages,
     inventaire_depuis_paquet,
 )
+from ..frontiere import charger_frontiere
 from ..cout import (
     COMPOSANTE_GARANTIE,
     PensionFinancee,
@@ -1718,6 +1719,11 @@ class Contexte:
         return self._donnee(
             "inventaire_avantages",
             lambda: charger_avantages(self.base.racine_donnees))
+
+    def frontiere(self):
+        """Le versant inverse : ce qu'on cotise sans rien acquérir. Une donnée."""
+        return self._donnee(
+            "frontiere", lambda: charger_frontiere(self.base.racine_donnees))
 
     def avantages(self):
         """Ce que les avantages non contributifs coûtent — quatre secondes, une fois."""
@@ -7489,10 +7495,13 @@ le droit de l'époque disait à l'heure.""",
         identifiant="avantages-age",
     )
 
+    carte_versement = _avantages_carte_versement(contexte)
+
     detail = (_avantages_detail_liste(contexte)
               + _avantages_detail_etats(contexte)
               + _avantages_detail_limites(contexte))
-    plan = g.plan(carte_frise + carte_cout + carte_age + detail, "/avantages")
+    plan = g.plan(carte_frise + carte_cout + carte_age + carte_versement + detail,
+                  "/avantages")
 
     tete = g.affiche(
         "Les avantages",
@@ -7525,6 +7534,8 @@ page dit de combien.</div>
 {carte_cout}
 
 {carte_age}
+
+{carte_versement}
 
 <div class="note"><strong>Aucun de ces dispositifs n'est illégitime.</strong>
 Chacun a été voté pour une raison, et plusieurs corrigent de vraies injustices.
@@ -7569,6 +7580,115 @@ PAGES_AGREGEES = {
     "/cout": _cout,
     "/avantages": _avantages,
 }
+
+
+def _avantages_carte_versement(contexte: Contexte) -> str:
+    """L'autre côté de la frontière : ce qu'on verse sans rien acquérir.
+
+    POURQUOI CETTE CARTE EXISTE. Toute la page décrit ce que le système SERT
+    au-delà de la cotisation. La question symétrique — que cotise-t-on sans que
+    rien ne soit servi ? — n'était posée nulle part, et elle a la même réponse :
+    beaucoup, et personne ne le dit. Une page qui n'énonce qu'un côté laisse
+    croire que le compte est à sens unique.
+
+    LES DEUX GRANDEURS NE SE COMPENSENT PAS, et la carte le dit plutôt que de
+    laisser le lecteur les soustraire. Elles portent sur deux faces différentes
+    de la même frontière : l'une dit ce que le système donne sans qu'on ait
+    payé, l'autre ce qu'on paie sans rien recevoir. Elles ne se rencontrent pas
+    dans la même poche — un cadre reçoit les secondes sans toucher les
+    premières.
+
+    LE PIÈGE D'ASSIETTE EST DIT, parce qu'il a été commis. On croit que la
+    cotisation déplafonnée ne porte que sur la part du salaire au-dessus du
+    plafond ; elle porte sur la totalité, dès le premier euro, et l'écart vaut
+    un facteur dix.
+    """
+    frontiere = contexte.frontiere()
+    derniere = frontiere.derniere
+    if derniere is None:
+        return ""
+    annees = tuple(a.annee for a in frontiere.annees)
+    courbe = g.graphique(
+        f"Cotisations vieillesse qui n'ouvrent aucun droit, de {annees[0]} à "
+        f"{annees[-1]}",
+        annees,
+        (
+            g.Serie("À la charge de l'employeur",
+                    tuple(a.patronale_md for a in frontiere.annees),
+                    "var(--serie-1)"),
+            g.Serie("À la charge du salarié",
+                    tuple(a.salariale_md for a in frontiere.annees),
+                    "var(--serie-2)",
+                    glose="nulle jusqu'en 2004 : la loi l'y ajoute en 2003, "
+                          "le décret en 2005"),
+        ),
+        unite="Md€ courants", empile=True, decimales_donnees=1,
+    )
+    lignes = "".join(
+        f"<tr><th scope=\"row\">{t.nom}</th>"
+        f"<td>{g.pourcentage(t.acquisitif, decimales=2)}</td>"
+        f"<td>{g.pourcentage(t.verse_sous_plafond, decimales=2)}</td>"
+        f"<td><strong>{g.pourcentage(t.part_sous_plafond, decimales=1)}</strong></td>"
+        f"</tr>"
+        for t in frontiere.tranches
+    )
+    forte = max(frontiere.tranches, key=lambda t: t.part_sous_plafond)
+    return g.cle(
+        "Et l'inverse : que cotise-t-on sans rien acquérir ?",
+        f"""<strong>{_milliards(derniere.total_md * 1000, 1)} en
+{derniere.annee}</strong>, dont
+{_milliards(derniere.salariale_md * 1000, 1)} prélevés sur le salarié. C'est la
+cotisation vieillesse <em>déplafonnée</em> : elle porte sur la totalité du
+salaire et n'ouvre aucun droit, le salaire retenu pour la pension étant borné
+au plafond.""",
+        courbe
+        + f"""<h3>À la complémentaire, c'est une proportion, et elle est forte</h3>
+<table class="donnees"><caption>Ce qu'un salarié verse à la complémentaire, et
+ce qu'il en acquiert</caption><thead><tr><th scope="col">Tranche</th>
+<th scope="col">Acquisitif</th><th scope="col">Versé</th>
+<th scope="col">Sans droits</th></tr></thead><tbody>{lignes}</tbody></table>
+<p><strong>Sur la {forte.nom.lower()},
+{g.pourcentage(forte.part_sous_plafond, decimales=0)} du versement n'achète
+aucun point.</strong> Trois fois plus, en proportion, que dans le régime de
+base. La fédération Agirc-Arrco l'écrit elle-même : « seule » la cotisation
+calculée au taux d'acquisition des points ouvre des droits.</p>"""
+        + g.depliant(
+            "Ce que ce chiffre n'est pas",
+            f"""<p><strong>Il ne se soustrait pas des avantages ci-dessus.</strong>
+Ce sont deux grandeurs de sens opposé, sur deux faces de la même frontière :
+l'une dit ce que le système donne sans qu'on ait payé, l'autre ce qu'on paie
+sans rien recevoir. Elles ne tombent pas dans la même poche : un cadre supporte
+les secondes sans toucher les premières.</p>
+<p><strong>L'assiette est la totalité du salaire, pas la part au-dessus du
+plafond.</strong> C'est l'erreur qu'on fait spontanément, et elle vaut un
+facteur dix. La cotisation déplafonnée est prélevée dès le premier euro ; ce
+qui est plafonné, c'est le salaire <em>retenu pour la pension</em>.</p>
+<p><strong>C'est un plancher.</strong> Il ne porte que le régime général. La
+complémentaire n'y entre qu'en proportion, faute d'une assiette publiée par
+tranche. Quant à la fonction publique, elle n'y est pas du tout : le taux de la
+contribution de l'État employeur est fixé chaque année pour <em>équilibrer</em>
+le compte des pensions, non pour acquérir un droit, et la Commission des
+comptes de la sécurité sociale le nomme « contribution d'équilibre ».</p>
+<p><strong>Ce que la complémentaire prélève sans contrepartie porte deux
+noms.</strong> Le pourcentage d'appel, fixé à
+{g.pourcentage(frontiere.pourcentage_appel - 1, decimales=0)} au-dessus du taux
+d'acquisition depuis 2019, et les deux contributions d'équilibre, que la
+fédération qualifie de « non génératrices de droits ».</p>
+<p><strong>Le mécanisme a déjà changé de signe.</strong> Le pourcentage d'appel,
+instauré en 1952, était à l'origine <em>inférieur</em> à 100 %, soit 78 % cette
+année-là : on versait moins que le taux contractuel et l'on acquérait les
+points du taux entier. Il n'est devenu un prélèvement sans contrepartie qu'en
+1992 à l'Arrco et 1995 à l'Agirc.</p>""",
+        ),
+        """Sources : taux de la cotisation déplafonnée certifiés contre les
+décrets dans la base LEGI ; assiette déplafonnée publiée par l'Urssaf, qui la
+définit comme telle, série labellisée par l'Autorité de la statistique
+publique. Taux de la complémentaire lus sur la fiche réglementaire de la
+fédération Agirc-Arrco. L'histoire du pourcentage d'appel est celle qu'en donne
+un document de travail du secrétariat général du Conseil d'orientation des
+retraites.""",
+        identifiant="avantages-versement",
+    )
 
 
 def _avantages_table_complete(contexte: Contexte) -> str:

@@ -1967,6 +1967,92 @@ def _(m: Modele):
     assert set(m.avantages.lignes_modele) <= set(m.avantages.lignes)
 
 
+@controle("part_sans_droits_de_la_tranche_1")
+def _(m: Modele):
+    """38 % du versement de tranche 1 n'achète aucun point, et c'est la plus forte.
+
+    Le nombre est un rapport de taux publiés, pas une estimation : le taux
+    appelé et la contribution d'équilibre général d'un côté, le taux de calcul
+    des points de l'autre. La page annonce le maximum des deux tranches ; le
+    contrôle vérifie que c'est bien la tranche 1 qui le porte, faute de quoi
+    la phrase nommerait la mauvaise.
+    """
+    tranches = m.contexte.frontiere().tranches
+    forte = max(tranches, key=lambda t: t.part_sous_plafond)
+    assert forte.nom == "Tranche 1"
+    assert round(forte.part_sous_plafond, 2) == 0.38
+
+
+@controle("assiette_deplafonnee_est_entiere")
+def _(m: Modele):
+    """La masse est le taux fois TOUTE l'assiette, pas une fraction d'elle.
+
+    C'est l'erreur que la page dénonce, et c'est donc celle qu'il faut
+    interdire au calcul : si quelqu'un glissait un jour un facteur — la part
+    au-dessus du plafond, une proportion de cadres —, le produit cesserait
+    d'être exact et rien ne le dirait.
+    """
+    annees = m.contexte.frontiere().annees
+    assert annees
+    for annee in annees:
+        assert _proche(annee.total_md, annee.assiette_md * annee.taux, 1e-9)
+
+
+@controle("cotisations_steriles_sont_un_plancher")
+def _(m: Modele):
+    """Le total ne porte que le régime général, et la page le dit.
+
+    Deux façons de le vérifier sans rien supposer : l'assiette employée est
+    celle du secteur privé, donc strictement inférieure aux salaires bruts des
+    comptes nationaux de la même année ; et la complémentaire n'apporte aucune
+    masse, seulement des taux, faute d'une assiette publiée par tranche.
+    """
+    frontiere = m.contexte.frontiere()
+    nationale = m.contexte.assiette()
+    for annee in frontiere.annees:
+        brute = nationale.poste("salaires_bruts", annee.annee) / 1000.0
+        assert 0.0 < annee.assiette_md < brute
+    for tranche in frontiere.tranches:
+        assert not hasattr(tranche, "masse_md")
+
+
+@controle("les_deux_versants_ne_se_soustraient_pas")
+def _(m: Modele):
+    """Ce qu'on cotise sans rien acquérir n'entre pas dans ce qui est servi.
+
+    La page l'affirme au lecteur ; le contrôle l'exige du code. Les deux
+    agrégats sont construits de part et d'autre de la frontière — l'un depuis
+    des prestations décomposées, l'autre depuis une assiette et un taux — et
+    aucune ligne de l'un ne doit porter le nom d'une ligne de l'autre, sans
+    quoi une somme deviendrait possible sans qu'on s'en aperçoive.
+    """
+    lignes = set(m.avantages.derniere.lignes) | set(m.avantages.lignes_modele)
+    assert "frontiere" not in lignes
+    assert not (lignes & {"cotisation_deplafonnee", "taux_appel", "ceg", "cet"})
+
+
+@controle("ecart_de_la_complementaire_a_deux_noms")
+def _(m: Modele):
+    """L'écart entre ce qu'on verse et ce qu'on acquiert se décompose en deux.
+
+    Le pourcentage d'appel d'abord, qui majore le taux d'acquisition sans rien
+    donner de plus ; la contribution d'équilibre général ensuite, qui s'ajoute.
+    Le contrôle reconstitue la décomposition : ce qui reste après avoir retiré
+    l'un et l'autre doit être nul. Une troisième contribution existe, la
+    technique, mais elle ne pèse que sur les rémunérations des salariés qui
+    dépassent le plafond — c'est la seconde assertion.
+    """
+    frontiere = m.contexte.frontiere()
+    appel = frontiere.pourcentage_appel
+    assert appel > 1.0
+    for tranche in frontiere.tranches:
+        equilibre = tranche.verse_sous_plafond - tranche.acquisitif * appel
+        assert equilibre > 0.0
+        assert _proche(tranche.acquisitif * appel + equilibre,
+                       tranche.verse_sous_plafond, 1e-9)
+        assert tranche.verse_au_dessus > tranche.verse_sous_plafond
+
+
 @controle("plus_grosse_ligne_lue")
 def _(m: Modele):
     lignes = m.avantages.derniere.lignes

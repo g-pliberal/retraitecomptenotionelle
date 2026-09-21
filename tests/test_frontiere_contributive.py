@@ -190,15 +190,38 @@ def test_toute_version_citee_se_retrouve_dans_l_index_legi(donnees):
 #: « Un nombre qui vit dans une phrase est un nombre qui ment un jour » —
 #: docs/avantages_non_contributifs.md, § 4 sexies. Celui-ci mentira le jour où
 #: une bascule sera ajoutée, et ce test le dira ce jour-là.
+def _droits_par_code(donnees: dict) -> dict[str, dict[str, int]]:
+    """Les mouvements de DROITS, rangés par code — la dissymétrie du § 5.
+
+    L'article porte le code dans son libellé (« L. 12 CPCMR », « L. 351-3 CSS »),
+    et c'est la seule information dont ce découpage a besoin.
+    """
+    par: dict[str, dict[str, int]] = {"CSS": {}, "CPCMR": {}}
+    for bascule in donnees["bascules"]:
+        if bascule["face"] != "droit":
+            continue
+        code = "CPCMR" if "CPCMR" in bascule["article"] else "CSS"
+        par[code][bascule["sens"]] = par[code].get(bascule["sens"], 0) + 1
+    return par
+
+
 COMPTES_DE_LA_PROSE = {
-    "Vingt-quatre déplacements datés":
-        lambda d: len(d["bascules"]) == 24,
-    "quarante identifiants cités":
+    "Trente-quatre déplacements datés":
+        lambda d: len(d["bascules"]) == 34,
+    "cinquante-neuf identifiants cités":
         lambda d: sum(1 for b in d["bascules"]
-                      for c in ("version", "version_precedente") if b.get(c)) == 40,
-    "Cinq ouvertures contre une fermeture":
-        lambda d: (sum(b["sens"] == "ouvre" for b in d["bascules"]) == 5
-                   and sum(b["sens"] == "ferme" for b in d["bascules"]) == 1),
+                      for c in ("version", "version_precedente") if b.get(c)) == 59,
+    # Le partage par code, qui est le résultat de la section 5 : le privé ne
+    # se referme jamais, la fonction publique est le seul endroit où la
+    # frontière a reculé. Un chiffre faux ici retournerait la conclusion.
+    "| Code de la sécurité sociale (privé) | **5** | 1 |":
+        lambda d: _droits_par_code(d)["CSS"] == {"ouvre": 5, "ferme": 1},
+    "| Code des pensions civiles et militaires | 4 | **6** |":
+        lambda d: _droits_par_code(d)["CPCMR"] == {"ouvre": 4, "ferme": 6},
+    "six fermetures contre quatre ouvertures":
+        lambda d: _droits_par_code(d)["CPCMR"] == {"ouvre": 4, "ferme": 6},
+    "Dix bascules, lues dans trois articles du code des pensions":
+        lambda d: sum("CPCMR" in b["article"] for b in d["bascules"]) == 10,
     "Dix charges ont été isolées chez un payeur nommé, dont neuf avant 2015":
         lambda d: (sum(b["sens"] == "identifie" for b in d["bascules"]) == 10
                    and sum(b["sens"] == "identifie" and str(b["date"]) < "2015"
@@ -393,3 +416,47 @@ def test_l_assiette_deplafonnee_n_est_pas_celle_des_comptes_nationaux():
     assert 0.60 < rapport < 0.80, (
         f"l'assiette privée vaut {rapport:.0%} des salaires bruts des comptes "
         f"nationaux : l'une des deux séries a changé de champ")
+
+
+# --- La liste que le législateur tient lui-même ---------------------------
+
+def test_chaque_poste_de_la_liste_legale_porte_un_avantage_ou_une_raison(donnees, codes_inventaire):
+    """Un blanc sans raison est une dette ; une raison écrite est une limite.
+
+    C'est la règle de l'inventaire des avantages non contributifs, et elle vaut
+    ici pour le motif inverse : cette liste-ci est celle du LÉGISLATEUR, et
+    chacun de ses postes doit trouver une ligne du dépôt, ou dire pourquoi il
+    n'en trouve pas. Deux dettes ont été découvertes ainsi — l'apprentissage et
+    les périodes reconnues équivalentes —, qu'aucune des trois listes internes
+    ne pouvait révéler, puisqu'elles décrivent ce que le modèle sait faire et
+    non ce que le système verse.
+    """
+    for poste in donnees["liste_legale"]["postes"]:
+        numero = poste["numero"]
+        assert poste["quoi"], f"{numero} : poste sans description"
+        avantages, manque = poste["avantages"], poste.get("manque")
+        assert bool(avantages) != bool(manque), (
+            f"{numero} : il faut des avantages OU une raison écrite, pas les deux "
+            f"ni aucun des deux")
+        inconnus = set(avantages) - codes_inventaire
+        assert inconnus == set(), (
+            f"{numero} : avantages absents de l'inventaire : {', '.join(sorted(inconnus))}")
+
+
+def test_la_liste_legale_est_lue_sous_une_version_verifiable(donnees):
+    """La liste change à chaque loi de financement : sa version fait foi.
+
+    Elle a déjà changé d'article une fois — L. 135-2 jusqu'en 2025, L. 222-2-1
+    depuis —, et le poste qui portait les périodes équivalentes y a été abrogé
+    au passage. Sans version citée, la confrontation ci-dessus serait datée de
+    nulle part.
+    """
+    legale = donnees["liste_legale"]
+    assert legale["lu_le"], "liste légale sans date de lecture"
+    pivots = {frontiere._normalise(p["article"]) for p in donnees["pivots"]}
+    assert frontiere._normalise(legale["article"]) in pivots, (
+        "l'article de la liste légale n'est pas un pivot : sa version échappe "
+        "à la sonde")
+    assert any(b["version"] == legale["version"] for b in donnees["bascules"]), (
+        "la version de la liste légale n'est vérifiée par aucune bascule : "
+        "ajouter la vérification ou citer la version qui l'est")

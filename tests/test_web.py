@@ -4057,7 +4057,18 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # publication. Deux tracés, deux périmètres, chacun cohérent de bout en
     # bout. Les replier reviendrait à demander au lecteur de déplier pour
     # comprendre que les chiffres ne s'additionnent pas.
-    "/avantages": (2000, 4, 7),
+    #
+    # LE PLAFOND EST PASSÉ DE 2 000 À 2 250 MOTS le 21 septembre 2026, et c'est
+    # la seule fois. La page comptait trois questions ; elle en pose une
+    # quatrième, symétrique des autres : que cotise-t-on sans rien acquérir ?
+    # Elle était exactement à 1 997 mots, si bien qu'aucune carte nouvelle,
+    # si brève soit-elle, ne pouvait plus y entrer. Replier la réponse aurait
+    # été pire que l'écrire : c'est le seul endroit du site qui dise que le
+    # compte n'est pas à sens unique. La carte ajoutée en pèse 238, cartes
+    # existantes comprises entre 200 et 400 : elle n'est pas la plus lourde.
+    # Ce plafond n'interdit toujours pas d'écrire ; il interdit d'ajouter une
+    # cinquième carte sans en replier une autre.
+    "/avantages": (2250, 5, 8),
     "/methode": (500, 0, 1),
     "/donnees": (300, 0, 0),
     # Risque répond à la question d'un lecteur qui n'a pas fait d'économie

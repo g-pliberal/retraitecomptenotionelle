@@ -14,7 +14,7 @@ ce résultat n'est pas celui qu'on croit.
 
 **Il décrit une liste À UNE DATE.** Ce que chaque ligne porte de `creation` et
 de `fin` ne dit pas que la frontière elle-même a bougé entre les deux, et elle
-l'a fait dans les deux sens — <!--chiffre:entrees(data/reference/legislation/frontiere_contributive.yaml:bascules)-->24<!--/--> fois depuis 1991,
+l'a fait dans les deux sens — <!--chiffre:entrees(data/reference/legislation/frontiere_contributive.yaml:bascules)-->34<!--/--> fois depuis 1991,
 y compris pour des dispositifs qui n'ont ni commencé ni fini ce jour-là.
 `docs/frontiere_contributive.md` porte ce mouvement, et le versant que cette
 page n'a jamais porté : ce qui est **versé sans rien ouvrir**. Trois de ses

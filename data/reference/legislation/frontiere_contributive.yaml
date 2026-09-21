@@ -130,6 +130,27 @@ pivots:
     quoi: >-
       Les périodes assimilées. Sa liste s'allonge par la fin, et chaque ajout
       est un droit gratuit de plus.
+  - article: L. 12 CPCMR
+    num: L12
+    titre_contient: Code des pensions civiles et militaires
+    quoi: >-
+      Les bonifications de la fonction publique — ce qui s'ajoute aux services
+      EFFECTIFS. Huit versions de 1982 à 2025. Le numéro d'article est partagé
+      par quatre codes dans l'index, d'où le filtre sur le titre.
+  - article: L. 12 bis CPCMR
+    num: L12 bis
+    titre_contient: Code des pensions civiles et militaires
+    quoi: >-
+      La majoration de durée d'assurance qui, en 2004, remplace la bonification
+      pour les enfants nés depuis. Deux versions, et la seconde renverse la
+      première.
+  - article: L. 24 CPCMR
+    num: L24
+    titre_contient: Code des pensions civiles et militaires
+    quoi: >-
+      Quand la pension se liquide : la catégorie active, les services
+      super-actifs, et le départ anticipé des parents de trois enfants qui n'y
+      est plus.
   - article: L. 161-22-1-1 CSS
     num: L161-22-1-1
     quoi: >-
@@ -733,6 +754,384 @@ bascules:
       pension et une seule. Ce n'est pas une confirmation du modèle — le champ
       n'est pas le même — mais c'est le seul point du droit où la question
       posée par ce dépôt reçoit une réponse rédigée.
+
+  # --- La fonction publique : le code des pensions ------------------------
+
+  - code: bonification_enfants_fp_conditionnee
+    date: 2004-01-01
+    face: droit
+    sens: ferme
+    libelle: L'année par enfant cesse d'être gratuite, et se ferme aux enfants à naître
+    quoi: >-
+      Le b de L. 12 disait « Bonification accordée AUX FEMMES FONCTIONNAIRES
+      pour chacun de leurs enfants ». Il dit désormais « les fonctionnaires et
+      militaires bénéficient d'une bonification fixée à un an […] à condition
+      qu'ils aient INTERROMPU leur activité », et seulement « pour chacun de
+      leurs enfants […] nés antérieurement au 1er janvier 2004 ». Deux
+      mouvements en une version : le droit s'ouvre aux pères et se referme sur
+      une condition d'interruption, puis s'éteint pour les naissances à venir.
+      Un an de services gratuits devient un an mérité par une interruption de
+      carrière — c'est-à-dire par un coût réel supporté par le bénéficiaire.
+    dispositifs: [bonification_enfants_fonction_publique]
+    article: L. 12 CPCMR
+    version: LEGIARTI000006362696
+    version_precedente: LEGIARTI000006362695
+    texte: loi n° 2003-775 du 21 août 2003
+    lu_le: 2026-09-21
+    portee_modele: applique
+    effet_modele: >-
+      Le moteur sert la bonification pour enfants de la fonction publique et la
+      cascade en isole le montant. La condition d'interruption, elle, lui
+      échappe : la grille de cas types ne porte pas d'interruption pour enfant,
+      si bien que le modèle accorde la bonification là où le droit la
+      refuserait. C'est un écart au droit positif, du côté généreux.
+
+  - code: majoration_duree_assurance_fp_creee
+    date: 2004-01-01
+    face: droit
+    sens: ouvre
+    libelle: Deux trimestres remplacent l'année, et pour les mères seulement
+    quoi: >-
+      L. 12 bis est créé le même jour : « Pour chacun de leurs enfants nés à
+      compter du 1er janvier 2004, les femmes, fonctionnaires ou militaires,
+      ayant accouché postérieurement à leur recrutement, bénéficient d'une
+      majoration de durée d'assurance fixée à deux trimestres. » C'est un droit
+      NOUVEAU, donc une ouverture ; c'est aussi, pour la même naissance, quatre
+      trimestres de moins qu'avant, et un droit rendu à son caractère féminin
+      après que le b l'eut ouvert aux deux parents.
+      La différence n'est pas que de taille. Une bonification s'ajoute aux
+      SERVICES et entre donc dans la liquidation ; une majoration de durée
+      d'assurance ne compte que pour la durée. Le même trimestre ne vaut pas la
+      même chose selon la case où il tombe.
+    dispositifs: [bonification_enfants_fonction_publique]
+    article: L. 12 bis CPCMR
+    version: LEGIARTI000006362697
+    version_precedente: null
+    texte: loi n° 2003-775 du 21 août 2003
+    lu_le: 2026-09-21
+    portee_modele: applique
+    effet_modele: >-
+      Le dépôt porte les deux régimes dans `majoration_duree_assurance.csv` et
+      les applique par date de naissance. C'est l'une des rares bascules de ce
+      fichier que le modèle rejoue vraiment.
+
+  - code: interruption_ou_reduction_fp
+    date: 2011-07-01
+    face: droit
+    sens: ouvre
+    libelle: Une activité RÉDUITE suffit désormais
+    quoi: >-
+      La condition du b passe de « à condition qu'ils aient interrompu leur
+      activité » à « interrompu OU RÉDUIT leur activité ». Un mot, et la
+      population éligible s'élargit à qui est passé à temps partiel sans jamais
+      s'arrêter.
+    dispositifs: [bonification_enfants_fonction_publique]
+    article: L. 12 CPCMR
+    version: LEGIARTI000023096747
+    version_precedente: LEGIARTI000006362696
+    texte: loi n° 2010-1330 du 9 novembre 2010
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Sans objet pour le modèle, qui n'oppose aucune condition d'interruption.
+
+  - code: cinquieme_militaire_dix_sept_ans
+    date: 2011-07-01
+    face: droit
+    sens: ferme
+    libelle: La bonification du cinquième exige deux années de service de plus
+    quoi: >-
+      Le i de L. 12 accorde un cinquième du temps de service, dans la limite de
+      cinq annuités, « à la condition qu'ils aient accompli au moins QUINZE ans
+      de services militaires effectifs ». La même version porte cette condition
+      à DIX-SEPT ans. La bonification la plus massive du système — 99,3 % des
+      pensions militaires liquidées en 2010 la portaient — se resserre sur les
+      carrières longues.
+    dispositifs: [bonification_cinquieme_militaires]
+    article: L. 12 CPCMR
+    version: LEGIARTI000023096747
+    version_precedente: LEGIARTI000006362696
+    texte: loi n° 2010-1330 du 9 novembre 2010
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      L'inventaire range `bonification_cinquieme_militaires` en `absent` : le
+      moteur ne la sert pas. La condition de durée lui échappe donc aussi.
+
+  - code: depart_trois_enfants_ferme
+    date: 2011-07-01
+    face: droit
+    sens: ferme
+    libelle: Le départ anticipé des parents de trois enfants disparaît du code
+    quoi: >-
+      De 1982 à 2011, L. 24 ouvrait la liquidation immédiate au fonctionnaire
+      parent de trois enfants — « pour les femmes fonctionnaires » jusqu'en
+      2004, puis, sous condition d'interruption pour chaque enfant, à l'un et
+      l'autre parent. L'expression « trois enfants » quitte l'article à cette
+      date et n'y est jamais revenue. C'est la seule EXTINCTION franche de tout
+      ce fichier : non une restriction, une disparition.
+      L'inventaire des avantages non contributifs ne porte aucune ligne pour ce
+      dispositif. Il a vécu trente ans et compté parmi les plus connus de la
+      fonction publique ; il n'est ni dans les quarante-deux, ni dans les
+      raisons écrites. C'est un manque, et il est signalé ici faute de pouvoir
+      le combler sans le chiffrer.
+    dispositifs: []
+    article: L. 24 CPCMR
+    version: LEGIARTI000023033603
+    version_precedente: LEGIARTI000006362730
+    texte: loi n° 2010-1330 du 9 novembre 2010
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Le modèle ne connaît pas ce départ anticipé, et n'a donc rien perdu à son
+      extinction. Mais il ne le servait pas non plus quand il existait : les
+      générations qui en ont bénéficié partent, dans le modèle, à l'âge de
+      droit commun. C'est un écart au droit positif sur les liquidations
+      d'avant 2011.
+
+  - code: categorie_active_dix_sept_ans
+    date: 2011-07-01
+    face: droit
+    sens: ferme
+    libelle: La catégorie active exige dix-sept ans de services au lieu de quinze
+    quoi: >-
+      Le 1° de L. 24 ouvrait le départ anticipé au fonctionnaire ayant accompli
+      « au moins QUINZE ans de services actifs ». La même version porte la
+      condition à DIX-SEPT ans — et la rédaction en vigueur la reprend telle
+      quelle, « dix-sept ans de services accomplis indifféremment dans de tels
+      emplois, dits services actifs ».
+    dispositifs: [categorie_active]
+    article: L. 24 CPCMR
+    version: LEGIARTI000023033603
+    version_precedente: LEGIARTI000006362730
+    texte: loi n° 2010-1330 du 9 novembre 2010
+    lu_le: 2026-09-21
+    portee_modele: applique
+    effet_modele: >-
+      Le moteur sert la catégorie active par la fiche du régime et une table
+      d'âges, non par une durée de services actifs : la condition de dix-sept
+      ans n'est pas opposée. `veille.yaml` porte déjà cette lacune sous
+      `categorie_active_duree_requise`, à l'état `manque`.
+
+  - code: cumul_bonifications_plafonne
+    date: 2023-09-01
+    face: droit
+    sens: ferme
+    libelle: Catégorie active et cinquième militaire ne se cumulent plus sans limite
+    quoi: >-
+      La réforme de 2023 ajoute à L. 12 une phrase qui n'existait pas : « Les
+      bonifications acquises […] pour services accomplis dans différents
+      emplois classés dans la catégorie active et la bonification prévue au i
+      peuvent se cumuler, DANS LA LIMITE DE VINGT TRIMESTRES. » Cinq annuités,
+      et pas une de plus, là où les deux dispositifs s'empilaient.
+    dispositifs: [categorie_active, bonification_cinquieme_militaires]
+    article: L. 12 CPCMR
+    version: LEGIARTI000047452833
+    version_precedente: LEGIARTI000047926152
+    texte: loi n° 2023-270 du 14 avril 2023, article 10
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Le moteur ne sert ni la bonification du cinquième ni les bonifications de
+      services de la catégorie active : il n'a donc rien à plafonner.
+
+  - code: cinquieme_militaire_non_degressif
+    date: 2023-09-01
+    face: droit
+    sens: ouvre
+    libelle: Le cinquième cesse de fondre avec les années servies en plus
+    quoi: >-
+      La même version SUPPRIME la phrase qui rabotait la bonification : « le
+      maximum de bonifications est donné aux militaires qui quittent le service
+      à cinquante-neuf ans ; la bonification est diminuée d'une annuité pour
+      chaque année supplémentaire de service ». Un militaire qui reste au-delà
+      conserve désormais ses cinq annuités entières. Dans la même version que
+      le plafond ci-dessus, et en sens inverse : une réforme n'a pas de sens
+      unique, et un fichier qui ne noterait que les fermetures mentirait.
+    dispositifs: [bonification_cinquieme_militaires]
+    article: L. 12 CPCMR
+    version: LEGIARTI000047452833
+    version_precedente: LEGIARTI000047926152
+    texte: loi n° 2023-270 du 14 avril 2023, article 10
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Sans objet : la bonification n'est pas servie.
+
+  - code: trimestre_d_accouchement_devient_bonification
+    date: 2025-12-31
+    face: droit
+    sens: ouvre
+    libelle: Un des deux trimestres change de case, et gagne de la valeur
+    quoi: >-
+      Un b ter est ajouté à L. 12 : « Bonification d'un trimestre pour chacun
+      de leurs enfants nés depuis le 1er janvier 2004, pour les femmes
+      fonctionnaires ou militaires, ayant accouché postérieurement à leur
+      recrutement. » Et L. 12 bis, réécrit le même jour, précise que des deux
+      trimestres de majoration, « L'UN EST PRIS EN COMPTE AU TITRE DE LA
+      BONIFICATION PRÉVUE AU b ter ».
+      CE N'EST DONC PAS UN AJOUT, et c'est la question que le registre de
+      veille posait. Le total reste de deux trimestres ; l'un d'eux passe de la
+      durée d'assurance aux SERVICES, où il entre dans la liquidation au lieu
+      de ne compter que pour la durée. Le même événement — un accouchement en
+      cours de carrière — vaut désormais davantage sans qu'aucune cotisation
+      l'ait payé.
+    dispositifs: [bonification_enfants_fonction_publique]
+    article: L. 12 CPCMR
+    version: LEGIARTI000053280361
+    version_precedente: LEGIARTI000047452833
+    texte: loi n° 2025-1403 du 30 décembre 2025, article 104
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Applicable aux pensions prenant effet à compter du 1er septembre 2026, et
+      étendu à la même date à la CNRACL et au FSPOEIE par décret en Conseil
+      d'État — c'est le décret n° 2026-699 que `veille.yaml` signalait. Le
+      modèle ne distingue pas bonification et majoration de durée pour les
+      enfants de la fonction publique : la bascule lui échappe.
+
+  - code: majoration_fp_partiellement_absorbee
+    date: 2025-12-31
+    face: droit
+    sens: ferme
+    libelle: La majoration de durée d'assurance perd la moitié de son contenu
+    quoi: >-
+      Le revers exact de la ligne précédente, et il se lit dans l'autre
+      article. L. 12 bis accordait deux trimestres de majoration de durée
+      d'assurance ; il en accorde toujours deux, « dont l'un est pris en compte
+      au titre de la bonification prévue au b ter de l'article L. 12 ». La
+      majoration proprement dite tombe donc à un trimestre. Les deux lignes
+      décrivent le même geste vu des deux côtés, et c'est pourquoi elles ne
+      s'additionnent pas.
+    dispositifs: [bonification_enfants_fonction_publique]
+    article: L. 12 bis CPCMR
+    version: LEGIARTI000053280367
+    version_precedente: LEGIARTI000006362697
+    texte: loi n° 2025-1403 du 30 décembre 2025, article 104
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Même remarque : la distinction entre bonification et majoration n'est pas
+      dans le moteur.
+
+# La liste légale, poste par poste, confrontée à l'inventaire du dépôt
+# ====================================================================
+# L'article L. 222-2-1 du code de la sécurité sociale, en vigueur au 1er
+# janvier 2026, est la liste que le LÉGISLATEUR tient de ce qu'il reconnaît
+# comme non contributif — il emploie l'expression en propres termes à son 8°.
+# L'inventaire du dépôt, lui, est né des trois listes internes et a été
+# complété de ce qu'elles ne portaient pas. Les deux ne se recouvrent pas, et
+# l'écart se lit dans les deux sens.
+#
+# CE QUE LA LISTE LÉGALE IGNORE, et ce n'est pas un oubli : la réversion, les
+# bonifications de service, les départs anticipés, les minima de pension. Elle
+# ne porte que ce qui donne lieu à un TRANSFERT entre organismes. Un avantage
+# qu'un régime sert sur ses propres deniers n'y a pas sa place, si lourd
+# soit-il. C'est la raison pour laquelle l'inventaire du dépôt existe.
+#
+# CE QUE L'INVENTAIRE IGNORAIT, et cela, c'en était un : chaque poste ci-dessous
+# porte `avantages`, les codes de l'inventaire qui le servent, ou `manque` avec
+# la raison. Un test exige l'un ou l'autre — un blanc sans raison est une dette.
+liste_legale:
+  article: L. 222-2-1 CSS
+  version: LEGIARTI000051288889
+  lu_le: 2026-09-21
+  postes:
+    - numero: "1°"
+      quoi: >-
+        Le financement des allocations du minimum vieillesse — dernier alinéa
+        de L. 643-1, chapitre V du titre Ier du livre VIII, article 2 de
+        l'ordonnance n° 2004-605 du 24 juin 2004.
+      avantages: [minimum_vieillesse]
+      manque: null
+
+    - numero: "2°"
+      quoi: >-
+        La prise en compte dans la durée d'assurance des périodes des 1°, 3° et
+        8° de L. 351-3 — maladie, maternité, invalidité, accident du travail,
+        chômage non indemnisé, stages de formation professionnelle —, des
+        périodes d'allocations de chômage et d'activité partielle, et du revenu
+        de remplacement versé par l'entreprise.
+      avantages: [periodes_assimilees]
+      manque: null
+      note: >-
+        LA LISTE DES PÉRIODES FINANCÉES N'EST PAS CELLE DES PÉRIODES VALIDÉES.
+        L. 351-3 en compte neuf ; le 2° n'en vise que trois, plus les
+        allocations. Restent à la charge des régimes, sans transfert : les
+        périodes de guerre (5°), la détention provisoire (6°), les sportifs de
+        haut niveau (7°) et les travaux d'utilité collective (9°). Un droit
+        gratuit sans payeur nommé est un droit qu'aucune série ne chiffrera.
+
+    - numero: "3°"
+      quoi: >-
+        Abrogé. Portait, jusqu'à la suppression du fonds, « les sommes
+        correspondant à la prise en compte par le régime général et le régime
+        des salariés agricoles des réductions de la durée d'assurance ou de
+        périodes reconnues équivalentes, définies à l'article L. 351-7-1 ».
+      avantages: []
+      manque: >-
+        l'inventaire ne porte aucune ligne pour les périodes reconnues
+        équivalentes ni pour les réductions de durée d'assurance de
+        L. 351-7-1. Le moteur ne les sert pas et aucune fiche ne les déclare :
+        c'est un écart au droit positif, découvert par cette confrontation et
+        non par les trois listes internes
+
+    - numero: "4°"
+      quoi: >-
+        Les dépenses du I de l'article 49 de la loi n° 2002-73 du 17 janvier
+        2002 : la branche verse aux organismes de l'article L. 921-4 —
+        c'est-à-dire à l'Agirc-Arrco — les cotisations dues au titre des
+        périodes de préretraite du Fonds national pour l'emploi, de préretraite
+        progressive, d'allocation de solidarité spécifique et d'allocation
+        équivalent retraite.
+      avantages: [points_gratuits_complementaires]
+      manque: null
+      note: >-
+        C'est le seul poste de la liste qui finance une COMPLÉMENTAIRE, et il
+        est passé inaperçu jusqu'ici : l'inventaire rattache les points gratuits
+        aux accords Agirc-Arrco, sans voir qu'une partie d'entre eux est payée
+        par la branche vieillesse sous un article de loi.
+
+    - numero: "5°"
+      quoi: >-
+        La prise en compte des périodes de volontariat du service national.
+      avantages: [service_national]
+      manque: null
+
+    - numero: "6°"
+      quoi: >-
+        L'allocation spéciale pour les personnes âgées de Mayotte et la prise
+        en compte des périodes de l'article 8 de l'ordonnance n° 2002-411.
+      avantages: []
+      manque: >-
+        extension territoriale du minimum vieillesse et des périodes
+        assimilées, et non un dispositif distinct. Le catalogue des régimes
+        porte Mayotte ; l'inventaire des avantages n'a pas à le dédoubler
+
+    - numero: "7°"
+      quoi: >-
+        La prise en charge du second alinéa de l'article L. 6243-3 du code du
+        travail : ce qui manque à l'assiette forfaitaire de l'apprenti pour
+        valider ses trimestres.
+      avantages: []
+      manque: >-
+        l'inventaire ne porte aucune ligne pour l'apprentissage. Le droit n'est
+        pas dans le code de la sécurité sociale mais dans celui du travail, et
+        les trois listes internes du dépôt, qui décrivent ce que le modèle sait
+        faire, ne pouvaient pas le trouver. C'est la seconde dette révélée par
+        cette confrontation
+
+    - numero: "8°"
+      quoi: >-
+        Le remboursement à la caisse de Saint-Pierre-et-Miquelon des « avantages
+        non contributifs mentionnés aux 1° à 5° et 7° du présent article ».
+        C'est ici, et nulle part ailleurs, que le législateur emploie
+        l'expression en propres termes après la suppression de L. 135-1.
+      avantages: []
+      manque: >-
+        extension territoriale, comme le 6°. Sa valeur est ailleurs : c'est le
+        dernier endroit du code où l'expression « avantages non contributifs »
+        survit, et il la définit par renvoi aux sept postes précédents
 
 # Les taux de l'Agirc-Arrco qui n'achètent aucun point
 # =====================================================
