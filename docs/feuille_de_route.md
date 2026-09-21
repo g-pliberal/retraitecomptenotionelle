@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 294<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 405<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 328<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 435<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12167,4 +12167,86 @@ réel en a : c'est ce qui le met hors d'atteinte de la durée requise.
 `src/retraite_notionnelle/castypes.py`, `moteur/js/scenario-actuel.js`,
 `moteur/js/castypes.js`, `data/reference/legislation/veille.yaml`,
 `tests/test_cout_age_depart.py`, `docs/limites.md` § 5 ter,
+`tests/temoins/pages.json`.
+
+### 87. Ce qu'une carrière tout en points ne se voyait rien opposer — `fait`
+
+**Demande.** « Vas-y, charge-toi de ça » : les trois réserves laissées par
+l'action 86 — lire le barème du coefficient de réduction dans son décret, dire
+ce que la carrière longue ouvre à un régime en points, et regarder le cas type
+libéral sans carrière antérieure.
+
+**Ce que les textes disent.** **R. 643-7 CSS**, version du 1er septembre 2023 :
+la réduction est fonction « soit du nombre de trimestres correspondant à la
+durée séparant l'âge auquel la pension de retraite prend effet du
+soixante-cinquième anniversaire […] soit du nombre de trimestres
+supplémentaires qui serait nécessaire […] pour relever du deuxième alinéa du I
+de l'article L. 643-3 », arrondi au chiffre supérieur, « le plus petit de ces
+deux nombres est pris en considération », et « le coefficient de minoration est
+égal à 1,25 % par trimestre manquant dans la limite de vingt trimestres ».
+C'est mot pour mot ce que `_trimestres_de_decote` faisait déjà : **la
+transcription de la fiche `cnavpl` est confirmée, et rien n'a bougé.** Côté
+agricole, R. 732-39 du code rural pose la même condition mais non le taux, et
+l'article qui le porte n'est pas dans le champ social de l'index : la fiche
+`msa_non_salaries` garde son 1,25 % par transcription, et la ligne de veille le
+dit.
+
+**La carrière longue leur est ouverte, et par deux textes.** L. 732-18-1 du
+code rural abaisse l'âge « pour les personnes ayant exercé une activité non
+salariée agricole qui ont commencé leur activité avant un des quatre âges, dont
+le plus élevé ne peut excéder vingt et un ans » ; le II de L. 643-3 renvoie les
+professions libérales à L. 351-1-1. Le moteur ne l'offrait qu'aux périodes en
+annuités. Les deux règles d'âge la lisent désormais sur la même liste — ne
+l'ouvrir qu'au taux plein faisait rendre à celui-ci un âge ANTÉRIEUR à celui que
+l'ouverture accordait, soixante-trois ans contre soixante-quatre pour un chef
+d'exploitation né en 2000.
+
+**Et en cherchant cela, le défaut le plus visible des trois.** `calculer` ne
+lisait l'âge d'ouverture opposable que sur les périodes en annuités. Une
+carrière entière en points n'en ayant aucune, **aucun âge ne lui était
+opposé** : le simulateur du site servait une pension de chef d'exploitation ou
+de profession libérale **à cinquante ans** sans rien refuser, quand il la
+refusait à l'artisan de la page voisine. Ce n'était pas un défaut de cas type,
+c'était une réponse fausse donnée à un visiteur. Au passage, `requis_reference`
+retombait pour eux sur 160 trimestres — une durée que plus aucune génération ne
+doit —, et c'est elle que leur abattement opposait. Corrigé par une SECONDE
+PASSE qui ne s'ouvre que si la première n'a rien trouvé : les carrières en
+annuités ne bougent pas d'un trimestre.
+
+**Ce que ça a déplacé.** Rien sur les agrégats — trajectoire 2070 à 18,35 % du
+PIB, écart moyen à l'âge conjoncturel tous régimes à −0,07 an, et le
+contrefactuel de l'action 83 tient : les cinq scénarios notionnels bougent de
+moins d'un dixième de point, le système actuel de +0,59, et corriger les âges
+éloigne toujours du COR. Les témoins de SIMULATION bougent, eux, et c'est le
+sujet : ce sont les carrières tout en points, qui voient maintenant un âge, une
+durée et une carrière longue. Le chef d'exploitation part à soixante-trois ans
+pour les générations récentes, sa carte de la page Cas types passe de +10 % à
++5 %, et l'écart aux militaires de 54 à 50 points.
+
+**L'angle mort du contrefactuel est refermé.** L'action 83 comptait deux cas
+types « insensibles à leur âge d'entrée » ; il n'y en a plus aucun, et les neuf
+comparables répondent tous.
+
+**Trois leçons.** **Une réserve bien écrite est un plan de travail** : les
+trois lignes laissées par l'action 86 ont donné trois lectures et un défaut
+qu'aucune ne nommait. **Un défaut de datation cachait un défaut de service** :
+ce qui n'était qu'une bizarrerie de cas type — un âge qui ne bouge pas — était
+la même cause qu'une pension servie à cinquante ans sur le site. Et **une
+seconde passe vaut mieux qu'un élargissement** : n'ouvrir la boucle aux régimes
+en points que si les annuités n'ont rien donné garantit que rien d'autre ne
+bouge, et le test le dit.
+
+**Ce qui reste.** Le taux du coefficient agricole, faute d'article dans le
+champ social de l'index. Et le cas type libéral n'a toujours aucune année
+salariée avant son installation, ce qui le met hors d'atteinte de la durée
+requise à tout âge : sa fiche date donc son départ sur l'ouverture, et savoir
+si un libéral représentatif a une carrière antérieure — l'internat, le
+salariat — reste ouvert. La DREES le laisse penser, en donnant 62,6 ans de
+moyenne aux professions libérales là où la fiche, seule, ne peut jamais
+atteindre la durée.
+
+**Fichiers.** `src/retraite_notionnelle/scenarios/actuel.py`,
+`moteur/js/scenario-actuel.js`, `data/reference/legislation/veille.yaml`,
+`scripts/cout_age_depart.py`, `tests/test_cout_age_depart.py`,
+`docs/limites.md` § 5 ter, `tests/temoins/simulations.json`,
 `tests/temoins/pages.json`.

@@ -35,22 +35,24 @@ trouvé ici n'entre dans `castypes.py` : ils ne servent qu'à borner ce que
 l'erreur coûte. Une fiche se réécrit sur ce qu'on sait d'une carrière, pas sur
 ce qui rapproche une moyenne d'une autre.
 
-TROIS RAISONS QUI EN FONT UNE BORNE BASSE
--------------------------------------------
+DEUX RAISONS QUI EN FONT UNE BORNE BASSE
+------------------------------------------
 1. **Quatre cas types restent hors champ** — militaire, agent de conduite,
    agent des IEG, catégorie active —, pour la raison écrite dans
    `cas_types_csp.yaml` : leur départ n'est pas une sortie du marché du
    travail. Ils pèsent un douzième de la grille et ne sont pas touchés.
-2. **Deux cas types ne se corrigent pas par l'âge d'entrée**, et le script le
-   MESURE au lieu de le supposer : l'exploitant agricole et la profession
-   libérale relèvent de régimes EN POINTS, auxquels le modèle n'oppose aucune
-   durée requise (`trimestres_requis` vaut zéro). Leur départ suit l'âge légal
-   et ne bouge pas d'un trimestre quand on déplace leur entrée de huit ans.
-   Leur écart — −1,21 et +0,66 an — vient d'ailleurs, et ce contrefactuel ne
-   le porte pas.
-3. **Le couloir d'une catégorie unique est un POINT**, qu'un pas d'une
+2. **Le couloir d'une catégorie unique est un POINT**, qu'un pas d'une
    demi-année n'atteint pas exactement. Le résidu est imprimé pour chaque cas
    type : c'est ce que la correction ne referme pas.
+
+Elles étaient TROIS jusqu'au 21 septembre 2026. La troisième disait que deux
+cas types ne se corrigeaient pas par l'âge d'entrée — l'exploitant agricole et
+la profession libérale, « auxquels le modèle n'oppose aucune durée requise ».
+Le constat était juste et l'explication fausse : c'était un défaut du moteur,
+qui ne savait rien opposer à une carrière entière en points, ni durée, ni âge
+d'ouverture, ni carrière longue. Il est corrigé, et les neuf cas types
+comparables répondent tous à leur âge d'entrée. Voir `docs/limites.md` § 5 ter,
+« Une carrière tout en points ne se voyait rien opposer ».
 """
 
 from __future__ import annotations

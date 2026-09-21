@@ -221,8 +221,8 @@ moins. Vert : plus.
 Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (chef d'exploitation
-  agricole, +10 % pour la génération 2000) et la moins bien traitée (militaire
-  non officier, -45 %), et les 54 points qui les séparent à carrière et à
+  agricole, +5 % pour la génération 2000) et la moins bien traitée (militaire
+  non officier, -45 %), et les 50 points qui les séparent à carrière et à
   durée identiques.
 - La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -57 %
   pour la génération 1940 à +35 % pour la génération 1970 : la même règle

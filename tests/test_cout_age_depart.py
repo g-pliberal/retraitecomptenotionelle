@@ -33,11 +33,9 @@ import cout_age_depart as CAD  # noqa: E402
 #: ne doit pas y toucher.
 HORS_CHAMP = ("militaire", "agent_sncf_conduite", "agent_ieg", "fonctionnaire_actif")
 
-#: Le seul cas type dont l'âge de départ ne répond pas à son âge d'entrée : sa
-#: fiche date le départ sur l'âge d'OUVERTURE, qui ignore la durée par
-#: construction. L'exploitant agricole y répondait aussi tant que
-#: `age_taux_plein_droit` rendait l'ouverture pour une carrière tout en points.
-SUR_L_OUVERTURE = ("profession_liberale",)
+#: Les deux cas types dont la carrière est ENTIÈREMENT en points : le moteur
+#: ne leur opposait ni durée, ni âge d'ouverture, ni carrière longue.
+TOUT_EN_POINTS = ("exploitant_agricole", "profession_liberale")
 
 
 @pytest.fixture(scope="module")
@@ -79,27 +77,20 @@ def test_le_contrefactuel_ne_touche_ni_les_fiches_ni_les_hors_champ(mesure):
                 <= CAD.ENTREE_MAXIMALE), decalage.code
 
 
-def test_un_seul_cas_type_ne_repond_pas_a_son_age_d_entree(mesure):
-    """Et la raison se vérifie, au lieu de se supposer.
+def test_tous_les_cas_types_comparables_repondent_a_leur_age_d_entree(mesure):
+    """L'angle mort du contrefactuel est refermé.
 
-    La profession libérale date son départ sur l'âge d'OUVERTURE, qui ignore la
-    durée par construction : déplacer son âge d'entrée de huit ans n'y change
-    rien, et son écart à sa catégorie vient d'ailleurs. C'est la première des
-    trois raisons qui font de ce contrefactuel une borne basse.
-
-    Ils étaient DEUX jusqu'au 21 septembre 2026, l'exploitant agricole aussi,
-    et c'était un défaut du moteur : voir le test suivant.
+    Deux cas types n'y répondaient pas, et la raison qu'on leur prêtait était
+    fausse — « des régimes en points, auxquels le modèle n'oppose aucune durée
+    requise ». C'était un défaut du moteur, corrigé le 21 septembre 2026 : les
+    neuf cas types comparables répondent tous, et la recherche d'âge d'entrée
+    ne laisse plus personne de côté.
     """
-    insensibles = {d.code for d in mesure["decalages"] if d.insensible}
-    assert insensibles == set(SUR_L_OUVERTURE)
-
-    fiches = {cas.code: cas for cas in CAS_TYPES}
-    for code in SUR_L_OUVERTURE:
-        assert fiches[code].regle_liquidation == "ouverture", code
+    assert not [d.code for d in mesure["decalages"] if d.insensible]
 
 
 def test_une_carriere_tout_en_points_se_voit_opposer_sa_duree(simulateur):
-    """Le défaut que la recherche d'âge d'entrée a fait voir.
+    """Le premier défaut que la recherche d'âge d'entrée a fait voir.
 
     `age_taux_plein_droit` rendait l'âge d'ouverture dès que la carrière
     n'avait aucune période en annuités — le modèle faisait donc liquider « au
@@ -122,6 +113,48 @@ def test_une_carriere_tout_en_points_se_voit_opposer_sa_duree(simulateur):
     tard = replace(cas, age_debut=28).age_liquidation_pour(simulateur, 1955)
     assert tot == pytest.approx(ouverture, abs=0.01)
     assert tard > tot + 0.9, "la durée manquante doit retarder le départ"
+
+
+def test_une_carriere_tout_en_points_se_voit_opposer_un_age(simulateur):
+    """Le second, et le plus visible : on pouvait liquider à cinquante ans.
+
+    `calculer` ne lisait l'âge d'ouverture opposable que sur les périodes en
+    ANNUITÉS. Une carrière entière en points n'en ayant aucune, aucun âge ne
+    lui était opposé : le simulateur servait une pension d'exploitant agricole
+    à cinquante ans sans rien refuser, quand il refusait la même chose à
+    l'artisan de la page voisine.
+    """
+    artisan = next(c for c in CAS_TYPES if c.code == "artisan")
+    temoin = simulateur.scenario_actuel.calculer(
+        artisan._carriere(simulateur, 2000, 50.0))
+    assert not temoin.liquidation_ouverte, "l'artisan sert de témoin"
+
+    for code in TOUT_EN_POINTS:
+        cas = next(c for c in CAS_TYPES if c.code == code)
+        resultat = simulateur.scenario_actuel.calculer(
+            cas._carriere(simulateur, 2000, 50.0))
+        assert not resultat.liquidation_ouverte, code
+        assert resultat.motif_ouverture == "non_ouverte", code
+        assert resultat.age_ouverture_opposable is not None, code
+
+
+def test_la_carriere_longue_est_ouverte_aux_regimes_en_points(simulateur):
+    """Et les deux règles d'âge la lisent sur la même liste.
+
+    L. 732-18-1 du code rural la donne aux non-salariés agricoles, le II de
+    L. 643-3 du code de la sécurité sociale aux professions libérales par
+    renvoi à L. 351-1-1. Ne l'ouvrir qu'au taux plein faisait rendre à celui-ci
+    un âge ANTÉRIEUR à celui que l'ouverture accordait — deux règles du même
+    droit qui se contredisent.
+    """
+    actuel = simulateur.scenario_actuel
+    cas = next(c for c in CAS_TYPES if c.code == "exploitant_agricole")
+    carriere = cas.construire(simulateur, 2000, "droit")
+
+    assert actuel.age_taux_plein_droit(carriere) >= actuel.age_ouverture_droit(carriere)
+    resultat = actuel.calculer(carriere)
+    assert resultat.motif_ouverture == "carriere_longue"
+    assert resultat.liquidation_ouverte
 
 
 def test_les_scenarios_notionnels_ne_bougent_pas(mesure):

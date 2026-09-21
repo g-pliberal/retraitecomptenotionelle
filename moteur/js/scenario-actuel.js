@@ -813,7 +813,15 @@ export class ScenarioActuel {
     const ouverture = Math.min(
       ...retenues.map(([, periode]) => this.ageOuverture(periode, carriere)),
     );
-    const anticipe = this.ageCarriereLongue(carriere, annuites);
+    // Les deux régimes de base en POINTS ouvrent la carrière longue :
+    // L. 732-18-1 du code rural pour les non-salariés agricoles, le II de
+    // L. 643-3 du code de la sécurité sociale pour les professions libérales,
+    // par renvoi à L. 351-1-1. Les deux règles d'âge la lisent sur la même
+    // liste, sans quoi elles se contrediraient.
+    const anticipe = this.ageCarriereLongue(
+      carriere,
+      annuites.length > 0 ? annuites : this.periodesOpposantUneDuree(autres),
+    );
     if (anticipe !== null && anticipe < ouverture) {
       return anticipe;
     }
@@ -874,6 +882,18 @@ export class ScenarioActuel {
    * et au-delà duquel attendre ne rapporte plus de taux. La durée acquise
    * compte les trimestres pour enfants, et la carrière longue passe avant.
    */
+  /**
+   * Parmi des périodes NON annuitaires, celles qui opposent une durée.
+   *
+   * L'Agirc-Arrco et l'Ircantec sont écartées : elles ont leurs propres
+   * coefficients d'anticipation, et ne sont jamais seules sur une carrière.
+   */
+  periodesOpposantUneDuree(periodes) {
+    return periodes.filter(([, periode]) =>
+      periode.abattement_points !== "agirc_arrco"
+      && periode.abattement_points !== "ircantec");
+  }
+
   ageTauxPleinDroit(carriere) {
     const { annuites, autres } = this.periodesParcourues(carriere);
     const retenues = annuites.length > 0 ? annuites : autres;
@@ -893,9 +913,7 @@ export class ScenarioActuel {
     // sont jamais seules sur une carrière.
     const opposent = annuites.length > 0
       ? annuites
-      : autres.filter(([, periode]) =>
-        periode.abattement_points !== "agirc_arrco"
-        && periode.abattement_points !== "ircantec");
+      : this.periodesOpposantUneDuree(autres);
     if (opposent.length === 0) {
       return ouverture;
     }
@@ -929,11 +947,7 @@ export class ScenarioActuel {
     const tauxPlein = Math.min(annulation, Math.max(ouverture, duree));
     // Le départ anticipé pour carrière longue passe avant les trois termes :
     // il n'ouvre qu'à qui a sa durée COTISÉE, donc au taux plein.
-    // Le départ anticipé reste lu sur les seules périodes en ANNUITÉS, comme
-    // `ageOuvertureDroit` le fait : l'étendre aux périodes en points ferait
-    // rendre ici un âge ANTÉRIEUR à celui que l'ouverture accorde, et les deux
-    // règles se contrediraient.
-    const anticipe = this.ageCarriereLongue(carriere, annuites);
+    const anticipe = this.ageCarriereLongue(carriere, opposent);
     if (anticipe !== null && anticipe < tauxPlein) {
       return anticipe;
     }
@@ -1761,20 +1775,36 @@ export class ScenarioActuel {
     const groupes = liquiderSuccessions
       ? this.groupesDeSuccession(codes, anneeLiquidation, derniereAnneeParRegime)
       : new Map();
-    for (const code of codes) {
-      if ((groupes.get(code) ?? [code])[0] !== code) {
-        continue;
+    // DEUX PASSES, ET LA SECONDE NE SERT QU'À QUI N'A QUE DES POINTS. Les
+    // régimes en annuités commandent ; mais une carrière entière en points
+    // n'en a aucun, et `ageOuvertureReference` restait nul — aucun âge ne lui
+    // était opposé, et un chef d'exploitation pouvait liquider à cinquante ans
+    // sans que rien ne le refuse. `requisReference` retombait de son côté sur
+    // 160, une durée que plus aucune génération ne doit, et c'est elle que
+    // l'abattement du régime en points opposait.
+    for (const calculs of [["annuites"], ["points", "mixte"]]) {
+      for (const code of codes) {
+        if ((groupes.get(code) ?? [code])[0] !== code) {
+          continue;
+        }
+        const regime = this.catalogue.obtenir(code);
+        const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+        if (periode === null || !calculs.includes(periode.type_calcul)) {
+          continue;
+        }
+        if (periode.abattement_points === "agirc_arrco"
+          || periode.abattement_points === "ircantec") {
+          continue;
+        }
+        requisReference = Math.max(requisReference, this.dureeRequise(periode, carriere)[0]);
+        const ageRegime = this.ageOuverture(periode, carriere);
+        ageOuvertureReference = ageOuvertureReference === null
+          ? ageRegime
+          : Math.min(ageOuvertureReference, ageRegime);
       }
-      const regime = this.catalogue.obtenir(code);
-      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
-      if (periode === null || periode.type_calcul !== "annuites") {
-        continue;
+      if (ageOuvertureReference !== null) {
+        break;
       }
-      requisReference = Math.max(requisReference, this.dureeRequise(periode, carriere)[0]);
-      const ageRegime = this.ageOuverture(periode, carriere);
-      ageOuvertureReference = ageOuvertureReference === null
-        ? ageRegime
-        : Math.min(ageOuvertureReference, ageRegime);
     }
     requisReference = requisReference || 160;
 
