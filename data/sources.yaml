@@ -736,6 +736,29 @@ institutions:
           que le dépôt AJUSTAIT jusque-là sur les trois colonnes de la
           distribution faute de les lire quelque part.
 
+      - id: drees_age_conjoncturel
+        titre: Âge conjoncturel moyen de départ à la retraite, selon le sexe
+        url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/retraite_graphique-1-age-conjoncturel-moyen-de-depart-a-la-retraite-selon-le-se0/
+        acces: api
+        statut_integration: certifie
+        recuperation: scripts/fetch/drees_age_conjoncturel.py
+        cible: data/reference/macro/age_conjoncturel_depart.csv
+        note: >-
+          La figure du panorama « Les retraités et les retraites », diffusée en
+          open data : 2004 à 2022, par sexe. Ce n'est PAS l'âge moyen de ceux
+          qui ont liquidé dans l'année — celui-là suit la taille des
+          générations qui se présentent — mais un indicateur SYNTHÉTIQUE, les
+          taux de liquidation par âge de l'année appliqués à une génération
+          fictive, comme un indice conjoncturel de fécondité. Il ne dépend donc
+          que des comportements et des règles de l'année, et c'est ce qui le
+          rend comparable à une grille de cas types, qui n'a pas de pyramide
+          des âges non plus. Cette série n'entre dans aucun calcul du site :
+          elle MESURE la grille, et `scripts/age_conjoncturel.py` fait la
+          mesure — écart moyen de 0,08 an sur dix-neuf années, ce que
+          `docs/limites.md` § 5 ter supposait sans pouvoir le chiffrer. Le jeu
+          est retrouvé par son TITRE et non par son identifiant : celui-ci
+          porte le numéro de la figure dans l'édition (« Graphique-1 »), qu'une
+          édition suivante renumérote.
       - id: drees_eir_distribution
         titre: Distribution des pensions mensuelles (échantillon interrégimes de retraités)
         url: https://data.drees.solidarites-sante.gouv.fr/explore/dataset/4178_distribution-des-pensions-mensuelles/

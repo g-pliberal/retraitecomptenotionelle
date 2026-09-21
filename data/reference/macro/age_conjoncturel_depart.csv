@@ -1,0 +1,89 @@
+# Âge conjoncturel moyen de départ à la retraite, par sexe
+# source_id: drees_age_conjoncturel
+# unite: années
+# fiabilite:
+#   certifiee : jeu « Âge conjoncturel moyen de départ à la retraite,
+#             selon le sexe » du portail open data de la DREES, figure
+#             du panorama « Les retraités et les retraites », recontrôlé
+#             par scripts/verifier_donnees.py.
+#
+# CE QUE CET ÂGE EST, ET CE QU'IL N'EST PAS
+# ------------------------------------------
+# Ce n'est pas l'âge moyen de ceux qui ont liquidé dans l'année : celui-là
+# suit la taille des générations qui se présentent, et monte quand une
+# classe creuse arrive à l'âge de partir. C'est un indicateur SYNTHÉTIQUE,
+# construit comme un indice conjoncturel de fécondité — les taux de
+# liquidation par âge de l'année, appliqués à une génération fictive.
+# Il ne dépend donc que des comportements et des règles de l'année.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À chiffrer le biais d'âge de la grille de cas types. docs/limites.md
+# § 5 ter l'énonçait sans le mesurer : « la grille part donc, en moyenne,
+# un peu plus tard que la France réelle ; l'âge conjoncturel de départ
+# que publie la DREES permettrait de le chiffrer, et il n'est pas dans
+# le dépôt. » scripts/age_conjoncturel.py fait la mesure.
+#
+# Cette série ne porte AUCUNE pension et n'entre dans aucun calcul du
+# site : elle mesure la grille, elle ne la corrige pas.
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,sexe,age,fiabilite
+2004,F,61.12,certifiee
+2004,H,60.06,certifiee
+2004,ensemble,60.59,certifiee
+2005,F,61.09,certifiee
+2005,H,60.01,certifiee
+2005,ensemble,60.55,certifiee
+2006,F,61.04,certifiee
+2006,H,59.96,certifiee
+2006,ensemble,60.50,certifiee
+2007,F,60.99,certifiee
+2007,H,59.95,certifiee
+2007,ensemble,60.47,certifiee
+2008,F,60.87,certifiee
+2008,H,59.88,certifiee
+2008,ensemble,60.39,certifiee
+2009,F,60.88,certifiee
+2009,H,60.06,certifiee
+2009,ensemble,60.47,certifiee
+2010,F,60.83,certifiee
+2010,H,60.15,certifiee
+2010,ensemble,60.49,certifiee
+2011,F,61.01,certifiee
+2011,H,60.47,certifiee
+2011,ensemble,60.71,certifiee
+2012,F,61.33,certifiee
+2012,H,60.72,certifiee
+2012,ensemble,61.04,certifiee
+2013,F,61.54,certifiee
+2013,H,60.89,certifiee
+2013,ensemble,61.23,certifiee
+2014,F,61.63,certifiee
+2014,H,61.07,certifiee
+2014,ensemble,61.36,certifiee
+2015,F,61.89,certifiee
+2015,H,61.29,certifiee
+2015,ensemble,61.61,certifiee
+2016,F,62.14,certifiee
+2016,H,61.53,certifiee
+2016,ensemble,61.84,certifiee
+2017,F,62.33,certifiee
+2017,H,61.72,certifiee
+2017,ensemble,62.03,certifiee
+2018,F,62.42,certifiee
+2018,H,61.78,certifiee
+2018,ensemble,62.10,certifiee
+2019,F,62.53,certifiee
+2019,H,61.90,certifiee
+2019,ensemble,62.23,certifiee
+2020,F,62.74,certifiee
+2020,H,62.08,certifiee
+2020,ensemble,62.42,certifiee
+2021,F,62.90,certifiee
+2021,H,62.21,certifiee
+2021,ensemble,62.57,certifiee
+2022,F,63.00,certifiee
+2022,H,62.33,certifiee
+2022,ensemble,62.68,certifiee

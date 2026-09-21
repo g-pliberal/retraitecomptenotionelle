@@ -7397,9 +7397,41 @@ générations 1964 à 1970 partent un trimestre plus tôt, avec un ou deux
 trimestres de moins à réunir. Ce qu'elle ne sait toujours pas faire : les âges
 d'entrée des cas types restent ceux de la grille — vingt-quatre ans pour
 l'artisan, vingt-sept pour le libéral —, ce qui suffit à les faire partir à
-soixante-sept ans une fois la durée requise opposée. La grille part donc, en
-moyenne, un peu plus tard que la France réelle ; l'âge conjoncturel de départ
-que publie la DREES permettrait de le chiffrer, et il n'est pas dans le dépôt.
+soixante-sept ans une fois la durée requise opposée. On en déduisait que la
+grille partait, en moyenne, un peu plus tard que la France réelle, et que
+l'âge conjoncturel de départ publié par la DREES permettrait de le chiffrer.
+
+**Il est maintenant dans le dépôt, et la déduction était fausse.**
+`data/reference/macro/age_conjoncturel_depart.csv` porte la série de la DREES,
+2004 à 2022, par sexe — l'indicateur synthétique, les taux de liquidation par
+âge de l'année appliqués à une génération fictive, donc indépendant de la
+pyramide des âges, ce qui est la seule raison pour laquelle il se compare à une
+grille. `scripts/age_conjoncturel.py` fait la comparaison : pour chaque année,
+l'âge auquel chaque cas type part, interpolé entre les points de la grille, et
+les treize pesés par les effectifs de caisse de la page « Coût ».
+
+**La grille suit l'âge réel à moins d'une demi-année sur dix-neuf ans**, et
+l'écart moyen est de −0,08 an — elle part un peu plus TÔT, non plus tard. Ce
+n'est pas une validation de la grille comme échantillon, qu'elle n'est pas :
+c'est que ses départs, pris ensemble et pesés, tombent où tombent ceux de la
+France réelle. Le tableau complet est celui que le script imprime ; ses deux
+bords disent l'essentiel : +0,26 an en 2010, −0,45 an en 2022.
+
+**Le défaut que la mesure trouve n'est donc pas celui qu'on cherchait.** Il est
+dans la PENTE des années récentes : jusqu'au début des années 2010 la grille
+partait plutôt plus tard, et depuis 2015 l'âge réel monte plus vite qu'elle —
++2,09 ans de 2004 à 2022 pour la DREES, +2,00 pour la grille, et tout l'écart
+se creuse après 2015. La grille ne connaît que ce que le droit ouvre ; la
+montée récente doit une part au comportement, qu'aucun cas type ne choisit.
+C'est une piste pour la trajectoire, et non une conclusion : une demi-année de
+départ plus tard ne referme pas quatre points de PIB.
+
+Quatre réserves tiennent la mesure, écrites en tête de `age_conjoncturel.py` :
+les poids sont des stocks de retraités et non des flux de liquidation, faute
+que le dépôt ait les seconds ; la grille reste treize configurations et non une
+population ; l'âge de la DREES est un comportement sous contrainte quand celui
+de la grille est mécanique ; et le sexe n'est pas comparé, la grille ne
+distinguant pas ses cas types par sexe.
 
 ---
 
@@ -7526,7 +7558,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1873<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1878<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
