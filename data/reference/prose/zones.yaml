@@ -145,6 +145,15 @@ fichiers:
       # dépôt se reproduit. Elles disent ce qui est vrai aujourd'hui, et le
       # contrôle refusera désormais qu'un chiffre y entre sans sa sonde.
       "Limites — à lire avant d'utiliser un chiffre": etat
+      # Le recensement des paramètres du scénario 1 : vingt-six chiffres, tous
+      # des paramètres de DROIT, et tous recopiés à la main d'une table
+      # certifiée faute d'une sonde qui sache y descendre. Ils lisent
+      # maintenant leur cellule — la durée requise de 1934, le taux de décote,
+      # l'âge légal de 1969, les quatre barèmes de la surcote. Deux seuls ne
+      # viennent pas d'un fichier, l'assiette de l'AVPF et l'âge majoré de la
+      # surcote de 2007 : ce sont des constantes du moteur, et un test nommé
+      # les tient.
+      "Paramètres du scénario 1, et ce qu'ils valent": etat
       "Écarts avec le droit positif dans le scénario 1": etat
       "La réforme agricole de 2026 n'est pas modélisée, et il faut le dire": etat
       "La réforme agricole de 2026 est en vigueur, et elle n'est pas calculable": etat
@@ -346,7 +355,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 73
+  sections_a_declarer: 72
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2

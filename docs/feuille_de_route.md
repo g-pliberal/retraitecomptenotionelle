@@ -8333,13 +8333,42 @@ que jusqu'au premier commentaire. Et une sonde qui compte peut maintenant
 traverser un cran d'entrées : `entrees(data/sources.yaml:institutions.*.jeux)`
 réunit les jeux de toutes les institutions, que rien ne totalisait ailleurs.
 
+**Le 21 septembre 2026, plus tard : les paramètres de droit lisent leur
+table.** Le recensement des paramètres du scénario 1 — l'étalon du dépôt —
+portait vingt-six chiffres recopiés à la main depuis les tables certifiées,
+faute d'une sonde qui sache descendre dans un CSV. Quatre sondes le font
+maintenant : `cellule` pour une ligne désignée par ses clés, `minimum` et
+`maximum` pour les bornes d'une colonne, `distinctes` pour le nombre de
+valeurs différentes. Une colonne porte au besoin son changement d'unité —
+`coefficient*100` lit en pour-cent la fraction que le fichier stocke,
+`valeur/12` dit au mois un montant annuel. Une cinquième, `partout`, rend la
+valeur que toutes les entrées désignées portent et refuse dès que deux
+s'écartent : c'est exactement ce qu'affirme une prose qui annonce un nombre
+unique, et c'est ainsi que le plafond de la majoration familiale de
+l'Agirc-Arrco est tenu.
+
+Le tableau du scénario 1 est donc entièrement ancré, et deux chiffres seulement
+ne viennent pas d'un fichier : l'assiette de l'AVPF et l'âge majoré de la
+surcote de 2007-2008 sont des constantes du moteur, que `tenu()` renvoie à un
+test nommé — le second a été écrit pour cela, parce que la table porte le
+drapeau `apres_65_ans` et jamais l'âge lui-même. Un troisième, l'écart de
+4,6 % entre le minimum garanti servi en 2024 et sa projection sur les prix,
+demandait de chaîner vingt années d'indice : c'est un test qui le tient, et il
+échouera le jour où l'écart bougera.
+
+**Et le lecteur de nombres avait un trou.** « 7 603,41 » se lisait comme DEUX
+nombres, 7 603 et 41 : le motif ne prévoyait pas la décimale après le
+séparateur de milliers. L'ancre refusait donc tout montant de cette forme, et
+une correction automatique en aurait fait « 7 603 ».
+
 **Ce qui reste — et c'est le travail, qui se fait section par section.**
-Soixante-treize sections, et elles ont toutes la même forme : elles disent ce
+Soixante-douze sections, et elles ont toutes la même forme : elles disent ce
 que les chiffres du dépôt valent AUJOURD'HUI, et chacun de leurs chiffres est
 une mesure du modèle — un écart en pourcentage, un montant, une part de PIB.
 Aucune ne se déclare sans une sonde qui la recalcule, ou sans un test nommé
-qui la tienne déjà. Le §1 de `limites.md` en porte à lui seul deux cents, et
-c'est le plus gros morceau qui reste ; les six résultats du README et les
+qui la tienne déjà — et les sondes de table n'y suffisent pas, puisque ces
+chiffres-là ne sont dans aucune table. Le §1 de `limites.md` en porte à lui
+seul deux cents, et c'est le plus gros morceau qui reste ; les six résultats du README et les
 sections chiffrées de `methodologie.md` suivent. Une seule phrase bloque le §2
 de `avantages_non_contributifs.md` : les 87 % du total chiffré que les lignes
 lues font, part qu'aucune sonde ne recalcule et qu'aucun test ne tient. Rien

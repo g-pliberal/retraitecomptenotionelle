@@ -142,10 +142,127 @@ def sonde_poids_comprime(motif: str) -> float:
     return sum(len(gzip.compress(f.read_bytes())) for f in _fichiers(motif)) / 1024
 
 
+def _lignes_csv(chemin: str) -> list[dict]:
+    """Les lignes de données d'un CSV du dépôt, commentaires écartés.
+
+    Les tables de `data/reference/` portent leur source et leur mode d'emploi
+    en tête, derrière des `#` : c'est ainsi que le modèle les lit
+    (`charger_serie_annuelle`), et les compter pour des données donnerait,
+    sur `duree_assurance_requise.csv`, une dizaine de lignes qui n'existent
+    pas.
+    """
+    with (RACINE / chemin).open(encoding="utf-8") as flux:
+        lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
+        return list(csv.DictReader(lignes))
+
+
 def sonde_lignes_csv(chemin: str) -> float:
-    """Nombre de lignes de données d'un CSV — l'en-tête ne compte pas."""
-    with (RACINE / chemin).open(encoding="utf-8") as fichier:
-        return max(0, sum(1 for _ in csv.reader(fichier)) - 1)
+    """Nombre de lignes de données d'un CSV — ni en-tête ni commentaires."""
+    return len(_lignes_csv(chemin))
+
+
+def _colonne_csv(argument: str) -> tuple[list[dict], str, float, str]:
+    """``fichier.csv:colonne[*facteur][?clé=valeur&…]``, décomposé.
+
+    Le facteur est là pour deux raisons, et elles reviennent partout : le
+    dépôt stocke les taux en fraction — `coefficient_minoration.csv` porte
+    0,01250 — quand la prose les écrit en pour-cent, et il stocke en montant
+    annuel ce que la prose donne au mois. `coefficient*100` et `valeur/12`
+    disent ce passage au lieu de le taire.
+    """
+    if ":" not in argument:
+        raise ValueError("il faut « fichier.csv:colonne?clé=valeur »")
+    chemin, reste = argument.split(":", 1)
+    specification, _, condition = reste.partition("?")
+    if "/" in specification:
+        colonne, _, diviseur = specification.partition("/")
+        facteur = str(1 / float(diviseur))
+    else:
+        colonne, _, facteur = specification.partition("*")
+    lignes = _lignes_csv(chemin)
+    if lignes and colonne not in lignes[0]:
+        raise ValueError(f"« {colonne} » n'est pas une colonne de {chemin} ; "
+                         f"il y a {', '.join(lignes[0])}")
+    for critere in filter(None, condition.split("&")):
+        champ, _, valeur = critere.partition("=")
+        if lignes and champ not in lignes[0]:
+            raise ValueError(f"« {champ} » n'est pas une colonne de {chemin}")
+        lignes = [l for l in lignes if l[champ] == valeur]
+    return lignes, colonne, float(facteur) if facteur else 1.0, chemin
+
+
+def sonde_cellule(argument: str) -> float:
+    """Une cellule d'un CSV : ``fichier.csv:colonne?clé=valeur``.
+
+    C'est ce qui manquait pour ancrer un paramètre de DROIT : la durée requise
+    d'une génération, l'âge légal d'une autre, le taux de décote d'un
+    trimestre. Ils vivent dans les tables certifiées de
+    `data/reference/legislation/`, une ligne par génération ou par année, et
+    aucune sonde ne savait y descendre — `limites.md` les recopiait donc à la
+    main. Plusieurs critères se joignent par `&`, et la désignation doit
+    tomber sur une ligne et une seule : deux lignes, c'est une désignation qui
+    ne dit pas ce qu'elle croit dire.
+    """
+    lignes, colonne, facteur, chemin = _colonne_csv(argument)
+    if len(lignes) != 1:
+        raise ValueError(f"« {argument} » désigne {len(lignes)} lignes de "
+                         f"{chemin}, il en faut une")
+    return float(lignes[0][colonne].replace(",", ".")) * facteur
+
+
+def _bornes_csv(argument: str) -> list[float]:
+    lignes, colonne, facteur, chemin = _colonne_csv(argument)
+    valeurs = [float(l[colonne].replace(",", ".")) * facteur
+               for l in lignes if l[colonne] not in ("", None)]
+    if not valeurs:
+        raise ValueError(f"« {argument} » ne rend aucune valeur de {chemin}")
+    return valeurs
+
+
+def sonde_minimum(argument: str) -> float:
+    """La plus petite valeur d'une colonne : ``fichier.csv:colonne?clé=valeur``.
+
+    Une table de droit se décrit par ses bornes — « 151 → 172 trimestres »,
+    « 60 → 64 ans » —, et ce sont elles qui bougent quand une réforme entre.
+    """
+    return min(_bornes_csv(argument))
+
+
+def sonde_maximum(argument: str) -> float:
+    """La plus grande valeur d'une colonne, mêmes règles que `minimum`."""
+    return max(_bornes_csv(argument))
+
+
+def sonde_distinctes(argument: str) -> float:
+    """Combien de valeurs différentes une colonne porte.
+
+    Une table peut ranger en lignes ce que la prose compte en colonnes : les
+    coefficients de revalorisation des salaires portés au compte tiennent une
+    ligne par couple (circulaire, année de perception), et ce que le lecteur
+    veut savoir est le nombre de CIRCULAIRES.
+    """
+    lignes, colonne, facteur, _ = _colonne_csv(argument)
+    return len({l[colonne] for l in lignes})
+
+
+def sonde_partout(argument: str) -> float:
+    """La valeur qu'un champ porte dans toutes les entrées qu'on désigne.
+
+    ``regimes.*.periodes.*.plafond_majoration_enfants`` : le plafond de la
+    majoration familiale de l'Agirc-Arrco est écrit dans chaque période de
+    chaque fiche, et la prose l'annonce une fois. La sonde refuse dès que deux
+    entrées ne portent pas la même valeur — c'est tout son intérêt : une prose
+    qui annonce un nombre unique ment dès qu'il cesse de l'être.
+    """
+    valeurs = _charge(argument)
+    valeurs = valeurs if isinstance(valeurs, list) else [valeurs]
+    distinctes = {float(v) for v in valeurs if isinstance(v, (int, float))}
+    if not distinctes:
+        raise ValueError(f"« {argument} » ne rend aucun nombre")
+    if len(distinctes) > 1:
+        raise ValueError(f"« {argument} » rend {len(distinctes)} valeurs "
+                         f"différentes ({sorted(distinctes)}), pas une")
+    return distinctes.pop()
 
 
 def _descendre(donnees, chemin: str, origine: str):
@@ -163,8 +280,17 @@ def _descendre(donnees, chemin: str, origine: str):
             suite = donnees.values() if isinstance(donnees, dict) else donnees
             reuni = []
             for branche in suite:
-                feuille = _descendre(branche, reste, origine) if reste else branche
-                reuni += list(feuille)
+                if not reste:
+                    reuni.append(branche)
+                    continue
+                try:
+                    feuille = _descendre(branche, reste, origine)
+                except ValueError:
+                    continue      # une entrée qui ne porte pas le champ
+                reuni += list(feuille) if isinstance(feuille, (list, dict)) \
+                    else [feuille]
+            if not reuni:
+                raise ValueError(f"« {chemin} » ne rend rien dans {origine}")
             return reuni
         if isinstance(donnees, list):
             donnees = donnees[int(cle)]
@@ -285,6 +411,11 @@ SONDES = {
     "poids": sonde_poids,
     "poids_comprime": sonde_poids_comprime,
     "lignes_csv": sonde_lignes_csv,
+    "cellule": sonde_cellule,
+    "minimum": sonde_minimum,
+    "maximum": sonde_maximum,
+    "distinctes": sonde_distinctes,
+    "partout": sonde_partout,
     "entrees": sonde_entrees,
     "valeur": sonde_valeur,
     "tests": sonde_tests,
@@ -305,9 +436,11 @@ UNITES = (
 )
 _UNITE = "|".join(UNITES)
 
-#: Un nombre : « 4 251 », « 79,5 », « −28 », « 2874 ». Le séparateur de
-#: milliers du dépôt est l'espace ordinaire.
-_NOMBRE = r"[−+-]?\d{1,3}(?:[  ]\d{3})+|[−+-]?\d+(?:,\d+)?"
+#: Un nombre : « 4 251 », « 79,5 », « −28 », « 2874 », « 11 975,57 ». Le
+#: séparateur de milliers du dépôt est l'espace ordinaire. La décimale
+#: manquait au premier motif, et « 7 603,41 » se lisait donc comme DEUX
+#: nombres — l'ancre le refusait, et une correction en aurait fait « 7 603 ».
+_NOMBRE = r"[−+-]?\d{1,3}(?:[  ]\d{3})+(?:,\d+)?|[−+-]?\d+(?:,\d+)?"
 
 _ESPACE = r"[ \t]*\n?[ \t]*"   # la coupe de ligne, jamais le blanc de paragraphe
 CHIFFRE = re.compile(rf"(?<![\w.-])({_NOMBRE}){_ESPACE}({_UNITE})(?![\w'’])")

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 from pathlib import Path
 
 import pytest
@@ -13,6 +14,7 @@ from retraite_notionnelle.carriere import (
     Metier,
 )
 from retraite_notionnelle.config import (
+    RACINE_DONNEES,
     AgeConversionDroitsAcquis,
     ModeAgeReference,
     PartCotisation,
@@ -2527,6 +2529,33 @@ def test_la_surcote_est_passee_a_1_25_pour_cent_au_1er_janvier_2009(simulateur):
     assert "taux 53.000%" in taux(2008)
     assert "taux 53.000%" in taux(2009)
     assert "taux 53.625%" in taux(2010)
+
+
+def test_le_bareme_2007_de_la_surcote_majore_au_dela_de_65_ans(simulateur):
+    """L'âge du barème de 2007-2008 n'est écrit nulle part dans les données.
+
+    `surcote_baremes.csv` porte les taux et un DRAPEAU, `apres_65_ans` : le
+    seuil lui-même — soixante-cinq ans — ne vit que dans une constante du
+    moteur, et `limites.md` l'annonce au lecteur. Ce test est ce qui la tient :
+    il ne juge pas le calcul, que les tests voisins couvrent, mais le fait que
+    le barème et le moteur parlent du même âge. Le changer d'un côté sans
+    l'autre échoue ici, et la prose qui le cite s'appuie sur ce nom.
+    """
+    from retraite_notionnelle.scenarios.actuel import ScenarioActuel
+
+    assert ScenarioActuel.SURCOTE_AGE_MAJORE == 65
+
+    chemin = (RACINE_DONNEES / "reference" / "legislation"
+              / "surcote_baremes.csv")
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
+        bareme = [l for l in csv.DictReader(lignes)
+                  if l["bareme"] == "regime_general" and l["debut"] == "2007"]
+    majores = [l for l in bareme if l["apres_65_ans"] == "1"]
+    assert [l["taux"] for l in majores] == ["0.0125"], (
+        "le barème de 2007-2008 doit porter une ligne, et une seule, pour les "
+        "trimestres acquis au-delà de l'âge majoré")
+    assert {l["taux"] for l in bareme if l not in majores} == {"0.0075", "0.0100"}
 
 
 def test_la_surcote_parentale_se_cumule_avec_la_surcote_ordinaire(simulateur):

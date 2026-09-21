@@ -77,6 +77,26 @@ traverser un cran d'entrées par `*` : `entrees(data/sources.yaml:institutions.*
 réunit les jeux de toutes les institutions du manifeste, que rien ne totalise
 ailleurs — la méthodologie en annonçait « cent vingt » en toutes lettres.
 
+**Les paramètres de droit se lisent dans leur table.** C'est le gros du dépôt :
+une durée requise, un âge légal, un taux de décote vivent dans un CSV de
+`data/reference/legislation/`, une ligne par génération ou par année, et la
+prose les recopiait faute de savoir y descendre. Quatre sondes le font :
+
+```markdown
+cellule(duree_assurance_requise.csv:trimestres?generation=1966)   une cellule
+minimum(age_ouverture_requis.csv:age)                             une borne
+maximum(coefficient_minoration.csv:coefficient*100)               l'autre
+distinctes(revalorisation_salaires.csv:date_effet)                les valeurs différentes
+```
+
+Les critères se joignent par `&`, et une cellule doit tomber sur une ligne et
+une seule : deux lignes, c'est une désignation qui ne dit pas ce qu'elle croit
+dire. Une colonne porte au besoin son changement d'unité, `coefficient*100`
+pour lire en pour-cent une fraction stockée telle quelle, `valeur/12` pour dire
+au mois un montant annuel. Et `partout(fiches.yaml:regimes.*.periodes.*.champ)`
+rend la valeur que TOUTES les entrées désignées portent, en refusant dès que
+deux s'écartent : c'est ce qu'affirme une prose qui annonce un nombre unique.
+
 Trois ancres ne calculent rien, et disent pourquoi :
 
 - `tenu(nom_du_test)` — le chiffre est tenu ailleurs, par un test qu'on nomme,
@@ -95,7 +115,7 @@ C'est ce qui fait avancer le dépôt sans qu'on y pense. Deux compteurs, en bas
 de `zones.yaml`, qui ne peuvent que décroître :
 
 - **les sections non déclarées**, aujourd'hui
-  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->73<!--/--> ;
+  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->72<!--/--> ;
 - **les chiffres qui portent l'aveu `a_verifier`**, aujourd'hui
   <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.chiffres_a_verifier)-->2<!--/-->.
 
