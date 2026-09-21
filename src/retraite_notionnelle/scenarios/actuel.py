@@ -2320,12 +2320,13 @@ class ScenarioActuel:
             return None
         ouverture = min(self._age_ouverture(periode, carriere)
                         for _, periode in retenues)
-        if not annuites:
+        opposent = annuites or self._periodes_opposant_une_duree(autres)
+        if not opposent:
             return ouverture
         annulation = min(self._age_taux_plein(periode, carriere)
                          for _, periode in retenues)
         requis = max(self._duree_requise(periode, carriere)[0]
-                     for _, periode in annuites)
+                     for _, periode in opposent)
         if not requis:
             return ouverture
         annee_liquidation = carriere.annee_liquidation
@@ -2334,16 +2335,58 @@ class ScenarioActuel:
             if ligne.annee <= annee_liquidation
         )
         majoration = self._majoration_pour_enfants(
-            carriere, {code: acquis for code, _ in annuites}, annee_liquidation
+            carriere, {code: acquis for code, _ in opposent}, annee_liquidation
         )
         if majoration is not None:
             acquis += majoration.trimestres
         duree = carriere.age_liquidation + (requis - acquis) / 4.0
         taux_plein = min(annulation, max(ouverture, duree))
+        # Le départ anticipé reste lu sur les seules périodes en ANNUITÉS, comme
+        # :meth:`age_ouverture_droit` le fait : l'étendre aux périodes en points
+        # ferait rendre ici un âge ANTÉRIEUR à celui que l'ouverture accorde —
+        # soixante-trois ans contre soixante-quatre pour un chef d'exploitation
+        # né en 2000 —, et les deux règles se contrediraient. Ce que la carrière
+        # longue ouvre à un régime en points est une question à part, et elle
+        # n'est pas tranchée ici.
         anticipe = self._age_carriere_longue(carriere, annuites)
         if anticipe is not None and anticipe < taux_plein:
             return anticipe
         return taux_plein
+
+    @staticmethod
+    def _periodes_opposant_une_duree(
+            periodes: list[tuple[str, PeriodeRegime]],
+    ) -> list[tuple[str, PeriodeRegime]]:
+        """Parmi des périodes NON annuitaires, celles qui opposent une durée.
+
+        Une carrière entière en points n'a aucune période en annuités, et la
+        règle du taux plein rendait alors l'âge d'OUVERTURE — c'est-à-dire
+        qu'elle faisait liquider au premier âge permis, sans regarder la durée.
+        La pension, elle, était bien abattue : ``_abattement_points`` lit la
+        décote de la fiche. Le modèle faisait donc partir au taux plein des
+        carrières que le même modèle servait minorées. Le libéral né en 1955
+        partait à soixante-quatre ans avec cent quarante-huit trimestres sur
+        cent soixante-six requis, soit dix-huit trimestres de réduction que la
+        règle disait inexistants.
+
+        Le droit oppose bien cette durée aux régimes en points : l'article
+        L. 643-3 du code de la sécurité sociale la pose pour les professions
+        libérales — « lorsque l'intéressé a accompli la durée d'assurance fixée
+        en application du deuxième alinéa de l'article L. 351-1 dans le présent
+        régime et dans un ou plusieurs autres régimes », sinon « coefficients de
+        réduction […] en fonction de l'âge […] et de la durée d'assurance » —,
+        et le II de l'article L. 732-24 du code rural pour les non-salariés
+        agricoles.
+
+        Deux familles sont écartées, et c'est le sens de cette fonction.
+        L'Agirc-Arrco et l'Ircantec n'opposent PAS la durée du régime de base :
+        elles ont leurs propres coefficients d'anticipation, en deux tables
+        dont ``_abattement_points`` retient la plus avantageuse. Elles ne sont
+        de toute façon jamais seules — ce sont des complémentaires, et la
+        carrière qui les porte a des périodes en annuités.
+        """
+        return [(code, periode) for code, periode in periodes
+                if periode.abattement_points not in ("agirc_arrco", "ircantec")]
 
     def _age_taux_plein(self, periode: PeriodeRegime, carriere: Carriere) -> float:
         """Âge d'annulation de la décote opposable à cet assuré.

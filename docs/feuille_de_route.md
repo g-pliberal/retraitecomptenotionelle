@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 375<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 294<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 401<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12017,3 +12017,76 @@ n'a pas comprises —, et c'est ce compte rendu qui dira quoi corriger.
 `tests/js/lecture-pdf.test.js`, `tests/js/comparer-releve.mjs`,
 `tests/test_web.py`, `docs/limites.md` §5.
 
+### 86. Une carrière tout en points partait au taux plein sans l'avoir — `fait`
+
+**Pourquoi.** L'action 83 avait buté sur deux cas types dont l'âge de départ ne
+répondait pas à leur âge d'entrée, et s'était contentée de le constater :
+« l'exploitant agricole et la profession libérale relèvent de régimes EN
+POINTS, auxquels le modèle n'oppose aucune durée requise ». Le constat était
+juste, l'explication fausse — et elle recouvrait un défaut du moteur.
+
+**Ce que c'était vraiment.** Le coefficient de réduction était DÉJÀ appliqué :
+`_abattement_points` lit la décote de la fiche, et les fiches `cnavpl` et
+`msa_non_salaries` portent depuis toujours `duree_requise_trimestres` et
+`decote_par_trimestre`. Ce qui manquait est que la règle qui DATE le départ ne
+le voyait pas : `age_taux_plein_droit` rendait l'âge d'ouverture dès que la
+carrière n'avait aucune période en annuités — `if not annuites: return
+ouverture`. Le modèle faisait donc liquider « au taux plein » des carrières
+qu'il servait minorées. Le libéral né en 1955 partait à soixante-quatre ans
+avec cent quarante-huit trimestres sur cent soixante-six requis : dix-huit
+trimestres de réduction que la règle disait inexistants.
+
+**Le droit, lu ce jour.** L. 643-3 I du code de la sécurité sociale
+(LEGIARTI000053280388, version du 31 décembre 2025 issue de la loi
+n° 2025-1403, applicable aux pensions prenant effet à compter du 1er septembre
+2026) : la pension vaut « le produit de la valeur du point par le nombre de
+points acquis » quand l'assuré a « la durée d'assurance fixée en application du
+deuxième alinéa de l'article L. 351-1 dans le présent régime et dans un ou
+plusieurs autres régimes », et un décret « fixe les coefficients de réduction
+[…] lorsque l'intéressé ne justifie pas de la durée ». Le II de l'article
+L. 732-24 du code rural (LEGIARTI000053280317) dit la même chose pour les
+non-salariés agricoles. Ligne et journal dans `veille.yaml`.
+
+**Ce que ça a déplacé.** Presque rien en chiffres, et c'est voulu : la
+trajectoire 2070 reste à 18,35 % du PIB, les 469 témoins de simulation ne
+bougent pas d'un bit, et seul l'exploitant agricole se déplace — 61,64 à
+61,73 ans de moyenne sur 2013-2020. Ce qui change est que le modèle ne dit plus
+« taux plein » d'une pension qu'il minore.
+
+**Le défaut en masquait un second, et c'est le plus intéressant.** Corrigé, le
+taux plein faisait partir la profession libérale à SOIXANTE-NEUF ANS : entrée à
+vingt-sept ans sans carrière antérieure, elle n'atteint la durée requise à
+aucun âge, et la règle la renvoyait à l'annulation de la décote, plus les deux
+ans de sa fiche. Or sa fiche disait déjà ce qu'il fallait faire — « seul cas
+type à partir APRÈS l'âge d'ouverture : deux ans » —, et elle portait pourtant
+`regle_liquidation: taux_plein`, qui ne donnait « ouverture + deux ans » que
+par le défaut qu'on venait de corriger. Elle porte désormais
+`regle_liquidation: ouverture`, ce que sa propre phrase disait ; et la DREES
+tranche dans le même sens, les professions libérales partant à 62,6 ans en
+moyenne de 2013 à 2020, non à soixante-sept.
+
+**Trois leçons.** **Un constat n'est pas une explication** : l'action 83 avait
+mesuré l'insensibilité et en avait déduit une cause plausible et fausse ; il a
+suffi de lire le moteur pour voir que la décote y était et que c'était la règle
+d'âge qui ne la lisait pas. **Une correction en expose une autre** : rendre la
+règle juste a rendu fausse une phrase de fiche, qu'il a fallu remettre d'accord
+avec elle-même. Et **une correction se borne** : étendre au passage le départ
+anticipé pour carrière longue aux périodes en points faisait rendre au taux
+plein un âge ANTÉRIEUR à celui que l'ouverture accorde — soixante-trois ans
+contre soixante-quatre pour un chef d'exploitation né en 2000 —, les deux
+règles se contredisant. La carrière longue reste donc lue sur les seules
+périodes en annuités, et le commentaire dit pourquoi.
+
+**Ce qui reste.** Les coefficients de réduction eux-mêmes ne sont pas lus dans
+leur décret en Conseil d'État : les deux fiches portent 1,25 % par trimestre,
+aligné sur le régime général, et rien ne dit que les barèmes coïncident —
+R. 643-8 pour la CNAVPL, la section D. 732 pour la MSA. Ce que la carrière
+longue ouvre à un régime en points n'est pas tranché. Et le cas type libéral
+n'a toujours aucune année salariée avant son installation, quand un libéral
+réel en a : c'est ce qui le met hors d'atteinte de la durée requise.
+
+**Fichiers.** `src/retraite_notionnelle/scenarios/actuel.py`,
+`src/retraite_notionnelle/castypes.py`, `moteur/js/scenario-actuel.js`,
+`moteur/js/castypes.js`, `data/reference/legislation/veille.yaml`,
+`tests/test_cout_age_depart.py`, `docs/limites.md` § 5 ter,
+`tests/temoins/pages.json`.
