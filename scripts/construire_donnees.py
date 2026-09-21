@@ -857,10 +857,11 @@ def _minimum_vieillesse() -> dict:
 def _majorations_enfants() -> list:
     """Trimestres accordés au titre des enfants, dispositif par dispositif."""
     return [
-        [dispositif, reference, debut, fin, trimestres, enfants_minimum,
-         beneficiaire, int(fiabilite)]
-        for dispositif, reference, debut, fin, trimestres, enfants_minimum,
-        beneficiaire, fiabilite in MajorationsPourEnfants(DONNEES)._table
+        [dispositif, reference, debut, fin, trimestres, services, services_depuis,
+         enfants_minimum, beneficiaire, int(fiabilite)]
+        for dispositif, reference, debut, fin, trimestres, services,
+        services_depuis, enfants_minimum, beneficiaire, fiabilite
+        in MajorationsPourEnfants(DONNEES)._table
     ]
 
 

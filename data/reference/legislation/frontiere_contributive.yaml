@@ -151,6 +151,33 @@ pivots:
       Quand la pension se liquide : la catégorie active, les services
       super-actifs, et le départ anticipé des parents de trois enfants qui n'y
       est plus.
+  - article: article 9 du décret n° 2008-639 du 30 juin 2008
+    num: "9"
+    titre_contient: "2008-639"
+    quoi: >-
+      La bonification de conduite du régime spécial de la SNCF : un trimestre
+      par année d'affiliation au-delà de la troisième, vingt au plus. Six
+      versions, dont une du 7 août 2026.
+  - article: article 20 du décret n° 2008-637 du 30 juin 2008
+    num: "20"
+    titre_contient: "2008-637"
+    quoi: >-
+      Les bonifications de services de la RATP : un cinquième du temps passé
+      dans les emplois du tableau B, cinq ans au plus, et la moitié des
+      services accomplis après cinquante-quatre ans. Sept versions.
+  - article: L. 351-7-1 CSS
+    num: L351-7-1
+    quoi: >-
+      La réduction de la durée requise pour les services militaires accomplis
+      en Afrique du Nord. Deux versions, toujours en vigueur — alors que le
+      poste qui la finançait est abrogé.
+  - article: L. 6243-3 code du travail
+    num: L6243-3
+    titre_contient: Code du travail
+    quoi: >-
+      Le complément de cotisations qui valide les trimestres de l'apprenti
+      au-delà de ce que son assiette porte. Le droit de l'apprenti n'est pas
+      dans le code de la sécurité sociale, et c'est pour cela qu'il manquait.
   - article: L. 161-22-1-1 CSS
     num: L161-22-1-1
     quoi: >-
@@ -1014,6 +1041,182 @@ bascules:
       Même remarque : la distinction entre bonification et majoration n'est pas
       dans le moteur.
 
+  - code: afrique_du_nord_hors_financement
+    date: 2026-01-01
+    face: financement
+    sens: fond
+    libelle: La réduction pour l'Afrique du Nord perd son financement, et garde son droit
+    quoi: >-
+      Le 3° de L. 135-2 finançait « les réductions de la durée d'assurance ou
+      de périodes reconnues équivalentes, définies à l'article L. 351-7-1 ».
+      Le 3° de L. 222-2-1, qui lui succède, porte « (Abrogé) ». Or la version
+      de L. 351-7-1 en vigueur depuis le 1er janvier 2017 n'a pas bougé : les
+      services militaires en Afrique du Nord ouvrent toujours droit à cette
+      réduction.
+      C'est le TROISIÈME cas de ce fichier où le droit survit à son
+      financement, après les indemnités journalières de maternité en 2020 et le
+      minimum contributif en 2016. Trois fois, la même illusion serait
+      possible : lire la fin d'un transfert comme la fin d'un droit.
+    dispositifs: [reduction_duree_afrique_du_nord]
+    article: L. 222-2-1 CSS
+    version: LEGIARTI000051288889
+    article_precedent: L. 135-2 CSS
+    version_precedente: LEGIARTI000042683484
+    texte: loi n° 2025-199 du 28 février 2025, article 24
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Le modèle oppose une durée requise par génération, sans dérogation
+      individuelle : il ne servait pas cette réduction avant, et ne la sert pas
+      davantage maintenant. Ce que la bascule change est la MESURE — la charge
+      cesse d'être un transfert identifiable.
+
+  # --- Les régimes spéciaux : SNCF et RATP --------------------------------
+
+  - code: bonifications_sncf_fermees_aux_nouveaux
+    date: 2008-07-01
+    face: droit
+    sens: ferme
+    libelle: La bonification de conduite se ferme à qui entre après 2008
+    quoi: >-
+      Le décret du 30 juin 2008 réécrit le régime spécial de la SNCF, et sa
+      rédaction initiale de l'article 9 réserve la bonification de conduite
+      « pour les personnels dont l'admission au cadre permanent de la SNCF a
+      été prononcée AVANT LE 1er JANVIER 2009 ». Un trimestre par année de
+      conduite au-delà de la troisième, vingt au plus : le droit demeure entier
+      pour qui l'avait, et n'existe plus pour personne d'autre.
+      Il n'y a pas de version précédente à citer : le décret remplace un
+      règlement de caisse que l'index LEGI ne porte pas sous ce numéro
+      d'article. La fermeture se lit donc dans le texte qui l'institue, non
+      dans un écart entre deux versions.
+    dispositifs: [bonifications_regimes_speciaux]
+    article: article 9 du décret n° 2008-639 du 30 juin 2008
+    version: LEGIARTI000019108305
+    version_precedente: null
+    texte: décret n° 2008-639 du 30 juin 2008
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      L'inventaire range `bonifications_regimes_speciaux` en `absent` : le
+      moteur lit le code `bonifications` de la fiche SNCF comme la bonification
+      pour enfants de la fonction publique, et ne sert aucune bonification de
+      SERVICES à ce régime. La fermeture ne lui change donc rien.
+
+  - code: bonifications_ratp_fermees_aux_nouveaux
+    date: 2008-07-01
+    face: droit
+    sens: ferme
+    libelle: Les bonifications du tableau B se ferment à qui entre après 2008
+    quoi: >-
+      Le décret jumeau du même jour fait de même à la RATP : « les assurés dont
+      l'admission à la régie a été prononcée antérieurement au 1er janvier 2009
+      bénéficient d'une bonification de services égale au cinquième de la durée
+      des services effectivement accomplis dans un des emplois de la deuxième
+      catégorie figurant au tableau B », cinq ans au plus. Une seconde
+      bonification, la moitié des services accomplis après cinquante-quatre
+      ans, porte la même condition.
+    dispositifs: [bonifications_regimes_speciaux]
+    article: article 20 du décret n° 2008-637 du 30 juin 2008
+    version: LEGIARTI000019104831
+    version_precedente: null
+    texte: décret n° 2008-637 du 30 juin 2008
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Même remarque : le moteur ne sert pas ces bonifications.
+
+  - code: bonifications_speciaux_quinze_ans
+    date: 2017-01-01
+    face: droit
+    sens: ferme
+    libelle: Les deux régimes exigent quinze années de services effectifs
+    quoi: >-
+      La même phrase entre le même jour dans les deux décrets : « Les
+      bonifications prévues au présent [article] sont prises en compte dès lors
+      que la pension rémunère au moins QUINZE ANNÉES de services effectifs. »
+      C'est la condition que le code des pensions avait reçue en 2011 pour ses
+      propres bonifications, étendue six ans plus tard aux régimes spéciaux.
+      Les réformes de la fonction publique et celles des régimes spéciaux ne
+      sont pas simultanées, mais elles se suivent.
+    dispositifs: [bonifications_regimes_speciaux]
+    article: article 9 du décret n° 2008-639 du 30 juin 2008
+    version: LEGIARTI000023733183
+    version_precedente: LEGIARTI000023733112
+    texte: null
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Sans objet : le moteur ne sert pas ces bonifications.
+
+  - code: activite_partielle_bonifiante
+    date: 2020-12-03
+    face: droit
+    sens: ouvre
+    libelle: Le chômage partiel de 2020 compte comme du service pour la bonification
+    quoi: >-
+      Le décret du 1er décembre 2020 ajoute aux deux articles que « les périodes
+      durant lesquelles les agents ont bénéficié de l'indemnité mentionnée au II
+      de l'article L. 5122-1 du code du travail sont prises en compte pour le
+      calcul de ces bonifications », applicables aux périodes courant à compter
+      du 1er mars 2020. Un mois d'activité partielle vaut donc un mois de
+      conduite, ou de tableau B, pour un droit qui n'a jamais été cotisé.
+      C'est une ouverture minuscule et instructive : la crise sanitaire a élargi
+      un avantage non contributif sans que personne ne l'ait décidé comme tel.
+    dispositifs: [bonifications_regimes_speciaux]
+    article: article 9 du décret n° 2008-639 du 30 juin 2008
+    version: LEGIARTI000042597049
+    version_precedente: LEGIARTI000023733183
+    texte: décret n° 2020-1489 du 1er décembre 2020
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Sans objet, et doublement : le moteur ne sert pas ces bonifications, et
+      il ne construit pas de périodes d'activité partielle.
+
+  - code: emploi_equivalent_ratp
+    date: 2025-01-01
+    face: droit
+    sens: ouvre
+    libelle: La RATP étend ses bonifications aux emplois équivalents
+    quoi: >-
+      Le décret du 28 juillet 2023 ajoute, après chacun des emplois du tableau
+      B, « ou dans un emploi équivalent au sens du dernier alinéa de l'article
+      2 », pour les pensions prenant effet à compter du 1er janvier 2025. Le
+      tableau cesse d'être une liste fermée : un emploi qui lui ressemble ouvre
+      désormais le même droit.
+    dispositifs: [bonifications_regimes_speciaux]
+    article: article 20 du décret n° 2008-637 du 30 juin 2008
+    version: LEGIARTI000047914213
+    version_precedente: LEGIARTI000050710711
+    texte: décret n° 2023-690 du 28 juillet 2023
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Sans objet : le moteur ne sert pas ces bonifications.
+
+  - code: conge_de_mobilite_bonifiant
+    date: 2026-08-07
+    face: droit
+    sens: ouvre
+    libelle: Le congé de mobilité compte lui aussi comme du service, à la SNCF
+    quoi: >-
+      Le décret du 4 août 2026 ajoute à l'article 9 que les périodes de congé
+      de mobilité de l'article L. 1237-18 du code du travail sont prises en
+      compte au même titre que l'activité partielle. C'est le déplacement de
+      frontière le plus RÉCENT que l'index du dépôt porte, toutes faces
+      confondues — et il va, comme presque tous les autres du côté des droits,
+      dans le sens de l'élargissement.
+    dispositifs: [bonifications_regimes_speciaux]
+    article: article 9 du décret n° 2008-639 du 30 juin 2008
+    version: LEGIARTI000054622839
+    version_precedente: LEGIARTI000048897013
+    texte: décret n° 2026-738 du 4 août 2026
+    lu_le: 2026-09-21
+    portee_modele: non_applique
+    effet_modele: >-
+      Sans objet : le moteur ne sert pas ces bonifications, et ne connaît pas
+      le congé de mobilité.
+
 # La liste légale, poste par poste, confrontée à l'inventaire du dépôt
 # ====================================================================
 # L'article L. 222-2-1 du code de la sécurité sociale, en vigueur au 1er
@@ -1036,6 +1239,31 @@ liste_legale:
   article: L. 222-2-1 CSS
   version: LEGIARTI000051288889
   lu_le: 2026-09-21
+  # Les articles lus POUR combler les deux dettes de la confrontation. Ils ne
+  # datent aucune bascule — ils fondent deux lignes de l'inventaire —, mais ce
+  # fichier ne cite rien qu'il ne puisse opposer : la sonde vérifie ces
+  # versions comme les autres.
+  lectures:
+    - article: L. 6243-3 code du travail
+      version: LEGIARTI000051289076
+      date: 2026-01-01
+      quoi: >-
+        « La branche mentionnée au 3° de l'article L. 200-2 du code de la
+        sécurité sociale prend à sa charge, dans des conditions fixées par
+        décret, le versement d'un complément de cotisations d'assurance
+        vieillesse afin de valider auprès des régimes de base un nombre de
+        trimestres correspondant à la durée du contrat d'apprentissage. »
+        C'est la base légale de la ligne `apprentissage` de l'inventaire.
+    - article: L. 351-7-1 CSS
+      version: LEGIARTI000053612584
+      date: 2017-01-01
+      quoi: >-
+        « Les services militaires actifs accomplis en Afrique du Nord […]
+        ouvrent droit à une réduction de la durée d'assurance, ou de périodes
+        reconnues équivalentes, requise pour bénéficier du taux plein. » C'est
+        la base légale de la ligne `reduction_duree_afrique_du_nord`, et la
+        version est TOUJOURS EN VIGUEUR alors que le poste qui la finançait est
+        abrogé.
   postes:
     - numero: "1°"
       quoi: >-
@@ -1068,13 +1296,15 @@ liste_legale:
         correspondant à la prise en compte par le régime général et le régime
         des salariés agricoles des réductions de la durée d'assurance ou de
         périodes reconnues équivalentes, définies à l'article L. 351-7-1 ».
-      avantages: []
-      manque: >-
-        l'inventaire ne porte aucune ligne pour les périodes reconnues
-        équivalentes ni pour les réductions de durée d'assurance de
-        L. 351-7-1. Le moteur ne les sert pas et aucune fiche ne les déclare :
-        c'est un écart au droit positif, découvert par cette confrontation et
-        non par les trois listes internes
+      avantages: [reduction_duree_afrique_du_nord]
+      manque: null
+      note: >-
+        LA DETTE EST COMBLÉE, et la lecture a corrigé ce qu'on en croyait.
+        L. 351-7-1 ne porte pas des « périodes équivalentes » génériques : il
+        vise les services militaires actifs accomplis en AFRIQUE DU NORD, et
+        leur ouvre une réduction de la durée requise pour le taux plein.
+        L'article est toujours en vigueur alors que le poste qui le finançait
+        est abrogé.
 
     - numero: "4°"
       quoi: >-
@@ -1113,13 +1343,16 @@ liste_legale:
         La prise en charge du second alinéa de l'article L. 6243-3 du code du
         travail : ce qui manque à l'assiette forfaitaire de l'apprenti pour
         valider ses trimestres.
-      avantages: []
-      manque: >-
-        l'inventaire ne porte aucune ligne pour l'apprentissage. Le droit n'est
-        pas dans le code de la sécurité sociale mais dans celui du travail, et
-        les trois listes internes du dépôt, qui décrivent ce que le modèle sait
-        faire, ne pouvaient pas le trouver. C'est la seconde dette révélée par
-        cette confrontation
+      avantages: [apprentissage]
+      manque: null
+      note: >-
+        LA DETTE EST COMBLÉE. Le second alinéa de L. 6243-3 fait verser « un
+        complément de cotisations d'assurance vieillesse afin de valider auprès
+        des régimes de base un nombre de trimestres correspondant à la durée du
+        contrat d'apprentissage ». Le droit n'est pas dans le code de la
+        sécurité sociale mais dans celui du travail : c'est pourquoi les trois
+        listes internes du dépôt, qui décrivent ce que le modèle sait faire, ne
+        pouvaient pas le trouver.
 
     - numero: "8°"
       quoi: >-

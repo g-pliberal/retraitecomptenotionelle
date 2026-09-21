@@ -83,3 +83,66 @@ def test_le_solde_vie_entiere_se_recompose(lignes):
         assert ligne.annees_pension > 20
         attendu = ligne.liberal_vie + ligne.aide_recue - ligne.actuel_vie
         assert abs(ligne.solde_vie - attendu) < 1e-6
+
+
+# --- La bonification de la fonction publique, et la case où elle tombe -----
+
+def _par_enfant(dispositif: str, naissance_mere: int, liquidation: int):
+    """Ce que la table accorde à une mère, en durée et en services."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.scenarios.actuel import MajorationsPourEnfants
+
+    return MajorationsPourEnfants(RACINE_DONNEES).par_enfant(
+        dispositif, "F", naissance_mere, liquidation, 2)
+
+
+def test_la_majoration_de_la_fonction_publique_ne_compte_pas_en_services():
+    """L. 12 bis accorde une MAJORATION DE DURÉE, non une bonification.
+
+    Une bonification s'ajoute aux services et relève donc le prorata, c'est-à-
+    dire la pension ; une majoration de durée d'assurance ne joue que sur la
+    décote et la durée tous régimes. Le modèle les confondait, et créditait
+    les mères fonctionnaires de deux trimestres de SERVICES par enfant né
+    depuis 2004 que le droit ne leur accorde pas.
+
+    Les mères sont datées par convention à trente ans à la naissance : une
+    mère née en 1985 a ses enfants en 2015, donc sous L. 12 bis.
+    """
+    trimestres, services, _ = _par_enfant("bonifications", 1985, 2045)
+    assert trimestres == 2
+    assert services == 1, (
+        "depuis septembre 2026, UN des deux trimestres est une bonification "
+        "au titre du b ter de L. 12 — pas deux, et pas zéro")
+
+
+def test_avant_2026_aucun_des_deux_trimestres_n_est_un_service():
+    """La conversion a une date, et elle est de liquidation.
+
+    Le b ter vaut « pour les pensions prenant effet à compter du 1er septembre
+    2026 ». Avant, les deux trimestres de L. 12 bis ne sont qu'une majoration
+    de durée : le prorata du régime n'en voit aucun.
+    """
+    trimestres, services, _ = _par_enfant("bonifications", 1985, 2025)
+    assert (trimestres, services) == (2, 0)
+
+
+def test_la_bonification_d_avant_2004_compte_entierement_en_services():
+    """L. 12 b accorde bien une bonification : un an par enfant, aux services.
+
+    C'est le contrôle qui empêche de « corriger » trop loin. La distinction
+    introduite ici ne vaut que pour L. 12 bis ; la bonification qui la précède
+    entrait aux services, et doit continuer d'y entrer.
+    """
+    trimestres, services, _ = _par_enfant("bonifications", 1960, 2024)
+    assert (trimestres, services) == (4, 4)
+
+
+def test_la_mda_du_prive_compte_entierement_dans_le_prorata():
+    """La MDA relève le prorata du régime général, et c'est le droit.
+
+    L'article L. 351-4 accorde des trimestres de durée d'assurance DU RÉGIME,
+    qui entrent donc à son numérateur. La distinction ne doit pas déborder sur
+    lui.
+    """
+    trimestres, services, _ = _par_enfant("mda", 1985, 2045)
+    assert (trimestres, services) == (8, 8)

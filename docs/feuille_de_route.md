@@ -25,8 +25,11 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 328<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 435<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 359<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 449<!--/--> lignes), puis dans les
+
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 359<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 449<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12266,3 +12269,98 @@ atteindre la durée.
 `scripts/cout_age_depart.py`, `tests/test_cout_age_depart.py`,
 `docs/limites.md` § 5 ter, `tests/temoins/simulations.json`,
 `tests/temoins/pages.json`.
+
+### 88. Une bonification n'est pas une majoration : 1,2 % de pension rendus au droit — `fait`
+
+**Demande.** « Que peut-on faire de plus ? », puis trois chantiers : combler les
+deux dettes de l'inventaire, modéliser le trimestre qui change de case, lire les
+régimes spéciaux.
+
+**Une ligne du registre était restée ouverte alors qu'elle était résolue.**
+L'action 84 avait répondu à la question que `veille.yaml` posait sur le décret
+n° 2026-699 — est-ce un ajout aux deux trimestres de L. 12 bis ? non — sans
+refermer la ligne. C'est fait, et la refermer a révélé le reste.
+
+**Le modèle sur-créditait les mères fonctionnaires depuis 2004, et personne ne
+l'avait vu.** L'article L. 12 b du code des pensions accorde une BONIFICATION,
+qui s'ajoute aux services et relève donc le prorata, c'est-à-dire la pension.
+L'article L. 12 bis, qui lui succède pour les enfants nés depuis 2004, accorde
+une MAJORATION DE DURÉE D'ASSURANCE, qui ne joue que sur la décote et la durée
+tous régimes. Le moteur les traitait de la même façon : il portait les deux
+trimestres au prorata de la fonction publique.
+
+**La preuve que la distinction est la bonne est dans la réforme qui la
+déplace.** L'article 104 de la loi du 30 décembre 2025 crée un b ter à L. 12
+pour convertir UN des deux trimestres en bonification, et réécrit L. 12 bis le
+même jour pour dire que des deux trimestres « l'un est pris en compte au titre
+de la bonification prévue au b ter ». Une conversion n'a de sens que si les deux
+cases diffèrent.
+
+**Ce que la correction déplace.** Sur un témoin du dépôt — mère fonctionnaire
+d'État de trois enfants —, les services passent de 142 à 139 trimestres et la
+pension annuelle de 46 938 à 45 946 €, soit **−2,1 %**. Sur une mère de deux
+enfants, **−1,16 %**, et le taux est stable d'une génération à l'autre parce
+qu'il ne dépend que du nombre de trimestres retirés sur la durée requise.
+L'agrégat, lui, ne bouge pas : aucun des treize cas types n'est à la fois
+fonctionnaire et parent — le même défaut de grille que la majoration pour trois
+enfants.
+
+**La table porte deux colonnes de plus**, `services_par_enfant` et
+`services_depuis`, parce qu'il fallait DEUX horloges : le montant se lit à
+l'année de naissance de l'enfant, la conversion à l'année de liquidation. Une
+approximation est assumée et écrite : le b ter vaut pour les pensions prenant
+effet à compter du 1er septembre 2026, le modèle date à l'année et l'applique
+dès janvier — huit mois de trop, sur une génération, pour un trimestre.
+
+**Les deux dettes de l'action 84 sont comblées, et la seconde n'était pas ce
+qu'on croyait.** L'apprentissage a sa ligne, fondée sur le second alinéa de
+L. 6243-3 du code du travail. Et L. 351-7-1, que le poste abrogé désignait comme
+« périodes reconnues équivalentes », vise en réalité les SERVICES MILITAIRES EN
+AFRIQUE DU NORD, à qui il ouvre une réduction de la durée requise. L'article est
+toujours en vigueur alors que le poste qui le finançait est abrogé : c'est le
+troisième cas, après les indemnités journalières de maternité et le minimum
+contributif, où un droit survit à son financement. L'inventaire compte
+désormais quarante-cinq dispositifs.
+
+**Les régimes spéciaux, six bascules, et une régularité.** Les bonifications de
+conduite de la SNCF et du tableau B de la RATP se ferment aux entrants d'après
+le 1er janvier 2009 dès la rédaction initiale des décrets de 2008 — c'est le
+seul cas du fichier où une fermeture se lit dans le texte qui l'institue et non
+dans l'écart entre deux versions. Puis elles ne font plus que s'élargir, trois
+fois : l'activité partielle en 2020, les emplois équivalents à la RATP en 2025,
+le congé de mobilité à la SNCF le 7 août 2026 — le déplacement le plus récent
+que le dépôt porte, toutes faces confondues.
+
+**Le chômage partiel de 2020 a élargi un avantage non contributif sans que
+personne ne l'ait décidé comme tel.** Le décret du 1er décembre 2020 fait
+compter les périodes d'activité partielle « pour le calcul de ces
+bonifications » : un mois de chômage partiel vaut un mois de conduite, pour un
+droit qui n'a jamais été cotisé. Rien dans le texte ne le présente ainsi.
+
+**Le portrait d'ensemble se nuance, et c'est la troisième fois.** L'action 78
+concluait que la frontière ne recule pas ; l'action 84 a montré que c'était vrai
+du privé et faux de la fonction publique. Les régimes spéciaux, eux, sont à
+l'équilibre — trois ouvertures, trois fermetures — et d'une façon qui leur est
+propre : fermés d'un coup, élargis ensuite pour ceux qui restaient.
+
+**Et le plafond desserré la veille a été mieux que rendu.** L'action 84 avait
+relevé le budget de lecture de la page Avantages de 2 000 à 2 250 mots, faute de
+place pour une carte de plus, et l'avait signalé comme un desserrage. Deux
+dispositifs ajoutés le lendemain le faisaient à nouveau sauter — et montraient le
+défaut : les sept tableaux de l'inventaire, ouverts à dessein, consommaient la
+moitié du budget. Un tableau se parcourt, une phrase se lit. Les deux sont
+désormais mesurés à part, sur les dix pages ; la prose de la page Avantages est
+tenue à 1 300 mots, soit moins que les 2 000 d'avant le desserrage ; et le
+budget de ses tableaux se calcule sur l'inventaire, à trente mots par ligne, de
+sorte qu'en allonger la liste — c'est-à-dire faire le travail que cette page
+existe pour montrer — ne coûte plus une phrase à personne.
+
+**Fichiers.** `data/reference/legislation/majoration_duree_assurance.csv`,
+`src/retraite_notionnelle/scenarios/actuel.py`, `moteur/js/regimes.js`,
+`moteur/js/scenario-actuel.js`, `scripts/construire_donnees.py`,
+`data/reference/legislation/avantages_non_contributifs.yaml`,
+`data/reference/legislation/frontiere_contributive.yaml`,
+`scripts/frontiere_contributive.py`, `tests/test_scenarios_meres.py`,
+`tests/test_frontiere_contributive.py`, `tests/test_web.py`,
+`docs/frontiere_contributive.md`, `docs/parcours_presentation.md`,
+`data/reference/legislation/veille.yaml`.

@@ -142,6 +142,15 @@ def verifier(donnees: dict, index: Path = INDEX_LEGI) -> list[str]:
             if ligne and ligne[0] >= attendue:
                 ecarts.append(f"{code}.version_precedente : {precedente} ({ligne[0]}) "
                               f"n'est pas antérieure à {attendue}")
+    # Les lectures de la liste légale : elles ne datent aucune bascule, mais
+    # ce fichier ne cite rien qu'il ne puisse opposer.
+    legale = donnees.get("liste_legale") or {}
+    controler("liste_legale", "version", legale["version"], legale["article"],
+              None, "debut")
+    for lecture in legale.get("lectures") or ():
+        controler(f"liste_legale.{lecture['article']}", "version",
+                  lecture["version"], lecture["article"],
+                  str(lecture["date"]), "debut")
     db.close()
     return ecarts
 
@@ -294,8 +303,10 @@ def main(arguments: list[str] | None = None) -> int:
             for ecart in ecarts:
                 print(f"  - {ecart}")
             return 1
-        total = sum(1 for b in donnees["bascules"] for c in ("version", "version_precedente")
-                    if b.get(c))
+        legale = donnees["liste_legale"]
+        total = (sum(1 for b in donnees["bascules"]
+                     for c in ("version", "version_precedente") if b.get(c))
+                 + 1 + len(legale.get("lectures") or ()))
         print(f"{total} versions d'article vérifiées dans l'index LEGI, aucun écart.")
         return 0
 

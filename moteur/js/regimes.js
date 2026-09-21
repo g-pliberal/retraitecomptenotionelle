@@ -601,13 +601,19 @@ export class MajorationsPourEnfants {
   }
 
   /**
-   * Trimestres accordés PAR ENFANT, ou `null` si rien n'est dû.
+   * Trimestres accordés PAR ENFANT, dont ceux qui comptent en SERVICES.
    *
-   * @returns {[number, number]|null} trimestres et fiabilité.
+   * Les premiers jouent sur la durée d'assurance, les seconds — qui en sont un
+   * sous-ensemble — sur le prorata du régime. Ils ne coïncident que là où le
+   * droit accorde une bonification ; une majoration de durée d'assurance rend
+   * `services` nul. Voir l'en-tête de
+   * `legislation/majoration_duree_assurance.csv`.
+   *
+   * @returns {[number, number, number]|null} trimestres, services, fiabilité.
    */
   parEnfant(dispositif, sexe, anneeNaissance, anneeLiquidation, nombreEnfants) {
-    for (const [code, reference, debut, fin, trimestres, enfantsMinimum,
-      beneficiaire, fiabilite] of this._table) {
+    for (const [code, reference, debut, fin, trimestres, servicesTable,
+      servicesDepuis, enfantsMinimum, beneficiaire, fiabilite] of this._table) {
       if (code !== dispositif) {
         continue;
       }
@@ -623,7 +629,13 @@ export class MajorationsPourEnfants {
       if (nombreEnfants < enfantsMinimum) {
         return null;
       }
-      return [trimestres, fiabilite];
+      // La part qui compte en services peut n'entrer en vigueur qu'à une
+      // SECONDE date, celle de la liquidation, quand la première est celle de
+      // la naissance de l'enfant : c'est le cas du b ter de L. 12.
+      const services = (servicesDepuis !== null && anneeLiquidation < servicesDepuis)
+        ? 0
+        : servicesTable;
+      return [trimestres, services, fiabilite];
     }
     return null;
   }

@@ -1461,7 +1461,7 @@ export class ScenarioActuel {
         }
         candidats.push([
           accorde[0] * carriere.nombre_enfants, valides, dispositif, code,
-          accorde[1],
+          accorde[2], accorde[1] * carriere.nombre_enfants,
         ]);
       }
     }
@@ -1473,7 +1473,7 @@ export class ScenarioActuel {
     const retenu = candidats[candidats.length - 1];
     return {
       regime: retenu[3], dispositif: retenu[2], trimestres: retenu[0],
-      fiabilite: retenu[4],
+      services: retenu[5], fiabilite: retenu[4],
     };
   }
 
@@ -1545,10 +1545,12 @@ export class ScenarioActuel {
       ? this.majorationPourEnfants(carriere, trimestresParRegime, anneeLiquidation)
       : null;
     if (majorationEnfants !== null) {
+      // LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE : tout joue sur la
+      // durée d'assurance, seule la part `services` entre au prorata du régime.
       trimestres += majorationEnfants.trimestres;
       trimestresParRegime.set(
         majorationEnfants.regime,
-        trimestresParRegime.get(majorationEnfants.regime) + majorationEnfants.trimestres,
+        trimestresParRegime.get(majorationEnfants.regime) + majorationEnfants.services,
       );
       fiabiliteGlobale = Math.min(fiabiliteGlobale, majorationEnfants.fiabilite);
     }

@@ -254,22 +254,37 @@ entrees:
     prochaine_veille: "2027-01-31"
 
   - id: majoration_duree_assurance_enfants
-    regle: "Huit trimestres par enfant au régime général (quatre avant 1975, un an de 1972 à 1974, à la mère), bonification de la fonction publique (quatre trimestres avant 2004, deux depuis)."
-    textes: ["L. 351-4 CSS", "L. 351-5 CSS", "L. 12 b et L. 12 bis CPCMR"]
+    regle: "Huit trimestres par enfant au régime général (quatre avant 1975, un an de 1972 à 1974, à la mère), bonification de la fonction publique (quatre trimestres avant 2004, deux depuis — dont l'un compte en SERVICES et non en durée pour les pensions prenant effet à compter du 1er septembre 2026)."
+    textes: ["L. 351-4 CSS", "L. 351-5 CSS", "L. 12 b, L. 12 b ter et L. 12 bis CPCMR"]
     sources:
       - {type: legifrance, reference: "L. 351-4 CSS", date: "2023-09-01"}
-    verifie_le: "2026-09-17"
+      - {type: legifrance, reference: "L. 12 CPCMR, version LEGIARTI000053280361", date: "2026-09-21"}
+      - {type: legifrance, reference: "L. 12 bis CPCMR, version LEGIARTI000053280367", date: "2026-09-21"}
+    verifie_le: "2026-09-21"
     temoins: []
     reformes: [parents_2026]
-    etat: a_verifier
-    effet: "Toute mère ; commande la décote, la proratisation, la surcote parentale et le SAM des parents."
+    etat: manque
+    effet: "Toute mère ; commande la décote, la proratisation, la surcote parentale et le SAM des parents. Dans la fonction publique, un trimestre change de case sans changer de nombre."
     a_faire: >-
-      Le décret n° 2026-699 (articles 3 et 4) crée « une bonification d'un
-      trimestre pour chacun de leurs enfants nés depuis le 1er janvier 2004 »
-      aux femmes fonctionnaires de la CNRACL et du FSPOEIE ayant accouché après
-      leur recrutement : lire l'article et dire si c'est un ajout aux deux
-      trimestres de L. 12 bis. L'attribution au père (partage des trimestres
-      d'éducation depuis 2010) reste une convention.
+      LU, ET LA RÉPONSE EST NON. La question posée ici était de savoir si la
+      bonification d'un trimestre créée pour les enfants nés depuis 2004
+      s'AJOUTE aux deux trimestres de L. 12 bis. La loi n° 2025-1403 du
+      30 décembre 2025 (article 104) insère un b ter à L. 12 et réécrit L. 12
+      bis le même jour : les deux trimestres demeurent, « dont l'un est pris en
+      compte au titre de la bonification prévue au b ter de l'article L. 12 ».
+      Le total ne bouge pas ; un trimestre passe de la durée d'assurance aux
+      services, où il entre dans la liquidation au lieu de ne compter que pour
+      la durée. Applicable aux pensions prenant effet à compter du 1er
+      septembre 2026, et étendu à la même date à la CNRACL et au FSPOEIE par
+      décret en Conseil d'État — le décret n° 2026-699.
+      CE QUI MANQUE AU MODÈLE : `majoration_duree_assurance.csv` porte les deux
+      trimestres en bloc, sous `bonifications`, sans distinguer ce qui entre
+      aux services de ce qui ne compte qu'en durée. Le partage n'a donc aucun
+      effet dans le calcul, alors qu'il en a un dans le droit. Le chiffrer
+      suppose d'ajouter la distinction au moteur, puis de la porter dans
+      `moteur/js/`.
+      RESTE AUSSI À TRANCHER : l'attribution au père (partage des trimestres
+      d'éducation depuis 2010) demeure une convention du dépôt.
     prochaine_veille: "2026-12-31"
 
   - id: majoration_dix_pour_cent
@@ -1861,3 +1876,52 @@ journal:
       faudrait le Journal officiel papier du 31 juillet 1979 — ce qui ne
       change plus rien au modèle, puisque la branche qu'il vise est hors de
       son champ.
+  - date: "2026-09-21"
+    session: "le trimestre qui change de case, et les régimes spéciaux"
+    consulte: >-
+      Index LEGI du dépôt : toutes les versions des articles L. 12, L. 12 bis et
+      L. 24 du code des pensions civiles et militaires ; L. 6243-3 du code du
+      travail ; L. 351-7-1 du code de la sécurité sociale ; article 9 du décret
+      n° 2008-639 du 30 juin 2008 (SNCF, six versions) et article 20 du décret
+      n° 2008-637 du même jour (RATP, sept versions).
+    trouve: >-
+      UNE ERREUR DU MODÈLE, ET ELLE VALAIT 1,2 % D'UNE PENSION. L'article
+      L. 12 bis accorde aux mères fonctionnaires une MAJORATION DE DURÉE
+      D'ASSURANCE de deux trimestres par enfant né depuis 2004 ; l'article
+      L. 12 b accordait, lui, une BONIFICATION. Les deux ne tombent pas dans la
+      même case : une bonification s'ajoute aux services et relève donc le
+      prorata, une majoration de durée ne joue que sur la décote et la durée
+      tous régimes. Le moteur les confondait et portait les deux trimestres au
+      prorata de la fonction publique. La preuve interne que la distinction est
+      la bonne : l'article 104 de la loi n° 2025-1403 crée un b ter pour
+      convertir l'un des deux trimestres en bonification, et réécrit L. 12 bis
+      pour dire que « l'un est pris en compte au titre de la bonification
+      prévue au b ter » — une conversion n'a de sens que si les cases diffèrent.
+      Sur un témoin du dépôt, mère fonctionnaire d'État de trois enfants : les
+      services passent de 142 à 139 trimestres et la pension de 46 938 à
+      45 946 € par an.
+      DEUX ARTICLES LUS POUR COMBLER LES DETTES de la confrontation à la liste
+      légale : le second alinéa de L. 6243-3 du code du travail, qui fait
+      verser un complément de cotisations pour valider les trimestres
+      d'apprentissage ; et L. 351-7-1, qui ne porte pas des « périodes
+      équivalentes » génériques mais la réduction de durée requise pour les
+      SERVICES MILITAIRES EN AFRIQUE DU NORD — article toujours en vigueur
+      alors que le poste qui le finançait est abrogé au 1er janvier 2026.
+      SIX BASCULES DE RÉGIMES SPÉCIAUX. Les bonifications de conduite de la
+      SNCF et du tableau B de la RATP sont réservées, dès la rédaction initiale
+      des décrets de 2008, aux agents admis avant le 1er janvier 2009 ; elles
+      exigent quinze années de services effectifs depuis 2017 ; et elles se
+      sont élargies trois fois depuis — activité partielle en 2020, emplois
+      équivalents à la RATP en 2025, congé de mobilité à la SNCF le 7 août 2026.
+    reste: >-
+      Le scénario 1 EST MODIFIÉ, et c'est la première fois de cette série de
+      sessions : `majoration_duree_assurance.csv` porte désormais deux colonnes,
+      `services_par_enfant` et `services_depuis`, et le moteur sépare la durée
+      des services. Une approximation est assumée et écrite dans l'en-tête de
+      la table : le b ter vaut pour les pensions prenant effet à compter du
+      1er septembre 2026, le modèle date à l'année et l'applique dès janvier.
+      Restent à lire à la source : les règlements des autres caisses spéciales
+      — IEG, Banque de France, Opéra, Comédie-Française —, qu'aucune session n'a
+      encore ouvertes ; et l'attribution au père des trimestres d'éducation
+      depuis 2010, qui demeure une convention du dépôt.
+    prochaine_veille: "2027-01-31"

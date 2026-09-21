@@ -4021,10 +4021,24 @@ def _hors_depliants(corps: str) -> str:
     )
 
 
-#: Ce que chaque page peut imposer à qui l'ouvre : mots à traverser, tracés
-#: ouverts, tableaux ouverts. Les bornes sont celles de la refonte, arrondies
-#: vers le haut d'environ un tiers : elles n'interdisent pas d'écrire, elles
-#: interdisent de revenir à une page qu'on ne lit pas.
+#: Ce que chaque page peut imposer à qui l'ouvre : mots de PROSE, tracés
+#: ouverts, tableaux ouverts, et mots DANS LES TABLEAUX. Les bornes sont celles
+#: de la refonte, arrondies vers le haut : elles n'interdisent pas d'écrire,
+#: elles interdisent de revenir à une page qu'on ne lit pas.
+#:
+#: LA PROSE ET LES TABLEAUX ONT ÉTÉ SÉPARÉS le 21 septembre 2026, et c'est ce
+#: qui a permis de RENDRE à la page Avantages le plafond qu'on lui avait
+#: desserré la veille. Un tableau se parcourt du regard, une phrase se lit :
+#: les compter ensemble faisait qu'ajouter un dispositif à l'inventaire —
+#: c'est-à-dire faire le travail que cette page existe pour montrer — coûtait
+#: du budget de PROSE, et poussait à relever le plafond à chaque découverte.
+#: Deux découvertes en deux jours l'avaient déjà fait une fois.
+#:
+#: Le quatrième nombre est donc le budget des tableaux. Il vaut ``None`` pour
+#: la page Avantages, dont les tableaux SONT l'inventaire : il se calcule alors
+#: à ``MOTS_PAR_DISPOSITIF`` par ligne, et grandit tout seul avec elle. C'est la
+#: seule page où une donnée commande un budget, et c'est la seule dont le
+#: contenu soit une liste que le dépôt allonge.
 #:
 #: Une page échappe à la règle des mots : « /simuler » EST un formulaire : ce
 #: qu'on y compte est fait de libellés de champs et de deux cents options de
@@ -4034,21 +4048,21 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # terme, et celui du plancher — l'argument le plus parlant du site, remonté
     # en haut de page par la revue de septembre 2026. Plus l'entrée, deux
     # lignes et un bouton qui disent que le site est un simulateur.
-    "/": (670, 0, 2),
-    "/simuler": (1500, 0, 0),
+    "/": (470, 0, 2, 240),
+    "/simuler": (1500, 0, 0, 0),
     # Trajectoire porte UN graphique, et c'est son sujet : il est donc ouvert,
     # là où celui de Coût attend qu'on déplie. Le reste de la page tient en
     # deux blocs de texte et le formulaire court.
-    "/trajectoire": (500, 1, 0),
+    "/trajectoire": (500, 1, 0, 0),
     # Partager ne porte que des cartes : leur texte est court par
     # construction — il doit tenir dans une image de 1200 × 675.
-    "/partager": (400, 0, 0),
+    "/partager": (400, 0, 0, 0),
     # Cas types et Données ont gagné, à la revue de septembre 2026, ce qu'un
     # lecteur doit lire AVANT les chiffres : la clé de lecture des grilles et
     # la trajectoire du système actuel pour l'une, le résumé en langage
     # courant pour l'autre. Les bornes suivent, d'un paragraphe chacune.
-    "/cas-types": (750, 0, 1),
-    "/cout": (700, 2, 0),
+    "/cas-types": (500, 0, 1, 310),
+    "/cout": (700, 2, 0, 0),
     # LA SEULE PAGE DU SITE QUI DÉPASSE LE MILLIER DE MOTS, et c'est son objet
     # même. Elle affirme qu'il existe trente-neuf avantages non contributifs :
     # elle doit donc les NOMMER tous, dire ce que chacun coûte, et — pour les
@@ -4087,26 +4101,43 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # bout. Les replier reviendrait à demander au lecteur de déplier pour
     # comprendre que les chiffres ne s'additionnent pas.
     #
-    # LE PLAFOND EST PASSÉ DE 2 000 À 2 250 MOTS le 21 septembre 2026, et c'est
-    # la seule fois. La page comptait trois questions ; elle en pose une
-    # quatrième, symétrique des autres : que cotise-t-on sans rien acquérir ?
-    # Elle était exactement à 1 997 mots, si bien qu'aucune carte nouvelle,
-    # si brève soit-elle, ne pouvait plus y entrer. Replier la réponse aurait
-    # été pire que l'écrire : c'est le seul endroit du site qui dise que le
-    # compte n'est pas à sens unique. La carte ajoutée en pèse 238, cartes
-    # existantes comprises entre 200 et 400 : elle n'est pas la plus lourde.
-    # Ce plafond n'interdit toujours pas d'écrire ; il interdit d'ajouter une
-    # cinquième carte sans en replier une autre.
-    "/avantages": (2250, 5, 8),
-    "/methode": (500, 0, 1),
-    "/donnees": (300, 0, 0),
+    # LE PLAFOND DE PROSE EST PLUS SERRÉ QU'AVANT LE DESSERRAGE. Le 21
+    # septembre 2026, l'ajout d'une
+    # quatrième carte — que cotise-t-on sans rien acquérir ? — avait fait
+    # passer le plafond de 2 000 à 2 250 mots, faute de place : la page était
+    # exactement à 1 997. Le lendemain, deux dispositifs de plus le faisaient
+    # à nouveau sauter, et l'on voyait le défaut : c'étaient les SEPT TABLEAUX
+    # de l'inventaire, ouverts à dessein depuis que la page a cessé de
+    # promettre quarante dispositifs sans les nommer, qui consommaient la
+    # moitié du budget. Les tableaux comptent désormais à part, et la prose
+    # est tenue à 1 300 mots — moins que les 2 000 d'avant le desserrage, et
+    # bien moins que les 2 250 d'après. Ce que le total autorise a grandi,
+    # puisque les lignes ont leur propre plafond ; ce qu'on peut IMPOSER À LIRE
+    # a diminué. Et ajouter un dispositif ne coûte plus une phrase à personne.
+    #
+    # Le budget des tableaux vaut ``None`` : il se calcule sur l'inventaire.
+    "/avantages": (1300, 5, 8, None),
+    "/methode": (400, 0, 1, 120),
+    "/donnees": (300, 0, 0, 0),
     # Risque répond à la question d'un lecteur qui n'a pas fait d'économie
     # en deux cartes, chacune avec le tableau qui la montre : les cas
     # documentés à l'étranger, et le compte projeté du COR. Ce sont ces deux
     # tableaux, et le plan de douze sections, qui portent le budget ; la
     # prose ouverte tient en trois cents mots. Tout le reste est replié.
-    "/risque": (850, 0, 2),
+    "/risque": (650, 0, 2, 250),
 }
+
+
+#: Ce qu'une ligne de l'inventaire coûte, en mots, aux tableaux de la page
+#: Avantages : le libellé du dispositif, son coût, et — quand la case est vide
+#: — la phrase qui dit pourquoi. Vingt-six en moyenne sur les quarante-cinq
+#: lignes d'aujourd'hui ; trente laisse de quoi écrire une raison un peu
+#: longue sans que le test se plaigne de ce qu'il devrait encourager.
+MOTS_PAR_DISPOSITIF = 30
+
+
+def _mots(html: str) -> int:
+    return len(re.sub(r"<[^>]+>", " ", html).split())
 
 
 @pytest.mark.parametrize("chemin", list(TITRES))
@@ -4122,13 +4153,32 @@ def test_aucune_page_ne_depasse_son_budget_de_lecture(contexte, chemin):
     Ce test tient la discipline page par page. Il ne dit pas quoi écrire ; il
     dit combien on peut en imposer avant que le lecteur ait choisi de lire.
     """
-    mots_max, traces_max, tableaux_max = BUDGETS_DE_LECTURE[chemin]
+    mots_max, traces_max, tableaux_max, mots_tableaux_max = \
+        BUDGETS_DE_LECTURE[chemin]
     visible = _hors_depliants(rendre(contexte, chemin, {})[1])
 
-    mots = len(re.sub(r"<[^>]+>", " ", visible).split())
+    # LA PROSE ET LES TABLEAUX NE SE LISENT PAS DE LA MÊME FAÇON, et les
+    # compter ensemble faisait payer à la prose ce qu'un inventaire coûte en
+    # lignes. Ils sont donc mesurés à part — voir l'en-tête des budgets.
+    sans_tableaux = re.sub(r"<table\b.*?</table>", " ", visible, flags=re.S)
+    mots = _mots(sans_tableaux)
     assert mots <= mots_max, (
-        f"{chemin} : {mots} mots à traverser avant d'avoir rien déplié, "
-        f"{mots_max} au plus"
+        f"{chemin} : {mots} mots de prose à traverser avant d'avoir rien "
+        f"déplié, {mots_max} au plus"
+    )
+
+    if mots_tableaux_max is None:
+        # La page Avantages MONTRE l'inventaire : ses tableaux grandissent avec
+        # lui, et leur budget aussi. C'est la seule page dont une donnée
+        # commande le plafond, et c'est la seule dont le contenu soit une liste
+        # que le dépôt a vocation à allonger.
+        mots_tableaux_max = MOTS_PAR_DISPOSITIF * len(
+            contexte.inventaire_avantages().avantages
+        )
+    mots_tableaux = _mots(visible) - mots
+    assert mots_tableaux <= mots_tableaux_max, (
+        f"{chemin} : {mots_tableaux} mots dans les tableaux ouverts, "
+        f"{mots_tableaux_max} au plus"
     )
     traces = visible.count('<figure class="graphique"')
     assert traces <= traces_max, f"{chemin} : {traces} graphiques ouverts"
