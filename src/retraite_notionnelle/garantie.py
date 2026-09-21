@@ -121,3 +121,99 @@ def cout_garantie(distribution: DistributionPensions, effectif_total: float,
         ),
         cout_annuel_meur=manque_mensuel * effectif_total * 12.0 / 1e6,
     )
+
+
+def facteurs_par_sexe(moyenne_femmes: float, moyenne_hommes: float,
+                      part_femmes: float, facteur: float,
+                      rapport: float) -> tuple[float, float]:
+    """Les deux facteurs de déplacement, sous contrainte de masse.
+
+    Le modèle déplace toute la distribution d'un FACTEUR UNIQUE, lu sur la
+    grille de cas types. Le scénario 6 ne déplace pourtant pas toutes les
+    carrières du même rapport : il retire les droits non contributifs, et les
+    femmes en détiennent plus souvent. De combien, personne ne le publie, et
+    la grille ne le dira pas — un seul de ses treize cas types est une femme.
+
+    Ce que cette fonction fait n'est donc pas de supposer l'écart, mais de le
+    PARAMÉTRER par le seul rapport ``r = f_F / f_H``, en imposant que la
+    moyenne d'ensemble bouge du même facteur qu'avant :
+
+        w·μ_F·f_F + (1−w)·μ_H·f_H = f·(w·μ_F + (1−w)·μ_H)
+
+    La contrainte est ce qui fait de l'exercice une RÉPARTITION et non une
+    hypothèse de plus : la grille garde le dernier mot sur l'agrégat, et il ne
+    reste à décider que le partage entre les deux sexes. À ``rapport = 1``,
+    les deux facteurs valent ``facteur`` et l'on retrouve la convention en
+    vigueur.
+    """
+    if rapport <= 0.0:
+        raise ValueError("le rapport des deux facteurs doit être strictement positif")
+    ensemble = part_femmes * moyenne_femmes + (1.0 - part_femmes) * moyenne_hommes
+    denominateur = (part_femmes * moyenne_femmes * rapport
+                    + (1.0 - part_femmes) * moyenne_hommes)
+    if ensemble <= 0.0 or denominateur <= 0.0:
+        raise ValueError("les pensions moyennes doivent être strictement positives")
+    facteur_hommes = facteur * ensemble / denominateur
+    return rapport * facteur_hommes, facteur_hommes
+
+
+def pension_moyenne(distribution: DistributionPensions) -> float:
+    """Pension moyenne de la distribution, dans ses propres euros.
+
+    Même convention que :func:`cout_garantie` : le milieu de chaque tranche, et
+    la tranche ouverte à sa borne inférieure. Les deux moyennes en sont
+    sous-estimées, celle des hommes un peu plus — ils sont plus nombreux dans
+    la tranche ouverte —, mais seul leur RAPPORT entre dans la contrainte de
+    :func:`facteurs_par_sexe`, et repousser la tranche ouverte de 4 500 à
+    6 500 € le déplace de 0,641 à 0,624.
+    """
+    return sum(
+        tranche.part * (
+            tranche.borne_inferieure if tranche.borne_superieure is None
+            else 0.5 * (tranche.borne_inferieure + tranche.borne_superieure)
+        )
+        for tranche in distribution.tranches
+    )
+
+
+def cout_garantie_par_sexe(femmes: DistributionPensions,
+                           hommes: DistributionPensions,
+                           part_femmes: float, effectif_total: float,
+                           plancher_mensuel: float, facteur: float,
+                           rapport: float) -> CoutGarantie:
+    """Le barème appliqué aux deux sexes à part, chacun de son facteur.
+
+    ``rapport`` vaut un pour la convention en vigueur, et le résultat redonne
+    alors celui de :func:`cout_garantie` sur la colonne « ensemble » — à
+    l'arrondi de publication près, la source arrondissant ses parts au
+    centième de point. En deçà de un, les pensions des femmes tombent
+    davantage, ce qui fait passer plus de monde sous le plancher : le coût de
+    la convention uniforme est une borne basse, et c'est ce que cette
+    fonction chiffre.
+    """
+    facteur_femmes, facteur_hommes = facteurs_par_sexe(
+        pension_moyenne(femmes), pension_moyenne(hommes),
+        part_femmes, facteur, rapport,
+    )
+    part = 0.0
+    manque_mensuel = 0.0
+    beneficiaires = 0.0
+    for distribution, poids, facteur_sexe in (
+        (femmes, part_femmes, facteur_femmes),
+        (hommes, 1.0 - part_femmes, facteur_hommes),
+    ):
+        chiffre = cout_garantie(distribution, effectif_total * poids,
+                                plancher_mensuel, facteur_sexe)
+        part += poids * chiffre.part_beneficiaires
+        beneficiaires += chiffre.beneficiaires
+        manque_mensuel += poids * chiffre.complement_moyen_mensuel * chiffre.part_beneficiaires
+    return CoutGarantie(
+        plancher_mensuel=plancher_mensuel,
+        # Le facteur rendu est celui de la contrainte, commun aux deux sexes
+        # par construction : c'est lui qui a été tenu, pas ceux qu'il répartit.
+        facteur=facteur,
+        part_beneficiaires=part,
+        beneficiaires=beneficiaires,
+        complement_moyen_mensuel=manque_mensuel / part if part else 0.0,
+        cout_annuel_meur=manque_mensuel * effectif_total * 12.0 / 1e6,
+    )

@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 487<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 597<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -10969,3 +10969,77 @@ il fait donc tomber leurs pensions plus que la moyenne, et le coût affiché est
 `src/retraite_notionnelle/cout.py`, `moteur/js/distribution.js`,
 `moteur/js/cout.js`, `tests/test_cout.py`, `docs/limites.md`,
 `moteur/donnees.json`, `tests/temoins/pages.json`.
+
+### 73. La réserve du déplacement uniforme cesse d'être une phrase : un milliard par quinze points d'écart — `fait`
+
+**Demande.** « Vas-y », après l'action 72, qui se terminait sur la seule
+réserve de fond restée non chiffrée : le déplacement de la distribution est
+proportionnel et uniforme, alors que le scénario 6 retire surtout des droits
+non contributifs que les femmes détiennent plus souvent. Leurs pensions
+tombent donc plus que la moyenne, et le coût affiché est une borne basse. De
+combien, personne ne le disait.
+
+**Le chemin direct était fermé, et il fallait le constater avant de le
+contourner.** Un facteur par sexe se tire de la grille de cas types comme le
+facteur d'ensemble s'en tire — et **un seul des treize cas types est une
+femme**. Une carrière ne fait pas une population, et un facteur féminin tiré
+d'elle seule serait moins fiable que la convention qu'il prétendrait corriger.
+Le dépôt ne porte par ailleurs aucune ventilation par sexe du coût des
+avantages non contributifs, qui aurait été l'autre chemin ; ni
+`data/reference/`, ni le module `avantages` ne la donnent.
+
+**Ce qui restait possible, et qui est une mesure.** L'EIR publie les deux
+sexes à part : on peut donc déplacer chaque distribution du sien. De combien
+elles diffèrent est ce que personne ne publie — mais on n'est pas obligé de le
+supposer, on peut le PARAMÉTRER, par le seul rapport `r = f_F/f_H`, et imposer
+que la moyenne d'ensemble bouge du même facteur qu'aujourd'hui :
+
+    w·μ_F·f_F + (1−w)·μ_H·f_H = f·(w·μ_F + (1−w)·μ_H)
+
+`w` est la part des femmes dans l'enquête, 52,8 %, celle que l'action 72 a
+établie ; `μ_F` et `μ_H` valent 1 120 € et 1 749 € en 2020. **La contrainte est
+ce qui fait de l'exercice une répartition et non une hypothèse de plus** : la
+grille garde le dernier mot sur l'agrégat, et le calcul ne décide que du
+partage entre les deux sexes.
+
+**Le résultat, au plancher majoré et à l'année de l'enquête.**
+
+| `r` | f_F | f_H | sous le plancher | coût | écart |
+|---|---|---|---|---|---|
+| 1,00 *(convention)* | 0,606 | 0,606 | 58,03 % | 28,5 Md € | réf. |
+| 0,95 | 0,588 | 0,619 | 58,04 % | 28,9 Md € | +0,3 |
+| 0,90 | 0,569 | 0,633 | 58,07 % | 29,3 Md € | +0,7 |
+| 0,85 | 0,550 | 0,647 | 58,19 % | 29,7 Md € | +1,2 |
+| 0,80 | 0,529 | 0,662 | 58,37 % | 30,3 Md € | +1,8 |
+
+Au plancher de base : 15,9, 16,2, 16,6, 16,9 et 17,4 milliards.
+
+**Ce que cela établit.** Le SENS — le coût ne baisse jamais, quel que soit
+`r`, parce que déplacer davantage les pensions les plus basses fait passer
+plus de monde sous le plancher — et l'ORDRE DE GRANDEUR : **environ un
+milliard par quinze points d'écart, moins de 5 % du total au bout de la
+fourchette**. La réserve est réelle, son sens connu, sa taille seconde, et
+elle ne renverse aucun chiffre de la page. Ce que cela n'établit pas est la
+valeur de `r` : elle reste un paramètre, et se lit `r ≈ (1 − a_F)/(1 − a_H)`,
+où `a_s` est la part non contributive de la pension du sexe `s` — un `r` de
+0,90 dit que cette part dépasse d'environ dix points chez les femmes. La
+mesurer demande une ventilation par sexe des avantages non contributifs, ou
+une grille qui ne compte pas une femme sur treize.
+
+**Où le calcul vit.** Dans `garantie.py` — `facteurs_par_sexe`,
+`pension_moyenne`, `cout_garantie_par_sexe` — et non dans le script, parce que
+la page en affiche deux lectures et qu'un nombre écrit en toutes lettres dans
+sa prose serait démenti au premier réglage. Portage JavaScript fait, témoins
+régénérés. `scripts/garantie_par_sexe.py` imprime le tableau entier ;
+`tests/test_garantie_par_sexe.py` tient le raccord — à `r = 1`, le script
+redonne le coût de la page, à l'arrondi de publication près et pas mieux, la
+DREES arrondissant ses parts au centième de point. Un contrôle du catalogue,
+`deplacement_uniforme_borne_basse`, tient les deux moitiés de la phrase que la
+page affirme : jamais moins, et moins d'un dixième de plus.
+
+**Fichiers.** `src/retraite_notionnelle/garantie.py`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/garantie.js`,
+`moteur/js/pages.js`, `scripts/garantie_par_sexe.py`,
+`tests/test_garantie_par_sexe.py`, `tests/test_affirmations.py`,
+`data/reference/site/affirmations.yaml`, `docs/limites.md`,
+`tests/temoins/pages.json`.

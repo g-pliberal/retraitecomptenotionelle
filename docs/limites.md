@@ -5081,6 +5081,47 @@ plancher. **Une réserve sans remède dans cette source** : le tableau de l'EIR
 comprend la majoration pour trois enfants, que les scénarios notionnels ne
 servent pas.
 
+**Le déplacement uniforme est une borne basse, et voici de combien.** La
+réserve était écrite depuis que la garantie est lue sur la distribution ; elle
+n'était pas chiffrée. `scripts/garantie_par_sexe.py` la chiffre. Le facteur
+par sexe tiré de la grille n'était pas disponible — sur les treize cas types,
+**un seul est une femme**, et une carrière ne fait pas une population —, et le
+dépôt ne porte aucune ventilation par sexe du coût des avantages non
+contributifs. Le script ne suppose donc pas l'écart : il le PARAMÈTRE, par le
+seul rapport `r = f_F / f_H` des deux facteurs de déplacement, et impose que la
+moyenne d'ensemble bouge du même facteur qu'aujourd'hui —
+`w·μ_F·f_F + (1−w)·μ_H·f_H = f·(w·μ_F + (1−w)·μ_H)`, avec `w` la part des
+femmes dans l'enquête (52,8 %) et `μ` la pension moyenne de chaque sexe
+(1 120 € contre 1 749 € en 2020). C'est cette contrainte qui fait de
+l'exercice une RÉPARTITION et non une hypothèse de plus : la grille garde le
+dernier mot sur l'agrégat, et le script ne décide que du partage.
+
+| `r` = f_F/f_H | f_F | f_H | sous le plancher majoré | coût | écart |
+|---|---|---|---|---|---|
+| 1,00 *(convention)* | 0,606 | 0,606 | 58,03 % | **28,5 Md €** | réf. |
+| 0,95 | 0,588 | 0,619 | 58,04 % | 28,9 Md € | +0,3 |
+| 0,90 | 0,569 | 0,633 | 58,07 % | 29,3 Md € | +0,7 |
+| 0,85 | 0,550 | 0,647 | 58,19 % | 29,7 Md € | +1,2 |
+| 0,80 | 0,529 | 0,662 | 58,37 % | 30,3 Md € | +1,8 |
+
+Au plancher de base, les mêmes rapports donnent 15,9, 16,2, 16,6, 16,9 et
+17,4 milliards. `r` se lit ainsi : si le scénario retire à chacun la part non
+contributive de sa pension, `f_s ≈ f·(1 − a_s)` et `r ≈ (1 − a_F)/(1 − a_H)`
+— un `r` de 0,90 dit que cette part dépasse d'environ dix points chez les
+femmes. Le dépôt ne mesure ni l'une ni l'autre, et `r` reste un paramètre.
+
+**Ce que le tableau établit, et ce qu'il n'établit pas.** Il établit le SENS —
+le coût ne baisse jamais, quel que soit `r`, parce que déplacer davantage les
+pensions les plus basses fait passer plus de monde sous le plancher — et
+l'ORDRE DE GRANDEUR : **environ un milliard par quinze points d'écart, moins
+de 5 % du total au bout de la fourchette**. La réserve est donc réelle, son
+sens connu, et sa taille seconde ; elle ne renverse aucun des chiffres de la
+page. Il n'établit pas la valeur de `r`, que seule une ventilation par sexe
+des avantages non contributifs — ou une grille de cas types qui ne compte pas
+une femme sur treize — donnerait. `tests/test_garantie_par_sexe.py` tient le
+raccord : à `r = 1`, le script redonne le coût de la page à l'arrondi de
+publication près.
+
 Et le modèle ne dit rien de l'impôt lui-même : il compte ce qui est versé,
 jamais ce qui est prélevé.
 
@@ -7331,7 +7372,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1842<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1848<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

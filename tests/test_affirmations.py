@@ -61,8 +61,11 @@ from retraite_notionnelle.cout import (
 )
 from retraite_notionnelle.donnees.bilan import charger_bilan
 from retraite_notionnelle.donnees.chargement import Fiabilite, journal_certification
-from retraite_notionnelle.donnees.distribution import DistributionPensions
-from retraite_notionnelle.garantie import cout_garantie
+from retraite_notionnelle.donnees.distribution import DistributionPensions, part_femmes
+from retraite_notionnelle.garantie import (
+    cout_garantie,
+    cout_garantie_par_sexe,
+)
 from retraite_notionnelle.moteur.indexation import Indexation
 from retraite_notionnelle.remuneration import AnneeComparee, charger_prelevements
 from retraite_notionnelle.scenarios.actuel import MinimumVieillesse, _coefficient_anticipation
@@ -516,6 +519,41 @@ def _(m: Modele):
                    liberal.capital_notionnel / liberal.conversion.diviseur)
     assert m.cout.cumul(COMPOSANTE_GARANTIE) > 0
     assert "garantie_vieillesse" in m.horizon.postes_depenses("notionnel_liberal")
+
+
+@controle("deplacement_uniforme_borne_basse")
+def _(m: Modele):
+    """Déplacer davantage les pensions des femmes ne fait jamais baisser le coût.
+
+    La phrase affirme deux choses : que la convention uniforme sous-estime, et
+    que l'ampleur reste seconde. Les deux se vérifient sur le modèle, sous
+    contrainte de masse — la moyenne d'ensemble reste déplacée du facteur que
+    la grille donne, et seul le partage entre les deux sexes change.
+    """
+    racine = m.base.racine_donnees
+    millesime = m.sim.distribution.millesime
+    colonnes = {
+        sexe: DistributionPensions(racine, sexe=sexe, millesime=millesime)
+        for sexe in ("F", "H")
+    }
+    poids = part_femmes(racine, millesime)
+    ligne = m.cout.annee(millesime)
+    assert ligne is not None and ligne.garantie is not None
+    vers = m.sim.macro.coefficient_prix(
+        m.base.annee_euros_garantie_vieillesse, millesime)
+    plancher = (m.base.garantie_vieillesse_mensuelle
+                + m.base.allocation_isolement_mensuelle) * vers
+    effectif = m.sim.effectifs.effectif("tous_regimes", millesime)
+    couts = [
+        cout_garantie_par_sexe(colonnes["F"], colonnes["H"], poids, effectif,
+                               plancher, ligne.garantie.facteur, rapport).cout_annuel_meur
+        for rapport in (1.0, 0.95, 0.90, 0.85, 0.80)
+    ]
+    # Jamais moins : c'est une borne basse.
+    assert couts == sorted(couts)
+    assert couts[-1] > couts[0]
+    # Et seconde : moins d'un dixième au bout de la fourchette.
+    assert couts[-1] / couts[0] < 1.10
 
 
 @controle("garantie_hors_masse_contributive")

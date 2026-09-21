@@ -80,3 +80,82 @@ export function coutGarantie(distribution, effectifTotal, plancherMensuel,
     coutAnnuelMeur: manqueMensuel * effectifTotal * 12 / 1e6,
   };
 }
+
+/**
+ * Les deux facteurs de déplacement, sous contrainte de masse. Portage de
+ * ``garantie.facteurs_par_sexe``.
+ *
+ * Le modèle déplace toute la distribution d'un facteur unique, lu sur la
+ * grille. Le scénario 6 ne déplace pourtant pas toutes les carrières du même
+ * rapport : il retire les droits non contributifs, et les femmes en
+ * détiennent plus souvent. De combien, personne ne le publie, et la grille ne
+ * le dira pas — un seul de ses treize cas types est une femme. L'écart n'est
+ * donc pas supposé, il est PARAMÉTRÉ par le rapport `r = fF / fH`, la moyenne
+ * d'ensemble restant déplacée du même facteur :
+ *
+ *     w·μF·fF + (1−w)·μH·fH = f·(w·μF + (1−w)·μH)
+ */
+export function facteursParSexe(moyenneFemmes, moyenneHommes, partFemmes,
+                                facteur, rapport) {
+  if (rapport <= 0) {
+    throw new Error("le rapport des deux facteurs doit être strictement positif");
+  }
+  const ensemble = partFemmes * moyenneFemmes + (1 - partFemmes) * moyenneHommes;
+  const denominateur = partFemmes * moyenneFemmes * rapport
+    + (1 - partFemmes) * moyenneHommes;
+  if (ensemble <= 0 || denominateur <= 0) {
+    throw new Error("les pensions moyennes doivent être strictement positives");
+  }
+  const facteurHommes = facteur * ensemble / denominateur;
+  return [rapport * facteurHommes, facteurHommes];
+}
+
+/**
+ * Pension moyenne de la distribution, dans ses propres euros. Portage de
+ * ``garantie.pension_moyenne`` : le milieu de chaque tranche, et la tranche
+ * ouverte à sa borne inférieure, comme `coutGarantie`.
+ */
+export function pensionMoyenne(distribution) {
+  let total = 0;
+  for (const tranche of distribution.tranches) {
+    const ouverte = tranche.borneSuperieure === null
+      || tranche.borneSuperieure === undefined;
+    total += tranche.part * (ouverte ? tranche.borneInferieure
+      : 0.5 * (tranche.borneInferieure + tranche.borneSuperieure));
+  }
+  return total;
+}
+
+/**
+ * Le barème appliqué aux deux sexes à part, chacun de son facteur. Portage de
+ * ``garantie.cout_garantie_par_sexe``. À `rapport = 1`, redonne le résultat de
+ * `coutGarantie` sur la colonne « ensemble », à l'arrondi de publication près.
+ */
+export function coutGarantieParSexe(femmes, hommes, partFemmes, effectifTotal,
+                                    plancherMensuel, facteur, rapport) {
+  const [facteurFemmes, facteurHommes] = facteursParSexe(
+    pensionMoyenne(femmes), pensionMoyenne(hommes), partFemmes, facteur, rapport,
+  );
+  let part = 0;
+  let manqueMensuel = 0;
+  let beneficiaires = 0;
+  for (const [distribution, poids, facteurSexe] of [
+    [femmes, partFemmes, facteurFemmes],
+    [hommes, 1 - partFemmes, facteurHommes],
+  ]) {
+    const chiffre = coutGarantie(distribution, effectifTotal * poids,
+                                 plancherMensuel, facteurSexe);
+    part += poids * chiffre.partBeneficiaires;
+    beneficiaires += chiffre.beneficiaires;
+    manqueMensuel += poids * chiffre.complementMoyenMensuel
+      * chiffre.partBeneficiaires;
+  }
+  return {
+    plancherMensuel,
+    facteur,
+    partBeneficiaires: part,
+    beneficiaires,
+    complementMoyenMensuel: part ? manqueMensuel / part : 0,
+    coutAnnuelMeur: manqueMensuel * effectifTotal * 12 / 1e6,
+  };
+}

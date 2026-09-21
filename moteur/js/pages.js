@@ -38,8 +38,9 @@ import {
   masseDuScenario,
 } from "./cout.js";
 import { chargerBilan } from "./bilan.js";
-import { DistributionPensions } from "./distribution.js";
-import { coutGarantie } from "./garantie.js";
+import { DistributionPensions, partFemmes as partFemmesDistribution }
+  from "./distribution.js";
+import { coutGarantie, coutGarantieParSexe } from "./garantie.js";
 import { SYSTEMES, DepensesRetraite } from "./depenses.js";
 import {
   GROUPES,
@@ -8254,6 +8255,21 @@ function coutDetailGarantie(contexte) {
     ["Plancher majoré, 1 050 € (personne seule)",
       base.garantie_vieillesse_mensuelle + base.allocation_isolement_mensuelle],
   ];
+  // CE QUE LE DÉPLACEMENT UNIFORME CACHE, chiffré plutôt qu'affirmé : aucun
+  // nombre n'est écrit en toutes lettres dans la note.
+  const plancherSeul = (base.garantie_vieillesse_mensuelle
+    + base.allocation_isolement_mensuelle) * versEnquete;
+  const poidsFemmes = partFemmesDistribution(contexte.paquet);
+  const parSexe = new Map();
+  for (const rapport of [1.0, 0.9, 0.8]) {
+    parSexe.set(rapport, coutGarantieParSexe(
+      new DistributionPensions(contexte.paquet, "F"),
+      new DistributionPensions(contexte.paquet, "H"),
+      poidsFemmes, effectifRetraites, plancherSeul, facteur, rapport,
+    ));
+  }
+  const coutParSexe = (rapport) => milliards(
+    parSexe.get(rapport).coutAnnuelMeur * taux / versEnquete, 1);
   const assiettes = [
     [`Pensions de ${millesime}`, 1.0],
     [`Pensions du système 4 en ${millesime}`, facteur],
@@ -8497,6 +8513,21 @@ distribution est celle de ${millesime}, tenue constante sur toute la série, le
 passé comme l'avenir. Ce tableau applique le barème à tous les retraités de
 ${millesime} ; la trajectoire ne l'applique qu'à ceux de 65 ans et plus, d'où un
 coût plus bas la même année.</p>
+
+<div class="note"><strong>Le déplacement uniforme est une borne basse, et de
+peu.</strong> Le système 4 retire les droits non contributifs que les femmes
+détiennent plus souvent : majorations pour enfants, assurance vieillesse des
+parents au foyer, minimum contributif, trimestres assimilés. Leurs pensions
+tombent donc plus que la moyenne, et davantage d'entre elles passent sous le
+plancher que ce déplacement unique ne le dit. Un facteur par sexe n'est pas
+calculable ici, un seul des treize cas types étant une femme ; l'écart se
+mesure pourtant en le paramétrant, la moyenne d'ensemble restant déplacée du
+même facteur. Si les pensions des femmes tombaient un dixième de plus que
+celles des hommes, la dernière ligne de ce tableau passerait de
+${coutParSexe(1.0)} à ${coutParSexe(0.9)} ; un cinquième de plus,
+${coutParSexe(0.8)}. Le sens n'est pas douteux, l'ampleur reste seconde, et
+<a href="${g.DEPOT}/blob/main/scripts/garantie_par_sexe.py">un script du
+dépôt</a> porte le tableau entier.</div>
 
 <p><strong>Ce qu'elle remplace.</strong> <strong>La garantie est le seul
 plancher du système 4</strong>, et c'est tout ce qu'il y a à retenir : elle
