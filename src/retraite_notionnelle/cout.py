@@ -152,7 +152,14 @@ from .donnees.distribution import (
 from .donnees.taux import CourbeTauxSansRisque
 from .donnees.equilibre import ORGANISMES, POSTES, ComptesRetraite
 from .donnees.population import Population
-from .garantie import _manque_moyen, cout_garantie
+from .garantie import (
+    CoutGarantie,
+    _manque_moyen,
+    cout_garantie,
+    cout_garantie_par_sexe,
+    facteurs_par_sexe,
+    pension_moyenne,
+)
 from .simulateur import Simulateur
 
 #: Les six systèmes, dans l'ordre du tableau de comparaison. Ce sont les
@@ -1944,9 +1951,24 @@ class GarantieDistribution:
 
     def __init__(self, distribution: DistributionPensions, plancher_mensuel: float,
                  pension_reference: float, effectif_par_tete: float,
-                 vers_constants: float, taux_recours: float = 1.0) -> None:
+                 vers_constants: float, taux_recours: float = 1.0,
+                 distributions_sexe: dict[str, DistributionPensions] | None = None,
+                 part_femmes: float = 0.0,
+                 rapport_deplacement: float = 1.0) -> None:
         if not 0.0 < taux_recours <= 1.0:
             raise ValueError("le taux de recours est une part, entre zéro exclu et un")
+        if rapport_deplacement <= 0.0:
+            raise ValueError("le rapport des deux facteurs doit être strictement positif")
+        #: Les deux colonnes de sexe de l'enquête, et le poids de chacune. Elles
+        #: ne servent que si le rapport diffère de un : à un, la convention
+        #: uniforme s'applique et la colonne « ensemble » suffit — elle est
+        #: d'ailleurs la seule qui soit exacte, le mélange des deux autres ne la
+        #: redonnant qu'à l'arrondi de publication près.
+        self.distributions_sexe = distributions_sexe
+        self.part_femmes = part_femmes
+        #: ``r = f_F / f_H`` : de combien les pensions des femmes tombent plus
+        #: que celles des hommes. Un pour la convention uniforme.
+        self.rapport_deplacement = rapport_deplacement
         self.distribution = distribution
         #: Part des ayants droit qui réclament la garantie.
         self.taux_recours = taux_recours
@@ -1960,6 +1982,40 @@ class GarantieDistribution:
         #: Coefficient des euros de l'enquête aux euros constants de référence.
         self.vers_constants = vers_constants
 
+    def chiffrer_distribution(self, effectif: float, facteur: float) -> CoutGarantie:
+        """Le barème appliqué à la distribution, d'un seul facteur ou de deux.
+
+        À ``rapport_deplacement = 1`` on lit la colonne « ensemble » de
+        l'enquête, et c'est la seule lecture EXACTE : le mélange de ses deux
+        colonnes de sexe ne la redonne qu'à l'arrondi de publication près, la
+        DREES arrondissant ses parts au centième de point. Faire passer la
+        convention uniforme par le mélange lui ferait donc perdre un
+        dix-millième pour rien.
+
+        Au-delà, chaque sexe est déplacé de son propre facteur, sous contrainte
+        que la moyenne d'ensemble bouge du même — c'est ce que la grille de cas
+        types a le dernier mot pour dire, et le rapport ne fait que le
+        répartir.
+        """
+        if self.rapport_deplacement == 1.0 or self.distributions_sexe is None:
+            return cout_garantie(self.distribution, effectif,
+                                 self.plancher_mensuel, facteur)
+        return cout_garantie_par_sexe(
+            self.distributions_sexe["F"], self.distributions_sexe["H"],
+            self.part_femmes, effectif, self.plancher_mensuel, facteur,
+            self.rapport_deplacement,
+        )
+
+    def facteurs_des_sexes(self, facteur: float) -> tuple[float, float]:
+        """Les deux facteurs sous lesquels ce calage déplace chaque sexe."""
+        if self.rapport_deplacement == 1.0 or self.distributions_sexe is None:
+            return facteur, facteur
+        return facteurs_par_sexe(
+            pension_moyenne(self.distributions_sexe["F"]),
+            pension_moyenne(self.distributions_sexe["H"]),
+            self.part_femmes, facteur, self.rapport_deplacement,
+        )
+
     def chiffrer(self, masses: dict[str, float], tetes: dict[str, float]) -> GarantieProjetee:
         """La garantie d'une année, d'après les masses et les têtes de la grille."""
         tetes_garantie = tetes[TETES_GARANTIE]
@@ -1969,7 +2025,7 @@ class GarantieDistribution:
         if facteur <= 0.0:
             return GarantieProjetee(0.0, 0.0, 0.0, 0.0)
         effectif = self.effectif_par_tete * tetes_garantie
-        chiffre = cout_garantie(self.distribution, effectif, self.plancher_mensuel, facteur)
+        chiffre = self.chiffrer_distribution(effectif, facteur)
         return GarantieProjetee(
             facteur=facteur,
             effectif=effectif,
@@ -1999,8 +2055,20 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
         if parametres.situation_foyer is SituationFoyer.SEUL else 0.0
     )
     toutes = tetes[TETES_TOUTES]
+    # LE RAPPORT DES DEUX SEXES EST LU, PAS SUPPOSÉ, depuis le 21 septembre
+    # 2026 : l'enquête publie la part de la durée validée qui n'a pas été
+    # cotisée, et un compte notionnel ne crédite que ce qui l'a été. Un
+    # paramètre réglé remplace la lecture — un le ramène à la convention
+    # uniforme, celle d'avant.
+    caracteristiques = simulateur.caracteristiques
+    rapport = parametres.rapport_deplacement_sexe
+    if rapport is None:
+        rapport = caracteristiques.rapport_deplacement()
     return GarantieDistribution(
         distribution=distribution,
+        distributions_sexe=simulateur.distributions_par_sexe,
+        part_femmes=caracteristiques.part_femmes,
+        rapport_deplacement=rapport,
         plancher_mensuel=plancher * macro.coefficient_prix(
             parametres.annee_euros_garantie_vieillesse, millesime),
         pension_reference=masses["actuel"] / toutes if toutes > 0.0 else 0.0,
@@ -2227,10 +2295,11 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
     FEMMES : leurs pensions sont plus basses, et l'enquête les distribue à
     part. La part des femmes parmi les bénéficiaires est celle des femmes
     sous le plancher, pesée par la part des femmes dans la population que
-    l'enquête décrit — 52,8 %, que sa colonne « ensemble » donne exactement,
-    étant le mélange de ses deux colonnes de sexe (``donnees.distribution.
-    part_femmes``) —, et les deux courbes de survie sont mélangées dans cette
-    proportion, au lieu de moitié-moitié. Les femmes vivant plus longtemps,
+    l'enquête décrit — 52,8 %, que son classeur de caractéristiques PUBLIE
+    (``donnees.caracteristiques``) et que le dépôt ajustait jusqu'au
+    21 septembre 2026 sur les trois colonnes de la distribution —, et les deux
+    courbes de survie sont mélangées dans cette proportion, au lieu de
+    moitié-moitié. Les femmes vivant plus longtemps,
     les avances s'allongent d'autant. Ce poids venait des courbes de survie
     jusqu'au 21 septembre 2026, qui en tiraient 56,0 % en population
     stationnaire : un chiffre sur les 65 ans et plus, appliqué aux
@@ -2333,12 +2402,15 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
         # point de part sous le plancher — 58,99 % en recomposant contre
         # 58,03 % dans la colonne dont le COÛT est tiré —, c'est-à-dire que le
         # modèle disait deux choses de la même population.
-        poids_femmes = part_femmes_distribution(parametres.racine_donnees,
-                                                millesime)
-        for sexe in ("F", "H"):
+        poids_femmes = calage.part_femmes
+        # CHAQUE SEXE SOUS SON PROPRE FACTEUR, comme le coût : les déplacer
+        # tous deux du facteur d'ensemble ferait dire au suivi des avances une
+        # autre chose que ce que la dépense dit, sur la même population.
+        facteur_f, facteur_h = calage.facteurs_des_sexes(deplacement)
+        for sexe, facteur_sexe in (("F", facteur_f), ("H", facteur_h)):
             par_sexe = DistributionPensions(parametres.racine_donnees, sexe=sexe)
             sous_plancher[sexe] = cout_garantie(
-                par_sexe, 1.0, calage.plancher_mensuel, deplacement).part_beneficiaires
+                par_sexe, 1.0, calage.plancher_mensuel, facteur_sexe).part_beneficiaires
         beneficiaires_f = poids_femmes * sous_plancher["F"]
         beneficiaires_h = (1.0 - poids_femmes) * sous_plancher["H"]
         if beneficiaires_f + beneficiaires_h > 0.0:

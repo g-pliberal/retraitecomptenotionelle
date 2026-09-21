@@ -741,6 +741,24 @@ class Parametres:
     #: le recours complet.
     taux_recours_garantie: float = 0.5
 
+    #: RAPPORT DES DEUX FACTEURS DE DÉPLACEMENT, ``r = f_F / f_H``. La garantie
+    #: est chiffrée en déplaçant la distribution des pensions vers celles du
+    #: scénario 6 ; le scénario ne déplace pourtant pas toutes les carrières du
+    #: même rapport, puisqu'il retire les droits NON COTISÉS et que les femmes
+    #: en détiennent plus souvent.
+    #:
+    #: ``None`` — le défaut depuis le 21 septembre 2026 — fait LIRE ce rapport
+    #: sur l'enquête, où il vaut 0,834 en 2020 : la part cotisée de la carrière
+    #: est de 74,0 % chez les femmes contre 89,1 % chez les hommes, et la
+    #: majoration pour enfants, proportionnelle à la pension, corrige de moins
+    #: d'un demi-point dans l'autre sens. Voir
+    #: ``donnees.caracteristiques.CaracteristiquesRetraites.rapport_deplacement``.
+    #:
+    #: ``1.0`` restitue l'ANCIENNE convention — un facteur unique pour tous —,
+    #: gardée pour mesurer ce qu'elle valait : elle sous-estimait le coût de la
+    #: garantie d'environ 5 %. Un nombre quelconque remplace la mesure.
+    rapport_deplacement_sexe: float | None = None
+
     #: Part de l'avance d'un bénéficiaire que sa SUCCESSION couvre. La garantie
     #: est une avance reprise sur la succession dès le premier euro, avec
     #: intérêts ; ce que les successions en rendent dépend du patrimoine des

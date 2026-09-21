@@ -38,6 +38,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.carriere import Affiliations  # noqa: E402
+from retraite_notionnelle.donnees.caracteristiques import CaracteristiquesRetraites  # noqa: E402
 from retraite_notionnelle.donnees.assiette import POSTES_ASSIETTE  # noqa: E402
 from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     SerieAnnuelle,
@@ -335,6 +336,27 @@ def _vie_en_couple() -> dict:
             for age in range(couple.age_minimal, couple.age_maximal + 1)
             for sexe in ("F", "H")
             for mode in ("couple", "seul")
+        },
+    }
+
+
+def _caracteristiques_retraites() -> dict:
+    """Ce que les carrières doivent aux droits non cotisés, par sexe.
+
+    Six indicateurs seulement, mais ce sont eux qui disent de combien le
+    scénario 6 déplace les pensions des femmes PLUS que celles des hommes.
+    """
+    c = CaracteristiquesRetraites(DONNEES)
+    return {
+        "millesime": c.millesime,
+        "fiabilite": int(c.fiabilite),
+        "valeurs": {
+            f"{indicateur}|{sexe}": c.valeur(indicateur, sexe)
+            for indicateur in ("effectifs", "pension_droit_direct",
+                               "pension_droit_direct_majorations",
+                               "duree_validee_non_cotisee", "duree_validee",
+                               "coefficient_proratisation", "part_minimum_pension")
+            for sexe in ("F", "H", "ensemble")
         },
     }
 
@@ -1174,6 +1196,7 @@ def construire(bilan: bytes) -> bytes:
         "distribution_pensions": _distribution_pensions(),
         "patrimoine_menages": _patrimoine_menages(),
         "distribution_pensions_sexes": _distribution_pensions_sexes(),
+        "caracteristiques_retraites": _caracteristiques_retraites(),
         "vie_en_couple": _vie_en_couple(),
         "certification": journal_certification(DONNEES),
         # Le bilan tel que ``data/derive/equilibre.json`` le porte, jamais

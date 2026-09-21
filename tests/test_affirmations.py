@@ -523,13 +523,20 @@ def _(m: Modele):
 
 @controle("deplacement_uniforme_borne_basse")
 def _(m: Modele):
-    """Déplacer davantage les pensions des femmes ne fait jamais baisser le coût.
+    """Le rapport est lu sur l'enquête, il vaut moins de un, et le modèle l'applique.
 
-    La phrase affirme deux choses : que la convention uniforme sous-estime, et
-    que l'ampleur reste seconde. Les deux se vérifient sur le modèle, sous
-    contrainte de masse — la moyenne d'ensemble reste déplacée du facteur que
-    la grille donne, et seul le partage entre les deux sexes change.
+    La phrase affirme trois choses. Que le rapport est MESURÉ : il sort des
+    caractéristiques des retraités par sexe, pas d'une hypothèse. Qu'il est
+    inférieur à un : les pensions des femmes tombent plus. Et que le modèle
+    l'applique : c'est ce que le calage de la trajectoire porte, et non un
+    calcul de côté. Le reste se vérifie sous contrainte de masse — la moyenne
+    d'ensemble reste déplacée du facteur que la grille donne, et seul le
+    partage entre les deux sexes change.
     """
+    mesure = m.sim.caracteristiques.rapport_deplacement()
+    assert 0.5 < mesure < 1.0
+    # Et c'est bien lui que la trajectoire applique.
+    assert m.base.rapport_deplacement_sexe is None
     racine = m.base.racine_donnees
     millesime = m.sim.distribution.millesime
     colonnes = {

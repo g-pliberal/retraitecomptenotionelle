@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 597<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 766<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -11153,3 +11153,68 @@ c'est déjà la colonne lue.
 `src/retraite_notionnelle/cout.py`, `scripts/verifier_donnees.py`,
 `scripts/fetch/cor_comptes_retraite.py`, `moteur/js/equilibre.js`,
 `tests/test_cout.py`, `docs/limites.md`, `tests/temoins/pages.json`.
+### 75. `r` cesse d'être un paramètre : il est lu sur l'enquête, et il vaut 0,834 — `fait`
+
+**Demande.** « Mesure `r` avec les avantages non contributifs par sexe »,
+après l'action 73, qui l'avait laissé paramètre faute de source.
+
+**Ce qui bloquait, et ce qui débloquait.** Un facteur par sexe se tire de la
+grille comme le facteur d'ensemble s'en tire, et un seul des treize cas types
+est une femme ; le dépôt ne portait par ailleurs aucune ventilation par sexe
+du coût des avantages non contributifs. Mais l'échantillon interrégimes qui
+porte la distribution porte AUSSI, dans un autre classeur du même millésime
+(« Caractéristiques de tous les retraités », EIR 2020), les caractéristiques
+des retraités par sexe. Elles n'étaient pas dans le dépôt : elles y sont.
+
+**Les deux termes, et ils ne jouent pas dans le même sens.**
+
+| | Femmes | Hommes | Rapport |
+|---|---|---|---|
+| Durée validée **non cotisée** | 26,0 % | 10,9 % | 0,740 / 0,891 = **0,831** |
+| Majoration pour enfants, en part de la pension | 2,60 % | 3,04 % | 0,974 / 0,970 = **1,005** |
+| | | | **r = 0,834** |
+
+La durée non cotisée domine : un compte notionnel ne crédite que ce qui a été
+cotisé, et une année validée sans cotisation n'y porte rien — AVPF, chômage,
+maladie, majoration de durée. La majoration pour enfants, elle, joue à
+L'ENVERS : dix pour cent de la pension pour trois enfants, c'est plus d'euros
+à qui a la pension la plus haute. C'est exactement le terme qu'on aurait
+supposé dans le mauvais sens.
+
+**Trois contrôles croisés, tous passés.** La pension moyenne des femmes que le
+dépôt calcule sur les tranches de la distribution — 1 120 € — contre 1 122 €
+publiés : 0,14 % d'écart. Celle des hommes, 1 749 contre 1 784, soit 2,0 % de
+moins, exactement ce que la tranche ouverte traitée en masse ponctuelle
+retranche, et qui ne touche que les hommes (2,74 % d'entre eux au-delà de
+4 500 € contre 0,24 % des femmes). Et surtout : **les effectifs publiés donnent
+52,78 % de femmes**, là où l'action 72 avait ajusté 52,7758 % sur les trois
+colonnes de la distribution. Le poids est désormais LU, et l'ajustement reste
+comme vérification.
+
+**Ce que la mesure déplace.** Le modèle applique `r = 0,834` au lieu de 1. La
+garantie de 2024 passe de 20,7 à 22,0 milliards, celle de 2026 de 0,69 à
+0,74 % du PIB, le versé de 2070 de 17,7 à 19,2, le cumulé 2026-2070 de 849 à
+918. La part des femmes parmi les bénéficiaires monte de 66 à 70 %. Au barème
+appliqué à la distribution, plancher majoré : 28,5 → 29,9 milliards. **La
+convention uniforme sous-estimait de 5 %**, ce qui confirme l'ordre de grandeur
+que l'action 73 avait annoncé sans la mesure.
+
+**Le réglage garde les deux lectures.** `rapport_deplacement_sexe` vaut `None`
+— lire l'enquête — et 1 restitue la convention d'avant, comme le dépôt le fait
+partout où une décision remplace une convention.
+
+**Ce que la mesure laisse dehors, et qui va dans le même sens.** L'enquête
+publie la PART des bénéficiaires d'un minimum de pension — 46,5 % des femmes
+contre 26,1 % des hommes — et non ce qu'il leur apporte : le retirer creuserait
+l'écart. Le rapport suppose en outre le salaire porté au compte constant d'une
+année cotisée à l'autre. `r = 0,834` est donc une borne haute, et le coût qui
+en découle une borne basse — plus étroite qu'avant, dans le même sens.
+
+**Fichiers.** `scripts/fetch/drees_caracteristiques_retraites.py`,
+`data/reference/macro/caracteristiques_retraites.csv`, `data/sources.yaml`,
+`scripts/verifier_donnees.py`,
+`src/retraite_notionnelle/donnees/caracteristiques.py`,
+`src/retraite_notionnelle/{config,cout,simulateur}.py`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/caracteristiques.js`,
+`moteur/js/{config,cout,pages}.js`, `scripts/construire_donnees.py`,
+`scripts/garantie_par_sexe.py`, `index.html`, `tests/`, `docs/limites.md`.

@@ -41,9 +41,10 @@
 import {
   CAS_TYPES, VARIANTES_LIQUIDATION, calculerCasTypes, poidsEffectifs, poidsEgaux,
 } from "./castypes.js";
-import { coutGarantie, manqueMoyen } from "./garantie.js";
-import { DistributionPensions, partFemmes as partFemmesDistribution }
-  from "./distribution.js";
+import { coutGarantie, coutGarantieParSexe, facteursParSexe, manqueMoyen,
+         pensionMoyenne } from "./garantie.js";
+import { CaracteristiquesRetraites } from "./caracteristiques.js";
+import { DistributionPensions } from "./distribution.js";
 import { Fiabilite } from "./serie.js";
 import { ORGANISMES, POSTES } from "./equilibre.js";
 
@@ -586,10 +587,21 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
  */
 class GarantieDistribution {
   constructor(distribution, plancherMensuel, pensionReference, effectifParTete,
-              versConstants, tauxRecours = 1.0) {
+              versConstants, tauxRecours = 1.0, distributionsSexe = null,
+              partFemmes = 0, rapportDeplacement = 1.0) {
     if (!(tauxRecours > 0 && tauxRecours <= 1)) {
       throw new RangeError("le taux de recours est une part, entre zéro exclu et un");
     }
+    if (rapportDeplacement <= 0) {
+      throw new RangeError("le rapport des deux facteurs doit être strictement positif");
+    }
+    // Les deux colonnes de sexe et le poids de chacune : elles ne servent que
+    // si le rapport diffère de un. À un, la colonne « ensemble » suffit — et
+    // elle est la seule exacte, le mélange des deux autres ne la redonnant
+    // qu'à l'arrondi de publication près.
+    this.distributionsSexe = distributionsSexe;
+    this.partFemmes = partFemmes;
+    this.rapportDeplacement = rapportDeplacement;
     this.distribution = distribution;
     // Part des ayants droit qui réclament la garantie.
     this.tauxRecours = tauxRecours;
@@ -597,6 +609,34 @@ class GarantieDistribution {
     this.pensionReference = pensionReference;
     this.effectifParTete = effectifParTete;
     this.versConstants = versConstants;
+  }
+
+  /**
+   * Le barème appliqué à la distribution, d'un seul facteur ou de deux. À
+   * `rapportDeplacement = 1` on lit la colonne « ensemble », seule lecture
+   * exacte ; au-delà, chaque sexe est déplacé du sien, sous contrainte que la
+   * moyenne d'ensemble bouge du même.
+   */
+  chiffrerDistribution(effectif, facteur) {
+    if (this.rapportDeplacement === 1.0 || this.distributionsSexe === null) {
+      return coutGarantie(this.distribution, effectif, this.plancherMensuel, facteur);
+    }
+    return coutGarantieParSexe(
+      this.distributionsSexe.F, this.distributionsSexe.H, this.partFemmes,
+      effectif, this.plancherMensuel, facteur, this.rapportDeplacement,
+    );
+  }
+
+  /** Les deux facteurs sous lesquels ce calage déplace chaque sexe. */
+  facteursDesSexes(facteur) {
+    if (this.rapportDeplacement === 1.0 || this.distributionsSexe === null) {
+      return [facteur, facteur];
+    }
+    return facteursParSexe(
+      pensionMoyenne(this.distributionsSexe.F),
+      pensionMoyenne(this.distributionsSexe.H),
+      this.partFemmes, facteur, this.rapportDeplacement,
+    );
   }
 
   /** La garantie d'une année, d'après les masses et les têtes de la grille. */
@@ -611,7 +651,7 @@ class GarantieDistribution {
     const facteur = total[RESSOURCES_GARANTIE] / tetesGarantie / this.pensionReference;
     if (facteur <= 0) return vide;
     const effectif = this.effectifParTete * tetesGarantie;
-    const chiffre = coutGarantie(this.distribution, effectif, this.plancherMensuel, facteur);
+    const chiffre = this.chiffrerDistribution(effectif, facteur);
     return {
       facteur,
       effectif,
@@ -645,6 +685,18 @@ function garantieDistribution(simulateur, liste, population, poids, revalorisati
   const plancher = parametres.garantie_vieillesse_mensuelle
     + (parametres.situation_foyer === "seul" ? parametres.allocation_isolement_mensuelle : 0);
   const toutes = tetes[TETES_TOUTES];
+  // LE RAPPORT DES DEUX SEXES EST LU, PAS SUPPOSÉ : l'enquête publie la part
+  // de la durée validée qui n'a pas été cotisée, et un compte notionnel ne
+  // crédite que ce qui l'a été. Un paramètre réglé remplace la lecture ; un le
+  // ramène à la convention uniforme, celle d'avant.
+  const caracteristiques = new CaracteristiquesRetraites(simulateur.paquet);
+  const regle = parametres.rapport_deplacement_sexe;
+  const rapport = (regle === null || regle === undefined)
+    ? caracteristiques.rapportDeplacement() : regle;
+  const distributionsSexe = {
+    F: new DistributionPensions(simulateur.paquet, "F"),
+    H: new DistributionPensions(simulateur.paquet, "H"),
+  };
   return new GarantieDistribution(
     distribution,
     plancher * macro.coefficientPrix(parametres.annee_euros_garantie_vieillesse, millesime),
@@ -652,6 +704,9 @@ function garantieDistribution(simulateur, liste, population, poids, revalorisati
     toutes > 0 ? simulateur.effectifs.effectif("tous_regimes", millesime) / toutes : 0,
     macro.coefficientPrix(millesime, parametres.annee_euros_constants),
     parametres.taux_recours_garantie,
+    distributionsSexe,
+    caracteristiques.partFemmes,
+    rapport,
   );
 }
 
@@ -1641,11 +1696,13 @@ function reprisesSuccessions(lignes, simulateur, calage) {
   if (poidsTotal > 0) {
     // LE POIDS DES DEUX SEXES EST CELUI DE L'ENQUÊTE, et non celui que les
     // courbes de survie donnaient : voir `partFemmes` dans distribution.js.
-    const poidsFemmes = partFemmesDistribution(simulateur.paquet);
-    for (const sexe of ["F", "H"]) {
+    const poidsFemmes = calage.partFemmes;
+    // CHAQUE SEXE SOUS SON PROPRE FACTEUR, comme le coût.
+    const [facteurF, facteurH] = calage.facteursDesSexes(deplacement);
+    for (const [sexe, facteurSexe] of [["F", facteurF], ["H", facteurH]]) {
       const parSexe = new DistributionPensions(simulateur.paquet, sexe);
       sousPlancher[sexe] = coutGarantie(
-        parSexe, 1.0, calage.plancherMensuel, deplacement,
+        parSexe, 1.0, calage.plancherMensuel, facteurSexe,
       ).partBeneficiaires;
     }
     const beneficiairesF = poidsFemmes * sousPlancher.F;
