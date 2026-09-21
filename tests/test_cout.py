@@ -69,7 +69,10 @@ from retraite_notionnelle.donnees.equilibre import (
     ORGANISMES,
     POSTES,
     POSTES_TRANSFERTS,
+    VARIANTE_REFERENCE,
     ComptesRetraite,
+    variante_du_scenario,
+    variantes_disponibles,
 )
 from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.garantie import (
@@ -2608,3 +2611,129 @@ def test_le_systeme_actuel_promet_plus_qu_il_n_encaisse_sur_tout_l_horizon(solde
     assert (projetees[-1].coefficient("actuel")
             < projetees[0].coefficient("actuel"))
     assert solde.premiere_annee_equilibree("actuel") is None
+
+
+# -- les variantes de compte du COR -------------------------------------------
+#
+# Le dépôt lisait le scénario de référence quel que soit le scénario demandé.
+# La croissance déplaçait donc la dépense des systèmes notionnels, qui est
+# CALCULÉE, sans déplacer celle du droit en vigueur, qui est EMPRUNTÉE — et le
+# rapport des deux, qui monte à juste titre, était appliqué à un niveau gelé.
+
+
+def test_les_variantes_declarees_sont_celles_du_fichier():
+    """Les noms de variantes SONT les noms de scénarios du fichier d'hypothèses.
+
+    C'est ce qui permet à ``variante_du_scenario`` de se passer d'une table de
+    correspondance : un scénario qui n'est pas une variante est, par
+    construction, celui sous lequel le compte principal est publié.
+    """
+    import yaml
+
+    macro = RACINE_DONNEES / "reference" / "macro"
+    hypotheses = yaml.safe_load(
+        (macro / "hypotheses_projection.yaml").read_text(encoding="utf-8"))
+    attendues = set(hypotheses["scenarios"]) - {hypotheses["scenario_par_defaut"]}
+    attendues |= set(hypotheses.get("variantes_chomage") or {})
+    assert set(variantes_disponibles(macro)) == attendues
+
+
+def test_le_scenario_de_reference_ne_prend_aucune_variante():
+    macro = RACINE_DONNEES / "reference" / "macro"
+    assert variante_du_scenario("cor_reference", macro) == VARIANTE_REFERENCE
+    assert variante_du_scenario(None, macro) == VARIANTE_REFERENCE
+    for nom in variantes_disponibles(macro):
+        assert variante_du_scenario(nom, macro) == nom
+
+
+def test_une_variante_inconnue_est_refusee():
+    """Jamais un repli silencieux sur la référence : il rendrait deux courbes
+    identiques sans que rien ne le dise, ce qui est le défaut qu'on répare."""
+    with pytest.raises(ValueError, match="variante de compte inconnue"):
+        ComptesRetraite(RACINE_DONNEES, variante="cor_productivite_moyenne")
+
+
+def test_une_variante_ne_touche_pas_aux_annees_observees(comptes):
+    """Ce que le passé a été ne dépend d'aucune hypothèse."""
+    for nom in variantes_disponibles(RACINE_DONNEES / "reference" / "macro"):
+        variante = ComptesRetraite(RACINE_DONNEES, variante=nom)
+        for annee in range(comptes.premiere_annee, comptes.derniere_annee_observee + 1):
+            assert variante.depense(annee) == comptes.depense(annee), (nom, annee)
+            assert variante.ressource(annee) == comptes.ressource(annee), (nom, annee)
+
+
+def test_une_variante_deplace_la_depense_projetee(comptes):
+    """Et dans le sens que le COR publie : plus de productivité, moins de
+    dépense en part de PIB — une pension indexée sur les prix décroche d'un PIB
+    qui accélère. Plus de chômage, davantage de dépense."""
+    horizon = comptes.derniere_annee
+    haute = ComptesRetraite(RACINE_DONNEES, variante="cor_productivite_haute")
+    basse = ComptesRetraite(RACINE_DONNEES, variante="cor_productivite_basse")
+    assert haute.depense(horizon) < comptes.depense(horizon) < basse.depense(horizon)
+    chomage_bas = ComptesRetraite(RACINE_DONNEES, variante="cor_chomage_bas")
+    chomage_haut = ComptesRetraite(RACINE_DONNEES, variante="cor_chomage_haut")
+    assert (chomage_bas.depense(horizon) < comptes.depense(horizon)
+            < chomage_haut.depense(horizon))
+
+
+def test_la_recette_ne_gagne_presque_rien_a_la_croissance(comptes):
+    """LE RÉSULTAT QUI SURPREND, ET QUI EST JUSTE.
+
+    On attend d'une croissance plus forte qu'elle apporte plus de recettes.
+    En euros, oui. En PART DE PIB — l'unité de tout le bilan —, non : l'assiette
+    et le PIB montent du même pas, et le fichier d'hypothèses s'interdit de
+    déformer le partage de la valeur ajoutée. Le COR trouve même un léger
+    RECUL, parce que sous sa convention EPR l'État verse ce qu'il faut pour
+    équilibrer les régimes de fonctionnaires, et qu'il leur en faut moins.
+
+    Le test borne l'effet plutôt que de le figer : ce qui doit tenir est qu'il
+    reste d'un ordre de grandeur en dessous de ce que la dépense fait.
+    """
+    horizon = comptes.derniere_annee
+    haute = ComptesRetraite(RACINE_DONNEES, variante="cor_productivite_haute")
+    sur_la_recette = abs(haute.ressource(horizon) - comptes.ressource(horizon))
+    sur_la_depense = abs(haute.depense(horizon) - comptes.depense(horizon))
+    assert sur_la_recette < 0.002
+    assert sur_la_depense > 5 * sur_la_recette
+
+
+def test_le_solde_d_une_variante_est_celui_de_sa_variante(comptes):
+    """``solde`` passe par les accesseurs et non par les séries : les prendre
+    aux séries redonnerait le solde de la référence sous toutes les variantes."""
+    horizon = comptes.derniere_annee
+    haute = ComptesRetraite(RACINE_DONNEES, variante="cor_productivite_haute")
+    assert haute.solde(horizon) == pytest.approx(
+        haute.ressource(horizon) - haute.depense(horizon))
+    assert haute.solde(horizon) > comptes.solde(horizon)
+
+
+def test_la_proposition_ne_perd_plus_un_point_a_la_croissance(
+        depenses, population, assiette):
+    """CE QUE LA CORRECTION VALAIT, ET POURQUOI IL EN RESTE.
+
+    Sous l'ancien raccord, le solde de la proposition en 2070 allait de +0,42 à
+    −0,72 point de PIB entre les variantes basse et haute de productivité : la
+    croissance coûtait 1,14 point à la proposition sans qu'aucun mécanisme
+    économique le justifie. Sous le compte de chaque variante, l'amplitude
+    tombe sous le demi-point.
+
+    IL EN RESTE, ET C'EST ATTENDU. Un compte notionnel indexé sur la masse
+    salariale est neutre à la croissance en part de PIB ; le droit en vigueur,
+    indexé sur les prix, en profite. La proposition gagne donc MOINS que le
+    droit constant à ce que la croissance soit forte, et ce résultat-là lui
+    appartient. Ce que le test borne est l'amplitude résiduelle, pas son signe.
+    """
+    soldes = {}
+    for scenario in ("cor_productivite_basse", "cor_reference",
+                     "cor_productivite_haute"):
+        comptes = ComptesRetraite(
+            RACINE_DONNEES,
+            variante=variante_du_scenario(
+                scenario, RACINE_DONNEES / "reference" / "macro"))
+        cout = calculer_cout(
+            Simulateur(Parametres().avec(scenario_projection=scenario)),
+            depenses, population, comptes, assiette=assiette)
+        ligne = cout.solde.annees[-1]
+        soldes[scenario] = ligne.solde("notionnel_liberal")
+    amplitude = soldes["cor_productivite_basse"] - soldes["cor_productivite_haute"]
+    assert 0.0 < amplitude < 0.005, soldes

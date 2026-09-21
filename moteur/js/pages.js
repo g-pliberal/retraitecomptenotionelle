@@ -48,6 +48,7 @@ import {
   POSTES,
   POSTES_TRANSFERTS,
   ComptesRetraite,
+  varianteDuScenario,
 } from "./equilibre.js";
 import { Restitution } from "./restitution.js";
 import { Indexation } from "./indexation.js";
@@ -1647,9 +1648,22 @@ export class Contexte {
     return this._donnee("depenses", () => new DepensesRetraite(this.paquet));
   }
 
-  /** Le second terme du bilan : ce que le système de retraite encaisse. */
+  /**
+   * Le second terme du bilan : ce que le système de retraite encaisse.
+   *
+   * SOUS LA VARIANTE DES RÈGLES DE `base`. La page lisait le scénario de
+   * référence du COR quel que soit le scénario demandé, si bien que la
+   * croissance déplaçait la dépense des systèmes notionnels, qui est calculée,
+   * sans déplacer celle du droit en vigueur, qui est empruntée.
+   *
+   * La mémoire porte le nom de la variante : deux jeux de règles qui ne
+   * diffèrent que par leur scénario ne doivent pas se partager un compte.
+   */
   comptes() {
-    return this._donnee("comptes", () => new ComptesRetraite(this.paquet));
+    const variante = varianteDuScenario(
+      this.base.scenario_projection, this.paquet);
+    return this._donnee(`comptes:${variante}`,
+                        () => new ComptesRetraite(this.paquet, variante));
   }
 
   /**

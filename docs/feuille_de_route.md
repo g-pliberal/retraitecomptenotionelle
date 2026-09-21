@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 813<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->29 896<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -11044,7 +11044,7 @@ page affirme : jamais moins, et moins d'un dixième de plus.
 `data/reference/site/affirmations.yaml`, `docs/limites.md`,
 `tests/temoins/pages.json`.
 
-### 74. Le compte du COR est lu dans un seul scénario, et la croissance ne déplace qu'une moitié du bilan — `à faire`
+### 74. Le compte du COR est lu dans un seul scénario, et la croissance ne déplace qu'une moitié du bilan — `fait`
 
 **Demande.** « Tu peux regarder si on n'a pas oublié des sources de recettes ?
 En effet, avec la croissance à 1 %, on devrait avoir moins de chômage et plus
@@ -11121,38 +11121,72 @@ variantes publiées (onglets `Chô_5%`, `Chô_7%`, `Chô_10%` de
 porte aucune. Et quand bien même : en part de PIB, une variante de chômage
 déplacerait la dépense, pas la recette, pour la raison ci-dessus.
 
-**Ce qu'il faut faire, et la bonne nouvelle est que la moitié du chemin est
-faite.** `scripts/fetch/cor_comptes_retraite.py` lit DÉJÀ le compte variante de
-productivité par variante — c'est `lire_bloc_eec`, quatre lignes étiquetées par
-leur hypothèse —, et c'est `verifier_donnees.py` qui n'en retient qu'une, en la
-cherchant sur `scenario_par_defaut` plutôt que sur le scénario demandé. Reste :
+**CE QUI A ÉTÉ FAIT, ET LA PREMIÈRE ÉTAPE A RENDU PLUS QUE PRÉVU.** La réserve
+qui pouvait tout arrêter — le bloc EPR n'est peut-être pas publié par variante —
+est levée : le COR le publie, dans des figures de SENSIBILITÉ que le dépôt ne
+lisait pas. Le rapport de juin 2026 en porte six (2.18 à 2.23 : fécondité,
+espérance de vie, solde migratoire, chômage, productivité, traitements
+indiciaires), chacune republiant **la dépense et le solde du système** sous la
+même note de bas de feuille que le compte principal — convention EPR, hors
+produits et charges financières, ensemble des régimes légalement obligatoires,
+FSV compris, hors RAFP. Deux sont prises : la 2.22 (productivité) et la 2.21
+(**chômage**, que l'action n'espérait pas et qui est la question posée).
 
-1. Établir si le bloc principal (convention EPR, celui que la section « solde »
-   lit) est lui aussi publié par variante dans le classeur du rapport de juin
-   2026. `_annees_en_tete` s'arrête au premier bloc de la feuille par choix, pas
-   par constat. Si oui, la suite est mécanique ; si non, il faut le dire et
-   s'arrêter là — une dépense de variante ne se déduit pas.
-2. Donner à `comptes_retraite.csv` et `taux_prelevement_retraite.csv` une
-   colonne `scenario`, et à `ComptesRetraite` le paramètre qui choisit la
-   colonne, comme `DonneesMacro` choisit déjà son jeu d'hypothèses.
-3. Porter dans `moteur/js/equilibre.js` et régénérer les témoins : leur diff
-   dira, chiffre par chiffre, ce que le raccord corrigé déplace.
-4. Écrire au § 5 de `limites.md` ce qui restera vrai ensuite : les variantes de
-   CHÔMAGE demeurent absentes, et c'est une autre dimension que la
-   productivité.
+**La ressource est dérivée, et la dérivation est contrôlée avant d'être
+utilisée.** Ces figures ne publient pas la ressource : elle est la somme de la
+dépense et du solde. `source_comptes_variantes` confronte d'abord la ligne de
+RÉFÉRENCE de chaque figure au compte principal, dépense contre dépense et somme
+contre ressource ; elle le redonne à 5 × 10⁻⁷ près, c'est-à-dire à l'arrondi de
+publication du classeur. Un écart plus grand arrête le script sans rien écrire :
+il dirait que les deux figures ne sont pas du même exercice.
 
-**Ce que ça déplacerait.** Le solde du système 6 en 2070 sous la variante
-haute, aujourd'hui à −0,72 point de PIB, et le même sous la variante basse,
-aujourd'hui à +0,42. Les deux bords de la fourchette que le site publie, donc,
-et dans le sens qui les rapproche. Le scénario de référence ne bouge pas :
-c'est déjà la colonne lue.
+**Ce que ça a déplacé.** Le solde de la proposition en 2070, en points de PIB :
 
-**Fichiers.** `data/reference/macro/comptes_retraite.csv`,
-`data/reference/macro/taux_prelevement_retraite.csv`,
+| | 0,4 % | 0,7 % | 1,0 % |
+|---|---|---|---|
+| avant | **+0,419** | −0,139 | **−0,724** |
+| après | **+0,109** | −0,139 | **−0,336** |
+
+L'amplitude tombe de 1,14 à 0,45 point, et le scénario de référence ne bouge
+pas d'un centime — c'était déjà la colonne lue, et c'est le contrôle qui dit
+que le raccord ne triche pas. Le résidu n'est pas un artefact : un compte
+notionnel indexé sur la masse salariale est neutre à la croissance en part de
+PIB, là où le droit en vigueur, indexé sur les prix, en profite. La proposition
+gagne donc moins que le droit constant à ce que la croissance soit forte.
+
+**Et la question de départ a sa réponse, qui n'est pas celle qu'on attendait.**
+Moins de chômage donne **moins** de recettes en part de PIB — 12,86 % contre
+12,91 % en 2070 sous la variante à 5 % —, et c'est la dépense qui recule, de
+15,30 % à 15,02 %. En part de PIB, une assiette plus large ne rapporte pas
+davantage : elle monte en même temps que son dénominateur. Le gain existe, il
+est simplement de l'autre côté du compte.
+
+**Ce qui reste ouvert, et c'est volontaire.** Le formulaire du site ne propose
+que les trois scénarios de productivité : les deux variantes de chômage sont
+dans les données et dans le compte, pas dans un bouton. Les ajouter demande un
+champ de saisie, son portage et ses témoins, pour une dimension que le COR
+traite à part ; `scripts/sensibilite_comptes.py` les imprime en attendant.
+Restent aussi hors variante, faute que le COR les publie ailleurs que dans son
+scénario de référence : le taux de prélèvement (figure 2.9), la structure des
+ressources, les ressources EEC et les transferts. Les quatre réserves sont au
+§ 5 de `limites.md`. Et quatre autres dimensions de sensibilité sont publiées
+sans être lues — fécondité, espérance de vie, solde migratoire, traitements
+indiciaires : le lecteur les prendrait sans une ligne de code nouvelle, il
+manque seulement les scénarios correspondants dans `hypotheses_projection.yaml`.
+
+**Fichiers.** `scripts/fetch/cor_comptes_retraite.py` (`lire_sensibilite`,
+`sensibilites`), `scripts/verifier_donnees.py` (`source_comptes_variantes`),
+`data/reference/macro/comptes_retraite_variantes.csv` (nouveau, 360 valeurs),
+`data/reference/macro/hypotheses_projection.yaml` (`variantes_chomage`),
 `src/retraite_notionnelle/donnees/equilibre.py`,
-`src/retraite_notionnelle/cout.py`, `scripts/verifier_donnees.py`,
-`scripts/fetch/cor_comptes_retraite.py`, `moteur/js/equilibre.js`,
-`tests/test_cout.py`, `docs/limites.md`, `tests/temoins/pages.json`.
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/equilibre.js`,
+`moteur/js/pages.js`, `scripts/construire_donnees.py`,
+`scripts/construire_temoins.py` (témoin `cout_variante_productivite`),
+`scripts/sensibilite_comptes.py` (nouveau), `tests/test_cout.py`,
+`tests/test_donnees.py`, `tests/test_affirmations.py`, `docs/limites.md`,
+`docs/parcours_presentation.md`, `moteur/donnees.json`,
+`tests/temoins/pages.json`.
+
 ### 75. `r` cesse d'être un paramètre : il est lu sur l'enquête, et il vaut 0,834 — `fait`
 
 **Demande.** « Mesure `r` avec les avantages non contributifs par sexe »,

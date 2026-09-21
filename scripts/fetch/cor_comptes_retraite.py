@@ -125,6 +125,27 @@ LIGNES_VENTILATION: tuple[tuple[str, str], ...] = (
 #: Classeurs de données attachés à la page du rapport.
 LIEN_CLASSEUR = re.compile(r'href="(/sites/default/files/[^"]+\.xlsx)"')
 
+#: Les deux figures de SENSIBILITÉ, et la dimension que chacune fait varier.
+#: Le COR y republie la dépense et le solde du système, sous la MÊME convention
+#: et le MÊME champ que le compte principal, une ligne par variante. C'est la
+#: seule publication qui dise ce qu'une hypothèse déplace sans changer de
+#: périmètre, et le dépôt n'en lisait aucune jusqu'au 21 septembre 2026.
+SENSIBILITES: tuple[tuple[str, str], ...] = (
+    ("productivite",
+     "sensibilite de la part des depenses et du solde du systeme de retraite "
+     "dans le pib a l'hypothese de croissance de la productivite"),
+    ("chomage",
+     "sensibilite de la part des depenses et du solde du systeme de retraite "
+     "dans le pib aux hypotheses de taux de chomage"),
+)
+
+#: Les deux grandeurs que porte une figure de sensibilité, reconnues au DÉBUT
+#: de leur intitulé : la figure du chômage écrit « Soldes » au pluriel.
+GRANDEURS_SENSIBILITE: tuple[tuple[str, str], ...] = (
+    ("depenses", "depenses"),
+    ("solde", "solde"),
+)
+
 #: Titres cherchés, et la clé sous laquelle chaque bloc est écrit. Le titre est
 #: comparé sans accents ni casse, sur son DÉBUT seulement : le COR ponctue ses
 #: intitulés différemment d'une année à l'autre — double espace, parenthèse
@@ -345,6 +366,138 @@ def lire_bloc_eec(grille: dict) -> dict[str, dict[str, float]]:
     return variantes
 
 
+def _etiquette_variante(valeur) -> str | None:
+    """Le nom sous lequel une ligne de variante est écrite dans le JSON.
+
+    LE RÉCUPÉRATEUR NE NOMME PAS LES SCÉNARIOS, IL LES TRANSCRIT. Le COR
+    étiquette ses variantes de productivité par leur HYPOTHÈSE — 0,01 et
+    0,004 — et ses variantes de chômage par un libellé — « Var C5% », « Var
+    C10% ». Traduire l'un ou l'autre en « haute » et « basse » ici figerait
+    dans une couche qui ne connaît pas les scénarios du dépôt un partage qui
+    leur appartient : c'est ``verifier_donnees.py`` qui rapproche ces
+    étiquettes de ``hypotheses_projection.yaml``, comme il le fait déjà pour
+    le bloc EEC. Seule exception, le marqueur du scénario de référence, qui
+    est le même mot dans toutes les figures du COR et qu'on normalise.
+    """
+    if isinstance(valeur, float):
+        return f"{round(valeur, 4):g}"
+    if not isinstance(valeur, str) or not valeur.strip():
+        return None
+    plie = _sans_accents(valeur)
+    if plie in MARQUEURS:
+        return "reference" if MARQUEURS[plie] == "projete" else None
+    return plie
+
+
+def lire_sensibilite(grille: dict) -> dict[str, dict[str, dict[str, float]]]:
+    """Une figure de sensibilité : la dépense et le solde, variante par variante.
+
+    POURQUOI UN TROISIÈME LECTEUR. ``lire_bloc`` s'arrête au premier bloc de la
+    feuille et range les lignes sous ``observe``/``projete`` ; une figure de
+    sensibilité porte DEUX blocs — la dépense, puis le solde —, chacun avec son
+    propre en-tête d'années, et ses lignes ne se distinguent pas par un
+    marqueur temporel mais par une VARIANTE. Les deux rangements n'ont rien de
+    commun.
+
+    CE QUE LE LECTEUR REND. ``{grandeur: {variante: {année: part de PIB}}}``,
+    la grandeur valant ``depenses`` ou ``solde``. La ligne ``Obs`` est écartée :
+    elle est la même dans toutes les variantes, elle est déjà dans le compte
+    principal, et une observation n'appartient à aucun scénario.
+
+    CE QU'IL NE REND PAS : les RESSOURCES. Le COR ne les publie pas dans ces
+    figures — il y donne la dépense et le solde, et la ressource en est la
+    somme. Cette dérivation est le travail de ``verifier_donnees.py``, qui la
+    contrôle d'abord sur le scénario de référence, où les trois grandeurs sont
+    publiées séparément.
+    """
+    lignes = sorted({l for l, _ in grille})
+    entetes: dict[int, dict[int, int]] = {}
+    for ligne in lignes:
+        annees = {
+            c: int(v) for (l, c), v in grille.items()
+            if l == ligne and isinstance(v, float)
+            and PREMIERE_ANNEE_PLAUSIBLE <= v <= DERNIERE_ANNEE_PLAUSIBLE
+            and v == int(v)
+        }
+        if len(annees) >= 8:
+            entetes[ligne] = annees
+    if not entetes:
+        raise LookupError("aucune ligne d'années dans la figure de sensibilité")
+
+    # UN SEUL PASSAGE, ET LES EN-TÊTES SERVENT DE BORNES. Les deux blocs se
+    # suivent sans ligne vide entre eux : une boucle qui s'arrêterait à la
+    # première ligne sans valeur lirait l'en-tête du second bloc comme une
+    # donnée, puis son intitulé, et rangerait la dépense sous « solde ». La
+    # grandeur est donc portée par la ligne qui la nomme, et réécrite à chaque
+    # intitulé reconnu.
+    lu: dict[str, dict[str, dict[str, float]]] = {}
+    grandeur = ""
+    annees: dict[int, int] = {}
+    for ligne in lignes:
+        if ligne in entetes:
+            annees = entetes[ligne]
+            continue
+        if not annees:
+            continue
+        premiere = min(annees)
+        intitule = grille.get((ligne, premiere - 2))
+        if isinstance(intitule, str) and intitule.strip():
+            plie = _sans_accents(intitule)
+            grandeur = next(
+                (code for code, debut in GRANDEURS_SENSIBILITE
+                 if plie.startswith(debut)), "")
+        etiquette = _etiquette_variante(grille.get((ligne, premiere - 1)))
+        if not grandeur or not etiquette:
+            continue
+        valeurs = {
+            str(annee): grille[(ligne, c)] for c, annee in sorted(annees.items())
+            if isinstance(grille.get((ligne, c)), float)
+        }
+        if valeurs:
+            lu.setdefault(grandeur, {})[etiquette] = valeurs
+
+    manquantes = [code for code, _ in GRANDEURS_SENSIBILITE if code not in lu]
+    if manquantes:
+        raise LookupError(
+            "grandeurs absentes de la figure de sensibilité : "
+            + ", ".join(manquantes)
+        )
+    references = [code for code, variantes in lu.items() if "reference" not in variantes]
+    if references:
+        raise LookupError(
+            "figure de sensibilité sans son scénario de référence : "
+            + ", ".join(sorted(references))
+        )
+    return lu
+
+
+def sensibilites(adresses: list[str]) -> dict[str, dict[str, dict[str, dict[str, float]]]]:
+    """Les figures de sensibilité de ``SENSIBILITES``, cherchées par leur titre."""
+    trouves: dict[str, dict] = {}
+    for adresse in adresses:
+        if len(trouves) == len(SENSIBILITES):
+            break
+        try:
+            classeur = feuilles(_recuperer(adresse))
+        except (urllib.error.HTTPError, urllib.error.URLError, ValueError):
+            continue
+        for grille in classeur.values():
+            titre = grille.get((0, 0)) or grille.get((0, 1)) or ""
+            if not isinstance(titre, str):
+                continue
+            plie = _sans_accents(titre)
+            for cle, attendu in SENSIBILITES:
+                if cle not in trouves and attendu in plie:
+                    trouves[cle] = lire_sensibilite(grille)
+    manquantes = [cle for cle, _ in SENSIBILITES if cle not in trouves]
+    if manquantes:
+        raise LookupError(
+            "figures de sensibilité introuvables dans les classeurs du "
+            "rapport : " + ", ".join(manquantes)
+        )
+    return trouves
+
+
 def blocs(adresses: list[str]) -> dict[str, list[dict]]:
     """Cherche chaque figure par son titre, dans tous les classeurs de la page."""
     trouves: dict[str, list[dict]] = {}
@@ -481,6 +634,7 @@ def main() -> int:
         adresses = classeurs(page)
         lus = blocs(adresses)
         eec = bloc_eec(adresses)
+        sensibilite = sensibilites(adresses)
         ventilation = ventilations(pages_annuelles())
     except (urllib.error.HTTPError, urllib.error.URLError) as erreur:
         print(f"COR indisponible : {erreur}", file=sys.stderr)
@@ -513,6 +667,12 @@ def main() -> int:
         # productivité par variante : la seule publication française qui
         # chiffre ce qu'une convention comptable déplace. Voir lire_bloc_eec.
         "ressources_eec": eec,
+        # La dépense et le solde du MÊME compte, variante par variante, sur
+        # les deux dimensions que le COR fait varier séparément : la
+        # productivité et le chômage. La ressource n'y est pas publiée ; elle
+        # est la somme des deux, et verifier_donnees.py contrôle cette
+        # dérivation sur le scénario de référence avant de s'en servir.
+        "sensibilite": sensibilite,
         # En MILLIONS d'euros, contrairement au reste : c'est un contrôle de la
         # série des rapports à la CCSS, qui sont écrits dans cette unité.
         "ventilation_transferts": ventilation,
@@ -530,6 +690,9 @@ def main() -> int:
           f"projeté : {min(projete)}-{max(projete)}")
     print(f"Structure des ressources : {len(charge['structure'])} postes")
     print(f"Ventilation des transferts : {', '.join(sorted(ventilation)) or 'aucune'}")
+    for dimension, grandeurs in sorted(sensibilite.items()):
+        variantes = sorted(grandeurs["depenses"])
+        print(f"Sensibilité {dimension} : {', '.join(variantes)}")
     return 0
 
 

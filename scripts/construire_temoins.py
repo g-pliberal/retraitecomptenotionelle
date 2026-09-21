@@ -744,6 +744,15 @@ def _pages(contexte: Contexte) -> dict:
         # Et une année refusée : elle doit retomber sur l'année mesurée, des
         # deux côtés du portage, plutôt que lever quoi que ce soit.
         ("cout_cascade_hors_liste", "/cout", {"cascade": "1999"}),
+        # La page Coût sous une VARIANTE DE COMPTE, et c'est le seul témoin qui
+        # emprunte ce chemin. Depuis le 21 septembre 2026, le scénario demandé
+        # ne déplace plus seulement ce que le modèle calcule : il choisit aussi
+        # la colonne du COR que la section « solde » lit — dépense et ressource
+        # du système, sous la variante correspondante de ses figures de
+        # sensibilité. Sans ce témoin, les deux portages pouvaient diverger sur
+        # la moitié du bilan qui est empruntée, et rien ne l'aurait dit.
+        ("cout_variante_productivite", "/cout",
+         {"projection": "cor_productivite_haute"}),
         ("avantages_regles", "/avantages", REGLES_AUTRES),
         ("methode", "/methode", {}),
         ("risque", "/risque", {}),

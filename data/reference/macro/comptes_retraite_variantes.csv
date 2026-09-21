@@ -1,0 +1,406 @@
+# Le compte du système de retraite sous chaque variante du COR, en part du PIB
+# source_id: cor_comptes_systeme_retraite
+# unite: part du produit intérieur brut, en fraction
+# fiabilite:
+#   projetee (2026-2070) : figures de sensibilité du rapport annuel. Une
+#             variante est une projection de part en part ; aucune de ses
+#             années n'est une observation.
+#
+# CE QUE CE FICHIER RÉPARE
+# --------------------------
+# comptes_retraite.csv ne porte que la colonne « Sc. Ref ». Le dépôt lisait
+# donc le même compte quel que soit le scénario demandé : choisir la
+# variante haute de productivité déplaçait la dépense des systèmes
+# notionnels, qui est CALCULÉE, sans déplacer celle du droit en vigueur,
+# qui est EMPRUNTÉE. Le rapport des deux montait à juste titre — un compte
+# notionnel indexé sur la masse salariale profite moins de la croissance
+# qu'un droit indexé sur les prix — mais il était appliqué à un niveau gelé,
+# et comptait donc deux fois dans le même sens. La proposition perdait
+# 0,58 point de PIB en 2070 pour la seule raison qu'on avait demandé plus
+# de croissance.
+#
+# DEUX DIMENSIONS, QUE LE COR SÉPARE ET QUI NE SE DÉDUISENT PAS
+# --------------------------------------------------------------
+# Les variantes de PRODUCTIVITÉ tiennent toutes le chômage à 7 % ; les
+# variantes de CHÔMAGE tiennent toutes la productivité à 0,7 %. Une
+# croissance plus forte n'apporte pas moins de chômage dans l'exercice du
+# COR, et le dépôt ne le suppose pas davantage. Les noms de variantes sont
+# ceux de hypotheses_projection.yaml, qui porte aussi l'étiquette sous
+# laquelle chaque figure les écrit.
+#
+# LA RESSOURCE EST DÉRIVÉE, ET LA DÉRIVATION EST CONTRÔLÉE
+# ----------------------------------------------------------
+# Ces figures publient la DÉPENSE et le SOLDE, jamais la ressource, qui est
+# la somme des deux. La ligne de référence de chaque figure est confrontée
+# au compte principal avant qu'une seule valeur ne soit écrite : si elle le
+# redonne au millionième, la même arithmétique vaut pour ses autres lignes.
+# Sur le rapport de juin 2026, elle le redonne.
+#
+# CE QUE CE FICHIER NE PORTE PAS. Le taux de prélèvement, que le COR ne
+# publie que dans le scénario de référence (figure 2.9) : profil_taux garde
+# donc la forme de la référence sous toutes les variantes. Et la STRUCTURE
+# des ressources, publiée elle aussi pour la seule référence.
+#
+# Ne pas modifier ces valeurs à la main : elles seraient écrasées
+# au prochain scripts/verifier_donnees.py --appliquer.
+annee,poste,variante,part_pib,fiabilite
+2026,depenses,cor_chomage_bas,0.141262,projetee
+2026,depenses,cor_chomage_haut,0.141262,projetee
+2026,depenses,cor_productivite_basse,0.141262,projetee
+2026,depenses,cor_productivite_haute,0.141262,projetee
+2026,ressources,cor_chomage_bas,0.139645,projetee
+2026,ressources,cor_chomage_haut,0.139643,projetee
+2026,ressources,cor_productivite_basse,0.139645,projetee
+2026,ressources,cor_productivite_haute,0.139645,projetee
+2027,depenses,cor_chomage_bas,0.142247,projetee
+2027,depenses,cor_chomage_haut,0.142247,projetee
+2027,depenses,cor_productivite_basse,0.142247,projetee
+2027,depenses,cor_productivite_haute,0.142247,projetee
+2027,ressources,cor_chomage_bas,0.140007,projetee
+2027,ressources,cor_chomage_haut,0.140004,projetee
+2027,ressources,cor_productivite_basse,0.140007,projetee
+2027,ressources,cor_productivite_haute,0.140007,projetee
+2028,depenses,cor_chomage_bas,0.142291,projetee
+2028,depenses,cor_chomage_haut,0.142291,projetee
+2028,depenses,cor_productivite_basse,0.142294,projetee
+2028,depenses,cor_productivite_haute,0.142294,projetee
+2028,ressources,cor_chomage_bas,0.139896,projetee
+2028,ressources,cor_chomage_haut,0.139899,projetee
+2028,ressources,cor_productivite_basse,0.139895,projetee
+2028,ressources,cor_productivite_haute,0.139894,projetee
+2029,depenses,cor_chomage_bas,0.141016,projetee
+2029,depenses,cor_chomage_haut,0.141016,projetee
+2029,depenses,cor_productivite_basse,0.141018,projetee
+2029,depenses,cor_productivite_haute,0.141018,projetee
+2029,ressources,cor_chomage_bas,0.139296,projetee
+2029,ressources,cor_chomage_haut,0.139296,projetee
+2029,ressources,cor_productivite_basse,0.139294,projetee
+2029,ressources,cor_productivite_haute,0.139293,projetee
+2030,depenses,cor_chomage_bas,0.140464,projetee
+2030,depenses,cor_chomage_haut,0.141160,projetee
+2030,depenses,cor_productivite_basse,0.140788,projetee
+2030,depenses,cor_productivite_haute,0.140704,projetee
+2030,ressources,cor_chomage_bas,0.138479,projetee
+2030,ressources,cor_chomage_haut,0.139128,projetee
+2030,ressources,cor_productivite_basse,0.138787,projetee
+2030,ressources,cor_productivite_haute,0.138737,projetee
+2031,depenses,cor_chomage_bas,0.139767,projetee
+2031,depenses,cor_chomage_haut,0.141143,projetee
+2031,depenses,cor_productivite_basse,0.140527,projetee
+2031,depenses,cor_productivite_haute,0.140075,projetee
+2031,ressources,cor_chomage_bas,0.137761,projetee
+2031,ressources,cor_chomage_haut,0.138298,projetee
+2031,ressources,cor_productivite_basse,0.137987,projetee
+2031,ressources,cor_productivite_haute,0.138102,projetee
+2032,depenses,cor_chomage_bas,0.139170,projetee
+2032,depenses,cor_chomage_haut,0.141240,projetee
+2032,depenses,cor_productivite_basse,0.140274,projetee
+2032,depenses,cor_productivite_haute,0.139717,projetee
+2032,ressources,cor_chomage_bas,0.137210,projetee
+2032,ressources,cor_chomage_haut,0.137827,projetee
+2032,ressources,cor_productivite_basse,0.137541,projetee
+2032,ressources,cor_productivite_haute,0.137620,projetee
+2033,depenses,cor_chomage_bas,0.138503,projetee
+2033,depenses,cor_chomage_haut,0.141244,projetee
+2033,depenses,cor_productivite_basse,0.139991,projetee
+2033,depenses,cor_productivite_haute,0.139158,projetee
+2033,ressources,cor_chomage_bas,0.136638,projetee
+2033,ressources,cor_chomage_haut,0.137381,projetee
+2033,ressources,cor_productivite_basse,0.137105,projetee
+2033,ressources,cor_productivite_haute,0.137149,projetee
+2034,depenses,cor_chomage_bas,0.138389,projetee
+2034,depenses,cor_chomage_haut,0.141829,projetee
+2034,depenses,cor_productivite_basse,0.140323,projetee
+2034,depenses,cor_productivite_haute,0.139222,projetee
+2034,ressources,cor_chomage_bas,0.136052,projetee
+2034,ressources,cor_chomage_haut,0.136948,projetee
+2034,ressources,cor_productivite_basse,0.136556,projetee
+2034,ressources,cor_productivite_haute,0.136517,projetee
+2035,depenses,cor_chomage_bas,0.138279,projetee
+2035,depenses,cor_chomage_haut,0.142380,projetee
+2035,depenses,cor_productivite_basse,0.140536,projetee
+2035,depenses,cor_productivite_haute,0.139124,projetee
+2035,ressources,cor_chomage_bas,0.135715,projetee
+2035,ressources,cor_chomage_haut,0.136735,projetee
+2035,ressources,cor_productivite_basse,0.136239,projetee
+2035,ressources,cor_productivite_haute,0.136127,projetee
+2036,depenses,cor_chomage_bas,0.138128,projetee
+2036,depenses,cor_chomage_haut,0.142920,projetee
+2036,depenses,cor_productivite_basse,0.140846,projetee
+2036,depenses,cor_productivite_haute,0.139025,projetee
+2036,ressources,cor_chomage_bas,0.135328,projetee
+2036,ressources,cor_chomage_haut,0.136510,projetee
+2036,ressources,cor_productivite_basse,0.135973,projetee
+2036,ressources,cor_productivite_haute,0.135784,projetee
+2037,depenses,cor_chomage_bas,0.138103,projetee
+2037,depenses,cor_chomage_haut,0.143609,projetee
+2037,depenses,cor_productivite_basse,0.141268,projetee
+2037,depenses,cor_productivite_haute,0.139019,projetee
+2037,ressources,cor_chomage_bas,0.134911,projetee
+2037,ressources,cor_chomage_haut,0.136256,projetee
+2037,ressources,cor_productivite_basse,0.135683,projetee
+2037,ressources,cor_productivite_haute,0.135411,projetee
+2038,depenses,cor_chomage_bas,0.137941,projetee
+2038,depenses,cor_chomage_haut,0.144119,projetee
+2038,depenses,cor_productivite_basse,0.141517,projetee
+2038,depenses,cor_productivite_haute,0.138837,projetee
+2038,ressources,cor_chomage_bas,0.134491,projetee
+2038,ressources,cor_chomage_haut,0.135993,projetee
+2038,ressources,cor_productivite_basse,0.135392,projetee
+2038,ressources,cor_productivite_haute,0.134983,projetee
+2039,depenses,cor_chomage_bas,0.137737,projetee
+2039,depenses,cor_chomage_haut,0.144602,projetee
+2039,depenses,cor_productivite_basse,0.141784,projetee
+2039,depenses,cor_productivite_haute,0.138647,projetee
+2039,ressources,cor_chomage_bas,0.134086,projetee
+2039,ressources,cor_chomage_haut,0.135693,projetee
+2039,ressources,cor_productivite_basse,0.135099,projetee
+2039,ressources,cor_productivite_haute,0.134524,projetee
+2040,depenses,cor_chomage_bas,0.137490,projetee
+2040,depenses,cor_chomage_haut,0.145037,projetee
+2040,depenses,cor_productivite_basse,0.142006,projetee
+2040,depenses,cor_productivite_haute,0.138328,projetee
+2040,ressources,cor_chomage_bas,0.133679,projetee
+2040,ressources,cor_chomage_haut,0.135422,projetee
+2040,ressources,cor_productivite_basse,0.134832,projetee
+2040,ressources,cor_productivite_haute,0.134090,projetee
+2041,depenses,cor_chomage_bas,0.137596,projetee
+2041,depenses,cor_chomage_haut,0.145144,projetee
+2041,depenses,cor_productivite_basse,0.142308,projetee
+2041,depenses,cor_productivite_haute,0.138226,projetee
+2041,ressources,cor_chomage_bas,0.133368,projetee
+2041,ressources,cor_chomage_haut,0.135080,projetee
+2041,ressources,cor_productivite_basse,0.134582,projetee
+2041,ressources,cor_productivite_haute,0.133698,projetee
+2042,depenses,cor_chomage_bas,0.137733,projetee
+2042,depenses,cor_chomage_haut,0.145266,projetee
+2042,depenses,cor_productivite_basse,0.142667,projetee
+2042,depenses,cor_productivite_haute,0.138347,projetee
+2042,ressources,cor_chomage_bas,0.133031,projetee
+2042,ressources,cor_chomage_haut,0.134736,projetee
+2042,ressources,cor_productivite_basse,0.134317,projetee
+2042,ressources,cor_productivite_haute,0.133315,projetee
+2043,depenses,cor_chomage_bas,0.138026,projetee
+2043,depenses,cor_chomage_haut,0.145531,projetee
+2043,depenses,cor_productivite_basse,0.143235,projetee
+2043,depenses,cor_productivite_haute,0.138385,projetee
+2043,ressources,cor_chomage_bas,0.132767,projetee
+2043,ressources,cor_chomage_haut,0.134428,projetee
+2043,ressources,cor_productivite_basse,0.134087,projetee
+2043,ressources,cor_productivite_haute,0.132969,projetee
+2044,depenses,cor_chomage_bas,0.138381,projetee
+2044,depenses,cor_chomage_haut,0.145878,projetee
+2044,depenses,cor_productivite_basse,0.143837,projetee
+2044,depenses,cor_productivite_haute,0.138514,projetee
+2044,ressources,cor_chomage_bas,0.132477,projetee
+2044,ressources,cor_chomage_haut,0.134109,projetee
+2044,ressources,cor_productivite_basse,0.133838,projetee
+2044,ressources,cor_productivite_haute,0.132625,projetee
+2045,depenses,cor_chomage_bas,0.138712,projetee
+2045,depenses,cor_chomage_haut,0.146180,projetee
+2045,depenses,cor_productivite_basse,0.144492,projetee
+2045,depenses,cor_productivite_haute,0.138581,projetee
+2045,ressources,cor_chomage_bas,0.132180,projetee
+2045,ressources,cor_chomage_haut,0.133808,projetee
+2045,ressources,cor_productivite_basse,0.133612,projetee
+2045,ressources,cor_productivite_haute,0.132303,projetee
+2046,depenses,cor_chomage_bas,0.139032,projetee
+2046,depenses,cor_chomage_haut,0.146505,projetee
+2046,depenses,cor_productivite_basse,0.145058,projetee
+2046,depenses,cor_productivite_haute,0.138648,projetee
+2046,ressources,cor_chomage_bas,0.131919,projetee
+2046,ressources,cor_chomage_haut,0.133505,projetee
+2046,ressources,cor_productivite_basse,0.133380,projetee
+2046,ressources,cor_productivite_haute,0.131970,projetee
+2047,depenses,cor_chomage_bas,0.139304,projetee
+2047,depenses,cor_chomage_haut,0.146757,projetee
+2047,depenses,cor_productivite_basse,0.145606,projetee
+2047,depenses,cor_productivite_haute,0.138679,projetee
+2047,ressources,cor_chomage_bas,0.131610,projetee
+2047,ressources,cor_chomage_haut,0.133199,projetee
+2047,ressources,cor_productivite_basse,0.133141,projetee
+2047,ressources,cor_productivite_haute,0.131638,projetee
+2048,depenses,cor_chomage_bas,0.139729,projetee
+2048,depenses,cor_chomage_haut,0.147169,projetee
+2048,depenses,cor_productivite_basse,0.146273,projetee
+2048,depenses,cor_productivite_haute,0.138848,projetee
+2048,ressources,cor_chomage_bas,0.131373,projetee
+2048,ressources,cor_chomage_haut,0.132934,projetee
+2048,ressources,cor_productivite_basse,0.132938,projetee
+2048,ressources,cor_productivite_haute,0.131344,projetee
+2049,depenses,cor_chomage_bas,0.140241,projetee
+2049,depenses,cor_chomage_haut,0.147673,projetee
+2049,depenses,cor_productivite_basse,0.147004,projetee
+2049,depenses,cor_productivite_haute,0.139110,projetee
+2049,ressources,cor_chomage_bas,0.131148,projetee
+2049,ressources,cor_chomage_haut,0.132675,projetee
+2049,ressources,cor_productivite_basse,0.132733,projetee
+2049,ressources,cor_productivite_haute,0.131062,projetee
+2050,depenses,cor_chomage_bas,0.140725,projetee
+2050,depenses,cor_chomage_haut,0.148162,projetee
+2050,depenses,cor_productivite_basse,0.147734,projetee
+2050,depenses,cor_productivite_haute,0.139387,projetee
+2050,ressources,cor_chomage_bas,0.130895,projetee
+2050,ressources,cor_chomage_haut,0.132424,projetee
+2050,ressources,cor_productivite_basse,0.132541,projetee
+2050,ressources,cor_productivite_haute,0.130799,projetee
+2051,depenses,cor_chomage_bas,0.141230,projetee
+2051,depenses,cor_chomage_haut,0.148662,projetee
+2051,depenses,cor_productivite_basse,0.148452,projetee
+2051,depenses,cor_productivite_haute,0.139678,projetee
+2051,ressources,cor_chomage_bas,0.130694,projetee
+2051,ressources,cor_chomage_haut,0.132198,projetee
+2051,ressources,cor_productivite_basse,0.132361,projetee
+2051,ressources,cor_productivite_haute,0.130557,projetee
+2052,depenses,cor_chomage_bas,0.141669,projetee
+2052,depenses,cor_chomage_haut,0.149069,projetee
+2052,depenses,cor_productivite_basse,0.149202,projetee
+2052,depenses,cor_productivite_haute,0.139890,projetee
+2052,ressources,cor_chomage_bas,0.130470,projetee
+2052,ressources,cor_chomage_haut,0.131947,projetee
+2052,ressources,cor_productivite_basse,0.132166,projetee
+2052,ressources,cor_productivite_haute,0.130292,projetee
+2053,depenses,cor_chomage_bas,0.142147,projetee
+2053,depenses,cor_chomage_haut,0.149551,projetee
+2053,depenses,cor_productivite_basse,0.149902,projetee
+2053,depenses,cor_productivite_haute,0.140133,projetee
+2053,ressources,cor_chomage_bas,0.130268,projetee
+2053,ressources,cor_chomage_haut,0.131749,projetee
+2053,ressources,cor_productivite_basse,0.132012,projetee
+2053,ressources,cor_productivite_haute,0.130072,projetee
+2054,depenses,cor_chomage_bas,0.142589,projetee
+2054,depenses,cor_chomage_haut,0.149966,projetee
+2054,depenses,cor_productivite_basse,0.150609,projetee
+2054,depenses,cor_productivite_haute,0.140366,projetee
+2054,ressources,cor_chomage_bas,0.130110,projetee
+2054,ressources,cor_chomage_haut,0.131553,projetee
+2054,ressources,cor_productivite_basse,0.131865,projetee
+2054,ressources,cor_productivite_haute,0.129862,projetee
+2055,depenses,cor_chomage_bas,0.142936,projetee
+2055,depenses,cor_chomage_haut,0.150272,projetee
+2055,depenses,cor_productivite_basse,0.151193,projetee
+2055,depenses,cor_productivite_haute,0.140522,projetee
+2055,ressources,cor_chomage_bas,0.129912,projetee
+2055,ressources,cor_chomage_haut,0.131361,projetee
+2055,ressources,cor_productivite_basse,0.131717,projetee
+2055,ressources,cor_productivite_haute,0.129665,projetee
+2056,depenses,cor_chomage_bas,0.143271,projetee
+2056,depenses,cor_chomage_haut,0.150601,projetee
+2056,depenses,cor_productivite_basse,0.151767,projetee
+2056,depenses,cor_productivite_haute,0.140681,projetee
+2056,ressources,cor_chomage_bas,0.129753,projetee
+2056,ressources,cor_chomage_haut,0.131185,projetee
+2056,ressources,cor_productivite_basse,0.131582,projetee
+2056,ressources,cor_productivite_haute,0.129470,projetee
+2057,depenses,cor_chomage_bas,0.143582,projetee
+2057,depenses,cor_chomage_haut,0.150873,projetee
+2057,depenses,cor_productivite_basse,0.152291,projetee
+2057,depenses,cor_productivite_haute,0.140793,projetee
+2057,ressources,cor_chomage_bas,0.129578,projetee
+2057,ressources,cor_chomage_haut,0.130998,projetee
+2057,ressources,cor_productivite_basse,0.131444,projetee
+2057,ressources,cor_productivite_haute,0.129283,projetee
+2058,depenses,cor_chomage_bas,0.143892,projetee
+2058,depenses,cor_chomage_haut,0.151148,projetee
+2058,depenses,cor_productivite_basse,0.152794,projetee
+2058,depenses,cor_productivite_haute,0.140892,projetee
+2058,ressources,cor_chomage_bas,0.129472,projetee
+2058,ressources,cor_chomage_haut,0.130843,projetee
+2058,ressources,cor_productivite_basse,0.131339,projetee
+2058,ressources,cor_productivite_haute,0.129125,projetee
+2059,depenses,cor_chomage_bas,0.144135,projetee
+2059,depenses,cor_chomage_haut,0.151344,projetee
+2059,depenses,cor_productivite_basse,0.153296,projetee
+2059,depenses,cor_productivite_haute,0.140934,projetee
+2059,ressources,cor_chomage_bas,0.129273,projetee
+2059,ressources,cor_chomage_haut,0.130672,projetee
+2059,ressources,cor_productivite_basse,0.131200,projetee
+2059,ressources,cor_productivite_haute,0.128959,projetee
+2060,depenses,cor_chomage_bas,0.144486,projetee
+2060,depenses,cor_chomage_haut,0.151657,projetee
+2060,depenses,cor_productivite_basse,0.153833,projetee
+2060,depenses,cor_productivite_haute,0.141076,projetee
+2060,ressources,cor_chomage_bas,0.129155,projetee
+2060,ressources,cor_chomage_haut,0.130531,projetee
+2060,ressources,cor_productivite_basse,0.131091,projetee
+2060,ressources,cor_productivite_haute,0.128815,projetee
+2061,depenses,cor_chomage_bas,0.144918,projetee
+2061,depenses,cor_chomage_haut,0.152076,projetee
+2061,depenses,cor_productivite_basse,0.154455,projetee
+2061,depenses,cor_productivite_haute,0.141310,projetee
+2061,ressources,cor_chomage_bas,0.129048,projetee
+2061,ressources,cor_chomage_haut,0.130424,projetee
+2061,ressources,cor_productivite_basse,0.131019,projetee
+2061,ressources,cor_productivite_haute,0.128699,projetee
+2062,depenses,cor_chomage_bas,0.145359,projetee
+2062,depenses,cor_chomage_haut,0.152458,projetee
+2062,depenses,cor_productivite_basse,0.155104,projetee
+2062,depenses,cor_productivite_haute,0.141572,projetee
+2062,ressources,cor_chomage_bas,0.128983,projetee
+2062,ressources,cor_chomage_haut,0.130323,projetee
+2062,ressources,cor_productivite_basse,0.130937,projetee
+2062,ressources,cor_productivite_haute,0.128584,projetee
+2063,depenses,cor_chomage_bas,0.145907,projetee
+2063,depenses,cor_chomage_haut,0.152940,projetee
+2063,depenses,cor_productivite_basse,0.155859,projetee
+2063,depenses,cor_productivite_haute,0.141923,projetee
+2063,ressources,cor_chomage_bas,0.128891,projetee
+2063,ressources,cor_chomage_haut,0.130233,projetee
+2063,ressources,cor_productivite_basse,0.130873,projetee
+2063,ressources,cor_productivite_haute,0.128482,projetee
+2064,depenses,cor_chomage_bas,0.146676,projetee
+2064,depenses,cor_chomage_haut,0.153678,projetee
+2064,depenses,cor_productivite_basse,0.156836,projetee
+2064,depenses,cor_productivite_haute,0.142481,projetee
+2064,ressources,cor_chomage_bas,0.128832,projetee
+2064,ressources,cor_chomage_haut,0.130165,projetee
+2064,ressources,cor_productivite_basse,0.130833,projetee
+2064,ressources,cor_productivite_haute,0.128405,projetee
+2065,depenses,cor_chomage_bas,0.147522,projetee
+2065,depenses,cor_chomage_haut,0.154468,projetee
+2065,depenses,cor_productivite_basse,0.157776,projetee
+2065,depenses,cor_productivite_haute,0.143100,projetee
+2065,ressources,cor_chomage_bas,0.128805,projetee
+2065,ressources,cor_chomage_haut,0.130135,projetee
+2065,ressources,cor_productivite_basse,0.130831,projetee
+2065,ressources,cor_productivite_haute,0.128348,projetee
+2066,depenses,cor_chomage_bas,0.148255,projetee
+2066,depenses,cor_chomage_haut,0.155152,projetee
+2066,depenses,cor_productivite_basse,0.158733,projetee
+2066,depenses,cor_productivite_haute,0.143597,projetee
+2066,ressources,cor_chomage_bas,0.128751,projetee
+2066,ressources,cor_chomage_haut,0.130079,projetee
+2066,ressources,cor_productivite_basse,0.130786,projetee
+2066,ressources,cor_productivite_haute,0.128275,projetee
+2067,depenses,cor_chomage_bas,0.148852,projetee
+2067,depenses,cor_chomage_haut,0.155689,projetee
+2067,depenses,cor_productivite_basse,0.159517,projetee
+2067,depenses,cor_productivite_haute,0.144010,projetee
+2067,ressources,cor_chomage_bas,0.128733,projetee
+2067,ressources,cor_chomage_haut,0.130043,projetee
+2067,ressources,cor_productivite_basse,0.130769,projetee
+2067,ressources,cor_productivite_haute,0.128220,projetee
+2068,depenses,cor_chomage_bas,0.149417,projetee
+2068,depenses,cor_chomage_haut,0.156201,projetee
+2068,depenses,cor_productivite_basse,0.160264,projetee
+2068,depenses,cor_productivite_haute,0.144410,projetee
+2068,ressources,cor_chomage_bas,0.128715,projetee
+2068,ressources,cor_chomage_haut,0.130015,projetee
+2068,ressources,cor_productivite_basse,0.130762,projetee
+2068,ressources,cor_productivite_haute,0.128186,projetee
+2069,depenses,cor_chomage_bas,0.149887,projetee
+2069,depenses,cor_chomage_haut,0.156641,projetee
+2069,depenses,cor_productivite_basse,0.160881,projetee
+2069,depenses,cor_productivite_haute,0.144739,projetee
+2069,ressources,cor_chomage_bas,0.128678,projetee
+2069,ressources,cor_chomage_haut,0.129980,projetee
+2069,ressources,cor_productivite_basse,0.130741,projetee
+2069,ressources,cor_productivite_haute,0.128151,projetee
+2070,depenses,cor_chomage_bas,0.150236,projetee
+2070,depenses,cor_chomage_haut,0.156908,projetee
+2070,depenses,cor_productivite_basse,0.161381,projetee
+2070,depenses,cor_productivite_haute,0.144933,projetee
+2070,ressources,cor_chomage_bas,0.128608,projetee
+2070,ressources,cor_chomage_haut,0.129918,projetee
+2070,ressources,cor_productivite_basse,0.130680,projetee
+2070,ressources,cor_productivite_haute,0.128078,projetee

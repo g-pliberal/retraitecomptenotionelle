@@ -429,6 +429,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         # projetées : un même fichier, deux niveaux, comme la pyramide des âges.
         "comptes_retraite": "macro/comptes_retraite.csv",
         "comptes_retraite_projetes": "macro/comptes_retraite.csv",
+        "comptes_retraite_variantes": "macro/comptes_retraite_variantes.csv",
         "structure_ressources_retraite": "macro/structure_ressources_retraite.csv",
         # Le taux de prélèvement du COR : observé et projeté dans le même
         # fichier, comme les deux colonnes du compte.
