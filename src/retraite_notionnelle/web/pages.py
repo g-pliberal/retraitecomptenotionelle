@@ -8370,6 +8370,17 @@ système actuel, est l'indexation sur les prix : elle fait décrocher les pensio
 des salaires, génération après génération. Les comptes notionnels font la même
 chose autrement, par le diviseur d'espérance de vie, mais ils le font
 <em>explicitement</em>, et à l'acquisition plutôt qu'au versement.</p>
+<p class="discret">Comme dans les deux tableaux du dessus, la colonne de la
+proposition ne porte que ses <strong>pensions contributives</strong> : sa
+garantie vieillesse y ajoute
+{g.pourcentage(horizon.part_pib(COMPOSANTE_GARANTIE), decimales=1)} du PIB en
+{avenir.derniere_annee}, ce qui porte son total à
+{g.pourcentage(horizon.part_pib("notionnel_liberal")
+               + horizon.part_pib(COMPOSANTE_GARANTIE), decimales=1)}, ou
+{g.pourcentage(horizon.part_pib("notionnel_liberal")
+               + horizon.part_pib(COMPOSANTE_GARANTIE)
+               - horizon.part_pib_reprises(), decimales=1)} net des reprises
+sur succession.</p>
 """, identifiant="cout-scenarios")
 
 
@@ -9466,8 +9477,8 @@ ses chiffres sont redits, ligne par ligne, dans le tableau replié dessous.</p>
 def _cout_detail_garantie(contexte: Contexte) -> str:
     """Ce que la garantie vieillesse coûte, lue sur la vraie distribution.
 
-    La trajectoire de la page la porte déjà : c'est la ligne « dont garantie »
-    des deux tableaux. Ce dépliant dit d'où elle vient — la distribution des
+    La trajectoire de la page la porte déjà : c'est la ligne « s'ajoute au
+    système 4 » des deux tableaux. Ce dépliant dit d'où elle vient — la distribution des
     pensions de l'EIR, déplacée année par année par la grille —, ce qu'elle
     coûterait à pensions inchangées, et ce qu'elle REMPLACE : quatre minima
     que l'impôt et les caisses paient déjà, dont le premier est réclamé par la
@@ -9520,8 +9531,8 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
         distribution, effectif_retraites,
         base.garantie_vieillesse_mensuelle * vers_enquete, facteur)
 
-    # La trajectoire, à quelques dates : ce que la ligne « dont garantie »
-    # des tableaux du haut contient, et pourquoi elle décroît.
+    # La trajectoire, à quelques dates : ce que la ligne « s'ajoute au
+    # système 4 » des tableaux du haut contient, et pourquoi elle décroît.
     derniere = contexte.depenses().derniere_annee
     etapes = []
     for millesime_etape in (millesime, derniere, 2030, 2050, cout.avenir.derniere_annee):
@@ -9719,7 +9730,7 @@ comme l'ASPA, et le programme retient l'hypothèse que la DREES mesure sur
 celle-ci : une personne seule éligible sur deux ne la réclame pas, la crainte
 de la reprise sur succession étant le premier motif donné. Une avance reprise
 dès le premier euro ne se réclamera pas davantage. Les bénéficiaires et les
-coûts de ce dépliant, la ligne « dont garantie » des tableaux du haut et le
+coûts de ce dépliant, la ligne « s'ajoute au système 4 » des tableaux du haut et le
 tableau poste par poste comptent donc {g.pourcentage(taux, decimales=0)} des ayants droit ; la part des
 retraités sous le plancher, elle, est donnée entière. Le paramètre
 <code>taux_recours_garantie</code> porte cette hypothèse, et un rend le recours
@@ -9786,7 +9797,7 @@ millions d'euros en 2024 (143,9 en 2023, avant le relèvement du seuil), deux
 pour cent de ce qu'elle verse. La garantie touche une population bien plus
 large, et souvent propriétaire : la trajectoire suit ces avances et ce que
 les successions en rendent, au taux de couverture du réglage, qui est une
-hypothèse et non une donnée. La ligne « dont garantie » reste
+hypothèse et non une donnée. La ligne « s'ajoute au système 4 » reste
 <strong>brute, avant reprise</strong> ; les lignes « dont reprises » et
 « garantie nette » disent le reste.</div>
 

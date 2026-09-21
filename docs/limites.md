@@ -4956,18 +4956,23 @@ interrégimes de retraités de la DREES (fin 2020, tranches de cent euros), à
 tous les retraités et non aux seuls 65 ans et plus. Quatre chiffres, parce que
 deux questions et deux planchers :
 
-| Assiette | Plancher | Retraités concernés | Coût annuel, euros de 2026 |
-|---|---|---|---|
-| Pensions de 2020 | 800 € | 22,8 %, soit 3,8 M | **18,4 Md €** |
-| Pensions de 2020 | 1 050 € | 32,7 %, soit 5,5 M | **32,2 Md €** |
-| Pensions du scénario 6 en 2020 | 800 € | 40,3 %, soit 6,7 M | **30,0 Md €** |
-| Pensions du scénario 6 en 2020 | 1 050 € | 54,7 %, soit 9,1 M | **53,7 Md €** |
+| Assiette | Plancher | Sous le plancher | Bénéficiaires | Coût annuel, euros de 2026 |
+|---|---|---|---|---|
+| Pensions de 2020 | 800 € | 22,8 %, soit 3,8 M | 1,9 M | **9,2 Md €** |
+| Pensions de 2020 | 1 050 € | 32,7 %, soit 5,5 M | 2,7 M | **16,1 Md €** |
+| Pensions du scénario 6 en 2020 | 800 € | 42,7 %, soit 7,1 M | 3,6 M | **15,9 Md €** |
+| Pensions du scénario 6 en 2020 | 1 050 € | 58,0 %, soit 9,7 M | 4,8 M | **28,5 Md €** |
 
-*Les deux dernières lignes disaient 35,9 et 64,2 milliards jusqu'au 20
-septembre 2026 : la page déplaçait la distribution du rapport contributif du
-scénario 6 MOINS celui de la garantie, une soustraction juste tant que la
-garantie était dans la masse contributive et fausse depuis qu'elle l'a quittée,
-la veille. Le facteur est désormais celui de la trajectoire, 0,64.*
+*Deux colonnes, parce que deux populations : tous ceux que leur pension met
+sous le plancher, et ceux qui réclament — un ayant droit sur deux, le recours
+que la DREES mesure sur l'ASPA. Le coût est celui des seconds, comme partout
+ailleurs sur la page. Les quatre lignes ont donc DOUBLÉ jusqu'au 20 septembre
+2026, où le recours est entré dans le calcul ; les deux dernières disaient en
+outre 35,9 et 64,2 milliards jusqu'à ce jour-là, la page déplaçant alors la
+distribution du rapport contributif du scénario 6 MOINS celui de la garantie —
+une soustraction juste tant que la garantie était dans la masse contributive et
+fausse depuis qu'elle l'a quittée, la veille. Le facteur est désormais celui de
+la trajectoire, 0,61 à la date de l'enquête.*
 
 **Ce qu'elle remplace, et ce que l'impôt paierait en plus.** La garantie est
 le SEUL plancher du scénario 6 : elle succède à l'ASPA, et le minimum
@@ -4976,9 +4981,9 @@ de référence disparaissent avec elle. En 2024, ces quatre minima coûtent
 7,8 milliards — 4,94 de minimum vieillesse lus dans les comptes de la
 protection sociale, 2,18 de minimum contributif et 0,72 de minimum garanti
 calculés sur la grille, qui n'est pas une population et les sous-estime, et
-une pension majorée de référence non chiffrée — contre 19,5 milliards de
+une pension majorée de référence non chiffrée — contre 20,7 milliards de
 garantie aux pensions du scénario 6 la même année, à un ayant droit sur deux :
-**11,7 milliards de plus pour l'impôt**, borne haute puisque le total remplacé
+**12,9 milliards de plus pour l'impôt**, borne haute puisque le total remplacé
 est une borne basse. *Le 20 septembre 2026, le minimum garanti est sorti de ce
 tableau au motif que les régimes de la fonction publique le servent dans leur
 dépense de pensions, et il y a été remis le même jour : le programme le
@@ -5024,7 +5029,7 @@ toujours pas, et qui vont en sens inverse l'une de l'autre : les femmes sous
 le plancher vivent souvent dans un ménage moins pauvre que leur pension — le
 calcul le sait pour leur espérance de vie, non pour leur patrimoine —, et deux
 concubins que le recensement compte en couple ne se succèdent pas l'un à
-l'autre. La ligne « dont garantie » reste
+l'autre. La ligne « s'ajoute au système 4 » reste
 brute ; les lignes « dont reprises » et « garantie nette » disent le reste
 (action 47 de la feuille de route).
 
