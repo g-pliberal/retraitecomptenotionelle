@@ -1309,6 +1309,16 @@ affirmations:
     etat: verifiee
     controle: cascade_ne_porte_que_la_depense
 
+  - id: cout.planchers_encadrent
+    page: /cout
+    extrait: "ces deux lignes encadrent le coût sans le donner"
+    porte: >-
+      le plancher d'une population est entre les deux planchers d'une
+      personne : la trajectoire mélange les deux dans la proportion que le
+      recensement mesure, et son coût tombe entre les deux lignes du tableau
+    etat: verifiee
+    controle: planchers_encadrent_le_cout
+
   - id: cout.deplacement_uniforme_borne_basse
     page: /cout
     extrait: >-

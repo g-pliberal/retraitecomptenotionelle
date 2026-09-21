@@ -180,7 +180,10 @@ def cout_garantie_par_sexe(femmes: DistributionPensions,
                            hommes: DistributionPensions,
                            part_femmes: float, effectif_total: float,
                            plancher_mensuel: float, facteur: float,
-                           rapport: float) -> CoutGarantie:
+                           rapport: float,
+                           plancher_majore: float | None = None,
+                           part_seule: dict[str, float] | None = None,
+                           ) -> CoutGarantie:
     """Le barème appliqué aux deux sexes à part, chacun de son facteur.
 
     ``rapport`` vaut un pour la convention en vigueur, et le résultat redonne
@@ -190,6 +193,17 @@ def cout_garantie_par_sexe(femmes: DistributionPensions,
     davantage, ce qui fait passer plus de monde sous le plancher : le coût de
     la convention uniforme est une borne basse, et c'est ce que cette
     fonction chiffre.
+
+    DEUX PLANCHERS, ET C'EST UNE POPULATION QU'ON CHIFFRE. La garantie vaut
+    800 € par personne, plus 250 € à qui vit seul : le plancher d'un individu
+    dépend d'un fait, sa situation de foyer, et celui d'une POPULATION dépend
+    donc de la répartition de ce fait. ``plancher_majore`` et ``part_seule``
+    portent cette répartition, sexe par sexe — les femmes vivent seules bien
+    plus souvent, et elles sont aussi bien plus souvent sous le plancher, si
+    bien que les deux se composent et qu'un partage global les manquerait.
+    Sans eux, le plancher unique s'applique à tout le monde : c'est la
+    convention d'avant le 21 septembre 2026, qui servait le plancher majoré à
+    la population entière et surestimait le coût de près d'un quart.
     """
     facteur_femmes, facteur_hommes = facteurs_par_sexe(
         pension_moyenne(femmes), pension_moyenne(hommes),
@@ -198,15 +212,25 @@ def cout_garantie_par_sexe(femmes: DistributionPensions,
     part = 0.0
     manque_mensuel = 0.0
     beneficiaires = 0.0
-    for distribution, poids, facteur_sexe in (
-        (femmes, part_femmes, facteur_femmes),
-        (hommes, 1.0 - part_femmes, facteur_hommes),
+    for sexe, distribution, poids, facteur_sexe in (
+        ("F", femmes, part_femmes, facteur_femmes),
+        ("H", hommes, 1.0 - part_femmes, facteur_hommes),
     ):
-        chiffre = cout_garantie(distribution, effectif_total * poids,
-                                plancher_mensuel, facteur_sexe)
-        part += poids * chiffre.part_beneficiaires
-        beneficiaires += chiffre.beneficiaires
-        manque_mensuel += poids * chiffre.complement_moyen_mensuel * chiffre.part_beneficiaires
+        seule = 0.0 if part_seule is None or plancher_majore is None else part_seule[sexe]
+        for plancher, poids_plancher in (
+            (plancher_mensuel, 1.0 - seule),
+            (plancher_majore if plancher_majore is not None else plancher_mensuel, seule),
+        ):
+            if poids_plancher <= 0.0:
+                continue
+            chiffre = cout_garantie(distribution,
+                                    effectif_total * poids * poids_plancher,
+                                    plancher, facteur_sexe)
+            part += poids * poids_plancher * chiffre.part_beneficiaires
+            beneficiaires += chiffre.beneficiaires
+            manque_mensuel += (poids * poids_plancher
+                               * chiffre.complement_moyen_mensuel
+                               * chiffre.part_beneficiaires)
     return CoutGarantie(
         plancher_mensuel=plancher_mensuel,
         # Le facteur rendu est celui de la contrainte, commun aux deux sexes

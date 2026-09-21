@@ -132,23 +132,37 @@ export function pensionMoyenne(distribution) {
  * `coutGarantie` sur la colonne « ensemble », à l'arrondi de publication près.
  */
 export function coutGarantieParSexe(femmes, hommes, partFemmes, effectifTotal,
-                                    plancherMensuel, facteur, rapport) {
+                                    plancherMensuel, facteur, rapport,
+                                    plancherMajore = null, partSeule = null) {
   const [facteurFemmes, facteurHommes] = facteursParSexe(
     pensionMoyenne(femmes), pensionMoyenne(hommes), partFemmes, facteur, rapport,
   );
   let part = 0;
   let manqueMensuel = 0;
   let beneficiaires = 0;
-  for (const [distribution, poids, facteurSexe] of [
-    [femmes, partFemmes, facteurFemmes],
-    [hommes, 1 - partFemmes, facteurHommes],
+  for (const [sexe, distribution, poids, facteurSexe] of [
+    ["F", femmes, partFemmes, facteurFemmes],
+    ["H", hommes, 1 - partFemmes, facteurHommes],
   ]) {
-    const chiffre = coutGarantie(distribution, effectifTotal * poids,
-                                 plancherMensuel, facteurSexe);
-    part += poids * chiffre.partBeneficiaires;
-    beneficiaires += chiffre.beneficiaires;
-    manqueMensuel += poids * chiffre.complementMoyenMensuel
-      * chiffre.partBeneficiaires;
+    // DEUX PLANCHERS : la garantie vaut 800 € par personne, plus 250 € à qui
+    // vit seul. Le plancher d'un individu dépend d'un fait ; celui d'une
+    // POPULATION dépend de la répartition de ce fait, que le recensement
+    // mesure. Sans `partSeule`, le plancher unique vaut pour tout le monde.
+    const seule = (partSeule === null || plancherMajore === null)
+      ? 0 : partSeule[sexe];
+    for (const [plancher, poidsPlancher] of [
+      [plancherMensuel, 1 - seule],
+      [plancherMajore === null ? plancherMensuel : plancherMajore, seule],
+    ]) {
+      if (poidsPlancher <= 0) continue;
+      const chiffre = coutGarantie(distribution,
+                                   effectifTotal * poids * poidsPlancher,
+                                   plancher, facteurSexe);
+      part += poids * poidsPlancher * chiffre.partBeneficiaires;
+      beneficiaires += chiffre.beneficiaires;
+      manqueMensuel += poids * poidsPlancher * chiffre.complementMoyenMensuel
+        * chiffre.partBeneficiaires;
+    }
   }
   return {
     plancherMensuel,

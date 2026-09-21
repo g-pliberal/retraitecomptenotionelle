@@ -588,7 +588,8 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
 class GarantieDistribution {
   constructor(distribution, plancherMensuel, pensionReference, effectifParTete,
               versConstants, tauxRecours = 1.0, distributionsSexe = null,
-              partFemmes = 0, rapportDeplacement = 1.0) {
+              partFemmes = 0, rapportDeplacement = 1.0,
+              plancherMajore = null, partSeule = null) {
     if (!(tauxRecours > 0 && tauxRecours <= 1)) {
       throw new RangeError("le taux de recours est une part, entre zéro exclu et un");
     }
@@ -602,6 +603,10 @@ class GarantieDistribution {
     this.distributionsSexe = distributionsSexe;
     this.partFemmes = partFemmes;
     this.rapportDeplacement = rapportDeplacement;
+    // Le plancher de qui vit SEUL, et la part des bénéficiaires de chaque sexe
+    // qui vit seule : `plancherMensuel` est alors celui de qui vit à deux.
+    this.plancherMajore = plancherMajore;
+    this.partSeule = partSeule;
     this.distribution = distribution;
     // Part des ayants droit qui réclament la garantie.
     this.tauxRecours = tauxRecours;
@@ -618,12 +623,17 @@ class GarantieDistribution {
    * moyenne d'ensemble bouge du même.
    */
   chiffrerDistribution(effectif, facteur) {
-    if (this.rapportDeplacement === 1.0 || this.distributionsSexe === null) {
+    // Le raccourci ne vaut que s'il n'y a rien à mélanger : les planchers se
+    // mélangent dans une proportion qui DÉPEND du sexe, et la colonne
+    // d'ensemble ne le sait pas.
+    if (this.distributionsSexe === null
+        || (this.rapportDeplacement === 1.0 && this.partSeule === null)) {
       return coutGarantie(this.distribution, effectif, this.plancherMensuel, facteur);
     }
     return coutGarantieParSexe(
       this.distributionsSexe.F, this.distributionsSexe.H, this.partFemmes,
       effectif, this.plancherMensuel, facteur, this.rapportDeplacement,
+      this.plancherMajore, this.partSeule,
     );
   }
 
@@ -682,8 +692,20 @@ function garantieDistribution(simulateur, liste, population, poids, revalorisati
   const millesime = distribution.millesime;
   const { total, tetes } = masses(liste, population, millesime, poids(millesime),
                                   revalorisation);
-  const plancher = parametres.garantie_vieillesse_mensuelle
-    + (parametres.situation_foyer === "seul" ? parametres.allocation_isolement_mensuelle : 0);
+  // LE PLANCHER D'UNE POPULATION N'EST PAS CELUI D'UNE PERSONNE : la garantie
+  // vaut 800 € par personne PLUS 250 € à qui vit seul, et le recensement dit
+  // qui vit seul, âge par âge et par sexe. `situation_foyer` reste ce qu'il a
+  // toujours été pour une CARRIÈRE, et ne décide plus pour tous.
+  const plancher = parametres.garantie_vieillesse_mensuelle;
+  const plancherMajore = plancher + parametres.allocation_isolement_mensuelle;
+  const couple = simulateur.vieEnCouple;
+  const partSeule = {};
+  for (const sexe of ["F", "H"]) {
+    partSeule[sexe] = 1 - couple.partMoyenne(
+      sexe,
+      simulateur.mortalite.courbeSurvie(65, parametres.annee_bascule, sexe, true, null),
+    );
+  }
   const toutes = tetes[TETES_TOUTES];
   // LE RAPPORT DES DEUX SEXES EST LU, PAS SUPPOSÉ : l'enquête publie la part
   // de la durée validée qui n'a pas été cotisée, et un compte notionnel ne
@@ -707,6 +729,9 @@ function garantieDistribution(simulateur, liste, population, poids, revalorisati
     distributionsSexe,
     caracteristiques.partFemmes,
     rapport,
+    plancherMajore * macro.coefficientPrix(
+      parametres.annee_euros_garantie_vieillesse, millesime),
+    partSeule,
   );
 }
 

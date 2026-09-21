@@ -191,15 +191,27 @@ def calculer(parametres: Parametres | None = None,
     moyenne_ensemble = (poids_femmes * moyennes["F"]
                         + (1.0 - poids_femmes) * moyennes["H"])
 
+    # QUI VIT SEUL, lu au recensement et pesé sur les années vécues après
+    # 65 ans : c'est la proportion dans laquelle les deux planchers se
+    # mélangent, et le mélange est ce que la trajectoire retient. Les deux
+    # planchers purs restent parcourus comme BORNES.
+    part_seule = {
+        sexe: 1.0 - simulateur.vie_en_couple.part_moyenne(
+            sexe,
+            list(simulateur.mortalite.courbe_survie(
+                65, parametres.annee_bascule, sexe, True, None)),
+        )
+        for sexe in ("F", "H")
+    }
+    base_mensuelle = parametres.garantie_vieillesse_mensuelle
+    majore_mensuel = base_mensuelle + parametres.allocation_isolement_mensuelle
     planchers = (
-        ("plancher majoré (personne seule)",
-         parametres.garantie_vieillesse_mensuelle
-         + parametres.allocation_isolement_mensuelle),
-        ("plancher de base (vie à deux)",
-         parametres.garantie_vieillesse_mensuelle),
+        ("pesé par le recensement (retenu)", base_mensuelle, part_seule),
+        ("plancher majoré pour tous", majore_mensuel, None),
+        ("plancher de base pour tous", base_mensuelle, None),
     )
     lectures: list[Lecture] = []
-    for libelle, mensuel in planchers:
+    for libelle, mensuel, seule in planchers:
         plancher = mensuel * vers_enquete
         reference = None
         for rapport in rapports:
@@ -213,10 +225,18 @@ def calculer(parametres: Parametres | None = None,
             part = 0.0
             cout_meur = 0.0
             for sexe, poids in (("F", poids_femmes), ("H", 1.0 - poids_femmes)):
-                chiffre = cout_garantie(colonnes[sexe], effectif * poids,
-                                        plancher, facteurs[sexe])
-                part += poids * chiffre.part_beneficiaires
-                cout_meur += chiffre.cout_annuel_meur
+                pour_ce_sexe = 0.0 if seule is None else seule[sexe]
+                for niveau, poids_niveau in (
+                    (plancher, 1.0 - pour_ce_sexe),
+                    (majore_mensuel * vers_enquete, pour_ce_sexe),
+                ):
+                    if poids_niveau <= 0.0:
+                        continue
+                    chiffre = cout_garantie(
+                        colonnes[sexe], effectif * poids * poids_niveau,
+                        niveau, facteurs[sexe])
+                    part += poids * poids_niveau * chiffre.part_beneficiaires
+                    cout_meur += chiffre.cout_annuel_meur
             milliards = cout_meur * vers_constants * recours / 1000.0
             if reference is None:
                 reference = milliards
