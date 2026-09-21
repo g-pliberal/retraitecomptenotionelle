@@ -1668,3 +1668,37 @@ journal:
       que la carrière longue ouvre à un régime en points n'est pas tranché.
       Aucun exemple chiffré publié par la CNAVPL ou la MSA n'a été trouvé qui
       rejouerait la règle : `exemples_officiels.yaml` n'en porte donc pas.
+  - date: 2026-09-21
+    session: deux années que le fichier disait mieux qu'elles ne valent
+    consulte: >-
+      `python scripts/veille_droit.py` au début de la session : 36 lignes, six à
+      revoir, aucune réforme nouvelle depuis la dernière entrée du journal.
+      Relu dans le dépôt, sans requête nouvelle à la DILA : le § 4 de
+      `docs/limites.md` sur la lecture des taux de cotisation, l'en-tête de
+      `data/reference/regimes/taux_cotisation_annuels.csv`, et
+      `controle_ancrage_taux_cotisation` de `scripts/verifier_donnees.py`, qui
+      porte le constat depuis qu'il a compté les décrets que la série ignore.
+    trouve: >-
+      UNE CONTRADICTION ENTRE LA PROSE ET LE FICHIER. Le tableau de
+      certification de `limites.md` donnait « fausses » les valeurs du régime
+      général de 1980 et 1981 — le décret n° 79-650 du 30 juillet 1979 a relevé
+      ces taux « à titre exceptionnel » du 1er août 1979 au 31 janvier 1981,
+      donc aux deux 1er janvier que la règle du dépôt regarde, et ni l'IPP ni
+      OpenFisca ne portent la hausse — quand `taux_cotisation_annuels.csv` les
+      porte `haute`, au même niveau que leurs voisines. La prose ne prétend
+      plus au niveau que le fichier ne porte pas : elle dit `haute`, et dit que
+      le dépôt les sait trop basses.
+    reste: >-
+      LE DÉCLASSEMENT DES SEIZE LIGNES (huit au régime général, huit à la
+      CAVIMAC qui recopie sa série), qui demande une session ayant rejoué les
+      récupérateurs. Une fiabilité ne se change pas dans le fichier seul : le
+      journal `data/derive/certification.json` dit combien de valeurs ont été
+      versées et à quel niveau, un test confronte ces comptes aux lignes du
+      fichier, et ces traces ne s'écrivent que par `verifier_donnees.py
+      --appliquer`, qui lit `data/brut/`, absent d'un dépôt cloné. Les forger à
+      la main mettrait dans la seule pièce qui dise d'où viennent les valeurs
+      une lecture qui n'a pas eu lieu. Il faudra aussi que le journal sache
+      porter deux niveaux pour un même contrôle. Et la VALEUR, elle, reste
+      inconnue : le décret a disparu de LEGI avec sa date d'expiration, sa
+      notice ne chiffre pas la hausse, et il faudrait le Journal officiel
+      papier du 1er août 1979.

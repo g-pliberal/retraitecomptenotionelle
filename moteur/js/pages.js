@@ -10815,6 +10815,10 @@ function donnees(contexte) {
     ]);
 
   const journal = contexte.paquet.certification || {};
+  // Le compte des institutions était écrit en dur des deux côtés — « 28 »
+  // pour 36 : il vient maintenant du paquet, que `construire_donnees.py`
+  // remplit depuis `data/sources.yaml`.
+  const institutions = String(contexte.paquet.institutions_citees ?? 0);
   const series = journal.series || {};
   const certifications = Object.entries(series)
     .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
@@ -10862,7 +10866,7 @@ function donnees(contexte) {
       "Régimes recensés", String(inventaire),
       `dont ${simulateur.catalogue.taille} calculés`,
     ) + g.fiche(
-      "Institutions citées", "28",
+      "Institutions citées", institutions,
       "INSEE, COR, DREES, Cnav, Légifrance…",
     );
     bandeau = `<div class="note"><strong>Les séries macroéconomiques sont
@@ -10884,7 +10888,7 @@ robustes encore.</div>`;
       "Régimes recensés", String(inventaire),
       `dont ${simulateur.catalogue.taille} calculés`,
     ) + g.fiche(
-      "Institutions citées", "28",
+      "Institutions citées", institutions,
       "INSEE, COR, DREES, Cnav, Légifrance…",
     );
     bandeau = `<div class="note avertissement"><strong>Aucune série n'a

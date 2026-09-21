@@ -5,6 +5,7 @@ from .chargement import (
     SerieAnnuelle,
     charger_serie_annuelle,
     charger_yaml,
+    compter_institutions,
     journal_certification,
 )
 from .macro import DonneesMacro
@@ -16,6 +17,7 @@ __all__ = [
     "SerieAnnuelle",
     "charger_serie_annuelle",
     "charger_yaml",
+    "compter_institutions",
     "journal_certification",
     "DonneesMacro",
     "DonneesMortalite",

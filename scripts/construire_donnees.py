@@ -44,6 +44,7 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     SerieAnnuelle,
     charger_serie_annuelle,
     charger_yaml,
+    compter_institutions,
     journal_certification,
 )
 from retraite_notionnelle.donnees.depenses import CATEGORIES_DROITS, SYSTEMES  # noqa: E402
@@ -1232,6 +1233,10 @@ def construire(bilan: bytes) -> bytes:
         "caracteristiques_retraites": _caracteristiques_retraites(),
         "vie_en_couple": _vie_en_couple(),
         "certification": journal_certification(DONNEES),
+        # Le manifeste des sources n'entre pas dans le paquet — le site n'en
+        # affiche pas le détail —, mais son COMPTE est un repère de la page
+        # Données, et il était écrit en dur dans les deux portages.
+        "institutions_citees": compter_institutions(DONNEES),
         # Le bilan tel que ``data/derive/equilibre.json`` le porte, jamais
         # recalculé ici : les deux côtés du portage lisent alors les mêmes
         # octets, et un écart de la table au modèle se voit à un seul
