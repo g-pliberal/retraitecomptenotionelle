@@ -38,6 +38,12 @@
 # Ne pas modifier les valeurs certifiées à la main : elles seraient
 # écrasées au prochain scripts/verifier_donnees.py --appliquer.
 annee,indicateur,sexe,valeur,fiabilite
+2020,beneficiaires_minimum_pension,F,4062.0,certifiee
+2020,beneficiaires_minimum_pension,H,2038.0,certifiee
+2020,beneficiaires_minimum_pension,ensemble,6100.0,certifiee
+2020,beneficiaires_minimum_regime_principal,F,3360.0,certifiee
+2020,beneficiaires_minimum_regime_principal,H,966.0,certifiee
+2020,beneficiaires_minimum_regime_principal,ensemble,4326.0,certifiee
 2020,coefficient_proratisation,F,83.3,certifiee
 2020,coefficient_proratisation,H,90.4,certifiee
 2020,coefficient_proratisation,ensemble,86.9,certifiee

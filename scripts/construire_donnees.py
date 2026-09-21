@@ -355,7 +355,9 @@ def _caracteristiques_retraites() -> dict:
             for indicateur in ("effectifs", "pension_droit_direct",
                                "pension_droit_direct_majorations",
                                "duree_validee_non_cotisee", "duree_validee",
-                               "coefficient_proratisation", "part_minimum_pension")
+                               "coefficient_proratisation", "part_minimum_pension",
+                               "beneficiaires_minimum_pension",
+                               "beneficiaires_minimum_regime_principal")
             for sexe in ("F", "H", "ensemble")
         },
     }

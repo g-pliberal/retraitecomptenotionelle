@@ -5121,12 +5121,46 @@ bénéficiaires monte de 66 à **70 %**. Au barème appliqué à la distribution
 l'enquête, plancher majoré, le coût passe de 28,5 à **29,9 milliards** : la
 convention uniforme sous-estimait de **5 %**.
 
-**Et la mesure est elle-même une borne basse**, par ce qu'elle laisse dehors.
-L'enquête publie la PART des bénéficiaires d'un minimum de pension — 46,5 % des
-femmes contre 26,1 % des hommes — et non ce que ce minimum leur apporte : le
-retirer creuserait l'écart davantage. Le rapport suppose en outre le salaire
-porté au compte constant d'une année cotisée à l'autre, faute de quoi la part
-cotisée de la carrière ne serait pas celle du capital.
+**Ce que les minima apportent, mesuré à son tour, et pourquoi il reste
+dehors.** C'était le troisième terme, nommé et non chiffré. Il l'est depuis le
+21 septembre 2026, et il ne vient pas de la même étagère que les deux autres :
+les EFFECTIFS de bénéficiaires sont lus sur l'enquête, la MASSE est prise au
+modèle, qui l'isole carrière par carrière dans la cascade du scénario 1 —
+2 912 millions en 2020, minimum contributif et minimum garanti réunis. Aucune
+série ne la publie, et le dépôt dit lui-même que cette masse est une borne
+basse : la grille n'est pas une population, et le minimum contributif est
+réclamé par des carrières courtes qu'elle ne compte guère.
+
+Le partage suppose alors une chose, et une seule : que le minimum apporte
+autant à un bénéficiaire qu'à un autre, quel que soit son sexe. L'enquête
+suggère que c'est prudent — sur le minimum vieillesse, qu'elle chiffre, les
+hommes touchent DAVANTAGE, 18 € par mois en moyenne contre 13, parce qu'ils
+tombent sous le plancher par carrière très courte.
+
+| Qui l'on compte | Bénéficiaires | dont femmes | Par mois | Part de la pension, F / H | × r |
+|---|---|---|---|---|---|
+| Au minimum de leur régime principal | 4,33 M | 78 % | 56 € | 1,92 % / 0,39 % | **0,985** |
+| Tous régimes confondus | 6,10 M | 67 % | 40 € | 1,65 % / 0,58 % | **0,989** |
+
+Le terme va donc dans le même sens que les deux autres, et il mènerait `r` de
+0,834 à 0,821-0,825. **Ce qu'il ferait au coût reste sous le pour cent** — 22,0
+milliards de garantie en 2024 deviennent 22,1 ou 22,2, et la part de PIB de
+2026 ne bouge pas au centième. C'est la raison de ne pas le retenir dans `r` :
+un terme dont le montant est pris au modèle là où les deux autres sont lus, et
+qui vaut moins d'un pour cent, coûterait plus en couplage — la garantie
+dépendrait du chiffrage des avantages — qu'il ne rapporte en justesse.
+`scripts/garantie_par_sexe.py` l'imprime, la page Coût l'affiche, et
+`test_les_minima_pesent_sur_les_femmes_et_restent_sous_le_pour_cent` le tient.
+
+**Le minimum vieillesse, lui, est hors de l'assiette**, et il fallait le
+vérifier plutôt que le supposer : l'enquête le publie sur une ligne SÉPARÉE de
+la pension de droit direct, qui est l'assiette de la distribution. Il n'est
+donc pas dans les pensions que le barème déplace, et ne peut rien faire à `r`.
+Une réserve qui se dissout par une lecture.
+
+**Ce qui reste**, et c'est tout : le rapport suppose le salaire porté au compte
+constant d'une année cotisée à l'autre, faute de quoi la part cotisée de la
+carrière ne serait pas celle du capital.
 
 `scripts/garantie_par_sexe.py` imprime la sensibilité entière, le rapport
 mesuré à son rang ; `tests/test_garantie_par_sexe.py` tient les deux raccords :
@@ -7383,7 +7417,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1849<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1850<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

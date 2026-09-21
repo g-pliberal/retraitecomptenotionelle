@@ -104,6 +104,20 @@ class CaracteristiquesRetraites:
         """
         return self.valeur("part_minimum_pension", sexe) / 100.0
 
+    def beneficiaires_minimum(self, sexe: str, *,
+                              regime_principal: bool = True) -> float:
+        """Combien de retraités touchent un minimum de pension, en milliers.
+
+        ``regime_principal`` retient les seuls assurés dont le régime PRINCIPAL
+        sert le minimum — 4,3 millions en 2020, dont 78 % de femmes. Les autres
+        le touchent sur un régime secondaire, où il est proratisé sur peu de
+        trimestres et ne pèse presque rien ; les compter tous ramène la part
+        des femmes à 67 %, et c'est la borne basse de l'écart.
+        """
+        code = ("beneficiaires_minimum_regime_principal" if regime_principal
+                else "beneficiaires_minimum_pension")
+        return self.valeur(code, sexe)
+
     def rapport_deplacement(self) -> float:
         """``r = f_F / f_H`` : de combien les femmes tombent plus que les hommes.
 

@@ -79,14 +79,14 @@
    "verifiee_le": "2026-09-20"
   },
   "caracteristiques_retraites": {
-   "ajoutees": 3,
+   "ajoutees": 6,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "7883f28e4b144d69",
-   "identiques": 18,
+   "empreinte": "4e13c8caef98a8dd",
+   "identiques": 21,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
-   "valeurs": 21,
+   "valeurs": 27,
    "verifiee_le": "2026-09-21"
   },
   "carriere_longue": {

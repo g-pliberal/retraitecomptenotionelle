@@ -67,6 +67,17 @@ export class CaracteristiquesRetraites {
   }
 
   /**
+   * Combien de retraités touchent un minimum de pension, en milliers.
+   * `regimePrincipal` retient les seuls assurés dont le régime principal sert
+   * le minimum — 4,3 millions en 2020, dont 78 % de femmes.
+   */
+  beneficiairesMinimum(sexe, regimePrincipal = true) {
+    return this.valeur(regimePrincipal
+      ? "beneficiaires_minimum_regime_principal"
+      : "beneficiaires_minimum_pension", sexe);
+  }
+
+  /**
    * `r = fF / fH` : de combien les femmes tombent plus que les hommes.
    *
    * Un compte notionnel ne crédite que ce qui a été cotisé : une année validée
