@@ -429,6 +429,23 @@ affirmations:
     etat: verifiee
     controle: trois_leviers_du_meme_manque
 
+  # Le dépôt du relevé de carrière : ce que le site fait du fichier, et ce
+  # qu'il n'en fait pas.
+
+  - id: simuler.depot_du_releve
+    page: /simuler
+    extrait: "Déposez le PDF de votre relevé"
+    porte: le relevé déposé est lu et devient la carrière que le simulateur calcule
+    etat: verifiee
+    controle: le_releve_depose_devient_la_carriere
+
+  - id: simuler.releve_lu_sur_place
+    page: /simuler
+    extrait: "dans votre navigateur"
+    porte: le fichier déposé est lu sur place et n'est envoyé nulle part
+    etat: verifiee
+    controle: le_releve_ne_quitte_pas_la_page
+
   - id: simuler.horizon_des_comptes
     page: /simuler
     extrait: "et la page n'invente pas la suite."

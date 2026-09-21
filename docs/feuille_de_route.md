@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->30 237<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 375<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -11938,3 +11938,82 @@ du site qui dise que le compte n'est pas à sens unique.
 `data/reference/site/affirmations.yaml`, `tests/test_affirmations.py`,
 `tests/test_web.py`, `tests/test_frontiere_contributive.py`,
 `docs/frontiere_contributive.md`.
+
+### 85. Le relevé de carrière se dépose en PDF, et le navigateur le lit — `fait`
+
+**Pourquoi.** L'action 7 avait ouvert la saisie exacte — une ligne par année,
+`année:régime:revenu:trimestres` — et `limites.md` §5 déclarait l'import
+automatique impossible. Il l'est en effet par la voie qu'on regardait : le
+répertoire de gestion des carrières uniques n'est pas ouvert, et son accès
+demande les identifiants de l'assuré. Mais ce n'est pas la seule voie. **Le
+document existe déjà**, en PDF, sur le compte retraite de chacun, et rien
+n'oblige à aller le chercher : c'est l'assuré qui le télécharge, et le
+navigateur qui le lit. Ce qui fermait la saisie exacte à presque tout le monde
+n'était pas l'authentification, c'était la recopie de quarante-cinq lignes de
+chiffres.
+
+**Marche.** Trois briques, et chacune a son modèle de référence en Python.
+
+- *Le lecteur de PDF, porté dans le navigateur.* `scripts/fetch/lecture_pdf.py`
+  lit les PDF du dépôt depuis les barèmes de la CNBF ; `moteur/js/lecture-pdf.js`
+  en est le portage, fonction pour fonction. Deux écarts imposés par le
+  navigateur, et deux seulement : la décompression y est asynchrone
+  (`DecompressionStream`, qui remplace `zlib`), et les octets sont portés par
+  une chaîne latin-1, ce qui permet de reprendre mot pour mot les expressions
+  régulières binaires du modèle. Vérifié sur deux vrais documents — le rapport
+  de l'OPEF, 6 054 lignes, et le guide « Comment lire mon relevé de carrière »
+  de l'Assurance retraite, 318 lignes — : les deux lecteurs rendent la même
+  chose, ligne pour ligne.
+- *La lecture du relevé.* `src/retraite_notionnelle/web/releve_lu.py` fait foi,
+  `moteur/js/releve-lu.js` le porte, et `tests/test_releve_lu.py` fait tourner
+  les deux sur les mêmes relevés en comparant la saisie qu'ils rendent au
+  caractère près. Quatre règles : un titre de régime vaut pour les lignes qui
+  suivent ; une ligne de carrière porte son année, un revenu au-dessus de
+  quatre et des trimestres au plus égaux à quatre ; une année revient autant
+  de fois que le relevé la coupe par employeur, et les revenus s'additionnent ;
+  ce qui n'est pas compris ressort tel quel et s'affiche.
+- *Le dépôt.* Un champ de fichier et un glisser-déposer dans le formulaire, et
+  le gestionnaire dans `index.html`. Les deux modules sont chargés à la
+  demande, jamais préchargés : ils ne servent qu'à qui dépose un relevé, et le
+  test des `modulepreload` l'exige maintenant dans les deux sens.
+
+**Ce que ça déplace.** Aucun chiffre du modèle : ni témoin de simulation, ni
+paramètre. Ce qui change est ce que le site SAIT recevoir. Quatre choses que
+la lecture fait et qu'une recopie à la main ne faisait pas : **les francs sont
+convertis** (÷ 6,55957, et ÷ 655,957 avant 1960, qu'un relevé porte en anciens
+francs — le guide de l'Assurance retraite le dit de la table qu'il publie en
+regard) ; **les périodes assimilées deviennent des interruptions**, par plages
+fusionnées, dans le champ prévu ; **les points Agirc disent le cadre**, année
+par année, ce qu'aucune colonne du régime général ne dit ; et **la date de
+naissance est reprise de l'en-tête**, la seule donnée du formulaire, hors la
+carrière, que le document porte.
+
+**Deux défauts trouvés en chemin, et corrigés.** Le lecteur de référence ne
+traitait pas `BT` : la norme y remet la matrice de texte à l'identité, et un
+producteur qui ouvre un objet texte par ligne — c'est ainsi que sont faits les
+relevés — voyait ses ordonnées s'ADDITIONNER d'un bloc au suivant. Le document
+sortait à l'envers, une ligne par fragment. Corrigé des deux côtés, avec son
+cas d'essai ; les deux vrais documents n'en bougent pas d'une ligne. Et la
+première version lisait n'importe quel PDF : le rapport de l'OPEF, cent pages
+sans le moindre relevé, y rendait vingt-deux « années de carrière » qui
+n'avaient jamais existé. Un document doit maintenant se reconnaître — son
+titre, ou l'en-tête de la colonne des trimestres — sans quoi rien n'est lu.
+
+**Ce qui reste.** Ce que le relevé ne porte pas : le mois, le revenu au-delà du
+plafond de la Sécurité sociale, le revenu des régimes qui comptent en points,
+et la répartition d'un état de services couvrant plusieurs années. Les quatre
+sont dits à qui dépose son relevé et écrits dans `limites.md` §5. Reste aussi à
+confronter la lecture à de VRAIS relevés : ceux du dépôt sont écrits à la forme
+des documents officiels, non tirés d'eux — aucun relevé réel n'est public, et
+il n'y en a pas dans le dépôt. Une mise en page inconnue se voit tout de suite
+— le compte rendu dit combien d'années ont été lues et montre les lignes qu'il
+n'a pas comprises —, et c'est ce compte rendu qui dira quoi corriger.
+
+**Fichiers.** `moteur/js/lecture-pdf.js`, `moteur/js/releve-lu.js`,
+`src/retraite_notionnelle/web/releve_lu.py`, `scripts/fetch/lecture_pdf.py`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
+`src/retraite_notionnelle/web/gabarit.py`, `index.html`,
+`tests/test_releve_lu.py`, `tests/test_lecture_pdf.py`,
+`tests/js/lecture-pdf.test.js`, `tests/js/comparer-releve.mjs`,
+`tests/test_web.py`, `docs/limites.md` §5.
+

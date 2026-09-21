@@ -1550,7 +1550,13 @@ def test_le_balayage_des_temoins_couvre_tous_les_statuts():
 
 
 def test_le_portage_javascript_retrouve_les_chiffres_du_modele():
-    """Lance ``node --test`` : le site doit calculer comme la référence Python."""
+    """Lance ``node --test`` : le site doit calculer comme la référence Python.
+
+    TOUS les fichiers d'essai du dossier y passent, et la liste se lit sur le
+    disque : elle était écrite en dur, et le jour où le lecteur de PDF a reçu
+    les siens ils ne tournaient nulle part. Un fichier ajouté au dossier est
+    lancé ici sans que personne ait à y penser.
+    """
     import shutil
     import subprocess
     from pathlib import Path
@@ -1559,8 +1565,13 @@ def test_le_portage_javascript_retrouve_les_chiffres_du_modele():
         pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
 
     racine = Path(__file__).resolve().parents[1]
+    fichiers = sorted(
+        str(chemin.relative_to(racine))
+        for chemin in (racine / "tests" / "js").glob("*.test.js")
+    )
+    assert fichiers, "aucun fichier d'essai JavaScript trouvé"
     execution = subprocess.run(
-        ["node", "--test", "tests/js/moteur.test.js"],
+        ["node", "--test", *fichiers],
         cwd=racine, capture_output=True, text=True, check=False,
     )
     assert execution.returncode == 0, execution.stdout + execution.stderr
@@ -2435,6 +2446,15 @@ def test_les_modules_sont_tous_precharges():
     Une liste écrite à la main dérive dès qu'un module est ajouté ou renommé :
     un module oublié réintroduit silencieusement la cascade, un module fantôme
     fait télécharger un fichier qui n'existe plus. Les deux échouent ici.
+
+    DEUX MODULES N'EN SONT PAS, et c'est délibéré : le lecteur de PDF et la
+    lecture du relevé ne servent qu'à celui qui dépose un relevé de carrière
+    sur le simulateur. Les précharger ferait payer à tous les autres — la
+    grande majorité — quarante kilo-octets qu'ils n'ouvriront jamais, et sur le
+    chemin critique du premier calcul. Ils sont donc importés à la demande,
+    dans le gestionnaire du dépôt, et le test l'exige dans les deux sens : ce
+    qui est chargé à la demande n'est jamais préchargé, et ce qui ne l'est pas
+    doit l'être.
     """
     import re
     from pathlib import Path
@@ -2444,12 +2464,21 @@ def test_les_modules_sont_tous_precharges():
 
     precharges = set(re.findall(
         r'<link rel="modulepreload" href="moteur/js/([\w.-]+\.js)">', page))
+    a_la_demande = set(re.findall(
+        r'import\(\s*"\./moteur/js/([\w.-]+\.js)"\s*\)', page))
     presents = {chemin.name for chemin in (racine / "moteur" / "js").iterdir()
                 if chemin.suffix == ".js"}
 
-    assert precharges == presents, (
+    assert a_la_demande <= presents, (
+        f"importés à la demande mais absents du dossier : {a_la_demande - presents}"
+    )
+    assert not (precharges & a_la_demande), (
+        "préchargés ET importés à la demande, donc téléchargés deux fois : "
+        f"{sorted(precharges & a_la_demande)}"
+    )
+    assert precharges == presents - a_la_demande, (
         f"préchargés mais absents du dossier : {precharges - presents} ; "
-        f"présents mais non préchargés : {presents - precharges}"
+        f"présents mais non préchargés : {presents - a_la_demande - precharges}"
     )
 
 

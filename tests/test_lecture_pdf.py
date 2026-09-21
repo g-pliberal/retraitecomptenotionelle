@@ -164,3 +164,21 @@ def test_une_police_simple_lit_par_un_octet_quoi_que_declare_sa_table():
         _objet(4, _flux(b"<< >>", _cmap(2, {0x64: "d", 0x75: "u"}))),
     )
     assert lignes_pdf(pdf) == ["dué"], lignes_pdf(pdf)
+
+
+def test_chaque_objet_texte_repart_de_l_origine_de_la_page():
+    """``BT`` remet la matrice de texte à l'identité : un ``Td`` qui suit part
+    de l'origine de la page, non du curseur laissé par l'objet précédent.
+
+    Un producteur qui ouvre un ``BT`` par ligne — et c'est ainsi que sont faits
+    les relevés de carrière que le site reçoit — voyait sinon ses ordonnées
+    s'additionner : la deuxième ligne se retrouvait à 1 380 au lieu de 680, la
+    page partait vers le haut, et le tri de haut en bas rendait le document à
+    l'envers, une ligne par fragment.
+    """
+    contenu = (b"BT /F1 10 Tf 60 700 Td (HAUT) Tj ET "
+               b"BT /F1 10 Tf 60 680 Td (MILIEU) Tj ET "
+               b"BT /F1 10 Tf 60 660 Td (BAS) Tj ET")
+    pdf = _document(_objet(1, _flux(b"<< >>", contenu)))
+    assert lignes_pdf(pdf) == ["HAUT", "MILIEU", "BAS"], lignes_pdf(pdf)
+

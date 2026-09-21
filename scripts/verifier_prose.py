@@ -88,17 +88,33 @@ ZONES = RACINE / "data" / "reference" / "prose" / "zones.yaml"
 
 
 def _fichiers(motif: str) -> list[Path]:
-    """Les fichiers d'un chemin, d'un motif, ou de plusieurs joints par « + »."""
+    """Les fichiers d'un chemin, d'un motif, ou de plusieurs joints par « + ».
+
+    Un terme précédé de « - » est RETIRÉ de ce que les précédents ont réuni.
+    C'est ce qui permet de dire le poids du premier chargement sans y compter
+    les modules chargés à la demande : ``moteur/js/*.js - moteur/js/lecture-pdf.js``
+    désigne le moteur moins son lecteur de PDF, que le navigateur ne télécharge
+    que si quelqu'un dépose un relevé. Sans ce retrait, la phrase du README
+    annonçait un poids que le lecteur ne transfère pas.
+    """
     reels: list[Path] = []
-    for part in motif.split("+"):
-        part = part.strip()
+    retires: list[Path] = []
+    # Le séparateur est le signe ENTOURÉ D'ESPACES, et rien d'autre : un nom de
+    # fichier porte des traits d'union — « lecture-pdf.js » — et découper sur le
+    # signe seul cherchait un fichier nommé « moteur/js/lecture ».
+    for terme in re.split(r"\s+(?=[+-]\s)", motif):
+        part = terme.strip()
+        enlever = part.startswith("-")
+        part = part.lstrip("+-").strip()
+        if not part:
+            continue
         trouves = sorted(RACINE.glob(part)) if any(c in part for c in "*?[") \
             else [RACINE / part]
         morceau = [f for f in trouves if f.is_file()]
         if not morceau:
             raise ValueError(f"aucun fichier pour « {part} »")
-        reels += morceau
-    return reels
+        (retires if enlever else reels).extend(morceau)
+    return [f for f in reels if f not in retires]
 
 
 def sonde_lignes(motif: str) -> float:

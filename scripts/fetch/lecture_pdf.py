@@ -289,7 +289,15 @@ def _hexa(brut: bytes, table: dict[int, str] | None) -> str:
 #: et ``"`` appliquent pour passer à la ligne suivante : sans eux, tout un
 #: paragraphe reste à la même ordonnée et se retrouve collé sur une seule ligne.
 JETONS = re.compile(
-    rb"(?P<tm>[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+Tm)"
+    # ``BT`` ouvre un objet texte, et la norme y remet la matrice de texte à
+    # l'identité : les ``Td`` qui suivent partent de l'origine de la page, et
+    # non du curseur laissé par l'objet précédent. Sans ce jeton, un producteur
+    # qui ouvre un ``BT`` par ligne — ReportLab, et les relevés de carrière que
+    # le site reçoit — voyait ses ordonnées s'ADDITIONNER d'un bloc au suivant :
+    # la page partait vers le haut à chaque ligne, et le tri de bas en haut
+    # rendait le document à l'envers, une ligne par fragment.
+    rb"(?P<bt>\bBT\b)"
+    rb"|(?P<tm>[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+[-\d.]+\s+Tm)"
     rb"|(?P<td>[-\d.]+\s+[-\d.]+\s+T[dD])"
     rb"|(?P<tl>[-\d.]+\s+TL)"
     rb"|(?P<etoile>T\*)"
@@ -395,7 +403,10 @@ def _fragments(octets: bytes) -> list[tuple[int, float, float, str]]:
                 if dans_tableau and float(jeton.group("nombre")) < ESPACE_DE_TABLEAU:
                     fragments.append((page, y, x, " "))
                 continue
-            if jeton.group("tm"):
+            if jeton.group("bt"):
+                x = y = 0.0
+                echelle_x = echelle_y = 1.0
+            elif jeton.group("tm"):
                 nombres = _reels(jeton.group("tm"))
                 if len(nombres) < 6:
                     continue
