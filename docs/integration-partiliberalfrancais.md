@@ -87,7 +87,8 @@ Vérifié sur la copie en production et sur GitHub Pages.
   contenu de ce dépôt, sans transformation. Pas de serveur de calcul, pas de
   base, pas d'API : le modèle tourne dans le navigateur.
 - **Les chemins relatifs conservés** : `index.html` charge `moteur/style.css`,
-  `moteur/donnees.json` (2,9 Mo brut, ~310 Ko compressé) et `moteur/js/*.js`
+  `moteur/donnees.json` (<!--chiffre:poids(moteur/donnees.json)-->3 049<!--/--> Ko bruts,
+  <!--chiffre:poids_comprime(moteur/donnees.json)-->346<!--/--> Ko compressés) et `moteur/js/*.js`
   relativement à sa propre adresse. Le répertoire peut s'appeler autrement que
   `retraite` ; il doit être servi avec sa barre finale (ou rediriger vers
   elle), sinon les chemins relatifs se résolvent un niveau trop haut.

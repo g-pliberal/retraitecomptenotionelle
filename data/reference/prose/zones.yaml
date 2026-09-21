@@ -35,6 +35,19 @@ fichiers:
       # `index.html` charge, et le poids du portage.
       "👉 [g-pliberal.github.io/retraitecomptenotionelle](https://g-pliberal.github.io/retraitecomptenotionelle/)": etat
       Tests: etat
+      # Ce que le dépôt EST : comment on l'ouvre, comment on l'appelle en
+      # Python, comment ses répertoires sont rangés, ce que ses options
+      # exposent, sous quelle licence. Rien n'y raconte : ces sections se
+      # lisent pour agir, et une seule ligne périmée s'y voit tout de suite.
+      # Les six résultats et les sections de données restent à arbitrer : ce
+      # sont des mesures, et chacune demande sa sonde.
+      "Ouvrir le site en local": etat
+      "En Python, hors du site": etat
+      "En bibliothèque": etat
+      "Six résultats à connaître avant de lire les chiffres": etat
+      "Organisation": etat
+      "Principales options": etat
+      "Licence": etat
 
   # ------------------------------------------------------------------------
   # La feuille de route est un journal : ses actions décrivent ce qu'on VOULAIT
@@ -55,10 +68,11 @@ fichiers:
     defaut: produit
 
   # ------------------------------------------------------------------------
-  # Le reste attend l'arbitrage, section par section. `limites.md` est le plus
-  # gros morceau et le plus mélangé : cinquante sections au passé — des
-  # corrections faites — et trois au présent (§1, §4, §5), qui disent ce que
-  # les chiffres du dépôt valent aujourd'hui.
+  # Le reste s'arbitre section par section, et ce qui reste se ressemble : des
+  # sections au présent dont chaque chiffre est une mesure du modèle — un
+  # écart en pourcentage, un montant, une part de PIB — et qui demandent donc
+  # une sonde par chiffre, ou un test nommé qui le tienne déjà. Le §1 de
+  # `limites.md` en porte deux cents à lui seul.
   # ------------------------------------------------------------------------
   # Ce document-ci décrit la mécanique elle-même : il se soumet à ce qu'il
   # demande aux autres, et tous ses chiffres sont ancrés.
@@ -124,8 +138,116 @@ fichiers:
       # pondération par la survie, la fenêtre qui s'arrête à l'horizon du COR,
       # les trois leviers qui comblent le même trou.
       "Le troisième chiffre du simulateur : ce qu'il dit, et les quatre choses qu'il suppose": recit
+      # --------------------------------------------------------------------
+      # Les sections d'état que ce document porte déjà sans un chiffre nu :
+      # ce que le modèle est, ce que la réforme agricole de 2026 empêche, ce
+      # que la comparaison à la littérature ne valide pas, et de quoi le
+      # dépôt se reproduit. Elles disent ce qui est vrai aujourd'hui, et le
+      # contrôle refusera désormais qu'un chiffre y entre sans sa sonde.
+      "Limites — à lire avant d'utiliser un chiffre": etat
+      "Écarts avec le droit positif dans le scénario 1": etat
+      "La réforme agricole de 2026 n'est pas modélisée, et il faut le dire": etat
+      "La réforme agricole de 2026 est en vigueur, et elle n'est pas calculable": etat
+      "Ce qu'elle ne valide pas, et qui reste assumé": etat
+      "Les limites de la comparaison elle-même": etat
+      "6. Reproductibilité": etat
+      # --------------------------------------------------------------------
+      # Quarante-six corrections datées, arbitrées le 21 septembre 2026. Le
+      # critère est celui que ce document s'applique à lui-même : une section
+      # est `recit` quand elle raconte un AVANT et un APRÈS — ce que le modèle
+      # faisait, ce qu'une lecture a trouvé, ce qui a changé ce jour-là. Ses
+      # chiffres sont les deux bouts d'une correction ; les rafraîchir
+      # effacerait ce qui a été corrigé, et le constat n'aurait plus de sens.
+      #
+      # Ce qui reste `a_declarer` ici n'y est pas par oubli : ce sont les
+      # sections au PRÉSENT — le §1 et son état de certification, le tableau
+      # des régimes incomplets, les réserves des §5 et suivants —, qui disent
+      # ce que les chiffres valent AUJOURD'HUI. Chacune demande une sonde par
+      # chiffre, c'est-à-dire un travail et non une déclaration.
+      # --------------------------------------------------------------------
+      # Les écarts au droit positif, la règle d'indexation, et les arbitrages
+      # du §3 : chacun porte l'écart qu'il a déplacé le jour dit, et la
+      # confrontation à OpenFisca porte ce que chaque oracle a trouvé.
+      "Ce qui vient d'être refermé": recit
+      "Le mois, là où le droit le date": recit
+      "Les DEUX règles d'indexation, et celle qui manquait": recit
+      "La pension civile : deux erreurs chez nous, une transcription chez lui": recit
+      "L'Arrco de 1999 à 2018 : rien à corriger, et c'est le résultat": recit
+      "L'Agirc des cadres, 1983-2012 : trois écarts, tous chez lui": recit
+      "L'Ircantec : deux corrections chez nous, deux transcriptions chez lui": recit
+      "Les régimes alignés : la MSA passe, et les indépendants depuis qu'ils ne sont plus coupés en deux": recit
+      "La cotisation déplafonnée est portée au compte": recit
+      "Trois valeurs de 2026 disponibles et non intégrées": recit
+      "Ce qui n'est pas de la répartition est sorti de la comparaison": recit
+      "La marche à l'année de bascule est voulue, et voici ce qu'elle vaut": recit
+      # Le §4, la campagne sur les régimes, passe par passe : ce que chaque
+      # lecture de source a trouvé, et la fiche qu'elle a corrigée. C'est le
+      # journal de chantier du dépôt, et le plus gros morceau du document.
+      "Une seconde passe, et trois choses qu'elle a corrigées": recit
+      "Une troisième passe, par le *Journal officiel*, et la carte change": recit
+      "La source que deux passes avaient manquée : le décret annuel": recit
+      "Le lecteur de PDF empilait les pages": recit
+      "Ce que la chronologie de la CARMF a fini par dire": recit
+      "La troisième passe : une forme de plus, et un dentiste": recit
+      "Le catalogue et le routage ne se parlaient pas": recit
+      "Les deux dernières sections que le décret annuel débloquait": recit
+      "Les deux dernières sections, et le mur qui n'était pas celui qu'on croyait": recit
+      "Ce que le lecteur de PDF du dépôt ne lit pas, et ce que cela avait coûté": recit
+      "Cent points par trimestre, et la pension que le moteur inventait": recit
+      "La retenue de 8,9 % datait de 1990, et la loi la fait partir de 1989": recit
+      "La clause du grand-père : six régimes fermés l'étaient pour tout le monde": recit
+      "Le compte notionnel recevait une moyenne de période, et le droit changeait le taux chaque année": recit
+      "La lecture des taux de cotisation, et les quatre choses qu'elle a trouvées": recit
+      "Avant 1967, la cotisation vieillesse n'existait pas séparément — et le dépôt lui prêtait 8,6 %": recit
+      "Le marin cotisait sur sa paie, et le régime ne connaît que vingt forfaits": recit
+      "Un jeune d'aujourd'hui pouvait se déclarer mineur, et la page le laissait croire": recit
+      "L'Ircantec n'avait pas de tranche B, et ses taux étaient ceux de 2008": recit
+      "La tranche 2 de l'Arrco était servie aux cadres, qui n'y cotisent pas": recit
+      "Et l'Agirc n'avait pas de tranche C": recit
+      "« De 23 à 113 points » : le barème que personne ne publiait est dans le code": recit
+      "Le taux de la première tranche a changé, et la phrase qui le portait mentait": recit
+      "La décote des régimes spéciaux avait quatre ans d'avance": recit
+      "L'Opéra de Paris : un âge pour tout le monde, et quarante-deux ans pour le ballet": recit
+      "Cent soixante-douze trimestres demandés aux assurés nés avant 1934": recit
+      "Une surcote servie vingt-cinq ans avant sa création": recit
+      "Sept pour cent jusqu'en 2003 : le taux de retenue du fonctionnaire était faux depuis 1991": recit
+      "Six pour cent jusqu'en 1983, et une marche par an depuis 2011 : la retenue lue chez OpenFisca": recit
+      "La SEITA partait à cinquante-cinq ans, et son décret dit soixante": recit
+      "Le navigant n'avait pas de décote, et son régime en a une depuis 2012": recit
+      "L'avocat d'avant 2004 recevait cent pour cent de son revenu": recit
+      "La pension du mineur ne dépend pas de son salaire, et le modèle la doublait": recit
+      "Le Journal officiel en une requête, et non plus en une demi-heure": recit
+  # Ce que le modèle calcule, et pourquoi ainsi : tout y est au présent, et une
+  # méthodologie périmée décrit un autre modèle que celui qui tourne. Le régime
+  # visé est donc `etat` de bout en bout, et ce qui l'empêche n'est jamais le
+  # temps de la phrase mais le chiffre qu'elle porte : les sections ci-dessous
+  # sont celles qui n'en portent aucun, ou dont les chiffres sont ancrés. Le
+  # reste attend une sonde par chiffre — c'est le travail de l'action 41, et il
+  # se fait section par section.
   docs/methodologie.md:
     defaut: a_declarer
+    sections:
+      "Méthodologie": etat
+      "1. Ce qu'est un compte notionnel": etat
+      "2. Périmètre temporel": etat
+      "3. L'indexation": etat
+      "La règle par défaut, et la règle demandée": etat
+      "La règle d'équilibre : la masse salariale": etat
+      "L'assiette la plus large : le PIB nominal": etat
+      "4. L'âge de référence": etat
+      "Variantes": etat
+      "La validation des trimestres": etat
+      "8. Les six scénarios": etat
+      "Scénario 2 — comptes notionnels rétroactifs": etat
+      "Scénario 3 — comptes notionnels à compter d'aujourd'hui": etat
+      "Scénarios 4 et 5 — les mêmes, part patronale comprise": etat
+      "8 bis. Du droit individuel au coût collectif": etat
+      "Et de là, l'avenir": etat
+      "9. Les données": etat
+      "Sources": etat
+      "Quelle source l'emporte": etat
+      "Fiabilité": etat
+      "Unité de compte": etat
   # Un JOURNAL DE CHANTIER : le §4 et ses six suites racontent, chacune, ce
   # qu'une session a mesuré le jour où elle l'a mesuré. Leurs chiffres sont
   # justes à leur date et gelés — les rafraîchir réécrirait l'histoire, et
@@ -133,16 +255,20 @@ fichiers:
   # passant de 5,3 à 95,2 milliards à mesure qu'on apprend où regarder.
   #
   # Trois sections échappent à ce régime : elles décrivent l'inventaire tel
-  # qu'il est aujourd'hui, et leurs comptes se périment donc pour de bon. Le
-  # tableau du §2 l'a fait le jour où trois dispositifs de plus ont été
-  # trouvés. Elles restent à arbitrer : il leur faut une sonde qui recompte
-  # depuis `avantages_non_contributifs.yaml`, pas une relecture.
+  # qu'il est aujourd'hui, et leurs comptes se périmaient donc pour de bon. Le
+  # tableau du §2 l'avait fait — il donnait 20 dispositifs « absent » pour 21,
+  # et l'entête quarante-trois en toutes lettres. Les quatre comptes du
+  # tableau et les deux de l'entête recomptent maintenant depuis les fichiers
+  # de données ; les deux sections qui n'affirment plus que cela passent en
+  # état. Le §2 reste à arbitrer pour une seule phrase : les 87 % du total
+  # chiffré que les lignes lues font, part qu'aucune sonde ne recalcule et
+  # qu'aucun test ne tient.
   docs/avantages_non_contributifs.md:
     defaut: recit
     sections:
-      Les avantages non contributifs du scénario 1: a_declarer
+      Les avantages non contributifs du scénario 1: etat
       "2. L'état du modèle : quatre mots, et ils ne se valent pas": a_declarer
-      3. La liste: a_declarer
+      3. La liste: etat
   # Des lectures de Légifrance, datées du jour où elles ont été faites et
   # ancrées sur un identifiant de version. Les chiffres qu'il écrit sont des
   # comptes de lignes du fichier de données, et
@@ -151,8 +277,18 @@ fichiers:
   # sait pas lire un dump LEGI.
   docs/frontiere_contributive.md:
     defaut: recit
+  # La procédure de veille, et ce que le registre porte. Elle est écrite pour
+  # être SUIVIE par la session d'après : périmée, elle enverrait relire ce qui
+  # l'a déjà été. Sa dernière section s'intitule « aujourd'hui » et donnait un
+  # compte figé au 17 septembre 2026 — vingt-deux exemples publiés pour 21 ;
+  # elle lit maintenant le registre et les témoins.
   docs/veille_droit.md:
-    defaut: a_declarer
+    defaut: etat
+    sections:
+      # Le jour où le dépôt a servi des âges légaux certifiés et faux : le
+      # récit qui fonde les trois outils, et ses chiffres sont ceux de ce
+      # jour-là — dont le « 63 ans et 171 trimestres » qui était l'erreur.
+      Ce qui s'est passé le 17 septembre 2026: recit
   # Le fichier entier reste à arbitrer, et le passer en `etat` a été essayé :
   # il porte trois tailles — celles du moteur d'Impeccable, de Chromium et d'un
   # plafond de caractères — dont deux désignent des logiciels installés HORS du
@@ -167,8 +303,23 @@ fichiers:
       # personne. La date est le sujet de la section.
       "Le navigateur ne voit rien hors de `localhost`, et il le dit mal": recit
       "Ce qu'un navigateur ne débloque pas": recit
+      # Les trois sections qui ne portent aucune de ces tailles : ce qu'un
+      # clone reçoit, la commande à lancer, et les règles figées à un commit.
+      "Outillage d'audit d'interface — ce qu'une machine neuve reçoit, et ce qu'elle doit encore faire": etat
+      Playwright CLI: etat
+      "Web Interface Guidelines : règles figées": etat
+  # La remise au mainteneur du site d'accueil : elle dit ce que l'hôte doit
+  # savoir AUJOURD'HUI — la frontière des deux dépôts, les adresses, ce que le
+  # simulateur attend d'un hébergement, la liste de vérification. Une remise
+  # périmée est pire qu'aucune remise : elle est écrite pour être suivie. Son
+  # unique chiffre, le poids du paquet, y est donc ancré — il disait 2,9 Mo
+  # bruts et 310 Ko compressés pour 3 049 et 346.
   docs/integration-partiliberalfrancais.md:
-    defaut: a_declarer
+    defaut: etat
+    sections:
+      # Un relevé daté, pris dans le navigateur et par requête directe, que la
+      # section elle-même donne « à revérifier avant de s'y fier ».
+      Ce qui a été observé le 17 septembre 2026: recit
   # Un parcours de présentation. Ses chiffres ne sont plus ceux d'une matinée
   # : `tests/test_parcours.py` rejoue ses adresses, rend ses pages, et refuse
   # tout montant, tout pourcentage et tout compte que le site n'affiche pas.
@@ -181,13 +332,21 @@ fichiers:
   # leur date de lecture, et la page Risque fait foi pour ceux du modèle.
   docs/risque_de_defaut.md:
     defaut: recit
+  # Les consignes que toute session lit en s'ouvrant : elles décrivent le dépôt
+  # d'AUJOURD'HUI, et une consigne périmée se suit quand même — c'est le pire
+  # des cas. Deux procès-verbaux y sont enclavés, et eux seuls sont gelés :
+  # l'audit des quatorze branches du 18 septembre 2026, et le compte des
+  # recalculs qui avait motivé la mémoire de `Carriere`.
   CLAUDE.md:
-    defaut: a_declarer
+    defaut: etat
+    paragraphes_recit:
+      - "Les quatorze branches `claude/*` qui restaient ont été auditées"
+      - "- `SerieAnnuelle` et `Carriere` sont immuables"
 
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 192
+  sections_a_declarer: 73
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2

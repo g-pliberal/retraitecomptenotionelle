@@ -72,7 +72,10 @@ python scripts/verifier_prose.py --sondes     # le vocabulaire des sondes
 « 2874 » ici et « 10 615 » là, et une correction qui changerait l'un en l'autre
 ferait un diff que personne ne veut relire.
 
-Une sonde qui arrondit se déclare : `poids(...)~5%`.
+Une sonde qui arrondit se déclare : `poids(...)~5%`. Une sonde qui compte peut
+traverser un cran d'entrées par `*` : `entrees(data/sources.yaml:institutions.*.jeux)`
+réunit les jeux de toutes les institutions du manifeste, que rien ne totalise
+ailleurs — la méthodologie en annonçait « cent vingt » en toutes lettres.
 
 Trois ancres ne calculent rien, et disent pourquoi :
 
@@ -92,7 +95,7 @@ C'est ce qui fait avancer le dépôt sans qu'on y pense. Deux compteurs, en bas
 de `zones.yaml`, qui ne peuvent que décroître :
 
 - **les sections non déclarées**, aujourd'hui
-  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->192<!--/--> ;
+  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->73<!--/--> ;
 - **les chiffres qui portent l'aveu `a_verifier`**, aujourd'hui
   <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.chiffres_a_verifier)-->2<!--/-->.
 
@@ -108,7 +111,10 @@ Trois angles morts, nommés d'avance plutôt que découverts plus tard.
 - **Les blocs de code.** Une ancre y serait visible, puisque rien n'y est
   masqué. L'arborescence du README annonce le nombre de tests dans un bloc :
   elle reste tenue par `test_le_README_dit_le_vrai_nombre_de_tests`, écrit
-  pour elle. Un chiffre qui compte a intérêt à sortir du bloc.
+  pour elle. Un chiffre qui compte a intérêt à sortir du bloc. Un `#` de bloc
+  n'est en revanche plus pris pour un titre : les commentaires du README
+  ouvraient autant de sections fantômes, qui gonflaient le cliquet et, plus
+  grave, coupaient en deux la section réelle qui les contient.
 - **Les chiffres en toutes lettres.** L'ancre ne sait pas les tenir, et c'est
   l'un d'eux qui avait vieilli du simple au double dans la feuille de route.
   Le contrôle les signale dans les zones `etat`, et la seule issue est de les

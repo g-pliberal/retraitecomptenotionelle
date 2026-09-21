@@ -8294,13 +8294,56 @@ cliquets, dans `zones.yaml`, ne peuvent que décroître : les sections non
 déclarées et les chiffres qui portent l'aveu `a_verifier`. Tout est décrit dans
 `docs/fraicheur.md`.
 
+**Le 21 septembre 2026 : le cliquet passe de 192 à 73.** Une passe d'arbitrage,
+document par document, et trois choses qu'elle a trouvées.
+
+*Le partage de `limites.md` était le morceau annoncé, et il s'est fait d'un
+seul mouvement.* Quarante-six sections y racontent une correction datée — un
+AVANT, un APRÈS, la fiche ou la table qui a changé ce jour-là — et c'est le
+critère qui les range en `recit` : les rafraîchir effacerait ce qui a été
+corrigé. Sept autres disent ce qui est vrai aujourd'hui sans porter un seul
+chiffre nu, et passent en `etat`. Ce qui reste attend une sonde par chiffre,
+et c'est là qu'est désormais le travail : le §1 et son état de certification,
+le §5 et ses réserves, la trajectoire projetée.
+
+*Les autres documents se rangent par leur usage, pas par leur temps.* Ce qui
+est écrit pour être SUIVI est `etat` de bout en bout, parce qu'une consigne
+périmée se suit quand même : `CLAUDE.md`, la remise au mainteneur du site
+d'accueil, la procédure de veille. Les deux procès-verbaux enclavés dans
+`CLAUDE.md` — l'audit des quatorze branches, le compte des recalculs de
+`date_liquidation` — sont gelés par `paragraphes_recit`, mécanique que la
+feuille de route avait déjà pour ses bilans. Vingt et une sections de
+`methodologie.md` et sept du README suivent, sans un chiffre à ancrer.
+
+*Quatre chiffres ont été pris en flagrant délit, et aucun n'aurait été vu
+autrement.* La remise au mainteneur annonçait un paquet de données de 2,9 Mo
+bruts et 310 Ko compressés, pour 3 049 et 346 ; `veille_droit.md` disait
+« vingt-deux exemples publiés » dans une section intitulée « aujourd'hui »,
+pour 21 ; `methodologie.md` donnait « cent vingt jeux de données des
+vingt-huit institutions », pour 161 et 36 ; le tableau des avantages non
+contributifs comptait 20 dispositifs `absent` pour 21. Les quatre étaient
+écrits en toutes lettres ou sans unité — c'est-à-dire exactement là où le
+contrôle ne regarde pas. Ils sont maintenant ancrés, donc recalculés.
+
+**Deux outils en sont sortis.** Le découpage en sections prenait un `#` de
+bloc de code pour un titre : les commentaires des exemples Python du README en
+ouvraient onze, qui gonflaient le cliquet et, plus grave, coupaient en deux la
+section réelle qui les contient — un régime déclaré sur elle ne valait plus
+que jusqu'au premier commentaire. Et une sonde qui compte peut maintenant
+traverser un cran d'entrées : `entrees(data/sources.yaml:institutions.*.jeux)`
+réunit les jeux de toutes les institutions, que rien ne totalisait ailleurs.
+
 **Ce qui reste — et c'est le travail, qui se fait section par section.**
-Abaisser le premier cliquet. `limites.md` est le morceau principal et le plus
-mélangé : trois sections au présent, qui disent ce que les chiffres du dépôt
-valent, et une cinquantaine au passé, qui racontent des corrections faites.
-`methodologie.md`, `avantages_non_contributifs.md` et le reste du README
-suivent. Rien n'oblige à tout reprendre d'un coup, et rien ne permet de
-reculer.
+Soixante-treize sections, et elles ont toutes la même forme : elles disent ce
+que les chiffres du dépôt valent AUJOURD'HUI, et chacun de leurs chiffres est
+une mesure du modèle — un écart en pourcentage, un montant, une part de PIB.
+Aucune ne se déclare sans une sonde qui la recalcule, ou sans un test nommé
+qui la tienne déjà. Le §1 de `limites.md` en porte à lui seul deux cents, et
+c'est le plus gros morceau qui reste ; les six résultats du README et les
+sections chiffrées de `methodologie.md` suivent. Une seule phrase bloque le §2
+de `avantages_non_contributifs.md` : les 87 % du total chiffré que les lignes
+lues font, part qu'aucune sonde ne recalcule et qu'aucun test ne tient. Rien
+n'oblige à tout reprendre d'un coup, et rien ne permet de reculer.
 
 **L'angle mort à traiter ensuite.** Ce contrôle ne juge pas une phrase,
 seulement un nombre : « la bascule ne reprend aucun droit acquis » lui est
@@ -8309,7 +8352,9 @@ chiffres du dépôt, l'autre les affirmations du site.
 
 **Fichiers.** `scripts/verifier_prose.py`, `data/reference/prose/zones.yaml`,
 `tests/test_prose.py`, `docs/fraicheur.md` (neufs) ; les ancres posées dans
-`README.md`, `docs/feuille_de_route.md` et `docs/limites.md`.
+`README.md`, `docs/feuille_de_route.md`, `docs/limites.md`,
+`docs/methodologie.md`, `docs/avantages_non_contributifs.md`,
+`docs/veille_droit.md` et `docs/integration-partiliberalfrancais.md`.
 
 ### 42. La passe visuelle du 19 septembre 2026 : vingt constats, du téléphone au bureau — `fait`
 
