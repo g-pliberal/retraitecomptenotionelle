@@ -7473,6 +7473,51 @@ au contraire à soixante ans tout du long, plus tôt que n'importe quel groupe.
 C'est exactement le mécanisme que la section supposait, et il est bien là : il
 ne se voyait pas parce qu'il se compense.
 
+**Ce que cette erreur coûte : rien, sur ce que le site compare.**
+`scripts/cout_age_depart.py` fait le contrefactuel. Pour chacun des neuf cas
+types comparables, il cherche l'âge d'entrée qui rapproche le plus son départ
+du couloir de sa catégorie — l'âge d'entrée, parce que c'est la cause que
+cette section désigne —, rebâtit la grille avec ces âges-là et relance le
+calcul du coût. Six cas types se déplacent ; l'artisan entre à 21,5 ans au
+lieu de 24, le contractuel à 21 au lieu de 24, le salarié au SMIC à 20 au lieu
+de 18.
+
+**Les cinq scénarios notionnels ne bougent pas** : moins d'un dixième de point
+de PIB en 2070, de −0,03 à +0,03. L'erreur d'âge leur est invisible, et la
+raison est dans le mécanisme — dans un compte notionnel, partir plus tôt
+allonge le diviseur autant que la carrière raccourcie retire au capital, et les
+deux termes se répondent. C'est la raison chiffrée de ne réécrire aucune fiche
+pour ce que le site argumente.
+
+**Le système actuel bouge, et dans le mauvais sens** : 18,35 % du PIB en 2070
+sous les fiches, 18,95 % sous le contrefactuel. L'écart avec la projection du
+COR passe de 4,15 à 4,75 points — corriger les âges ÉLOIGNE le modèle du COR
+au lieu de l'en rapprocher. **L'âge de départ n'explique donc pas l'écart que
+cette section laisse ouvert**, et la piste du taux de remplacement reste
+entière. Une réserve sur ce +0,61 point : déplacer l'âge d'entrée déplace aussi
+la DURÉE de carrière, et le chiffre mêle les deux effets — c'est d'ailleurs la
+durée qui domine, puisque quatre des six cas types déplacés entrent PLUS TÔT.
+
+**Et les deux critères d'âge tirent en sens contraire.** Sous la grille
+corrigée, l'écart à l'âge conjoncturel tous régimes passe de −0,08 à −0,65 an :
+rapprocher chaque cas type de SA catégorie éloigne leur SOMME. Les deux ne
+peuvent pas être satisfaits ensemble. Le suspect est le groupe des quatre cas
+types hors champ — un douzième de la grille, à des âges de 44,0 à 56,6 ans —,
+dont le poids ou l'âge devrait alors être faux ; mais la mesure tient le
+constat et ne tranche pas son explication, les deux sources ne décrivant pas la
+même population.
+
+**Trois raisons font de ce contrefactuel une borne basse**, écrites en tête du
+script. Les quatre cas types hors champ ne sont pas touchés. **Deux cas types
+ne répondent pas du tout à leur âge d'entrée**, et le script le mesure au lieu
+de le supposer : l'exploitant agricole et la profession libérale relèvent de
+régimes EN POINTS, auxquels le modèle n'oppose aucune durée requise — leur
+`trimestres_requis` vaut zéro, leur départ suit l'âge légal, et le déplacer de
+huit ans d'âge d'entrée n'y change pas un trimestre. Leurs écarts, −1,21 et
++0,66 an, viennent d'ailleurs. Enfin un couloir réduit à une seule catégorie
+est un POINT, qu'un pas d'une demi-année n'atteint pas : le résidu subsiste,
+de 0,12 à 0,30 an pour trois cas types.
+
 **Ce que le couloir vaut, et ce qu'il ne vaut pas.** La nomenclature classe des
 professions, la grille décrit des carrières par leur régime et leur niveau de
 revenu : un cas type déclare donc tous les groupes où il peut tomber, et
@@ -7609,7 +7654,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1894<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1899<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

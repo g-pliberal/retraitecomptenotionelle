@@ -67,7 +67,7 @@ RACINE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.castypes import (  # noqa: E402
-    CAS_TYPES, calculer_cas_types, poids_effectifs,
+    CAS_TYPES, CasType, calculer_cas_types, poids_effectifs,
 )
 from retraite_notionnelle.config import Parametres  # noqa: E402
 from retraite_notionnelle.cout import generations  # noqa: E402
@@ -108,9 +108,23 @@ def age_conjoncturel_publie(sexe: str = SEXE) -> dict[int, float]:
         }
 
 
-def departs_de_la_grille(simulateur: Simulateur) -> dict[str, list[tuple[int, float]]]:
-    """Pour chaque cas type, ses couples (année de liquidation, âge), triés."""
-    grille = calculer_cas_types(simulateur, CAS_TYPES, generations(), "droit")
+def departs_de_la_grille(
+    simulateur: Simulateur,
+    cas_types: tuple[CasType, ...] = CAS_TYPES,
+    generations_retenues: tuple[int, ...] | None = None,
+) -> dict[str, list[tuple[int, float]]]:
+    """Pour chaque cas type, ses couples (année de liquidation, âge), triés.
+
+    ``cas_types`` et ``generations_retenues`` ne servent pas ici : ils servent
+    à ``age_depart_csp.py`` et à ``cout_age_depart.py``, qui rejouent la même
+    lecture sur une grille MODIFIÉE ou sur un petit nombre de générations.
+    Restreindre les générations ne change aucun point — la grille en donne un
+    par génération —, cela n'en calcule que moins.
+    """
+    grille = calculer_cas_types(
+        simulateur, cas_types,
+        generations_retenues if generations_retenues is not None else generations(),
+        "droit")
     departs: dict[str, list[tuple[int, float]]] = {}
     for (code, _), comparaison in grille.resultats.items():
         carriere = comparaison.carriere
@@ -136,10 +150,16 @@ def age_interpole(points: list[tuple[int, float]], annee: int) -> float | None:
     return points[-1][1]
 
 
-def mesurer(simulateur: Simulateur) -> list[Annee]:
-    """Le tableau, année par année, sur la fenêtre que la DREES publie."""
+def mesurer(simulateur: Simulateur,
+            cas_types: tuple[CasType, ...] = CAS_TYPES) -> list[Annee]:
+    """Le tableau, année par année, sur la fenêtre que la DREES publie.
+
+    ``cas_types`` sert à ``cout_age_depart.py``, qui rejoue la mesure sur une
+    grille dont les âges d'entrée ont été déplacés : la concordance d'ensemble
+    survit-elle à la correction cas par cas ?
+    """
     publie = age_conjoncturel_publie()
-    departs = departs_de_la_grille(simulateur)
+    departs = departs_de_la_grille(simulateur, cas_types)
     mesures: list[Annee] = []
     for annee in sorted(publie):
         poids = poids_effectifs(simulateur.effectifs, annee)

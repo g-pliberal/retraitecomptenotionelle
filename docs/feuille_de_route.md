@@ -11754,3 +11754,66 @@ stock de retraités, comme pour l'action 80.
 `scripts/verifier_donnees.py`, `data/reference/macro/age_depart_csp.csv`,
 `data/reference/macro/cas_types_csp.yaml`, `data/sources.yaml`,
 `docs/limites.md` § 5 ter.
+
+### 83. Ce que l'erreur d'âge coûte : rien, sur ce que le site compare — `fait`
+
+**Pourquoi.** L'action 82 avait mesuré 1,17 an d'écart en valeur absolue entre
+l'âge de départ des cas types et celui de leur catégorie socioprofessionnelle,
+et le dépôt avait écrit qu'il ne corrigeait rien. Une erreur qu'on ne corrige
+pas doit au moins être chiffrée : tant qu'on ne sait pas ce que ces 1,17 an
+déplacent, on ne sait pas s'il faut réécrire une fiche ou fermer le sujet.
+
+**Marche.** `scripts/cout_age_depart.py` fait le contrefactuel. Pour chacun des
+neuf cas types comparables, il cherche l'âge d'entrée qui rapproche le plus son
+départ du couloir de sa catégorie — l'âge d'entrée, parce que c'est la cause
+que `limites.md` § 5 ter désigne, et parce que forcer l'âge de départ
+directement donnerait une carrière que le droit ne produit pas. Puis il rebâtit
+la grille avec ces âges et relance `cout.calculer_cout`. Six cas types se
+déplacent : l'artisan entre à 21,5 ans au lieu de 24, le contractuel à 21 au
+lieu de 24, le salarié au SMIC à 20 au lieu de 18.
+
+**Ce que ça a déplacé.** **Les cinq scénarios notionnels ne bougent pas** —
+moins d'un dixième de point de PIB en 2070, de −0,03 à +0,03. L'erreur d'âge
+leur est invisible, et le mécanisme le dit : dans un compte notionnel, partir
+plus tôt allonge le diviseur autant que la carrière raccourcie retire au
+capital. C'est la raison chiffrée de ne réécrire aucune fiche pour ce que le
+site argumente, et le sujet se ferme là.
+
+**Le système actuel bouge, et dans le mauvais sens** : 18,35 % du PIB en 2070
+sous les fiches, 18,95 % sous le contrefactuel, et l'écart avec la projection
+du COR passe de 4,15 à 4,75 points. Corriger les âges ÉLOIGNE le modèle du COR.
+L'âge de départ n'explique donc pas l'écart que le § 5 ter laisse ouvert, et la
+piste qu'il nomme — un taux de remplacement qui ne recule pas quand celui du
+COR recule — reste entière. Elle est la suite.
+
+**Ce que la mesure laisse ouvert.** Sous la grille corrigée, l'écart à l'âge
+conjoncturel tous régimes passe de −0,08 à −0,65 an : rapprocher chaque cas
+type de SA catégorie éloigne leur SOMME. Les deux critères ne peuvent pas être
+satisfaits ensemble. Le suspect est le groupe des quatre cas types hors champ —
+un douzième de la grille, à des âges de 44,0 à 56,6 ans —, dont le poids ou
+l'âge serait alors faux ; la mesure tient le constat et ne tranche pas son
+explication, les deux sources ne décrivant pas la même population.
+
+**Trois leçons.** **Un contrefactuel n'est pas une proposition** : aucun âge
+d'entrée trouvé ici n'entre dans `castypes.py`, et un test l'exige — une fiche
+se réécrit sur ce qu'on sait d'une carrière, pas sur ce qui rapproche une
+moyenne d'une autre. **Le sens d'une correction se mesure avant de la faire** :
+celle-ci allait dans le mauvais sens, et le dépôt aurait pu passer une journée
+à réécrire des fiches pour creuser un écart. Et **deux cas types ne répondent
+pas à leur âge d'entrée**, ce que le script mesure au lieu de le supposer :
+l'exploitant agricole et la profession libérale relèvent de régimes en points,
+auxquels le modèle n'oppose aucune durée requise — `trimestres_requis` vaut
+zéro, leur départ suit l'âge légal, et le déplacer de huit ans d'âge d'entrée
+n'y change pas un trimestre.
+
+**Ce qui reste.** Le +0,61 point du système actuel mêle deux effets, l'âge de
+départ et la durée de carrière, parce que déplacer l'entrée déplace les deux —
+et c'est la durée qui domine, quatre des six cas types déplacés entrant plus
+tôt. Les séparer demanderait un levier que la grille n'a pas. Les deux cas
+types en points gardent leurs écarts, −1,21 et +0,66 an, qui viennent d'ailleurs
+— vraisemblablement de la décote de ces régimes, que le modèle ne leur applique
+pas.
+
+**Fichiers.** `scripts/cout_age_depart.py`, `tests/test_cout_age_depart.py`,
+`scripts/age_conjoncturel.py` (deux fonctions rendues rejouables sur une autre
+grille), `docs/limites.md` § 5 ter.
