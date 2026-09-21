@@ -1309,6 +1309,16 @@ affirmations:
     etat: verifiee
     controle: cascade_ne_porte_que_la_depense
 
+  - id: cout.deplacement_uniforme_borne_basse
+    page: /cout
+    extrait: "Le déplacement uniforme est une borne basse, et de peu."
+    porte: >-
+      déplacer davantage les pensions des femmes, à moyenne d'ensemble
+      inchangée, fait toujours monter le coût de la garantie, et de moins d'un
+      dixième au bout de la fourchette parcourue
+    etat: verifiee
+    controle: deplacement_uniforme_borne_basse
+
   - id: cout.garantie_hors_ligne_du_systeme_4
     page: /cout
     extrait: "ligne du système 4 ne porte que ses pensions contributives"

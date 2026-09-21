@@ -55,8 +55,11 @@ from ..cout import (
 )
 from ..donnees.bilan import BilanFige, charger_bilan
 from ..donnees.assiette import AssietteActivite
-from ..donnees.distribution import DistributionPensions
-from ..garantie import cout_garantie
+from ..donnees.distribution import (
+    DistributionPensions,
+    part_femmes as part_femmes_distribution,
+)
+from ..garantie import cout_garantie, cout_garantie_par_sexe
 from ..donnees.chargement import (
     DonneeInsuffisante,
     charger_periodes_non_travaillees,
@@ -9508,6 +9511,26 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
         ("Plancher majoré, 1 050 € (personne seule)",
          base.garantie_vieillesse_mensuelle + base.allocation_isolement_mensuelle),
     )
+    # CE QUE LE DÉPLACEMENT UNIFORME CACHE, chiffré plutôt qu'affirmé. Aucun
+    # nombre n'est écrit en toutes lettres dans la note : les deux lectures
+    # sont calculées ici, sous le facteur et le plancher de la page.
+    plancher_seul = (base.garantie_vieillesse_mensuelle
+                     + base.allocation_isolement_mensuelle) * vers_enquete
+    poids_femmes = part_femmes_distribution(base.racine_donnees, millesime)
+    par_sexe = {
+        rapport: cout_garantie_par_sexe(
+            DistributionPensions(base.racine_donnees, sexe="F",
+                                 millesime=millesime),
+            DistributionPensions(base.racine_donnees, sexe="H",
+                                 millesime=millesime),
+            poids_femmes, effectif_retraites, plancher_seul, facteur, rapport)
+        for rapport in (1.0, 0.9, 0.8)
+    }
+
+    def _cout_par_sexe(rapport: float) -> str:
+        return _milliards(
+            par_sexe[rapport].cout_annuel_meur * taux / vers_enquete, 1)
+
     assiettes = (
         (f"Pensions de {millesime}", 1.0),
         (f"Pensions du système 4 en {millesime}", facteur),
@@ -9757,6 +9780,21 @@ distribution est celle de {millesime}, tenue constante sur toute la série, le
 passé comme l'avenir. Ce tableau applique le barème à tous les retraités de
 {millesime} ; la trajectoire ne l'applique qu'à ceux de 65 ans et plus, d'où un
 coût plus bas la même année.</p>
+
+<div class="note"><strong>Le déplacement uniforme est une borne basse, et de
+peu.</strong> Le système 4 retire les droits non contributifs que les femmes
+détiennent plus souvent : majorations pour enfants, assurance vieillesse des
+parents au foyer, minimum contributif, trimestres assimilés. Leurs pensions
+tombent donc plus que la moyenne, et davantage d'entre elles passent sous le
+plancher que ce déplacement unique ne le dit. Un facteur par sexe n'est pas
+calculable ici, un seul des treize cas types étant une femme ; l'écart se
+mesure pourtant en le paramétrant, la moyenne d'ensemble restant déplacée du
+même facteur. Si les pensions des femmes tombaient un dixième de plus que
+celles des hommes, la dernière ligne de ce tableau passerait de
+{_cout_par_sexe(1.0)} à {_cout_par_sexe(0.9)} ; un cinquième de plus,
+{_cout_par_sexe(0.8)}. Le sens n'est pas douteux, l'ampleur reste seconde, et
+<a href="{g.DEPOT}/blob/main/scripts/garantie_par_sexe.py">un script du
+dépôt</a> porte le tableau entier.</div>
 
 <p><strong>Ce qu'elle remplace.</strong> <strong>La garantie est le seul
 plancher du système 4</strong>, et c'est tout ce qu'il y a à retenir : elle
