@@ -96,8 +96,14 @@ class _MajorationEnfants:
     regime: str
     #: Dispositif qui les accorde : ``mda`` ou ``bonifications``.
     dispositif: str
-    #: Trimestres accordés au total, tous enfants confondus.
+    #: Trimestres accordés au total, tous enfants confondus. Ils jouent sur la
+    #: durée d'assurance tous régimes, donc sur la décote et la surcote.
     trimestres: int
+    #: Ceux d'entre eux qui entrent dans les SERVICES du régime, et relèvent
+    #: donc son prorata. Une bonification en est ; une majoration de durée
+    #: d'assurance n'en est pas — voir l'en-tête de
+    #: `legislation/majoration_duree_assurance.csv`.
+    services: int
     fiabilite: Fiabilite
 
 
@@ -689,7 +695,9 @@ class MajorationsPourEnfants:
     AGE_PRESUME_A_LA_NAISSANCE = 30
 
     def __init__(self, racine: Path) -> None:
-        self._table: list[tuple[str, str, int, int, int, int, str, Fiabilite]] = []
+        self._table: list[
+            tuple[str, str, int, int, int, int, int | None, int, str, Fiabilite]
+        ] = []
         chemin = (racine / "reference" / "legislation"
                   / "majoration_duree_assurance.csv")
         if not chemin.exists():
@@ -697,12 +705,15 @@ class MajorationsPourEnfants:
         with chemin.open(encoding="utf-8") as flux:
             lignes = (l for l in flux if not l.lstrip().startswith("#"))
             for ligne in csv.DictReader(lignes):
+                depuis = (ligne["services_depuis"] or "").strip()
                 self._table.append((
                     ligne["dispositif"],
                     ligne["reference"],
                     int(ligne["debut"]),
                     int(ligne["fin"]),
                     int(ligne["trimestres_par_enfant"]),
+                    int(ligne["services_par_enfant"]),
+                    int(depuis) if depuis else None,
                     int(ligne["enfants_minimum"]),
                     ligne["beneficiaire"],
                     Fiabilite.depuis_texte(ligne["fiabilite"]),
@@ -710,8 +721,14 @@ class MajorationsPourEnfants:
 
     def par_enfant(self, dispositif: str, sexe: str, annee_naissance: int,
                    annee_liquidation: int,
-                   nombre_enfants: int) -> tuple[int, Fiabilite] | None:
-        """Trimestres accordés PAR ENFANT, ou ``None`` si rien n'est dû.
+                   nombre_enfants: int) -> tuple[int, int, Fiabilite] | None:
+        """Trimestres accordés PAR ENFANT, dont ceux qui comptent en SERVICES.
+
+        Rend ``(trimestres, services, fiabilite)``. Les premiers jouent sur la
+        durée d'assurance, les seconds — qui en sont un sous-ensemble — sur le
+        prorata du régime. Ils ne coïncident que là où le droit accorde une
+        bonification ; une majoration de durée d'assurance rend ``services``
+        nul, et c'est tout l'objet de cette distinction.
 
         ``None`` couvre les quatre cas où le droit ne donne rien : le
         dispositif n'existe pas encore à la date qui le commande, il n'a jamais
@@ -719,8 +736,8 @@ class MajorationsPourEnfants:
         pas élevé le nombre d'enfants que la ligne exige — la loi Boulin
         demandait deux enfants là où les suivantes se contentent d'un.
         """
-        for (code, reference, debut, fin, trimestres, enfants_minimum,
-             beneficiaire, fiabilite) in self._table:
+        for (code, reference, debut, fin, trimestres, services, services_depuis,
+             enfants_minimum, beneficiaire, fiabilite) in self._table:
             if code != dispositif:
                 continue
             annee = (annee_liquidation if reference == "liquidation"
@@ -731,7 +748,14 @@ class MajorationsPourEnfants:
                 return None
             if nombre_enfants < enfants_minimum:
                 return None
-            return trimestres, fiabilite
+            # La part qui compte en services peut n'entrer en vigueur qu'à une
+            # SECONDE date, celle de la liquidation, quand la première est
+            # celle de la naissance de l'enfant. C'est le cas du b ter de
+            # L. 12, qui convertit un trimestre de majoration en bonification
+            # pour les pensions prenant effet à compter de septembre 2026.
+            if services_depuis is not None and annee_liquidation < services_depuis:
+                services = 0
+            return trimestres, services, fiabilite
         return None
 
 
@@ -3029,19 +3053,19 @@ class ScenarioActuel:
                 )
                 if accorde is None:
                     continue
-                trimestres, fiabilite = accorde
+                trimestres, services, fiabilite = accorde
                 candidats.append((
                     trimestres * carriere.nombre_enfants, valides, dispositif,
-                    code, fiabilite,
+                    code, services * carriere.nombre_enfants, fiabilite,
                 ))
         if not candidats:
             return None
-        trimestres, _, dispositif, code, fiabilite = max(
+        trimestres, _, dispositif, code, services, fiabilite = max(
             candidats, key=lambda c: (c[0], c[1], c[3])
         )
         return _MajorationEnfants(
             regime=code, dispositif=dispositif, trimestres=trimestres,
-            fiabilite=fiabilite,
+            services=services, fiabilite=fiabilite,
         )
 
     # -- calcul --------------------------------------------------------------
@@ -3150,9 +3174,16 @@ class ScenarioActuel:
             ) if avantages_non_contributifs else None
         )
         if majoration_enfants is not None:
+            # LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE. Tout ce qui est
+            # accordé joue sur la durée d'assurance tous régimes, donc sur la
+            # décote ; seule la part `services` entre au prorata du régime, et
+            # relève donc la pension. Ce module les confondait, et sur-créditait
+            # les mères fonctionnaires de deux trimestres de services par enfant
+            # né depuis 2004, là où L. 12 bis n'accorde qu'une majoration de
+            # durée.
             trimestres += majoration_enfants.trimestres
             trimestres_par_regime[majoration_enfants.regime] += (
-                majoration_enfants.trimestres
+                majoration_enfants.services
             )
             fiabilite_globale = min(fiabilite_globale, majoration_enfants.fiabilite)
 

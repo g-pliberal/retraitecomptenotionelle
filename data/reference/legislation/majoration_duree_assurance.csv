@@ -16,8 +16,35 @@
 #     régime général mais leur propre bonification, qui vaut un an par enfant né
 #     avant 2004 et deux trimestres seulement pour les enfants nés depuis.
 #
-# Les trimestres accordés ici jouent sur la durée d'assurance tous régimes — donc
-# sur la décote — ET dans la proratisation du régime qui les porte.
+# DEUX CASES, ET LE MODÈLE LES CONFONDAIT. Les trimestres accordés ici jouent
+# sur la durée d'assurance tous régimes — donc sur la décote — mais ils
+# n'entrent PAS tous dans la proratisation du régime qui les porte, et c'est
+# cette seconde colonne que la table portait à tort pour la fonction publique.
+#
+# Une BONIFICATION s'ajoute aux SERVICES : dans un régime en annuités, elle
+# entre au numérateur du prorata et relève donc la pension. Une MAJORATION DE
+# DURÉE D'ASSURANCE ne compte que pour la durée — la décote, la surcote, la
+# durée tous régimes —, et ne touche pas au prorata. L'article L. 12 b du code
+# des pensions accorde une bonification ; l'article L. 12 bis, qui lui succède
+# pour les enfants nés depuis 2004, accorde une MAJORATION. Le modèle les
+# traitait de la même façon et sur-créditait donc les mères fonctionnaires de
+# deux trimestres de services par enfant né depuis 2004.
+#
+# La preuve interne que la distinction est la bonne : l'article 104 de la loi
+# n° 2025-1403 du 30 décembre 2025 crée un b ter à L. 12 pour convertir UN des
+# deux trimestres en bonification, et réécrit L. 12 bis pour dire que des deux
+# trimestres « l'un est pris en compte au titre de la bonification prévue au
+# b ter ». Une conversion n'a de sens que si les deux cases diffèrent.
+#
+# `services_par_enfant` porte donc ce qui entre au prorata, et
+# `services_depuis` l'année de liquidation à partir de laquelle cette part
+# s'applique — avant elle, aucun service n'est accordé. La colonne est vide
+# quand la règle n'a pas de seconde date, c'est-à-dire partout ailleurs.
+#
+# UNE APPROXIMATION, ET ELLE EST DITE. Le b ter vaut « pour les pensions
+# prenant effet à compter du 1er septembre 2026 » ; le modèle date à l'ANNÉE,
+# et applique donc la conversion dès janvier 2026. Huit mois de trop, sur une
+# seule génération, pour un trimestre de services.
 #
 # DEUX DISPOSITIFS, ET ILS NE SE LISENT PAS À LA MÊME DATE
 #
@@ -59,6 +86,10 @@
 #                 * Enfants nés à compter du 1er janvier 2004 : la bonification
 #                   disparaît, remplacée par DEUX TRIMESTRES par enfant pour les
 #                   femmes fonctionnaires ayant accouché après leur recrutement.
+#                   Ce sont deux trimestres de MAJORATION DE DURÉE, qui ne
+#                   comptent pas dans les services — jusqu'au 1er septembre
+#                   2026, où l'un d'eux devient une bonification (b ter de
+#                   L. 12, article 104 de la loi n° 2025-1403).
 #
 # `reference` dit à quelle date se lit la ligne, et la distinction n'est pas
 # cosmétique : la MDA se lit à l'ANNÉE DE LIQUIDATION, puisque c'est le droit en
@@ -92,8 +123,8 @@
 #
 # `fin` vaut 2100 pour une règle toujours en vigueur, comme partout ailleurs
 # dans data/.
-dispositif,reference,debut,fin,trimestres_par_enfant,enfants_minimum,beneficiaire,fiabilite
-mda,liquidation,1972,1974,4,2,mere,haute
-mda,liquidation,1975,2100,8,1,mere,haute
-bonifications,naissance_enfant,1900,2003,4,1,mere,moyenne
-bonifications,naissance_enfant,2004,2100,2,1,mere,moyenne
+dispositif,reference,debut,fin,trimestres_par_enfant,services_par_enfant,services_depuis,enfants_minimum,beneficiaire,fiabilite
+mda,liquidation,1972,1974,4,4,,2,mere,haute
+mda,liquidation,1975,2100,8,8,,1,mere,haute
+bonifications,naissance_enfant,1900,2003,4,4,,1,mere,moyenne
+bonifications,naissance_enfant,2004,2100,2,1,2026,1,mere,moyenne

@@ -132,6 +132,14 @@ def test_tout_article_cite_est_un_pivot_declare_et_tout_pivot_sert(donnees):
         for champ in ("article", "article_precedent"):
             if bascule.get(champ):
                 cites.add(frontiere._normalise(bascule[champ]))
+    # Un article peut fonder une LIGNE de l'inventaire sans dater de bascule :
+    # L. 6243-3 du code du travail porte le droit de l'apprenti, que le code de
+    # la sécurité sociale ignore. Il est alors cité par la liste légale, sous
+    # `lectures`, et la sonde en vérifie la version comme celle d'une bascule.
+    legale = donnees["liste_legale"]
+    cites.add(frontiere._normalise(legale["article"]))
+    for lecture in legale.get("lectures") or ():
+        cites.add(frontiere._normalise(lecture["article"]))
     assert cites <= pivots, (
         "articles cités sans pivot déclaré : " + ", ".join(sorted(cites - pivots)))
     assert pivots <= cites, (
@@ -196,21 +204,31 @@ def _droits_par_code(donnees: dict) -> dict[str, dict[str, int]]:
     L'article porte le code dans son libellé (« L. 12 CPCMR », « L. 351-3 CSS »),
     et c'est la seule information dont ce découpage a besoin.
     """
-    par: dict[str, dict[str, int]] = {"CSS": {}, "CPCMR": {}}
+    par: dict[str, dict[str, int]] = {"CSS": {}, "CPCMR": {}, "SPECIAUX": {}}
     for bascule in donnees["bascules"]:
         if bascule["face"] != "droit":
             continue
-        code = "CPCMR" if "CPCMR" in bascule["article"] else "CSS"
+        article = bascule["article"]
+        if "CPCMR" in article:
+            code = "CPCMR"
+        elif "décret" in article:
+            # Les régimes spéciaux ne vivent ni dans un code ni dans une loi :
+            # leurs bonifications sont dans deux décrets propres à chaque
+            # caisse, et c'est ce qui les distingue ici.
+            code = "SPECIAUX"
+        else:
+            code = "CSS"
         par[code][bascule["sens"]] = par[code].get(bascule["sens"], 0) + 1
     return par
 
 
 COMPTES_DE_LA_PROSE = {
-    "Trente-quatre déplacements datés":
-        lambda d: len(d["bascules"]) == 34,
-    "cinquante-neuf identifiants cités":
+    "Quarante et un déplacements datés":
+        lambda d: len(d["bascules"]) == 41,
+    "soixante-quatorze identifiants cités":
         lambda d: sum(1 for b in d["bascules"]
-                      for c in ("version", "version_precedente") if b.get(c)) == 59,
+                      for c in ("version", "version_precedente") if b.get(c))
+                  + 1 + len(d["liste_legale"].get("lectures") or ()) == 74,
     # Le partage par code, qui est le résultat de la section 5 : le privé ne
     # se referme jamais, la fonction publique est le seul endroit où la
     # frontière a reculé. Un chiffre faux ici retournerait la conclusion.
@@ -218,19 +236,24 @@ COMPTES_DE_LA_PROSE = {
         lambda d: _droits_par_code(d)["CSS"] == {"ouvre": 5, "ferme": 1},
     "| Code des pensions civiles et militaires | 4 | **6** |":
         lambda d: _droits_par_code(d)["CPCMR"] == {"ouvre": 4, "ferme": 6},
+    "| Régimes spéciaux (SNCF, RATP) | 3 | 3 |":
+        lambda d: _droits_par_code(d)["SPECIAUX"] == {"ouvre": 3, "ferme": 3},
     "six fermetures contre quatre ouvertures":
         lambda d: _droits_par_code(d)["CPCMR"] == {"ouvre": 4, "ferme": 6},
     "Dix bascules, lues dans trois articles du code des pensions":
         lambda d: sum("CPCMR" in b["article"] for b in d["bascules"]) == 10,
+    "trois fois en dix-huit ans":
+        lambda d: sum("décret" in b["article"] and b["sens"] == "ouvre"
+                      for b in d["bascules"]) == 3,
     "Dix charges ont été isolées chez un payeur nommé, dont neuf avant 2015":
         lambda d: (sum(b["sens"] == "identifie" for b in d["bascules"]) == 10
                    and sum(b["sens"] == "identifie" and str(b["date"]) < "2015"
                            for b in d["bascules"]) == 9),
-    "cinq ont été refondues dans les comptes des régimes, et quatre de ces cinq "
+    "six ont été refondues dans les comptes des régimes, et cinq de ces six "
     "sont postérieures à 2016":
-        lambda d: (sum(b["sens"] == "fond" for b in d["bascules"]) == 5
+        lambda d: (sum(b["sens"] == "fond" for b in d["bascules"]) == 6
                    and sum(b["sens"] == "fond" and str(b["date"]) >= "2016"
-                           for b in d["bascules"]) == 4),
+                           for b in d["bascules"]) == 5),
 }
 
 

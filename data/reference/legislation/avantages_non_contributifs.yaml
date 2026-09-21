@@ -568,6 +568,43 @@ avantages:
         c'est le contrôle externe le plus direct de toute la liste, un seul
         payeur pour un seul objet.
 
+  - code: apprentissage
+    libelle: Validation des trimestres d'apprentissage au-delà de l'assiette
+    famille: periodes_non_cotisees
+    quoi: >-
+      L'assiette de l'apprenti est réduite par exonération, et ne suffirait pas
+      à valider quatre trimestres. Un complément de cotisations est versé pour
+      valider « un nombre de trimestres correspondant à la durée du contrat
+      d'apprentissage » : le droit acquis cesse d'être proportionné à ce qui a
+      été versé, et c'est un tiers qui paie la différence — le Fonds de
+      solidarité vieillesse jusqu'en 2025, la branche vieillesse depuis.
+    base_legale: [L. 6243-3 code du travail (second alinéa), L. 222-2-1 7° CSS]
+    veille: []
+    creation: 2014
+    fin: null
+    regimes: régime général, régimes alignés
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Aucun des treize cas types n'est apprenti, et la grille n'a pas de motif
+      d'apprentissage : le modèle n'a rien sur quoi appliquer la règle. C'est le
+      même défaut que pour la majoration pour trois enfants — un instrument de
+      rapport ne compte pas une population.
+    sans_chiffre: >-
+      aucun cas type n'est apprenti, et aucun poste publié n'isole le complément
+      de cotisations versé à ce titre
+    cout:
+      mesurable_par: aucune
+      note: >-
+        TROUVÉ EN CONFRONTANT L'INVENTAIRE À LA LISTE LÉGALE, et il ne pouvait
+        pas être trouvé autrement : le droit n'est pas dans le code de la
+        sécurité sociale mais dans celui du travail, et les trois listes
+        internes dont cet inventaire est né décrivent ce que le MODÈLE sait
+        faire. Voir docs/frontiere_contributive.md § 10.
+        Le montant existe pourtant quelque part : la branche le verse, et un
+        décret en fixe les conditions. Il n'est isolé dans aucune publication
+        que le dépôt sache lire.
+
   - code: service_national
     chiffre_par: scripts/cout_avantages.py
     libelle: Validation du service national
@@ -1086,6 +1123,42 @@ avantages:
         415 pensions civiles de l'État pour 7,0 trimestres (jaune budgétaire,
         tableau A-7). Gain mensuel par tête sur le flux 2023 : 69 € chez les
         militaires, 157 € chez les civils (tableau 50).
+
+  - code: reduction_duree_afrique_du_nord
+    libelle: Réduction de la durée d'assurance pour services militaires en Afrique du Nord
+    famille: age_et_bonifications
+    quoi: >-
+      Les services militaires actifs accomplis en Afrique du Nord ouvrent droit
+      à « une réduction de la durée d'assurance, ou de périodes reconnues
+      équivalentes, requise pour bénéficier du taux plein ». Ce n'est ni un
+      trimestre gratuit ni un âge abaissé : c'est la CIBLE qui recule, ce qui
+      revient au même pour l'assuré et ne se lit sur aucune ligne de sa pension.
+    base_legale: [L. 351-7-1 CSS, L. 311-1 CPMIVG]
+    veille: []
+    creation: 1994
+    fin: null
+    regimes: régime général, régime des salariés agricoles
+    etat_modele: absent
+    ligne_cascade: null
+    pourquoi_pas_chiffre: >-
+      Le modèle oppose une durée requise par génération, la même pour tous : il
+      n'a pas de dérogation individuelle à cette durée, et aucun cas type ne
+      porte de service militaire en Afrique du Nord. La population est de plus
+      en extinction — les dernières classes concernées sont nées avant 1945.
+    sans_chiffre: >-
+      la durée requise du modèle est celle de la génération, sans dérogation
+      individuelle ; et aucun poste publié n'isole cette réduction
+    cout:
+      mesurable_par: aucune
+      note: >-
+        SECONDE LIGNE TROUVÉE PAR LA CONFRONTATION À LA LISTE LÉGALE, et elle
+        illustre le propos de ce chantier mieux qu'aucune autre. Le 3° de
+        l'ancien article L. 135-2 en finançait la prise en charge ; le 3° de
+        L. 222-2-1, qui lui succède au 1er janvier 2026, porte « (Abrogé) ».
+        Or l'article L. 351-7-1 est TOUJOURS EN VIGUEUR, dans sa version du
+        1er janvier 2017. Le droit demeure, son financement a disparu : c'est
+        le troisième cas, après les indemnités journalières de maternité et le
+        minimum contributif, où les deux faces se déplacent séparément.
 
   - code: retraite_anticipee_handicap
     libelle: Retraite anticipée des travailleurs handicapés

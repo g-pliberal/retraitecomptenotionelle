@@ -5,11 +5,11 @@ document décrit son **déplacement** : ce qui n'était pas contributif et l'est
 devenu, ce qui l'était et ne l'est plus, et le versant que le dépôt ne portait
 nulle part — ce qui est **versé sans rien ouvrir**.
 
-Trente-quatre déplacements datés, de 1991 à 2026, vivent dans
+Quarante et un déplacements datés, de 1991 à 2026, vivent dans
 `data/reference/legislation/frontiere_contributive.yaml`. Chacun porte
 l'identifiant de la version d'article qui en fait foi, et
 `python scripts/frontiere_contributive.py --verifier` rouvre l'index LEGI du
-dépôt pour confronter les cinquante-neuf identifiants cités à ce que le dump
+dépôt pour confronter les soixante-quatorze identifiants cités à ce que le dump
 contient. Une date écrite sans version opposable serait une mémoire.
 
 ## 1. Le mot « contributif » en cache trois, et elles bougent séparément
@@ -149,6 +149,7 @@ le plus net de ce document.**
 |---|---|---|
 | Code de la sécurité sociale (privé) | **5** | 1 |
 | Code des pensions civiles et militaires | 4 | **6** |
+| Régimes spéciaux (SNCF, RATP) | 3 | 3 |
 
 Dans le privé, **la frontière ne recule jamais**, et l'unique « fermeture » n'en
 est pas une : c'est la seconde pension du cumul emploi-retraite, un objet neuf,
@@ -164,13 +165,17 @@ ouvertures**, et les trois plus lourdes tombent le même jour. Le § 9 les
 détaille. C'est une dissymétrie qu'aucune des deux listes ne montre seule, et
 elle ne se voit qu'en lisant les deux codes avec la même grille.
 
+Les régimes spéciaux, eux, sont à l'équilibre, et d'une façon qui leur est
+propre : ils se sont fermés d'un coup, en 2008, aux entrants d'après, puis n'ont
+plus fait que s'élargir pour ceux qui restaient. Le § 11 le raconte.
+
 **Du côté du financement, la visibilité se referme, et c'est récent.** Dix
-charges ont été isolées chez un payeur nommé, dont neuf avant 2015 ; cinq ont
-été refondues dans les comptes des régimes, et quatre de ces cinq sont
-postérieures à 2016 — le minimum contributif (2016), les indemnités
-journalières (2020), le fonds lui-même et le régime général (2026). Le
-mouvement des trente premières années a rendu la dépense lisible ; celui des
-dix dernières la rend progressivement opaque.
+charges ont été isolées chez un payeur nommé, dont neuf avant 2015 ; six ont
+été refondues dans les comptes des régimes, et cinq de ces six sont
+postérieures à 2016 : le minimum contributif (2016), les indemnités
+journalières (2020), le fonds lui-même, le régime général et la réduction pour
+l'Afrique du Nord (2026). Le mouvement des trente premières années a rendu la
+dépense lisible ; celui des dix dernières la rend progressivement opaque.
 
 Un mot sur la façon de compter, parce qu'elle décide du résultat. Une bascule
 est rangée sur la face que **la version citée prouve**, et non sur celle que son
@@ -237,13 +242,17 @@ s'arrête.
    le jour où le régime général cesse d'apparaître comme bénéficiaire d'un
    transfert, la ligne `periodes_assimilees` change de nature. Il faut le voir
    venir plutôt que le constater.
-3. **Les bascules de la fonction publique sont lues — voir le § 9.** Dix, dans
-   L. 12, L. 12 bis et L. 24, dont les trois fermetures de 2011. Restent les
-   régimes spéciaux, dont les textes sont des décrets propres à chaque caisse.
-4. **La liste légale a été confrontée à l'inventaire, poste par poste — voir le
-   § 10.** Elle a rapporté deux dettes : l'apprentissage et les périodes
-   reconnues équivalentes. Reste à les combler, c'est-à-dire à leur trouver une
-   ligne et un chiffre, ou une raison écrite.
+3. **Les bascules de la fonction publique et des régimes spéciaux sont lues —
+   § 9 et § 11.** Dix dans L. 12, L. 12 bis et L. 24 ; six dans les deux
+   décrets du 30 juin 2008. Restent les autres caisses à règlement propre —
+   IEG, Banque de France, Opéra, Comédie-Française —, dont aucune n'a encore
+   été ouverte.
+4. **La liste légale a été confrontée à l'inventaire — voir le § 10 —, et les
+   deux dettes qu'elle a rapportées sont comblées.** L'apprentissage et la
+   réduction pour l'Afrique du Nord ont leur ligne, leur base légale lue et
+   leur raison écrite. Ni l'une ni l'autre n'est chiffrée, et aucune ne le sera
+   par le modèle : la grille n'a ni apprenti ni ancien d'Afrique du Nord, et
+   aucun poste publié ne les isole.
 
 
 ## 8. Combien : 17,9 milliards, et la correction d'une erreur écrite plus haut
@@ -502,11 +511,11 @@ l'article L. 222-2-1, et elle a rapporté **deux dettes**.
 |---|---|---|
 | 1° | Minimum vieillesse | `minimum_vieillesse` |
 | 2° | Périodes assimilées, chômage, activité partielle | `periodes_assimilees` |
-| 3° | *Abrogé* — réductions de durée et périodes équivalentes (L. 351-7-1) | **absent** |
+| 3° | *Abrogé* — réduction de durée pour l'Afrique du Nord (L. 351-7-1) | `reduction_duree_afrique_du_nord` |
 | 4° | Points de complémentaire des préretraites et de l'ASS | `points_gratuits_complementaires` |
 | 5° | Volontariat du service national | `service_national` |
 | 6° | Mayotte | extension territoriale |
-| 7° | Validation des trimestres d'apprentissage (L. 6243-3 code du travail) | **absent** |
+| 7° | Validation des trimestres d'apprentissage (L. 6243-3 code du travail) | `apprentissage` |
 | 8° | Saint-Pierre-et-Miquelon | extension territoriale |
 
 **L'apprentissage manquait, et il ne pouvait pas manquer autrement.** Son droit
@@ -518,9 +527,22 @@ un article de L. 6243-3. C'est le même défaut que le § 4 sexies avait relevé
 trouvant trois dispositifs dans la nomenclature des comptes : **partir de ce
 qu'on calcule ne mène jamais à ce que le système verse.**
 
-**Les périodes reconnues équivalentes manquaient aussi**, et leur poste vient
-d'être abrogé — elles ont donc quitté la liste légale sans jamais entrer dans
-celle du dépôt.
+**Les deux dettes sont comblées**, et la seconde n'était pas ce qu'on croyait.
+Le 3° parlait de « réductions de la durée d'assurance ou de périodes reconnues
+équivalentes, définies à l'article L. 351-7-1 » ; l'article, lu, vise les
+**services militaires actifs accomplis en Afrique du Nord**, et leur ouvre une
+réduction de la durée requise pour le taux plein. Ce n'est ni un trimestre
+gratuit ni un âge abaissé : c'est la cible qui recule, ce qui revient au même
+pour l'assuré et ne se lit sur aucune ligne de sa pension.
+
+**Et il démontre une troisième fois la thèse du § 1.** Le poste qui le finançait
+est abrogé au 1<sup>er</sup> janvier 2026 ; la version de L. 351-7-1 en vigueur
+depuis 2017 n'a pas bougé. Après les indemnités journalières de maternité (2020)
+et le minimum contributif (2016), c'est le troisième droit qui survit à son
+financement. Trois fois, la même illusion serait possible : lire la fin d'un
+transfert comme la fin d'un droit.
+
+L'inventaire compte désormais **quarante-cinq dispositifs**.
 
 ### Le poste qu'on n'attendait pas : la branche paie une complémentaire
 
@@ -555,6 +577,65 @@ cotisation et l'a perdue. On le voit ici à l'endroit : le législateur ouvre un
 droit, et choisit de ne pas le financer à part. Les deux mouvements de ce
 document — l'ouverture des droits et la refonte des financements — ne sont pas
 seulement simultanés, ils se répondent.
+
+
+## 11. Les régimes spéciaux : fermés une fois, élargis depuis
+
+Les bonifications de service de la SNCF et de la RATP ne sont pas dans le code
+de la sécurité sociale ni dans celui des pensions : elles vivent dans deux
+décrets jumeaux du 30 juin 2008, l'un par régime, que l'index du dépôt porte
+avec toutes leurs versions.
+
+**Elles se ferment le jour même où elles sont réécrites.** La rédaction
+initiale de l'article 9 du décret SNCF réserve la bonification de conduite —
+un trimestre par année au-delà de la troisième, vingt au plus — aux
+« personnels dont l'admission au cadre permanent de la SNCF a été prononcée
+**avant le 1<sup>er</sup> janvier 2009** ». L'article 20 du décret RATP fait de
+même pour le cinquième du tableau B. Le droit demeure entier pour qui l'avait ;
+il n'existe plus pour personne d'autre.
+
+Il n'y a pas de version antérieure à citer : ces décrets remplacent des
+règlements de caisse que l'index ne porte pas sous ces numéros d'article. La
+fermeture se lit donc dans le texte qui l'institue, non dans l'écart entre deux
+versions — c'est le seul cas de ce fichier où il en va ainsi, et la ligne le
+dit.
+
+**Puis elles ne font plus que s'élargir**, trois fois en dix-huit ans, et pour
+ceux-là seuls qui restaient :
+
+| Date | Ce qui s'ouvre | Texte |
+|---|---|---|
+| 3 décembre 2020 | les périodes d'**activité partielle** comptent comme du service | décret n° 2020-1489 |
+| 1<sup>er</sup> janvier 2025 | la RATP étend le tableau B aux « emplois **équivalents** » | décret n° 2023-690 |
+| 7 août 2026 | le **congé de mobilité** compte lui aussi, à la SNCF | décret n° 2026-738 |
+
+La première mérite qu'on s'y arrête. Le décret du 1<sup>er</sup> décembre 2020
+ajoute que les périodes d'indemnité d'activité partielle « sont prises en compte
+pour le calcul de ces bonifications », à compter du 1<sup>er</sup> mars 2020.
+Un mois de chômage partiel vaut donc un mois de conduite, pour un droit qui n'a
+jamais été cotisé. **La crise sanitaire a élargi un avantage non contributif
+sans que personne ne l'ait décidé comme tel**, et rien dans le décret ne le
+présente ainsi.
+
+La dernière est le déplacement le plus **récent** que ce document porte, toutes
+faces confondues — et il va, comme presque tous ceux du côté des droits, dans le
+sens de l'élargissement.
+
+**Une seule fermeture leur est venue d'ailleurs.** Au 1<sup>er</sup> janvier
+2017, la même phrase entre dans les deux décrets : les bonifications ne sont
+prises en compte « que dès lors que la pension rémunère au moins quinze années
+de services effectifs ». C'est la condition que le code des pensions avait reçue
+six ans plus tôt, en 2011, pour ses propres bonifications. Les réformes de la
+fonction publique et celles des régimes spéciaux ne sont pas simultanées, mais
+elles se suivent — et le décalage est ici de six ans exactement.
+
+**Le modèle n'en sert aucune.** L'inventaire range
+`bonifications_regimes_speciaux` en `absent`, et le § 4 sexies de
+`docs/avantages_non_contributifs.md` a déjà relevé pourquoi : les fiches de la
+SNCF et de la RATP déclarent le code `bonifications` depuis toujours, mais le
+moteur le lit comme la bonification pour enfants de la fonction publique.
+Aucune de ces six bascules ne change donc un euro calculé. Elles disent
+seulement, avec des dates, ce que le modèle ne fait pas.
 
 ---
 
