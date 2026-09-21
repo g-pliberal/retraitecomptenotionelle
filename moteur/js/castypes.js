@@ -145,13 +145,22 @@ export const CAS_TYPES = [
     affiliation: "profession_liberale",
     age_debut: 27, age_liquidation: 66, niveau_salaire: 2.5,
     caisses: ["cnavpl"],
+    regle_liquidation: "ouverture",
     ecart_liquidation: 2,
     commentaire: "Régime de base CNAVPL et complémentaire Cipav, la section par "
       + "défaut. Un libéral d'une section spécialisée — auxiliaires médicaux, "
       + "pharmaciens, notaires — aurait un complémentaire différent, et celui-là "
       + "n'est pas paramétré. Seul cas type à partir APRÈS l'âge d'ouverture : "
       + "deux ans, l'écart que la grille lui donnait déjà quand les âges étaient "
-      + "écrits.",
+      + "écrits. La règle est `ouverture` et non `taux_plein`, et c'est ce que "
+      + "cette phrase disait depuis toujours : entré à vingt-sept ans sans "
+      + "carrière antérieure, ce cas type n'atteint la durée requise à aucun "
+      + "âge, et le taux plein le ferait attendre l'annulation de la décote — "
+      + "soixante-sept ans, quand la DREES observe les professions libérales "
+      + "partir à 62,6 ans en moyenne de 2013 à 2020. La règle `taux_plein` "
+      + "rendait l'ouverture pour cette fiche tant que le moteur ne savait pas "
+      + "opposer de durée à une carrière tout en points ; il le sait depuis, et "
+      + "la fiche dit maintenant ce qu'elle faisait.",
   },
   {
     code: "contractuel_public",

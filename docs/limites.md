@@ -7438,11 +7438,11 @@ l'âge auquel chaque cas type part, interpolé entre les points de la grille, et
 les treize pesés par les effectifs de caisse de la page « Coût ».
 
 **La grille suit l'âge réel à moins d'une demi-année sur dix-neuf ans**, et
-l'écart moyen est de −0,08 an — elle part un peu plus TÔT, non plus tard. Ce
+l'écart moyen est de −0,07 an — elle part un peu plus TÔT, non plus tard. Ce
 n'est pas une validation de la grille comme échantillon, qu'elle n'est pas :
 c'est que ses départs, pris ensemble et pesés, tombent où tombent ceux de la
 France réelle. Le tableau complet est celui que le script imprime ; ses deux
-bords disent l'essentiel : +0,26 an en 2010, −0,45 an en 2022.
+bords disent l'essentiel : +0,30 an en 2010, −0,45 an en 2022.
 
 **Le défaut que la mesure trouve n'est donc pas celui qu'on cherchait.** Il est
 dans la PENTE des années récentes : jusqu'au début des années 2010 la grille
@@ -7470,10 +7470,10 @@ six groupes plus la ligne « toutes CSP » —, et
 quels groupes il se compare et pourquoi. `scripts/age_depart_csp.py` fait la
 confrontation.
 
-**Les écarts individuels valent 1,17 an, et ils se compensent.** Pesés comme
-sur la page « Coût », les neuf cas types comparables s'écartent de 1,17 an en
-valeur absolue et de +0,45 an seulement en signé, là où le tous régimes donne
-−0,10 an sur la même fenêtre. La concordance d'ensemble n'était donc pas un
+**Les écarts individuels valent 1,16 an, et ils se compensent.** Pesés comme
+sur la page « Coût », les neuf cas types comparables s'écartent de 1,16 an en
+valeur absolue et de +0,46 an seulement en signé, là où le tous régimes donne
+−0,09 an sur la même fenêtre. La concordance d'ensemble n'était donc pas un
 accord cas par cas : c'est une compensation, à laquelle s'ajoutent les quatre
 cas types laissés hors champ — militaire, agent de conduite, agent des IEG,
 catégorie active —, qui pèsent 8,3 % de la grille et partent entre 44,0 et
@@ -7486,7 +7486,7 @@ catégorie active —, qui pèsent 8,3 % de la grille et partent entre 44,0 et
 | Fonctionnaire sédentaire (catégorie B) | 63,21 | 61,24 | **+1,97** |
 | Salarié au SMIC, carrière complète | 60,00 | 61,59 – 61,95 | **−1,59** |
 | Cadre du privé | 64,07 | 62,59 | +1,48 |
-| Chef d'exploitation agricole | 61,64 | 62,85 | −1,21 |
+| Chef d'exploitation agricole | 61,73 | 62,85 | −1,12 |
 | Profession libérale | 63,25 | 62,59 | +0,66 |
 | Salarié au salaire moyen | 62,33 | 61,24 – 61,95 | +0,38 |
 | Carrière interrompue | 61,64 | 61,24 – 61,95 | 0,00 |
@@ -7517,16 +7517,16 @@ deux termes se répondent. C'est la raison chiffrée de ne réécrire aucune fic
 pour ce que le site argumente.
 
 **Le système actuel bouge, et dans le mauvais sens** : 18,35 % du PIB en 2070
-sous les fiches, 18,95 % sous le contrefactuel. L'écart avec la projection du
-COR passe de 4,15 à 4,75 points — corriger les âges ÉLOIGNE le modèle du COR
+sous les fiches, 18,96 % sous le contrefactuel. L'écart avec la projection du
+COR passe de 4,15 à 4,76 points — corriger les âges ÉLOIGNE le modèle du COR
 au lieu de l'en rapprocher. **L'âge de départ n'explique donc pas l'écart que
 cette section laisse ouvert**, et la piste du taux de remplacement reste
 entière. Une réserve sur ce +0,61 point : déplacer l'âge d'entrée déplace aussi
 la DURÉE de carrière, et le chiffre mêle les deux effets — c'est d'ailleurs la
-durée qui domine, puisque quatre des six cas types déplacés entrent PLUS TÔT.
+durée qui domine, puisque cinq des sept cas types déplacés entrent PLUS TÔT.
 
 **Et les deux critères d'âge tirent en sens contraire.** Sous la grille
-corrigée, l'écart à l'âge conjoncturel tous régimes passe de −0,08 à −0,65 an :
+corrigée, l'écart à l'âge conjoncturel tous régimes passe de −0,07 à −0,55 an :
 rapprocher chaque cas type de SA catégorie éloigne leur SOMME. Les deux ne
 peuvent pas être satisfaits ensemble. Le suspect est le groupe des quatre cas
 types hors champ — un douzième de la grille, à des âges de 44,0 à 56,6 ans —,
@@ -7535,15 +7535,53 @@ constat et ne tranche pas son explication, les deux sources ne décrivant pas la
 même population.
 
 **Trois raisons font de ce contrefactuel une borne basse**, écrites en tête du
-script. Les quatre cas types hors champ ne sont pas touchés. **Deux cas types
-ne répondent pas du tout à leur âge d'entrée**, et le script le mesure au lieu
-de le supposer : l'exploitant agricole et la profession libérale relèvent de
-régimes EN POINTS, auxquels le modèle n'oppose aucune durée requise — leur
-`trimestres_requis` vaut zéro, leur départ suit l'âge légal, et le déplacer de
-huit ans d'âge d'entrée n'y change pas un trimestre. Leurs écarts, −1,21 et
-+0,66 an, viennent d'ailleurs. Enfin un couloir réduit à une seule catégorie
-est un POINT, qu'un pas d'une demi-année n'atteint pas : le résidu subsiste,
-de 0,12 à 0,30 an pour trois cas types.
+script. Les quatre cas types hors champ ne sont pas touchés. **Un cas type ne
+répond pas du tout à son âge d'entrée** : la profession libérale, dont la fiche
+date le départ sur l'âge d'OUVERTURE et non sur le taux plein — son écart de
++0,66 an vient donc d'ailleurs. L'exploitant agricole y répondait aussi
+jusqu'au 21 septembre 2026, et la raison en était un défaut du moteur : voir
+plus bas, « Une carrière tout en points partait au taux plein sans l'avoir ».
+Enfin un couloir réduit à une seule catégorie est un POINT, qu'un pas d'une
+demi-année n'atteint pas : le résidu subsiste, de 0,12 à 0,30 an pour trois cas
+types.
+
+**Une carrière tout en points partait au taux plein sans l'avoir.** C'est le
+défaut que la recherche d'âge d'entrée a fait voir, et il était plus précis que
+« la décote manque » : le coefficient de réduction était DÉJÀ appliqué —
+`_abattement_points` lit la décote de la fiche —, mais la règle qui DATE le
+départ ne le voyait pas. `age_taux_plein_droit` rendait l'âge d'ouverture dès
+que la carrière n'avait aucune période en annuités, si bien que le modèle
+faisait liquider « au taux plein » des carrières qu'il servait minorées : le
+libéral né en 1955 partait à soixante-quatre ans avec cent quarante-huit
+trimestres sur cent soixante-six requis, soit dix-huit trimestres de réduction
+que la règle disait inexistants.
+
+Le droit oppose bien cette durée aux régimes en points, et les deux articles le
+disent : **L. 643-3 I du code de la sécurité sociale** pour les professions
+libérales — la pension vaut « le produit de la valeur du point par le nombre de
+points acquis » quand l'assuré a « la durée d'assurance fixée en application du
+deuxième alinéa de l'article L. 351-1 dans le présent régime et dans un ou
+plusieurs autres régimes », et un décret « fixe les coefficients de réduction
+[…] lorsque l'intéressé ne justifie pas de la durée » — et **le II de l'article
+L. 732-24 du code rural** pour les non-salariés agricoles. La règle les suit
+depuis le 21 septembre 2026 ; sa ligne est dans
+`data/reference/legislation/veille.yaml`.
+
+**Ce que la correction a déplacé, et ce qu'elle a exposé.** Presque rien en
+chiffres : la trajectoire 2070 reste à 18,35 %, les 469 témoins de simulation
+ne bougent pas d'un bit, et l'exploitant agricole passe de 61,64 à 61,73 ans de
+moyenne. Mais elle a rendu FAUSSE une phrase de la fiche du libéral. Celle-ci
+disait « seul cas type à partir APRÈS l'âge d'ouverture : deux ans » et portait
+`regle_liquidation: taux_plein` — ce qui ne donnait « ouverture + deux ans »
+que par le défaut qu'on vient de corriger. La règle du taux plein, appliquée
+pour de bon, la faisait attendre l'annulation de la décote et partir à
+soixante-neuf ans : entrée à vingt-sept ans sans carrière antérieure, elle
+n'atteint la durée requise à aucun âge. La fiche porte donc désormais
+`regle_liquidation: ouverture`, ce que sa propre phrase disait depuis toujours,
+et la DREES tranche dans le même sens — les professions libérales partent à
+62,6 ans en moyenne de 2013 à 2020, non à soixante-sept. **Le défaut en
+masquait un second** : un libéral réel a des années salariées avant son
+installation, et ce cas type n'en a aucune.
 
 **Ce que le couloir vaut, et ce qu'il ne vaut pas.** La nomenclature classe des
 professions, la grille décrit des carrières par leur régime et leur niveau de
@@ -7681,7 +7719,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1933<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1934<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -883,14 +883,27 @@ export class ScenarioActuel {
     const ouverture = Math.min(
       ...retenues.map(([, periode]) => this.ageOuverture(periode, carriere)),
     );
-    if (annuites.length === 0) {
+    // Une carrière entière en points n'a aucune période en annuités, et la
+    // règle rendait alors l'âge d'OUVERTURE — elle faisait donc liquider au
+    // taux plein des carrières que `abattementPoints` servait minorées. Le
+    // droit oppose bien la durée aux régimes en points : L. 643-3 du code de
+    // la sécurité sociale pour les professions libérales, L. 732-24 II du code
+    // rural pour les non-salariés agricoles. L'Agirc-Arrco et l'Ircantec sont
+    // écartées : elles ont leurs propres coefficients d'anticipation, et ne
+    // sont jamais seules sur une carrière.
+    const opposent = annuites.length > 0
+      ? annuites
+      : autres.filter(([, periode]) =>
+        periode.abattement_points !== "agirc_arrco"
+        && periode.abattement_points !== "ircantec");
+    if (opposent.length === 0) {
       return ouverture;
     }
     const annulation = Math.min(
       ...retenues.map(([, periode]) => this.ageTauxPlein(periode, carriere)),
     );
     const requis = Math.max(
-      ...annuites.map(([, periode]) => this.dureeRequise(periode, carriere)[0]),
+      ...opposent.map(([, periode]) => this.dureeRequise(periode, carriere)[0]),
     );
     if (!requis) {
       return ouverture;
@@ -907,7 +920,7 @@ export class ScenarioActuel {
     // mère de deux enfants était datée trois ans après l'âge où sa pension
     // est entière.
     const majoration = this.majorationPourEnfants(
-      carriere, new Map(annuites.map(([code]) => [code, acquis])), anneeLiquidation,
+      carriere, new Map(opposent.map(([code]) => [code, acquis])), anneeLiquidation,
     );
     if (majoration !== null) {
       acquis += majoration.trimestres;
@@ -916,6 +929,10 @@ export class ScenarioActuel {
     const tauxPlein = Math.min(annulation, Math.max(ouverture, duree));
     // Le départ anticipé pour carrière longue passe avant les trois termes :
     // il n'ouvre qu'à qui a sa durée COTISÉE, donc au taux plein.
+    // Le départ anticipé reste lu sur les seules périodes en ANNUITÉS, comme
+    // `ageOuvertureDroit` le fait : l'étendre aux périodes en points ferait
+    // rendre ici un âge ANTÉRIEUR à celui que l'ouverture accorde, et les deux
+    // règles se contrediraient.
     const anticipe = this.ageCarriereLongue(carriere, annuites);
     if (anticipe !== null && anticipe < tauxPlein) {
       return anticipe;
