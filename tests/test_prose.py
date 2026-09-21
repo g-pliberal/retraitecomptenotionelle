@@ -232,6 +232,61 @@ def test_un_commentaire_de_code_n_est_pas_un_titre_de_section():
         "En Python", "En bibliothèque"]
 
 
+def test_un_nombre_a_decimale_et_a_separateur_est_un_seul_nombre():
+    """« 7 603,41 » se lisait comme deux nombres, 7 603 et 41.
+
+    Le premier motif ne prévoyait pas la décimale après le séparateur de
+    milliers : l'ancre refusait un montant comme celui du minimum contributif
+    majoré — « elle entoure 2 nombres, il en faut un » — et une correction en
+    aurait fait « 7 603 ».
+    """
+    import re
+    assert re.findall(verifier_prose._NOMBRE, "7 603,41") == ["7 603,41"]
+    assert re.findall(verifier_prose._NOMBRE, "11 975,57 €") == ["11 975,57"]
+    assert re.findall(verifier_prose._NOMBRE, "4 251 lignes") == ["4 251"]
+
+
+def test_les_sondes_de_csv_lisent_les_tables_de_droit():
+    """Une cellule, deux bornes, un compte de valeurs différentes.
+
+    C'est ce qui manquait pour qu'un paramètre de DROIT cesse d'être recopié à
+    la main : la durée requise d'une génération vit dans une table certifiée,
+    et `limites.md` la redisait de mémoire.
+    """
+    table = "data/reference/legislation/duree_assurance_requise.csv:trimestres"
+    assert verifier_prose.sonde_cellule(f"{table}?generation=1966") == 172
+    assert verifier_prose.sonde_maximum(table) == 172
+    assert verifier_prose.sonde_minimum(table) < 172
+    minoration = ("data/reference/legislation/coefficient_minoration.csv"
+                  ":coefficient*100")
+    assert verifier_prose.sonde_minimum(minoration) == pytest.approx(1.25)
+    revalorisation = ("data/reference/legislation/revalorisation_salaires.csv"
+                      ":date_effet")
+    assert verifier_prose.sonde_distinctes(revalorisation) >= 10
+
+
+def test_une_cellule_doit_etre_designee_sans_ambiguite():
+    """Deux lignes pour une cellule, c'est une désignation qui se croit
+    précise : le barème de la surcote porte trois lignes pour 2007, et les
+    confondre donnerait le taux d'une autre règle."""
+    surcote = "data/reference/legislation/surcote_baremes.csv:taux"
+    with pytest.raises(ValueError):
+        verifier_prose.sonde_cellule(f"{surcote}?bareme=regime_general&debut=2007")
+    with pytest.raises(ValueError):
+        verifier_prose.sonde_cellule(f"{surcote}?bareme=nexiste_pas")
+
+
+def test_partout_refuse_une_valeur_qui_ne_l_est_plus():
+    """`partout` dit « toutes les entrées portent ce nombre », et c'est une
+    affirmation : le jour où l'une s'en écarte, la prose qui l'annonce une
+    fois est devenue fausse, et la sonde doit le dire plutôt que choisir."""
+    fiches = "data/reference/regimes/complementaires_prive.yaml:regimes"
+    assert verifier_prose.sonde_partout(
+        f"{fiches}.*.periodes.*.plafond_majoration_enfants") == 2367
+    with pytest.raises(ValueError):
+        verifier_prose.sonde_partout(f"{fiches}.*.periodes.*.debut")
+
+
 def test_une_sonde_peut_traverser_un_cran_d_entrees():
     """`institutions.*.jeux` réunit les jeux de toutes les institutions.
 

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import csv
+
 import pytest
 
 from pathlib import Path
@@ -164,6 +166,30 @@ def test_coefficient_prix_est_reversible(macro):
     retour = macro.coefficient_prix(2020, 1975)
     assert aller * retour == pytest.approx(1.0)
     assert aller > 1.0
+
+
+def test_le_minimum_garanti_servi_est_sous_sa_projection(macro):
+    """Ce que la revalorisation par décision a coûté au minimum garanti.
+
+    `limites.md` en tire une règle qui vaut pour les trois minima : le montant
+    SERVI prime sur la projection. La loi ne fixe pas ces montants chaque
+    année, elle les revalorise « comme les pensions » — une décision annuelle,
+    gelée en 2014 et sous-indexée plusieurs fois depuis. Projeter sur les prix
+    l'ancre certifiée de 2004 donne donc, pour 2024, un montant que l'État n'a
+    pas payé, et l'écart est ce que la prose annonce. Il est tenu ici parce
+    qu'aucune sonde de `verifier_prose.py` ne chaîne vingt années d'indice.
+    """
+    chemin = (RACINE_DONNEES / "reference" / "legislation"
+              / "minimum_garanti_montants.csv")
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (ligne for ligne in flux if not ligne.lstrip().startswith("#"))
+        montants = {int(l["annee"]): float(l["valeur"])
+                    for l in csv.DictReader(lignes)}
+    projete = montants[2004] * macro.coefficient_prix(2004, 2024)
+    ecart = (projete / montants[2024] - 1) * 100
+    assert round(ecart, 1) == 4.6, (
+        f"l'écart du minimum garanti de 2024 vaut {ecart:.1f} % et non 4,6 : "
+        "corriger la phrase de docs/limites.md que cette valeur tient")
 
 
 def test_plafond_croit_apres_la_derniere_valeur_publiee(macro):
