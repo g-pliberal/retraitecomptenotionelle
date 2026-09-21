@@ -1074,6 +1074,21 @@ def _avantages() -> dict:
 
 
 
+def _frontiere() -> dict:
+    """Le versant `cotisation` de la frontière — chiffré une fois, ici.
+
+    C'est une DÉRIVÉE, non une donnée brute : le produit du taux déplafonné par
+    l'assiette de l'Urssaf. Le portage la relit au lieu de la recalculer, et un
+    témoin vérifie que les deux disent la même chose. C'est la règle du dépôt —
+    un chiffre qui dépend de la porte par laquelle on entre n'est pas un
+    chiffre —, appliquée au moins cher : il n'y a ici aucun modèle à porter,
+    seulement un produit déjà fait.
+    """
+    from retraite_notionnelle.frontiere import charger_frontiere
+
+    return charger_frontiere(DONNEES).dictionnaire()
+
+
 def _bilan(contexte=None) -> dict:
     """Le bilan des quatre systèmes comparés, année par année, en part de PIB.
 
@@ -1170,6 +1185,7 @@ def construire(bilan: bytes) -> bytes:
         "populations": _populations(),
         "regimes": _regimes(),
         "inventaire": _inventaire(),
+        "frontiere": _frontiere(),
         "avantages": _avantages(),
         "affiliations": _affiliations(),
         "valeurs_point": _valeurs_point(),

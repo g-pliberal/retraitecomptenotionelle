@@ -5,11 +5,11 @@ document décrit son **déplacement** : ce qui n'était pas contributif et l'est
 devenu, ce qui l'était et ne l'est plus, et le versant que le dépôt ne portait
 nulle part — ce qui est **versé sans rien ouvrir**.
 
-Vingt-quatre déplacements datés, de 1991 à 2026, vivent dans
+Trente-quatre déplacements datés, de 1991 à 2026, vivent dans
 `data/reference/legislation/frontiere_contributive.yaml`. Chacun porte
 l'identifiant de la version d'article qui en fait foi, et
 `python scripts/frontiere_contributive.py --verifier` rouvre l'index LEGI du
-dépôt pour confronter les quarante identifiants cités à ce que le dump
+dépôt pour confronter les cinquante-neuf identifiants cités à ce que le dump
 contient. Une date écrite sans version opposable serait une mémoire.
 
 ## 1. Le mot « contributif » en cache trois, et elles bougent séparément
@@ -142,14 +142,27 @@ droit français où la question que ce dépôt pose reçoit une réponse rédig�
 `python scripts/frontiere_contributive.py --chronologie` range les vingt-quatre
 bascules dans l'ordre du temps, faces mêlées. Deux asymétries en sortent.
 
-**Du côté des droits, la frontière ne recule pas.** Cinq ouvertures contre une
-fermeture, et la fermeture n'en est pas une : c'est la seconde pension du cumul
-emploi-retraite, un objet neuf, et non un droit gratuit retiré à qui l'avait.
-Les cinq ouvertures sont l'entrée des indemnités journalières au salaire de base
-(2010), les sportifs de haut niveau (2011), les stages de formation
-professionnelle (2014), les travaux d'utilité collective (2023) et le congé
-supplémentaire de naissance (2025). **La liste des périodes assimilées s'allonge
-par la fin, et aucun de ces ajouts n'a jamais été repris.**
+**Du côté des droits, tout dépend du code que l'on lit — et c'est le résultat
+le plus net de ce document.**
+
+| | Ouvertures | Fermetures |
+|---|---|---|
+| Code de la sécurité sociale (privé) | **5** | 1 |
+| Code des pensions civiles et militaires | 4 | **6** |
+
+Dans le privé, **la frontière ne recule jamais**, et l'unique « fermeture » n'en
+est pas une : c'est la seconde pension du cumul emploi-retraite, un objet neuf,
+non un droit gratuit retiré à qui l'avait. Les cinq ouvertures sont l'entrée des
+indemnités journalières au salaire de base (2010), les sportifs de haut niveau
+(2011), les stages de formation professionnelle (2014), les travaux d'utilité
+collective (2023) et le congé supplémentaire de naissance (2025). La liste des
+périodes assimilées s'allonge par la fin, et aucun de ces ajouts n'a jamais été
+repris.
+
+Dans la fonction publique, l'inverse : **six fermetures contre quatre
+ouvertures**, et les trois plus lourdes tombent le même jour. Le § 9 les
+détaille. C'est une dissymétrie qu'aucune des deux listes ne montre seule, et
+elle ne se voit qu'en lisant les deux codes avec la même grille.
 
 **Du côté du financement, la visibilité se referme, et c'est récent.** Dix
 charges ont été isolées chez un payeur nommé, dont neuf avant 2015 ; cinq ont
@@ -224,14 +237,13 @@ s'arrête.
    le jour où le régime général cesse d'apparaître comme bénéficiaire d'un
    transfert, la ligne `periodes_assimilees` change de nature. Il faut le voir
    venir plutôt que le constater.
-3. **Les bascules de la fonction publique manquent.** Ce document lit le code
-   de la sécurité sociale ; la bonification pour enfants du code des pensions,
-   restreinte aux enfants nés avant 2004 et conditionnée à une interruption
-   d'activité, est un déplacement de frontière de la même nature et n'y est pas.
-4. **La liste légale doit être confrontée à l'inventaire, poste par poste.** Le
-   § 2 dit que les deux ne se recouvrent pas ; personne n'a encore fait le
-   tableau des deux côtés, et c'est le moyen le plus court de trouver ce qui
-   manque encore aux quarante-deux dispositifs.
+3. **Les bascules de la fonction publique sont lues — voir le § 9.** Dix, dans
+   L. 12, L. 12 bis et L. 24, dont les trois fermetures de 2011. Restent les
+   régimes spéciaux, dont les textes sont des décrets propres à chaque caisse.
+4. **La liste légale a été confrontée à l'inventaire, poste par poste — voir le
+   § 10.** Elle a rapporté deux dettes : l'apprentissage et les périodes
+   reconnues équivalentes. Reste à les combler, c'est-à-dire à leur trouver une
+   ligne et un chiffre, ou une raison écrite.
 
 
 ## 8. Combien : 17,9 milliards, et la correction d'une erreur écrite plus haut
@@ -349,6 +361,200 @@ lui-même sur ce terrain est celui d'Agirc-Arrco — 27,6 Md€ de prestations
 servies « au titre de la solidarité » en 2024, près de 30 % de ses pensions —,
 mais il est de l'autre côté de la frontière, et il vient d'un communiqué, sans
 décomposition ni compte audité.
+
+
+## 9. La fonction publique : le seul endroit où la frontière a reculé
+
+Dix bascules, lues dans trois articles du code des pensions — L. 12 pour les
+bonifications, L. 12 bis pour la majoration de durée d'assurance, L. 24 pour
+l'âge de liquidation. La recherche documentaire sur le web n'avait rien produit
+sur ce terrain ; l'index LEGI du dépôt porte les versions, et la même méthode
+que pour L. 135-2 y suffit.
+
+### 2004 : l'année par enfant devient une année méritée
+
+Le b de L. 12 disait « Bonification accordée **aux femmes fonctionnaires** pour
+chacun de leurs enfants ». Il dit désormais « **les fonctionnaires et
+militaires** bénéficient d'une bonification fixée à un an […] **à condition
+qu'ils aient interrompu leur activité** », et seulement pour les enfants « nés
+antérieurement au 1<sup>er</sup> janvier 2004 ».
+
+Trois mouvements dans une seule version : le droit s'ouvre aux pères, se
+referme sur une condition d'interruption, et s'éteint pour les naissances à
+venir. Un an de services gratuits devient un an payé par une interruption de
+carrière — c'est-à-dire par un coût réel supporté par le bénéficiaire. C'est,
+de tout ce document, la seule fois qu'un avantage non contributif devient
+**contributif au sens fort** : non pas cotisé, mais acquis contre quelque chose.
+
+Le même jour, L. 12 bis crée le régime de remplacement : deux trimestres de
+majoration de durée d'assurance, pour les enfants nés à compter de 2004, aux
+femmes ayant accouché après leur recrutement. Quatre trimestres de moins qu'une
+année, et un droit rendu à son caractère féminin après que le b venait de
+l'ouvrir aux deux parents.
+
+> **La différence entre les deux cases n'est pas de taille, elle est de
+> nature.** Une bonification s'ajoute aux **services** et entre donc dans la
+> liquidation ; une majoration de durée d'assurance ne compte que pour la
+> durée, c'est-à-dire pour la décote et le prorata. Le même trimestre ne vaut
+> pas la même chose selon la case où il tombe — et c'est exactement ce que la
+> réforme de 2025 va déplacer.
+
+### 2011 : trois fermetures le même jour
+
+La loi du 9 novembre 2010 referme, dans les mêmes versions, trois droits
+distincts :
+
+- **le départ anticipé des parents de trois enfants disparaît**. L'expression
+  « trois enfants » quitte l'article L. 24 à cette date et n'y est jamais
+  revenue. C'est la seule extinction franche de tout ce fichier : non une
+  restriction, une disparition ;
+- **la catégorie active exige dix-sept ans de services actifs au lieu de
+  quinze** — condition que la rédaction en vigueur reprend telle quelle ;
+- **la bonification du cinquième des militaires exige dix-sept ans de services
+  au lieu de quinze**. C'est la bonification la plus massive du système :
+  99,3 % des pensions militaires liquidées en 2010 la portaient.
+
+La même version ouvre pourtant d'un mot : la condition du b passe de
+« interrompu » à « interrompu **ou réduit** » leur activité, ce qui étend le
+droit à qui est passé à temps partiel sans jamais s'arrêter.
+
+**Le départ des parents de trois enfants n'est dans aucune liste du dépôt.** Il
+a vécu trente ans, il comptait parmi les avantages les plus connus de la
+fonction publique, et l'inventaire des quarante-deux dispositifs ne le porte ni
+sous un code ni sous une raison écrite. C'est un manque, signalé ici faute de
+pouvoir le chiffrer.
+
+### 2023 : un plafond et une libération, dans la même version
+
+La réforme de 2023 ajoute à L. 12 une phrase qui n'existait pas — « Les
+bonifications acquises […] pour services accomplis dans différents emplois
+classés dans la catégorie active et la bonification prévue au i peuvent se
+cumuler, **dans la limite de vingt trimestres** » — et en **supprime** une
+autre, celle qui rabotait le cinquième des militaires d'une annuité par année
+servie au-delà de cinquante-neuf ans.
+
+Une fermeture et une ouverture dans la même version, en sens contraires. Une
+réforme n'a pas de sens unique, et un inventaire qui ne noterait que les
+fermetures mentirait autant qu'un autre qui ne noterait que les ouvertures.
+
+### 2026 : un trimestre change de case, et la veille du dépôt avait raison de demander
+
+Le registre de veille du dépôt portait depuis des mois une ligne `a_verifier` :
+le décret n° 2026-699 crée « une bonification d'un trimestre pour chacun de
+leurs enfants nés depuis le 1<sup>er</sup> janvier 2004 » aux femmes
+fonctionnaires — **est-ce un ajout aux deux trimestres de L. 12 bis ?**
+
+**Non, et le texte le dit lui-même.** La loi du 30 décembre 2025 insère un b ter
+à L. 12 pour cette bonification d'un trimestre, et réécrit L. 12 bis le même
+jour : les deux trimestres de majoration demeurent, « **dont l'un est pris en
+compte au titre de la bonification prévue au b ter de l'article L. 12** ».
+
+Le total ne bouge pas. Ce qui bouge est la **case** : un des deux trimestres
+passe de la durée d'assurance aux services, où il entre dans la liquidation au
+lieu de ne compter que pour la durée. Le même accouchement vaut davantage,
+sans qu'aucune cotisation l'ait payé. C'est pourquoi ce document le compte deux
+fois, en sens opposés — une ouverture à L. 12, une fermeture à L. 12 bis — :
+les deux lignes décrivent le même geste vu des deux côtés, et ne s'additionnent
+pas. Applicable aux pensions prenant effet à compter du 1<sup>er</sup> septembre
+2026, et étendu à la CNRACL et au FSPOEIE à la même date par décret en Conseil
+d'État — c'est le décret que la veille signalait.
+
+### Ce que le modèle en fait, et ce qu'il n'en fait pas
+
+Une seule de ces dix bascules est vraiment rejouée : le passage de la
+bonification d'un an à la majoration de deux trimestres en 2004, que
+`majoration_duree_assurance.csv` porte et que le moteur applique par date de
+naissance. Pour le reste :
+
+- **la condition d'interruption n'est pas opposée** — la grille de cas types ne
+  porte pas d'interruption pour enfant, si bien que le modèle accorde la
+  bonification là où le droit la refuserait. C'est un écart au droit positif, du
+  côté généreux ;
+- **la condition de dix-sept ans de services actifs n'est pas opposée** non
+  plus : le moteur sert la catégorie active par la fiche du régime et une table
+  d'âges. `veille.yaml` porte déjà cette lacune, à l'état `manque` ;
+- **les bonifications de services ne sont pas servies du tout**, si bien que le
+  plafond de vingt trimestres de 2023 n'a rien à plafonner.
+
+### Une bascule qui n'en est pas une, et qu'il faut dire quand même
+
+La réforme de 2023 a réécrit le départ de la catégorie active en termes
+**relatifs** : non plus « cinquante-sept ans », mais « un âge anticipé égal à
+l'âge mentionné au premier alinéa de l'article L. 161-17-2 du code de la
+sécurité sociale **diminué de cinq années** », dix pour les services
+super-actifs. L'âge absolu monte donc avec l'âge légal — mais **l'avantage, lui,
+est intact** : cinq ans avant tout le monde, hier comme aujourd'hui.
+
+Ce n'est donc ni une ouverture ni une fermeture, et ce fichier ne la compte pas.
+Elle mérite pourtant d'être écrite : c'est le seul endroit où le droit a pris
+soin de **protéger** un avantage non contributif contre une réforme qui
+déplaçait tout le reste.
+
+
+## 10. Ce que le législateur compte, et ce que le dépôt comptait
+
+Le § 7 réclamait la confrontation de l'inventaire à la liste légale, poste par
+poste, comme « le moyen le plus court de trouver ce qui manque encore aux
+quarante-deux dispositifs ». Elle est faite, sur les huit postes de
+l'article L. 222-2-1, et elle a rapporté **deux dettes**.
+
+| Poste | Ce qu'il finance | Dans l'inventaire |
+|---|---|---|
+| 1° | Minimum vieillesse | `minimum_vieillesse` |
+| 2° | Périodes assimilées, chômage, activité partielle | `periodes_assimilees` |
+| 3° | *Abrogé* — réductions de durée et périodes équivalentes (L. 351-7-1) | **absent** |
+| 4° | Points de complémentaire des préretraites et de l'ASS | `points_gratuits_complementaires` |
+| 5° | Volontariat du service national | `service_national` |
+| 6° | Mayotte | extension territoriale |
+| 7° | Validation des trimestres d'apprentissage (L. 6243-3 code du travail) | **absent** |
+| 8° | Saint-Pierre-et-Miquelon | extension territoriale |
+
+**L'apprentissage manquait, et il ne pouvait pas manquer autrement.** Son droit
+n'est pas dans le code de la sécurité sociale mais dans celui du travail. Les
+trois listes internes dont l'inventaire est né — les champs de
+`Neutralisations`, les codes des fiches de régime, les lignes de la cascade —
+décrivent toutes ce que le MODÈLE sait faire ; aucune ne pouvait aller chercher
+un article de L. 6243-3. C'est le même défaut que le § 4 sexies avait relevé en
+trouvant trois dispositifs dans la nomenclature des comptes : **partir de ce
+qu'on calcule ne mène jamais à ce que le système verse.**
+
+**Les périodes reconnues équivalentes manquaient aussi**, et leur poste vient
+d'être abrogé — elles ont donc quitté la liste légale sans jamais entrer dans
+celle du dépôt.
+
+### Le poste qu'on n'attendait pas : la branche paie une complémentaire
+
+Le 4° renvoie à l'article 49 de la loi de modernisation sociale de 2002, dont
+le texte est explicite : la branche verse chaque année **aux organismes de
+l'article L. 921-4** — c'est-à-dire à l'Agirc-Arrco — les cotisations dues au
+titre des périodes de préretraite du Fonds national pour l'emploi, de
+préretraite progressive, d'allocation de solidarité spécifique et d'allocation
+équivalent retraite.
+
+L'inventaire rattachait les points gratuits de complémentaire aux seuls accords
+Agirc-Arrco. Une partie d'entre eux est payée par la branche vieillesse, sous
+un article de loi, depuis 1999 pour les plus anciens. Le dispositif était dans
+l'inventaire ; son payeur n'y était pas.
+
+### La liste des périodes financées n'est pas celle des périodes validées
+
+C'est la trouvaille la plus utile de la confrontation, et elle se lit dans un
+seul mot du 2°. L'article L. 351-3 valide neuf catégories de périodes ; le
+poste qui les finance n'en vise que **trois** — les 1°, 3° et 8° —, plus les
+allocations de chômage et d'activité partielle.
+
+Restent donc à la charge des régimes, sans transfert ni payeur nommé : les
+périodes de guerre (5°), la détention provisoire (6°), **les sportifs de haut
+niveau (7°) et les travaux d'utilité collective (9°)** — c'est-à-dire, très
+exactement, les deux droits les plus récemment ouverts, ceux que le § 5 relevait
+comme les derniers ajouts à une liste qui ne se referme jamais.
+
+**Un droit gratuit sans payeur nommé est un droit qu'aucune série ne
+chiffrera.** Le § 6 disait déjà cela de l'allocation veuvage, qui avait eu sa
+cotisation et l'a perdue. On le voit ici à l'endroit : le législateur ouvre un
+droit, et choisit de ne pas le financer à part. Les deux mouvements de ce
+document — l'ouverture des droits et la refonte des financements — ne sont pas
+seulement simultanés, ils se répondent.
 
 ---
 

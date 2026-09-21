@@ -146,70 +146,32 @@ def verifier(donnees: dict, index: Path = INDEX_LEGI) -> list[str]:
     return ecarts
 
 
-#: Les deux séries que le chiffrage multiplie, et rien d'autre. Le produit est
-#: exact parce que les deux termes viennent de PRODUCTEURS et couvrent le MÊME
-#: champ : le taux de L. 241-3 s'applique au secteur privé du régime général,
-#: et l'assiette de l'Urssaf est celle-là même — sa note méthodologique la
-#: définit comme « l'assiette déplafonnée des cotisations sociales ».
+#: Le chiffrage vit dans le MODÈLE, et non ici. Le § 4 sexies de
+#: `docs/avantages_non_contributifs.md` dit ce qu'il en coûte quand un même
+#: chiffre est calculé à deux endroits : la ligne de commande annonçait
+#: 12,6 milliards quand la page du site en annonçait 93,9, et l'écart n'était
+#: pas une erreur de calcul mais un périmètre que rien ne signalait. Ce script
+#: n'imprime donc que ce que `retraite_notionnelle.frontiere` calcule.
 CHEMIN_ASSIETTE = RACINE / "data" / "reference" / "macro" / "masse_salariale_privee.csv"
-CHEMIN_TAUX = RACINE / "data" / "reference" / "regimes" / "taux_cotisation_annuels.csv"
+
+
+def _frontiere():
+    from retraite_notionnelle.frontiere import charger_frontiere
+    return charger_frontiere(RACINE / "data")
 
 
 def cotisations_sans_contrepartie() -> dict[int, dict[str, float]]:
-    """Ce que le régime général prélève SANS rien ouvrir, année par année.
-
-    La cotisation vieillesse déplafonnée de l'article L. 241-3 CSS n'ouvre
-    aucun droit : le salaire annuel de base est borné au plafond par
-    R. 351-29, les trimestres à quatre par an par R. 351-9. Et elle porte sur
-    la TOTALITÉ de la rémunération, dès le premier euro — non, comme on le
-    croit, sur la seule fraction au-dessus du plafond. L'écart entre ces deux
-    lectures vaut un facteur dix, et c'est la première chose à fixer avant de
-    multiplier quoi que ce soit.
-
-    Le produit est donc direct : taux déplafonné × assiette déplafonnée. Aucune
-    distribution de salaires n'est nécessaire, et c'est ce qui rend ce chiffre
-    exact plutôt qu'estimé.
-
-    Ce qu'il NE COUVRE PAS, et il faut le dire avec le résultat : le taux
-    d'appel de l'Agirc-Arrco et ses contributions d'équilibre, qui relèvent
-    d'accords nationaux interprofessionnels que le dépôt ne sait pas certifier ;
-    et la fonction publique, dont la contribution employeur est fixée pour
-    équilibrer un compte, non pour acquérir un droit. Le total rendu ici est
-    donc un PLANCHER de la non-contributivité du versement.
-    """
-    from retraite_notionnelle.donnees.chargement import charger_serie_annuelle
-    from retraite_notionnelle.donnees.chargement import Fiabilite
-
-    assiette = charger_serie_annuelle(CHEMIN_ASSIETTE, "montant_meur",
-                                      interpolation="ponctuelle")
-    taux = charger_serie_annuelle(
-        CHEMIN_TAUX, "valeur", interpolation="escalier",
-        filtre={"regime": "regime_general", "mesure": "taux_deplafonne"})
-    part = charger_serie_annuelle(
-        CHEMIN_TAUX, "valeur", interpolation="escalier",
-        filtre={"regime": "regime_general", "mesure": "part_salariale_deplafonnee"})
-
-    resultat: dict[int, dict[str, float]] = {}
-    for annee in range(assiette.premiere_annee, assiette.derniere_annee + 1):
-        # On ne chiffre QUE les années que l'Urssaf a publiées. Hors de sa
-        # fenêtre, la série reconduit sa valeur de bord et retombe à `estimee` ;
-        # multiplier cela par un taux donnerait un milliard qui n'a pas de
-        # source, au milieu d'une colonne qui en a une.
-        observee = assiette.brut(annee)
-        if observee.fiabilite is not Fiabilite.CERTIFIEE:
-            continue
-        masse = observee.valeur / 1000.0            # Md€
-        t = taux(annee)
-        prelevee = masse * t
-        salariale = prelevee * part(annee)
-        resultat[annee] = {
-            "assiette_md": masse,
-            "taux": t,
-            "total_md": prelevee,
-            "salariale_md": salariale,
-            "patronale_md": prelevee - salariale,
+    """Ce que le régime général prélève SANS rien ouvrir, année par année."""
+    return {
+        a.annee: {
+            "assiette_md": a.assiette_md,
+            "taux": a.taux,
+            "total_md": a.total_md,
+            "salariale_md": a.salariale_md,
+            "patronale_md": a.patronale_md,
         }
-    return resultat
+        for a in _frontiere().annees
+    }
 
 
 def part_sans_contrepartie_complementaire(donnees: dict) -> list[dict]:
@@ -220,26 +182,21 @@ def part_sans_contrepartie_complementaire(donnees: dict) -> list[dict]:
     l'inventer. Le rapport, lui, est exact — il ne met en jeu que des taux
     publiés par la fédération.
 
-    Deux colonnes, parce qu'un même salarié ne subit pas les mêmes
-    prélèvements selon qu'il franchit le plafond : la CET ne pèse que sur ceux
-    qui le dépassent, mais alors sur la TOTALITÉ de leur rémunération, tranche
-    1 comprise.
+    ``donnees`` n'est plus lu que pour sa forme : le calcul vient du modèle,
+    qui relit le même fichier. L'argument reste pour que les tests puissent
+    continuer d'appeler cette fonction avec l'inventaire en main.
     """
-    baremes = donnees["taux_agirc_arrco"]
-    cet = baremes["contribution_equilibre_technique"]
-    lignes = []
-    for tranche in baremes["tranches"]:
-        acquisitif = tranche["taux_calcul_des_points"]
-        appele = tranche["taux_appele"] + tranche["contribution_equilibre_general"]
-        lignes.append({
-            "nom": tranche["nom"],
-            "acquisitif": acquisitif,
-            "verse_sous_plafond": appele,
-            "verse_au_dessus": appele + cet,
-            "part_sous_plafond": 1 - acquisitif / appele,
-            "part_au_dessus": 1 - acquisitif / (appele + cet),
-        })
-    return lignes
+    return [
+        {
+            "nom": t.nom,
+            "acquisitif": t.acquisitif,
+            "verse_sous_plafond": t.verse_sous_plafond,
+            "verse_au_dessus": t.verse_au_dessus,
+            "part_sous_plafond": t.part_sous_plafond,
+            "part_au_dessus": t.part_au_dessus,
+        }
+        for t in _frontiere().tranches
+    ]
 
 
 def chiffrer(sortie=None) -> None:

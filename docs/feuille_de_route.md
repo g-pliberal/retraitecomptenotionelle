@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 251<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->30 062<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->30 237<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -11862,3 +11862,79 @@ pas.
 **Fichiers.** `scripts/cout_age_depart.py`, `tests/test_cout_age_depart.py`,
 `scripts/age_conjoncturel.py` (deux fonctions rendues rejouables sur une autre
 grille), `docs/limites.md` § 5 ter.
+
+### 84. Le versant inverse porté sur le site, et deux dettes trouvées en confrontant les listes — `fait`
+
+**Demande.** « Que peut-on faire de plus ? », puis trois chantiers retenus :
+porter le versant « cotisation » sur le site, lire les bascules du code des
+pensions, confronter l'inventaire à la liste légale.
+
+**Le code des pensions, dix bascules.** La recherche documentaire sur le web
+n'avait rien rendu sur ce terrain ; l'index LEGI du dépôt porte les versions, et
+la méthode qui avait donné L. 135-2 y suffit. En 2004, le b de L. 12 passe de
+« bonification accordée AUX FEMMES FONCTIONNAIRES » à « les fonctionnaires et
+militaires […] à condition qu'ils aient INTERROMPU leur activité », et se ferme
+aux enfants nés depuis : un an de services gratuits devient un an payé par une
+interruption de carrière. C'est la seule fois, dans tout ce chantier, qu'un
+avantage devient contributif au sens fort. En 2011, trois fermetures le même
+jour : le départ anticipé des parents de trois enfants quitte L. 24 et n'y est
+jamais revenu, la catégorie active et le cinquième militaire passent de quinze à
+dix-sept ans de services.
+
+**Et le partage qui en sort renverse la conclusion précédente.** L'action 78
+concluait que « la frontière ne recule pas ». C'est vrai du code de la sécurité
+sociale — cinq ouvertures, une fermeture qui n'en est pas une — et faux du code
+des pensions : six fermetures contre quatre ouvertures. **La fonction publique
+est le seul endroit où la frontière a reculé.** Une dissymétrie qu'aucune des
+deux listes ne montre seule.
+
+**Une question `a_verifier` du registre de veille, tranchée.** Le décret
+n° 2026-699 crée une bonification d'un trimestre pour les enfants nés depuis
+2004 : est-ce un ajout aux deux trimestres de L. 12 bis ? **Non.** L. 12 bis,
+réécrit le même jour, dit que des deux trimestres « l'un est pris en compte au
+titre de la bonification prévue au b ter ». Le total ne bouge pas ; un trimestre
+passe de la durée d'assurance aux SERVICES, où il entre dans la liquidation.
+
+**La confrontation à la liste légale, et deux dettes.** Les huit postes de
+L. 222-2-1 ont été confrontés à l'inventaire. L'**apprentissage** manquait, et
+ne pouvait pas manquer autrement : son droit est dans le code du travail, et les
+trois listes internes dont l'inventaire est né décrivent ce que le modèle sait
+faire. Les **périodes reconnues équivalentes** manquaient aussi, et leur poste
+vient d'être abrogé. Trouvaille latérale : le 4° fait payer par la branche
+vieillesse les points de complémentaire des préretraites et de l'ASS — le
+dispositif était dans l'inventaire, son payeur n'y était pas. Et le 2° ne
+finance que trois des neuf catégories de périodes de L. 351-3 : les sportifs de
+haut niveau et les TUC, les deux droits les plus récemment ouverts, sont à la
+charge des régimes, sans payeur nommé.
+
+**Le site, enfin.** Une quatrième carte sur la page Avantages : « Et l'inverse :
+que cotise-t-on sans rien acquérir ? » Elle porte les 17,9 Md€ depuis 1997, le
+tableau des tranches Agirc-Arrco, et dit que les deux grandeurs ne se
+soustraient pas. Le calcul vit dans `src/retraite_notionnelle/frontiere.py` et
+n'est PAS porté en JavaScript : il ne dépend d'aucune saisie, le paquet le
+transporte déjà fait, et le portage le relit. C'est la règle du dépôt — un
+chiffre ne dépend pas de la porte — appliquée au moins cher.
+
+**Quatre garde-fous se sont déclenchés, et chacun a servi.** Le port JavaScript
+graduait son axe sur la plus haute bande au lieu de leur somme, parce que
+`graphique` prend ses options en positionnel et qu'un objet les laissait à
+faux ; `pourcentage` n'a pas la même signature des deux côtés, d'où un « 27,0 % »
+contre « 27 % ». Les deux ont été trouvés par la comparaison HTML, au caractère
+près. Le compteur d'incises en tiret a fait resserrer cinq phrases. Et le
+catalogue des affirmations a exigé six contrôles pour six phrases fortes, dont
+un qui interdit au calcul de glisser un facteur dans l'assiette — l'erreur même
+que la carte dénonce.
+
+**Le budget de lecture de la page a été relevé, et c'est la seule fois.** Elle
+était à 1 997 mots pour un plafond de 2 000 : aucune carte, si brève soit-elle,
+ne pouvait plus y entrer. Le plafond passe à 2 250, avec la raison écrite dans
+le test. Replier la réponse aurait été pire que l'écrire : c'est le seul endroit
+du site qui dise que le compte n'est pas à sens unique.
+
+**Fichiers.** `src/retraite_notionnelle/frontiere.py`, `moteur/js/frontiere.js`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`, `index.html`,
+`scripts/construire_donnees.py`,
+`data/reference/legislation/frontiere_contributive.yaml`,
+`data/reference/site/affirmations.yaml`, `tests/test_affirmations.py`,
+`tests/test_web.py`, `tests/test_frontiere_contributive.py`,
+`docs/frontiere_contributive.md`.
