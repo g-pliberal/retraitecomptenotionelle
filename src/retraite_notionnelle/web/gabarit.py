@@ -3137,7 +3137,8 @@ def _aires_ecart(haute: Serie, basse: Serie, annees: tuple[int, ...],
     return "".join(morceaux)
 
 
-def _sommet(series: tuple[Serie, ...], empile: bool) -> tuple[float, float, float]:
+def _sommet(series: tuple[Serie, ...], empile: bool,
+            sommet_minimal: float = 0.0) -> tuple[float, float, float]:
     """Sommet de l'axe vertical, pas de graduation, et plancher.
 
     Le plancher est zéro tant qu'aucune valeur n'est négative, et le sommet
@@ -3147,6 +3148,18 @@ def _sommet(series: tuple[Serie, ...], empile: bool) -> tuple[float, float, floa
     l'AMPLITUDE tienne dans le même nombre de divisions, puis chaque borne est
     arrondie au pas, vers le bas pour le plancher et vers le haut pour le
     sommet, si bien que zéro tombe toujours sur une graduation.
+
+    ``sommet_minimal`` FIGE UNE ÉCHELLE QUE LES DONNÉES NE DOIVENT PAS
+    RÉTRÉCIR, et il existe pour une raison mesurée. Un axe qui suit ses
+    données est le bon défaut : il remplit le cadre. Il devient un piège dès
+    que le lecteur COMPARE deux tracés du même graphique sous deux
+    hypothèses — le 21 septembre 2026, la carte du solde montait à 20 % du PIB
+    sous le scénario de référence et à 15 % sous la variante haute de
+    productivité, si bien que l'écart de 2070, qui perd 29 % de sa valeur
+    entre les deux, n'en perdait que 5 % de sa hauteur à l'écran. Le chiffre
+    disait le vrai, le dessin le contredisait, et c'est le dessin qu'on
+    regarde d'abord. Qui passe cet argument donne à toutes les variantes le
+    sommet de la plus haute, et les tracés redeviennent superposables.
     """
     if empile:
         valeurs = [
@@ -3155,7 +3168,7 @@ def _sommet(series: tuple[Serie, ...], empile: bool) -> tuple[float, float, floa
         ]
     else:
         valeurs = [v for serie in series for v in serie.valeurs if v is not None]
-    maximum = max(valeurs, default=0.0)
+    maximum = max([*valeurs, sommet_minimal], default=0.0)
     minimum = min(valeurs, default=0.0)
     if minimum >= 0.0:
         pas = pas_graduation(maximum)
@@ -3218,7 +3231,8 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
               nom_abscisse: str = "Année",
               ecart: tuple[int, int] | None = None,
               libelle_ecart: str = "",
-              decimales_donnees: int | None = None) -> str:
+              decimales_donnees: int | None = None,
+              sommet_minimal: float = 0.0) -> str:
     """Graphique en courbes, ou en bandes empilées si ``empile``.
 
     ``titre`` n'est pas affiché : il est le texte alternatif du SVG, c'est-à-dire
@@ -3243,6 +3257,11 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
     entre deux courbes qui se perdrait. Sans elle, les deux précisions restent
     liées, comme partout ailleurs sur le site.
 
+    ``sommet_minimal`` empêche l'axe de descendre plus bas que cette valeur.
+    Il sert aux graphiques qu'un réglage du site redessine : sans lui, l'axe
+    suit les données et deux tracés du MÊME graphique ne se comparent plus.
+    Voir ``_sommet``, qui porte la mesure de ce que cela coûtait.
+
     ``ecart`` désigne deux séries par leur rang et peint le ruban qui les
     sépare : vert là où la première passe au-dessus de la seconde, rouge là où
     elle passe dessous. C'est ce qui rend lisible, sans savoir lire un
@@ -3253,7 +3272,7 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
     if not annees or not series:
         return ""
 
-    sommet, pas, plancher = _sommet(series, empile)
+    sommet, pas, plancher = _sommet(series, empile, sommet_minimal)
     gauche = nombre_brut(_abscisse(annees[0], annees[0], annees[-1]))
     droite = nombre_brut(_abscisse(annees[-1], annees[0], annees[-1]))
 

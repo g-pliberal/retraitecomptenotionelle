@@ -387,6 +387,38 @@ def variante_du_scenario(scenario: str | None, macro: Path) -> str:
     return VARIANTE_REFERENCE
 
 
+def depense_maximale_toutes_variantes(racine: Path) -> float:
+    """La dépense la plus haute qu'un scénario du COR atteigne, en part de PIB.
+
+    À QUOI CELA SERT : À FIGER L'AXE DE LA CARTE DU SOLDE. Le graphique du
+    bilan est redessiné quand le lecteur change de scénario, et son axe suivait
+    ses données : 20 % du PIB sous la référence, 15 % sous la variante haute de
+    productivité. L'écart de 2070 perdait alors 29 % de sa valeur et 5 % de sa
+    hauteur à l'écran — le dessin démentait le chiffre. Donner à tous les
+    scénarios le sommet du plus dépensier rend les tracés superposables.
+
+    ELLE EST LUE, ET NON ÉCRITE. Un 20 % en dur tiendrait jusqu'au prochain
+    rapport du COR, puis mentirait en silence. Ici le plafond suit ses
+    variantes : il vaut aujourd'hui la dépense de 2070 sous la productivité à
+    0,4 %, et il suivra celle qui la remplacera.
+
+    Les séries sont mémorisées sur la signature de leur fichier : appeler
+    ceci ne relit rien qu'une page n'ait déjà lu.
+    """
+    macro = racine / "reference" / "macro"
+    series = [charger_serie_annuelle(
+        macro / "comptes_retraite.csv", "part_pib",
+        nom="comptes_retraite_depenses", filtre={"poste": "depenses"})]
+    series += [
+        charger_serie_annuelle(
+            macro / "comptes_retraite_variantes.csv", "part_pib",
+            nom=f"comptes_variante_{nom}_depenses",
+            filtre={"poste": "depenses", "variante": nom})
+        for nom in variantes_disponibles(macro)
+    ]
+    return max(serie(annee) for serie in series for annee in serie.annees())
+
+
 class ComptesRetraite:
     """Le compte du système de retraite : dépenses, ressources, solde, structure.
 

@@ -691,6 +691,23 @@ grille de cas types réagit plus fort à la croissance que le modèle de
 population du COR — c'est le même écart de méthode que le § 5 ter chiffre à
 trois points à l'horizon.
 
+**L'axe de la carte du solde est figé, et il a fallu regarder le dessin pour
+s'en apercevoir.** Les chiffres étaient justes dès la mise en place des
+variantes ; le tracé, non. L'axe de la carte « La retraite coûte-t-elle plus
+qu'elle ne rapporte ? » suivait ses données — 20 % du PIB sous la référence,
+15 % sous la variante haute de productivité —, si bien que l'écart de 2070
+perdait 29 % de sa valeur d'un tracé à l'autre (2,39 point contre 1,69) et
+5 % seulement de sa hauteur à l'écran. Un lecteur qui bascule d'un scénario à
+l'autre voyait une bande rouge presque inchangée alors que le déficit avait
+fondu d'un quart. C'est la seule carte du site qu'un réglage redessine ET
+qu'on lit en comparant deux réglages : l'écart entre les deux courbes est son
+sujet. Elle porte donc désormais le sommet de la variante la plus dépensière,
+commun à tous les scénarios — et ce sommet est LU sur les variantes
+(`depense_maximale_toutes_variantes`), pas écrit : un 20 % figé tiendrait
+jusqu'au prochain rapport du COR, puis mentirait en silence. Les autres
+graphiques gardent l'axe qui suit leurs données, qui est le bon défaut tant
+qu'on ne compare pas deux tracés du même graphique.
+
 **Ce que la variante ne déplace pas, et qu'il faut savoir avant de lire un
 coefficient.** Quatre séries restent celles du scénario de référence, parce que
 le COR ne les publie que là : le TAUX DE PRÉLÈVEMENT (figure 2.9), donc le
@@ -7475,7 +7492,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1858<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1860<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

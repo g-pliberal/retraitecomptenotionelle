@@ -1186,8 +1186,16 @@ function airesEcart(haute, basse, annees, sommet, plancher = 0.0) {
  * que l'AMPLITUDE tienne dans le même nombre de divisions, puis chaque borne
  * est arrondie au pas, si bien que zéro tombe toujours sur une graduation.
  */
-function sommetEchelle(series, empile) {
-  let maximum = 0.0;
+/**
+ * Sommet de l'axe vertical, pas de graduation, et plancher.
+ *
+ * `sommetMinimal` fige une échelle que les données ne doivent pas rétrécir.
+ * Un axe qui suit ses données est le bon défaut ; il devient un piège dès que
+ * le lecteur COMPARE deux tracés du même graphique sous deux hypothèses. Voir
+ * le portage Python, qui porte la mesure de ce que cela coûtait.
+ */
+function sommetEchelle(series, empile, sommetMinimal = 0.0) {
+  let maximum = sommetMinimal;
   let minimum = 0.0;
   if (empile) {
     for (let rang = 0; rang < series[0].valeurs.length; rang += 1) {
@@ -1274,11 +1282,12 @@ export function graphique(titre, annees, series, unite = "", empile = false,
                           decimales = 0, legendeVisible = true, repere = null,
                           libelleRepere = "", etiquettes = [],
                           nomAbscisse = "Année", ecart = null,
-                          libelleEcart = "", decimalesDonnees = null) {
+                          libelleEcart = "", decimalesDonnees = null,
+                          sommetMinimal = 0.0) {
   if (!annees.length || !series.length) {
     return "";
   }
-  const { sommet, pas, plancher } = sommetEchelle(series, empile);
+  const { sommet, pas, plancher } = sommetEchelle(series, empile, sommetMinimal);
   const derniereAnnee = annees[annees.length - 1];
   const gauche = nombreBrut(abscisse(annees[0], annees[0], derniereAnnee));
   const droite = nombreBrut(abscisse(derniereAnnee, annees[0], derniereAnnee));

@@ -72,6 +72,7 @@ from ..donnees.equilibre import (
     POSTES,
     POSTES_TRANSFERTS,
     ComptesRetraite,
+    depense_maximale_toutes_variantes,
     variante_du_scenario,
 )
 from ..donnees.regimes import charger_inventaire
@@ -6914,6 +6915,14 @@ def _cout(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
         # dixième. Sans lui, l'écart entre les deux courbes — un point et demi
         # de PIB, tout le sujet de la carte — se lirait « 14 » contre « 13 ».
         decimales_donnees=1,
+        # LE MÊME AXE SOUS TOUS LES SCÉNARIOS. C'est la seule carte du site
+        # qu'un réglage redessine ET qu'on lit en comparant deux réglages :
+        # l'écart entre les deux courbes EST son sujet. Un axe qui suit ses
+        # données le rendait incomparable — voir `gabarit._sommet`, qui porte
+        # la mesure. Le plafond est celui de la variante la plus dépensière,
+        # lu et non écrit.
+        sommet_minimal=depense_maximale_toutes_variantes(
+            contexte.base.racine_donnees) * 100,
     )
     equilibre = solde.premiere_annee_equilibree(reforme)
 
