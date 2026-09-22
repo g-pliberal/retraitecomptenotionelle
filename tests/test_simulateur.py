@@ -3875,7 +3875,7 @@ def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulate
     même âge en subit dix-huit — seize pour cent de pension d'écart (c'était
     vingt trimestres et vingt pour cent avant que la suspension de 2026 ne
     ramène la durée requise de la génération 1965 à cent soixante-dix), là où
-    le plafond de vingt trimestres annulait l'écart à cinquante-sept ans.
+    le plafond de vingt trimestres éteint l'écart de TAUX à cinquante-sept ans.
     """
     periode = simulateur.catalogue["cnracl"].periode(2023)
     carriere = simulateur.carriere_simple(
@@ -3893,14 +3893,18 @@ def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulate
     assert actif.pension_annuelle / sedentaire.pension_annuelle == (
         pytest.approx(0.9 / 0.775, abs=0.01))
     # À cinquante-sept ans, les deux décotes butent sur le plafond de vingt
-    # trimestres et l'écart de pension redevient nul : c'est ce que
-    # `docs/limites.md` disait du modèle d'avant, et qui reste vrai là.
-    assert (_pension_actuelle(simulateur,
-                              "fonctionnaire_territorial_hospitalier_actif",
-                              1965, 57).pension_annuelle
-            == pytest.approx(_pension_actuelle(
-                simulateur, "fonctionnaire_territorial_hospitalier",
-                1965, 57).pension_annuelle))
+    # trimestres : l'écart de TAUX disparaît, et il ne reste que celui des
+    # durées requises — 169 trimestres pour l'actif, 170 pour le sédentaire,
+    # depuis que le modèle lit le XXIV, B de l'article 10 de la loi de 2023.
+    # Un trimestre de dénominateur, soit six dixièmes de pour-cent.
+    classe = _pension_actuelle(
+        simulateur, "fonctionnaire_territorial_hospitalier_actif", 1965, 57)
+    non_classe = _pension_actuelle(
+        simulateur, "fonctionnaire_territorial_hospitalier", 1965, 57)
+    assert classe.trimestres_requis == 169
+    assert non_classe.trimestres_requis == 170
+    assert classe.pension_annuelle / non_classe.pension_annuelle == (
+        pytest.approx(170 / 169, abs=1e-4))
 
 
 def test_la_surcote_d_un_actif_se_compte_depuis_l_age_legal_de_droit_commun(simulateur):
@@ -4296,3 +4300,87 @@ def test_une_annee_de_chomage_rouvre_la_carriere_longue(simulateur):
     actuel = simulateur.scenario_actuel
     interrompue = _carriere_hachee(simulateur, {1990: "chomage_indemnise"})
     assert actuel.calculer(interrompue).motif_ouverture == "carriere_longue"
+
+
+# --- La durée requise des emplois classés (XXIV, B de la loi de 2023) ------
+
+def _actif(simulateur, naissance: int, affiliation: str, age: float) -> tuple[int, float]:
+    """Durée requise opposée à un emploi classé, et pension servie."""
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=naissance,
+        sexe="H",
+        metiers=[Metier(affiliation=affiliation, age_debut=22.0,
+                        niveau_salaire=1.0)],
+        age_liquidation=age,
+        macro=simulateur.macro,
+    )
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    return resultat.trimestres_requis, resultat.pension_annuelle
+
+
+def test_la_categorie_active_n_a_pas_la_duree_de_sa_generation(simulateur):
+    """« Par dérogation à l'article L. 13 » — et le modèle l'ignorait.
+
+    Le XXIV, B de l'article 10 de la loi du 14 avril 2023 donne aux emplois
+    classés leur propre calendrier : 169 trimestres des nés entre le
+    1er septembre 1966 et le 31 décembre 1967, 170 jusqu'au 31 mars 1970, 171
+    jusqu'à la fin de 1970, 172 à compter de 1971. La table des sédentaires en
+    oppose 172 dès la génération 1966 : trois trimestres de trop à un actif né
+    en 1967.
+    """
+    assert _actif(simulateur, 1967, "fonctionnaire_etat_actif", 60.0)[0] == 169
+    assert _actif(simulateur, 1969, "fonctionnaire_etat_actif", 60.0)[0] == 170
+    assert _actif(simulateur, 1971, "fonctionnaire_etat_actif", 60.0)[0] == 172
+
+
+def test_la_super_active_suit_les_memes_marches_cinq_ans_plus_tard(simulateur):
+    """Le 2° du B décale tout de cinq générations, et rien d'autre."""
+    assert _actif(simulateur, 1972, "fonctionnaire_etat_super_actif", 55.0)[0] == 169
+    assert _actif(simulateur, 1974, "fonctionnaire_etat_super_actif", 55.0)[0] == 170
+    assert _actif(simulateur, 1976, "fonctionnaire_etat_super_actif", 55.0)[0] == 172
+
+
+def test_avant_la_reforme_l_emploi_classe_garde_l_ancienne_table(simulateur):
+    """« Celle applicable avant l'entrée en vigueur du présent XXIV ».
+
+    C'est l'article L. 161-17-3 dans sa version du 22 janvier 2014 : 168
+    trimestres pour les nés de 1961 à 1963, 169 de 1964 à 1966. La table des
+    sédentaires, elle, a déjà monté — 169 pour un né en 1962, 170 pour un né
+    en 1965. Sans cette lecture, la correction se serait arrêtée à 1966 et
+    aurait laissé quatre générations sur la mauvaise durée.
+    """
+    assert _actif(simulateur, 1962, "fonctionnaire_etat_actif", 60.0)[0] == 168
+    assert _actif(simulateur, 1965, "fonctionnaire_etat_actif", 60.0)[0] == 169
+
+
+def test_le_sedentaire_garde_la_duree_de_sa_generation(simulateur):
+    """La dérogation ne déborde pas : elle tient au CLASSEMENT.
+
+    Un fonctionnaire non classé né la même année que l'actif se voit opposer
+    la durée de sa génération, et c'est le droit.
+    """
+    assert _actif(simulateur, 1967, "fonctionnaire_etat", 64.0)[0] == 172
+    assert _actif(simulateur, 1962, "fonctionnaire_etat", 64.0)[0] == 169
+
+
+def test_la_derogation_suppose_la_duree_de_services_classes(simulateur):
+    """Dix-sept ans de services classés, ou rien de tout cela.
+
+    L'article L. 24 ouvre l'âge anticipé « à la condition que le fonctionnaire
+    puisse se prévaloir, au total, d'au moins dix-sept ans de services […] dits
+    services actifs ». La durée requise suit la même porte : qui n'a pas la
+    durée de services reste au droit commun, durée de sa génération comprise.
+    """
+    carriere = Carriere.depuis_parcours(
+        annee_naissance=1967,
+        sexe="H",
+        metiers=[
+            Metier(affiliation="fonctionnaire_etat", age_debut=22.0,
+                   niveau_salaire=1.0),
+            Metier(affiliation="fonctionnaire_etat_actif", age_debut=55.0,
+                   niveau_salaire=1.0),
+        ],
+        age_liquidation=64.0,
+        macro=simulateur.macro,
+    )
+    assert simulateur.scenario_actuel.calculer(carriere).trimestres_requis == 172

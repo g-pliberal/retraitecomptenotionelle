@@ -362,6 +362,18 @@ def inventaire_depuis_paquet(lignes: dict) -> Inventaire:
 #: 1° pour les autres.
 MILITAIRES: frozenset[str] = frozenset({"militaire", "militaire_officier"})
 
+#: Avantages dont la DURÉE REQUISE fait partie, et pour lesquels le garde-fou de
+#: :func:`avantages_par_recalcul` ne s'applique donc pas.
+#:
+#: Le classement de l'emploi en est le seul : le XXIV, B de l'article 10 de la
+#: loi du 14 avril 2023 donne sa durée « pour les fonctionnaires bénéficiant, au
+#: titre de la catégorie active, d'un droit au départ à l'âge anticipé ». Elle
+#: n'est pas un effet de bord du retrait, elle est l'une des trois choses que le
+#: classement accorde. La jouissance militaire, elle, n'y est pas : ses 160
+#: trimestres viennent de la fiche du régime, et le retrait du droit d'âge les
+#: fait tomber sans qu'aucun texte l'attache à ce droit.
+DUREE_REQUISE_EST_L_AVANTAGE: frozenset[str] = frozenset({"categorie_active"})
+
 
 @dataclass(frozen=True)
 class Neutralisation:
@@ -566,6 +578,17 @@ def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
     déplace aussi la DURÉE REQUISE, le rapport de proratisation change avec lui
     et l'écart ne mesure plus rien de nommable. L'appelant reçoit le refus et sa
     raison, et le refus est contagieux : voir :func:`decomposer`.
+
+    SAUF QUAND LA DURÉE REQUISE EST L'AVANTAGE, et c'est le cas du classement de
+    l'emploi depuis que le modèle lit le XXIV, B de l'article 10 de la loi du
+    14 avril 2023. Le texte donne cette durée « pour les fonctionnaires
+    bénéficiant, AU TITRE DE LA CATÉGORIE ACTIVE, d'un droit au départ à l'âge
+    anticipé » : elle n'est pas un effet de bord du retrait, elle est l'une des
+    trois choses que le classement accorde, avec l'âge anticipé et l'âge
+    d'annulation de la décote. La refuser reviendrait à cesser de chiffrer un
+    avantage parce qu'on vient d'en mieux comprendre la portée. La jouissance
+    militaire, elle, reste refusée : sa durée de 160 trimestres vient de la
+    fiche du régime et non du droit d'âge qu'on retire.
     """
     parts: dict[str, float] = {}
     refus: dict[str, str] = {}
@@ -612,7 +635,8 @@ def recalculer(simulateur: Simulateur, cas: CasType, generation: int,
                 continue
             sans = variante.calculer(
                 carriere_variante(simulateur, cas, generation, age))
-            if sans.trimestres_requis != reelle.trimestres_requis:
+            if (code not in DUREE_REQUISE_EST_L_AVANTAGE
+                    and sans.trimestres_requis != reelle.trimestres_requis):
                 refus[code] = (
                     f"{cas.code} : le retrait déplace la durée requise, "
                     f"{sans.trimestres_requis} trimestres contre "

@@ -242,6 +242,19 @@ export function chargerAvantages(paquet) {
  */
 export const MILITAIRES = new Set(["militaire", "militaire_officier"]);
 
+/**
+ * Avantages dont la DURÉE REQUISE fait partie, et pour lesquels le garde-fou du
+ * recalcul ne s'applique donc pas.
+ *
+ * Le classement de l'emploi en est le seul : le XXIV, B de l'article 10 de la
+ * loi du 14 avril 2023 donne sa durée « pour les fonctionnaires bénéficiant, au
+ * titre de la catégorie active, d'un droit au départ à l'âge anticipé ». Elle
+ * n'est pas un effet de bord du retrait, elle est l'une des trois choses que le
+ * classement accorde. La jouissance militaire, elle, n'y est pas : ses 160
+ * trimestres viennent de la fiche du régime.
+ */
+export const DUREE_REQUISE_EST_L_AVANTAGE = new Set(["categorie_active"]);
+
 /** Comment retirer un avantage du scénario 1, et ce que le retrait signifie. */
 export const NEUTRALISATIONS = [
   {
@@ -473,7 +486,8 @@ export function recalculer(simulateur, cas, generation, age, reelle, variantes =
       const sans = variante.calculer(
         carriereVariante(simulateur, cas, generation, age),
       );
-      if (sans.trimestres_requis !== reelle.trimestres_requis) {
+      if (!DUREE_REQUISE_EST_L_AVANTAGE.has(code)
+          && sans.trimestres_requis !== reelle.trimestres_requis) {
         refus[code] = `${cas.code} : le retrait déplace la durée requise, `
           + `${sans.trimestres_requis} trimestres contre `
           + `${reelle.trimestres_requis} — la proratisation change avec lui, et `
