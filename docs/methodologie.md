@@ -878,16 +878,17 @@ ouvriers de l'État — et deux statuts militaires.
 * l'**âge d'ouverture** — l'âge anticipé de l'article L. 24, I, 1°, « l'âge
   mentionné au premier alinéa de l'article L. 161-17-2 du code de la sécurité
   sociale diminué de cinq années », et l'âge minoré, le même diminué de dix :
-  57 et 52 ans avant la réforme de 2023, 59 et 54 après elle, avec les deux
-  montées en charge — celle de la loi du 9 novembre 2010, qui part de 55 et
-  50 ans, et celle du F du XXIV de l'article 10 de la loi du 14 avril 2023,
+  <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1964)-->57<!--/--> et <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1970)-->52<!--/--> ans avant la réforme de 2023,
+  <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->59<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->54<!--/--> ans après elle, avec les deux
+  montées en charge — celle de la loi du 9 novembre 2010, qui part de
+  <!--chiffre:minimum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->55<!--/--> et <!--chiffre:minimum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->50<!--/--> ans, et celle du F du XXIV de l'article 10 de la loi du 14 avril 2023,
   trois mois par génération à compter du 1<sup>er</sup> septembre 1966 et du
   1<sup>er</sup> septembre 1971 ;
-* l'**âge d'annulation de la décote** — 62 et 57 ans, la limite d'âge du grade,
+* l'**âge d'annulation de la décote** — <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_annulation?classement=active)-->62<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_annulation?classement=super_active)-->57<!--/--> ans, la limite d'âge du grade,
   que l'article L. 14 bis a reprise depuis 2023 sous la forme « âge anticipé
   majoré de trois années ». C'est là que le classement pèse le plus : le barème
   de l'article L. 14 retranche ses trimestres de cette limite-là et non de
-  67 ans, si bien qu'un agent classé parti à 60 ans subit huit trimestres de
+  <!--chiffre:maximum(data/reference/legislation/age_annulation_decote.csv:age)-->67<!--/--> ans, si bien qu'un agent classé parti à <!--chiffre:illustration()-->60<!--/--> ans subit huit trimestres de
   décote quand un sédentaire du même âge en subit vingt ;
 * la **condition de durée** — dix-sept ans de services actifs, vingt-sept de
   services super-actifs. Sans elle, l'assuré reste au droit commun : le texte
@@ -900,7 +901,7 @@ III de l'article L. 14 ne la donne qu'« au-delà de l'âge mentionné à l'arti
 L. 161-17-2 », et le D du XXIV de l'article 10 de la loi de 2023 le confirme
 pour les emplois classés — l'âge anticipé majoré de cinq années, l'âge minoré
 majoré de dix, c'est-à-dire l'âge légal dans les deux cas. La compter depuis
-57 ans aurait payé deux fois l'avantage du classement.
+<!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1964)-->57<!--/--> ans aurait payé deux fois l'avantage du classement.
 
 **La pension militaire ne s'ouvre pas à un âge mais à une durée.** Le II de
 l'article L. 24 : elle est liquidée « lorsqu'un officier […] réunit, à la date
@@ -960,19 +961,19 @@ précédent, et le modèle en prenait deux à l'envers.
    (L. 351-10). Deux durées le proratisent, et ce ne sont pas les mêmes : le
    montant de base suit la durée d'assurance acquise dans le régime, sa
    majoration au titre des périodes cotisées suit la seule durée cotisée
-   (D. 351-2-2), et cette majoration demande en outre 120 trimestres cotisés
+   (D. 351-2-2), et cette majoration demande en outre <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=TRIMESTRES_COTISES_MINIMUM_MAJORE)-->120<!--/--> trimestres cotisés
    tous régimes. Il se compare à la pension AVANT surcote, puis est écrêté de ce
    qui ferait dépasser le plafond de l'article L. 173-2 — plafond auquel se
    comparent les pensions personnelles, majorations pour enfants exclues.
 4. **Minimum garanti** de la fonction publique (L. 17) — non pas un plancher
-   proratisé mais un barème en escalier sur la durée de services : 57,5 % de la
-   référence à quinze ans, 95 % à trente, la totalité à quarante. La référence
+   proratisé mais un barème en escalier sur la durée de services : <!--chiffre:tenu(test_le_minimum_garanti_de_la_fonction_publique_est_servi)-->57,5<!--/--> % de la
+   référence à quinze ans, <!--chiffre:tenu(test_le_minimum_garanti_de_la_fonction_publique_est_servi)-->95<!--/--> % à trente, la totalité à quarante. La référence
    est le traitement de l'indice majoré 227 au 1er janvier 2004, revalorisé
    comme les pensions depuis. Il n'est dû qu'au taux plein depuis la loi du
    9 novembre 2010.
-5. **Surcote parentale** (L. 351-1-2-1) — 1,25 % par trimestre acquis entre
-   63 ans et l'âge légal, quatre au plus, à l'assuré qui justifie de la durée
-   requise à 63 ans et détient au moins un trimestre de majoration pour enfants.
+5. **Surcote parentale** (L. 351-1-2-1) — <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:taux_par_trimestre*100?debut=2023)-->1,25<!--/--> % par trimestre acquis entre
+   <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:age_ouverture?debut=2023)-->63<!--/--> ans et l'âge légal, quatre au plus, à l'assuré qui justifie de la durée
+   requise à <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:age_ouverture?debut=2023)-->63<!--/--> ans et détient au moins un trimestre de majoration pour enfants.
    C'est la contrepartie du recul de l'âge légal voulu par la loi du 14 avril
    2023 : l'année de travail qu'elle impose à qui avait déjà sa durée ne
    rapportait rien, la surcote ordinaire ne comptant qu'au-delà de l'âge légal.
@@ -980,12 +981,12 @@ précédent, et le modèle en prenait deux à l'envers.
    l'âge légal : rien jusqu'à la génération 1964, un trimestre pour 1965, quatre
    à partir de 1968. C'est le trimestre pour enfants qui ouvre le droit, et non
    le sexe.
-6. **Majoration pour trois enfants et plus** — 10 %, davantage dans la fonction
+6. **Majoration pour trois enfants et plus** — <!--chiffre:tenu(test_la_majoration_de_10_pour_cent_n_apparait_qu_a_trois_enfants)-->10<!--/--> %, davantage dans la fonction
    publique, calculée sur le montant DÉJÀ RELEVÉ par les minima, et plafonnée en
    euros à la complémentaire.
 7. **Minimum vieillesse** — allocation différentielle qui complète tout le
    reste, majorations comprises, jusqu'au barème d'une personne seule. Servie à
-   partir de 65 ans, et toujours affichée comme une ligne séparée : ce n'est pas
+   partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et toujours affichée comme une ligne séparée : ce n'est pas
    une pension mais une aide sociale, soumise à condition de ressources du
    foyer, à demande, et récupérable sur les successions. Le paramètre
    `minimum_vieillesse_dans_le_scenario_actuel` la retire d'un seul geste.
