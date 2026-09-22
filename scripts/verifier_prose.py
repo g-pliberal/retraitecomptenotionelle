@@ -653,7 +653,9 @@ def paragraphes_geles(lignes: list[str], prefixes: list[str]) -> set[int]:
         return set()
     geles, gele = set(), False
     for numero, ligne in enumerate(lignes, 1):
-        if any(ligne.startswith(prefixe) for prefixe in prefixes):
+        # Un paragraphe peut être la suite d'un point de liste, en retrait :
+        # le préfixe se cherche après l'indentation.
+        if any(ligne.lstrip().startswith(prefixe) for prefixe in prefixes):
             gele = True
         elif not ligne.strip():
             gele = False
