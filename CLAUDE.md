@@ -184,6 +184,11 @@ Le livrable est le site statique ; voir `README.md`.
   `data/reference/prose/zones.yaml`, et ses deux cliquets ne peuvent que
   décroître. Après toute modification de la prose :
   `python scripts/verifier_prose.py --corriger`.
+- Ce que la proposition coûte et rapporte, année par année, pour un projet de
+  loi de finances : `docs/chiffrage_plf.md`, dont tous les tableaux sont écrits
+  par `python scripts/chiffrage_plf.py` et tenus par un test de péremption. Sa
+  prose est datée ; ses chiffres ne le sont pas. Ne jamais y corriger un tableau
+  à la main.
 - Les chantiers à mener, classés par ce qu'ils déplacent : `docs/feuille_de_route.md`.
   Une session qui cherche quoi faire commence là, et y note ce qu'elle a fait.
 - Seule dépendance hors bibliothèque standard : PyYAML. Le portage JavaScript

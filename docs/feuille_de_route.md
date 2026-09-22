@@ -13558,3 +13558,60 @@ cliquet du test a été resserré d'autant.
 **Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
 `scripts/construire_temoins.py`, `tests/test_web.py`,
 `tests/temoins/pages.json`.
+
+### 104. Le chiffrage budgétaire pour un PLF : deux variantes, et quatre arbitrages que le programme ne tranche pas — `fait`
+
+**Demande.** Rassembler les projections de dépenses et de recettes de la
+proposition, pondération du recensement comprise, en un tableau annuel lisible
+pour un projet de loi de finances, et signaler les hypothèses encore fragiles.
+
+**Rien n'était à calculer : tout était à rassembler.** `cout.calculer_cout`
+portait déjà chaque grandeur, mais dans deux objets qui ne parlent pas la même
+unité — `Solde` en parts de PIB, avec un PIB mis à zéro hors de la fenêtre
+publiée, `Avenir` avec la garantie, les reprises et un PIB nominal projeté. Le
+chiffrage les réunit année par année, de la bascule à 2070, en points de PIB
+et en milliards d'euros courants, et dit dans ses conventions que les euros
+lointains portent une hypothèse de croissance.
+
+**Deux variantes et non une, parce que leur écart est le premier fait
+budgétaire du dossier.** La rétroactive, défaut du dépôt, recalcule les pensions
+déjà liquidées ; la prospective, empruntée à `proposition_prospective.py`, fige
+les droits acquis. La seconde dégrade le solde de 3,6 points de PIB de plus
+l'année de la bascule. Un PLF ne peut chiffrer que celle-là, sauf à assumer
+une loi rétroactive.
+
+**Le résultat qui organise le document : la proposition retire plus de
+recettes que de dépense.** En 2026, 6,1 points de recettes contre 4,8 de
+dépense, pensions et garantie comprises ; le solde public se dégrade de
+1,34 point, alors même que la dépense de pensions baisse de plus d'un tiers.
+
+**Quatre arbitrages ouverts, dont deux plus lourds que cet écart.** Les impôts et
+taxes affectés sortent du compte de la retraite, mais le programme ne dit pas
+si l'État cesse de les lever : 2,14 points en 2026, et le signe de la lecture
+en dépend. Les subventions d'équilibre posent la même question en plus petit.
+La rétroactivité. Et le coefficient d'équilibre, calculé à 0,89 et jamais
+appliqué — le déficit affiché et la baisse de pension qu'un pilotage
+imposerait sont deux lectures du même manque, qui ne s'additionnent pas.
+
+**Une trouvaille en chemin, laissée telle quelle.** Deux paragraphes de
+`limites.md` (« Le scénario 6, et ce que sa garantie ne voit pas ») portent
+encore la garantie d'avant la pondération du recensement — 1,30 % du PIB en
+2026 et 20,7 milliards en 2024, quand le modèle en donne 0,58 % et 17,4. Ils
+sont en zone `recit`, ce qui est leur régime voulu, et le contrôle de fraîcheur
+passe à juste titre. Le chiffrage le signale pour qu'ils ne soient pas cités
+dans un document budgétaire. Et `Avenir.cumul` commence à la première année
+PROJETÉE, un an avant la bascule : le « 729 de 2026 à 2070 » de la même section
+est en réalité 2025-2070. Le chiffrage somme sur la seule fenêtre qu'il annonce.
+
+**Tous les chiffres sont produits, la prose seule est datée.** Le document
+est `recit` dans `zones.yaml` — il raconte ce que ces tableaux voulaient dire
+le 22 septembre 2026 —, mais chacun de ses huit tableaux est un bloc que
+`scripts/chiffrage_plf.py` réécrit, et `test_le_chiffrage_plf_n_est_pas_perime`
+refuse un document ou une série qui ne seraient plus les siens. La prose
+renvoie aux tableaux plutôt que de recopier leurs chiffres. Le test coûte deux
+`calculer_cout`, une trentaine de secondes, que xdist absorbe.
+
+**Fichiers.** `scripts/chiffrage_plf.py`, `docs/chiffrage_plf.md`,
+`docs/chiffrage_plf.csv`, `data/reference/prose/zones.yaml`,
+`tests/test_prose.py`, `README.md`, `CLAUDE.md`, `docs/limites.md` (compte de
+tests).

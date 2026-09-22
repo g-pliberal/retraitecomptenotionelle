@@ -231,6 +231,29 @@ def test_les_tableaux_produits_ne_sont_pas_perimes():
     assert rendu.returncode == 0, rendu.stdout + rendu.stderr
 
 
+def test_le_chiffrage_plf_n_est_pas_perime():
+    """Un chiffrage budgétaire est le document qu'on oublie de relire.
+
+    `docs/chiffrage_plf.md` porte les dépenses, les recettes et le solde de la
+    proposition année par année, et sa prose est datée — régime `recit`. Ses
+    tableaux, eux, sont ceux que le modèle calcule aujourd'hui : une
+    modification du modèle les déplace, et personne ne pense à rouvrir un avis
+    rendu. `scripts/chiffrage_plf.py --verifier` le refuse, document et série
+    annuelle comprises.
+
+    Le contrôle coûte deux exécutions de `calculer_cout` — la variante
+    rétroactive et la prospective —, soit une trentaine de secondes, ce qui en
+    fait l'un des tests les plus lents de la suite. C'est le prix d'un chiffrage
+    qui ne se périme pas en silence, et xdist l'absorbe.
+    """
+    import subprocess
+
+    rendu = subprocess.run(
+        [sys.executable, "-X", "utf8", "scripts/chiffrage_plf.py", "--verifier"],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8")
+    assert rendu.returncode == 0, rendu.stdout + rendu.stderr
+
+
 def test_un_bloc_produit_est_exempt_de_l_ancre():
     """Un tableau qu'un script écrit n'a pas à porter une ancre par cellule.
 
