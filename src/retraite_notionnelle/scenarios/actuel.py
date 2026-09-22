@@ -2287,7 +2287,44 @@ class ScenarioActuel:
         derogation = self._derogation_active(periode, carriere)
         if derogation is not None:
             return derogation.age_ouverture
-        return self._age_ouverture_commun(periode, carriere)
+        commun = self._age_ouverture_commun(periode, carriere)
+        par_services = self._ouverture_par_services(periode, carriere)
+        if par_services is not None and par_services < commun:
+            return par_services
+        return commun
+
+    def _ouverture_par_services(self, periode: PeriodeRegime,
+                                carriere: Carriere) -> float | None:
+        """L'âge que la durée de services dans le régime ouvre, ou ``None``.
+
+        Les marins acquièrent la pension d'ancienneté « lorsque se trouve
+        remplie la double condition de cinquante ans d'âge et de vingt-cinq
+        années de services » (R. 2 de leur code). Les cinquante-cinq ans que
+        le même article fixe ensuite ne sont que la borne de l'entrée en
+        jouissance de celui qui CONTINUE à naviguer (L. 5552-5 du code des
+        transports) : qui cesse à cinquante ans avec vingt-cinq ans de mer
+        liquide, et l'ENIM l'écrit — « Gaspard, marin, a 50 ans et réunit
+        25 ans de services […] Il peut prétendre au versement d'une pension
+        d'ancienneté ». Le plafond de vingt-cinq annuités de R. 13 n'avait
+        pas d'autre objet que ce départ-là.
+
+        Les services sont ceux des statuts que le régime route, comptés
+        jusqu'à la liquidation ; l'âge est le plus tardif de l'âge écrit et de
+        celui où la durée est atteinte.
+        """
+        if (periode.age_ouverture_services is None
+                or periode.services_ouverture_annees is None):
+            return None
+        statuts = [code for code in self.affiliations.codes
+                   if periode.regime in self._regimes_routes([code])]
+        requis = periode.services_ouverture_annees
+        servies = carriere.duree_de_service(statuts, self._borne_carriere(carriere))
+        if servies + 1e-9 < requis:
+            return None
+        atteint = carriere.age_de_service(statuts, requis)
+        if atteint is None:
+            return None
+        return max(periode.age_ouverture_services, atteint)
 
     def _age_ouverture_commun(self, periode: PeriodeRegime,
                               carriere: Carriere) -> float:
@@ -3850,9 +3887,19 @@ class ScenarioActuel:
                 # trente ans de mer touche 50 % du salaire forfaitaire, non
                 # 60 %. C'est la seule règle du catalogue où l'ÂGE borne la
                 # durée, et non l'inverse.
-                trimestres_regime = min(
-                    trimestres_regime, periode.duree_maximum_avant_age_trimestres
-                )
+                # Levé « au profit d'un marin âgé d'au moins cinquante-deux ans
+                # et demi, réunissant trente-sept annuités et demie de
+                # services » : le même alinéa, b).
+                levee = (periode.duree_maximum_levee_age is not None
+                         and periode.duree_maximum_levee_trimestres is not None
+                         and age_liquidation >= periode.duree_maximum_levee_age
+                         and trimestres_regime
+                         >= periode.duree_maximum_levee_trimestres)
+                if not levee:
+                    trimestres_regime = min(
+                        trimestres_regime,
+                        periode.duree_maximum_avant_age_trimestres,
+                    )
 
             taux = periode.taux_plein or 0.5
             #: Part du taux qui vient de la surcote. Le minimum contributif se
@@ -4258,7 +4305,7 @@ class ScenarioActuel:
                             f"{age_parental:g} ans et l'âge légal"),
                 ))
 
-        if avantages_non_contributifs and carriere.nombre_enfants >= 3:
+        if avantages_non_contributifs and carriere.nombre_enfants >= 2:
             majoration = 0.0
             taux_cite = 0.0
             # Le plafond de l'Agirc-Arrco s'oppose à la majoration de LA
@@ -4275,7 +4322,10 @@ class ScenarioActuel:
                     continue
                 if "majoration_enfants" not in periode.avantages_non_contributifs:
                     continue
-                taux = _taux_majoration_enfants(regime, carriere.nombre_enfants)
+                taux = _taux_majoration_enfants(regime, carriere.nombre_enfants,
+                                                periode)
+                if taux <= 0:
+                    continue
                 part = pension.montant * taux
                 plafond = self._plafond_majoration(
                     pension.regime, periode, carriere, annee_liquidation
@@ -4297,7 +4347,9 @@ class ScenarioActuel:
                     detail += ", plafonnée en euros à la complémentaire"
                 avantages.append(AvantageApplique(
                     code="majoration_enfants",
-                    libelle="Majoration pour trois enfants et plus",
+                    libelle=("Majoration pour trois enfants et plus"
+                             if carriere.nombre_enfants >= 3
+                             else "Bonification pour deux enfants"),
                     montant=majoration,
                     detail=detail,
                 ))
@@ -4339,14 +4391,20 @@ class ScenarioActuel:
         )
 
 
-def _taux_majoration_enfants(regime, nombre_enfants: int) -> float:
+def _taux_majoration_enfants(regime, nombre_enfants: int,
+                             periode: PeriodeRegime | None = None) -> float:
     """Taux de majoration pour enfants, régime par régime.
 
     Le régime général et les régimes spéciaux servent 10 % à partir de trois
     enfants. La fonction publique y ajoute 5 % par enfant au-delà du troisième.
     Les complémentaires servent 10 % aussi, mais plafonnés en euros : le taux
     est le même, c'est :meth:`ScenarioActuel._plafond_majoration` qui borne.
+    Une fiche qui porte son propre barème — les marins, qui bonifient dès deux
+    enfants — l'emporte.
     """
+    if periode is not None and periode.taux_majoration_enfants:
+        bareme = periode.taux_majoration_enfants
+        return bareme[min(nombre_enfants, len(bareme) - 1)]
     if nombre_enfants < 3:
         return 0.0
     if regime.famille == "fonction_publique":

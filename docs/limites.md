@@ -4761,6 +4761,53 @@ l'index ne portent que le titre ou le visa (décrets de 1956 à 1961, arrêtés 
 1991 à 2006) : la grille de 2008 est ramenée par le salaire moyen, et ces
 années sont marquées estimées.
 
+### Le marin de cinquante ans, et ce que la caisse applique que le modèle n'applique pas
+
+Le 22 septembre 2026, les six pages que l'ENIM consacre à la retraite ont été
+lues (action 89), puis confrontées au code des pensions de retraite des marins
+dans l'index LEGI. Deux règles manquaient au modèle, et le texte comme la
+caisse les écrivent.
+
+**Le départ à cinquante ans était refusé.** L'article R. 2 acquiert la pension
+d'ancienneté « lorsque se trouve remplie la double condition de cinquante ans
+d'âge et de vingt-cinq années de services » ; les cinquante-cinq ans qu'il
+fixe ensuite ne bornent que l'entrée en jouissance de celui qui continue à
+naviguer (L. 5552-5 du code des transports). La fiche avait pris cette borne
+pour l'âge d'ouverture, et refusait donc le départ même que le plafond de
+vingt-cinq annuités de R. 13 organise. L'ENIM le décrit en une phrase —
+« Gaspard, marin, a 50 ans et réunit 25 ans de services […] Il peut prétendre
+au versement d'une pension d'ancienneté » —, qui est désormais un témoin. Le
+plafond est aussi levé à cinquante-deux ans et demi pour trente-sept annuités
+et demie, comme le même article le veut.
+
+**La bonification pour enfants n'était pas servie.** R. 14 : « 5 % de son
+montant pour deux enfants, 10 % pour trois enfants et 15 % au-delà ». La fiche
+ne déclarait aucune majoration ; elle en porte désormais le barème propre, le
+seul du catalogue qui commence à deux enfants. L'exemple de l'ENIM — 870,79 €
+par mois, plus 43,54 € pour deux enfants — est rejoué.
+
+**Ce qui reste, et que la caisse applique.**
+
+- La pension SPÉCIALE, moins de quinze ans de services, s'ouvre à
+  cinquante-cinq ans pour qui touche une autre pension de base et à soixante
+  sinon (R. 5) ; le modèle l'ouvre à cinquante-cinq ans dans tous les cas. La
+  page de l'ENIM se contredit : son texte renvoie à l'âge légal du régime
+  général, soixante-quatre ans pour les générations 1968 et suivantes, et
+  l'exemple qui suit fait partir Henry « à 60 ans ». C'est R. 5 qui fait foi.
+- Le salaire de référence est le forfait de la catégorie MOYENNE des
+  trente-six derniers mois, ou d'une catégorie supérieure tenue cinq ans
+  (R. 11) ; le modèle prend celle de la dernière année. Les services se
+  décomptent au semestre (R. 12), le modèle au trimestre. L'écart tient à une
+  catégorie et à un trimestre au plus.
+- Le taux réduit de 1 % par annuité des services de petite pêche et de pêche
+  côtière outre-mer, le partage des droits du conjoint collaborateur, la
+  réversion à 54 % de la pension et des bonifications, et la cessation
+  anticipée des marins exposés à l'amiante — dès cinquante ans, à soixante ans
+  moins le tiers des services à la machine — ne sont pas modélisés.
+
+La grille des salaires forfaitaires, elle, est exacte : les vingt montants
+publiés par l'ENIM au 1<sup>er</sup> avril 2026 sont ceux du dépôt, au centime.
+
 ### Un jeune d'aujourd'hui pouvait se déclarer mineur, et la page le laissait croire
 
 Le routage savait qu'un mineur recruté après septembre 2010 relève du régime
@@ -7997,7 +8044,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2077<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2079<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

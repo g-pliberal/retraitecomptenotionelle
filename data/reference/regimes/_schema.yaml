@@ -215,6 +215,35 @@ champs_periode:
     description: "plafond de durée liquidable en deçà de `duree_maximum_avant_age`"
     defaut: null
 
+  duree_maximum_levee_age:
+    description: >-
+      Âge à partir duquel le plafond précédent est LEVÉ pour qui réunit
+      `duree_maximum_levee_trimestres` dans le régime. Le même R. 13 l'écarte
+      « au profit d'un marin âgé d'au moins cinquante-deux ans et demi,
+      réunissant trente-sept annuités et demie de services » — l'embarqué de
+      quinze ans, que la page de l'ENIM range sous « 52 ans et demi ».
+    defaut: null
+
+  duree_maximum_levee_trimestres:
+    description: "durée dans le régime qui lève le plafond à `duree_maximum_levee_age`"
+    defaut: null
+
+  age_ouverture_services:
+    description: >-
+      Âge d'ouverture ABAISSÉ pour qui réunit `services_ouverture_annees` de
+      services dans le régime, à la date de la liquidation. L'âge retenu est le
+      plus tardif des deux : celui-ci, et celui où la durée est atteinte. Les
+      marins seuls le portent — « la double condition de cinquante ans d'âge
+      et de vingt-cinq années de services » (R. 2 de leur code) —, l'âge de
+      cinquante-cinq ans que R. 2 fixe ensuite n'étant que la borne de
+      l'entrée en jouissance de qui continue à naviguer (L. 5552-5 du code des
+      transports).
+    defaut: null
+
+  services_ouverture_annees:
+    description: "durée de services, en années, qui ouvre `age_ouverture_services`"
+    defaut: null
+
   decote_par_trimestre: "abattement par trimestre manquant (fraction, null si aucun)"
 
   bareme_decote:
@@ -360,6 +389,16 @@ champs_periode:
       trimestres, sans laquelle la majoration n'est pas due — « si, à 67 ans,
       vous réunissez 30 années d'affiliation à la Cipav ». `null` : aucune
       condition.
+    defaut: null
+
+  taux_majoration_enfants:
+    description: >-
+      Barème PROPRE de la majoration pour enfants, par nombre d'enfants à
+      partir de zéro ; le dernier taux vaut au-delà. Absent, le barème commun
+      s'applique — 10 % dès trois enfants, 5 % de plus par enfant au-delà dans
+      la fonction publique. Les marins bonifient dès DEUX enfants : « 5 % de
+      son montant pour deux enfants, 10 % pour trois enfants et 15 % au-delà »
+      (R. 14 de leur code), ce que la page de l'ENIM écrit à l'identique.
     defaut: null
 
   plafond_majoration_enfants:

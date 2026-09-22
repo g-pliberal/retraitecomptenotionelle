@@ -764,7 +764,41 @@ export class ScenarioActuel {
     if (derogation !== null) {
       return derogation.ageOuverture;
     }
-    return this.ageOuvertureCommun(periode, carriere);
+    const commun = this.ageOuvertureCommun(periode, carriere);
+    const parServices = this.ouvertureParServices(periode, carriere);
+    if (parServices !== null && parServices < commun) {
+      return parServices;
+    }
+    return commun;
+  }
+
+  /**
+   * L'âge que la durée de services dans le régime ouvre, ou null.
+   *
+   * Les marins acquièrent la pension d'ancienneté « lorsque se trouve remplie
+   * la double condition de cinquante ans d'âge et de vingt-cinq années de
+   * services » (R. 2 de leur code) ; les cinquante-cinq ans que le même article
+   * fixe ensuite ne bornent que l'entrée en jouissance de celui qui continue à
+   * naviguer (L. 5552-5 du code des transports). L'âge est le plus tardif de
+   * l'âge écrit et de celui où la durée est atteinte.
+   */
+  ouvertureParServices(periode, carriere) {
+    if (periode.age_ouverture_services == null
+        || periode.services_ouverture_annees == null) {
+      return null;
+    }
+    const statuts = this.affiliations.codes
+      .filter((code) => this.regimesRoutes([code]).has(periode.regime));
+    const requis = periode.services_ouverture_annees;
+    const servies = carriere.dureeDeService(statuts, borneCarriere(carriere));
+    if (servies + 1e-9 < requis) {
+      return null;
+    }
+    const atteint = carriere.ageDeService(statuts, requis);
+    if (atteint === null) {
+      return null;
+    }
+    return Math.max(periode.age_ouverture_services, atteint);
   }
 
   /**
@@ -2089,9 +2123,18 @@ export class ScenarioActuel {
         // pensions de retraite des marins : « le maximum des annuités
         // liquidables dans les pensions d'ancienneté dont la liquidation est
         // demandée avant cinquante-cinq ans est fixé à vingt-cinq annuités ».
-        trimestresRegime = Math.min(
-          trimestresRegime, periode.duree_maximum_avant_age_trimestres,
-        );
+        // Levé « au profit d'un marin âgé d'au moins cinquante-deux ans et
+        // demi, réunissant trente-sept annuités et demie de services » : le
+        // même alinéa, b).
+        const levee = periode.duree_maximum_levee_age != null
+          && periode.duree_maximum_levee_trimestres != null
+          && ageLiquidation >= periode.duree_maximum_levee_age
+          && trimestresRegime >= periode.duree_maximum_levee_trimestres;
+        if (!levee) {
+          trimestresRegime = Math.min(
+            trimestresRegime, periode.duree_maximum_avant_age_trimestres,
+          );
+        }
       }
 
       let taux = periode.taux_plein || 0.5;
@@ -2462,7 +2505,7 @@ export class ScenarioActuel {
       }
     }
 
-    if (avantagesNonContributifs && carriere.nombre_enfants >= 3) {
+    if (avantagesNonContributifs && carriere.nombre_enfants >= 2) {
       let majoration = 0.0;
       let tauxCite = 0.0;
       // Le plafond de l'Agirc-Arrco s'oppose à la majoration de LA
@@ -2478,7 +2521,10 @@ export class ScenarioActuel {
             || !periode.avantages_non_contributifs.includes("majoration_enfants")) {
           continue;
         }
-        const taux = tauxMajorationEnfants(regime, carriere.nombre_enfants);
+        const taux = tauxMajorationEnfants(regime, carriere.nombre_enfants, periode);
+        if (taux <= 0) {
+          continue;
+        }
         const part = pension.montant * taux;
         const plafond = this.plafondMajoration(
           pension.regime, periode, carriere, anneeLiquidation,
@@ -2503,7 +2549,9 @@ export class ScenarioActuel {
         }
         avantages.push({
           code: "majoration_enfants",
-          libelle: "Majoration pour trois enfants et plus",
+          libelle: carriere.nombre_enfants >= 3
+            ? "Majoration pour trois enfants et plus"
+            : "Bonification pour deux enfants",
           montant: majoration,
           detail,
         });
@@ -2679,9 +2727,14 @@ function coefficientAnticipation(trimestresManquants, maximum) {
  * régimes spéciaux servent 10 % à partir de trois enfants ; la fonction
  * publique y ajoute 5 % par enfant au-delà du troisième. Les complémentaires
  * servent 10 % aussi, mais plafonnés en euros : le taux est le même, c'est
- * `plafondMajoration` qui borne.
+ * `plafondMajoration` qui borne. Une fiche qui porte son propre barème — les
+ * marins, qui bonifient dès deux enfants — l'emporte.
  */
-function tauxMajorationEnfants(regime, nombreEnfants) {
+function tauxMajorationEnfants(regime, nombreEnfants, periode = null) {
+  const bareme = periode?.taux_majoration_enfants;
+  if (bareme && bareme.length > 0) {
+    return bareme[Math.min(nombreEnfants, bareme.length - 1)];
+  }
   if (nombreEnfants < 3) {
     return 0.0;
   }

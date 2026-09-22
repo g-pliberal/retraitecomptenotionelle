@@ -26286,11 +26286,11 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 55.0,
+     "age_ouverture_opposable": 50.0,
      "avantages_appliques": [],
-     "liquidation_ouverte": false,
+     "liquidation_ouverte": true,
      "minimum_applique": false,
-     "motif_ouverture": "non_ouverte",
+     "motif_ouverture": "age_legal",
      "par_regime": [
       {
        "detail": "SR 45,022.26 € × taux 75.000% × 100/150",
@@ -97581,7 +97581,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 55.0,
+     "age_ouverture_opposable": 50.0,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -97906,7 +97906,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 55.0,
+     "age_ouverture_opposable": 50.0,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -98217,7 +98217,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 55.0,
+     "age_ouverture_opposable": 50.0,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -98528,7 +98528,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 55.0,
+     "age_ouverture_opposable": 50.0,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -98839,7 +98839,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 55.0,
+     "age_ouverture_opposable": 50.0,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
@@ -99150,7 +99150,7 @@
    },
    "scenarios": {
     "actuel": {
-     "age_ouverture_opposable": 55.0,
+     "age_ouverture_opposable": 50.0,
      "avantages_appliques": [],
      "liquidation_ouverte": true,
      "minimum_applique": false,
