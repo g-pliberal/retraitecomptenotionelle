@@ -99,6 +99,20 @@ class AnneeCarriere:
     #: cotise pour lui sur cette assiette, et le salaire entre dans le salaire
     #: annuel moyen. Une période assimilée, elle, n'y entre jamais.
     revenu_avpf: float = 0.0
+    #: Cette année entre-t-elle dans les SERVICES d'un régime de la fonction
+    #: publique ? Ce régime-là ne proratise pas sur la durée d'assurance mais
+    #: sur les services et bonifications (L. 13 du code des pensions), et
+    #: l'article L. 9 écarte le temps passé dans une position statutaire sans
+    #: services effectifs, hors la liste qu'il énumère. Une année d'emploi en
+    #: est toujours ; une année de chômage n'en est jamais — un fonctionnaire
+    #: au chômage n'est d'ailleurs plus fonctionnaire.
+    services_fonction_publique: bool = True
+    #: Limite, en trimestres PAR ENFANT, des services que cette année ouvre.
+    #: Zéro quand il n'y en a pas. Le 1° de L. 9 excepte le congé parental
+    #: « dans la limite de trois ans par enfant » : le décompte se fait donc
+    #: sur toute la carrière, pas année par année, et c'est le scénario qui
+    #: tient le budget.
+    services_plafond_trimestres_par_enfant: int = 0
 
     @property
     def cotise(self) -> bool:
@@ -233,6 +247,17 @@ def _ligne_annuelle(
         revenu_avpf=(
             0.0 if cotise or regle is None or not regle.avpf
             else 1820.0 * macro.smic_horaire(annee) * part
+        ),
+        # Services et durée d'assurance ne sont pas la même case : la première
+        # proratise la pension de la fonction publique, la seconde celle du
+        # régime général. Une année de chômage indemnisé en valide quatre
+        # trimestres à la CNAV et aucun service à l'État.
+        services_fonction_publique=(
+            cotise or regle is None or regle.services_fonction_publique
+        ),
+        services_plafond_trimestres_par_enfant=(
+            0 if cotise or regle is None
+            else regle.services_plafond_trimestres_par_enfant
         ),
     )
 

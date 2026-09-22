@@ -1505,6 +1505,19 @@ export class ScenarioActuel {
     // COMPRISES : le coefficient de proratisation porte sur la durée
     // d'assurance, pas sur les seules années cotisées.
     const trimestresParRegime = new Map();
+    // SERVICES accomplis dans chaque régime. La fonction publique ne proratise
+    // pas sa pension sur la durée d'assurance mais sur les services et
+    // bonifications (L. 13 du code des pensions), et l'article L. 9 écarte « le
+    // temps passé dans une position statutaire ne comportant pas
+    // l'accomplissement de services effectifs au sens de l'article L. 5 », hors
+    // la liste fermée qu'il énumère. Le moteur créditait ce prorata de TOUTE
+    // période validée : une carrière de fonctionnaire coupée de cinq ans de
+    // chômage servait exactement la même pension qu'une carrière pleine.
+    const servicesParRegime = new Map();
+    // Ce qui reste du budget de services que L. 9 ouvre dans une limite — trois
+    // ans par enfant pour le congé parental. Il se tient sur toute la carrière,
+    // et non année par année.
+    const budgetServicesPlafonnes = new Map();
     // Durée COTISÉE dans chaque régime : c'est elle, et non la durée
     // d'assurance, qui proratise la majoration du minimum contributif au titre
     // des périodes cotisées (D. 351-2-2).
@@ -1517,6 +1530,14 @@ export class ScenarioActuel {
       if (retenusLigne <= 0) {
         continue;
       }
+      let servicesLigne = ligne.services_fonction_publique ? retenusLigne : 0;
+      const plafond = ligne.services_plafond_trimestres_par_enfant;
+      if (servicesLigne > 0 && plafond > 0) {
+        const restant = budgetServicesPlafonnes.get(plafond)
+          ?? plafond * carriere.nombre_enfants;
+        servicesLigne = Math.min(servicesLigne, restant);
+        budgetServicesPlafonnes.set(plafond, restant - servicesLigne);
+      }
       for (const code of this.affiliations.regimes(
         ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
         ligne.cotise ? ligne.revenu : ligne.revenu_reference,
@@ -1528,6 +1549,11 @@ export class ScenarioActuel {
         trimestresParRegime.set(
           code, (trimestresParRegime.get(code) ?? 0) + retenusLigne,
         );
+        if (servicesLigne > 0) {
+          servicesParRegime.set(
+            code, (servicesParRegime.get(code) ?? 0) + servicesLigne,
+          );
+        }
         if (ligne.cotise) {
           trimestresCotisesParRegime.set(
             code, (trimestresCotisesParRegime.get(code) ?? 0) + retenusLigne,
@@ -1545,12 +1571,19 @@ export class ScenarioActuel {
       ? this.majorationPourEnfants(carriere, trimestresParRegime, anneeLiquidation)
       : null;
     if (majorationEnfants !== null) {
-      // LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE : tout joue sur la
-      // durée d'assurance, seule la part `services` entre au prorata du régime.
+      // LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE, et la majoration se
+      // range dans les deux : tout ce qui est accordé joue sur la durée
+      // d'assurance, tous régimes et dans le régime ; la seule part `services`
+      // entre aux services, qui proratisent la pension de la fonction publique.
       trimestres += majorationEnfants.trimestres;
       trimestresParRegime.set(
         majorationEnfants.regime,
-        trimestresParRegime.get(majorationEnfants.regime) + majorationEnfants.services,
+        trimestresParRegime.get(majorationEnfants.regime) + majorationEnfants.trimestres,
+      );
+      servicesParRegime.set(
+        majorationEnfants.regime,
+        (servicesParRegime.get(majorationEnfants.regime) ?? 0)
+          + majorationEnfants.services,
       );
       fiabiliteGlobale = Math.min(fiabiliteGlobale, majorationEnfants.fiabilite);
     }
@@ -1999,7 +2032,14 @@ export class ScenarioActuel {
       const sommeMembres = (table) => membres.reduce(
         (somme, m) => somme + (table.get(m) ?? 0), 0,
       );
-      let trimestresRegime = Math.min(sommeMembres(trimestresParRegime), proratisation);
+      // Le numérateur n'est pas le même selon le régime : services et
+      // bonifications dans la fonction publique (L. 13), durée d'assurance
+      // partout ailleurs (R. 351-1).
+      const acquisParRegime = (
+        this.catalogue.obtenir(code).famille === "fonction_publique"
+          ? servicesParRegime : trimestresParRegime
+      );
+      let trimestresRegime = Math.min(sommeMembres(acquisParRegime), proratisation);
       if (periode.duree_maximum_avant_age !== null
           && periode.duree_maximum_avant_age !== undefined
           && periode.duree_maximum_avant_age_trimestres !== null
@@ -2097,7 +2137,7 @@ export class ScenarioActuel {
         const ageOuverturePeriode = this.ageOuverture(periode, carriere);
         eligiblesGaranti.push({
           indice: indicePension,
-          trimestresServices: sommeMembres(trimestresParRegime),
+          trimestresServices: sommeMembres(servicesParRegime),
           ouvert: carriere.annee_naissance + ageOuverturePeriode < 2011
             || trimestresDecote <= 0
             || trimestres >= requis,

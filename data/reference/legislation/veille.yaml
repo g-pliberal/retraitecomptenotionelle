@@ -198,6 +198,61 @@ entrees:
     a_faire: "Chercher un exemple publié (fiche service-public ou circulaire Cnav) et l'ajouter au témoin."
     prochaine_veille: "2027-03-31"
 
+  - id: services_et_duree_fonction_publique
+    regle: >-
+      La pension de la fonction publique se proratise sur les SERVICES ET
+      BONIFICATIONS, non sur la durée d'assurance (L. 13 CPCMR), et l'article
+      L. 9 écarte des services « le temps passé dans une position statutaire ne
+      comportant pas l'accomplissement de services effectifs au sens de
+      l'article L. 5 », hors la liste fermée qu'il énumère : congé parental,
+      temps partiel de droit et disponibilité pour élever un enfant dans la
+      limite de trois ans par enfant né ou adopté à partir du 1er janvier 2004 ;
+      congés de maladie, de maternité, d'accident de service et de maladie
+      professionnelle du fonctionnaire en activité ; congés de formation et
+      congé civique ; détachement. Le chômage n'est pas une position
+      statutaire : il n'ouvre aucun service.
+    textes: ["L. 5 CPCMR", "L. 9 CPCMR", "L. 13 CPCMR"]
+    sources:
+      - type: legifrance
+        reference: >-
+          L. 9 CPCMR, LEGIARTI000053279095, lu par le récupérateur dans l'index
+          LEGI du dépôt : « Le temps passé dans une position statutaire ne
+          comportant pas l'accomplissement de services effectifs au sens de
+          l'article L. 5 ne peut entrer en compte dans la constitution du droit
+          à pension, sauf : 1° Dans la limite de trois ans par enfant né ou
+          adopté à partir du 1er janvier 2004 […] »
+        date: "2026-09-22"
+      - type: legifrance
+        reference: "L. 5 CPCMR, LEGIARTI000047453644, liste des services retenus"
+        date: "2026-09-22"
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: conforme
+    effet: >-
+      Toute carrière de fonctionnaire coupée par une interruption. Le moteur
+      créditait le prorata de TOUTE période validée : cinq ans de chômage
+      servaient exactement la même pension qu'une carrière pleine. Ils en
+      retirent désormais vingt trimestres de services, soit 11,9 % de pension
+      sur une carrière de fonctionnaire d'État née en 1975 et partie à
+      soixante-quatre ans. La durée d'assurance, elle, ne bouge pas : les mêmes
+      cinq ans restent vingt trimestres assimilés pour la décote, et le régime
+      général continue de les compter dans sa propre proratisation.
+    a_faire: >-
+      DEUX APPROXIMATIONS ASSUMÉES, toutes deux du côté généreux. La première :
+      la condition « né ou adopté à partir du 1er janvier 2004 » du 1° n'est pas
+      appliquée, le modèle ne collectant pas l'année de naissance des enfants —
+      il la déduit de l'âge de la mère. Un congé parental pris pour un enfant né
+      avant 2004 ouvre donc ici trois ans de services que L. 9 lui refuse. La
+      seconde : les dix-huit régimes spéciaux se proratisent eux aussi sur des
+      services, mais leurs règlements n'ont pas été lus, et la règle ne
+      s'applique qu'à la famille `fonction_publique` ; `docs/limites.md` le
+      porte. Reste enfin à lire le 2° de L. 9 article par article : la liste des
+      congés exceptés est transcrite motif par motif dans
+      `periodes_non_travaillees.csv`, mais le modèle ne connaît pas la POSITION
+      statutaire, seulement le motif, et présume l'agent en activité.
+    prochaine_veille: "2027-06-30"
+
   - id: taux_plein_et_proratisation
     regle: "Pension = salaire annuel moyen × taux × durée dans le régime / durée requise ; durée de proratisation propre aux générations 1944-1948."
     textes: ["L. 351-1 CSS", "R. 351-6 CSS"]
@@ -2109,3 +2164,40 @@ journal:
       trancher sur texte. Et le cas type libéral n'a toujours aucune carrière
       antérieure : la structure `CasType` ne porte qu'une affiliation, et lui
       en donner deux est un chantier, non une retouche.
+  - date: "2026-09-22"
+    session: "cinq ans de chômage ne coûtaient rien à un fonctionnaire"
+    consulte: >-
+      Index LEGI du dépôt : articles L. 5 (LEGIARTI000047453644) et L. 9
+      (LEGIARTI000053279095) du code des pensions civiles et militaires de
+      retraite, lus en entier — le premier pour la liste des services retenus,
+      le second pour celle des positions statutaires qui n'en comportent pas et
+      les exceptions qu'il énumère. Relu à côté d'eux l'article L. 13, qui
+      proratise la pension sur les services et bonifications.
+    trouve: >-
+      LA CONFUSION ENTRE DURÉE ET SERVICES NE S'ARRÊTAIT PAS À LA MAJORATION
+      POUR ENFANTS. Le moteur créditait le prorata de la fonction publique de
+      TOUTE période validant un trimestre, chômage compris : une carrière de
+      fonctionnaire d'État coupée de cinq ans de chômage servait exactement la
+      même pension qu'une carrière pleine, au centime près. L'article L. 9 dit
+      l'inverse, et sa liste d'exceptions est fermée. Le chômage n'y est pas —
+      un fonctionnaire au chômage n'est plus fonctionnaire, le chômage n'étant
+      pas une position statutaire. Les congés de maladie, de maternité,
+      d'accident de service et de maladie professionnelle du fonctionnaire en
+      activité y sont ; le congé parental y est dans la limite de trois ans par
+      enfant. Sur une fonctionnaire née en 1975 partie à soixante-quatre ans,
+      cinq ans de chômage retirent désormais vingt trimestres de services et
+      11,9 % de pension ; le même congé pris pour deux enfants ne retire rien,
+      et huit trimestres pour un seul.
+    reste: >-
+      Le scénario 1 EST MODIFIÉ : `periodes_non_travaillees.csv` porte deux
+      colonnes de plus, et le moteur tient deux comptes parallèles par régime —
+      durée d'assurance et services —, le numérateur étant choisi sur la
+      famille du régime. Deux approximations sont assumées et écrites. La
+      condition « né ou adopté à partir du 1er janvier 2004 » du 1° de L. 9
+      n'est pas appliquée, faute de collecter l'année de naissance des enfants.
+      Et les dix-huit régimes spéciaux, qui se proratisent eux aussi sur des
+      services, gardent l'ancienne règle : leurs règlements n'ont pas été lus,
+      et `docs/limites.md` le porte. Reste aussi que le modèle connaît le MOTIF
+      de l'interruption et non la POSITION statutaire, et présume donc l'agent
+      en activité — ce que L. 9 exige pour ses 2° et 3°.
+    prochaine_veille: "2027-06-30"

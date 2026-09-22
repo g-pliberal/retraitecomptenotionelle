@@ -584,7 +584,7 @@ ligne :
 | AVPF | oui, salaire forfaitaire au SMIC porté au compte |
 | pension de réversion | **non** — elle ne concerne pas l'assuré lui-même |
 | bonifications, catégorie active | **non** — elles supposent des informations que le modèle n'a pas |
-| périodes assimilées | oui, motif par motif |
+| périodes assimilées | oui, motif par motif — et ce qu'elles ouvrent en services, à part |
 | garantie minimale de points | oui, 120 points par an de 1989 à 2018 |
 | carrières longues | oui, pour dire si le droit ouvre la liquidation |
 | décote et surcote | oui, barème propre à la fonction publique compris |
@@ -611,8 +611,21 @@ distinguer, et ils ne suivent pas la même règle :
   les trois scénarios, y compris en notionnel — puisque des cotisations ont
   bien été versées.
 
+- les **services de la fonction publique** sont une troisième case, et la même
+  période n'y compte pas de la même façon. La pension de l'État ne se proratise
+  pas sur la durée d'assurance mais sur les services et bonifications
+  (article L. 13 du code des pensions), et l'article L. 9 en écarte « le temps
+  passé dans une position statutaire ne comportant pas l'accomplissement de
+  services effectifs au sens de l'article L. 5 », hors une liste fermée :
+  congés de maladie, de maternité, d'accident de service et de maladie
+  professionnelle du fonctionnaire en activité, congé parental dans la limite
+  de trois ans par enfant, détachement. Le chômage n'est pas une position
+  statutaire, et n'y ouvre donc rien.
+
 Une année de chômage indemnisé n'est donc pas vide à l'Agirc-Arrco alors
 qu'elle l'est à la CNAV ; une année de chômage non indemnisé est vide partout.
+Et les mêmes cinq années de chômage, qui valident vingt trimestres de durée
+d'assurance à la CNAV, n'ouvrent aucun service à l'État.
 
 ### La validation des trimestres
 

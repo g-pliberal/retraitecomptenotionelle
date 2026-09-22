@@ -431,7 +431,7 @@ RANGS_METIER = ("premier", "deuxième", "troisième", "quatrième", "cinquième"
 #:
 #: Les codes sont ceux de ``legislation/periodes_non_travaillees.csv``, qui dit
 #: ce que chacun ouvre — trimestres assimilés, points complémentaires financés
-#: par l'UNEDIC ou la Sécurité sociale, AVPF. Un test vérifie qu'aucun code
+#: par l'UNEDIC ou la Sécurité sociale, AVPF, services de la fonction publique. Un test vérifie qu'aucun code
 #: d'ici n'est absent de là-bas : le menu ne peut pas proposer un motif que le
 #: moteur traiterait en « sans activité » sans le dire.
 #: Les libellés sont des groupes nominaux : le menu les range sous le groupe

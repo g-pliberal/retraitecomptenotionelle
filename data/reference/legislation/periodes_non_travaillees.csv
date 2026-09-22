@@ -9,8 +9,42 @@
 #
 # `trimestres_assimiles` — trimestres validés au régime de BASE sans cotisation.
 #   C'est le mécanisme des périodes assimilées : elles comptent dans la durée
-#   d'assurance (donc contre la décote et dans la proratisation) mais n'ajoutent
+#   d'assurance (donc contre la décote, et dans la proratisation DU RÉGIME
+#   GÉNÉRAL, dont le coefficient porte sur la durée d'assurance) mais n'ajoutent
 #   aucun salaire au compte, et n'entrent donc pas dans le salaire de référence.
+#
+# `services_fonction_publique` — LA MÊME PÉRIODE N'Y COMPTE PAS DE LA MÊME
+#   FAÇON, et le modèle l'ignorait. La pension de la fonction publique ne se
+#   proratise pas sur la durée d'assurance mais sur les SERVICES ET
+#   BONIFICATIONS (article L. 13 du code des pensions), et l'article L. 9 est
+#   catégorique : « Le temps passé dans une position statutaire ne comportant
+#   pas l'accomplissement de services effectifs au sens de l'article L. 5 ne
+#   peut entrer en compte dans la constitution du droit à pension », sauf une
+#   liste fermée qu'il énumère. Un fonctionnaire au chômage n'est d'ailleurs
+#   plus fonctionnaire : le chômage n'est pas une position statutaire.
+#
+#   Le modèle créditait le prorata de la fonction publique de TOUTE période
+#   validée, si bien qu'une carrière de fonctionnaire avec cinq ans de chômage
+#   servait exactement la même pension qu'une carrière pleine. La colonne dit
+#   désormais, motif par motif, ce que L. 5 et L. 9 retiennent :
+#
+#     oui      la position comporte des services effectifs, ou l'article L. 9
+#              l'excepte nommément ;
+#     non      elle n'en comporte pas, et n'est pas exceptée ;
+#     plafonne exceptée, mais dans une limite — voir la colonne suivante.
+#
+#   `services_plafond_annees_par_enfant` porte cette limite quand elle existe.
+#   Le 1° de L. 9 excepte le congé parental, le temps partiel de droit et la
+#   disponibilité pour élever un enfant « dans la limite de trois ans par enfant
+#   né ou adopté à partir du 1er janvier 2004 ». LA CONDITION DE DATE N'EST PAS
+#   APPLIQUÉE : le modèle ne connaît pas l'année de naissance des enfants, il la
+#   déduit de l'âge de la mère. L'écart joue du côté généreux, et `veille.yaml`
+#   le porte.
+#
+#   CE QUI N'EST PAS COUVERT : les dix-huit régimes spéciaux. Leur pension se
+#   proratise elle aussi sur des services, mais leurs règlements sont propres à
+#   chaque caisse et n'ont pas été lus. La règle ne s'applique donc qu'à la
+#   famille `fonction_publique` du catalogue, et `docs/limites.md` le dit.
 #
 # `ouvre_droits_complementaires` — l'UNEDIC et les organismes de sécurité
 #   sociale versent, eux, de véritables cotisations aux régimes COMPLÉMENTAIRES
@@ -33,13 +67,13 @@
 #   cotisées, et ne comptent pas pour la carrière longue.
 #
 # Un motif absent de cette table est traité comme `sans_activite`.
-motif,trimestres_assimiles,ouvre_droits_complementaires,avpf,fiabilite
-chomage_indemnise,4,oui,non,haute
-chomage_non_indemnise,4,non,non,haute
-maladie,4,oui,non,moyenne
-maternite,4,oui,non,moyenne
-invalidite,4,oui,non,moyenne
-accident_travail,4,oui,non,moyenne
-service_militaire,4,non,non,haute
-education_enfant,4,non,oui,haute
-sans_activite,0,non,non,certifiee
+motif,trimestres_assimiles,ouvre_droits_complementaires,avpf,services_fonction_publique,services_plafond_annees_par_enfant,fiabilite
+chomage_indemnise,4,oui,non,non,,haute
+chomage_non_indemnise,4,non,non,non,,haute
+maladie,4,oui,non,oui,,moyenne
+maternite,4,oui,non,oui,,moyenne
+invalidite,4,oui,non,oui,,moyenne
+accident_travail,4,oui,non,oui,,moyenne
+service_militaire,4,non,non,oui,,haute
+education_enfant,4,non,oui,plafonne,3,haute
+sans_activite,0,non,non,non,,certifiee
