@@ -173,6 +173,28 @@ def tableau_generations() -> str:
     return "\n".join(lignes)
 
 
+#: L'exemple du §3 du README : la sortie de ``Comparaison.tableau()`` pour la
+#: carrière que le bloc de code juste au-dessus construit. Elle était collée à
+#: la main, et elle avait vieilli — la rente du pilier annonçait 1 569 € quand
+#: le modèle en sert 1 515 — sans que le bloc de code, que le contrôle de la
+#: prose ne lit pas, puisse le dire.
+REPERE_EXEMPLE = "exemple_fonctionnaire"
+TITRE_EXEMPLE = "Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans"
+
+
+def sortie_exemple() -> str:
+    """Le tableau de l'exemple et la ligne de qui verse quoi, sans le reste."""
+    sys.path.insert(0, str(RACINE / "scripts"))
+    from mesures_prose import _comparaison_de
+
+    lignes = _comparaison_de({"exemple": "fonctionnaire"}).tableau().split("\n")
+    debut = next(i for i, l in enumerate(lignes) if l.startswith("Scénario"))
+    fin = next(i for i, l in enumerate(lignes) if l.lstrip().startswith("= total"))
+    verse = next(i for i, l in enumerate(lignes) if l.startswith("Qui verse"))
+    corps = lignes[debut:fin + 1] + [""] + lignes[verse:verse + 5]
+    return "\n".join(["```", TITRE_EXEMPLE, "", *(l.rstrip() for l in corps), "```"])
+
+
 def remplacer(texte: str, repere: str, contenu: str) -> str:
     debut, fin = f"<!-- {repere}:debut -->", f"<!-- {repere}:fin -->"
     if debut not in texte or fin not in texte:
@@ -202,20 +224,25 @@ def main() -> int:
         print(f"{document} : tableau des règles d'indexation réécrit")
 
     # Le second tableau ne vit que dans le README : il commente la correction
-    # de la ligne de référence, que la méthodologie ne reprend pas.
+    # de la ligne de référence, que la méthodologie ne reprend pas. La sortie
+    # de l'exemple du §3 non plus.
     chemin = RACINE / "README.md"
-    texte = chemin.read_text(encoding="utf-8")
-    voulu = remplacer(texte, REPERE_GENERATIONS, tableau_generations())
-    if voulu != texte:
+    for repere, fabrique, quoi in (
+            (REPERE_GENERATIONS, tableau_generations, "tableau des générations"),
+            (REPERE_EXEMPLE, sortie_exemple, "sortie de l'exemple du §3")):
+        texte = chemin.read_text(encoding="utf-8")
+        voulu = remplacer(texte, repere, fabrique())
+        if voulu == texte:
+            continue
         if arguments.verifier:
-            perimes.append("README.md (tableau des générations)")
+            perimes.append(f"README.md ({quoi})")
         else:
             chemin.write_text(voulu, encoding="utf-8", newline="\n")
-            print("README.md : tableau des générations réécrit")
+            print(f"README.md : {quoi} réécrit")
 
     if perimes:
         print("\n".join(
-            f"{document} : le tableau des règles d'indexation a dérivé — "
+            f"{document} : un bloc produit a dérivé — "
             "lancer python scripts/construire_tableaux_md.py"
             for document in perimes), file=sys.stderr)
         return 1
