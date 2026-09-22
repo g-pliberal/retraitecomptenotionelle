@@ -280,7 +280,7 @@ def telecharger(url: str, cible: Path) -> Path:
     partiel = cible.with_suffix(cible.suffix + ".partiel")
     commande = ["curl", "-sSf", "-L", "--retry", "5", "--retry-delay", "5",
                 "-C", "-", "--max-time", "14400", "-o", str(partiel), url]
-    resultat = subprocess.run(commande, stderr=subprocess.PIPE, text=True)
+    resultat = subprocess.run(commande, stderr=subprocess.PIPE, text=True, encoding="utf-8")
     if resultat.returncode != 0:
         if "404" in resultat.stderr:      # rien à reprendre : la page n'existe pas
             partiel.unlink(missing_ok=True)
@@ -307,7 +307,15 @@ def verser_archive(db: sqlite3.Connection, archive: Path, tout: bool,
     y trouver aussi la liste de suppression.
     """
     if not remplacer:
-        detar = subprocess.Popen(["tar", "-xzO", "-f", str(archive)],
+        # Le nom NU, depuis le répertoire de l'archive : `tar` lit un argument
+        # qui contient un deux-points comme `hôte:chemin`, et un chemin absolu
+        # de Windows commence par `C:`. GNU tar répondait « Cannot connect to
+        # C: resolve failed » et l'index se construisait vide, sans que rien ne
+        # le dise. `--force-local` corrigerait aussi, mais c'est une option GNU
+        # que le tar BSD de Windows n'a pas ; se placer à côté du fichier ne
+        # demande rien à personne.
+        detar = subprocess.Popen(["tar", "-xzO", "-f", archive.name],
+                                 cwd=archive.parent,
                                  stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
         bilan = inserer(db, documents(detar.stdout), tout)
         detar.wait()
@@ -488,7 +496,7 @@ def filtrer_index(base: str, filtre: str, explicite: str | None = None
     import threading
 
     db, source = ouvrir_lecture(base, explicite)
-    sonde = subprocess.Popen([sys.executable, "-c", filtre],
+    sonde = subprocess.Popen([sys.executable, "-X", "utf8", "-c", filtre],
                              stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     # SQLite ne se lit que du fil qui l'a ouvert : c'est donc ce fil-ci qui
     # alimente le filtre, et un second qui recueille ce qu'il imprime.

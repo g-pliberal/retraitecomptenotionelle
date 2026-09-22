@@ -246,7 +246,8 @@ def test_le_portage_javascript_lit_les_memes_releves():
         fichier.flush()
         execution = subprocess.run(
             ["node", "tests/js/comparer-releve.mjs", fichier.name],
-            cwd=RACINE, capture_output=True, text=True, check=False,
+            cwd=RACINE, capture_output=True, text=True, encoding="utf-8",
+            check=False,
         )
     assert execution.returncode == 0, execution.stdout + execution.stderr
     rendu = json.loads(execution.stdout)

@@ -244,8 +244,8 @@ def depouiller(url: str) -> list[tuple[str, str]]:
     )
     lecture.stdout.close()
     filtre = subprocess.Popen(
-        [sys.executable, "-c", FILTRE], stdin=detar.stdout,
-        stdout=subprocess.PIPE, text=True,
+        [sys.executable, "-X", "utf8", "-c", FILTRE], stdin=detar.stdout,
+        stdout=subprocess.PIPE, text=True, encoding="utf-8",
     )
     detar.stdout.close()
     sortie, _ = filtre.communicate()

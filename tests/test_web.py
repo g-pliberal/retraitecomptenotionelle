@@ -1712,7 +1712,7 @@ def test_le_portage_javascript_retrouve_les_chiffres_du_modele():
     assert fichiers, "aucun fichier d'essai JavaScript trouvé"
     execution = subprocess.run(
         ["node", "--test", *fichiers],
-        cwd=racine, capture_output=True, text=True, check=False,
+        cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False,
     )
     assert execution.returncode == 0, execution.stdout + execution.stderr
 
@@ -1800,7 +1800,7 @@ def test_le_portage_javascript_concorde_sur_des_carrieres_tirees_au_hasard():
     try:
         execution = subprocess.run(
             ["node", "tests/js/comparer.mjs", chemin],
-            cwd=racine, capture_output=True, text=True, check=False,
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False,
         )
     finally:
         Path(chemin).unlink(missing_ok=True)
@@ -2315,7 +2315,7 @@ def test_le_portage_javascript_arrondit_comme_python():
     try:
         execution = subprocess.run(
             ["node", "tests/js/comparer-arrondis.mjs", chemin],
-            cwd=racine, capture_output=True, text=True, check=False,
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False,
         )
     finally:
         Path(chemin).unlink(missing_ok=True)
@@ -2429,7 +2429,7 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
     try:
         execution = subprocess.run(
             ["node", "tests/js/comparer-pages.mjs", chemin],
-            cwd=racine, capture_output=True, text=True, check=False,
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False,
         )
     finally:
         Path(chemin).unlink(missing_ok=True)
@@ -2523,7 +2523,7 @@ def test_les_refus_de_saisie_sont_ecrits_a_l_identique_par_les_deux_moteurs():
     try:
         execution = subprocess.run(
             ["node", "tests/js/comparer-pages.mjs", chemin],
-            cwd=racine, capture_output=True, text=True, check=False,
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False,
         )
     finally:
         Path(chemin).unlink(missing_ok=True)
@@ -3571,9 +3571,9 @@ def test_le_README_dit_le_vrai_nombre_de_tests():
 
     racine = Path(__file__).resolve().parents[1]
     collecte = subprocess.run(
-        [sys.executable, "-m", "pytest", "--collect-only", "-q",
+        [sys.executable, "-X", "utf8", "-m", "pytest", "--collect-only", "-q",
          "-p", "no:cacheprovider", str(racine / "tests")],
-        capture_output=True, text=True, cwd=racine,
+        capture_output=True, text=True, encoding="utf-8", cwd=racine,
     )
     compte = re.search(r"(\d+) tests? collected", collecte.stdout)
     assert compte, f"collecte illisible : {collecte.stdout[-400:]}"
@@ -3961,7 +3961,7 @@ def test_les_deux_portages_dessinent_les_memes_pictogrammes():
         ["node", "--input-type=module", "-e",
          'import { ICONES } from "./moteur/js/gabarit.js";'
          "process.stdout.write(JSON.stringify(ICONES));"],
-        cwd=racine, capture_output=True, text=True, check=True,
+        cwd=racine, capture_output=True, text=True, encoding="utf-8", check=True,
     )
     assert json.loads(lecture.stdout) == dict(g.ICONES)
 
@@ -4015,7 +4015,7 @@ def test_la_coquille_est_la_meme_des_deux_cotes_du_portage():
         ["node", "--input-type=module", "-e",
          'import { entete, pied } from "./moteur/js/gabarit.js";'
          'process.stdout.write(JSON.stringify([entete("/cout"), pied()]));'],
-        cwd=racine, capture_output=True, text=True, check=True,
+        cwd=racine, capture_output=True, text=True, encoding="utf-8", check=True,
     )
     assert json.loads(lecture.stdout) == [g.entete("/cout"), g.pied()]
 
@@ -4764,7 +4764,7 @@ def test_le_glossaire_est_le_meme_des_deux_cotes_du_portage():
         ["node", "--input-type=module", "-e",
          'import { GLOSSAIRE } from "./moteur/js/gabarit.js";'
          "process.stdout.write(JSON.stringify(GLOSSAIRE));"],
-        cwd=racine, capture_output=True, text=True, check=True,
+        cwd=racine, capture_output=True, text=True, encoding="utf-8", check=True,
     )
     assert json.loads(lecture.stdout) == dict(g.GLOSSAIRE)
     # Et aucune définition ne porte un chiffre qui bouge : un plafond, une
@@ -5689,7 +5689,7 @@ def test_chaque_route_porte_sa_description():
         ["node", "--input-type=module", "-e",
          'import { DESCRIPTIONS } from "./moteur/js/pages.js";'
          "process.stdout.write(JSON.stringify(DESCRIPTIONS));"],
-        cwd=racine, capture_output=True, text=True, check=True,
+        cwd=racine, capture_output=True, text=True, encoding="utf-8", check=True,
     )
     assert json.loads(lecture.stdout) == DESCRIPTIONS
 
@@ -6289,7 +6289,8 @@ def test_le_script_de_la_page_s_analyse():
     script = re.search(r'<script type="module">(.*?)</script>', page, re.S).group(1)
     with tempfile.NamedTemporaryFile("w", suffix=".mjs", delete=False, encoding="utf-8") as fichier:
         fichier.write(script)
-    resultat = subprocess.run(["node", "--check", fichier.name], capture_output=True, text=True)
+    resultat = subprocess.run(["node", "--check", fichier.name],
+                              capture_output=True, text=True, encoding="utf-8")
     assert resultat.returncode == 0, resultat.stderr
 
 

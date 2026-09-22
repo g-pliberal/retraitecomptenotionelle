@@ -226,8 +226,8 @@ def test_les_tableaux_produits_ne_sont_pas_perimes():
     import subprocess
 
     rendu = subprocess.run(
-        [sys.executable, "scripts/construire_tableaux_md.py", "--verifier"],
-        cwd=RACINE, capture_output=True, text=True)
+        [sys.executable, "-X", "utf8", "scripts/construire_tableaux_md.py", "--verifier"],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8")
     assert rendu.returncode == 0, rendu.stdout + rendu.stderr
 
 
