@@ -823,12 +823,12 @@ Trois choses distinctes, que le modèle confondait :
 modèle les confondait.** La première (L. 161-17-3) commande le TAUX : en deçà,
 la décote s'applique. La seconde (R. 351-6) est le DÉNOMINATEUR qui réduit la
 pension d'une carrière incomplète. La loi du 22 juillet 1993 a fait monter la
-première de 150 à 160 trimestres pour les générations 1934 à 1943 ; elle n'a
+première de <!--chiffre:cellule(data/reference/legislation/duree_assurance_requise.csv:trimestres?generation=1900)-->150<!--/--> à <!--chiffre:cellule(data/reference/legislation/duree_assurance_requise.csv:trimestres?generation=1943)-->160<!--/--> trimestres pour les générations 1934 à 1943 ; elle n'a
 touché à la seconde que pour les générations 1944 à 1948, et de deux trimestres
-par génération — 150 avant 1944, puis 152, 154, 156, 158, 160. Un assuré né en
-1945 ayant validé 156 trimestres se voit donc opposer 160 trimestres pour le
-taux, et il est décoté de quatre, mais 154 pour la proratisation : son
-coefficient vaut 1, et non 156/160. Le modèle lui retirait 2,5 % de pension de
+par génération — <!--chiffre:cellule(data/reference/legislation/duree_proratisation.csv:trimestres?generation=1900)-->150<!--/--> avant 1944, puis <!--chiffre:cellule(data/reference/legislation/duree_proratisation.csv:trimestres?generation=1944)-->152<!--/-->, <!--chiffre:cellule(data/reference/legislation/duree_proratisation.csv:trimestres?generation=1945)-->154<!--/-->, <!--chiffre:cellule(data/reference/legislation/duree_proratisation.csv:trimestres?generation=1946)-->156<!--/-->, <!--chiffre:cellule(data/reference/legislation/duree_proratisation.csv:trimestres?generation=1947)-->158<!--/-->, <!--chiffre:cellule(data/reference/legislation/duree_proratisation.csv:trimestres?generation=1948)-->160<!--/-->. Un assuré né en
+1945 ayant validé <!--chiffre:tenu(test_la_proratisation_ne_penalise_pas_une_carriere_qui_atteint_sa_duree)-->156<!--/--> trimestres se voit donc opposer <!--chiffre:cellule(data/reference/legislation/duree_assurance_requise.csv:trimestres?generation=1945)-->160<!--/--> trimestres pour le
+taux, et il est décoté de quatre, mais <!--chiffre:cellule(data/reference/legislation/duree_proratisation.csv:trimestres?generation=1945)-->154<!--/--> pour la proratisation : son
+coefficient vaut 1, et non 156/160. Le modèle lui retirait <!--chiffre:tenu(test_la_proratisation_ne_penalise_pas_une_carriere_qui_atteint_sa_duree)-->2,5<!--/--> % de pension de
 base que le droit ne retire pas. La table est dans
 `legislation/duree_proratisation.csv`, et elle est réservée aux régimes alignés
 sur le code de la sécurité sociale : la fonction publique et les régimes
@@ -836,22 +836,23 @@ spéciaux ont la leur, calendaire (L. 13 du code des pensions), qui n'est pas
 modélisée.
 
 Le taux plein par la durée est une création de l'ordonnance du 26 mars 1982.
-Avant elle, le taux ne dépendait QUE de l'âge : 20 % à 60 ans majorés de quatre
-points par année différée jusqu'en 1971, puis — loi Boulin — 25 % à 60 ans et
-50 % à 65. Une carrière de quarante ans liquidée à 60 ans en 1975 était servie
+Avant elle, le taux ne dépendait QUE de l'âge : <!--chiffre:tenu(test_le_taux_d_avant_1983_ne_depend_que_de_l_age)-->20<!--/--> % à <!--chiffre:tenu(test_le_taux_d_avant_1983_ne_depend_que_de_l_age)-->60<!--/--> ans majorés de quatre
+points par année différée jusqu'en 1971, puis — loi Boulin — <!--chiffre:tenu(test_le_taux_d_avant_1983_ne_depend_que_de_l_age)-->25<!--/--> % à <!--chiffre:tenu(test_le_taux_d_avant_1983_ne_depend_que_de_l_age)-->60<!--/--> ans et
+<!--chiffre:tenu(test_le_taux_d_avant_1983_ne_depend_que_de_l_age)-->50<!--/--> % à 65. Une carrière de quarante ans liquidée à <!--chiffre:illustration()-->60<!--/--> ans en 1975 était servie
 au même taux réduit qu'une carrière de vingt.
 
 La **fonction publique** n'a pas la décote du régime général. L'article L. 14 du
 code des pensions lui donne la sienne, et rien n'y coïncide : elle n'existe qu'à
 compter de 2006, son coefficient monte d'un huitième de point par an jusqu'à
-1,25 % en 2015, et son âge d'annulation n'est pas un âge en propre mais la
+<!--chiffre:maximum(data/reference/legislation/decote_fonction_publique.csv:coefficient*100)-->1,25<!--/--> % en 2015, et son âge d'annulation n'est pas un âge en propre mais la
 **limite d'âge du grade**, diminuée d'un nombre de trimestres décroissant
 jusqu'à s'annuler en 2020. Et ces deux paramètres se lisent à l'année où le
 droit s'ouvre, non à celle du départ — « année au cours de laquelle sont réunies
 les conditions mentionnées au I et au II de l'article L. 24 », titre le tableau
-de la loi de 2003. Un sédentaire dont le droit s'ouvre en 2012 voit sa décote
-s'annuler à 63 ans, pas à 67, et la garde s'il part plus tard. La même loi fait
-monter la durée de services du pourcentage maximum de 150 à 160 trimestres,
+de la loi de 2003. Un sédentaire né en 1952, dont le droit s'ouvre en 2012, voit
+sa décote s'annuler à <!--chiffre:tenu(test_la_decote_de_la_fonction_publique_est_celle_de_l_article_l14)-->63<!--/--> ans et neuf mois, pas à 67, et la garde s'il part plus
+tard. La même loi fait monter la durée de services du pourcentage maximum de
+150 à <!--chiffre:maximum(data/reference/legislation/duree_requise_fonction_publique.csv:trimestres)-->160<!--/--> trimestres,
 deux par an, pour les droits ouverts de 2004 à 2008
 (`legislation/duree_requise_fonction_publique.csv`) ; la durée du régime
 général, par génération, ne vaut pour la fonction publique qu'à compter de 2009.
