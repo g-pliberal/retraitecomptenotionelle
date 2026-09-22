@@ -398,6 +398,26 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
 - **Pension de réversion.** Elle ne concerne pas l'assuré mais son conjoint
   survivant, et suppose de connaître un ménage. Hors périmètre par
   construction : le modèle décrit une carrière, pas une famille.
+- **La liquidation unique des régimes alignés (LURA), pour la moitié
+  agricole.** Depuis le 1er juillet 2017, un assuré né à compter de 1953 qui a
+  cotisé à deux des trois régimes alignés — régime général, salariés agricoles,
+  sécurité sociale des indépendants — reçoit UNE retraite : un seul revenu
+  annuel moyen, formé de la somme des salaires et revenus d'une même année, et
+  une seule proratisation (`L. 173-1-2` et `R. 173-4-4-1, 4°` CSS, circulaire
+  Cnav 2017/27 du 21 juillet 2017). Le modèle le fait pour le couple régime
+  général / indépendants, mais par un autre chemin : il réunit un régime et
+  celui qui l'a ABSORBÉ, et la CANCAVA, le RSI puis le régime général en font
+  un. Il ne le fait pas pour les salariés agricoles, dont le régime existe
+  toujours. Mesuré sur une carrière moitié privée moitié agricole, né en 1960,
+  parti à 64 ans : le modèle liquide deux pensions de base — 41 499 € de
+  salaire de référence sur 88/167 à la MSA, 29 069 € sur 80/167 au régime
+  général — là où la caisse en calcule une seule. Le sens de l'écart n'est pas
+  déterminé sans refaire le calcul selon la règle, ce qui est une modification
+  du modèle et non une lecture : les deux salaires de référence encadrent celui
+  que la caisse retiendrait. Deux bornes de la règle manquent aussi au chemin
+  du dépôt, et dans l'autre sens : la LURA vaut à partir de la génération 1953
+  et des pensions prenant effet au 1er juillet 2017, quand l'absorption du RSI
+  ne date le regroupement qu'en 2018-2020.
 - **Bonifications de service.** Bonifications de dépaysement, de campagne
   militaire, du cinquième pour les emplois de sécurité. La bonification POUR
   ENFANTS, elle, est servie : elle ne demande que le nombre d'enfants. Les
