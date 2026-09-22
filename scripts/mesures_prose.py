@@ -278,8 +278,29 @@ def fusion(**reglages: str) -> float:
     Un taux (``taux_cotisation_retraite``, ``taux_cotisation_salarie``) se lit
     en %, le reste dans son unité : ``duree_requise`` en trimestres,
     ``age_ouverture`` en années.
+
+    ``critere=le_plus_eleve`` (ou toute autre valeur de ``CritereTaux``)
+    refait la fusion sous une autre règle de taux — la méthodologie dit
+    pourquoi elle écarte le maximum, et il faut pouvoir dire ce qu'il vaut.
+    ``pivot=regime_general`` rend plutôt, en %, ce que ce régime pivot apporte
+    à la somme : la tranche 1, cotisation déplafonnée comprise, comme la
+    fusion la compte.
     """
-    fusionne = _simulateur(_parametres()).regime_fusionne
+    from retraite_notionnelle.moteur.fusion import (CritereTaux, RegleFusion,
+                                                    _taux_total, fusionner)
+
+    simulateur = _simulateur(_parametres())
+    fusionne = simulateur.regime_fusionne
+    if "pivot" in reglages:
+        actives = simulateur.catalogue[reglages["pivot"]].periodes_actives(
+            fusionne.annee_bascule)
+        if not actives:
+            raise ValueError(f"« {reglages['pivot']} » n'a pas de période active")
+        tranche_1 = min(actives, key=lambda p: p.bornes_assiette_en_pass()[0])
+        return _taux_total(tranche_1) * 100
+    if "critere" in reglages:
+        fusionne = fusionner(simulateur.catalogue, fusionne.annee_bascule,
+                             RegleFusion(critere_taux=CritereTaux(reglages["critere"])))
     champ = reglages["champ"]
     if not hasattr(fusionne, champ):
         raise ValueError(f"le régime unique n'a pas de champ « {champ} »")
@@ -379,6 +400,21 @@ def anticipation(**reglages: str) -> float:
         duree = float(reglages["carriere"])
         garde *= (duree - (reference - age)) / duree
     return (1 - garde) * 100
+
+
+def composition_revalorisation(**reglages: str) -> float:
+    """Ce que composer année par année les coefficients des arrêtés fait
+    perdre, en % et en valeur absolue, face au coefficient lu d'un bloc.
+
+    ``de`` et ``a`` : 1940 et 2025 pour la méthodologie. La caisse arrondit
+    ses colonnes au millième ; le moteur, qui compose tous ses modes de la
+    même façon, en hérite un écart que la prose chiffre.
+    """
+    de, a = reglages["de"], reglages["a"]
+    compose = cumul_indexation(regle="revalorisation_portee_au_compte", de=de, a=a)
+    lu = _simulateur(_parametres()).macro.coefficient_revalorisation_portee_au_compte(
+        int(de), int(a))
+    return abs(compose / lu - 1) * 100
 
 
 def millieme_salaire(**_: str) -> float:
@@ -544,6 +580,7 @@ MESURES = {
     "millieme_salaire": millieme_salaire,
     "poids_trimestre": poids_trimestre,
     "dependance": dependance,
+    "composition_revalorisation": composition_revalorisation,
 }
 
 

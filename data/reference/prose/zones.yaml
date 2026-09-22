@@ -350,6 +350,8 @@ fichiers:
       "Brut, et pas net": etat
       "Arrondis : ce que le droit fait, et ce que le modèle fait": etat
       "Ancrage des rémunérations": etat
+      "La seule ligne qui ne soit pas une hypothèse": etat
+      "7. La fusion des régimes": etat
   # Un JOURNAL DE CHANTIER : le §4 et ses six suites racontent, chacune, ce
   # qu'une session a mesuré le jour où elle l'a mesuré. Leurs chiffres sont
   # justes à leur date et gelés — les rafraîchir réécrirait l'histoire, et
@@ -459,7 +461,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 51
+  sections_a_declarer: 49
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2

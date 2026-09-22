@@ -151,7 +151,7 @@ Ce paragraphe désignait `indexation=prix` comme la règle neutralisant
 l'indexation. C'était une erreur, et elle valait un facteur cinq. Le régime
 général ne revalorise les salaires portés au compte sur les prix que **depuis
 1987** : avant, les arrêtés annuels suivaient les salaires. Le coefficient
-réellement appliqué vaut ×1 538 sur 1941-2025, contre ×322,2 pour les prix.
+réellement appliqué vaut ×<!--chiffre:mesure(cumul_indexation?regle=revalorisation_portee_au_compte&de=1940&a=2025)-->1 538<!--/--> sur 1941-2025, contre ×<!--chiffre:mesure(cumul_indexation?regle=prix&de=1940&a=2025)-->322,2<!--/--> pour les prix.
 Comparer le compte notionnel à une indexation sur les prix ne le comparait donc
 pas au droit positif ; cela lui opposait une troisième règle, jamais appliquée,
 et imputait aux comptes notionnels un écart qui venait encore de l'indexation.
@@ -168,17 +168,18 @@ que le droit en vigueur a accordé ?**
 Ce que la correction déplace est modeste, et le dire fait partie de la
 correction : les cotisations se concentrent sur les dernières années d'une
 carrière, où les deux règles coïncident. La ligne de référence du scénario
-rétroactif passe de -89,9 % à -84,7 % pour la génération 1920, de -89,0 % à
--87,5 % pour 1930, ne bouge pas pour 1945 (-85,1 %), et l'écart s'inverse pour
-les carrières entièrement postérieures à 1987 (-81,0 % à -81,4 % pour 1958) :
-depuis 1990, les arrêtés revalorisent un peu moins vite que les prix (×1,69
-contre ×1,80), l'indexation légale étant assise sur l'inflation de l'année
+rétroactif passe de <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=prix)-->-91,2<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=revalorisation_portee_au_compte)-->-86,2<!--/--> % pour la génération 1920, de
+<!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=prix)-->-89,4<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=revalorisation_portee_au_compte)-->-87,6<!--/--> % pour 1930, ne bouge pas pour 1945
+(<!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=prix)-->-85,4<!--/--> % contre <!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=revalorisation_portee_au_compte)-->-85,4<!--/--> %), et l'écart s'inverse pour
+les carrières entièrement postérieures à 1987 (<!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=prix)-->-81,3<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=revalorisation_portee_au_compte)-->-81,8<!--/--> % pour
+1958) : depuis 1990, les arrêtés revalorisent un peu moins vite que les prix
+(×<!--chiffre:mesure(cumul_indexation?regle=revalorisation_portee_au_compte&de=1990&a=2025)-->1,69<!--/--> contre ×<!--chiffre:mesure(cumul_indexation?regle=prix&de=1990&a=2025)-->1,79<!--/-->), l'indexation légale étant assise sur l'inflation de l'année
 précédente. Le facteur cinq est celui de l'indice cumulé sur 1941-2025, pas
 celui du résultat.
 
 Une réserve de composition : le modèle compose ce mode année par année, comme
 tous les autres, alors que la caisse arrondit ses colonnes à trois décimales. Le
-produit des taux annuels s'écarte de 0,04 % du coefficient lu directement de
+produit des taux annuels s'écarte de <!--chiffre:mesure(composition_revalorisation?de=1940&a=2025)-->0,04<!--/--> % du coefficient lu directement de
 bout en bout sur 1941-2025. C'est le prix de l'uniformité du moteur, et c'est
 deux ordres de grandeur sous les écarts que ce mode sert à mesurer.
 
@@ -662,9 +663,9 @@ profit d'un régime unique construit **au cas le plus défavorable** :
 
 | Paramètre | Règle | Valeur 2026 |
 |---|---|---|
-| âge d'ouverture | le plus élevé | 64 ans |
-| âge du taux plein | le plus élevé | 67 ans |
-| durée requise | la plus longue | 172 trimestres |
+| âge d'ouverture | le plus élevé | <!--chiffre:mesure(fusion?champ=age_ouverture)-->65<!--/--> ans |
+| âge du taux plein | le plus élevé | <!--chiffre:mesure(fusion?champ=age_taux_plein)-->67,5<!--/--> ans |
+| durée requise | la plus longue | <!--chiffre:mesure(fusion?champ=duree_requise_trimestres)-->172<!--/--> trimestres |
 | salaire de référence | le moins avantageux | carrière entière |
 | assiette | la plus large | déplafonnée |
 | avantages non contributifs | aucun | — |
@@ -672,14 +673,15 @@ profit d'un régime unique construit **au cas le plus défavorable** :
 **Le taux de cotisation fait exception, et c'est le seul.** Le retenir « au plus
 défavorable » n'aurait pas de sens : un taux plus faible réduit les droits, mais
 réduit tout autant les prélèvements. Retenir le maximum n'est pas meilleur : ce
-maximum est le taux de tranche 2 de l'Agirc-Arrco (21,59 %), qui ne s'applique
-aujourd'hui qu'au-dessus du plafond. Le régime fusionné retient donc la **somme
-des taux d'un statut pivot** — régime général 17,86 % + Agirc-Arrco 7,87 % =
-**25,73 %** — c'est-à-dire l'effort contributif réel d'un salarié pour une
+maximum est aujourd'hui le taux d'équilibre d'une caisse publique
+(<!--chiffre:mesure(fusion?champ=taux_cotisation_retraite&critere=le_plus_eleve)-->41,2<!--/--> %), fixé pour combler un déficit et non pour ouvrir des droits. Le
+régime fusionné retient donc la **somme des taux d'un statut pivot** — régime
+général <!--chiffre:mesure(fusion?pivot=regime_general)-->17,96<!--/--> % + Agirc-Arrco <!--chiffre:mesure(fusion?pivot=agirc_arrco)-->7,87<!--/--> % =
+**<!--chiffre:mesure(fusion?champ=taux_cotisation_retraite)-->25,83<!--/--> %** — c'est-à-dire l'effort contributif réel d'un salarié pour une
 retraite complète. Modifiable par `RegleFusion.critere_taux`.
 
 Le régime unique **hérite aussi de la répartition salarié/employeur** de ses
-régimes pivots : 10,45 % de part salariale sur 25,73 % en 2026. Ce n'est pas une
+régimes pivots : <!--chiffre:mesure(fusion?champ=taux_cotisation_salarie)-->10,45<!--/--> % de part salariale sur <!--chiffre:mesure(fusion?champ=taux_cotisation_retraite)-->25,83<!--/--> % en 2026. Ce n'est pas une
 décision de la fusion mais la conséquence de ce qui la compose, et c'est elle
 qui, après la bascule, sépare le scénario 5 du scénario 3. Une exception : un
 assuré qui n'avait pas d'employeur — artisan, libéral — n'en gagne pas un en
