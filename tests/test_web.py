@@ -934,6 +934,104 @@ def test_une_pension_que_nulle_carriere_ne_sert_est_refusee(
     assert phrase in corps
 
 
+def test_la_situation_est_la_premiere_question_et_commande_la_saisie(contexte):
+    """« En activité ou à la retraite » vient avant tout, et décide du reste.
+
+    C'est la question qui a remplacé « je saisis : mon revenu / ma pension » —
+    une question de modélisation posée à quelqu'un qui n'est pas venu
+    modéliser. Elle doit donc arriver AVANT le premier champ, et emporter avec
+    elle ce que le formulaire demande : un actif ne connaît pas sa pension, un
+    retraité ne se souvient pas de son salaire.
+    """
+    _, actif = rendre(contexte, "/simuler", {})
+    assert "Vous êtes" in actif
+    assert actif.index("Vous êtes") < actif.index('id="naissance"'), (
+        "la situation ne vient plus avant le premier champ"
+    )
+    assert 'id="salaire"' in actif and 'id="pension"' not in actif
+
+    _, retraite = rendre(contexte, "/simuler", {"situation": "retraite"})
+    assert 'id="pension"' in retraite and 'id="salaire"' not in retraite
+
+    # Le lien de la bascule porte les DEUX réglages : cliquer reconfigure le
+    # formulaire d'un coup, sans passer par un second contrôle.
+    lien = re.search(r'aria-label="Vous êtes".*?href="#/simuler\?([^"]*)"',
+                     actif, re.S)
+    assert lien, "la bascule de situation ne mène nulle part"
+    requete = dict(parse_qsl(html.unescape(lien.group(1))))
+    assert requete["situation"] == "retraite"
+    assert requete["saisie_par"] == "pension"
+
+
+def test_une_adresse_qui_ne_dit_que_la_situation_ouvre_la_bonne_saisie(contexte):
+    """Le défaut suit la situation ; l'explicite l'emporte.
+
+    Une adresse partagée à la main — « ?situation=retraite » — doit ouvrir le
+    formulaire sur la pension, sans qu'on ait à écrire le second réglage. Mais
+    un retraité qui a choisi de saisir ce qu'il gagnait garde son choix, parce
+    que son adresse le dit.
+    """
+    assert Saisie.depuis_requete({"situation": "retraite"}).saisie_par == "pension"
+    assert Saisie.depuis_requete({"situation": "actif"}).saisie_par == "revenu"
+    assert Saisie.depuis_requete(
+        {"situation": "retraite", "saisie_par": "revenu"}).saisie_par == "revenu"
+
+
+def test_le_desaccord_de_situation_est_dit_et_non_corrige(contexte):
+    """La situation et la date peuvent se contredire, et c'est sans danger.
+
+    Le modèle ne lit QUE la date : aucun chiffre ne dépend de la situation
+    déclarée. Corriger la date effacerait une carrière saisie, refuser la
+    saisie arrêterait quelqu'un sur un réglage qui ne change aucun résultat —
+    le formulaire le dit, et laisse la date décider.
+    """
+    # L'exemple par défaut est celui d'un actif : se déclarer retraité le
+    # contredit, et c'est le premier clic de qui vient pour sa pension.
+    _, incoherent = rendre(contexte, "/simuler", {"situation": "retraite"})
+    assert "Vous vous dites à la retraite" in incoherent
+    assert "Saisie refusée" not in incoherent
+
+    # Et dans l'autre sens.
+    _, inverse = rendre(contexte, "/simuler", {
+        "situation": "actif", "naissance": "1955-06-01", "debut": "1975-01",
+        "liquidation": "2017-06"})
+    assert "Vous vous dites en activité" in inverse
+
+    # Une situation cohérente ne dit rien du tout.
+    _, coherent = rendre(contexte, "/simuler", {
+        "situation": "retraite", "naissance": "1955-06-01",
+        "debut": "1975-01", "liquidation": "2017-06"})
+    assert "Vous vous dites" not in coherent
+
+
+def test_un_retraite_peut_encore_saisir_ce_qu_il_gagnait(contexte):
+    """L'échappatoire est offerte là où elle sert, et dans ce sens-là seul.
+
+    Un retraité qui a gardé ses fiches de paie doit pouvoir donner son revenu ;
+    une bascule permanente aurait remis à tout le monde la question qu'on vient
+    de retirer, une ligne sous le champ suffit. Le chemin inverse — un actif
+    qui vise une pension — n'est pas offert sur le formulaire de tout le monde :
+    il passe par la situation, et la page dit alors que c'est la date qui
+    compte.
+    """
+    _, retraite = rendre(contexte, "/simuler", {"situation": "retraite"})
+    # PAR SON TEXTE, et non par le premier lien venu : la bascule de situation
+    # porte elle aussi « saisie_par=revenu », mais elle change de situation en
+    # même temps. Chercher au plus court aurait mesuré la bascule.
+    lien = re.search(
+        r'href="#/simuler\?([^"]*)">Ou saisir ce que vous gagniez\.</a>',
+        retraite)
+    assert lien, "un retraité ne peut plus saisir ce qu'il gagnait"
+    requete = dict(parse_qsl(html.unescape(lien.group(1))))
+    assert requete["situation"] == "retraite" and requete["saisie_par"] == "revenu"
+    _, repris = rendre(contexte, "/simuler", requete)
+    assert 'id="salaire"' in repris and 'id="pension"' not in repris
+
+    # En activité, aucune ligne de ce genre : le formulaire reste nu.
+    _, actif = rendre(contexte, "/simuler", {})
+    assert "Ou saisir" not in actif
+
+
 def test_la_bascule_net_brut_traduit_la_pension_saisie(contexte):
     """Changer d'affichage ne doit pas changer la carrière qu'on a décrite.
 
@@ -3149,15 +3247,18 @@ def test_le_simulateur_tient_en_peu_de_mots(contexte):
     d'interrogation. Ce test tient la porte fermée : la prose revient toujours,
     une phrase à la fois.
     """
-    # LA BARRE A BOUGÉ UNE FOIS, DE SIX MOTS, le 22 septembre 2026 : c'est ce
-    # que coûte la troisième bascule — « Je saisis : mon revenu / ma pension ».
-    # Un CONTRÔLE, et non de la prose, ce que ce compte ne sait pas distinguer.
-    # Ses libellés ont été raccourcis d'abord, jusqu'à ce que l'opposition des
-    # deux suffise à porter le sens, et la barre n'a monté que de ce qui restait.
-    # C'est la seule raison recevable de la déplacer : une phrase ajoutée ne
-    # l'est pas, et c'est tout l'objet de ce test.
+    # LA BARRE A BOUGÉ DEUX FOIS LE MÊME JOUR, le 22 septembre 2026, et elle
+    # redescend. Elle était montée de trois mots pour une bascule « Je saisis :
+    # mon revenu / ma pension » — un CONTRÔLE, que ce compte ne sait pas
+    # distinguer d'une phrase. Cette bascule a été remplacée le jour même par
+    # la question qui la rendait inutile — « Vous êtes : en activité / à la
+    # retraite » —, qui coûte autant mais répond à sa place, et la date de
+    # départ n'a plus à dire « effectif, ou souhaité » quand on vient de
+    # l'apprendre. La barre descend donc SOUS ce qu'elle valait avant les deux
+    # changements. C'est le seul sens dans lequel on la déplace sans se
+    # justifier ; la monter demande, chaque fois, qu'un contrôle l'exige.
     vierge = rendre(contexte, "/simuler", {})[1]
-    assert _mots_visibles(vierge) <= 163, "le formulaire reprend de la prose"
+    assert _mots_visibles(vierge) <= 162, "le formulaire reprend de la prose"
 
     resultats = rendre(contexte, "/simuler", {
         "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",

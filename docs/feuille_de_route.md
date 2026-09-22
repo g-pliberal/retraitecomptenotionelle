@@ -26,16 +26,16 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 123<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 207<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 123<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 207<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 123<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 207<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 123<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 207<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13483,3 +13483,48 @@ pas.
 
 **Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
 `tests/test_web.py`, `tests/temoins/pages.json`.
+
+### 103. La première question n'était pas la bonne : en activité, ou à la retraite ? — `fait`
+
+**Demande.** « Je pense que la première des questions serait de demander si la
+personne est en retraite ou en période d'activité. Ce serait beaucoup plus
+simple dans l'expérience utilisateur. »
+
+**La bascule de l'action 99 posait une question de modélisation déguisée.**
+« Je saisis : mon revenu / ma pension » demande de choisir une ENTRÉE DU CALCUL
+à quelqu'un qui n'est pas venu modéliser. Or ce choix se déduit : un actif ne
+connaît pas sa pension, un retraité ne se souvient pas de son salaire. La
+question a donc été remplacée par celle qui la rend inutile — **« Vous êtes :
+en activité / à la retraite »** —, et elle est posée AVANT le premier champ,
+parce qu'elle commande tout le reste. Son lien porte les deux réglages : un
+clic reconfigure le formulaire d'un coup.
+
+**Elle n'entre dans aucun calcul, et c'est ce qui la rend sûre.** Le modèle ne
+lit que la DATE DE DÉPART, qui dit au mois près si la pension est déjà servie.
+La situation n'oriente que le formulaire : ce qu'il demande, et comment il le
+nomme — la date de départ dit maintenant « effectif » ou « souhaité », et non
+plus les deux. Deux réglages qui se contrediraient ne peuvent donc fausser
+aucun chiffre, et le cas se produit au premier clic : l'exemple par défaut est
+celui d'un actif né en 1975, et le déclarer retraité laisse son départ en 2039.
+**Le formulaire le dit au lieu de le corriger** : réécrire deux dates sous les
+doigts de quelqu'un effacerait une carrière saisie, et refuser l'arrêterait sur
+un réglage qui ne change aucun résultat.
+
+**L'échappatoire est offerte dans un sens seulement, et c'est un arbitrage
+assumé.** Un retraité qui a gardé ses fiches de paie peut donner son revenu :
+une ligne sous le champ, et non une bascule permanente qui aurait remis à tout
+le monde la question qu'on venait de retirer. Le chemin inverse — un actif qui
+vise une pension — existe, la page le calcule et le complément du champ le
+dit ; mais c'est une autre question que celle du simulateur, elle n'intéresse
+qu'une minorité, et une ligne de plus sur le formulaire de TOUT LE MONDE est un
+prix trop élevé pour elle.
+
+**Le compte de mots du formulaire redescend sous ce qu'il valait avant
+l'action 99** : 162 au lieu de 163, et de 160 avant les deux. Une bascule
+remplacée par une bascule, une aide de trois mots ramenée à un — la question de
+l'utilisateur a rendu le formulaire plus court, pas seulement plus clair, et le
+cliquet du test a été resserré d'autant.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
+`scripts/construire_temoins.py`, `tests/test_web.py`,
+`tests/temoins/pages.json`.

@@ -259,15 +259,34 @@ SALAIRE_DEFAUT = {"euros_mois": 3500.0, "moyen": 1.0}
 #: revenu dont le SCÉNARIO 1 la tire : le droit en vigueur est le seul des
 #: quatre systèmes qu'il ait un sens d'inverser, puisque c'est le seul que
 #: l'assuré a réellement subi.
-#: Les libellés sont courts — « Mon revenu », et non « Mon revenu d'activité »
-#: comme le champ — parce que c'est leur OPPOSITION qui porte le sens : mis
-#: côte à côte, les deux mots se distinguent sans qu'on ait à les qualifier, et
-#: ce qui se lit à l'ouverture du formulaire se compte (voir
-#: ``test_le_simulateur_tient_en_peu_de_mots``).
-SAISIES = [
-    ("revenu", "Mon revenu"),
-    ("pension", "Ma pension"),
+#: Où l'on en est de sa vie, et c'est la PREMIÈRE question du formulaire.
+#:
+#: Elle a remplacé « Je saisis : mon revenu / ma pension », qui était une
+#: question de modélisation déguisée en question à l'utilisateur : elle
+#: demandait de choisir une entrée du calcul, quand celle-ci se déduit de ce
+#: qu'on est. Un actif ne connaît pas sa pension, un retraité ne se souvient
+#: pas de son salaire : la situation commande la saisie, et non l'inverse.
+#:
+#: ELLE N'ENTRE DANS AUCUN CALCUL. Le modèle ne connaît que la date de départ,
+#: et c'est elle qui dit, au jour près, si la pension est déjà servie ou non —
+#: voir ``_lecture_des_montants``. La situation n'oriente que le formulaire :
+#: ce qu'il demande, et comment il le nomme. Deux réglages qui se contrediraient
+#: ne peuvent donc pas fausser un chiffre, et le formulaire le signale au lieu
+#: de le corriger.
+SITUATIONS = [
+    ("actif", "en activité"),
+    ("retraite", "à la retraite"),
 ]
+
+#: Ce que chaque situation demande par défaut. Le lien de la bascule porte les
+#: deux, si bien que choisir sa situation reconfigure le formulaire d'un coup.
+SAISIE_DE_LA_SITUATION = {"actif": "revenu", "retraite": "pension"}
+
+#: Ce que le formulaire demande. Ce n'est plus un choix offert au lecteur mais
+#: la conséquence de sa situation : les libellés ont disparu avec la bascule
+#: qui les portait, et il ne reste que les deux codes, qui bornent ce qu'une
+#: adresse a le droit de dire.
+SAISIES = [("revenu", ""), ("pension", "")]
 
 #: Pension mensuelle proposée par défaut, en euros NETS. Voisine de la pension
 #: moyenne de droit direct des retraités de droit français, pour que le
@@ -591,6 +610,9 @@ class Saisie:
     #: Ce que le formulaire demande : ``revenu`` — ce qu'on gagne en travaillant,
     #: d'où le simulateur tire une pension — ou ``pension`` — ce qu'on touche
     #: déjà, d'où il remonte au revenu. Voir :data:`SAISIES`.
+    #: En activité ou à la retraite : la première question du formulaire, et la
+    #: seule qui n'entre dans aucun calcul. Voir :data:`SITUATIONS`.
+    situation: str = "actif"
     saisie_par: str = "revenu"
     #: La pension mensuelle saisie, quand c'est elle qu'on saisit. Elle est dans
     #: la MÊME convention que les montants affichés : nette ou brute selon
@@ -669,6 +691,8 @@ class Saisie:
         salaire = _reel(parametres, "salaire", SALAIRE_DEFAUT[unite])
         # La naissance se lit avant tout le reste : les dates de carrière ne
         # valent un âge que rapportées à elle.
+        situation = _parmi(parametres, "situation", SITUATIONS,
+                           defauts.situation)
         naissance = _date_saisie(parametres, "naissance")
         annee_naissance = (naissance[0] if naissance
                            else _entier(parametres, "naissance", defauts.naissance))
@@ -679,8 +703,14 @@ class Saisie:
             unite_revenu=unite,
             montants=_parmi(parametres, "montants", MODES_MONTANT,
                             defauts.montants),
+            situation=situation,
+            # Ce que la situation demande, SAUF si l'adresse dit autre chose :
+            # un retraité peut préférer saisir ce qu'il gagnait, un actif viser
+            # une pension. Le défaut suit la situation, l'explicite l'emporte —
+            # c'est ce qui fait qu'une adresse réduite à « situation=retraite »
+            # ouvre le formulaire sur la pension.
             saisie_par=_parmi(parametres, "saisie_par", SAISIES,
-                              defauts.saisie_par),
+                              SAISIE_DE_LA_SITUATION[situation]),
             pension=_reel(parametres, "pension", defauts.pension),
             naissance=annee_naissance,
             naissance_mois=mois_naissance,
@@ -1343,6 +1373,7 @@ class Saisie:
         # Ce que le formulaire demande s'écrit toujours, pour la même raison :
         # une adresse qui l'omettrait décrirait une saisie par le revenu, et
         # le nombre « pension » n'y servirait plus à rien.
+        champs["situation"] = self.situation
         champs["saisie_par"] = self.saisie_par
         champs["pension"] = _nombre(self.pension)
         # Les métiers qui suivent le premier, un groupe de trois champs chacun.
@@ -3428,7 +3459,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
                      autocomplete="bday"),
         g.champ_date("liquidation", "Départ à la retraite",
                      saisie.jour_de(saisie.liquidation),
-                     "effectif, ou souhaité",
+                     "effectif" if saisie.situation == "retraite" else "souhaité",
                      saisie.calcul_de(saisie.liquidation),
                      complement="C'est la date à laquelle tout le calcul se "
                      "place. La pension prend effet le premier du mois, et "
@@ -3481,11 +3512,13 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   <h2 class="serif" style="margin-top:0">Votre carrière{_bulle_du_titre(saisie)}</h2>
   <p style="margin-top:0.3rem">L'exemple est déjà rempli. Calculez-le tel
   quel, ou saisissez la vôtre.</p>
+  {_bascule_situation(saisie)}
+  {_desaccord_de_situation(saisie, contexte)}
   <div class="grille">{identite}</div>
   <h3>La carrière, période par période{_bulle_des_periodes()}</h3>
   {_metiers(saisie, affiliations, echelle)}
   {_bloc_pension(saisie)}
-  {_bascule_saisie(saisie)}
+  {_lien_autre_saisie(saisie)}
   {"" if saisie.par_pension else _bascule_unite(saisie, echelle)}
   {_bascule_montants(saisie, echelle, taux_pension)}
   {_mention_conversion(saisie, echelle)}
@@ -3716,29 +3749,86 @@ qu'il faut déposer.</p>
 """
 
 
-def _bascule_saisie(saisie: Saisie) -> str:
-    """Le lien qui passe du revenu à la pension, et retour.
+def _desaccord_de_situation(saisie: Saisie, contexte: Contexte) -> str:
+    """Quand la situation déclarée et la date de départ ne disent pas la même
+    chose.
 
-    Même composant que les deux autres bascules, et pour les mêmes raisons :
-    l'adresse EST la saisie, elle se partage telle qu'on la lit, et cela ne
-    demande pas une ligne de JavaScript.
+    LE MODÈLE NE LIT QUE LA DATE, et c'est ce qui rend ce désaccord inoffensif :
+    aucun chiffre n'en dépend. Le formulaire le dit plutôt que de trancher —
+    corriger la date effacerait une carrière saisie, refuser la saisie
+    arrêterait quelqu'un sur un réglage qui ne change aucun résultat.
 
-    RIEN N'EST TRADUIT D'UN MODE À L'AUTRE, à la différence des bascules
-    d'unité et de montants. Traduire demanderait de calculer — dans un sens
-    la pension de la carrière saisie, dans l'autre le revenu que la pension
-    suppose —, et un lien du formulaire n'a pas à lancer une simulation pour
-    savoir ce qu'il porte. Chaque mode garde donc le nombre qu'on lui a donné,
-    et la page qui suit le calcul montre l'autre.
+    Le cas se produit au premier clic : l'exemple par défaut est celui d'un
+    actif né en 1975, et le déclarer retraité laisse son départ en 2039. Dire
+    ce qui cloche vaut mieux que réécrire deux dates sous ses doigts.
     """
-    vers_la_pension = saisie.saisie_par == "revenu"
-    cible = (f"#/simuler?"
-             + escape(saisie.requete(
-                 saisie_par="pension" if vers_la_pension else "revenu")))
-    revenu, pension = (libelle for _, libelle in SAISIES)
-    branches = [(revenu, "#" if vers_la_pension else cible),
-                (pension, cible if vers_la_pension else "#")]
-    return g.bascule("Je saisis", branches,
-                     revenu if vers_la_pension else pension)
+    annee = saisie.date_de(saisie.liquidation).annee
+    courante = contexte.base.annee_courante
+    passe = annee < courante
+    if passe == (saisie.situation == "retraite"):
+        return ""
+    if passe:
+        phrase = (f"Vous vous dites en activité, mais le départ est daté de "
+                  f"{annee}, qui est passé : c'est la date qui compte, et le "
+                  "calcul sera celui d'un retraité.")
+    else:
+        phrase = (f"Vous vous dites à la retraite, mais le départ est daté de "
+                  f"{annee}, qui est à venir : c'est la date qui compte, et le "
+                  "calcul sera celui d'un actif.")
+    return f'<p class="discret">{phrase}</p>'
+
+
+def _bascule_situation(saisie: Saisie) -> str:
+    """La première question : en activité, ou à la retraite ?
+
+    ELLE EST PREMIÈRE PARCE QU'ELLE COMMANDE LE RESTE. Le formulaire demandait
+    auparavant « je saisis : mon revenu / ma pension », c'est-à-dire de choisir
+    une entrée du calcul — une question de modélisation posée à quelqu'un qui
+    n'est pas venu modéliser. Celle-ci ne demande que ce qu'on est, et la
+    saisie s'en déduit : un actif ne connaît pas sa pension, un retraité ne se
+    souvient pas de son salaire. Le lien porte donc les DEUX réglages, et
+    choisir sa situation reconfigure le formulaire d'un coup.
+
+    Même composant que les autres bascules, et pour les mêmes raisons :
+    l'adresse EST la saisie, elle se partage telle qu'on la lit, et cela ne
+    demande pas une ligne de JavaScript. Rien n'est traduit d'un état à
+    l'autre — le nombre déjà tapé est un revenu ou une pension, et les deux ne
+    se convertissent pas l'un en l'autre sans lancer une simulation, ce qu'un
+    lien de formulaire n'a pas à faire.
+    """
+    actif = saisie.situation == "actif"
+    autre = "retraite" if actif else "actif"
+    cible = "#/simuler?" + escape(saisie.requete(
+        situation=autre, saisie_par=SAISIE_DE_LA_SITUATION[autre]))
+    en_activite, a_la_retraite = (libelle for _, libelle in SITUATIONS)
+    branches = [(en_activite, "#" if actif else cible),
+                (a_la_retraite, cible if actif else "#")]
+    return g.bascule("Vous êtes", branches,
+                     en_activite if actif else a_la_retraite)
+
+
+def _lien_autre_saisie(saisie: Saisie) -> str:
+    """L'échappatoire, offerte LÀ OÙ ELLE SERT et non comme un réglage de plus.
+
+    La situation commande la saisie, mais elle ne la scelle pas : un retraité
+    peut préférer donner ce qu'il gagnait, parce qu'il a gardé ses fiches de
+    paie. Une ligne sous le champ suffit à le lui offrir, et une bascule
+    permanente aurait remis à tout le monde la question qu'on vient de retirer.
+
+    ELLE NE PARAÎT QUE DANS UN SENS, et c'est un arbitrage assumé. Le chemin
+    inverse — un actif qui vise une pension et demande quel revenu elle
+    suppose — existe, la page le calcule, et le complément du champ le dit ;
+    mais c'est une autre question que celle du simulateur, elle n'intéresse
+    qu'une minorité, et une ligne de plus sur le formulaire de TOUT LE MONDE
+    est un prix trop élevé pour elle. On y accède en se déclarant à la
+    retraite : la page dit alors que c'est la date qui compte, et calcule
+    juste.
+    """
+    if not saisie.par_pension:
+        return ""
+    cible = "#/simuler?" + escape(saisie.requete(saisie_par="revenu"))
+    return (f'<p class="discret"><a href="{cible}">Ou saisir ce que vous '
+            "gagniez.</a></p>")
 
 
 def _aide_profil(profil: str, affiliation: str | None = None) -> str:
