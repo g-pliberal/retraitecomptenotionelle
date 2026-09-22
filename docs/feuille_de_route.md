@@ -13749,3 +13749,38 @@ sections touchées ici : la fusion garde ses ancres, et la ligne de l'ENIM
 porte les siennes.
 
 **Fichiers.** `docs/limites.md`.
+
+### 106. Le §4 de `limites.md` relu contre le modèle : une carte périmée, et une garantie deux fois trop chère — `fait`
+
+**Demande.** Corriger les erreurs du §4 de `limites.md`, relevées en le
+résumant le 22 septembre 2026. Les sous-sections `recit` n'ont été relues que
+pour leurs contradictions internes, et n'en portaient pas ; les dix qui
+disent l'état du dépôt l'ont été contre le code et les données.
+
+**La carte des jeux de règles n'était plus ce qu'elle dit être.** Le texte la
+donne pour la sortie de `calendrier_regimes.py --carte`, et vingt lignes
+avaient bougé depuis — IRCEC, CAVEC, CNRACL, régime général, MSA. Elle est
+régénérée depuis l'index LEGI, et la phrase qui disait les trois
+complémentaires libérales à une seule période tombe : aucune ne l'est plus.
+
+**Ce que les sessions du même jour avaient rendu faux.** La levée du plafond
+des marins à cinquante-deux ans et demi, donnée pour manquante au tableau des
+manques ; le RACD et le RACL « hors catalogue » ; la CARMF « sans série
+historique », qui en a une de 1983 à 2026 ; la Cipav sans « fiche écrite » ;
+la grille des forfaits des marins « introuvable ». Le cas type du navigant est
+recalculé, décote de 2012 comprise — 52 121 € au lieu de 53 755 à deux fois
+le salaire moyen ; celui du médecin est daté, `profession_liberale` portant
+désormais la Cipav. La part patronale du public couvre huit régimes et non
+neuf, la CNRACL jusqu'en 2028, et la RATP est découverte après 2025.
+
+**Le scénario 6 portait encore la garantie d'avant le recensement**, comme
+l'action 104 l'avait signalé : 1,30 % du PIB en 2026 pour 0,58, 40 milliards
+pour 18, 1 621 cumulés pour 731, 12,9 milliards de plus pour l'impôt en 2024
+pour 9,5. Le facteur de déplacement valait 0,61 et 1,14, non 0,64 et 1,26 ;
+les reprises de 2070, 8,0 et non 7,7. Le coût de la garantie DÉPEND du poids
+des femmes depuis que chaque sexe est déplacé du sien — lu à 56 % plutôt qu'à
+52,8 %, il monte de 2,7 % —, et ce poids vient de `CaracteristiquesRetraites`,
+non de `distribution.part_femmes`. Les hypothèses sans source sont sept et non
+six. Les cumuls courent de 2025, première année projetée, et non de 2026.
+
+**Fichiers.** `docs/limites.md`.
