@@ -311,7 +311,12 @@ export class ScenarioActuel {
         }
         return this.macro.coefficientRevalorisationSalaires(depart, arrivee);
       };
-    const revenus = [];
+    // LE REVENU D'UNE ANNÉE, TOUTES ACTIVITÉS DU RÉGIME RÉUNIES : deux
+    // activités qui versent au même régime, ou à deux régimes alignés que la
+    // liquidation unique réunit, forment un seul revenu annuel, écrêté UNE fois
+    // au plafond (R. 173-4-4-1, 1°). Une année d'une seule activité n'a qu'un
+    // terme, et rien ne bouge.
+    const parAnnee = new Map();
     for (const ligne of carriere.lignes) {
       if (ligne.annee >= anneeLiquidation) {
         continue;
@@ -350,16 +355,22 @@ export class ScenarioActuel {
       if (borneBasse > 0) {
         revenu = Math.max(0.0, Math.min(revenu, borneHaute || revenu) - borneBasse);
       }
+      const [somme, fraction] = parAnnee.get(ligne.annee) ?? [0.0, 0.0];
+      parAnnee.set(ligne.annee,
+        [somme + revenu, Math.max(fraction, ligne.fraction_annee)]);
+    }
+
+    const revenus = [];
+    for (const annee of [...parAnnee.keys()].sort((a, b) => a - b)) {
+      let [revenu, fraction] = parAnnee.get(annee);
       if (plafonner) {
         // Le plafond se proratise sur les mois travaillés : l'année d'entrée
         // dans la vie active n'est pas pleine.
         revenu = Math.min(
-          revenu,
-          this.macro.plafond_securite_sociale.valeur(ligne.annee)
-            * ligne.fraction_annee,
+          revenu, this.macro.plafond_securite_sociale.valeur(annee) * fraction,
         );
       }
-      revenus.push(revenu * revaloriser(ligne.annee, anneeLiquidation));
+      revenus.push(revenu * revaloriser(annee, anneeLiquidation));
     }
 
     if (revenus.length === 0) {
@@ -390,13 +401,16 @@ export class ScenarioActuel {
       // L'année de la liquidation est incomplète — l'assuré n'y a travaillé que
       // quelques mois —, mais c'est bien son traitement que liquide le régime :
       // on l'annualise plutôt que de reculer d'un an.
-      const derniere = carriere.ligne(anneeLiquidation);
-      if (derniere !== null && derniere.cotise && derniere.fraction_annee > 0
-          && this.affiliations.regimes(
-            derniere.affiliation, anneeLiquidation,
-            carriere.dateEntree(derniere.affiliation),
-            derniere.revenu, this.macro.plafond_securite_sociale.valeur(anneeLiquidation))
-            .some((c) => codesAdmis.has(c))) {
+      // La ligne du régime, et non l'activité principale : un fonctionnaire
+      // qui cumule une activité libérale liquide son traitement.
+      const derniere = carriere.lignesDe(anneeLiquidation).find(
+        (ligne) => this.affiliations.regimes(
+          ligne.affiliation, anneeLiquidation,
+          carriere.dateEntree(ligne.affiliation),
+          ligne.revenu, this.macro.plafond_securite_sociale.valeur(anneeLiquidation))
+          .some((c) => codesAdmis.has(c)),
+      ) ?? null;
+      if (derniere !== null && derniere.cotise && derniere.fraction_annee > 0) {
         let traitement = this.assietteDeReference(periode, derniere)
           / derniere.fraction_annee;
         if (plafonner) {
@@ -1036,12 +1050,9 @@ export class ScenarioActuel {
       ...annuites.map(([, periode]) => this.dureeRequise(periode, carriere)[0]),
     ) || 160;
     const anneeLiquidation = carriere.anneeLiquidation;
-    let cotises = 0;
-    for (const ligne of carriere.lignes) {
-      if (ligne.cotise && ligne.annee <= anneeLiquidation) {
-        cotises += carriere.trimestresRetenus(ligne);
-      }
-    }
+    let cotises = carriere.trimestresCumules(carriere.lignes.filter(
+      (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation,
+    ));
     const majoration = this.majorationPourEnfants(
       carriere, new Map(annuites.map(([code]) => [code, cotises])), anneeLiquidation,
     );
@@ -1130,12 +1141,9 @@ export class ScenarioActuel {
       return ouverture;
     }
     const anneeLiquidation = carriere.anneeLiquidation;
-    let acquis = 0;
-    for (const ligne of carriere.lignes) {
-      if (ligne.annee <= anneeLiquidation) {
-        acquis += carriere.trimestresRetenus(ligne);
-      }
-    }
+    let acquis = carriere.trimestresCumules(carriere.lignes.filter(
+      (ligne) => ligne.annee <= anneeLiquidation,
+    ));
     // Les trimestres accordés au titre des enfants comptent dans la durée,
     // lus au régime qui les porte comme `calculer` le fait : sans eux, une
     // mère de deux enfants était datée trois ans après l'âge où sa pension
@@ -1551,17 +1559,12 @@ export class ScenarioActuel {
     const trimestreLegal = Math.floor((dateLegal.mois - 1) / 3);
     const debutAge = new DateMois(dateLegal.annee, 1).plusMois(3 * (trimestreLegal + 1));
 
-    const parAnnee = new Map();
-    const cotisesParAnnee = new Map();
-    for (const ligne of carriere.lignes) {
-      if (ligne.annee <= anneeLiquidation) {
-        const retenus = carriere.trimestresRetenus(ligne);
-        parAnnee.set(ligne.annee, retenus);
-        if (ligne.cotise) {
-          cotisesParAnnee.set(ligne.annee, retenus);
-        }
-      }
-    }
+    const parAnnee = carriere.trimestresParAnnee(carriere.lignes.filter(
+      (ligne) => ligne.annee <= anneeLiquidation,
+    ));
+    const cotisesParAnnee = carriere.trimestresParAnnee(carriere.lignes.filter(
+      (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation,
+    ));
     let acquis = trimestres;
     for (const valides of parAnnee.values()) {
       acquis -= valides;
@@ -1868,6 +1871,35 @@ export class ScenarioActuel {
     // Dernière année cotisée dans chaque régime : elle désigne, dans une
     // chaîne de succession, la caisse qui liquide.
     const derniereAnneeParRegime = new Map();
+    // Les trois mêmes, ANNÉE PAR ANNÉE. Deux activités cumulées peuvent
+    // verser au même régime, ou à deux régimes liquidés ensemble : leurs
+    // trimestres s'y additionnent sans dépasser les trimestres civils de
+    // l'année. Une année d'une seule activité n'est pas touchée.
+    const parAnnee = { assurance: new Map(), services: new Map(), cotises: new Map() };
+    // Ce qui ne tient à aucune année — la majoration pour enfants — et
+    // s'ajoute donc hors plafond annuel.
+    const horsAnnee = { assurance: new Map(), services: new Map(), cotises: new Map() };
+    const crediterTrimestres = (table, code, annee, trimestres) => {
+      if (!parAnnee[table].has(code)) {
+        parAnnee[table].set(code, new Map());
+      }
+      const annees = parAnnee[table].get(code);
+      annees.set(annee, (annees.get(annee) ?? 0) + trimestres);
+    };
+    const cumulPlafonne = (table, membres) => {
+      const sommes = new Map();
+      let total = 0;
+      for (const membre of membres) {
+        for (const [annee, trimestres] of parAnnee[table].get(membre) ?? []) {
+          sommes.set(annee, (sommes.get(annee) ?? 0) + trimestres);
+        }
+        total += horsAnnee[table].get(membre) ?? 0;
+      }
+      for (const [annee, somme] of sommes) {
+        total += Math.min(somme, carriere.plafondTrimestres(annee));
+      }
+      return total;
+    };
     for (const ligne of carriere.lignes) {
       const retenusLigne = carriere.trimestresRetenus(ligne);
       if (retenusLigne <= 0) {
@@ -1889,19 +1921,19 @@ export class ScenarioActuel {
         if (!this.catalogue.contient(code)) {
           continue;
         }
-        trimestresParRegime.set(
-          code, (trimestresParRegime.get(code) ?? 0) + retenusLigne,
-        );
+        crediterTrimestres("assurance", code, ligne.annee, retenusLigne);
         if (servicesLigne > 0) {
-          servicesParRegime.set(
-            code, (servicesParRegime.get(code) ?? 0) + servicesLigne,
-          );
+          crediterTrimestres("services", code, ligne.annee, servicesLigne);
         }
         if (ligne.cotise) {
-          trimestresCotisesParRegime.set(
-            code, (trimestresCotisesParRegime.get(code) ?? 0) + retenusLigne,
-          );
+          crediterTrimestres("cotises", code, ligne.annee, retenusLigne);
         }
+      }
+    }
+    for (const [table, cible] of [["assurance", trimestresParRegime],
+      ["services", servicesParRegime], ["cotises", trimestresCotisesParRegime]]) {
+      for (const code of parAnnee[table].keys()) {
+        cible.set(code, cumulPlafonne(table, [code]));
       }
     }
 
@@ -1934,6 +1966,8 @@ export class ScenarioActuel {
         (servicesParRegime.get(majorationEnfants.regime) ?? 0)
           + majorationEnfants.services,
       );
+      horsAnnee.assurance.set(majorationEnfants.regime, majorationEnfants.trimestres);
+      horsAnnee.services.set(majorationEnfants.regime, majorationEnfants.services);
       fiabiliteGlobale = Math.min(fiabiliteGlobale, majorationEnfants.fiabilite);
     }
 
@@ -1942,7 +1976,7 @@ export class ScenarioActuel {
       // APRÈS le départ : elle n'ouvre pas de droits dans la pension qu'on
       // liquide. L'année du départ, elle, ouvre ceux de ses mois qui l'ont
       // précédé — ni zéro ni douze, mais le compte juste.
-      const part = carriere.partRetenue(ligne.annee);
+      const part = carriere.partRetenueLigne(ligne);
       if (part <= 0) {
         continue;
       }
@@ -2222,12 +2256,9 @@ export class ScenarioActuel {
 
     // Trimestres réellement COTISÉS, tous régimes : ils commandent la carrière
     // longue et la majoration du minimum contributif.
-    let trimestresCotises = 0;
-    for (const ligne of carriere.lignes) {
-      if (ligne.cotise && ligne.annee <= anneeLiquidation) {
-        trimestresCotises += carriere.trimestresRetenus(ligne);
-      }
-    }
+    const trimestresCotises = carriere.trimestresCumules(carriere.lignes.filter(
+      (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation,
+    ));
 
     // Le droit ouvre-t-il cette liquidation à cet âge ? La question n'était pas
     // posée : le modèle servait une pension décotée à qui ne pouvait pas encore
@@ -2429,24 +2460,24 @@ export class ScenarioActuel {
       if (fiabiliteProratisation !== null) {
         fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteProratisation);
       }
-      const sommeMembres = (table) => membres.reduce(
-        (somme, m) => somme + (table.get(m) ?? 0), 0,
-      );
       // Le numérateur n'est pas le même selon le régime : services et
       // bonifications dans la fonction publique (L. 13), durée d'assurance
-      // partout ailleurs (R. 351-1).
+      // partout ailleurs (R. 351-1). Les membres d'un groupe liquidé ensemble
+      // se somment ANNÉE PAR ANNÉE : deux activités cumulées dans deux régimes
+      // alignés ne valident pas huit trimestres la même année.
       const acquisParRegime = (
         this.catalogue.obtenir(code).famille === "fonction_publique"
-          ? servicesParRegime : trimestresParRegime
+          ? "services" : "assurance"
       );
       // Le plafond est la durée requise, que les BONIFICATIONS seules peuvent
       // dépasser, dans la limite d'un taux : « Le pourcentage maximum fixé à
       // l'article L 13 peut-être augmenté de cinq points du chef des
       // bonifications » (L. 12 CPCMR).
       const bonifications = (periode.taux_maximum_bonifie && periode.taux_plein)
-        ? sommeMembres(bonificationsParRegime) : 0;
+        ? membres.reduce((somme, m) => somme + (bonificationsParRegime.get(m) ?? 0), 0)
+        : 0;
       let trimestresRegime = Math.min(
-        sommeMembres(acquisParRegime), proratisation + bonifications,
+        cumulPlafonne(acquisParRegime, membres), proratisation + bonifications,
       );
       // Rapport des trimestres liquidables à la durée requise, borné au taux
       // maximum — 80/75 avec des bonifications, un sans elles.
@@ -2541,7 +2572,7 @@ export class ScenarioActuel {
         // Le minimum se proratise « dans les mêmes conditions que la pension » :
         // c'est donc la durée de proratisation qui fait office ici aussi.
         const cotisesRegime = Math.min(
-          sommeMembres(trimestresCotisesParRegime), proratisation,
+          cumulPlafonne("cotises", membres), proratisation,
         );
         eligiblesMinimum.push({
           indice: indicePension,
@@ -2559,7 +2590,7 @@ export class ScenarioActuel {
         const ageOuverturePeriode = this.ageOuverture(periode, carriere);
         eligiblesGaranti.push({
           indice: indicePension,
-          trimestresServices: sommeMembres(servicesParRegime),
+          trimestresServices: cumulPlafonne("services", membres),
           ouvert: carriere.annee_naissance + ageOuverturePeriode < 2011
             || trimestresDecote <= 0
             || trimestres >= requis,
@@ -3192,14 +3223,10 @@ function assietteDeReference(periode, ligne) {
  * assimilées comprises : c'est la durée qu'oppose la condition de taux plein.
  */
 function trimestresValidesAvant(carriere, age, anneeLiquidation) {
-  let total = 0;
-  for (const ligne of carriere.lignes) {
-    if (ligne.annee <= anneeLiquidation
-        && ligne.annee - carriere.annee_naissance < age) {
-      total += carriere.trimestresRetenus(ligne);
-    }
-  }
-  return total;
+  return carriere.trimestresCumules(carriere.lignes.filter(
+    (ligne) => ligne.annee <= anneeLiquidation
+      && ligne.annee - carriere.annee_naissance < age,
+  ));
 }
 
 /**
@@ -3236,15 +3263,11 @@ function trimestresEntreDates(carriere, debut, fin, cotisesSeulement) {
  * dans l'année.
  */
 function trimestresCotisesEntre(carriere, ageBas, ageHaut, anneeLiquidation) {
-  let total = 0;
-  for (const ligne of carriere.lignes) {
+  return carriere.trimestresCumules(carriere.lignes.filter((ligne) => {
     const age = ligne.annee - carriere.annee_naissance;
-    if (ligne.cotise && ligne.annee <= anneeLiquidation
-        && age >= ageBas && age < ageHaut) {
-      total += carriere.trimestresRetenus(ligne);
-    }
-  }
-  return total;
+    return ligne.cotise && ligne.annee <= anneeLiquidation
+      && age >= ageBas && age < ageHaut;
+  }));
 }
 
 /**
@@ -3253,12 +3276,8 @@ function trimestresCotisesEntre(carriere, ageBas, ageHaut, anneeLiquidation) {
  * prolongé, pas de l'entrée précoce dans la vie active.
  */
 function trimestresCotisesApres(carriere, age, anneeLiquidation) {
-  let total = 0;
-  for (const ligne of carriere.lignes) {
-    if (ligne.cotise && ligne.annee <= anneeLiquidation
-        && ligne.annee - carriere.annee_naissance >= age) {
-      total += carriere.trimestresRetenus(ligne);
-    }
-  }
-  return total;
+  return carriere.trimestresCumules(carriere.lignes.filter(
+    (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation
+      && ligne.annee - carriere.annee_naissance >= age,
+  ));
 }

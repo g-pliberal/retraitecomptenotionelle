@@ -989,12 +989,18 @@ export class CarriereLongue {
   entreePrecoce(carriere, anneeLiquidation, ageMax, trimestresDebut) {
     const requis = carriere.mois_naissance >= CarriereLongue.MOIS_DERNIER_TRIMESTRE
       ? trimestresDebut - 1 : trimestresDebut;
-    let acquis = 0;
+    // Quatre trimestres au plus par année civile, activités cumulées comprises.
+    const parAnnee = new Map();
     for (const ligne of carriere.lignes) {
       if (ligne.cotise && ligne.annee <= carriere.annee_naissance + ageMax
           && ligne.annee < anneeLiquidation) {
-        acquis += ligne.trimestres_valides;
+        parAnnee.set(ligne.annee,
+          (parAnnee.get(ligne.annee) ?? 0) + ligne.trimestres_valides);
       }
+    }
+    let acquis = 0;
+    for (const trimestres of parAnnee.values()) {
+      acquis += Math.min(4, trimestres);
     }
     return acquis >= requis;
   }

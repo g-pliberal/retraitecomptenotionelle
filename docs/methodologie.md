@@ -2330,7 +2330,21 @@ Deux conventions le bornent, l'une et l'autre imposées par la maille des donné
   deux métiers ont réellement payé, au prorata des mois. C'est la seule
   approximation du découpage, et elle ne porte que sur une année par changement :
   ses cotisations sont calculées au barème d'un régime plutôt qu'au barème
-  partagé des deux.
+  partagé des deux ;
+* **deux activités à la fois se DÉCLARENT, et chacune a sa ligne.** Le
+  salarié qui exerce aussi en libéral, le fonctionnaire qui a une activité
+  accessoire : un métier marqué `cumul` s'ajoute à l'activité principale au
+  lieu de lui succéder, de son âge de début à son âge de fin ou au départ. Le
+  modèle ne le devine jamais — un métier qui ne le déclare pas succède au
+  précédent. L'année porte alors une ligne par statut, et deux lignes ne
+  partagent jamais le leur. Chaque activité cotise à son régime sur son
+  revenu, et chaque régime sert ses droits ; ce que le droit compte TOUS
+  RÉGIMES ne dépasse pas quatre trimestres par année civile (R. 351-5, et le
+  2° de R. 173-4-4-1 pour la liquidation unique des régimes alignés), et la
+  liquidation unique somme les revenus d'une même année avant de les écrêter
+  une seule fois au plafond. Servi par les deux moteurs, qu'un tirage au
+  hasard de parcours cumulés confronte valeur par valeur ; le formulaire du
+  site ne le propose pas encore.
 
 Le formulaire du site en accepte six, ce qui n'est pas une limite du moteur :
 au-delà, ce n'est plus une suite de métiers qu'on décrit mais un relevé de

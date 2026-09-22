@@ -1303,12 +1303,14 @@ class CarriereLongue:
         """
         if carriere.mois_naissance >= self.MOIS_DERNIER_TRIMESTRE:
             trimestres_debut -= 1
-        acquis = sum(
-            ligne.trimestres_valides for ligne in carriere.lignes
-            if ligne.cotise
-            and ligne.annee <= carriere.annee_naissance + age_max
-            and ligne.annee < annee_liquidation
-        )
+        par_annee: dict[int, int] = {}
+        for ligne in carriere.lignes:
+            if (ligne.cotise
+                    and ligne.annee <= carriere.annee_naissance + age_max
+                    and ligne.annee < annee_liquidation):
+                par_annee[ligne.annee] = (par_annee.get(ligne.annee, 0)
+                                          + ligne.trimestres_valides)
+        acquis = sum(min(4, trimestres) for trimestres in par_annee.values())
         return acquis >= trimestres_debut
 
     def cotises_reputes(self, carriere: Carriere, trimestres_cotises: int,
@@ -2086,7 +2088,13 @@ class ScenarioActuel:
                 perception, arrivee, mois_liquidation
             )
         codes_admis = frozenset(membres) if membres else frozenset((code,))
-        revenus: list[float] = []
+        # LE REVENU D'UNE ANNÉE, TOUTES ACTIVITÉS DU RÉGIME RÉUNIES. Deux
+        # activités cumulées qui versent au même régime — ou à deux régimes
+        # alignés que la liquidation unique réunit — forment un seul revenu
+        # annuel, écrêté UNE fois au plafond : c'est la somme des salaires et
+        # revenus d'une même année que la LURA écrête (R. 173-4-4-1, 1°).
+        # Une année d'une seule activité n'a qu'un terme, et rien ne bouge.
+        par_annee: dict[int, list[float]] = {}
         for ligne in carriere.lignes:
             if ligne.annee >= annee_liquidation:
                 continue
@@ -2129,6 +2137,13 @@ class ScenarioActuel:
             )
             if borne_basse > 0:
                 revenu = max(0.0, min(revenu, borne_haute or revenu) - borne_basse)
+            cumul = par_annee.setdefault(ligne.annee, [0.0, 0.0])
+            cumul[0] += revenu
+            cumul[1] = max(cumul[1], ligne.fraction_annee)
+
+        revenus: list[float] = []
+        for annee in sorted(par_annee):
+            revenu, fraction = par_annee[annee]
             if plafonner:
                 # Le plafond se proratise sur les mois travaillés : l'année
                 # d'entrée dans la vie active n'est pas pleine, et un plafond
@@ -2136,10 +2151,9 @@ class ScenarioActuel:
                 # écrêté.
                 revenu = min(
                     revenu,
-                    self.macro.plafond_securite_sociale(ligne.annee)
-                    * ligne.fraction_annee,
+                    self.macro.plafond_securite_sociale(annee) * fraction,
                 )
-            revenus.append(revenu * revaloriser(ligne.annee, annee_liquidation))
+            revenus.append(revenu * revaloriser(annee, annee_liquidation))
 
         if not revenus:
             return 0.0
@@ -2170,7 +2184,17 @@ class ScenarioActuel:
             # départ. L'année de la liquidation est incomplète — l'assuré n'y a
             # travaillé que quelques mois —, mais c'est bien son traitement que
             # liquide le régime : on l'annualise plutôt que de reculer d'un an.
-            derniere = carriere.ligne(annee_liquidation)
+            # La ligne du régime, et non l'activité principale : un
+            # fonctionnaire qui cumule une activité libérale liquide son
+            # traitement, quel que soit le rang de la ligne.
+            derniere = next((
+                ligne for ligne in carriere.lignes_de(annee_liquidation)
+                if not codes_admis.isdisjoint(self.affiliations.regimes(
+                    ligne.affiliation, annee_liquidation,
+                    carriere.date_entree(ligne.affiliation),
+                    revenu=ligne.revenu,
+                    plafond=self.macro.plafond_securite_sociale(annee_liquidation)))
+            ), None)
             if (derniere is not None and derniere.cotise
                     and derniere.fraction_annee > 0
                     and not codes_admis.isdisjoint(self.affiliations.regimes(
@@ -2845,8 +2869,8 @@ class ScenarioActuel:
         requis = max(self._duree_requise(periode, carriere)[0]
                      for _, periode in periodes) or 160
         annee_liquidation = carriere.annee_liquidation
-        cotises = sum(
-            carriere.trimestres_retenus(ligne) for ligne in carriere.lignes
+        cotises = carriere.trimestres_cumules(
+            ligne for ligne in carriere.lignes
             if ligne.cotise and ligne.annee <= annee_liquidation
         )
         majoration = self._majoration_pour_enfants(
@@ -2914,8 +2938,8 @@ class ScenarioActuel:
         if not requis:
             return ouverture
         annee_liquidation = carriere.annee_liquidation
-        acquis = sum(
-            carriere.trimestres_retenus(ligne) for ligne in carriere.lignes
+        acquis = carriere.trimestres_cumules(
+            ligne for ligne in carriere.lignes
             if ligne.annee <= annee_liquidation
         )
         majoration = self._majoration_pour_enfants(
@@ -3496,15 +3520,13 @@ class ScenarioActuel:
         trimestre_legal = (date_legal.mois - 1) // 3
         debut_age = DateMois(date_legal.annee, 1).plus_mois(3 * (trimestre_legal + 1))
 
-        par_annee = {
-            ligne.annee: carriere.trimestres_retenus(ligne)
-            for ligne in carriere.lignes if ligne.annee <= annee_liquidation
-        }
-        cotises_par_annee = {
-            ligne.annee: carriere.trimestres_retenus(ligne)
-            for ligne in carriere.lignes
+        par_annee = carriere.trimestres_par_annee(
+            ligne for ligne in carriere.lignes if ligne.annee <= annee_liquidation
+        )
+        cotises_par_annee = carriere.trimestres_par_annee(
+            ligne for ligne in carriere.lignes
             if ligne.cotise and ligne.annee <= annee_liquidation
-        }
+        )
         acquis = trimestres - sum(par_annee.values())
         debut_duree = None
         if acquis >= requis:
@@ -3900,6 +3922,33 @@ class ScenarioActuel:
         # Dernière année cotisée dans chaque régime : elle désigne, dans une
         # chaîne de succession, la caisse qui liquide.
         derniere_annee_par_regime: dict[str, int] = {}
+        # Les trois mêmes, ANNÉE PAR ANNÉE. Deux activités cumulées peuvent
+        # verser au même régime, ou à deux régimes liquidés ensemble : leurs
+        # trimestres s'y additionnent sans dépasser les trimestres civils de
+        # l'année. Une année d'une seule activité n'est pas touchée.
+        par_annee: dict[str, dict[str, dict[int, int]]] = {
+            "assurance": {}, "services": {}, "cotises": {},
+        }
+
+        def crediter_trimestres(table: str, code: str, annee: int,
+                                trimestres: int) -> None:
+            annees = par_annee[table].setdefault(code, {})
+            annees[annee] = annees.get(annee, 0) + trimestres
+
+        # Ce qui ne tient à aucune année — la majoration pour enfants — et
+        # s'ajoute donc hors plafond annuel.
+        hors_annee: dict[str, dict[str, int]] = {
+            "assurance": {}, "services": {}, "cotises": {},
+        }
+
+        def cumul_plafonne(table: str, membres: tuple[str, ...]) -> int:
+            sommes: dict[int, int] = {}
+            for membre in membres:
+                for annee, trimestres in par_annee[table].get(membre, {}).items():
+                    sommes[annee] = sommes.get(annee, 0) + trimestres
+            return (sum(min(somme, carriere.plafond_trimestres(annee))
+                        for annee, somme in sommes.items())
+                    + sum(hors_annee[table].get(membre, 0) for membre in membres))
 
         for ligne in carriere.lignes:
             retenus_ligne = carriere.trimestres_retenus(ligne)
@@ -3922,17 +3971,16 @@ class ScenarioActuel:
                     plafond=self.macro.plafond_securite_sociale(ligne.annee)):
                 if code not in self.catalogue:
                     continue
-                trimestres_par_regime[code] = (
-                    trimestres_par_regime.get(code, 0) + retenus_ligne
-                )
+                crediter_trimestres("assurance", code, ligne.annee, retenus_ligne)
                 if services_ligne:
-                    services_par_regime[code] = (
-                        services_par_regime.get(code, 0) + services_ligne
-                    )
+                    crediter_trimestres("services", code, ligne.annee, services_ligne)
                 if ligne.cotise:
-                    trimestres_cotises_par_regime[code] = (
-                        trimestres_cotises_par_regime.get(code, 0) + retenus_ligne
-                    )
+                    crediter_trimestres("cotises", code, ligne.annee, retenus_ligne)
+        for table, cible in (("assurance", trimestres_par_regime),
+                             ("services", services_par_regime),
+                             ("cotises", trimestres_cotises_par_regime)):
+            for code in par_annee[table]:
+                cible[code] = cumul_plafonne(table, (code,))
 
         # Les trimestres accordés au titre des enfants ne flottent pas au-dessus
         # des régimes : le droit les attribue DANS un régime, et ils comptent
@@ -3972,6 +4020,12 @@ class ScenarioActuel:
                 services_par_regime.get(majoration_enfants.regime, 0)
                 + majoration_enfants.services
             )
+            hors_annee["assurance"][majoration_enfants.regime] = (
+                majoration_enfants.trimestres
+            )
+            hors_annee["services"][majoration_enfants.regime] = (
+                majoration_enfants.services
+            )
             fiabilite_globale = min(fiabilite_globale, majoration_enfants.fiabilite)
 
         for ligne in carriere.lignes:
@@ -3979,7 +4033,7 @@ class ScenarioActuel:
             # exercée APRÈS le départ : elle n'ouvre pas de droits dans la
             # pension qu'on liquide. L'année du départ, elle, ouvre ceux de ses
             # mois qui l'ont précédé — ni zéro ni douze, mais le compte juste.
-            part = carriere.part_retenue(ligne.annee)
+            part = carriere.part_retenue_ligne(ligne)
             if part <= 0:
                 continue
             if not ligne.cotise and not ligne.familles_cotisantes:
@@ -4289,8 +4343,8 @@ class ScenarioActuel:
 
         # Trimestres réellement COTISÉS, tous régimes : ils commandent la
         # carrière longue et la majoration du minimum contributif.
-        trimestres_cotises = sum(
-            carriere.trimestres_retenus(ligne) for ligne in carriere.lignes
+        trimestres_cotises = carriere.trimestres_cumules(
+            ligne for ligne in carriere.lignes
             if ligne.cotise and ligne.annee <= annee_liquidation
         )
 
@@ -4512,11 +4566,6 @@ class ScenarioActuel:
             # Le numérateur n'est pas le même selon le régime : services et
             # bonifications dans la fonction publique (L. 13), durée
             # d'assurance partout ailleurs (R. 351-1).
-            acquis_par_regime = (
-                services_par_regime
-                if self.catalogue[code].famille == "fonction_publique"
-                else trimestres_par_regime
-            )
             # Le plafond est la durée requise, que les BONIFICATIONS seules
             # peuvent dépasser, et dans la limite d'un taux : « Le pourcentage
             # maximum fixé à l'article L 13 peut-être augmenté de cinq points du
@@ -4527,8 +4576,16 @@ class ScenarioActuel:
                 sum(bonifications_par_regime.get(m, 0) for m in membres)
                 if periode.taux_maximum_bonifie and periode.taux_plein else 0
             )
+            # Les membres d'un groupe liquidé ensemble se somment ANNÉE PAR
+            # ANNÉE : deux activités cumulées dans deux régimes alignés ne
+            # valident pas huit trimestres la même année.
             trimestres_regime = min(
-                sum(acquis_par_regime.get(m, 0) for m in membres),
+                cumul_plafonne(
+                    "services"
+                    if self.catalogue[code].famille == "fonction_publique"
+                    else "assurance",
+                    membres,
+                ),
                 proratisation + bonifications,
             )
             #: Rapport des trimestres liquidables à la durée requise, borné au
@@ -4639,7 +4696,7 @@ class ScenarioActuel:
                 # pension » : c'est donc la durée de proratisation, et non la
                 # durée requise, qui fait office ici aussi.
                 cotises_regime = min(
-                    sum(trimestres_cotises_par_regime.get(m, 0) for m in membres),
+                    cumul_plafonne("cotises", membres),
                     proratisation,
                 )
                 eligibles_minimum.append(_EligibleMinimum(
@@ -4660,9 +4717,7 @@ class ScenarioActuel:
                 age_ouverture = self._age_ouverture(periode, carriere)
                 eligibles_garanti.append(_EligibleMinimumGaranti(
                     indice=len(pensions),
-                    trimestres_services=sum(
-                        services_par_regime.get(m, 0) for m in membres
-                    ),
+                    trimestres_services=cumul_plafonne("services", membres),
                     ouvert=(
                         carriere.annee_naissance + age_ouverture < 2011
                         or trimestres_decote <= 0
@@ -5126,8 +5181,8 @@ def _trimestres_cotises_apres(carriere: Carriere, age: float,
     Seuls ceux-là ouvrent droit à la surcote : c'est une récompense du travail
     prolongé, pas de l'entrée précoce dans la vie active.
     """
-    return sum(
-        carriere.trimestres_retenus(ligne)
+    return carriere.trimestres_cumules(
+        ligne
         for ligne in carriere.lignes
         if ligne.cotise
         and ligne.annee <= annee_liquidation
@@ -5142,8 +5197,8 @@ def _trimestres_valides_avant(carriere: Carriere, age: float,
     Périodes assimilées comprises : c'est la durée d'assurance qu'oppose la
     condition de taux plein, et non la seule durée cotisée.
     """
-    return sum(
-        carriere.trimestres_retenus(ligne)
+    return carriere.trimestres_cumules(
+        ligne
         for ligne in carriere.lignes
         if ligne.annee <= annee_liquidation
         and ligne.annee - carriere.annee_naissance < age
@@ -5189,8 +5244,8 @@ def _trimestres_cotises_entre(carriere: Carriere, age_bas: float, age_haut: floa
     surcote parentale, dont la fenêtre tombe en cours d'année, se compte au
     mois près : :func:`_trimestres_entre_dates`.
     """
-    return sum(
-        carriere.trimestres_retenus(ligne)
+    return carriere.trimestres_cumules(
+        ligne
         for ligne in carriere.lignes
         if ligne.cotise
         and ligne.annee <= annee_liquidation

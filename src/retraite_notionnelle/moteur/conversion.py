@@ -53,12 +53,17 @@ def niveau_relatif(carriere: Carriere, macro: DonneesMacro) -> float:
     relevé, c'est ce que le relevé dit. Vaut un si rien n'est cotisé.
     """
     revenus = 0.0
-    references = 0.0
+    # Une année de deux activités ne compte qu'une fois au dénominateur, pour
+    # la plus longue des deux : c'est son revenu TOTAL qu'on rapporte.
+    fractions: dict[int, float] = {}
     for ligne in carriere.lignes:
         if not ligne.cotise:
             continue
         revenus += ligne.revenu
-        references += salaire_moyen_annuel(macro, ligne.annee) * ligne.fraction_annee
+        fractions[ligne.annee] = max(fractions.get(ligne.annee, 0.0),
+                                     ligne.fraction_annee)
+    references = sum(salaire_moyen_annuel(macro, annee) * fraction
+                     for annee, fraction in fractions.items())
     return revenus / references if references > 0.0 else 1.0
 
 

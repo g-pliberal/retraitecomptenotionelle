@@ -431,6 +431,19 @@ n'est ainsi pas vue si elle ne déborde pas sur la suivante ; le champ
 « Interruptions » des options de modélisation, qui désigne les années une à
 une, reste l'outil fin, et il garde le dernier mot sur les lignes.
 
+**Deux activités à la fois : ce que le cumul ne dit pas encore.** Une
+activité déclarée cumulée a sa propre ligne, et le scénario 1 la traite
+comme le droit : chaque régime sur son revenu, la durée tous régimes bornée à
+quatre trimestres par année civile, les régimes alignés réunis sur la somme
+de leurs revenus. Trois approximations restent. Le compte notionnel porte la
+cotisation de chaque activité sous ses propres bornes, et le plafond global
+d'assiette du modèle s'y applique activité par activité, non sur leur somme.
+Deux statuts qui versent au même régime complémentaire — deux employeurs, l'un
+cadre, l'autre non — y cotisent chacun sous un plafond entier : la règle qui
+répartit le plafond entre plusieurs employeurs n'a été ni lue ni modélisée.
+Et la fiche de paie de la
+page Rémunération ne montre que l'activité principale.
+
 ### Ce qui reste hors du modèle, et pourquoi
 
 Ces lignes ne sont pas des oublis : chacune demande une information que le

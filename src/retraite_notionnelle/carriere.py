@@ -167,6 +167,16 @@ class Metier:
 
     Le métier court de ``age_debut`` jusqu'au début du suivant ; le dernier
     jusqu'à la liquidation.
+
+    **Une activité CUMULÉE ne remplace pas, elle s'ajoute.** Le salarié qui
+    ouvre un cabinet le soir, le fonctionnaire qui a une activité accessoire,
+    le médecin hospitalier qui consulte en libéral : deux statuts à la fois,
+    deux régimes qui encaissent chacun sur leur revenu. ``cumul`` le dit, et
+    c'est à l'assuré de le dire — le modèle ne le devine jamais, et un métier
+    qui ne le déclare pas succède au précédent comme il l'a toujours fait. Une
+    activité cumulée court de ``age_debut`` à ``age_fin``, ou jusqu'à la
+    liquidation si ``age_fin`` est absent ; elle ne touche pas à la suite des
+    métiers principaux, qui continuent de couvrir la carrière bout à bout.
     """
 
     #: Statut d'affiliation (clé de ``legislation/affiliations.yaml``).
@@ -175,6 +185,12 @@ class Metier:
     age_debut: float
     #: Niveau de revenu, en multiples du salaire moyen par tête de l'année.
     niveau_salaire: float = 1.0
+    #: Vrai si ce métier s'AJOUTE à l'activité principale au lieu de lui
+    #: succéder. Faux par défaut : rien n'est supposé.
+    cumul: bool = False
+    #: Âge auquel une activité cumulée s'arrête ; ``None`` la mène jusqu'à la
+    #: liquidation. Sans objet pour un métier principal, que le suivant clôt.
+    age_fin: float | None = None
 
 
 @dataclass(frozen=True)
@@ -408,7 +424,17 @@ def _ligne_annuelle(
 
 @dataclass
 class Carriere:
-    """Carrière complète d'un assuré."""
+    """Carrière complète d'un assuré.
+
+    **Une ligne par année ET PAR ACTIVITÉ.** Une année ne porte d'ordinaire
+    qu'une ligne ; celle où l'assuré a exercé deux activités à la fois en porte
+    une par statut, et deux lignes de la même année ne partagent jamais leur
+    statut. La première ligne d'une année est l'activité PRINCIPALE — celle du
+    parcours, ou la première du relevé —, et c'est elle que :meth:`ligne` rend.
+    Ce que le droit compte par régime se lit ligne par ligne ; ce qu'il compte
+    TOUS RÉGIMES — la durée d'assurance, la durée cotisée — ne dépasse jamais
+    quatre trimestres par année civile, et se lit par :meth:`trimestres_cumules`.
+    """
 
     annee_naissance: int
     sexe: str  # "H" ou "F"
@@ -440,7 +466,18 @@ class Carriere:
             raise ValueError(
                 f"mois de naissance attendu entre 1 et 12, reçu {self.mois_naissance}"
             )
+        # Tri STABLE : l'activité principale, donnée la première, le reste.
         self.lignes.sort(key=lambda ligne: ligne.annee)
+        vues: set[tuple[int, str]] = set()
+        for ligne in self.lignes:
+            cle = (ligne.annee, ligne.affiliation)
+            if cle in vues:
+                raise ValueError(
+                    f"{self.identifiant} : deux lignes de {ligne.annee} sous le "
+                    f"même statut {ligne.affiliation!r} — deux emplois du même "
+                    "statut font une seule ligne, dont le revenu est la somme"
+                )
+            vues.add(cle)
 
     # -- dates ---------------------------------------------------------------
 
@@ -546,7 +583,10 @@ class Carriere:
 
     @cached_property
     def annees_cotisees(self) -> tuple[int, ...]:
-        return tuple(ligne.annee for ligne in self.lignes if ligne.cotise)
+        # Une année de deux activités reste UNE année cotisée.
+        return tuple(dict.fromkeys(
+            ligne.annee for ligne in self.lignes if ligne.cotise
+        ))
 
     def _lignes_de_service(self, affiliations: Iterable[str],
                            jusqu_a: int | None = None
@@ -559,9 +599,16 @@ class Carriere:
         déjà du bon côté.
         """
         codes = set(affiliations)
-        return [ligne for ligne in self.lignes
-                if ligne.affiliation in codes and ligne.cotise
-                and (jusqu_a is None or ligne.annee <= jusqu_a)]
+        # Une année ne sert qu'une fois, quand deux statuts de la liste s'y
+        # cumulent : on garde celui qui en couvre le plus.
+        par_annee: dict[int, AnneeCarriere] = {}
+        for ligne in self.lignes:
+            if (ligne.affiliation in codes and ligne.cotise
+                    and (jusqu_a is None or ligne.annee <= jusqu_a)):
+                retenue = par_annee.get(ligne.annee)
+                if retenue is None or ligne.fraction_annee > retenue.fraction_annee:
+                    par_annee[ligne.annee] = ligne
+        return [par_annee[annee] for annee in sorted(par_annee)]
 
     def duree_de_service(self, affiliations: Iterable[str],
                          jusqu_a: int | None = None) -> float:
@@ -639,7 +686,64 @@ class Carriere:
         jusqu'à quatre trimestres à qui part en fin d'année, et c'est la décote
         qu'ils commandent.
         """
-        return sum(self.trimestres_retenus(ligne) for ligne in self.lignes)
+        return self.trimestres_cumules(self.lignes)
+
+    def trimestres_par_annee(self, lignes: Iterable[AnneeCarriere]
+                             ) -> dict[int, int]:
+        """Trimestres que ces lignes font entrer dans une durée, année par année.
+
+        **Quatre au plus par année civile, quel que soit le nombre
+        d'activités.** Deux activités exercées la même année valident chacune
+        ses trimestres dans son régime, mais la durée d'assurance tous régimes
+        n'en compte jamais plus que les trimestres civils écoulés. La limite
+        de quatre trimestres par année civile est celle de l'article R. 351-5
+        du code de la sécurité sociale ; le 2° de R. 173-4-4-1 l'apprécie sur
+        la réunion des régimes alignés (LEGIARTI000053335493), et l'article 20
+        du décret n° 2003-1306 l'écrit pour la durée d'assurance tous régimes
+        que la CNRACL oppose (LEGIARTI000054590030). Une année d'une seule
+        ligne n'est pas touchée : sa ligne ne dépasse déjà pas ce plafond.
+        """
+        sommes: dict[int, int] = {}
+        for ligne in lignes:
+            retenus = self.trimestres_retenus(ligne)
+            if retenus > 0:
+                sommes[ligne.annee] = sommes.get(ligne.annee, 0) + retenus
+        plafonds = self._plafonds_trimestres
+        return {annee: min(somme, plafonds[annee])
+                for annee, somme in sommes.items()}
+
+    def trimestres_cumules(self, lignes: Iterable[AnneeCarriere]) -> int:
+        """Somme de :meth:`trimestres_par_annee` : une durée, tous régimes."""
+        return sum(self.trimestres_par_annee(lignes).values())
+
+    @cached_property
+    def _plafonds_trimestres(self) -> dict[int, int]:
+        """Trimestres civils qu'une année peut valider, toutes activités
+        confondues : ceux de l'activité qui en couvre le plus."""
+        plafonds: dict[int, int] = {}
+        for ligne in self.lignes:
+            part = self.part_retenue_ligne(ligne)
+            plafonds[ligne.annee] = max(
+                plafonds.get(ligne.annee, 0),
+                trimestres_civils(round(part * 12)) if part > 0 else 0,
+            )
+        return plafonds
+
+    def plafond_trimestres(self, annee: int) -> int:
+        """Trimestres civils que cette année peut valider, toutes activités
+        confondues. Quatre pour une année pleine."""
+        return self._plafonds_trimestres.get(annee, 4)
+
+    @cached_property
+    def _lignes_par_annee(self) -> dict[int, tuple[AnneeCarriere, ...]]:
+        par_annee: dict[int, list[AnneeCarriere]] = {}
+        for ligne in self.lignes:
+            par_annee.setdefault(ligne.annee, []).append(ligne)
+        return {annee: tuple(lignes) for annee, lignes in par_annee.items()}
+
+    def lignes_de(self, annee: int) -> tuple[AnneeCarriere, ...]:
+        """Toutes les lignes d'une année, l'activité principale en tête."""
+        return self._lignes_par_annee.get(annee, ())
 
     def part_retenue(self, annee: int) -> float:
         """Part de l'année civile qui compte, une fois le départ pris en compte.
@@ -657,6 +761,12 @@ class Carriere:
         ligne = self.ligne(annee)
         if ligne is None:
             return 0.0
+        return self.part_retenue_ligne(ligne)
+
+    def part_retenue_ligne(self, ligne: AnneeCarriere) -> float:
+        """:meth:`part_retenue` d'une ligne précise : deux activités de la même
+        année n'en couvrent pas forcément les mêmes mois."""
+        annee = ligne.annee
         if self.age_liquidation is None:
             return ligne.fraction_annee
         if annee > self.annee_liquidation:
@@ -673,16 +783,16 @@ class Carriere:
         l'année suivante, un seul pour qui part en avril, aucun pour qui part
         en février.
         """
-        part = self.part_retenue(ligne.annee)
+        part = self.part_retenue_ligne(ligne)
         if part <= 0:
             return 0
         return min(ligne.trimestres_valides, trimestres_civils(round(part * 12)))
 
     def ligne(self, annee: int) -> AnneeCarriere | None:
-        for l in self.lignes:
-            if l.annee == annee:
-                return l
-        return None
+        """La ligne de l'activité PRINCIPALE de l'année, ``None`` s'il n'y en a
+        pas. Les activités cumulées se lisent par :meth:`lignes_de`."""
+        lignes = self._lignes_par_annee.get(annee)
+        return lignes[0] if lignes else None
 
     def affiliations_utilisees(self) -> tuple[str, ...]:
         return tuple(dict.fromkeys(ligne.affiliation for ligne in self.lignes))
@@ -868,6 +978,13 @@ class Carriere:
         """
         if not metiers:
             raise ValueError("une carrière compte au moins un métier")
+        if metiers[0].cumul:
+            raise ValueError(
+                "une activité cumulée s'ajoute à une activité principale : la "
+                "carrière ne peut pas commencer par elle"
+            )
+        cumuls = [metier for metier in metiers if metier.cumul]
+        metiers = [metier for metier in metiers if not metier.cumul]
 
         date_naissance = DateMois(annee_naissance, mois_naissance)
         bornes = [date_naissance.plus_mois(en_mois(metier.age_debut))
@@ -968,8 +1085,54 @@ class Carriere:
             ))
         lignes = limiter_chomage_non_indemnise(lignes, annee_naissance)
 
+        # LES ACTIVITÉS CUMULÉES, chacune sur ses propres mois. Elles ne
+        # déplacent rien de l'activité principale : elles ajoutent à chaque
+        # année qu'elles touchent une ligne de plus, sous leur statut, avec le
+        # revenu qu'elles ont payé et les trimestres que ce revenu valide. Une
+        # interruption déclarée arrête l'activité principale, pas celle-ci.
+        periodes_cumulees = []
+        for metier in cumuls:
+            ouverture = date_naissance.plus_mois(en_mois(metier.age_debut))
+            cloture = (fin if metier.age_fin is None
+                       else date_naissance.plus_mois(en_mois(metier.age_fin)))
+            if ouverture.rang < debut.rang:
+                raise ValueError(
+                    "une activité cumulée commence après le début de la "
+                    "carrière : elle s'ajoute à une activité déjà là"
+                )
+            if cloture.rang > fin.rang:
+                raise ValueError(
+                    "une activité cumulée s'arrête au plus tard à la liquidation"
+                )
+            if cloture.rang <= ouverture.rang:
+                raise ValueError(
+                    "une activité cumulée doit s'arrêter après avoir commencé"
+                )
+            periodes_cumulees.append((metier, ouverture, cloture))
+            for annee in range(ouverture.annee, cloture.annee + 1):
+                mois = mois_travailles(annee, ouverture, cloture)
+                if mois <= 0:
+                    continue
+                revenu = (metier.niveau_salaire
+                          * profil_salaire(macro.racine, profil_carriere,
+                                           annee - annee_naissance, annee,
+                                           metier.affiliation)
+                          * salaire_moyen_reference[annee] * (mois / MOIS_PAR_AN))
+                lignes.append(_ligne_annuelle(
+                    annee=annee,
+                    revenu=revenu,
+                    affiliation=metier.affiliation,
+                    type_periode="emploi",
+                    macro=macro,
+                    motifs=motifs,
+                    part=fraction_annee(annee, ouverture, cloture),
+                    part_primes=part_primes,
+                    trimestres_maximum=trimestres_civils(mois),
+                ))
+
         dates_entree: dict[str, DateMois] = {}
-        for metier, ouverture, _ in periodes:
+        for metier, ouverture, _ in sorted(
+                periodes + periodes_cumulees, key=lambda p: p[1].rang):
             dates_entree.setdefault(metier.affiliation, ouverture)
 
         return cls(
