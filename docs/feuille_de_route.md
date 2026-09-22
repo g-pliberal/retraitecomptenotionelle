@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 755<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 100<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 117<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14054,3 +14054,36 @@ d'abord, celles qu'un lecteur peut reprendre à la main.
 `index.html`, `tests/test_lecture_pdf.py`, `tests/js/lecture-pdf.test.js`,
 `tests/test_releve_lu.py`, `docs/limites.md` §5.
 
+### 109. Le §5 de `limites.md` relu contre le modèle, et un chiffre de la page Avantages qui dérivait — `fait`
+
+**Demande.** Corriger les erreurs du §5 de `limites.md`, relevées en le
+résumant le 22 septembre 2026.
+
+**La recette du scénario 6 avait encore bougé.** −1,22 % du PIB de solde moyen
+et non −2,16, coefficient 2040 à 0,83 et non 0,76, plus déficitaire que le
+système actuel d'un dixième de point et 29 années sur 45, non d'un demi-point
+et 38 ; la variante `rapport` à −0,53 % et 0,91. Le coût de la sortie des
+impôts affectés est resté 1,395 point, et la table des mesures successives en
+prend une quatrième ligne. Le RAFP est servi à son barème, non converti.
+
+**Les six limites de fond.** Vingt-sept dispositifs sans chiffre sur
+quarante-cinq, non vingt-quatre sur quarante-deux ; dix lignes lues dans les
+sous-postes des comptes, non sept ; la surcote parentale est servie par la
+grille, elle ne paie simplement rien avant 2026. Le tableau de la décote est
+remesuré au diviseur par vingtile, qui est le défaut — 84,1 % et non 84,0,
+puis 2,4, 7,0, 0,8, 4,2 et 6,4 points —, dans `limites.md` comme dans
+`avantages_non_contributifs.md` ; la baisse de dépense va de 3,5 à 4,4 %, le
+gain de solde de deux à cinq dixièmes. Le libéral a 3,1 ans de rente de plus
+et 186 000 €, depuis que sa règle de départ a changé. Le contrôle d'isolement
+de `avantages.py` n'est plus un refus pour la catégorie active.
+
+**Un chiffre de page écrit en dur.** L'écart entre un agent actif et un
+sédentaire partis à 57 ans était écrit dans `pages.py` — 825 € pour 1960, 102 €
+pour 1965 — quand le modèle rend 680 et 84 ; `limites.md` disait la page
+calculée. Elle l'est désormais, des deux côtés du portage
+(`_ecart_plafond_decote`, `ecartPlafondDecote`).
+
+**Fichiers.** `docs/limites.md`, `docs/avantages_non_contributifs.md`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
+`tests/temoins/pages.json`,
+`tests/test_affirmations.py` (docstring).

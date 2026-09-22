@@ -6222,8 +6222,10 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   contributif, et le sens de l'erreur est connu : elle n'a pas d'enfants.** Un
   seul des treize cas types en a — `carriere_interrompue`, deux enfants —, si
   bien que la majoration de pension pour trois enfants et plus valait **zéro
-  toutes les années de la série**, et que la surcote parentale vaut zéro pour
-  la même raison. La grille est faite pour comparer des systèmes sur une même
+  toutes les années de la série**. La surcote parentale, elle, la grille la
+  sert à la carrière interrompue à partir de la génération 1970, mais elle ne
+  paie que des pensions prenant effet à compter de 2026 : rien à mesurer sur
+  les années publiées. La grille est faite pour comparer des systèmes sur une même
   carrière, où les erreurs de niveau s'annulent au dénominateur ; le coût d'un
   avantage est un compte de POPULATION. C'est l'erreur déjà rencontrée sur la
   garantie vieillesse, que les cas types surestimaient de loin et que le barème
@@ -6233,12 +6235,12 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
   valent <!--chiffre:mesure(avantages?annee=2024)-->96,2<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,5<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
   total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
-  et sept autres lignes dans les sous-postes des Comptes de la protection
+  et dix autres lignes dans les sous-postes des Comptes de la protection
   sociale, dont la majoration pour enfants à <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=majoration_enfants)-->7,8<!--/--> milliards — que le modèle
   chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
   l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
   le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,1<!--/--> milliards qu'il calcule encore lui-même
-  restent soumis à cette limite. Vingt-quatre dispositifs sur quarante-deux ne
+  restent soumis à cette limite. Vingt-sept dispositifs sur quarante-cinq ne
   portent aucun chiffre, chacun avec sa raison écrite.
 
   **Une seconde limite, découverte en réparant la première : les deux mesures
@@ -6251,8 +6253,9 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   soixante-six. Voir `docs/avantages_non_contributifs.md`.
 
 - **Le diviseur est le même pour tout le monde, et il transfère à qui vit
-  plus longtemps — le système actuel autant que les autres.** L'espérance de
-  vie du §5 de `methodologie.md` est celle de la population générale. Les
+  plus longtemps — le système actuel autant que les autres.** Ce fut la règle
+  jusqu'au 21 septembre 2026 : l'espérance de vie du §5 de `methodologie.md`
+  était alors celle de la population générale. Les
   pensionnés civils de l'État vivent un an de plus à 65 ans, d'après leur
   propre régime ; les 5 % d'hommes les plus aisés vivent sept ans de plus à
   65 ans que les 5 % les plus modestes, d'après l'INSEE. Depuis le
@@ -6268,8 +6271,10 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   qu'aucun diviseur ne l'a calculée. Par le revenu, chaque cas type rattaché
   au vingtile de niveau de vie où son salaire le place : le salarié au SMIC a
   3,0 ans de rente de moins que la table commune ne lui en compte et
-  l'exploitant agricole 3,7 de moins, le cadre 2,7 de plus et le libéral 3,2
-  de plus — 49 000 € retirés au premier, 173 000 € ajoutés au dernier, sur la
+  l'exploitant agricole 3,7 de moins, le cadre 2,7 de plus et le libéral 3,1
+  de plus — 49 000 € retirés au premier, 186 000 € ajoutés au dernier (3,2
+  ans et 173 000 € avant que la règle de départ du libéral ne change, le
+  22 septembre 2026), sur la
   vie et sous le système actuel. Le diviseur commun transfère donc des
   modestes vers les aisés, dans le sens qu'on craignait, puisque qui vit
   longtemps est aussi qui a le plus cotisé ; et ce n'est pas un défaut du
@@ -6279,8 +6284,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   constant dans le temps, une espérance de stock appliquée à des liquidants
   futurs, et une grille de cas types qui n'est pas une population. Ce que
   ce transfert coûte au régime se mesure aussi (`--deficit`) : un diviseur
-  par vingtile baisserait la dépense des scénarios notionnels de 3,6 à
-  4,3 %, quatre à cinq dixièmes de point de PIB, parce que les gros capitaux
+  par vingtile baisserait la dépense des scénarios notionnels de 3,5 à
+  4,4 %, de deux à cinq dixièmes de point de PIB de solde moyen, parce que les gros capitaux
   sont servis le plus longtemps. La page
   Coût l'applique depuis lors par les pensions de ses cas types, mais compte
   encore tout le monde à la mortalité générale : ce sous-compte déplace son
@@ -6292,11 +6297,11 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   Mesuré en comparant ce que coûte une année d'anticipation sous le droit en
   vigueur et sous le coefficient de conversion notionnel, sur un fonctionnaire
   sédentaire de la génération 1965 : partir deux ans plus tôt laisse 81,7 % de
-  la pension sous le droit actuel contre 84,0 % sous le notionnel — le droit est
-  PLUS DUR de 2,3 points ; à cinq ans d'avance, plus dur de 6,4 points. Puis la
+  la pension sous le droit actuel contre 84,1 % sous le notionnel — le droit est
+  PLUS DUR de 2,4 points ; à cinq ans d'avance, plus dur de 7,0 points. Puis la
   décote bute sur son plafond de vingt trimestres et le rapport s'inverse : à
-  huit ans d'avance le droit est plus doux de 1,5 point, à dix ans de 5,1, à
-  douze ans de 7,6. Or l'anticipation extrême est exactement celle de la
+  huit ans d'avance le droit est plus doux de 0,8 point, à dix ans de 4,2, à
+  douze ans de 6,4. Or l'anticipation extrême est exactement celle de la
   catégorie active, de la super-active, de la conduite SNCF et des militaires :
   le barème est le plus clément là où il devrait l'être le moins. Voir
   `docs/avantages_non_contributifs.md` §4 ter.
@@ -6306,16 +6311,17 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   catégorie active parti à <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans et un agent sédentaire parti le même jour
   butent tous deux sur le même plafond, et leurs pensions ne diffèrent que de
   quelques centaines d'euros par an pour la génération 1960 — la page Avantages
-  en donne le chiffre, que le modèle calcule, et le chiffre que cette page et le
-  site portaient en dur avait dérivé sans que rien ne le dise. Pour la
-  génération 1965 l'écart tombe à une centaine d'euros, le classement abaissant
+  en donne le chiffre, que le modèle calcule depuis le 22 septembre 2026 ; le
+  chiffre que cette page et le site portaient en dur avait dérivé deux fois
+  sans que rien ne le dise. Pour la génération 1965 l'écart tombe sous la centaine d'euros, le classement abaissant
   par ailleurs la durée requise d'un trimestre. Mesurer la
   valeur d'un avantage d'ÂGE par l'écart de MONTANT à date de départ fixe donne
   donc un chiffre petit — <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=categorie_active)-->0,5<!--/--> milliard en 2024 pour la catégorie active — et ce
-  chiffre n'est pas faux, il est incomplet ; il est de surcroît désormais
-  REFUSÉ sur les cas types dont le retrait du classement déplace la durée
-  requise, le contrôle d'isolement de `avantages.py` n'acceptant pas un écart
-  qui mêlerait les deux effets. Ce que l'avantage coûte, ce sont les annuités
+  chiffre n'est pas faux, il est incomplet. Il porte de surcroît, depuis le
+  22 septembre 2026, la durée requise propre aux emplois classés, que le
+  contrôle d'isolement de `avantages.py` accepte pour ce seul avantage
+  (`DUREE_REQUISE_EST_L_AVANTAGE`), le texte la donnant « au titre de la
+  catégorie active ». Ce que l'avantage coûte, ce sont les annuités
   servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **<!--chiffre:mesure(avantages?annee=2024&quoi=anticipees)-->12,8<!--/--> milliards en 2024**, dont <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=classement)-->6,6<!--/--> pour le
   classement, <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=regime_special)-->2,2<!--/--> pour les régimes spéciaux et <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=carriere_longue)-->4,0<!--/--> pour la carrière longue
   (`scripts/cout_avantages.py --duree`). Ce sont des annuités anticipées et non

@@ -42,7 +42,7 @@ from ..config import (
 )
 from ..avantages import (
     LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, calculer_avantages,
-    charger_avantages,
+    carriere_variante, charger_avantages,
     inventaire_depuis_paquet,
 )
 from ..frontiere import charger_frontiere
@@ -7979,6 +7979,25 @@ LIBELLES_ETATS: dict[str, str] = {
 }
 
 
+def _ecart_plafond_decote(simulateur: Simulateur, generation: int) -> float:
+    """Ce que le classement ajoute, par an, à la pension d'un agent parti à 57 ans.
+
+    Le cas type actif contre la même carrière déclassée, au même âge : la
+    décote plafonnée à vingt trimestres rattrape presque tout l'écart d'âge, et
+    ce qui reste est ce que le montant sait dire de l'avantage. Ce chiffre était
+    écrit en dur dans la page — 825 € pour 1960, 102 € pour 1965 — et avait
+    dérivé sans que rien ne le dise ; il est calculé depuis le 22 septembre 2026.
+    """
+    cas = next(c for c in CAS_TYPES if c.code == "fonctionnaire_actif")
+    actif, sedentaire = (
+        simulateur.simuler(carriere_variante(
+            simulateur, cas, generation, 57, affiliation=affiliation,
+        )).actuel.pension_annuelle
+        for affiliation in (None, "fonctionnaire_territorial_hospitalier")
+    )
+    return actif - sedentaire
+
+
 def _avantages(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
     """Tous les avantages non contributifs, depuis quand, et ce qu'ils coûtent.
 
@@ -8325,8 +8344,10 @@ l'âge légal n'est rattrapée par aucune décote.""",
             f"""<p>La décote est <strong>plafonnée à vingt trimestres</strong>.
 Un agent de catégorie active parti à 57 ans et un agent sédentaire parti le même
 jour butent donc tous deux sur le même plafond : leurs pensions ne diffèrent que
-de 825 € par an pour la génération 1960, et de 102 € pour celle de 1965, dont le
-classement abaisse par ailleurs la durée requise d'un trimestre. Le montant ne
+de {g.euros(_ecart_plafond_decote(contexte.simulateur(), 1960))} par an pour la
+génération 1960, et de {g.euros(_ecart_plafond_decote(contexte.simulateur(), 1965))}
+pour celle de 1965, dont le classement abaisse par ailleurs la durée requise
+d'un trimestre. Le montant ne
 sait pas distinguer celui qui part cinq ans trop tôt ; la durée le sait.</p>
 <p>Le classement de l'emploi en porte
 {g.pourcentage(part_classement, decimales=0)}. Le reste se partage entre les
