@@ -196,21 +196,38 @@ export const UNITES_REVENU = [
 export const SALAIRE_DEFAUT = { euros_mois: 3500.0, moyen: 1.0 };
 
 /**
- * Ce que le formulaire demande : un revenu d'activité, ou une pension.
+ * Où l'on en est de sa vie, et c'est la PREMIÈRE question du formulaire.
  *
- * Le simulateur va du revenu à la pension, et c'est le sens du droit : on
- * cotise, puis on liquide. Mais celui qui est déjà à la retraite connaît sa
- * pension au centime et ne se souvient pas de ce qu'il gagnait il y a trente
- * ans — lui demander un revenu, c'est lui demander d'estimer ce que le
- * simulateur sait calculer. Le second mode prend donc la pension et cherche le
- * revenu dont le SCÉNARIO 1 la tire : le droit en vigueur est le seul des
- * quatre systèmes qu'il ait un sens d'inverser, puisque c'est le seul que
- * l'assuré a réellement subi.
+ * Elle a remplacé « Je saisis : mon revenu / ma pension », qui était une
+ * question de modélisation déguisée en question à l'utilisateur : elle
+ * demandait de choisir une entrée du calcul, quand celle-ci se déduit de ce
+ * qu'on est. Un actif ne connaît pas sa pension, un retraité ne se souvient
+ * pas de son salaire : la situation commande la saisie, et non l'inverse.
+ *
+ * ELLE N'ENTRE DANS AUCUN CALCUL. Le modèle ne connaît que la date de départ,
+ * et c'est elle qui dit, au jour près, si la pension est déjà servie ou non.
+ * La situation n'oriente que le formulaire : ce qu'il demande, et comment il
+ * le nomme. Deux réglages qui se contrediraient ne peuvent donc pas fausser un
+ * chiffre, et le formulaire le signale au lieu de le corriger.
  */
-const SAISIES = [
-  ["revenu", "Mon revenu"],
-  ["pension", "Ma pension"],
+const SITUATIONS = [
+  ["actif", "en activité"],
+  ["retraite", "à la retraite"],
 ];
+
+/**
+ * Ce que chaque situation demande par défaut. Le lien de la bascule porte les
+ * deux, si bien que choisir sa situation reconfigure le formulaire d'un coup.
+ */
+const SAISIE_DE_LA_SITUATION = { actif: "revenu", retraite: "pension" };
+
+/**
+ * Ce que le formulaire demande : un revenu d'activité, ou une pension. Ce
+ * n'est plus un choix offert au lecteur mais la conséquence de sa situation :
+ * les libellés ont disparu avec la bascule qui les portait, et il ne reste que
+ * les deux codes, qui bornent ce qu'une adresse a le droit de dire.
+ */
+const SAISIES = [["revenu", ""], ["pension", ""]];
 
 /**
  * Pension mensuelle proposée par défaut, en euros NETS. Voisine de la pension
@@ -506,6 +523,9 @@ const DEFAUTS = Object.freeze({
   //: Ce que le formulaire demande : `revenu` — ce qu'on gagne en travaillant,
   //: d'où le simulateur tire une pension — ou `pension` — ce qu'on touche déjà,
   //: d'où il remonte au revenu. Voir `SAISIES`.
+  //: En activité ou à la retraite : la première question du formulaire, et la
+  //: seule qui n'entre dans aucun calcul. Voir `SITUATIONS`.
+  situation: "actif",
   saisie_par: "revenu",
   //: La pension mensuelle saisie, quand c'est elle qu'on saisit. Elle est dans
   //: la MÊME convention que les montants affichés : nette ou brute selon
@@ -576,6 +596,8 @@ export class Saisie {
     const salaire = reel(parametres, "salaire", SALAIRE_DEFAUT[unite]);
     // La naissance se lit avant tout le reste : les dates de carrière ne valent
     // un âge que rapportées à elle.
+    const situation = parmi(parametres, "situation", SITUATIONS,
+      DEFAUTS.situation);
     const naissance = dateSaisie(parametres, "naissance");
     const anneeNaissance = naissance
       ? naissance.annee : entier(parametres, "naissance", DEFAUTS.naissance);
@@ -584,7 +606,13 @@ export class Saisie {
     const saisie = new Saisie({
       unite_revenu: unite,
       montants: parmi(parametres, "montants", MODES_MONTANT, DEFAUTS.montants),
-      saisie_par: parmi(parametres, "saisie_par", SAISIES, DEFAUTS.saisie_par),
+      situation,
+      // Ce que la situation demande, SAUF si l'adresse dit autre chose : un
+      // retraité peut préférer saisir ce qu'il gagnait. Le défaut suit la
+      // situation, l'explicite l'emporte — c'est ce qui fait qu'une adresse
+      // réduite à « situation=retraite » ouvre le formulaire sur la pension.
+      saisie_par: parmi(parametres, "saisie_par", SAISIES,
+        SAISIE_DE_LA_SITUATION[situation]),
       pension: reel(parametres, "pension", DEFAUTS.pension),
       naissance: anneeNaissance,
       naissance_mois: moisNaissance,
@@ -1292,6 +1320,7 @@ export class Saisie {
     // Ce que le formulaire demande s'écrit toujours, pour la même raison : une
     // adresse qui l'omettrait décrirait une saisie par le revenu, et le nombre
     // « pension » n'y servirait plus à rien.
+    champs.situation = this.situation;
     champs.saisie_par = this.saisie_par;
     champs.pension = nombreBrut(this.pension);
     // Les métiers qui suivent le premier, un groupe de trois champs chacun. Une
@@ -2676,7 +2705,7 @@ function formulaire(saisie, contexte) {
       + "au 1<sup>er</sup> septembre 1961."),
     g.champDate("liquidation", "Départ à la retraite",
       saisie.jourDe(saisie.liquidation),
-      "effectif, ou souhaité",
+      saisie.situation === "retraite" ? "effectif" : "souhaité",
       saisie.calculDe(saisie.liquidation),
       {
         min: saisie.jourDe(AGE_LIQUIDATION_MINIMAL),
@@ -2728,11 +2757,13 @@ function formulaire(saisie, contexte) {
   <h2 class="serif" style="margin-top:0">Votre carrière${bulleDuTitre(saisie)}</h2>
   <p style="margin-top:0.3rem">L'exemple est déjà rempli. Calculez-le tel
   quel, ou saisissez la vôtre.</p>
+  ${basculeSituation(saisie)}
+  ${desaccordDeSituation(saisie, contexte)}
   <div class="grille">${identite}</div>
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
   ${metiersFormulaire(saisie, affiliations, echelle)}
   ${blocPension(saisie)}
-  ${basculeSaisie(saisie)}
+  ${lienAutreSaisie(saisie)}
   ${saisie.parPension ? "" : basculeUnite(saisie, echelle)}
   ${basculeMontants(saisie, echelle, tauxPension)}
   ${mentionConversion(saisie, echelle)}
@@ -2970,27 +3001,80 @@ qu'il faut déposer.</p>
 }
 
 /**
- * Le lien qui passe du revenu à la pension, et retour. Même composant que les
- * deux autres bascules, et pour les mêmes raisons : l'adresse EST la saisie.
+ * Quand la situation déclarée et la date de départ ne disent pas la même chose.
  *
- * RIEN N'EST TRADUIT D'UN MODE À L'AUTRE, à la différence des bascules d'unité
- * et de montants. Traduire demanderait de calculer — dans un sens la pension
- * de la carrière saisie, dans l'autre le revenu que la pension suppose —, et
- * un lien du formulaire n'a pas à lancer une simulation pour savoir ce qu'il
- * porte. Chaque mode garde donc le nombre qu'on lui a donné, et la page qui
- * suit le calcul montre l'autre.
+ * LE MODÈLE NE LIT QUE LA DATE, et c'est ce qui rend ce désaccord inoffensif :
+ * aucun chiffre n'en dépend. Le formulaire le dit plutôt que de trancher —
+ * corriger la date effacerait une carrière saisie, refuser la saisie
+ * arrêterait quelqu'un sur un réglage qui ne change aucun résultat.
+ *
+ * Le cas se produit au premier clic : l'exemple par défaut est celui d'un
+ * actif né en 1975, et le déclarer retraité laisse son départ en 2039. Dire ce
+ * qui cloche vaut mieux que réécrire deux dates sous ses doigts.
  */
-function basculeSaisie(saisie) {
-  const versLaPension = saisie.saisie_par === "revenu";
+function desaccordDeSituation(saisie, contexte) {
+  const annee = saisie.dateDe(saisie.liquidation).annee;
+  const passe = annee < contexte.base.annee_courante;
+  if (passe === (saisie.situation === "retraite")) return "";
+  const phrase = passe
+    ? `Vous vous dites en activité, mais le départ est daté de ${annee}, qui `
+      + "est passé : c'est la date qui compte, et le calcul sera celui d'un "
+      + "retraité."
+    : `Vous vous dites à la retraite, mais le départ est daté de ${annee}, qui `
+      + "est à venir : c'est la date qui compte, et le calcul sera celui d'un "
+      + "actif.";
+  return `<p class="discret">${phrase}</p>`;
+}
+
+/**
+ * La première question : en activité, ou à la retraite ?
+ *
+ * ELLE EST PREMIÈRE PARCE QU'ELLE COMMANDE LE RESTE. Le formulaire demandait
+ * auparavant « je saisis : mon revenu / ma pension », c'est-à-dire de choisir
+ * une entrée du calcul — une question de modélisation posée à quelqu'un qui
+ * n'est pas venu modéliser. Celle-ci ne demande que ce qu'on est, et la saisie
+ * s'en déduit : un actif ne connaît pas sa pension, un retraité ne se souvient
+ * pas de son salaire. Le lien porte donc les DEUX réglages, et choisir sa
+ * situation reconfigure le formulaire d'un coup.
+ *
+ * Rien n'est traduit d'un état à l'autre — le nombre déjà tapé est un revenu
+ * ou une pension, et les deux ne se convertissent pas l'un en l'autre sans
+ * lancer une simulation, ce qu'un lien de formulaire n'a pas à faire.
+ */
+function basculeSituation(saisie) {
+  const actif = saisie.situation === "actif";
+  const autre = actif ? "retraite" : "actif";
   const cible = `#/simuler?${echapper(saisie.requete({
-    saisie_par: versLaPension ? "pension" : "revenu",
+    situation: autre, saisie_par: SAISIE_DE_LA_SITUATION[autre],
   }))}`;
-  const [revenu, pension] = SAISIES.map(([, libelle]) => libelle);
+  const [enActivite, aLaRetraite] = SITUATIONS.map(([, libelle]) => libelle);
   const branches = [
-    [revenu, versLaPension ? "#" : cible],
-    [pension, versLaPension ? cible : "#"],
+    [enActivite, actif ? "#" : cible],
+    [aLaRetraite, actif ? cible : "#"],
   ];
-  return g.bascule("Je saisis", branches, versLaPension ? revenu : pension);
+  return g.bascule("Vous êtes", branches, actif ? enActivite : aLaRetraite);
+}
+
+/**
+ * L'échappatoire, offerte LÀ OÙ ELLE SERT et non comme un réglage de plus.
+ *
+ * La situation commande la saisie, mais elle ne la scelle pas : un retraité
+ * peut préférer donner ce qu'il gagnait, parce qu'il a gardé ses fiches de
+ * paie. Une ligne sous le champ suffit à le lui offrir, et une bascule
+ * permanente aurait remis à tout le monde la question qu'on vient de retirer.
+ *
+ * ELLE NE PARAÎT QUE DANS UN SENS, et c'est un arbitrage assumé. Le chemin
+ * inverse — un actif qui vise une pension et demande quel revenu elle
+ * suppose — existe, la page le calcule, et le complément du champ le dit ;
+ * mais c'est une autre question que celle du simulateur, elle n'intéresse
+ * qu'une minorité, et une ligne de plus sur le formulaire de TOUT LE MONDE est
+ * un prix trop élevé pour elle.
+ */
+function lienAutreSaisie(saisie) {
+  if (!saisie.parPension) return "";
+  const cible = `#/simuler?${echapper(saisie.requete({ saisie_par: "revenu" }))}`;
+  return `<p class="discret"><a href="${cible}">Ou saisir ce que vous `
+    + "gagniez.</a></p>";
 }
 
 function aideProfil(paquet, profil, affiliation = null) {

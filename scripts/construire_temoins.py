@@ -623,8 +623,22 @@ def _pages(contexte: Contexte) -> dict:
         # boucle du site dont le résultat dépend de l'ordre des opérations
         # flottantes, et ces quatre témoins sont ce qui garantit que les deux
         # moteurs la parcourent pas pour pas.
+        # Le chemin réel : on se déclare retraité, et la saisie suit. Les
+        # dates de BASE étant celles d'un actif, ce témoin fige aussi la phrase
+        # du désaccord — le premier clic de qui vient pour sa pension.
         ("simuler_par_pension", "/simuler", {
-            **BASE, "saisie_par": "pension", "pension": "1500",
+            **BASE, "situation": "retraite", "pension": "1500",
+        }),
+        # Une situation de retraité COHÉRENTE avec ses dates : aucune phrase de
+        # désaccord, et la date de départ dit « effectif » et non « souhaité ».
+        ("simuler_retraite_coherent", "/simuler", {
+            **BASE, "situation": "retraite", "pension": "1500",
+            "naissance": "1955", "debut": "20", "liquidation": "62",
+        }),
+        # Et le retraité qui préfère donner ce qu'il gagnait : l'échappatoire.
+        ("simuler_retraite_par_revenu", "/simuler", {
+            **BASE, "situation": "retraite", "saisie_par": "revenu",
+            "naissance": "1955", "debut": "20", "liquidation": "62",
         }),
         ("simuler_par_pension_brute", "/simuler", {
             **BASE, "saisie_par": "pension", "pension": "2400",
