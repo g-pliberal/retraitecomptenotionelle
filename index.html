@@ -437,6 +437,7 @@ function daterStatuts(contenu) {
         revenu.disabled = creux;
         revenu.closest("div").hidden = creux;
       }
+      if (rang > 1) { montrerAjout(rang, CODES_SANS_EMPLOI.has(menu.value)); }
       const debut = rang === 1 ? lire("debut") : lire(`metier${rang}_debut`);
       const entree = naissance !== null && debut !== null && debut > naissance
         ? debut
@@ -450,6 +451,27 @@ function daterStatuts(contenu) {
       }
     }
   };
+  // Une activité qui S'AJOUTE à celle en cours a une date de fin ; celle qui
+  // la remplace n'en a pas, et une période sans emploi n'a ni l'une ni
+  // l'autre. Désactivés autant que masqués : un champ caché mais soumis
+  // resterait une saisie invisible, que le calcul refuserait sans qu'on voie
+  // pourquoi.
+  const montrerAjout = (rang, creux) => {
+    const ajout = formulaire.elements[`metier${rang}_cumul`];
+    const fin = formulaire.elements[`metier${rang}_fin`];
+    if (ajout) {
+      ajout.disabled = creux;
+      ajout.closest("div").hidden = creux;
+    }
+    if (fin) {
+      const sansFin = creux || !ajout || ajout.value !== "oui";
+      fin.disabled = sansFin;
+      fin.closest("div").hidden = sansFin;
+    }
+  };
+  for (const ajout of formulaire.querySelectorAll("select[name$='_cumul']")) {
+    montrerAjout(Number(ajout.name.replace(/\D/g, "")), false);
+  }
   formulaire.addEventListener("input", trier);
   formulaire.addEventListener("change", trier);
 }

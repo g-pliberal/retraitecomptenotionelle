@@ -962,7 +962,9 @@ export class Carriere {
             annee, metier.affiliation)
           * salaireMoyen.get(annee)
           * (mois / MOIS_PAR_AN);
-        lignes.push(ligneAnnuelle({
+        // Après la limite du chômage non indemnisé, qui ne regarde que
+        // l'activité principale — comme en Python.
+        limitees.push(ligneAnnuelle({
           annee,
           revenu,
           affiliation: metier.affiliation,

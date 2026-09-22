@@ -481,6 +481,10 @@ TRAJECTOIRE = (
 )
 
 #: Rang de chaque période, tel que le formulaire l'annonce.
+#: La réponse qui dit qu'une activité S'AJOUTE à celle en cours. Toute autre
+#: réponse que celle-ci ou le vide est refusée.
+CUMUL = "oui"
+
 RANGS_METIER = ("premier", "deuxième", "troisième", "quatrième", "cinquième",
                 "sixième", "septième", "huitième")
 
@@ -572,6 +576,11 @@ class MetierSaisi:
     #: première ligne de la carrière n'est jamais une période sans emploi, et
     #: « sans_activite » y garde le sens d'affiliation qu'il a toujours eu.
     sans_emploi: bool = False
+    #: Vrai si cette activité S'AJOUTE à celle en cours au lieu de la
+    #: remplacer. Faux tant que la personne ne l'a pas dit : rien n'est deviné.
+    cumul: bool = False
+    #: Âge auquel une activité ajoutée s'arrête ; ``None`` la mène au départ.
+    fin: float | None = None
 
 
 #: Les clés de requête qui décrivent les RÈGLES, et non la carrière.
@@ -846,6 +855,9 @@ class Saisie:
         # remontée du modèle.
         precedent = self.debut
         for rang, metier in enumerate(self.metiers, start=2):
+            if metier.cumul:
+                self._verifier_cumul(metier, rang)
+                continue
             if not AGE_DEBUT_MINIMAL <= metier.debut <= AGE_LIQUIDATION_MAXIMAL:
                 raise ErreurSaisie(
                     f"Métier n° {rang} : il doit commencer "
@@ -869,6 +881,39 @@ class Saisie:
             if not metier.sans_emploi:
                 self._verifier_revenu(metier.salaire, rang=rang)
             precedent = metier.debut
+
+    def _verifier_cumul(self, metier: MetierSaisi, rang: int) -> None:
+        """Une activité ajoutée : dans la carrière, et payée de son revenu.
+
+        Elle ne suit pas la précédente — elle l'accompagne —, et n'a donc pas
+        à commencer après elle ; seulement pendant la carrière. Elle ne se
+        décrit pas non plus par la pension : la pension saisie ne dit qu'un
+        niveau pour toute la carrière, et le revenu d'une seconde activité ne
+        s'en déduit pas.
+        """
+        if self.par_pension:
+            raise ErreurSaisie(
+                f"Métier n° {rang} : une activité qui s'ajoute à celle en cours "
+                "se décrit par son revenu. La saisie par la pension ne cherche "
+                "qu'un niveau pour toute la carrière, et ne dirait rien de "
+                "celui de cette activité-là."
+            )
+        if metier.debut < self.debut:
+            raise ErreurSaisie(
+                f"Métier n° {rang} : une activité qui s'ajoute commence pendant "
+                f"la carrière, qui commence en {self.date_de(self.debut)}."
+            )
+        if metier.debut >= self.liquidation:
+            raise ErreurSaisie(
+                f"Métier n° {rang} : il doit commencer avant le départ à la "
+                f"retraite, fixé en {self.date_de(self.liquidation)}."
+            )
+        if metier.fin is not None and not metier.debut < metier.fin <= self.liquidation:
+            raise ErreurSaisie(
+                f"Métier n° {rang} : il doit s'arrêter après avoir commencé, et "
+                f"au plus tard au départ, fixé en {self.date_de(self.liquidation)}."
+            )
+        self._verifier_revenu(metier.salaire, rang=rang)
 
     # -- ce que le formulaire demande ----------------------------------------
 
@@ -985,7 +1030,8 @@ class Saisie:
                 continue
             self._verifier_niveau(niveau, rang, echelle)
             metiers.append(Metier(affiliation=ligne.statut, age_debut=ligne.debut,
-                                  niveau_salaire=niveau))
+                                  niveau_salaire=niveau, cumul=ligne.cumul,
+                                  age_fin=ligne.fin))
         return metiers
 
     def interruptions_de_carriere(
@@ -1010,8 +1056,10 @@ class Saisie:
             if not ligne.sans_emploi:
                 continue
             ouverture = self.date_de(ligne.debut)
-            cloture = (self.date_de(lignes[rang + 1].debut)
-                       if rang + 1 < len(lignes) else fin)
+            # Une activité ajoutée ne clôt pas l'interruption : elle se tient
+            # à côté. C'est la période principale suivante qui la clôt.
+            suivantes = [autre for autre in lignes[rang + 1:] if not autre.cumul]
+            cloture = self.date_de(suivantes[0].debut) if suivantes else fin
             for annee in range(ouverture.annee, cloture.annee + 1):
                 creux = mois_travailles(annee, ouverture, cloture)
                 portee = mois_travailles(annee, debut, fin)
@@ -1401,6 +1449,10 @@ class Saisie:
             champs[f"metier{rang}_debut"] = self.mois_de(metier.debut)
             champs[f"metier{rang}_statut"] = metier.statut
             champs[f"metier{rang}_salaire"] = _nombre(metier.salaire)
+            if metier.cumul:
+                champs[f"metier{rang}_cumul"] = CUMUL
+                if metier.fin is not None:
+                    champs[f"metier{rang}_fin"] = self.mois_de(metier.fin)
         champs.update(remplacements)
         return urlencode(champs)
 
@@ -1420,7 +1472,9 @@ def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
         debut = (parametres.get(f"metier{rang}_debut") or "").strip()
         statut = (parametres.get(f"metier{rang}_statut") or "").strip()
         salaire = (parametres.get(f"metier{rang}_salaire") or "").strip()
-        if not (debut or statut or salaire):
+        cumul = (parametres.get(f"metier{rang}_cumul") or "").strip()
+        fin = (parametres.get(f"metier{rang}_fin") or "").strip()
+        if not (debut or statut or salaire or cumul or fin):
             continue
         # Remontrée, la ligne incomplète n'est pas un métier : la lecture s'y
         # arrête, et c'est la ligne vide du formulaire qui la reçoit.
@@ -1440,16 +1494,40 @@ def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
         # pas ce qu'elle paie — elle ne paie rien — mais le salaire de
         # référence sur lequel l'UNEDIC cotise aux complémentaires.
         sans_emploi = statut in CODES_SANS_EMPLOI
-        if not sans_emploi:
-            salaire_precedent = _reel(
-                parametres, f"metier{rang}_salaire", salaire_precedent
+        # LE CUMUL SE DÉCLARE, et ne se déduit de rien : une activité qui ne
+        # dit pas s'ajouter à celle en cours la remplace, comme toujours.
+        if cumul not in ("", CUMUL):
+            raise ErreurSaisie(
+                f"Métier n° {rang} : « {cumul} » n'est pas une réponse "
+                "possible — l'activité remplace la précédente, ou s'y ajoute."
             )
+        if cumul and sans_emploi:
+            raise ErreurSaisie(
+                f"Métier n° {rang} : une période sans emploi ne s'ajoute pas à "
+                "une activité — elle l'interrompt."
+            )
+        if fin and not cumul:
+            raise ErreurSaisie(
+                f"Métier n° {rang} : une date de fin ne se donne qu'à une "
+                "activité qui s'ajoute à celle en cours ; celle qui la remplace "
+                "s'arrête où commence la période suivante."
+            )
+        # Une activité ajoutée garde son propre revenu, mais n'en passe pas à
+        # la ligne suivante : c'est l'activité principale qu'elle continue.
+        salaire = salaire_precedent
+        if not sans_emploi:
+            salaire = _reel(parametres, f"metier{rang}_salaire", salaire_precedent)
+            if not cumul:
+                salaire_precedent = salaire
         metiers.append(MetierSaisi(
             debut=_age_saisi(parametres, f"metier{rang}_debut", 0.0,
                              naissance, naissance_mois),
             statut=statut,
-            salaire=salaire_precedent,
+            salaire=salaire,
             sans_emploi=sans_emploi,
+            cumul=bool(cumul),
+            fin=(_age_saisi(parametres, f"metier{rang}_fin", 0.0,
+                            naissance, naissance_mois) if fin else None),
         ))
     return metiers
 
@@ -4277,8 +4355,12 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
                                  _options_statuts(affiliations,
                                                   saisie.date_de(metier.debut),
                                                   sans_emploi=True),
-                                 saisie, echelle),
-            sans_emploi=metier.sans_emploi))
+                                 saisie, echelle, cumul=metier.cumul,
+                                 fin=("" if metier.fin is None
+                                      else saisie.jour_de(metier.fin)),
+                                 calcul_fin=("" if metier.fin is None
+                                             else saisie.calcul_de(metier.fin))),
+            sans_emploi=metier.sans_emploi, cumul=metier.cumul))
 
     # La ligne vide : elle n'existe que tant qu'il reste de la place, et son
     # statut n'est pas présélectionné — un statut choisi par défaut ferait
@@ -4297,7 +4379,8 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
 
 def _champs_metier(rang: int, debut: str, calcul: str, statut: str,
                    salaire: str, statuts: list[tuple], saisie: Saisie,
-                   echelle: "Echelle") -> str:
+                   echelle: "Echelle", cumul: bool = False, fin: str = "",
+                   calcul_fin: str = "") -> str:
     """Les champs d'une période qui suit la première.
 
     La période se date au mois comme le reste, depuis que le calendrier a
@@ -4308,10 +4391,29 @@ def _champs_metier(rang: int, debut: str, calcul: str, statut: str,
     celui d'avant lui sert de référence là où le droit lui ouvre des points.
     Le champ disparaît donc plutôt que de demander un nombre dont rien ne
     serait fait.
+
+    UNE ACTIVITÉ PEUT S'AJOUTER À CELLE EN COURS au lieu de la remplacer — le
+    salarié qui exerce aussi en libéral. C'est la personne qui le dit, par un
+    menu dont la réponse par défaut est celle d'avant : l'activité remplace la
+    précédente. La date de fin ne sert qu'à l'activité ajoutée ; vide, elle
+    court jusqu'au départ. Une période sans emploi n'a ni l'un ni l'autre.
     """
     revenu = "" if statut in CODES_SANS_EMPLOI or saisie.par_pension else (
         _champ_revenu(f"metier{rang}_salaire", saisie, echelle, salaire,
                       bref=True)
+    )
+    ajout = "" if statut in CODES_SANS_EMPLOI or saisie.par_pension else (
+        g.liste(f"metier{rang}_cumul", "Cette activité",
+                [("", "remplace la précédente"),
+                 (CUMUL, "s'ajoute à celle en cours")],
+                CUMUL if cumul else "",
+                "deux activités à la fois : la seconde s'ajoute")
+        + g.champ_date(f"metier{rang}_fin", "Fin, si elle s'ajoute", fin,
+                       "vide : jusqu'au départ", calcul_fin,
+                       min=saisie.jour_de(AGE_DEBUT_MINIMAL),
+                       max=saisie.jour_de(AGE_LIQUIDATION_MAXIMAL),
+                       data_age_min=str(AGE_DEBUT_MINIMAL),
+                       data_age_max=str(AGE_LIQUIDATION_MAXIMAL))
     )
     return (
         g.champ_date(f"metier{rang}_debut", "Début de cette période", debut,
@@ -4323,11 +4425,12 @@ def _champs_metier(rang: int, debut: str, calcul: str, statut: str,
         + g.liste(f"metier{rang}_statut", "Métier, ou période sans emploi",
                   [("", "— aucun —")] + statuts, statut)
         + revenu
+        + ajout
     )
 
 
 def _ligne_metier(rang: int, champs: str, vide: bool = False,
-                  sans_emploi: bool = False) -> str:
+                  sans_emploi: bool = False, cumul: bool = False) -> str:
     """Une période : un ``<fieldset>``, et son rang en ``<legend>``.
 
     « Revenu d'activité brut mensuel » et « Métier, ou période sans emploi »
@@ -4349,7 +4452,8 @@ def _ligne_metier(rang: int, champs: str, vide: bool = False,
                 + g.sommaire("Ajouter une période — un métier, une "
                              "interruption")
                 + f'<div class="grille">{champs}</div></details>')
-    titre = f"{rangs} période, sans emploi" if sans_emploi else f"{rangs} métier"
+    titre = (f"{rangs} période, sans emploi" if sans_emploi
+             else f"{rangs} métier, en plus" if cumul else f"{rangs} métier")
     return (f'<fieldset class="metier"><legend class="rang">{escape(titre)}</legend>'
             f'<div class="grille">{champs}</div></fieldset>')
 
@@ -4370,27 +4474,46 @@ def _resume_parcours(contexte: Contexte, saisie: Saisie) -> str:
     saisie.parcours(contexte.echelle(saisie))
 
     affiliations = contexte.simulateur().affiliations
-    bornes = [ligne.debut for ligne in lignes] + [saisie.liquidation]
+
+    def terme(rang: int, ligne: MetierSaisi) -> float:
+        # Une activité ajoutée s'arrête à sa date de fin ; une activité
+        # principale, là où commence la principale suivante.
+        if ligne.cumul:
+            return saisie.liquidation if ligne.fin is None else ligne.fin
+        suivantes = [autre for autre in lignes[rang + 1:] if not autre.cumul]
+        return suivantes[0].debut if suivantes else saisie.liquidation
+
     etapes = [
         (LIBELLES_SANS_EMPLOI[ligne.statut] if ligne.sans_emploi
          else escape(affiliations.libelle(ligne.statut)))
-        + f" de {_age(bornes[rang])} à {_age(bornes[rang + 1])}"
+        + f" de {_age(ligne.debut)} à {_age(terme(rang, ligne))}"
         for rang, ligne in enumerate(lignes)
     ]
+    # Une activité ajoutée ne SUIT pas la précédente : elle l'accompagne.
+    phrase = etapes[0] + "".join(
+        (", et en même temps " if ligne.cumul else ", puis ") + etape
+        for ligne, etape in zip(lignes[1:], etapes[1:])
+    )
     creux = any(ligne.sans_emploi for ligne in lignes)
+    ajoutees = (
+        " Une activité ajoutée a sa propre ligne et cotise à son propre "
+        "régime ; la durée d'assurance ne compte jamais plus de quatre "
+        "trimestres par année, toutes activités confondues."
+        if any(ligne.cumul for ligne in lignes) else ""
+    )
     convention = (
         "L'année d'un changement revient à ce qui en occupe le plus de mois "
-        "— les régimes liquident à l'année, et une année n'a qu'un statut — "
+        "— les régimes liquident à l'année, et une année n'a qu'une activité principale — "
         "mais le revenu porté au compte reste la somme de ce qui a été payé."
         if creux else
         "L'année d'un changement revient au métier qui en occupe le plus de "
-        "mois — les régimes liquident à l'année, et une année n'a qu'un "
-        "statut — mais le revenu porté au compte reste la somme de ce que les "
+        "mois — les régimes liquident à l'année, et une année n'a qu'une "
+        "activité principale — mais le revenu porté au compte reste la somme de ce que les "
         "deux ont payé."
     )
     return (
         f'<p class="discret">Carrière en {len(lignes)} périodes : '
-        + ", puis ".join(etapes) + ". " + convention + "</p>"
+        + phrase + ". " + convention + ajoutees + "</p>"
     )
 
 

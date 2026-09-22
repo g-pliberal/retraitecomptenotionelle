@@ -452,6 +452,21 @@ def _cas() -> list[dict]:
             "naissance_mois": mois, "metier2_debut": "42",
             "metier2_statut": "artisan", "metier2_salaire": "3",
         }))
+    # Deux activités À LA FOIS, déclarées comme telles : la seconde s'ajoute à
+    # la première au lieu de la remplacer. Un régime distinct qui sert sa
+    # pension en plus, puis deux régimes alignés que la liquidation unique
+    # réunit, sur une période bornée qui commence et finit en cours d'année —
+    # là où le plafond de quatre trimestres et la somme des revenus d'une même
+    # année se voient.
+    cas.append(("cumul_salarie_et_liberal", {
+        "metier2_debut": "35", "metier2_statut": "medecin_liberal",
+        "metier2_salaire": "0.8", "metier2_cumul": "oui",
+    }))
+    cas.append(("cumul_salarie_et_artisan_borne", {
+        "naissance_mois": "5", "salaire": "2",
+        "metier2_debut": "40.25", "metier2_statut": "artisan",
+        "metier2_salaire": "0.5", "metier2_cumul": "oui", "metier2_fin": "52.5",
+    }))
     # Une interruption qui tombe sur le changement de métier : l'année n'est pas
     # cotisée, mais elle relève quand même d'un statut, et d'un seul.
     cas.append(("metiers_avec_interruption", {
@@ -761,6 +776,20 @@ def _pages(contexte: Contexte) -> dict:
         ("simuler_depart_l_annee_de_la_bascule", "/simuler", {
             **BASE, "naissance": "1962-03-15", "debut": "1984-09",
             "liquidation": "2026-07",
+        }),
+        # Une activité AJOUTÉE à celle en cours : la légende dit « en plus »,
+        # sa date de fin est remplie, et le résumé dit les deux activités côte
+        # à côte au lieu de l'une après l'autre.
+        ("simuler_cumul", "/simuler", {
+            **BASE, "naissance": "1968", "liquidation": "64",
+            "metier2_debut": "36", "metier2_statut": "medecin_liberal",
+            "metier2_salaire": "0.6", "metier2_cumul": "oui", "metier2_fin": "58",
+        }),
+        # Une date de fin sans que l'activité se déclare ajoutée : rien n'est
+        # deviné, la saisie est refusée.
+        ("simuler_cumul_non_declare", "/simuler", {
+            **BASE, "metier2_debut": "40", "metier2_statut": "artisan",
+            "metier2_salaire": "1", "metier2_fin": "50",
         }),
         # Une ligne de métier laissée à moitié remplie : la page doit le dire,
         # et dire ce qui manque.

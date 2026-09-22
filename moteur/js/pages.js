@@ -305,6 +305,12 @@ export const HEURES_SMIC_PAR_MOIS = 151.67;
 export const METIERS_MAXIMUM = 6;
 
 /**
+ * La réponse qui dit qu'une activité S'AJOUTE à celle en cours. Toute autre
+ * réponse que celle-ci ou le vide est refusée.
+ */
+export const CUMUL = "oui";
+
+/**
  * Nombre de lignes qu'un relevé de carrière peut porter. Une carrière tient
  * entre quatorze ans — l'âge de début minimal — et soixante-quinze, soit
  * soixante et une années civiles au plus ; la borne laisse deux lignes de marge
@@ -747,6 +753,10 @@ export class Saisie {
     let precedent = this.debut;
     this.metiers.forEach((metier, index) => {
       const rang = index + 2;
+      if (metier.cumul) {
+        this.verifierCumul(metier, rang);
+        return;
+      }
       if (!(metier.debut >= AGE_DEBUT_MINIMAL
             && metier.debut <= AGE_LIQUIDATION_MAXIMAL)) {
         throw new ErreurSaisie(
@@ -770,6 +780,42 @@ export class Saisie {
       this.verifierRevenu(metier.salaire, rang);
       precedent = metier.debut;
     });
+  }
+
+  /**
+   * Une activité ajoutée : dans la carrière, et payée de son revenu. Elle ne
+   * suit pas la précédente — elle l'accompagne. Elle ne se décrit pas par la
+   * pension, qui ne dit qu'un niveau pour toute la carrière.
+   */
+  verifierCumul(metier, rang) {
+    if (this.parPension) {
+      throw new ErreurSaisie(
+        `Métier n° ${rang} : une activité qui s'ajoute à celle en cours se `
+        + "décrit par son revenu. La saisie par la pension ne cherche qu'un "
+        + "niveau pour toute la carrière, et ne dirait rien de celui de cette "
+        + "activité-là.",
+      );
+    }
+    if (metier.debut < this.debut) {
+      throw new ErreurSaisie(
+        `Métier n° ${rang} : une activité qui s'ajoute commence pendant la `
+        + `carrière, qui commence en ${this.dateDe(this.debut)}.`,
+      );
+    }
+    if (metier.debut >= this.liquidation) {
+      throw new ErreurSaisie(
+        `Métier n° ${rang} : il doit commencer avant le départ à la retraite, `
+        + `fixé en ${this.dateDe(this.liquidation)}.`,
+      );
+    }
+    if (metier.fin !== null
+        && !(metier.debut < metier.fin && metier.fin <= this.liquidation)) {
+      throw new ErreurSaisie(
+        `Métier n° ${rang} : il doit s'arrêter après avoir commencé, et au plus `
+        + `tard au départ, fixé en ${this.dateDe(this.liquidation)}.`,
+      );
+    }
+    this.verifierRevenu(metier.salaire, rang);
   }
 
   /**
@@ -852,7 +898,7 @@ export class Saisie {
     return [
       {
         debut: this.debut, statut: this.statut, salaire: this.salaire,
-        sans_emploi: false,
+        sans_emploi: false, cumul: false, fin: null,
       },
       ...this.metiers,
     ];
@@ -896,6 +942,8 @@ export class Saisie {
         affiliation: ligne.statut,
         age_debut: ligne.debut,
         niveau_salaire: niveaux[index],
+        cumul: ligne.cumul,
+        age_fin: ligne.fin,
       });
     });
     return metiers;
@@ -921,8 +969,10 @@ export class Saisie {
     lignes.forEach((ligne, index) => {
       if (!ligne.sans_emploi) { return; }
       const ouverture = this.dateDe(ligne.debut);
-      const cloture = index + 1 < lignes.length
-        ? this.dateDe(lignes[index + 1].debut) : fin;
+      // Une activité ajoutée ne clôt pas l'interruption : elle se tient à
+      // côté. C'est la période principale suivante qui la clôt.
+      const suivante = lignes.slice(index + 1).find((autre) => !autre.cumul);
+      const cloture = suivante ? this.dateDe(suivante.debut) : fin;
       for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
         const creux = moisTravailles(annee, ouverture, cloture);
         const portee = moisTravailles(annee, debut, fin);
@@ -1341,6 +1391,12 @@ export class Saisie {
       champs[`metier${rang}_debut`] = this.moisDe(metier.debut);
       champs[`metier${rang}_statut`] = metier.statut;
       champs[`metier${rang}_salaire`] = nombreBrut(metier.salaire);
+      if (metier.cumul) {
+        champs[`metier${rang}_cumul`] = CUMUL;
+        if (metier.fin !== null) {
+          champs[`metier${rang}_fin`] = this.moisDe(metier.fin);
+        }
+      }
     });
     Object.assign(champs, remplacements);
     return Object.entries(champs)
@@ -1365,7 +1421,9 @@ function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois,
     const debutBrut = String(parametres[`metier${rang}_debut`] ?? "").trim();
     const statut = String(parametres[`metier${rang}_statut`] ?? "").trim();
     const salaireBrut = String(parametres[`metier${rang}_salaire`] ?? "").trim();
-    if (!debutBrut && !statut && !salaireBrut) {
+    const cumul = String(parametres[`metier${rang}_cumul`] ?? "").trim();
+    const finBrut = String(parametres[`metier${rang}_fin`] ?? "").trim();
+    if (!debutBrut && !statut && !salaireBrut && !cumul && !finBrut) {
       continue;
     }
     // Remontrée, la ligne incomplète n'est pas un métier : la lecture s'y
@@ -1387,14 +1445,47 @@ function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois,
     // qu'elle paie — elle ne paie rien — mais le salaire de référence sur
     // lequel l'UNEDIC cotise aux régimes complémentaires.
     const sansEmploi = CODES_SANS_EMPLOI.has(statut);
+    // LE CUMUL SE DÉCLARE, et ne se déduit de rien : une activité qui ne dit
+    // pas s'ajouter à celle en cours la remplace, comme toujours.
+    if (cumul !== "" && cumul !== CUMUL) {
+      throw new ErreurSaisie(
+        `Métier n° ${rang} : « ${cumul} » n'est pas une réponse possible — `
+        + "l'activité remplace la précédente, ou s'y ajoute.",
+      );
+    }
+    if (cumul && sansEmploi) {
+      throw new ErreurSaisie(
+        `Métier n° ${rang} : une période sans emploi ne s'ajoute pas à une `
+        + "activité — elle l'interrompt.",
+      );
+    }
+    if (finBrut && !cumul) {
+      throw new ErreurSaisie(
+        `Métier n° ${rang} : une date de fin ne se donne qu'à une activité qui `
+        + "s'ajoute à celle en cours ; celle qui la remplace s'arrête où "
+        + "commence la période suivante.",
+      );
+    }
+    // Une activité ajoutée garde son propre revenu, mais n'en passe pas à la
+    // ligne suivante : c'est l'activité principale qu'elle continue.
+    let salaireLigne = salaire;
     if (!sansEmploi) {
-      salaire = reel(parametres, `metier${rang}_salaire`, salaire);
+      salaireLigne = reel(parametres, `metier${rang}_salaire`, salaire);
+      if (!cumul) {
+        salaire = salaireLigne;
+      }
     }
     metiers.push({
       debut: ageSaisi(parametres, `metier${rang}_debut`, 0.0,
         naissance, naissanceMois),
       statut,
-      salaire,
+      salaire: salaireLigne,
+      // Vrai si l'activité S'AJOUTE à celle en cours au lieu de la remplacer.
+      cumul: Boolean(cumul),
+      // Âge auquel une activité ajoutée s'arrête ; null la mène au départ.
+      fin: finBrut
+        ? ageSaisi(parametres, `metier${rang}_fin`, 0.0, naissance, naissanceMois)
+        : null,
       // Vrai si `statut` est un motif de `SANS_EMPLOI` et non une affiliation.
       // Décidé à la LECTURE, et non déduit plus tard du statut : la première
       // ligne de la carrière n'est jamais une période sans emploi, et
@@ -1941,8 +2032,7 @@ export class Contexte {
       mois_naissance: saisie.naissance_mois,
       sexe: saisie.sexe,
       metiers: parcours.map((metier, rang) => ({
-        affiliation: metier.affiliation,
-        age_debut: metier.age_debut,
+        ...metier,
         niveau_salaire: niveaux[rang],
       })),
       age_liquidation: saisie.liquidation,
@@ -3304,8 +3394,10 @@ function metiersFormulaire(saisie, affiliations, echelle) {
       rang, saisie.jourDe(metier.debut), saisie.calculDe(metier.debut),
       metier.statut, nombreBrut(metier.salaire),
       optionsStatuts(affiliations, saisie.dateDe(metier.debut), true),
-      saisie, echelle,
-    ), false, metier.sans_emploi));
+      saisie, echelle, metier.cumul,
+      metier.fin === null ? "" : saisie.jourDe(metier.fin),
+      metier.fin === null ? "" : saisie.calculDe(metier.fin),
+    ), false, metier.sans_emploi, metier.cumul));
   });
 
   // La ligne vide : elle n'existe que tant qu'il reste de la place, et son
@@ -3331,7 +3423,8 @@ function metiersFormulaire(saisie, affiliations, echelle) {
  * remplacé les âges : il n'en coûte pas un champ de plus, et une carrière qui
  * change de régime en cours d'année se décrit telle qu'elle a eu lieu.
  */
-function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, echelle) {
+function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, echelle,
+  cumul = false, fin = "", calculFin = "") {
   // Une période sans emploi n'a que deux champs : elle ne paie aucun revenu, et
   // celui d'avant lui sert de référence là où le droit lui ouvre des points. Le
   // champ disparaît donc plutôt que de demander un nombre dont rien ne serait
@@ -3339,6 +3432,23 @@ function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, ech
   const revenu = CODES_SANS_EMPLOI.has(statut) || saisie.parPension
     ? ""
     : champRevenu(`metier${rang}_salaire`, saisie, echelle, salaire, true);
+  // UNE ACTIVITÉ PEUT S'AJOUTER À CELLE EN COURS au lieu de la remplacer.
+  // C'est la personne qui le dit, par un menu dont la réponse par défaut est
+  // celle d'avant ; la date de fin ne sert qu'à l'activité ajoutée.
+  const ajout = CODES_SANS_EMPLOI.has(statut) || saisie.parPension
+    ? ""
+    : g.liste(`metier${rang}_cumul`, "Cette activité",
+      [["", "remplace la précédente"], [CUMUL, "s'ajoute à celle en cours"]],
+      cumul ? CUMUL : "",
+      "deux activités à la fois : la seconde s'ajoute")
+      + g.champDate(`metier${rang}_fin`, "Fin, si elle s'ajoute", fin,
+        "vide : jusqu'au départ", calculFin,
+        {
+          min: saisie.jourDe(AGE_DEBUT_MINIMAL),
+          max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL),
+          data_age_min: String(AGE_DEBUT_MINIMAL),
+          data_age_max: String(AGE_LIQUIDATION_MAXIMAL),
+        });
   return g.champDate(`metier${rang}_debut`, "Début de cette période", debut,
     "le mois où elle commence", calcul,
     {
@@ -3349,7 +3459,8 @@ function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, ech
     })
     + g.liste(`metier${rang}_statut`, "Métier, ou période sans emploi",
       [["", "— aucun —"], ...statuts], statut)
-    + revenu;
+    + revenu
+    + ajout;
 }
 
 /**
@@ -3368,14 +3479,15 @@ function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, ech
  * `<fieldset>` : c'est le résumé qui nomme le groupe, et le nommer deux fois
  * ferait lire deux titres pour une ligne qui n'existe pas encore.
  */
-function ligneMetier(rang, champs, vide = false, sansEmploi = false) {
+function ligneMetier(rang, champs, vide = false, sansEmploi = false, cumul = false) {
   const rangs = majuscule(RANGS_METIER[rang - 1]);
   if (vide) {
     return '<details class="metier facultatif">'
       + g.sommaire("Ajouter une période — un métier, une interruption")
       + `<div class="grille">${champs}</div></details>`;
   }
-  const titre = sansEmploi ? `${rangs} période, sans emploi` : `${rangs} métier`;
+  const titre = sansEmploi ? `${rangs} période, sans emploi`
+    : cumul ? `${rangs} métier, en plus` : `${rangs} métier`;
   return `<fieldset class="metier"><legend class="rang">${echapper(titre)}</legend>`
     + `<div class="grille">${champs}</div></fieldset>`;
 }
@@ -3401,23 +3513,40 @@ function resumeParcours(contexte, saisie) {
   // signalé ici comme il l'est ailleurs, avant que la page ne le résume.
   saisie.parcours(contexte.echelle(saisie));
   const affiliations = contexte.simulateur().affiliations;
-  const bornes = [...lignes.map((ligne) => ligne.debut), saisie.liquidation];
+  // Une activité ajoutée s'arrête à sa date de fin ; une activité principale,
+  // là où commence la principale suivante.
+  const terme = (rang, ligne) => {
+    if (ligne.cumul) {
+      return ligne.fin === null ? saisie.liquidation : ligne.fin;
+    }
+    const suivante = lignes.slice(rang + 1).find((autre) => !autre.cumul);
+    return suivante ? suivante.debut : saisie.liquidation;
+  };
   const etapes = lignes.map((ligne, rang) => (
     (ligne.sans_emploi
       ? LIBELLES_SANS_EMPLOI[ligne.statut]
       : echapper(affiliations.libelle(ligne.statut)))
-    + ` de ${age(bornes[rang])} à ${age(bornes[rang + 1])}`
+    + ` de ${age(ligne.debut)} à ${age(terme(rang, ligne))}`
   ));
+  // Une activité ajoutée ne SUIT pas la précédente : elle l'accompagne.
+  const phrase = etapes[0] + etapes.slice(1).map(
+    (etape, index) => (lignes[index + 1].cumul ? ", et en même temps " : ", puis ") + etape,
+  ).join("");
+  const ajoutees = lignes.some((ligne) => ligne.cumul)
+    ? " Une activité ajoutée a sa propre ligne et cotise à son propre "
+      + "régime ; la durée d'assurance ne compte jamais plus de quatre "
+      + "trimestres par année, toutes activités confondues."
+    : "";
   const convention = lignes.some((ligne) => ligne.sans_emploi)
     ? "L'année d'un changement revient à ce qui en occupe le plus de mois "
-      + "— les régimes liquident à l'année, et une année n'a qu'un statut — "
+      + "— les régimes liquident à l'année, et une année n'a qu'une activité principale — "
       + "mais le revenu porté au compte reste la somme de ce qui a été payé."
     : "L'année d'un changement revient au métier qui en occupe le plus de "
-      + "mois — les régimes liquident à l'année, et une année n'a qu'un "
-      + "statut — mais le revenu porté au compte reste la somme de ce que les "
+      + "mois — les régimes liquident à l'année, et une année n'a qu'une "
+      + "activité principale — mais le revenu porté au compte reste la somme de ce que les "
       + "deux ont payé.";
   return `<p class="discret">Carrière en ${lignes.length} périodes : `
-    + etapes.join(", puis ") + ". " + convention + "</p>";
+    + phrase + ". " + convention + ajoutees + "</p>";
 }
 
 /**
