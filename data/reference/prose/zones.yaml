@@ -305,6 +305,15 @@ fichiers:
       # 19 septembre 2026 — a son intertitre, et c'est un récit : ses soldes
       # (−2,16 % du PIB) ne sont plus ceux du modèle (−1,22 %), et le README
       # porte ceux d'aujourd'hui.
+      # L'état de certification : le tableau lit ses bornes et ses comptes
+      # dans les fichiers qu'il décrit, les hypothèses de projection dans leur
+      # table. Il donnait les quotients d'Eurostat « âges 0-94 » de 1986 à
+      # 2024, quand le fichier s'arrête à 84 ans de 1998 à 2013, et « 28
+      # caisses » pour 27 séries. La suite était le registre des recontrôles,
+      # daté entrée par entrée : il a son intertitre, et c'est un récit.
+      "1. État de certification des données": etat
+      "Ce que le recontrôle a trouvé, série par série": recit
+      "Ce que la certification garantit": etat
       "5. Ce que le modèle ne calcule pas, et pourquoi": etat
       "La recette du scénario 6 : la variante `rapport`, et les décisions du 19 septembre 2026": recit
       "Le reste du périmètre": etat
