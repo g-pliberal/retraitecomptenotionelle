@@ -25,7 +25,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 751<!--/--> lignes)
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 755<!--/--> lignes)
 et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 580<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
@@ -13783,4 +13783,16 @@ des femmes depuis que chaque sexe est déplacé du sien — lu à 56 % plutôt q
 non de `distribution.part_femmes`. Les hypothèses sans source sont sept et non
 six. Les cumuls courent de 2025, première année projetée, et non de 2026.
 
-**Fichiers.** `docs/limites.md`.
+**Et le rendement instantané.** Le §3 et la docstring de `scenarios/actuel.py`
+le réservaient au RCI et au RAFP, « faute d'un prix d'achat publié ». Mesuré en
+simulant les soixante-deux statuts à trois générations : le RAFP n'y passe
+pas, il a sa série ; y passent les complémentaires des sections libérales et de
+l'IRCEC, cinq petits régimes, et les années postérieures au dernier barème de
+l'Agirc-Arrco, de l'Ircantec, du RCI et de la complémentaire des avocats. Le
+plancher de base pour tous cumule 526 milliards, non 525 ; le scénario 6
+n'ajoute pas « trois » limites mais une vingtaine. L'avance libérée de
+150 000 € en 2070 est juste : 20 049 millions pour 2,77 millions de
+bénéficiaires et 20,8 ans d'avance.
+
+**Fichiers.** `docs/limites.md`, `src/retraite_notionnelle/scenarios/actuel.py`
+(docstring).

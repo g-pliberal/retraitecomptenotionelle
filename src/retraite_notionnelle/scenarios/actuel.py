@@ -23,8 +23,12 @@ est une **approximation documentée**, pas un simulateur officiel :
   de liquidation. Les points d'un régime fermé sont convertis dans son
   successeur au rapport des deux valeurs de service, comme l'ont fait
   l'unification Arrco de 1999 et la fusion Agirc-Arrco de 2019. Restent au
-  rendement instantané (``regimes/rendements_points.csv``) la CNBF, le RCI et le
-  RAFP, et les années postérieures au dernier barème publié ;
+  rendement instantané (``regimes/rendements_points.csv``) les complémentaires
+  des sections libérales et de l'IRCEC, dont les caisses publient un rendement
+  ou un barème annuel mais aucune série de prix d'achat, quelques petits
+  régimes — CAFAT, tranche B de la Polynésie, additionnel des enseignants du
+  privé, gérants de débits de tabac, conjoints du bâtiment —, et, pour tous,
+  les années postérieures au dernier barème publié ;
 * trois horloges, comme dans le droit — ce qui s'ACQUIERT est lu à l'année
   travaillée (taux de cotisation, assiette, plafond, prix d'achat du point,
   heures pour valider un trimestre) ; ce qui commande la MONTÉE EN CHARGE des
