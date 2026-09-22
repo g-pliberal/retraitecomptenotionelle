@@ -9,7 +9,7 @@ comment on cesse d'en écrire.
 Le mal n'est pas le chiffre faux. Il en traînait, et ils étaient réparables à
 la main : la feuille de route donnait « plus de trois mille lignes » à
 `src/retraite_notionnelle/scenarios/actuel.py`, qui en fait
-<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 706<!--/-->,
+<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 745<!--/-->,
 et « douze mille lignes » au portage, qui en fait
 <!--chiffre:lignes(moteur/js/*.js)-->32 575<!--/--> ; le README annonçait un
 premier chargement de 310 Ko quand il en transfère plus du double, et
@@ -120,7 +120,7 @@ C'est ce qui fait avancer le dépôt sans qu'on y pense. Deux compteurs, en bas
 de `zones.yaml`, qui ne peuvent que décroître :
 
 - **les sections non déclarées**, aujourd'hui
-  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->54<!--/--> ;
+  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->51<!--/--> ;
 - **les chiffres qui portent l'aveu `a_verifier`**, aujourd'hui
   <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.chiffres_a_verifier)-->2<!--/-->.
 

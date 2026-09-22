@@ -727,7 +727,13 @@ def verifier_ancres(fichier: str, texte: str) -> tuple[str, list[Anomalie]]:
         anomalies.append(Anomalie(
             fichier, ligne, "derive",
             f"la prose dit {nombres[0]}, {nom}({argument}) en donne {juste}"))
-        return trouve.group(0).replace(nombres[0], juste, 1)
+        # Le remplacement porte sur le CONTENU de l'ancre, jamais sur sa
+        # sonde : « 0 » provisoire autour de ``annee=2070`` réécrivait
+        # l'argument en « annee=251170 », premier « 0 » venu.
+        debut, fin = trouve.span(4)
+        contenu = ecrit.replace(nombres[0], juste, 1)
+        return (trouve.group(0)[: debut - trouve.start()] + contenu
+                + trouve.group(0)[fin - trouve.start():])
 
     return ANCRE.sub(remplacer, texte), anomalies
 

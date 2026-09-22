@@ -56,7 +56,7 @@ Et trois façons d'en mesurer le coût : par le **modèle** (la cascade, ou un
 recalcul de même nature), par une **série publiée**, ou par **rien** — ce
 dernier cas étant une limite qu'il vaut mieux écrire qu'estimer. Quand les deux
 premières existent, **la série publiée l'emporte** : c'est le premier critère
-de `data/sources.yaml`, et c'est ce qui fait aujourd'hui 87 % du total chiffré.
+de `data/sources.yaml`, et c'est ce qui fait aujourd'hui <!--chiffre:mesure(avantages?quoi=part_lue)-->85<!--/--> % du total chiffré.
 
 ## 3. La liste
 

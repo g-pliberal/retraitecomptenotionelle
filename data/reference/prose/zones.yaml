@@ -45,6 +45,12 @@ fichiers:
     # 263 Ko sont ceux de ce temps-là, au milieu d'une section d'état.
     paragraphes_recit:
       - "Le site a d'abord exécuté le Python lui-même"
+      # Deux paragraphes du §5 racontent comment le contrôle externe s'est
+      # dégradé, puis comment le défaut qu'on croyait en cause a été corrigé :
+      # leurs 18,3, 19,3, 19,5 et 19,4 % sont les étapes de septembre 2026. Le
+      # paragraphe qui les suit dit ce que la trajectoire vaut aujourd'hui.
+      - "Le contrôle externe s'est dégradé deux fois"
+      - "**Ce défaut-là est corrigé"
     sections:
       Ouvrir le simulateur: etat
       # Le corps de la section : ce que le premier chargement transfère, ce que
@@ -79,6 +85,15 @@ fichiers:
       # régime général y était donnée à 40,87 %, que plus aucune fiche ne
       # porte, et la série publique à « neuf régimes », quand elle en a huit.
       "3. La part patronale pèse plus lourd que la part salariale": etat
+      # Le coût, passé et projeté : tout y est une mesure du coût agrégé, que
+      # la sonde recalcule en dix-sept secondes. Le jour où ces sections ont
+      # été ancrées, le README donnait la garantie vieillesse à 40 milliards
+      # en 2026 pour 17,8, le système actuel à 19,3 % du PIB en 2070 pour
+      # 18,4, et le COR à 14,2 % pour les 15,3 que porte son dernier rapport ;
+      # il affirmait surtout que le scénario 3 n'économise rien en 2026, quand
+      # il y cesse de servir la réversion.
+      "4. Ce que la retraite a coûté depuis 1959": etat
+      "5. Une réforme prospective ne fait rien économiser tout de suite, et beaucoup ensuite": etat
 
   # ------------------------------------------------------------------------
   # La feuille de route est un journal : ses actions décrivent ce qu'on VOULAIT
@@ -354,7 +369,9 @@ fichiers:
     defaut: recit
     sections:
       Les avantages non contributifs du scénario 1: etat
-      "2. L'état du modèle : quatre mots, et ils ne se valent pas": a_declarer
+      # La part des lignes lues dans le total chiffré se recalcule sur le coût
+      # des avantages, et ce n'était plus 87 % mais 85 quand elle a été ancrée.
+      "2. L'état du modèle : quatre mots, et ils ne se valent pas": etat
       3. La liste: etat
   # Des lectures de Légifrance, datées du jour où elles ont été faites et
   # ancrées sur un identifiant de version. Les chiffres qu'il écrit sont des
@@ -442,7 +459,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 54
+  sections_a_declarer: 51
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2

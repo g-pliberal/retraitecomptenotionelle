@@ -256,10 +256,20 @@ def ecart_avenir(**reglages: str) -> float:
 def economie_pib(**reglages: str) -> float:
     """Ce qu'un système fait économiser une année, en points de PIB.
 
-    La différence des parts de PIB du système actuel et du système désigné.
+    La différence des parts de PIB du système actuel et du système désigné ;
+    ``moins=5`` retranche l'économie d'un second système, pour dire de combien
+    l'un économise plus que l'autre.
     """
     ligne = _avenir(reglages)
-    return (ligne.part_pib("actuel") - ligne.part_pib(_scenario(reglages["scenario"]))) * 100
+    economie = ligne.part_pib("actuel") - ligne.part_pib(_scenario(reglages["scenario"]))
+    if "moins" in reglages:
+        economie -= ligne.part_pib("actuel") - ligne.part_pib(_scenario(reglages["moins"]))
+    return economie * 100
+
+
+def dependance(**reglages: str) -> float:
+    """Rapport de dépendance démographique d'une année : 65 ans et plus sur 20-64 ans."""
+    return _avenir(reglages).dependance
 
 
 def fusion(**reglages: str) -> float:
@@ -384,7 +394,135 @@ def millieme_salaire(**_: str) -> float:
     return salaire_moyen_annuel(macro, parametres.annee_courante) / 12 / 1000
 
 
+@lru_cache(maxsize=None)
+def _depenses():
+    from retraite_notionnelle.donnees.depenses import DepensesRetraite
+
+    return DepensesRetraite(_parametres().racine_donnees)
+
+
+def depense(**reglages: str) -> float:
+    """La dépense OBSERVÉE d'une année, en Md€ courants — la DREES, pas le modèle.
+
+    ``quoi=totale`` (défaut), ``repartition`` pour la seule répartition
+    obligatoire, ``hors_repartition`` pour le reste — capitalisation,
+    dépendance, minimum vieillesse —, ``part_pib`` pour la totale en % du PIB.
+    """
+    from retraite_notionnelle.donnees.depenses import SYSTEMES
+
+    depenses, annee = _depenses(), int(reglages["annee"])
+    quoi = reglages.get("quoi", "totale")
+    if quoi == "totale":
+        return depenses.depense(annee) / 1000
+    if quoi == "part_pib":
+        return depenses.part_pib(annee) * 100
+    if quoi in ("repartition", "hors_repartition"):
+        voulu = quoi == "repartition"
+        return sum(depenses.depense_systeme(s.code, annee) for s in SYSTEMES
+                   if s.repartition == voulu) / 1000
+    raise ValueError(f"quoi inconnu « {quoi} »")
+
+
+def surcout_passe(**reglages: str) -> float:
+    """De combien le cumul observé d'un système dépasse celui d'un autre, en %.
+
+    ``scenario`` et ``base`` : « le scénario 4 coûte 132 % de plus que le 2 ».
+    """
+    cout = _cout_de(reglages)
+    return (cout.cumul(_scenario(reglages["scenario"]))
+            / cout.cumul(_scenario(reglages["base"])) - 1) * 100
+
+
+def poids(**reglages: str) -> float:
+    """Ce que pèsent un ou plusieurs cas types dans les masses, en %.
+
+    ``cas=cadre|artisan`` additionne ; la dernière année observée, celle que
+    la page Coût affiche. ``ponderation=egale`` rend l'ancienne convention.
+    """
+    cout = _cout_de(reglages)
+    codes = reglages["cas"].split("|")
+    inconnus = [c for c in codes if c not in cout.poids]
+    if inconnus:
+        raise ValueError(f"cas types inconnus : {', '.join(inconnus)}")
+    return sum(cout.poids[c] for c in codes) * 100
+
+
+def grille(**reglages: str) -> float:
+    """La taille de la grille du coût : ``quoi=cas_types`` ou ``generations``."""
+    from retraite_notionnelle import cout as C
+    from retraite_notionnelle.castypes import CAS_TYPES
+
+    quoi = reglages["quoi"]
+    if quoi == "cas_types":
+        return len(CAS_TYPES)
+    if quoi == "generations":
+        return len(C.generations())
+    raise ValueError(f"quoi inconnu « {quoi} »")
+
+
+def garantie(**reglages: str) -> float:
+    """La garantie vieillesse d'une année de la trajectoire : ``quoi=facteur``.
+
+    Le facteur par lequel la distribution des pensions est déplacée ; ou
+    ``beneficiaires`` et ``ayants_droit``, en millions.
+    """
+    ligne = _avenir(reglages)
+    if ligne.garantie is None:
+        raise ValueError(f"pas de garantie en {reglages['annee']}")
+    quoi = reglages["quoi"]
+    if quoi == "facteur":
+        return ligne.garantie.facteur
+    if quoi in ("beneficiaires", "ayants_droit"):
+        return getattr(ligne.garantie, quoi) / 1e6
+    raise ValueError(f"quoi inconnu « {quoi} »")
+
+
+@lru_cache(maxsize=None)
+def _avantages():
+    """Ce que les avantages non contributifs coûtent — celui de la page Avantages."""
+    from retraite_notionnelle.avantages import calculer_avantages
+    from retraite_notionnelle.donnees.population import Population
+
+    parametres = _parametres()
+    return calculer_avantages(_simulateur(parametres), _depenses(),
+                              Population(parametres.racine_donnees))
+
+
+def avantages(**reglages: str) -> float:
+    """Le coût des avantages non contributifs d'une année, en Md€ courants.
+
+    ``quoi=total`` (défaut), ``lues`` pour les lignes qu'un producteur publie,
+    ``calculees`` pour les autres, ``part_lue`` pour la part des premières
+    dans le total, en %, ``part_depense`` pour le total en % de la dépense
+    observée. ``annee`` : la dernière année de la série si on l'omet.
+    """
+    from retraite_notionnelle.avantages import LIGNES_LUES
+
+    cout = _avantages()
+    if "annee" in reglages:
+        ligne = next((l for l in cout.annees if l.annee == int(reglages["annee"])), None)
+        if ligne is None:
+            raise ValueError(f"l'année {reglages['annee']} n'est pas dans la série")
+    else:
+        ligne = cout.derniere
+    lues = sum(v for k, v in ligne.lignes.items() if k in LIGNES_LUES)
+    quoi = reglages.get("quoi", "total")
+    valeurs = {"total": ligne.gratuit / 1000, "lues": lues / 1000,
+               "calculees": (ligne.gratuit - lues) / 1000,
+               "part_lue": lues / ligne.gratuit * 100,
+               "part_depense": ligne.gratuit / ligne.observee * 100}
+    if quoi not in valeurs:
+        raise ValueError(f"quoi inconnu « {quoi} »")
+    return valeurs[quoi]
+
+
 MESURES = {
+    "avantages": avantages,
+    "depense": depense,
+    "surcout_passe": surcout_passe,
+    "poids": poids,
+    "grille": grille,
+    "garantie": garantie,
     "fusion": fusion,
     "constante": constante,
     "parametre": parametre,
@@ -405,6 +543,7 @@ MESURES = {
     "anticipation": anticipation,
     "millieme_salaire": millieme_salaire,
     "poids_trimestre": poids_trimestre,
+    "dependance": dependance,
 }
 
 
