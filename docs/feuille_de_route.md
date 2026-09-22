@@ -26,16 +26,16 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 651<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 075<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 651<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 075<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 651<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 075<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 651<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 075<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13231,3 +13231,86 @@ session non.
 **Fichiers.** `data/sources.yaml` (quatre jeux : deux adresses corrigées, le
 document de la Cour déclaré avec son empreinte, deux notes),
 `data/reference/legislation/veille.yaml` (journal du 22 septembre 2026).
+
+### 99. Saisir sa pension plutôt que son salaire : le scénario 1 s'inverse — `fait`
+
+**Demande.** « Je veux qu'on puisse avoir le choix de rentrer soit la pension
+soit le salaire. »
+
+**Pourquoi c'était la bonne demande.** L'action 97 avait clarifié le champ de
+revenu : elle disait à un retraité de ne pas y mettre sa pension, et de saisir
+à la place ce qu'il gagnait trente ans plus tôt. C'est une réponse honnête à
+une mauvaise question. Le retraité connaît sa pension au centime ; le revenu,
+il l'estime. Le simulateur, lui, sait calculer — et ce qu'on lui demandait
+d'estimer est précisément ce qu'il sait faire, dans l'autre sens.
+
+**Le formulaire a une troisième bascule : « Je saisis — mon revenu d'activité /
+ma pension ».** En mode pension, les champs de revenu de chaque période
+disparaissent — ce sont eux que la page cherche —, un champ de pension les
+remplace, et l'unité de saisie s'efface avec eux puisqu'elle ne gouverne plus
+aucun nombre. La page de résultats ouvre alors sur le revenu trouvé, avant les
+quatre montants : c'est la question qu'on a posée.
+
+**AUCUNE DONNÉE NOUVELLE À CERTIFIER, et c'est le point qui décidait de la
+faisabilité.** Le moteur ne calcule qu'une pension au moment de la liquidation :
+jamais celle qu'un retraité touche aujourd'hui. Remonter de l'une à l'autre
+aurait demandé la série des revalorisations réellement servies, à lire dans les
+arrêtés — un chantier de veille à lui seul. Il se trouve qu'il n'y en a pas
+besoin : la page exprime cette première pension **en euros constants de l'année
+de référence**, et le droit indexe les pensions servies sur les prix. Une
+pension qui a suivi les prix garde son pouvoir d'achat : la somme qu'un retraité
+touche aujourd'hui EST sa première pension exprimée en euros d'aujourd'hui. La
+cible saisie et le montant calculé sont donc déjà dans la même unité. Les
+sous-indexations décidées certaines années font seules la différence, et le
+champ le dit.
+
+**L'inversion est une dichotomie de dix-huit coupes sur le scénario 1** — le
+droit en vigueur, seul des quatre systèmes qu'il ait un sens d'inverser,
+puisque c'est le seul que l'assuré a réellement subi. Dix-huit coupes sur
+[0,1 ; 10] laissent treize centimes de revenu mensuel. Le compte de tours est
+FIXE et non un arrêt sur convergence : les deux moteurs doivent rendre le même
+niveau au bit près, et c'est la seule boucle du site dont le résultat dépende
+de l'ordre des opérations flottantes. Vingt évaluations du scénario 1 : 115 ms
+dans le navigateur, où une évaluation coûte 7 ms — contre 200 ms en Python, qui
+ne sert ici qu'aux tests.
+
+**La dichotomie cherche une BORNE, pas une racine, et c'est ce qui rend les
+refus possibles.** La pension n'est pas une fonction bijective du revenu, et
+les trois cas où elle ne l'est pas sont le droit :
+
+- **elle plafonne** — au-delà du plafond de la tranche la plus haute du statut,
+  cotiser davantage n'acquiert plus rien, et toutes les carrières mieux payées
+  servent la même pension ;
+- **elle a un plancher** — le minimum contributif et l'ASPA servent un montant
+  qu'aucun revenu ne fait descendre ;
+- **elle SAUTE**, et c'est la trouvaille de l'action. Une année ne valide quatre
+  trimestres qu'à partir de 150 heures de SMIC ; au-dessous, la carrière compte
+  pour moins qu'elle n'a duré, le minimum contributif est proratisé d'autant, et
+  la pension bondit au franchissement du seuil. Sur un salarié du privé né en
+  1955, parti à 62 ans après une carrière complète, **aucun revenu ne donne de
+  pension entre 401 € et 816 € bruts par mois** — en euros de son année de
+  départ, 2017, qui est l'unité dans laquelle le moteur calcule. Chercher une racine aurait rendu,
+  dans ce cas, un revenu dont la pension n'est pas celle qu'on demandait, sans
+  que rien ne le signale — le pire des trois résultats. La dichotomie converge
+  vers le bord du saut, la pension rendue est celle d'après, et l'écart à la
+  cible est ce qui fait le refus. Le refus nomme les deux bords du trou.
+
+**Ce que l'inversion suppose, et qui est vérifié.** La pension doit être
+croissante en le revenu : cotiser plus n'a jamais acquis moins. Rien dans le
+code ne l'impose, et une règle ajoutée un jour pourrait le démentir sans
+qu'aucun autre test ne bronche. `test_la_pension_ne_decroit_jamais_quand_le_revenu_monte`
+balaie donc trente niveaux sur cinq statuts, un par famille de plafonds.
+
+**Une convention, dite en toutes lettres sous le champ :** toutes les périodes
+reçoivent le même niveau de revenu, que le profil de carrière déforme ensuite.
+Inverser une pension ne donne qu'un nombre, et une carrière en compte autant
+qu'elle a de métiers ; pour un revenu par métier, c'est le relevé qu'il faut
+déposer. Le lien « reprendre cette carrière en saisissant le revenu », sous le
+chiffre trouvé, fait le passage sans rien perdre — c'est le seul endroit où la
+bascule traduit, la bascule du formulaire ne le pouvant pas faute de connaître
+le résultat d'un calcul qui n'a pas eu lieu.
+
+**Fichiers.** `src/retraite_notionnelle/simulateur.py`, `moteur/js/simulateur.js`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
+`src/retraite_notionnelle/web/gabarit.py`, `scripts/construire_temoins.py`,
+`tests/test_simulateur.py`, `tests/test_web.py`, `tests/temoins/pages.json`.

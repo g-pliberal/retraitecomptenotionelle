@@ -618,6 +618,26 @@ def _pages(contexte: Contexte) -> dict:
         ("simuler_carriere_vide", "/simuler", {
             **BASE, "interruptions": "1996:2038:chomage_indemnise",
         }),
+        # La saisie PAR LA PENSION, et les trois refus qu'elle peut rendre.
+        # L'inversion est une dichotomie de dix-huit coupes : c'est la seule
+        # boucle du site dont le résultat dépend de l'ordre des opérations
+        # flottantes, et ces quatre témoins sont ce qui garantit que les deux
+        # moteurs la parcourent pas pour pas.
+        ("simuler_par_pension", "/simuler", {
+            **BASE, "saisie_par": "pension", "pension": "1500",
+        }),
+        ("simuler_par_pension_brute", "/simuler", {
+            **BASE, "saisie_par": "pension", "pension": "2400",
+            "montants": "brut",
+        }),
+        # Au-dessus de ce que le statut peut acquérir : le plafond de tranche.
+        ("simuler_pension_trop_haute", "/simuler", {
+            **BASE, "saisie_par": "pension", "pension": "9000",
+        }),
+        # Au-dessous du minimum contributif et de l'ASPA : le plancher.
+        ("simuler_pension_trop_basse", "/simuler", {
+            **BASE, "saisie_par": "pension", "pension": "1",
+        }),
         ("simuler_saisie_refusee", "/simuler", {**BASE, "liquidation": "12"}),
         # Un refus alors qu'on saisissait en multiples : le formulaire repart de
         # ses valeurs par défaut, mais dans l'unité où l'on travaillait.

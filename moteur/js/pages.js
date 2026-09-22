@@ -59,7 +59,7 @@ import { echapper, formatFixe, formatG } from "./format.js";
 import * as g from "./gabarit.js";
 import { nomFiabilite } from "./serie.js";
 import { Incidence, salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
-import { Simulateur } from "./simulateur.js";
+import { Simulateur, niveauPourPension } from "./simulateur.js";
 
 export const PROFILS = [
   ["auto", "Déduit du statut (défaut)"],
@@ -194,6 +194,38 @@ export const UNITES_REVENU = [
 // nombre rond proche du salaire moyen plutôt que le salaire moyen exact : le
 // champ est fait pour être remplacé, et « 3 500 » se relit mieux que « 3 475 ».
 export const SALAIRE_DEFAUT = { euros_mois: 3500.0, moyen: 1.0 };
+
+/**
+ * Ce que le formulaire demande : un revenu d'activité, ou une pension.
+ *
+ * Le simulateur va du revenu à la pension, et c'est le sens du droit : on
+ * cotise, puis on liquide. Mais celui qui est déjà à la retraite connaît sa
+ * pension au centime et ne se souvient pas de ce qu'il gagnait il y a trente
+ * ans — lui demander un revenu, c'est lui demander d'estimer ce que le
+ * simulateur sait calculer. Le second mode prend donc la pension et cherche le
+ * revenu dont le SCÉNARIO 1 la tire : le droit en vigueur est le seul des
+ * quatre systèmes qu'il ait un sens d'inverser, puisque c'est le seul que
+ * l'assuré a réellement subi.
+ */
+const SAISIES = [
+  ["revenu", "Mon revenu"],
+  ["pension", "Ma pension"],
+];
+
+/**
+ * Pension mensuelle proposée par défaut, en euros NETS. Voisine de la pension
+ * moyenne de droit direct des retraités de droit français, pour que le
+ * formulaire s'ouvre sur un cas qui ressemble à celui de qui le lit.
+ */
+const PENSION_DEFAUT = 1500.0;
+
+/**
+ * Les bornes du niveau de revenu, en multiples du salaire moyen. Le formulaire
+ * les impose au champ, et l'inversion balaie l'intervalle qu'elles ferment :
+ * c'est le même domaine, et il n'y en a qu'un.
+ */
+const NIVEAU_MINIMAL = 0.1;
+const NIVEAU_MAXIMAL = 10.0;
 
 // Les deux façons de lire tout montant du simulateur — ce qu'on saisit comme
 // ce qu'on affiche. Un seul réglage pour les deux : lire un salaire net et une
@@ -471,6 +503,17 @@ const DEFAUTS = Object.freeze({
   //: moyen d'une année à l'autre.
   unite_revenu: "euros_mois",
   montants: "net",
+  //: Ce que le formulaire demande : `revenu` — ce qu'on gagne en travaillant,
+  //: d'où le simulateur tire une pension — ou `pension` — ce qu'on touche déjà,
+  //: d'où il remonte au revenu. Voir `SAISIES`.
+  saisie_par: "revenu",
+  //: La pension mensuelle saisie, quand c'est elle qu'on saisit. Elle est dans
+  //: la MÊME convention que les montants affichés : nette ou brute selon
+  //: `montants`, et en euros constants de `euros`. C'est ce qui la rend
+  //: comparable sans rien convertir — et, pour un retraité dont la pension a
+  //: suivi les prix comme le droit le prévoit, c'est exactement la somme qu'il
+  //: touche aujourd'hui. Voir `champPension`.
+  pension: PENSION_DEFAUT,
   //: Les métiers exercés APRÈS le premier. Le premier, lui, est décrit par
   //: ``statut``, ``debut`` et ``salaire`` : une adresse d'avant les carrières
   //: multiples reste donc valide, et décrit la carrière d'un seul métier.
@@ -541,6 +584,8 @@ export class Saisie {
     const saisie = new Saisie({
       unite_revenu: unite,
       montants: parmi(parametres, "montants", MODES_MONTANT, DEFAUTS.montants),
+      saisie_par: parmi(parametres, "saisie_par", SAISIES, DEFAUTS.saisie_par),
+      pension: reel(parametres, "pension", DEFAUTS.pension),
       naissance: anneeNaissance,
       naissance_mois: moisNaissance,
       naissance_jour: naissance ? naissance.jour : DEFAUTS.naissance_jour,
@@ -658,6 +703,7 @@ export class Saisie {
         + "(1 = aucun lissage).",
       );
     }
+    this._verifierPension();
     // Les métiers se suivent sans se recouvrir : chacun commence après le
     // précédent et avant le départ à la retraite.
     let precedent = this.debut;
@@ -686,6 +732,28 @@ export class Saisie {
       this.verifierRevenu(metier.salaire, rang);
       precedent = metier.debut;
     });
+  }
+
+  /**
+   * Vrai si c'est la pension qui est saisie, et le revenu qui se cherche. Le
+   * relevé l'emporte sur elle comme il l'emporte sur les revenus : il donne la
+   * carrière année par année, il n'y a plus rien à inverser.
+   */
+  get parPension() {
+    return this.saisie_par === "pension" && !this.releveActif;
+  }
+
+  /**
+   * La pension saisie, contrôlée avant qu'on cherche ce qu'elle suppose. Une
+   * borne haute serait un chiffre inventé : c'est le PLAFOND DU STATUT qui dit
+   * ce qu'une carrière peut acquérir, il se lit sur la courbe, et l'inversion
+   * le rapporte elle-même. Seul le zéro est refusé ici.
+   */
+  _verifierPension() {
+    if (this.saisie_par !== "pension") return;
+    if (!(this.pension > 0)) {
+      throw new ErreurSaisie("La pension doit être strictement positive.");
+    }
   }
 
   /** Vrai si les revenus sont saisis en euros, faux si c'est un ratio. */
@@ -1221,6 +1289,11 @@ export class Saisie {
     // nombre « salaire », et une adresse partagée qui l'omettrait décrirait une
     // autre carrière que celle qu'on a calculée.
     champs.montants = this.montants;
+    // Ce que le formulaire demande s'écrit toujours, pour la même raison : une
+    // adresse qui l'omettrait décrirait une saisie par le revenu, et le nombre
+    // « pension » n'y servirait plus à rien.
+    champs.saisie_par = this.saisie_par;
+    champs.pension = nombreBrut(this.pension);
     // Les métiers qui suivent le premier, un groupe de trois champs chacun. Une
     // ligne vide du formulaire n'en produit aucun : l'adresse ne porte que ce
     // qui a été saisi.
@@ -1554,6 +1627,46 @@ export class Echelle {
 }
 
 /**
+ * Pourquoi aucune carrière ne sert la pension saisie, et ce qui la sert.
+ *
+ * Les trois refus disent une règle du droit, jamais une limite du calcul, et
+ * c'est ce qui les rend utiles : celui qui les lit apprend pourquoi sa pension
+ * ne se déduit pas d'un revenu, et ce qu'il faut changer — le montant, ou la
+ * carrière décrite au-dessus.
+ *
+ * Les montants sont rendus dans la langue du formulaire — mensuels, nets si la
+ * page est en net, en euros de l'année de référence —, faute de quoi le refus
+ * opposerait des annuels bruts à quelqu'un qui vient de taper un net mensuel.
+ */
+function refusDePension(trouve, montants, constants) {
+  const afficher = (annuel) => g.euros(
+    montants.pension((annuel * constants) / MOIS_PAR_AN),
+  );
+  if (trouve.sousLePlancher) {
+    return "Aucune carrière de cette forme ne sert une pension si petite : au "
+      + `revenu le plus bas que le formulaire accepte, elle sert déjà `
+      + `${afficher(trouve.plancher)} par mois — le minimum contributif et `
+      + "l'ASPA font ce plancher. Saisissez au moins ce montant, ou décrivez "
+      + "une carrière plus courte ou plus interrompue.";
+  }
+  if (trouve.auDessusDuPlafond) {
+    return "Aucune carrière de cette forme ne sert une pension si grande : le "
+      + `système actuel plafonne à ${afficher(trouve.plafond)} par mois. `
+      + "Au-delà du plafond de la tranche la plus haute de ce statut, cotiser "
+      + "davantage n'acquiert plus rien, et toutes les carrières mieux payées "
+      + "servent la même pension.";
+  }
+  return "Aucune carrière de cette forme ne sert exactement cette pension : "
+    + `entre ${afficher(trouve.pension_dessous)} et ${afficher(trouve.pension)} `
+    + "par mois, il n'y a rien. Une année ne valide quatre trimestres qu'à "
+    + "partir de 150 heures de SMIC ; au-dessous, la carrière compte pour "
+    + "moins qu'elle n'a duré et le minimum contributif est proratisé "
+    + "d'autant, si bien que la pension saute dès que le seuil est franchi. "
+    + "Saisissez l'un de ces deux montants, ou décrivez la carrière — sa "
+    + "durée, ses interruptions — telle qu'elle a été.";
+}
+
+/**
  * Combien d'agrégats le contexte garde en mémoire, tous jeux de règles
  * confondus. Deux par jeu — le coût et les avantages —, donc trois jeux de
  * règles : celui par défaut, et les deux derniers essayés.
@@ -1784,11 +1897,15 @@ export class Contexte {
         );
       }
     }
-    const carriere = simulateur.carriereParcours({
+    const batir = (niveaux) => simulateur.carriereParcours({
       annee_naissance: saisie.naissance,
       mois_naissance: saisie.naissance_mois,
       sexe: saisie.sexe,
-      metiers: parcours,
+      metiers: parcours.map((metier, rang) => ({
+        affiliation: metier.affiliation,
+        age_debut: metier.age_debut,
+        niveau_salaire: niveaux[rang],
+      })),
       age_liquidation: saisie.liquidation,
       profil_carriere: saisie.profil,
       interruptions: saisie.interruptionsDeCarriere(motifs),
@@ -1796,8 +1913,56 @@ export class Contexte {
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
+
+    if (saisie.parPension) {
+      return this._simulerParPension(simulateur, saisie, batir, parcours);
+    }
+    const carriere = batir(parcours.map((metier) => metier.niveau_salaire));
     verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
     return simulateur.simuler(carriere);
+  }
+
+  /**
+   * La carrière que la pension suppose, puis les quatre systèmes dessus.
+   *
+   * UN SEUL NIVEAU POUR TOUTE LA CARRIÈRE. Inverser une pension ne donne qu'un
+   * nombre, et une carrière en compte autant qu'elle a de métiers : il faut
+   * donc une convention, et la plus simple est la seule qui n'invente rien —
+   * le même niveau partout, que le profil de carrière déforme ensuite comme il
+   * le fait toujours. Qui veut un revenu par métier le saisit, ou dépose son
+   * relevé.
+   *
+   * LA CIBLE EST RAMENÉE À CE QUE LE MODÈLE CALCULE, et dans cet ordre : la
+   * pension saisie est mensuelle, nette peut-être, en euros constants de
+   * l'année de référence ; le scénario 1 rend une pension annuelle, brute, en
+   * euros de l'année de liquidation. Le coefficient des euros constants ne
+   * dépend que de l'année de liquidation, jamais du niveau de revenu : il se
+   * calcule une fois, avant la dichotomie, et non à chaque tour.
+   */
+  _simulerParPension(simulateur, saisie, batir, parcours) {
+    const montants = Montants.depuis(saisie, simulateur);
+    const constants = simulateur.macro.coefficientPrix(
+      saisie.dateDe(saisie.liquidation).annee,
+      simulateur.parametres.annee_euros_constants,
+    );
+    const brute = saisie.enNet
+      ? saisie.pension / (1.0 - montants.tauxPension) : saisie.pension;
+    const cible = brute * MOIS_PAR_AN / constants;
+    const combien = parcours.length;
+    const pensionDeNiveau = (niveau) => simulateur.scenarioActuel.calculer(
+      batir(new Array(combien).fill(niveau)),
+    ).pension_annuelle;
+
+    const trouve = niveauPourPension(pensionDeNiveau, cible,
+      NIVEAU_MINIMAL, NIVEAU_MAXIMAL);
+    if (!trouve.atteinte) {
+      throw new ErreurSaisie(refusDePension(trouve, montants, constants));
+    }
+    const carriere = batir(new Array(combien).fill(trouve.niveau));
+    verifierStatutsOuverts(simulateur.affiliations, carriere, parcours);
+    const comparaison = simulateur.simuler(carriere);
+    comparaison.niveau_inverse = trouve;
+    return comparaison;
   }
 
   /**
@@ -2563,7 +2728,9 @@ function formulaire(saisie, contexte) {
   <div class="grille">${identite}</div>
   <h3>La carrière, période par période${bulleDesPeriodes()}</h3>
   ${metiersFormulaire(saisie, affiliations, echelle)}
-  ${basculeUnite(saisie, echelle)}
+  ${blocPension(saisie)}
+  ${basculeSaisie(saisie)}
+  ${saisie.parPension ? "" : basculeUnite(saisie, echelle)}
   ${basculeMontants(saisie, echelle)}
   ${mentionConversion(saisie, echelle)}
   ${releveFormulaire(saisie)}
@@ -2749,6 +2916,80 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
  * de sa vie, alors que le revenu saisi est celui du milieu de carrière et que
  * le profil le déforme aux deux bouts.
  */
+/**
+ * Le champ « combien touchez-vous », qui remplace les revenus.
+ *
+ * IL EST DANS LA MÊME CONVENTION QUE LES MONTANTS AFFICHÉS, et c'est ce qui le
+ * rend utilisable sans rien convertir. Le simulateur ne calcule qu'une pension
+ * au moment de la liquidation, mais il l'exprime en euros constants de l'année
+ * de référence ; or le droit indexe les pensions servies sur les prix. Une
+ * pension qui a suivi les prix garde son pouvoir d'achat : la somme qu'un
+ * retraité touche aujourd'hui EST sa première pension exprimée en euros
+ * d'aujourd'hui. Il n'y a donc rien à remonter, et aucune série de
+ * revalorisations à certifier pour cela — seulement une convention à dire.
+ */
+function champPension(saisie) {
+  // Deux accords pour un seul mode : la PENSION est nette, les EUROS sont
+  // nets. « en euros nettes par mois » s'est affiché une fois.
+  const mot = saisie.enNet ? "nette" : "brute";
+  const euros = saisie.enNet ? "nets" : "bruts";
+  const aide = `en euros ${euros} par mois, l'année de référence étant `
+    + `${saisie.euros}`;
+  const complement = "Déjà à la retraite ? C'est la pension que vous touchez, "
+    + "telle qu'elle tombe sur le compte. Le simulateur calcule la pension du "
+    + `premier mois, mais il l'exprime en euros de ${saisie.euros}, et le `
+    + "droit indexe les pensions servies sur les prix : une pension qui a "
+    + "suivi les prix garde son pouvoir d'achat, les deux montants sont donc "
+    + "le même. Les sous-indexations décidées certaines années font seules la "
+    + "différence, et le simulateur ne les suit pas. Pas encore à la retraite ? "
+    + "C'est alors la pension que vous visez, et la page dira quel revenu "
+    + "d'activité il y faut.";
+  return g.champ("pension", `Pension ${mot} mensuelle`,
+    nombreBrut(saisie.pension), aide, "number", { min: "0", step: "1" },
+    complement);
+}
+
+/**
+ * Le champ de pension, et la phrase qui dit ce qu'il remplace. Muet tant que
+ * c'est le revenu qu'on saisit : un champ grisé, ou même seulement présent,
+ * ferait croire que les deux nombres comptent à la fois.
+ */
+function blocPension(saisie) {
+  if (!saisie.parPension) return "";
+  return `
+<div class="grille cible-pension">${champPension(saisie)}</div>
+<p class="discret">Le revenu de chaque période a disparu : c'est lui que la
+page cherche. Toutes les périodes reçoivent le <strong>même niveau de
+revenu</strong>, que le profil de carrière déforme ensuite aux deux bouts ;
+pour une carrière dont le revenu change d'un métier à l'autre, c'est le relevé
+qu'il faut déposer.</p>
+`;
+}
+
+/**
+ * Le lien qui passe du revenu à la pension, et retour. Même composant que les
+ * deux autres bascules, et pour les mêmes raisons : l'adresse EST la saisie.
+ *
+ * RIEN N'EST TRADUIT D'UN MODE À L'AUTRE, à la différence des bascules d'unité
+ * et de montants. Traduire demanderait de calculer — dans un sens la pension
+ * de la carrière saisie, dans l'autre le revenu que la pension suppose —, et
+ * un lien du formulaire n'a pas à lancer une simulation pour savoir ce qu'il
+ * porte. Chaque mode garde donc le nombre qu'on lui a donné, et la page qui
+ * suit le calcul montre l'autre.
+ */
+function basculeSaisie(saisie) {
+  const versLaPension = saisie.saisie_par === "revenu";
+  const cible = `#/simuler?${echapper(saisie.requete({
+    saisie_par: versLaPension ? "pension" : "revenu",
+  }))}`;
+  const [revenu, pension] = SAISIES.map(([, libelle]) => libelle);
+  const branches = [
+    [revenu, versLaPension ? "#" : cible],
+    [pension, versLaPension ? cible : "#"],
+  ];
+  return g.bascule("Je saisis", branches, versLaPension ? revenu : pension);
+}
+
 function aideProfil(paquet, profil, affiliation = null) {
   const [debut, fin] = bornesDeformation(paquet, profil, affiliation);
   if (debut === fin) {
@@ -2830,7 +3071,8 @@ function metiersFormulaire(saisie, affiliations, echelle) {
       saisie.statut,
       "proposé aux seules dates où son régime recrutait", {},
       g.GLOSSAIRE["statut d'affiliation"])
-    + champRevenu("salaire", saisie, echelle, nombreBrut(saisie.salaire)),
+    + (saisie.parPension
+      ? "" : champRevenu("salaire", saisie, echelle, nombreBrut(saisie.salaire))),
   )];
 
   saisie.metiers.forEach((metier, index) => {
@@ -2871,7 +3113,7 @@ function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, ech
   // celui d'avant lui sert de référence là où le droit lui ouvre des points. Le
   // champ disparaît donc plutôt que de demander un nombre dont rien ne serait
   // fait.
-  const revenu = CODES_SANS_EMPLOI.has(statut)
+  const revenu = CODES_SANS_EMPLOI.has(statut) || saisie.parPension
     ? ""
     : champRevenu(`metier${rang}_salaire`, saisie, echelle, salaire, true);
   return g.champDate(`metier${rang}_debut`, "Début de cette période", debut,
@@ -3691,6 +3933,62 @@ ${detail}
 `, "resultats-financement");
 }
 
+/**
+ * Le revenu que la pension suppose — la réponse, quand c'est elle qu'on a
+ * demandée.
+ *
+ * ELLE VIENT AVANT LES QUATRE BARRES. Qui saisit sa pension n'a pas posé la
+ * même question que qui saisit son salaire : il demande d'abord ce que sa
+ * pension dit de sa carrière, et ensuite seulement ce que les autres systèmes
+ * en auraient fait. Mettre ce chiffre sous les barres aurait rendu les quatre
+ * montants sans dire sur quoi ils ont été calculés.
+ *
+ * Le lien de reprise porte le revenu trouvé dans l'unité du formulaire : il
+ * fait passer de la pension au revenu sans rien perdre, et c'est le seul
+ * chemin par lequel la bascule de saisie traduit quelque chose — elle ne le
+ * peut pas elle-même, faute de connaître le résultat d'un calcul qui n'a pas
+ * encore eu lieu.
+ */
+function revenuDeduit(contexte, comparaison, saisie) {
+  const trouve = comparaison.niveau_inverse;
+  if (!trouve) return "";
+  const echelle = contexte.echelle(saisie);
+  const brut = echelle.mensuel(trouve.niveau);
+  const affiche = saisie.enNet
+    ? echelle.netMensuel(brut, saisie.statut) : brut;
+  const mot = saisie.enNet ? "nets" : "bruts";
+
+  // Le revenu écrit dans le lien est dans l'unité de saisie, et dans le mode
+  // de saisie : c'est le nombre que le champ relira.
+  const valeur = saisie.revenu_en_euros
+    ? nombreBrut(arrondir(affiche, 0))
+    : nombreBrut(arrondir(trouve.niveau, DECIMALES_MULTIPLE));
+  const remplacements = { saisie_par: "revenu", salaire: valeur };
+  for (let rang = 2; rang < saisie.metiers.length + 2; rang += 1) {
+    remplacements[`metier${rang}_salaire`] = valeur;
+  }
+  const reprise = `#/simuler?${echapper(saisie.requete(remplacements))}`;
+
+  const [debut, fin] = bornesDeformation(contexte.paquet, saisie.profil,
+    saisie.statut);
+  const quand = debut === fin
+    ? "toutes les années de votre carrière"
+    : "le milieu de votre carrière, que le profil de carrière déforme ensuite "
+      + "aux deux bouts";
+  return `
+<div class="carte revenu-deduit">
+  <h3 style="margin-top:0">Le revenu que votre pension suppose</h3>
+  <p class="cle-chiffre">${g.euros(affiche)} ${mot} par mois</p>
+  <p>C'est le revenu d'activité dont le <strong>système actuel</strong> tire
+  exactement la pension que vous avez saisie. Il vaut pour ${quand}. Les quatre
+  montants ci-dessous sont calculés sur cette carrière-là.</p>
+  <p class="discret"><a href="${reprise}">Reprendre cette carrière en saisissant
+  le revenu</a> — pour le corriger, ou pour donner un revenu différent à chaque
+  période.</p>
+</div>
+`;
+}
+
 function resultats(contexte, saisie) {
   const comparaison = contexte.simuler(saisie);
   const carriere = comparaison.carriere;
@@ -3998,6 +4296,7 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
 <h2 id="resultats" tabindex="-1">Résultats\
 ${lectureDesMontants(comparaison, saisie)}</h2>
 ${lecture}
+${revenuDeduit(contexte, comparaison, saisie)}
 <div class="carte">
   ${basculeMontants(saisie, contexte.echelle(saisie))}
   ${scenarios}
