@@ -761,6 +761,7 @@ def _categorie_active() -> dict:
              else str(generation)): [
                 derogation.age_ouverture, derogation.age_annulation,
                 derogation.services_requis, int(derogation.fiabilite),
+                derogation.duree_requise,
             ]
             for generation, derogation in sorted(valeurs.items())
         }

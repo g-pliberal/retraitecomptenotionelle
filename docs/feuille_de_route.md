@@ -25,11 +25,17 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 495<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 595<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 516<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 623<!--/--> lignes), puis dans les
 
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 495<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 595<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 516<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 623<!--/--> lignes), puis dans les
+
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 516<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 623<!--/--> lignes), puis dans les
+
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 516<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 623<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12808,3 +12814,76 @@ seule.
 `moteur/js/scenario-actuel.js`, `tests/test_simulateur.py`,
 `tests/js/moteur.test.js`, `data/reference/legislation/veille.yaml`,
 `docs/limites.md`.
+
+### 94. Un emploi classé n'a pas la durée de sa génération — `fait`
+
+**Demande.** « Que peut-on faire d'autre ? », troisième chantier : les lignes du
+registre de veille restées `manque`. Celle-ci était la dernière des trois, et sa
+fermeture vide la colonne : plus aucune ligne du registre n'est `manque`.
+
+**Ce que le registre disait.** `categorie_active_duree_requise` portait l'état
+`manque` depuis le 17 septembre 2026, avec sa mesure : « un actif né en 1969 se
+voit opposer 172 trimestres au lieu de 170 ». Le modèle opposait aux emplois
+classés la durée des sédentaires — celle de leur génération —, alors que deux
+textes leur en fixent une propre.
+
+**Deux textes qui disent la même chose au mot près.** Le XXIV, B de l'article 10
+de la loi du 14 avril 2023 (version LEGIARTI000053280920) pour les
+fonctionnaires de l'État, et le II, B de l'article 13 du décret n° 2023-435
+(version LEGIARTI000054059137, issue du décret n° 2026-344) pour la CNRACL et le
+FSPOEIE. Tous deux « par dérogation à l'article L. 13 » : 169 trimestres du
+1<sup>er</sup> septembre 1966 au 31 décembre 1967, 170 jusqu'au 31 mars 1970, 171
+jusqu'à la fin de 1970, 172 à compter de 1971 — et les mêmes marches cinq ans
+plus tard pour la super-active.
+
+**La lecture qui a élargi le chantier, et c'est ce qu'une lecture doit faire.**
+Le « a) » des deux textes renvoie, pour ceux qui naissent avant ces dates, à « la
+durée applicable avant l'entrée en vigueur » de la réforme — c'est-à-dire
+l'article L. 161-17-3 dans sa version du 22 janvier 2014
+(LEGIARTI000028494794) : 167 trimestres pour les nés de 1958 à 1960, 168 de 1961
+à 1963, 169 de 1964 à 1966. La dérogation ne commence donc pas en 1966 mais dès
+1961, quatre générations que le registre ne visait pas. C'est pourquoi la table
+porte des lignes intercalaires aux âges identiques : elles ne sont là que pour
+couper la durée là où l'ancienne table coupait.
+
+**Et une non-monotonie que le texte assume.** Un super-actif né en juin 1971 se
+voit opposer 171 trimestres par l'ancienne table, celui qui naît en octobre 1971
+seulement 169 : la dérogation nouvelle commence au 1<sup>er</sup> septembre 1971
+et recommence à 169. Rien n'indique une erreur de plume, et le modèle suit la
+lettre.
+
+**Ce que la correction rend.** +1,78 % de pension à un fonctionnaire d'État de
+catégorie active né en 1967 parti à soixante ans — 169 trimestres requis au lieu
+de 172 —, +1,18 % à un né en 1969, +0,60 % à un né en 1962. Dans la fonction
+publique la durée requise commande aussi la proratisation : le gain porte sur le
+taux et sur le prorata à la fois. Sept témoins du dépôt bougent, tous des
+carrières classées ; sur deux d'entre eux la pension du système actuel ne bouge
+pas — 172/172 devient 170/170 —, et c'est la conversion des droits acquis des
+scénarios prospectifs qui s'en trouve relevée.
+
+**Ce qui reste.** Le C du même XXIV : la durée des fonctionnaires civils et des
+militaires qui liquident avant soixante ans SANS être classés — 169 trimestres,
+puis un de plus au 1<sup>er</sup> janvier 2025 et au 1<sup>er</sup> janvier 2027,
+la table commune à compter de 2028. `docs/limites.md` le porte.
+
+**Et un garde-fou qui s'est mis à refuser ce qu'il fallait mesurer.** Le coût de
+chaque avantage non isolé par la cascade se mesure par retrait : on refait la
+pension sans l'avantage, et l'écart est la ligne. Un garde-fou refusait le
+chiffre quand le retrait déplaçait aussi la DURÉE REQUISE, parce que la
+proratisation change avec elle et que l'écart ne mesure plus rien de nommable.
+Il visait la jouissance militaire, dont les 160 trimestres viennent de la fiche
+du régime. Il s'est mis à refuser le classement de l'emploi — qui devenait le
+seul avantage dont la durée requise fait PARTIE, le texte la donnant « pour les
+fonctionnaires bénéficiant, au titre de la catégorie active, d'un droit au
+départ à l'âge anticipé ». Cesser de chiffrer un avantage parce qu'on vient d'en
+mieux comprendre la portée aurait été le contraire du but : le garde-fou porte
+désormais la liste des avantages dont la durée est l'un des effets, et la ligne
+reste mesurée. Elle vaut 0,5 Md € en 2024, et la page Avantages passe de 12,8 à
+12,9 Md € de pensions servies avant l'âge légal.
+
+**Fichiers.** `data/reference/legislation/categorie_active.csv`,
+`src/retraite_notionnelle/scenarios/actuel.py`,
+`src/retraite_notionnelle/avantages.py`, `moteur/js/regimes.js`,
+`moteur/js/scenario-actuel.js`, `scripts/construire_donnees.py`,
+`tests/test_simulateur.py`, `data/reference/legislation/veille.yaml`,
+`docs/limites.md`, `docs/parcours_presentation.md`.

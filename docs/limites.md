@@ -497,12 +497,17 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   longue des nés en décembre 1965, fixée à 60 ans et 8 mois pour que la
   pension prenne effet le 1er septembre 2026, tombe ici en août 2026, sous le
   décret précédent, qui demande 60 ans et 9 mois.
-- **La durée requise des emplois classés.** Le décret n° 2026-344 (article 3,
-  B) donne aux catégories actives leur propre calendrier de durée — 169
-  trimestres des nés de septembre 1966 à 1967, 172 dès 1971 —, l'âge anticipé
-  ayant cinq ans d'avance sur l'âge légal ; le modèle leur oppose la durée de
-  leur génération, comme aux sédentaires. Les âges eux-mêmes sont lus alinéa
-  par alinéa dans le D du même article.
+- **La durée requise des emplois classés : servie, sauf le C.** Le XXIV, B de
+  l'article 10 de la loi du 14 avril 2023 pour l'État, et le II, B de l'article
+  13 du décret n° 2023-435 pour la CNRACL et le FSPOEIE, donnent aux catégories
+  actives leur propre calendrier de durée — 169 trimestres des nés de septembre
+  1966 à 1967, 172 dès 1971, les mêmes marches cinq ans plus tard pour la
+  super-active —, et `categorie_active.csv` le porte depuis le 22 septembre
+  2026, ancienne table comprise pour les générations d'avant. Reste dehors le C
+  du même XXIV : la durée des fonctionnaires civils et des militaires qui
+  liquident avant soixante ans SANS être classés, 169 trimestres puis un de plus
+  au 1er janvier 2025 et au 1er janvier 2027. Ceux-là se voient encore opposer
+  la durée de leur génération.
 - **Ce qui compte en services dans les régimes spéciaux.** La pension des
   dix-huit régimes spéciaux du catalogue se proratise, comme celle de la
   fonction publique, sur des services et non sur une durée d'assurance ; mais
@@ -7927,7 +7932,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2024<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2029<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

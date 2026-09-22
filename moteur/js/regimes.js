@@ -129,11 +129,12 @@ export class AgesAnnulationDecote extends TableParGeneration {
  * Le drapeau `categorie_active` existait dans la configuration sans qu'aucun
  * statut le porte : le policier et l'aide-soignant étaient calculés comme des
  * sédentaires, et l'âge du sédentaire leur était opposé. Cette table porte les
- * trois paramètres que le classement déplace — l'âge d'ouverture (l'âge
+ * quatre paramètres que le classement déplace — l'âge d'ouverture (l'âge
  * anticipé ou minoré de L. 24, I, 1°), l'âge d'annulation de la décote (la
  * limite d'âge du grade, puis l'article L. 14 bis), la durée de services
- * classés exigée — pour les deux classements, lus en escalier sur la
- * génération.
+ * classés exigée, et la durée de services et bonifications REQUISE, que le
+ * XXIV, B de l'article 10 de la loi du 14 avril 2023 fixe par dérogation à
+ * L. 13 — pour les deux classements, lus en escalier sur la génération.
  */
 export class AgesCategorieActive {
   constructor(paquet) {
@@ -151,7 +152,8 @@ export class AgesCategorieActive {
 
   /**
    * @returns {{ageOuverture: number, ageAnnulation: number,
-   *            servicesRequis: number, fiabilite: number} | null}
+   *            servicesRequis: number, fiabilite: number,
+   *            dureeRequise: number|null} | null}
    */
   derogation(classement, generation) {
     const generations = this._generations[classement];
@@ -172,6 +174,10 @@ export class AgesCategorieActive {
       ageAnnulation: ligne[1],
       servicesRequis: ligne[2],
       fiabilite: ligne[3],
+      // Durée de services et bonifications propre au classement, « par
+      // dérogation à l'article L. 13 ». Nulle quand la durée de la génération
+      // vaut, ce qui est le cas jusqu'à 1961.
+      dureeRequise: ligne[4] ?? null,
     };
   }
 }

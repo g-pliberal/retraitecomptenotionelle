@@ -372,6 +372,10 @@ class DerogationActive:
     age_annulation: float
     #: Années de services classés sans lesquelles rien de tout cela ne vaut.
     services_requis: float
+    #: Durée de services et bonifications requise, quand le classement en a une
+    #: qui lui soit propre — « par dérogation à l'article L. 13 ». ``None``
+    #: quand la durée de la génération vaut, ce qui est le cas jusqu'à 1961.
+    duree_requise: int | None
     fiabilite: Fiabilite
 
 
@@ -406,6 +410,11 @@ class AgesCategorieActive:
                     age_ouverture=float(ligne["age_ouverture"]),
                     age_annulation=float(ligne["age_annulation"]),
                     services_requis=float(ligne["services_requis_annees"]),
+                    duree_requise=(
+                        int(ligne["duree_requise_trimestres"])
+                        if ligne.get("duree_requise_trimestres", "").strip()
+                        else None
+                    ),
                     fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
                 )
         self._generations = {classement: sorted(valeurs)
@@ -1907,6 +1916,15 @@ class ScenarioActuel:
         La fonction publique a sa propre montée en charge, 2004-2008, lue à
         l'année d'ouverture du droit ; elle passe avant la table par
         génération, qui ne vaut pour elle qu'à compter de 2009.
+
+        ET UN EMPLOI CLASSÉ N'A PAS LA DURÉE DE SA GÉNÉRATION. Le XXIV, B de
+        l'article 10 de la loi du 14 avril 2023 pour l'État, et le II, B de
+        l'article 13 du décret n° 2023-435 pour la CNRACL et le FSPOEIE, fixent
+        « par dérogation à l'article L. 13 » une durée propre aux catégories
+        active et super-active — 169 trimestres des nés de septembre 1966 à
+        1967, 172 dès 1971, et les mêmes marches cinq ans plus tard pour la
+        super-active. Le modèle leur opposait celle des sédentaires, soit
+        jusqu'à trois trimestres de trop.
         """
         requis = periode.duree_requise_trimestres or 160
         if periode.bareme_decote == "fonction_publique":
@@ -1919,6 +1937,9 @@ class ScenarioActuel:
             )
             if transitoire is not None:
                 return transitoire
+        derogation = self._derogation_active(periode, carriere)
+        if derogation is not None and derogation.duree_requise is not None:
+            return derogation.duree_requise, derogation.fiabilite
         if periode.duree_requise_par_generation:
             par_generation = self.durees_requises.trimestres(carriere.generation)
             if par_generation is not None:

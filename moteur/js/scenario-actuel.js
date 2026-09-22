@@ -410,6 +410,14 @@ export class ScenarioActuel {
         return transitoire;
       }
     }
+    // ET UN EMPLOI CLASSÉ N'A PAS LA DURÉE DE SA GÉNÉRATION : le XXIV, B de
+    // l'article 10 de la loi du 14 avril 2023 pour l'État, et le II, B de
+    // l'article 13 du décret n° 2023-435 pour la CNRACL et le FSPOEIE, lui en
+    // fixent une propre « par dérogation à l'article L. 13 ».
+    const derogation = this.derogationActive(periode, carriere);
+    if (derogation !== null && derogation.dureeRequise !== null) {
+      return [derogation.dureeRequise, derogation.fiabilite];
+    }
     if (periode.duree_requise_par_generation) {
       const parGeneration = this.dureesRequises.trimestres(carriere.generation);
       if (parGeneration !== null) {
