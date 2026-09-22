@@ -2711,3 +2711,51 @@ def test_les_cotisants_par_regime_sont_lus_et_projetes():
     with pytest.raises(KeyError):
         cotisants.serie("caisse_inconnue")
 
+
+
+def test_les_coefficients_de_fusion_se_recalculent_depuis_les_valeurs_de_point():
+    """Un changement d'unité n'est pas un nombre à recopier, c'est un quotient.
+
+    `conversions_points.csv` portait pour l'Agirc 0,347798289 alors que son
+    propre commentaire prescrivait le rapport des valeurs de service au
+    31 décembre 2018 — 0,4378 ÷ 1,2588 = 0,347791548. Rien ne recalculait le
+    nombre, donc rien ne voyait l'écart : 1,9 × 10⁻⁵, soit huit centimes par
+    tranche de mille points Agirc sur chaque pension complémentaire du
+    scénario 1. Le calculateur public de la caisse l'a levé le 22 septembre
+    2026 ; ce test le tiendrait sans lui, les deux valeurs de service étant
+    certifiées dans le dépôt.
+
+    Les deux quotients vérifiés ici sont ceux dont les DEUX bornes sont dans
+    `valeurs_point.csv`. Les autres coefficients du fichier ne s'y ramènent
+    pas — la CARMF tient le sien de ses statuts, l'Ircantec vaut un par
+    construction — et leur commentaire le dit.
+    """
+    def valeur_service(regime, annee):
+        chemin = RACINE_DONNEES / "reference" / "regimes" / "valeurs_point.csv"
+        with chemin.open(encoding="utf-8") as f:
+            for ligne in csv.DictReader(l for l in f if not l.startswith("#")):
+                if (ligne["regime"] == regime and int(ligne["annee"]) == annee
+                        and ligne["mesure"] == "valeur_service"):
+                    return float(ligne["valeur"]), ligne["fiabilite"]
+        raise AssertionError(f"valeur de service absente : {regime} {annee}")
+
+    chemin = RACINE_DONNEES / "reference" / "regimes" / "conversions_points.csv"
+    with chemin.open(encoding="utf-8") as f:
+        conversions = {
+            (l["regime"], int(l["annee_effet"])): float(l["coefficient"])
+            for l in csv.DictReader(x for x in f if not x.startswith("#"))
+        }
+
+    # L'Agirc : le point vaut ce que son ancienne valeur de service pèse dans
+    # celle du régime unifié. La caisse publie 437,80 € pour mille points.
+    agirc, fiab_agirc = valeur_service("agirc", 2018)
+    arrco, fiab_arrco = valeur_service("arrco", 2018)
+    assert fiab_agirc == fiab_arrco == "certifiee"
+    # Tolérance : l'unité du dernier chiffre écrit (neuf décimales). L'erreur
+    # que ce test doit attraper valait 6,7 × 10⁻⁶, soit six mille fois plus.
+    assert conversions[("agirc", 2019)] == pytest.approx(agirc / arrco, abs=1e-9)
+    assert 1000 * conversions[("agirc", 2019)] * arrco == pytest.approx(437.80, abs=0.005)
+
+    # L'Arrco garde son point : la valeur de service du régime unifié EST la
+    # sienne, le quotient vaut donc exactement un.
+    assert conversions[("arrco", 2019)] == pytest.approx(1.0, abs=1e-9)

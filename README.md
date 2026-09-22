@@ -377,7 +377,7 @@ print(simulateur.simuler(carriere).tableau())
 | Étalon confronté à une seconde implémentation | Les cinq familles de régimes qu'expose **OpenFisca-France-Pension** — régime général, pension civile (État et CNRACL), Arrco d'avant 2019, Agirc des cadres, Ircantec — sont rejouées sur cinquante-huit profils par ce modèle écrit par d'autres à partir des mêmes textes ; les régimes alignés (MSA des salariés agricoles, artisans, commerçants), qu'il ne modélise pas, se confrontent à l'oracle du régime général, puisque la loi les calcule comme lui. Durée, décote, taux, proratisation, points, prix d'achat et valeur du point concordent, et chaque confrontation a fait trouver des erreurs des deux côtés — chez nous, le barème de décote de la fonction publique lu à l'année de liquidation au lieu de l'année d'ouverture du droit, la montée en charge 2004-2008 de sa durée de services, l'assiette de la tranche B de l'Ircantec et son coefficient d'anticipation |
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait de 12 % sur quarante ans, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
-| Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut 0,347798289 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
+| Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut 0,347791548, le rapport de leurs valeurs de service au 31 décembre 2018 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
 | Portage vérifié, pas cru sur parole | Le site rejoue 469 simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
 
 ---
@@ -1232,7 +1232,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          2070 tests Python
+tests/                          2071 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1281,7 +1281,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->2070<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2071<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

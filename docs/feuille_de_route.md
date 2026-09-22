@@ -13314,3 +13314,66 @@ le résultat d'un calcul qui n'a pas eu lieu.
 `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
 `src/retraite_notionnelle/web/gabarit.py`, `scripts/construire_temoins.py`,
 `tests/test_simulateur.py`, `tests/test_web.py`, `tests/temoins/pages.json`.
+
+### 100. Le calculateur de la caisse corrige le dépôt : un coefficient de fusion faux — `fait`
+
+**Demande.** « Est-ce qu'il y a encore des sites qui étaient bloqués dans
+l'environnement cloud de Claude Code qui peuvent être débloqués par une
+session locale ? » Puis : « fais les 2 » — corriger l'inventaire, et
+dépouiller un simulateur.
+
+**Les huit sources, et ce qui les ouvre.** `data/sources_a_explorer.yaml`
+porte 260 adresses dont huit demandaient un geste. Sondées depuis un poste
+ordinaire : six répondent 200 en simple requête, deux passent au navigateur
+(Cloudflare pour la CRP RATP, Légifrance). Mais le mérite n'est pas au lieu.
+Pour les trois `chaine_incomplete`, ce qui change est le CLIENT : le serveur
+omet l'intermédiaire de son certificat, et un client qui va le chercher par
+l'extension AIA — tout navigateur, et le `curl` de Windows adossé à Schannel
+— le rattrape seul, vérification entière. Pour les deux `git`, `git clone`
+passait déjà. Pour Légifrance, l'index LEGI du dépôt sert le même contenu.
+
+**Et une ligne `ferme` qui ne l'était plus.** Le calculateur Agirc-Arrco était
+classé hors de portée pour certificat EXPIRÉ — constat juste, et
+infranchissable. Or le certificat a été renouvelé le jour même : émis le
+22 septembre 2026, valable jusqu'au 8 avril 2027. La session qui l'avait
+sondé l'a attrapé dans la fenêtre du renouvellement. Plus aucun jeu de
+l'inventaire n'est `ferme`.
+
+**Ce que le calculateur a rendu, et c'est une correction du dépôt.** `calcru`
+n'est pas un simulateur de pension : il convertit des points d'avant 2019 en
+points Agirc-Arrco. C'est donc l'oracle du coefficient de fusion — et il a
+levé une erreur que personne ne relisait.
+
+| | Coefficient Agirc → Agirc-Arrco |
+|---|---|
+| `conversions_points.csv` | 0,347798289 |
+| Son propre commentaire | « le rapport 0,4378 ÷ 1,2588 » |
+| Ce rapport vaut | **0,347791548** |
+| Le calculateur de la caisse affiche | **0,347791548** |
+
+Le fichier se contredisait : le nombre enregistré n'était pas le quotient que
+sa note prescrivait. L'exemple publié par la caisse tranche — 1 000 points
+Agirc valent 437,80 €, ce que le quotient rend à l'euro près et que
+l'ancienne valeur manquait de 8 millièmes. L'écart relatif est de
+1,9 × 10⁻⁵ : il déplace 2 448 valeurs de témoins, toutes des pensions
+complémentaires du scénario 1, et l'écart maximal mesuré sur les témoins est
+exactement celui du coefficient — la correction ne fait rien d'autre.
+
+**Le garde-fou, qui est le vrai résultat.** L'erreur a vécu parce que RIEN NE
+RECALCULAIT le nombre, alors que ses deux bornes sont dans le dépôt,
+certifiées : les valeurs de service Agirc et Arrco de 2018.
+`test_les_coefficients_de_fusion_se_recalculent_depuis_les_valeurs_de_point`
+refait le quotient et vérifie l'exemple de la caisse ; vérifié qu'il rejette
+bien l'ancienne valeur. Un changement d'unité n'est pas un nombre à recopier.
+
+**Ce qui reste.** Les trois parcours du GIP Union Retraite (liste des
+simulateurs, retraite progressive, expatriation) sont joignables et non
+dépouillés — l'expatriation vise une limite que `docs/limites.md` déclare
+hors modèle. Et l'en-tête de `tests/temoins/exemples_officiels.yaml` affirme
+encore qu'« aucun simulateur officiel n'est automatisable », ce que l'action
+89 a démenti : à reprendre avec le premier oracle qui donnera une pension.
+
+**Fichiers.** `data/reference/regimes/conversions_points.csv`,
+`data/sources_a_explorer.yaml`, `tests/test_donnees.py`, et les fichiers
+fabriqués : `moteur/donnees.json`, `data/derive/equilibre.json`,
+`tests/temoins/simulations.json`, `tests/temoins/pages.json`.

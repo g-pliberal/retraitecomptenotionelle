@@ -62,10 +62,20 @@
 #     service du régime unifié a été fixée au 1er janvier 2019 à celle de
 #     l'Arrco au 31 décembre 2018, soit 1,2588 €.
 #
-#   agirc -> agirc_arrco, 2019 — même accord : coefficient 0,347798289, égal au
+#   agirc -> agirc_arrco, 2019 — même accord : coefficient 0,347791548, égal au
 #     rapport des valeurs de service de l'Agirc et de l'Arrco au 31 décembre
 #     2018 (0,4378 ÷ 1,2588). C'est le coefficient que les caisses ont appliqué
 #     et qui figure sur les relevés de carrière.
+#     CETTE LIGNE PORTAIT 0,347798289, QUI N'EST PAS CE QUOTIENT. La phrase
+#     ci-dessus prescrivait déjà le bon calcul — 0,4378 ÷ 1,2588 = 0,347791548 —
+#     et le nombre enregistré à côté n'était pas lui : une transcription fautive
+#     à la sixième décimale, que rien ne recalculait. Elle valait 1,9 × 10⁻⁵ en
+#     relatif, soit 8 centimes de trop par tranche de 1 000 points Agirc.
+#     L'oracle qui l'a levée est le calculateur public de la caisse elle-même
+#     (`espace-personnel.agirc-arrco.fr/public/calcru`, lu le 22 septembre
+#     2026) : il affiche 1000 × 0,347791548 = 347,79 points, puis 437,80 € —
+#     le montant officiel, que le quotient rend à l'euro près et que l'ancienne
+#     valeur manquait de 8 millièmes d'euro (437,8085 €).
 #
 #   ipacte -> ircantec et igrante -> ircantec, 1971 — la création de l'Ircantec
 #     par le décret du 23 décembre 1970 réunit l'IPACTE et l'IGRANTE sans
@@ -94,7 +104,7 @@ regime,annee_effet,successeur,coefficient,fiabilite
 arrco,1999,,0.387464,haute
 unirs,1999,arrco,0.387464,haute
 arrco,2019,agirc_arrco,1.000000,haute
-agirc,2019,agirc_arrco,0.347798289,haute
+agirc,2019,agirc_arrco,0.347791548,haute
 ipacte,1971,ircantec,1.000000,moyenne
 igrante,1971,ircantec,1.000000,moyenne
 rco_artisans,2013,rci,0.277800,haute
