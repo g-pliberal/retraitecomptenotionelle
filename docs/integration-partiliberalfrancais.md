@@ -270,11 +270,13 @@ Ce que l'hôte n'a **pas** besoin de connaître, et ne doit pas citer :
 
 1. `/retraite/` s'ouvre, affiche le programme, et le pied de page porte le
    lien « Parti libéral français » qui ramène à la racine du site. Le bandeau
-   de tête tient sur une rangée au large : le nom du simulateur, puis les
-   neuf onglets.
-2. `/retraite/#/simuler` ouvre le formulaire ; « Calculer les six scénarios »
-   affiche six montants et fait défiler jusqu'à eux.
-3. L'adresse d'exemple ci-dessus, collée dans la barre, affiche six scénarios
+   de tête porte le nom du simulateur, puis les onglets de l'électeur
+   — Programme, Simuler, Coût, Pourquoi changer, Partager — et, derrière
+   l'étiquette « Pour vérifier », en plus petit, les cinq pages qui prouvent.
+2. `/retraite/#/simuler` ouvre le formulaire ; « Calculer les quatre
+   systèmes » affiche le résumé « En bref » puis les quatre montants, et fait
+   défiler jusqu'à eux.
+3. L'adresse d'exemple ci-dessus, collée dans la barre, affiche quatre systèmes
    sans passer par le formulaire ; recharger la page les réaffiche ; le bouton
    « précédent » du navigateur revient au formulaire.
 4. Sur un téléphone (ou une fenêtre de 390 px) : pas de défilement

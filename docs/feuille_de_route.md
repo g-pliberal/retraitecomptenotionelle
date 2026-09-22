@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 755<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 953<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 100<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13877,7 +13877,7 @@ bénéficiaires et 20,8 ans d'avance.
 **Fichiers.** `docs/limites.md`, `src/retraite_notionnelle/scenarios/actuel.py`
 (docstring).
 
-### 107. L'électeur perdu : la réponse avant l'explication — `en cours`
+### 107. L'électeur perdu : la réponse avant l'explication — `fait`
 
 **Demande.** « J'aimerais que le site soit plus compréhensible. Actuellement,
 ce n'est pas très aisé pour un électeur de s'y retrouver. Il faut que
@@ -13931,10 +13931,66 @@ La page de résultats compte moins de mots qu'avant, résumé compris : 1 026 au
 lieu de 1 043. Aucun chiffre du modèle n'a bougé ; seuls les témoins des pages
 ont changé, et le portage JavaScript les rend au caractère près.
 
-**Fichiers.** `src/retraite_notionnelle/web/pages.py` et `web/gabarit.py`,
-`moteur/js/pages.js`, `moteur/style.css`, `tests/test_web.py`,
-`tests/temoins/pages.json`.
+**Deuxième geste : l'accueil répond aux questions de l'électeur.** Une
+section « Vos questions », entre le tableau qui oppose les deux systèmes et
+l'appel à vérifier : onze questions dans ses mots, chacune repliée sur trois ou
+quatre phrases — ma retraite va-t-elle baisser, je suis déjà retraité, que
+deviennent mes trimestres, à quel âge partir, ma fiche de paie, les petites
+retraites, si je meurs, la Bourse, les fonctionnaires, le coût, la fiabilité
+des chiffres. Les réponses ne disent que ce que le site établit ailleurs, et
+renvoient à la preuve : vers une autre page par un lien, vers un dépliant de
+l'accueil par `data-vers` — les neuf dépliants de « Pour aller plus loin » ont
+reçu un identifiant pour cela. La phrase en gras de chacune est au catalogue
+des affirmations, sous le contrôle qui tient déjà la même affirmation ailleurs
+; une seule en demandait un nouveau.
 
+- *La première réponse est celle qui coûte* : « Le plus souvent, elle sera
+  plus basse que ce que le système actuel promet. » Le simulateur le montre en
+  trois clics ; le taire ici aurait fait lire le reste comme une réclame. Le
+  contrôle `proposition_le_plus_souvent_sous_la_promesse` le vérifie sur la
+  grille des carrières types — plus de la moitié des cases négatives —, et
+  tombera le jour où ce ne sera plus vrai.
+- *Le retraité apprend ce que l'étape 2 du programme disait dans un tableau
+  replié* : sa pension serait recalculée sur ce qui a été cotisé, revalorisée
+  ensuite sur les prix, complétée par la garantie s'il le faut — une avance,
+  reprise sur la succession.
+- *La carte « 18 % + 5 % »* part du taux d'aujourd'hui, 28 % employeur compris,
+  puis dit où vont ses points : 18 pour la retraite de tous, 5 placés à votre
+  nom, 5 rendus sur le salaire. Elle alignait trois pourcentages avant le
+  repère qui permet de les lire.
+- *L'ASPA est nommée* « le minimum vieillesse » là où elle paraît sur l'accueil.
+
+La liste se parcourt du regard et ne coûte rien au budget de lecture : 454 mots
+de prose ouverte, pour 470.
+
+**Troisième geste : le bandeau, en deux voix.** Programme, Simuler, Coût,
+Pourquoi changer, Partager restent des onglets ; Cumul versé, Carrières types,
+Droits non cotisés, Méthode et Sources passent derrière une étiquette qui se
+voit, « Pour vérifier », en casse normale et plus petits. Sur un ordinateur de
+1 280 points, le bandeau garde sa hauteur ; sur un téléphone, le groupe prend
+sa rangée sous un filet. Les pages ont pris le nom de leur onglet, sur-titre et
+titre du navigateur compris : « Risque » devient « Pourquoi changer »,
+« Avantages » — que l'électeur lisait comme les avantages de la réforme —
+« Droits non cotisés », « Trajectoire » « Cumul versé », « Cas types »
+« Carrières types », « Données » « Sources ». Les adresses ne changent pas.
+
+**Trois liens menaient à l'accueil sans le dire.** `#/methode/` et
+`#/donnees/`, avec une barre de trop, depuis l'accueil et depuis les résultats
+: le routeur ne connaît pas ces routes et rend le programme. Deux tests tiennent
+désormais tout le site : un lien interne mène à une route qui existe, et un
+`data-vers` vise une section présente sur la page qu'il désigne.
+
+**Ce qui n'a pas bougé.** Aucun chiffre du modèle ; le nom du site, « Retraite
+à comptes notionnels », que l'accueil explique dès sa première phrase et que le
+site parent affiche dans son propre onglet ; les systèmes 2 et 3 sur la page de
+résultats, que l'action 63 a nommés à la demande de l'utilisateur, et que la
+clé de lecture présente maintenant pour ce qu'ils sont.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py` et `web/gabarit.py`,
+`moteur/js/pages.js` et `moteur/js/gabarit.js`, `moteur/style.css`,
+`data/reference/site/affirmations.yaml`, `tests/test_web.py`,
+`tests/test_affirmations.py`, `tests/temoins/pages.json`, `README.md`,
+`docs/integration-partiliberalfrancais.md`.
 
 ### 108. Le premier vrai relevé, et les six défauts qu'il a trouvés — `fait`
 

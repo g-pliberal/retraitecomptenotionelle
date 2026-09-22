@@ -2069,14 +2069,14 @@ export const DESCRIPTIONS = {
 export const TITRES = {
   "/": "Programme",
   "/simuler": "Simuler",
-  "/trajectoire": "Trajectoire",
-  "/cas-types": "Cas types",
   "/cout": "Coût",
-  "/risque": "Risque",
-  "/avantages": "Avantages",
-  "/methode": "Méthode",
-  "/donnees": "Données",
+  "/risque": "Pourquoi changer",
   "/partager": "Partager",
+  "/trajectoire": "Cumul versé",
+  "/cas-types": "Carrières types",
+  "/avantages": "Droits non cotisés",
+  "/methode": "Méthode",
+  "/donnees": "Sources",
 };
 
 /**
@@ -3536,7 +3536,7 @@ function trajectoire(contexte, comparaison, saisie) {
  */
 function pageTrajectoire(contexte, parametres) {
   const tete = g.affiche(
-    "Trajectoire",
+    "Le cumul versé",
     "Ce que chaque système vous "
     + '<span class="cle-texte">aura versé.</span>',
     "La même carrière, suivie année après année depuis le départ. Pas une "
@@ -4013,7 +4013,7 @@ jeunes », alors que « les prestations des retraités et de ceux proches de la
 retraite sont habituellement protégées » (McHale, 1999). Rogner toutes les
 pensions du même taux, comme fait le troisième chiffre, est donc la version
 DOUCE : dans les réformes observées, ce sont ceux qui n'ont pas encore liquidé
-qui ont payé. <a href="${g.lien("/risque")}">La page Risque</a> rassemble ce que
+qui ont payé. <a href="${g.lien("/risque")}">La page « Pourquoi changer »</a> rassemble ce que
 la recherche en sait.</p>
 
 ${detail}
@@ -5615,8 +5615,8 @@ ${echapper(dateEnClair(pilier.date_courbe))} et publiée par la Banque centrale
 européenne ; les versements des années suivantes emploient les taux à terme
 que cette même courbe implique. Les frais partent des moyennes 2025 du marché
 des plans d'épargne retraite individuels, mesurées par l'Observatoire des
-produits d'épargne financière, et baissent ensuite par paliers. La page <a href="${g.lien("/methode/")}">Méthode</a>
-dit ce que ces choix supposent, et la page <a href="${g.lien("/donnees/")}">Données</a>
+produits d'épargne financière, et baissent ensuite par paliers. La page <a href="${g.lien("/methode")}">Méthode</a>
+dit ce que ces choix supposent, et la page <a href="${g.lien("/donnees")}">Sources</a>
 d'où ils viennent. Fiabilité de ce compartiment :
 <span class="etiquette-fiabilite">${echapper(g.fiabiliteEnClair(nomFiabilite(pilier.fiabilite)))}</span>, le
 barème de frais étant saisi, confronté au rapport à la main et non recontrôlé
@@ -6383,7 +6383,7 @@ function casTypes(contexte, regards = null) {
   );
 
   const tete = g.affiche(
-    "Cas types",
+    "Carrières types",
     'Treize carrières, <span class="cle-texte">sept générations.</span>',
     "Chaque case dit ce que la pension deviendrait, par rapport à "
     + "aujourd'hui, pour la même carrière. <strong>Rouge : moins "
@@ -6698,7 +6698,7 @@ ${avantages.annee}, soit
 ${g.pourcentage(avantages.gratuit / avantages.observee, false, 1)} de la
 dépense vieillesse-survie (${milliards(avantages.observee, 1)}, un périmètre
 plus large que les cartes).
-<a href="${g.lien("/avantages")}">La page Avantages</a> les détaille.</div>
+<a href="${g.lien("/avantages")}">Le détail, dispositif par dispositif</a>.</div>
 `;
   }
 
@@ -7117,7 +7117,7 @@ le droit de l'époque disait à l'heure.`,
     carteFrise + carteCout + carteAge + carteVersement + detail, "/avantages");
 
   const tete = g.affiche(
-    "Les avantages",
+    "Les droits non cotisés",
     'Ce que la retraite verse <span class="cle-texte">sans que personne '
     + "l'ait cotisé.</span>",
     "Un compte notionnel ne sert que ce qui a été versé. Le système actuel "
@@ -7534,7 +7534,7 @@ ${g.tableau(
 les comptes de la protection sociale et l'enquête de la DREES auprès des
 caisses, les autres calculées sur la grille de cas types, et les dispositifs
 que ni l'un ni l'autre ne mesurent restent sans chiffre.
-<a href="${g.lien("/avantages")}">La page Avantages</a> les nomme un par un,
+<a href="${g.lien("/avantages")}">La page des droits non cotisés</a> les nomme un par un,
 dit d'où vient chaque montant et pourquoi une case reste vide.</p>
 `;
   }
@@ -9823,7 +9823,7 @@ lui depuis les rapports à la Commission des comptes de la Sécurité sociale ; 
 tout ce qui passe par un rapport de masses est <strong>estimé</strong>, sans
 pouvoir être autre chose — aucune institution ne publie ce qu'aurait coûté un
 système qui n'a pas existé. Tout est détaillé sur la page
-<a href="${g.lien("/donnees")}">Données</a>.</p>
+<a href="${g.lien("/donnees")}">Sources</a>.</p>
 `, "cout-sources");
 }
 
@@ -10140,7 +10140,7 @@ pension, à VOTRE date de départ, est sur
   const plan = g.plan(cartePrelevement + cartePromesse + detail, "/risque");
 
   const tete = g.affiche(
-    "Le risque",
+    "Pourquoi changer",
     "Ce que la retraite vous prend, "
     + '<span class="cle-texte">et ce qu\'elle ne rendra pas.</span>',
     `${g.euros(verseMensuel)} par mois prélevés sur un salaire moyen, `
@@ -11229,7 +11229,7 @@ les tests.</p>
 <p>Les données que le site charge sont produites par un script à partir des
 mêmes fichiers que le modèle, et un test refuse un paquet périmé. Les séries
 sont recontrôlées contre le fichier de l'institution qui les produit — la
-page <a href="${g.lien("/donnees")}">Données</a> dit lesquelles, et à quelle
+page <a href="${g.lien("/donnees")}">Sources</a> dit lesquelles, et à quelle
 date.</p>
 <p class="discret"><a href="${g.DEPOT}">Le dépôt</a> ·
 <a href="${g.DEPOT}/blob/main/README.md">ce qu'il contient, et combien de tests
@@ -11631,7 +11631,7 @@ citation de la source : chaque valeur du dépôt porte la sienne dans
     + depliantSources + depliantReutilisation;
 
   const tete = g.affiche(
-    "Les données",
+    "Les sources",
     "Rien ici n'est "
     + '<span class="cle-texte">à croire sur parole.</span>',
     "Chaque série est recontrôlée, automatiquement, contre le fichier de "
@@ -11747,7 +11747,7 @@ taux, sa durée exigée et son minimum.</p>
   des réformes (1993, 2003, 2010, 2014, 2023), qui déplacent chaque fois
   l'effort sur ceux qui n'ont pas encore pris leur retraite.
   <a href="${g.lien("/cout")}">Le solde est ici</a>.</li>
-</ul>`);
+</ul>`, "pourquoi-changer");
 
   const depliantCalcul = g.depliant("Comment une pension serait calculée", `
 <p>Un compte notionnel est un compte <em>virtuel</em> : aucun capital n'est
@@ -11768,7 +11768,7 @@ d'âge du ${g.terme("taux plein")}, ni ${g.terme("décote")}, ni
 ${g.terme("surcote")} : partir plus tôt donne une pension
 plus faible, partir plus tard une pension plus forte, dans le rapport exact de
 ce que l'un et l'autre coûtent.
-<a href="${g.lien("/methode")}">Le détail du calcul</a>.</p>`);
+<a href="${g.lien("/methode")}">Le détail du calcul</a>.</p>`, "le-calcul");
 
   const depliantVerifier = g.depliant("Tout vérifier, page par page", `
 <div class="note signee">
@@ -11785,21 +11785,25 @@ pas discuter.</p>
 <ul class="serree">
   <li><a href="${g.lien("/simuler")}">Simuler</a> : votre carrière, ou votre
   relevé collé tel quel, sous les quatre systèmes.</li>
-  <li><a href="${g.lien("/cas-types")}">Cas types</a> : treize carrières sur sept
-  générations.</li>
   <li><a href="${g.lien("/cout")}">Coût</a> : ce qui rentre, ce qui sort, et ce
   qui manque, de 1959 à 2070.</li>
-  <li><a href="${g.lien("/risque")}">Risque</a> : votre retraite sera-t-elle
-  payée, et ce que la recherche en sait.</li>
+  <li><a href="${g.lien("/risque")}">Pourquoi changer</a> : votre retraite
+  sera-t-elle payée, et ce que la recherche en sait.</li>
+  <li><a href="${g.lien("/trajectoire")}">Cumul versé</a> : ce que chaque système
+  vous aura versé, du départ jusqu'à 105 ans.</li>
+  <li><a href="${g.lien("/cas-types")}">Carrières types</a> : treize carrières sur
+  sept générations.</li>
+  <li><a href="${g.lien("/avantages")}">Droits non cotisés</a> : ce que la retraite
+  verse sans cotisation, dispositif par dispositif.</li>
   <li><a href="${g.lien("/methode")}">Méthode</a> : ce que le modèle calcule, et
   ce qu'il supprime.</li>
-  <li><a href="${g.lien("/donnees")}">Données</a> : l'état de fiabilité de chaque
+  <li><a href="${g.lien("/donnees")}">Sources</a> : l'état de fiabilité de chaque
   série, source par source.</li>
 </ul>
 <p class="discret">Le modèle, les données et cette page sont publiés sous
 licence libre : <a href="${g.DEPOT}">le dépôt</a>. Solde du système de retraite
 en ${anneeSolde} :
-${g.pourcentage(comptes.solde(anneeSolde), true, 2)} du PIB.</p>`);
+${g.pourcentage(comptes.solde(anneeSolde), true, 2)} du PIB.</p>`, "tout-verifier");
 
   // Les trois gestes du calcul. Ils étaient au format du texte courant, et se
   // lisaient comme une note de bas de page à côté du tableau qui leur fait
@@ -11843,8 +11847,9 @@ ${engagements(contexte)}
   <div class="encadre">
     <h2 class="serif" style="margin-top:0">Le plancher regarde chacun, pas le
     couple</h2>
-    <p>Aujourd'hui, l'ASPA regarde les ressources du couple : à 300 € et
-    1 500 € de pension, il ne reçoit rien. La garantie regarde chacun :</p>
+    <p>Aujourd'hui, le minimum vieillesse (l'ASPA) regarde les ressources du
+    couple : à 300 € et 1 500 € de pension, il ne reçoit rien. Notre garantie
+    regarde chacun :</p>
     ${tableauGarantie()}
   </div>
 </div>
@@ -11853,6 +11858,8 @@ ${engagements(contexte)}
 ${differences}
 <p class="discret">C'est le système de la Suède, de l'Italie, de la Pologne et
 de la Lettonie.</p>
+
+${programmeQuestions(contexte)}
 
 <div class="creme">
 <p class="surtitre">Vérifiez plutôt que de nous croire</p>
@@ -11877,6 +11884,134 @@ ${programmeBlocages(contexte)}
 
 ${depliantVerifier}
 `;
+}
+
+/**
+ * Les questions qu'un électeur pose, et la réponse en quelques lignes.
+ *
+ * L'accueil exposait le programme dans l'ordre de celui qui l'a écrit ;
+ * l'électeur arrive avec d'autres questions, dans un autre ordre. Chaque
+ * réponse ne dit que ce que le site établit ailleurs : la phrase en gras est au
+ * catalogue des affirmations, le lien de fin mène à la preuve, et rien n'y est
+ * simulé. Voir `_programme_questions` dans `web/pages.py`.
+ */
+function programmeQuestions(contexte) {
+  const base = contexte.base;
+  const regimes = contexte.simulateur().catalogue.taille;
+  const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
+  const capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
+  const volontaire = g.pourcentage(tauxCapitalisationVolontaireApplique(base),
+    false, 0);
+  const impose = g.pourcentage(base.taux_cotisation_liberal
+    + base.taux_capitalisation_obligatoire, false, 0);
+  const aujourdHui = g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0);
+  const garantie = g.euros(base.garantie_vieillesse_mensuelle);
+  const seul = g.euros(base.garantie_vieillesse_mensuelle
+    + base.allocation_isolement_mensuelle);
+  const age = AGE_OUVERTURE_GARANTIE;
+
+  // Les renvois. Vers une autre page, un lien ; vers un dépliant de celle-ci,
+  // `data-vers`, que le script d'index.html ouvre sans toucher à la route.
+  const vers = (section, texte) => `<a href="${g.lien("/")}" data-vers="${section}">${texte}</a>`;
+  const simulateur = `<a href="${g.lien("/simuler")}">le simulateur</a>`;
+  const calcul = vers("le-calcul", "Le calcul, en trois gestes");
+  const plancher = vers("le-plancher", "Le plancher en détail");
+  const veuve = vers("le-plancher", "Ce que cela change pour une veuve");
+  const capitalisation = vers("la-part-capitalisee", "La part capitalisée en détail");
+  const blocages = vers("les-blocages", "« Ce qui pouvait nous arrêter »");
+  const cout = `<a href="${g.lien("/cout")}">La page Coût</a>`;
+  const sources = `<a href="${g.lien("/donnees")}">D'où viennent les chiffres</a>`;
+
+  // La CSG rendue n'existe que si la proposition rend une part des impôts
+  // qu'elle cesse d'affecter : la phrase se tait sinon, comme le dépliant.
+  let csg = "";
+  const restitution = contexte.restitution();
+  if (restitution && restitution.partRendue > 0) {
+    const points = restitution.annuelle(base.annee_bascule).pointsCsg;
+    if (points > 0) {
+      csg = `, et la CSG baisse de ${g.nombre(points * 100, 2)} point`;
+    }
+  }
+
+  const questions = [
+    ["Ma retraite va-t-elle baisser ?", `
+<p><strong>Le plus souvent, elle sera plus basse que ce que le système actuel
+promet.</strong> Elle vaudra ce que vous aurez cotisé, alors que le système
+actuel promet davantage que ce que les cotisations paient, et que ses recettes
+ne suffisent déjà plus à tenir cette promesse. En échange, un salarié du privé
+cotise ${impose} au lieu de ${aujourdHui}, et son salaire net augmente. Pour
+votre carrière, ${simulateur} met les deux montants côte à côte, avec ce que
+chacun des deux systèmes a vraiment de quoi payer.</p>`],
+    ["Je suis déjà à la retraite : qu'est-ce qui change pour moi ?", `
+<p><strong>Votre pension serait recalculée sur ce qui a été réellement
+cotisé</strong>, depuis la première cotisation : ce que le système actuel
+ajoute sans cotisation n'est plus servi. Elle reste ensuite revalorisée sur les
+prix. Si elle est modeste, la garantie vieillesse la complète à partir de ${age}
+ans, jusqu'à ${seul} par mois pour qui vit seul et ${garantie} chacun en couple ;
+c'est une avance, reprise sur la succession. Pour votre cas, choisissez « à la
+retraite » dans ${simulateur}.</p>`],
+    ["Que deviennent mes trimestres et mes points ?", `
+<p><strong>Toute votre carrière est recalculée depuis la première
+cotisation</strong>, comme si le compte avait toujours existé. Chaque
+cotisation versée, la vôtre et celle de votre employeur, y est inscrite, puis
+revalorisée chaque année au rythme des salaires. Trimestres et points
+disparaissent, et avec eux les droits qu'aucune cotisation n'a payés :
+trimestres gratuits, majorations, minimums. ${calcul}.</p>`],
+    ["À quel âge pourrai-je partir ?", `
+<p>C'est vous qui choisissez, au-dessus d'un âge minimum. Il n'y a plus d'âge
+du taux plein, ni décote, ni surcote : <strong>partir plus tôt donne une pension
+plus faible, partir plus tard une pension plus forte</strong>, dans le rapport
+exact de ce que cela coûte. La garantie vieillesse, elle, n'est versée qu'à
+partir de ${age} ans.</p>`],
+    ["Qu'est-ce qui change sur ma fiche de paie ?", `
+<p>Pour un salarié du privé, la cotisation retraite passe de ${aujourdHui} du
+salaire brut, employeur compris, à ${impose} : ${taux} pour la retraite de tous,
+${capitalise} épargnés à votre nom. <strong>Les ${volontaire} d'écart vous
+reviennent en salaire</strong>${csg}. Libre à vous d'épargner aussi ces
+${volontaire} : ${simulateur} montre ce qu'ils vous rapporteraient, et ce qu'il
+vous reste alors chaque mois.</p>`],
+    ["Et les petites retraites ?", `
+<p>Les quatre minimums d'aujourd'hui sont remplacés par <strong>une garantie
+unique, calculée pour chacun</strong>, sans regarder les ressources du
+conjoint : ${seul} par mois pour une personne seule, ${garantie} chacun en
+couple, à partir de ${age} ans, payés par l'impôt. C'est une avance, reprise sur
+la succession sans que les héritiers paient jamais de leur poche.
+${plancher}.</p>`],
+    ["Et si je meurs ? Et mon conjoint ?", `
+<p>Si vous mourez avant votre retraite, <strong>le capital de votre épargne
+retraite revient à vos héritiers</strong>, en entier. La pension de
+répartition, elle, s'éteint avec vous, et notre système ne sert pas de pension
+de réversion : chacun reçoit ce qu'il a cotisé. Pour un conjoint survivant aux
+ressources modestes, c'est la garantie vieillesse qui prend le relais.
+${veuve}.</p>`],
+    ["Mon argent sera-t-il placé en Bourse ?", `
+<p><strong>Non.</strong> La retraite reste une retraite par répartition : les
+cotisations de l'année paient les pensions de l'année, et rien n'est placé.
+Seule l'épargne à votre nom l'est (${capitalise}, et ce que vous y ajoutez), sur
+des titres d'État parmi les mieux notés de la zone euro, gardés jusqu'à leur
+échéance : aucune action, aucun pari. ${capitalisation}.</p>`],
+    ["Et les fonctionnaires, les régimes spéciaux ?", `
+<p>Ils rejoignent le même compte, au même taux que tout le monde :
+<strong>à cotisation égale, pension égale</strong>, quel que soit le statut, et
+les ${regimes} barèmes d'aujourd'hui disparaissent. L'État cotisera ${taux} comme
+tout employeur ; la moitié de ce qu'il cesse de verser ira au traitement de ses
+agents, l'autre moitié aux pensions déjà promises.</p>`],
+    ["Combien cela coûte-t-il, et qui paie ?", `
+<p>Baisser la cotisation à ${taux} a un prix : pendant la transition, la
+proposition encaisse moins qu'elle ne verse, et son déficit dépasse celui du
+système actuel. ${cout} le chiffre année par année, garantie vieillesse
+comprise ; le dépliant ${blocages} dit ce que nous en faisons.</p>`],
+    ["Ces chiffres sont-ils fiables ?", `
+<p>Ils viennent des institutions publiques (INSEE, Conseil d'orientation des
+retraites, caisses de retraite), et un programme les recontrôle contre leur
+source. Le modèle est public : chacun peut le relire et le refaire tourner. Il
+ne vaut pas relevé de carrière pour autant : pour vos droits, seule votre
+caisse fait foi, sur <a href="https://www.info-retraite.fr/">info-retraite.fr</a>.
+${sources}.</p>`],
+  ];
+  return "<h2>Vos questions</h2>\n" + questions
+    .map(([question, reponse]) => g.depliant(question, reponse))
+    .join("\n");
 }
 
 /**
@@ -11923,7 +12058,7 @@ sans que personne ne l'ait voté.</p>
   devraient financer.</li>
   <li><strong>L'écart se solde chaque année</strong>, au lieu de s'accumuler en
   silence jusqu'à la réforme suivante.</li>
-</ul>`);
+</ul>`, "plus-juste");
 }
 
 /**
@@ -11979,16 +12114,17 @@ function engagements(contexte) {
     [`${taux} + ${capitalise}`,
       "de cotisation : la répartition, "
       + '<strong class="cle-texte">plus un capital à votre nom</strong>.',
-      `${taux} au compte de retraite — part salariale et patronale `
-      + "additionnées, contre "
-      + `${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} aujourd'hui `
+      // Le taux d'aujourd'hui D'ABORD, puis ce que deviennent ses points :
+      // 18 + 5 + 5. Voir `_engagements` en Python.
+      `Aujourd'hui, ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} du `
+      + "salaire brut d'un salarié du privé, employeur compris "
       + `(${g.pourcentage(TAUX_ACTUEL_SALARIAL, false, 1)} + `
-      + `${g.pourcentage(TAUX_ACTUEL_PATRONAL, false, 1)} pour un salarié du privé), `
-      + 'et <strong class="cle-texte">le même taux pour tout le monde</strong>. '
-      + `Par-dessus, ${capitalise} placés sur des titres sans risque, `
-      + '<strong class="cle-texte">qui vous appartiennent</strong> et se '
-      + `transmettent. Restent ${volontaire} rendus : le simulateur montre ce `
-      + "qu'ils donnent si vous les placez au même endroit, "
+      + `${g.pourcentage(TAUX_ACTUEL_PATRONAL, false, 1)}). Demain, `
+      + '<strong class="cle-texte">le même taux pour tout le monde</strong> : '
+      + `${taux} pour la retraite de tous, ${capitalise} placés sans risque à `
+      + 'votre nom, <strong class="cle-texte">qui vous appartiennent</strong> '
+      + `et se transmettent, et ${volontaire} rendus sur votre salaire. Le `
+      + "simulateur montre ce qu'ils donnent si vous les épargnez aussi, "
       + '<strong class="cle-texte">à effort inchangé</strong>.'],
     ["1 compte",
       '<strong class="cle-texte">en euros</strong>, lisible par tous.',
@@ -12202,7 +12338,7 @@ La garantie regarde chacun, et sert 500 € au premier. C'est ce changement
 d'assiette, plus que le montant, qui fait la différence pour les femmes aux
 pensions les plus faibles.
 <a href="${g.lien("/cout")}">Ce qu'elle coûterait</a> est calculé sur la
-distribution réelle des pensions, non sur des cas types.</p>`);
+distribution réelle des pensions, non sur des cas types.</p>`, "le-plancher");
 }
 
 /**
@@ -12260,8 +12396,9 @@ toucheriez sans.</p>
 </ul>
 <p>Ce que cela coûte est chiffré : l'enveloppe prélève des frais, et le
 simulateur les montre euro par euro, comme il montre le rendement qui reste. La
-page <a href="${g.lien("/methode/")}">Méthode</a> dit à quels
+page <a href="${g.lien("/methode")}">Méthode</a> dit à quels
 taux l'argent est placé, d'où ils viennent et ce qu'ils supposent.</p>`,
+    "la-part-capitalisee",
   );
 }
 
@@ -12313,7 +12450,8 @@ function programmeTransition(contexte) {
 <p>La bascule recalcule tout, depuis la première cotisation.</p>
 ${etapes}
 <p>Après la bascule, un seul régime : départ possible à
-${age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>`);
+${age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>`,
+  "la-transition");
 }
 
 
@@ -12381,6 +12519,7 @@ employeur, et la moitié de ce qu'il cesse de verser ira au traitement des
 agents ; l'autre moitié paiera les pensions déjà promises, qui restent dues.
 C'est la seule augmentation de traitement que ce programme contienne, et elle
 n'est pas petite.</p>`,
+    "les-impots",
   );
 }
 
@@ -12450,5 +12589,6 @@ function programmeBlocages(contexte) {
   return g.depliant("Ce qui pouvait nous arrêter, et ce que nous en avons fait", `
 <p>Nous avons cherché ce qui arrêterait cette proposition avant de la défendre. Voici les cinq points, ce que nous avons mesuré, et ce que nous en faisons.</p>
 ${points}
-<p class="discret">Mesures des 20 et 21 septembre 2026, par trois scripts du dépôt : le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective. Cette page ne les recalcule pas ; leur détail, décision par décision, est dans la feuille de route du <a href="${g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a>.</p>`);
+<p class="discret">Mesures des 20 et 21 septembre 2026, par trois scripts du dépôt : le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective. Cette page ne les recalcule pas ; leur détail, décision par décision, est dans la feuille de route du <a href="${g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a>.</p>`,
+  "les-blocages");
 }

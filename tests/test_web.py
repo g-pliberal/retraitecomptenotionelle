@@ -5617,6 +5617,83 @@ def test_aucun_lien_ne_remplace_la_route_par_une_ancre(contexte):
         assert not ancres, f"{chemin} : {ancres}"
 
 
+def test_tout_lien_interne_mene_a_une_page_qui_existe(contexte):
+    """Un lien vers « #/methode/ » ne mène pas à la page Méthode : le routeur
+    ne connaît pas cette route, et rend l'accueil. Trois liens du site
+    portaient cette barre de trop — vers Méthode depuis l'accueil et depuis
+    les résultats, vers les sources depuis les résultats —, et l'électeur qui
+    les suivait revenait au programme sans comprendre pourquoi."""
+    pages = [("/simuler", SIMULATION_TEMOIN)] + [(chemin, {}) for chemin in TITRES]
+    for chemin, parametres in pages:
+        corps = g.entete(chemin) + rendre(contexte, chemin, parametres)[1]
+        for cible in re.findall(r'href="#(/[^"?]*)', corps):
+            assert cible in TITRES, f"{chemin} : lien vers {cible!r}, route inconnue"
+
+
+def test_chaque_renvoi_vise_une_section_qui_existe(contexte):
+    """``data-vers`` ouvre une section sans toucher à la route : une cible
+    absente laisse le lien agir en lien ordinaire, et le lecteur arrive en
+    haut d'une page au lieu de la section promise. La cible est cherchée sur
+    la page que le lien désigne — la même, le plus souvent ; celle de Coût
+    quand Carrières types renvoie au coefficient d'équilibre."""
+    pages = [("/simuler", SIMULATION_TEMOIN)] + [(chemin, {}) for chemin in TITRES]
+    rendues = {}
+    for chemin, parametres in pages:
+        corps = rendre(contexte, chemin, parametres)[1]
+        rendues.setdefault(chemin, corps)
+        for route, cible in re.findall(
+                r'href="#(/[^"?]*)[^"]*" data-vers="([^"]+)"', corps):
+            destination = corps if route == chemin else rendues.setdefault(
+                route, rendre(contexte, route, {})[1])
+            assert f'id="{cible}"' in destination, (
+                f"{chemin} : section {cible!r} absente de {route}")
+
+
+#: Les questions de l'accueil, dans l'ordre où elles s'y posent.
+QUESTIONS_DE_L_ELECTEUR = (
+    "Ma retraite va-t-elle baisser ?",
+    "Je suis déjà à la retraite : qu'est-ce qui change pour moi ?",
+    "Que deviennent mes trimestres et mes points ?",
+    "À quel âge pourrai-je partir ?",
+    "Qu'est-ce qui change sur ma fiche de paie ?",
+    "Et les petites retraites ?",
+    "Et si je meurs ? Et mon conjoint ?",
+    "Mon argent sera-t-il placé en Bourse ?",
+    "Et les fonctionnaires, les régimes spéciaux ?",
+    "Combien cela coûte-t-il, et qui paie ?",
+    "Ces chiffres sont-ils fiables ?",
+)
+
+
+def test_l_accueil_repond_aux_questions_de_l_electeur(contexte):
+    """L'électeur arrive avec ses questions, pas avec le plan du programme.
+
+    Elles sont posées dans ses mots, après le tableau qui oppose les deux
+    systèmes, chacune repliée sur sa réponse : la liste se parcourt du regard
+    et ne coûte rien au budget de lecture. La première est celle qui coûte, et
+    sa réponse dit ce que le simulateur montrera.
+    """
+    corps = rendre(contexte, "/", {})[1]
+    texte = html.unescape(corps)
+    rangs = [texte.index(f"<span>{question}</span></summary>")
+             for question in QUESTIONS_DE_L_ELECTEUR]
+    assert rangs == sorted(rangs), "les questions ne sont plus dans l'ordre"
+    assert texte.index("Le système actuel et notre programme") < rangs[0]
+    assert rangs[-1] < texte.index("Vérifiez plutôt que de nous croire")
+    # Repliées : aucune réponse ne se lit sans avoir ouvert sa question.
+    visible = html.unescape(_hors_depliants(corps))
+    assert "<h2>Vos questions</h2>" in visible
+    for question in QUESTIONS_DE_L_ELECTEUR:
+        assert question not in visible
+    # La réponse à la première question ne se dérobe pas.
+    assert ("Le plus souvent, elle sera plus basse que ce que le système "
+            "actuel\npromet.") in texte
+    # Les montants de la garantie sont ceux des paramètres.
+    base = contexte.base
+    assert g.euros(base.garantie_vieillesse_mensuelle
+                   + base.allocation_isolement_mensuelle) in texte
+
+
 def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
     """UNE PENSION par scénario, et dans une seule unité.
 
@@ -5723,42 +5800,55 @@ def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):
 # -- la revue du 15 septembre 2026 : le thème « architecture » -----------------
 
 
-def test_la_navigation_est_groupee_par_fonction():
-    """Le message, la preuve, la confiance, et ce qu'on en fait : quatre
-    groupes, et non huit liens à la file.
+def test_la_navigation_met_l_electeur_d_abord():
+    """Deux voix dans le bandeau : ce que l'électeur vient chercher, puis ce
+    qui permet de le vérifier.
 
-    Le groupement reste, et il reste DIT : chaque groupe porte son étiquette
-    dans le HTML, où les synthèses vocales la lisent comme la structure du
-    menu. Ce qui a changé à la refonte, c'est qu'elle ne se voit plus — huit
-    pages sous quatre intertitres prenaient deux fois la hauteur du bandeau,
-    devenu collant. La feuille la sort de l'écran sans la sortir de l'arbre
-    d'accessibilité : `clip-path`, et non `display: none`.
+    Dix onglets de même poids ne disaient pas par où commencer, et six d'entre
+    eux ne répondent qu'à qui veut vérifier. Les pages qui répondent aux
+    questions de l'électeur — le programme, sa retraite, le coût, pourquoi
+    changer — restent des onglets ; les cinq qui les prouvent passent derrière
+    une étiquette qui SE VOIT, « Pour vérifier ». Les autres étiquettes restent
+    dites aux synthèses vocales et sorties de l'écran, par `clip-path` et non
+    par `display: none`.
+
+    Les libellés disent ce qu'on trouve : « Avantages » se lisait comme les
+    avantages de la réforme, « Risque » ne disait pas de quoi, « Trajectoire »
+    et « Cas types » étaient des mots du modèle.
     """
     entete = g.entete("/cout")
-    groupes = re.findall(r'<span class="groupe"><span class="etiquette">(.*?)</span>'
+    groupes = re.findall(r'<span class="(groupe(?: secondaire)?)"><span class="etiquette">(.*?)</span>'
                          r'<span class="liens">(.*?)</span></span>', entete)
-    assert [etiquette for etiquette, _ in groupes] == [
-        "Le programme", "La preuve", "La confiance", "Faire connaître"]
-    pages = [re.findall(r'href="([^"]+)"', liens) for _, liens in groupes]
-    assert pages == [["#/"],
-                     ["#/simuler", "#/trajectoire", "#/cas-types", "#/cout",
-                      "#/risque", "#/avantages"],
-                     ["#/methode", "#/donnees"],
-                     ["#/partager"]]
+    assert [(classe, etiquette) for classe, etiquette, _ in groupes] == [
+        ("groupe", "L&#x27;essentiel"), ("groupe", "Faire connaître"),
+        ("groupe secondaire", "Pour vérifier")]
+    pages = [re.findall(r'href="([^"]+)"', liens) for _, _, liens in groupes]
+    assert pages == [["#/", "#/simuler", "#/cout", "#/risque"],
+                     ["#/partager"],
+                     ["#/trajectoire", "#/cas-types", "#/avantages", "#/methode",
+                      "#/donnees"]]
+    libelles = [re.findall(r">([^<]+)</a>", liens) for _, _, liens in groupes]
+    assert libelles == [["Programme", "Simuler", "Coût", "Pourquoi changer"],
+                        ["Partager"],
+                        ["Cumul versé", "Carrières types", "Droits non cotisés",
+                         "Méthode", "Sources"]]
     assert 'href="#/cout" aria-current="page"' in entete
     assert [chemin for chemin, _ in g.LIENS] == [
-        "/", "/simuler", "/trajectoire", "/cas-types", "/cout", "/risque",
-        "/avantages", "/methode", "/donnees", "/partager"]
-    # Toute page de la barre est une page que le routeur sait rendre, et
-    # réciproquement : depuis le retrait des mentions légales, le site n'a plus
-    # aucune page hors barre.
-    assert set(chemin for chemin, _ in g.LIENS) == set(TITRES)
-    # L'étiquette est masquée à l'œil, pas à l'oreille.
+        "/", "/simuler", "/cout", "/risque", "/partager", "/trajectoire",
+        "/cas-types", "/avantages", "/methode", "/donnees"]
+    # Le titre de chaque page est le libellé de son onglet : c'est lui que
+    # l'onglet du navigateur affiche.
+    assert dict(g.LIENS) == TITRES
+    assert list(TITRES) == [chemin for chemin, _ in g.LIENS]
+    # L'étiquette est masquée à l'œil, pas à l'oreille ; celle du groupe
+    # secondaire, elle, se voit.
     assert "nav .etiquette" in g.FEUILLE_DE_STYLE
     etiquette = g.FEUILLE_DE_STYLE.split("nav .etiquette {")[1].split("}")[0]
     assert "clip-path" in etiquette and "display: none" not in etiquette, (
         "une étiquette en display:none quitte aussi l'arbre d'accessibilité"
     )
+    visible = g.FEUILLE_DE_STYLE.split("nav .groupe.secondaire .etiquette {")[1].split("}")[0]
+    assert "clip-path: none" in visible
     # L'onglet courant ne se signale pas QUE par la couleur : un soulignement
     # épais le marque, et `aria-current` l'annonce.
     actif = g.FEUILLE_DE_STYLE.split('nav a[aria-current="page"] {')[1].split("}")[0]

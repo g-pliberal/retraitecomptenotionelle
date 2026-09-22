@@ -290,6 +290,36 @@ nav .etiquette {
    en prenaient trois. Les liens sont les enfants directs du `<nav>`, et se
    replient un par un. */
 nav .liens { display: contents; }
+/* La seconde voix du bandeau : les pages qui PROUVENT, pour qui veut
+   vérifier. Elles étaient des onglets comme les autres, et l'électeur ne savait
+   pas par où commencer. Elles restent dans la barre, mais derrière une
+   étiquette qui se voit, en casse normale et plus petites. Le groupe est une
+   boîte qui se replie d'un bloc : sur un téléphone, l'étiquette ne reste
+   jamais seule au bout d'une ligne, séparée de ses pages. */
+nav .groupe.secondaire { display: flex; flex-wrap: wrap; align-items: stretch; }
+nav .groupe.secondaire .etiquette {
+  position: static; width: auto; height: auto; margin: 0 0 0 0.55rem;
+  overflow: visible; clip-path: none; white-space: nowrap;
+  display: inline-flex; align-items: center;
+  padding: 0 0.3rem 0 0.9rem; border-left: 1px solid var(--trait-champ);
+  font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--texte-doux);
+}
+header.bandeau nav .groupe.secondaire a {
+  font-size: 0.8125rem; font-weight: 600; letter-spacing: 0;
+  text-transform: none;
+}
+/* Sur un téléphone, le groupe prend sa propre rangée, séparée par un filet
+   horizontal plutôt que vertical — un trait debout au bord gauche de l'écran
+   ne sépare rien —, et des lignes un peu moins hautes : le bandeau n'y est
+   pas collé, mais il ne doit pas repousser le titre de la page d'un écran. */
+@media (max-width: 48rem) {
+  nav .groupe.secondaire { flex-basis: 100%; border-top: 1px solid var(--trait); }
+  nav .groupe.secondaire .etiquette {
+    border-left: 0; margin-left: 0; padding-left: 0.55rem; min-height: 2.25rem;
+  }
+  header.bandeau nav .groupe.secondaire a { min-height: 2.25rem; }
+}
 /* Un onglet. Toute la hauteur de la barre — 56 px, bien plus que les 44 de la
    cible tactile (WCAG 2.5.8) —, capitales serrées, et un filet sous chacun :
    c'est ce filet qui prend l'or sur l'onglet courant. L'ACTIF NE SE SIGNALE
@@ -1891,29 +1921,37 @@ SIGNATURE_SITE = "Parti libéral français — le simulateur de retraite"
 #: graphique — une image qui circule sans adresse ne ramène personne.
 ADRESSE_SITE = "partiliberalfrancais.fr/#simulateur"
 
-#: La navigation, par FONCTION et non par page : le message, la preuve, la
-#: confiance. Six liens à la file ne disaient pas où aller après le programme ;
-#: trois groupes le disent — ce qu'on propose, ce qui le montre, ce qui permet
-#: de le croire. ``LIENS`` en est la liste à plat, pour qui n'a besoin que des
-#: pages.
+#: La navigation, en deux voix : ce que l'électeur vient chercher, puis ce qui
+#: permet de le vérifier. ``LIENS`` en est la liste à plat, pour qui n'a besoin
+#: que des pages.
 #:
-#: Depuis la refonte en affiche, les étiquettes de groupe ne se VOIENT plus :
-#: huit pages sous trois intertitres prenaient deux fois la hauteur du bandeau,
-#: qui est désormais collé en haut. Elles restent DITES aux synthèses vocales,
-#: qui les lisent comme la structure du menu — c'est le style qui les sort de
-#: l'écran, pas ce fichier, et la classification reste vraie.
+#: Dix onglets de même poids ne disaient pas à l'électeur par où commencer, et
+#: cinq d'entre eux ne répondent qu'à celui qui veut vérifier. Les pages qui
+#: répondent à SES questions — le programme, sa retraite, le coût, pourquoi
+#: changer — restent des onglets ; celles qui PROUVENT passent derrière une
+#: étiquette qui se voit, « Pour vérifier », en plus petit. Les deux autres
+#: étiquettes restent DITES aux synthèses vocales, qui les lisent comme la
+#: structure du menu, et le style les sort de l'écran.
+#:
+#: Les libellés disent ce qu'on trouve derrière : « Avantages » se lisait comme
+#: les avantages de la réforme, « Risque » ne disait pas de quoi, « Trajectoire »
+#: et « Cas types » étaient des mots du modèle, « Données » un mot d'ingénieur.
 GROUPES_NAVIGATION = (
-    ("Le programme", (("/", "Programme"),)),
-    ("La preuve", (("/simuler", "Simuler"), ("/trajectoire", "Trajectoire"),
-                   ("/cas-types", "Cas types"), ("/cout", "Coût"),
-                   ("/risque", "Risque"), ("/avantages", "Avantages"))),
-    ("La confiance", (("/methode", "Méthode"), ("/donnees", "Données"))),
-    # Partager n'est ni une preuve ni une garantie : c'est ce qu'on fait APRÈS
+    ("L'essentiel", (("/", "Programme"), ("/simuler", "Simuler"),
+                     ("/cout", "Coût"), ("/risque", "Pourquoi changer"))),
+    # Partager n'est ni une réponse ni une preuve : c'est ce qu'on fait APRÈS
     # avoir lu. La barre de partage de chaque graphique y renvoie déjà sans
     # passer par ici ; la page tient la liste complète des cartes, pour qui les
     # veut toutes.
     ("Faire connaître", (("/partager", "Partager"),)),
+    ("Pour vérifier", (("/trajectoire", "Cumul versé"),
+                       ("/cas-types", "Carrières types"),
+                       ("/avantages", "Droits non cotisés"),
+                       ("/methode", "Méthode"), ("/donnees", "Sources"))),
 )
+
+#: Le groupe dont l'étiquette SE VOIT, et dont les pages parlent plus bas.
+GROUPE_SECONDAIRE = "Pour vérifier"
 
 LIENS = tuple(lien_ for _, liens in GROUPES_NAVIGATION for lien_ in liens)
 
@@ -1986,8 +2024,11 @@ def navigation(chemin_actif: str = "/") -> str:
             + f">{escape(libelle)}</a>"
             for chemin, libelle in liens
         )
+    def classe(etiquette: str) -> str:
+        return "groupe secondaire" if etiquette == GROUPE_SECONDAIRE else "groupe"
     return "".join(
-        f'<span class="groupe"><span class="etiquette">{escape(etiquette)}</span>'
+        f'<span class="{classe(etiquette)}"><span class="etiquette">'
+        f'{escape(etiquette)}</span>'
         f'<span class="liens">{liens_du_groupe(liens)}</span></span>'
         for etiquette, liens in GROUPES_NAVIGATION
     )

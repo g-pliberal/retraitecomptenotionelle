@@ -166,31 +166,31 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->844<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 662<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->846<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 673<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
-Sept pages. **Programme** est l'accueil : la proposition du Parti libéral
-français pour les retraites — ce qu'est le système actuel, ce qu'est un compte
-notionnel, en quoi il est plus juste et plus lisible, ce qu'il change à la
-justice entre générations, ce que devient la garantie vieillesse, et les étapes
-qui mènent de l'un à l'autre. Puis **Simuler** (une carrière — en un ou
-plusieurs métiers, ou bien **lue sur votre relevé** année par année —, avec le
-détail du calcul, la décomposition de l'écart règle par règle et la cascade qui
-mène du scénario 1 au scénario 3), **Cas types** (la grille 13 carrières ×
-7 générations), **Coût** (ce qui rentre, ce qui sort et ce qui manque —
-trois chiffres et deux graphiques en tête de page, qui se lisent au survol et se
-téléchargent en image), **Risque** (votre retraite sera-t-elle payée, et ce que
-la recherche universitaire en sait, en deux cartes puis dix sections),
-**Méthode**, **Données** (l'état de fiabilité des
-séries). Chacune est bâtie de la même façon : ce qui répond à la question en
+Dix pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
+l'accueil — la proposition du Parti libéral français pour les retraites, ce
+qu'elle change terme à terme, et les questions qu'un électeur pose, chacune
+repliée sur sa réponse courte ; **Simuler** (une carrière — en un ou plusieurs
+métiers, ou bien **lue sur votre relevé** année par année —, résumée en trois
+phrases avant les quatre montants, avec le détail du calcul et la
+décomposition de l'écart règle par règle), **Coût** (ce qui rentre, ce qui sort
+et ce qui manque — trois chiffres et deux graphiques en tête de page, qui se
+lisent au survol et se téléchargent en image), **Pourquoi changer** (votre
+retraite sera-t-elle payée, et ce que la recherche universitaire en sait) et
+**Partager**. Puis, derrière l'étiquette « Pour vérifier », celles qui
+prouvent : **Cumul versé**, **Carrières types** (la grille 13 carrières ×
+7 générations), **Droits non cotisés**, **Méthode** et **Sources** (l'état de
+fiabilité des séries). Chacune est bâtie de la même façon : ce qui répond à la question en
 tête de page, et tout ce qui la justifie dans des sections repliées qui se
 parcourent comme un sommaire. Le site ne porte aucune mention légale : il est
 encarté dans partiliberalfrancais.fr, qui l'édite et l'héberge, et qui porte donc
 l'identification de l'éditeur, la politique de données personnelles et la
 déclaration d'accessibilité. Ce que le dépôt ne peut pas déléguer — la licence
 du code, celle des infographies, l'obligation de citer le producteur d'une
-série — se lit sous **Données**, section « Licences et réutilisation ».
+série — se lit sous **Sources**, section « Licences et réutilisation ».
 
 La simulation vit sous `#/simuler`, et son adresse contient tous ses
 paramètres — elle peut être citée ou partagée telle quelle. Chaque résultat est
@@ -1237,7 +1237,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2105 tests Python
+tests/                          2124 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1286,7 +1286,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->2105<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2124<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,
