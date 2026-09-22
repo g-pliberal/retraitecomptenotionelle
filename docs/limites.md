@@ -6471,8 +6471,8 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
 
   | | Solde moyen 2026-2070 | Coefficient 2040 | Équilibre atteint |
   |---|---|---|---|
-  | Scénario 6, convention `assiette` (affichée) | **−2,16 % du PIB** | **0,76** | jamais |
-  | Scénario 6, convention `rapport` | −1,47 % | 0,82 | 2026 |
+  | Scénario 6, convention `assiette` (affichée) | **−1,22 % du PIB** | **0,83** | jamais |
+  | Scénario 6, convention `rapport` | −0,53 % | 0,91 | 2026 |
   | Système actuel | −1,13 % | — | jamais |
 
   Deux effets de sens contraire séparent ces deux lignes, et il faut les
@@ -6482,8 +6482,9 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   un taux : elle RETIRE aussi les trois postes qui n'acquièrent de droits à
   personne, et ce second effet l'emporte largement sur le premier. **Sous sa
   propre convention, la proposition est donc plus déficitaire que le système
-  qu'elle remplace**, d'un demi-point de PIB en moyenne, là où l'ancienne la
-  donnait au-dessus de lui. C'est le chiffre d'un système qui ne vit que de ses
+  qu'elle remplace**, d'un dixième de point de PIB en moyenne — d'un point encore
+  avant le recalcul du 22 septembre, les niveaux ayant bougé depuis (voir la
+  table ci-dessous) —, là où l'ancienne la donnait au-dessus de lui. C'est le chiffre d'un système qui ne vit que de ses
   cotisations, et c'est celui que le dépôt affiche.
 
   *Cette ligne a changé deux fois, et les deux mouvements valent d'être dits.*
@@ -6555,14 +6556,14 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   `cout.py`, et deux tests le tiennent.
 
   *Ce que la sortie coûte* : **1,395 point de solde moyen**. Sur 2026-2070, le
-  scénario 6 passe de −0,76 % du PIB, poste reconduit, à **−2,16 %**, contre
+  scénario 6 passe de +0,17 % du PIB, poste reconduit, à **−1,22 %**, contre
   −1,13 % pour le système actuel : il est désormais plus déficitaire que lui
-  dans 38 des 45 années, et ne revient à l'équilibre sur aucune. Son
+  dans 29 des 45 années, et ne revient à l'équilibre sur aucune. Son
   coefficient d'équilibre de 2040 — ce que le système peut servir rapporté à ce
-  qu'il promet — descend de 0,90 à **0,76**.
+  qu'il promet — descend de 0,98 à **0,83**.
 
   *Et ce coût est le seul chiffre de ce paragraphe qui n'ait jamais bougé.* Les
-  NIVEAUX, eux, ont changé deux fois depuis la décision, chaque fois pour une
+  NIVEAUX, eux, ont changé trois fois depuis la décision, chaque fois pour une
   raison qui n'a rien à voir avec l'impôt :
 
   | Mesuré le | Poste reconduit | Poste sorti | Coût |
@@ -6570,8 +6571,9 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   | 19 septembre au soir, à la décision | −1,12 % | −2,51 % | 1,395 |
   | après que la réversion eut quitté les cinq scénarios notionnels | −0,28 % | −1,67 % | 1,395 |
   | après que le profil de carrière fut lu chez l'INSEE | −0,76 % | −2,16 % | 1,395 |
+  | recalculé le 22 septembre 2026 | +0,17 % | −1,22 % | 1,395 |
 
-  Trois mesures, trois niveaux, un seul coût. C'est ce qu'on attend d'une
+  Quatre mesures, quatre niveaux, un seul coût. C'est ce qu'on attend d'une
   grandeur qui est une PART des ressources : elle ne dépend pas de ce que les
   pensions coûtent. Que la table ci-dessus existe est aussi un aveu — ces
   niveaux sont restés faux dans ce fichier entre chaque déplacement du modèle
@@ -6613,9 +6615,10 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   d'équilibre des scénarios notionnels les RETIRE : année par année là où on
   les connaît, à part constante des ressources avant 2013 et sur tout
   l'horizon projeté — personne ne projette ce que la CNAF versera en 2070, et
-  une part constante est l'hypothèse qui n'en ajoute aucune autre. Cela
-  ramène le scénario 3 en 2070 de 1,94 à 1,87, le scénario 5 de 1,17 à 1,13,
-  et met les deux en déficit dès 2025, où ils servent encore les pensions du
+  une part constante est l'hypothèse qui n'en ajoute aucune autre. Le jour où
+  il est entré, cela ramenait le scénario 3 en 2070 de 1,94 à 1,87 et le
+  scénario 5 de 1,17 à 1,13 — ils valent aujourd'hui 1,67 et 1,08 —, et cela
+  met les deux en déficit en 2025, où ils servent encore les pensions du
   système actuel. Le système actuel encaisse tout et garde le solde du COR.
   Le coefficient n'est toujours pas appliqué, et ce que la branche famille
   ferait de ce qu'elle cesserait de verser est une décision de programme, pas
@@ -6662,9 +6665,10 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   arrondis à l'entier supérieur (R. 351-27), et la pension n'est pas arrondie du
   tout — voir `methodologie.md`.
 
-- **La capitalisation.** Le compartiment RAFP est isolé et converti au même
-  coefficient actuariel que le reste, mais son **rendement financier propre**
-  n'est pas modélisé : ses points sont valorisés au barème publié par l'ERAFP,
+- **La capitalisation.** Le compartiment RAFP est isolé et servi à son propre
+  barème, identique dans les six scénarios et sorti des totaux de la
+  répartition (§3), mais son **rendement financier propre** n'est pas
+  modélisé : ses points sont valorisés au barème publié par l'ERAFP,
   non par le rendement de son portefeuille. C'est le traitement demandé — seule
   la répartition est en cause — et il rend le RAFP comparable au reste plutôt
   que de le faire dépendre d'hypothèses de marché.
