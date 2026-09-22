@@ -17,12 +17,13 @@ import shutil
 import subprocess
 import tempfile
 from pathlib import Path
+from urllib.parse import parse_qsl
 
 import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.simulateur import Simulateur
-from retraite_notionnelle.web.pages import Contexte
+from retraite_notionnelle.web.pages import Contexte, ErreurSaisie, Saisie, rendre
 
 
 @pytest.fixture(scope="module")
@@ -251,3 +252,67 @@ def test_ce_que_le_cumul_refuse(simulateur, metiers, motif):
     with pytest.raises(ValueError, match=motif):
         simulateur.carriere_parcours(
             annee_naissance=1962, sexe="H", metiers=metiers, age_liquidation=67.0)
+
+
+# -- le formulaire ------------------------------------------------------------
+
+_SAISIE = {
+    "naissance": "1968", "sexe": "H", "statut": "salarie_prive_non_cadre",
+    "debut": "21", "liquidation": "64", "salaire": "1",
+}
+
+
+def test_le_formulaire_ne_cumule_que_ce_qui_est_declare():
+    """Sans réponse au menu, la deuxième ligne REMPLACE la première."""
+    remplace = Saisie.depuis_requete({
+        **_SAISIE, "metier2_debut": "40", "metier2_statut": "artisan",
+        "metier2_salaire": "0.5"})
+    assert not remplace.metiers[0].cumul
+    ajoute = Saisie.depuis_requete({
+        **_SAISIE, "metier2_debut": "40", "metier2_statut": "artisan",
+        "metier2_salaire": "0.5", "metier2_cumul": "oui", "metier2_fin": "50"})
+    metier = ajoute.metiers[0]
+    assert metier.cumul and metier.fin == pytest.approx(50.0)
+
+
+def test_le_formulaire_mene_le_cumul_jusqu_au_modele():
+    contexte = Contexte()
+    requete = {**_SAISIE, "metier2_debut": "36", "metier2_statut": "medecin_liberal",
+               "metier2_salaire": "0.6", "metier2_cumul": "oui", "metier2_fin": "58"}
+    carriere = contexte.simuler(Saisie.depuis_requete(requete)).carriere
+    liberal = [l.annee for l in carriere.lignes if l.affiliation == "medecin_liberal"]
+    assert liberal == list(range(2004, 2026))
+    # L'activité principale n'a pas été interrompue par celle qui s'ajoute.
+    assert all(carriere.ligne(annee).affiliation == "salarie_prive_non_cadre"
+               for annee in liberal)
+    # L'adresse partageable rejoue la même saisie.
+    relue = Saisie.depuis_requete(dict(parse_qsl(
+        Saisie.depuis_requete(requete).requete())))
+    assert relue.metiers == Saisie.depuis_requete(requete).metiers
+
+
+@pytest.mark.parametrize("ajout, motif", [
+    ({"metier2_fin": "50"}, "date de fin"),
+    ({"metier2_cumul": "peut-etre"}, "réponse possible"),
+    ({"metier2_cumul": "oui", "metier2_statut": "chomage_indemnise"},
+     "sans emploi"),
+    ({"metier2_cumul": "oui", "metier2_fin": "70"}, "au plus tard au départ"),
+    ({"metier2_cumul": "oui", "saisie_par": "pension", "pension": "1500"},
+     "par son revenu"),
+])
+def test_ce_que_le_formulaire_refuse(ajout, motif):
+    requete = {**_SAISIE, "metier2_debut": "40", "metier2_statut": "artisan",
+               "metier2_salaire": "0.5", **ajout}
+    with pytest.raises(ErreurSaisie, match=motif):
+        Saisie.depuis_requete(requete)
+
+
+def test_la_page_dit_l_activite_ajoutee():
+    contexte = Contexte()
+    _, page = rendre(contexte, "/simuler", {
+        **_SAISIE, "metier2_debut": "36", "metier2_statut": "medecin_liberal",
+        "metier2_salaire": "0.6", "metier2_cumul": "oui"})
+    assert "Deuxième métier, en plus" in page
+    assert 'name="metier2_fin"' in page
+    assert '<option value="oui" selected' in page
+    assert "et en même temps Médecin libéral de 36 ans" in page
