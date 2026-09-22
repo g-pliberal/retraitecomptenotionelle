@@ -161,7 +161,11 @@ def _plages(bloc: bytes) -> list[tuple[bytes, bytes, bytes | list[bytes]]]:
     Une entrée s'écrit de DEUX façons, et la norme les mêle dans le même bloc :
     ``<début> <fin> <destination>``, où les codes suivants se déduisent en
     ajoutant un, et ``<début> <fin> [ <dst> <dst> … ]``, où chaque code a la
-    sienne. L'estimation retraite d'Info Retraite écrit les deux.
+    sienne. Les deux se sont présentées dans un même document : une
+    estimation retraite d'Info Retraite ré-exportée par un éditeur de bureau.
+    La table venait de l'éditeur, non de la caisse — mais la forme tableau est
+    de la norme, et un lecteur qui ne la connaît pas se trompe sur tout le
+    document.
 
     Une expression régulière qui cherchait trois hexadécimaux d'affilée
     ignorait les crochets et lisait À CHEVAL sur les entrées : la première
@@ -456,7 +460,7 @@ def _fragments(octets: bytes) -> list[tuple[int, int, float, float, str]]:
         # pose un tampon dans la marge, un filigrane, une étiquette d'axe. Ses
         # glyphes tombent aux ordonnées des lignes du corps de page, et les
         # regrouper avec elles y insérait des lettres et des chiffres
-        # étrangers — sur l'estimation retraite d'Info Retraite, vingt-deux
+        # étrangers — sur une estimation retraite d'Info Retraite, vingt-deux
         # caractères par page venaient se coller dans les montants du relevé,
         # qui devenaient des revenus de deux millions d'euros. La bande — 0
         # pour le texte droit, 1 pour le texte tourné — entre donc dans la clé

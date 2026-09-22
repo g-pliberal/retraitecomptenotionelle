@@ -97,7 +97,10 @@ Cotisation vieillesse plafonnée 6,90
 #: L'estimation retraite que délivre Info Retraite, à la forme du document réel
 #: — lu le 22 septembre 2026, et c'est lui qui a écrit ce cas. Les noms et les
 #: montants sont inventés ; la MISE EN PAGE ne l'est pas, et c'est elle qui
-#: compte. Elle empile deux tableaux — les trimestres par année, les revenus
+#: compte. Le document lu avait été ré-exporté par une suite bureautique pour
+#: être anonymisé : son CONTENU — les deux tableaux, les en-têtes, les unités,
+#: les pièges — est celui de la caisse, sa couche de doublure est celle de
+#: l'éditeur. Les deux sont ici, parce que les deux se présenteront. Elle empile deux tableaux — les trimestres par année, les revenus
 #: par période —, coupe chaque année en deux lignes, et mêle au tout des pièges
 #: qui ressemblent à s'y méprendre à des lignes de carrière : un pied de page
 #: daté, une valeur du point à une date, une phrase française chiffrée, une

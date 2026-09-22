@@ -577,7 +577,8 @@ def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture
         # UNE LIGNE DE TABLEAU PORTE QUELQUES COLONNES, PAS QUARANTE. Un PDF
         # peut porter deux fois le même texte — une couche visible, mise en
         # page, et une couche de doublure où tout est collé bout à bout. C'est
-        # le cas de l'estimation retraite d'Info Retraite, dont la doublure
+        # le cas d'une estimation retraite ré-exportée par un éditeur de
+        # bureau pour être anonymisée, dont la doublure
         # rendait des lignes de deux cents caractères où les dates et les
         # montants de toute une page se suivaient sans séparateur. Additionnés
         # à l'année qu'ils touchaient, ils y faisaient des revenus de deux

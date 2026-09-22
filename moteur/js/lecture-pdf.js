@@ -242,7 +242,10 @@ const JETON_CMAP = /<([0-9A-Fa-f]+)>|([[\]])/g;
  * Une entrée s'écrit de DEUX façons, et la norme les mêle dans le même bloc :
  * `<début> <fin> <destination>`, où les codes suivants se déduisent en ajoutant
  * un, et `<début> <fin> [ <dst> <dst> … ]`, où chaque code a la sienne.
- * L'estimation retraite d'Info Retraite écrit les deux.
+ * Les deux se sont présentées dans un même document : une estimation
+ * retraite d'Info Retraite ré-exportée par un éditeur de bureau. La table
+ * venait de l'éditeur, non de la caisse — mais la forme tableau est de la
+ * norme, et un lecteur qui ne la connaît pas se trompe sur tout le document.
  *
  * Une expression régulière qui cherchait trois hexadécimaux d'affilée ignorait
  * les crochets et lisait À CHEVAL sur les entrées : de proche en proche, TOUTE

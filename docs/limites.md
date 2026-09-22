@@ -6765,18 +6765,40 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   d'écran — ne porte aucun texte : rien ne s'y lit, et la page le dit plutôt
   que de rendre une carrière vide sans explication.
 
-  **Ce qu'un vrai document a appris, le 22 septembre 2026.** La lecture avait
-  été écrite contre des relevés d'essai, faute d'en avoir un vrai : aucun n'est
-  public. La première estimation retraite déposée sur le site — celle que
-  délivre Info Retraite — a corrigé quatre défauts d'un coup, et c'est elle qui
-  fixe désormais les règles.
+  **Ce qu'un vrai document a appris, le 22 septembre 2026 — et ce qu'il ne
+  prouve pas.** La lecture avait été écrite contre des relevés d'essai, faute
+  d'en avoir un vrai : aucun n'est public. La première estimation retraite
+  déposée sur le site a corrigé quatre défauts d'un coup, et c'est elle qui fixe
+  désormais les règles de lecture. **Ce document n'était pas intact** : produit
+  par le composeur d'Info Retraite (`KslPrn`), il avait été rouvert dans une
+  suite bureautique (`ONLYOFFICE 9.4`) pour être anonymisé, puis ré-exporté. Ce
+  qui vient de la caisse et ce qui vient de l'éditeur se sépare donc, et il faut
+  le séparer :
+
+  - **De la caisse, et vérifiable comme tel** : les deux tableaux et leurs
+    en-têtes, les colonnes, les unités écrites, la note de bas de tableau, le
+    pied de page daté, les projections de départ. C'est le CONTENU, et c'est de
+    lui que viennent les règles de lecture du relevé.
+  - **De l'éditeur, ou probablement de lui** : les polices du fichier — du
+    Calibri, qu'aucune administration n'emploie —, donc la table `ToUnicode` et
+    la forme de ses plages ; et la couche de doublure, où le texte d'une page
+    entière est collé bout à bout. Les deux défauts du lecteur de PDF ont été
+    trouvés là, et les corriger est juste — la forme tableau d'un `bfrange` est
+    de la norme, et le texte tourné existe partout — mais **rien ne dit encore
+    qu'un document intact d'Info Retraite les aurait exigés**.
+
+  Le relevé n'a donc toujours pas été confronté à un PDF de caisse INTACT. Ce
+  qui a été vérifié sur celui-ci est que la carrière s'en lit en entier, et le
+  contrôle vient du document lui-même : le total de trimestres enregistrés qu'il
+  annonce en synthèse est exactement celui que la lecture recompose, année par
+  année, depuis l'autre tableau. Le chiffre est sous l'action correspondante de
+  la feuille de route : il appartient à un document qui ne peut pas être publié,
+  et aucune sonde du dépôt ne saurait donc le recalculer.
 
   - **Un relevé porte deux tableaux, et ils se complètent.** L'un donne les
     trimestres année par année et ne porte aucun revenu ; l'autre donne les
     revenus par PÉRIODE — « 01/01/2025 31/12/2025 49 150 € » — et ne porte
-    aucun trimestre. Une année se lit donc dans les deux à la fois, et le
-    contrôle est arithmétique : le document annonçait 32 trimestres
-    enregistrés, et la somme de ce qui a été lu en fait 32.
+    aucun trimestre. Une année se lit donc dans les deux à la fois.
   - **L'unité écrite l'emporte sur la position.** « 4 trim. », « 203,91 pts »,
     « 49 150 € » : une caisse écrit toujours ce que ses nombres sont, et s'y
     fier vaut mieux que de deviner une colonne. C'est ce qui permet de prendre
@@ -6791,7 +6813,8 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   - **Un PDF peut porter deux fois le même texte** : une couche visible, mise
     en page, et une couche de doublure où toute une page est collée bout à
     bout. Additionnée à la première, elle faisait des revenus de deux millions
-    d'euros.
+    d'euros. Celle-ci venait de la suite bureautique ; un document rouvert pour
+    être anonymisé, ou simplement ré-enregistré, en porte une.
 
 - **La coordination interrégimes.** Chaque régime liquide sur ses seules
   années, et la durée acquise dans chacun est comptée séparément — c'est le
