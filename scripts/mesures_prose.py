@@ -663,6 +663,48 @@ def part_pensions_sous(**reglages: str) -> float:
                if float(l["borne_mensuelle"]) < float(reglages["borne"]))
 
 
+def fiche_regime(**reglages: str) -> float:
+    """Un champ des périodes d'une fiche de régime, telle qu'elle est écrite.
+
+    ``fichier=base_prive&regime=regime_general&champ=part_salariale`` ;
+    ``de`` et ``a`` bornent l'année de DÉBUT des périodes retenues (``a``
+    vaut ``de`` si on l'omet), tout autre réglage filtre sur un champ de la
+    période (``assiette=tranche_b``). ``stat=min`` ou ``stat=max`` quand
+    plusieurs périodes répondent, sinon elles doivent toutes s'accorder.
+    Un champ dont le nom commence par ``part`` ou ``taux`` se lit en %.
+
+    La fiche ÉCRITE, et non le catalogue chargé : le régime général y reçoit
+    ses taux année par année, et la méthodologie dit précisément ce que les
+    fiches portent avant ce découpage.
+    """
+    from retraite_notionnelle.donnees.chargement import charger_yaml
+
+    speciaux = {"fichier", "regime", "champ", "de", "a", "stat"}
+    donnees = charger_yaml(RACINE / "data/reference/regimes" / f"{reglages['fichier']}.yaml")
+    regime = next((r for r in donnees["regimes"] if r["code"] == reglages["regime"]), None)
+    if regime is None:
+        raise ValueError(f"{reglages['fichier']} n'a pas de régime « {reglages['regime']} »")
+    de = int(reglages.get("de", 0))
+    a = int(reglages.get("a", reglages.get("de", 9999)))
+    filtres = {c: v for c, v in reglages.items() if c not in speciaux}
+    champ = reglages["champ"]
+    valeurs = [float(p[champ]) for p in regime["periodes"]
+               if de <= int(p["debut"]) <= a and p.get(champ) is not None
+               and all(str(p.get(c)) == v for c, v in filtres.items())]
+    if not valeurs:
+        raise ValueError(f"aucune période de {reglages['regime']} ne répond")
+    stat = reglages.get("stat")
+    if stat == "min":
+        valeur = min(valeurs)
+    elif stat == "max":
+        valeur = max(valeurs)
+    elif len(set(valeurs)) == 1:
+        valeur = valeurs[0]
+    else:
+        raise ValueError(f"{len(set(valeurs))} valeurs différentes ; préciser stat=min ou max")
+    return valeur * 100 if champ.startswith(("part", "taux")) else valeur
+
+
 def composition_revalorisation(**reglages: str) -> float:
     """Ce que composer année par année les coefficients des arrêtés fait
     perdre, en % et en valeur absolue, face au coefficient lu d'un bloc.
@@ -1120,6 +1162,7 @@ MESURES = {
     "mortalite_population": mortalite_population,
     "table_mortalite": table_mortalite,
     "part_pensions_sous": part_pensions_sous,
+    "fiche_regime": fiche_regime,
 }
 
 
