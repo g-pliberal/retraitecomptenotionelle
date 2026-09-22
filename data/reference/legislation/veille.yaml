@@ -546,12 +546,14 @@ entrees:
     textes: ["L. 173-1-2 CSS", "R. 173-3-2 CSS"]
     sources:
       - {type: legifrance, reference: "L. 173-1-2 CSS", date: "2017-07-01"}
-    verifie_le: "2026-09-17"
+      - {type: legifrance, reference: "R. 173-4-4-1, 4° CSS (décret n° 2017-735 du 3 mai 2017) : le revenu annuel moyen est déterminé à partir de la somme des salaires et revenus d'une même année", date: "2017-05-03"}
+      - {type: circulaire_cnav, reference: "2017/27 du 21 juillet 2017, « Liquidation unique des régimes alignés » — régime compétent, revenu annuel moyen, proratisation ; ses exemples portent sur la compétence, aucun ne chiffre une pension", date: "2017-07-21"}
+    verifie_le: "2026-09-22"
     temoins: []
     reformes: []
-    etat: a_verifier
-    effet: "Le modèle réunit un régime et son successeur (artisan devenu régime général) ; un salarié devenu artisan la même année, ou l'inverse, n'a pas été vérifié contre la LURA."
-    a_faire: "Construire un profil salarié puis artisan et le confronter à l'oracle OpenFisca ou à un exemple Cnav de LURA."
+    etat: approximation
+    effet: "VÉRIFIÉ PAR CONSTRUCTION, ET LE MODÈLE EN FAIT LA MOITIÉ. Pour le couple régime général / indépendants il donne le résultat de la LURA — un seul salaire de référence, une seule proratisation — mais par un autre chemin : il réunit un régime et celui qui l'a ABSORBÉ, et la CANCAVA, le RSI puis le régime général en font un. Carrière moitié privée moitié artisanale, né en 1960, parti à 64 ans : « SR 40 748,99 € × 50,625 % × 167/167, 3 caisses liquidées ensemble ». Pour les salariés agricoles, dont le régime existe toujours, il liquide DEUX pensions : la même carrière avec la MSA donne « SR 41 499,37 € × 88/167 » et « SR 29 069,36 € × 80/167 ». Le sens de l'écart n'est pas déterminé sans refaire le calcul selon la règle ; les deux salaires de référence encadrent celui que la caisse retiendrait. Les bornes de la règle manquent aussi, et dans l'autre sens : la LURA vaut pour les générations à compter de 1953 et les pensions prenant effet au 1er juillet 2017, quand l'absorption du RSI ne date le regroupement qu'en 2018-2020 — une carrière liquidée entre ces deux dates est coupée en deux par le modèle quand la caisse la liquide d'un coup."
+    a_faire: "Ajouter `msa_salaries` au groupe liquidé avec le régime général et les caisses d'indépendants, sous les deux conditions de la LURA — génération à compter de 1953, pension prenant effet au 1er juillet 2017 —, et dater ce regroupement sur la LURA plutôt que sur l'absorption du RSI. C'est une modification du moteur et de son portage, non une lecture. Aucun exemple chiffré publié n'a été trouvé pour la rejouer : la circulaire 2017/27 n'en donne que de compétence."
     prochaine_veille: "2027-03-31"
 
   # ---- Hors périmètre, à dire ---------------------------------------
@@ -2201,3 +2203,38 @@ journal:
       de l'interruption et non la POSITION statutaire, et présume donc l'agent
       en activité — ce que L. 9 exige pour ses 2° et 3°.
     prochaine_veille: "2027-06-30"
+  - date: 2026-09-22
+    session: la liquidation unique, vérifiée par construction
+    consulte: >-
+      Circulaire Cnav 2017/27 du 21 juillet 2017, lue dans son PDF avec le
+      lecteur du dépôt : la règle du revenu annuel moyen unique (R. 173-4-4-1,
+      4° CSS, décret n° 2017-735 du 3 mai 2017), le régime compétent, les
+      bornes de la LURA (générations à compter de 1953, pensions prenant effet
+      au 1er juillet 2017). Ses exemples portent tous sur la COMPÉTENCE ; aucun
+      ne chiffre une pension, et la recherche n'a trouvé aucun exemple chiffré
+      publié ailleurs. À défaut d'oracle — OpenFisca n'a pas de module pour les
+      indépendants ni pour la MSA —, la vérification s'est faite par
+      construction, sur deux carrières du modèle.
+    trouve: >-
+      LE MODÈLE EN FAIT LA MOITIÉ, ET PAR UN AUTRE CHEMIN. Une carrière moitié
+      privée moitié artisanale, née en 1960 et liquidée à 64 ans, reçoit « SR
+      40 748,99 € × 50,625 % × 167/167, 3 caisses liquidées ensemble » : c'est
+      le résultat de la LURA, obtenu parce que le modèle réunit un régime et
+      celui qui l'a ABSORBÉ — CANCAVA, RSI puis régime général. La même
+      carrière avec la MSA des salariés donne deux pensions, « SR 41 499,37 €
+      × 88/167 » et « SR 29 069,36 € × 80/167 », là où la caisse en calcule
+      une : le régime agricole existe toujours, aucune absorption ne le
+      rattache, et la LURA le couvre pourtant. Les bornes manquent aussi dans
+      l'autre sens : le regroupement du régime général et des indépendants est
+      daté par l'absorption de 2018-2020, non par le 1er juillet 2017, si bien
+      qu'une carrière liquidée entre les deux dates est coupée en deux. La
+      ligne passe de `a_verifier` à `approximation`, avec ce que la correction
+      demande.
+    reste: >-
+      La correction elle-même, qui est une modification du moteur et de son
+      portage : ajouter `msa_salaries` au groupe, sous les deux conditions de
+      la LURA, et dater le regroupement sur la loi. Le sens de l'écart n'a pas
+      été chiffré : il demande de refaire le calcul selon la règle, et les deux
+      salaires de référence que le modèle calcule encadrent celui que la caisse
+      retiendrait. `limites.md` porte la mesure, sous « Ce qui reste hors du
+      modèle ».
