@@ -31,6 +31,11 @@ fichiers:
     # recopiées à la main, donnaient le PIB nominal à 1 068,6 % pour 1 068,3.
     blocs_produits:
       - indexation
+      # Et le tableau des générations, qui mesure ce que la correction de la
+      # ligne de référence déplace : cinq simulations du scénario rétroactif
+      # sous deux règles d'indexation. Il était lui aussi recopié, et il avait
+      # vieilli d'un point sur la génération 1920 — le modèle a bougé depuis.
+      - generations
     # « Le site a d'abord exécuté le Python lui-même, par Pyodide » ouvre un
     # paragraphe qui raconte l'époque d'avant le portage : ses 13,5 Mo et ses
     # 263 Ko sont ceux de ce temps-là, au milieu d'une section d'état.

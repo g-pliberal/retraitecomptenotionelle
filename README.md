@@ -439,13 +439,15 @@ carrière pèse dix à trente fois une année de début —, et c'est là que le
 règles coïncident. Sur le scénario rétroactif, pour un salarié du privé non
 cadre entré à 20 ans et parti à 62 :
 
+<!-- generations:debut -->
 | Génération | Carrière | Ligne de référence « Prix » | Ligne corrigée | Écart |
 |---|---|---|---|---|
-| 1920 | 1940-1982 | -89,9 % | -84,7 % | **+5,2 pt** |
-| 1930 | 1950-1992 | -89,0 % | -87,5 % | +1,5 pt |
-| 1945 | 1965-2007 | -85,1 % | -85,1 % | 0,0 pt |
-| 1958 | 1978-2020 | -81,0 % | -81,4 % | **-0,4 pt** |
-| 1990 | 2010-2052 | -78,3 % | -78,3 % | 0,0 pt |
+| 1920 | 1940-1982 | -91,2 % | -86,2 % | **+5,0 pt** |
+| 1930 | 1950-1992 | -89,4 % | -87,6 % | +1,8 pt |
+| 1945 | 1965-2007 | -85,4 % | -85,4 % | 0,0 pt |
+| 1958 | 1978-2020 | -81,3 % | -81,8 % | **-0,5 pt** |
+| 1990 | 2010-2052 | -78,2 % | -78,3 % | 0,0 pt |
+<!-- generations:fin -->
 
 L'écart change même de signe pour les carrières entièrement postérieures à
 1987 : depuis 1990 les arrêtés ont revalorisé un peu moins vite que les prix

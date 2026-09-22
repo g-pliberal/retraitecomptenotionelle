@@ -60,6 +60,15 @@ DOCUMENTS = {
 
 REPERE = "indexation"
 
+#: Le second tableau du §1 du README : ce que la correction de la ligne de
+#: référence déplace, génération par génération. Les cinq générations sont
+#: celles que la prose commente — deux carrières d'avant 1987, une à cheval,
+#: deux d'après —, et la carrière est celle qu'elle annonce.
+GENERATIONS = (1920, 1930, 1945, 1958, 1990)
+AGE_DEBUT_GENERATIONS = 20
+AGE_LIQUIDATION_GENERATIONS = 62
+REPERE_GENERATIONS = "generations"
+
 
 def nombre(valeur: float, decimales: int = 1) -> str:
     """« 1 538,2 » : virgule décimale, espace ordinaire pour les milliers.
@@ -104,6 +113,66 @@ def tableau(entete: str) -> str:
     return "\n".join(lignes)
 
 
+def ecarts_par_generation() -> list[tuple[int, float, float]]:
+    """L'écart du scénario rétroactif au scénario 1, sous les deux règles.
+
+    La ligne de référence « Prix » est celle que le dépôt a longtemps donnée
+    pour la règle qui neutralise l'indexation ; la ligne corrigée est la
+    revalorisation réellement portée au compte. Ce que leur différence
+    déplace se lit génération par génération, et change de signe pour les
+    carrières entièrement postérieures à 1987.
+    """
+    from retraite_notionnelle.config import ModeIndexation
+
+    simulateurs = {}
+    for mode in (ModeIndexation.PRIX,
+                 ModeIndexation.REVALORISATION_PORTEE_AU_COMPTE):
+        simulateurs[mode] = Simulateur(
+            replace(Parametres(), mode_indexation=mode))
+
+    rendus = []
+    for generation in GENERATIONS:
+        ecarts = []
+        for mode, simulateur in simulateurs.items():
+            carriere = simulateur.carriere_simple(
+                annee_naissance=generation, sexe="H",
+                affiliation="salarie_prive_non_cadre",
+                age_debut=AGE_DEBUT_GENERATIONS,
+                age_liquidation=AGE_LIQUIDATION_GENERATIONS)
+            resultat = simulateur.simuler(carriere)
+            ecarts.append((resultat.notionnel_retroactif.pension_annuelle
+                           / resultat.actuel.pension_annuelle - 1) * 100)
+        rendus.append((generation, ecarts[0], ecarts[1]))
+    return rendus
+
+
+def tableau_generations() -> str:
+    """Le tableau des cinq générations, prêt à poser entre les repères."""
+    rendus = ecarts_par_generation()
+    differences = [corrige - prix for _, prix, corrige in rendus]
+    haut, bas = max(differences), min(differences)
+    lignes = [
+        "| Génération | Carrière | Ligne de référence « Prix » | Ligne corrigée | Écart |",
+        "|---|---|---|---|---|",
+    ]
+    for (generation, prix, corrige), difference in zip(rendus, differences):
+        debut = generation + AGE_DEBUT_GENERATIONS
+        fin = generation + AGE_LIQUIDATION_GENERATIONS
+        # Un écart nul n'a pas de signe : « -0,0 pt » se lit comme une erreur
+        # de calcul, quand c'est la mesure qui dit « rien ne bouge ».
+        arrondi = round(difference, 1)
+        ecrit = (f"{arrondi:+.1f}" if arrondi else "0,0").replace(".", ",")
+        ecrit = ecrit if ecrit.endswith("pt") else f"{ecrit} pt"
+        # Les deux extrêmes portent le propos : le plus grand écart, et celui
+        # qui change de signe. Les mettre en valeur est le geste de la page.
+        if difference in (haut, bas):
+            ecrit = f"**{ecrit}**"
+        lignes.append(
+            f"| {generation} | {debut}-{fin} | {nombre(prix)} % "
+            f"| {nombre(corrige)} % | {ecrit} |")
+    return "\n".join(lignes)
+
+
 def remplacer(texte: str, repere: str, contenu: str) -> str:
     debut, fin = f"<!-- {repere}:debut -->", f"<!-- {repere}:fin -->"
     if debut not in texte or fin not in texte:
@@ -131,6 +200,18 @@ def main() -> int:
             continue
         chemin.write_text(voulu, encoding="utf-8")
         print(f"{document} : tableau des règles d'indexation réécrit")
+
+    # Le second tableau ne vit que dans le README : il commente la correction
+    # de la ligne de référence, que la méthodologie ne reprend pas.
+    chemin = RACINE / "README.md"
+    texte = chemin.read_text(encoding="utf-8")
+    voulu = remplacer(texte, REPERE_GENERATIONS, tableau_generations())
+    if voulu != texte:
+        if arguments.verifier:
+            perimes.append("README.md (tableau des générations)")
+        else:
+            chemin.write_text(voulu, encoding="utf-8")
+            print("README.md : tableau des générations réécrit")
 
     if perimes:
         print("\n".join(

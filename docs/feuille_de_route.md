@@ -8504,6 +8504,15 @@ puisqu'un script les écrit et qu'un test les tient. C'est la quatrième forme d
 régime `produit`, et celle qui manquait — un document mêle la prose et ce qui
 se calcule, et il fallait pouvoir le dire ligne à ligne.
 
+Le second tableau du §1 a suivi le même chemin : les cinq générations qui
+mesurent ce que la correction de la ligne de référence déplace — le scénario
+rétroactif sous les prix, puis sous la revalorisation réellement portée au
+compte. Cinq simulations, une seconde et demie, et l'écart de la génération
+1920 passe de +5,2 à +5,0 points : le tableau avait vieilli d'un point sur ses
+deux premières lignes, non parce qu'on l'avait mal écrit, mais parce que le
+modèle a bougé sous lui. C'est la forme la plus discrète de la péremption, et
+la seule qu'aucune relecture n'attrape.
+
 **Ce qui reste — et c'est le travail, qui se fait section par section.**
 Soixante-douze sections, et elles ont toutes la même forme : elles disent ce
 que les chiffres du dépôt valent AUJOURD'HUI, et chacun de leurs chiffres est
