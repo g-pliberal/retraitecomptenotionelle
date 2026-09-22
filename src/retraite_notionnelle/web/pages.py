@@ -2682,7 +2682,8 @@ n'est récupérée qu'au-delà d'un seuil d'actif net. Quatre règles l'encadren
   ans qui l'ont précédée, sont réintégrées : la créance se poursuit contre le
   donataire, à hauteur de ce qu'il a reçu et jamais au-delà, comme l'aide
   sociale départementale le fait déjà ; les primes d'assurance-vie versées
-  après 65 ans de même, contre leur bénéficiaire ;</li>
+  dans la même fenêtre de même, contre leur bénéficiaire, pour qu'un placement
+  fait à soixante ans ne mette pas l'épargne hors d'atteinte ;</li>
   <li>la créance est garantie par une hypothèque légale inscrite dès le
   premier versement, de sorte qu'un bien donné la porte avec lui.</li>
 </ul>
@@ -10311,6 +10312,35 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
     patrimoine = simulateur.patrimoine
     modestes = patrimoine.statistiques("retraites_q1")
     retraites = patrimoine.statistiques("retraites")
+    # Les trois règles qui protègent la reprise, telles que la couverture les
+    # compte (``cout._recouvrement``) : elles n'ont d'objet que si la part est
+    # calculée.
+    regles_reprise = ""
+    if reprise_calculee and garantie_bascule is not None:
+        immediate = garantie_bascule.part_reprise_immediate
+        regles_reprise = f"""<p class="discret"><strong>Les trois règles qui protègent la
+reprise sont comptées.</strong> {g.pourcentage(garantie_bascule.deces_en_couple, decimales=0)} des bénéficiaires meurent en couple :
+le logement attend alors le conjoint survivant, qui vit encore
+{g.nombre(garantie_bascule.duree_veuvage, 1)} ans en moyenne, et n'est repris qu'au bout de
+{garantie_bascule.report_annees} ans, intérêts courus. Un ménage est tenu pour propriétaire au-delà
+de {g.euros(base.patrimoine_minimal_proprietaire)} de patrimoine, en euros de 2018 comme les montants qui suivent, et son
+logement en fait alors
+{g.pourcentage(base.part_logement_proprietaires, decimales=0)}. Les donations faites dans les dix ans qui précèdent
+l'ouverture, ou après, sont rendues à la succession des ménages qui en ont
+fait : {g.pourcentage(base.part_donateurs_modestes, decimales=0)} des ménages retraités les moins dotés,
+{g.pourcentage(base.part_donateurs_retraites, decimales=0)} de l'ensemble selon le COR, pour
+{g.euros(base.donation_moyenne_modestes)} et {g.euros(base.donation_moyenne_retraites)} donnés, dont la règle atteint
+{g.pourcentage(base.part_donations_fenetre * base.part_donations_connues, decimales=0)}, un don manuel qu'on ne déclare pas lui
+échappant. L'assurance-vie, enfin, est hors succession : elle fait
+{g.pourcentage(base.part_assurance_vie_patrimoine, decimales=0)} du patrimoine des ménages les moins dotés selon la Banque de
+France, et la règle n'en reprend que les primes de la même fenêtre, supposées
+{g.pourcentage(base.part_assurance_vie_reprise, decimales=0)} du capital. Ce que la succession couvre se partage donc
+entre {g.pourcentage(immediate, decimales=0)} rendus au décès et
+{g.pourcentage(part_reprise - immediate, decimales=0)} que le logement des couples rend plus
+tard, en valeur au décès. Ces règles pèsent peu sur le chiffre, parce que la
+créance dépasse déjà, et de loin, ce que la plupart des successions
+contiennent ; elles comptent pour ce qu'elles empêchent.</p>
+"""
     # Le temps passé en couple après 65 ans, sur la table du vingtile des
     # bénéficiaires : ce qui regroupe deux avances sur une succession.
     vie_en_couple = simulateur.vie_en_couple
@@ -10408,8 +10438,8 @@ de la médiane, et le mélange entre les deux ; la part retenue est la moyenne,
 pesée par les avances.</p>
 
 <p class="discret"><strong>Une succession porte {g.nombre(avances_succession, 2)} avances</strong>, et
-c'est presque toujours celle de la femme. La règle reporte la reprise au décès
-du conjoint survivant ; or un homme de 65 ans vit en couple {g.pourcentage(couple_h, decimales=0)} du
+c'est presque toujours celle de la femme. La règle reporte la reprise du
+logement au décès du conjoint survivant ; or un homme de 65 ans vit en couple {g.pourcentage(couple_h, decimales=0)} du
 temps qui lui reste, une femme {g.pourcentage(couple_f, decimales=0)}, et le conjoint est lui aussi sous
 le plancher assez souvent pour que les deux avances se retrouvent sur la même
 succession. Le patrimoine du fichier étant celui d'un ménage, c'est bien ce
@@ -10424,6 +10454,7 @@ ne se succèdent pas l'un à l'autre, alors que le recensement les compte en
 couple. Le réglage « Part de l'avance couverte par la succession » remplace
 tout ce calcul par un nombre.</p>
 
+{regles_reprise}
 {g.tableau(
     ["Année", "Versé", "Avances libérées par les décès", "Reprises",
      "Garantie nette", "Net en part du PIB", "Avances en cours"],

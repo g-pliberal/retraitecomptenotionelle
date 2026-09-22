@@ -1108,6 +1108,13 @@ affirmations:
     etat: verifiee
     controle: avances_par_succession
 
+  - id: cout.trois_regles_de_la_reprise
+    page: /cout
+    extrait: "reprise sont comptées."
+    porte: le report du logement, les donations réintégrées et l'assurance-vie de la fenêtre entrent dans la couverture
+    etat: verifiee
+    controle: trois_regles_de_la_reprise
+
   - id: cout.brute_avant_reprise
     page: /cout
     extrait: "brute, avant reprise"

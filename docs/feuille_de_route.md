@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 637<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 302<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 532<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -9565,6 +9565,40 @@ distribution des successions déclarées, pour un recoupement d'ensemble, et
 Connection reset by peer », vérifié le 22 septembre 2026 sur la racine comme
 sur la page de recherche). Le jeu `cdc_rapports_retraites`, qui portait ce même
 blocage sans le dire, le porte aussi. La liste en compte dix.
+
+*Le 22 septembre 2026, plus tard : les trois règles de la reprise sont
+comptées.* « Calcule les trois », puis « oui » à les coder, la fenêtre de
+l'assurance-vie alignée sur celle des donations. Le report du logement au
+décès du conjoint survivant, les donations réintégrées et l'assurance-vie ne
+jouaient jusque-là que dans le texte du programme. `cout._recouvrement` et
+son jumeau `recouvrement` les font entrer dans la couverture, calculée
+désormais sur mille rangs de chaque distribution de patrimoine
+(`DistributionPatrimoine.grille`, l'inverse de la loi normale par
+l'approximation d'Acklam des deux côtés) ; `_deces_en_couple` lit sur le
+recensement et les courbes de décès du premier vingtile la part des décès en
+couple, 35 %, et ce que vit ensuite le survivant, 11,1 ans ; la trajectoire
+rend au décès la part immédiate et, onze ans plus tard, ce que le logement
+des couples rend, intérêts courus (`part_reprise_immediate`, `report_annees`,
+`facteur_report` sur `GarantieProjetee`). Quinze paramètres, chacun avec sa
+source ou son motif d'hypothèse, dont trois interrupteurs
+(`reprise_report_logement`, `reprise_donations`, `reprise_assurance_vie`) ;
+les trois coupés et l'assurance-vie à zéro rendent le calcul d'avant au
+chiffre près, et un test le tient. Deux sources au manifeste
+(`cor_transmissions_retraites`, `bdf_comptes_distributionnels`), `L. 132-8`
+CASF lu sur une copie, Légifrance refusant la session. Une correction en
+chemin : le calcul d'avant comptait l'assurance-vie comme saisissable alors
+qu'elle est hors succession, ce qui surestimait la couverture ; et la règle
+écrite laissait placer son épargne en assurance-vie avant 65 ans hors
+d'atteinte, d'où l'alignement, écrit dans le dépliant du programme. Ce que ça
+déplace : la couverture reste à 39 %, les reprises de 2070 passent de 7,8 à
+8,0 milliards d'euros, leur cumul de 2026 à 2070 de 243 à 239, parce que le
+report décale onze ans de reprises pendant la montée en charge. Les
+hypothèses sans source, de bas en haut, laissent 2070 entre 7,5 et 9,1. La
+page Coût porte un paragraphe de plus, « Les trois règles qui protègent la
+reprise sont comptées », et son affirmation contrôlée ; `limites.md` dit le
+détail et les hypothèses. Reste ce qui restait : le fichier individuel de
+l'enquête, qui remplacerait aussi la part du logement, le patrimoine du
+propriétaire et les donations par des données.
 
 **Fin.** La page Coût donne la garantie en trois lignes, brut, reprises et
 net, sur le patrimoine des bénéficiaires selon leur pension lu dans le fichier

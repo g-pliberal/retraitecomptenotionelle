@@ -5324,6 +5324,57 @@ en couple par âge et par sexe, croisée avec la part de chaque sexe sous le
 plancher, les pensions du couple étant supposées indépendantes — elles ne le
 sont pas, et la corrélation rendrait ce nombre plus grand).
 
+**Les trois règles qui protègent la reprise sont comptées depuis le
+22 septembre 2026** (`cout._recouvrement`, `recouvrement` dans `cout.js`). La
+couverture était l'espérance de `min(créance, patrimoine)` ; elle se calcule
+désormais sur mille rangs de chaque distribution, parce que chaque règle ne
+joue que sur une partie du patrimoine. *Le logement attend le conjoint
+survivant* : 35 % des décès de bénéficiaires surviennent en couple (recensement
+2021, âge par âge, sur les courbes de décès du premier vingtile), la créance
+est alors prise sur ce qui n'est pas le logement et le reste attend
+11 ans — ce que le survivant vit encore, 11,1 ans, l'écart d'âge entre
+conjoints étant de 2,6 ans —, grossi de 25 % d'intérêts, sur le seul
+logement. *Les donations de la fenêtre sont réintégrées* : 7,0 % des ménages
+retraités les moins dotés et 15,8 % de l'ensemble ont déjà donné (COR,
+document n° 7 du 16 décembre 2021, tableau 1). *L'assurance-vie est hors
+succession*, et le calcul d'avant la comptait tout entière comme saisissable :
+elle fait 10 % du patrimoine des ménages les moins dotés (Banque de France,
+comptes distributionnels, 2023), et la règle n'en reprend que les primes
+versées dans la même fenêtre que les donations. Cette fenêtre a été alignée le
+même jour : la règle écrite ne reprenait que les primes versées après 65 ans,
+ce qui laissait placer son épargne à 60 ans hors d'atteinte ; `L. 132-8` CASF
+(LEGIARTI000031728913, en vigueur depuis le 30 décembre 2015), pour l'aide
+sociale, ne reprend que les primes versées après 70 ans.
+
+Ce que cela déplace, au réglage par défaut : la couverture reste à 39 %, dont
+35 % rendus au décès et le reste par le logement des couples ; les reprises de
+2070 passent de 7,8 à 8,0 milliards d'euros 2026, leur cumul de 2026 à 2070 de
+243 à 239. Règle par règle, chacune seule contre le calcul d'avant : le report
+du logement porte 2070 à 7,85 mais retire 8 milliards au cumul, parce qu'il
+décale les reprises de onze ans pendant la montée en charge ; les donations
+portent 2070 à 8,1 et le cumul à 252 ; l'assurance-vie hors succession ramène
+2070 à 7,4, et sa règle le remonte à 7,6. Tout pèse peu parce que la
+couverture est saturée : une avance libérée vaut 150 000 € en moyenne en 2070,
+face à une médiane de 36 800 € pour le quart modeste. Les règles valent
+surtout pour ce qu'elles ferment : sans celle des donations, que 30 % des
+propriétaires donnent leur logement retirerait de l'ordre de 0,8 milliard par an à
+l'horizon (calcul hors modèle du 22 septembre 2026, que le modèle ne refait
+pas : il ne connaît pas de donation faite pour échapper à la reprise).
+
+Six nombres de ce calcul sont des hypothèses sans source, et `Parametres` les
+porte avec leur motif : la part du logement dans le patrimoine d'un
+propriétaire (75 %), le patrimoine à partir duquel un ménage est propriétaire
+(80 000 € de 2018, qui laisse 30 % de locataires parmi les ménages retraités
+quand le COR en compte 30,5 %), ce qu'un ménage donateur a donné (60 000 € et
+100 000 €), la part des donations que la règle atteint (85 % dans la fenêtre,
+80 % connues de l'administration) et la part du capital d'assurance-vie que
+les primes de la fenêtre représentent (60 %). Les faire varier ensemble de
+bas en haut laisse les reprises de 2070 entre 7,5 et 9,1 milliards. Le report
+suppose le logement pris sur la succession du survivant comme sur celle d'un
+ménage, patrimoine constant en euros constants, et une seule durée de veuvage
+pour tous : la distribution de ces durées ne changerait pas le régime
+permanent, seulement la montée en charge.
+
 **Le poids des deux sexes est celui de l'enquête, et il ne se devinait
 pas.** Le dépôt ne porte aucun effectif de retraités par sexe : ni la pyramide
 des âges de l'INSEE, qui ignore la retraite, ni les effectifs de la DREES, qui
@@ -8047,7 +8098,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2084<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2088<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -863,6 +863,26 @@ institutions:
           sur succession de la garantie vieillesse (action 47) : le premier
           quartile tient lieu des plus petites pensions, l'ensemble des
           retraités des autres.
+      - id: cor_transmissions_retraites
+        titre: >-
+          Les transmissions de patrimoine : qui donne quoi et à qui ?
+          (secrétariat général du COR, document n° 7 de la séance du
+          16 décembre 2021, sur l'enquête Histoire de vie et Patrimoine 2018)
+        url: https://www.cor-retraites.fr/sites/default/files/2021-12/Doc.07_Transmissions.pdf
+        acces: document
+        statut_integration: saisi
+        cible: src/retraite_notionnelle/config.py
+        note: >-
+          Lu le 22 septembre 2026, pour la règle des donations de la reprise
+          sur succession (action 47). Tableau 1 : part des ménages retraités
+          qui ont déjà fait une donation, selon leur patrimoine net — 7,0 %
+          sous le quatrième décile, 15,5 % du quatrième au septième, 22,3 %,
+          21,7 %, 39,1 % au-delà du neuvième ; l'ensemble, 15,8 %, est la
+          moyenne des cinq colonnes pesée par leur largeur. Graphique 5 : la
+          moitié des donations des 70-79 ans dépasse 100 000 €. Aucun montant
+          moyen n'est publié : ceux de `Parametres` sont des hypothèses.
+          Saisis à la lecture dans `Parametres.part_donateurs_modestes` et
+          `part_donateurs_retraites`, aucun script ne les revérifie.
       - id: insee_vie_en_couple
         titre: >-
           Mode de résidence des personnes de 65 ans ou plus, par âge et par sexe
@@ -3710,6 +3730,29 @@ institutions:
           sur les PRIX, le nôtre à des pensions revalorisées au taux qui les
           actualise. Ce n'est pas le même objet, et l'écart va dans le sens
           d'une sévérité plus grande chez eux. Voir `docs/limites.md` §5 quater.
+
+  banque_de_france:
+    nom: Banque de France
+    role: >-
+      Comptes financiers et comptes distributionnels du patrimoine des ménages.
+    jeux:
+      - id: bdf_comptes_distributionnels
+        titre: >-
+          De nouvelles statistiques sur la distribution du patrimoine des
+          ménages dans la comptabilité nationale (Bulletin de la Banque de
+          France n° 250-6, février 2024)
+        url: https://www.banque-france.fr/system/files/2024-02/BDF250-6_Comptes.pdf
+        acces: document
+        statut_integration: saisi
+        cible: src/retraite_notionnelle/config.py
+        note: >-
+          Lu le 22 septembre 2026, pour la règle de l'assurance-vie de la
+          reprise sur succession (action 47). Graphique 4, deuxième trimestre
+          2023 : pour les 50 % de ménages les moins dotés, patrimoine net
+          moyen 47 000 €, dont 57 % d'actifs financiers, 46 % de dépôts et
+          10 % d'assurance-vie et d'épargne retraite. Saisi dans
+          `Parametres.part_assurance_vie_patrimoine`, aucun script ne le
+          revérifie. Le Bulletin ne ventile pas par âge.
 
   bce:
     nom: Banque centrale européenne

@@ -771,6 +771,74 @@ class Parametres:
     #: remboursée. Ne joue que sur la page Coût, à partir de la bascule.
     part_reprise_garantie: float | None = None
 
+    # --- Les trois règles de la reprise (action 47) --------------------------
+    #: Elles ne jouent que sur la couverture CALCULÉE (``part_reprise_garantie``
+    #: à ``None``) ; voir ``cout._recouvrement``, qui dit comment chacune entre
+    #: dans le calcul, et ``docs/limites.md``. Chacune se coupe, pour mesurer ce
+    #: qu'elle déplace ; les trois coupées, et l'assurance-vie ramenée à zéro,
+    #: rendent la couverture d'avant le 22 septembre 2026.
+    #:
+    #: 1. LE LOGEMENT ATTEND LE DÉCÈS DU CONJOINT SURVIVANT QUI L'OCCUPE, les
+    #: intérêts courant entre-temps. Au premier décès d'un couple, la créance
+    #: n'est prise que sur ce qui n'est pas le logement ; le reste attend le
+    #: survivant, capitalisé au taux réel, et n'est pris que sur le logement.
+    reprise_report_logement: bool = True
+    #: La part du patrimoine d'un ménage PROPRIÉTAIRE que son logement
+    #: représente. Hypothèse : le COR (document n° 3 du 16 décembre 2021)
+    #: donne 63,5 % d'immobilier dans le patrimoine brut des ménages
+    #: retraités, tous biens et tous ménages confondus, locataires compris.
+    part_logement_proprietaires: float = 0.75
+    #: Le patrimoine à partir duquel un ménage est tenu pour propriétaire de
+    #: son logement, en euros de l'enquête (2018). Hypothèse : sur l'ensemble
+    #: des ménages retraités, il laisse 30 % de locataires, et le COR en
+    #: compte 30,5 % (69,5 % de propriétaires).
+    patrimoine_minimal_proprietaire: float = 80_000.0
+    #: L'écart d'âge entre conjoints, le mari étant le plus âgé : 2,6 ans
+    #: (INSEE, 2017). Il dit à quel âge le survivant entre en veuvage, et donc
+    #: combien de temps la reprise du logement attend.
+    ecart_age_couple: float = 2.6
+    #:
+    #: 2. LES DONATIONS FAITES DEPUIS L'OUVERTURE, OU DANS LES DIX ANS QUI L'ONT
+    #: PRÉCÉDÉE, SONT RÉINTÉGRÉES : la créance se poursuit contre le donataire,
+    #: à hauteur de ce qu'il a reçu. Le patrimoine de l'enquête est celui qui
+    #: RESTE après les donations déjà faites ; la règle lui rend, chez les
+    #: ménages donateurs, la part des donations qu'elle atteint.
+    reprise_donations: bool = True
+    #: La part des ménages retraités qui ont déjà fait une donation : 7,0 %
+    #: parmi les 40 % les moins dotés, 15,8 % sur l'ensemble (COR, document
+    #: n° 7 du 16 décembre 2021, tableau 1, enquête Patrimoine 2018 ;
+    #: l'ensemble est la moyenne des cinq colonnes pesée par leur largeur).
+    part_donateurs_modestes: float = 0.07
+    part_donateurs_retraites: float = 0.158
+    #: Ce qu'un ménage donateur a donné, en euros de l'enquête (2018).
+    #: Hypothèses : le COR ne publie pas de montant, seulement que la moitié
+    #: des donations des 70-79 ans dépasse 100 000 € (graphique 5).
+    donation_moyenne_modestes: float = 60_000.0
+    donation_moyenne_retraites: float = 100_000.0
+    #: La part de ces donations que la règle atteint : celles qui tombent dans
+    #: la fenêtre (dix ans avant l'ouverture, et après), et que l'administration
+    #: connaît — un don manuel non déclaré lui échappe. Hypothèses.
+    part_donations_fenetre: float = 0.85
+    part_donations_connues: float = 0.8
+    #:
+    #: 3. L'ASSURANCE-VIE EST HORS SUCCESSION (L. 132-12 du code des
+    #: assurances), mais le patrimoine de l'enquête la compte. La règle en
+    #: reprend les primes versées dans la même fenêtre que les donations —
+    #: depuis l'ouverture, ou dans les dix ans qui l'ont précédée —, contre
+    #: leur bénéficiaire ; le reste, primes antérieures et intérêts, échappe.
+    #: Sans la règle, tout échappe. ``L. 132-8`` CASF, pour l'aide sociale, ne
+    #: reprend que les primes versées après 70 ans.
+    reprise_assurance_vie: bool = True
+    #: La part de l'assurance-vie et de l'épargne retraite dans le patrimoine
+    #: des ménages : 10 % pour les 50 % les moins dotés (Banque de France,
+    #: comptes distributionnels de patrimoine, deuxième trimestre 2023).
+    #: Zéro rend l'ancienne convention, où tout le patrimoine était saisissable.
+    part_assurance_vie_patrimoine: float = 0.10
+    #: La part du capital d'assurance-vie au décès que les primes de la fenêtre
+    #: représentent. Hypothèse : le reste vient des primes versées avant et des
+    #: intérêts.
+    part_assurance_vie_reprise: float = 0.6
+
     #: Seul ou à deux. Ne joue que sur l'allocation d'isolement : la garantie
     #: est individualisée, et le conjoint n'entre pas dans le calcul. Le défaut
     #: est la personne seule, comme pour l'ASPA du scénario 1, de sorte que les

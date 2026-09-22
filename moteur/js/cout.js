@@ -660,7 +660,9 @@ class GarantieDistribution {
                    ayantsDroit: 0, tauxRecours: 1.0, avancesLibereesConstants: 0,
                    reprisesConstants: 0, stockAvancesConstants: 0, tauxReel: 0,
                    partReprise: 0, dureeAvances: 0, populationMortalite: null,
-                   partFemmes: 0, avancesParSuccession: 1 };
+                   partFemmes: 0, avancesParSuccession: 1,
+                   partRepriseImmediate: 0, reportAnnees: 0, facteurReport: 1,
+                   decesEnCouple: 0, dureeVeuvage: 0 };
     if (tetesGarantie <= 0 || this.pensionReference <= 0) return vide;
     const facteur = total[RESSOURCES_GARANTIE] / tetesGarantie / this.pensionReference;
     if (facteur <= 0) return vide;
@@ -684,6 +686,11 @@ class GarantieDistribution {
       populationMortalite: null,
       partFemmes: 0,
       avancesParSuccession: 1,
+      partRepriseImmediate: 0,
+      reportAnnees: 0,
+      facteurReport: 1,
+      decesEnCouple: 0,
+      dureeVeuvage: 0,
     };
   }
 }
@@ -1689,6 +1696,85 @@ class Cout {
  * produit, mise à l'échelle par un ancrage calculé sur cette même dernière
  * année : les deux expressions coïncident exactement à la jonction.
  */
+/** Ce qu'il reste à vivre à `age` : copie de `_esperance_restante`. */
+function esperanceRestante(courbe, age) {
+  if (age < 65.0) return esperanceRestante(courbe, 65.0) + (65.0 - age);
+  const rang = Math.trunc(age - 65.0);
+  const fraction = age - 65.0 - rang;
+  const survie = (k) => (k < courbe.length ? courbe[k] : 0.0);
+  const depart = survie(rang) * (1.0 - fraction) + survie(rang + 1) * fraction;
+  if (depart <= 1e-12) return 0.0;
+  let aire = 0.5 * (depart + survie(rang + 1)) * (1.0 - fraction);
+  for (let k = rang + 1; k < courbe.length; k += 1) aire += 0.5 * (survie(k) + survie(k + 1));
+  return aire / depart;
+}
+
+/** Les décès en couple, et le veuvage qui suit : copie de `_deces_en_couple`. */
+function decesEnCouple(couple, courbes, partFemmes, ecartAge) {
+  let enCouple = 0.0;
+  let tous = 0.0;
+  let veuvage = 0.0;
+  for (const [sexe, poids] of [["F", partFemmes], ["H", 1.0 - partFemmes]]) {
+    const courbe = courbes[sexe];
+    const autre = courbes[sexe === "F" ? "H" : "F"];
+    const ecart = sexe === "F" ? ecartAge : -ecartAge;
+    for (let k = 0; k < courbe.length; k += 1) {
+      const deces = courbe[k] - (k + 1 < courbe.length ? courbe[k + 1] : 0.0);
+      if (deces <= 0.0) continue;
+      const age = 65.0 + k + 0.5;
+      const part = couple.part(age, sexe);
+      tous += poids * deces;
+      enCouple += poids * deces * part;
+      veuvage += poids * deces * part * esperanceRestante(autre, age + ecart);
+    }
+  }
+  if (enCouple <= 0.0) return [0.0, 0.0];
+  return [enCouple / tous, veuvage / enCouple];
+}
+
+/**
+ * Ce qu'une créance rend, au décès et au décès du conjoint survivant, en part
+ * de la créance : copie de `_recouvrement`, qui dit les trois règles.
+ */
+function recouvrement(creance, patrimoines, parametres, decesCouple, facteurReport,
+                      partDonateurs, donation) {
+  if (creance <= 0.0 || !patrimoines.length) return [1.0, 0.0];
+  const partAv = parametres.part_assurance_vie_patrimoine;
+  const echappe = partAv * (parametres.reprise_assurance_vie
+    ? 1.0 - parametres.part_assurance_vie_reprise : 1.0);
+  const report = parametres.reprise_report_logement;
+  const logement = parametres.part_logement_proprietaires;
+  const proprietaire = parametres.patrimoine_minimal_proprietaire;
+  let ajout = 0.0;
+  if (parametres.reprise_donations) {
+    ajout = donation * parametres.part_donations_fenetre * parametres.part_donations_connues;
+  } else {
+    partDonateurs = 0.0;
+  }
+  let immediat = 0.0;
+  let differe = 0.0;
+  for (const patrimoine of patrimoines) {
+    const saisissable = patrimoine * (1.0 - echappe);
+    const partLogement = patrimoine >= proprietaire ? logement : 0.0;
+    for (const [poids, actif, dontLogement] of [
+      [1.0 - partDonateurs, saisissable, partLogement * saisissable],
+      [partDonateurs, saisissable + ajout, partLogement * saisissable]]) {
+      if (poids <= 0.0) continue;
+      const seul = Math.min(creance, actif);
+      let premier = seul;
+      let second = 0.0;
+      if (report) {
+        premier = Math.min(creance, actif - dontLogement);
+        second = Math.min((creance - premier) * facteurReport, dontLogement);
+      }
+      immediat += poids * ((1.0 - decesCouple) * seul + decesCouple * premier);
+      differe += poids * decesCouple * second;
+    }
+  }
+  const nombre = patrimoines.length;
+  return [immediat / nombre / creance, differe / nombre / creance];
+}
+
 /**
  * Les avances de la garantie, leur intérêt, et ce que les successions rendent.
  * Copie de `_reprises_successions` dans `cout.py`, qui dit la méthode et ce
@@ -1822,14 +1908,28 @@ function reprisesSuccessions(lignes, simulateur, calage) {
   }
 
   // 5. La couverture : calculée sur le patrimoine des retraités, sauf réglage.
+  // Les trois règles de la reprise y entrent par `recouvrement`.
+  const [decesCouple, veuvage] = decesEnCouple(
+    simulateur.vieEnCouple, { F: courbeF, H: courbeH }, partFemmes,
+    parametres.ecart_age_couple);
   let part = parametres.part_reprise_garantie;
-  if (part === null || part === undefined) {
+  let report = 0;
+  let facteurReport = 1.0;
+  let immediate;
+  if (part !== null && part !== undefined) {
+    immediate = part;
+  } else {
+    if (parametres.reprise_report_logement) {
+      report = Math.round(veuvage);
+      facteurReport = (1.0 + tauxMoyen) ** report;
+    }
     const patrimoine = simulateur.patrimoine;
     const bas = patrimoine.distribution("retraites_q1");
     const haut = patrimoine.distribution("retraites");
     const versBas = macro.coefficientPrix(anneeEuros, bas.annee);
     const versHaut = macro.coefficientPrix(anneeEuros, haut.annee);
-    let numerateur = 0.0;
+    let numerateurImmediat = 0.0;
+    let numerateurDiffere = 0.0;
     let denominateur = 0.0;
     for (const [poids, complement, , rang] of tranches) {
       const avance = Math.abs(tauxMoyen) > 1e-12
@@ -1838,21 +1938,32 @@ function reprisesSuccessions(lignes, simulateur, calage) {
       // Ce que la succession affronte n'est pas une avance, mais toutes
       // celles qu'elle porte.
       const surSuccession = avance * avancesParSuccession;
-      const couvertureBas = bas.couverture(surSuccession * versBas);
-      const couvertureHaut = haut.couverture(surSuccession * versHaut);
-      let couverture;
-      if (rang <= 0.25) couverture = couvertureBas;
-      else if (rang >= 0.5) couverture = couvertureHaut;
-      else couverture = couvertureBas + (couvertureHaut - couvertureBas) * (rang - 0.25) / 0.25;
-      numerateur += poids * avance * couverture;
+      const [immediatBas, differeBas] = recouvrement(
+        surSuccession * versBas, bas.grille, parametres, decesCouple, facteurReport,
+        parametres.part_donateurs_modestes, parametres.donation_moyenne_modestes);
+      const [immediatHaut, differeHaut] = recouvrement(
+        surSuccession * versHaut, haut.grille, parametres, decesCouple, facteurReport,
+        parametres.part_donateurs_retraites, parametres.donation_moyenne_retraites);
+      let melange;
+      if (rang <= 0.25) melange = 0.0;
+      else if (rang >= 0.5) melange = 1.0;
+      else melange = (rang - 0.25) / 0.25;
+      numerateurImmediat += poids * avance * (immediatBas + (immediatHaut - immediatBas) * melange);
+      numerateurDiffere += poids * avance * (differeBas + (differeHaut - differeBas) * melange);
       denominateur += poids * avance;
     }
-    part = denominateur > 0 ? numerateur / denominateur : 0.0;
+    immediate = denominateur > 0 ? numerateurImmediat / denominateur : 0.0;
+    const differee = denominateur > 0 ? numerateurDiffere / denominateur : 0.0;
+    part = immediate + differee / facteurReport;
   }
+  // Ce que le logement rend, en euros de l'année où il le rend, pour un euro
+  // d'avance libérée `report` années plus tôt.
+  const differeeRendue = (part - immediate) * facteurReport;
 
   // 6. Les avances, année par année.
   const complements = new Map();
   const croissance = new Map();
+  const libereesParAnnee = new Map();
   let facteur = 1.0;
   let stock = 0.0;
   for (const ligne of projetees) {
@@ -1874,9 +1985,11 @@ function reprisesSuccessions(lignes, simulateur, calage) {
       liberees += partDeces / totalSurvie * avance;
     });
     liberees *= garantie.beneficiaires;
+    libereesParAnnee.set(annee, liberees);
     stock = stock * (1.0 + tauxReel) + verse - liberees;
+    const anterieures = libereesParAnnee.has(annee - report) ? libereesParAnnee.get(annee - report) : 0.0;
     garantie.avancesLibereesConstants = liberees;
-    garantie.reprisesConstants = part * liberees;
+    garantie.reprisesConstants = immediate * liberees + differeeRendue * anterieures;
     garantie.stockAvancesConstants = stock;
     garantie.tauxReel = tauxReel;
     garantie.partReprise = part;
@@ -1884,6 +1997,11 @@ function reprisesSuccessions(lignes, simulateur, calage) {
     garantie.populationMortalite = population;
     garantie.partFemmes = partFemmes;
     garantie.avancesParSuccession = avancesParSuccession;
+    garantie.partRepriseImmediate = immediate;
+    garantie.reportAnnees = report;
+    garantie.facteurReport = facteurReport;
+    garantie.decesEnCouple = decesCouple;
+    garantie.dureeVeuvage = veuvage;
   }
 }
 

@@ -319,6 +319,28 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   // Part de l'avance d'un bénéficiaire que sa succession couvre : null la
   // fait calculer sur le patrimoine des ménages retraités selon leur revenu.
   part_reprise_garantie: null,
+  // Les trois règles de la reprise (action 47), qui ne jouent que sur la
+  // couverture calculée : voir `Parametres` dans `config.py` pour les sources
+  // et les hypothèses, et `recouvrement` dans `cout.js`.
+  // 1. Le logement attend le décès du conjoint survivant qui l'occupe.
+  reprise_report_logement: true,
+  part_logement_proprietaires: 0.75,
+  patrimoine_minimal_proprietaire: 80000.0,
+  ecart_age_couple: 2.6,
+  // 2. Les donations de la fenêtre (dix ans avant l'ouverture, et après) sont
+  // réintégrées.
+  reprise_donations: true,
+  part_donateurs_modestes: 0.07,
+  part_donateurs_retraites: 0.158,
+  donation_moyenne_modestes: 60000.0,
+  donation_moyenne_retraites: 100000.0,
+  part_donations_fenetre: 0.85,
+  part_donations_connues: 0.8,
+  // 3. L'assurance-vie est hors succession ; la règle en reprend les primes
+  // versées dans la même fenêtre.
+  reprise_assurance_vie: true,
+  part_assurance_vie_patrimoine: 0.10,
+  part_assurance_vie_reprise: 0.6,
   annee_euros_garantie_vieillesse: 2026,
   //: Seul ou à deux : ne joue que sur l'allocation d'isolement. Le défaut est
   //: la personne seule, comme pour l'ASPA du scénario 1.
