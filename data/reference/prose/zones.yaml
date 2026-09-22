@@ -317,6 +317,13 @@ fichiers:
       # de sa lecture, simulations comprises : il a son intertitre, et c'est
       # un récit.
       "Ce que JORF et LEGI ne contiennent pas": etat
+      # La garantie du scénario 6 : ce qu'elle est — l'âge, l'assiette, les
+      # montants — et ce qu'elle coûte, recalculé. Elle annonçait 1,30 % du
+      # PIB et 40 milliards en 2026 quand le modèle en calcule 0,58 % et
+      # 17,8 ; 3 757 milliards dans le passé pour 1 593. Le journal des
+      # mesures qui l'ont établie a son intertitre, et c'est un récit.
+      "Le scénario 6, et ce que sa garantie ne voit pas": etat
+      "La garantie du scénario 6, mesure par mesure": recit
       "Les régimes entrés depuis, et ce que chaque caisse publie": recit
       "1. État de certification des données": etat
       "Ce que le recontrôle a trouvé, série par série": recit

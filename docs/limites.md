@@ -5208,18 +5208,65 @@ par construction, n'existe plus.
 
 ### Le scénario 6, et ce que sa garantie ne voit pas
 
-Le scénario 6 — le scénario 4 jusqu'à la bascule, puis un taux unique de 18 %
+Le scénario 6 — le scénario 4 jusqu'à la bascule, puis un taux unique de <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %
 pour tous, plus une garantie vieillesse individualisée, financée par l'impôt —
 hérite des limites du scénario 4, part patronale inconnue du public comprise :
 ce qui a été cotisé avant la bascule y est porté aux mêmes taux, et estimé là
 où le 4 l'estime. Il en ajoute trois.
 
-**La garantie est ouverte à 65 ans, et le modèle sert désormais ce qu'elle
-doit à qui est parti plus tôt.** *Corrigé le 19 septembre 2026.* Avant 65 ans
-on ne touche pas le minimum vieillesse ; à partir de 65 ans on le touche, même
-si l'on a liquidé à 62. Le complément est donc CALCULÉ dans tous les cas, et il
+**La garantie est ouverte à <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et le modèle sert désormais ce qu'elle
+doit à qui est parti plus tôt.** *Corrigé le 19 septembre 2026.* Avant <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans
+on ne touche pas le minimum vieillesse ; à partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans on le touche, même
+si l'on a liquidé à <!--chiffre:illustration()-->62<!--/-->. Le complément est donc CALCULÉ dans tous les cas, et il
 n'entre dans la pension affichée que lorsqu'il est dû dès le départ ; la page
 de simulation dit l'année où il s'ouvre, et le montant qu'il vaudra.
+
+**La garantie regarde l'ENSEMBLE de la pension obligatoire.** *Tranché le
+19 septembre 2026 par le programme.* Les <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % de répartition et les <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> %
+capitalisés sont comparés ensemble au plancher : une allocation différentielle
+compte les ressources, non leur origine. La rente du pilier réduit donc le
+complément euro pour euro, et c'est ce qui coûte le moins à l'impôt. Le modèle
+laissait jusque-là cette rente hors du calcul, faute que la question — de
+droit, pas de modèle — ait été tranchée.
+
+**Les montants sont des euros de 2026, déflatés par les prix.** <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> € et <!--chiffre:mesure(parametre?nom=allocation_isolement_mensuelle)-->250<!--/--> €
+sont ceux de la proposition ; une liquidation de 1995 les reçoit ramenés par
+l'indice des prix, comme l'ASPA entre deux ancres de son barème. Ce n'est
+qu'une convention : rien ne dit qu'une garantie créée en 2026 aurait été
+indexée sur les prix depuis 1941.
+
+**Ce que la garantie coûte aujourd'hui, dans la trajectoire.** Le barème est
+appliqué, année par année, à la distribution des pensions de l'échantillon
+interrégimes de 2020, déplacée du facteur que la grille donne : la pension
+moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
+Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,14<!--/--> en 2070. La garantie coûte
+<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,58<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->18<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->3,2<!--/--> millions de
+bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,40<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->15<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,8<!--/--> millions —, soit
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->731<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 593<!--/--> depuis 1959. Ces chiffres
+sont bruts des reprises sur succession ; la sous-section qui suit dit comment
+chacun a été établi.
+
+Ce que cette méthode suppose, et qui reste une limite : la FORME de la
+distribution est celle de 2020, déplacée sans être déformée, le passé comme
+l'avenir ; le déplacement est proportionnel et uniforme, quand le scénario ne
+déplace pas toutes les carrières du même rapport ; et les retraités de moins
+de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, qui attendent la garantie, sont supposés répartis comme les autres.
+Une seule méthode sur toute la série, plutôt qu'une falaise entre deux.
+
+**Ce que la garantie n'est plus : une dépense du compte des cotisants.** Elle
+est financée par l'impôt, et elle a donc quitté la masse contributive du
+scénario 6, où elle était comptée jusqu'ici. C'est la symétrie de ce que la
+recette fait déjà — la CSG de solidarité sort des ressources —, et sans elle la
+garantie aurait été payée deux fois : une fois par les cotisations, une fois
+par le contribuable.
+
+### La garantie du scénario 6, mesure par mesure
+
+Ce qui suit est le journal des mesures qui ont établi la garantie, chacune
+datée : ses chiffres sont ceux du jour où elle a été faite, et plusieurs ont
+bougé depuis. Ce que la garantie coûte aujourd'hui est au paragraphe
+précédent, que la prose recalcule.
 
 **Ce montant n'est pas celui du départ, et ce document a dit le contraire.**
 Il affirmait l'égalité exacte entre le complément calculé à la liquidation et
@@ -5234,20 +5281,6 @@ d'autant. Il est désormais calculé POUR l'année d'ouverture, et la cascade de
 la page montre la ligne `f′` qui porte ce passage. La trajectoire de la
 garantie y perd un neuvième : **0,80 % du PIB en 2026** au lieu de 0,91 %, et
 **616 milliards** cumulés au lieu de 696.
-
-**La garantie regarde l'ENSEMBLE de la pension obligatoire.** *Tranché le
-19 septembre 2026 par le programme.* Les 18 % de répartition et les 5 %
-capitalisés sont comparés ensemble au plancher : une allocation différentielle
-compte les ressources, non leur origine. La rente du pilier réduit donc le
-complément euro pour euro, et c'est ce qui coûte le moins à l'impôt. Le modèle
-laissait jusque-là cette rente hors du calcul, faute que la question — de
-droit, pas de modèle — ait été tranchée.
-
-**Les montants sont des euros de 2026, déflatés par les prix.** 800 € et 250 €
-sont ceux de la proposition ; une liquidation de 1995 les reçoit ramenés par
-l'indice des prix, comme l'ASPA entre deux ancres de son barème. Ce n'est
-qu'une convention : rien ne dit qu'une garantie créée en 2026 aurait été
-indexée sur les prix depuis 1941.
 
 **La masse de la trajectoire n'est plus vue par treize carrières : elle est
 lue sur la distribution des pensions, depuis le 20 septembre 2026.** Une
@@ -5273,20 +5306,6 @@ grille, sur l'échelle des retraités de la DREES. La trajectoire porte
 bénéficiaires), décroissant à 0,40 % en 2070 (15 milliards, 2,8 millions),
 soit 731 milliards constants cumulés sur la projection ; et le passé, où le
 même déplacement est appliqué à rebours, en porte 1 593 depuis 1959.
-
-Ce que cette méthode suppose, et qui reste une limite : la FORME de la
-distribution est celle de 2020, déplacée sans être déformée, le passé comme
-l'avenir ; le déplacement est proportionnel et uniforme, quand le scénario ne
-déplace pas toutes les carrières du même rapport ; et les retraités de moins
-de 65 ans, qui attendent la garantie, sont supposés répartis comme les autres.
-Une seule méthode sur toute la série, plutôt qu'une falaise entre deux.
-
-**Ce que la garantie n'est plus : une dépense du compte des cotisants.** Elle
-est financée par l'impôt, et elle a donc quitté la masse contributive du
-scénario 6, où elle était comptée jusqu'ici. C'est la symétrie de ce que la
-recette fait déjà — la CSG de solidarité sort des ressources —, et sans elle la
-garantie aurait été payée deux fois : une fois par les cotisations, une fois
-par le contribuable.
 
 La page porte aussi, à la date de l'enquête, le barème appliqué à la
 distribution des pensions brutes de droit direct que publie l'échantillon
