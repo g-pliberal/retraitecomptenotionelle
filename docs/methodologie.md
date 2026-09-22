@@ -716,8 +716,9 @@ pension                  = Σ points × valeur de service (année de liquidation
 ```
 
 Le taux d'appel est le décalage, invisible ailleurs, entre ce qui est prélevé et
-ce qui ouvre des droits : depuis 1995, cotiser 125 € n'acquiert que 100 € de
-points. L'ignorer surestimerait la retraite complémentaire d'un quart.
+ce qui ouvre des droits : depuis la fusion de 2019, cotiser <!--chiffre:maximum(data/reference/regimes/valeurs_point.csv:valeur*100?regime=agirc_arrco&mesure=taux_appel)-->127<!--/--> € n'acquiert que
+<!--chiffre:illustration()-->100<!--/--> € de points, et l'Agirc en demandait déjà <!--chiffre:cellule(data/reference/regimes/valeurs_point.csv:valeur*100?regime=agirc&annee=1995&mesure=taux_appel)-->125<!--/--> en 1995. L'ignorer
+surestimerait la retraite complémentaire d'un bon quart.
 
 Un régime fermé ne sert plus ses points : ils passent à son successeur, au
 coefficient que l'accord de fusion a fixé. Le modèle refait ce chemin (UNIRS →
@@ -779,7 +780,7 @@ Le modèle les approchait par « les salaires jusqu'en 1986, les prix depuis »,
 qu'ont fait les arrêtés dans les grandes lignes. Mais seulement dans les grandes
 lignes : ils ont connu des revalorisations semestrielles, des gels, des
 revalorisations exceptionnelles, et des changements du délai d'application.
-L'approximation **sur-revalorise les salaires anciens de 12,1 % sur 1970-2018**,
+L'approximation **sur-revalorise les salaires anciens de <!--chiffre:mesure(approximation_revalorisation?de=1970&a=2018)-->17,4<!--/--> % sur 1970-2018**,
 et gonflait d'autant le salaire de référence de toute carrière en comportant.
 
 La source est la circulaire annuelle de revalorisation de la Cnav, qui publie la
@@ -795,14 +796,14 @@ l'arrêté annuel applique un coefficient unique à tous les salaires déjà por
 compte, quelle que soit leur année de perception. Une colonne suffirait donc en
 théorie à reconstruire toutes les autres — en pratique la caisse arrondit sa
 table à trois décimales et repart chaque année de la précédente, si bien que la
-reconstruction dérive avec la distance : 0,02 % à deux ans, 0,16 % à sept. Le
-dépôt garde donc les **dix colonnes publiées** d'octobre 2017 à janvier 2026. Le
+reconstruction dérive avec la distance — `limites.md` en donne la mesure. Le
+dépôt garde donc les **<!--chiffre:distinctes(data/reference/legislation/revalorisation_salaires.csv:date_effet)-->10<!--/--> colonnes publiées** d'octobre 2017 à janvier 2026. Le
 modèle sert la colonne EN VIGUEUR À LA DATE DE LIQUIDATION — la plus récente
 dont la date d'effet ne lui est pas postérieure, dans son année — et l'écart est
-alors nul ; il ancre sinon sur la plus proche, ce qui divise la dérive par dix.
+alors nul ; il ancre sinon sur la plus proche, ce qui réduit la dérive.
 C'est le mois qui désigne la colonne, et il faut qu'il le fasse : deux
 circulaires portent l'année 2022, celle du 1<sup>er</sup> juillet dépassant
-celle du 1<sup>er</sup> janvier de 3,9 %.
+celle du 1<sup>er</sup> janvier de <!--chiffre:mesure(ecart_colonnes?de=2022-01-01&a=2022-07-01)-->3,9<!--/--> % au moins.
 
 Trois bornes demeurent : avant 2017 aucune circulaire n'est accessible et la
 dérive y est invérifiable ; après 2026 le coefficient est ancré sur la dernière

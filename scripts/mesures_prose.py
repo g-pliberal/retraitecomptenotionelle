@@ -518,6 +518,37 @@ def droits_acquis_variation(**reglages: str) -> float:
     return (arrivee / depart - 1) * 100
 
 
+def approximation_revalorisation(**reglages: str) -> float:
+    """Ce que l'ancienne approximation — « les salaires jusqu'en 1986, les prix
+    depuis » — ajoute aux coefficients des arrêtés, de ``de`` à ``a``, en %.
+
+    Elle reste le repli du moteur hors des colonnes publiées : ce qu'elle
+    coûte n'est donc pas de l'histoire.
+    """
+    macro = _simulateur(_parametres()).macro
+    de, a = int(reglages["de"]), int(reglages["a"])
+    return (macro.coefficient_revalorisation_salaires(de, a)
+            / macro.coefficient_revalorisation_portee_au_compte(de, a) - 1) * 100
+
+
+def ecart_colonnes(**reglages: str) -> float:
+    """Le plus petit écart entre deux colonnes publiées de revalorisation, en %.
+
+    ``de=2022-01-01&a=2022-07-01`` : deux circulaires de la même année, sur
+    toutes les années de perception qu'elles portent l'une et l'autre.
+    """
+    import csv
+
+    chemin = RACINE / "data/reference/legislation/revalorisation_salaires.csv"
+    colonnes: dict[str, dict[str, float]] = {}
+    with chemin.open(encoding="utf-8") as flux:
+        for ligne in csv.DictReader(r for r in flux if not r.startswith("#")):
+            colonnes.setdefault(ligne["date_effet"], {})[ligne["annee_perception"]] = float(
+                ligne["coefficient"])
+    de, a = colonnes[reglages["de"]], colonnes[reglages["a"]]
+    return (min(a[annee] / de[annee] for annee in de if annee in a) - 1) * 100
+
+
 def composition_revalorisation(**reglages: str) -> float:
     """Ce que composer année par année les coefficients des arrêtés fait
     perdre, en % et en valeur absolue, face au coefficient lu d'un bloc.
@@ -961,6 +992,8 @@ MESURES = {
     "age_reference": age_reference,
     "droits_acquis": droits_acquis,
     "droits_acquis_variation": droits_acquis_variation,
+    "approximation_revalorisation": approximation_revalorisation,
+    "ecart_colonnes": ecart_colonnes,
 }
 
 
