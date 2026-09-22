@@ -22,6 +22,7 @@ s'étendre.
 
 from __future__ import annotations
 
+import re
 import importlib.util
 import sys
 from pathlib import Path
@@ -383,3 +384,49 @@ def test_une_ancre_citee_dans_un_bloc_de_code_n_est_pas_evaluee():
              "```\n")
     _, anomalies = verifier_prose.verifier_ancres("exemple.md", texte)
     assert not anomalies
+
+
+# --- L'outillage d'interface : la prose et le script qui l'installe --------
+
+def test_l_outillage_annonce_les_versions_qu_il_installe():
+    """`docs/outillage_interface.md` cite trois versions, et le dépôt les porte.
+
+    C'est la dérive que l'action 41 poursuit, dans un coin où le contrôle par
+    ancre ne peut rien : `verifier_prose.py` ne lit pas un numéro de version —
+    « 0.1.20 » n'est pas un chiffre au sens de son motif —, et les trois
+    sections de ce document restent `a_declarer` pour une autre raison, leurs
+    poids en mégaoctets décrivant des artefacts extérieurs que rien ici ne
+    recalcule. Les VERSIONS, elles, sont dans le dépôt : la compétence porte la
+    sienne dans son en-tête, le moteur dans son fichier `VERSION`, et le CLI
+    Playwright dans le script d'installation. Une prose qui les cite et un
+    script qui en installe d'autres se seraient séparés sans bruit.
+    """
+    doc = (RACINE / "docs" / "outillage_interface.md").read_text(encoding="utf-8")
+
+    skill = (RACINE / ".claude" / "skills" / "impeccable" / "SKILL.md").read_text(
+        encoding="utf-8")
+    competence = re.search(r"^version: (\S+)$", skill, re.MULTILINE).group(1)
+    moteur = (RACINE / ".claude" / "skills" / "impeccable" / "scripts"
+              / "VERSION").read_text(encoding="utf-8").strip()
+    installe = (RACINE / "scripts" / "setup_ui_tools.sh").read_text(encoding="utf-8")
+    playwright = re.search(r"^PLAYWRIGHT_CLI_VERSION=(\S+)$", installe,
+                           re.MULTILINE).group(1)
+
+    attendus = {
+        f"{competence} (compétence), moteur {moteur}":
+            "la ligne Impeccable du tableau « Ce qu'un clone frais contient déjà »",
+        f"`~/.impeccable/bin/{moteur}/`":
+            "le cache du moteur, versionné par son numéro",
+        f"(tag `engine-v{moteur}`)":
+            "le tag de la release d'où le lanceur tire le binaire",
+        f"`@playwright/cli` {playwright}":
+            "la ligne Playwright CLI du même tableau",
+        f"**`@playwright/cli@{playwright}`**":
+            "la puce « Ce qui demande le réseau »",
+    }
+    manquants = [f"{quoi} : « {texte} »"
+                 for texte, quoi in attendus.items() if texte not in doc]
+    assert manquants == [], (
+        "docs/outillage_interface.md ne dit plus les versions que le dépôt "
+        "porte — " + " ; ".join(manquants)
+    )

@@ -8532,6 +8532,33 @@ de `avantages_non_contributifs.md` : les 87 % du total chiffré que les lignes
 lues font, part qu'aucune sonde ne recalcule et qu'aucun test ne tient. Rien
 n'oblige à tout reprendre d'un coup, et rien ne permet de reculer.
 
+**Le 22 septembre 2026 : les gains faciles sont épuisés, et trois sections
+butent sur autre chose.** Une passe de mesure sur les soixante-douze sections
+restantes : AUCUNE ne passerait en `etat` sans poser une ancre. Les sept
+sections que la passe du 21 septembre avait trouvées sans un seul chiffre nu
+étaient les dernières de cette espèce ; ce qui reste demande une sonde par
+chiffre, une à une, et c'est le travail annoncé.
+
+Trois d'entre elles butent sur un obstacle d'une autre nature, et il valait
+mieux le nommer que le redécouvrir : les sections de `docs/outillage_interface.md`
+n'affirment rien sur le dépôt mais sur des ARTEFACTS EXTÉRIEURS — le moteur
+Impeccable pèse 16 Mo, Chromium 190, le hook tourne par défaut à 8 000
+caractères. Aucune sonde ne peut recalculer le poids du binaire de quelqu'un
+d'autre ; `illustration()` ne convient pas, puisque ces nombres peuvent devenir
+faux ; et payer la dette `a_verifier` est interdit par le cliquet, qui ne peut
+que décroître. Ces trois sections resteront donc `a_declarer` tant que les
+poids y figureront, et c'est la mécanique qui fonctionne, non une dette oubliée.
+
+**Ce qui pouvait l'être y a été tenu quand même.** Le même document cite trois
+versions figées — la compétence Impeccable, son moteur, le CLI Playwright —, et
+le dépôt les porte toutes les trois : l'en-tête de `SKILL.md`, le fichier
+`scripts/VERSION`, la variable `PLAYWRIGHT_CLI_VERSION` de
+`scripts/setup_ui_tools.sh`. Le contrôle par ancre ne les voit pas — « 0.1.20 »
+n'est pas un chiffre au sens de son motif —, et une prose qui cite une version
+pendant que le script en installe une autre se serait séparée sans bruit.
+`test_l_outillage_annonce_les_versions_qu_il_installe` les lie désormais aux
+cinq endroits où le document les écrit.
+
 **L'angle mort à traiter ensuite.** Ce contrôle ne juge pas une phrase,
 seulement un nombre : « la bascule ne reprend aucun droit acquis » lui est
 invisible. C'est l'action 34, et les deux se complètent — l'une tient les
@@ -9530,10 +9557,23 @@ dépôt calculerait par personne de 65 ans et plus la pension individuelle et le
 patrimoine net du ménage, donc la couverture par tranche de pension, et le
 poids des couples ; le fichier resterait hors de git, la table agrégée
 entrerait avec son script. À vérifier au dictionnaire des variables que le
-montant individuel des pensions y est. Deux sites refusent la session et se
-déclarent par l'action 45 : celui de l'ADISP, et celui de la Cour des comptes,
-dont le rapport de septembre 2024 sur les droits de succession donne la
-distribution des successions déclarées, pour un recoupement d'ensemble.
+montant individuel des pensions y est.
+
+*Le 22 septembre 2026, les deux blocages sont déclarés, et c'était le geste qui
+manquait.* L'action 45 avait bâti le mécanisme — un champ `blocage` dans le
+manifeste, une liste que `scripts/fetch/source_locale.py` imprime — et ce qui
+bloque le point 1 restait écrit ici seulement, c'est-à-dire nulle part où on
+le cherche. Deux jeux sont entrés au manifeste : `adisp_histoire_de_vie_patrimoine`
+(`convention` — le catalogue de Progedo répond depuis une session, le fichier
+se commande sur inscription, et rien n'est à déposer dans `data/brut/` :
+un fichier individuel d'enquête n'entre pas dans un dépôt public, c'est la
+table agrégée qui entrerait, avec son script) et `cdc_successions_2024`
+(`reseau` — le rapport de septembre 2024 sur les droits de succession donne la
+distribution des successions déclarées, pour un recoupement d'ensemble, et
+`ccomptes.fr` ferme la connexion avant toute réponse : « Recv failure:
+Connection reset by peer », vérifié le 22 septembre 2026 sur la racine comme
+sur la page de recherche). Le jeu `cdc_rapports_retraites`, qui portait ce même
+blocage sans le dire, le porte aussi. La liste en compte dix.
 
 **Fin.** La page Coût donne la garantie en trois lignes, brut, reprises et
 net, sur le patrimoine des bénéficiaires selon leur pension lu dans le fichier

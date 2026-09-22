@@ -1904,8 +1904,8 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->162<!--/--> jeux de données des
-<!--chiffre:entrees(data/sources.yaml:institutions)-->36<!--/--> institutions, avec pour chacun l'URL, le mode
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->164<!--/--> jeux de données des
+<!--chiffre:entrees(data/sources.yaml:institutions)-->37<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 
 ### Quelle source l'emporte
