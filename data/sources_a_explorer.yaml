@@ -1673,8 +1673,14 @@ sources:
       fiche prêtait aux droits de plaidoirie sont la cotisation
       d'invalidité-décès. La série de la retraite forfaitaire (16 664 € en 2017,
       19 154 € en 2026) et celle de la cotisation forfaitaire par ancienneté sont
-      écrites dans la note de la fiche `cnbf` ; les porter demande une série par
-      année dans le moteur, action à part.
+      écrites dans la note de la fiche `cnbf`, puis portées le 23 septembre
+      2026 : une période par barème dans
+      `data/reference/regimes/non_salaries.yaml`, pour la base comme pour la
+      grille C1 du complémentaire — que la fiche prenait à 2026 depuis 2019,
+      alors que son taux de première tranche a doublé en dix ans. Le barème
+      2024, retiré du site, est lu dans Internet Archive par
+      `scripts/fetch/cnbf_baremes.py`, et ses deux valeurs du point sont
+      certifiées dans `valeurs_point.csv`.
   - id: cnbf_fiches_pratiques
     url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=fiches-pratiques
     nature: index

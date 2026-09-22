@@ -5025,3 +5025,37 @@ def test_le_racl_n_a_rejoint_les_deux_autres_qu_en_2025(simulateur):
     avant_2014 = _periode(simulateur, "ircec_racd", 2010)
     assert avant_2014.abattement_points == "decote_du_regime_de_base"
     assert _periode(simulateur, "ircec_racd", 2014).abattement_points == "ircec"
+
+
+# -- action 89 : les barèmes annuels de la CNBF ------------------------------
+
+
+def test_les_avocats_cotisent_au_bareme_de_leur_annee(simulateur):
+    """Le taux de première tranche du complémentaire, classe C1, a doublé en
+    dix ans : 3,20 % en 2016, 5,00 % en 2024, 7,00 % en 2026. La fiche portait
+    la grille de 2026 depuis 2019. Chaque année a désormais la sienne, avec les
+    bornes en euros de son barème — 41 674 € jusqu'en 2020, 42 507 € ensuite.
+    La base porte, elle, la pension forfaitaire de l'année : 16 664 € en 2017,
+    19 154 € en 2026.
+    """
+    def premiere_tranche(annee):
+        periodes = [p for p in simulateur.catalogue["cnbf_complementaire"].periodes
+                    if p.debut <= annee <= (p.fin or 9999)
+                    and p.borne_basse_euros == 0]
+        assert len(periodes) == 1, annee
+        return periodes[0]
+
+    assert premiere_tranche(2016).taux_cotisation_retraite == pytest.approx(0.032)
+    assert premiere_tranche(2019).taux_cotisation_retraite == pytest.approx(0.038)
+    assert premiere_tranche(2024).taux_cotisation_retraite == pytest.approx(0.050)
+    assert premiere_tranche(2026).taux_cotisation_retraite == pytest.approx(0.070)
+    assert premiere_tranche(2020).borne_haute_euros == 41674
+    assert premiere_tranche(2021).borne_haute_euros == 42507
+    taux = [premiere_tranche(a).taux_cotisation_retraite for a in range(2016, 2027)]
+    assert taux == sorted(taux)
+
+    base = simulateur.catalogue["cnbf"]
+    assert base.periode(2017).pension_forfaitaire_annuelle == 16664
+    assert base.periode(2017).pension_forfaitaire_annee == 2017
+    assert base.periode(2026).pension_forfaitaire_annuelle == 19154
+    assert base.periode(2020).cotisation_forfaitaire_euros == 1190

@@ -43,9 +43,10 @@ seules la retardaient. Elles sont tranchées, et écrites dans la fiche :
   du catalogue, les ferait dériver. C'est ce constat, et non un arbitrage, qui a
   levé l'obstacle : il fallait un champ de bornes en euros, il existe désormais.
 
-Reste hors du modèle la cotisation FORFAITAIRE de base — 363 € la première
-année, 1 988 € à partir de la sixième — qui ne dépend pas du revenu, quand le
-compte notionnel ne sait porter qu'une fraction d'assiette.
+Les TAUX de cotisation des mêmes barèmes — grille C1 du complémentaire, taux
+proportionnel et cotisation forfaitaire de la base — ne sont pas extraits par
+ce script : leur mise en page change d'une année à l'autre, et ils sont
+transcrits à la main dans les fiches `cnbf` et `cnbf_complementaire`.
 """
 
 from __future__ import annotations
@@ -66,7 +67,12 @@ RACINE = "https://www.cnbf.fr/wp-content/uploads"
 
 #: Les barèmes mis en ligne par la CNBF, année par année. La caisse les range
 #: par date de dépôt et non par millésime, et ne les publie pas tous : 2016 est
-#: dans un format qui ne porte pas les deux valeurs, 2024 n'est pas en ligne.
+#: une image, sans texte à extraire.
+#:
+#: 2024 N'EST PLUS EN LIGNE, mais il l'a été : la caisse l'a retiré en
+#: remaniant son site, et Internet Archive l'a gardé, capturé le 15 juillet
+#: 2024 à son adresse d'origine. Une adresse complète est lue telle quelle ;
+#: le suffixe ``id_`` demande à l'archive le fichier brut, sans son bandeau.
 BAREMES = {
     2017: "2024/11/Bareme-cotisations-et-prestations-2017.pdf",
     2018: "2024/11/Bareme-des-cotisations-et-prestations-2018.pdf",
@@ -75,6 +81,8 @@ BAREMES = {
     2021: "2024/11/Bareme-CNBF-2021.pdf",
     2022: "2024/11/Bareme-CNBF-2022-7.pdf",
     2023: "2024/11/Bareme-CNBF-2023-01.10.pdf",
+    2024: "https://web.archive.org/web/20240715164610id_/"
+          "https://www.cnbf.fr/wp-content/uploads/2023/09/Bareme-CNBF-2024-01.20.pdf",
     2025: "2025/02/Bareme-CNBF-2025-01.01_vDf-1.pdf",
     2026: "2026/01/Bareme-CNBF-2026.01.01.pdf",
 }
@@ -116,6 +124,11 @@ def _normaliser(lignes: list[str]) -> str:
     texte = texte.replace(" ", " ").replace(" ", " ")
     texte = texte.translate(str.maketrans(REPARATION))
     return re.sub(r"\s+", "", texte)
+
+
+def _adresse(chemin: str) -> str:
+    """L'adresse d'un barème : sous ``RACINE``, ou telle quelle si complète."""
+    return chemin if chemin.startswith("https://") else f"{RACINE}/{chemin}"
 
 
 def _nombre(texte: str) -> float:
@@ -166,7 +179,7 @@ def _telecharger(url: str) -> bytes:
 def main() -> int:
     serie: dict[int, tuple[float, float]] = {}
     for annee, chemin in sorted(BAREMES.items()):
-        url = f"{RACINE}/{chemin}"
+        url = _adresse(chemin)
         try:
             octets = lire_ou_telecharger(url, _telecharger)
         except (urllib.error.HTTPError, urllib.error.URLError, OSError) as erreur:
@@ -197,7 +210,7 @@ def main() -> int:
         json.dumps({
             "source": RACINE,
             "recupere_le": date.today().isoformat(),
-            "baremes": {str(a): f"{RACINE}/{c}" for a, c in sorted(BAREMES.items())},
+            "baremes": {str(a): _adresse(c) for a, c in sorted(BAREMES.items())},
             "note": "régime complémentaire des avocats ; le régime de base est "
                     "forfaitaire et n'a pas de point",
             "serie": plat,

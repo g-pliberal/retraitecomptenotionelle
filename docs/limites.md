@@ -3226,7 +3226,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 |---|---|---|---|
 | Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; le montant de la cotisation FORFAITAIRE du régime de base d'avant 2004 — qui ne commande plus la pension, seulement le flux versé au compte notionnel | le régime de base, en points plafonnés à <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnavpl.periodes.debut=2025.points_maximum)-->557<!--/-->, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
 | Marins (ENIM) | les salaires forfaitaires d'avant 2008, que les textes de l'index ne chiffrent pas ; la CATÉGORIE du marin, que le décret définit par le métier et qu'une carrière saisie ne porte pas, et la catégorie MOYENNE des trente-six derniers mois qui fait le salaire de référence (R. 11) ; le décompte des services au semestre (R. 12) ; la pension d'invalidité, seule exception au plafond de vingt-cinq annuités qui ne soit pas servie | la grille des vingt forfaits lue au Journal officiel depuis 2008, la catégorie la plus proche du revenu — convention nommée —, et la grille de 2008 ramenée par le salaire moyen avant ; le plafond de vingt-cinq annuités avant cinquante-cinq ans est porté | **estimé** avant 2008, la grille de 2008 étant ramenée par le salaire moyen ; l'écart de catégorie et de décompte tient à une catégorie et à un trimestre au plus ; la levée du plafond à cinquante-deux ans et demi pour trente-sept annuités et demie est servie depuis le 22 septembre 2026 |
-| Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (au barème 2026, <!--chiffre:illustration()-->363<!--/--> € la première, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.cotisation_forfaitaire_euros)-->1 988<!--/--> € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.taux_cotisation_retraite*100)-->3,20<!--/--> % ET le forfait à sa valeur de croisière, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.cotisation_forfaitaire_euros)-->1 988<!--/--> € ; les années d'avant 2019 restent au rendement instantané | **surestime de <!--chiffre:illustration()-->4 586<!--/--> € sur une carrière**, au barème 2026, le flux des cinq premières années, contre près de <!--chiffre:illustration()-->70 000<!--/--> € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
+| Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (au barème 2026, <!--chiffre:illustration()-->363<!--/--> € la première, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.cotisation_forfaitaire_euros)-->1 510<!--/--> € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.taux_cotisation_retraite*100)-->3,00<!--/--> % ET le forfait à sa valeur de croisière, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.cotisation_forfaitaire_euros)-->1 510<!--/--> € ; les années d'avant 2019 restent au rendement instantané | **surestime de <!--chiffre:illustration()-->4 586<!--/--> € sur une carrière**, au barème 2026, le flux des cinq premières années, contre près de <!--chiffre:illustration()-->70 000<!--/--> € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
 | Non-salariés agricoles | les points gratuits de la RCO — <!--chiffre:illustration()-->66<!--/--> par an aux conjoints et aides familiaux avant 2011, dans la limite de <!--chiffre:illustration()-->17<!--/--> ans ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, EN VIGUEUR depuis le 1er janvier 2026 et non calculable : deux de ses trois paramètres sont renvoyés à un décret que la base ne porte pas | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà, seule dont les paramètres existent | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
 | Régimes spéciaux résiduels | des paramètres certifiés — mais plus des textes : l'Opéra, la Comédie-Française, la SEITA, les clercs de notaires, la Banque de France, le fonds spécial des ouvriers de l'État et le personnel navigant ont leurs décrets lus VERSION PAR VERSION dans la base LEGI, et passent au niveau `moyenne`. Restent au niveau `estimee` les mines — dont dix-huit millésimes sont interpolés entre deux valeurs sourcées —, les marins, le port autonome de Strasbourg et les chemins de fer secondaires | pour les quatre derniers, les textes fondateurs sans recontrôle ; le port de Strasbourg n'a rien dans LEGI que des décrets de compensation, son règlement de retraite étant un acte de l'établissement | **indéterminé** pour ces quatre-là, et c'est le seul cas où le dépôt ne sait pas dire le sens. Ces régimes portent peu d'assurés ; leur poids dans les agrégats est faible |
 
@@ -6447,6 +6447,40 @@ Les lignes `carmf_asv_minoration_enfants`, `carcdsf_minoration_age_seul`,
 `cavp_minoration_deux_pentes`, `carpimko_ages_2015` et
 `carpv_minoration_age_seul` du registre de veille en tiennent le détail.
 
+### Les avocats cotisaient au taux de 2026 depuis 2019
+
+Le complémentaire des avocats est un régime en points à cinq tranches de
+revenu, fixées en euros. La fiche portait une seule grille, celle de 2026,
+appliquée à tous les revenus depuis 2019 ; avant, un taux moyen de 8 %. Les
+barèmes annuels de la caisse, que `scripts/fetch/cnbf_baremes.py` lisait déjà
+pour la valeur du point et jamais pour les taux, disent autre chose : le taux
+de la première tranche, en classe C1, est passé de 3,20 % en 2016 à 3,80 % en
+2019, 5,00 % en 2024 et 7,00 % en 2026. Chaque année de 2016 à 2026 a
+maintenant sa grille. Le barème 2024 n'est plus sur le site de la caisse :
+il a été lu dans Internet Archive, qui l'a capturé le 15 juillet 2024 à son
+adresse d'origine, et ses deux valeurs du point sont certifiées comme les
+autres.
+
+Le régime de base a changé de la même façon. Sa pension forfaitaire, la
+cotisation forfaitaire et le taux proportionnel étaient ceux de 2026 ramenés
+par les prix sur toute la période ; ils sont lus année par année depuis 2016,
+et ancrés sur 2016 avant. Le forfait de 2020 est celui du barème révisé,
+réduit d'un quart au titre de la crise sanitaire. Les témoins donnent la
+mesure : l'avocat né en 1945 voit sa pension de base monter de 15 826 € à
+16 830 €, parce que le forfait réel de 2016 dépasse de 6 % celui que les prix
+reconstituaient ; celui né en 1965 voit son complémentaire baisser de
+11 716 € à 10 472 €, parce que la fiche ne lui prête plus le taux de 2026 sur
+ses années 2016 à 2024.
+
+**Ce qui reste hors de la fiche.** La classe est toujours C1, la seule
+qu'aucun avocat n'a à choisir. Les cinq premières années de la cotisation
+forfaitaire, plus basses, ne sont pas distinguées. Avant 2016, aucun barème
+n'est publié : le complémentaire reste au taux moyen de 8 %, qui est celui
+d'un revenu élevé et surestime un revenu modeste, et la base porte les
+valeurs de 2016 ramenées par les prix. Les barèmes d'une année s'appliquent
+aux revenus de la même année, comme partout dans le catalogue, alors que la
+caisse appelait avant 2025 ses cotisations sur un revenu antérieur.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -8645,7 +8679,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2252<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2256<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
