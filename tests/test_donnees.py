@@ -546,6 +546,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/contribution_employeur_public.csv",
         "employeur_public_cnracl_journal_officiel":
             "legislation/contribution_employeur_public.csv",
+        # Le tableau du gestionnaire : il relève au niveau `certifiee` les
+        # années qu'OpenFisca ne pouvait que transcrire.
+        "employeur_public_cnracl_gestionnaire":
+            "legislation/contribution_employeur_public.csv",
         "employeur_public_sncf":
             "legislation/contribution_employeur_public.csv",
         "employeur_public_sncf_textes":
@@ -611,7 +615,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
     }
     # Les séries d'APPOINT — celles qui ne comblent que ce que les autres ne
     # couvrent pas — peuvent n'avoir rien à dire, et sont alors absentes.
-    appoint = {"valeurs_point_insee", "employeur_public_texte"}
+    appoint = {"valeurs_point_insee", "employeur_public_texte",
+               # Depuis que le tableau du gestionnaire de la CNRACL est lu,
+               # la transcription d'OpenFisca n'a plus rien à combler.
+               "employeur_public_cnracl"}
     assert set(journal["series"]) <= set(fichiers)
     assert set(fichiers) - set(journal["series"]) <= appoint
 

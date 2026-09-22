@@ -1207,6 +1207,29 @@ institutions:
           transcription OpenFisca, qui ne couvre plus que 2022 et les régimes
           prédécesseurs IPACTE et IGRANTE.
 
+      - id: juris_cnracl_taux
+        titre: >-
+          CNRACL, documentation juridique — « Cotisations, historique des taux
+          applicables » (retenue de l'agent et contribution de l'employeur,
+          depuis le 19 septembre 1947)
+        url: https://www.juris-cnracl.retraites.fr/cotisations/taux-de-cotisations/cotisations-historique-des-taux-applicables
+        acces: api
+        statut_integration: certifie
+        cible: data/reference/legislation/contribution_employeur_public.csv
+        recuperation: scripts/fetch/juris_cnracl_taux.py
+        note: >-
+          La base que la Caisse des dépôts tient pour les employeurs
+          territoriaux et hospitaliers, et qu'elle destine à la gestion : elle
+          GÈRE le régime, c'est donc une source primaire. Son tableau de
+          quarante-neuf périodes a relevé au niveau `certifiee` les quarante
+          années de contribution employeur qu'OpenFisca ne pouvait que
+          transcrire ; les trois sources — le texte lu dans LEGI, ce tableau et
+          la transcription tierce — s'accordent sur les soixante-dix-neuf
+          années, au centième de point près. Elle porte aussi la RETENUE de
+          l'agent, qui confirme la fiche du régime sans y rien changer, et dix
+          années dont le taux a bougé en cours de route, que la convention
+          annuelle du dépôt ne peut pas rendre.
+
       - id: cdc_open_data
         titre: Open data de la Caisse des dépôts — retraites
         url: https://opendata.caissedesdepots.fr/

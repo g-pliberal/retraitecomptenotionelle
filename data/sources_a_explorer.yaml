@@ -7,7 +7,7 @@
 # quand elle a rendu ce qu'elle avait, elle passe dans le manifeste — et sa
 # ligne ici prend l'état `epuise` avec la date.
 #
-# Il est né le 22 septembre 2026 d'une liste de 213 adresses, remise en six
+# Il est né le 22 septembre 2026 d'une liste de 237 adresses, remise en sept
 # lots. Le chantier qu'elle ouvre est l'action 89 de `docs/feuille_de_route.md`,
 # et la manière de le mener est dans `docs/exploration_sources.md`.
 #
@@ -43,8 +43,8 @@
 #               c'est là que se cachent les règlements et les circulaires
 #   code        le code source d'un modèle public, lisible et exécutable
 #
-# ACCES — mesuré, pas supposé (213 adresses sondées le 22 septembre 2026 :
-#         205 répondent 200 à une simple requête, huit demandent un geste)
+# ACCES — mesuré, pas supposé (237 adresses sondées le 22 septembre 2026 :
+#         229 répondent 200 à une simple requête, huit demandent un geste)
 #   session ............ joignable en `curl` depuis une session, 200
 #   chaine_incomplete .. le serveur ne sert pas l'intermédiaire de son
 #                        certificat ; un navigateur le rattrape tout seul,
@@ -2366,3 +2366,296 @@ sources:
       l'âge légal passe de 62 à 64 ans sur la même plage. Ligne
       `coefficient_anticipation_ircantec` ajoutée à
       `data/reference/legislation/veille.yaml`.
+
+  # ---- CNRACL : la documentation juridique (septième lot) -----------------
+  # `juris-cnracl.retraites.fr` est la base que la Caisse des dépôts tient pour
+  # les employeurs territoriaux et hospitaliers : c'est le RÈGLEMENT du régime,
+  # articles à l'appui, et non une page d'explication. `scripts/veille_droit.py`
+  # la nomme déjà parmi les sources à consulter avant de toucher au scénario 1.
+
+  - id: juris_cnracl_pension_normale
+    url: https://www.juris-cnracl.retraites.fr/pension-normale
+    nature: index
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      La table des matières de la pension normale : c'est d'ici que partent
+      toutes les règles de liquidation du régime, et l'ordre dans lequel la
+      caisse les applique.
+    statut: a_explorer
+
+  - id: juris_cnracl_traitement_de_base
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/la-determination-du-traitement-de-base
+    nature: regle
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Le traitement des six derniers mois : quel indice, quelle durée de
+      détention exigée, ce qui entre dans l'assiette et ce qui n'y entre pas.
+      Le modèle prend un salaire de fin de carrière ; voici la règle exacte.
+    statut: a_explorer
+
+  - id: juris_cnracl_temps_partiel
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/modalites-de-prise-en-compte-des-services-temps-partiel-et-non-complet
+    nature: regle
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Le temps partiel compte pour sa durée en DURÉE D'ASSURANCE et pour sa
+      quotité en SERVICES : c'est la règle qui sépare les deux durées, et le
+      modèle ne porte pas le temps partiel.
+    statut: a_explorer
+
+  - id: juris_cnracl_coordination
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/regles-de-coordination-avec-les-autres-regimes
+    nature: regle
+    acces: session
+    regimes: [cnracl, regime_general, ircantec]
+    a_en_tirer: >-
+      Ce qui arrive aux services d'un agent qui part sans droit à pension :
+      rétablissement au régime général et à l'Ircantec. Le dépôt route un
+      statut vers un régime et ne défait jamais l'affiliation.
+    statut: a_explorer
+
+  - id: juris_cnracl_montant_pension
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/calcul-de-la-pension/determination-du-montant-de-la-pension
+    nature: regle
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      L'ordre des opérations : prorata, décote, surcote, minimum garanti,
+      plafonnement — avec les exemples chiffrés de la base.
+    statut: a_explorer
+
+  - id: juris_cnracl_decote
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/duree-dassurance-decote-et-surcote/calcul-de-la-decote
+    nature: bareme
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      La décote territoriale, son taux par génération et son âge d'annulation,
+      chez celui qui la liquide : le dépôt les tient d'un récupérateur LEGI
+      (`dila_legi_decote_fonction_publique.py`), sans source d'application.
+    statut: a_explorer
+
+  - id: juris_cnracl_surcote
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/duree-dassurance-decote-et-surcote/calcul-de-la-surcote-0
+    nature: bareme
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      La surcote : trimestres entiers, point de départ, et la surcote parentale
+      ouverte en 2024.
+    statut: a_explorer
+
+  - id: juris_cnracl_minimum_garanti
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/minimum-garanti
+    nature: bareme
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Le barème du minimum garanti par années de services, et sa condition de
+      taux plein depuis 2010 : le dépôt le projette, et
+      `tests/test_donnees.py` contrôle la projection sans que personne l'ait
+      lu chez le liquidateur.
+    statut: a_explorer
+
+  - id: juris_cnracl_sp_cti
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/les-accessoires-de-pension/supplement-de-pension-au-titre-du-complement-de-traitement-indiciaire-sp-cti
+    nature: bareme
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Le supplément de pension du complément de traitement indiciaire — le
+      « Ségur » des hospitaliers : une pension qui s'ajoute hors formule, pour
+      une population nombreuse, et que le dépôt ignore entièrement.
+    statut: a_explorer
+
+  - id: juris_cnracl_nbi
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/les-accessoires-de-pension/la-liquidation-de-la-nouvelle-bonification-indiciaire-nbi
+    nature: bareme
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      La nouvelle bonification indiciaire : cotisée, elle donne un supplément
+      de pension proportionnel. C'est de la rémunération indiciaire qui n'est
+      pas dans le traitement de base, donc un morceau d'assiette que le modèle
+      ne voit pas.
+    statut: a_explorer
+
+  - id: juris_cnracl_surcotisation
+    url: https://www.juris-cnracl.retraites.fr/gestion-des-carrieres/surcotisation
+    nature: regle
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      La surcotisation du temps partiel : l'agent paie sur un temps plein pour
+      que sa quotité compte pleinement. Un prix payé pour un droit, à comparer
+      au prix actuariel du système notionnel.
+    statut: a_explorer
+
+  - id: juris_cnracl_surcotisation_historique
+    url: https://www.juris-cnracl.retraites.fr/surcotisation-historique-des-taux-applicables
+    nature: bareme
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      La SÉRIE des taux de surcotisation, année par année.
+    statut: a_explorer
+
+  - id: juris_cnracl_taux_cotisations
+    url: https://www.juris-cnracl.retraites.fr/cotisations/taux-de-cotisations
+    nature: bareme
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Les taux de l'année, part agent et part employeur : la part patronale
+      est un axe de tête de la feuille de route, et le taux employeur de la
+      CNRACL est l'un des plus élevés du pays.
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      La page mère : elle renvoie à l'historique, dépouillé, et ajoute deux
+      choses que le dépôt ne porte pas — les cotisations SUPPLÉMENTAIRES des
+      sapeurs-pompiers professionnels (indemnité de feu) et des aides-soignants
+      (prime spéciale de sujétion), et le fait que la NBI est cotisée au même
+      taux que le traitement depuis 2012 pour la retenue et 2013 pour la
+      contribution. Deux morceaux d'assiette à chiffrer ou à déclarer dans
+      `docs/limites.md`.
+
+  - id: juris_cnracl_taux_historique
+    url: https://www.juris-cnracl.retraites.fr/cotisations/taux-de-cotisations/cotisations-historique-des-taux-applicables
+    nature: bareme
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      L'HISTORIQUE des taux de cotisation vieillesse, agent et employeur, par
+      date d'effet : c'est le pendant exact de l'annexe 4-4 de l'Ircantec, qui
+      a fait tomber une convention le 22 septembre 2026. À confronter aux taux
+      et aux parts que porte la fiche de la CNRACL.
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Quarante-neuf périodes, du 19 septembre 1947 à 2026. Elle ne corrige
+      RIEN — les soixante-dix-neuf années de contribution employeur et toute
+      la série de retenue s'accordent avec le dépôt, au centième de point
+      près —, et c'est justement ce qui la rend précieuse : la Caisse des
+      dépôts GÈRE le régime, donc les quarante années qu'OpenFisca portait au
+      niveau `haute` passent à `certifiee`. Récupérateur
+      `scripts/fetch/juris_cnracl_taux.py`, certification
+      `employeur_public_cnracl_gestionnaire` dans `scripts/verifier_donnees.py`,
+      source au manifeste sous `juris_cnracl_taux`, contrôle dans
+      `tests/test_juris_cnracl_taux.py`. Elle porte aussi une coquille — « Du
+      01/01/20 au 31/12/2020 » — et dix années dont le taux a changé en cours
+      de route, que la convention annuelle ne rend pas.
+
+  # ---- Service des retraites de l'État et RAFP, suite ---------------------
+
+  - id: sre_mes_cotisations
+    url: https://retraitesdeletat.gouv.fr/actif/carriere/mes-cotisations
+    nature: bareme
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      La retenue pour pension civile, sa série de taux et son assiette : la
+      fiche de l'État est `partiel`, et la contribution employeur est portée à
+      part dans `legislation/contribution_employeur_public.csv`.
+    statut: a_explorer
+
+  - id: sre_ameliorer_retraite
+    url: https://retraitesdeletat.gouv.fr/actif/carriere/comment-ameliorer-ma-retraite
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat, rafp]
+    a_en_tirer: >-
+      Rachat d'études, surcotisation du temps partiel, prolongation : la liste
+      des leviers, par le liquidateur, donc la liste de ce que le modèle doit
+      savoir refuser ou appliquer.
+    statut: a_explorer
+
+  - id: sre_retraite_progressive
+    url: https://retraitesdeletat.gouv.fr/actif/lage-de-depart/la-retraite-progressive
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      La retraite progressive des fonctionnaires d'État, ouverte en 2023 :
+      conditions, quotité, et fraction de pension servie.
+    statut: a_explorer
+
+  - id: surcot_ac_aix_marseille
+    url: https://appli.ac-aix-marseille.fr/surcot/
+    nature: simulateur
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Un calculateur de surcotisation du temps partiel servi par une académie :
+      il applique le barème de l'État, en accès libre et sans compte. Le
+      balayer donne le PRIX que l'État fait payer à un fonctionnaire pour
+      racheter la quotité non travaillée — la grandeur que le système notionnel
+      calcule, lui, par neutralité actuarielle.
+    statut: a_explorer
+
+  - id: rafp_calcul_paiement_prestation
+    url: https://www.rafp.fr/actif/activite/calcul-et-paiement-votre-prestation-rafp
+    nature: bareme
+    acces: session
+    regimes: [rafp]
+    a_en_tirer: >-
+      Le seuil qui sépare la rente du capital, le coefficient de majoration par
+      âge et la table de conversion : le dépôt applique ce barème sans l'avoir
+      lu chez l'ERAFP.
+    statut: a_explorer
+
+  - id: rafp_reversion
+    url: https://www.rafp.fr/actif/activite/reversion
+    nature: regle
+    acces: session
+    regimes: [rafp]
+    a_en_tirer: >-
+      La réversion du régime additionnel, qui n'a pas les conditions de la
+      pension civile.
+    statut: a_explorer
+
+  - id: fonction_publique_retraite_progressive
+    url: https://www.fonction-publique.gouv.fr/toutes-les-publications/faq-relative-la-retraite-progressive-dans-la-fonction-publique
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat, cnracl]
+    a_en_tirer: >-
+      La FAQ de la DGAFP : elle tranche les cas que les fiches laissent
+      ouverts, et elle vaut pour les trois versants de la fonction publique.
+    statut: a_explorer
+
+  - id: fonction_publique_rafp_volontaire
+    url: https://www.fonction-publique.gouv.fr/toutes-les-actualites/tout-savoir-sur-la-cotisation-volontaire-au-regime-de-retraite-additionnelle-de-la-fonction-publique
+    nature: regle
+    acces: session
+    regimes: [rafp]
+    a_en_tirer: >-
+      La cotisation VOLONTAIRE au RAFP, ouverte récemment : un canal
+      d'acquisition surnuméraire, à déclarer ou à chiffrer.
+    statut: a_explorer
+
+  # ---- CAVIMAC ------------------------------------------------------------
+
+  - id: cavimac_demander_retraite
+    url: https://www.cavimac.fr/assurance-retraite/assurance-retraite/demander-ma-retraite-de-base-0
+    nature: regle
+    acces: session
+    regimes: [cavimac]
+    a_en_tirer: >-
+      La liquidation du régime des cultes : conditions et montant, pour un
+      régime que le dépôt modélise sur peu de sources.
+    statut: a_explorer
+
+  - id: cavimac_guide
+    url: https://www.cavimac.fr/guide-cavimac
+    nature: document
+    acces: session
+    regimes: [cavimac]
+    a_en_tirer: >-
+      Le guide de la caisse : assiette forfaitaire, taux, et le mode de
+      validation des périodes de ministère, qui n'est celui d'aucun autre
+      régime.
+    statut: a_explorer

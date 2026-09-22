@@ -2579,3 +2579,36 @@ journal:
       autant, en sens contraire, et seule une carrière en deux temps les
       départagerait — ce que `CasType`, qui ne porte qu'une affiliation, ne
       sait pas exprimer.
+    session: les taux de la CNRACL, lus chez le gestionnaire du régime
+    consulte: >-
+      Documentation juridique de la CNRACL (`juris-cnracl.retraites.fr`),
+      page « Cotisations — historique des taux applicables » : quarante-neuf
+      périodes, du 19 septembre 1947 à 2026, retenue de l'agent et contribution
+      de l'employeur. Page mère « Taux de cotisations ». Relancés, pour
+      recouper : `dila_index.py legi` et `jorf --recuperer`,
+      `dila_legi_cnracl.py`, `contribution_employeur_public.py`,
+      `sncf_contribution_employeur.py`.
+    trouve: >-
+      AUCUN ÉCART, ET C'EST LE RÉSULTAT. Les soixante-dix-neuf années de
+      contribution employeur et toute la série de retenue du dépôt s'accordent
+      avec le tableau du gestionnaire, au centième de point près, y compris la
+      convention de date — le taux en vigueur au 1er janvier vaut pour l'année.
+      Ce qui change n'est donc pas un chiffre mais son RANG : la Caisse des
+      dépôts gère la CNRACL, c'est le producteur, et les quarante années que le
+      dépôt tenait d'OpenFisca au niveau `haute` passent à `certifiee`. La
+      série employeur de la CNRACL n'a plus une seule année de second rang.
+      La page mère signale par ailleurs deux cotisations SUPPLÉMENTAIRES que
+      le dépôt ne porte pas — sapeurs-pompiers professionnels (indemnité de
+      feu) et aides-soignants (prime spéciale de sujétion) — et rappelle que
+      la NBI est cotisée au taux du traitement depuis 2012.
+    reste: >-
+      Dix années ont vu leur taux changer en cours de route, et la convention
+      annuelle du dépôt ne peut pas les rendre : la plus lourde est 1980, où la
+      contribution tombe de 18 % à 6 % au 1er juillet — l'employeur a versé
+      cette année-là la moitié de ce que le dépôt lui compte.
+      `tests/test_juris_cnracl_taux.py` les nomme toutes les dix et vérifie
+      qu'il n'y en a pas d'autres. Et un piège de manipulation, rencontré en
+      chemin : `verifier_donnees.py --appliquer` lancé avec un `data/brut/`
+      incomplet REDESCEND les lignes dont la meilleure source est absente —
+      cinq années de la SNCF sont ainsi passées de `certifiee` à `haute` avant
+      d'être rendues à leur rang. Lancer les récupérateurs avant d'appliquer.

@@ -1,5 +1,5 @@
 # Contribution EMPLOYEUR des régimes publics et spéciaux, par année
-# source_id: sre_historique_taux, dila_legi_cnracl,
+# source_id: sre_historique_taux, dila_legi_cnracl, juris_cnracl_taux,
 #            sncf_contribution_employeur, dila_legi_contribution_employeur,
 #            openfisca_contribution_employeur_public
 # unite: fraction de l'assiette de la retenue pour pension (traitement
@@ -27,6 +27,20 @@
 #                          remplacement. `certifiee`, et seulement pour les
 #                          années dont la chaîne des versions est sûre : voir
 #                          scripts/fetch/dila_legi_cnracl.py.
+#   CNRACL, 1948-2026      « Cotisations — historique des taux applicables »,
+#                          documentation juridique de la CNRACL
+#                          (juris-cnracl.retraites.fr) : quarante-neuf périodes,
+#                          du 19 septembre 1947 à 2026, retenue de l'agent et
+#                          contribution de l'employeur. La Caisse des dépôts
+#                          GÈRE le régime : c'est le producteur, et les
+#                          quarante années qu'OpenFisca portait à `haute`
+#                          passent à `certifiee`. Les trois sources — texte,
+#                          gestionnaire, transcription — s'accordent sur les
+#                          soixante-dix-neuf années. Convention de date : le
+#                          taux en vigueur au 1er janvier vaut pour l'année,
+#                          et dix années ont changé en cours de route, dont
+#                          1980 où la contribution tombe de 18 % à 6 % au
+#                          1er juillet. Voir scripts/fetch/juris_cnracl_taux.py.
 #   CNRACL, 1993-2028      article 5 II du décret n° 91-613 du 28 juin 1991,
 #                          LU dans la base LEGI (`dila_legi_cnracl.py`) :
 #                          « Le taux de la contribution sur les traitements
@@ -55,9 +69,12 @@
 #   Opéra, 1992-2026       II de l'article 6 du décret n° 91-613, renvoyant au
 #   Comédie-Française      2° de l'article 4 des décrets du 5 avril 1968 et du
 #                          11 octobre 1968. `certifiee`.
-#   CNRACL hors 1984-1988, transcription d'OpenFisca-France — `haute`.
-#   État 1995-2005,
+#   État 1995-2005,        transcription d'OpenFisca-France — `haute`.
 #   SNCF 2012-2018
+#
+#   La CNRACL, elle, n'a plus une seule année en `haute` depuis le
+#   22 septembre 2026 : le tableau du gestionnaire a relevé les quarante qui
+#   l'étaient. La transcription d'OpenFisca reste lue, et sert de recoupement.
 #
 # POURQUOI LA CNRACL S'ARRÊTE À CINQ ANNÉES AVANT 1993. La contiguïté des
 # versions n'est pas leur complétude : quand un décret modificatif manque à la
@@ -164,42 +181,42 @@
 # Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas
 # modifier à la main.
 annee,regime,taux,nature,fiabilite
-1948,cnracl,0.120000,appelee,haute
-1949,cnracl,0.120000,appelee,haute
-1950,cnracl,0.120000,appelee,haute
-1951,cnracl,0.180000,appelee,haute
-1952,cnracl,0.180000,appelee,haute
-1953,cnracl,0.180000,appelee,haute
-1954,cnracl,0.180000,appelee,haute
-1955,cnracl,0.210000,appelee,haute
-1956,cnracl,0.180000,appelee,haute
-1957,cnracl,0.180000,appelee,haute
-1958,cnracl,0.180000,appelee,haute
-1959,cnracl,0.180000,appelee,haute
-1960,cnracl,0.180000,appelee,haute
-1961,cnracl,0.200000,appelee,haute
-1962,cnracl,0.180000,appelee,haute
-1963,cnracl,0.180000,appelee,haute
-1964,cnracl,0.180000,appelee,haute
-1965,cnracl,0.180000,appelee,haute
-1966,cnracl,0.180000,appelee,haute
-1967,cnracl,0.180000,appelee,haute
-1968,cnracl,0.180000,appelee,haute
-1969,cnracl,0.180000,appelee,haute
-1970,cnracl,0.180000,appelee,haute
-1971,cnracl,0.182000,appelee,haute
-1972,cnracl,0.182000,appelee,haute
-1973,cnracl,0.182000,appelee,haute
-1974,cnracl,0.196000,appelee,haute
-1975,cnracl,0.196000,appelee,haute
-1976,cnracl,0.196000,appelee,haute
-1977,cnracl,0.180000,appelee,haute
-1978,cnracl,0.180000,appelee,haute
-1979,cnracl,0.180000,appelee,haute
-1980,cnracl,0.180000,appelee,haute
-1981,cnracl,0.130000,appelee,haute
-1982,cnracl,0.130000,appelee,haute
-1983,cnracl,0.125000,appelee,haute
+1948,cnracl,0.120000,appelee,certifiee
+1949,cnracl,0.120000,appelee,certifiee
+1950,cnracl,0.120000,appelee,certifiee
+1951,cnracl,0.180000,appelee,certifiee
+1952,cnracl,0.180000,appelee,certifiee
+1953,cnracl,0.180000,appelee,certifiee
+1954,cnracl,0.180000,appelee,certifiee
+1955,cnracl,0.210000,appelee,certifiee
+1956,cnracl,0.180000,appelee,certifiee
+1957,cnracl,0.180000,appelee,certifiee
+1958,cnracl,0.180000,appelee,certifiee
+1959,cnracl,0.180000,appelee,certifiee
+1960,cnracl,0.180000,appelee,certifiee
+1961,cnracl,0.200000,appelee,certifiee
+1962,cnracl,0.180000,appelee,certifiee
+1963,cnracl,0.180000,appelee,certifiee
+1964,cnracl,0.180000,appelee,certifiee
+1965,cnracl,0.180000,appelee,certifiee
+1966,cnracl,0.180000,appelee,certifiee
+1967,cnracl,0.180000,appelee,certifiee
+1968,cnracl,0.180000,appelee,certifiee
+1969,cnracl,0.180000,appelee,certifiee
+1970,cnracl,0.180000,appelee,certifiee
+1971,cnracl,0.182000,appelee,certifiee
+1972,cnracl,0.182000,appelee,certifiee
+1973,cnracl,0.182000,appelee,certifiee
+1974,cnracl,0.196000,appelee,certifiee
+1975,cnracl,0.196000,appelee,certifiee
+1976,cnracl,0.196000,appelee,certifiee
+1977,cnracl,0.180000,appelee,certifiee
+1978,cnracl,0.180000,appelee,certifiee
+1979,cnracl,0.180000,appelee,certifiee
+1980,cnracl,0.180000,appelee,certifiee
+1981,cnracl,0.130000,appelee,certifiee
+1982,cnracl,0.130000,appelee,certifiee
+1983,cnracl,0.125000,appelee,certifiee
 1984,cnracl,0.102000,appelee,certifiee
 1984,mines,0.077500,appelee,certifiee
 1985,cnracl,0.102000,appelee,certifiee
@@ -210,13 +227,13 @@ annee,regime,taux,nature,fiabilite
 1987,mines,0.077500,appelee,certifiee
 1988,cnracl,0.182000,appelee,certifiee
 1988,mines,0.077500,appelee,certifiee
-1989,cnracl,0.197000,appelee,haute
+1989,cnracl,0.197000,appelee,certifiee
 1989,mines,0.077500,appelee,certifiee
-1990,cnracl,0.197000,appelee,haute
+1990,cnracl,0.197000,appelee,certifiee
 1990,mines,0.077500,appelee,certifiee
-1991,cnracl,0.197000,appelee,haute
+1991,cnracl,0.197000,appelee,certifiee
 1991,mines,0.077500,appelee,certifiee
-1992,cnracl,0.213000,appelee,haute
+1992,cnracl,0.213000,appelee,certifiee
 1992,comedie_francaise,0.088000,appelee,certifiee
 1992,mines,0.077500,appelee,certifiee
 1992,opera_de_paris,0.088000,appelee,certifiee

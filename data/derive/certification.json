@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-09-21",
+ "dernier_passage_le": "2026-09-22",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -342,16 +342,16 @@
    "valeurs": 334,
    "verifiee_le": "2026-09-20"
   },
-  "employeur_public_cnracl": {
+  "employeur_public_cnracl_gestionnaire": {
    "ajoutees": 0,
    "colonne": "taux",
    "corrigees": 0,
    "empreinte": "9061fd34656bebfc",
    "identiques": 40,
-   "niveau": "haute",
-   "source": "OpenFisca-France, décrets CNRACL et barèmes de la Caisse des dépôts",
+   "niveau": "certifiee",
+   "source": "CNRACL, documentation juridique, « Cotisations — historique des taux applicables »",
    "valeurs": 40,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-22"
   },
   "employeur_public_cnracl_journal_officiel": {
    "ajoutees": 0,
@@ -362,7 +362,7 @@
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 5 II, et décret n° 47-1846 du 19 septembre 1947, article 3",
    "valeurs": 41,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-09-22"
   },
   "employeur_public_comedie_francaise": {
    "ajoutees": 35,
@@ -384,7 +384,7 @@
    "niveau": "certifiee",
    "source": "Service des retraites de l'État, fiche « Historique des taux de cotisations »",
    "valeurs": 21,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-22"
   },
   "employeur_public_etat_implicite": {
    "ajoutees": 0,
@@ -395,7 +395,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, taux implicite du jaune « pensions » du PLF 2011",
    "valeurs": 11,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-22"
   },
   "employeur_public_ieg": {
    "ajoutees": 16,
@@ -450,7 +450,7 @@
    "niveau": "haute",
    "source": "OpenFisca-France, arrêtés annuels fixant les composantes T1 et T2",
    "valeurs": 7,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-22"
   },
   "employeur_public_sncf_avant_2007": {
    "ajoutees": 15,
@@ -472,7 +472,7 @@
    "niveau": "certifiee",
    "source": "DILA, arrêtés annuels du taux T1 (base JORF) et décret n° 2007-1056 du 28 juin 2007, article 2 IV (base LEGI)",
    "valeurs": 5,
-   "verifiee_le": "2026-09-17"
+   "verifiee_le": "2026-09-22"
   },
   "engagements_retraite": {
    "ajoutees": 0,
@@ -494,7 +494,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-09-21"
+   "verifiee_le": "2026-09-22"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -967,7 +967,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-09-21"
+   "verifiee_le": "2026-09-22"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1121,7 +1121,7 @@
    "niveau": "certifiee",
    "source": "Caisse des dépôts, barèmes Ircantec (IRC_BAR_01 et IRC_BAR_02)",
    "valeurs": 153,
-   "verifiee_le": "2026-09-13"
+   "verifiee_le": "2026-09-22"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,
