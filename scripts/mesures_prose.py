@@ -717,7 +717,8 @@ def avantages(**reglages: str) -> float:
     ``quoi=total`` (défaut), ``lues`` pour les lignes qu'un producteur publie,
     ``calculees`` pour les autres, ``part_lue`` pour la part des premières
     dans le total, en %, ``part_depense`` pour le total en % de la dépense
-    observée. ``annee`` : la dernière année de la série si on l'omet.
+    observée ; ``quoi=ligne&cle=…`` une ligne, ``quoi=anticipees`` les
+    pensions servies avant l'âge légal, ``&motif=…`` pour l'un des trois. ``annee`` : la dernière année de la série si on l'omet.
     """
     from retraite_notionnelle.avantages import LIGNES_LUES
 
@@ -730,6 +731,13 @@ def avantages(**reglages: str) -> float:
         ligne = cout.derniere
     lues = sum(v for k, v in ligne.lignes.items() if k in LIGNES_LUES)
     quoi = reglages.get("quoi", "total")
+    if quoi == "ligne":
+        if reglages["cle"] not in ligne.lignes:
+            raise ValueError(f"« {reglages['cle']} » n'est pas une ligne chiffrée")
+        return ligne.lignes[reglages["cle"]] / 1000
+    if quoi == "anticipees":
+        motif = reglages.get("motif")
+        return (ligne.anticipees[motif] if motif else ligne.anticipee) / 1000
     valeurs = {"total": ligne.gratuit / 1000, "lues": lues / 1000,
                "calculees": (ligne.gratuit - lues) / 1000,
                "part_lue": lues / ligne.gratuit * 100,
