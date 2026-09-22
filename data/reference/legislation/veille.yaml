@@ -2612,3 +2612,48 @@ journal:
       incomplet REDESCEND les lignes dont la meilleure source est absente —
       cinq années de la SNCF sont ainsi passées de `certifiee` à `haute` avant
       d'être rendues à leur rang. Lancer les récupérateurs avant d'appliquer.
+  - date: 2026-09-22
+    session: le même texte lu deux fois, et un mois de septembre perdu
+    consulte: >-
+      `python scripts/veille_droit.py` au démarrage, puis
+      `python scripts/fetch/dila_index.py legi --mettre-a-jour` — zéro incrément
+      depuis celui du 21. Index LEGI : article 10 de la loi n° 2023-270 dans sa
+      version du 31 décembre 2025 (LEGIARTI000053280920), XXIV, A, B et C lus
+      alinéa par alinéa ; article 13 du décret n° 2023-435 dans sa rédaction
+      issue de l'article 3 du décret n° 2026-344 (LEGIARTI000054059137), II, A à
+      G ; L. 161-17-3 du code de la sécurité sociale dans sa version du
+      22 janvier 2014 (LEGIARTI000028494794), qui est l'escalier « applicable
+      avant l'entrée en vigueur » auquel les deux textes renvoient ; et L. 13 du
+      code des pensions dans sa version du 31 décembre 2025
+      (LEGIARTI000053280906), qui renvoie la durée du pourcentage maximum à
+      L. 161-17-3. Vérifié au passage, pour la ligne `fin_de_la_suspension_2028`,
+      que L. 161-17-2 et L. 161-17-3 n'ont pas de version postérieure au
+      31 décembre 2025.
+    trouve: >-
+      LE MÊME TEXTE QUE L'ENTRÉE PRÉCÉDENTE, LU LE MÊME JOUR PAR UNE AUTRE
+      SESSION, ET LA MÊME CORRECTION PORTÉE JUSQU'AU BOUT DE CHAQUE CÔTÉ : table
+      identique, valeurs identiques, découverte au rebasage. Le doublon a été
+      abandonné au profit de `main`. CE QUE LA LECTURE A AJOUTÉ, en revanche :
+      la mise à l'essai de l'escalier marche par marche, y compris la marche qui
+      DESCEND — un super-actif né en août 1971 doit 171 trimestres, celui de
+      septembre 169, le texte remettant leur compteur à 169 au moment même où
+      leur âge commence à monter. Et c'est cet essai qui a buté sur UN MOIS DE
+      SEPTEMBRE PERDU, qui n'a rien à voir avec le droit : les tables écrivent
+      le 1er septembre `1961.667`, huit douzièmes valent 1961,666 666…, et la
+      lecture en escalier rendait donc à l'assuré né en SEPTEMBRE 1961 la marche
+      d'août — 168 trimestres au lieu de 169 et 62 ans d'âge d'ouverture au lieu
+      de 62 ans et trois mois, pour le mois-même que la loi du 14 avril 2023
+      désigne. Le trou valait aussi pour `1963.667` de la carrière longue,
+      `1966.667` et `1971.667` de la catégorie active, `1971.667` de la
+      jouissance militaire. La génération est maintenant lue à la précision où
+      les tables sont écrites.
+    reste: >-
+      DEUX LIGNES À OUVRIR, lues et non portées : le F du même II donne à la
+      carrière longue de la fonction publique sa propre durée cotisée — 167
+      trimestres de 1958 à 1960, 171 de 1970 à 1972 —, et le C vise les autres
+      départs avant soixante ans. ET UNE LEÇON DE MÉTHODE, qui vaut d'être
+      consignée là où les sessions la reliront : deux sessions ont passé la même
+      journée sur la même ligne du registre parce que rien ne disait qu'elle
+      était prise. Le partage par zones du `CLAUDE.md` nomme le modèle, les
+      données et le site ; le registre de veille est une zone de plus, et ses
+      lignes `manque` se prennent une à la fois.

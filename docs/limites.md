@@ -349,6 +349,19 @@ parité du millésime : deux assurés déclarant « soixante-quatre ans et six m
 | Générations coupées par un texte | 1<sup>er</sup> juillet 1951, 1<sup>er</sup> septembre 1961 : les tables portent deux lignes, lues au mois de naissance |
 | Traitement des six derniers mois | Celui **en vigueur au départ**, annualisé, et non celui de la dernière année pleine |
 
+**Et la coupure de septembre tombait à côté d'un mois, sans que rien ne le
+dise.** Une génération s'écrit ici en années décimales, et les tables écrivent
+le 1<sup>er</sup> septembre `1961.667` — trois décimales, comme le veut leur
+convention. Huit douzièmes valent 1961,666 666… Le premier étant plus grand que
+le second, la lecture en escalier rendait à l'assuré né en SEPTEMBRE 1961 la
+marche d'août : **168 trimestres au lieu de 169, et un âge d'ouverture de
+62 ans au lieu de 62 ans et trois mois** — pour le mois-même que la loi du
+14 avril 2023 désigne, et pour un douzième de la génération. Le même trou
+s'ouvrait sur `1963.667` de la carrière longue, sur `1966.667` et `1971.667` de
+la catégorie active, et sur `1971.667` de la jouissance militaire. La
+génération est désormais lue à la précision où les tables sont écrites, ce qui
+le referme des deux côtés du portage. Corrigé le 22 septembre 2026.
+
 **Une exposition n'est pas une interpolation.** Le diviseur mélange deux
 dimensions — l'âge et le millésime de la table —, et la seconde a d'abord été
 laissée en escalier, au motif qu'une table de mortalité est publiée par année
@@ -440,9 +453,14 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
 - **Catégorie active : servie, mais sur un classement déclaré.** L'âge anticipé
   de l'article L. 24 — 57 ans, 52 pour la super-active, 59 et 54 après la
   réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote
-  propre au classement (62 et 57 ans) et la condition de durée de services
-  classés (17 et 27 ans). Ce qui reste hors du modèle est le CLASSEMENT
-  lui-même : il tient à l'emploi occupé, qu'aucune donnée de carrière ne révèle,
+  propre au classement (62 et 57 ans), la condition de durée de services
+  classés (17 et 27 ans) et, depuis le 22 septembre 2026, la DURÉE REQUISE
+  propre aux emplois classés : l'accélération de 2023 ne s'y applique pas à la
+  date où elle s'applique aux autres, et le B du XXIV de l'article 10 de la loi
+  n° 2023-270 leur oppose 169 trimestres des nés du 1er septembre 1966 à 1967
+  contre 172 en droit commun, 170 jusqu'au 31 mars 1970, 171 jusqu'à la fin de
+  1970, 172 ensuite — cinq ans plus tard pour la super-active. Ce qui reste hors
+  du modèle est le CLASSEMENT lui-même : il tient à l'emploi occupé, qu'aucune donnée de carrière ne révèle,
   et c'est donc l'assuré qui le déclare en choisissant l'un des cinq statuts
   classés. Qui se trompe de statut se trompe d'âge. La table ne porte par
   ailleurs qu'une durée par classement — 17 ans en active, 27 en super-active :
@@ -5955,11 +5973,17 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   hérite.** L'article L. 14 borne la décote à vingt trimestres : un agent de
   catégorie active parti à 57 ans et un agent sédentaire parti le même jour
   butent tous deux sur le même plafond, et leurs pensions ne diffèrent que de
-  868 € par an. Mesurer la valeur d'un avantage d'ÂGE par l'écart de MONTANT
-  à date de départ fixe donne donc un chiffre petit — 0,6 milliard en 2024 pour
-  la catégorie active — et ce chiffre n'est pas faux, il est incomplet : ce que
-  l'avantage coûte, ce sont les annuités servies avant l'âge légal, que nulle
-  décote ne rattrape. Elles valent **13,7 milliards en 2024**, dont 7,5 pour le
+  825 € par an pour la génération 1960 — le chiffre de 868 € que cette page et
+  le site portaient en dur avait dérivé sans que rien ne le dise, et il est
+  désormais celui du modèle. Pour la génération 1965 l'écart tombe à 102 €, le
+  classement abaissant par ailleurs la durée requise d'un trimestre. Mesurer la
+  valeur d'un avantage d'ÂGE par l'écart de MONTANT à date de départ fixe donne
+  donc un chiffre petit — 0,5 milliard en 2024 pour la catégorie active — et ce
+  chiffre n'est pas faux, il est incomplet ; il est de surcroît désormais
+  REFUSÉ sur les cas types dont le retrait du classement déplace la durée
+  requise, le contrôle d'isolement de `avantages.py` n'acceptant pas un écart
+  qui mêlerait les deux effets. Ce que l'avantage coûte, ce sont les annuités
+  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **13,7 milliards en 2024**, dont 7,5 pour le
   classement, 2,4 pour les régimes spéciaux et 3,8 pour la carrière longue
   (`scripts/cout_avantages.py --duree`). Ce sont des annuités anticipées et non
   un surcoût net — partir tôt, c'est aussi cotiser moins et mourir plus tôt en
@@ -7956,7 +7980,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2050<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2051<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

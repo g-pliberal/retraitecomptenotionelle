@@ -1281,7 +1281,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->2050<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2051<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

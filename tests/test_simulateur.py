@@ -3907,6 +3907,54 @@ def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulate
         pytest.approx(170 / 169, abs=1e-4))
 
 
+def test_le_classement_oppose_sa_propre_duree_requise(simulateur):
+    """L'accélération de 2023 ne s'applique pas aux emplois classés à la date où
+    elle s'applique aux autres : c'est la contrepartie du recul de leur âge.
+
+    Le B du XXIV de l'article 10 de la loi n° 2023-270, pour les fonctionnaires
+    de l'État, et le II, B de l'article 13 du décret n° 2023-435 dans sa
+    rédaction issue du décret n° 2026-344 du 7 mai 2026, pour la CNRACL et le
+    fonds des ouvriers, portent le même escalier : la durée d'avant la réforme
+    jusqu'aux nés du 31 août 1966, puis 169 trimestres jusqu'à la fin de 1967,
+    170 jusqu'au 31 mars 1970, 171 jusqu'à la fin de 1970, 172 à compter de
+    1971 — cinq ans plus tard pour la super-active.
+
+    Deux choses s'y vérifient, et la seconde surprend. La première : un actif né
+    en 1967 doit 169 trimestres quand le droit commun en oppose 172. La seconde :
+    **l'escalier redescend** pour la super-active, le texte remettant leur
+    compteur à 169 au moment où leur âge commence à monter — un super-actif né
+    en août 1971 doit 171 trimestres, celui de septembre 169.
+
+    La dérogation ne vaut que pour qui EXERCE le droit au départ anticipé : le
+    sédentaire du même régime et de la même génération reste au droit commun.
+    """
+    def requis(affiliation, generation, mois=1):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=generation, sexe="H", affiliation=affiliation,
+            age_debut=22, age_liquidation=60, mois_naissance=mois,
+        )
+        return simulateur.scenario_actuel.calculer(carriere).trimestres_requis
+
+    actif = "fonctionnaire_territorial_hospitalier_actif"
+    super_actif = "fonctionnaire_etat_super_actif"
+    sedentaire = "fonctionnaire_territorial_hospitalier"
+
+    # L'escalier de la catégorie active, marche par marche.
+    assert requis(actif, 1963) == 168
+    assert requis(actif, 1967) == 169
+    assert requis(actif, 1969) == 170
+    assert requis(actif, 1971) == 172
+    # Et le droit commun, qui ne le suit pas : c'est là qu'est la dérogation.
+    assert requis(sedentaire, 1967) == 172
+    assert requis(sedentaire, 1969) == 172
+
+    # La super-active, et la marche qui descend au 1er septembre 1971.
+    assert requis(super_actif, 1971, mois=8) == 171
+    assert requis(super_actif, 1971, mois=9) == 169
+    assert requis(super_actif, 1974) == 170
+    assert requis(super_actif, 1976) == 172
+
+
 def test_la_surcote_d_un_actif_se_compte_depuis_l_age_legal_de_droit_commun(simulateur):
     """Le III de l'article L. 14 ne donne la majoration qu'« au-delà de l'âge
     mentionné à l'article L. 161-17-2 », et le D du XXIV de l'article 10 de la

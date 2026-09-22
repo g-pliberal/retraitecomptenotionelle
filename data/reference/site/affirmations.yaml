@@ -1503,7 +1503,7 @@ affirmations:
   - id: avantages.servies_avant_l_age
     page: /avantages
     extrait: "de pensions servies avant l'âge légal en"
-    porte: les annuités anticipées sont rapportées au montant des mêmes dispositifs, compté
+    porte: les annuités anticipées sont rapportées au montant des mêmes dispositifs quand il y en a un à rapporter, et la phrase se tait sinon
     etat: verifiee
     controle: annuites_anticipees_rapportees_au_montant
 

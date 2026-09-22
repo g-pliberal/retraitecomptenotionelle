@@ -7500,8 +7500,9 @@ l'âge légal n'est rattrapée par aucune décote.""",
             f"""<p>La décote est <strong>plafonnée à vingt trimestres</strong>.
 Un agent de catégorie active parti à 57 ans et un agent sédentaire parti le même
 jour butent donc tous deux sur le même plafond : leurs pensions ne diffèrent que
-de 868 € par an. Le montant ne sait pas distinguer celui qui part cinq ans trop
-tôt ; la durée le sait.</p>
+de 825 € par an pour la génération 1960, et de 102 € pour celle de 1965, dont le
+classement abaisse par ailleurs la durée requise d'un trimestre. Le montant ne
+sait pas distinguer celui qui part cinq ans trop tôt ; la durée le sait.</p>
 <p>Le classement de l'emploi en porte
 {g.pourcentage(part_classement, decimales=0)}. Le reste se partage entre les
 âges propres des régimes spéciaux et la <strong>carrière longue</strong>, qui

@@ -340,8 +340,19 @@ class Carriere:
         2023 ceux nés à compter du 1er septembre 1961. Une génération s'écrit
         donc en années décimales, et le mois de naissance décide de quel côté
         de la coupure l'assuré tombe.
+
+        **L'ARRONDI À TROIS DÉCIMALES N'EST PAS COSMÉTIQUE, et son absence
+        coûtait un mois entier de chaque coupure de septembre.** Les tables
+        écrivent le 1er septembre `1961.667` — trois décimales, comme le veut
+        leur convention —, quand huit douzièmes valent 1961,666 666… Le premier
+        étant plus grand que le second, la lecture en escalier rendait à
+        l'assuré né en SEPTEMBRE 1961 la marche d'août : 168 trimestres au lieu
+        de 169, et un âge d'ouverture de 62 ans au lieu de 62 ans et trois mois,
+        pour le mois-même que la loi du 14 avril 2023 désigne. Le même trou
+        s'ouvrait sur `1963.667`, `1966.667` et `1971.667`. Lire la génération à
+        la précision où la table est écrite le referme.
         """
-        return self.annee_naissance + (self.mois_naissance - 1) / 12
+        return round(self.annee_naissance + (self.mois_naissance - 1) / 12, 3)
 
     @cached_property
     def date_liquidation(self) -> DateMois:
