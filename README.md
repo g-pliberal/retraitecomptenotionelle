@@ -1116,6 +1116,7 @@ python scripts/fetch/dila_legi_cnracl.py        # contribution employeur CNRACL 
 python scripts/fetch/dila_legi_decote_fonction_publique.py  # décote FP (index LEGI)
 python scripts/fetch/dila_legi_minimum_garanti.py  # barème du minimum garanti, dans l'index LEGI
 python scripts/fetch/erafp_valeurs_point.py     # valeurs du point du RAFP, par l'ERAFP
+python scripts/fetch/cnav_baremes_rci.py        # valeurs du point RCI depuis 2024, par la Cnav
 python scripts/fetch/jorf_plafond_securite_sociale.py  # plafond ancien, dans ses décrets (index JORF)
 python scripts/fetch/sncf_contribution_employeur.py  # contribution SNCF, dans les deux index
 python scripts/fetch/dila_legi_minimum_vieillesse.py  # montant de l'ASPA, dans le code (index LEGI)

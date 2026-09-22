@@ -44,6 +44,13 @@
 #
 # Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas
 # modifier à la main.
+# RCI 2024 à 2026 : barèmes « Valeur d'achat » et « Valeur de service du
+#   point de retraite complémentaire » de la Cnav (legislation.lassuranceretraite.fr,
+#   circulaires 2023/33, 2024/36 et 2025/31), lus le 22 septembre 2026. La
+#   série s'arrêtait à 2023 et le moteur retombait, pour les cotisations de
+#   2024 et après, sur un rendement de 6,74 % quand celui de 2026 vaut 6,20 % :
+#   les points RCI acquis en 2026 ressortaient 9 % trop nombreux, écart mis au
+#   jour par le simulateur Mon-entreprise de l'Urssaf, qui porte ces valeurs.
 regime,annee,mesure,valeur,fiabilite
 agirc,1947,salaire_reference,0.039637,certifiee
 agirc,1947,valeur_service,0.006098,certifiee
@@ -972,6 +979,12 @@ rci,2022,salaire_reference,17.956000,haute
 rci,2022,valeur_service,1.221000,haute
 rci,2023,salaire_reference,19.394000,haute
 rci,2023,valeur_service,1.280000,haute
+rci,2024,salaire_reference,20.734000,haute
+rci,2024,valeur_service,1.327000,haute
+rci,2025,salaire_reference,21.532000,haute
+rci,2025,valeur_service,1.335000,haute
+rci,2026,salaire_reference,21.726000,haute
+rci,2026,valeur_service,1.347000,haute
 rco_artisans,1979,salaire_reference,0.893351,haute
 rco_artisans,1980,salaire_reference,1.003115,haute
 rco_artisans,1980,valeur_service,0.119825,haute
