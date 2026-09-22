@@ -156,9 +156,22 @@ def _lignes_csv(chemin: str) -> list[dict]:
         return list(csv.DictReader(lignes))
 
 
-def sonde_lignes_csv(chemin: str) -> float:
-    """Nombre de lignes de données d'un CSV — ni en-tête ni commentaires."""
-    return len(_lignes_csv(chemin))
+def sonde_lignes_csv(argument: str) -> float:
+    """Nombre de lignes de données d'un CSV — ni en-tête ni commentaires.
+
+    ``fichier.csv?regime=agirc|arrco&fiabilite=certifiee`` ne compte que les
+    lignes qui passent tous les critères ; ``|`` y sépare les valeurs admises.
+    C'est ce que dit une prose qui compte « les valeurs lues chez la caisse ».
+    """
+    chemin, _, condition = argument.partition("?")
+    lignes = _lignes_csv(chemin)
+    for critere in filter(None, condition.split("&")):
+        champ, _, valeurs = critere.partition("=")
+        if lignes and champ not in lignes[0]:
+            raise ValueError(f"« {champ} » n'est pas une colonne de {chemin}")
+        admises = set(valeurs.split("|"))
+        lignes = [l for l in lignes if l[champ] in admises]
+    return len(lignes)
 
 
 def _colonne_csv(argument: str) -> tuple[list[dict], str, float, str]:

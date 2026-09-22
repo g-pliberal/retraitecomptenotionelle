@@ -63,6 +63,16 @@ fichiers:
       # salariés d'exemple. Elle annonçait +182 € par mois au salaire moyen
       # quand la fiche en donne 203 : la CSG rendue était arrivée depuis.
       "Retraite à comptes notionnels — modèle français rétroactif": etat
+      # Le tableau des exigences : des comptes de fichiers, des paramètres de
+      # droit lus dans leur table, et ce que le régime unique retient. Il
+      # annonçait 36 réformes pour 89, un âge de fusion de 64/67 ans quand le
+      # régime unique ouvre à 65 et donne le taux plein à 67,5, un taux du
+      # régime général de 16,35 % en 1991 pour 15,8, et 469 témoins pour 494.
+      "Ce que le modèle fait": etat
+      # Les sources, et comment on les rafraîchit : des périodes de séries,
+      # des comptes de valeurs certifiées. Les âges des espérances de vie sont
+      # les libellés des séries, et le 6,6651 € une conversion de francs.
+      "Les données": etat
       Ouvrir le simulateur: etat
       # Le corps de la section : ce que le premier chargement transfère, ce que
       # `index.html` charge, et le poids du portage.
@@ -481,7 +491,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 47
+  sections_a_declarer: 45
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
