@@ -230,6 +230,11 @@ parallèles — par zone, et en poussant souvent.
 1. Prendre un LOT COHÉRENT : un régime, ou une famille (les sections libérales,
    les régimes spéciaux, le versant international, les modèles publics).
    Ne pas piocher au hasard dans la liste.
+   Puis LE RÉSERVER : passer ses lignes à `en_cours` et pousser ce seul
+   commit, avant d'ouvrir une source. Le 22 septembre 2026, deux sessions ont
+   pris le lot de l'IRCEC le même soir, chacune sur un `main` où il était
+   encore `a_explorer` ; la seconde a lu les mêmes règlements et écrit le
+   même barème, et n'a découvert la première qu'en poussant.
 2. Lire la fiche du régime concerné avant d'ouvrir la source : on cherche ce
    qui MANQUE, pas ce qu'on a déjà. L'inventaire dit lesquelles sont
    `partiel`, et le champ `a_en_tirer` de chaque ligne dit quoi y chercher.

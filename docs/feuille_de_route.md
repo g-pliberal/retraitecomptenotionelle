@@ -12673,6 +12673,36 @@ le simulateur de cotisations de la Sécurité sociale des artistes-auteurs,
 celui de mon-entreprise, la page des âges de l'IRCEC — qui a servi un PDF au
 lieu d'une page —, et le barème des cotisations arriérées de la Cnav.
 
+**Seconde passe du même soir sur les artistes-auteurs.** Une autre session
+avait pris le même lot sans le savoir ; elle a gardé le barème de minoration de
+la première, mieux sourcé que le sien, et n'a porté que ce que la première
+n'avait pas. Trois corrections du scénario 1, toutes lues au texte. *La
+majoration de 10 % pour trois enfants*, au RAAP depuis 2014 (article 28) et au
+RACD depuis l'arrêté du 17 avril 2024 ; aucune fiche ne la déclarait. *Le RAAP
+des auteurs dramatiques et des compositeurs à la moitié du taux* (décret
+n° 62-420, article 2 II, depuis 2016) : le texte vise la personne affiliée au
+RACD ou au RACL, non la part de son revenu ; une fiche `ircec_raap_taux_amenage`
+à points du RAAP, et le rendement suit désormais `points_de`. *La classe
+spéciale d'avant 2016* : de 1981 à 2015, le RAAP prélevait une classe, et
+« à défaut d'option » la classe spéciale, six points par an ; trente et un
+montants lus dans les décrets annuels, de 876 F en 1984 à 448 € en 2015, là où
+la fiche prélevait 8 % du revenu. Les témoins des trois statuts d'auteur
+perdent de 7 à 27 % au scénario 1. La table des âges de l'IRCEC recoupe celle
+du dépôt ; sa foire aux questions décrit encore le RACL d'avant mai 2025. Les
+cinq pages de la Sécurité sociale des artistes-auteurs confirment le droit du
+régime général pour le scénario 1, et montrent ce que le compte notionnel
+prête à tort : la part patronale d'un salarié, 54 % du compte « patronal » du
+témoin, quand le diffuseur ne verse que 1 % pour toutes les branches.
+
+**Ce que ce second passage laisse ouvert.** Un drapeau de statut qui porte au
+compte la seule part salariale des auteurs, dans le compte notionnel et la
+fiche de paie des deux moteurs — la question de la part du 1 % du diffuseur
+qui revient à la vieillesse est à trancher d'abord (`docs/limites.md`,
+« Les artistes-auteurs n'ont pas d'employeur »). La classe A d'office des
+musiciens avant 2004, que l'article 1er d'alors, absent de l'index, dirait. Et
+restent `a_explorer` le simulateur de mon-entreprise et les cotisations
+arriérées de la Cnav.
+
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`
 (la forme), puis, selon ce qu'on trouve : `tests/temoins/exemples_officiels.yaml`,
