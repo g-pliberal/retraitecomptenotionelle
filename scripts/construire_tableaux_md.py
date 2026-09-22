@@ -198,7 +198,7 @@ def main() -> int:
         if arguments.verifier:
             perimes.append(document)
             continue
-        chemin.write_text(voulu, encoding="utf-8")
+        chemin.write_text(voulu, encoding="utf-8", newline="\n")
         print(f"{document} : tableau des règles d'indexation réécrit")
 
     # Le second tableau ne vit que dans le README : il commente la correction
@@ -210,7 +210,7 @@ def main() -> int:
         if arguments.verifier:
             perimes.append("README.md (tableau des générations)")
         else:
-            chemin.write_text(voulu, encoding="utf-8")
+            chemin.write_text(voulu, encoding="utf-8", newline="\n")
             print("README.md : tableau des générations réécrit")
 
     if perimes:
