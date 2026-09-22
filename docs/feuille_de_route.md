@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 867<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 269<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 272<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14054,16 +14054,31 @@ clé de lecture présente maintenant pour ce qu'ils sont.
 
 **Pourquoi.** L'action 85 avait ouvert le dépôt d'un relevé en PDF et l'avait
 dit elle-même : la lecture n'avait jamais vu de vrai document, puisque aucun
-n'est public. Elle a été confrontée à une estimation retraite d'Info Retraite —
-seize pages, deux tableaux de carrière — le 22 septembre 2026. Le document
-sortait en lettres fausses, sans un seul chiffre.
+n'est public. Elle a été confrontée à une estimation retraite d'Info Retraite le
+22 septembre 2026. Le document sortait en lettres fausses, sans un seul chiffre.
+
+**Ce que ce document est, exactement.** Il n'était pas intact, et son porteur
+l'a dit : produit par `KslPrn`, le composeur d'Info Retraite, à 1 h 30, il a été
+rouvert dans une suite bureautique (`ONLYOFFICE 9.4`) pour être anonymisé, puis
+ré-exporté à 22 h 16 — les deux dates sont dans ses métadonnées, et ses polices
+sont du Calibri, qu'aucune administration n'emploie. **Le contenu est celui de
+la caisse ; le contenant est celui de l'éditeur**, et les six défauts se
+partagent en conséquence. Les quatre défauts de LECTURE DU RELEVÉ viennent du
+contenu, donc de la caisse : ses deux tableaux, ses unités écrites, ses lignes
+qui ressemblent à une carrière sans en être une. Les deux défauts du LECTEUR DE
+PDF ont été trouvés dans le contenant : les corriger est juste — la forme
+tableau d'un `bfrange` est de la norme, le texte tourné existe partout, et les
+deux documents de référence du dépôt y gagnent — mais rien ne dit qu'un PDF
+intact d'Info Retraite les aurait exigés. **La confrontation à un document de
+caisse INTACT reste donc à faire.**
 
 **Ce que le document a trouvé, et qui est corrigé.** Six défauts, dont deux
 dans le lecteur de PDF lui-même, qui servait déjà aux certifications du dépôt.
 
 - *La forme TABLEAU d'un `bfrange`.* Une table `ToUnicode` écrit ses plages de
   deux façons — `<début> <fin> <destination>` et `<début> <fin> [ <dst> <dst> …
-  ]` —, et ce document mêle les deux. L'expression régulière du lecteur
+  ]` —, et ce document mêle les deux. La table venait de la suite bureautique,
+  non de la caisse. L'expression régulière du lecteur
   cherchait trois hexadécimaux d'affilée : elle ignorait les crochets, lisait à
   cheval sur les entrées, et de proche en proche TOUTE la table se décalait.
   D'où « LQIRUPDWLRQ » pour « information » — et, les chiffres tombant sur des
@@ -14091,7 +14106,9 @@ dans le lecteur de PDF lui-même, qui servait déjà aux certifications du dép�
   document, et le site y ajoute l'année courante.
 - *La couche de doublure.* Le PDF porte deux fois le même texte : une couche
   visible et une couche où toute une page est collée bout à bout. Additionnée à
-  la première, elle faisait des revenus de deux millions d'euros.
+  la première, elle faisait des revenus de deux millions d'euros. Elle vient de
+  l'éditeur, et tout document rouvert pour être anonymisé en portera une : c'est
+  le cas d'usage le plus probable de qui envoie son relevé à quelqu'un.
 
 **Ce que ça a déplacé.** La carrière se lit maintenant en entier : onze années,
 2014 à 2025, revenus et trimestres. Le contrôle est arithmétique et il vient du
@@ -14101,9 +14118,10 @@ des périodes, employeur par employeur. Aucun chiffre du modèle ne bouge ;
 `tests/test_releve_lu.py` porte le document en cas d'essai, sa mise en page et
 ses pièges reproduits, les montants inventés.
 
-**Ce qui reste.** Ce relevé-ci est celui d'un salarié du privé : les mises en
-page de la fonction publique, des libéraux et des régimes spéciaux n'ont
-toujours pas été vues. Et la couche de doublure ressort dans les lignes non
+**Ce qui reste.** Un PDF de caisse INTACT, d'abord : celui-ci était ré-exporté.
+Et ce relevé-ci est celui d'un salarié du privé : les mises en page de la
+fonction publique, des libéraux et des régimes spéciaux n'ont toujours pas été
+vues. Et la couche de doublure ressort dans les lignes non
 comprises, où elle n'apprend rien : le compte rendu montre les plus courtes
 d'abord, celles qu'un lecteur peut reprendre à la main.
 
