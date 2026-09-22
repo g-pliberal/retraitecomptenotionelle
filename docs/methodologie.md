@@ -1053,20 +1053,23 @@ diviseurs diffèrent, la conversion n'est pas neutre.
 | `reference` (défaut) | l'âge de référence | abattement du rapport des diviseurs si l'assuré part avant cet âge |
 | `liquidation` | l'âge de départ effectif | aucun : la conversion est neutre |
 
-Pour un salarié né en 1975 partant à 64 ans, l'âge de référence est de 67 ans :
-les droits acquis sont convertis à `G(67, 2026) = 22,03` puis servis à
-`G(64, 2039) = 25,67`. L'écart entre les deux, environ 10 %, est retiré de
+Pour un salarié né en 1975, entré à <!--chiffre:illustration()-->21<!--/--> ans et partant à <!--chiffre:illustration()-->62<!--/--> ans, l'âge de
+référence est de <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans : les droits acquis sont convertis au diviseur
+`G(64, 2026)`, <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_conversion)-->25,69<!--/--> années, puis servis à `G(62, 2037)`,
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_service)-->28,35<!--/--> années. L'écart entre les deux, environ <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=ecart_diviseurs)-->10<!--/--> %, est retiré de
 droits que le système actuel aurait servis sans décote — l'anticipation est
 payée une seconde fois, sur le passé. La pension du scénario 3 passe de
-23 074 € à 25 334 € par an lorsqu'on retient l'autre convention.
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=pension)-->25 961<!--/--> € à <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&conversion=liquidation&quoi=pension)-->27 600<!--/--> € par an lorsqu'on retient l'autre convention. Un
+départ à l'âge de référence lui-même ne sépare pas les deux : le diviseur est
+alors le même.
 
 **Le défaut est celui qui fait dépendre le pot du seul passé**, et c'est la
 raison de fond. Sur une carrière témoin — né en 1975, homme, salarié du privé
-non cadre entré à 21 ans, au salaire moyen et à profil plat, soit trente années
-cotisées avant la bascule et un droit figé de 18 683 € par an —, le pot vaut
-sous `reference` **459 467 € quel que soit l'âge de départ**. Sous
-`liquidation`, le même passé vaudrait **526 244 € pour un départ à 60 ans et
-411 567 € pour un départ à 67 ans** : 28 % d'écart pour un passé identique,
+non cadre entré à <!--chiffre:illustration()-->21<!--/--> ans, au salaire moyen et à profil plat, soit trente années
+cotisées avant la bascule et un droit figé de <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=figee)-->19 052<!--/--> € par an —, le pot vaut
+sous `reference` **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=pot)-->489 410<!--/--> € quel que soit l'âge de départ**. Sous
+`liquidation`, le même passé vaudrait **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=60&conversion=liquidation&quoi=pot)-->558 501<!--/--> € pour un départ à <!--chiffre:illustration()-->60<!--/--> ans et
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=67&conversion=liquidation&quoi=pot)-->439 658<!--/--> € pour un départ à <!--chiffre:illustration()-->67<!--/--> ans** : <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&conversion=liquidation&quoi=pot&de=67&a=60)-->27<!--/--> % d'écart pour un passé identique,
 parce que le diviseur qui constitue le pot rétrécit avec l'âge. Un test tient
 ces deux propriétés.
 
@@ -1076,8 +1079,8 @@ respectent quelque chose de différent — l'une le CAPITAL que le passé
 représente, l'autre la RENTE ANNUELLE qu'il promettait —, et la mesure a
 tranché entre elles : sous `liquidation`, le pot rétrécit avec l'âge à peu près
 au rythme où les cotisations nouvelles le remplissent, si bien que sept années
-de travail supplémentaires ne feraient monter le capital total que de 0,8 %
-contre 26 % aujourd'hui. Un compte notionnel promet qu'on retrouve ce qu'on
+de travail supplémentaires ne feraient monter le capital total que de <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&conversion=liquidation&quoi=capital&de=60&a=67)-->2,5<!--/--> %
+contre <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&quoi=capital&de=60&a=67)-->27<!--/--> % aujourd'hui. Un compte notionnel promet qu'on retrouve ce qu'on
 verse ; c'est cette promesse-là que le défaut tient. Le détail de la mesure est
 sous « Ce qui est délibérément en bas » de `feuille_de_route.md`, à l'action 24,
 abandonnée pour ce motif.
