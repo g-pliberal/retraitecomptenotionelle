@@ -13160,3 +13160,64 @@ propre action.
 
 **Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
 `tests/test_web.py`, `tests/temoins/pages.json`.
+
+### 98. Ce qui bloquait n'était pas le conteneur : cinq adresses mortes — `fait`
+
+**Demande.** « Regarde dans le projet tous les sites qui bloquaient à cause de
+l'environnement Cloud. J'utilise une session locale qui pourrait débloquer la
+plupart de ces blocages. »
+
+**Le diagnostic.** La liste existait — l'action 45 l'avait faite, et
+`python scripts/fetch/source_locale.py` l'imprime —, mais elle mélangeait deux
+choses sous le mot `reseau` : les hôtes qu'un environnement de construction ne
+joint pas, et les hôtes que PERSONNE ne joint plus. Les dix jeux bloqués du
+manifeste et les hôtes que `limites.md`, `exploration_sources.md` et ce
+document-ci tenaient pour hors d'atteinte ont été sondés un à un depuis un
+poste ordinaire, le 22 septembre 2026, en requête simple puis dans un
+navigateur pour ceux qui opposent un défi anti-robot.
+
+**Cinq noms d'hôte sont morts, trois ont un successeur.** C'est le vrai
+résultat, et il ne demandait aucun poste particulier : il demandait qu'on
+distingue « la machine ne joint pas » de « l'adresse n'existe plus ».
+
+| Écrit dans le dépôt | En réalité |
+|---|---|
+| `legislation.cnav.fr` injoignable | `legislation.lassuranceretraite.fr`, que `scripts/fetch/cnav_revalorisation_salaires.py` interrogeait DÉJÀ |
+| `statistiques-recherches.cnav.fr` | `statistiques-recherche.lassuranceretraite.fr`, au singulier, que le jeu voisin citait déjà |
+| `www.cprpsncf.fr` injoignable | `www.cprpf.fr` — le serveur le disait, son certificat portant déjà ce nom |
+| `opendata.sncf.com` injoignable | `data.sncf.com` |
+| `epsilon.insee.fr`, `performance-publique.budget.gouv.fr` | morts, sans successeur trouvé |
+
+Deux passages de ce document restent donc écrits tels quels, et faux pour la
+raison qu'ils donnent : le « `legislation.cnav.fr` n'est pas joignable depuis
+une session du dépôt » de l'action 92, et les « injoignables depuis ce
+conteneur » de l'action 37. Ils sont `recit`, vrais à leur date ; c'est le
+manifeste qui porte désormais l'adresse juste, et la circulaire Cnav 2026-29
+que la première disait hors d'atteinte est à portée.
+
+**Ce qu'un poste apporte vraiment, et ce qu'il n'apportait pas.** La Cour des
+comptes est le seul gain : `ccomptes.fr` ferme la connexion depuis une session
+et répond 200 depuis un poste. Le rapport sur les droits de succession —
+92 pages — est apporté, avec les dix-huit CSV de ses graphiques que la Cour
+publie à côté. C'est ce que l'action 47 attend pour la reprise de la garantie
+vieillesse : le dépôt mesure aujourd'hui la couverture d'une avance sur le
+patrimoine des MÉNAGES retraités, jamais sur ce que les successions portent
+réellement. Pour le reste, rien de neuf : `budget.gouv.fr` s'ouvre au
+navigateur, mais ses trois annexes ont un miroir à l'Assemblée nationale depuis
+l'action 45 et `--recuperer` les rapporte sans personne ; la Banque de France,
+qui refusait la session ET le runner, répond 200 ici, mais `OPEF2026.pdf` est
+déposé sur la release depuis le 20 septembre ; Légifrance refuse encore la
+requête simple et s'ouvre au navigateur, quand l'index LEGI du dépôt sert déjà
+le même contenu. `drees_eic` et l'enquête Patrimoine sont sous convention :
+aucun poste ne les débloque.
+
+**Ce qui n'est pas fait.** Le rapport de la Cour n'a pas de lecteur : ses
+valeurs ne sont pas entrées dans le dépôt, et `cdc_successions_2024` reste
+`a_faire`. `data/brut/` n'est pas versionné — le document sert à la session qui
+l'a déposé, et c'est le lecteur, versionné, qui rendra la valeur
+recontrôlable. Le blocage du jeu reste `reseau` : un poste le joint, une
+session non.
+
+**Fichiers.** `data/sources.yaml` (quatre jeux : deux adresses corrigées, le
+document de la Cour déclaré avec son empreinte, deux notes),
+`data/reference/legislation/veille.yaml` (journal du 22 septembre 2026).

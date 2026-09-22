@@ -1027,15 +1027,30 @@ institutions:
 
       - id: cnav_baremes
         titre: Barèmes et paramètres du régime général (circulaires)
-        url: https://www.legislation.cnav.fr/
+        url: https://legislation.lassuranceretraite.fr/
         acces: document
         statut_integration: saisi
+        note: >-
+          L'ADRESSE A CHANGÉ, et c'est ce qui faisait passer le site pour
+          injoignable. `legislation.cnav.fr` ne se résout plus en DNS — ni
+          depuis une session, ni depuis un poste ordinaire, vérifié le
+          22 septembre 2026 : ce n'était pas un blocage réseau mais un nom
+          d'hôte mort. La législation de la caisse est servie par
+          `legislation.lassuranceretraite.fr`, que
+          `scripts/fetch/cnav_revalorisation_salaires.py` interrogeait déjà
+          pour les circulaires de revalorisation.
         cible: data/reference/regimes/regime_general.yaml
       - id: cnav_statistiques
         titre: Statistiques et open data CNAV
-        url: https://www.statistiques-recherches.cnav.fr/
+        url: https://www.statistiques-recherche.lassuranceretraite.fr/
         acces: fichier
         statut_integration: a_faire
+        note: >-
+          Même correction d'adresse que `cnav_baremes` :
+          `statistiques-recherches.cnav.fr` ne se résout plus, et le site est
+          servi par `statistiques-recherche.lassuranceretraite.fr` — au
+          singulier —, que `cnav_comptes_notionnels_2009` citait déjà sans que
+          personne fasse le rapprochement. Joint le 22 septembre 2026.
 
       - id: cnav_comptes_notionnels_2009
         titre: >-
@@ -1332,15 +1347,22 @@ institutions:
           session du dépôt — `curl` rend « Recv failure: Connection reset by
           peer », vérifié le 22 septembre 2026 sur la racine comme sur la page
           de recherche. Ce n'est pas un refus poli qu'un navigateur
-          contournerait : rien ne répond. Les rapports sont donc saisis depuis
-          leur lecture ailleurs.
+          contournerait : rien ne répond. Un POSTE ORDINAIRE, lui, le joint
+          sans rien de particulier — 200 sur la page de recherche comme sur
+          les PDF, le même jour : le blocage est du côté de l'environnement
+          où le dépôt est construit, et tout rapport de la Cour s'apporte
+          donc comme `cdc_successions_2024` l'a été. Les rapports déjà en
+          table sont saisis depuis leur lecture ailleurs.
 
       - id: cdc_successions_2024
         titre: >-
           Les droits de succession, rapport public thématique de septembre 2024
         url: https://www.ccomptes.fr/fr/publications/les-droits-de-succession
+        document: https://www.ccomptes.fr/sites/default/files/2024-09/20240925-Droits-de-succession%C2%A0_1.pdf
         acces: document
         blocage: reseau
+        fichier_local: cdc_droits_succession_2024.pdf
+        sha256: f32e42b18788f6ef760f4f2e6b30b27ee71cf73ac655cb6f861c274168f11384
         statut_integration: a_faire
         note: >-
           Le rapport donne la distribution des SUCCESSIONS DÉCLARÉES, actif net
@@ -1348,7 +1370,15 @@ institutions:
           feuille de route attend pour la reprise de la garantie vieillesse :
           le dépôt calcule aujourd'hui la couverture d'une avance sur le
           patrimoine des MÉNAGES retraités, jamais sur ce que les successions
-          portent réellement. Même blocage réseau que le jeu précédent.
+          portent réellement. LE DOCUMENT EST LÀ : 92 pages, apporté le
+          22 septembre 2026 depuis un poste ordinaire, qui joint `ccomptes.fr`
+          sans un mot — le blocage était bien la machine, pas la source. La
+          Cour publie à côté les données de ses graphiques
+          (`20240925-donnees-Droits-de-succession .zip`, dix-huit CSV, déposé
+          sous `cdc_droits_succession_2024_donnees.zip`) : `T9`, `Source T10`
+          et `Source T14` sont les tableaux à lire d'abord. Reste à écrire le
+          lecteur, et le blocage reste `reseau` tant qu'une session ne joint
+          pas l'hôte.
 
   progedo_adisp:
     nom: Progedo — Archives de données issues de la statistique publique (ADISP)
@@ -1931,10 +1961,18 @@ institutions:
     jeux:
       - id: rs_cprpsncf
         titre: Règlement du régime spécial SNCF
-        url: https://www.cprpsncf.fr/
+        url: https://www.cprpf.fr/
         acces: document
         statut_integration: saisi
         cible: data/reference/regimes/sncf.yaml
+        note: >-
+          LA CAISSE A CHANGÉ DE NOM DE DOMAINE, et c'est ce qui la faisait
+          passer pour injoignable : `cprpsncf.fr` ne se résout plus, et le
+          serveur le disait depuis le début — le certificat qu'il sert porte
+          `cprpf.fr`. Joint le 22 septembre 2026. La fiche `sncf.yaml` est la
+          première que l'action 94 désigne à relire : elle majore l'âge de
+          référence de cinq ans comme le faisait celle des IEG, où la version
+          en vigueur dit trois depuis 2025.
       - id: rs_crpratp
         titre: Règlement du régime spécial RATP
         url: https://www.crpratp.fr/

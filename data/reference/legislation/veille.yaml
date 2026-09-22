@@ -2739,3 +2739,42 @@ journal:
       la première chose à faire du prochain lot. La CNIEG publie par ailleurs
       deux exemples chiffrés de surcote, transcriptibles en témoins le jour où
       `tests/test_oracle.py` saura construire une carrière de régime spécial.
+
+  - date: "2026-09-22"
+    session: "les sources qu'une session ne joignait pas, sondées depuis un poste"
+    consulte: >-
+      Aucun texte de droit : une revue d'ACCÈS. Les dix jeux que
+      `data/sources.yaml` déclare bloqués et les hôtes que
+      `docs/feuille_de_route.md`, `docs/limites.md` et
+      `docs/exploration_sources.md` tiennent pour injoignables ont été sondés
+      un à un depuis un poste ordinaire, en requête simple puis, pour ceux qui
+      opposent un défi anti-robot, dans un navigateur : `ccomptes.fr`,
+      `legifrance.gouv.fr`, `budget.gouv.fr`, `banque-france.fr`,
+      `data.gouv.fr`, `crpratp.fr`, `les-simulateurs.info-retraite.fr`,
+      `espace-personnel.agirc-arrco.fr`, `github.com`, et les six noms d'hôte
+      que les notes disaient hors d'atteinte.
+    trouve: >-
+      CINQ NOMS D'HÔTE SONT MORTS, ET TROIS ONT UN SUCCESSEUR : ce que le dépôt
+      rangeait en blocage réseau était, pour eux, une adresse périmée.
+      `legislation.cnav.fr` ne se résout plus — le site est
+      `legislation.lassuranceretraite.fr`, que
+      `scripts/fetch/cnav_revalorisation_salaires.py` interrogeait déjà sans
+      que personne fasse le rapprochement ; `statistiques-recherches.cnav.fr`
+      est devenu `statistiques-recherche.lassuranceretraite.fr`, au singulier ;
+      `www.cprpsncf.fr` est devenu `www.cprpf.fr`, et son serveur le disait
+      depuis le début, le certificat qu'il sert portant déjà ce nom ;
+      `opendata.sncf.com` est devenu `data.sncf.com`. Restent sans successeur
+      trouvé `epsilon.insee.fr` et `performance-publique.budget.gouv.fr`.
+      La Cour des comptes, elle, est bien un blocage de machine : un poste la
+      joint sans rien de particulier, et le rapport sur les droits de
+      succession que l'action 47 attend est apporté, avec les dix-huit CSV de
+      ses graphiques. Légifrance refuse encore la requête simple mais s'ouvre
+      au navigateur — l'index LEGI du dépôt servait déjà le même contenu.
+    reste: >-
+      LA CIRCULAIRE CNAV 2026-29 EST À PORTÉE, et deux entrées de ce journal
+      la disaient injoignable pour la mauvaise raison : elles visaient
+      `legislation.cnav.fr`. Elles restent écrites telles quelles, datées de ce
+      qu'on croyait alors ; c'est l'adresse du manifeste qui est corrigée. Le
+      rapport de la Cour n'a pas de lecteur : ses valeurs ne sont pas entrées
+      dans le dépôt, et `cdc_successions_2024` reste `a_faire`. Rien du
+      scénario 1 n'est modifié, aucune ligne du registre ne change d'état.
