@@ -4148,3 +4148,110 @@ def test_carriere_longue_quatre_trimestres_pour_qui_est_ne_au_dernier_trimestre(
     # (171 trimestres pour un né après mars 1965, suspension comprise).
     assert actuel.age_ouverture_droit(septembre) == pytest.approx(60.75)
     assert actuel.age_ouverture_droit(novembre) == pytest.approx(60.0)
+
+
+# --- Les périodes que le droit RÉPUTE cotisées (D. 351-1-2) ----------------
+
+def _carriere_hachee(simulateur, interruptions: dict[int, str]) -> Carriere:
+    """Un ouvrier entré à seize ans et demi, qui liquide à soixante ans.
+
+    Sans interruption, la carrière longue lui est ouverte : c'est l'étalon
+    dont chaque motif s'écarte.
+    """
+    return Carriere.depuis_parcours(
+        annee_naissance=1965,
+        sexe="H",
+        metiers=[Metier(affiliation="salarie_prive_non_cadre", age_debut=16.5,
+                        niveau_salaire=0.8)],
+        age_liquidation=60.0,
+        macro=simulateur.macro,
+        interruptions=interruptions,
+    )
+
+
+def _cotises(simulateur, interruptions: dict[int, str]) -> tuple[int, int]:
+    """Durée réellement cotisée, puis celle que la carrière longue oppose."""
+    carriere = _carriere_hachee(simulateur, interruptions)
+    cotises = sum(carriere.trimestres_retenus(ligne)
+                  for ligne in carriere.lignes if ligne.cotise)
+    dispositif = simulateur.scenario_actuel.carriere_longue
+    return cotises, dispositif.cotises_reputes(carriere, cotises, 0)
+
+
+def test_la_maternite_est_reputee_cotisee_sans_limite(simulateur):
+    """Le 4° du I de D. 351-1-2 ne lui oppose aucun plafond.
+
+    Il vise « les périodes comptées comme périodes d'assurance en application
+    du 2° de l'article R. 351-12 » — l'indemnisation de la maternité — et,
+    seul de la liste, sans « dans la limite de ».
+    """
+    cotises, opposes = _cotises(
+        simulateur, {annee: "maternite" for annee in range(1990, 1993)})
+    assert opposes - cotises == 12, "trois années pleines, aucune écrêtée"
+
+
+def test_le_chomage_indemnise_est_reputte_cotise_dans_la_limite_de_quatre(simulateur):
+    """Le 3° du I plafonne à quatre trimestres, sur toute la carrière.
+
+    La limite se compte « auprès de l'ensemble des régimes obligatoires » et
+    pour toute la vie, non année par année : trois ans de chômage n'en ouvrent
+    pas plus qu'un.
+    """
+    _, un_an = _cotises(simulateur, {1990: "chomage_indemnise"})
+    cotises_trois, trois_ans = _cotises(
+        simulateur, {annee: "chomage_indemnise" for annee in range(1990, 1993)})
+    assert trois_ans - cotises_trois == 4
+    assert un_an - trois_ans == 8, (
+        "le plafond est atteint dès la première année ; les deux suivantes "
+        "ne coûtent que leurs trimestres cotisés"
+    )
+
+
+def test_le_chomage_NON_indemnise_n_est_jamais_repute_cotise(simulateur):
+    """Le 3° ne cite que les b et c du 4° de R. 351-12, jamais le d.
+
+    Le d est le chômage involontaire NON indemnisé : il valide des trimestres
+    d'assurance, il n'en répute aucun cotisé. C'est le contrôle qui empêche
+    d'élargir la liste au-delà de ce qu'elle dit.
+    """
+    cotises, opposes = _cotises(
+        simulateur,
+        {annee: "chomage_non_indemnise" for annee in range(1990, 1993)})
+    assert opposes == cotises
+
+
+def test_maladie_et_accident_du_travail_partagent_la_meme_enveloppe(simulateur):
+    """Le 2° du I vise l'INCAPACITÉ TEMPORAIRE, non l'un ou l'autre motif.
+
+    Il renvoie aux 1° et 5° de R. 351-12 — indemnités journalières de maladie,
+    et celles de l'accident du travail — « dans la limite de quatre
+    trimestres », une seule fois pour les deux. Les traiter séparément en
+    aurait rendu huit.
+    """
+    cotises, opposes = _cotises(simulateur, {
+        1990: "maladie", 1991: "maladie",
+        1992: "accident_travail", 1993: "accident_travail",
+    })
+    assert opposes - cotises == 4
+
+
+def test_l_invalidite_s_arrete_a_deux_trimestres(simulateur):
+    """Le 5° du I : « dans la limite de deux trimestres », et c'est la seule.
+
+    Le 3° de R. 351-12 compte un trimestre par échéance d'arrérages ; le
+    décret n'en répute cotisés que deux.
+    """
+    cotises, opposes = _cotises(
+        simulateur, {annee: "invalidite" for annee in range(1990, 1993)})
+    assert opposes - cotises == 2
+
+
+def test_une_annee_de_chomage_rouvre_la_carriere_longue(simulateur):
+    """Ce que la correction change pour l'assuré, et non pour le compte.
+
+    Le modèle ne comptait que les trimestres réellement cotisés : une seule
+    année de chômage suffisait à fermer un départ que le droit ouvre.
+    """
+    actuel = simulateur.scenario_actuel
+    interrompue = _carriere_hachee(simulateur, {1990: "chomage_indemnise"})
+    assert actuel.calculer(interrompue).motif_ouverture == "carriere_longue"

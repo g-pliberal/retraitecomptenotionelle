@@ -25,11 +25,11 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 404<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 510<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 448<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 563<!--/--> lignes), puis dans les
 
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 404<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 510<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 448<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 563<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12661,3 +12661,71 @@ règle : leurs règlements n'ont pas été lus, et `docs/limites.md` le dit.
 `scripts/construire_donnees.py`, `tests/test_services_fonction_publique.py`,
 `data/reference/legislation/veille.yaml`, `docs/methodologie.md`,
 `docs/limites.md`, `README.md`.
+
+### 92. Une année de chômage fermait un départ que le droit ouvre — `fait`
+
+**Demande.** « Que peut-on faire d'autre ? », et le troisième chantier : les
+trois lignes du registre de veille restées `manque`. Celle-ci est la première.
+
+**Ce que le registre disait, et depuis quand.** `carriere_longue_reputes_cotises_autres`
+portait l'état `manque` depuis le 17 septembre 2026 : le départ anticipé pour
+carrière longue ne compte pas la durée d'assurance mais celle « ayant donné lieu
+à cotisations à la charge de l'assuré » (D. 351-1-1), et le modèle s'en tenait là
+— aux seuls trimestres réellement cotisés, plus les deux trimestres d'enfants que
+la loi de financement pour 2026 répute cotisés. La conséquence était mesurable et
+fausse : **une seule année de chômage indemnisé suffisait à fermer un départ que
+le droit ouvre.**
+
+**L'article qui manquait, lu dans l'index LEGI.** D. 351-1-2, version
+LEGIARTI000053356011, réputé cotisées six familles de périodes, chacune sous sa
+propre limite, comptée sur toute la carrière et tous régimes confondus :
+
+| Ce que le décret répute cotisé | Renvoi | Limite |
+|---|---|---|
+| service national | 1° du I | 4 trimestres |
+| incapacité temporaire — maladie ET accident du travail | 2° (R. 351-12, 1° et 5°) | 4 trimestres **pour les deux** |
+| chômage indemnisé et activité partielle | 3° (R. 351-12, b et c du 4°, et 10°) | 4 trimestres |
+| maternité | 4° (R. 351-12, 2°) | **aucune** |
+| invalidité | 5° (R. 351-12, 3°) | 2 trimestres |
+| parents au foyer et aidants (AVPF) | 7° (L. 381-1 et L. 381-2) | 4 trimestres |
+
+Deux lectures décident de tout, et aucune ne se devine. La première : le 2° vise
+l'INCAPACITÉ TEMPORAIRE, non la maladie puis l'accident du travail — les deux
+motifs tiennent ensemble dans quatre trimestres, et les compter séparément en
+aurait rendu huit. La seconde : le 3° ne cite que les b et c du 4° de R. 351-12,
+jamais le d, qui est le chômage NON indemnisé. Celui-là valide des trimestres
+d'assurance et n'en répute aucun cotisé — c'est la seule période assimilée que le
+décret ne reprenne jamais, et la maternité est la seule qu'il n'écrête pas.
+
+**La règle est en données.** `periodes_non_travaillees.csv` porte deux colonnes
+de plus, `reputes_cotises_enveloppe` et `reputes_cotises_plafond` : l'enveloppe
+est ce qui porte la limite, et deux motifs qui la partagent la partagent
+vraiment. Le budget se consomme dans l'ordre de la carrière. Le plafond annuel de
+quatre trimestres que l'article pose par ailleurs est tenu d'avance, une année du
+modèle ne portant qu'un statut.
+
+**Deux témoins neufs, pour une raison qui vaut d'être dite.** Aucun cas type du
+dépôt n'était à la fois interrompu et candidat à la carrière longue, ni à la fois
+fonctionnaire et interrompu : les deux règles corrigées ces deux derniers jours
+ne tenaient donc qu'aux tests Python, et le portage JavaScript ne leur était
+comparé sur rien. `fonctionnaire_interrompu` et `carriere_longue_hachee` ferment
+ce trou, et leur diff est le premier contrôle du portage.
+
+**Ce qui reste, et c'est écrit.** Le 6° du I — majoration du compte professionnel
+de prévention — n'est pas calculé par le modèle ; la part du 7° qui vise les
+fonctionnaires affiliés à un régime spécial n'est pas distinguée. Et une lecture
+manque : D. 351-1-3 pose la condition de DÉBUT d'activité sur une « durée
+d'assurance » de cinq trimestres quand le modèle n'y compte que les trimestres
+cotisés. Le texte est plus large que le modèle ; la doctrine Cnav ne l'est
+peut-être pas, et `legislation.cnav.fr` n'est pas joignable depuis une session du
+dépôt. La condition reste donc plus dure que la lettre du décret, et le registre
+porte la question.
+
+**Fichiers.** `data/reference/legislation/periodes_non_travaillees.csv`,
+`src/retraite_notionnelle/donnees/chargement.py`,
+`src/retraite_notionnelle/carriere.py`,
+`src/retraite_notionnelle/scenarios/actuel.py`, `moteur/js/carriere.js`,
+`moteur/js/regimes.js`, `scripts/construire_donnees.py`,
+`scripts/construire_temoins.py`, `tests/test_simulateur.py`,
+`data/reference/legislation/veille.yaml`, `docs/methodologie.md`,
+`docs/limites.md`.

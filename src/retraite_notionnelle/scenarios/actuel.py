@@ -1052,22 +1052,66 @@ class CarriereLongue:
 
     def cotises_reputes(self, carriere: Carriere, trimestres_cotises: int,
                         trimestres_enfants: int) -> int:
-        """La durée cotisée que le dispositif oppose, enfants compris.
+        """La durée cotisée que le dispositif oppose, périodes réputées comprises.
 
-        Les trimestres réellement cotisés, plus — pour les pensions prenant
-        effet depuis le 1er septembre 2026 — jusqu'à deux trimestres de la
-        majoration pour enfants, que la loi de financement pour 2026 répute
-        cotisés. Les autres périodes réputées cotisées (chômage, maladie,
-        maternité, invalidité) restent hors du modèle, qui ne compte que les
-        trimestres réellement cotisés : voir ``docs/limites.md``.
+        Les trimestres réellement cotisés, plus deux listes fermées que le droit
+        RÉPUTE cotisées. L'article D. 351-1-2 porte la première — service
+        national, incapacité temporaire, chômage indemnisé, maternité,
+        invalidité, assurance vieillesse des parents au foyer —, chacune sous sa
+        propre limite, comptée sur toute la carrière ; c'est
+        :meth:`_reputes_assimiles` qui la tient, sur la table des motifs. Et
+        l'article D. 351-1-2-1 porte la seconde, pour les pensions prenant effet
+        depuis le 1er septembre 2026 : jusqu'à deux trimestres de la majoration
+        pour enfants.
+
+        Le modèle ne comptait que les trimestres réellement cotisés, ce qui
+        rendait la condition plus dure qu'elle ne l'est et déclarait non
+        ouvertes des carrières hachées que le droit ouvre.
         """
+        cotises = trimestres_cotises + self._reputes_assimiles(carriere)
         if trimestres_enfants <= 0 or carriere.age_liquidation is None:
-            return trimestres_cotises
+            return cotises
         if carriere.date_liquidation.rang < self.ENFANTS_REPUTES_COTISES_DEPUIS.rang:
-            return trimestres_cotises
-        return trimestres_cotises + min(
+            return cotises
+        return cotises + min(
             self.ENFANTS_REPUTES_COTISES_MAXIMUM, trimestres_enfants
         )
+
+    @staticmethod
+    def _reputes_assimiles(carriere: Carriere) -> int:
+        """Ce que les périodes assimilées ajoutent à la durée cotisée.
+
+        Chaque enveloppe de l'article D. 351-1-2 a son plafond, et deux motifs
+        qui la partagent le partagent : maladie et accident du travail tiennent
+        ensemble dans quatre trimestres, parce que le 2° vise l'incapacité
+        temporaire et non l'une ou l'autre. Le budget se consomme dans l'ordre
+        de la carrière, et une enveloppe sans plafond — la maternité — n'en
+        consomme aucun.
+
+        Le plafond annuel de quatre trimestres que l'article pose par ailleurs
+        est tenu d'avance : une année ne porte ici qu'un statut, et
+        :meth:`Carriere.trimestres_retenus` n'en rend jamais plus de quatre.
+        """
+        annee_liquidation = carriere.annee_liquidation
+        budgets: dict[str, int] = {}
+        reputes = 0
+        for ligne in carriere.lignes:
+            if ligne.cotise or not ligne.reputes_cotises_enveloppe:
+                continue
+            if ligne.annee > annee_liquidation:
+                continue
+            retenus = carriere.trimestres_retenus(ligne)
+            if retenus <= 0:
+                continue
+            plafond = ligne.reputes_cotises_plafond
+            if not plafond:
+                reputes += retenus
+                continue
+            restant = budgets.setdefault(ligne.reputes_cotises_enveloppe, plafond)
+            pris = min(retenus, restant)
+            budgets[ligne.reputes_cotises_enveloppe] = restant - pris
+            reputes += pris
+        return reputes
 
     def age_de_depart(self, carriere: Carriere, annee_liquidation: int,
                       trimestres_cotises: int,
