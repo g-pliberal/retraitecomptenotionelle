@@ -145,22 +145,17 @@ export const CAS_TYPES = [
     affiliation: "profession_liberale",
     age_debut: 27, age_liquidation: 66, niveau_salaire: 2.5,
     caisses: ["cnavpl"],
-    regle_liquidation: "ouverture",
-    ecart_liquidation: 2,
     commentaire: "Régime de base CNAVPL et complémentaire Cipav, la section par "
       + "défaut. Un libéral d'une section spécialisée — auxiliaires médicaux, "
       + "pharmaciens, notaires — aurait un complémentaire différent, et celui-là "
-      + "n'est pas paramétré. Seul cas type à partir APRÈS l'âge d'ouverture : "
-      + "deux ans, l'écart que la grille lui donnait déjà quand les âges étaient "
-      + "écrits. La règle est `ouverture` et non `taux_plein`, et c'est ce que "
-      + "cette phrase disait depuis toujours : entré à vingt-sept ans sans "
-      + "carrière antérieure, ce cas type n'atteint la durée requise à aucun "
-      + "âge, et le taux plein le ferait attendre l'annulation de la décote — "
-      + "soixante-sept ans, quand la CNAVPL observe ses propres titulaires "
-      + "liquider à 64,8 ans en 2018 et 66,1 en 2025. La règle `taux_plein` "
-      + "rendait l'ouverture pour cette fiche tant que le moteur ne savait pas "
-      + "opposer de durée à une carrière tout en points ; il le sait depuis, et "
-      + "la fiche dit maintenant ce qu'elle faisait.",
+      + "n'est pas paramétré. Il a porté jusqu'au 22 septembre 2026 une règle à "
+      + "lui, « ouverture plus deux ans », qui n'était qu'un contournement : le "
+      + "moteur ne savait pas opposer de durée à une carrière tout en points, et "
+      + "le taux plein lui rendait donc l'âge d'ouverture. Le défaut corrigé, la "
+      + "règle ordinaire le date comme les autres, et le COR la confirme — son "
+      + "cas type n° 13, un médecin libéral de secteur 1 né en 1960, « peut "
+      + "prétendre à un départ à 62 ans » et « atteint le taux plein à 66 ans et "
+      + "9 mois », quand cette fiche donne 62,00 et 67,00 pour la même génération."
   },
   {
     code: "contractuel_public",
@@ -186,7 +181,9 @@ export const CAS_TYPES = [
   // ouvre la liquidation, sans égard à la durée, pour les carrières dont un
   // STATUT commande le départ. `services` : l'âge d'entrée augmenté de
   // `ecart_liquidation` années de services, pour la pension militaire, qui ne
-  // s'ouvre pas à un âge mais à une durée.
+  // s'ouvre pas à un âge mais à une durée — et qui est désormais la seule fiche
+  // à porter ce décalage : le libéral l'a rendu le 22 septembre 2026 avec la
+  // règle d'exception qu'il contournait.
   regle_liquidation: "taux_plein",
   ecart_liquidation: 0.0,
   ...cas,
