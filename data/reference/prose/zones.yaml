@@ -183,7 +183,31 @@ fichiers:
 
   docs/limites.md:
     defaut: a_declarer
+    # Des procès-verbaux enclavés dans des sections d'état : un défaut trouvé,
+    # corrigé, et ce qu'il valait ce jour-là. Leurs chiffres sont l'avant et
+    # l'après — la tranche de la Cipav écrite d'un seul côté, le régime
+    # agricole qui opposait 172 trimestres en 1980, le balayage des témoins
+    # passé de 138 à 250 cas, la part déplafonnée qu'OpenFisca servait dès le
+    # 1er janvier 2004.
+    paragraphes_recit:
+      - "UN PIÈGE DÉCOUVERT EN CHEMIN"
+      - "Le nombre n'est pas à lui seul un verdict"
+      - "**Les témoins ne le voyaient pas, et c'est le second enseignement.**"
+      - "**Un : la confrontation vérifie une copie, pas une lecture.**"
     sections:
+      # Sections d'état ancrées le 22 septembre 2026 : la règle d'indexation,
+      # dont le cumul du triple lock lit le modèle ; les régimes qui manquent ;
+      # le rendement unique de la CARPIMKO, dont les deux rendements lisent
+      # leur table ; les taux employeur du public, dont la RATP, portée « à
+      # près de 32 % » quand ses deux taux se lisent séparément ; la part de
+      # l'État en 2008 que le CEPII retrouve.
+      "2. La règle d'indexation domine le scénario rétroactif": etat
+      "Les régimes qui manquent encore, et ce qui bloque chacun": etat
+      "Un rendement unique là où il faudrait une série": etat
+      "Le simulateur doit être juste à tout âge : où il ne l'est pas encore": etat
+      "Ce que vaut une série qu'on ne peut pas certifier": etat
+      "La part patronale du public, et ce qu'on n'en sait pas": etat
+      "Ce que la comparaison valide": etat
       # Elle raconte une correction datée : ×1,69 et ×2,42 sont les pentes que
       # le modèle appliquait AVANT le 19 septembre 2026, ×1,30 et ×1,86 celles
       # que l'INSEE observe en 2024. Les rafraîchir effacerait ce qui a été
@@ -491,7 +515,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 45
+  sections_a_declarer: 38
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
