@@ -203,3 +203,117 @@ def test_les_deux_criteres_d_age_tirent_en_sens_contraire(mesure, simulateur):
     assert abs(fiches) < 0.2
     assert contrefactuel < fiches
     assert abs(contrefactuel) > abs(fiches)
+
+
+def test_le_plafond_de_decote_ne_mord_sur_aucune_liquidation_ouverte(simulateur):
+    """Le plafond de vingt trimestres est l'arithmétique des deux âges.
+
+    Il est écrit là où le droit a voulu l'écrire — R. 643-7 pour les libéraux,
+    R. 723-38 pour les avocats, le I de L. 14 pour la fonction publique — et
+    absent de R. 351-27 2° comme de R. 732-61. La raison est que l'écart entre
+    l'âge d'ouverture et l'âge d'annulation vaut AU PLUS vingt trimestres :
+    exactement vingt pour les générations 1930 à 1961, douze pour celles
+    d'après 1968. Sur toute liquidation que le droit ouvre, le décompte par
+    l'âge est donc borné par construction.
+
+    Ce test le vérifie plutôt que de le supposer : il rejoue chaque décote en
+    ôtant le plafond, et refuse qu'une seule liquidation OUVERTE en soit
+    changée. S'il tombe un jour, c'est que les âges ont bougé, et le plafond
+    cessera d'être invisible.
+    """
+    import dataclasses
+
+    from retraite_notionnelle.scenarios import actuel as A
+
+    original = A.ScenarioActuel._trimestres_de_decote
+    mordu = {"oui": False}
+
+    def espion(self, periode, carriere, trimestres, requis, age_liquidation,
+               age_annulation):
+        borne = original(self, periode, carriere, trimestres, requis,
+                         age_liquidation, age_annulation)
+        if periode.decote_trimestres_maximum is None or borne <= 0:
+            return borne
+        libre = dataclasses.replace(periode, decote_trimestres_maximum=None)
+        if original(self, libre, carriere, trimestres, requis, age_liquidation,
+                    age_annulation) > borne + 1e-9:
+            mordu["oui"] = True
+        return borne
+
+    A.ScenarioActuel._trimestres_de_decote = espion
+    try:
+        ouvertes = 0
+        for cas in CAS_TYPES:
+            for generation in (1950, 1970, 1990):
+                for quarts in range(232, 272):   # 58,0 à 68,0 ans, au trimestre
+                    mordu["oui"] = False
+                    resultat = simulateur.scenario_actuel.calculer(
+                        cas._carriere(simulateur, generation, quarts / 4))
+                    if not resultat.liquidation_ouverte:
+                        continue
+                    ouvertes += 1
+                    assert not mordu["oui"], (
+                        f"{cas.code}, génération {generation}, départ à "
+                        f"{quarts / 4} ans : le plafond a mordu")
+    finally:
+        A.ScenarioActuel._trimestres_de_decote = original
+    assert ouvertes > 500, "le balayage doit voir des liquidations ouvertes"
+
+
+def test_l_ecart_des_deux_ages_ne_depasse_jamais_vingt_trimestres(simulateur):
+    """La raison pour laquelle le plafond ne mord pas, mesurée dans les tables.
+
+    Vingt trimestres exactement de 1930 à 1961 — soixante ans contre
+    soixante-cinq —, puis dix-huit, quinze, treize et douze à mesure que les
+    réformes relèvent l'âge d'ouverture sans toucher à l'annulation.
+    """
+    actuel = simulateur.scenario_actuel
+    ecarts = {}
+    for generation in range(1930, 2016):
+        ouverture = actuel.ages_ouverture.age(generation)
+        annulation = actuel.ages_annulation_decote.age(generation)
+        if ouverture is None or annulation is None:
+            continue
+        ecarts[generation] = round((annulation[0] - ouverture[0]) * 4, 2)
+
+    assert ecarts, "les deux tables doivent se recouvrir"
+    assert max(ecarts.values()) == 20.0
+    assert all(ecarts[g] == 20.0 for g in range(1930, 1962) if g in ecarts)
+    assert ecarts[2000] == 12.0
+
+
+def test_le_liberal_retrouve_le_cas_type_du_COR(simulateur):
+    """Le cas type n° 13 du rapport annuel de juin 2026, à trois mois près.
+
+    Le COR décrit un médecin libéral de secteur 1 né en 1960 : il « peut
+    prétendre à un départ à 62 ans » et « atteint le taux plein à 66 ans et
+    9 mois ». La fiche du dépôt, rendue à la règle ordinaire une fois le défaut
+    des carrières tout en points corrigé, donne 62,00 et 67,00 pour la même
+    génération.
+
+    C'est la première confrontation du dépôt à un cas type libéral publié, et
+    elle vaut mieux que la moyenne d'un groupe de la nomenclature : les deux
+    âges sont construits sous la même convention — on part au taux plein — là
+    où l'enquête Emploi mesure un comportement.
+    """
+    actuel = simulateur.scenario_actuel
+    fiche = next(cas for cas in CAS_TYPES if cas.code == "profession_liberale")
+    assert fiche.regle_liquidation == "taux_plein"
+    assert fiche.ecart_liquidation == 0
+
+    carriere = fiche.construire(simulateur, 1960, "droit")
+    assert actuel.age_ouverture_droit(carriere) == pytest.approx(62.0, abs=0.01)
+    assert actuel.age_taux_plein_droit(carriere) == pytest.approx(66.75, abs=0.3)
+
+
+def test_le_militaire_est_seul_a_porter_un_ecart_de_liquidation():
+    """Le champ a perdu son second usager, et ne doit pas en retrouver un par mégarde.
+
+    `ecart_liquidation` porte la durée de services de la pension militaire, qui
+    ne s'ouvre pas à un âge mais à une durée. Le libéral l'a porté jusqu'au
+    22 septembre 2026 pour contourner un défaut du moteur ; le défaut corrigé,
+    il l'a rendu.
+    """
+    porteurs = {cas.code: cas.ecart_liquidation
+                for cas in CAS_TYPES if cas.ecart_liquidation}
+    assert porteurs == {"militaire": 25}

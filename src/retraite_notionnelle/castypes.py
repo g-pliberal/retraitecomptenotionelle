@@ -97,9 +97,10 @@ class CasType:
     #: une durée : lui opposer un âge légal serait lui opposer ce que le droit
     #: ne lui oppose pas.
     regle_liquidation: str = "taux_plein"
-    #: Le décalage que la règle applique à son âge de référence. Il vaut zéro
-    #: partout sauf chez le libéral, qui part deux ans après l'ouverture, et
-    #: chez le militaire, où il porte la durée de services elle-même.
+    #: Le décalage que la règle applique à son âge de référence. Il ne sert
+    #: plus qu'au militaire, où il porte la durée de services elle-même : le
+    #: libéral l'a porté jusqu'au 22 septembre 2026 pour contourner un défaut du
+    #: moteur, et l'a rendu avec lui.
     ecart_liquidation: float = 0.0
     commentaire: str = ""
 
@@ -339,25 +340,19 @@ CAS_TYPES: tuple[CasType, ...] = (
         affiliation="profession_liberale",
         age_debut=27, age_liquidation=66, niveau_salaire=2.5,
         caisses=("cnavpl",),
-        regle_liquidation="ouverture",
-        ecart_liquidation=2,
         commentaire="Régime de base CNAVPL et complémentaire Cipav, la section par "
                     "défaut. Un libéral d'une section spécialisée — auxiliaires "
                     "médicaux, pharmaciens, notaires — aurait un complémentaire "
-                    "différent, et celui-là n'est pas paramétré. Seul cas type à "
-                    "partir APRÈS l'âge d'ouverture : deux ans, l'écart que la "
-                    "grille lui donnait déjà quand les âges étaient écrits. La "
-                    "règle est `ouverture` et non `taux_plein`, et c'est ce que "
-                    "cette phrase disait depuis toujours : entré à vingt-sept ans "
-                    "sans carrière antérieure, ce cas type n'atteint la durée "
-                    "requise à aucun âge, et le taux plein le ferait attendre "
-                    "l'annulation de la décote — soixante-sept ans, quand la "
-                    "CNAVPL observe ses propres titulaires liquider à 64,8 ans "
-                    "en 2018 et 66,1 en 2025. La règle `taux_plein` rendait "
-                    "l'ouverture pour cette fiche tant que le moteur ne savait pas "
-                    "opposer de durée à une carrière tout en points ; il le sait "
-                    "depuis, et la fiche dit maintenant ce qu'elle faisait.",
-    ),
+                    "différent, et celui-là n'est pas paramétré. Il a porté "
+                    "jusqu'au 22 septembre 2026 une règle à lui, « ouverture plus "
+                    "deux ans », qui n'était qu'un contournement : le moteur ne "
+                    "savait pas opposer de durée à une carrière tout en points, et "
+                    "le taux plein lui rendait donc l'âge d'ouverture. Le défaut "
+                    "corrigé, la règle ordinaire le date comme les autres, et le "
+                    "COR la confirme — son cas type n° 13, un médecin libéral de "
+                    "secteur 1 né en 1960, « peut prétendre à un départ à 62 ans » "
+                    "et « atteint le taux plein à 66 ans et 9 mois », quand cette "
+                    "fiche donne 62,00 et 67,00 pour la même génération."),
     CasType(
         code="contractuel_public",
         libelle="Agent contractuel de la fonction publique",

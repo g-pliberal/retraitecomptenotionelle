@@ -7582,7 +7582,7 @@ l'âge auquel chaque cas type part, interpolé entre les points de la grille, et
 les treize pesés par les effectifs de caisse de la page « Coût ».
 
 **La grille suit l'âge réel à moins d'une demi-année sur dix-neuf ans**, et
-l'écart moyen est de −0,07 an — elle part un peu plus TÔT, non plus tard. Ce
+l'écart moyen est de −0,02 an — elle part un peu plus TÔT, non plus tard. Ce
 n'est pas une validation de la grille comme échantillon, qu'elle n'est pas :
 c'est que ses départs, pris ensemble et pesés, tombent où tombent ceux de la
 France réelle. Le tableau complet est celui que le script imprime ; ses deux
@@ -7617,7 +7617,7 @@ confrontation.
 **Les écarts individuels valent 1,17 an, et ils se compensent.** Pesés comme
 sur la page « Coût », les huit cas types comparables s'écartent de 1,17 an en
 valeur absolue et de +0,46 an seulement en signé, là où le tous régimes donne
-−0,07 an sur la même fenêtre. La concordance d'ensemble n'était donc pas un
+−0,02 an sur la même fenêtre. La concordance d'ensemble n'était donc pas un
 accord cas par cas : c'est une compensation, à laquelle s'ajoutent les quatre
 cas types laissés hors champ — militaire, agent de conduite, agent des IEG,
 catégorie active —, qui pèsent 8,3 % de la grille et partent entre 44,0 et
@@ -7759,7 +7759,7 @@ contredisent.
 
 **Ce que la correction a déplacé, et ce qu'elle a exposé.** Rien sur les
 agrégats : la trajectoire 2070 reste à 18,35 % du PIB et l'écart moyen à l'âge
-conjoncturel tous régimes à −0,07 an. Les témoins de SIMULATION, eux, bougent —
+conjoncturel tous régimes à −0,02 an. Les témoins de SIMULATION, eux, bougent —
 ce sont les carrières tout en points, qui voient maintenant un âge, une durée
 et une carrière longue —, et l'exploitant agricole passe de 61,64 à 61,73 ans
 de moyenne sur 2013-2020, partant à soixante-trois ans au titre de la carrière
@@ -7784,17 +7784,41 @@ est dominé par les cadres SALARIÉS, et sa moyenne ne décrit pas les libéraux
 **la CNAVPL publie l'âge moyen à la liquidation de ses propres titulaires**, et
 il vaut 64,81 ans en 2018 et 66,11 en 2025, contre 62,59 pour le groupe 3 tout
 entier. Trois ans et demi d'écart. Confronté au chiffre de sa caisse plutôt
-qu'à celui de son groupe, le cas type part **1,24 an trop TÔT** en moyenne de
-2018 à 2025, là où le groupe 3 le disait 0,66 an trop tard : **le signe
-s'inverse**. Il est donc sorti du champ de cette confrontation-là, avec sa
-raison écrite dans `cas_types_csp.yaml`, et huit cas types y restent.
+qu'à celui de son groupe, le cas type ne tombe plus du même côté. Il est donc
+sorti du champ de cette confrontation-là, avec sa raison écrite dans
+`cas_types_csp.yaml`, et huit cas types y restent.
 
 C'est aussi la correction d'une phrase que ce dépôt a portée une journée : « la
 DREES observe les professions libérales partir à 62,6 ans en moyenne » disait
-le groupe 3, pas les libéraux. La décision qu'elle servait à justifier — dater
-le départ de ce cas type sur l'âge d'OUVERTURE et non sur le taux plein — reste
-la bonne, et pour une meilleure raison : le taux plein le ferait partir à
-soixante-neuf ans, quand sa caisse observe soixante-six.
+le groupe 3, pas les libéraux.
+
+**Et le COR publie mieux qu'une moyenne de groupe : un cas type de libéral.**
+Le rapport annuel de juin 2026 ajoute, sous le n° 13, un médecin généraliste
+conventionné de secteur 1 né en 1960. Il « peut prétendre à un départ à
+62 ans » et « atteint le taux plein à 66 ans et 9 mois ». La fiche du dépôt,
+pour la même génération, donne **62,00 et 67,00** : trois mois d'écart sur le
+second, aucun sur le premier. C'est la première confrontation du dépôt à un cas
+type libéral publié, et elle vaut mieux que l'âge d'un groupe ou celui d'une
+caisse — les deux nombres sont construits sous la MÊME convention, on part au
+taux plein, là où l'enquête Emploi et le recueil de la CNAVPL mesurent un
+comportement.
+
+**Ce que cette confrontation a tranché.** La fiche portait une règle à elle —
+« ouverture plus deux ans » — qui n'était qu'un contournement : le moteur ne
+savait pas opposer de durée à une carrière tout en points, et le taux plein lui
+rendait donc l'âge d'ouverture. Le défaut corrigé, le contournement n'avait
+plus de cause, et sa constante de deux ans ne s'appuyait sur aucune source.
+**La fiche est rendue à la règle ordinaire**, `taux_plein` sans décalage, et
+`ecart_liquidation` n'a plus qu'un usager, le militaire, dont il porte la durée
+de services. Ce que cela déplace : le libéral part à 67 ans dans toutes les
+générations au lieu de 64 puis 66 ; la trajectoire 2070 passe de 18,35 à
+18,34 % du PIB ; et la concordance d'ensemble à l'âge conjoncturel tous régimes
+s'améliore, de −0,07 à −0,02 an.
+
+Contre l'âge OBSERVÉ de sa caisse, la fiche passe de 1,24 an trop tôt à 1,42 an
+trop tard. Les deux conventions manquent donc la moyenne réelle d'à peu près
+autant, en sens contraire, et le choix ne se fait pas sur l'ajustement : il se
+fait sur la règle, et la règle ordinaire est celle du COR.
 
 **Ce que le couloir vaut, et ce qu'il ne vaut pas.** La nomenclature classe des
 professions, la grille décrit des carrières par leur régime et leur niveau de
@@ -7932,7 +7956,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2030<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2034<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -25,17 +25,17 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 516<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 623<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 620<!--/--> lignes), puis dans les
 
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 516<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 623<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 620<!--/--> lignes), puis dans les
 
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 516<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 623<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 620<!--/--> lignes), puis dans les
 
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 516<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 623<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 620<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12927,3 +12927,76 @@ reste mesurée. Elle vaut 0,5 Md € en 2024, et la page Avantages passe de 12,8
 `moteur/js/scenario-actuel.js`, `scripts/construire_donnees.py`,
 `tests/test_simulateur.py`, `data/reference/legislation/veille.yaml`,
 `docs/limites.md`, `docs/parcours_presentation.md`.
+### 95. Le plafond qui ne mord pas, et le médecin libéral du COR — `fait`
+
+**Demande.** « Fais des recherches complémentaires pour le reste » : les deux
+réserves de l'action 90 — le plafond de vingt trimestres, écrit dans certains
+textes et pas dans d'autres, et le cas type libéral sans carrière antérieure.
+
+**Le plafond n'est pas une règle de plus : c'est l'arithmétique des deux
+âges.** Il est écrit là où le droit a voulu l'écrire — R. 643-7 pour les
+professions libérales, R. 723-38 pour les avocats, le I de L. 14 pour la
+fonction publique — et absent de R. 351-27 2° comme de R. 732-61, qui ne s'en
+sont jamais souciés. La raison est mesurable dans les tables du dépôt :
+**l'écart entre l'âge d'ouverture et l'âge d'annulation vaut exactement vingt
+trimestres pour les générations 1930 à 1961**, puis descend à dix-huit, quinze,
+treize et douze à mesure que les réformes relèvent le premier sans toucher au
+second. Sur toute liquidation que le droit ouvre, le décompte par l'âge est
+donc borné par construction.
+
+**Et il ne mord nulle part.** Un balayage de treize cas types × six générations
+× tous les trimestres de cinquante à soixante-huit ans produit **2 483
+liquidations ouvertes**, et le plafond n'en change aucune. Il ne mordrait que
+sur une liquidation antérieure à l'âge d'ouverture, que le modèle refuse depuis
+l'action 87. Rien à changer dans le calcul ; la docstring, qui en faisait une
+règle de « tous les régimes qui appliquent une décote », est réécrite, et deux
+tests tiennent l'identité — si les âges bougent un jour, le plafond cessera
+d'être invisible et quelqu'un le verra.
+
+**Le COR publie un cas type de libéral, et le dépôt le retrouve à trois mois
+près.** Le rapport annuel de juin 2026 ajoute, sous le n° 13, un médecin
+généraliste conventionné de secteur 1 né en 1960 : il « peut prétendre à un
+départ à 62 ans » et « atteint le taux plein à 66 ans et 9 mois ». La fiche du
+dépôt, pour la même génération, donne **62,00 et 67,00**. C'est la première
+confrontation du dépôt à un cas type libéral publié, et elle vaut mieux que
+l'âge d'un groupe de la nomenclature ou que celui d'une caisse : les deux
+nombres sont construits sous la MÊME convention — on part au taux plein — là où
+l'enquête Emploi et le recueil de la CNAVPL mesurent un comportement.
+
+**Ce qu'elle a tranché.** La fiche portait une règle à elle, « ouverture plus
+deux ans », qui n'était qu'un contournement : le moteur ne savait pas opposer
+de durée à une carrière tout en points, et le taux plein lui rendait donc l'âge
+d'ouverture. Le défaut corrigé à l'action 87, le contournement n'avait plus de
+cause, et sa constante de deux ans ne s'appuyait sur aucune source. **La fiche
+est rendue à la règle ordinaire**, `taux_plein` sans décalage, et
+`ecart_liquidation` n'a plus qu'un usager — le militaire, dont il porte la
+durée de services. Un test le tient.
+
+**Ce que ça a déplacé.** Le libéral part à 67 ans dans toutes les générations
+au lieu de 64 puis 66. La trajectoire 2070 passe de 18,35 à 18,34 % du PIB, et
+la concordance d'ensemble à l'âge conjoncturel tous régimes **s'améliore**, de
+−0,07 à −0,02 an. Contre l'âge OBSERVÉ de sa caisse, la fiche passe de 1,24 an
+trop tôt à 1,42 an trop tard : les deux conventions manquent la moyenne réelle
+d'à peu près autant, en sens contraire, et le choix ne s'est donc pas fait sur
+l'ajustement mais sur la règle.
+
+**Trois leçons.** **Une règle qu'on n'a jamais vue agir mérite qu'on cherche
+pourquoi** : le plafond n'était ni faux ni utile, il était une conséquence, et
+le dire coûte deux tests là où le supposer coûtait une réserve ouverte à chaque
+relecture. **Un contournement survit à sa cause** si personne ne revient le
+chercher : celui-ci a tenu une journée seulement parce que la réserve était
+écrite. Et **la meilleure référence est celle qui partage la convention** — le
+groupe 3 de la nomenclature mesure un comportement, la caisse aussi, le cas
+type du COR non, et c'est lui qui tranche.
+
+**Ce qui reste.** Le cas type libéral n'a toujours aucune carrière antérieure,
+quand la CNAVPL immatricule ses affiliés à 32,58 ans en moyenne. Seule une
+carrière en deux temps — salariée puis libérale — départagerait les deux
+conventions, et `CasType` ne porte qu'une affiliation : c'est un chantier, non
+une retouche.
+
+**Fichiers.** `src/retraite_notionnelle/scenarios/actuel.py`,
+`src/retraite_notionnelle/castypes.py`, `moteur/js/castypes.js`,
+`data/reference/legislation/veille.yaml`,
+`data/reference/macro/cas_types_csp.yaml`, `tests/test_cout_age_depart.py`,
+`docs/limites.md` § 5 ter, `tests/temoins/pages.json`.

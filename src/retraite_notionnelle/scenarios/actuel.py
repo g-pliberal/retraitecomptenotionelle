@@ -2660,10 +2660,27 @@ class ScenarioActuel:
 
         Le décompte retient le plus favorable des deux : trimestres manquants
         pour la durée requise, ou trimestres manquants jusqu'à l'âge
-        d'annulation de la décote. Et il est PLAFONNÉ — vingt trimestres dans
-        tous les régimes qui appliquent une décote. Sans ce plafond, un départ
-        dix ans avant l'heure retirait la moitié de la pension là où le droit
-        n'en retire que le quart.
+        d'annulation de la décote.
+
+        **Le plafond de vingt trimestres n'est pas une règle de plus : c'est
+        l'arithmétique des deux âges.** Il est écrit là où le droit a voulu
+        l'écrire — R. 643-7 pour les professions libérales, R. 723-38 pour les
+        avocats, le I de L. 14 pour la fonction publique — et absent de
+        R. 351-27 2° comme de R. 732-61, qui ne s'en sont jamais souciés. La
+        raison est mesurable dans les tables du dépôt : l'écart entre l'âge
+        d'ouverture et l'âge d'annulation vaut EXACTEMENT vingt trimestres pour
+        les générations 1930 à 1961, puis descend à dix-huit, quinze, treize et
+        douze à mesure que les réformes relèvent le premier sans toucher au
+        second. Sur toute liquidation que le droit ouvre, le décompte par l'âge
+        est donc au plus de vingt par construction, et le plafond ne mord
+        jamais — ``tests/test_moteur.py`` le vérifie sur toute la grille.
+
+        Il ne mordrait que sur une liquidation ANTÉRIEURE à l'âge d'ouverture,
+        que le modèle refuse depuis qu'il sait opposer un âge à toutes les
+        carrières. Le garder ne coûte donc rien et protège d'un changement
+        d'âges qui casserait l'identité ; le retirer demanderait de vérifier
+        les trois textes qui l'écrivent. On le garde, et cette phrase dit
+        pourquoi il ne se voit pas.
 
         Le décompte par l'ÂGE est arrondi à l'entier supérieur, comme le veut
         l'article R. 351-27. Les âges d'annulation des générations 1951 à 1954

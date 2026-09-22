@@ -887,13 +887,7 @@ entrees:
       `msa_non_salaries` porte déjà `decote_par_generation: true`, qui les lit
       dans `coefficient_minoration.csv`. Son `decote_par_trimestre: 0.0125`
       n'est que le repli. Aucune valeur n'a bougé, des deux côtés.
-    a_faire: >-
-      Le PLAFOND du nombre de trimestres n'est explicite que chez les libéraux
-      — R. 643-7, « dans la limite de vingt trimestres ». R. 351-27 2° n'en
-      porte aucun, et R. 732-61 non plus avant 2026 : le modèle en applique un
-      de vingt partout, ce qui ne mord que sur un départ plus de cinq ans avant
-      l'âge d'annulation, où la décote ne s'applique de toute façon pas. À
-      trancher sur texte plutôt que sur cette remarque.
+    a_faire: null
     prochaine_veille: "2027-03-31"
 
   - id: carriere_longue_regimes_en_points
@@ -959,6 +953,50 @@ entrees:
       « la plus avantageuse des deux » ; le vérifier demanderait un exemple
       chiffré de la caisse, qu'elle ne publie pas.
     prochaine_veille: "2027-03-31"
+
+  - id: plafond_des_trimestres_de_decote
+    regle: >-
+      Le plafond de vingt trimestres de décote est écrit dans trois textes et
+      absent des deux autres ; il ne mord sur aucune liquidation que le droit
+      ouvre, parce que l'écart entre l'âge d'ouverture et l'âge d'annulation
+      vaut au plus vingt trimestres.
+    textes:
+      - "R. 643-7 CSS (professions libérales), version du 1er septembre 2023"
+      - "R. 723-38 CSS (avocats)"
+      - "L. 14 I du code des pensions civiles et militaires"
+      - "R. 351-27 2° CSS et R. 732-61 du code rural : aucun plafond"
+    sources:
+      - type: legifrance
+        reference: >-
+          R. 643-7 CSS, LEGIARTI000047633290 : « Le coefficient de minoration
+          est égal à 1,25 % par trimestre manquant dans la limite de vingt
+          trimestres. » R. 723-38 CSS et le I de L. 14 du code des pensions
+          portent la même limite.
+        date: "2026-09-22"
+      - type: legifrance
+        reference: >-
+          R. 351-27 2° CSS, LEGIARTI000054589995, version du 1er août 2026 :
+          « Pour chaque trimestre ainsi retenu, le coefficient de minoration à
+          appliquer au “ taux plein ” est 1,25 %. » Aucune limite de trimestres
+          n'y figure, et R. 732-61 du code rural n'en porte pas davantage.
+          R. 351-27-1, qui plafonne, ne vise que les assurés de L. 161-17-4.
+        date: "2026-09-22"
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: conforme
+    effet: >-
+      Aucun. Le modèle applique un plafond de vingt trimestres par défaut
+      (`decote_trimestres_maximum`), et il ne mord sur AUCUNE des 2 483
+      liquidations ouvertes qu'un balayage de la grille produit — treize cas
+      types, six générations, tous les trimestres de cinquante à soixante-huit
+      ans. La raison est mesurable dans les tables : l'écart entre l'âge
+      d'ouverture et l'âge d'annulation vaut exactement vingt trimestres pour
+      les générations 1930 à 1961, puis dix-huit, quinze, treize et douze
+      ensuite. Le décompte par l'âge est donc borné par construction sur toute
+      liquidation ouverte. Deux tests le tiennent.
+    a_faire: null
+    prochaine_veille: "2027-06-30"
 
 journal:
   - date: "2026-09-19"
@@ -2506,3 +2544,38 @@ journal:
       la majoration pour enfants, les trimestres réputés cotisés, la durée des
       emplois classés — ont été fermées les 21 et 22 septembre 2026.
     prochaine_veille: "2027-03-31"
+  - date: "2026-09-22"
+    session: "le plafond qui ne mord pas, et le médecin libéral du COR"
+    consulte: >-
+      Index LEGI du dépôt : R. 643-7 CSS, R. 723-38 CSS, le I de L. 14 du code
+      des pensions, R. 351-27 2° dans sa version du 1er août 2026 et
+      R. 351-27-1, R. 732-61 du code rural. Hors LEGI, le rapport annuel du COR
+      de juin 2026 (`RA_2026_def_0.pdf`, 8 650 lignes), lu par
+      `lecture_pdf.py` : ses notes de bas de page 156 et 157 décrivent les âges
+      de chacun de ses treize cas types.
+    trouve: >-
+      LE PLAFOND DE VINGT TRIMESTRES N'EST PAS UNE RÈGLE DE PLUS. Il est écrit
+      chez les libéraux, les avocats et la fonction publique, absent de
+      R. 351-27 2° et de R. 732-61 — et il ne mord sur aucune des 2 483
+      liquidations ouvertes d'un balayage complet de la grille, parce que
+      l'écart entre l'âge d'ouverture et l'âge d'annulation vaut au plus vingt
+      trimestres : exactement vingt de 1930 à 1961, douze après 1968. Rien à
+      changer dans le calcul ; la docstring, qui en faisait une règle de « tous
+      les régimes », est réécrite, et deux tests tiennent l'identité.
+      LE COR PUBLIE UN CAS TYPE DE LIBÉRAL, et le dépôt le retrouve. Son cas
+      type n° 13, un médecin généraliste de secteur 1 né en 1960, « peut
+      prétendre à un départ à 62 ans » et « atteint le taux plein à 66 ans et
+      9 mois » ; la fiche du dépôt donne 62,00 et 67,00 pour la même
+      génération. La règle d'exception que cette fiche portait — « ouverture
+      plus deux ans » — n'était qu'un contournement du défaut corrigé la
+      veille, et sa constante ne s'appuyait sur aucune source : elle est rendue
+      à la règle ordinaire. `ecart_liquidation` n'a plus qu'un usager, le
+      militaire.
+    reste: >-
+      Le cas type libéral n'a toujours aucune carrière antérieure, quand la
+      CNAVPL immatricule ses affiliés à 32,58 ans en moyenne. Contre l'âge
+      observé de sa caisse, la fiche passe de 1,24 an trop tôt à 1,42 an trop
+      tard : les deux conventions manquent la moyenne réelle d'à peu près
+      autant, en sens contraire, et seule une carrière en deux temps les
+      départagerait — ce que `CasType`, qui ne porte qu'une affiliation, ne
+      sait pas exprimer.
