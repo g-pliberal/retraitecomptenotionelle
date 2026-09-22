@@ -138,6 +138,47 @@ function sansBlocJson(html) {
   return html.replace(/(<pre class="json">)[\s\S]*?(<\/pre>)/g, "$1$2");
 }
 
+/**
+ * La liquidation unique des régimes alignés, portée dans le moteur du site.
+ *
+ * Les témoins figés ne la couvrent pas : ils balaient un statut à la fois, et
+ * la Lura ne se voit que sur un polypensionné. Le tirage au hasard de
+ * `test_le_portage_javascript_concorde…` ne la couvre pas davantage, pour la
+ * même raison. Sans cet essai, le portage pourrait couper en deux une carrière
+ * que le Python liquide d'un coup, et rien ne le dirait.
+ */
+test("les régimes alignés se liquident ensemble depuis juillet 2017", () => {
+  const contexte = new Contexte(paquet);
+  const simulateur = contexte.simulateur();
+  const base = (naissance, moisNaissance, age) => {
+    const carriere = simulateur.carriereParcours({
+      annee_naissance: naissance,
+      mois_naissance: moisNaissance,
+      sexe: "H",
+      age_liquidation: age,
+      metiers: [
+        { affiliation: "salarie_prive_non_cadre", age_debut: 22, niveau_salaire: 1 },
+        { affiliation: "salarie_agricole", age_debut: 42, niveau_salaire: 1 },
+      ],
+    });
+    return simulateur.scenarioActuel.calculer(carriere).pensions_par_regime
+      .filter((p) => p.type_calcul !== "points" && p.montant > 0);
+  };
+
+  // Né en 1960, parti à 64 ans : une seule retraite de base, celle de la
+  // caisse qui a le dossier, sur la carrière entière.
+  const unique = base(1960, 1, 64);
+  assert.equal(unique.length, 1);
+  assert.match(unique[0].detail, /2 caisses liquidées ensemble/);
+  assert.match(unique[0].detail, /167\/167/);
+
+  // Né en 1950 : la loi ne le vise pas. Et la borne du 1er juillet 2017 est
+  // opposée au mois près, comme en Python.
+  assert.equal(base(1950, 1, 62).length, 2);
+  assert.equal(base(1955, 1, 62).length, 2);
+  assert.equal(base(1955, 9, 62).length, 1);
+});
+
 test("le seuil d'affiliation de l'élu local est lu comme en Python", () => {
   // L. 382-31 : le régime général n'est dû qu'au-dessus de la moitié du
   // plafond ; en deçà, l'élu n'a que l'Ircantec. Sans revenu, la liste des

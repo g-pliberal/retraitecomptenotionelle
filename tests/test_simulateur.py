@@ -2531,6 +2531,47 @@ def test_la_surcote_est_passee_a_1_25_pour_cent_au_1er_janvier_2009(simulateur):
     assert "taux 53.625%" in taux(2010)
 
 
+def test_la_liquidation_unique_reunit_les_regimes_alignes(simulateur):
+    """Une carrière moitié privée moitié agricole n'a qu'une retraite de base.
+
+    Depuis le 1er juillet 2017, un assuré né à compter de 1953 qui a cotisé à
+    deux des trois régimes alignés — régime général, salariés agricoles,
+    indépendants — reçoit UNE retraite : un revenu annuel moyen formé de la
+    somme des salaires et revenus d'une même année, sur les vingt-cinq
+    meilleures, et une proratisation qui tient compte de tous les trimestres
+    des trois régimes (`L. 173-1-2` et `R. 173-4-4-1` CSS, circulaire Cnav
+    2017/27). Le modèle y arrivait pour le couple régime général /
+    indépendants, par la chaîne d'absorption ; il coupait en deux la carrière
+    qui passe par la MSA, dont le régime existe toujours.
+    """
+    def base(naissance, age, second, mois=1):
+        carriere = simulateur.carriere_parcours(
+            annee_naissance=naissance, mois_naissance=mois, sexe="H",
+            age_liquidation=age,
+            metiers=[Metier("salarie_prive_non_cadre", age_debut=22),
+                     Metier(second, age_debut=42)])
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        return [p for p in resultat.pensions_par_regime
+                if p.type_calcul != "points" and p.montant]
+
+    # Né en 1960, parti à 64 ans : la LURA s'applique, et les deux régimes
+    # alignés liquident ensemble sous les règles de la caisse qui a le dossier.
+    unique = base(1960, 64, "salarie_agricole")
+    assert len(unique) == 1, [p.regime for p in unique]
+    assert "2 caisses liquidées ensemble" in unique[0].detail
+    assert "167/167" in unique[0].detail
+
+    # Né en 1950 : la loi ne le vise pas, et le modèle ne le réunit pas.
+    assert len(base(1950, 62, "salarie_agricole")) == 2
+
+    # Et la borne du 1er juillet 2017 est opposée au MOIS près : né en janvier
+    # 1955, parti à 62 ans, la pension prend effet en janvier 2017 — la LURA
+    # ne s'applique pas ; né en septembre, elle prend effet en septembre, et
+    # elle s'applique.
+    assert len(base(1955, 62, "salarie_agricole", mois=1)) == 2
+    assert len(base(1955, 62, "salarie_agricole", mois=9)) == 1
+
+
 def test_le_bareme_2007_de_la_surcote_majore_au_dela_de_65_ans(simulateur):
     """L'âge du barème de 2007-2008 n'est écrit nulle part dans les données.
 

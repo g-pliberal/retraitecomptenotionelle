@@ -37,6 +37,22 @@ import { Fiabilite } from "./serie.js";
 const SURCOTE_DEPUIS = new DateMois(2004, 1);
 /** Âge au-delà duquel le barème de 2007-2008 sert 1,25 %. */
 const SURCOTE_AGE_MAJORE = 65;
+
+/**
+ * Les trois régimes que la liquidation unique des régimes alignés réunit — le
+ * régime général, les salariés agricoles et la sécurité sociale des
+ * indépendants sous ses trois noms. Les exploitants agricoles n'en sont pas :
+ * la LURA ne vise que les SALARIÉS agricoles.
+ */
+const REGIMES_ALIGNES = new Set([
+  "regime_general", "msa_salaries", "cancava", "organic", "rsi",
+]);
+/** La clé sous laquelle ils se réunissent : ce n'est pas un régime. */
+const REGIMES_ALIGNES_TETE = "regimes_alignes";
+/** Assurés nés à compter de 1953 (article 51 de la LFSS pour 2016). */
+const LURA_PREMIERE_GENERATION = 1953;
+/** Pensions prenant effet au 1er juillet 2017 (décret n° 2017-737, art. 4). */
+const LURA_DATE_EFFET = 2017 * 12 + 6;
 /** Rang du mois de septembre 2026 : premières pensions des parents à 24/23 ans. */
 const PARENTS_MEILLEURES_ANNEES_DEPUIS = 2026 * 12 + 8;
 
@@ -485,19 +501,34 @@ export class ScenarioActuel {
    * régime général.
    *
    * Le groupe est liquidé par le membre de la DERNIÈRE période active de la
-   * carrière — à égalité, par l'absorbant —, dont la fiche donne les règles.
+   * carrière — à égalité, par l'absorbant —, dont la fiche donne les règles,
+   * et c'est aussi ce que la LURA prescrit.
+   *
+   * ET LES RÉGIMES ALIGNÉS DISTINCTS SE RÉUNISSENT AUSSI, DEPUIS 2017. La
+   * liquidation unique des régimes alignés (L. 173-1-2 CSS) donne une seule
+   * retraite à qui a cotisé à deux des trois régimes alignés : un revenu
+   * annuel moyen formé de la somme des salaires et revenus d'une même année,
+   * sur les vingt-cinq meilleures, et une proratisation qui tient compte de
+   * tous leurs trimestres (R. 173-4-4-1, 1° et 4°). Le modèle y arrivait pour
+   * le couple régime général / indépendants par la chaîne d'absorption, qui
+   * ne ferme le RSI qu'en 2018, et pas du tout pour les salariés agricoles.
    *
    * @returns {Map<string, string[]>}
    */
-  groupesDeSuccession(codes, anneeLiquidation, derniereAnneeParRegime) {
+  groupesDeSuccession(codes, anneeLiquidation, derniereAnneeParRegime, carriere = null) {
     const parTete = new Map();
+    const lura = carriere !== null
+      && carriere.generation >= LURA_PREMIERE_GENERATION
+      && carriere.dateLiquidation.rang >= LURA_DATE_EFFET;
     for (const code of codes) {
       const regime = this.catalogue.obtenir(code);
       const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
       if (periode === null || periode.type_calcul !== "annuites") {
         continue;
       }
-      const tete = this.teteDeSuccession(code, anneeLiquidation);
+      const tete = lura && REGIMES_ALIGNES.has(code)
+        ? REGIMES_ALIGNES_TETE
+        : this.teteDeSuccession(code, anneeLiquidation);
       if (!parTete.has(tete)) {
         parTete.set(tete, []);
       }
@@ -1808,7 +1839,8 @@ export class ScenarioActuel {
     // sautés partout où un régime liquide. À FAUX, chaque nom de caisse est
     // liquidé sur ses seules années — variante qui ne sert qu'à mesurer.
     const groupes = liquiderSuccessions
-      ? this.groupesDeSuccession(codes, anneeLiquidation, derniereAnneeParRegime)
+      ? this.groupesDeSuccession(codes, anneeLiquidation, derniereAnneeParRegime,
+                                 carriere)
       : new Map();
     // DEUX PASSES, ET LA SECONDE NE SERT QU'À QUI N'A QUE DES POINTS. Les
     // régimes en annuités commandent ; mais une carrière entière en points

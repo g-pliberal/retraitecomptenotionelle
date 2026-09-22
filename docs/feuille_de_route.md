@@ -25,11 +25,11 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 448<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 563<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 495<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 595<!--/--> lignes), puis dans les
 
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 448<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 563<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 495<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 595<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12764,3 +12764,47 @@ donc ces années au niveau `haute`, d'OpenFisca. Les certifier demande un
 récupérateur qui lise ce PDF et le recontrôle qui va avec, dans
 `scripts/verifier_donnees.py` : c'est la suite immédiate, et elle vaut pour
 toutes les annexes du même genre.
+
+### 93. Deux pensions là où la caisse n'en sert qu'une — `fait`
+
+**Demande.** « Fait des recherches complémentaires et corrige », après que
+l'action précédente eut laissé la liquidation unique des régimes alignés vérifiée
+par construction mais faite à moitié dans le modèle.
+
+**La règle, et ses deux conditions opposables.** L. 173-1-2 : l'assuré qui a
+relevé de plusieurs des régimes alignés reçoit, pour l'ensemble, une pension
+unique servie par le dernier d'entre eux, calculée comme si la carrière s'y était
+déroulée en entier. R. 173-4-4-1 pose les deux bornes que le modèle doit
+opposer : le 1° réserve la règle aux assurés nés **à compter de 1953** et le 4°
+aux pensions prenant effet **à compter du 1er juillet 2017** — une date au mois,
+pas à l'année. La circulaire Cnav 2017/27 en donne l'application, et nomme les
+cinq régimes concernés : régime général, salariés agricoles, et les trois
+guichets devenus le RSI (Cancava, Organic, RSI).
+
+**Ce que le modèle faisait.** Il liquidait chaque régime aligné pour son propre
+compte. Sur une carrière moitié privée moitié agricole née en 1960, cela donnait
+deux pensions — « SR 41 499 € × 88/167 » d'un côté, « SR 29 069 € × 80/167 » de
+l'autre — soit **18 121 €**. La caisse en sert une : « SR 40 749 € × 167/167 »,
+soit **20 629 €**. L'écart de 2 508 € ne vient pas d'un salaire de référence plus
+généreux — il est plus bas que celui du régime général seul — mais du taux de
+proratisation, que la réunion des carrières porte de deux fractions incomplètes à
+une seule entière.
+
+**Fait des deux côtés.** `REGIMES_ALIGNES` et une tête de succession commune
+`regimes_alignes` dans `ScenarioActuel._groupes_de_succession`, qui reçoit
+désormais la carrière pour lire la génération et le mois d'effet ; même chose
+dans `moteur/js/scenario-actuel.js`, où la borne de juillet 2017 s'écrit
+`2017 * 12 + 6` pour se comparer au rang du mois.
+
+**Aucun témoin n'a bougé, et c'est le sujet.** La grille de cas types n'exerce
+qu'un statut à la fois : la liquidation unique ne se voit que sur un
+polypensionné, qu'aucun témoin ne porte. Le changement ne tenait donc à rien
+avant que deux tests dédiés ne soient écrits — un en Python, un en JavaScript —
+qui vérifient la réunion pour 1960, la non-réunion pour 1950, et la frontière au
+mois : né en 1955, liquidant en janvier 2017 deux pensions, en septembre 2017 une
+seule.
+
+**Fichiers.** `src/retraite_notionnelle/scenarios/actuel.py`,
+`moteur/js/scenario-actuel.js`, `tests/test_simulateur.py`,
+`tests/js/moteur.test.js`, `data/reference/legislation/veille.yaml`,
+`docs/limites.md`.
