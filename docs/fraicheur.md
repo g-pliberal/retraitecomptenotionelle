@@ -120,7 +120,7 @@ C'est ce qui fait avancer le dépôt sans qu'on y pense. Deux compteurs, en bas
 de `zones.yaml`, qui ne peuvent que décroître :
 
 - **les sections non déclarées**, aujourd'hui
-  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->47<!--/--> ;
+  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->45<!--/--> ;
 - **les chiffres qui portent l'aveu `a_verifier`**, aujourd'hui
   <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.chiffres_a_verifier)-->2<!--/-->.
 

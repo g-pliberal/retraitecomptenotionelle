@@ -514,13 +514,18 @@ def poids(**reglages: str) -> float:
 
 
 def grille(**reglages: str) -> float:
-    """La taille de la grille du coût : ``quoi=cas_types`` ou ``generations``."""
+    """La taille des grilles : ``quoi=cas_types``, ``generations`` (celles de la
+    page Coût) ou ``generations_cas_types`` (celles de la page Cas types)."""
     from retraite_notionnelle import cout as C
     from retraite_notionnelle.castypes import CAS_TYPES
 
     quoi = reglages["quoi"]
     if quoi == "cas_types":
         return len(CAS_TYPES)
+    if quoi == "generations_cas_types":
+        from retraite_notionnelle.castypes import GENERATIONS
+
+        return len(GENERATIONS)
     if quoi == "generations":
         return len(C.generations())
     raise ValueError(f"quoi inconnu « {quoi} »")
@@ -742,6 +747,20 @@ def fiche(**reglages: str) -> float:
     return montants[quoi] / fiche.brut * 100
 
 
+def avance(**reglages: str) -> float:
+    """Les années d'anticipation d'un départ sur l'âge de référence, sur une carrière."""
+    ecart = _comparaison_de(reglages).notionnel_retroactif.ecart_age
+    return ecart.age_reference - ecart.age_liquidation
+
+
+def profils_oracle(**_: str) -> float:
+    """Le nombre de profils rejoués par OpenFisca-France-Pension, toutes familles."""
+    import json
+
+    return sum(len(json.loads(chemin.read_text(encoding="utf-8"))["profils"])
+               for chemin in (RACINE / "tests" / "temoins").glob("openfisca_*.json"))
+
+
 def garantie_complement(**reglages: str) -> float:
     """Ce que la garantie vieillesse sert, par mois, à qui a ``pension=…`` euros."""
     return max(0.0, _parametres().garantie_vieillesse_mensuelle - float(reglages["pension"]))
@@ -759,6 +778,8 @@ MESURES = {
     "gain_net": gain_net,
     "fiche": fiche,
     "garantie_complement": garantie_complement,
+    "avance": avance,
+    "profils_oracle": profils_oracle,
     "avantages": avantages,
     "depense": depense,
     "surcout_passe": surcout_passe,
