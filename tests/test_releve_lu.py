@@ -93,7 +93,48 @@ Net à payer 2 431,55
 Cotisation vieillesse plafonnée 6,90
 """
 
+
+#: L'estimation retraite que délivre Info Retraite, à la forme du document réel
+#: — lu le 22 septembre 2026, et c'est lui qui a écrit ce cas. Les noms et les
+#: montants sont inventés ; la MISE EN PAGE ne l'est pas, et c'est elle qui
+#: compte. Elle empile deux tableaux — les trimestres par année, les revenus
+#: par période —, coupe chaque année en deux lignes, et mêle au tout des pièges
+#: qui ressemblent à s'y méprendre à des lignes de carrière : un pied de page
+#: daté, une valeur du point à une date, une phrase française chiffrée, une
+#: projection de départ en 2060, et une couche de doublure où toute une page
+#: est collée bout à bout.
+ESTIMATION = """
+Relevé de carrière
+Détail par année
+Année Durée tous régimes Durée par régime Points par régime
+4 trim. L’Assurance retraite
+2025 4 trim. 203,91 pts Agirc-Arrco
+4 trim. L’Assurance retraite
+2024 4 trim. 133,76 pts Agirc-Arrco
+1 trim. L’Assurance retraite
+2023 1 trim. 6,5 pts Agirc-Arrco
+0 trim. L’Assurance retraite
+2022 0 trim. 4 pts Ircantec
+Détail de votre carrière
+Employeur/activité Date début Date fin Revenus* Régime(s)
+01/01/2025 31/12/2025 49 150 €
+01/10/2024 31/12/2024 12 190 € L’Assurance retraite, Agirc-Arrco
+ARQUUS
+01/01/2024 27/09/2024 37 294 €
+06/08/2023 13/08/2023 761 € Agirc-Arrco
+24/07/2023 04/08/2023 867 € L’Assurance retraite, Agirc-Arrco
+GROUPE MORGAN SERVICES
+01/12/2022 31/12/2022 L’Assurance retraite
+*Revenu d'activité soumis à cotisations retraite.
+3 / 7 Edité le 22/09/2026
+1,4386 € Valeur du point au 01/11/2025 :
+Pour valider un trimestre, il faut avoir perçu un certain revenu. En 2026, il faut avoir perçu au moins 1 803,00 € pour valider 1 trimestre.
+01/06/2060 169 trimestres 2 764,30 € En partant au avec , vous pourriez avoir droit à bruts par mois et
+01/01/202531/12/202549 150 €01/10/202431/12/202412 190 €ARQUUSL’Assurance retraite, Agirc-Arrco01/01/202427/09/202437 294 €
+"""
+
 RELEVES = {
+    "estimation": ESTIMATION,
     "regime_general": REGIME_GENERAL,
     "tous_regimes": TOUS_REGIMES,
     "ancienne": ANCIENNE,
@@ -175,6 +216,40 @@ def test_un_regime_en_points_ne_rend_aucun_revenu():
     assert all(ligne.revenu == 0 for ligne in lecture.lignes)
     assert all(ligne.trimestres == 4 for ligne in lecture.lignes)
     assert any("points" in note for note in lecture.notes)
+
+
+def test_l_estimation_d_info_retraite_se_lit_en_entier():
+    """Le document réel, et les cinq pièges qu'il porte.
+
+    C'est le premier vrai relevé que la lecture ait vu, et il a corrigé quatre
+    défauts d'un coup. Ce cas les tient tous : les deux tableaux qui se
+    complètent — les trimestres d'un côté, les revenus de l'autre —, l'année
+    coupée en deux lignes, la période que seule une caisse complémentaire a
+    reportée, et les quatre lignes qui ressemblent à une carrière sans en être
+    une.
+    """
+    lecture = _lire("estimation")
+    lues = {ligne.annee: ligne for ligne in lecture.lignes}
+
+    # Les années du relevé, et elles seules : ni 2026 (le pied de page et la
+    # phrase sur le revenu minimum), ni 2060 (une projection de départ).
+    assert sorted(lues) == [2022, 2023, 2024, 2025]
+
+    # Les revenus s'additionnent sur l'année, la période que seule l'Agirc-Arrco
+    # a reportée comprise — 761 € qu'une lecture qui jette ces lignes perdait.
+    assert round(lues[2023].revenu) == 761 + 867
+    assert round(lues[2024].revenu) == 37_294 + 12_190
+    assert round(lues[2025].revenu) == 49_150
+
+    # Les trimestres viennent de l'AUTRE tableau, celui qui n'a pas de revenus,
+    # et dont chaque ligne nomme une caisse complémentaire.
+    assert [lues[annee].trimestres for annee in (2022, 2023, 2024, 2025)] == [0, 1, 4, 4]
+
+    # 1,4386 € n'est pas un revenu de 2025 : c'est la valeur du point, datée.
+    assert round(lues[2025].revenu) == 49_150
+    # La ligne de carrière dont la cellule « revenus » est vide ressort telle
+    # quelle : elle existe, et le lecteur doit pouvoir la compléter.
+    assert any("01/12/2022" in ligne for ligne in lecture.ignorees)
 
 
 def test_un_document_qui_n_est_pas_un_releve_ne_rend_pas_de_carriere():

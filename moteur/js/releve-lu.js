@@ -34,6 +34,36 @@ export const ANNEE_MAXIMALE = 2095;
 export const TRIMESTRES_PAR_AN = 4;
 
 /**
+ * Au-delà, la ligne n'est pas une ligne de tableau. Une année de relevé porte
+ * son millésime, un revenu, des trimestres, parfois des points : cinq nombres
+ * au plus. Quarante nombres sur une ligne, c'est une couche de doublure où
+ * toute une page a été collée bout à bout.
+ */
+export const NOMBRES_PAR_LIGNE = 6;
+
+/**
+ * Au-delà, la ligne n'est pas une ligne de tableau non plus : c'est une
+ * PHRASE. « Pour valider un trimestre, il faut avoir perçu un certain revenu.
+ * En 2026, il faut avoir perçu au moins 1 803,00 € pour valider 1 trimestre »
+ * porte une année, un montant en euros et des trimestres, tous correctement
+ * étiquetés : rien, dans les nombres, ne la distingue d'une ligne de carrière.
+ * Ce qui l'en distingue, c'est qu'elle est écrite en français.
+ */
+export const MOTS_PAR_LIGNE = 12;
+
+/**
+ * Ce qui annonce la date du document. Un relevé ne rapporte jamais l'avenir :
+ * les années postérieures à son édition sont des projections — « En partant au
+ * 01/06/2060 … vous pourriez avoir droit à 2 764,30 € » — et non des carrières.
+ */
+export const EDITION = ["edite le", "editee le", "situation au", "releve au",
+  "arrete au", "mis a jour le"];
+
+/** Ce qu'on lit devant une date pour savoir si elle est celle du document. */
+const AVANT_LA_DATE = 24;
+
+
+/**
  * Les régimes qu'un relevé nomme, et le statut du simulateur qui leur
  * correspond. `genre` vaut « base » pour un régime qui porte une carrière en
  * euros, « points » pour un régime de base qui compte en points — professions
@@ -238,14 +268,44 @@ function motifDe(plat) {
   return null;
 }
 
-/** Les nombres d'une ligne, virgule décimale et milliers recollés. */
+const EUROS = ["eur", "euro", "euros"];
+const POINTS = ["pt", "pts", "point", "points"];
+
+/**
+ * Ce que l'unité écrite derrière un nombre dit de ce nombre.
+ *
+ * C'est l'information la plus sûre d'un relevé, et la seule qui ne dépende pas
+ * de la mise en page : « 49 150 € » est un revenu où qu'il se trouve dans la
+ * ligne, « 4 trim. » une durée, « 203,91 pts » des points. Le signe € se
+ * cherche sur le texte BRUT : il ne survit pas à la mise à plat, qui ne garde
+ * que des lettres et des chiffres.
+ */
+function uniteDe(suite) {
+  if (suite.trimStart().startsWith("\u20ac")) return "revenu";
+  const plat = sansAccent(suite);
+  const premier = plat ? plat.split(" ")[0] : "";
+  if (EUROS.includes(premier)) return "revenu";
+  if (premier.startsWith("trim")) return "trimestre";
+  if (POINTS.includes(premier)) return "point";
+  return null;
+}
+
+/**
+ * Ce qu'on regarde derrière un nombre pour y chercher son unité : de quoi
+ * couvrir « trimestres » sans mordre sur la colonne suivante.
+ */
+const SUITE_LUE = 12;
+
+/** Les nombres d'une ligne, avec leur unité quand elle est écrite. */
 function nombresDe(reste) {
   const valeurs = [];
   MONTANT.lastIndex = 0;
   for (let t = MONTANT.exec(reste); t; t = MONTANT.exec(reste)) {
-    let nombre = Number(t[1].replace(/[    ]/g, ""));
+    let nombre = Number(t[1].replace(/[ \u00a0\u202f\u2009]/g, ""));
     if (t[2]) nombre += Number(t[2]) / (10 ** t[2].length);
-    valeurs.push(nombre);
+    const suite = reste.slice(t.index + t[0].length,
+                              t.index + t[0].length + SUITE_LUE);
+    valeurs.push([nombre, uniteDe(suite)]);
   }
   return valeurs;
 }
@@ -258,14 +318,35 @@ function enEuros(montant, annee) {
 }
 
 /**
- * L'année de la ligne, les nombres qui restent, et si elle couvre une plage.
+ * L'année d'édition du document, quand il la porte en toutes lettres.
+ *
+ * C'est la date qui SUIT le marqueur, et non la plus tardive de la ligne : une
+ * couche de doublure colle toute une page sur une seule ligne, et l'on y trouve
+ * « Edité le 22/09/2026 » à côté de « En partant au 01/06/2066 ».
+ */
+function anneeDuDocument(lignes) {
+  let derniere = null;
+  for (const ligne of lignes) {
+    DATE.lastIndex = 0;
+    for (let t = DATE.exec(ligne); t; t = DATE.exec(ligne)) {
+      const avant = sansAccent(ligne.slice(Math.max(0, t.index - AVANT_LA_DATE), t.index));
+      if (!EDITION.some((marqueur) => avant.endsWith(marqueur))) continue;
+      const annee = Number(t[3]);
+      if (derniere === null || annee > derniere) derniere = annee;
+    }
+  }
+  return derniere;
+}
+
+/**
+ * L'année de la ligne, les nombres qui restent, si elle couvre une plage, si
+ * son millésime ne vient que d'une date, et combien de dates elle porte.
  *
  * Les dates en clair sont retirées d'abord : leurs jours et leurs mois sont des
  * nombres de un à trente et un, qu'on lirait pour des trimestres. Quand une
  * ligne en porte deux d'années différentes, elle décrit une PÉRIODE de
- * plusieurs années — un état de services de la fonction publique — que la
- * maille annuelle du modèle ne sait pas répartir : on ne la lit pas, on la
- * montre.
+ * plusieurs années que la maille annuelle du modèle ne sait pas répartir : on
+ * ne la lit pas, on la montre.
  */
 function anneeEtNombres(ligne) {
   const anneesDesDates = [];
@@ -276,35 +357,50 @@ function anneeEtNombres(ligne) {
   const plage = new Set(anneesDesDates).size > 1;
   let annee = null;
   for (let rang = 0; rang < nombres.length; rang += 1) {
-    const nombre = nombres[rang];
-    if (Number.isInteger(nombre) && nombre >= ANNEE_MINIMALE && nombre <= ANNEE_MAXIMALE) {
+    const [nombre, unite] = nombres[rang];
+    // Le millésime ouvre la ligne, ou ne porte pas d'unité. La réserve est pour
+    // le tableau qui écrit « 2011 Points Agirc 415,20 » : lue comme une unité,
+    // la colonne suivante ferait de l'année un nombre de points.
+    if (Number.isInteger(nombre) && nombre >= ANNEE_MINIMALE && nombre <= ANNEE_MAXIMALE
+        && (unite === null || rang === 0)) {
       annee = nombre;
       nombres = nombres.slice(0, rang).concat(nombres.slice(rang + 1));
       break;
     }
   }
-  if (annee === null && anneesDesDates.length) [annee] = anneesDesDates;
-  return { annee, nombres, plage };
+  const parLaDate = annee === null && anneesDesDates.length > 0;
+  if (parLaDate) [annee] = anneesDesDates;
+  return { annee, nombres, plage, parLaDate, dates: anneesDesDates.length };
 }
 
 /**
  * Lit un relevé, ligne à ligne, et rend la carrière qu'il décrit.
  *
- * Quatre règles, et elles suffisent à lire les relevés des deux formes — celui
- * du régime général, une seule caisse et un seul tableau, et le relevé de
- * situation individuelle, qui empile un tableau par régime :
+ * Cinq règles, éprouvées sur un vrai document — l'estimation retraite que
+ * délivre Info Retraite, qui empile un tableau des trimestres par année et un
+ * tableau des revenus par période :
  *
- * 1. **Une ligne qui NOMME un régime le rend courant** pour celles qui suivent.
- * 2. **Une ligne de carrière porte son année**, en général la première. Un
- *    nombre supérieur à quatre est un revenu ; un nombre de quatre au plus est
- *    un compte de trimestres, et c'est le dernier qui compte.
+ * 1. **Une ligne qui NOMME un régime ouvre une section**, et les lignes qui
+ *    suivent en relèvent. Seul un régime qui porte une carrière donne son
+ *    statut à l'année ; une caisse complémentaire n'en donne aucun.
+ * 2. **L'unité écrite l'emporte sur la position** : « 49 150 € » est un
+ *    revenu, « 4 trim. » une durée, « 203,91 pts » des points, où qu'ils
+ *    tombent dans la ligne. Un tableau qui n'écrit pas ses unités se lit à la
+ *    position, le revenu au-dessus de quatre et les trimestres en dessous.
  * 3. **Une année revient autant de fois que le relevé la coupe** : les revenus
  *    s'additionnent, les trimestres aussi, plafonnés à quatre.
- * 4. **Ce qui n'est pas compris n'est pas deviné** : la ligne ressort telle
+ * 4. **Ce qui ressemble à une ligne sans en être une est écarté** : une phrase
+ *    française, une ligne de quarante nombres, une date de référence sans sa
+ *    seconde borne, une année postérieure à l'édition du document.
+ * 5. **Ce qui n'est pas compris n'est pas deviné** : la ligne ressort telle
  *    quelle dans `ignorees`, et le site la montre.
+ *
+ * `anneeMaximale` borne les années lues — le site passe l'année courante. La
+ * date d'édition du document, quand il la porte, la resserre encore.
  */
-export function lireReleve(lignes) {
+export function lireReleve(lignes, anneeMaximale = null) {
   let courant = null;
+  let section = null;
   const annees = new Map();
   const ignorees = [];
   const regimes = [];
@@ -312,6 +408,13 @@ export function lireReleve(lignes) {
   let francs = false;
   let points = false;
   let naissance = null;
+
+  // Le plafond des années lues : celui que l'appelant donne, resserré par la
+  // date d'édition du document quand il la porte. Ce qui est postérieur est une
+  // projection, pas une carrière.
+  const edition = anneeDuDocument(lignes);
+  let plafond = anneeMaximale;
+  if (edition !== null) plafond = plafond === null ? edition : Math.min(plafond, edition);
 
   const platEntier = sansAccent(lignes.join(" "));
   if (!MARQUEURS.some((marqueur) => platEntier.includes(marqueur))) {
@@ -340,40 +443,86 @@ export function lireReleve(lignes) {
     }
     const regime = regimeDe(plat);
     if (regime !== null) {
-      courant = regime;
+      // DEUX RÉGIMES COURANTS, ET C'EST LE RELEVÉ QUI L'IMPOSE. La SECTION est
+      // le dernier régime nommé, quel qu'il soit : les lignes qui suivent
+      // « Ircantec » en relèvent même si elles ne le répètent pas. La BASE est
+      // le dernier régime qui porte une carrière : c'est de lui que vient le
+      // statut de l'année, jamais de la caisse qui ne tient que des points.
+      section = regime;
+      if (regime.genre !== "indice") courant = regime;
       if (!regimes.includes(regime.code)) regimes.push(regime.code);
     }
 
-    const { annee, nombres, plage } = anneeEtNombres(ligne);
+    const { annee, nombres, plage, parLaDate, dates } = anneeEtNombres(ligne);
     if (annee === null) continue;
     if (plage) { ignorees.push(ligne); continue; }
+    // UNE LIGNE DE TABLEAU PORTE QUELQUES COLONNES, PAS QUARANTE. Un PDF peut
+    // porter deux fois le même texte — une couche visible, mise en page, et une
+    // couche de doublure où tout est collé bout à bout.
+    if (nombres.length > NOMBRES_PAR_LIGNE) { ignorees.push(ligne); continue; }
+    if (plafond !== null && annee > plafond) continue;
+    // UNE PÉRIODE A DEUX BORNES. Quand le millésime ne vient que d'une date,
+    // une seule date ne suffit pas : « Valeur du point au 01/11/2025 : 1,4386 € »
+    // et « 3 / 7 Edité le 22/09/2026 » en portent une, et toutes deux se
+    // lisaient comme une année de carrière.
+    if (parLaDate && dates < 2) continue;
+    if (plat.split(" ").filter((mot) => mot.length > 1 && !/^\d+$/.test(mot))
+      .length > MOTS_PAR_LIGNE) continue;
 
     const motif = motifDe(plat);
     const emploi = EMPLOIS.some((mot) => plat.includes(mot));
 
-    if (courant !== null && courant.genre === "indice") {
-      if (courant.code === "agirc") cadres.add(annee);
-      continue;
-    }
+    // Le régime qui gouverne la ligne : celui qu'elle nomme, sinon celui de la
+    // section où elle se trouve.
+    const gouverne = regime !== null ? regime : section;
+    const indiceSeul = gouverne !== null && gouverne.genre === "indice";
+    if (indiceSeul && gouverne.code === "agirc") cadres.add(annee);
     if (courant === null) {
       if (nombres.length) ignorees.push(ligne);
       continue;
     }
 
-    let trimestres = null;
+    const etiquetes = nombres.filter(([, unite]) => unite).map(([, unite]) => unite);
     let revenu = 0.0;
-    for (const nombre of nombres) {
-      if (nombre > TRIMESTRES_PAR_AN || !Number.isInteger(nombre)) {
-        revenu = Math.max(revenu, nombre);
-      } else {
-        // LE DERNIER l'emporte : les trimestres sont la colonne de droite, et
-        // une année assimilée y porte « 0 4 » — zéro euro, quatre trimestres.
-        trimestres = nombre;
+    let trimestres = null;
+    if (etiquetes.length) {
+      for (const [valeur, unite] of nombres) {
+        if (unite === "revenu") revenu = Math.max(revenu, valeur);
+        else if (unite === "trimestre" && valeur <= TRIMESTRES_PAR_AN) {
+          // Le dernier l'emporte, et jamais un cumul de carrière : « 172
+          // trimestres » est un total, pas une année.
+          trimestres = valeur;
+        }
+        // Les points sont lus, et jetés : ce n'est pas un revenu.
+      }
+    } else if (indiceSeul) {
+      // Une ligne qui ne relève que d'un régime complémentaire et n'écrit
+      // aucune unité ne dit rien qu'on sache lire : ses nombres sont des points
+      // bien plus souvent que des euros.
+      continue;
+    } else {
+      for (const [valeur] of nombres) {
+        if (valeur > TRIMESTRES_PAR_AN || !Number.isInteger(valeur)) {
+          revenu = Math.max(revenu, valeur);
+        } else {
+          // LE DERNIER l'emporte, et non le premier : les trimestres sont la
+          // colonne de droite, et une année assimilée y porte « 0 4 ».
+          trimestres = valeur;
+        }
       }
     }
     if (courant.genre === "points") {
+      // Le nombre lu est un nombre de POINTS, pas un revenu. L'année et ses
+      // trimestres se gardent ; le revenu reste à compléter.
       if (revenu) points = true;
       revenu = 0.0;
+    }
+    if (parLaDate && !etiquetes.length) {
+      // L'année ne vient que d'une date, et aucun nombre ne porte son unité :
+      // la ligne ne dit pas de carrière. Si elle nomme tout de même un régime,
+      // elle ressort — c'est une ligne dont une cellule manque.
+      if (regime !== null && !indiceSeul) ignorees.push(ligne);
+      continue;
     }
     if (revenu === 0.0 && trimestres === null && !motif && !emploi) {
       ignorees.push(ligne);
@@ -449,6 +598,7 @@ export function lireReleve(lignes) {
     notes, naissance,
   };
 }
+
 
 /**
  * Recolle les années voisines de même motif en une seule plage : le champ

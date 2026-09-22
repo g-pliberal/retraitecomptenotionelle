@@ -13934,3 +13934,67 @@ ont changé, et le portage JavaScript les rend au caractère près.
 **Fichiers.** `src/retraite_notionnelle/web/pages.py` et `web/gabarit.py`,
 `moteur/js/pages.js`, `moteur/style.css`, `tests/test_web.py`,
 `tests/temoins/pages.json`.
+
+
+### 108. Le premier vrai relevé, et les six défauts qu'il a trouvés — `fait`
+
+**Pourquoi.** L'action 85 avait ouvert le dépôt d'un relevé en PDF et l'avait
+dit elle-même : la lecture n'avait jamais vu de vrai document, puisque aucun
+n'est public. Elle a été confrontée à une estimation retraite d'Info Retraite —
+seize pages, deux tableaux de carrière — le 22 septembre 2026. Le document
+sortait en lettres fausses, sans un seul chiffre.
+
+**Ce que le document a trouvé, et qui est corrigé.** Six défauts, dont deux
+dans le lecteur de PDF lui-même, qui servait déjà aux certifications du dépôt.
+
+- *La forme TABLEAU d'un `bfrange`.* Une table `ToUnicode` écrit ses plages de
+  deux façons — `<début> <fin> <destination>` et `<début> <fin> [ <dst> <dst> …
+  ]` —, et ce document mêle les deux. L'expression régulière du lecteur
+  cherchait trois hexadécimaux d'affilée : elle ignorait les crochets, lisait à
+  cheval sur les entrées, et de proche en proche TOUTE la table se décalait.
+  D'où « LQIRUPDWLRQ » pour « information » — et, les chiffres tombant sur des
+  codes de contrôle, pas un seul nombre dans tout le document.
+- *Le texte tourné.* Vingt-deux glyphes par page, posés à un quart de tour dans
+  la marge, tombaient aux ordonnées des lignes du tableau et s'y inséraient :
+  un revenu de 1 137 € devenait 203 568 €. La bande de lecture — droite ou
+  tournée — entre désormais dans la clé de regroupement. Les deux documents de
+  référence du dépôt y gagnent aussi : leurs titres courants verticaux et leurs
+  étiquettes d'axe ne coupent plus les phrases.
+- *Les deux tableaux d'un relevé.* Les trimestres sont dans l'un, les revenus
+  dans l'autre, et aucun ne porte les deux. L'année se lit dans les deux à la
+  fois.
+- *Les unités écrites.* « 4 trim. », « 203,91 pts », « 49 150 € » : elles
+  l'emportent désormais sur la position, qui reste le recours des tableaux
+  muets. C'est ce qui permet de prendre à une ligne d'Agirc-Arrco sa durée sans
+  prendre ses points pour un revenu — et de compter les 761 € d'une période que
+  seule la complémentaire avait reportée.
+- *Ce qui ressemble à une carrière sans en être une.* Un pied de page daté, une
+  valeur du point à une date, une phrase française portant une année, un
+  montant et des trimestres, des projections de départ jusqu'en 2066. Quatre
+  règles les écartent : une période a deux bornes, une ligne de tableau n'est
+  pas une phrase, elle porte quelques nombres et non quarante, et un relevé ne
+  rapporte jamais l'avenir — le plafond se lit sur la date d'édition du
+  document, et le site y ajoute l'année courante.
+- *La couche de doublure.* Le PDF porte deux fois le même texte : une couche
+  visible et une couche où toute une page est collée bout à bout. Additionnée à
+  la première, elle faisait des revenus de deux millions d'euros.
+
+**Ce que ça a déplacé.** La carrière se lit maintenant en entier : onze années,
+2014 à 2025, revenus et trimestres. Le contrôle est arithmétique et il vient du
+document lui-même — il annonce **32 trimestres enregistrés**, et la somme de ce
+qui est lu en fait 32. Les revenus se recoupent année par année avec le tableau
+des périodes, employeur par employeur. Aucun chiffre du modèle ne bouge ;
+`tests/test_releve_lu.py` porte le document en cas d'essai, sa mise en page et
+ses pièges reproduits, les montants inventés.
+
+**Ce qui reste.** Ce relevé-ci est celui d'un salarié du privé : les mises en
+page de la fonction publique, des libéraux et des régimes spéciaux n'ont
+toujours pas été vues. Et la couche de doublure ressort dans les lignes non
+comprises, où elle n'apprend rien : le compte rendu montre les plus courtes
+d'abord, celles qu'un lecteur peut reprendre à la main.
+
+**Fichiers.** `scripts/fetch/lecture_pdf.py`, `moteur/js/lecture-pdf.js`,
+`src/retraite_notionnelle/web/releve_lu.py`, `moteur/js/releve-lu.js`,
+`index.html`, `tests/test_lecture_pdf.py`, `tests/js/lecture-pdf.test.js`,
+`tests/test_releve_lu.py`, `docs/limites.md` §5.
+

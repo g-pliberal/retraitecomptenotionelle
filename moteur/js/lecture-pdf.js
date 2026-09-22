@@ -230,6 +230,62 @@ function deHexa(chiffres) {
   return texte;
 }
 
+/**
+ * Les jetons d'un bloc ``bfrange`` : un hexadécimal entre chevrons, ou l'un des
+ * deux crochets qui encadrent une liste de destinations.
+ */
+const JETON_CMAP = /<([0-9A-Fa-f]+)>|([[\]])/g;
+
+/**
+ * Les entrées d'un bloc ``bfrange``, lues jeton par jeton.
+ *
+ * Une entrée s'écrit de DEUX façons, et la norme les mêle dans le même bloc :
+ * `<début> <fin> <destination>`, où les codes suivants se déduisent en ajoutant
+ * un, et `<début> <fin> [ <dst> <dst> … ]`, où chaque code a la sienne.
+ * L'estimation retraite d'Info Retraite écrit les deux.
+ *
+ * Une expression régulière qui cherchait trois hexadécimaux d'affilée ignorait
+ * les crochets et lisait À CHEVAL sur les entrées : de proche en proche, TOUTE
+ * la table se décalait. Le document sortait en lettres fausses — et ses
+ * chiffres, tombés sur des codes de contrôle, ne sortaient pas du tout.
+ */
+function plagesDe(bloc) {
+  const jetons = [];
+  JETON_CMAP.lastIndex = 0;
+  for (let t = JETON_CMAP.exec(bloc); t; t = JETON_CMAP.exec(bloc)) {
+    jetons.push(t[1] !== undefined ? { hexa: t[1] } : { delimiteur: t[2] });
+  }
+  const entrees = [];
+  let rang = 0;
+  while (rang < jetons.length) {
+    if (jetons[rang].delimiteur) {
+      // Un crochet là où l'on attend un début de plage : entrée abîmée, on la
+      // saute plutôt que de décaler tout ce qui suit.
+      rang += 1;
+      continue;
+    }
+    if (rang + 1 >= jetons.length || jetons[rang + 1].delimiteur) break;
+    const debut = jetons[rang].hexa;
+    const fin = jetons[rang + 1].hexa;
+    rang += 2;
+    if (rang >= jetons.length) break;
+    if (jetons[rang].delimiteur === "[") {
+      rang += 1;
+      const destinations = [];
+      while (rang < jetons.length && !jetons[rang].delimiteur) {
+        destinations.push(jetons[rang].hexa);
+        rang += 1;
+      }
+      if (rang < jetons.length && jetons[rang].delimiteur === "]") rang += 1;
+      entrees.push([debut, fin, destinations]);
+    } else {
+      entrees.push([debut, fin, jetons[rang].hexa]);
+      rang += 1;
+    }
+  }
+  return entrees;
+}
+
 /** Lit une table ToUnicode : code de glyphe -> caractère. */
 function cmap(contenu) {
   const table = new Table();
@@ -248,12 +304,19 @@ function cmap(contenu) {
     }
   }
   for (const bloc of contenu.match(/beginbfrange[\s\S]*?endbfrange/g) ?? []) {
-    const plages = /<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>/g;
-    for (let t = plages.exec(bloc); t; t = plages.exec(bloc)) {
-      const premier = parseInt(t[3], 16);
-      const fin = parseInt(t[2], 16);
+    for (const [debut, fin, destinations] of plagesDe(bloc)) {
+      const premiere = parseInt(debut, 16);
+      const derniere = parseInt(fin, 16);
+      if (Array.isArray(destinations)) {
+        // La forme TABLEAU : une destination par code, dans l'ordre.
+        destinations.forEach((dst, i) => {
+          if (premiere + i <= derniere) table.set(premiere + i, deHexa(dst));
+        });
+        continue;
+      }
+      const premier = parseInt(destinations, 16);
       let i = 0;
-      for (let code = parseInt(t[1], 16); code <= fin; code += 1, i += 1) {
+      for (let code = premiere; code <= derniere; code += 1, i += 1) {
         // Une destination hors du plan Unicode — les rapports à la CCSS en
         // portent, dans des plages que rien n'utilise — ne doit pas faire
         // tomber la lecture de tout le document.
@@ -498,6 +561,16 @@ async function fragments(octets) {
     let interligne = 0.0;
     let police = null;
     let dansTableau = false;
+    // LE TEXTE TOURNÉ NE SE LIT PAS SUR LES MÊMES LIGNES QUE LE RESTE.
+    // « 0 -1 -1 0 » est un quart de tour : c'est ainsi qu'un producteur pose un
+    // tampon dans la marge, un filigrane, une étiquette d'axe. Ses glyphes
+    // tombent aux ordonnées des lignes du corps de page, et les regrouper avec
+    // elles y insérait des lettres et des chiffres étrangers — sur l'estimation
+    // retraite d'Info Retraite, vingt-deux caractères par page venaient se
+    // coller dans les montants du relevé, qui devenaient des revenus de deux
+    // millions d'euros. La bande — 0 pour le texte droit, 1 pour le texte
+    // tourné — entre donc dans la clé de regroupement.
+    let bande = 0;
     JETONS.lastIndex = 0;
     for (let jeton = JETONS.exec(contenu); jeton; jeton = JETONS.exec(contenu)) {
       const g = jeton.groups;
@@ -505,7 +578,7 @@ async function fragments(octets) {
       if (g.ouvre || g.ferme) { dansTableau = Boolean(g.ouvre); continue; }
       if (g.nombre) {
         if (dansTableau && Number(g.nombre) < ESPACE_DE_TABLEAU) {
-          tous.push([page, y, x, " "]);
+          tous.push([page, bande, ...(bande ? [x, -y] : [y, x]), " "]);
         }
         continue;
       }
@@ -519,6 +592,7 @@ async function fragments(octets) {
         if (nombres.length < 6) continue;
         [echelleX, echelleY] = [nombres[0], nombres[3]];
         [x, y] = [nombres[4], nombres[5]];
+        bande = nombres[1] || nombres[2] ? 1 : 0;
       } else if (g.td) {
         const nombres = reels(g.td);
         if (nombres.length < 2) continue;
@@ -537,7 +611,8 @@ async function fragments(octets) {
         const morceau = g.hex
           ? hexa(g.hex, tables.get(police))
           : litteral(g.txt.slice(1, -1), tables.get(police));
-        if (morceau.trim()) tous.push([page, y, x, morceau]);
+        const [ligne, colonne] = bande ? [x, -y] : [y, x];
+        if (morceau.trim()) tous.push([page, bande, ligne, colonne, morceau]);
         else if (morceau) {
           // Une chaîne qui n'est qu'une espace est l'espace entre deux mots que
           // le producteur a posés séparément — « (Effectif) ( ) (total) » — :
@@ -545,7 +620,7 @@ async function fragments(octets) {
           // insécable, et c'est elle qui empêche « 2 132 milliards » de se lire
           // comme deux nombres.
           const insecable = morceau.replace(/[ \t\r\n\f\v]/g, "");
-          tous.push([page, y, x, insecable ? " " : " "]);
+          tous.push([page, bande, ligne, colonne, insecable ? " " : " "]);
         }
       }
     }
@@ -572,8 +647,9 @@ function assembler(tous, tolerance) {
   let ordonnee = null;
   let feuille = null;
   let abscisse = null;
-  for (const [page, y, x, morceau] of tous) {
-    const memeLigne = ordonnee !== null && page === feuille
+  for (const [page, bande, y, x, morceau] of tous) {
+    const memeLigne = ordonnee !== null && feuille !== null
+      && page === feuille[0] && bande === feuille[1]
       && Math.abs(y - ordonnee) <= tolerance;
     if (memeLigne || ordonnee === null) {
       // DEUX FRAGMENTS POSÉS À DES ABSCISSES DIFFÉRENTES SONT SÉPARÉS PAR UNE
@@ -590,7 +666,7 @@ function assembler(tous, tolerance) {
       lignes.push(normaliser(courante.join("")));
       courante = [morceau];
     }
-    ordonnee = y; feuille = page; abscisse = x;
+    ordonnee = y; feuille = [page, bande]; abscisse = x;
   }
   if (courante.length) {
     lignes.push(courante.join("").replace(/\s+/g, " ").trim());
@@ -602,7 +678,7 @@ function trier(tous) {
   return tous
     .map((fragment, rang) => [fragment, rang])
     .sort(([a, rangA], [b, rangB]) => (
-      a[0] - b[0] || b[1] - a[1] || a[2] - b[2] || rangA - rangB
+      a[0] - b[0] || a[1] - b[1] || b[2] - a[2] || a[3] - b[3] || rangA - rangB
     ))
     .map(([fragment]) => fragment);
 }
