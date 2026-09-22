@@ -705,6 +705,51 @@ def fiche_regime(**reglages: str) -> float:
     return valeur * 100 if champ.startswith(("part", "taux")) else valeur
 
 
+@lru_cache(maxsize=None)
+def _sous_projection(projection: str, generation: int, debut: int, depart: int):
+    """La carrière de référence, sous un scénario de projection du COR."""
+    parametres = replace(_parametres(), scenario_projection=projection)
+    simulateur = _simulateur(parametres)
+    carriere = simulateur.carriere_simple(
+        annee_naissance=generation, sexe=CARRIERE["sexe"],
+        affiliation=CARRIERE["affiliation"], age_debut=debut, age_liquidation=depart)
+    return simulateur.simuler(carriere)
+
+
+def fourchette(**reglages: str) -> float:
+    """Le bloc « Ce que l'hypothèse pèse » du site, sur la carrière de référence.
+
+    ``generation``, ``depart`` et au besoin ``debut``. ``quoi`` : ``basse`` et ``haute`` (la
+    pension mensuelle du scénario 2 sous les deux variantes de productivité,
+    en euros constants), ``amplitude`` (leur écart, en %), ``projetees`` et
+    ``annees`` (les années du compte après la dernière observation, et en
+    tout), ``part`` (la part projetée du calcul, en %).
+    """
+    generation, depart = int(reglages["generation"]), int(reglages["depart"])
+    debut = int(reglages.get("debut", CARRIERE["debut"]))
+    quoi = reglages["quoi"]
+
+    def mensuelle(projection: str) -> float:
+        comparaison = _sous_projection(projection, generation, debut, depart)
+        return comparaison.en_euros_constants(
+            comparaison.notionnel_retroactif.pension_annuelle) / 12
+
+    if quoi in ("basse", "haute"):
+        return mensuelle(f"cor_productivite_{quoi}")
+    if quoi == "amplitude":
+        return (mensuelle("cor_productivite_haute") / mensuelle("cor_productivite_basse") - 1) * 100
+    comparaison = _sous_projection("cor_reference", generation, debut, depart)
+    carriere = comparaison.carriere
+    derniere = _simulateur(_parametres()).macro.derniere_annee_observee
+    premiere = min(carriere.annees_cotisees, default=carriere.annee_liquidation)
+    annees = carriere.annee_liquidation - premiere + 1
+    projetees = max(0, carriere.annee_liquidation - max(premiere - 1, derniere))
+    valeurs = {"annees": annees, "projetees": projetees, "part": projetees / annees * 100}
+    if quoi not in valeurs:
+        raise ValueError(f"« {quoi} » n'est pas mesuré")
+    return valeurs[quoi]
+
+
 def composition_revalorisation(**reglages: str) -> float:
     """Ce que composer année par année les coefficients des arrêtés fait
     perdre, en % et en valeur absolue, face au coefficient lu d'un bloc.
@@ -1163,6 +1208,7 @@ MESURES = {
     "table_mortalite": table_mortalite,
     "part_pensions_sous": part_pensions_sous,
     "fiche_regime": fiche_regime,
+    "fourchette": fourchette,
 }
 
 
