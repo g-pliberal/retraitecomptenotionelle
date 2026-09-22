@@ -1,0 +1,42 @@
+# Âge à partir duquel la SNCF et la RATP comptent la surcote, PAR GÉNÉRATION
+# -------------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# LA SURCOTE D'UN CHEMINOT NE PART PAS DE SON ÂGE D'OUVERTURE. Le II de
+# l'article 13 du décret n° 2008-639 (SNCF) ne compte que les trimestres
+# « effectués après le 1er juillet 2008, au-delà de l'âge mentionné au premier
+# alinéa de l'article L. 161-17-2 du code de la sécurité sociale », et le II de
+# l'article 24 du décret n° 2008-637 (RATP) ceux accomplis « au-delà de l'âge
+# mentionné au 4° du II de l'article 6 », soixante-quatre ans. Le modèle les
+# comptait depuis l'âge d'ouverture de la fiche — cinquante-quatre ans pour un
+# agent de conduite —, et le défaut ne se voyait pas tant que la durée requise
+# qu'on leur opposait était de 172 trimestres : il ne restait rien au-delà.
+#
+# LE CALENDRIER EST LE MÊME DANS LES DEUX DÉCRETS, et ce n'est pas celui du
+# régime général : c'est l'âge légal décalé de cinq générations, comme le reste
+# de la réforme de 2008. IV de l'article 37-1 du décret n° 2008-639
+# (LEGIARTI000048896987) et 3° du II de l'article 51-1 du décret n° 2008-637
+# (LEGIARTI000047914257), versions en vigueur lues le 22 septembre 2026 :
+# soixante ans pour les nés avant 1957, quatre mois de plus par génération
+# jusqu'à soixante-deux ans pour 1962, trois mois de plus ensuite jusqu'à
+# soixante-trois ans et neuf mois pour 1969, soixante-quatre ans à compter de
+# 1970. La suspension de 2026 n'y est pas reprise.
+#
+# `haute` : lues dans le texte en vigueur de l'index LEGI, non recontrôlées par
+# un récupérateur.
+generation,age,fiabilite
+1900,60.00,haute
+1957,60.33,haute
+1958,60.67,haute
+1959,61.00,haute
+1960,61.33,haute
+1961,61.67,haute
+1962,62.00,haute
+1963,62.25,haute
+1964,62.50,haute
+1965,62.75,haute
+1966,63.00,haute
+1967,63.25,haute
+1968,63.50,haute
+1969,63.75,haute
+1970,64.00,haute

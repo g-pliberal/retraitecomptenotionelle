@@ -3373,16 +3373,19 @@ def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     assert coefficient == pytest.approx(0.0025)
     assert age_annulation == pytest.approx(55.0 - 14.0 / 4.0)
 
-    # 2025 : la montée en charge est finie. L'âge de référence est celui de la
-    # période — et depuis le relèvement de la loi du 14 avril 2023, étalé par
-    # génération aux pensions prenant effet en 2025 (décret n° 2023-967,
-    # art. 37-1), il vaut cette année-là cinquante-deux ans et trois mois
-    # d'ouverture, plus cinq ans. Un agent né en janvier 1973 les atteint en
-    # avril 2025.
+    # 2025 : la montée en charge est finie. L'âge de référence ne suit PAS le
+    # relèvement de l'âge d'ouverture de la loi du 14 avril 2023 : le 1° du I
+    # de l'article 13, dans sa rédaction du décret n° 2023-967, le fixe à
+    # cinquante-sept ans pour les agents de conduite. La fiche le faisait
+    # monter cinq ans au-dessus de l'âge d'ouverture — 57,25 ans en 2025,
+    # 59 ans à partir de 2034.
     periode = simulateur.catalogue["sncf"].periode(2025)
     coefficient, age_annulation, _ = scenario._decote(periode, agent(1973), 2025)
     assert coefficient == pytest.approx(0.0125)
-    assert age_annulation == pytest.approx(57.25)
+    assert age_annulation == pytest.approx(57.0)
+    periode = simulateur.catalogue["sncf"].periode(2034)
+    _, age_annulation, _ = scenario._decote(periode, agent(1980), 2034)
+    assert age_annulation == pytest.approx(57.0)
 
 
 def test_l_age_d_annulation_du_ballet_de_l_opera_est_quarante_deux_ans(simulateur):
