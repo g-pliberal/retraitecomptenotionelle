@@ -176,7 +176,8 @@ affiliations:
     famille: prive
     periodes:
       - {debut: 1964, fin: 1976, regimes: [ircec_racd]}
-      - {debut: 1977, fin: null, regimes: [regime_general, ircec_raap, ircec_racd]}
+      - {debut: 1977, fin: 2015, regimes: [regime_general, ircec_raap, ircec_racd]}
+      - {debut: 2016, fin: null, regimes: [regime_general, ircec_raap_taux_amenage, ircec_racd]}
     note: >-
       Comme l'artiste-auteur, avec le RACD en plus depuis le décret
       n° 64-226 ; le régime général et le RAAP suivent la loi du 31
@@ -184,18 +185,23 @@ affiliations:
       n'est pas sans employeur. C'est l'organisme de perception qui route :
       le simulateur « Quel est mon régime ? » de l'IRCEC envoie la SACD au
       RAAP et au RACD, la SACEM au RAAP et au RACL, la SCAM au RAAP seul
-      (lu le 22 septembre 2026).
+      (lu le 22 septembre 2026). Depuis 2016, le RAAP de qui cotise au RACD
+      est à la moitié du taux (décret n° 62-420, article 2 II) : la fiche
+      `ircec_raap_taux_amenage` le porte, et ses points sont ceux du RAAP.
 
   auteur_lyrique:
     libelle: Auteur ou compositeur de musique (SACEM)
     famille: prive
     periodes:
       - {debut: 1962, fin: 1976, regimes: [ircec_racl]}
-      - {debut: 1977, fin: null, regimes: [regime_general, ircec_raap, ircec_racl]}
+      - {debut: 1977, fin: 2015, regimes: [regime_general, ircec_raap, ircec_racl]}
+      - {debut: 2016, fin: null, regimes: [regime_general, ircec_raap_taux_amenage, ircec_racl]}
     note: >-
       Comme l'artiste-auteur, avec le RACL en plus depuis le décret
       n° 61-1304 ; le régime général et le RAAP suivent la loi du 31
-      décembre 1975.
+      décembre 1975. Depuis 2016, le RAAP de qui cotise au RACL est à la
+      moitié du taux (décret n° 62-420, article 2 II) : la fiche
+      `ircec_raap_taux_amenage` le porte, et ses points sont ceux du RAAP.
 
   gerant_debit_tabac:
     libelle: Gérant de débit de tabac (buraliste)

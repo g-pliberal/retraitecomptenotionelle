@@ -1520,6 +1520,128 @@ regimes:
           relève une assiette trop basse, il ne l'annule pas). Surestime donc
           les droits des toutes petites carrières artistiques.
 
+  - code: ircec_raap_taux_amenage
+    nom: >-
+      RAAP au taux aménagé des auteurs affiliés au RACD ou au RACL (IRCEC)
+    famille: liberal
+    source_id: legifrance_textes
+    fiabilite: haute
+    creation: 2016
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Auteurs et compositeurs dramatiques (SACD) et auteurs et compositeurs de
+      musique (SACEM) : ils cotisent au RAAP comme tout artiste-auteur, mais à
+      la MOITIÉ du taux, parce qu'ils cotisent déjà au RACD ou au RACL.
+    hors_repartition: false
+    periodes:
+      - debut: 2016
+        fin: 2016
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.025
+        points_de: ircec_raap
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        abattement_points: ircec
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: >-
+          LA MOITIÉ DU TAUX, PAR LA PERSONNE ET NON PAR LE REVENU. Le II de
+          l'article 2 du décret n° 62-420, dans sa rédaction en vigueur depuis
+          le 1er janvier 2016 (LEGIARTI000031832007, puis
+          LEGIARTI000041766050) : « Pour les personnes tenues de cotiser aux
+          régimes […] institués par les décrets n° 61-1304 [le RACL] et
+          n° 64-226 [le RACD], le taux de la cotisation au régime institué par
+          le présent décret est égal à la moitié de celui prévu au I ». Le
+          guide 2026 de l'IRCEC l'applique — « cette cotisation RAAP, au taux
+          aménagé de 4 %, vient s'ajouter à celle du RACD » —, son mémo et sa
+          page de calcul aussi, « sur les revenus déjà soumis à cotisation
+          RACD et/ou RACL ». Les statuts `auteur_dramatique` et
+          `auteur_lyrique` portent tout leur revenu au RACD ou au RACL : les
+          deux lectures y coïncident.
+          UNE FICHE À PART, COMME LA TRANCHE 2 DE L'ARRCO : un barème que tous
+          les affiliés du régime ne cotisent pas, que l'affiliation donne aux
+          uns et pas aux autres, et dont les points restent des points du RAAP
+          (`points_de: ircec_raap`) — même prix d'achat, même valeur de
+          service, même rendement. Liquidation : celle du RAAP.
+          2,5 % EN 2016 : la moitié des 5 % de la montée en charge du décret
+          n° 2015-1877 (article 3 II), qui déroge au taux du I ; la moitié des
+          6 %, 7 % et 8 % ensuite. Ce cumul des deux textes est une lecture,
+          non une citation : aucun des deux ne l'écrit en chiffres.
+      - debut: 2017
+        fin: 2017
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.03
+        points_de: ircec_raap
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        abattement_points: ircec
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: >-
+          Moitié des 6 % de 2017.
+      - debut: 2018
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.035
+        points_de: ircec_raap
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        abattement_points: ircec
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: >-
+          Moitié des 7 % de 2018.
+      - debut: 2019
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.04
+        points_de: ircec_raap
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        abattement_points: ircec
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: >-
+          Moitié des 8 % du RAAP : 4 %, le « taux aménagé » que le guide, le
+          mémo et la page de calcul de l'IRCEC publient pour 2026. Assiette,
+          seuil d'affiliation et plafond de trois plafonds de la Sécurité
+          sociale : ceux du RAAP, que la fiche `ircec_raap` décrit.
+
   - code: carmf_complementaire
     nom: >-
       Régime complémentaire vieillesse des médecins libéraux (CARMF)

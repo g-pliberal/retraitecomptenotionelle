@@ -2197,6 +2197,12 @@ sources:
       volontaire. La fiche `ircec_raap` de
       `data/reference/regimes/non_salaries.yaml` porte déjà tout cela, ou dit
       ne pas le modéliser ; le taux aménagé est noté dans `docs/limites.md`.
+      RELUE LE MÊME JOUR, pour le taux aménagé : le décret (n° 62-420,
+      article 2 II) vise les PERSONNES tenues de cotiser au RACD ou au RACL,
+      non la part de leur revenu, et les statuts d'auteur dramatique et de
+      compositeur sont ces personnes. Il est porté depuis : fiche
+      `ircec_raap_taux_amenage` de data/reference/regimes/non_salaries.yaml,
+      ligne `raap_taux_amenage_racd_racl` du registre de veille.
 
   - id: ircec_faq
     url: https://www.ircec.fr/foire-aux-questions/

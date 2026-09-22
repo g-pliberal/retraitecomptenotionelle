@@ -2117,10 +2117,12 @@ export class ScenarioActuel {
         }
 
         // Années sans prix d'achat connu : le rendement instantané prend le
-        // relais, régime par régime et année par année.
+        // relais, régime par régime et année par année. Une fiche qui emprunte
+        // le barème du point d'un autre régime (`points_de`) en emprunte aussi
+        // le rendement.
         if (cumul) {
           const [rendement, fiabiliteRendement] = this.rendements.rendement(
-            code, Math.min(anneeLiquidation, derniereAnnee(regime)),
+            periode.points_de ?? code, Math.min(anneeLiquidation, derniereAnnee(regime)),
           );
           montant += cumul * rendement;
           fiabiliteRegime = Math.min(fiabiliteRegime, fiabiliteRendement);

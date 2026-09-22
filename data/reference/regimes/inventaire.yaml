@@ -571,6 +571,25 @@ inventaire:
       générations nées avant 1955 jusqu'en 2024, elle est approchée (voir
       `docs/limites.md`).
 
+  - code: ircec_raap_taux_amenage
+    nom: RAAP au taux aménagé des auteurs affiliés au RACD ou au RACL (IRCEC)
+    famille: liberal
+    population: Auteurs dramatiques (SACD) et compositeurs (SACEM), qui cotisent au RAAP à la moitié du taux
+    creation: 2016
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [auteur_dramatique, auteur_lyrique]
+    textes:
+      - {reference: "décret n° 62-420 du 11 avril 1962, article 2 II (« le taux de la cotisation […] est égal à la moitié de celui prévu au I »), rédaction du décret n° 2015-1877", id: LEGIARTI000041766050}
+    manque: >-
+      Un barème du RAAP, non un régime : la moitié du taux pour qui cotise au
+      RACD ou au RACL, dont les points sont ceux du RAAP. Il en partage les
+      manques — seuil d'affiliation de 900 SMIC horaires et minimum de trente
+      points non appliqués.
+
   - code: ircec_racd
     nom: Régime des auteurs et compositeurs dramatiques (IRCEC)
     famille: liberal
