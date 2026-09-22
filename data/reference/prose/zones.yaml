@@ -230,6 +230,15 @@ fichiers:
       # Le PIB que la page se fabriquait jusqu'au 20 septembre 2026, et ce que
       # sa substitution a rendu.
       - "Elle en avait un jusqu'au 20 septembre 2026"
+      # Le pilier capitalisé : des mesures faites le 20 septembre 2026 sur la
+      # courbe du 17 — la prime de terme à 0,005, ce que chaque hypothèse de
+      # frais déplace, et pour qui —, et deux tableaux de sources datés.
+      - "Depuis septembre 2026, le modèle **sait** la retirer"
+      - "| Poste | OPEF 2025, marché"
+      - "| Marché | Mécanisme"
+      - "**Ce que chaque hypothèse déplace.**"
+      - "| Réglage | Rente | Écart |"
+      - "Pour un assuré né en 1985"
     sections:
       # Sections d'état ancrées le 22 septembre 2026 : la règle d'indexation,
       # dont le cumul du triple lock lit le modèle ; les régimes qui manquent ;
@@ -278,6 +287,12 @@ fichiers:
       # fiches, les gains au SMIC sur la fiche d'exemple. Le gain « +39 € une
       # fois le brut stabilisé », qu'aucune mesure ne recalcule, n'est plus
       # chiffré.
+      # Le pilier capitalisé : les frais et leurs paliers sont ceux de
+      # `Parametres`, les primes de terme des constantes ; les autres chiffres
+      # sont ceux des rapports cités — OPEF, CCSF, fonds étrangers —, datés
+      # par leur source. Le poids du frais sur la réserve, « 8 % de rente »,
+      # qu'aucune mesure ne recalcule, n'est plus chiffré.
+      "5 ante. Le pilier capitalisé : ce que sa rente suppose": etat
       "5 ante bis. La fiche de paie : neuf réserves, dont trois décisives, et deux que la restitution ajoute": etat
       "5 ante ter. Le net et le brut : ce que la bascule suppose": etat
       # Le coût agrégé : la dépense observée, les poids et les écarts se
@@ -617,7 +632,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 19
+  sections_a_declarer: 18
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
