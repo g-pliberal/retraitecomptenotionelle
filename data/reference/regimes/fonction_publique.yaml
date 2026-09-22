@@ -1573,6 +1573,8 @@ regimes:
         part_salariale: 0.50   # décret 2004-569 : 5 % agent, 5 % employeur
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        surcote_points: rafp
+        capital_seuil_points: 5125
         avantages_non_contributifs: [reversion]
         notes: >-
           RÉGIME PAR CAPITALISATION PROVISIONNÉE — EXCLU DU PÉRIMÈTRE NOTIONNEL.
@@ -1599,6 +1601,8 @@ regimes:
         part_salariale: 0.50   # décret 2004-569 : 5 % agent, 5 % employeur
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        surcote_points: rafp
+        capital_seuil_points: 5125
         avantages_non_contributifs: [reversion]
         notes: >-
           RÉGIME PAR CAPITALISATION PROVISIONNÉE — EXCLU DU PÉRIMÈTRE NOTIONNEL.
@@ -1612,6 +1616,17 @@ regimes:
           1968 et les suivantes, lu à la génération. Le régime n'a pas de
           décote ni d'âge d'annulation propre : `age_taux_plein` reste la
           valeur de repli de l'ouverture et n'est pas lu.
+          LA VALEUR DE SERVICE EST MODULÉE PAR L'ÂGE : « en fonction de l'âge
+          de liquidation de la retraite additionnelle » (art. 8,
+          LEGIARTI000037483754), selon le barème actuariel que publie l'ERAFP
+          — 1,00 jusqu'à 62 ans, 1,08 à 64, 1,22 à 67, 1,40 à 70, 1,80 dès 75.
+          SOUS 5 125 POINTS, UN CAPITAL : la prestation est « servie sous forme
+          de capital lorsque le nombre de points acquis est inférieur à 5 125 »
+          (art. 9, LEGIARTI000037483756), au coefficient de conversion de
+          l'âge — 25,57 à 64 ans, interpolé au mois. La calculette de l'ERAFP
+          donne, pour 3 000 points à 65 ans en 2026, 4 723,63 € : 3 000 ×
+          1,12 × 0,05671 × 24,79. Le montant annuel de la fiche reste celui
+          de la rente équivalente, le capital est écrit dans le détail.
 
   - code: fonctionnaires_pacifique
     nom: >-

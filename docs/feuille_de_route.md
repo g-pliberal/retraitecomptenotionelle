@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 755<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 117<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 867<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 269<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12820,6 +12820,26 @@ cinquante ans pour tous, quand l'article 147 du décret de 1946, dans sa
 version de 1974, réservait cet âge aux trente ans de mine dont vingt au fond
 et donnait cinquante-cinq aux autres. Sa version en vigueur n'a pas été lue ;
 c'est la même question que celle des marins, posée à l'envers.
+
+**Les calculettes officielles, le 22 septembre 2026 au soir.** Environ cent
+cinquante calculs sur mon-entreprise, l'ERAFP, la CARMF et la CARPIMKO, chacun
+confronté au scénario 1 puis au texte ; le rapport est dans les fichiers du
+projet (`ecarts_simulateurs_officiels.md`). Six écarts étaient chez nous, et
+la loi leur donne tort à chaque fois ; ils sont corrigés dans les deux moteurs.
+La seconde tranche de la Cipav va jusqu'à quatre plafonds depuis 2025, et non
+trois. Le RCI n'avait aucune valeur de point après 2023 et achetait au
+rendement de 2013, 9 % de points de trop : `scripts/fetch/cnav_baremes_rci.py`
+lit désormais les barèmes de la Cnav. La CARPIMKO de 2026 cotise sur le revenu
+entier, relevé à un demi-plafond (`assiette_minimale_pass`), au point de 391 €
+que seule sa calculette publie. L'ASV des médecins sert 27 points plus
+l'ajustement proportionnel au revenu, neuf au plus (`points_ajustement_*`), et
+non 36 à tous. Le RAFP est majoré par l'âge de liquidation (`surcote_points:
+rafp`) et versé en capital sous 5 125 points (`capital_seuil_points`), le
+capital étant écrit dans le détail de la pension. Enfin l'artisan, le
+commerçant et le libéral cotisent au régime de base sur une assiette minimale,
+200 SMIC horaires puis 450 depuis 2023 (`legislation/assiette_minimale_independants.csv`),
+qui valide leurs trimestres. Reste à lire le décret n° 2026-418, qui réécrit
+les complémentaires libérales, contre les dix fiches.
 
 ### 90. Le barème agricole retrouvé, et un groupe qui ne décrivait pas le libéral — `fait`
 

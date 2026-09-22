@@ -569,6 +569,11 @@ class ConstructeurCompte:
                     # 1 820 SMIC même quand le revenu est en dessous. Ce qui a
                     # été prélevé ouvre des droits, ici comme dans le scénario 1.
                     assiette = repere
+                if not periode.assiette_forfaitaire:
+                    # Assiette minimale en plafonds : celle de la CARPIMKO
+                    # depuis 2026, comme dans le scénario 1.
+                    assiette = max(assiette, periode.assiette_minimale(
+                        self.macro.plafond_securite_sociale(annee)) * part)
                 # LA COTISATION FORFAITAIRE. Certains complémentaires libéraux
                 # ne sont ni proportionnels ni forfaitaires mais LES DEUX : le
                 # régime des chirurgiens-dentistes appelle 3 210,60 € en 2026,

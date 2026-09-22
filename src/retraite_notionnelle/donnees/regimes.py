@@ -276,6 +276,20 @@ class PeriodeRegime:
     #: la même pour tous —, et c'est pourquoi sa conversion ignore l'assiette.
     #: Le nombre de trimestres, lui, reste celui que le revenu a validés.
     points_par_trimestre_valide: float | None
+    #: POINTS D'AJUSTEMENT, qui s'ajoutent aux points par trimestre : leur
+    #: nombre vaut ``points_ajustement_par_forfait`` fois la cotisation
+    #: proportionnelle divisée par la cotisation forfaitaire, dans la limite
+    #: de ``points_ajustement_maximum`` par an. C'est l'ASV des médecins depuis
+    #: 2012 : 27 points pour le forfait, et « dans la limite de neuf points par
+    #: an », l'ajustement multiplié par « les deux tiers » des 27 points et
+    #: divisé par le forfait (décret n° 2011-1644, art. 3).
+    points_ajustement_par_forfait: float | None
+    #: SEUIL DU CAPITAL : en deçà de ce nombre de points, le régime verse un
+    #: capital une fois au lieu d'une rente. C'est le RAFP, « servie sous forme
+    #: de capital lorsque le nombre de points acquis est inférieur à 5 125 »
+    #: (décret n° 2004-569, art. 9).
+    capital_seuil_points: float | None
+    points_ajustement_maximum: float | None
     #: BARÈME DE POINTS NOMMÉ, dont la formule vit dans le moteur parce qu'elle
     #: ne se laisse pas écrire en colonnes. Une seule valeur pour l'instant :
     #: ``msa_proportionnelle``, la retraite proportionnelle des non-salariés
@@ -312,6 +326,13 @@ class PeriodeRegime:
     #: du culte n'a pas de salaire dont on prélèverait une fraction ; la
     #: congrégation et lui cotisent sur un forfait.
     assiette_forfaitaire: bool
+    #: ASSIETTE MINIMALE, en plafonds annuels de la Sécurité sociale : la
+    #: cotisation est due sur au moins cette assiette, quel que soit le
+    #: revenu. C'est la forme de la CARPIMKO depuis 2026 — « l'assiette de
+    #: cette cotisation est comprise entre un minimum et un maximum »,
+    #: 50 % et 300 % du plafond (décret n° 2025-1076, art. 7 et 14). Un
+    #: seuil qui relève l'assiette, et non un abattement qui la retranche.
+    assiette_minimale_pass: float | None
     #: COTISATION PAR CLASSES : le régime ne prélève ni un taux ni un forfait
     #: mais un MONTANT par palier de revenu, lu dans `classes_cotisation.csv`.
     #: C'est la forme de la Cipav d'avant 2023.
@@ -379,6 +400,12 @@ class PeriodeRegime:
         if borne_haute is None:
             return 0.0
         return (borne_haute - borne_basse) * pass_annuel
+
+    def assiette_minimale(self, pass_annuel: float) -> float:
+        """Assiette en deçà de laquelle la cotisation n'est pas appelée."""
+        if self.assiette_minimale_pass is None:
+            return 0.0
+        return self.assiette_minimale_pass * pass_annuel
 
     def couvre(self, annee: int) -> bool:
         return self.debut <= annee and (self.fin is None or annee <= self.fin)
@@ -999,6 +1026,18 @@ class CatalogueRegimes:
                     None if p.get("points_minimum_annuels") is None
                     else float(p["points_minimum_annuels"])
                 ),
+                capital_seuil_points=(
+                    None if p.get("capital_seuil_points") is None
+                    else float(p["capital_seuil_points"])
+                ),
+                points_ajustement_par_forfait=(
+                    None if p.get("points_ajustement_par_forfait") is None
+                    else float(p["points_ajustement_par_forfait"])
+                ),
+                points_ajustement_maximum=(
+                    None if p.get("points_ajustement_maximum") is None
+                    else float(p["points_ajustement_maximum"])
+                ),
                 points_par_trimestre_valide=(
                     None if p.get("points_par_trimestre_valide") is None
                     else float(p["points_par_trimestre_valide"])
@@ -1019,6 +1058,10 @@ class CatalogueRegimes:
                 ),
                 assiette_plancher=bool(p.get("assiette_plancher", False)),
                 assiette_forfaitaire=bool(p.get("assiette_forfaitaire", False)),
+                assiette_minimale_pass=(
+                    None if p.get("assiette_minimale_pass") is None
+                    else float(p["assiette_minimale_pass"])
+                ),
                 cotisation_par_classes=bool(
                     p.get("cotisation_par_classes", False)
                 ),

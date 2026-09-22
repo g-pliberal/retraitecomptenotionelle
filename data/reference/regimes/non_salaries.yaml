@@ -4650,7 +4650,8 @@ regimes:
         surcote_points: par_age_seul
         surcote_trimestres_maximum: 20
         avantages_non_contributifs: [reversion]
-        assiette: tranche_05_3_pass
+        assiette: plafonnee_3_pass
+        assiette_minimale_pass: 0.5
         taux_cotisation_retraite: 0.087
         notes: >-
           LA RÉFORME DU 1er JANVIER 2026 SUPPRIME LE FORFAIT. Le décret n° 2025-1076
@@ -4658,13 +4659,23 @@ regimes:
           proportionnelle : 8,7 % ; limites de l'assiette : seuil : 50 % du plafond
           annuel de la sécurité sociale ; plafond : 3 fois le plafond annuel ». Les
           bornes quittent l'euro pour le plafond, et la fiche les suit.
+          LE SEUIL EST UN MINIMUM, PAS UN ABATTEMENT. L'article 7 du même décret
+          réécrit l'article 2 du décret du 22 février 1984 : « une cotisation
+          proportionnelle assise sur les revenus d'activité retenus pour le calcul
+          de la cotisation du régime de base. L'assiette de cette cotisation est
+          comprise entre un minimum et un maximum. » La cotisation porte donc sur
+          le revenu ENTIER, relevé à un demi-plafond et coupé à trois : 2 091 € au
+          moins, 12 544 € au plus en 2026, ce que la caisse écrit et que sa
+          calculette applique. La fiche lisait l'ancien seuil de 25 246 € comme
+          une tranche, et retranchait un demi-plafond de tout revenu.
           L'arrêté du 14 novembre 2025 qui approuve les statuts le dit autrement :
           l'article 6 perd le mot « forfaitaire », et l'article 7 devient « une
           cotisation proportionnelle […] Le versement de la cotisation porte
           attribution, annuellement, d'un nombre de points obtenu en divisant le
           montant de cette cotisation par le coût d'acquisition d'un point ».
-          CE COÛT N'EST PAS ENCORE PUBLIÉ. Le rendement de 2025 est donc reconduit,
-          et c'est la seule valeur estimée de cette fiche depuis 2010.
+          CE COÛT N'EST PUBLIÉ NI AU JOURNAL OFFICIEL NI SUR LE SITE DE LA CAISSE ;
+          sa calculette le laisse lire, 391 € le point pour une valeur de service
+          de 21,48 €, soit un rendement de 5,49 % (`rendements_points.csv`).
           LA MAJORATION DE REPORT DATE DE 2015 : l'arrêté du 31 juillet 2015
           (JORFARTI000031255547) insère l'article 12 ter — « lorsque la
           liquidation de la retraite est ajournée au-delà de l'âge auquel
@@ -7921,7 +7932,9 @@ regimes:
         taux_cotisation_retraite: 0.000833
         cotisation_forfaitaire_euros: 1433.33
         cotisation_forfaitaire_annee: 2012
-        points_par_trimestre_valide: 7.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 13.0
         valeur_point_annee: 2012
         decote_par_trimestre: 0.0125
@@ -7943,14 +7956,15 @@ regimes:
           limite de cinq fois le plafond » (art. 2, LEGIARTI000033090911) —
           0,25 % en 2012, un tiers pour le médecin — qui ouvre « un nombre de
           points supplémentaires […] dans la limite de neuf points par an »
-          égal à ajustement × 18 / forfait (art. 3, LEGIARTI000024853554). Ces
-          points d'ajustement sont portés dans `points_par_trimestre_valide`
-          au niveau qu'atteint un médecin à temps plein de secteur 1 : le
-          plafond de neuf points est atteint dès que l'ajustement total vaut
-          la moitié du forfait, c'est-à-dire, au taux plein de 3,8 %, dès 68
-          000 € de revenu ; en dessous, la fiche surestime ces points. En 2012
-          l'ajustement à 0,25 % n'ouvre qu'un point environ (28 points, 7 par
-          trimestre). VALEUR DE SERVICE : « s'agissant des points liquidés à
+          égal à ajustement × 18 / forfait (art. 3, LEGIARTI000024853554). Les 27 points du forfait sont portés par `points_par_trimestre_valide` (6,75
+          par trimestre), ceux de l'ajustement par
+          `points_ajustement_par_forfait` et `points_ajustement_maximum` : 18
+          fois la cotisation d'ajustement divisée par le forfait, neuf au
+          plus. Le rapport est le même sur la part du médecin et sur le total,
+          puisque les caisses paient deux fois chacune des deux. La calculette
+          de la CARMF le vérifie en 2026 : 28,25 points à 10 000 € de revenu,
+          33,02 à 48 060 €, 35,76 à 70 000 €, 36 au-delà. En 2012 l'ajustement
+          à 0,25 % n'ouvre qu'un point environ. VALEUR DE SERVICE : « s'agissant des points liquidés à
           compter du 1er janvier 2011 : […] 13 euros à compter du second
           semestre de l'exercice 2012 » (art. 4, LEGIARTI000024853556).
       - debut: 2013
@@ -7968,7 +7982,9 @@ regimes:
         taux_cotisation_retraite: 0.003000
         cotisation_forfaitaire_euros: 1466.67
         cotisation_forfaitaire_annee: 2013
-        points_par_trimestre_valide: 7.7
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 13.0
         valeur_point_annee: 2012
         decote_par_trimestre: 0.0125
@@ -8004,7 +8020,9 @@ regimes:
         taux_cotisation_retraite: 0.005000
         cotisation_forfaitaire_euros: 1500.00
         cotisation_forfaitaire_annee: 2014
-        points_par_trimestre_valide: 8.3
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 13.0
         valeur_point_annee: 2012
         decote_par_trimestre: 0.0125
@@ -8039,7 +8057,9 @@ regimes:
         taux_cotisation_retraite: 0.007000
         cotisation_forfaitaire_euros: 1550.00
         cotisation_forfaitaire_annee: 2015
-        points_par_trimestre_valide: 8.85
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 13.0
         valeur_point_annee: 2012
         decote_par_trimestre: 0.0125
@@ -8073,7 +8093,9 @@ regimes:
         taux_cotisation_retraite: 0.008667
         cotisation_forfaitaire_euros: 1616.67
         cotisation_forfaitaire_annee: 2016
-        points_par_trimestre_valide: 9.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 13.0
         valeur_point_annee: 2012
         decote_par_trimestre: 0.0125
@@ -8092,8 +8114,7 @@ regimes:
           chaque année en fonction de l'évolution constatée du revenu moyen »
           des médecins (art. 1, LEGIARTI000024853551) — la fiche le ramène sur
           les prix, faute de cette série. Ajustement « 2,60 % au titre de
-          l'exercice 2016 » ; le plafond de neuf points est atteint : 36 par
-          an, 9 par trimestre. VALEUR DE SERVICE : « s'agissant des points
+          l'exercice 2016 » ; neuf points d'ajustement au plus, selon le revenu. VALEUR DE SERVICE : « s'agissant des points
           liquidés à compter du 1er janvier 2011 : […] 13 euros à compter du
           second semestre de l'exercice 2012 » (art. 4, LEGIARTI000024853556).
           AUCUNE MAJORATION DE REPORT AVANT 2017 : l'arrêté du 1er décembre
@@ -8116,7 +8137,9 @@ regimes:
         taux_cotisation_retraite: 0.009333
         cotisation_forfaitaire_euros: 1616.67
         cotisation_forfaitaire_annee: 2016
-        points_par_trimestre_valide: 9.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 11.31
         valeur_point_annee: 2017
         decote_par_trimestre: null
@@ -8136,7 +8159,7 @@ regimes:
           : le forfait et le taux de la fiche valent donc un tiers du total,
           et la part des caisses est décrite ici, non comptée. Ajustement «
           2,8 % au titre de l'exercice 2017 » (art. 2, LEGIARTI000033090911),
-          plafond de neuf points atteint. VALEUR DE SERVICE : « s'agissant des
+          neuf points d'ajustement au plus, selon le revenu. VALEUR DE SERVICE : « s'agissant des
           points liquidés à compter du 1er janvier 2017 : 11,31 euros » (art.
           4, LEGIARTI000033090908 au 5 septembre 2016).
           LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
@@ -8164,7 +8187,9 @@ regimes:
         taux_cotisation_retraite: 0.010667
         cotisation_forfaitaire_euros: 1616.67
         cotisation_forfaitaire_annee: 2016
-        points_par_trimestre_valide: 9.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 11.31
         valeur_point_annee: 2017
         decote_par_trimestre: null
@@ -8212,7 +8237,9 @@ regimes:
         taux_cotisation_retraite: 0.012000
         cotisation_forfaitaire_euros: 1616.67
         cotisation_forfaitaire_annee: 2016
-        points_par_trimestre_valide: 9.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 11.31
         valeur_point_annee: 2017
         decote_par_trimestre: null
@@ -8260,7 +8287,9 @@ regimes:
         taux_cotisation_retraite: 0.012667
         cotisation_forfaitaire_euros: 1616.67
         cotisation_forfaitaire_annee: 2016
-        points_par_trimestre_valide: 9.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 11.31
         valeur_point_annee: 2017
         decote_par_trimestre: null
@@ -8309,7 +8338,9 @@ regimes:
         taux_cotisation_retraite: 0.012667
         cotisation_forfaitaire_euros: 1616.67
         cotisation_forfaitaire_annee: 2016
-        points_par_trimestre_valide: 9.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 11.36
         valeur_point_annee: 2021
         decote_par_trimestre: null
@@ -8358,7 +8389,9 @@ regimes:
         taux_cotisation_retraite: 0.012667
         cotisation_forfaitaire_euros: 1616.67
         cotisation_forfaitaire_annee: 2016
-        points_par_trimestre_valide: 9.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 11.48
         valeur_point_annee: 2022
         decote_par_trimestre: null
@@ -8407,7 +8440,9 @@ regimes:
         taux_cotisation_retraite: 0.012667
         cotisation_forfaitaire_euros: 1616.67
         cotisation_forfaitaire_annee: 2016
-        points_par_trimestre_valide: 9.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 11.71
         valeur_point_annee: 2023
         decote_par_trimestre: null
@@ -8456,7 +8491,9 @@ regimes:
         taux_cotisation_retraite: 0.012667
         cotisation_forfaitaire_euros: 1616.67
         cotisation_forfaitaire_annee: 2016
-        points_par_trimestre_valide: 9.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 11.82
         valeur_point_annee: 2025
         decote_par_trimestre: null
@@ -8505,7 +8542,9 @@ regimes:
         taux_cotisation_retraite: 0.013333
         cotisation_forfaitaire_euros: 1616.67
         cotisation_forfaitaire_annee: 2016
-        points_par_trimestre_valide: 9.0
+        points_par_trimestre_valide: 6.75
+        points_ajustement_par_forfait: 18
+        points_ajustement_maximum: 9
         valeur_point_euros: 11.82
         valeur_point_annee: 2025
         decote_par_trimestre: null

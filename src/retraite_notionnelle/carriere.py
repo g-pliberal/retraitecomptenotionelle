@@ -23,6 +23,8 @@ from functools import cached_property
 from pathlib import Path
 
 from .donnees.chargement import (
+    assiette_minimale,
+    charger_assiettes_minimales,
     charger_periodes_non_travaillees,
     charger_table_csv,
     charger_yaml,
@@ -99,6 +101,12 @@ class AnneeCarriere:
     #: cotise pour lui sur cette assiette, et le salaire entre dans le salaire
     #: annuel moyen. Une période assimilée, elle, n'y entre jamais.
     revenu_avpf: float = 0.0
+    #: ASSIETTE MINIMALE du régime de base d'un indépendant, en euros de
+    #: l'année : l'artisan, le commerçant ou le libéral qui déclare moins
+    #: cotise quand même sur ce montant (D. 633-2, D. 642-4), qui valide ses
+    #: trimestres et entre dans son salaire annuel moyen ou ses points. Nulle
+    #: pour tout autre statut. Voir `legislation/assiette_minimale_independants.csv`.
+    assiette_minimale_base: float = 0.0
     #: Cette année entre-t-elle dans les SERVICES d'un régime de la fonction
     #: publique ? Ce régime-là ne proratise pas sur la durée d'assurance mais
     #: sur les services et bonifications (L. 13 du code des pensions), et
@@ -214,8 +222,21 @@ def _ligne_annuelle(
     """
     cotise = type_periode == "emploi"
     regle = None if cotise else motifs.get(type_periode, motifs.get("sans_activite"))
+    # L'ASSIETTE MINIMALE DES INDÉPENDANTS : un artisan qui déclare 3 000 €
+    # cotise en 2026 sur 450 SMIC horaires, soit 5 409 €, et valide trois
+    # trimestres au lieu d'un. Le revenu de la ligne reste celui qu'il a
+    # déclaré : sa complémentaire, le RCI, n'a pas de minimum.
+    minimale = 0.0
+    if cotise and revenu > 0:
+        regle_minimale = assiette_minimale(
+            charger_assiettes_minimales(macro.racine), affiliation, annee)
+        if regle_minimale is not None:
+            minimale = regle_minimale.montant(
+                macro.plafond_securite_sociale(annee),
+                macro.smic_horaire(annee), part)
     if trimestres_declares is None:
-        trimestres = (macro.trimestres_valides(revenu, annee) if cotise
+        trimestres = (macro.trimestres_valides(max(revenu, minimale), annee)
+                      if cotise
                       else (regle.trimestres_assimiles if regle else 4))
     else:
         trimestres = trimestres_declares
@@ -232,6 +253,7 @@ def _ligne_annuelle(
         # le plafond : on ne valide pas quatre trimestres en sept mois, si gros
         # que soit le salaire.
         trimestres_valides=min(trimestres_maximum, trimestres),
+        assiette_minimale_base=minimale,
         cotisations_versees=cotise,
         # Pendant une période indemnisée, l'UNEDIC ou la Sécurité sociale
         # versent de vraies cotisations aux régimes complémentaires, assises

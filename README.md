@@ -166,8 +166,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->847<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 673<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->852<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 792<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Dix pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -200,7 +200,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->3 094<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->3 206<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->73<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -623,7 +623,7 @@ Scénario                                                          Courants   Co
 5. Notionnel dès 2026, salariale + patronale                       32,980€     26,321€    2,193€    -6.9%
 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        47,099€     37,589€    3,132€   +32.9%
 --------------------------------------------------------------------------------------------------------
-   hors répartition (RAFP), servi à part, identique aux 6           1,506€      1,202€      100€
+   hors répartition (RAFP), servi à part, identique aux 6           1,627€      1,298€      108€
 --------------------------------------------------------------------------------------------------------
    + rente capitalisée obligatoire, scénario 6                      1,515€      1,209€      101€
    + rente capitalisée volontaire, les 5 points rendus              1,515€      1,209€      101€

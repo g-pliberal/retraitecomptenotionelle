@@ -19,7 +19,7 @@
  */
 
 import { DateMois, enMois } from "./calendrier.js";
-import { salaireMoyenAnnuel } from "./carriere.js";
+import { assietteMinimale, salaireMoyenAnnuel } from "./carriere.js";
 import { formatFixe, formatPourcentage } from "./format.js";
 import {
   AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
@@ -222,6 +222,21 @@ export class ScenarioActuel {
    * « sur le salaire forfaitaire de la catégorie dans laquelle il a été
    * classé » (R. 11), non sur sa paie. Proratisé sur les mois de l'année.
    */
+  /**
+   * L'assiette minimale que la ligne oppose à l'un de ces régimes : celle du
+   * régime de BASE d'un indépendant (D. 633-2, D. 642-4), nulle ailleurs.
+   */
+  assietteMinimale(codes, ligne) {
+    if (!(ligne.assiette_minimale_base > 0)) {
+      return 0.0;
+    }
+    const regle = assietteMinimale(this.macro.paquet, ligne.affiliation, ligne.annee);
+    if (regle === null || !codes.some((c) => regle[1].includes(c))) {
+      return 0.0;
+    }
+    return ligne.assiette_minimale_base;
+  }
+
   assietteDeReference(periode, ligne) {
     if (periode.assiette_grille) {
       const forfaitGrille = this.grilles.forfait(
@@ -303,7 +318,8 @@ export class ScenarioActuel {
         }
         revenu = ligne.revenu_avpf;
       } else {
-        revenu = this.assietteDeReference(periode, ligne);
+        revenu = Math.max(this.assietteDeReference(periode, ligne),
+          this.assietteMinimale([...codesAdmis], ligne));
       }
       // TRANCHE DE SALAIRE. Un régime qui liquide tranche par tranche — le
       // personnel navigant, 1,85 % par annuité sur la première et 1,4 % sur la
@@ -1457,6 +1473,11 @@ export class ScenarioActuel {
     if (mode === "aucune") {
       return 1.0;
     }
+    if (mode === "rafp") {
+      // Le RAFP module sa valeur de service par un barème d'âge, sans taux
+      // par trimestre : 1,08 à 64 ans, 1,22 à 67, 1,40 à 70.
+      return majorationRafp(ageLiquidation);
+    }
     if (mode === "ircantec") {
       return this.surcoteIrcantec(
         periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
@@ -1814,6 +1835,9 @@ export class ScenarioActuel {
               base = forfaitGrille[0] * part;
             }
           }
+          // L'assiette minimale du régime de base d'un libéral : 450 SMIC
+          // horaires depuis 2023 (D. 642-4), qui ouvrent leurs points.
+          base = Math.max(base, this.assietteMinimale([code], ligne));
           const plafond = borneHaute === null ? base : borneHaute;
           let assiette = Math.max(0.0, Math.min(base, plafond) - borneBasse);
           const repere = periode.repereAssiette(
@@ -1830,6 +1854,12 @@ export class ScenarioActuel {
             // Assiette minimale : la complémentaire agricole cotise sur
             // 1 820 SMIC même quand le revenu est en dessous.
             assiette = repere;
+          }
+          if (!periode.assiette_forfaitaire) {
+            // Assiette minimale en plafonds : la CARPIMKO appelle depuis 2026
+            // sa cotisation sur un demi-plafond au moins, et les points suivent
+            // ce qui est appelé. Le plafond est déjà proratisé sur les mois.
+            assiette = Math.max(assiette, periode.assietteMinimale(pass));
           }
           // La cotisation forfaitaire s'ajoute à la proportionnelle, et elle est
           // due quel que soit le revenu — même convention que dans compte.js.
@@ -1885,10 +1915,26 @@ export class ScenarioActuel {
             // d'avant 2004.
             const [echelleTrim, fiabiliteEchelleTrim] = this.conversionsPoints
               .echelle(bareme, ligne.annee, anneeLiquidation);
+            let points = periode.points_par_trimestre_valide
+              * carriere.trimestresRetenus(ligne);
+            if (periode.points_ajustement_par_forfait !== null
+                && periode.points_ajustement_par_forfait !== undefined
+                && forfait > 0) {
+              // Les points d'AJUSTEMENT de l'ASV des médecins : 18 fois la
+              // cotisation proportionnelle sur le forfait, neuf au plus
+              // (décret n° 2011-1644, art. 3). Ils suivent le revenu, là où
+              // les 27 points du forfait ne suivent que la durée.
+              let ajustement = periode.points_ajustement_par_forfait * assiette
+                * periode.taux_cotisation_retraite / forfait;
+              if (periode.points_ajustement_maximum !== null
+                  && periode.points_ajustement_maximum !== undefined) {
+                ajustement = Math.min(ajustement,
+                  periode.points_ajustement_maximum * part);
+              }
+              points += ajustement;
+            }
             pointsAcquis.set(code,
-              (pointsAcquis.get(code) ?? 0.0)
-                + periode.points_par_trimestre_valide
-                  * carriere.trimestresRetenus(ligne) * echelleTrim);
+              (pointsAcquis.get(code) ?? 0.0) + points * echelleTrim);
             fiabilitePoints.set(code, Math.min(
               fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
               fiabiliteEchelleTrim,
@@ -2133,6 +2179,7 @@ export class ScenarioActuel {
         }
 
         fiabiliteGlobale = Math.min(fiabiliteGlobale, fiabiliteRegime);
+        const montantBrut = montant;
         let abattement = 1.0;
         if (!ignorerPenaliteAge) {
           abattement = this.abattementPoints(
@@ -2141,11 +2188,31 @@ export class ScenarioActuel {
           );
           montant *= abattement;
         }
+        let detail = formulePoints(details, abattement);
+        // Les années qu'aucun prix d'achat ne couvre encore passent par le
+        // rendement : le seuil se compare aux points que vaut TOUT le montant.
+        let pointsTotaux = points;
+        const seuilCapital = periode.capital_seuil_points;
+        if (seuilCapital !== null && seuilCapital !== undefined) {
+          const valeurSeuil = this.valeurDuPoint(periode.points_de ?? code, anneeLiquidation);
+          if (valeurSeuil !== null && valeurSeuil[0] > 0) {
+            pointsTotaux = montantBrut / valeurSeuil[0];
+          }
+        }
+        if (seuilCapital !== null && seuilCapital !== undefined
+            && pointsTotaux > 0 && pointsTotaux < seuilCapital) {
+          // SOUS LE SEUIL, UN CAPITAL (décret n° 2004-569, art. 9). Le
+          // montant annuel reste celui de la rente dont le capital est
+          // l'équivalent actuariel.
+          const capital = montant * conversionCapitalRafp(ageLiquidation);
+          detail += ` ; versé en capital, ${formatFixe(capital, 0, true)} € en une fois `
+            + `(moins de ${formatFixe(periode.capital_seuil_points, 0, true)} points)`;
+        }
         pensions.push({
           regime: code,
           montant,
           type_calcul: periode.type_calcul,
-          detail: formulePoints(details, abattement),
+          detail,
           fiabilite: fiabiliteRegime,
         });
         continue;
@@ -2780,6 +2847,36 @@ function formulePoints(termes, coefficient) {
 
 export function auTrimestreSuperieur(trimestres) {
   return Math.max(0, Math.ceil(Math.round(trimestres * 1000) / 1000));
+}
+
+// RAFP — barème actuariel de modulation de la valeur de service, par âge
+// ENTIER à la date d'effet (décret n° 2004-569, art. 8 ; tableau de l'ERAFP).
+const MAJORATION_RAFP = {
+  62: 1.00, 63: 1.04, 64: 1.08, 65: 1.12, 66: 1.17, 67: 1.22, 68: 1.28,
+  69: 1.33, 70: 1.40, 71: 1.47, 72: 1.54, 73: 1.62, 74: 1.71, 75: 1.80,
+};
+
+// RAFP — coefficients de conversion en capital depuis le 1er janvier 2022,
+// interpolés au mois entre deux âges entiers, comme le document l'écrit.
+const CONVERSION_CAPITAL_RAFP = {
+  62: 27.11, 63: 26.34, 64: 25.57, 65: 24.79, 66: 24.02, 67: 23.25,
+  68: 22.47, 69: 21.70, 70: 20.92, 71: 20.15, 72: 19.37, 73: 18.61,
+  74: 17.84, 75: 17.07,
+};
+
+function majorationRafp(ageLiquidation) {
+  return MAJORATION_RAFP[Math.min(75, Math.max(62, Math.trunc(ageLiquidation + 1e-9)))];
+}
+
+function conversionCapitalRafp(ageLiquidation) {
+  const age = Math.min(75.0, Math.max(62.0, ageLiquidation));
+  const ans = Math.trunc(age + 1e-9);
+  if (ans >= 75) {
+    return CONVERSION_CAPITAL_RAFP[75];
+  }
+  const mois = Math.trunc((age - ans) * 12 + 1e-6);
+  const bas = CONVERSION_CAPITAL_RAFP[ans];
+  return bas + (CONVERSION_CAPITAL_RAFP[ans + 1] - bas) * mois / 12;
 }
 
 function coefficientAnticipation(trimestresManquants, maximum) {
