@@ -12497,9 +12497,9 @@ existe pour montrer — ne coûte plus une phrase à personne.
 
 ---
 
-### 89. Dépouiller les 237 sources officielles remises le 22 septembre 2026 — `en cours`
+### 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026 — `en cours`
 
-**Demande.** Sept lots d'adresses, remis le même jour : « explorer chaque lien
+**Demande.** Huit lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
 pas rester à la surface et regarder uniquement la page servie par le lien mais
 aussi l'ensemble des pages qui peuvent être explorées. Il y a énormément de
@@ -12520,10 +12520,10 @@ capitalisée de la CAVP. Et il touche l'étalon : le scénario 1 doit être le
 droit en vigueur tel que la caisse l'applique, et ces sources sont exactement
 les sources d'application que `docs/veille_droit.md` exige à côté du texte.
 
-**Ce qui est déjà fait, et qui était le plus long.** Les 237 adresses sont
+**Ce qui est déjà fait, et qui était le plus long.** Les 260 adresses sont
 inventoriées dans `data/sources_a_explorer.yaml`, une ligne chacune, avec le
 régime qu'elles concernent, la nature de ce qu'elles portent et, en une
-phrase, ce qu'on va y chercher. Elles ont toutes été sondées : 229 répondent
+phrase, ce qu'on va y chercher. Elles ont toutes été sondées : 252 répondent
 200 à une session, et les huit autres tiennent en cinq cas dont quatre se
 contournent proprement. `docs/exploration_sources.md` porte les recettes.
 
@@ -13087,3 +13087,39 @@ modèle n'oppose pas encore ; et le C vise les autres départs avant soixante an
 `data/reference/legislation/veille.yaml`, `tests/test_simulateur.py`,
 `tests/test_affirmations.py`, `data/reference/site/affirmations.yaml`,
 `docs/limites.md`.
+**Troisième lot dépouillé : les IEG, le 22 septembre 2026.** Les pages
+« réglementation » de la CNIEG, puis l'annexe 3 du statut national lue dans
+l'index LEGI. Deux confirmations et deux écarts.
+
+*Confirmé.* La montée en charge de la décote des régimes spéciaux — rien avant
+le 1er juillet 2010, un dixième du taux par an, 1,25 % en 2019, et un âge
+d'annulation qui recule de seize trimestres à rien de 2010 à 2024 — est
+exactement ce que le dépôt applique depuis qu'il a lu le texte de l'Opéra de
+Paris. La caisse publie les deux tables à l'identique. Le taux de surcote,
+1,25 % par trimestre depuis 2009, l'est aussi.
+
+*Corrigé : sept trimestres de décote de trop, depuis 2025.* Le I de l'article 10
+de l'annexe 3, dans sa version en vigueur (LEGIARTI000052046924), compte les
+trimestres de minoration jusqu'à « un âge de référence correspondant à l'âge
+minimum d'ouverture du droit à pension applicable à l'assuré **majoré de trois
+ans** » — cinq ans avant la réforme de 2023 —, et son article 45 fixe cet âge à
+soixante-deux ans pour les agents en services actifs nés avant 1975. La fiche
+portait 63,75 puis 64 ans. Sur le cas type des IEG, l'écart au système actuel
+passe de −23 % à −32 % pour la génération 1970 et de −38 % à −45 % pour celle
+de 2000 : l'agent des IEG devient, en tête de la page Cas types, la carrière la
+moins bien traitée par la proposition, à la place du militaire non officier.
+
+*Déclaré, non corrigé : le régime a sa propre table de durée requise.* 169
+trimestres pour la génération 1963, 170 pour 1964-1965, 171 pour 1966-1967, 172
+à partir de 1968 — trois générations de moins que la table commune que le dépôt
+lui oppose. Un trimestre vaut 1,25 % de décote ou 0,6 % de pension. Le corriger
+demande une quatrième table dans `_duree_requise` — après celle de la fonction
+publique, celle de la catégorie active et la table commune — et son portage
+JavaScript : c'est la ligne `duree_requise_ieg` du registre de veille, état
+`manque`. La CNIEG publie en outre une table par MOTIF D'ANTICIPATION, que le
+dépôt ne porte pour aucun régime spécial.
+
+*Et la question qu'il laisse ouverte.* La SNCF et la RATP portent la même
+construction — âge d'ouverture majoré de cinq ans — et leurs textes n'ont pas
+été lus. Si la réforme de 2023 les a traitées comme les IEG, deux autres fiches
+décotent de trop. C'est la première chose à faire du prochain lot.

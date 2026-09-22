@@ -164,7 +164,7 @@ Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses don
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
 chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->821<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 571<!--/--> Ko bruts) et prend quelques dixièmes
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 573<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Sept pages. **Programme** est l'accueil : la proposition du Parti libéral
@@ -197,7 +197,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->3 056<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->3 058<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->72<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -855,10 +855,10 @@ contrôle et non identité.
 |---|---|---|---|
 | 1. Système actuel | −0,17 % du PIB | **−1,13 %** | **0,84** |
 | 2. Notionnel rétroactif, part salariale | +9,15 % | +7,96 % | 2,60 |
-| 3. Notionnel dès 2026, part salariale | −1,34 % | +1,38 % | **1,67** |
+| 3. Notionnel dès 2026, part salariale | −1,34 % | +1,39 % | **1,67** |
 | 4. Notionnel rétroactif, salariale + patronale | +4,03 % | +2,21 % | 1,16 |
-| 5. Notionnel dès 2026, salariale + patronale | −1,35 % | −0,20 % | 1,08 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,04 % | **−1,23 %** | **0,98** |
+| 5. Notionnel dès 2026, salariale + patronale | −1,35 % | −0,19 % | 1,08 |
+| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,04 % | **−1,22 %** | **0,98** |
 
 Chiffres du 20 septembre 2026, ceux que la page Coût affiche, Python et
 JavaScript à l'identique, et qu'un test y confronte ligne par ligne
