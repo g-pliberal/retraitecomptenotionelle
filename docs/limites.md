@@ -2214,10 +2214,10 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   Ircantec depuis 1949), avec conversion des points aux fusions. S'y ajoutent
   depuis peu deux régimes dont le barème n'est pas un prix d'achat mais un
   NOMBRE DE POINTS par tranche d'assiette : le régime de base des professions
-  libérales (525 points au plafond jusqu'en 2024, 557 depuis 2025, 25 sur la
-  seconde tranche) et la complémentaire agricole (100 points pour 1 820 SMIC).
+  libérales (<!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnavpl.periodes.debut=2015;assiette=plafonnee.points_maximum)-->525<!--/--> points au plafond jusqu'en 2024, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnavpl.periodes.debut=2025.points_maximum)-->557<!--/--> depuis 2025, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnavpl.periodes.debut=2024;assiette=plafonnee_5_pass.points_maximum)-->25<!--/--> sur la
+  seconde tranche) et la complémentaire agricole (<!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=msa_rco.periodes.debut=2003.points_maximum)-->100<!--/--> points pour <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=msa_rco.periodes.debut=2003.assiette_repere_smic)-->1 820<!--/--> SMIC).
   Le même régime de base en connaît une troisième forme pour ce qui précède
-  2004 : CENT POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant cotisé. La complémentaire des
+  2004 : <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnavpl.periodes.debut=1949.points_par_trimestre_valide)-->100<!--/--> POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant cotisé. La complémentaire des
   avocats les a rejoints, avec le prix d'achat publié par la CNBF et les cinq
   tranches en euros de la classe C1, depuis 2019 seulement — les tranches
   antérieures ne sont pas publiées. Restent au rendement instantané le RCI et le
@@ -2242,8 +2242,8 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   professions libérales, celui des avocats, et celui des exploitants
   agricoles. La SURCOTE de l'Ircantec, elle, en est sortie : le IV de
   l'article 16 de l'arrêté du 30 décembre 1970 est servi depuis le
-  1er janvier 2010, à ses deux taux — 0,75 % par trimestre entier écoulé
-  au-delà de l'âge du taux plein, 0,625 % par trimestre cotisé au-delà de la
+  1er janvier 2010, à ses deux taux — <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=_SURCOTE_IRCANTEC_AGE&echelle=100)-->0,75<!--/--> % par trimestre entier écoulé
+  au-delà de l'âge du taux plein, <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=_SURCOTE_IRCANTEC_DUREE&echelle=100)-->0,625<!--/--> % par trimestre cotisé au-delà de la
   durée requise en deçà de cet âge —, et le coefficient d'un régime en points
   peut désormais dépasser un, des deux côtés du portage. Les neuf autres
   régimes en points dont la fiche écrit une surcote la servent aussi depuis
@@ -2258,18 +2258,18 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   vingt trimestres à la CAVEC et à la CARPIMKO, douze à la CAVP, années
   pleines seulement à la CIPAV et à la CARMF d'avant 2017. Rien n'est servi
   avant le texte qui date chaque règle, et les taux que les fiches
-  reportaient en arrière sans texte — 0,75 % à la CARPIMKO, 1 % à la CPRN —
+  reportaient en arrière sans texte — <!--chiffre:illustration()-->0,75<!--/--> % à la CARPIMKO, <!--chiffre:illustration()-->1<!--/--> % à la CPRN —
   sont ceux des arrêtés. Ce que la fiche ne porte pas est dit dans ses
   notes : la CIPAV ne majore que les points des trente premières années, la
   CAVP borne les générations 1951 à 1955 à un ou deux ans, la CNAVPL sert
-  1,25 % aux liquidations de 2024 et non aux trimestres accomplis depuis
-  septembre 2023, la MSA ramène à 0,75 % l'escalier de 3, 4 et 5 % d'avant
+  <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnavpl.periodes.debut=2024;assiette=plafonnee.surcote_par_trimestre*100)-->1,25<!--/--> % aux liquidations de 2024 et non aux trimestres accomplis depuis
+  septembre 2023, la MSA ramène à <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=msa_non_salaries.periodes.debut=2004.surcote_par_trimestre*100)-->0,75<!--/--> % l'escalier de <!--chiffre:illustration()-->3<!--/-->, <!--chiffre:illustration()-->4<!--/--> et <!--chiffre:illustration()-->5<!--/--> % d'avant
   2009 ;
 - **revalorisation des salaires portés au compte** — le modèle ne les
   reconstitue plus, il les LIT dans la circulaire annuelle de la Cnav
   (`legislation/revalorisation_salaires.csv`, perceptions 1930-2025). Il les
   approchait par « les salaires jusqu'en 1986, les prix depuis » ; cette
-  approximation sur-revalorise les salaires anciens de 12,1 % sur 1970-2018.
+  approximation sur-revalorise les salaires anciens.
   Dix colonnes publiées sont dans le dépôt ; hors d'elles, le coefficient est
   ancré sur la plus proche, et l'approximation ne reprend toute la main
   qu'avant 1930, où elle joue À LA HAUSSE ;
@@ -3112,18 +3112,18 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n’est pas un régime absent : les 72 fiches du catalogue
-calculent toutes une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
+Un régime « incomplet » n’est pas un régime absent : les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->72<!--/--> régimes du catalogue
+calculent tous une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
 on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 
 | Régime | Ce qui manque | Ce qui le remplace | Sens et ordre de grandeur |
 |---|---|---|---|
-| Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; le montant de la cotisation FORFAITAIRE du régime de base d'avant 2004 — qui ne commande plus la pension, seulement le flux versé au compte notionnel | le régime de base, en points plafonnés à 550, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
+| Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; le montant de la cotisation FORFAITAIRE du régime de base d'avant 2004 — qui ne commande plus la pension, seulement le flux versé au compte notionnel | le régime de base, en points plafonnés à <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnavpl.periodes.debut=2025.points_maximum)-->557<!--/-->, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
 | Marins (ENIM) | les salaires forfaitaires d'avant 2008, que les textes de l'index ne chiffrent pas ; la CATÉGORIE du marin, que le décret définit par le métier et qu'une carrière saisie ne porte pas ; les deux exceptions au plafond de vingt-cinq annuités, l'invalidité et le marin de cinquante-deux ans et demi réunissant trente-sept annuités et demie | la grille des vingt forfaits lue au Journal officiel depuis 2008, la catégorie la plus proche du revenu — convention nommée —, et la grille de 2008 ramenée par le salaire moyen avant ; le plafond de vingt-cinq annuités avant cinquante-cinq ans est porté | **estimé** avant 2008, la grille de 2008 étant ramenée par le salaire moyen ; **sous-estime** la pension du marin embarqué très jeune, à qui le plafond est opposé alors que le texte l'en dispense |
-| Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (363 € la première, 1 988 € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de 3,20 % ET le forfait à sa valeur de croisière, 1 988 € ; les années d'avant 2019 restent au rendement instantané | **surestime de 4 586 € sur une carrière** le flux des cinq premières années, contre 70 000 € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
-| Non-salariés agricoles | les points gratuits de la RCO — 66 par an aux conjoints et aides familiaux avant 2011, dans la limite de 17 ans ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, EN VIGUEUR depuis le 1er janvier 2026 et non calculable : deux de ses trois paramètres sont renvoyés à un décret que la base ne porte pas | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà, seule dont les paramètres existent | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
+| Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (au barème 2026, <!--chiffre:illustration()-->363<!--/--> € la première, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.cotisation_forfaitaire_euros)-->1 988<!--/--> € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.taux_cotisation_retraite*100)-->3,20<!--/--> % ET le forfait à sa valeur de croisière, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.cotisation_forfaitaire_euros)-->1 988<!--/--> € ; les années d'avant 2019 restent au rendement instantané | **surestime de <!--chiffre:illustration()-->4 586<!--/--> € sur une carrière**, au barème 2026, le flux des cinq premières années, contre près de <!--chiffre:illustration()-->70 000<!--/--> € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
+| Non-salariés agricoles | les points gratuits de la RCO — <!--chiffre:illustration()-->66<!--/--> par an aux conjoints et aides familiaux avant 2011, dans la limite de <!--chiffre:illustration()-->17<!--/--> ans ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, EN VIGUEUR depuis le 1er janvier 2026 et non calculable : deux de ses trois paramètres sont renvoyés à un décret que la base ne porte pas | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà, seule dont les paramètres existent | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
 | Régimes spéciaux résiduels | des paramètres certifiés — mais plus des textes : l'Opéra, la Comédie-Française, la SEITA, les clercs de notaires, la Banque de France, le fonds spécial des ouvriers de l'État et le personnel navigant ont leurs décrets lus VERSION PAR VERSION dans la base LEGI, et passent au niveau `moyenne`. Restent au niveau `estimee` les mines — dont dix-huit millésimes sont interpolés entre deux valeurs sourcées —, les marins, le port autonome de Strasbourg et les chemins de fer secondaires | pour les quatre derniers, les textes fondateurs sans recontrôle ; le port de Strasbourg n'a rien dans LEGI que des décrets de compensation, son règlement de retraite étant un acte de l'établissement | **indéterminé** pour ces quatre-là, et c'est le seul cas où le dépôt ne sait pas dire le sens. Ces régimes portent peu d'assurés ; leur poids dans les agrégats est faible |
 
 **Ce qui a été refermé depuis la version précédente de ce tableau.** Le régime
@@ -3133,8 +3133,8 @@ valeur de point : elle en a une, certifiée de 2005 à 2024, tirée du code rura
 Le régime de base des professions libérales y figurait sans barème : il a le
 sien, plafonné en points comme la caisse le publie. La grille des classes de
 son étage d'avant 2004 y figurait aussi : **elle n'était pas la bonne
-question** — la pension d'avant 2004 ne dépend d'aucune classe, et la section
-« Cent points par trimestre » plus bas dit pourquoi.
+question** — la pension d'avant 2004 ne dépend d'aucune classe, et la section sur
+le régime de base des libéraux d'avant 2004, plus bas, dit pourquoi.
 
 **Pourquoi ce qui reste ne se referme pas de la même façon.** Les limites
 refermées cette année l'ont toutes été par un changement de CLÉ D'ENTRÉE — un
@@ -3145,7 +3145,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **72 régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->72<!--/--> régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 

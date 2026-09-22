@@ -309,9 +309,12 @@ def _descendre(donnees, chemin: str, origine: str):
         if isinstance(donnees, list) and "=" in cle:
             # « code=regime_general » : l'entrée d'une liste qui porte ce champ.
             # Les fiches de régime sont des listes, et leur rang n'y dit rien.
-            champ, _, voulu = cle.partition("=")
-            trouves = [e for e in donnees
-                       if isinstance(e, dict) and str(e.get(champ)) == voulu]
+            # Plusieurs critères se joignent par « ; » : une fiche range ses
+            # tranches en périodes qui partagent leur année de début, et
+            # ``debut=2015;assiette=plafonnee`` désigne celle de la première.
+            criteres = [c.partition("=")[::2] for c in cle.split(";")]
+            trouves = [e for e in donnees if isinstance(e, dict)
+                       and all(str(e.get(champ)) == voulu for champ, voulu in criteres)]
             if len(trouves) != 1:
                 raise ValueError(f"« {cle} » désigne {len(trouves)} entrées "
                                  f"dans {origine}, il en faut une")

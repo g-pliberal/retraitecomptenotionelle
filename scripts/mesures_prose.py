@@ -354,7 +354,7 @@ def parametre(**reglages: str) -> float:
 
 
 def constante(**reglages: str) -> float:
-    """Une constante du modèle : ``de=module&nom=CONSTANTE``.
+    """Une constante du modèle : ``de=module&nom=CONSTANTE``, ``echelle=100`` au besoin.
 
     Pour les bornes que le code fixe et que la prose annonce — la fenêtre de
     lissage la plus longue, l'âge d'entrée de la carrière de référence. Le
@@ -380,7 +380,7 @@ def constante(**reglages: str) -> float:
             objet = getattr(objet, morceau)
         else:
             raise ValueError(f"{reglages['de']} n'a pas de « {reglages['nom']} »")
-    return float(objet)
+    return float(objet) * float(reglages.get("echelle", 1))
 
 
 def poids_trimestre(**reglages: str) -> float:
