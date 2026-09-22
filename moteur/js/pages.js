@@ -27,7 +27,7 @@ import {
 import { AssietteActivite } from "./assiette.js";
 import {
   LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, calculerAvantages,
-  chargerAvantages,
+  carriereVariante, chargerAvantages,
 } from "./avantages.js";
 import { chargerFrontiere } from "./frontiere.js";
 import {
@@ -6817,6 +6817,21 @@ const LIBELLES_ETATS = {
  * MESURE et un plancher très bas, le troisième mesure autre chose, les annuités
  * servies avant l'âge légal. Voir la référence Python pour le détail.
  */
+/**
+ * Ce que le classement ajoute, par an, à la pension d'un agent parti à 57 ans :
+ * le cas type actif contre la même carrière déclassée, au même âge. Calculé
+ * depuis le 22 septembre 2026 — voir `_ecart_plafond_decote` en Python.
+ */
+function ecartPlafondDecote(simulateur, generation) {
+  const cas = CAS_TYPES.find((c) => c.code === "fonctionnaire_actif");
+  const [actif, sedentaire] = [null, "fonctionnaire_territorial_hospitalier"].map(
+    (affiliation) => simulateur.simuler(carriereVariante(
+      simulateur, cas, generation, 57, affiliation,
+    )).actuel.pension_annuelle,
+  );
+  return actif - sedentaire;
+}
+
 function avantages(contexte, regards = null) {
   const inventaire = contexte.inventaireAvantages();
   const c = contexte.avantages();
@@ -7089,8 +7104,10 @@ l'âge légal n'est rattrapée par aucune décote.`,
       `<p>La décote est <strong>plafonnée à vingt trimestres</strong>.
 Un agent de catégorie active parti à 57 ans et un agent sédentaire parti le même
 jour butent donc tous deux sur le même plafond : leurs pensions ne diffèrent que
-de 825 € par an pour la génération 1960, et de 102 € pour celle de 1965, dont le
-classement abaisse par ailleurs la durée requise d'un trimestre. Le montant ne
+de ${g.euros(ecartPlafondDecote(contexte.simulateur(), 1960))} par an pour la
+génération 1960, et de ${g.euros(ecartPlafondDecote(contexte.simulateur(), 1965))}
+pour celle de 1965, dont le classement abaisse par ailleurs la durée requise
+d'un trimestre. Le montant ne
 sait pas distinguer celui qui part cinq ans trop tôt ; la durée le sait.</p>
 <p>Le classement de l'emploi en porte
 ${g.pourcentage(partClassement, false, 0)}. Le reste se partage entre les

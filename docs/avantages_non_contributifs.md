@@ -336,11 +336,11 @@ coefficient de conversion notionnel :
 
 | Départ | Droit actuel | Notionnel | Écart |
 |---|---|---|---|
-| 62,5 ans | 81,7 % | 84,0 % | **−2,3 pts** (plus dur) |
-| 59,5 ans | 59,1 % | 65,5 % | **−6,4 pts** (plus dur) |
-| 56,5 ans | 48,0 % | 46,4 % | **+1,5 pt** (plus doux) |
-| 54,5 ans | 44,6 % | 39,5 % | **+5,1 pts** |
-| 52,5 ans | 40,3 % | 32,7 % | **+7,6 pts** |
+| 62,5 ans | 81,7 % | 84,1 % | **−2,4 pts** (plus dur) |
+| 59,5 ans | 58,2 % | 65,2 % | **−7,0 pts** (plus dur) |
+| 56,5 ans | 46,8 % | 46,0 % | **+0,8 pt** (plus doux) |
+| 54,5 ans | 43,1 % | 38,9 % | **+4,2 pts** |
+| 52,5 ans | 38,6 % | 32,2 % | **+6,4 pts** |
 
 La décote **surpunit l'anticipation ordinaire et sous-punit l'anticipation
 extrême**, parce qu'elle est plafonnée à vingt trimestres. Or l'anticipation

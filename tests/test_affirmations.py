@@ -2185,12 +2185,13 @@ def _(m: Modele):
     """Le rapport est compté sur le modèle, et la page écrit ce compte — ou se
     tait quand il n'y a plus de montant à rapporter.
 
-    La seconde branche n'est pas théorique : le classement de l'emploi portant
-    depuis le 22 septembre 2026 sa propre durée requise, le contrôle
-    d'isolement de `avantages.py` refuse d'en tirer un montant sur les cas
-    types dont ce retrait déplace la proratisation. Il en reste aujourd'hui
-    assez pour que le rapport s'écrive ; le jour où il n'en restera plus, ce
-    contrôle exigera le silence plutôt qu'un rapport que rien ne calcule.
+    La seconde branche n'est pas théorique : le contrôle d'isolement de
+    `avantages.py` refuse un montant dont le retrait déplacerait aussi la
+    proratisation. Il l'accepte pour la catégorie active depuis le
+    22 septembre 2026 — la durée requise propre aux emplois classés est l'un de
+    ses effets (`DUREE_REQUISE_EST_L_AVANTAGE`) —, mais le garde-fou vaut pour
+    les autres. Le jour où il ne resterait plus de montant, ce contrôle
+    exigera le silence plutôt qu'un rapport que rien ne calcule.
     """
     derniere = m.avantages.derniere
     montant = sum(derniere.lignes.get(ligne, 0.0) for ligne in m.avantages.lignes_modele
