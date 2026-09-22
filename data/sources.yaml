@@ -1302,7 +1302,59 @@ institutions:
         titre: Rapports publics thématiques sur les retraites
         url: https://www.ccomptes.fr/fr/recherche?search=retraites
         acces: document
+        blocage: reseau
         statut_integration: saisi
+        note: >-
+          `ccomptes.fr` ferme la connexion avant toute réponse depuis une
+          session du dépôt — `curl` rend « Recv failure: Connection reset by
+          peer », vérifié le 22 septembre 2026 sur la racine comme sur la page
+          de recherche. Ce n'est pas un refus poli qu'un navigateur
+          contournerait : rien ne répond. Les rapports sont donc saisis depuis
+          leur lecture ailleurs.
+
+      - id: cdc_successions_2024
+        titre: >-
+          Les droits de succession, rapport public thématique de septembre 2024
+        url: https://www.ccomptes.fr/fr/publications/les-droits-de-succession
+        acces: document
+        blocage: reseau
+        statut_integration: a_faire
+        note: >-
+          Le rapport donne la distribution des SUCCESSIONS DÉCLARÉES, actif net
+          par tranche. C'est le recoupement d'ensemble que l'action 47 de la
+          feuille de route attend pour la reprise de la garantie vieillesse :
+          le dépôt calcule aujourd'hui la couverture d'une avance sur le
+          patrimoine des MÉNAGES retraités, jamais sur ce que les successions
+          portent réellement. Même blocage réseau que le jeu précédent.
+
+  progedo_adisp:
+    nom: Progedo — Archives de données issues de la statistique publique (ADISP)
+    role: >-
+      Diffusion des fichiers individuels des enquêtes de la statistique
+      publique aux chercheurs et aux enseignants.
+    jeux:
+      - id: adisp_histoire_de_vie_patrimoine
+        titre: >-
+          Enquête Histoire de vie et Patrimoine (INSEE), fichier standard
+        url: https://data.progedo.fr/
+        acces: fichier
+        blocage: convention
+        statut_integration: a_faire
+        note: >-
+          LE FICHIER QUI LÈVERAIT LA DERNIÈRE HYPOTHÈSE DE L'ACTION 47. Le
+          patrimoine des retraités selon leur PENSION n'est publié nulle part :
+          le dépôt cale une log-normale sur les deux moments que le COR publie
+          pour les ménages retraités, et en tire la part d'une avance qu'une
+          succession couvre. Le fichier individuel donnerait, par personne de
+          65 ans et plus, la pension et le patrimoine net du ménage — donc la
+          couverture par tranche de pension, et le poids des couples.
+          Le catalogue répond depuis une session (200 le 22 septembre 2026),
+          le fichier non : il se commande sur inscription, à des fins de
+          recherche ou d'enseignement. Rien à déposer dans `data/brut/` — un
+          fichier individuel d'enquête n'entre pas dans un dépôt public ; ce
+          qui entrerait est la TABLE AGRÉGÉE qu'un script en tirerait, avec ce
+          script. À vérifier au dictionnaire des variables que le montant
+          individuel des pensions y figure.
 
   agirc_arrco:
     nom: Agirc-Arrco
