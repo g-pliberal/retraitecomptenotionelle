@@ -2227,8 +2227,13 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   2004 : <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnavpl.periodes.debut=1949.points_par_trimestre_valide)-->100<!--/--> POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant cotisé. La complémentaire des
   avocats les a rejoints, avec le prix d'achat publié par la CNBF et les cinq
   tranches en euros de la classe C1, depuis 2019 seulement — les tranches
-  antérieures ne sont pas publiées. Restent au rendement instantané le RCI et le
-  RAFP, faute d'un prix d'achat publié ;
+  antérieures ne sont pas publiées. Restent au rendement instantané, faute
+  d'une série de prix d'achat, les complémentaires des sections libérales et de
+  l'IRCEC, quelques petits régimes — CAFAT, tranche B de la Polynésie,
+  additionnel des enseignants du privé, gérants de débits de tabac, conjoints du
+  bâtiment —, et les années postérieures au dernier barème publié de
+  l'Agirc-Arrco, de l'Ircantec, du RCI et de la complémentaire des avocats. Le
+  RAFP, lui, a sa série ;
 - **montée en charge des réformes** — le modèle a trois horloges, comme le
   droit. Ce qui s'ACQUIERT est lu à l'année travaillée : taux de cotisation,
   assiette et ses bornes, plafond de la Sécurité sociale, prix d'achat du point,
@@ -5212,7 +5217,8 @@ Le scénario 6 — le scénario 4 jusqu'à la bascule, puis un taux unique de <!
 pour tous, plus une garantie vieillesse individualisée, financée par l'impôt —
 hérite des limites du scénario 4, part patronale inconnue du public comprise :
 ce qui a été cotisé avant la bascule y est porté aux mêmes taux, et estimé là
-où le 4 l'estime. Il en ajoute trois.
+où le 4 l'estime. Il en ajoute d'autres, que les paragraphes suivants
+prennent une à une.
 
 **La garantie est ouverte à <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et le modèle sert désormais ce qu'elle
 doit à qui est parti plus tôt.** *Corrigé le 19 septembre 2026.* Avant <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans
@@ -5492,7 +5498,7 @@ global les manquerait.
 |---|---|---|---|
 | Plancher majoré pour tous *(jusqu'au 21 septembre 2026)* | 22,0 Md € | 0,74 % | 918 Md € |
 | **Pesé par le recensement** | **17,4 Md €** | **0,58 %** | **731 Md €** |
-| Plancher de base pour tous | 12,5 Md € | 0,42 % | 525 Md € |
+| Plancher de base pour tous | 12,5 Md € | 0,42 % | 526 Md € |
 
 La convention d'avant surestimait donc la garantie de **plus d'un cinquième**,
 et ce n'était pas une prudence assumée : c'était une borne haute faute d'avoir
