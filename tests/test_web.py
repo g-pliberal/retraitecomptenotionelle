@@ -5301,9 +5301,11 @@ def test_le_README_donne_le_solde_que_la_page_cout_calcule(contexte):
 
     Il a été faux plusieurs jours de suite : −1,93 % et 0,89 pour la
     proposition quand le site affichait −1,52 % et 0,92, et 1,87 pour le
-    scénario 3 deux paragraphes après un tableau qui disait 1,64. Le README
-    est le document le plus lu du dépôt, et sa section 6 n'est pas encore une
-    zone `etat` de `zones.yaml` : ce test tient ses nombres en attendant.
+    scénario 3 deux paragraphes après un tableau qui disait 1,64. La section
+    est devenue une zone `etat` de `zones.yaml`, et ses nombres portent une
+    ancre que la sonde `mesure` recalcule ; ce test reste, parce qu'il
+    confronte le README à la PAGE et non au modèle — deux chemins qui
+    pourraient diverger. Il lit les nombres sous leurs ancres.
     """
     from pathlib import Path
 
@@ -5315,6 +5317,7 @@ def test_le_README_donne_le_solde_que_la_page_cout_calcule(contexte):
     horizon = solde.annee(solde.derniere_annee)
 
     def normaliser(texte: str) -> str:
+        texte = re.sub(r"<!--.*?-->", "", texte)
         return (texte.replace("**", "").replace("−", "-").replace(" du PIB", "")
                 .replace("\u202f", " ").replace("\u00a0", " ").strip())
 
