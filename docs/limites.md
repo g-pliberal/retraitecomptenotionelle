@@ -5249,14 +5249,14 @@ garantie regarde — compte notionnel et rente du pilier capitalisé, à partir 
 65 ans, revalorisés — rapportée à la pension moyenne du système actuel en
 2020, l'une et l'autre par tête et en euros constants, lues sur la même grille
 (`GarantieDistribution` dans `cout.py`, porté dans `moteur/js/cout.js`). Ce
-facteur vaut 0,64 en 2020, parce qu'un compte rétroactif ne rend que ce qui a
-été cotisé, et 1,26 en 2070, les pensions montant avec les salaires face à un
+facteur vaut 0,61 en 2020, parce qu'un compte rétroactif ne rend que ce qui a
+été cotisé, et 1,14 en 2070, les pensions montant avec les salaires face à un
 plancher indexé sur les prix. L'effectif suit les têtes de 65 ans et plus de la
 grille, sur l'échelle des retraités de la DREES. La trajectoire porte
-**1,30 % du PIB en 2026** (40 milliards d'euros de 2026, 6,8 millions de
-bénéficiaires), décroissant à 0,86 % en 2070 (32 milliards, 5,1 millions),
-soit 1 621 milliards constants cumulés sur la projection ; et le passé, où le
-même déplacement est appliqué à rebours, en porte 3 757 depuis 1959.
+**0,58 % du PIB en 2026** (18 milliards d'euros de 2026, 3,2 millions de
+bénéficiaires), décroissant à 0,40 % en 2070 (15 milliards, 2,8 millions),
+soit 731 milliards constants cumulés sur la projection ; et le passé, où le
+même déplacement est appliqué à rebours, en porte 1 593 depuis 1959.
 
 Ce que cette méthode suppose, et qui reste une limite : la FORME de la
 distribution est celle de 2020, déplacée sans être déformée, le passé comme
@@ -5303,9 +5303,9 @@ de référence disparaissent avec elle. En 2024, ces quatre minima coûtent
 7,8 milliards — 4,94 de minimum vieillesse lus dans les comptes de la
 protection sociale, 2,18 de minimum contributif et 0,72 de minimum garanti
 calculés sur la grille, qui n'est pas une population et les sous-estime, et
-une pension majorée de référence non chiffrée — contre 20,7 milliards de
+une pension majorée de référence non chiffrée — contre 17,4 milliards de
 garantie aux pensions du scénario 6 la même année, à un ayant droit sur deux :
-**12,9 milliards de plus pour l'impôt**, borne haute puisque le total remplacé
+**9,5 milliards de plus pour l'impôt**, borne haute puisque le total remplacé
 est une borne basse. *Le 20 septembre 2026, le minimum garanti est sorti de ce
 tableau au motif que les régimes de la fonction publique le servent dans leur
 dépense de pensions, et il y a été remis le même jour : le programme le
@@ -5379,7 +5379,7 @@ propriétaires donnent leur logement retirerait de l'ordre de 0,8 milliard par a
 l'horizon (calcul hors modèle du 22 septembre 2026, que le modèle ne refait
 pas : il ne connaît pas de donation faite pour échapper à la reprise).
 
-Six nombres de ce calcul sont des hypothèses sans source, et `Parametres` les
+Sept nombres de ce calcul sont des hypothèses sans source, et `Parametres` les
 porte avec leur motif : la part du logement dans le patrimoine d'un
 propriétaire (75 %), le patrimoine à partir duquel un ménage est propriétaire
 (80 000 € de 2018, qui laisse 30 % de locataires parmi les ménages retraités
@@ -5408,14 +5408,19 @@ comptait : à 56,0 %, recomposer les deux sexes donnait 58,99 % de retraités
 sous le plancher majoré aux pensions du scénario 6, quand la colonne
 « ensemble » — celle dont le COÛT est tiré — en donne 58,03 %. Le modèle
 décrivait deux populations différentes dans le même calcul.
-`donnees.distribution.part_femmes` lit ce poids sur le fichier et refuse un
-fichier dont les trois colonnes ne se répondraient plus ;
+Le modèle prend ce poids dans l'effectif de chaque sexe que publie le classeur
+de caractéristiques de la même enquête (`CaracteristiquesRetraites.part_femmes`) ;
+`donnees.distribution.part_femmes` le retrouve par les moindres carrés et
+refuse un fichier dont les trois colonnes ne se répondraient plus ;
 `test_les_deux_sexes_recomposent_la_colonne_dont_le_cout_est_tire` tient le
 raccord. Ce que cela déplace : la part des femmes parmi les bénéficiaires passe
 de 68 à 66 %, la durée d'une avance de 20,5 à 20,4 ans, le nombre d'avances par
 succession de 1,28 à 1,29, et la couverture ne bouge pas, 37 % des deux côtés.
-**Le COÛT de la garantie ne dépend pas de ce poids** : il est lu directement
-sur la colonne « ensemble ». Une réserve demeure, et elle va dans l'autre
+**Le COÛT de la garantie dépend de ce poids depuis que chaque sexe est déplacé
+du sien** : à `r = 1` et sous un plancher unique, il serait lu directement sur
+la colonne « ensemble » ; au rapport mesuré et aux deux planchers mélangés, il
+est recomposé des deux colonnes de sexe, pesées par ce poids — lu à 56 % plutôt
+qu'à 52,8 %, il monterait de 2,7 %. Une réserve demeure, et elle va dans l'autre
 sens : le poids lu est celui de TOUS les retraités de l'enquête, quand les
 bénéficiaires ont 65 ans et plus. C'est la convention que le modèle applique
 déjà à la FORME de la distribution — « les retraités de moins de 65 ans sont
@@ -5426,8 +5431,8 @@ seuls 65 ans et plus ferait bouger les deux ensemble.
 Le patrimoine des retraités selon leur PENSION n'est publié nulle part : c'est le
 fichier individuel de l'enquête qui le donnerait, et il se commande, action
 47. Le réglage `reprise` remplace la part calculée par un nombre. Au réglage
-par défaut, en 2070 : 15,3 milliards versés, 7,7 repris, 7,6 nets ; de 2026 à
-2070 : 729 versés, 243 repris, 486 nets. Deux choses que le calcul ne voit
+par défaut, en 2070 : 15,4 milliards versés, 8,0 repris, 7,4 nets ; de 2025,
+première année projetée, à 2070 : 731 versés, 239 repris, 491 nets. Deux choses que le calcul ne voit
 toujours pas, et qui vont en sens inverse l'une de l'autre : les femmes sous
 le plancher vivent souvent dans un ménage moins pauvre que leur pension — le
 calcul le sait pour leur espérance de vie, non pour leur patrimoine —, et deux
@@ -5448,10 +5453,10 @@ proportion, sexe par sexe. Les deux se composent — les femmes vivent seules
 plus souvent ET tombent sous le plancher plus souvent —, si bien qu'un partage
 global les manquerait.
 
-| | Garantie 2024 | 2026, % du PIB | Cumul 2026-2070 |
+| | Garantie 2024 | 2026, % du PIB | Cumul 2025-2070 |
 |---|---|---|---|
 | Plancher majoré pour tous *(jusqu'au 21 septembre 2026)* | 22,0 Md € | 0,74 % | 918 Md € |
-| **Pesé par le recensement** | **17,4 Md €** | **0,58 %** | **729 Md €** |
+| **Pesé par le recensement** | **17,4 Md €** | **0,58 %** | **731 Md €** |
 | Plancher de base pour tous | 12,5 Md € | 0,42 % | 525 Md € |
 
 La convention d'avant surestimait donc la garantie de **plus d'un cinquième**,
@@ -5533,7 +5538,7 @@ dehors.** C'était le troisième terme, nommé et non chiffré. Il l'est depuis 
 21 septembre 2026, et il ne vient pas de la même étagère que les deux autres :
 les EFFECTIFS de bénéficiaires sont lus sur l'enquête, la MASSE est prise au
 modèle, qui l'isole carrière par carrière dans la cascade du scénario 1 —
-2 912 millions en 2020, minimum contributif et minimum garanti réunis. Aucune
+2 909 millions en 2020, minimum contributif et minimum garanti réunis. Aucune
 série ne la publie, et le dépôt dit lui-même que cette masse est une borne
 basse : la grille n'est pas une population, et le minimum contributif est
 réclamé par des carrières courtes qu'elle ne compte guère.
@@ -5550,8 +5555,8 @@ tombent sous le plancher par carrière très courte.
 | Tous régimes confondus | 6,10 M | 67 % | 40 € | 1,65 % / 0,58 % | **0,989** |
 
 Le terme va donc dans le même sens que les deux autres, et il mènerait `r` de
-0,834 à 0,821-0,825. **Ce qu'il ferait au coût reste sous le pour cent** — 22,0
-milliards de garantie en 2024 deviennent 22,1 ou 22,2, et la part de PIB de
+0,834 à 0,821-0,825. **Ce qu'il ferait au coût reste sous le pour cent** — 17,4
+milliards de garantie en 2024 deviennent 17,5, et la part de PIB de
 2026 ne bouge pas au centième. C'est la raison de ne pas le retenir dans `r` :
 un terme dont le montant est pris au modèle là où les deux autres sont lus, et
 qui vaut moins d'un pour cent, coûterait plus en couplage — la garantie
