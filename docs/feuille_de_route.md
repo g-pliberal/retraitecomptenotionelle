@@ -8486,6 +8486,24 @@ série ignore » ne veut pas dire « les années qu'il couvre sont fausses », m
 « personne n'a encore dit ce que ce texte leur fait ». Le message du contrôle
 disait la première phrase ; il dit maintenant la seconde.
 
+**Le 22 septembre 2026 : ce que le modèle calcule cesse d'être recopié.** Le
+tableau des règles d'indexation — les neuf rendements cumulés de 1941 à 2025,
+qui portent l'argument principal du dépôt — existait en TROIS exemplaires : le
+site le calcule à chaque rendu, le README et la méthodologie le recopiaient. La
+page avait déjà payé cette dette une fois, ses neuf nombres y étant écrits en
+dur, et l'un d'eux mentait de trois dixièmes de point ; les deux copies de la
+prose étaient restées dans cet état, et elles donnaient le PIB nominal à
+1 068,6 % quand le modèle en calcule 1 068,3.
+
+`scripts/construire_tableaux_md.py` les écrit maintenant entre deux repères,
+depuis `_cumuls_indexation` — la fonction même du site —, et un test refuse une
+prose qui ne serait plus la sienne. C'est le geste de `construire_regimes_md.py`
+pour `docs/regimes.md`, appliqué à un BLOC au lieu d'un document entier : un
+`blocs_produits` dans `zones.yaml` exempte ces lignes de l'ancre par cellule,
+puisqu'un script les écrit et qu'un test les tient. C'est la quatrième forme du
+régime `produit`, et celle qui manquait — un document mêle la prose et ce qui
+se calcule, et il fallait pouvoir le dire ligne à ligne.
+
 **Ce qui reste — et c'est le travail, qui se fait section par section.**
 Soixante-douze sections, et elles ont toutes la même forme : elles disent ce
 que les chiffres du dépôt valent AUJOURD'HUI, et chacun de leurs chiffres est

@@ -213,6 +213,38 @@ def test_les_sondes_comptent_ce_qu_elles_disent_compter():
     assert verifier_prose.sonde_poids("moteur/donnees.json") > 0
 
 
+def test_les_tableaux_produits_ne_sont_pas_perimes():
+    """Ce que le modèle calcule ne se recopie pas à la main.
+
+    Le site rend le tableau des règles d'indexation à chaque affichage ; la
+    prose en portait deux copies, dans le README et dans la méthodologie, et
+    elles donnaient le PIB nominal à 1 068,6 % quand le modèle en calcule
+    1 068,3. `scripts/construire_tableaux_md.py` les écrit désormais entre
+    deux repères, et ce test refuse une prose qui ne serait plus la sienne.
+    """
+    import subprocess
+
+    rendu = subprocess.run(
+        [sys.executable, "scripts/construire_tableaux_md.py", "--verifier"],
+        cwd=RACINE, capture_output=True, text=True)
+    assert rendu.returncode == 0, rendu.stdout + rendu.stderr
+
+
+def test_un_bloc_produit_est_exempt_de_l_ancre():
+    """Un tableau qu'un script écrit n'a pas à porter une ancre par cellule.
+
+    C'est le régime `produit`, mais sur un BLOC au lieu d'une section entière,
+    parce qu'un document mêle la prose et ce qui se calcule : la phrase qui
+    commente le tableau reste tenue par une ancre, le tableau par son script.
+    """
+    lignes = ["Le pouvoir d'achat conservé :", "<!-- indexation:debut -->",
+              "| Règle | ×4,9 | 1,5 % |", "<!-- indexation:fin -->",
+              "et 12 lignes de prose ensuite"]
+    produites = verifier_prose.lignes_produites(lignes, ["indexation"])
+    assert produites == {2, 3, 4}
+    assert verifier_prose.lignes_produites(lignes, []) == set()
+
+
 def test_un_commentaire_de_code_n_est_pas_un_titre_de_section():
     """Le README écrit ses exemples en Python, commentaires compris.
 

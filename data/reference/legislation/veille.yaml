@@ -552,16 +552,18 @@ entrees:
     prochaine_veille: "2027-01-31"
 
   - id: revalorisation_des_pensions
-    regle: "Revalorisation annuelle des pensions liquidées (1er janvier), y compris ce que la LFSS 2026 a décidé pour 2026."
-    textes: ["L. 161-25 CSS", "loi n° 2025-1403"]
-    sources: []
-    verifie_le: "2026-09-17"
+    regle: "Revalorisation annuelle des pensions liquidées au 1er janvier : coefficient égal à l'évolution moyenne annuelle des prix hors tabac sur les douze derniers indices mensuels (L. 161-25), que L. 161-23-1 applique au régime général et aux deux régimes agricoles. Au 1er janvier 2026 : 1,009, soit 0,9 %."
+    textes: ["L. 161-25 CSS", "L. 161-23-1 CSS (version du 1er janvier 2026, LEGIARTI000051289722)", "instruction interministérielle n° DSS/3A/DB/6BRS/2025/174 du 15 décembre 2025"]
+    sources:
+      - {type: circulaire_cnav, reference: "2025/29 du 22 décembre 2025, « Revalorisation à compter du 1er janvier 2026 » — coefficient 1,009, soit 0,9 %", date: "2025-12-22"}
+      - {type: legifrance, reference: "L. 161-23-1, version en vigueur au 1er janvier 2026 (LEGIARTI000051289722), lue dans l'index LEGI du dépôt", date: "2026-01-01"}
+    verifie_le: "2026-09-22"
     temoins: []
     reformes: []
-    etat: a_verifier
-    effet: "N'entre pas dans la pension à la liquidation ; entre dans les trajectoires de la page Coût. Vérifier que la série de revalorisation des pensions porte le taux réellement appliqué au 1er janvier 2026."
-    a_faire: "Lire l'article de la LFSS 2026 sur la revalorisation 2026 et confronter à la série macro."
-    prochaine_veille: "2026-12-31"
+    etat: conforme
+    effet: "N'entre pas dans la pension à la liquidation ; entre dans les trajectoires de la page Coût, qui revalorisent les pensions servies sur la règle d'indexation du scénario — les PRIX par défaut. La LFSS 2026 n'a pas dérogé à L. 161-25 pour 2026 : la recherche dans l'index LEGI ne trouve aucune version dérogatoire, et la circulaire Cnav applique la règle ordinaire. Le coefficient servi, 0,9 %, tombe à quatre centièmes de point de l'inflation 2025 que le dépôt porte, certifiée INSEE : 0,943 %. Le modèle et le droit disent donc la même chose pour 2026."
+    a_faire: "Rien pour 2026. Relire au 1er janvier 2027, et surtout si une loi de financement déroge à L. 161-25 — un gel ou une sous-indexation ne se verrait pas dans la série des prix, et c'est ce qui a séparé, plusieurs fois depuis 2014, le montant servi de ce que les prix auraient donné (`limites.md`, minimum garanti)."
+    prochaine_veille: "2027-01-31"
 
   # ---- Régimes autres que le régime général et la fonction publique -----
   - id: regimes_speciaux_et_non_salaries
@@ -587,11 +589,11 @@ entrees:
     textes: ["loi n° 2025-1403, article 105 VI"]
     sources:
       - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 1.1", date: "2026-03-05"}
-    verifie_le: "2026-09-17"
+    verifie_le: "2026-09-22"
     temoins: []
     reformes: [lfss_2026_suspension]
     etat: a_verifier
-    effet: "Tout changement de calendrier touche les générations 1965 et suivantes. Au 16 septembre 2026 (index LEGI), la version du 31 décembre 2025 de L. 161-17-2 et de L. 161-17-3 est la dernière, sans date de fin."
+    effet: "Tout changement de calendrier touche les générations 1965 et suivantes. Relu le 22 septembre 2026, index LEGI à jour de l'incrément du 21 : la version du 31 décembre 2025 de L. 161-17-2 (LEGIARTI000053280889) et de L. 161-17-3 (LEGIARTI000053280903) est toujours la dernière, sans date de fin. La suspension tient, et cette ligne reste `a_verifier` parce que c'est un calendrier politique, non une lacune du dépôt."
     a_faire: "À chaque session : `python scripts/fetch/dila_index.py legi --mettre-a-jour`, puis vérifier que L. 161-17-2 et L. 161-17-3 n'ont pas de version postérieure au 31 décembre 2025 (`dila_cherche.py legi --num L161-17-2`)."
     prochaine_veille: "2027-01-31"
 
@@ -2017,3 +2019,30 @@ journal:
       reste `a_verifier`, les quatre témoins fixant le nombre de trimestres
       servis et non le sort du décret n° 2026-699 ni celui du père.
     prochaine_veille: "2026-11-30"
+  - date: 2026-09-22
+    session: la revalorisation de 2026, lue là où elle s'applique
+    consulte: >-
+      `python scripts/fetch/dila_index.py legi --mettre-a-jour` : un incrément,
+      celui du 21 septembre 2026. Index LEGI : L. 161-17-2 et L. 161-17-3,
+      toutes versions ; L. 161-25 ; L. 161-23-1 dans sa version en vigueur au
+      1er janvier 2026 (LEGIARTI000051289722) ; l'annexe de la loi n° 2025-1403
+      et les articles qui la citent, cherchés sans trouver de dérogation pour
+      2026. Circulaire Cnav 2025/29 du 22 décembre 2025, lue dans son PDF avec
+      le lecteur du dépôt.
+    trouve: >-
+      LA SUSPENSION TIENT : la version du 31 décembre 2025 de L. 161-17-2 et de
+      L. 161-17-3 est toujours la dernière, sans date de fin. ET LA
+      REVALORISATION DE 2026 EST CELLE DE LA RÈGLE ORDINAIRE : la circulaire
+      Cnav applique L. 161-25 sans dérogation — coefficient 1,009, soit 0,9 %,
+      fixé par l'instruction interministérielle n° DSS/3A/DB/6BRS/2025/174 du
+      15 décembre 2025 —, et ce taux tombe à quatre centièmes de point de
+      l'inflation 2025 que le dépôt porte, certifiée INSEE : 0,943 %. Les
+      trajectoires de la page Coût revalorisant les pensions servies sur les
+      prix, le modèle et le droit disent la même chose pour 2026. La ligne
+      passe de `a_verifier` à `conforme`.
+    reste: >-
+      Ce qui se verrait mal : un GEL ou une sous-indexation décidés par une loi
+      de financement ne laisseraient aucune trace dans la série des prix, et
+      c'est ce qui a séparé plusieurs fois depuis 2014 le montant servi de ce
+      que les prix auraient donné. La ligne est donc à relire à chaque loi de
+      financement, et pas seulement au 1er janvier.

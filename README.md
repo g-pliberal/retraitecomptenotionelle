@@ -399,17 +399,19 @@ Le triple lock inversé, pris à la lettre, compare deux taux **nominaux**
 dépasse la productivité — soit presque toute la période 1945-1985 — c'est la
 productivité qui l'emporte.
 
+<!-- indexation:debut -->
 | Règle | Comptes 1941-2025 | Prix | Pouvoir d'achat conservé |
 |---|---|---|---|
 | Triple lock inversé, littéral | ×4,9 | ×322,2 | **1,5 %** |
 | Moyenne des trois taux | ×175,7 | ×322,2 | 54,5 % |
 | Triple lock inversé, tout en nominal | ×223,3 | ×322,2 | 69,3 % |
-| Indexation sur les prix | ×322,2 | ×322,2 | 100 % |
+| Indexation sur les prix | ×322,2 | ×322,2 | 100,0 % |
 | Médiane des trois taux | ×397,6 | ×322,2 | 123,4 % |
-| **Revalorisation réellement pratiquée** | **×1 538,2** | ×322,2 | **477,4 %** |
+| Revalorisation réellement pratiquée | ×1 538,2 | ×322,2 | 477,4 % |
 | Masse salariale (règle d'équilibre) | ×3 685,1 | ×322,2 | 1 143,7 % |
-| PIB nominal | ×3 442,3 | ×322,2 | 1 068,6 % |
-| PIB nominal, lissé sur 5 ans (Italie) | ×4 152,7 | ×322,2 | 1 288,8 % |
+| PIB nominal | ×3 442,3 | ×322,2 | 1 068,3 % |
+| PIB nominal lissé sur 5 ans (Italie) | ×4 152,7 | ×322,2 | 1 288,8 % |
+<!-- indexation:fin -->
 
 Une cotisation de 1950 ne conserve donc que 1,5 % de sa valeur réelle. Dans le
 scénario rétroactif, **l'essentiel de la baisse affichée vient de la règle
@@ -1228,7 +1230,7 @@ docs/
   limites.md                    ce qu'il ne calcule pas, et ce qui reste à certifier
   veille_droit.md               comment le scénario 1 reste le droit applicable : le registre, le script, la règle
 
-tests/                          1965 tests Python
+tests/                          1967 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1277,7 +1279,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->1965<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->1967<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,
