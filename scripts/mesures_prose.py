@@ -832,8 +832,8 @@ def gain_net(**reglages: str) -> float:
 def fiche(**reglages: str) -> float:
     """Les cotisations retraite de la fiche de paie, en points du brut.
 
-    L'année de référence ; ``quoi=salarie`` ou ``employeur``, ``systeme=actuel``
-    (défaut) ou ``proposition``. Mêmes réglages que ``ecart``.
+    L'année de référence ; ``quoi=salarie``, ``employeur`` ou ``total``,
+    ``systeme=actuel`` (défaut) ou ``proposition``. Mêmes réglages que ``ecart``.
     """
     reference = _comparaison_de(reglages).remuneration.reference
     fiche = (reference.proposition if reglages.get("systeme") == "proposition"

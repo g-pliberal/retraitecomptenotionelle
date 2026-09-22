@@ -221,6 +221,12 @@ fichiers:
       - "**Et la part est contrôlée chez un autre producteur.**"
       - "Ce qui reste : la part est très légèrement SURESTIMÉE"
       - "5. **La grille ne monte pas au-delà de 2,5 fois le salaire moyen.**"
+      # Le partage des 23 points, tranché le 20 septembre 2026 sur les mesures
+      # de `partage_taux_unique.py` : ses quatre lectures à deux SMIC et la
+      # hausse du brut sous le partage inverse sont celles de ce jour-là.
+      - "**2. Le partage salarial/patronal du taux unique n'est pas neutre"
+      - "**Ce que le choix retenu achète, et ce qu'il coûte**"
+      - "**Deux réserves subsistent au SMIC"
     sections:
       # Sections d'état ancrées le 22 septembre 2026 : la règle d'indexation,
       # dont le cumul du triple lock lit le modèle ; les régimes qui manquent ;
@@ -265,6 +271,11 @@ fichiers:
       # Le net et le brut : le barème de la CSG se lit dans les prélèvements.
       # Il donnait « 22 580 % » pour 22 580 € ; le taux de remplacement net de
       # la « carrière témoin », qu'aucune mesure ne désigne, n'est plus chiffré.
+      # La fiche de paie : les taux se lisent dans les prélèvements et les
+      # fiches, les gains au SMIC sur la fiche d'exemple. Le gain « +39 € une
+      # fois le brut stabilisé », qu'aucune mesure ne recalcule, n'est plus
+      # chiffré.
+      "5 ante bis. La fiche de paie : neuf réserves, dont trois décisives, et deux que la restitution ajoute": etat
       "5 ante ter. Le net et le brut : ce que la bascule suppose": etat
       # Le coût agrégé : la dépense observée, les poids et les écarts se
       # recalculent ; les parts de la réversion lisent leur table.
