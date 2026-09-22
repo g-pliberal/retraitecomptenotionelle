@@ -442,7 +442,9 @@ def depense(**reglages: str) -> float:
 
     ``quoi=totale`` (défaut), ``repartition`` pour la seule répartition
     obligatoire, ``hors_repartition`` pour le reste — capitalisation,
-    dépendance, minimum vieillesse —, ``part_pib`` pour la totale en % du PIB.
+    dépendance, minimum vieillesse —, ``part_pib`` pour la totale en % du PIB,
+    ``part_pib_repartition`` pour la seule répartition, et ``ecart_cor`` pour
+    ce qui sépare de celle-ci le compte du COR, en points de PIB.
     """
     from retraite_notionnelle.donnees.depenses import SYSTEMES
 
@@ -452,6 +454,14 @@ def depense(**reglages: str) -> float:
         return depenses.depense(annee) / 1000
     if quoi == "part_pib":
         return depenses.part_pib(annee) * 100
+    if quoi in ("part_pib_repartition", "ecart_cor"):
+        repartition = sum(depenses.depense_systeme(s.code, annee) for s in SYSTEMES
+                          if s.repartition) / depenses.pib(annee) * 100
+        if quoi == "part_pib_repartition":
+            return repartition
+        cor = next(float(l["part_pib"]) for l in _csv("comptes_retraite.csv")
+                   if l["annee"] == str(annee) and l["poste"] == "depenses")
+        return cor * 100 - repartition
     if quoi in ("repartition", "hors_repartition"):
         voulu = quoi == "repartition"
         return sum(depenses.depense_systeme(s.code, annee) for s in SYSTEMES
@@ -552,7 +562,156 @@ def avantages(**reglages: str) -> float:
     return valeurs[quoi]
 
 
+def _solde_annee(reglages: dict[str, str]):
+    solde = _cout_de(reglages).solde
+    annee = int(reglages["annee"]) if "annee" in reglages else solde.derniere_annee
+    ligne = solde.annee(annee)
+    if ligne is None:
+        raise ValueError(f"l'année {annee} n'est pas dans le bilan")
+    return ligne
+
+
+def solde(**reglages: str) -> float:
+    """Solde d'un système une année, en % du PIB ; ``en=milliards`` en Md€ courants."""
+    ligne = _solde_annee(reglages)
+    scenario = _scenario(reglages["scenario"])
+    if reglages.get("en") == "milliards":
+        return ligne.solde_meur(scenario) / 1000
+    return ligne.solde(scenario) * 100
+
+
+def solde_moyen(**reglages: str) -> float:
+    """Solde moyen d'un système sur les années projetées, en % du PIB.
+
+    La fenêtre de la page Coût : de la première année projetée à l'horizon.
+    """
+    solde = _cout_de(reglages).solde
+    return solde.solde_moyen(_scenario(reglages["scenario"]),
+                             solde.premiere_annee_projetee, solde.derniere_annee) * 100
+
+
+def coefficient(**reglages: str) -> float:
+    """Coefficient d'équilibre d'un système une année — l'horizon si on l'omet.
+
+    ``quoi=minimum`` rend le plus bas des années projetées, ``quoi=annee_minimum``
+    l'année où il est atteint, ``quoi=economie`` ce qu'on lirait à tort comme
+    une économie, ``1 − 1/c``, en %.
+    """
+    scenario = _scenario(reglages["scenario"])
+    quoi = reglages.get("quoi", "valeur")
+    if quoi in ("minimum", "annee_minimum"):
+        lignes = _cout_de(reglages).solde.projetees()
+        plus_bas = min(lignes, key=lambda l: l.coefficient(scenario))
+        return plus_bas.coefficient(scenario) if quoi == "minimum" else plus_bas.annee
+    valeur = _solde_annee(reglages).coefficient(scenario)
+    if quoi == "economie":
+        return (1 - 1 / valeur) * 100
+    return valeur
+
+
+def annees_equilibrees(**reglages: str) -> float:
+    """Combien d'années projetées un système finit à l'équilibre ou en excédent."""
+    scenario = _scenario(reglages["scenario"])
+    return sum(1 for l in _cout_de(reglages).solde.projetees() if l.solde(scenario) >= 0)
+
+
+def dette(**reglages: str) -> float:
+    """Le stock que les soldes accumulent, en % du PIB, une année — l'horizon si on l'omet."""
+    dette = _cout_de(reglages).dette
+    annee = int(reglages.get("annee", dette.derniere_annee))
+    return dette.stock(_scenario(reglages["scenario"]), annee) * 100
+
+
+def recette(**reglages: str) -> float:
+    """Ce qui entre dans le compte du système actuel une année, en % du PIB.
+
+    ``quoi=retrait`` : ce que les scénarios notionnels ne peuvent pas compter
+    — les versements de la CNAF, de l'Unédic et du FSV ; ``quoi=impots`` : les
+    impôts et taxes affectés ; ``quoi=taux_prelevement`` : ce que le système
+    prélève sur l'assiette des revenus d'activité, en %.
+    """
+    ligne = _solde_annee(reglages)
+    quoi = reglages["quoi"]
+    if quoi == "retrait":
+        return ligne.retrait * 100
+    if quoi == "impots":
+        return ligne.ressources * ligne.part_impots * 100
+    if quoi == "impots_milliards":
+        # Le bilan met le PIB à zéro hors de la fenêtre publiée, à dessein : les
+        # euros d'une année projetée se lisent au PIB PROJETÉ de la trajectoire.
+        pib = _cout_de(reglages).avenir.annee(ligne.annee).pib
+        return ligne.ressources * ligne.part_impots * pib / 1000
+    if quoi == "taux_prelevement":
+        return ligne.taux_prelevement * 100
+    raise ValueError(f"quoi inconnu « {quoi} »")
+
+
+def _csv(nom: str) -> list[dict]:
+    import csv
+
+    chemin = RACINE / "data" / "reference" / "macro" / nom
+    with chemin.open(encoding="utf-8") as fichier:
+        return list(csv.DictReader(l for l in fichier if not l.startswith("#")))
+
+
+def somme_postes(**reglages: str) -> float:
+    """La somme de postes d'une série macro une année : ``serie=…&postes=a|b``.
+
+    ``structure_ressources_retraite.csv`` rend une part des ressources, en % ;
+    ``transferts_retraite.csv``, ``assiette_activite.csv`` et
+    ``impots_retraite_remuneration.csv`` un montant, en Md€.
+    """
+    serie, annee = reglages["serie"], reglages["annee"]
+    postes = set(reglages["postes"].split("|"))
+    lignes = [l for l in _csv(serie) if l["annee"] == annee and l["poste"] in postes]
+    trouves = {l["poste"] for l in lignes}
+    if trouves != postes:
+        raise ValueError(f"{serie} n'a pas {', '.join(sorted(postes - trouves))} en {annee}")
+    if "part" in lignes[0]:
+        return sum(float(l["part"]) for l in lignes) * 100
+    return sum(float(l["montant_meur"]) for l in lignes) / 1000
+
+
+def restitution(**reglages: str) -> float:
+    """Le partage de ce que la proposition n'encaisse plus, une année.
+
+    ``quoi=part_du_poste`` : la part des impôts affectés qui est assise sur une
+    rémunération, en % ; ``quoi=points_csg`` : les points de CSG d'activité
+    rendus.
+    """
+    from retraite_notionnelle.restitution import Restitution
+
+    parametres = _parametres()
+    partage = Restitution(parametres.racine_donnees, parametres.part_rendue_aux_salaires)
+    annee = int(reglages["annee"])
+    quoi = reglages["quoi"]
+    if quoi == "part_du_poste":
+        return partage.part_du_poste(annee) * 100
+    if quoi == "points_csg":
+        return partage.annuelle(annee).points_csg * 100
+    raise ValueError(f"quoi inconnu « {quoi} »")
+
+
+def gain_net(**reglages: str) -> float:
+    """Ce que la proposition ajoute au revenu net d'un actif, en %, sur une carrière.
+
+    L'année de référence de la fiche de paie — la première année pleine sous
+    le nouveau système. Mêmes réglages que ``ecart``.
+    """
+    reference = _comparaison_de(reglages).remuneration.reference
+    return reference.gain_net / reference.droit_en_vigueur.net * 100
+
+
 MESURES = {
+    "solde": solde,
+    "solde_moyen": solde_moyen,
+    "coefficient": coefficient,
+    "annees_equilibrees": annees_equilibrees,
+    "dette": dette,
+    "recette": recette,
+    "somme_postes": somme_postes,
+    "restitution": restitution,
+    "gain_net": gain_net,
     "avantages": avantages,
     "depense": depense,
     "surcout_passe": surcout_passe,

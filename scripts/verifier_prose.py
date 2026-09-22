@@ -679,10 +679,11 @@ def _ecrire_comme(valeur: float, modele: str) -> str:
             [entier[: len(entier) % 3 or 3]]
             + [entier[i:i + 3] for i in range(len(entier) % 3 or 3, len(entier), 3)]
         )
-    if modele.startswith("−"):
-        signe = "−" if signe else ""
-    elif modele.startswith("+") and valeur >= 0:
-        signe = "+"
+    # Un chiffre écrit avec un signe typographique — « −1,13 », « +7,96 » —
+    # est un chiffre SIGNÉ : il garde un signe, quel que soit celui que la
+    # valeur prend. Le trait d'union, lui, ne sert qu'aux négatifs.
+    if modele[:1] in ("−", "+"):
+        signe = "−" if signe else "+"
     return f"{signe}{entier}" + (f",{fraction}" if fraction else "")
 
 

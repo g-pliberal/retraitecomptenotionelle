@@ -859,137 +859,124 @@ existe est le compte du *système de retraite*, que le COR consolide chaque ann�
 depuis les rapports à la Commission des comptes de la Sécurité sociale. On lui
 prend les **deux** colonnes, dépenses et ressources : un solde ne se fabrique pas
 en soustrayant deux périmètres. Le sien — régimes légalement obligatoires, FSV
-compris — vaut 13,86 % du PIB en 2024 contre 13,59 % pour la répartition
-obligatoire de la DREES ; les deux se recoupent à 0,28 point, ce qui vaut
+compris — vaut <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,86<!--/--> % du PIB en 2024 contre <!--chiffre:mesure(depense?annee=2024&quoi=part_pib_repartition)-->13,59<!--/--> % pour la répartition
+obligatoire de la DREES ; les deux se recoupent à <!--chiffre:mesure(depense?annee=2024&quoi=ecart_cor)-->0,28<!--/--> point, ce qui vaut
 contrôle et non identité.
 
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
-| 1. Système actuel | −0,17 % du PIB | **−1,13 %** | **0,84** |
-| 2. Notionnel rétroactif, part salariale | +9,15 % | +7,96 % | 2,60 |
-| 3. Notionnel dès 2026, part salariale | −1,34 % | +1,39 % | **1,67** |
-| 4. Notionnel rétroactif, salariale + patronale | +4,03 % | +2,21 % | 1,16 |
-| 5. Notionnel dès 2026, salariale + patronale | −1,35 % | −0,19 % | 1,08 |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | +4,04 % | **−1,22 %** | **0,98** |
+| 1. Système actuel | <!--chiffre:mesure(solde?scenario=1&annee=2025)-->−0,17<!--/--> % du PIB | **<!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %** | **<!--chiffre:mesure(coefficient?scenario=1)-->0,84<!--/-->** |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(solde?scenario=2&annee=2025)-->+9,15<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=2)-->+7,96<!--/--> % | <!--chiffre:mesure(coefficient?scenario=2)-->2,60<!--/--> |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−1,34<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,39<!--/--> % | **<!--chiffre:mesure(coefficient?scenario=3)-->1,67<!--/-->** |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(solde?scenario=4&annee=2025)-->+4,03<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=4)-->+2,21<!--/--> % | <!--chiffre:mesure(coefficient?scenario=4)-->1,16<!--/--> |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−1,35<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,19<!--/--> % | <!--chiffre:mesure(coefficient?scenario=5)-->1,08<!--/--> |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+4,04<!--/--> % | **<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,22<!--/--> %** | **<!--chiffre:mesure(coefficient?scenario=6)-->0,98<!--/-->** |
 
-Chiffres du 20 septembre 2026, ceux que la page Coût affiche, Python et
-JavaScript à l'identique, et qu'un test y confronte ligne par ligne
-(`test_le_README_donne_le_solde_que_la_page_cout_calcule`) : elles ont été
-fausses plusieurs jours de suite, chaque fois que le modèle de coût a bougé.
-Le scénario 6 ne s'équilibre jamais sur la fenêtre :
-−0,90 point de PIB en 2026, −2,03 en 2050, −0,63 en 2070, et il accumule
-103 % du PIB de dette en 2070, contre 66 % pour le système actuel.
+Ce sont les chiffres que la page Coût affiche, Python et JavaScript à
+l'identique : la sonde de la prose les recalcule, et
+`test_le_README_donne_le_solde_que_la_page_cout_calcule` les confronte en plus
+à la page, ligne par ligne. Ils ont été faux plusieurs jours de suite, chaque
+fois que le modèle de coût a bougé. Le scénario 6 ne s'équilibre sur aucune
+des années projetées — il en compte <!--chiffre:mesure(annees_equilibrees?scenario=6)-->0<!--/--> à l'équilibre : <!--chiffre:mesure(solde?scenario=6&annee=2026)-->−0,93<!--/--> point de PIB en 2026,
+<!--chiffre:mesure(solde?scenario=6&annee=2050)-->−1,65<!--/--> en 2050, <!--chiffre:mesure(solde?scenario=6&annee=2070)-->−0,12<!--/--> en 2070 —, et il accumule <!--chiffre:mesure(dette?scenario=6)-->84<!--/--> % du PIB de dette en
+2070, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel.
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
-5,1 milliards de besoin de financement en 2025. C'est la vérification que le
-raccord entre deux périmètres ne triche pas — le rapport du scénario 1 vaut un
-par construction, donc son solde doit être le solde publié, et il l'est.
+<!--chiffre:mesure(solde?scenario=1&annee=2025&en=milliards)-->−5,1<!--/--> milliards de solde en 2025. C'est la vérification que le raccord
+entre deux périmètres ne triche pas — le rapport du scénario 1 vaut un par
+construction, donc son solde doit être le solde publié, et il l'est.
 
 **Un coefficient supérieur à un n'est pas une économie, c'est une marge.** Un
 système notionnel réel *applique* son coefficient : il ne laisse pas dormir un
-excédent, il relève les pensions jusqu'à l'équilibre. Lire les 1,67 du
-scénario 3 en 2070 comme une économie de 40 % est donc un contresens : à
+excédent, il relève les pensions jusqu'à l'équilibre. Lire les <!--chiffre:mesure(coefficient?scenario=3)-->1,67<!--/--> du
+scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->40<!--/--> % est donc un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, mais **autrement
 réparti entre les carrières** — ce qui est exactement ce que le reste de ce dépôt
 mesure. Le modèle calcule ce facteur ; il ne l'applique jamais, et toutes les
 courbes de coût des sections précédentes sont celles d'un système qui ne se
 pilote pas.
 
-**Un quart des ressources n'est pas cotisé, et cette part grandit.** 77 % des
-ressources de 2025 sont des cotisations — en comptant la contribution
+**Un quart des ressources n'est pas cotisé, et cette part grandit.** <!--chiffre:mesure(somme_postes?serie=structure_ressources_retraite.csv&annee=2024&postes=cotisations|contribution_equilibre_etat)-->77<!--/--> % des
+ressources de 2024 sont des cotisations — en comptant la contribution
 d'équilibre que l'État verse au régime de ses fonctionnaires, que le modèle
-porte déjà au compte des scénarios 4 et 5 — contre 80 % en 2004 ; les impôts et
-taxes affectés passent de 7 % à 15 %. Un compte notionnel ne sait créditer que
+porte déjà au compte des scénarios 4 et 5 — contre <!--chiffre:mesure(somme_postes?serie=structure_ressources_retraite.csv&annee=2004&postes=cotisations|contribution_equilibre_etat)-->80<!--/--> % en 2004 ; les impôts et
+taxes affectés passent de <!--chiffre:mesure(somme_postes?serie=structure_ressources_retraite.csv&annee=2004&postes=impots_et_taxes)-->7<!--/--> % à <!--chiffre:mesure(somme_postes?serie=structure_ressources_retraite.csv&annee=2024&postes=impots_et_taxes)-->14<!--/--> %. Un compte notionnel ne sait créditer que
 la part cotisée, et c'est ce qui borne la lecture de tout ce tableau.
 
 **La recette suit le droit.** Le poste
 « transferts d'organismes extérieurs » est ventilé par celui qui paie, lu dans
 les rapports à la Commission des comptes de la Sécurité sociale : la branche
-famille verse 10,9 milliards en 2024 pour l'assurance vieillesse des parents au
-foyer et les majorations pour enfants, l'assurance chômage 3,9 milliards pour
-les points de retraite complémentaire des chômeurs. Les scénarios notionnels
-suppriment les premiers droits et ne portent rien au compte pendant une année
-de chômage ; leur coefficient ne compte donc pas ces recettes : elles leur
-sont retirées, année par année de 2013 à 2024, à part constante des ressources
-avant et sur tout l'horizon projeté. C'est pourquoi les scénarios 3 et 5 sont
-déjà en déficit en 2025, où ils servent encore les pensions du système actuel,
-et pourquoi le scénario 3 vaut 1,67 en 2070, moins que sans ce retrait. Le système actuel,
-lui, encaisse tout, et son solde reste celui du COR.
+famille verse <!--chiffre:mesure(somme_postes?serie=transferts_retraite.csv&annee=2024&postes=cnaf_avpf|cnaf_majorations)-->10,9<!--/--> milliards en 2024 pour l'assurance vieillesse des parents au
+foyer et les majorations pour enfants, l'assurance chômage <!--chiffre:mesure(somme_postes?serie=transferts_retraite.csv&annee=2024&postes=unedic_agirc_arrco|unedic_ircantec)-->3,9<!--/--> milliards pour
+les points de retraite complémentaire des chômeurs. Le fonds de solidarité
+vieillesse finance par la CSG deux choses que les scénarios notionnels ne
+servent pas non plus : des trimestres pour des périodes non travaillées
+(<!--chiffre:mesure(somme_postes?serie=transferts_retraite.csv&annee=2024&postes=fsv_cotisations)-->15,2<!--/--> Md€ en 2024) et le minimum vieillesse (<!--chiffre:mesure(somme_postes?serie=transferts_retraite.csv&annee=2024&postes=fsv_prestations)-->4,3<!--/--> Md€). Les scénarios
+notionnels suppriment ces droits ; leur coefficient ne compte donc pas ces
+recettes, qui leur sont retirées année par année de 2013 à 2024, à part
+constante des ressources avant et sur tout l'horizon projeté — <!--chiffre:mesure(recette?quoi=retrait&annee=2025)-->1,18<!--/--> % du PIB
+en 2025. C'est pourquoi les scénarios 3 et 5 sont déjà en déficit en 2025, où
+ils servent encore les pensions du système actuel. Le système actuel, lui,
+encaisse tout, et son solde reste celui du COR.
 
 **La recette suit aussi le TAUX, et cela ne concerne que le scénario 6.** Il
-remplace tous les taux de cotisation par un seul, 18 %, parts salariale et
-patronale additionnées. Sur les carrières de la grille, le droit en vigueur en
-prélève **28,7 %** en moyenne : 27,9 % pour un salarié non cadre du privé sous
-le plafond, chiffre que le COR publie dans son rapport annuel et que le modèle
-retrouve à huit dixièmes de point, et bien davantage pour un fonctionnaire,
-dont l'employeur verse 74,28 % du traitement. La part cotisée des ressources,
-77 % du total, est donc multipliée par **0,63** à compter de la bascule. Cela
-change le sens du tableau pour ce scénario : son solde moyen s'établit à
-−1,24 % du PIB, et son coefficient est sous un sur chacune des années
-projetées, 0,82 au plus bas en 2046, 0,98 en 2070. Il est le seul des trois
-systèmes rétroactifs à ne pas afficher de marge, et il passe sous le système
-actuel, qui est à −1,13 % — d'un dixième de point. Ce déficit est le
-coût de transition du taux unique : pendant trente ans, la
-caisse paie les pensions de l'ancien système avec dix points de cotisation en
-moins, et aucune règle d'indexation ne le règle. Les quatre autres scénarios notionnels ne changent que ce qui
-est PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ : l'employeur verse sa part dans
-tous les cas, et leur recette ne bouge pas.
+remplace tous les taux de cotisation par un seul, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %, parts salariale et
+patronale additionnées, appliqué à l'assiette des revenus d'activité :
+salaires et traitements bruts plus revenu mixte des non-salariés,
+**<!--chiffre:mesure(somme_postes?serie=assiette_activite.csv&annee=2024&postes=salaires_bruts|revenu_mixte)-->1 249<!--/--> Md€ en 2024**, certifiés chez l'INSEE (`assiette_activite.csv`). Le
+système de retraite y prélève aujourd'hui <!--chiffre:mesure(recette?quoi=taux_prelevement&annee=2025)-->32,8<!--/--> % de ressources en tout ; la
+proposition en prélèverait <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/-->. Elle ne reconduit pas non plus les
+subventions d'équilibre, dont la fusion supprime l'objet, ni les impôts
+affectés, qui n'acquièrent de droits à personne. Cela change le sens du
+tableau pour ce scénario : son solde moyen s'établit à <!--chiffre:mesure(solde_moyen?scenario=6)-->−1,22<!--/--> % du PIB, et
+son coefficient est sous un sur chacune des années projetées,
+<!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,82<!--/--> au plus bas en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2046<!--/-->, <!--chiffre:mesure(coefficient?scenario=6)-->0,98<!--/--> en 2070. Il est le seul des trois systèmes
+rétroactifs à ne pas afficher de marge, et il passe sous le système actuel,
+qui est à <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %. Ce déficit est le coût de transition du taux unique :
+pendant trente ans, la caisse paie les pensions de l'ancien système avec une
+cotisation ramenée à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % de l'assiette, et aucune règle d'indexation ne le
+règle. Les quatre autres scénarios notionnels ne changent que ce qui est PORTÉ
+AU COMPTE, non ce qui est PRÉLEVÉ : l'employeur verse sa part dans tous les
+cas, et leur recette ne bouge pas.
 
-**Dix-huit pour cent de quoi ?** De l'assiette des revenus d'activité :
-salaires et traitements bruts plus revenu mixte des non-salariés, **1 249 Md€
-en 2024**, soit 42,6 % du PIB. Elle est certifiée chez l'INSEE
-(`assiette_activite.csv`) et recoupée par une seconde route qui ne doit rien à
-l'INSEE — l'inversion du tableau 2.11 du rapport du COR, à 3,9 % près. Le
-système de retraite y prélève aujourd'hui 32,8 % de ressources en tout ; la
-proposition en prélèverait 18. Le modèle sait aussi calculer la lecture
-inverse, où les 18 % subissent la même déperdition que les taux légaux
-d'aujourd'hui — allègements généraux, assiettes réduites : le scénario 6 y
-serait déficitaire de 1,72 % du PIB, mesuré le 19 septembre 2026, avant que
-l'emploi projeté et le stock de la bascule ne changent. Cette lecture suppose que la proposition
-garde la même architecture d'exonérations, ce que son texte ne dit pas ;
-`docs/limites.md` §5 dit ce qui sépare les deux.
-
-**Et la recette suit le droit jusqu'au bout.** Le fonds de solidarité
-vieillesse finance par la CSG deux choses que les scénarios notionnels ne
-servent pas : des trimestres pour des périodes non travaillées (15,2 Md€ en
-2024) et le minimum vieillesse (4,3 Md€). Il échappait à la règle parce que sa
-recette n'arrive pas par un transfert mais par l'impôt. Il y est entré le
-19 septembre 2026, et le retrait total passe d'un demi-point de PIB à **1,17 %**
-— ce qui coûte 0,64 point de solde moyen à chacun des cinq scénarios
-notionnels.
+Le modèle sait aussi calculer la lecture inverse, où les <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % subissent la
+même déperdition que les taux légaux d'aujourd'hui — allègements généraux,
+assiettes réduites (`convention_recette="rapport"`). Elle suppose que la
+proposition garde la même architecture d'exonérations, ce que son texte ne dit
+pas ; `docs/limites.md` §5 dit ce qui sépare les deux.
 
 **Et ce que la proposition n'encaisse plus, elle ne le garde pas.** Trois
 postes sortent de son compte — la contribution d'équilibre de l'État, les
-subventions d'équilibre, les impôts et taxes affectés —, et le dépôt ne disait
-pas ce qu'ils devenaient, ce qui revenait à les laisser au budget, c'est-à-dire
-à les consacrer au déficit. Décision du 20 septembre 2026 : **la moitié est
-rendue aux salaires, la moitié éteint de la dette**, et la même moitié vaut
+subventions d'équilibre, les impôts et taxes affectés. La règle, décidée le
+20 septembre 2026 : **la moitié est rendue aux salaires, la moitié éteint de la
+dette** (`Parametres.part_rendue_aux_salaires`, <!--chiffre:mesure(parametre?nom=part_rendue_aux_salaires)-->50<!--/--> %), et la même moitié vaut
 pour les deux postes qui sortent d'une poche identifiable.
 
-Les impôts et taxes affectés valent 2,14 % du PIB en 2026, 64 Md€ : 32 Md€ sont
-rendus, 32 éteignent de la dette. Le droit dit dans quel ordre, et ce qu'il dit
-est contre-intuitif. Deux impôts du poste seulement sortent d'une rémunération :
-**la taxe sur les salaires**, dont l'article L. 131-8, 1° du code de la sécurité
-sociale verse 58,35 % à la branche vieillesse, et **le forfait social**, que
-l'article L. 241-3, 1° lui donne en entier — ensemble 18 Md€, 28 % du poste. Ils
-sont supprimés. Le solde revient en **1,12 point de CSG d'activité**, et il faut
-dire pourquoi ce n'est pas une restitution : **la CSG sur les revenus d'activité
-ne finance aujourd'hui aucune retraite.** Ses 9,20 points vont à la CNAF (0,95),
-à l'assurance maladie (4,25), à la CADES (0,45), à l'Unédic (1,47) et à la CNSA
-(2,08) — 9,20 exactement, et rien à la vieillesse (L. 131-8, 3°, version en
-vigueur au 1er février 2026). Ce que la retraite encaisse en CSG est assis sur
-le capital et sur les pensions.
+Les impôts et taxes affectés valent <!--chiffre:mesure(recette?quoi=impots&annee=2026)-->2,14<!--/--> % du PIB en 2026, <!--chiffre:mesure(recette?quoi=impots_milliards&annee=2026)-->66<!--/--> Md€, dont la
+moitié est rendue. Le droit dit dans quel ordre, et ce qu'il dit est
+contre-intuitif. Deux impôts du poste seulement sortent d'une rémunération :
+**la taxe sur les salaires**, dont l'article L. 131-8, 1° du code de la
+sécurité sociale verse une part à la branche vieillesse, et **le forfait
+social**, que l'article L. 241-3, 1° lui donne en entier — ensemble
+<!--chiffre:mesure(restitution?quoi=part_du_poste&annee=2026)-->28<!--/--> % du poste. Ils sont supprimés. Le solde revient en
+**<!--chiffre:mesure(restitution?quoi=points_csg&annee=2026)-->1,12<!--/--> point de CSG d'activité**, et il faut dire pourquoi ce n'est pas une
+restitution : **la CSG sur les revenus d'activité ne finance aujourd'hui
+aucune retraite.** L'article L. 131-8, 3° la répartit entre la CNAF,
+l'assurance maladie, la CADES, l'Unédic et la CNSA, et rien à la vieillesse ;
+`src/retraite_notionnelle/restitution.py` porte les taux et la version de
+l'article. Ce que la retraite encaisse en CSG est assis sur le capital et sur
+les pensions.
 
-La contribution d'équilibre de l'employeur public suit la même règle : 82,28 %
-du traitement d'un fonctionnaire d'État en 2026, ramenés à la part patronale du
-taux unique, et la moitié de ce qui est libéré remonte dans le traitement —
-l'autre moitié paie la dette de pensions déjà promises, qui reste due. Sur la
-fiche de paie d'un fonctionnaire d'État, c'est **+32,9 % de traitement net**,
-et à tous les niveaux de traitement : ni réduction générale ni plafond ne
-viennent courber le calcul. Ce n'est ni l'incidence intégrale, qui lui prêterait les
-soixante-dix points comme s'ils avaient été son salaire différé, ni l'assiette
-fixe, qui ne lui en rendrait aucun : `Parametres.part_rendue_aux_salaires` porte
-le partage, et le mettre à zéro rend l'ancienne convention.
+La contribution d'équilibre de l'employeur public suit la même règle :
+<!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> % du traitement d'un fonctionnaire d'État en 2026, ramenés à la part
+patronale du taux unique, et la moitié de ce qui est libéré remonte dans le
+traitement — l'autre moitié paie la dette de pensions déjà promises, qui reste
+due. Sur la fiche de paie de la fonctionnaire de l'exemple du §3, c'est
+**+<!--chiffre:mesure(gain_net?exemple=fonctionnaire)-->37,6<!--/--> % de traitement net** en 2026, et à tous les niveaux de traitement :
+ni réduction générale ni plafond ne viennent courber le calcul. Ce n'est ni
+l'incidence intégrale, qui lui prêterait toute la contribution comme si elle
+avait été son salaire différé, ni l'assiette fixe, qui ne lui en rendrait
+rien : mettre le partage à zéro rend l'ancienne convention.
 
 **Et les pensions LIQUIDÉES suivent la règle d'indexation, comme le compte qui
 les a produites.** Un système notionnel a deux règles d'indexation — celle du

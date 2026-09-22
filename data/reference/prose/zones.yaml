@@ -51,6 +51,9 @@ fichiers:
       # paragraphe qui les suit dit ce que la trajectoire vaut aujourd'hui.
       - "Le contrôle externe s'est dégradé deux fois"
       - "**Ce défaut-là est corrigé"
+      # Et la correction de l'indexation des pensions liquidées, le
+      # 19 septembre 2026 : ses +0,12 et −0,88 % sont l'avant et l'après.
+      - "**Et les pensions LIQUIDÉES"
     sections:
       Ouvrir le simulateur: etat
       # Le corps de la section : ce que le premier chargement transfère, ce que
@@ -94,6 +97,15 @@ fichiers:
       # il y cesse de servir la réversion.
       "4. Ce que la retraite a coûté depuis 1959": etat
       "5. Une réforme prospective ne fait rien économiser tout de suite, et beaucoup ensuite": etat
+      # Le solde et le coefficient d'équilibre. Récrite le jour de son
+      # ancrage : elle décrivait encore la recette du scénario 6 comme un
+      # rapport de taux légaux multiplié par 0,63, quand la convention par
+      # défaut applique les 18 % à l'assiette ; elle donnait à ce scénario
+      # 103 % du PIB de dette en 2070 pour 84, et au fonctionnaire d'État un
+      # gain net de 32,9 % pour 37,6. Les taux d'affectation de la CSG, qui
+      # ne sont dans aucune donnée, n'y sont plus recopiés : `restitution.py`
+      # les porte avec leurs articles.
+      "6. Un coût n'est pas un solde, et le coefficient d'équilibre le dit": etat
 
   # ------------------------------------------------------------------------
   # La feuille de route est un journal : ses actions décrivent ce qu'on VOULAIT
@@ -461,7 +473,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 49
+  sections_a_declarer: 48
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
