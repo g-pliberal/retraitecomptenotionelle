@@ -63,6 +63,30 @@ l'être.
 
 ### Ce qui vient d'être refermé
 
+**La liquidation unique des régimes alignés, servie depuis le 22 septembre
+2026.** Depuis le 1er juillet 2017, un assuré né à compter de 1953 qui a
+cotisé à deux des trois régimes alignés — régime général, salariés agricoles,
+sécurité sociale des indépendants — reçoit UNE retraite de base : un revenu
+annuel moyen formé de la somme des salaires et revenus d'une même année
+civile, écrêtée au plafond, sur les vingt-cinq meilleures années, et une
+proratisation qui tient compte de tous les trimestres des trois régimes
+(`L. 173-1-2` et `R. 173-4-4-1`, 1° et 4°, CSS ; circulaire Cnav 2017/27 du
+21 juillet 2017). Le modèle y arrivait à moitié, et par un autre chemin : il
+réunit un régime et celui qui l'a ABSORBÉ, si bien que la CANCAVA, le RSI puis
+le régime général ne faisaient qu'un pour un artisan, mais que les salariés
+agricoles — dont le régime existe toujours — restaient à part. Une carrière
+moitié privée moitié agricole, née en 1960 et partie à 64 ans, recevait deux
+pensions de base, « SR 41 499 € × 88/167 » et « SR 29 069 € × 80/167 », là où
+la caisse en calcule une seule : elle en reçoit maintenant une, « SR 40 749 €
+× 167/167 », soit **20 629 € au lieu de 18 121 €** pour cette carrière-là. Et
+la chaîne d'absorption datait le regroupement du régime général et des
+indépendants de 2018, quand la loi le date du 1er juillet 2017 : une carrière
+liquidée entre les deux était coupée en deux. Les deux conditions de la loi
+sont désormais opposées, la seconde au MOIS près — une pension prenant effet
+en janvier 2017 n'y a pas droit, celle de septembre oui. Aucun témoin n'a
+bougé : la grille de cas types n'exerce qu'un statut à la fois, et la LURA ne
+se voit que sur un polypensionné.
+
 **Dix erreurs de calcul.**
 
 - **Les trimestres pour enfants étaient servis huit par enfant, à tout le
@@ -398,26 +422,16 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
 - **Pension de réversion.** Elle ne concerne pas l'assuré mais son conjoint
   survivant, et suppose de connaître un ménage. Hors périmètre par
   construction : le modèle décrit une carrière, pas une famille.
-- **La liquidation unique des régimes alignés (LURA), pour la moitié
-  agricole.** Depuis le 1er juillet 2017, un assuré né à compter de 1953 qui a
-  cotisé à deux des trois régimes alignés — régime général, salariés agricoles,
-  sécurité sociale des indépendants — reçoit UNE retraite : un seul revenu
-  annuel moyen, formé de la somme des salaires et revenus d'une même année, et
-  une seule proratisation (`L. 173-1-2` et `R. 173-4-4-1, 4°` CSS, circulaire
-  Cnav 2017/27 du 21 juillet 2017). Le modèle le fait pour le couple régime
-  général / indépendants, mais par un autre chemin : il réunit un régime et
-  celui qui l'a ABSORBÉ, et la CANCAVA, le RSI puis le régime général en font
-  un. Il ne le fait pas pour les salariés agricoles, dont le régime existe
-  toujours. Mesuré sur une carrière moitié privée moitié agricole, né en 1960,
-  parti à 64 ans : le modèle liquide deux pensions de base — 41 499 € de
-  salaire de référence sur 88/167 à la MSA, 29 069 € sur 80/167 au régime
-  général — là où la caisse en calcule une seule. Le sens de l'écart n'est pas
-  déterminé sans refaire le calcul selon la règle, ce qui est une modification
-  du modèle et non une lecture : les deux salaires de référence encadrent celui
-  que la caisse retiendrait. Deux bornes de la règle manquent aussi au chemin
-  du dépôt, et dans l'autre sens : la LURA vaut à partir de la génération 1953
-  et des pensions prenant effet au 1er juillet 2017, quand l'absorption du RSI
-  ne date le regroupement qu'en 2018-2020.
+- **La troisième condition de la liquidation unique des régimes alignés.** La
+  LURA elle-même est servie depuis le 22 septembre 2026 — voir plus bas —, et
+  ses deux premières conditions sont opposées : la génération, la date d'effet
+  au mois près. La troisième ne l'est pas : la loi écarte la LURA de qui avait
+  DÉJÀ obtenu, avant le 1er juillet 2017, une retraite de même nature dans
+  l'un des trois régimes. Une carrière du dépôt liquide tout à la fois, et ne
+  peut donc pas porter ce cas. De même, le revenu annuel moyen de la LURA
+  additionne les salaires et revenus d'une MÊME année civile avant de les
+  écrêter au plafond : une carrière du dépôt n'exerce qu'un métier à la fois,
+  et la somme n'a jamais lieu.
 - **Bonifications de service.** Bonifications de dépaysement, de campagne
   militaire, du cinquième pour les emplois de sécurité. La bonification POUR
   ENFANTS, elle, est servie : elle ne demande que le nombre d'enfants. Les
@@ -7913,7 +7927,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2023<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2024<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

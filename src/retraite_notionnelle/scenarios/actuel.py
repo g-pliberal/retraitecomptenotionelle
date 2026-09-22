@@ -1990,9 +1990,39 @@ class ScenarioActuel:
             vu.add(suivant)
             courant = suivant
 
+    #: Les trois régimes que la liquidation unique des régimes alignés réunit
+    #: — le régime général, les salariés agricoles et la sécurité sociale des
+    #: indépendants, sous ses trois noms successifs. Les exploitants agricoles
+    #: n'en sont pas : la LURA ne vise que les SALARIÉS agricoles.
+    REGIMES_ALIGNES = frozenset({
+        "regime_general", "msa_salaries", "cancava", "organic", "rsi",
+    })
+    #: La LURA ne vaut que pour les assurés nés à compter de 1953 (article 51
+    #: de la loi n° 2015-1702 de financement pour 2016) et pour les pensions
+    #: prenant effet à compter du 1er juillet 2017 (article 4 du décret
+    #: n° 2017-737 du 3 mai 2017).
+    LURA_PREMIERE_GENERATION = 1953
+    LURA_DATE_EFFET = DateMois(2017, 7)
+    #: La clé sous laquelle les régimes alignés se réunissent quand la LURA
+    #: s'applique : ce n'est pas un régime, c'est un groupe.
+    REGIMES_ALIGNES_TETE = "regimes_alignes"
+
+    def _lura_applicable(self, carriere: Carriere) -> bool:
+        """La liquidation unique vaut-elle pour cette carrière ?
+
+        Deux conditions, et le modèle les porte toutes les deux : la
+        génération, et la date d'effet au mois près. Une troisième reste hors
+        du modèle — la LURA ne s'applique pas à qui avait déjà obtenu, avant
+        le 1er juillet 2017, une retraite de même nature dans l'un des trois
+        régimes —, parce qu'une carrière du dépôt liquide tout à la fois.
+        """
+        return (carriere.generation >= self.LURA_PREMIERE_GENERATION
+                and carriere.date_liquidation.rang >= self.LURA_DATE_EFFET.rang)
+
     def _groupes_de_succession(
             self, codes: list[str], annee_liquidation: int,
             derniere_annee_par_regime: dict[str, int],
+            carriere: Carriere | None = None,
     ) -> dict[str, tuple[str, ...]]:
         """Les régimes d'annuités que la carrière a traversés, groupés par
         chaîne de succession : pour chaque code d'un groupe d'au moins deux,
@@ -2015,20 +2045,37 @@ class ScenarioActuel:
 
         Le groupe est liquidé par le membre de la DERNIÈRE période active de
         la carrière — à égalité, par l'absorbant —, dont la fiche donne les
-        règles : c'est la caisse qui aurait le dossier. Un assuré qui n'a
-        connu qu'un seul nom n'est pas touché, et la coordination entre
-        régimes alignés DISTINCTS — proratisation croisée, liquidation
-        unique — reste hors du modèle (``docs/limites.md`` §3).
+        règles : c'est la caisse qui aurait le dossier, et c'est aussi ce que
+        la LURA prescrit (« le montant de la retraite unique est déterminé en
+        fonction des règles applicables au régime liquidateur »). Un assuré
+        qui n'a connu qu'un seul nom n'est pas touché.
+
+        **ET LES RÉGIMES ALIGNÉS DISTINCTS SE RÉUNISSENT AUSSI, DEPUIS 2017.**
+        La liquidation unique des régimes alignés (`L. 173-1-2` CSS) donne une
+        seule retraite à qui a cotisé à deux des trois régimes alignés : un
+        revenu annuel moyen formé de la somme des salaires et revenus d'une
+        même année, écrêtée au plafond, sur les vingt-cinq meilleures années,
+        et une proratisation qui tient compte de tous les trimestres des trois
+        régimes (`R. 173-4-4-1`, 1° et 4°, circulaire Cnav 2017/27). Le modèle
+        y arrivait déjà pour le couple régime général / indépendants, mais par
+        la chaîne d'absorption, qui ne ferme le RSI qu'en 2018 : une carrière
+        liquidée entre juillet 2017 et l'absorption était coupée en deux. Et
+        il ne le faisait pas du tout pour les salariés agricoles, dont le
+        régime existe toujours — « SR 41 499 € × 88/167 » plus
+        « SR 29 069 € × 80/167 » là où la caisse calcule un seul salaire de
+        référence. Les deux conditions de la loi sont opposées :
+        :meth:`_lura_applicable`.
         """
         par_tete: dict[str, list[str]] = {}
+        lura = carriere is not None and self._lura_applicable(carriere)
         for code in codes:
             regime = self.catalogue[code]
             periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
             if periode is None or periode.type_calcul != "annuites":
                 continue
-            par_tete.setdefault(
-                self._tete_de_succession(code, annee_liquidation), []
-            ).append(code)
+            tete = (self.REGIMES_ALIGNES_TETE if lura and code in self.REGIMES_ALIGNES
+                    else self._tete_de_succession(code, annee_liquidation))
+            par_tete.setdefault(tete, []).append(code)
         groupes: dict[str, tuple[str, ...]] = {}
         for membres in par_tete.values():
             if len(membres) < 2:
@@ -3511,7 +3558,7 @@ class ScenarioActuel:
         # sont sautés partout où un régime liquide.
         groupes = (
             self._groupes_de_succession(
-                codes, annee_liquidation, derniere_annee_par_regime
+                codes, annee_liquidation, derniere_annee_par_regime, carriere
             ) if liquider_successions else {}
         )
         # DEUX PASSES, ET LA SECONDE NE SERT QU'À QUI N'A QUE DES POINTS.
