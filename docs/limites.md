@@ -6869,11 +6869,11 @@ entre le net d'aujourd'hui et le brut de demain.
 l'était sous le moitié-moitié, pour une raison qui tient et qu'il faut garder
 en tête : la réduction générale dégressive unique efface depuis 2026 la
 totalité des cotisations patronales de son périmètre au niveau du SMIC — son
-coefficient maximal, 40,21 %, est exactement leur somme —, si bien qu'un
-salarié au SMIC ne supporte aujourd'hui que ses 11,3 points salariaux, et que
+coefficient maximal, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:reduction_generale.coefficient_maximal*100)-->40,21<!--/--> %, est exactement leur somme —, si bien qu'un
+salarié au SMIC ne supporte aujourd'hui que ses <!--chiffre:mesure(fiche?exemple=smic&quoi=salarie)-->11,3<!--/--> points salariaux, et que
 baisser la part patronale ne lui rend rien. Le partage retenu ne touche pas à
-cette part : il ramène la retenue de l'assuré à 6,33 points, et le gain au SMIC
-est de **+91 € par mois le premier mois, +39 € une fois le brut stabilisé**.
+cette part : il ramène la retenue de l'assuré à <!--chiffre:mesure(fiche?exemple=smic&quoi=salarie&systeme=proposition)-->6,33<!--/--> points, et le gain au SMIC
+est de **+<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->89<!--/--> € par mois le premier mois**, moins une fois le brut stabilisé.
 
 **Deux réserves subsistent au SMIC, et elles sont de sens opposé.** Le coût du
 travail y monte de **66 € par mois**, seul niveau de salaire où il bouge : la
@@ -6896,10 +6896,10 @@ l'employeur. Quand il verse des taux de DROIT COMMUN — un salarié du privé, 
 agent d'un régime spécial que la fermeture de 2023 a versé au régime général, un
 agent public non titulaire —, le site affiche un coût du travail et le tient
 fixe : l'incidence est intégrale. Quand ce qu'il verse est un taux
-d'ÉQUILIBRE — 82,28 % du traitement pour l'État en 2026, 37,65 % pour la
+d'ÉQUILIBRE — <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> % du traitement pour l'État en 2026, <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=cnracl)-->37,65<!--/--> % pour la
 CNRACL —, **le site n'affiche pas de coût du travail** : ce taux est fixé pour
 que le compte d'affectation spéciale « Pensions » tombe juste, non parce que
-l'agent acquerrait 82 % de son traitement en droits nouveaux, et poser dessus
+l'agent acquerrait <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82<!--/--> % de son traitement en droits nouveaux, et poser dessus
 l'incidence intégrale afficherait une hausse de salaire de soixante-dix points
 qui n'existe pas — la dette de pensions qu'il finance, elle, reste à payer. Pour
 ces statuts, le traitement indiciaire brut est tenu fixe et seule la retenue de
@@ -6921,13 +6921,13 @@ retraite additionnelle de la fonction publique (RAFP), assise sur les PRIMES que
 l'assiette du dépôt — traitement indiciaire brut et NBI — exclut par
 construction : un agent dont les primes pèsent lourd ne voit ici qu'une fraction
 de sa feuille de paie. Pour un indépendant, la contribution à la formation
-professionnelle (un forfait de 0,25 % du plafond, et non un taux, laissé dehors
+professionnelle (un forfait de <!--chiffre:illustration()-->0,25<!--/--> % du plafond, et non un taux, laissé dehors
 par symétrie avec les taxes sur salaires du privé) et l'assiette minimale que la
 loi impose aux très bas revenus, faute de savoir si l'assuré relève d'une de ses
 exonérations : le net affiché en bas de barème est un plafond. Ses cotisations
 de retraite sont par ailleurs celles des fiches de régime, qui alignent
-l'artisan et le commerçant sur le régime général — 15,45 % sous le plafond et
-2,51 % déplafonnés plutôt que 17,15 % et 0,72 % : c'est la convention du modèle
+l'artisan et le commerçant sur le régime général — <!--chiffre:valeur(data/reference/regimes/base_prive.yaml:regimes.code=regime_general.periodes.debut=2023.taux_cotisation_retraite*100)-->15,45<!--/--> % sous le plafond et
+<!--chiffre:illustration()-->2,51<!--/--> % déplafonnés plutôt que <!--chiffre:illustration()-->17,15<!--/--> % et <!--chiffre:illustration()-->0,72<!--/--> % : c'est la convention du modèle
 entier, et la fiche de paie ne peut pas en diverger sans que le compte notionnel
 et elle cessent de dire la même chose. Enfin, pour un agent public non
 titulaire, le coefficient maximal de la réduction générale reste celui du décret
@@ -6943,8 +6943,8 @@ d'entreprise. Aucune ne bouge d'un système à l'autre, et plusieurs dépendent 
 la commune ou de la taille de l'entreprise ; les porter demanderait de choisir
 un employeur type de plus. L'employeur retenu est une entreprise de cinquante
 salariés et plus ; sous le seuil, le FNAL et le coefficient de la réduction
-générale valent 0,40 point de moins. Le taux d'accidents du travail est le taux
-moyen d'OpenFisca (3,00 %), au-dessus du taux net moyen national ; il ne déplace
+générale valent <!--chiffre:illustration()-->0,40<!--/--> point de moins. Le taux d'accidents du travail est le taux
+moyen d'OpenFisca (<!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:profils.salarie_prive.postes.code=accidents_travail.employeur.0.taux*100)-->3,00<!--/--> %), au-dessus du taux net moyen national ; il ne déplace
 aucun écart entre systèmes, seulement le niveau du coût affiché.
 
 **7. Les taux sont ceux d'un millésime, appliqués aux années à venir.** Le
@@ -6966,7 +6966,7 @@ ne le voit que s'il va lire.
 paie du modèle, et c'est un manque, pas un oubli.** Depuis le 20 septembre
 2026, la proposition supprime les deux impôts du poste « impôts et taxes
 affectés » qui sortent d'une rémunération — la taxe sur les salaires, dont
-58,35 % va à la branche vieillesse (L. 131-8, 1°), et le forfait social, qui
+<!--chiffre:illustration()-->58,35<!--/--> % va à la branche vieillesse (L. 131-8, 1°), et le forfait social, qui
 lui va en entier (L. 241-3, 1°). Or la taxe sur les salaires n'est due que par
 les employeurs NON assujettis à la TVA — hôpitaux, banques, assurances,
 associations —, et le profil d'employeur du dépôt est une entreprise de
