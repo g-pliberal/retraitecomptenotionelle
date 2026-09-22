@@ -87,7 +87,7 @@ en janvier 2017 n'y a pas droit, celle de septembre oui. Aucun témoin n'a
 bougé : la grille de cas types n'exerce qu'un statut à la fois, et la LURA ne
 se voit que sur un polypensionné.
 
-**Dix erreurs de calcul.**
+**Onze erreurs de calcul.**
 
 - **Les trimestres pour enfants étaient servis huit par enfant, à tout le
   monde et de tout temps.** Le droit n'en a jamais servi autant. La majoration
@@ -472,11 +472,8 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote
   propre au classement (<!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_annulation?classement=active)-->62<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_annulation?classement=super_active)-->57<!--/--> ans), la condition de durée de services
   classés (<!--chiffre:maximum(data/reference/legislation/categorie_active.csv:services_requis_annees?classement=active)-->17<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:services_requis_annees?classement=super_active)-->27<!--/--> ans) et, depuis le 22 septembre 2026, la DURÉE REQUISE
-  propre aux emplois classés : l'accélération de 2023 ne s'y applique pas à la
-  date où elle s'applique aux autres, et le B du XXIV de l'article 10 de la loi
-  n° 2023-270 leur oppose <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1967)-->169<!--/--> trimestres des nés du 1er septembre 1966 à 1967
-  contre <!--chiffre:cellule(data/reference/legislation/duree_assurance_requise.csv:trimestres?generation=1967)-->172<!--/--> en droit commun, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1969)-->170<!--/--> jusqu'au 31 mars 1970, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1970.25)-->171<!--/--> jusqu'à la fin de
-  1970, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1971)-->172<!--/--> ensuite — cinq ans plus tard pour la super-active. Ce qui reste hors
+  propre aux emplois classés, dont le calendrier est donné plus bas (« La durée
+  requise des emplois classés »). Ce qui reste hors
   du modèle est le CLASSEMENT lui-même : il tient à l'emploi occupé, qu'aucune donnée de carrière ne révèle,
   et c'est donc l'assuré qui le déclare en choisissant l'un des cinq statuts
   classés. Qui se trompe de statut se trompe d'âge. La table ne porte par
@@ -943,13 +940,14 @@ pour l'Arrco reconstituée, 26,43 F pour l'UNIRS).
 qui a été cherché, pour éviter de le rechercher deux fois — et elle est tenue
 dans les deux sens : une limite qui se referme n'est pas effacée, elle est
 réécrite avec ce qui l'a levée et ce qu'elle a fini par coûter. Sur les
-vingt-cinq entrées qui suivent, **douze ont été refermées par une source trouvée**, **deux
+vingt-huit entrées qui suivent, **seize ont été refermées par une source trouvée**, **deux
 par la mesure du biais** qu'elles laissent — un biais chiffré n'est plus une
 inconnue, il se retranche — et **quatre à moitié** : le plafond ancien, dont
 trente et une années sur soixante et onze sont désormais lues dans leur décret ;
 la contribution de la SNCF, cinq années sur douze ; celle de la CNRACL d'avant
 1993, cinq sur quarante-cinq ; et le minimum vieillesse, neuf ancres sur
-quatorze. Ces demi-fermetures se ressemblent : la source a été trouvée et lue,
+quatorze, qui occupe deux entrées — ses montants servis, puis son montant
+dans le code. Ces demi-fermetures se ressemblent : la source a été trouvée et lue,
 et ce qui reste tient à la RÉDACTION des textes ou aux LACUNES de la base — un
 décret qui ne nomme pas l'année qu'il commande, un taux que le décret fait
 évoluer par renvoi au lieu de l'écrire, un article qu'on ne réécrit pas à chaque
@@ -2280,9 +2278,11 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
 - **polypensionnés** — chaque régime liquide sur ses seules années, et la
   durée acquise dans chacun est comptée séparément ; mais un régime et celui
   qui lui succède ne sont pas deux régimes, et liquident ensemble (voir « Les
-  régimes alignés » ci-dessous). Restent hors du modèle les règles de
-  COORDINATION entre régimes alignés DISTINCTS : proratisation croisée du
-  salaire annuel moyen, et liquidation unique (LURA).
+  régimes alignés » ci-dessous). La liquidation unique des régimes alignés
+  DISTINCTS (LURA) et sa proratisation croisée du salaire annuel moyen sont
+  servies depuis le 22 septembre 2026 ; seule en reste dehors sa troisième
+  condition, la retraite de même nature déjà obtenue avant le 1er juillet
+  2017 (voir « Ce qui reste hors du modèle »).
 
 Un écart de quelques pour cent avec la pension réelle est attendu.
 
@@ -2868,6 +2868,7 @@ d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
 | fiche F16336 et circulaire carrière Cnav 2017-01, fiche 6.2b | huit trimestres par enfant au régime général — quatre de maternité, quatre d'éducation | **exact** |
 | fiche F37311 | bonification de la fonction publique : quatre trimestres par enfant né avant 2004, deux pour ceux nés depuis | **exact** |
 | circulaire Cnav 2022-26 | assiette de la majoration pour trois enfants : <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->10<!--/--> % de la retraite telle qu'elle est servie, surcotée, décotée ou pile au taux plein | **exact** |
+| ENIM, pages « Le mode de calcul » et « Les conditions d'attribution » | marin : bonification de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->5<!--/--> % dès deux enfants (R. 14), pension d'ancienneté ouverte à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->50<!--/--> ans pour <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->25<!--/--> ans de services et refusée un trimestre plus tôt (R. 2) | **exact** |
 
 **Ce que la confrontation a trouvé, dans l'ordre.** Le premier exemple lu
 contredisait les tables certifiées du dépôt : non que le récupérateur se soit
@@ -2938,7 +2939,7 @@ circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour 
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
 par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->30<!--/--> tombent justes ensemble, sur
-dix sources et sept règles, c'est le droit que le modèle applique, et non une
+onze sources et neuf règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
 
 ### La cotisation déplafonnée est portée au compte
@@ -6612,13 +6613,12 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 - **La coordination interrégimes.** Chaque régime liquide sur ses seules
   années, et la durée acquise dans chacun est comptée séparément — c'est le
   droit, et un régime et celui qui lui succède comptent pour un seul (voir
-  §3). Restent dehors la **proratisation croisée** du salaire annuel moyen
-  entre régimes alignés et la **liquidation unique** (LURA), qui, depuis 2017,
-  fait calculer par une seule caisse la retraite d'un polypensionné des trois
-  régimes alignés. L'effet est de second ordre pour une carrière
-  mono-affiliée — le cas ordinaire — et joue plutôt à la hausse pour un
-  polypensionné, dont le salaire annuel moyen unique est calculé sur les
-  meilleures années tous régimes confondus.
+  §3). La **liquidation unique** (LURA), qui, depuis 2017, fait calculer par
+  une seule caisse la retraite d'un polypensionné des trois régimes alignés,
+  est servie depuis le 22 septembre 2026, avec la **proratisation croisée** de
+  son salaire annuel moyen. En reste dehors sa troisième condition — la
+  retraite de même nature déjà obtenue avant le 1er juillet 2017 —, qu'une
+  carrière du dépôt, liquidée tout d'un coup, ne peut pas porter.
 
 ---
 
