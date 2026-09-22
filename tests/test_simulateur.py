@@ -4623,3 +4623,69 @@ def test_le_marin_est_bonifie_des_deux_enfants(simulateur):
     assert taux("marin", 3) == pytest.approx(0.10)
     assert taux("marin", 5) == pytest.approx(0.15)
     assert taux("salarie_prive_non_cadre", 2) == 0
+
+
+# -- action 89 : la minoration des trois régimes de l'IRCEC -------------------
+
+
+def test_l_ircec_compte_des_annees_et_non_des_trimestres(simulateur):
+    """Règlement du RAAP, art. 27 b : « 2,5 % par année pour chacune des deux
+    premières années manquantes ; 5 % par année manquante supplémentaire » —
+    et, « si cela est plus favorable à l'adhérent », les coefficients du
+    régime de base. À soixante-deux ans, cinq années manquent jusqu'à
+    soixante-sept : 20 %, là où la décote du régime de base en retire 25.
+    Une année entamée compte entière, comme dans l'annexe de l'arrêté du
+    21 novembre 2013 : deux ans et demi d'anticipation en valent trois, 10 %
+    — mais à quatre trimestres de la durée, le régime de base n'en retire que
+    5, et c'est lui qui est servi. À un trimestre de l'âge, 1,25 % contre
+    2,5 % : le régime de base encore.
+    """
+    scenario = simulateur.scenario_actuel
+    periode = _periode(simulateur, "ircec_raap", 2026)
+    assert periode.abattement_points == "ircec"
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1960, sexe="F", affiliation="artiste_auteur",
+        age_debut=30, age_liquidation=62,
+    )
+    assert scenario._age_taux_plein(periode, carriere) == pytest.approx(67.0)
+    assert scenario._abattement_points(
+        periode, carriere, 140, 172, 62.0, 2022) == pytest.approx(0.80)
+    assert scenario._abattement_points(
+        periode, carriere, 168, 172, 64.5, 2024) == pytest.approx(0.95)
+    assert scenario._abattement_points(
+        periode, carriere, 100, 172, 64.5, 2024) == pytest.approx(0.90)
+    assert scenario._abattement_points(
+        periode, carriere, 100, 172, 66.75, 2026) == pytest.approx(0.9875)
+    # La durée réunie ouvre le taux plein dès l'âge légal.
+    assert scenario._abattement_points(
+        periode, carriere, 172, 172, 62.0, 2022) == pytest.approx(1.0)
+
+
+def test_le_racl_n_a_rejoint_les_deux_autres_qu_en_2025(simulateur):
+    """De 2014 à 2024, le RACL minorait de « 5 % par année manquante », sans
+    renvoi au régime de base, et seul l'âge ouvrait le taux plein : une
+    compositrice partie à soixante-deux ans avec toute sa durée perdait le
+    quart de sa pension. L'arrêté du 13 mai 2025 l'aligne sur le RAAP et le
+    RACD. Avant 2014, la fiche garde la décote du régime de base, faute des
+    coefficients du règlement de 1978.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1960, sexe="F", affiliation="artiste_auteur",
+        age_debut=20, age_liquidation=62,
+    )
+    ancien = _periode(simulateur, "ircec_racl", 2020)
+    assert ancien.abattement_points == "ircec_age_seul"
+    assert scenario._abattement_points(
+        ancien, carriere, 180, 172, 62.0, 2022) == pytest.approx(0.75)
+    assert scenario._abattement_points(
+        ancien, carriere, 180, 172, 64.5, 2024) == pytest.approx(0.85)
+
+    nouveau = _periode(simulateur, "ircec_racl", 2025)
+    assert nouveau.abattement_points == "ircec"
+    assert scenario._abattement_points(
+        nouveau, carriere, 180, 172, 62.0, 2022) == pytest.approx(1.0)
+
+    avant_2014 = _periode(simulateur, "ircec_racd", 2010)
+    assert avant_2014.abattement_points == "decote_du_regime_de_base"
+    assert _periode(simulateur, "ircec_racd", 2014).abattement_points == "ircec"

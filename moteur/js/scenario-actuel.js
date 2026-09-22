@@ -1255,6 +1255,50 @@ export class ScenarioActuel {
       / (passAnnuel - 2 * minimumContributif));
   }
 
+  /** Coefficient qui reprend la décote du régime de base. */
+  abattementRegimeDeBase(periode, carriere, trimestres, requis, ageLiquidation,
+    anneeLiquidation) {
+    const [decote, ageAnnulation] = this.decote(periode, carriere, anneeLiquidation);
+    if (decote === null) {
+      return 1.0;
+    }
+    const trimestresDecote = this.trimestresDeDecote(
+      periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
+    );
+    return Math.max(0.0, 1.0 - decote * trimestresDecote);
+  }
+
+  /**
+   * Minoration des trois régimes de l'IRCEC : 2,5 % pour chacune des deux
+   * premières années manquantes jusqu'à l'âge du taux plein, 5 % au-delà, une
+   * année entamée comptant entière ; ou la décote du régime de base si elle
+   * est plus favorable. `ircec_age_seul` est le RACL de 2014 à 2024 : 5 % par
+   * année, sans autre voie que l'âge. Voir le docstring du modèle Python.
+   */
+  abattementIrcec(periode, carriere, trimestres, requis, ageLiquidation,
+    anneeLiquidation) {
+    const ageTauxPlein = this.ageTauxPlein(periode, carriere);
+    const ageSeul = periode.abattement_points === "ircec_age_seul";
+    if (ageLiquidation >= ageTauxPlein - 1e-9) {
+      return 1.0;
+    }
+    if (!ageSeul && trimestres >= requis) {
+      return 1.0;
+    }
+    const annees = Math.ceil(
+      auTrimestreSuperieur((ageTauxPlein - ageLiquidation) * 4) / 4,
+    );
+    const propre = Math.max(0.0, ageSeul
+      ? 1.0 - 0.05 * annees
+      : 1.0 - 0.025 * Math.min(annees, 2) - 0.05 * Math.max(0, annees - 2));
+    if (ageSeul) {
+      return propre;
+    }
+    return Math.max(propre, this.abattementRegimeDeBase(
+      periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
+    ));
+  }
+
   abattementPoints(periode, carriere, trimestres, requis, ageLiquidation,
     anneeLiquidation, trimestresRegime = 0) {
     // L'Ircantec a le même barème que l'Agirc-Arrco, et son texte l'écrit :
@@ -1285,16 +1329,15 @@ export class ScenarioActuel {
         const candidats = [parDuree, parAge].filter((c) => c !== null);
         abattement = candidats.length ? Math.max(...candidats) : 1.0;
       }
+    } else if (periode.abattement_points === "ircec"
+      || periode.abattement_points === "ircec_age_seul") {
+      abattement = this.abattementIrcec(
+        periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
+      );
     } else {
-      const [decote, ageAnnulation] = this.decote(periode, carriere, anneeLiquidation);
-      if (decote === null) {
-        abattement = 1.0;
-      } else {
-        const trimestresDecote = this.trimestresDeDecote(
-          periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
-        );
-        abattement = Math.max(0.0, 1.0 - decote * trimestresDecote);
-      }
+      abattement = this.abattementRegimeDeBase(
+        periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
+      );
     }
 
     // Abattu et majoré ne se rencontrent pas : les deux majorations de

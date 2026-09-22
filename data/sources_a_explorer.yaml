@@ -1392,7 +1392,16 @@ sources:
     a_en_tirer: >-
       Le routage entre RAAP, RACD et RACL : trois fiches `partiel`, et un
       routage que le dépôt fait sans source écrite.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Le simulateur porte sa table en clair dans les valeurs de ses listes : 52
+      activités, dont 27 au RAAP seul, 17 au RAAP et au RACD, 8 au RAAP et au
+      RACL ; et, par organisme, la SACD au RACD, la SACEM au RACL, la SCAM et
+      l'URSSAF au RAAP seul. C'est l'organisme de perception qui route, et les
+      statuts `auteur_dramatique` (SACD) et `auteur_lyrique` (SACEM) de
+      `data/reference/legislation/affiliations.yaml` routent déjà ainsi, et
+      leur note cite maintenant ce simulateur.
 
   - id: ircec_guide_retraite
     url: https://www.ircec.fr/wp-content/uploads/2026/02/guide-de-la-retraite-ircec.pdf
@@ -1402,7 +1411,19 @@ sources:
     a_en_tirer: >-
       Le guide de février 2026 : taux, classes, valeurs de point et exemples
       des trois régimes d'artistes-auteurs, en un seul document.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      Rendement du RAAP en 2026 : 90,30 € d'achat, 9,75 € de service, 10,8 %,
+      porté à `rendements_points.csv`. Les seuils et plafonds des trois
+      régimes, les minimums de liquidation (30, 900, 850 points), la cotisation
+      de solidarité, le taux aménagé de 4 % et le tableau des âges après la
+      suspension de la réforme, conforme au dépôt. Des projections RAAP
+      (revenu constant × 8 % / 90,30 × 9,75 × années) et RACD, RACL (points ×
+      valeur de service) qui ne sont que la formule : pas un témoin, faute
+      d'une grandeur que `test_oracle.py` sache comparer. Le guide ne donne
+      PAS le barème de minoration, seulement « coefficient éventuel » : il est
+      dans les règlements.
 
   # ---- MSA ---------------------------------------------------------------
 
@@ -1663,7 +1684,12 @@ sources:
       La page de liens de l'IRCEC : elle nomme les organismes avec lesquels le
       régime s'articule, et c'est souvent là qu'on trouve les sources qu'aucun
       moteur de recherche ne remonte.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Mène aux statuts, aux trois règlements (lus, voir leurs lignes) et au
+      décret n° 2011-2074 sur la gouvernance ; rien d'autre qui touche au
+      calcul.
 
   - id: cnav_independants_complementaire
     url: https://www.lassuranceretraite.fr/portail-info/hors-menu/annexe/travailleurs-independants/retraite-complementaire.html
@@ -2161,7 +2187,16 @@ sources:
     a_en_tirer: >-
       Le taux du RAAP, son assiette, son seuil d'affiliation et l'option de
       cotisation à taux réduit : le barème de la fiche `ircec_raap`.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      8 % entre le seuil de 900 SMIC horaires et trois plafonds ; option à 4 %
+      sous 2 700 SMIC, droits divisés par deux ; 4 % sur les revenus déjà
+      soumis au RACD ou au RACL ; prise en charge de moitié par la Sofia sous
+      deux plafonds ; maintien de la classe de 2016 jusqu'en 2027 ; cotisation
+      volontaire. La fiche `ircec_raap` de
+      `data/reference/regimes/non_salaries.yaml` porte déjà tout cela, ou dit
+      ne pas le modéliser ; le taux aménagé est noté dans `docs/limites.md`.
 
   - id: ircec_faq
     url: https://www.ircec.fr/foire-aux-questions/
@@ -2171,7 +2206,14 @@ sources:
     a_en_tirer: >-
       Une FAQ de caisse répond aux cas que le règlement laisse implicites, et
       chiffre souvent ses réponses : à dérouler question par question.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      Les réponses sur la liquidation confirment le règlement : « il est retenu
+      le coefficient le plus favorable » entre celui de l'IRCEC et celui du
+      régime de base, et le RACL se liquide « à compter de l'âge du taux
+      plein ». Les questions de cotisation reprennent le guide. Déroulée
+      pour la retraite ; pas pour l'action sociale ni le recouvrement.
 
   - id: ircec_qr_age_ouverture
     url: https://www.ircec.fr/qr/age-douverture-des-droits/
@@ -2191,7 +2233,14 @@ sources:
     a_en_tirer: >-
       Le mémo de février 2026 : les valeurs de l'année en une page, qui datent
       le reste.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Les valeurs 2026 en une page, toutes reprises par le guide : seuils
+      (10 692 € RAAP, 3 170,46 € RACL), plafonds (597 500 € RACD,
+      435 938,46 € RACL), taux, taux aménagé de 4 %. Les fiches de
+      `data/reference/regimes/non_salaries.yaml` les citaient déjà ; rien de
+      neuf.
 
   - id: ircec_reglement_raap
     url: https://www.ircec.fr/wp-content/uploads/2025/01/reglementraap_17042024-1.pdf
@@ -2201,7 +2250,16 @@ sources:
     a_en_tirer: >-
       Le règlement du RAAP (version du 17 avril 2024) : classes, points,
       liquidation, réversion — le texte qui fait foi pour la fiche.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      Article 27 : minoration de 2,5 % pour chacune des deux premières années
+      manquantes et 5 % au-delà, ou le régime de base s'il est plus
+      favorable ; taux plein dès l'âge légal si la pension de base l'est.
+      Lu aussi au JORF (arrêtés du 21 novembre 2013 et du 17 avril 2024) et
+      porté à la fiche (`abattement_points: ircec`, depuis 2014). Restent :
+      le minimum de 30 points, les exonérations (6 points gratuits en cas
+      d'incapacité), la cotisation volontaire.
 
   - id: ircec_reglement_racd
     url: https://www.ircec.fr/wp-content/uploads/2025/01/reglementracd_17042024.pdf
@@ -2210,7 +2268,15 @@ sources:
     regimes: [ircec_racd]
     a_en_tirer: >-
       Le règlement du RACD, régime des auteurs et compositeurs dramatiques.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      Articles 16 à 26 : 8 % des droits bruts, plafond de 120 000 points au
+      compte, cotisation de solidarité de 1 % à 4 % de 2024 à 2027, 900
+      points minimum ou remboursement, minoration de l'IRCEC portée à la
+      fiche depuis 2014. L'annexe de 2013 intervertissait, pour les
+      générations 1955 et suivantes, les colonnes du RACD et du RACL : voir
+      `docs/limites.md`.
 
   - id: ircec_reglement_racl
     url: https://www.ircec.fr/wp-content/uploads/2025/06/reglement-racl_13052025_nc.pdf
@@ -2220,7 +2286,14 @@ sources:
     a_en_tirer: >-
       Le règlement du RACL (version du 13 mai 2025), régime des auteurs et
       compositeurs lyriques.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      Articles 16 à 24 : 20 points minimum et 2 750 au plus par an, 55 000 au
+      compte, cotisation de solidarité de 3 %, 850 points minimum ou
+      versement unique. La minoration n'a rejoint celle des deux autres
+      régimes que par l'arrêté du 13 mai 2025 : la fiche porte 5 % par année
+      et l'âge seul de 2014 à 2024 (`ircec_age_seul`), puis le barème commun.
 
   # ---- Ircantec : les droits, les annexes de barème ------------------------
   # L'Ircantec est `modelise` et ses barèmes sont déjà CERTIFIÉS sur les deux

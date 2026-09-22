@@ -1343,7 +1343,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1962
-        fin: 2015
+        fin: 2013
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -1359,6 +1359,11 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
+          LIQUIDATIONS ANTÉRIEURES À 2014 : le règlement servait alors le
+          taux plein à soixante-cinq ans, et ses coefficients d'anticipation,
+          que l'arrêté du 21 novembre 2013 a remplacés, ne sont pas reproduits
+          au Journal officiel. La période garde la décote du régime de base,
+          faute d'eux.
           AVANT LA RÉFORME LE RÉGIME N'ÉTAIT PAS PROPORTIONNEL mais OPTIONNEL,
           et c'est plus grave qu'une table manquante. « Un système optionnel :
           l'adhérent choisissait un montant parmi [des classes] », écrit
@@ -1374,6 +1379,37 @@ regimes:
           La période porte donc le taux proportionnel de 8 %, et
           l'approximation SURESTIME lourdement : la caisse écrit que « jusqu'à
           présent, 80 % des adhérents cotisent sur la base » la plus basse.
+      - debut: 2014
+        fin: 2015
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.08
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        abattement_points: ircec
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          MINORATION DE L'IRCEC, et non celle du régime de base : « 2,5 %
+          par année pour chacune des deux premières années manquantes ; 5 %
+          par année manquante supplémentaire », ou la décote du régime de
+          base si elle est plus favorable (règlement, art. 27 b, dans la
+          rédaction de l'arrêté du 21 novembre 2013, en vigueur au 1er
+          janvier 2014) ; taux plein dès l'âge légal si la pension du régime
+          de base l'est.
+          Une année entamée compte entière : l'annexe de l'arrêté du 21
+          novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
+          trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
+          leurs propres coefficients, que la période ne porte pas (voir
+          `docs/limites.md`).
+          Taux et assiette : ceux de la période précédente.
       - debut: 2016
         fin: 2016
         type_calcul: points
@@ -1389,6 +1425,7 @@ regimes:
         taux_cotisation_retraite: 0.05
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
+        abattement_points: ircec
         avantages_non_contributifs: [reversion]
         notes: >-
           MONTÉE EN CHARGE DU DÉCRET DU 30 DÉCEMBRE 2015, que la fiche ignorait
@@ -1415,6 +1452,7 @@ regimes:
         taux_cotisation_retraite: 0.06
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
+        abattement_points: ircec
         avantages_non_contributifs: [reversion]
         notes: >-
           Deuxième palier de la montée en charge : 6 % des revenus de 2017,
@@ -1434,6 +1472,7 @@ regimes:
         taux_cotisation_retraite: 0.07
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
+        abattement_points: ircec
         avantages_non_contributifs: [reversion]
         notes: >-
           Troisième palier : 7 % des revenus de 2018, appelés en 2019.
@@ -1452,6 +1491,7 @@ regimes:
         taux_cotisation_retraite: 0.08
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
+        abattement_points: ircec
         avantages_non_contributifs: [reversion]
         notes: >-
           TAUX PLEIN DE LA RÉFORME, atteint sur les revenus de 2019 au terme
@@ -8275,7 +8315,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1964
-        fin: null
+        fin: 2013
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -8291,6 +8331,11 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
+          LIQUIDATIONS ANTÉRIEURES À 2014 : le règlement servait alors le
+          taux plein à soixante-cinq ans, et ses coefficients d'anticipation,
+          que l'arrêté du 21 novembre 2013 a remplacés, ne sont pas reproduits
+          au Journal officiel. La période garde la décote du régime de base,
+          faute d'eux.
           TAUX : « la cotisation complémentaire […] est fixée à 8 % de la
           totalité du montant des droits perçus pendant l'année dans la limite
           d'un maximum fixé par le règlement » (décret n° 64-226, art. 2,
@@ -8301,7 +8346,40 @@ regimes:
           (4,78 € en 2026) et la valeur de service (0,421 €) :
           `rendements_points.csv` porte leur rapport, 8,8 centimes de rente
           par euro, appliqué à toute la carrière faute de série ancienne ;
-          niveau `estimee`. Âges et décote de la fiche `ircec_raap`.
+          niveau `estimee`. Âges de la fiche `ircec_raap`.
+      - debut: 2014
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        taux_cotisation_retraite: 0.0800
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        abattement_points: ircec
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          MINORATION DE L'IRCEC, et non celle du régime de base : règlement
+          du RACD, art. 21, dans la rédaction de l'arrêté du 21 novembre
+          2013 puis de celui du 17 avril 2024 (JORFARTI000049490796) : 2,5 %
+          pour chacune des deux premières années manquantes, 5 % au-delà, ou
+          les coefficients du régime de base s'ils sont plus favorables ;
+          taux plein dès l'âge légal si la pension du régime de base l'est.
+          L'annexe de 2013 portait 5 % dès la première année pour les
+          générations 1955 et suivantes, contre son propre article : c'est
+          l'article que la fiche suit, et celui qu'a gardé l'arrêté de 2024.
+          Une année entamée compte entière : l'annexe de l'arrêté du 21
+          novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
+          trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
+          leurs propres coefficients, que la période ne porte pas (voir
+          `docs/limites.md`).
+          Taux, assiette et points : ceux de la première période.
 
   - code: ircec_racl
     nom: >-
@@ -8322,7 +8400,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1962
-        fin: null
+        fin: 2013
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -8338,6 +8416,11 @@ regimes:
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
+          LIQUIDATIONS ANTÉRIEURES À 2014 : le règlement servait alors le
+          taux plein à soixante-cinq ans, et ses coefficients d'anticipation,
+          que l'arrêté du 21 novembre 2013 a remplacés, ne sont pas reproduits
+          au Journal officiel. La période garde la décote du régime de base,
+          faute d'eux.
           TAUX : le décret ne fixe qu'un seuil d'affiliation et renvoie au
           règlement (décret n° 61-1304, art. 1, LEGIARTI000006781613,
           LEGIARTI000018123908 dès 2004 ; arrêté du 9 mars 1987,
@@ -8347,8 +8430,70 @@ regimes:
           huit, borne la plus proche, et ignore le seuil. POINTS : prix
           d'achat 10,304 €, valeur de service 0,618 € en 2026, soit 6,0
           centimes de rente par euro dans `rendements_points.csv`, appliqués à
-          toute la carrière ; niveau `estimee`. Âges et décote de la fiche
+          toute la carrière ; niveau `estimee`. Âges de la fiche
           `ircec_raap`.
+      - debut: 2014
+        fin: 2024
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_8_pass
+        taux_cotisation_retraite: 0.0650
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        abattement_points: ircec_age_seul
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          MINORATION DE L'IRCEC, et non celle du régime de base : règlement
+          du RACL, art. 21, dans la rédaction de l'arrêté du 21 novembre
+          2013 : « 5 % par année manquante entre la date d'effet de la
+          liquidation pour un départ à l'âge du taux plein et la date de
+          prise d'effet de la pension », sans renvoi au régime de base, et
+          un taux plein que seul l'âge ouvre. L'annexe du même arrêté
+          portait 2,5 % la première année pour les générations 1955 et
+          suivantes : c'est l'article que la fiche suit.
+          Une année entamée compte entière : l'annexe de l'arrêté du 21
+          novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
+          trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
+          leurs propres coefficients, que la période ne porte pas (voir
+          `docs/limites.md`).
+          Taux, assiette et points : ceux de la première période.
+      - debut: 2025
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_8_pass
+        taux_cotisation_retraite: 0.0650
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        abattement_points: ircec
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          MINORATION DE L'IRCEC, et non celle du régime de base : l'arrêté
+          du 13 mai 2025 (JORFARTI000051592840) aligne le RACL sur le RAAP
+          et le RACD : 2,5 % pour chacune des deux premières années
+          manquantes, 5 % au-delà, les coefficients du régime de base s'ils
+          sont plus favorables, et le taux plein dès l'âge légal si la
+          pension du régime de base l'est.
+          Une année entamée compte entière : l'annexe de l'arrêté du 21
+          novembre 2013 (JORFARTI000028254004) la chiffre trimestre par
+          trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
+          leurs propres coefficients, que la période ne porte pas (voir
+          `docs/limites.md`).
+          Taux, assiette et points : ceux de la première période.
 
   - code: organic_conjoints_batiment
     nom: >-

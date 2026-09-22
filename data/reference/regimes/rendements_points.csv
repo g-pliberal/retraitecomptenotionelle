@@ -65,7 +65,10 @@ msa_non_salaries,1952,2100,0.0600,estimee
 cnbf,1948,2100,0.0650,estimee
 cnbf_complementaire,1979,2100,0.0850,estimee
 rafp,2005,2100,0.0389,haute
-ircec_raap,1962,2100,0.1090,haute
+# RAAP : 9,05 / 83,03 en 2023 et 9,55 / 87,60 en 2024 font 10,9 % ; le guide
+# 2026 de l'IRCEC donne 9,75 € de service pour 90,30 € d'achat, 10,8 %.
+ircec_raap,1962,2025,0.1090,haute
+ircec_raap,2026,2100,0.1080,haute
 # CARCDSF complémentaire : rendement RECALCULÉ ANNÉE PAR ANNÉE depuis les
 # mémentos du chirurgien-dentiste, qui donnent pour chaque exercice la
 # cotisation forfaitaire, les six points qu'elle attribue — d'où le prix du
