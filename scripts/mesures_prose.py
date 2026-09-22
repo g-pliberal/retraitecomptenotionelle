@@ -580,6 +580,89 @@ def taux_statut(**reglages: str) -> float:
     return total * 100
 
 
+@lru_cache(maxsize=None)
+def _mortalite_population(population: str, cas: str, generation: int):
+    import mortalite_population
+    from retraite_notionnelle.castypes import CAS_TYPES
+
+    cas_type = next((c for c in CAS_TYPES if c.code == cas), None)
+    if cas_type is None:
+        raise ValueError(f"cas type inconnu « {cas} »")
+    if population == "vingtile":
+        mortalite = mortalite_population._simulateur(None).mortalite
+        population = mortalite.population_niveau_de_vie(cas_type.niveau_salaire)
+    resultat = mortalite_population.mesurer(population, cas_type, generation)
+    if resultat is None or "erreur" in resultat:
+        raise ValueError(f"{cas} ne se mesure pas : {resultat}")
+    return resultat
+
+
+def mortalite_population(**reglages: str) -> float:
+    """Ce que change une table de mortalité propre à une population, à capital égal.
+
+    ``population`` (``fonctionnaires_civils_etat``, ou ``vingtile`` pour celui
+    où le salaire du cas type le place), ``cas`` (code d'un cas type),
+    ``generation``. ``quoi`` : ``annees`` (années de rente en plus, en moins
+    si négatif), ``ecart`` (écart de pension du scénario ``scenario``, 4 par
+    défaut, en %), ``transfert`` (sur la vie, en euros constants, scénario 1
+    par défaut). ``abs=1`` rend la valeur sans son signe. C'est
+    ``scripts/mortalite_population.py``, cellule par cellule.
+    """
+    resultat = _mortalite_population(reglages["population"], reglages["cas"],
+                                     int(reglages["generation"]))
+    quoi = reglages["quoi"]
+    defaut = "4" if quoi == "ecart" else "1"
+    ligne = next(l for l in resultat["scenarios"]
+                 if l["numero"] == int(reglages.get("scenario", defaut)))
+    valeurs = {
+        "annees": lambda: resultat["esperance_population"] - resultat["esperance_commune"],
+        "ecart": lambda: ligne["ecart"] * 100,
+        "transfert": lambda: ligne["transfert_vie"],
+    }
+    if quoi not in valeurs:
+        raise ValueError(f"« {quoi} » n'est pas mesuré ; il y a {', '.join(valeurs)}")
+    # La prose dit le sens en mots — « 3,0 ans de MOINS », « retirés » — et
+    # le nombre sans signe : ``abs=1`` le lui rend ainsi.
+    valeur = valeurs[quoi]()
+    return abs(valeur) if reglages.get("abs") else valeur
+
+
+def table_mortalite(**reglages: str) -> float:
+    """Ce que change le choix de la table, à ``age`` et à la date ``annee``.
+
+    ``quoi=moment`` : les années d'espérance de vie qu'une table du moment
+    retire à la table de génération ; ``quoi=sexe`` : ce qu'une table sexuée
+    retirerait à la pension d'une femme face à la table unisexe, en %.
+    Population générale dans les deux cas.
+    """
+    mortalite = _simulateur(_parametres()).mortalite
+    age, annee = float(reglages["age"]), float(reglages["annee"])
+    generation = mortalite.esperance_residuelle(age, annee, None, True)
+    if reglages["quoi"] == "moment":
+        return generation - mortalite.esperance_residuelle(age, annee, None, False)
+    if reglages["quoi"] == "sexe":
+        return (1 - generation / mortalite.esperance_residuelle(age, annee, "F", True)) * 100
+    raise ValueError(f"« {reglages['quoi']} » n'est pas mesuré ; il y a moment, sexe")
+
+
+def part_pensions_sous(**reglages: str) -> float:
+    """La part des retraités dont la pension brute mensuelle est sous ``borne``, en %.
+
+    ``annee`` : le millésime de la distribution de la DREES
+    (``macro/distribution_pensions.csv``), tous sexes.
+    """
+    import csv
+
+    chemin = RACINE / "data/reference/macro/distribution_pensions.csv"
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = [l for l in csv.DictReader(r for r in flux if not r.startswith("#"))
+                  if l["annee"] == reglages["annee"] and l["sexe"] == "ensemble"]
+    if not lignes:
+        raise ValueError(f"pas de distribution pour {reglages['annee']}")
+    return sum(float(l["part_pct"]) for l in lignes
+               if float(l["borne_mensuelle"]) < float(reglages["borne"]))
+
+
 def composition_revalorisation(**reglages: str) -> float:
     """Ce que composer année par année les coefficients des arrêtés fait
     perdre, en % et en valeur absolue, face au coefficient lu d'un bloc.
@@ -1034,6 +1117,9 @@ MESURES = {
     "approximation_revalorisation": approximation_revalorisation,
     "ecart_colonnes": ecart_colonnes,
     "taux_statut": taux_statut,
+    "mortalite_population": mortalite_population,
+    "table_mortalite": table_mortalite,
+    "part_pensions_sous": part_pensions_sous,
 }
 
 

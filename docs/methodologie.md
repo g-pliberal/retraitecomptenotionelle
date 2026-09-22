@@ -448,11 +448,12 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
 
 - **Table de génération**, pas table du moment. À chaque année vécue est
   appliquée la mortalité de l'année civile correspondante. Une table du moment
-  sous-estimerait la longévité des générations récentes de 1,5 à 3 ans, et
-  surestimerait donc leur pension d'autant.
+  sous-estimerait la longévité des générations récentes de <!--chiffre:mesure(table_mortalite?age=64&annee=2040&quoi=moment)-->1,5<!--/--> à <!--chiffre:mesure(table_mortalite?age=64&annee=2000&quoi=moment)-->3<!--/--> ans pour
+  une liquidation à <!--chiffre:illustration()-->64<!--/--> ans entre 2040 et 2000, et surestimerait donc leur
+  pension d'autant.
 - **Table unisexe** par défaut. C'est la pratique des systèmes notionnels suédois
   et italien. Une table sexuée est actuariellement exacte mais réduirait la
-  pension des femmes de 5 à 10 % à capital identique, et serait contraire au
+  pension des femmes de <!--chiffre:mesure(table_mortalite?age=64&annee=2040&quoi=sexe)-->6<!--/--> à <!--chiffre:mesure(table_mortalite?age=64&annee=2000&quoi=sexe)-->10<!--/--> % à capital identique, sur les mêmes dates, et serait contraire au
   principe de non-discrimination. `--table par_sexe` permet de mesurer l'écart.
 - **Table par niveau de vie** par défaut, depuis le 21 septembre 2026, et
   c'est un choix qui se désactive d'un mot. Une table de population générale
@@ -469,7 +470,7 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   nommée s'impose aussi à toute carrière, pour mesurer :
   `population=fonctionnaires_civils_etat` remplace la table par celle des
   pensionnés civils de l'État, dont le Service des retraites de
-  l'État publie l'espérance de vie à 65 ans (24,68 ans pour les femmes, 21,16
+  l'État publie l'espérance de vie à <!--chiffre:illustration()-->65<!--/--> ans (<!--chiffre:cellule(data/reference/mortalite/esperances_vie_populations.csv:valeur?population=fonctionnaires_civils_etat&sexe=F&annee=2024)-->24,68<!--/--> ans pour les femmes, <!--chiffre:cellule(data/reference/mortalite/esperances_vie_populations.csv:valeur?population=fonctionnaires_civils_etat&sexe=H&annee=2024)-->21,16<!--/-->
   pour les hommes en 2024, un an de plus que l'INSEE à la population
   générale). La table n'est pas reconstruite : un facteur sur la force de
   mortalité de la table générale — la survie de chaque cellule élevée à cette
@@ -477,15 +478,15 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   reproduire l'espérance publiée, puis tenu constant sur toutes les années,
   faute d'observation ailleurs. `scripts/mortalite_population.py` en tire le
   transfert, cas type par cas type et sur les six scénarios : pour le
-  fonctionnaire sédentaire né en 1975, 1,5 an de rente de plus, soit 5,7 % de
-  pension notionnelle à capital égal, et 54 000 € sur la vie sous le système
+  fonctionnaire sédentaire né en 1975, <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=annees)-->1,5<!--/--> an de rente de plus, soit <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=ecart&abs=1)-->5,7<!--/--> % de
+  pension notionnelle à capital égal, et <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=transfert)-->53 912<!--/--> € sur la vie sous le système
   actuel, qui ne connaît aucun diviseur et transfère donc autant.
 - **L'axe du revenu, par les tables de l'INSEE.** L'INSEE publie des tables
   de mortalité par VINGTILE de niveau de vie (Insee Résultats, mai 2025 ;
   `mortalite/esperances_vie_niveau_de_vie.csv`, lu par
-  `scripts/fetch/insee_mortalite_niveau_de_vie.py`) : à 65 ans en 2020-2024,
-  15,1 ans pour les 5 % d'hommes les plus modestes contre 22,1 pour les 5 %
-  les plus aisés, 20,2 contre 25,2 chez les femmes. Chaque vingtile est une
+  `scripts/fetch/insee_mortalite_niveau_de_vie.py`) : à <!--chiffre:illustration()-->65<!--/--> ans en 2020-2024,
+  <!--chiffre:cellule(data/reference/mortalite/esperances_vie_niveau_de_vie.csv:valeur?periode=2020-2024&sexe=H&vingtile=1&mesure=e65)-->15,1<!--/--> ans pour les <!--chiffre:illustration()-->5<!--/--> % d'hommes les plus modestes contre <!--chiffre:cellule(data/reference/mortalite/esperances_vie_niveau_de_vie.csv:valeur?periode=2020-2024&sexe=H&vingtile=20&mesure=e65)-->22,1<!--/--> pour les <!--chiffre:illustration()-->5<!--/--> %
+  les plus aisés, <!--chiffre:cellule(data/reference/mortalite/esperances_vie_niveau_de_vie.csv:valeur?periode=2020-2024&sexe=F&vingtile=1&mesure=e65)-->20,15<!--/--> contre <!--chiffre:cellule(data/reference/mortalite/esperances_vie_niveau_de_vie.csv:valeur?periode=2020-2024&sexe=F&vingtile=20&mesure=e65)-->25,2<!--/--> chez les femmes. Chaque vingtile est une
   population du diviseur, `niveau_de_vie_v01` à `_v20`, calée non sur sa
   valeur brute mais sur son rapport à l'ensemble de l'étude — qui vit un à
   trois dixièmes de moins que la population générale certifiée, par son champ
@@ -497,12 +498,12 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   partie : la convention place le SMIC au quatrième vingtile, le salaire
   moyen au treizième, le cadre au dix-neuvième. Le résultat, pour la
   génération 1975 (`scripts/mortalite_population.py --niveau-de-vie`) : le
-  salarié au SMIC a 3,0 ans de rente de MOINS que la table commune ne lui
-  en compte, l'exploitant agricole 3,7 de moins, le cadre 2,7 de plus, le
-  libéral 3,2 de plus. Un diviseur commun transfère donc des modestes vers
-  les aisés : 12,5 % de pension notionnelle à capital égal pour le SMIC,
-  11,7 % dans l'autre sens pour le libéral, et sur la vie 49 000 € retirés
-  au premier et 173 000 € ajoutés au second sous le système actuel — qui
+  salarié au SMIC a <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=annees&abs=1)-->3,0<!--/--> ans de rente de MOINS que la table commune ne lui
+  en compte, l'exploitant agricole <!--chiffre:mesure(mortalite_population?population=vingtile&cas=exploitant_agricole&generation=1975&quoi=annees&abs=1)-->3,7<!--/--> de moins, le cadre <!--chiffre:mesure(mortalite_population?population=vingtile&cas=cadre&generation=1975&quoi=annees&abs=1)-->2,7<!--/--> de plus, le
+  libéral <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=annees&abs=1)-->3,1<!--/--> de plus. Un diviseur commun transfère donc des modestes vers
+  les aisés : <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=ecart&abs=1)-->12,5<!--/--> % de pension notionnelle à capital égal pour le SMIC,
+  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,9<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->48 601<!--/--> € retirés
+  au premier et <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=transfert&abs=1)-->186 064<!--/--> € ajoutés au second sous le système actuel — qui
   transfère autant que les autres, n'ayant aucun diviseur pour le savoir.
   Cette mesure est celle que le défaut applique désormais ; ses chiffres
   restent ceux de la table commune contre le vingtile, et
@@ -520,7 +521,7 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   patrimoine. C'est circulaire sous un compte notionnel, la pension
   dépendant du diviseur, et le modèle itère jusqu'au point fixe, six tours
   au plus. Par la pension, le SMIC à carrière complète monte au sixième
-  vingtile — six retraités sur dix touchent moins de 1 500 € —, le salaire
+  vingtile — <!--chiffre:mesure(part_pensions_sous?borne=1500&annee=2020)-->59<!--/--> % des retraités touchaient moins de <!--chiffre:illustration()-->1 500<!--/--> € en 2020 —, le salaire
   moyen au onzième, le cadre reste au dix-neuvième, et les régimes à départ
   précoce descendent, leur pension étant plus petite que leur salaire ne
   le laissait croire.

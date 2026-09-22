@@ -575,6 +575,7 @@ fichiers:
       "Précision des coefficients affichés": etat
       "Une carrière, plusieurs métiers": etat
       "Le périmètre du taux de cotisation": etat
+      "5. Le coefficient de conversion": etat
   # Un JOURNAL DE CHANTIER : le §4 et ses six suites racontent, chacune, ce
   # qu'une session a mesuré le jour où elle l'a mesuré. Leurs chiffres sont
   # justes à leur date et gelés — les rafraîchir réécrirait l'histoire, et
@@ -684,7 +685,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 10
+  sections_a_declarer: 9
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
