@@ -8620,10 +8620,7 @@ typographique n'était pas gardé à la correction ; un paragraphe en retrait
 
 **Ce qui reste.** Neuf sections de `methodologie.md`, qu'une autre session
 ancre en même temps, et les trois de `docs/outillage_interface.md`, qui
-restent `a_declarer` pour la raison dite plus haut. Un test de `test_web.py`
-compare `equilibre.json` à l'octet près et tombe dans un conteneur sur un
-écart au dernier chiffre de deux flottants : il demande une reconstruction
-déterministe, pas une régénération.
+restent `a_declarer` pour la raison dite plus haut.
 
 **L'angle mort à traiter ensuite.** Ce contrôle ne juge pas une phrase,
 seulement un nombre : « la bascule ne reprend aucun droit acquis » lui est
