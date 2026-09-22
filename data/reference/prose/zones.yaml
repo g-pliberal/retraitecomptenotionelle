@@ -454,6 +454,14 @@ fichiers:
   # se fait section par section.
   docs/methodologie.md:
     defaut: a_declarer
+    # Trois procès-verbaux enclavés dans le scénario 1 : ce que coûtait la
+    # conversion des points devinée, l'unification Arrco de 1999, et la table
+    # d'OpenFisca reprise d'abord. Leurs chiffres sont ceux du jour de la
+    # correction.
+    paragraphes_recit:
+      - "Les deviner coûtait cher, et de deux façons."
+      - "**L'unification Arrco du 1<sup>er</sup> janvier 1999"
+      - "La source est la circulaire annuelle de revalorisation de la Cnav"
     # Même tableau, même script : la méthodologie en portait la seconde copie.
     blocs_produits:
       - indexation
@@ -498,6 +506,8 @@ fichiers:
       "Le taux plein, et ce qui l'ouvre": etat
       "La construction": etat
       "L'âge de conversion des droits acquis": etat
+      "Scénario 1 — le système actuel": etat
+      "Ce que chaque régime liquide, et sur quoi": etat
   # Un JOURNAL DE CHANTIER : le §4 et ses six suites racontent, chacune, ce
   # qu'une session a mesuré le jour où elle l'a mesuré. Leurs chiffres sont
   # justes à leur date et gelés — les rafraîchir réécrirait l'histoire, et
