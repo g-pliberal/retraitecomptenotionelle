@@ -2130,14 +2130,15 @@ des lignes que le lecteur a sous les yeux et fait paraître suffisante une
 décimale de moins — c'est ainsi que le diviseur a d'abord été fixé à quatre
 décimales alors qu'il en faut cinq.
 
-Écart maximal de la ligne reconstituée depuis l'écran, sur 52 carrières :
+Écart maximal de la ligne reconstituée depuis l'écran, mesuré le 10 septembre
+2026 sur 52 carrières — la mesure qui a fixé les deux constantes :
 
 | Étape | 4 déc. | 5 déc. | 6 déc. | Retenu |
 |---|---|---|---|---|
-| Droits acquis × diviseur | 2,70 € | **0,57 €** | 0,57 € | 5 (`DECIMALES_DIVISEUR`) |
-| Capital ÷ diviseur | 0,10 € | **0,02 €** | 0,02 € | 5 |
-| Capital × revalorisation | 62,27 € | 6,47 € | **1,23 €** | 6 (`DECIMALES_FACTEUR`) |
-| Cotisations × rendement cumulé | 50,92 € | 5,09 € | **1,07 €** | 6 |
+| Droits acquis × diviseur | 2,70 € | **0,57 €** | 0,57 € | <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=DECIMALES_DIVISEUR)-->5<!--/--> (`DECIMALES_DIVISEUR`) |
+| Capital ÷ diviseur | 0,10 € | **0,02 €** | 0,02 € | <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=DECIMALES_DIVISEUR)-->5<!--/--> |
+| Capital × revalorisation | 62,27 € | 6,47 € | **1,23 €** | <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=DECIMALES_FACTEUR)-->6<!--/--> (`DECIMALES_FACTEUR`) |
+| Cotisations × rendement cumulé | 50,92 € | 5,09 € | **1,07 €** | <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=DECIMALES_FACTEUR)-->6<!--/--> |
 
 Au-delà, le gain s'arrête : ce qui reste vient de ce que les **capitaux
 s'affichent à l'euro**, ce qui borne toute reconstitution à un demi-euro par
