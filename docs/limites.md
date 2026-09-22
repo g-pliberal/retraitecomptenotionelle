@@ -3123,7 +3123,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 | Régime | Ce qui manque | Ce qui le remplace | Sens et ordre de grandeur |
 |---|---|---|---|
 | Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; le montant de la cotisation FORFAITAIRE du régime de base d'avant 2004 — qui ne commande plus la pension, seulement le flux versé au compte notionnel | le régime de base, en points plafonnés à <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnavpl.periodes.debut=2025.points_maximum)-->557<!--/-->, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
-| Marins (ENIM) | les salaires forfaitaires d'avant 2008, que les textes de l'index ne chiffrent pas ; la CATÉGORIE du marin, que le décret définit par le métier et qu'une carrière saisie ne porte pas ; les deux exceptions au plafond de vingt-cinq annuités, l'invalidité et le marin de cinquante-deux ans et demi réunissant trente-sept annuités et demie | la grille des vingt forfaits lue au Journal officiel depuis 2008, la catégorie la plus proche du revenu — convention nommée —, et la grille de 2008 ramenée par le salaire moyen avant ; le plafond de vingt-cinq annuités avant cinquante-cinq ans est porté | **estimé** avant 2008, la grille de 2008 étant ramenée par le salaire moyen ; **sous-estime** la pension du marin embarqué très jeune, à qui le plafond est opposé alors que le texte l'en dispense |
+| Marins (ENIM) | les salaires forfaitaires d'avant 2008, que les textes de l'index ne chiffrent pas ; la CATÉGORIE du marin, que le décret définit par le métier et qu'une carrière saisie ne porte pas, et la catégorie MOYENNE des trente-six derniers mois qui fait le salaire de référence (R. 11) ; le décompte des services au semestre (R. 12) ; la pension d'invalidité, seule exception au plafond de vingt-cinq annuités qui ne soit pas servie | la grille des vingt forfaits lue au Journal officiel depuis 2008, la catégorie la plus proche du revenu — convention nommée —, et la grille de 2008 ramenée par le salaire moyen avant ; le plafond de vingt-cinq annuités avant cinquante-cinq ans est porté | **estimé** avant 2008, la grille de 2008 étant ramenée par le salaire moyen ; l'écart de catégorie et de décompte tient à une catégorie et à un trimestre au plus ; la levée du plafond à cinquante-deux ans et demi pour trente-sept annuités et demie est servie depuis le 22 septembre 2026 |
 | Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (au barème 2026, <!--chiffre:illustration()-->363<!--/--> € la première, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.cotisation_forfaitaire_euros)-->1 988<!--/--> € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.taux_cotisation_retraite*100)-->3,20<!--/--> % ET le forfait à sa valeur de croisière, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.cotisation_forfaitaire_euros)-->1 988<!--/--> € ; les années d'avant 2019 restent au rendement instantané | **surestime de <!--chiffre:illustration()-->4 586<!--/--> € sur une carrière**, au barème 2026, le flux des cinq premières années, contre près de <!--chiffre:illustration()-->70 000<!--/--> € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
 | Non-salariés agricoles | les points gratuits de la RCO — <!--chiffre:illustration()-->66<!--/--> par an aux conjoints et aides familiaux avant 2011, dans la limite de <!--chiffre:illustration()-->17<!--/--> ans ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, EN VIGUEUR depuis le 1er janvier 2026 et non calculable : deux de ses trois paramètres sont renvoyés à un décret que la base ne porte pas | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà, seule dont les paramètres existent | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
 | Régimes spéciaux résiduels | des paramètres certifiés — mais plus des textes : l'Opéra, la Comédie-Française, la SEITA, les clercs de notaires, la Banque de France, le fonds spécial des ouvriers de l'État et le personnel navigant ont leurs décrets lus VERSION PAR VERSION dans la base LEGI, et passent au niveau `moyenne`. Restent au niveau `estimee` les mines — dont dix-huit millésimes sont interpolés entre deux valeurs sourcées —, les marins, le port autonome de Strasbourg et les chemins de fer secondaires | pour les quatre derniers, les textes fondateurs sans recontrôle ; le port de Strasbourg n'a rien dans LEGI que des décrets de compensation, son règlement de retraite étant un acte de l'établissement | **indéterminé** pour ces quatre-là, et c'est le seul cas où le dépôt ne sait pas dire le sens. Ces régimes portent peu d'assurés ; leur poids dans les agrégats est faible |
@@ -3304,13 +3304,14 @@ est passé au **code des transports** : les fiches s'arrêtent à l'état de 202
 
 Un navigant est le seul assuré du catalogue à cotiser à **quatre régimes
 simultanément** — régime général, Agirc-Arrco, et les deux tranches de sa
-caisse. Carrière de 25 à 55 ans, génération 1965 :
+caisse. Carrière de 25 à 55 ans, génération 1965, en euros courants, décote
+de 2012 comprise (voir « Le navigant n'avait pas de décote », plus bas) :
 
 | Revenu | Pension actuelle | Notionnelle | Part patronale comprise |
 |---|---|---|---|
-| 2 × salaire moyen | 53 755 € | 11 647 € | 31 667 € |
-| 4 × | 104 566 € | 23 650 € | 65 508 € |
-| 6 × | 159 865 € | 29 646 € | 83 581 € |
+| 2 × salaire moyen | 52 121 € | 9 426 € | 25 944 € |
+| 4 × | 98 144 € | 17 492 € | 49 627 € |
+| 6 × | 164 598 € | 25 697 € | 73 673 € |
 
 C'est le cas type qui montre le plus nettement ce que mesure ce dépôt : partir
 à 55 ans coûte deux fois, et un régime spécial à départ précoce est ce qu'un
@@ -3327,7 +3328,8 @@ le seuil, le plafond, la valeur d'achat, la valeur de service ET le rendement.
 Trois années relevées : 2023 (83,03 € d'achat, 9,05 € de service, rendement
 10,9 %), 2024 (87,60 / 9,55 / 10,9 %), 2026 (90,30 / 9,75 / 10,8 %). Le mémo
 2026 donne aussi le RACD (4,78 / 0,421 / 8,8 %) et le RACL (10,304 / 0,618 /
-6 %), qui restent hors catalogue faute d'un statut qui les distingue.
+6 %), qui sont depuis entrés au catalogue (voir « L'IRCEC compte des
+années », plus bas).
 
 **La CARMF publie ses chiffres clés sur deux pages** : 11,8 % des revenus nets
 dans la limite de trois plafonds et demi — 19 849 € de cotisation maximale en
@@ -3336,7 +3338,9 @@ trois chiffres donnent un prix d'achat de 1 723 € et un rendement de 4,48 %.
 
 Ce que la CARMF change à une simulation de médecin est exactement ce que ce
 document annonçait sans pouvoir le combler — carrière de 25 à 64 ans, à trois
-fois le salaire moyen :
+fois le salaire moyen, mesurée le jour où la fiche est entrée. Ces chiffres ne
+se recalculent plus tels quels : `profession_liberale` porte depuis la
+complémentaire de la Cipav, et n'est plus la base seule.
 
 | Statut | Pension actuelle | Notionnelle |
 |---|---|---|
@@ -3366,9 +3370,12 @@ publié tel quel par la caisse.
 * le **seuil d'affiliation** du RAAP — 900 SMIC horaires, 10 692 € en 2026 —
   en dessous duquel aucune cotisation n'est due : le modèle prélève quand même,
   n'ayant pas de mécanisme de seuil d'exonération (`assiette_plancher` relève
-  une assiette trop basse, il ne l'annule pas) ;
-* **toute série historique pour la CARMF** : la caisse ne publie que l'année en
-  cours, et les chiffres de 2026 sont appliqués à toute la période.
+  une assiette trop basse, il ne l'annule pas).
+
+La série historique de la CARMF manquait aussi : la caisse ne publie que
+l'année en cours. Elle a été trouvée depuis, dans sa chronologie, et le
+rendement est porté année par année de 1983 à 2026 (voir « Ce que la
+chronologie de la CARMF a fini par dire », plus bas).
 
 **Les autres sections ont été relevées une par une, et le mur est toujours le
 même.** Il ne tient pas au taux — presque toutes le publient — mais au **PRIX
@@ -3383,7 +3390,7 @@ ce que chaque caisse donne, pour que personne n'ait à refaire le trajet :
 | **CARPIMKO**, auxiliaires médicaux | forfait + 3 % de 1996 à 2025, 8,70 % entre un demi et trois plafonds depuis 2026 — série complète au Journal officiel | 18,08 € (2010) à 21,48 € (2026), publiée par la caisse | sans objet : le rendement se déduit des 8 points du forfait. FICHE ÉCRITE |
 | **CAVP**, pharmaciens | régime MIXTE : part en répartition FORFAITAIRE de 7 657 € (taux d'appel 105,4 % en 2026), identique dans toutes les classes ; part en CAPITALISATION de 2 906 à 17 436 € selon la classe | annuité de 320,75 € (2024), 328,80 € (2026) | sans objet : le régime compte en annuités. FICHE ÉCRITE pour le volet réparti |
 | **CAVOM**, officiers ministériels | 12,50 % jusqu'à huit plafonds depuis 2016, six CLASSES avant | 3,3745 € (2026) | **55,1390 €**, publié par le guide de la caisse, qui donne aussi le rendement : 6,12 %. FICHE ÉCRITE à partir de 2016 |
-| **CIPAV**, interprofessionnelle | 9 % jusqu'à un plafond et 22 % d'un à trois depuis 2023 ; huit CLASSES avant | 2,89 € (2026) | **47,40 €**, publié — voir la troisième passe ci-dessous |
+| **CIPAV**, interprofessionnelle | 9 % jusqu'à un plafond et 22 % d'un à trois depuis 2023 ; huit CLASSES avant | 2,89 € (2026) | **47,40 €**, publié — voir la troisième passe ci-dessous. FICHE ÉCRITE |
 | **CAVEC**, experts-comptables | neuf classes, de 898 € à 30 616 € | 1,3850 € (2026) | rendement 8,33 %, vérifié sur les neuf classes. FICHE ÉCRITE |
 | **CARPV**, vétérinaires | trois classes jusqu'en 2025 (16, 20 et 24 points), quatre depuis 2026 (17, 21, 25 et 28) | 37,79 € (2023) à 39,54 € (2026) | **602,00 €** en 2026, 570,26 € en 2024 : le décret annuel le fixe depuis 2016, et chaque classe divise exactement par ses points en ce montant. FICHE ÉCRITE |
 | **CPRN**, notaires | section C : 4,10 % des produits de l'office ; section B : huit classes de 10 à 80 points | section B 17,7710 €, section C 0,9422 € (2026) | section B 279,12 € × 115 %, section C **17,69 €**, tous deux publiés par le guide de la caisse. FICHE ÉCRITE pour la section C |
@@ -4293,64 +4300,72 @@ modèle :
 | `ratp` | 1930-2033 | 16 | 79 | 3 | 0 |
 | `assemblees_parlementaires` | 1930-2030 | 22 | 79 | 0 | 0 |
 | `banque_de_france` | 1930-2026 | 16 | 78 | 0 | 0 |
-| `cavec_complementaire` | 1953-2026 | 2 | 74 | 0 | 0 |
 | `opera_de_paris` | 1930-2026 | 4 | 72 | 4 | 0 |
 | `crpcen` | 1937-2026 | 16 | 71 | 0 | 0 |
-| `ircec_racl` | 1962-2026 | 1 | 65 | 1 | 0 |
 | `fonctionnaires_pacifique` | 1959-2029 | 8 | 65 | 0 | 0 |
 | `cafat_nouvelle_caledonie` | 1958-2026 | 5 | 65 | 0 | 0 |
-| `ircec_racd` | 1964-2026 | 1 | 63 | 2 | 0 |
 | `comedie_francaise` | 1930-2026 | 4 | 63 | 1 | 0 |
 | `cnbf` | 1948-2026 | 2 | 56 | 2 | 0 |
 | `cps_polynesie` | 1968-2026 | 2 | 55 | 0 | 0 |
-| `cnavpl` | 1949-2026 | 7 | 55 | 9 | 0 |
-| `ircec_raap` | 1962-2026 | 5 | 54 | 2 | 0 |
+| `cnavpl` | 1949-2026 | 8 | 55 | 9 | 0 |
+| `cavec_complementaire` | 1953-2026 | 5 | 55 | 0 | 0 |
+| `ircec_racl` | 1962-2026 | 3 | 52 | 1 | 0 |
+| `ircec_raap` | 1962-2026 | 6 | 52 | 1 | 0 |
+| `ircec_racd` | 1964-2026 | 3 | 50 | 2 | 0 |
 | `seita` | 1935-2026 | 8 | 49 | 0 | 0 |
 | `cese_membres` | 1957-2026 | 14 | 48 | 0 | 0 |
 | `carcdsf_complementaire` | 1949-2026 | 22 | 48 | 0 | 0 |
 | `regimes_professionnels_integres` | 1947-1993 | 1 | 47 | 0 | 0 |
-| `cnracl` | 1945-2026 | 7 | 45 | 17 | 0 |
 | `mines` | 1930-2026 | 22 | 44 | 1 | 0 |
 | `cnbf_complementaire` | 1979-2026 | 2 | 40 | 0 | 0 |
+| `cnracl` | 1945-2026 | 19 | 39 | 11 | 0 |
 | `ieg` | 1946-2026 | 15 | 38 | 3 | 0 |
 | `gerants_debits_tabac` | 1963-2026 | 2 | 37 | 10 | 0 |
 | `cavom_complementaire` | 1979-2026 | 2 | 37 | 5 | 0 |
 | `wallis_et_futuna` | 1975-2026 | 13 | 34 | 0 | 0 |
 | `msa_non_salaries` | 1952-2026 | 7 | 34 | 13 | 0 |
-| `cipav_complementaire` | 1979-2026 | 4 | 34 | 1 | 0 |
+| `cipav_complementaire` | 1979-2026 | 5 | 34 | 1 | 0 |
 | `crpnpac_tranche_2` | 1963-2026 | 4 | 32 | 0 | 0 |
 | `crpnpac` | 1963-2026 | 4 | 32 | 5 | 0 |
 | `cps_polynesie_tranche_b` | 1995-2026 | 1 | 32 | 0 | 0 |
-| `cavp_complementaire` | 1949-2026 | 7 | 29 | 2 | 0 |
-| `regime_general` | 1945-2026 | 8 | 27 | 14 | 0 |
-| `msa_salaries` | 1945-2026 | 8 | 27 | 3 | 0 |
-| `fspoeie` | 1930-2026 | 9 | 26 | 4 | 0 |
-| `fonction_publique_etat` | 1948-2026 | 8 | 26 | 7 | 0 |
+| `cavp_complementaire` | 1949-2026 | 8 | 29 | 2 | 0 |
 | `chemins_fer_secondaires` | 1930-1954 | 1 | 25 | 0 | 0 |
-| `organic` | 1949-2006 | 5 | 24 | 3 | 0 |
+| `organic` | 1949-2006 | 15 | 24 | 0 | 0 |
 | `msa_rco` | 2003-2026 | 1 | 24 | 24 | 0 |
-| `cancava` | 1949-2006 | 5 | 24 | 3 | 0 |
-| `cprn_complementaire` | 1949-2026 | 9 | 22 | 2 | 0 |
+| `cancava` | 1949-2006 | 15 | 24 | 0 | 0 |
+| `cprn_complementaire` | 1949-2026 | 10 | 22 | 2 | 0 |
 | `cavamac_complementaire` | 1968-2026 | 8 | 22 | 5 | 0 |
 | `ipacte` | 1951-1970 | 1 | 20 | 0 | 0 |
+| `fspoeie` | 1930-2026 | 21 | 20 | 2 | 0 |
+| `fonction_publique_etat` | 1948-2026 | 20 | 20 | 2 | 0 |
 | `pensions_civiles_1853` | 1930-1948 | 1 | 19 | 0 | 0 |
-| `ircantec` | 1971-2026 | 15 | 17 | 6 | 0 |
+| `ircantec` | 1971-2026 | 16 | 17 | 6 | 0 |
 | `rafp` | 2005-2026 | 2 | 16 | 6 | 0 |
-| `cssm_mayotte` | 1987-2036 | 34 | 16 | 0 | 0 |
 | `assurances_sociales` | 1930-1945 | 1 | 16 | 0 | 0 |
 | `carpv_complementaire` | 1950-2026 | 10 | 15 | 0 | 0 |
 | `organic_conjoints_batiment` | 1973-2003 | 4 | 13 | 0 | 0 |
-| `cps_saint_pierre_et_miquelon` | 1987-2037 | 32 | 13 | 0 | 0 |
 | `asv_conventionnes` | 1972-2026 | 21 | 13 | 10 | 0 |
 | `agirc` | 1947-2018 | 24 | 13 | 0 | 0 |
+| `regime_general` | 1945-2026 | 33 | 12 | 0 | 0 |
 | `rco_artisans` | 1979-2012 | 10 | 12 | 2 | 0 |
 | `rci` | 2013-2026 | 2 | 12 | 2 | 0 |
-| `cavimac` | 1979-2026 | 8 | 12 | 0 | 0 |
+| `msa_salaries` | 1945-2026 | 35 | 12 | 0 | 0 |
 | `carpimko_complementaire` | 1984-2026 | 27 | 12 | 0 | 0 |
 | `arrco` | 1961-2018 | 18 | 12 | 1 | 0 |
 | `igrante` | 1960-1970 | 1 | 11 | 0 | 0 |
 | `enseignants_prive_additionnel` | 2005-2026 | 6 | 11 | 1 | 0 |
+| `cssm_mayotte` | 1987-2036 | 37 | 11 | 0 | 0 |
 | `arrco_tranche_2_entreprises_nouvelles` | 1997-2018 | 6 | 11 | 0 | 0 |
+| `arrco_tranche_2` | 1961-2018 | 22 | 9 | 0 | 0 |
+| `nric` | 2004-2012 | 2 | 8 | 3 | 0 |
+| `cavimac` | 1979-2026 | 22 | 8 | 0 | 0 |
+| `carmf_complementaire` | 1949-2026 | 62 | 8 | 1 | 0 |
+| `cps_saint_pierre_et_miquelon` | 1987-2037 | 37 | 7 | 0 | 0 |
+| `agirc_entreprises_nouvelles` | 1981-2018 | 17 | 7 | 0 | 0 |
+| `unirs` | 1957-1961 | 1 | 5 | 0 | 0 |
+| `avts` | 1941-1945 | 1 | 5 | 0 | 0 |
+| `agirc_arrco` | 2019-2026 | 2 | 5 | 0 | 0 |
+| `rsi` | 2006-2018 | 7 | 4 | 1 | 0 |
 | `rsi` | 2006-2018 | 2 | 10 | 4 | 0 |
 | `arrco_tranche_2` | 1961-2018 | 22 | 9 | 0 | 0 |
 | `nric` | 2004-2012 | 2 | 8 | 3 | 0 |
@@ -4373,12 +4388,12 @@ est un manque, et le test `test_toute_reforme_est_coupee_absorbee_ou_declaree`
 impose qu'il n'y en ait aucune. Les deux premières lignes restent ce qui
 résiste : le port autonome de Strasbourg, dont le règlement de retraite est un
 acte de l'établissement et non un texte publié, et les marins, dont la formule
-est stable depuis 1968 — vérifiée article par article — mais dont la grille des
-salaires forfaitaires reste introuvable.
+est stable depuis 1968 — vérifiée article par article —, et dont la grille des
+salaires forfaitaires, lue au Journal officiel depuis 2008, ne demande pas de
+période de plus : elle est une table annuelle, que la fiche lit à part.
 
 Le nombre n'est pas à lui seul un verdict : un régime dont les règles n'ont pas
-bougé mérite une seule période, et c'est le cas des trois complémentaires
-libérales de la liste, qui prélèvent par classes depuis leur création. Mais il
+bougé mérite une seule période. Mais il
 dit où chercher, et ce qu'on y trouve est parfois gros : le régime des salariés
 agricoles portait une période pour quatre-vingt-seize ans, avec les paramètres de
 2023 — un salarié agricole parti en 1980 se voyait opposer 172 trimestres au lieu
@@ -5106,7 +5121,7 @@ Les scénarios 4 et 5 ajoutent à la part salariale ce que verse l'employeur. Po
 un salarié du privé, la fiche du régime le porte — `part_salariale` en donne la
 répartition, recoupée à OpenFisca année par année. Pour un agent public, elle
 n'est dans aucune fiche : le modèle la lit dans
-`legislation/contribution_employeur_public.csv`, qui couvre aujourd'hui neuf
+`legislation/contribution_employeur_public.csv`, qui couvre aujourd'hui huit
 régimes, mais aucun sur toute sa durée. Partout ailleurs, la part patronale est
 **estimée** par l'effort d'un salarié du privé de la même année — jamais laissée
 à zéro, qui ferait retomber les scénarios 4 et 5 sur les 2 et 3 sans le dire —
@@ -5116,9 +5131,9 @@ est affiché sous la simulation.
 | Régime | Couvert | Découvert | Ce qui manque |
 |---|---|---|---|
 | Fonction publique d'État | 1995-2026 | 1930-1994 | rien à retrouver : l'État ne versait aucune cotisation, les pensions étaient payées sur crédits budgétaires, et le plus ancien chiffrage a posteriori — le jaune « pensions » — s'arrête à 1995 |
-| CNRACL | 1948-2025 | 1945-1947 | le décret fondateur date du 19 septembre 1947 ; la convention « taux au 1er janvier » fait donc commencer la série en 1948 |
+| CNRACL | 1948-2028 | 1945-1947 | le décret fondateur date du 19 septembre 1947 ; la convention « taux au 1er janvier » fait donc commencer la série en 1948 |
 | SNCF | 1992-2018 | 1930-1991, 2019- | avant 1992, aucun texte de la base LEGI ne porte le taux ; après 2018, le décret cesse de chiffrer la composante T2, qui évolue par formule |
-| RATP | 2007-2025 | 1930-2006 | rien à retrouver : avant l'adossement de 2006, la RATP payait les pensions sans qu'aucun texte fixe un taux, exactement comme l'État avant son compte d'affectation spéciale |
+| RATP | 2007-2025 | 1930-2006, 2026- | rien à retrouver : avant l'adossement de 2006, la RATP payait les pensions sans qu'aucun texte fixe un taux, exactement comme l'État avant son compte d'affectation spéciale ; après 2025, la série n'a pas encore sa ligne, et le dernier taux est reconduit au niveau `estimee` |
 | IEG | 2005-2020 | 1946-2004, 2021- | avant 2005, EDF et GDF payaient les pensions directement ; après 2020, l'arrêté du 29 décembre 2021 remplace la fixation annuelle par une formule que la caisse applique sans la publier |
 | Mines | 1984-2026 | 1930-1983 | la base LEGI ne garde aucune version de l'article 52 du décret de 1946 avant le 1er janvier 1984 |
 | Opéra de Paris, Comédie-Française | 1992-2026 | 1930-1991 | même mur : les versions datées du décret qui fixe ces taux commencent au 1er juillet 1991 |
