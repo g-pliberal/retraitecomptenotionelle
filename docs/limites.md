@@ -5996,6 +5996,59 @@ refonte de la CARPIMKO —, la contribution employeur de la CNRACL jusqu'en
 2028, et les portes de carrière longue de 2004, 2011 et 2012 lues par
 génération dans les versions abrogées de D. 351-1-1.
 
+### L'IRCEC compte des années, et le modèle lui opposait des trimestres
+
+Les trois fiches de l'IRCEC — le RAAP des artistes-auteurs, le RACD des
+auteurs dramatiques, le RACL des compositeurs — renvoyaient toutes à la décote
+du régime de base : 1,25 % par trimestre manquant jusqu'à soixante-sept ans.
+Le guide 2026 de la caisse ne donne pas de barème, il écrit seulement
+« coefficient de minoration éventuel ». Les règlements, eux, en donnent un, et
+ce n'est pas celui-là : « 2,5 % par année pour chacune des deux premières
+années manquantes ; 5 % par année manquante supplémentaire », ou les
+coefficients du régime de base « si cela est plus favorable à l'adhérent ».
+Et la pension est servie sans minoration dès l'âge légal si celle du régime
+de base l'est au taux plein. À soixante-deux ans, sans la durée, l'IRCEC
+retire 20 % ; la fiche en retirait 25.
+
+**Lu au Journal officiel, par l'index du dépôt, et non chez la caisse
+seulement.** Le barème vient de l'arrêté du 21 novembre 2013
+(JORFARTI000028254004), qui a réécrit les trois règlements au 1er janvier 2014.
+Son annexe chiffre la minoration trimestre par trimestre : un à quatre
+trimestres valent la première année entière, cinq à huit la deuxième. Une
+année entamée compte donc entière, et c'est ce que `_abattement_ircec` fait.
+L'arrêté du 17 avril 2024 (JORFARTI000049490796) a supprimé les barèmes par
+génération ; celui du 13 mai 2025 (JORFARTI000051592840) a enfin aligné le
+RACL, qui jusque-là minorait de 5 % par année sans marche à 2,5 % et sans
+renvoi au régime de base, et ne connaissait que l'âge pour le taux plein. Les
+fiches sont coupées en conséquence : RAAP et RACD depuis 2014, RACL de 2014 à
+2024 puis depuis 2025 (`abattement_points: ircec` et `ircec_age_seul`).
+
+**Ce qui reste hors de la fiche, et pourquoi.**
+
+* *Avant 2014*, le règlement servait le taux plein à soixante-cinq ans et
+  minorait l'anticipation selon un tableau que l'arrêté de 2013 remplace sans
+  le reproduire. Les périodes antérieures gardent la décote du régime de base,
+  faute de lui.
+* *Les générations nées avant 1955* avaient de 2014 à 2024 leurs propres
+  coefficients : 5 % par année (RAAP) ou 6 % (RACD, RACL) jusqu'à soixante-cinq
+  ans pour les générations nées avant 1953, un tableau pour 1953 et 1954. La
+  fiche leur applique le barème des générations suivantes. Elles avaient toutes
+  soixante-sept ans en 2021 : l'écart ne touche que des départs anticipés
+  d'avant cette date.
+* *L'annexe de 2013 contredit ses propres articles* pour les générations 1955
+  et suivantes : elle donne 5 % dès la première année au RACD, dont l'article
+  dit 2,5, et 2,5 % au RACL, dont l'article dit 5. Les deux colonnes semblent
+  interverties. La fiche suit les articles, qui sont ce que les arrêtés de
+  2024 et 2025 ont gardé.
+* *Les plafonds de points* — 120 000 au RACD, 55 000 au RACL, 2 750 par an au
+  RACL — et les *minimums de liquidation* (30 points au RAAP, 900 au RACD, 850
+  au RACL, en deçà desquels la caisse verse un capital ou rembourse) ne sont
+  pas appliqués : le modèle ne compte pas de points pour ces régimes, il
+  applique un rendement à la cotisation.
+* *Le taux aménagé de 4 % au RAAP* sur les revenus déjà soumis au RACD ou au
+  RACL n'est pas appliqué : la carrière ne dit pas quelle part du revenu
+  relève de quel régime.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -8098,7 +8151,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2088<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2090<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

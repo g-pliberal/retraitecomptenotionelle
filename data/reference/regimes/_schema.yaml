@@ -325,8 +325,15 @@ champs_periode:
       régime — deux tables, l'une indexée sur les trimestres manquants, l'autre
       sur l'âge, dont la plus avantageuse est retenue. `ircantec` applique le
       barème de l'article 16 de l'arrêté du 30 décembre 1970, qui est le MÊME
-      escalier, aux mêmes marches, et se lit de la même façon.
-    valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec"]
+      escalier, aux mêmes marches, et se lit de la même façon. `ircec` est
+      celui des trois régimes de l'IRCEC depuis 2014 (RAAP, RACD ; RACL depuis
+      2025) : des ANNÉES manquantes jusqu'à l'âge du taux plein, une année
+      entamée comptant entière, 2,5 % pour chacune des deux premières et 5 %
+      au-delà, ou la décote du régime de base si elle est plus favorable ; pas
+      de minoration si la durée requise est réunie. `ircec_age_seul` est le
+      RACL de 2014 à 2024 : 5 % par année manquante, et seul l'âge ouvre le
+      taux plein.
+    valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec", "ircec", "ircec_age_seul"]
     defaut: decote_du_regime_de_base
 
   surcote_points:

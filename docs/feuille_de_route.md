@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 637<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 532<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 706<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 575<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12584,6 +12584,22 @@ transcrire là où ça va — un exemple chiffré dans
 barème dans `data/reference/regimes/` avec sa ligne au manifeste, un mur dans
 `limites.md` ; puis passer la ligne de l'inventaire à `explore` ou `epuise`
 avec sa date et sa note. `docs/exploration_sources.md` détaille chaque geste.
+
+**Passe du 22 septembre 2026 : les artistes-auteurs (IRCEC).** Neuf adresses
+de l'IRCEC dépouillées (guide, mémo, trois règlements, FAQ, pages de taux, de
+liens et de routage), puis les arrêtés d'approbation des règlements lus au
+JORF, de 2013 à 2025. Ce qu'elle a trouvé : la minoration des trois régimes
+n'est pas la décote du régime de base, que les trois fiches leur prêtaient,
+mais 2,5 % pour chacune des deux premières années manquantes et 5 % au-delà,
+ou le régime de base s'il est plus favorable ; le RACL n'a rejoint ce barème
+qu'en 2025. Deux modes nouveaux, `abattement_points: ircec` et
+`ircec_age_seul`, portés en JavaScript ; les fiches sont coupées en 2014 (et
+en 2025 pour le RACL) ; le rendement du RAAP passe à 10,8 % en 2026 ; le
+routage SACD/SACEM a sa source. Écrit dans `docs/limites.md` (« L'IRCEC compte
+des années ») et au registre de veille (`minoration_ircec`). Restent du lot :
+le simulateur de cotisations de la Sécurité sociale des artistes-auteurs,
+celui de mon-entreprise, la page des âges de l'IRCEC — qui a servi un PDF au
+lieu d'une page —, et le barème des cotisations arriérées de la Cnav.
 
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`

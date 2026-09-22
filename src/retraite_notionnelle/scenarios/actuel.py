@@ -570,6 +570,11 @@ _PALIERS_ANTICIPATION: tuple[tuple[int, float], ...] = (
     (12, 0.01), (20, 0.0125), (40, 0.0175),
 )
 
+#: Les deux barèmes de minoration des régimes de l'IRCEC (RAAP, RACD, RACL),
+#: qui comptent des années manquantes et non des trimestres : voir
+#: ``_abattement_ircec``.
+_ABATTEMENTS_IRCEC = ("ircec", "ircec_age_seul")
+
 #: Dernière ligne de la table des âges : dix ans d'anticipation. Au-delà, le
 #: barème ne descend plus.
 _COEFFICIENT_ANTICIPATION_PLANCHER = 0.43
@@ -2941,18 +2946,16 @@ class ScenarioActuel:
                     par_age = _COEFFICIENT_ANTICIPATION_PLANCHER
                 candidats = [c for c in (par_duree, par_age) if c is not None]
                 abattement = max(candidats) if candidats else 1.0
-        else:
-            decote, age_annulation, _ = self._decote(
-                periode, carriere, annee_liquidation
+        elif periode.abattement_points in _ABATTEMENTS_IRCEC:
+            abattement = self._abattement_ircec(
+                periode, carriere, trimestres, requis,
+                age_liquidation, annee_liquidation,
             )
-            if decote is None:
-                abattement = 1.0
-            else:
-                trimestres_decote = self._trimestres_de_decote(
-                    periode, carriere, trimestres, requis, age_liquidation,
-                    age_annulation
-                )
-                abattement = max(0.0, 1.0 - decote * trimestres_decote)
+        else:
+            abattement = self._abattement_regime_de_base(
+                periode, carriere, trimestres, requis,
+                age_liquidation, annee_liquidation,
+            )
 
         if abattement < 1.0:
             # ABATTU ET MAJORÉ NE SE RENCONTRENT PAS. Les deux majorations de
@@ -2965,6 +2968,72 @@ class ScenarioActuel:
             periode, carriere, trimestres, requis,
             age_liquidation, annee_liquidation, trimestres_regime,
         )
+
+    def _abattement_regime_de_base(self, periode: PeriodeRegime,
+                                   carriere: Carriere, trimestres: int,
+                                   requis: int, age_liquidation: float,
+                                   annee_liquidation: int) -> float:
+        """Coefficient qui reprend la décote du régime de base : un taux par
+        trimestre manquant, au plus favorable de l'âge et de la durée."""
+        decote, age_annulation, _ = self._decote(
+            periode, carriere, annee_liquidation
+        )
+        if decote is None:
+            return 1.0
+        trimestres_decote = self._trimestres_de_decote(
+            periode, carriere, trimestres, requis, age_liquidation,
+            age_annulation
+        )
+        return max(0.0, 1.0 - decote * trimestres_decote)
+
+    def _abattement_ircec(self, periode: PeriodeRegime, carriere: Carriere,
+                          trimestres: int, requis: int,
+                          age_liquidation: float,
+                          annee_liquidation: int) -> float:
+        """Coefficient de minoration des trois régimes de l'IRCEC.
+
+        Les règlements du RAAP (art. 27), du RACD (art. 21) et du RACL
+        (art. 21) ne reprennent pas la décote du régime de base : ils comptent
+        des ANNÉES manquantes jusqu'à l'âge du taux plein — celui du 1° de
+        l'article L. 351-8 —, « 2,5 % par année pour chacune des deux premières
+        années manquantes ; 5 % par année manquante supplémentaire ». Une
+        année entamée compte entière : l'annexe de l'arrêté du 21 novembre
+        2013 le chiffre trimestre par trimestre, un à quatre trimestres
+        d'anticipation valant 2,5 %, cinq à huit 5 %, neuf à douze 10 %.
+
+        « Toutefois, si cela est plus favorable à l'adhérent », les mêmes
+        coefficients que ceux du régime de base : c'est la décote de la fiche,
+        et le coefficient retenu est le plus haut des deux. La pension est
+        servie sans minoration dès l'âge légal si celle du régime de base
+        l'est au taux plein, c'est-à-dire dès que la durée requise est réunie.
+
+        ``ircec_age_seul`` est le RACL de 2014 à 2024 : « 5 % par année
+        manquante », sans marche à 2,5 %, sans renvoi au régime de base, et un
+        taux plein que la durée n'ouvrait pas — il fallait l'âge. L'arrêté du
+        13 mai 2025 l'a aligné sur les deux autres. Le modèle leur opposait à
+        tous trois 1,25 % par trimestre depuis soixante-sept ans : vingt-cinq
+        pour cent à soixante-deux ans pour qui n'a pas sa durée, là où l'IRCEC
+        en retire vingt.
+        """
+        age_taux_plein = self._age_taux_plein(periode, carriere)
+        age_seul = periode.abattement_points == "ircec_age_seul"
+        if age_liquidation >= age_taux_plein - 1e-9:
+            return 1.0
+        if not age_seul and trimestres >= requis:
+            return 1.0
+        annees = -(-_au_trimestre_superieur(
+            (age_taux_plein - age_liquidation) * 4) // 4)
+        if age_seul:
+            propre = 1.0 - 0.05 * annees
+        else:
+            propre = 1.0 - 0.025 * min(annees, 2) - 0.05 * max(0, annees - 2)
+        propre = max(0.0, propre)
+        if age_seul:
+            return propre
+        return max(propre, self._abattement_regime_de_base(
+            periode, carriere, trimestres, requis,
+            age_liquidation, annee_liquidation,
+        ))
 
     #: Premier trimestre que la surcote puisse compter : les dispositions de
     #: la loi du 21 août 2003 valent pour les périodes cotisées accomplies à
