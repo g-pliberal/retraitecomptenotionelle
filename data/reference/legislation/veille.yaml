@@ -1298,6 +1298,170 @@ entrees:
       forme de la cotisation n'est pas connue et la fiche garde 8 %.
     prochaine_veille: "2027-06-30"
 
+  - id: cipav_seconde_tranche
+    regle: >-
+      Complémentaire de la Cipav : 9 % puis 11 % jusqu'à un plafond, 22 % puis
+      21 % au-delà, jusqu'à trois plafonds en 2023, trois et demi en 2024,
+      quatre depuis 2025.
+    textes:
+      - "décret n° 79-262 du 21 mars 1979, article 2 (LEGIARTI000054168526)"
+      - "décret n° 2025-1076, article 12, 8° (taux et valeur d'achat de 2025)"
+    sources:
+      - {type: legifrance, reference: "décret n° 79-262, article 2, version en vigueur lue dans l'index LEGI : « entre un et quatre plafonds » depuis 2025", date: "2026-09-22"}
+      - {type: autre, reference: "calculette mon-entreprise de l'Urssaf, 22 septembre 2026 : seconde tranche coupée à 3,5 plafonds, un exercice de retard sur le décret", url: "https://mon-entreprise.urssaf.fr/", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: >-
+      Un libéral de la Cipav au-delà de trois plafonds achetait trop peu de
+      points depuis 2024 : la fiche coupait la seconde tranche à trois.
+    a_faire: >-
+      Confronter à la calculette de la Cipav quand elle sera joignable.
+    prochaine_veille: "2027-03-31"
+
+  - id: rci_valeurs_point
+    regle: >-
+      Prix d'achat et valeur de service du point de la complémentaire des
+      artisans et commerçants (RCI), 2024 à 2026.
+    textes:
+      - "délibérations du conseil de la protection sociale des travailleurs indépendants, reprises par les circulaires Cnav 2023/33, 2024/36 et 2025/31"
+    sources:
+      - {type: circulaire_cnav, reference: "barèmes rci_valeur_achat_point_bar et rci_valeur_point_bar de la base de législation de la Cnav : 20,734 €, 21,532 €, 21,726 € ; 1,327 €, 1,335 €, 1,347 €", url: "https://legislation.lassuranceretraite.fr/", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: >-
+      Faute de valeurs après 2023, le modèle achetait les points RCI au
+      rendement de 2013 (6,74 %) au lieu de 6,20 % : 9 % de points de trop.
+      Le récupérateur `cnav_baremes_rci.py` relit aussi 2013-2023 et les
+      trouve identiques à OpenFisca.
+    a_faire: >-
+      Ajouter la valeur 2027 à la circulaire de décembre 2026.
+    prochaine_veille: "2027-01-15"
+
+  - id: carpimko_assiette_2026
+    regle: >-
+      Complémentaire de la CARPIMKO depuis 2026 : 8,7 % du revenu entier,
+      assiette relevée à un demi-plafond et coupée à trois ; points au coût
+      d'acquisition, 391 € en 2026 pour une valeur de service de 21,48 €.
+    textes:
+      - "décret n° 2025-1076, articles 7 et 14 (JORFARTI000052565540, JORFARTI000052565558)"
+      - "arrêté du 14 novembre 2025 approuvant les statuts (JORFARTI000052604992)"
+    sources:
+      - {type: jorf, reference: "décret n° 2025-1076, article 7 : « L'assiette de cette cotisation est comprise entre un minimum et un maximum » ; article 14 : 8,7 %, seuil 50 % et plafond trois fois le plafond annuel", date: "2026-09-22"}
+      - {type: autre, reference: "CARPIMKO, page « selon mes revenus » : « entre 2 091 € et 12 544 € pour 2026 » ; calculette CalculCotisations2026 : 391 € le point, de 3 000 à 250 000 €", url: "https://www.carpimko.com/je-suis-en-activite/cotisations/selon-mes-revenus", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: approximation
+    effet: >-
+      La fiche retranchait un demi-plafond de tout revenu et reconduisait le
+      rendement de 2025, 7,36 % : un tiers de points de trop au-dessus d'un
+      demi-plafond, aucun en dessous. Le coût du point n'est publié ni au
+      Journal officiel ni sur le site : il est lu sur la calculette, d'où
+      l'état.
+    a_faire: >-
+      Remplacer 391 € par la valeur publiée dès qu'un texte ou un barème de la
+      caisse la donne.
+    prochaine_veille: "2027-01-31"
+
+  - id: asv_medecins_ajustement
+    regle: >-
+      ASV des médecins depuis 2012 : 27 points pour la cotisation forfaitaire,
+      plus 18 fois la cotisation d'ajustement divisée par le forfait, neuf
+      points au plus par an.
+    textes:
+      - "décret n° 2011-1644, article 3 (LEGIARTI000024853554)"
+      - "décret n° 2011-1644, article 2 (LEGIARTI000052567960) : 4 % depuis 2026"
+    sources:
+      - {type: legifrance, reference: "article 3 : « dans la limite de neuf points par an, égal au rapport [...] entre le produit du montant de la cotisation d'ajustement et des deux tiers du nombre de points acquis au titre de la cotisation forfaitaire [...] et le montant de la cotisation forfaitaire »", date: "2026-09-22"}
+      - {type: autre, reference: "calculette de la CARMF (showresultat.php), 22 septembre 2026 : 28,25 points à 10 000 €, 30,76 à 30 000 €, 33,02 à 48 060 €, 35,76 à 70 000 €, 36 au-delà de 90 000 €", url: "https://www.carmf.fr/", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: approximation
+    effet: >-
+      La fiche servait 36 points à tout médecin, soit jusqu'à 7,75 points de
+      trop sous 70 000 €. Le forfait, revalorisé sur le revenu moyen des
+      médecins que le dépôt n'a pas, suit les prix : le modèle rend 28,21,
+      30,63, 32,81 et 35,46 points, à moins de 1 % de la caisse.
+    a_faire: >-
+      Porter le forfait publié chaque année par la CARMF.
+    prochaine_veille: "2027-03-31"
+
+  - id: rafp_majoration_capital
+    regle: >-
+      RAFP : valeur de service modulée par l'âge de liquidation (1,00 à 62 ans
+      jusqu'à 1,80 à 75) ; prestation versée en capital sous 5 125 points, au
+      coefficient de conversion de l'âge.
+    textes:
+      - "décret n° 2004-569, article 8 (LEGIARTI000037483754)"
+      - "décret n° 2004-569, article 9 (LEGIARTI000037483756)"
+    sources:
+      - {type: legifrance, reference: "article 8 : la valeur de service « est modulée en fonction de l'âge de liquidation » ; article 9 : « servie sous forme de capital lorsque le nombre de points acquis est inférieur à 5 125 »", date: "2026-09-22"}
+      - {type: autre, reference: "ERAFP, « Valeurs des coefficients de majoration » et coefficients de conversion en capital au 1er janvier 2022 ; page « calcul et paiement de votre prestation » : 4 448 × 1,08 × 0,05671 × 25,57 = 6 965,93 €", url: "https://www.rafp.fr/actif/activite/calcul-et-paiement-votre-prestation-rafp", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: approximation
+    effet: >-
+      Le modèle servait la valeur de service nue à tout âge : 22 % de moins à
+      67 ans. Il sert maintenant la majoration par âge entier, et sous le seuil
+      écrit le capital dans le détail de la pension ; le montant annuel reste
+      celui de la rente équivalente. Le capital fractionné entre 4 900 et
+      5 124 points n'est pas distingué.
+    a_faire: >-
+      Vérifier si l'ERAFP interpole la majoration au mois comme la conversion.
+    prochaine_veille: "2027-03-31"
+
+  - id: assiette_minimale_independants
+    regle: >-
+      Assiette minimale de la cotisation de base des artisans, commerçants et
+      libéraux : 200 SMIC horaires jusqu'en 2011, 5,25 %, 7,70 % puis 11,5 % du
+      plafond, 450 SMIC horaires depuis 2023, sous condition de 90 jours
+      d'affiliation depuis 2012 ; le micro-entrepreneur n'y est pas soumis.
+    textes:
+      - "code de la sécurité sociale, D. 633-2 (LEGIARTI000006737877 à LEGIARTI000048838330)"
+      - "code de la sécurité sociale, D. 642-4 (LEGIARTI000006738120 à LEGIARTI000048838321)"
+      - "décret n° 2023-1352 du 29 décembre 2023"
+    sources:
+      - {type: legifrance, reference: "D. 633-2 et D. 642-4, toutes les versions de l'index LEGI, lues le 22 septembre 2026", date: "2026-09-22"}
+      - {type: autre, reference: "calculette de la CARPIMKO : 63,3 points CNAVPL et trois trimestres pour 3 000 € de revenu, soit l'assiette de 5 409 €", url: "https://www.carpimko.com/", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: approximation
+    effet: >-
+      Un indépendant à 3 000 € validait un trimestre au lieu de trois et
+      n'avait ni le salaire ni les points du minimum. Les exclusions du
+      libéral dont l'activité n'est pas principale ou déjà retraité ne sont
+      pas opposées ; avant 1985 le dépôt ne connaît aucun texte.
+    a_faire: >-
+      Lire les versions de D. 633-2 antérieures à 1985 dans le JORF.
+    prochaine_veille: "2027-01-31"
+
+  - id: decret_2026_418_liberaux
+    regle: >-
+      Décret n° 2026-418 du 29 mai 2026 réécrivant les régimes complémentaires
+      et d'invalidité-décès des sections libérales, à confronter aux fiches.
+    textes:
+      - "décret n° 2026-418 du 29 mai 2026 (JORF du 31 mai 2026)"
+    sources:
+      - {type: jorf, reference: "décret n° 2026-418, lu en partie dans l'index JORF le 22 septembre 2026 (articles sur l'ASV des auxiliaires médicaux, les rachats de la CARMF)", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: a_verifier
+    effet: >-
+      Inconnu tant que le décret n'est pas lu article par article contre les
+      fiches des dix sections.
+    a_faire: >-
+      Lire les quelque quarante articles et reporter chaque changement de
+      paramètre dans sa fiche.
+    prochaine_veille: "2026-10-31"
+
 journal:
   - date: "2026-09-19"
     session: "le net et le brut, d'un bout à l'autre du simulateur"
