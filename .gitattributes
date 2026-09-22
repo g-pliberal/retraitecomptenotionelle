@@ -1,3 +1,20 @@
+# Les fins de ligne sont des LF, PARTOUT, y compris dans le répertoire de
+# travail d'une machine Windows.
+#
+# L'installeur de Git for Windows pose `core.autocrlf=true` dans la
+# configuration SYSTÈME : tout clone y reçoit un répertoire de travail en
+# CRLF, sans que personne l'ait demandé. Le dépôt, lui, stocke des LF — et
+# ce sont ces octets-là que l'hébergeur sert. Les deux ne se voyaient pas
+# jusqu'à ce qu'on mesure : la sonde `poids` de `verifier_prose.py` compte
+# les octets SUR LE DISQUE, et rendait 4 626 Ko là où le site en sert
+# 4 594. `verifier_prose.py --corriger` écrivait alors ce chiffre faux dans
+# le README, silencieusement, à chaque passage sur une machine Windows.
+#
+# `eol=lf` prime sur `core.autocrlf`, quelle que soit sa portée : la règle
+# appartient donc au dépôt, et aucune machine n'a à être reconfigurée. Les
+# fichiers que git reconnaît comme binaires ne sont pas touchés.
+* text=auto eol=lf
+
 # Les fichiers fabriqués par un script ne se fusionnent pas ligne à ligne.
 #
 # `pages.json` (2,4 Mo), `simulations.json` (4,8 Mo) et `donnees.json` (3 Mo)
