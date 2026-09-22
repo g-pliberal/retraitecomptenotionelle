@@ -1970,11 +1970,12 @@ Deux sources, par ordre de priorité, et le partage se fait couple par couple
 (année, sexe, âge) — pas en bloc :
 
 1. `data/reference/mortalite/quotients_periode.csv` — les **quotients observés**
-   (`annee,sexe,age,qx`). Ils couvrent 1986-2024, des âges 0 à 84 puis 0 à 94
-   selon les millésimes, et viennent de la table de mortalité française
-   diffusée par Eurostat ;
-2. partout ailleurs — avant 1986, au-delà du dernier âge publié, et pour les
-   années projetées — une table paramétrique de **Gompertz-Makeham**
+   (`annee,sexe,age,qx`). Ils couvrent <!--chiffre:minimum(data/reference/mortalite/quotients_periode.csv:annee)-->1899<!--/-->-<!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:annee)-->2024<!--/-->, une seule source par année : les
+   tables de Vallin et Meslé publiées par l'INED jusqu'en 1997, par âge jusqu'à
+   <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=1990)-->104<!--/--> ans ; la table de mortalité française diffusée par Eurostat
+   ensuite, jusqu'à <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2000)-->84<!--/--> ans pour les millésimes 1998-2013 et <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2020)-->94<!--/--> ans depuis ;
+2. partout ailleurs — au-delà du dernier âge publié, et pour les années
+   projetées — une table paramétrique de **Gompertz-Makeham**
    `μ(x) = A + B·exp(k(x−60))`, dont *B* et *k* sont ajustés par bissection.
 
 **La cible de cet ajustement est la table RACCORDÉE, pas la loi seule**, et
@@ -1989,12 +1990,12 @@ L'ajustement se fait donc en deux temps. La **forme** de la queue — le
 paramètre *k* — vient de la calibration classique sur la loi seule, où e60 et
 e65 portent sur toute la plage d'âges et la déterminent sans ambiguïté. Son
 **niveau** — le paramètre *B* — est ensuite recalé, à forme constante, pour que
-la table raccordée reproduise l'espérance publiée à 60 ans. Là où la queue n'a
-pas prise sur la cible — millésimes dont les quotients vont jusqu'à 104 ans, où
+la table raccordée reproduise l'espérance publiée à <!--chiffre:illustration()-->60<!--/--> ans. Là où la queue n'a
+pas prise sur la cible — millésimes dont les quotients vont jusqu'à <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age)-->104<!--/--> ans, où
 les données décident seules —, le recalage est abandonné plutôt que forcé.
 
 Le raccord est contrôlé, et le contrôle est cette fois réel : un test recalcule
-l'espérance de vie à 60 ans par le seul chemin que le moteur emprunte
+l'espérance de vie à <!--chiffre:illustration()-->60<!--/--> ans par le seul chemin que le moteur emprunte
 (`survie_annuelle`, quotients observés puis loi) et la confronte à l'espérance
 publiée par l'INSEE, qui vient d'une tout autre chaîne de production. Les deux
 concordent à 0,1 an près sur 1990-2024. Le test précédent passait par une
@@ -2007,7 +2008,7 @@ calcul.
 
 **Une troisième source, pour les populations particulières.**
 `data/reference/mortalite/esperances_vie_populations.csv` porte l'espérance de
-vie à 65 ans que certains régimes publient pour leurs propres pensionnés — les
+vie à <!--chiffre:illustration()-->65<!--/--> ans que certains régimes publient pour leurs propres pensionnés — les
 fonctionnaires civils de l'État, par le Service des retraites de l'État,
 saisie depuis le projet annuel de performances du programme 741 annexé au
 PLF 2026 — et, dans `esperances_vie_niveau_de_vie.csv`, les vingt vingtiles
@@ -2017,10 +2018,10 @@ une table : il cale, sexe par sexe, un facteur sur la force de mortalité de
 la table générale de l'année observée, et le tient constant ailleurs. Elles
 ne servent qu'à la variante `population_conversion` du §5.
 
-**Les années projetées viennent de l'INSEE, année par année, jusqu'en 2125.**
+**Les années projetées viennent de l'INSEE, année par année, jusqu'en <!--chiffre:maximum(data/reference/mortalite/esperances_vie.csv:annee)-->2125<!--/-->.**
 Ce sont les projections de population **2026**, qui publient les quotients de
-mortalité par âge (0 à 120 ans) et par année : le dépôt en dérive e0, e60 et
-e65, y compris donc l'espérance à 65 ans que l'INSEE ne publie jamais, et la
+mortalité par âge (0 à <!--chiffre:mesure(constante?de=retraite_notionnelle.donnees.mortalite&nom=AGE_TERMINAL)-->120<!--/--> ans) et par année : le dépôt en dérive e0, e60 et
+e65, y compris donc l'espérance à <!--chiffre:illustration()-->65<!--/--> ans que l'INSEE ne publie jamais, et la
 calibration s'appuie dessus comme sur n'importe quelle autre année. Elles
 étaient auparavant saisies à six années rondes depuis un exercice antérieur,
 interpolées entre elles et gelées après 2080 — un gel qui arrêtait l'espérance
@@ -2030,7 +2031,7 @@ La somme des survies se fait **sans le demi-an usuel** : ce classeur indexe ses
 quotients par âge atteint dans l'année, qui le comprend déjà. Deux contrôles
 l'établissent et le récupérateur les refait à chaque exécution — l'espérance de
 vie à la naissance publiée par l'INSEE pour 2070 est retrouvée au centième
-(89,5 et 86,7 ans), et la série projetée rejoint l'observée sans marche.
+(<!--chiffre:cellule(data/reference/mortalite/esperances_vie.csv:valeur?annee=2070&sexe=F&mesure=e0)-->89,5<!--/--> et <!--chiffre:cellule(data/reference/mortalite/esperances_vie.csv:valeur?annee=2070&sexe=H&mesure=e0)-->86,7<!--/--> ans), et la série projetée rejoint l'observée sans marche.
 
 ### Unité de compte
 
