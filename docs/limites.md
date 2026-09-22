@@ -2379,7 +2379,7 @@ rejoue sans avoir à installer le paquet.
 **Cinq familles de régimes y passent aujourd'hui**, et c'est tout ce
 qu'OpenFisca expose : le régime général, la pension civile (État et CNRACL),
 l'Arrco d'avant 2019, l'Agirc des cadres et l'Ircantec des agents non
-titulaires — cinquante-huit profils en tout. Les régimes alignés — MSA des
+titulaires — <!--chiffre:mesure(profils_oracle)-->48<!--/--> profils en tout. Les régimes alignés — MSA des
 salariés agricoles, artisans, commerçants — n'ont chez lui aucun module, et
 n'en ont pas besoin : la loi les calcule comme le régime général, et c'est à
 l'oracle du régime général qu'ils se confrontent. Restent hors de portée le
@@ -2400,7 +2400,7 @@ leur pension est celle du régime général :
 | Trimestres de décote | **exacts** sur les dix |
 | Taux de liquidation | **exact** sur les dix |
 | Coefficient de proratisation | **exact** sur les dix |
-| Salaire annuel moyen | jusqu'à 2,35 %, **et c'est OpenFisca qui s'écarte de la source** |
+| Salaire annuel moyen | jusqu'à <!--chiffre:mesure(ecart_openfisca)-->2,40<!--/--> %, **et c'est OpenFisca qui s'écarte de la source** |
 | Pension de base | l'écart du salaire annuel moyen, et rien d'autre |
 
 Le décompte des trimestres de décote est le contrôle le plus exigeant du lot :
@@ -2435,7 +2435,7 @@ celle du 9 janvier 2023, la table d'OpenFisca s'en écarte :
 - de **−17 % à +10 %**, sans régularité, sur les années 1949-1962.
 
 Le modèle lit donc la circulaire, et le désaccord résiduel avec OpenFisca —
-jusqu'à 2,35 %, toujours dans le même sens — n'est plus le nôtre.
+jusqu'à <!--chiffre:mesure(ecart_openfisca)-->2,40<!--/--> %, toujours dans le même sens — n'est plus le nôtre.
 
 **Le coefficient se lit dans une colonne, par rapport de deux de ses valeurs.**
 L'arrêté annuel applique un coefficient unique à tous les salaires déjà portés
@@ -2502,8 +2502,9 @@ coefficients de revalorisation, approchés au lieu d'être lus — corrigés tou
 deux, et ce sont les paragraphes précédents. Chez lui, deux fois. Sa table de
 revalorisation, à laquelle il manque la revalorisation exceptionnelle de juillet
 2022 — c'est le paragraphe précédent. Et : une table de durée requise
-antérieure à la réforme du 14 avril 2023, qui oppose 169 trimestres à la
-génération 1965 là où l'article L. 161-17-3, lu dans la base LEGI, en donne 172.
+antérieure à la réforme du 14 avril 2023, qui oppose <!--chiffre:illustration()-->169<!--/--> trimestres à la
+génération 1965 là où l'article L. 161-17-3, lu dans la base LEGI, en donne
+<!--chiffre:cellule(data/reference/legislation/duree_assurance_requise.csv:trimestres?generation=1965)-->170<!--/--> depuis la suspension de la réforme.
 **Un désaccord ne désigne donc pas d'office le coupable.**
 
 Quatre bornes à connaître, et elles sont étroites :
