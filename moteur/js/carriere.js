@@ -314,7 +314,17 @@ function ligneAnnuelle({
   });
 }
 
-/** Carrière complète d'un assuré. */
+/**
+ * Carrière complète d'un assuré.
+ *
+ * **Une ligne par année ET PAR ACTIVITÉ.** Une année ne porte d'ordinaire
+ * qu'une ligne ; celle où l'assuré a exercé deux activités à la fois en porte
+ * une par statut, et deux lignes de la même année ne partagent jamais leur
+ * statut. La première ligne d'une année est l'activité PRINCIPALE, et c'est
+ * elle que {@link ligne} rend. Ce que le droit compte TOUS RÉGIMES ne dépasse
+ * jamais quatre trimestres par année civile : {@link trimestresCumules}.
+ * Portage de `carriere.py`, qui porte les sources.
+ */
 export class Carriere {
   constructor({
     annee_naissance,
@@ -353,7 +363,25 @@ export class Carriere {
     // est fermé aux recrutés depuis septembre 2023. C'est la date qui décide
     // de la clause du grand-père, pas la première ligne.
     this.dates_entree = dates_entree;
-    this._parAnnee = new Map(this.lignes.map((ligne) => [ligne.annee, ligne]));
+    // Tri STABLE : l'activité principale, donnée la première, reste en tête.
+    this._parAnnee = new Map();
+    const vues = new Set();
+    for (const ligne of this.lignes) {
+      const cle = `${ligne.annee}:${ligne.affiliation}`;
+      if (vues.has(cle)) {
+        throw new Error(
+          `${identifiant} : deux lignes de ${ligne.annee} sous le même statut `
+          + `'${ligne.affiliation}' — deux emplois du même statut font une `
+          + "seule ligne, dont le revenu est la somme",
+        );
+      }
+      vues.add(cle);
+      if (!this._parAnnee.has(ligne.annee)) {
+        this._parAnnee.set(ligne.annee, []);
+      }
+      this._parAnnee.get(ligne.annee).push(ligne);
+    }
+    this._plafonds = null;
   }
 
   // -- dates -----------------------------------------------------------------
@@ -447,7 +475,10 @@ export class Carriere {
   }
 
   get anneesCotisees() {
-    return this.lignes.filter((ligne) => ligne.cotise).map((ligne) => ligne.annee);
+    // Une année de deux activités reste UNE année cotisée.
+    return [...new Set(
+      this.lignes.filter((ligne) => ligne.cotise).map((ligne) => ligne.annee),
+    )];
   }
 
   /**
@@ -459,10 +490,19 @@ export class Carriere {
    */
   _lignesDeService(affiliations, jusquA = null) {
     const codes = new Set(affiliations);
-    return this.lignes.filter(
-      (ligne) => codes.has(ligne.affiliation) && ligne.cotise
-        && (jusquA === null || ligne.annee <= jusquA),
-    );
+    // Une année ne sert qu'une fois, quand deux statuts de la liste s'y
+    // cumulent : on garde celui qui en couvre le plus.
+    const parAnnee = new Map();
+    for (const ligne of this.lignes) {
+      if (codes.has(ligne.affiliation) && ligne.cotise
+          && (jusquA === null || ligne.annee <= jusquA)) {
+        const retenue = parAnnee.get(ligne.annee);
+        if (retenue === undefined || ligne.fraction_annee > retenue.fraction_annee) {
+          parAnnee.set(ligne.annee, ligne);
+        }
+      }
+    }
+    return [...parAnnee.keys()].sort((a, b) => a - b).map((a) => parAnnee.get(a));
   }
 
   /**
@@ -535,10 +575,61 @@ export class Carriere {
    * d'assurance qui commande la décote.
    */
   get trimestresActuels() {
-    return this.lignes.reduce(
-      (total, ligne) => total + this.trimestresRetenus(ligne),
-      0,
-    );
+    return this.trimestresCumules(this.lignes);
+  }
+
+  /**
+   * Trimestres que ces lignes font entrer dans une durée, année par année :
+   * quatre au plus par année civile, quel que soit le nombre d'activités
+   * (R. 351-5, et le 2° de R. 173-4-4-1 pour les régimes alignés). Une année
+   * d'une seule ligne n'est pas touchée.
+   */
+  trimestresParAnnee(lignes) {
+    const sommes = new Map();
+    for (const ligne of lignes) {
+      const retenus = this.trimestresRetenus(ligne);
+      if (retenus > 0) {
+        sommes.set(ligne.annee, (sommes.get(ligne.annee) ?? 0) + retenus);
+      }
+    }
+    const resultat = new Map();
+    for (const [annee, somme] of sommes) {
+      resultat.set(annee, Math.min(somme, this.plafondTrimestres(annee)));
+    }
+    return resultat;
+  }
+
+  /** Somme de {@link trimestresParAnnee} : une durée, tous régimes. */
+  trimestresCumules(lignes) {
+    let total = 0;
+    for (const trimestres of this.trimestresParAnnee(lignes).values()) {
+      total += trimestres;
+    }
+    return total;
+  }
+
+  /**
+   * Trimestres civils que cette année peut valider, toutes activités
+   * confondues : ceux de l'activité qui en couvre le plus. Quatre pour une
+   * année pleine.
+   */
+  plafondTrimestres(annee) {
+    if (this._plafonds === null) {
+      this._plafonds = new Map();
+      for (const ligne of this.lignes) {
+        const part = this.partRetenueLigne(ligne);
+        this._plafonds.set(ligne.annee, Math.max(
+          this._plafonds.get(ligne.annee) ?? 0,
+          part > 0 ? trimestresCivils(Math.round(part * 12)) : 0,
+        ));
+      }
+    }
+    return this._plafonds.get(annee) ?? 4;
+  }
+
+  /** Toutes les lignes d'une année, l'activité principale en tête. */
+  lignesDe(annee) {
+    return this._parAnnee.get(annee) ?? [];
   }
 
   /**
@@ -553,6 +644,15 @@ export class Carriere {
     if (ligne === null) {
       return 0.0;
     }
+    return this.partRetenueLigne(ligne);
+  }
+
+  /**
+   * {@link partRetenue} d'une ligne précise : deux activités de la même année
+   * n'en couvrent pas forcément les mêmes mois.
+   */
+  partRetenueLigne(ligne) {
+    const annee = ligne.annee;
     if (this.age_liquidation === null || this.age_liquidation === undefined) {
       return ligne.fraction_annee;
     }
@@ -571,7 +671,7 @@ export class Carriere {
    * par les trimestres CIVILS écoulés avant le point de départ.
    */
   trimestresRetenus(ligne) {
-    const part = this.partRetenue(ligne.annee);
+    const part = this.partRetenueLigne(ligne);
     if (part <= 0) {
       return 0;
     }
@@ -579,8 +679,13 @@ export class Carriere {
                     trimestresCivils(Math.round(part * 12)));
   }
 
+  /**
+   * La ligne de l'activité PRINCIPALE de l'année, null s'il n'y en a pas. Les
+   * activités cumulées se lisent par {@link lignesDe}.
+   */
   ligne(annee) {
-    return this._parAnnee.get(annee) ?? null;
+    const lignes = this._parAnnee.get(annee);
+    return lignes ? lignes[0] : null;
   }
 
   affiliationsUtilisees() {
@@ -695,6 +800,11 @@ export class Carriere {
    * compris : le niveau propre à chaque métier s'y superpose, il ne remet pas
    * la progression à zéro. ``interruptions`` associe une année à une période
    * non cotisée.
+   *
+   * **Une activité CUMULÉE ne remplace pas, elle s'ajoute** : un métier qui
+   * porte `cumul: true` court de `age_debut` à `age_fin` (ou jusqu'à la
+   * liquidation) à côté de l'activité principale, sous son propre statut. Rien
+   * n'est supposé : un métier qui ne le déclare pas succède au précédent.
    */
   static depuisParcours({
     annee_naissance,
@@ -712,6 +822,14 @@ export class Carriere {
     if (!metiers || metiers.length === 0) {
       throw new Error("une carrière compte au moins un métier");
     }
+    if (metiers[0].cumul) {
+      throw new Error(
+        "une activité cumulée s'ajoute à une activité principale : la "
+        + "carrière ne peut pas commencer par elle",
+      );
+    }
+    const cumuls = metiers.filter((metier) => metier.cumul);
+    metiers = metiers.filter((metier) => !metier.cumul);
 
     const dateNaissance = new DateMois(annee_naissance, mois_naissance);
     const bornes = metiers.map(
@@ -808,8 +926,59 @@ export class Carriere {
     }
     const limitees = limiterChomageNonIndemnise(lignes, annee_naissance);
 
+    // LES ACTIVITÉS CUMULÉES, chacune sur ses propres mois. Elles ne
+    // déplacent rien de l'activité principale : une ligne de plus par année
+    // touchée, sous leur statut. Une interruption déclarée arrête l'activité
+    // principale, pas celle-ci.
+    const periodesCumulees = [];
+    for (const metier of cumuls) {
+      const ouverture = dateNaissance.plusMois(enMois(metier.age_debut));
+      const cloture = metier.age_fin === null || metier.age_fin === undefined
+        ? fin : dateNaissance.plusMois(enMois(metier.age_fin));
+      if (ouverture.rang < debut.rang) {
+        throw new Error(
+          "une activité cumulée commence après le début de la carrière : elle "
+          + "s'ajoute à une activité déjà là",
+        );
+      }
+      if (cloture.rang > fin.rang) {
+        throw new Error(
+          "une activité cumulée s'arrête au plus tard à la liquidation",
+        );
+      }
+      if (cloture.rang <= ouverture.rang) {
+        throw new Error(
+          "une activité cumulée doit s'arrêter après avoir commencé",
+        );
+      }
+      periodesCumulees.push({ metier, ouverture, cloture });
+      for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
+        const mois = moisTravailles(annee, ouverture, cloture);
+        if (mois <= 0) {
+          continue;
+        }
+        const revenu = metier.niveau_salaire
+          * profilSalaire(macro.paquet, profil_carriere, annee - annee_naissance,
+            annee, metier.affiliation)
+          * salaireMoyen.get(annee)
+          * (mois / MOIS_PAR_AN);
+        lignes.push(ligneAnnuelle({
+          annee,
+          revenu,
+          affiliation: metier.affiliation,
+          type_periode: "emploi",
+          macro,
+          part: fractionAnnee(annee, ouverture, cloture),
+          part_primes,
+          trimestresMaximum: trimestresCivils(mois),
+        }));
+      }
+    }
+
     const datesEntree = {};
-    for (const { metier, ouverture } of periodes) {
+    const toutes = [...periodes, ...periodesCumulees]
+      .sort((a, b) => a.ouverture.rang - b.ouverture.rang);
+    for (const { metier, ouverture } of toutes) {
       if (!Object.prototype.hasOwnProperty.call(datesEntree, metier.affiliation)) {
         datesEntree[metier.affiliation] = ouverture;
       }

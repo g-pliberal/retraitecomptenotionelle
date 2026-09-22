@@ -657,12 +657,15 @@ def _dernier_revenu_annualise(carriere: Carriere, macro: DonneesMacro) -> float:
     derniers = [l for l in carriere.lignes if l.cotise]
     if not derniers:
         return 0.0
-    dernier = derniers[-1]
-    reference = salaire_moyen_annuel(macro, dernier.annee)
+    # Toutes les activités de la dernière année cotisée : c'est le revenu
+    # d'activité que la pension remplace, et non celui d'une seule d'entre elles.
+    annee = derniers[-1].annee
+    revenu = sum(l.revenu_annualise for l in derniers if l.annee == annee)
+    reference = salaire_moyen_annuel(macro, annee)
     if reference <= 0:
-        return dernier.revenu_annualise
+        return revenu
     facteur = salaire_moyen_annuel(macro, carriere.annee_liquidation) / reference
-    return dernier.revenu_annualise * facteur
+    return revenu * facteur
 
 
 class Simulateur:

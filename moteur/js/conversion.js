@@ -28,13 +28,20 @@ import {
  */
 export function niveauRelatif(carriere, macro) {
   let revenus = 0.0;
-  let references = 0.0;
+  // Une année de deux activités ne compte qu'une fois au dénominateur, pour la
+  // plus longue des deux : c'est son revenu TOTAL qu'on rapporte.
+  const fractions = new Map();
   for (const ligne of carriere.lignes) {
     if (!ligne.cotise) {
       continue;
     }
     revenus += ligne.revenu;
-    references += salaireMoyenAnnuel(macro, ligne.annee) * ligne.fraction_annee;
+    fractions.set(ligne.annee,
+      Math.max(fractions.get(ligne.annee) ?? 0.0, ligne.fraction_annee));
+  }
+  let references = 0.0;
+  for (const [annee, fraction] of fractions) {
+    references += salaireMoyenAnnuel(macro, annee) * fraction;
   }
   return references > 0.0 ? revenus / references : 1.0;
 }

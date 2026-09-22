@@ -423,7 +423,43 @@ class ConstructeurCompte:
 
     def cotisation_annuelle(self, carriere: Carriere, annee: int,
                             regime_fusionne: RegimeFusionne | None = None) -> CotisationAnnuelle:
-        ligne = carriere.ligne(annee)
+        """Les cotisations de l'année, TOUTES ACTIVITÉS RÉUNIES.
+
+        Deux activités cumulées cotisent chacune à son régime, sur son revenu
+        et sous ses propres bornes, et le compte porte ce qui a été versé :
+        la somme des deux. Une année d'une seule activité est cette activité.
+        """
+        lignes = carriere.lignes_de(annee)
+        if len(lignes) <= 1:
+            return self._cotisation_ligne(
+                carriere, lignes[0] if lignes else None, annee, regime_fusionne
+            )
+        details = [self._cotisation_ligne(carriere, ligne, annee, regime_fusionne)
+                   for ligne in lignes]
+        revenu = sum(d.revenu for d in details)
+        cotisation = sum(d.cotisation for d in details)
+        origines = [d.origine_part_employeur for d in details
+                    if d.origine_part_employeur]
+        return CotisationAnnuelle(
+            annee=annee,
+            revenu=revenu,
+            assiette_retenue=sum(d.assiette_retenue for d in details),
+            cotisation=cotisation,
+            regimes=tuple(dict.fromkeys(
+                code for d in details for code in d.regimes)),
+            taux_effectif=cotisation / revenu if revenu else 0.0,
+            hors_repartition=sum(d.hors_repartition for d in details),
+            fiabilite=min(d.fiabilite for d in details),
+            origine_part_employeur=(
+                "repli" if "repli" in origines else (origines[0] if origines else "")
+            ),
+            part_employeur=sum(d.part_employeur for d in details),
+        )
+
+    def _cotisation_ligne(self, carriere: Carriere, ligne, annee: int,
+                          regime_fusionne: RegimeFusionne | None
+                          ) -> CotisationAnnuelle:
+        """Les cotisations d'UNE activité de l'année."""
         # Une année non travaillée ne porte au compte que ce qu'un tiers a
         # VERSÉ pour elle : les cotisations complémentaires que l'Unédic paie
         # pendant un chômage indemnisé. Les points que l'Agirc-Arrco donne
@@ -439,7 +475,7 @@ class ConstructeurCompte:
         # ne porte que les mois travaillés, et les plafonds se proratisent sur
         # les mêmes mois. L'année du départ est en outre tronquée au point de
         # départ, y compris quand la ligne, elle, déclare douze mois.
-        part = carriere.part_retenue(annee)
+        part = carriere.part_retenue_ligne(ligne)
         if part <= 0:
             return CotisationAnnuelle(
                 annee=annee, revenu=0.0, assiette_retenue=0.0, cotisation=0.0,

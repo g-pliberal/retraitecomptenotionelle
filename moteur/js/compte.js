@@ -310,8 +310,44 @@ export class ConstructeurCompte {
 
   // -- cotisation d'une année ------------------------------------------------
 
+  /**
+   * Les cotisations de l'année, TOUTES ACTIVITÉS RÉUNIES. Deux activités
+   * cumulées cotisent chacune à son régime, sur son revenu et sous ses propres
+   * bornes, et le compte porte ce qui a été versé : la somme des deux. Une
+   * année d'une seule activité est cette activité.
+   */
   cotisationAnnuelle(carriere, annee, regimeFusionne = null) {
-    const ligne = carriere.ligne(annee);
+    const lignes = carriere.lignesDe(annee);
+    if (lignes.length <= 1) {
+      return this._cotisationLigne(
+        carriere, lignes.length ? lignes[0] : null, annee, regimeFusionne,
+      );
+    }
+    const details = lignes.map(
+      (ligne) => this._cotisationLigne(carriere, ligne, annee, regimeFusionne),
+    );
+    const somme = (cle) => details.reduce((total, d) => total + d[cle], 0);
+    const revenu = somme("revenu");
+    const cotisation = somme("cotisation");
+    const origines = details.map((d) => d.origine_part_employeur).filter(Boolean);
+    return {
+      annee,
+      revenu,
+      assiette_retenue: somme("assiette_retenue"),
+      cotisation,
+      regimes: [...new Set(details.flatMap((d) => d.regimes))],
+      taux_effectif: revenu ? cotisation / revenu : 0.0,
+      hors_repartition: somme("hors_repartition"),
+      fiabilite: Math.min(...details.map((d) => d.fiabilite)),
+      nulle: cotisation <= 0,
+      origine_part_employeur: origines.includes("repli")
+        ? "repli" : (origines[0] ?? ""),
+      part_employeur: somme("part_employeur"),
+    };
+  }
+
+  /** Les cotisations d'UNE activité de l'année. */
+  _cotisationLigne(carriere, ligne, annee, regimeFusionne) {
     // Une année non travaillée ne porte au compte que ce qu'un tiers a VERSÉ
     // pour elle : les cotisations que l'Unédic paie pendant un chômage
     // indemnisé. Les points gratuits de la maladie n'y entrent pas.
@@ -329,7 +365,7 @@ export class ConstructeurCompte {
     // porte que les mois travaillés, et les plafonds se proratisent sur les
     // mêmes mois. L'année du départ est en outre tronquée au point de départ,
     // y compris quand la ligne, elle, déclare douze mois.
-    const part = carriere.partRetenue(annee);
+    const part = carriere.partRetenueLigne(ligne);
     if (part <= 0) {
       return {
         annee, revenu: 0.0, assiette_retenue: 0.0, cotisation: 0.0,

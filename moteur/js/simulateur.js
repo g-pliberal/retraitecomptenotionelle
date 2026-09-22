@@ -439,11 +439,15 @@ function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coeffici
 function dernierRevenuAnnualise(carriere, macro) {
   const derniers = carriere.lignes.filter((ligne) => ligne.cotise);
   if (derniers.length === 0) return 0.0;
-  const dernier = derniers[derniers.length - 1];
-  const reference = salaireMoyenAnnuel(macro, dernier.annee);
-  if (reference <= 0) return dernier.revenuAnnualise;
+  // Toutes les activités de la dernière année cotisée : c'est le revenu
+  // d'activité que la pension remplace, et non celui d'une seule d'entre elles.
+  const annee = derniers[derniers.length - 1].annee;
+  const revenu = derniers.filter((ligne) => ligne.annee === annee)
+    .reduce((total, ligne) => total + ligne.revenuAnnualise, 0);
+  const reference = salaireMoyenAnnuel(macro, annee);
+  if (reference <= 0) return revenu;
   const facteur = salaireMoyenAnnuel(macro, carriere.anneeLiquidation) / reference;
-  return dernier.revenuAnnualise * facteur;
+  return revenu * facteur;
 }
 
 /** Façade : charge les données une fois, simule autant de carrières que voulu. */
