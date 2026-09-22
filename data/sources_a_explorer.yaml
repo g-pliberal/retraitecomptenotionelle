@@ -1817,10 +1817,16 @@ sources:
     a_en_tirer: >-
       Les conditions d'ouverture à la RATP : âges par catégorie (sédentaire,
       actif, actif à conditions particulières) et leur calendrier de report.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
     note: >-
       Cloudflare répond 403 à `curl` (page « Attention Required »). Chromium
-      passe : voir docs/exploration_sources.md.
+      passe : voir docs/exploration_sources.md. La page et ses voisines
+      publiques (« en bref », « réglementation », les foires aux questions)
+      ne publient ni les âges ni la décote : tout est dans l'espace des
+      affiliés. Les règles ont été lues dans le décret n° 2008-637 (lignes
+      `age_reference_decote_sncf_ratp` et `duree_requise_sncf_ratp` du
+      registre de veille).
 
   - id: enim_mode_de_calcul
     url: https://www.enim.eu/retraite/mode-de-calcul
@@ -1928,7 +1934,16 @@ sources:
       Le régime spécial de la SNCF vu par sa caisse : âges par catégorie,
       coefficient de minoration, durée. Le dépôt le modélise, et la SNCF pèse
       lourd dans les cas types — d'où l'importance de la recontrôler.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      Les âges d'ouverture par génération, identiques à l'article 37-1. La
+      page « Réforme des retraites 2023 » de la même caisse donne l'âge
+      d'annulation de la décote « inchangé » à cinquante-sept ans pour la
+      conduite, que la fiche faisait monter à cinquante-neuf : corrigé, avec
+      la table de durée requise propre et l'âge de la surcote. Restent les
+      deux tableaux de durée et de coefficient que « Simuler sa retraite »
+      publie en images, non relus.
 
   - id: cprpf_enfants
     url: https://www.cprpf.fr/actifs/preparer-ma-retraite/preparer-ma-retraite-rs/mes-enfants-et-ma-retraite/

@@ -547,6 +547,19 @@ def _cas() -> list[dict]:
         **parentale, "liquidation": "67",
     }))
 
+    # La SNCF et la RATP ont leur table de durée requise, leur âge de référence
+    # de la décote fixé à cinquante-sept ans et leur âge de surcote : trois
+    # branches que le cas de base, né en 1975 et parti à soixante-quatre ans
+    # avec 172 trimestres, ne visite pas.
+    for nom, statut, naissance, liquidation in (
+        ("sncf_depart_a_l_ouverture", "agent_sncf", 1980, "54"),
+        ("ratp_duree_propre", "agent_ratp", 1966, "60"),
+        ("sncf_surcote_apres_soixante_quatre_ans", "agent_sncf", 1975, "66"),
+    ):
+        cas_statut(nom, statut, naissance)
+        assert cas[-1][0] == nom, f"{nom} : aucun âge d'entrée admissible"
+        cas[-1][1]["liquidation"] = liquidation
+
     # Les carrières LUES sur un relevé, plutôt que reconstituées.
     cas.extend(_cas_releve())
 

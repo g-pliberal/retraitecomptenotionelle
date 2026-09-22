@@ -197,17 +197,23 @@ pivots:
 
   # --- Régimes spéciaux --------------------------------------------------
   sncf:
-    # L'article 13 porte la décote, l'article 37-1 le calendrier des âges par
-    # génération ; les articles 3 (pension proportionnelle) et 17 (entrée en
-    # jouissance) ne datent aucun paramètre de la fiche.
-    - {texte: "Décret n° 2008-639", num: "37-1", parametres: [age_ouverture, age_taux_plein]}
-    - {texte: "Décret n° 2008-639", num: "13", parametres: [decote_par_trimestre, bareme_decote]}
+    # L'article 13 porte la décote et son âge de référence, l'article 37-1 le
+    # calendrier des âges par génération et celui de la surcote, l'article 35
+    # la table de durée requise ; les articles 3 (pension proportionnelle) et
+    # 17 (entrée en jouissance) ne datent aucun paramètre de la fiche.
+    - {texte: "Décret n° 2008-639", num: "37-1", parametres: [age_ouverture, age_taux_plein, age_surcote_regimes_speciaux]}
+    - {texte: "Décret n° 2008-639", num: "13", parametres: [decote_par_trimestre, bareme_decote, age_taux_plein]}
+    - {texte: "Décret n° 2008-639", num: "35", parametres: [duree_requise_table]}
     - {texte: "Décret n° 2008-639", num: "6", parametres: [duree_requise_trimestres, taux_plein]}
   ratp:
     # L'article 6 porte les âges cibles, l'article 51-1 leur calendrier par
-    # génération ; l'article 13 n'a qu'une version et ne date rien.
+    # génération et celui de la surcote, l'article 24 l'âge de référence de la
+    # décote, l'article 51 la table de durée requise ; l'article 13 n'a qu'une
+    # version et ne date rien.
     - {texte: "Décret n° 2008-637", num: "6", parametres: [age_ouverture, age_taux_plein]}
-    - {texte: "Décret n° 2008-637", num: "51-1", parametres: [age_ouverture, age_taux_plein]}
+    - {texte: "Décret n° 2008-637", num: "51-1", parametres: [age_ouverture, age_taux_plein, age_surcote_regimes_speciaux]}
+    - {texte: "Décret n° 2008-637", num: "24", parametres: [age_taux_plein, bareme_decote]}
+    - {texte: "Décret n° 2008-637", num: "51", parametres: [duree_requise_table]}
     - {texte: "Décret n° 2008-637", num: "17", parametres: [decote_par_trimestre, bareme_decote]}
   ieg:
     # L'annexe 3 du statut national porte les âges et la retenue ; sa rédaction

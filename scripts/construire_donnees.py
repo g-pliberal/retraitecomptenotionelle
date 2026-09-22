@@ -82,6 +82,7 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     AgesAnnulationDecote,
     AgesJouissanceMilitaire,
     AgesOuverture,
+    AgesSurcoteRegimesSpeciaux,
     AnneesSalaireReference,
     CoefficientsMinoration,
     DureesProratisation,
@@ -532,6 +533,8 @@ def _regimes() -> list[dict]:
                     "age_taux_plein": p.age_taux_plein,
                     "duree_requise_trimestres": p.duree_requise_trimestres,
                     "duree_requise_par_generation": p.duree_requise_par_generation,
+                    "duree_requise_table": p.duree_requise_table,
+                    "age_surcote_regimes_speciaux": p.age_surcote_regimes_speciaux,
                     "duree_proratisation_par_generation":
                         p.duree_proratisation_par_generation,
                     "age_ouverture_par_generation": p.age_ouverture_par_generation,
@@ -919,6 +922,21 @@ def _minimum_contributif() -> dict:
     table = MinimumContributif(DONNEES, DonneesMacro(DONNEES))._table
     return {f"{mesure}|{annee}": [valeur, int(fiabilite)]
             for (mesure, annee), (valeur, fiabilite) in sorted(table.items())}
+
+
+def _durees_requises_regimes() -> dict:
+    """Durée requise propre à un régime spécial, par table et par génération."""
+    from retraite_notionnelle.scenarios.actuel import DureesRequisesRegimes
+
+    return {
+        table: {
+            (str(int(generation)) if float(generation).is_integer()
+             else str(generation)): [trimestres, retranche, int(fiabilite)]
+            for generation, (trimestres, retranche, fiabilite)
+            in sorted(valeurs.items())
+        }
+        for table, valeurs in sorted(DureesRequisesRegimes(DONNEES)._table.items())
+    }
 
 
 def _durees_requises_fonction_publique() -> dict:
@@ -1350,10 +1368,12 @@ def construire(bilan: bytes) -> bytes:
         "durees_requises": _table_par_generation(DureesRequises),
         "durees_requises_avant_suspension": _table_par_generation(
             DureesRequisesAvantSuspension),
+        "durees_requises_regimes": _durees_requises_regimes(),
         "durees_proratisation": _table_par_generation(DureesProratisation),
         "revalorisation_salaires": _revalorisation_salaires(),
         "revalorisation_pensions": _revalorisation_pensions(),
         "ages_ouverture": _table_par_generation(AgesOuverture),
+        "ages_surcote_regimes_speciaux": _table_par_generation(AgesSurcoteRegimesSpeciaux),
         "ages_annulation_decote": _table_par_generation(AgesAnnulationDecote),
         "ages_regimes": _ages_regimes(),
         "categorie_active": _categorie_active(),

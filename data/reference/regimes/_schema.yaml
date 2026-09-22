@@ -47,6 +47,29 @@ champs_periode:
       l'année de liquidation — ce qui reste correct avant 1993.
     defaut: false
 
+  duree_requise_table:
+    description: >-
+      Table de durée requise PROPRE au régime, par génération, qui passe avant
+      la table commune : `sncf_conduite`, `ratp`
+      (`legislation/duree_requise_regimes_speciaux.csv`). Leurs décrets
+      écrivent chacun la leur, et la suspension de 2026, qui a abaissé la table
+      commune, ne les a pas touchés. En deçà de la première génération de la
+      table, la table commune reste le repli. La table de la SNCF porte en plus
+      les trimestres que le II de l'article 35 du décret n° 2008-639 retranche
+      à la durée requise pour compter la décote par la durée.
+    valeurs: [null, "sncf_conduite", "ratp"]
+    defaut: null
+
+  age_surcote_regimes_speciaux:
+    description: >-
+      Si vrai, la surcote ne se compte qu'au-delà de l'âge lu dans
+      `legislation/age_surcote_regimes_speciaux.csv` à l'ANNÉE DE NAISSANCE —
+      l'âge légal décalé de cinq générations que les décrets de la SNCF
+      (article 37-1, IV) et de la RATP (article 51-1, II, 3°) écrivent,
+      soixante-quatre ans à compter de la génération 1970 —, et non au-delà de
+      l'âge d'ouverture de la fiche.
+    defaut: false
+
   age_ouverture_par_generation:
     description: >-
       Si vrai, l'âge d'ouverture est lu dans

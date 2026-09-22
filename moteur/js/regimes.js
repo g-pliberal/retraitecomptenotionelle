@@ -71,6 +71,29 @@ export const SUSPENSION_2026_EFFET = [2026, 9];
 export const GENERATIONS_SUSPENSION = [1964.0, 1966.0];
 
 /**
+ * Durée requise propre à un régime spécial, par génération.
+ *
+ * La SNCF et la RATP écrivent chacune leur table dans leur décret, et la
+ * suspension de 2026, qui a abaissé la table commune, ne les a pas touchées. La
+ * table de la SNCF porte en plus ce que le II de l'article 35 du décret
+ * n° 2008-639 retranche à la durée requise pour compter la décote par la durée.
+ */
+export class DureesRequisesRegimes {
+  constructor(paquet) {
+    this._tables = Object.fromEntries(
+      Object.entries(paquet.durees_requises_regimes ?? {})
+        .map(([table, valeurs]) => [table, new TableParGeneration(valeurs)]),
+    );
+  }
+
+  /** @returns {[number, number, number] | null} trimestres, retranchés pour la décote, fiabilité. */
+  ligne(table, generation) {
+    const lue = this._tables[table];
+    return lue === undefined ? null : lue.valeur(generation);
+  }
+}
+
+/**
  * Durée de services requise dans la fonction publique, 2004-2008.
  *
  * Le II de l'article 66 de la loi du 21 août 2003 fait monter le nombre de
@@ -123,6 +146,21 @@ export class DureesProratisation extends TableParGeneration {
 export class AgesOuverture extends TableParGeneration {
   constructor(paquet) {
     super(paquet.ages_ouverture);
+  }
+
+  /** @returns {[number, number] | null} âge et fiabilité. */
+  age(generation) {
+    return this.valeur(generation);
+  }
+}
+
+/**
+ * Âge d'où la SNCF et la RATP comptent la surcote, par génération : l'âge
+ * légal décalé de cinq générations, soixante-quatre ans à compter de 1970.
+ */
+export class AgesSurcoteRegimesSpeciaux extends TableParGeneration {
+  constructor(paquet) {
+    super(paquet.ages_surcote_regimes_speciaux);
   }
 
   /** @returns {[number, number] | null} âge et fiabilité. */

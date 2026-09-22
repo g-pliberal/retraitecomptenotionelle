@@ -120,6 +120,15 @@ class PeriodeRegime:
     #: loi Fillon pour la fonction publique, leurs réformes propres pour les
     #: régimes spéciaux. La valeur ci-dessus sert alors de repli.
     duree_requise_par_generation: bool
+    #: La table de durée requise PROPRE au régime, par génération, qui passe
+    #: avant la table commune : `sncf_conduite`, `ratp`
+    #: (`legislation/duree_requise_regimes_speciaux.csv`). Leurs décrets
+    #: écrivent chacun la sienne, et la suspension de 2026 ne les a pas touchés.
+    duree_requise_table: str | None
+    #: La surcote se compte-t-elle depuis l'âge du calendrier propre à la SNCF
+    #: et à la RATP (`legislation/age_surcote_regimes_speciaux.csv`), et non
+    #: depuis l'âge d'ouverture de la fiche ?
+    age_surcote_regimes_speciaux: bool
     #: L'âge d'ouverture suit-il la génération plutôt que l'année de
     #: liquidation ? Vrai pour les régimes alignés sur l'âge légal général.
     age_ouverture_par_generation: bool
@@ -914,6 +923,10 @@ class CatalogueRegimes:
                 ),
                 duree_requise_par_generation=bool(
                     p.get("duree_requise_par_generation", False)
+                ),
+                duree_requise_table=p.get("duree_requise_table"),
+                age_surcote_regimes_speciaux=bool(
+                    p.get("age_surcote_regimes_speciaux", False)
                 ),
                 age_ouverture_par_generation=bool(
                     p.get("age_ouverture_par_generation", False)

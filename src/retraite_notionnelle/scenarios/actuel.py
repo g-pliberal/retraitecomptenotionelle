@@ -292,7 +292,7 @@ GENERATIONS_SUSPENSION = (1964.0, 1966.0)
 class DureesRequisesRegimes:
     """Durée requise propre à un régime spécial, par génération.
 
-    La SNCF, la RATP et les IEG écrivent chacun leur table dans leur décret, et
+    La SNCF et la RATP écrivent chacune leur table dans leur décret, et
     la suspension de 2026, qui a abaissé la table commune, ne les a pas
     touchées. La fiche nomme la sienne (`duree_requise_table`) sur ses périodes
     de 2025 et après.
@@ -483,6 +483,22 @@ class AgesOuverture(TableParGeneration):
 
     def __init__(self, racine: Path) -> None:
         super().__init__(racine, "age_ouverture_requis.csv", "age")
+
+    def age(self, generation: float) -> tuple[float, Fiabilite] | None:
+        return self.valeur(generation)
+
+
+class AgesSurcoteRegimesSpeciaux(TableParGeneration):
+    """Âge d'où la SNCF et la RATP comptent la surcote, par génération.
+
+    Ce n'est ni leur âge d'ouverture ni l'âge légal du régime général : c'est
+    l'âge légal décalé de cinq générations, soixante-quatre ans à compter de la
+    génération 1970 (décret n° 2008-639, article 37-1, IV ; décret
+    n° 2008-637, article 51-1, II, 3°).
+    """
+
+    def __init__(self, racine: Path) -> None:
+        super().__init__(racine, "age_surcote_regimes_speciaux.csv", "age")
 
     def age(self, generation: float) -> tuple[float, Fiabilite] | None:
         return self.valeur(generation)
@@ -1822,6 +1838,9 @@ class ScenarioActuel:
         self.durees_requises_regimes = DureesRequisesRegimes(parametres.racine_donnees)
         self.durees_proratisation = DureesProratisation(parametres.racine_donnees)
         self.ages_ouverture = AgesOuverture(parametres.racine_donnees)
+        self.ages_surcote_regimes_speciaux = AgesSurcoteRegimesSpeciaux(
+            parametres.racine_donnees
+        )
         self.ages_annulation_decote = AgesAnnulationDecote(parametres.racine_donnees)
         self.ages_regimes = AgesRegimes(parametres.racine_donnees)
         self.ages_categorie_active = AgesCategorieActive(parametres.racine_donnees)
@@ -2185,8 +2204,19 @@ class ScenarioActuel:
         1967, 172 dès 1971, et les mêmes marches cinq ans plus tard pour la
         super-active. Le modèle leur opposait celle des sédentaires, soit
         jusqu'à trois trimestres de trop.
+
+        UN RÉGIME SPÉCIAL QUI ÉCRIT SA TABLE PASSE AVANT LA TABLE COMMUNE : la
+        SNCF et la RATP (`legislation/duree_requise_regimes_speciaux.csv`).
+        En deçà de la première génération qu'elle nomme, la table commune reste
+        le repli.
         """
         requis = periode.duree_requise_trimestres or 160
+        if periode.duree_requise_table is not None:
+            propre = self.durees_requises_regimes.ligne(
+                periode.duree_requise_table, carriere.generation
+            )
+            if propre is not None:
+                return propre[0], propre[2]
         if periode.bareme_decote == "fonction_publique":
             transitoire = self.durees_requises_fonction_publique.trimestres(
                 self._annee_ouverture_des_droits(
@@ -2666,6 +2696,19 @@ class ScenarioActuel:
                 return par_generation[0]
         return periode.age_ouverture
 
+    def _age_surcote(self, periode: PeriodeRegime, carriere: Carriere) -> float:
+        """Âge au-delà duquel les trimestres cotisés ouvrent la surcote.
+
+        L'âge légal de droit commun, sauf pour la SNCF et la RATP, dont les
+        décrets écrivent leur propre calendrier : le compter depuis leur âge
+        d'ouverture payait la surcote dix ans trop tôt à un agent de conduite.
+        """
+        if periode.age_surcote_regimes_speciaux:
+            propre = self.ages_surcote_regimes_speciaux.age(carriere.generation)
+            if propre is not None:
+                return propre[0]
+        return self._age_ouverture_commun(periode, carriere)
+
     def _periodes_parcourues(
             self, carriere: Carriere
     ) -> tuple[list[tuple[str, PeriodeRegime]], list[tuple[str, PeriodeRegime]]]:
@@ -3091,7 +3134,11 @@ class ScenarioActuel:
             (age_annulation - age_liquidation) * 4
         ))
         if periode.decote_annulee_par_la_duree:
-            trimestres_decote = min(max(0, requis - trimestres), manquants_age)
+            # La SNCF compte la décote par la durée sur une cible abaissée de
+            # deux à dix trimestres selon la génération (décret n° 2008-639,
+            # article 35, II) ; partout ailleurs, rien n'est retranché.
+            cible = requis - self._retranche_decote(periode, carriere)
+            trimestres_decote = min(max(0, cible - trimestres), manquants_age)
         else:
             # Avant l'ordonnance du 26 mars 1982, le taux ne dépendait QUE de
             # l'âge : le régime général servait 20 % à 60 ans, majorés de
@@ -3107,6 +3154,15 @@ class ScenarioActuel:
         if periode.decote_trimestres_maximum is not None:
             trimestres_decote = min(trimestres_decote, periode.decote_trimestres_maximum)
         return trimestres_decote
+
+    def _retranche_decote(self, periode: PeriodeRegime, carriere: Carriere) -> int:
+        """Trimestres retranchés à la durée requise pour compter la décote."""
+        if periode.duree_requise_table is None:
+            return 0
+        propre = self.durees_requises_regimes.ligne(
+            periode.duree_requise_table, carriere.generation
+        )
+        return 0 if propre is None else propre[1]
 
     def _valeur_point_fiche(self, periode: PeriodeRegime, annee: int) -> float:
         """Valeur de service du point écrite dans la fiche, à l'année demandée.
@@ -4511,7 +4567,7 @@ class ScenarioActuel:
                 # La surcote se compte depuis l'âge légal DE DROIT COMMUN, même
                 # pour un emploi classé, et le militaire n'en a aucune : le III
                 # de l'article L. 14 ne la donne qu'au « fonctionnaire civil ».
-                age_ouverture = self._age_ouverture_commun(periode, carriere)
+                age_ouverture = self._age_surcote(periode, carriere)
                 if (periode.surcote_par_trimestre and supplementaires > 0
                         and age_liquidation >= age_ouverture
                         and self._droit_militaire(periode, carriere) is None):

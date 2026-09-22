@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 283<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->35 328<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 339<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->35 408<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13553,6 +13553,58 @@ dépôt ne porte pour aucun régime spécial.
 construction — âge d'ouverture majoré de cinq ans — et leurs textes n'ont pas
 été lus. Si la réforme de 2023 les a traitées comme les IEG, deux autres fiches
 décotent de trop. C'est la première chose à faire du prochain lot.
+
+**Quatrième lot dépouillé : la SNCF et la RATP, le 22 septembre 2026.** La
+question que les IEG laissaient ouverte avait la réponse attendue, et deux de
+plus. Les textes lus dans l'index LEGI à jour de l'incrément du 21 : les
+articles 13, 15, 35 et 37-1 du décret n° 2008-639, les articles 6, 24, 51 et
+51-1 du décret n° 2008-637, chacun dans toutes ses versions ; chez les
+caisses, trois pages de la CPRPSNCF, et les pages publiques de la CRP RATP,
+qui ne publient rien de la décote.
+
+*Corrigé : l'âge de référence de la décote ne monte pas.* Le 1° du I de
+l'article 13 du décret de la SNCF le FIXE depuis le décret du 20 octobre 2023
+à cinquante-sept ans pour les agents de conduite, soixante-deux pour les
+autres ; celui de la RATP le fixe à l'âge d'ouverture FINAL majoré de trois
+ans, cinquante-sept ans au tableau B, et garde de 2025 à 2033 l'âge d'avant,
+qui vaut aussi cinquante-sept. Les deux fiches le faisaient monter jusqu'à
+cinquante-neuf ans, et prenaient pour l'âge d'annulation les soixante-deux à
+soixante-quatre ans des générations 1963 à 1970, qui sont ceux de la surcote.
+La CPRPSNCF l'écrit : « L'âge d'annulation de la décote est inchangé ». Un
+agent de conduite né en 1980 parti à cinquante-quatre ans passe de vingt
+trimestres de décote à douze, de 56,25 % à 63,75 %, de 23 711 € à 26 872 € ;
+le même à la RATP.
+
+*Corrigé : chacun a sa table de durée requise, et la suspension ne la touche
+pas.* 170 trimestres pour un agent de conduite né en 1975, non 172 ; 171 pour
+un agent de la RATP né en 1966, non 172. L'article 105 de la loi du
+30 décembre 2025 ne réécrit que le code de la sécurité sociale et la loi de
+2023 pour la fonction publique, et aucun décret n'a repris la suspension dans
+ces deux régimes : `reformes.yaml` le déclare. La SNCF compte en outre la
+décote par la durée sur une cible abaissée de deux à dix trimestres (II de
+l'article 35). C'est la quatrième table de `_duree_requise`, que la ligne
+`duree_requise_ieg` demandait : `legislation/duree_requise_regimes_speciaux.csv`,
+le champ `duree_requise_table` des fiches, et son portage.
+
+*Corrigé en chemin : la surcote partait de l'âge d'ouverture.* Les deux décrets
+ne la comptent qu'au-delà d'un âge propre, soixante-quatre ans à compter de la
+génération 1970 ; le modèle partait de cinquante-quatre. Invisible tant que la
+durée requise était de 172 trimestres, le défaut est apparu sur le témoin de
+l'agent SNCF, qui recevait deux trimestres de surcote qu'il n'avait pas
+accomplis (`legislation/age_surcote_regimes_speciaux.csv`).
+
+*Ce que ça déplace.* Le cas type « Agent de conduite SNCF » passe, dans les
+deux dernières générations de la page Cas types, de −17 % à −25 % et de −26 %
+à −34 % : c'est sa pension ACTUELLE qui remonte. Les agrégats de la page Coût
+bougent d'un dixième. Trois témoins nouveaux tiennent les trois branches dans
+les deux moteurs.
+
+*Et ce que le lot défait.* Aux IEG, la table qu'on croyait devoir brancher
+est celle des sédentaires ; l'agent actif du cas type relève du I bis de
+l'article 45, quatre tables selon ses années de services actifs, que le
+dépôt ne sait pas choisir. Restent aussi la table des agents sédentaires de
+la SNCF, qu'aucune fiche ne modélise, et les carrières longues des deux
+régimes.
 
 ### 97. Quel salaire faut-il rentrer ? Celui du travail, et jamais la pension — `fait`
 

@@ -23,10 +23,11 @@ import { assietteMinimale, salaireMoyenAnnuel } from "./carriere.js";
 import { formatFixe, formatPourcentage } from "./format.js";
 import {
   AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
-  AgesOuverture, AgesRegimes, AnneesSalaireReference, CarriereLongue,
+  AgesOuverture, AgesRegimes, AgesSurcoteRegimesSpeciaux, AnneesSalaireReference, CarriereLongue,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
   DureesProratisation, DureesRequises, DureesRequisesAvantSuspension,
-  DureesRequisesFonctionPublique, GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
+  DureesRequisesFonctionPublique, DureesRequisesRegimes,
+  GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
   DureesServicesMilitaires,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
@@ -106,9 +107,11 @@ export class ScenarioActuel {
     this.grilles = new SalairesForfaitaires(paquet);
     this.dureesRequises = new DureesRequises(paquet);
     this.dureesRequisesAvantSuspension = new DureesRequisesAvantSuspension(paquet);
+    this.dureesRequisesRegimes = new DureesRequisesRegimes(paquet);
     this.dureesRequisesFonctionPublique = new DureesRequisesFonctionPublique(paquet);
     this.dureesProratisation = new DureesProratisation(paquet);
     this.agesOuverture = new AgesOuverture(paquet);
+    this.agesSurcoteRegimesSpeciaux = new AgesSurcoteRegimesSpeciaux(paquet);
     this.agesAnnulationDecote = new AgesAnnulationDecote(paquet);
     this.agesRegimes = new AgesRegimes(paquet);
     this.agesCategorieActive = new AgesCategorieActive(paquet);
@@ -418,6 +421,17 @@ export class ScenarioActuel {
    */
   /** @returns {[number, number|null]} durée requise opposable, et fiabilité. */
   dureeRequise(periode, carriere) {
+    // UN RÉGIME SPÉCIAL QUI ÉCRIT SA TABLE PASSE AVANT LA TABLE COMMUNE : la
+    // SNCF et la RATP. En deçà de sa première génération, la table commune
+    // reste le repli.
+    if (periode.duree_requise_table) {
+      const propre = this.dureesRequisesRegimes.ligne(
+        periode.duree_requise_table, carriere.generation,
+      );
+      if (propre !== null) {
+        return [propre[0], propre[2]];
+      }
+    }
     // La fonction publique a sa propre montée en charge, 2004-2008, lue à
     // l'année d'ouverture du droit ; elle passe avant la table par génération.
     if (periode.bareme_decote === "fonction_publique") {
@@ -885,6 +899,20 @@ export class ScenarioActuel {
    * années, l'âge minoré majoré de dix, c'est-à-dire l'âge légal dans les deux
    * cas.
    */
+  /**
+   * Âge au-delà duquel les trimestres cotisés ouvrent la surcote : l'âge légal
+   * de droit commun, sauf pour la SNCF et la RATP, qui écrivent le leur.
+   */
+  ageSurcote(periode, carriere) {
+    if (periode.age_surcote_regimes_speciaux) {
+      const propre = this.agesSurcoteRegimesSpeciaux.age(carriere.generation);
+      if (propre !== null) {
+        return propre[0];
+      }
+    }
+    return this.ageOuvertureCommun(periode, carriere);
+  }
+
   ageOuvertureCommun(periode, carriere) {
     if (periode.age_table) {
       const propres = this.agesRegimes.ages(periode.age_table, carriere.generation);
@@ -1238,6 +1266,17 @@ export class ScenarioActuel {
    * Avant l'ordonnance du 26 mars 1982, le taux ne dépendait QUE de l'âge :
    * aucune durée, si longue fût-elle, n'ouvrait le taux plein avant l'heure.
    */
+  /** Trimestres retranchés à la durée requise pour compter la décote. */
+  retrancheDecote(periode, carriere) {
+    if (!periode.duree_requise_table) {
+      return 0;
+    }
+    const propre = this.dureesRequisesRegimes.ligne(
+      periode.duree_requise_table, carriere.generation,
+    );
+    return propre === null ? 0 : propre[1];
+  }
+
   trimestresDeDecote(periode, carriere, trimestres, requis, ageLiquidation,
     ageAnnulation) {
     // LE MILITAIRE A LA SIENNE, et elle ne compte pas des âges. Le II de
@@ -1259,8 +1298,11 @@ export class ScenarioActuel {
     // trimestre entier, et l'on opposait 13,32 trimestres là où le droit en
     // oppose 14.
     const manquantsAge = auTrimestreSuperieur((ageAnnulation - ageLiquidation) * 4);
+    // La SNCF compte la décote par la durée sur une cible abaissée de deux à
+    // dix trimestres selon la génération (décret n° 2008-639, article 35, II).
+    const cible = requis - this.retrancheDecote(periode, carriere);
     let trimestresDecote = periode.decote_annulee_par_la_duree
-      ? Math.min(Math.max(0, requis - trimestres), manquantsAge)
+      ? Math.min(Math.max(0, cible - trimestres), manquantsAge)
       : manquantsAge;
     if (trimestresDecote <= 0) {
       return 0.0;
@@ -2443,7 +2485,7 @@ export class ScenarioActuel {
         // emploi classé, et le militaire n'en a aucune : le III de l'article
         // L. 14 ne la donne qu'au « fonctionnaire civil ».
         let supplementaires = Math.max(0, trimestres - requis);
-        const ageOuverture = this.ageOuvertureCommun(periode, carriere);
+        const ageOuverture = this.ageSurcote(periode, carriere);
         if (periode.surcote_par_trimestre && supplementaires > 0
             && ageLiquidation >= ageOuverture
             && this.droitMilitaire(periode, carriere) === null) {
