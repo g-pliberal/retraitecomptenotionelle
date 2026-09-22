@@ -1,6 +1,6 @@
 # Explorer les sources officielles — la méthode
 
-Le 22 septembre 2026, 213 adresses ont été remises au dépôt en six lots :
+Le 22 septembre 2026, 237 adresses ont été remises au dépôt en sept lots :
 simulateurs de caisses, pages de règles, barèmes, circulaires, index de
 documents, et quatre modèles publics dont le code est ouvert. Elles sont
 inventoriées dans `data/sources_a_explorer.yaml`, une par ligne, avec ce
@@ -17,12 +17,12 @@ mains humaines, et l'on en a la preuve dans ce dépôt même.
 
 ## Ce qu'une session obtient, mesuré et non supposé
 
-Les 213 adresses ont été sondées le 22 septembre 2026, à raison d'une requête
-chacune. Deux cent cinq ont répondu 200 du premier coup. Les huit autres
+Les 237 adresses ont été sondées le 22 septembre 2026, à raison d'une requête
+chacune. Deux cent vingt-neuf ont répondu 200 du premier coup. Les huit autres
 tiennent en cinq cas, et chacun a sa recette — aucune ne consiste à baisser
 une vérification.
 
-### `session` — 205 adresses, rien à faire
+### `session` — 229 adresses, rien à faire
 
 `curl` suffit, la page arrive. C'est l'immense majorité, et c'est contraire à
 ce que le dépôt supposait : `tests/temoins/exemples_officiels.yaml` ouvre sur
@@ -115,6 +115,12 @@ dans `tests/temoins/exemples_officiels.yaml` avec leur date et rejoués par
 `tests/test_oracle.py` contre le scénario 1. Un fichier de dix mille lignes
 de sortie ne prouve rien de plus et personne ne le relira.
 
+**Un zéro n'est pas un refus.** Trois pages de `juris-cnracl.retraites.fr`
+ont rendu un code 000 — pas de réponse du tout — quand les vingt et une autres
+du même hôte répondaient : c'était la charge de six requêtes en parallèle, et
+les trois sont revenues du premier coup en série. Toujours resonder seul, et
+lentement, avant de conclure qu'un site refuse.
+
 **Espacer les requêtes.** Ces serveurs sont ceux d'organismes publics et
 personne ne les a prévenus. Un appel par seconde au plus, une session à la
 fois sur un même hôte, et l'on garde en cache ce qu'on a déjà demandé.
@@ -178,7 +184,7 @@ ici.
 
 ## Comment une session prend sa part
 
-Le lot ne se traite pas d'un coup, et il ne faut pas essayer : 213 adresses,
+Le lot ne se traite pas d'un coup, et il ne faut pas essayer : 237 adresses,
 dont vingt-huit simulateurs à balayer, valent plusieurs journées. La
 manière de s'y prendre est celle que `CLAUDE.md` impose déjà pour les sessions
 parallèles — par zone, et en poussant souvent.

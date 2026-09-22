@@ -2937,6 +2937,13 @@ def source_employeur_cnracl_jo() -> dict[tuple, float]:
     return {(annee, "cnracl"): taux for annee, taux in sorted(serie.items())}
 
 
+def _annees_cnracl_du_gestionnaire() -> set[tuple]:
+    try:
+        return set(source_employeur_cnracl_gestionnaire())
+    except SourceAbsente:
+        return set()
+
+
 def _annees_cnracl_du_journal_officiel() -> set[tuple]:
     try:
         return set(source_employeur_cnracl_jo())
@@ -2956,11 +2963,40 @@ def source_employeur_cnracl() -> dict[tuple, float]:
     d'avant 1993, dont les taux sont dans les décrets abrogés que celui de 1991
     a remplacés.
     """
-    couvertes = _annees_cnracl_du_journal_officiel()
+    couvertes = _annees_cnracl_du_journal_officiel() | _annees_cnracl_du_gestionnaire()
     return {
         (annee, "cnracl"): taux
         for annee, taux in sorted(_contributions_employeur("cnracl").items())
         if (annee, "cnracl") not in couvertes
+    }
+
+
+def source_employeur_cnracl_gestionnaire() -> dict[tuple, float]:
+    """Contribution employeur de la CNRACL, chez qui gère le régime.
+
+    La documentation juridique de la CNRACL — `juris-cnracl.retraites.fr`, que
+    la Caisse des dépôts tient pour les employeurs territoriaux et hospitaliers
+    — publie l'historique des taux par période, du 19 septembre 1947 à
+    aujourd'hui. La Caisse GÈRE la CNRACL : c'est le producteur, et non une
+    transcription tierce, d'où le niveau `certifiee` là où OpenFisca plafonnait
+    à `haute`.
+
+    Comme la source OpenFisca qu'elle remplace, elle ne garde que ce que le
+    *Journal officiel* ne rend pas : entre le texte et le tableau de celui qui
+    l'applique, c'est le texte qui l'emporte — critère 1 de `data/sources.yaml`.
+
+    Les deux sources se sont accordées sur les soixante-dix-neuf années, au
+    centième de point près, le 22 septembre 2026 : ce qui change n'est donc pas
+    un chiffre, c'est ce qu'on peut en dire.
+    """
+    serie = _serie_json("juris_cnracl_taux.json",
+                        "scripts/fetch/juris_cnracl_taux.py")
+    couvertes = _annees_cnracl_du_journal_officiel()
+    return {
+        (cle.split("|")[1], "cnracl"): taux
+        for cle, taux in serie.items()
+        if cle.startswith("contribution|")
+        and (cle.split("|")[1], "cnracl") not in couvertes
     }
 
 
@@ -5658,6 +5694,24 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         niveau="haute",
+        gabarit={"nature": "appelee"},
+            # Elle s'efface devant le texte ET devant le gestionnaire : depuis
+        # que le tableau de la CNRACL est lu, il ne lui reste rien à combler.
+        complementaire=True,
+),
+    # Le tableau du GESTIONNAIRE, qui relève les quarante années qu'OpenFisca
+    # ne pouvait que transcrire. Elle vient après la ligne ci-dessus : les deux
+    # couvrent les mêmes années, et c'est la dernière qui écrit le niveau.
+    Certification(
+        nom="employeur_public_cnracl_gestionnaire",
+        chemin=REFERENCE / "legislation" / "contribution_employeur_public.csv",
+        cles=("annee", "regime"),
+        colonne="taux",
+        source=source_employeur_cnracl_gestionnaire,
+        origine="CNRACL, documentation juridique, « Cotisations — historique "
+                "des taux applicables »",
+        decimales=6,
+        tolerance=5e-7,
         gabarit={"nature": "appelee"},
     ),
     Certification(

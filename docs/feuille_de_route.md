@@ -12497,9 +12497,9 @@ existe pour montrer — ne coûte plus une phrase à personne.
 
 ---
 
-### 89. Dépouiller les 213 sources officielles remises le 22 septembre 2026 — `en cours`
+### 89. Dépouiller les 237 sources officielles remises le 22 septembre 2026 — `en cours`
 
-**Demande.** Six lots d'adresses, remis le même jour : « explorer chaque lien
+**Demande.** Sept lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
 pas rester à la surface et regarder uniquement la page servie par le lien mais
 aussi l'ensemble des pages qui peuvent être explorées. Il y a énormément de
@@ -12520,10 +12520,10 @@ capitalisée de la CAVP. Et il touche l'étalon : le scénario 1 doit être le
 droit en vigueur tel que la caisse l'applique, et ces sources sont exactement
 les sources d'application que `docs/veille_droit.md` exige à côté du texte.
 
-**Ce qui est déjà fait, et qui était le plus long.** Les 213 adresses sont
+**Ce qui est déjà fait, et qui était le plus long.** Les 237 adresses sont
 inventoriées dans `data/sources_a_explorer.yaml`, une ligne chacune, avec le
 régime qu'elles concernent, la nature de ce qu'elles portent et, en une
-phrase, ce qu'on va y chercher. Elles ont toutes été sondées : 205 répondent
+phrase, ce qu'on va y chercher. Elles ont toutes été sondées : 229 répondent
 200 à une session, et les huit autres tiennent en cinq cas dont quatre se
 contournent proprement. `docs/exploration_sources.md` porte les recettes.
 
@@ -13000,3 +13000,36 @@ une retouche.
 `data/reference/legislation/veille.yaml`,
 `data/reference/macro/cas_types_csp.yaml`, `tests/test_cout_age_depart.py`,
 `docs/limites.md` § 5 ter, `tests/temoins/pages.json`.
+**Deuxième lot dépouillé : la CNRACL, le 22 septembre 2026.** La documentation
+juridique du régime (`juris-cnracl.retraites.fr`), que la Caisse des dépôts
+tient pour les employeurs territoriaux et hospitaliers — elle GÈRE la CNRACL,
+c'est donc une source primaire, et `scripts/veille_droit.py` la nommait déjà
+parmi les sources à consulter sans que personne l'ait lue.
+
+*Aucun écart, et c'est le résultat.* Son tableau de quarante-neuf périodes, du
+19 septembre 1947 à 2026, donne la retenue de l'agent et la contribution de
+l'employeur. Les deux séries du dépôt s'y accordent sur les soixante-dix-neuf
+années, au centième de point près, convention de date comprise. Ce qui change
+n'est donc pas un chiffre, c'est son RANG : les quarante années de contribution
+employeur que le dépôt tenait d'OpenFisca au niveau `haute` passent à
+`certifiee`, et cette série n'a plus une seule année de second rang.
+`scripts/fetch/juris_cnracl_taux.py` récupère le tableau, la certification
+`employeur_public_cnracl_gestionnaire` le verse, et
+`tests/test_juris_cnracl_taux.py` le tient hors réseau, les quarante-neuf
+périodes transcrites.
+
+*Ce que la source apprend en plus.* Dix années ont vu un taux changer en cours
+de route, que la convention annuelle du dépôt ne peut pas rendre — la plus
+lourde est 1980, où la contribution tombe de 18 % à 6 % au 1er juillet :
+l'employeur a versé cette année-là la moitié de ce que le dépôt lui compte. Le
+test les nomme toutes les dix et vérifie qu'il n'y en a pas d'autres. La page
+mère signale par ailleurs deux cotisations supplémentaires que le dépôt ignore
+— sapeurs-pompiers professionnels et aides-soignants — et le SP-CTI, le
+supplément de pension du « Ségur » hospitalier, reste entier à chiffrer.
+
+*Un piège de manipulation, à dire une fois pour toutes.*
+`verifier_donnees.py --appliquer` lancé avec un `data/brut/` incomplet fait
+REDESCENDRE les lignes dont la meilleure source est absente : cinq années de
+la SNCF sont ainsi passées de `certifiee` à `haute` avant d'être rendues à leur
+rang par la récupération manquante. Lancer les récupérateurs d'abord, et
+relire le diff du fichier de référence avant de commiter.
