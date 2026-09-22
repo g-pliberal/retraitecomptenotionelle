@@ -672,7 +672,7 @@ exactement la même pension.
 
 ---
 
-### 4. Depuis 1959, la retraite a coûté quinze mille milliards
+### 4. Ce que la retraite a coûté depuis 1959
 
 La page **Coût** répond à la question inverse de tout le reste du site : non pas
 « que toucherait cet assuré ? », mais « qu'est-ce que tout cela a coûté ? ». Les
@@ -680,16 +680,16 @@ dépenses viennent des Comptes de la protection sociale de la DREES, risque
 vieillesse-survie, **certifiées de 1959 à 2024** et recontrôlées contre l'API à
 chaque exécution.
 
-| | Millions d'euros |
+| | Montant |
 |---|---|
-| Dépense 2024, risque vieillesse-survie entier | **426,7 Md €** |
-| dont répartition obligatoire | **398,8 Md €** |
-| dont dépendance, capitalisation, minimum vieillesse | 27,9 Md € |
-| Part du PIB en 2024 | 14,5 % |
-| Cumul 1959-2024, en euros constants de 2026 | **14 987 Md €** |
+| Dépense 2024, risque vieillesse-survie entier | **<!--chiffre:mesure(depense?annee=2024)-->426,7<!--/--> Md €** |
+| dont répartition obligatoire | **<!--chiffre:mesure(depense?annee=2024&quoi=repartition)-->398,8<!--/--> Md €** |
+| dont dépendance, capitalisation, minimum vieillesse | <!--chiffre:mesure(depense?annee=2024&quoi=hors_repartition)-->27,9<!--/--> Md € |
+| Part du PIB en 2024 | <!--chiffre:mesure(depense?annee=2024&quoi=part_pib)-->14,5<!--/--> % |
+| Cumul 1959-2024, en euros constants de 2026 | **<!--chiffre:mesure(cumul_passe?scenario=1)-->14 987<!--/--> Md €** |
 
 C'est la deuxième ligne — la répartition obligatoire seule — qu'il faut
-rapprocher des « quelque 420 milliards » que l'on cite d'ordinaire pour l'année
+rapprocher des « quelque <!--chiffre:illustration()-->420<!--/--> milliards » que l'on cite d'ordinaire pour l'année
 en cours : le total publié est plus large, et la ventilation par système dit
 exactement de combien.
 
@@ -699,19 +699,19 @@ n'ayant publié le raccord, ces neuf années restent une impasse, et le total,
 lui, les couvre.
 
 Sur cette dépense observée, le modèle applique le rapport des masses de pension
-entre systèmes — les treize cas types croisés avec dix-neuf générations, pondérés
+entre systèmes — les <!--chiffre:mesure(grille?quoi=cas_types)-->13<!--/--> cas types croisés avec <!--chiffre:mesure(grille?quoi=generations)-->28<!--/--> générations, pondérés
 par l'effectif réel de chaque génération et par celui des retraités de la caisse
 de chaque cas type :
 
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
-| 1. Système actuel | 14 987 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 2 842 Md € | −81,0 % |
-| 3. Notionnel dès 2026, part salariale | 14 987 Md € | +0,0 % |
-| 4. Notionnel rétroactif, salariale + patronale | 6 598 Md € | −56,0 % |
-| 5. Notionnel dès 2026, salariale + patronale | 14 987 Md € | +0,0 % |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 7 218 Md € | −51,8 % |
-| *dont garantie vieillesse du 6, lue sur la distribution des pensions* | *3 757 Md €* | |
+| 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->14 987<!--/--> Md € | réf. |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->3 100<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,3<!--/--> % |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->14 987<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->7 037<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,0<!--/--> % |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->14 987<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->7 037<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−53,0<!--/--> % |
+| *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 593<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
 ce n'est pas un défaut du calcul : leur bascule est fixée à 2026, aucune pension
@@ -724,33 +724,34 @@ bascule était avancée avant la dernière année observée.
 
 L'écart du scénario 2 ne mesure pas, lui non plus, l'effet des comptes
 notionnels : il mesure la part salariale seule — le scénario 4, qui ajoute la
-part patronale, coûte 132 % de plus — et la règle d'indexation, dont le résultat
-1 ci-dessus montre qu'elle domine tout. Le scénario 6 est ici le scénario 4
-plus sa garantie vieillesse : aucune pension servie avant 2026 n'a une année
-cotisée à 18 %.
+part patronale, coûte <!--chiffre:mesure(surcout_passe?scenario=4&base=2)-->127<!--/--> % de plus — et la règle d'indexation, dont le résultat
+1 ci-dessus montre qu'elle domine tout. Le scénario 6 est ici le scénario 4,
+et sa garantie vieillesse s'y ajoute : aucune pension servie avant 2026 n'a une année
+cotisée à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %.
 
 **Les cas types ne pèsent plus d'un poids égal.** Chacun porte l'effectif des
 retraités de sa caisse, publié par la DREES et lu année par année : l'agent de
-conduite pèse 0,7 % et non 7,7 %, les quatre carrières du privé 63 % à elles
+conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->0,7<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->7,7<!--/--> %, les quatre carrières du privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->63<!--/--> % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
-qu'argumenté — elle donne −78,3 % au scénario 2 contre −81,0 %, et −59,8 % au
-scénario 4 contre −56,0 %. Le sens du biais n'était donc pas celui qu'on
+qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−76,1<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,3<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,9<!--/--> % au
+scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,0<!--/--> %. Le sens du biais n'était donc pas celui qu'on
 annonçait : la surreprésentation des départs très précoces faisait bien du
 scénario 4 un plancher, mais elle faisait du scénario 2 un plafond.
 
 **La garantie vieillesse du scénario 6 ne se chiffre pas sur des cas types, et
-la ligne en italique ne l'est plus.** C'est une allocation différentielle : son
-coût est celui de la queue basse de la distribution des pensions, et treize
+la ligne en italique ne l'est plus.** Elle ne fait pas partie du total du 6 : elle
+s'y ajoute, payée par l'impôt et non par les cotisations. C'est une allocation différentielle : son
+coût est celui de la queue basse de la distribution des pensions, et <!--chiffre:mesure(grille?quoi=cas_types)-->13<!--/-->
 carrières ne décrivent pas une distribution. Le barème est donc appliqué, année
 par année, à la distribution que publie l'échantillon interrégimes de la DREES
 pour 2020, déplacée du seul facteur que la grille sait donner — la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020 :
-0,64 cette année-là, 1,26 en 2070. Aux pensions d'aujourd'hui, la garantie
-coûterait **18,4 milliards par an**, 32,2 si l'on sert à tous l'allocation
-d'isolement ; aux pensions du scénario 6, **40 milliards en 2026** (1,3 % du
-PIB), décroissant à 32 en 2070 (0,9 %) à mesure que les pensions montent face à
-un plancher indexé sur les prix. Elle remplace quatre minima qui coûtent
-7,8 milliards en 2024, et la page Coût dit ce que l'impôt paierait en plus.
+<!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> cette année-là, <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,14<!--/--> en 2070. Sur la trajectoire, elle coûte
+**<!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->18<!--/--> milliards en 2026** (<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,6<!--/--> % du PIB), et <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->15<!--/--> milliards en 2070
+(<!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,4<!--/--> %) : les pensions montent face à un plancher indexé sur les prix. Ces
+coûts comptent les <!--chiffre:mesure(parametre?nom=taux_recours_garantie)-->50<!--/--> % d'ayants droit qui la réclament, le taux que la DREES
+mesure sur l'ASPA. Elle remplace quatre minima, et la page Coût dit ce qu'ils
+coûtent et ce que l'impôt paierait en plus.
 
 Les poids de génération, eux, ne sont pas supposés non plus : ce sont les
 effectifs de la **pyramide des âges de l'INSEE**, observés jusqu'en 2023. Reste
@@ -775,25 +776,28 @@ pyramide des âges, et les pensions que chaque génération acquiert.
 
 | Système | Coût 2070 | Part du PIB 2070 | Cumul 2025-2070 | Écart |
 |---|---|---|---|---|
-| 1. Système actuel | 714 Md € | **19,3 %** | 25 749 Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | 220 Md € | 5,9 % | 7 852 Md € | −69,5 % |
-| 3. Notionnel dès 2026, part salariale | 337 Md € | **9,1 %** | 19 039 Md € | −26,1 % |
-| 4. Notionnel rétroactif, salariale + patronale | 494 Md € | 13,3 % | 18 627 Md € | −27,7 % |
-| 5. Notionnel dès 2026, salariale + patronale | 526 Md € | 14,2 % | 22 225 Md € | −13,7 % |
-| 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse | 386 Md € | 10,4 % | 16 802 Md € | −34,7 % |
+| 1. Système actuel | <!--chiffre:mesure(cout_annee?scenario=1&annee=2070)-->714<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,4<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=1)-->25 796<!--/--> Md € | réf. |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cout_annee?scenario=2&annee=2070)-->212<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=2&annee=2070)-->5,4<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=2)-->7 547<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=2)-->−70,7<!--/--> % |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cout_annee?scenario=3&annee=2070)-->331<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=3&annee=2070)-->8,5<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=3)-->18 957<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=3)-->−26,5<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=4&annee=2070)-->474<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=4&annee=2070)-->12,2<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=4)-->17 815<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=4)-->−30,9<!--/--> % |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=5&annee=2070)-->511<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=5&annee=2070)-->13,1<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=5)-->21 993<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=5)-->−14,7<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cout_annee?scenario=6&annee=2070)-->371<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->9,5<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=6)-->16 073<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=6)-->−37,7<!--/--> % |
 
-Chiffres du 20 septembre 2026 : l'emploi projeté suit le scénario de référence
-du COR pour les systèmes 2 à 6, et les pensions déjà servies à la bascule
-gardent les prix (actions 46 et 48 de la feuille de route). Le site ne compare
+Ces chiffres sont recalculés par le modèle : l'emploi projeté suit le scénario
+de référence du COR pour les systèmes 2 à 6, et les pensions déjà servies à la
+bascule gardent les prix (actions 46 et 48 de la feuille de route). Le site ne compare
 plus que quatre de ces six systèmes ; le modèle calcule toujours les six.
 
 Trois choses à lire dans ce tableau.
 
-**Le système actuel monte, et le contrôle externe s'est dégradé deux fois.** Il
-passe de 13,6 % du PIB en 2024 à 19,3 % en 2070, alors que le nombre de
-personnes de 65 ans ou plus rapporté aux 20-64 ans passe de 0,39 à 0,62. Le COR,
-qui projette la même grandeur avec un modèle de population complet, trouve
-**13,9 % en 2024 et 14,2 % en 2070** (rapport annuel de juin 2025). L'écart
+**Le système actuel monte, et plus vite que ne le projette le COR.** Il passe
+de <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % du PIB en 2024 à <!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,4<!--/--> % en 2070, alors que le nombre de personnes
+de <!--chiffre:mesure(constante?de=retraite_notionnelle.cout&nom=AGE_DEPENDANCE)-->65<!--/--> ans ou plus rapporté aux 20-64 ans passe de <!--chiffre:mesure(dependance?annee=2024)-->0,39<!--/--> à <!--chiffre:mesure(dependance?annee=2070)-->0,62<!--/-->. Le COR, qui
+projette la même grandeur avec un modèle de population complet, trouve
+**<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % en 2024 et <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** dans le scénario de référence de son
+dernier rapport annuel, que `comptes_retraite.csv` porte.
+
+Le contrôle externe s'est dégradé deux fois, et l'histoire en est datée. L'écart
 d'arrivée était de deux points tant que les cas types pesaient d'un poids égal ;
 il est passé à quatre quand ils ont porté les effectifs de leur caisse, puis à
 cinq quand chacun s'est mis à liquider à l'âge de SA génération. Les deux fois,
@@ -815,22 +819,27 @@ pour enfants, et redescend à 19,4 avec la suspension de la réforme de 2023
 (LFSS 2026), qui fait partir plus tôt les générations 1964 à 1970 : le diagnostic que
 [`docs/feuille_de_route.md`](docs/feuille_de_route.md) avait posé était juste sur
 le défaut et faux sur son sens, et c'est la mesure qui le dit.
-[`docs/limites.md`](docs/limites.md) §5 ter porte le chiffrage et la piste qui
-reste — le taux de remplacement du modèle ne recule pas, celui du COR recule.
+
+Ces étapes sont celles de septembre 2026, et le tableau ci-dessus ne les
+recopie pas : il est recalculé, et la trajectoire 2070 y vaut
+<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,4<!--/--> %. [`docs/limites.md`](docs/limites.md) §5 ter porte le chiffrage et la piste
+qui reste — le taux de remplacement du modèle ne recule pas, celui du COR
+recule.
 
 **Une réforme prospective met une génération à produire son effet.** Le scénario
-3 ne fait rien économiser en 2026 — les droits acquis sont conservés —, et
-10,2 points de PIB en 2070. Décider vite ne fait pas économiser vite ; cela fait
+3 n'économise en 2026 que la réversion, qu'il cesse de servir à la bascule —
+<!--chiffre:mesure(economie_pib?scenario=3&annee=2026)-->1,4<!--/--> point de PIB, les droits acquis étant conservés —, et <!--chiffre:mesure(economie_pib?scenario=3&annee=2070)-->9,9<!--/--> points en
+2070. Décider vite ne fait pas économiser vite ; cela fait
 économiser longtemps.
 
 **L'écart entre 3 et 5 mesure encore une seule chose** : ce que verse
-l'employeur. Le scénario 5 économise cinq points de PIB de moins que le
-scénario 3, parce que son compte est alimenté par la cotisation entière.
+l'employeur. Le scénario 5 économise <!--chiffre:mesure(economie_pib?scenario=3&moins=5&annee=2070)-->5<!--/--> points de PIB de moins que le
+scénario 3 en 2070, parce que son compte est alimenté par la cotisation entière.
 
 Ce que la projection suppose est écrit sur la page et dans
 [`docs/limites.md`](docs/limites.md) §5 ter : la démographie de l'INSEE
 (scénario central, seize autres existent), un PIB qui suit les hypothèses du COR
-**corrigées du recul de la population d'âge actif** — 10 % d'ici 2070 —, un taux
+**trajectoire d'emploi de son scénario de référence comprise**, un taux
 de couverture constant, et aucune règle de pilotage. Rien de tout cela n'est
 certifié et ne peut l'être : une projection est une hypothèse, et la page
 l'affiche parce qu'un ordre de grandeur documenté vaut mieux qu'un silence.
