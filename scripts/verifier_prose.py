@@ -352,9 +352,9 @@ def sonde_tests(_: str = "") -> float:
     """
     if not _COMPTE_TESTS:
         collecte = subprocess.run(
-            [sys.executable, "-m", "pytest", "--collect-only", "-q",
+            [sys.executable, "-X", "utf8", "-m", "pytest", "--collect-only", "-q",
              "-p", "no:cacheprovider", str(RACINE / "tests")],
-            capture_output=True, text=True, cwd=RACINE,
+            capture_output=True, text=True, encoding="utf-8", cwd=RACINE,
         )
         trouve = re.search(r"(\d+) tests? collected", collecte.stdout)
         if not trouve:

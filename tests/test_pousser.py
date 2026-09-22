@@ -24,7 +24,7 @@ SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "pousser.sh"
 def git(depot: Path, *arguments: str) -> str:
     """Un git dans ``depot``, qui lève si la commande échoue."""
     acheve = subprocess.run(
-        ["git", *arguments], cwd=depot, capture_output=True, text=True,
+        ["git", *arguments], cwd=depot, capture_output=True, text=True, encoding="utf-8",
         check=True,
     )
     return acheve.stdout.strip()
@@ -33,6 +33,7 @@ def git(depot: Path, *arguments: str) -> str:
 def pousser(depot: Path) -> subprocess.CompletedProcess:
     return subprocess.run(
         ["bash", str(SCRIPT)], cwd=depot, capture_output=True, text=True,
+        encoding="utf-8",
     )
 
 
@@ -202,7 +203,7 @@ def test_la_reference_de_suivi_d_une_branche_supprimee_est_nettoyee(atelier):
 
     reste = subprocess.run(
         ["git", "rev-parse", "--quiet", "--verify", f"refs/remotes/origin/{branche}"],
-        cwd=session, capture_output=True, text=True,
+        cwd=session, capture_output=True, text=True, encoding="utf-8",
     )
     assert reste.returncode != 0, "le pointeur de suivi du fantôme est supprimé"
     assert git(session, "rev-list", "--count", "@{upstream}..HEAD") == "0"

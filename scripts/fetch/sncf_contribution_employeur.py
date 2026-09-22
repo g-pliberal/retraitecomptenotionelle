@@ -238,8 +238,8 @@ def depouiller(url: str, filtre: str) -> list[str]:
     )
     lecture.stdout.close()
     sonde = subprocess.Popen(
-        [sys.executable, "-c", filtre], stdin=detar.stdout,
-        stdout=subprocess.PIPE, text=True,
+        [sys.executable, "-X", "utf8", "-c", filtre], stdin=detar.stdout,
+        stdout=subprocess.PIPE, text=True, encoding="utf-8",
     )
     detar.stdout.close()
     sortie, _ = sonde.communicate()

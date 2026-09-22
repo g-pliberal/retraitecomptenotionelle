@@ -988,7 +988,7 @@ def depouiller(url: str) -> dict[str, list[tuple[str, str]]]:
     detar = subprocess.Popen(["tar", "-xzO"], stdin=lecture.stdout,
                              stdout=subprocess.PIPE)
     lecture.stdout.close()
-    filtre = subprocess.Popen([sys.executable, "-c", FILTRE % motif],
+    filtre = subprocess.Popen([sys.executable, "-X", "utf8", "-c", FILTRE % motif],
                               stdin=detar.stdout, stdout=subprocess.PIPE)
     detar.stdout.close()
 
