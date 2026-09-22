@@ -501,15 +501,19 @@ fichiers:
   # se fait section par section.
   docs/methodologie.md:
     defaut: a_declarer
-    # Quatre procès-verbaux enclavés dans des sections d'état : ce que coûtait
+    # Cinq procès-verbaux enclavés dans des sections d'état : ce que coûtait
     # la conversion des points devinée, l'unification Arrco de 1999, la table
     # d'OpenFisca reprise d'abord, et ce que rendait la loi de mortalité
-    # calibrée sur elle-même. Leurs chiffres sont ceux du jour de la correction.
+    # calibrée sur elle-même — et la mesure des décimales affichées. Leurs
+    # chiffres sont ceux du jour de la correction.
     paragraphes_recit:
       - "Les deviner coûtait cher, et de deux façons."
       - "**L'unification Arrco du 1<sup>er</sup> janvier 1999"
       - "La source est la circulaire annuelle de revalorisation de la Cnav"
       - "**La cible de cet ajustement est la table RACCORDÉE, pas la loi seule**"
+      # La mesure du 10 septembre 2026 qui a fixé les décimales affichées.
+      - "Écart maximal de la ligne reconstituée depuis l'écran, mesuré le"
+      - "| Étape | 4 déc. | 5 déc. | 6 déc. | Retenu |"
     # Même tableau, même script : la méthodologie en portait la seconde copie.
     blocs_produits:
       - indexation
@@ -557,6 +561,7 @@ fichiers:
       "Scénario 1 — le système actuel": etat
       "Ce que chaque régime liquide, et sur quoi": etat
       "Tables de mortalité": etat
+      "Précision des coefficients affichés": etat
   # Un JOURNAL DE CHANTIER : le §4 et ses six suites racontent, chacune, ce
   # qu'une session a mesuré le jour où elle l'a mesuré. Leurs chiffres sont
   # justes à leur date et gelés — les rafraîchir réécrirait l'histoire, et
@@ -666,7 +671,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 14
+  sections_a_declarer: 13
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
