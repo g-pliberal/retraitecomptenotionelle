@@ -4965,11 +4965,162 @@ def _second_revenu(comparaison: Comparaison, montants: "Montants",
     )
 
 
+def _en_bref(comparaison: Comparaison, saisie: Saisie, montants: "Montants",
+             constants: dict[str, float], capitalise_volontaire: float,
+             capitalise: float, finances: dict[str, PensionFinancee]) -> str:
+    """Ce que l'électeur est venu chercher, en trois phrases, avant les barres.
+
+    Les quatre barres répondent à tout, et c'est leur défaut pour qui n'a pas
+    lu la page Méthode : dix nombres, trois étiquettes, quatre gloses, et rien
+    qui dise lesquels comparer. Sa question tient pourtant en une ligne —
+    combien aujourd'hui, combien avec la proposition, et ce que ça change sur
+    ma fiche de paie. Ces phrases y répondent avec les nombres des barres,
+    arrondis à l'euro, et avec eux seuls : le résumé ne calcule rien que la
+    carte ne montre juste en dessous.
+
+    ELLES SONT SYMÉTRIQUES, et c'est la règle qui a coûté à écrire. Le manque
+    de financement est dit pour le système actuel ET pour la proposition, dans
+    les mêmes mots et la même unité : le taire pour l'une aurait flatté
+    l'autre. C'est la décision de l'action 62, appliquée au résumé.
+
+    Le salaire est le NET, quel que soit le mode : c'est lui qui arrive sur le
+    compte, et c'est celui que la section « Et pendant que vous cotisez »
+    chiffre. En brut, la proposition déplace surtout ce que l'employeur verse,
+    et « votre salaire brut baisse de 6 € » disait vrai d'une fiche de paie où
+    le net monte de trois cents.
+
+    Les systèmes 2 et 3 n'y sont pas : ce ne sont pas des choix offerts à
+    l'électeur, mais des étalons, et la clé de lecture le dit juste dessous.
+    """
+    carriere = comparaison.carriere
+    parametres = comparaison.parametres
+    date = escape(str(carriere.date_liquidation))
+    accord = "nets" if montants.net else "bruts"
+
+    def somme(annuel: float) -> str:
+        """Un montant mensuel, arrondi à l'euro, mis en avant."""
+        return (f'<strong class="cle-texte">'
+                f"{g.euros(montants.pension(annuel) / 12)}</strong>")
+
+    def manque(cle: str, capitalisee: float = 0.0) -> float:
+        """Ce qui manque chaque mois pour tenir la promesse — celui des barres."""
+        finance = finances.get(cle)
+        if finance is None or finance.manque <= 0.0:
+            return 0.0
+        montant = constants[cle]
+        return montant - finance.servie(montant, capitalisee)
+
+    def non_financee(montant: float, aussi: bool) -> str:
+        return (f" Elle{' non plus' if aussi else ''} n'est pas entièrement "
+                f"financée : il manque {g.euros(montants.pension(montant) / 12)} "
+                "par mois.")
+
+    # Le système actuel : la promesse, puis ce qui lui manque.
+    actuel = constants["actuel"]
+    if carriere.annee_liquidation < parametres.annee_courante:
+        phrase_actuel = (
+            f"Avec le système actuel, votre retraite était de {somme(actuel)} "
+            f"{accord} par mois à votre départ, en {date}."
+        )
+    else:
+        phrase_actuel = (
+            f"Avec le système actuel, votre retraite serait de {somme(actuel)} "
+            f"{accord} par mois, à partir de {date}, à "
+            f"{_age(carriere.age_liquidation)}."
+        )
+    if not comparaison.actuel.liquidation_ouverte:
+        phrase_actuel += (" À cet âge, pourtant, le droit actuel ne vous "
+                          "laisserait pas partir.")
+    manque_actuel = manque("actuel")
+    if manque_actuel > 0.0:
+        phrase_actuel += non_financee(manque_actuel, aussi=False)
+
+    # La proposition : ce qu'on touche sans rien ajouter, puis le plafond que
+    # les points rendus permettent d'atteindre, puis — dans les mêmes mots que
+    # pour le système actuel — ce qui lui manque. Qui est déjà parti avant la
+    # bascule voit sa pension RECALCULÉE, et la phrase le dit : c'est la
+    # première question d'un retraité, et l'étape 2 du programme y répond.
+    liberal = constants["liberal"]
+    plancher = liberal - capitalise_volontaire
+    if carriere.annee_liquidation < parametres.annee_bascule:
+        phrase_liberal = (
+            "Avec notre proposition, elle serait recalculée sur ce qui a été "
+            f"cotisé : {somme(plancher)} {accord} par mois"
+        )
+    else:
+        phrase_liberal = (
+            f"Avec notre proposition, elle serait de {somme(plancher)} {accord} "
+            "par mois"
+        )
+    rendus = g.pourcentage(parametres.taux_capitalisation_volontaire_applique,
+                           decimales=0)
+    if capitalise_volontaire > 0.0:
+        phrase_liberal += (
+            f", et jusqu'à {somme(liberal)} si vous épargnez aussi les {rendus} "
+            "de cotisation qu'elle vous rend"
+        )
+    phrase_liberal += "."
+    manque_liberal = manque("liberal", capitalise)
+    if manque_liberal > 0.0:
+        phrase_liberal += non_financee(manque_liberal, aussi=manque_actuel > 0.0)
+
+    phrases = [phrase_actuel, phrase_liberal]
+    # La fiche de paie : ce qui change tout de suite, et pour les actifs seuls.
+    # Le plafond de la proposition suppose les points rendus ÉPARGNÉS : ce
+    # qu'il en reste sur le salaire se dit dans la même phrase, sans quoi le
+    # lecteur additionnerait le plafond de la pension et le salaire plein, qui
+    # ne vont pas ensemble.
+    remuneration = comparaison.remuneration
+    if remuneration is not None:
+        gain = remuneration.gain_net_mensuel
+        if abs(gain) < 0.5:
+            sens = "ne change pas"
+        else:
+            sens = (f"{'augmente' if gain > 0 else 'baisse'} de "
+                    f'<strong class="cle-texte">{g.euros(abs(gain))}</strong> '
+                    "par mois")
+        phrase = (f"Pendant que vous travaillez, votre "
+                  f"{escape(remuneration.libelle_net.lower())} {sens} avec "
+                  "notre proposition")
+        if capitalise_volontaire > 0.0 and remuneration.verse_le_volontaire:
+            apres = remuneration.gain_net_mensuel_apres_volontaire
+            if abs(apres) < 0.5:
+                reste = "ne change plus"
+            elif apres > 0:
+                reste = f"n'augmente plus que de {g.euros(apres)}"
+            else:
+                reste = f"baisse de {g.euros(-apres)}"
+            # « Rémunération nette », seul libellé féminin des quatre profils.
+            pronom = ("elle" if remuneration.libelle_net.lower()
+                      .startswith("rémunération") else "il")
+            phrase += f" ; si vous épargnez les {rendus} rendus, {pronom} {reste}"
+        phrases.append(phrase + ".")
+
+    unite = ("en euros d'aujourd'hui"
+             if saisie.euros == parametres.annee_courante
+             else f"en euros de {saisie.euros}")
+    # Le renvoi vers « qui paiera » ne s'écrit que si le dépliant existe : il
+    # suit le manque du système actuel, et se tait avant 2002, où les comptes
+    # du COR ne disent rien.
+    renvoi = ""
+    if manque_actuel > 0.0:
+        renvoi = (f' <a href="{g.route("/simuler")}" '
+                  'data-vers="resultats-financement">Qui paiera ce qui '
+                  "manque ?</a>")
+    corps = "".join(f"<p>{phrase}</p>" for phrase in phrases)
+    return (
+        '<section class="en-bref" aria-labelledby="en-bref">'
+        '<h3 class="surtitre" id="en-bref">En bref</h3>'
+        f"{corps}"
+        f'<p class="discret">Montants {unite}, arrondis à l\'euro.{renvoi}</p>'
+        "</section>"
+    )
+
+
 def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     comparaison = contexte.simuler(saisie)
     carriere = comparaison.carriere
     retro = comparaison.notionnel_retroactif
-    conversion = retro.conversion
 
     # Le moteur ne calcule qu'un montant, en euros de l'année de liquidation.
     # La page n'en affiche qu'un, et ce n'est pas celui-là : le même ramené au
@@ -5014,7 +5165,6 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     finances = _financements(contexte, comparaison)
 
     montants = Montants.depuis(saisie, comparaison.parametres, comparaison)
-    annee_depart = carriere.annee_liquidation
     unite_reference = (
         "par mois, en euros d'aujourd'hui"
         if saisie.euros == comparaison.parametres.annee_courante
@@ -5198,25 +5348,17 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
                part_volontaire=capitalise_volontaire)
     )
 
+    # Deux repères que tout le monde lit : la durée cotisée et le départ. Le
+    # coefficient de conversion et le capital notionnel les suivaient, en
+    # vedette, avec cinq décimales ; ce sont des étapes du calcul, et ils sont
+    # descendus dans « Le détail du calcul », à côté de la chaîne qu'ils
+    # servent à refaire.
     fiches = "".join([
         g.fiche("années cotisées", str(len(carriere.annees_cotisees))),
         # La date, et pas seulement l'année : la pension prend effet le premier
         # du mois, et c'est ce mois que l'utilisateur vient de choisir.
-        g.fiche("liquidation", f"{_age(carriere.age_liquidation)} "
+        g.fiche("départ à la retraite", f"{_age(carriere.age_liquidation)} "
                 f'<span class="discret">en {carriere.date_liquidation}</span>'),
-        # Deux décimales, et non une : le lecteur qui refait la division
-        # « capital ÷ coefficient » doit retrouver la pension affichée. À 25,7
-        # au lieu de 25,67 il tombait un euro à côté, et doutait du reste.
-        g.fiche("coefficient de conversion",
-                g.nombre(conversion.diviseur, DECIMALES_DIVISEUR),
-                definition=g.GLOSSAIRE["coefficient de conversion"]),
-        # Le capital est un montant de l'année de liquidation, quand les six
-        # pensions ci-dessous sont mises en avant en euros de l'année de
-        # référence : sans l'unité, deux grandeurs de nature différente se
-        # touchaient sans que rien ne les distingue.
-        g.fiche(f"capital notionnel rétroactif, en euros de {annee_depart}",
-                g.euros(retro.capital_notionnel),
-                definition=g.GLOSSAIRE["capital notionnel"]),
     ])
 
     capitalisation = ""
@@ -5270,35 +5412,54 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         f'<span class="etiquette-fiabilite">{escape(g.fiabilite_en_clair(comparaison.fiabilite))}'
         "</span></p>"
     )
-    # La clé de lecture, avant les chiffres. Les six blocs portent des titres
-    # exacts ; aucun ne disait qu'il n'y a qu'une carrière, ni que le premier
-    # est la référence des cinq autres. Cinq phrases, en clair.
+    # La clé de lecture, avant les chiffres. Les quatre blocs portent des
+    # titres exacts ; aucun ne disait qu'il n'y a qu'une carrière, ni que le
+    # premier est la référence des autres, ni lequel est la proposition — et
+    # l'électeur qui ne l'apprend pas compare le 1 au 2, qui n'est proposé par
+    # personne.
     lecture = f"""
 <p class="note resume"><strong>Quatre calculs pour votre carrière.</strong>
 Le système 1 applique les règles d'aujourd'hui. C'est la référence.
-Les trois autres appliquent chacun d'autres règles à la même carrière.
+Le système 4 est notre proposition. Les systèmes 2 et 3 ne sont pas des
+propositions : ils mesurent ce que vaudraient vos seules cotisations.
 Trois chiffres par ligne : votre <strong>salaire</strong> pendant que vous
 cotisez, la <strong>pension</strong> que le système promet une fois retraité,
 et, quand ses recettes n'y suffisent pas, ce qu'elles en paient
 <strong>vraiment</strong> — en {montants.mot} tous les trois,
-{unite_reference}. Le troisième chiffre n'est pas une prévision : il dit de
-combien les comptes du système sont courts, et le dépliant
-« <a href="#resultats-financement">Le système promet plus qu'il n'encaisse</a> »
-dit qui peut payer la différence.
-{_note_du_mode(montants)}
-Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
+{unite_reference}.</p>"""
 
-    # Les montants d'abord, les repères techniques ensuite. Dans l'autre ordre,
-    # un téléphone montrait après le calcul un coefficient de conversion, un
-    # capital et une note sur l'âge de référence, et pas un euro de pension.
+    # Ce qu'il faut savoir pour lire les chiffres, et qui venait AVANT eux dans
+    # la clé de lecture, qu'il allongeait de moitié : que le troisième n'est pas
+    # une prévision, et le taux de CSG que le net suppose. Sous les barres, on
+    # le lit une fois qu'on sait de quoi il parle. Le renvoi passe par
+    # `data-vers` : un lien « #resultats-financement » prenait la place de la
+    # route dans l'adresse, et ramenait le lecteur à l'accueil en perdant sa
+    # simulation.
+    a_savoir = ""
+    if any(finance.manque > 0.0 for finance in finances.values()):
+        a_savoir = (
+            "Le chiffre « vraiment payé » n'est pas une prévision : il dit de "
+            "combien les comptes du système sont courts — "
+            f'<a href="{g.route("/simuler")}" data-vers="resultats-financement">'
+            "qui peut payer la différence</a>. "
+        )
+    a_savoir = f'<p class="discret">{a_savoir}{_note_du_mode(montants)}</p>'
+
+    # Le résumé d'abord, la clé de lecture ensuite, les montants enfin, et les
+    # repères techniques après eux. Dans l'autre ordre, un téléphone montrait
+    # après le calcul un coefficient de conversion, un capital et une note sur
+    # l'âge de référence, et pas un euro de pension.
     return f"""
 <h2 id="resultats" tabindex="-1">Résultats\
 {_lecture_des_montants(comparaison, saisie)}</h2>
+{_en_bref(comparaison, saisie, montants, constants, capitalise_volontaire,
+          capitalise, finances)}
 {lecture}
 {_revenu_deduit(contexte, comparaison, saisie, montants)}
 <div class="carte">
   {_bascule_montants(saisie, contexte.echelle(saisie), montants.taux_pension)}
   {scenarios}
+  {a_savoir}
   {fiabilite}
   {capitalisation}
   {minimum}
@@ -6211,7 +6372,13 @@ def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
     else:
         sous_quelle_hypothese = (
             f"à {escape(remuneration.libelle_assiette.lower())} inchangé")
+    # D'où vient l'écart — la CSG allégée, le taux d'équilibre d'un employeur
+    # public — est une explication, et elle faisait deux paragraphes de plus
+    # entre le chiffre et la fiche de paie. Repliée, elle se lit à la demande ;
+    # le chiffre, lui, reste ouvert.
     rendu = _salaire_net_rendu(remuneration, net)
+    if rendu:
+        rendu = g.depliant("D'où vient cet écart de salaire", rendu)
     return f"""
 <h2 id="salaire-net">Et pendant que vous cotisez</h2>
 <p class="chapeau">Une réforme des retraites ne change pas que votre pension :
@@ -6799,6 +6966,25 @@ def _detail(contexte: Contexte, comparaison: Comparaison) -> str:
         entete_de_ligne=True,
     )
 
+    # Les deux repères du compte notionnel, descendus des résultats où ils
+    # s'affichaient en vedette : ici, ils sont à côté de la chaîne qu'ils
+    # servent à refaire.
+    reperes = "".join([
+        # Deux décimales, et non une : le lecteur qui refait la division
+        # « capital ÷ coefficient » doit retrouver la pension affichée. À 25,7
+        # au lieu de 25,67 il tombait un euro à côté, et doutait du reste.
+        g.fiche("coefficient de conversion",
+                g.nombre(retro.conversion.diviseur, DECIMALES_DIVISEUR),
+                definition=g.GLOSSAIRE["coefficient de conversion"]),
+        # Le capital est un montant de l'année de liquidation, comme tout ce
+        # qui est dans cette section : l'unité le dit quand même, parce que
+        # les montants du haut de la page sont en euros de l'année de
+        # référence.
+        g.fiche(f"capital notionnel rétroactif, en euros de {annee}",
+                g.euros(retro.capital_notionnel),
+                definition=g.GLOSSAIRE["capital notionnel"]),
+    ])
+
     return g.depliant("Le détail du calcul", f"""
 <p>Tous les montants de cette section sont en <strong>euros de {annee}</strong>,
 l'année du départ.{g.bulle(
@@ -6818,6 +7004,7 @@ l'année du départ.{g.bulle(
 {regimes}
 {part}
 <h4>Système 2 — construction du compte notionnel rétroactif</h4>
+<div class="fiches">{reperes}</div>
 {compte}
 <details>
   {g.sommaire("Les résultats complets en JSON")}

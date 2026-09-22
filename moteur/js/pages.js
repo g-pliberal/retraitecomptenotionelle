@@ -4107,11 +4107,136 @@ function secondRevenu(comparaison, montants, deduit) {
     + "demande.</p>";
 }
 
+/**
+ * Ce que l'électeur est venu chercher, en trois phrases, avant les barres.
+ *
+ * Les quatre barres répondent à tout, et c'est leur défaut pour qui n'a pas lu
+ * la page Méthode : dix nombres, et rien qui dise lesquels comparer. Ces
+ * phrases répondent avec les nombres des barres, arrondis à l'euro, et avec
+ * eux seuls. Elles sont SYMÉTRIQUES : le manque de financement est dit pour le
+ * système actuel ET pour la proposition, dans les mêmes mots. Le salaire est
+ * le NET, quel que soit le mode : c'est lui qui arrive sur le compte. Voir
+ * `_en_bref` dans `web/pages.py`.
+ */
+function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
+  capitalise, finances) {
+  const carriere = comparaison.carriere;
+  const parametres = comparaison.parametres;
+  const date = echapper(String(carriere.dateLiquidation));
+  const accord = montants.net ? "nets" : "bruts";
+
+  // Un montant mensuel, arrondi à l'euro, mis en avant.
+  const somme = (annuel) => '<strong class="cle-texte">'
+    + `${g.euros(montants.pension(annuel) / 12)}</strong>`;
+
+  // Ce qui manque chaque mois pour tenir la promesse — celui des barres.
+  const manque = (cle, capitalisee = 0.0) => {
+    const finance = finances[cle] === undefined ? null : finances[cle];
+    if (finance === null || finance.manque <= 0.0) {
+      return 0.0;
+    }
+    const montant = constants[cle];
+    return montant - finance.servie(montant, capitalisee);
+  };
+
+  const nonFinancee = (montant, aussi) => ` Elle${aussi ? " non plus" : ""} `
+    + "n'est pas entièrement financée : il manque "
+    + `${g.euros(montants.pension(montant) / 12)} par mois.`;
+
+  // Le système actuel : la promesse, puis ce qui lui manque.
+  const actuel = constants.actuel;
+  let phraseActuel = carriere.anneeLiquidation < parametres.annee_courante
+    ? `Avec le système actuel, votre retraite était de ${somme(actuel)} `
+      + `${accord} par mois à votre départ, en ${date}.`
+    : `Avec le système actuel, votre retraite serait de ${somme(actuel)} `
+      + `${accord} par mois, à partir de ${date}, à `
+      + `${age(carriere.age_liquidation)}.`;
+  if (!comparaison.actuel.liquidation_ouverte) {
+    phraseActuel += " À cet âge, pourtant, le droit actuel ne vous "
+      + "laisserait pas partir.";
+  }
+  const manqueActuel = manque("actuel");
+  if (manqueActuel > 0.0) {
+    phraseActuel += nonFinancee(manqueActuel, false);
+  }
+
+  // La proposition : ce qu'on touche sans rien ajouter, puis le plafond que les
+  // points rendus permettent d'atteindre, puis ce qui lui manque. Qui est déjà
+  // parti avant la bascule voit sa pension RECALCULÉE, et la phrase le dit.
+  const liberal = constants.liberal;
+  const plancher = liberal - capitaliseVolontaire;
+  let phraseLiberal = carriere.anneeLiquidation < parametres.annee_bascule
+    ? "Avec notre proposition, elle serait recalculée sur ce qui a été "
+      + `cotisé : ${somme(plancher)} ${accord} par mois`
+    : `Avec notre proposition, elle serait de ${somme(plancher)} ${accord} `
+      + "par mois";
+  const rendus = g.pourcentage(
+    tauxCapitalisationVolontaireApplique(parametres), false, 0);
+  if (capitaliseVolontaire > 0.0) {
+    phraseLiberal += `, et jusqu'à ${somme(liberal)} si vous épargnez aussi `
+      + `les ${rendus} de cotisation qu'elle vous rend`;
+  }
+  phraseLiberal += ".";
+  const manqueLiberal = manque("liberal", capitalise);
+  if (manqueLiberal > 0.0) {
+    phraseLiberal += nonFinancee(manqueLiberal, manqueActuel > 0.0);
+  }
+
+  const phrases = [phraseActuel, phraseLiberal];
+  // La fiche de paie : ce qui change tout de suite, et pour les actifs seuls.
+  // Le plafond de la proposition suppose les points rendus ÉPARGNÉS : ce qu'il
+  // en reste sur le salaire se dit dans la même phrase.
+  const remuneration = comparaison.remuneration;
+  if (remuneration !== null) {
+    const gain = remuneration.gainNetMensuel;
+    const sens = Math.abs(gain) < 0.5
+      ? "ne change pas"
+      : `${gain > 0 ? "augmente" : "baisse"} de `
+        + `<strong class="cle-texte">${g.euros(Math.abs(gain))}</strong> `
+        + "par mois";
+    let phrase = "Pendant que vous travaillez, votre "
+      + `${echapper(remuneration.libelleNet.toLowerCase())} ${sens} avec `
+      + "notre proposition";
+    if (capitaliseVolontaire > 0.0 && remuneration.verseLeVolontaire) {
+      const apres = remuneration.gainNetMensuelApresVolontaire;
+      let reste;
+      if (Math.abs(apres) < 0.5) {
+        reste = "ne change plus";
+      } else if (apres > 0) {
+        reste = `n'augmente plus que de ${g.euros(apres)}`;
+      } else {
+        reste = `baisse de ${g.euros(-apres)}`;
+      }
+      // « Rémunération nette », seul libellé féminin des quatre profils.
+      const pronom = remuneration.libelleNet.toLowerCase()
+        .startsWith("rémunération") ? "elle" : "il";
+      phrase += ` ; si vous épargnez les ${rendus} rendus, ${pronom} ${reste}`;
+    }
+    phrases.push(`${phrase}.`);
+  }
+
+  const unite = saisie.euros === parametres.annee_courante
+    ? "en euros d'aujourd'hui"
+    : `en euros de ${saisie.euros}`;
+  // Le renvoi vers « qui paiera » ne s'écrit que si le dépliant existe : il
+  // suit le manque du système actuel.
+  const renvoi = manqueActuel > 0.0
+    ? ` <a href="${g.route("/simuler")}" `
+      + 'data-vers="resultats-financement">Qui paiera ce qui '
+      + "manque ?</a>"
+    : "";
+  const corps = phrases.map((phrase) => `<p>${phrase}</p>`).join("");
+  return '<section class="en-bref" aria-labelledby="en-bref">'
+    + '<h3 class="surtitre" id="en-bref">En bref</h3>'
+    + corps
+    + `<p class="discret">Montants ${unite}, arrondis à l'euro.${renvoi}</p>`
+    + "</section>";
+}
+
 function resultats(contexte, saisie) {
   const comparaison = contexte.simuler(saisie);
   const carriere = comparaison.carriere;
   const retro = comparaison.notionnel_retroactif;
-  const conversion = retro.conversion;
 
   // Le moteur ne calcule qu'un montant, en euros de l'année de liquidation. La
   // page n'en affiche qu'un, et ce n'est pas celui-là : le même ramené au
@@ -4155,7 +4280,6 @@ function resultats(contexte, saisie) {
   // ou dans l'autre.
   const finances = financements(contexte, comparaison);
 
-  const anneeDepart = carriere.anneeLiquidation;
   const uniteReference = saisie.euros === comparaison.parametres.annee_courante
     ? "par mois, en euros d'aujourd'hui"
     : `par mois, en euros de ${saisie.euros}`;
@@ -4324,25 +4448,15 @@ function resultats(contexte, saisie) {
       comparaison.tauxRemplacementTotal("notionnel_liberal"),
       capitalise, capitaliseVolontaire);
 
+  // Deux repères que tout le monde lit : la durée cotisée et le départ. Le
+  // coefficient de conversion et le capital notionnel sont descendus dans
+  // « Le détail du calcul », à côté de la chaîne qu'ils servent à refaire.
   const fiches = [
     g.fiche("années cotisées", String(carriere.anneesCotisees.length)),
     // La date, et pas seulement l'année : la pension prend effet le premier du
     // mois, et c'est ce mois que l'utilisateur vient de choisir.
-    g.fiche("liquidation", `${age(carriere.age_liquidation)} `
+    g.fiche("départ à la retraite", `${age(carriere.age_liquidation)} `
       + `<span class="discret">en ${carriere.dateLiquidation}</span>`),
-    // Deux décimales, et non une : le lecteur qui refait la division
-    // « capital ÷ coefficient » doit retrouver la pension affichée. À 25,7 au
-    // lieu de 25,67 il tombait un euro à côté, et doutait du reste.
-    g.fiche("coefficient de conversion",
-      g.nombre(conversion.diviseur, DECIMALES_DIVISEUR), "",
-      g.GLOSSAIRE["coefficient de conversion"]),
-    // Le capital est un montant de l'année de liquidation, quand les six
-    // pensions ci-dessous sont mises en avant en euros de l'année de
-    // référence : sans l'unité, deux grandeurs de nature différente se
-    // touchaient sans que rien ne les distingue.
-    g.fiche(`capital notionnel rétroactif, en euros de ${anneeDepart}`,
-      g.euros(retro.capital_notionnel), "",
-      g.GLOSSAIRE["capital notionnel"]),
   ].join("");
 
   let capitalisation = "";
@@ -4389,35 +4503,46 @@ function resultats(contexte, saisie) {
   const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
     + 'résultat : <span class="etiquette-fiabilite">'
     + `${echapper(g.fiabiliteEnClair(nomFiabilite(comparaison.fiabilite)))}</span></p>`;
-  // La clé de lecture, avant les chiffres. Les six blocs portent des titres
-  // exacts ; aucun ne disait qu'il n'y a qu'une carrière, ni que le premier
-  // est la référence des cinq autres. Cinq phrases, en clair.
+  // La clé de lecture, avant les chiffres. Aucun titre ne disait qu'il n'y a
+  // qu'une carrière, ni que le premier est la référence des autres, ni lequel
+  // est la proposition.
   const lecture = `
 <p class="note resume"><strong>Quatre calculs pour votre carrière.</strong>
 Le système 1 applique les règles d'aujourd'hui. C'est la référence.
-Les trois autres appliquent chacun d'autres règles à la même carrière.
+Le système 4 est notre proposition. Les systèmes 2 et 3 ne sont pas des
+propositions : ils mesurent ce que vaudraient vos seules cotisations.
 Trois chiffres par ligne : votre <strong>salaire</strong> pendant que vous
 cotisez, la <strong>pension</strong> que le système promet une fois retraité,
 et, quand ses recettes n'y suffisent pas, ce qu'elles en paient
 <strong>vraiment</strong> — en ${montants.mot} tous les trois,
-${uniteReference}. Le troisième chiffre n'est pas une prévision : il dit de
-combien les comptes du système sont courts, et le dépliant
-« <a href="#resultats-financement">Le système promet plus qu'il n'encaisse</a> »
-dit qui peut payer la différence.
-${noteDuMode(montants)}
-Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
+${uniteReference}.</p>`;
 
-  // Les montants d'abord, les repères techniques ensuite. Dans l'autre ordre,
-  // un téléphone montrait après le calcul un coefficient de conversion, un
-  // capital et une note sur l'âge de référence, et pas un euro de pension.
+  // Ce qu'il faut savoir pour lire les chiffres, sous les barres : que le
+  // troisième n'est pas une prévision, et le taux de CSG que le net suppose.
+  // Le renvoi passe par `data-vers` : un lien « #resultats-financement »
+  // prenait la place de la route dans l'adresse, et ramenait à l'accueil.
+  let aSavoir = "";
+  if (Object.values(finances).some((finance) => finance.manque > 0.0)) {
+    aSavoir = "Le chiffre « vraiment payé » n'est pas une prévision : il dit de "
+      + "combien les comptes du système sont courts — "
+      + `<a href="${g.route("/simuler")}" data-vers="resultats-financement">`
+      + "qui peut payer la différence</a>. ";
+  }
+  aSavoir = `<p class="discret">${aSavoir}${noteDuMode(montants)}</p>`;
+
+  // Le résumé d'abord, la clé de lecture ensuite, les montants enfin, et les
+  // repères techniques après eux.
   return `
 <h2 id="resultats" tabindex="-1">Résultats\
 ${lectureDesMontants(comparaison, saisie)}</h2>
+${enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
+    capitalise, finances)}
 ${lecture}
 ${revenuDeduit(contexte, comparaison, saisie, montants)}
 <div class="carte">
   ${basculeMontants(saisie, contexte.echelle(saisie), montants.tauxPension)}
   ${scenarios}
+  ${aSavoir}
   ${fiabilite}
   ${capitalisation}
   ${minimum}
@@ -4822,7 +4947,12 @@ function salaireNet(comparaison, saisie) {
   } else {
     sousQuelleHypothese = `à ${echapper(remuneration.libelleAssiette.toLowerCase())} inchangé`;
   }
-  const rendu = salaireNetRendu(remuneration, net);
+  // D'où vient l'écart est une explication : repliée, elle se lit à la
+  // demande, et le chiffre reste ouvert.
+  let rendu = salaireNetRendu(remuneration, net);
+  if (rendu) {
+    rendu = g.depliant("D'où vient cet écart de salaire", rendu);
+  }
   // LE CHIFFRE DU MILIEU EST LE NET PLEIN : ce que la proposition laisse quand
   // elle a prélevé ses 23 points, et rien d'autre. Les cinq points que
   // personne n'impose n'en sont pas retirés — une épargne qu'on décide seul
@@ -5862,6 +5992,22 @@ function detail(contexte, comparaison) {
     true,
   );
 
+  // Les deux repères du compte notionnel, descendus des résultats où ils
+  // s'affichaient en vedette : ici, à côté de la chaîne qu'ils servent à
+  // refaire.
+  const reperes = [
+    // Deux décimales, et non une : le lecteur qui refait la division
+    // « capital ÷ coefficient » doit retrouver la pension affichée.
+    g.fiche("coefficient de conversion",
+      g.nombre(retro.conversion.diviseur, DECIMALES_DIVISEUR), "",
+      g.GLOSSAIRE["coefficient de conversion"]),
+    // Le capital est un montant de l'année de liquidation, comme tout ce qui
+    // est dans cette section : l'unité le dit quand même.
+    g.fiche(`capital notionnel rétroactif, en euros de ${annee}`,
+      g.euros(retro.capital_notionnel), "",
+      g.GLOSSAIRE["capital notionnel"]),
+  ].join("");
+
   return g.depliant("Le détail du calcul", `
 <p>Tous les montants de cette section sont en <strong>euros de ${annee}</strong>,
 l'année du départ.${g.bulle(
@@ -5881,6 +6027,7 @@ l'année du départ.${g.bulle(
 ${regimes}
 ${part}
 <h4>Système 2 — construction du compte notionnel rétroactif</h4>
+<div class="fiches">${reperes}</div>
 ${compte}
 <details>
   ${g.sommaire("Les résultats complets en JSON")}

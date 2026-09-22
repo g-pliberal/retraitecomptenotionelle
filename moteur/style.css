@@ -405,6 +405,17 @@ a:hover { opacity: 0.85; }
 /* Le résumé en langage courant d'une page technique : trois ou quatre phrases
    avant le détail, dans le même encart qu'une note, un peu plus grand. */
 .note.resume { font-size: 1rem; }
+/* « En bref », en tête des résultats : ce que l'électeur retient s'il ne lit
+   rien d'autre. L'encart d'une note, en plus grand, et les sommes en or : ce
+   sont les seuls chiffres de la page qu'il doit emporter. */
+.en-bref {
+  border-left: 3px solid var(--or); background: var(--fond-carte);
+  padding: 1rem 1.25rem; margin: 1.5rem 0; border-radius: 0 4px 4px 0;
+  font-size: 1.125rem; line-height: 1.55; max-width: 46rem;
+}
+.en-bref .surtitre { margin: 0 0 0.75rem; font-size: 0.875rem; }
+.en-bref p { margin: 0.6rem 0 0; }
+.en-bref p.discret { margin-top: 0.9rem; font-size: 0.9rem; }
 /* L'entrée de l'accueil : deux lignes qui disent que le site est un
    simulateur, et le bouton qui l'ouvre. */
 .note.entree { font-size: 1rem; margin: 1.2rem 0; }

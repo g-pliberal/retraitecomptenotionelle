@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 755<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 580<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 727<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13846,3 +13846,61 @@ bénéficiaires et 20,8 ans d'avance.
 
 **Fichiers.** `docs/limites.md`, `src/retraite_notionnelle/scenarios/actuel.py`
 (docstring).
+
+### 107. L'électeur perdu : la réponse avant l'explication — `en cours`
+
+**Demande.** « J'aimerais que le site soit plus compréhensible. Actuellement,
+ce n'est pas très aisé pour un électeur de s'y retrouver. Il faut que
+l'électeur moyen ne se pose aucune question une fois qu'il a visité le site.
+Il faut penser que l'électeur est perdu avec cette avalanche d'information. »
+
+**Ce qui le perdait, lu au navigateur sur ordinateur et sur téléphone.** Tout
+est vrai sur le site, et presque rien n'est dit dans l'ordre où l'électeur se
+pose les questions. Après « Calculer », un téléphone montrait d'abord une clé
+de lecture de cent soixante mots, puis dix nombres sur quatre barres — salaire,
+retraite, « vraiment payé », trois montants sous la barre du système 4 — et
+rien qui dise lesquels comparer ; puis un coefficient de conversion à cinq
+décimales. La première question d'un électeur, « ma retraite va-t-elle
+baisser ? », n'avait de réponse directe nulle part, et celle d'un retraité,
+« et la mienne ? », était rangée à l'étape 2 d'un tableau replié. Dix onglets
+de même poids, dont six de vérification (« Trajectoire », « Cas types »,
+« Avantages », que l'électeur lit comme les avantages de la réforme). Et un
+lien cassé : « Le système promet plus qu'il n'encaisse », dans la clé de
+lecture, écrivait `#resultats-financement` à la place de la route, et
+renvoyait à l'accueil en perdant la simulation.
+
+**Premier geste, poussé seul : les résultats répondent avant d'expliquer.**
+
+- *« En bref », en tête des résultats.* Trois phrases, avec les nombres des
+  barres arrondis à l'euro et rien d'autre : ce que le système actuel promet
+  et ce qu'il lui manque, ce que la proposition sert sans rien ajouter puis
+  avec les cinq points rendus, et ce qui manque à elle aussi — dans les mêmes
+  mots, « Elle non plus n'est pas entièrement financée », parce que taire le
+  manque de l'une flatterait l'autre (action 62) ; enfin le salaire net, et ce
+  qu'il en reste si l'on épargne les cinq points, sans quoi le lecteur
+  additionnerait le plafond de la pension et le salaire plein. Un retraité
+  parti avant la bascule y lit que sa pension « serait recalculée sur ce qui a
+  été cotisé ». Le salaire est toujours le net : en brut, la proposition
+  déplace surtout ce que l'employeur verse, et « votre salaire brut baisse de
+  6 € » disait vrai d'une fiche de paie où le net monte de trois cents.
+- *La clé de lecture nomme la proposition*, et dit des systèmes 2 et 3 qu'ils
+  ne sont pas des propositions ; elle passe de cent soixante mots à
+  quatre-vingts. Ce qu'elle disait après les chiffres qu'elle annonçait — le
+  troisième n'est pas une prévision, la CSG au taux plein — est sous les
+  barres.
+- *Le coefficient de conversion et le capital notionnel* quittent la carte des
+  repères pour « Le détail du calcul », à côté de la chaîne qu'ils servent à
+  refaire. Restent les années cotisées et le « départ à la retraite », qui
+  s'appelait « liquidation ».
+- *« D'où vient cet écart de salaire »* replie les deux paragraphes sur la CSG
+  et le taux d'équilibre public ; le chiffre, lui, reste ouvert.
+- *Le lien cassé passe par `data-vers`*, et un test refuse désormais tout
+  lien qui remplacerait la route par une ancre, sur toutes les pages.
+
+La page de résultats compte moins de mots qu'avant, résumé compris : 1 026 au
+lieu de 1 043. Aucun chiffre du modèle n'a bougé ; seuls les témoins des pages
+ont changé, et le portage JavaScript les rend au caractère près.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py` et `web/gabarit.py`,
+`moteur/js/pages.js`, `moteur/style.css`, `tests/test_web.py`,
+`tests/temoins/pages.json`.
