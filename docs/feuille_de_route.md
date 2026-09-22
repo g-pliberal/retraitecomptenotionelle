@@ -13377,3 +13377,66 @@ encore qu'« aucun simulateur officiel n'est automatisable », ce que l'action
 `data/sources_a_explorer.yaml`, `tests/test_donnees.py`, et les fichiers
 fabriqués : `moteur/donnees.json`, `data/derive/equilibre.json`,
 `tests/temoins/simulations.json`, `tests/temoins/pages.json`.
+
+
+### 101. Dix-huit tests rouges sur Windows, et aucun n'accusait Windows — `fait`
+
+**Demande.** « Corrige et reprends tout ce qui ne va pas. »
+
+**Le diagnostic.** Une machine Windows faisait échouer dix-huit tests que
+Linux passait. La tentation était de les mettre au compte de la plateforme :
+trois défauts du DÉPÔT s'y cachaient, qu'aucune session Linux ne pouvait
+voir, et le troisième écrivait des chiffres faux dans le README.
+
+**`tar` et la lettre de lecteur — douze tests.** `tar` lit un argument qui
+contient un deux-points comme `hôte:chemin`, et un chemin absolu de Windows
+commence par `C:`. GNU tar répondait « Cannot connect to C: resolve failed »,
+`dila_index` construisait un index VIDE, et rien ne le disait — l'échec
+arrivait douze tests plus loin, sous la forme d'un ensemble vide. Le nom nu
+depuis le répertoire de l'archive (`cwd=archive.parent`) ne demande rien à
+personne ; `--force-local` aurait marché aussi, mais c'est une option GNU que
+le tar BSD de Windows n'a pas.
+
+**L'encodage, dans les deux sens — cinq tests.** Vingt-six
+`subprocess.run(text=True)` décodaient avec l'encodage de la plateforme,
+cp1252 ici : toute sortie accentuée revenait en mojibake, d'où les échecs du
+portage JavaScript, de la coquille et du glossaire. Ils décodent maintenant
+en UTF-8, explicitement. Mais la réciproque est le vrai piège, et elle a
+mordu pendant la correction : **forcer la LECTURE en UTF-8 ne suffit pas si
+l'enfant ÉCRIT en cp1252.** Un `pytest --collect-only` imprime des
+identifiants accentués ; le décodage échouait dans le fil de lecture,
+`stdout` revenait à `None`, et la sonde `tests()` cessait de répondre. Les
+dix-sept sous-processus Python du dépôt tournent donc en mode UTF-8
+(`-X utf8`). Une correction à un seul bout aurait remplacé un échec par un
+autre — c'est ce qui s'est passé, le temps d'un test.
+
+**Le CRLF, et ce n'était pas qu'un test rouge.** L'installeur de Git for
+Windows pose `core.autocrlf=true` dans la configuration SYSTÈME : tout clone
+Windows reçoit un répertoire de travail en CRLF sans que personne l'ait
+demandé. Le dépôt stocke des LF, et ce sont ces octets que l'hébergeur sert.
+L'écart ne se voyait pas jusqu'à ce qu'on mesure : la sonde `poids` compte
+les octets SUR LE DISQUE, et rendait 4 626 Ko là où le site en sert 4 594.
+Or `verifier_prose.py --corriger` écrit ce qu'il mesure : **il a inscrit ce
+chiffre faux dans le README deux fois dans la session, rattrapé à la main les
+deux fois.** Un `* text=auto eol=lf` dans `.gitattributes` prime sur
+`core.autocrlf` quelle que soit sa portée : la règle appartient au dépôt,
+aucune machine n'a à être reconfigurée, et le dépôt n'a rien changé de son
+contenu — il stockait déjà des LF, seul le disque mentait.
+
+**Et une affirmation devenue fausse.** L'en-tête de
+`tests/temoins/exemples_officiels.yaml` écrivait qu'« aucun simulateur
+officiel n'est automatisable ». C'est vrai des simulateurs NOMINATIFS, qui
+exigent FranceConnect, et faux des vingt-huit calculettes anonymes que
+l'action 89 recense — dont l'une vient de corriger le dépôt (action 100).
+La phrase est reprise et dit maintenant ce qu'elle voulait dire.
+
+**Le résultat.** `python -m pytest` : **2 070 passés, 1 ignoré, zéro échec**,
+et `verifier_prose.py` dit le vrai sans qu'un seul chiffre ait eu à être
+réécrit. La suite tient en seize minutes sur cette machine, là où
+`CLAUDE.md` en annonce trente-cinq secondes : c'est le coût du démarrage de
+processus sous Windows, et il n'est pas traité ici.
+
+**Fichiers.** `.gitattributes`, `scripts/fetch/dila_index.py`, les treize
+autres récupérateurs DILA, `scripts/verifier_prose.py`,
+`tests/test_pousser.py`, `tests/test_prose.py`, `tests/test_releve_lu.py`,
+`tests/test_web.py`, `tests/temoins/exemples_officiels.yaml`.

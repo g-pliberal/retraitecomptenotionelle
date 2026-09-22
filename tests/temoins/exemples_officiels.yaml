@@ -1,12 +1,25 @@
 # Exemples chiffrés publiés par les organismes qui appliquent les règles,
 # rejoués par `tests/test_oracle.py` contre le scénario 1.
 # ------------------------------------------------------------------------
-# Aucun simulateur officiel n'est automatisable : « Mon estimation retraite »
+# Aucun simulateur NOMINATIF n'est automatisable : « Mon estimation retraite »
 # d'info-retraite.fr, le simulateur de l'Assurance retraite et l'ENSAP des
 # fonctionnaires exigent FranceConnect et le relevé de carrière réel de la
-# personne connectée, sans mode anonyme ni API. Ce qui est officiel ET
-# reproductible, ce sont les EXEMPLES que ces mêmes organismes publient : une
-# carrière minuscule dont la réponse est écrite par la caisse. Chacun est
+# personne connectée, sans mode anonyme ni API.
+#
+# CETTE PHRASE DISAIT « aucun simulateur officiel », ET C'ÉTAIT FAUX. Les
+# mêmes caisses publient à côté des calculettes ANONYMES, sans
+# FranceConnect : `data/sources_a_explorer.yaml` en recense vingt-huit, et
+# l'action 89 de la feuille de route ouvre leur dépouillement. Une d'elles a
+# déjà servi — le `calcru` d'Agirc-Arrco, qui a levé un coefficient de fusion
+# faux (action 100). Un simulateur anonyme est un ORACLE : on l'interroge
+# autant qu'on veut, et vingt appels bien choisis rendent un barème que
+# personne n'a publié. Ce fichier-ci ne porte encore aucun résultat de ce
+# genre parce qu'aucune calculette n'a encore rendu une PENSION complète ;
+# le jour où l'une le fera, ses réponses viendront ici comme les autres.
+#
+# Ce qui est officiel ET reproductible aujourd'hui, ce sont les EXEMPLES que
+# ces organismes publient : une carrière minuscule dont la réponse est
+# écrite par la caisse. Chacun est
 # transcrit ici tel que la source l'écrit, avec sa date de vérification ; le
 # test construit la carrière — une seule affiliation, un salaire constant, le
 # nombre de trimestres de l'exemple — et compare la grandeur nommée.
