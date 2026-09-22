@@ -6099,18 +6099,18 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   la même raison. La grille est faite pour comparer des systèmes sur une même
   carrière, où les erreurs de niveau s'annulent au dénominateur ; le coût d'un
   avantage est un compte de POPULATION. C'est l'erreur déjà rencontrée sur la
-  garantie vieillesse — les 93 milliards tirés des cas types étaient faux, le
-  barème appliqué à la distribution DREES donne 18,4 milliards.
+  garantie vieillesse, que les cas types surestimaient de loin et que le barème
+  appliqué à la distribution DREES chiffre juste.
 
   **La limite tient toujours, mais elle ne mord plus sur le chiffre publié**,
   parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
-  valent 95,2 milliards en 2024, soit 22,3 % de la dépense, et **86 % de ce
+  valent <!--chiffre:mesure(avantages?annee=2024)-->96,2<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,5<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
   total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
   et sept autres lignes dans les sous-postes des Comptes de la protection
-  sociale, dont la majoration pour enfants à 7,8 milliards — que le modèle
+  sociale, dont la majoration pour enfants à <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=majoration_enfants)-->7,8<!--/--> milliards — que le modèle
   chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
   l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
-  le chiffre mais la LISTE, et les 13,1 milliards qu'il calcule encore lui-même
+  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,1<!--/--> milliards qu'il calcule encore lui-même
   restent soumis à cette limite. Vingt-quatre dispositifs sur quarante-deux ne
   portent aucun chiffre, chacun avec sa raison écrite.
 
@@ -6118,7 +6118,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   n'ont pas la même fenêtre.** Les sous-postes des comptes ne sont publiés que
   depuis 2020, la réversion depuis 2004, et le modèle calcule depuis 1959. Une
   ligne ne mélange donc jamais les deux périmètres — la règle a été posée après
-  qu'un minimum vieillesse eut valu 0,02 milliard en 2019 par le modèle et 4,01
+  qu'un minimum vieillesse eut valu <!--chiffre:illustration()-->0,02<!--/--> milliard en 2019 par le modèle et 4,01
   en 2020 par les comptes, dans la même série. Le site porte en conséquence
   deux tracés qui ne s'additionnent pas : le NIVEAU sur cinq ans, la FORME sur
   soixante-six. Voir `docs/avantages_non_contributifs.md`.
@@ -6176,20 +6176,21 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
 - **Une décote plafonnée ne sait pas dire qui part trop tôt, et le modèle en
   hérite.** L'article L. 14 borne la décote à vingt trimestres : un agent de
-  catégorie active parti à 57 ans et un agent sédentaire parti le même jour
+  catégorie active parti à <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans et un agent sédentaire parti le même jour
   butent tous deux sur le même plafond, et leurs pensions ne diffèrent que de
-  825 € par an pour la génération 1960 — le chiffre de 868 € que cette page et
-  le site portaient en dur avait dérivé sans que rien ne le dise, et il est
-  désormais celui du modèle. Pour la génération 1965 l'écart tombe à 102 €, le
-  classement abaissant par ailleurs la durée requise d'un trimestre. Mesurer la
+  quelques centaines d'euros par an pour la génération 1960 — la page Avantages
+  en donne le chiffre, que le modèle calcule, et le chiffre que cette page et le
+  site portaient en dur avait dérivé sans que rien ne le dise. Pour la
+  génération 1965 l'écart tombe à une centaine d'euros, le classement abaissant
+  par ailleurs la durée requise d'un trimestre. Mesurer la
   valeur d'un avantage d'ÂGE par l'écart de MONTANT à date de départ fixe donne
-  donc un chiffre petit — 0,5 milliard en 2024 pour la catégorie active — et ce
+  donc un chiffre petit — <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=categorie_active)-->0,5<!--/--> milliard en 2024 pour la catégorie active — et ce
   chiffre n'est pas faux, il est incomplet ; il est de surcroît désormais
   REFUSÉ sur les cas types dont le retrait du classement déplace la durée
   requise, le contrôle d'isolement de `avantages.py` n'acceptant pas un écart
   qui mêlerait les deux effets. Ce que l'avantage coûte, ce sont les annuités
-  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **13,7 milliards en 2024**, dont 7,5 pour le
-  classement, 2,4 pour les régimes spéciaux et 3,8 pour la carrière longue
+  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **<!--chiffre:mesure(avantages?annee=2024&quoi=anticipees)-->12,8<!--/--> milliards en 2024**, dont <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=classement)-->6,6<!--/--> pour le
+  classement, <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=regime_special)-->2,2<!--/--> pour les régimes spéciaux et <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=carriere_longue)-->4,0<!--/--> pour la carrière longue
   (`scripts/cout_avantages.py --duree`). Ce sont des annuités anticipées et non
   un surcoût net — partir tôt, c'est aussi cotiser moins et mourir plus tôt en
   moyenne ; c'est exactement l'arbitrage qu'un coefficient de conversion
@@ -6207,8 +6208,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
-  niveaux, et un coefficient de 1,62 en 2070 pour le scénario 3 ne se lit donc
-  pas comme une économie de 38 % : il se lit comme la marge dont ce système
+  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,67<!--/--> en 2070 pour le scénario 3 ne se lit donc
+  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->40<!--/--> % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
 - **Les ressources ne sont pas celles du risque vieillesse, et ne peuvent pas
@@ -6221,10 +6222,17 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   du COR — régimes légalement obligatoires, FSV compris, RAFP exclu —, dont on
   prend les DEUX colonnes, dépenses et ressources, pour ne pas soustraire deux
   périmètres. Les deux se recoupent à moins de trois dixièmes de point de PIB
-  (13,86 % contre 13,59 % en 2024), ce qui vaut contrôle et non identité ; seul
+  (<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,86<!--/--> % contre <!--chiffre:mesure(depense?annee=2024&quoi=part_pib_repartition)-->13,59<!--/--> % en 2024), ce qui vaut contrôle et non identité ; seul
   le RAPPORT des masses, qui est sans dimension, passe de l'une à l'autre. Ce
   compte vaut `haute` et jamais `certifiee` : le COR consolide des comptes
   produits par les régimes, c'est le critère 1 du manifeste des sources.
+
+### La recette du scénario 6 : la variante `rapport`, et les décisions du 19 septembre 2026
+
+Ce qui suit raconte comment la recette du scénario 6 a été établie, mesure
+par mesure et décision par décision. Ses chiffres sont ceux du jour de chaque
+mesure, et plusieurs ont bougé depuis ; ce que le solde et le coefficient
+valent aujourd'hui est au §6 du README, que la prose recalcule.
 
 - **Les recettes réagissent sur deux points, et sur deux seulement.** Le
   premier est le droit (voir ci-dessous). Le second est le TAUX, et il ne
@@ -6523,6 +6531,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   un résultat du modèle. Depuis le 18 septembre 2026, ce retrait n'est plus la
   seule réaction des recettes : voir le point précédent.
 
+### Le reste du périmètre
+
 - **L'horizon de la projection.** La dépense observée s'arrête à 2024,
   dernière année publiée par la DREES ; la trajectoire projetée s'arrête à
   2070, dernière année des projections de population de l'INSEE. Ni l'une ni
@@ -6536,30 +6546,23 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   assuré qui, dans un système notionnel, travaillerait deux ans de plus
   récupérerait à la fois des cotisations et un diviseur plus favorable.
 
-- **Le net.** Tous les montants sont **bruts**. Une pension supporte la CSG, la
-  CRDS et la CASA, dont les taux dépendent du revenu fiscal de référence du
-  FOYER — que le modèle ne connaît pas, puisqu'il décrit une carrière et non un
-  ménage. Le passage au net retrancherait, pour un retraité au taux normal,
-  environ 9,1 % de la pension. Ce prélèvement étant proportionnel et identique
-  dans les trois scénarios, il ne déplacerait aucun des écarts affichés : c'est
-  la raison pour laquelle le brut suffit ici.
-  La règle vaut aussi à l'entrée : le revenu d'activité se saisit en brut, et le
-  simulateur ne propose pas de le saisir en net. Il faudrait pour cela une série
-  de taux de prélèvement salarial par statut et par année, du même niveau de
-  preuve que le reste du dépôt, qui n'y est pas. Le champ le dit donc
-  explicitement — « avant cotisations et impôt ; pour un salarié, la ligne brut
-  de la fiche de paie » — et donne l'échelle chiffrée, SMIC, salaire moyen et
-  plafond, plutôt que de la laisser deviner.
+- **Le net.** Le modèle calcule en **brut**, et le site convertit en net ce
+  qu'on touche — la pension, le salaire —, saisie comprise. La conversion
+  suppose ce que le §5 ante ter décrit : un taux de CSG sur les pensions qui
+  est celui du taux plein pour tout le monde, faute de connaître le revenu
+  fiscal du FOYER, que le modèle ne connaît pas puisqu'il décrit une carrière
+  et non un ménage. Ce prélèvement étant proportionnel et identique dans tous
+  les scénarios, il ne déplace aucun des écarts affichés.
 
 - **L'arrondi des revenus portés au compte.** L'article L. 133-10 du code de
   la sécurité sociale arrondit à l'euro le plus proche « le montant des
   cotisations et contributions sociales et de leurs assiettes » — donc les
-  revenus inscrits au compte, la fraction de 0,50 € étant comptée pour 1. Le
+  revenus inscrits au compte, la fraction de <!--chiffre:illustration()-->0,50<!--/--> € étant comptée pour 1. Le
   modèle ne l'applique pas : il porte au compte des revenus reconstitués, au
   centime. L'écart est borné et il est petit — chaque année retenue s'écarte de
-  0,50 € au plus, donc leur moyenne aussi, donc la pension de **0,25 € par an**,
-  soit **0,02 € par mois**, quel que soit le niveau de revenu. À comparer aux
-  8,5 % d'amplitude qu'ouvre le seul choix d'hypothèse de productivité. Deux
+  <!--chiffre:illustration()-->0,50<!--/--> € au plus, donc leur moyenne aussi, donc une pension au taux plein de
+  **<!--chiffre:illustration()-->0,25<!--/--> € par an** au plus, soit **<!--chiffre:illustration()-->0,02<!--/--> € par mois**, quel que soit le niveau
+  de revenu. Deux
   raisons de ne pas l'appliquer aujourd'hui : la règle vise des assiettes
   DÉCLARÉES, que le modèle n'a pas — il synthétise ses revenus depuis un profil
   —, et la doctrine ne dit pas si l'arrondi précède ou suit la revalorisation,

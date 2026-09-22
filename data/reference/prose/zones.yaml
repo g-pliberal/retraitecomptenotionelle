@@ -239,6 +239,11 @@ fichiers:
       - "**Ce que chaque hypothèse déplace.**"
       - "| Réglage | Rente | Écart |"
       - "Pour un assuré né en 1985"
+      # Deux mesures du §5, faites un jour par un script et chiffrées contre
+      # une table commune : le transfert du diviseur, ce que la décote coûte
+      # an par an d'avance.
+      - "- **Le diviseur est le même pour tout le monde"
+      - "- **La décote surpunit l'anticipation ordinaire"
     sections:
       # Sections d'état ancrées le 22 septembre 2026 : la règle d'indexation,
       # dont le cumul du triple lock lit le modèle ; les régimes qui manquent ;
@@ -292,6 +297,17 @@ fichiers:
       # sont ceux des rapports cités — OPEF, CCSF, fonds étrangers —, datés
       # par leur source. Le poids du frais sur la réserve, « 8 % de rente »,
       # qu'aucune mesure ne recalcule, n'est plus chiffré.
+      # Ce que le modèle ne calcule pas : les avantages et les annuités
+      # anticipées se recalculent sur le coût des avantages, le coefficient du
+      # scénario 3 sur le solde. Le chiffre du coefficient était 1,62 pour 1,67,
+      # les annuités anticipées 13,7 milliards pour 12,8. La chronique de la
+      # recette du scénario 6 — la variante `rapport`, puis les décisions du
+      # 19 septembre 2026 — a son intertitre, et c'est un récit : ses soldes
+      # (−2,16 % du PIB) ne sont plus ceux du modèle (−1,22 %), et le README
+      # porte ceux d'aujourd'hui.
+      "5. Ce que le modèle ne calcule pas, et pourquoi": etat
+      "La recette du scénario 6 : la variante `rapport`, et les décisions du 19 septembre 2026": recit
+      "Le reste du périmètre": etat
       "5 ante. Le pilier capitalisé : ce que sa rente suppose": etat
       "5 ante bis. La fiche de paie : neuf réserves, dont trois décisives, et deux que la restitution ajoute": etat
       "5 ante ter. Le net et le brut : ce que la bascule suppose": etat
@@ -632,7 +648,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 18
+  sections_a_declarer: 17
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
