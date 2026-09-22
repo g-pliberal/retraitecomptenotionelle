@@ -68,7 +68,16 @@ C'est la même voie pour les simulateurs dont le calcul ne part qu'au clic.
 `www.enim.eu` est un cas plus traître : il répond **200** à `curl`, et le
 sondage l'a donc rangé en `session`. Mais ces 200 portent une page de 212
 octets, un script du pare-feu Incapsula et rien d'autre. Un code de réponse
-ne dit pas qu'on a lu la page : il faut regarder sa taille. Chromium passe,
+ne dit pas qu'on a lu la page : il faut regarder sa taille.
+`scripts/fetch/sonder_sources.py` refait le sondage en jugeant le CORPS —
+taille, marques d'Incapsula et de Cloudflare — et imprime les lignes dont
+l'accès déclaré est démenti ; il n'écrit rien. Passé sur les deux cent
+soixante adresses le soir du 22 septembre 2026, il a rangé en `navigateur`
+les six pages de l'ENIM et trois de mon-entreprise, coquilles de 7 Ko que le
+JavaScript remplit. Il a aussi montré son propre piège : Incapsula glisse son
+script dans les VRAIES pages qu'il protège — celles de la fonction publique en
+portent un au milieu de cinquante kilo-octets de contenu. Une marque ne suffit
+donc pas ; c'est le texte visible qui tranche. Chromium passe,
 une fois son magasin de certificats préparé comme le dit
 `docs/outillage_interface.md` (`certutil`, paquet `libnss3-tools`).
 
@@ -167,6 +176,28 @@ l'Agirc-Arrco, la CARPIMKO, la CNIEG et service-public décrivent chacun de leur
 côté — valent un recoupement, et c'est ce qui fait monter une valeur d'un cran.
 
 ---
+
+## Ce que le premier lot a appris
+
+Le lot de l'ENIM, le 22 septembre 2026, a rendu plus que ses six pages, et
+quatre de ses leçons valent pour toutes les autres.
+
+- **Lire la fiche d'abord a payé.** C'est en ayant sous les yeux la note qui
+  disait « la fiche porte cinquante-cinq, l'âge de jouissance » que l'exemple
+  de Gaspard, parti à cinquante ans, a sauté aux yeux. Sans elle, la page se
+  lisait comme une description, et rien n'aurait été corrigé.
+- **Une page de caisse renvoie au texte, et c'est le texte qui tranche.**
+  L'ENIM cite ses articles au bas de chaque page. Les lire dans l'index LEGI a
+  pris quelques minutes et a donné trois règles de plus que la page n'en
+  disait — la pension spéciale, la levée du plafond, le décompte au semestre.
+- **Une page peut se contredire elle-même.** Celle de l'ENIM renvoie à l'âge
+  légal du régime général dans son texte, et fait partir son exemple à
+  soixante ans trois lignes plus bas. Transcrire l'exemple sans relire le
+  texte aurait choisi au hasard.
+- **Âge d'ouverture et âge de jouissance ne sont pas la même chose.** La
+  fiche des marins portait le second à la place du premier. Toute fiche de
+  régime spécial dont l'âge est « fixé pour l'entrée en jouissance » mérite
+  la même question : à quel âge le DROIT s'acquiert-il ?
 
 ## Où va ce qu'on en tire
 

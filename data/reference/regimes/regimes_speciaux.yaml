@@ -1414,6 +1414,8 @@ regimes:
         duree_requise_trimestres: 150
         age_ouverture_services: 50
         services_ouverture_annees: 25
+        pension_speciale_services_annees: 15
+        pension_speciale_age_sans_autre_pension: 60
         duree_maximum_avant_age: 55
         duree_maximum_avant_age_trimestres: 100
         duree_maximum_levee_age: 52.5
@@ -1470,10 +1472,14 @@ regimes:
           de services dans le régime ; `age_ouverture` reste cinquante-cinq,
           l'âge de la pension proportionnelle (quinze ans, R. 3) et de la
           pension spéciale (moins de quinze ans, R. 5 et L. 5552-12).
-          CE QUE LA PENSION SPÉCIALE DEMANDE ET QUE LA FICHE NE PORTE PAS :
-          cinquante-cinq ans seulement pour qui touche une autre pension de
-          base, soixante sinon (R. 5). Le modèle l'ouvre à cinquante-cinq
-          dans tous les cas. La page de l'ENIM, elle, écrit « l'âge légal
+          LA PENSION SPÉCIALE, moins de quinze ans de services, entre en
+          jouissance avec l'autre pension de base de l'assuré, jamais avant
+          cinquante-cinq ans, et à soixante ans sans autre pension (L. 5552-12
+          du code des transports, R. 5) : `pension_speciale_*` depuis le
+          22 septembre 2026. Avant, le modèle l'ouvrait à cinquante-cinq ans
+          dans tous les cas, et un polypensionné passé dix ans par la mer
+          liquidait TOUTE sa carrière à cinquante-cinq ans, régime général
+          compris. La page de l'ENIM, elle, écrit « l'âge légal
           d'ouverture du droit à pension de retraite du régime général […]
           (64 ans pour les assurés nés à partir de 1968) » et, trois lignes
           plus bas, l'exemple d'Henry « à 60 ans » : la page se contredit, et

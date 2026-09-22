@@ -453,3 +453,23 @@ def test_l_outillage_annonce_les_versions_qu_il_installe():
         "docs/outillage_interface.md ne dit plus les versions que le dépôt "
         "porte — " + " ; ".join(manquants)
     )
+
+
+def test_aucun_paragraphe_n_est_repete_a_la_suite():
+    """Une résolution de conflit qui garde les deux côtés laisse deux fois le
+    même paragraphe, et rien ne le voit : les chiffres ancrés de chaque copie
+    sont justes, `verifier_prose.py` les corrige tous. Le 21 septembre 2026,
+    deux résolutions successives ont ainsi porté à quatre exemplaires la phrase
+    de la feuille de route sur le coût transversal d'un changement du modèle,
+    et elle y est restée une journée entière. Quand un conflit ne porte que
+    sur des chiffres ancrés, on garde UN côté et l'on relance le script."""
+    doublons = []
+    for chemin in [RACINE / "README.md", RACINE / "CLAUDE.md",
+                   *sorted((RACINE / "docs").glob("*.md"))]:
+        paragraphes = [p.strip() for p in
+                       re.split(r"\n\s*\n", chemin.read_text(encoding="utf-8"))]
+        for rang in range(1, len(paragraphes)):
+            courant = paragraphes[rang]
+            if len(courant) > 40 and courant == paragraphes[rang - 1]:
+                doublons.append(f"{chemin.name} : « {courant[:60]}… »")
+    assert not doublons, doublons

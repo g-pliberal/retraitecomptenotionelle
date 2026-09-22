@@ -25,17 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 591<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 260<!--/--> lignes), puis dans les
-
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 591<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 260<!--/--> lignes), puis dans les
-
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 591<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 260<!--/--> lignes), puis dans les
-
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 591<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 260<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 637<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 302<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12572,6 +12563,41 @@ chacune porte sa date et ce qu'elle a donné. Les fiches `partiel` qui le sont
 faute de barème publié ne le sont plus, ou disent lequel n'existe pas. Et
 `limites.md` dit, source par source, ce que les caisses appliquent que le
 modèle n'applique pas.
+**Premier lot dépouillé : l'Ircantec, le 22 septembre 2026.** Trois annexes de
+la base documentaire que la Caisse des dépôts tient pour les gestionnaires du
+régime — elle le GÈRE, elle en est donc le producteur —, lues dans leur PDF
+avec `scripts/fetch/lecture_pdf.py`.
+
+*Une convention soldée, et une erreur avec elle.* La fiche du régime écrivait
+noir sur blanc que la répartition salarié/employeur était reportée sur toute
+la série « faute d'une série publiée ». Elle est publiée, à chaque date d'effet
+depuis 1925 : l'annexe 4-4 donne les taux appelés part par part. La tranche A
+vaut 40 % de l'agent d'un bout à l'autre — la convention était juste. La
+tranche B, non : l'agent en portait 34 % de 1971 à 2010, et la part n'est
+montée aux 35,64 % d'aujourd'hui que par paliers annuels, de 2011 à 2017.
+Quatorze périodes corrigées ; sur le témoin du contractuel, quinze euros par an
+passent de l'agent à l'employeur.
+
+*Un escalier confirmé ligne à ligne.* L'action 88 avait tiré du texte de
+l'article 16 de l'arrêté du 30 décembre 1970 un barème à trois marches, contre
+la décote plate de 1,1 % par trimestre que le dépôt appliquait. L'annexe
+« Retraite à taux réduit » le tabule, génération par génération : le modèle
+rend les quarante et une lignes des onze tables. Et elle apprend ce que le
+texte ne disait pas — les ancrages sont des ÂGES FIXES, 1 à 67 ans, 0,88 à 64,
+0,78 à 62, 0,43 à 57, les mêmes pour toutes les générations, quand l'âge légal
+passe de 62 à 64 ans sur cette plage. C'est l'âge du taux plein qui ancre
+l'escalier, jamais l'âge d'ouverture. `tests/test_ircantec_minoration.py` le
+tient désormais, et la ligne `coefficient_anticipation_ircantec` est entrée au
+registre de veille.
+
+*Ce que ce lot laisse ouvert.* Le salaire de référence de 2023 (5,329 €) et de
+2024 (5,611 €) est dans l'annexe 8-1 ; les deux CSV de la Caisse des dépôts
+s'arrêtent à 2021 — vérifié en relançant le récupérateur —, et le dépôt porte
+donc ces années au niveau `haute`, d'OpenFisca. Les certifier demande un
+récupérateur qui lise ce PDF et le recontrôle qui va avec, dans
+`scripts/verifier_donnees.py` : c'est la suite immédiate, et elle vaut pour
+toutes les annexes du même genre.
+
 **Lot de l'ENIM, le 22 septembre 2026 : les six pages du régime des marins.**
 Le site répond 200 à `curl`, et le sondage l'avait rangé en `session` ; mais
 ces 200 portent une page de 212 octets, le script d'un pare-feu anti-robots.
@@ -12601,6 +12627,47 @@ cinquante-cinq ans, refusé hier, liquidé aujourd'hui au même montant.
 autre pension (R. 5, que la page de l'ENIM contredit elle-même), la
 catégorie moyenne de trente-six mois, le décompte au semestre, la petite
 pêche outre-mer, la réversion et la cessation anticipée amiante.
+
+**Ce que le lot de l'ENIM a appris, appliqué le même soir.** Cinq
+enseignements, chacun porté là où il sert.
+
+*La règle qui restait ouverte est fermée.* La pension spéciale des marins
+(moins de quinze ans de services) suit l'entrée en jouissance de l'autre
+pension de base, jamais avant cinquante-cinq ans, et attend soixante ans sans
+autre pension (L. 5552-12 du code des transports, R. 5). Le modèle l'ouvrait
+à cinquante-cinq ans dans tous les cas — et, l'âge d'une carrière étant le
+plus précoce de ses régimes, il faisait liquider à cet âge toute la carrière
+d'un polypensionné passé dix ans par la mer, régime général compris. Champs
+`pension_speciale_*`, deux moteurs, un test de chaque côté ; aucun témoin
+figé ne portait ce cas, d'où les tests.
+
+*Le site disait encore l'ancien droit.* La méthode affichée ne connaissait
+que « la majoration pour trois enfants » et un droit ouvert par l'âge légal
+ou la carrière longue ; elle dit maintenant le barème des marins et
+l'ouverture par la durée de services. La ligne de l'inventaire des régimes,
+que la page des régimes affiche, disait les exceptions de R. 13 « hors
+fiche » : elle dit ce qui est porté et ce qui manque.
+
+*Un 200 n'est pas une page lue.* `scripts/fetch/sonder_sources.py` ressonde
+l'inventaire en jugeant le texte servi. Sur les deux cent soixante adresses,
+il a rangé en `navigateur` trois pages de mon-entreprise en plus des six de
+l'ENIM ; et il a montré son propre piège, Incapsula glissant son script dans
+de vraies pages. Un test hors réseau tient les deux cas.
+
+*Un paragraphe était en quatre exemplaires*, en tête de ce fichier. Ce
+n'était pas le script de la prose : deux résolutions de conflit successives
+avaient gardé les deux côtés. Réparé ; `tests/test_prose.py` refuse deux
+paragraphes identiques à la suite, et `CLAUDE.md` dit de garder un seul
+côté d'un conflit de chiffres ancrés — et de ne jamais prendre un fichier de
+prose entier d'un côté, ce que cette session a failli faire en rebasant.
+
+*Le lot de l'Ircantec était rangé sous l'action 92* ; il est revenu ici.
+
+**Piste ouverte par ce lot.** La fiche des mines ouvre la pension à
+cinquante ans pour tous, quand l'article 147 du décret de 1946, dans sa
+version de 1974, réservait cet âge aux trente ans de mine dont vingt au fond
+et donnait cinquante-cinq aux autres. Sa version en vigueur n'a pas été lue ;
+c'est la même question que celle des marins, posée à l'envers.
 
 ### 90. Le barème agricole retrouvé, et un groupe qui ne décrivait pas le libéral — `fait`
 
@@ -12805,41 +12872,6 @@ porte la question.
 `scripts/construire_temoins.py`, `tests/test_simulateur.py`,
 `data/reference/legislation/veille.yaml`, `docs/methodologie.md`,
 `docs/limites.md`.
-
-**Premier lot dépouillé : l'Ircantec, le 22 septembre 2026.** Trois annexes de
-la base documentaire que la Caisse des dépôts tient pour les gestionnaires du
-régime — elle le GÈRE, elle en est donc le producteur —, lues dans leur PDF
-avec `scripts/fetch/lecture_pdf.py`.
-
-*Une convention soldée, et une erreur avec elle.* La fiche du régime écrivait
-noir sur blanc que la répartition salarié/employeur était reportée sur toute
-la série « faute d'une série publiée ». Elle est publiée, à chaque date d'effet
-depuis 1925 : l'annexe 4-4 donne les taux appelés part par part. La tranche A
-vaut 40 % de l'agent d'un bout à l'autre — la convention était juste. La
-tranche B, non : l'agent en portait 34 % de 1971 à 2010, et la part n'est
-montée aux 35,64 % d'aujourd'hui que par paliers annuels, de 2011 à 2017.
-Quatorze périodes corrigées ; sur le témoin du contractuel, quinze euros par an
-passent de l'agent à l'employeur.
-
-*Un escalier confirmé ligne à ligne.* L'action 88 avait tiré du texte de
-l'article 16 de l'arrêté du 30 décembre 1970 un barème à trois marches, contre
-la décote plate de 1,1 % par trimestre que le dépôt appliquait. L'annexe
-« Retraite à taux réduit » le tabule, génération par génération : le modèle
-rend les quarante et une lignes des onze tables. Et elle apprend ce que le
-texte ne disait pas — les ancrages sont des ÂGES FIXES, 1 à 67 ans, 0,88 à 64,
-0,78 à 62, 0,43 à 57, les mêmes pour toutes les générations, quand l'âge légal
-passe de 62 à 64 ans sur cette plage. C'est l'âge du taux plein qui ancre
-l'escalier, jamais l'âge d'ouverture. `tests/test_ircantec_minoration.py` le
-tient désormais, et la ligne `coefficient_anticipation_ircantec` est entrée au
-registre de veille.
-
-*Ce que ce lot laisse ouvert.* Le salaire de référence de 2023 (5,329 €) et de
-2024 (5,611 €) est dans l'annexe 8-1 ; les deux CSV de la Caisse des dépôts
-s'arrêtent à 2021 — vérifié en relançant le récupérateur —, et le dépôt porte
-donc ces années au niveau `haute`, d'OpenFisca. Les certifier demande un
-récupérateur qui lise ce PDF et le recontrôle qui va avec, dans
-`scripts/verifier_donnees.py` : c'est la suite immédiate, et elle vaut pour
-toutes les annexes du même genre.
 
 ### 93. Deux pensions là où la caisse n'en sert qu'une — `fait`
 

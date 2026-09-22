@@ -4788,12 +4788,15 @@ par mois, plus 43,54 € pour deux enfants — est rejoué.
 
 **Ce qui reste, et que la caisse applique.**
 
-- La pension SPÉCIALE, moins de quinze ans de services, s'ouvre à
-  cinquante-cinq ans pour qui touche une autre pension de base et à soixante
-  sinon (R. 5) ; le modèle l'ouvre à cinquante-cinq ans dans tous les cas. La
-  page de l'ENIM se contredit : son texte renvoie à l'âge légal du régime
-  général, soixante-quatre ans pour les générations 1968 et suivantes, et
-  l'exemple qui suit fait partir Henry « à 60 ans ». C'est R. 5 qui fait foi.
+- La pension SPÉCIALE, moins de quinze ans de services, entre en jouissance
+  avec l'autre pension de base, jamais avant cinquante-cinq ans, et à soixante
+  ans sans autre pension (L. 5552-12, R. 5). Le modèle l'ouvrait à
+  cinquante-cinq ans dans tous les cas — et faisait liquider à cet âge toute
+  la carrière d'un polypensionné passé dix ans par la mer, régime général
+  compris. C'est corrigé le même jour. La page de l'ENIM se contredit : son
+  texte renvoie à l'âge légal du régime général, soixante-quatre ans pour les
+  générations 1968 et suivantes, et l'exemple qui suit fait partir Henry « à
+  60 ans ». C'est R. 5 qui fait foi.
 - Le salaire de référence est le forfait de la catégorie MOYENNE des
   trente-six derniers mois, ou d'une catégorie supérieure tenue cinq ans
   (R. 11) ; le modèle prend celle de la dernière année. Les services se
@@ -8044,7 +8047,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2080<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2084<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

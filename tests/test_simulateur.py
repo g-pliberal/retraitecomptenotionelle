@@ -4554,3 +4554,72 @@ def test_l_inversion_avoue_ce_qu_aucune_carriere_ne_sert(simulateur):
     assert not saut.atteinte
     assert not saut.sous_le_plancher and not saut.au_dessus_du_plafond
     assert saut.pension_dessous < saut.cible < saut.pension
+
+
+def test_les_ages_des_marins_suivent_la_duree_de_leurs_services(simulateur):
+    """Trois pensions, trois âges, et c'est la durée de services qui choisit.
+
+    Vingt-cinq ans de services ouvrent la pension d'ancienneté à cinquante ans
+    (R. 2 du code des pensions de retraite des marins) ; quinze, la
+    proportionnelle à cinquante-cinq (R. 3) ; moins de quinze, une pension
+    SPÉCIALE qui suit l'entrée en jouissance d'une autre pension de base, sans
+    autre pension à soixante ans (L. 5552-12 du code des transports, R. 5).
+    Le plafond de vingt-cinq annuités avant cinquante-cinq ans est levé à
+    cinquante-deux ans et demi pour trente-sept annuités et demie (R. 13 b).
+    Les cinq règles ont été lues le 22 septembre 2026 dans l'index LEGI et sur
+    les pages de l'ENIM.
+    """
+    from retraite_notionnelle.carriere import Metier
+
+    scenario = simulateur.scenario_actuel
+
+    def marin(age_debut, age, naissance=1966):
+        return simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="H", affiliation="marin",
+            age_debut=age_debut, age_liquidation=age, niveau_salaire=1.0,
+            profil_carriere="plat")
+
+    # Vingt-cinq ans de mer : l'ancienneté s'ouvre à cinquante ans, pas avant.
+    assert scenario.calculer(marin(25, 50)).liquidation_ouverte
+    assert not scenario.calculer(marin(25.25, 50)).liquidation_ouverte
+    # Vingt ans : la proportionnelle attend cinquante-cinq ans.
+    assert scenario.age_ouverture_droit(marin(30, 50)) == 55
+    # Dix ans et aucune autre pension : soixante ans.
+    assert not scenario.calculer(marin(49.75, 59.75)).liquidation_ouverte
+    assert scenario.calculer(marin(50, 60)).liquidation_ouverte
+    # Dix ans de mer puis le privé : la spéciale suit la pension du régime
+    # général, et le polypensionné ne liquide plus à cinquante-cinq ans.
+    poly = simulateur.carriere_parcours(
+        annee_naissance=1966, sexe="H", age_liquidation=55,
+        metiers=[Metier("marin", 20, 1.0), Metier("salarie_prive_non_cadre", 30, 1.0)])
+    assert scenario.age_ouverture_droit(poly) > 60
+    assert not scenario.calculer(poly).liquidation_ouverte
+
+    # Le plafond de vingt-cinq annuités, et sa levée à cinquante-deux ans et
+    # demi pour trente-sept annuités et demie.
+    plafonne = scenario.calculer(marin(15.25, 52.5, naissance=1970))
+    leve = scenario.calculer(marin(15, 52.5, naissance=1970))
+    assert "100/150" in plafonne.pensions_par_regime[0].detail
+    assert "150/150" in leve.pensions_par_regime[0].detail
+
+
+def test_le_marin_est_bonifie_des_deux_enfants(simulateur):
+    """R. 14 : « 5 % de son montant pour deux enfants, 10 % pour trois enfants
+    et 15 % au-delà ». Le seul barème du catalogue qui commence à deux, et le
+    salarié du privé père de deux enfants n'en reçoit toujours rien."""
+    scenario = simulateur.scenario_actuel
+
+    def taux(affiliation, enfants):
+        resultat = scenario.calculer(simulateur.carriere_simple(
+            annee_naissance=1966, sexe="H", affiliation=affiliation,
+            age_debut=25, age_liquidation=60 if affiliation == "marin" else 64,
+            niveau_salaire=1.0, nombre_enfants=enfants))
+        majoration = sum(a.montant for a in resultat.avantages_appliques
+                         if a.code == "majoration_enfants")
+        return majoration / sum(p.montant for p in resultat.pensions_par_regime)
+
+    assert taux("marin", 1) == 0
+    assert taux("marin", 2) == pytest.approx(0.05)
+    assert taux("marin", 3) == pytest.approx(0.10)
+    assert taux("marin", 5) == pytest.approx(0.15)
+    assert taux("salarie_prive_non_cadre", 2) == 0

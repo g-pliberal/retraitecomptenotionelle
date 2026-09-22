@@ -765,11 +765,51 @@ export class ScenarioActuel {
       return derogation.ageOuverture;
     }
     const commun = this.ageOuvertureCommun(periode, carriere);
+    const speciale = this.ouverturePensionSpeciale(periode, carriere);
+    if (speciale !== null) {
+      return speciale;
+    }
     const parServices = this.ouvertureParServices(periode, carriere);
     if (parServices !== null && parServices < commun) {
       return parServices;
     }
     return commun;
+  }
+
+  /** Les statuts que le régime route, et les années servies dans ceux-ci. */
+  servicesDansLeRegime(periode, carriere) {
+    const statuts = this.affiliations.codes
+      .filter((code) => this.regimesRoutes([code]).has(periode.regime));
+    return { statuts, servies: carriere.dureeDeService(statuts, borneCarriere(carriere)) };
+  }
+
+  /**
+   * L'âge de la pension SPÉCIALE des marins, ou null si l'assuré a les quinze
+   * ans de services qui ouvrent une autre pension. Elle entre en jouissance
+   * avec la pension de base d'un autre régime, jamais avant cinquante-cinq ans,
+   * et à défaut à soixante ans (L. 5552-12 du code des transports, R. 5 du code
+   * des pensions de retraite des marins). Le modèle liquidant tout à la même
+   * date, elle suit le plus précoce des AUTRES régimes de base traversés.
+   */
+  ouverturePensionSpeciale(periode, carriere) {
+    const seuil = periode.pension_speciale_services_annees;
+    const isole = periode.pension_speciale_age_sans_autre_pension;
+    if (seuil == null || isole == null) {
+      return null;
+    }
+    const { servies } = this.servicesDansLeRegime(periode, carriere);
+    if (servies + 1e-9 >= seuil) {
+      return null;
+    }
+    const { annuites, autres } = this.periodesParcourues(carriere);
+    const bases = [...annuites, ...this.periodesOpposantUneDuree(autres)]
+      .filter(([code]) => code !== periode.regime)
+      .map(([, p]) => p);
+    if (bases.length === 0) {
+      return isole;
+    }
+    return Math.max(periode.age_ouverture,
+      Math.min(...bases.map((p) => this.ageOuverture(p, carriere))));
   }
 
   /**
@@ -787,10 +827,8 @@ export class ScenarioActuel {
         || periode.services_ouverture_annees == null) {
       return null;
     }
-    const statuts = this.affiliations.codes
-      .filter((code) => this.regimesRoutes([code]).has(periode.regime));
+    const { statuts, servies } = this.servicesDansLeRegime(periode, carriere);
     const requis = periode.services_ouverture_annees;
-    const servies = carriere.dureeDeService(statuts, borneCarriere(carriere));
     if (servies + 1e-9 < requis) {
       return null;
     }

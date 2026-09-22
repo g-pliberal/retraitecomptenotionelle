@@ -1077,12 +1077,14 @@ entrees:
       depuis 1968 : ni LEGI ni le JORF n'en portent, et la loi de 2023 laisse
       le régime où il était (reformes.yaml).
     a_faire: >-
-      La pension SPÉCIALE (moins de quinze ans de services) s'ouvre à
-      cinquante-cinq ans pour qui touche une autre pension de base, à soixante
-      sinon (R. 5) ; le modèle l'ouvre à cinquante-cinq dans tous les cas. La
+      La pension SPÉCIALE (moins de quinze ans de services) entre en
+      jouissance avec l'autre pension de base, pas avant cinquante-cinq ans,
+      et à soixante sans autre pension (L. 5552-12, R. 5) : appliqué le même
+      jour, tenu par tests/test_simulateur.py et tests/js/moteur.test.js. La
       page de l'ENIM se contredit sur ce point — « l'âge légal […] du régime
       général » dans le texte, « à 60 ans » dans l'exemple d'Henry — et c'est
-      R. 5 qui dit soixante.
+      R. 5 qui dit soixante. Reste la pension d'invalidité de L. 6 et R. 4,
+      que le modèle ne liquide pas.
     prochaine_veille: "2027-03-31"
 
   - id: marins_bonification_enfants
@@ -2888,3 +2890,27 @@ journal:
       (R. 12), le taux de 1 % de la petite pêche outre-mer, le partage des
       droits du conjoint collaborateur, la C3A des marins exposés à l'amiante
       et la réversion à 54 % : écrits dans `docs/limites.md`, non modélisés.
+
+  - date: "2026-09-22"
+    session: "action 89, enseignements du lot de l'ENIM"
+    consulte: >-
+      Dans l'index LEGI, les anciens L. 7 et L. 8 du code des pensions de
+      retraite des marins (LEGIARTI000006791891, LEGIARTI000006791893) et
+      leurs successeurs L. 5552-11 et L. 5552-12 du code des transports, avec
+      R. 5 ; les notes de toutes les fiches de régime qui parlent d'entrée en
+      jouissance.
+    trouve: >-
+      LA PENSION SPÉCIALE DES MARINS, moins de quinze ans de services, entre
+      en jouissance avec l'autre pension de base de l'assuré, jamais avant
+      cinquante-cinq ans, et à soixante ans sans autre pension. Le modèle
+      l'ouvrait à cinquante-cinq ans dans tous les cas, et faisait donc
+      liquider à cet âge TOUTE la carrière d'un polypensionné passé dix ans
+      par la mer, régime général compris. Corrigé dans les deux moteurs,
+      tenu par un test de chaque côté. Aucune autre fiche ne confond l'âge
+      de jouissance et l'âge d'ouverture ; celle des mines ouvre à cinquante
+      ans ce que l'article 147 de 1974 réservait aux trente ans de mine dont
+      vingt au fond, et sa version en vigueur n'a pas été lue.
+    reste: >-
+      La fiche des mines, à confronter à la version en vigueur du décret
+      n° 46-2769 ; la pension d'invalidité des marins (L. 5552-7, R. 4), que
+      le modèle ne liquide pas.

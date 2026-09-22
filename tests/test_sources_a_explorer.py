@@ -166,3 +166,32 @@ def test_l_inventaire_couvre_les_regimes_les_plus_incomplets(sources, codes_de_r
     visees = {code for source in sources for code in source["regimes"]}
     assert len(partielles & visees) >= 15, (
         f"seules {len(partielles & visees)} fiches partielles sont visées")
+
+
+def test_le_sondeur_juge_le_texte_et_non_le_code():
+    """Deux pièges vus le 22 septembre 2026, et le sondeur doit tenir les deux.
+    Un 200 de 212 octets qui ne porte que le script d'Incapsula est un DÉFI :
+    c'est ce que servait l'ENIM. Une page de cinquante kilo-octets qui porte le
+    même script au milieu de son contenu est LUE : c'est ce que servent les
+    pages de la fonction publique. Une coquille presque vide que le JavaScript
+    remplit demande elle aussi un navigateur."""
+    import importlib.util
+
+    chemin = RACINE / "scripts" / "fetch" / "sonder_sources.py"
+    spec = importlib.util.spec_from_file_location("sonder_sources", chemin)
+    sondeur = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(sondeur)
+
+    defi = (b'<html><head><META NAME="robots" CONTENT="noindex,nofollow">'
+            b'<script src="/_Incapsula_Resource?SWJIYLWA=5074"></script>'
+            b'<body></body></html>')
+    vraie = (b"<html><body>" + b"<p>La pension civile est calculee.</p>" * 400
+             + b'<script src="/_Incapsula_Resource?x=1"></script></body></html>')
+    coquille = b'<html><body><div id="root"></div><script src="app.js"></script></body></html>'
+    html = "text/html; charset=utf-8"
+    assert sondeur.verdict(200, defi, html) == "navigateur"
+    assert sondeur.verdict(200, vraie, html) == "session"
+    assert sondeur.verdict(200, coquille, html) == "navigateur"
+    assert sondeur.verdict(200, b"%PDF-1.7" + b"x" * 100, "application/pdf") == "session"
+    assert sondeur.verdict(404, b"<html><body>" + b"introuvable " * 300 + b"</body></html>", html) == "refus"
+    assert sondeur.verdict(None, b"Empty reply", "") == "erreur"

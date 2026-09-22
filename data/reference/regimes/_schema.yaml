@@ -244,6 +244,21 @@ champs_periode:
     description: "durée de services, en années, qui ouvre `age_ouverture_services`"
     defaut: null
 
+  pension_speciale_services_annees:
+    description: >-
+      Durée de services dans le régime en deçà de laquelle la pension est
+      SPÉCIALE : elle entre en jouissance avec l'autre pension de base de
+      l'assuré, jamais avant `age_ouverture`, et à défaut d'autre pension à
+      `pension_speciale_age_sans_autre_pension`. Les marins : moins de quinze
+      ans de services, cinquante-cinq ans, soixante sans autre pension
+      (L. 5552-11 et L. 5552-12 du code des transports, R. 5 du code des
+      pensions de retraite des marins).
+    defaut: null
+
+  pension_speciale_age_sans_autre_pension:
+    description: "âge de la pension spéciale de qui n'a pas d'autre pension de base"
+    defaut: null
+
   decote_par_trimestre: "abattement par trimestre manquant (fraction, null si aucun)"
 
   bareme_decote:

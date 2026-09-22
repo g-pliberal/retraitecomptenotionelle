@@ -2288,10 +2288,58 @@ class ScenarioActuel:
         if derogation is not None:
             return derogation.age_ouverture
         commun = self._age_ouverture_commun(periode, carriere)
+        speciale = self._ouverture_pension_speciale(periode, carriere)
+        if speciale is not None:
+            return speciale
         par_services = self._ouverture_par_services(periode, carriere)
         if par_services is not None and par_services < commun:
             return par_services
         return commun
+
+    def _services_dans_le_regime(self, periode: PeriodeRegime,
+                                 carriere: Carriere) -> tuple[list[str], float]:
+        """Les statuts que le régime route, et les années servies dans ceux-ci
+        jusqu'à la liquidation."""
+        statuts = [code for code in self.affiliations.codes
+                   if periode.regime in self._regimes_routes([code])]
+        return statuts, carriere.duree_de_service(
+            statuts, self._borne_carriere(carriere))
+
+    def _ouverture_pension_speciale(self, periode: PeriodeRegime,
+                                    carriere: Carriere) -> float | None:
+        """L'âge de la pension SPÉCIALE des marins, ou ``None`` si l'assuré a
+        les quinze ans de services qui ouvrent une autre pension.
+
+        Moins de quinze ans de services n'ouvrent ni la pension d'ancienneté
+        ni la proportionnelle, mais une pension spéciale (L. 5552-11 du code
+        des transports), dont « la concession et l'entrée en jouissance […]
+        interviennent au moment de l'entrée en jouissance de la pension de
+        retraite servie par l'Etat ou un régime légal de sécurité sociale,
+        sous réserve que l'intéressé ait atteint » cinquante-cinq ans, et à
+        défaut d'une telle pension à soixante ans (L. 5552-12 ; R. 5 du code
+        des pensions de retraite des marins).
+
+        Le modèle liquide tous les régimes à la même date : la pension
+        spéciale suit donc le plus précoce des AUTRES régimes de base que la
+        carrière traverse, jamais avant l'âge de la fiche ; sans autre régime
+        de base, c'est l'âge de la fiche sans autre pension. La page de l'ENIM
+        écrit « l'âge légal […] du régime général » dans son texte et
+        « 60 ans » dans son exemple : c'est R. 5 qui fait foi.
+        """
+        seuil = periode.pension_speciale_services_annees
+        isole = periode.pension_speciale_age_sans_autre_pension
+        if seuil is None or isole is None:
+            return None
+        _, servies = self._services_dans_le_regime(periode, carriere)
+        if servies + 1e-9 >= seuil:
+            return None
+        annuites, autres = self._periodes_parcourues(carriere)
+        bases = [p for code, p in annuites + self._periodes_opposant_une_duree(autres)
+                 if code != periode.regime]
+        if not bases:
+            return isole
+        return max(periode.age_ouverture,
+                   min(self._age_ouverture(p, carriere) for p in bases))
 
     def _ouverture_par_services(self, periode: PeriodeRegime,
                                 carriere: Carriere) -> float | None:
@@ -2315,10 +2363,8 @@ class ScenarioActuel:
         if (periode.age_ouverture_services is None
                 or periode.services_ouverture_annees is None):
             return None
-        statuts = [code for code in self.affiliations.codes
-                   if periode.regime in self._regimes_routes([code])]
+        statuts, servies = self._services_dans_le_regime(periode, carriere)
         requis = periode.services_ouverture_annees
-        servies = carriere.duree_de_service(statuts, self._borne_carriere(carriere))
         if servies + 1e-9 < requis:
             return None
         atteint = carriere.age_de_service(statuts, requis)

@@ -154,6 +154,12 @@ class PeriodeRegime:
     #: des marins. Sans cette durée, c'est `age_ouverture` qui vaut.
     age_ouverture_services: float | None
     services_ouverture_annees: float | None
+    #: En deçà de cette durée de services, la pension est SPÉCIALE : elle suit
+    #: l'entrée en jouissance d'une autre pension de base, jamais avant
+    #: `age_ouverture`, et s'ouvre à défaut à l'âge ci-dessous (R. 5 et
+    #: L. 5552-12 du code des transports pour les marins : quinze ans, soixante).
+    pension_speciale_services_annees: float | None
+    pension_speciale_age_sans_autre_pension: float | None
     taux_plein: float | None
     salaire_reference: str
     assiette: str
@@ -888,6 +894,14 @@ class CatalogueRegimes:
                 services_ouverture_annees=(
                     None if p.get("services_ouverture_annees") is None
                     else float(p["services_ouverture_annees"])
+                ),
+                pension_speciale_services_annees=(
+                    None if p.get("pension_speciale_services_annees") is None
+                    else float(p["pension_speciale_services_annees"])
+                ),
+                pension_speciale_age_sans_autre_pension=(
+                    None if p.get("pension_speciale_age_sans_autre_pension") is None
+                    else float(p["pension_speciale_age_sans_autre_pension"])
                 ),
                 taux_plein=None if p.get("taux_plein") is None else float(p["taux_plein"]),
                 salaire_reference=p.get("salaire_reference", "sans_objet"),

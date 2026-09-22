@@ -10953,8 +10953,10 @@ contributifs que la carrière suffit à déterminer :</p>
   justifie de la durée requise à 63 ans et détient un trimestre de majoration
   pour enfants. C'est la contrepartie du recul de l'âge légal, et elle se cumule
   avec la surcote ordinaire, qui ne compte qu'au-delà de cet âge ;</li>
-  <li><strong>la majoration pour trois enfants</strong>, calculée sur le montant
-  déjà relevé par les minima, et plafonnée en euros à la complémentaire ;</li>
+  <li><strong>la majoration pour enfants</strong>, calculée sur le montant
+  déjà relevé par les minima et plafonnée en euros à la complémentaire : 10 %
+  dès trois enfants, 5 % de plus par enfant au-delà dans la fonction publique,
+  et 5 % dès deux enfants chez les marins ;</li>
   <li><strong>le minimum vieillesse</strong>, allocation différentielle servie à
   partir de 65 ans sous le barème d'une personne seule. Ce n'est pas une
   pension : elle apparaît toujours comme une ligne séparée de la cascade.</li>
@@ -10965,7 +10967,9 @@ publique, dont le coefficient et l'âge d'annulation montent en charge de 2006 �
 la garantie minimale de points de l'Agirc, 120 points par an de 1989 à 2018
 même quand la tranche B est nulle.</p>
 <p>Enfin, le système dit si le droit <strong>ouvre</strong> la liquidation
-demandée : âge légal du régime, ou départ anticipé pour carrière longue. Quand
+demandée : âge légal du régime, avancé par la durée de services là où le
+régime le prévoit (emplois classés, militaires, marins), ou départ anticipé
+pour carrière longue. Quand
 il ne l'ouvre pas, le montant reste calculé, parce qu'il faut comparer les
 quatre systèmes sur la même carrière, mais la page le signale : il ne décrit alors
 aucune pension que le système actuel servirait.</p>`);
