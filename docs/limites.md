@@ -2004,8 +2004,9 @@ Le triple lock inversé, pris à la lettre, retient le minimum entre deux taux
 que l'inflation dépasse la croissance de la productivité, c'est cette dernière
 qui l'emporte.
 
-Sur 1941-2025, les comptes sont revalorisés ×4,9 quand les prix sont multipliés
-par 322,2 : **une cotisation de 1950 conserve 1,5 % de sa valeur réelle.**
+Sur 1941-2025, les comptes sont revalorisés ×<!--chiffre:mesure(cumul_indexation?regle=triple_lock_inverse&de=1940&a=2025)-->4,9<!--/--> quand les prix sont multipliés
+par <!--chiffre:mesure(cumul_indexation?regle=prix&de=1940&a=2025)-->322,2<!--/--> : **un euro cotisé en 1940 conserve, en 2025, <!--chiffre:mesure(conserve?regle=triple_lock_inverse)-->1,5<!--/--> % de sa valeur
+réelle.**
 
 Conséquence : dans le scénario rétroactif, l'essentiel de la baisse affichée
 vient de la règle d'indexation, pas du passage aux comptes notionnels. Les deux
@@ -2017,7 +2018,7 @@ Comparer, sur la même carrière, la règle « triple lock inversé, tout en
 nominal » et la règle « revalorisation portée au compte » — le sélecteur
 d'indexation du formulaire, ou `mode_indexation` en Python.
 
-La variante nominale conserve 69 % du pouvoir d'achat sur la même période, tout
+La variante nominale conserve <!--chiffre:mesure(conserve?regle=triple_lock_inverse_nominal)-->69<!--/--> % du pouvoir d'achat sur la même période, tout
 en restant plus sévère que l'indexation sur les prix. C'est probablement ce que
 vise l'intention d'une règle d'indexation prudente ; le choix reste ouvert.
 
@@ -3157,7 +3158,7 @@ document saisi à la main, et les portails officiels ne servent pas de liste
 exploitable —, si bien qu'un régime pouvait manquer à la liste des manquants.
 [`data/reference/regimes/inventaire.yaml`](../data/reference/regimes/inventaire.yaml)
 énumère maintenant TOUS les régimes obligatoires, vivants, disparus ou hors
-champ — 89 lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
+champ — <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->89<!--/--> lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
 programme 195 des lois de finances, chacune avec son texte fondateur et, quand
 l'index DILA du dépôt le porte, son identifiant —, et dit pour chacun s'il est
 modélisé, partiel, à modéliser ou hors champ. `tests/test_donnees.py` impose
@@ -3598,11 +3599,11 @@ la fiche du dépôt a été corrigée.
 La fiche CARPIMKO met en lumière une approximation qui vaut pour TOUS les
 régimes convertis par `rendements_points.csv` : le moteur applique **un seul
 rendement, celui de l'année de liquidation**, aux cotisations revalorisées de
-toute la carrière. Or le rendement de la CARPIMKO tombe de 13,10 % en 2010 à
-7,36 % en 2025. Une infirmière qui liquide en 2027 voit donc ses cotisations de
-2010 converties à 7,36 % au lieu de 13,10 % : sa complémentaire ressort à
-3 683 € là où l'accumulation année par année en donnerait environ 5 600 €, soit
-un tiers de moins.
+toute la carrière. Or le rendement de la CARPIMKO tombe de <!--chiffre:cellule(data/reference/regimes/rendements_points.csv:rendement*100?regime=carpimko_complementaire&debut=2010)-->13,10<!--/--> % en 2010 à
+<!--chiffre:cellule(data/reference/regimes/rendements_points.csv:rendement*100?regime=carpimko_complementaire&debut=2025)-->7,36<!--/--> % en 2025. Une infirmière qui liquide en 2027 voit donc ses cotisations de
+2010 converties au rendement de 2025 au lieu du leur, à peine plus de la moitié :
+sa complémentaire ressort très en deçà de ce que l'accumulation année par année
+en donnerait — d'un tiers, quand cette section a été écrite.
 
 Le chemin exact existe déjà dans le moteur — `valeurs_point.csv`, qui accumule
 des points année par année —, et la CARPIMKO a de quoi l'emprunter : son prix
@@ -5125,7 +5126,7 @@ est affiché sous la simulation.
 convention qui se défend mais qui se paie. Trois de ces régimes reçoivent aussi
 de l'État une contribution que la série ne porte pas, parce qu'elle n'est pas
 une cotisation d'employeur : les droits spécifiques de la RATP jusqu'à 45 000
-agents, « une cotisation correspondant à 22 % des salaires » plus un complément
+agents, « une cotisation correspondant à <!--chiffre:illustration()-->22<!--/--> % des salaires » plus un complément
 d'équilibre pour les mines — près de trois fois ce que verse l'exploitant —, la
 subvention de l'Opéra. Pour la SNCF d'après 2007, la somme T1 + T2 laisse de
 même dehors la subvention d'équilibre. La ligne de l'État est la seule exception
@@ -5158,9 +5159,9 @@ privé, mais parce qu'on ne le connaît pas.
 
 **Le repli n'est pas neutre, et il ne l'était pas dans le sens qu'on croyait.**
 Là où la série manquait, le modèle prêtait au régime l'effort d'un salarié du
-privé — de l'ordre de 27,75 % en 2026. Les taux lus sont tantôt plus élevés (la
-RATP et ses 12,29 % de retenue portent le total à près de 32 %), tantôt bien
-plus bas (les mines et leurs 7,75 %, l'Opéra et ses 9,56 %). Le repli
+privé — de l'ordre de <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total)-->27,98<!--/--> % en 2026. Les taux lus sont tantôt plus élevés (la
+RATP, <!--chiffre:valeur(data/reference/regimes/regimes_speciaux.yaml:regimes.code=ratp.periodes.debut=2025.taux_cotisation_retraite*100)-->12,29<!--/--> % de retenue et <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2025&regime=ratp)-->19,13<!--/--> % d'employeur en 2025), tantôt bien
+plus bas (les mines et leurs <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=mines)-->7,75<!--/--> %, l'Opéra et ses <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=opera_de_paris)-->9,56<!--/--> %). Le repli
 surestimait donc la part patronale des régimes à faible cotisation d'employeur
 et la sous-estimait pour les régimes adossés : ce n'était ni un plancher ni un
 plafond, mais un brouillage.
@@ -8106,8 +8107,8 @@ pas :
   dans la mesure où le taux de revalorisation est ici supposé égal au taux de
   croissance de la masse salariale ». Avec sa limite, en note : ce n'est pas le
   choix suédois, qui indexe sur les salaires et non sur la masse.
-- **La part patronale de l'État en 2008.** Le CEPII écrit 55,7 % ; la ligne
-  certifiée du dépôt porte 55,71 %. Deux chaînes sans rapport, le même chiffre.
+- **La part patronale de l'État en 2008.** Le CEPII écrit <!--chiffre:illustration()-->55,7<!--/--> % ; la ligne
+  certifiée du dépôt porte <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2008&regime=fonction_publique_etat)-->55,71<!--/--> %. Deux chaînes sans rapport, le même chiffre.
 
 ### Ce qu'elle ne valide pas, et qui reste assumé
 
