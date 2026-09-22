@@ -1457,23 +1457,40 @@ sources:
   - id: enim_mode_de_calcul
     url: https://www.enim.eu/retraite/mode-de-calcul
     nature: regle
-    acces: session
+    acces: navigateur
     regimes: [marins]
     a_en_tirer: >-
       La pension des marins, assise sur des SALAIRES FORFAITAIRES par catégorie
       et non sur le salaire réel : structure unique en France, et fiche
       `partiel` à l'inventaire.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      La formule (2 % du forfait par annuité), la catégorie moyenne des
+      trente-six derniers mois et la règle des cinq ans (R. 11), l'arrondi au
+      semestre, le taux réduit de 1 % de la petite pêche outre-mer, et la
+      bonification pour enfants — 5, 10, 15 % dès DEUX enfants (R. 14) — que
+      la fiche ne déclarait pas : portée dans le modèle, et l'exemple
+      d'Arnaud est le témoin `enim_bonification_deux_enfants` de
+      tests/temoins/exemples_officiels.yaml. Les forfaits de 2024 qu'il cite
+      (catégories 3, 8, 11) sont ceux du dépôt. Le reste est dans
+      data/reference/legislation/veille.yaml (`marins_salaire_de_reference`).
 
   - id: enim_salaires_forfaitaires
     url: https://www.enim.eu/employeur/salaires-forfaitaires
     nature: bareme
-    acces: session
+    acces: navigateur
     regimes: [marins]
     a_en_tirer: >-
       La grille des vingt catégories de salaires forfaitaires : c'est
       exactement la donnée qui manque à la fiche des marins.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Grille au 1er avril 2026 (arrêté du 19 mars 2026) : les vingt
+      montants annuels sont ceux de data/reference/regimes/salaires_forfaitaires.csv,
+      au centime. Recoupement du Journal officiel par la caisse ; rien de
+      neuf à transcrire, la page ne porte que l'année en cours.
 
   - id: crpn_publications
     url: https://www.crpn.fr/la-crpn/publications/
@@ -2091,11 +2108,17 @@ sources:
   - id: enim_reversion
     url: https://www.enim.eu/retraite/pension-de-reversion
     nature: regle
-    acces: session
+    acces: navigateur
     regimes: [marins]
     a_en_tirer: >-
       La réversion des marins, assise elle aussi sur les salaires forfaitaires.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      54 % de la pension ET des bonifications (R. 15), sans condition de
+      ressources ; conditions d'âge et d'antériorité du mariage, allocation
+      de 27 % au conjoint sans droit. Le modèle ne liquide pas de réversion
+      par régime : rien à transcrire, docs/limites.md le dit.
 
   # ---- IRCEC : les trois règlements (sixième lot) -------------------------
   # Les trois fiches d'artistes-auteurs sont `partiel`, et c'est ici que se
@@ -2932,31 +2955,53 @@ sources:
   - id: enim_conditions_attribution
     url: https://www.enim.eu/retraite/conditions-dattribution
     nature: regle
-    acces: session
+    acces: navigateur
     regimes: [marins]
     a_en_tirer: >-
       Les conditions d'ouverture chez les marins : durée de services et de
       navigation, âges dérogatoires. Fiche `partiel` à l'inventaire.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Pension d'ancienneté dès 50 ans pour 25 ans de services (R. 2), que
+      la fiche refusait avant 55 : portée (`age_ouverture_services`), avec la
+      levée du plafond de 25 annuités à 52 ans et demi, et l'exemple de
+      Gaspard est le témoin `enim_anciennete_a_cinquante_ans`. La page se
+      contredit sur la pension spéciale — âge légal du régime général dans le
+      texte, 60 ans dans l'exemple ; R. 5 dit 60, écrit dans docs/limites.md.
+      Conjoint collaborateur (1 % du forfait de 3e catégorie, partage 1/3
+      2/3) : hors modèle.
 
   - id: enim_preretraite_amiante
     url: https://www.enim.eu/retraite/preretraite-amiante
     nature: regle
-    acces: session
+    acces: navigateur
     regimes: [marins]
     a_en_tirer: >-
       La cessation anticipée d'activité amiante : un départ avant l'âge que le
       dépôt ne porte pour aucun régime, et qui pèse sur l'âge moyen observé.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      C3A des marins : dès 50 ans, versée à 60 ans moins le tiers de la
+      durée des services à la machine, jusqu'au droit à pension
+      proportionnelle ou spéciale. Prestation de prévoyance, non de
+      retraite : rien n'entre dans le modèle, docs/limites.md le dit.
 
   - id: enim_cumul_emploi_retraite
     url: https://www.enim.eu/retraite/pour-travailler-tout-en-etant-retraite
     nature: regle
-    acces: session
+    acces: navigateur
     regimes: [marins]
     a_en_tirer: >-
       Le cumul chez les marins, dont les règles tiennent à la navigation.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Cumul interdit avant 55 ans avec une activité maritime ; depuis 2018
+      la reprise maritime n'ouvre plus de droits (L. 5552-38) ; exonération
+      de la cotisation salariale après 65 ans. Le modèle ne simule pas le
+      cumul : rien à transcrire.
 
   - id: crpcen_rachat_etudes
     url: https://www.crpcen.fr/affilies/le-rachat-dannees-detudes

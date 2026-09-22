@@ -1611,7 +1611,7 @@ def test_le_temoin_des_exemples_officiels_est_source():
     """Chaque exemple dit qui l'a publié, où, et quand il a été vérifié."""
     for exemple in _charger_exemples():
         source = exemple["source"]
-        assert source["editeur"] in ("service-public.gouv.fr", "Cnav"), exemple["id"]
+        assert source["editeur"] in ("service-public.gouv.fr", "Cnav", "ENIM"), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]
         assert len(exemple["enonce"].split()) >= 12, exemple["id"]

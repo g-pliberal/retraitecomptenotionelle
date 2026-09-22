@@ -65,6 +65,13 @@ sans rien à télécharger. La compétence `playwright-cli` de `.claude/skills/`
 le pilote ; `docs/outillage_interface.md` dit ce qu'une machine neuve reçoit.
 C'est la même voie pour les simulateurs dont le calcul ne part qu'au clic.
 
+`www.enim.eu` est un cas plus traître : il répond **200** à `curl`, et le
+sondage l'a donc rangé en `session`. Mais ces 200 portent une page de 212
+octets, un script du pare-feu Incapsula et rien d'autre. Un code de réponse
+ne dit pas qu'on a lu la page : il faut regarder sa taille. Chromium passe,
+une fois son magasin de certificats préparé comme le dit
+`docs/outillage_interface.md` (`certutil`, paquet `libnss3-tools`).
+
 ### `git` — la page est refusée, le dépôt ne l'est pas
 
 `github.com` répond 403 en HTML à travers le proxy de sortie, et `git clone`

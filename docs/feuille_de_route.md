@@ -25,17 +25,17 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 207<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 591<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 260<!--/--> lignes), puis dans les
 
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 207<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 591<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 260<!--/--> lignes), puis dans les
 
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 207<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 591<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 260<!--/--> lignes), puis dans les
 
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 207<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 591<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 260<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12572,6 +12572,36 @@ chacune porte sa date et ce qu'elle a donné. Les fiches `partiel` qui le sont
 faute de barème publié ne le sont plus, ou disent lequel n'existe pas. Et
 `limites.md` dit, source par source, ce que les caisses appliquent que le
 modèle n'applique pas.
+**Lot de l'ENIM, le 22 septembre 2026 : les six pages du régime des marins.**
+Le site répond 200 à `curl`, et le sondage l'avait rangé en `session` ; mais
+ces 200 portent une page de 212 octets, le script d'un pare-feu anti-robots.
+Chromium passe une fois son magasin de certificats préparé. Les six lignes
+sont `epuise`, et deux règles de droit en sont sorties, lues ensuite dans le
+code des pensions de retraite des marins.
+
+*Le marin de cinquante ans était refusé.* R. 2 ouvre la pension d'ancienneté
+à « la double condition de cinquante ans d'âge et de vingt-cinq années de
+services » ; les cinquante-cinq ans qu'il fixe ensuite ne bornent que la
+jouissance de qui continue à naviguer (L. 5552-5 du code des transports). La
+fiche avait pris la borne pour l'âge, et refusait le départ même que le
+plafond de vingt-cinq annuités de R. 13 organise. Nouveau champ de fiche,
+`age_ouverture_services`, dans les deux moteurs ; l'exception des
+cinquante-deux ans et demi à ce plafond est portée avec lui.
+
+*La bonification pour enfants n'était pas servie* : 5 % pour deux enfants,
+10 % pour trois, 15 % au-delà (R. 14). Le barème est en données
+(`taux_majoration_enfants`), le seul du catalogue qui commence à deux enfants.
+
+Deux exemples de la caisse deviennent témoins — l'ENIM entre comme troisième
+éditeur de `exemples_officiels.yaml` —, la grille des salaires forfaitaires
+de 2026 est recoupée au centime, et trois lignes entrent au registre de
+veille. Un seul témoin de simulation bouge : un marin parti avant
+cinquante-cinq ans, refusé hier, liquidé aujourd'hui au même montant.
+`docs/limites.md` dit ce qui reste : la pension spéciale à soixante ans sans
+autre pension (R. 5, que la page de l'ENIM contredit elle-même), la
+catégorie moyenne de trente-six mois, le décompte au semestre, la petite
+pêche outre-mer, la réversion et la cessation anticipée amiante.
+
 ### 90. Le barème agricole retrouvé, et un groupe qui ne décrivait pas le libéral — `fait`
 
 **Demande.** « Fais des recherches complémentaires et corrige » : les deux

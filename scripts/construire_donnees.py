@@ -563,11 +563,30 @@ def _regimes() -> list[dict]:
                     "cotisation_forfaitaire_annee": p.cotisation_forfaitaire_annee,
                     "avantages_non_contributifs": list(p.avantages_non_contributifs),
                     "notes": p.notes,
+                    **_regles_des_marins(p),
                 }
                 for p in regime.periodes
             ],
         })
     return fiches
+
+
+def _regles_des_marins(p) -> dict:
+    """Les champs que seule la fiche des marins porte, et seulement là.
+
+    Écrits sur chaque période de chaque régime, ils pèseraient 140 Ko de
+    ``null`` dans le paquet ; le moteur JavaScript lit leur absence comme leur
+    nullité.
+    """
+    champs = {
+        "duree_maximum_levee_age": p.duree_maximum_levee_age,
+        "duree_maximum_levee_trimestres": p.duree_maximum_levee_trimestres,
+        "age_ouverture_services": p.age_ouverture_services,
+        "services_ouverture_annees": p.services_ouverture_annees,
+        "taux_majoration_enfants": (list(p.taux_majoration_enfants)
+                                    if p.taux_majoration_enfants else None),
+    }
+    return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 
 
 def _affiliations() -> dict:

@@ -343,3 +343,31 @@ exemples:
       trimestres pour 169 requis, taux 41,25 %.
     carriere: {naissance: "1962-05", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2025-05", age_debut: 30, nombre_enfants: 3}
     attendu: {taux_liquidation: 0.4125, majoration_enfants_sur_pensions: 0.10}
+
+  # ---- ENIM (régime des marins) ------------------------------------------
+  # Les deux pages que l'Établissement national des invalides de la marine
+  # consacre au calcul et aux conditions d'attribution, lues le 22 septembre
+  # 2026 (action 89). Le site sert une page anti-robots à `curl` et s'ouvre
+  # dans Chromium. Chacune a levé une règle que le modèle n'appliquait pas,
+  # et que le code des pensions de retraite des marins écrit en toutes
+  # lettres : la bonification dès DEUX enfants (R. 14), l'ouverture à
+  # cinquante ans pour vingt-cinq ans de services (R. 2).
+  - id: enim_bonification_deux_enfants
+    source: {editeur: "ENIM", reference: "enim.eu, Retraite, « Le mode de calcul », exemple en vigueur au 1er avril 2024", verifie_le: "2026-09-22"}
+    enonce: >-
+      Arnaud a 2 enfants et réunit 14 ans 8 mois et 27 jours de services,
+      arrondis à 14,5 annuités, en 11e catégorie (36 032,62 €) : 14,5 × 2 %
+      × 36 032,62 € = 870,79 € par mois, plus la bonification pour enfants
+      de 5 %, 43,54 € — 914,33 € brut mensuels.
+    carriere: {naissance: "1964-04", sexe: H, affiliation: marin, liquidation: "2024-04", trimestres_valides: 58, nombre_enfants: 2}
+    attendu: {trimestres_valides: 58, liquidation_ouverte: true, majoration_enfants_sur_pensions: 0.05}
+
+  - id: enim_anciennete_a_cinquante_ans
+    source: {editeur: "ENIM", reference: "enim.eu, Retraite, « Les conditions d'attribution », pension d'ancienneté", verifie_le: "2026-09-22"}
+    enonce: >-
+      La pension d'ancienneté s'ouvre avec au moins 25 années de services, à
+      partir de 50 ans, 52 ans et demi ou 55 ans selon la situation. Gaspard,
+      marin, a 50 ans et réunit 25 ans de services : il peut prétendre au
+      versement d'une pension d'ancienneté.
+    carriere: {naissance: "1974-01", sexe: H, affiliation: marin, liquidation: "2024-01", age_debut: 25}
+    attendu: {liquidation_ouverte: true, age_ouverture: 50.0, non_ouverte_un_trimestre_plus_tot: true}

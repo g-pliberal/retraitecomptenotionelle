@@ -1412,8 +1412,12 @@ regimes:
         age_ouverture: 55
         age_taux_plein: 55
         duree_requise_trimestres: 150
+        age_ouverture_services: 50
+        services_ouverture_annees: 25
         duree_maximum_avant_age: 55
         duree_maximum_avant_age_trimestres: 100
+        duree_maximum_levee_age: 52.5
+        duree_maximum_levee_trimestres: 150
         taux_plein: 0.75
         salaire_reference: dernier_salaire
         assiette: forfaitaire
@@ -1422,7 +1426,8 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        taux_majoration_enfants: [0.0, 0.0, 0.05, 0.10, 0.15]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LA FORMULE, ELLE, EST STABLE ET VÉRIFIÉE : « les pensions servies en
           application des dispositions du présent code sont calculées à raison
@@ -1442,18 +1447,41 @@ regimes:
           forfaitaire, quand la fiche lui en accordait 75 %. C'est la seule
           règle du catalogue où l'ÂGE borne la DURÉE, d'où les deux champs
           `duree_maximum_avant_age` que le moteur a appris à lire.
-          LES DEUX EXCEPTIONS À CE PLAFOND NE SONT PAS PORTÉES : le même alinéa
-          l'écarte « dans le cas de pension liquidée [pour invalidité] » et
-          « au profit d'un marin âgé d'au moins cinquante-deux ans et demi,
-          réunissant trente-sept annuités et demie de services ». Le second cas
-          est atteignable — un marin embarqué à quinze ans —, et la fiche lui
-          oppose le plafond à tort.
+          L'EXCEPTION DES CINQUANTE-DEUX ANS ET DEMI EST PORTÉE depuis le
+          22 septembre 2026 : le même alinéa écarte le plafond « au profit
+          d'un marin âgé d'au moins cinquante-deux ans et demi, réunissant
+          trente-sept annuités et demie de services » (`duree_maximum_levee_*`)
+          — l'embarqué de quinze ans, que la page de l'ENIM range sous
+          « 52 ans et demi ». Celle de la pension d'invalidité (L. 6, R. 4)
+          ne l'est pas : le modèle ne liquide pas d'invalidité.
           LES ÂGES SONT CEUX DE 1968, ET N'ONT PAS BOUGÉ : l'article R. 2
           — inchangé depuis le 31 mars 1968 — acquiert le droit « lorsque se
           trouve remplie la double condition de cinquante ans d'âge et de
           vingt-cinq années de services » et fixe « l'âge d'entrée en jouissance
-          de la pension à cinquante-cinq ans ». La fiche porte cinquante-cinq,
-          l'âge de jouissance.
+          de la pension à cinquante-cinq ans ». Ces cinquante-cinq ans sont
+          ceux du deuxième alinéa de l'ancien L. 4, aujourd'hui L. 5552-5 du
+          code des transports : la borne de l'entrée en jouissance de celui
+          qui CONTINUE à naviguer, non l'âge d'ouverture. La fiche portait
+          cinquante-cinq et refusait donc le départ à cinquante ans que le
+          plafond de R. 13 suppose et que l'ENIM décrit — « Gaspard, marin, a
+          50 ans et réunit 25 ans de services […] Il peut prétendre au
+          versement d'une pension d'ancienneté ». Elle porte depuis le
+          22 septembre 2026 `age_ouverture_services: 50` pour vingt-cinq ans
+          de services dans le régime ; `age_ouverture` reste cinquante-cinq,
+          l'âge de la pension proportionnelle (quinze ans, R. 3) et de la
+          pension spéciale (moins de quinze ans, R. 5 et L. 5552-12).
+          CE QUE LA PENSION SPÉCIALE DEMANDE ET QUE LA FICHE NE PORTE PAS :
+          cinquante-cinq ans seulement pour qui touche une autre pension de
+          base, soixante sinon (R. 5). Le modèle l'ouvre à cinquante-cinq
+          dans tous les cas. La page de l'ENIM, elle, écrit « l'âge légal
+          d'ouverture du droit à pension de retraite du régime général […]
+          (64 ans pour les assurés nés à partir de 1968) » et, trois lignes
+          plus bas, l'exemple d'Henry « à 60 ans » : la page se contredit, et
+          c'est R. 5, lu dans LEGI, qui dit soixante.
+          LA BONIFICATION POUR ENFANTS EST PORTÉE depuis le 22 septembre
+          2026 : 5 % pour deux enfants, 10 % pour trois, 15 % au-delà (R. 14,
+          `taux_majoration_enfants`). La fiche ne la déclarait pas, et le
+          marin père de deux enfants perdait 5 % de pension.
           Le plus ancien régime de retraite français (Colbert, 1673).
           Cotisations et pensions assises sur des SALAIRES FORFAITAIRES par
           catégorie, non sur la rémunération réelle.
@@ -1476,7 +1504,14 @@ regimes:
           chaque année, dans la catégorie dont le forfait approche le plus
           son revenu annualisé (`assiette_grille: marins`), et cotise comme
           il liquide sur ce forfait — le salaire de référence est celui de
-          la catégorie de la dernière année, ce que R. 11 demande. C'est une
+          la catégorie de la dernière année, quand R. 11 retient la catégorie
+          MOYENNE des trente-six derniers mois, ou celle de fonctions
+          supérieures tenues cinq ans au moins ; et le décompte des services
+          se fait au semestre (R. 12 : la fraction égale ou supérieure à trois
+          mois compte pour six, l'autre est négligée), quand le modèle compte
+          au trimestre. La grille de 2026 a été recoupée le 22 septembre 2026
+          sur la page « Les salaires forfaitaires » de l'ENIM : les vingt
+          montants, au centime. C'est une
           CONVENTION, la seule qui rende la grille applicable, et elle est
           nommée. Avant 2008, les textes de l'index ne portent pas les
           montants (décrets de 1956 à 1961, arrêtés de 1991 à 2006 : visas et

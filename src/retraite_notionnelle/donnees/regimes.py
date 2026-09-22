@@ -143,6 +143,17 @@ class PeriodeRegime:
     #: 50 %.
     duree_maximum_avant_age: float | None
     duree_maximum_avant_age_trimestres: int | None
+    #: Le même article R. 13 lève ce plafond « au profit d'un marin âgé d'au
+    #: moins cinquante-deux ans et demi, réunissant trente-sept annuités et
+    #: demie de services » : l'âge, et la durée en trimestres.
+    duree_maximum_levee_age: float | None
+    duree_maximum_levee_trimestres: int | None
+    #: Âge d'ouverture ABAISSÉ pour qui réunit une durée de services dans le
+    #: régime : « la double condition de cinquante ans d'âge et de vingt-cinq
+    #: années de services » de l'article R. 2 du code des pensions de retraite
+    #: des marins. Sans cette durée, c'est `age_ouverture` qui vaut.
+    age_ouverture_services: float | None
+    services_ouverture_annees: float | None
     taux_plein: float | None
     salaire_reference: str
     assiette: str
@@ -216,6 +227,11 @@ class PeriodeRegime:
     #: est publié. Le plafond suit ensuite la valeur de service du point.
     plafond_majoration_enfants: float | None
     plafond_majoration_annee: int | None
+    #: Barème PROPRE de la majoration pour enfants, indexé par le nombre
+    #: d'enfants — le dernier taux vaut au-delà. ``None`` : le barème commun
+    #: de ``_taux_majoration_enfants``. Les marins bonifient dès DEUX enfants,
+    #: 5 %, puis 10 % pour trois et 15 % au-delà (R. 14 de leur code).
+    taux_majoration_enfants: tuple[float, ...] | None
     #: Nombre de points attribués quand l'assiette atteint le repère
     #: ci-dessous. Sert aux régimes dont le barème est écrit en POINTS et non
     #: en prix d'achat — le régime de base des libéraux, la complémentaire
@@ -857,6 +873,22 @@ class CatalogueRegimes:
                     None if p.get("duree_maximum_avant_age_trimestres") is None
                     else int(p["duree_maximum_avant_age_trimestres"])
                 ),
+                duree_maximum_levee_age=(
+                    None if p.get("duree_maximum_levee_age") is None
+                    else float(p["duree_maximum_levee_age"])
+                ),
+                duree_maximum_levee_trimestres=(
+                    None if p.get("duree_maximum_levee_trimestres") is None
+                    else int(p["duree_maximum_levee_trimestres"])
+                ),
+                age_ouverture_services=(
+                    None if p.get("age_ouverture_services") is None
+                    else float(p["age_ouverture_services"])
+                ),
+                services_ouverture_annees=(
+                    None if p.get("services_ouverture_annees") is None
+                    else float(p["services_ouverture_annees"])
+                ),
                 taux_plein=None if p.get("taux_plein") is None else float(p["taux_plein"]),
                 salaire_reference=p.get("salaire_reference", "sans_objet"),
                 assiette=p.get("assiette", "deplafonnee"),
@@ -917,6 +949,10 @@ class CatalogueRegimes:
                 plafond_majoration_enfants=(
                     None if p.get("plafond_majoration_enfants") is None
                     else float(p["plafond_majoration_enfants"])
+                ),
+                taux_majoration_enfants=(
+                    None if p.get("taux_majoration_enfants") is None
+                    else tuple(float(t) for t in p["taux_majoration_enfants"])
                 ),
                 plafond_majoration_annee=(
                     None if p.get("plafond_majoration_annee") is None

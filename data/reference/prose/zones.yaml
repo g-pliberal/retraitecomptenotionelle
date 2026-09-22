@@ -226,6 +226,10 @@ fichiers:
       "Ils ne sont pas trop bas : ce décret ne touche pas la vieillesse": recit
       "Avant 1967, la cotisation vieillesse n'existait pas séparément — et le dépôt lui prêtait 8,6 %": recit
       "Le marin cotisait sur sa paie, et le régime ne connaît que vingt forfaits": recit
+      # Datée du 22 septembre 2026 : ce que la lecture des pages de l'ENIM a
+      # corrigé et ce qu'elle a laissé. Ses nombres sont ceux du texte et de
+      # la caisse, non des mesures du modèle.
+      "Le marin de cinquante ans, et ce que la caisse applique que le modèle n'applique pas": recit
       "Un jeune d'aujourd'hui pouvait se déclarer mineur, et la page le laissait croire": recit
       "L'Ircantec n'avait pas de tranche B, et ses taux étaient ceux de 2008": recit
       "La tranche 2 de l'Arrco était servie aux cadres, qui n'y cotisent pas": recit
