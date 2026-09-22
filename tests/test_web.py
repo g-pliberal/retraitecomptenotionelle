@@ -5482,20 +5482,26 @@ def test_le_formulaire_dit_que_l_exemple_est_rempli(page):
     assert "Résultats" not in texte
 
 
-def test_les_resultats_s_ouvrent_sur_la_cle_de_lecture_puis_les_montants(contexte):
-    """Sous « Résultats » : cinq phrases qui disent ce qu'on regarde, puis les
-    quatre montants, puis seulement les repères techniques. Dans l'ordre
-    inverse, un téléphone montrait un coefficient de conversion et pas un
-    euro."""
+def test_les_resultats_s_ouvrent_sur_le_resume_la_cle_puis_les_montants(contexte):
+    """Sous « Résultats » : trois phrases qui répondent à la question de
+    l'électeur, puis la clé qui dit ce qu'on regarde, puis les quatre montants,
+    puis seulement les repères techniques. Dans l'ordre inverse, un téléphone
+    montrait un coefficient de conversion et pas un euro ; sans le résumé, il
+    montrait dix nombres et rien qui dise lesquels comparer."""
     corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
     visible = _hors_depliants(corps)
     resultats = visible.index('id="resultats"')
+    bref = visible.index('<section class="en-bref"', resultats)
     lecture = visible.index("Quatre calculs pour votre carrière", resultats)
     premier = visible.index('<div class="scenario">', lecture)
     reperes = visible.index('<div class="fiches">', resultats)
-    assert lecture < premier < reperes
+    assert bref < lecture < premier < reperes
     cle = visible[lecture:premier]
     assert "C'est la référence." in cle
+    # La clé nomme la proposition, et dit ce que sont les deux autres : sans
+    # cela, l'électeur comparait le 1 au 2, que personne ne propose.
+    assert "Le système 4 est notre proposition." in cle
+    assert "Les systèmes 2 et 3 ne sont pas des\npropositions" in cle
     assert "votre <strong>salaire</strong> pendant" in cle
     assert "la <strong>pension</strong> que le système promet" in cle
     # Le troisième chiffre est annoncé lui aussi : il est apparu sans que la
@@ -5509,7 +5515,106 @@ def test_les_resultats_s_ouvrent_sur_la_cle_de_lecture_puis_les_montants(context
     # donc sur le texte aplati, comme le lecteur le lit.
     aplati = " ".join(cle.split())
     assert "en net tous les trois, par mois, en euros d'aujourd'hui" in aplati
-    assert "au <strong>taux plein</strong>" in aplati
+    # Ce que la clé disait APRÈS les chiffres qu'elle annonçait — que le
+    # troisième n'est pas une prévision, et la CSG que le net suppose — se lit
+    # sous les barres, une fois qu'on sait de quoi il parle. La clé en était
+    # deux fois plus longue.
+    carte = " ".join(visible[premier:reperes].split())
+    assert "n'est pas une prévision" in carte
+    assert "au <strong>taux plein</strong>" in carte
+    paragraphe = cle[:cle.index("</p>")]
+    assert len(re.sub(r"<[^>]+>", " ", paragraphe).split()) < 90, (
+        "la clé de lecture s'allonge de nouveau")
+
+
+def _somme_affichee(texte: str) -> float:
+    return float(texte.replace("\u202f", "").replace(",", "."))
+
+
+def test_le_resume_des_resultats_redit_les_chiffres_des_barres(contexte):
+    """« En bref » ne calcule rien : il redit, arrondis à l'euro, les montants
+    que les barres affichent juste dessous — le système actuel, la
+    proposition sans rien ajouter puis avec les points rendus, le salaire net.
+
+    ET IL LE FAIT SYMÉTRIQUEMENT. Le manque de financement est écrit pour les
+    deux systèmes, dans les mêmes mots et au même euro que sous leurs barres :
+    le taire pour l'un flatterait l'autre (action 62). Les systèmes 2 et 3,
+    étalons et non choix, n'y figurent pas.
+    """
+    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    bref = re.search(r'<section class="en-bref".*?</section>', corps, re.S).group(0)
+    # Les blancs ORDINAIRES seuls sont repliés : `split()` couperait aussi
+    # l'espace fine insécable des milliers, que les montants portent.
+    texte = re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", " ", bref))
+    blocs = corps.split('<div class="scenario">')[1:]
+    actuel, liberal = blocs[0], blocs[3]
+
+    def principal(bloc: str) -> float:
+        return _somme_affichee(re.search(
+            r'class="chiffre principal">.*?<span class="somme">([^<]+)</span>',
+            bloc, re.S).group(1))
+
+    def euro(montant: float) -> str:
+        return euros(montant)
+
+    assert euro(principal(actuel)) in texte
+    assert euro(principal(liberal)) in texte
+    plancher = _somme_affichee(re.search(
+        r"soit\s+([\d\u202f]+,\d{2})\u202f€ par\s+mois sans rien ajouter",
+        liberal).group(1))
+    assert f"serait de {euro(plancher)} nets par mois" in texte
+    assert f"jusqu'à {euro(principal(liberal))}" in texte
+    # Les deux manques, au même euro que sous les barres, et dans les mêmes
+    # mots : « Elle n'est pas entièrement financée », « Elle non plus ».
+    for bloc in (actuel, liberal):
+        manque = re.search(r"il manque ([^<]+) par mois", bloc).group(1)
+        assert f"il manque {manque} par mois" in texte
+    assert "Elle n'est pas entièrement financée" in texte
+    assert "Elle non plus n'est pas entièrement financée" in texte
+    # Le salaire net, arrondi, celui que « Et pendant que vous cotisez »
+    # chiffre au centime.
+    gain = _somme_affichee(re.search(
+        r'<span class="ecart">\+([\d\u202f]+,\d{2})\u202f€ par mois</span>',
+        liberal).group(1))
+    assert f"augmente de {euro(gain)} par mois" in texte
+    # Ni le 2 ni le 3 : leurs montants ne sont pas dans le résumé.
+    for bloc in blocs[1:3]:
+        assert euro(principal(bloc)) not in texte
+    # Le renvoi vers « qui paiera » vise un dépliant qui existe, sans toucher
+    # à la route.
+    assert 'data-vers="resultats-financement"' in bref
+    assert 'id="resultats-financement"' in corps
+
+
+def test_le_resume_dit_au_retraite_que_sa_pension_serait_recalculee(contexte):
+    """La première question d'un retraité : « et la mienne ? ». L'étape 2 du
+    programme y répond — les pensions liquidées avant la bascule sont
+    recalculées sur ce qui a été cotisé —, et le résumé le dit dans ces mots,
+    au passé pour la pension d'aujourd'hui, sans ligne de salaire."""
+    corps = rendre(contexte, "/simuler", {
+        "situation": "retraite", "saisie": "pension", "unite_revenu": "euros_mois",
+        "naissance": "1955-03-01", "liquidation": "2017-04-01",
+        "debut": "1975-09-01", "statut": "salarie_prive_non_cadre",
+        "pension": "1600"})[1]
+    bref = re.search(r'<section class="en-bref".*?</section>', corps, re.S).group(0)
+    texte = re.sub(r"[ \t\n]+", " ", re.sub(r"<[^>]+>", " ", bref))
+    assert "votre retraite était de" in texte
+    assert "à votre départ, en avril 2017" in texte
+    assert "elle serait recalculée sur ce qui a été cotisé" in texte
+    assert "Pendant que vous travaillez" not in texte
+
+
+def test_aucun_lien_ne_remplace_la_route_par_une_ancre(contexte):
+    """Ici l'adresse EST la route : un lien « #resultats-financement » la
+    remplaçait, et le routeur, ne reconnaissant aucune page, rendait
+    l'accueil — le lecteur qui cliquait dans la clé de lecture perdait sa
+    simulation. Tout lien interne vise une route ; une section se rejoint par
+    ``data-vers``, que le script de la page traite sans toucher à l'adresse."""
+    pages = [("/simuler", SIMULATION_TEMOIN)] + [(chemin, {}) for chemin in TITRES]
+    for chemin, parametres in pages:
+        corps = rendre(contexte, chemin, parametres)[1]
+        ancres = re.findall(r'href="(#[^/"][^"]*)"', corps)
+        assert not ancres, f"{chemin} : {ancres}"
 
 
 def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):
