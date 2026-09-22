@@ -40,6 +40,9 @@ fichiers:
       # que le modèle imprime et que la prose recopiait : elle annonçait une
       # rente de 1 569 € quand le modèle en sert 1 515.
       - exemple_fonctionnaire
+      # Et celle de l'agent de conduite de l'introduction, qui donnait au
+      # scénario 4 une pension de 7 481 € quand le modèle en sert 7 159.
+      - exemple_sncf
     # « Le site a d'abord exécuté le Python lui-même, par Pyodide » ouvre un
     # paragraphe qui raconte l'époque d'avant le portage : ses 13,5 Mo et ses
     # 263 Ko sont ceux de ce temps-là, au milieu d'une section d'état.
@@ -55,6 +58,11 @@ fichiers:
       # 19 septembre 2026 : ses +0,12 et −0,88 % sont l'avant et l'après.
       - "**Et les pensions LIQUIDÉES"
     sections:
+      # L'introduction : les paramètres de la proposition sont ceux du modèle,
+      # et le partage des 23 points se lit sur la fiche de paie de deux
+      # salariés d'exemple. Elle annonçait +182 € par mois au salaire moyen
+      # quand la fiche en donne 203 : la CSG rendue était arrivée depuis.
+      "Retraite à comptes notionnels — modèle français rétroactif": etat
       Ouvrir le simulateur: etat
       # Le corps de la section : ce que le premier chargement transfère, ce que
       # `index.html` charge, et le poids du portage.
@@ -473,7 +481,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 48
+  sections_a_declarer: 47
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2

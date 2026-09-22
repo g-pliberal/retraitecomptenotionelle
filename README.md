@@ -26,9 +26,9 @@ comparables :
 | **1** | Système actuel | Le droit en vigueur, minima et majorations compris. C'est la référence. Le total affiché est celui de la **répartition seule** : ce qui relève de la capitalisation (RAFP) est servi à part, à l'identique dans les six scénarios. |
 | **2** | Notionnel **rétroactif** depuis 1941 | Contrefactuel : toute la carrière recalculée sur les seules cotisations, comme si la règle avait toujours existé. |
 | **3** | Notionnel **à compter de 2026** | Réforme prospective : les droits déjà acquis sont figés — au contributif seul, avantages non contributifs retirés — puis convertis en capital, et les règles notionnelles s'appliquent ensuite. Qui a liquidé avant la bascule garde sa pension telle quelle : c'est ce qui distingue ce scénario du **2**. |
-| **4** | Le scénario **2**, part patronale comprise | Le même compte rétroactif, la cotisation de l'employeur en plus : celle de la fiche pour le privé, celle réellement versée — jusqu'à 82,28 % du traitement en 2026 — pour le public. |
+| **4** | Le scénario **2**, part patronale comprise | Le même compte rétroactif, la cotisation de l'employeur en plus : celle de la fiche pour le privé, celle réellement versée — jusqu'à <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> % du traitement en 2026 — pour le public. |
 | **5** | Le scénario **3**, part patronale comprise | Le même compte prospectif, droits acquis conservés, avec la même part patronale en plus. |
-| **6** | La **proposition libérale** : le scénario **4** jusqu'à 2026, puis 18 % pour tous en répartition, 5 + 5 % capitalisés, et une garantie vieillesse | Le même compte rétroactif, cotisation entière aux taux réels jusqu'à la bascule, puis un **taux unique de 18 %** à compter de 2026 — salariale et patronale additionnées, le même pour tous les statuts. Par-dessus, trois ajouts. Une **cotisation capitalisée de 5 %**, prélevée sur la même assiette **en plus** de la répartition, placée sur des titres sans risque à des maturités qui raccourcissent à l'approche du départ, servie en rente viagère selon la table du modèle, et **transmissible** aux héritiers tant qu'elle n'est pas liquidée : elle est tenue dans un compartiment distinct, jamais confondue avec la pension notionnelle. Puis **5 % de capitalisation volontaire** : 18 + 5 font 23 quand le système actuel prélève 28, et le modèle suppose les cinq points rendus remis au même compte, pour que les deux systèmes se comparent **à effort égal**. Et une **garantie vieillesse** qui remplace l'ASPA : 800 € par mois par personne, plus 250 € d'allocation d'isolement pour qui vit seul, individualisée (la pension du conjoint ne compte pas) et financée par l'impôt. Mêmes âges de départ que le scénario 4. |
+| **6** | La **proposition libérale** : le scénario **4** jusqu'à 2026, puis <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % pour tous en répartition, <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> % capitalisés, et une garantie vieillesse | Le même compte rétroactif, cotisation entière aux taux réels jusqu'à la bascule, puis un **taux unique de <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %** à compter de 2026 — salariale et patronale additionnées, le même pour tous les statuts. Par-dessus, trois ajouts. Une **cotisation capitalisée de <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> %**, prélevée sur la même assiette **en plus** de la répartition, placée sur des titres sans risque à des maturités qui raccourcissent à l'approche du départ, servie en rente viagère selon la table du modèle, et **transmissible** aux héritiers tant qu'elle n'est pas liquidée : elle est tenue dans un compartiment distinct, jamais confondue avec la pension notionnelle. Puis **<!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> % de capitalisation volontaire** : <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> font <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total&systeme=proposition)-->23<!--/--> quand le système actuel prélève <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total)-->28<!--/-->, et le modèle suppose les cinq points rendus remis au même compte, pour que les deux systèmes se comparent **à effort égal**. Et une **garantie vieillesse** qui remplace l'ASPA : <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> € par mois par personne, plus <!--chiffre:mesure(parametre?nom=allocation_isolement_mensuelle)-->250<!--/--> € d'allocation d'isolement pour qui vit seul, individualisée (la pension du conjoint ne compte pas) et financée par l'impôt. Mêmes âges de départ que le scénario 4. |
 
 Les comptes sont revalorisés, par défaut, sur la croissance de la **masse
 salariale** — l'assiette des cotisations, donc le rendement qu'un système en
@@ -54,18 +54,20 @@ print(simulateur.simuler(simulateur.carriere_simple(
 )).tableau())
 ```
 
+<!-- exemple_sncf:debut -->
 ```
-Agent de conduite SNCF né en 1955, parti à 50 ans (quinze ans avant l'âge de référence)
+Agent de conduite SNCF né en 1955, parti à 50 ans (15 ans avant l'âge de référence)
 
 Scénario                                                          Courants   Constants   Mensuel    Écart
 --------------------------------------------------------------------------------------------------------
-1. Système actuel                                                  19,256€     26,960€    2,247€     réf.
-2. Notionnel rétroactif, part salariale                             2,270€      3,178€      265€   -88.2%
-3. Notionnel dès 2026, part salariale                              19,256€     26,960€    2,247€    +0.0%
-4. Notionnel rétroactif, salariale + patronale                      7,481€     10,474€      873€   -61.2%
-5. Notionnel dès 2026, salariale + patronale                       19,256€     26,960€    2,247€    +0.0%
-6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse         7,481€     10,474€      873€   -61.2%
+1. Système actuel                                                  19,118€     26,767€    2,231€     réf.
+2. Notionnel rétroactif, part salariale                             2,178€      3,049€      254€   -88.6%
+3. Notionnel dès 2026, part salariale                              19,118€     26,767€    2,231€    +0.0%
+4. Notionnel rétroactif, salariale + patronale                      7,159€     10,024€      835€   -62.6%
+5. Notionnel dès 2026, salariale + patronale                       19,118€     26,767€    2,231€    +0.0%
+6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse         7,159€     10,024€      835€   -62.6%
 ```
+<!-- exemple_sncf:fin -->
 
 > Les scénarios 4 et 5 sont les scénarios 2 et 3, à une différence près et une
 > seule : **ce qui alimente le compte**. Même carrière, même indexation, même
@@ -75,47 +77,47 @@ Scénario                                                          Courants   Co
 > Les scénarios 3 et 5 sont ici identiques au système actuel parce que cet agent
 > a liquidé en 2005, avant la bascule : ses droits sont intégralement acquis. Le
 > scénario 6 est identique au scénario 4 pour la même raison : aucune de ses
-> années n'est cotisée à 18 %, et à 50 ans la garantie vieillesse n'est pas
+> années n'est cotisée à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %, et à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.sncf.depart)-->50<!--/--> ans la garantie vieillesse n'est pas
 > ouverte.
 
 > **Le scénario 6 est la proposition du Parti libéral français**, et il se lit
 > contre le scénario 4 : même compte rétroactif, cotisation salariale et
 > patronale confondues, mêmes âges, même indexation, même liquidation. Quatre
-> choses changent. Le taux — 18 % pour tous à compter de 2026, là où le
+> choses changent. Le taux — <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % pour tous à compter de 2026, là où le
 > scénario 4 porte les taux réellement en vigueur de chaque régime ; ce qui a
 > été cotisé avant 2026 sous le système actuel reste porté au compte tel quel,
-> et qui a liquidé avant n'a aucune année à 18 %. Pour les années d'après, les
+> et qui a liquidé avant n'a aucune année à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %. Pour les années d'après, les
 > statuts qui cotisaient plus descendent, ceux qui cotisaient moins remontent.
 > Un plancher — la seule
 > ligne des scénarios notionnels qui ne vienne pas d'une cotisation —, servi à
-> partir de 65 ans comme l'ASPA, mais **individualisé** : à 300 € et 1 500 €
-> dans un couple, l'ASPA ne sert rien, la garantie sert 500 € au premier. La
+> partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans comme l'ASPA, mais **individualisé** : à <!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->1 500<!--/--> €
+> dans un couple, l'ASPA ne sert rien, la garantie sert <!--chiffre:mesure(garantie_complement?pension=300)-->500<!--/--> € au premier. La
 > page de simulation détaille la garantie étape par étape, et la page Coût
 > compte à part ce que l'impôt en finance.
 >
-> Et un **pilier capitalisé** : 5 % de la même assiette, prélevés en plus des
-> 18 %, à compter de 2026. Ils ne passent pas par le compte notionnel ; ils
+> Et un **pilier capitalisé** : <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> % de la même assiette, prélevés en plus des
+> <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %, à compter de 2026. Ils ne passent pas par le compte notionnel ; ils
 > constituent un capital, placé sur des titres sans risque et logé dans
 > l'enveloppe du PER. Le total imposé reste inférieur à celui d'aujourd'hui :
-> 18 + 5 = 23 %, contre 28 % pour un salarié du privé. Le modèle le tient dans
+> <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> = <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total&systeme=proposition)-->23<!--/--> %, contre <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total)-->28<!--/--> % pour un salarié du privé. Le modèle le tient dans
 > un compartiment à part, et les six sorties — tableau, page, JSON — affichent
 > toujours des lignes nommées plutôt qu'une somme. Ce qui les sépare n'est pas
 > un détail de présentation : une pension de répartition s'éteint avec son
 > titulaire, un capital se transmet.
 >
-> **Qui porte ces 23 points, et c'est ce qui décide du salaire net.** La
+> **Qui porte ces <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total&systeme=proposition)-->23<!--/--> points, et c'est ce qui décide du salaire net.** La
 > proposition les annonce « salariale et patronale additionnées » sans dire qui
 > paie quoi, et le partage n'est pas neutre : la CSG est assise sur le brut,
 > que le partage déplace, et l'allègement sur les bas salaires n'efface que des
 > cotisations patronales. Le choix retenu est de **laisser la part patronale où
-> elle est** — 16,67 points, ce qu'un employeur du privé verse aujourd'hui — et
-> de faire porter toute la baisse par la part salariale, qui tombe de 11,31 à
-> **6,33**. C'est le seul partage dont la baisse arrive sur la fiche le
+> elle est** — <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=employeur)-->16,67<!--/--> points, ce qu'un employeur du privé verse aujourd'hui — et
+> de faire porter toute la baisse par la part salariale, qui tombe de <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=salarie)-->11,31<!--/--> à
+> **<!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=salarie&systeme=proposition)-->6,33<!--/-->**. C'est le seul partage dont la baisse arrive sur la fiche le
 > lendemain de la réforme, sans supposer qu'un employeur rende son économie, et
-> le seul qui rende quelque chose au voisinage du SMIC : +182 € par mois au
-> salaire moyen dès le premier mois, +91 € au SMIC. Le prix à payer est que le
+> le seul qui rende quelque chose au voisinage du SMIC : +<!--chiffre:mesure(gain_net?exemple=salaire_moyen&en=mensuel)-->203<!--/--> € par mois au
+> salaire moyen dès le premier mois, +<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->89<!--/--> € au SMIC. Le prix à payer est que le
 > salaire **brut** ne monte pas, donc ni les droits qui en dépendent, ni le
-> crédit au compte notionnel ; le partage inverse le ferait monter de 2,9 %,
+> crédit au compte notionnel ; le partage inverse le ferait monter,
 > mais des années plus tard et amputé du quart par la CSG et les autres
 > branches. `part_salariale_taux_unique` le rend réglable, et
 > `scripts/partage_taux_unique.py` chiffre les quatre partages possibles aux
@@ -123,12 +125,13 @@ Scénario                                                          Courants   Co
 >
 > Restent **cinq points rendus**, et c'est la question que tout le monde pose
 > ensuite : et si on les remettait au même endroit ? Le modèle suppose que oui
-> — une **capitalisation volontaire de 5 %**, sur la même assiette, aux mêmes
-> conditions —, et l'effort revient alors à 28 %, ce qu'il est déjà. Ce n'est
+> — une **capitalisation volontaire de <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> %**, sur la même assiette, aux mêmes
+> conditions —, et l'effort revient alors à <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total&systeme=proposition)-->23<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> points, ce que
+> le système actuel prélève déjà (<!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total)-->28<!--/-->). Ce n'est
 > pas une prévision de comportement mais une convention de comparaison : sans
 > elle, le site opposerait deux systèmes qui ne coûtent pas le même prix.
 > Elle est volontaire, donc **elle n'est pas sur la fiche de paie** : le
-> salaire net affiché est le net plein, celui que laissent les 23 points
+> salaire net affiché est le net plein, celui que laissent les <!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=total&systeme=proposition)-->23<!--/--> points
 > imposés, et les cinq points rendus sont écrits sous lui comme un placement
 > pris sur ce net, **entièrement à la charge de l'assuré** — aucun employeur
 > ne cofinance une épargne qu'on décide seul —, avec ce qui lui reste s'il le
@@ -137,7 +140,7 @@ Scénario                                                          Courants   Co
 > ligne sous lui écrit le plancher qu'on touche sans rien ajouter, pour que
 > qui ne la verserait pas n'ait rien à retrancher lui-même.
 > `capitalisation_volontaire=False` la retire, et la proposition redevient
-> 18 + 5.
+> <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/-->.
 
 > **Le scénario 2 n'est pas une proposition de réforme**, et l'écart qu'il
 > affiche ne mesure pas l'effet des comptes notionnels. Deux raisons, et aucune

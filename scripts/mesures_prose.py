@@ -86,15 +86,30 @@ EXEMPLES = {
     "fonctionnaire": {"generation": "1975", "sexe": "F",
                       "affiliation": "fonctionnaire_etat", "debut": "22",
                       "depart": "64", "primes": "0.2", "profil": "ascendant"},
+    # L'agent de conduite de l'introduction du README, parti à cinquante ans
+    # avant la bascule : ses scénarios 3 et 5 sont le système actuel.
+    "sncf": {"generation": "1955", "sexe": "H", "affiliation": "agent_sncf",
+             "debut": "20", "depart": "50", "niveau": "1.1", "profil": "ascendant"},
+    # Deux salariés du privé non cadres, actifs à la bascule, pour la fiche
+    # de paie : au salaire moyen, et au SMIC — le niveau et le profil plat du
+    # cas type « smic_carriere_complete ».
+    "salaire_moyen": {"generation": "1980", "sexe": "H",
+                      "affiliation": "salarie_prive_non_cadre", "debut": "22",
+                      "depart": "64", "niveau": "1.0", "profil": "plat"},
+    "smic": {"generation": "1980", "sexe": "H",
+             "affiliation": "salarie_prive_non_cadre", "debut": "22",
+             "depart": "64", "niveau": "0.55", "profil": "plat"},
 }
 
 
 @lru_cache(maxsize=None)
 def _comparaison(generation: int, indexation: str, lissage: str,
                  affiliation: str, sexe: str, debut: int, depart: int,
-                 primes: float, profil: str):
+                 primes: float, profil: str, niveau: float):
     simulateur = _simulateur(_parametres(indexation, lissage))
     options = {"part_primes": primes} if primes else {}
+    if niveau:
+        options["niveau_salaire"] = niveau
     if profil:
         options["profil_carriere"] = profil
     carriere = simulateur.carriere_simple(
@@ -111,7 +126,8 @@ def _comparaison_de(reglages: dict[str, str]):
     return _comparaison(int(voulu["generation"]), voulu.get("indexation", ""),
                         voulu.get("lissage", ""), voulu["affiliation"],
                         voulu["sexe"], int(voulu["debut"]), int(voulu["depart"]),
-                        float(voulu.get("primes", 0) or 0), voulu.get("profil", ""))
+                        float(voulu.get("primes", 0) or 0), voulu.get("profil", ""),
+                        float(voulu.get("niveau", 0) or 0))
 
 
 def ecart(**reglages: str) -> float:
@@ -342,6 +358,10 @@ def constante(**reglages: str) -> float:
     for morceau in reglages["nom"].split("."):
         if morceau.isdigit() and isinstance(objet, tuple) and int(morceau) < len(objet):
             objet = objet[int(morceau)]
+        elif isinstance(objet, dict) and morceau in objet:
+            # Une entrée de dictionnaire, comme l'âge de départ d'un exemple :
+            # ``EXEMPLES.sncf.depart``.
+            objet = objet[morceau]
         elif hasattr(objet, morceau):
             objet = getattr(objet, morceau)
         else:
@@ -696,10 +716,35 @@ def gain_net(**reglages: str) -> float:
     """Ce que la proposition ajoute au revenu net d'un actif, en %, sur une carrière.
 
     L'année de référence de la fiche de paie — la première année pleine sous
-    le nouveau système. Mêmes réglages que ``ecart``.
+    le nouveau système. Mêmes réglages que ``ecart`` ; ``en=mensuel`` rend le
+    gain en euros par mois plutôt qu'en pour-cent du net.
     """
     reference = _comparaison_de(reglages).remuneration.reference
+    if reglages.get("en") == "mensuel":
+        return reference.gain_net / 12
     return reference.gain_net / reference.droit_en_vigueur.net * 100
+
+
+def fiche(**reglages: str) -> float:
+    """Les cotisations retraite de la fiche de paie, en points du brut.
+
+    L'année de référence ; ``quoi=salarie`` ou ``employeur``, ``systeme=actuel``
+    (défaut) ou ``proposition``. Mêmes réglages que ``ecart``.
+    """
+    reference = _comparaison_de(reglages).remuneration.reference
+    fiche = (reference.proposition if reglages.get("systeme") == "proposition"
+             else reference.droit_en_vigueur)
+    quoi = reglages["quoi"]
+    montants = {"salarie": fiche.retraite_salarie, "employeur": fiche.retraite_employeur,
+                "total": fiche.retraite_salarie + fiche.retraite_employeur}
+    if quoi not in montants:
+        raise ValueError(f"quoi inconnu « {quoi} »")
+    return montants[quoi] / fiche.brut * 100
+
+
+def garantie_complement(**reglages: str) -> float:
+    """Ce que la garantie vieillesse sert, par mois, à qui a ``pension=…`` euros."""
+    return max(0.0, _parametres().garantie_vieillesse_mensuelle - float(reglages["pension"]))
 
 
 MESURES = {
@@ -712,6 +757,8 @@ MESURES = {
     "somme_postes": somme_postes,
     "restitution": restitution,
     "gain_net": gain_net,
+    "fiche": fiche,
+    "garantie_complement": garantie_complement,
     "avantages": avantages,
     "depense": depense,
     "surcout_passe": surcout_passe,

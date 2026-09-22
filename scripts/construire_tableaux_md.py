@@ -181,18 +181,43 @@ def tableau_generations() -> str:
 REPERE_EXEMPLE = "exemple_fonctionnaire"
 TITRE_EXEMPLE = "Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans"
 
+#: L'exemple de l'introduction : un agent de conduite parti à cinquante ans,
+#: avant la bascule. Seuls les six scénarios sont repris ; son titre dit
+#: l'anticipation que le modèle calcule, et non celle qu'on a cru lire.
+REPERE_SNCF = "exemple_sncf"
 
-def sortie_exemple() -> str:
-    """Le tableau de l'exemple et la ligne de qui verse quoi, sans le reste."""
+
+def _sortie(exemple: str):
     sys.path.insert(0, str(RACINE / "scripts"))
     from mesures_prose import _comparaison_de
 
-    lignes = _comparaison_de({"exemple": "fonctionnaire"}).tableau().split("\n")
+    comparaison = _comparaison_de({"exemple": exemple})
+    return comparaison, comparaison.tableau().split("\n")
+
+
+def _bloc(titre: str, corps: list[str]) -> str:
+    return "\n".join(["```", titre, "", *(l.rstrip() for l in corps), "```"])
+
+
+def sortie_exemple() -> str:
+    """Le tableau de l'exemple et la ligne de qui verse quoi, sans le reste."""
+    _, lignes = _sortie("fonctionnaire")
     debut = next(i for i, l in enumerate(lignes) if l.startswith("Scénario"))
     fin = next(i for i, l in enumerate(lignes) if l.lstrip().startswith("= total"))
     verse = next(i for i, l in enumerate(lignes) if l.startswith("Qui verse"))
-    corps = lignes[debut:fin + 1] + [""] + lignes[verse:verse + 5]
-    return "\n".join(["```", TITRE_EXEMPLE, "", *(l.rstrip() for l in corps), "```"])
+    return _bloc(TITRE_EXEMPLE, lignes[debut:fin + 1] + [""] + lignes[verse:verse + 5])
+
+
+def sortie_sncf() -> str:
+    """Les six scénarios de l'agent de conduite, sous le titre qui les situe."""
+    comparaison, lignes = _sortie("sncf")
+    debut = next(i for i, l in enumerate(lignes) if l.startswith("Scénario"))
+    fin = next(i for i, l in enumerate(lignes) if l.startswith("6. "))
+    ecart = comparaison.notionnel_retroactif.ecart_age
+    situation = (f" ({abs(ecart.ecart):g} ans avant l'âge de référence)"
+                 if ecart.anticipe else "")
+    titre = f"Agent de conduite SNCF né en 1955, parti à 50 ans{situation}"
+    return _bloc(titre, lignes[debut:fin + 1])
 
 
 def remplacer(texte: str, repere: str, contenu: str) -> str:
@@ -229,7 +254,8 @@ def main() -> int:
     chemin = RACINE / "README.md"
     for repere, fabrique, quoi in (
             (REPERE_GENERATIONS, tableau_generations, "tableau des générations"),
-            (REPERE_EXEMPLE, sortie_exemple, "sortie de l'exemple du §3")):
+            (REPERE_EXEMPLE, sortie_exemple, "sortie de l'exemple du §3"),
+            (REPERE_SNCF, sortie_sncf, "sortie de l'exemple de l'introduction")):
         texte = chemin.read_text(encoding="utf-8")
         voulu = remplacer(texte, repere, fabrique())
         if voulu == texte:
