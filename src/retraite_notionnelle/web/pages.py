@@ -3391,12 +3391,12 @@ def _releve(saisie: Saisie) -> str:
 #: devant le champ qu'on se demande quoi y écrire.
 APPEL_REVENU_RETRAITE = (
     " Jamais une pension : la pension est ce que le simulateur CALCULE, et "
-    "l'écrire ici reviendrait à cotiser sur elle — la pension rendue serait "
-    "celle de quelqu'un qui aurait gagné, toute sa vie, ce que vous touchez "
+    "l'écrire ici reviendrait à cotiser dessus. Le montant rendu serait alors "
+    "celui de quelqu'un qui aurait gagné, toute sa vie, ce que vous touchez "
     "une fois à la retraite. "
     "Déjà à la retraite ? Écrivez ce que vous gagniez en travaillant, au "
-    "milieu de votre carrière — ou déposez votre relevé, plus bas, qui écrit "
-    "la carrière année par année et dispense de l'estimer."
+    "milieu de votre carrière. Ou déposez votre relevé, plus bas : il écrit "
+    "la carrière année par année, et dispense de l'estimer."
 )
 
 
