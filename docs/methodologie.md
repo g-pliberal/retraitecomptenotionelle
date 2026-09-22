@@ -314,26 +314,26 @@ la conséquence logique de la règle (`plancher_indexation`).
 Les séries observées s'arrêtent en 2025. Geler la dernière valeur serait une
 hypothèse implicite et fausse. Le modèle projette donc explicitement, selon le
 jeu de scénarios du Conseil d'orientation des retraites
-(`data/reference/macro/hypotheses_projection.yaml`) : inflation 1,75 % et
-productivité réelle **0,7 %** dans le scénario de référence, **0,4 %** et
-**1,0 %** dans les deux variantes. C'est la nomenclature que le COR retient
+(`data/reference/macro/hypotheses_projection.yaml`) : inflation <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.inflation*100)-->1,75<!--/--> % et
+productivité réelle **<!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.productivite_reelle*100)-->0,7<!--/--> %** dans le scénario de référence, **<!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_productivite_basse.productivite_reelle*100)-->0,4<!--/--> %** et
+**<!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_productivite_haute.productivite_reelle*100)-->1,0<!--/--> %** dans les deux variantes. C'est la nomenclature que le COR retient
 depuis son rapport de juin 2025 — celui-là même qui abandonne la variante à
-1,3 %, « prenant note du ralentissement structurel de la productivité » — et
+<!--chiffre:illustration()-->1,3<!--/--> %, « prenant note du ralentissement structurel de la productivité » — et
 qu'il reconduit à l'identique en juin 2026. Toute année projetée porte la
 fiabilité la plus basse, qui se propage jusqu'au résultat.
 
 **Le site affiche une fourchette, pas un nombre seul.** Sous les cinq scénarios,
 un bloc rejoue la même carrière sous les trois hypothèses de productivité et
-donne l'amplitude — pour une génération 2000 partant à 64 ans, la pension du
-scénario 2 va de 654 € à 822 € par mois, soit 25,7 % d'écart. Il dit aussi
-combien d'années du compte tombent après la dernière observation : 39 sur 44,
-soit 88,6 % du calcul. Quand la liquidation précède cette année-là, le bloc le
+donne l'amplitude — pour la génération 2000, entrée à <!--chiffre:illustration()-->21<!--/--> ans et partant à
+<!--chiffre:illustration()-->64<!--/--> ans, la pension du scénario 2 va de <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=basse)-->654<!--/--> € à <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=haute)-->822<!--/--> € par mois, soit
+<!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=amplitude)-->25,7<!--/--> % d'écart. Il dit aussi combien d'années du compte tombent après la
+dernière observation : <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=projetees)-->39<!--/--> sur <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=annees)-->44<!--/-->, soit <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=part)-->88,6<!--/--> % du calcul. Quand la liquidation précède cette année-là, le bloc le
 dit et ne montre aucune fourchette — **aucune hypothèse n'entre alors dans le
 chiffre**, et c'est la chose la plus utile qu'on puisse dire à un lecteur qui
 s'en méfie.
 
 Cette fourchette n'est **pas un intervalle de confiance** : elle ne fait varier
-que la productivité, laisse l'inflation à 1,75 %, l'emploi sur la trajectoire
+que la productivité, laisse l'inflation à <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.inflation*100)-->1,75<!--/--> %, l'emploi sur la trajectoire
 retenue — celle du scénario de référence du COR par défaut, constant en
 variante — et la législation inchangée. C'est une mesure de sensibilité à un
 paramètre, et la page l'écrit — l'avenir peut sortir de la fourchette. Le
@@ -347,14 +347,15 @@ séries**, comme la dernière que les trois assiettes portent au-dessus de
 exige que les deux coïncident : une déclaration que rien ne contrôle finit par
 mentir.
 
-Trois écarts avec la source, assumés et détaillés dans le fichier
+Deux écarts avec la source, assumés et détaillés dans le fichier
 d'hypothèses : le COR raisonne en productivité **horaire**, le modèle en
 productivité **par tête**, seule série que l'INSEE publie de 1950 à 2025 ; le
 COR atteint sa cible **en 2040**, le modèle l'applique **dès 2026**, sans
-trajectoire de convergence ; le COR projette l'emploi, le modèle le suppose
-constant. Et l'inflation de 1,75 % est une convention reconduite des rapports
-antérieurs du COR — ce n'est pas la cible de la BCE, qui est de 2 % symétrique
-depuis 2021, et les documents publics de juin 2025 et de juin 2026 ne la
+trajectoire de convergence. L'emploi, que le modèle a longtemps supposé
+constant, suit désormais la trajectoire de référence du COR, l'emploi constant
+restant en variante. Et l'inflation de <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.inflation*100)-->1,75<!--/--> % est une convention reconduite des
+rapports antérieurs du COR — ce n'est pas la cible de la BCE, qui est de
+<!--chiffre:illustration()-->2<!--/--> % symétrique depuis 2021, et les documents publics de juin 2025 et de juin 2026 ne la
 restatent pas.
 
 ---
