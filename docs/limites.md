@@ -7560,10 +7560,10 @@ six groupes plus la ligne « toutes CSP » —, et
 quels groupes il se compare et pourquoi. `scripts/age_depart_csp.py` fait la
 confrontation.
 
-**Les écarts individuels valent 1,16 an, et ils se compensent.** Pesés comme
-sur la page « Coût », les neuf cas types comparables s'écartent de 1,16 an en
+**Les écarts individuels valent 1,17 an, et ils se compensent.** Pesés comme
+sur la page « Coût », les huit cas types comparables s'écartent de 1,17 an en
 valeur absolue et de +0,46 an seulement en signé, là où le tous régimes donne
-−0,09 an sur la même fenêtre. La concordance d'ensemble n'était donc pas un
+−0,07 an sur la même fenêtre. La concordance d'ensemble n'était donc pas un
 accord cas par cas : c'est une compensation, à laquelle s'ajoutent les quatre
 cas types laissés hors champ — militaire, agent de conduite, agent des IEG,
 catégorie active —, qui pèsent 8,3 % de la grille et partent entre 44,0 et
@@ -7577,11 +7577,10 @@ catégorie active —, qui pèsent 8,3 % de la grille et partent entre 44,0 et
 | Salarié au SMIC, carrière complète | 60,00 | 61,59 – 61,95 | **−1,59** |
 | Cadre du privé | 64,07 | 62,59 | +1,48 |
 | Chef d'exploitation agricole | 61,73 | 62,85 | −1,12 |
-| Profession libérale | 63,25 | 62,59 | +0,66 |
 | Salarié au salaire moyen | 62,33 | 61,24 – 61,95 | +0,38 |
 | Carrière interrompue | 61,64 | 61,24 – 61,95 | 0,00 |
 
-Un seul cas type sur neuf tombe dans son couloir. **Le sens des écarts est
+Un seul cas type sur huit tombe dans son couloir. **Le sens des écarts est
 cohérent, et il désigne l'âge d'entrée** : les trois qui partent le plus tard —
 le contractuel et l'artisan entrent à vingt-quatre ans, le cadre à
 vingt-trois — sont ceux dont la fiche impose une entrée tardive, et qui doivent
@@ -7630,7 +7629,7 @@ réduit à une seule catégorie est un POINT, qu'un pas d'une demi-année n'atte
 pas — le résidu subsiste, de 0,12 à 0,30 an pour trois cas types. Elles étaient
 TROIS jusqu'au 21 septembre 2026, la troisième disant que deux cas types ne
 répondaient pas à leur âge d'entrée ; c'était un défaut du moteur, et il est
-corrigé — les neuf cas types comparables y répondent tous.
+corrigé — les huit cas types comparables y répondent tous.
 
 **Une carrière tout en points ne se voyait rien opposer.** C'est ce que la
 recherche d'âge d'entrée a fait voir, et le défaut avait trois faces. Toutes
@@ -7722,6 +7721,26 @@ et la DREES tranche dans le même sens — les professions libérales partent à
 62,6 ans en moyenne de 2013 à 2020, non à soixante-sept. **Le défaut en
 masquait un second** : un libéral réel a des années salariées avant son
 installation, et ce cas type n'en a aucune.
+
+**Un groupe de la nomenclature n'est pas toujours la bonne référence, et le
+libéral l'a montré.** Il y figurait, au groupe 3, « cadres et professions
+intellectuelles supérieures » — c'est bien là que la nomenclature met les
+professions libérales, et non au groupe 2 avec les indépendants. Mais ce groupe
+est dominé par les cadres SALARIÉS, et sa moyenne ne décrit pas les libéraux :
+**la CNAVPL publie l'âge moyen à la liquidation de ses propres titulaires**, et
+il vaut 64,81 ans en 2018 et 66,11 en 2025, contre 62,59 pour le groupe 3 tout
+entier. Trois ans et demi d'écart. Confronté au chiffre de sa caisse plutôt
+qu'à celui de son groupe, le cas type part **1,24 an trop TÔT** en moyenne de
+2018 à 2025, là où le groupe 3 le disait 0,66 an trop tard : **le signe
+s'inverse**. Il est donc sorti du champ de cette confrontation-là, avec sa
+raison écrite dans `cas_types_csp.yaml`, et huit cas types y restent.
+
+C'est aussi la correction d'une phrase que ce dépôt a portée une journée : « la
+DREES observe les professions libérales partir à 62,6 ans en moyenne » disait
+le groupe 3, pas les libéraux. La décision qu'elle servait à justifier — dater
+le départ de ce cas type sur l'âge d'OUVERTURE et non sur le taux plein — reste
+la bonne, et pour une meilleure raison : le taux plein le ferait partir à
+soixante-neuf ans, quand sa caisse observe soixante-six.
 
 **Ce que le couloir vaut, et ce qu'il ne vaut pas.** La nomenclature classe des
 professions, la grille décrit des carrières par leur régime et leur niveau de

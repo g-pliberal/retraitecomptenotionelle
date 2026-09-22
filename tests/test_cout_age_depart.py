@@ -31,7 +31,8 @@ import cout_age_depart as CAD  # noqa: E402
 
 #: Les cas types que `cas_types_csp.yaml` laisse hors champ : le contrefactuel
 #: ne doit pas y toucher.
-HORS_CHAMP = ("militaire", "agent_sncf_conduite", "agent_ieg", "fonctionnaire_actif")
+HORS_CHAMP = ("militaire", "agent_sncf_conduite", "agent_ieg",
+              "fonctionnaire_actif", "profession_liberale")
 
 #: Les deux cas types dont la carrière est ENTIÈREMENT en points : le moteur
 #: ne leur opposait ni durée, ni âge d'ouverture, ni carrière longue.

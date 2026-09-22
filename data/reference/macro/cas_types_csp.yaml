@@ -74,12 +74,25 @@ cas_types:
       intellectuelles supérieures.
 
   - code: profession_liberale
-    groupes: ["3"]
-    motif: >-
-      Les professions libérales sont dans le groupe 3, et non dans le groupe 2
-      avec les indépendants — c'est un classement de la nomenclature qu'on
-      suivrait mal de mémoire, et il compte ici : le groupe 3 part en moyenne
-      plus tôt que le groupe 2.
+    hors_champ: >-
+      La nomenclature les met bien dans le groupe 3, avec les cadres et les
+      professions intellectuelles supérieures — et non dans le groupe 2 avec
+      les indépendants, classement qu'on suivrait mal de mémoire. Mais ce
+      groupe est dominé par les cadres SALARIÉS, et sa moyenne ne décrit pas
+      les libéraux : la CNAVPL publie l'âge moyen à la liquidation de ses
+      propres titulaires, et il vaut 64,8 ans en 2018 et 66,1 ans en 2025,
+      contre 62,6 ans pour le groupe 3 tout entier. Trois ans et demi d'écart :
+      comparer le cas type à son groupe reviendrait à lui opposer la carrière
+      d'un autre. Le chiffre de sa caisse est meilleur, et
+      `docs/limites.md` § 5 ter porte la confrontation — le cas type part 1,24
+      an trop TÔT, là où le groupe 3 le disait 0,66 an trop tard.
+    source: >-
+      CNAVPL, recueil statistique 2025, « Âges moyens » : âge moyen à la
+      liquidation des titulaires du régime de base, 64,81 ans au 30 juin 2018
+      et 66,11 au 30 juin 2025 (CIPAV-PL, la section de ce cas type : 64,91 et
+      66,02) ; âge moyen à l'immatriculation, 35,32 ans en 2018 et 32,58 en
+      2025. Lu le 22 septembre 2026 (`scripts/fetch/cnavpl_recueils.py` dépose
+      le document).
 
   - code: fonctionnaire_sedentaire
     groupes: ["4"]

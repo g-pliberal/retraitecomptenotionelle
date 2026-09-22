@@ -104,43 +104,61 @@ def test_chaque_cas_type_a_sa_ligne_et_son_motif():
             assert len(fiche["hors_champ"].split()) >= 10, code
 
 
-def test_les_professions_liberales_sont_avec_les_cadres():
-    """Le classement qu'on suivrait mal de mémoire, et qui change la réponse.
+def test_le_liberal_est_au_groupe_3_et_hors_champ_quand_meme():
+    """Le classement qu'on suivrait mal de mémoire, et ce qu'il ne suffit pas à régler.
 
-    La nomenclature les met dans le groupe 3 avec les cadres, non dans le
-    groupe 2 avec les artisans et les commerçants. Le groupe 2 part en moyenne
-    plus tard : les confondre déplacerait l'écart du libéral.
+    La nomenclature met les professions libérales dans le groupe 3 avec les
+    cadres, non dans le groupe 2 avec les artisans — et la fiche le dit. Mais
+    ce groupe est dominé par les cadres SALARIÉS : la CNAVPL publie pour ses
+    propres titulaires un âge de liquidation supérieur de plus de trois ans à
+    celui du groupe entier, et le cas type est donc hors champ. Le classement
+    reste écrit, parce que c'est lui qu'on retrouverait de travers.
     """
     fiches = {fiche["code"]: fiche
               for fiche in age_depart_csp.correspondance()["cas_types"]}
-    assert fiches["profession_liberale"]["groupes"] == ["3"]
+    liberal = fiches["profession_liberale"]
+    assert "groupes" not in liberal
+    assert "groupe 3" in liberal["hors_champ"]
+    assert "CNAVPL" in liberal["hors_champ"]
+    assert "CNAVPL" in liberal["source"]
     assert fiches["cadre"]["groupes"] == ["3"]
     assert fiches["artisan"]["groupes"] == ["2"]
 
 
-def test_quatre_cas_types_sortent_du_champ_et_ce_sont_les_departs_precoces(
+def test_cinq_cas_types_sortent_du_champ_et_leur_motif_est_ecrit(
         confrontations):
-    """Le militaire, l'agent de conduite, l'agent des IEG, la catégorie active.
+    """Quatre départs précoces, et un libéral que son groupe ne décrit pas.
 
-    Leur départ n'est pas une sortie du marché du travail, et l'enquête Emploi
-    compte retraité qui se déclare tel. Les comparer reviendrait à dater deux
-    événements différents.
+    Pour les quatre premiers — militaire, agent de conduite, agent des IEG,
+    catégorie active —, le départ n'est pas une sortie du marché du travail, et
+    l'enquête Emploi compte retraité qui se déclare tel : les comparer
+    reviendrait à dater deux événements différents. Pour la profession
+    libérale, la nomenclature la place bien au groupe 3, mais ce groupe est
+    dominé par les cadres salariés — la CNAVPL publie 64,8 ans en 2018 pour ses
+    propres titulaires contre 62,6 pour le groupe entier, et le signe de
+    l'écart s'inverse selon la référence retenue.
+
+    Chaque motif est écrit dans la fiche, et fait au moins dix mots : c'est la
+    seule chose qui empêche une mise hors champ de devenir une commodité.
     """
     _, hors_champ = confrontations
     assert set(hors_champ) == {
-        "militaire", "agent_sncf_conduite", "agent_ieg", "fonctionnaire_actif"}
+        "militaire", "agent_sncf_conduite", "agent_ieg", "fonctionnaire_actif",
+        "profession_liberale"}
+    for code, motif in hors_champ.items():
+        assert len(motif.split()) >= 10, code
 
 
 def test_les_ecarts_individuels_valent_plus_d_une_annee(confrontations):
     """Ce que la concordance d'ensemble ne disait pas.
 
-    Neuf cas types comparables, pesés comme sur la page « Coût » : plus d'une
+    Huit cas types comparables, pesés comme sur la page « Coût » : plus d'une
     année d'écart en valeur absolue, là où le tous régimes donnait moins d'un
     dixième. Le seuil est lâche — ce qu'on refuse est que ce constat s'efface
     sans que personne le voie.
     """
     lignes, _ = confrontations
-    assert len(lignes) == 9
+    assert len(lignes) == 8
     absolu = sum(ligne.poids * abs(ligne.ecart) for ligne in lignes)
     assert absolu > 0.8
     assert max(abs(ligne.ecart) for ligne in lignes) > 2.0

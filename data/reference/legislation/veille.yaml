@@ -659,11 +659,7 @@ entrees:
       soixante-quatre ans avec cent quarante-huit trimestres sur cent
       soixante-six requis. Les deux articles ci-dessus disent que la durée
       s'oppose, et la règle les suit depuis le 21 septembre 2026.
-    a_faire: >-
-      Le barème agricole reste non lu : R. 732-39 du code rural pose la
-      CONDITION du coefficient de minoration, mais l'article qui en donne le
-      TAUX n'est pas dans le champ social de l'index LEGI du dépôt. La fiche
-      `msa_non_salaries` garde donc 1,25 % par trimestre sans l'avoir lu.
+    a_faire: null
     prochaine_veille: "2027-03-31"
 
   - id: bareme_minoration_regimes_en_points
@@ -697,6 +693,29 @@ entrees:
           coefficient — liquidation avant l'âge de L. 732-25 et sans la durée
           du deuxième alinéa de L. 351-1 — et non son taux.
         date: "2026-09-21"
+      - type: legifrance
+        reference: >-
+          R. 732-61 du code rural, LEGIARTI000035918397, version du 28 octobre
+          2017 en vigueur jusqu'au 1er janvier 2026 : « La minoration est égale
+          au produit du plus petit de ces deux nombres, arrondis chacun au
+          nombre immédiatement supérieur, par le coefficient suivant : −2,5 %
+          pour l'assuré né avant le 1er janvier 1944 ; −2,375 % pour l'assuré
+          né en 1944 ; −2,25 % en 1945 ; −2,125 % en 1946 ; −2 % en 1947 ;
+          −1,875 % en 1948 ; −1,75 % en 1949 ; −1,625 % en 1950 ; −1,5 % en
+          1951 ; −1,375 % en 1952 ; −1,25 % pour l'assuré né après 1952. » Ces
+          onze valeurs sont, génération par génération, celles du II de
+          R. 351-27 que porte déjà `coefficient_minoration.csv`.
+        date: "2026-09-22"
+      - type: legifrance
+        reference: >-
+          R. 732-68 du code rural, LEGIARTI000053336735, version du 1er janvier
+          2026 (décret n° 2025-1409 du 31 décembre 2025) : « Le coefficient de
+          minoration prévu au II de l'article L. 732-24 du présent code est
+          déterminé dans les mêmes conditions que celui mentionné au 2° du I de
+          l'article R. 351-27 du code de la sécurité sociale, y compris
+          s'agissant du plafonnement mentionné à l'article R. 351-27-1 du même
+          code. » L'alignement sur le régime général devient explicite.
+        date: "2026-09-22"
     verifie_le: "2026-09-21"
     temoins: []
     reformes: []
@@ -705,11 +724,19 @@ entrees:
       Le barème de la fiche `cnavpl` — 1,25 % par trimestre — est confirmé par
       le texte, et `_trimestres_de_decote` appliquait déjà les trois règles de
       l'article : plus petit des deux décomptes, arrondi de R. 351-27, plafond
-      de vingt trimestres. Aucune valeur n'a bougé.
+      de vingt trimestres. Le barème AGRICOLE l'est aussi, et il est
+      générationnel : R. 732-61 donne les onze mêmes valeurs que le II de
+      R. 351-27, de 2,5 % avant 1944 à 1,25 % après 1952, et la fiche
+      `msa_non_salaries` porte déjà `decote_par_generation: true`, qui les lit
+      dans `coefficient_minoration.csv`. Son `decote_par_trimestre: 0.0125`
+      n'est que le repli. Aucune valeur n'a bougé, des deux côtés.
     a_faire: >-
-      Le taux agricole n'est pas lu : l'article qui le porte est hors du champ
-      social de l'index. La fiche `msa_non_salaries` garde 1,25 % par
-      transcription.
+      Le PLAFOND du nombre de trimestres n'est explicite que chez les libéraux
+      — R. 643-7, « dans la limite de vingt trimestres ». R. 351-27 2° n'en
+      porte aucun, et R. 732-61 non plus avant 2026 : le modèle en applique un
+      de vingt partout, ce qui ne mord que sur un départ plus de cinq ans avant
+      l'âge d'annulation, où la décote ne s'applique de toute façon pas. À
+      trancher sur texte plutôt que sur cette remarque.
     prochaine_veille: "2027-03-31"
 
   - id: carriere_longue_regimes_en_points
@@ -2046,3 +2073,39 @@ journal:
       c'est ce qui a séparé plusieurs fois depuis 2014 le montant servi de ce
       que les prix auraient donné. La ligne est donc à relire à chaque loi de
       financement, et pas seulement au 1er janvier.
+  - date: 2026-09-22
+    session: "le barème agricole, et le groupe qui ne décrivait pas le libéral"
+    consulte: >-
+      Index LEGI du dépôt, interrogé directement en SQL plutôt que par
+      `dila_cherche.py` : les 262 articles D732/R732 du code rural, puis les 43
+      qui contiennent « minoration ». R. 732-61 (huit versions), R. 732-68
+      (deux), R. 351-27 et R. 351-27-1, D. 732-40 et D. 732-41. Et hors LEGI,
+      le recueil statistique 2025 de la CNAVPL, déposé par
+      `scripts/fetch/cnavpl_recueils.py` et lu par `lecture_pdf.py`.
+    trouve: >-
+      LE BARÈME AGRICOLE EST GÉNÉRATIONNEL, et c'est celui du régime général.
+      R. 732-61 dans sa version de 2017 donne onze coefficients, de 2,5 % pour
+      les nés avant 1944 à 1,25 % après 1952 — les mêmes, génération par
+      génération, que le II de R. 351-27 que `coefficient_minoration.csv`
+      porte déjà. La fiche `msa_non_salaries` ayant `decote_par_generation`,
+      le modèle les applique depuis toujours : la transcription est confirmée,
+      et rien ne bouge. Depuis le 1er janvier 2026, R. 732-68 rend l'alignement
+      explicite. L'article n'était pas introuvable : la recherche plein texte
+      ne le rendait pas, la requête SQL sur le titre du code, si.
+      ET LE RECUEIL DE LA CNAVPL A DÉMENTI UNE PHRASE ÉCRITE LA VEILLE. Le
+      dépôt disait « la DREES observe les professions libérales partir à
+      62,6 ans » : c'est le groupe 3 de la nomenclature, dominé par les cadres
+      SALARIÉS. La caisse des libéraux publie l'âge de ses propres titulaires —
+      64,81 ans en 2018, 66,11 en 2025 — et l'âge moyen à l'immatriculation,
+      32,58 ans en 2025, qui dit à lui seul qu'un libéral a dix ans de carrière
+      ailleurs avant de s'installer. Confronté à sa caisse, le cas type part
+      1,24 an trop TÔT là où son groupe le disait 0,66 an trop tard : le signe
+      s'inverse. Il est sorti du champ de la confrontation par catégorie.
+    reste: >-
+      Le plafond de vingt trimestres n'est explicite que chez les libéraux
+      (R. 643-7) ; ni R. 351-27 2° ni R. 732-61 n'en portent, et le modèle en
+      applique un partout. Il ne mord que sur un départ de plus de cinq ans
+      avant l'âge d'annulation, où la décote ne s'applique pas, mais c'est à
+      trancher sur texte. Et le cas type libéral n'a toujours aucune carrière
+      antérieure : la structure `CasType` ne porte qu'une affiliation, et lui
+      en donner deux est un chantier, non une retouche.
