@@ -2652,6 +2652,9 @@ function champsModelisation(saisie) {
 function formulaire(saisie, contexte) {
   const affiliations = contexte.simulateur().affiliations;
   const echelle = contexte.echelle(saisie);
+  // La bascule net/brut traduit la pension saisie comme elle traduit les
+  // salaires : il lui faut donc ce qu'une pension supporte.
+  const tauxPension = Montants.depuis(saisie, contexte.simulateur()).tauxPension;
 
   // Trois champs là où il en fallait cinq : une date de naissance porte son
   // mois, une date de départ porte l'âge qu'on écrivait en deux fois. Les
@@ -2731,7 +2734,7 @@ function formulaire(saisie, contexte) {
   ${blocPension(saisie)}
   ${basculeSaisie(saisie)}
   ${saisie.parPension ? "" : basculeUnite(saisie, echelle)}
-  ${basculeMontants(saisie, echelle)}
+  ${basculeMontants(saisie, echelle, tauxPension)}
   ${mentionConversion(saisie, echelle)}
   ${releveFormulaire(saisie)}
   <details class="options">
@@ -3948,8 +3951,16 @@ ${detail}
  * chemin par lequel la bascule de saisie traduit quelque chose — elle ne le
  * peut pas elle-même, faute de connaître le résultat d'un calcul qui n'a pas
  * encore eu lieu.
+ *
+ * ELLE NOMME LE SECOND REVENU DE LA PAGE, faute de quoi les deux se
+ * contredisent à l'œil. Les barres portent, à gauche de chaque pension, ce que
+ * la carrière paie l'année de référence des fiches de paie ; ce chiffre n'est
+ * pas celui-ci, et n'a aucune raison de l'être — le profil de carrière fait
+ * monter le revenu avec l'âge, et les deux se lisent donc à deux moments
+ * différents de la même vie. Les afficher à quelques centimètres l'un de
+ * l'autre sans le dire faisait douter des deux.
  */
-function revenuDeduit(contexte, comparaison, saisie) {
+function revenuDeduit(contexte, comparaison, saisie, montants) {
   const trouve = comparaison.niveau_inverse;
   if (!trouve) return "";
   const echelle = contexte.echelle(saisie);
@@ -3982,11 +3993,34 @@ function revenuDeduit(contexte, comparaison, saisie) {
   <p>C'est le revenu d'activité dont le <strong>système actuel</strong> tire
   exactement la pension que vous avez saisie. Il vaut pour ${quand}. Les quatre
   montants ci-dessous sont calculés sur cette carrière-là.</p>
+  ${secondRevenu(comparaison, montants, affiche)}
   <p class="discret"><a href="${reprise}">Reprendre cette carrière en saisissant
   le revenu</a> — pour le corriger, ou pour donner un revenu différent à chaque
   période.</p>
 </div>
 `;
+}
+
+/**
+ * L'autre revenu que la page affiche, et pourquoi il n'est pas le même.
+ *
+ * Muet quand les barres n'en portent pas — un retraité ne cotise plus —, et
+ * muet quand les deux tombent sur le même euro, ce qui arrive sous un profil de
+ * carrière plat : il n'y aurait alors rien à expliquer, et la phrase ne ferait
+ * que semer le doute qu'elle est censée lever.
+ */
+function secondRevenu(comparaison, montants, deduit) {
+  const remuneration = comparaison.remuneration;
+  if (remuneration === null || remuneration === undefined) return "";
+  const reference = remuneration.reference;
+  const paie = montants.salaire(reference.droitEnVigueur) / MOIS_PAR_AN;
+  if (Math.abs(paie - deduit) < 1.0) return "";
+  return `<p>Les barres en portent un second, et les deux sont justes : `
+    + `${g.euros(paie)} par mois, ce que cette même carrière paie en `
+    + `${reference.annee}. Le profil de carrière fait monter le revenu avec `
+    + "l'âge, si bien que les deux chiffres se lisent à deux moments "
+    + "différents de la même vie. C'est celui du dessus que le formulaire "
+    + "demande.</p>";
 }
 
 function resultats(contexte, saisie) {
@@ -4296,9 +4330,9 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>`;
 <h2 id="resultats" tabindex="-1">Résultats\
 ${lectureDesMontants(comparaison, saisie)}</h2>
 ${lecture}
-${revenuDeduit(contexte, comparaison, saisie)}
+${revenuDeduit(contexte, comparaison, saisie, montants)}
 <div class="carte">
-  ${basculeMontants(saisie, contexte.echelle(saisie))}
+  ${basculeMontants(saisie, contexte.echelle(saisie), montants.tauxPension)}
   ${scenarios}
   ${fiabilite}
   ${capitalisation}
@@ -4608,9 +4642,23 @@ function mentionConversion(saisie, echelle) {
  * ferait relire comme un brut, et la page reviendrait en décrivant une AUTRE
  * carrière — mieux payée d'un quart.
  */
-function basculeMontants(saisie, echelle) {
+function basculeMontants(saisie, echelle, tauxPension) {
   const versLeNet = !saisie.enNet;
   const remplacements = { montants: versLeNet ? "net" : "brut" };
+  // LA PENSION SAISIE SE TRADUIT COMME LES SALAIRES, et pour exactement la
+  // même raison : le nombre du formulaire est un net en mode net. Le recopier
+  // tel quel dans l'autre mode le ferait relire comme un brut — une pension
+  // plus petite d'un dixième —, et la page reviendrait en décrivant une autre
+  // carrière que celle qu'on venait de calculer. Le taux est celui des
+  // pensions, non celui d'un salaire : une pension ne supporte que la CSG, la
+  // CRDS et la CASA.
+  if (saisie.saisie_par === "pension") {
+    remplacements.pension = nombreBrut(arrondir(
+      versLeNet ? saisie.pension * (1 - tauxPension)
+        : saisie.pension / (1 - tauxPension),
+      0,
+    ));
+  }
   // Seule la saisie EN EUROS porte un net ou un brut : un multiple du salaire
   // moyen est un rapport entre deux bruts, que le mode ne touche pas.
   if (saisie.revenu_en_euros) {

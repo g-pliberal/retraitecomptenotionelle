@@ -934,6 +934,68 @@ def test_une_pension_que_nulle_carriere_ne_sert_est_refusee(
     assert phrase in corps
 
 
+def test_la_bascule_net_brut_traduit_la_pension_saisie(contexte):
+    """Changer d'affichage ne doit pas changer la carrière qu'on a décrite.
+
+    Le nombre du formulaire est un NET en mode net. Le recopier tel quel dans
+    l'autre mode le ferait relire comme un brut — une pension plus petite d'un
+    dixième —, et la page reviendrait en décrivant une autre carrière que celle
+    qu'on venait de calculer, sans un mot. C'est le bogue que la bascule évite
+    depuis toujours pour les salaires ; la pension l'avait rouvert.
+    """
+    base = {"saisie_par": "pension", "pension": "1800",
+            "naissance": "1975-01-01", "debut": "1996-01",
+            "liquidation": "2039-01"}
+    _, corps = rendre(contexte, "/simuler", base)
+    bloc = re.search(r'<div class="bascule"[^>]*aria-label="Montants".*?</div>',
+                     corps, re.S)
+    assert bloc, "la bascule des montants a disparu"
+    lien = re.search(r'href="#/simuler\?([^"]*)"', bloc.group(0))
+    assert lien, "la bascule ne mène nulle part"
+    vers_brut = dict(parse_qsl(html.unescape(lien.group(1))))
+    assert vers_brut["montants"] == "brut"
+    # 1 800 € nets valent environ 1 980 € bruts : une pension ne supporte que
+    # la CSG, la CRDS et la CASA, soit 9,1 %.
+    assert 1960 <= float(vers_brut["pension"]) <= 2000, (
+        f"la pension n'a pas été traduite : {vers_brut['pension']}"
+    )
+    # Et la carrière est la même des deux côtés : le revenu déduit en brut est
+    # celui du net, converti par la fiche de paie du statut.
+    _, en_brut = rendre(contexte, "/simuler", vers_brut)
+    assert abs(_pension_affichee(contexte, en_brut)
+               - float(vers_brut["pension"])) < 1.5
+
+
+def test_les_deux_revenus_de_la_page_ne_se_contredisent_pas(contexte):
+    """La page en affiche deux, et elle doit dire pourquoi ils diffèrent.
+
+    Le bloc du haut donne le revenu du MILIEU de carrière — celui que le
+    formulaire demande —, les barres donnent ce que la carrière paie l'année de
+    référence des fiches de paie. Le profil de carrière fait monter le revenu
+    avec l'âge : les deux nombres diffèrent, et les lire à quelques centimètres
+    l'un de l'autre sans explication faisait douter des deux.
+    """
+    commun = {"saisie_par": "pension", "pension": "1800",
+              "naissance": "1975-01-01", "debut": "1996-01",
+              "liquidation": "2039-01"}
+    _, ascendant = rendre(contexte, "/simuler", commun)
+    assert "Les barres en portent un second" in ascendant
+    deduit = re.search(r'<p class="cle-chiffre">([\d\u202f]+)', ascendant)
+    paie = re.search(r'<span class="chiffre salaire">.*?'
+                     r'<span class="somme">([\d\u202f]+)', ascendant, re.S)
+    assert deduit and paie, "un des deux revenus a disparu de la page"
+    assert deduit.group(1) != paie.group(1), (
+        "les deux revenus coïncident : la phrase qui les distingue n'a plus "
+        "lieu d'être, et ce test ne mesure plus rien"
+    )
+
+    # Sous un profil PLAT, le revenu ne bouge pas avec l'âge : les deux
+    # tombent sur le même euro, et la phrase se tait plutôt que d'expliquer
+    # une différence qui n'existe pas.
+    _, plat = rendre(contexte, "/simuler", {**commun, "profil": "plat"})
+    assert "Les barres en portent un second" not in plat
+
+
 def test_le_formulaire_de_pension_retire_les_revenus(contexte):
     """Les deux nombres ne peuvent pas compter à la fois.
 
