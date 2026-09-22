@@ -1824,7 +1824,31 @@ institutions:
         url: https://www.ircantec.retraites.fr/
         acces: document
         statut_integration: saisi
-        cible: data/reference/regimes/ircantec.yaml
+        cible: data/reference/regimes/complementaires_prive.yaml
+
+      - id: ircantec_annexes_baremes
+        titre: >-
+          Annexes de barème de la base documentaire Ircantec — taux de
+          cotisation (annexe 4-4), taux théoriques et salaire de référence
+          (annexe 8-1)
+        url: https://baseircantec.retraites.fr/
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/complementaires_prive.yaml
+        note: >-
+          La base documentaire que la Caisse des dépôts tient pour les
+          gestionnaires du régime, à côté des deux CSV de
+          `scripts/fetch/cdc_ircantec.py`. Ses annexes portent ce que les CSV
+          n'ont pas : la part de l'AGENT et celle de l'EMPLOYEUR dans chaque
+          taux, à chaque date d'effet depuis 1925, et les taux théoriques
+          depuis 1935. Lues le 22 septembre 2026, elles ont soldé la
+          convention de répartition que la fiche reportait sur toute la série
+          — juste sur la tranche A, fausse sur la tranche B avant 2017. Elles
+          donnent aussi le salaire de référence de 2023 et de 2024, que les
+          CSV s'arrêtent avant de publier : à verser dans
+          `valeurs_point.csv` par un récupérateur, ce qui suppose de lire le
+          PDF (le dépôt sait le faire, `scripts/fetch/lecture_pdf.py`) et
+          d'ajouter le recontrôle qui les certifie.
 
   regimes_speciaux:
     nom: Caisses des régimes spéciaux (CPRPSNCF, CRPRATP, CNIEG, ENIM, CRPCEN, Banque de France, Opéra, Comédie-Française…)

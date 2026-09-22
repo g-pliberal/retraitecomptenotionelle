@@ -1,6 +1,6 @@
 # Explorer les sources officielles — la méthode
 
-Le 22 septembre 2026, 188 adresses ont été remises au dépôt en cinq lots :
+Le 22 septembre 2026, 213 adresses ont été remises au dépôt en six lots :
 simulateurs de caisses, pages de règles, barèmes, circulaires, index de
 documents, et quatre modèles publics dont le code est ouvert. Elles sont
 inventoriées dans `data/sources_a_explorer.yaml`, une par ligne, avec ce
@@ -17,12 +17,12 @@ mains humaines, et l'on en a la preuve dans ce dépôt même.
 
 ## Ce qu'une session obtient, mesuré et non supposé
 
-Les 188 adresses ont été sondées le 22 septembre 2026, à raison d'une requête
-chacune. Cent quatre-vingts ont répondu 200 du premier coup. Les huit autres
+Les 213 adresses ont été sondées le 22 septembre 2026, à raison d'une requête
+chacune. Deux cent cinq ont répondu 200 du premier coup. Les huit autres
 tiennent en cinq cas, et chacun a sa recette — aucune ne consiste à baisser
 une vérification.
 
-### `session` — 180 adresses, rien à faire
+### `session` — 205 adresses, rien à faire
 
 `curl` suffit, la page arrive. C'est l'immense majorité, et c'est contraire à
 ce que le dépôt supposait : `tests/temoins/exemples_officiels.yaml` ouvre sur
@@ -178,7 +178,7 @@ ici.
 
 ## Comment une session prend sa part
 
-Le lot ne se traite pas d'un coup, et il ne faut pas essayer : 188 adresses,
+Le lot ne se traite pas d'un coup, et il ne faut pas essayer : 213 adresses,
 dont vingt-huit simulateurs à balayer, valent plusieurs journées. La
 manière de s'y prendre est celle que `CLAUDE.md` impose déjà pour les sessions
 parallèles — par zone, et en poussant souvent.

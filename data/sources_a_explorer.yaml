@@ -7,7 +7,7 @@
 # quand elle a rendu ce qu'elle avait, elle passe dans le manifeste — et sa
 # ligne ici prend l'état `epuise` avec la date.
 #
-# Il est né le 22 septembre 2026 d'une liste de 188 adresses, remise en cinq
+# Il est né le 22 septembre 2026 d'une liste de 213 adresses, remise en six
 # lots. Le chantier qu'elle ouvre est l'action 89 de `docs/feuille_de_route.md`,
 # et la manière de le mener est dans `docs/exploration_sources.md`.
 #
@@ -43,8 +43,8 @@
 #               c'est là que se cachent les règlements et les circulaires
 #   code        le code source d'un modèle public, lisible et exécutable
 #
-# ACCES — mesuré, pas supposé (188 adresses sondées le 22 septembre 2026 :
-#         180 répondent 200 à une simple requête, huit demandent un geste)
+# ACCES — mesuré, pas supposé (213 adresses sondées le 22 septembre 2026 :
+#         205 répondent 200 à une simple requête, huit demandent un geste)
 #   session ............ joignable en `curl` depuis une session, 200
 #   chaine_incomplete .. le serveur ne sert pas l'intermédiaire de son
 #                        certificat ; un navigateur le rattrape tout seul,
@@ -2067,3 +2067,302 @@ sources:
     a_en_tirer: >-
       La réversion des marins, assise elle aussi sur les salaires forfaitaires.
     statut: a_explorer
+
+  # ---- IRCEC : les trois règlements (sixième lot) -------------------------
+  # Les trois fiches d'artistes-auteurs sont `partiel`, et c'est ici que se
+  # trouve leur texte : un règlement de régime, pas une page d'explication.
+
+  - id: ircec_raap_calcul_taux
+    url: https://www.ircec.fr/vos-regimes/raap/cotisations/calcul-taux-cotisations-raap/
+    nature: bareme
+    acces: session
+    regimes: [ircec_raap]
+    a_en_tirer: >-
+      Le taux du RAAP, son assiette, son seuil d'affiliation et l'option de
+      cotisation à taux réduit : le barème de la fiche `ircec_raap`.
+    statut: a_explorer
+
+  - id: ircec_faq
+    url: https://www.ircec.fr/foire-aux-questions/
+    nature: index
+    acces: session
+    regimes: [ircec_raap, ircec_racd, ircec_racl]
+    a_en_tirer: >-
+      Une FAQ de caisse répond aux cas que le règlement laisse implicites, et
+      chiffre souvent ses réponses : à dérouler question par question.
+    statut: a_explorer
+
+  - id: ircec_qr_age_ouverture
+    url: https://www.ircec.fr/qr/age-douverture-des-droits/
+    nature: regle
+    acces: session
+    regimes: [ircec_raap, ircec_racd, ircec_racl]
+    a_en_tirer: >-
+      L'âge d'ouverture des droits dans les trois régimes, et s'il suit celui
+      du régime de base ou s'en écarte.
+    statut: a_explorer
+
+  - id: ircec_memo
+    url: https://www.ircec.fr/wp-content/uploads/2026/02/mon-memo-ircec.pdf
+    nature: document
+    acces: session
+    regimes: [ircec_raap, ircec_racd, ircec_racl]
+    a_en_tirer: >-
+      Le mémo de février 2026 : les valeurs de l'année en une page, qui datent
+      le reste.
+    statut: a_explorer
+
+  - id: ircec_reglement_raap
+    url: https://www.ircec.fr/wp-content/uploads/2025/01/reglementraap_17042024-1.pdf
+    nature: document
+    acces: session
+    regimes: [ircec_raap]
+    a_en_tirer: >-
+      Le règlement du RAAP (version du 17 avril 2024) : classes, points,
+      liquidation, réversion — le texte qui fait foi pour la fiche.
+    statut: a_explorer
+
+  - id: ircec_reglement_racd
+    url: https://www.ircec.fr/wp-content/uploads/2025/01/reglementracd_17042024.pdf
+    nature: document
+    acces: session
+    regimes: [ircec_racd]
+    a_en_tirer: >-
+      Le règlement du RACD, régime des auteurs et compositeurs dramatiques.
+    statut: a_explorer
+
+  - id: ircec_reglement_racl
+    url: https://www.ircec.fr/wp-content/uploads/2025/06/reglement-racl_13052025_nc.pdf
+    nature: document
+    acces: session
+    regimes: [ircec_racl]
+    a_en_tirer: >-
+      Le règlement du RACL (version du 13 mai 2025), régime des auteurs et
+      compositeurs lyriques.
+    statut: a_explorer
+
+  # ---- Ircantec : les droits, les annexes de barème ------------------------
+  # L'Ircantec est `modelise` et ses barèmes sont déjà CERTIFIÉS sur les deux
+  # CSV que publie la Caisse des dépôts, qui gère le régime
+  # (`scripts/fetch/cdc_ircantec.py`). Ce qui reste ouvert est nommé dans la
+  # fiche : la répartition salarié/employeur, reportée par convention sur les
+  # années antérieures à 2025, et les années postérieures à 2021, transcrites
+  # d'OpenFisca. Les annexes ci-dessous sont du même producteur.
+
+  - id: ircantec_conditions_depart
+    url: https://www.ircantec.retraites.fr/actif/preparer-ma-retraite/conditions-depart-retraite
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Les conditions de départ telles que la caisse les énonce aujourd'hui, à
+      confronter à l'article 16 de l'arrêté du 30 décembre 1970 que la fiche
+      applique version par version.
+    statut: a_explorer
+
+  - id: ircantec_droits_cotisation
+    url: https://www.ircantec.retraites.fr/actif/acquisition-droits/activite-professionnelle/calcul-droits-cotisation-demarches
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Les points acquis par COTISATION : cotisation divisée par le salaire de
+      référence et le taux d'appel, la formule même que le modèle applique.
+    statut: a_explorer
+
+  - id: ircantec_droits_validation
+    url: https://www.ircantec.retraites.fr/actif/acquisition-droits/activite-professionnelle/calcul-droits-validation-demarches
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Les points acquis par VALIDATION de services antérieurs : un canal que le
+      modèle ne porte pas, et qui compte pour les agents titularisés.
+    statut: a_explorer
+
+  - id: ircantec_chomage
+    url: https://www.ircantec.retraites.fr/actif/decouvre-droits/chomage
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Les points gratuits de chômage : poste de la frontière contributive,
+      chiffré par l'action 81 pour d'autres régimes et pas pour celui-ci.
+    statut: a_explorer
+
+  - id: ircantec_maladie_invalidite
+    url: https://www.ircantec.retraites.fr/actif/decouvre-droits/maladie-accident-travail-invalidite
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Les points de maladie, d'accident du travail et d'invalidité, et leur
+      condition d'attribution.
+    statut: a_explorer
+
+  - id: ircantec_enfants
+    url: https://www.ircantec.retraites.fr/actif/decouvre-droits/enfants
+    nature: bareme
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      La majoration pour enfants de l'Ircantec, que la fiche déclare sans en
+      porter le barème (`avantages_non_contributifs: [majoration_enfants]`).
+    statut: a_explorer
+
+  - id: ircantec_service_militaire
+    url: https://www.ircantec.retraites.fr/actif/decouvre-droits/service-militaire
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Les points du service national : droit non contributif que le dépôt ne
+      compte pour aucun régime complémentaire.
+    statut: a_explorer
+
+  - id: ircantec_mandats_elus
+    url: https://www.ircantec.retraites.fr/actif/decouvre-droits/mandats-elus
+    nature: regle
+    acces: session
+    regimes: [ircantec, elus_locaux_ircantec]
+    a_en_tirer: >-
+      Les droits des élus locaux, dont l'affiliation est une fiche de ROUTAGE à
+      l'inventaire : assiette, taux, et ce qu'un mandat rapporte.
+    statut: a_explorer
+
+  - id: ircantec_retraite_progressive
+    url: https://www.ircantec.retraites.fr/actif/prepare-retraite/dispositifs-adaptes-situation/dispositif-retraite-progressive
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      La retraite progressive à l'Ircantec : la fraction de pension servie, et
+      les points que l'activité poursuivie continue d'acquérir.
+    statut: a_explorer
+
+  - id: ircantec_cumul_emploi_retraite
+    url: https://www.ircantec.retraites.fr/actif/dispositif-cumul-emploi-retraite
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Le cumul emploi-retraite et les points qu'il ouvre ou non.
+    statut: a_explorer
+
+  - id: ircantec_calcul_cotisations_employeur
+    url: https://www.ircantec.retraites.fr/employeur/calcul-cotisations
+    nature: bareme
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Le calcul des cotisations côté EMPLOYEUR : c'est la page qui sépare la
+      part salariale de la part patronale, et la fiche du régime reporte cette
+      répartition par convention sur tout l'avant-2025. La part patronale est
+      un axe de tête de la feuille de route.
+    statut: a_explorer
+
+  - id: ircantec_reversion
+    url: https://www.ircantec.retraites.fr/deces/pension-reversion?dt=act
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      La réversion de l'Ircantec : taux, conditions d'âge et de mariage,
+      partage entre conjoints.
+    statut: a_explorer
+
+  - id: baseircantec_age_taux_plein
+    url: https://baseircantec.retraites.fr/demander-sa-retraite/les-conditions-douverture-du-droit-a-retraite/age-normal-de-la-retraite-a-taux-plein
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      L'âge normal du taux plein dans la base documentaire — celle qui fait
+      foi pour les gestionnaires — à confronter aux versions de l'article 16
+      que la fiche a lues dans LEGI.
+    statut: a_explorer
+
+  - id: baseircantec_points_gratuits_chomage
+    url: https://baseircantec.retraites.fr/carriere/periodes-dactivite/titulaire-sans-droit-a-pension/points-gratuits/chomage
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Les points gratuits de chômage, règle de gestion et non page d'accueil :
+      assiette retenue, plafond, durée.
+    statut: a_explorer
+
+  - id: baseircantec_anx0801_taux_theoriques
+    url: https://baseircantec.retraites.fr/sites/default/files/2023-12/anx0801_externe_tx_theoriques_sal_ref2024_0.pdf
+    nature: bareme
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Taux théoriques et salaire de référence 2024, par le producteur : les
+      valeurs postérieures à 2021 viennent aujourd'hui d'OpenFisca et
+      plafonnent au niveau `haute`. Cette annexe peut les certifier.
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      Lue : salaire de référence 5,083 € en 2022 — ce que le dépôt porte déjà,
+      au niveau `haute` —, 5,329 € en 2023 et 5,611 € en 2024, que
+      `valeurs_point.csv` n'a pas, les deux CSV de la Caisse des dépôts
+      s'arrêtant à 2021 (vérifié en relançant `scripts/fetch/cdc_ircantec.py`).
+      Les taux théoriques y sont aussi donnés part par part depuis 1935. Reste
+      à écrire le récupérateur qui lit ce PDF et le recontrôle qui certifie ces
+      trois années : c'est un chantier de `docs/feuille_de_route.md`, pas une
+      saisie à la main dans une série certifiée.
+
+  - id: baseircantec_anx0404_taux_cotisation
+    url: https://baseircantec.retraites.fr/sites/default/files/2024-04/anx0404.tauxdecotisation%20-%20externe.pdf
+    nature: bareme
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Les taux de cotisation, tranche par tranche et PART PAR PART : c'est la
+      pièce qui peut remplacer la convention de répartition salarié/employeur
+      que la fiche reporte faute d'une série publiée.
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Elle l'a remplacée. Les taux appelés y sont donnés agent et employeur à
+      chaque date d'effet depuis 1925 : la tranche A vaut 40 % de l'agent d'un
+      bout à l'autre — la convention du dépôt était juste —, la tranche B 34 %
+      de 1971 à 2010, puis une montée par paliers annuels jusqu'aux 35,64 %
+      de 2017, que la fiche reportait en arrière. Quatorze périodes corrigées
+      dans `data/reference/regimes/complementaires_prive.yaml`, source ajoutée
+      au manifeste `data/sources.yaml` sous `ircantec_annexes_baremes`.
+
+  - id: baseircantec_annexe401_plafond
+    url: https://baseircantec.retraites.fr/sites/default/files/2024-01/annexe401plafond_ss_2024.pdf
+    nature: bareme
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Le plafond de la Sécurité sociale retenu par le régime pour 2024 :
+      contrôle croisé de `data/reference/macro/plafond_securite_sociale.csv`.
+    statut: a_explorer
+
+  - id: baseircantec_taux_minoration
+    url: https://baseircantec.retraites.fr/sites/default/files/2025-07/Tableaux%20tx%20de%20mino%20retraite%20%C3%A0%20tx%20r%C3%A9duit%202023%20externe.pdf
+    nature: bareme
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Les tables de minoration d'une retraite à taux réduit : l'escalier de
+      l'article 16 — 0,43 à dix ans d'anticipation, puis 0,017 5, 0,012 5 et
+      0,01 par trimestre — tabulé par le gestionnaire lui-même. C'est la
+      confrontation la plus directe qui soit avec `abattement_points: ircantec`,
+      et le moyen de solder la décote de 1,1 % par trimestre que le dépôt a
+      corrigée le 18 septembre 2026.
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Soldée. Les onze tables — générations 1955 à 1968 et au-delà — sont
+      transcrites et rejouées par `tests/test_ircantec_minoration.py` : le
+      modèle rend les quarante et une lignes. Elles ajoutent ce que le texte
+      ne disait pas : les ancrages sont des âges FIXES (1 à 67 ans, 0,88 à 64,
+      0,78 à 62, 0,43 à 57), identiques d'une génération à l'autre, quand
+      l'âge légal passe de 62 à 64 ans sur la même plage. Ligne
+      `coefficient_anticipation_ircantec` ajoutée à
+      `data/reference/legislation/veille.yaml`.

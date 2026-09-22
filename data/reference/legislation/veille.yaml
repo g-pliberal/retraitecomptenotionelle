@@ -873,6 +873,33 @@ entrees:
     a_faire: null
     prochaine_veille: "2027-03-31"
 
+  - id: coefficient_anticipation_ircantec
+    regle: "Coefficient d'anticipation de l'Ircantec : escalier à trois marches ancré sur l'âge du taux plein, plancher 0,43 à dix ans d'anticipation, et seconde table par la durée."
+    textes: ["article 16 de l'arrêté du 30 décembre 1970 (LEGIARTI000006381606, LEGIARTI000024266924)", "L. 351-8 1° CSS"]
+    sources:
+      - {type: legifrance, reference: "arrêté du 30 décembre 1970, article 16, versions successives lues dans l'index LEGI", date: "2026-09-18"}
+      - {type: autre, reference: "Ircantec, base documentaire, annexe « Retraite à taux réduit — taux de minoration », tableaux 2023, onze générations de 1955 à 1968 et au-delà", url: "https://baseircantec.retraites.fr/", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: conforme
+    effet: >-
+      Toute liquidation Ircantec anticipée. Les quarante et une lignes de la
+      table publiée sont rejouées par tests/test_ircantec_minoration.py et le
+      modèle les rend toutes. La table de la caisse ajoute ce que le texte ne
+      disait pas : les ancrages sont des ÂGES FIXES — 1 à 67 ans, 0,88 à 64,
+      0,78 à 62, 0,43 à 57 — identiques pour les onze générations, alors que
+      l'âge légal passe de 62 à 64 ans sur cette plage. C'est l'âge du taux
+      plein qui ancre l'escalier, jamais l'âge d'ouverture, et le modèle fait
+      déjà ainsi.
+    a_faire: >-
+      La seconde table de l'article, celle qui lit la DURÉE manquante, n'a pas
+      d'équivalent publié : la colonne « durée d'assurance » des tableaux
+      couple les deux lectures au lieu de les séparer. Le modèle applique
+      « la plus avantageuse des deux » ; le vérifier demanderait un exemple
+      chiffré de la caisse, qu'elle ne publie pas.
+    prochaine_veille: "2027-03-31"
+
 journal:
   - date: "2026-09-19"
     session: "le net et le brut, d'un bout à l'autre du simulateur"
@@ -2313,3 +2340,33 @@ journal:
       large que le modèle ; la condition reste en l'état, plus dure que sa
       lettre, en attendant la circulaire qui l'applique.
     prochaine_veille: "2027-03-31"
+    session: les annexes de barème de l'Ircantec, lues chez le gestionnaire
+    consulte: >-
+      Base documentaire du régime (`baseircantec.retraites.fr`), trois annexes
+      lues dans leur PDF avec le lecteur du dépôt : « Évolution des taux de
+      cotisations » (annexe 4-4, taux théoriques et taux appelés, part de
+      l'agent et part de l'employeur, à chaque date d'effet depuis 1925),
+      « Évolution des taux théoriques et du salaire de référence » (annexe 8-1,
+      depuis 1935, version du 14 décembre 2023) et « Retraite à taux réduit —
+      taux de minoration » (tableaux 2023, onze générations). Relancé
+      `scripts/fetch/cdc_ircantec.py`, qui couvre toujours 1971-2021.
+    trouve: >-
+      DEUX CHOSES, ET LA SECONDE ÉTAIT UNE ERREUR. La répartition
+      salarié/employeur que la fiche reportait par convention sur toute la
+      série est publiée : juste sur la tranche A, qui vaut 40 % de l'agent d'un
+      bout à l'autre, fausse sur la tranche B, où l'agent portait 34 % de 1971
+      à 2010 et non 35,64 %, la part ne montant que par paliers annuels de 2011
+      à 2017. Les quatorze périodes de tranche B sont corrigées, et le témoin
+      du contractuel déplace quinze euros par an de l'agent vers l'employeur.
+      Et la table de minoration de la caisse confirme, ligne à ligne, l'escalier
+      que le dépôt avait tiré du texte le 18 septembre : 0,43 à dix ans
+      d'anticipation, trois marches de 0,017 5, 0,012 5 et 0,01. Elle ajoute ce
+      que le texte ne disait pas — les ancrages sont des âges fixes, les mêmes
+      pour toutes les générations.
+    reste: >-
+      Le salaire de référence de 2023 (5,329 €) et de 2024 (5,611 €) est dans
+      l'annexe 8-1, et les deux CSV de la Caisse des dépôts s'arrêtent à 2021 :
+      le dépôt les porte donc au niveau `haute`, d'OpenFisca, jusqu'à ce qu'un
+      récupérateur lise ce PDF et que le recontrôle de
+      `scripts/verifier_donnees.py` les certifie. L'annexe 8-1 confirme au
+      passage la valeur 2022 déjà portée (5,083 €).
