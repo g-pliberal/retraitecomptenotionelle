@@ -8618,9 +8618,47 @@ lecteur ignorait l'espace fine comme séparateur de milliers ; un signe
 typographique n'était pas gardé à la correction ; un paragraphe en retrait
 échappait au gel.
 
-**Ce qui reste.** Neuf sections de `methodologie.md`, qu'une autre session
-ancre en même temps, et les trois de `docs/outillage_interface.md`, qui
-restent `a_declarer` pour la raison dite plus haut.
+**Le 23 septembre 2026, dans la nuit : la méthodologie, section par
+section.** Dix-sept sections y sont passées en `etat` depuis la note du soir,
+et douze mesures ont rejoint le registre — la fusion sous une autre règle,
+l'âge de référence, les droits acquis sous les deux conventions, les
+populations de mortalité, la fourchette du site, les fiches telles qu'elles
+sont écrites. La méthodologie était le document le plus en retard du dépôt,
+parce qu'elle décrit le modèle et que le modèle avait bougé sous elle :
+
+- *le régime unique* ouvrait à 64 ans et donnait le taux plein à 67, pour
+  65 et 67,5 ; son taux le plus élevé était « la tranche 2 de l'Agirc-Arrco,
+  21,59 % », quand c'est une caisse publique d'équilibre à 41,2 % ;
+- *la part salariale des fiches* avait quatre points de retard pour le
+  régime général (40,87 % pour 44,66), et la tranche 2 de l'Ircantec n'a
+  jamais été à 40 % ;
+- *les tables de mortalité* ignoraient Vallin et Meslé, et faisaient
+  reconstituer par la loi paramétrique toute la mortalité d'avant 1986 ;
+- *l'âge de référence* atteignait 64 ans « en 2030 » : la suspension de la
+  loi n° 2025-1403 le reporte à la génération 1969 ;
+- *les droits acquis* donnaient leur exemple sous un âge de référence de
+  67 ans, qui n'est plus le défaut, et leurs quatre montants avaient bougé ;
+- *le taux d'appel* restait à 125 % « depuis 1995 », pour 127 % depuis 2019 ;
+  la sur-revalorisation de l'ancienne approximation vaut 17,4 %, pas 12,1 —
+  elle est de nouveau chiffrée, par une mesure qui la recalcule ;
+- *la décote de 2012* s'annulait « à 63 ans », pour 63 ans et neuf mois ;
+- *la section sur 1980 et 1981* les tenait encore pour fausses, cinquième
+  copie de l'erreur que la recherche du 21 septembre avait réfutée.
+
+Deux affirmations se contredisaient dans la même section — l'emploi projeté
+« sur la trajectoire du COR par défaut », puis « supposé constant » —, et le
+fichier d'hypothèses a tranché. Une troisième ne se vérifie plus : la
+reconstruction d'une colonne de revalorisation depuis sa voisine « divise la
+dérive par dix » ; le test qui la mesure trouve 0,12 % contre 0,26 %, un
+rapport de deux. La méthodologie renvoie désormais au tableau de
+`limites.md` sans recopier ses chiffres, mais ce tableau, la docstring de
+`coefficient_revalorisation_portee_au_compte` et celle du test disent encore
+« par dix » : c'est à reprendre avec la définition exacte de la mesure.
+
+**Ce qui reste.** Trois sections de la méthodologie — le scénario 6, le
+pilier capitalisé, le solde —, laissées à la session qui tient la recette et
+la garantie de ce scénario, et les trois de `docs/outillage_interface.md`,
+qui restent `a_declarer` pour la raison dite plus haut.
 
 **L'angle mort à traiter ensuite.** Ce contrôle ne juge pas une phrase,
 seulement un nombre : « la bascule ne reprend aucun droit acquis » lui est
