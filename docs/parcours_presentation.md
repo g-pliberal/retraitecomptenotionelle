@@ -329,7 +329,7 @@ Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
 Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
 croire sur parole. » 42 177 valeurs recontrôlées automatiquement contre le
 fichier de l'institution qui les produit, sur 107 séries ; 89 régimes
-recensés dont 72 calculés ; 37 institutions citées. Ce compte mesure la
+recensés dont 72 calculés ; 38 institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
 la réponse est que les pensions se contrôlent ailleurs, sur les exemples
 publiés par les caisses, et que `docs/limites.md` dit lesquels. Le code et

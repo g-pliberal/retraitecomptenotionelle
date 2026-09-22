@@ -130,6 +130,7 @@ la seule chose qu'on emprunte à une série pour l'appliquer à l'autre.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass, field, replace
 from typing import Callable, Sequence
 
@@ -1870,8 +1871,10 @@ class GarantieProjetee:
     #: Les avances que les décès de l'année libèrent, avec leurs intérêts, en
     #: millions d'euros constants : ce que les successions AURAIENT à rendre.
     avances_liberees_constants: float = 0.0
-    #: Ce qu'elles rendent : la part ``part_reprise_garantie`` des avances
-    #: libérées. Zéro avant la bascule, les avances commençant avec elle.
+    #: Ce qu'elles rendent : la part ``part_reprise_immediate`` des avances
+    #: libérées l'année même, et ce que le logement des couples rend des
+    #: avances libérées ``report_annees`` plus tôt. Zéro avant la bascule, les
+    #: avances commençant avec elle.
     reprises_constants: float = 0.0
     #: Les avances en cours en fin d'année, intérêts compris, en millions
     #: d'euros constants : la créance de l'État sur les bénéficiaires vivants.
@@ -1879,7 +1882,9 @@ class GarantieProjetee:
     #: Le taux réel de l'année, lu sur la courbe des taux et déflaté.
     taux_reel: float = 0.0
     #: La part de l'avance que la succession couvre, celle qui a servi :
-    #: calculée sur le patrimoine des retraités, ou réglée.
+    #: calculée sur le patrimoine des retraités, ou réglée. En valeur à la date
+    #: du décès : ce que le logement rend plus tard y est ramené par les
+    #: intérêts qu'il a courus.
     part_reprise: float = 0.0
     #: La durée moyenne d'une avance : l'espérance de vie à 65 ans de la
     #: population dont la mortalité a servi, en années.
@@ -1895,6 +1900,20 @@ class GarantieProjetee:
     #: seul en laisse une, un couple de deux bénéficiaires en laisse deux sur
     #: la succession du survivant. Un vaut « chacun sa succession ».
     avances_par_succession: float = 1.0
+    #: La part des avances libérées que les successions rendent SANS ATTENDRE,
+    #: au décès du bénéficiaire. Le reste de ``part_reprise`` est le logement
+    #: d'un couple, repris au décès du survivant, ``report_annees`` plus tard.
+    part_reprise_immediate: float = 0.0
+    #: Ce que la reprise du logement attend, en années entières : ce que vit
+    #: en moyenne le conjoint survivant. Zéro sans report.
+    report_annees: int = 0
+    #: Ce qu'un euro d'avance est devenu quand le logement le rend : les
+    #: intérêts de ``report_annees`` années au taux réel moyen. Un sans report.
+    facteur_report: float = 1.0
+    #: La part des décès de bénéficiaires qui surviennent en couple.
+    deces_en_couple: float = 0.0
+    #: Ce que vit ensuite le conjoint survivant, en années.
+    duree_veuvage: float = 0.0
 
 
 class GarantieDistribution:
@@ -2322,6 +2341,117 @@ def _rapports(masses: dict[str, float], garantie: GarantieProjetee,
     return rapports
 
 
+def _esperance_restante(courbe: Sequence[float], age: float) -> float:
+    """Ce qu'il reste à vivre à ``age``, sur une courbe de survie tenue
+    d'année en année depuis 65 ans, prise linéaire entre deux anniversaires.
+    En deçà de 65 ans, les années qui manquent s'ajoutent à l'espérance à 65
+    ans : la courbe ne dit rien avant, et la mortalité y est faible."""
+    if age < 65.0:
+        return _esperance_restante(courbe, 65.0) + (65.0 - age)
+    rang = int(age - 65.0)
+    fraction = age - 65.0 - rang
+
+    def survie(k: int) -> float:
+        return courbe[k] if k < len(courbe) else 0.0
+
+    depart = survie(rang) * (1.0 - fraction) + survie(rang + 1) * fraction
+    if depart <= 1e-12:
+        return 0.0
+    aire = 0.5 * (depart + survie(rang + 1)) * (1.0 - fraction)
+    for k in range(rang + 1, len(courbe)):
+        aire += 0.5 * (survie(k) + survie(k + 1))
+    return aire / depart
+
+
+def _deces_en_couple(couple, courbes: dict[str, Sequence[float]], part_femmes: float,
+                     ecart_age: float) -> tuple[float, float]:
+    """La part des décès de bénéficiaires qui surviennent en couple, et ce que
+    le conjoint survivant vit ensuite, en moyenne sur ces décès.
+
+    Le recensement dit, âge par âge et par sexe, qui vit en couple ; les
+    courbes de survie des bénéficiaires disent à quel âge ils meurent. Le
+    conjoint est de l'autre sexe, plus jeune de ``ecart_age`` quand c'est le
+    mari qui meurt, plus âgé d'autant sinon, et il vit selon la courbe de son
+    sexe — celle des bénéficiaires, qu'il le soit ou non.
+    """
+    en_couple = 0.0
+    tous = 0.0
+    veuvage = 0.0
+    for sexe, poids in (("F", part_femmes), ("H", 1.0 - part_femmes)):
+        courbe = courbes[sexe]
+        autre = courbes["H" if sexe == "F" else "F"]
+        ecart = ecart_age if sexe == "F" else -ecart_age
+        for k in range(len(courbe)):
+            deces = courbe[k] - (courbe[k + 1] if k + 1 < len(courbe) else 0.0)
+            if deces <= 0.0:
+                continue
+            age = 65.0 + k + 0.5
+            part = couple.part(age, sexe)
+            tous += poids * deces
+            en_couple += poids * deces * part
+            veuvage += poids * deces * part * _esperance_restante(autre, age + ecart)
+    if en_couple <= 0.0:
+        return 0.0, 0.0
+    return en_couple / tous, veuvage / en_couple
+
+
+def _recouvrement(creance: float, patrimoines: Sequence[float], parametres,
+                  deces_en_couple: float, facteur_report: float,
+                  part_donateurs: float, donation: float) -> tuple[float, float]:
+    """Ce qu'une créance rend, en moyenne sur une population de patrimoines :
+    au décès, et au décès du conjoint survivant, en part de la créance.
+
+    Les trois règles de la reprise, dans l'ordre où la succession les
+    rencontre (``Parametres`` porte les sources et les hypothèses) :
+
+    - l'ASSURANCE-VIE est hors succession, et la règle n'en reprend que les
+      primes de la fenêtre : ce qui reste est saisissable ;
+    - les DONATIONS de la fenêtre sont réintégrées chez les ménages donateurs,
+      comme un actif de plus, pris tout de suite ;
+    - au décès d'un bénéficiaire EN COUPLE, la créance est prise sur ce qui
+      n'est pas le logement ; ce qui en reste attend le survivant, grossi de
+      ``facteur_report``, et n'est pris que sur le logement, que seul un
+      propriétaire a. Qui meurt seul rend tout de suite, sur tout.
+
+    Le second nombre est en euros de l'année où il est rendu, intérêts
+    compris : c'est lui que la trajectoire décale.
+    """
+    if creance <= 0.0 or not patrimoines:
+        return 1.0, 0.0
+    part_av = parametres.part_assurance_vie_patrimoine
+    echappe = part_av * (1.0 - parametres.part_assurance_vie_reprise
+                         if parametres.reprise_assurance_vie else 1.0)
+    report = parametres.reprise_report_logement
+    logement = parametres.part_logement_proprietaires
+    proprietaire = parametres.patrimoine_minimal_proprietaire
+    ajout = 0.0
+    if parametres.reprise_donations:
+        ajout = (donation * parametres.part_donations_fenetre
+                 * parametres.part_donations_connues)
+    else:
+        part_donateurs = 0.0
+    immediat = 0.0
+    differe = 0.0
+    for patrimoine in patrimoines:
+        saisissable = patrimoine * (1.0 - echappe)
+        part_logement = logement if patrimoine >= proprietaire else 0.0
+        for poids, actif, dont_logement in (
+                (1.0 - part_donateurs, saisissable, part_logement * saisissable),
+                (part_donateurs, saisissable + ajout, part_logement * saisissable)):
+            if poids <= 0.0:
+                continue
+            seul = min(creance, actif)
+            if report:
+                premier = min(creance, actif - dont_logement)
+                second = min((creance - premier) * facteur_report, dont_logement)
+            else:
+                premier, second = seul, 0.0
+            immediat += poids * ((1.0 - deces_en_couple) * seul + deces_en_couple * premier)
+            differe += poids * deces_en_couple * second
+    nombre = len(patrimoines)
+    return immediat / nombre / creance, differe / nombre / creance
+
+
 def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
                           garantie: GarantieDistribution) -> None:
     """Les avances de la garantie, leur intérêt, et ce que les successions rendent.
@@ -2542,14 +2672,28 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
         )
 
     # 5. La couverture : calculée sur le patrimoine des retraités, sauf réglage.
+    # Les trois règles de la reprise y entrent par ``_recouvrement`` : la part
+    # rendue au décès, et celle que le logement d'un couple rend au décès du
+    # survivant, ``report`` années plus tard et grossie des intérêts courus.
+    deces_couple, veuvage = _deces_en_couple(
+        simulateur.vie_en_couple, {"F": courbe_f, "H": courbe_h}, part_femmes,
+        parametres.ecart_age_couple)
     part = parametres.part_reprise_garantie
-    if part is None:
+    report = 0
+    facteur_report = 1.0
+    if part is not None:
+        immediate = part
+    else:
+        if parametres.reprise_report_logement:
+            report = int(math.floor(veuvage + 0.5))
+            facteur_report = (1.0 + taux_moyen) ** report
         patrimoine = simulateur.patrimoine
         bas = patrimoine.distribution("retraites_q1")
         haut = patrimoine.distribution("retraites")
         vers_bas = macro.coefficient_prix(annee_euros, bas.annee)
         vers_haut = macro.coefficient_prix(annee_euros, haut.annee)
-        numerateur = 0.0
+        numerateur_immediat = 0.0
+        numerateur_differe = 0.0
         denominateur = 0.0
         for poids, complement, _, rang in tranches:
             avance = (complement * ((1.0 + taux_moyen) ** total_survie - 1.0) / taux_moyen
@@ -2557,21 +2701,36 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
             # Ce que la succession affronte n'est pas une avance, mais toutes
             # celles qu'elle porte.
             sur_succession = avance * avances_par_succession
-            couverture_bas = bas.couverture(sur_succession * vers_bas)
-            couverture_haut = haut.couverture(sur_succession * vers_haut)
+            immediat_bas, differe_bas = _recouvrement(
+                sur_succession * vers_bas, bas.grille, parametres, deces_couple,
+                facteur_report, parametres.part_donateurs_modestes,
+                parametres.donation_moyenne_modestes)
+            immediat_haut, differe_haut = _recouvrement(
+                sur_succession * vers_haut, haut.grille, parametres, deces_couple,
+                facteur_report, parametres.part_donateurs_retraites,
+                parametres.donation_moyenne_retraites)
             if rang <= 0.25:
-                couverture = couverture_bas
+                melange = 0.0
             elif rang >= 0.5:
-                couverture = couverture_haut
+                melange = 1.0
             else:
-                couverture = couverture_bas + (couverture_haut - couverture_bas) * (rang - 0.25) / 0.25
-            numerateur += poids * avance * couverture
+                melange = (rang - 0.25) / 0.25
+            numerateur_immediat += poids * avance * (
+                immediat_bas + (immediat_haut - immediat_bas) * melange)
+            numerateur_differe += poids * avance * (
+                differe_bas + (differe_haut - differe_bas) * melange)
             denominateur += poids * avance
-        part = numerateur / denominateur if denominateur > 0.0 else 0.0
+        immediate = numerateur_immediat / denominateur if denominateur > 0.0 else 0.0
+        differee = numerateur_differe / denominateur if denominateur > 0.0 else 0.0
+        part = immediate + differee / facteur_report
+    # Ce que le logement rend, en euros de l'année où il le rend, pour un euro
+    # d'avance libérée ``report`` années plus tôt.
+    differee_rendue = (part - immediate) * facteur_report
 
     # 6. Les avances, année par année.
     complements: dict[int, float] = {}
     croissance: dict[int, float] = {}
+    liberees_par_annee: dict[int, float] = {}
     facteur = 1.0
     stock = 0.0
     for ligne in projetees:
@@ -2592,11 +2751,13 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
                            * facteur / croissance.get(annee - j, facteur))
             liberees += part_deces / total_survie * avance
         liberees *= garantie.beneficiaires
+        liberees_par_annee[annee] = liberees
         stock = stock * (1.0 + taux_reel) + verse - liberees
         ligne.garantie = replace(
             garantie,
             avances_liberees_constants=liberees,
-            reprises_constants=part * liberees,
+            reprises_constants=(immediate * liberees + differee_rendue
+                                * liberees_par_annee.get(annee - report, 0.0)),
             stock_avances_constants=stock,
             taux_reel=taux_reel,
             part_reprise=part,
@@ -2604,6 +2765,11 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
             population_mortalite=population,
             part_femmes=part_femmes,
             avances_par_succession=avances_par_succession,
+            part_reprise_immediate=immediate,
+            report_annees=report,
+            facteur_report=facteur_report,
+            deces_en_couple=deces_couple,
+            duree_veuvage=veuvage,
         )
 
 

@@ -23,6 +23,38 @@ export function repartitionNormale(x) {
   return 0.5 * (1.0 + signe * erf);
 }
 
+/** Le nombre de rangs sur lesquels `grille` pose une distribution. */
+export const RANGS_GRILLE = 1000;
+
+const ACKLAM_A = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02,
+  1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+const ACKLAM_B = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02,
+  6.680131188771972e+01, -1.328068155288572e+01];
+const ACKLAM_C = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00,
+  -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+const ACKLAM_D = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00,
+  3.754408661907416e+00];
+
+/** Φ⁻¹(p) par l'approximation d'Acklam : copie de `quantile_normal`. */
+export function quantileNormal(p) {
+  const [a, b, c, d] = [ACKLAM_A, ACKLAM_B, ACKLAM_C, ACKLAM_D];
+  const bas = 0.02425;
+  if (p < bas) {
+    const q = Math.sqrt(-2.0 * Math.log(p));
+    return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5])
+      / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1.0);
+  }
+  if (p > 1.0 - bas) {
+    const q = Math.sqrt(-2.0 * Math.log(1.0 - p));
+    return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5])
+      / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1.0);
+  }
+  const q = p - 0.5;
+  const r = q * q;
+  return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q
+    / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1.0);
+}
+
 export class DistributionPatrimoine {
   constructor(population, annee, patrimoine, quantiles, mediane, moyenne) {
     this.population = population;
@@ -44,6 +76,33 @@ export class DistributionPatrimoine {
       ? this._esperanceMinQuantiles(avance)
       : this._esperanceMinLognormale(avance);
     return Math.min(1.0, Math.max(0.0, esperance / avance));
+  }
+
+  /** Le patrimoine au milieu de chaque rang : copie de `grille`. */
+  get grille() {
+    if (this._grille) return this._grille;
+    const valeurs = [];
+    if (this.forme === "quantiles") {
+      const points = [[0.0, 0.0], ...this.quantiles];
+      const [uDernier, qDernier] = points[points.length - 1];
+      for (let i = 0; i < RANGS_GRILLE; i += 1) {
+        const u = (i + 0.5) / RANGS_GRILLE;
+        if (u >= uDernier) { valeurs.push(qDernier); continue; }
+        for (let j = 0; j + 1 < points.length; j += 1) {
+          const [u0, q0] = points[j];
+          const [u1, q1] = points[j + 1];
+          if (u <= u1) { valeurs.push(q0 + (q1 - q0) * (u - u0) / (u1 - u0)); break; }
+        }
+      }
+    } else {
+      const sigma = Math.sqrt(2.0 * Math.log(this.moyenne / this.mediane));
+      const mu = Math.log(this.mediane);
+      for (let i = 0; i < RANGS_GRILLE; i += 1) {
+        valeurs.push(Math.exp(mu + sigma * quantileNormal((i + 0.5) / RANGS_GRILLE)));
+      }
+    }
+    this._grille = valeurs;
+    return valeurs;
   }
 
   _esperanceMinQuantiles(avance) {

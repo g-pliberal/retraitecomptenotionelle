@@ -1126,8 +1126,16 @@ def test_les_reprises_sur_succession_suivent_les_avances(cout):
             assert projetee.stock_avances_constants == 0.0
             continue
         assert projetee.avances_liberees_constants >= 0.0
+        # Ce qui est rendu au décès, plus ce que le logement des couples rend
+        # des avances libérées ``report_annees`` plus tôt, intérêts courus.
+        anterieure = avenir.annee(ligne.annee - projetee.report_annees)
+        liberees_avant = (anterieure.garantie.avances_liberees_constants
+                          if anterieure is not None and anterieure.annee >= bascule
+                          else 0.0)
         assert projetee.reprises_constants == pytest.approx(
-            part * projetee.avances_liberees_constants)
+            projetee.part_reprise_immediate * projetee.avances_liberees_constants
+            + (projetee.part_reprise - projetee.part_reprise_immediate)
+            * projetee.facteur_report * liberees_avant)
         assert ligne.garantie_nette_constants() == pytest.approx(
             ligne.cout_constants(COMPOSANTE_GARANTIE) - projetee.reprises_constants)
         assert -0.05 < projetee.taux_reel < 0.05
@@ -1151,6 +1159,50 @@ def test_les_reprises_sur_succession_suivent_les_avances(cout):
     assert derniere.reprises_constants() > 0.3 * derniere.cout_constants(COMPOSANTE_GARANTIE)
     assert derniere.garantie.stock_avances_constants > premiere.garantie.stock_avances_constants > 0.0
     assert 0.0 < avenir.cumul_reprises() < avenir.cumul(COMPOSANTE_GARANTIE)
+
+
+def test_sans_les_trois_regles_la_grille_rend_la_couverture_fermee():
+    """Les trois règles coupées et l'assurance-vie ramenée à zéro, le
+    recouvrement sur la grille est l'espérance fermée de ``couverture`` : la
+    convention d'avant le 22 septembre 2026, au millième près."""
+    from dataclasses import replace
+    from pathlib import Path
+    from retraite_notionnelle.cout import _recouvrement
+    from retraite_notionnelle.donnees.patrimoine import PatrimoineMenages
+    parametres = replace(Parametres(), reprise_report_logement=False,
+                         reprise_donations=False, reprise_assurance_vie=False,
+                         part_assurance_vie_patrimoine=0.0)
+    patrimoine = PatrimoineMenages(Path(parametres.racine_donnees))
+    for population in ("retraites_q1", "retraites"):
+        distribution = patrimoine.distribution(population)
+        for creance in (10_000.0, 60_000.0, 150_000.0, 400_000.0):
+            immediat, differe = _recouvrement(
+                creance, distribution.grille, parametres, 0.35, 1.3, 0.1, 50_000.0)
+            assert differe == 0.0
+            assert immediat == pytest.approx(distribution.couverture(creance), abs=1e-3)
+
+
+def test_le_logement_d_un_couple_ne_rend_que_ce_qu_il_vaut():
+    """Au premier décès d'un couple, la créance est prise sur ce qui n'est pas
+    le logement, et le reste attend le survivant : grossi des intérêts, il
+    n'est jamais pris au-delà du logement, et un locataire n'a rien à attendre."""
+    from dataclasses import replace
+    from retraite_notionnelle.cout import _recouvrement
+    parametres = replace(Parametres(), reprise_donations=False,
+                         reprise_assurance_vie=False, part_assurance_vie_patrimoine=0.0,
+                         part_logement_proprietaires=0.75,
+                         patrimoine_minimal_proprietaire=80_000.0)
+    # Un propriétaire de 200 000 €, dont 150 000 de logement, tout en couple :
+    # 50 000 tout de suite, puis 100 000 × 1,3 = 130 000 sur le logement.
+    immediat, differe = _recouvrement(150_000.0, [200_000.0], parametres, 1.0, 1.3, 0.0, 0.0)
+    assert immediat * 150_000.0 == pytest.approx(50_000.0)
+    assert differe * 150_000.0 == pytest.approx(130_000.0)
+    # Une créance plus grosse bute sur le logement.
+    immediat, differe = _recouvrement(400_000.0, [200_000.0], parametres, 1.0, 1.3, 0.0, 0.0)
+    assert differe * 400_000.0 == pytest.approx(150_000.0)
+    # Un locataire de 50 000 € rend tout de suite ce qu'il a, et rien après.
+    immediat, differe = _recouvrement(150_000.0, [50_000.0], parametres, 1.0, 1.3, 0.0, 0.0)
+    assert immediat * 150_000.0 == pytest.approx(50_000.0) and differe == 0.0
 
 
 def test_le_recours_reduit_le_cout_de_la_garantie_dans_la_meme_proportion(cout, distribution):

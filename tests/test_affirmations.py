@@ -699,8 +699,13 @@ def _(m: Modele):
     ligne = avenir.annee(avenir.derniere_annee)
     garantie = ligne.garantie
     assert garantie.avances_liberees_constants > 0
-    assert _proche(ligne.reprises_constants() / garantie.avances_liberees_constants,
-                   garantie.part_reprise)
+    # Ce qui est rendu au décès, plus ce que le logement des couples rend des
+    # avances libérées ``report_annees`` plus tôt, intérêts courus.
+    anterieure = avenir.annee(avenir.derniere_annee - garantie.report_annees).garantie
+    assert _proche(ligne.reprises_constants(),
+                   garantie.part_reprise_immediate * garantie.avances_liberees_constants
+                   + (garantie.part_reprise - garantie.part_reprise_immediate)
+                   * garantie.facteur_report * anterieure.avances_liberees_constants)
     # Aucun seuil d'actif net : l'ASPA en a un, la garantie n'en a pas.
     assert not any("seuil" in nom for nom in _champs(Parametres))
 
@@ -716,6 +721,39 @@ def _(m: Modele):
     garantie = m.cout.avenir.annee(m.cout.avenir.derniere_annee).garantie
     assert 1.0 < garantie.avances_par_succession < 2.0
     assert 0 < garantie.part_reprise < 1
+
+
+@controle("trois_regles_de_la_reprise")
+def _(m: Modele):
+    """Le logement attend le survivant, les donations reviennent, l'assurance-vie
+    n'est reprise que sur la fenêtre : les trois règles jouent, chacune dans
+    son sens, sur la couverture que la trajectoire retient."""
+    from retraite_notionnelle.cout import _recouvrement
+    garantie = m.cout.avenir.annee(m.cout.avenir.derniere_annee).garantie
+    base = m.base
+    assert base.reprise_report_logement and base.reprise_donations
+    assert base.reprise_assurance_vie
+    assert 0 < garantie.deces_en_couple < 1
+    assert garantie.report_annees == int(garantie.duree_veuvage + 0.5) > 0
+    assert garantie.facteur_report > 1
+    assert 0 < garantie.part_reprise_immediate < garantie.part_reprise
+    grille = m.sim.patrimoine.distribution("retraites").grille
+    creance = 150_000.0
+
+    def rendu(**reglage):
+        parametres = replace(base, **reglage)
+        immediat, differe = _recouvrement(
+            creance, grille, parametres, garantie.deces_en_couple,
+            garantie.facteur_report, parametres.part_donateurs_retraites,
+            parametres.donation_moyenne_retraites)
+        return immediat, differe
+    immediat, differe = rendu()
+    # Le report fait attendre une part : moins tout de suite, quelque chose après.
+    sans_report = rendu(reprise_report_logement=False)
+    assert immediat < sans_report[0] and differe > 0 == sans_report[1]
+    # Les donations réintégrées rendent plus ; l'assurance-vie sans la règle, moins.
+    assert rendu(reprise_donations=False)[0] < immediat
+    assert rendu(reprise_assurance_vie=False)[0] < immediat
 
 
 @controle("garantie_brute_et_nette")
