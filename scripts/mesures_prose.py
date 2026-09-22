@@ -297,6 +297,18 @@ def economie_pib(**reglages: str) -> float:
     return economie * 100
 
 
+def emploi_projete(**_: str) -> float:
+    """Ce que l'emploi projeté par le COR fait de 2026 à l'horizon, en %.
+
+    La croissance de l'emploi composée année par année, sur la série que lisent
+    la masse salariale et le PIB projetés.
+    """
+    cumul = 1.0
+    for ligne in _csv("emploi_projete.csv"):
+        cumul *= 1 + float(ligne["croissance_emploi"])
+    return (cumul - 1) * 100
+
+
 def dependance(**reglages: str) -> float:
     """Rapport de dépendance démographique d'une année : 65 ans et plus sur 20-64 ans."""
     return _avenir(reglages).dependance
@@ -944,6 +956,7 @@ MESURES = {
     "millieme_salaire": millieme_salaire,
     "poids_trimestre": poids_trimestre,
     "dependance": dependance,
+    "emploi_projete": emploi_projete,
     "composition_revalorisation": composition_revalorisation,
     "age_reference": age_reference,
     "droits_acquis": droits_acquis,

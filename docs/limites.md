@@ -7638,8 +7638,8 @@ montre pas. Les hypothèses macroéconomiques sont celles du COR, déjà décrit
 dans `data/reference/macro/hypotheses_projection.yaml`.
 
 **Ce qui est de nous, et qui se discute.** Le PIB projeté suit le rythme nominal
-du COR — 2,45 % par an dans le scénario de référence — **composé avec sa
-trajectoire d'emploi**, qui recule de 6 % d'ici 2070. C'est la convention que
+du COR — <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.pib_nominal*100)-->2,45<!--/--> % par an dans le scénario de référence — **composé avec sa
+trajectoire d'emploi**, qui recule de <!--chiffre:mesure(emploi_projete)-->−6<!--/--> % d'ici 2070. C'est la convention que
 `hypotheses_projection.yaml` énonce pour tout le dépôt (« le PIB nominal suit la
 même convention que la masse salariale »), et c'est la même série que lit
 l'indexation des comptes : la page n'a plus de PIB à elle.
@@ -7689,12 +7689,19 @@ trajectoire avancerait par marches de cinq ans.
 
 **Le contrôle externe, et ce qu'il dit.** Le COR projette la même grandeur avec
 un modèle de population complet et une méthode qui n'a rien de commun avec
-celle-ci : il trouve 13,9 % du PIB en 2024 et **15,3 % en 2070** (rapport annuel
+celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve 13,6 % et **18,35 %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,34<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **trois
 points à l'arrivée**.
+
+### L'écart au COR, et ce que chaque correction en a appris
+
+Ce qui suit est une chronique, datée action par action : chaque paragraphe
+dit ce qu'une correction a déplacé le jour où elle a été faite, et ses
+chiffres sont ceux de ce jour-là. La trajectoire d'aujourd'hui est celle du
+paragraphe précédent.
 
 Cet écart d'arrivée valait cinq points jusqu'au 20 septembre 2026 ; un point en
 était un effet de DÉNOMINATEUR, et non de dépense — la page rapportait sa
