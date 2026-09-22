@@ -13719,3 +13719,33 @@ renvoie aux tableaux plutôt que de recopier leurs chiffres. Le test coûte deux
 `docs/chiffrage_plf.csv`, `data/reference/prose/zones.yaml`,
 `tests/test_prose.py`, `README.md`, `CLAUDE.md`, `docs/limites.md` (compte de
 tests).
+
+### 105. Six comptes faux dans `limites.md` — `fait`
+
+**Demande.** Corriger les erreurs relevées en résumant `limites.md` section par
+section, le 22 septembre 2026.
+
+**Six comptes que la prose annonçait et que le dépôt dément.** « Dix erreurs de
+calcul » en listait onze. Les « vingt-cinq entrées » de ce qui reste hors de
+portée, au §1, sont vingt-huit, et le partage qui les suit en comptait
+vingt-trois : seize sont refermées par une source, non douze, et le minimum
+vieillesse en occupe deux. Les « cinquante-huit profils » d'OpenFisca sont
+quarante-huit (10 + 10 + 7 + 10 + 11), et ils l'étaient déjà le jour où la
+phrase a été écrite ; le README, qui portait le même nombre, a été ancré le même
+soir par une autre session. Les exemples officiels sont trente, et non
+vingt-huit : les deux de l'ENIM, entrés le matin même (action 89), manquaient au
+tableau du §3, qui les porte désormais. La LURA, servie depuis le 22 septembre,
+était encore déclarée hors du modèle au §3 et au §5. Et la durée requise des
+emplois classés était détaillée deux fois dans « Ce qui reste hors du modèle » :
+la puce de la catégorie active renvoie maintenant à celle qui la porte.
+
+**Laissé tel quel.** « Vingt-deux exemples sont rejoués », dans « Ce qui vient
+d'être refermé », était vrai le 17 septembre, et la section est `recit`.
+
+**En chemin.** Les témoins périmés et le test du bloc d'exemple du README,
+trouvés rouges sur `main` au début de la session, ont été réparés en parallèle
+par une autre session, qui a aussi ancré, le même soir, les chiffres des
+sections touchées ici : la fusion garde ses ancres, et la ligne de l'ENIM
+porte les siennes.
+
+**Fichiers.** `docs/limites.md`.
