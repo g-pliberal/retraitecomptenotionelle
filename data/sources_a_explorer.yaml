@@ -76,6 +76,15 @@ sources:
       La liste des simulateurs du GIP, et pour chacun s'il est anonyme ou
       derrière FranceConnect. Point d'entrée de tout le lot.
     statut: a_explorer
+    note: >-
+      Ce que `chaine_incomplete` coûte dépend du CLIENT, pas du lieu. Le
+      serveur omet l'intermédiaire de son certificat ; un client qui va le
+      chercher par l'extension AIA du certificat — tout navigateur, et le
+      `curl` de Windows adossé à Schannel — le rattrape seul et répond 200,
+      vérification entière (`ssl_verify=0`). Le `curl` d'une session s'arrête,
+      lui, sur « unable to get local issuer certificate » : d'où la recette de
+      `docs/exploration_sources.md`, qui ajoute le maillon au paquet de
+      confiance. Mesuré le 22 septembre 2026.
 
   - id: union_retraite_progressive
     url: https://parcours.info-retraite.fr/retraite-progressive
@@ -180,17 +189,37 @@ sources:
   - id: agirc_arrco_calcru
     url: https://espace-personnel.agirc-arrco.fr/public/calcru
     nature: simulateur
-    acces: ferme
+    acces: session
     regimes: [agirc_arrco]
     a_en_tirer: >-
       Le calculateur public de la retraite complémentaire — anonyme, sans
       FranceConnect, donc automatisable en principe.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
     note: >-
-      Le certificat du serveur était EXPIRÉ le 22 septembre 2026 (chaîne
-      Sectigo complète, `Verify return code: 10`). Rien à contourner : ni
-      `curl` ni Chromium ne doivent passer outre. À resonder, le défaut est
-      chez l'émetteur et se répare de son côté.
+      CE N'EST PAS UN SIMULATEUR DE PENSION, et c'est mieux que ça : `calcru`
+      convertit des points Agirc et Arrco d'avant 2019 en points Agirc-Arrco.
+      C'est donc l'oracle du COEFFICIENT DE FUSION, et il a levé une erreur du
+      dépôt. `conversions_points.csv` portait 0,347798289 quand son propre
+      commentaire prescrivait le rapport des valeurs de service au 31 décembre
+      2018 — 0,4378 ÷ 1,2588 = 0,347791548. Le calculateur affiche ce
+      quotient-là, et son exemple publié (1 000 points Agirc → 437,80 €) ne
+      tombe juste qu'avec lui : l'ancienne valeur rendait 437,8085 €. Corrigé,
+      et tenu désormais par
+      `test_les_coefficients_de_fusion_se_recalculent_depuis_les_valeurs_de_point`,
+      qui recalcule le quotient depuis deux valeurs de service certifiées —
+      le garde-fou qui manquait, et sans lequel rien ne relisait ce nombre.
+      Le reste de la page n'apprend rien : les valeurs de point 2018 et 2019
+      qu'elle affiche sont déjà dans le dépôt, certifiées.
+      LE CERTIFICAT A ÉTÉ RENOUVELÉ, et la ligne `ferme` est levée. Il était
+      EXPIRÉ quand cette ligne a été écrite, le 22 septembre 2026 (chaîne
+      Sectigo complète, `Verify return code: 10`) ; resondé le même jour, le
+      serveur sert un certificat émis le 22 septembre 2026 et valable
+      jusqu'au 8 avril 2027 (Sectigo Public Server Authentication CA OV R36).
+      La vérification passe entière — `ssl_verify=0`, rien de désactivé —, et
+      le site répond 200. Le défaut était bien chez l'émetteur, et il a été
+      réparé de son côté dans la journée : le calculateur n'est plus hors de
+      portée d'une session.
 
   - id: agirc_arrco_calculette_fiscale
     url: https://www.agirc-arrco.fr/storage/2026-Calculette-determination-fiscale-clients-V3.html

@@ -1380,8 +1380,9 @@ def test_les_points_d_un_regime_fusionne_sont_convertis(simulateur):
     Et il les sert au coefficient que l'accord de fusion a fixé, non au rapport
     de deux valeurs de service prises où les séries s'arrêtent. L'accord national
     interprofessionnel du 17 novembre 2017 convertit les points Arrco UN POUR UN
-    et les points Agirc au coefficient 0,347798289 — celui qui figure sur les
-    relevés de carrière.
+    et les points Agirc au rapport des valeurs de service AU 31 DÉCEMBRE 2018,
+    soit 0,4378 ÷ 1,2588 = 0,347791548 — celui qui figure sur les relevés de
+    carrière, et que le calculateur public de la caisse applique.
 
     Ce test opposait auparavant le rapport `arrco(2018) / agirc_arrco(2019)`,
     qui vaut 0,990 : la valeur du régime unifié y était prise au 31 décembre
@@ -1402,8 +1403,15 @@ def test_les_points_d_un_regime_fusionne_sont_convertis(simulateur):
     service_2022, _ = valeurs.service("agirc_arrco", 2022)
     assert apres == pytest.approx(service_2022), "un point Arrco vaut un point Agirc-Arrco"
 
+    # Le coefficient ne se recopie pas : c'est le rapport des valeurs de
+    # service au 31 décembre 2018. Cette ligne portait 0,347798289, qui n'est
+    # pas ce rapport — voir l'action 99 et
+    # test_les_coefficients_de_fusion_se_recalculent_depuis_les_valeurs_de_point.
+    service_agirc_2018, _ = valeurs.service("agirc", 2018)
+    service_arrco_2018, _ = valeurs.service("arrco", 2018)
     agirc, _ = scenario.valeur_du_point("agirc", 2022)
-    assert agirc / service_2022 == pytest.approx(0.347798289, rel=1e-6)
+    assert agirc / service_2022 == pytest.approx(
+        service_agirc_2018 / service_arrco_2018, rel=1e-6)
 
 
 def test_un_regime_ferme_ne_vaut_jamais_plus_que_son_successeur(simulateur):
