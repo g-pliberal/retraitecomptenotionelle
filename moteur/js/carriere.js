@@ -241,9 +241,16 @@ export class Carriere {
    * ne coupent pas au 1er janvier : la loi du 9 novembre 2010 vise les assurés
    * nés à compter du 1er juillet 1951, celle du 14 avril 2023 ceux nés à
    * compter du 1er septembre 1961.
+   *
+   * L'ARRONDI À TROIS DÉCIMALES N'EST PAS COSMÉTIQUE : les tables écrivent le
+   * 1er septembre `1961.667`, quand huit douzièmes valent 1961,666 666… Sans
+   * lui, la lecture en escalier rendait à l'assuré né en septembre 1961 la
+   * marche d'août — 168 trimestres au lieu de 169, et 62 ans au lieu de 62 ans
+   * et trois mois, pour le mois-même que la loi du 14 avril 2023 désigne.
    */
   get generation() {
-    return this.annee_naissance + (this.mois_naissance - 1) / 12;
+    return Math.round(
+      (this.annee_naissance + (this.mois_naissance - 1) / 12) * 1000) / 1000;
   }
 
   /**

@@ -26,16 +26,16 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 620<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 628<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 620<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 628<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 620<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 628<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 620<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 628<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13033,3 +13033,57 @@ REDESCENDRE les lignes dont la meilleure source est absente : cinq années de
 la SNCF sont ainsi passées de `certifiee` à `haute` avant d'être rendues à leur
 rang par la récupération manquante. Lancer les récupérateurs d'abord, et
 relire le diff du fichier de référence avant de commiter.
+
+### 96. Un mois de septembre qui tombait à côté — `fait`
+
+**Demande.** « Fait des recherches complémentaires et corrige. »
+
+**DEUX SESSIONS ONT LU LE MÊME TEXTE LE MÊME JOUR, et il faut le dire.** Celle-ci
+a mené la même correction que l'action 94 — la durée requise propre aux emplois
+classés — jusqu'au bout, avant de découvrir au rebasage que `main` la portait
+déjà, table identique et valeurs identiques. C'est le cas que la règle des zones
+du `CLAUDE.md` existe pour éviter : deux sessions sur le même registre de veille
+se rencontrent sur la même ligne. Le travail dupliqué a été abandonné au profit
+de celui de `main`, à trois choses près, qui sont ce que cette action garde.
+
+**La première, et c'est la seule vraie trouvaille : un mois de septembre qui
+tombait à côté.** L'essai écrit pour la super-active refusait de passer, et sa
+raison n'était pas dans le droit. Une génération s'écrit ici en années
+décimales, et les tables écrivent le 1er septembre `1961.667` — trois décimales,
+comme le veut leur convention. Huit douzièmes valent 1961,666 666… Le premier
+étant plus grand que le second, la lecture en escalier rendait à l'assuré né en
+SEPTEMBRE 1961 la marche d'août : **168 trimestres au lieu de 169, et un âge
+d'ouverture de 62 ans au lieu de 62 ans et trois mois** — pour le mois-même que
+la loi du 14 avril 2023 désigne, et pour un douzième de la génération. Le trou
+valait aussi pour `1963.667` de la carrière longue, `1966.667` et `1971.667` de
+la catégorie active, `1971.667` de la jouissance militaire. La génération est
+désormais lue à la précision où les tables sont écrites, dans les deux moteurs.
+
+**La deuxième : un essai qui tient l'escalier marche par marche.** L'action 94
+vérifiait la durée requise sur un point ; celui-ci la vérifie sur huit, dont la
+marche qui DESCEND — un super-actif né en août 1971 doit 171 trimestres, celui
+de septembre 169, le texte remettant leur compteur à 169 au moment même où leur
+âge commence à monter — et le contre-exemple du sédentaire, qui reste au droit
+commun. C'est cet essai qui a trouvé le mois perdu.
+
+**La troisième : 868 € qui avaient dérivé à 825 €.** Le dépliant « Pourquoi le
+montant ne suffit pas à le dire » portait ce chiffre en dur, et le modèle en
+donnait un autre depuis un moment. Il est corrigé, daté de sa génération, et
+accompagné de celui de 1965 — 102 €, le classement abaissant désormais sa durée
+requise d'un trimestre. Dit au passage dans `limites.md` et dans l'inventaire
+des avantages : le contrôle d'isolement de `avantages.py` refuse maintenant ce
+calcul sur les cas types dont le retrait du classement déplace la
+proratisation ; il en reste assez pour que la mesure tienne, et la page continue
+de chiffrer dix-huit dispositifs.
+
+**Deux lignes à ouvrir, lues et non portées.** Le F du II de l'article 13 du
+décret n° 2023-435 donne à la carrière longue de la fonction publique sa propre
+durée cotisée — 167 trimestres de 1958 à 1960, 171 de 1970 à 1972 —, que le
+modèle n'oppose pas encore ; et le C vise les autres départs avant soixante ans.
+
+**Fichiers.** `src/retraite_notionnelle/carriere.py`, `moteur/js/carriere.js`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
+`data/reference/legislation/avantages_non_contributifs.yaml`,
+`data/reference/legislation/veille.yaml`, `tests/test_simulateur.py`,
+`tests/test_affirmations.py`, `data/reference/site/affirmations.yaml`,
+`docs/limites.md`.

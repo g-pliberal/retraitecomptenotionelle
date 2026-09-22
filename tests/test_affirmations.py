@@ -2093,13 +2093,27 @@ def _(m: Modele):
 
 @controle("annuites_anticipees_rapportees_au_montant")
 def _(m: Modele):
-    """Le rapport est compté sur le modèle, et la page écrit ce compte."""
+    """Le rapport est compté sur le modèle, et la page écrit ce compte — ou se
+    tait quand il n'y a plus de montant à rapporter.
+
+    La seconde branche n'est pas théorique : le classement de l'emploi portant
+    depuis le 22 septembre 2026 sa propre durée requise, le contrôle
+    d'isolement de `avantages.py` refuse d'en tirer un montant sur les cas
+    types dont ce retrait déplace la proratisation. Il en reste aujourd'hui
+    assez pour que le rapport s'écrive ; le jour où il n'en restera plus, ce
+    contrôle exigera le silence plutôt qu'un rapport que rien ne calcule.
+    """
     derniere = m.avantages.derniere
     montant = sum(derniere.lignes.get(ligne, 0.0) for ligne in m.avantages.lignes_modele
                   if m.inventaire.famille_de_ligne(ligne) == "age_et_bonifications")
-    assert montant > 0 and derniere.anticipee > montant
+    texte = TEMOINS_PAR_NOM["avantages"]["texte"]
+    assert derniere.anticipee > 0
+    if montant <= 0:
+        assert "fois ce que les mêmes dispositifs ajoutent" not in texte
+        return
+    assert derniere.anticipee > montant
     attendu = f"soit {g.nombre(derniere.anticipee / montant, 0)} fois"
-    assert attendu in TEMOINS_PAR_NOM["avantages"]["texte"]
+    assert attendu in texte
 
 
 @controle("decote_plafonnee_a_vingt_trimestres")

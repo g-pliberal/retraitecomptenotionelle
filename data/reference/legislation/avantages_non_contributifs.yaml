@@ -805,11 +805,15 @@ avantages:
         CHIFFRÉE, par recalcul, et il faut compter DEUX effets que tout invite à
         confondre.
         Sur le MONTANT : on refait la pension avec le statut sédentaire de mêmes
-        régimes, à date de départ inchangée. 0,6 Md€ en 2024, et 868 € par an
+        régimes, à date de départ inchangée. 0,5 Md€ en 2024, et 825 € par an
         pour un agent classé de la génération 1960. C'est PETIT, et ce n'est pas
         une erreur — la décote est plafonnée à vingt trimestres, si bien que
         l'agent classé et l'agent sédentaire partis le même jour butent tous
-        deux sur le même plafond.
+        deux sur le même plafond. Depuis que le classement porte aussi sa propre
+        durée requise (22 septembre 2026), le contrôle d'isolement de
+        `avantages.py` REFUSE ce calcul sur les cas types dont il déplace la
+        proratisation : la mesure ne tient plus que sur les autres, et l'écart
+        du sexagénaire de 1965 est tombé à 102 €.
         Sur la DURÉE : les pensions servies avant l'âge légal de la génération.
         7,5 Md€ en 2024 pour le seul classement, dans un total de 13,7 Md€ de
         pensions anticipées — dont 2,4 pour les régimes spéciaux et 3,8 pour la
