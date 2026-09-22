@@ -215,6 +215,14 @@ fichiers:
       # +4,5, le prospectif du privé à −21 % pour −37 — et la phrase « la
       # moitié de l'écart est de la rétroactivité » n'était plus vraie : c'en
       # est l'essentiel.
+      # Ce que le scénario 1 approche, et les régimes incomplets : les
+      # barèmes modélisés se lisent dans leur fiche ; ceux qui ne le sont pas
+      # sont cités à leur date — le barème 2026 de la CNBF, la RCO d'avant
+      # 2011. Le régime de base des libéraux plafonnait « à 550 points » pour
+      # 557 ; la sur-revalorisation de « 12,1 % sur 1970-2018 », qu'aucune
+      # mesure ne rend, n'est plus chiffrée.
+      "3. Le scénario « système actuel » est une approximation": etat
+      "4. Régimes incomplets, et de combien": etat
       "5 quater. Comparaison à la littérature : pourquoi les écarts d'ici sont plus grands": etat
       "Ce que la littérature trouve": etat
       "Ce n'est pas une contradiction : c'est la somme de quatre choix": etat
@@ -529,7 +537,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 35
+  sections_a_declarer: 30
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
