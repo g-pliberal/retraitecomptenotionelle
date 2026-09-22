@@ -1101,8 +1101,8 @@ ne le disait :
 
 | Secteur | Ce que porte `taux_cotisation_retraite` | Valeur 2023 |
 |---|---|---|
-| Privé (régime général + Agirc-Arrco) | total salarié **+ employeur** | 25,7 % |
-| Fonction publique, régimes spéciaux | retenue de l'agent **seule** | 11,10 %, parfois 7 % |
+| Privé (régime général + Agirc-Arrco) | total salarié **+ employeur** | <!--chiffre:mesure(taux_statut?regimes=regime_general|agirc_arrco&annee=2023)-->25,6<!--/--> % |
+| Fonction publique, régimes spéciaux | retenue de l'agent **seule** | <!--chiffre:mesure(taux_statut?regimes=fonction_publique_etat&annee=2023)-->11,10<!--/--> % à l'État, <!--chiffre:mesure(taux_statut?regimes=sncf&annee=2023)-->10,85<!--/--> % à la SNCF, <!--chiffre:mesure(taux_statut?regimes=mines&annee=2023)-->8,05<!--/--> % aux mines |
 
 Alimenter un compte notionnel avec ces deux grandeurs revient à comparer un
 effort contributif complet à un demi-effort. À rémunération et carrière

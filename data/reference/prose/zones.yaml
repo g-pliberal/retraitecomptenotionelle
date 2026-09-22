@@ -523,6 +523,8 @@ fichiers:
       - "| Étape | 4 déc. | 5 déc. | 6 déc. | Retenu |"
       # Les trois nombres écrits à la main que le profil lu a remplacés.
       - "**Ce que ça a remplacé, et ce que ça a coûté.**"
+      # L'écart de 37 % que le périmètre mal lu fabriquait, avant sa correction.
+      - "Alimenter un compte notionnel avec ces deux grandeurs revient à comparer un"
     # Même tableau, même script : la méthodologie en portait la seconde copie.
     blocs_produits:
       - indexation
@@ -572,6 +574,7 @@ fichiers:
       "Tables de mortalité": etat
       "Précision des coefficients affichés": etat
       "Une carrière, plusieurs métiers": etat
+      "Le périmètre du taux de cotisation": etat
   # Un JOURNAL DE CHANTIER : le §4 et ses six suites racontent, chacune, ce
   # qu'une session a mesuré le jour où elle l'a mesuré. Leurs chiffres sont
   # justes à leur date et gelés — les rafraîchir réécrirait l'histoire, et
@@ -681,7 +684,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 11
+  sections_a_declarer: 10
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
