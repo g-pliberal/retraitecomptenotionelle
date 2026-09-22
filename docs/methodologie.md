@@ -2214,8 +2214,8 @@ Deux conventions le bornent, l'une et l'autre imposées par la maille des donné
     sien.
 
   **Le public a son propre fichier**, `profil_salaire_statut_public.csv`, lu
-  dans le seul jeu de l'INSEE qui croise l'âge et le statut : ×1,11 de 26 à
-  55 ans pour un catégorie C, ×1,22 pour un catégorie B, ×1,56 pour un
+  dans le seul jeu de l'INSEE qui croise l'âge et le statut : ×1,11 de <!--chiffre:mesure(constante?de=retraite_notionnelle.carriere&nom=TRANCHES_CATEGORIE.Y_LT30)-->26<!--/--> à
+  <!--chiffre:mesure(constante?de=retraite_notionnelle.carriere&nom=TRANCHES_CATEGORIE.Y50T59)-->54,5<!--/--> ans — les centres de ses tranches extrêmes — pour un catégorie C, ×1,22 pour un catégorie B, ×1,56 pour un
   catégorie A, là où le profil du privé qu'on leur servait valait ×1,30.
 
   **Les régimes spéciaux portent en plus un facteur de secteur**, lu dans
