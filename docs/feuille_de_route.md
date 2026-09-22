@@ -8550,6 +8550,28 @@ pendant que le script en installe une autre se serait séparée sans bruit.
 `test_l_outillage_annonce_les_versions_qu_il_installe` les lie désormais aux
 cinq endroits où le document les écrit.
 
+**Le 22 septembre 2026, au soir : douze sections de la méthodologie, et
+trois chiffres que le modèle avait laissés derrière lui.** Le cliquet passe de
+66 à 54. Quatre mesures rejoignent le registre de `scripts/mesures_prose.py` —
+`taux_indexation` (ce qu'une règle accorde une seule année), `anticipation`
+(le coût d'un départ anticipé à capital donné, qui suit l'âge de référence
+quand il bouge), `millieme_salaire`, `poids_trimestre` —, et `constante` lit
+désormais une constante de classe ou l'élément d'un couple.
+
+Ce que l'ancrage a trouvé : le lissage donnait −81,5, −80,2 et −79,1 % à la
+génération 1930 quand le modèle en calcule −83,9, −82,9 et −81,9 ; le régime
+unique répartissait 25,73 % quand il applique 25,83 — la même dérive que le
+README, dans une seconde copie ; et l'exemple du compte « revalorisé de 1 à
+5 % quand les prix montent de 10 à 50 % » ne tenait pas, l'après-guerre ayant
+revalorisé de 14 % pour 52 % d'inflation. Il cite maintenant deux années
+réelles, 1946 et 1981.
+
+Ce qui reste dans ce document est plus lourd : la construction des scénarios 6
+et du pilier capitalisé, la contribution employeur du public, les tables de
+mortalité — chacun une vingtaine de chiffres ou plus. Et *Le périmètre du taux
+de cotisation* attend une mesure qui somme les taux d'un statut une année
+donnée : son 25,7 % de 2023 n'est dans aucune fiche seule.
+
 **L'angle mort à traiter ensuite.** Ce contrôle ne juge pas une phrase,
 seulement un nombre : « la bascule ne reprend aucun droit acquis » lui est
 invisible. C'est l'action 34, et les deux se complètent — l'une tient les
