@@ -413,7 +413,7 @@ productivité qui l'emporte.
 | PIB nominal lissé sur 5 ans (Italie) | ×4 152,7 | ×322,2 | 1 288,8 % |
 <!-- indexation:fin -->
 
-Une cotisation de 1950 ne conserve donc que 1,5 % de sa valeur réelle. Dans le
+Un euro cotisé en 1940 ne conserve donc, en 2025, que <!--chiffre:mesure(conserve?regle=triple_lock_inverse)-->1,5<!--/--> % de sa valeur réelle. Dans le
 scénario rétroactif, **l'essentiel de la baisse affichée vient de la règle
 d'indexation, pas du passage aux comptes notionnels**.
 
@@ -425,7 +425,7 @@ comptes notionnels). Chaque simulation web affiche cette décomposition d'office
 La dernière ligne du tableau est la seule qui ne soit pas une hypothèse : c'est
 le coefficient que les arrêtés annuels ont réellement appliqué aux salaires
 portés au compte, celui dont le scénario 1 se sert pour son salaire de
-référence. Il vaut ×1 538, près de cinq fois les prix, parce que le régime
+référence. Il vaut ×<!--chiffre:mesure(cumul_indexation?regle=revalorisation_portee_au_compte&de=1940&a=2025)-->1 538<!--/-->, près de cinq fois les prix, parce que le régime
 général a revalorisé sur les **salaires** jusqu'en 1986 et sur les prix
 seulement depuis 1987. Ce README, la documentation et le site ont longtemps
 désigné `indexation=prix` comme la règle qui neutralise l'indexation :
@@ -437,7 +437,7 @@ suggère, et il faut le dire aussi : les cotisations d'une carrière se
 concentrent sur ses dernières années — en euros courants, une année de fin de
 carrière pèse dix à trente fois une année de début —, et c'est là que les deux
 règles coïncident. Sur le scénario rétroactif, pour un salarié du privé non
-cadre entré à 20 ans et parti à 62 :
+cadre entré à <!--chiffre:mesure(constante?de=construire_tableaux_md&nom=AGE_DEBUT_GENERATIONS)-->20<!--/--> ans et parti à <!--chiffre:mesure(constante?de=construire_tableaux_md&nom=AGE_LIQUIDATION_GENERATIONS)-->62<!--/--> :
 
 <!-- generations:debut -->
 | Génération | Carrière | Ligne de référence « Prix » | Ligne corrigée | Écart |
@@ -451,7 +451,7 @@ cadre entré à 20 ans et parti à 62 :
 
 L'écart change même de signe pour les carrières entièrement postérieures à
 1987 : depuis 1990 les arrêtés ont revalorisé un peu moins vite que les prix
-(×1,69 contre ×1,80), l'indexation légale étant assise sur l'inflation de
+(×<!--chiffre:mesure(cumul_indexation?regle=revalorisation_portee_au_compte&de=1990&a=2025)-->1,69<!--/--> contre ×<!--chiffre:mesure(cumul_indexation?regle=prix&de=1990&a=2025)-->1,79<!--/-->), l'indexation légale étant assise sur l'inflation de
 l'année précédente. L'erreur portait donc sur l'indice cumulé et sur ce qu'on
 en disait, pas sur l'ordre de grandeur des résultats — mais une ligne de
 référence fausse reste une ligne de référence fausse, et c'est sur elle que
@@ -468,12 +468,12 @@ n'est pas celui qu'on attend :
 
 - la **médiane** est presque toujours l'inflation (43 années sur 85) ou le
   salaire moyen (20) : deux taux **nominaux**. Elle suit donc les prix et les
-  dépasse même légèrement — ×397,6 contre ×322,2 — parce que le salaire moyen
+  dépasse même légèrement — ×<!--chiffre:mesure(cumul_indexation?regle=mediane_trois_taux&de=1940&a=2025)-->397,6<!--/--> contre ×<!--chiffre:mesure(cumul_indexation?regle=prix&de=1940&a=2025)-->322,2<!--/--> — parce que le salaire moyen
   l'emporte quand la productivité est forte. Sur les 85 années, elle ne passe
   sous l'inflation que 18 fois, contre 61 pour le minimum. **Ce n'est plus une
   règle d'austérité** ; c'est, en pratique, une indexation prix-salaires ;
-- la **moyenne** est plus sévère que la médiane, et même que les prix — ×175,7,
-  soit 54,5 % du pouvoir d'achat. La raison n'est pas la statistique mais le
+- la **moyenne** est plus sévère que la médiane, et même que les prix — ×<!--chiffre:mesure(cumul_indexation?regle=moyenne_trois_taux&de=1940&a=2025)-->175,7<!--/-->,
+  soit <!--chiffre:mesure(conserve?regle=moyenne_trois_taux)-->54,5<!--/--> % du pouvoir d'achat. La raison n'est pas la statistique mais le
   mélange : la moyenne incorpore **un tiers de productivité réelle chaque
   année**, y compris pendant les années à dix ou vingt points d'inflation, là où
   le minimum et la médiane ne retiennent le terme réel que les années où il
@@ -497,10 +497,10 @@ qui découle d'un argument plutôt que d'une intention.
 
 `indexation=masse_salariale` la sert, depuis les salaires et traitements bruts
 des comptes nationaux (D11, INSEE, idbank 011785411, certifiés depuis 1950).
-Sur 1941-2025 elle vaut **×3 685, soit onze fois les prix** : l'emploi salarié a
+Sur 1941-2025 elle vaut **×<!--chiffre:mesure(cumul_indexation?regle=masse_salariale&de=1940&a=2025)-->3 685<!--/-->, soit <!--chiffre:mesure(fois_prix?regle=masse_salariale)-->11,4<!--/--> fois les prix** : l'emploi salarié a
 doublé depuis 1950, et cette croissance-là s'ajoute chaque année à celle des
-salaires. C'est de très loin la règle la plus généreuse du tableau — une règle
-d'équilibre, pas une règle d'austérité.
+salaires. Avec le PIB nominal, lissé ou non, c'est l'une des trois règles les
+plus généreuses du tableau — une règle d'équilibre, pas une règle d'austérité.
 
 Deux réserves, à lire avant de s'en servir :
 
@@ -508,8 +508,9 @@ Deux réserves, à lire avant de s'en servir :
   et 3 n'y versent qu'une cotisation partielle.** Le taux d'équilibre est celui
   du système entier ; y adosser la seule part salariale mélange deux périmètres.
   C'est aux scénarios 4 et 5, qui portent la cotisation entière, qu'elle se
-  compare sans biais — et l'écart au système actuel y passe de -81 % à -51 %
-  pour la génération 1930, de -69 % à -41 % pour 1945 ;
+  compare sans biais — et, pour le salarié du privé du tableau précédent,
+  l'écart au système actuel y passe de <!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-84<!--/--> % à <!--chiffre:mesure(ecart?scenario=4&generation=1930)-->-57<!--/--> % pour la
+  génération 1930, de <!--chiffre:mesure(ecart?scenario=2&generation=1945)-->-79<!--/--> % à <!--chiffre:mesure(ecart?scenario=4&generation=1945)-->-46<!--/--> % pour 1945 ;
 - **1930-1949 est estimé**, faute de comptes nationaux : ces vingt années
   supposent l'emploi salarié constant et reprennent la variation du salaire
   moyen. La fiabilité `estimee` le dit et se propage jusqu'au résultat.
@@ -521,16 +522,16 @@ valeur ajoutée se déplace vers les revenus non salariaux.
 ### 1 quater. Le lissage pluriannuel, qui n'est pas une règle
 
 Le lissage applique une moyenne glissante de N années au taux que la règle
-produit — **n'importe laquelle des neuf**, et N est libre, de 1 à 30 ans. Ce
+produit — **n'importe laquelle des neuf**, et N est libre, de 1 à <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=LISSAGE_MAXIMUM)-->30<!--/--> ans. Ce
 n'est donc pas une dixième règle
 mais un réglage orthogonal, et il répond à une question que le choix de la règle
 ne pose pas : la **loterie de cohorte**.
 
-Sur le PIB nominal brut, une cotisation de 1980 vaut ×5,44 à une liquidation de
-2019 et **×5,18 en 2020** : attendre un an fait *perdre*, parce que l'année
+Sur le PIB nominal brut, une cotisation de 1980 vaut ×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&de=1980&a=2019)-->5,44<!--/--> à une liquidation de
+2019 et **×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&de=1980&a=2020)-->5,18<!--/--> en 2020** : attendre un an fait *perdre*, parce que l'année
 traversée s'est mal passée. Rien dans la carrière ne le justifie — c'est le
-calendrier qui tranche. Avec `lissage=5`, le recul disparaît (×6,64 puis
-×6,71) : le trou de 2020 est absorbé par les quatre années qui l'entourent. Sur
+calendrier qui tranche. Avec `lissage=5`, le recul disparaît (×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&lissage=5&de=1980&a=2019)-->6,64<!--/--> puis
+×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&lissage=5&de=1980&a=2020)-->6,71<!--/-->) : le trou de 2020 est absorbé par les quatre années qui l'entourent. Sur
 1950-2025, le PIB nominal brut compte deux années où liquider plus tard rapporte
 moins ; lissé sur trois ou cinq ans, aucune.
 
@@ -546,18 +547,18 @@ ci-dessus : sur quatre-vingts ans, une moyenne glissante **n'est pas neutre**.
 Elle revient à mesurer la croissance depuis une base reculée d'environ la moitié
 de la fenêtre, ce qui gonfle le cumul d'une vingtaine de pour cent à cinq ans —
 sans qu'aucune série ait changé. Sur une carrière, l'écart entre lissé et non
-lissé reste d'un à deux points (règle par défaut, génération 1930 : -81,5 % sans
-lissage, -80,2 % à trois ans, -79,1 % à cinq).
+lissé reste d'un à deux points (règle par défaut, génération 1930 : <!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-83,9<!--/--> % sans
+lissage, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=3)-->-82,9<!--/--> % à trois ans, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=5)-->-81,9<!--/--> % à cinq).
 
-Et un résultat qui recadre tout le reste : même sous cette règle, le scénario
-rétroactif reste 70 à 81 % en dessous du système actuel (scénario 2), et 28 à
-51 % en dessous avec la cotisation entière (scénario 4). L'indexation explique
+Et un résultat qui recadre tout le reste : même sous la règle par défaut, la masse
+salariale, le scénario rétroactif reste loin sous le système actuel — de <!--chiffre:mesure(ecart?scenario=2&generation=1990)-->-75<!--/--> % (génération 1990) à <!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-84<!--/--> % (1930) au
+scénario 2, de <!--chiffre:mesure(ecart?scenario=4&generation=1990)-->-38<!--/--> % à <!--chiffre:mesure(ecart?scenario=4&generation=1930)-->-57<!--/--> % avec la cotisation entière au scénario 4. L'indexation explique
 donc une part importante de l'écart, mais pas la totalité : le reste tient à ce
 que le système actuel sert plus qu'un compte strictement contributif.
 
 ### 2. La fusion augmente les cotisations des indépendants
 
-Le régime unique applique 25,73 % sur assiette déplafonnée. Pour les professions
+Le régime unique applique <!--chiffre:mesure(fusion?champ=taux_cotisation_retraite)-->25,83<!--/--> % sur assiette déplafonnée. Pour les professions
 libérales et les indépendants, qui cotisent aujourd'hui moins et sous plafond,
 c'est une forte hausse de prélèvement — et donc de pension. C'est la seule ligne
 du tableau des cas types qui progresse ; le résultat est correct, mais il traduit
@@ -577,21 +578,21 @@ privé — qui rendait les statuts comparables au prix d'un chiffre inventé. De
 séries l'en dispensent :
 
 - **`part_salariale`** dans les fiches : la fraction du taux que l'assuré
-  supporte. 40,87 % au régime général en 2023, 40 % à l'Agirc-Arrco par la règle
-  40-60 de l'ANI du 17 novembre 2017, 100 % pour un non-salarié qui paie tout.
+  supporte. <!--chiffre:valeur(data/reference/regimes/base_prive.yaml:regimes.code=regime_general.periodes.debut=2023.part_salariale*100)-->44,66<!--/--> % au régime général depuis 2023, <!--chiffre:partout(data/reference/regimes/complementaires_prive.yaml:regimes.code=agirc_arrco.periodes.*.part_salariale*100)-->40<!--/--> % à l'Agirc-Arrco par la
+  règle 40-60 de l'ANI du 17 novembre 2017, <!--chiffre:illustration()-->100<!--/--> % pour un non-salarié qui paie tout.
 - **La contribution employeur du public**, que le dépôt soutenait introuvable
   avant 2006. C'était vrai de l'État, et faux du reste : la CNRACL est une
   caisse depuis 1947 et publie son taux depuis 1948 ; l'État a un taux
   *implicite* reconstitué par le PLF 2011 depuis 1995 ; depuis 2006 le taux est
-  appelé par décret — 49,90 %, puis 74,28 % de 2013 à 2024, 78,28 % en 2025 et
-  **82,28 % en 2026** ; la SNCF publie ses composantes T1 et T2 de 2007 à 2018,
+  appelé par décret — <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2006&regime=fonction_publique_etat)-->49,90<!--/--> %, puis <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2013&regime=fonction_publique_etat)-->74,28<!--/--> % de 2013 à 2024, <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2025&regime=fonction_publique_etat)-->78,28<!--/--> % en 2025 et
+  **<!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> % en 2026** ; la SNCF publie ses composantes T1 et T2 de 2007 à 2018,
   et son taux d'avant est dans le décret qui fixe les cotisations des régimes
-  spéciaux — 28,44 % de 1992 à 2006. **Six régimes s'y sont ajoutés**, tous lus
-  au *Journal officiel* : la RATP (2007-2025) et les IEG (2005-2020), dont
+  spéciaux — <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=1992&regime=sncf)-->28,44<!--/--> % de 1992 à 2006. **Cinq régimes s'y sont ajoutés**, tous lus
+  au *Journal officiel* : la RATP (<!--chiffre:minimum(data/reference/legislation/contribution_employeur_public.csv:annee?regime=ratp)-->2007<!--/-->-<!--chiffre:maximum(data/reference/legislation/contribution_employeur_public.csv:annee?regime=ratp)-->2025<!--/-->) et les IEG (<!--chiffre:minimum(data/reference/legislation/contribution_employeur_public.csv:annee?regime=ieg)-->2005<!--/-->-<!--chiffre:maximum(data/reference/legislation/contribution_employeur_public.csv:annee?regime=ieg)-->2020<!--/-->), dont
   l'employeur verse depuis l'adossement ce que les mêmes salariés coûteraient
-  au régime général et à l'Agirc-Arrco, arrêté par arrêté ; les mines, 7,75 % à
-  la charge de l'exploitant sans bouger depuis 1984 ; l'Opéra de Paris et la
-  Comédie-Française, 8,80 % en 1992 et 9,56 % en 2026.
+  au régime général et à l'Agirc-Arrco, arrêté par arrêté ; les mines, <!--chiffre:maximum(data/reference/legislation/contribution_employeur_public.csv:taux*100?regime=mines)-->7,75<!--/--> % à
+  la charge de l'exploitant sans bouger depuis <!--chiffre:minimum(data/reference/legislation/contribution_employeur_public.csv:annee?regime=mines)-->1984<!--/--> ; l'Opéra de Paris et la
+  Comédie-Française, <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=1992&regime=opera_de_paris)-->8,80<!--/--> % en 1992 et <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=opera_de_paris)-->9,56<!--/--> % en 2026.
 
 ```python
 comparaison = simulateur.simuler(simulateur.carriere_simple(
@@ -606,6 +607,7 @@ for pension in comparaison.actuel.pensions_par_regime:
     print(f"{pension.regime:<28} {pension.montant:>10,.0f} €   {pension.detail}")
 ```
 
+<!-- exemple_fonctionnaire:debut -->
 ```
 Fonctionnaire d'État née en 1975, 20 % de primes, partie à 64 ans
 
@@ -618,11 +620,11 @@ Scénario                                                          Courants   Co
 5. Notionnel dès 2026, salariale + patronale                       32,980€     26,321€    2,193€    -6.9%
 6. Notionnel rétroactif, 18 % dès 2026, garantie vieillesse        47,099€     37,589€    3,132€   +32.9%
 --------------------------------------------------------------------------------------------------------
-   hors répartition (RAFP), servi à part, identique aux 6           1,506€      1,202€      100€         
+   hors répartition (RAFP), servi à part, identique aux 6           1,506€      1,202€      100€
 --------------------------------------------------------------------------------------------------------
-   + rente capitalisée obligatoire, scénario 6                      1,569€      1,252€      104€         
-   + rente capitalisée volontaire, les 5 points rendus              1,569€      1,252€      104€         
-   = total servi par le scénario 6                                 50,236€     40,093€    3,341€   +41.8%
+   + rente capitalisée obligatoire, scénario 6                      1,515€      1,209€      101€
+   + rente capitalisée volontaire, les 5 points rendus              1,515€      1,209€      101€
+   = total servi par le scénario 6                                 50,129€     40,008€    3,334€   +41.5%
 
 Qui verse la cotisation, en euros courants cumulés :
   part salariale           139,912 €   scénarios 2 et 3
@@ -630,30 +632,31 @@ Qui verse la cotisation, en euros courants cumulés :
   total                    719,225 €   scénarios 4 et 5
   contribution employeur publique trouvée sur 29 année(s)
 ```
+<!-- exemple_fonctionnaire:fin -->
 
 Le scénario 6 reste ici un peu sous le scénario 4 sur sa ligne de répartition,
 et c'est le taux, pas la garantie : jusqu'en 2025 son compte est celui du 4, aux
-taux réels, et ce n'est que sur les années 2026-2038, cotisées à 18 % au lieu
-des 82,28 % que l'État verse, qu'il s'en écarte. La pension contributive dépasse
+taux réels, et ce n'est que sur les années 2026-2038, cotisées à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % au lieu
+des <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> % que l'État verse, qu'il s'en écarte. La pension contributive dépasse
 de toute façon le plancher. Les treize années cotisées au pilier capitalisé
-ajoutent 1 569 € par an au titre des 5 % obligatoires, et 1 569 € de plus si
-elle verse les 5 % rendus : le total du scénario 6 repasse ainsi au-dessus du
+ajoutent <!--chiffre:mesure(pension?exemple=fonctionnaire&scenario=6&part=obligatoire)-->1 515<!--/--> € par an au titre des <!--chiffre:illustration()-->5<!--/--> % obligatoires, et <!--chiffre:mesure(pension?exemple=fonctionnaire&scenario=6&part=volontaire)-->1 515<!--/--> € de plus si
+elle verse les <!--chiffre:illustration()-->5<!--/--> % rendus : le total du scénario 6 repasse ainsi au-dessus du
 scénario 4, mais les trois lignes ne promettent pas la même chose — la pension
 de répartition s'éteint avec sa titulaire, le capital des deux autres se serait
 transmis, et la dernière, elle, n'est due que si elle décide de la verser.
 
-L'employeur verse ici 79 % du total. C'est l'ordre de grandeur d'un taux
-d'**équilibre**, et c'est la limite du scénario 4 : 82,28 % ne signifie pas
-qu'un fonctionnaire acquiert 82 % de son traitement en droits nouveaux, mais
+L'employeur verse ici <!--chiffre:mesure(part_employeur?exemple=fonctionnaire)-->81<!--/--> % du total. C'est l'ordre de grandeur d'un taux
+d'**équilibre**, et c'est la limite du scénario 4 : <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> % ne signifie pas
+qu'un fonctionnaire acquiert <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82<!--/--> % de son traitement en droits nouveaux, mais
 qu'il faut aujourd'hui cette contribution pour payer les pensions
 d'aujourd'hui — démographie et engagements hérités compris.
 
-Quatre limites à connaître. Pour le public, la série couvre neuf régimes :
+Quatre limites à connaître. Pour le public, la série couvre <!--chiffre:distinctes(data/reference/legislation/contribution_employeur_public.csv:regime)-->8<!--/--> régimes :
 sept autres — FSPOEIE, marins, CRPCEN, Banque de France, port de Strasbourg,
 SEITA, chemins de fer secondaires — voient leur part patronale **estimée** par
 l'effort d'un salarié du privé, et le modèle affiche sur combien d'années.
-Aucun des neuf n'est couvert sur toute sa durée : l'État commence en 1995, la
-RATP en 2007, les mines en 1984, et les IEG s'arrêtent en 2020, où le texte
+Aucun d'eux n'est couvert sur toute sa durée : l'État commence en <!--chiffre:minimum(data/reference/legislation/contribution_employeur_public.csv:annee?regime=fonction_publique_etat)-->1995<!--/-->, la
+RATP en <!--chiffre:minimum(data/reference/legislation/contribution_employeur_public.csv:annee?regime=ratp)-->2007<!--/-->, les mines en <!--chiffre:minimum(data/reference/legislation/contribution_employeur_public.csv:annee?regime=mines)-->1984<!--/-->, et les IEG s'arrêtent en <!--chiffre:maximum(data/reference/legislation/contribution_employeur_public.csv:annee?regime=ieg)-->2020<!--/-->, où le texte
 cesse de chiffrer. Ces taux sont ceux de l'**employeur**, non ceux de
 l'équilibre — la contribution que l'État verse par ailleurs à la RATP, aux
 mines et à l'Opéra n'y est pas —, à la seule exception de la ligne de l'État,

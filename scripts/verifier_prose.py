@@ -254,9 +254,10 @@ def sonde_partout(argument: str) -> float:
     entrées ne portent pas la même valeur — c'est tout son intérêt : une prose
     qui annonce un nombre unique ment dès qu'il cesse de l'être.
     """
+    argument, facteur = _facteur(argument)
     valeurs = _charge(argument)
     valeurs = valeurs if isinstance(valeurs, list) else [valeurs]
-    distinctes = {float(v) for v in valeurs if isinstance(v, (int, float))}
+    distinctes = {float(v) * facteur for v in valeurs if isinstance(v, (int, float))}
     if not distinctes:
         raise ValueError(f"« {argument} » ne rend aucun nombre")
     if len(distinctes) > 1:
@@ -292,7 +293,17 @@ def _descendre(donnees, chemin: str, origine: str):
             if not reuni:
                 raise ValueError(f"« {chemin} » ne rend rien dans {origine}")
             return reuni
-        if isinstance(donnees, list):
+        if isinstance(donnees, list) and "=" in cle:
+            # « code=regime_general » : l'entrée d'une liste qui porte ce champ.
+            # Les fiches de régime sont des listes, et leur rang n'y dit rien.
+            champ, _, voulu = cle.partition("=")
+            trouves = [e for e in donnees
+                       if isinstance(e, dict) and str(e.get(champ)) == voulu]
+            if len(trouves) != 1:
+                raise ValueError(f"« {cle} » désigne {len(trouves)} entrées "
+                                 f"dans {origine}, il en faut une")
+            donnees = trouves[0]
+        elif isinstance(donnees, list):
             donnees = donnees[int(cle)]
         elif cle in donnees:
             donnees = donnees[cle]
@@ -301,8 +312,25 @@ def _descendre(donnees, chemin: str, origine: str):
     return donnees
 
 
+def _facteur(argument: str) -> tuple[str, float]:
+    """``…*100`` ou ``…/12`` en fin d'argument : le changement d'unité.
+
+    Le même que celui des sondes de CSV : une fiche stocke 0,4466 quand la
+    prose écrit 44,66 %.
+    """
+    trouve = re.search(r"([*/])([\d.]+)$", argument)
+    if not trouve:
+        return argument, 1.0
+    nombre = float(trouve.group(2))
+    return argument[: trouve.start()], nombre if trouve.group(1) == "*" else 1 / nombre
+
+
 def _charge(argument: str):
-    """``fichier:clé.sous_clé`` ; le fichier peut être un YAML ou un JSON."""
+    """``fichier:clé.sous_clé`` ; le fichier peut être un YAML ou un JSON.
+
+    Un cran ``champ=valeur`` choisit, dans une liste, l'entrée qui le porte :
+    ``regimes.code=regime_general.periodes.debut=2023.part_salariale``.
+    """
     if ":" not in argument:
         raise ValueError("il faut « fichier:clé.sous_clé »")
     chemin, cle = argument.split(":", 1)
@@ -333,11 +361,12 @@ def sonde_entrees(argument: str) -> float:
 
 
 def sonde_valeur(argument: str) -> float:
-    """Valeur scalaire d'un YAML : ``fichier.yaml:clé.sous_clé``."""
+    """Valeur scalaire d'un YAML : ``fichier.yaml:clé.sous_clé``, ``*100`` au besoin."""
+    argument, facteur = _facteur(argument)
     valeur = _charge(argument)
     if not isinstance(valeur, (int, float)):
         raise ValueError(f"« {argument} » ne rend pas un nombre mais {type(valeur).__name__}")
-    return float(valeur)
+    return float(valeur) * facteur
 
 
 _COMPTE_TESTS: list[float] = []
@@ -402,6 +431,20 @@ def sonde_a_verifier(raison: str) -> None:
     return None
 
 
+def sonde_mesure(argument: str) -> float:
+    """Ce que le modèle calcule : ``nom?clé=valeur``, voir `mesures_prose.py`.
+
+    Les autres sondes lisent le dépôt ; celle-ci lit le MODÈLE — un écart de
+    pension, un coût en milliards, une part de PIB. C'est la matière des six
+    résultats du README et du §5 de `limites.md`, qu'aucune table ne porte et
+    que la prose recopiait d'une exécution.
+    """
+    sys.path.insert(0, str(RACINE / "scripts"))
+    from mesures_prose import mesurer
+
+    return mesurer(argument)
+
+
 SONDES = {
     "tenu": sonde_tenu,
     "illustration": sonde_illustration,
@@ -419,6 +462,7 @@ SONDES = {
     "entrees": sonde_entrees,
     "valeur": sonde_valeur,
     "tests": sonde_tests,
+    "mesure": sonde_mesure,
 }
 
 # --------------------------------------------------------------------------
@@ -440,7 +484,10 @@ _UNITE = "|".join(UNITES)
 #: séparateur de milliers du dépôt est l'espace ordinaire. La décimale
 #: manquait au premier motif, et « 7 603,41 » se lisait donc comme DEUX
 #: nombres — l'ancre le refusait, et une correction en aurait fait « 7 603 ».
-_NOMBRE = r"[−+-]?\d{1,3}(?:[  ]\d{3})+(?:,\d+)?|[−+-]?\d+(?:,\d+)?"
+#: L'espace insécable et l'espace fine, que la prose emploie aussi — « 1 569 € »
+#: —, devaient être dans la classe ; ils y étaient devenus deux espaces
+#: ordinaires, et « 1 569 » se lisait lui aussi comme deux nombres.
+_NOMBRE = r"[−+-]?\d{1,3}(?:[ \u00a0\u202f]\d{3})+(?:,\d+)?|[−+-]?\d+(?:,\d+)?"
 
 _ESPACE = r"[ \t]*\n?[ \t]*"   # la coupe de ligne, jamais le blanc de paragraphe
 CHIFFRE = re.compile(rf"(?<![\w.-])({_NOMBRE}){_ESPACE}({_UNITE})(?![\w'’])")

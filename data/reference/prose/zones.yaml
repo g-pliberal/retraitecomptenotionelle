@@ -36,6 +36,10 @@ fichiers:
       # sous deux règles d'indexation. Il était lui aussi recopié, et il avait
       # vieilli d'un point sur la génération 1920 — le modèle a bougé depuis.
       - generations
+      # La sortie de l'exemple du §3 — une fonctionnaire d'État née en 1975 —,
+      # que le modèle imprime et que la prose recopiait : elle annonçait une
+      # rente de 1 569 € quand le modèle en sert 1 515.
+      - exemple_fonctionnaire
     # « Le site a d'abord exécuté le Python lui-même, par Pyodide » ouvre un
     # paragraphe qui raconte l'époque d'avant le portage : ses 13,5 Mo et ses
     # 263 Ko sont ceux de ce temps-là, au milieu d'une section d'état.
@@ -60,6 +64,21 @@ fichiers:
       "Organisation": etat
       "Principales options": etat
       "Licence": etat
+      # Les deux premiers résultats : tout chiffre y est une MESURE du modèle
+      # — un écart de pension, un rendement cumulé, un taux du régime unique —
+      # que la sonde `mesure` recalcule. Ils étaient recopiés d'une exécution,
+      # et le 22 septembre 2026 aucune carrière ne rendait plus ceux du §1 ter
+      # et du §1 quater ; le taux du régime unique avait vieilli d'un dixième.
+      "1. La règle d'indexation domine tout le reste": etat
+      "1 bis. Le minimum n'est pas la seule statistique : médiane et moyenne": etat
+      "1 ter. La règle que la théorie désigne : la masse salariale": etat
+      "1 quater. Le lissage pluriannuel, qui n'est pas une règle": etat
+      "2. La fusion augmente les cotisations des indépendants": etat
+      # Les taux de la contribution employeur lisent leur cellule, et ce que
+      # l'exemple affiche est la mesure de l'exemple. La part salariale du
+      # régime général y était donnée à 40,87 %, que plus aucune fiche ne
+      # porte, et la série publique à « neuf régimes », quand elle en a huit.
+      "3. La part patronale pèse plus lourd que la part salariale": etat
 
   # ------------------------------------------------------------------------
   # La feuille de route est un journal : ses actions décrivent ce qu'on VOULAIT
@@ -411,7 +430,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 72
+  sections_a_declarer: 66
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
