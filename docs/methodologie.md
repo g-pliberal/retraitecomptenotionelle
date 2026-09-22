@@ -105,7 +105,9 @@ a toujours fait ainsi ; c'est le texte qui a été corrigé.
 Deux des trois termes sont nominaux, le troisième est réel. Dès que l'inflation
 dépasse la croissance de la productivité — c'est-à-dire pendant la quasi-totalité
 de la période 1945-1985 — c'est la productivité réelle qui l'emporte, et le
-compte est revalorisé de 1 à 5 % quand les prix montent de 10 à 50 %.
+compte suit de très loin : revalorisé de <!--chiffre:mesure(taux_indexation?regle=triple_lock_inverse&annee=1946)-->14,0<!--/--> % en 1946 quand les prix
+montent de <!--chiffre:mesure(taux_indexation?regle=prix&annee=1946)-->51,9<!--/--> %, de <!--chiffre:mesure(taux_indexation?regle=triple_lock_inverse&annee=1981)-->1,3<!--/--> % en 1981 quand ils montent de
+<!--chiffre:mesure(taux_indexation?regle=prix&annee=1981)-->13,4<!--/--> %.
 
 Mesure sur la période complète, 1941-2025 :
 
@@ -197,13 +199,13 @@ minimum, à termes inchangés. Ce que les données disent, sur 1941-2025 :
 - la **médiane** est l'inflation 43 années sur 85 et le salaire moyen 20 :
   autrement dit, un taux nominal dans trois cas sur quatre. Elle ne passe sous
   l'inflation que 18 années sur 85, contre 61 pour le minimum, et son cumul
-  dépasse celui des prix (×397,6 contre ×322,2) parce que le salaire moyen
+  dépasse celui des prix (×<!--chiffre:mesure(cumul_indexation?regle=mediane_trois_taux&de=1940&a=2025)-->397,6<!--/--> contre ×<!--chiffre:mesure(cumul_indexation?regle=prix&de=1940&a=2025)-->322,2<!--/-->) parce que le salaire moyen
   l'emporte quand la productivité est forte. **La médiane n'est plus une règle
   d'austérité** : c'est en pratique une indexation intermédiaire entre prix et
   salaires, dont le taux reste un taux observé — propriété que le minimum a
   aussi, et que la moyenne n'a pas ;
-- la **moyenne** est plus sévère que la médiane, et même que les prix (×175,7,
-  soit 54,5 % du pouvoir d'achat). Non parce qu'elle serait « au milieu », mais
+- la **moyenne** est plus sévère que la médiane, et même que les prix
+  (×<!--chiffre:mesure(cumul_indexation?regle=moyenne_trois_taux&de=1940&a=2025)-->175,7<!--/-->, soit <!--chiffre:mesure(conserve?regle=moyenne_trois_taux)-->54,5<!--/--> % du pouvoir d'achat). Non parce qu'elle serait « au milieu », mais
   parce qu'elle incorpore **un tiers de productivité réelle chaque année**, y
   compris pendant les années à dix ou vingt points d'inflation, là où le minimum
   et la médiane ne retiennent le terme réel que les années où il gagne. Sa
@@ -278,7 +280,7 @@ L'ordre des opérations compte, et il est fixé dans `Indexation.taux` :
    moyenne pourrait repasser sous le seuil ne serait pas un plancher.
 
 La fenêtre se saisit librement dans le formulaire : n'importe quel entier de
-1 à 30 ans. La borne haute n'est pas une limite du
+1 à <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=LISSAGE_MAXIMUM)-->30<!--/--> ans. La borne haute n'est pas une limite du
 moteur mais un garde-fou de sens — au-delà d'une trentaine d'années la moyenne
 couvre presque toute une carrière, tous les millésimes reçoivent à peu près le
 même taux, et ce n'est plus un lissage mais un taux fixe reconstitué.
@@ -298,10 +300,10 @@ une moyenne glissante n'est pas neutre. Le produit des moyennes glissantes
 revient à mesurer la croissance depuis une base reculée d'environ la moitié de
 la fenêtre, ce qui gonfle le coefficient d'une vingtaine de pour cent à cinq ans
 — sans qu'aucune série ait changé. C'est ce qui fait passer le PIB nominal de
-×3 442,3 à ×4 152,7 dans le tableau plus haut, alors qu'il croît *moins* vite
-que la masse salariale (×3 685,1). Sur une carrière, l'écart entre lissé et non
-lissé retombe à un ou deux points : règle par défaut, génération 1930, -81,5 %
-sans lissage, -80,2 % à trois ans, -79,1 % à cinq.
+×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&de=1940&a=2025)-->3 442,3<!--/--> à ×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&lissage=5&de=1940&a=2025)-->4 152,7<!--/--> dans le tableau plus haut, alors qu'il croît *moins* vite
+que la masse salariale (×<!--chiffre:mesure(cumul_indexation?regle=masse_salariale&de=1940&a=2025)-->3 685,1<!--/-->). Sur une carrière, l'écart entre lissé et non
+lissé retombe à un ou deux points : règle par défaut, génération 1930,
+<!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-83,9<!--/--> % sans lissage, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=3)-->-82,9<!--/--> % à trois ans, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=5)-->-81,9<!--/--> % à cinq.
 
 Aucun plancher n'est appliqué par défaut : le taux peut être négatif, ce qui est
 la conséquence logique de la règle (`plancher_indexation`).
@@ -398,10 +400,11 @@ par défaut. L'anticipation est déjà sanctionnée deux fois, mécaniquement :
 1. les années non travaillées n'ont produit aucune cotisation ;
 2. la rente est servie plus longtemps, donc le diviseur est plus élevé.
 
-Ordre de grandeur du second effet seul : cinq ans d'anticipation à 64 ans en
-2026 augmentent le diviseur d'environ 4 années d'espérance de vie, soit une
-pension annuelle inférieure d'environ 15 %. En ajoutant les cinq années de
-cotisations manquantes sur une carrière de 42 ans, la perte totale approche 25 %.
+Ordre de grandeur du second effet seul : cinq ans d'anticipation sur
+<!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans en 2026 augmentent le diviseur de <!--chiffre:mesure(anticipation?avance=5&annee=2026&quoi=esperance)-->4,5<!--/--> années d'espérance de vie, soit
+une pension annuelle inférieure de <!--chiffre:mesure(anticipation?avance=5&annee=2026)-->15<!--/--> %. En ajoutant les cinq années de
+cotisations manquantes sur une carrière de <!--chiffre:illustration()-->42<!--/--> ans, la perte totale approche
+<!--chiffre:mesure(anticipation?avance=5&annee=2026&carriere=42)-->26<!--/--> %.
 
 Une décote explicite supplémentaire reste disponible
 (`ModeCoefficientEcart.EXPLICITE`), mais c'est alors une double peine assumée.
@@ -415,7 +418,7 @@ et par un seul canal — le diviseur auquel les droits acquis sont convertis à 
 bascule (§5). Partout ailleurs, il est une grandeur affichée : l'écart
 d'anticipation que le rapport de simulation imprime.
 
-Ce canal unique n'est pas léger pour autant. Passer de 67 à 64 ans prend un
+Ce canal unique n'est pas léger pour autant. Passer de 67 à <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans prend un
 diviseur plus élevé, donc un capital d'ouverture plus gros, et le cadeau va tout
 entier aux générations de transition. Les deux scénarios prospectifs y gagnent
 un demi-point de PIB de dépense : le scénario 5 repasse sous le système actuel
@@ -577,7 +580,7 @@ ligne :
 |---|---|
 | minimum contributif | oui, réservé au taux plein, deux prorata, écrêté |
 | minimum garanti | oui, barème de l'article L. 17 |
-| ASPA | oui, à partir de 65 ans, barème d'une personne seule, ligne séparée |
+| ASPA | oui, à partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, barème d'une personne seule, ligne séparée |
 | PMR (retraite agricole) | **non** — voir `docs/limites.md` |
 | majoration pour trois enfants | oui, plafonnée en euros à la complémentaire |
 | majoration de durée d'assurance | oui, attribuée dans un régime |
@@ -585,7 +588,7 @@ ligne :
 | pension de réversion | **non** — elle ne concerne pas l'assuré lui-même |
 | bonifications, catégorie active | **non** — elles supposent des informations que le modèle n'a pas |
 | périodes assimilées | oui, motif par motif — et ce qu'elles ouvrent en services, à part |
-| garantie minimale de points | oui, 120 points par an de 1989 à 2018 |
+| garantie minimale de points | oui, <!--chiffre:partout(data/reference/regimes/complementaires_prive.yaml:regimes.*.periodes.*.points_minimum_annuels)-->120<!--/--> points par an de 1989 à 2018 |
 | carrières longues | oui, pour dire si le droit ouvre la liquidation |
 | décote et surcote | oui, barème propre à la fonction publique compris |
 | coefficient de solidarité Agirc-Arrco | **non** — dispositif éteint, voir `docs/limites.md` |
@@ -988,7 +991,7 @@ précédent, et le modèle en prenait deux à l'envers.
 #### Le droit ouvre-t-il cette liquidation ?
 
 Le modèle calculait une pension à n'importe quel âge sans jamais dire si la loi
-ouvrait ce départ-là. Un salarié né en 1965 y liquidait à 58 ans une pension
+ouvrait ce départ-là. Un salarié né en 1965 y liquidait à <!--chiffre:illustration()-->58<!--/--> ans une pension
 décotée que le droit ne lui aurait pas servie du tout. La question est
 maintenant posée, et sa réponse accompagne le montant : l'âge d'ouverture du
 régime le plus précoce de la carrière, ou le **départ anticipé pour carrière
@@ -1260,8 +1263,8 @@ rémunération retrouvent exactement la même pension.
 
 À compter de la bascule il n'y a plus ni fonction publique ni régimes spéciaux :
 un seul régime, dont le taux est la somme des taux du statut pivot privé (§7).
-Il en **hérite la répartition** salarié/employeur — 10,45 % de part salariale
-sur 25,73 % en 2026 — et c'est elle qui sépare le scénario 5 du scénario 3 après
+Il en **hérite la répartition** salarié/employeur — <!--chiffre:mesure(fusion?champ=taux_cotisation_salarie)-->10,45<!--/--> % de part salariale
+sur <!--chiffre:mesure(fusion?champ=taux_cotisation_retraite)-->25,83<!--/--> % en 2026 — et c'est elle qui sépare le scénario 5 du scénario 3 après
 la bascule. Il n'y a donc, après la bascule, aucune contribution publique à
 retrouver décret par décret : la réforme l'a remplacée.
 
@@ -1273,8 +1276,8 @@ et la répartition doit le suivre.
 #### Ce que ces scénarios ne disent pas
 
 Les taux employeur publics sont des taux d'**équilibre**, fixés pour que le
-compte tombe juste. Un taux de 82,28 % ne signifie pas qu'un fonctionnaire
-acquiert 82 % de son traitement en droits nouveaux : il signifie qu'il faut
+compte tombe juste. Un taux de <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> % ne signifie pas qu'un fonctionnaire
+acquiert <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82<!--/--> % de son traitement en droits nouveaux : il signifie qu'il faut
 aujourd'hui cette contribution pour payer les pensions d'aujourd'hui,
 démographie et engagements hérités compris. Les porter à un compte notionnel
 répond à une question précise :
@@ -2065,7 +2068,7 @@ Le lien, lui, porte l'adresse complète, unité et montants déjà traduits, si 
 que la page revient dans l'autre unité en décrivant la même carrière.
 
 L'aller-retour n'est pas exact, et il ne peut pas l'être : le multiple s'écrit au
-millième, et un millième de salaire moyen vaut **environ 3,50 € par mois**. Un
+millième, et un millième de salaire moyen vaut **environ <!--chiffre:mesure(millieme_salaire)-->3,48<!--/--> € par mois**. Un
 aller-retour déplace donc le revenu d'un demi-pas au plus, plus l'arrondi à
 l'euro — **deux euros par mois** sur tout le domaine accepté, balayé euro par
 euro par un test. Le pas du champ et la précision du lien sont tenus par une
@@ -2093,7 +2096,7 @@ Trois arrondis subsistent en droit, et voici ce que le modèle en fait :
 
 | Arrondi | Fondement | Le modèle |
 |---|---|---|
-| Trimestres, à l'entier supérieur | CSS art. R. 351-27 | **appliqué** — et il pèse : un trimestre vaut environ 0,6 % de la pension |
+| Trimestres, à l'entier supérieur | CSS art. R. 351-27 | **appliqué** — et il pèse : un trimestre vaut environ <!--chiffre:mesure(poids_trimestre?generation=1965)-->0,6<!--/--> % de la pension |
 | Revenus portés au compte, à l'euro le plus proche (la fraction de 0,50 comptée pour 1) | CSS art. L. 133-10, section « Règles d'arrondis » | **non appliqué** — voir `limites.md` |
 | Montants anciens en francs, convertis puis arrondis au centime | doctrine Cnav, *Revenu annuel moyen* | **non appliqué** — le relevé se saisit déjà en euros, la conversion se fait donc avant le modèle et hors de lui |
 
@@ -2142,7 +2145,7 @@ choisies : elles suivront si ces précisions changent.
 ### Ancrage des rémunérations
 
 Les comptes nationaux ne publient que des taux de croissance du salaire moyen.
-Le modèle les cumule à partir d'un point d'ancrage — 40 000 € bruts annuels en
+Le modèle les cumule à partir d'un point d'ancrage — <!--chiffre:mesure(constante?de=retraite_notionnelle.carriere&nom=ANCRAGE_SALAIRE_MOYEN.1)-->40 000<!--/--> € bruts annuels en
 2024 — documenté dans `carriere.py`. Ce point déplace proportionnellement tous
 les revenus reconstitués, donc toutes les pensions, mais il est **sans effet sur
 les rapports entre scénarios**, qui sont l'objet du modèle.
@@ -2150,7 +2153,7 @@ les rapports entre scénarios**, qui sont l'objet du modèle.
 Il commande en revanche la traduction d'un salaire en multiple, et donc les
 repères que le site affiche sous le champ — SMIC, salaire moyen, plafond de la
 Sécurité sociale — pour que l'échelle soit visible au lieu d'être supposée. Le
-SMIC mensuel y est calculé sur 151,67 heures, la durée légale actuelle ; l'année
+SMIC mensuel y est calculé sur <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=HEURES_SMIC_PAR_MOIS)-->151,67<!--/--> heures, la durée légale actuelle ; l'année
 de référence étant celle du modèle, aucune durée du travail passée n'a à être
 supposée.
 
