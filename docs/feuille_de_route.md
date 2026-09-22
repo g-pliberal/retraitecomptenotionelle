@@ -8572,6 +8572,59 @@ mortalité — chacun une vingtaine de chiffres ou plus. Et *Le périmètre du t
 de cotisation* attend une mesure qui somme les taux d'un statut une année
 donnée : son 25,7 % de 2023 n'est dans aucune fiche seule.
 
+**Le 22 septembre 2026, dans la nuit : le README et `limites.md` entièrement
+déclarés, et la sonde qui lit le modèle.** Ce qui restait disait ce que le
+MODÈLE calcule — un écart de pension, un coût, un solde —, et aucune sonde ne
+savait le lire. `mesure(nom?clé=valeur)` le fait, adossée au registre de
+`scripts/mesures_prose.py` : écart d'un scénario sur une carrière nommée,
+rendement cumulé d'une règle, coût, part de PIB, solde, coefficient,
+dette, garantie, avantages, fiche de paie, paramètres et constantes. Chaque
+mesure est mémorisée pour le processus, et le coût agrégé ne se calcule
+qu'une fois ; la vérification de la prose en coûte une trentaine de secondes
+de plus. Les deux sorties d'exemple du README, collées à la main, sont
+écrites par `construire_tableaux_md.py`.
+
+*Ce que l'ancrage a trouvé*, et c'est l'argument de l'action : presque aucune
+section chiffrée ne disait plus le vrai. Le README donnait la garantie
+vieillesse à 40 milliards en 2026 pour 17,8, le système actuel à 19,3 % du PIB
+en 2070 pour 18,4, le COR à 14,2 % pour 15,3, le solde du scénario 6 en 2050 à
+−2,03 points pour −1,65, sa dette à 103 % du PIB pour 84, le taux du régime
+unique à 25,73 % pour 25,83, la part salariale du régime général à 40,87 %
+pour 44,66, 36 réformes au calendrier pour 89 ; il affirmait que le scénario 3
+n'économise rien en 2026, quand il y cesse de servir la réversion, et que la
+garantie fait partie du total du 6, quand elle s'y ajoute. `limites.md` faisait
+passer un fonctionnaire d'État à +4,5 % au scénario 4 pour +35,3, lisait la
+recette du 6 par un rapport de taux abandonné, et donnait au solde de ce
+scénario −2,16 % du PIB pour −1,22. Trois phrases étaient fausses sans chiffre
+en cause : la masse salariale « de très loin la plus généreuse » des règles,
+que le PIB lissé dépasse ; « la moitié de l'écart est de la rétroactivité »,
+qui en est l'essentiel ; et le simulateur qui « ne propose pas » la saisie en
+net, quand il la propose.
+
+*Ce qui ne se recalculait pas n'est plus chiffré*, plutôt que d'être avoué :
+une douzaine de nombres qu'aucune mesure ne rend — la sur-revalorisation de
+12,1 %, le « +39 € une fois le brut stabilisé », le 8 % de rente du frais de
+réserve — sont redevenus des phrases. Les citations de sources datées (CNAV,
+CEPII, OPEF, barèmes de 2026) sont des `illustration()`.
+
+*Les chroniques ont reçu un intertitre.* Cinq sections de `limites.md`
+mêlaient l'état et le journal des corrections qui y avaient mené ; le journal
+a désormais son intertitre, déclaré `recit` — l'enquête sur les coefficients de
+revalorisation, le registre des recontrôles, les décisions du 19 septembre sur
+la recette du 6, l'écart au COR, les mesures de la garantie —, et l'état est
+ancré au-dessus. Quatre outils du contrôle ont été réparés en chemin :
+`--corriger` réécrivait l'argument de l'ancre quand le nombre y figurait ; le
+lecteur ignorait l'espace fine comme séparateur de milliers ; un signe
+typographique n'était pas gardé à la correction ; un paragraphe en retrait
+échappait au gel.
+
+**Ce qui reste.** Neuf sections de `methodologie.md`, qu'une autre session
+ancre en même temps, et les trois de `docs/outillage_interface.md`, qui
+restent `a_declarer` pour la raison dite plus haut. Un test de `test_web.py`
+compare `equilibre.json` à l'octet près et tombe dans un conteneur sur un
+écart au dernier chiffre de deux flottants : il demande une reconstruction
+déterministe, pas une régénération.
+
 **L'angle mort à traiter ensuite.** Ce contrôle ne juge pas une phrase,
 seulement un nombre : « la bascule ne reprend aucun droit acquis » lui est
 invisible. C'est l'action 34, et les deux se complètent — l'une tient les
