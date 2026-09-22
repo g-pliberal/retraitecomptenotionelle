@@ -562,6 +562,24 @@ def ecart_colonnes(**reglages: str) -> float:
     return (min(a[annee] / de[annee] for annee in de if annee in a) - 1) * 100
 
 
+def taux_statut(**reglages: str) -> float:
+    """Ce que prélèvent ensemble des régimes une année, en % : ``regimes=a|b&annee=2023``.
+
+    Tranche 1 de chacun, cotisation déplafonnée comprise — la grandeur que la
+    fusion additionne pour son statut pivot, mais à l'année qu'on désigne.
+    """
+    from retraite_notionnelle.moteur.fusion import _taux_total
+
+    catalogue = _simulateur(_parametres()).catalogue
+    annee, total = int(reglages["annee"]), 0.0
+    for code in reglages["regimes"].split("|"):
+        actives = catalogue[code].periodes_actives(annee)
+        if not actives:
+            raise ValueError(f"« {code} » n'a pas de période active en {annee}")
+        total += _taux_total(min(actives, key=lambda p: p.bornes_assiette_en_pass()[0]))
+    return total * 100
+
+
 def composition_revalorisation(**reglages: str) -> float:
     """Ce que composer année par année les coefficients des arrêtés fait
     perdre, en % et en valeur absolue, face au coefficient lu d'un bloc.
@@ -1015,6 +1033,7 @@ MESURES = {
     "droits_acquis_variation": droits_acquis_variation,
     "approximation_revalorisation": approximation_revalorisation,
     "ecart_colonnes": ecart_colonnes,
+    "taux_statut": taux_statut,
 }
 
 
