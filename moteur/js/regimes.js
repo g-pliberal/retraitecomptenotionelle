@@ -734,21 +734,61 @@ export class CarriereLongue {
   }
 
   /**
-   * La durée cotisée que le dispositif oppose, enfants compris : depuis les
-   * pensions prenant effet au 1er septembre 2026, jusqu'à deux trimestres de
-   * la majoration pour enfants sont réputés cotisés (L. 351-1-1, 3°, LFSS
-   * 2026 article 104 ; D. 351-1-2-1, décret n° 2026-700 ; circulaire Cnav
-   * 2026-29, point 1.2.3.8).
+   * La durée cotisée que le dispositif oppose, périodes réputées comprises.
+   *
+   * Deux listes fermées s'ajoutent aux trimestres réellement cotisés :
+   * l'article D. 351-1-2 — service national, incapacité temporaire, chômage
+   * indemnisé, maternité, invalidité, AVPF —, chacune sous sa propre limite,
+   * que {@link CarriereLongue.reputesAssimiles} tient ; et l'article
+   * D. 351-1-2-1, qui répute cotisés jusqu'à deux trimestres de la majoration
+   * pour enfants pour les pensions prenant effet au 1er septembre 2026 (LFSS
+   * 2026 article 104 ; décret n° 2026-700 ; circulaire Cnav 2026-29, point
+   * 1.2.3.8).
    */
   cotisesReputes(carriere, trimestresCotises, trimestresEnfants) {
+    const cotises = trimestresCotises + CarriereLongue.reputesAssimiles(carriere);
     if (trimestresEnfants <= 0 || carriere.age_liquidation === null) {
-      return trimestresCotises;
+      return cotises;
     }
     if (carriere.dateLiquidation.rang < CarriereLongue.ENFANTS_REPUTES_COTISES_DEPUIS) {
-      return trimestresCotises;
+      return cotises;
     }
-    return trimestresCotises
+    return cotises
       + Math.min(CarriereLongue.ENFANTS_REPUTES_COTISES_MAXIMUM, trimestresEnfants);
+  }
+
+  /**
+   * Ce que les périodes assimilées ajoutent à la durée cotisée.
+   *
+   * Chaque enveloppe de D. 351-1-2 a son plafond, et deux motifs qui la
+   * partagent le partagent : maladie et accident du travail tiennent ensemble
+   * dans quatre trimestres. Le budget se consomme dans l'ordre de la carrière,
+   * et une enveloppe sans plafond — la maternité — n'en consomme aucun.
+   */
+  static reputesAssimiles(carriere) {
+    const anneeLiquidation = carriere.anneeLiquidation;
+    const budgets = new Map();
+    let reputes = 0;
+    for (const ligne of carriere.lignes) {
+      if (ligne.cotise || !ligne.reputes_cotises_enveloppe
+          || ligne.annee > anneeLiquidation) {
+        continue;
+      }
+      const retenus = carriere.trimestresRetenus(ligne);
+      if (retenus <= 0) {
+        continue;
+      }
+      const plafond = ligne.reputes_cotises_plafond;
+      if (!plafond) {
+        reputes += retenus;
+        continue;
+      }
+      const restant = budgets.get(ligne.reputes_cotises_enveloppe) ?? plafond;
+      const pris = Math.min(retenus, restant);
+      budgets.set(ligne.reputes_cotises_enveloppe, restant - pris);
+      reputes += pris;
+    }
+    return reputes;
   }
 
   /**

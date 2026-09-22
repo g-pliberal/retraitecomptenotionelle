@@ -699,7 +699,9 @@ def _periodes_non_travaillees() -> dict:
         motif: [regle.trimestres_assimiles,
                 regle.ouvre_droits_complementaires, int(regle.fiabilite),
                 regle.avpf, regle.services_fonction_publique,
-                regle.services_plafond_trimestres_par_enfant]
+                regle.services_plafond_trimestres_par_enfant,
+                regle.reputes_cotises_enveloppe,
+                regle.reputes_cotises_plafond]
         for motif, regle in sorted(charger_periodes_non_travaillees(DONNEES).items())
     }
 

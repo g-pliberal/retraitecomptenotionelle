@@ -113,6 +113,12 @@ class AnneeCarriere:
     #: sur toute la carrière, pas année par année, et c'est le scénario qui
     #: tient le budget.
     services_plafond_trimestres_par_enfant: int = 0
+    #: Enveloppe de l'article D. 351-1-2 sous laquelle cette année est RÉPUTÉE
+    #: COTISÉE pour la carrière longue, et plafond de cette enveloppe sur toute
+    #: la carrière. Enveloppe vide : jamais réputée cotisée. Plafond nul :
+    #: réputée cotisée sans limite, ce qui n'est vrai que de la maternité.
+    reputes_cotises_enveloppe: str = ""
+    reputes_cotises_plafond: int = 0
 
     @property
     def cotise(self) -> bool:
@@ -258,6 +264,15 @@ def _ligne_annuelle(
         services_plafond_trimestres_par_enfant=(
             0 if cotise or regle is None
             else regle.services_plafond_trimestres_par_enfant
+        ),
+        # La carrière longue compte la durée COTISÉE, que D. 351-1-2 complète
+        # d'une liste fermée de périodes qu'il répute telles, chacune sous sa
+        # limite. Une année cotisée n'a pas à être réputée quoi que ce soit.
+        reputes_cotises_enveloppe=(
+            "" if cotise or regle is None else regle.reputes_cotises_enveloppe
+        ),
+        reputes_cotises_plafond=(
+            0 if cotise or regle is None else regle.reputes_cotises_plafond
         ),
     )
 

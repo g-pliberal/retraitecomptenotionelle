@@ -464,13 +464,18 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   professionnelles que le modèle ne collecte pas. Un assuré qui en relèverait
   est ici déclaré « non ouvert » alors que le droit l'ouvrirait, et subit une
   décote dont le droit le dispenserait.
-- **Trimestres « réputés cotisés » de la carrière longue.** La loi du 20 janvier
-  2014 en a élargi la liste (chômage, maladie, maternité, dans des limites
-  propres à chacun). Le modèle ne compte que les trimestres réellement cotisés
-  — et, depuis les pensions de septembre 2026, les deux trimestres de
-  majoration pour enfants que la loi de financement pour 2026 répute cotisés —,
-  ce qui rend la condition plus dure qu'elle ne l'est : quelques carrières
-  hachées sont déclarées non ouvertes alors que le droit les ouvrirait.
+- **Trimestres « réputés cotisés » de la carrière longue : deux cas sur sept.**
+  Les six enveloppes de l'article D. 351-1-2 sont servies depuis le
+  22 septembre 2026 — service national, incapacité temporaire, chômage
+  indemnisé, maternité, invalidité, assurance vieillesse des parents au foyer —,
+  chacune sous sa limite. Restent dehors le 6° du I, majoration de durée
+  d'assurance du compte professionnel de prévention, que le modèle ne calcule
+  pas, et la part du 7° qui vise les fonctionnaires affiliés à un régime spécial
+  tout en remplissant les conditions de L. 381-1, qu'il ne distingue pas. Reste
+  aussi une lecture qui manque : l'article D. 351-1-3 pose la condition de DÉBUT
+  d'activité sur une « durée d'assurance » de cinq trimestres, quand le modèle
+  n'y compte que les trimestres cotisés — plus dur que la lettre du décret, en
+  attendant la circulaire qui l'applique.
 - **La date d'effet est le mois de l'anniversaire.** Le modèle liquide au mois
   où l'âge demandé est atteint ; la caisse fait prendre effet la pension le
   premier jour du mois SUIVANT, sauf pour qui est né un premier. Un mois
@@ -7908,7 +7913,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1973<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1979<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

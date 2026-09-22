@@ -457,6 +457,21 @@ def _cas() -> list[dict]:
         "interruptions": "1999:2001:chomage_indemnise, 2008:2009:maladie",
         "naissance": "1970",
     }))
+    # DEUX CASES QU'AUCUN CAS TYPE N'EXERÇAIT. Un fonctionnaire interrompu :
+    # la pension de l'État se proratise sur les SERVICES, dont L. 9 écarte le
+    # chômage. Et une carrière longue hachée : le départ anticipé compte la
+    # durée COTISÉE, que D. 351-1-2 complète d'une liste fermée de périodes
+    # réputées telles, chacune sous sa limite. Les deux règles ne tenaient
+    # qu'aux tests Python, le portage ne leur était comparé sur rien.
+    cas.append(("fonctionnaire_interrompu", {
+        "statut": "fonctionnaire_etat", "sexe": "F", "enfants": "2",
+        "interruptions": "2000:2004:chomage_indemnise",
+    }))
+    cas.append(("carriere_longue_hachee", {
+        "naissance": "1965", "debut": "17", "liquidation": "60",
+        "salaire": "0.8", "profil": "plat",
+        "interruptions": "1990:1990:chomage_indemnise, 1995:1997:maternite",
+    }))
     cas.append(("primes_fonction_publique", {
         "statut": "fonctionnaire_etat", "primes": "0.22",
     }))

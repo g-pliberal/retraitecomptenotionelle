@@ -66,14 +66,43 @@
 #   donc pas droit à la majoration du minimum contributif au titre des périodes
 #   cotisées, et ne comptent pas pour la carrière longue.
 #
+# `reputes_cotises_enveloppe` et `reputes_cotises_plafond` — LA CARRIÈRE LONGUE
+#   NE COMPTE PAS LA DURÉE D'ASSURANCE, mais la durée ayant donné lieu à
+#   cotisations à la charge de l'assuré (D. 351-1-1). L'article D. 351-1-2
+#   ajoute à celle-ci une liste fermée de périodes qu'il RÉPUTE cotisées, et
+#   chacune sous sa propre limite, comptée sur toute la carrière et tous
+#   régimes confondus :
+#
+#     1° service national, dans la limite de quatre trimestres ;
+#     2° incapacité TEMPORAIRE — maladie (1° de R. 351-12) et accident du
+#        travail indemnisé en journalières (5°) —, quatre trimestres POUR LES
+#        DEUX ENSEMBLE ;
+#     3° chômage INDEMNISÉ et activité partielle (b et c du 4°, et 10° de
+#        R. 351-12), quatre trimestres pour les deux ensemble ;
+#     4° maternité (2° de R. 351-12), SANS LIMITE ;
+#     5° invalidité (3° de R. 351-12), deux trimestres ;
+#     7° assurance vieillesse des parents au foyer et des aidants (L. 381-1 et
+#        L. 381-2), quatre trimestres.
+#
+#   L'enveloppe est ce qui porte la limite : deux motifs qui la partagent se
+#   la partagent vraiment. Une enveloppe vide dit que la période n'est jamais
+#   réputée cotisée — c'est le cas du chômage NON indemnisé, que le 3° ne
+#   reprend pas (il ne cite que les b et c du 4° de R. 351-12, et non le d).
+#   Un plafond vide dit qu'il n'y en a pas.
+#
+#   Le modèle ne porte pas les deux autres cas du I : le 6°, majoration de
+#   durée d'assurance du compte professionnel de prévention, qu'il ne calcule
+#   pas ; et la part du 7° qui vise les fonctionnaires affiliés à un régime
+#   spécial, qu'il ne distingue pas.
+#
 # Un motif absent de cette table est traité comme `sans_activite`.
-motif,trimestres_assimiles,ouvre_droits_complementaires,avpf,services_fonction_publique,services_plafond_annees_par_enfant,fiabilite
-chomage_indemnise,4,oui,non,non,,haute
-chomage_non_indemnise,4,non,non,non,,haute
-maladie,4,oui,non,oui,,moyenne
-maternite,4,oui,non,oui,,moyenne
-invalidite,4,oui,non,oui,,moyenne
-accident_travail,4,oui,non,oui,,moyenne
-service_militaire,4,non,non,oui,,haute
-education_enfant,4,non,oui,plafonne,3,haute
-sans_activite,0,non,non,non,,certifiee
+motif,trimestres_assimiles,ouvre_droits_complementaires,avpf,services_fonction_publique,services_plafond_annees_par_enfant,reputes_cotises_enveloppe,reputes_cotises_plafond,fiabilite
+chomage_indemnise,4,oui,non,non,,chomage,4,haute
+chomage_non_indemnise,4,non,non,non,,,,haute
+maladie,4,oui,non,oui,,incapacite_temporaire,4,moyenne
+maternite,4,oui,non,oui,,maternite,,moyenne
+invalidite,4,oui,non,oui,,invalidite,2,moyenne
+accident_travail,4,oui,non,oui,,incapacite_temporaire,4,moyenne
+service_militaire,4,non,non,oui,,service_national,4,haute
+education_enfant,4,non,oui,plafonne,3,avpf,4,haute
+sans_activite,0,non,non,non,,,,certifiee

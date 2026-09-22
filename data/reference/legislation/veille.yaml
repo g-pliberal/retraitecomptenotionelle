@@ -444,23 +444,63 @@ entrees:
 
   - id: carriere_longue_reputes_cotises_autres
     regle: "Trimestres réputés cotisés : chômage, maladie et accidents du travail, maternité, invalidité (deux), service national, compte professionnel de prévention, AVPF (quatre), dans des limites propres à chacun."
-    textes: ["D. 351-1-1 CSS", "D. 351-1-2-1 CSS"]
+    textes: ["D. 351-1-1 CSS", "D. 351-1-2 CSS", "D. 351-1-2-1 CSS", "R. 351-12 CSS"]
     sources:
       - {type: circulaire_cnav, reference: "2026-29 du 4 septembre 2026, points 1.2.3.1 à 1.2.3.7", date: "2026-09-04"}
-    verifie_le: "2026-09-17"
+      - type: legifrance
+        reference: >-
+          D. 351-1-2 CSS, LEGIARTI000053356011, version du 1er janvier 2026,
+          lue en entier dans l'index LEGI du dépôt : « sont réputées avoir
+          donné lieu à cotisations : 1° Les périodes de service national […]
+          dans la limite de quatre trimestres ; 2° Les périodes comptées comme
+          périodes d'assurance en application des 1° et 5° au titre de
+          l'incapacité temporaire de l'article R. 351-12, dans la limite de
+          quatre trimestres ; 3° Les périodes comptées […] en application des b
+          et c du 4° et du 10° de l'article R. 351-12, dans la limite de quatre
+          trimestres ; 4° Les périodes comptées […] en application du 2° de
+          l'article R. 351-12 ; 5° […] du 3° de l'article R. 351-12, dans la
+          limite de deux trimestres ; […] 7° Les périodes validées en
+          application des articles L. 381-1 et L. 381-2 […] dans la limite de
+          quatre trimestres. »
+        date: "2026-09-22"
+      - type: legifrance
+        reference: >-
+          R. 351-12 CSS, LEGIARTI000054425288, lu pour la correspondance des
+          renvois : 1° maladie indemnisée, 2° maternité, 3° invalidité, 4° b
+          et c chômage indemnisé et d chômage NON indemnisé, 5° accident du
+          travail, 10° activité partielle.
+        date: "2026-09-22"
+    verifie_le: "2026-09-22"
     temoins: []
     reformes: []
-    etat: manque
-    effet: "Le modèle ne compte que les trimestres réellement cotisés et ceux des enfants : quelques carrières hachées sont déclarées non ouvertes alors que le droit les ouvre."
+    etat: conforme
+    effet: >-
+      PORTÉ LE 22 SEPTEMBRE 2026. Les six enveloppes sont en table, motif par
+      motif, dans `periodes_non_travaillees.csv`, et le moteur les consomme
+      dans l'ordre de la carrière. Ce que cela change : une seule année de
+      chômage indemnisé suffisait à fermer un départ que le droit ouvre, et
+      trois ans de maternité le fermaient tout autant alors que le 4° ne leur
+      oppose aucune limite. Deux motifs partagent leur enveloppe, parce que le
+      2° vise l'incapacité temporaire et non l'un ou l'autre : maladie et
+      accident du travail tiennent ensemble dans quatre trimestres.
     a_faire: >-
-      Porter les limites par nature de période, la circulaire 2026-29 les donne
-      toutes. Ses TROIS EXEMPLES du point 1.2 ont été lus le 21 septembre 2026
-      et ne se rejouent pas en l'état : ils arbitrent, année par année, entre
-      des périodes assimilées de nature différente — maladie, chômage, service
-      national, invalidité, maternité — et retiennent la combinaison la plus
-      favorable, quand le modèle synthétise une carrière sans distinguer ces
-      natures. L'exemple ne pourra donc servir de témoin qu'APRÈS le portage,
-      et non pour le guider.
+      RESTE HORS DU MODÈLE, et c'est écrit dans `docs/limites.md` : le 6° du I
+      — majoration de durée d'assurance du compte professionnel de prévention,
+      que le modèle ne calcule pas — et la part du 7° qui vise les
+      fonctionnaires affiliés à un régime spécial, qu'il ne distingue pas.
+      RESTE À TRANCHER, ET C'EST UNE LECTURE QUI MANQUE : l'article D. 351-1-3,
+      version LEGIARTI000053356007, pose la condition de DÉBUT D'ACTIVITÉ sur
+      une « durée d'assurance d'au moins cinq trimestres », là où le modèle ne
+      compte que les trimestres COTISÉS de ces années-là. Le texte est plus
+      large que le modèle ; la doctrine Cnav ne l'est peut-être pas, et le
+      site legislation.cnav.fr n'est pas joignable depuis une session du
+      dépôt. La condition reste donc telle quelle, plus dure que la lettre du
+      décret, en attendant la circulaire.
+      LES TROIS EXEMPLES du point 1.2 de la circulaire 2026-29, lus le
+      21 septembre 2026, ne se rejouent toujours pas : ils arbitrent, année
+      par année, entre des périodes assimilées de nature différente et
+      retiennent la combinaison la plus favorable, quand une carrière du
+      modèle ne porte qu'un motif par année.
     prochaine_veille: "2027-03-31"
 
   - id: categorie_active_super_active
@@ -2238,3 +2278,38 @@ journal:
       salaires de référence que le modèle calcule encadrent celui que la caisse
       retiendrait. `limites.md` porte la mesure, sous « Ce qui reste hors du
       modèle ».
+
+  - date: "2026-09-22"
+    session: "une année de chômage fermait un départ que le droit ouvre"
+    consulte: >-
+      Index LEGI du dépôt : article D. 351-1-2 du code de la sécurité sociale,
+      version LEGIARTI000053356011 du 1er janvier 2026, lu en entier ; article
+      R. 351-12, version LEGIARTI000054425288, lu en entier pour la
+      correspondance de ses renvois ; article D. 351-1-3, version
+      LEGIARTI000053356007, pour la condition de début d'activité ; article
+      D. 351-1-2-1, version LEGIARTI000054589209, relu pour vérifier que les
+      deux trimestres d'enfants s'ajoutent bien à cette liste et ne s'y
+      substituent pas. Tentative infructueuse de joindre legislation.cnav.fr,
+      qui porte la circulaire 2026-29 : le réseau d'une session du dépôt ne
+      l'atteint pas.
+    trouve: >-
+      LA LISTE DES PÉRIODES RÉPUTÉES COTISÉES ÉTAIT ENTIÈREMENT ABSENTE DU
+      MODÈLE, qui ne comptait que les trimestres réellement cotisés. Une seule
+      année de chômage indemnisé fermait donc un départ en carrière longue que
+      le droit ouvre. Six enveloppes sont désormais en table. Deux lectures
+      décident de tout : le 2° vise l'INCAPACITÉ TEMPORAIRE, si bien que
+      maladie et accident du travail tiennent ensemble dans quatre trimestres ;
+      et le 3° ne cite que les b et c du 4° de R. 351-12, jamais le d, qui est
+      le chômage NON indemnisé — seule période assimilée que le décret ne
+      reprenne jamais, quand la maternité est la seule qu'il n'écrête pas.
+    reste: >-
+      DEUX CAS SUR SEPT restent dehors, et `docs/limites.md` les porte : le 6°
+      du I, majoration de durée d'assurance du compte professionnel de
+      prévention, que le modèle ne calcule pas, et la part du 7° qui vise les
+      fonctionnaires affiliés à un régime spécial, qu'il ne distingue pas.
+      UNE LECTURE MANQUE : D. 351-1-3 pose la condition de DÉBUT d'activité sur
+      une « durée d'assurance d'au moins cinq trimestres », là où le modèle ne
+      compte que les trimestres cotisés de ces années-là. Le texte est plus
+      large que le modèle ; la condition reste en l'état, plus dure que sa
+      lettre, en attendant la circulaire qui l'applique.
+    prochaine_veille: "2027-03-31"

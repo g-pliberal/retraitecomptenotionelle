@@ -75,12 +75,19 @@ export class AnneeCarriere {
     //: Zéro quand il n'y en a pas — le décompte se fait sur toute la carrière,
     //: et c'est le scénario qui tient le budget.
     services_plafond_trimestres_par_enfant = 0,
+    //: Enveloppe de l'article D. 351-1-2 sous laquelle cette année est RÉPUTÉE
+    //: COTISÉE pour la carrière longue, et plafond de cette enveloppe sur toute
+    //: la carrière. Enveloppe vide : jamais réputée cotisée. Plafond nul :
+    //: réputée cotisée sans limite, ce qui n'est vrai que de la maternité.
+    reputes_cotises_enveloppe = "",
+    reputes_cotises_plafond = 0,
   }) {
     Object.assign(this, {
       annee, revenu, affiliation, type_periode, quotite,
       trimestres_valides, cotisations_versees, part_primes,
       revenu_reference, familles_cotisantes, revenu_avpf, fraction_annee,
       services_fonction_publique, services_plafond_trimestres_par_enfant,
+      reputes_cotises_enveloppe, reputes_cotises_plafond,
     });
   }
 
@@ -132,6 +139,10 @@ function ligneAnnuelle({
   // CNAV et aucun service à l'État.
   const ouvreServices = cotise || regle === null || regle[4] === true;
   const plafondServices = (cotise || regle === null) ? 0 : regle[5];
+  // La carrière longue compte la durée COTISÉE, que D. 351-1-2 complète d'une
+  // liste fermée de périodes qu'il répute telles, chacune sous sa limite.
+  const enveloppeReputes = (cotise || regle === null) ? "" : regle[6];
+  const plafondReputes = (cotise || regle === null) ? 0 : regle[7];
   const trimestres = trimestresDeclares === null
     ? (cotise ? macro.trimestresValides(revenu, annee)
       : (regle !== null ? regle[0] : 4))
@@ -164,6 +175,8 @@ function ligneAnnuelle({
       : 0.0,
     services_fonction_publique: ouvreServices,
     services_plafond_trimestres_par_enfant: plafondServices,
+    reputes_cotises_enveloppe: enveloppeReputes,
+    reputes_cotises_plafond: plafondReputes,
   });
 }
 
