@@ -194,6 +194,12 @@ fichiers:
       - "Le nombre n'est pas à lui seul un verdict"
       - "**Les témoins ne le voyaient pas, et c'est le second enseignement.**"
       - "**Un : la confrontation vérifie une copie, pas une lecture.**"
+      # Trois procès-verbaux de la confrontation aux exemples des caisses :
+      # ce qu'elle a trouvé, les six exemples du 21 septembre, la circulaire
+      # annulée.
+      - "**Ce que la confrontation a trouvé, dans l'ordre.**"
+      - "**Six exemples de plus, le 21 septembre 2026"
+      - "**Une circulaire annulée ne certifie plus rien.**"
     sections:
       # Sections d'état ancrées le 22 septembre 2026 : la règle d'indexation,
       # dont le cumul du triple lock lit le modèle ; les régimes qui manquent ;
@@ -221,6 +227,15 @@ fichiers:
       # 2011. Le régime de base des libéraux plafonnait « à 550 points » pour
       # 557 ; la sur-revalorisation de « 12,1 % sur 1970-2018 », qu'aucune
       # mesure ne rend, n'est plus chiffrée.
+      # Ce que le modèle ne sert pas : les âges et les durées de la catégorie
+      # active et des militaires lisent leur table ; ce qui n'est pas modélisé
+      # — les corps à 32 ans de services, le malus de l'Agirc-Arrco éteint en
+      # 2023, le C du XXIV — est cité tel que le texte l'écrit.
+      "Ce qui reste hors du modèle, et pourquoi": etat
+      # Les exemples publiés : les valeurs du tableau sont celles des caisses,
+      # et `test_les_exemples_publies_par_les_caisses_sont_reproduits` les
+      # rejoue. Il y en avait trente, pas « vingt-huit ».
+      "Ce que disent les exemples publiés par les caisses": etat
       "3. Le scénario « système actuel » est une approximation": etat
       "4. Régimes incomplets, et de combien": etat
       "5 quater. Comparaison à la littérature : pourquoi les écarts d'ici sont plus grands": etat
@@ -538,7 +553,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 29
+  sections_a_declarer: 27
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2

@@ -468,41 +468,41 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   autres supposent de connaître le CORPS d'appartenance et le détail des
   services, que la saisie ne demande pas.
 - **Catégorie active : servie, mais sur un classement déclaré.** L'âge anticipé
-  de l'article L. 24 — 57 ans, 52 pour la super-active, 59 et 54 après la
+  de l'article L. 24 — <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1965)-->52<!--/--> pour la super-active, <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->59<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->54<!--/--> après la
   réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote
-  propre au classement (62 et 57 ans), la condition de durée de services
-  classés (17 et 27 ans) et, depuis le 22 septembre 2026, la DURÉE REQUISE
+  propre au classement (<!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_annulation?classement=active)-->62<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_annulation?classement=super_active)-->57<!--/--> ans), la condition de durée de services
+  classés (<!--chiffre:maximum(data/reference/legislation/categorie_active.csv:services_requis_annees?classement=active)-->17<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:services_requis_annees?classement=super_active)-->27<!--/--> ans) et, depuis le 22 septembre 2026, la DURÉE REQUISE
   propre aux emplois classés : l'accélération de 2023 ne s'y applique pas à la
   date où elle s'applique aux autres, et le B du XXIV de l'article 10 de la loi
-  n° 2023-270 leur oppose 169 trimestres des nés du 1er septembre 1966 à 1967
-  contre 172 en droit commun, 170 jusqu'au 31 mars 1970, 171 jusqu'à la fin de
-  1970, 172 ensuite — cinq ans plus tard pour la super-active. Ce qui reste hors
+  n° 2023-270 leur oppose <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1967)-->169<!--/--> trimestres des nés du 1er septembre 1966 à 1967
+  contre <!--chiffre:cellule(data/reference/legislation/duree_assurance_requise.csv:trimestres?generation=1967)-->172<!--/--> en droit commun, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1969)-->170<!--/--> jusqu'au 31 mars 1970, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1970.25)-->171<!--/--> jusqu'à la fin de
+  1970, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1971)-->172<!--/--> ensuite — cinq ans plus tard pour la super-active. Ce qui reste hors
   du modèle est le CLASSEMENT lui-même : il tient à l'emploi occupé, qu'aucune donnée de carrière ne révèle,
   et c'est donc l'assuré qui le déclare en choisissant l'un des cinq statuts
   classés. Qui se trompe de statut se trompe d'âge. La table ne porte par
-  ailleurs qu'une durée par classement — 17 ans en active, 27 en super-active :
-  les 17 années des ingénieurs du contrôle de la navigation aérienne et les 32
+  ailleurs qu'une durée par classement — <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:services_requis_annees?classement=active)-->17<!--/--> ans en active, <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:services_requis_annees?classement=super_active)-->27<!--/--> en super-active :
+  les <!--chiffre:illustration()-->17<!--/--> années des ingénieurs du contrôle de la navigation aérienne et les <!--chiffre:illustration()-->32<!--/-->
   des égoutiers et des identificateurs de l'institut médico-légal ne sont pas
   distinguées, faute d'un corps déclaré.
 - **Pension militaire : la durée est servie, le grade ne l'est pas.** Les deux
   statuts militaires opposent la durée de services qui ouvre la pension —
-  17 ans pour un non-officier, 27 pour un officier, 15 et 25 avant la loi du
+  <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->17<!--/--> ans pour un non-officier, <!--chiffre:maximum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->27<!--/--> pour un officier, <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=non_officier)-->15<!--/--> et <!--chiffre:minimum(data/reference/legislation/duree_services_militaires.csv:annees_requises?categorie=officier)-->25<!--/--> avant la loi du
   9 novembre 2010 —, l'âge de jouissance différée de l'article L. 25 et la
   décote propre du II de l'article L. 14, plafonnée à dix trimestres. Restent
   dehors : la LIMITE D'ÂGE DE GRADE, qui ouvre la pension quelle que soit la
   durée accomplie et qui sert d'âge d'annulation de la décote au militaire
-  liquidant à 52 ans ou plus (L. 14 bis, 4°) — le modèle ne connaît pas le
+  liquidant à <!--chiffre:illustration()-->52<!--/--> ans ou plus (L. 14 bis, 4°) — le modèle ne connaît pas le
   grade et applique donc à tous le barème du II —, et la limite de durée de
   services, qui l'ouvre de la même façon. Conséquence : un officier supérieur
   radié par limite d'âge peut être déclaré non ouvert quand le droit l'ouvre, et
-  la décote d'un militaire parti très tôt est au plus de 12,5 %, jamais de 25 %.
+  la décote d'un militaire parti très tôt est au plus de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=TRIMESTRES_DECOTE_MILITAIRE&echelle=1.25)-->12,5<!--/--> %, jamais de <!--chiffre:illustration()-->25<!--/--> %.
 - **Pension majorée de référence (PMR)** du régime des non-salariés agricoles.
   Le régime agricole est déjà le plus approché du catalogue — sa part
   forfaitaire, sa complémentaire obligatoire et ses valeurs de point ne sont que
   partiellement sourcées. Ajouter la PMR sur ce socle donnerait un chiffre plus
   précis d'apparence et pas davantage de vérité.
 - **Coefficients de solidarité et majorants de l'Agirc-Arrco.** Le malus de
-  10 % pendant trois ans, et le bonus de 10, 20 ou 30 % pendant un an, ne
+  <!--chiffre:illustration()-->10<!--/--> % pendant trois ans, et le bonus de <!--chiffre:illustration()-->10<!--/-->, <!--chiffre:illustration()-->20<!--/--> ou <!--chiffre:illustration()-->30<!--/--> % pendant un an, ne
   s'appliquent qu'aux pensions prenant effet entre le 1er janvier 2019 et le
   30 novembre 2023 : le dispositif est éteint. Surtout, leur effet est
   TEMPORAIRE, quand le modèle ne calcule qu'une pension annuelle unique.
@@ -529,18 +529,18 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   où l'âge demandé est atteint ; la caisse fait prendre effet la pension le
   premier jour du mois SUIVANT, sauf pour qui est né un premier. Un mois
   d'écart, qui se voit là où un texte coupe au mois : la borne de la carrière
-  longue des nés en décembre 1965, fixée à 60 ans et 8 mois pour que la
+  longue des nés en décembre 1965, fixée à <!--chiffre:illustration()-->60<!--/--> ans et 8 mois pour que la
   pension prenne effet le 1er septembre 2026, tombe ici en août 2026, sous le
-  décret précédent, qui demande 60 ans et 9 mois.
+  décret précédent, qui demande <!--chiffre:illustration()-->60<!--/--> ans et 9 mois.
 - **La durée requise des emplois classés : servie, sauf le C.** Le XXIV, B de
   l'article 10 de la loi du 14 avril 2023 pour l'État, et le II, B de l'article
   13 du décret n° 2023-435 pour la CNRACL et le FSPOEIE, donnent aux catégories
-  actives leur propre calendrier de durée — 169 trimestres des nés de septembre
-  1966 à 1967, 172 dès 1971, les mêmes marches cinq ans plus tard pour la
+  actives leur propre calendrier de durée — <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1967)-->169<!--/--> trimestres des nés de septembre
+  1966 à 1967, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1971)-->172<!--/--> dès 1971, les mêmes marches cinq ans plus tard pour la
   super-active —, et `categorie_active.csv` le porte depuis le 22 septembre
   2026, ancienne table comprise pour les générations d'avant. Reste dehors le C
   du même XXIV : la durée des fonctionnaires civils et des militaires qui
-  liquident avant soixante ans SANS être classés, 169 trimestres puis un de plus
+  liquident avant soixante ans SANS être classés, <!--chiffre:illustration()-->169<!--/--> trimestres puis un de plus
   au 1er janvier 2025 et au 1er janvier 2027. Ceux-là se voient encore opposer
   la durée de leur génération.
 - **Ce qui compte en services dans les régimes spéciaux.** La pension des
@@ -2850,23 +2850,23 @@ c'est de là que viennent les −7,2 % et +0,3 %.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-vingt-huit, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->30<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
 
 | Source | Ce qu'elle fait rejouer | Accord |
 |---|---|---|
-| service-public.gouv.fr, fiches F19666 et F20349 | décote du privé et de la fonction publique, né en 1964, 159 trimestres sur 170 : taux 43,125 %, réduction de 13,75 % | **exact** |
-| fiches F19643 et F16494 | surcote du privé et de la fonction publique, 4 trimestres civils après l'âge légal : +5 % | **exact**, une fois la période de référence comptée au trimestre civil |
-| fiches F21552 et F36464 | taux plein à 170, taux plein à 67 ans avec 158, taux minoré à 65 ans (45 %), proratisation 158/170 | **exact** |
-| actualité A15703 | minimum contributif 2026 : 170 trimestres dont 135 cotisés, 873,53 € par mois | **exact** au centime |
-| circulaire Cnav 2026-07 | âges légaux et durées de la suspension pour trois dates de naissance, décote d'un né en novembre 1961 (44,375 %) | **exact**, une fois les tables réécrites |
+| service-public.gouv.fr, fiches F19666 et F20349 | décote du privé et de la fonction publique, né en 1964, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->159<!--/--> trimestres sur 170 : taux <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->43,125<!--/--> %, réduction de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->13,75<!--/--> % | **exact** |
+| fiches F19643 et F16494 | surcote du privé et de la fonction publique, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->4<!--/--> trimestres civils après l'âge légal : +<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->5<!--/--> % | **exact**, une fois la période de référence comptée au trimestre civil |
+| fiches F21552 et F36464 | taux plein à 170, taux plein à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->67<!--/--> ans avec 158, taux minoré à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->65<!--/--> ans (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->45<!--/--> %), proratisation <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->158<!--/-->/170 | **exact** |
+| actualité A15703 | minimum contributif 2026 : <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->170<!--/--> trimestres dont 135 cotisés, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->873,53<!--/--> € par mois | **exact** au centime |
+| circulaire Cnav 2026-07 | âges légaux et durées de la suspension pour trois dates de naissance, décote d'un né en novembre 1961 (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->44,375<!--/--> %) | **exact**, une fois les tables réécrites |
 | circulaire Cnav 2026-29 | carrière longue par génération, 1964 à 1971, ouverte à la borne et refusée un trimestre plus tôt | **exact**, une fois la borne lue par génération |
-| circulaire Cnav 2018-04 | surcote à un, deux et trois taux (2,5 %, 4,75 %, 10,25 %) | **exact**, une fois le barème daté |
+| circulaire Cnav 2018-04 | surcote à un, deux et trois taux (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->2,5<!--/--> %, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->4,75<!--/--> %, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->10,25<!--/--> %) | **exact**, une fois le barème daté |
 | fiche F16336 et circulaire carrière Cnav 2017-01, fiche 6.2b | huit trimestres par enfant au régime général — quatre de maternité, quatre d'éducation | **exact** |
 | fiche F37311 | bonification de la fonction publique : quatre trimestres par enfant né avant 2004, deux pour ceux nés depuis | **exact** |
-| circulaire Cnav 2022-26 | assiette de la majoration pour trois enfants : 10 % de la retraite telle qu'elle est servie, surcotée, décotée ou pile au taux plein | **exact** |
+| circulaire Cnav 2022-26 | assiette de la majoration pour trois enfants : <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->10<!--/--> % de la retraite telle qu'elle est servie, surcotée, décotée ou pile au taux plein | **exact** |
 
 **Ce que la confrontation a trouvé, dans l'ordre.** Le premier exemple lu
 contredisait les tables certifiées du dépôt : non que le récupérateur se soit
@@ -2906,9 +2906,9 @@ Ce dernier point est ce que la circulaire 2022-26 tient à dire et que le
 modèle aurait pu manquer : « la surcote majore la retraite et fait partie
 intégrante de l'avantage de base », si bien que la majoration pour enfants
 « est donc calculée sur la base du montant annuel de la retraite, majorée par
-la surcote ». Son exemple le chiffre — 10 % × (600 + 22,50) = 62,25 — et
-c'est un ordre d'opérations, pas un barème : appliquer les 10 % à la pension
-d'AVANT la surcote rendrait 9,52 % de celle d'après, et le témoin le verrait.
+la surcote ». Son exemple le chiffre — <!--chiffre:illustration()-->10<!--/--> % × (600 + 22,50) = 62,25 — et
+c'est un ordre d'opérations, pas un barème : appliquer les <!--chiffre:illustration()-->10<!--/--> % à la pension
+d'AVANT la surcote rendrait <!--chiffre:illustration()-->9,52<!--/--> % de celle d'après, et le témoin le verrait.
 
 **Une circulaire annulée ne certifie plus rien.** Les six témoins de carrière
 longue citaient la circulaire Cnav 2026-17 du 12 juin 2026, que la 2026-29 du
@@ -2936,7 +2936,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les vingt-huit tombent justes ensemble, sur
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->30<!--/--> tombent justes ensemble, sur
 dix sources et sept règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
 
