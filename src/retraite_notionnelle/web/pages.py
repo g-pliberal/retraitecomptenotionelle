@@ -87,7 +87,12 @@ from ..remuneration import (
     salaire_net_depuis_brut,
 )
 from ..restitution import Restitution
-from ..simulateur import Comparaison, Simulateur
+from ..simulateur import (
+    Comparaison,
+    NiveauInverse,
+    Simulateur,
+    niveau_pour_pension,
+)
 from . import gabarit as g
 
 #: Le profil de carrière se DÉDUIT du statut par défaut : on ne demande pas sa
@@ -236,7 +241,38 @@ UNITES_REVENU = [
 #: Ce que porte le champ tant que rien n'a été saisi, dans chaque unité. Un
 #: nombre rond proche du salaire moyen plutôt que le salaire moyen exact : le
 #: champ est fait pour être remplacé, et « 3 500 » se relit mieux que « 3 475 ».
+#: Les bornes du niveau de revenu, en multiples du salaire moyen. Le formulaire
+#: les impose au champ, et l'inversion balaie l'intervalle qu'elles ferment :
+#: c'est le même domaine, et il n'y en a qu'un.
+NIVEAU_MINIMAL = 0.1
+NIVEAU_MAXIMAL = 10.0
+
 SALAIRE_DEFAUT = {"euros_mois": 3500.0, "moyen": 1.0}
+
+#: Ce que le formulaire demande : un revenu d'activité, ou une pension.
+#:
+#: Le simulateur va du revenu à la pension, et c'est le sens du droit : on
+#: cotise, puis on liquide. Mais celui qui est déjà à la retraite connaît sa
+#: pension au centime et ne se souvient pas de ce qu'il gagnait il y a trente
+#: ans — lui demander un revenu, c'est lui demander d'estimer ce que le
+#: simulateur sait calculer. Le second mode prend donc la pension et cherche le
+#: revenu dont le SCÉNARIO 1 la tire : le droit en vigueur est le seul des
+#: quatre systèmes qu'il ait un sens d'inverser, puisque c'est le seul que
+#: l'assuré a réellement subi.
+#: Les libellés sont courts — « Mon revenu », et non « Mon revenu d'activité »
+#: comme le champ — parce que c'est leur OPPOSITION qui porte le sens : mis
+#: côte à côte, les deux mots se distinguent sans qu'on ait à les qualifier, et
+#: ce qui se lit à l'ouverture du formulaire se compte (voir
+#: ``test_le_simulateur_tient_en_peu_de_mots``).
+SAISIES = [
+    ("revenu", "Mon revenu"),
+    ("pension", "Ma pension"),
+]
+
+#: Pension mensuelle proposée par défaut, en euros NETS. Voisine de la pension
+#: moyenne de droit direct des retraités de droit français, pour que le
+#: formulaire s'ouvre sur un cas qui ressemble à celui de qui le lit.
+PENSION_DEFAUT = 1500.0
 
 #: Les deux façons de lire tout montant du simulateur — ce qu'on saisit comme
 #: ce qu'on affiche. Un seul réglage pour les deux : lire un salaire net et une
@@ -552,6 +588,17 @@ class Saisie:
     #: saisit ce que le métier paie maintenant, et le modèle suit ensuite le
     #: salaire moyen d'une année à l'autre.
     unite_revenu: str = "euros_mois"
+    #: Ce que le formulaire demande : ``revenu`` — ce qu'on gagne en travaillant,
+    #: d'où le simulateur tire une pension — ou ``pension`` — ce qu'on touche
+    #: déjà, d'où il remonte au revenu. Voir :data:`SAISIES`.
+    saisie_par: str = "revenu"
+    #: La pension mensuelle saisie, quand c'est elle qu'on saisit. Elle est dans
+    #: la MÊME convention que les montants affichés : nette ou brute selon
+    #: ``montants``, et en euros constants de ``euros``. C'est ce qui la rend
+    #: comparable sans rien convertir — et, pour un retraité dont la pension a
+    #: suivi les prix comme le droit le prévoit, c'est exactement la somme qu'il
+    #: touche aujourd'hui. Voir ``_champ_pension``.
+    pension: float = PENSION_DEFAUT
     #: Net ou brut : vaut pour TOUT le simulateur, la saisie comprise. En
     #: « net », le salaire tapé est un net mensuel que le modèle convertit en
     #: brut par la fiche de paie du statut, et tous les montants affichés —
@@ -632,6 +679,9 @@ class Saisie:
             unite_revenu=unite,
             montants=_parmi(parametres, "montants", MODES_MONTANT,
                             defauts.montants),
+            saisie_par=_parmi(parametres, "saisie_par", SAISIES,
+                              defauts.saisie_par),
+            pension=_reel(parametres, "pension", defauts.pension),
             naissance=annee_naissance,
             naissance_mois=mois_naissance,
             naissance_jour=naissance[2] if naissance else defauts.naissance_jour,
@@ -741,6 +791,7 @@ class Saisie:
                 f"Fenêtre de lissage attendue entre 1 et {LISSAGE_MAXIMUM} ans "
                 "(1 = aucun lissage)."
             )
+        self._verifier_pension()
         # Les métiers se suivent sans se recouvrir : chacun commence après le
         # précédent et avant le départ à la retraite. C'est la seule chose que
         # le moteur exige, et elle se dit ici plutôt que par une exception
@@ -770,6 +821,29 @@ class Saisie:
             if not metier.sans_emploi:
                 self._verifier_revenu(metier.salaire, rang=rang)
             precedent = metier.debut
+
+    # -- ce que le formulaire demande ----------------------------------------
+
+    @property
+    def par_pension(self) -> bool:
+        """Vrai si c'est la pension qui est saisie, et le revenu qui se cherche.
+
+        Le relevé l'emporte sur elle comme il l'emporte sur les revenus : il
+        donne la carrière année par année, il n'y a plus rien à inverser.
+        """
+        return self.saisie_par == "pension" and not self.releve_actif
+
+    def _verifier_pension(self) -> None:
+        """La pension saisie, contrôlée avant qu'on cherche ce qu'elle suppose.
+
+        Une borne haute serait un chiffre inventé : c'est le PLAFOND DU STATUT
+        qui dit ce qu'une carrière peut acquérir, il se lit sur la courbe, et
+        l'inversion le rapporte elle-même. Seul le zéro est refusé ici.
+        """
+        if self.saisie_par != "pension":
+            return
+        if self.pension <= 0:
+            raise ErreurSaisie("La pension doit être strictement positive.")
 
     # -- l'unité des revenus -------------------------------------------------
 
@@ -804,7 +878,7 @@ class Saisie:
         if self.revenu_en_euros:
             if valeur <= 0:
                 raise _refus(rang, "Le revenu doit être strictement positif.")
-        elif not 0.1 <= valeur <= 10:
+        elif not NIVEAU_MINIMAL <= valeur <= NIVEAU_MAXIMAL:
             raise _refus(
                 rang,
                 "Niveau de revenu attendu entre 0,1 et 10 fois le salaire moyen.",
@@ -1266,6 +1340,11 @@ class Saisie:
         # nombre « salaire », et une adresse partagée qui l'omettrait décrirait
         # une autre carrière que celle qu'on a calculée.
         champs["montants"] = self.montants
+        # Ce que le formulaire demande s'écrit toujours, pour la même raison :
+        # une adresse qui l'omettrait décrirait une saisie par le revenu, et
+        # le nombre « pension » n'y servirait plus à rien.
+        champs["saisie_par"] = self.saisie_par
+        champs["pension"] = _nombre(self.pension)
         # Les métiers qui suivent le premier, un groupe de trois champs chacun.
         # Une ligne vide du formulaire n'en produit aucun : l'adresse ne porte
         # que ce qui a été saisi.
@@ -1567,6 +1646,52 @@ class Echelle:
         return niveau * self.moyen / MOIS_PAR_AN
 
 
+def _refus_de_pension(trouve: "NiveauInverse", saisie: Saisie,
+                      montants: "Montants", constants: float) -> str:
+    """Pourquoi aucune carrière ne sert la pension saisie, et ce qui la sert.
+
+    Les trois refus disent une règle du droit, jamais une limite du calcul, et
+    c'est ce qui les rend utiles : celui qui les lit apprend pourquoi sa
+    pension ne se déduit pas d'un revenu, et ce qu'il faut changer — le
+    montant, ou la carrière décrite au-dessus.
+
+    Les montants sont rendus dans la langue du formulaire — mensuels, nets si
+    la page est en net, en euros de l'année de référence —, faute de quoi le
+    refus opposerait des annuels bruts à quelqu'un qui vient de taper un net
+    mensuel.
+    """
+    def afficher(annuel: float) -> str:
+        return g.euros(montants.pension(annuel * constants / MOIS_PAR_AN))
+
+    if trouve.sous_le_plancher:
+        return (
+            "Aucune carrière de cette forme ne sert une pension si petite : "
+            f"au revenu le plus bas que le formulaire accepte, elle sert déjà "
+            f"{afficher(trouve.plancher)} par mois — le minimum contributif et "
+            "l'ASPA font ce plancher. Saisissez au moins ce montant, ou "
+            "décrivez une carrière plus courte ou plus interrompue."
+        )
+    if trouve.au_dessus_du_plafond:
+        return (
+            "Aucune carrière de cette forme ne sert une pension si grande : "
+            f"le système actuel plafonne à {afficher(trouve.plafond)} par "
+            "mois. Au-delà du plafond de la tranche la plus haute de ce "
+            "statut, cotiser davantage n'acquiert plus rien, et toutes les "
+            "carrières mieux payées servent la même pension."
+        )
+    return (
+        "Aucune carrière de cette forme ne sert exactement cette pension : "
+        f"entre {afficher(trouve.pension_dessous)} et "
+        f"{afficher(trouve.pension)} par mois, il n'y a rien. Une année ne "
+        "valide quatre trimestres qu'à partir de 150 heures de SMIC ; "
+        "au-dessous, la carrière compte pour moins qu'elle n'a duré et le "
+        "minimum contributif est proratisé d'autant, si bien que la pension "
+        "saute dès que le seuil est franchi. Saisissez l'un de ces deux "
+        "montants, ou décrivez la carrière — sa durée, ses interruptions — "
+        "telle qu'elle a été."
+    )
+
+
 #: Combien d'agrégats le contexte garde en mémoire, tous jeux de règles
 #: confondus. Deux par jeu — le coût et les avantages —, donc trois jeux de
 #: règles : celui par défaut, et les deux derniers essayés.
@@ -1781,20 +1906,71 @@ class Contexte:
                 raise ErreurSaisie(
                     f"Statut d'affiliation inconnu : « {metier.affiliation} »."
                 )
-        carriere = simulateur.carriere_parcours(
-            annee_naissance=saisie.naissance,
-            sexe=saisie.sexe,
-            metiers=parcours,
-            mois_naissance=saisie.naissance_mois,
-            age_liquidation=saisie.liquidation,
-            profil_carriere=saisie.profil,
-            interruptions=saisie.interruptions_de_carriere(motifs),
-            nombre_enfants=saisie.enfants,
-            part_primes=saisie.primes,
-            identifiant="assuré",
-        )
+
+        def batir(niveaux: list[float]) -> "Carriere":
+            return simulateur.carriere_parcours(
+                annee_naissance=saisie.naissance,
+                sexe=saisie.sexe,
+                metiers=[
+                    replace(metier, niveau_salaire=niveau)
+                    for metier, niveau in zip(parcours, niveaux)
+                ],
+                mois_naissance=saisie.naissance_mois,
+                age_liquidation=saisie.liquidation,
+                profil_carriere=saisie.profil,
+                interruptions=saisie.interruptions_de_carriere(motifs),
+                nombre_enfants=saisie.enfants,
+                part_primes=saisie.primes,
+                identifiant="assuré",
+            )
+
+        if saisie.par_pension:
+            return self._simuler_par_pension(simulateur, saisie, batir,
+                                             len(parcours), parcours)
+        carriere = batir([metier.niveau_salaire for metier in parcours])
         _verifier_statuts_ouverts(simulateur.affiliations, carriere, parcours)
         return simulateur.simuler(carriere)
+
+    def _simuler_par_pension(self, simulateur: Simulateur, saisie: Saisie,
+                             batir, combien: int, parcours) -> Comparaison:
+        """La carrière que la pension suppose, puis les quatre systèmes dessus.
+
+        UN SEUL NIVEAU POUR TOUTE LA CARRIÈRE. Inverser une pension ne donne
+        qu'un nombre, et une carrière en compte autant qu'elle a de métiers :
+        il faut donc une convention, et la plus simple est la seule qui
+        n'invente rien — le même niveau partout, que le profil de carrière
+        déforme ensuite comme il le fait toujours. Qui veut un revenu par
+        métier le saisit, ou dépose son relevé.
+
+        LA CIBLE EST RAMENÉE À CE QUE LE MODÈLE CALCULE, et dans cet ordre : la
+        pension saisie est mensuelle, nette peut-être, en euros constants de
+        l'année de référence ; le scénario 1 rend une pension annuelle, brute,
+        en euros de l'année de liquidation. Le coefficient des euros constants
+        ne dépend que de l'année de liquidation, jamais du niveau de revenu :
+        il se calcule une fois, avant la dichotomie, et non à chaque tour.
+        """
+        montants = Montants.depuis(saisie, self.base)
+        constants = simulateur.macro.coefficient_prix(
+            saisie.date_de(saisie.liquidation).annee,
+            simulateur.parametres.annee_euros_constants,
+        )
+        brute = (saisie.pension / (1.0 - montants.taux_pension)
+                 if saisie.en_net else saisie.pension)
+        cible = brute * MOIS_PAR_AN / constants
+
+        def pension_de_niveau(niveau: float) -> float:
+            return simulateur.scenario_actuel.calculer(
+                batir([niveau] * combien)).pension_annuelle
+
+        trouve = niveau_pour_pension(pension_de_niveau, cible,
+                                     NIVEAU_MINIMAL, NIVEAU_MAXIMAL)
+        if not trouve.atteinte:
+            raise ErreurSaisie(_refus_de_pension(trouve, saisie, montants,
+                                                 constants))
+        carriere = batir([trouve.niveau] * combien)
+        _verifier_statuts_ouverts(simulateur.affiliations, carriere, parcours)
+        comparaison = simulateur.simuler(carriere)
+        return replace(comparaison, niveau_inverse=trouve)
 
     def _carriere_relevee(self, simulateur: Simulateur, saisie: Saisie,
                           motifs) -> "Carriere":
@@ -3305,7 +3481,9 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   <div class="grille">{identite}</div>
   <h3>La carrière, période par période{_bulle_des_periodes()}</h3>
   {_metiers(saisie, affiliations, echelle)}
-  {_bascule_unite(saisie, echelle)}
+  {_bloc_pension(saisie)}
+  {_bascule_saisie(saisie)}
+  {"" if saisie.par_pension else _bascule_unite(saisie, echelle)}
   {_bascule_montants(saisie, echelle)}
   {_mention_conversion(saisie, echelle)}
   {_releve(saisie)}
@@ -3427,7 +3605,8 @@ def _champ_revenu(nom: str, saisie: Saisie, echelle: "Echelle", valeur: str,
                        "tête : c'est l'unité qui garde son sens sur "
                        "quatre-vingts ans, quand un montant n'en a que rapporté "
                        "à son année." + APPEL_REVENU_RETRAITE,
-                       min="0.1", max="10", step=_nombre(PAS_MULTIPLE))
+                       min=_nombre(NIVEAU_MINIMAL),
+                       max=_nombre(NIVEAU_MAXIMAL), step=_nombre(PAS_MULTIPLE))
 
     # « Revenu » et non « salaire » : douze des vingt-deux statuts ne sont pas
     # salariés, et un artisan n'a ni salaire ni fiche de paie. Le brut garde le
@@ -3479,6 +3658,84 @@ def _champ_revenu(nom: str, saisie: Saisie, echelle: "Echelle", valeur: str,
                    type_="number",
                    complement="" if bref else complement + APPEL_REVENU_RETRAITE,
                    min="0", step="1")
+
+
+def _champ_pension(saisie: Saisie) -> str:
+    """Le champ « combien touchez-vous », qui remplace les revenus.
+
+    IL EST DANS LA MÊME CONVENTION QUE LES MONTANTS AFFICHÉS, et c'est ce qui
+    le rend utilisable sans rien convertir. Le simulateur ne calcule qu'une
+    pension au moment de la liquidation, mais il l'exprime en euros constants
+    de l'année de référence ; or le droit indexe les pensions servies sur les
+    prix. Une pension qui a suivi les prix garde son pouvoir d'achat : la somme
+    qu'un retraité touche aujourd'hui EST sa première pension exprimée en euros
+    d'aujourd'hui. Il n'y a donc rien à remonter, et aucune série de
+    revalorisations à certifier pour cela — seulement une convention à dire,
+    ce que fait le complément.
+    """
+    # Deux accords pour un seul mode : la PENSION est nette, les EUROS sont
+    # nets. « en euros nettes par mois » s'est affiché une fois.
+    mot = "nette" if saisie.en_net else "brute"
+    euros = "nets" if saisie.en_net else "bruts"
+    aide = (f"en euros {euros} par mois, l'année de référence étant "
+            f"{saisie.euros}")
+    complement = (
+        "Déjà à la retraite ? C'est la pension que vous touchez, telle qu'elle "
+        "tombe sur le compte. Le simulateur calcule la pension du premier "
+        f"mois, mais il l'exprime en euros de {saisie.euros}, et le droit "
+        "indexe les pensions servies sur les prix : une pension qui a suivi "
+        "les prix garde son pouvoir d'achat, les deux montants sont donc le "
+        "même. Les sous-indexations décidées certaines années font seules la "
+        "différence, et le simulateur ne les suit pas. Pas encore à la "
+        "retraite ? C'est alors la pension que vous visez, et la page dira "
+        "quel revenu d'activité il y faut."
+    )
+    return g.champ("pension", f"Pension {mot} mensuelle", _nombre(saisie.pension),
+                   aide, type_="number", complement=complement,
+                   min="0", step="1")
+
+
+def _bloc_pension(saisie: Saisie) -> str:
+    """Le champ de pension, et la phrase qui dit ce qu'il remplace.
+
+    Muet tant que c'est le revenu qu'on saisit : un champ grisé, ou même
+    seulement présent, ferait croire que les deux nombres comptent à la fois.
+    """
+    if not saisie.par_pension:
+        return ""
+    return f"""
+<div class="grille cible-pension">{_champ_pension(saisie)}</div>
+<p class="discret">Le revenu de chaque période a disparu : c'est lui que la
+page cherche. Toutes les périodes reçoivent le <strong>même niveau de
+revenu</strong>, que le profil de carrière déforme ensuite aux deux bouts ;
+pour une carrière dont le revenu change d'un métier à l'autre, c'est le relevé
+qu'il faut déposer.</p>
+"""
+
+
+def _bascule_saisie(saisie: Saisie) -> str:
+    """Le lien qui passe du revenu à la pension, et retour.
+
+    Même composant que les deux autres bascules, et pour les mêmes raisons :
+    l'adresse EST la saisie, elle se partage telle qu'on la lit, et cela ne
+    demande pas une ligne de JavaScript.
+
+    RIEN N'EST TRADUIT D'UN MODE À L'AUTRE, à la différence des bascules
+    d'unité et de montants. Traduire demanderait de calculer — dans un sens
+    la pension de la carrière saisie, dans l'autre le revenu que la pension
+    suppose —, et un lien du formulaire n'a pas à lancer une simulation pour
+    savoir ce qu'il porte. Chaque mode garde donc le nombre qu'on lui a donné,
+    et la page qui suit le calcul montre l'autre.
+    """
+    vers_la_pension = saisie.saisie_par == "revenu"
+    cible = (f"#/simuler?"
+             + escape(saisie.requete(
+                 saisie_par="pension" if vers_la_pension else "revenu")))
+    revenu, pension = (libelle for _, libelle in SAISIES)
+    branches = [(revenu, "#" if vers_la_pension else cible),
+                (pension, cible if vers_la_pension else "#")]
+    return g.bascule("Je saisis", branches,
+                     revenu if vers_la_pension else pension)
 
 
 def _aide_profil(profil: str, affiliation: str | None = None) -> str:
@@ -3566,7 +3823,8 @@ def _metiers(saisie: Saisie, affiliations: Affiliations,
                   saisie.statut,
                   "proposé aux seules dates où son régime recrutait",
                   complement=g.GLOSSAIRE["statut d'affiliation"])
-        + _champ_revenu("salaire", saisie, echelle, _nombre(saisie.salaire)),
+        + ("" if saisie.par_pension else
+           _champ_revenu("salaire", saisie, echelle, _nombre(saisie.salaire))),
     )]
 
     for rang, metier in enumerate(saisie.metiers, start=2):
@@ -3609,8 +3867,9 @@ def _champs_metier(rang: int, debut: str, calcul: str, statut: str,
     Le champ disparaît donc plutôt que de demander un nombre dont rien ne
     serait fait.
     """
-    revenu = "" if statut in CODES_SANS_EMPLOI else _champ_revenu(
-        f"metier{rang}_salaire", saisie, echelle, salaire, bref=True,
+    revenu = "" if statut in CODES_SANS_EMPLOI or saisie.par_pension else (
+        _champ_revenu(f"metier{rang}_salaire", saisie, echelle, salaire,
+                      bref=True)
     )
     return (
         g.champ_date(f"metier{rang}_debut", "Début de cette période", debut,
@@ -4523,6 +4782,60 @@ la recherche en sait.</p>
 {detail}
 """, identifiant="resultats-financement")
 
+def _revenu_deduit(contexte: Contexte, comparaison: Comparaison,
+                   saisie: Saisie) -> str:
+    """Le revenu que la pension suppose — la réponse, quand c'est elle qu'on a
+    demandée.
+
+    ELLE VIENT AVANT LES QUATRE BARRES. Qui saisit sa pension n'a pas posé la
+    même question que qui saisit son salaire : il demande d'abord ce que sa
+    pension dit de sa carrière, et ensuite seulement ce que les autres systèmes
+    en auraient fait. Mettre ce chiffre sous les barres aurait rendu les quatre
+    montants sans dire sur quoi ils ont été calculés.
+
+    Le lien de reprise porte le revenu trouvé dans l'unité du formulaire : il
+    fait passer de la pension au revenu sans rien perdre, et c'est le seul
+    chemin par lequel la bascule de saisie traduit quelque chose — elle ne le
+    peut pas elle-même, faute de connaître le résultat d'un calcul qui n'a pas
+    encore eu lieu.
+    """
+    trouve = comparaison.niveau_inverse
+    if trouve is None:
+        return ""
+    echelle = contexte.echelle(saisie)
+    brut = echelle.mensuel(trouve.niveau)
+    affiche = (echelle.net_mensuel(brut, saisie.statut) if saisie.en_net
+               else brut)
+    mot = "nets" if saisie.en_net else "bruts"
+
+    # Le revenu écrit dans le lien est dans l'unité de saisie, et dans le mode
+    # de saisie : c'est le nombre que le champ relira.
+    valeur = (_nombre(round(affiche)) if saisie.revenu_en_euros
+              else _nombre(round(trouve.niveau, DECIMALES_MULTIPLE)))
+    remplacements: dict[str, object] = {"saisie_par": "revenu",
+                                        "salaire": valeur}
+    for rang in range(2, len(saisie.metiers) + 2):
+        remplacements[f"metier{rang}_salaire"] = valeur
+    reprise = f"#/simuler?{escape(saisie.requete(**remplacements))}"
+
+    debut, fin = bornes_deformation(RACINE_DONNEES, saisie.profil, saisie.statut)
+    quand = ("toutes les années de votre carrière" if debut == fin else
+             "le milieu de votre carrière, que le profil de carrière déforme "
+             "ensuite aux deux bouts")
+    return f"""
+<div class="carte revenu-deduit">
+  <h3 style="margin-top:0">Le revenu que votre pension suppose</h3>
+  <p class="cle-chiffre">{g.euros(affiche)} {mot} par mois</p>
+  <p>C'est le revenu d'activité dont le <strong>système actuel</strong> tire
+  exactement la pension que vous avez saisie. Il vaut pour {quand}. Les quatre
+  montants ci-dessous sont calculés sur cette carrière-là.</p>
+  <p class="discret"><a href="{reprise}">Reprendre cette carrière en saisissant
+  le revenu</a> — pour le corriger, ou pour donner un revenu différent à chaque
+  période.</p>
+</div>
+"""
+
+
 def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     comparaison = contexte.simuler(saisie)
     carriere = comparaison.carriere
@@ -4853,6 +5166,7 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
 <h2 id="resultats" tabindex="-1">Résultats\
 {_lecture_des_montants(comparaison, saisie)}</h2>
 {lecture}
+{_revenu_deduit(contexte, comparaison, saisie)}
 <div class="carte">
   {_bascule_montants(saisie, contexte.echelle(saisie))}
   {scenarios}

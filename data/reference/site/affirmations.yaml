@@ -51,6 +51,15 @@ affirmations:
   # L'accueil : le programme
   # ------------------------------------------------------------------------
 
+  - id: simuler.pension_niveau_unique
+    page: /simuler
+    extrait: "même niveau de revenu"
+    porte: >-
+      saisie par la pension, toutes les périodes de la carrière reçoivent le
+      niveau de revenu trouvé, que le profil déforme ensuite
+    etat: verifiee
+    controle: inversion_niveau_unique
+
   - id: accueil.compte_a_votre_nom
     page: /
     extrait: "Un compte à votre nom, en euros."

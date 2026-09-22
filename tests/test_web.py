@@ -826,6 +826,129 @@ def test_le_champ_de_revenu_ecarte_la_pension(contexte):
         assert "déposez votre relevé" in corps
 
 
+# -- la saisie par la pension ------------------------------------------------
+
+
+def _pension_affichee(contexte, corps: str) -> float:
+    """Le montant que la page écrit sur la barre du système actuel.
+
+    Lu sur le HTML et non recalculé : c'est ce que le lecteur voit qui doit
+    valoir ce qu'il a tapé, et un contrôle qui relancerait le modèle ne dirait
+    rien de la chaîne d'affichage — mensualisation, net, euros constants — que
+    l'inversion doit traverser À L'ENVERS pour poser sa cible.
+    """
+    depart = corps.find("1. Système de répartition actuel")
+    assert depart >= 0, "la barre du système actuel a disparu de la page"
+    montant = re.search(
+        r'<span class="chiffre principal">.*?'
+        r'<span class="somme">([\d\u202f]+),(\d\d)</span>',
+        corps[depart:], re.S,
+    )
+    assert montant, f"aucun montant lisible : {corps[depart:depart + 300]}"
+    return float(montant.group(1).replace("\u202f", "") + "." + montant.group(2))
+
+
+@pytest.mark.parametrize("pension,mode", [
+    (1500, "net"), (2400, "net"), (1000, "net"), (2000, "brut"),
+])
+def test_la_pension_saisie_est_celle_que_le_systeme_actuel_sert(
+    contexte, pension, mode,
+):
+    """L'aller-retour, qui est tout l'objet de la fonctionnalité.
+
+    On saisit une pension ; la page doit afficher CETTE pension sur la barre du
+    système actuel, au centime près. Si elle affichait autre chose, le revenu
+    déduit ne serait le revenu de personne, et les trois autres systèmes
+    seraient calculés sur une carrière qui n'est pas celle du lecteur.
+    """
+    _, corps = rendre(contexte, "/simuler", {
+        "saisie_par": "pension", "pension": str(pension), "montants": mode,
+        "naissance": "1955-06-01", "debut": "1975-01", "liquidation": "2017-06",
+    })
+    assert "Saisie refusée" not in corps
+    assert abs(_pension_affichee(contexte, corps) - pension) < 0.5
+
+
+def test_le_revenu_deduit_est_annonce_avant_les_quatre_montants(contexte):
+    """La réponse à la question posée passe devant la réponse aux autres."""
+    _, corps = rendre(contexte, "/simuler", {
+        "saisie_par": "pension", "pension": "1500",
+        "naissance": "1955-06-01", "debut": "1975-01", "liquidation": "2017-06",
+    })
+    assert "Le revenu que votre pension suppose" in corps
+    assert corps.index("Le revenu que votre pension suppose") < corps.index(
+        "Système de répartition actuel"
+    )
+
+
+def test_le_lien_de_reprise_decrit_la_meme_carriere(contexte):
+    """Reprendre en saisissant le revenu doit rendre la même pension.
+
+    C'est le seul endroit où la bascule de saisie traduit : elle ne le peut pas
+    d'elle-même, faute de connaître le résultat d'un calcul qui n'a pas encore
+    eu lieu, et c'est la page de résultats qui porte le nombre trouvé. Si ce
+    lien perdait le revenu, le lecteur qui veut corriger sa carrière repartirait
+    de la valeur par défaut sans que rien ne le dise.
+    """
+    _, corps = rendre(contexte, "/simuler", {
+        "saisie_par": "pension", "pension": "1500",
+        "naissance": "1955-06-01", "debut": "1975-01", "liquidation": "2017-06",
+    })
+    # DANS LE BLOC DU REVENU DÉDUIT, et nulle part ailleurs : la bascule du
+    # formulaire porte elle aussi « saisie_par=revenu », mais sans le nombre
+    # trouvé — elle ne peut pas le connaître. Chercher le premier lien venu
+    # aurait mesuré la bascule en croyant mesurer la reprise.
+    bloc = re.search(r'<div class="carte revenu-deduit">(.*?)</div>', corps, re.S)
+    assert bloc, "le bloc du revenu déduit a disparu de la page"
+    lien = re.search(r'href="#/simuler\?([^"]*saisie_par=revenu[^"]*)"',
+                     bloc.group(1))
+    assert lien, "la page ne propose pas de reprendre la carrière en revenu"
+    requete = dict(parse_qsl(html.unescape(lien.group(1))))
+    assert requete["saisie_par"] == "revenu"
+    _, repris = rendre(contexte, "/simuler", requete)
+    assert "Saisie refusée" not in repris
+    # L'arrondi à l'euro du revenu écrit dans le lien déplace la pension de
+    # quelques euros : c'est la même carrière, pas le même centime.
+    assert abs(_pension_affichee(contexte, repris) - 1500) < 15
+
+
+@pytest.mark.parametrize("pension,phrase", [
+    ("9000", "plafonne à"),
+    ("1", "font ce plancher"),
+])
+def test_une_pension_que_nulle_carriere_ne_sert_est_refusee(
+    contexte, pension, phrase,
+):
+    """Les refus disent une règle du droit, jamais une limite du calcul.
+
+    Au-dessus du plafond de tranche, cotiser n'acquiert plus rien ; au-dessous
+    du minimum contributif, le droit sert un montant qu'aucun revenu ne fait
+    descendre. Rendre malgré tout un revenu approché aurait été le pire des
+    trois choix : un chiffre faux, vraisemblable, et que rien ne signale.
+    """
+    _, corps = rendre(contexte, "/simuler", {
+        "saisie_par": "pension", "pension": pension,
+        "naissance": "1955-06-01", "debut": "1975-01", "liquidation": "2017-06",
+    })
+    assert "Saisie refusée" in corps
+    assert phrase in corps
+
+
+def test_le_formulaire_de_pension_retire_les_revenus(contexte):
+    """Les deux nombres ne peuvent pas compter à la fois.
+
+    Laisser les champs de revenu à côté du champ de pension ferait croire que
+    la carrière porte les deux, alors que l'un est saisi et l'autre cherché.
+    """
+    _, revenu = rendre(contexte, "/simuler", {"saisie_par": "revenu"})
+    _, pension = rendre(contexte, "/simuler", {
+        "saisie_par": "pension", "pension": "1500"})
+    assert 'id="salaire"' in revenu and 'id="pension"' not in revenu
+    assert 'id="pension"' in pension and 'id="salaire"' not in pension
+    # L'unité de saisie ne gouverne plus aucun nombre : elle s'efface avec eux.
+    assert "× salaire moyen" in revenu and "× salaire moyen" not in pension
+
+
 def test_le_multiple_est_traduit_en_euros(contexte):
     _, corps = rendre(contexte, "/simuler", {"unite_revenu": "moyen", "salaire": "1"})
     assert "1 = salaire moyen, soit" in corps
@@ -2268,6 +2391,37 @@ def test_le_portage_javascript_rend_les_memes_pages_au_hasard():
             "corps": temoins.sans_bloc_json(rendre(contexte, "/simuler", requete)[1]),
         })
 
+    # LA SAISIE PAR LA PENSION A SA PROPRE SÉRIE, et elle est plus courte parce
+    # qu'elle coûte vingt fois plus cher : chacune de ces pages inverse le
+    # scénario 1 par une dichotomie de dix-huit coupes. C'est la seule boucle
+    # du site dont le résultat dépend de l'ordre des opérations flottantes —
+    # une différence d'un ulp sur une comparaison et les deux moteurs prennent
+    # des branches différentes —, et c'est donc celle qu'il faut le plus
+    # sûrement comparer sur des carrières auxquelles personne n'a pensé. Les
+    # montants tirés balaient les trois refus autant que les inversions qui
+    # aboutissent.
+    for numero in range(12):
+        debut = alea.randint(14, 30)
+        requete = {
+            "naissance": str(alea.randint(1930, 2000)),
+            "naissance_mois": str(alea.randint(1, 12)),
+            "sexe": alea.choice(["H", "F"]),
+            "statut": alea.choice(statuts),
+            "debut": str(debut),
+            "liquidation": str(alea.randint(max(41, debut + 1), 75)),
+            "montants": alea.choice(["net", "brut"]),
+            "saisie_par": "pension",
+            "pension": alea.choice(
+                ["1", "500", "1200", "1500", "2400", "9000",
+                 f"{alea.uniform(200, 5000):.2f}"]
+            ),
+        }
+        cas.append({
+            "nom": f"pension_{numero}",
+            "requete": requete,
+            "corps": temoins.sans_bloc_json(rendre(contexte, "/simuler", requete)[1]),
+        })
+
     with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
                                      delete=False) as fichier:
         json.dump(cas, fichier, ensure_ascii=False)
@@ -2933,8 +3087,15 @@ def test_le_simulateur_tient_en_peu_de_mots(contexte):
     d'interrogation. Ce test tient la porte fermée : la prose revient toujours,
     une phrase à la fois.
     """
+    # LA BARRE A BOUGÉ UNE FOIS, DE SIX MOTS, le 22 septembre 2026 : c'est ce
+    # que coûte la troisième bascule — « Je saisis : mon revenu / ma pension ».
+    # Un CONTRÔLE, et non de la prose, ce que ce compte ne sait pas distinguer.
+    # Ses libellés ont été raccourcis d'abord, jusqu'à ce que l'opposition des
+    # deux suffise à porter le sens, et la barre n'a monté que de ce qui restait.
+    # C'est la seule raison recevable de la déplacer : une phrase ajoutée ne
+    # l'est pas, et c'est tout l'objet de ce test.
     vierge = rendre(contexte, "/simuler", {})[1]
-    assert _mots_visibles(vierge) <= 160, "le formulaire reprend de la prose"
+    assert _mots_visibles(vierge) <= 163, "le formulaire reprend de la prose"
 
     resultats = rendre(contexte, "/simuler", {
         "naissance": "1962-03-15", "debut": "1984-09", "liquidation": "2026-07",

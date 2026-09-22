@@ -435,6 +435,23 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
 - **Pension de réversion.** Elle ne concerne pas l'assuré mais son conjoint
   survivant, et suppose de connaître un ménage. Hors périmètre par
   construction : le modèle décrit une carrière, pas une famille.
+- **Les revalorisations servies APRÈS la liquidation.** Le moteur s'arrête au
+  jour du départ : il calcule la pension du premier mois et ne suit aucune des
+  revalorisations qu'un retraité a reçues depuis. La page l'exprime en euros
+  constants de l'année de référence, ce qui rend le montant comparable aux prix
+  d'aujourd'hui — mais par le CHEMIN DES PRIX, non par celui des arrêtés. Or le
+  droit indexe les pensions servies sur les prix : les deux chemins coïncident,
+  à ceci près que plusieurs années ont été sous-indexées par décision expresse
+  — gels et revalorisations partielles —, et le modèle ne les reprend pas. La
+  conséquence se voit sur la saisie par la pension, où c'est cette convention
+  qui autorise un retraité à taper le montant qu'il touche aujourd'hui. Ce
+  montant est un peu plus bas que sa première pension revalorisée sur les prix,
+  puisque les pensions ont décroché des prix ces années-là ; la page vise donc
+  une cible un peu trop basse, et le revenu d'activité qu'elle en déduit est
+  un peu plus bas que celui qui a réellement été gagné. Servir la vraie trajectoire
+  demanderait la série des coefficients réellement appliqués aux pensions,
+  lue dans les arrêtés ; le dépôt porte celle des salaires portés au compte,
+  qui n'est pas la même chose.
 - **La troisième condition de la liquidation unique des régimes alignés.** La
   LURA elle-même est servie depuis le 22 septembre 2026 — voir plus bas —, et
   ses deux premières conditions sont opposées : la génération, la date d'effet
@@ -7980,7 +7997,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2052<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2070<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

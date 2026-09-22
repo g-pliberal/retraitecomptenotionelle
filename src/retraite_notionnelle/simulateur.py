@@ -152,6 +152,11 @@ class Comparaison:
     #: Dénominateur du taux de remplacement. Calculé par le simulateur, qui
     #: seul dispose des séries : voir :meth:`Simulateur._dernier_revenu`.
     dernier_revenu_annualise: float = 0.0
+    #: Renseigné quand la carrière n'a pas été saisie mais DÉDUITE d'une
+    #: pension : ce que l'inversion a trouvé, et ce qu'elle a dû écarter. Voir
+    #: :func:`niveau_pour_pension`. ``None`` partout ailleurs, c'est-à-dire
+    #: chaque fois que le revenu est celui qu'on a donné.
+    niveau_inverse: "NiveauInverse | None" = None
 
     # -- indicateurs ---------------------------------------------------------
 
@@ -1011,3 +1016,139 @@ class Simulateur:
                 f"« {exigee} ». Certifier les données ou abaisser "
                 "Parametres.fiabilite_minimale."
             )
+
+
+# -- l'inversion : de la pension au revenu -----------------------------------
+#
+# Le simulateur va du revenu à la pension. Un retraité, lui, connaît sa pension
+# au centime et ne se souvient pas de ce qu'il gagnait il y a trente ans : ce
+# qui suit fait le chemin inverse, en cherchant le niveau de revenu dont le
+# SCÉNARIO 1 — le droit en vigueur, le seul qui ait un sens à inverser — tire
+# la pension saisie.
+
+#: Nombre de coupes de la dichotomie. Fixe, et non un arrêt sur un écart :
+#: les deux moteurs doivent rendre le MÊME niveau au bit près, et une boucle
+#: qui s'arrête sur une condition de convergence n'offre pas cette garantie
+#: aussi simplement qu'un compte de tours. Dix-huit coupes sur [0,1 ; 10]
+#: laissent 3,8 · 10⁻⁵ de niveau, soit treize centimes de revenu mensuel :
+#: bien en deçà de l'euro que la page affiche.
+COUPES_INVERSION = 18
+
+#: Les niveaux sur lesquels ``tests/test_simulateur.py`` balaie la croissance
+#: de la pension. Ils sont ici, et non dans le test, parce que c'est la
+#: PROPRIÉTÉ dont la dichotomie dépend : le jour où l'on doutera d'elle, c'est
+#: à côté d'elle qu'on cherchera ce qui l'établit.
+NIVEAUX_BALAYAGE = tuple(
+    round(0.1 + rang * (10.0 - 0.1) / 29, 4) for rang in range(30)
+)
+
+#: Ce qui sépare une pension atteinte d'une pension manquée : un euro par mois,
+#: la maille de ce que la page écrit. La dichotomie, elle, resserre à moins d'un
+#: euro par AN dans la partie continue de la courbe — cet écart ne se franchit
+#: donc que sur un saut de la fonction, jamais par défaut de convergence.
+TOLERANCE_INVERSION = 12.0
+
+
+@dataclass(frozen=True)
+class NiveauInverse:
+    """Le niveau de revenu qu'une pension suppose, et ce qu'il ne dit pas.
+
+    La pension n'est pas une fonction bijective du revenu, et les trois cas où
+    elle ne l'est pas ne sont pas des détails de calcul : ils sont le droit.
+
+    ELLE PLAFONNE. Au-delà du plafond de la tranche la plus haute du statut,
+    cotiser davantage n'acquiert plus rien : toutes les carrières mieux payées
+    que ce plafond servent la même pension, et aucune ne sert davantage.
+
+    ELLE SAUTE. Une année ne valide quatre trimestres qu'à partir de 150 heures
+    de SMIC ; au-dessous, la carrière est comptée pour moins qu'elle n'a duré,
+    le minimum contributif est proratisé d'autant, et la pension fait un bond
+    dès que le seuil est franchi. Entre les deux, il existe des pensions que
+    NULLE carrière de cette forme ne sert.
+
+    ELLE A UN PLANCHER. Le minimum contributif et l'ASPA servent un montant
+    qu'aucun revenu, si petit soit-il, ne fait descendre.
+
+    Le champ ``pension`` porte donc ce que le niveau trouvé donne RÉELLEMENT,
+    et l'appelant doit le comparer à ce qui était demandé — c'est à quoi sert
+    :attr:`atteinte`.
+    """
+
+    #: Le niveau trouvé, en multiples du salaire moyen.
+    niveau: float
+    #: La pension annuelle que ce niveau sert, en euros de l'année de
+    #: liquidation. C'est elle, et non la cible, qui dit la vérité.
+    pension: float
+    #: La pension demandée, dans la même unité.
+    cible: float
+    #: Ce que sert le plus grand niveau dont la pension reste EN DESSOUS de la
+    #: cible. Avec :attr:`pension`, il borne le saut : entre les deux, aucune
+    #: carrière de cette forme ne sert quoi que ce soit, et c'est ce couple que
+    #: le refus montre plutôt qu'un chiffre approché.
+    pension_dessous: float
+    #: Ce que sert le niveau le plus bas accepté : le plancher du droit.
+    plancher: float
+    #: Ce que sert le niveau le plus haut accepté : le plafond du statut.
+    plafond: float
+    #: Le nombre de fois que le scénario 1 a été calculé. Sert aux tests et à
+    #: la mesure, jamais à l'affichage.
+    evaluations: int
+
+    @property
+    def atteinte(self) -> bool:
+        """La pension demandée est-elle servie par le niveau trouvé ?"""
+        return abs(self.pension - self.cible) <= TOLERANCE_INVERSION
+
+    @property
+    def sous_le_plancher(self) -> bool:
+        """La pension demandée est plus petite que ce que le droit garantit."""
+        return self.cible < self.plancher - TOLERANCE_INVERSION
+
+    @property
+    def au_dessus_du_plafond(self) -> bool:
+        """La pension demandée dépasse ce que ce statut peut acquérir."""
+        return self.cible > self.plafond + TOLERANCE_INVERSION
+
+
+def niveau_pour_pension(pension_de_niveau, cible: float, mini: float,
+                        maxi: float) -> NiveauInverse:
+    """Le plus petit niveau de revenu dont le scénario 1 tire ``cible``.
+
+    ``pension_de_niveau`` calcule une pension annuelle à partir d'un niveau ;
+    c'est l'appelant qui décide ce qu'il y met — la carrière, ses métiers, ses
+    interruptions —, et cette fonction ne connaît que le nombre qui en sort.
+
+    LA DICHOTOMIE CHERCHE UNE BORNE, PAS UNE RACINE. Elle resserre l'encadrement
+    du plus petit niveau dont la pension ATTEINT la cible, ce qui reste défini
+    quand la fonction saute : sur un saut, elle converge vers le bord du saut,
+    et la pension rendue est celle d'après — plus grande que la cible, et c'est
+    ainsi qu'on sait que la cible n'est servie par personne. Chercher une racine
+    aurait rendu, dans ce cas, un niveau dont la pension n'est pas celle qu'on
+    demandait, sans que rien ne le signale.
+
+    La fonction est supposée croissante, ce que le droit assure : cotiser plus
+    n'a jamais acquis moins. Rien ici ne le vérifie — le contrôle est dans
+    ``tests/test_simulateur.py``, qui balaie la courbe statut par statut.
+    """
+    plancher = pension_de_niveau(mini)
+    plafond = pension_de_niveau(maxi)
+    evaluations = 2
+    if cible <= plancher:
+        return NiveauInverse(mini, plancher, cible, plancher, plancher,
+                             plafond, evaluations)
+    if cible > plafond:
+        return NiveauInverse(maxi, plafond, cible, plafond, plancher,
+                             plafond, evaluations)
+
+    bas, haut = mini, maxi
+    pension_bas, pension_haut = plancher, plafond
+    for _ in range(COUPES_INVERSION):
+        milieu = (bas + haut) / 2.0
+        servie = pension_de_niveau(milieu)
+        evaluations += 1
+        if servie >= cible:
+            haut, pension_haut = milieu, servie
+        else:
+            bas, pension_bas = milieu, servie
+    return NiveauInverse(haut, pension_haut, cible, pension_bas, plancher,
+                         plafond, evaluations)

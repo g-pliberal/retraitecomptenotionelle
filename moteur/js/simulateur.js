@@ -59,7 +59,7 @@ export class Comparaison {
     carriere, actuel, notionnelRetroactif, notionnelProspectif,
     notionnelRetroactifEmployeur, notionnelProspectifEmployeur, notionnelLiberal,
     regimeFusionne, parametres, coefficientEurosConstants = 1.0,
-    dernierRevenuAnnualise = 0.0, remuneration = null,
+    dernierRevenuAnnualise = 0.0, remuneration = null, niveauInverse = null,
   }) {
     this.carriere = carriere;
     this.actuel = actuel;
@@ -82,6 +82,11 @@ export class Comparaison {
     //: cotise plus — et pour tout statut dont `remuneration.js` ne sait pas
     //: écrire la fiche de paie.
     this.remuneration = remuneration;
+    //: Renseigné quand la carrière n'a pas été saisie mais DÉDUITE d'une
+    //: pension : ce que l'inversion a trouvé, et ce qu'elle a dû écarter. Voir
+    //: `niveauPourPension`. `null` partout ailleurs, c'est-à-dire chaque fois
+    //: que le revenu est celui qu'on a donné.
+    this.niveau_inverse = niveauInverse;
   }
 
   /** Pension rapportée au dernier revenu d'activité, à la date du départ. */
@@ -598,4 +603,124 @@ export class Simulateur {
       );
     }
   }
+}
+
+
+// -- l'inversion : de la pension au revenu -----------------------------------
+//
+// Le simulateur va du revenu à la pension. Un retraité, lui, connaît sa pension
+// au centime et ne se souvient pas de ce qu'il gagnait il y a trente ans : ce
+// qui suit fait le chemin inverse, en cherchant le niveau de revenu dont le
+// SCÉNARIO 1 — le droit en vigueur, le seul qui ait un sens à inverser — tire
+// la pension saisie.
+
+/**
+ * Nombre de coupes de la dichotomie. Fixe, et non un arrêt sur un écart : les
+ * deux moteurs doivent rendre le MÊME niveau au bit près, et une boucle qui
+ * s'arrête sur une condition de convergence n'offre pas cette garantie aussi
+ * simplement qu'un compte de tours. Dix-huit coupes sur [0,1 ; 10] laissent
+ * 3,8 · 10⁻⁵ de niveau, soit treize centimes de revenu mensuel : bien en deçà
+ * de l'euro que la page affiche.
+ */
+export const COUPES_INVERSION = 18;
+
+/**
+ * Ce qui sépare une pension atteinte d'une pension manquée : un euro par mois,
+ * la maille de ce que la page écrit. La dichotomie, elle, resserre à moins d'un
+ * euro par AN dans la partie continue de la courbe — cet écart ne se franchit
+ * donc que sur un saut de la fonction, jamais par défaut de convergence.
+ */
+export const TOLERANCE_INVERSION = 12.0;
+
+/**
+ * Le niveau de revenu qu'une pension suppose, et ce qu'il ne dit pas.
+ *
+ * La pension n'est pas une fonction bijective du revenu, et les trois cas où
+ * elle ne l'est pas sont le droit et non un défaut de calcul. ELLE PLAFONNE :
+ * au-delà du plafond de la tranche la plus haute du statut, cotiser davantage
+ * n'acquiert plus rien. ELLE SAUTE : une année ne valide quatre trimestres
+ * qu'à partir de 150 heures de SMIC, et la pension bondit dès le seuil franchi,
+ * si bien qu'il existe des pensions que NULLE carrière de cette forme ne sert.
+ * ELLE A UN PLANCHER : le minimum contributif et l'ASPA servent un montant
+ * qu'aucun revenu ne fait descendre.
+ */
+export class NiveauInverse {
+  constructor({ niveau, pension, cible, pensionDessous, plancher, plafond,
+    evaluations }) {
+    this.niveau = niveau;
+    //: Ce que le niveau trouvé sert RÉELLEMENT, en euros de l'année de
+    //: liquidation. C'est elle, et non la cible, qui dit la vérité.
+    this.pension = pension;
+    this.cible = cible;
+    //: Ce que sert le plus grand niveau dont la pension reste EN DESSOUS de la
+    //: cible. Avec `pension`, il borne le saut.
+    this.pension_dessous = pensionDessous;
+    this.plancher = plancher;
+    this.plafond = plafond;
+    this.evaluations = evaluations;
+  }
+
+  /** La pension demandée est-elle servie par le niveau trouvé ? */
+  get atteinte() {
+    return Math.abs(this.pension - this.cible) <= TOLERANCE_INVERSION;
+  }
+
+  /** La pension demandée est plus petite que ce que le droit garantit. */
+  get sousLePlancher() {
+    return this.cible < this.plancher - TOLERANCE_INVERSION;
+  }
+
+  /** La pension demandée dépasse ce que ce statut peut acquérir. */
+  get auDessusDuPlafond() {
+    return this.cible > this.plafond + TOLERANCE_INVERSION;
+  }
+}
+
+/**
+ * Le plus petit niveau de revenu dont le scénario 1 tire `cible`.
+ *
+ * LA DICHOTOMIE CHERCHE UNE BORNE, PAS UNE RACINE. Elle resserre l'encadrement
+ * du plus petit niveau dont la pension ATTEINT la cible, ce qui reste défini
+ * quand la fonction saute : sur un saut, elle converge vers le bord du saut, et
+ * la pension rendue est celle d'après — plus grande que la cible, et c'est
+ * ainsi qu'on sait que la cible n'est servie par personne. Chercher une racine
+ * aurait rendu, dans ce cas, un niveau dont la pension n'est pas celle qu'on
+ * demandait, sans que rien ne le signale.
+ */
+export function niveauPourPension(pensionDeNiveau, cible, mini, maxi) {
+  const plancher = pensionDeNiveau(mini);
+  const plafond = pensionDeNiveau(maxi);
+  let evaluations = 2;
+  if (cible <= plancher) {
+    return new NiveauInverse({
+      niveau: mini, pension: plancher, cible, pensionDessous: plancher,
+      plancher, plafond, evaluations,
+    });
+  }
+  if (cible > plafond) {
+    return new NiveauInverse({
+      niveau: maxi, pension: plafond, cible, pensionDessous: plafond,
+      plancher, plafond, evaluations,
+    });
+  }
+  let bas = mini;
+  let haut = maxi;
+  let pensionBas = plancher;
+  let pensionHaut = plafond;
+  for (let coupe = 0; coupe < COUPES_INVERSION; coupe += 1) {
+    const milieu = (bas + haut) / 2.0;
+    const servie = pensionDeNiveau(milieu);
+    evaluations += 1;
+    if (servie >= cible) {
+      haut = milieu;
+      pensionHaut = servie;
+    } else {
+      bas = milieu;
+      pensionBas = servie;
+    }
+  }
+  return new NiveauInverse({
+    niveau: haut, pension: pensionHaut, cible, pensionDessous: pensionBas,
+    plancher, plafond, evaluations,
+  });
 }

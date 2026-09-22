@@ -335,6 +335,40 @@ def _(m: Modele):
     assert all(c.cotisation >= 0 for c in compte.cotisations)
 
 
+@controle("inversion_niveau_unique")
+def _(m: Modele):
+    """La saisie par la pension donne le MÊME niveau à toutes les périodes.
+
+    C'est la convention que la page annonce sous le champ, et elle n'a rien
+    d'évident : une carrière à trois métiers pouvait très bien recevoir trois
+    niveaux, puisque l'inversion n'en cherche qu'un et qu'il faut bien décider
+    ce qu'on fait des autres. Le contrôle le lit sur la carrière que le modèle
+    a effectivement construite, et non sur le texte.
+    """
+    comparaison = m.simuler_requete(
+        saisie_par="pension", pension=1500, naissance="1955-06-01",
+        debut="1975-01", liquidation="2017-06", metier2_debut="1995-01",
+        metier2_statut="artisan",
+    )
+    trouve = comparaison.niveau_inverse
+    assert trouve is not None and trouve.atteinte
+    # La carrière ne garde pas ses métiers — elle garde les ANNÉES qu'ils ont
+    # produites —, et c'est donc sur elles que la convention se lit : la même
+    # carrière décrite en revenus, chaque période portant le niveau trouvé,
+    # doit produire exactement les mêmes années.
+    temoin = m.simuler_requete(
+        saisie_par="revenu", unite_revenu="moyen", salaire=trouve.niveau,
+        metier2_salaire=trouve.niveau, naissance="1955-06-01",
+        debut="1975-01", liquidation="2017-06", metier2_debut="1995-01",
+        metier2_statut="artisan",
+    )
+    obtenues = [ligne.revenu for ligne in comparaison.carriere.lignes]
+    attendues = [ligne.revenu for ligne in temoin.carriere.lignes]
+    assert obtenues == attendues, (
+        "les périodes ne portent pas toutes le niveau trouvé"
+    )
+
+
 @controle("pension_egale_capital_sur_diviseur")
 def _(m: Modele):
     retro = m.defaut.notionnel_retroactif

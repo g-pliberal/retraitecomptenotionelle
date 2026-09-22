@@ -1016,6 +1016,15 @@ tbody tr[hidden] { display: none; }
 .scenario .principal .somme {
   font-size: 1.875rem; font-weight: 900; letter-spacing: -0.03em;
 }
+/* Le revenu qu'une pension suppose : la réponse à la question posée, et donc
+   le seul chiffre de la page qui vient AVANT les quatre montants. Il est écrit
+   à la taille d'un montant de scénario — c'en est un, dans l'autre sens — et
+   dans la couleur d'accent, qui dit qu'on le cherchait. */
+.revenu-deduit .cle-chiffre {
+  font-size: 1.875rem; font-weight: 900; letter-spacing: -0.03em;
+  color: var(--accent); margin: 0.2rem 0 0.8rem;
+}
+
 /* Le salaire net, à gauche de la pension et DE LA MÊME TAILLE QU'ELLE.
    Deux grandeurs de nature différente se touchent ici — ce qu'on touche en
    travaillant, ce qu'on touchera à la retraite —, et elles comptent autant
