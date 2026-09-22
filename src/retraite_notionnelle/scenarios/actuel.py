@@ -3950,10 +3950,16 @@ class ScenarioActuel:
                         )
 
                 # Années sans prix d'achat connu : le rendement instantané prend
-                # le relais, régime par régime et année par année.
+                # le relais, régime par régime et année par année. Il fait
+                # partie du barème du point — c'est le rapport de la valeur de
+                # service au prix d'achat —, et une fiche qui emprunte ce barème
+                # (`points_de`) emprunte donc aussi le rendement : sans quoi elle
+                # ne trouvait aucune ligne sous son propre code, et sa pension
+                # tombait à zéro sans rien dire.
                 if cumul:
                     rendement, fiabilite_rendement = self.rendements.rendement(
-                        code, min(annee_liquidation, _derniere_annee(regime))
+                        periode.points_de or code,
+                        min(annee_liquidation, _derniere_annee(regime)),
                     )
                     montant += cumul * rendement
                     fiabilite_regime = min(fiabilite_regime, fiabilite_rendement)

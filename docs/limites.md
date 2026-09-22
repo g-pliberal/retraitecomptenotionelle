@@ -3114,7 +3114,7 @@ tranche net, et la grille de cas types le montre tel quel.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n’est pas un régime absent : les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->72<!--/--> régimes du catalogue
+Un régime « incomplet » n’est pas un régime absent : les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->73<!--/--> régimes du catalogue
 calculent tous une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -3147,7 +3147,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->72<!--/--> régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->73<!--/--> régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -3160,7 +3160,7 @@ document saisi à la main, et les portails officiels ne servent pas de liste
 exploitable —, si bien qu'un régime pouvait manquer à la liste des manquants.
 [`data/reference/regimes/inventaire.yaml`](../data/reference/regimes/inventaire.yaml)
 énumère maintenant TOUS les régimes obligatoires, vivants, disparus ou hors
-champ — <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->89<!--/--> lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
+champ — <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->90<!--/--> lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
 programme 195 des lois de finances, chacune avec son texte fondateur et, quand
 l'index DILA du dépôt le porte, son identifiant —, et dit pour chacun s'il est
 modélisé, partiel, à modéliser ou hors champ. `tests/test_donnees.py` impose
@@ -3929,7 +3929,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 62 statuts », « 72 régimes » —, parce que ce sont des chiffres de données et
+« 62 statuts », « 73 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### Les deux dernières sections que le décret annuel débloquait
@@ -6083,6 +6083,25 @@ de la caisse l'écrit en creux : sa formule du RACL est la seule des trois sans
 « majoration familiale ». Portée depuis 2014 au RAAP, depuis 2024 au RACD ;
 une mère de trois enfants retrouve 10 % de ses pensions d'auteur.
 
+**Le RAAP des auteurs dramatiques et des compositeurs était prélevé au double
+du taux.** La section précédente l'écarte — « la carrière ne dit pas quelle part
+du revenu relève de quel régime » —, mais le décret ne regarde pas le revenu :
+il regarde la personne. Le II de l'article 2 du décret n° 62-420, depuis le
+1<sup>er</sup> janvier 2016 : « Pour les personnes tenues de cotiser aux
+régimes […] institués par les décrets n° 61-1304 [le RACL] et n° 64-226 [le
+RACD], le taux de la cotisation au régime institué par le présent décret est
+égal à la moitié de celui prévu au I. » Les statuts `auteur_dramatique` et
+`auteur_lyrique` sont exactement ces personnes, et ils portent déjà tout leur
+revenu au RACD ou au RACL : ils cotisent désormais au RAAP à 4 %, par une fiche
+à part dont les points restent ceux du RAAP. Pour une carrière entière depuis
+2016, leur pension du RAAP est la moitié de celle d'un artiste-auteur au même
+revenu — ce qu'elle était avant 2016 reste au taux de la fiche.
+
+En chemin, un défaut du moteur : le rendement, qui fait partie du barème du
+point, se lisait sous le code de la fiche et non sous celui du régime dont elle
+emprunte le barème. Une fiche `points_de` sans valeur du point connue aurait vu
+sa pension tomber à zéro sans rien dire ; aucune ne l'était encore.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -8195,7 +8214,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2095<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2099<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -15,8 +15,8 @@ avec la raison. Une découverte faite en chemin qui mérite un chantier se note
 ici, pas dans un commentaire de code.
 
 **Le constat de septembre 2026, qui fonde ce classement.** La couverture des
-régimes est finie : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->89<!--/--> lignes d'inventaire, plus aucune ligne « à modéliser »,
-<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->37<!--/--> fiches partielles dont chaque mur est documenté dans `regimes.md` et
+régimes est finie : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->90<!--/--> lignes d'inventaire, plus aucune ligne « à modéliser »,
+<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->38<!--/--> fiches partielles dont chaque mur est documenté dans `regimes.md` et
 `limites.md` §4. Continuer sur cet axe rapporte peu : les manques restants
 portent sur des populations minuscules ou des barèmes que personne ne publie.
 Les gains sont sur ce qui porte les résultats de tête du README : les agrégats
@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 745<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 578<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 751<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 580<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.

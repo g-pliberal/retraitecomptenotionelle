@@ -135,6 +135,11 @@ pivots:
   ircec_raap:
     - {texte: "Décret n°62-420", num: "1", parametres: [creation]}
     - {texte: "Arrêté du 21 novembre 2013", num: "", parametres: [taux_cotisation_retraite, valeur_point]}
+  ircec_raap_taux_amenage:
+    # Le II de l'article 2 : la moitié du taux pour qui cotise au RACD ou au
+    # RACL, depuis la rédaction du 1er janvier 2016.
+    - {texte: "Décret n°62-420", num: "2", parametres: [taux_cotisation_retraite, assiette]}
+    - {texte: "Décret n° 2015-1877", num: "3", parametres: [taux_cotisation_retraite]}
   carmf_complementaire:
     - {texte: "Décret n°49-579", num: "2", parametres: [taux_cotisation_retraite, assiette]}
   asv_conventionnes:

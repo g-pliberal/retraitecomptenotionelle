@@ -17,8 +17,8 @@ appliquées à travers son histoire. Ce document fait la première moitié ; la
 seconde est l'étape suivante, esquissée en fin de page.
 
 <!-- compte:debut -->
-L'inventaire compte **89 lignes** : 35 régimes modélisés,
-37 calculés mais incomplets, 2 affiliations portées par un statut,
+L'inventaire compte **90 lignes** : 35 régimes modélisés,
+38 calculés mais incomplets, 2 affiliations portées par un statut,
 15 hors champ — et plus aucune ligne à modéliser.
 <!-- compte:fin -->
 
@@ -88,6 +88,7 @@ repris par un autre.
 | Caisse de retraite du personnel navigant professionnel de l'aéronautique civile, tranche 1 (`crpnpac`) | spécial | depuis 1963 | ◐ partiel | `personnel_navigant` | Les fiches s'arrêtent à l'état de 2023, quand le régime est passé du code de l'aviation civile au code des transports ; le taux d'appel de 1995 à 2011 n'est pas appliqué. |
 | Caisse de retraite du personnel navigant, tranche 2 (`crpnpac_tranche_2`) | spécial | depuis 1963 | ◐ partiel | `personnel_navigant` | Même limite que la tranche 1 : état de 2023. |
 | Régime des artistes-auteurs professionnels (IRCEC) (`ircec_raap`) | libéral | depuis 1962 | ◐ partiel | `artiste_auteur`, `auteur_dramatique`, `auteur_lyrique` | Avant 2017 la cotisation était optionnelle, choisie par classe sans lien avec le revenu ; le seuil d'affiliation de 900 SMIC horaires n'est pas appliqué. La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les générations nées avant 1955 jusqu'en 2024, elle est approchée (voir `docs/limites.md`). |
+| RAAP au taux aménagé des auteurs affiliés au RACD ou au RACL (IRCEC) (`ircec_raap_taux_amenage`) | libéral | depuis 2016 | ◐ partiel | `auteur_dramatique`, `auteur_lyrique` | Un barème du RAAP, non un régime : la moitié du taux pour qui cotise au RACD ou au RACL, dont les points sont ceux du RAAP. Il en partage les manques — seuil d'affiliation de 900 SMIC horaires et minimum de trente points non appliqués. |
 | Régime des auteurs et compositeurs dramatiques (IRCEC) (`ircec_racd`) | libéral | depuis 1964 | ◐ partiel | `auteur_dramatique` | Le barème du point est celui du seul mémo 2026 de l'IRCEC, appliqué en rendement à toute la carrière ; le plafond de 597 500 € est arrondi à treize plafonds de la Sécurité sociale. La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les générations nées avant 1955 jusqu'en 2024, elle est approchée (voir `docs/limites.md`). |
 | Régime des auteurs et compositeurs lyriques (IRCEC) (`ircec_racl`) | libéral | depuis 1962 | ◐ partiel | `auteur_lyrique` | Le taux de 6,5 % et le barème du point viennent du seul mémo 2026 de l'IRCEC, appliqués à toute la carrière ; le seuil d'affiliation (3 170 €) est ignoré et le plafond de 435 938 € arrondi à huit plafonds de la Sécurité sociale. La minoration de l'IRCEC est lue depuis 2014 ; avant, et pour les générations nées avant 1955 jusqu'en 2024, elle est approchée (voir `docs/limites.md`). |
 | Régimes professionnels de salariés intégrés à l'Agirc-Arrco (`regimes_professionnels_integres`) | complémentaire, privé | depuis 1947, fermé en 1993 | ◐ partiel | `salarie_regime_professionnel_integre` | La fiche porte le barème bancaire pour toutes les populations : le complément de 35 % du dernier salaire en 42 ans, la Sécurité sociale déduite, et 16 % de cotisation ; les barèmes propres de la CPPOSS, de la CGRCE, des CCI, de l'IRREP, de la CAMARCA et du personnel au sol d'Air France (règlement de 1956, régime différentiel de 1993), le complément différentiel de 1994 et son rabot, et l'Agirc du cadre bancaire ne le sont pas. |

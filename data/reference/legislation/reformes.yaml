@@ -367,7 +367,7 @@ reformes:
     date: 2016-01-01
     texte: {reference: "décret n° 2015-1877 du 30 décembre 2015 (RAAP proportionnel)", id: null}
     parametres: [taux_cotisation_retraite, cotisation_par_classes]
-    regimes: [ircec_raap]
+    regimes: [ircec_raap, ircec_raap_taux_amenage]
     absorbee_par: []
     non_appliquee: {}
 
@@ -438,7 +438,7 @@ reformes:
               carmf_complementaire, carcdsf_complementaire, carpimko_complementaire,
               cavp_complementaire, cavec_complementaire, cipav_complementaire,
               cprn_complementaire, cavamac_complementaire, cavom_complementaire,
-              carpv_complementaire, ircec_raap, crpnpac, crpnpac_tranche_2]
+              carpv_complementaire, ircec_raap, ircec_raap_taux_amenage, crpnpac, crpnpac_tranche_2]
     absorbee_par: [age_ouverture_par_generation, duree_requise_par_generation]
     non_appliquee:
       opera_de_paris: >-
@@ -863,7 +863,7 @@ reformes:
               cavp_complementaire, cese_membres, cipav_complementaire, cnavpl, cnbf,
               cnbf_complementaire, cnracl, comedie_francaise, cprn_complementaire, crpcen,
               enseignants_prive_additionnel, fonction_publique_etat, fspoeie, ieg, ircantec,
-              ircec_raap, ircec_racd, ircec_racl, msa_non_salaries, msa_rco, msa_salaries,
+              ircec_raap, ircec_raap_taux_amenage, ircec_racd, ircec_racl, msa_non_salaries, msa_rco, msa_salaries,
               opera_de_paris, rafp, ratp, rci, regime_general, sncf]
     absorbee_par: [age_ouverture_par_generation, duree_requise_par_generation]
     non_appliquee: {}

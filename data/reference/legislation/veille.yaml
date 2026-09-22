@@ -1228,6 +1228,39 @@ entrees:
       reçoivent aucune.
     prochaine_veille: "2027-03-31"
 
+  - id: raap_taux_amenage_racd_racl
+    regle: >-
+      Le taux de cotisation au RAAP est la moitié du taux de droit commun pour
+      les personnes tenues de cotiser au RACD ou au RACL : 4 % depuis les
+      revenus de 2019, la moitié de la montée en charge de 2016 à 2018.
+    textes:
+      - "décret n° 62-420 du 11 avril 1962, article 2 II, rédaction du décret n° 2015-1877 (LEGIARTI000031832007 du 1er janvier 2016, LEGIARTI000041766050 depuis le 1er avril 2020)"
+      - "décret n° 2015-1877 du 30 décembre 2015, article 3 II (taux de 5 à 8 % de 2016 à 2019)"
+    sources:
+      - {type: legifrance, reference: "décret n° 62-420, article 2, six versions lues dans l'index LEGI ; le II n'apparaît qu'avec la rédaction du 1er janvier 2016", date: "2026-09-22"}
+      - {type: autre, reference: "IRCEC, guide de la retraite 2026 (« cette cotisation RAAP, au taux aménagé de 4 %, vient s'ajouter à celle du RACD »), mémo 2026 et page « Principes de calcul et taux de cotisation au RAAP » (« sur les revenus déjà soumis à cotisation auprès du RACL et/ou du RACD »)", url: "https://www.ircec.fr/vos-regimes/raap/cotisations/calcul-taux-cotisations-raap/", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: [ircec_2016]
+    etat: conforme
+    effet: >-
+      Les statuts `auteur_dramatique` et `auteur_lyrique` cotisaient au RAAP à
+      8 % : le double de ce que le décret leur demande, et donc le double des
+      points. Porté depuis le 22 septembre 2026 par la fiche
+      `ircec_raap_taux_amenage`, que l'affiliation leur donne à partir de 2016
+      et dont les points sont ceux du RAAP (`points_de`) ; tenu par
+      tests/test_ircec_auteurs.py. Pour une carrière entière depuis 2016, la
+      pension du RAAP d'un auteur dramatique est exactement la moitié de celle
+      d'un artiste-auteur au même revenu. Le texte vise la PERSONNE, la caisse
+      écrit « sur les revenus déjà soumis » au RACD ou au RACL : les deux
+      lectures coïncident pour ces statuts, qui portent tout leur revenu au
+      RACD ou au RACL. La moitié des taux de montée en charge de 2016 à 2018
+      cumule deux textes qu'aucun n'écrit en chiffres.
+    a_faire: >-
+      Un auteur qui tire une partie seulement de ses revenus de la SACD ou de
+      la SACEM demanderait de partager le revenu entre deux statuts.
+    prochaine_veille: "2027-03-31"
+
 journal:
   - date: "2026-09-19"
     session: "le net et le brut, d'un bout à l'autre du simulateur"
