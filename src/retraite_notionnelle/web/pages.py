@@ -3404,6 +3404,9 @@ def _champs_modelisation(saisie: Saisie) -> str:
 def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
     affiliations = contexte.simulateur().affiliations
     echelle = contexte.echelle(saisie)
+    # La bascule net/brut traduit la pension saisie comme elle traduit les
+    # salaires : il lui faut donc ce qu'une pension supporte.
+    taux_pension = Montants.depuis(saisie, contexte.base).taux_pension
 
     # Trois champs là où il en fallait cinq : une date de naissance porte son
     # mois, une date de départ porte l'âge qu'on avait écrit en deux fois. Les
@@ -3484,7 +3487,7 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
   {_bloc_pension(saisie)}
   {_bascule_saisie(saisie)}
   {"" if saisie.par_pension else _bascule_unite(saisie, echelle)}
-  {_bascule_montants(saisie, echelle)}
+  {_bascule_montants(saisie, echelle, taux_pension)}
   {_mention_conversion(saisie, echelle)}
   {_releve(saisie)}
   <details class="options">
@@ -4783,7 +4786,7 @@ la recherche en sait.</p>
 """, identifiant="resultats-financement")
 
 def _revenu_deduit(contexte: Contexte, comparaison: Comparaison,
-                   saisie: Saisie) -> str:
+                   saisie: Saisie, montants: "Montants") -> str:
     """Le revenu que la pension suppose — la réponse, quand c'est elle qu'on a
     demandée.
 
@@ -4798,6 +4801,14 @@ def _revenu_deduit(contexte: Contexte, comparaison: Comparaison,
     chemin par lequel la bascule de saisie traduit quelque chose — elle ne le
     peut pas elle-même, faute de connaître le résultat d'un calcul qui n'a pas
     encore eu lieu.
+
+    ELLE NOMME LE SECOND REVENU DE LA PAGE, faute de quoi les deux se
+    contredisent à l'œil. Les barres portent, à gauche de chaque pension, ce
+    que la carrière paie l'année de référence des fiches de paie ; ce chiffre
+    n'est pas celui-ci, et n'a aucune raison de l'être — le profil de carrière
+    fait monter le revenu avec l'âge, et les deux se lisent donc à deux
+    moments différents de la même vie. Les afficher à quelques centimètres
+    l'un de l'autre sans le dire faisait douter des deux.
     """
     trouve = comparaison.niveau_inverse
     if trouve is None:
@@ -4829,11 +4840,38 @@ def _revenu_deduit(contexte: Contexte, comparaison: Comparaison,
   <p>C'est le revenu d'activité dont le <strong>système actuel</strong> tire
   exactement la pension que vous avez saisie. Il vaut pour {quand}. Les quatre
   montants ci-dessous sont calculés sur cette carrière-là.</p>
+  {_second_revenu(comparaison, montants, affiche)}
   <p class="discret"><a href="{reprise}">Reprendre cette carrière en saisissant
   le revenu</a> — pour le corriger, ou pour donner un revenu différent à chaque
   période.</p>
 </div>
 """
+
+
+def _second_revenu(comparaison: Comparaison, montants: "Montants",
+                   deduit: float) -> str:
+    """L'autre revenu que la page affiche, et pourquoi il n'est pas le même.
+
+    Muet quand les barres n'en portent pas — un retraité ne cotise plus —, et
+    muet quand les deux tombent sur le même euro, ce qui arrive sous un profil
+    de carrière plat : il n'y aurait alors rien à expliquer, et la phrase ne
+    ferait que semer le doute qu'elle est censée lever.
+    """
+    remuneration = comparaison.remuneration
+    if remuneration is None:
+        return ""
+    reference = remuneration.reference
+    paie = montants.salaire(reference.droit_en_vigueur) / MOIS_PAR_AN
+    if abs(paie - deduit) < 1.0:
+        return ""
+    return (
+        f"<p>Les barres en portent un second, et les deux sont justes : "
+        f"{g.euros(paie)} par mois, ce que cette même carrière paie en "
+        f"{reference.annee}. Le profil de carrière fait monter le revenu avec "
+        "l'âge, si bien que les deux chiffres se lisent à deux moments "
+        "différents de la même vie. C'est celui du dessus que le formulaire "
+        "demande.</p>"
+    )
 
 
 def _resultats(contexte: Contexte, saisie: Saisie) -> str:
@@ -5166,9 +5204,9 @@ Le pourcentage en fin de ligne : l'écart avec le système 1.</p>"""
 <h2 id="resultats" tabindex="-1">Résultats\
 {_lecture_des_montants(comparaison, saisie)}</h2>
 {lecture}
-{_revenu_deduit(contexte, comparaison, saisie)}
+{_revenu_deduit(contexte, comparaison, saisie, montants)}
 <div class="carte">
-  {_bascule_montants(saisie, contexte.echelle(saisie))}
+  {_bascule_montants(saisie, contexte.echelle(saisie), montants.taux_pension)}
   {scenarios}
   {fiabilite}
   {capitalisation}
@@ -5935,7 +5973,8 @@ def _mention_conversion(saisie: Saisie, echelle: "Echelle") -> str:
             "affichée en net.</span></p>")
 
 
-def _bascule_montants(saisie: Saisie, echelle: "Echelle") -> str:
+def _bascule_montants(saisie: Saisie, echelle: "Echelle",
+                      taux_pension: float) -> str:
     """Le lien qui passe de net à brut, et retour — montants déjà traduits.
 
     Un lien plutôt qu'un menu, pour la même raison que la bascule d'unité : il
@@ -5961,6 +6000,18 @@ def _bascule_montants(saisie: Saisie, echelle: "Echelle") -> str:
     vers_le_net = not saisie.en_net
     remplacements: dict[str, object] = {
         "montants": "net" if vers_le_net else "brut"}
+    # LA PENSION SAISIE SE TRADUIT COMME LES SALAIRES, et pour exactement la
+    # même raison : le nombre du formulaire est un net en mode net. Le recopier
+    # tel quel dans l'autre mode le ferait relire comme un brut — une pension
+    # plus petite d'un dixième —, et la page reviendrait en décrivant une autre
+    # carrière que celle qu'on venait de calculer. Le taux est celui des
+    # pensions, non celui d'un salaire : une pension ne supporte que la CSG, la
+    # CRDS et la CASA.
+    if saisie.saisie_par == "pension":
+        remplacements["pension"] = _nombre(round(
+            saisie.pension * (1.0 - taux_pension) if vers_le_net
+            else saisie.pension / (1.0 - taux_pension)
+        ))
     # Seule la saisie EN EUROS porte un net ou un brut : un multiple du salaire
     # moyen est un rapport entre deux bruts, que le mode ne touche pas.
     if saisie.revenu_en_euros:

@@ -26,16 +26,16 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 075<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 123<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 075<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 123<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 075<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 123<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 075<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->32 123<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13440,3 +13440,46 @@ processus sous Windows, et il n'est pas traité ici.
 autres récupérateurs DILA, `scripts/verifier_prose.py`,
 `tests/test_pousser.py`, `tests/test_prose.py`, `tests/test_releve_lu.py`,
 `tests/test_web.py`, `tests/temoins/exemples_officiels.yaml`.
+
+### 102. Deux revenus sur le même écran, et une bascule qui changeait la carrière — `fait`
+
+**Demande.** « Il y a des infos contradictoires dans les résultats. Le nouveau
+résultat retraite est en contradiction avec les scénarios. »
+
+**C'était vrai, et deux fois.**
+
+**PREMIÈRE CONTRADICTION : DEUX REVENUS À QUELQUES CENTIMÈTRES L'UN DE
+L'AUTRE.** Le bloc de l'action 99 annonce « le revenu que votre pension
+suppose : 2 089 € nets par mois » ; la barre du système actuel, juste
+au-dessous, porte « salaire 2 289,24 € net/mois ». Les deux sont justes et ne
+disent pas la même chose : le premier est le niveau du MILIEU de carrière —
+celui que le formulaire demande, et que le profil déforme ensuite —, le second
+est ce que cette carrière paie l'année de référence des fiches de paie, où
+l'assuré a cinquante et un ans. Le profil de carrière fait monter le revenu
+avec l'âge : l'écart est la pente, pas une erreur.
+
+L'ambiguïté PRÉEXISTAIT — en saisie par le revenu, on tape déjà un nombre que
+les barres ne redisent pas — mais elle ne se voyait pas : il fallait comparer
+ce qu'on avait tapé à ce qu'on lisait. Le bloc du revenu déduit a mis les deux
+chiffres côte à côte, et une ambiguïté qui se voit est une contradiction. Le
+bloc nomme donc le second revenu, dit de quelle année il est et pourquoi il est
+plus haut. La phrase se tait dans les deux cas où elle n'aurait rien à dire :
+quand les barres ne portent pas de salaire — un retraité ne cotise plus — et
+quand le profil est plat, les deux nombres tombant alors sur le même euro.
+
+**SECONDE CONTRADICTION, ET C'EST UN VRAI BOGUE : la bascule net/brut ne
+traduisait pas la pension saisie.** Elle traduit les salaires depuis toujours,
+et pour une raison écrite dans son propre commentaire : le nombre du formulaire
+est un net en mode net, et le recopier tel quel dans l'autre mode le ferait
+relire comme un brut. La pension avait rouvert exactement ce trou. Taper
+1 800 € nets, cliquer sur « brut », et la page relisait 1 800 € BRUTS — une
+pension plus petite d'un dixième, donc une autre carrière, donc un autre revenu
+déduit, sans un mot. Elle porte maintenant 1 980 €, et le taux appliqué est
+celui des pensions : une pension ne supporte que la CSG, la CRDS et la CASA.
+
+**Deux tests, un par bogue**, et le second vérifie aussi que la phrase se tait
+sous un profil plat — sans quoi elle expliquerait une différence qui n'existe
+pas.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
+`tests/test_web.py`, `tests/temoins/pages.json`.
