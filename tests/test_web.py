@@ -791,7 +791,7 @@ def test_le_formulaire_dit_brut_ou_net_et_donne_l_echelle(contexte):
     for mode, ligne in (("brut", "la ligne « brut » de la fiche de paie"),
                         ("net", "la ligne « net à payer » de la fiche de paie")):
         _, corps = rendre(contexte, "/simuler", {"montants": mode})
-        assert f"Revenu {mode} mensuel" in corps
+        assert f"Revenu d&#x27;activité {mode} mensuel" in corps
         assert ligne in corps
         # L'échelle est chiffrée : « 1 = salaire moyen » ne dit rien à personne.
         assert "SMIC" in corps and "salaire moyen" in corps
@@ -807,6 +807,23 @@ def test_le_formulaire_dit_brut_ou_net_et_donne_l_echelle(contexte):
         return float(re.search(r"SMIC ([\d\u202f]+)\u202f€", corps)
                      .group(1).replace("\u202f", ""))
     assert 0.75 < smic(net) / smic(brut) < 0.85
+
+
+def test_le_champ_de_revenu_ecarte_la_pension(contexte):
+    """Un retraité ne doit pas pouvoir y écrire sa pension sans être averti.
+
+    « Revenu mensuel », sous une date de départ déjà passée, se lit comme « ce
+    que vous touchez aujourd'hui ». Le montant serait alors cotisé comme un
+    salaire, et la pension rendue serait fausse sans rien avoir l'air de l'être
+    — d'où le mot « d'activité » dans le LIBELLÉ, qui se lit sans rien ouvrir,
+    et la conduite à tenir dans le complément, dans les deux unités de saisie.
+    """
+    for unite, libelle in (("euros_mois", "Revenu d&#x27;activité"),
+                           ("moyen", "Niveau de revenu d&#x27;activité")):
+        _, corps = rendre(contexte, "/simuler", {"unite_revenu": unite})
+        assert libelle in corps
+        assert "Jamais une pension" in corps
+        assert "déposez votre relevé" in corps
 
 
 def test_le_multiple_est_traduit_en_euros(contexte):
