@@ -446,6 +446,66 @@ def age_reference(**reglages: str) -> float:
     return age - float(reglages["depart"]) if "depart" in reglages else age
 
 
+@lru_cache(maxsize=None)
+def _prospectif(conversion: str, generation: int, debut: int, depart: int):
+    """Le scénario 3 d'un salarié du privé, sous une convention de conversion."""
+    from retraite_notionnelle.config import AgeConversionDroitsAcquis
+
+    parametres = _parametres()
+    if conversion:
+        parametres = replace(parametres,
+                             age_conversion_droits_acquis=AgeConversionDroitsAcquis(conversion))
+    simulateur = _simulateur(parametres)
+    carriere = simulateur.carriere_simple(
+        annee_naissance=generation, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_debut=debut, age_liquidation=depart)
+    return simulateur.simuler(carriere).notionnel_prospectif
+
+
+def droits_acquis(**reglages: str) -> float:
+    """Ce que deviennent les droits d'avant la bascule, dans le scénario 3.
+
+    ``generation``, ``debut``, ``depart`` ; ``conversion=liquidation`` pour la
+    variante. ``quoi`` : ``pot`` (le capital constitué à la bascule, en €),
+    ``figee`` (la pension figée qu'il convertit, en € par an), ``pension`` (la
+    pension du scénario, en € par an), ``capital`` (le capital total à la
+    liquidation, en €), ``diviseur_conversion`` et ``diviseur_service`` (les
+    deux diviseurs, en années), ``age_conversion``.
+    """
+    resultat = _prospectif(reglages.get("conversion", ""), int(reglages["generation"]),
+                           int(reglages["debut"]), int(reglages["depart"]))
+    acquis = resultat.droits_acquis
+    valeurs = {
+        "pot": lambda: acquis.capital_a_la_bascule,
+        "figee": lambda: acquis.pension_figee,
+        "pension": lambda: resultat.pension_annuelle,
+        "capital": lambda: resultat.capital_notionnel,
+        "diviseur_conversion": lambda: acquis.diviseur,
+        "diviseur_service": lambda: resultat.conversion.diviseur,
+        "age_conversion": lambda: acquis.age_conversion,
+        # Ce que la conversion à l'âge de référence retire d'un droit ouvert
+        # quand on part avant : le rapport des deux diviseurs, en %.
+        "ecart_diviseurs": lambda: (resultat.conversion.diviseur / acquis.diviseur - 1) * 100,
+    }
+    quoi = reglages["quoi"]
+    if quoi not in valeurs:
+        raise ValueError(f"« {quoi} » n'est pas mesuré ; il y a {', '.join(valeurs)}")
+    return valeurs[quoi]()
+
+
+def droits_acquis_variation(**reglages: str) -> float:
+    """Ce qu'une grandeur de ``droits_acquis`` gagne d'un âge de départ à l'autre, en %.
+
+    Mêmes réglages, sauf ``depart`` : ``de=60&a=67``. C'est le « 28 %
+    d'écart pour un passé identique » et le gain en capital de sept années de
+    travail, que la méthodologie oppose d'une convention à l'autre.
+    """
+    communs = {c: v for c, v in reglages.items() if c not in ("de", "a")}
+    depart = droits_acquis(**communs, depart=reglages["de"])
+    arrivee = droits_acquis(**communs, depart=reglages["a"])
+    return (arrivee / depart - 1) * 100
+
+
 def composition_revalorisation(**reglages: str) -> float:
     """Ce que composer année par année les coefficients des arrêtés fait
     perdre, en % et en valeur absolue, face au coefficient lu d'un bloc.
@@ -886,6 +946,8 @@ MESURES = {
     "dependance": dependance,
     "composition_revalorisation": composition_revalorisation,
     "age_reference": age_reference,
+    "droits_acquis": droits_acquis,
+    "droits_acquis_variation": droits_acquis_variation,
 }
 
 
