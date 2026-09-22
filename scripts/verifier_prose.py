@@ -755,7 +755,7 @@ def controler(zonage: Zonage, corriger: bool) -> tuple[list[Anomalie], list[str]
         anomalies += ecarts
         anomalies += verifier_zones(fichier, texte, zonage)
         if corriger and corrige != texte:
-            chemin.write_text(corrige, encoding="utf-8")
+            chemin.write_text(corrige, encoding="utf-8", newline="\n")
             reecrits.append(fichier)
     return anomalies, reecrits
 

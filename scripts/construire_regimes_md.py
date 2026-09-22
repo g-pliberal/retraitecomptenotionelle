@@ -142,7 +142,7 @@ def main() -> int:
             return 1
         print(f"{DOCUMENT.relative_to(RACINE)} est à jour")
         return 0
-    DOCUMENT.write_text(nouveau, encoding="utf-8")
+    DOCUMENT.write_text(nouveau, encoding="utf-8", newline="\n")
     print(f"{DOCUMENT.relative_to(RACINE)} réécrit")
     return 0
 
