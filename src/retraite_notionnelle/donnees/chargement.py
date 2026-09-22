@@ -460,7 +460,35 @@ class PeriodeNonTravaillee:
     #: c'est ce qui distingue l'AVPF d'une période assimilée, laquelle valide
     #: des trimestres sans jamais ajouter de salaire.
     avpf: bool = False
+    #: Cette période entre-t-elle dans les SERVICES d'un régime de la fonction
+    #: publique ? La pension y est proratisée sur les services et bonifications
+    #: (L. 13 du code des pensions), et l'article L. 9 refuse le temps passé
+    #: « dans une position statutaire ne comportant pas l'accomplissement de
+    #: services effectifs au sens de l'article L. 5 », sauf une liste fermée.
+    #: La durée d'assurance, elle, retient la période dans tous les cas : ce
+    #: sont deux cases distinctes, et les confondre servait à un fonctionnaire
+    #: au chômage la pension d'une carrière pleine.
+    services_fonction_publique: bool = True
+    #: Limite, EN TRIMESTRES PAR ENFANT, des services ainsi ouverts — le 1° de
+    #: L. 9 excepte le congé parental « dans la limite de trois ans par
+    #: enfant ». Zéro quand la période n'est pas plafonnée.
+    services_plafond_trimestres_par_enfant: int = 0
     fiabilite: Fiabilite = Fiabilite.ESTIMEE
+
+
+def _services(ligne: dict[str, str]) -> tuple[bool, int]:
+    """Ce qu'une ligne de la table dit des services de la fonction publique.
+
+    Trois valeurs, et une seule en porte un plafond : ``oui`` la position
+    comporte des services effectifs ou L. 9 l'excepte nommément, ``non`` elle
+    n'en comporte pas, ``plafonne`` elle est exceptée dans une limite, que la
+    colonne voisine donne en ANNÉES par enfant.
+    """
+    valeur = ligne.get("services_fonction_publique", "oui").strip().lower()
+    plafond = ligne.get("services_plafond_annees_par_enfant", "").strip()
+    if valeur == "plafonne":
+        return True, 4 * int(plafond) if plafond else 0
+    return valeur == "oui", 0
 
 
 def charger_periodes_non_travaillees(racine: Path) -> dict[str, PeriodeNonTravaillee]:
@@ -472,6 +500,7 @@ def charger_periodes_non_travaillees(racine: Path) -> dict[str, PeriodeNonTravai
     with chemin.open(encoding="utf-8") as flux:
         lignes = (l for l in flux if not l.lstrip().startswith("#"))
         for ligne in csv.DictReader(lignes):
+            services, plafond_services = _services(ligne)
             table[ligne["motif"]] = PeriodeNonTravaillee(
                 motif=ligne["motif"],
                 trimestres_assimiles=int(ligne["trimestres_assimiles"]),
@@ -479,6 +508,8 @@ def charger_periodes_non_travaillees(racine: Path) -> dict[str, PeriodeNonTravai
                     ligne["ouvre_droits_complementaires"].strip().lower() == "oui"
                 ),
                 avpf=ligne.get("avpf", "non").strip().lower() == "oui",
+                services_fonction_publique=services,
+                services_plafond_trimestres_par_enfant=plafond_services,
                 fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
             )
     return table

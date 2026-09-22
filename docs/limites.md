@@ -464,6 +464,16 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   ayant cinq ans d'avance sur l'âge légal ; le modèle leur oppose la durée de
   leur génération, comme aux sédentaires. Les âges eux-mêmes sont lus alinéa
   par alinéa dans le D du même article.
+- **Ce qui compte en services dans les régimes spéciaux.** La pension des
+  dix-huit régimes spéciaux du catalogue se proratise, comme celle de la
+  fonction publique, sur des services et non sur une durée d'assurance ; mais
+  ce que chacun retient comme service tient à son propre règlement, et aucun
+  n'a été lu. La règle tirée des articles L. 5 et L. 9 du code des pensions —
+  le chômage n'ouvre aucun service, les congés de maladie et de maternité en
+  ouvrent, le congé parental dans la limite de trois ans par enfant — ne
+  s'applique donc qu'à la famille `fonction_publique`. Partout ailleurs, une
+  interruption qui valide des trimestres continue d'entrer au prorata, ce qui
+  surestime la pension d'un agent de régime spécial à carrière hachée.
 - **Montée en charge propre aux régimes spéciaux.** La décote créée par la
   réforme de 2008 y monte en charge comme celle de la fonction publique, mais
   selon un calendrier qui lui est propre, régime par régime. Le modèle applique
@@ -7878,7 +7888,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->1967<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->1973<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

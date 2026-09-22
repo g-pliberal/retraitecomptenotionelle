@@ -3024,8 +3024,11 @@ class ScenarioActuel:
         """Trimestres dus au titre des enfants, et régime qui les porte.
 
         Le droit n'attribue pas ces trimestres au-dessus des régimes : il les
-        donne DANS un régime, et ils comptent donc aussi dans sa
-        proratisation, pas seulement dans la décote tous régimes confondus.
+        donne DANS un régime. Ce qu'ils y font dépend de leur nature — une
+        bonification entre aux services et relève donc la proratisation, une
+        majoration de durée d'assurance ne joue que sur la décote tous régimes
+        confondus. C'est le champ `services` du résultat qui les sépare, et
+        c'est lui, non `trimestres`, que l'appelant ajoute au compte du régime.
         On retient donc, parmi les régimes en annuités dont la fiche de
         l'année de liquidation porte un dispositif que la table sert, celui
         qui accorde le plus ; à égalité, celui où l'assuré a validé le plus de
@@ -3132,6 +3135,21 @@ class ScenarioActuel:
         # année de chômage indemnisé ne verse rien au compte mais compte bien
         # dans le rapport durée acquise / durée requise.
         trimestres_par_regime: dict[str, int] = {}
+        # SERVICES accomplis dans chaque régime. La fonction publique ne
+        # proratise pas sa pension sur la durée d'assurance mais sur les
+        # services et bonifications (L. 13 du code des pensions), et l'article
+        # L. 9 écarte « le temps passé dans une position statutaire ne
+        # comportant pas l'accomplissement de services effectifs au sens de
+        # l'article L. 5 », hors la liste fermée qu'il énumère. Le moteur
+        # créditait ce prorata de TOUTE période validée : une carrière de
+        # fonctionnaire coupée de cinq ans de chômage servait exactement la
+        # même pension qu'une carrière pleine.
+        services_par_regime: dict[str, int] = {}
+        # Ce qui reste du budget de services que L. 9 ouvre dans une limite —
+        # trois ans par enfant pour le congé parental. Il se tient sur toute la
+        # carrière, et non année par année : deux congés de deux ans pour un
+        # seul enfant n'ouvrent que trois ans de services.
+        budget_services_plafonnes: dict[int, int] = {}
         # Durée COTISÉE dans chaque régime : c'est elle, et non la durée
         # d'assurance, qui proratise la majoration du minimum contributif au
         # titre des périodes cotisées (D. 351-2-2).
@@ -3144,6 +3162,16 @@ class ScenarioActuel:
             retenus_ligne = carriere.trimestres_retenus(ligne)
             if retenus_ligne <= 0:
                 continue
+            services_ligne = (
+                retenus_ligne if ligne.services_fonction_publique else 0
+            )
+            plafond = ligne.services_plafond_trimestres_par_enfant
+            if services_ligne and plafond:
+                restant = budget_services_plafonnes.setdefault(
+                    plafond, plafond * carriere.nombre_enfants
+                )
+                services_ligne = min(services_ligne, restant)
+                budget_services_plafonnes[plafond] = restant - services_ligne
             for code in self.affiliations.regimes(
                     ligne.affiliation, ligne.annee,
                     carriere.date_entree(ligne.affiliation),
@@ -3154,6 +3182,10 @@ class ScenarioActuel:
                 trimestres_par_regime[code] = (
                     trimestres_par_regime.get(code, 0) + retenus_ligne
                 )
+                if services_ligne:
+                    services_par_regime[code] = (
+                        services_par_regime.get(code, 0) + services_ligne
+                    )
                 if ligne.cotise:
                     trimestres_cotises_par_regime[code] = (
                         trimestres_cotises_par_regime.get(code, 0) + retenus_ligne
@@ -3174,16 +3206,21 @@ class ScenarioActuel:
             ) if avantages_non_contributifs else None
         )
         if majoration_enfants is not None:
-            # LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE. Tout ce qui est
-            # accordé joue sur la durée d'assurance tous régimes, donc sur la
-            # décote ; seule la part `services` entre au prorata du régime, et
-            # relève donc la pension. Ce module les confondait, et sur-créditait
-            # les mères fonctionnaires de deux trimestres de services par enfant
-            # né depuis 2004, là où L. 12 bis n'accorde qu'une majoration de
-            # durée.
+            # LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE, et la
+            # majoration se range dans les deux : tout ce qui est accordé joue
+            # sur la durée d'assurance — tous régimes, donc la décote, et celle
+            # du régime, donc sa proratisation — quand la seule part `services`
+            # entre aux services, qui proratisent la pension de la fonction
+            # publique. Ce module les confondait, et sur-créditait les mères
+            # fonctionnaires de deux trimestres de services par enfant né depuis
+            # 2004, là où L. 12 bis n'accorde qu'une majoration de durée.
             trimestres += majoration_enfants.trimestres
             trimestres_par_regime[majoration_enfants.regime] += (
-                majoration_enfants.services
+                majoration_enfants.trimestres
+            )
+            services_par_regime[majoration_enfants.regime] = (
+                services_par_regime.get(majoration_enfants.regime, 0)
+                + majoration_enfants.services
             )
             fiabilite_globale = min(fiabilite_globale, majoration_enfants.fiabilite)
 
@@ -3662,8 +3699,16 @@ class ScenarioActuel:
             )
             if fiabilite_proratisation is not None:
                 fiabilite_globale = min(fiabilite_globale, fiabilite_proratisation)
+            # Le numérateur n'est pas le même selon le régime : services et
+            # bonifications dans la fonction publique (L. 13), durée
+            # d'assurance partout ailleurs (R. 351-1).
+            acquis_par_regime = (
+                services_par_regime
+                if self.catalogue[code].famille == "fonction_publique"
+                else trimestres_par_regime
+            )
             trimestres_regime = min(
-                sum(trimestres_par_regime.get(m, 0) for m in membres), proratisation
+                sum(acquis_par_regime.get(m, 0) for m in membres), proratisation
             )
             if (periode.duree_maximum_avant_age is not None
                     and periode.duree_maximum_avant_age_trimestres is not None
@@ -3780,7 +3825,7 @@ class ScenarioActuel:
                 eligibles_garanti.append(_EligibleMinimumGaranti(
                     indice=len(pensions),
                     trimestres_services=sum(
-                        trimestres_par_regime.get(m, 0) for m in membres
+                        services_par_regime.get(m, 0) for m in membres
                     ),
                     ouvert=(
                         carriere.annee_naissance + age_ouverture < 2011

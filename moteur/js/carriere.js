@@ -64,11 +64,23 @@ export class AnneeCarriere {
     //: celle de la liquidation sont incomplètes, et ``revenu`` ne porte alors
     //: que ce qui a été perçu pendant ces mois-là.
     fraction_annee = 1.0,
+    //: Cette année entre-t-elle dans les SERVICES d'un régime de la fonction
+    //: publique ? Ce régime-là ne proratise pas sur la durée d'assurance mais
+    //: sur les services et bonifications (L. 13 du code des pensions), et
+    //: l'article L. 9 écarte le temps passé dans une position statutaire sans
+    //: services effectifs, hors la liste qu'il énumère. Une année d'emploi en
+    //: est toujours ; une année de chômage n'en est jamais.
+    services_fonction_publique = true,
+    //: Limite, en trimestres PAR ENFANT, des services que cette année ouvre.
+    //: Zéro quand il n'y en a pas — le décompte se fait sur toute la carrière,
+    //: et c'est le scénario qui tient le budget.
+    services_plafond_trimestres_par_enfant = 0,
   }) {
     Object.assign(this, {
       annee, revenu, affiliation, type_periode, quotite,
       trimestres_valides, cotisations_versees, part_primes,
       revenu_reference, familles_cotisantes, revenu_avpf, fraction_annee,
+      services_fonction_publique, services_plafond_trimestres_par_enfant,
     });
   }
 
@@ -114,6 +126,12 @@ function ligneAnnuelle({
   const regle = cotise ? null : (motifs[typePeriode] ?? motifs.sans_activite ?? null);
   const ouvreComplementaires = regle !== null && regle[1] === true;
   const ouvreAvpf = regle !== null && regle[3] === true;
+  // Services et durée d'assurance ne sont pas la même case : la première
+  // proratise la pension de la fonction publique, la seconde celle du régime
+  // général. Une année de chômage indemnisé en valide quatre trimestres à la
+  // CNAV et aucun service à l'État.
+  const ouvreServices = cotise || regle === null || regle[4] === true;
+  const plafondServices = (cotise || regle === null) ? 0 : regle[5];
   const trimestres = trimestresDeclares === null
     ? (cotise ? macro.trimestresValides(revenu, annee)
       : (regle !== null ? regle[0] : 4))
@@ -144,6 +162,8 @@ function ligneAnnuelle({
     revenu_avpf: (!cotise && ouvreAvpf)
       ? 1820.0 * macro.smic_horaire.valeur(annee) * part
       : 0.0,
+    services_fonction_publique: ouvreServices,
+    services_plafond_trimestres_par_enfant: plafondServices,
   });
 }
 

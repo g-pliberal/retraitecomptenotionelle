@@ -25,11 +25,11 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 359<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 449<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 404<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 510<!--/--> lignes), puis dans les
 
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 359<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 449<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 404<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 510<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12587,3 +12587,68 @@ retouche.
 `src/retraite_notionnelle/castypes.py`, `moteur/js/castypes.js`,
 `tests/test_age_depart_csp.py`, `tests/test_cout_age_depart.py`,
 `docs/limites.md` § 5 ter.
+
+### 91. Cinq ans de chômage ne coûtaient rien à un fonctionnaire — `fait`
+
+**Demande.** « Que peut-on faire d'autre ? », puis trois chantiers, dont le
+premier : auditer la même confusion ailleurs — durée contre services, pour les
+périodes assimilées cette fois.
+
+**La confusion était plus large que la majoration pour enfants.** L'action 88
+avait séparé la bonification, qui entre aux services, de la majoration de durée
+d'assurance, qui n'y entre pas. Restait à regarder d'où viennent les AUTRES
+trimestres du prorata de la fonction publique : le moteur y portait toute
+période validant un trimestre, chômage compris. Une carrière de fonctionnaire
+d'État coupée de cinq ans de chômage servait donc exactement la même pension
+qu'une carrière pleine — au centime près, ce qui est la signature d'un droit
+qu'on n'a pas écrit plutôt que d'un droit généreux.
+
+**Ce que disent L. 5 et L. 9, lus dans LEGI.** L'article L. 13 proratise la
+pension de l'État sur les SERVICES ET BONIFICATIONS, non sur la durée
+d'assurance ; et l'article L. 9, version LEGIARTI000053279095, est catégorique :
+« Le temps passé dans une position statutaire ne comportant pas
+l'accomplissement de services effectifs au sens de l'article L. 5 ne peut entrer
+en compte dans la constitution du droit à pension, sauf : 1° Dans la limite de
+trois ans par enfant né ou adopté à partir du 1er janvier 2004 […] ». Suit une
+liste fermée — congé parental, temps partiel de droit et disponibilité pour
+élever un enfant ; congés de maladie, de maternité, d'accident de service et de
+maladie professionnelle du fonctionnaire en activité ; congés de formation et
+congé civique ; détachement. Le chômage n'y est pas, et pour cause : un
+fonctionnaire au chômage n'est plus fonctionnaire, le chômage n'est pas une
+position statutaire.
+
+**La règle est en données, pas en code.** `periodes_non_travaillees.csv` porte
+deux colonnes de plus, `services_fonction_publique` — `oui`, `non`, `plafonne` —
+et `services_plafond_annees_par_enfant`. Le moteur tient désormais deux comptes
+parallèles par régime, la durée d'assurance et les services, et choisit le
+numérateur sur la famille du régime : services dans la fonction publique, durée
+d'assurance partout ailleurs. Le budget des services plafonnés se tient sur
+TOUTE la carrière, et non année par année : deux congés de deux ans pour un seul
+enfant n'ouvrent que trois ans de services.
+
+**Ce que la correction déplace.** Sur une fonctionnaire d'État née en 1975,
+partie à soixante-quatre ans, cinq ans de chômage retirent vingt trimestres de
+services : 148/172 au lieu de 168/172, et 42 422 € au lieu de 48 155 €, soit
+−11,9 %. Deux ans en retirent 4,76 %. Le congé parental, lui, ne coûte rien à
+une mère de deux enfants — L. 9 l'excepte à hauteur de trois ans par enfant —
+mais coûte huit trimestres à une mère d'un seul. Et rien ne bouge au régime
+général : les mêmes cinq ans y restent vingt trimestres assimilés, le prorata de
+la CNAV portant sur la durée d'assurance. Aucun témoin du dépôt ne change de
+chiffre, aucun cas type n'étant à la fois fonctionnaire et interrompu — c'est
+précisément pourquoi le défaut avait tenu si longtemps.
+
+**Deux approximations assumées, écrites toutes les deux.** La condition « né ou
+adopté à partir du 1er janvier 2004 » du 1° n'est pas appliquée, le modèle ne
+collectant pas l'année de naissance des enfants. Et les dix-huit régimes
+spéciaux, qui se proratisent eux aussi sur des services, gardent l'ancienne
+règle : leurs règlements n'ont pas été lus, et `docs/limites.md` le dit.
+
+**Fichiers.** `data/reference/legislation/periodes_non_travaillees.csv`,
+`src/retraite_notionnelle/donnees/chargement.py`,
+`src/retraite_notionnelle/carriere.py`,
+`src/retraite_notionnelle/scenarios/actuel.py`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/carriere.js`,
+`moteur/js/scenario-actuel.js`, `moteur/js/pages.js`,
+`scripts/construire_donnees.py`, `tests/test_services_fonction_publique.py`,
+`data/reference/legislation/veille.yaml`, `docs/methodologie.md`,
+`docs/limites.md`, `README.md`.
