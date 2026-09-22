@@ -109,17 +109,19 @@ compte est revalorisé de 1 à 5 % quand les prix montent de 10 à 50 %.
 
 Mesure sur la période complète, 1941-2025 :
 
+<!-- indexation:debut -->
 | Règle | Revalorisation cumulée 1941-2025 | Prix | Pouvoir d'achat conservé |
 |---|---|---|---|
 | Triple lock inversé, littéral | ×4,9 | ×322,2 | **1,5 %** |
 | Moyenne des trois taux | ×175,7 | ×322,2 | 54,5 % |
 | Triple lock inversé, tout en nominal | ×223,3 | ×322,2 | 69,3 % |
-| Indexation sur les prix | ×322,2 | ×322,2 | 100 % |
+| Indexation sur les prix | ×322,2 | ×322,2 | 100,0 % |
 | Médiane des trois taux | ×397,6 | ×322,2 | 123,4 % |
 | Revalorisation réellement pratiquée | ×1 538,2 | ×322,2 | 477,4 % |
 | Masse salariale (règle d'équilibre) | ×3 685,1 | ×322,2 | 1 143,7 % |
-| PIB nominal | ×3 442,3 | ×322,2 | 1 068,6 % |
-| PIB nominal, lissé sur 5 ans (Italie) | ×4 152,7 | ×322,2 | 1 288,8 % |
+| PIB nominal | ×3 442,3 | ×322,2 | 1 068,3 % |
+| PIB nominal lissé sur 5 ans (Italie) | ×4 152,7 | ×322,2 | 1 288,8 % |
+<!-- indexation:fin -->
 
 Ces chiffres sont ceux que produit la commande citée ci-dessus, et le
 tableau les a longtemps donnés périmés — ×243,7 et ×318,6, valeurs d'une

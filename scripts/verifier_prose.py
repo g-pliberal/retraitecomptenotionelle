@@ -546,6 +546,38 @@ class Zonage:
         regle = self.fichiers.get(fichier) or {}
         return regle.get("paragraphes_recit", []) or []
 
+    def blocs_produits(self, fichier: str) -> list[str]:
+        """Les repères dont un script écrit le contenu.
+
+        Un tableau que `construire_tableaux_md.py` réécrit depuis le modèle
+        n'a pas à porter une ancre par cellule : il est tenu par son script et
+        par le test qui refuse une prose périmée — c'est le régime `produit`,
+        mais sur un BLOC au lieu d'une section entière, parce qu'un document
+        mêle la prose et ce qui se calcule.
+        """
+        regle = self.fichiers.get(fichier) or {}
+        return regle.get("blocs_produits", []) or []
+
+
+def lignes_produites(lignes: list[str], reperes: list[str]) -> set[int]:
+    """Les lignes qu'un script écrit, repère par repère.
+
+    Les deux lignes de repère comprises : elles ne portent pas de chiffre, et
+    les inclure évite d'avoir à dire de quel côté elles tombent.
+    """
+    produites: set[int] = set()
+    for repere in reperes:
+        debut, fin = f"<!-- {repere}:debut -->", f"<!-- {repere}:fin -->"
+        dedans = False
+        for numero, ligne in enumerate(lignes, 1):
+            if ligne.strip() == debut:
+                dedans = True
+            if dedans:
+                produites.add(numero)
+            if ligne.strip() == fin:
+                dedans = False
+    return produites
+
 
 def paragraphes_geles(lignes: list[str], prefixes: list[str]) -> set[int]:
     """Les lignes d'un procès-verbal enclavé dans une section d'état.
@@ -661,6 +693,7 @@ def verifier_zones(fichier: str, texte: str, zonage: Zonage) -> list[Anomalie]:
     # sans bouger un caractère, pour que le reste du texte reste contrôlé.
     masque = _nettoyer(ANCRE.sub(lambda m: " " * len(m.group(0)), texte))
     geles = paragraphes_geles(lignes, zonage.prefixes_recit(fichier))
+    geles |= lignes_produites(lignes, zonage.blocs_produits(fichier))
     regle = zonage.fichiers.get(fichier)
     declarees = set((regle or {}).get("sections", {}) or {})
     etat = set()

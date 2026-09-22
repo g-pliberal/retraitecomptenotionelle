@@ -24,6 +24,13 @@ fichiers:
   # ------------------------------------------------------------------------
   README.md:
     defaut: a_declarer
+    # Le tableau des règles d'indexation est écrit par
+    # `scripts/construire_tableaux_md.py` depuis le modèle, et un test refuse
+    # une copie périmée : ses cellules n'ont pas à porter une ancre chacune.
+    # Le site le calculait déjà à chaque rendu ; les deux copies de la prose,
+    # recopiées à la main, donnaient le PIB nominal à 1 068,6 % pour 1 068,3.
+    blocs_produits:
+      - indexation
     # « Le site a d'abord exécuté le Python lui-même, par Pyodide » ouvre un
     # paragraphe qui raconte l'époque d'avant le portage : ses 13,5 Mo et ses
     # 263 Ko sont ceux de ce temps-là, au milieu d'une section d'état.
@@ -240,6 +247,9 @@ fichiers:
   # se fait section par section.
   docs/methodologie.md:
     defaut: a_declarer
+    # Même tableau, même script : la méthodologie en portait la seconde copie.
+    blocs_produits:
+      - indexation
     sections:
       "Méthodologie": etat
       "1. Ce qu'est un compte notionnel": etat
