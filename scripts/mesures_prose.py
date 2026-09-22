@@ -303,10 +303,85 @@ def constante(**reglages: str) -> float:
     import importlib
 
     sys.path.insert(0, str(RACINE / "scripts"))
-    module = importlib.import_module(reglages["de"])
-    if not hasattr(module, reglages["nom"]):
-        raise ValueError(f"{reglages['de']} n'a pas de « {reglages['nom']} »")
-    return float(getattr(module, reglages["nom"]))
+    objet = importlib.import_module(reglages["de"])
+    # Une constante de classe se nomme par son chemin : l'âge d'ouverture de
+    # l'ASPA est ``MinimumVieillesse.AGE_OUVERTURE``.
+    # et un rang désigne l'élément d'un couple : le salaire d'ancrage est
+    # ``ANCRAGE_SALAIRE_MOYEN.1``, l'année qui le porte ``.0``.
+    for morceau in reglages["nom"].split("."):
+        if morceau.isdigit() and isinstance(objet, tuple) and int(morceau) < len(objet):
+            objet = objet[int(morceau)]
+        elif hasattr(objet, morceau):
+            objet = getattr(objet, morceau)
+        else:
+            raise ValueError(f"{reglages['de']} n'a pas de « {reglages['nom']} »")
+    return float(objet)
+
+
+def poids_trimestre(**reglages: str) -> float:
+    """Ce qu'un trimestre pèse dans une pension proratisée, en % : ``generation=1965``.
+
+    L'inverse de la durée requise de la génération, lue dans sa table.
+    """
+    import csv
+
+    chemin = RACINE / "data/reference/legislation/duree_assurance_requise.csv"
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = [l for l in csv.DictReader(r for r in flux if not r.startswith("#"))
+                  if l["generation"] == reglages["generation"]]
+    if len(lignes) != 1:
+        raise ValueError(f"la génération {reglages['generation']} a {len(lignes)} lignes")
+    return 100 / float(lignes[0]["trimestres"])
+
+
+def taux_indexation(**reglages: str) -> float:
+    """Ce qu'une règle accorde une seule année, en % : ``regle=prix&annee=1981``.
+
+    La méthodologie oppose, année par année, ce que le compte reçoit et ce que
+    les prix prennent ; ``cumul_indexation`` ne disait que le produit.
+    """
+    annee = int(reglages["annee"])
+    return (cumul_indexation(**{**reglages, "de": str(annee - 1), "a": str(annee)}) - 1) * 100
+
+
+def anticipation(**reglages: str) -> float:
+    """Ce que coûte un départ anticipé à capital donné, en % de la pension.
+
+    ``avance`` (les années d'anticipation), ``annee``, et au besoin
+    ``reference`` — l'âge dont on s'écarte, l'âge de référence par défaut, si
+    bien que la prose suit ce paramètre quand il bouge : le seul allongement
+    du diviseur. Avec
+    ``carriere=42``, les années non cotisées s'y ajoutent au prorata — l'ordre
+    de grandeur que la méthodologie donne, qui ignore que les dernières
+    cotisations pèsent plus que les premières. ``quoi=esperance`` rend plutôt
+    les années d'espérance de vie que l'anticipation ajoute au diviseur.
+    """
+    parametres = _parametres()
+    convertisseur = _simulateur(parametres).convertisseur
+    reference = float(reglages.get("reference", parametres.age_reference_fixe))
+    age = reference - float(reglages["avance"])
+    annee = int(reglages["annee"])
+    if reglages.get("quoi") == "esperance":
+        return (convertisseur.coefficient(age, annee).esperance_residuelle
+                - convertisseur.coefficient(reference, annee).esperance_residuelle)
+    garde = convertisseur.effet_anticipation(age, reference, annee)
+    if "carriere" in reglages:
+        duree = float(reglages["carriere"])
+        garde *= (duree - (reference - age)) / duree
+    return (1 - garde) * 100
+
+
+def millieme_salaire(**_: str) -> float:
+    """Un millième du salaire moyen, en euros par mois, l'année du modèle.
+
+    Le pas auquel le site écrit un multiple : c'est lui qui borne ce qu'un
+    aller-retour entre euros et multiple peut déplacer.
+    """
+    from retraite_notionnelle.carriere import salaire_moyen_annuel
+
+    parametres = _parametres()
+    macro = _simulateur(parametres).macro
+    return salaire_moyen_annuel(macro, parametres.annee_courante) / 12 / 1000
 
 
 MESURES = {
@@ -326,6 +401,10 @@ MESURES = {
     "cumul_avenir": cumul_avenir,
     "ecart_avenir": ecart_avenir,
     "economie_pib": economie_pib,
+    "taux_indexation": taux_indexation,
+    "anticipation": anticipation,
+    "millieme_salaire": millieme_salaire,
+    "poids_trimestre": poids_trimestre,
 }
 
 

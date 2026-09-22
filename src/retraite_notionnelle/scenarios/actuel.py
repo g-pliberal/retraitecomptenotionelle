@@ -262,6 +262,44 @@ class DureesRequises(TableParGeneration):
         return None if valeur is None else (int(valeur[0]), valeur[1])
 
 
+class DureesRequisesRegimes:
+    """Durée requise propre à un régime spécial, par génération.
+
+    La SNCF, la RATP et les IEG écrivent chacun leur table dans leur décret, et
+    la suspension de 2026, qui a abaissé la table commune, ne les a pas
+    touchées. La fiche nomme la sienne (`duree_requise_table`) sur ses périodes
+    de 2025 et après.
+
+    La table de la SNCF porte en plus ce que le II de l'article 35 du décret
+    n° 2008-639 retranche à la durée requise pour compter la décote par la
+    durée — jusqu'à dix trimestres pour un agent de conduite né en 1980.
+    """
+
+    FICHIER = "duree_requise_regimes_speciaux.csv"
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[str, dict[float, tuple[int, int, Fiabilite]]] = {}
+        chemin = racine / "reference" / "legislation" / self.FICHIER
+        if chemin.exists():
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    self._table.setdefault(ligne["table"], {})[
+                        float(ligne["generation"])
+                    ] = (int(ligne["trimestres"]), int(ligne["retranche_decote"]),
+                         Fiabilite.depuis_texte(ligne["fiabilite"]))
+        self._generations = {cle: tuple(sorted(valeurs))
+                             for cle, valeurs in self._table.items()}
+
+    def ligne(self, table: str,
+              generation: float) -> tuple[int, int, Fiabilite] | None:
+        """Trimestres requis, trimestres retranchés pour la décote, fiabilité."""
+        generations = self._generations.get(table)
+        if not generations:
+            return None
+        return valeur_par_generation(self._table[table], generations, generation)
+
+
 class DureesRequisesFonctionPublique:
     """Durée de services requise dans la fonction publique, 2004-2008.
 
@@ -1591,6 +1629,7 @@ class ScenarioActuel:
         self.classes = ClassesCotisation(parametres.racine_donnees)
         self.grilles = SalairesForfaitaires(parametres.racine_donnees)
         self.durees_requises = DureesRequises(parametres.racine_donnees)
+        self.durees_requises_regimes = DureesRequisesRegimes(parametres.racine_donnees)
         self.durees_proratisation = DureesProratisation(parametres.racine_donnees)
         self.ages_ouverture = AgesOuverture(parametres.racine_donnees)
         self.ages_annulation_decote = AgesAnnulationDecote(parametres.racine_donnees)
