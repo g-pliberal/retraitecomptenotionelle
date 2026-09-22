@@ -603,30 +603,30 @@ résumé :
 | Profil de salaire par âge et catégorie | 2024 | **certifiée** | INSEE Melodi, DS_DERA_PRIVE_ANNUEL |
 | Profil de salaire public par âge et statut | 2023 | **certifiée** | INSEE Melodi, DS_DERA_PUBLIC_ANNUEL |
 | Profil de salaire par âge et secteur | 2018, 2022 | **certifiée** | Eurostat, enquête sur la structure des salaires |
-| Population par âge, 50 ans et plus | <!--chiffre:minimum(data/reference/macro/population_par_age.csv:annee?fiabilite=certifiee)-->1962<!--/-->-<!--chiffre:maximum(data/reference/macro/population_par_age.csv:annee?fiabilite=certifiee)-->2023<!--/--> | **certifiée** | INSEE, estimations de population (classeur des projections 2026) |
-| Population par âge, 50 ans et plus | <!--chiffre:minimum(data/reference/macro/population_par_age.csv:annee?fiabilite=projetee)-->2024<!--/-->-<!--chiffre:maximum(data/reference/macro/population_par_age.csv:annee?fiabilite=projetee)-->2070<!--/--> | projetée | INSEE, projections de population 2026, scénario central |
+| Population par âge, <!--chiffre:minimum(data/reference/macro/population_par_age.csv:age)-->50<!--/--> ans et plus | <!--chiffre:minimum(data/reference/macro/population_par_age.csv:annee?fiabilite=certifiee)-->1962<!--/-->-<!--chiffre:maximum(data/reference/macro/population_par_age.csv:annee?fiabilite=certifiee)-->2023<!--/--> | **certifiée** | INSEE, estimations de population (classeur des projections 2026) |
+| Population par âge, <!--chiffre:minimum(data/reference/macro/population_par_age.csv:age)-->50<!--/--> ans et plus | <!--chiffre:minimum(data/reference/macro/population_par_age.csv:annee?fiabilite=projetee)-->2024<!--/-->-<!--chiffre:maximum(data/reference/macro/population_par_age.csv:annee?fiabilite=projetee)-->2070<!--/--> | projetée | INSEE, projections de population 2026, scénario central |
 | Population des 20-64 ans | 1962-2023 / 2024-2070 | **certifiée** / projetée | mêmes sources |
 | Dépenses de vieillesse-survie, tous régimes | <!--chiffre:minimum(data/reference/macro/depenses_retraite.csv:annee?fiabilite=certifiee)-->1959<!--/-->-<!--chiffre:maximum(data/reference/macro/depenses_retraite.csv:annee?fiabilite=certifiee)-->2024<!--/--> | **certifiée** | DREES, Comptes de la protection sociale, poste E11-2 |
 | Dépenses de vieillesse-survie, par système | <!--chiffre:minimum(data/reference/macro/depenses_retraite_regimes.csv:annee?fiabilite=certifiee)-->1990<!--/-->-<!--chiffre:maximum(data/reference/macro/depenses_retraite_regimes.csv:annee?fiabilite=certifiee)-->2024<!--/--> | **certifiée** | DREES, mêmes comptes, ventilation par organisme |
 | Dépenses de vieillesse-survie, par système | 1981-1989 | absentes | nomenclature d'alors sans raccord publié — voir §5 bis |
-| Retraités de droit direct, par caisse | 2004-2024, 28 caisses | **certifiée** | DREES, enquête annuelle auprès des caisses de retraite, fichier diffusé |
+| Retraités de droit direct, par caisse | 2004-2024, <!--chiffre:distinctes(data/reference/regimes/effectifs_retraites.csv:caisse)-->27<!--/--> séries, les caisses et le total tous régimes | **certifiée** | DREES, enquête annuelle auprès des caisses de retraite, fichier diffusé |
 | Retraités de droit direct, par caisse | hors 2004-2024 | estimée | la répartition du bord est reconduite — voir §5 bis |
-| Distribution des pensions mensuelles brutes de droit direct | fin 2020, 46 tranches | **certifiée** | DREES, échantillon interrégimes de retraités 2020, tableau 1 |
+| Distribution des pensions mensuelles brutes de droit direct | fin 2020, <!--chiffre:distinctes(data/reference/macro/distribution_pensions.csv:borne_mensuelle?sexe=ensemble)-->46<!--/--> tranches | **certifiée** | DREES, échantillon interrégimes de retraités 2020, tableau 1 |
 | Patrimoine des ménages : déciles, moyennes et médianes par âge | début 2021 et début 2024 | **haute** | INSEE, enquête Histoire de vie et Patrimoine, Insee Focus n° 287 et page « Distribution du patrimoine des ménages », classeurs lus par script |
-| Mode de résidence après 65 ans, par âge et par sexe | 2021, 36 âges | **haute** | INSEE, recensement 2021, *Insee Première* n° 2040, figure 2, classeur lu par script |
-| Patrimoine des ménages retraités selon leur revenu disponible | 2018, six valeurs | **saisie** | COR, « Le patrimoine des retraités », séance du 16 décembre 2021, sur l'enquête Patrimoine 2018 — les graphiques du PDF ne se lisent pas |
+| Mode de résidence après <!--chiffre:minimum(data/reference/macro/vie_en_couple.csv:age)-->65<!--/--> ans, par âge et par sexe | 2021, <!--chiffre:distinctes(data/reference/macro/vie_en_couple.csv:age)-->36<!--/--> âges | **haute** | INSEE, recensement 2021, *Insee Première* n° 2040, figure 2, classeur lu par script |
+| Patrimoine des ménages retraités selon leur revenu disponible | 2018, <!--chiffre:lignes_csv(data/reference/macro/patrimoine_menages.csv?source_id=cor_patrimoine_retraites)-->6<!--/--> valeurs | **saisie** | COR, « Le patrimoine des retraités », séance du 16 décembre 2021, sur l'enquête Patrimoine 2018 — les graphiques du PDF ne se lisent pas |
 | Hypothèses de projection | 2026-2100 | **saisie** | COR, rapport annuel de juin 2025, jeu reconduit en juin 2026 |
 | Emploi projeté (croissance de l'emploi, dérivée) | 2026-2070 | **saisie** | COR, rapport annuel de juin 2026, données de la partie 1 : population active et chômage du scénario de référence |
-| Espérance de vie à 0 et 60 ans | <!--chiffre:minimum(data/reference/mortalite/esperances_vie.csv:annee?mesure=e0&fiabilite=certifiee)-->1946<!--/-->-<!--chiffre:maximum(data/reference/mortalite/esperances_vie.csv:annee?mesure=e0&fiabilite=certifiee)-->2025<!--/--> | **certifiée** | INSEE BDM, quatre idbanks, annuel par sexe |
-| Espérance de vie à 65 ans | 1960-2024 | **certifiée** | OCDE `DSD_HEALTH_STAT@DF_LE` |
-| Espérance de vie à 65 ans | 1946-1959 | haute | **dérivée** des quotients INED, recalculée à chaque exécution |
+| Espérance de vie à 0 et <!--chiffre:illustration()-->60<!--/--> ans | <!--chiffre:minimum(data/reference/mortalite/esperances_vie.csv:annee?mesure=e0&fiabilite=certifiee)-->1946<!--/-->-<!--chiffre:maximum(data/reference/mortalite/esperances_vie.csv:annee?mesure=e0&fiabilite=certifiee)-->2025<!--/--> | **certifiée** | INSEE BDM, quatre idbanks, annuel par sexe |
+| Espérance de vie à <!--chiffre:illustration()-->65<!--/--> ans | 1960-2024 | **certifiée** | OCDE `DSD_HEALTH_STAT@DF_LE` |
+| Espérance de vie à <!--chiffre:illustration()-->65<!--/--> ans | 1946-1959 | haute | **dérivée** des quotients INED, recalculée à chaque exécution |
 | Espérances de vie e0, e60, e65 | 2026-2125 | projetée | **dérivée** des quotients projetés par l'INSEE, projections 2026 |
 | Espérance de vie par vingtile de niveau de vie, e0, e60, e65 | 2012-2016 et 2020-2024 | haute | INSEE, tables de mortalité par niveau de vie (Insee Résultats 2025), lues telles quelles, l'ensemble contrôlé contre la série certifiée |
-| Espérance de vie à 65 ans des fonctionnaires civils de l'État | 2024 | **saisie** | Service des retraites de l'État, PAP 741 du PLF 2026, apporté par l'utilisateur |
-| Quotients de mortalité par âge | 1986-2024 | **certifiée** | Eurostat `demo_mlifetable`, âges 0-94 |
+| Espérance de vie à <!--chiffre:illustration()-->65<!--/--> ans des fonctionnaires civils de l'État | 2024 | **saisie** | Service des retraites de l'État, PAP 741 du PLF 2026, apporté par l'utilisateur |
+| Quotients de mortalité par âge | 1986-2024 | **certifiée** | Eurostat `demo_mlifetable`, âges 0-<!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2024)-->94<!--/--> depuis 2014, 0-<!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2010)-->84<!--/--> de 1998 à 2013 |
 | Quotients de mortalité par âge | 1899-1985 | **certifiée** | INED, tables de Vallin et Meslé, âges 0-104 |
-| Quotients de mortalité par âge | 1986-1997, 95 à 104 ans | **certifiée** | INED, là où Eurostat s'arrête |
-| Quotients de mortalité par âge | après 1997, au-delà de 94 ans | absents | calibration paramétrique, dont le biais est mesuré |
+| Quotients de mortalité par âge | 1986-1997, jusqu'à <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=1990)-->104<!--/--> ans | **certifiée** | INED, là où Eurostat s'arrête |
+| Quotients de mortalité par âge | après 1997, au-delà de <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2010)-->84<!--/--> ans jusqu'en 2013 et de <!--chiffre:maximum(data/reference/mortalite/quotients_periode.csv:age?annee=2024)-->94<!--/--> ans depuis | absents | calibration paramétrique, dont le biais est mesuré |
 | Minimum contributif et plafond d'écrêtement | ancres de 2007 à 2014 | **certifiée** | DILA, base LEGI, code de la sécurité sociale |
 | Minimum contributif, minimum majoré et plafond | montants servis 2020 | haute | transcrits d'une réponse ministérielle, recoupés à chaque exécution contre les circulaires Cnav que transcrit OpenFisca-France-Pension — sa série s'arrête en 2023, les montants postérieurs restent sans recoupement |
 | Minimum vieillesse (ASPA) | ancres 2006, 2009-2012, 2014, 2018-2020 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 815-1` |
@@ -638,7 +638,7 @@ résumé :
 | Durée d'assurance requise par génération | 1953-1957 | **certifiée** | DILA, base LEGI, décrets d'application des lois de 2003 et de 2010 |
 | Durée d'assurance requise par génération | 1934-1942 | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-45` II |
 | Durée d'assurance requise par génération | 1943-1952 | haute | 160 vient de la règle générale, non d'un alinéa qui les nomme ; les 161-164 sont dans des décrets absents de la base — recoupées à chaque exécution contre la table d'OpenFisca-France-Pension |
-| Durée de services de la fonction publique, droits ouverts 2004-2008 | 152 à 160 trimestres | haute | loi n° 2003-775, article 66 II, lu dans la base LEGI et mis en table ; recoupé contre OpenFisca-France-Pension |
+| Durée de services de la fonction publique, droits ouverts 2004-2008 | <!--chiffre:minimum(data/reference/legislation/duree_requise_fonction_publique.csv:trimestres)-->152<!--/--> à <!--chiffre:maximum(data/reference/legislation/duree_requise_fonction_publique.csv:trimestres)-->160<!--/--> trimestres | haute | loi n° 2003-775, article 66 II, lu dans la base LEGI et mis en table ; recoupé contre OpenFisca-France-Pension |
 | Coefficient de minoration par génération | <!--chiffre:minimum(data/reference/legislation/coefficient_minoration.csv:generation?fiabilite=certifiee)-->1900<!--/-->-<!--chiffre:maximum(data/reference/legislation/coefficient_minoration.csv:generation?fiabilite=certifiee)-->1975<!--/--> | **certifiée** | DILA, base LEGI, code de la sécurité sociale `R. 351-27` |
 | Bornes de la carrière longue | 2023-, règle générale et borne des vingt ans par génération | **certifiée** | DILA, base LEGI, `L. 351-1-1` et `D. 351-1-1` (I et II, versions de 2023 et de 2026, lues à leur date d'effet) |
 | Bornes de la carrière longue | 2004, 2011 et 2012, par génération | **certifiée** | DILA, base LEGI, versions abrogées de `D. 351-1-1` que l'index expose |
@@ -655,7 +655,7 @@ résumé :
 | Plafond Sécurité sociale | 2002-2025 | **certifiée** | INSEE BDM, idbank 000822494 |
 | Plafond Sécurité sociale | 1963, 1965-1981, 1984, 1987, 1988, 1990-1993, 1996-2001 | **certifiée** | DILA, base JORF, décrets portant fixation du plafond |
 | Plafond Sécurité sociale | le reste de 1931-2001 | haute | OpenFisca-France, daté décret par décret — la notice ancienne du JORF n'a pas d'écriture stable |
-| Revalorisation des salaires portés au compte | 10 colonnes, effets 2017-2026, perceptions depuis 1930 | haute | Cnav, circulaires de revalorisation, recoupées deux à deux |
+| Revalorisation des salaires portés au compte | <!--chiffre:distinctes(data/reference/legislation/revalorisation_salaires.csv:date_effet)-->10<!--/--> colonnes, effets 2017-2026, perceptions depuis 1930 | haute | Cnav, circulaires de revalorisation, recoupées deux à deux |
 | Taux de cotisation, régime général | <!--chiffre:minimum(data/reference/regimes/taux_cotisation_annuels.csv:annee?regime=regime_general&fiabilite=certifiee)-->1982<!--/-->-<!--chiffre:maximum(data/reference/regimes/taux_cotisation_annuels.csv:annee?regime=regime_general&fiabilite=certifiee)-->2026<!--/--> | **certifiée** | DILA, base LEGI, code de la sécurité sociale `D. 242-4` et décret n° 81-1013 du 13 novembre 1981, article 2 ; la hausse temporaire de 1987-1988, qui n'a pas réécrit l'article, est lue dans la base JORF |
 | Taux de cotisation, régime général | 1967-1979 | haute | OpenFisca-France, transcrit des barèmes IPP — l'article 3 du décret n° 67-803 n'a qu'une version dans LEGI, datée de 1967 et portant l'état de 1979. Chaque marche est **ancrée** à son décret, retrouvé au JORF au numéro et à la date que l'IPP annonce (35 sur 36 ; le n° 70-680 manque à l'index) |
 | Taux de cotisation, régime général | 1980 et 1981 | haute, **comme leurs voisines** | le décret n° 79-650 du 30 juillet 1979 a relevé des taux « à titre exceptionnel » du 1er août 1979 au 31 janvier 1981 : c'est le point du plan Barrot, porté par la seule cotisation MALADIE du salarié, et la vieillesse n'y est pas — voir plus bas |
@@ -736,12 +736,30 @@ valeurs, à quel niveau, et une empreinte de la série reconstruite.
 le dire.** `verifier_donnees.py` confronte des séries à un producteur ; une
 hypothèse de long terme n'a pas de producteur, elle a un auteur. Le fichier
 `data/reference/macro/hypotheses_projection.yaml` transcrit donc le jeu du COR
-— référence 0,7 %, variantes 0,4 % et 1,0 % de croissance annuelle de la
+— référence <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.productivite_reelle*100)-->0,7<!--/--> %, variantes <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_productivite_basse.productivite_reelle*100)-->0,4<!--/--> % et <!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_productivite_haute.productivite_reelle*100)-->1,0<!--/--> % de croissance annuelle de la
 productivité — en nommant son millésime, et rien ne garantit qu'il suive le
 prochain rapport autrement qu'à la main. Deux réserves s'y ajoutent : le taux
 est appliqué dès 2026 quand le COR ne l'atteint qu'en 2040, et l'inflation de
-1,75 % est une convention reconduite de ses rapports antérieurs, que les
+<!--chiffre:valeur(data/reference/macro/hypotheses_projection.yaml:scenarios.cor_reference.inflation*100)-->1,75<!--/--> % est une convention reconduite de ses rapports antérieurs, que les
 documents publics de juin 2025 et de juin 2026 ne restatent pas.
+
+**Deux niveaux, deux exigences.** `certifiee` suppose que la source soit le
+**producteur** de la donnée : INSEE, Eurostat, OCDE. Une transcription tierce,
+même sourcée et reprise automatiquement, plafonne à `haute` — c'est le cas des
+années du plafond ancien dont le décret n'a pas été lu, et qui viennent
+d'OpenFisca-France. La distinction n'est pas cosmétique : elle dit ce qu'on
+saurait vérifier soi-même en remontant d'un cran. Et le plafond montre à quoi
+elle sert : sur les trente et une années où les deux chemins existent — la
+transcription et le *Journal officiel* —, ils donnent le même chiffre à l'euro
+près, ce qui certifie ces trente et une-là et rend les autres un peu moins
+incertaines sans les certifier.
+
+### Ce que le recontrôle a trouvé, série par série
+
+Ce qui suit est le registre des recontrôles et des corrections, série par
+série, chacun daté : il dit ce qu'une lecture a trouvé le jour où elle a été
+faite, et ce qu'elle a déplacé ce jour-là. Le tableau d'en haut dit l'état
+d'aujourd'hui.
 
 **Ce que le scénario de projection déplace dans le BILAN, depuis le
 21 septembre 2026.** Jusqu'à cette date, `comptes_retraite.csv` ne portait que
@@ -842,17 +860,6 @@ transmet aux comptes. La convention d'avant reste une variante du formulaire
 (« Emploi projeté : constant »), et la page de résultats dit ce que l'une
 vaut contre l'autre. Le PIB de la page Coût, lui, ne lit pas encore cette
 trajectoire : il suit la population des 20-64 ans, ce qui est dit au § 5 ter.
-
-**Deux niveaux, deux exigences.** `certifiee` suppose que la source soit le
-**producteur** de la donnée : INSEE, Eurostat, OCDE. Une transcription tierce,
-même sourcée et reprise automatiquement, plafonne à `haute` — c'est le cas des
-années du plafond ancien dont le décret n'a pas été lu, et qui viennent
-d'OpenFisca-France. La distinction n'est pas cosmétique : elle dit ce qu'on
-saurait vérifier soi-même en remontant d'un cran. Et le plafond montre à quoi
-elle sert : sur les trente et une années où les deux chemins existent — la
-transcription et le *Journal officiel* —, ils donnent le même chiffre à l'euro
-près, ce qui certifie ces trente et une-là et rend les autres un peu moins
-incertaines sans les certifier.
 
 **Ce que l'automatisation a corrigé.** L'API SDMX de la Banque de données
 macroéconomiques de l'INSEE (`api.insee.fr/series/BDM/V1`) est ouverte sans clé
@@ -1979,6 +1986,8 @@ plus volontiers.
   avril 2018 sur un seul montant, alors que l'allocation a monté en 2016 et en
   2017 ; et il s'arrête en 2020. Les ancres de 2007, 2016, 2017 et d'après 2020
   disent donc ce que le code ne dit pas.
+
+### Ce que la certification garantit
 
 **Ce que cela veut dire concrètement.** Les carrières entamées après 1950 —
 c'est-à-dire les générations nées à partir de 1930 environ, soit la quasi-totalité
