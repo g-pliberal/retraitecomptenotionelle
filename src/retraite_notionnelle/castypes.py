@@ -351,9 +351,9 @@ CAS_TYPES: tuple[CasType, ...] = (
                     "cette phrase disait depuis toujours : entré à vingt-sept ans "
                     "sans carrière antérieure, ce cas type n'atteint la durée "
                     "requise à aucun âge, et le taux plein le ferait attendre "
-                    "l'annulation de la décote — soixante-sept ans, quand la DREES "
-                    "observe les professions libérales partir à 62,6 ans en "
-                    "moyenne de 2013 à 2020. La règle `taux_plein` rendait "
+                    "l'annulation de la décote — soixante-sept ans, quand la "
+                    "CNAVPL observe ses propres titulaires liquider à 64,8 ans "
+                    "en 2018 et 66,1 en 2025. La règle `taux_plein` rendait "
                     "l'ouverture pour cette fiche tant que le moteur ne savait pas "
                     "opposer de durée à une carrière tout en points ; il le sait "
                     "depuis, et la fiche dit maintenant ce qu'elle faisait.",

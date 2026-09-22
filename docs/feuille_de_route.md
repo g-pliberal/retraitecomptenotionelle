@@ -12517,3 +12517,73 @@ chacune porte sa date et ce qu'elle a donné. Les fiches `partiel` qui le sont
 faute de barème publié ne le sont plus, ou disent lequel n'existe pas. Et
 `limites.md` dit, source par source, ce que les caisses appliquent que le
 modèle n'applique pas.
+### 90. Le barème agricole retrouvé, et un groupe qui ne décrivait pas le libéral — `fait`
+
+**Demande.** « Fais des recherches complémentaires et corrige » : les deux
+réserves de l'action 87 — le taux du coefficient de minoration agricole, que
+l'index n'avait pas rendu, et le cas type libéral sans carrière antérieure.
+
+**Le barème agricole n'était pas introuvable, la requête l'était.**
+`dila_cherche.py` interroge l'index en plein texte, et ses requêtes ne
+rendaient rien. La même base, interrogée en SQL sur le titre du code, donne
+262 articles `D732`/`R732`, dont 43 contiennent « minoration ». **R. 732-61**,
+dans sa version du 28 octobre 2017 en vigueur jusqu'au 1er janvier 2026,
+porte le barème en toutes lettres : « La minoration est égale au produit du
+plus petit de ces deux nombres, arrondis chacun au nombre immédiatement
+supérieur, par le coefficient suivant : −2,5 % pour l'assuré né avant le
+1er janvier 1944 […] −1,25 % pour l'assuré né après 1952. »
+
+**Il est GÉNÉRATIONNEL, et c'est celui du régime général.** Les onze valeurs
+sont, génération par génération, celles du II de R. 351-27 que
+`coefficient_minoration.csv` porte déjà — et la fiche `msa_non_salaries`
+portant `decote_par_generation: true`, le modèle les appliquait depuis
+toujours. Son `decote_par_trimestre: 0.0125` n'est que le repli. **La
+transcription est confirmée, et aucune valeur ne bouge.** Depuis le 1er janvier
+2026, R. 732-68 rend l'alignement explicite — « déterminé dans les mêmes
+conditions que celui mentionné au 2° du I de l'article R. 351-27 ».
+
+**Et le recueil de la CNAVPL a démenti une phrase écrite la veille.** L'action
+86 justifiait la règle de départ du cas type libéral en écrivant que « la DREES
+observe les professions libérales partir à 62,6 ans en moyenne ». C'est le
+GROUPE 3 de la nomenclature — « cadres et professions intellectuelles
+supérieures » —, dominé par les cadres salariés. La caisse des libéraux publie
+l'âge de ses propres titulaires : **64,81 ans en 2018, 66,11 en 2025**. Trois
+ans et demi d'écart avec son groupe.
+
+**Le signe s'inverse.** Confronté au chiffre de sa caisse plutôt qu'à celui de
+son groupe, le cas type part **1,24 an trop TÔT** en moyenne de 2018 à 2025, là
+où le groupe 3 le disait 0,66 an trop tard. Il est donc sorti du champ de la
+confrontation par catégorie, avec sa raison et ses chiffres écrits dans
+`cas_types_csp.yaml` ; huit cas types y restent, et l'écart pesé en valeur
+absolue passe de 1,16 à 1,17 an.
+
+**La décision de l'action 86 reste la bonne, pour une meilleure raison.** Dater
+le départ de ce cas type sur l'âge d'OUVERTURE et non sur le taux plein le fait
+partir à soixante-quatre puis soixante-six ans ; le taux plein le ferait
+attendre soixante-neuf. Sa caisse observe soixante-six.
+
+**Trois leçons.** **Une recherche qui ne rend rien n'est pas une absence** : le
+plein texte de l'index taisait un article que le SQL a rendu en une requête, et
+le dépôt a passé une journée à écrire « non lu » d'un texte qu'il portait.
+**Un groupe de nomenclature n'est pas toujours la bonne référence** : celui du
+libéral le classe correctement et le décrit mal, et c'est exactement le genre
+d'erreur qu'un couloir large ne rattrape pas — il faut une autre source. Et
+**une justification fausse peut soutenir une décision juste** : la règle
+d'ouverture était le bon choix, la raison qu'on lui donnait ne l'était pas, et
+seule la seconde a dû changer.
+
+**Ce qui reste.** Le PLAFOND de vingt trimestres n'est explicite que chez les
+libéraux (R. 643-7) ; ni R. 351-27 2° ni R. 732-61 n'en portent, et le modèle
+en applique un partout. Il ne mord que sur un départ de plus de cinq ans avant
+l'âge d'annulation, où la décote ne s'applique pas — mais c'est à trancher sur
+texte, et la ligne de veille le dit. Et le cas type libéral n'a toujours aucune
+carrière antérieure, quand la CNAVPL immatricule ses affiliés à **32,58 ans en
+moyenne** : dix ans de carrière ailleurs avant l'installation. `CasType` ne
+porte qu'une affiliation, et lui en donner deux est un chantier, non une
+retouche.
+
+**Fichiers.** `data/reference/legislation/veille.yaml`,
+`data/reference/macro/cas_types_csp.yaml`,
+`src/retraite_notionnelle/castypes.py`, `moteur/js/castypes.js`,
+`tests/test_age_depart_csp.py`, `tests/test_cout_age_depart.py`,
+`docs/limites.md` § 5 ter.
