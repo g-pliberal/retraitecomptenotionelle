@@ -1773,10 +1773,10 @@ inventaire:
     manque: >-
       La progression de la cotisation forfaitaire sur les cinq premières années
       et la contribution équivalente aux droits de plaidoirie ne sont pas
-      portées ; la retraite forfaitaire et la cotisation de croisière sont
-      ramenées de 2026 par les prix, quand les barèmes de 2017 à 2026 en
-      donnent la série ; ni la majoration de durée d'assurance pour enfants
-      ni la surcote parentale.
+      portées, ni la majoration de durée d'assurance pour enfants, ni la
+      surcote parentale. La retraite forfaitaire et la cotisation de
+      croisière sont celles de chaque barème depuis 2016 ; avant, celles de
+      2016 ramenées par les prix.
 
   - code: cnbf_complementaire
     nom: Complémentaire des avocats (CNBF)

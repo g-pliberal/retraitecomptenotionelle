@@ -1083,12 +1083,12 @@
    "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "988dba33ad15f670",
-   "identiques": 18,
+   "empreinte": "8267f7431efc0fb9",
+   "identiques": 20,
    "niveau": "certifiee",
    "source": "CNBF, barèmes annuels des cotisations et prestations",
-   "valeurs": 18,
-   "verifiee_le": "2026-09-13"
+   "valeurs": 20,
+   "verifiee_le": "2026-09-22"
   },
   "valeurs_point_estimees": {
    "ajoutees": 40,

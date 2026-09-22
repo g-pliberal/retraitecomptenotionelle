@@ -12889,6 +12889,16 @@ les dispenses des premières années d'affiliation. *Les statuts antérieurs*,
 publiés au Bulletin officiel : CARCDSF avant 2007, CAVP avant 2009, CARPIMKO
 avant 2015, CARPV avant 2021.
 
+**Passe du 22 septembre 2026, suite : les avocats (CNBF).** Les onze
+barèmes annuels de la caisse, 2016 à 2026, dont celui de 2024 retrouvé dans
+Internet Archive. Le récupérateur n'en lisait que la valeur du point : la
+grille de cotisation du complémentaire était celle de 2026 depuis 2019, alors
+que son taux de première tranche a doublé en dix ans, et la pension de base
+celle de 2026 ramenée par les prix. Les deux fiches sont lues année par
+année ; les valeurs du point de 2024 sont certifiées. Écrit dans
+`docs/limites.md` (« Les avocats cotisaient au taux de 2026 depuis 2019 »).
+Restent du lot : les fiches pratiques et les deux simulateurs de la caisse.
+
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`
 (la forme), puis, selon ce qu'on trouve : `tests/temoins/exemples_officiels.yaml`,

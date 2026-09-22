@@ -1870,7 +1870,7 @@ institutions:
         cible: data/reference/regimes/cnbf.yaml
 
       - id: cnbf_baremes
-        titre: Barèmes annuels des cotisations et prestations, 2017-2026
+        titre: Barèmes annuels des cotisations et prestations, 2016-2026
         url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=baremes
         acces: fichier
         statut_integration: certifie
@@ -1883,6 +1883,10 @@ institutions:
           en PDF : le récupérateur les lit avec scripts/fetch/lecture_pdf.py et
           refuse d'écrire une série qui ne serait pas monotone, faute de quoi
           une erreur de lecture passerait inaperçue.
+          Le barème 2024, retiré du site, est lu dans Internet Archive ; celui
+          de 2016, une image, n'a pas de texte et ses valeurs du point restent
+          hors série. Les TAUX de cotisation des mêmes barèmes sont transcrits
+          à la main dans les fiches `cnbf` et `cnbf_complementaire`.
 
   dgafp:
     nom: Direction générale de l'administration et de la fonction publique

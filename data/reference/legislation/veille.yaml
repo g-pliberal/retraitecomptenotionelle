@@ -2135,6 +2135,36 @@ entrees:
       statuts de la CARMF.
     prochaine_veille: "2027-03-31"
 
+  - id: baremes_cnbf
+    regle: >-
+      Pension forfaitaire de base, cotisation forfaitaire, taux proportionnel
+      et grille de cotisation du complémentaire des avocats (classe C1), année
+      par année depuis 2016.
+    textes:
+      - "R. 723-43 CSS : le montant de la retraite de base est fixé par décision de l'assemblée générale de la CNBF"
+      - "barèmes annuels des cotisations et prestations de la CNBF, 2016 à 2026"
+    sources:
+      - type: autre
+        reference: >-
+          CNBF, barèmes des cotisations et prestations 2016 à 2023, 2025 et
+          2026, en ligne ; barème 2024 (« Bareme-CNBF-2024-01.20.pdf ») lu dans
+          Internet Archive, capture du 15 juillet 2024 à l'adresse d'origine.
+        url: "https://www.cnbf.fr/medias/documents/?_sft_thematique-media=baremes"
+        date: "2026-09-22"
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: >-
+      Tout avocat. La grille du complémentaire était celle de 2026 depuis
+      2019, alors que le taux de première tranche est passé de 3,20 % en 2016
+      à 7,00 % en 2026 ; la pension de base était celle de 2026 ramenée par
+      les prix. Les deux sont lues année par année, et ancrées sur 2016 avant.
+    a_faire: >-
+      Aucun barème antérieur à 2016 n'est publié par la caisse ; le chercher
+      dans ses rapports annuels ou dans la presse professionnelle.
+    prochaine_veille: "2027-02-28"
+
 journal:
   - date: "2026-09-19"
     session: "le net et le brut, d'un bout à l'autre du simulateur"
@@ -4196,3 +4226,21 @@ journal:
       montant du minimum garanti de 2023 en toutes lettres dans une
       publication ; la valeur 2026 du point RCO et de la CNAVPL, quand elles
       seront fixées.
+
+  - date: "2026-09-22"
+    session: "action 89, lot des avocats : les barèmes annuels de la CNBF"
+    consulte: >-
+      Les onze barèmes annuels de la CNBF, 2016 à 2026, dont celui de 2024
+      retiré du site et retrouvé dans Internet Archive ; l'index des fiches
+      pratiques.
+    trouve: >-
+      Les taux de cotisation du complémentaire des avocats n'avaient jamais
+      été transcrits : la fiche portait la grille de 2026 depuis 2019, alors
+      que le taux de première tranche a doublé en dix ans. La pension de
+      base de chaque année est publiée depuis 2016 ; la fiche la
+      reconstituait par les prix depuis 2026, et sous-estimait de 6 % celle
+      de 2016.
+    reste: >-
+      Aucun barème d'avant 2016. Les fiches pratiques, les deux simulateurs
+      de la caisse (cotisations, prélèvements sociaux) restent à dépouiller.
+      Rien de la réglementation d'âge ou de décote n'a changé.
