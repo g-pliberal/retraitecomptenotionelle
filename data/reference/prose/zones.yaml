@@ -212,6 +212,15 @@ fichiers:
       - "Le dépôt n'a d'abord gardé que la colonne la plus récente"
       - "Ce document a un temps affirmé"
       - "- **Le mois existe désormais"
+      # Dans le coût agrégé, quatre mesures faites un jour : ce que valait la
+      # pondération égale des générations, ce que le retrait de la réversion a
+      # rendu au solde le 19 septembre, le contrôle de la part des droits
+      # dérivés contre la DREES, le déplafonnement du 20 septembre.
+      - "1. **Les effectifs de génération ne sont plus supposés.**"
+      - "Ce que la décision rend : **+1,19 point"
+      - "**Et la part est contrôlée chez un autre producteur.**"
+      - "Ce qui reste : la part est très légèrement SURESTIMÉE"
+      - "5. **La grille ne monte pas au-delà de 2,5 fois le salaire moyen.**"
     sections:
       # Sections d'état ancrées le 22 septembre 2026 : la règle d'indexation,
       # dont le cumul du triple lock lit le modèle ; les régimes qui manquent ;
@@ -253,6 +262,13 @@ fichiers:
       # Et la génération 1965 se voit opposer 170 trimestres depuis la
       # suspension, non plus 172.
       "Ce que dit la confrontation à une seconde implémentation": etat
+      # Le net et le brut : le barème de la CSG se lit dans les prélèvements.
+      # Il donnait « 22 580 % » pour 22 580 € ; le taux de remplacement net de
+      # la « carrière témoin », qu'aucune mesure ne désigne, n'est plus chiffré.
+      "5 ante ter. Le net et le brut : ce que la bascule suppose": etat
+      # Le coût agrégé : la dépense observée, les poids et les écarts se
+      # recalculent ; les parts de la réversion lisent leur table.
+      "5 bis. Le coût agrégé : ce qui est observé, ce qui est estimé": etat
       "3. Le scénario « système actuel » est une approximation": etat
       "4. Régimes incomplets, et de combien": etat
       "5 quater. Comparaison à la littérature : pourquoi les écarts d'ici sont plus grands": etat
@@ -570,7 +586,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 26
+  sections_a_declarer: 24
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2

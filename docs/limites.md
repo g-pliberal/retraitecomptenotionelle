@@ -7008,20 +7008,20 @@ Quatre réserves, dont la première commande tout le reste.
 monde.** L'article L. 136-8 le fait dépendre du revenu fiscal de référence du
 foyer, perçu l'avant-dernière année, et en tire quatre cas pour une part de
 quotient familial (montants 2026, revalorisés chaque année sur les prix) :
-exonéré jusqu'à 11 128 €, 3,80 % jusqu'à 14 548 €, 6,60 % jusqu'à 22 580 %,
-8,30 % au-delà. Le simulateur ne demande ni la composition du foyer, ni les
-autres ressources, ni un revenu d'il y a deux ans : il applique donc 8,30 %,
-plus 0,50 % de CRDS et 0,30 % de CASA, soit **9,10 %**.
+exonéré jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=exonéré.revenu_fiscal_maximum)-->11 128<!--/--> €, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux réduit.taux*100)-->3,80<!--/--> % jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux réduit.revenu_fiscal_maximum)-->14 548<!--/--> €, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux médian.taux*100)-->6,60<!--/--> % jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux médian.revenu_fiscal_maximum)-->22 580<!--/--> €,
+<!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux plein.taux*100)-->8,30<!--/--> % au-delà. Le simulateur ne demande ni la composition du foyer, ni les
+autres ressources, ni un revenu d'il y a deux ans : il applique donc <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.csg_taux_plein*100)-->8,30<!--/--> %,
+plus <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.crds*100)-->0,50<!--/--> % de CRDS et <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.casa*100)-->0,30<!--/--> % de CASA, soit **<!--chiffre:mesure(prelevement_pension)-->9,10<!--/--> %**.
 
 La convention SURESTIME le prélèvement sur les petites pensions — et ce sont
-justement celles des scénarios notionnels. Une pension de 660 € par mois
+justement celles des scénarios notionnels. Une pension de <!--chiffre:illustration()-->660<!--/--> € par mois
 placerait son titulaire, s'il vivait seul et n'avait rien d'autre, sous le
 premier seuil : il serait exonéré des trois, et son net vaudrait son brut. Le
-site lui retire 9,1 %. L'écart entre systèmes affiché en net est donc un peu
+site lui retire <!--chiffre:mesure(prelevement_pension)-->9,1<!--/--> %. L'écart entre systèmes affiché en net est donc un peu
 RESSERRÉ pour les petites pensions, et exact pour les grandes. La page le dit
 sous la clé de lecture.
 
-**2. La cotisation maladie de 1 % sur la retraite complémentaire n'est pas
+**2. La cotisation maladie de <!--chiffre:illustration()-->1<!--/--> % sur la retraite complémentaire n'est pas
 comptée.** Elle ne porte que sur une partie de la pension, et les cinq scénarios
 notionnels ne distinguent pas base et complémentaire — leur compte est unique.
 L'appliquer aux uns et pas aux autres fabriquerait un écart qui ne viendrait
@@ -7032,16 +7032,16 @@ légèrement surestimé.
 convention : le dépôt la traite en rente viagère à titre GRATUIT, ce qu'elle est
 quand la cotisation qui l'a constituée a été prélevée à la source et déduite —
 le cas d'une cotisation obligatoire. Une rente à titre onéreux relèverait des
-prélèvements sur revenus du patrimoine, à 17,2 % sur une fraction du montant qui
+prélèvements sur revenus du patrimoine, à <!--chiffre:illustration()-->17,2<!--/--> % sur une fraction du montant qui
 dépend de l'âge. La proposition ne tranche pas.
 
 **3 bis. Le taux de remplacement suit le mode, et il MONTE en net.** Le modèle
 le calcule brut sur brut. En mode net, le site le convertit — pension nette
 rapportée au dernier revenu net —, sans quoi il serait le seul chiffre de la
 page à parler l'autre langue. Le taux net dépasse alors le taux brut de
-plusieurs points : 44,7 % devient 51,4 % sur la carrière témoin. Ce n'est pas
+plusieurs points. Ce n'est pas
 un artefact, c'est un fait du système français — une pension est prélevée de
-9,1 %, un salaire d'une vingtaine de points — et il est rarement montré. La
+<!--chiffre:mesure(prelevement_pension)-->9,1<!--/--> %, un salaire d'une vingtaine de points — et il est rarement montré. La
 conversion emprunte le rapport net/brut de la DERNIÈRE fiche de paie de la
 carrière, celle de l'année du départ, qui est l'année du dénominateur ; pour un
 statut sans fiche de paie, le taux reste brut faute de pouvoir le netter
@@ -7137,7 +7137,7 @@ réserves de PÉRIMÈTRE, et non de fiabilité :
 
 - le risque vieillesse-survie est plus large que « les retraites » : il porte
   aussi le minimum vieillesse, la dépendance des personnes âgées et la retraite
-  supplémentaire par capitalisation, soit 27,9 milliards sur 426,7 en 2024. La
+  supplémentaire par capitalisation, soit <!--chiffre:mesure(depense?annee=2024&quoi=hors_repartition)-->27,9<!--/--> milliards sur <!--chiffre:mesure(depense?annee=2024)-->426,7<!--/--> en 2024. La
   ventilation permet de les retrancher, et la page affiche les deux grandeurs ;
 - la ventilation ne commence qu'en 1990. De 1981 à 1989 la DREES en publie une
   autre, dont les périmètres ne se raccordent pas — « Régime général de la
@@ -7170,15 +7170,15 @@ le 19 septembre 2026 :
    fixerait » la pondération. C'était faux : l'enquête annuelle auprès des
    caisses de retraite dénombre les retraités caisse par caisse et année par
    année depuis 2004. Chaque cas type porte désormais l'effectif de sa caisse ;
-   l'agent de conduite pèse 0,7 % et non 7,7 %, et les quatre carrières du
-   privé 63 % à elles quatre.
+   l'agent de conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->0,7<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->7,7<!--/--> %, et les quatre carrières du
+   privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->63<!--/--> % à elles quatre.
 
    Ce que l'ancienne convention valait est donc mesuré plutôt qu'argumenté, et
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de −59,8 % à −56,0 % — et faux du
-   scénario 2, qui passe de −78,3 % à −81,0 % : la pondération donne aux
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,9<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,0<!--/--> % — et faux du
+   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−76,1<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,3<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
    l'autre.
@@ -7200,7 +7200,7 @@ le 19 septembre 2026 :
    qu'en 1941 : les générations antérieures à 1880 n'ont, dans ce modèle,
    aucune pension, et plusieurs régimes n'existaient pas encore. Les premières
    années reposent sur deux ou trois générations et la moitié des cas types.
-   Elles pèsent peu dans le cumul — la dépense de 1959 vaut 0,5 % de celle de
+   Elles pèsent peu dans le cumul — la dépense de 1959 vaut <!--chiffre:mesure(rapport_depenses?de=1959&a=2024)-->0,5<!--/--> % de celle de
    2024 en euros courants — mais leur rapport ne vaut pas ce que valent ceux
    d'après 1980.
 
@@ -7214,8 +7214,8 @@ le 19 septembre 2026 :
    jusqu'au 19 septembre 2026.
 
    La base est désormais ventilée. `part_droits_derives.csv` dit quelle
-   fraction de la masse versée est une pension de réversion : 12,4 % en 2010,
-   10,4 % en 2024, 9,5 % en 2040, 5,7 % en 2070 — la réversion recule dans la
+   fraction de la masse versée est une pension de réversion : <!--chiffre:cellule(data/reference/macro/part_droits_derives.csv:part*100?annee=2010)-->12,4<!--/--> % en 2010,
+   <!--chiffre:cellule(data/reference/macro/part_droits_derives.csv:part*100?annee=2024)-->10,4<!--/--> % en 2024, <!--chiffre:cellule(data/reference/macro/part_droits_derives.csv:part*100?annee=2040)-->9,5<!--/--> % en 2040, <!--chiffre:cellule(data/reference/macro/part_droits_derives.csv:part*100?annee=2070)-->5,7<!--/--> % en 2070 — la réversion recule dans la
    projection du COR, les carrières des femmes se rapprochant de celles des
    hommes. Le rapport ne multiplie plus que le reste.
 

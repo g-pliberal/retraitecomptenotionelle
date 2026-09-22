@@ -513,6 +513,21 @@ def depense(**reglages: str) -> float:
     raise ValueError(f"quoi inconnu « {quoi} »")
 
 
+def rapport_depenses(**reglages: str) -> float:
+    """La dépense observée d'une année rapportée à celle d'une autre, en euros courants, en %."""
+    depenses = _depenses()
+    return depenses.depense(int(reglages["de"])) / depenses.depense(int(reglages["a"])) * 100
+
+
+def prelevement_pension(**_: str) -> float:
+    """CSG au taux plein, CRDS et CASA sur une pension, en % : ce que le site retient."""
+    import yaml
+
+    chemin = RACINE / "data" / "reference" / "legislation" / "prelevements_remuneration.yaml"
+    pensions = yaml.safe_load(chemin.read_text(encoding="utf-8"))["pensions"]
+    return (pensions["csg_taux_plein"] + pensions["crds"] + pensions["casa"]) * 100
+
+
 def surcout_passe(**reglages: str) -> float:
     """De combien le cumul observé d'un système dépasse celui d'un autre, en %.
 
@@ -842,6 +857,8 @@ MESURES = {
     "avantages": avantages,
     "depense": depense,
     "surcout_passe": surcout_passe,
+    "rapport_depenses": rapport_depenses,
+    "prelevement_pension": prelevement_pension,
     "poids": poids,
     "grille": grille,
     "garantie": garantie,
