@@ -998,6 +998,61 @@ entrees:
     a_faire: null
     prochaine_veille: "2027-06-30"
 
+  - id: age_reference_decote_ieg
+    regle: "Âge d'annulation de la décote du régime spécial des IEG : l'âge minimum d'ouverture majoré de TROIS ans depuis le 1er janvier 2025, et soixante-deux ans pour les agents en services actifs nés avant 1975."
+    textes: ["annexe 3 du décret n° 46-1541 du 22 juin 1946, article 10 I et article 45 (LEGIARTI000052046924)", "décret n° 2023-692 du 28 juillet 2023"]
+    sources:
+      - {type: legifrance, reference: "annexe 3 du statut national des IEG, version en vigueur au 6 août 2025, LEGIARTI000052046924, lue dans l'index LEGI du dépôt", date: "2026-09-22"}
+      - {type: autre, reference: "CNIEG, réglementation, « Âge d'annulation de la décote » : « à compter du 1er janvier 2025 […] âge minimum + 3 ans (sauf exceptions) », de façon à maintenir cet âge au plus tard à soixante-sept ans", url: "https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/decote/age-annulation-decote.html", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: [reforme_2023]
+    etat: conforme
+    effet: >-
+      La fiche portait l'âge d'ouverture majoré de CINQ ans — 63,75 ans pour
+      les liquidations de 2025-2026, 64 ans ensuite —, règle d'avant la réforme
+      de 2023. Un agent liquidant à soixante-deux ans se voyait opposer sept
+      trimestres de décote de trop, soit 8,75 % de pension. Corrigé à
+      soixante-deux ans. Sur le cas type des IEG, l'écart au système actuel
+      passe de −23 % à −32 % pour la génération 1970 et de −38 % à −45 % pour
+      celle de 2000 : le cas type des IEG devient, en tête de la page Cas
+      types, la carrière la moins bien traitée par la proposition, à la place
+      du militaire non officier.
+    a_faire: >-
+      La même question se pose pour la SNCF et la RATP, dont les fiches portent
+      aussi l'âge d'ouverture majoré de cinq ans (53,5 et 58,5) : leurs textes
+      n'ont pas été lus. Le 7° de l'article 16 des IEG garde d'ailleurs les
+      cinq ans, et la fiche ne distingue pas cette population.
+    prochaine_veille: "2027-03-31"
+
+  - id: duree_requise_ieg
+    regle: "Durée d'assurance requise du régime spécial des IEG : le régime a SA table par génération, qui n'est pas celle du régime général."
+    textes: ["annexe 3 du décret n° 46-1541 du 22 juin 1946, article 45 (LEGIARTI000052046924)"]
+    sources:
+      - {type: legifrance, reference: "annexe 3 du statut national des IEG : « A compter du 1er juillet 2019, elle est fixée à : 167 trimestres, pour les agents nés entre le 1er juillet 1959 et le 31 décembre 1960 ; 168 pour 1961-1962 ; 169 pour 1963 ; 170 pour 1964-1965 ; 171 pour 1966-1967 ; 172 à partir de 1968 »", date: "2026-09-22"}
+      - {type: autre, reference: "CNIEG, réglementation, « Tableau des durées d'assurance » applicable à compter du 1er janvier 2025 : mêmes valeurs, par génération et par motif d'anticipation", url: "https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance/tableau-duree-assurance.html", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: [reforme_2023]
+    etat: manque
+    effet: >-
+      La fiche des IEG porte `duree_requise_par_generation: true`, qui lit la
+      table du régime général. Trois générations y diffèrent : 1963 (169
+      trimestres aux IEG, 170 au commun), 1966 et 1967 (171 contre 172). Un
+      trimestre de trop vaut 1,25 % de décote ou un cent-soixante-douzième de
+      prorata, soit environ 0,6 % de pension. La CNIEG publie en outre une
+      table par MOTIF D'ANTICIPATION — hors anticipation, anticipation de cinq
+      ans au titre de quinze ans de services actifs, de quatre ans au titre de
+      douze ans —, que le dépôt ne porte pour aucun régime spécial.
+    a_faire: >-
+      `_duree_requise` lit trois tables : celle de la fonction publique
+      (2004-2008), la dérogation de catégorie active
+      (`legislation/categorie_active.csv`, par classement et par génération) et
+      la table commune. Il en faut une quatrième, par RÉGIME, et son portage
+      dans `moteur/js/`. À mener avec la même question pour la SNCF, la RATP et
+      les mines, dont les textes portent sans doute aussi leur propre table.
+    prochaine_veille: "2027-03-31"
+
 journal:
   - date: "2026-09-19"
     session: "le net et le brut, d'un bout à l'autre du simulateur"
@@ -2657,3 +2712,30 @@ journal:
       était prise. Le partage par zones du `CLAUDE.md` nomme le modèle, les
       données et le site ; le registre de veille est une zone de plus, et ses
       lignes `manque` se prennent une à la fois.
+    session: la réglementation des IEG, lue chez la CNIEG puis dans son texte
+    consulte: >-
+      CNIEG, pages « réglementation » : mode de calcul, taux de la pension,
+      durée d'assurance et son tableau, décote, coefficient, âge d'annulation
+      de la décote, surcote. Puis, dans l'index LEGI du dépôt, l'annexe 3 du
+      décret n° 46-1541 du 22 juin 1946 — vingt versions datées, dont celle en
+      vigueur (LEGIARTI000052046924, 6 août 2025).
+    trouve: >-
+      DEUX CHOSES CONFIRMÉES, DEUX ÉCARTS. Confirmées : la montée en charge de
+      la décote des régimes spéciaux, que le dépôt modélise déjà — rien avant
+      le 1er juillet 2010, un dixième par an, 1,25 % en 2019 — et l'âge
+      d'annulation reculant de seize trimestres à rien de 2010 à 2024, tables
+      que la CNIEG publie à l'identique. Les écarts : depuis le 1er janvier
+      2025, l'âge de référence est l'âge minimum majoré de TROIS ans et non de
+      cinq, et vaut soixante-deux ans pour les agents en services actifs nés
+      avant 1975 — la fiche portait 63,75 puis 64 ans, soit sept trimestres de
+      décote de trop ; et le régime a SA PROPRE table de durée requise, dont
+      trois générations diffèrent de la table commune que le dépôt lui oppose.
+      Le premier écart est corrigé, le second est ouvert : il demande une
+      quatrième table dans `_duree_requise` et son portage JavaScript.
+    reste: >-
+      La SNCF et la RATP portent la même construction — âge d'ouverture majoré
+      de cinq ans — et leurs textes n'ont pas été lus : si la réforme de 2023
+      les a traités comme les IEG, deux autres fiches décotent de trop. C'est
+      la première chose à faire du prochain lot. La CNIEG publie par ailleurs
+      deux exemples chiffrés de surcote, transcriptibles en témoins le jour où
+      `tests/test_oracle.py` saura construire une carrière de régime spécial.

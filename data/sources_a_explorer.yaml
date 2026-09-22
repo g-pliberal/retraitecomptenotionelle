@@ -7,7 +7,7 @@
 # quand elle a rendu ce qu'elle avait, elle passe dans le manifeste — et sa
 # ligne ici prend l'état `epuise` avec la date.
 #
-# Il est né le 22 septembre 2026 d'une liste de 237 adresses, remise en sept
+# Il est né le 22 septembre 2026 d'une liste de 260 adresses, remise en huit
 # lots. Le chantier qu'elle ouvre est l'action 89 de `docs/feuille_de_route.md`,
 # et la manière de le mener est dans `docs/exploration_sources.md`.
 #
@@ -43,8 +43,8 @@
 #               c'est là que se cachent les règlements et les circulaires
 #   code        le code source d'un modèle public, lisible et exécutable
 #
-# ACCES — mesuré, pas supposé (237 adresses sondées le 22 septembre 2026 :
-#         229 répondent 200 à une simple requête, huit demandent un geste)
+# ACCES — mesuré, pas supposé (260 adresses sondées le 22 septembre 2026 :
+#         252 répondent 200 à une simple requête, huit demandent un geste)
 #   session ............ joignable en `curl` depuis une session, 200
 #   chaine_incomplete .. le serveur ne sert pas l'intermédiaire de son
 #                        certificat ; un navigateur le rattrape tout seul,
@@ -2658,4 +2658,283 @@ sources:
       Le guide de la caisse : assiette forfaitaire, taux, et le mode de
       validation des périodes de ministère, qui n'est celui d'aucun autre
       régime.
+    statut: a_explorer
+
+  # ---- CNIEG : la réglementation du régime des IEG (huitième lot) ---------
+  # Les pages « réglementation » de la CNIEG sont au régime des IEG ce que
+  # juris-cnracl est à la CNRACL : le texte appliqué, tableau par tableau, et
+  # non la page d'accueil. Le dépôt modélise ce régime ; il ne l'a jamais
+  # confronté à son gestionnaire.
+
+  - id: cnieg_simulateur_rachat_xls
+    url: https://www.cnieg.fr/files/live/sites/portail/files/documents/Particuliers/Mes-e-services/P-simulation-rachat-v2023.xls
+    nature: simulateur
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Un classeur de simulation du rachat d'années d'études, servi en
+      téléchargement : le barème actuariel n'y est pas derrière un formulaire,
+      il est DANS LES CELLULES. C'est la forme la plus lisible qu'un
+      simulateur puisse prendre — on lit la formule au lieu de la deviner en
+      balayant —, et c'est le cinquième barème de rachat du chantier, après
+      l'ENSAP, la CNRACL, la Cipav et la Cnav.
+    statut: a_explorer
+
+  - id: cnieg_amelioration_retraite
+    url: https://www.cnieg.fr/accueil/actif/montant-retraite/amelioration-retraite.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Les leviers que le régime reconnaît : rachat, surcote, prolongation.
+    statut: a_explorer
+
+  - id: cnieg_reglementation
+    url: https://www.cnieg.fr/accueil/reglementation/particulier.html
+    nature: index
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      La table des matières de la réglementation : c'est d'ici que partent
+      toutes les pages qui suivent, et sans doute d'autres.
+    statut: a_explorer
+
+  - id: cnieg_rachat_etudes
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/rachat-annees-etudes.html
+    nature: bareme
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      La règle du rachat, à côté du classeur qui la chiffre : options, nombre
+      de trimestres, et ce que le rachat ouvre exactement.
+    statut: a_explorer
+
+  - id: cnieg_mode_calcul
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/mode-calcul.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      La formule du régime, énoncée par son gestionnaire : à confronter à la
+      fiche `ieg`, que le dépôt modélise sans source d'application.
+    statut: a_explorer
+
+  - id: cnieg_salaire_calcul
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/salaire-calcul.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Le salaire de référence : quels éléments de rémunération entrent dans
+      l'assiette de liquidation, et sur quelle durée.
+    statut: a_explorer
+
+  - id: cnieg_taux_pension
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/taux-pension.html
+    nature: bareme
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Le taux de la pension et son plafond : les 75 % et ce qui les porte
+      au-delà.
+    statut: a_explorer
+
+  - id: cnieg_duree_assurance
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      La durée d'assurance dans un régime spécial : ce qu'elle compte et ce
+      qu'elle ne compte pas.
+    statut: a_explorer
+
+  - id: cnieg_tableau_duree_assurance
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance/tableau-duree-assurance.html
+    nature: bareme
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      LA TABLE, génération par génération : c'est la pièce qui se confronte
+      valeur par valeur à `legislation/duree_assurance_requise.csv` pour un
+      régime spécial, et le dépôt n'a jamais lu celle des IEG chez sa caisse.
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      Le régime a SA table — 169 trimestres pour la génération 1963, 170 pour
+      1964-1965, 171 pour 1966-1967, 172 à partir de 1968 —, confirmée mot pour
+      mot par l'annexe 3 du statut national. Le dépôt lui oppose la table
+      commune : trois générations diffèrent d'un trimestre. Non corrigé, parce
+      qu'il y faut une quatrième table dans `_duree_requise` et son portage
+      JavaScript : ligne `duree_requise_ieg` au registre de veille, état
+      `manque`, avec ce qu'il reste à faire. La page publie en outre une table
+      par MOTIF D'ANTICIPATION, que le dépôt ne porte pour aucun régime.
+
+  - id: cnieg_decote
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/decote.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      La règle de décote du régime, dont la convergence sur le droit commun
+      s'est faite par étapes.
+    statut: a_explorer
+
+  - id: cnieg_decote_coefficient
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/decote/coefficient.html
+    nature: bareme
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Le coefficient de minoration par génération : à confronter à
+      `legislation/coefficient_minoration.csv`.
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Conforme : le taux monte d'un dixième par an du 1er juillet 2010 au
+      1er juillet 2019, exactement ce que porte
+      `data/reference/legislation/decote_regimes_speciaux.csv`. Rien à corriger, et c'est la
+      confirmation, chez la caisse, d'une table que le dépôt avait tirée du
+      seul texte de l'Opéra de Paris.
+
+  - id: cnieg_age_annulation_decote
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/decote/age-annulation-decote.html
+    nature: bareme
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      L'âge d'annulation de la décote, par génération et par catégorie :
+      `legislation/age_annulation_decote.csv` porte cette table pour le droit
+      commun, et le régime spécial a la sienne.
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      LA PLUS GROSSE TROUVAILLE DU LOT. La page dit « à compter du
+      1er janvier 2025 : âge minimum + 3 ans (sauf exceptions) », quand la
+      fiche du dépôt portait l'âge d'ouverture majoré de CINQ ans. Le texte le
+      confirme et le précise — article 10 I et article 45 de l'annexe 3 du
+      statut national, LEGIARTI000052046924 : soixante-deux ans pour les
+      agents en services actifs nés avant 1975. Sept trimestres de décote de
+      trop, 8,75 % de pension. Corrigé dans
+      `data/reference/regimes/regimes_speciaux.yaml`, ligne
+      `age_reference_decote_ieg` au registre de veille. La montée en charge de
+      2010 à 2024 que la même page tabule est, elle, conforme au modèle.
+
+  - id: cnieg_surcote
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/surcote.html
+    nature: bareme
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      La surcote des IEG, son taux et son point de départ.
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      1,25 % par trimestre depuis le 1er janvier 2009 : conforme à la fiche.
+      Deux conditions que le dépôt ne porte pas — la durée d'assurance ouvrant
+      la surcote ne peut être inférieure à 160 trimestres, et le coefficient
+      total ne peut dépasser 100 % — et DEUX EXEMPLES CHIFFRÉS publiés
+      (Monsieur E né en 1949, Madame F née en 1959), transcriptibles en témoins
+      le jour où `tests/test_oracle.py` saura construire une carrière de régime
+      spécial.
+
+  - id: cnieg_majoration_enfants
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/majoration-enfants-eleves.html
+    nature: bareme
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      La majoration pour enfants élevés : le barème d'un régime spécial, à
+      joindre à l'action 43 et au chiffrage des avantages non contributifs.
+    statut: a_explorer
+
+  - id: cnieg_minimum_retraite
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/minimum-retraite.html
+    nature: bareme
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Le minimum de pension du régime, que le dépôt ne porte pour aucun régime
+      spécial.
+    statut: a_explorer
+
+  - id: cnieg_baremes_cotisations_sociales
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/retraite/cotisations-sociales/baremes.html
+    nature: bareme
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Les barèmes de CSG, CRDS et Casa sur les pensions, avec leurs seuils :
+      énième source sur les prélèvements, et la plus utile pour dire un net
+      de pension sans se tromper de tranche.
+    statut: a_explorer
+
+  - id: cnieg_pension_orphelin
+    url: https://www.cnieg.fr/accueil/reglementation/particulier/pension-temporaire-orphelin.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      La pension temporaire d'orphelin : un droit dérivé que seuls quelques
+      régimes servent, et qu'aucun scénario du dépôt ne porte.
+    statut: a_explorer
+
+  - id: cnieg_reprise_activite
+    url: https://www.cnieg.fr/accueil/retraite/situation/reprise-activite.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Le cumul emploi-retraite dans les IEG, et son écrêtement propre.
+    statut: a_explorer
+
+  - id: cnieg_deces
+    url: https://www.cnieg.fr/accueil/retraite/deces.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      La réversion et le capital décès des IEG, aux conditions du régime
+      spécial et non du droit commun.
+    statut: a_explorer
+
+  # ---- ENIM et CRPCEN, suite ----------------------------------------------
+
+  - id: enim_conditions_attribution
+    url: https://www.enim.eu/retraite/conditions-dattribution
+    nature: regle
+    acces: session
+    regimes: [marins]
+    a_en_tirer: >-
+      Les conditions d'ouverture chez les marins : durée de services et de
+      navigation, âges dérogatoires. Fiche `partiel` à l'inventaire.
+    statut: a_explorer
+
+  - id: enim_preretraite_amiante
+    url: https://www.enim.eu/retraite/preretraite-amiante
+    nature: regle
+    acces: session
+    regimes: [marins]
+    a_en_tirer: >-
+      La cessation anticipée d'activité amiante : un départ avant l'âge que le
+      dépôt ne porte pour aucun régime, et qui pèse sur l'âge moyen observé.
+    statut: a_explorer
+
+  - id: enim_cumul_emploi_retraite
+    url: https://www.enim.eu/retraite/pour-travailler-tout-en-etant-retraite
+    nature: regle
+    acces: session
+    regimes: [marins]
+    a_en_tirer: >-
+      Le cumul chez les marins, dont les règles tiennent à la navigation.
+    statut: a_explorer
+
+  - id: crpcen_rachat_etudes
+    url: https://www.crpcen.fr/affilies/le-rachat-dannees-detudes
+    nature: bareme
+    acces: session
+    regimes: [crpcen]
+    a_en_tirer: >-
+      Le rachat d'années d'études chez les clercs de notaires : sixième barème
+      de rachat du chantier, et fiche `partiel`.
     statut: a_explorer
