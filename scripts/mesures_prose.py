@@ -785,6 +785,40 @@ def profils_oracle(**_: str) -> float:
                for chemin in (RACINE / "tests" / "temoins").glob("openfisca_*.json"))
 
 
+def ecart_openfisca(**reglages: str) -> float:
+    """L'écart du salaire annuel moyen au régime général d'OpenFisca, en %.
+
+    Les dix profils de ``tests/temoins/openfisca_regime_general.json``, rejoués
+    comme ``tests/test_oracle.py`` les rejoue ; ``stat=max`` (défaut) ou
+    ``min`` de l'écart relatif, OpenFisca au-dessus.
+    """
+    import json
+
+    from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+
+    simulateur = _simulateur(_parametres())
+    scenario = simulateur.scenario_actuel
+    temoin = json.loads((RACINE / "tests" / "temoins" / "openfisca_regime_general.json")
+                        .read_text(encoding="utf-8"))
+    ecarts = []
+    for entree in temoin["profils"].values():
+        profil = entree["profil"]
+        carriere = Carriere(
+            annee_naissance=profil["naissance"], sexe="H",
+            lignes=[AnneeCarriere(annee=annee, revenu=profil["salaire"],
+                                  affiliation="salarie_prive_non_cadre",
+                                  trimestres_valides=4)
+                    for annee in range(profil["debut"], profil["liquidation"])],
+            age_liquidation=float(profil["liquidation"] - profil["naissance"]),
+            identifiant=profil["code"])
+        periode = simulateur.catalogue["regime_general"].periode(profil["liquidation"])
+        nous = scenario.salaire_de_reference(
+            "regime_general", carriere, periode, profil["liquidation"],
+            True, profil["naissance"], True)
+        ecarts.append(entree["openfisca"]["salaire_de_reference"] / nous - 1)
+    return (min(ecarts) if reglages.get("stat") == "min" else max(ecarts)) * 100
+
+
 def garantie_complement(**reglages: str) -> float:
     """Ce que la garantie vieillesse sert, par mois, à qui a ``pension=…`` euros."""
     return max(0.0, _parametres().garantie_vieillesse_mensuelle - float(reglages["pension"]))
@@ -804,6 +838,7 @@ MESURES = {
     "garantie_complement": garantie_complement,
     "avance": avance,
     "profils_oracle": profils_oracle,
+    "ecart_openfisca": ecart_openfisca,
     "avantages": avantages,
     "depense": depense,
     "surcout_passe": surcout_passe,

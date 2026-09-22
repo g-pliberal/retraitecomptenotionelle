@@ -200,6 +200,18 @@ fichiers:
       - "**Ce que la confrontation a trouvé, dans l'ordre.**"
       - "**Six exemples de plus, le 21 septembre 2026"
       - "**Une circulaire annulée ne certifie plus rien.**"
+      # Et l'enquête sur le salaire de référence, dans la confrontation à
+      # OpenFisca : l'approximation d'avant, l'écart de sa table à la
+      # circulaire de janvier 2023, la dérive des colonnes reconstruites, le
+      # mois qui désignait la mauvaise colonne. Des mesures faites un jour,
+      # sur des tables qui ne bougent plus.
+      - "Il s'écartait de +0,30 % à +7,55 %"
+      - "- de **−3 % à −5,5 %**"
+      - "- de **−17 % à +10 %**"
+      - "| Colonne reconstruite"
+      - "Le dépôt n'a d'abord gardé que la colonne la plus récente"
+      - "Ce document a un temps affirmé"
+      - "- **Le mois existe désormais"
     sections:
       # Sections d'état ancrées le 22 septembre 2026 : la règle d'indexation,
       # dont le cumul du triple lock lit le modèle ; les régimes qui manquent ;
@@ -236,6 +248,11 @@ fichiers:
       # et `test_les_exemples_publies_par_les_caisses_sont_reproduits` les
       # rejoue. Il y en avait trente, pas « vingt-huit ».
       "Ce que disent les exemples publiés par les caisses": etat
+      # La confrontation à OpenFisca. L'écart du salaire annuel moyen se
+      # recalcule sur les dix profils : 2,40 % au plus, pour « 2,35 » écrits.
+      # Et la génération 1965 se voit opposer 170 trimestres depuis la
+      # suspension, non plus 172.
+      "Ce que dit la confrontation à une seconde implémentation": etat
       "3. Le scénario « système actuel » est une approximation": etat
       "4. Régimes incomplets, et de combien": etat
       "5 quater. Comparaison à la littérature : pourquoi les écarts d'ici sont plus grands": etat
@@ -553,7 +570,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 27
+  sections_a_declarer: 26
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
