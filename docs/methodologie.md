@@ -366,32 +366,35 @@ restatent pas.
 L'âge de référence est l'âge auquel une liquidation est réputée « à l'heure ».
 Il se lit en deux temps, séparés par l'année de bascule.
 
-**À partir de la bascule, il vaut 64 ans** : l'âge légal d'ouverture des droits,
-que la loi du 14 avril 2023 atteint en 2030. C'est le défaut du modèle. Le
-système proposé ne reconduit pas le taux plein à 67 ans, parce que le taux plein
+**À partir de la bascule, il vaut <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans** : l'âge légal d'ouverture des droits
+que la loi du 14 avril 2023 a fixé, et que la génération <!--chiffre:minimum(data/reference/legislation/age_ouverture_requis.csv:generation?age=64.00)-->1969<!--/--> sera la première à
+atteindre — l'article 105 de la loi n° 2025-1403 du 30 décembre 2025, qui
+suspend la réforme, en a retardé la montée d'un trimestre par génération. C'est
+le défaut du modèle. Le
+système proposé ne reconduit pas le taux plein à <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_taux_plein_legal)-->67<!--/--> ans, parce que le taux plein
 est une condition de **durée d'assurance** — un nombre de trimestres — et qu'un
 compte notionnel n'a pas cette notion : il n'a qu'un capital et un diviseur.
-Reconduire 67 ans aurait été importer dans le système proposé une borne que rien
+Reconduire <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_taux_plein_legal)-->67<!--/--> ans aurait été importer dans le système proposé une borne que rien
 n'y justifie.
 
 **Avant la bascule, il est bâti à cliquet** : c'est le maximum de tous les âges
 de taux plein observés jusqu'à l'année considérée, et il ne redescend jamais.
-64 ans n'existait dans aucun droit avant 2030 ; une liquidation de 1990 se
-mesure donc à son époque, et non à la nôtre.
+<!--chiffre:maximum(data/reference/legislation/age_ouverture_requis.csv:age)-->64<!--/--> ans n'existe dans aucun droit avant que la génération 1969 l'atteigne ;
+une liquidation de 1990 se mesure donc à son époque, et non à la nôtre.
 
 | Période | Âge du taux plein en droit | Âge de référence retenu |
 |---|---|---|
-| 1945-1981 | 65 ans | 65 ans |
-| 1982-2010 | **60 ans** (ordonnance du 26 mars 1982) | **65 ans** — le cliquet tient |
-| 2011-2016 | montée en charge 65 → 67 | 65 → 67 ans |
-| 2017-2025 | 67 ans | 67 ans |
-| 2026- | 67 ans | **64 ans** — l'âge fixe prend le relais |
+| 1945-1981 | <!--chiffre:cellule(data/reference/legislation/ages_reference.csv:age_taux_plein_legal?annee=1945)-->65<!--/--> ans | <!--chiffre:mesure(age_reference?annee=1950)-->65<!--/--> ans |
+| 1982-2010 | **<!--chiffre:cellule(data/reference/legislation/ages_reference.csv:age_taux_plein_legal?annee=1982)-->60<!--/--> ans** (ordonnance du 26 mars 1982) | **<!--chiffre:mesure(age_reference?annee=1990)-->65<!--/--> ans** — le cliquet tient |
+| 2011-2016 | montée en charge 65 → 67 | 65 → <!--chiffre:mesure(age_reference?annee=2020)-->67<!--/--> ans |
+| 2017-2025 | <!--chiffre:cellule(data/reference/legislation/ages_reference.csv:age_taux_plein_legal?annee=2017)-->67<!--/--> ans | <!--chiffre:mesure(age_reference?annee=2020)-->67<!--/--> ans |
+| 2026- | <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_taux_plein_legal)-->67<!--/--> ans | **<!--chiffre:mesure(age_reference?annee=2026)-->64<!--/--> ans** — l'âge fixe prend le relais |
 
 Conséquences directes sur la période à cliquet, conformes à la demande :
 
-- une liquidation à 60 ans en 1990 est une **anticipation de 5 ans** ;
-- un agent de conduite parti à 50 ans en 1990 anticipe de **15 ans** ;
-- un danseur de l'Opéra parti à 40 ans anticipe de **25 ans**.
+- une liquidation à <!--chiffre:illustration()-->60<!--/--> ans en 1990 est une **anticipation de <!--chiffre:mesure(age_reference?annee=1990&depart=60)-->5<!--/--> ans** ;
+- un agent de conduite parti à <!--chiffre:illustration()-->50<!--/--> ans en 1990 anticipe de **<!--chiffre:mesure(age_reference?annee=1990&depart=50)-->15<!--/--> ans** ;
+- un danseur de l'Opéra parti à <!--chiffre:illustration()-->40<!--/--> ans anticipe de **<!--chiffre:mesure(age_reference?annee=1990&depart=40)-->25<!--/--> ans**.
 
 ### Comment l'écart pèse sur la pension
 

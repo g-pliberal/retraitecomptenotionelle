@@ -436,6 +436,16 @@ def anticipation(**reglages: str) -> float:
     return (1 - garde) * 100
 
 
+def age_reference(**reglages: str) -> float:
+    """L'âge de référence d'une liquidation de l'année ``annee``, en années.
+
+    Avec ``depart=60``, l'anticipation qu'un départ à cet âge représente —
+    la grandeur que la méthodologie illustre sur trois métiers.
+    """
+    age = _simulateur(_parametres()).age_reference.age(int(reglages["annee"]))
+    return age - float(reglages["depart"]) if "depart" in reglages else age
+
+
 def composition_revalorisation(**reglages: str) -> float:
     """Ce que composer année par année les coefficients des arrêtés fait
     perdre, en % et en valeur absolue, face au coefficient lu d'un bloc.
@@ -823,6 +833,7 @@ MESURES = {
     "poids_trimestre": poids_trimestre,
     "dependance": dependance,
     "composition_revalorisation": composition_revalorisation,
+    "age_reference": age_reference,
 }
 
 

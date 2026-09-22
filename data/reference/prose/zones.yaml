@@ -428,6 +428,7 @@ fichiers:
       "La catégorie active et la pension militaire": etat
       "La cascade des avantages non contributifs, dans l'ordre du droit": etat
       "Le taux plein, et ce qui l'ouvre": etat
+      "La construction": etat
   # Un JOURNAL DE CHANTIER : le §4 et ses six suites racontent, chacune, ce
   # qu'une session a mesuré le jour où elle l'a mesuré. Leurs chiffres sont
   # justes à leur date et gelés — les rafraîchir réécrirait l'histoire, et
@@ -537,7 +538,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 30
+  sections_a_declarer: 29
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 2
