@@ -1127,16 +1127,18 @@ retenue de l'agent. Toute autre période doit porter une valeur explicite, et
 
 | Régime | Période | Part salariale | Origine |
 |---|---|---:|---|
-| Régime général | 1945-1971 | 34,79 % | mesurée sur 1968-1971, OpenFisca ne remontant pas plus haut |
-| Régime général | 1972-1982 | 33,24 % | OpenFisca, moyenne de période |
-| Régime général | 1983-1993 | 42,53 % | idem |
-| Régime général | 1994-2022 | 40,1 à 41,0 % | idem |
-| Régime général | 2023- | 40,87 % | idem |
-| Arrco, Agirc-Arrco, Ircantec | toutes | 40 % | règle de répartition 40-60 (ANI du 17 novembre 2017, art. 38) |
-| Agirc | 1947-1980 | 25 % | OpenFisca : un quart, trois quarts |
-| Agirc | 1981-2018 | 31 à 37 % | OpenFisca, moyenne de période |
-| RAFP | 2005- | 50 % | décret 2004-569 : 5 % agent, 5 % employeur |
-| Assurances sociales, AVTS | 1930-1945 | 50 % | loi du 30 avril 1930 : 8 %, moitié ouvrier moitié patron |
+| Régime général | 1945-1971 | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=1945)-->34,88<!--/--> % | mesurée sur 1968-1971, OpenFisca ne remontant pas plus haut |
+| Régime général | 1972-1982 | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=1972)-->33,43<!--/--> % | OpenFisca, moyenne de période |
+| Régime général | 1983-1993 | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=1983)-->43,90<!--/--> % | idem |
+| Régime général | 1994-2022 | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=1994&a=2011&stat=min)-->44,41<!--/--> à <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=1994&a=2011&stat=max)-->44,63<!--/--> % | idem |
+| Régime général | 2023- | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=regime_general&champ=part_salariale&de=2023)-->44,66<!--/--> % | idem |
+| Arrco, Agirc-Arrco | toutes | <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=arrco&de=1961&a=2018)-->40<!--/--> % | règle de répartition 40-60 (ANI du 17 novembre 2017, art. 38) |
+| Ircantec, tranche 1 | 1971-2025 | <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=ircantec&de=1971&a=2017&assiette=tranche_1)-->40<!--/--> % | idem ; <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=ircantec&de=2026&assiette=tranche_1)-->39,9<!--/--> % depuis 2026 |
+| Ircantec, tranche 2 | toutes | <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=ircantec&de=1971&a=2008&assiette=tranche_2_ircantec&stat=min)-->34<!--/--> à <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=ircantec&de=2009&a=2026&assiette=tranche_2&stat=max)-->35,64<!--/--> % | OpenFisca, moyenne de période |
+| Agirc | 1947-1993 | <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=agirc&de=1947&a=1993)-->25<!--/--> % | OpenFisca : un quart, trois quarts |
+| Agirc | 1994-2018 | <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=agirc&de=1994&a=2015&stat=min)-->30<!--/--> à <!--chiffre:mesure(fiche_regime?fichier=complementaires_prive&champ=part_salariale&regime=agirc&de=1994&a=2015&stat=max)-->38<!--/--> % | OpenFisca, moyenne de période |
+| RAFP | 2005- | <!--chiffre:mesure(fiche_regime?fichier=fonction_publique&regime=rafp&champ=part_salariale&de=2005&a=2011)-->50<!--/--> % | décret 2004-569 : <!--chiffre:mesure(fiche_regime?fichier=fonction_publique&regime=rafp&champ=taux_cotisation_retraite&de=2005&a=2011)-->10<!--/--> %, moitié agent, moitié employeur |
+| Assurances sociales, AVTS | 1930-1945 | <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=assurances_sociales&champ=part_salariale&de=1930)-->50<!--/--> % | loi du 30 avril 1930 : <!--chiffre:mesure(fiche_regime?fichier=base_prive&regime=assurances_sociales&champ=taux_cotisation_retraite&de=1930)-->8<!--/--> %, moitié ouvrier moitié patron |
 
 La part est une **moyenne sur la période**, comme le taux lui-même : les fiches
 sont découpées par période législative, et les parts salariale et patronale
@@ -1149,7 +1151,7 @@ de chaque année sont lus dans `regimes/taux_cotisation_annuels.csv` et
 appliqués au chargement des fiches, période découpée année par année (voir
 [`limites.md`](limites.md), « Le compte notionnel recevait une moyenne de
 période »). Les lignes du tableau ci-dessus restent celles des fiches ; le
-compte, lui, reçoit 35,3 % de part salariale en 1967 et 44,7 % en 2024.
+compte, lui, reçoit <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1967&mesure=part_salariale)-->35,3<!--/--> % de part salariale en 1967 et <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=2024&mesure=part_salariale)-->44,7<!--/--> % en 2024.
 
 **D'où vient chaque année de cette table.** Le régime général depuis 1982 et
 les salariés agricoles depuis 1980 sont **certifiés** : leurs quatre mesures
@@ -1164,15 +1166,15 @@ est suivi** et non recopié : c'est le II de `D. 741-35`, et non une convention
 du dépôt, qui aligne les salariés agricoles sur le régime général depuis 2014 —
 avant cette date, leur employeur payait un point de moins. Et un **décret qui
 fixe le taux sans réécrire l'article** est lu dans la base JORF, à condition
-d'être nommé et corroboré : c'est le cas du relèvement temporaire de 0,2 point
+d'être nommé et corroboré : c'est le cas du relèvement temporaire de <!--chiffre:illustration()-->0,2<!--/--> point
 du 1er juillet 1987 au 30 juin 1988. Les années d'avant 1982 restent
 transcrites d'OpenFisca-France, au niveau `haute` ; `limites.md` dit pourquoi
 la base ne permet pas de les dater, et **ce qu'elles valent malgré tout** : la
 DATE de chacune de leurs marches est vérifiée contre le *Journal officiel*, par
-le décret que l'IPP — source amont d'OpenFisca — nomme en regard. Deux années y
-font exception et sont tenues pour fausses, 1980 et 1981 : un décret du
-30 juillet 1979 a relevé ces taux « à titre exceptionnel » sur une fenêtre qui
-les couvre, et aucune source ne porte la hausse.
+le décret que l'IPP — source amont d'OpenFisca — nomme en regard. Le décret du
+30 juillet 1979, qui relève des taux « à titre exceptionnel » sur une fenêtre
+couvrant 1980 et 1981, a longtemps fait tenir ces deux années pour fausses : il
+ne touchait que la cotisation maladie, et leurs taux vieillesse sont justes.
 
 **Le drapeau porte sur le STATUT, pas seulement sur le régime.** Un artisan
 cotise au régime général, dont la fiche porte la répartition 41/59 d'un salarié.
