@@ -3782,6 +3782,10 @@ def test_le_README_montre_la_simulation_que_le_modele_calcule_vraiment():
         if not portees.match(ligne):
             continue
         verifiees += 1
+        # Sans ses espaces de fin : `construire_tableaux_md.py` écrit le bloc
+        # ligne par ligne `rstrip()`-ée, et la ligne du pilier, qui n'a pas de
+        # colonne d'écart, n'était plus retrouvée pour ses seuls blancs.
+        ligne = ligne.rstrip()
         assert ligne in readme, (
             "le bloc d'exemple du README a dérivé : le modèle écrit\n"
             f"  {ligne}\net le README ne le porte pas"

@@ -6050,6 +6050,22 @@ fiches sont coupées en conséquence : RAAP et RACD depuis 2014, RACL de 2014 à
   RACL n'est pas appliqué : la carrière ne dit pas quelle part du revenu
   relève de quel régime.
 
+### Ce que la même lecture de l'IRCEC a encore rendu
+
+Une seconde session a lu les mêmes règlements le même jour, sans savoir que
+la première les avait lus (action 89). Elle n'y a pas trouvé autre chose que le
+barème de minoration ; elle y a trouvé ce qui l'entourait.
+
+**La majoration pour trois enfants n'était servie par aucune des trois
+fiches.** L'article 28 du règlement du RAAP, dans la rédaction de l'arrêté du
+21 novembre 2013, la pose en une phrase — « il est majoré de 10 % au profit de
+l'adhérent ayant eu au moins trois enfants », ou les ayant élevés neuf ans
+avant leurs seize ans —, et l'arrêté du 17 avril 2024 a donné la même à
+l'article 23 du RACD. Le règlement du RACL n'en porte aucune, et le guide 2026
+de la caisse l'écrit en creux : sa formule du RACL est la seule des trois sans
+« majoration familiale ». Portée depuis 2014 au RAAP, depuis 2024 au RACD ;
+une mère de trois enfants retrouve 10 % de ses pensions d'auteur.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -8152,7 +8168,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2090<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2095<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

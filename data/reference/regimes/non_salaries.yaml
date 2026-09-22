@@ -1395,7 +1395,7 @@ regimes:
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         abattement_points: ircec
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           MINORATION DE L'IRCEC, et non celle du régime de base : « 2,5 %
           par année pour chacune des deux premières années manquantes ; 5 %
@@ -1409,6 +1409,12 @@ regimes:
           trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
           leurs propres coefficients, que la période ne porte pas (voir
           `docs/limites.md`).
+          MAJORATION POUR ENFANTS, du même arrêté : la pension « est majorée
+          de 10 % au profit de l'adhérent ayant eu au moins trois enfants », ou
+          les ayant élevés neuf ans avant leurs seize ans (article 28). La
+          fiche ne la déclarait pas ; elle la porte sur toutes les périodes
+          depuis 2014. Le règlement d'avant n'est pas au Journal officiel, et
+          la première période n'en porte aucune.
           Taux et assiette : ceux de la période précédente.
       - debut: 2016
         fin: 2016
@@ -1426,7 +1432,7 @@ regimes:
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         abattement_points: ircec
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           MONTÉE EN CHARGE DU DÉCRET DU 30 DÉCEMBRE 2015, que la fiche ignorait
           en appliquant 8 % dès l'origine de la réforme. Le communiqué de
@@ -1453,7 +1459,7 @@ regimes:
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         abattement_points: ircec
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Deuxième palier de la montée en charge : 6 % des revenus de 2017,
           appelés en 2018.
@@ -1473,7 +1479,7 @@ regimes:
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         abattement_points: ircec
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Troisième palier : 7 % des revenus de 2018, appelés en 2019.
       - debut: 2019
@@ -1492,7 +1498,7 @@ regimes:
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         abattement_points: ircec
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           TAUX PLEIN DE LA RÉFORME, atteint sur les revenus de 2019 au terme
           d'une montée en charge de quatre ans — voir les trois périodes qui
@@ -8348,7 +8354,7 @@ regimes:
           par euro, appliqué à toute la carrière faute de série ancienne ;
           niveau `estimee`. Âges de la fiche `ircec_raap`.
       - debut: 2014
-        fin: null
+        fin: 2023
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -8379,7 +8385,34 @@ regimes:
           trimestre. Les générations nées avant 1955 avaient jusqu'en 2024
           leurs propres coefficients, que la période ne porte pas (voir
           `docs/limites.md`).
-          Taux, assiette et points : ceux de la première période.
+          Taux, assiette et points : ceux de la première période. AUCUNE
+          MAJORATION POUR ENFANTS avant 2024 : voir la période suivante.
+      - debut: 2024
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_13_pass
+        taux_cotisation_retraite: 0.0800
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        abattement_points: ircec
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: >-
+          MAJORATION POUR ENFANTS DEPUIS L'ARRÊTÉ DU 17 AVRIL 2024
+          (JORFARTI000049490796), qui l'a insérée à l'article 23 du règlement :
+          la pension « est majorée de 10 % au profit de l'adhérent ayant eu au
+          moins trois enfants », ou les ayant élevés neuf ans avant leurs seize
+          ans. Le RACD n'en servait aucune avant — le guide 2026 de la caisse
+          et sa foire aux questions l'écrivent désormais, au RACD comme au
+          RAAP. Minoration, taux, assiette et points : ceux de la période
+          précédente.
 
   - code: ircec_racl
     nom: >-
