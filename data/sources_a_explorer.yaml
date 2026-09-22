@@ -1,0 +1,2069 @@
+# Sources repérées, à explorer — le vivier du manifeste
+# =====================================================
+# `data/sources.yaml` est le manifeste : il ne porte que des sources DONT UNE
+# VALEUR EST ENTRÉE dans le dépôt. Ce fichier-ci porte l'amont : les sources
+# repérées, dont on sait qu'elles contiennent quelque chose pour le modèle,
+# et qu'aucune session n'a encore dépouillées. Une source ne reste pas ici :
+# quand elle a rendu ce qu'elle avait, elle passe dans le manifeste — et sa
+# ligne ici prend l'état `epuise` avec la date.
+#
+# Il est né le 22 septembre 2026 d'une liste de 188 adresses, remise en cinq
+# lots. Le chantier qu'elle ouvre est l'action 89 de `docs/feuille_de_route.md`,
+# et la manière de le mener est dans `docs/exploration_sources.md`.
+#
+# OÙ VA CE QU'ON EN TIRE
+#   un exemple chiffré ....... tests/temoins/exemples_officiels.yaml, rejoué
+#                              contre le scénario 1 par tests/test_oracle.py
+#   une règle de droit ....... data/reference/legislation/veille.yaml
+#   un barème, une valeur .... data/reference/regimes/, et la source passe au
+#                              manifeste avec son `statut_integration`
+#   un mur .................... docs/limites.md, et la fiche du régime
+#   une réforme non coupée ... data/reference/legislation/reformes.yaml
+#
+# CHAMPS
+#   id ............ identifiant court, unique dans le fichier
+#   url ........... l'adresse telle qu'elle a été remise
+#   nature ........ voir ci-dessous
+#   acces ......... ce qu'une session obtient, MESURÉ le 22 septembre 2026
+#   regimes ....... codes de data/reference/regimes/inventaire.yaml que la
+#                   page concerne ; vide quand elle est interrégime
+#   a_en_tirer .... ce qu'on va y chercher, en une phrase — pas « explorer »
+#   statut ........ a_explorer | en_cours | explore | epuise | sans_suite
+#   explore_le .... date du dépouillement, quand il a eu lieu
+#   note .......... ce que la session a trouvé, ou ce qui l'a arrêtée
+#
+# NATURE
+#   simulateur  un formulaire qui calcule. C'est la mine : chaque exécution
+#               est un exemple chiffré produit par celui-là même qui applique
+#               la règle, et vingt exécutions dessinent le barème entier.
+#   regle       une page qui décrit une règle (âge, décote, minimum, cumul)
+#   bareme      des taux, des plafonds, des valeurs de point
+#   document    un PDF — circulaire, guide, règlement, statistiques
+#   index       une page-liste d'où partent d'autres documents : à DÉROULER,
+#               c'est là que se cachent les règlements et les circulaires
+#   code        le code source d'un modèle public, lisible et exécutable
+#
+# ACCES — mesuré, pas supposé (188 adresses sondées le 22 septembre 2026 :
+#         180 répondent 200 à une simple requête, huit demandent un geste)
+#   session ............ joignable en `curl` depuis une session, 200
+#   chaine_incomplete .. le serveur ne sert pas l'intermédiaire de son
+#                        certificat ; un navigateur le rattrape tout seul,
+#                        `curl` non. Recette dans docs/exploration_sources.md
+#   navigateur ......... demande Chromium : Cloudflare, ou page construite en
+#                        JavaScript. Playwright est installé (voir le doc)
+#   git ................ la page HTML est refusée, `git clone` passe
+#   refus .............. 403 : le site ou la politique de sortie refuse
+#   ferme .............. hors de portée d'une session, et pour une raison qui
+#                        ne se contourne pas (certificat expiré, FranceConnect)
+
+sources:
+
+  # ---- Union Retraite (GIP interrégimes) --------------------------------
+  # Le seul endroit où le droit de TOUS les régimes est appliqué ensemble.
+  # `tests/temoins/exemples_officiels.yaml` dit depuis sa première ligne
+  # qu'« aucun simulateur officiel n'est automatisable » : c'est vrai de
+  # « Mon estimation retraite », qui exige FranceConnect, et FAUX des
+  # simulateurs anonymes que le même GIP publie, qu'aucune session n'avait
+  # essayé d'atteindre — le certificat incomplet de *.info-retraite.fr
+  # suffisait à les faire passer pour injoignables.
+
+  - id: union_retraite_les_simulateurs
+    url: https://les-simulateurs.info-retraite.fr
+    nature: index
+    acces: chaine_incomplete
+    regimes: []
+    a_en_tirer: >-
+      La liste des simulateurs du GIP, et pour chacun s'il est anonyme ou
+      derrière FranceConnect. Point d'entrée de tout le lot.
+    statut: a_explorer
+
+  - id: union_retraite_progressive
+    url: https://parcours.info-retraite.fr/retraite-progressive
+    nature: simulateur
+    acces: chaine_incomplete
+    regimes: []
+    a_en_tirer: >-
+      L'éligibilité à la retraite progressive, règle par règle et interrégime :
+      âge, durée d'assurance, quotité de travail, et ce que la pension
+      partielle vaut. Le dépôt ne modélise pas la retraite progressive ;
+      c'est de quoi la chiffrer, ou dire dans limites.md ce qu'elle déplace.
+    statut: a_explorer
+
+  - id: union_retraite_expatriation
+    url: https://parcours.info-retraite.fr/retraite_expatriation
+    nature: simulateur
+    acces: chaine_incomplete
+    regimes: []
+    a_en_tirer: >-
+      Le traitement des périodes à l'étranger : conventions, totalisation,
+      proratisation. `docs/limites.md` déclare les carrières internationales
+      hors modèle ; ce parcours dit ce que ce mur laisse dehors.
+    statut: a_explorer
+
+  # ---- Cnav / Assurance retraite ----------------------------------------
+
+  - id: cnav_legislation_portail
+    url: https://legislation.lassuranceretraite.fr/#/
+    nature: index
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Le corpus d'application du régime général : circulaires, lettres,
+      questions-réponses. C'est la source d'APPLICATION qu'exige
+      docs/veille_droit.md à côté du texte de Légifrance. Dérouler la
+      recherche par thème et par date, pas seulement la page d'accueil.
+    statut: a_explorer
+
+  - id: cnav_circulaire_2026_07
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_07_05032026.pdf
+    nature: document
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Circulaire du 5 mars 2026 : à lire pour ce qu'elle change au scénario 1,
+      avec sa ligne dans veille.yaml et son exemple chiffré s'il y en a un.
+    statut: a_explorer
+
+  - id: cnav_circulaire_2026_04
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2026_04_05022026.pdf
+    nature: document
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Circulaire du 5 février 2026, même traitement.
+    statut: a_explorer
+
+  - id: cnav_circulaire_2025_33
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_33_23122025.pdf
+    nature: document
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Circulaire du 23 décembre 2025 : période où la loi du 30 décembre 2025 a
+      déplacé les âges légaux, celle-là même qui avait pris le dépôt en défaut
+      le 17 septembre 2026. Vérifier que les tables du dépôt la portent.
+    statut: a_explorer
+
+  - id: cnav_circulaire_2025_29
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_29_22122025.pdf
+    nature: document
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Circulaire du 22 décembre 2025, même traitement.
+    statut: a_explorer
+
+  - id: cnav_prelevements_sociaux
+    url: https://www.lassuranceretraite.fr/portail-info/portail-info/home/retraite/paiements-retraite/prelevements-sociaux-retraite.html
+    nature: bareme
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      CSG, CRDS, Casa sur les pensions : taux, seuils de revenu fiscal de
+      référence, exonération et taux réduit. Le dépôt compare des pensions
+      BRUTES ; ces taux sont ce qui manque pour dire un net de pension, comme
+      l'action 39 l'a fait pour le salaire.
+    statut: a_explorer
+
+  - id: cnav_arrierees_artiste_auteur
+    url: https://www.lassuranceretraite.fr/portail-info/hors-menu/annexe/salaries/montant-retraite/cotis-arrierees-artiste-auteur.html
+    nature: bareme
+    acces: session
+    regimes: [regime_general, ircec_raap]
+    a_en_tirer: >-
+      Le barème de régularisation des cotisations arriérées des
+      artistes-auteurs. Chiffres rares, et fiche IRCEC partielle à l'inventaire.
+    statut: a_explorer
+
+  # ---- Agirc-Arrco ------------------------------------------------------
+
+  - id: agirc_arrco_calcru
+    url: https://espace-personnel.agirc-arrco.fr/public/calcru
+    nature: simulateur
+    acces: ferme
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Le calculateur public de la retraite complémentaire — anonyme, sans
+      FranceConnect, donc automatisable en principe.
+    statut: a_explorer
+    note: >-
+      Le certificat du serveur était EXPIRÉ le 22 septembre 2026 (chaîne
+      Sectigo complète, `Verify return code: 10`). Rien à contourner : ni
+      `curl` ni Chromium ne doivent passer outre. À resonder, le défaut est
+      chez l'émetteur et se répare de son côté.
+
+  - id: agirc_arrco_calculette_fiscale
+    url: https://www.agirc-arrco.fr/storage/2026-Calculette-determination-fiscale-clients-V3.html
+    nature: simulateur
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Une page HTML autonome : le calcul est DANS le fichier, en JavaScript.
+      Elle donne les taux de CSG, CRDS, Casa et l'assiette fiscale des
+      pensions complémentaires, lisibles directement dans le source plutôt
+      que déduits d'une prose. À lire ligne à ligne, c'est un barème exécutable.
+    statut: a_explorer
+
+  - id: agirc_arrco_points_obtenus
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/points-de-retraite-comment-sont-ils-obtenus/
+    nature: regle
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Salaire de référence, taux d'appel, assiette : la règle d'acquisition
+      telle que le régime l'énonce, à confronter aux valeurs de
+      data/reference/regimes/valeurs_point.csv, qui viennent d'OpenFisca —
+      source secondaire plafonnée au niveau `haute`.
+    statut: a_explorer
+
+  - id: agirc_arrco_points_carriere
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/points-de-retraite-et-evenements-de-la-carriere/
+    nature: regle
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Les points attribués sans cotisation : chômage, maladie, invalidité,
+      temps partiel. C'est exactement la frontière que docs/frontiere_contributive.md
+      arbitre, et l'un des postes que l'action 81 a chiffrés à 17,9 milliards.
+    statut: a_explorer
+
+  - id: agirc_arrco_points_vie
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/points-de-retraite-et-evenements-de-la-vie/
+    nature: regle
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Les points liés aux événements familiaux, et la majoration pour enfants :
+      matière de l'action 43, qui montre ce que chaque système sert à une mère.
+    statut: a_explorer
+
+  - id: agirc_arrco_etranger
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/travailler-a-letranger/
+    nature: regle
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Ce que devient la complémentaire pendant une expatriation, à croiser
+      avec le parcours expatriation du GIP.
+    statut: a_explorer
+
+  - id: agirc_arrco_ouverture_droits
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/conditions-douverture-de-mes-droits/
+    nature: regle
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Conditions d'ouverture et coefficient de solidarité (le « malus » de
+      10 % pendant trois ans), supprimé pour les liquidations récentes :
+      vérifier la date d'extinction que le dépôt applique.
+    statut: a_explorer
+
+  - id: agirc_arrco_majorations_enfants
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/majorations-pour-enfants/
+    nature: bareme
+    acces: session
+    regimes: [agirc_arrco, agirc, arrco]
+    a_en_tirer: >-
+      Majoration de 10 % pour trois enfants, majoration pour enfant à charge,
+      leur plafond, et leur histoire Agirc/Arrco avant 2012 — le dépôt doit
+      dire laquelle il applique année par année.
+    statut: a_explorer
+
+  - id: agirc_arrco_retraite_progressive
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/retraite-progressive/
+    nature: regle
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      La retraite progressive vue par la complémentaire, à joindre au parcours
+      du GIP pour chiffrer ce que le dispositif vaut.
+    statut: a_explorer
+
+  - id: agirc_arrco_reversion
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion/
+    nature: regle
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Taux de 60 %, âge, condition de non-remariage, absence de condition de
+      ressources : la réversion complémentaire, que le dépôt ne modélise pas.
+    statut: a_explorer
+
+  - id: agirc_arrco_reversion_orphelin
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/la-pension-de-reversion-de-lorphelin/
+    nature: regle
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      La réversion d'orphelin, propre à la complémentaire : 50 % des points,
+      conditions d'âge. Un droit dont aucun régime de base n'a l'équivalent.
+    statut: a_explorer
+
+  - id: agirc_arrco_cumul_emploi_retraite
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/vivre-ma-retraite/cumul-emploi-retraite/
+    nature: regle
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Le cumul emploi-retraite et les droits nouveaux qu'il ouvre depuis 2023 :
+      dispositif que la proposition notionnelle rend sans objet, et qu'il faut
+      donc savoir décrire pour dire ce qu'elle simplifie.
+    statut: a_explorer
+
+  - id: agirc_arrco_circulaire_2025_16
+    url: https://www.agirc-arrco.fr/storage/CirculaireAgircArrco2025-16sg-drj.pdf
+    nature: document
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Une circulaire précise, à lire pour ce qu'elle fixe et pour ses exemples
+      chiffrés, que test_oracle.py sait rejouer.
+    statut: a_explorer
+
+  - id: agirc_arrco_textes_de_reference
+    url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-institutionnelle/textes-de-reference/
+    nature: index
+    acces: session
+    regimes: [agirc_arrco, agirc, arrco]
+    a_en_tirer: >-
+      L'accord national interprofessionnel et ses avenants : le TEXTE du
+      régime, là où la fiche grand public n'en est que le résumé.
+    statut: a_explorer
+
+  - id: agirc_arrco_circulaires
+    url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-institutionnelle/circulaires-agirc-arrco/
+    nature: index
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Toutes les circulaires, pas seulement la 2025-16 : à dérouler, année par
+      année, pour dater les changements de paramètres.
+    statut: a_explorer
+
+  - id: agirc_arrco_parametres_statistiques
+    url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-institutionnelle/parametres-et-donnees-statistiques/
+    nature: bareme
+    acces: session
+    regimes: [agirc_arrco, agirc, arrco]
+    a_en_tirer: >-
+      Les paramètres publiés par le producteur : salaire de référence, valeur
+      de service, taux d'appel, rendement — de quoi CERTIFIER valeurs_point.csv
+      au lieu de la tenir d'OpenFisca. Et les effectifs, qui pèsent les cas
+      types depuis l'action 1.
+    statut: a_explorer
+
+  - id: agirc_arrco_guides
+    url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-pratique/guides-dinformation-retraite/
+    nature: index
+    acces: session
+    regimes: [agirc_arrco]
+    a_en_tirer: >-
+      Les guides d'information : c'est là que les exemples chiffrés complets
+      se trouvent, carrière et résultat.
+    statut: a_explorer
+
+  # ---- Ircantec ---------------------------------------------------------
+
+  - id: ircantec_points_mode_de_calcul
+    url: https://baseircantec.retraites.fr/carriere/constitution-des-droits/determination-du-nombre-de-points-mode-de-calcul
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      La base documentaire de l'Ircantec — l'équivalent d'un règlement, autrement
+      plus précis que la page grand public : assiettes A et B, taux théoriques,
+      taux d'appel, salaire de référence.
+    statut: a_explorer
+
+  - id: ircantec_parametres
+    url: https://www.ircantec.retraites.fr/employeur/parametres-utilises-ircantec
+    nature: bareme
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Les paramètres de l'année et leur série : à confronter à valeurs_point.csv
+      et aux taux de cotisation de la fiche du régime.
+    statut: a_explorer
+
+  - id: ircantec_valeur_point
+    url: https://www.ircantec.retraites.fr/retraite/valeur-point
+    nature: bareme
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      La valeur de service, historisée par le producteur lui-même.
+    statut: a_explorer
+
+  - id: ircantec_prolongation_activite
+    url: https://www.ircantec.retraites.fr/actif/acquisition-droits/prolongation-activite
+    nature: regle
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Ce que la prolongation d'activité ajoute : la surcote propre à l'Ircantec,
+      si elle existe, et le sort des points acquis après l'âge du taux plein.
+    statut: a_explorer
+
+  - id: ircantec_prelevements_sociaux
+    url: https://www.ircantec.retraites.fr/guide-des-prelevements-sociaux
+    nature: bareme
+    acces: session
+    regimes: [ircantec]
+    a_en_tirer: >-
+      Le guide des prélèvements sur les pensions : deuxième source sur les
+      taux CSG/CRDS/Casa, à recouper avec la Cnav et l'Agirc-Arrco. Trois
+      sources qui disent la même chose valent certification.
+    statut: a_explorer
+
+  # ---- RAFP (ERAFP) -----------------------------------------------------
+
+  - id: rafp_simulateur_prestation
+    url: https://www.rafp.fr/actif/futur-retraite/simulateur-prestation
+    nature: simulateur
+    acces: session
+    regimes: [rafp]
+    a_en_tirer: >-
+      La prestation servie pour un nombre de points donné : rente ou capital
+      selon le seuil, coefficient de majoration par âge. Plusieurs exécutions
+      donnent la TABLE de conversion entière, que le dépôt applique aujourd'hui
+      de mémoire d'arrêté.
+    statut: a_explorer
+
+  - id: rafp_calculette_points
+    url: https://www.rafp.fr/actif/futur-retraite/calculette-points
+    nature: simulateur
+    acces: session
+    regimes: [rafp]
+    a_en_tirer: >-
+      Les points acquis pour une assiette donnée : c'est le versant
+      acquisition du même barème, et le moyen de vérifier l'assiette (20 % du
+      traitement indiciaire, primes comprises) que le dépôt retient.
+    statut: a_explorer
+
+  - id: rafp_cotisations_points
+    url: https://www.rafp.fr/actif/activite/calculer-vos-cotisations-et-vos-points-rafp
+    nature: regle
+    acces: session
+    regimes: [rafp]
+    a_en_tirer: >-
+      L'assiette, le plafond de 20 %, le partage 5 %/5 % : la règle écrite
+      derrière les deux calculettes.
+    statut: a_explorer
+
+  - id: rafp_retraite
+    url: https://www.rafp.fr/retraite
+    nature: regle
+    acces: session
+    regimes: [rafp]
+    a_en_tirer: >-
+      Liquidation, âge, seuil de versement en capital : la porte d'entrée des
+      pages « retraite » du régime, à dérouler.
+    statut: a_explorer
+
+  - id: rafp_compte_epargne_temps
+    url: https://www.rafp.fr/employeur/compte-epargne-temps
+    nature: regle
+    acces: session
+    regimes: [rafp]
+    a_en_tirer: >-
+      La monétisation du compte épargne-temps en points RAFP : un canal
+      d'acquisition que le dépôt ignore, à chiffrer ou à déclarer.
+    statut: a_explorer
+
+  # ---- Service des retraites de l'État -----------------------------------
+
+  - id: sre_formule_de_calcul
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-formule-de-calcul
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      La formule que la caisse applique : 75 %, traitement des six derniers
+      mois, durée des services. La fiche du régime est `partiel` à l'inventaire.
+    statut: a_explorer
+
+  - id: sre_decote
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-decote
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Le barème de décote et son âge d'annulation, avec ses exemples chiffrés :
+      matière directe pour exemples_officiels.yaml, à côté de la fiche F20349
+      déjà rejouée.
+    statut: a_explorer
+
+  - id: sre_surcote
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-surcote
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      La surcote de la fonction publique, ses trimestres entiers, et la
+      surcote parentale ouverte en 2024.
+    statut: a_explorer
+
+  - id: sre_duree_assurance
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-duree-dassurance
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Ce qui distingue durée de SERVICES et durée d'ASSURANCE — la confusion
+      la plus coûteuse du régime, puisque l'une proratise et l'autre décote.
+    statut: a_explorer
+
+  - id: sre_majoration_enfants
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-majoration-pour-enfants
+    nature: bareme
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      10 % pour trois enfants, 5 % par enfant au-delà, plafond au dernier
+      traitement : à joindre à l'action 43.
+    statut: a_explorer
+
+  - id: sre_minimum_garanti
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/le-minimum-garanti
+    nature: bareme
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Le barème du minimum garanti par années de services, et son indice
+      majoré : le dépôt le projette (test_donnees.py le contrôle), il manque
+      la lecture chez celui qui l'applique.
+    statut: a_explorer
+
+  - id: sre_bonifications
+    url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/les-bonifications
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Les bonifications, que le commit du 22 septembre 2026 vient de distinguer
+      des majorations : dépaysement, campagne, enfants nés avant 2004. À lire
+      pour vérifier que la distinction tient chez la caisse.
+    statut: a_explorer
+
+  - id: sre_services_valables
+    url: https://retraitesdeletat.gouv.fr/actif/carriere/les-services-valables-pour-ma-retraite
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Quels services comptent : stage, temps partiel, services auxiliaires
+      validés. Le dépôt compte des années pleines ; voici ce que cette maille
+      coûte.
+    statut: a_explorer
+
+  - id: sre_militaires
+    url: https://retraitesdeletat.gouv.fr/actif/les-specificites-des-militaires/le-calcul-de-la-pension
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat, pensions_civiles_1853]
+    a_en_tirer: >-
+      La pension militaire : jouissance immédiate, bonifications de campagne,
+      durées de services minimales. Population que le dépôt range avec les
+      civils, sans le dire.
+    statut: a_explorer
+
+  - id: ensap_rachat_etudes
+    url: https://ensap.gouv.fr/web/calculette/rachatetudes
+    nature: simulateur
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Le prix d'un trimestre racheté, par âge, par traitement et par option :
+      un barème actuariel complet, qu'on obtient en balayant la grille. C'est
+      la MÊME grandeur que le dépôt appelle neutralité actuarielle dans le
+      système notionnel — le comparer au prix que l'État facture est un
+      contrôle de premier ordre.
+    statut: a_explorer
+
+  - id: ensap_pecari
+    url: https://ensap.gouv.fr/calculette/pecari/
+    nature: simulateur
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Calculette officielle de l'ENSAP : identifier ce qu'elle calcule
+      exactement et si elle tourne sans compte (l'adresse répond 200 hors
+      connexion), puis la balayer.
+    statut: a_explorer
+
+  # ---- CNRACL et Caisse des dépôts --------------------------------------
+
+  - id: cnracl_sim2010
+    url: https://www.cnracl.retraites.fr/outils/cnracl/sim2010/validation/saisie.htm
+    nature: simulateur
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Un simulateur de 2010 encore en ligne, sans authentification : il
+      applique le droit de son époque. Deux usages — vérifier le modèle SUR
+      LE PASSÉ, ce qu'aucune autre source ne permet, et voir ce qu'une
+      calculette vieillie fait dire de faux aujourd'hui.
+    statut: a_explorer
+
+  - id: cnracl_rachat_etudes
+    url: https://www.cnracl.retraites.fr/rachat-etudes-superieures/
+    nature: simulateur
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Le barème de rachat d'années d'études côté territorial, à comparer à
+      celui de l'ENSAP : deux prix pour la même chose, chez le même État.
+    statut: a_explorer
+
+  - id: cnracl_cumul_emploi_retraite
+    url: https://www.cnracl.retraites.fr/simulateur-cumul-emploi-retraite
+    nature: simulateur
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Le plafond de cumul et son écrêtement, calculés : règle que le dépôt
+      ne porte pas.
+    statut: a_explorer
+
+  - id: cnracl_calcul_pension
+    url: https://www.cnracl.retraites.fr/actif/ma-future-retraite/montant-de-ma-pension/le-calcul-de-la-pension
+    nature: regle
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      La formule côté affilié, avec ses exemples.
+    statut: a_explorer
+
+  - id: cnracl_montant_initial
+    url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/calcul-du-montant-initial-de-la-pension
+    nature: regle
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Les pages EMPLOYEUR sont la documentation technique du régime : elles
+      disent l'ordre des opérations, que les pages grand public taisent.
+    statut: a_explorer
+
+  - id: cnracl_decote_surcote
+    url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/pension-decotee-et-surcotee-limpact-de-la-duree-dassurance
+    nature: regle
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Décote, surcote et durée d'assurance tous régimes, avec exemples chiffrés.
+    statut: a_explorer
+
+  - id: cnracl_minimum_garanti
+    url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-pension/minimum-garanti
+    nature: bareme
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Le barème du minimum garanti territorial, et sa condition de taux plein
+      depuis 2010.
+    statut: a_explorer
+
+  - id: cnracl_enfants
+    url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/droits-lies-aux-enfants-la-bonification-et-les-majorations
+    nature: regle
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Bonification pour enfant né avant 2004 et majoration de pension : la page
+      qui sépare les deux, exactement la distinction que le dépôt vient de
+      faire sienne.
+    statut: a_explorer
+
+  - id: cnracl_montant_definitif
+    url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/montant-definitif-de-la-pension-calcul-et-plafonnement
+    nature: regle
+    acces: session
+    regimes: [cnracl]
+    a_en_tirer: >-
+      Le plafonnement du montant définitif : plafond global des bonifications
+      et majorations, que le dépôt n'applique pas.
+    statut: a_explorer
+
+  - id: cdc_convertisseur_validation
+    url: https://www.cdc.retraites.fr/outils/ConvertisseurValidation/Convertisseur.html
+    nature: simulateur
+    acces: session
+    regimes: [cnracl, fspoeie]
+    a_en_tirer: >-
+      La conversion des durées en trimestres et en jours, telle que la Caisse
+      des dépôts la fait. Le dépôt arrondit à l'année ou au trimestre ; ce
+      convertisseur dit ce que l'arrondi coûte.
+    statut: a_explorer
+
+  - id: cdc_fspoeie_future_retraite
+    url: https://politiques-sociales.caissedesdepots.fr/FSPOEIE/ma-future-retraite-fspoeie
+    nature: regle
+    acces: session
+    regimes: [fspoeie]
+    a_en_tirer: >-
+      Les conditions d'ouverture du fonds des ouvriers de l'État, catégories
+      insalubres comprises.
+    statut: a_explorer
+
+  - id: cdc_fspoeie_montant
+    url: https://politiques-sociales.caissedesdepots.fr/FSPOEIE/le-montant-de-ma-pension-fspoeie
+    nature: regle
+    acces: session
+    regimes: [fspoeie]
+    a_en_tirer: >-
+      Le montant : salaire de référence, taux, et ce qui distingue le FSPOEIE
+      des pensions civiles.
+    statut: a_explorer
+
+  - id: cdc_mines_droits_directs
+    url: https://politiques-sociales.caissedesdepots.fr/retraite-des-mines/droits-directs-retraite-des-mines
+    nature: regle
+    acces: session
+    regimes: [mines]
+    a_en_tirer: >-
+      Le régime minier, fermé depuis 2010 mais servant encore : conditions,
+      coefficients, services au fond. Le dépôt le modélise ; cette page le
+      recontrôle chez le gestionnaire.
+    statut: a_explorer
+
+  # ---- DREES : les modèles publics ---------------------------------------
+  # Ce lot est d'une autre nature que les autres : ce n'est pas une règle à
+  # lire, c'est un MODÈLE à confronter au nôtre, écrit par l'administration
+  # qui chiffre les réformes.
+
+  - id: drees_codes_sources_communique
+    url: https://drees.solidarites-sante.gouv.fr/communique-de-presse/la-drees-met-disposition-de-nouveaux-codes-sources-et-des-nouvelles-bases-de
+    nature: index
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      L'inventaire de ce que la DREES a ouvert : modèles, bases, dépôts. Point
+      d'entrée des trois lignes qui suivent, et de ce qu'elles ne disent pas.
+    statut: a_explorer
+
+  - id: drees_caliper
+    url: https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/loutil-caliper-calcul-interregimes-des-pensions-de-retraite
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      CALIPER calcule une pension INTERRÉGIMES, régime par régime : c'est le
+      jumeau administratif du scénario 1. Sa documentation dit quelles règles
+      il applique et lesquelles il simplifie — la liste des simplifications
+      d'un modèle officiel est un étalon pour docs/limites.md.
+    statut: a_explorer
+
+  - id: drees_trajectoire
+    url: https://git.drees.fr/drees_code_public/modeles/trajectoire
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le modèle de projection de la DREES : hypothèses démographiques et
+      d'emploi, et la manière dont il projette les carrières. À confronter à
+      la trajectoire d'emploi du COR que le dépôt a adoptée à l'action 46.
+    statut: a_explorer
+
+  - id: drees_calcul_pension
+    url: https://gitlab.com/DREES_code/public/outils/calcul_pension
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le calculateur de pension de la DREES, en clair. `git clone` passe
+      depuis une session (vérifié). Le lire, c'est lire une transcription
+      ADMINISTRATIVE du droit — deuxième avis, à côté d'OpenFisca, sur chaque
+      règle du scénario 1.
+    statut: a_explorer
+
+  - id: openfisca_france_pension
+    url: https://github.com/openfisca/openfisca-france-pension
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Déjà au manifeste pour ses paramètres (`openfisca_points`,
+      `openfisca_regime_general_oracle`). Ce qui reste à en tirer est le
+      MOTEUR : régimes spéciaux, fonction publique, et les paramètres qu'aucun
+      script du dépôt ne récupère encore.
+    statut: a_explorer
+    note: >-
+      La page HTML de github.com répond 403 à travers le proxy de sortie ;
+      `git ls-remote` et `git clone` passent (vérifié le 22 septembre 2026).
+      Lire le dépôt cloné, pas le site.
+
+  # ---- Urssaf : mon-entreprise -------------------------------------------
+  # Le versant COTISATIONS, celui que le dépôt paie deux fois — assiettes et
+  # taux des indépendants, matière première des scénarios notionnels.
+
+  - id: mon_entreprise_bibliotheque
+    url: https://mon-entreprise.urssaf.fr/développeur/bibliothèque-de-calcul
+    nature: code
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le moteur publij (règles en YAML, publiées comme paquet) : les taux de
+      cotisation vieillesse de TOUS les statuts, datés, dans un format lisible
+      par machine. C'est peut-être le récupérateur automatique qui manque aux
+      taux saisis à la main dans data/reference/regimes/.
+    statut: a_explorer
+
+  - id: mon_entreprise_developpeur
+    url: https://mon-entreprise.urssaf.fr/développeur/
+    nature: index
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      L'API et les modules : savoir s'il existe un point d'appel qui rende un
+      calcul complet sans navigateur.
+    statut: a_explorer
+
+  - id: mon_entreprise_depot
+    url: https://github.com/betagouv/mon-entreprise
+    nature: code
+    acces: git
+    regimes: []
+    a_en_tirer: >-
+      Le dépôt des règles : `modele-social`, ses fichiers de taux et leurs
+      dates d'effet, avec l'historique git qui date chaque changement.
+    statut: a_explorer
+    note: >-
+      Comme OpenFisca : HTML refusé par le proxy, `git clone` accepté.
+
+  - id: mon_entreprise_comparaison_ei
+    url: https://mon-entreprise.urssaf.fr/simulateurs/comparaison-régimes-sociaux/EI/protection-sociale/retraite
+    nature: simulateur
+    acces: session
+    regimes: [rsi, rci, cnavpl, cipav_complementaire]
+    a_en_tirer: >-
+      Le comparateur des statuts : pour un même revenu, ce que chaque statut
+      cotise et ce qu'il acquiert en retraite. Exactement la grandeur que la
+      page Coût du dépôt met en regard des scénarios.
+    statut: a_explorer
+
+  - id: mon_entreprise_independant
+    url: https://mon-entreprise.urssaf.fr/simulateurs/indépendant
+    nature: simulateur
+    acces: session
+    regimes: [rsi, rco_artisans, rci]
+    a_en_tirer: >-
+      Les cotisations de l'indépendant, assiette par assiette, avec la réforme
+      d'assiette unique de 2025. Le dépôt doit savoir dire ce qu'un
+      indépendant cotise ET ce qu'il acquiert.
+    statut: a_explorer
+
+  - id: mon_entreprise_auto_entrepreneur
+    url: https://mon-entreprise.urssaf.fr/simulateurs/auto-entrepreneur
+    nature: simulateur
+    acces: session
+    regimes: [micro_entrepreneurs]
+    a_en_tirer: >-
+      Le taux global du micro-social et la part qui ouvre des droits vieillesse :
+      la fiche `micro_entrepreneurs` est un simple routage à l'inventaire, et
+      c'est ici que se lit ce qu'un micro-entrepreneur acquiert réellement.
+    statut: a_explorer
+
+  - id: mon_entreprise_cipav
+    url: https://mon-entreprise.urssaf.fr/simulateurs/profession-liberale/cipav
+    nature: simulateur
+    acces: session
+    regimes: [cnavpl, cipav_complementaire]
+    a_en_tirer: >-
+      Les cotisations Cipav par tranche, et les points acquis : à confronter
+      aux pages de la Cipav elle-même.
+    statut: a_explorer
+
+  - id: mon_entreprise_artiste_auteur
+    url: https://mon-entreprise.urssaf.fr/simulateurs/artiste-auteur
+    nature: simulateur
+    acces: session
+    regimes: [regime_general, ircec_raap, ircec_racd, ircec_racl]
+    a_en_tirer: >-
+      Le régime des artistes-auteurs, dont les trois fiches IRCEC sont
+      `partiel` : assiette, taux, seuil d'affiliation.
+    statut: a_explorer
+
+  # ---- CNAVPL et ses sections professionnelles ---------------------------
+  # C'est ici que l'inventaire est le plus faible : `cnavpl` est `partiel`, et
+  # huit sections sur dix le sont aussi. Chaque section publie son barème et,
+  # pour la moitié d'entre elles, un simulateur de cotisations.
+
+  - id: cnavpl_guides
+    url: https://www.cnavpl.fr/les-guides-des-pl/
+    nature: index
+    acces: session
+    regimes: [cnavpl]
+    a_en_tirer: >-
+      Les guides de la caisse nationale : le régime de base en points, commun
+      aux dix sections, avec ses deux tranches et sa valeur de service. La
+      fiche `cnavpl` est `partiel` ; ces guides sont ce qui la complète.
+    statut: a_explorer
+
+  - id: cipav_calcul_retraite
+    url: https://www.lacipav.fr/calcul-retraite
+    nature: regle
+    acces: session
+    regimes: [cnavpl, cipav_complementaire]
+    a_en_tirer: >-
+      Le calcul des deux étages Cipav, base et complémentaire, avec les
+      classes de cotisation.
+    statut: a_explorer
+
+  - id: cipav_cotiser
+    url: https://www.lacipav.fr/cotiser-pour-acquerir-des-droits-retraite-prevoyance
+    nature: bareme
+    acces: session
+    regimes: [cnavpl, cipav_complementaire]
+    a_en_tirer: >-
+      Les classes A à H, leur prix et les points qu'elles rendent : le barème
+      qui fait la fiche `cipav_complementaire`.
+    statut: a_explorer
+
+  - id: cipav_age
+    url: https://www.lacipav.fr/quel-age-prendre-retraite
+    nature: regle
+    acces: session
+    regimes: [cnavpl, cipav_complementaire]
+    a_en_tirer: >-
+      Âge d'ouverture, taux plein, coefficients d'anticipation et d'ajournement
+      propres à la complémentaire.
+    statut: a_explorer
+
+  - id: cipav_cumul
+    url: https://www.lacipav.fr/cumul-emploi-retraite
+    nature: regle
+    acces: session
+    regimes: [cnavpl, cipav_complementaire]
+    a_en_tirer: >-
+      Le cumul chez les libéraux, où il est plus libre qu'ailleurs.
+    statut: a_explorer
+
+  - id: cipav_rachat
+    url: https://www.lacipav.fr/racheter-trimestres
+    nature: bareme
+    acces: session
+    regimes: [cnavpl, cipav_complementaire]
+    a_en_tirer: >-
+      Le prix d'un trimestre racheté chez un libéral : troisième barème de
+      rachat, après l'ENSAP et la CNRACL.
+    statut: a_explorer
+
+  - id: cipav_documents
+    url: https://www.lacipav.fr/documents-utiles
+    nature: index
+    acces: session
+    regimes: [cnavpl, cipav_complementaire]
+    a_en_tirer: >-
+      Statuts, règlement, circulaires et notices : la source de droit de la
+      section, là où les pages sont des résumés.
+    statut: a_explorer
+
+  - id: carmf_simulateur_cotisations
+    url: https://www.carmf.fr/page.php?page=cdrom%2Fcalc%2Findex.php%3Fcalc%3Dcoti
+    nature: simulateur
+    acces: session
+    regimes: [carmf_complementaire, asv_conventionnes, cnavpl]
+    a_en_tirer: >-
+      Les cotisations d'un médecin, les trois étages compris (base, complémentaire,
+      ASV) : la CARMF est la section la mieux outillée, et son simulateur donne
+      le barème entier en une grille de revenus.
+    statut: a_explorer
+
+  - id: carmf_simulateur_cumul
+    url: https://www.carmf.fr/page.php?page=cdrom%2Fcalc%2Findex.php%3Fcalc%3Dcumul
+    nature: simulateur
+    acces: session
+    regimes: [carmf_complementaire]
+    a_en_tirer: >-
+      Le cumul emploi-retraite des médecins, et sa cotisation sans droits —
+      poste que l'action 81 chiffre sous « cotiser sans rien acquérir ».
+    statut: a_explorer
+
+  - id: carmf_simulateur_conjoint
+    url: https://www.carmf.fr/page.php?page=cdrom%2Fcalc%2Findex.php%3Fcalc%3Dconjcollab
+    nature: simulateur
+    acces: session
+    regimes: [carmf_complementaire]
+    a_en_tirer: >-
+      Le conjoint collaborateur : statut que le dépôt ne porte pour aucun
+      régime, et qui existe chez tous les indépendants.
+    statut: a_explorer
+
+  - id: carmf_capim
+    url: https://www.carmf.fr/page.php?page=cdrom/capim/capim-calculette-calcul.php
+    nature: simulateur
+    acces: session
+    regimes: [carmf_complementaire]
+    a_en_tirer: >-
+      La calculette du capital décès-invalidité : hors champ retraite, mais
+      elle dit ce que la cotisation couvre en plus de la vieillesse — utile à
+      docs/frontiere_contributive.md.
+    statut: a_explorer
+
+  - id: carmf_calcul_retraite
+    url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-calcul.htm
+    nature: regle
+    acces: session
+    regimes: [carmf_complementaire, asv_conventionnes]
+    a_en_tirer: >-
+      Le calcul des trois pensions d'un médecin, chacune avec sa valeur de
+      point.
+    statut: a_explorer
+
+  - id: carmf_age
+    url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-age.htm
+    nature: regle
+    acces: session
+    regimes: [carmf_complementaire]
+    a_en_tirer: >-
+      Les âges et les coefficients d'anticipation propres à la CARMF.
+    statut: a_explorer
+
+  - id: carmf_taux_2026
+    url: https://www.carmf.fr/page.php?page=chiffrescles/stats/2026/taux2026.htm
+    nature: bareme
+    acces: session
+    regimes: [carmf_complementaire, asv_conventionnes, cnavpl]
+    a_en_tirer: >-
+      Les taux et valeurs de l'année, publiés par le producteur : à saisir
+      dans la fiche, et à remonter dans le temps par les années voisines de
+      la même adresse (2025, 2024…).
+    statut: a_explorer
+
+  - id: carmf_documents
+    url: https://www.carmf.fr/page.php?page=doc/documents.htm
+    nature: index
+    acces: session
+    regimes: [carmf_complementaire]
+    a_en_tirer: >-
+      Statuts, rapports et documentation : la série historique des valeurs de
+      point s'y trouve, et c'est elle qui manque.
+    statut: a_explorer
+
+  - id: carcdsf_simulateur
+    url: https://www.carcdsf.fr/cotisations-du-praticien/simulation-des-cotisations
+    nature: simulateur
+    acces: session
+    regimes: [carcdsf_complementaire, asv_conventionnes]
+    a_en_tirer: >-
+      Les cotisations d'un chirurgien-dentiste ou d'une sage-femme, par revenu :
+      la fiche `carcdsf_complementaire` est `partiel`.
+    statut: a_explorer
+
+  - id: carcdsf_regimes
+    url: https://www.carcdsf.fr/retraite/quels-regimes-composent-ma-retraite
+    nature: regle
+    acces: session
+    regimes: [carcdsf_complementaire, asv_conventionnes, cnavpl]
+    a_en_tirer: >-
+      Les trois étages et leurs règles respectives.
+    statut: a_explorer
+
+  - id: carcdsf_montant_cotisations
+    url: https://www.carcdsf.fr/cotisations-du-praticien/montant-des-cotisations
+    nature: bareme
+    acces: session
+    regimes: [carcdsf_complementaire, asv_conventionnes]
+    a_en_tirer: >-
+      Le barème écrit, à côté du simulateur : les deux doivent dire la même
+      chose, et l'écart éventuel est un résultat.
+    statut: a_explorer
+
+  - id: cavp_calcul
+    url: https://www.cavp.fr/préparer-votre-retraite/comment-votre-retraite-est-elle-calculée
+    nature: regle
+    acces: session
+    regimes: [cavp_complementaire, cnavpl]
+    a_en_tirer: >-
+      La CAVP est le seul régime obligatoire français dont une part est en
+      CAPITALISATION. Sa règle de calcul est donc doublement utile : elle
+      complète une fiche `partiel`, et elle donne un cas réel de pilier
+      capitalisé obligatoire, à côté du pilier que la proposition construit.
+    statut: a_explorer
+
+  - id: carpimko_simulateur
+    url: https://www2.carpimko.com/simulateur
+    nature: simulateur
+    acces: session
+    regimes: [carpimko_complementaire, cnavpl]
+    a_en_tirer: >-
+      Le simulateur des auxiliaires médicaux : cotisations et droits, par
+      revenu.
+    statut: a_explorer
+
+  - id: carpimko_calcul_retraite
+    url: https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/calcul-de-ma-retraite
+    nature: regle
+    acces: session
+    regimes: [carpimko_complementaire, cnavpl, asv_conventionnes]
+    a_en_tirer: >-
+      Le calcul des trois étages, dont l'ASV des conventionnés.
+    statut: a_explorer
+
+  - id: carpimko_age
+    url: https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/age-de-ma-retraite
+    nature: regle
+    acces: session
+    regimes: [carpimko_complementaire]
+    a_en_tirer: >-
+      Âges et coefficients propres à la section.
+    statut: a_explorer
+
+  - id: carpimko_rachats
+    url: https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/rachats-du-regime-de-base
+    nature: bareme
+    acces: session
+    regimes: [cnavpl]
+    a_en_tirer: >-
+      Le rachat dans le régime de base des libéraux : barème de la CNAVPL vu
+      par une section.
+    statut: a_explorer
+
+  - id: carpimko_cotisations
+    url: https://www.carpimko.com/je-suis-en-activite/cotisations/selon-mes-revenus
+    nature: bareme
+    acces: session
+    regimes: [carpimko_complementaire, cnavpl]
+    a_en_tirer: >-
+      Les tranches de cotisation et les points qu'elles rendent.
+    statut: a_explorer
+
+  - id: carpimko_prelevements
+    url: https://www.carpimko.com/je-suis-retraite/mes-pensions-de-retraite/prelevements-sociaux
+    nature: bareme
+    acces: session
+    regimes: [carpimko_complementaire]
+    a_en_tirer: >-
+      Les prélèvements sur les pensions libérales, à recouper avec la Cnav.
+    statut: a_explorer
+
+  - id: carpimko_reversion
+    url: https://www.carpimko.com/je-suis-retraite/droits-du-conjoint-survivant/pension-de-reversion
+    nature: regle
+    acces: session
+    regimes: [carpimko_complementaire]
+    a_en_tirer: >-
+      La réversion chez les libéraux, dont les conditions diffèrent du privé.
+    statut: a_explorer
+
+  - id: carpimko_reglements
+    url: https://www.carpimko.com/nous-connaitre/la-caisse-de-retraite/reglements-et-rapports
+    nature: index
+    acces: session
+    regimes: [carpimko_complementaire]
+    a_en_tirer: >-
+      Les règlements et rapports : le texte du régime, et les séries de
+      valeurs de point dans les rapports annuels.
+    statut: a_explorer
+
+  - id: carpv_cotisations
+    url: https://www.carpv.fr/vos-retraites/comprendre-vos-cotisations-et-vos-appels-de-cotisations/
+    nature: bareme
+    acces: session
+    regimes: [carpv_complementaire, cnavpl]
+    a_en_tirer: >-
+      Les cotisations des vétérinaires, fiche `partiel` à l'inventaire.
+    statut: a_explorer
+
+  - id: cavamac_ordre_de_grandeur
+    url: https://www.cavamac.fr/actus/calculer-rapidement-lordre-de-grandeur-de-mes-retraites/
+    nature: simulateur
+    acces: session
+    regimes: [cavamac_complementaire, cnavpl]
+    a_en_tirer: >-
+      Une méthode de calcul rapide publiée par la caisse : elle expose le
+      rendement du régime en clair, ce qu'aucune autre section ne fait.
+    statut: a_explorer
+
+  - id: cavamac_calcul_pension
+    url: https://www.cavamac.fr/je-pars-a-la-retraite/le-calcul-de-ma-pension/
+    nature: regle
+    acces: session
+    regimes: [cavamac_complementaire, cnavpl]
+    a_en_tirer: >-
+      Le calcul des pensions des agents généraux d'assurance.
+    statut: a_explorer
+
+  - id: cavamac_cotisations_rbl
+    url: https://www.cavamac.fr/je-suis-en-activite/mes-cotisations-rbl/
+    nature: bareme
+    acces: session
+    regimes: [cnavpl]
+    a_en_tirer: >-
+      Le régime de base des libéraux vu par la CAVAMAC : deuxième lecture du
+      même barème national, contrôle croisé gratuit.
+    statut: a_explorer
+
+  - id: cavamac_cotisations_rco_rid
+    url: https://www.cavamac.fr/je-suis-en-activite/mes-cotisations-rco-et-rid/
+    nature: bareme
+    acces: session
+    regimes: [cavamac_complementaire]
+    a_en_tirer: >-
+      Le complémentaire et le régime invalidité-décès : cotisation assise sur
+      les commissions, cas unique parmi les sections.
+    statut: a_explorer
+
+  - id: cavec_simulateur
+    url: https://www.cavec.fr/simuler-vos-cotisations/
+    nature: simulateur
+    acces: session
+    regimes: [cavec_complementaire, cnavpl]
+    a_en_tirer: >-
+      Les cotisations des experts-comptables et commissaires aux comptes, par
+      classe.
+    statut: a_explorer
+
+  - id: cavec_calcul_retraite
+    url: https://www.cavec.fr/votre-retraite/votre-retraite/preparer-votre-retraite/le-calcul-de-votre-retraite/
+    nature: regle
+    acces: session
+    regimes: [cavec_complementaire, cnavpl]
+    a_en_tirer: >-
+      Le calcul de la pension, base et complémentaire.
+    statut: a_explorer
+
+  - id: cavec_montant_cotisations
+    url: https://www.cavec.fr/votre-retraite/vos-cotisations/vos-cotisations-en-tant-que-liberal-tns/montant-de-vos-cotisations/
+    nature: bareme
+    acces: session
+    regimes: [cavec_complementaire, cnavpl]
+    a_en_tirer: >-
+      Les classes et leur prix, écrits à côté du simulateur.
+    statut: a_explorer
+
+  - id: cavec_guides
+    url: https://www.cavec.fr/guides-et-documentations/
+    nature: index
+    acces: session
+    regimes: [cavec_complementaire]
+    a_en_tirer: >-
+      Guides et statuts, pour la série historique.
+    statut: a_explorer
+
+  - id: cavom_retraite
+    url: https://www.cavom.net/vos-droits/votre-retraite/
+    nature: regle
+    acces: session
+    regimes: [cavom_complementaire, cnavpl]
+    a_en_tirer: >-
+      Le calcul chez les officiers ministériels, fiche `partiel`.
+    statut: a_explorer
+
+  - id: cavom_cotisations
+    url: https://www.cavom.net/vos-cotisations/vous-etes-professionnel-liberal/
+    nature: bareme
+    acces: session
+    regimes: [cavom_complementaire, cnavpl]
+    a_en_tirer: >-
+      Les classes de cotisation et les points acquis.
+    statut: a_explorer
+
+  - id: cavom_cumul
+    url: https://www.cavom.net/vos-droits/le-cumul-emploi-retraite/
+    nature: regle
+    acces: session
+    regimes: [cavom_complementaire]
+    a_en_tirer: >-
+      Le cumul, section par section : les règles diffèrent, et le dépôt n'en
+      porte aucune.
+    statut: a_explorer
+
+  - id: cavom_reversion
+    url: https://www.cavom.net/vos-droits/la-reversion/
+    nature: regle
+    acces: session
+    regimes: [cavom_complementaire]
+    a_en_tirer: >-
+      La réversion chez les officiers ministériels.
+    statut: a_explorer
+
+  - id: cavom_publications
+    url: https://www.cavom.net/nos-medias/publications/
+    nature: index
+    acces: session
+    regimes: [cavom_complementaire]
+    a_en_tirer: >-
+      Rapports et statuts, pour dater les valeurs.
+    statut: a_explorer
+
+  - id: cnbf_simulateur_cotisations
+    url: https://www.cnbf.fr/espace-avocats/simulation-des-cotisations/
+    nature: simulateur
+    acces: session
+    regimes: [cnbf, cnbf_complementaire]
+    a_en_tirer: >-
+      Les cotisations d'un avocat : forfaitaire par ancienneté, proportionnelle,
+      et complémentaire par classe. La fiche `cnbf` du régime de base est
+      `partiel`, et le barème forfaitaire par année d'exercice est précisément
+      ce qui lui manque.
+    statut: a_explorer
+
+  - id: cnbf_prelevements
+    url: https://www.cnbf.fr/espace-avocats/calcul-de-prelevements-sociaux/
+    nature: simulateur
+    acces: session
+    regimes: [cnbf, cnbf_complementaire]
+    a_en_tirer: >-
+      Les prélèvements sur les pensions d'avocat, calculés.
+    statut: a_explorer
+
+  - id: cnbf_baremes
+    url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=baremes
+    nature: index
+    acces: session
+    regimes: [cnbf, cnbf_complementaire]
+    a_en_tirer: >-
+      Les barèmes publiés, année par année : la série que le dépôt n'a pas.
+    statut: a_explorer
+
+  - id: cnbf_fiches_pratiques
+    url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=fiches-pratiques
+    nature: index
+    acces: session
+    regimes: [cnbf, cnbf_complementaire]
+    a_en_tirer: >-
+      Les fiches pratiques, qui portent les exemples chiffrés.
+    statut: a_explorer
+
+  - id: ircec_quel_regime
+    url: https://www.ircec.fr/ircec/quel-est-mon-regime/
+    nature: regle
+    acces: session
+    regimes: [ircec_raap, ircec_racd, ircec_racl]
+    a_en_tirer: >-
+      Le routage entre RAAP, RACD et RACL : trois fiches `partiel`, et un
+      routage que le dépôt fait sans source écrite.
+    statut: a_explorer
+
+  - id: ircec_guide_retraite
+    url: https://www.ircec.fr/wp-content/uploads/2026/02/guide-de-la-retraite-ircec.pdf
+    nature: document
+    acces: session
+    regimes: [ircec_raap, ircec_racd, ircec_racl]
+    a_en_tirer: >-
+      Le guide de février 2026 : taux, classes, valeurs de point et exemples
+      des trois régimes d'artistes-auteurs, en un seul document.
+    statut: a_explorer
+
+  # ---- MSA ---------------------------------------------------------------
+
+  - id: msa_non_salaries
+    url: https://www.msa.fr/lfp/retraite/non-salaries-agricoles
+    nature: regle
+    acces: session
+    regimes: [msa_non_salaries, msa_rco]
+    a_en_tirer: >-
+      Retraite forfaitaire, retraite proportionnelle en points, RCO : les deux
+      fiches agricoles non salariées sont `partiel`, et ce sont les deux
+      régimes dont la structure ressemble le moins à celle du régime général.
+    statut: a_explorer
+
+  - id: msa_reforme_25_meilleures_annees
+    url: https://www.msa.fr/lfp/retraite/reforme-exploitants-25-meilleures-annees
+    nature: regle
+    acces: session
+    regimes: [msa_non_salaries]
+    a_en_tirer: >-
+      La réforme du 13 février 2023, qui fait passer les exploitants au calcul
+      sur les 25 meilleures années à compter de 2026 : une réforme RÉCENTE,
+      donc une ligne obligatoire dans reformes.yaml et veille.yaml, et un
+      changement que le dépôt doit couper à la bonne date.
+    statut: a_explorer
+
+  # ---- Régimes spéciaux ---------------------------------------------------
+
+  - id: cnieg_calcul_retraite
+    url: https://www.cnieg.fr/accueil/actif/montant-retraite/calcul-retraite.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Le calcul des IEG : salaire des six derniers mois, coefficient de 75 %,
+      services actifs et insalubres. Le dépôt le modélise ; cette page dit ce
+      qu'il simplifie.
+    statut: a_explorer
+
+  - id: cnieg_age_retraite
+    url: https://www.cnieg.fr/accueil/actif/age-depart/age-retraite.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Les âges après la réforme de 2023, qui ferme le régime aux nouveaux
+      embauchés : le calendrier de convergence, borne par borne.
+    statut: a_explorer
+
+  - id: cnieg_retraite_progressive
+    url: https://www.cnieg.fr/accueil/actif/age-depart/retraite-progressive.html
+    nature: regle
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      La retraite progressive dans un régime spécial, ouverte récemment.
+    statut: a_explorer
+
+  - id: cnieg_prelevements
+    url: https://www.cnieg.fr/accueil/retraite/prelevements/prelevements-sociaux.html
+    nature: bareme
+    acces: session
+    regimes: [ieg]
+    a_en_tirer: >-
+      Les prélèvements sur les pensions des IEG, dont la CSG à taux particulier.
+    statut: a_explorer
+
+  - id: crpratp_ouverture_du_droit
+    url: https://www.crpratp.fr/web/actif/preparez-votre-depart-a-la-retraite/ouverture-du-droit
+    nature: regle
+    acces: navigateur
+    regimes: [ratp]
+    a_en_tirer: >-
+      Les conditions d'ouverture à la RATP : âges par catégorie (sédentaire,
+      actif, actif à conditions particulières) et leur calendrier de report.
+    statut: a_explorer
+    note: >-
+      Cloudflare répond 403 à `curl` (page « Attention Required »). Chromium
+      passe : voir docs/exploration_sources.md.
+
+  - id: enim_mode_de_calcul
+    url: https://www.enim.eu/retraite/mode-de-calcul
+    nature: regle
+    acces: session
+    regimes: [marins]
+    a_en_tirer: >-
+      La pension des marins, assise sur des SALAIRES FORFAITAIRES par catégorie
+      et non sur le salaire réel : structure unique en France, et fiche
+      `partiel` à l'inventaire.
+    statut: a_explorer
+
+  - id: enim_salaires_forfaitaires
+    url: https://www.enim.eu/employeur/salaires-forfaitaires
+    nature: bareme
+    acces: session
+    regimes: [marins]
+    a_en_tirer: >-
+      La grille des vingt catégories de salaires forfaitaires : c'est
+      exactement la donnée qui manque à la fiche des marins.
+    statut: a_explorer
+
+  - id: crpn_publications
+    url: https://www.crpn.fr/la-crpn/publications/
+    nature: index
+    acces: session
+    regimes: [crpnpac, crpnpac_tranche_2]
+    a_en_tirer: >-
+      Rapports et règlement du personnel navigant : deux fiches `partiel`.
+    statut: a_explorer
+
+  - id: crpn_comprendre_retraite
+    url: https://www.crpn.fr/je-suis-retraite/comprendre-ma-retraite/
+    nature: regle
+    acces: session
+    regimes: [crpnpac, crpnpac_tranche_2]
+    a_en_tirer: >-
+      Le calcul de la pension des navigants, ses deux tranches et son âge de
+      départ dérogatoire.
+    statut: a_explorer
+
+  - id: crpn_cotisations_employeur
+    url: https://www.crpn.fr/je-represente-un-employeur/calculer-les-cotisations/
+    nature: bareme
+    acces: session
+    regimes: [crpnpac, crpnpac_tranche_2]
+    a_en_tirer: >-
+      Les taux salarié et employeur par tranche — la part patronale est l'un
+      des axes de tête de la feuille de route.
+    statut: a_explorer
+
+  - id: crpn_acquerir_des_droits
+    url: https://www.crpn.fr/je-suis-salarie/acquerir-des-droits/
+    nature: regle
+    acces: session
+    regimes: [crpnpac, crpnpac_tranche_2]
+    a_en_tirer: >-
+      L'acquisition des droits chez les navigants : annuités, bonifications de
+      vol, et ce que l'inaptitude ouvre.
+    statut: a_explorer
+
+  - id: crpn_notices_formulaires
+    url: https://www.crpn.fr/je-suis-salarie/notices-et-formulaires/
+    nature: index
+    acces: session
+    regimes: [crpnpac, crpnpac_tranche_2]
+    a_en_tirer: >-
+      Les notices : documents d'application, souvent porteurs d'exemples
+      chiffrés que les pages n'ont pas.
+    statut: a_explorer
+
+  - id: crpcen_montant_pension
+    url: https://www.crpcen.fr/affilies/le-montant-de-votre-pension
+    nature: regle
+    acces: session
+    regimes: [crpcen]
+    a_en_tirer: >-
+      Les clercs de notaires : calcul, minimum, et le taux de cotisation
+      employeur le plus élevé de France. Fiche `partiel`.
+    statut: a_explorer
+
+  - id: cprpf_comprendre_droits
+    url: https://www.cprpf.fr/actifs/preparer-ma-retraite/preparer-ma-retraite-rs/comprendre-vos-droits/
+    nature: regle
+    acces: session
+    regimes: [sncf]
+    a_en_tirer: >-
+      Le régime spécial de la SNCF vu par sa caisse : âges par catégorie,
+      coefficient de minoration, durée. Le dépôt le modélise, et la SNCF pèse
+      lourd dans les cas types — d'où l'importance de la recontrôler.
+    statut: a_explorer
+
+  - id: cprpf_enfants
+    url: https://www.cprpf.fr/actifs/preparer-ma-retraite/preparer-ma-retraite-rs/mes-enfants-et-ma-retraite/
+    nature: regle
+    acces: session
+    regimes: [sncf]
+    a_en_tirer: >-
+      Bonifications et majorations pour enfants à la SNCF, matière de
+      l'action 43.
+    statut: a_explorer
+
+  # ---- Artistes-auteurs (Urssaf Limousin) ---------------------------------
+
+  - id: saa_simulateur_cotisations
+    url: https://www.secu-artistes-auteurs.fr/simulateur-cotisations-sociales
+    nature: simulateur
+    acces: session
+    regimes: [regime_general, ircec_raap]
+    a_en_tirer: >-
+      Les cotisations d'un artiste-auteur par revenu, y compris la part prise
+      en charge : un simulateur officiel pour une population dont les trois
+      fiches sont `partiel`.
+    statut: a_explorer
+
+  - id: saa_validation_trimestres
+    url: https://www.secu-artistes-auteurs.fr/artiste-auteur/mes-evenements-de-vie/retraite/validation-de-trimestres
+    nature: regle
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Le seuil de revenu qui valide un trimestre pour un artiste-auteur, et le
+      mécanisme de cotisation volontaire qui permet d'en valider quatre : une
+      règle d'acquisition que le dépôt applique au seul salaire.
+    statut: a_explorer
+
+  - id: saa_age_montant
+    url: https://www.secu-artistes-auteurs.fr/artiste-auteur/mes-evenements-de-vie/retraite/age-et-montant-de-la-retraite
+    nature: regle
+    acces: session
+    regimes: [regime_general, ircec_raap]
+    a_en_tirer: >-
+      Ce que touche un artiste-auteur, base et complémentaire IRCEC réunies.
+    statut: a_explorer
+
+  - id: saa_assiette_sociale
+    url: https://www.secu-artistes-auteurs.fr/artiste-auteur/mon-activite-artistique/cotisations-et-contributions-sociales/assiette-sociale
+    nature: regle
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      L'assiette : bénéfice ou recettes majorées de 15 %, option annuelle.
+      Le choix d'assiette change les droits, et le dépôt n'en porte qu'un.
+    statut: a_explorer
+
+  - id: saa_taux_cotisations
+    url: https://www.secu-artistes-auteurs.fr/artiste-auteur/mon-activite-artistique/cotisations-et-contributions-sociales/taux-de-cotisations
+    nature: bareme
+    acces: session
+    regimes: [regime_general, ircec_raap]
+    a_en_tirer: >-
+      Les taux, dont le taux vieillesse plafonné et déplafonné, et la
+      contribution diffuseur.
+    statut: a_explorer
+
+  - id: ircec_liens
+    url: https://www.ircec.fr/liens/
+    nature: index
+    acces: session
+    regimes: [ircec_raap, ircec_racd, ircec_racl]
+    a_en_tirer: >-
+      La page de liens de l'IRCEC : elle nomme les organismes avec lesquels le
+      régime s'articule, et c'est souvent là qu'on trouve les sources qu'aucun
+      moteur de recherche ne remonte.
+    statut: a_explorer
+
+  - id: cnav_independants_complementaire
+    url: https://www.lassuranceretraite.fr/portail-info/hors-menu/annexe/travailleurs-independants/retraite-complementaire.html
+    nature: bareme
+    acces: session
+    regimes: [rci, rco_artisans, nric]
+    a_en_tirer: >-
+      Le RCI et ses prédécesseurs (RCO artisans, NRIC commerçants), servis par
+      la Cnav depuis 2020 : classes, points, valeur de service. Trois fiches
+      que le dépôt modélise sur des valeurs saisies.
+    statut: a_explorer
+
+  # ---- service-public.gouv.fr ---------------------------------------------
+  # Quatre fiches de ce site sont DÉJÀ rejouées par test_oracle.py. Les autres
+  # sont du même bois : une règle, un exemple chiffré, une date de mise à jour.
+
+  - id: sp_f21552_enfants_salarie
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F21552
+    nature: regle
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      « Comment les enfants sont-ils pris en compte pour la retraite du
+      salarié ? » : MDA, AVPF, majoration de 10 %. Les trois canaux, avec
+      leurs exemples — matière de l'action 43 et de la frontière contributive.
+    statut: a_explorer
+
+  - id: sp_f21142_montant_agent_public
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F21142
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat, cnracl]
+    a_en_tirer: >-
+      Le montant de la retraite d'un agent public, avec exemples chiffrés :
+      rejouables tels quels contre le scénario 1.
+    statut: a_explorer
+
+  - id: sp_f16336_montant_salarie
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F16336
+    nature: regle
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Le montant de la retraite d'un salarié du privé : SAM, taux, prorata,
+      et les exemples de la fiche.
+    statut: a_explorer
+
+  - id: sp_f31249_chomage
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F31249
+    nature: regle
+    acces: session
+    regimes: [regime_general, agirc_arrco]
+    a_en_tirer: >-
+      Les périodes de chômage : trimestres assimilés, points de complémentaire,
+      et leurs limites. Poste central de docs/frontiere_contributive.md et des
+      17,9 milliards de l'action 81.
+    statut: a_explorer
+
+  - id: sp_f19666_decote
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F19666
+    nature: regle
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      La décote du salarié. Fiche DÉJÀ rejouée (témoin `sp_f19666_decote`,
+      vérifiée au 1er janvier 2026) : à relire pour la redater et voir si son
+      exemple a changé.
+    statut: a_explorer
+
+  - id: sp_f19643_surcote
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F19643
+    nature: regle
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      La surcote du salarié. Fiche déjà rejouée (`sp_f19643_surcote`), même
+      traitement.
+    statut: a_explorer
+
+  - id: sp_f13736_duree_fonctionnaire
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F13736
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat, cnracl]
+    a_en_tirer: >-
+      La durée d'assurance du fonctionnaire, et sa différence d'avec la durée
+      de services — la distinction que le dépôt doit tenir des deux côtés.
+    statut: a_explorer
+
+  - id: sp_f2971_csg_crds
+    url: https://www.service-public.gouv.fr/particuliers/vosdroits/F2971
+    nature: bareme
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      CSG et CRDS sur les revenus d'activité ET de remplacement, avec les
+      seuils de revenu fiscal de référence : la source de référence pour
+      passer du brut au net, des deux côtés de la vie.
+    statut: a_explorer
+
+  - id: sp_f33841_micro_entrepreneur
+    url: https://entreprendre.service-public.gouv.fr/vosdroits/F33841
+    nature: regle
+    acces: session
+    regimes: [micro_entrepreneurs]
+    a_en_tirer: >-
+      Le régime de retraite du micro-entrepreneur : ce que le taux global
+      ouvre comme droits, et le chiffre d'affaires minimal pour valider un
+      trimestre.
+    statut: a_explorer
+
+  - id: sp_f23369_entrepreneur_individuel
+    url: https://entreprendre.service-public.gouv.fr/vosdroits/F23369
+    nature: regle
+    acces: session
+    regimes: [rsi, rci]
+    a_en_tirer: >-
+      Le régime de retraite de l'entrepreneur individuel, base et
+      complémentaire.
+    statut: a_explorer
+
+  # ---- CLEISS : le versant international ----------------------------------
+  # `docs/limites.md` déclare les carrières internationales hors modèle. Ce
+  # lot est ce qui permettrait de CHIFFRER ce mur au lieu de le déclarer.
+
+  - id: cleiss_regime_france3
+    url: https://www.cleiss.fr/docs/regimes/regime_france3.html
+    nature: regle
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      La description complète du système français de retraite, écrite pour les
+      institutions étrangères : une synthèse dense, à jour, qui sert de liste
+      de contrôle — ce qu'elle nomme et que le dépôt ne porte pas est un manque.
+    statut: a_explorer
+
+  - id: cleiss_faq_retraite
+    url: https://www.cleiss.fr/faq/retraite-pensions.html
+    nature: regle
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les questions fréquentes sur les pensions internationales : totalisation,
+      proratisation, pension nationale contre pension européenne.
+    statut: a_explorer
+
+  - id: cleiss_reglements
+    url: https://www.cleiss.fr/particuliers/retraite/reglements.html
+    nature: regle
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le calcul d'une pension sous les règlements européens : la comparaison
+      entre montant national et montant proratisé, qui est le cœur du sujet.
+    statut: a_explorer
+
+  - id: cleiss_accord1
+    url: https://www.cleiss.fr/particuliers/retraite/accord1.html
+    nature: regle
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le calcul sous accord bilatéral, premier cas.
+    statut: a_explorer
+
+  - id: cleiss_accord2
+    url: https://www.cleiss.fr/particuliers/retraite/accord2.html
+    nature: regle
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Le calcul sous accord bilatéral, second cas.
+    statut: a_explorer
+
+  - id: cleiss_reglements_accord
+    url: https://www.cleiss.fr/particuliers/retraite/reglements-accord.html
+    nature: regle
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      La carrière qui relève à la fois des règlements européens et d'un accord
+      bilatéral : le cas le plus complexe, et celui qui dit jusqu'où va la
+      combinatoire.
+    statut: a_explorer
+
+  - id: cleiss_docs_textes
+    url: https://www.cleiss.fr/docs/textes/index.html
+    nature: index
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les textes des accords bilatéraux, pays par pays.
+    statut: a_explorer
+
+  - id: cleiss_reglements_index
+    url: https://www.cleiss.fr/reglements/index.html
+    nature: index
+    acces: session
+    regimes: []
+    a_en_tirer: >-
+      Les règlements européens de coordination, dans leur texte.
+    statut: a_explorer
+
+  # ---- Légifrance ---------------------------------------------------------
+
+  - id: legifrance_css_vieillesse
+    url: https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006073189/LEGISCTA000006156616/
+    nature: regle
+    acces: refus
+    regimes: [regime_general]
+    a_en_tirer: >-
+      La section du code de la Sécurité sociale visée : à lire pour les
+      articles qu'elle contient et leurs versions.
+    statut: a_explorer
+    note: >-
+      Le site répond 403 à une session (mesuré le 22 septembre 2026), comme
+      CLAUDE.md l'annonce. Ne pas insister : l'index plein texte LEGI du dépôt
+      sert le même contenu — `python scripts/fetch/dila_cherche.py legi ... --num`.
+
+  # ---- CNAVPL, le régime de base des libéraux (cinquième lot) -------------
+  # Les sept pages de la caisse NATIONALE, là où les lignes précédentes
+  # dépouillent les sections. Le régime de base est commun aux dix : ce qui se
+  # lit ici vaut pour toutes, et c'est le meilleur rendement du lot.
+
+  - id: cnavpl_regime_de_base
+    url: https://www.cnavpl.fr/regime-de-base/
+    nature: regle
+    acces: session
+    regimes: [cnavpl]
+    a_en_tirer: >-
+      Le régime de base en points, ses deux tranches (jusqu'à 85 % du plafond,
+      puis jusqu'à cinq fois), leurs taux et les points qu'elles rendent :
+      c'est le cœur de la fiche `cnavpl`, aujourd'hui `partiel`.
+    statut: a_explorer
+
+  - id: cnavpl_preparer_sa_retraite
+    url: https://www.cnavpl.fr/preparer-sa-retraite/
+    nature: regle
+    acces: session
+    regimes: [cnavpl]
+    a_en_tirer: >-
+      Âge, taux plein, durée d'assurance et rachats chez les libéraux.
+    statut: a_explorer
+
+  - id: cnavpl_comprendre_sa_retraite
+    url: https://www.cnavpl.fr/comprendre-sa-retraite/
+    nature: regle
+    acces: session
+    regimes: [cnavpl]
+    a_en_tirer: >-
+      Le calcul de la pension de base : valeur de service du point, décote,
+      surcote, majorations.
+    statut: a_explorer
+
+  - id: cnavpl_situations_particulieres
+    url: https://www.cnavpl.fr/situations-particulieres/
+    nature: regle
+    acces: session
+    regimes: [cnavpl]
+    a_en_tirer: >-
+      Maternité, maladie, invalidité, conjoint collaborateur, début d'activité :
+      les points attribués sans cotisation chez les libéraux — un versant de
+      la frontière contributive que le dépôt n'a lu que pour les salariés.
+    statut: a_explorer
+
+  - id: cnavpl_complementaires_prevoyance
+    url: https://www.cnavpl.fr/regimes-complementaires-et-prevoyance/
+    nature: index
+    acces: session
+    regimes: [cnavpl, carmf_complementaire, carcdsf_complementaire, cavp_complementaire, carpimko_complementaire, carpv_complementaire, cavamac_complementaire, cavec_complementaire, cavom_complementaire, cipav_complementaire, cprn_complementaire]
+    a_en_tirer: >-
+      La vue d'ensemble des dix sections et de leurs complémentaires : une
+      table de comparaison que le dépôt devrait pouvoir reproduire fiche par
+      fiche, et qui dira du premier coup d'œil lesquelles il décrit mal.
+    statut: a_explorer
+
+  - id: cnavpl_statuts
+    url: https://www.cnavpl.fr/statuts-et-documents-de-reference/
+    nature: index
+    acces: session
+    regimes: [cnavpl]
+    a_en_tirer: >-
+      Statuts et décrets : la source de droit du régime de base, à citer dans
+      la fiche plutôt qu'une page d'explication.
+    statut: a_explorer
+
+  - id: cnavpl_ressources_documentaires
+    url: https://www.cnavpl.fr/ressources-documentaires/
+    nature: index
+    acces: session
+    regimes: [cnavpl]
+    a_en_tirer: >-
+      Les recueils annuels — que `scripts/fetch/cnavpl_recueils.py` sait déjà
+      lire depuis un document apporté : voir ce que cette page publie de plus,
+      et si la récupération peut cesser de passer par `data/brut/`.
+    statut: a_explorer
+
+  # ---- CPRN, les notaires -------------------------------------------------
+
+  - id: cprn_cotisations
+    url: https://cprn.fr/je-suis-affilie/je-suis-actif/mes-cotisations/
+    nature: bareme
+    acces: session
+    regimes: [cprn_complementaire, cnavpl]
+    a_en_tirer: >-
+      Les cotisations des notaires, section C comprise : la fiche
+      `cprn_complementaire` est `partiel`.
+    statut: a_explorer
+
+  - id: cprn_age_depart
+    url: https://cprn.fr/je-suis-affilie/je-suis-actif/preparer-sa-retraite-en-toute-serenite/lage-de-depart-a-la-retraite/
+    nature: regle
+    acces: session
+    regimes: [cprn_complementaire]
+    a_en_tirer: >-
+      Les âges et les coefficients propres à la caisse des notaires.
+    statut: a_explorer
+
+  - id: cprn_conjoint_collaborateur
+    url: https://cprn.fr/je-suis-affilie/je-suis-actif/conjoint-collaborateur/
+    nature: regle
+    acces: session
+    regimes: [cprn_complementaire]
+    a_en_tirer: >-
+      Le statut de conjoint collaborateur, deuxième source après la CARMF :
+      deux régimes qui le décrivent valent un recoupement sur un statut que le
+      dépôt ne porte pas du tout.
+    statut: a_explorer
+
+  - id: cprn_revalorisation
+    url: https://cprn.fr/je-suis-affilie/je-suis-retraite/la-revalorisation-de-mes-pensions/
+    nature: bareme
+    acces: session
+    regimes: [cprn_complementaire]
+    a_en_tirer: >-
+      La règle de revalorisation des pensions servies : dans un régime en
+      points, c'est elle qui fait le rendement réel, et le dépôt la fixe par
+      convention pour la plupart des régimes.
+    statut: a_explorer
+
+  - id: cprn_reversion
+    url: https://cprn.fr/je-suis-affilie/je-suis-beneficiaire/tout-savoir-sur-la-reversion/
+    nature: regle
+    acces: session
+    regimes: [cprn_complementaire]
+    a_en_tirer: >-
+      La réversion chez les notaires, dont la condition de ressources et le
+      partage entre conjoints successifs diffèrent du régime général.
+    statut: a_explorer
+
+  - id: cprn_statuts
+    url: https://cprn.fr/ma-caisse/les-statuts-cprn/
+    nature: index
+    acces: session
+    regimes: [cprn_complementaire]
+    a_en_tirer: >-
+      Les statuts : le texte du régime, avec ses barèmes en annexe.
+    statut: a_explorer
+
+  - id: cprn_publications
+    url: https://cprn.fr/ma-caisse/les-publications-2/
+    nature: index
+    acces: session
+    regimes: [cprn_complementaire]
+    a_en_tirer: >-
+      Rapports annuels et séries de valeurs de point.
+    statut: a_explorer
+
+  # ---- Assurance retraite : les règles du régime général -------------------
+
+  - id: cnav_annees_civiles_retenues
+    url: https://www.lassuranceretraite.fr/portail-info/hors-menu/annexe/salaries/montant-retraite/nombre-annees-civiles-retenues.html
+    nature: bareme
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Le nombre d'années retenues pour le salaire annuel moyen, GÉNÉRATION PAR
+      GÉNÉRATION : la montée de 10 à 25 ans, que le dépôt applique et dont la
+      table mérite d'être lue chez celui qui liquide.
+    statut: a_explorer
+
+  - id: cnav_interruptions_carriere
+    url: https://www.lassuranceretraite.fr/portail-info/home/actif/ma-carriere/interruptions-carriere.html
+    nature: regle
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Chômage, maladie, maternité, service national : les trimestres assimilés
+      et leurs plafonds. Poste central de la frontière contributive.
+    statut: a_explorer
+
+  - id: cnav_ameliorer_montant
+    url: https://www.lassuranceretraite.fr/portail-info/home/actif/montant-retraite/ameliorer-montant-retraite.html
+    nature: regle
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Surcote, rachat, cumul, minimum contributif : la liste, par la Cnav, de
+      tout ce qui relève un montant — donc la liste de ce que le modèle doit
+      savoir appliquer.
+    statut: a_explorer
+
+  - id: cnav_parentalite
+    url: https://www.lassuranceretraite.fr/portail-info/home/actif/vie-personnelle-retraite/parentalite-droits-retraite.html
+    nature: regle
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      MDA, AVPF, majoration de pension, congé parental : les quatre canaux de
+      la parentalité, chez celui qui les liquide. Matière de l'action 43 et du
+      chiffrage des avantages non contributifs.
+    statut: a_explorer
+
+  - id: cnav_handicap_invalidite
+    url: https://www.lassuranceretraite.fr/portail-info/portail-info/home/actif/vie-personnelle-retraite/handicap-invalidite.html
+    nature: regle
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Retraite anticipée des travailleurs handicapés, pension d'invalidité
+      convertie, inaptitude : trois portes de sortie anticipée que le dépôt ne
+      distingue pas, et qui pèsent sur l'âge moyen de départ.
+    statut: a_explorer
+
+  - id: cnav_rachat_trimestres
+    url: https://www.lassuranceretraite.fr/portail-info/home/actif/ma-carriere/rachat-trimestres-retraite.html
+    nature: bareme
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Le barème de rachat Fillon (années d'études, années incomplètes), par âge
+      et par option : quatrième barème de rachat du lot, et le plus utilisé.
+      C'est le prix que l'État met sur un trimestre — à comparer à ce que le
+      système notionnel ferait payer pour le même droit.
+    statut: a_explorer
+
+  - id: sp_a15703_minimum_contributif
+    url: https://www.service-public.gouv.fr/particuliers/actualites/A15703
+    nature: bareme
+    acces: session
+    regimes: [regime_general]
+    a_en_tirer: >-
+      Le montant du minimum contributif, majoré ou non, à sa date de
+      publication : une valeur que le dépôt projette et qui doit être recalée
+      sur la valeur servie.
+    statut: a_explorer
+
+  # ---- Suite des régimes spéciaux et de la fonction publique ---------------
+
+  - id: sre_retraite_anticipee
+    url: https://retraitesdeletat.gouv.fr/actif/lage-de-depart/la-retraite-anticipee
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Carrière longue, catégorie active, invalidité, parent de trois enfants :
+      les départs anticipés de la fonction publique, dont plusieurs ont été
+      fermés par étapes. Le dépôt doit dater chaque fermeture.
+    statut: a_explorer
+
+  - id: sre_cumul_emploi_retraite
+    url: https://retraitesdeletat.gouv.fr/actif/je-prepare-ma-retraite/jenvisage-dexercer-une-activite-pendant-ma-retraite
+    nature: regle
+    acces: session
+    regimes: [fonction_publique_etat]
+    a_en_tirer: >-
+      Le cumul emploi-retraite d'un ancien fonctionnaire, avec son écrêtement
+      propre : à mettre en regard de la CNRACL et de l'Agirc-Arrco.
+    statut: a_explorer
+
+  - id: enim_reversion
+    url: https://www.enim.eu/retraite/pension-de-reversion
+    nature: regle
+    acces: session
+    regimes: [marins]
+    a_en_tirer: >-
+      La réversion des marins, assise elle aussi sur les salaires forfaitaires.
+    statut: a_explorer

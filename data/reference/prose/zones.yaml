@@ -346,6 +346,15 @@ fichiers:
   # leur date de lecture, et la page Risque fait foi pour ceux du modèle.
   docs/risque_de_defaut.md:
     defaut: recit
+  # Le procès-verbal du sondage des 164 adresses remises le 22 septembre 2026,
+  # et la méthode qu'il a fondée. Ses chiffres sont ceux de ce jour-là — ce
+  # qu'une session a obtenu de chaque hôte —, et un certificat réparé les
+  # démentira sans que le document ait tort : il disait ce qui était. Les
+  # codes de réponse et les recettes de contournement n'ont pas de sonde qui
+  # les recalcule, et en inventer une reviendrait à resonder cent soixante
+  # serveurs publics à chaque exécution des tests.
+  docs/exploration_sources.md:
+    defaut: recit
   # Les consignes que toute session lit en s'ouvrant : elles décrivent le dépôt
   # d'AUJOURD'HUI, et une consigne périmée se suit quand même — c'est le pire
   # des cas. Deux procès-verbaux y sont enclavés, et eux seuls sont gelés :

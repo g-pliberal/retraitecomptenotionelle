@@ -12421,3 +12421,81 @@ existe pour montrer — ne coûte plus une phrase à personne.
 `tests/test_frontiere_contributive.py`, `tests/test_web.py`,
 `docs/frontiere_contributive.md`, `docs/parcours_presentation.md`,
 `data/reference/legislation/veille.yaml`.
+
+---
+
+### 89. Dépouiller les 188 sources officielles remises le 22 septembre 2026 — `à faire`
+
+**Demande.** Cinq lots d'adresses, remis le même jour : « explorer chaque lien
+assez profondément et en tirer le maximum possible pour notre site. Il ne faut
+pas rester à la surface et regarder uniquement la page servie par le lien mais
+aussi l'ensemble des pages qui peuvent être explorées. Il y a énormément de
+simulateurs qui peuvent s'avérer être une mine d'or si on exécute plusieurs
+simulations sur chaque. Il faudrait bien entendu faire attention à des
+comportements imparfaits vu qu'en grande majorité, ces simulateurs ont été
+conçus par l'homme. Ces liens vont surtout aider à documenter comment le
+système actuel fonctionne. »
+
+**Pourquoi c'est le premier rang.** Le dépôt a fini de COMPTER les régimes :
+89 lignes d'inventaire, plus aucune « à modéliser ». Il n'a pas fini de les
+LIRE — 37 fiches sont `partiel`, et pour la plupart parce que leur barème n'a
+jamais été lu chez celui qui l'applique. Ce lot vise précisément ces
+trente-sept, dont vingt sont visées par au moins une adresse : les salaires
+forfaitaires des marins, les classes de la Cipav,
+le forfait par ancienneté de la CNBF, les tranches de la CAVOM, la part
+capitalisée de la CAVP. Et il touche l'étalon : le scénario 1 doit être le
+droit en vigueur tel que la caisse l'applique, et ces sources sont exactement
+les sources d'application que `docs/veille_droit.md` exige à côté du texte.
+
+**Ce qui est déjà fait, et qui était le plus long.** Les 188 adresses sont
+inventoriées dans `data/sources_a_explorer.yaml`, une ligne chacune, avec le
+régime qu'elles concernent, la nature de ce qu'elles portent et, en une
+phrase, ce qu'on va y chercher. Elles ont toutes été sondées : 180 répondent
+200 à une session, et les huit autres tiennent en cinq cas dont quatre se
+contournent proprement. `docs/exploration_sources.md` porte les recettes.
+
+**La découverte du sondage, qui change le chantier.** Le dépôt tenait pour
+acquis qu'aucun simulateur officiel n'est automatisable —
+`tests/temoins/exemples_officiels.yaml` l'écrit en tête. C'est vrai des
+simulateurs nominatifs, qui exigent FranceConnect, et faux des vingt-huit
+calculettes anonymes publiées par les mêmes caisses. Les simulateurs du GIP
+Union Retraite passaient même pour injoignables : leur serveur omet
+l'intermédiaire de son certificat, un navigateur le rattrape tout seul, `curl`
+non. Le maillon ajouté, ils répondent. Un simulateur est un ORACLE : on peut
+l'interroger cent fois, et vingt appels bien choisis rendent un barème que
+personne n'a publié.
+
+**Le risque, et il est nommé par la demande.** Ces calculettes sont écrites à
+la main et vieillissent : un paramètre resté à l'année passée, une borne d'âge
+qui n'a pas suivi la dernière loi, un arrondi, un champ qui plafonne sans le
+dire. Le dépôt est mal placé pour en douter — le 17 septembre 2026, ses propres
+âges légaux étaient certifiés et faux. D'où la règle : un simulateur est une
+source d'APPLICATION, jamais de droit ; sa valeur plafonne au niveau `haute`,
+comme celles d'OpenFisca ; quand il contredit le texte, le texte l'emporte et
+l'écart s'écrit dans `limites.md`. Une calculette gelée à sa date n'est
+d'ailleurs pas un défaut mais une chance : `sim2010` de la CNRACL applique le
+droit de 2010, et c'est le seul moyen de vérifier le modèle sur le PASSÉ.
+
+**Marche.** Par lots cohérents, jamais au hasard : les sections libérales, les
+régimes spéciaux, la fonction publique, le versant international du CLEISS,
+les quatre modèles publics (CALIPER, trajectoire, calcul_pension, OpenFisca),
+le versant cotisations de mon-entreprise. Pour chaque lot : lire la fiche du
+régime AVANT la source, pour chercher ce qui manque et non ce qu'on a ; puis
+transcrire là où ça va — un exemple chiffré dans
+`tests/temoins/exemples_officiels.yaml`, une règle dans `veille.yaml`, un
+barème dans `data/reference/regimes/` avec sa ligne au manifeste, un mur dans
+`limites.md` ; puis passer la ligne de l'inventaire à `explore` ou `epuise`
+avec sa date et sa note. `docs/exploration_sources.md` détaille chaque geste.
+
+**Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
+`docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`
+(la forme), puis, selon ce qu'on trouve : `tests/temoins/exemples_officiels.yaml`,
+`data/reference/legislation/veille.yaml`,
+`data/reference/legislation/reformes.yaml`, `data/reference/regimes/`,
+`data/sources.yaml`, `docs/limites.md`, `docs/regimes.md`.
+
+**Fin.** Aucune ligne de `sources_a_explorer.yaml` n'est restée `a_explorer` ;
+chacune porte sa date et ce qu'elle a donné. Les fiches `partiel` qui le sont
+faute de barème publié ne le sont plus, ou disent lequel n'existe pas. Et
+`limites.md` dit, source par source, ce que les caisses appliquent que le
+modèle n'applique pas.
