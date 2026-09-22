@@ -5688,7 +5688,7 @@ regimes:
           règle dans l'index : elle est servie depuis 2013, borne de
           période, et rien avant.
       - debut: 2023
-        fin: 2024
+        fin: 2023
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -5708,8 +5708,52 @@ regimes:
         taux_cotisation_retraite: 0.22
         notes: >-
           Seconde tranche de la cotisation proportionnelle : 22 % des revenus
-          compris entre un et trois plafonds, soit 48 060 € et 144 180 € en
-          2026.
+          compris entre un et trois plafonds pour l'exercice 2023. Article 2
+          du décret n° 79-262 (LEGIARTI000054168526) : « une et trois fois le
+          plafond précité pour l'exercice 2023 ; une et trois fois et demie le
+          même plafond pour l'exercice 2024 ; une et quatre fois le même
+          plafond à compter de l'exercice 2025 ». La fiche prolongeait les
+          trois plafonds jusqu'à aujourd'hui ; la page des taux 2026 de
+          l'Urssaf et le simulateur de la caisse, confrontés le 22 septembre
+          2026, appliquent quatre plafonds.
+          LA SURCOTE SE COMPTE EN ANNÉES PLEINES, DEPUIS L'ÂGE DU TAUX PLEIN
+          : la fiche pratique « À quel âge prendre ma retraite » (2022)
+          écrit, pour le complémentaire, « avec surcote (appliquée sur les
+          points acquis au titre des 30 premières années de cotisations) à
+          partir de 67 ans : 5 % par année pleine de différé si, à 67 ans,
+          vous réunissez 30 années d'affiliation à la Cipav », et entre 62
+          et 67 ans « le même abattement que celui appliqué à votre retraite
+          de base ». Le moteur retient 1,25 % par trimestre, par années
+          pleines, depuis l'âge du taux plein lu à la génération, sous
+          condition de cent vingt trimestres dans le régime ; il majore TOUS
+          les points et non ceux des trente premières années, ce que rien
+          dans le modèle ne distingue. Aucun statut de la caisse ne date la
+          règle dans l'index : elle est servie depuis 2013, borne de
+          période, et rien avant.
+
+      - debut: 2024
+        fin: 2024
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0125
+        surcote_points: par_age_seul
+        surcote_pas_trimestres: 4
+        surcote_affiliation_minimale_trimestres: 120
+        avantages_non_contributifs: [reversion]
+        assiette: tranche_1_3_5_pass
+        taux_cotisation_retraite: 0.22
+        notes: >-
+          Seconde tranche, exercice 2024 : 22 % des revenus compris entre un
+          et trois plafonds et demi (article 2 du décret n° 79-262,
+          LEGIARTI000054168526).
           LA SURCOTE SE COMPTE EN ANNÉES PLEINES, DEPUIS L'ÂGE DU TAUX PLEIN
           : la fiche pratique « À quel âge prendre ma retraite » (2022)
           écrit, pour le complémentaire, « avec surcote (appliquée sur les
@@ -5787,11 +5831,15 @@ regimes:
         surcote_pas_trimestres: 4
         surcote_affiliation_minimale_trimestres: 120
         avantages_non_contributifs: [reversion]
-        assiette: tranche_1_3_pass
+        assiette: tranche_1_4_pass
         taux_cotisation_retraite: 0.21
         notes: >-
-          Seconde tranche : 21 % des revenus compris entre un et trois plafonds
-          depuis 2025, contre 22 % en 2023 et 2024.
+          Seconde tranche : 21 % des revenus compris entre un et QUATRE
+          plafonds depuis 2025 (article 2 du décret n° 79-262,
+          LEGIARTI000054168526, « une et quatre fois le même plafond à compter
+          de l'exercice 2025 »), soit 48 060 € et 192 240 € en 2026, contre
+          22 % en 2023 et 2024. La page des taux 2026 de l'Urssaf écrit les
+          mêmes bornes.
           LA SURCOTE SE COMPTE EN ANNÉES PLEINES, DEPUIS L'ÂGE DU TAUX PLEIN
           : la fiche pratique « À quel âge prendre ma retraite » (2022)
           écrit, pour le complémentaire, « avec surcote (appliquée sur les

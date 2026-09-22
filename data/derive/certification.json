@@ -1145,6 +1145,17 @@
    "valeurs": 44,
    "verifiee_le": "2026-09-13"
   },
+  "valeurs_point_rci_cnav": {
+   "ajoutees": 0,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "ac79db347e9e4d0e",
+   "identiques": 6,
+   "niveau": "haute",
+   "source": "Cnav, base de législation : barèmes du point RCI (circulaires Cnav 2023/33, 2024/36 et 2025/31)",
+   "valeurs": 6,
+   "verifiee_le": "2026-09-22"
+  },
   "valeurs_point_texte": {
    "ajoutees": 0,
    "colonne": "valeur",

@@ -984,6 +984,9 @@ export const BORNES_ASSIETTE = Object.freeze({
   tranche_1_4_pass: [1.0, 4.0],
   // Cipav depuis 2023 : 9 % jusqu'au plafond, 22 % du plafond au triple.
   tranche_1_3_pass: [1.0, 3.0],
+  // Cipav en 2024 : la seconde tranche va jusqu'à trois plafonds et demi,
+  // puis jusqu'à quatre depuis 2025 (article 2 du décret n° 79-262).
+  tranche_1_3_5_pass: [1.0, 3.5],
   // CARPIMKO depuis 2026 : 8,70 % entre un demi et trois plafonds.
   tranche_05_3_pass: [0.5, 3.0],
   // CAVOM depuis 2016 : 12,5 % du revenu, jusqu'à huit plafonds. C'est la

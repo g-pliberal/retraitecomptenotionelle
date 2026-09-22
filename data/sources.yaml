@@ -993,6 +993,21 @@ institutions:
           dit ce qui a été payé. Le montant de 2023 n'est pas repris ici : le
           code le porte déjà, au centime près.
 
+      - id: cnav_baremes_rci
+        titre: Prix et valeur du point RCI, 2024-2026, dans la base de législation
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=rci_valeur_point_bar.aspx
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/cnav_baremes_rci.py
+        note: >-
+          Deux barèmes, servis en HTML par l'API publique du site :
+          rci_valeur_achat_point_bar et rci_valeur_point_bar. Ils prolongent
+          la transcription d'OpenFisca, qui s'arrête en 2023 ; faute d'elles,
+          le modèle achetait les points RCI au rendement de 2013 (6,74 %), soit
+          9 % de trop en 2026. Transcription des décisions du CPSTI, donc
+          `haute`. Les années 2013-2023 y concordent avec OpenFisca au millième.
+
       - id: cnav_revalorisation_salaires
         titre: Coefficients de revalorisation des salaires portés au compte, dix colonnes 2017-2026
         url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2025_29_22122025.pdf

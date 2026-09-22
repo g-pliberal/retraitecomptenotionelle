@@ -56,7 +56,11 @@ ircantec,2009,2100,0.0852,haute
 # des artisans valait 11,95 % en 1980.
 rco_artisans,1979,2012,0.0674,estimee
 nric,2004,2012,0.0674,estimee
-rci,2013,2100,0.0674,haute
+# RCI : 6,74 % jusqu'en 2023, puis le rendement du dernier barème publié par
+# la Cnav, 1,347 / 21,726 = 6,20 % en 2026, pour les années que la série des
+# prix d'achat ne couvre pas encore.
+rci,2013,2023,0.0674,haute
+rci,2024,2100,0.0620,haute
 cnavpl,1949,2003,0.080,estimee
 cnavpl,2004,2100,0.0620,estimee
 cancava,1949,1972,0.090,estimee

@@ -2204,6 +2204,25 @@ def source_valeurs_point_independants() -> dict[tuple, float]:
     }
 
 
+def source_valeurs_point_rci_cnav() -> dict[tuple, float]:
+    """Prix et valeur du point du RCI depuis 2024, dans les barèmes de la Cnav.
+
+    La transcription d'OpenFisca s'arrête en 2023 ; le modèle retombait ensuite
+    sur le rendement de 2013, 6,74 %, quand celui de 2024 est de 6,20 %. La Cnav,
+    qui liquide ces pensions, reprend les valeurs du conseil de la protection
+    sociale des travailleurs indépendants : une transcription, niveau `haute`.
+    Le récupérateur ne garde que les années qu'OpenFisca ne porte pas, et refuse
+    d'écrire si les années communes diffèrent.
+    """
+    return {
+        tuple(cle.split("|")): valeur
+        for cle, valeur in sorted(
+            _serie_json("cnav_baremes_rci.json",
+                        "scripts/fetch/cnav_baremes_rci.py").items()
+        )
+    }
+
+
 def source_valeurs_point_msa() -> dict[tuple, float]:
     """Valeur de service du point de la complémentaire agricole, dans le code rural.
 
@@ -5312,6 +5331,18 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         niveau="moyenne",
+    ),
+    Certification(
+        nom="valeurs_point_rci_cnav",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_point_rci_cnav,
+        origine="Cnav, base de législation : barèmes du point RCI "
+                "(circulaires Cnav 2023/33, 2024/36 et 2025/31)",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="haute",
     ),
     Certification(
         nom="valeurs_point_texte",
