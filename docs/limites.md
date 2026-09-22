@@ -6631,7 +6631,7 @@ reste n'a pas. Six, et la première est de loin la plus lourde.
 **1. La prime de terme n'est pas retirée des forwards.** Les versements futurs
 se placent aux taux forward implicites de la courbe du jour. Sous l'hypothèse
 des anticipations pures, le forward est le taux futur attendu ; en pratique, il
-le dépasse d'une prime de terme que la littérature situe entre 0,3 et 1 point
+le dépasse d'une prime de terme que la littérature situe entre <!--chiffre:illustration()-->0,3<!--/--> et <!--chiffre:illustration()-->1<!--/--> point
 sur les maturités longues quand la courbe est ascendante. **Le pilier est donc
 flatté**, et d'autant plus que la carrière est longue. L'alternative — retirer
 une prime estimée — supposerait davantage et se vérifierait moins ; le choix
@@ -6658,8 +6658,8 @@ d'où la trancher. Un test tient la séparation.
 
 Depuis, il est un **réglage du site** : « Taux futurs du pilier capitalisé »,
 à côté de celui des frais, avec trois positions — les taux à terme de la
-courbe (défaut), la prime retirée au milieu de la fourchette (0,50 point à
-trente ans), la prime retirée au haut (1 point). Une réserve qu'un lecteur peut
+courbe (défaut), la prime retirée au milieu de la fourchette (<!--chiffre:mesure(constante?de=retraite_notionnelle.config&nom=PRIME_TERME_MILIEU&echelle=100)-->0,50<!--/--> point à
+trente ans), la prime retirée au haut (<!--chiffre:mesure(constante?de=retraite_notionnelle.config&nom=PRIME_TERME_HAUTE&echelle=100)-->1<!--/--> point). Une réserve qu'un lecteur peut
 chiffrer lui-même cesse d'être une réserve qu'on lui demande de croire, et le
 choix de publier sous les anticipations pures redevient ce qu'il est : un
 choix, pas un impensé.
@@ -6687,32 +6687,32 @@ qu'il a été publié.
 **3. Les frais sont ceux du marché, et leur baisse est une hypothèse.** Le
 pilier supporte quatre frais, aux vraies moyennes du marché du PER individuel
 en 2025, lues sur le rapport de l'OPEF (tableau T7) et sur celui du CCSF de
-2021 : 1,09 % sur versement et 0,76 % par an sur encours, moyennes pondérées
-par les primes et par l'encours ; 0,99 % sur arrérages, moyenne sur les vingt
-assureurs déclarants et non sur les seuls neuf qui facturent (2,20 %) ; et
-0,52 % par an sur la réserve de la rente, que l'OPEF ne mesure pas et que le
-CCSF relevait sur 22 contrats sur 34, de 0,60 à 1 % par an, estimé au milieu
+2021 : <!--chiffre:mesure(parametre?nom=frais_versement_capitalisation)-->1,09<!--/--> % sur versement et <!--chiffre:mesure(parametre?nom=frais_gestion_capitalisation)-->0,76<!--/--> % par an sur encours, moyennes pondérées
+par les primes et par l'encours ; <!--chiffre:mesure(parametre?nom=frais_arrerages_capitalisation)-->0,99<!--/--> % sur arrérages, moyenne sur les vingt
+assureurs déclarants et non sur les seuls neuf qui facturent (<!--chiffre:illustration()-->2,20<!--/--> %) ; et
+<!--chiffre:mesure(parametre?nom=frais_encours_rente_capitalisation)-->0,52<!--/--> % par an sur la réserve de la rente, que l'OPEF ne mesure pas et que le
+CCSF relevait sur 22 contrats sur 34, de <!--chiffre:illustration()-->0,60<!--/--> à <!--chiffre:illustration()-->1<!--/--> % par an, estimé au milieu
 de la fourchette sur la part des contrats qui facturent. Ce dernier frais pèse
-plus que les arrérages : 8 % de rente au diviseur du modèle. Trois choses que
+plus que les arrérages au diviseur du modèle. Trois choses que
 ces sources disent sur ce que les moyennes sont :
 
-- Le frais sur versement du PER (1,09 %) est le double de celui de
-  l'assurance-vie (0,55 %) et six fois celui du contrat de capitalisation
-  (0,19 %), pour les mêmes assureurs et les mêmes fonds en euros. L'OPEF
+- Le frais sur versement du PER (<!--chiffre:mesure(parametre?nom=frais_versement_capitalisation)-->1,09<!--/--> %) est le double de celui de
+  l'assurance-vie (<!--chiffre:illustration()-->0,55<!--/--> %) et six fois celui du contrat de capitalisation
+  (<!--chiffre:illustration()-->0,19<!--/--> %), pour les mêmes assureurs et les mêmes fonds en euros. L'OPEF
   l'explique par des frais fixes qui pèsent sur des primes petites. Une
   cotisation prélevée sur chaque paie n'a pas cette structure de coût.
 - La moyenne des frais sur arrérages publiée est **non pondérée** et ne porte
   que sur les 9 organismes, sur 20, qui les facturent : onze assureurs sur
-  vingt ne prélèvent rien sur la rente. Le 2,20 % est la moyenne de ceux qui
-  facturent, le 0,99 % celle du marché, et la médiane est nulle.
+  vingt ne prélèvent rien sur la rente. Le <!--chiffre:illustration()-->2,20<!--/--> % est la moyenne de ceux qui
+  facturent, le <!--chiffre:mesure(parametre?nom=frais_arrerages_capitalisation)-->0,99<!--/--> % celle du marché, et la médiane est nulle.
 - Le frais de gestion du fonds en euros est le poste qui compte, parce qu'il
   s'applique chaque année à tout l'encours, et c'est celui qu'un régime
   obligatoire fait le plus baisser : la prime de pension suédoise, seul pilier
-  obligatoire capitalisé adossé à un compte notionnel, coûte 0,11 % des
-  encours en frais de fonds après remise et 0,024 % d'administration ; le
-  Fonds de réserve pour les retraites, 0,41 % toutes charges comprises, dont
-  8,6 points de base de coûts fixes, en gérant des actions ; l'ERAFP
-  provisionne « au moins 0,2 % des encours ». Aucun ne prélève sur les
+  obligatoire capitalisé adossé à un compte notionnel, coûte <!--chiffre:illustration()-->0,11<!--/--> % des
+  encours en frais de fonds après remise et <!--chiffre:illustration()-->0,024<!--/--> % d'administration ; le
+  Fonds de réserve pour les retraites, <!--chiffre:illustration()-->0,41<!--/--> % toutes charges comprises, dont
+  <!--chiffre:illustration()-->8,6<!--/--> points de base de coûts fixes, en gérant des actions ; l'ERAFP
+  provisionne « au moins <!--chiffre:illustration()-->0,2<!--/--> % des encours ». Aucun ne prélève sur les
   versements ni sur les arrérages.
 
 **Ce que ces moyennes sont, et ce qu'on sait des médianes.** Les frais sur
@@ -6749,18 +6749,18 @@ des jeux `controle` du manifeste :
 Trois leçons, et le modèle les tient. **La baisse va par à-coups**, une
 décision puis un plateau, d'où des paliers plutôt qu'une pente : le frais de
 gestion suit le rythme américain, le seul observé sur trente ans, par marches
-de dix ans (0,76, 0,54, 0,39, 0,28, 0,20 % en 2066, le plancher de l'ERAFP) ;
+de dix ans (<!--chiffre:mesure(parametre?nom=frais_gestion_capitalisation)-->0,76<!--/-->, <!--chiffre:mesure(parametre?nom=frais_gestion_paliers.0.1)-->0,54<!--/-->, <!--chiffre:mesure(parametre?nom=frais_gestion_paliers.1.1)-->0,39<!--/-->, <!--chiffre:mesure(parametre?nom=frais_gestion_paliers.2.1)-->0,28<!--/-->, <!--chiffre:mesure(parametre?nom=frais_gestion_paliers.3.1)-->0,20<!--/--> % en 2066, le plancher de l'ERAFP) ;
 le frais sur versement rejoint l'assurance-vie de 2025 en 2031, le contrat de
 capitalisation en 2036, zéro en 2046 ; le frais sur arrérages, dont la médiane
 est déjà nulle, s'éteint en 2046 ; le frais sur la réserve suit le rythme de
 la gestion. **Elle porte sur les nouveaux dépôts, et un peu sur le stock** :
 un frais de gestion est contractuel, l'OPEF le montre en deux ans, et les
 lignes de l'échelle portent le tarif de leur cohorte, qui ne referme chaque
-année que 10 % de son écart avec le tarif du jour, la moitié en sept ans,
+année que <!--chiffre:mesure(parametre?nom=convergence_frais_stock&echelle=100)-->10<!--/--> % de son écart avec le tarif du jour, la moitié en sept ans,
 entre le contrat privé qu'on ne renégocie pas (0) et le plafond qui touche
 tout le stock d'un coup (1), comme au Royaume-Uni et en Suède. **Elle n'est
-pas acquise** : le Chili a vu la commission d'une caisse remonter de 0,47 % à
-1,16 % dès qu'elle a cessé d'être adjudicataire, et le modèle ne fait jamais
+pas acquise** : le Chili a vu la commission d'une caisse remonter de <!--chiffre:illustration()-->0,47<!--/--> % à
+<!--chiffre:illustration()-->1,16<!--/--> % dès qu'elle a cessé d'être adjudicataire, et le modèle ne fait jamais
 remonter un frais. Les paliers sont une hypothèse, datée et sourcée, pas une
 mesure ; leurs années et leurs niveaux se changent en un endroit.
 
@@ -6795,7 +6795,8 @@ qui promet une rente ne peut pas la gager sur des actions. Mais le modèle ne
 dit rien de ce qu'un panachage aurait donné, ni de la volatilité qu'il aurait
 fallu accepter pour cela. Il ne dit rien non plus du risque de crédit : la
 courbe retenue est celle des souverains les mieux notés, pas celle de la dette
-française, qui rendait 51 points de base de plus au dix ans.
+française, qui rendait <!--chiffre:illustration()-->51<!--/--> points de base de plus au dix ans
+le jour de la courbe.
 
 **5. Aucune fiscalité.** Les versements au PER sont déductibles du revenu
 imposable, la rente est imposable à la sortie, et le capital transmis au décès

@@ -353,16 +353,26 @@ def fusion(**reglages: str) -> float:
 def parametre(**reglages: str) -> float:
     """Un paramètre par défaut du modèle : ``nom=taux_cotisation_liberal``.
 
-    Un taux se lit en %, le reste dans son unité — ``annee_bascule``,
-    ``age_reference``. C'est le réglage que le site prend quand on ne lui dit
+    Un taux, une part, un frais ou une prime se lit en %, le reste dans son
+    unité — ``annee_bascule``, ``age_reference`` ; un rang désigne l'élément
+    d'un tuple, ``frais_gestion_paliers.3.1`` le taux du quatrième palier et
+    ``.3.0`` son année. C'est le réglage que le site prend quand on ne lui dit
     rien, et celui que la prose décrit.
     """
     parametres = _parametres()
-    nom = reglages["nom"]
+    nom, *rangs = reglages["nom"].split(".")
     if not hasattr(parametres, nom):
         raise ValueError(f"les paramètres n'ont pas de champ « {nom} »")
-    valeur = float(getattr(parametres, nom))
-    return valeur * 100 if nom.startswith("taux") or nom.startswith("part") else valeur
+    objet = getattr(parametres, nom)
+    # Un rang désigne l'élément d'un tuple : les paliers de frais sont des
+    # couples (année, taux), et ``frais_gestion_paliers.3.1`` est le taux du
+    # quatrième.
+    for rang in rangs:
+        objet = objet[int(rang)]
+    valeur = float(objet)
+    en_pour_cent = (nom.startswith(("taux", "part", "frais", "prime"))
+                    and not (rangs and rangs[-1] == "0"))
+    return (valeur * 100 if en_pour_cent else valeur) * float(reglages.get("echelle", 1))
 
 
 def constante(**reglages: str) -> float:
