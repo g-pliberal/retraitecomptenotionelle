@@ -2664,12 +2664,12 @@ function refus(rang, phrase) {
 //: au statut, ni à l'unité —, et posé là plutôt que dans un encadré : c'est
 //: devant le champ qu'on se demande quoi y écrire.
 const APPEL_REVENU_RETRAITE = " Jamais une pension : la pension est ce que le "
-  + "simulateur CALCULE, et l'écrire ici reviendrait à cotiser sur elle — la "
-  + "pension rendue serait celle de quelqu'un qui aurait gagné, toute sa vie, "
-  + "ce que vous touchez une fois à la retraite. Déjà à la retraite ? Écrivez "
-  + "ce que vous gagniez en travaillant, au milieu de votre carrière — ou "
-  + "déposez votre relevé, plus bas, qui écrit la carrière année par année et "
-  + "dispense de l'estimer.";
+  + "simulateur CALCULE, et l'écrire ici reviendrait à cotiser dessus. Le "
+  + "montant rendu serait alors celui de quelqu'un qui aurait gagné, toute sa "
+  + "vie, ce que vous touchez une fois à la retraite. Déjà à la retraite ? "
+  + "Écrivez ce que vous gagniez en travaillant, au milieu de votre carrière. "
+  + "Ou déposez votre relevé, plus bas : il écrit la carrière année par année, "
+  + "et dispense de l'estimer.";
 
 /**
  * Le champ « combien gagnez-vous », dans l'unité choisie. Le libellé porte le

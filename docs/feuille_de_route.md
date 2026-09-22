@@ -26,16 +26,16 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 628<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 651<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 628<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 651<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 628<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 651<!--/--> lignes), puis dans les
 
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 533<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 628<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->31 651<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13158,8 +13158,18 @@ et les trois autres systèmes se calculeraient dessus. C'est une fonctionnalité
 pas une clarification : elle change ce que le simulateur affirme, et demande sa
 propre action.
 
+**Le premier jet a été poussé rouge, et le cliquet des incises l'a dit.** Le
+hook `Stop` de l'action 36 pousse à la fin du tour, et il a poussé pendant que
+la suite tournait encore : `main` a porté quelques minutes un texte dont les
+deux incises en tiret cadratin faisaient passer `/simuler` de quatorze phrases
+à seize, au-dessus du plafond que `test_les_incises_en_tiret_restent_rares`
+tient. Le complément a été réécrit en deux-points et en phrases séparées, ce
+qui vaut mieux de toute façon. **La leçon est sur l'ordre des gestes, pas sur
+le hook** : quand la suite complète met neuf minutes, le commit doit attendre
+qu'elle soit verte, puisque le commit vaut publication.
+
 **Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
-`tests/test_web.py`, `tests/temoins/pages.json`.
+`tests/test_web.py`, `tests/temoins/pages.json`, `README.md`.
 
 ### 98. Ce qui bloquait n'était pas le conteneur : cinq adresses mortes — `fait`
 
