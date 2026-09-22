@@ -12451,9 +12451,9 @@ existe pour montrer — ne coûte plus une phrase à personne.
 
 ---
 
-### 89. Dépouiller les 188 sources officielles remises le 22 septembre 2026 — `à faire`
+### 89. Dépouiller les 213 sources officielles remises le 22 septembre 2026 — `en cours`
 
-**Demande.** Cinq lots d'adresses, remis le même jour : « explorer chaque lien
+**Demande.** Six lots d'adresses, remis le même jour : « explorer chaque lien
 assez profondément et en tirer le maximum possible pour notre site. Il ne faut
 pas rester à la surface et regarder uniquement la page servie par le lien mais
 aussi l'ensemble des pages qui peuvent être explorées. Il y a énormément de
@@ -12474,10 +12474,10 @@ capitalisée de la CAVP. Et il touche l'étalon : le scénario 1 doit être le
 droit en vigueur tel que la caisse l'applique, et ces sources sont exactement
 les sources d'application que `docs/veille_droit.md` exige à côté du texte.
 
-**Ce qui est déjà fait, et qui était le plus long.** Les 188 adresses sont
+**Ce qui est déjà fait, et qui était le plus long.** Les 213 adresses sont
 inventoriées dans `data/sources_a_explorer.yaml`, une ligne chacune, avec le
 régime qu'elles concernent, la nature de ce qu'elles portent et, en une
-phrase, ce qu'on va y chercher. Elles ont toutes été sondées : 180 répondent
+phrase, ce qu'on va y chercher. Elles ont toutes été sondées : 205 répondent
 200 à une session, et les huit autres tiennent en cinq cas dont quatre se
 contournent proprement. `docs/exploration_sources.md` porte les recettes.
 
@@ -12729,3 +12729,38 @@ porte la question.
 `scripts/construire_temoins.py`, `tests/test_simulateur.py`,
 `data/reference/legislation/veille.yaml`, `docs/methodologie.md`,
 `docs/limites.md`.
+
+**Premier lot dépouillé : l'Ircantec, le 22 septembre 2026.** Trois annexes de
+la base documentaire que la Caisse des dépôts tient pour les gestionnaires du
+régime — elle le GÈRE, elle en est donc le producteur —, lues dans leur PDF
+avec `scripts/fetch/lecture_pdf.py`.
+
+*Une convention soldée, et une erreur avec elle.* La fiche du régime écrivait
+noir sur blanc que la répartition salarié/employeur était reportée sur toute
+la série « faute d'une série publiée ». Elle est publiée, à chaque date d'effet
+depuis 1925 : l'annexe 4-4 donne les taux appelés part par part. La tranche A
+vaut 40 % de l'agent d'un bout à l'autre — la convention était juste. La
+tranche B, non : l'agent en portait 34 % de 1971 à 2010, et la part n'est
+montée aux 35,64 % d'aujourd'hui que par paliers annuels, de 2011 à 2017.
+Quatorze périodes corrigées ; sur le témoin du contractuel, quinze euros par an
+passent de l'agent à l'employeur.
+
+*Un escalier confirmé ligne à ligne.* L'action 88 avait tiré du texte de
+l'article 16 de l'arrêté du 30 décembre 1970 un barème à trois marches, contre
+la décote plate de 1,1 % par trimestre que le dépôt appliquait. L'annexe
+« Retraite à taux réduit » le tabule, génération par génération : le modèle
+rend les quarante et une lignes des onze tables. Et elle apprend ce que le
+texte ne disait pas — les ancrages sont des ÂGES FIXES, 1 à 67 ans, 0,88 à 64,
+0,78 à 62, 0,43 à 57, les mêmes pour toutes les générations, quand l'âge légal
+passe de 62 à 64 ans sur cette plage. C'est l'âge du taux plein qui ancre
+l'escalier, jamais l'âge d'ouverture. `tests/test_ircantec_minoration.py` le
+tient désormais, et la ligne `coefficient_anticipation_ircantec` est entrée au
+registre de veille.
+
+*Ce que ce lot laisse ouvert.* Le salaire de référence de 2023 (5,329 €) et de
+2024 (5,611 €) est dans l'annexe 8-1 ; les deux CSV de la Caisse des dépôts
+s'arrêtent à 2021 — vérifié en relançant le récupérateur —, et le dépôt porte
+donc ces années au niveau `haute`, d'OpenFisca. Les certifier demande un
+récupérateur qui lise ce PDF et le recontrôle qui va avec, dans
+`scripts/verifier_donnees.py` : c'est la suite immédiate, et elle vaut pour
+toutes les annexes du même genre.

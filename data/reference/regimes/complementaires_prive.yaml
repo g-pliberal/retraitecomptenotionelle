@@ -3255,11 +3255,23 @@ regimes:
           `IRC_BAR_01_txcotis.csv` que publie la Caisse des dépôts, qui GÈRE le
           régime : c'est le producteur, et ce fichier porte déjà, dans ce dépôt,
           le taux d'appel et le salaire de référence.
-          La répartition 40 % / 60 % de la tranche A et 35,64 % / 64,36 % de la
-          tranche B est celle des barèmes 2025 et 2026 (2,80 % et 4,20 % sur la
-          tranche A, 6,95 % et 12,55 % sur la tranche B en 2025 ; 2,84 % et
-          4,27 %, 7,06 % et 12,75 % en 2026) ; elle est reportée sur les années
-          antérieures, faute d'une série publiée, et c'est une convention.
+          LA RÉPARTITION N'EST PLUS UNE CONVENTION : ELLE EST PUBLIÉE, ET LA
+          TRANCHE B A BOUGÉ. La fiche reportait sur toute la série les parts
+          des barèmes 2025 et 2026 — 40 % / 60 % sur la tranche A, 35,64 % /
+          64,36 % sur la tranche B — faute d'une série publiée. Elle existe :
+          l'annexe 4-4 de la base documentaire du régime
+          (`baseircantec.retraites.fr`, « Évolution des taux de cotisations »,
+          lue le 22 septembre 2026) donne les taux appelés PART PAR PART à
+          chaque date d'effet depuis 1925, et l'annexe 8-1 fait de même pour
+          les taux théoriques depuis 1935. La tranche A y vaut 40 % de l'agent
+          d'un bout à l'autre, à quatre centièmes de point près : la convention
+          était juste, et elle est maintenant lue. La tranche B, non — l'agent
+          en portait 34 % de 1971 à 2010 (2,55 sur 7,50 en 1971, 5,95 sur 17,50
+          en 1992, 6,00 sur 17,60 en 2011), et la part n'est montée à 35,64 %
+          que par paliers annuels, de 2011 à 2017. La reporter en arrière
+          faisait payer à un contractuel des années 1990 un point et demi de
+          cotisation de plus que ce que le régime lui retenait, et d'autant
+          moins à son employeur.
           L'ÂGE EST CELUI DE L'ARTICLE 16 DE L'ARRÊTÉ DU 30 DÉCEMBRE 1970, lu
           version par version dans la base LEGI. De 1971 au 30 juin 2011
           (LEGIARTI000006381606 à LEGIARTI000019511923) : « l'allocation de
@@ -3606,7 +3618,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.0750
-        part_salariale: 0.3564
+        part_salariale: 0.34
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
@@ -3639,7 +3651,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.1000
-        part_salariale: 0.3564
+        part_salariale: 0.34
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
@@ -3657,7 +3669,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.1250
-        part_salariale: 0.3564
+        part_salariale: 0.34
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
@@ -3675,7 +3687,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.1526
-        part_salariale: 0.3564
+        part_salariale: 0.3401
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
@@ -3693,7 +3705,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.1642
-        part_salariale: 0.3564
+        part_salariale: 0.34
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
@@ -3711,7 +3723,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2_ircantec
         taux_cotisation_retraite: 0.1750
-        part_salariale: 0.3564
+        part_salariale: 0.34
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
@@ -3729,7 +3741,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1750
-        part_salariale: 0.3564
+        part_salariale: 0.34
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         avantages_non_contributifs: [majoration_enfants, reversion]
@@ -3750,7 +3762,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1750
-        part_salariale: 0.3564
+        part_salariale: 0.34
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         surcote_points: ircantec
@@ -3780,7 +3792,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1760
-        part_salariale: 0.3564
+        part_salariale: 0.3409
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         surcote_points: ircantec
@@ -3801,7 +3813,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1780
-        part_salariale: 0.3564
+        part_salariale: 0.3427
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         surcote_points: ircantec
@@ -3822,7 +3834,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1806
-        part_salariale: 0.3564
+        part_salariale: 0.345
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         surcote_points: ircantec
@@ -3843,7 +3855,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1836
-        part_salariale: 0.3564
+        part_salariale: 0.3475
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         surcote_points: ircantec
@@ -3864,7 +3876,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1876
-        part_salariale: 0.3564
+        part_salariale: 0.3507
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         surcote_points: ircantec
@@ -3885,7 +3897,7 @@ regimes:
         abattement_points: ircantec
         assiette: tranche_2
         taux_cotisation_retraite: 0.1910
-        part_salariale: 0.3564
+        part_salariale: 0.3534
         decote_par_trimestre: 0.01
         surcote_par_trimestre: null
         surcote_points: ircantec
