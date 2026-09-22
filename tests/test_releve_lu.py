@@ -108,29 +108,29 @@ Relevé de carrière
 Détail par année
 Année Durée tous régimes Durée par régime Points par régime
 4 trim. L’Assurance retraite
-2025 4 trim. 203,91 pts Agirc-Arrco
+2025 4 trim. 188,40 pts Agirc-Arrco
 4 trim. L’Assurance retraite
-2024 4 trim. 133,76 pts Agirc-Arrco
+2024 4 trim. 121,05 pts Agirc-Arrco
 1 trim. L’Assurance retraite
 2023 1 trim. 6,5 pts Agirc-Arrco
 0 trim. L’Assurance retraite
 2022 0 trim. 4 pts Ircantec
 Détail de votre carrière
 Employeur/activité Date début Date fin Revenus* Régime(s)
-01/01/2025 31/12/2025 49 150 €
-01/10/2024 31/12/2024 12 190 € L’Assurance retraite, Agirc-Arrco
-ARQUUS
-01/01/2024 27/09/2024 37 294 €
-06/08/2023 13/08/2023 761 € Agirc-Arrco
-24/07/2023 04/08/2023 867 € L’Assurance retraite, Agirc-Arrco
-GROUPE MORGAN SERVICES
+01/01/2025 31/12/2025 42 800 €
+01/10/2024 31/12/2024 11 400 € L’Assurance retraite, Agirc-Arrco
+FONDERIE DU NORD
+01/01/2024 24/09/2024 33 600 €
+06/08/2023 13/08/2023 640 € Agirc-Arrco
+24/07/2023 04/08/2023 910 € L’Assurance retraite, Agirc-Arrco
+INTERIM DU CENTRE
 01/12/2022 31/12/2022 L’Assurance retraite
 *Revenu d'activité soumis à cotisations retraite.
 3 / 7 Edité le 22/09/2026
 1,4386 € Valeur du point au 01/11/2025 :
 Pour valider un trimestre, il faut avoir perçu un certain revenu. En 2026, il faut avoir perçu au moins 1 803,00 € pour valider 1 trimestre.
 01/06/2060 169 trimestres 2 764,30 € En partant au avec , vous pourriez avoir droit à bruts par mois et
-01/01/202531/12/202549 150 €01/10/202431/12/202412 190 €ARQUUSL’Assurance retraite, Agirc-Arrco01/01/202427/09/202437 294 €
+01/01/202531/12/202542 800 €01/10/202431/12/202411 400 €FONDERIE DU NORDL’Assurance retraite, Agirc-Arrco01/01/202424/09/202433 600 €
 """
 
 RELEVES = {
@@ -236,17 +236,17 @@ def test_l_estimation_d_info_retraite_se_lit_en_entier():
     assert sorted(lues) == [2022, 2023, 2024, 2025]
 
     # Les revenus s'additionnent sur l'année, la période que seule l'Agirc-Arrco
-    # a reportée comprise — 761 € qu'une lecture qui jette ces lignes perdait.
-    assert round(lues[2023].revenu) == 761 + 867
-    assert round(lues[2024].revenu) == 37_294 + 12_190
-    assert round(lues[2025].revenu) == 49_150
+    # a reportée comprise — 640 € qu'une lecture qui jette ces lignes perdait.
+    assert round(lues[2023].revenu) == 640 + 910
+    assert round(lues[2024].revenu) == 33_600 + 11_400
+    assert round(lues[2025].revenu) == 42_800
 
     # Les trimestres viennent de l'AUTRE tableau, celui qui n'a pas de revenus,
     # et dont chaque ligne nomme une caisse complémentaire.
     assert [lues[annee].trimestres for annee in (2022, 2023, 2024, 2025)] == [0, 1, 4, 4]
 
     # 1,4386 € n'est pas un revenu de 2025 : c'est la valeur du point, datée.
-    assert round(lues[2025].revenu) == 49_150
+    assert round(lues[2025].revenu) == 42_800
     # La ligne de carrière dont la cellule « revenus » est vide ressort telle
     # quelle : elle existe, et le lecteur doit pouvoir la compléter.
     assert any("01/12/2022" in ligne for ligne in lecture.ignorees)
