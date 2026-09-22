@@ -1424,6 +1424,10 @@ sources:
       d'une grandeur que `test_oracle.py` sache comparer. Le guide ne donne
       PAS le barème de minoration, seulement « coefficient éventuel » : il est
       dans les règlements.
+      RELU LE MÊME JOUR : l'exemple de Spike, « fidèle de la classe C », qui a
+      versé 2 694 € en 2016 pour 36 points, est six fois la classe spéciale de
+      449 € que fixe le décret n° 2015-1802 — le recoupement des montants que
+      data/reference/regimes/classes_cotisation.csv porte désormais.
 
   # ---- MSA ---------------------------------------------------------------
 
@@ -2289,6 +2293,13 @@ sources:
       porté à la fiche (`abattement_points: ircec`, depuis 2014). Restent :
       le minimum de 30 points, les exonérations (6 points gratuits en cas
       d'incapacité), la cotisation volontaire.
+      RELU LE MÊME JOUR : son article 28 majore de 10 % la pension de qui a
+      eu trois enfants, et la fiche ne le déclarait pas — porté depuis 2014.
+      Son article 21 maintient jusqu'en 2027 « la classe de cotisation pour
+      laquelle l'adhérent a opté », et renvoie ainsi aux classes d'avant 2016,
+      que le décret n° 62-420 (article 2, 1981-2015) définit et que les
+      décrets annuels chiffrent : la classe spéciale d'office est désormais
+      dans data/reference/regimes/classes_cotisation.csv, six points par an.
 
   - id: ircec_reglement_racd
     url: https://www.ircec.fr/wp-content/uploads/2025/01/reglementracd_17042024.pdf

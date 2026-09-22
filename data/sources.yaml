@@ -3469,6 +3469,14 @@ institutions:
           et avec les mêmes sections, fixe la cotisation forfaitaire du régime
           de BASE — en francs jusqu'en 2001. Le mot « complémentaire » est
           exigé dans le motif pour l'écarter.
+          ET LA SECTION DES ARTISTES, que le récupérateur ne lit pas : les
+          mêmes décrets — et ceux de 1984 à 2000, que l'index LEGI porte —
+          fixent chaque année la classe de référence du régime commun aux
+          artistes graphiques et plastiques et aux musiciens, le RAAP
+          d'avant 2016 : classe spéciale de 876 F en 1984 à 448 € en 2015
+          (classe A, son double, de 1995 à 2011). Trente et un montants,
+          saisis à la main le 22 septembre 2026 dans
+          `data/reference/regimes/classes_cotisation.csv`.
 
       - id: cavp_mementos
         titre: >-

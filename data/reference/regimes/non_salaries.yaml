@@ -1343,7 +1343,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1962
-        fin: 2013
+        fin: 1980
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -1355,6 +1355,8 @@ regimes:
         salaire_reference: carriere_entiere
         assiette: plafonnee_3_pass
         taux_cotisation_retraite: 0.08
+        valeur_point_euros: 9.75
+        valeur_point_annee: 2026
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
@@ -1364,21 +1366,74 @@ regimes:
           que l'arrêté du 21 novembre 2013 a remplacés, ne sont pas reproduits
           au Journal officiel. La période garde la décote du régime de base,
           faute d'eux.
-          AVANT LA RÉFORME LE RÉGIME N'ÉTAIT PAS PROPORTIONNEL mais OPTIONNEL,
-          et c'est plus grave qu'une table manquante. « Un système optionnel :
-          l'adhérent choisissait un montant parmi [des classes] », écrit
-          l'IRCEC dans son communiqué du 27 janvier 2016, qui ajoute que « le
-          taux de cotisation proportionnel aux revenus artistiques » vient « en
-          lieu et place » de ce système, « déconnecté des revenus artistiques
-          perçus ».
-          LE MÉCANISME DE CLASSES DU DÉPÔT NE PEUT DONC PAS SERVIR ICI. Il
-          range l'assuré dans un palier d'après son REVENU, ce que font la
-          Cipav et la CAVEC ; au RAAP la classe était un CHOIX, et aucun modèle
-          ne peut deviner celui d'un assuré. Ce n'est pas la table qui manque,
-          c'est le lien entre le revenu et la cotisation.
-          La période porte donc le taux proportionnel de 8 %, et
-          l'approximation SURESTIME lourdement : la caisse écrit que « jusqu'à
-          présent, 80 % des adhérents cotisent sur la base » la plus basse.
+          COTISATION AVANT 1981 : le décret n° 62-420 dans sa rédaction
+          d'origine n'est pas dans l'index LEGI, et rien n'y dit comment le
+          régime appelait ses cotisations avant les cinq classes de 1981. La
+          période garde le taux proportionnel de 8 %, qui SURESTIME : la
+          caisse écrit que « jusqu'à présent, 80 % des adhérents cotisent sur
+          la base » la plus basse. Voir la période suivante.
+          VALEUR DE SERVICE : 9,75 € en 2026, publiée par la caisse (guide et
+          mémo 2026), revalorisée sur les prix vers l'année de liquidation.
+          Elle sert les points des classes de 1981 à 2015 ; les cotisations
+          proportionnelles passent, elles, par le rendement de
+          `rendements_points.csv`.
+      - debut: 1981
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_3_pass
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        points_maximum: 6
+        assiette_forfaitaire: true
+        assiette_repere_smic: 1
+        valeur_point_euros: 9.75
+        valeur_point_annee: 2026
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          LA CLASSE SPÉCIALE, SIX POINTS PAR AN. De 1981 à 2015, « le régime
+          comporte cinq classes de cotisation ainsi définies : Classe
+          spéciale : portant attribution annuelle de 6 points de retraite ;
+          Classe A : […] 12 points ; Classe B : […] 24 points ; Classe C : […]
+          36 points ; Classe D : […] 48 points » (décret n° 62-420, article 2,
+          LEGIARTI000006781619). La classe se CHOISISSAIT — « un système
+          optionnel », écrit l'IRCEC dans son communiqué du 27 janvier 2016,
+          « déconnecté des revenus artistiques perçus » —, et c'est ce qui
+          avait tenu la fiche au taux proportionnel de 8 %, qu'aucun texte ne
+          porte. Mais le même article dit ce que devient qui ne choisit pas :
+          « A défaut d'option, les personnes mentionnées à l'article 1er […]
+          sont inscrites d'office en classe spéciale » (rédaction de 2004,
+          LEGIARTI000018123994 ; en 1981, pour les artistes graphiques et
+          plastiques). Le modèle ne prête jamais un choix qu'il ne connaît
+          pas — c'est la règle des classes de la CNBF et des minima sous
+          condition de demande —, et la caisse écrit que « 80 % des adhérents
+          cotisent sur la base » la plus basse : la période sert la classe
+          d'office. Six points par an (`points_maximum`, l'assiette n'étant
+          qu'un repère), valorisés à la valeur de service de la fiche ; au
+          compte notionnel, le montant de la classe que fixe le décret de
+          l'exercice (`cotisation_par_classes`, `classes_cotisation.csv`) —
+          876 F en 1984, 1 500 F en 2000, 409 € en 2012, 448 € en 2015.
+          CE QUI RESTE APPROCHÉ. De 1981 à mai 2004, « les assujettis
+          mentionnés au b » de l'article 1er — que l'index ne reproduit pas ;
+          sans doute les professeurs de musique, musiciens, auteurs et
+          compositeurs — étaient inscrits d'office en classe A, douze points
+          pour le double : la fiche leur sert la classe spéciale. Les montants
+          de 1981 à 1983, antérieurs au premier décret lu, et celui de 1989,
+          dont l'index n'a que le sommaire, sont reportés de la grille voisine
+          au rapport des plafonds. Et la période AVANT 2004 couvre des statuts
+          que le décret ne couvrait pas encore : il ne vise « les personnes
+          relevant de l'article L. 382-12 », tous les artistes-auteurs, que
+          depuis le 29 mai 2004 (LEGIARTI000006781618).
+          LIQUIDATION : celle de la période précédente.
       - debut: 2014
         fin: 2015
         type_calcul: points
@@ -1391,7 +1446,13 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: plafonnee_3_pass
-        taux_cotisation_retraite: 0.08
+        taux_cotisation_retraite: 0.0
+        cotisation_par_classes: true
+        points_maximum: 6
+        assiette_forfaitaire: true
+        assiette_repere_smic: 1
+        valeur_point_euros: 9.75
+        valeur_point_annee: 2026
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         abattement_points: ircec
@@ -1415,7 +1476,8 @@ regimes:
           fiche ne la déclarait pas ; elle la porte sur toutes les périodes
           depuis 2014. Le règlement d'avant n'est pas au Journal officiel, et
           la première période n'en porte aucune.
-          Taux et assiette : ceux de la période précédente.
+          Cotisation, points et valeur de service : ceux de la période
+          précédente, la classe spéciale et ses six points.
       - debut: 2016
         fin: 2016
         type_calcul: points
@@ -1429,6 +1491,8 @@ regimes:
         salaire_reference: carriere_entiere
         assiette: plafonnee_3_pass
         taux_cotisation_retraite: 0.05
+        valeur_point_euros: 9.75
+        valeur_point_annee: 2026
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         abattement_points: ircec
@@ -1456,6 +1520,8 @@ regimes:
         salaire_reference: carriere_entiere
         assiette: plafonnee_3_pass
         taux_cotisation_retraite: 0.06
+        valeur_point_euros: 9.75
+        valeur_point_annee: 2026
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         abattement_points: ircec
@@ -1476,6 +1542,8 @@ regimes:
         salaire_reference: carriere_entiere
         assiette: plafonnee_3_pass
         taux_cotisation_retraite: 0.07
+        valeur_point_euros: 9.75
+        valeur_point_annee: 2026
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         abattement_points: ircec
@@ -1495,6 +1563,8 @@ regimes:
         salaire_reference: carriere_entiere
         assiette: plafonnee_3_pass
         taux_cotisation_retraite: 0.08
+        valeur_point_euros: 9.75
+        valeur_point_annee: 2026
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
         abattement_points: ircec

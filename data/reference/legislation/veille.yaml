@@ -1261,6 +1261,43 @@ entrees:
       la SACEM demanderait de partager le revenu entre deux statuts.
     prochaine_veille: "2027-03-31"
 
+  - id: raap_classe_speciale
+    regle: >-
+      De 1981 à 2015, le RAAP prélevait une classe et non un taux : cinq
+      classes de 6 à 48 points par an, dont le montant est fixé chaque année
+      par décret ; à défaut d'option, l'assuré est inscrit d'office en classe
+      spéciale, six points par an.
+    textes:
+      - "décret n° 62-420 du 11 avril 1962, article 2, rédactions du 25 juillet 1981 (LEGIARTI000006781619) au 1er janvier 2016 (LEGIARTI000026885109)"
+      - "décrets annuels fixant les cotisations des régimes complémentaires des professions libérales et des artistes, 1984 à 2015 (n° 84-435 à n° 2015-1802)"
+    sources:
+      - {type: legifrance, reference: "décret n° 62-420, article 2, quatre versions de 1981 à 2015, et décrets annuels de 1984 à 1988 lus dans l'index LEGI", date: "2026-09-22"}
+      - {type: jorf, reference: "décrets annuels de 1990 à 2015 lus dans l'index JORF : classe spéciale de 1 134 F en 1990 à 448 € en 2015, classe A de 2 712 F en 1995 à 792 € en 2011 ; 1989 n'a que son sommaire", date: "2026-09-22"}
+      - {type: autre, reference: "IRCEC, communiqué du 27 janvier 2016 (« 80 % des adhérents cotisent sur la base » la plus basse) et guide de la retraite 2026 : Spike, « fidèle de la classe C », a versé 2 694 € en 2016 pour 36 points — six fois la classe spéciale de 449 € que fixe le décret n° 2015-1802", url: "https://www.ircec.fr/wp-content/uploads/2026/02/guide-de-la-retraite-ircec.pdf", date: "2026-09-22"}
+    verifie_le: "2026-09-22"
+    temoins: []
+    reformes: [ircec_1981_classes]
+    etat: approximation
+    effet: >-
+      La fiche prélevait 8 % du revenu avant 2016 — un taux qu'aucun texte ne
+      porte — et servait donc, à un revenu moyen, quatre à six fois les points
+      de la classe d'office. Depuis le 22 septembre 2026, les années 1981 à
+      2015 servent six points par an (`points_maximum`) valorisés à la valeur
+      de service de la caisse, et portent au compte notionnel le montant de la
+      classe (`classes_cotisation.csv`) ; tenu par tests/test_ircec_auteurs.py.
+      Les témoins des trois statuts d'auteur perdent de 7 à 27 % au scénario
+      1. Approximations : de 1981 à mai 2004, les assujettis du b de
+      l'article 1er — sans doute les musiciens et compositeurs — étaient
+      inscrits d'office en classe A, douze points pour le double, et la fiche
+      leur sert la classe spéciale ; les montants de 1981 à 1983 et de 1989
+      sont reportés de la grille voisine au rapport des plafonds.
+    a_faire: >-
+      La rédaction de l'article 1er antérieure à 2004 n'est pas dans l'index :
+      la lire dirait qui étaient les assujettis du a et du b, et si les
+      auteurs lyriques du modèle relevaient de la classe A. Avant 1981, la
+      forme de la cotisation n'est pas connue et la fiche garde 8 %.
+    prochaine_veille: "2027-06-30"
+
 journal:
   - date: "2026-09-19"
     session: "le net et le brut, d'un bout à l'autre du simulateur"

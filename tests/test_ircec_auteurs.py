@@ -18,6 +18,12 @@ n° 61-1304 [le RACL] et n° 64-226 [le RACD], le taux de la cotisation au
 régime institué par le présent décret est égal à la moitié de celui prévu au
 I ». Le modèle prélevait 8 % aux auteurs dramatiques et aux compositeurs, et
 leur servait donc le double des points du RAAP qu'ils acquièrent.
+
+**La classe spéciale d'avant 2016.** Le RAAP ne prélevait pas un taux mais
+une classe — six points par an pour la classe spéciale, douze à quarante-huit
+pour les classes A à D —, que l'assuré choisissait ; « à défaut d'option »,
+il était « inscrit d'office en classe spéciale » (décret n° 62-420, article 2,
+de 1981 à 2015). La fiche prélevait 8 % du revenu, qu'aucun texte ne porte.
 """
 
 from __future__ import annotations
@@ -127,3 +133,35 @@ def test_la_fiche_au_taux_amenage_emprunte_le_rendement_du_raap(simulateur):
     trouvé aucune ligne, et la pension serait tombée à zéro sans rien dire."""
     _, auteur = _calculer(simulateur, "auteur_lyrique", 1994, 22.0, 64.0)
     assert "rendement 10.80%" in auteur["ircec_raap_taux_amenage"].detail
+
+
+def test_la_classe_speciale_sert_six_points_par_an_quel_que_soit_le_revenu(
+        simulateur):
+    """Né en 1960, entré en 1982 : trente-quatre années de classe spéciale
+    jusqu'en 2015, soit 204 points — au revenu moyen comme au triple."""
+    for niveau in (1.0, 3.0):
+        carriere = Carriere.depuis_parcours(
+            annee_naissance=1960, sexe="H",
+            metiers=[Metier(affiliation="artiste_auteur", age_debut=22.0,
+                            niveau_salaire=niveau)],
+            age_liquidation=64.0, macro=simulateur.macro,
+        )
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        raap = next(p for p in resultat.pensions_par_regime
+                    if p.regime == "ircec_raap")
+        assert "204.00 points" in raap.detail, (niveau, raap.detail)
+
+
+def test_la_classe_speciale_coute_ce_que_le_decret_de_l_exercice_fixe(
+        simulateur):
+    """Au compte notionnel, le montant de la classe : 876 F en 1984, la moitié
+    de la classe A de 3 000 F en 2000, 448 € en 2015 — quel que soit le revenu."""
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.regimes import ClassesCotisation
+
+    classes = ClassesCotisation(RACINE_DONNEES)
+    for annee, attendu in ((1984, 876 / 6.55957), (2000, 1500 / 6.55957),
+                           (2015, 448.0)):
+        for revenu in (10_000.0, 90_000.0):
+            montant, _ = classes.cotisation("ircec_raap", annee, revenu)
+            assert montant == pytest.approx(attendu, abs=0.01), (annee, revenu)
