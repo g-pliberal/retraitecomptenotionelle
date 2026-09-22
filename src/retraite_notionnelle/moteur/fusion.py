@@ -23,8 +23,8 @@ module qui ne suive pas la règle littérale. Le retenir « au plus défavorable
 n'aurait pas de sens : un taux plus faible réduit les droits, mais réduit tout
 autant les prélèvements, et déséquilibrerait le régime sans rien démontrer.
 Retenir le taux le plus élevé n'est pas meilleur : le maximum tombe sur le taux
-de tranche 2 de l'Agirc-Arrco (21,59 %), qui ne s'applique aujourd'hui qu'à la
-part de rémunération supérieure au plafond.
+d'équilibre d'une caisse publique, fixé pour combler un déficit et non pour
+ouvrir des droits (la valeur est dans ``docs/methodologie.md`` §7, recalculée).
 
 Le régime fusionné retient donc, par défaut, la **somme des taux d'un statut
 pivot** — régime général plus Agirc-Arrco pour un salarié du privé — c'est-à-dire
