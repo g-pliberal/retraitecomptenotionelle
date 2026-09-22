@@ -142,3 +142,61 @@ carpv_complementaire,2026,76994,10234,haute
 carpv_complementaire,2026,102659,12642,haute
 carpv_complementaire,2026,128324,15050,haute
 carpv_complementaire,2026,,16856,haute
+# RAAP : LA CLASSE SPÉCIALE, 1984-2015. Avant la réforme de 2016, le régime
+# ne prélevait pas un taux mais une CLASSE : « le régime comporte cinq classes
+# de cotisation ainsi définies : Classe spéciale : portant attribution annuelle
+# de 6 points de retraite ; Classe A : 12 points ; B : 24 ; C : 36 ; D : 48 »,
+# les montants de A à D étant « deux, quatre, six et huit fois » celui de la
+# classe spéciale (décret n° 62-420, article 2, rédaction du 1er janvier 1981,
+# LEGIARTI000006781619). La classe se CHOISISSAIT, et c'est ce qui la tenait
+# hors du modèle ; mais « à défaut d'option, les personnes mentionnées à
+# l'article 1er […] sont inscrites d'office en classe spéciale » (même article,
+# rédaction de 2004, LEGIARTI000018123994 ; en 1981 déjà pour les artistes
+# graphiques et plastiques). Le dépôt ne prête jamais un choix qu'il ne connaît
+# pas : c'est la classe d'office qui entre ici, une ligne par exercice et sans
+# borne, et l'IRCEC écrit que « 80 % des adhérents » cotisaient sur la base la
+# plus basse. La fiche `ircec_raap` lui sert SIX POINTS par an
+# (`points_maximum`), la grille ne portant que ce qui a été versé.
+#
+# OÙ SE LISENT LES MONTANTS : un décret par exercice, lu dans les index LEGI et
+# JORF du dépôt — décrets n° 84-435 (1984), 85-1086, 86-1022, 87-296, 88-94,
+# 90-311, 91-864, 92-326, 93-646, du 6 juillet 1994, 95-517, 96-1003, 97-830,
+# 98-599, 99-959, 2000-1082, 2001-1182, 2002-1525, 2003-1214, 2004-1095,
+# 2005-1683, 2006-1579, 2007-1437, 2008-1303, 2009-1635, 2010-1253, 2011-674,
+# 2012-1528, 2013-1081, 2014-1639 et 2015-1802. Jusqu'en 1994 et depuis 2012 ils
+# fixent la classe spéciale ; de 1995 à 2011 la classe A, « classe de
+# référence », dont la classe spéciale est la moitié. Francs convertis à
+# 6,55957. Le décret n° 89-313 n'a que son sommaire dans l'index : 1989 prend
+# la grille de 1988 au rapport des plafonds, comme tout exercice sans grille,
+# et 1981 à 1983, antérieurs au premier montant lu, celle de 1984.
+ircec_raap,1984,,133.55,haute
+ircec_raap,1985,,142.69,haute
+ircec_raap,1986,,150.01,haute
+ircec_raap,1987,,154.58,haute
+ircec_raap,1988,,160.07,haute
+ircec_raap,1990,,172.88,haute
+ircec_raap,1991,,180.65,haute
+ircec_raap,1992,,187.51,haute
+ircec_raap,1993,,194.83,haute
+ircec_raap,1994,,200.32,haute
+ircec_raap,1995,,206.72,haute
+ircec_raap,1996,,212.21,haute
+ircec_raap,1997,,217.7,haute
+ircec_raap,1998,,222.27,haute
+ircec_raap,1999,,225.93,haute
+ircec_raap,2000,,228.67,haute
+ircec_raap,2001,,234.16,haute
+ircec_raap,2002,,243.0,haute
+ircec_raap,2003,,252.0,haute
+ircec_raap,2004,,264.0,haute
+ircec_raap,2005,,276.0,haute
+ircec_raap,2006,,285.0,haute
+ircec_raap,2007,,303.0,haute
+ircec_raap,2008,,364.0,haute
+ircec_raap,2009,,381.0,haute
+ircec_raap,2010,,387.0,haute
+ircec_raap,2011,,396.0,haute
+ircec_raap,2012,,409,haute
+ircec_raap,2013,,426,haute
+ircec_raap,2014,,438,haute
+ircec_raap,2015,,448,haute

@@ -111,6 +111,14 @@ reformes:
         tous les salariés dès 1961, et l'inventaire porte comme manque les
         années 1961-1972 prêtées à qui n'était pas affilié.
 
+  - code: ircec_1981_classes
+    date: 1981-01-01
+    texte: {reference: "décret n° 62-420 du 11 avril 1962, article 2 dans sa rédaction du 1er janvier 1981 (cinq classes de 6 à 48 points, classe spéciale d'office à défaut d'option)", id: LEGIARTI000006781619}
+    parametres: [cotisation_par_classes, points_maximum]
+    regimes: [ircec_raap]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: retraite_60_ans_1983
     date: 1983-04-01
     texte: {reference: "ordonnance n° 82-270 du 26 mars 1982 relative à l'abaissement de l'âge de la retraite", id: LEGITEXT000006069322}

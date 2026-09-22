@@ -6148,6 +6148,32 @@ point, se lisait sous le code de la fiche et non sous celui du régime dont elle
 emprunte le barème. Une fiche `points_de` sans valeur du point connue aurait vu
 sa pension tomber à zéro sans rien dire ; aucune ne l'était encore.
 
+**Et avant 2016, le RAAP n'était pas un taux mais une classe.** La fiche le
+savait — un paragraphe entier y expliquait que la classe était un CHOIX, et
+qu'aucun modèle ne devine le choix d'un assuré — et en concluait qu'il fallait
+prélever 8 % du revenu, taux qu'aucun texte ne porte. Le même article 2 du
+décret n° 62-420 qui crée les classes, en 1981, dit pourtant ce que devient
+qui ne choisit pas : « à défaut d'option », il est « inscrit d'office en classe
+spéciale », six points par an. C'est la classe que le dépôt sert désormais,
+par la règle qu'il applique partout — ne jamais prêter un choix qu'on ne
+connaît pas —, et c'est celle de « 80 % des adhérents », selon la caisse. Ses
+montants sont au Journal officiel, un décret par exercice : 876 F en 1984,
+1 500 F en 2000, 448 € en 2015. Le guide 2026 de l'IRCEC les recoupe sans le
+vouloir : Spike, « fidèle de la classe C », a versé 2 694 € en 2016 pour 36
+points, six fois les 449 € de la classe spéciale que fixe le décret de cette
+année-là. À un revenu moyen, la fiche servait quatre à six fois les points de
+la classe d'office ; les témoins des artistes-auteurs perdent de 7 à 27 % au
+scénario 1, et leur compte notionnel ce qu'ils n'avaient pas versé.
+
+Ce que la classe laisse approché : de 1981 à mai 2004, les assujettis du b de
+l'article 1<sup>er</sup> — sans doute les musiciens et les compositeurs, la
+rédaction d'alors n'étant pas dans l'index — étaient inscrits d'office en
+classe A, douze points pour le double, et la fiche leur sert la classe
+spéciale ; les montants de 1981 à 1983 et de 1989 sont reportés de la grille
+voisine ; et avant le 29 mai 2004, le régime ne visait pas encore tous les
+artistes-auteurs, quand le modèle y affilie écrivains et photographes dès
+1977.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -8260,7 +8286,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2099<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2101<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
