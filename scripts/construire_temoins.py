@@ -475,6 +475,18 @@ def _cas() -> list[dict]:
     cas.append(("primes_fonction_publique", {
         "statut": "fonctionnaire_etat", "primes": "0.22",
     }))
+    # Les trois régimes de l'IRCEC ont leur propre barème de minoration — 2,5 %
+    # pour chacune des deux premières années manquantes, 5 % ensuite, ou le
+    # coefficient du régime de base s'il est plus favorable — et le RAAP comme
+    # le RACD majorent de 10 % la pension de qui a eu trois enfants. Les
+    # témoins des statuts d'auteur ont tous une carrière complète et aucun
+    # enfant : ni le barème ni la majoration n'étaient comparés au portage. Une
+    # autrice dramatique entrée à quarante ans, mère de trois enfants, les fait
+    # jouer tous les deux, au RAAP comme au RACD.
+    cas.append(("auteur_dramatique_carriere_courte", {
+        "statut": "auteur_dramatique", "naissance": "1970", "debut": "40",
+        "enfants": "3", "sexe": "F",
+    }))
     cas.append(("enfants", {"enfants": "3", "sexe": "F"}))
 
     # Les trimestres accordés au titre des enfants ne dépendent pas du seul

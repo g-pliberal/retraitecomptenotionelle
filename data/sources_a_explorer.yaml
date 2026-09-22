@@ -2214,6 +2214,16 @@ sources:
       régime de base, et le RACL se liquide « à compter de l'âge du taux
       plein ». Les questions de cotisation reprennent le guide. Déroulée
       pour la retraite ; pas pour l'action sociale ni le recouvrement.
+      RELUE LE MÊME JOUR : la réponse sur le RACL — « la pension RACL se
+      liquide à compter de l'âge du taux plein, ce qui peut entraîner une
+      différence entre l'âge de liquidation au régime général et au RACL » —
+      décrit la règle d'AVANT l'arrêté du 13 mai 2025, qui a donné au RACL le
+      taux plein dès l'âge légal quand le régime de base l'est. Mise à jour le
+      3 mars 2026, la page ne l'a pas suivi : c'est le règlement qui fait foi,
+      et la fiche le suit (`ircec_age_seul` jusqu'en 2024 seulement). Elle
+      donne aussi la majoration de 10 % pour trois enfants au RAAP et au RACD,
+      que les fiches ne portaient pas : voir
+      data/reference/legislation/veille.yaml (`majoration_enfants_ircec`).
 
   - id: ircec_qr_age_ouverture
     url: https://www.ircec.fr/qr/age-douverture-des-droits/
@@ -2223,7 +2233,20 @@ sources:
     a_en_tirer: >-
       L'âge d'ouverture des droits dans les trois régimes, et s'il suit celui
       du régime de base ou s'en écarte.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      L'adresse sert un PDF, pas une page : la table des âges d'ouverture et
+      des durées du taux plein, en deux colonnes — retraites prenant effet
+      jusqu'au 1er août 2026, puis à compter du 1er septembre 2026. La seconde
+      est, génération par génération, celle de
+      data/reference/legislation/age_ouverture_requis.csv et
+      duree_assurance_requise.csv — 62 ans et 9 mois et 170 trimestres pour
+      1964 et le premier trimestre de 1965, 63 ans et 171 ensuite, 64 ans et
+      172 à partir de 1969 : un troisième organisme qui recoupe la table du
+      dépôt après la Cnav. Les trois régimes suivent l'âge légal du régime de
+      base ; ils ne s'en écartent que par le taux plein, voir
+      `minoration_ircec` au registre de veille.
 
   - id: ircec_memo
     url: https://www.ircec.fr/wp-content/uploads/2026/02/mon-memo-ircec.pdf
