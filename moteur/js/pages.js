@@ -2659,23 +2659,44 @@ function refus(rang, phrase) {
   );
 }
 
+//: Ce que le champ de revenu ne demande PAS, et ce qu'un retraité saisit à la
+//: place. Commun aux quatre compléments — la confusion ne tient ni au mode, ni
+//: au statut, ni à l'unité —, et posé là plutôt que dans un encadré : c'est
+//: devant le champ qu'on se demande quoi y écrire.
+const APPEL_REVENU_RETRAITE = " Jamais une pension : la pension est ce que le "
+  + "simulateur CALCULE, et l'écrire ici reviendrait à cotiser sur elle — la "
+  + "pension rendue serait celle de quelqu'un qui aurait gagné, toute sa vie, "
+  + "ce que vous touchez une fois à la retraite. Déjà à la retraite ? Écrivez "
+  + "ce que vous gagniez en travaillant, au milieu de votre carrière — ou "
+  + "déposez votre relevé, plus bas, qui écrit la carrière année par année et "
+  + "dispense de l'estimer.";
+
 /**
  * Le champ « combien gagnez-vous », dans l'unité choisie. Le libellé porte le
  * mot « brut » et l'aide dit où le lire : c'est la question qui revenait le plus
  * souvent devant ce formulaire, et elle se règle là, sur le champ, plutôt que
  * dans un encadré qu'on lit après avoir répondu.
+ *
+ * Il porte aussi « d'activité », et c'est la question suivante. « Revenu
+ * mensuel », sous une date de départ qui peut être passée, se lit comme « ce
+ * que vous touchez aujourd'hui » : un actif y met son salaire, un retraité y
+ * mettrait sa pension. Rien ne clocherait : le modèle cotiserait sur ce montant
+ * comme sur un salaire, et rendrait une pension bien plus petite que celle
+ * qu'il touche — un résultat faux, mais vraisemblable, qui ne se détecte pas à
+ * l'œil. D'où la mise en garde sur le champ, et non ailleurs.
  */
 function champRevenu(nom, saisie, echelle, valeur, bref = false) {
   if (!saisie.revenu_en_euros) {
     const aideMultiple = bref
       ? "en multiples du salaire moyen brut"
       : `1 = salaire moyen, soit ${g.euros(echelle.mensuel(1))} bruts par mois`;
-    return g.champ(nom, "Niveau de revenu", valeur, aideMultiple, "number",
+    return g.champ(nom, "Niveau de revenu d'activité", valeur, aideMultiple,
+      "number",
       { min: "0.1", max: "10", step: nombreBrut(PAS_MULTIPLE) },
       bref ? ""
         : "Le modèle raisonne en multiples du salaire moyen par tête : c'est "
           + "l'unité qui garde son sens sur quatre-vingts ans, quand un montant "
-          + "n'en a que rapporté à son année.");
+          + "n'en a que rapporté à son année." + APPEL_REVENU_RETRAITE);
   }
   // « Revenu » et non « salaire » : douze des vingt-deux statuts ne sont pas
   // salariés, et un artisan n'a ni salaire ni fiche de paie. Le brut garde le
@@ -2717,8 +2738,9 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
       + "salarié, la ligne « brut » de la fiche de paie. Le modèle le suit "
       + "ensuite le long du salaire moyen, année après année.";
   }
-  return g.champ(nom, `Revenu ${mot} mensuel`, valeur, aide, "number",
-    { min: "0", step: "1" }, bref ? "" : complement);
+  return g.champ(nom, `Revenu d'activité ${mot} mensuel`, valeur, aide, "number",
+    { min: "0", step: "1" },
+    bref ? "" : complement + APPEL_REVENU_RETRAITE);
 }
 
 /**
@@ -2868,7 +2890,8 @@ function champsMetier(rang, debut, calcul, statut, salaire, statuts, saisie, ech
 /**
  * Une période : un `<fieldset>`, et son rang en `<legend>`.
  *
- * « Revenu brut mensuel » et « Métier, ou période sans emploi » sont les mêmes
+ * « Revenu d'activité brut mensuel » et « Métier, ou période sans emploi »
+ * sont les mêmes
  * libellés dans chaque bloc ; seul le rang les distingue. Un intertitre
  * ordinaire le montrerait à l'œil sans le dire à personne d'autre : la légende
  * d'un groupe, elle, est énoncée avec chacun des champs qu'elle couvre.

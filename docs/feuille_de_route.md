@@ -13123,3 +13123,40 @@ dépôt ne porte pour aucun régime spécial.
 construction — âge d'ouverture majoré de cinq ans — et leurs textes n'ont pas
 été lus. Si la réforme de 2023 les a traitées comme les IEG, deux autres fiches
 décotent de trop. C'est la première chose à faire du prochain lot.
+
+### 97. Quel salaire faut-il rentrer ? Celui du travail, et jamais la pension — `fait`
+
+**Demande.** « Sur le simulateur, il faut rentrer quel salaire ? Moi je rentre
+mon salaire actuel, mais un retraité veut rentrer sa retraite actuelle. J'ai
+l'impression que ce n'est pas si clair que ça. »
+
+**Le champ demandait « Revenu net mensuel », et la date de départ juste
+au-dessus peut être passée.** Les deux ensemble se lisent « ce que vous touchez
+aujourd'hui ». Un actif y met son salaire, ce qui est la bonne réponse ; un
+retraité y mettrait sa pension, et **rien ne clocherait** : le modèle
+cotiserait sur ce montant comme sur un salaire, et rendrait une pension bien
+plus petite que celle qu'il touche déjà. Un résultat faux, vraisemblable, et
+que personne ne peut détecter à l'œil — le pire des trois.
+
+**Le libellé porte maintenant le mot qui tranche : « Revenu d'activité net
+mensuel », « Niveau de revenu d'activité ».** Il se lit sans rien ouvrir, et
+c'est le terme du droit : un revenu d'activité n'est pas un revenu de
+remplacement. Le complément du champ dit ensuite ce qu'un retraité doit saisir
+à la place — ce qu'il gagnait en travaillant, **au milieu de sa carrière**,
+puisque c'est le point sur lequel le profil de carrière est centré —, et le
+renvoie au dépôt du relevé, qui écrit la carrière année par année et dispense
+de l'estimer. La phrase est commune aux quatre compléments du champ : la
+confusion ne tient ni au mode d'affichage, ni au statut, ni à l'unité de
+saisie.
+
+**Reste à décider, et non fait : saisir sa pension POUR DE BON.** Un retraité
+connaît son montant au centime ; le simulateur, lui, lui demande d'estimer un
+salaire d'il y a trente ans. Inverser le scénario 1 — chercher le niveau de
+revenu dont il tire la pension observée, par dichotomie sur un calcul qui est
+monotone en ce niveau — donnerait une carrière calibrée sur un chiffre connu,
+et les trois autres systèmes se calculeraient dessus. C'est une fonctionnalité,
+pas une clarification : elle change ce que le simulateur affirme, et demande sa
+propre action.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
+`tests/test_web.py`, `tests/temoins/pages.json`.
