@@ -389,11 +389,14 @@ def constante(**reglages: str) -> float:
     objet = importlib.import_module(reglages["de"])
     # Une constante de classe se nomme par son chemin : l'âge d'ouverture de
     # l'ASPA est ``MinimumVieillesse.AGE_OUVERTURE``.
-    # et un rang désigne l'élément d'un couple : le salaire d'ancrage est
-    # ``ANCRAGE_SALAIRE_MOYEN.1``, l'année qui le porte ``.0``.
+    # un rang désigne l'élément d'un couple — le salaire d'ancrage est
+    # ``ANCRAGE_SALAIRE_MOYEN.1``, l'année qui le porte ``.0`` —, et une clé
+    # l'entrée d'une table : ``TRANCHES_CATEGORIE.Y_LT30``.
     for morceau in reglages["nom"].split("."):
         if morceau.isdigit() and isinstance(objet, tuple) and int(morceau) < len(objet):
             objet = objet[int(morceau)]
+        elif isinstance(objet, dict) and morceau in objet:
+            objet = objet[morceau]
         elif isinstance(objet, dict) and morceau in objet:
             # Une entrée de dictionnaire, comme l'âge de départ d'un exemple :
             # ``EXEMPLES.sncf.depart``.
