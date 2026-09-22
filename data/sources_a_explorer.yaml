@@ -1637,7 +1637,15 @@ sources:
       Les cotisations d'un artiste-auteur par revenu, y compris la part prise
       en charge : un simulateur officiel pour une population dont les trois
       fiches sont `partiel`.
-    statut: a_explorer
+    statut: explore
+    explore_le: "2026-09-22"
+    note: >-
+      Un formulaire Drupal à étapes, pour un artiste-auteur ou un diffuseur,
+      qui applique « les taux de l'année actuellement en vigueur » : ceux de
+      la page des taux, lus sur cette page même. Il ne calcule aucune pension
+      et n'a pas d'historique ; l'interroger n'apprendrait rien que
+      docs/limites.md n'écrive déjà. Laissé `explore` : un navigateur
+      pourrait vérifier qu'il applique bien la prise en charge de l'État.
 
   - id: saa_validation_trimestres
     url: https://www.secu-artistes-auteurs.fr/artiste-auteur/mes-evenements-de-vie/retraite/validation-de-trimestres
@@ -1648,7 +1656,14 @@ sources:
       Le seuil de revenu qui valide un trimestre pour un artiste-auteur, et le
       mécanisme de cotisation volontaire qui permet d'en valider quatre : une
       règle d'acquisition que le dépôt applique au seul salaire.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      150 SMIC horaires d'assiette sociale par trimestre, quatre au plus par
+      an, revenus portés au compte dans la limite du plafond : la règle du
+      régime général (R. 351-9), que le modèle applique aux artistes-auteurs
+      comme aux salariés — data/reference/legislation/validation_trimestres.csv.
+      Rien à corriger.
 
   - id: saa_age_montant
     url: https://www.secu-artistes-auteurs.fr/artiste-auteur/mes-evenements-de-vie/retraite/age-et-montant-de-la-retraite
@@ -1657,7 +1672,17 @@ sources:
     regimes: [regime_general, ircec_raap]
     a_en_tirer: >-
       Ce que touche un artiste-auteur, base et complémentaire IRCEC réunies.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Âges d'après la suspension de 2026, vingt-cinq meilleures années, taux
+      de 37,5 à 50 %, minimum contributif, taux plein automatique à
+      soixante-sept ans : le droit du régime général, tel que le modèle
+      l'applique aux artistes-auteurs (data/reference/legislation/). Deux
+      choses qu'il ne modélise pas : la retraite progressive, que les
+      artistes-auteurs demandent au titre des indépendants, et le cumul
+      intégral emploi-retraite. Le guide pratique « Retraite de base des
+      artistes-auteurs » (avril 2026) dit la même chose.
 
   - id: saa_assiette_sociale
     url: https://www.secu-artistes-auteurs.fr/artiste-auteur/mon-activite-artistique/cotisations-et-contributions-sociales/assiette-sociale
@@ -1667,7 +1692,15 @@ sources:
     a_en_tirer: >-
       L'assiette : bénéfice ou recettes majorées de 15 %, option annuelle.
       Le choix d'assiette change les droits, et le dépôt n'en porte qu'un.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Assiette sociale : 100 % du brut en traitements et salaires ; en
+      micro-BNC, chiffre d'affaires moins 34 % puis plus 15 % ; en déclaration
+      contrôlée, bénéfice plus 15 %. Le modèle prend le revenu saisi pour
+      l'assiette : rien à y changer, la conversion relève de la saisie. Le
+      détail des revenus artistiques et accessoires éligibles n'a pas d'effet
+      sur le calcul (docs/limites.md, section des artistes-auteurs).
 
   - id: saa_taux_cotisations
     url: https://www.secu-artistes-auteurs.fr/artiste-auteur/mon-activite-artistique/cotisations-et-contributions-sociales/taux-de-cotisations
@@ -1677,7 +1710,21 @@ sources:
     a_en_tirer: >-
       Les taux, dont le taux vieillesse plafonné et déplafonné, et la
       contribution diffuseur.
-    statut: a_explorer
+    statut: epuise
+    explore_le: "2026-09-22"
+    note: >-
+      Taux 2023 à 2026, et le document « Historique des taux de cotisations »
+      de l'organisme, de 1977 à 2024. L'auteur paie la vieillesse du
+      SALARIÉ au taux du salarié — plafonnée 6,55 % jusqu'en 2005, 6,65 %,
+      6,75, 6,80, 6,85, 6,90 % depuis 2016 ; déplafonnée de 0,10 à 0,40 % —,
+      recoupée point par point avec la part salariale de la fiche du régime
+      général ; l'État en prend 0,75 point et toute la déplafonnée depuis
+      2019. Le diffuseur ne verse que 1 % pour toutes les branches (1,10 % avec
+      la formation depuis 2012) : le compte notionnel prête pourtant aux
+      auteurs la part patronale d'un salarié, 54 % des sommes portées au
+      compte du témoin de l'artiste-auteur dans le scénario rétroactif
+      patronal. Écrit dans docs/limites.md, correctif proposé à la feuille de
+      route ; scénario 1 inchangé.
 
   - id: ircec_liens
     url: https://www.ircec.fr/liens/

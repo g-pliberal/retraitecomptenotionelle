@@ -3101,3 +3101,32 @@ journal:
       4 % au RAAP et la cotisation de solidarité du RACD (1 % à 4 % de 2024 à
       2027), non modélisés. Les simulateurs de la Sécurité sociale des
       artistes-auteurs et de mon-entreprise, du même lot, restent à dépouiller.
+
+  - date: "2026-09-22"
+    session: "action 89, seconde passe sur les artistes-auteurs (IRCEC, Sécurité sociale des artistes auteurs)"
+    consulte: >-
+      Les règlements du RAAP, du RACD et du RACL, le guide et le mémo 2026 de
+      l'IRCEC, sa foire aux questions et sa table des âges ; dans l'index JORF,
+      les arrêtés d'approbation de 2013, 2017, 2021, 2024 et 2025 et les
+      décrets annuels de cotisations de 1990 à 2015 ; dans l'index LEGI, le
+      décret n° 62-420 (articles 1 et 2, toutes versions), le décret
+      n° 2015-1877 et les décrets annuels de 1984 à 1988 ; les cinq pages et
+      les deux documents (historique des taux, guide de la retraite) de la
+      Sécurité sociale des artistes auteurs. L'index LEGI mis à jour au
+      22 septembre 2026 ne porte aucune version de L. 161-17-2 ni de
+      L. 161-17-3 postérieure au 31 décembre 2025.
+    trouve: >-
+      Trois règles que le scénario 1 n'appliquait pas : la majoration de 10 %
+      pour trois enfants du RAAP (depuis 2014) et du RACD (depuis 2024) ; le
+      RAAP à la moitié du taux pour qui cotise au RACD ou au RACL (depuis
+      2016) ; la classe spéciale d'office de 1981 à 2015, six points par an,
+      aux montants des décrets annuels, à la place des 8 % du revenu que la
+      fiche prélevait. Lignes `majoration_enfants_ircec`,
+      `raap_taux_amenage_racd_racl` et `raap_classe_speciale`. La table des
+      âges de l'IRCEC recoupe celle du dépôt ; la cotisation vieillesse des
+      artistes-auteurs est celle du salarié, recoupée de 1991 à 2024.
+    reste: >-
+      La classe A d'office des musiciens avant 2004 ; la forme de la
+      cotisation au RAAP avant 1981 ; les minimums de points et le seuil
+      d'affiliation des trois régimes. Hors scénario 1 : la part patronale que
+      le compte notionnel prête aux auteurs, sans diffuseur qui la verse.

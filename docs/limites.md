@@ -6174,6 +6174,42 @@ voisine ; et avant le 29 mai 2004, le régime ne visait pas encore tous les
 artistes-auteurs, quand le modèle y affilie écrivains et photographes dès
 1977.
 
+### Les artistes-auteurs n'ont pas d'employeur, et leur compte notionnel en porte un
+
+Les pages de la Sécurité sociale des artistes auteurs, lues le 22 septembre
+2026 (action 89), ne changent rien au scénario 1 : le droit du régime général
+s'y applique tel quel — cent cinquante SMIC horaires par trimestre, vingt-cinq
+meilleures années, les âges d'après la suspension —, et c'est ce que le modèle
+fait. Elles changent le compte notionnel.
+
+**Ce que l'auteur et son diffuseur versent.** L'historique des taux que publie
+l'organisme, de 1977 à 2024, le dit année par année : l'auteur paie la
+cotisation vieillesse du SALARIÉ, au taux du salarié — 6,55 % plafonnée
+jusqu'en 2005, 6,65 %, puis 6,75, 6,80, 6,85 et 6,90 % depuis 2016, et la
+déplafonnée de 0,10 à 0,40 % —, recoupée point par point avec la part
+salariale de la fiche du régime général. Le diffuseur, lui, ne verse qu'une
+« contribution diffuseur » de 1 % de la rémunération artistique, pour toutes
+les branches, et 0,1 % de formation depuis 2012. Depuis 2019, l'État prend en
+charge 0,75 point de la plafonnée et toute la déplafonnée.
+
+**Ce que le compte porte.** Le statut `artiste_auteur` n'est pas marqué
+`sans_employeur` — le diffuseur verse bien quelque chose —, et le compte lui
+prête donc la part patronale d'un salarié : 8,55 % plafonnée et 2,11 %
+déplafonnée en 2026. Sur le témoin de l'artiste-auteur, 199 962 € des
+372 038 € portés au compte dans le scénario rétroactif « salariale +
+patronale » sont cette part, qu'aucun diffuseur n'a versée : 54 %. Les
+scénarios 4 et 5 des trois statuts d'auteur en sont surévalués d'autant ; les
+scénarios 2 et 3, qui ne portent que la part de l'assuré, sont justes à
+1,15 point près depuis 2019.
+
+**Pourquoi ce n'est pas corrigé dans la même passe.** Le correctif est un
+drapeau de statut — la part salariale portée au compte, aucune part patronale
+— lu par le compte notionnel et par la fiche de paie, dans les deux moteurs.
+Il demande un arbitrage que les pages ne tranchent pas : la contribution de
+1 % finance toutes les branches, et rien ne dit quelle part en revient à la
+vieillesse. Le compter pour zéro sous-évalue un peu ; le porter en entier
+surévalue. C'est une action à part, que la feuille de route nomme.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
