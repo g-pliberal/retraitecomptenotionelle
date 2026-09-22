@@ -80,6 +80,28 @@ fichiers:
     defaut: produit
 
   # ------------------------------------------------------------------------
+  # Le chiffrage budgétaire : une prose DATÉE autour de tableaux que
+  # `scripts/chiffrage_plf.py` recalcule. Le régime est donc `recit` — le
+  # document raconte ce que ces chiffres voulaient dire le 22 septembre 2026,
+  # et le rafraîchir serait réécrire un avis rendu — mais aucun chiffre n'y est
+  # pour autant un souvenir : tous sont dans des blocs produits, que
+  # `test_le_chiffrage_plf_n_est_pas_perime` refuse de laisser vieillir. C'est
+  # le partage que `blocs_produits` sert ailleurs, appliqué à un document
+  # entier.
+  # ------------------------------------------------------------------------
+  docs/chiffrage_plf.md:
+    defaut: recit
+    blocs_produits:
+      - fait_central
+      - arbitrages
+      - annuel_retroactif
+      - horizon_retroactif
+      - annuel_prospectif
+      - horizon_prospectif
+      - prelevements
+      - agregats
+
+  # ------------------------------------------------------------------------
   # Le reste s'arbitre section par section, et ce qui reste se ressemble : des
   # sections au présent dont chaque chiffre est une mesure du modèle — un
   # écart en pourcentage, un montant, une part de PIB — et qui demandent donc
