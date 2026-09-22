@@ -129,11 +129,18 @@ def _cmap(contenu: bytes) -> Table:
         for src, dst in re.findall(rb"<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>", bloc):
             table[int(src, 16)] = caracteres(dst)
     for bloc in re.findall(rb"beginbfrange(.*?)endbfrange", contenu, re.S):
-        for debut, fin, dst in re.findall(
-            rb"<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>\s*<([0-9A-Fa-f]+)>", bloc
-        ):
-            premier = int(dst, 16)
-            for i, code in enumerate(range(int(debut, 16), int(fin, 16) + 1)):
+        for debut, fin, destinations in _plages(bloc):
+            premiere = int(debut, 16)
+            derniere = int(fin, 16)
+            if isinstance(destinations, list):
+                # La forme TABLEAU : une destination par code, dans l'ordre.
+                for i, dst in enumerate(destinations):
+                    if premiere + i > derniere:
+                        break
+                    table[premiere + i] = caracteres(dst)
+                continue
+            premier = int(destinations, 16)
+            for i, code in enumerate(range(premiere, derniere + 1)):
                 # Une destination hors du plan Unicode — les rapports à la CCSS
                 # en portent, dans des plages que rien n'utilise — ne doit pas
                 # faire tomber la lecture de tout le document.
@@ -141,6 +148,57 @@ def _cmap(contenu: bytes) -> Table:
                     break
                 table[code] = chr(premier + i)
     return table
+
+
+#: Les jetons d'un bloc ``bfrange`` : un hexadécimal entre chevrons, ou l'un
+#: des deux crochets qui encadrent une liste de destinations.
+JETON_CMAP = re.compile(rb"<([0-9A-Fa-f]+)>|([\[\]])")
+
+
+def _plages(bloc: bytes) -> list[tuple[bytes, bytes, bytes | list[bytes]]]:
+    """Les entrées d'un bloc ``bfrange``, lues jeton par jeton.
+
+    Une entrée s'écrit de DEUX façons, et la norme les mêle dans le même bloc :
+    ``<début> <fin> <destination>``, où les codes suivants se déduisent en
+    ajoutant un, et ``<début> <fin> [ <dst> <dst> … ]``, où chaque code a la
+    sienne. L'estimation retraite d'Info Retraite écrit les deux.
+
+    Une expression régulière qui cherchait trois hexadécimaux d'affilée
+    ignorait les crochets et lisait À CHEVAL sur les entrées : la première
+    destination du tableau devenait la destination de toute la plage, les deux
+    suivantes se recollaient à l'entrée d'après, et de proche en proche TOUTE
+    la table se décalait. Le document sortait en lettres fausses — et ses
+    chiffres, tombés sur des codes de contrôle, ne sortaient pas du tout. On
+    lit donc les jetons dans l'ordre, crochets compris.
+    """
+    jetons = JETON_CMAP.findall(bloc)
+    entrees: list[tuple[bytes, bytes, bytes | list[bytes]]] = []
+    rang = 0
+    while rang + 2 < len(jetons) + 1:
+        if jetons[rang][1]:
+            # Un crochet là où l'on attend un début de plage : entrée abîmée,
+            # on le saute plutôt que de décaler tout ce qui suit.
+            rang += 1
+            continue
+        if rang + 1 >= len(jetons) or jetons[rang + 1][1]:
+            break
+        debut, fin = jetons[rang][0], jetons[rang + 1][0]
+        rang += 2
+        if rang >= len(jetons):
+            break
+        if jetons[rang][1] == b"[":
+            rang += 1
+            destinations = []
+            while rang < len(jetons) and not jetons[rang][1]:
+                destinations.append(jetons[rang][0])
+                rang += 1
+            if rang < len(jetons) and jetons[rang][1] == b"]":
+                rang += 1
+            entrees.append((debut, fin, destinations))
+        else:
+            entrees.append((debut, fin, jetons[rang][0]))
+            rang += 1
+    return entrees
 
 
 def _dictionnaire(objet: bytes, cle: bytes, objets: dict[int, bytes]) -> bytes:
@@ -350,7 +408,7 @@ def _reels(operandes: bytes) -> list[float]:
     return valeurs
 
 
-def _fragments(octets: bytes) -> list[tuple[int, float, float, str]]:
+def _fragments(octets: bytes) -> list[tuple[int, int, float, float, str]]:
     """Reconstitue les lignes visuelles du document, de haut en bas.
 
     LE NUMÉRO DE FLUX FAIT PARTIE DE LA CLÉ, et c'est tout sauf un détail.
@@ -368,7 +426,7 @@ def _fragments(octets: bytes) -> list[tuple[int, float, float, str]]:
     objets = _objets(octets)
     communes = _polices(octets)
     par_contenu = _polices_par_contenu(objets)
-    fragments: list[tuple[int, float, float, str]] = []
+    fragments: list[tuple[int, int, float, float, str]] = []
     for page, (numero, objet) in enumerate(objets.items()):
         # Une image JPEG contient « Tj » une fois sur dix, par hasard : on ne
         # la lit pas comme du texte.
@@ -393,6 +451,18 @@ def _fragments(octets: bytes) -> list[tuple[int, float, float, str]]:
         interligne = 0.0
         police = None
         dans_tableau = False
+        # LE TEXTE TOURNÉ NE SE LIT PAS SUR LES MÊMES LIGNES QUE LE RESTE.
+        # « 0 -1 -1 0 » est un quart de tour : c'est ainsi qu'un producteur
+        # pose un tampon dans la marge, un filigrane, une étiquette d'axe. Ses
+        # glyphes tombent aux ordonnées des lignes du corps de page, et les
+        # regrouper avec elles y insérait des lettres et des chiffres
+        # étrangers — sur l'estimation retraite d'Info Retraite, vingt-deux
+        # caractères par page venaient se coller dans les montants du relevé,
+        # qui devenaient des revenus de deux millions d'euros. La bande — 0
+        # pour le texte droit, 1 pour le texte tourné — entre donc dans la clé
+        # de regroupement, et les deux ne se mélangent plus. Un texte tourné se
+        # lit le long de l'autre axe : sa ligne est son abscisse.
+        bande = 0
         for jeton in JETONS.finditer(contenu):
             if jeton.group("dict"):
                 continue
@@ -401,7 +471,7 @@ def _fragments(octets: bytes) -> list[tuple[int, float, float, str]]:
                 continue
             if jeton.group("nombre"):
                 if dans_tableau and float(jeton.group("nombre")) < ESPACE_DE_TABLEAU:
-                    fragments.append((page, y, x, " "))
+                    fragments.append((page, bande, *((x, -y) if bande else (y, x)), " "))
                 continue
             if jeton.group("bt"):
                 x = y = 0.0
@@ -412,6 +482,7 @@ def _fragments(octets: bytes) -> list[tuple[int, float, float, str]]:
                     continue
                 echelle_x, echelle_y = nombres[0], nombres[3]
                 x, y = nombres[4], nombres[5]
+                bande = 1 if (nombres[1] or nombres[2]) else 0
             elif jeton.group("td"):
                 nombres = _reels(jeton.group("td"))
                 if len(nombres) < 2:
@@ -433,15 +504,16 @@ def _fragments(octets: bytes) -> list[tuple[int, float, float, str]]:
                 morceau = (_hexa(jeton.group("hex"), tables.get(police))
                            if jeton.group("hex")
                            else _litteral(jeton.group("txt")[1:-1], tables.get(police)))
+                ligne, colonne = (x, -y) if bande else (y, x)
                 if morceau.strip():
-                    fragments.append((page, y, x, morceau))
+                    fragments.append((page, bande, ligne, colonne, morceau))
                 elif morceau:
                     # Une chaîne qui n'est qu'une espace est l'espace entre
                     # deux mots que le producteur a posés séparément —
                     # « (Effectif) ( ) (total) » — : la jeter les colle. Une
                     # insécable — la fine des milliers — reste insécable.
                     insecable = morceau.strip(" \t\r\n\f\v")
-                    fragments.append((page, y, x, " " if insecable else " "))
+                    fragments.append((page, bande, ligne, colonne, " " if insecable else " "))
 
     return fragments
 
@@ -456,7 +528,7 @@ def _normaliser(texte: str) -> str:
     return re.sub(r"[ \t\r\n\f\v]+", " ", texte).strip()
 
 
-def _assembler(fragments: list[tuple[int, float, float, str]],
+def _assembler(fragments: list[tuple[int, int, float, float, str]],
                tolerance: float) -> list[str]:
     """Regroupe des fragments déjà triés en lignes visuelles."""
     lignes: list[str] = []
@@ -464,8 +536,8 @@ def _assembler(fragments: list[tuple[int, float, float, str]],
     ordonnee = None
     feuille = None
     abscisse = None
-    for page, y, x, morceau in fragments:
-        meme_ligne = (ordonnee is not None and page == feuille
+    for page, bande, y, x, morceau in fragments:
+        meme_ligne = (ordonnee is not None and (page, bande) == feuille
                       and abs(y - ordonnee) <= tolerance)
         if meme_ligne or ordonnee is None:
             # DEUX FRAGMENTS POSÉS À DES ABSCISSES DIFFÉRENTES SONT SÉPARÉS
@@ -482,7 +554,7 @@ def _assembler(fragments: list[tuple[int, float, float, str]],
         else:
             lignes.append(_normaliser("".join(courante)))
             courante = [morceau]
-        ordonnee, feuille, abscisse = y, page, x
+        ordonnee, feuille, abscisse = y, (page, bande), x
     if courante:
         lignes.append(re.sub(r"\s+", " ", "".join(courante)).strip())
     return [l for l in lignes if l]
@@ -503,7 +575,7 @@ def lignes_pdf(octets: bytes, tolerance: float = 3.0) -> list[str]:
     pages.
     """
     fragments = _fragments(octets)
-    fragments.sort(key=lambda f: (f[0], -f[1], f[2]))
+    fragments.sort(key=lambda f: (f[0], f[1], -f[2], f[3]))
     return _assembler(fragments, tolerance)
 
 
@@ -522,8 +594,8 @@ def lignes_par_page(octets: bytes, tolerance: float = 3.0) -> list[list[str]]:
     fragments, dont le premier champ est déjà le numéro de page.
     """
     fragments = _fragments(octets)
-    fragments.sort(key=lambda f: (f[0], -f[1], f[2]))
-    pages: dict[int, list[tuple[int, float, float, str]]] = {}
+    fragments.sort(key=lambda f: (f[0], f[1], -f[2], f[3]))
+    pages: dict[int, list[tuple[int, int, float, float, str]]] = {}
     for fragment in fragments:
         pages.setdefault(fragment[0], []).append(fragment)
     return [_assembler(pages[page], tolerance) for page in sorted(pages)]

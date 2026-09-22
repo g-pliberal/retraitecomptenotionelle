@@ -627,10 +627,21 @@ function recadrerLesDates(formulaire) {
 /** Les lignes que la lecture n'a pas comprises, montrées et non tues. */
 function lignesIgnorees(ignorees) {
   if (!ignorees.length) { return ""; }
-  const montrees = ignorees.slice(0, 4).map(
-    (ligne) => `<li><code>${neutraliser(ligne)}</code></li>`).join("");
-  const reste = ignorees.length > 4
-    ? `<li>… et ${ignorees.length - 4} autres.</li>` : "";
+  // Tronquées : une couche de doublure colle parfois toute une page sur une
+  // seule ligne, et deux mille caractères de charabia dans le compte rendu
+  // noieraient les quatre lignes qui méritent d'être lues.
+  // LES PLUS COURTES D'ABORD. Ce que le lecteur peut reprendre à la main, ce
+  // sont les lignes de tableau — courtes, une année et deux colonnes. Les
+  // longues sont des couches de doublure où toute une page a été collée bout à
+  // bout : elles ne portent rien qu'il puisse recopier, et l'ordre du document
+  // les faisait passer devant.
+  const rangees = [...ignorees].sort((a, b) => a.length - b.length);
+  const montrees = rangees.slice(0, 4).map((ligne) => {
+    const courte = ligne.length > 90 ? `${ligne.slice(0, 90)}…` : ligne;
+    return `<li><code>${neutraliser(courte)}</code></li>`;
+  }).join("");
+  const reste = rangees.length > 4
+    ? `<li>… et ${rangees.length - 4} autres.</li>` : "";
   return `<p>Lignes non comprises, à reporter à la main s'il le faut :</p>`
     + `<ul>${montrees}${reste}</ul>`;
 }
@@ -664,7 +675,10 @@ async function deposerLeReleve(contenu, fichier) {
     }
 
     const { lireReleve, parametresDe } = await import("./moteur/js/releve-lu.js");
-    const lecture = lireReleve(lignes);
+    // L'année courante borne ce qui peut être une carrière : un relevé ne
+    // rapporte jamais l'avenir, et les documents d'estimation en portent
+    // beaucoup — « En partant au 01/06/2060, vous pourriez avoir droit à… ».
+    const lecture = lireReleve(lignes, new Date().getFullYear());
     if (lecture.lignes.length === 0) {
       dire("Aucune année de carrière n'a été reconnue dans ce fichier. "
         + "S'il s'agit bien d'un relevé, sa mise en page est inconnue du "

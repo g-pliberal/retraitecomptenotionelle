@@ -6759,6 +6759,34 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   d'écran — ne porte aucun texte : rien ne s'y lit, et la page le dit plutôt
   que de rendre une carrière vide sans explication.
 
+  **Ce qu'un vrai document a appris, le 22 septembre 2026.** La lecture avait
+  été écrite contre des relevés d'essai, faute d'en avoir un vrai : aucun n'est
+  public. La première estimation retraite déposée sur le site — celle que
+  délivre Info Retraite — a corrigé quatre défauts d'un coup, et c'est elle qui
+  fixe désormais les règles.
+
+  - **Un relevé porte deux tableaux, et ils se complètent.** L'un donne les
+    trimestres année par année et ne porte aucun revenu ; l'autre donne les
+    revenus par PÉRIODE — « 01/01/2025 31/12/2025 49 150 € » — et ne porte
+    aucun trimestre. Une année se lit donc dans les deux à la fois, et le
+    contrôle est arithmétique : le document annonçait 32 trimestres
+    enregistrés, et la somme de ce qui a été lu en fait 32.
+  - **L'unité écrite l'emporte sur la position.** « 4 trim. », « 203,91 pts »,
+    « 49 150 € » : une caisse écrit toujours ce que ses nombres sont, et s'y
+    fier vaut mieux que de deviner une colonne. C'est ce qui permet de prendre
+    à une ligne d'Agirc-Arrco sa durée sans prendre ses points pour un revenu —
+    et de compter une période que seule la complémentaire a reportée.
+  - **Un document mêle à sa carrière des lignes qui lui ressemblent.** Un pied
+    de page daté, une valeur du point à une date, une phrase française qui
+    porte une année, un montant et des trimestres, et des projections de départ
+    en 2060. Quatre règles les écartent : une période a deux bornes, une ligne
+    de tableau n'est pas une phrase, une ligne de tableau porte quelques
+    nombres et non quarante, et un relevé ne rapporte jamais l'avenir.
+  - **Un PDF peut porter deux fois le même texte** : une couche visible, mise
+    en page, et une couche de doublure où toute une page est collée bout à
+    bout. Additionnée à la première, elle faisait des revenus de deux millions
+    d'euros.
+
 - **La coordination interrégimes.** Chaque régime liquide sur ses seules
   années, et la durée acquise dans chacun est comptée séparément — c'est le
   droit, et un régime et celui qui lui succède comptent pour un seul (voir

@@ -60,6 +60,28 @@ ANNEE_MAXIMALE = 2095
 #: valide jamais plus de quatre trimestres dans une année civile.
 TRIMESTRES_PAR_AN = 4
 
+#: Au-delà, la ligne n'est pas une ligne de tableau. Une année de relevé porte
+#: son millésime, un revenu, des trimestres, parfois des points : cinq nombres
+#: au plus. Quarante nombres sur une ligne, c'est une couche de doublure où
+#: toute une page a été collée bout à bout.
+NOMBRES_PAR_LIGNE = 6
+
+#: Au-delà, la ligne n'est pas une ligne de tableau non plus : c'est une
+#: PHRASE. « Pour valider un trimestre, il faut avoir perçu un certain revenu.
+#: En 2026, il faut avoir perçu au moins 1 803,00 € pour valider 1 trimestre »
+#: porte une année, un montant en euros et des trimestres, tous correctement
+#: étiquetés : rien, dans les nombres, ne la distingue d'une ligne de carrière.
+#: Ce qui l'en distingue, c'est qu'elle est écrite en français. Une cellule de
+#: tableau ne l'est pas : le nom d'un employeur et celui d'une caisse tiennent
+#: en quelques mots.
+MOTS_PAR_LIGNE = 12
+
+#: Ce qui annonce la date du document. Un relevé ne rapporte jamais l'avenir :
+#: les années postérieures à son édition sont des projections — « En partant au
+#: 01/06/2060 … vous pourriez avoir droit à 2 764,30 € » — et non des carrières.
+EDITION = ("edite le", "editee le", "situation au", "releve au", "arrete au",
+           "mis a jour le")
+
 
 @dataclass(frozen=True)
 class Regime:
@@ -321,14 +343,54 @@ def _motif_de(plat: str) -> str | None:
     return None
 
 
-def _nombres(reste: str) -> list[float]:
-    """Les nombres d'une ligne, virgule décimale et milliers recollés."""
+#: Ce qu'une caisse écrit derrière un nombre, et qui dit ce que le nombre est.
+#: C'est l'information la plus sûre d'un relevé, et la seule qui ne dépende pas
+#: de la mise en page : « 49 150 € » est un revenu où qu'il se trouve dans la
+#: ligne, « 4 trim. » une durée, « 203,91 pts » des points. Un tableau qui ne
+#: les écrit pas se lit à la position, comme avant.
+EUROS = ("eur", "euro", "euros")
+POINTS = ("pt", "pts", "point", "points")
+
+
+def _unite(suite: str) -> str | None:
+    """Ce que l'unité écrite derrière un nombre dit de ce nombre.
+
+    Le signe € se cherche sur le texte BRUT : il ne survit pas à la mise à
+    plat, qui ne garde que des lettres et des chiffres. Le reste se lit sur le
+    premier mot qui suit, « trim. » comme « trimestres ».
+    """
+    if suite.lstrip().startswith("\u20ac"):
+        return "revenu"
+    plat = sans_accent(suite)
+    premier = plat.split(" ")[0] if plat else ""
+    if premier in EUROS:
+        return "revenu"
+    if premier.startswith("trim"):
+        return "trimestre"
+    if premier in POINTS:
+        return "point"
+    return None
+
+
+#: Ce qu'on regarde derrière un nombre pour y chercher son unité : de quoi
+#: couvrir « trimestres » sans mordre sur la colonne suivante.
+SUITE_LUE = 12
+
+
+def _nombres(reste: str) -> list[tuple[float, str | None]]:
+    """Les nombres d'une ligne, avec leur unité quand elle est écrite.
+
+    La virgule décimale et les milliers sont recollés ; l'unité est cherchée
+    dans les quelques caractères qui suivent le nombre.
+    """
     valeurs = []
-    for entier, centimes in MONTANT.findall(reste):
+    for trouve in MONTANT.finditer(reste):
+        entier, centimes = trouve.group(1), trouve.group(2)
         nombre = float(re.sub(r"[     ]", "", entier))
         if centimes:
             nombre += float(centimes) / (10 ** len(centimes))
-        valeurs.append(nombre)
+        suite = reste[trouve.end():trouve.end() + SUITE_LUE]
+        valeurs.append((nombre, _unite(suite)))
     return valeurs
 
 
@@ -353,7 +415,9 @@ class _Annee:
     source: str = ""
 
 
-def _annee_et_nombres(ligne: str) -> tuple[int | None, list[float], bool]:
+def _annee_et_nombres(
+    ligne: str,
+) -> tuple[int | None, list[tuple[float, str | None]], bool, bool, int]:
     """L'année de la ligne, les nombres qui restent, et si elle couvre une plage.
 
     Les dates en clair sont retirées d'abord : leurs jours et leurs mois sont
@@ -369,14 +433,25 @@ def _annee_et_nombres(ligne: str) -> tuple[int | None, list[float], bool]:
     annees_des_dates = [int(annee) for _, _, annee in dates]
     plage = len(set(annees_des_dates)) > 1
     annee = None
-    for rang, nombre in enumerate(nombres):
-        if float(nombre).is_integer() and ANNEE_MINIMALE <= nombre <= ANNEE_MAXIMALE:
+    for rang, (nombre, unite) in enumerate(nombres):
+        # Le millésime ouvre la ligne, ou ne porte pas d'unité. La réserve est
+        # pour le tableau qui écrit « 2011 Points Agirc 415,20 » : lue comme
+        # une unité, la colonne suivante ferait de l'année un nombre de points,
+        # et la ligne n'aurait plus de millésime du tout.
+        if (float(nombre).is_integer() and ANNEE_MINIMALE <= nombre <= ANNEE_MAXIMALE
+                and (unite is None or rang == 0)):
             annee = int(nombre)
             nombres = nombres[:rang] + nombres[rang + 1:]
             break
-    if annee is None and annees_des_dates:
+    # L'année peut n'être portée que par une DATE — « 01/01/2025 31/12/2025
+    # 49 150 € » est une ligne de carrière dont le millésime ne s'écrit nulle
+    # part ailleurs. L'appelant a besoin de le savoir : un pied de page
+    # (« 7 / 7 Edité le 22/09/2026 ») porte lui aussi une date, et rien d'autre
+    # qui ressemble à une carrière.
+    par_la_date = annee is None and bool(annees_des_dates)
+    if par_la_date:
         annee = annees_des_dates[0]
-    return annee, nombres, plage
+    return annee, nombres, plage, par_la_date, len(annees_des_dates)
 
 
 def _naissance_de(ligne: str, plat: str) -> str | None:
@@ -390,7 +465,32 @@ def _naissance_de(ligne: str, plat: str) -> str | None:
     return f"{int(annee):04d}-{int(mois):02d}-{int(jour):02d}"
 
 
-def lire_releve(lignes: list[str]) -> Lecture:
+#: Ce qu'on lit devant une date pour savoir si elle est celle du document.
+AVANT_LA_DATE = 24
+
+
+def _annee_du_document(lignes: list[str]) -> int | None:
+    """L'année d'édition du document, quand il la porte en toutes lettres.
+
+    C'est la date qui SUIT le marqueur, et non la plus tardive de la ligne :
+    une couche de doublure colle toute une page sur une seule ligne, et l'on y
+    trouve « Edité le 22/09/2026 » à côté de « En partant au 01/06/2066 ». Lire
+    le maximum de la ligne donnait 2066, et le plafond ne plafonnait plus rien.
+    """
+    derniere = None
+    for ligne in lignes:
+        for trouve in DATE.finditer(ligne):
+            avant = sans_accent(ligne[max(0, trouve.start() - AVANT_LA_DATE):
+                                      trouve.start()])
+            if not any(avant.endswith(marqueur) for marqueur in EDITION):
+                continue
+            annee = int(trouve.group(3))
+            if derniere is None or annee > derniere:
+                derniere = annee
+    return derniere
+
+
+def lire_releve(lignes: list[str], annee_maximale: int | None = None) -> Lecture:
     """Lit un relevé, ligne à ligne, et rend la carrière qu'il décrit.
 
     Quatre règles, et elles suffisent à lire les relevés des deux formes —
@@ -414,6 +514,7 @@ def lire_releve(lignes: list[str]) -> Lecture:
        pas au programme de choisir à sa place un chiffre vraisemblable.
     """
     courant: Regime | None = None
+    section: Regime | None = None
     annees: dict[int, _Annee] = {}
     ignorees: list[str] = []
     regimes: list[str] = []
@@ -421,6 +522,14 @@ def lire_releve(lignes: list[str]) -> Lecture:
     francs = False
     points = False
     naissance: str | None = None
+
+    # Le plafond des années lues : celui que l'appelant donne — le site passe
+    # l'année courante —, resserré par la date d'édition du document quand il
+    # la porte. Ce qui est postérieur est une projection, pas une carrière.
+    edition = _annee_du_document(lignes)
+    if edition is not None:
+        annee_maximale = edition if annee_maximale is None else min(annee_maximale,
+                                                                    edition)
 
     plat_entier = sans_accent(" ".join(lignes))
     if not any(marqueur in plat_entier for marqueur in MARQUEURS):
@@ -446,51 +555,109 @@ def lire_releve(lignes: list[str]) -> Lecture:
             continue
         regime = _regime_de(plat)
         if regime is not None:
-            courant = regime
+            # DEUX RÉGIMES COURANTS, ET C'EST LE RELEVÉ QUI L'IMPOSE. La
+            # SECTION est le dernier régime nommé, quel qu'il soit : un relevé
+            # tous régimes empile ses tableaux sous un titre, et les lignes qui
+            # suivent « Ircantec » sont des lignes d'Ircantec même si elles ne
+            # le répètent pas. La BASE est le dernier régime qui porte une
+            # carrière : c'est de lui que vient le statut de l'année, jamais de
+            # la caisse qui ne tient que des points.
+            section = regime
+            if regime.genre != "indice":
+                courant = regime
             if regime.code not in regimes:
                 regimes.append(regime.code)
 
-        annee, nombres, plage = _annee_et_nombres(ligne)
+        annee, nombres, plage, par_la_date, dates = _annee_et_nombres(ligne)
         if annee is None:
             continue
         if plage:
             ignorees.append(ligne)
+            continue
+        # UNE LIGNE DE TABLEAU PORTE QUELQUES COLONNES, PAS QUARANTE. Un PDF
+        # peut porter deux fois le même texte — une couche visible, mise en
+        # page, et une couche de doublure où tout est collé bout à bout. C'est
+        # le cas de l'estimation retraite d'Info Retraite, dont la doublure
+        # rendait des lignes de deux cents caractères où les dates et les
+        # montants de toute une page se suivaient sans séparateur. Additionnés
+        # à l'année qu'ils touchaient, ils y faisaient des revenus de deux
+        # millions d'euros.
+        if len(nombres) > NOMBRES_PAR_LIGNE:
+            ignorees.append(ligne)
+            continue
+        if annee_maximale is not None and annee > annee_maximale:
+            continue
+        # UNE PÉRIODE A DEUX BORNES. Quand le millésime ne vient que d'une
+        # date, une seule date ne suffit pas : « Valeur du point au 01/11/2025
+        # : 1,4386 € » et « 3 / 7 Edité le 22/09/2026 » en portent une, et
+        # toutes deux se lisaient comme une année de carrière — l'une y
+        # ajoutait un euro et quarante, l'autre sept euros et trois trimestres.
+        if par_la_date and dates < 2:
+            continue
+        if len([mot for mot in plat.split(" ") if len(mot) > 1
+                and not mot.isdigit()]) > MOTS_PAR_LIGNE:
             continue
 
         motif = _motif_de(plat)
         emploi = any(mot in plat for mot in EMPLOIS)
 
         # Un régime complémentaire ne porte pas de carrière : ses points
-        # feraient un revenu qui n'en est pas un, et ses lignes doubleraient
-        # celles de la base. Il dit en revanche le statut de l'année.
-        if courant is not None and courant.genre == "indice":
-            if courant.code == "agirc":
-                cadres.add(annee)
-            continue
+        # feraient un revenu qui n'en est pas un, et ses années doubleraient
+        # celles de la base. Mais sa ligne n'est pas perdue pour autant : elle
+        # porte la durée tous régimes de l'année — « 2025 4 trim. 203,91 pts
+        # Agirc-Arrco » —, et parfois un revenu en euros que la base n'a pas
+        # reporté. On lui prend donc ce qui est ÉTIQUETÉ, et rien d'autre.
+        # Le régime qui gouverne la ligne : celui qu'elle nomme, sinon celui
+        # de la section où elle se trouve.
+        gouverne = regime if regime is not None else section
+        indice_seul = gouverne is not None and gouverne.genre == "indice"
+        if indice_seul and gouverne.code == "agirc":
+            cadres.add(annee)
         if courant is None:
             if nombres:
                 ignorees.append(ligne)
             continue
 
-        trimestres = None
+        etiquetes = [unite for _, unite in nombres if unite]
         revenu = 0.0
-        for nombre in nombres:
-            if nombre > TRIMESTRES_PAR_AN or not float(nombre).is_integer():
-                revenu = max(revenu, nombre)
-            else:
-                # LE DERNIER l'emporte, et non le premier : les trimestres sont
-                # la colonne de droite d'un relevé, et une année assimilée y
-                # porte « 0 4 » — zéro euro, quatre trimestres. Retenir le
-                # premier nombre lisait zéro trimestre là où le relevé en
-                # valide quatre, et la pension s'en trouvait amputée sans un
-                # mot.
-                trimestres = int(nombre)
+        trimestres = None
+        if etiquetes:
+            for valeur, unite in nombres:
+                if unite == "revenu":
+                    revenu = max(revenu, valeur)
+                elif unite == "trimestre" and valeur <= TRIMESTRES_PAR_AN:
+                    # Le dernier l'emporte, et jamais un cumul de carrière :
+                    # « 172 trimestres » est un total, pas une année.
+                    trimestres = int(valeur)
+                # Les points sont lus, et jetés : ce n'est pas un revenu.
+        elif indice_seul:
+            # Une ligne qui ne nomme qu'un régime complémentaire et n'écrit
+            # aucune unité ne dit rien qu'on sache lire : ses nombres sont des
+            # points bien plus souvent que des euros.
+            continue
+        else:
+            for valeur, _ in nombres:
+                if valeur > TRIMESTRES_PAR_AN or not float(valeur).is_integer():
+                    revenu = max(revenu, valeur)
+                else:
+                    # LE DERNIER l'emporte, et non le premier : les trimestres
+                    # sont la colonne de droite d'un relevé, et une année
+                    # assimilée y porte « 0 4 » — zéro euro, quatre trimestres.
+                    trimestres = int(valeur)
         if courant.genre == "points":
             # Le nombre lu est un nombre de POINTS, pas un revenu. L'année et
             # ses trimestres se gardent ; le revenu reste à compléter.
             if revenu:
                 points = True
             revenu = 0.0
+        if par_la_date and not etiquetes:
+            # L'année ne vient que d'une date, et aucun nombre ne porte son
+            # unité : la ligne ne dit pas de carrière. Si elle nomme tout de
+            # même un régime, elle ressort — c'est une ligne dont une cellule
+            # manque, et le lecteur doit la voir.
+            if regime is not None and not indice_seul:
+                ignorees.append(ligne)
+            continue
         if revenu == 0.0 and trimestres is None and not motif and not emploi:
             ignorees.append(ligne)
             continue
