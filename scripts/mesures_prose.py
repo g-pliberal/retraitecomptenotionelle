@@ -96,6 +96,15 @@ EXEMPLES = {
     "salaire_moyen": {"generation": "1980", "sexe": "H",
                       "affiliation": "salarie_prive_non_cadre", "debut": "22",
                       "depart": "64", "niveau": "1.0", "profil": "plat"},
+    # La carrière que `limites.md` §5 quater oppose à la littérature : une
+    # carrière ascendante au salaire moyen, entrée à 22 ans, née en 1975,
+    # liquidée à 64 ans — dans le privé et à l'État.
+    "litterature_prive": {"generation": "1975", "sexe": "H",
+                          "affiliation": "salarie_prive_non_cadre", "debut": "22",
+                          "depart": "64", "niveau": "1.0", "profil": "ascendant"},
+    "litterature_etat": {"generation": "1975", "sexe": "H",
+                         "affiliation": "fonctionnaire_etat", "debut": "22",
+                         "depart": "64", "niveau": "1.0", "profil": "ascendant"},
     "smic": {"generation": "1980", "sexe": "H",
              "affiliation": "salarie_prive_non_cadre", "debut": "22",
              "depart": "64", "niveau": "0.55", "profil": "plat"},
@@ -166,6 +175,11 @@ def pension(**reglages: str) -> float:
     if part == "volontaire":
         return comparaison.rente_capitalisee_volontaire(scenario)
     raise ValueError(f"part inconnue « {part} »")
+
+
+def part_salariale_versee(**reglages: str) -> float:
+    """Part de la cotisation totale versée par l'assuré lui-même, en %, sur une carrière."""
+    return 100 - part_employeur(**reglages)
 
 
 def part_employeur(**reglages: str) -> float:
@@ -792,6 +806,7 @@ MESURES = {
     "ecart": ecart,
     "pension": pension,
     "part_employeur": part_employeur,
+    "part_salariale_versee": part_salariale_versee,
     "cumul_indexation": cumul_indexation,
     "conserve": conserve,
     "fois_prix": fois_prix,

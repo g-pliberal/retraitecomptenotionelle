@@ -208,6 +208,16 @@ fichiers:
       "Ce que vaut une série qu'on ne peut pas certifier": etat
       "La part patronale du public, et ce qu'on n'en sait pas": etat
       "Ce que la comparaison valide": etat
+      # La comparaison à la littérature : les résultats publiés sont des
+      # citations datées, qui ne peuvent pas devenir fausses ; ceux du dépôt
+      # sont mesurés sur la carrière que la section décrit. Ils avaient bougé
+      # de beaucoup — le scénario 4 d'un fonctionnaire d'État à +35 % pour
+      # +4,5, le prospectif du privé à −21 % pour −37 — et la phrase « la
+      # moitié de l'écart est de la rétroactivité » n'était plus vraie : c'en
+      # est l'essentiel.
+      "5 quater. Comparaison à la littérature : pourquoi les écarts d'ici sont plus grands": etat
+      "Ce que la littérature trouve": etat
+      "Ce n'est pas une contradiction : c'est la somme de quatre choix": etat
       # Elle raconte une correction datée : ×1,69 et ×2,42 sont les pentes que
       # le modèle appliquait AVANT le 19 septembre 2026, ×1,30 et ×1,86 celles
       # que l'INSEE observe en 2024. Les rafraîchir effacerait ce qui a été

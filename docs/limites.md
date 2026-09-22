@@ -8033,27 +8033,27 @@ la ligne « toutes CSP » —, ce qu'un test tient.
 
 Trois travaux français ont simulé le passage des retraites aux comptes
 notionnels, et **aucun ne trouve ce que trouve ce dépôt**. Un lecteur qui les
-connaît arrive ici avec une objection d'une ligne — « la CNAV dit −7 %, vous
-dites −73 % » — et cette page lui doit une réponse chiffrée. La voici.
+connaît arrive ici avec une objection d'une ligne — « la CNAV dit <!--chiffre:illustration()-->−7<!--/--> %, vous
+dites <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−72<!--/--> % » — et cette page lui doit une réponse chiffrée. La voici.
 
 ### Ce que la littérature trouve
 
 | Travail | Ce qu'il simule | Résultat |
 |---|---|---|
-| **CNAV, Albert & Oliveau, nov. 2009** (modèle PRISME, régime général, euros 2004) | bascule au prorata des générations 1952-1961, taux réel de la CNAV, **droits non contributifs conservés** | masses de prestations **−7 % en 2050** (hommes −10,5 %, femmes −3,4 %) ; besoin de financement 36 Md€ contre 49 Md€ |
+| **CNAV, Albert & Oliveau, nov. 2009** (modèle PRISME, régime général, euros 2004) | bascule au prorata des générations 1952-1961, taux réel de la CNAV, **droits non contributifs conservés** | masses de prestations **<!--chiffre:illustration()-->−7<!--/--> % en 2050** (hommes <!--chiffre:illustration()-->−10,5<!--/--> %, femmes <!--chiffre:illustration()-->−3,4<!--/--> %) ; besoin de financement 36 Md€ contre 49 Md€ |
 | **COR, 7e rapport, janv. 2010** | l'expertise demandée par le Parlement ; pas de chiffrage central | les dispositifs de solidarité valent **« de l'ordre d'un cinquième des retraites tous régimes »** |
-| **CEPII, Lettre n° 297, avril 2010** (OLGAMAP, équilibre général) | régime unique, **taux unique ~22 %**, transition 2015-2030 | besoin de financement **−0,7 pt de PIB** en 2050 ; en variante à actualisation nulle, **−3,2 pts** et système excédentaire |
+| **CEPII, Lettre n° 297, avril 2010** (OLGAMAP, équilibre général) | régime unique, **taux unique ~<!--chiffre:illustration()-->22<!--/--> %**, transition 2015-2030 | besoin de financement **−0,7 pt de PIB** en 2050 ; en variante à actualisation nulle, **−3,2 pts** et système excédentaire |
 
 Et ce que trouve ce dépôt, pour une carrière ascendante au salaire moyen,
-entrée à 22 ans, née en 1975, liquidée à 64 ans :
+entrée à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.litterature_prive.debut)-->22<!--/--> ans, née en 1975, liquidée à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.litterature_prive.depart)-->64<!--/--> ans :
 
 | | Salarié du privé non cadre | Fonctionnaire d'État |
 |---|---:|---:|
-| 2. Notionnel rétroactif, part salariale | **−73,1 %** | **−82,1 %** |
-| 3. Notionnel dès 2026, part salariale | −37,4 % | −41,1 % |
-| 4. Notionnel rétroactif, salariale + patronale | −33,5 % | **+4,5 %** |
-| 5. Notionnel dès 2026, salariale + patronale | −22,4 % | −30,5 % |
-| 6. Proposition libérale (18 % dès 2026) | −41,1 % | −0,9 % |
+| 2. Notionnel rétroactif, part salariale | **<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−71,8<!--/--> %** | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=2)-->−78,1<!--/--> %** |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,4<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−22,6<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−30,2<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+35,3<!--/--> %** |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−8,1<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−11,5<!--/--> % |
+| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−37,0<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->+29,7<!--/--> % |
 
 ### Ce n'est pas une contradiction : c'est la somme de quatre choix
 
@@ -8064,29 +8064,29 @@ prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
    et l'un comme l'autre **conservent les droits déjà acquis**. Les scénarios 2
    et 4 recalculent la carrière ENTIÈRE depuis 1941. Le dépôt publie lui-même
    la mesure de ce choix : les scénarios 3 et 5, qui figent les droits acquis
-   comme le fait la littérature, ramènent l'écart de −73,1 % à −37,4 % pour le
-   salarié du privé. **La moitié de l'écart est de la rétroactivité, rien
+   comme le fait la littérature, ramènent l'écart de <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−71,8<!--/--> % à <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,4<!--/--> % pour le
+   salarié du privé. **L'essentiel de l'écart est de la rétroactivité, rien
    d'autre.**
 2. **Les droits non contributifs.** La CNAV les CONSERVE et les convertit en
    cotisations fictives ; son tableau 2.1 en donne la part dans le capital
-   porté au compte — **hommes 16 % en 2020 et 13 % en 2050, femmes 36 % et
-   31 %**. Le COR donne le même ordre de grandeur tous régimes, un cinquième.
+   porté au compte — **hommes <!--chiffre:illustration()-->16<!--/--> % en 2020 et <!--chiffre:illustration()-->13<!--/--> % en 2050, femmes <!--chiffre:illustration()-->36<!--/--> % et
+   <!--chiffre:illustration()-->31<!--/--> %**. Le COR donne le même ordre de grandeur tous régimes, un cinquième.
    Le §6 de `methodologie.md` les supprime tous. C'est, à soi seul, dix à
    trente-cinq points de capital en moins selon le sexe — et c'est aussi
    pourquoi les écarts de ce dépôt sont, à carrière égale, plus durs pour les
    femmes.
 3. **Le périmètre de la cotisation.** Les scénarios 2 et 3 ne portent au compte
-   que la part SALARIALE, soit 40 % du total versé pour le salarié du privé et
-   19 % pour le fonctionnaire. La littérature raisonne toujours sur la
+   que la part SALARIALE, soit <!--chiffre:mesure(part_salariale_versee?exemple=litterature_prive)-->40<!--/--> % du total versé pour le salarié du privé et
+   <!--chiffre:mesure(part_salariale_versee?exemple=litterature_etat)-->18<!--/--> % pour le fonctionnaire. La littérature raisonne toujours sur la
    cotisation entière. Le scénario 4 est la comparaison honnête, et il donne
-   −33,5 % pour le privé et **+4,5 %** pour le fonctionnaire.
+   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−30,2<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+35,3<!--/--> %** pour le fonctionnaire.
 4. **L'âge de liquidation.** La CNAV suppose les âges de départ INCHANGÉS, et
-   observe malgré tout que ses perdants partent à 60 ans et ses gagnants à 65.
+   observe malgré tout que ses perdants partent à <!--chiffre:illustration()-->60<!--/--> ans et ses gagnants à 65.
    Ici, le diviseur est la seule sanction du départ précoce, et il n'est pas
    amorti par une décote plafonnée.
 
-Additionnés, ces quatre écarts rendent compte de la distance entre −7 % et
-−73 % sans qu'aucun chiffre ait besoin d'être révisé de part ou d'autre. Ce
+Additionnés, ces quatre écarts rendent compte de la distance entre <!--chiffre:illustration()-->−7<!--/--> % et
+<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−72<!--/--> % sans qu'aucun chiffre ait besoin d'être révisé de part ou d'autre. Ce
 qu'il faut en retenir : **les résultats de ce dépôt ne mesurent pas « le
 notionnel » en général, mais une version précise et volontairement dure du
 notionnel**, et la littérature en mesure une autre, volontairement douce.
