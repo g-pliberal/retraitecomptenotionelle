@@ -42,17 +42,21 @@ export const ADRESSE_SITE = "partiliberalfrancais.fr/#simulateur";
 const FINE = "\u202f";
 
 /**
- * La navigation, par FONCTION et non par page : le message, la preuve, la
- * confiance. Copie de `GROUPES_NAVIGATION` dans `web/gabarit.py`.
+ * La navigation, en deux voix : ce que l'électeur vient chercher, puis ce qui
+ * permet de le vérifier, derrière une étiquette qui se voit. Copie de
+ * `GROUPES_NAVIGATION` dans `web/gabarit.py`, qui dit pourquoi.
  */
 export const GROUPES_NAVIGATION = [
-  ["Le programme", [["/", "Programme"]]],
-  ["La preuve", [["/simuler", "Simuler"], ["/trajectoire", "Trajectoire"],
-    ["/cas-types", "Cas types"], ["/cout", "Coût"],
-    ["/risque", "Risque"], ["/avantages", "Avantages"]]],
-  ["La confiance", [["/methode", "Méthode"], ["/donnees", "Données"]]],
+  ["L'essentiel", [["/", "Programme"], ["/simuler", "Simuler"],
+    ["/cout", "Coût"], ["/risque", "Pourquoi changer"]]],
   ["Faire connaître", [["/partager", "Partager"]]],
+  ["Pour vérifier", [["/trajectoire", "Cumul versé"],
+    ["/cas-types", "Carrières types"], ["/avantages", "Droits non cotisés"],
+    ["/methode", "Méthode"], ["/donnees", "Sources"]]],
 ];
+
+/** Le groupe dont l'étiquette SE VOIT, et dont les pages parlent plus bas. */
+export const GROUPE_SECONDAIRE = "Pour vérifier";
 
 export const LIENS = GROUPES_NAVIGATION.flatMap(([, liens]) => liens);
 
@@ -117,8 +121,11 @@ export function navigation(cheminActif = "/") {
   const liensDuGroupe = (liens) => liens.map(([chemin, libelle]) => `<a href="${lien(chemin)}"`
     + (chemin === cheminActif ? ' aria-current="page"' : "")
     + `>${echapper(libelle)}</a>`).join("");
+  const classe = (etiquette) => (etiquette === GROUPE_SECONDAIRE
+    ? "groupe secondaire" : "groupe");
   return GROUPES_NAVIGATION.map(([etiquette, liens]) => (
-    `<span class="groupe"><span class="etiquette">${echapper(etiquette)}</span>`
+    `<span class="${classe(etiquette)}"><span class="etiquette">`
+    + `${echapper(etiquette)}</span>`
     + `<span class="liens">${liensDuGroupe(liens)}</span></span>`
   )).join("");
 }

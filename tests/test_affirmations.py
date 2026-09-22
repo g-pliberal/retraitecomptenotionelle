@@ -521,6 +521,23 @@ def _(m: Modele):
     assert all(ligne.rapports["notionnel_liberal"] != 1.0 for ligne in observees)
 
 
+@controle("proposition_le_plus_souvent_sous_la_promesse")
+def _(m: Modele):
+    """La réponse de l'accueil à « Ma retraite va-t-elle baisser ? ».
+
+    Elle dit : le plus souvent, plus basse que ce que le système actuel
+    promet. La grille des cas types en décide — treize carrières, sept
+    générations, l'écart du système 4 au système 1 que la page des carrières
+    types affiche, rente capitalisée comprise. Le jour où la proposition sert
+    davantage dans la moitié des cases, la réponse est à réécrire, et ce
+    contrôle le dit.
+    """
+    ecarts = [comparaison.variation_totale("notionnel_liberal")
+              for comparaison in m.grille_cas_types.resultats.values()]
+    assert ecarts
+    assert sum(ecart < 0.0 for ecart in ecarts) > len(ecarts) / 2
+
+
 @controle("quatre_systemes_meme_carriere")
 def _(m: Modele):
     assert len(SCENARIOS_MONTRES) == 4 and SCENARIOS_MONTRES[0] == "actuel"

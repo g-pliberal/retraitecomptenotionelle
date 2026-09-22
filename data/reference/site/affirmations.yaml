@@ -402,6 +402,67 @@ affirmations:
     etat: verifiee
     controle: regime_unique_apres_bascule
 
+  # Les questions de l'électeur, sur l'accueil. Chaque réponse porte en gras la
+  # phrase qui répond ; elle est vérifiée comme le reste du programme, et le
+  # plus souvent par le contrôle qui tient déjà la même affirmation ailleurs.
+  - id: accueil.question_plus_basse
+    page: /
+    extrait: "Le plus souvent, elle sera plus basse que ce que le système actuel promet."
+    porte: >-
+      sur la grille des cas types, la proposition sert moins que la promesse du
+      système actuel dans plus de la moitié des cases
+    etat: verifiee
+    controle: proposition_le_plus_souvent_sous_la_promesse
+
+  - id: accueil.question_retraite_recalculee
+    page: /
+    extrait: "Votre pension serait recalculée sur ce qui a été réellement cotisé"
+    porte: la proposition est rétroactive — les pensions déjà liquidées sont recalculées
+    etat: verifiee
+    controle: proposition_retroactive
+
+  - id: accueil.question_carriere_recalculee
+    page: /
+    extrait: "Toute votre carrière est recalculée depuis la première cotisation"
+    porte: la proposition est rétroactive — le compte part de la première cotisation
+    etat: verifiee
+    controle: proposition_retroactive
+
+  - id: accueil.question_partir_plus_tot
+    page: /
+    extrait: "partir plus tôt donne une pension plus faible, partir plus tard une pension plus forte"
+    porte: le diviseur est l'espérance de vie résiduelle, sans autre barème
+    etat: verifiee
+    controle: diviseur_est_l_esperance_de_vie
+
+  - id: accueil.question_ecart_en_salaire
+    page: /
+    extrait: "d'écart vous reviennent en salaire"
+    porte: le coût du travail est tenu fixe, la baisse de cotisation passe au salaire
+    etat: verifiee
+    controle: cout_du_travail_fixe
+
+  - id: accueil.question_garantie_pour_chacun
+    page: /
+    extrait: "une garantie unique, calculée pour chacun"
+    porte: la garantie est un plancher par personne, le conjoint n'y entre pas
+    etat: verifiee
+    controle: garantie_individualisee
+
+  - id: accueil.question_heritiers
+    page: /
+    extrait: "le capital de votre épargne retraite revient à vos héritiers"
+    porte: le capital du pilier se transmet avant la liquidation
+    etat: verifiee
+    controle: capital_capitalise_transmissible
+
+  - id: accueil.question_cotisation_egale
+    page: /
+    extrait: "à cotisation égale, pension égale"
+    porte: le diviseur ne dépend pas du statut, seul le capital compte
+    etat: verifiee
+    controle: a_capital_egal_pension_egale
+
   # ------------------------------------------------------------------------
   # Simuler
   # ------------------------------------------------------------------------

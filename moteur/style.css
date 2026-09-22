@@ -277,6 +277,36 @@ nav .etiquette {
    en prenaient trois. Les liens sont les enfants directs du `<nav>`, et se
    replient un par un. */
 nav .liens { display: contents; }
+/* La seconde voix du bandeau : les pages qui PROUVENT, pour qui veut
+   vérifier. Elles étaient des onglets comme les autres, et l'électeur ne savait
+   pas par où commencer. Elles restent dans la barre, mais derrière une
+   étiquette qui se voit, en casse normale et plus petites. Le groupe est une
+   boîte qui se replie d'un bloc : sur un téléphone, l'étiquette ne reste
+   jamais seule au bout d'une ligne, séparée de ses pages. */
+nav .groupe.secondaire { display: flex; flex-wrap: wrap; align-items: stretch; }
+nav .groupe.secondaire .etiquette {
+  position: static; width: auto; height: auto; margin: 0 0 0 0.55rem;
+  overflow: visible; clip-path: none; white-space: nowrap;
+  display: inline-flex; align-items: center;
+  padding: 0 0.3rem 0 0.9rem; border-left: 1px solid var(--trait-champ);
+  font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--texte-doux);
+}
+header.bandeau nav .groupe.secondaire a {
+  font-size: 0.8125rem; font-weight: 600; letter-spacing: 0;
+  text-transform: none;
+}
+/* Sur un téléphone, le groupe prend sa propre rangée, séparée par un filet
+   horizontal plutôt que vertical — un trait debout au bord gauche de l'écran
+   ne sépare rien —, et des lignes un peu moins hautes : le bandeau n'y est
+   pas collé, mais il ne doit pas repousser le titre de la page d'un écran. */
+@media (max-width: 48rem) {
+  nav .groupe.secondaire { flex-basis: 100%; border-top: 1px solid var(--trait); }
+  nav .groupe.secondaire .etiquette {
+    border-left: 0; margin-left: 0; padding-left: 0.55rem; min-height: 2.25rem;
+  }
+  header.bandeau nav .groupe.secondaire a { min-height: 2.25rem; }
+}
 /* Un onglet. Toute la hauteur de la barre — 56 px, bien plus que les 44 de la
    cible tactile (WCAG 2.5.8) —, capitales serrées, et un filet sous chacun :
    c'est ce filet qui prend l'or sur l'onglet courant. L'ACTIF NE SE SIGNALE
