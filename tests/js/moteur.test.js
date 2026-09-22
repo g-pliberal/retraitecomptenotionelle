@@ -179,6 +179,54 @@ test("les régimes alignés se liquident ensemble depuis juillet 2017", () => {
   assert.equal(base(1955, 9, 62).length, 1);
 });
 
+/**
+ * Les âges des marins, portés dans le moteur du site : ancienneté à cinquante
+ * ans pour vingt-cinq ans de services (R. 2), proportionnelle à cinquante-cinq,
+ * spéciale à soixante sans autre pension (R. 5) ou avec l'autre pension de
+ * base, levée du plafond de vingt-cinq annuités à cinquante-deux ans et demi
+ * (R. 13 b), bonification dès deux enfants (R. 14). Aucun témoin figé ne tient
+ * le polypensionné : cet essai le fait.
+ */
+test("les âges et la bonification des marins sont ceux du Python", () => {
+  const contexte = new Contexte(paquet);
+  const simulateur = contexte.simulateur();
+  const scenario = simulateur.scenarioActuel;
+  const parcours = (metiers, age, naissance = 1966, enfants = 0) =>
+    simulateur.carriereParcours({
+      annee_naissance: naissance, sexe: "H", age_liquidation: age,
+      nombre_enfants: enfants, profil_carriere: "plat", metiers,
+    });
+  const marin = (debut, age, naissance = 1966, enfants = 0) => parcours(
+    [{ affiliation: "marin", age_debut: debut, niveau_salaire: 1 }], age, naissance, enfants);
+
+  assert.equal(scenario.calculer(marin(25, 50)).liquidation_ouverte, true);
+  assert.equal(scenario.calculer(marin(25.25, 50)).liquidation_ouverte, false);
+  assert.equal(scenario.ageOuvertureDroit(marin(30, 50)), 55);
+  assert.equal(scenario.calculer(marin(49.75, 59.75)).liquidation_ouverte, false);
+  assert.equal(scenario.calculer(marin(50, 60)).liquidation_ouverte, true);
+
+  const poly = parcours([
+    { affiliation: "marin", age_debut: 20, niveau_salaire: 1 },
+    { affiliation: "salarie_prive_non_cadre", age_debut: 30, niveau_salaire: 1 },
+  ], 55);
+  assert.ok(scenario.ageOuvertureDroit(poly) > 60);
+  assert.equal(scenario.calculer(poly).liquidation_ouverte, false);
+
+  assert.match(scenario.calculer(marin(15.25, 52.5, 1970)).pensions_par_regime[0].detail, /100\/150/);
+  assert.match(scenario.calculer(marin(15, 52.5, 1970)).pensions_par_regime[0].detail, /150\/150/);
+
+  const taux = (enfants) => {
+    const r = scenario.calculer(marin(25, 60, 1966, enfants));
+    const majoration = r.avantages_appliques
+      .filter((a) => a.code === "majoration_enfants")
+      .reduce((somme, a) => somme + a.montant, 0);
+    return majoration / r.pensions_par_regime.reduce((somme, p) => somme + p.montant, 0);
+  };
+  assert.equal(taux(1), 0);
+  assert.ok(Math.abs(taux(2) - 0.05) < 1e-9);
+  assert.ok(Math.abs(taux(5) - 0.15) < 1e-9);
+});
+
 test("le seuil d'affiliation de l'élu local est lu comme en Python", () => {
   // L. 382-31 : le régime général n'est dû qu'au-dessus de la moitié du
   // plafond ; en deçà, l'élu n'a que l'Ircantec. Sans revenu, la liste des

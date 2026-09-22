@@ -138,7 +138,14 @@ python -m pytest && bash scripts/pousser.sh
 ```
 
   Le côté qu'on garde n'a pas d'importance, puisqu'on réécrit les quatre
-  fichiers depuis les sources rebasées. Si plusieurs commits de la session
+  fichiers depuis les sources rebasées. Même geste pour un conflit de prose
+  qui ne porte que sur des chiffres ancrés (`<!--chiffre:…-->`) : garder UN
+  côté, jamais les deux, puis `python scripts/verifier_prose.py --corriger`.
+  Garder les deux a doublé deux fois un paragraphe de la feuille de route ;
+  `tests/test_prose.py` refuse désormais deux paragraphes identiques à la
+  suite. Et `git checkout --theirs` sur un fichier de prose en conflit est à
+  proscrire : il reprend le fichier ENTIER d'un côté, et efface ce que
+  l'autre session y a écrit ailleurs. Si plusieurs commits de la session
   touchent aux témoins, le rebasage s'arrête autant de fois : régénérer à
   chaque arrêt, chaque commit retrouvant alors les témoins de son propre état.
 

@@ -44,7 +44,11 @@
 #   code        le code source d'un modèle public, lisible et exécutable
 #
 # ACCES — mesuré, pas supposé (260 adresses sondées le 22 septembre 2026 :
-#         252 répondent 200 à une simple requête, huit demandent un geste)
+#         252 répondent 200 à une simple requête, huit demandent un geste).
+#         Un 200 ne dit pas qu'on a lu la page : resondées le soir même par
+#         scripts/fetch/sonder_sources.py, qui juge le TEXTE servi, les six
+#         pages de l'ENIM (un pare-feu Incapsula) et trois de mon-entreprise
+#         (des coquilles remplies en JavaScript) sont passées à `navigateur`.
 #   session ............ joignable en `curl` depuis une session, 200
 #   chaine_incomplete .. le serveur ne sert pas l'intermédiaire de son
 #                        certificat ; un navigateur le rattrape tout seul,
@@ -769,6 +773,11 @@ sources:
       L'inventaire de ce que la DREES a ouvert : modèles, bases, dépôts. Point
       d'entrée des trois lignes qui suivent, et de ce qu'elles ne disent pas.
     statut: a_explorer
+    note: >-
+      Le 22 septembre 2026 au soir, le serveur ferme la connexion sans rien
+      répondre (« Empty reply from server »), à `curl` comme à Python, quand il
+      répondait 200 le matin même. Un zéro n'est pas un refus : à resonder seul
+      et lentement avant de conclure, l'accès reste `session`.
 
   - id: drees_caliper
     url: https://drees.solidarites-sante.gouv.fr/sources-outils-et-enquetes/loutil-caliper-calcul-interregimes-des-pensions-de-retraite
@@ -781,6 +790,11 @@ sources:
       il applique et lesquelles il simplifie — la liste des simplifications
       d'un modèle officiel est un étalon pour docs/limites.md.
     statut: a_explorer
+    note: >-
+      Le 22 septembre 2026 au soir, le serveur ferme la connexion sans rien
+      répondre (« Empty reply from server »), à `curl` comme à Python, quand il
+      répondait 200 le matin même. Un zéro n'est pas un refus : à resonder seul
+      et lentement avant de conclure, l'accès reste `session`.
 
   - id: drees_trajectoire
     url: https://git.drees.fr/drees_code_public/modeles/trajectoire
@@ -828,7 +842,7 @@ sources:
   - id: mon_entreprise_bibliotheque
     url: https://mon-entreprise.urssaf.fr/développeur/bibliothèque-de-calcul
     nature: code
-    acces: session
+    acces: navigateur
     regimes: []
     a_en_tirer: >-
       Le moteur publij (règles en YAML, publiées comme paquet) : les taux de
@@ -836,16 +850,26 @@ sources:
       par machine. C'est peut-être le récupérateur automatique qui manque aux
       taux saisis à la main dans data/reference/regimes/.
     statut: a_explorer
+    note: >-
+      Resondé le 22 septembre 2026 par `scripts/fetch/sonder_sources.py` : le 200
+      porte une coquille de 7 Ko, presque sans texte, que le JavaScript remplit.
+      La page se lit dans Chromium ; les règles, elles, sont dans le dépôt du
+      code (`mon_entreprise_depot`), qui se clone.
 
   - id: mon_entreprise_developpeur
     url: https://mon-entreprise.urssaf.fr/développeur/
     nature: index
-    acces: session
+    acces: navigateur
     regimes: []
     a_en_tirer: >-
       L'API et les modules : savoir s'il existe un point d'appel qui rende un
       calcul complet sans navigateur.
     statut: a_explorer
+    note: >-
+      Resondé le 22 septembre 2026 par `scripts/fetch/sonder_sources.py` : le 200
+      porte une coquille de 7 Ko, presque sans texte, que le JavaScript remplit.
+      La page se lit dans Chromium ; les règles, elles, sont dans le dépôt du
+      code (`mon_entreprise_depot`), qui se clone.
 
   - id: mon_entreprise_depot
     url: https://github.com/betagouv/mon-entreprise
@@ -862,13 +886,18 @@ sources:
   - id: mon_entreprise_comparaison_ei
     url: https://mon-entreprise.urssaf.fr/simulateurs/comparaison-régimes-sociaux/EI/protection-sociale/retraite
     nature: simulateur
-    acces: session
+    acces: navigateur
     regimes: [rsi, rci, cnavpl, cipav_complementaire]
     a_en_tirer: >-
       Le comparateur des statuts : pour un même revenu, ce que chaque statut
       cotise et ce qu'il acquiert en retraite. Exactement la grandeur que la
       page Coût du dépôt met en regard des scénarios.
     statut: a_explorer
+    note: >-
+      Resondé le 22 septembre 2026 par `scripts/fetch/sonder_sources.py` : le 200
+      porte une coquille de 7 Ko, presque sans texte, que le JavaScript remplit.
+      La page se lit dans Chromium ; les règles, elles, sont dans le dépôt du
+      code (`mon_entreprise_depot`), qui se clone.
 
   - id: mon_entreprise_independant
     url: https://mon-entreprise.urssaf.fr/simulateurs/indépendant

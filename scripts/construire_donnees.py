@@ -583,6 +583,9 @@ def _regles_des_marins(p) -> dict:
         "duree_maximum_levee_trimestres": p.duree_maximum_levee_trimestres,
         "age_ouverture_services": p.age_ouverture_services,
         "services_ouverture_annees": p.services_ouverture_annees,
+        "pension_speciale_services_annees": p.pension_speciale_services_annees,
+        "pension_speciale_age_sans_autre_pension":
+            p.pension_speciale_age_sans_autre_pension,
         "taux_majoration_enfants": (list(p.taux_majoration_enfants)
                                     if p.taux_majoration_enfants else None),
     }

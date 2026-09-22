@@ -1718,9 +1718,9 @@ affirmations:
     etat: verifiee
     controle: etalon_applique_les_avantages
 
-  - id: methode.majoration_trois_enfants
+  - id: methode.majoration_enfants
     page: /methode
-    extrait: "la majoration pour trois enfants, calculée"
+    extrait: "la majoration pour enfants, calculée"
     porte: l'étalon applique cet avantage, et le modèle le chiffre
     etat: verifiee
     controle: etalon_applique_les_avantages
