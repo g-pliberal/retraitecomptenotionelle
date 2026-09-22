@@ -91,8 +91,13 @@ ircec_raap,2026,2100,0.1080,haute
 # service / forfait d'un côté, 22 × valeur de service / (plafond − seuil) × 3 %
 # de l'autre. Il tombe de 13,10 % en 2010 à 7,36 % en 2025.
 # Avant 2010 la caisse ne publie pas la valeur du point : c'est le rendement de
-# 2010 qui est reconduit. En 2026 le coût d'acquisition du point n'est pas
-# encore publié : c'est celui de 2025.
+# 2010 qui est reconduit. En 2026 le coût d'acquisition du point n'est publié
+# ni au Journal officiel ni sur le site de la caisse, mais la calculette de la
+# CARPIMKO le laisse lire (22 septembre 2026) : sur neuf revenus, de 3 000 à
+# 250 000 €, la cotisation divisée par les points donne 390,8 à 391,1 € — les
+# points n'y ont que deux décimales. 21,48 / 391 = 5,49 %. Reconduire 7,36 %
+# achetait un tiers de points de trop ; lue sur une calculette et non sur un
+# barème, la valeur reste `moyenne`.
 carpimko_complementaire,1984,2009,0.1310,estimee
 carpimko_complementaire,2010,2010,0.1310,haute
 carpimko_complementaire,2011,2011,0.1219,haute
@@ -110,7 +115,7 @@ carpimko_complementaire,2022,2022,0.0886,haute
 carpimko_complementaire,2023,2023,0.0849,haute
 carpimko_complementaire,2024,2024,0.0768,haute
 carpimko_complementaire,2025,2025,0.0736,haute
-carpimko_complementaire,2026,2100,0.0736,estimee
+carpimko_complementaire,2026,2100,0.0549,moyenne
 # CAVP, volet en répartition : la caisse compte en ANNUITÉS et non en points —
 # « nombre d'années validées × 320,75 » (mémento 2024) —, et la cotisation
 # forfaitaire de 6 880 € donne exactement ce rendement : 320,75 / 6 880 =

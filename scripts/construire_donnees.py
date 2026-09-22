@@ -545,6 +545,9 @@ def _regimes() -> list[dict]:
                     "points_maximum": p.points_maximum,
                     "points_minimum_annuels": p.points_minimum_annuels,
                     "points_par_trimestre_valide": p.points_par_trimestre_valide,
+                    "points_ajustement_par_forfait": p.points_ajustement_par_forfait,
+                    "points_ajustement_maximum": p.points_ajustement_maximum,
+                    "capital_seuil_points": p.capital_seuil_points,
                     "bareme_points": p.bareme_points,
                     "points_de": p.points_de,
                     "valeur_point_euros": p.valeur_point_euros,
@@ -556,6 +559,7 @@ def _regimes() -> list[dict]:
                     "assiette_repere_smic": p.assiette_repere_smic,
                     "assiette_plancher": p.assiette_plancher,
                     "assiette_forfaitaire": p.assiette_forfaitaire,
+                    "assiette_minimale_pass": p.assiette_minimale_pass,
                     "cotisation_par_classes": p.cotisation_par_classes,
                     "assiette_grille": p.assiette_grille,
                     "assiette_facteur_revenu": p.assiette_facteur_revenu,
@@ -711,6 +715,17 @@ def _contribution_employeur_public() -> dict:
         for regime, annees in sorted(table.items())
         for annee, contribution in sorted(annees.items())
     }
+
+
+def _assiette_minimale_independants() -> list:
+    """Assiette minimale du régime de base des indépendants, règle par règle."""
+    from retraite_notionnelle.donnees.chargement import charger_assiettes_minimales
+
+    return [
+        [sorted(r.statuts), sorted(r.regimes), r.debut, r.fin,
+         r.heures_smic, r.part_pass, r.proratise, r.jours_minimum]
+        for r in charger_assiettes_minimales(DONNEES)
+    ]
 
 
 def _periodes_non_travaillees() -> dict:
@@ -1232,6 +1247,7 @@ def construire(bilan: bytes) -> bytes:
         "coefficients_minoration": _table_par_generation(CoefficientsMinoration),
         "annees_salaire_reference": _table_par_generation(AnneesSalaireReference),
         "periodes_non_travaillees": _periodes_non_travaillees(),
+        "assiette_minimale_independants": _assiette_minimale_independants(),
         "profil_salaire_age": _profil_salaire("profil_salaire_age.csv", "annee"),
         "profil_salaire_categorie": _profil_salaire(
             "profil_salaire_categorie.csv", "categorie"),

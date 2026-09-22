@@ -1,0 +1,56 @@
+# Assiette minimale du régime de BASE des travailleurs indépendants
+# ------------------------------------------------------------------
+# Un artisan, un commerçant ou un libéral qui déclare peu cotise quand même :
+# la cotisation annuelle de retraite de base « ne peut être calculée sur une
+# assiette inférieure à » un minimum, et ce minimum valide des trimestres et
+# ouvre des points comme un revenu. Le micro-entrepreneur n'y est pas soumis :
+# il cotise un pourcentage de son chiffre d'affaires (L. 613-7).
+#
+# Artisans et commerçants, article D. 633-2 du code de la sécurité sociale :
+#   « 200 fois le montant horaire du salaire minimum de croissance en vigueur
+#   le 1er janvier de l'année considérée » (LEGIARTI000006737877 au 21 décembre
+#   1985, LEGIARTI000006737878, LEGIARTI000006737879 jusqu'au 5 avril 2012) ;
+#   « 5,25 % de la valeur du plafond » (LEGIARTI000025629830, 2012-2013,
+#   LEGIARTI000028435877, 2014) ; « 7,70 % » (LEGIARTI000030034546, 2015) ;
+#   « 11,5 % » (LEGIARTI000031799409, 2016 ; LEGIARTI000041966730, jusqu'en
+#   2022) ; « 450 fois le montant horaire du salaire minimum de croissance »
+#   (LEGIARTI000048838330, décret n° 2023-1352, « à compter des cotisations
+#   annuelles dues au titre de l'année 2023 »). Depuis 2012, « le présent
+#   alinéa s'applique aux travailleurs indépendants dont la durée d'affiliation
+#   est au moins égale à quatre-vingt-dix jours au cours de cette même année ».
+#   Avant 2012 le texte ne proratise pas et ne pose aucune durée : la table
+#   non plus. La version de 1985 est la première que l'index LEGI porte ; les
+#   années antérieures n'ont pas de ligne, donc pas de minimum.
+#
+# Professions libérales, article D. 642-4 :
+#   « 200 fois le montant horaire du salaire minimum de croissance », « réduit
+#   au prorata des trimestres d'affiliation » en cas d'affiliation inférieure à
+#   une année (LEGIARTI000006738120 au 1er janvier 2004, LEGIARTI000006738121) ;
+#   puis 5,25 % du plafond (LEGIARTI000025629881), 7,70 % (LEGIARTI000030034623),
+#   11,5 % (LEGIARTI000031799405, LEGIARTI000041966471) et 450 SMIC horaires
+#   (LEGIARTI000048838321, à compter de 2023), « non réduite au prorata de la
+#   durée d'affiliation », sous la même condition de quatre-vingt-dix jours.
+#   Avant 2004 le régime de base des libéraux servait une allocation par
+#   trimestre, sans assiette (voir la fiche `cnavpl`).
+#   La cotisation minimale ne s'applique « ni aux personnes dont l'activité
+#   libérale n'est pas l'activité professionnelle principale, ni aux personnes
+#   bénéficiaires d'un avantage de retraite » : le modèle ne connaît ni l'un ni
+#   l'autre cas et applique le minimum à tout libéral en activité.
+#
+# Colonnes : `statuts` et `regimes` séparés par des espaces — les statuts du
+# simulateur qui le subissent, et les régimes de base auxquels il s'applique
+# (un artisan cotise au régime général depuis 2018, mais sa complémentaire, le
+# RCI, n'a pas de minimum). `heures_smic` OU `part_pass` donne le montant.
+# `proratise` : le minimum suit-il la part de l'année couverte ? `jours_minimum`
+# : durée d'affiliation en deçà de laquelle il ne s'applique pas.
+statuts,regimes,debut,fin,heures_smic,part_pass,proratise,jours_minimum,fiabilite
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,1985,2011,200,,non,0,haute
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2012,2014,,0.0525,non,90,haute
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2015,2015,,0.077,non,90,haute
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2016,2022,,0.115,non,90,haute
+artisan commercant gerant_debit_tabac,cancava organic rsi regime_general,2023,,450,,non,90,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal,cnavpl regime_general,2004,2011,200,,oui,0,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal,cnavpl regime_general,2012,2014,,0.0525,non,90,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal,cnavpl regime_general,2015,2015,,0.077,non,90,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal,cnavpl regime_general,2016,2022,,0.115,non,90,haute
+profession_liberale liberal_non_reglemente auxiliaire_medical pharmacien expert_comptable agent_general_assurance notaire veterinaire officier_ministeriel chirurgien_dentiste_ou_sage_femme medecin_liberal,cnavpl regime_general,2023,,450,,non,90,haute

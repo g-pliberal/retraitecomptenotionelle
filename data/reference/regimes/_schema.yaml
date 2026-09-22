@@ -356,8 +356,10 @@ champs_periode:
       entre l'âge du taux plein et la liquidation (son 1°), 0,625 % par
       trimestre COTISÉ au-delà de la durée requise entre l'âge légal et l'âge
       du taux plein (son 2°), sans qu'une même période puisse être comptée
-      deux fois.
-    valeurs: ["aucune", "regime_general", "par_age_seul", "ircantec"]
+      deux fois. `rafp` : le barème actuariel de l'ERAFP, un coefficient par
+      âge entier à la date d'effet, de 1,00 à 62 ans à 1,80 à 75 (décret
+      n° 2004-569, art. 8), sans taux par trimestre.
+    valeurs: ["aucune", "regime_general", "par_age_seul", "ircantec", "rafp"]
     defaut: aucune
 
   surcote_age_debut:
@@ -460,6 +462,24 @@ champs_periode:
       dont la tranche B est nulle, en acquérait autant qu'un autre.
       `null` : aucune garantie.
 
+  capital_seuil_points:
+    description: >-
+      En deçà de ce nombre de points, la prestation est un CAPITAL versé une
+      fois : le RAFP sous 5 125 points (décret n° 2004-569, art. 9), converti
+      par le barème d'âge de l'ERAFP. Le montant annuel reste celui de la rente
+      équivalente ; le capital est écrit dans le détail de la pension.
+    defaut: null
+
+  points_ajustement_par_forfait:
+  points_ajustement_maximum:
+    description: >-
+      Points d'AJUSTEMENT, ajoutés aux points par trimestre validé : le premier
+      champ multiplie la cotisation proportionnelle divisée par la cotisation
+      forfaitaire, le second plafonne le résultat, par an. C'est l'ASV des
+      médecins depuis 2012 — 18 fois l'ajustement sur le forfait, neuf points
+      au plus (décret n° 2011-1644, art. 3).
+    defaut: null
+
   points_par_trimestre_valide:
     description: >-
       Points attribués par TRIMESTRE VALIDÉ, sans égard au montant cotisé.
@@ -530,6 +550,16 @@ champs_periode:
       C'est l'assiette minimale de la complémentaire agricole, qui ouvre ses
       cent points même à un revenu plus faible.
     defaut: false
+
+  assiette_minimale_pass:
+    description: >-
+      Assiette MINIMALE, en plafonds annuels de la Sécurité sociale : la
+      cotisation proportionnelle est due sur au moins cette assiette, quel que
+      soit le revenu, et ouvre les points correspondants. C'est la CARPIMKO
+      depuis 2026 — assiette « comprise entre un minimum et un maximum »,
+      50 % et 300 % du plafond. Proratisée comme l'assiette sur une année
+      incomplète.
+    defaut: null
 
   cotisation_forfaitaire_euros:
   cotisation_forfaitaire_annee:

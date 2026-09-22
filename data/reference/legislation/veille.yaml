@@ -3130,3 +3130,26 @@ journal:
       cotisation au RAAP avant 1981 ; les minimums de points et le seuil
       d'affiliation des trois régimes. Hors scénario 1 : la part patronale que
       le compte notionnel prête aux auteurs, sans diffuseur qui la verse.
+
+  - date: "2026-09-22"
+    session: "écarts avec les simulateurs officiels, corrections"
+    consulte: >-
+      Index LEGI : D. 633-2 et D. 642-4 dans toutes leurs versions, articles 1
+      à 3 du décret n° 2011-1644, article 2 du décret n° 79-262. Index JORF :
+      décret n° 2025-1076, arrêté du 14 novembre 2025 (statuts de la CARPIMKO),
+      décret n° 2026-418. Cnav : barèmes du point RCI. CARPIMKO : page des
+      cotisations 2026. ERAFP : tableaux de majoration et de conversion en
+      capital, page de calcul de la prestation.
+    trouve: >-
+      Six écarts avec les calculettes, tous du côté du dépôt : seconde tranche
+      de la Cipav à quatre plafonds depuis 2025 ; valeurs du point RCI de 2024
+      à 2026 ; assiette de la CARPIMKO entre un demi et trois plafonds, sur le
+      revenu entier, au point de 391 € ; ASV des médecins à 27 points plus
+      l'ajustement ; RAFP majoré par l'âge et versé en capital sous 5 125
+      points ; assiette minimale du régime de base des indépendants. Corrigés
+      dans les deux moteurs.
+    reste: >-
+      Le coût du point de la CARPIMKO en 2026 n'est publié nulle part ailleurs
+      que dans sa calculette. Le décret n° 2026-418 reste à lire article par
+      article. Les exclusions de la cotisation minimale des libéraux et le
+      capital fractionné du RAFP ne sont pas modélisés.

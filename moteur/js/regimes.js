@@ -1058,6 +1058,14 @@ export class PeriodeRegime {
     const [borneBasse, borneHaute] = this.bornesAssietteEnPass();
     return borneHaute === null ? 0.0 : (borneHaute - borneBasse) * pass;
   }
+
+  /** Assiette en deçà de laquelle la cotisation n'est pas appelée. */
+  assietteMinimale(pass) {
+    if (this.assiette_minimale_pass === null || this.assiette_minimale_pass === undefined) {
+      return 0.0;
+    }
+    return this.assiette_minimale_pass * pass;
+  }
 }
 
 export class Regime {

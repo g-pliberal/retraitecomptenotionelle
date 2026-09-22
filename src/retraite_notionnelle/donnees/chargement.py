@@ -500,6 +500,82 @@ def _services(ligne: dict[str, str]) -> tuple[bool, int]:
     return valeur == "oui", 0
 
 
+@dataclass(frozen=True)
+class AssietteMinimale:
+    """Une ligne de ``legislation/assiette_minimale_independants.csv``."""
+
+    statuts: frozenset[str]
+    regimes: frozenset[str]
+    debut: int
+    fin: int | None
+    heures_smic: float | None
+    part_pass: float | None
+    proratise: bool
+    jours_minimum: int
+
+    def montant(self, pass_annuel: float, smic_horaire: float,
+                part: float) -> float:
+        """L'assiette minimale de l'année, pour une année couverte à ``part``.
+
+        Nulle en deçà de ``jours_minimum`` d'affiliation ; proratisée quand le
+        texte le dit, entière sinon.
+        """
+        if part * 365 + 1e-6 < self.jours_minimum:
+            return 0.0
+        if self.heures_smic is not None:
+            montant = self.heures_smic * smic_horaire
+        else:
+            montant = (self.part_pass or 0.0) * pass_annuel
+        return montant * part if self.proratise else montant
+
+
+_ASSIETTES_MINIMALES: dict[tuple[str, int, int], tuple[AssietteMinimale, ...]] = {}
+
+
+def charger_assiettes_minimales(racine: Path) -> tuple[AssietteMinimale, ...]:
+    """Assiette minimale du régime de base des indépendants, par statut.
+
+    Lue à chaque construction d'une carrière : on la garde donc, indexée sur
+    la signature du fichier, comme les autres points de passage du disque.
+    """
+    chemin = racine / "reference" / "legislation" / "assiette_minimale_independants.csv"
+    if not chemin.exists():
+        return ()
+    etat = chemin.stat()
+    cle = (str(chemin), etat.st_mtime_ns, etat.st_size)
+    if cle in _ASSIETTES_MINIMALES:
+        return _ASSIETTES_MINIMALES[cle]
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (l for l in flux if not l.lstrip().startswith("#"))
+        table = tuple(
+            AssietteMinimale(
+                statuts=frozenset(ligne["statuts"].split()),
+                regimes=frozenset(ligne["regimes"].split()),
+                debut=int(ligne["debut"]),
+                fin=int(ligne["fin"]) if ligne["fin"].strip() else None,
+                heures_smic=(float(ligne["heures_smic"])
+                             if ligne["heures_smic"].strip() else None),
+                part_pass=(float(ligne["part_pass"])
+                           if ligne["part_pass"].strip() else None),
+                proratise=ligne["proratise"].strip().lower() == "oui",
+                jours_minimum=int(ligne["jours_minimum"] or 0),
+            )
+            for ligne in csv.DictReader(lignes)
+        )
+    _ASSIETTES_MINIMALES[cle] = table
+    return table
+
+
+def assiette_minimale(table: tuple[AssietteMinimale, ...], statut: str,
+                      annee: int) -> AssietteMinimale | None:
+    """La règle d'assiette minimale que ce statut subit cette année-là."""
+    for regle in table:
+        if (statut in regle.statuts and regle.debut <= annee
+                and (regle.fin is None or annee <= regle.fin)):
+            return regle
+    return None
+
+
 def charger_periodes_non_travaillees(racine: Path) -> dict[str, PeriodeNonTravaillee]:
     """Table des motifs d'interruption et de ce que chacun ouvre."""
     chemin = racine / "reference" / "legislation" / "periodes_non_travaillees.csv"

@@ -55,6 +55,8 @@ from ..calendrier import DateMois, en_mois
 from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
 from ..config import Parametres
 from ..donnees.chargement import (
+    assiette_minimale,
+    charger_assiettes_minimales,
     Fiabilite,
     charger_table_par_generation,
     valeur_par_generation,
@@ -684,6 +686,43 @@ def _au_trimestre_superieur(trimestres: float) -> int:
     au-dessus d'un entier n'en fasse compter un de plus.
     """
     return max(0, -(-int(round(trimestres * 1000)) // 1000))
+
+
+#: RAFP — barème actuariel de modulation de la valeur de service, par âge
+#: ENTIER à la date d'effet : « la valeur de service du point est modulée en
+#: fonction de l'âge de liquidation de la retraite additionnelle » (décret
+#: n° 2004-569, art. 8). Tableau publié par l'ERAFP, « Valeurs des
+#: coefficients de majoration » ; 1,00 jusqu'à 62 ans, 1,80 dès 75.
+_MAJORATION_RAFP = {
+    62: 1.00, 63: 1.04, 64: 1.08, 65: 1.12, 66: 1.17, 67: 1.22, 68: 1.28,
+    69: 1.33, 70: 1.40, 71: 1.47, 72: 1.54, 73: 1.62, 74: 1.71, 75: 1.80,
+}
+
+#: RAFP — coefficients de conversion en capital, par âge à la date d'effet,
+#: pour les prestations servies depuis le 1er janvier 2022 (barème de l'ERAFP).
+#: Le document les interpole au MOIS entre deux âges entiers : 62 ans et 7
+#: mois valent 27,11 + (26,34 − 27,11) × 7 / 12.
+_CONVERSION_CAPITAL_RAFP = {
+    62: 27.11, 63: 26.34, 64: 25.57, 65: 24.79, 66: 24.02, 67: 23.25,
+    68: 22.47, 69: 21.70, 70: 20.92, 71: 20.15, 72: 19.37, 73: 18.61,
+    74: 17.84, 75: 17.07,
+}
+
+
+def _majoration_rafp(age_liquidation: float) -> float:
+    """Coefficient de majoration du RAFP à l'âge de liquidation."""
+    return _MAJORATION_RAFP[min(75, max(62, int(age_liquidation + 1e-9)))]
+
+
+def _conversion_capital_rafp(age_liquidation: float) -> float:
+    """Coefficient de conversion en capital du RAFP, interpolé au mois."""
+    age = min(75.0, max(62.0, age_liquidation))
+    ans = int(age + 1e-9)
+    if ans >= 75:
+        return _CONVERSION_CAPITAL_RAFP[75]
+    mois = int((age - ans) * 12 + 1e-6)
+    bas = _CONVERSION_CAPITAL_RAFP[ans]
+    return bas + (_CONVERSION_CAPITAL_RAFP[ans + 1] - bas) * mois / 12
 
 
 def _coefficient_anticipation(trimestres_manquants: float,
@@ -1735,6 +1774,21 @@ class ScenarioActuel:
 
     # -- salaire de référence ------------------------------------------------
 
+    def _assiette_minimale(self, codes, ligne) -> float:
+        """L'assiette minimale que la ligne oppose à l'un de ces régimes.
+
+        Celle du régime de BASE d'un indépendant (D. 633-2, D. 642-4), portée
+        par la ligne ; nulle pour tout autre régime — la complémentaire des
+        artisans et commerçants n'a pas de minimum.
+        """
+        if ligne.assiette_minimale_base <= 0:
+            return 0.0
+        regle = assiette_minimale(charger_assiettes_minimales(self.macro.racine),
+                                  ligne.affiliation, ligne.annee)
+        if regle is None or regle.regimes.isdisjoint(codes):
+            return 0.0
+        return ligne.assiette_minimale_base
+
     def _assiette_de_reference(self, periode: PeriodeRegime, ligne) -> float:
         """La rémunération que ce régime liquide : voir la fonction du même
         nom, et, pour un régime à grille, le salaire forfaitaire de la
@@ -1872,7 +1926,8 @@ class ScenarioActuel:
                     continue
                 revenu = ligne.revenu_avpf
             else:
-                revenu = self._assiette_de_reference(periode, ligne)
+                revenu = max(self._assiette_de_reference(periode, ligne),
+                             self._assiette_minimale(codes_admis, ligne))
             # TRANCHE DE SALAIRE. Un régime qui liquide TRANCHE PAR TRANCHE —
             # le personnel navigant, dont l'article R. 426-16-1 attribue
             # 1,85 % par annuité à la première et 1,4 % à la seconde — a
@@ -3222,6 +3277,10 @@ class ScenarioActuel:
         mode = periode.surcote_points
         if mode == "aucune":
             return 1.0
+        if mode == "rafp":
+            # Le RAFP module sa valeur de service par un barème d'âge, sans
+            # taux par trimestre : 1,08 à 64 ans, 1,22 à 67, 1,40 à 70.
+            return _majoration_rafp(age_liquidation)
         if mode == "ircantec":
             return self._surcote_ircantec(
                 periode, carriere, trimestres, requis,
@@ -3619,6 +3678,10 @@ class ScenarioActuel:
                         )
                         if forfait_grille is not None:
                             base = forfait_grille[0] * part
+                    # L'assiette minimale du régime de base d'un libéral :
+                    # 450 SMIC horaires depuis 2023 (D. 642-4), qui ouvrent
+                    # les points que ce montant ouvrirait.
+                    base = max(base, self._assiette_minimale((code,), ligne))
                     plafond = base if borne_haute is None else borne_haute
                     assiette = max(0.0, min(base, plafond) - borne_basse)
                     repere = periode.repere_assiette(
@@ -3635,6 +3698,13 @@ class ScenarioActuel:
                         # sur 1 820 SMIC même quand le revenu est en dessous,
                         # et ouvre donc ses cent points malgré tout.
                         assiette = repere
+                    if not periode.assiette_forfaitaire:
+                        # Assiette minimale en plafonds : la CARPIMKO appelle
+                        # depuis 2026 sa cotisation sur un demi-plafond au
+                        # moins, et les points suivent ce qui est appelé. Le
+                        # plafond est déjà proratisé sur les mois de l'année.
+                        assiette = max(assiette,
+                                       periode.assiette_minimale(pass_annuel))
                     # La cotisation forfaitaire s'ajoute à la proportionnelle,
                     # et elle est due quel que soit le revenu — cf.
                     # `Compte._cotisation_forfaitaire`, même convention
@@ -3705,9 +3775,26 @@ class ScenarioActuel:
                         echelle, fiabilite_echelle = self.conversions_points.echelle(
                             bareme, ligne.annee, annee_liquidation
                         )
+                        points = (periode.points_par_trimestre_valide
+                                  * carriere.trimestres_retenus(ligne))
+                        if (periode.points_ajustement_par_forfait is not None
+                                and forfait > 0):
+                            # Les points d'AJUSTEMENT de l'ASV des médecins :
+                            # 18 fois la cotisation proportionnelle sur le
+                            # forfait, neuf au plus (décret n° 2011-1644,
+                            # art. 3). Ils suivent le revenu, là où les 27
+                            # points du forfait ne suivent que la durée.
+                            ajustement = (periode.points_ajustement_par_forfait
+                                          * assiette
+                                          * periode.taux_cotisation_retraite
+                                          / forfait)
+                            if periode.points_ajustement_maximum is not None:
+                                ajustement = min(
+                                    ajustement,
+                                    periode.points_ajustement_maximum * part)
+                            points += ajustement
                         points_acquis[code] = points_acquis.get(code, 0.0) + (
-                            periode.points_par_trimestre_valide
-                            * carriere.trimestres_retenus(ligne) * echelle
+                            points * echelle
                         )
                         fiabilite_points[code] = min(
                             fiabilite_points.get(code, Fiabilite.CERTIFIEE),
@@ -3973,6 +4060,7 @@ class ScenarioActuel:
                     )
 
                 fiabilite_globale = min(fiabilite_globale, fiabilite_regime)
+                montant_brut = montant
                 abattement = 1.0
                 if not ignorer_penalite_age:
                     # Le coefficient d'anticipation multiplie le montant : sans
@@ -3985,9 +4073,33 @@ class ScenarioActuel:
                         trimestres_par_regime.get(code, 0),
                     )
                     montant *= abattement
+                detail = _formule_points(details, abattement)
+                # Les années qu'aucun prix d'achat ne couvre encore passent par
+                # le rendement : le seuil se compare donc aux points que vaut
+                # TOUT le montant, à la valeur de service de la liquidation.
+                points_totaux = points
+                if periode.capital_seuil_points is not None:
+                    valeur = self.valeur_du_point(
+                        periode.points_de or code, annee_liquidation)
+                    if valeur is not None and valeur[0] > 0:
+                        points_totaux = montant_brut / valeur[0]
+                if (periode.capital_seuil_points is not None
+                        and 0 < points_totaux < periode.capital_seuil_points):
+                    # SOUS LE SEUIL, UN CAPITAL. Le RAFP ne sert de rente qu'à
+                    # partir de 5 125 points ; en deçà, il verse une fois
+                    # « points × coefficient de majoration × valeur de service ×
+                    # coefficient de conversion en capital » (décret
+                    # n° 2004-569, art. 9). Le montant annuel reste celui de la
+                    # rente dont le capital est l'équivalent actuariel : c'est
+                    # lui que les comparaisons annuelles savent lire.
+                    capital = montant * _conversion_capital_rafp(age_liquidation)
+                    detail += (
+                        f" ; versé en capital, {capital:,.0f} € en une fois "
+                        f"(moins de {periode.capital_seuil_points:,.0f} points)"
+                    )
                 pensions.append(PensionRegime(
                     regime=code, montant=montant, type_calcul=periode.type_calcul,
-                    detail=_formule_points(details, abattement),
+                    detail=detail,
                     fiabilite=fiabilite_regime,
                 ))
                 continue

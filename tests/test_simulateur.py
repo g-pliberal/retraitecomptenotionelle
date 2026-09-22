@@ -3771,7 +3771,8 @@ def test_toute_surcote_ecrite_par_une_fiche_en_points_est_servie(simulateur):
         for regime in simulateur.catalogue
         for p in regime.periodes
         if p.type_calcul in ("points", "mixte")
-        and bool(p.surcote_par_trimestre) != (p.surcote_points not in ("aucune", "ircantec"))
+        and bool(p.surcote_par_trimestre) != (
+            p.surcote_points not in ("aucune", "ircantec", "rafp"))
         and not (p.surcote_points == "ircantec" and not p.surcote_par_trimestre)
     ]
     assert not orphelines, orphelines

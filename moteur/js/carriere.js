@@ -81,6 +81,9 @@ export class AnneeCarriere {
     //: réputée cotisée sans limite, ce qui n'est vrai que de la maternité.
     reputes_cotises_enveloppe = "",
     reputes_cotises_plafond = 0,
+    //: ASSIETTE MINIMALE du régime de base d'un indépendant (D. 633-2,
+    //: D. 642-4), en euros de l'année ; nulle pour tout autre statut.
+    assiette_minimale_base = 0.0,
   }) {
     Object.assign(this, {
       annee, revenu, affiliation, type_periode, quotite,
@@ -88,6 +91,7 @@ export class AnneeCarriere {
       revenu_reference, familles_cotisantes, revenu_avpf, fraction_annee,
       services_fonction_publique, services_plafond_trimestres_par_enfant,
       reputes_cotises_enveloppe, reputes_cotises_plafond,
+      assiette_minimale_base,
     });
   }
 
@@ -117,6 +121,30 @@ export class AnneeCarriere {
  * relevé dit combien de trimestres l'année a validés, et ce chiffre-là fait
  * foi ; une carrière paramétrique les déduit du montant cotisé.
  */
+/**
+ * La règle d'assiette minimale que ce statut subit cette année-là, lue dans
+ * `legislation/assiette_minimale_independants.csv`, ou `null`.
+ */
+export function assietteMinimale(paquet, statut, annee) {
+  for (const regle of paquet.assiette_minimale_independants ?? []) {
+    const [statuts, , debut, fin] = regle;
+    if (statuts.includes(statut) && debut <= annee && (fin === null || annee <= fin)) {
+      return regle;
+    }
+  }
+  return null;
+}
+
+/** Le montant de cette règle pour une année couverte à `part`. */
+function montantAssietteMinimale(regle, pass, smicHoraire, part) {
+  const [, , , , heuresSmic, partPass, proratise, joursMinimum] = regle;
+  if (part * 365 + 1e-6 < joursMinimum) {
+    return 0.0;
+  }
+  const montant = heuresSmic !== null ? heuresSmic * smicHoraire : (partPass ?? 0.0) * pass;
+  return proratise ? montant * part : montant;
+}
+
 function ligneAnnuelle({
   annee,
   revenu,
@@ -143,8 +171,20 @@ function ligneAnnuelle({
   // liste fermée de périodes qu'il répute telles, chacune sous sa limite.
   const enveloppeReputes = (cotise || regle === null) ? "" : regle[6];
   const plafondReputes = (cotise || regle === null) ? 0 : regle[7];
+  // L'ASSIETTE MINIMALE DES INDÉPENDANTS : un artisan qui déclare 3 000 €
+  // cotise en 2026 sur 450 SMIC horaires et valide trois trimestres au lieu
+  // d'un. Le revenu de la ligne reste celui qu'il a déclaré.
+  let minimale = 0.0;
+  if (cotise && revenu > 0) {
+    const regleMinimale = assietteMinimale(macro.paquet, affiliation, annee);
+    if (regleMinimale !== null) {
+      minimale = montantAssietteMinimale(regleMinimale,
+        macro.plafond_securite_sociale.valeur(annee),
+        macro.smic_horaire.valeur(annee), part);
+    }
+  }
   const trimestres = trimestresDeclares === null
-    ? (cotise ? macro.trimestresValides(revenu, annee)
+    ? (cotise ? macro.trimestresValides(Math.max(revenu, minimale), annee)
       : (regle !== null ? regle[0] : 4))
     : trimestresDeclares;
   return new AnneeCarriere({
@@ -159,6 +199,7 @@ function ligneAnnuelle({
     // plafond : on ne valide pas quatre trimestres en sept mois, si gros que
     // soit le salaire.
     trimestres_valides: Math.min(trimestresMaximum, trimestres),
+    assiette_minimale_base: minimale,
     // Pendant une période indemnisée, l'UNEDIC ou la Sécurité sociale versent
     // de vraies cotisations aux régimes complémentaires, assises sur le
     // salaire d'avant.
