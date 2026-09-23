@@ -255,6 +255,9 @@ fichiers:
       "Les régimes qui manquent encore, et ce qui bloque chacun": etat
       "Un rendement unique là où il faudrait une série": etat
       "Le simulateur doit être juste à tout âge : où il ne l'est pas encore": etat
+      # Ancrée le 23 septembre 2026 : l'écart du cas type retraité est une
+      # mesure du modèle, ceux du COR sont tenus par leurs tests.
+      "La pension d'aujourd'hui d'un retraité : ce qui est lu, et ce qui est reconstitué": etat
       "Ce que vaut une série qu'on ne peut pas certifier": etat
       "La part patronale du public, et ce qu'on n'en sait pas": etat
       "Ce que la comparaison valide": etat

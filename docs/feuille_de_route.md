@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 245<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 829<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->34 681<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14463,3 +14463,120 @@ minimum contributif de 2024.
 
 **Restent** les lots 3 (mécanique notionnelle et coût), 4 (chiffres du site
 et données), 5 (tests mal orientés) et 6 (consignes périmées).
+
+### 112. Le retraité voit la pension qu'il touche aujourd'hui, et un cas type la refait à la main — `fait`
+
+**Demande.** « J'ai vu une erreur pour le cas retraités. Il montre le montant
+de la pension à l'âge de départ à la retraite. Il faut montrer la pension
+d'aujourd'hui. Il faut faire un cas type comme pour le cas d'une personne en
+activité pour être sûr de notre coup. » (23 septembre 2026)
+
+**Ce qui était faux.** Pour qui était déjà parti, la page le disait elle-même :
+« ces montants sont ceux de votre pension au moment du départ […], et non de
+celle que vous touchez aujourd'hui ». Elle affichait la pension du premier
+mois, ramenée en euros de 2026 par l'indice des prix — comme si elle avait
+suivi les prix. Elle ne les a pas suivis : gel de 2014, 0,3 % en 2019, cinq
+coefficients en 2020 selon la retraite totale de décembre 2019, point Arrco
+sans revalorisation plusieurs années de suite. Et la saisie par la pension
+prenait le montant saisi pour celui du départ.
+
+**Ce qui a été fait.**
+
+- *Les revalorisations servies, lues à la source.* Le barème « Coefficients de
+  revalorisation des retraites » de la Cnav, toutes les dates d'effet depuis
+  1949 et les cinq tranches de 2020 (`scripts/fetch/cnav_revalorisation_pensions.py`) ;
+  les décrets de revalorisation des pensions de l'État de 2004 à 2008, lus dans
+  l'index JORF ; l'article 81 de la LFSS 2020 et l'article 68 de la LFSS 2019 ;
+  L. 16 du code des pensions civiles et militaires dans ses trois rédactions.
+- *Chaque régime revalorisé par son texte* (`revalorisation.py`, porté dans
+  `revalorisation.js`) : les coefficients de la Cnav pour le régime général et
+  les régimes alignés, la valeur de service de l'année pour les régimes en
+  points — fusions et changement d'échelle de l'Arrco de 1999 compris —, le
+  point d'indice puis les décrets puis L. 161-23-1 pour la fonction publique,
+  la règle générale pour les régimes spéciaux, estimée avant 2009. L'ASPA
+  d'aujourd'hui est recalculée à 65 ans révolus sur les pensions d'aujourd'hui.
+  Les systèmes 2 à 4 suivent la règle que la page Coût prête aux comptes
+  notionnels, et la garantie vieillesse du système 4 se recalcule sur la
+  pension d'aujourd'hui.
+- *La page.* Les montants d'un retraité sont ceux de 2026 ; la saisie par la
+  pension vise la pension d'aujourd'hui — 1 600 € nets saisis sont 1 600 € nets
+  en 2026 ; un dépliant « Votre pension, de votre départ à aujourd'hui » refait
+  le chemin régime par régime, dit la tranche de 2020 et ce que la page
+  affichait avant. L'affirmation « au moment du départ » quitte le catalogue ;
+  « ces montants sont ceux de votre pension d'aujourd'hui » y entre, avec son
+  contrôle sur le modèle.
+- *Trois choses trouvées en chemin.* Une pension prise en janvier 2020 n'était
+  pas servie en décembre 2019 : l'article 81 regarde la retraite « reçue […]
+  le mois précédent », nulle, et le modèle lui prêtait son montant de départ.
+  La phrase sur les systèmes 2 à 4 disait « jusqu'à la bascule, puis les prix »
+  même quand le stock est réindexé. Et le réglage « pensions en cours à la
+  bascule » se disait « page Coût seulement » : il joue désormais aussi sur la
+  pension d'un retraité.
+
+**Le cas type, refait à la main.** Un salarié non cadre né en janvier 1950,
+au travail de 20 à 62 ans à 0,8 fois le salaire moyen, parti en janvier 2012.
+Sa pension de départ, celle du modèle : 1 477,46 € bruts par mois. La base,
+multipliée par les treize revalorisations du barème recopiées une à une,
+×1,2215 ; la complémentaire, ses points servis à 1,4386 € au lieu de 1,2414 €,
+×1,1589 ; 1 537,80 € en décembre 2019, donc 1 % en 2020. Sa pension de 2026 :
+**1 780,61 € bruts, 1 618,57 € nets par mois**. La page lui en affichait
+1 844,09 € bruts, 1 676 € nets — 3,4 % de trop. `tests/test_revalorisation.py`
+refait ce compte sans le moteur ; le témoin `retraite_cas_type_2012` y tient le
+portage JavaScript, et `tests/test_web.py` la page.
+
+**Le cas type des autres.** Le COR publie, au rapport de juin 2026 (figure
+3.14), le pouvoir d'achat de la pension nette d'un non-cadre et d'un cadre
+partis en 1997, 2002, 2007 et 2012, année après année. Le dépôt le refait avec
+ses propres séries : le non-cadre à moins de trois centièmes de point en 2026
+pour les quatre générations, la génération 1952 à un quart de point chaque
+année ; le cadre à 0,16 point en 2025, mais de 0,27 à 0,35 point en 2026,
+l'année prévisionnelle du rapport, sans cause trouvée.
+
+**Ce que ça a déplacé.** Aucun chiffre à la liquidation : les témoins ne
+gagnent qu'un bloc `aujourd_hui` pour chaque carrière déjà liquidée, et le cas
+type en entrée. Sur la page, la pension d'un retraité bouge d'autant que le
+droit l'a revalorisée autrement que les prix. Mesuré ce jour-là sur une
+carrière au salaire moyen partie à 62 ans, un départ tous les deux ans : de
+2,2 à 5,8 % de moins pour les départs du privé de 1996 à 2020, cadres ou non,
+et 1,5 à 1,8 % de plus pour celui de 2022, qui a reçu les 4 % anticipés de
+juillet et les 5,3 % de 2024. Dans la fonction publique, jusqu'à 8 % de moins
+pour les départs d'avant 2004, dont la péréquation n'est suivie que par le
+point d'indice, et 4,7 à 5,7 % de plus pour ceux de janvier 2022 et 2024, qui
+reçoivent la revalorisation du jour même de leur départ : les décrets de 2004
+à 2007 la donnaient aux pensions « dont la date d'effet est au plus tard » ce
+jour-là, et le modèle prolonge cette règle depuis 2009.
+
+**Ce qui reste.**
+
+- La confrontation à un DOCUMENT réel de retraité — une attestation de paiement,
+  un avis de revalorisation —, comme l'action 108 l'a faite pour un actif.
+- La péréquation de la fonction publique avant 2004 au-delà du point d'indice :
+  les tableaux d'assimilation qui relevaient les pensions d'un grade réformé.
+- Les régimes spéciaux avant 2009, dont les pensions suivaient les salaires de
+  leurs actifs ; le régime de base des libéraux au-delà de sa dernière valeur
+  de point publiée, et les régimes en points dont le dépôt ne porte pas la
+  série des valeurs de service, comme la complémentaire de la Cipav — la règle
+  générale en tient lieu. L'Ircantec, elle, a désormais ses valeurs jusqu'en 2026
+  (action 111).
+- La fonction publique depuis 2009 : aucun texte lu ne redit, sous
+  L. 161-23-1, que la revalorisation du jour du départ est servie — le modèle
+  le suppose, sur la foi des décrets d'avant. Et la tranche de 2020 d'une
+  pension prise le 1er janvier 2020 : la lettre de l'article 81 est appliquée,
+  aucune circulaire lue ne dit ce que le service des retraites de l'État a
+  fait.
+- L'écart du cadre du COR en 2026.
+- Le graphique des cumuls reste bâti sur la pension du départ, et le dit.
+
+**Fichiers.** `src/retraite_notionnelle/revalorisation.py` et
+`moteur/js/revalorisation.js` (nouveaux), `simulateur.py`/`simulateur.js`,
+`cout.py`/`cout.js` (la règle servie des systèmes notionnels y a déménagé),
+`web/pages.py`/`pages.js`, `config.py` (docstring), `index.html` (le
+préchargement du module), `scripts/fetch/cnav_revalorisation_pensions.py`,
+`scripts/fetch/cor_pouvoir_achat_retraite.py`,
+`data/reference/legislation/revalorisation_pensions.csv` et
+`revalorisation_pensions_fonction_publique.csv`, `data/sources.yaml`,
+`scripts/construire_donnees.py`, `scripts/construire_temoins.py`,
+`scripts/mesures_prose.py` (mesure `aujourd_hui`), `tests/test_revalorisation.py`
+(nouveau), `tests/test_web.py`, `tests/test_affirmations.py`,
+`data/reference/site/affirmations.yaml`, `tests/temoins/`,
+`data/reference/legislation/veille.yaml`, `docs/limites.md` §3.

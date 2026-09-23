@@ -3137,6 +3137,82 @@ qui montrent la marche n'ont d'ailleurs aucun enfant.
 réforme réelle lisserait la frontière sur plusieurs générations. Le modèle
 tranche net, et la grille de cas types le montre tel quel.
 
+### La pension d'aujourd'hui d'un retraité : ce qui est lu, et ce qui est reconstitué
+
+Le simulateur montre à qui est déjà parti la pension qu'il touche cette année,
+et non plus celle de son premier mois ramenée par l'indice des prix. Chaque
+régime la revalorise par son texte (`src/retraite_notionnelle/revalorisation.py`,
+porté dans `moteur/js/revalorisation.js`). L'écart n'est pas un détail : le
+salarié non cadre du cas type, parti en janvier 2012, touche en 2026
+<!--chiffre:mesure(aujourd_hui?generation=1950&niveau=0.8)-->−3,4<!--/--> % de
+moins que sa pension de départ ramenée par les prix — ce que la page lui
+affichait. Le calcul est exact là où un texte donne un coefficient ou une
+valeur de point ; ailleurs il est reconstitué, et le dépliant « Votre pension,
+de votre départ à aujourd'hui » le dit au retraité concerné.
+
+**Ce qui est lu.** Le régime général et les régimes alignés : chaque date
+d'effet depuis 1949, les cinq tranches de 2020 comprises, dans le barème de la
+Cnav. Les régimes en points : la valeur de service de l'année, le long des
+fusions et des changements d'échelle — le point Arrco d'avant 1999 est converti
+à l'échelle de l'année. La fonction publique depuis 2004 : un décret par an
+jusqu'en 2008, puis l'article L. 161-23-1. Deux contrôles le tiennent : le cas
+type, refait à la main coefficient par coefficient
+(`tests/test_revalorisation.py`), et les cas types du COR, figure 3.14 du
+rapport de juin 2026, dont le non-cadre des quatre générations est retrouvé en
+2026 à <!--chiffre:tenu(test_le_pouvoir_d_achat_du_non_cadre_du_cor_est_retrouve)-->0,1<!--/-->
+point et, pour la génération 1952, année après année à
+<!--chiffre:tenu(test_le_non_cadre_de_1952_se_suit_annee_apres_annee)-->0,3<!--/-->
+point.
+
+**Ce qui est reconstitué.**
+
+- *La péréquation de la fonction publique, avant 2004.* La pension suivait le
+  traitement de l'indice auquel elle avait été liquidée. Le modèle suit la
+  valeur du point d'indice, et non les tableaux d'assimilation qui relevaient
+  aussi les pensions d'un grade réformé : un fonctionnaire parti avant 2004
+  dont le corps a été revalorisé depuis touche davantage que ce que la page
+  lui montre.
+- *Les régimes spéciaux avant 2009.* Leurs pensions suivaient les salaires de
+  leurs actifs, qu'aucune série publique ne donne ; la règle du régime général
+  en tient lieu, et la fiabilité affichée tombe à « estimée ».
+- *Les régimes en points au-delà de leur dernière valeur publiée* — le régime
+  de base des libéraux en 2026 — suivent la règle générale, comme ceux dont le
+  dépôt ne porte pas la série des valeurs de service, la complémentaire de la
+  Cipav par exemple ; la fiabilité affichée le dit.
+- *La revalorisation du jour du départ, dans la fonction publique depuis
+  2009.* Les décrets de 2004 à 2007 la servaient aux pensions « dont la date
+  d'effet est au plus tard » ce jour-là ; aucun texte lu ne le redit sous
+  l'article L. 161-23-1, et le modèle prolonge la règle. Un départ au
+  1er janvier 2024 reçoit ainsi la revalorisation de ce jour-là.
+- *La tranche de 2020 d'une pension de la fonction publique prise le
+  1er janvier 2020.* L'article 81 de la loi n° 2019-1446 choisit le
+  coefficient sur la retraite totale reçue le mois précédent, nulle ici : le
+  modèle sert le coefficient des petites retraites. Aucune circulaire lue ne
+  dit comment le service des retraites de l'État l'a appliqué.
+- *La majoration pour enfants* suit le coefficient moyen des régimes, pondéré
+  par leurs pensions, et non celui de chacun des régimes qui la portent.
+- *Ce qui n'est pas une revalorisation* n'est pas servi : la prime
+  exceptionnelle de 2015 aux petites retraites, notamment. Et la pension
+  d'aujourd'hui est calculée en brut, puis nette aux prélèvements de cette
+  année — la CSG du départ n'intervient nulle part.
+
+**Le cadre du COR s'écarte davantage, et la cause n'est pas trouvée.** Le
+dépôt le retrouve à
+<!--chiffre:tenu(test_le_cadre_du_cor_est_retrouve_a_un_tiers_de_point)-->0,2<!--/-->
+point en 2025, et à
+<!--chiffre:tenu(test_le_cadre_du_cor_est_retrouve_a_un_tiers_de_point)-->0,4<!--/-->
+point en 2026, l'année prévisionnelle du rapport, toujours du côté d'une perte
+plus forte. Aucune hypothèse d'inflation ou de revalorisation de novembre ne le
+résorbe sans ouvrir l'écart du non-cadre, et les conventions publiées de
+l'annexe n'en disent pas davantage.
+
+**Ce qui reste celui du départ.** Le graphique des cumuls de la trajectoire
+additionne la pension du premier mois, supposée garder son pouvoir d'achat, et
+sa légende le dit. Les systèmes 2 à 4 ne sont pas le droit : leur pension
+servie suit la règle que le modèle prête aux comptes notionnels, celle de la
+page Coût, et la garantie vieillesse du système 4 se recalcule sur la pension
+d'aujourd'hui.
+
 ---
 
 ## 4. Régimes incomplets, et de combien
@@ -8554,7 +8630,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2208<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2229<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
