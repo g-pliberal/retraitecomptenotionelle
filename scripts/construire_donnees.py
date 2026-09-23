@@ -749,6 +749,30 @@ def _revalorisation_salaires() -> list:
     ]
 
 
+def _revalorisation_pensions() -> dict:
+    """Les revalorisations des pensions servies, date d'effet par date d'effet.
+
+    Une ligne : date ISO, coefficient, bornes mensuelles des tranches de 2020
+    (``null`` ailleurs), fiabilité. Les références des textes restent dans les
+    fichiers : la page ne les cite pas.
+    """
+    from retraite_notionnelle.revalorisation import RevalorisationsPensions
+
+    revalorisations = RevalorisationsPensions(DONNEES)
+
+    def lignes(serie):
+        return [
+            [r.date_effet.isoformat(), r.coefficient, r.superieur_a, r.au_plus,
+             int(r.fiabilite)]
+            for r in serie
+        ]
+
+    return {
+        "generales": lignes(revalorisations.generales),
+        "fonction_publique": lignes(revalorisations.fonction_publique),
+    }
+
+
 def _contribution_employeur_public() -> dict:
     """Part employeur des régimes publics, indexée « régime|année »."""
     from retraite_notionnelle.donnees.regimes import ContributionsEmployeurPubliques
@@ -1314,6 +1338,7 @@ def construire(bilan: bytes) -> bytes:
         "durees_requises": _table_par_generation(DureesRequises),
         "durees_proratisation": _table_par_generation(DureesProratisation),
         "revalorisation_salaires": _revalorisation_salaires(),
+        "revalorisation_pensions": _revalorisation_pensions(),
         "ages_ouverture": _table_par_generation(AgesOuverture),
         "ages_annulation_decote": _table_par_generation(AgesAnnulationDecote),
         "ages_regimes": _ages_regimes(),

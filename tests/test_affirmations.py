@@ -1208,13 +1208,25 @@ def _(m: Modele):
                    comparaison.actuel.pension_annuelle / comparaison.dernier_revenu_annualise)
 
 
-@controle("pension_au_moment_du_depart")
+@controle("pension_d_aujourd_hui_revalorisee")
 def _(m: Modele):
-    comparaison = m.defaut
-    annee = comparaison.carriere.annee_liquidation
-    assert comparaison.notionnel_retroactif.conversion.annee_liquidation == annee
-    assert _proche(comparaison.coefficient_euros_constants,
-                   m.sim.macro.coefficient_prix(annee, m.base.annee_euros_constants))
+    comparaison = m.deja_liquidee
+    aujourd_hui = comparaison.aujourd_hui
+    assert aujourd_hui is not None and aujourd_hui.annee == m.base.annee_courante
+    actuel = aujourd_hui.actuel
+    # Chaque régime part du montant que le scénario 1 a liquidé…
+    assert _proche(sum(r.au_depart for r in actuel.regimes if not r.hors_repartition)
+                   + actuel.majoration_enfants + actuel.minimum_vieillesse_au_depart,
+                   comparaison.actuel.pension_annuelle)
+    # … et le revalorise par son texte, pas par l'indice des prix : c'est ce
+    # que la page affichait jusqu'au 23 septembre 2026, et ce n'est pas ce que
+    # le retraité touche.
+    assert all(r.coefficient > 1.0 for r in actuel.regimes if r.au_depart > 0)
+    par_les_prix = comparaison.actuel.pension_annuelle * m.sim.macro.coefficient_prix(
+        comparaison.carriere.annee_liquidation, aujourd_hui.annee)
+    assert not _proche(actuel.pension_annuelle, par_les_prix, 1e-3)
+    # Qui n'est pas encore parti n'a pas de pension d'aujourd'hui.
+    assert m.defaut.aujourd_hui is None
 
 
 @controle("sous_total_contributif")

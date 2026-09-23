@@ -537,12 +537,15 @@ affirmations:
     etat: verifiee
     controle: taux_de_remplacement_definition
 
-  - id: simuler.au_moment_du_depart
+  - id: simuler.pension_d_aujourd_hui
     page: /simuler
-    extrait: "au moment du départ"
-    porte: le moteur ne calcule qu'une pension à la liquidation, sans revalorisation ensuite
+    extrait: "ces montants sont ceux de votre pension d'aujourd'hui"
+    porte: >-
+      pour qui est déjà parti, les montants sont ceux de l'année courante : la
+      pension du départ revalorisée régime par régime selon son texte, et non
+      ramenée par l'indice des prix
     etat: verifiee
-    controle: pension_au_moment_du_depart
+    controle: pension_d_aujourd_hui_revalorisee
 
   - id: simuler.ecart_fiche_de_paie
     page: /simuler

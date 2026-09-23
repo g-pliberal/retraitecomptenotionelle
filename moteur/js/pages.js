@@ -12,13 +12,13 @@ import {
 import { bornesDeformation, salaireMoyenAnnuel } from "./carriere.js";
 import { repartition } from "./capitalisation.js";
 import { CourbeTauxSansRisque } from "./taux.js";
-import { FAMILLES_STATUT, formaterBorne } from "./regimes.js";
+import { FAMILLES_STATUT, MinimumVieillesse, formaterBorne } from "./regimes.js";
 import {
   CAS_TYPES, GENERATIONS, ageLiquidationPour, calculerCasTypes,
 } from "./castypes.js";
 import {
   AgeConversionDroitsAcquis, ModeAgeReference, ModeIndexation, PARAMETRES_DEFAUT, PartCotisation,
-  SituationFoyer, TableConversion, avec, cleParametres,
+  RevalorisationStock, SituationFoyer, TableConversion, avec, cleParametres,
   tauxCapitalisationApplique, tauxCapitalisationVolontaireApplique,
   tauxRetraitePropose,
   sousRegimeFrais,
@@ -57,7 +57,10 @@ import { Indexation } from "./indexation.js";
 import { Population } from "./population.js";
 import { echapper, formatFixe, formatG } from "./format.js";
 import * as g from "./gabarit.js";
-import { nomFiabilite } from "./serie.js";
+import { Fiabilite, nomFiabilite } from "./serie.js";
+import {
+  REGLE_FONCTION_PUBLIQUE, REGLE_GENERALE, REGLE_POINT, REGLE_REGIME_SPECIAL,
+} from "./revalorisation.js";
 import { Incidence, salaireBrutDepuisNet, salaireNetDepuisBrut } from "./remuneration.js";
 import { Simulateur, niveauPourPension } from "./simulateur.js";
 
@@ -530,9 +533,9 @@ const DEFAUTS = Object.freeze({
   //: La pension mensuelle saisie, quand c'est elle qu'on saisit. Elle est dans
   //: la MÊME convention que les montants affichés : nette ou brute selon
   //: `montants`, et en euros constants de `euros`. C'est ce qui la rend
-  //: comparable sans rien convertir — et, pour un retraité dont la pension a
-  //: suivi les prix comme le droit le prévoit, c'est exactement la somme qu'il
-  //: touche aujourd'hui. Voir `champPension`.
+  //: comparable sans rien convertir. Pour un retraité, c'est la pension qu'il
+  //: touche AUJOURD'HUI, et le simulateur la compare à sa pension de départ
+  //: revalorisée comme le droit l'a fait. Voir `champPension`.
   pension: PENSION_DEFAUT,
   //: Les métiers exercés APRÈS le premier. Le premier, lui, est décrit par
   //: ``statut``, ``debut`` et ``salaire`` : une adresse d'avant les carrières
@@ -1983,17 +1986,25 @@ export class Contexte {
    */
   _simulerParPension(simulateur, saisie, batir, parcours) {
     const montants = Montants.depuis(saisie, simulateur);
+    // Pour un retraité, la cible est la pension d'AUJOURD'HUI : il saisit ce
+    // qu'il touche, pas ce qu'il touchait le premier mois. Voir
+    // `_simuler_par_pension` dans `pages.py`.
+    const parametres = simulateur.parametres;
+    const retraite = saisie.dateDe(saisie.liquidation).annee < parametres.annee_courante;
     const constants = simulateur.macro.coefficientPrix(
-      saisie.dateDe(saisie.liquidation).annee,
-      simulateur.parametres.annee_euros_constants,
+      retraite ? parametres.annee_courante : saisie.dateDe(saisie.liquidation).annee,
+      parametres.annee_euros_constants,
     );
     const brute = saisie.enNet
       ? saisie.pension / (1.0 - montants.tauxPension) : saisie.pension;
     const cible = brute * MOIS_PAR_AN / constants;
     const combien = parcours.length;
-    const pensionDeNiveau = (niveau) => simulateur.scenarioActuel.calculer(
-      batir(new Array(combien).fill(niveau)),
-    ).pension_annuelle;
+    const pensionDeNiveau = (niveau) => {
+      const carriere = batir(new Array(combien).fill(niveau));
+      return retraite
+        ? simulateur.pensionActuelleAujourdhui(carriere)
+        : simulateur.scenarioActuel.calculer(carriere).pension_annuelle;
+    };
 
     const trouve = niveauPourPension(pensionDeNiveau, cible,
       NIVEAU_MINIMAL, NIVEAU_MAXIMAL);
@@ -2687,7 +2698,7 @@ function champsModelisation(saisie) {
       + "hausse jusque vers 2040 puis en recul. Le système 1 n'en lit rien : "
       + "il revalorise sur les prix."),
     g.liste("stock", "Pensions en cours à la bascule", REVALORISATIONS_STOCK,
-      saisie.stock, "page Coût seulement", {},
+      saisie.stock, "page Coût, et pension d'un retraité", {},
       "Ce que la réforme fait des pensions déjà servies le jour où elle "
       + "s'applique. Par défaut elles gardent l'indice des prix que le droit "
       + "leur promet, et seuls les comptes ouverts sous le nouveau régime "
@@ -3038,13 +3049,11 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
  * Le champ « combien touchez-vous », qui remplace les revenus.
  *
  * IL EST DANS LA MÊME CONVENTION QUE LES MONTANTS AFFICHÉS, et c'est ce qui le
- * rend utilisable sans rien convertir. Le simulateur ne calcule qu'une pension
- * au moment de la liquidation, mais il l'exprime en euros constants de l'année
- * de référence ; or le droit indexe les pensions servies sur les prix. Une
- * pension qui a suivi les prix garde son pouvoir d'achat : la somme qu'un
- * retraité touche aujourd'hui EST sa première pension exprimée en euros
- * d'aujourd'hui. Il n'y a donc rien à remonter, et aucune série de
- * revalorisations à certifier pour cela — seulement une convention à dire.
+ * rend utilisable sans rien convertir : pour un retraité, la pension qu'il
+ * touche AUJOURD'HUI, celle de son relevé bancaire. Le simulateur calcule sa
+ * pension de départ, la revalorise comme chaque régime l'a fait depuis, et
+ * c'est à cette pension-là qu'il compare le montant saisi. Voir
+ * `_champ_pension` dans `pages.py` pour ce qu'il supposait avant.
  */
 function champPension(saisie) {
   // Deux accords pour un seul mode : la PENSION est nette, les EUROS sont
@@ -3053,15 +3062,14 @@ function champPension(saisie) {
   const euros = saisie.enNet ? "nets" : "bruts";
   const aide = `en euros ${euros} par mois, l'année de référence étant `
     + `${saisie.euros}`;
-  const complement = "Déjà à la retraite ? C'est la pension que vous touchez, "
-    + "telle qu'elle tombe sur le compte. Le simulateur calcule la pension du "
-    + `premier mois, mais il l'exprime en euros de ${saisie.euros}, et le `
-    + "droit indexe les pensions servies sur les prix : une pension qui a "
-    + "suivi les prix garde son pouvoir d'achat, les deux montants sont donc "
-    + "le même. Les sous-indexations décidées certaines années font seules la "
-    + "différence, et le simulateur ne les suit pas. Pas encore à la retraite ? "
-    + "C'est alors la pension que vous visez, et la page dira quel revenu "
-    + "d'activité il y faut.";
+  const complement = "Déjà à la retraite ? C'est la pension que vous touchez "
+    + "aujourd'hui, telle qu'elle tombe sur le compte. Le simulateur calcule "
+    + "celle de votre départ, puis la revalorise comme chaque régime l'a fait "
+    + "depuis — la retraite de base par les coefficients de la loi, la "
+    + "complémentaire par la valeur de son point —, et c'est à celle "
+    + "d'aujourd'hui qu'il compare le montant saisi. Pas encore à la "
+    + "retraite ? C'est alors la pension que vous visez, et la page dira "
+    + "quel revenu d'activité il y faut.";
   return g.champ("pension", `Pension ${mot} mensuelle`,
     nombreBrut(saisie.pension), aide, "number", { min: "0", step: "1" },
     complement);
@@ -3482,10 +3490,12 @@ function lectureDesMontants(comparaison, saisie) {
       + "aujourd'hui.";
   } else if (annee < courante) {
     quand = "Vous êtes déjà à la retraite : ces montants sont ceux de votre "
-      + `pension <strong>au moment du départ</strong> — ${date} —, et non `
-      + `de celle que vous touchez aujourd'hui. Depuis ${annee}, votre `
-      + "pension a été revalorisée chaque année ; le simulateur s'arrête au "
-      + "jour de la liquidation et ne suit aucune de ces revalorisations.";
+      + `pension <strong>d'aujourd'hui</strong>, celle de ${courante}, et `
+      + `non de votre premier mois de retraite — ${date}. Depuis, chaque `
+      + "régime l'a revalorisée à sa façon : la retraite de base par les "
+      + "coefficients que la loi fixe chaque année, la complémentaire par "
+      + "la valeur de son point. Ni l'une ni l'autre n'a suivi exactement "
+      + "les prix, et le détail, régime par régime, est plus bas.";
   } else {
     quand = "Vous liquidez cette année : ces montants sont ceux de votre "
       + `<strong>première pension</strong>, celle de ${date}. Le simulateur `
@@ -3494,7 +3504,13 @@ function lectureDesMontants(comparaison, saisie) {
   }
 
   let unites;
-  if (annee > saisie.euros) {
+  if (annee < courante) {
+    unites = saisie.euros === courante
+      ? `Ils sont donnés en euros de ${courante}, ceux de cette année : `
+        + "rien n'est converti."
+      : `Ils sont donnés en euros de ${saisie.euros} : la somme versée en `
+        + `${courante} est ramenée au pouvoir d'achat de ${saisie.euros}.`;
+  } else if (annee > saisie.euros) {
     unites = `Ils sont donnés en euros de ${saisie.euros}, et dans cette unité `
       + `seulement : la somme telle qu'elle serait versée en ${annee}, `
       + "l'inflation d'ici là comprise, est ramenée au pouvoir d'achat de "
@@ -3533,11 +3549,16 @@ function lectureDesMontants(comparaison, saisie) {
       + "pleine — un brut sur un brut, donc plus bas qu'un taux calculé sur "
       + "des nets.";
 
+  const compare = annee < courante
+    ? "Ce que compare cette page, ce sont quatre façons de CALCULER votre "
+      + "pension, chacune revalorisée depuis votre départ selon sa propre "
+      + "règle : le droit pour le système actuel, la règle du compte pour les "
+      + "trois autres."
+    : "Ce que compare cette page, ce sont quatre façons de CALCULER une "
+      + "pension de départ, pas quatre façons de la revaloriser ensuite.";
   return g.bulle(
     "De quand sont ces chiffres, et en quels euros",
-    `${quand} ${unites} Ce que compare cette page, ce sont quatre façons de `
-    + "CALCULER une pension de départ, pas quatre façons de la revaloriser "
-    + `ensuite. ${prelevements}`,
+    `${quand} ${unites} ${compare} ${prelevements}`,
   );
 }
 
@@ -3606,10 +3627,28 @@ function corpsTrajectoire(contexte, comparaison, saisie, seul = false) {
   // son « k » sur téléphone, où les textes du repère sont grossis. Le texte
   // sous le graphique dit ce que « k€ » désigne, et de quelle année.
   const unite = "k€";
+  // Pour un retraité, les montants du haut sont ceux d'AUJOURD'HUI, et ce
+  // graphique n'en fait pas la somme : il additionne ceux du premier mois.
+  const retraite = comparaison.aujourd_hui !== null;
+  let ouverture;
+  if (seul) {
+    ouverture = "Chaque système sert une pension mensuelle ; ce graphique";
+  } else if (retraite) {
+    ouverture = "Les quatre montants du haut sont ceux d'un seul mois, "
+      + "aujourd'hui ; ce graphique reprend ceux du premier mois et";
+  } else {
+    ouverture = "Les quatre montants du haut sont ceux d'un seul mois, le "
+      + "premier. Ce graphique";
+  }
+  const hypothese = retraite
+    ? "que la pension garde, du départ à la fin, le pouvoir d'achat de la "
+      + "première : le graphique ne reprend pas les revalorisations que vous "
+      + "avez reçues depuis, que détaille le dépliant « Votre pension, de "
+      + "votre départ à aujourd'hui », et ne prévoit pas celles à venir."
+    : "que la pension garde son pouvoir d'achat après le départ, le moteur ne "
+      + "simulant aucune revalorisation postérieure à la liquidation.";
   return `
-<p>${seul
-    ? "Chaque système sert une pension mensuelle ; ce graphique"
-    : "Les quatre montants du haut sont ceux d'un seul mois, le premier. Ce graphique"}
+<p>${ouverture}
 les additionne, année après année, à mesure que le retraité vieillit.${g.bulle(
     "Ce que ce graphique ajoute aux quatre montants",
     "C'est là que la durée entre dans le calcul. Une pension "
@@ -3617,8 +3656,7 @@ les additionne, année après année, à mesure que le retraité vieillit.${g.bu
     + "<strong>vivre plus longtemps que la moyenne, c'est toucher plus que ce "
     + "que la carrière a financé</strong> — et mourir avant, moins. Cumuls "
     + `bruts, en milliers d'euros constants de ${saisie.euros} : ils supposent `
-    + "que la pension garde son pouvoir d'achat après le départ, le moteur ne "
-    + "simulant aucune revalorisation postérieure à la liquidation. Une "
+    + `${hypothese} Une `
     + "indexation qui décrocherait des prix ferait fléchir les quatre courbes à "
     + "la fois, sans changer leur ordre.",
   )}</p>
@@ -3969,20 +4007,25 @@ const SCENARIOS_DES_BARRES = {
 function financements(contexte, comparaison) {
   const carriere = comparaison.carriere;
   const bilan = contexte.bilan();
-  if (carriere.anneeLiquidation < bilan.premiereAnnee) return {};
+  // Pour un retraité, la lecture commence aujourd'hui : le montant affiché est
+  // sa pension d'aujourd'hui, et les années qu'il a déjà touchées sont passées.
+  const debut = comparaison.aujourd_hui !== null
+    ? Math.max(carriere.anneeLiquidation, comparaison.parametres.annee_courante)
+    : carriere.anneeLiquidation;
+  if (debut < bilan.premiereAnnee) return {};
   const survie = courbeDeSurvie(
     contexte, carriere, comparaison.notionnel_retroactif.conversion.table);
   // Le poids d'une année est la part des partants encore en vie EN SON
   // MILIEU : une pension servie du 1er janvier au 31 décembre l'est à une
   // population qui décroît pendant l'année.
+  const ecoule = debut - carriere.anneeLiquidation;
   const poids = [];
-  for (let rang = 0; rang < Math.max(survie.length - 1, 0); rang += 1) {
-    poids.push(partVivante(survie, rang + 0.5));
+  for (let rang = 0; rang < Math.max(survie.length - 1 - ecoule, 0); rang += 1) {
+    poids.push(partVivante(survie, ecoule + rang + 0.5));
   }
   const resultat = {};
   for (const [cle, scenario] of Object.entries(SCENARIOS_DES_BARRES)) {
-    const part = financer(bilan, bilan.assiette, scenario,
-      carriere.anneeLiquidation, poids);
+    const part = financer(bilan, bilan.assiette, scenario, debut, poids);
     if (part !== null) resultat[cle] = part;
   }
   return resultat;
@@ -4021,12 +4064,25 @@ function gloseFinancement(finance) {
 function financement(contexte, comparaison, finances, montants) {
   if (!Object.keys(finances).length) return "";
   const bilan = contexte.bilan();
-  const depart = comparaison.carriere.anneeLiquidation;
   const reference = finances.actuel === undefined ? null : finances.actuel;
   if (reference === null) return "";
-  const departDit = reference.departCouvert
-    ? `${depart}, l'année où vous partiriez`
-    : `${reference.premiereAnnee}, la première année que les comptes couvrent`;
+  // Pour un retraité, la fenêtre s'ouvre cette année : voir `financements`. Et
+  // le quatrième levier — reculer l'âge — ne le concerne plus : il est parti.
+  const retraite = comparaison.aujourd_hui !== null;
+  const moyenneDepuis = retraite ? "cette année" : "l'année du départ";
+  const aVenir = retraite ? " à venir" : "";
+  const levierAge = retraite ? "" : " Un quatrième levier\nexiste — reculer "
+    + "l'âge —, et ce simulateur le mesure déjà : changez l'âge de\n"
+    + "liquidation, et les quatre montants bougent.";
+  const depart = reference.anneeLiquidation;
+  let departDit;
+  if (retraite) {
+    departDit = `${depart}, cette année`;
+  } else {
+    departDit = reference.departCouvert
+      ? `${depart}, l'année où vous partiriez`
+      : `${reference.premiereAnnee}, la première année que les comptes couvrent`;
+  }
 
   // Les trois leviers du système ACTUEL, en unités de la vie courante. Le
   // salaire moyen brut d'aujourd'hui sert d'étalon à la hausse de cotisation :
@@ -4121,7 +4177,7 @@ tient ses comptes — le projette en déficit jusqu'en ${bilan.derniereAnnee}. L
 montant du système 1 est ce que la loi promet ; il ne dit pas que l'argent
 est là.</p>
 
-<p>En ${departDit}, il manquera
+<p>En ${departDit}, il ${retraite ? "manque" : "manquera"}
 ${g.pourcentage(1 - reference.coefficientDepart, false, 0)} de ce que le
 système doit verser. Cette différence, quelqu'un la paiera, et il
 n'y a que trois façons de la payer. Aucune n'est décidée ; les voici toutes les
@@ -4132,11 +4188,9 @@ ${leviers}
 <p>Le troisième chiffre des résultats applique la première, parce que c'est la
 seule des trois qui se lise sur une pension. Il est un peu plus sévère que les
 ${g.pourcentage(1 - reference.coefficientDepart, false, 0)} ci-dessus : il
-ne s'arrête pas à l'année du départ, il fait la moyenne de toutes vos
-années de retraite, où le manque grandit, chaque
-année comptant pour le nombre de partants encore en vie. Un quatrième levier
-existe — reculer l'âge —, et ce simulateur le mesure déjà : changez l'âge de
-liquidation, et les quatre montants bougent.</p>
+ne s'arrête pas à ${moyenneDepuis}, il fait la moyenne de toutes vos
+années de retraite${aVenir}, où le manque grandit, chaque
+année comptant pour le nombre de partants encore en vie.${levierAge}</p>
 
 ${horizon}
 
@@ -4280,8 +4334,9 @@ function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
   // Le système actuel : la promesse, puis ce qui lui manque.
   const actuel = constants.actuel;
   let phraseActuel = carriere.anneeLiquidation < parametres.annee_courante
-    ? `Avec le système actuel, votre retraite était de ${somme(actuel)} `
-      + `${accord} par mois à votre départ, en ${date}.`
+    ? "Avec le système actuel, votre retraite est aujourd'hui de "
+      + `${somme(actuel)} ${accord} par mois : celle de votre départ, en `
+      + `${date}, revalorisée depuis comme le droit l'a fait.`
     : `Avec le système actuel, votre retraite serait de ${somme(actuel)} `
       + `${accord} par mois, à partir de ${date}, à `
       + `${age(carriere.age_liquidation)}.`;
@@ -4367,10 +4422,28 @@ function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
     + "</section>";
 }
 
-function resultats(contexte, saisie) {
-  const comparaison = contexte.simuler(saisie);
-  const carriere = comparaison.carriere;
-  const retro = comparaison.notionnel_retroactif;
+/**
+ * Les quatre pensions que la page affiche, et la rente capitalisée — du
+ * départ pour qui n'est pas encore parti, d'aujourd'hui pour qui l'est.
+ * Portage de `_montants_affiches`.
+ */
+function montantsAffiches(comparaison) {
+  const aujourdhui = comparaison.aujourd_hui;
+  if (aujourdhui !== null) {
+    const convertir = (montant) => comparaison.aujourdhuiEnEurosConstants(montant);
+    const courants = {
+      actuel: aujourdhui.pension("actuel"),
+      retroactif: aujourdhui.pension("notionnel_retroactif"),
+      "retroactif-employeur": aujourdhui.pension("notionnel_retroactif_employeur"),
+      liberal: aujourdhui.pensionTotale("notionnel_liberal"),
+    };
+    const constants = {};
+    for (const [cle, montant] of Object.entries(courants)) {
+      constants[cle] = convertir(montant);
+    }
+    return [constants, convertir(aujourdhui.rente_capitalisee),
+      convertir(aujourdhui.rente_capitalisee_volontaire)];
+  }
 
   // Le moteur ne calcule qu'un montant, en euros de l'année de liquidation. La
   // page n'en affiche qu'un, et ce n'est pas celui-là : le même ramené au
@@ -4381,7 +4454,7 @@ function resultats(contexte, saisie) {
   // distinguer du premier.
   const courants = {
     actuel: comparaison.actuel.pension_annuelle,
-    retroactif: retro.pension_annuelle,
+    retroactif: comparaison.notionnel_retroactif.pension_annuelle,
     "retroactif-employeur":
       comparaison.notionnel_retroactif_employeur.pension_annuelle,
     // La proposition sert DEUX lignes : la pension de répartition issue du
@@ -4395,15 +4468,45 @@ function resultats(contexte, saisie) {
   for (const [cle, montant] of Object.entries(courants)) {
     constants[cle] = comparaison.enEurosConstants(montant);
   }
-  const capitalise = comparaison.enEurosConstants(
-    comparaison.notionnel_liberal.rente_capitalisation_obligatoire,
-  );
-  // La part de cette rente qui vient des cinq points VOLONTAIRES, nommée à
-  // part sous la barre : c'est la seule ligne de la page que personne
-  // n'impose, et le lecteur doit pouvoir la retrancher de l'œil.
-  const capitaliseVolontaire = comparaison.enEurosConstants(
-    comparaison.notionnel_liberal.rente_capitalisation_volontaire,
-  );
+  // La part de la rente qui vient des cinq points VOLONTAIRES, nommée à part
+  // sous la barre : c'est la seule ligne de la page que personne n'impose, et
+  // le lecteur doit pouvoir la retrancher de l'œil.
+  return [constants,
+    comparaison.enEurosConstants(
+      comparaison.notionnel_liberal.rente_capitalisation_obligatoire),
+    comparaison.enEurosConstants(
+      comparaison.notionnel_liberal.rente_capitalisation_volontaire)];
+}
+
+/**
+ * L'écart de chaque système au système actuel, tel que les barres le montrent :
+ * sur les pensions d'aujourd'hui pour un retraité, au départ pour un actif.
+ * Portage de `_ecarts_affiches`.
+ */
+function ecartsAffiches(comparaison, constants) {
+  if (comparaison.aujourd_hui === null) {
+    return {
+      actuel: null,
+      retroactif: comparaison.variation("notionnel_retroactif"),
+      "retroactif-employeur": comparaison.variation("notionnel_retroactif_employeur"),
+      liberal: comparaison.variationTotale("notionnel_liberal"),
+    };
+  }
+  const reference = constants.actuel;
+  const ecarts = {};
+  for (const cle of Object.keys(constants)) {
+    if (cle === "actuel") ecarts[cle] = null;
+    else ecarts[cle] = reference > 0 ? constants[cle] / reference - 1.0 : Number.NaN;
+  }
+  return ecarts;
+}
+
+function resultats(contexte, saisie) {
+  const comparaison = contexte.simuler(saisie);
+  const carriere = comparaison.carriere;
+
+  const [constants, capitalise, capitaliseVolontaire] = montantsAffiches(comparaison);
+  const ecarts = ecartsAffiches(comparaison, constants);
   const reference = Math.max(...Object.values(constants)) || 1.0;
 
   // Ce que les comptes du système financent de chacun de ces montants, à la
@@ -4554,17 +4657,17 @@ function resultats(contexte, saisie) {
   // recalculée, et à quel taux. C'est ce qui explique l'ordre des montants.
   const scenarios = bloc("actuel", "1. Système de répartition actuel",
     "le droit en vigueur, minima et majorations compris",
-    null, comparaison.tauxRemplacementActuel)
+    ecarts.actuel, comparaison.tauxRemplacementActuel)
     + bloc("retroactif", "2. Ce que vous avez cotisé, part salariale seule",
       "toute la carrière recalculée depuis 1941, sur la seule part "
       + "salariale — 11,3 % du brut pour un salarié du privé",
-      comparaison.variation("notionnel_retroactif"),
+      ecarts.retroactif,
       comparaison.tauxRemplacementRetroactif)
     + bloc("retroactif-employeur",
       "3. Ce que vous avez cotisé, part salariale + patronale",
       "la même carrière recalculée depuis 1941, les deux parts "
       + "comprises — les 28 % prélevés aujourd'hui",
-      comparaison.variation("notionnel_retroactif_employeur"),
+      ecarts["retroactif-employeur"],
       comparaison.tauxRemplacement("notionnel_retroactif_employeur"))
     + bloc("liberal",
       "4. La proposition du Parti libéral français",
@@ -4578,7 +4681,7 @@ function resultats(contexte, saisie) {
       + `(${g.pourcentage(tauxRetraitePropose(comparaison.parametres), false, 0)} `
       + "en tout), les uns comme les autres placés sans risque — plus "
       + "une garantie vieillesse payée par l'impôt",
-      comparaison.variationTotale("notionnel_liberal"),
+      ecarts.liberal,
       comparaison.tauxRemplacementTotal("notionnel_liberal"),
       capitalise, capitaliseVolontaire);
 
@@ -4595,9 +4698,10 @@ function resultats(contexte, saisie) {
 
   let capitalisation = "";
   if (comparaison.actuel.pension_hors_repartition > 0) {
-    const montant = comparaison.enEurosConstants(
-      comparaison.actuel.pension_hors_repartition,
-    );
+    const montant = comparaison.aujourd_hui !== null
+      ? comparaison.aujourdhuiEnEurosConstants(
+        comparaison.aujourd_hui.actuel.pension_hors_repartition)
+      : comparaison.enEurosConstants(comparaison.actuel.pension_hors_repartition);
     capitalisation = '<p class="discret">Hors répartition, servi à part : '
       + `${g.eurosCentimes(montant / 12)} par mois de RAFP, en euros de ${saisie.euros} `
       + "comme les quatre montants ci-dessus."
@@ -4691,6 +4795,7 @@ ${salaireNet(comparaison, saisie)}
 <p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
 suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
 voir.</p>
+${pensionDAujourdhui(contexte, comparaison, saisie)}
 ${financement(contexte, comparaison, finances, montants)}
 ${trajectoire(contexte, comparaison, saisie)}
 ${fourchette(contexte, saisie, comparaison)}
@@ -4840,6 +4945,180 @@ ${g.tableau(
 ${saisie.euros}.</p>`);
 }
 
+/**
+ * Comment chaque régime a été revalorisé depuis le départ, dans la langue du
+ * tableau. Les règles sont celles de `revalorisation.js`.
+ */
+const REGLES_DE_REVALORISATION = {
+  [REGLE_POINT]: "valeur de service du point, année après année",
+  [REGLE_GENERALE]: "coefficients de l'article L. 161-23-1, date après date",
+  [REGLE_FONCTION_PUBLIQUE]: "coefficients de l'article L. 16 du code des "
+    + "pensions, date après date",
+  [REGLE_REGIME_SPECIAL]: "taux des fonctionnaires depuis 2009",
+};
+
+/** Ce qu'un régime sans règle propre dans le modèle reçoit à la place. */
+const REGLE_PAR_DEFAUT_EN_CLAIR = "règle du régime général, faute de série propre "
+  + "à ce régime";
+
+/** Fin de la péréquation des pensions civiles et militaires, en année. */
+const ANNEE_FIN_PEREQUATION = 2004;
+
+/**
+ * De la pension du départ à celle d'aujourd'hui, régime par régime. Portage de
+ * `_pension_d_aujourd_hui`, dont le raisonnement est écrit en entier : un
+ * retraité lit désormais la pension qu'il touche, et ce dépliant refait le
+ * chemin, en brut et par mois.
+ */
+function pensionDAujourdhui(contexte, comparaison, saisie) {
+  const aujourdhui = comparaison.aujourd_hui;
+  if (aujourdhui === null) return "";
+  const catalogue = contexte.simulateur().catalogue;
+  const actuel = aujourdhui.actuel;
+  const carriere = comparaison.carriere;
+  const annee = carriere.anneeLiquidation;
+  const courante = aujourdhui.annee;
+  const departDate = echapper(String(carriere.dateLiquidation));
+
+  const nomRegime = (code) => (catalogue.contient(code) ? catalogue.obtenir(code).nom : code);
+
+  const regleEnClair = (regime) => {
+    if (regime.regle === REGLE_FONCTION_PUBLIQUE && annee < ANNEE_FIN_PEREQUATION) {
+      return "point d'indice jusqu'en 2003, puis coefficients de "
+        + "l'article L. 16 du code des pensions";
+    }
+    if (regime.regle === REGLE_REGIME_SPECIAL && annee < 2009) {
+      return "taux des fonctionnaires depuis 2009 ; avant, la règle du "
+        + "régime général tient lieu de la péréquation";
+    }
+    return REGLES_DE_REVALORISATION[regime.regle] ?? REGLE_PAR_DEFAUT_EN_CLAIR;
+  };
+
+  const mois = (annuel) => g.eurosCentimes(annuel / MOIS_PAR_AN);
+
+  const lignes = [];
+  for (const regime of actuel.regimes) {
+    if (regime.hors_repartition || regime.au_depart <= 0) continue;
+    lignes.push([echapper(nomRegime(regime.regime)), mois(regime.au_depart),
+      `×${g.nombre(regime.coefficient, 4)}`, mois(regime.aujourd_hui),
+      regleEnClair(regime)]);
+  }
+  if (actuel.majoration_enfants > 0) {
+    lignes.push(["+ Majoration pour enfants", mois(actuel.majoration_enfants),
+      `×${g.nombre(actuel.coefficient_majoration, 4)}`,
+      mois(actuel.majoration_enfants * actuel.coefficient_majoration),
+      "celle des régimes qui la portent"]);
+  }
+  if (actuel.minimum_vieillesse_au_depart > 0 || actuel.minimum_vieillesse > 0) {
+    lignes.push(["+ Minimum vieillesse (ASPA)",
+      mois(actuel.minimum_vieillesse_au_depart), "—",
+      mois(actuel.minimum_vieillesse),
+      "allocation différentielle, recalculée sur le barème de "
+      + `${courante} à partir de 65 ans`]);
+  }
+  const totalDepart = comparaison.actuel.pension_annuelle;
+  const total = actuel.pension_annuelle;
+  lignes.push(["<strong>Pension du système actuel</strong>",
+    `<strong>${mois(totalDepart)}</strong>`,
+    totalDepart > 0 ? `×${g.nombre(total / totalDepart, 4)}` : "—",
+    `<strong>${mois(total)}</strong>`, ""]);
+  for (const regime of actuel.regimes) {
+    if (regime.hors_repartition && regime.au_depart > 0) {
+      lignes.push([`hors total — ${echapper(nomRegime(regime.regime))}`,
+        mois(regime.au_depart), `×${g.nombre(regime.coefficient, 4)}`,
+        mois(regime.aujourd_hui), regleEnClair(regime)]);
+    }
+  }
+  const tableau = g.tableau(
+    ["Régime", `Au départ, en euros de ${annee}`, "Revalorisation",
+      `En ${courante}`, "Règle suivie"],
+    lignes,
+    ["", "nombre", "nombre", "nombre", "texte"],
+    "Système 1, de votre départ à aujourd'hui : montants bruts mensuels",
+    true,
+  );
+
+  // Ce que la page affichait avant : la pension du départ, ramenée par les
+  // prix. Le rapport des deux coefficients de la comparaison le donne.
+  const parLesPrix = totalDepart * comparaison.coefficient_euros_constants
+    / comparaison.coefficient_euros_aujourd_hui;
+  let ecart = "";
+  if (parLesPrix > 0) {
+    ecart = `<p>Ramenée en euros de ${courante} par l'indice des prix, votre `
+      + `pension de départ vaudrait ${mois(parLesPrix)} bruts par mois : `
+      + "c'est ce que vous toucheriez si elle avait suivi l'inflation. "
+      + `Celle que vous touchez est de ${mois(total)}, soit `
+      + `<strong>${g.pourcentage(total / parLesPrix - 1.0, true)}</strong>. `
+      + "Aucune revalorisation n'est une indexation sur les prix au jour "
+      + "près, et certaines années n'en ont connu aucune.</p>";
+  }
+
+  let tranche = "";
+  if (actuel.mensuel_decembre_2019) {
+    const [hausse] = contexte.simulateur().revalorisations.generale(
+      "2020-01-01", "2020-01-01", true, actuel.mensuel_decembre_2019,
+    );
+    tranche = "<p>En 2020, la revalorisation de la retraite de base dépendait du "
+      + "montant total de la retraite du mois précédent : 1 % jusqu'à "
+      + "2 000 € bruts par mois, 0,3 % au-delà de 2 014 €, trois marches "
+      + "entre les deux. Pour vous, "
+      + `${g.eurosCentimes(actuel.mensuel_decembre_2019)} en décembre `
+      + `2019 : ${g.pourcentage(hausse - 1.0, true)}.</p>`;
+  }
+
+  // La règle du compte jusqu'à la bascule, puis les prix, sauf pour qui est
+  // parti après la bascule, ou si le stock est réindexé.
+  const regleServie = carriere.anneeLiquidation < saisie.bascule
+    && saisie.stock === RevalorisationStock.PRIX
+    ? `la règle d'indexation réglée plus haut jusqu'à la bascule de ${saisie.bascule}, `
+      + "puis les prix"
+    : "la règle d'indexation réglée plus haut, de votre départ à aujourd'hui";
+  const reel = aujourdhui.coefficients_notionnels.notionnel_retroactif;
+  let notionnels = "<p>Les systèmes 2 à 4 ne sont pas le droit : leur pension servie suit "
+    + `la règle que le modèle prête aux comptes notionnels — ${regleServie}, `
+    + "comme sur la page Coût. Depuis votre départ, elle y a varié de "
+    + `<strong>${g.pourcentage(reel - 1.0, true)}</strong> en pouvoir `
+    + "d'achat.";
+  if (aujourdhui.garantie_vieillesse > 0) {
+    notionnels += " La garantie vieillesse de la proposition se calcule sur votre "
+      + "pension d'aujourd'hui : elle vous sert "
+      + `${mois(aujourdhui.garantie_vieillesse)} bruts par mois.`;
+  }
+  notionnels += "</p>";
+
+  const reserves = [];
+  if (actuel.regimes.some((r) => r.regle === REGLE_FONCTION_PUBLIQUE)
+      && annee < ANNEE_FIN_PEREQUATION) {
+    reserves.push("la péréquation des pensions de la fonction publique avant 2004, "
+      + "suivie par le point d'indice sans les réformes de grille qui "
+      + "relevaient aussi les pensions");
+  }
+  if (actuel.regimes.some((r) => r.regle === REGLE_REGIME_SPECIAL) && annee < 2009) {
+    reserves.push("les revalorisations d'un régime spécial avant 2009, qui suivaient "
+      + "les salaires de ses actifs et qu'aucune série publique ne donne");
+  }
+  if (actuel.regimes.some((r) => r.au_depart > 0 && r.regle === REGLE_POINT
+      && r.fiabilite < Fiabilite.HAUTE)) {
+    reserves.push("les valeurs de point que les séries du dépôt ne portent pas, "
+      + "prolongées par la règle du régime général");
+  }
+  const reserve = reserves.length > 0
+    ? '<p class="discret">Une partie de ce chemin est reconstituée plutôt '
+      + `que lue : ${reserves.join(" ; ")}.</p>`
+    : "";
+
+  return g.depliant("Votre pension, de votre départ à aujourd'hui", `
+<p class="chapeau">Votre pension a pris effet en ${departDate}. Ce que vous
+touchez aujourd'hui, c'est elle, revalorisée chaque année par le texte de
+chaque régime — et non par les prix. Le tableau refait le chemin.</p>
+${tableau}
+${ecart}
+${tranche}
+${notionnels}
+${reserve}
+`, "resultats-aujourdhui");
+}
+
 const NATURES_PART_EMPLOYEUR = {
   appelee: "contribution appelée par décret ou par arrêté",
   implicite: "taux implicite reconstitué par les documents budgétaires",
@@ -4849,6 +5128,37 @@ const NATURES_PART_EMPLOYEUR = {
 /**
  * Un montant qui est un ÉCART : il se lit avec son signe, positif compris.
  */
+/**
+ * Ce que la garantie sert AUJOURD'HUI à un retraité — le montant d'en haut.
+ * Portage de `_garantie_d_aujourd_hui`.
+ */
+function garantieDAujourdhui(comparaison) {
+  const aujourdhui = comparaison.aujourd_hui;
+  if (aujourdhui === null) return "";
+  const annee = aujourdhui.annee;
+  const mois = (annuel) => g.eurosCentimes(annuel / MOIS_PAR_AN);
+  const debut = "<p>Vous êtes déjà à la retraite : le montant affiché plus haut "
+    + `est celui de ${annee}, et la garantie s'y calcule sur la pension `
+    + "de cette année. ";
+  if (!aujourdhui.garantie_ouverte) {
+    const ouverture = comparaison.carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE;
+    return debut + `Elle ne s'ouvre qu'à 65 ans, en ${ouverture} : rien `
+      + "n'est servi aujourd'hui.</p>";
+  }
+  if (aujourdhui.garantie_vieillesse > 0) {
+    return debut
+      + `La pension obligatoire, ${mois(aujourdhui.ressources_garantie)} `
+      + "par mois, reste sous le plancher de "
+      + `${mois(aujourdhui.plancher_garantie)} : la garantie y ajoute `
+      + `<strong>${mois(aujourdhui.garantie_vieillesse)} par mois</strong>, `
+      + "que l'impôt finance.</p>";
+  }
+  return debut
+    + `La pension obligatoire, ${mois(aujourdhui.ressources_garantie)} par `
+    + `mois, dépasse le plancher de ${mois(aujourdhui.plancher_garantie)} : `
+    + "la garantie ne sert rien.</p>";
+}
+
 function eurosSigne(montant, centimes = true) {
   const signe = montant > 0 ? "+" : "";
   return `${signe}${centimes ? g.eurosCentimes(montant) : g.euros(montant)}`;
@@ -5871,8 +6181,10 @@ function garantieVieillesse(comparaison, saisie) {
       + "parce qu'elle suit la masse salariale quand le plancher suit les prix — "
       + `reste sous le plancher de ${g.eurosCentimes(garantie.plancher_annuel / 12)} : `
       + `l'impôt en finance <strong>${g.eurosCentimes(garantie.complement / 12)} par `
-      + "mois</strong>. Le montant affiché plus haut est celui du départ, sans "
-      + "la garantie.</p>";
+      + "mois</strong>."
+      + (comparaison.aujourd_hui !== null ? ""
+        : " Le montant affiché plus haut est celui du départ, sans la garantie.")
+      + "</p>";
   } else {
     lecture = "<p>Ici, la pension obligatoire de "
       + `${g.eurosCentimes(garantie.ressources / 12)} par mois `
@@ -5880,6 +6192,7 @@ function garantieVieillesse(comparaison, saisie) {
       + "la garantie ne sert rien, et le système 4 est un compte notionnel "
       + "à taux unique, sans plus.</p>";
   }
+  lecture += garantieDAujourdhui(comparaison);
 
   // Le tableau de la proposition, recalculé avec la règle du scénario — en
   // euros mensuels de l'année où la proposition fixe ses montants, sans l'âge :

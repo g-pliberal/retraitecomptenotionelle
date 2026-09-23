@@ -26,6 +26,9 @@ import { EffectifsCotisants, EffectifsRetraites } from "./effectifs.js";
 import { fusionner } from "./fusion.js";
 import { BaremePrelevements, remunerationDeLaCarriere } from "./remuneration.js";
 import {
+  RevalorisationServie, RevalorisationsPensions, actuelAujourdhui, pensionAujourdhui,
+} from "./revalorisation.js";
+import {
   DonneeInsuffisante, Fiabilite, fiabiliteDepuisTexte, nomFiabilite,
 } from "./serie.js";
 
@@ -60,6 +63,7 @@ export class Comparaison {
     notionnelRetroactifEmployeur, notionnelProspectifEmployeur, notionnelLiberal,
     regimeFusionne, parametres, coefficientEurosConstants = 1.0,
     dernierRevenuAnnualise = 0.0, remuneration = null, niveauInverse = null,
+    aujourdhui = null, coefficientEurosAujourdhui = 1.0,
   }) {
     this.carriere = carriere;
     this.actuel = actuel;
@@ -87,6 +91,13 @@ export class Comparaison {
     //: `niveauPourPension`. `null` partout ailleurs, c'est-à-dire chaque fois
     //: que le revenu est celui qu'on a donné.
     this.niveau_inverse = niveauInverse;
+    //: Pour qui a DÉJÀ liquidé — avant l'année courante —, ce que les six
+    //: systèmes lui servent aujourd'hui, en euros courants de l'année courante.
+    //: `null` pour qui part cette année ou plus tard. Voir `revalorisation.js`.
+    this.aujourd_hui = aujourdhui;
+    //: Passage des euros de l'année courante aux euros constants de
+    //: `parametres.annee_euros_constants`.
+    this.coefficient_euros_aujourd_hui = coefficientEurosAujourdhui;
   }
 
   /** Pension rapportée au dernier revenu d'activité, à la date du départ. */
@@ -98,6 +109,11 @@ export class Comparaison {
 
   enEurosConstants(montant) {
     return montant * this.coefficient_euros_constants;
+  }
+
+  /** Un montant d'aujourd'hui, dans les euros constants de la page. */
+  aujourdhuiEnEurosConstants(montant) {
+    return montant * this.coefficient_euros_aujourd_hui;
   }
 
   /**
@@ -281,9 +297,44 @@ export class Comparaison {
         regimes_fusionnes: [...this.regime_fusionne.regimes_fusionnes],
         origines: { ...this.regime_fusionne.origines },
       },
+      aujourd_hui: resumeAujourdhui(this.aujourd_hui),
       fiabilite: nomFiabilite(this.fiabilite),
     };
   }
+}
+
+/** La pension d'aujourd'hui, pour la sortie JSON — `null` avant le départ. */
+function resumeAujourdhui(aujourdhui) {
+  if (aujourdhui === null) return null;
+  const actuel = aujourdhui.actuel;
+  return {
+    annee: aujourdhui.annee,
+    actuel: {
+      pension_annuelle: actuel.pension_annuelle,
+      pension_hors_repartition: actuel.pension_hors_repartition,
+      par_regime: actuel.regimes.map((r) => ({
+        regime: r.regime,
+        au_depart: r.au_depart,
+        coefficient: r.coefficient,
+        aujourd_hui: r.aujourd_hui,
+        regle: r.regle,
+        fiabilite: nomFiabilite(r.fiabilite),
+      })),
+      majoration_enfants: actuel.majoration_enfants,
+      coefficient_majoration: actuel.coefficient_majoration,
+      minimum_vieillesse: actuel.minimum_vieillesse,
+      mensuel_decembre_2019: actuel.mensuel_decembre_2019,
+      fiabilite: nomFiabilite(actuel.fiabilite),
+    },
+    notionnels: { ...aujourdhui.notionnels },
+    coefficients_notionnels: { ...aujourdhui.coefficients_notionnels },
+    garantie_vieillesse: aujourdhui.garantie_vieillesse,
+    rente_capitalisee: aujourdhui.rente_capitalisee,
+    rente_capitalisee_volontaire: aujourdhui.rente_capitalisee_volontaire,
+    garantie_ouverte: aujourdhui.garantie_ouverte,
+    plancher_garantie: aujourdhui.plancher_garantie,
+    ressources_garantie: aujourdhui.ressources_garantie,
+  };
 }
 
 function resumeNotionnel(resultat, tauxRemplacementScenario, variation, coefficient = 1.0) {
@@ -425,6 +476,10 @@ export class Simulateur {
     this.baremePrelevements = new BaremePrelevements(paquet.prelevements_remuneration);
 
     this.indexation = new Indexation(this.macro, parametres);
+    // Ce que le droit a servi aux pensions liquidées, date d'effet par date
+    // d'effet : la pension d'aujourd'hui d'un retraité en dépend.
+    this.revalorisations = new RevalorisationsPensions(paquet);
+    this._revalorisationServie = null;
     this.convertisseur = new Convertisseur(
       this.mortalite, parametres, this.macro, this.distribution,
     );
@@ -501,6 +556,33 @@ export class Simulateur {
     this._regimeFusionne = null;
   }
 
+  /**
+   * La règle que les systèmes notionnels prêtent aux pensions servies — celle
+   * de la page Coût —, de la première année de la répartition à l'année
+   * courante.
+   */
+  get revalorisationServie() {
+    if (this._revalorisationServie === null) {
+      this._revalorisationServie = new RevalorisationServie(
+        this, this.parametres.annee_debut_repartition, this.parametres.annee_courante,
+      );
+    }
+    return this._revalorisationServie;
+  }
+
+  /**
+   * Le système 1 servi l'année courante, en euros de cette année : la
+   * grandeur que l'inversion cherche pour un retraité. Pour qui liquide cette
+   * année ou plus tard, c'est la pension du départ.
+   */
+  pensionActuelleAujourdhui(carriere) {
+    const resultat = this.scenarioActuel.calculer(carriere);
+    if (carriere.anneeLiquidation >= this.parametres.annee_courante) {
+      return resultat.pension_annuelle;
+    }
+    return actuelAujourdhui(this, carriere, resultat).pension_annuelle;
+  }
+
   get regimeFusionne() {
     if (this._regimeFusionne === null) {
       this._regimeFusionne = fusionner(this.catalogue, this.parametres.annee_bascule);
@@ -558,7 +640,7 @@ export class Simulateur {
 
     const fusionne = this.parametres.fusion_au_plus_defavorable ? this.regimeFusionne : null;
 
-    return new Comparaison({
+    const comparaison = new Comparaison({
       carriere,
       actuel: this.scenarioActuel.calculer(carriere),
       notionnelRetroactif: this.scenarioNotionnel.retroactif(carriere, fusionne),
@@ -583,6 +665,13 @@ export class Simulateur {
         this.parametres, this.baremePrelevements, this.paquet,
       ),
     });
+    if (carriere.anneeLiquidation < this.parametres.annee_courante) {
+      comparaison.aujourd_hui = pensionAujourdhui(this, comparaison);
+      comparaison.coefficient_euros_aujourd_hui = this.macro.coefficientPrix(
+        this.parametres.annee_courante, this.parametres.annee_euros_constants,
+      );
+    }
+    return comparaison;
   }
 
   _verifierFiabilite(carriere) {

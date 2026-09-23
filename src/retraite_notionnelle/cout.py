@@ -142,7 +142,6 @@ from .castypes import (
     poids_effectifs,
     poids_egaux,
 )
-from .config import RevalorisationStock
 from .donnees.assiette import AssietteActivite
 from .donnees.chargement import Fiabilite, SerieAnnuelle
 from .donnees.depenses import DepensesRetraite
@@ -161,6 +160,7 @@ from .garantie import (
     facteurs_par_sexe,
     pension_moyenne,
 )
+from .revalorisation import RevalorisationServie
 from .simulateur import Simulateur
 
 #: Les six systèmes, dans l'ordre du tableau de comparaison. Ce sont les
@@ -1644,114 +1644,6 @@ CLES_REVALORISEES: frozenset[str] = frozenset(
 CLES_PROSPECTIVES: frozenset[str] = frozenset({
     "notionnel_prospectif", "notionnel_prospectif_employeur",
 })
-
-
-class RevalorisationServie:
-    """Ce que devient une pension DÉJÀ LIQUIDÉE, année après année.
-
-    UN SYSTÈME NOTIONNEL A DEUX RÈGLES D'INDEXATION, ET NON UNE. La première
-    fait grossir le compte pendant la carrière ; la seconde revalorise la
-    pension une fois qu'elle est servie. Les pays qui ont fait ce système les
-    règlent séparément : la Suède revalorise le compte sur l'indice des
-    salaires et la pension liquidée sur ce même indice diminué de 1,6 point ;
-    l'Italie revalorise le compte sur le PIB et la pension liquidée sur les
-    prix.
-
-    Le dépôt n'en portait qu'une. Les masses de la page « Coût » figeaient la
-    pension en euros constants pour toute la retraite, ce qui est une
-    indexation sur les PRIX qui ne disait pas son nom — correcte pour le
-    scénario 1, où c'est la loi, fausse pour les cinq autres. Car la seconde
-    règle est déjà écrite ailleurs dans le modèle, et depuis toujours : le
-    diviseur de conversion vaut l'espérance de vie résiduelle parce que
-    ``taux_anticipe_conversion`` est nul, et il ne la vaut QUE si la rente est
-    ensuite revalorisée au taux auquel le compte l'a été. Le modèle promettait
-    donc une rente indexée sur la masse salariale et en servait une indexée sur
-    les prix ; il payait moins que son propre contrat.
-
-    CE QUE REND CETTE CLASSE est le coefficient qui corrige l'écart, en euros
-    CONSTANTS puisque c'est l'unité des masses : le produit des taux
-    d'indexation depuis la liquidation, déflaté des prix de la même période. Il
-    vaut 1 l'année de la liquidation, ×1,15 au bout de vingt ans de projection
-    — 2,45 % contre 1,75 % —, et jusqu'à ×3 pour les vingt années qui suivent
-    une liquidation de 1960, où la masse salariale progressait de cinq points
-    par an au-dessus des prix.
-
-    CE QU'ELLE N'EST PAS. Elle ne choisit pas la règle : elle applique celle
-    que ``mode_indexation`` porte déjà, quelle qu'elle soit. Sous le triple
-    lock inversé, qui passe sous les prix la plupart des années, son
-    coefficient descend en dessous de 1 et la correction joue à la baisse.
-    C'est la conséquence logique de la règle, et non un défaut.
-    """
-
-    def __init__(self, simulateur: Simulateur,
-                 premiere_annee: int, derniere_annee: int) -> None:
-        macro = simulateur.macro
-        indexation = simulateur.indexation
-        #: L'année à partir de laquelle une réforme PROSPECTIVE revalorise ce
-        #: qu'elle sert : voir :data:`CLES_PROSPECTIVES`.
-        self.annee_bascule = simulateur.parametres.annee_bascule
-        #: Le stock à la bascule garde-t-il les prix ? Voir :meth:`coefficient_stock`.
-        self.stock_sur_les_prix = (
-            simulateur.parametres.revalorisation_stock is RevalorisationStock.PRIX
-        )
-        self.premiere_annee = premiere_annee
-        self.derniere_annee = max(derniere_annee, premiere_annee)
-        index = 1.0
-        self._index: dict[int, float] = {self.premiere_annee: index}
-        for annee in range(self.premiere_annee + 1, self.derniere_annee + 1):
-            # Le taux d'indexation est NOMINAL, les masses sont en euros
-            # constants : on le déflate année par année, et non en bloc. Un
-            # produit de taux nominaux divisé par une inflation cumulée serait
-            # la même chose ici, mais cesserait de l'être dès qu'un plancher ou
-            # un lissage s'appliquerait à l'un des deux — et il y en a un.
-            index *= (1.0 + indexation.taux(annee).taux) * macro.coefficient_prix(
-                annee, annee - 1
-            )
-            self._index[annee] = index
-
-    def _valeur(self, annee: int) -> float:
-        borne = min(max(annee, self.premiere_annee), self.derniere_annee)
-        return self._index[borne]
-
-    def coefficient(self, annee_liquidation: int, annee: int) -> float:
-        """Ce que vaut en ``annee``, en euros constants, un euro de pension
-        liquidé en ``annee_liquidation``.
-
-        Vaut exactement 1 l'année de la liquidation et avant elle : une pension
-        qui n'est pas encore servie ne se revalorise pas.
-        """
-        if annee <= annee_liquidation:
-            return 1.0
-        depart = self._valeur(annee_liquidation)
-        return self._valeur(annee) / depart if depart else 1.0
-
-    def coefficient_stock(self, annee_liquidation: int, annee: int,
-                          prospectif: bool) -> float:
-        """Le même coefficient, avec la règle du STOCK à la bascule.
-
-        Une pension liquidée à compter de la bascule suit la règle du compte
-        depuis sa liquidation, dans tous les cas. Une pension liquidée AVANT :
-
-        - sous ``PRIX``, elle garde les prix — coefficient 1 en euros
-          constants — à compter de la bascule. Pour une réforme prospective,
-          qui n'existait pas avant, c'est 1 depuis toujours ; pour une réforme
-          rétroactive, dont le compte fictif a été revalorisé sur sa règle
-          jusqu'à la bascule, le coefficient est gelé à sa valeur de la
-          bascule ;
-        - sous ``REINDEXE``, la réforme prospective la prend à sa règle le jour
-          de la bascule (``max(liquidation, bascule)``), et la rétroactive
-          l'a toujours revalorisée sur la sienne.
-        """
-        bascule = self.annee_bascule
-        if annee_liquidation >= bascule:
-            return self.coefficient(annee_liquidation, annee)
-        if self.stock_sur_les_prix:
-            if prospectif:
-                return 1.0
-            return self.coefficient(annee_liquidation, min(annee, bascule))
-        if prospectif:
-            return self.coefficient(bascule, annee)
-        return self.coefficient(annee_liquidation, annee)
 
 
 #: Les deux comptes de TÊTES que la grille rend avec ses masses : tous les

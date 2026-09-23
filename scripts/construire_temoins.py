@@ -326,6 +326,15 @@ def _cas() -> list[dict]:
         cas.append((f"revalorisation_juillet_2022_{cote}", {
             "naissance": "1958", "liquidation": "64", "liquidation_mois": mois,
         }))
+    # LE CAS TYPE D'UN RETRAITÉ, que tests/test_revalorisation.py refait à la
+    # main : un non-cadre né en janvier 1950, parti en janvier 2012 à 62 ans.
+    # Sa pension de 2026 — celle du départ menée par les treize revalorisations
+    # du régime général et la valeur du point Agirc-Arrco — tient ainsi le
+    # portage JavaScript au chiffre refait sans le moteur.
+    cas.append(("retraite_cas_type_2012", {
+        "naissance": "1950", "debut": "20", "liquidation": "62",
+        "salaire": "0.8", "unite_revenu": "moyen",
+    }))
 
     # Règles de modélisation, une par une.
     for mode in ("triple_lock_inverse", "triple_lock_inverse_nominal",

@@ -13,6 +13,7 @@ import math
 import re
 from collections.abc import Iterable
 from dataclasses import dataclass, field, replace
+from datetime import date
 from html import escape
 from urllib.parse import urlencode
 
@@ -63,6 +64,7 @@ from ..donnees.distribution import (
 from ..garantie import cout_garantie, cout_garantie_par_sexe
 from ..donnees.chargement import (
     DonneeInsuffisante,
+    Fiabilite,
     charger_periodes_non_travaillees,
     compter_institutions,
     journal_certification,
@@ -87,6 +89,13 @@ from ..remuneration import (
     salaire_net_depuis_brut,
 )
 from ..restitution import Restitution
+from ..revalorisation import (
+    FIN_PEREQUATION,
+    REGLE_FONCTION_PUBLIQUE,
+    REGLE_GENERALE,
+    REGLE_POINT,
+    REGLE_REGIME_SPECIAL,
+)
 from ..simulateur import (
     Comparaison,
     NiveauInverse,
@@ -618,9 +627,9 @@ class Saisie:
     #: La pension mensuelle saisie, quand c'est elle qu'on saisit. Elle est dans
     #: la MÊME convention que les montants affichés : nette ou brute selon
     #: ``montants``, et en euros constants de ``euros``. C'est ce qui la rend
-    #: comparable sans rien convertir — et, pour un retraité dont la pension a
-    #: suivi les prix comme le droit le prévoit, c'est exactement la somme qu'il
-    #: touche aujourd'hui. Voir ``_champ_pension``.
+    #: comparable sans rien convertir. Pour un retraité, c'est la pension qu'il
+    #: touche AUJOURD'HUI, et le simulateur la compare à sa pension de départ
+    #: revalorisée comme le droit l'a fait. Voir ``_champ_pension``.
     pension: float = PENSION_DEFAUT
     #: Net ou brut : vaut pour TOUT le simulateur, la saisie comprise. En
     #: « net », le salaire tapé est un net mensuel que le modèle convertit en
@@ -1992,19 +2001,32 @@ class Contexte:
         en euros de l'année de liquidation. Le coefficient des euros constants
         ne dépend que de l'année de liquidation, jamais du niveau de revenu :
         il se calcule une fois, avant la dichotomie, et non à chaque tour.
+
+        POUR UN RETRAITÉ, LA CIBLE EST LA PENSION D'AUJOURD'HUI. Il saisit ce
+        qu'il touche, pas ce qu'il touchait le premier mois : la dichotomie
+        compare donc au montant saisi la pension du départ revalorisée comme
+        le droit l'a fait depuis — :meth:`Simulateur.pension_actuelle_aujourd_hui`
+        —, en euros de l'année courante. Ce coefficient-là dépend du niveau,
+        par la tranche de 2020 et par le poids de la complémentaire : il se
+        refait à chaque tour, et c'est le prix de l'exactitude.
         """
         montants = Montants.depuis(saisie, self.base)
+        parametres = simulateur.parametres
+        retraite = saisie.date_de(saisie.liquidation).annee < parametres.annee_courante
         constants = simulateur.macro.coefficient_prix(
-            saisie.date_de(saisie.liquidation).annee,
-            simulateur.parametres.annee_euros_constants,
+            parametres.annee_courante if retraite
+            else saisie.date_de(saisie.liquidation).annee,
+            parametres.annee_euros_constants,
         )
         brute = (saisie.pension / (1.0 - montants.taux_pension)
                  if saisie.en_net else saisie.pension)
         cible = brute * MOIS_PAR_AN / constants
 
         def pension_de_niveau(niveau: float) -> float:
-            return simulateur.scenario_actuel.calculer(
-                batir([niveau] * combien)).pension_annuelle
+            carriere = batir([niveau] * combien)
+            if retraite:
+                return simulateur.pension_actuelle_aujourd_hui(carriere)
+            return simulateur.scenario_actuel.calculer(carriere).pension_annuelle
 
         trouve = niveau_pour_pension(pension_de_niveau, cible,
                                      NIVEAU_MINIMAL, NIVEAU_MAXIMAL)
@@ -3599,7 +3621,7 @@ def _champs_modelisation(saisie: Saisie) -> str:
                 "vers 2040 puis en recul. Le système 1 n'en lit rien : il "
                 "revalorise sur les prix."),
         g.liste("stock", "Pensions en cours à la bascule", REVALORISATIONS_STOCK,
-                saisie.stock, "page Coût seulement",
+                saisie.stock, "page Coût, et pension d'un retraité",
                 complement="Ce que la réforme fait des pensions déjà servies "
                 "le jour où elle s'applique. Par défaut elles gardent "
                 "l'indice des prix que le droit leur promet, et seuls les "
@@ -3950,14 +3972,15 @@ def _champ_pension(saisie: Saisie) -> str:
     """Le champ « combien touchez-vous », qui remplace les revenus.
 
     IL EST DANS LA MÊME CONVENTION QUE LES MONTANTS AFFICHÉS, et c'est ce qui
-    le rend utilisable sans rien convertir. Le simulateur ne calcule qu'une
-    pension au moment de la liquidation, mais il l'exprime en euros constants
-    de l'année de référence ; or le droit indexe les pensions servies sur les
-    prix. Une pension qui a suivi les prix garde son pouvoir d'achat : la somme
-    qu'un retraité touche aujourd'hui EST sa première pension exprimée en euros
-    d'aujourd'hui. Il n'y a donc rien à remonter, et aucune série de
-    revalorisations à certifier pour cela — seulement une convention à dire,
-    ce que fait le complément.
+    le rend utilisable sans rien convertir : pour un retraité, la pension
+    qu'il touche AUJOURD'HUI, celle de son relevé bancaire. Le simulateur
+    calcule sa pension de départ, la revalorise comme chaque régime l'a fait
+    depuis, et c'est à cette pension-là qu'il compare le montant saisi.
+
+    Il a longtemps supposé l'inverse — qu'une pension qui a suivi les prix
+    garde son pouvoir d'achat, si bien que la première pension ramenée en
+    euros d'aujourd'hui ÉTAIT celle qu'on touche. Les pensions n'ont pas suivi
+    les prix, et le revenu que la page en déduisait était trop bas d'autant.
     """
     # Deux accords pour un seul mode : la PENSION est nette, les EUROS sont
     # nets. « en euros nettes par mois » s'est affiché une fois.
@@ -3966,13 +3989,12 @@ def _champ_pension(saisie: Saisie) -> str:
     aide = (f"en euros {euros} par mois, l'année de référence étant "
             f"{saisie.euros}")
     complement = (
-        "Déjà à la retraite ? C'est la pension que vous touchez, telle qu'elle "
-        "tombe sur le compte. Le simulateur calcule la pension du premier "
-        f"mois, mais il l'exprime en euros de {saisie.euros}, et le droit "
-        "indexe les pensions servies sur les prix : une pension qui a suivi "
-        "les prix garde son pouvoir d'achat, les deux montants sont donc le "
-        "même. Les sous-indexations décidées certaines années font seules la "
-        "différence, et le simulateur ne les suit pas. Pas encore à la "
+        "Déjà à la retraite ? C'est la pension que vous touchez aujourd'hui, "
+        "telle qu'elle tombe sur le compte. Le simulateur calcule celle de "
+        "votre départ, puis la revalorise comme chaque régime l'a fait "
+        "depuis — la retraite de base par les coefficients de la loi, la "
+        "complémentaire par la valeur de son point —, et c'est à celle "
+        "d'aujourd'hui qu'il compare le montant saisi. Pas encore à la "
         "retraite ? C'est alors la pension que vous visez, et la page dira "
         "quel revenu d'activité il y faut."
     )
@@ -4332,20 +4354,21 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
     """À quelle date se rapportent les montants affichés, et en quels euros.
 
     C'est la première question que pose un lecteur devant les quatre barres :
-    « ce nombre, c'est celui de quand ? ». Deux conventions y répondent, dont
-    aucune ne va de soi. Le moteur ne calcule qu'une pension AU MOMENT DE LA
-    LIQUIDATION — il n'existe aucune phase postérieure qu'il revaloriserait —,
-    et il l'exprime en euros constants. Autrement dit : jamais la pension
-    d'aujourd'hui d'un retraité, toujours celle de son premier mois de
-    retraite ; et jamais le montant nominal que porte un relevé bancaire,
-    toujours son pouvoir d'achat ramené à une année de référence.
+    « ce nombre, c'est celui de quand ? ». La réponse dépend de la date du
+    départ.
 
-    Les deux conventions se disent différemment selon que le départ est passé
-    ou à venir, parce que ce qu'elles écartent n'est pas le même : pour un
-    actif, les revalorisations à venir de sa pension ; pour un retraité, celles
-    qu'il a déjà reçues. La seconde n'a plus qu'un chiffre à expliquer : la
-    page n'affiche que le pouvoir d'achat de l'année de référence, jamais la
-    somme nominale du mois du départ, et ce paragraphe dit d'où il vient.
+    POUR UN ACTIF, la pension de son premier mois, en euros constants de
+    l'année de référence : le moteur la calcule au jour de la liquidation, et
+    ne prévoit pas les revalorisations à venir.
+
+    POUR UN RETRAITÉ, la pension qu'il touche AUJOURD'HUI, et c'est une
+    correction : la page lui montrait la première, ramenée en euros
+    d'aujourd'hui par l'indice des prix, ce qui supposait qu'elle avait suivi
+    les prix. Elle ne les a pas suivis — gel de 2014, 0,3 % en 2019, point
+    Agirc-Arrco gelé plusieurs années —, et le montant affiché n'était pas celui
+    de son relevé bancaire. Il l'est désormais : chaque régime revalorisé comme
+    son texte l'a fait (``retraite_notionnelle.revalorisation``), et le détail
+    est dans un dépliant plus bas.
     """
     carriere = comparaison.carriere
     annee = carriere.annee_liquidation
@@ -4362,10 +4385,12 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
     elif annee < courante:
         quand = (
             "Vous êtes déjà à la retraite : ces montants sont ceux de votre "
-            f"pension <strong>au moment du départ</strong> — {date} —, et non "
-            f"de celle que vous touchez aujourd'hui. Depuis {annee}, votre "
-            "pension a été revalorisée chaque année ; le simulateur s'arrête au "
-            "jour de la liquidation et ne suit aucune de ces revalorisations."
+            f"pension <strong>d'aujourd'hui</strong>, celle de {courante}, et "
+            f"non de votre premier mois de retraite — {date}. Depuis, chaque "
+            "régime l'a revalorisée à sa façon : la retraite de base par les "
+            "coefficients que la loi fixe chaque année, la complémentaire par "
+            "la valeur de son point. Ni l'une ni l'autre n'a suivi exactement "
+            "les prix, et le détail, régime par régime, est plus bas."
         )
     else:
         quand = (
@@ -4375,7 +4400,15 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
             "suivantes."
         )
 
-    if annee > saisie.euros:
+    if annee < courante:
+        unites = (
+            f"Ils sont donnés en euros de {courante}, ceux de cette année : "
+            "rien n'est converti."
+            if saisie.euros == courante else
+            f"Ils sont donnés en euros de {saisie.euros} : la somme versée en "
+            f"{courante} est ramenée au pouvoir d'achat de {saisie.euros}."
+        )
+    elif annee > saisie.euros:
         unites = (
             f"Ils sont donnés en euros de {saisie.euros}, et dans cette unité "
             "seulement : la somme telle qu'elle serait versée en "
@@ -4427,11 +4460,18 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
             "calculé sur des nets."
         )
 
+    compare = (
+        "Ce que compare cette page, ce sont quatre façons de CALCULER votre "
+        "pension, chacune revalorisée depuis votre départ selon sa propre "
+        "règle : le droit pour le système actuel, la règle du compte pour les "
+        "trois autres."
+        if annee < courante else
+        "Ce que compare cette page, ce sont quatre façons de CALCULER une "
+        "pension de départ, pas quatre façons de la revaloriser ensuite."
+    )
     return g.bulle(
         "De quand sont ces chiffres, et en quels euros",
-        f"{quand} {unites} Ce que compare cette page, ce sont quatre façons de "
-        "CALCULER une pension de départ, pas quatre façons de la revaloriser "
-        f"ensuite. {prelevements}",
+        f"{quand} {unites} {compare} {prelevements}",
     )
 
 
@@ -4516,10 +4556,30 @@ def _corps_trajectoire(contexte: Contexte, comparaison: Comparaison,
     # encore son « k » sur téléphone, où les textes du repère sont grossis. Le
     # texte sous le graphique dit ce que « k€ » désigne, et de quelle année.
     unite = "k€"
+    # Pour un retraité, les montants du haut sont ceux d'AUJOURD'HUI, et ce
+    # graphique n'en fait pas la somme : il additionne ceux du premier mois.
+    # Le dire, sans quoi le point de départ de chaque courbe démentirait la
+    # barre qui la surmonte.
+    retraite = comparaison.aujourd_hui is not None
+    if seul:
+        ouverture = "Chaque système sert une pension mensuelle ; ce graphique"
+    elif retraite:
+        ouverture = ("Les quatre montants du haut sont ceux d'un seul mois, "
+                     "aujourd'hui ; ce graphique reprend ceux du premier mois et")
+    else:
+        ouverture = ("Les quatre montants du haut sont ceux d'un seul mois, le "
+                     "premier. Ce graphique")
+    hypothese = (
+        "que la pension garde, du départ à la fin, le pouvoir d'achat de la "
+        "première : le graphique ne reprend pas les revalorisations que vous "
+        "avez reçues depuis, que détaille le dépliant « Votre pension, de "
+        "votre départ à aujourd'hui », et ne prévoit pas celles à venir."
+        if retraite else
+        "que la pension garde son pouvoir d'achat après le départ, le moteur ne "
+        "simulant aucune revalorisation postérieure à la liquidation."
+    )
     return f"""
-<p>{"Chaque système sert une pension mensuelle ; ce graphique"
-     if seul else
-     "Les quatre montants du haut sont ceux d'un seul mois, le premier. Ce graphique"}
+<p>{ouverture}
 les additionne, année après année, à mesure que le retraité vieillit.{g.bulle(
     "Ce que ce graphique ajoute aux quatre montants",
     "C'est là que la durée entre dans le calcul. Une pension "
@@ -4527,8 +4587,7 @@ les additionne, année après année, à mesure que le retraité vieillit.{g.bul
     "<strong>vivre plus longtemps que la moyenne, c'est toucher plus que ce "
     "que la carrière a financé</strong> — et mourir avant, moins. Cumuls "
     f"bruts, en milliers d'euros constants de {saisie.euros} : ils supposent "
-    "que la pension garde son pouvoir d'achat après le départ, le moteur ne "
-    "simulant aucune revalorisation postérieure à la liquidation. Une "
+    f"{hypothese} Une "
     "indexation qui décrocherait des prix ferait fléchir les quatre courbes à la "
     "fois, sans changer leur ordre.",
 )}</p>
@@ -4916,10 +4975,18 @@ def _financements(contexte: Contexte,
     afficher un coefficient tiré d'années postérieures au départ, sous un
     montant qui est celui du premier mois de retraite, ferait dire à la page
     ce qu'aucun compte ne dit.
+
+    POUR UN RETRAITÉ, LA LECTURE COMMENCE AUJOURD'HUI. Le montant affiché est
+    sa pension d'aujourd'hui, et ce que les comptes en financent se lit sur
+    les années qui lui restent, pas sur celles qu'il a déjà touchées : la
+    fenêtre part de l'année courante, et chaque année pèse la part des
+    partants encore en vie — la même courbe, prise où il en est.
     """
     carriere = comparaison.carriere
     bilan = contexte.bilan()
-    if carriere.annee_liquidation < bilan.premiere_annee:
+    debut = (max(carriere.annee_liquidation, comparaison.parametres.annee_courante)
+             if comparaison.aujourd_hui is not None else carriere.annee_liquidation)
+    if debut < bilan.premiere_annee:
         return {}
     survie = _survie(contexte, carriere,
                      comparaison.notionnel_retroactif.conversion.table)
@@ -4927,12 +4994,12 @@ def _financements(contexte: Contexte,
     # MILIEU : une pension servie du 1er janvier au 31 décembre l'est à une
     # population qui décroît pendant l'année, et prendre la part du 1er
     # janvier la surestimerait d'une demi-année de mortalité.
-    poids = tuple(_part_vivante(survie, rang + 0.5)
-                  for rang in range(max(len(survie) - 1, 0)))
+    ecoule = debut - carriere.annee_liquidation
+    poids = tuple(_part_vivante(survie, ecoule + rang + 0.5)
+                  for rang in range(max(len(survie) - 1 - ecoule, 0)))
     financements = {}
     for cle, scenario in SCENARIOS_DES_BARRES.items():
-        part = financer(bilan, bilan.assiette, scenario,
-                        carriere.annee_liquidation, poids)
+        part = financer(bilan, bilan.assiette, scenario, debut, poids)
         if part is not None:
             financements[cle] = part
     return financements
@@ -4990,13 +5057,28 @@ def _financement(contexte: Contexte, comparaison: Comparaison,
     if not finances:
         return ""
     bilan = contexte.bilan()
-    depart = comparaison.carriere.annee_liquidation
     reference = finances.get("actuel")
     if reference is None:
         return ""
-    depart_dit = (f"{depart}, l'année où vous partiriez" if reference.depart_couvert
-                  else f"{reference.premiere_annee}, la première année que les "
-                       "comptes couvrent")
+    # Pour un retraité, la fenêtre s'ouvre cette année : voir `_financements`.
+    # Et le quatrième levier — reculer l'âge — ne le concerne plus : il est
+    # parti.
+    retraite = comparaison.aujourd_hui is not None
+    moyenne_depuis = "cette année" if retraite else "l'année du départ"
+    a_venir = " à venir" if retraite else ""
+    levier_age = "" if retraite else (
+        " Un quatrième levier\nexiste — reculer l'âge —, et ce simulateur le "
+        "mesure déjà : changez l'âge de\nliquidation, et les quatre montants "
+        "bougent."
+    )
+    depart = reference.annee_liquidation
+    if retraite:
+        depart_dit = f"{depart}, cette année"
+    else:
+        depart_dit = (f"{depart}, l'année où vous partiriez"
+                      if reference.depart_couvert
+                      else f"{reference.premiere_annee}, la première année que "
+                           "les comptes couvrent")
 
     # Les trois leviers du système ACTUEL, en unités de la vie courante. Le
     # salaire moyen brut d'aujourd'hui sert d'étalon à la hausse de cotisation :
@@ -5093,7 +5175,7 @@ tient ses comptes — le projette en déficit jusqu'en {bilan.derniere_annee}. L
 montant du système 1 est ce que la loi promet ; il ne dit pas que l'argent
 est là.</p>
 
-<p>En {depart_dit}, il manquera
+<p>En {depart_dit}, il {"manque" if retraite else "manquera"}
 {g.pourcentage(1 - reference.coefficient_depart, decimales=0)} de ce que le
 système doit verser. Cette différence, quelqu'un la paiera, et il
 n'y a que trois façons de la payer. Aucune n'est décidée ; les voici toutes les
@@ -5104,11 +5186,9 @@ trois, pour la même année :</p>
 <p>Le troisième chiffre des résultats applique la première, parce que c'est la
 seule des trois qui se lise sur une pension. Il est un peu plus sévère que les
 {g.pourcentage(1 - reference.coefficient_depart, decimales=0)} ci-dessus : il
-ne s'arrête pas à l'année du départ, il fait la moyenne de toutes vos
-années de retraite, où le manque grandit, chaque
-année comptant pour le nombre de partants encore en vie. Un quatrième levier
-existe — reculer l'âge —, et ce simulateur le mesure déjà : changez l'âge de
-liquidation, et les quatre montants bougent.</p>
+ne s'arrête pas à {moyenne_depuis}, il fait la moyenne de toutes vos
+années de retraite{a_venir}, où le manque grandit, chaque
+année comptant pour le nombre de partants encore en vie.{levier_age}</p>
 
 {horizon}
 
@@ -5268,8 +5348,9 @@ def _en_bref(comparaison: Comparaison, saisie: Saisie, montants: "Montants",
     actuel = constants["actuel"]
     if carriere.annee_liquidation < parametres.annee_courante:
         phrase_actuel = (
-            f"Avec le système actuel, votre retraite était de {somme(actuel)} "
-            f"{accord} par mois à votre départ, en {date}."
+            f"Avec le système actuel, votre retraite est aujourd'hui de "
+            f"{somme(actuel)} {accord} par mois : celle de votre départ, en "
+            f"{date}, revalorisée depuis comme le droit l'a fait."
         )
     else:
         phrase_actuel = (
@@ -5366,10 +5447,28 @@ def _en_bref(comparaison: Comparaison, saisie: Saisie, montants: "Montants",
     )
 
 
-def _resultats(contexte: Contexte, saisie: Saisie) -> str:
-    comparaison = contexte.simuler(saisie)
-    carriere = comparaison.carriere
-    retro = comparaison.notionnel_retroactif
+def _montants_affiches(comparaison: Comparaison
+                       ) -> tuple[dict[str, float], float, float]:
+    """Les quatre pensions que la page affiche, et la rente capitalisée.
+
+    En euros constants de l'année de référence, et DE QUAND ? Du départ pour
+    qui n'est pas encore parti ; d'aujourd'hui pour qui l'est, parce que c'est
+    la pension qu'il touche et celle qu'il compare. Voir
+    :func:`_lecture_des_montants`.
+    """
+    aujourd_hui = comparaison.aujourd_hui
+    if aujourd_hui is not None:
+        convertir = comparaison.aujourd_hui_en_euros_constants
+        courants = {
+            "actuel": aujourd_hui.pension("actuel"),
+            "retroactif": aujourd_hui.pension("notionnel_retroactif"),
+            "retroactif-employeur":
+                aujourd_hui.pension("notionnel_retroactif_employeur"),
+            "liberal": aujourd_hui.pension_totale("notionnel_liberal"),
+        }
+        return ({cle: convertir(montant) for cle, montant in courants.items()},
+                convertir(aujourd_hui.rente_capitalisee),
+                convertir(aujourd_hui.rente_capitalisee_volontaire))
 
     # Le moteur ne calcule qu'un montant, en euros de l'année de liquidation.
     # La page n'en affiche qu'un, et ce n'est pas celui-là : le même ramené au
@@ -5380,7 +5479,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     # pour distinguer du premier.
     courants = {
         "actuel": comparaison.actuel.pension_annuelle,
-        "retroactif": retro.pension_annuelle,
+        "retroactif": comparaison.notionnel_retroactif.pension_annuelle,
         "retroactif-employeur":
             comparaison.notionnel_retroactif_employeur.pension_annuelle,
         # La proposition sert DEUX lignes : la pension de répartition issue du
@@ -5391,18 +5490,49 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         # un rendement de la répartition ce qui sort d'un marché obligataire.
         "liberal": comparaison.notionnel_liberal.pension_totale,
     }
-    constants = {cle: comparaison.en_euros_constants(montant)
-                 for cle, montant in courants.items()}
-    capitalise = comparaison.en_euros_constants(
-        comparaison.notionnel_liberal.rente_capitalisation_obligatoire
-    )
-    # La part de cette rente qui vient des cinq points VOLONTAIRES — ceux que
-    # la proposition rend et que le site suppose remis au compte. Elle est
-    # nommée à part sous la barre : c'est la seule ligne de la page que
-    # personne n'impose, et le lecteur doit pouvoir la retrancher de l'œil.
-    capitalise_volontaire = comparaison.en_euros_constants(
-        comparaison.notionnel_liberal.rente_capitalisation_volontaire
-    )
+    # La part de la rente qui vient des cinq points VOLONTAIRES — ceux que la
+    # proposition rend et que le site suppose remis au compte. Elle est nommée
+    # à part sous la barre : c'est la seule ligne de la page que personne
+    # n'impose, et le lecteur doit pouvoir la retrancher de l'œil.
+    return ({cle: comparaison.en_euros_constants(montant)
+             for cle, montant in courants.items()},
+            comparaison.en_euros_constants(
+                comparaison.notionnel_liberal.rente_capitalisation_obligatoire),
+            comparaison.en_euros_constants(
+                comparaison.notionnel_liberal.rente_capitalisation_volontaire))
+
+
+def _ecarts_affiches(comparaison: Comparaison,
+                     constants: dict[str, float]) -> dict[str, float | None]:
+    """L'écart de chaque système au système actuel, tel que les barres le montrent.
+
+    Pour un retraité, il se lit sur les pensions d'AUJOURD'HUI, celles que les
+    barres portent : un écart pris au départ démentirait les deux montants
+    qu'il est censé relier. Pour un actif, c'est celui du modèle, au départ.
+    """
+    if comparaison.aujourd_hui is None:
+        return {
+            "actuel": None,
+            "retroactif": comparaison.variation("notionnel_retroactif"),
+            "retroactif-employeur":
+                comparaison.variation("notionnel_retroactif_employeur"),
+            "liberal": comparaison.variation_totale("notionnel_liberal"),
+        }
+    reference = constants["actuel"]
+    return {
+        cle: (None if cle == "actuel"
+              else constants[cle] / reference - 1.0 if reference > 0
+              else float("nan"))
+        for cle in constants
+    }
+
+
+def _resultats(contexte: Contexte, saisie: Saisie) -> str:
+    comparaison = contexte.simuler(saisie)
+    carriere = comparaison.carriere
+
+    constants, capitalise, capitalise_volontaire = _montants_affiches(comparaison)
+    ecarts = _ecarts_affiches(comparaison, constants)
     reference = max(constants.values()) or 1.0
 
     # Ce que les comptes du système financent de chacun de ces montants, à la
@@ -5567,17 +5697,17 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
     scenarios = (
         bloc("actuel", "1. Système de répartition actuel",
              "le droit en vigueur, minima et majorations compris",
-             None, comparaison.taux_remplacement_actuel)
+             ecarts["actuel"], comparaison.taux_remplacement_actuel)
         + bloc("retroactif", "2. Ce que vous avez cotisé, part salariale seule",
                "toute la carrière recalculée depuis 1941, sur la seule part "
                "salariale — 11,3 % du brut pour un salarié du privé",
-               comparaison.variation("notionnel_retroactif"),
+               ecarts["retroactif"],
                comparaison.taux_remplacement_retroactif)
         + bloc("retroactif-employeur",
                "3. Ce que vous avez cotisé, part salariale + patronale",
                "la même carrière recalculée depuis 1941, les deux parts "
                "comprises — les 28 % prélevés aujourd'hui",
-               comparaison.variation("notionnel_retroactif_employeur"),
+               ecarts["retroactif-employeur"],
                comparaison.taux_remplacement("notionnel_retroactif_employeur"))
         + bloc("liberal",
                "4. La proposition du Parti libéral français",
@@ -5591,7 +5721,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
                f"({g.pourcentage(comparaison.parametres.taux_retraite_propose, decimales=0)} "
                "en tout), les uns comme les autres placés sans risque — plus "
                "une garantie vieillesse payée par l'impôt",
-               comparaison.variation_totale("notionnel_liberal"),
+               ecarts["liberal"],
                comparaison.taux_remplacement_total("notionnel_liberal"),
                part_capitalisee=capitalise,
                part_volontaire=capitalise_volontaire)
@@ -5612,8 +5742,12 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
 
     capitalisation = ""
     if comparaison.actuel.pension_hors_repartition > 0:
-        montant = comparaison.en_euros_constants(
-            comparaison.actuel.pension_hors_repartition
+        montant = (
+            comparaison.aujourd_hui_en_euros_constants(
+                comparaison.aujourd_hui.actuel.pension_hors_repartition)
+            if comparaison.aujourd_hui is not None
+            else comparaison.en_euros_constants(
+                comparaison.actuel.pension_hors_repartition)
         )
         capitalisation = (
             f'<p class="discret">Hors répartition, servi à part : '
@@ -5723,6 +5857,7 @@ et, quand ses recettes n'y suffisent pas, ce qu'elles en paient
 <p class="chapeau">Les quatre montants ci-dessus sont le résultat ; tout ce qui
 suit est le détail du calcul, rangé par question. Ouvrez ce que vous voulez
 voir.</p>
+{_pension_d_aujourd_hui(contexte, comparaison, saisie)}
 {_financement(contexte, comparaison, finances, montants)}
 {_trajectoire(contexte, comparaison, saisie)}
 {_fourchette(contexte, saisie, comparaison)}
@@ -5732,6 +5867,193 @@ voir.</p>
 {_pilier_capitalise(comparaison, saisie)}
 {_detail(contexte, comparaison)}
 """
+
+
+#: Comment chaque régime a été revalorisé depuis le départ, dans la langue du
+#: tableau. Les règles sont celles de ``retraite_notionnelle.revalorisation``.
+REGLES_DE_REVALORISATION = {
+    REGLE_POINT: "valeur de service du point, année après année",
+    REGLE_GENERALE: "coefficients de l'article L. 161-23-1, date après date",
+    REGLE_FONCTION_PUBLIQUE: "coefficients de l'article L. 16 du code des "
+                             "pensions, date après date",
+    REGLE_REGIME_SPECIAL: "taux des fonctionnaires depuis 2009",
+}
+
+#: Ce qu'un régime sans règle propre dans le modèle reçoit à la place.
+REGLE_PAR_DEFAUT_EN_CLAIR = ("règle du régime général, faute de série propre "
+                            "à ce régime")
+
+
+def _pension_d_aujourd_hui(contexte: Contexte, comparaison: Comparaison,
+                           saisie: Saisie) -> str:
+    """De la pension du départ à celle d'aujourd'hui, régime par régime.
+
+    C'EST LE CALCUL QUI MANQUAIT À LA PAGE. Un retraité y lisait sa pension du
+    premier mois, ramenée en euros d'aujourd'hui par l'indice des prix ; il y
+    lit désormais celle qu'il touche, et ce dépliant refait le chemin : le
+    montant de chaque régime au départ, le coefficient que son texte lui a
+    appliqué depuis, le montant d'aujourd'hui. En BRUT et par mois, parce que
+    la CSG d'il y a quinze ans n'est plus celle d'aujourd'hui, et qu'un net
+    du départ calculé au taux de 2026 serait un nombre que personne n'a vu.
+
+    La dernière phrase dit ce que la page affichait avant, et de combien elle
+    se trompait : c'est l'écart entre les revalorisations et les prix.
+    """
+    aujourd_hui = comparaison.aujourd_hui
+    if aujourd_hui is None:
+        return ""
+    catalogue = contexte.simulateur().catalogue
+    actuel = aujourd_hui.actuel
+    carriere = comparaison.carriere
+    annee = carriere.annee_liquidation
+    courante = aujourd_hui.annee
+    depart_date = escape(str(carriere.date_liquidation))
+
+    def nom_regime(code: str) -> str:
+        try:
+            return catalogue[code].nom
+        except KeyError:
+            return code
+
+    def regle_en_clair(regime) -> str:
+        if regime.regle == REGLE_FONCTION_PUBLIQUE and annee < FIN_PEREQUATION.year:
+            return ("point d'indice jusqu'en 2003, puis coefficients de "
+                    "l'article L. 16 du code des pensions")
+        if regime.regle == REGLE_REGIME_SPECIAL and annee < 2009:
+            return ("taux des fonctionnaires depuis 2009 ; avant, la règle du "
+                    "régime général tient lieu de la péréquation")
+        return REGLES_DE_REVALORISATION.get(regime.regle, REGLE_PAR_DEFAUT_EN_CLAIR)
+
+    def mois(annuel: float) -> str:
+        return g.euros_centimes(annuel / MOIS_PAR_AN)
+
+    lignes = []
+    for regime in actuel.regimes:
+        if regime.hors_repartition or regime.au_depart <= 0:
+            continue
+        lignes.append([escape(nom_regime(regime.regime)), mois(regime.au_depart),
+                       "×" + g.nombre(regime.coefficient, 4), mois(regime.aujourd_hui),
+                       regle_en_clair(regime)])
+    if actuel.majoration_enfants > 0:
+        lignes.append(["+ Majoration pour enfants", mois(actuel.majoration_enfants),
+                       "×" + g.nombre(actuel.coefficient_majoration, 4),
+                       mois(actuel.majoration_enfants * actuel.coefficient_majoration),
+                       "celle des régimes qui la portent"])
+    if actuel.minimum_vieillesse_au_depart > 0 or actuel.minimum_vieillesse > 0:
+        lignes.append(["+ Minimum vieillesse (ASPA)",
+                       mois(actuel.minimum_vieillesse_au_depart), "—",
+                       mois(actuel.minimum_vieillesse),
+                       "allocation différentielle, recalculée sur le barème de "
+                       f"{courante} à partir de 65 ans"])
+    total_depart = comparaison.actuel.pension_annuelle
+    total = actuel.pension_annuelle
+    lignes.append(["<strong>Pension du système actuel</strong>",
+                   "<strong>" + mois(total_depart) + "</strong>",
+                   ("×" + g.nombre(total / total_depart, 4)) if total_depart > 0 else "—",
+                   "<strong>" + mois(total) + "</strong>", ""])
+    for regime in actuel.regimes:
+        if regime.hors_repartition and regime.au_depart > 0:
+            lignes.append(["hors total — " + escape(nom_regime(regime.regime)),
+                           mois(regime.au_depart), "×" + g.nombre(regime.coefficient, 4),
+                           mois(regime.aujourd_hui), regle_en_clair(regime)])
+    tableau = g.tableau(
+        ["Régime", f"Au départ, en euros de {annee}", "Revalorisation",
+         f"En {courante}", "Règle suivie"],
+        lignes,
+        ["", "nombre", "nombre", "nombre", "texte"],
+        titre="Système 1, de votre départ à aujourd'hui : montants bruts mensuels",
+        entete_de_ligne=True,
+    )
+
+    # Ce que la page affichait avant : la pension du départ, ramenée par les
+    # prix. Le rapport des deux coefficients de la comparaison le donne, sans
+    # relire l'indice.
+    par_les_prix = (total_depart * comparaison.coefficient_euros_constants
+                    / comparaison.coefficient_euros_aujourd_hui)
+    ecart = ""
+    if par_les_prix > 0:
+        ecart = (
+            f"<p>Ramenée en euros de {courante} par l'indice des prix, votre "
+            f"pension de départ vaudrait {mois(par_les_prix)} bruts par mois : "
+            "c'est ce que vous toucheriez si elle avait suivi l'inflation. "
+            f"Celle que vous touchez est de {mois(total)}, soit "
+            f"<strong>{g.pourcentage(total / par_les_prix - 1.0, signe=True)}</strong>. "
+            "Aucune revalorisation n'est une indexation sur les prix au jour "
+            "près, et certaines années n'en ont connu aucune.</p>"
+        )
+
+    # Seul qui touchait déjà sa retraite en décembre 2019 a vu la tranche
+    # choisie sur ce montant.
+    tranche = ""
+    if actuel.mensuel_decembre_2019:
+        hausse, _ = contexte.simulateur().revalorisations.generale(
+            date(2020, 1, 1), date(2020, 1, 1), True, actuel.mensuel_decembre_2019)
+        tranche = (
+            "<p>En 2020, la revalorisation de la retraite de base dépendait du "
+            "montant total de la retraite du mois précédent : 1 % jusqu'à "
+            "2 000 € bruts par mois, 0,3 % au-delà de 2 014 €, trois marches "
+            "entre les deux. Pour vous, "
+            f"{g.euros_centimes(actuel.mensuel_decembre_2019)} en décembre "
+            f"2019 : {g.pourcentage(hausse - 1.0, signe=True)}.</p>"
+        )
+
+    # La règle du compte jusqu'à la bascule, puis les prix, sauf pour qui est
+    # parti après la bascule, ou si le stock est réindexé : alors la règle du
+    # compte depuis le départ. C'est ``RevalorisationServie.coefficient_stock``.
+    if (carriere.annee_liquidation < saisie.bascule
+            and saisie.stock == RevalorisationStock.PRIX.value):
+        regle_servie = (f"la règle d'indexation réglée plus haut jusqu'à la "
+                        f"bascule de {saisie.bascule}, puis les prix")
+    else:
+        regle_servie = ("la règle d'indexation réglée plus haut, de votre "
+                        "départ à aujourd'hui")
+    reel = aujourd_hui.coefficients_notionnels["notionnel_retroactif"]
+    notionnels = (
+        "<p>Les systèmes 2 à 4 ne sont pas le droit : leur pension servie suit "
+        f"la règle que le modèle prête aux comptes notionnels — {regle_servie}, "
+        "comme sur la page Coût. Depuis votre départ, elle y a varié de "
+        f"<strong>{g.pourcentage(reel - 1.0, signe=True)}</strong> en pouvoir "
+        "d'achat."
+    )
+    if aujourd_hui.garantie_vieillesse > 0:
+        notionnels += (
+            " La garantie vieillesse de la proposition se calcule sur votre "
+            f"pension d'aujourd'hui : elle vous sert "
+            f"{mois(aujourd_hui.garantie_vieillesse)} bruts par mois."
+        )
+    notionnels += "</p>"
+
+    reserves = []
+    if any(r.regle == REGLE_FONCTION_PUBLIQUE for r in actuel.regimes) and (
+            annee < FIN_PEREQUATION.year):
+        reserves.append(
+            "la péréquation des pensions de la fonction publique avant 2004, "
+            "suivie par le point d'indice sans les réformes de grille qui "
+            "relevaient aussi les pensions")
+    if any(r.regle == REGLE_REGIME_SPECIAL for r in actuel.regimes) and annee < 2009:
+        reserves.append(
+            "les revalorisations d'un régime spécial avant 2009, qui suivaient "
+            "les salaires de ses actifs et qu'aucune série publique ne donne")
+    if any(r.regle == REGLE_POINT and r.fiabilite < Fiabilite.HAUTE
+           for r in actuel.regimes if r.au_depart > 0):
+        reserves.append(
+            "les valeurs de point que les séries du dépôt ne portent pas, "
+            "prolongées par la règle du régime général")
+    reserve = (
+        "<p class=\"discret\">Une partie de ce chemin est reconstituée plutôt "
+        f"que lue : {' ; '.join(reserves)}.</p>" if reserves else ""
+    )
+
+    return g.depliant("Votre pension, de votre départ à aujourd'hui", f"""
+<p class="chapeau">Votre pension a pris effet en {depart_date}. Ce que vous
+touchez aujourd'hui, c'est elle, revalorisée chaque année par le texte de
+chaque régime — et non par les prix. Le tableau refait le chemin.</p>
+{tableau}
+{ecart}
+{tranche}
+{notionnels}
+{reserve}
+""", identifiant="resultats-aujourdhui")
 
 
 NATURES_PART_EMPLOYEUR = {
@@ -6268,8 +6590,11 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
             "plancher suit les prix — reste sous le plancher de "
             f"{g.euros_centimes(garantie.plancher_annuel / 12)} : l'impôt en "
             f"finance <strong>{g.euros_centimes(garantie.complement / 12)} par "
-            "mois</strong>. Le montant affiché plus haut est celui du départ, "
-            "sans la garantie.</p>"
+            "mois</strong>."
+            + ("" if comparaison.aujourd_hui is not None else
+               " Le montant affiché plus haut est celui du départ, sans la "
+               "garantie.")
+            + "</p>"
         )
     else:
         lecture = (
@@ -6279,6 +6604,7 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
             "la garantie ne sert rien, et le système 4 est un compte notionnel "
             "à taux unique, sans plus.</p>"
         )
+    lecture += _garantie_d_aujourd_hui(comparaison)
 
     # Le tableau de la proposition, recalculé avec la règle du scénario — en
     # euros mensuels de l'année où la proposition fixe ses montants, sans
@@ -6344,6 +6670,44 @@ départ.{g.bulle(
     "pension contributive. L'option « situation de foyer » du formulaire ne "
     "change qu'une chose : l'allocation d'isolement.",
 )}</p>""")
+
+
+def _garantie_d_aujourd_hui(comparaison: Comparaison) -> str:
+    """Ce que la garantie sert AUJOURD'HUI à un retraité — le montant d'en haut.
+
+    Le tableau refait la garantie à la date du départ, parce que c'est là que
+    la chaîne se lit. Pour qui est déjà parti, le montant affiché plus haut est
+    celui d'aujourd'hui : la garantie s'y calcule sur la pension de cette
+    année et sur le plancher de cette année, et cette phrase dit les deux.
+    """
+    aujourd_hui = comparaison.aujourd_hui
+    if aujourd_hui is None:
+        return ""
+    annee = aujourd_hui.annee
+
+    def mois(annuel: float) -> str:
+        return g.euros_centimes(annuel / MOIS_PAR_AN)
+
+    debut = (f"<p>Vous êtes déjà à la retraite : le montant affiché plus haut "
+             f"est celui de {annee}, et la garantie s'y calcule sur la pension "
+             "de cette année. ")
+    if not aujourd_hui.garantie_ouverte:
+        ouverture = comparaison.carriere.annee_naissance + MinimumVieillesse.AGE_OUVERTURE
+        return debut + (f"Elle ne s'ouvre qu'à 65 ans, en {ouverture} : rien "
+                        "n'est servi aujourd'hui.</p>")
+    if aujourd_hui.garantie_vieillesse > 0:
+        return debut + (
+            f"La pension obligatoire, {mois(aujourd_hui.ressources_garantie)} "
+            f"par mois, reste sous le plancher de "
+            f"{mois(aujourd_hui.plancher_garantie)} : la garantie y ajoute "
+            f"<strong>{mois(aujourd_hui.garantie_vieillesse)} par mois</strong>, "
+            "que l'impôt finance.</p>"
+        )
+    return debut + (
+        f"La pension obligatoire, {mois(aujourd_hui.ressources_garantie)} par "
+        f"mois, dépasse le plancher de {mois(aujourd_hui.plancher_garantie)} : "
+        "la garantie ne sert rien.</p>"
+    )
 
 
 def _euros_signe(montant: float, centimes: bool = True) -> str:
