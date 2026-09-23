@@ -15175,19 +15175,23 @@ README confronte désormais ses milliards à ceux de la page.
 
 **Ce qui reste.**
 
-- Les documents : `limites.md` et `methodologie.md` gardent leurs parts de PIB
-  seules. Les récits datés n'ont pas à être réécrits, ce sont les chiffres
-  d'un jour : les paragraphes du README que `zones.yaml` déclare récits,
-  `risque_de_defaut.md`, cette feuille de route. `chiffrage_plf.md` dit déjà
-  tout en milliards d'euros courants, comme un projet de loi de finances les
-  demande.
+- Les documents. Les sections d'état de `methodologie.md` et de `limites.md`
+  disent leurs parts en milliards, sauf deux : les dix points de dette que des
+  primes de terme auraient déplacés, un contrefactuel écarté, et le contrôle
+  externe du § 5 ter des limites, dont la page Coût donne la version en euros
+  constants. Les récits datés n'ont pas à être réécrits, ce sont les chiffres
+  d'un jour : les paragraphes du README et de ces deux documents que
+  `zones.yaml` déclare récits, `risque_de_defaut.md`, cette feuille de route.
+  `chiffrage_plf.md` dit déjà tout en milliards d'euros courants, comme un
+  projet de loi de finances les demande.
 - Sur téléphone, la légende du graphique de tête s'allonge : la case de la
   valeur réserve sa largeur, et « 14,3 % · 428 Md € » en prend plus que « 14,3 ».
 
 **Fichiers.** `src/retraite_notionnelle/web/gabarit.py` et `moteur/js/gabarit.js`
 (`milliards`, `part_et_milliards`, le `pib` des graphiques, la frise),
 `web/pages.py` et `moteur/js/pages.js`, `scripts/mesures_prose.py`, `README.md`,
-`tests/test_web.py`, `tests/temoins/pages.json`.
+`docs/methodologie.md`, `docs/limites.md`, `tests/test_web.py`,
+`tests/temoins/pages.json`.
 
 ### 119. Les complémentaires relues : le plafond du RAFP, et cinq trous que rien ne disait — `en cours`
 

@@ -426,8 +426,9 @@ d'anticipation que le rapport de simulation imprime.
 Ce canal unique n'est pas léger pour autant. Passer de 67 à <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans prend un
 diviseur plus élevé, donc un capital d'ouverture plus gros, et le cadeau va tout
 entier aux générations de transition. Les deux scénarios prospectifs y gagnent
-un demi-point de PIB de dépense : le scénario 5 repasse sous le système actuel
-en solde moyen, le 3 recule son année d'équilibre de 2044 à 2049.
+un demi-point de PIB de dépense, une quinzaine de milliards d'euros par an au
+PIB de 2025 : le scénario 5 repasse sous le système actuel en solde moyen, le 3
+recule son année d'équilibre de 2044 à 2049.
 
 ### Variantes
 
@@ -1880,9 +1881,10 @@ le seul à les consolider, si bien que ces valeurs entrent au niveau `haute`.
 
 **On lui prend les DEUX colonnes**, et non les seules ressources. Son périmètre
 — régimes légalement obligatoires, FSV compris, RAFP exclu — n'est pas celui de
-la dépense affichée plus haut : <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,86<!--/--> % du PIB en 2024 contre <!--chiffre:mesure(depense?annee=2024&quoi=part_pib_repartition)-->13,59<!--/--> % pour la
-répartition obligatoire de la DREES et <!--chiffre:mesure(depense?annee=2024&quoi=part_pib)-->14,54<!--/--> % pour le risque vieillesse-survie
-entier. Soustraire l'une de l'autre fabriquerait un solde de deux périmètres ;
+la dépense affichée plus haut : <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,86<!--/--> % du PIB en 2024, <!--chiffre:mesure(depense?annee=2024&quoi=cor)-->407<!--/--> Md€,
+contre <!--chiffre:mesure(depense?annee=2024&quoi=part_pib_repartition)-->13,59<!--/--> %, <!--chiffre:mesure(depense?annee=2024&quoi=repartition)-->398,8<!--/--> Md€, pour la répartition obligatoire de la DREES
+et <!--chiffre:mesure(depense?annee=2024&quoi=part_pib)-->14,54<!--/--> %, <!--chiffre:mesure(depense?annee=2024)-->427<!--/--> Md€, pour le risque vieillesse-survie entier.
+Soustraire l'une de l'autre fabriquerait un solde de deux périmètres ;
 en gardant la dépense du COR au dénominateur, le solde du scénario 1 redonne
 exactement celui qu'il publie, et le voisinage des deux séries devient un
 contrôle externe au lieu d'être un risque. Du modèle, cette section n'emprunte
@@ -1893,15 +1895,15 @@ que le RAPPORT des masses, qui est sans dimension et passe donc d'un périmètre
 des droits qu'aucun scénario notionnel ne sert, et deux payeurs la versent. La
 branche famille paie l'assurance vieillesse des parents au foyer et les
 majorations pour enfants :
-<!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=famille)-->0,4<!--/--> point de PIB,
+<!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=famille)-->0,4<!--/--> point de PIB, <!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=famille&en=milliards)-->10,9<!--/--> Md€,
 <!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=famille&sur=ressources)-->2,7<!--/--> % des ressources en 2024, lus chez celui qui paie dans les
 rapports à la Commission des comptes de la Sécurité sociale. Le fonds de
 solidarité vieillesse, dont la CNAV reprend les missions au 1er janvier 2026,
 finance par la CSG des trimestres pour des périodes non travaillées et le
-minimum vieillesse : <!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=solidarite)-->0,7<!--/--> point de plus, qui arrive
+minimum vieillesse : <!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=solidarite)-->0,7<!--/--> point de plus, <!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=solidarite&en=milliards)-->19,6<!--/--> Md€, qui arrive
 par l'impôt et sort donc de la ligne des impôts affectés, non de celle des
 transferts. Le troisième payeur, l'assurance chômage, verse les points des
-chômeurs — <!--chiffre:mesure(recette?annee=2024&quoi=versement&payeurs=chomage)-->0,1<!--/--> point —, et
+chômeurs — <!--chiffre:mesure(recette?annee=2024&quoi=versement&payeurs=chomage)-->0,1<!--/--> point, <!--chiffre:mesure(recette?annee=2024&quoi=versement&payeurs=chomage&en=milliards)-->3,9<!--/--> Md€ —, et
 ceux-là, le compte notionnel les porte : sa recette reste à tous. Le dépôt la
 retirait aussi jusqu'au 23 septembre 2026, au motif qu'une année de chômage
 ne portait rien au compte, ce qui n'a jamais été le cas. Les scénarios 2 à 6
