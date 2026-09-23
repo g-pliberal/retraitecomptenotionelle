@@ -852,13 +852,9 @@ def _pages(contexte: Contexte) -> dict:
             "metier2_salaire": "4200",
         }),
         ("programme", "/", {}),
-        # Trajectoire sans paramètre : la carrière d'exemple, celle qui
-        # répond quand on ouvre l'onglet.
-        ("trajectoire", "/trajectoire", {}),
-        # Et avec une carrière saisie : c'est la seule autre page que
-        # l'adresse paramètre, et le témoin doit couvrir les deux chemins —
-        # le formulaire y est rendu deux fois, avec deux destinations.
-        ("trajectoire_carriere", "/trajectoire", dict(BASE)),
+        # La page « Cumul versé » n'est plus : son adresse rend les résultats
+        # du simulateur, que les témoins ci-dessus couvrent, et
+        # `ANCIENNES_ROUTES` le tient. Même chose pour « Sources », plus bas.
         ("cas_types", "/cas-types", {}),
         ("cout", "/cout", {}),
         ("avantages", "/avantages", {}),
@@ -905,7 +901,6 @@ def _pages(contexte: Contexte) -> dict:
         ("avantages_regles", "/avantages", REGLES_AUTRES),
         ("methode", "/methode", {}),
         ("risque", "/risque", {}),
-        ("donnees", "/donnees", {}),
         ("partager", "/partager", {}),
     ]
     pages = {}

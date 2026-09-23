@@ -115,8 +115,8 @@
 
 <script type="module">
 import {
-  CLES_MODELISATION, CODES_SANS_EMPLOI, Contexte, DESCRIPTIONS, RELEVE_MAXIMUM,
-  Saisie, TITRES, rendre, requeteBasculee,
+  ANCIENNES_ROUTES, CLES_MODELISATION, CODES_SANS_EMPLOI, Contexte, DESCRIPTIONS,
+  RELEVE_MAXIMUM, Saisie, TITRES, rendre, requeteBasculee,
 } from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
 import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";
@@ -249,7 +249,12 @@ function lireAdresse(ancre) {
   const ancienne = route === "/" && Object.keys(parametres).some(
     (cle) => !CLES_MODELISATION.includes(cle),
   );
-  return { chemin: ancienne ? "/simuler" : route, parametres };
+  // Les adresses des deux pages parties le 23 septembre 2026 — « Cumul versé »
+  // et « Sources » — mènent à ce qui les a remplacées, et y ouvrent la section
+  // qui porte leur contenu. Le site parent et des partages les portent encore.
+  const [remplacante, section] = ANCIENNES_ROUTES[route] || [];
+  if (remplacante) { return { chemin: remplacante, parametres, section }; }
+  return { chemin: ancienne ? "/simuler" : route, parametres, section: "" };
 }
 
 // Ce qu'annonce l'écran d'attente des pages qui calculent longtemps : mieux
@@ -272,6 +277,9 @@ let optionsDepliees = false;
 
 // Le premier rendu ne déplace pas le focus — voir `reprendre`.
 let premierRendu = true;
+// La section qu'un renvoi venu d'une autre page demande d'ouvrir une fois la
+// page d'arrivée rendue — voir « le plan d'une page longue », plus bas.
+let sectionEnAttente = null;
 
 // La route dont la page est affichée, et la requête sous laquelle elle l'a
 // été : un rendu qui ne change pas de route se fait SUR PLACE — voir
@@ -384,6 +392,12 @@ async function afficher() {
   // rouverts, saisie remise dans ses champs, légendes dimensionnées — doit
   // être fait avant qu'on mesure où poser la lecture.
   reprendre(contenu, { action, surPlace, repere });
+  // Puis la section qu'une ancienne adresse, ou un renvoi venu d'une autre
+  // page, désigne : on l'ouvre, et on y va. Un renvoi qui n'a pas trouvé la
+  // sienne ne survit pas au rendu suivant.
+  const section = cible.section || sectionEnAttente;
+  sectionEnAttente = null;
+  if (section) { ouvrirSection(section); }
 }
 
 // -- les statuts, aux seules dates où leur régime recrutait -------------------
@@ -1456,7 +1470,7 @@ document.addEventListener("submit", (evenement) => {
   }
   // Un formulaire qui simule mène à des résultats ; les autres — « Recalculer
   // cette page » — recalculent la page sous les yeux du lecteur.
-  const simule = route === "/simuler" || route === "/trajectoire";
+  const simule = route === "/simuler";
   noterDeclencheur(evenement.submitter || formulaire, simule ? "calcul" : "sur-place");
   naviguer(`#${route}?${requete}`);
 });
@@ -2586,12 +2600,16 @@ document.addEventListener("click", (evenement) => {
 // d'évitement, étendu au corps de la page : ouvrir la section si elle est
 // repliée — et celles qui l'enveloppent —, y poser le focus, y faire défiler,
 // sans toucher à l'adresse.
-document.addEventListener("click", (evenement) => {
-  const lien = evenement.target.closest("a[data-vers]");
-  if (!lien) { return; }
-  const cible = document.getElementById(lien.dataset.vers);
-  if (!cible) { return; }
-  evenement.preventDefault();
+//
+// La section peut être sur une AUTRE page — Carrières types renvoie au
+// coefficient d'équilibre de la page Coût, les autres pages à la partie
+// « D'où viennent les chiffres » de Méthode et sources. Le lien suit alors sa
+// route, et c'est le rendu de la page d'arrivée qui ouvre la section —
+// `sectionEnAttente`, déclarée avec les autres états du routeur.
+
+function ouvrirSection(identifiant) {
+  const cible = document.getElementById(identifiant);
+  if (!cible) { return false; }
   for (let noeud = cible; noeud; noeud = noeud.parentElement) {
     if (noeud.tagName === "DETAILS") { noeud.open = true; }
   }
@@ -2600,6 +2618,18 @@ document.addEventListener("click", (evenement) => {
   const foyer = cible.tagName === "DETAILS" ? cible.querySelector("summary") : cible;
   foyer.focus({ preventScroll: true });
   cible.scrollIntoView({ block: "start" });
+  return true;
+}
+
+document.addEventListener("click", (evenement) => {
+  const lien = evenement.target.closest("a[data-vers]");
+  if (!lien) { return; }
+  if (!document.getElementById(lien.dataset.vers)) {
+    sectionEnAttente = lien.dataset.vers;
+    return;
+  }
+  evenement.preventDefault();
+  ouvrirSection(lien.dataset.vers);
 });
 
 // -- filtrer et trier un tableau ----------------------------------------------

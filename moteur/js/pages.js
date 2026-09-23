@@ -2150,9 +2150,6 @@ export const DESCRIPTIONS = {
   "/simuler": "Votre carrière calculée de quatre façons : le système actuel, et "
     + "les comptes notionnels appliqués depuis 1941 ou à partir de la "
     + "bascule. Tout se calcule dans votre navigateur, rien n'est envoyé.",
-  "/trajectoire": "Ce que chaque système aura versé, du départ à 105 ans : "
-    + "le cumul, et non la pension d'un mois — c'est là que la "
-    + "durée de la retraite entre dans le calcul.",
   "/cas-types": "Treize carrières types sur sept générations : ce que chaque "
     + "pension deviendrait, par rapport à aujourd'hui, sous la "
     + "proposition et sous quatre contrefactuels.",
@@ -2165,10 +2162,9 @@ export const DESCRIPTIONS = {
   "/avantages": "Tous les avantages non contributifs du système actuel : "
     + "lesquels, depuis quand, et ce que le modèle sait en chiffrer.",
   "/methode": "Comment une pension en comptes notionnels se calcule, en trois "
-    + "opérations, et pourquoi la règle de revalorisation décide de "
-    + "presque tout.",
-  "/donnees": "D'où viennent les chiffres du site, série par série et régime "
-    + "par régime, et ce qui a été recontrôlé contre sa source.",
+    + "opérations, pourquoi la règle de revalorisation décide de "
+    + "presque tout, et d'où viennent les chiffres du site, série par "
+    + "série et régime par régime.",
   "/partager": "Les chiffres du programme au format des réseaux sociaux, "
     + "1200 × 675, en filigrane @pliberal : le plancher, le taux, "
     + "le déficit, et l'appel au simulateur.",
@@ -2180,11 +2176,20 @@ export const TITRES = {
   "/cout": "Coût",
   "/risque": "Pourquoi changer",
   "/partager": "Partager",
-  "/trajectoire": "Cumul versé",
   "/cas-types": "Carrières types",
   "/avantages": "Droits non cotisés",
-  "/methode": "Méthode",
-  "/donnees": "Sources",
+  "/methode": "Méthode et sources",
+};
+
+/**
+ * Les adresses de deux pages qui n'existent plus, et ce qu'elles montrent
+ * désormais : la page, et la section à ouvrir. Le routeur d'`index.html` la
+ * lit pour ouvrir cette section. Copie de `ANCIENNES_ROUTES` dans
+ * `web/pages.py`.
+ */
+export const ANCIENNES_ROUTES = {
+  "/trajectoire": ["/simuler", "cumul"],
+  "/donnees": ["/methode", "sources"],
 };
 
 /**
@@ -2192,18 +2197,19 @@ export const TITRES = {
  * rendues dans la page, jamais levées : une adresse mal formée doit afficher un
  * message, pas une trace d'exécution.
  *
- * `/simuler` et `/trajectoire` lisent `parametres` en entier : ce sont les deux
- * pages que l'adresse paramètre carrière comprise, et elles portent le même
- * formulaire. Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages — n'en
- * lisent que les RÈGLES, et se calculent sous elles. Toute adresse inconnue
- * retombe sur l'accueil.
+ * `/simuler` lit `parametres` en entier : c'est la page que l'adresse paramètre
+ * carrière comprise. Les trois pages qui AGRÈGENT — Cas types, Coût, Avantages —
+ * n'en lisent que les RÈGLES, et se calculent sous elles. Les adresses de
+ * `ANCIENNES_ROUTES` rendent la page qui les a remplacées ; toute autre adresse
+ * inconnue retombe sur l'accueil.
  *
  * C'est ici, et nulle part ailleurs, que les réglages sont posés pour les liens
  * de la page à venir : `rendre` est le point d'entrée unique du rendu, et les y
  * poser à chaque appel — fût-ce à vide — garantit qu'aucune page n'hérite des
  * réglages de la précédente.
  */
-export function rendre(contexte, chemin, parametres = null) {
+export function rendre(contexte, cheminDemande, parametres = null) {
+  const chemin = (ANCIENNES_ROUTES[cheminDemande] || [cheminDemande])[0];
   const requete = parametres || {};
   let regles;
   let refus = "";
@@ -2218,9 +2224,6 @@ export function rendre(contexte, chemin, parametres = null) {
   }
   g.poserOptions(regles.requeteModelisation());
 
-  if (chemin === "/trajectoire") {
-    return [TITRES[chemin], refus + pageTrajectoire(contexte, requete)];
-  }
   if (chemin === "/partager") {
     return [TITRES[chemin], partager(contexte)];
   }
@@ -2232,9 +2235,6 @@ export function rendre(contexte, chemin, parametres = null) {
   }
   if (chemin === "/methode") {
     return [TITRES[chemin], methode(contexte)];
-  }
-  if (chemin === "/donnees") {
-    return [TITRES[chemin], donnees(contexte)];
   }
   if (chemin !== "/simuler") {
     return [TITRES["/"], programme(contexte)];
@@ -3703,7 +3703,7 @@ function lectureDesMontants(comparaison, saisie) {
  * postérieure à la liquidation — additionner en euros constants est la
  * convention la plus neutre dont on dispose, ce n'est pas une prévision.
  */
-function corpsTrajectoire(contexte, comparaison, saisie, seul = false) {
+function corpsTrajectoire(contexte, comparaison, saisie) {
   const carriere = comparaison.carriere;
   const depart = carriere.age_liquidation || 0.0;
   if (!(depart > 0 && depart < AGE_MAXIMUM_TRAJECTOIRE)) return "";
@@ -3756,9 +3756,7 @@ function corpsTrajectoire(contexte, comparaison, saisie, seul = false) {
   // graphique n'en fait pas la somme : il additionne ceux du premier mois.
   const retraite = comparaison.aujourd_hui !== null;
   let ouverture;
-  if (seul) {
-    ouverture = "Chaque système sert une pension mensuelle ; ce graphique";
-  } else if (retraite) {
+  if (retraite) {
     ouverture = "Les quatre montants du haut sont ceux d'un seul mois, "
       + "aujourd'hui ; ce graphique reprend ceux du premier mois et";
   } else {
@@ -3812,105 +3810,14 @@ ${phraseEcart}.${g.bulle(
  * Le même cumul, replié, pour le bas de la page Simuler.
  *
  * Là-bas il vient après quatre montants et trois tableaux : le déplier d'office
- * ferait un septième bloc à traverser. Il a sa propre page, en revanche, où il
- * est le sujet et s'ouvre donc de lui-même.
+ * ferait un septième bloc à traverser. Son identifiant est celui que vise
+ * l'ancienne adresse de la page « Cumul versé » (`ANCIENNES_ROUTES`) : le
+ * routeur l'ouvre, et y fait défiler.
  */
 function trajectoire(contexte, comparaison, saisie) {
   const corps = corpsTrajectoire(contexte, comparaison, saisie);
   if (!corps) return "";
-  return g.depliant("Ce que chaque système finit par verser", corps);
-}
-
-/**
- * Ce que chaque système vous AURA versé, du départ à 105 ans.
- *
- * Un montant mensuel ne dit rien de la durée : les barres de la page Simuler
- * donnent la pension d'un mois, le premier. Ici on additionne, et c'est là que
- * la mécanique notionnelle devient visible. Un graphique, et un seul : c'est
- * la règle du site.
- *
- * Copie de `_page_trajectoire` dans `web/pages.py`.
- */
-function pageTrajectoire(contexte, parametres) {
-  const tete = g.affiche(
-    "Le cumul versé",
-    "Ce que chaque système vous "
-    + '<span class="cle-texte">aura versé.</span>',
-    "La même carrière, suivie année après année depuis le départ. Pas une "
-    + "pension mensuelle, mais le cumul : ce que vous aurez réellement "
-    + "touché à 75, à 86, à 95 ans.",
-  );
-  const form = simulateurCourt(contexte, "/trajectoire");
-
-  let saisie;
-  try {
-    saisie = Saisie.depuisRequete(parametres);
-  } catch (erreur) {
-    if (fauteDeProgramme(erreur)) throw erreur;
-    return tete + form + messageErreur(erreur.message);
-  }
-
-  let corps;
-  try {
-    corps = corpsTrajectoire(contexte, contexte.simuler(saisie), saisie, true);
-  } catch (erreur) {
-    if (fauteDeProgramme(erreur)) throw erreur;
-    return tete + form + messageErreur(erreur.message);
-  }
-  if (!corps) {
-    return tete + form + messageErreur(
-      "Cette carrière ne verse aucune pension : il n'y a pas de cumul "
-      + "à tracer.",
-    );
-  }
-
-  // Le graphique est monté en CARTE : c'est elle qui lui donne sa question, sa
-  // réponse en une phrase, sa source — et sa barre de partage. Sans elle, la
-  // Trajectoire aurait été la seule page à graphique dont on ne puisse rien
-  // publier.
-  const carte = g.cle(
-    "Au total, combien chaque système aura-t-il versé ?",
-    "À âge de départ identique, l'écart entre deux courbes est ce que le "
-    + "système choisi vous coûte ou vous rapporte, année après année.",
-    corps,
-    "Cumuls bruts, en euros constants, sur la carrière saisie. "
-    + "Modèle ouvert : "
-    + `<a href="${g.DEPOT}">le dépôt</a>.`,
-    "cumul",
-  );
-
-  return `
-${tete}
-
-${form}
-
-${carte}
-
-<div class="paire">
-  <div>
-    <h2 style="margin-top:0">Pourquoi le cumul, et pas le mois</h2>
-    <p>Une pension mensuelle ne dit rien de la durée. Le graphique montre les
-    quatre systèmes à âge de départ identique : l'écart entre deux courbes est ce
-    que le système choisi vous coûte ou vous rapporte, année après année.</p>
-    <p>Les scénarios qui ne portent au compte que la <strong>part
-    salariale</strong> restent sous le système actuel ; ceux qui y ajoutent la
-    <strong>part patronale</strong> passent au-dessus. <span class="cle-texte">La
-    proposition libérale se place entre les deux, avec un taux de
-    ${g.pourcentage(contexte.base.taux_cotisation_liberal, false, 0)} au lieu
-    de ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)}.</span></p>
-  </div>
-  <div class="encadre">
-    <h2 class="serif" style="margin-top:0">Le repère de l'espérance de vie</h2>
-    <p>C'est la durée que le modèle lit sur la table de la génération
-    concernée, et par laquelle le compte notionnel divise. Celui qui vit plus
-    longtemps touche davantage que ce qu'il a cotisé, celui qui vit moins
-    longtemps touche moins — comme dans tout système par répartition.</p>
-    <p class="discret">Le trait vertical du graphique la marque. La courbe
-    continue au-delà : c'est là que se lit ce qu'une longue vieillesse
-    change.</p>
-  </div>
-</div>
-`;
+  return g.depliant("Ce que chaque système finit par verser", corps, "cumul");
 }
 
 /**
@@ -6217,9 +6124,8 @@ ${echapper(dateEnClair(pilier.date_courbe))} et publiée par la Banque centrale
 européenne ; les versements des années suivantes emploient les taux à terme
 que cette même courbe implique. Les frais partent des moyennes 2025 du marché
 des plans d'épargne retraite individuels, mesurées par l'Observatoire des
-produits d'épargne financière, et baissent ensuite par paliers. La page <a href="${g.lien("/methode")}">Méthode</a>
-dit ce que ces choix supposent, et la page <a href="${g.lien("/donnees")}">Sources</a>
-d'où ils viennent. Fiabilité de ce compartiment :
+produits d'épargne financière, et baissent ensuite par paliers. La page <a href="${g.lien("/methode")}">Méthode
+et sources</a> dit ce que ces choix supposent, et d'où ils viennent. Fiabilité de ce compartiment :
 <span class="etiquette-fiabilite">${echapper(g.fiabiliteEnClair(nomFiabilite(pilier.fiabilite)))}</span>, le
 barème de frais étant saisi, confronté au rapport à la main et non recontrôlé
 automatiquement.</p>`);
@@ -9082,8 +8988,8 @@ ${choix}
 ${milliards(arriveeMeur, 0)}${auPib(comptes, annee)}, soit
 ${milliards(ecart * 1000, 0)} de moins,
 ${g.pourcentage(ecart * 1000 / depense, false, 0)} de la facture. Tout est
-pris sur le compte du <a href="${g.lien("/donnees")}">Conseil d'orientation des
-retraites</a>, le même que les cartes du haut, et il tient ses deux bouts
+pris sur le compte du <a href="${g.lien("/methode")}" data-vers="sources">Conseil
+d'orientation des retraites</a>, le même que les cartes du haut, et il tient ses deux bouts
 jusqu'en ${solde.derniereAnnee}.</p>
 
 ${figure}
@@ -10889,7 +10795,7 @@ lui depuis les rapports à la Commission des comptes de la Sécurité sociale ; 
 tout ce qui passe par un rapport de masses est <strong>estimé</strong>, sans
 pouvoir être autre chose — aucune institution ne publie ce qu'aurait coûté un
 système qui n'a pas existé. Tout est détaillé sur la page
-<a href="${g.lien("/donnees")}">Sources</a>.</p>
+<a href="${g.lien("/methode")}" data-vers="sources">Méthode et sources</a>.</p>
 `, "cout-sources");
 }
 
@@ -11851,7 +11757,7 @@ Les huit autres restent à un clic, dans les options du simulateur.`,
   );
 
   const tete = g.affiche(
-    "La méthode",
+    "Méthode et sources",
     "Comment c'est calculé, "
     + '<span class="cle-texte">en trois opérations.</span>',
     "Un compte notionnel est un compte <em>virtuel</em> : rien n'est "
@@ -11894,6 +11800,8 @@ ${methodeSuppressions()}
 ${methodeCarriere(contexte)}
 ${methodeUnites()}
 ${methodeConstruction()}
+
+${methodeSources(contexte)}
 `;
 }
 
@@ -12330,8 +12238,8 @@ les tests.</p>
 <p>Les données que le site charge sont produites par un script à partir des
 mêmes fichiers que le modèle, et un test refuse un paquet périmé. Les séries
 sont recontrôlées contre le fichier de l'institution qui les produit — la
-page <a href="${g.lien("/donnees")}">Sources</a> dit lesquelles, et à quelle
-date.</p>
+partie <a href="${g.lien("/methode")}" data-vers="sources">« D'où viennent les
+chiffres »</a>, plus bas, dit lesquelles, et à quelle date.</p>
 <p class="discret"><a href="${g.DEPOT}">Le dépôt</a> ·
 <a href="${g.DEPOT}/blob/main/README.md">ce qu'il contient, et combien de tests
 le tiennent</a> · <a href="${g.DEPOT}/tree/main/tests">les tests</a></p>`);
@@ -12510,9 +12418,14 @@ ${table}`, "donnees-inventaire");
 }
 
 /**
- * Ce que valent les chiffres du site.
+ * Ce que valent les chiffres du site : la seconde partie de la page Méthode.
  *
- * LA PAGE RÉPOND À UNE SEULE QUESTION, ET ELLE Y RÉPOND EN TROIS CHIFFRES :
+ * Elle a été une page à elle, « Sources », jusqu'au 23 septembre 2026 ; elle
+ * est la fin de la page Méthode, sous son propre titre, que l'ancienne
+ * adresse `#/donnees` vise (`ANCIENNES_ROUTES`). Son « En clair » est devenu
+ * son introduction, et son plan est parti. Voir `_methode_sources`.
+ *
+ * ELLE RÉPOND À UNE SEULE QUESTION, ET ELLE Y RÉPOND EN TROIS CHIFFRES :
  * combien de valeurs ont été recontrôlées contre le fichier de l'institution qui
  * les produit, combien de régimes sont recensés, et à quelle date. Tout le reste
  * est une pièce justificative, et une pièce justificative se range.
@@ -12520,7 +12433,7 @@ ${table}`, "donnees-inventaire");
  * Elle pesait 5 851 mots et huit tableaux dépliés. Rien n'en est retiré : ce qui
  * rend un chiffre vérifiable doit rester lisible, et l'est, à un clic.
  */
-function donnees(contexte) {
+function methodeSources(contexte) {
   const simulateur = contexte.simulateur();
   const macro = simulateur.macro;
 
@@ -12731,33 +12644,18 @@ citation de la source : chaque valeur du dépôt porte la sienne dans
     + inventaireSection(contexte.paquet.inventaire || [], simulateur.catalogue)
     + depliantSources + depliantReutilisation;
 
-  const tete = g.affiche(
-    "Les sources",
-    "Rien ici n'est "
-    + '<span class="cle-texte">à croire sur parole.</span>',
-    "Chaque série est recontrôlée, automatiquement, contre le fichier de "
-    + "l'institution qui la produit. Ce qui ne l'est pas est dit.",
-  );
-
   return `
-${tete}
-
-<div class="note resume"><strong>En clair.</strong> Les chiffres de ce site
-viennent des institutions qui les produisent : l'INSEE pour les prix et les
-salaires, le Conseil d'orientation des retraites pour les comptes, les caisses
-pour leurs barèmes. Un programme les retélécharge et les compare, valeur par
-valeur, à ce que le site utilise. Ce qui n'a pas pu être vérifié ainsi est
-marqué comme tel, et les règles de chaque régime sont lues dans les textes.
-Cette page dit, série par série et régime par régime, ce qui est vérifié et ce
-qui ne l'est pas.</div>
+<h2 id="sources" tabindex="-1">D'où viennent les chiffres</h2>
+<p>Rien ici n'est à croire sur parole. Les chiffres de ce site viennent des
+institutions qui les produisent : l'INSEE pour les prix et les salaires, le
+Conseil d'orientation des retraites pour les comptes, les caisses pour leurs
+barèmes. Un programme les retélécharge et les compare, valeur par valeur, à ce
+que le site utilise ; ce qui n'a pas pu être vérifié ainsi est marqué comme
+tel, et les règles de chaque régime sont lues dans les textes.</p>
 
 <div class="fiches reperes">${reperes}</div>
 
-${g.plan(detail, "/donnees")}
-
 ${bandeau}
-
-<h2>Le détail</h2>
 
 ${detail}
 `;
@@ -12903,7 +12801,7 @@ function programmePourquoi(contexte) {
   const inventaire = (contexte.paquet.inventaire || []).length;
   return `
 <p>La retraite française ? Un empilement de régimes, plus qu'un système.
-Ce site en <a href="${g.lien("/donnees")}">recense ${inventaire}</a>, actuels et
+Ce site en <a href="${g.lien("/methode")}" data-vers="sources">recense ${inventaire}</a>, actuels et
 disparus, et en calcule ${regimes}. Chacun a son âge de départ, son assiette, son
 taux, sa durée exigée et son minimum.</p>
 <ul class="serree">
@@ -13021,7 +12919,8 @@ function programmeQuestions(contexte) {
   const veuve = vers("la-veuve", "Ce que cela change pour une veuve");
   const methode = `<a href="${g.lien("/methode")}">Le détail du calcul</a>`;
   const cout = `<a href="${g.lien("/cout")}">La page Coût</a>`;
-  const sources = `<a href="${g.lien("/donnees")}">D'où viennent les chiffres</a>`;
+  const sources = `<a href="${g.lien("/methode")}" data-vers="sources">`
+    + "D'où viennent les chiffres</a>";
 
   // La CSG rendue n'existe que si la proposition rend une part des impôts
   // qu'elle cesse d'affecter : la phrase se tait sinon, comme le dépliant.

@@ -502,3 +502,17 @@ test("les primes cotisent au RAFP dans la limite de 20 % du traitement", () => {
   assert.ok(Math.abs(pensionAuDela / pension - 1) < 1e-9, `${pensionAuDela} ≠ ${pension}`);
   assert.ok(Math.abs(capitalAuDela / capital - 1) < 1e-9, `${capitalAuDela} ≠ ${capital}`);
 });
+
+test("les adresses des pages parties rendent celles qui les ont remplacées", () => {
+  // « Cumul versé » et « Sources » ne sont plus des pages (23 septembre
+  // 2026) ; leurs adresses, que le site parent et des partages portent,
+  // rendent les résultats du simulateur et la page Méthode et sources. Le
+  // modèle Python le tient de son côté ; ici, le portage fait de même.
+  const contexte = new Contexte(paquet);
+  const carriere = { naissance: "1975-01-01", debut: "1996-01-01",
+    liquidation: "2039-01-01", statut: "salarie_prive_non_cadre" };
+  assert.deepEqual(rendre(contexte, "/donnees", {}), rendre(contexte, "/methode", {}));
+  const cumul = rendre(contexte, "/trajectoire", carriere);
+  assert.deepEqual(cumul, rendre(contexte, "/simuler", carriere));
+  assert.match(cumul[1], /<details class="section" id="cumul">/);
+});

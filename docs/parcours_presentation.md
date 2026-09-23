@@ -61,11 +61,12 @@ Pologne et de la Lettonie.
 
 ## Le parcours, page par page
 
-La barre du haut porte dix onglets, groupés en quatre : **le programme**
-(Programme), **la preuve** (Simuler, Trajectoire, Cas types, Coût, Risque,
-Avantages), **la confiance** (Méthode, Données), **faire connaître**
-(Partager). Le parcours ci-dessous en montre six, dans l'ordre, et laisse
-les quatre autres pour les questions.
+La barre du haut porte huit onglets, en deux voix : ceux de l'électeur
+(Programme, Simuler, Coût, Pourquoi changer, Partager), puis, derrière
+l'étiquette « Pour vérifier » — un bouton, sur un téléphone —, ceux qui
+prouvent (Carrières types, Droits non cotisés, Méthode et sources). Le
+parcours ci-dessous en montre six, dans l'ordre, et laisse les autres pour
+les questions.
 
 ### 1. Programme — trois minutes
 
@@ -350,9 +351,10 @@ vérifiez plutôt que de nous croire.
 
 ### Les pages qu'on garde pour les questions
 
-- **Trajectoire** : la même carrière suivie année après année, en cumul, ce
-  qu'on aura réellement touché à 75, 86 et 95 ans. Utile si quelqu'un objecte
-  que partir plus tôt « rapporte plus ».
+- **Le cumul versé**, dépliant « Ce que chaque système finit par verser » des
+  résultats : la même carrière suivie année après année, en cumul, ce qu'on
+  aura réellement touché à 75, 86 et 95 ans. Utile si quelqu'un objecte que
+  partir plus tôt « rapporte plus ».
 - **Partager** : quatre cartes prêtes à publier, au format des réseaux, avec
   leur message rédigé.
 - Les sections repliées de chaque page : « Pour aller plus loin », et sur

@@ -2018,7 +2018,7 @@ ADRESSE_SITE = "partiliberalfrancais.fr/#simulateur"
 #: que des pages.
 #:
 #: Dix onglets de même poids ne disaient pas à l'électeur par où commencer, et
-#: cinq d'entre eux ne répondent qu'à celui qui veut vérifier. Les pages qui
+#: cinq d'entre eux ne répondaient qu'à celui qui veut vérifier. Les pages qui
 #: répondent à SES questions — le programme, sa retraite, le coût, pourquoi
 #: changer — restent des onglets ; celles qui PROUVENT passent derrière une
 #: étiquette qui se voit, « Pour vérifier », en plus petit. Les deux autres
@@ -2028,6 +2028,11 @@ ADRESSE_SITE = "partiliberalfrancais.fr/#simulateur"
 #: Les libellés disent ce qu'on trouve derrière : « Avantages » se lisait comme
 #: les avantages de la réforme, « Risque » ne disait pas de quoi, « Trajectoire »
 #: et « Cas types » étaient des mots du modèle, « Données » un mot d'ingénieur.
+#:
+#: HUIT PAGES, ET NON PLUS DIX, depuis le 23 septembre 2026 : « Cumul versé »
+#: redisait un dépliant des résultats, et « Sources » est devenue la fin de la
+#: page Méthode. Leurs adresses mènent là où leur contenu est allé — voir
+#: ``pages.ANCIENNES_ROUTES``.
 GROUPES_NAVIGATION = (
     ("L'essentiel", (("/", "Programme"), ("/simuler", "Simuler"),
                      ("/cout", "Coût"), ("/risque", "Pourquoi changer"))),
@@ -2036,10 +2041,9 @@ GROUPES_NAVIGATION = (
     # passer par ici ; la page tient la liste complète des cartes, pour qui les
     # veut toutes.
     ("Faire connaître", (("/partager", "Partager"),)),
-    ("Pour vérifier", (("/trajectoire", "Cumul versé"),
-                       ("/cas-types", "Carrières types"),
+    ("Pour vérifier", (("/cas-types", "Carrières types"),
                        ("/avantages", "Droits non cotisés"),
-                       ("/methode", "Méthode"), ("/donnees", "Sources"))),
+                       ("/methode", "Méthode et sources"))),
 )
 
 #: Le groupe dont l'étiquette SE VOIT, et dont les pages parlent plus bas.

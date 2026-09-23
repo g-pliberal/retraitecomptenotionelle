@@ -50,9 +50,9 @@ export const GROUPES_NAVIGATION = [
   ["L'essentiel", [["/", "Programme"], ["/simuler", "Simuler"],
     ["/cout", "Coût"], ["/risque", "Pourquoi changer"]]],
   ["Faire connaître", [["/partager", "Partager"]]],
-  ["Pour vérifier", [["/trajectoire", "Cumul versé"],
-    ["/cas-types", "Carrières types"], ["/avantages", "Droits non cotisés"],
-    ["/methode", "Méthode"], ["/donnees", "Sources"]]],
+  // Huit pages, et non plus dix : voir `GROUPES_NAVIGATION` en Python.
+  ["Pour vérifier", [["/cas-types", "Carrières types"],
+    ["/avantages", "Droits non cotisés"], ["/methode", "Méthode et sources"]]],
 ];
 
 /** Le groupe dont l'étiquette SE VOIT, et dont les pages parlent plus bas. */
