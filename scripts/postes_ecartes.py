@@ -47,6 +47,14 @@ LES TROIS CHIFFRAGES, ET CE QU'ILS SUPPOSENT
 
 ``tous`` — les trois ensemble, qui est la borne haute de l'exercice.
 
+SANS LA TVA À TAUX UNIQUE
+-------------------------
+Depuis le 23 septembre 2026, la proposition affecte à sa retraite une TVA à
+taux unique qui prend la place de ces postes. La question posée ici est de
+savoir lequel d'entre eux pourrait tenir ce rôle ; elle se pose donc sans
+elle, et ``calculer`` la retire : avec elle, la proposition est à
+l'équilibre, et aucun poste n'aurait rien à combler.
+
 CE QU'IL EMPRUNTE
 -----------------
 ``cout.calculer_cout`` aux paramètres par défaut, et rien d'autre : chaque
@@ -60,7 +68,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -200,6 +208,8 @@ def besoin_de(solde: C.Solde, poste: str, libelle: str,
 
 
 def calculer(parametres: Parametres) -> tuple[C.Cout, list[Chiffrage], list[Besoin]]:
+    # La TVA à taux unique est ce que ces postes remplaceraient : voir l'en-tête.
+    parametres = replace(parametres, taux_tva_liberal=0.0)
     racine = parametres.racine_donnees
     cout = C.calculer_cout(
         Simulateur(parametres), DepensesRetraite(racine), Population(racine),

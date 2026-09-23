@@ -25,8 +25,8 @@ plus celui que ce script produit.
 CE QU'IL CHIFFRE, ET LES DEUX VARIANTES
 ----------------------------------------
 Le scénario 6 — taux unique de 18 % en répartition, 5 % de capitalisation
-obligatoire en plus, garantie vieillesse financée par l'impôt — sous ses deux
-formes :
+obligatoire en plus, garantie vieillesse financée par l'impôt, TVA à taux
+unique affectée à la retraite — sous ses deux formes :
 
 - **rétroactive**, la convention par défaut du dépôt : toutes les pensions,
   déjà liquidées comprises, sont recalculées en comptes notionnels depuis 1941 ;
@@ -184,13 +184,31 @@ class Chiffrage:
         return self.pensions(annee) + self.garantie(annee)
 
     def recettes(self, annee: int) -> float:
-        return self.solde[annee].ressources_de(LIBERAL)
+        """Tout ce que la retraite de la proposition encaisse, garantie comprise.
+
+        Les ressources du régime, et la part de la TVA à taux unique qui paie
+        la garantie avant d'y entrer : sans elle, « Recettes » moins « Dépense
+        totale » ne ferait pas « Solde + garantie ».
+        """
+        return self.solde[annee].ressources_de(LIBERAL) + self.tva_garantie(annee)
+
+    def tva(self, annee: int) -> float:
+        """Toute la TVA à taux unique affectée à la proposition, en part de PIB."""
+        return self.solde[annee].tva_de(LIBERAL) + self.tva_garantie(annee)
+
+    def tva_garantie(self, annee: int) -> float:
+        """La part de cette TVA qui paie la garantie vieillesse, avant le régime."""
+        return self.solde[annee].tva_garantie(LIBERAL)
 
     def solde_regime(self, annee: int) -> float:
         return self.solde[annee].solde(LIBERAL)
 
     def solde_elargi(self, annee: int) -> float:
         """Le solde du régime, diminué de la garantie que le contribuable porte.
+
+        La TVA à taux unique paie la garantie AVANT d'entrer au régime : le
+        solde du régime l'a donc déjà payée, et seule la part que la TVA ne
+        couvre pas est encore retranchée ici — rien, à 21,1 %.
 
         Ce n'est PAS un solde toutes administrations publiques, pour deux
         raisons. Les impôts et taxes affectés que la proposition cesse
@@ -200,7 +218,7 @@ class Chiffrage:
         verser, ``versements_publics_retires``, est une recette en moins pour
         la retraite mais une dépense en moins pour eux.
         """
-        return self.solde_regime(annee) - self.garantie(annee)
+        return self.solde_regime(annee) - self.garantie(annee) + self.tva_garantie(annee)
 
     def solde_actuel(self, annee: int) -> float:
         return self.solde[annee].solde("actuel")
@@ -268,7 +286,14 @@ class Chiffrage:
         return postes["contribution_equilibre_etat"] + postes["subventions_equilibre"]
 
     def prelevements_proposes(self, annee: int) -> float:
-        return self.poste_recette(annee, "cotisations", LIBERAL) + self.pilier_obligatoire(annee)
+        """Ce que la proposition prélève : ses cotisations, son pilier, sa TVA.
+
+        La TVA à taux unique en est, pour ce qu'elle rapporte DE PLUS que les
+        quatre taux d'aujourd'hui : c'est un prélèvement obligatoire, et le
+        système actuel compte bien ses impôts affectés dans les siens.
+        """
+        return (self.poste_recette(annee, "cotisations", LIBERAL)
+                + self.pilier_obligatoire(annee) + self.tva(annee))
 
 
 # -- les blocs que le script écrit dans le document --------------------------
@@ -309,10 +334,17 @@ def tableau_fait_central(retro: Chiffrage, prosp: Chiffrage) -> str:
     cessent de payer, et des versements que d'autres administrations cessent
     de faire, et qu'elles gardent. L'écart est celui du système de retraite,
     garantie comprise — pas le solde public, que le document ne chiffre pas.
+
+    La TVA à taux unique est à part, sur sa ligne : ce n'est pas une recette
+    que la proposition retire mais une recette qu'elle AJOUTE, et la mêler aux
+    impôts affectés qu'elle supprime ferait lire une variation de trois
+    centièmes de point là où deux points s'en vont et deux points arrivent.
     """
     an = PREMIERE_ANNEE
-    recettes = retro.recettes(an) - retro.solde[an].ressources_de("actuel")
+    tva = retro.tva(an)
+    recettes = retro.recettes(an) - tva - retro.solde[an].ressources_de("actuel")
     depense = retro.depense(an) - retro.solde[an].depense("actuel")
+    taux_tva = nombre(retro.parametres.taux_tva_liberal * 100, 1)
 
     def ligne(libelle: str, valeur: float, gras: bool = False) -> str:
         part = nombre(valeur * 100, 2, True)
@@ -326,9 +358,11 @@ def tableau_fait_central(retro: Chiffrage, prosp: Chiffrage) -> str:
         "|---|---:|---:|",
         ligne("Recettes retirées au système de retraite", recettes),
         ligne("dont cotisations, au taux unique", retro.retire(an, "cotisations")),
-        ligne("dont impôts et taxes affectés", retro.retire(an, "impots_et_taxes")),
+        ligne("dont impôts et taxes affectés",
+              retro.retire(an, "impots_et_taxes") - retro.retire(an, "impots_tva")),
         ligne("dont versements de l'État et de la branche famille",
               retro.versements_publics_retires(an)),
+        ligne(f"TVA à taux unique de {taux_tva} %, affectée à la retraite", tva),
         ligne("Dépense publique retirée (pensions et garantie)", depense),
         ligne("Écart de solde de la retraite, garantie comprise, variante rétroactive",
               retro.ecart(an), gras=True),
@@ -346,6 +380,9 @@ def tableau_arbitrages(retro: Chiffrage, prosp: Chiffrage) -> str:
     subventions = retro.poste_recette(an, "subventions_equilibre", "actuel")
     retroactivite = prosp.depense(an) - retro.depense(an)
     pilotage = 1.0 - retro.coefficient(an)
+    sens = "de moins" if pilotage >= 0.0 else "de plus"
+    tva = retro.tva(an)
+    taux_tva = nombre(retro.parametres.taux_tva_liberal * 100, 1)
     lignes = [
         f"| Arbitrage ouvert | Ce qu'il déplace en {an} | En milliards |",
         "|---|---:|---:|",
@@ -357,9 +394,11 @@ def tableau_arbitrages(retro: Chiffrage, prosp: Chiffrage) -> str:
         f"| Renoncer à la rétroactivité (variante prospective) "
         f"| {nombre(-retroactivite * 100, 2, True)} pt "
         f"| {nombre(-retro.md(an, retroactivite), 0, True)} |",
+        f"| Renoncer à la TVA à taux unique de {taux_tva} % "
+        f"| {nombre(-tva * 100, 2, True)} pt | {nombre(-retro.md(an, tva), 0, True)} |",
         f"| Appliquer le coefficient d'équilibre, non appliqué ici "
         f"| {nombre(retro.coefficient(an), 2)} sur toutes les pensions "
-        f"| soit {nombre(pilotage * 100, 1)} % de moins |",
+        f"| soit {nombre(abs(pilotage) * 100, 1)} % {sens} |",
     ]
     return "\n".join(lignes)
 
@@ -372,12 +411,14 @@ def tableau_prelevements(retro: Chiffrage) -> str:
     l'État, et le tableau les montre pour qu'on voie qu'elles disparaissent,
     pas pour les compter.
     """
+    taux_tva = nombre(retro.parametres.taux_tva_liberal * 100, 1)
     lignes = [
         "| Année | Cotisations (sc. 1) | Impôts et taxes affectés (sc. 1) "
         "| **Prélèvements sc. 1** | Cotisations 18 % (sc. 6) "
-        "| Pilier obligatoire 5 % (sc. 6) | **Prélèvements sc. 6** | Écart "
+        f"| Pilier obligatoire 5 % (sc. 6) | TVA {taux_tva} % (sc. 6) "
+        "| **Prélèvements sc. 6** | Écart "
         "| Versé par l'État au sc. 1, hors prélèvements |",
-        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for annee in ANNEES_PRELEVEMENTS:
         postes = retro.solde[annee].postes_ressources("actuel")
@@ -387,6 +428,7 @@ def tableau_prelevements(retro: Chiffrage) -> str:
         total_actuel = retro.prelevements_actuels(annee)
         propose = retro.poste_recette(annee, "cotisations", LIBERAL)
         pilier = retro.pilier_obligatoire(annee)
+        tva = retro.tva(annee)
         total_propose = retro.prelevements_proposes(annee)
 
         def cellule(valeur: float, gras: bool = False) -> str:
@@ -397,7 +439,7 @@ def tableau_prelevements(retro: Chiffrage) -> str:
         lignes.append(
             f"| {annee} | {cellule(cotisations)} | {cellule(impots)} "
             f"| {cellule(total_actuel, True)} "
-            f"| {cellule(propose)} | {cellule(pilier)} "
+            f"| {cellule(propose)} | {cellule(pilier)} | {cellule(tva)} "
             f"| {cellule(total_propose, True)} "
             f"| {nombre((total_propose - total_actuel) * 100, 2, True)} "
             f"| {cellule(etat)} |"
@@ -444,7 +486,8 @@ def tableau_agregats(retro: Chiffrage, prosp: Chiffrage) -> str:
 COLONNES: tuple[str, ...] = (
     "annee", "variante", "pib_mdeur_courants", "pensions_pib", "garantie_brute_pib",
     "reprises_pib", "depense_totale_pib", "recettes_pib", "cotisations_pib",
-    "pilier_obligatoire_pib", "solde_regime_pib", "solde_regime_plus_garantie_pib",
+    "pilier_obligatoire_pib", "tva_affectee_pib", "solde_regime_pib",
+    "solde_regime_plus_garantie_pib",
     "coefficient_equilibre", "dette_pib", "sc1_depenses_pib", "sc1_recettes_pib",
     "sc1_solde_pib", "ecart_de_solde_pib",
 )
@@ -471,6 +514,7 @@ def serie(retro: Chiffrage, prosp: Chiffrage) -> str:
                 f"{chiffrage.recettes(annee) * 100:.3f}",
                 f"{chiffrage.poste_recette(annee, 'cotisations', LIBERAL) * 100:.3f}",
                 f"{chiffrage.pilier_obligatoire(annee) * 100:.3f}",
+                f"{chiffrage.tva(annee) * 100:.3f}",
                 f"{chiffrage.solde_regime(annee) * 100:.3f}",
                 f"{chiffrage.solde_elargi(annee) * 100:.3f}",
                 f"{chiffrage.coefficient(annee):.3f}",

@@ -852,12 +852,14 @@ affirmations:
     etat: verifiee
     controle: les_ecarts_bougent_si_chaque_systeme_s_equilibre
 
-  - id: cas_types.facteur_inferieur_a_un
-    page: /cas-types
-    extrait: "Un coefficient inférieur à un est un manque, le coût de la transition au taux unique."
-    porte: la lecture du coefficient est calculée depuis le solde, et suit son signe
-    etat: verifiee
-    controle: note_du_coefficient_suit_son_signe
+  # LA BRANCHE « INFÉRIEUR À UN » N'EST PLUS RENDUE depuis le 23 septembre
+  # 2026 : avec la TVA à taux unique, le coefficient de la proposition ne
+  # descend sous un que deux années sur quarante-cinq, et la page écrit la
+  # lecture mêlée, qui n'a pas de phrase forte. L'entrée
+  # `cas_types.facteur_inferieur_a_un` est donc retirée ; le jour où une page
+  # rendra de nouveau « Un coefficient inférieur à un est un manque »,
+  # `test_rien_n_echappe_au_catalogue` le dira. Le contrôle, lui, éprouve
+  # toujours les trois lectures.
 
   # L'AUTRE BRANCHE DE LA MÊME PHRASE. Elle existait dans le code depuis que la
   # lecture suit le signe, et rien ne la rendait : sous les réglages par
@@ -1083,9 +1085,19 @@ affirmations:
   - id: cout.ligne_a_ligne
     page: /cout
     extrait: "Ce que la proposition change, ligne à ligne."
-    porte: la proposition ne reconduit ni contribution d'équilibre, ni subventions, ni impôts affectés
+    porte: la proposition ne reconduit ni contribution d'équilibre, ni subventions, ni impôts affectés, et ne met que la TVA à taux unique à leur place
     etat: verifiee
     controle: trois_postes_disparaissent
+
+  # LA TVA À TAUX UNIQUE, décidée le 23 septembre 2026 : ce qu'elle rapporte de
+  # plus que les quatre taux d'aujourd'hui va à la proposition seule, à sa
+  # garantie vieillesse d'abord, à son régime ensuite.
+  - id: cout.tva_ajoutee
+    page: /cout
+    extrait: "Ce que la proposition ajoute : une TVA à taux unique."
+    porte: la TVA à taux unique paie la garantie d'abord, le régime ensuite, et ne va qu'au scénario 6
+    etat: verifiee
+    controle: tva_paie_la_garantie_puis_le_regime
 
   - id: cout.deficits_additionnes
     page: /cout

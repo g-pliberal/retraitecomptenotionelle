@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 671<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 326<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 581<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15736,3 +15736,55 @@ tests qui visaient `/donnees` visent `/methode`.
 `tests/js/moteur.test.js`, `tests/temoins/pages.json`, `README.md`,
 `docs/methodologie.md`, `docs/integration-partiliberalfrancais.md`,
 `docs/parcours_presentation.md`.
+
+### 123. Une TVA à taux unique de 21,1 % finance le scénario 6 — `fait`
+
+**Demande.** « Je veux augmenter la TVA actuelle pour combler le déficit du
+système de retraite. Je veux un seul taux » ; puis « je voulais le taux de TVA
+pour le scénario parti libéral français » ; puis « met la TVA à 21,1 % pour le
+scénario 6 ».
+
+**Le taux.** Les quatre taux d'aujourd'hui — 20, 10, 5,5 et 2,1 % — cèdent la
+place à un seul. 21,1 % est celui qui couvre chaque année le déficit de la
+variante rétroactive, garantie vieillesse comprise, sans rien emprunter : le
+taux du pic de 2044, 21,12 % exactement, arrondi au dixième. Il n'a pas besoin
+de monter beaucoup au-dessus de 20 % parce qu'il supprime les taux réduits,
+qui coûtent 52 Md€ nets : un taux unique de 15,46 % rapporterait déjà ce que
+rapportent les quatre. Le même calcul donnait 15,9 % pour le seul déficit du
+système actuel en 2026, et 28,2 % pour la variante prospective.
+
+**L'assiette.** Personne ne la publie hors du modèle de la TVA théorique de la
+DG Trésor : le Trésor-Éco n° 371 (septembre 2025) donne ce que rapporterait en
+2025 un point de plus sur chaque taux, brut et net de la TVA que paient les
+administrations elles-mêmes. Recopié dans `macro/assiette_tva.csv` (niveau
+`haute`), lu par `donnees/tva.py` et `moteur/js/tva.js`. Recoupement : le CPO
+chiffrait le coût des taux réduits à 47 Md€ en 2021, ces assiettes en donnent
+52 en 2025.
+
+**Où elle va.** `Parametres.taux_tva_liberal`, zéro rendant l'ancienne
+convention. Ce que la TVA rapporte de plus — 2,17 points de PIB — paie d'abord
+la garantie vieillesse nette de la trajectoire, puis entre au régime, au poste
+des impôts affectés, sur une ligne à elle (« Dont TVA à taux unique »). Sans ce
+partage, le régime aurait affiché un excédent qui appartient à la garantie, et
+un coefficient d'équilibre qui promettait de relever toutes les pensions.
+`solde_fusion.py` la tient hors de ses variantes : il compare des taux de
+cotisation, et le coût des 18 % cité par l'accueil ne doit pas la contenir.
+
+**Ce que ça a déplacé.** Dans le chiffrage pour un PLF, l'écart de solde de
+2026 passe de -1,44 à +0,72 point de PIB dans la variante rétroactive, de
+-4,72 à -2,55 dans la prospective. Le solde moyen 2026-2070 du scénario 6
+passe de -1,40 à +0,54 point, sa dette de 2070 de +97 % du PIB à des réserves
+de 31 %, et son coefficient d'équilibre ne descend plus sous 1,00 — au pic de
+2044, où il manque six millièmes de point. L'accueil, la page Coût (tableau,
+note, schémas des flux), le README et le chiffrage le disent ; la proposition
+prélève désormais plus que le système actuel si l'on compte ses 5 %
+capitalisés, 11,88 points de PIB contre 11,30 en 2026.
+
+**Ce qui reste.** Le chiffrage est statique : ni effet de volume, ni asymétrie
+de répercussion, ni effet de prix sur ce qui est indexé — l'alimentation prend
+14,8 %, les médicaments remboursables 18,6 %, et les pensions qui suivent
+l'indice des prix suivraient. C'est à mesurer, avec l'effet sur le salaire net
+que le simulateur affiche, qui ignore la TVA. Les excédents d'après 2050 ne
+sont employés à rien : un taux qui redescendrait après le pic, ou un
+coefficient appliqué, les rendrait. Et le premier arbitrage du chiffrage reste
+ouvert : l'État cesse-t-il de lever les impôts affectés que la TVA remplace ?

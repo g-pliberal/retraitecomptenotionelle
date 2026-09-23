@@ -79,12 +79,16 @@ def test_sous_a_le_taux_effectif_est_celui_du_regime_unique(resultat_a, hypothes
 
 
 def test_les_scenarios_1_et_6_ne_bougent_pas(resultat_a, reference):
+    """À la TVA à taux unique près, que les variantes tiennent hors de la
+    comparaison : le scénario 6 y perd exactement ce qu'elle apportait à son
+    régime."""
     for convention in solde_fusion.CONVENTIONS:
         lectures = resultat_a.lectures[convention]
         for scenario in ("actuel", "notionnel_liberal"):
             for ligne in reference.solde.projetees():
                 assert lectures[scenario].soldes[ligne.annee] == pytest.approx(
-                    ligne.solde(scenario), abs=1e-12), (convention, scenario, ligne.annee)
+                    ligne.solde(scenario) - ligne.tva_de(scenario), abs=1e-12), (
+                    convention, scenario, ligne.annee)
 
 
 def test_avant_la_bascule_rien_ne_change(resultat_a, reference):
@@ -118,12 +122,17 @@ def test_la_recette_suit_la_regle_du_programme(resultat_a, reference):
 def test_le_contexte_rend_ses_attributs(hypotheses):
     _, toutes = hypotheses
     avant = (ConstructeurCompte.taux_unifie, C.CLES_RECETTES, C._pensionnes,
-             C._rapports_recettes, C.SoldeAnnuel.ressources_de)
+             C._rapports_recettes, C.SoldeAnnuel.ressources_de,
+             C.SoldeAnnuel._tva_affectee)
     with solde_fusion.RegimeUniqueVariante(toutes["C"]):
         assert C.CLES_RECETTES != avant[1]
         assert ConstructeurCompte.taux_unifie is not avant[0]
+        # La TVA à taux unique n'est pas un taux de cotisation : les variantes
+        # la laissent hors de la comparaison.
+        assert C.SoldeAnnuel._tva_affectee is not avant[5]
     assert (ConstructeurCompte.taux_unifie, C.CLES_RECETTES, C._pensionnes,
-            C._rapports_recettes, C.SoldeAnnuel.ressources_de) == avant
+            C._rapports_recettes, C.SoldeAnnuel.ressources_de,
+            C.SoldeAnnuel._tva_affectee) == avant
 
 
 # -- ce que l'accueil cite --------------------------------------------------

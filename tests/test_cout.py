@@ -1906,8 +1906,12 @@ def test_la_recette_du_scenario_6_est_son_taux_sur_l_assiette(cout_assiette: Cou
         autres = ligne.ressources * (1.0 - ligne.part_contributive
                                      - ligne.part_subventions
                                      - ligne.part_impots)
+        # Et la TVA à taux unique, depuis le 23 septembre 2026 : ce qui en reste
+        # une fois la garantie payée. Elle n'est pas une cotisation, et le
+        # taux plein ne la contient pas.
         assert ligne.ressources_de("notionnel_liberal") == pytest.approx(
-            pleine + autres - (ligne.retrait - ligne.retrait_par_impot)), ligne.annee
+            pleine + autres - (ligne.retrait - ligne.retrait_par_impot)
+            + ligne.tva_de("notionnel_liberal")), ligne.annee
         if ligne.annee >= bascule + 3:
             # Une fois le décalage de la grille éteint, le taux plein rapporte
             # PLUS que le rapport de taux légaux ne le disait : c'est la
@@ -1996,7 +2000,9 @@ def test_la_recette_suit_le_taux(cout: Cout):
         assert 0.5 < rapport < 0.8, ligne.annee
         # Ce que la formule doit rendre, écrit autrement qu'elle.
         cotisees = ligne.ressources * ligne.part_contributive
-        attendu = cotisees * rapport + (ligne.ressources - cotisees) - ligne.retrait
+        # La TVA à taux unique s'ajoute, sous l'une et l'autre convention.
+        attendu = (cotisees * rapport + (ligne.ressources - cotisees) - ligne.retrait
+                   + ligne.tva_de("notionnel_liberal"))
         assert ligne.ressources_de("notionnel_liberal") == pytest.approx(attendu)
         assert ligne.ressources_de("notionnel_liberal") < ligne.ressources_de(
             "notionnel_retroactif_employeur"), ligne.annee
@@ -2055,7 +2061,11 @@ def test_les_recettes_reactives_deplacent_le_solde_du_scenario_6(cout: Cout):
     """
     bascule = Parametres().annee_bascule
     fin = cout.solde.derniere_annee
-    reactif = cout.solde.solde_moyen("notionnel_liberal", bascule, fin)
+    # Ce que la réaction des recettes coûte, sans la TVA à taux unique : elle
+    # est une recette ajoutée, non une recette qui réagit.
+    periode = [l for l in cout.solde.annees if bascule <= l.annee <= fin]
+    tva = sum(l.tva_de("notionnel_liberal") for l in periode) / len(periode)
+    reactif = cout.solde.solde_moyen("notionnel_liberal", bascule, fin) - tva
     fige = sum(
         ligne.ressources - ligne.retrait - ligne.depense("notionnel_liberal")
         for ligne in cout.solde.annees if bascule <= ligne.annee <= fin
@@ -2148,7 +2158,9 @@ def test_le_scenario_6_ne_reconduit_pas_la_contribution_d_equilibre_de_l_Etat(
                    + point.ressources * (1.0 - point.part_contributive
                                          - point.part_subventions
                                          - point.part_impots)
-                   - (point.retrait - point.retrait_par_impot))
+                   - (point.retrait - point.retrait_par_impot)
+                   # La TVA à taux unique, qui n'est ni l'un ni l'autre.
+                   + point.tva_de("notionnel_liberal"))
         assert point.ressources_de("notionnel_liberal") == pytest.approx(attendu)
 
         # 3. Les subventions d'équilibre existent bel et bien dans le système
@@ -2320,7 +2332,8 @@ def test_la_proposition_ne_compte_que_les_cotisations_et_deux_restes(cout_assiet
             assert point.recette_par_assiette
             assert postes["contribution_equilibre_etat"] == 0.0
             assert postes["subventions_equilibre"] == 0.0
-            assert postes["impots_et_taxes"] == 0.0
+            # Des impôts, la seule TVA à taux unique (23 septembre 2026).
+            assert postes["impots_et_taxes"] == postes["impots_tva"]
             assert postes["cotisations"] == pytest.approx(
                 point.ressources * point.taux_liberal / point.taux_prelevement)
             assert point.postes_depenses("notionnel_liberal")["garantie_vieillesse"] > 0.0

@@ -292,12 +292,20 @@ class RegimeUniqueVariante:
             "_pensionnes": C._pensionnes,
             "_rapports_recettes": C._rapports_recettes,
             "ressources_de": C.SoldeAnnuel.ressources_de,
+            "_tva_affectee": C.SoldeAnnuel._tva_affectee,
         }
         ConstructeurCompte.taux_unifie = self._taux_unifie(ConstructeurCompte.taux_unifie)
         C.CLES_RECETTES = C.CLES_RECETTES + (FUSION, REVENU)
         C._pensionnes = self._pensionnes(C._pensionnes)
         C._rapports_recettes = self._rapports_recettes(C._rapports_recettes)
         C.SoldeAnnuel.ressources_de = self._ressources_de(C.SoldeAnnuel.ressources_de)
+        # Les variantes comparent des TAUX DE COTISATION sous les mêmes règles
+        # de recette. La TVA à taux unique que la proposition affecte à sa
+        # retraite depuis le 23 septembre 2026 n'en est pas un : la laisser au
+        # seul scénario 6 ferait lire son produit, plus de deux points de PIB,
+        # comme une économie des 18 %. Elle est donc tenue hors de la
+        # comparaison, le temps du contexte.
+        C.SoldeAnnuel._tva_affectee = lambda ligne, scenario: 0.0
         return self
 
     def __exit__(self, *exc) -> None:
@@ -306,6 +314,7 @@ class RegimeUniqueVariante:
         C._pensionnes = self._sauvegarde["_pensionnes"]
         C._rapports_recettes = self._sauvegarde["_rapports_recettes"]
         C.SoldeAnnuel.ressources_de = self._sauvegarde["ressources_de"]
+        C.SoldeAnnuel._tva_affectee = self._sauvegarde["_tva_affectee"]
 
 
 # -- le calcul ---------------------------------------------------------------

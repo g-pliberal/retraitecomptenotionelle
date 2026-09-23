@@ -48,6 +48,7 @@ import { DistributionPensions } from "./distribution.js";
 import { Fiabilite } from "./serie.js";
 import { ORGANISMES, POSTES } from "./equilibre.js";
 import { RevalorisationServie } from "./revalorisation.js";
+import { AssietteTva } from "./tva.js";
 
 // La règle des pensions servies est née ici, pour la page Coût ; le
 // simulateur s'en sert aussi, pour dire ce qu'un retraité touche aujourd'hui,
@@ -161,11 +162,12 @@ export const CONVENTIONS_REVERSION = [
  * `ressourcesDe` applique au total : les deux se somment exactement. Les six
  * premiers codes sont ceux d'`equilibre.POSTES` ; les « dont » ventilent le
  * poste des transferts par celui qui paie, et l'impôt par ce qu'en verse le
- * fonds de solidarité vieillesse.
+ * fonds de solidarité vieillesse et par la TVA à taux unique que la
+ * proposition y affecte.
  */
 export const POSTES_RESSOURCES = POSTES.map((poste) => poste.code);
 export const DONT_TRANSFERTS = ["transferts_famille", "transferts_chomage", "transferts_autres"];
-export const DONT_IMPOTS = ["impots_solidarite", "impots_autres"];
+export const DONT_IMPOTS = ["impots_solidarite", "impots_tva", "impots_autres"];
 
 /**
  * Ce qu'un système verse, en trois lignes que `masseDuScenario` sépare déjà
@@ -1029,7 +1031,8 @@ class SoldeAnnuel {
               tauxLiberal = 0.0, anneeBascule = 0,
               convention = CONVENTION_RAPPORT,
               partDerives = 0.0, reversionServie = false,
-              reformeEnVigueur = true, parts = {}, versements = {}) {
+              reformeEnVigueur = true, parts = {}, versements = {},
+              tvaLiberal = 0.0, garantieLiberal = 0.0) {
     this.annee = annee;
     this.projete = projete;
     this.ressources = ressources;
@@ -1073,6 +1076,45 @@ class SoldeAnnuel {
     // non : ne servent qu'au tableau poste par poste.
     this.parts = parts;
     this.versements = versements;
+    // Ce que la TVA à taux unique rapporte DE PLUS que les quatre taux
+    // d'aujourd'hui, et la garantie vieillesse nette de la proposition, qu'elle
+    // paie d'abord : en part de PIB, nulles avant la bascule.
+    this.tvaLiberal = tvaLiberal;
+    this.garantieLiberal = garantieLiberal;
+  }
+
+  /**
+   * Toute la TVA affectée à un système, en part de PIB : au scénario 6 seul,
+   * à compter de la bascule. Jamais négative : une baisse de TVA ne se prend
+   * pas sur la retraite.
+   */
+  tvaAffectee(scenario) {
+    if (scenario !== "notionnel_liberal"
+        || !(this.anneeBascule > 0 && this.anneeBascule <= this.annee)) {
+      return 0.0;
+    }
+    return Math.max(this.tvaLiberal, 0.0);
+  }
+
+  /**
+   * La part de la TVA qui paie la garantie vieillesse. LA TVA PAIE D'ABORD LA
+   * GARANTIE (Parti libéral, 23 septembre 2026) : la garantie est « financée
+   * par l'impôt », et la TVA à taux unique est cet impôt. Le régime unique ne
+   * reçoit que ce qui reste — sans quoi il afficherait un excédent qui n'est pas
+   * le sien. Quand la TVA ne suffit pas, le reste est à la charge du budget.
+   */
+  tvaGarantie(scenario) {
+    return Math.min(this.tvaAffectee(scenario), Math.max(this.garantieLiberal, 0.0));
+  }
+
+  /**
+   * La TVA qui entre au régime d'un système : ce qui reste une fois la garantie
+   * payée. Ce n'est pas une cotisation — elle n'ouvre aucun droit — : elle
+   * comble ce que le compte notionnel laisse, et tient lieu du coefficient
+   * d'équilibre.
+   */
+  tvaDe(scenario) {
+    return this.tvaAffectee(scenario) - this.tvaGarantie(scenario);
   }
 
   /**
@@ -1126,14 +1168,17 @@ class SoldeAnnuel {
       const autres = this.ressources
         * (1 - this.partContributive - this.partSubventions - this.partImpots);
       // La CSG du fonds de solidarité vieillesse vient de sortir avec le
-      // poste : la retirer encore ici la retirerait deux fois.
-      return pleine + autres - (this.retrait - this.retraitParImpot);
+      // poste : la retirer encore ici la retirerait deux fois. La TVA à taux
+      // unique y rentre, à sa place : voir `tvaDe`.
+      return pleine + autres - (this.retrait - this.retraitParImpot)
+        + this.tvaDe(scenario);
     }
     // LA RECETTE SUIT LE TAUX, ancienne convention : la part COTISÉE des
     // ressources observées est multipliée par un rapport de taux légaux.
     const rapport = this.rapportsRecettes[scenario] ?? 1.0;
     const cotisees = this.ressources * this.partContributive;
-    return cotisees * rapport + (this.ressources - cotisees) - this.retrait;
+    return cotisees * rapport + (this.ressources - cotisees) - this.retrait
+      + this.tvaDe(scenario);
   }
 
   /** Ressources moins dépenses. Négatif : besoin de financement. */
@@ -1177,8 +1222,9 @@ class SoldeAnnuel {
    * somment au total. Le système actuel encaisse chaque poste tel quel, et
    * ses « dont » sont ce que chaque payeur verse réellement. La proposition,
    * dès la bascule, remplace les cotisations par 18 % de l'assiette et met à
-   * zéro la contribution d'équilibre, les subventions et les impôts affectés ;
-   * des transferts, elle ne garde que ce qui ne paie pas un droit supprimé.
+   * zéro la contribution d'équilibre et les subventions ; des impôts affectés,
+   * elle ne garde que la TVA à taux unique qu'elle leur substitue, une fois la
+   * garantie payée ; des transferts, ce qui ne paie pas un droit supprimé.
    * Les scénarios 3 et 5, avant la bascule, ont les postes du système actuel.
    * Les autres scénarios notionnels gardent chaque poste, la part cotisée
    * multipliée par le rapport de recette, et retranchent chez le payeur ce
@@ -1211,35 +1257,41 @@ class SoldeAnnuel {
       postes.transferts_famille = famille;
       postes.transferts_chomage = chomage;
       postes.impots_solidarite = solidarite;
+      postes.impots_tva = 0.0;
     } else if (scenario === "notionnel_liberal" && this.recetteParAssiette) {
+      const tva = this.tvaDe(scenario);
       postes = {
         cotisations: total * this.tauxLiberal / this.tauxPrelevement,
         contribution_equilibre_etat: 0.0,
         subventions_equilibre: 0.0,
-        impots_et_taxes: 0.0,
+        impots_et_taxes: tva,
         transferts: total * part("transferts") - retireFamille - retireChomage,
         autres_produits: total * part("autres_produits"),
         transferts_famille: famille - retireFamille,
         transferts_chomage: chomage - retireChomage,
         impots_solidarite: 0.0,
+        impots_tva: tva,
       };
     } else {
       const rapport = this.rapportsRecettes[scenario] ?? 1.0;
+      const tva = this.tvaDe(scenario);
       postes = {
         cotisations: total * part("cotisations") * rapport,
         contribution_equilibre_etat: total * part("contribution_equilibre_etat") * rapport,
         subventions_equilibre: total * part("subventions_equilibre"),
-        impots_et_taxes: total * part("impots_et_taxes") - retireSolidarite,
+        impots_et_taxes: total * part("impots_et_taxes") - retireSolidarite + tva,
         transferts: total * part("transferts") - retireFamille - retireChomage,
         autres_produits: total * part("autres_produits"),
         transferts_famille: famille - retireFamille,
         transferts_chomage: chomage - retireChomage,
         impots_solidarite: solidarite - retireSolidarite,
+        impots_tva: tva,
       };
     }
     postes.transferts_autres = postes.transferts - postes.transferts_famille
       - postes.transferts_chomage;
-    postes.impots_autres = postes.impots_et_taxes - postes.impots_solidarite;
+    postes.impots_autres = postes.impots_et_taxes - postes.impots_solidarite
+      - postes.impots_tva;
     return postes;
   }
 
@@ -2108,7 +2160,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
  */
 function construireSolde(avenir, comptes, derniereAnneePib, assiette,
                         tauxLiberal, anneeBascule, convention, depenses,
-                        reversionServie = false) {
+                        reversionServie = false, tvaLiberal = 0.0) {
   const parAnnee = new Map(avenir.annees.map((ligne) => [ligne.annee, ligne]));
   // Le taux de prélèvement de l'année, mesuré puis suivi chez le COR. Le
   // NIVEAU est mesuré sur une année où l'assiette est PUBLIÉE, seule chose que
@@ -2151,6 +2203,12 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
         ORGANISMES.map((organisme) => [organisme.code,
           comptes.versement(annee, organisme.code)]),
       ),
+      // La TVA à taux unique, la même chaque année, et la garantie nette de la
+      // trajectoire, qu'elle paie d'abord : nulles avant la bascule.
+      annee >= anneeBascule ? tvaLiberal : 0.0,
+      annee >= anneeBascule
+        ? ligne.partPib(COMPOSANTE_GARANTIE) - ligne.partPibReprises()
+        : 0.0,
     ));
   }
   if (!lignes.length) return new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);
@@ -2244,12 +2302,17 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
   const avenir = construireAvenir(liste, depenses, population, simulateur, poids,
                                   revalorisation, reversionServie, poidsCotisants,
                                   garantie);
+  // La TVA à taux unique que la proposition affecte à sa retraite : lue ici
+  // plutôt que passée, pour que tout appelant la reçoive — elle est un terme de
+  // la proposition, pas un réglage de page.
+  const tva = new AssietteTva(simulateur.paquet);
   const solde = comptes && avenir.annees.length
     ? construireSolde(
       avenir, comptes, depenses.pib.derniereAnnee, assiette,
       simulateur.parametres.taux_cotisation_liberal,
       simulateur.parametres.annee_bascule, conventionRecette, depenses,
       reversionServie,
+      tva.recetteSupplementaire(simulateur.parametres.taux_tva_liberal),
     )
     : new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);
   return new Cout(

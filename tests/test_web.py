@@ -4888,6 +4888,9 @@ def test_la_carte_des_flux_dessine_le_compte_de_la_bascule(contexte):
     sources = {s: {n.libelle for n in c.sources} for s, c in caisses.items()}
     assert "Impôts" in sources["actuel"]
     assert "Impôts" not in sources["notionnel_liberal"]
+    # La TVA à taux unique entre au régime unique sous son nom (23 septembre
+    # 2026), et elle seule des impôts.
+    assert "TVA" in sources["notionnel_liberal"]
     assert {n.libelle for n in caisses["actuel"].usages} >= {"Pensions de réversion"}
 
     corps = rendre(contexte, "/cout", {})[1]
@@ -4903,12 +4906,14 @@ def test_la_carte_des_flux_dessine_le_compte_de_la_bascule(contexte):
                                 schema).group(1)) for schema in schemas]
     assert hauteurs[0] / hauteurs[1] == pytest.approx(
         caisses["actuel"].valeur / caisses["notionnel_liberal"].valeur, rel=2e-3)
-    # Le déficit n'est pas caché : il est un payeur, et la réponse le chiffre.
-    solde = -ligne.solde("notionnel_liberal") * bilan.pib
-    assert solde > 0
+    # Le solde n'est pas caché : un déficit est un payeur, un excédent un
+    # usage, et la réponse chiffre l'un ou l'autre. Avec la TVA à taux unique,
+    # la bascule est en excédent.
+    solde = ligne.solde("notionnel_liberal") * bilan.pib
+    verbe = "placerait" if solde >= 0 else "emprunterait"
     # Les blancs de la source sont repliés, mais pas les espaces fines des
     # montants : `\s` les attraperait aussi.
-    assert f"emprunterait {_milliards_flux(solde)}" in html.unescape(
+    assert f"{verbe} {_milliards_flux(abs(solde))}" in html.unescape(
         re.sub(r"[ \t\n]+", " ", carte.group(0)))
 
 
@@ -5610,9 +5615,16 @@ def test_cas_types_dit_du_reglage_ce_que_le_solde_dit(contexte):
         assert f"Les {dernier} de la proposition en {fin} disent un manque" in cout
         assert f"son plus bas, {minimum} en {annee_minimum}" in cout
     else:
+        # Assez de décimales pour qu'un plus bas sous un ne s'écrive pas 1,00 :
+        # c'est le cas depuis la TVA à taux unique, 0,999 en 2044.
+        from retraite_notionnelle.web.pages import _decimales_sous_un
+
+        precis = g.nombre(coefficients[annee_minimum],
+                          _decimales_sous_un(coefficients[annee_minimum]))
         assert f"inférieur à un {sous_un} années sur {len(coefficients)}" in cas_types
-        assert f"{minimum} en {annee_minimum}" in cas_types
-        assert f"son plus bas, {minimum} en {annee_minimum}" in cout
+        assert f"{precis} en {annee_minimum}" in cas_types
+        assert f"{dernier} en {fin}" in cas_types
+        assert f"son plus bas, {precis} en {annee_minimum}" in cout
     # Et dans aucun cas la page ne lit plus un coefficient comme une économie.
     assert "comme\nune économie" not in cout
     assert "Le coefficient se lit dans les deux sens" in cout
@@ -5914,13 +5926,20 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres(contexte):
         liberal).group(1))
     assert f"serait de {euro(plancher)} nets par mois" in texte
     assert f"jusqu'à {euro(principal(liberal))}" in texte
-    # Les deux manques, au même euro que sous les barres, et dans les mêmes
-    # mots : « Elle n'est pas entièrement financée », « Elle non plus ».
-    for bloc in (actuel, liberal):
-        manque = re.search(r"il manque ([^<]+) par mois", bloc).group(1)
-        assert f"il manque {manque} par mois" in texte
+    # Les manques, au même euro que sous les barres, et dans les mêmes mots :
+    # « Elle n'est pas entièrement financée », « Elle non plus ». Un système
+    # que ses comptes financent n'en a pas, et le résumé ne lui en prête pas :
+    # c'est le cas de la proposition depuis la TVA à taux unique.
+    manques = {}
+    for nom, bloc in (("actuel", actuel), ("liberal", liberal)):
+        trouve = re.search(r"il manque ([^<]+) par mois", bloc)
+        manques[nom] = trouve.group(1) if trouve else None
+        if trouve:
+            assert f"il manque {trouve.group(1)} par mois" in texte
+    assert manques["actuel"], "le système actuel du témoin n'est pas financé"
     assert "Elle n'est pas entièrement financée" in texte
-    assert "Elle non plus n'est pas entièrement financée" in texte
+    assert ("Elle non plus n'est pas entièrement financée" in texte) == bool(
+        manques["liberal"])
     # Le salaire net, celui que « Et pendant que vous cotisez » chiffre au même
     # euro.
     gain = _somme_affichee(re.search(
