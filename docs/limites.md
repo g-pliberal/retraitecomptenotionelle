@@ -8934,7 +8934,7 @@ barèmes.
   cette date n'a laissé aucune trace.
 - <!--chiffre:tests()-->2354<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
-  propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
+  propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.
 - Les bases JORF et LEGI de la DILA sont interrogeables sans retélécharger
   leurs dumps : `python scripts/fetch/dila_index.py jorf --recuperer` rapatrie

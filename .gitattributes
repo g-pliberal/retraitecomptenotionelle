@@ -17,20 +17,23 @@
 
 # Les fichiers fabriqués par un script ne se fusionnent pas ligne à ligne.
 #
-# `pages.json` (2,4 Mo), `simulations.json` (4,8 Mo) et `donnees.json` (3 Mo)
-# sont écrits par un script depuis le modèle Python. Quand deux sessions les
-# ont régénérés chacune de son côté, la fusion à trois branches de git y
-# réussit souvent — et c'est le danger : elle rend un fichier que ni l'une ni
-# l'autre n'a produit, qui ne correspond à aucun état du modèle. Les tests le
-# rattrapent (`--verifier` compare l'octet), mais après coup et sans dire quoi.
+# `pages.json`, `simulations.json`, `donnees.json` et `style.css` — plusieurs
+# mégaoctets pour les trois premiers —, `equilibre.json` et la série du
+# chiffrage budgétaire sont écrits par un script depuis le modèle Python.
+# Quand deux sessions les ont régénérés chacune de son côté, la fusion à trois
+# branches de git y réussit souvent — et c'est le danger : elle rend un fichier
+# que ni l'une ni l'autre n'a produit, qui ne correspond à aucun état du
+# modèle. Les tests le rattrapent (`--verifier` compare l'octet), mais après
+# coup et sans dire quoi.
 #
 # `-merge` fait donc échouer la fusion franchement : git garde la version de
 # la branche courante et déclare le conflit. La résolution ne s'arbitre pas,
-# elle se relance — voir « Plusieurs sessions en parallèle » dans CLAUDE.md :
-#
-#   git checkout --ours <fichier>   # n'importe quel côté fait l'affaire
-#   python scripts/construire_donnees.py && python scripts/construire_temoins.py
-#   python -m pytest
+# elle se relance, et sa recette est UNE : celle de CLAUDE.md, « Plusieurs
+# sessions en parallèle », qu'on ne recopie pas ici pour qu'elles ne
+# divergent plus — ce fichier en donnait une autre jusqu'au 23 septembre 2026,
+# sans le rebasage ni le chiffrage. En résumé : reprendre le rebasage, relancer
+# `construire_donnees.py`, `construire_temoins.py` et `chiffrage_plf.py`,
+# `git add -A && git rebase --continue`, puis tester et pousser.
 #
 # On ne touche pas à l'attribut `diff` : le diff chiffre par chiffre des
 # témoins est ce qui rend le portage JavaScript vérifiable, il doit rester
@@ -40,3 +43,5 @@ moteur/donnees.json            -merge
 moteur/style.css               -merge
 tests/temoins/pages.json       -merge
 tests/temoins/simulations.json -merge
+data/derive/equilibre.json     -merge
+docs/chiffrage_plf.csv         -merge

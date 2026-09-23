@@ -12,7 +12,7 @@ bash scripts/pousser.sh
 
 `scripts/pousser.sh` fait la recette en entier : `git fetch origin main`,
 `git merge --ff-only origin/main` pour rattraper ce que `main` a reçu
-entre-temps, `git push origin HEAD:main`, puis les deux gestes qui font taire
+entre-temps, `git push origin HEAD:main`, puis les trois gestes qui font taire
 le compteur de commits non poussés (plus bas). Il ne dit rien quand il n'y a
 rien à publier, et écrit une ligne quand il a poussé. Quand une autre session
 a poussé entre-temps, il rebase les commits de celle-ci sur `origin/main` —
@@ -92,7 +92,10 @@ supprimer, et leur suppression se fait à la main**, depuis l'onglet Branches de
 GitHub : le jeton d'une session Claude Code peut créer et mettre à jour une
 référence, pas en supprimer une — `git push origin --delete` répond 403. Les
 empreintes sont dans le message du commit qui porte cette phrase, pour qui
-voudrait en ressusciter une.
+voudrait en ressusciter une — ou y étaient : l'historique ayant été réécrit le
+23 septembre 2026, ces empreintes ne désignent plus rien, et les branches
+elles-mêmes les portent. Elles étaient dix-neuf ce jour-là : les quatorze
+auditées, et d'autres parues depuis, qui ne l'ont pas été.
 
 **Le compteur de commits « non poussés » est faux, et ne se commente pas.**
 La référence distante de la branche `claude/…` d'une session est créée à son
@@ -123,11 +126,12 @@ tient les onze comportements du script, celui-ci compris.
 là-dessus** : une ligne au plus, jamais une explication. C'est du temps et des
 jetons dépensés pour un chiffre qui se trompe.
 
-Un hook `Stop` lancerait le script tout seul à la fin de chaque tour, et
-`main` serait à jour sans que personne ait à y penser. **Il n'est pas dans le
-dépôt** : une session Claude Code n'a pas le droit d'écrire sous `.claude/`.
-Son inscription dans `settings.json` est donnée sous l'action 36 de
-`docs/feuille_de_route.md`, à poser à la main, une fois pour toutes.
+Un hook `Stop` lance le script tout seul à la fin de chaque tour, et `main`
+est à jour sans que personne ait à y penser : il est dans le dépôt, dans
+`.claude/settings.json`, depuis le 19 septembre 2026. Ce paragraphe disait le
+contraire jusqu'au 23 septembre, et l'action 36 de `docs/feuille_de_route.md`,
+qui donnait l'inscription à poser à la main, est faite ; une session Claude
+Code n'a toujours pas le droit d'écrire sous `.claude/`.
 
 **Plusieurs sessions en parallèle : oui, en se partageant le dépôt par zones.**
 Chaque session web a son conteneur et son clone — rien n'est partagé côté
@@ -155,9 +159,10 @@ sûr. D'où quatre règles :
   le conflit éventuel se lit en trois lignes. Même chose pour le `journal` de
   `veille.yaml`, qui s'allonge par la fin.
 - **Un conflit sur un fichier fabriqué ne s'arbitre pas, il se relance.**
-  `.gitattributes` marque `-merge` les quatre fichiers qu'un script écrit
+  `.gitattributes` marque `-merge` les six fichiers qu'un script écrit
   (`moteur/donnees.json`, `moteur/style.css`, `tests/temoins/pages.json`,
-  `tests/temoins/simulations.json`) : git y déclare le conflit au lieu de
+  `tests/temoins/simulations.json`, `data/derive/equilibre.json`,
+  `docs/chiffrage_plf.csv`) : git y déclare le conflit au lieu de
   fusionner ligne à ligne et de rendre un fichier que ni l'une ni l'autre des
   sessions n'a produit. La version de la branche courante reste dans le
   répertoire de travail, sans marqueurs, et la résolution est mécanique :
@@ -166,6 +171,7 @@ sûr. D'où quatre règles :
 git rebase origin/main          # pousser.sh l'a refusé, on le reprend à la main
 python scripts/construire_donnees.py
 python scripts/construire_temoins.py
+python scripts/chiffrage_plf.py     # ses tableaux, dans le .md, sont des chiffres ancrés
 git add -A && git rebase --continue
 python -m pytest && bash scripts/pousser.sh
 ```
@@ -202,8 +208,10 @@ Le livrable est le site statique ; voir `README.md`.
   `python scripts/construire_donnees.py`. À reconstruire après toute modification
   des données ou du style.
 - Tests : `tests/` — `python -m pytest` (lance aussi `node --test`). La suite
-  complète se répartit d'elle-même sur les cœurs et tient en trente-cinq
-  secondes ; viser
+  complète se répartit d'elle-même sur les cœurs et tient en huit minutes
+  environ sur quatre (mesuré le 23 septembre 2026 ; « trente-cinq
+  secondes », qu'on lisait ici, datait d'une suite bien plus légère) ;
+  viser
   un fichier ou un cas (`python -m pytest tests/test_moteur.py`) la garde en
   série, ce qui est plus lisible et plus rapide pour un seul test. Pour tout
   forcer en série : `PYTEST_SANS_XDIST=1`.
@@ -230,14 +238,20 @@ Le livrable est le site statique ; voir `README.md`.
   prose est datée ; ses chiffres ne le sont pas. Ne jamais y corriger un tableau
   à la main.
 - Les chantiers à mener, classés par ce qu'ils déplacent : `docs/feuille_de_route.md`.
-  Une session qui cherche quoi faire commence là, et y note ce qu'elle a fait.
+  Une session qui cherche quoi faire commence là — par les actions `en cours`
+  et ce que leurs dernières notes laissent ouvert, aucune n'étant plus « à
+  faire » —, et y note ce qu'elle a fait.
 - Seule dépendance hors bibliothèque standard : PyYAML. Le portage JavaScript
   n'utilise aucune bibliothèque. pytest et pytest-xdist ne servent qu'aux tests
   (`.[dev]`) ; la suite tourne sans xdist, en série.
 - Les données lues sur disque sont mémorisées, indexées sur la signature du
   fichier (mtime et taille) : `charger_yaml`, `charger_serie_annuelle`, la
   table des quotients de mortalité. Un fichier modifié est donc relu sans
-  qu'on ait à vider quoi que ce soit. `charger_yaml` rend une copie, l'appelant
+  qu'on ait à vider quoi que ce soit. Les lois de mortalité calibrées, elles,
+  sont gardées sur disque (`data/derive/calibrations_mortalite.json`), et une
+  loi n'y est reprise que si l'empreinte de ses entrées est celle des données
+  du jour : ce n'était pas le cas avant le 23 septembre 2026, et 112 lois
+  étaient restées calées sur d'anciennes cibles. `charger_yaml` rend une copie, l'appelant
   peut la modifier ; les séries et la table des quotients sont partagées, parce
   qu'elles ne sont jamais modifiées — le rester est une contrainte. Ne pas
   contourner ces points de passage : ce sont eux qui tiennent les temps.
@@ -272,7 +286,8 @@ avait changés, et rien ne le disait. D'où trois obligations, décrites dans
   table certifiée l'est à une date.
 - **À la fin**, consigner dans le `journal` de `veille.yaml` ce qui a été
   consulté, trouvé et laissé. Un test refuse toute réforme du calendrier
-  sans sa ligne de veille.
+  datée de 2023 ou après sans sa ligne de veille ; les plus anciennes n'en
+  exigent pas.
 
 ## Chercher dans le JORF ou LEGI
 
@@ -294,5 +309,6 @@ python scripts/fetch/dila_cherche.py legi '"sur la base de" heures' --num R351-9
 Lire les extraits, pas les textes : `--compter` d'abord si la requête est
 large, `--limite` ensuite, `--texte ID --motif` pour ne lire que les fenêtres
 utiles. L'index ne contient que le champ social (voir `THEMATIQUE` dans
-`dila_index.py`) : ce qu'il ne trouve pas peut exister dans le dump, que les
-scripts de certification continuent de lire.
+`dila_index.py`) : ce qu'il ne trouve pas peut exister dans le dump. Les
+scripts de certification lisent eux aussi l'index depuis le 17 septembre
+2026 ; leur option `--dump` garde la lecture du dump.
