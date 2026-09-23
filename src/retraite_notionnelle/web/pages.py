@@ -3186,14 +3186,20 @@ def _programme_capitalisation(contexte: Contexte) -> str:
     base = contexte.base
     taux = g.pourcentage(base.taux_capitalisation_obligatoire, decimales=0)
     volontaire = g.pourcentage(base.taux_capitalisation_volontaire, decimales=0)
-    total = g.pourcentage(base.taux_capitalisation_applique, decimales=0)
     repartition_ = g.pourcentage(base.taux_cotisation_liberal, decimales=0)
     impose_ = g.pourcentage(
         base.taux_cotisation_liberal + base.taux_capitalisation_obligatoire,
         decimales=0)
     propose = g.pourcentage(base.taux_retraite_propose, decimales=0)
+    # LE TITRE SÉPARE CE QUI EST IMPOSÉ DE CE QUI EST LIBRE. Il disait
+    # « 10 % qui vous appartiennent », sous une réponse qui venait de dire
+    # « 5 %, et ce que vous y ajoutez » et à côté des « 18 % + 5 % » de la
+    # carte : deux chiffres pour une même chose, qu'un nouveau venu ne
+    # réconciliait pas (23 septembre 2026).
+    libre = (f", et {volontaire} de plus si vous le voulez"
+             if base.taux_capitalisation_volontaire > 0 else "")
     return f"""
-<h3>La part capitalisée : {total} qui vous appartiennent</h3>
+<h3>La part capitalisée : {taux} obligatoires{libre}</h3>
 <p>À compter de {base.annee_bascule}, {taux} de votre rémunération
 sont prélevés <strong>en plus</strong> des {repartition_} de la répartition, et
 placés à votre nom sur des titres sans risque. Ce capital ne passe pas par le
@@ -6589,6 +6595,12 @@ def _pilier_capitalise(comparaison: Comparaison, saisie: Saisie) -> str:
     taux_volontaire = g.pourcentage(pilier.taux_cotisation_volontaire, decimales=0)
     avec_volontaire = pilier.taux_cotisation_volontaire > 0
     depart = comparaison.carriere.annee_liquidation
+    # Ce qui est imposé, puis ce qui est libre : « 10 % placés » additionnait
+    # une cotisation obligatoire et une épargne que personne n'impose.
+    titre = (f"Le pilier capitalisé : {taux_impose} obligatoires dès "
+             f"{parametres.annee_bascule}"
+             + (f", et {taux_volontaire} de plus si vous le voulez"
+                if avec_volontaire else ""))
 
     if not pilier.actif:
         if depart < parametres.annee_bascule:
@@ -6607,11 +6619,7 @@ départ, elle ne perçoit aucun revenu d'activité, et le pilier ne prélève qu
 sur ce que l'on gagne. Une période sans emploi n'y verse rien, fût-elle
 indemnisée : l'Unédic paie des cotisations de retraite complémentaire, que le
 compte notionnel porte, et non une épargne au nom de l'assuré.</p>"""
-        return g.depliant(
-            f"Le pilier capitalisé : {taux} placés dès "
-            f"{parametres.annee_bascule}",
-            raison,
-        )
+        return g.depliant(titre, raison)
 
     premiere = pilier.annees[0]
     derniere = pilier.annees[-1]
@@ -6751,8 +6759,7 @@ sur votre fiche de paie : c'est le même argent, et c'est vous qui
 choisissez.</p>"""
 
     return g.depliant(
-        f"Le pilier capitalisé : {taux} placés dès "
-        f"{parametres.annee_bascule}",
+        titre,
         f"""
 <p>À compter de {parametres.annee_bascule}, {taux} de la
 rémunération sont prélevés <strong>en plus</strong> de la cotisation de
@@ -13890,8 +13897,10 @@ def _methode_capitalisation(contexte: Contexte) -> str:
         entete_de_ligne=True,
     )
 
+    libre = (f", {volontaire} volontaires"
+             if base.taux_capitalisation_volontaire_applique > 0 else "")
     return g.depliant(
-        f"Le pilier capitalisé : {total_capitalise} placés, ce que cela suppose",
+        f"Le pilier capitalisé : {taux} obligatoires{libre}, ce que cela suppose",
         f"""
 <p>La proposition ajoute, à compter de {base.annee_bascule}, une
 cotisation de {taux} prélevée sur la même assiette que la cotisation de

@@ -6031,8 +6031,11 @@ function pilierCapitalise(comparaison, saisie) {
   );
   const avecVolontaire = pilier.taux_cotisation_volontaire > 0;
   const depart = comparaison.carriere.anneeLiquidation;
-  const titre = `Le pilier capitalisé : ${taux} placés dès `
-    + `${parametres.annee_bascule}`;
+  // Ce qui est imposé, puis ce qui est libre : « 10 % placés » additionnait
+  // une cotisation obligatoire et une épargne que personne n'impose.
+  const titre = `Le pilier capitalisé : ${tauxImpose} obligatoires dès `
+    + `${parametres.annee_bascule}`
+    + (avecVolontaire ? `, et ${tauxVolontaire} de plus si vous le voulez` : "");
 
   if (!pilier.actif) {
     if (depart < parametres.annee_bascule) {
@@ -11939,7 +11942,9 @@ function methodeCapitalisation(contexte) {
   );
 
   return g.depliant(
-    `Le pilier capitalisé : ${totalCapitalise} placés, ce que cela suppose`,
+    `Le pilier capitalisé : ${taux} obligatoires${
+      tauxCapitalisationVolontaireApplique(base) > 0 ? `, ${volontaire} volontaires` : ""
+    }, ce que cela suppose`,
     `
 <p>La proposition ajoute, à compter de ${base.annee_bascule}, une
 cotisation de ${taux} prélevée sur la même assiette que la cotisation de
@@ -13507,14 +13512,17 @@ function programmeCapitalisation(contexte) {
   const base = contexte.base;
   const taux = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
   const volontaire = g.pourcentage(base.taux_capitalisation_volontaire, false, 0);
-  const total = g.pourcentage(tauxCapitalisationApplique(base), false, 0);
   const repartition_ = g.pourcentage(base.taux_cotisation_liberal, false, 0);
   const impose_ = g.pourcentage(
     base.taux_cotisation_liberal + base.taux_capitalisation_obligatoire, false, 0,
   );
   const propose = g.pourcentage(tauxRetraitePropose(base), false, 0);
+  // Le titre sépare ce qui est imposé de ce qui est libre. Voir
+  // `_programme_capitalisation`.
+  const libre = base.taux_capitalisation_volontaire > 0
+    ? `, et ${volontaire} de plus si vous le voulez` : "";
   return `
-<h3>La part capitalisée : ${total} qui vous appartiennent</h3>
+<h3>La part capitalisée : ${taux} obligatoires${libre}</h3>
 <p>À compter de ${base.annee_bascule}, ${taux} de votre rémunération
 sont prélevés <strong>en plus</strong> des ${repartition_} de la répartition, et
 placés à votre nom sur des titres sans risque. Ce capital ne passe pas par le
