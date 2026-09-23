@@ -606,6 +606,7 @@ def _regimes() -> list[dict]:
                     "notes": p.notes,
                     **_regles_des_marins(p),
                     **_regles_des_sections(p),
+                    **_plafond_des_primes(p),
                 }
                 for p in regime.periodes
             ],
@@ -651,6 +652,17 @@ def _regles_des_sections(p) -> dict:
         "surcote_trimestres_cotises": p.surcote_trimestres_cotises or None,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
+
+
+def _plafond_des_primes(p) -> dict:
+    """Le plafond des primes du RAFP, 20 % du traitement, et seulement là.
+
+    Même raison que pour les marins : le moteur JavaScript lit son absence
+    comme sa nullité.
+    """
+    if p.plafond_primes_traitement is None:
+        return {}
+    return {"plafond_primes_traitement": p.plafond_primes_traitement}
 
 
 def _affiliations() -> dict:

@@ -469,3 +469,36 @@ test("le chômage non indemnisé ne valide que dans les limites de R. 351-12", (
   assert.equal(ulterieures(carriere(1955, 1975, 2016, senior)), 16);
   assert.equal(ulterieures(carriere(1965, 1985, 2016, senior)), 4);
 });
+
+/**
+ * Le plafond des primes du RAFP : « dans la limite de 20 % du traitement
+ * indiciaire brut total » (décret n° 2004-569, art. 2). Deux agentes au même
+ * traitement, primes au plafond pour l'une, au-delà pour l'autre : même
+ * retraite additionnelle, même compartiment de capitalisation. Rejoue
+ * `test_les_primes_au_dela_du_plafond_ne_cotisent_pas_au_rafp`.
+ */
+test("les primes cotisent au RAFP dans la limite de 20 % du traitement", () => {
+  const contexte = new Contexte(paquet);
+  const simulateur = contexte.simulateur();
+  const periode = simulateur.catalogue.obtenir("rafp").periode(2026);
+  assert.ok(Math.abs(periode.plafond_primes_traitement - 0.20) < 1e-12);
+  assert.ok(Math.abs(periode.partDuRevenu(40000, 0.10) - 4000) < 1e-6);
+  assert.ok(Math.abs(periode.partDuRevenu(40000, 0.25) - 6000) < 1e-6);
+
+  const profil = {
+    annee_naissance: 1975, sexe: "F", affiliation: "fonctionnaire_etat",
+    age_debut: 23, age_liquidation: 64,
+  };
+  const retraiteAdditionnelle = (niveau, primes) => {
+    const resultat = simulateur.simuler(simulateur.carriereSimple({
+      ...profil, niveau_salaire: niveau, part_primes: primes,
+    }));
+    const pension = resultat.actuel.pensions_par_regime.find((p) => p.regime === "rafp");
+    return [pension.montant, resultat.notionnel_retroactif.capital_capitalisation];
+  };
+  const [pension, capital] = retraiteAdditionnelle(0.9, 1 / 6);
+  const [pensionAuDela, capitalAuDela] = retraiteAdditionnelle(1.0, 0.25);
+  assert.ok(pension > 0 && capital > 0);
+  assert.ok(Math.abs(pensionAuDela / pension - 1) < 1e-9, `${pensionAuDela} ≠ ${pension}`);
+  assert.ok(Math.abs(capitalAuDela / capital - 1) < 1e-9, `${capitalAuDela} ≠ ${capital}`);
+});

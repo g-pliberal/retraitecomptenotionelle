@@ -4078,11 +4078,9 @@ class ScenarioActuel:
                         borne_basse *= part
                         borne_haute = (None if borne_haute is None
                                        else borne_haute * part)
-                    base = base_ligne
-                    if periode.assiette == "primes_uniquement":
-                        base = base_ligne * ligne.part_primes
-                    elif periode.assiette == "hors_primes":
-                        base = base_ligne * (1.0 - ligne.part_primes)
+                    # Traitement seul, primes seules — celles du RAFP dans la
+                    # limite de 20 % du traitement : voir `part_du_revenu`.
+                    base = periode.part_du_revenu(base_ligne, ligne.part_primes)
                     # L'assiette de la CAVAMAC est faite des commissions
                     # versées par les compagnies, celle de la CPRN des produits
                     # de l'office : le facteur les reconstitue depuis le
@@ -5261,11 +5259,7 @@ def _assiette_de_reference(periode: PeriodeRegime, ligne) -> float:
     primes comprises, sans quoi les primes ouvriraient deux fois des droits —
     au RAFP et à la pension civile — alors qu'elles n'en ouvrent qu'au RAFP.
     """
-    if periode.assiette == "primes_uniquement":
-        return ligne.revenu * ligne.part_primes
-    if periode.assiette == "hors_primes":
-        return ligne.revenu * (1.0 - ligne.part_primes)
-    return ligne.revenu
+    return periode.part_du_revenu(ligne.revenu, ligne.part_primes)
 
 
 def _derniere_annee(regime) -> int:

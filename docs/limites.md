@@ -6623,6 +6623,43 @@ un second modèle, `modele-ti`, qui a suivi la réforme, et dont les points
 tombent sur ceux du dépôt au dixième près sur une grille de quatorze revenus,
 de 2024 à 2026.
 
+### Le RAFP prenait toutes les primes, et le décret s'arrête à 20 % du traitement
+
+La fiche du RAFP l'écrivait depuis sa création — « 5 % agent + 5 % employeur
+sur les primes, dans la limite de 20 % du traitement indiciaire » —, et aucun
+des deux moteurs ne le lisait : l'assiette était le revenu multiplié par la
+part des primes, sans borne. L'article 2 du décret n° 2004-569 porte pourtant
+la limite dans ses six versions, de la première (LEGIARTI000006453300) à celle
+en vigueur depuis le 17 avril 2024 (LEGIARTI000049424057) : les primes
+cotisent « dans la limite de 20 % du traitement indiciaire brut total ou de la
+solde brute totale perçus au cours de l'année considérée ». L'ERAFP le redit
+en tête de sa page sur les cotisations, lue le 23 septembre 2026, et précise
+que le plafond s'apprécie sur l'année, en cumul depuis janvier — la
+granularité même de la carrière du modèle.
+
+**Ce que cela déplaçait.** Des primes qui font 22 % de la rémunération valent
+28 % du traitement : l'agent n'en cotise que 20, soit 15,6 % de sa
+rémunération, et le moteur lui faisait cotiser les 22 — une retraite
+additionnelle trop haute de 41 %. Les trois cas types publics, à 18, 22 et
+25 % de primes, cotisaient sur une assiette trop forte de 10, 41 et 67 %. Un
+champ de période, `plafond_primes_traitement`, porte la limite, et
+`PeriodeRegime.part_du_revenu`, en Python comme en JavaScript, fait désormais
+le découpage — traitement seul, primes seules — que le scénario 1 et le compte
+notionnel recopiaient chacun de leur côté. Deux témoins bougent sur 505, les
+deux carrières de fonctionnaire à 22 % de primes : leur RAFP baisse de 29 %,
+au scénario 1 comme dans les compartiments de capitalisation des comptes
+notionnels. Le RAFP étant servi à l'identique partout, aucun écart entre
+scénarios ne bouge.
+
+**Ce qui reste.** Les deux exceptions que l'ERAFP nomme : la garantie
+individuelle du pouvoir d'achat, cotisée sans plafond, et les jours de compte
+épargne-temps convertis en points. La cotisation volontaire des agents de
+l'État en poste dans quatre collectivités d'outre-mer, ouverte le 1er avril
+2024. Et le taux unique des comptes notionnels, qui porte sur toute la
+rémunération quand la capitalisation n'est pas isolée : le plafond, règle du
+RAFP, n'y a pas cours. La ligne `rafp_assiette_plafond` du registre de veille
+en tient le détail.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -8821,7 +8858,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2331<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2332<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

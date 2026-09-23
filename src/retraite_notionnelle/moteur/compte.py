@@ -413,6 +413,16 @@ class ConstructeurCompte:
 
     def _base_selon_assiette(self, assiette: str, base_ligne: float,
                              part_primes: float) -> float:
+        """La part de la rémunération qu'un GROUPE d'assiettes découpe.
+
+        Sert au seul taux uniforme, qui réunit les assiettes par leur point de
+        départ — traitement, primes, rémunération entière — avant de prélever.
+        Le plafond des primes du RAFP n'y a pas cours : c'est une règle du
+        RAFP, et un taux unique porte sur toute la rémunération. Le groupe des
+        primes ne s'y forme d'ailleurs que si `isoler_capitalisation` vaut
+        faux ; sinon le RAFP garde son taux, son plafond et son compartiment.
+        Les cotisations d'un régime passent par `PeriodeRegime.part_du_revenu`.
+        """
         if assiette == "primes_uniquement":
             return base_ligne * part_primes
         if assiette == "hors_primes":
@@ -564,9 +574,10 @@ class ConstructeurCompte:
                     periode, annee, part
                 )
 
-                base = self._base_selon_assiette(
-                    periode.assiette, base_ligne, ligne.part_primes
-                )
+                # Traitement seul ou primes seules, celles du RAFP dans la
+                # limite de 20 % du traitement : `PeriodeRegime.part_du_revenu`,
+                # le découpage même du scénario 1.
+                base = periode.part_du_revenu(base_ligne, ligne.part_primes)
                 # L'ASSIETTE N'EST PAS TOUJOURS LE REVENU. La CAVAMAC prélève
                 # sur les commissions que les compagnies versent à l'agent
                 # général, la CPRN sur les produits de l'office du notaire :

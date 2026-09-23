@@ -468,10 +468,15 @@ sources:
     acces: session
     regimes: [rafp]
     a_en_tirer: >-
-      Les points acquis pour une assiette donnée : c'est le versant
-      acquisition du même barème, et le moyen de vérifier l'assiette (20 % du
-      traitement indiciaire, primes comprises) que le dépôt retient.
-    statut: en_cours
+      Les points acquis pour une cotisation donnée, mois par mois et année par
+      année depuis 2005 : de quoi recouper les valeurs d'acquisition de
+      `valeurs_point.csv` et l'arrondi des points au point supérieur.
+    statut: a_explorer
+    note: >-
+      Ouverte le 23 septembre 2026, pas lancée. Elle part de la cotisation
+      déjà versée, part de l'agent, qu'elle double pour l'employeur, et non
+      des primes : elle ne voit pas le plafond de 20 % du traitement, qui se
+      joue en amont, dans l'assiette. La ligne disait le contraire.
 
   - id: rafp_cotisations_points
     url: https://www.rafp.fr/actif/activite/calculer-vos-cotisations-et-vos-points-rafp
@@ -481,7 +486,19 @@ sources:
     a_en_tirer: >-
       L'assiette, le plafond de 20 %, le partage 5 %/5 % : la règle écrite
       derrière les deux calculettes.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
+    note: >-
+      Le plafond de 20 % du traitement indiciaire brut, apprécié en cumul sur
+      l'année, que le modèle n'appliquait pas : il l'applique (champ
+      `plafond_primes_traitement` de data/reference/regimes/fonction_publique.yaml,
+      ligne `rafp_assiette_plafond` du registre de veille, récit dans
+      docs/limites.md). Les valeurs du point de 2025 et 2026 sont celles que
+      le dépôt certifie. Restent : les deux exceptions au plafond — la GIPA,
+      cotisée en entier, et les jours de compte épargne-temps convertis en
+      points —, la cotisation volontaire des agents de l'État outre-mer, et
+      l'exemple de la page, 350 € de cotisation pour 240 points arrondis au
+      point supérieur.
 
   - id: rafp_retraite
     url: https://www.rafp.fr/retraite

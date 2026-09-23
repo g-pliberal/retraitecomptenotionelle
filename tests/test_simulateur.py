@@ -1937,6 +1937,40 @@ def test_rafp_et_rci_sont_calcules_en_points(simulateur):
         assert "points × valeur de service" in pensions[code].detail, code
 
 
+def test_les_primes_au_dela_du_plafond_ne_cotisent_pas_au_rafp(simulateur):
+    """Le RAFP prend les primes « dans la limite de 20 % du traitement
+    indiciaire brut total » (décret n° 2004-569, art. 2, toutes versions).
+
+    Deux agentes au même traitement : les primes de l'une en font exactement
+    le cinquième, un sixième de sa rémunération ; celles de l'autre en font
+    le tiers, un quart de sa rémunération. Au-delà du plafond, une prime
+    n'ajoute aucun point : les deux retraites additionnelles sont égales, et
+    les deux compartiments de capitalisation aussi. Le moteur servait à la
+    seconde cinq tiers de la première.
+    """
+    periode = simulateur.catalogue["rafp"].periode(2026)
+    assert periode.plafond_primes_traitement == pytest.approx(0.20)
+    assert periode.part_du_revenu(40_000, 0.10) == pytest.approx(4_000)
+    assert periode.part_du_revenu(40_000, 0.25) == pytest.approx(6_000)
+
+    profil = dict(annee_naissance=1975, sexe="F", affiliation="fonctionnaire_etat",
+                  age_debut=23, age_liquidation=64)
+    au_plafond = simulateur.carriere_simple(niveau_salaire=0.9, part_primes=1 / 6,
+                                            **profil)
+    au_dela = simulateur.carriere_simple(niveau_salaire=1.0, part_primes=0.25,
+                                         **profil)
+
+    def retraite_additionnelle(carriere):
+        resultat = simulateur.simuler(carriere)
+        pension = next(p for p in resultat.actuel.pensions_par_regime
+                       if p.regime == "rafp")
+        return pension.montant, resultat.notionnel_retroactif.capital_capitalisation
+
+    pension, capital = retraite_additionnelle(au_plafond)
+    assert pension > 0 and capital > 0
+    assert retraite_additionnelle(au_dela) == pytest.approx((pension, capital))
+
+
 def test_le_producteur_prime_sur_la_transcription(simulateur):
     """L'Ircantec est le seul régime dont on ait les deux sources.
 
