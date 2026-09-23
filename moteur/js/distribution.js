@@ -28,6 +28,11 @@ export class DistributionPensions {
       borneSuperieure: brut.bornes_superieures[rang],
       part,
     }));
+    // Le paquet porte la distribution des RÉSIDENTS en France, que la
+    // garantie sert : la part des résidents met l'effectif à l'échelle, et
+    // celle des femmes parmi eux pèse les deux sexes. Voir distribution.py.
+    this.partResidents = brut.part_residents ?? 1.0;
+    this.partFemmesResidents = brut.part_femmes_residents ?? null;
   }
 
   /**

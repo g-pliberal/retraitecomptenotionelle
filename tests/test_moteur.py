@@ -710,8 +710,12 @@ def test_le_rattachement_par_la_pension_est_un_point_fixe():
     s'arrête au sixième tour, ce qui rend le résultat déterministe. Ce test
     tient le point fixe là où il existe, et vérifie que le rang parmi les
     retraités n'est pas le rang par le salaire : le SMIC à carrière
-    complète, quatrième vingtile par le salaire, est au sixième par sa
-    pension — six retraités sur dix touchent moins de 1 500 € par mois."""
+    complète, quatrième vingtile par le salaire, est au cinquième par sa
+    pension. Le rang se lit parmi les retraités qui résident en France,
+    ceux que décrivent les vingtiles de niveau de vie de l'INSEE : 57 %
+    d'entre eux touchent moins de 1 500 € par mois, contre 59 % en comptant
+    ceux qui vivent à l'étranger, dont la pension française est petite —
+    c'est ce qui le faisait classer au sixième jusqu'au 23 septembre 2026."""
     from retraite_notionnelle.castypes import CAS_TYPES
     from retraite_notionnelle.simulateur import Simulateur
 
@@ -727,10 +731,11 @@ def test_le_rattachement_par_la_pension_est_un_point_fixe():
         resultat.pension_annuelle, carriere.annee_liquidation)
     # Le point fixe peut osciller entre deux vingtiles voisins — la pension
     # du sixième retombe au cinquième, qui la renvoie au sixième — ; le
-    # dernier tour est retenu, et le vingtile de la pension servie est alors
-    # celui-là ou son voisin.
-    assert retenue == "niveau_de_vie_v06"
-    assert attendue in ("niveau_de_vie_v05", "niveau_de_vie_v06")
+    # dernier tour est alors retenu. Ici il est atteint : le vingtile de la
+    # pension servie est celui qui l'a servie.
+    assert retenue == "niveau_de_vie_v05"
+    assert attendue == retenue
+    assert par_pension.distribution.part_sous(1500.0) == pytest.approx(0.573, abs=0.005)
     salaire = par_salaire.simuler(carriere).notionnel_retroactif_employeur
     assert salaire.conversion.table.endswith("niveau_de_vie_v04")
     assert resultat.pension_annuelle < salaire.pension_annuelle

@@ -1806,6 +1806,34 @@ def source_caracteristiques_retraites() -> dict[tuple, float]:
     }
 
 
+def source_pensions_residence() -> dict[tuple, float]:
+    """Les retraités selon qu'ils résident en France ou à l'étranger.
+
+    Le même classeur que ``source_caracteristiques_retraites``, feuille
+    « Naissance-Résidence » : l'effectif, les deux pensions moyennes de droit
+    direct et les onze quantiles publiés, pour trois colonnes — les résidents
+    à l'étranger, en France, et l'ensemble. La garantie vieillesse du
+    scénario 6, qui remplace l'ASPA et en garde la condition de résidence,
+    ne se chiffre que sur la deuxième ; la distribution des pensions porte la
+    troisième.
+    """
+    charge = _lire_json(
+        "drees_caracteristiques_retraites.json",
+        "scripts/fetch/drees_caracteristiques_retraites.py",
+    )
+    if "residence" not in charge:
+        raise SourceAbsente(
+            "drees_caracteristiques_retraites.json sans feuille de résidence "
+            "(relancer scripts/fetch/drees_caracteristiques_retraites.py)")
+    annee = str(charge["millesime"])
+    return {
+        (annee, residence, indicateur, sexe): valeur
+        for residence, indicateurs in charge["residence"].items()
+        for indicateur, serie in indicateurs.items()
+        for sexe, valeur in serie.items()
+    }
+
+
 def source_age_conjoncturel() -> dict[tuple, float]:
     """L'âge conjoncturel de départ à la retraite, par sexe, depuis 2004.
 
@@ -4987,6 +5015,48 @@ CERTIFICATIONS = (
             "# minimum de pension APPORTE à ses bénéficiaires. Le classeur en donne",
             "# la part — 46,5 % des femmes contre 26,1 % des hommes — et non le",
             "# montant. Le retirer creuserait l'écart davantage.",
+            "#",
+            "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
+            "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",
+        ),
+    ),
+    Certification(
+        nom="pensions_residence",
+        chemin=REFERENCE / "macro" / "pensions_residence.csv",
+        cles=("annee", "residence", "indicateur", "sexe"),
+        colonne="valeur",
+        source=source_pensions_residence,
+        origine="DREES, échantillon interrégimes de retraités (EIR)",
+        decimales=1,
+        tolerance=0.05,
+        entete=(
+            "# Les retraités selon leur lieu de résidence",
+            "# source_id: drees_eir_caracteristiques",
+            "# unite: milliers de retraités (effectifs), euros bruts par mois",
+            "# fiabilite:",
+            "#   certifiee : feuille « Naissance-Résidence » du classeur",
+            "#             « Caractéristiques de tous les retraités » de l'EIR,",
+            "#             diffusé par la DREES et recontrôlé par",
+            "#             scripts/verifier_donnees.py.",
+            "#",
+            "# `residence` : etranger, france, ensemble — les colonnes « Retraités",
+            "# résidents à l'étranger », « Retraités résidents en France » et",
+            "# « Ensemble ». `indicateur` : effectifs ; pension_droit_direct et",
+            "# pension_droit_direct_majorations, les deux moyennes de droit direct,",
+            "# sans et avec les majorations pour enfants ; d1 à d9, q1, mediane et",
+            "# q3, les quantiles publiés de la seconde.",
+            "#",
+            "# À QUOI CETTE SÉRIE SERT",
+            "# ------------------------",
+            "# À retirer de la distribution des pensions les retraités qui résident",
+            "# à l'étranger. Le tableau de la distribution les compte — « résidants",
+            "# en France ou à l'étranger », dit sa note —, et la garantie vieillesse",
+            "# du scénario 6 ne les sert pas : elle remplace l'ASPA, qui exige une",
+            "# résidence stable et régulière en France (article L. 815-1). Ils",
+            "# sont 5,5 % des retraités, et presque tous sous le plancher : leur",
+            "# pension française moyenne est de 437 € brut par mois, parce que leur",
+            "# carrière française a été courte. Les compter gonflait le coût de la",
+            "# garantie d'un sixième environ.",
             "#",
             "# Ne pas modifier les valeurs certifiées à la main : elles seraient",
             "# écrasées au prochain scripts/verifier_donnees.py --appliquer.",

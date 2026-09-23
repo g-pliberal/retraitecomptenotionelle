@@ -340,7 +340,10 @@ def _distribution_pensions() -> dict:
     la borne inférieure, la borne supérieure — ``null`` pour la tranche ouverte
     du haut — et la part des retraités.
     """
-    distribution = DistributionPensions(DONNEES)
+    # Celle des résidents en France, que la garantie sert : la soustraction est
+    # faite ici, une fois, et le site lit son résultat avec la part des
+    # résidents qui met l'effectif à l'échelle.
+    distribution = DistributionPensions(DONNEES, residence="france")
     return {
         "millesime": distribution.millesime,
         "sexe": distribution.sexe,
@@ -348,6 +351,8 @@ def _distribution_pensions() -> dict:
         "bornes_inferieures": [t.borne_inferieure for t in distribution.tranches],
         "bornes_superieures": [t.borne_superieure for t in distribution.tranches],
         "parts": [t.part for t in distribution.tranches],
+        "part_residents": distribution.part_residents,
+        "part_femmes_residents": distribution.part_femmes_residents,
     }
 
 
@@ -402,9 +407,10 @@ def _distribution_pensions_sexes() -> dict:
             "bornes_inferieures": [t.borne_inferieure for t in d.tranches],
             "bornes_superieures": [t.borne_superieure for t in d.tranches],
             "parts": [t.part for t in d.tranches],
+            "part_residents": d.part_residents,
         }
         for sexe in ("F", "H")
-        for d in (DistributionPensions(DONNEES, sexe=sexe),)
+        for d in (DistributionPensions(DONNEES, sexe=sexe, residence="france"),)
     }
 
 

@@ -578,6 +578,9 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "macro/prestations_non_contributives.csv",
         "distribution_pensions": "macro/distribution_pensions.csv",
         "caracteristiques_retraites": "macro/caracteristiques_retraites.csv",
+        # Le même classeur, une autre feuille : la résidence des retraités,
+        # que la garantie vieillesse lit pour ne servir que ceux de France.
+        "pensions_residence": "macro/pensions_residence.csv",
         "age_conjoncturel_depart": "macro/age_conjoncturel_depart.csv",
         "age_depart_csp": "macro/age_depart_csp.csv",
         "structure_financement_regimes": "regimes/structure_financement.csv",

@@ -63,12 +63,14 @@ def test_le_rapport_mesure_redonne_le_cout_que_la_page_affiche(
     assert reference.rapport == pytest.approx(
         simulateur.caracteristiques.rapport_deplacement())
     # Le coût de la trajectoire est celui des 65 ans et plus ; celui du script,
-    # celui de TOUS les retraités de l'enquête, comme le tableau des quatre
-    # lectures de la page. Les deux se déduisent l'un de l'autre par le rapport
-    # des effectifs, et c'est cette identité qu'on vérifie.
+    # celui de TOUS les retraités de l'enquête qui résident en France, comme le
+    # tableau des quatre lectures de la page. Les deux se déduisent l'un de
+    # l'autre par le rapport des effectifs, et c'est cette identité qu'on
+    # vérifie.
     attendu = (garantie.cout_constants / 1000.0
                * simulateur.effectifs.effectif(
                    "tous_regimes", simulateur.distribution.millesime)
+               * simulateur.distribution.part_residents
                / garantie.effectif)
     # PAS À ZÉRO, ET LA SOURCE DIT POURQUOI. La DREES publie ses parts
     # arrondies au centième de point : sa colonne « ensemble » n'est donc le
@@ -101,6 +103,7 @@ def test_le_rapport_un_redonne_l_ancienne_convention(lectures):
     attendu = (ligne.garantie.cout_constants / 1000.0
                * simulateur.effectifs.effectif(
                    "tous_regimes", simulateur.distribution.millesime)
+               * simulateur.distribution.part_residents
                / ligne.garantie.effectif)
     uniforme = next(l for l in lectures
                     if l.plancher.startswith("pesé par le recensement")
@@ -143,16 +146,17 @@ def test_la_contrainte_de_masse_tient_sur_toute_la_colonne(lectures):
     plus : la grille de cas types garde le dernier mot sur l'agrégat, et le
     script ne décide que du partage entre les deux sexes.
     """
-    from retraite_notionnelle.donnees.distribution import (
-        DistributionPensions, part_femmes,
-    )
+    from retraite_notionnelle.donnees.distribution import DistributionPensions
     parametres = Parametres()
     racine = parametres.racine_donnees
-    millesime = Simulateur(parametres).distribution.millesime
-    poids = part_femmes(racine, millesime)
+    distribution = Simulateur(parametres).distribution
+    millesime = distribution.millesime
+    # Les résidents en France, les seuls que la garantie sert.
+    poids = distribution.part_femmes_residents
     moyennes = {
         sexe: garantie_par_sexe._moyenne(
-            DistributionPensions(racine, sexe=sexe, millesime=millesime))
+            DistributionPensions(racine, sexe=sexe, millesime=millesime,
+                                 residence="france"))
         for sexe in ("F", "H")
     }
     ensemble = poids * moyennes["F"] + (1.0 - poids) * moyennes["H"]
@@ -180,8 +184,12 @@ def test_l_ecart_uniforme_est_toujours_une_borne_basse(lectures):
         assert couts == sorted(couts), plancher
         assert couts[-1] > couts[0], plancher
         # Et l'ampleur reste seconde : le tableau ne vaudrait rien s'il
-        # laissait croire que la réserve emporte le chiffrage.
-        assert couts[-1] / couts[0] < 1.10, plancher
+        # laissait croire que la réserve emporte le chiffrage. La borne était
+        # de 10 % ; elle est de 12 % depuis que la garantie ne sert que les
+        # résidents en France (23 septembre 2026) : la base a perdu un sixième,
+        # l'écart absolu presque rien, et la ligne r = 0,80 est passée de 8,4 à
+        # 10,1 %.
+        assert couts[-1] / couts[0] < 1.12, plancher
 
 
 def test_les_minima_pesent_sur_les_femmes_et_restent_sous_le_pour_cent(lectures):

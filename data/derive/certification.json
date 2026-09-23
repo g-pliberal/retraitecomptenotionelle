@@ -101,15 +101,15 @@
    "verifiee_le": "2026-09-20"
   },
   "caracteristiques_retraites": {
-   "ajoutees": 6,
+   "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
    "empreinte": "4e13c8caef98a8dd",
-   "identiques": 21,
+   "identiques": 27,
    "niveau": "certifiee",
    "source": "DREES, échantillon interrégimes de retraités (EIR)",
    "valeurs": 27,
-   "verifiee_le": "2026-09-21"
+   "verifiee_le": "2026-09-23"
   },
   "carriere_longue": {
    "ajoutees": 0,
@@ -682,6 +682,17 @@
    "source": "DREES, Comptes de la protection sociale, postes E11-21.1 et E11-22.1",
    "valeurs": 10,
    "verifiee_le": "2026-09-19"
+  },
+  "pensions_residence": {
+   "ajoutees": 126,
+   "colonne": "valeur",
+   "corrigees": 0,
+   "empreinte": "fa5346aba8cad5d3",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DREES, échantillon interrégimes de retraités (EIR)",
+   "valeurs": 126,
+   "verifiee_le": "2026-09-23"
   },
   "pib_courant": {
    "ajoutees": 0,

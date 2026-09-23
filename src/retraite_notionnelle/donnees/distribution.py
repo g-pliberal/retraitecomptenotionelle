@@ -17,10 +17,96 @@ et non la seule moyenne d'un régime.
 from __future__ import annotations
 
 import csv
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from .chargement import Fiabilite
+
+#: Les quantiles que la DREES publie de la pension de droit direct, sous le
+#: code du fichier de résidence et leur rang.
+QUANTILES_PUBLIES: tuple[tuple[str, float], ...] = (
+    ("d1", 0.10), ("d2", 0.20), ("q1", 0.25), ("d3", 0.30), ("d4", 0.40),
+    ("mediane", 0.50), ("d6", 0.60), ("d7", 0.70), ("q3", 0.75), ("d8", 0.80),
+    ("d9", 0.90),
+)
+
+#: Les deux lectures de la distribution. ``tous`` est le tableau de l'enquête,
+#: tel quel ; ``france`` en retire les retraités qui résident à l'étranger.
+RESIDENCES = ("tous", "france")
+
+
+class ResidenceRetraites:
+    """Les retraités selon leur lieu de résidence, pour un millésime d'EIR.
+
+    Trois colonnes — ``etranger``, ``france``, ``ensemble`` — et, dans
+    chacune, l'effectif, les deux pensions moyennes de droit direct et les
+    onze quantiles publiés de la seconde, par sexe.
+    """
+
+    def __init__(self, racine: Path, millesime: int | None = None) -> None:
+        chemin = racine / "reference" / "macro" / "pensions_residence.csv"
+        valeurs: dict[int, dict[tuple[str, str, str], float]] = {}
+        fiabilites: dict[int, Fiabilite] = {}
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                annee = int(ligne["annee"])
+                valeurs.setdefault(annee, {})[
+                    (ligne["residence"], ligne["indicateur"], ligne["sexe"])
+                ] = float(ligne["valeur"])
+                niveau = Fiabilite.depuis_texte(ligne["fiabilite"])
+                courante = fiabilites.get(annee)
+                fiabilites[annee] = niveau if courante is None else min(courante, niveau)
+        if not valeurs:
+            raise ValueError(f"aucune ligne exploitable dans {chemin}")
+        self.millesime = max(valeurs) if millesime is None else millesime
+        if self.millesime not in valeurs:
+            raise KeyError(f"millésime absent de {chemin.name} : {self.millesime}")
+        self._valeurs = valeurs[self.millesime]
+        self.fiabilite = fiabilites[self.millesime]
+
+    def valeur(self, residence: str, indicateur: str, sexe: str) -> float:
+        return self._valeurs[(residence, indicateur, sexe)]
+
+    def repartition_etranger(self, sexe: str) -> tuple[list[float], list[float]]:
+        """La répartition des pensions des résidents à l'étranger, en points.
+
+        Linéaire entre deux quantiles publiés, de zéro au premier décile. Au-delà
+        du neuvième, la borne haute est celle qui redonne la moyenne publiée :
+        c'est tout ce que l'enquête dit de la queue.
+
+        LA GRANDEUR EST CELLE DU TABLEAU DE LA DISTRIBUTION, et ce n'est pas
+        celle des quantiles. Ceux-ci décrivent la pension de droit direct
+        « dont les majorations pour enfants » ; la moyenne du tableau de la
+        distribution — 1 432 € en 2020 — est celle de la « pension de retraite
+        de droit direct », 1 435 €, et non celle-là, 1 476 €. Les quantiles
+        sont donc ramenés à la première par le rapport des deux moyennes. Le
+        contrôle le justifie : les déciles des résidents en France que la
+        soustraction produit retombent à une vingtaine d'euros près sur ceux
+        que la DREES publie, là où ils s'en écartaient de 2 à 3 % sans lui.
+        """
+        moyenne = self.valeur("etranger", "pension_droit_direct", sexe)
+        echelle = moyenne / self.valeur("etranger", "pension_droit_direct_majorations", sexe)
+        points = [0.0] + [self.valeur("etranger", code, sexe) * echelle
+                          for code, _ in QUANTILES_PUBLIES]
+        rangs = [0.0] + [rang for _, rang in QUANTILES_PUBLIES]
+        fixe = sum((rangs[i + 1] - rangs[i]) * (points[i] + points[i + 1]) / 2.0
+                   for i in range(len(points) - 1))
+        haut = 2.0 * (moyenne - fixe) / (1.0 - rangs[-1]) - points[-1]
+        if haut <= points[-1]:
+            raise ValueError(f"moyenne de l'étranger incompatible avec ses déciles ({sexe})")
+        return points + [haut], rangs + [1.0]
+
+
+def _rang(points: list[float], rangs: list[float], montant: float) -> float:
+    """La fonction de répartition linéaire par morceaux, en un montant."""
+    if montant <= points[0]:
+        return 0.0
+    for i in range(len(points) - 1):
+        if montant <= points[i + 1]:
+            return rangs[i] + (rangs[i + 1] - rangs[i]) * (
+                (montant - points[i]) / (points[i + 1] - points[i]))
+    return 1.0
 
 
 @dataclass(frozen=True)
@@ -49,7 +135,9 @@ class DistributionPensions:
     """
 
     def __init__(self, racine: Path, sexe: str = "ensemble",
-                 millesime: int | None = None) -> None:
+                 millesime: int | None = None, residence: str = "tous") -> None:
+        if residence not in RESIDENCES:
+            raise ValueError(f"résidence inconnue : {residence!r}")
         chemin = racine / "reference" / "macro" / "distribution_pensions.csv"
         parts: dict[int, dict[float, float]] = {}
         fiabilites: dict[int, Fiabilite] = {}
@@ -85,6 +173,53 @@ class DistributionPensions:
             )
             for rang, borne in enumerate(bornes)
         )
+        #: Ce que la distribution décrit, sur les retraités de l'enquête : un
+        #: pour le tableau tel quel, la part des résidents en France sinon.
+        self.residence = residence
+        self.part_residents = 1.0
+        if residence == "france":
+            self._garder_les_residents(racine)
+
+    def _garder_les_residents(self, racine: Path) -> None:
+        """Retire du tableau les retraités qui résident à l'étranger.
+
+        LA GARANTIE NE LES SERT PAS. Elle remplace l'ASPA, et en garde la
+        condition de résidence stable et régulière en France (article
+        L. 815-1). Or le tableau de la distribution les compte — sa note dit
+        « résidants en France ou à l'étranger » —, et ils pèsent sur la queue
+        basse plus que partout : 5,5 % des retraités en 2020, mais une pension
+        française moyenne de 437 € brut par mois, leur carrière française ayant
+        été courte. Le coût de la garantie les servait jusqu'au 23 septembre
+        2026, et s'en trouvait gonflé d'un sixième environ.
+
+        L'enquête ne publie pas la distribution par tranches des résidents ;
+        elle publie leur effectif et leurs quantiles, et ceux des résidents à
+        l'étranger. On retire donc de chaque tranche ce que la répartition des
+        seconds y met — linéaire entre deux quantiles, calée sur leur moyenne
+        au-delà du neuvième décile —, et le contrôle est externe : les déciles
+        des résidents en France que cette soustraction produit sont ceux que
+        la DREES publie, à une vingtaine d'euros près.
+        """
+        residence = ResidenceRetraites(racine, self.millesime)
+        sexe = self.sexe
+        etranger = residence.valeur("etranger", "effectifs", sexe)
+        tous = residence.valeur("ensemble", "effectifs", sexe)
+        points, rangs = residence.repartition_etranger(sexe)
+        comptes = []
+        for tranche in self.tranches:
+            haut = (1.0 if tranche.borne_superieure is None
+                    else _rang(points, rangs, tranche.borne_superieure))
+            partis = etranger * (haut - _rang(points, rangs, tranche.borne_inferieure))
+            comptes.append(max(0.0, tranche.part * tous - partis))
+        total = sum(comptes)
+        self.tranches = tuple(replace(tranche, part=compte / total)
+                              for tranche, compte in zip(self.tranches, comptes))
+        self.part_residents = residence.valeur("france", "effectifs", sexe) / tous
+        #: La part des femmes parmi les résidents : celle que la garantie pèse.
+        self.part_femmes_residents = (
+            residence.valeur("france", "effectifs", "F")
+            / residence.valeur("france", "effectifs", "ensemble"))
+        self.fiabilite = min(self.fiabilite, residence.fiabilite, Fiabilite.HAUTE)
 
     def part_sous(self, montant_mensuel: float) -> float:
         """La part des retraités dont la pension est inférieure à un montant,
