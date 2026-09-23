@@ -15099,3 +15099,92 @@ point retire ou déplace quelque chose qu'une demande précédente a posé :
 **Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
 `tests/test_web.py`, `tests/temoins/pages.json`, `README.md`,
 `docs/parcours_presentation.md`.
+
+### 118. Chaque part du PIB se lit aussi en euros, partout où le site en écrit une — `fait`
+
+**Demande.** « J'aimerais que tout ce qui est identifié en % du PIB soit aussi
+identifié en €. Certaines personnes sont plus habitués aux montants en euros.
+Il y a déjà une partie du travail qui a été fait et il faut aller jusqu'au bout
+de ce processus. » (23 septembre 2026)
+
+**Ce qui existait.** Le tableau poste par poste (action 35, D), la note sur les
+impôts rendus et le simulateur (action 62) disaient leurs parts en milliards,
+au PIB de la dernière année publiée ; la cascade (actions 37 et 38) convertissait
+les années projetées au PIB que le modèle projette, en euros courants de
+l'année ; la trajectoire du modèle était en euros constants. Le reste, trente
+endroits recensés sur cinq pages, ne parlait qu'en part du PIB : les quatre
+graphiques qui en sont tracés, le tableau du solde et du coefficient, celui du
+stock, la frise, la dette publique, les engagements acquis, le compte du COR
+de la page Risque, les chiffres qu'elle cite du COR, de l'INSEE et de l'OCDE,
+la carte « Le déficit » de Partager, le solde de l'accueil et de Cas types.
+
+**Une seule règle pour tout le site** (`_pib_de_conversion`, `pibDeConversion`) :
+une année dont l'INSEE publie le PIB se convertit au PIB de cette année-là,
+c'est ce qui a été versé, encaissé ou dû ; une année projetée se convertit au
+PIB de la dernière année publiée, et la page l'écrit, « au PIB de 2025 ». C'est
+la règle de l'action 62 : un PIB de 2070 serait une hypothèse de croissance
+déguisée en observation, et des euros de 2070 porteraient toute l'inflation
+d'ici là. Seule la trajectoire du modèle garde ses euros constants, parce que
+ses parts en sont tirées et que ses tableaux le disent.
+
+**Ce qui a été fait.**
+
+- *Les graphiques.* `g.graphique` prend un `pib` par année : chaque point de
+  son tableau, donc de la lecture au survol qui le relit, s'écrit
+  « 14,1 % · 422 Md € ». Le tracé ne change pas. Sous la carte de tête, une
+  bulle dit la règle et ce que vaut un point, 29,9 Md € en 2025 : la carte
+  était au plafond de son budget de lecture, et la bulle n'y compte pas.
+- *Les tableaux.* La même forme dans la case, les deux unités côte à côte :
+  solde et coefficient d'équilibre, stock de 2070 et sensibilité au taux,
+  dépendance démographique (en euros constants), compte du COR de Risque.
+- *La frise.* Chaque flux porte ses milliards sous sa part, chaque ligne du
+  stock les siens alignés à droite. Les colonnes passent de 200 à 260 unités,
+  pour que la réserve du système 2 tienne sans toucher sa voisine : 19,6 unités
+  de blanc au plus serré, mesurées au navigateur sur les quatre frises.
+- *La prose* des cinq pages, et les chiffres cités (les −0,2, −0,9 et −2,4 points
+  du COR, les 3,7 et 6,3 points de l'INSEE, l'éducation et la recherche selon
+  l'OCDE, Feldstein), leurs milliards au PIB de 2025.
+- *Le README* : le tableau des soldes, les économies des scénarios 3 et 5, la
+  dette, le retrait et les impôts affectés, par des sondes qui prennent
+  `en=milliards` et suivent la même règle (`_milliards_de_part`).
+
+**Trois choses corrigées en chemin.**
+
+- *La cascade suivait une autre règle.* En 2070, elle disait la dépense du
+  système actuel à 1 278 Md €, en euros de 2070 au PIB projeté, quand la carte
+  du haut en donne désormais 458 au même endroit. Elle suit la règle du site ;
+  le README, qui disait les impôts affectés de 2026 à 66 Md € au PIB projeté,
+  en dit 64, comme la page.
+- *Le tableau poste par poste* prenait le PIB de 2025 même pour une bascule
+  réglée sur une année passée, et affirmait alors qu'un PIB publié ne l'était
+  pas. La note restitution et le programme lisent le même PIB que lui.
+- *La note sur la recette* du tableau poste par poste nommait encore
+  l'assurance chômage parmi les versements retirés aux scénarios notionnels.
+  La correction des périodes indemnisées, poussée le même jour, la leur
+  laisse : la note ne nomme plus que la branche famille et le fonds de
+  solidarité vieillesse, comme le dépliant des transferts.
+
+**Ce que ça a déplacé.** Aucun chiffre du modèle : les simulations sont
+identiques, les pages portent des milliards de plus, et le JavaScript rend le
+même HTML que le Python. Les milliards n'ajoutent rien à la prose ouverte de
+la page Coût : la règle y est dite dans une bulle, que le budget de lecture ne
+compte pas. Les tableaux ouverts de Risque passent de 250 à 270 mots, dix cases
+de quatre mots. Le HTML de la page Coût gagne 131 000 caractères, de 570 000 à
+701 000, pour l'essentiel les tableaux des graphiques et la frise. Le test du
+README confronte désormais ses milliards à ceux de la page.
+
+**Ce qui reste.**
+
+- Les documents : `limites.md` et `methodologie.md` gardent leurs parts de PIB
+  seules. Les récits datés n'ont pas à être réécrits, ce sont les chiffres
+  d'un jour : les paragraphes du README que `zones.yaml` déclare récits,
+  `risque_de_defaut.md`, cette feuille de route. `chiffrage_plf.md` dit déjà
+  tout en milliards d'euros courants, comme un projet de loi de finances les
+  demande.
+- Sur téléphone, la légende du graphique de tête s'allonge : la case de la
+  valeur réserve sa largeur, et « 14,3 % · 428 Md € » en prend plus que « 14,3 ».
+
+**Fichiers.** `src/retraite_notionnelle/web/gabarit.py` et `moteur/js/gabarit.js`
+(`milliards`, `part_et_milliards`, le `pib` des graphiques, la frise),
+`web/pages.py` et `moteur/js/pages.js`, `scripts/mesures_prose.py`, `README.md`,
+`tests/test_web.py`, `tests/temoins/pages.json`.
