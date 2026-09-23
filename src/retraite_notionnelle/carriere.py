@@ -810,12 +810,22 @@ class Carriere:
 
         LA CONVENTION, ET IL N'Y EN A QU'UNE : LA DERNIÈRE ANNÉE SE PROLONGE.
         Même statut, même nature de période, même salaire RELATIF — le revenu
-        annualisé de la dernière ligne, avancé chaque année au rythme du
-        salaire moyen, comme le fait déjà le dénominateur du taux de
-        remplacement. Elle vaut pour toutes les carrières, qu'elles viennent
-        d'un profil, d'un parcours ou d'un relevé, et c'est pourquoi elle ne
-        relit aucun profil : un relevé n'en a pas. Qui finissait sa carrière au
-        chômage la finit donc au chômage, trois ans plus tard.
+        annualisé de la ligne, avancé chaque année au rythme du salaire moyen,
+        comme le fait déjà le dénominateur du taux de remplacement. Elle vaut
+        pour toutes les carrières, qu'elles viennent d'un profil, d'un parcours
+        ou d'un relevé, et c'est pourquoi elle ne relit aucun profil : un relevé
+        n'en a pas. Qui finissait sa carrière au chômage la finit donc au
+        chômage, trois ans plus tard.
+
+        TOUTE LA DERNIÈRE ANNÉE, et non sa dernière ligne : l'activité
+        principale ET chaque activité cumulée qui court encore au départ, à son
+        propre revenu. Jusqu'au 23 septembre 2026, seule la dernière ligne se
+        prolongeait — celle d'une activité cumulée, puisqu'elle vient après la
+        principale : le salarié qui exerçait aussi en libéral ne gardait que son
+        revenu libéral pendant les années du report. Une activité cumulée qui
+        s'arrête dans la dernière année, avant le départ, ne se prolonge pas :
+        elle y couvre moins de mois que l'activité principale alors qu'elle
+        courait déjà l'année d'avant.
 
         Rend la carrière elle-même, inchangée, quand le départ demandé ne
         tombe pas après celui qu'elle porte.
@@ -826,26 +836,38 @@ class Carriere:
         initiale = self.date_liquidation
         fin = self.date_naissance.plus_mois(en_mois(age_liquidation))
         motifs = charger_periodes_non_travaillees(macro.racine)
-        derniere = self.lignes[-1]
-        cotisee = derniere.type_periode == "emploi"
-        # Le revenu annualisé de la dernière ligne : ce qui a été perçu pour
-        # une année d'emploi, le salaire de référence pour une interruption.
-        base = derniere.revenu if cotisee else derniere.revenu_reference
-        base = base / derniere.fraction_annee if derniere.fraction_annee > 0 else 0.0
-        reference = salaire_moyen_annuel(macro, derniere.annee)
+        derniere_annee = self.lignes[-1].annee
+        finales = self.lignes_de(derniere_annee)
+        principale = finales[0]
+        veille = {ligne.affiliation for ligne in self.lignes_de(derniere_annee - 1)}
 
-        def ligne(annee: int, mois: int) -> AnneeCarriere:
+        def poursuivie(ligne: AnneeCarriere) -> bool:
+            """L'activité de cette ligne court-elle encore au départ initial ?"""
+            return (ligne is principale
+                    or round(ligne.fraction_annee * MOIS_PAR_AN)
+                    >= round(principale.fraction_annee * MOIS_PAR_AN)
+                    or ligne.affiliation not in veille)
+
+        reference = salaire_moyen_annuel(macro, derniere_annee)
+
+        def ligne(source: AnneeCarriere, annee: int, mois: int) -> AnneeCarriere:
+            """``source`` poursuivie ``mois`` mois de ``annee``."""
+            # Le revenu annualisé de la ligne : ce qui a été perçu pour une
+            # année d'emploi, le salaire de référence pour une interruption.
+            percu = (source.revenu if source.type_periode == "emploi"
+                     else source.revenu_reference)
+            base = percu / source.fraction_annee if source.fraction_annee > 0 else 0.0
             facteur = (salaire_moyen_annuel(macro, annee) / reference
                        if reference > 0 else 1.0)
             return _ligne_annuelle(
                 annee=annee,
                 revenu=base * facteur * mois / MOIS_PAR_AN,
-                affiliation=derniere.affiliation,
-                type_periode=derniere.type_periode,
+                affiliation=source.affiliation,
+                type_periode=source.type_periode,
                 macro=macro,
                 motifs=motifs,
                 part=mois / MOIS_PAR_AN,
-                part_primes=derniere.part_primes,
+                part_primes=source.part_primes,
                 trimestres_maximum=trimestres_civils(mois),
             )
 
@@ -863,19 +885,24 @@ class Carriere:
         # Une carrière qui s'arrêtait AVANT son départ — un relevé dont les
         # dernières années sont vides — finissait sans activité : c'est cette
         # situation-là qui se prolonge, et le report n'ajoute aucune ligne.
-        contigue = (derniere.annee == initiale.annee
-                    or (derniere.annee == initiale.annee - 1 and initiale.mois == 1))
+        contigue = (derniere_annee == initiale.annee
+                    or (derniere_annee == initiale.annee - 1 and initiale.mois == 1))
         lignes = list(self.lignes)
         if contigue:
-            ajoutes = (fin_travaillee(derniere.annee, fin)
-                       - fin_travaillee(derniere.annee, initiale))
+            sources = [source for source in finales if poursuivie(source)]
+            ajoutes = (fin_travaillee(derniere_annee, fin)
+                       - fin_travaillee(derniere_annee, initiale))
             if ajoutes > 0:
-                mois = round(derniere.fraction_annee * MOIS_PAR_AN) + ajoutes
-                lignes[-1] = ligne(derniere.annee, min(mois, MOIS_PAR_AN))
-            for annee in range(derniere.annee + 1, fin.annee + 1):
+                for source in sources:
+                    mois = round(source.fraction_annee * MOIS_PAR_AN) + ajoutes
+                    rang = next(i for i, l in enumerate(lignes) if l is source)
+                    lignes[rang] = ligne(source, derniere_annee, min(mois, MOIS_PAR_AN))
+            # L'activité principale en tête de chaque année, les cumulées
+            # ensuite : l'ordre que le tri stable de la carrière conserve.
+            for annee in range(derniere_annee + 1, fin.annee + 1):
                 mois = fin_travaillee(annee, fin)
                 if mois > 0:
-                    lignes.append(ligne(annee, mois))
+                    lignes.extend(ligne(source, annee, mois) for source in sources)
 
         return Carriere(
             annee_naissance=self.annee_naissance,

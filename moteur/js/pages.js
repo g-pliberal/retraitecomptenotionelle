@@ -13824,7 +13824,7 @@ n'est pas petite.</p>`;
  */
 export const MESURES_BLOCAGES = {
   taux_regime_unique: 25.8,
-  cout_18_pour_cent: 2.4,
+  cout_18_pour_cent: 1.9,
   solde_moyen_proposition: 0.5,
   solde_moyen_actuel: -1.1,
   dette_2070_proposition: -31,
@@ -13834,7 +13834,7 @@ export const MESURES_BLOCAGES = {
   coefficient_2070: 1.25,
   tva_affectee: 2.2,
   solde_moyen_prospectif: -1.5,
-  cout_diviseur_age_legal: 0.1,
+  cout_diviseur_age_legal: 0.2,
 };
 
 /**

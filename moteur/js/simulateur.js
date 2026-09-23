@@ -700,7 +700,6 @@ export class Simulateur {
     }
   }
 
-  /** Calcule les six scénarios pour une carrière. */
   /**
    * La carrière que la proposition fait liquider : la même, sauf l'âge. Son
    * âge légal ne s'applique qu'aux départs qu'elle régit, ceux qui prennent
@@ -732,6 +731,7 @@ export class Simulateur {
     return this.scenarioLiberal.liberal(carriere, fusionne);
   }
 
+  /** Calcule les six scénarios pour une carrière. */
   simuler(carriere) {
     this._verifierFiabilite(carriere);
     const proposition = this.carriereProposition(carriere);

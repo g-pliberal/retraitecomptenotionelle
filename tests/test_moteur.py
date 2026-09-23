@@ -565,11 +565,11 @@ def test_le_defaut_tient_le_cliquet_puis_fixe_l_age_legal_de_la_proposition(mort
 
     Avant elle, le cliquet, parce qu'une liquidation de 1990 se mesure à son
     époque. À partir d'elle, l'âge légal de départ de la proposition, 65 ans
-    depuis le 22 septembre 2026 — et c'est le même paramètre qui les tient
-    ensemble, sans quoi la référence et l'âge légal divergeraient au premier
-    réglage. La bascule elle-même est du second côté : les droits acquis y
-    sont convertis, et c'est le seul calcul où l'âge de référence pèse sur une
-    pension.
+    depuis le 22 septembre 2026. Ce sont DEUX paramètres,
+    ``age_reference_fixe`` et ``age_legal_liberal`` : ce test tient leurs
+    défauts égaux, mais régler l'un ne règle pas l'autre. La bascule elle-même
+    est du second côté : les droits acquis y sont convertis, et c'est le seul
+    calcul où l'âge de référence pèse sur une pension.
     """
     parametres = Parametres()
     assert parametres.mode_age_reference is ModeAgeReference.FIXE_APRES_BASCULE

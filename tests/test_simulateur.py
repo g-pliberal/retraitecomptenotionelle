@@ -5432,6 +5432,68 @@ def test_un_releve_qui_s_arrete_avant_le_depart_n_est_pas_prolonge(simulateur):
     assert prolongee.lignes == carriere.lignes
 
 
+def test_la_prolongation_poursuit_aussi_l_activite_cumulee(simulateur):
+    """Le salarié qui exerce aussi en libéral garde SES DEUX revenus pendant
+    les années du report, l'activité principale en tête. Jusqu'au 23
+    septembre 2026, seule la dernière ligne de l'année se prolongeait — la
+    libérale — et le salaire disparaissait."""
+    from retraite_notionnelle.carriere import salaire_moyen_annuel
+
+    carriere = simulateur.carriere_parcours(
+        annee_naissance=1975, sexe="H",
+        metiers=[Metier(affiliation="salarie_prive_non_cadre", age_debut=21.0),
+                 Metier(affiliation="medecin_liberal", age_debut=35.0,
+                        niveau_salaire=0.8, cumul=True)],
+        age_liquidation=64.0)
+    assert str(carriere.date_liquidation) == "janvier 2039"
+    prolongee = carriere.prolongee(65.0, simulateur.macro)
+    assert str(prolongee.date_liquidation) == "janvier 2040"
+    avant = carriere.lignes_de(2038)
+    apres = prolongee.lignes_de(2039)
+    assert [l.affiliation for l in apres] == [l.affiliation for l in avant] == [
+        "salarie_prive_non_cadre", "medecin_liberal"]
+    rythme = (salaire_moyen_annuel(simulateur.macro, 2039)
+              / salaire_moyen_annuel(simulateur.macro, 2038))
+    for ancienne, nouvelle in zip(avant, apres):
+        assert nouvelle.revenu == pytest.approx(ancienne.revenu * rythme)
+
+
+def test_une_activite_cumulee_arretee_avant_le_depart_ne_reprend_pas(simulateur):
+    """Arrêtée en juillet 2038, six mois avant le départ initial : elle ne
+    court plus au départ, et le report ne la ranime pas."""
+    carriere = simulateur.carriere_parcours(
+        annee_naissance=1975, sexe="H",
+        metiers=[Metier(affiliation="salarie_prive_non_cadre", age_debut=21.0),
+                 Metier(affiliation="medecin_liberal", age_debut=35.0,
+                        niveau_salaire=0.8, cumul=True, age_fin=63.5)],
+        age_liquidation=64.0)
+    assert [l.affiliation for l in carriere.lignes_de(2038)] == [
+        "salarie_prive_non_cadre", "medecin_liberal"]
+    prolongee = carriere.prolongee(65.0, simulateur.macro)
+    assert [l.affiliation for l in prolongee.lignes_de(2039)] == [
+        "salarie_prive_non_cadre"]
+
+
+def test_la_prolongation_d_un_releve_ne_depend_pas_de_l_ordre_des_lignes(simulateur):
+    """Deux activités la même dernière année : les deux se prolongent, dans
+    quelque ordre que le relevé les donne."""
+    def releve(ordre):
+        lignes = []
+        for annee in range(1987, 2027):
+            for affiliation, revenu in ordre:
+                lignes.append(LigneRelevee(annee=annee, affiliation=affiliation,
+                                           revenu=revenu))
+        return simulateur.carriere_releve(1965, "H", lignes, age_liquidation=62.0)
+
+    activites = [("fonctionnaire_etat", 40_000.0), ("salarie_prive_non_cadre", 2_000.0)]
+    un = releve(activites).prolongee(65.0, simulateur.macro)
+    autre = releve(activites[::-1]).prolongee(65.0, simulateur.macro)
+    for annee in (2027, 2028, 2029):
+        assert len(un.lignes_de(annee)) == 2
+        assert (sum(l.revenu for l in un.lignes_de(annee))
+                == pytest.approx(sum(l.revenu for l in autre.lignes_de(annee))))
+
+
 def test_l_age_legal_ne_reporte_que_les_departs_qu_il_regit(simulateur):
     """Avant 65 ans et à compter de la bascule : reporté. Avant la bascule,
     ou à 65 ans et plus : la carrière elle-même."""
