@@ -14673,15 +14673,22 @@ cible), le document de l'hébergeur (neuf autres pages, toutes les routes,
 quatre systèmes et leurs couleurs), `.gitattributes` (une seule recette, et
 deux fichiers fabriqués de plus en `-merge`), et l'en-tête de ce fichier.
 
-**Reste**, relevé par l'audit et non corrigé. Le passif acquis du scénario 1
-est revalorisé par la règle notionnelle dans `calculer_engagements` alors que
-ses masses restent sur les prix (579 % du PIB en 2021 au lieu de 522, face aux
-397 % d'Eurostat) ; après la bascule, les retraités d'avant 2026 gardent leurs
-majorations pour enfants dans les scénarios prospectifs, mais le
-remboursement de la branche famille en est retiré (0,2 point en 2026) ; le
-tableau poste par poste de la page Coût ne montre pas la même garantie que la
-trajectoire l'année de la bascule. Et, du lot 2, le seuil de la première
-tranche du RCI de 2014 à 2023.
+**L'engagement acquis — fait, le même jour.** Il revalorisait les pensions
+du système actuel sur la règle notionnelle, quand ses masses, et l'ancrage qui
+les convertit en euros, les laissent sur les prix : 577 % du PIB en 2021 au
+lieu de 520, face aux 397 % d'Eurostat, et un écart de taux de 2,0 points au
+lieu de 1,3. Une seule fonction, `regle_revalorisation`, dit désormais la
+règle aux masses et à l'engagement, et un test double la règle notionnelle
+sans que l'engagement du système actuel bouge. Le tableau de `limites.md` qui
+le chiffre est ancré sur la table figée (`mesure(engagement)`), et l'arrêté
+du SMIC de juin, que le lot 4 laissait à lire, l'a été dans l'index JORF.
+
+**Reste**, relevé par l'audit et non corrigé. Après la bascule, les retraités
+d'avant 2026 gardent leurs majorations pour enfants dans les scénarios
+prospectifs, mais le remboursement de la branche famille en est retiré
+(0,2 point en 2026) ; le tableau poste par poste de la page Coût ne montre pas
+la même garantie que la trajectoire l'année de la bascule. Et, du lot 2, le
+seuil de la première tranche du RCI de 2014 à 2023.
 
 ### 112. Le retraité voit la pension qu'il touche aujourd'hui, et un cas type la refait à la main — `fait`
 

@@ -42,9 +42,14 @@ from retraite_notionnelle.cout import (
     COMPOSANTE_GARANTIE,
     CONVENTION_REVERSION_SERVIE,
     CONVENTION_REVERSION_SUPPRIMEE,
+    REGLE_PRIX,
+    REGLE_PROSPECTIVE,
+    REGLE_STOCK,
     Dette,
     calculer_dette,
+    calculer_engagements,
     masse_du_scenario,
+    regle_revalorisation,
 )
 from retraite_notionnelle.donnees.assiette import (
     POSTES_ASSIETTE,
@@ -81,6 +86,7 @@ from retraite_notionnelle.garantie import (
     cout_garantie,
     cout_garantie_par_sexe,
 )
+from retraite_notionnelle.revalorisation import RevalorisationServie
 from retraite_notionnelle.simulateur import Simulateur
 
 
@@ -777,6 +783,50 @@ def test_une_ponderation_inconnue_est_refusee(depenses, population):
     with pytest.raises(ValueError, match="pondération inconnue"):
         calculer_cout(Simulateur(Parametres()), depenses, population,
                       ponderation="au_hasard")
+
+
+# -- l'engagement acquis -------------------------------------------------------
+
+
+def test_chaque_systeme_revalorise_ce_qu_il_sert_selon_sa_regle():
+    """Le système actuel sur les prix, les notionnels sur la règle du compte."""
+    assert regle_revalorisation("actuel") == REGLE_PRIX
+    for cle, _ in SCENARIOS:
+        if cle == "actuel":
+            continue
+        attendue = REGLE_PROSPECTIVE if cle in CLES_PROSPECTIVES else REGLE_STOCK
+        assert regle_revalorisation(cle) == attendue, cle
+
+
+def test_l_engagement_revalorise_comme_les_masses(depenses, population, monkeypatch):
+    """L'engagement acquis revalorise ce qu'un système sert comme ses masses.
+
+    Le système actuel est indexé sur les prix : en euros constants, une pension
+    servie n'y bouge pas, et l'ancrage qui convertit ses masses en euros le
+    suppose. Jusqu'au 23 septembre 2026, l'engagement le revalorisait pourtant
+    sur la règle notionnelle, et le grossissait d'un dixième. On DOUBLE ici la
+    règle notionnelle : l'engagement du système actuel ne doit pas bouger, celui
+    d'un système notionnel, rétroactif ou prospectif, doit doubler exactement.
+    Deux cas types suffisent, la règle ne dépend pas de la carrière.
+    """
+    simulateur = Simulateur(Parametres())
+    cas = CAS_TYPES[:2]
+    scenarios = ["actuel", "notionnel_liberal", *sorted(CLES_PROSPECTIVES)[:1]]
+    reference = calculer_engagements(simulateur, depenses, population, 2021,
+                                     scenarios, cas_types=cas)
+    regle = RevalorisationServie.coefficient_stock
+    monkeypatch.setattr(
+        RevalorisationServie, "coefficient_stock",
+        lambda soi, liquidation, annee, prospectif:
+            2.0 * regle(soi, liquidation, annee, prospectif),
+    )
+    double = calculer_engagements(simulateur, depenses, population, 2021,
+                                  scenarios, cas_types=cas)
+    assert double.part_pib("actuel") == pytest.approx(
+        reference.part_pib("actuel"), rel=1e-12)
+    for cle in scenarios[1:]:
+        assert double.part_pib(cle) == pytest.approx(
+            2.0 * reference.part_pib(cle), rel=1e-12), cle
 
 
 # -- l'âge auquel chaque cas type liquide ------------------------------------

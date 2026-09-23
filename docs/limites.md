@@ -8169,20 +8169,28 @@ année.
 
 | | Part du PIB en 2021 |
 |---|---|
-| Système actuel, convention du COR | **579 %** |
-| — dont retraités (pension entière acquise) | 231 % |
-| — dont actifs, au prorata de la carrière faite | 347 % |
-| Proposition (système 6) | 370 % |
-| Notionnel part salariale (système 2) | 162 % |
-| Publié par Eurostat, tableau 29 | 397 % |
+| Système actuel, convention du COR | **<!--chiffre:mesure(engagement)-->520<!--/--> %** |
+| — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->196<!--/--> % |
+| — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->324<!--/--> % |
+| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->383<!--/--> % |
+| Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->168<!--/--> % |
+| Publié par Eurostat, tableau 29 | <!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % |
 
 La proposition doit moins parce qu'elle promet moins : c'est la même règle qui
 fait baisser ses pensions et son engagement, et le rapport des deux est à peu
 près celui des masses.
 
+Chaque système y revalorise ce qu'il sert selon SA règle, celle de ses masses :
+les prix pour le système actuel, que l'article L. 161-23-1 du code de la
+sécurité sociale y indexe, la règle du compte pour les systèmes notionnels.
+Jusqu'au 23 septembre 2026, l'engagement revalorisait aussi le système actuel
+sur la règle notionnelle, plus rapide que les prix, et le trouvait d'un dixième
+plus haut ; un test double désormais la règle notionnelle et vérifie que
+l'engagement du système actuel ne bouge pas.
+
 **L'écart avec le chiffre publié est un TAUX, pas un droit.** Les mêmes droits,
-actualisés **deux points de plus par an**, valent exactement les 397 %
-d'Eurostat. Ni l'un ni l'autre n'est faux : un engagement acquis n'a pas de
+actualisés **<!--chiffre:mesure(engagement?quoi=ecart)-->1,3<!--/--> point de plus par an**, valent exactement les
+<!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % d'Eurostat. Ni l'un ni l'autre n'est faux : un engagement acquis n'a pas de
 niveau propre, il a un taux. C'est la même démonstration que les soixante points
 d'écart entre deux transmissions, faite cette fois de l'intérieur, et c'est
 pourquoi la page affiche les deux sans choisir.
@@ -8197,7 +8205,7 @@ que pour cinq des six, et l'étalon serait hors du tableau. Ensuite,
 l'**extrapolation au-delà de 2070** : l'INSEE ne projette pas la pyramide plus
 loin, et les cohortes déjà nées y sont prolongées par la table de mortalité du
 dépôt, la même qui sert de diviseur aux comptes notionnels. Elle ne porte que
-**35 points sur 579**, soit six pour cent : le résultat ne dit donc pas d'abord
+**<!--chiffre:mesure(engagement?quoi=hors_projection)-->29<!--/--> points sur <!--chiffre:mesure(engagement)-->520<!--/-->** : le résultat ne dit donc pas d'abord
 une table de mortalité, et un test borne cette part. Enfin, la table est **figée
 sous les réglages de référence**, comme le reste du bilan, parce que sommer
 quatre-vingts années de flux ne peut pas se faire chez le lecteur.
@@ -8932,7 +8940,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2332<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2334<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -1703,6 +1703,31 @@ CLES_PROSPECTIVES: frozenset[str] = frozenset({
     "notionnel_prospectif", "notionnel_prospectif_employeur",
 })
 
+#: Les trois règles qu'une pension SERVIE suit, selon le système : les prix,
+#: soit un coefficient de un en euros constants ; la règle du compte, celle du
+#: stock comprise ; la même, pour une réforme qui ne commence qu'à la bascule.
+REGLE_PRIX = "prix"
+REGLE_STOCK = "stock"
+REGLE_PROSPECTIVE = "prospective"
+
+
+def regle_revalorisation(cle: str) -> str:
+    """La règle qu'une pension servie suit sous le système ``cle``.
+
+    UNE SEULE FONCTION, PARCE QUE DEUX CALCULS DOIVENT DIRE LA MÊME CHOSE : la
+    masse d'une année (:func:`_masses`) et l'engagement acquis
+    (:func:`calculer_engagements`), qui somme ces mêmes pensions sur toute la
+    retraite. Jusqu'au 23 septembre 2026, chacun décidait de son côté, et
+    l'engagement revalorisait le système actuel sur la règle notionnelle
+    quand ses masses, et l'ancrage qui les convertit en euros, le laissaient
+    sur les prix.
+    """
+    if cle in CLES_PROSPECTIVES:
+        return REGLE_PROSPECTIVE
+    if cle in CLES_REVALORISEES:
+        return REGLE_STOCK
+    return REGLE_PRIX
+
 
 #: Les deux comptes de TÊTES que la grille rend avec ses masses : tous les
 #: retraités qu'elle représente, et ceux d'entre eux qui ont atteint l'âge de
@@ -1800,9 +1825,10 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
                     + poids_garantie_nominal * rente
                 )
                 continue
-            if cle in CLES_PROSPECTIVES:
+            regle = regle_revalorisation(cle)
+            if regle == REGLE_PROSPECTIVE:
                 poids_cle = poids_revalorise_prospectif
-            elif cle in CLES_REVALORISEES:
+            elif regle == REGLE_STOCK:
                 poids_cle = poids_revalorise
             else:
                 poids_cle = poids
@@ -3089,6 +3115,13 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     PIB de l'année. Les effectifs viennent de l'INSEE tant qu'il les projette,
     de la table de mortalité ensuite — ``hors_projection`` dit ce que cette
     seconde moitié pèse, et c'est peu.
+
+    CE QUE DEVIENT LA PENSION UNE FOIS SERVIE est la règle de son système,
+    celle de ses masses (:func:`regle_revalorisation`) : les prix pour le
+    système actuel, que l'article L. 161-23-1 y indexe, la règle du compte
+    pour les systèmes notionnels. Jusqu'au 23 septembre 2026, le système
+    actuel suivait ici la règle notionnelle, plus rapide que les prix :
+    son engagement de 2021 en était grossi d'un dixième.
     """
     pensionnes, _ = _pensionnes(simulateur, cas_types, liquidation)
     poids = _ponderation(simulateur, ponderation, cas_types)
@@ -3148,6 +3181,12 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     }
 
     cles = list(dict.fromkeys(scenarios))
+    # Chaque système revalorise ce qu'il sert selon SA règle, celle de ses
+    # masses : l'ancrage ci-dessus convertit une masse du système actuel
+    # restée sur les prix, et l'engagement ne peut pas la revaloriser
+    # autrement sans cesser d'être la somme de ces masses.
+    regles = {cle: regle_revalorisation(cle) for cle in cles}
+    regles_utiles = set(regles.values())
     totaux = {cle: 0.0 for cle in cles}
     parts = {"retraites": 0.0, "actifs": 0.0, "hors_projection": 0.0}
     sensibilite = {ecart: 0.0 for ecart in ECARTS_ACTUALISATION}
@@ -3178,13 +3217,20 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
                     continue
                 commun = (
                     acquis * part_caisse * effectif
-                    * revalorisation.coefficient_stock(fin_carriere, millesime,
-                                                       prospectif=False)
                     * ancrage / macro.coefficient_prix(millesime, annee_euros)
                     / pib[millesime]
                 )
+                coefficients = {
+                    REGLE_PRIX: 1.0,
+                    REGLE_STOCK: revalorisation.coefficient_stock(
+                        fin_carriere, millesime, prospectif=False),
+                }
+                if REGLE_PROSPECTIVE in regles_utiles:
+                    coefficients[REGLE_PROSPECTIVE] = revalorisation.coefficient_stock(
+                        fin_carriere, millesime, prospectif=True)
                 for cle in cles:
-                    totaux[cle] += commun * pensionne.pensions[cle]
+                    totaux[cle] += (commun * coefficients[regles[cle]]
+                                    * pensionne.pensions[cle])
                 valeur = commun * pensionne.pensions["actuel"]
                 parts["retraites" if acquis >= 1.0 else "actifs"] += valeur
                 if millesime > depart_survie:

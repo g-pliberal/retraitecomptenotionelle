@@ -1438,6 +1438,37 @@ def allocation(**reglages: str) -> float:
     raise ValueError(f"quoi inconnu « {quoi} »")
 
 
+
+def engagement(**reglages: str) -> float:
+    """L'engagement acquis de la table figée, en % du PIB de son année.
+
+    Celui d'un système (``scenario``, le 1 si on l'omet) ; ``quoi=retraites``
+    ou ``quoi=actifs``, l'une des deux moitiés de celui du système actuel ;
+    ``quoi=hors_projection``, ce que la table de mortalité y porte après la
+    pyramide de l'INSEE ; ``quoi=publie``, le chiffre d'Eurostat ; et
+    ``quoi=ecart``, en points, l'écart de taux qui ramène le premier au
+    dernier. C'est ce que la page Coût écrit, lu dans la même table.
+    """
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.bilan import charger_bilan
+
+    acquis = charger_bilan(RACINE_DONNEES).engagements
+    if acquis is None:
+        raise ValueError("la table figée ne porte pas l'engagement acquis")
+    quoi = reglages.get("quoi", "total")
+    if quoi == "total":
+        return acquis.part_pib(_scenario(reglages.get("scenario", "1"))) * 100
+    if quoi == "ecart":
+        ecart = acquis.ecart_pour(acquis.publie)
+        if ecart is None:
+            raise ValueError("la sensibilité ne couvre pas le chiffre publié")
+        return ecart * 100
+    if quoi in ("retraites", "actifs", "hors_projection", "publie"):
+        return getattr(acquis, quoi) * 100
+    raise ValueError(f"« {quoi} » : attendu total, retraites, actifs, "
+                     "hors_projection, publie ou ecart")
+
+
 MESURES = {
     "solde": solde,
     "solde_moyen": solde_moyen,
@@ -1501,6 +1532,7 @@ MESURES = {
     "part_pensions_sous": part_pensions_sous,
     "fiche_regime": fiche_regime,
     "fourchette": fourchette,
+    "engagement": engagement,
 }
 
 
