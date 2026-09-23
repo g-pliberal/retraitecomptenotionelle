@@ -29,7 +29,7 @@ import {
   DureesServicesMilitaires,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
-  SurcoteBaremes, SurcoteParentale, ValeursPoint,
+  MajorationsEnfantsPoints, SurcoteBaremes, SurcoteParentale, ValeursPoint,
 } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
 
@@ -127,6 +127,7 @@ export class ScenarioActuel {
     this.surcoteBaremes = new SurcoteBaremes(paquet);
     this.majorationsEnfants = new MajorationsPourEnfants(paquet);
     this.surcoteParentale = new SurcoteParentale(paquet);
+    this.majorationsEnfantsPoints = new MajorationsEnfantsPoints(paquet);
   }
 
   // -- valorisation des points -----------------------------------------------
@@ -1752,6 +1753,18 @@ export class ScenarioActuel {
     // pas le prix d'achat du point ; points acquis pour les autres.
     const cumulCotisations = new Map();
     const pointsAcquis = new Map();
+    // La majoration pour enfants des points de l'Agirc-Arrco dépend de leur
+    // année d'ACQUISITION : voir `crediter` dans le Python.
+    const majorationPoints = new Map();
+    const pointsMajores = new Map();
+    const crediter = (code, annee, points) => {
+      pointsAcquis.set(code, (pointsAcquis.get(code) ?? 0.0) + points);
+      const taux = this.majorationsEnfantsPoints.taux(code, annee, carriere.nombre_enfants);
+      if (taux !== null) {
+        majorationPoints.set(code, (majorationPoints.get(code) ?? 0.0) + points * taux);
+        pointsMajores.set(code, (pointsMajores.get(code) ?? 0.0) + points);
+      }
+    };
     const fiabilitePoints = new Map();
     // Durée d'assurance validée dans chaque régime, PÉRIODES ASSIMILÉES
     // COMPRISES : le coefficient de proratisation porte sur la durée
@@ -1978,9 +1991,8 @@ export class ScenarioActuel {
             // cents SMIC horaires au moins et sur un plafond au plus.
             const [echelleMsa, fiabiliteEchelleMsa] = this.conversionsPoints
               .echelle(bareme, ligne.annee, anneeLiquidation);
-            pointsAcquis.set(code,
-              (pointsAcquis.get(code) ?? 0.0)
-                + this.pointsMsa(periode, ligne.annee, assiette) * part * echelleMsa);
+            crediter(code, ligne.annee,
+              this.pointsMsa(periode, ligne.annee, assiette) * part * echelleMsa);
             fiabilitePoints.set(code, Math.min(
               fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
               fiabiliteEchelleMsa,
@@ -2016,8 +2028,7 @@ export class ScenarioActuel {
               }
               points += ajustement;
             }
-            pointsAcquis.set(code,
-              (pointsAcquis.get(code) ?? 0.0) + points * echelleTrim);
+            crediter(code, ligne.annee, points * echelleTrim);
             fiabilitePoints.set(code, Math.min(
               fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
               fiabiliteEchelleTrim,
@@ -2032,9 +2043,8 @@ export class ScenarioActuel {
             // sont les barèmes qui sont publiés, pas les prix d'achat.
             const [echelleBareme, fiabiliteEchelleBareme] = this.conversionsPoints
               .echelle(bareme, ligne.annee, anneeLiquidation);
-            pointsAcquis.set(code,
-              (pointsAcquis.get(code) ?? 0.0)
-                + periode.points_maximum * assiette / repere * echelleBareme);
+            crediter(code, ligne.annee,
+              periode.points_maximum * assiette / repere * echelleBareme);
             fiabilitePoints.set(code, Math.min(
               fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
               fiabiliteEchelleBareme,
@@ -2061,7 +2071,7 @@ export class ScenarioActuel {
             // de 1999 n'en produisaient que 11,15.
             const [echelle, fiabiliteEchelle] = this.conversionsPoints
               .echelle(bareme, ligne.annee, anneeLiquidation);
-            pointsAcquis.set(code, (pointsAcquis.get(code) ?? 0.0) + pointsAnnee * echelle);
+            crediter(code, ligne.annee, pointsAnnee * echelle);
             fiabilitePoints.set(code, Math.min(
               fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, fiabiliteAchat,
               fiabiliteEchelle,
@@ -2784,14 +2794,25 @@ export class ScenarioActuel {
       // unifié, et plafonner chacun séparément triplerait le plafond.
       let majorationPlafonnee = 0.0;
       let plafondCommun = null;
+      // [régime, part, soumise au plafond], dans l'ordre des pensions.
+      const parts = [];
       for (const pension of pensions) {
+        if (pension.montant <= 0.0) {
+          continue;
+        }
         const regime = this.catalogue.obtenir(pension.regime);
         const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
         if (periode === null
             || !periode.avantages_non_contributifs.includes("majoration_enfants")) {
           continue;
         }
-        const taux = tauxMajorationEnfants(regime, carriere.nombre_enfants, periode);
+        let taux = tauxMajorationEnfants(regime, carriere.nombre_enfants, periode);
+        const points = pointsAcquis.get(pension.regime) ?? 0.0;
+        const majores = pointsMajores.get(pension.regime) ?? 0.0;
+        if (majores > 0.0 && points > 0.0) {
+          // CHAQUE POINT À SON TAUX, celui de son année d'acquisition.
+          taux = (majorationPoints.get(pension.regime) + taux * (points - majores)) / points;
+        }
         if (taux <= 0) {
           continue;
         }
@@ -2805,11 +2826,16 @@ export class ScenarioActuel {
           majorationPlafonnee += part;
           plafondCommun = plafondCommun === null ? plafond : Math.max(plafondCommun, plafond);
         }
+        parts.push([pension.regime, part, plafond !== null]);
         tauxCite = Math.max(tauxCite, taux);
       }
       const plafonnee = plafondCommun !== null;
+      let retenuePlafonnee = 1.0;
       if (plafondCommun !== null) {
         majoration += Math.min(majorationPlafonnee, plafondCommun);
+        if (majorationPlafonnee > plafondCommun) {
+          retenuePlafonnee = plafondCommun / majorationPlafonnee;
+        }
       }
       if (majoration > 0) {
         total += majoration;
@@ -2824,6 +2850,9 @@ export class ScenarioActuel {
             : "Bonification pour deux enfants",
           montant: majoration,
           detail,
+          par_regime: parts.map(([code, part, soumise]) => [
+            code, part * (soumise ? retenuePlafonnee : 1.0),
+          ]),
         });
       }
     }

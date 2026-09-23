@@ -1511,6 +1511,22 @@ institutions:
           reconstituée du salaire de référence Arrco depuis 1948, qui ne porte
           pas la valeur de service correspondante.
 
+      - id: agirc_arrco_majorations_familiales
+        titre: Majoration pour enfants nés ou élevés, par période d'acquisition des points
+        url: https://www.legifrance.gouv.fr/conv_coll/id/KALIARTI000036731850/?idConteneur=KALICONT000046709421
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/legislation/majoration_enfants_points.csv
+        note: >-
+          Article 94 de l'accord national interprofessionnel du 17 novembre 2017,
+          lu sur Légifrance le 23 septembre 2026, et le dépliant de la fédération
+          « Décrypter la majoration pour enfants » (mars 2025), dont l'exemple
+          chiffré est rejoué par un test. Le taux dépend de l'année d'ACQUISITION
+          de chaque point et du régime qui l'a inscrit : 10 à 30 % pour l'Arrco
+          d'avant 1999 si le règlement de la caisse la prévoyait, 5 % pour
+          l'Arrco de 1999 à 2011, 8 à 24 % pour l'Agirc d'avant 2012, 10 %
+          depuis. Le modèle servait 10 % à tous les points.
+
       - id: agirc_arrco_coefficients
         titre: Coefficients d'anticipation et plafond des majorations familiales
         url: https://www.agirc-arrco.fr/storage/2024/10/Coefficients-de-minorations-AA.pdf

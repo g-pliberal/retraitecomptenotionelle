@@ -93,6 +93,9 @@ class AvantageApplique:
     libelle: str
     montant: float
     detail: str = ""
+    #: Part de chaque régime, dans l'ordre des pensions, quand l'avantage se
+    #: répartit entre eux — la majoration pour enfants, plafond compris.
+    par_regime: tuple[tuple[str, float], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -941,11 +944,11 @@ class SurcoteParentale:
     """Surcote parentale — article L. 351-1-2-1 du code de la sécurité sociale.
 
     Le dernier avantage familial créé par le droit, et la contrepartie directe
-    du recul de l'âge légal : un assuré qui avait sa durée requise à 63 ans
-    s'est vu imposer par la loi du 14 avril 2023 une année de travail de plus
-    qui ne lui rapportait rien, la surcote ordinaire ne récompensant que les
-    trimestres accomplis APRÈS l'âge légal. La loi comble ce trou pour les
-    seuls parents : 1,25 % par trimestre acquis dans l'année qui précède
+    du recul de l'âge légal : un assuré qui avait sa durée requise un an avant
+    l'âge légal s'est vu imposer par la loi du 14 avril 2023 une année de
+    travail de plus qui ne lui rapportait rien, la surcote ordinaire ne
+    récompensant que les trimestres accomplis APRÈS l'âge légal. La loi comble
+    ce trou pour les seuls parents : 1,25 % par trimestre acquis dans l'année qui précède
     l'âge légal, quatre trimestres au plus, dès que cet âge atteint 63 ans, à
     qui détient au moins un trimestre de majoration de durée d'assurance au
     titre des enfants.
@@ -982,6 +985,42 @@ class SurcoteParentale:
         for debut, fin, age, taux, maximum, fiabilite in self._table:
             if debut <= annee_liquidation <= fin:
                 return age, taux, maximum, fiabilite
+        return None
+
+
+class MajorationsEnfantsPoints:
+    """Majoration pour enfants de l'Agirc-Arrco, par période d'ACQUISITION.
+
+    Le taux ne dépend pas du départ mais de l'année où chaque point a été
+    inscrit, et du régime qui l'a inscrit (accord du 17 novembre 2017,
+    article 94) : 10 à 30 % pour l'Arrco d'avant 1999, 5 % de 1999 à 2011,
+    8 à 24 % pour l'Agirc d'avant 2012, 10 % depuis. Le modèle servait 10 % à
+    tous les points. Voir ``majoration_enfants_points.csv``.
+    """
+
+    FICHIER = "majoration_enfants_points.csv"
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[str, list[tuple[int, int, tuple[float, ...], Fiabilite]]] = {}
+        chemin = racine / "reference" / "legislation" / self.FICHIER
+        if not chemin.exists():
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                bareme = tuple(float(t) for t in ligne["bareme"].split())
+                for code in ligne["regimes"].split():
+                    self._table.setdefault(code, []).append((
+                        int(ligne["acquis_debut"]), int(ligne["acquis_fin"]),
+                        bareme, Fiabilite.depuis_texte(ligne["fiabilite"]),
+                    ))
+
+    def taux(self, regime: str, annee: int, nombre_enfants: int) -> float | None:
+        """Taux des points que ``regime`` a inscrits en ``annee`` ; ``None``
+        quand la table ne dit rien de ce régime ou de cette année."""
+        for debut, fin, bareme, _ in self._table.get(regime, ()):
+            if debut <= annee <= fin:
+                return bareme[min(nombre_enfants, len(bareme) - 1)]
         return None
 
 
@@ -1777,6 +1816,8 @@ class ScenarioActuel:
         self.annees_salaire_reference = AnneesSalaireReference(parametres.racine_donnees)
         self.majorations_enfants = MajorationsPourEnfants(parametres.racine_donnees)
         self.surcote_parentale = SurcoteParentale(parametres.racine_donnees)
+        self.majorations_enfants_points = MajorationsEnfantsPoints(
+            parametres.racine_donnees)
         self.durees_requises_fonction_publique = DureesRequisesFonctionPublique(
             parametres.racine_donnees
         )
@@ -3699,6 +3740,19 @@ class ScenarioActuel:
         # n'a pas le prix d'achat du point ; points acquis pour les autres.
         cumul_cotisations: dict[str, float] = {}
         points_acquis: dict[str, float] = {}
+        # La majoration pour enfants des points de l'Agirc-Arrco dépend de leur
+        # année d'ACQUISITION : chaque point y entre avec son taux, et la
+        # pension du régime se majore au taux moyen de ses points.
+        majoration_points: dict[str, float] = {}
+        points_majores: dict[str, float] = {}
+
+        def crediter(code: str, annee: int, points: float) -> None:
+            points_acquis[code] = points_acquis.get(code, 0.0) + points
+            taux = self.majorations_enfants_points.taux(
+                code, annee, carriere.nombre_enfants)
+            if taux is not None:
+                majoration_points[code] = majoration_points.get(code, 0.0) + points * taux
+                points_majores[code] = points_majores.get(code, 0.0) + points
         fiabilite_points: dict[str, Fiabilite] = {}
         # Durée d'assurance validée dans chaque régime, PÉRIODES ASSIMILÉES
         # COMPRISES : le coefficient de proratisation du régime général porte
@@ -3948,10 +4002,10 @@ class ScenarioActuel:
                         echelle, fiabilite_echelle = self.conversions_points.echelle(
                             bareme, ligne.annee, annee_liquidation
                         )
-                        points_acquis[code] = points_acquis.get(code, 0.0) + (
+                        crediter(code, ligne.annee, (
                             self._points_msa(periode, ligne.annee, assiette)
                             * part * echelle
-                        )
+                        ))
                         fiabilite_points[code] = min(
                             fiabilite_points.get(code, Fiabilite.CERTIFIEE),
                             regime.fiabilite, fiabilite_echelle,
@@ -3988,9 +4042,7 @@ class ScenarioActuel:
                                     ajustement,
                                     periode.points_ajustement_maximum * part)
                             points += ajustement
-                        points_acquis[code] = points_acquis.get(code, 0.0) + (
-                            points * echelle
-                        )
+                        crediter(code, ligne.annee, points * echelle)
                         fiabilite_points[code] = min(
                             fiabilite_points.get(code, Fiabilite.CERTIFIEE),
                             regime.fiabilite, fiabilite_echelle,
@@ -4008,9 +4060,8 @@ class ScenarioActuel:
                         echelle, fiabilite_echelle = self.conversions_points.echelle(
                             bareme, ligne.annee, annee_liquidation
                         )
-                        points_acquis[code] = points_acquis.get(code, 0.0) + (
-                            periode.points_maximum * assiette / repere * echelle
-                        )
+                        crediter(code, ligne.annee,
+                                 periode.points_maximum * assiette / repere * echelle)
                         fiabilite_points[code] = min(
                             fiabilite_points.get(code, Fiabilite.CERTIFIEE),
                             regime.fiabilite, fiabilite_echelle,
@@ -4043,9 +4094,7 @@ class ScenarioActuel:
                         echelle, fiabilite_echelle = self.conversions_points.echelle(
                             bareme, ligne.annee, annee_liquidation
                         )
-                        points_acquis[code] = (
-                            points_acquis.get(code, 0.0) + points_annee * echelle
-                        )
+                        crediter(code, ligne.annee, points_annee * echelle)
                         fiabilite_points[code] = min(
                             fiabilite_points.get(code, Fiabilite.CERTIFIEE),
                             fiabilite_achat, fiabilite_echelle,
@@ -4830,7 +4879,11 @@ class ScenarioActuel:
             # tripler le plafond. On les met donc dans un même seau.
             majoration_plafonnee = 0.0
             plafond_commun: float | None = None
+            #: (régime, part, soumise au plafond), dans l'ordre des pensions.
+            parts: list[tuple[str, float, bool]] = []
             for pension in pensions:
+                if pension.montant <= 0.0:
+                    continue
                 regime = self.catalogue[pension.regime]
                 periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
                 if periode is None:
@@ -4839,6 +4892,16 @@ class ScenarioActuel:
                     continue
                 taux = _taux_majoration_enfants(regime, carriere.nombre_enfants,
                                                 periode)
+                points = points_acquis.get(pension.regime, 0.0)
+                majores = points_majores.get(pension.regime, 0.0)
+                if majores > 0.0 and points > 0.0:
+                    # CHAQUE POINT À SON TAUX, celui de son année d'acquisition
+                    # (`MajorationsEnfantsPoints`) : le module servait 10 % aux
+                    # points Arrco de 1999 à 2011, que l'accord majore de 5 %,
+                    # et aux points Agirc d'avant 2012, qu'il majore de 8 à
+                    # 24 % selon le nombre d'enfants.
+                    taux = (majoration_points[pension.regime]
+                            + taux * (points - majores)) / points
                 if taux <= 0:
                     continue
                 part = pension.montant * taux
@@ -4851,10 +4914,14 @@ class ScenarioActuel:
                     majoration_plafonnee += part
                     plafond_commun = (plafond if plafond_commun is None
                                       else max(plafond_commun, plafond))
+                parts.append((pension.regime, part, plafond is not None))
                 taux_cite = max(taux_cite, taux)
             plafonnee = plafond_commun is not None
+            retenue_plafonnee = 1.0
             if plafond_commun is not None:
                 majoration += min(majoration_plafonnee, plafond_commun)
+                if majoration_plafonnee > plafond_commun:
+                    retenue_plafonnee = plafond_commun / majoration_plafonnee
             if majoration > 0:
                 total += majoration
                 detail = f"jusqu'à {taux_cite:.0%} selon le régime"
@@ -4867,6 +4934,10 @@ class ScenarioActuel:
                              else "Bonification pour deux enfants"),
                     montant=majoration,
                     detail=detail,
+                    par_regime=tuple(
+                        (code, part * (retenue_plafonnee if soumise else 1.0))
+                        for code, part, soumise in parts
+                    ),
                 ))
 
         if (avantages_non_contributifs
@@ -4910,12 +4981,15 @@ def _taux_majoration_enfants(regime, nombre_enfants: int,
                              periode: PeriodeRegime | None = None) -> float:
     """Taux de majoration pour enfants, régime par régime.
 
-    Le régime général et les régimes spéciaux servent 10 % à partir de trois
-    enfants. La fonction publique y ajoute 5 % par enfant au-delà du troisième.
-    Les complémentaires servent 10 % aussi, mais plafonnés en euros : le taux
-    est le même, c'est :meth:`ScenarioActuel._plafond_majoration` qui borne.
-    Une fiche qui porte son propre barème — les marins, qui bonifient dès deux
-    enfants — l'emporte.
+    Le régime général sert 10 % à partir de trois enfants. La fonction
+    publique y ajoute 5 % par enfant au-delà du troisième. Une fiche qui porte
+    son propre barème l'emporte : les régimes spéciaux, dont la plupart suivent
+    la fonction publique et la Banque de France sert 8,5 % puis 4,25 % par
+    enfant, les marins, qui bonifient dès deux enfants. Les points de
+    l'Agirc-Arrco ont un taux par année d'acquisition, que
+    :class:`MajorationsEnfantsPoints` porte et que l'appelant substitue à
+    celui-ci ; leur plafond en euros est
+    :meth:`ScenarioActuel._plafond_majoration`.
     """
     if periode is not None and periode.taux_majoration_enfants:
         bareme = periode.taux_majoration_enfants

@@ -42,11 +42,14 @@
 #     ni de la durée requise de la génération. Un témoin qui l'emploie fixe
 #     son `age_debut`, sans quoi les deux parcours ne partiraient pas du même
 #     point ;
-#   majoration_enfants_sur_pensions — montant de la majoration pour trois
-#     enfants rapporté à la somme des pensions de régime. La circulaire dit
-#     que l'assiette est la retraite TELLE QUE CALCULÉE : appliquer les 10 %
-#     à la pension d'avant la surcote, ou d'avant la majoration de durée
-#     d'assurance, rendrait ici moins que le taux publié.
+#   majoration_enfants_sur_pensions — majoration pour enfants servie par les
+#     régimes de BASE, rapportée à leur pension. La circulaire dit que
+#     l'assiette est la retraite TELLE QUE CALCULÉE : appliquer les 10 % à la
+#     pension d'avant la surcote, ou d'avant la majoration de durée
+#     d'assurance, rendrait ici moins que le taux publié. Jusqu'au
+#     23 septembre 2026, la grandeur rapportait la majoration de TOUS les
+#     régimes à toutes les pensions, Agirc-Arrco compris, dont les points
+#     n'ont pas tous le même taux (accord du 17 novembre 2017, article 94).
 #   coefficients_des_regimes — pour chaque régime en points nommé, le
 #     coefficient d'anticipation ou de majoration que le scénario 1 applique
 #     à sa pension, 1 s'il n'en applique aucun. C'est ce que les sections

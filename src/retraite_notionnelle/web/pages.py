@@ -12816,8 +12816,11 @@ contributifs que la carrière suffit à déterminer :</p>
   qu'au-delà de cet âge ;</li>
   <li><strong>la majoration pour enfants</strong>, calculée sur le montant
   déjà relevé par les minima et plafonnée en euros à la complémentaire : 10 %
-  dès trois enfants, 5 % de plus par enfant au-delà dans la fonction publique,
-  et 5 % dès deux enfants chez les marins ;</li>
+  dès trois enfants, 5 % de plus par enfant au-delà dans la fonction publique
+  et la plupart des régimes spéciaux, 8,5 % puis 4,25 % à la Banque de France,
+  et 5 % dès deux enfants chez les marins. À l'Agirc-Arrco, chaque point a le
+  taux de son année d'acquisition : 5 % pour l'Arrco de 1999 à 2011, 8 à 24 %
+  selon le nombre d'enfants pour l'Agirc d'avant 2012, 10 % depuis ;</li>
   <li><strong>le minimum vieillesse</strong>, allocation différentielle servie à
   partir de 65 ans sous le barème d'une personne seule. Ce n'est pas une
   pension : elle apparaît toujours comme une ligne séparée de la cascade.</li>

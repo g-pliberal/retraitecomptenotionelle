@@ -5446,7 +5446,7 @@
        "code": "majoration_enfants",
        "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
        "libelle": "Majoration pour trois enfants et plus",
-       "montant": 4083.527153986382
+       "montant": 3949.4155373211615
       }
      ],
      "liquidation_ouverte": true,
@@ -5474,11 +5474,11 @@
        "regime": "regime_general"
       }
      ],
-     "pension_annuelle": 44918.79869385021,
-     "pension_annuelle_euros_constants": 35849.30168039556,
+     "pension_annuelle": 44784.687077184986,
+     "pension_annuelle_euros_constants": 35742.26836818601,
      "pension_hors_repartition": 0,
-     "pension_mensuelle": 3743.2332244875174,
-     "taux_remplacement": 0.6888791186926246,
+     "pension_mensuelle": 3732.0572564320823,
+     "taux_remplacement": 0.6868223697371494,
      "total_contributif": 39099.87810012723
     },
     "notionnel_liberal": {
@@ -5539,7 +5539,7 @@
      "rente_capitalisation_obligatoire": 3150.9969598200646,
      "rente_capitalisation_volontaire": 1575.4984799100323,
      "taux_remplacement": 0.23010854401134306,
-     "variation_vs_actuel": -0.665966730929441
+     "variation_vs_actuel": -0.6649664394311926
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
@@ -5569,7 +5569,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.3506875536518459,
-     "variation_vs_actuel": -0.4909302022140093
+     "variation_vs_actuel": -0.4894057487002703
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
@@ -5599,7 +5599,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.41814976971980145,
-     "variation_vs_actuel": -0.3929997899872788
+     "variation_vs_actuel": -0.391182075388969
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -5622,7 +5622,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10702968807209481,
-     "variation_vs_actuel": -0.8446321202546843
+     "variation_vs_actuel": -0.8441668577087033
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -5645,7 +5645,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.2644492813357346,
-     "variation_vs_actuel": -0.6161165665209677
+     "variation_vs_actuel": -0.614966994396323
     }
    },
    "unite": {
@@ -5788,7 +5788,7 @@
        "code": "majoration_enfants",
        "detail": "jusqu'à 10% selon le régime",
        "libelle": "Majoration pour trois enfants et plus",
-       "montant": 63.56088774321877
+       "montant": 63.560887743218764
       }
      ],
      "liquidation_ouverte": true,
@@ -6127,7 +6127,7 @@
        "code": "majoration_enfants",
        "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
        "libelle": "Majoration pour trois enfants et plus",
-       "montant": 3066.52718289168
+       "montant": 2996.8582193017414
       }
      ],
      "liquidation_ouverte": true,
@@ -6155,11 +6155,11 @@
        "regime": "regime_general"
       }
      ],
-     "pension_annuelle": 33731.79901180848,
-     "pension_annuelle_euros_constants": 26921.054751233805,
+     "pension_annuelle": 33662.13004821854,
+     "pension_annuelle_euros_constants": 26865.452558697027,
      "pension_hors_repartition": 0,
-     "pension_mensuelle": 2810.98325098404,
-     "taux_remplacement": 0.5173141902913968,
+     "pension_mensuelle": 2805.1775040182115,
+     "taux_remplacement": 0.5162457402073869,
      "total_contributif": 27011.659728693787
     },
     "notionnel_liberal": {
@@ -6220,7 +6220,7 @@
      "rente_capitalisation_obligatoire": 3150.9969598200646,
      "rente_capitalisation_volontaire": 1575.4984799100323,
      "taux_remplacement": 0.20098745104564353,
-     "variation_vs_actuel": -0.6114789526024218
+     "variation_vs_actuel": -0.6106748484454272
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
@@ -6250,7 +6250,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.2720499173117185,
-     "variation_vs_actuel": -0.4741108548395393
+     "variation_vs_actuel": -0.4730224462434687
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
@@ -6280,7 +6280,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.3395121333796741,
-     "variation_vs_actuel": -0.34370226111827507
+     "variation_vs_actuel": -0.3423439518488136
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -6303,7 +6303,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.09536884047332532,
-     "variation_vs_actuel": -0.8156461928492524
+     "variation_vs_actuel": -0.8152646442467233
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -6326,7 +6326,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.23532818837003502,
-     "variation_vs_actuel": -0.5450962050016885
+     "variation_vs_actuel": -0.5441547115226584
     }
    },
    "unite": {
@@ -7814,7 +7814,7 @@
        "code": "majoration_enfants",
        "detail": "jusqu'à 10% selon le régime, plafonnée en euros à la complémentaire",
        "libelle": "Majoration pour trois enfants et plus",
-       "montant": 2701.165972869379
+       "montant": 2631.4970092794406
       }
      ],
      "liquidation_ouverte": true,
@@ -7842,11 +7842,11 @@
        "regime": "regime_general"
       }
      ],
-     "pension_annuelle": 29712.825701563164,
-     "pension_annuelle_euros_constants": 23713.547185717194,
+     "pension_annuelle": 29643.156737973226,
+     "pension_annuelle_euros_constants": 23657.944993180416,
      "pension_hors_repartition": 0,
-     "pension_mensuelle": 2476.068808463597,
-     "taux_remplacement": 0.45567881996725634,
+     "pension_mensuelle": 2470.263061497769,
+     "taux_remplacement": 0.45461036988324655,
      "total_contributif": 27011.659728693787
     },
     "notionnel_liberal": {
@@ -7907,7 +7907,7 @@
      "rente_capitalisation_obligatoire": 3150.9969598200646,
      "rente_capitalisation_volontaire": 1575.4984799100323,
      "taux_remplacement": 0.20098745104564353,
-     "variation_vs_actuel": -0.5589273799030514
+     "variation_vs_actuel": -0.5578907469768863
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
@@ -7937,7 +7937,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.2720499173117185,
-     "variation_vs_actuel": -0.4029787969270392
+     "variation_vs_actuel": -0.4015756451363248
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
@@ -7967,7 +7967,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.3395121333796741,
-     "variation_vs_actuel": -0.25493106437540725
+     "variation_vs_actuel": -0.25317996272969323
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -7990,7 +7990,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.09536884047332532,
-     "variation_vs_actuel": -0.790710394483162
+     "variation_vs_actuel": -0.7902185106384221
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {},
@@ -8013,7 +8013,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.23532818837003502,
-     "variation_vs_actuel": -0.4835656649853839
+     "variation_vs_actuel": -0.4823519128468797
     }
    },
    "unite": {

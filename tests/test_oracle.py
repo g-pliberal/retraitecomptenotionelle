@@ -1580,13 +1580,23 @@ def test_les_exemples_publies_par_les_caisses_sont_reproduits(simulateur, exempl
             # modèle sert : la circulaire dit qu'elle porte sur la retraite
             # TELLE QUE CALCULÉE, surcote comprise. Appliquer les 10 % à la
             # pension d'avant la surcote rendrait ici moins que le taux publié.
+            #
+            # Et sur la pension du RÉGIME DE BASE, dont la caisse publie
+            # l'exemple, non sur le total : le témoin divisait la majoration de
+            # tous les régimes par toutes les pensions, et ne valait 10 % que
+            # parce que le modèle servait aussi 10 % à tous les points de
+            # l'Agirc-Arrco — ce que l'accord ne fait pas (5 % aux points Arrco
+            # de 1999 à 2011).
             majoration = next(
-                (a.montant for a in resultat.avantages_appliques
+                (a for a in resultat.avantages_appliques
                  if a.code == "majoration_enfants"), None)
             assert majoration is not None, "aucune majoration pour enfants servie"
-            pensions = sum(p.montant for p in resultat.pensions_par_regime)
-            assert majoration / pensions == pytest.approx(valeur, abs=1e-9), (
-                cle, majoration / pensions)
+            base = {p.regime: p.montant for p in resultat.pensions_par_regime
+                    if p.type_calcul == "annuites"}
+            part = sum(montant for regime, montant in majoration.par_regime
+                       if regime in base)
+            assert part / sum(base.values()) == pytest.approx(valeur, abs=1e-9), (
+                cle, part / sum(base.values()))
         elif cle == "non_ouverte_un_trimestre_plus_tot":
             _, plus_tot = _carriere_exemple(simulateur, exemple, decalage_mois=-3)
             assert plus_tot.motif_ouverture == "non_ouverte", plus_tot.motif_ouverture

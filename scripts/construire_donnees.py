@@ -979,6 +979,17 @@ def _surcote_parentale() -> list:
     ]
 
 
+def _majoration_enfants_points() -> dict:
+    """Majoration pour enfants des points, par régime et période d'acquisition."""
+    from retraite_notionnelle.scenarios.actuel import MajorationsEnfantsPoints
+
+    return {
+        code: [[debut, fin, list(bareme), int(fiabilite)]
+               for debut, fin, bareme, fiabilite in lignes]
+        for code, lignes in sorted(MajorationsEnfantsPoints(DONNEES)._table.items())
+    }
+
+
 def _carriere_longue() -> dict:
     """Portes du départ anticipé pour carrière longue, par date d'effet.
 
@@ -1329,6 +1340,7 @@ def construire(bilan: bytes) -> bytes:
         "carriere_longue": _carriere_longue(),
         "majorations_enfants": _majorations_enfants(),
         "surcote_parentale": _surcote_parentale(),
+        "majoration_enfants_points": _majoration_enfants_points(),
         "surcote_baremes": _surcote_baremes(),
         "depenses": _depenses(),
         "comptes_retraite": _comptes_retraite(),
