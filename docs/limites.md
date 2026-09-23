@@ -3155,7 +3155,8 @@ d'effet depuis 1949, les cinq tranches de 2020 comprises, dans le barème de la
 Cnav. Les régimes en points : la valeur de service de l'année, le long des
 fusions et des changements d'échelle — le point Arrco d'avant 1999 est converti
 à l'échelle de l'année. La fonction publique depuis 2004 : un décret par an
-jusqu'en 2008, puis l'article L. 161-23-1. Deux contrôles le tiennent : le cas
+jusqu'en 2008, puis l'article L. 161-23-1. La majoration pour enfants suit,
+part par part, le régime qui la porte. Deux contrôles le tiennent : le cas
 type, refait à la main coefficient par coefficient
 (`tests/test_revalorisation.py`), et les cas types du COR, figure 3.14 du
 rapport de juin 2026, dont le non-cadre des quatre générations est retrouvé en
@@ -3189,8 +3190,6 @@ point.
   coefficient sur la retraite totale reçue le mois précédent, nulle ici : le
   modèle sert le coefficient des petites retraites. Aucune circulaire lue ne
   dit comment le service des retraites de l'État l'a appliqué.
-- *La majoration pour enfants* suit le coefficient moyen des régimes, pondéré
-  par leurs pensions, et non celui de chacun des régimes qui la portent.
 - *Ce qui n'est pas une revalorisation* n'est pas servi : la prime
   exceptionnelle de 2015 aux petites retraites, notamment. Et la pension
   d'aujourd'hui est calculée en brut, puis nette aux prélèvements de cette
@@ -8632,7 +8631,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2231<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2232<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
