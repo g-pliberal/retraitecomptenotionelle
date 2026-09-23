@@ -6174,7 +6174,7 @@ voisine ; et avant le 29 mai 2004, le régime ne visait pas encore tous les
 artistes-auteurs, quand le modèle y affilie écrivains et photographes dès
 1977.
 
-### Les artistes-auteurs n'ont pas d'employeur, et leur compte notionnel en porte un
+### Les artistes-auteurs n'ont pas d'employeur, et leur compte notionnel en portait un
 
 Les pages de la Sécurité sociale des artistes auteurs, lues le 22 septembre
 2026 (action 89), ne changent rien au scénario 1 : le droit du régime général
@@ -6209,6 +6209,26 @@ Il demande un arbitrage que les pages ne tranchent pas : la contribution de
 1 % finance toutes les branches, et rien ne dit quelle part en revient à la
 vieillesse. Le compter pour zéro sous-évalue un peu ; le porter en entier
 surévalue. C'est une action à part, que la feuille de route nomme.
+
+**Corrigé le 23 septembre 2026.** Le drapeau est posé sur les trois statuts
+d'auteur : `part_salariale_seule` dit que l'assuré paie la part salariale et
+que personne ne paie l'autre — l'inverse de `sans_employeur`, où il paie les
+deux. Le compte ne porte plus que cette part, sous toutes les conventions et
+dans les deux moteurs ; les scénarios 4 et 5 des auteurs retombent sur les 2
+et 3, comme ceux d'un artisan. Le 1 % du diffuseur y compte pour zéro :
+l'article L. 382-4 lui fait assurer « le financement des charges incombant
+aux employeurs au titre des assurances sociales et des prestations
+familiales » sans dire ce qui revient à la vieillesse, et l'arrêté du 13 avril
+1981 qui en fixe le taux ne le dit pas davantage. Le compte en est sous-évalué
+d'un point de revenu au plus, si tout le 1 % allait à la vieillesse. Sur le
+témoin de l'artiste-auteur, le compte du scénario 4 tombe de 372 038 à
+172 076 €, et sa pension de 15 218 à 7 063 € par an ; la proposition, qui ne
+lui prêtait la part patronale qu'avant la bascule, passe de 13 057 à 9 147 €,
+que la garantie vieillesse complète désormais de 3 736 €. La fiche de paie
+n'est plus servie aux auteurs : celle du salarié leur prêtait une assurance
+chômage, l'Agirc-Arrco et un employeur payant une quarantaine de points.
+Mieux vaut rien qu'un net faux ; un net saisi est lu comme un brut, et le site
+le dit sous le formulaire.
 
 ---
 
@@ -8383,7 +8403,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2124<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2127<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->4 867<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 272<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 310<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12740,6 +12740,17 @@ qui revient à la vieillesse est à trancher d'abord (`docs/limites.md`,
 musiciens avant 2004, que l'article 1er d'alors, absent de l'index, dirait. Et
 restent `a_explorer` le simulateur de mon-entreprise et les cotisations
 arriérées de la Cnav.
+
+**Le 23 septembre : la part patronale des auteurs est retirée.** Le drapeau
+`part_salariale_seule` (`affiliations.yaml`) marque les trois statuts
+d'auteur ; `compte.py` et `compte.js` ne leur portent plus que la part
+salariale, sous toutes les conventions, et la fiche de paie du salarié ne leur
+est plus servie. Le 1 % du diffuseur compte pour zéro : l'article L. 382-4 le
+verse à toutes les branches sans dire la part de la vieillesse. Seuls les
+témoins des trois statuts d'auteur bougent, et le scénario 1 n'en bouge pas ;
+tenu par trois tests (`test_simulateur.py`, `test_donnees.py`,
+`test_remuneration.py`). Détail dans `docs/limites.md`, « Les artistes-auteurs
+n'ont pas d'employeur ».
 
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`

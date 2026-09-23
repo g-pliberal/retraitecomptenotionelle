@@ -105,7 +105,8 @@ export class ConstructeurCompte {
    * @returns {[number, number, string, number]} taux, part employeur, origine,
    *   fiabilité.
    */
-  tauxEffectif(regime, periode, annee, sansEmployeur = false) {
+  tauxEffectif(regime, periode, annee, sansEmployeur = false,
+    partSalarialeSeule = false) {
     const part = this.parametres.part_cotisation;
     const taux = periode.taux_cotisation_retraite;
 
@@ -113,6 +114,13 @@ export class ConstructeurCompte {
       // Un non-salarié paie tout : la répartition de la fiche est celle d'un
       // salarié du même régime, elle ne le concerne pas.
       return [taux, 0.0, "", Fiabilite.CERTIFIEE];
+    }
+
+    if (partSalarialeSeule) {
+      // Un auteur paie la part du salarié, et personne l'autre : le compte
+      // porte cette part sous TOUTES les conventions, parce qu'elle est tout
+      // ce qui a été versé.
+      return [periode.tauxCotisationSalarie, 0.0, "", Fiabilite.CERTIFIEE];
     }
 
     if (part === PartCotisation.SALARIALE) {
@@ -202,7 +210,10 @@ export class ConstructeurCompte {
     const salarie = this.aUnEmployeur(ligne, annee)
       ? regimeFusionne.taux_cotisation_salarie : unifie;
 
-    if (this.parametres.part_cotisation === PartCotisation.SALARIALE) {
+    if (this.parametres.part_cotisation === PartCotisation.SALARIALE
+        || this.affiliations.partSalarialeSeule(ligne.affiliation)) {
+      // Même exception, dans l'autre sens : un auteur qui ne payait que la
+      // part du salarié n'en gagne pas un employeur non plus.
       return [salarie, 0.0, "", Fiabilite.CERTIFIEE];
     }
     return [unifie, unifie - salarie, "", Fiabilite.CERTIFIEE];
@@ -366,6 +377,7 @@ export class ConstructeurCompte {
       this.macro.plafond_securite_sociale.valeur(annee),
     );
     const sansEmployeur = this.affiliations.sansEmployeur(ligne.affiliation);
+    const partSalarialeSeule = this.affiliations.partSalarialeSeule(ligne.affiliation);
     let cotisation = 0.0;
     let assietteTotale = 0.0;
     let horsRepartition = 0.0;
@@ -491,7 +503,7 @@ export class ConstructeurCompte {
         }
 
         const [taux, tauxEmployeur, origine, fiabiliteTaux] = this.tauxEffectif(
-          code, periode, annee, sansEmployeur,
+          code, periode, annee, sansEmployeur, partSalarialeSeule,
         );
         if (origine) {
           origines.push(origine);
@@ -516,6 +528,7 @@ export class ConstructeurCompte {
             partAgent = 1.0;
           }
           montant += this.parametres.part_cotisation === PartCotisation.SALARIALE
+            || partSalarialeSeule
             ? deplafonnee * partAgent : deplafonnee;
         }
 
@@ -527,7 +540,7 @@ export class ConstructeurCompte {
           cotisation += montant;
           assietteTotale += assiette;
           partEmployeur += assiette * tauxEmployeur;
-          if (deplafonnee > 0 && !sansEmployeur
+          if (deplafonnee > 0 && !sansEmployeur && !partSalarialeSeule
               && this.parametres.part_cotisation !== PartCotisation.SALARIALE) {
             // Même règle que pour `tauxEmployeur` ci-dessus : sous
             // `salariale`, le compte ne porte que la part de l'assuré, et la

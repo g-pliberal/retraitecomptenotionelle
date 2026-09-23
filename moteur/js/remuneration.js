@@ -761,8 +761,17 @@ export function contributionEquilibre(paquet, affiliations, statut, annee) {
 
 const MEMOIRE_CONTRIBUTIONS = new Map();
 
-/** La fiche de paie sait-elle décrire ce statut ? */
+/**
+ * La fiche de paie sait-elle décrire ce statut ?
+ *
+ * Pas celui d'un auteur, bien qu'il soit de la famille du privé : son
+ * précompte n'est pas une fiche de paie, et celle du salarié lui prêtait une
+ * assurance chômage, une complémentaire et un employeur qu'il n'a pas.
+ */
 export function ficheDePaiePossible(affiliations, statut) {
+  if (affiliations.partSalarialeSeule(statut)) {
+    return false;
+  }
   try {
     return FAMILLES_COUVERTES.includes(affiliations.famille(statut));
   } catch {
@@ -795,6 +804,10 @@ export function profilDeLaFiche(affiliations, catalogue, statut, annee) {
     return null;
   }
   if (!FAMILLES_COUVERTES.includes(famille)) {
+    return null;
+  }
+  if (affiliations.partSalarialeSeule(statut)) {
+    // Un auteur n'a pas de fiche de paie : voir `ficheDePaiePossible`.
     return null;
   }
   if (famille === "independant" || affiliations.sansEmployeur(statut)) {

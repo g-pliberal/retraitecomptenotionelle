@@ -211,7 +211,8 @@ class ConstructeurCompte:
         )
 
     def taux_effectif(self, regime: str, periode, annee: int,
-                      sans_employeur: bool = False
+                      sans_employeur: bool = False,
+                      part_salariale_seule: bool = False,
                       ) -> tuple[float, float, str, Fiabilite]:
         """Taux à porter au compte, sa part employeur, d'où elle vient et ce
         qu'elle vaut.
@@ -232,6 +233,14 @@ class ConstructeurCompte:
             # Un non-salarié paie tout : la répartition de la fiche est celle
             # d'un salarié du même régime, elle ne le concerne pas.
             return taux, 0.0, "", Fiabilite.CERTIFIEE
+
+        if part_salariale_seule:
+            # Un auteur paie la part du salarié, et personne l'autre : le
+            # compte porte cette part sous TOUTES les conventions, parce
+            # qu'elle est tout ce qui a été versé. Les scénarios 4 et 5 lui
+            # prêtaient la part patronale d'un salarié, que le diffuseur ne
+            # verse pas.
+            return periode.taux_cotisation_salarie, 0.0, "", Fiabilite.CERTIFIEE
 
         if part is PartCotisation.SALARIALE:
             # La même grandeur des deux côtés : ce que l'assuré supporte. Pour
@@ -325,7 +334,10 @@ class ConstructeurCompte:
         salarie = (regime_fusionne.taux_cotisation_salarie
                    if self.a_un_employeur(ligne, annee) else unifie)
 
-        if self.parametres.part_cotisation is PartCotisation.SALARIALE:
+        if (self.parametres.part_cotisation is PartCotisation.SALARIALE
+                or self.affiliations.part_salariale_seule(ligne.affiliation)):
+            # Même exception, dans l'autre sens : un auteur qui ne payait que
+            # la part du salarié n'en gagne pas un employeur non plus.
             return salarie, 0.0, "", Fiabilite.CERTIFIEE
         return unifie, unifie - salarie, "", Fiabilite.CERTIFIEE
 
@@ -470,6 +482,8 @@ class ConstructeurCompte:
             plafond=self.macro.plafond_securite_sociale(annee),
         )
         sans_employeur = self.affiliations.sans_employeur(ligne.affiliation)
+        part_salariale_seule = self.affiliations.part_salariale_seule(
+            ligne.affiliation)
         cotisation = 0.0
         assiette_totale = 0.0
         hors_repartition = 0.0
@@ -598,7 +612,7 @@ class ConstructeurCompte:
                     continue
 
                 taux, taux_employeur, origine, fiabilite_taux = self.taux_effectif(
-                    code, periode, annee, sans_employeur
+                    code, periode, annee, sans_employeur, part_salariale_seule
                 )
                 if origine:
                     origines.append(origine)
@@ -628,7 +642,8 @@ class ConstructeurCompte:
                         part_agent = 1.0
                     montant += (deplafonnee * part_agent
                                 if self.parametres.part_cotisation
-                                is PartCotisation.SALARIALE else deplafonnee)
+                                is PartCotisation.SALARIALE
+                                or part_salariale_seule else deplafonnee)
 
                 if regime.hors_repartition and self.parametres.isoler_capitalisation:
                     # RAFP, assurances sociales d'avant-guerre : ces droits sont
@@ -639,6 +654,7 @@ class ConstructeurCompte:
                     assiette_totale += assiette
                     part_employeur += assiette * taux_employeur
                     if (deplafonnee > 0 and not sans_employeur
+                            and not part_salariale_seule
                             and self.parametres.part_cotisation
                             is not PartCotisation.SALARIALE):
                         # Même règle que pour `taux_employeur` ci-dessus : sous

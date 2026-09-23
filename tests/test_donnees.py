@@ -1973,6 +1973,27 @@ def test_les_statuts_sans_employeur_sont_marques():
     assert not affiliations.sans_employeur("fonctionnaire_etat")
 
 
+def test_les_statuts_a_part_salariale_seule_sont_les_auteurs():
+    """L'auteur paie la part du salarié, et personne ne paie l'autre.
+
+    Le drapeau est l'inverse de `sans_employeur`, et les deux s'excluent : on
+    ne peut pas à la fois tout payer et n'en payer qu'une part. La liste est
+    un contrat, comme la précédente — le routage des trois statuts d'auteur
+    passe par le régime général, dont la fiche porte la répartition d'un
+    salarié, et c'est le statut qui dit que cette répartition est à moitié
+    fausse pour eux.
+    """
+    from retraite_notionnelle.carriere import Affiliations
+
+    affiliations = Affiliations(RACINE_DONNEES)
+    seule = {code for code in affiliations.codes
+             if affiliations.part_salariale_seule(code)}
+    assert seule == {"artiste_auteur", "auteur_dramatique", "auteur_lyrique"}
+    for code in seule:
+        assert not affiliations.sans_employeur(code), code
+        assert "regime_general" in affiliations.regimes(code, 2026), code
+
+
 def test_les_statuts_classes_et_militaires_sont_ceux_qu_on_attend():
     """Le classement d'un emploi ne se devine pas : il se déclare.
 

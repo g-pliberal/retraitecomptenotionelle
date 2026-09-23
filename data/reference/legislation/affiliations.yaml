@@ -31,6 +31,17 @@
 # d'un salarié. Le taux est le bon, la répartition ne l'est pas : lui, paie
 # tout. Sans ce drapeau, les scénarios 4 et 5 lui prêteraient un employeur.
 #
+# `part_salariale_seule: true` marque le cas inverse, celui des trois statuts
+# d'auteur : l'assuré paie la part SALARIALE du régime général, à son taux, et
+# personne ne paie la part patronale. Le diffuseur verse une contribution,
+# 1 % des droits d'auteur depuis l'arrêté du 13 avril 1981, qui assure « le
+# financement des charges incombant aux employeurs au titre des assurances
+# sociales et des prestations familiales » (article L. 382-4 du code de la
+# sécurité sociale) — toutes branches confondues, et aucun texte ne dit ce qui
+# en revient à la vieillesse : le compte la compte pour zéro. Sans ce drapeau,
+# les scénarios 4 et 5 lui prêteraient la part patronale d'un salarié, et la
+# fiche de paie le coût du travail d'un employeur.
+#
 # `categorie_active: active` ou `super_active` marque les statuts de la fonction
 # publique dont l'emploi est CLASSÉ, et qui liquident donc avant l'âge légal :
 # cinquante-sept ans — cinquante-deux pour la super-active — avant la réforme de
@@ -174,6 +185,7 @@ affiliations:
   auteur_dramatique:
     libelle: Auteur ou compositeur dramatique, auteur de l'audiovisuel (SACD)
     famille: prive
+    part_salariale_seule: true
     periodes:
       - {debut: 1964, fin: 1976, regimes: [ircec_racd]}
       - {debut: 1977, fin: 2015, regimes: [regime_general, ircec_raap, ircec_racd]}
@@ -181,8 +193,9 @@ affiliations:
     note: >-
       Comme l'artiste-auteur, avec le RACD en plus depuis le décret
       n° 64-226 ; le régime général et le RAAP suivent la loi du 31
-      décembre 1975. Le diffuseur cotise à côté de l'auteur : le statut
-      n'est pas sans employeur. C'est l'organisme de perception qui route :
+      décembre 1975. L'auteur paie la part salariale, personne la part
+      patronale (`part_salariale_seule`). C'est l'organisme de perception qui
+      route :
       le simulateur « Quel est mon régime ? » de l'IRCEC envoie la SACD au
       RAAP et au RACD, la SACEM au RAAP et au RACL, la SCAM au RAAP seul
       (lu le 22 septembre 2026). Depuis 2016, le RAAP de qui cotise au RACD
@@ -192,6 +205,7 @@ affiliations:
   auteur_lyrique:
     libelle: Auteur ou compositeur de musique (SACEM)
     famille: prive
+    part_salariale_seule: true
     periodes:
       - {debut: 1962, fin: 1976, regimes: [ircec_racl]}
       - {debut: 1977, fin: 2015, regimes: [regime_general, ircec_raap, ircec_racl]}
@@ -877,14 +891,18 @@ affiliations:
   artiste_auteur:
     libelle: Artiste-auteur (écrivain, illustrateur, photographe…)
     famille: prive
+    part_salariale_seule: true
     periodes:
       - {debut: 1977, fin: null, regimes: [regime_general, ircec_raap]}
     note: >-
       Les artistes-auteurs relèvent du RÉGIME GÉNÉRAL pour leur retraite de
       base — la loi du 31 décembre 1975 les y rattache — et du RAAP pour leur
-      complémentaire. Le statut n'est donc PAS marqué `sans_employeur` : le
-      diffuseur verse une contribution à côté du précompte de l'auteur, comme
-      un employeur. Avant 1977, aucune affiliation obligatoire.
+      complémentaire. Le statut n'est PAS marqué `sans_employeur` : l'auteur
+      ne paie pas la part patronale à la place d'un employeur, il paie la
+      part salariale, au taux du salarié, et personne ne paie l'autre
+      (`part_salariale_seule`) — le diffuseur ne verse qu'une contribution de
+      1 %, toutes branches confondues. Avant 1977, aucune affiliation
+      obligatoire.
 
   chirurgien_dentiste_ou_sage_femme:
     libelle: Chirurgien-dentiste ou sage-femme libéral

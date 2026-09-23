@@ -3317,3 +3317,24 @@ journal:
       que dans sa calculette. Le décret n° 2026-418 reste à lire article par
       article. Les exclusions de la cotisation minimale des libéraux et le
       capital fractionné du RAFP ne sont pas modélisés.
+
+  - date: "2026-09-23"
+    session: "part patronale des auteurs, hors scénario 1"
+    consulte: >-
+      Index LEGI : article L. 382-4 du code de la sécurité sociale, version en
+      vigueur depuis le 1er janvier 2019 (LEGIARTI000036392723) et les trois
+      précédentes ; arrêté du 13 avril 1981 fixant le taux de la contribution
+      des diffuseurs (LEGIARTI000006782901) ; article 3 du décret n° 77-221.
+    trouve: >-
+      La contribution des diffuseurs assure « le financement des charges
+      incombant aux employeurs au titre des assurances sociales et des
+      prestations familiales » : 1 % des droits d'auteur depuis 1981, toutes
+      branches confondues, sans part de la vieillesse nommée. Le scénario 1
+      n'en dépend pas. Le compte notionnel ne porte plus aux trois statuts
+      d'auteur que la part salariale (`part_salariale_seule`), et le 1 % y
+      compte pour zéro ; la fiche de paie du salarié ne leur est plus servie.
+    reste: >-
+      La part du 1 % qui revient à la vieillesse, si un texte ou les comptes
+      de la Sécurité sociale des artistes-auteurs la disent un jour ; la
+      fiche de paie propre aux auteurs, précompte et contribution du
+      diffuseur, qui n'existe pas.

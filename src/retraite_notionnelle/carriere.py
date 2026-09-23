@@ -1333,6 +1333,18 @@ class Affiliations:
         """
         return bool(self._profils.get(affiliation, {}).get("sans_employeur", False))
 
+    def part_salariale_seule(self, affiliation: str) -> bool:
+        """Ce statut ne paie-t-il que la part salariale, sans part patronale ?
+
+        Vrai pour les trois statuts d'auteur : l'auteur paie la cotisation du
+        salarié, à son taux, et personne ne paie celle de l'employeur — le
+        diffuseur ne verse qu'une contribution de 1 %, toutes branches
+        confondues. C'est l'inverse de ``sans_employeur``, où l'assuré paie
+        les deux ; dans les deux cas, le compte ne porte aucune part patronale.
+        """
+        return bool(self._profils.get(affiliation, {}).get(
+            "part_salariale_seule", False))
+
     def categorie_active(self, affiliation: str) -> str | None:
         """Classement de l'emploi : ``active``, ``super_active`` ou rien.
 
