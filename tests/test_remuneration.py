@@ -411,6 +411,23 @@ def test_les_familles_qu_on_ne_sait_pas_decrire_n_affichent_rien(pieces):
             affiliations, pieces["catalogue"], statut, ANNEE) is None, statut
 
 
+def test_les_auteurs_n_ont_pas_de_fiche_de_paie(pieces):
+    """De la famille du privé, et pourtant pas un salarié.
+
+    Le profil du privé prêtait à l'auteur une assurance chômage, l'Agirc-Arrco
+    et un employeur payant une quarantaine de points, là où son diffuseur ne
+    verse que 1 %. Mieux vaut rien qu'un net faux : la conversion d'un net
+    saisi, elle, rend le nombre tel quel, et le site dit qu'il n'a pas su
+    convertir.
+    """
+    affiliations = pieces["affiliations"]
+    for statut in ("artiste_auteur", "auteur_dramatique", "auteur_lyrique"):
+        assert affiliations.famille(statut) == "prive", statut
+        assert not fiche_de_paie_possible(affiliations, statut), statut
+        assert profil_de_la_fiche(
+            affiliations, pieces["catalogue"], statut, ANNEE) is None, statut
+
+
 def test_les_quatre_familles_couvertes_le_sont(pieces):
     affiliations = pieces["affiliations"]
     for statut in ("salarie_prive_non_cadre", "fonctionnaire_etat",

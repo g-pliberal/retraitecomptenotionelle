@@ -1261,6 +1261,9 @@ def profil_de_la_fiche(affiliations, catalogue, statut: str,
         return None
     if famille not in FAMILLES_COUVERTES:
         return None
+    if affiliations.part_salariale_seule(statut):
+        # Un auteur n'a pas de fiche de paie : voir ``fiche_de_paie_possible``.
+        return None
     if famille == "independant" or affiliations.sans_employeur(statut):
         return "independant"
     for code in affiliations.regimes(statut, annee):
@@ -1287,7 +1290,16 @@ def fiche_de_paie_possible(affiliations, statut: str) -> bool:
     Restent dehors les salariés agricoles — la MSA a ses propres taux hors
     retraite —, l'outre-mer, dont chaque collectivité a sa caisse, les élus,
     dont l'indemnité de fonction n'est pas un salaire, et qui n'a pas d'emploi.
+
+    Et les AUTEURS, bien qu'ils soient de la famille du privé : leur précompte
+    n'est pas une fiche de paie. Ils paient la vieillesse d'un salarié, mais
+    ni son assurance chômage ni sa complémentaire — la leur est le RAAP —, et
+    le diffuseur ne verse qu'une contribution de 1 % là où un employeur paie
+    une quarantaine de points. La fiche du salarié leur prêtait l'un et
+    l'autre : mieux vaut rien qu'un net faux.
     """
+    if affiliations.part_salariale_seule(statut):
+        return False
     try:
         return affiliations.famille(statut) in FAMILLES_COUVERTES
     except KeyError:

@@ -603,6 +603,7 @@ def _affiliations() -> dict:
             "libelle": affiliations.libelle(code),
             "famille": affiliations.famille(code),
             "sans_employeur": affiliations.sans_employeur(code),
+            "part_salariale_seule": affiliations.part_salariale_seule(code),
             "categorie_active": affiliations.categorie_active(code),
             "pension_militaire": affiliations.pension_militaire(code),
             "releve_par": affiliations.releve_par(code),

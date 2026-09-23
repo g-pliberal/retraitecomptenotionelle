@@ -1280,6 +1280,18 @@ export class Affiliations {
   }
 
   /**
+   * Ce statut ne paie-t-il que la part salariale, sans part patronale ?
+   *
+   * Vrai pour les trois statuts d'auteur : l'auteur paie la cotisation du
+   * salarié, à son taux, et personne ne paie celle de l'employeur. C'est
+   * l'inverse de `sansEmployeur`, où l'assuré paie les deux ; dans les deux
+   * cas, le compte ne porte aucune part patronale.
+   */
+  partSalarialeSeule(affiliation) {
+    return Boolean((this._profils[affiliation] ?? {}).part_salariale_seule);
+  }
+
+  /**
    * Classement de l'emploi : "active", "super_active" ou null.
    *
    * Le classement tient à l'EMPLOI, pas à la personne ni au régime : un

@@ -758,6 +758,30 @@ def test_sans_employeur_les_quatre_scenarios_se_reduisent_a_deux(simulateur):
         assert not comparaison.contribution_employeur.a_un_employeur, affiliation
 
 
+def test_les_auteurs_ne_portent_que_leur_part_salariale(simulateur):
+    """Un auteur paie la part du salarié, et personne ne paie l'autre.
+
+    Le cas inverse de l'artisan, et la même conséquence : aucune part
+    patronale au compte. L'auteur relève du régime général, dont la fiche
+    porte la répartition d'un salarié ; mais son diffuseur ne verse qu'une
+    contribution de 1 %, toutes branches confondues (article L. 382-4 du code
+    de la sécurité sociale). Sans le drapeau `part_salariale_seule`, les
+    scénarios 4 et 5 lui prêtaient la part patronale d'un salarié — 54 % du
+    compte du témoin, le 22 septembre 2026.
+    """
+    for affiliation in ("artiste_auteur", "auteur_dramatique", "auteur_lyrique"):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1975, sexe="F", affiliation=affiliation,
+            age_debut=27, age_liquidation=64,
+        )
+        comparaison = simulateur.simuler(carriere)
+        assert (comparaison.notionnel_retroactif_employeur.pension_annuelle
+                == pytest.approx(comparaison.notionnel_retroactif.pension_annuelle)), affiliation
+        assert (comparaison.notionnel_prospectif_employeur.pension_annuelle
+                == pytest.approx(comparaison.notionnel_prospectif.pension_annuelle)), affiliation
+        assert not comparaison.contribution_employeur.a_un_employeur, affiliation
+
+
 def test_le_prive_aussi_a_une_part_patronale(simulateur, salarie_moyen):
     """L'axe n'est pas public/privé : il est salarial/patronal, pour tous.
 
