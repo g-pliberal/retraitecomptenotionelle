@@ -2199,6 +2199,25 @@ institutions:
         acces: document
         statut_integration: saisi
         cible: data/reference/regimes/marins.yaml
+      - id: rs_cavimac_circulaires
+        titre: >-
+          Circulaires de la CAVIMAC sur le recouvrement des cotisations
+          maladie, vieillesse et retraite complémentaire des cultes
+        url: https://www.cavimac.fr/publications
+        acces: document
+        statut_integration: saisi
+        cible: data/reference/regimes/complementaires_prive.yaml
+        note: >-
+          Une circulaire par relèvement du SMIC, lisibles de la n° 2021/04 (15
+          novembre 2021) à la n° 2026/03 (27 mai 2026) ; les précédentes sont
+          des images. Toutes portent la même règle pour la retraite
+          complémentaire obligatoire des cultes : l'assiette forfaitaire des
+          autres cotisations, le SMIC mensuel — 1 589 € en novembre 2021,
+          1 867 € en juin 2026 —, au « taux de base » de 10,02 %, dont 6,01 % à
+          la charge de la collectivité et 4,01 % de l'assuré, soit la
+          cotisation de 7,87 % de l'Agirc-Arrco et sa contribution d'équilibre
+          générale de 2,15 %. C'est la source de la fiche `arrco_cultes` ; les
+          taux eux-mêmes restent ceux de l'Agirc-Arrco.
 
   urssaf:
     nom: Urssaf Caisse nationale

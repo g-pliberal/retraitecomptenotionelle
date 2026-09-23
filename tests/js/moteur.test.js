@@ -555,3 +555,27 @@ test("le chef d'exploitation reçoit ses points gratuits de RCO", () => {
   const [avant2023, ligneAvant2023] = rco(scenario.calculer(chef(1955, 40, 64)));
   assert.ok(!avant2023.detail.includes("gratuits") && ligneAvant2023 === null);
 });
+
+/**
+ * L'Arrco des cultes : depuis 2006, pour qui perçoit une rémunération
+ * individuelle (L. 921-1), sur le forfait du SMIC que la CAVIMAC applique à
+ * toutes ses cotisations. Même arithmétique que
+ * `test_le_ministre_du_culte_remunere_cotise_a_l_arrco_sur_le_forfait`.
+ */
+test("le ministre du culte rémunéré cotise à l'Arrco sur le forfait", () => {
+  const contexte = new Contexte(paquet);
+  const simulateur = contexte.simulateur();
+  assert.deepEqual(simulateur.affiliations.regimes("ministre_du_culte", 2005), ["cavimac"]);
+  assert.deepEqual(simulateur.affiliations.regimes("ministre_du_culte", 2006),
+    ["cavimac", "arrco_cultes"]);
+  assert.deepEqual(simulateur.affiliations.regimes("membre_congregation", 2026), ["cavimac"]);
+  const rco = (statut, niveau) => simulateur.scenarioActuel.calculer(simulateur.carriereSimple({
+    annee_naissance: 1961, sexe: "H", affiliation: statut, age_debut: 25,
+    age_liquidation: 65, niveau_salaire: niveau,
+  })).pensions_par_regime.find((p) => p.regime === "arrco_cultes") ?? null;
+  assert.equal(rco("membre_congregation", 1.0), null);
+  const pension = rco("ministre_du_culte", 0.5);
+  assert.ok(pension.montant > 0);
+  assert.ok(Math.abs(rco("ministre_du_culte", 2.0).montant - pension.montant) < 1e-9);
+  assert.ok(pension.detail.startsWith("1,348.24 points"), pension.detail);
+});

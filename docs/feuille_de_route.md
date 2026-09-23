@@ -20,8 +20,8 @@ avec la raison. Une découverte faite en chemin qui mérite un chantier se note
 ici, pas dans un commentaire de code.
 
 **Le constat de septembre 2026, qui fonde ce classement.** La couverture des
-régimes est finie : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->90<!--/--> lignes d'inventaire, plus aucune ligne « à modéliser »,
-<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->38<!--/--> fiches partielles dont chaque mur est documenté dans `regimes.md` et
+régimes est finie : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->91<!--/--> lignes d'inventaire, plus aucune ligne « à modéliser »,
+<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->39<!--/--> fiches partielles dont chaque mur est documenté dans `regimes.md` et
 `limites.md` §4. Continuer sur cet axe rapporte peu : les manques restants
 portent sur des populations minuscules ou des barèmes que personne ne publie.
 Les gains sont sur ce qui porte les résultats de tête du README : les agrégats
@@ -15350,7 +15350,7 @@ README confronte désormais ses milliards à ceux de la page.
 `docs/methodologie.md`, `docs/limites.md`, `tests/test_web.py`,
 `tests/temoins/pages.json`.
 
-### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, et quatre trous que rien ne disait — `en cours`
+### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait — `en cours`
 
 **Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
 régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste
@@ -15449,16 +15449,32 @@ depuis le 14 février 2026 fixe encore la valeur de service de la RCO « pour
 l'année 2025 », 0,3919 €, quand le modèle extrapole 2026. À reprendre avec la
 réforme des vingt-cinq meilleures années.
 
-**Ce qui reste**, dans l'ordre où le prendre : l'Arrco des ministres des
-cultes, statut à scinder ; les ouvriers de l'État hors du RAFP ; le barème de
-l'Ircantec pour enfants ; le routage calédonien et sa ligne d'inventaire ; les
-deux exceptions au plafond du RAFP — la GIPA, cotisée en entier, les jours de
-compte épargne-temps convertis — et la cotisation volontaire des agents de
-l'État outre-mer ; les 66 points gratuits des conjoints, aides familiaux et
-collaborateurs, qui demandent de connaître ces statuts. Les lignes
-`rafp_assiette_plafond` et `rco_points_gratuits` du registre de veille et les
-deux récits de `limites.md` (« Le RAFP prenait toutes les primes », « La RCO
-ne servait que les points cotisés ») en tiennent le détail.
+**Ce qui a été fait ensuite : l'Arrco des ministres des cultes.** L. 921-1,
+complété par l'article 75 de la loi de financement de la sécurité sociale pour
+2006, affilie à l'Arrco depuis le 1er janvier 2006 les personnes du régime des
+cultes « qui bénéficient d'un revenu d'activité perçu individuellement ». Les
+circulaires de la CAVIMAC, qui recouvre la cotisation, en donnent l'assiette —
+le forfait du SMIC mensuel, comme ses autres cotisations — et le taux de base,
+10,02 %, soit les 7,87 % de l'Agirc-Arrco et ses 2,15 % de contribution
+d'équilibre. Le statut `ministre_du_culte` est scindé : il garde son code et
+reçoit une fiche `arrco_cultes` depuis 2006, qui emprunte les points de
+l'Arrco puis de l'Agirc-Arrco ; `membre_congregation` n'a que la CAVIMAC. Le
+ministre du simulateur né en 1975 gagne 14 % de pension au scénario 1, celui
+né en 1955 6,2 %.
+
+**Ce qui reste**, dans l'ordre où le prendre : le salaire annuel moyen de la
+CAVIMAC, que la page de la caisse calcule « sur la base du SMIC » quand le
+modèle prend le revenu saisi, et ses années d'avant 1979, validées
+gratuitement quand le modèle n'en compte aucune ; les ouvriers de l'État hors
+du RAFP ; le barème de l'Ircantec pour enfants ; le routage calédonien et sa
+ligne d'inventaire ; les deux exceptions au plafond du RAFP — la GIPA, cotisée
+en entier, les jours de compte épargne-temps convertis — et la cotisation
+volontaire des agents de l'État outre-mer ; les 66 points gratuits des
+conjoints, aides familiaux et collaborateurs, qui demandent de connaître ces
+statuts ; les huit taux spécifiques de l'Arrco des cultes. Les lignes
+`rafp_assiette_plafond`, `rco_points_gratuits` et
+`cultes_retraite_complementaire` du registre de veille et les trois récits de
+`limites.md` en tiennent le détail.
 
 **Fichiers.** `data/reference/regimes/_schema.yaml`,
 `data/reference/regimes/fonction_publique.yaml`, `non_salaries.yaml`,
@@ -15470,7 +15486,10 @@ ne servait que les points cotisés ») en tiennent le détail.
 `data/reference/legislation/veille.yaml`,
 `data/reference/legislation/avantages_non_contributifs.yaml`,
 `data/sources_a_explorer.yaml`, `data/reference/prose/zones.yaml`,
-`docs/limites.md`, `docs/regimes.md`, `docs/parcours_presentation.md`.
+`docs/limites.md`, `docs/regimes.md`, `docs/parcours_presentation.md` ; pour
+les cultes, `data/reference/legislation/affiliations.yaml`,
+`majoration_enfants_points.csv` et `reformes.yaml`, `data/sources.yaml`,
+`scripts/construire_temoins.py`.
 
 ### 120. Le rapport de la Cour des comptes sur les retraites des fonctionnaires de l'État : une règle rendue au scénario 1, et ce qu'il reste à en tirer — `fait`
 

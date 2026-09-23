@@ -1993,7 +1993,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->177<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->178<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->39<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 

@@ -2204,6 +2204,214 @@ regimes:
           solidarité supprimé.
 
 
+  - code: arrco_cultes
+    nom: >-
+      Retraite complémentaire obligatoire des cultes (Arrco, puis
+      Agirc-Arrco)
+    famille: complementaire_prive
+    source_id: rs_cavimac_circulaires
+    fiabilite: haute
+    creation: 2006
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    population: >-
+      Les personnes du régime des cultes (L. 382-15) « qui bénéficient d'un
+      revenu d'activité perçu individuellement » : ministres des cultes
+      rémunérés par leur diocèse, leur association ou leur communauté, et
+      membres de congrégations dans le même cas. L. 921-1 les affilie à une
+      institution de retraite complémentaire depuis le 1er janvier 2006 ; la
+      CAVIMAC recouvre les cotisations, une institution de l'Arrco calcule et
+      sert les points. Fiche à part de l'Arrco parce que son ASSIETTE n'est
+      pas un salaire mais un forfait.
+    hors_repartition: false
+    periodes:
+      - debut: 2006
+        fin: 2010
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        assiette_repere_smic: 1820
+        assiette_forfaitaire: true
+        taux_cotisation_retraite: 0.075
+        part_salariale: 0.40   # la collectivité paie les trois cinquièmes
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux de la tranche 1 de l'Arrco, 6 % appelés à 125 %, repris de sa
+          fiche : les circulaires de la CAVIMAC lisibles vont de novembre 2021
+          à juin 2026, et portent toutes le même forfait et le même taux de
+          base. Voir la dernière période pour la règle.
+
+      - debut: 2011
+        fin: 2013
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        assiette_repere_smic: 1820
+        assiette_forfaitaire: true
+        taux_cotisation_retraite: 0.075
+        part_salariale: 0.40   # la collectivité paie les trois cinquièmes
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux de la tranche 1 de l'Arrco, repris de sa fiche ; l'âge du taux
+          plein suit celui du régime de base, lu à la génération, depuis la loi
+          du 9 novembre 2010.
+
+      - debut: 2014
+        fin: 2014
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        assiette_repere_smic: 1820
+        assiette_forfaitaire: true
+        taux_cotisation_retraite: 0.07625
+        part_salariale: 0.40   # la collectivité paie les trois cinquièmes
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux de la tranche 1 de l'Arrco, 6,10 % appelés à 125 %, repris de sa
+          fiche.
+
+      - debut: 2015
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 60
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: null
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        assiette_repere_smic: 1820
+        assiette_forfaitaire: true
+        taux_cotisation_retraite: 0.0775
+        part_salariale: 0.40   # la collectivité paie les trois cinquièmes
+        points_de: arrco
+        decote_par_trimestre: 0.01
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          Taux de la tranche 1 de l'Arrco, 6,20 % appelés à 125 %, repris de sa
+          fiche.
+
+      - debut: 2019
+        fin: 2023
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        assiette_repere_smic: 1820
+        assiette_forfaitaire: true
+        taux_cotisation_retraite: 0.0787
+        part_salariale: 0.40   # la collectivité paie les trois cinquièmes
+        points_de: agirc_arrco
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion, coefficient_solidarite]
+        notes: >-
+          Régime unifié Agirc-Arrco : 6,20 % appelés à 127 % sur la tranche 1,
+          coefficients de solidarité jusqu'en 2023, comme la fiche `agirc_arrco`
+          dont les points sont empruntés (`points_de`).
+
+      - debut: 2024
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        abattement_points: agirc_arrco
+        plafond_majoration_enfants: 2367
+        plafond_majoration_annee: 2025
+        salaire_reference: carriere_entiere
+        assiette: tranche_1
+        assiette_repere_smic: 1820
+        assiette_forfaitaire: true
+        taux_cotisation_retraite: 0.0787
+        part_salariale: 0.40   # la collectivité paie les trois cinquièmes
+        points_de: agirc_arrco
+        decote_par_trimestre: null
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [majoration_enfants, reversion]
+        notes: >-
+          LOI N° 2005-1579 DU 19 DÉCEMBRE 2005, ARTICLE 75, VII : « Ces
+          dispositions sont applicables aux personnes mentionnées à l'article
+          L. 382-15 qui bénéficient d'un revenu d'activité perçu
+          individuellement » — la phrase que porte L. 921-1 depuis sa version du
+          20 décembre 2005 (LEGIARTI000006745503) jusqu'à celle en vigueur
+          (LEGIARTI000047452643). L'ASSIETTE EST UN FORFAIT : la circulaire de la
+          CAVIMAC n° 2026/03 du 27 mai 2026 porte au SMIC mensuel, 1 867 € depuis
+          le 1er juin 2026, « les assiettes forfaitaires respectives des
+          cotisations mensuelles d'assurance maladie – maternité – invalidité,
+          vieillesse et retraite complémentaire obligatoire des cultes ». C'est
+          le principe de l'Agirc-Arrco — « lorsque l'assiette de cotisation est
+          définie forfaitairement pour le calcul des cotisations de sécurité
+          sociale, cette même assiette est retenue » (circulaire 2019-1-DRJ,
+          fiche 3) —, et le revenu saisi n'y entre donc pas, pas plus qu'à la
+          base. LE TAUX est le « taux de base » de la circulaire, 10,02 %, dont
+          6,01 % à la charge de la collectivité et 4,01 % de l'assuré : 7,87 % de
+          cotisation qui ouvre des points, et les 2,15 % de la contribution
+          d'équilibre générale, qui n'en ouvrent pas. Les huit « taux
+          spécifiques » qu'elle énumère, de 11,13 à 21,31 %, ne sont pas portés.
+          Les points sont ceux de l'Arrco puis de l'Agirc-Arrco (`points_de`),
+          achetés et servis à leur barème : seule l'assiette diffère, comme pour
+          la tranche 2 de l'Arrco.
+
   - code: agirc_entreprises_nouvelles
     nom: Agirc, barème des entreprises créées après 1981
     famille: complementaire_prive

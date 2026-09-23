@@ -76,6 +76,12 @@ pivots:
       Accord national interprofessionnel du 17 novembre 2017, étendu par
       l'arrêté du 24 avril 2018 (JORFTEXT000036847920) qui n'en reprend pas
       le texte ; barème et coefficients lus chez la fédération.
+  arrco_cultes:
+    # L. 921-1 porte l'affiliation depuis sa version du 20 décembre 2005 ;
+    # R. 382-89 le forfait du SMIC, que l'Agirc-Arrco reprend comme assiette.
+    # Le barème est celui de l'Arrco puis de l'Agirc-Arrco, hors LEGI.
+    - {texte: "Code de la sécurité sociale", num: L921-1, parametres: [affiliation]}
+    - {texte: "Code de la sécurité sociale", num: R382-89, parametres: [assiette_forfaitaire, assiette_repere_smic]}
   ipacte:
     # L'article 7 porte l'assiette ET le taux (4,25 / 8,25 %) ; aucun article d'âge.
     - {texte: "Décret n° 51-1445", num: "7", parametres: [assiette, taux_cotisation_retraite]}
