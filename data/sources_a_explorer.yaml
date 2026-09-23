@@ -1932,7 +1932,7 @@ sources:
       Retraite forfaitaire, retraite proportionnelle en points, RCO : les deux
       fiches agricoles non salariées sont `partiel`, et ce sont les deux
       régimes dont la structure ressemble le moins à celle du régime général.
-    statut: a_explorer
+    statut: en_cours
 
   - id: msa_reforme_25_meilleures_annees
     url: https://www.msa.fr/lfp/retraite/reforme-exploitants-25-meilleures-annees
