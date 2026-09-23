@@ -215,6 +215,27 @@ Le lot des professions juridiques, le 23 septembre 2026, en a ajouté deux.
   son règlement écrit-il, et la durée d'assurance y annule-t-elle la
   minoration ?
 
+Le lot des professions de santé, le même jour, en a ajouté trois.
+
+- **Un champ vide n'est pas une règle.** Les fiches de la CARMF et de la
+  CARPV disaient « l'âge seul » en laissant la durée requise vide ; le
+  moteur, faute de durée propre au régime, prenait celle de la carrière, et
+  la minoration disparaissait pour tout assuré parti avec sa durée. Une
+  règle s'écrit par le drapeau qui la nomme — `decote_annulee_par_la_duree:
+  false`, `abattement_points` — et un test la rejoue à l'âge où elle mord.
+  Chercher la même forme dans les fiches voisines : la CAVAMAC, la CAVEC et
+  la CPRN d'avant 2014 la portent encore.
+- **Une réponse n'est pas un calcul.** La calculette de la CARMF, interrogée
+  avec les noms de champs de son formulaire, rend un tableau complet, sans
+  une erreur, et à revenu nul : ses vrais paramètres sont ceux que son
+  script construit (`v_revenu`, `v_situationC`…). Vérifier qu'une sortie
+  bouge avec l'entrée avant de la lire.
+- **Deux pages d'une même caisse peuvent se contredire, et la calculette
+  départage.** La page de calcul de la CARMF compte l'ajustement de l'ASV à
+  9,5 points au plus et bâtit son exemple dessus ; le décret en dit neuf, et
+  la calculette de la même caisse aussi. La fiche suit le décret, et l'écart
+  est écrit dans la note de la source.
+
 ## Où va ce qu'on en tire
 
 Rien ne reste dans un fichier de notes : chaque trouvaille a sa destination,

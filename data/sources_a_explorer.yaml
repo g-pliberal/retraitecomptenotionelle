@@ -1025,11 +1025,27 @@ sources:
       Les cotisations d'un médecin, les trois étages compris (base, complémentaire,
       ASV) : la CARMF est la section la mieux outillée, et son simulateur donne
       le barème entier en une grille de revenus.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      La calculette répond à un POST sur /cdrom/calc/showresultat.php, avec
+      les champs que son script construit (`v_revenu`, `v_revenuADR`,
+      `v_secteur`, `v_situationC`…) ; ceux du formulaire rendent un calcul à
+      revenu nul. Quatre revenus de 2026, 30 000, 80 000, 150 000 et 250 000
+      €, donnent le barème entier, et il était déjà dans le dépôt : base à
+      8,73 % jusqu'au plafond (557 points) et 1,87 % jusqu'à cinq (8,30 points
+      à 80 000 €) ; complémentaire à 11,8 % jusqu'à 3,5 plafonds, un point par
+      14 602 €, 11,52 au plus (19 849 € à 250 000 €) ; ASV à 1 917 € de
+      forfait pour 27 points et 1,3333 % d'ajustement, qui ouvre 18 fois
+      l'ajustement divisé par le forfait, neuf points au plus (3,76 à 30 000
+      €, neuf dès 80 000 €). Rien à corriger dans
+      data/reference/regimes/non_salaries.yaml (`carmf_complementaire`,
+      `asv_conventionnes`, `cnavpl`) ni dans
+      data/reference/regimes/rendements_points.csv. Ce qu'elle montre en plus
+      : la participation de l'assurance maladie à la cotisation de base des
+      médecins de secteur 1 (article 96-3 de la convention médicale), 645 € à
+      30 000 € et 1 208 € à 80 000 €, que le modèle ne déduit pas —
+      docs/limites.md.
 
   - id: carmf_simulateur_cumul
     url: https://www.carmf.fr/page.php?page=cdrom%2Fcalc%2Findex.php%3Fcalc%3Dcumul
@@ -1039,11 +1055,20 @@ sources:
     a_en_tirer: >-
       Le cumul emploi-retraite des médecins, et sa cotisation sans droits —
       poste que l'action 81 chiffre sous « cotiser sans rien acquérir ».
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Même calculette, mode `v_situationC=cumul`, lancée à 30 000 et 80 000 €
+      en 2026. En cumul intégral, la base ouvre ses points (557 et 8,30 à 80
+      000 €) mais la complémentaire (9 440 €) et l'ASV (1 917 + 1 067 €) sont
+      appelées sans qu'aucun point ne s'y attache : 12 424 € versés sans droit
+      à 80 000 €, 4 840 € à 30 000 € (où le forfait ASV tombe à 900 €). En
+      cumul plafonné, aucune ligne n'ouvre de points, et le revenu est borné à
+      un plafond (48 060 €), l'excédent retenu sur les pensions de 2028. Le
+      modèle ne simule pas le cumul emploi-retraite : rien à transcrire. C'est
+      un cas libéral pour le poste « cotiser sans rien acquérir » de l'action
+      81, qui ne chiffre que le régime général
+      (docs/frontiere_contributive.md).
 
   - id: carmf_simulateur_conjoint
     url: https://www.carmf.fr/page.php?page=cdrom%2Fcalc%2Findex.php%3Fcalc%3Dconjcollab
@@ -1053,11 +1078,16 @@ sources:
     a_en_tirer: >-
       Le conjoint collaborateur : statut que le dépôt ne porte pour aucun
       régime, et qui existe chez tous les indépendants.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Le conjoint collaborateur est un mode de la même calculette ; la page
+      des taux 2026 (`carmf_taux_2026`) en donne l'exemple à 80 000 € de
+      revenu du médecin : base sur un revenu forfaitaire d'un demi-plafond, ou
+      sur 25 ou 50 % du revenu du médecin avec ou sans partage d'assiette ;
+      complémentaire et invalidité-décès au quart ou à la moitié de la
+      cotisation du médecin (2 360 ou 4 720 € pour 9 440 €). Aucun statut du
+      dépôt n'a de conjoint collaborateur : rien à transcrire.
 
   - id: carmf_capim
     url: https://www.carmf.fr/page.php?page=cdrom/capim/capim-calculette-calcul.php
@@ -1068,11 +1098,17 @@ sources:
       La calculette du capital décès-invalidité : hors champ retraite, mais
       elle dit ce que la cotisation couvre en plus de la vieillesse — utile à
       docs/frontiere_contributive.md.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Ce n'est pas le capital décès-invalidité : c'est la calculette de
+      CAPIMED, le contrat de retraite supplémentaire FACULTATIF en
+      capitalisation de la CARMF — dix classes de 1 569 € (option A) ou 3 138
+      € (option B), rendement financier net de 3,40 % en 2025, rente calculée
+      à un taux technique garanti de 1,75 %, réversion à 60 ou 100 % au choix.
+      Hors du champ obligatoire : rien à transcrire. Le rendement net et le
+      taux technique d'un contrat réel peuvent servir de point de comparaison
+      au pilier capitalisé de la proposition.
 
   - id: carmf_calcul_retraite
     url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-calcul.htm
@@ -1082,11 +1118,25 @@ sources:
     a_en_tirer: >-
       Le calcul des trois pensions d'un médecin, chacune avec sa valeur de
       point.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      L'exemple complet d'un médecin né le 10 novembre 1960, parti à 65 ans au
+      1er janvier 2026 avec 80 000 € de revenu moyen : base 15 402,81 points ×
+      0,6599 € = 10 164,32 € ; complémentaire 209,93 points × 77,14 € × 1,15 =
+      18 623,10 € ; ASV 1 002,60 points × 11,82 € × 1,15 = 13 628,34 €. Les
+      valeurs de point sont dans data/reference/regimes/ ; le coefficient de
+      1,15 — douze trimestres de report entre 62 et 65 ans — est l'exemple
+      `carmf_report_62_65_ans` de tests/temoins/exemples_officiels.yaml. UN
+      DÉSACCORD entre deux pages de la caisse : celle-ci compte l'ajustement
+      ASV à « 1 point par tranche de 7 987,50 € (9,5 points maximum) » et
+      donne 36,50 points à 80 000 €, quand l'article 3 du décret n° 2011-1644
+      (LEGIARTI000024853554, une seule version depuis 2012) écrit « dans la
+      limite de neuf points » et que la calculette rend 36 points au même
+      revenu. La fiche suit le décret et la calculette. L'exemple dit aussi
+      que la première année d'affiliation ne donne aucun point de base et les
+      deux premières aucun point complémentaire (dispense sans droits) : non
+      modélisé, docs/limites.md.
 
   - id: carmf_age
     url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-age.htm
@@ -1095,11 +1145,22 @@ sources:
     regimes: [carmf_complementaire]
     a_en_tirer: >-
       Les âges et les coefficients d'anticipation propres à la CARMF.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Les âges de la base après la LFSS pour 2026 sont ceux des tables
+      communes. La complémentaire et l'ASV s'ouvrent à l'âge légal, sans
+      condition de durée, et la retraite en temps choisi les majore de 1,25 %
+      par trimestre de 62 à 65 ans puis de 0,75 % jusqu'à 70 ans : c'est ce
+      que la fiche porte depuis 2023, et le règlement approuvé le 10 juillet
+      2026 l'écrit dans les mêmes termes (article 2). La règle d'avant 2017, «
+      0,75 à 60 ans […] 0,95 à 64 ans », lue dans les statuts, a corrigé la
+      fiche de 2000 à 2016, où la durée annulait une minoration qui n'en
+      dépend pas : data/reference/regimes/non_salaries.yaml, ligne
+      `carmf_asv_minoration_enfants` de
+      data/reference/legislation/veille.yaml. La page ajoute une majoration de
+      13 % des deux pensions en cas d'inaptitude, dès 62 ans, que le modèle ne
+      connaît pas (il n'a pas d'inaptitude).
 
   - id: carmf_taux_2026
     url: https://www.carmf.fr/page.php?page=chiffrescles/stats/2026/taux2026.htm
@@ -1110,11 +1171,20 @@ sources:
       Les taux et valeurs de l'année, publiés par le producteur : à saisir
       dans la fiche, et à remonter dans le temps par les années voisines de
       la même adresse (2025, 2024…).
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Taux 2026 : base 8,73 % et 1,87 %, complémentaire 11,80 % jusqu'à 3,5
+      plafonds (10,20 % en 2025), ASV 1 917 € de forfait et 1,3333 %
+      d'ajustement en secteur 1, trois fois plus en secteur 2 ; valeurs de
+      service 0,6599, 77,14 et 11,82 €. Tout est déjà dans
+      data/reference/regimes/non_salaries.yaml et
+      data/reference/regimes/rendements_points.csv. La colonne d'évolution se
+      trompe sur le point complémentaire (« + 1,30 % » pour 75,25 → 77,14 €,
+      qui font + 2,51 %) ; la valeur, elle, est celle que la page de calcul
+      emploie. Les années voisines de la même adresse (2005 à 2025) n'ajoutent
+      rien à la chronologie de la caisse, déjà saisie (`carmf_chronologie`
+      dans data/sources.yaml).
 
   - id: carmf_documents
     url: https://www.carmf.fr/page.php?page=doc/documents.htm
@@ -1124,11 +1194,17 @@ sources:
     a_en_tirer: >-
       Statuts, rapports et documentation : la série historique des valeurs de
       point s'y trouve, et c'est elle qui manque.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Index : statuts généraux, règlements de l'ASV, de l'invalidité-décès,
+      des conjoints collaborateurs et de CAPIMED, guides, rapports annuels et
+      leurs archives, chronologie 2025 — déjà saisie (`carmf_chronologie` dans
+      data/sources.yaml). Les règlements lus dans cette passe l'ont été au
+      Journal officiel, dans l'arrêté du 10 juillet 2026 qui les approuve, et
+      c'est là que la majoration de 10 % pour trois enfants a été trouvée
+      (article 23) ; ce qui en a servi est dans les notes de `carmf_age` et
+      des fiches. Aucune série historique au-delà de la chronologie.
 
   - id: carcdsf_simulateur
     url: https://www.carcdsf.fr/cotisations-du-praticien/simulation-des-cotisations
@@ -1138,11 +1214,19 @@ sources:
     a_en_tirer: >-
       Les cotisations d'un chirurgien-dentiste ou d'une sage-femme, par revenu :
       la fiche `carcdsf_complementaire` est `partiel`.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Le calcul se fait dans le navigateur, et ses paramètres sont écrits en
+      clair dans le source de la page : plafond 48 060 €, base 8,73 % et 1,87
+      %, cotisation minimale 573 €, complémentaire 11,35 % et forfait de 3 210
+      €, prestations complémentaires de vieillesse (PCV) 0,725 % et forfait de
+      1 663 €, invalidité-décès et indemnités journalières 394 et 841 € ; pour
+      2025, plafond 47 100 €, base 8,23 %, minimum 540 €. La complémentaire
+      est celle de data/reference/regimes/non_salaries.yaml
+      (`carcdsf_complementaire`, 2026 : tranche de 0,65 à 5 plafonds, 11,35 %,
+      3 210,60 €) : rien à corriger. Les PCV des chirurgiens-dentistes et des
+      sages-femmes ne sont pas modélisées (`manque` de `asv_conventionnes`).
 
   - id: carcdsf_regimes
     url: https://www.carcdsf.fr/retraite/quels-regimes-composent-ma-retraite
@@ -1151,11 +1235,20 @@ sources:
     regimes: [carcdsf_complementaire, asv_conventionnes, cnavpl]
     a_en_tirer: >-
       Les trois étages et leurs règles respectives.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Trois régimes : la base (point à 0,6599 € en 2026), la complémentaire
+      (31,82 €, rendement de 5,95 % déjà dans
+      data/reference/regimes/rendements_points.csv) et les PCV, dont la valeur
+      de point dépend de la date d'acquisition et de celle de la liquidation
+      (tableau en PDF, non modélisé). La page renvoie à « A quel âge demander
+      ses droits », qui a donné la minoration par l'âge seul (1,25 % par
+      trimestre manquant jusqu'à 67 ans) et le taux plein anticipé d'un an par
+      enfant pour les mères, cinq au plus, avec son exemple (deux enfants,
+      taux plein dès 65 ans) : `carcdsf_deux_enfants_65_ans` dans
+      tests/temoins/exemples_officiels.yaml, ligne
+      `carcdsf_minoration_age_seul` de data/reference/legislation/veille.yaml.
 
   - id: carcdsf_montant_cotisations
     url: https://www.carcdsf.fr/cotisations-du-praticien/montant-des-cotisations
@@ -1165,11 +1258,19 @@ sources:
     a_en_tirer: >-
       Le barème écrit, à côté du simulateur : les deux doivent dire la même
       chose, et l'écart éventuel est un résultat.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Le barème écrit dit la même chose que le simulateur : complémentaire à 3
+      210,60 € de forfait et 11,35 % entre 0,65 et 5 plafonds (31 239 € – 240
+      300 €), forfait réduit au prorata sous 0,65 plafond ; base à 8,73 % et
+      1,87 %, minimum de 573 € (450 Smic horaires, trois trimestres) — la page
+      écrit « un PASS, soit 40 060 € » pour 48 060 € ; PCV des dentistes à 1
+      663,60 € de forfait et 0,725 %, l'assurance maladie en versant deux fois
+      le forfait et autant de proportionnel, dispense sous 500 C (11 500 €) ;
+      PCV des sages-femmes à 780 € dont 260 € à leur charge. La complémentaire
+      est dans data/reference/regimes/non_salaries.yaml ; la réduction du
+      forfait et les PCV ne le sont pas.
 
   - id: cavp_calcul
     url: https://www.cavp.fr/préparer-votre-retraite/comment-votre-retraite-est-elle-calculée
@@ -1181,11 +1282,22 @@ sources:
       CAPITALISATION. Sa règle de calcul est donc doublement utile : elle
       complète une fiche `partiel`, et elle donne un cas réel de pilier
       capitalisé obligatoire, à côté du pilier que la proposition construit.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Répartition : 328,80 € par annuité en 2026 (13 974 € pour 42,5 annuités
+      et un taux plein à 67 ans), déjà dans la fiche avec le rendement de 4,29
+      % ; minoration avant l'âge du taux plein et majoration après ; 10 % pour
+      trois enfants, hommes et femmes — `majoration_enfants` depuis 2009, date
+      des statuts lus au Journal officiel
+      (data/reference/regimes/non_salaries.yaml). La page d'âge voisine donne
+      le taux plein à 67 ans pour les générations nées à partir de 1956,
+      repris dans data/reference/legislation/ages_regimes.csv (`cavp`).
+      CAPITALISATION : la rente dépend d'un coefficient de conversion (âge,
+      table de mortalité de la génération, taux technique, réversion) dont la
+      page donne la liste et aucune valeur ; la part capitalisée reste hors du
+      modèle. PCV des biologistes : 1,25 % par trimestre avant 67 ans et 10 %
+      pour trois enfants, non modélisées.
 
   - id: carpimko_simulateur
     url: https://www2.carpimko.com/simulateur
@@ -1195,11 +1307,15 @@ sources:
     a_en_tirer: >-
       Le simulateur des auxiliaires médicaux : cotisations et droits, par
       revenu.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Déjà lue le 22 septembre 2026 par la passe qui a recalculé le rendement
+      : sur neuf revenus, la cotisation divisée par les points donne un point
+      à 391 € en 2026, d'où 21,48 / 391 = 5,49 % dans
+      data/reference/regimes/rendements_points.csv. La page servie n'est que
+      le gabarit de l'application ; cette passe ne l'a pas relancée, elle ne
+      rend que des cotisations et la précédente en a tiré ce qu'elle donne.
 
   - id: carpimko_calcul_retraite
     url: https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/calcul-de-ma-retraite
@@ -1208,11 +1324,21 @@ sources:
     regimes: [carpimko_complementaire, cnavpl, asv_conventionnes]
     a_en_tirer: >-
       Le calcul des trois étages, dont l'ASV des conventionnés.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Valeurs de service au 1er janvier 2026 : base 0,6599 €, complémentaire
+      21,48 €, ASV 1,50 €. Complémentaire : décote de 1,25 % par trimestre, la
+      plus favorable de la durée ou de l'âge de 67 ans, 25 % au plus — la
+      durée l'annule, et la fiche le fait ; surcote de 1,25 % par trimestre
+      après l'âge du taux plein, vingt au plus, que la fiche porte. ASV des
+      auxiliaires médicaux : 5 % par année avant 65 ans, 25 % à 60 ans, 24,5
+      points de forfait et 34,10 au plus de proportionnel — non modélisée
+      (`manque` de `asv_conventionnes`). Trois enfants : 10 % sur la base et
+      la complémentaire, `majoration_enfants` dans
+      data/reference/regimes/non_salaries.yaml. Le tableau porte encore les 8
+      + 22 points de la complémentaire d'avant 2026, que le barème de 2026 a
+      remplacés.
 
   - id: carpimko_age
     url: https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/age-de-ma-retraite
@@ -1221,11 +1347,15 @@ sources:
     regimes: [carpimko_complementaire]
     a_en_tirer: >-
       Âges et coefficients propres à la section.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Âge légal de 62 à 64 ans et taux plein à 67 ans pour la base et la
+      complémentaire ; ASV à 60 ans, taux plein à 65. La page ne donne que la
+      cible : l'escalier des générations 1956 à 1961 vient des statuts dans la
+      rédaction de l'arrêté du 31 juillet 2015, lus au Journal officiel, et il
+      est dans data/reference/legislation/ages_regimes.csv (`carpimko_2016`),
+      ligne `carpimko_ages_2015` de data/reference/legislation/veille.yaml.
 
   - id: carpimko_rachats
     url: https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/rachats-du-regime-de-base
@@ -1235,11 +1365,14 @@ sources:
     a_en_tirer: >-
       Le rachat dans le régime de base des libéraux : barème de la CNAVPL vu
       par une section.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Rachat de trimestres de la base des libéraux (années d'études, années
+      incomplètes), de 20 à 67 ans, au coût fixé chaque année par arrêté selon
+      l'âge et la moyenne des revenus des trois dernières années ; le détail
+      2026 est dans un dépliant lié. Le modèle ne simule aucun rachat : rien à
+      transcrire.
 
   - id: carpimko_cotisations
     url: https://www.carpimko.com/je-suis-en-activite/cotisations/selon-mes-revenus
@@ -1248,11 +1381,15 @@ sources:
     regimes: [carpimko_complementaire, cnavpl]
     a_en_tirer: >-
       Les tranches de cotisation et les points qu'elles rendent.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      2026 : complémentaire à 8,70 % de l'assiette sociale entre 0,5 et 3
+      plafonds (2 091 € – 12 544 €), ce que la fiche porte
+      (data/reference/regimes/non_salaries.yaml, `carpimko_complementaire`) ;
+      base à 8,73 % et 1,87 % ; ASV à 671 € de forfait (224 € à la charge de
+      l'affilié, 447 € de l'assurance maladie) et 0,40 % de l'assiette
+      conventionnée, non modélisée ; invalidité-décès 1 022 €.
 
   - id: carpimko_prelevements
     url: https://www.carpimko.com/je-suis-retraite/mes-pensions-de-retraite/prelevements-sociaux
@@ -1261,11 +1398,14 @@ sources:
     regimes: [carpimko_complementaire]
     a_en_tirer: >-
       Les prélèvements sur les pensions libérales, à recouper avec la Cnav.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      CSG à 3,8, 6,6 ou 8,3 % selon le revenu fiscal, CRDS 0,5 %, CASA 0,3 % :
+      les taux du régime général. Le modèle applique le taux plein à toutes
+      les pensions et garde le barème pour la page
+      (data/reference/legislation/prelevements_remuneration.yaml). Rien de
+      propre aux libéraux, rien à transcrire.
 
   - id: carpimko_reversion
     url: https://www.carpimko.com/je-suis-retraite/droits-du-conjoint-survivant/pension-de-reversion
@@ -1274,11 +1414,16 @@ sources:
     regimes: [carpimko_complementaire]
     a_en_tirer: >-
       La réversion chez les libéraux, dont les conditions diffèrent du privé.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Base : 54 % à 55 ans, sous plafond de ressources (25 001,60 € seul, 40
+      002,56 € en couple en 2026). Complémentaire et ASV : 65 ans (60 en cas
+      d'inaptitude, 55 pour la complémentaire sans rente de survie), deux ans
+      de mariage sauf enfant, 60 % pour la complémentaire et 50 % pour l'ASV,
+      sans condition de ressources, suspendue au remariage. Le modèle déclare
+      la réversion sans la calculer — il ne connaît pas de conjoint : rien à
+      transcrire.
 
   - id: carpimko_reglements
     url: https://www.carpimko.com/nous-connaitre/la-caisse-de-retraite/reglements-et-rapports
@@ -1288,11 +1433,16 @@ sources:
     a_en_tirer: >-
       Les règlements et rapports : le texte du régime, et les séries de
       valeurs de point dans les rapports annuels.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      La liste des règlements et des rapports n'est pas dans le HTML servi :
+      la page la construit dans le navigateur, et une session doit passer par
+      Chromium pour la lire. Les textes dont cette passe avait besoin ont été
+      lus au Journal officiel : statuts dans la rédaction de l'arrêté du 31
+      juillet 2015, arrêté du 27 décembre 2023, règlement approuvé le 10
+      juillet 2026. Les rapports d'activité, qui pourraient porter des valeurs
+      de point d'avant 2010, restent à ouvrir.
 
   - id: carpv_cotisations
     url: https://www.carpv.fr/vos-retraites/comprendre-vos-cotisations-et-vos-appels-de-cotisations/
@@ -1301,11 +1451,17 @@ sources:
     regimes: [carpv_complementaire, cnavpl]
     a_en_tirer: >-
       Les cotisations des vétérinaires, fiche `partiel` à l'inventaire.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions de santé (CARMF,
-      CARCDSF, CAVP, CARPIMKO, CARPV).
+      Les quatre classes de 2026, de 10 234 € pour 17 points à 16 856 € pour
+      28, bornées à 76 994, 102 659 et 128 324 € : celles de
+      data/reference/regimes/classes_cotisation.csv, rien à corriger. La
+      partie sur la base en est restée à 2024 (plafond de 46 368 €, 8,23 %,
+      minimum de 529 € pour 59,90 points et trois trimestres). S'y ajoutent
+      l'allègement sous 51 330 € de revenu, sur demande, et 100 points de base
+      par accouchement, dans la limite de 550 par an — ni l'un ni l'autre
+      modélisé.
 
   - id: cavamac_ordre_de_grandeur
     url: https://www.cavamac.fr/actus/calculer-rapidement-lordre-de-grandeur-de-mes-retraites/
