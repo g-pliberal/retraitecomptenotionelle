@@ -6560,10 +6560,11 @@ const GRILLES_CAS_TYPES = [
  * suit en CSS —, et l'onglet ouvert est le système 4. Voir `_cas_types` dans
  * `web/pages.py`.
  *
- * CE QU'ELLE DIT EST UN ÉCART ENTRE LIGNES, JAMAIS UN NIVEAU. Le modèle calcule
- * ce que chaque carrière acquiert ; il n'applique pas le coefficient
- * d'équilibre, qui déplacerait toute la grille en bloc. C'est écrit en tête, et
- * non en note de bas de page.
+ * CE QU'ELLE DIT SE LIT CONTRE UNE PROMESSE, celle du système actuel à la même
+ * carrière. Ce que la grille mesure le plus sûrement est l'écart entre ses
+ * lignes ; le niveau dépend AUSSI du coefficient d'équilibre, que le modèle
+ * n'applique pas. C'est écrit en tête, et non en note de bas de page. Voir
+ * `_cas_types` : l'accueil lit sur cette grille l'ordre de grandeur de la baisse.
  */
 /**
  * « proposition » sur le système 4, « contrefactuel » sur les autres, rien
@@ -6854,13 +6855,13 @@ function casTypes(contexte, regards = null) {
   return `
 ${tete}
 
-<div class="note"><strong>Ces pourcentages ne sont pas des baisses de
-pension.</strong> Chaque case compare deux carrières calculées sous la même
-règle, et ce que la grille mesure est l'écart entre ses lignes : ce qu'un
-militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
-niveau général, lui, dépend d'un
-${g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle calcule
-mais n'applique jamais — et <strong>chaque système a le sien</strong>.\
+<div class="note"><strong>Ces pourcentages se lisent contre une
+promesse</strong> : chaque case rapporte ce qu'un système servirait à ce que le
+système actuel promet à la même carrière. Ce que la grille mesure le plus
+sûrement est l'écart entre ses lignes : ce qu'un militaire touche de plus ou de
+moins qu'un artisan, à cotisation égale. Le niveau général, lui, dépend aussi
+d'un ${g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle
+calcule mais n'applique jamais — et <strong>chaque système a le sien</strong>.\
 ${g.bulle("Ce qu'un coefficient appliqué déplacerait", `Un facteur commun laisserait ces cases inchangées, une case
 étant déjà un rapport de deux pensions. Mais il y a quatre coefficients, un par
 système : les ramener chacun à SON équilibre déplacerait les écarts, de ${g.nombre(deplacement * 100, 0)}
@@ -12194,6 +12195,7 @@ function programme(contexte) {
         `vos ${g.terme("25 meilleures années", "salaire de référence")}, `
         + "un taux, une durée",
         "votre compte, divisé par votre espérance de vie"],
+      ...ligneDuMontant(contexte.bilan().ecarts),
       ["Partir un an plus tôt",
         `une ${g.terme("décote")}, dont le barème change à chaque réforme`,
         "un an de cotisation en moins, un an de pension en plus"],
@@ -12376,13 +12378,58 @@ ${depliantVerifier}
 }
 
 /**
+ * Les fractions dans lesquelles l'accueil dit un ordre de grandeur. Copie de
+ * `FRACTIONS_EN_MOTS` dans `web/pages.py`.
+ */
+const FRACTIONS_EN_MOTS = [
+  [1 / 10, "un dixième"], [1 / 5, "un cinquième"], [1 / 4, "un quart"],
+  [1 / 3, "un tiers"], [2 / 5, "deux cinquièmes"], [1 / 2, "la moitié"],
+  [3 / 5, "trois cinquièmes"], [2 / 3, "deux tiers"], [3 / 4, "trois quarts"],
+];
+
+/** La fraction de `FRACTIONS_EN_MOTS` la plus proche de `part`. */
+function fractionEnMots(part) {
+  let [valeur, mots] = FRACTIONS_EN_MOTS[0];
+  for (const [candidate, texte] of FRACTIONS_EN_MOTS.slice(1)) {
+    if (Math.abs(candidate - part) < Math.abs(valeur - part)) {
+      [valeur, mots] = [candidate, texte];
+    }
+  }
+  return mots;
+}
+
+/**
+ * « de l'ordre d'un quart à un tiers » : la baisse, dite en fractions — celles
+ * des deux écarts médians de ce qu'on touche sans rien ajouter. Portage de
+ * `_ordre_de_grandeur`.
+ */
+function ordreDeGrandeur(ecarts) {
+  const parts = [-ecarts.aVenir, -ecarts.dejaLiquidees].sort((a, b) => a - b);
+  const [bas, haut] = parts.map(fractionEnMots);
+  const texte = bas === haut ? bas : `${bas} à ${haut}`;
+  return `de l'ordre ${texte.startsWith("un") ? "d'" : "de "}${texte}`;
+}
+
+/**
+ * La ligne « Votre retraite » du tableau de l'accueil, ou aucune : ce que
+ * cela donne, que le tableau taisait. Portage de `_ligne_du_montant`.
+ */
+function ligneDuMontant(ecarts) {
+  if (ecarts === null) return [];
+  return [["Votre retraite",
+    "ce que votre régime promet",
+    `${ordreDeGrandeur(ecarts)} de moins, en médiane`]];
+}
+
+/**
  * Les questions qu'un électeur pose, et la réponse en quelques lignes.
  *
  * L'accueil exposait le programme dans l'ordre de celui qui l'a écrit ;
  * l'électeur arrive avec d'autres questions, dans un autre ordre. Chaque
  * réponse ne dit que ce que le site établit ailleurs : la phrase en gras est au
  * catalogue des affirmations, le lien de fin mène à la preuve, et rien n'y est
- * simulé. Voir `_programme_questions` dans `web/pages.py`.
+ * simulé — les écarts médians de la première réponse sont lus dans le bilan
+ * figé. Voir `_programme_questions` dans `web/pages.py`.
  */
 function programmeQuestions(contexte) {
   const base = contexte.base;
@@ -12422,23 +12469,47 @@ function programmeQuestions(contexte) {
     }
   }
 
+  // De combien : trois médianes de la grille des cas types, lues dans le
+  // bilan figé. Des BAISSES, dites sans signe : la phrase porte le sens. Un
+  // paquet d'avant elles — gardé en cache par le navigateur — n'en porte pas,
+  // et les deux réponses se taisent alors sur le chiffre plutôt que d'emporter
+  // la page. Voir `_programme_questions`.
+  const ecarts = contexte.bilan().ecarts;
+  let ordre = "";
+  let combien = "";
+  let combienRetraite = "";
+  if (ecarts !== null) {
+    ordre = `, ${ordreDeGrandeur(ecarts)}`;
+    const casTypes = `<a href="${g.lien("/cas-types")}">treize carrières types</a>`;
+    const baisseRetraite = g.pourcentage(-ecarts.dejaLiquidees, false, 0);
+    combien = ` Sur nos ${casTypes}, la baisse médiane est de
+${g.pourcentage(-ecarts.aVenir, false, 0)} pour qui n'est pas encore à la
+retraite, de ${g.pourcentage(-ecarts.aVenirVolontaire, false, 0)} s'il
+place aussi les ${volontaire} que la proposition lui rend sur son salaire, et de
+${baisseRetraite} sur la pension d'un retraité d'aujourd'hui, garantie
+vieillesse comprise.`;
+    combienRetraite = ` Sur nos carrières types, la pension
+d'aujourd'hui baisse ainsi de ${baisseRetraite} en médiane.`;
+  }
+
   const questions = [
     ["Ma retraite va-t-elle baisser ?", `
 <p><strong>Le plus souvent, elle sera plus basse que ce que le système actuel
-promet.</strong> Elle vaudra ce que vous aurez cotisé, alors que le système
-actuel promet davantage que ce que les cotisations paient, et que ses recettes
-ne suffisent déjà plus à tenir cette promesse. En échange, un salarié du privé
-cotise ${impose} au lieu de ${aujourdHui}, et son salaire net augmente. Pour
-votre carrière, ${simulateur} met les deux montants côte à côte, avec ce que
-chacun des deux systèmes a vraiment de quoi payer.</p>`],
+promet${ordre}.</strong>${combien} Votre retraite vaudra ce que vous aurez
+cotisé, alors que le système actuel promet davantage que ce que les cotisations
+paient, et que ses recettes ne suffisent déjà plus à tenir cette promesse. En
+échange, un salarié du privé cotise ${impose} au lieu de ${aujourdHui}, et son
+salaire net augmente. Pour votre carrière, ${simulateur} met les deux montants
+côte à côte, avec ce que chacun des deux systèmes a vraiment de quoi
+payer.</p>`],
     ["Je suis déjà à la retraite : qu'est-ce qui change pour moi ?", `
 <p><strong>Votre pension serait recalculée sur ce qui a été réellement
 cotisé</strong>, depuis la première cotisation : ce que le système actuel
 ajoute sans cotisation n'est plus servi. Elle reste ensuite revalorisée sur les
 prix. Si elle est modeste, la garantie vieillesse la complète à partir de ${age}
 ans, jusqu'à ${seul} par mois pour qui vit seul et ${garantie} chacun en couple ;
-c'est une avance, reprise sur la succession. Pour votre cas, choisissez « à la
-retraite » dans ${simulateur}.</p>`],
+c'est une avance, reprise sur la succession.${combienRetraite} Pour votre cas,
+choisissez « à la retraite » dans ${simulateur}.</p>`],
     ["Que deviennent mes trimestres et mes points ?", `
 <p><strong>Toute votre carrière est recalculée depuis la première
 cotisation</strong>, comme si le compte avait toujours existé. Chaque

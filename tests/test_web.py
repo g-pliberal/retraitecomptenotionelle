@@ -7,6 +7,7 @@ standard et sert de référence au portage JavaScript.
 
 from __future__ import annotations
 
+import dataclasses
 import html
 import itertools
 import re
@@ -22,6 +23,7 @@ from retraite_notionnelle.web.gabarit import (
     pourcentage,
     tableau,
 )
+from retraite_notionnelle.donnees.bilan import EcartsFiges
 from retraite_notionnelle.donnees.chargement import (
     DonneeInsuffisante,
     charger_periodes_non_travaillees,
@@ -64,6 +66,8 @@ from retraite_notionnelle.web.pages import (
     ErreurSaisie,
     Saisie,
     _champs_modelisation,
+    _fraction_en_mots,
+    _ordre_de_grandeur,
     rendre,
     statuts,
 )
@@ -5237,20 +5241,27 @@ def test_aucun_chemin_de_fichier_n_est_cite_en_texte_brut(contexte):
 
 
 def test_la_cle_de_lecture_des_cas_types_precede_les_chiffres(contexte):
-    """Le scénario 6 affiche −28 % à −76 % : sans la clé, on lit une baisse.
+    """Le scénario 6 affiche des écarts rouges : la clé dit contre quoi ils se lisent.
 
     La clé était sur la page Coût ; elle est en tête de Cas types, AVANT les
     trois chiffres d'ouverture et les grilles, et dit de quel côté de un se
     trouve le réglage annuel de la proposition. Elle renvoie à la section de
     Coût qui le chiffre.
+
+    Elle a ouvert sur « ces pourcentages ne sont pas des baisses de pension »
+    jusqu'au 23 septembre 2026, jour où l'accueil s'est mis à dire l'ordre de
+    grandeur de la baisse, lu sur cette même grille. Elle dit désormais contre
+    quoi ils se lisent — la promesse du système actuel —, et ne peut plus
+    démentir, un clic plus loin, ce que l'accueil affirme.
     """
     corps = rendre(contexte, "/cas-types", {})[1]
-    cle = corps.index("Ces pourcentages ne sont pas des baisses de")
+    cle = corps.index("Ces pourcentages se lisent contre une")
     assert cle < corps.index('<div class="fiches reperes">')
     assert cle < corps.index('<div class="panneaux">')
     assert "Pour la proposition, ce facteur est " in corps
     assert 'data-vers="cout-equilibre"' in corps
-    assert "Ces pourcentages ne sont pas des baisses" in _hors_depliants(corps)
+    assert "Ces pourcentages se lisent contre une" in _hors_depliants(corps)
+    assert "ne sont pas des baisses" not in corps
 
 
 def _reglage_proposition_attendu(contexte):
@@ -5722,11 +5733,101 @@ def test_l_accueil_repond_aux_questions_de_l_electeur(contexte):
         assert question not in visible
     # La réponse à la première question ne se dérobe pas.
     assert ("Le plus souvent, elle sera plus basse que ce que le système "
-            "actuel\npromet.") in texte
+            "actuel\npromet, de l'ordre ") in texte
     # Les montants de la garantie sont ceux des paramètres.
     base = contexte.base
     assert g.euros(base.garantie_vieillesse_mensuelle
                    + base.allocation_isolement_mensuelle) in texte
+
+
+def _replier(texte: str) -> str:
+    """Les blancs du HTML repliés, SAUF les espaces fines et insécables.
+
+    ``str.split()`` les compte pour des blancs : « 31 % » avec son espace fine
+    en devenait un autre texte que celui que la page écrit.
+    """
+    return re.sub(r"[ \t\n]+", " ", texte)
+
+
+def test_l_accueil_dit_de_combien_la_retraite_baisse(contexte):
+    """« Pour que les gens aient une idée de la baisse » (23 septembre 2026).
+
+    L'accueil disait que la retraite serait le plus souvent plus basse, sans
+    dire de combien. Il le dit à deux endroits, et au même chiffre : dans le
+    tableau qui oppose les deux systèmes, OUVERT — c'est ce que le lecteur
+    pressé voit —, et dans la réponse à la première question, qui détaille les
+    trois écarts médians. Les chiffres sont ceux du bilan figé, écrits sans
+    signe parce que la phrase dit « baisse » ; l'ordre de grandeur en toutes
+    lettres est tiré des deux écarts de ce qu'on touche sans rien ajouter.
+    """
+    corps = rendre(contexte, "/", {})[1]
+    texte = _replier(html.unescape(corps))
+    ecarts = contexte.bilan().ecarts
+    assert ecarts is not None, "le bilan figé ne porte pas les écarts médians"
+    ordre = _ordre_de_grandeur(ecarts)
+
+    # Le tableau, sans rien déplier.
+    visible = _replier(html.unescape(_hors_depliants(corps)))
+    assert (f'<th class="" scope="row">Votre retraite</th><td class="texte">ce que '
+            f'votre régime promet</td><td class="texte">{ordre} de moins, en '
+            "médiane</td>") in visible
+
+    # La réponse : l'ordre de grandeur en gras, puis les trois médianes.
+    assert (f"<strong>Le plus souvent, elle sera plus basse que ce que le "
+            f"système actuel promet, {ordre}.</strong>") in texte
+    for ecart in (ecarts.a_venir, ecarts.a_venir_volontaire, ecarts.deja_liquidees):
+        assert ecart < 0.0
+        assert f"{pourcentage(-ecart, decimales=0)}" in texte
+    assert (f"la baisse médiane est de {pourcentage(-ecarts.a_venir, decimales=0)} "
+            "pour qui n'est pas encore à la retraite") in texte
+    assert (f"la pension d'aujourd'hui baisse ainsi de "
+            f"{pourcentage(-ecarts.deja_liquidees, decimales=0)} en médiane") in texte
+    # La preuve est à un clic : la grille des carrières types.
+    assert '<a href="#/cas-types">treize carrières types</a>' in texte
+
+
+@pytest.mark.parametrize(("part", "mots"), [
+    (0.24, "un quart"), (0.31, "un tiers"), (0.26, "un quart"),
+    (0.48, "la moitié"), (0.05, "un dixième"), (0.9, "trois quarts"),
+])
+def test_une_part_se_dit_par_la_fraction_la_plus_proche(part, mots):
+    assert _fraction_en_mots(part) == mots
+
+
+def test_l_ordre_de_grandeur_elide_ce_qu_il_faut():
+    """« d'un quart », mais « de la moitié » et « de deux cinquièmes »."""
+    def ecarts(a_venir, deja):
+        return EcartsFiges(a_venir=a_venir, a_venir_volontaire=a_venir,
+                           deja_liquidees=deja, cases_a_venir=1,
+                           cases_deja_liquidees=1)
+
+    assert _ordre_de_grandeur(ecarts(-0.31, -0.26)) == "de l'ordre d'un quart à un tiers"
+    assert _ordre_de_grandeur(ecarts(-0.33, -0.34)) == "de l'ordre d'un tiers"
+    assert _ordre_de_grandeur(ecarts(-0.5, -0.4)) == (
+        "de l'ordre de deux cinquièmes à la moitié")
+    # Les cinq points volontaires n'entrent pas dans l'ordre de grandeur.
+    assert _ordre_de_grandeur(EcartsFiges(
+        a_venir=-0.31, a_venir_volontaire=-0.05, deja_liquidees=-0.31,
+        cases_a_venir=1, cases_deja_liquidees=1)) == "de l'ordre d'un tiers"
+
+
+def test_un_paquet_sans_ecarts_ne_fait_pas_tomber_l_accueil():
+    """Un bilan écrit avant les écarts médians : l'accueil se tait sur le chiffre.
+
+    Le navigateur garde le paquet en cache (``force-cache``) : un lecteur
+    revenu après le 23 septembre 2026 peut recevoir le nouveau code et l'ancien
+    paquet. L'accueil ne doit pas en tomber ; il retrouve la réponse d'avant,
+    sans chiffre, et le tableau sa ligne d'avant.
+    """
+    ancien = Contexte()
+    ancien._donnees["bilan"] = dataclasses.replace(ancien.bilan(), ecarts=None)
+    corps = rendre(ancien, "/", {})[1]
+    texte = _replier(html.unescape(corps))
+    assert ("<strong>Le plus souvent, elle sera plus basse que ce que le "
+            "système actuel promet.</strong> Votre retraite vaudra") in texte
+    assert "baisse médiane" not in texte
+    assert "Votre retraite</th>" not in texte
+    assert "c'est une avance, reprise sur la succession. Pour votre cas" in texte
 
 
 def test_un_scenario_n_affiche_que_les_euros_de_l_annee_de_reference(contexte):

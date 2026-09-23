@@ -407,12 +407,48 @@ affirmations:
   # plus souvent par le contrôle qui tient déjà la même affirmation ailleurs.
   - id: accueil.question_plus_basse
     page: /
-    extrait: "Le plus souvent, elle sera plus basse que ce que le système actuel promet."
+    extrait: "Le plus souvent, elle sera plus basse que ce que le système actuel promet"
     porte: >-
       sur la grille des cas types, la proposition sert moins que la promesse du
       système actuel dans plus de la moitié des cases
     etat: verifiee
     controle: proposition_le_plus_souvent_sous_la_promesse
+
+  # DE COMBIEN, depuis le 23 septembre 2026 : « pour que les gens aient une
+  # idée de la baisse ». La même phrase en gras porte l'ordre de grandeur en
+  # fractions ; la suite, les trois écarts médians de la grille ; le tableau
+  # d'en haut, l'ordre de grandeur encore, ouvert. L'accueil ne simule rien :
+  # il lit les médianes dans le bilan figé, et le contrôle exige qu'elles y
+  # soient celles du modèle.
+  - id: accueil.question_ordre_de_grandeur
+    page: /
+    extrait: "la baisse médiane est de"
+    porte: >-
+      les écarts médians de la proposition au système actuel sur la grille des
+      cas types — carrières à venir sans puis avec les points volontaires,
+      pensions déjà liquidées à leur montant d'aujourd'hui — sont des baisses,
+      celles que le modèle calcule, et l'ordre de grandeur en fractions est
+      tiré des deux qu'on touche sans rien ajouter
+    etat: verifiee
+    controle: ordre_de_grandeur_de_la_baisse
+
+  - id: accueil.question_retraite_baisse
+    page: /
+    extrait: "la pension d'aujourd'hui baisse ainsi de"
+    porte: >-
+      recalculée, garantie vieillesse comprise, la pension d'aujourd'hui des
+      carrières déjà liquidées de la grille baisse de l'écart médian annoncé
+    etat: verifiee
+    controle: ordre_de_grandeur_de_la_baisse
+
+  - id: accueil.tableau_votre_retraite
+    page: /
+    extrait: "de moins, en médiane"
+    porte: >-
+      la ligne « Votre retraite » du tableau d'accueil donne l'ordre de
+      grandeur de la première question, tiré des mêmes médianes
+    etat: verifiee
+    controle: ordre_de_grandeur_de_la_baisse
 
   - id: accueil.question_retraite_recalculee
     page: /
@@ -789,12 +825,19 @@ affirmations:
     etat: verifiee
     controle: legende_rouge_vert
 
-  - id: cas_types.pas_des_baisses
+  # Elle a dit « Ces pourcentages ne sont pas des baisses de pension » jusqu'au
+  # 23 septembre 2026. L'accueil dit depuis ce jour l'ordre de grandeur de la
+  # baisse, lu sur cette grille : la clé ne pouvait plus la démentir un clic
+  # plus loin. Elle dit contre quoi les cases se lisent.
+  - id: cas_types.contre_une_promesse
     page: /cas-types
-    extrait: "Ces pourcentages ne sont pas des baisses de pension."
-    porte: le coefficient d'équilibre n'est pas appliqué, la grille mesure des écarts entre lignes
+    extrait: "Ces pourcentages se lisent contre une promesse"
+    porte: >-
+      chaque case rapporte ce qu'un système servirait à la pension que la règle
+      du système actuel promet à la même carrière, sans coefficient
+      d'équilibre appliqué ni à l'une ni à l'autre
     etat: verifiee
-    controle: coefficient_jamais_applique
+    controle: les_cases_se_lisent_contre_la_promesse
 
   # Elle a dit « il multiplierait les cases par le même facteur », sous un
   # contrôle qui vérifiait seulement que le coefficient n'est pas appliqué —

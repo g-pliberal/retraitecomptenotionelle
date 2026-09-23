@@ -110,10 +110,29 @@ export class EngagementFige {
   }
 }
 
+/**
+ * Les écarts médians de la grille des cas types, tels que la table les porte.
+ *
+ * L'accueil dit de combien la proposition baisse les retraites, et il ne
+ * simule rien : il lit ces trois médianes, que `castypes.ecarts_medians` tire
+ * de la grille entière côté Python — des secondes de calcul que la première
+ * page ouverte ne peut pas faire attendre. Les champs sont ceux de
+ * `castypes.EcartsMedians`.
+ */
+export class EcartsFiges {
+  constructor(brut) {
+    this.aVenir = brut.a_venir;
+    this.aVenirVolontaire = brut.a_venir_volontaire;
+    this.dejaLiquidees = brut.deja_liquidees;
+    this.casesAVenir = brut.cases_a_venir;
+    this.casesDejaLiquidees = brut.cases_deja_liquidees;
+  }
+}
+
 /** Le bilan des quatre systèmes comparés, tel que la table le porte. */
 export class BilanFige {
   constructor(annees, premiereAnneeProjetee, assiette, pib = 0.0, anneePib = 0,
-              engagements = null) {
+              engagements = null, ecarts = null) {
     this.annees = annees;
     this.premiereAnneeProjetee = premiereAnneeProjetee;
     this.assiette = assiette;
@@ -124,6 +143,8 @@ export class BilanFige {
     this.pib = pib;
     this.anneePib = anneePib;
     this.engagements = engagements;
+    // Les écarts médians de la proposition au système actuel, sur la grille.
+    this.ecarts = ecarts;
     this.premiereAnnee = annees.length ? annees[0].annee : 0;
     this.derniereAnnee = annees.length ? annees[annees.length - 1].annee : 0;
     this.derniereAnneeObservee = premiereAnneeProjetee - 1;
@@ -148,5 +169,6 @@ export function chargerBilan(donnees) {
     new AssietteFigee(donnees.annee_assiette, donnees.part_pib_assiette),
     donnees.pib, donnees.annee_pib,
     donnees.engagements ? new EngagementFige(donnees.engagements) : null,
+    donnees.ecarts_medians ? new EcartsFiges(donnees.ecarts_medians) : null,
   );
 }

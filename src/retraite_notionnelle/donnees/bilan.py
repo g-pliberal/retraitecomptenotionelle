@@ -112,6 +112,24 @@ class EngagementFige:
 
 
 @dataclass(frozen=True)
+class EcartsFiges:
+    """Les écarts médians de la grille des cas types, tels que la table les porte.
+
+    L'accueil dit de combien la proposition baisse les retraites, et il ne
+    simule rien : il lit ces trois médianes, que ``castypes.ecarts_medians``
+    tire de la grille entière des cas types — des secondes de calcul que la
+    première page ouverte ne peut pas faire attendre. Les champs sont ceux de
+    ``castypes.EcartsMedians`` : la page ne sait pas lequel des deux elle lit.
+    """
+
+    a_venir: float
+    a_venir_volontaire: float
+    deja_liquidees: float
+    cases_a_venir: int
+    cases_deja_liquidees: int
+
+
+@dataclass(frozen=True)
 class BilanFige:
     """Le bilan des quatre systèmes comparés, tel que la table le porte.
 
@@ -130,6 +148,8 @@ class BilanFige:
     annee_pib: int = 0
     #: L'engagement acquis à date, à la dernière année qu'Eurostat transmette.
     engagements: EngagementFige | None = None
+    #: Les écarts médians de la proposition au système actuel, sur la grille.
+    ecarts: EcartsFiges | None = None
 
     @property
     def premiere_annee(self) -> int:
@@ -175,6 +195,20 @@ def depuis_dictionnaire(donnees: dict) -> BilanFige:
         pib=float(donnees.get("pib", 0.0)),
         annee_pib=int(donnees.get("annee_pib", 0)),
         engagements=_engagements(donnees.get("engagements")),
+        ecarts=_ecarts(donnees.get("ecarts_medians")),
+    )
+
+
+def _ecarts(brut: dict | None) -> EcartsFiges | None:
+    """Les écarts médians, ou rien : une table écrite avant eux n'en porte pas."""
+    if not brut:
+        return None
+    return EcartsFiges(
+        a_venir=float(brut["a_venir"]),
+        a_venir_volontaire=float(brut["a_venir_volontaire"]),
+        deja_liquidees=float(brut["deja_liquidees"]),
+        cases_a_venir=int(brut["cases_a_venir"]),
+        cases_deja_liquidees=int(brut["cases_deja_liquidees"]),
     )
 
 
