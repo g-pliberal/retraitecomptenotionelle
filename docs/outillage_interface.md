@@ -18,7 +18,7 @@ scripts/setup_ui_tools.sh --essai    # en plus, ouvre et ferme un Chromium pour 
 
 | Outil | Version | Dans Git | Hors Git, obtenu au premier usage |
 |---|---|---|---|
-| Impeccable | 4.3.1 (compétence), moteur 0.1.5 | `.claude/skills/impeccable/` (SKILL.md, références, lanceur `scripts/impeccable`, `scripts/VERSION`), les quatre agents `.claude/agents/impeccable-*.md`, le hook dans `.claude/settings.json` | le moteur natif (16 Mo), dans `~/.impeccable/bin/0.1.5/` |
+| Impeccable | 4.3.1 (compétence), moteur 0.1.5 | `.claude/skills/impeccable/` (SKILL.md, références, lanceur `scripts/impeccable`, `scripts/VERSION`), les quatre agents `.claude/agents/impeccable-*.md`, le hook dans `.claude/settings.json` | le moteur natif (<!--chiffre:tenu(test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees)-->16<!--/--> Mo), dans `~/.impeccable/bin/0.1.5/` |
 | Web Interface Guidelines | 1.0.0 (compétence), règles figées au commit `e3d624b` | `.claude/skills/web-design-guidelines/` (SKILL.md, `guidelines.md`, `guidelines.provenance.yaml`) | rien |
 | Playwright CLI | `@playwright/cli` 0.1.20 | `.claude/skills/playwright-cli/` (SKILL.md livré par ce paquet), `.playwright/cli.config.json` | le paquet npm global, et le Chromium qu'il attend |
 
@@ -41,7 +41,7 @@ session, ignoré).
   globalement par npm (jamais dans le dépôt : pas de `node_modules`, pas de
   `package.json`, `pyproject.toml` intact). Le script n'installe que si la
   commande manque ou répond une autre version.
-- **Chromium** (« Chrome for Testing », ~190 Mo), depuis `cdn.playwright.dev`,
+- **Chromium** (« Chrome for Testing », une archive de ~<!--chiffre:tenu(test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees)-->190<!--/--> Mo), depuis `cdn.playwright.dev`,
   par `playwright-cli install-browser chromium`, le mécanisme officiel. Le
   script ne le lance que si la révision attendue par cette version du CLI est
   absente ; `--sans-navigateur` l'en empêche. Playwright range les navigateurs
@@ -67,7 +67,7 @@ aucun chemin absolu, rien de propre à une machine. C'est exactement ce que
 `impeccable hooks on` écrit dans `.claude/settings.local.json`, déplacé dans le
 fichier partagé comme la compétence le prévoit ; ne pas relancer `hooks on`,
 qui recréerait le doublon local. Sans `.impeccable/config.json`, le hook tourne
-avec ses valeurs par défaut (activé, cinq constats, 8 000 caractères) ;
+avec ses valeurs par défaut (activé, cinq constats, <!--chiffre:tenu(test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees)-->8 000<!--/--> caractères) ;
 `/impeccable hooks off|ignore-value|…` crée ce fichier, qui peut être commité.
 Le hook écrit `.impeccable/hook.cache.json` à l'usage, ignoré.
 
