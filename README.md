@@ -167,8 +167,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->927<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 290<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->929<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 307<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Huit pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -206,9 +206,9 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->3 510<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->3 527<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
-2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->73<!--/--> fiches de régime) et
+2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->74<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
 du dépôt, telle quelle : c'est ce que GitHub Pages publie sans aucun réglage, et
 `.nojekyll` demande que les fichiers soient servis sans transformation. Rien
@@ -224,10 +224,10 @@ poids de ce qu'on voulait exécuter.
 Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->509<!--/--> simulations complètes et
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->515<!--/--> simulations complètes et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->54<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
-<!--chiffre:portage(valeurs)-->83 625<!--/--> nombres,
+<!--chiffre:portage(valeurs)-->84 605<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->88,9<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->11,8<!--/--> · 10⁻¹⁵, quelques dizaines
 d'*ulp* (un *ulp* vaut 2 · 10⁻¹⁶, la précision d'un flottant). Les pages, elles, sont comparées caractère par caractère : le
@@ -320,7 +320,7 @@ print(simulateur.simuler(simulateur.carriere_releve(
 # Le cas général : grille cas type × génération
 print(calculer_cas_types(simulateur).tableau())
 
-# Les 62 statuts et les 73 régimes du catalogue
+# Les 63 statuts et les 74 régimes du catalogue
 for regime in simulateur.catalogue:
     print(f"{regime.code:<26} {regime.famille:<22} {regime.nom}")
 ```
@@ -351,8 +351,8 @@ print(simulateur.simuler(carriere).tableau())
 | Exigence | Réalisation |
 |---|---|
 | Comptes notionnels rétroactifs depuis l'origine de la répartition | Origine 1941 (AVTS), paramétrable à 1945 |
-| Chaque réforme laisse une trace dans chaque fiche | Un calendrier central des réformes (`data/reference/legislation/reformes.yaml`, <!--chiffre:entrees(data/reference/legislation/reformes.yaml:reformes)-->108<!--/--> entrées de 1945 à 2026) et, par régime, les articles de code ou de décret qui portent ses paramètres (`regimes/pivots.yaml`) ; `scripts/calendrier_regimes.py` lit leurs versions dans l'index LEGI et les confronte aux périodes des fiches, et un test impose que toute réforme touchant un régime soit coupée, absorbée par un drapeau par génération, ou déclarée non appliquée avec sa raison |
-| Tous les régimes, actuels **et** disparus | <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->73<!--/--> régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->90<!--/--> lignes** — tous les régimes obligatoires ayant existé depuis 1930, calculés ou non —, ancré sur `R. 711-1`, qui dit ce qui manque à chacun et pourquoi ; un test le tient aligné sur le catalogue, et ses tableaux sont produits par script |
+| Chaque réforme laisse une trace dans chaque fiche | Un calendrier central des réformes (`data/reference/legislation/reformes.yaml`, <!--chiffre:entrees(data/reference/legislation/reformes.yaml:reformes)-->109<!--/--> entrées de 1945 à 2026) et, par régime, les articles de code ou de décret qui portent ses paramètres (`regimes/pivots.yaml`) ; `scripts/calendrier_regimes.py` lit leurs versions dans l'index LEGI et les confronte aux périodes des fiches, et un test impose que toute réforme touchant un régime soit coupée, absorbée par un drapeau par génération, ou déclarée non appliquée avec sa raison |
+| Tous les régimes, actuels **et** disparus | <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->74<!--/--> régimes calculés : AGIRC, ARRCO, CANCAVA, ORGANIC, RSI, mines, SEITA, chemins de fer secondaires… — et un [inventaire](docs/regimes.md) de **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->91<!--/--> lignes** — tous les régimes obligatoires ayant existé depuis 1930, calculés ou non —, ancré sur `R. 711-1`, qui dit ce qui manque à chacun et pourquoi ; un test le tient aligné sur le catalogue, et ses tableaux sont produits par script |
 | Départ trop tôt = pension réduite | Âge de référence à **<!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans** — l'âge légal d'ouverture des droits — à partir de la bascule ; avant elle, un **cliquet** que l'abaissement de 1982 ne fait pas redescendre |
 | Régimes à départ précoce traités au même étalon | L'agent de conduite de l'exemple, parti à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.sncf.depart)-->50<!--/--> ans en 2005, compte <!--chiffre:mesure(avance?exemple=sncf)-->15<!--/--> ans d'anticipation ; après la bascule, un départ de l'Opéra à <!--chiffre:illustration()-->40<!--/--> ans se mesure à un âge de référence de <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans |
 | Indexation par triple lock inversé, depuis l'origine | `min(inflation, salaire moyen, productivité réelle)`, appliqué aux comptes en constitution. Le modèle s'arrête à la liquidation : il ne revalorise pas les pensions servies, et n'en calcule qu'une, dans les euros de l'année de départ |
@@ -375,7 +375,7 @@ print(simulateur.simuler(carriere).tableau())
 | Le droit ouvre-t-il ce départ ? | Âge légal du régime ou carrière longue ; sinon le montant est marqué comme un contrefactuel, pas une pension servie |
 | Suppression des minima | Ni minimum contributif, ni minimum garanti, ni ASPA : peu cotisé, peu de retraite |
 | Suppression des avantages | Ni majorations enfants, ni MDA, ni AVPF, ni bonifications, ni réversion, ni trimestres gratuits |
-| Tout le monde peut simuler | <!--chiffre:entrees(data/reference/legislation/affiliations.yaml:affiliations)-->62<!--/--> statuts d’affiliation, cinq informations suffisent |
+| Tout le monde peut simuler | <!--chiffre:entrees(data/reference/legislation/affiliations.yaml:affiliations)-->63<!--/--> statuts d’affiliation, cinq informations suffisent |
 | La cotisation de chaque année, pas une moyenne de période | Le compte notionnel reçoit le taux de l'année — <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1967&mesure=taux_plafonne)-->8<!--/--> % en 1967, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1979&mesure=taux_plafonne)-->13<!--/--> % en 1979, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1991&mesure=taux_plafonne)-->16<!--/--> % en 1991 au régime général, sous le plafond —, lu dans `taux_cotisation_annuels.csv` (<!--chiffre:lignes_csv(data/reference/regimes/taux_cotisation_annuels.csv)-->1 206<!--/--> valeurs, lues dans les décrets datés ou, à défaut, dans les barèmes d'OpenFisca-France, pour le régime général, les salariés agricoles, les cultes, Mayotte, Saint-Pierre-et-Miquelon, les artisans, les commerçants et le RSI) et appliqué année par année au chargement des fiches, qui gardent leur moyenne pour les années d'avant 1967 |
 | Le marin cotise et liquide sur le forfait de sa catégorie | Les <!--chiffre:distinctes(data/reference/regimes/salaires_forfaitaires.csv:categorie)-->20<!--/--> salaires forfaitaires des marins sont lus au Journal officiel, arrêté par arrêté depuis 2008 (`salaires_forfaitaires.csv`, <!--chiffre:lignes_csv(data/reference/regimes/salaires_forfaitaires.csv)-->380<!--/--> montants certifiés) ; le moteur range le marin dans la catégorie la plus proche de son revenu — convention nommée — et cotise comme il liquide sur ce forfait, dans les deux moteurs |
 | Avant 1967, la part vieillesse des assurances sociales, datée | Les taux de 1945 à 1966 viennent du tableau du COR d'après la Cnav, et la part vieillesse est la convention nommée de 8,5/21 — celle de l'ordonnance de 1967 —, au niveau estimé : le compte reçoit <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1945&mesure=taux_plafonne)-->5<!--/--> % en 1945, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1947&mesure=taux_plafonne)-->6<!--/--> % en 1947, <!--chiffre:cellule(data/reference/regimes/taux_cotisation_annuels.csv:valeur*100?regime=regime_general&annee=1966&mesure=taux_plafonne)-->8<!--/--> % en 1966 ; la retenue des fonctionnaires est à <!--chiffre:valeur(data/reference/regimes/fonction_publique.yaml:regimes.code=fonction_publique_etat.periodes.debut=1989.taux_cotisation_retraite*100)-->8,9<!--/--> % dès 1989 (loi n° 89-18, art. 23), les points CARMF d'avant 1991 valent <!--chiffre:cellule(data/reference/regimes/conversions_points.csv:coefficient?regime=carmf_complementaire)-->1,33<!--/--> point d'après |
@@ -387,7 +387,7 @@ print(simulateur.simuler(carriere).tableau())
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut <!--chiffre:cellule(data/reference/regimes/conversions_points.csv:coefficient?regime=agirc)-->0,347791548<!--/-->, le rapport de leurs valeurs de service au 31 décembre 2018 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
-| Portage vérifié, pas cru sur parole | Le site rejoue <!--chiffre:entrees(tests/temoins/simulations.json:)-->509<!--/--> simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
+| Portage vérifié, pas cru sur parole | Le site rejoue <!--chiffre:entrees(tests/temoins/simulations.json:)-->515<!--/--> simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
 
 ---
 
@@ -1228,7 +1228,7 @@ data/
                                 du système de retraite, pyramide des âges,
                                 projections
     mortalite/                  espérances de vie et quotients par âge observés
-    regimes/                    73 fiches de régime + schéma + valeurs du point,
+    regimes/                    74 fiches de régime + schéma + valeurs du point,
                                 et l'inventaire de tous les régimes (inventaire.yaml)
     legislation/                âges et durées par génération, barèmes des
                                 minima, décote de la fonction publique,
@@ -1276,7 +1276,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2350 tests Python
+tests/                          2351 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1330,7 +1330,7 @@ Sans cible, la suite se répartit d'elle-même sur les cœurs (pytest-xdist) ;
 avec une cible — un fichier, un test —, elle tourne en série, ce qui est plus
 lisible pour un seul test.
 
-<!--chiffre:tests()-->2350<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2351<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

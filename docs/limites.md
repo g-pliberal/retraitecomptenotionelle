@@ -3239,7 +3239,7 @@ d'aujourd'hui.
 
 ## 4. Régimes incomplets, et de combien
 
-Un régime « incomplet » n’est pas un régime absent : les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->73<!--/--> régimes du catalogue
+Un régime « incomplet » n’est pas un régime absent : les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->74<!--/--> régimes du catalogue
 calculent tous une pension. Ce qui manque est, chaque fois, un ÉTAGE ou un
 BARÈME qu'aucune source publique ne donne en série. Le tableau dit lequel, ce
 qui le remplace, et **dans quel sens** l'approximation joue — car un modèle dont
@@ -3272,7 +3272,7 @@ forme, ni en série, ni en texte réglementaire, ni en PDF. Les chercher encore
 supposerait de les reconstituer à partir de cas individuels, ce qui produirait
 un chiffre plus précis d'apparence et pas davantage de vérité.
 
-Le catalogue compte **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->73<!--/--> régimes**, actuels et disparus. Il est structurellement
+Le catalogue compte **<!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->74<!--/--> régimes**, actuels et disparus. Il est structurellement
 extensible : ajouter un régime consiste à écrire une fiche YAML conforme à
 `data/reference/regimes/_schema.yaml`, sans toucher au moteur.
 
@@ -3285,7 +3285,7 @@ document saisi à la main, et les portails officiels ne servent pas de liste
 exploitable —, si bien qu'un régime pouvait manquer à la liste des manquants.
 [`data/reference/regimes/inventaire.yaml`](../data/reference/regimes/inventaire.yaml)
 énumère maintenant TOUS les régimes obligatoires, vivants, disparus ou hors
-champ — <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->90<!--/--> lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
+champ — <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->91<!--/--> lignes, ancrées sur `R. 711-1`, `D. 643-1`, `L. 921-1` et le
 programme 195 des lois de finances, chacune avec son texte fondateur et, quand
 l'index DILA du dépôt le porte, son identifiant —, et dit pour chacun s'il est
 modélisé, partiel, à modéliser ou hors champ. `tests/test_donnees.py` impose
@@ -4061,7 +4061,7 @@ fichiers : toute année routée doit trouver une période de régime, tout régi
 du catalogue doit être routé ou nommé avec sa raison, toute succession
 (`succede_a`, `integre_dans`) doit désigner un régime qui existe. Un quatrième
 rattache aux données les nombres que le README et ce document annoncent —
-« 62 statuts », « 73 régimes » —, parce que ce sont des chiffres de données et
+« 63 statuts », « 74 régimes » —, parce que ce sont des chiffres de données et
 non de prose, et que le dépôt s'est déjà fait prendre à en laisser dériver un.
 
 ### Les deux dernières sections que le décret annuel débloquait
@@ -6736,6 +6736,43 @@ n'en déclare aucune. La révision des pensions prises avant le 1er septembre
 arrérages suivants. La ligne `rco_points_gratuits` du registre de veille en
 tient le détail.
 
+### Le ministre du culte n'avait pas d'Arrco, et L. 921-1 la lui donne depuis 2006
+
+Le statut du simulateur confondait deux populations que la loi sépare.
+L'article 75 de la loi de financement de la sécurité sociale pour 2006 a
+complété L. 921-1 : l'affiliation obligatoire à une institution de retraite
+complémentaire est « applicable aux personnes mentionnées à l'article L. 382-15
+qui bénéficient d'un revenu d'activité perçu individuellement ». Le ministre
+rémunéré par son diocèse, son association ou sa communauté cotise donc à
+l'Arrco depuis le 1er janvier 2006, puis à l'Agirc-Arrco ; le religieux qui vit
+de sa congrégation, non. Le modèle ne routait l'Arrco ni à l'un ni à l'autre.
+
+La cotisation ne porte pas sur le revenu. Les circulaires de la CAVIMAC, qui
+la recouvre, en donnent l'assiette et le taux : la n° 2026/03 du 27 mai 2026
+porte au SMIC mensuel, 1 867 €, « les assiettes forfaitaires respectives des
+cotisations [...] vieillesse et retraite complémentaire obligatoire des
+cultes », et cote la ligne « RCO — Tous cultes - taux de base » à 10,02 %,
+dont 6,01 % pour la collectivité et 4,01 % pour l'assuré — les 7,87 % de
+l'Agirc-Arrco et ses 2,15 % de contribution d'équilibre générale. Les
+circulaires lisibles, depuis novembre 2021, disent toutes la même chose.
+
+**Ce que cela déplace.** Le statut est scindé : `ministre_du_culte` garde son
+code et reçoit l'Arrco depuis 2006, `membre_congregation` n'a que la CAVIMAC.
+Une fiche `arrco_cultes` porte les points de l'Arrco puis de l'Agirc-Arrco sur
+le forfait, comme la tranche 2 de l'Arrco emprunte les siens. Le ministre du
+simulateur né en 1975 gagne 14 % de pension au scénario 1, celui né en 1955
+6,2 %. Six témoins s'ajoutent, ceux du nouveau statut ; quatre changent de
+pension, les ministres des générations 1945 à 1975, et la liste des régimes
+que fusionne le système unique gagne une ligne dans tous.
+
+**Ce qui reste.** Les huit taux spécifiques que la CAVIMAC énumère, de 11,13 à
+21,31 % ; le taux d'avant 2019, repris de l'Arrco faute de circulaire plus
+ancienne lisible ; le texte de l'avenant n° 25 à l'accord Agirc-Arrco, qui
+touche en 2024 à son annexe B pour les affiliés de la CAVIMAC. Le lecteur de
+relevé rattache toute ligne de la CAVIMAC au ministre rémunéré : c'est au
+formulaire de corriger. La ligne `cultes_retraite_complementaire` du registre
+de veille en tient le détail.
+
 ### Les navigants décotaient jusqu'à soixante-cinq ans, et la loi dit soixante
 
 La caisse des navigants de l'aviation civile (CRPN) écarte la décote « à
@@ -8988,7 +9025,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2350<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2351<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

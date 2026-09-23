@@ -3173,6 +3173,51 @@ def test_le_chef_d_exploitation_recoit_ses_points_gratuits_de_rco(simulateur):
     assert _rco(resultat) == (None, None)
 
 
+def test_le_ministre_du_culte_remunere_cotise_a_l_arrco_sur_le_forfait(simulateur):
+    """L'Arrco depuis 2006 pour qui perçoit une rémunération individuelle.
+
+    « Ces dispositions sont applicables aux personnes mentionnées à l'article
+    L. 382-15 qui bénéficient d'un revenu d'activité perçu individuellement »
+    (L. 921-1, complété par la loi n° 2005-1579, art. 75, VII). La CAVIMAC
+    recouvre la cotisation sur le SMIC mensuel, l'assiette forfaitaire de
+    toutes ses cotisations (circulaire n° 2026/03). Le statut confondait le
+    ministre rémunéré et le religieux qui vit de sa communauté, et ne routait
+    l'Arrco à aucun des deux.
+    """
+    affiliations = simulateur.affiliations
+    assert affiliations.regimes("ministre_du_culte", 2005) == ("cavimac",)
+    assert affiliations.regimes("ministre_du_culte", 2006) == ("cavimac", "arrco_cultes")
+    assert affiliations.regimes("membre_congregation", 2026) == ("cavimac",)
+
+    scenario = simulateur.scenario_actuel
+
+    def rco(statut, niveau):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1961, sexe="H", affiliation=statut, age_debut=25,
+            age_liquidation=65, niveau_salaire=niveau,
+        )
+        return next((p for p in scenario.calculer(carriere).pensions_par_regime
+                     if p.regime == "arrco_cultes"), None)
+
+    assert rco("membre_congregation", 1.0) is None
+    pension = rco("ministre_du_culte", 0.5)
+    # Le forfait : le revenu déclaré n'entre pas dans l'assiette.
+    assert rco("ministre_du_culte", 2.0).montant == pytest.approx(pension.montant, abs=1e-9)
+    # Parti en janvier 2026 : vingt années, de 2006 à 2025, de 1 820 heures de
+    # SMIC à 7,5 % puis 7,87 %, achetées au prix de l'Arrco puis de
+    # l'Agirc-Arrco, dont les points sont empruntés.
+    attendus = 0.0
+    for annee in range(2006, 2026):
+        periode = simulateur.catalogue["arrco_cultes"].periode(annee)
+        reference, appel, _ = scenario.valeurs_point.achat(periode.points_de, annee)
+        echelle, _ = scenario.conversions_points.echelle(periode.points_de, annee, 2026)
+        attendus += (1820 * simulateur.macro.smic_horaire(annee)
+                     * periode.taux_cotisation_retraite / (appel * reference) * echelle)
+    points = float(pension.detail.split(" points")[0].replace(",", ""))
+    assert points == pytest.approx(attendus, abs=0.005)
+    assert attendus > 1000
+
+
 # -- minimum contributif, désormais sourcé dans le code ----------------------
 
 

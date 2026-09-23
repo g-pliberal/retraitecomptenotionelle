@@ -100,7 +100,7 @@ commiter sur `main`.
 
 ## Ce que le registre porte aujourd'hui
 
-Le registre porte <!--chiffre:entrees(data/reference/legislation/veille.yaml:entrees)-->88<!--/--> lignes,
+Le registre porte <!--chiffre:entrees(data/reference/legislation/veille.yaml:entrees)-->89<!--/--> lignes,
 et ce qui y est `conforme` a été lu dans le texte comme dans son application,
 puis rejoué par les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->46<!--/--> exemples publiés
 que `exemples_officiels.yaml` transcrit. Le 17 septembre 2026, l'action 27 a

@@ -1956,6 +1956,46 @@ entrees:
       principale et secondaire.
     prochaine_veille: "2027-09-30"
 
+  - id: cultes_retraite_complementaire
+    regle: >-
+      Retraite complémentaire obligatoire des cultes : depuis le 1er janvier
+      2006, les personnes du régime des cultes (L. 382-15) « qui bénéficient
+      d'un revenu d'activité perçu individuellement » sont affiliées à une
+      institution de retraite complémentaire (L. 921-1). La CAVIMAC recouvre
+      la cotisation sur l'assiette forfaitaire de ses autres cotisations, le
+      SMIC mensuel, au « taux de base » de 10,02 % — les 7,87 % de
+      l'Agirc-Arrco et les 2,15 % de sa contribution d'équilibre générale —,
+      dont les trois cinquièmes à la charge de la collectivité ; une
+      institution de l'Arrco calcule et sert les points.
+    textes:
+      - "loi n° 2005-1579 du 19 décembre 2005, article 75, VII (JORFARTI000002070677)"
+      - "code de la sécurité sociale, L. 921-1, de sa version du 20 décembre 2005 (LEGIARTI000006745503) à celle en vigueur depuis le 1er septembre 2023 (LEGIARTI000047452643), la phrase dans toutes"
+      - "code de la sécurité sociale, R. 382-89 et R. 382-90 : l'assiette forfaitaire du régime des cultes"
+      - "avenant n° 25 du 18 décembre 2024 à l'accord Agirc-Arrco, avis d'extension du 9 avril 2025 (JORFARTI000051439935) : il « complète la dernière phrase de l'article 2 de l'Annexe B pour tenir compte des ministres des cultes et des membres des congrégations » ; le texte de l'accord n'est pas lu"
+    sources:
+      - {type: legifrance, reference: "L. 921-1 en vigueur (LEGIARTI000047452643) : « Ces dispositions sont applicables aux personnes mentionnées à l'article L. 382-15 qui bénéficient d'un revenu d'activité perçu individuellement »", date: "2026-09-23"}
+      - {type: autre, reference: "CAVIMAC, circulaire n° 2026/03 du 27 mai 2026 : « les assiettes forfaitaires respectives des cotisations mensuelles d'assurance maladie – maternité – invalidité, vieillesse et retraite complémentaire obligatoire des cultes » portées au SMIC, 1 867 € ; « RCO — Tous cultes - taux de base » 10,02 %, part collective 6,01 %, part personnelle 4,01 % ; même règle dans chaque circulaire lisible depuis la n° 2021/04 du 15 novembre 2021", url: "https://www.cavimac.fr/publications", date: "2026-09-23"}
+      - {type: autre, reference: "CAVIMAC, espace partenaires : « Il a été institué à compter du 1er janvier 2006 (Loi n° 2005 – 1579 du 19 décembre 2005) une couverture de retraite complémentaire obligatoire pour les ministres des cultes. Tous les ministres des cultes, quelle que soit leur nationalité, qui perçoivent des rémunérations individuelles du fait de leur activité cultuelle, sont assujettis, à titre obligatoire » ; gestion par des institutions de l'Arrco", url: "https://www.cavimac.fr/bienvenue-sur-lespace-partenaires", date: "2026-09-23"}
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [cultes_arrco_2006]
+    etat: conforme
+    effet: >-
+      Ministres des cultes rémunérés, depuis 2006 : le modèle ne leur routait
+      que la CAVIMAC. Au statut du simulateur, le ministre né en 1975 gagne
+      14 % de pension au scénario 1, celui né en 1955 6,2 %. Fiche
+      `arrco_cultes` — points de l'Arrco puis de l'Agirc-Arrco, assiette
+      forfaitaire —, statut `ministre_du_culte` scindé de
+      `membre_congregation`, tenu par
+      `test_le_ministre_du_culte_remunere_cotise_a_l_arrco_sur_le_forfait` et
+      son pendant JavaScript.
+    a_faire: >-
+      Les huit taux spécifiques de la CAVIMAC, de 11,13 à 21,31 %. Le taux
+      d'avant 2019, repris de l'Arrco faute de circulaire lisible antérieure à
+      novembre 2021. Le lecteur de relevé rattache encore toute ligne de la
+      CAVIMAC au ministre rémunéré.
+    prochaine_veille: "2027-09-30"
+
   - id: assiette_minimale_independants
     regle: >-
       Assiette minimale de la cotisation de base des artisans, commerçants et
@@ -5162,3 +5202,25 @@ journal:
       Les 66 points des conjoints, aides familiaux et collaborateurs ; les
       majorations de durée comptées dans les dix-sept ans et demi depuis
       2026 ; la révision, en 2023, des pensions prises avant.
+
+  - date: "2026-09-23"
+    session: "action 119, l'Arrco des ministres des cultes"
+    consulte: >-
+      Dans les index LEGI et JORF : L. 921-1 dans toutes ses versions,
+      l'article 75 de la loi du 19 décembre 2005, R. 382-89 et R. 382-90,
+      l'avis d'extension de l'avenant n° 25 à l'accord Agirc-Arrco. La
+      réponse ministérielle au Sénat du 16 janvier 2008 ; l'espace partenaires
+      de la CAVIMAC, sa page sur la retraite de base et ses circulaires de
+      cotisations de novembre 2021 à juin 2026 ; les circulaires Agirc-Arrco
+      2019-1-DRJ et 2020-02-DRJ.
+    trouve: >-
+      L'Arrco depuis 2006 pour qui perçoit une rémunération individuelle, sur
+      le forfait du SMIC et au taux de base de l'Agirc-Arrco : le statut ne la
+      routait à personne. La page de la retraite de base dit aussi que le
+      salaire annuel moyen des cultes se calcule sur le SMIC, quand le modèle
+      prend le revenu saisi, et que les années d'avant 1979 sont validées
+      gratuitement.
+    reste: >-
+      Les taux spécifiques de la CAVIMAC ; le texte de l'avenant n° 25 ; les
+      fractions de pension d'avant 1998 et les trimestres gratuits d'avant
+      1979.

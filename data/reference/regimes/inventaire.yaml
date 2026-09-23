@@ -372,6 +372,28 @@ inventaire:
       - {reference: "accord national interprofessionnel du 8 décembre 1961 (hors JORF)", id: null}
       - {reference: "accord du 25 avril 1996, article 26 (hors JORF)", id: null}
 
+  - code: arrco_cultes
+    nom: Retraite complémentaire obligatoire des cultes (Arrco, puis Agirc-Arrco)
+    famille: complementaire_prive
+    population: >-
+      Ministres des cultes et religieux percevant une rémunération
+      individuelle
+    creation: 2006
+    fermeture: null
+    extinction: null
+    succede_a: []
+    integre_dans: null
+    couverture: partiel
+    statuts: [ministre_du_culte]
+    textes:
+      - {reference: "code de la sécurité sociale, L. 921-1, complété par la loi n° 2005-1579 du 19 décembre 2005, article 75, VII", id: LEGIARTI000047452643}
+      - {reference: "circulaires de la CAVIMAC sur le recouvrement des cotisations de retraite complémentaire des cultes, n° 2021/04 à 2026/03", id: null}
+    manque: >-
+      Le taux de base seul : les huit taux spécifiques de la CAVIMAC, de
+      11,13 à 21,31 %, ne sont pas portés ; avant 2019, le taux est celui de
+      la tranche 1 de l'Arrco, aucune circulaire antérieure à novembre 2021
+      n'étant lisible.
+
   - code: agirc_entreprises_nouvelles
     nom: Agirc, barème des entreprises créées après 1981
     famille: complementaire_prive
@@ -1214,7 +1236,7 @@ inventaire:
     succede_a: []
     integre_dans: null
     couverture: modelise
-    statuts: [ministre_du_culte]
+    statuts: [ministre_du_culte, membre_congregation]
     textes:
       - {reference: "loi n° 78-4 du 2 janvier 1978 relative aux régimes d'assurance maladie, maternité, invalidité, vieillesse applicables aux ministres des cultes", id: null}
       - {reference: "code de la sécurité sociale, L. 382-15 et suivants", id: LEGIARTI000031686004}

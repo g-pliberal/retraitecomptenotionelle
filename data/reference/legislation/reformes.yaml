@@ -247,6 +247,14 @@ reformes:
     absorbee_par: []
     non_appliquee: {}
 
+  - code: cultes_arrco_2006
+    date: 2006-01-01
+    texte: {reference: "loi n° 2005-1579 du 19 décembre 2005 de financement de la sécurité sociale pour 2006, article 75, VII : L. 921-1 étendu aux personnes du régime des cultes « qui bénéficient d'un revenu d'activité perçu individuellement »", id: JORFARTI000002070677}
+    parametres: [creation]
+    regimes: [arrco_cultes]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: rsi_2006
     date: 2006-07-01
     texte: {reference: "ordonnance n° 2005-1528 du 8 décembre 2005 relative à la création du régime social des indépendants", id: null}
