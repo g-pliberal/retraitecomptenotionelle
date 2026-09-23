@@ -169,9 +169,9 @@ Ce que la correction déplace est modeste, et le dire fait partie de la
 correction : les cotisations se concentrent sur les dernières années d'une
 carrière, où les deux règles coïncident. La ligne de référence du scénario
 rétroactif passe de <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=prix)-->-91,2<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1920&indexation=revalorisation_portee_au_compte)-->-86,2<!--/--> % pour la génération 1920, de
-<!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=prix)-->-89,4<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=revalorisation_portee_au_compte)-->-87,6<!--/--> % pour 1930, ne bouge pas pour 1945
-(<!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=prix)-->-85,4<!--/--> % contre <!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=revalorisation_portee_au_compte)-->-85,4<!--/--> %), et l'écart s'inverse pour
-les carrières entièrement postérieures à 1987 (<!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=prix)-->-81,3<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=revalorisation_portee_au_compte)-->-81,8<!--/--> % pour
+<!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=prix)-->-89,3<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1930&indexation=revalorisation_portee_au_compte)-->-87,5<!--/--> % pour 1930, ne bouge pas pour 1945
+(<!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=prix)-->-84,8<!--/--> % contre <!--chiffre:mesure(ecart?scenario=2&generation=1945&indexation=revalorisation_portee_au_compte)-->-84,8<!--/--> %), et l'écart s'inverse pour
+les carrières entièrement postérieures à 1987 (<!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=prix)-->-80,5<!--/--> % à <!--chiffre:mesure(ecart?scenario=2&generation=1958&indexation=revalorisation_portee_au_compte)-->-81,0<!--/--> % pour
 1958) : depuis 1990, les arrêtés revalorisent un peu moins vite que les prix
 (×<!--chiffre:mesure(cumul_indexation?regle=revalorisation_portee_au_compte&de=1990&a=2025)-->1,69<!--/--> contre ×<!--chiffre:mesure(cumul_indexation?regle=prix&de=1990&a=2025)-->1,79<!--/-->), l'indexation légale étant assise sur l'inflation de l'année
 précédente. Le facteur cinq est celui de l'indice cumulé sur 1941-2025, pas
@@ -304,7 +304,7 @@ la fenêtre, ce qui gonfle le coefficient d'une vingtaine de pour cent à cinq a
 ×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&de=1940&a=2025)-->3 442,3<!--/--> à ×<!--chiffre:mesure(cumul_indexation?regle=pib_nominal&lissage=5&de=1940&a=2025)-->4 152,7<!--/--> dans le tableau plus haut, alors qu'il croît *moins* vite
 que la masse salariale (×<!--chiffre:mesure(cumul_indexation?regle=masse_salariale&de=1940&a=2025)-->3 685,1<!--/-->). Sur une carrière, l'écart entre lissé et non
 lissé retombe à un ou deux points : règle par défaut, génération 1930,
-<!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-83,9<!--/--> % sans lissage, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=3)-->-82,9<!--/--> % à trois ans, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=5)-->-81,9<!--/--> % à cinq.
+<!--chiffre:mesure(ecart?scenario=2&generation=1930)-->-83,8<!--/--> % sans lissage, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=3)-->-82,7<!--/--> % à trois ans, <!--chiffre:mesure(ecart?scenario=2&generation=1930&lissage=5)-->-81,8<!--/--> % à cinq.
 
 Aucun plancher n'est appliqué par défaut : le taux peut être négatif, ce qui est
 la conséquence logique de la règle (`plancher_indexation`).
@@ -325,7 +325,7 @@ fiabilité la plus basse, qui se propage jusqu'au résultat.
 **Le site affiche une fourchette, pas un nombre seul.** Sous les cinq scénarios,
 un bloc rejoue la même carrière sous les trois hypothèses de productivité et
 donne l'amplitude — pour la génération 2000, entrée à <!--chiffre:illustration()-->21<!--/--> ans et partant à
-<!--chiffre:illustration()-->64<!--/--> ans, la pension du scénario 2 va de <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=basse)-->654<!--/--> € à <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=haute)-->822<!--/--> € par mois, soit
+<!--chiffre:illustration()-->64<!--/--> ans, la pension du scénario 2 va de <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=basse)-->639<!--/--> € à <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=haute)-->803<!--/--> € par mois, soit
 <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=amplitude)-->25,7<!--/--> % d'écart. Il dit aussi combien d'années du compte tombent après la
 dernière observation : <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=projetees)-->39<!--/--> sur <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=annees)-->44<!--/-->, soit <!--chiffre:mesure(fourchette?generation=2000&depart=64&debut=21&quoi=part)-->88,6<!--/--> % du calcul. Quand la liquidation précède cette année-là, le bloc le
 dit et ne montre aucune fourchette — **aucune hypothèse n'entre alors dans le
@@ -406,8 +406,8 @@ par défaut. L'anticipation est déjà sanctionnée deux fois, mécaniquement :
 2. la rente est servie plus longtemps, donc le diviseur est plus élevé.
 
 Ordre de grandeur du second effet seul : cinq ans d'anticipation sur
-<!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans en 2026 augmentent le diviseur de <!--chiffre:mesure(anticipation?avance=5&annee=2026&quoi=esperance)-->4,5<!--/--> années d'espérance de vie, soit
-une pension annuelle inférieure de <!--chiffre:mesure(anticipation?avance=5&annee=2026)-->15<!--/--> %. En ajoutant les cinq années de
+<!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans en 2026 augmentent le diviseur de <!--chiffre:mesure(anticipation?avance=5&annee=2026&quoi=esperance)-->4,7<!--/--> années d'espérance de vie, soit
+une pension annuelle inférieure de <!--chiffre:mesure(anticipation?avance=5&annee=2026)-->17<!--/--> %. En ajoutant les cinq années de
 cotisations manquantes sur une carrière de <!--chiffre:illustration()-->42<!--/--> ans, la perte totale approche
 <!--chiffre:mesure(anticipation?avance=5&annee=2026&carriere=42)-->26<!--/--> %.
 
@@ -449,12 +449,12 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
 
 - **Table de génération**, pas table du moment. À chaque année vécue est
   appliquée la mortalité de l'année civile correspondante. Une table du moment
-  sous-estimerait la longévité des générations récentes de <!--chiffre:mesure(table_mortalite?age=64&annee=2040&quoi=moment)-->1,5<!--/--> à <!--chiffre:mesure(table_mortalite?age=64&annee=2000&quoi=moment)-->3<!--/--> ans pour
+  sous-estimerait la longévité des générations récentes de <!--chiffre:mesure(table_mortalite?age=64&annee=2040&quoi=moment)-->1,4<!--/--> à <!--chiffre:mesure(table_mortalite?age=64&annee=2000&quoi=moment)-->2<!--/--> ans pour
   une liquidation à <!--chiffre:illustration()-->64<!--/--> ans entre 2040 et 2000, et surestimerait donc leur
   pension d'autant.
 - **Table unisexe** par défaut. C'est la pratique des systèmes notionnels suédois
   et italien. Une table sexuée est actuariellement exacte mais réduirait la
-  pension des femmes de <!--chiffre:mesure(table_mortalite?age=64&annee=2040&quoi=sexe)-->6<!--/--> à <!--chiffre:mesure(table_mortalite?age=64&annee=2000&quoi=sexe)-->10<!--/--> % à capital identique, sur les mêmes dates, et serait contraire au
+  pension des femmes de <!--chiffre:mesure(table_mortalite?age=64&annee=2040&quoi=sexe)-->5<!--/--> à <!--chiffre:mesure(table_mortalite?age=64&annee=2000&quoi=sexe)-->10<!--/--> % à capital identique, sur les mêmes dates, et serait contraire au
   principe de non-discrimination. `--table par_sexe` permet de mesurer l'écart.
 - **Table par niveau de vie** par défaut, depuis le 21 septembre 2026, et
   c'est un choix qui se désactive d'un mot. Une table de population générale
@@ -479,8 +479,8 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   reproduire l'espérance publiée, puis tenu constant sur toutes les années,
   faute d'observation ailleurs. `scripts/mortalite_population.py` en tire le
   transfert, cas type par cas type et sur les six scénarios : pour le
-  fonctionnaire sédentaire né en 1975, <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=annees)-->1,5<!--/--> an de rente de plus, soit <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=ecart&abs=1)-->5,7<!--/--> % de
-  pension notionnelle à capital égal, et <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=transfert)-->53 912<!--/--> € sur la vie sous le système
+  fonctionnaire sédentaire né en 1975, <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=annees)-->1,3<!--/--> an de rente de plus, soit <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=ecart&abs=1)-->5,2<!--/--> % de
+  pension notionnelle à capital égal, et <!--chiffre:mesure(mortalite_population?population=fonctionnaires_civils_etat&cas=fonctionnaire_sedentaire&generation=1975&quoi=transfert)-->47 573<!--/--> € sur la vie sous le système
   actuel, qui ne connaît aucun diviseur et transfère donc autant.
 - **L'axe du revenu, par les tables de l'INSEE.** L'INSEE publie des tables
   de mortalité par VINGTILE de niveau de vie (Insee Résultats, mai 2025 ;
@@ -499,12 +499,12 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   partie : la convention place le SMIC au quatrième vingtile, le salaire
   moyen au treizième, le cadre au dix-neuvième. Le résultat, pour la
   génération 1975 (`scripts/mortalite_population.py --niveau-de-vie`) : le
-  salarié au SMIC a <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=annees&abs=1)-->3,0<!--/--> ans de rente de MOINS que la table commune ne lui
-  en compte, l'exploitant agricole <!--chiffre:mesure(mortalite_population?population=vingtile&cas=exploitant_agricole&generation=1975&quoi=annees&abs=1)-->3,7<!--/--> de moins, le cadre <!--chiffre:mesure(mortalite_population?population=vingtile&cas=cadre&generation=1975&quoi=annees&abs=1)-->2,7<!--/--> de plus, le
-  libéral <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=annees&abs=1)-->3,1<!--/--> de plus. Un diviseur commun transfère donc des modestes vers
-  les aisés : <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=ecart&abs=1)-->12,5<!--/--> % de pension notionnelle à capital égal pour le SMIC,
-  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,9<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->48 601<!--/--> € retirés
-  au premier et <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=transfert&abs=1)-->186 064<!--/--> € ajoutés au second sous le système actuel — qui
+  salarié au SMIC a <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=annees&abs=1)-->2,7<!--/--> ans de rente de MOINS que la table commune ne lui
+  en compte, l'exploitant agricole <!--chiffre:mesure(mortalite_population?population=vingtile&cas=exploitant_agricole&generation=1975&quoi=annees&abs=1)-->3,3<!--/--> de moins, le cadre <!--chiffre:mesure(mortalite_population?population=vingtile&cas=cadre&generation=1975&quoi=annees&abs=1)-->2,4<!--/--> de plus, le
+  libéral <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=annees&abs=1)-->2,8<!--/--> de plus. Un diviseur commun transfère donc des modestes vers
+  les aisés : <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=ecart&abs=1)-->11,2<!--/--> % de pension notionnelle à capital égal pour le SMIC,
+  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,1<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->42 844<!--/--> € retirés
+  au premier et <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=transfert&abs=1)-->165 814<!--/--> € ajoutés au second sous le système actuel — qui
   transfère autant que les autres, n'ayant aucun diviseur pour le savoir.
   Cette mesure est celle que le défaut applique désormais ; ses chiffres
   restent ceux de la table commune contre le vingtile, et
@@ -1058,11 +1058,11 @@ diviseurs diffèrent, la conversion n'est pas neutre.
 
 Pour un salarié né en 1975, entré à <!--chiffre:illustration()-->21<!--/--> ans et partant à <!--chiffre:illustration()-->62<!--/--> ans, l'âge de
 référence est de <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans : les droits acquis sont convertis au diviseur
-`G(64, 2026)`, <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_conversion)-->25,69<!--/--> années, puis servis à `G(62, 2037)`,
-<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_service)-->28,35<!--/--> années. L'écart entre les deux, environ <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=ecart_diviseurs)-->10<!--/--> %, est retiré de
+`G(64, 2026)`, <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_conversion)-->24,58<!--/--> années, puis servis à `G(62, 2037)`,
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_service)-->27,50<!--/--> années. L'écart entre les deux, environ <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=ecart_diviseurs)-->12<!--/--> %, est retiré de
 droits que le système actuel aurait servis sans décote — l'anticipation est
 payée une seconde fois, sur le passé. La pension du scénario 3 passe de
-<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=pension)-->25 961<!--/--> € à <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&conversion=liquidation&quoi=pension)-->27 600<!--/--> € par an lorsqu'on retient l'autre convention. Un
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=pension)-->25 713<!--/--> € à <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&conversion=liquidation&quoi=pension)-->27 464<!--/--> € par an lorsqu'on retient l'autre convention. Un
 départ à l'âge de référence lui-même ne sépare pas les deux : le diviseur est
 alors le même.
 
@@ -1070,9 +1070,9 @@ alors le même.
 raison de fond. Sur une carrière témoin — né en 1975, homme, salarié du privé
 non cadre entré à <!--chiffre:illustration()-->21<!--/--> ans, au salaire moyen et à profil plat, soit trente années
 cotisées avant la bascule et un droit figé de <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=figee)-->19 052<!--/--> € par an —, le pot vaut
-sous `reference` **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=pot)-->489 410<!--/--> € quel que soit l'âge de départ**. Sous
-`liquidation`, le même passé vaudrait **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=60&conversion=liquidation&quoi=pot)-->558 501<!--/--> € pour un départ à <!--chiffre:illustration()-->60<!--/--> ans et
-<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=67&conversion=liquidation&quoi=pot)-->439 658<!--/--> € pour un départ à <!--chiffre:illustration()-->67<!--/--> ans** : <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&conversion=liquidation&quoi=pot&de=67&a=60)-->27<!--/--> % d'écart pour un passé identique,
+sous `reference` **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=pot)-->468 239<!--/--> € quel que soit l'âge de départ**. Sous
+`liquidation`, le même passé vaudrait **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=60&conversion=liquidation&quoi=pot)-->539 966<!--/--> € pour un départ à <!--chiffre:illustration()-->60<!--/--> ans et
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=67&conversion=liquidation&quoi=pot)-->416 821<!--/--> € pour un départ à <!--chiffre:illustration()-->67<!--/--> ans** : <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&conversion=liquidation&quoi=pot&de=67&a=60)-->30<!--/--> % d'écart pour un passé identique,
 parce que le diviseur qui constitue le pot rétrécit avec l'âge. Un test tient
 ces deux propriétés.
 
@@ -1082,7 +1082,7 @@ respectent quelque chose de différent — l'une le CAPITAL que le passé
 représente, l'autre la RENTE ANNUELLE qu'il promettait —, et la mesure a
 tranché entre elles : sous `liquidation`, le pot rétrécit avec l'âge à peu près
 au rythme où les cotisations nouvelles le remplissent, si bien que sept années
-de travail supplémentaires ne feraient monter le capital total que de <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&conversion=liquidation&quoi=capital&de=60&a=67)-->2,5<!--/--> %
+de travail supplémentaires ne feraient monter le capital total que de <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&conversion=liquidation&quoi=capital&de=60&a=67)-->1,1<!--/--> %
 contre <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&quoi=capital&de=60&a=67)-->27<!--/--> % aujourd'hui. Un compte notionnel promet qu'on retrouve ce qu'on
 verse ; c'est cette promesse-là que le défaut tient. Le détail de la mesure est
 sous « Ce qui est délibérément en bas » de `feuille_de_route.md`, à l'action 24,

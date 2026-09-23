@@ -5245,11 +5245,11 @@ indexée sur les prix depuis 1941.
 appliqué, année par année, à la distribution des pensions de l'échantillon
 interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
-Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,14<!--/--> en 2070. La garantie coûte
-<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,58<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->18<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->3,2<!--/--> millions de
-bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,40<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->15<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,8<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->731<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 593<!--/--> depuis 1959. Ces chiffres
+Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,13<!--/--> en 2070. La garantie coûte
+<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,55<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->17<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->3,1<!--/--> millions de
+bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,39<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->15<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,8<!--/--> millions —, soit
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->702<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 572<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 
@@ -6416,8 +6416,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
-  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,67<!--/--> en 2070 pour le scénario 3 ne se lit donc
-  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->40<!--/--> % : il se lit comme la marge dont ce système
+  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/--> en 2070 pour le scénario 3 ne se lit donc
+  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->41<!--/--> % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
 - **Les ressources ne sont pas celles du risque vieillesse, et ne peuvent pas
@@ -7459,8 +7459,8 @@ le 19 septembre 2026 :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,9<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−53,0<!--/--> % — et faux du
-   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−76,1<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−79,3<!--/--> % : la pondération donne aux
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,0<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> % — et faux du
+   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,6<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
    l'autre.
@@ -8340,7 +8340,7 @@ la ligne « toutes CSP » —, ce qu'un test tient.
 Trois travaux français ont simulé le passage des retraites aux comptes
 notionnels, et **aucun ne trouve ce que trouve ce dépôt**. Un lecteur qui les
 connaît arrive ici avec une objection d'une ligne — « la CNAV dit <!--chiffre:illustration()-->−7<!--/--> %, vous
-dites <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−72<!--/--> % » — et cette page lui doit une réponse chiffrée. La voici.
+dites <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−71<!--/--> % » — et cette page lui doit une réponse chiffrée. La voici.
 
 ### Ce que la littérature trouve
 
@@ -8355,11 +8355,11 @@ entrée à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.litteratur
 
 | | Salarié du privé non cadre | Fonctionnaire d'État |
 |---|---:|---:|
-| 2. Notionnel rétroactif, part salariale | **<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−71,8<!--/--> %** | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=2)-->−78,1<!--/--> %** |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,4<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−22,6<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−30,2<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+35,3<!--/--> %** |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−8,1<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−11,5<!--/--> % |
-| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−37,0<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->+29,7<!--/--> % |
+| 2. Notionnel rétroactif, part salariale | **<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> %** | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=2)-->−77,3<!--/--> %** |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,7<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−22,9<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,7<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+40,2<!--/--> %** |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−7,9<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−11,5<!--/--> % |
+| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−34,7<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->+34,4<!--/--> % |
 
 ### Ce n'est pas une contradiction : c'est la somme de quatre choix
 
@@ -8370,7 +8370,7 @@ prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
    et l'un comme l'autre **conservent les droits déjà acquis**. Les scénarios 2
    et 4 recalculent la carrière ENTIÈRE depuis 1941. Le dépôt publie lui-même
    la mesure de ce choix : les scénarios 3 et 5, qui figent les droits acquis
-   comme le fait la littérature, ramènent l'écart de <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−71,8<!--/--> % à <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,4<!--/--> % pour le
+   comme le fait la littérature, ramènent l'écart de <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> % à <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,7<!--/--> % pour le
    salarié du privé. **L'essentiel de l'écart est de la rétroactivité, rien
    d'autre.**
 2. **Les droits non contributifs.** La CNAV les CONSERVE et les convertit en
@@ -8385,14 +8385,14 @@ prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
    que la part SALARIALE, soit <!--chiffre:mesure(part_salariale_versee?exemple=litterature_prive)-->40<!--/--> % du total versé pour le salarié du privé et
    <!--chiffre:mesure(part_salariale_versee?exemple=litterature_etat)-->18<!--/--> % pour le fonctionnaire. La littérature raisonne toujours sur la
    cotisation entière. Le scénario 4 est la comparaison honnête, et il donne
-   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−30,2<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+35,3<!--/--> %** pour le fonctionnaire.
+   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,7<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+40,2<!--/--> %** pour le fonctionnaire.
 4. **L'âge de liquidation.** La CNAV suppose les âges de départ INCHANGÉS, et
    observe malgré tout que ses perdants partent à <!--chiffre:illustration()-->60<!--/--> ans et ses gagnants à 65.
    Ici, le diviseur est la seule sanction du départ précoce, et il n'est pas
    amorti par une décote plafonnée.
 
 Additionnés, ces quatre écarts rendent compte de la distance entre <!--chiffre:illustration()-->−7<!--/--> % et
-<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−72<!--/--> % sans qu'aucun chiffre ait besoin d'être révisé de part ou d'autre. Ce
+<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−71<!--/--> % sans qu'aucun chiffre ait besoin d'être révisé de part ou d'autre. Ce
 qu'il faut en retenir : **les résultats de ce dépôt ne mesurent pas « le
 notionnel » en général, mais une version précise et volontairement dure du
 notionnel**, et la littérature en mesure une autre, volontairement douce.
@@ -8444,7 +8444,16 @@ barèmes.
 
 - Aucune dépendance hors PyYAML ; tous les calculs sont déterministes.
 - La calibration des tables de mortalité est mémorisée dans
-  `data/derive/calibrations_mortalite.json`, régénérable en supprimant le fichier.
+  `data/derive/calibrations_mortalite.json`, que `scripts/construire_donnees.py`
+  réécrit et dont `test_le_paquet_est_a_jour` vérifie la fraîcheur. Chaque loi y
+  porte l'empreinte de ses entrées — les deux espérances cibles, les quotients
+  observés de l'année, les constantes de la méthode — et n'est reprise que si
+  elles n'ont pas changé. Ce n'était pas le cas jusqu'au 23 septembre 2026 : la
+  mémoire, indexée sur « année|sexe » seulement, avait survécu au remplacement
+  des espérances de vie projetées par celles de l'INSEE, et les lois de 2025 à
+  2080 restaient calées sur les anciennes cibles — plus d'un an d'espérance de
+  vie de trop pour les femmes —, dans le modèle comme sur le site, sans qu'aucun
+  test le voie : tous construisaient leur table sans cette mémoire.
 - La certification des séries est tracée dans `data/derive/certification.json`,
   que `scripts/verifier_donnees.py --appliquer` COMPLÈTE au lieu de le
   remplacer : les récupérateurs sont indépendants et lents, on ne lance
@@ -8458,7 +8467,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2147<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2149<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -404,9 +404,10 @@ ANNEE_CARRIERE_MAXIMALE = NAISSANCE_MAXIMALE + AGE_LIQUIDATION_MAXIMAL
 #: modèle vont jusqu'à 120 ans : ce n'est pas la table qui s'arrête tôt, c'est
 #: la MOYENNE par laquelle le capital notionnel est divisé. Un graphique qui
 #: s'arrêterait à cette moyenne cacherait justement ce qu'il doit montrer — que
-#: la moitié d'une génération lui survit. À 105 ans, le modèle donne encore une
-#: personne sur dix vivante parmi celles parties à 64 ans : la borne n'est pas
-#: une fantaisie, elle est le bout de la distribution, pas son milieu.
+#: la moitié d'une génération lui survit. Des personnes parties à 64 ans en 2026,
+#: le modèle en donne encore une sur dix vivante à 100 ans, deux ou trois sur
+#: cent à 105 : la borne n'est pas une fantaisie, elle est le bout de la
+#: distribution, pas son milieu.
 AGE_MAXIMUM_TRAJECTOIRE = 105
 
 #: LES QUATRE SYSTÈMES QUE LE SITE COMPARE, dans l'ordre où il les montre.

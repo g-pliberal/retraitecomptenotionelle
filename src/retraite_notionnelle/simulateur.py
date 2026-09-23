@@ -979,8 +979,8 @@ class Simulateur:
         )
         liberal = self.scenario_liberal.liberal(carriere, fusionne)
 
-        self.mortalite.enregistrer_cache()
-
+        # La mémoire des calibrations n'est plus écrite ici : c'est un fichier
+        # versionné, dont `scripts/construire_donnees.py` est le seul écrivain.
         return Comparaison(
             carriere=carriere,
             actuel=actuel,

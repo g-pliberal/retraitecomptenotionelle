@@ -32,6 +32,7 @@ Force de mortalité retenue :  μ(x) = A + B · exp(k · (x − 60))
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import math
 from dataclasses import dataclass
@@ -42,6 +43,10 @@ from .chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle
 
 #: Mortalité « accidentelle », indépendante de l'âge (terme de Makeham).
 MORTALITE_ACCIDENTELLE = 0.0005
+
+#: Version de la méthode de calibration, qui entre dans l'empreinte de chaque
+#: loi mémorisée : la changer invalide toute la mémoire d'un coup.
+VERSION_CALIBRATION = 2
 
 #: Pas d'intégration numérique, en années. 0,25 an suffit : l'écart avec un pas
 #: mensuel est inférieur à 0,01 an sur les espérances calculées, très en deçà de
@@ -206,6 +211,35 @@ def _calibrer(e60_cible: float, e65_cible: float, annee: int, sexe: str,
         # seule, et l'on conserve la forme et le niveau de la loi pure.
 
     return LoiMortalite(MORTALITE_ACCIDENTELLE, b, k, annee, sexe, fiabilite)
+
+
+def empreinte_calibration(e60: float, e65: float,
+                          quotients: dict[int, float] | None) -> str:
+    """Ce dont une loi calibrée dépend, résumé en seize caractères.
+
+    Les deux cibles, les quotients observés de l'année — la calibration porte
+    sur la table raccordée — et les constantes de la méthode. Une loi n'est
+    reprise de la mémoire que si son empreinte est celle que les données
+    d'aujourd'hui donneraient.
+    """
+    contenu = json.dumps(
+        [VERSION_CALIBRATION, MORTALITE_ACCIDENTELLE, TOLERANCE_CALIBRATION, PAS,
+         AGE_TERMINAL, repr(float(e60)), repr(float(e65)),
+         sorted((int(age), repr(float(q))) for age, q in (quotients or {}).items())],
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(contenu.encode("utf-8")).hexdigest()[:16]
+
+
+def serialiser_calibrations(table: dict[str, list]) -> str:
+    """Le fichier ``calibrations_mortalite.json``, octet pour octet.
+
+    Un seul format pour ses deux écrivains — ``scripts/construire_donnees.py``
+    et :meth:`DonneesMortalite.enregistrer_cache` —, faute de quoi le test de
+    fraîcheur du paquet verrait un fichier « périmé » qui ne diffère que par
+    ses blancs.
+    """
+    return json.dumps(table, indent=0, sort_keys=True)
 
 
 _QUOTIENTS_EN_CACHE: dict[tuple[str, int, int], dict | None] = {}
@@ -441,6 +475,8 @@ class DonneesMortalite:
         Les paramètres calibrés sont mémorisés sur disque
         (``data/derive/calibrations_mortalite.json``) : la calibration est
         déterministe, la refaire à chaque exécution ne coûterait que du temps.
+        Chaque loi y porte l'empreinte de ses entrées (:func:`empreinte_calibration`),
+        et n'est reprise que si ces entrées n'ont pas changé.
         """
         annee_bornee = max(
             self._e60[sexe].premiere_annee,
@@ -453,27 +489,64 @@ class DonneesMortalite:
             fiabilite = Fiabilite.ESTIMEE
 
         cle = f"{annee_bornee}|{sexe}"
+        quotients = (self._quotients_observes or {}).get((annee_bornee, sexe))
+        empreinte = empreinte_calibration(e60.valeur, e65.valeur, quotients)
         memorise = self._cache.get(cle)
-        if memorise is not None:
-            b, k = memorise
+        # UNE LOI MÉMORISÉE NE VAUT QUE POUR LES DONNÉES DONT ELLE EST TIRÉE.
+        # La mémoire était indexée sur la seule clé « année|sexe » : quand les
+        # espérances de vie projetées ont été remplacées par celles de l'INSEE,
+        # les lois de 2025 à 2080 sont restées calées sur les anciennes cibles
+        # — jusqu'à 1,1 an d'espérance à 65 ans de trop —, et le modèle comme le
+        # site s'en sont servis sans que rien le dise, les tests construisant
+        # leur table sans cette mémoire. Chaque loi porte désormais l'empreinte
+        # de ses entrées, et une empreinte qui ne correspond plus la périme.
+        if memorise is not None and len(memorise) == 3 and memorise[2] == empreinte:
+            b, k, _ = memorise
             return LoiMortalite(MORTALITE_ACCIDENTELLE, b, k, annee, sexe, fiabilite)
 
         loi = _calibrer(
-            e60.valeur, e65.valeur, annee, sexe, fiabilite,
-            quotients=(self._quotients_observes or {}).get((annee_bornee, sexe)),
+            e60.valeur, e65.valeur, annee, sexe, fiabilite, quotients=quotients,
         )
-        self._cache[cle] = [loi.b, loi.k]
+        self._cache[cle] = [loi.b, loi.k, empreinte]
         self._cache_modifie = True
         return loi
+
+    def empreinte(self, annee: int, sexe: str) -> str:
+        """L'empreinte des entrées de la calibration d'une année et d'un sexe."""
+        annee_bornee = max(
+            self._e60[sexe].premiere_annee,
+            min(annee, self._e60[sexe].derniere_annee),
+        )
+        return empreinte_calibration(
+            self._e60[sexe].brut(annee_bornee).valeur,
+            self._e65[sexe].brut(annee_bornee).valeur,
+            (self._quotients_observes or {}).get((annee_bornee, sexe)),
+        )
+
+    def table_calibrations(self) -> dict[str, list]:
+        """Les lois de toutes les années de la série, calibrées ou relues.
+
+        C'est le contenu de ``data/derive/calibrations_mortalite.json`` tel que
+        ``scripts/construire_donnees.py`` l'écrit : une entrée par année de la
+        série d'espérances de vie et par sexe, et rien d'autre — une entrée
+        orpheline d'une série plus longue ne survit pas à la reconstruction.
+        """
+        table: dict[str, list] = {}
+        for sexe in self.SEXES:
+            serie = self._e60[sexe]
+            for annee in range(serie.premiere_annee, serie.derniere_annee + 1):
+                self.loi(annee, sexe)
+                cle = f"{annee}|{sexe}"
+                table[cle] = list(self._cache[cle])
+        return table
 
     def enregistrer_cache(self) -> None:
         """Écrit les calibrations sur disque. Sans effet si rien n'a changé."""
         if not (self._cache_disque and self._cache_modifie):
             return
         self._chemin_cache.parent.mkdir(parents=True, exist_ok=True)
-        self._chemin_cache.write_text(
-            json.dumps(self._cache, indent=0, sort_keys=True), encoding="utf-8"
-        )
+        self._chemin_cache.write_text(serialiser_calibrations(self._cache),
+                                      encoding="utf-8")
         self._cache_modifie = False
 
     def _survie_cellule(self, age: int, annee: int, sexe: str) -> float:
