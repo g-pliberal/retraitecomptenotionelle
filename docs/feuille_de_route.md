@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 418<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->35 813<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->35 775<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15011,3 +15011,91 @@ et leurs portages dans `moteur/js/` (`regimes.js` pour la carrière longue),
 `index.html` ; `scripts/construire_temoins.py`, `tests/temoins/` ; `tests/test_cumul_activites.py`,
 `tests/js/comparer-cumul.mjs` ; `data/reference/legislation/veille.yaml` ;
 `docs/methodologie.md`, `docs/limites.md`.
+
+### 117. « Même moi je m'y perds » : l'accueil en une seule liste, et une légende qui montrait son code — `fait`
+
+**Demande.** « Est-ce que le site est clair pour un nouvel arrivant ? Je
+t'avoue que même moi je m'y perds par rapport à la quantité d'information qui
+y est présente. Est-ce qu'il y a possibilité de condenser l'information et de
+la rendre plus compréhensible pour tout le monde sans perdre le message ? »
+(23 septembre 2026)
+
+**Ce qui a été mesuré**, au navigateur, sur les dix pages, à 1 280 et à
+390 points de large.
+
+- *La page ouverte n'est pas ce qui perd le lecteur.* Les dix pages affichent
+  environ 9 200 mots sans rien déplier, menus compris, et toutes tiennent leur
+  budget de lecture. Ce qui les dépasse est derrière : environ 54 000 mots une
+  fois tout déplié, dont 18 700 pour Coût seul, et une centaine de dépliants.
+- *L'accueil disait chaque sujet deux fois, dans deux piles.* Onze questions
+  de l'électeur, puis neuf dépliants « Pour aller plus loin » qui reprenaient
+  les mêmes sujets dans la voix du programme — le plancher, la part
+  capitalisée, les impôts, le coût —, et chaque réponse courte renvoyait plus
+  bas vers l'un d'eux. Deux dépliants ne faisaient que redire : « Comment une
+  pension serait calculée », les trois gestes affichés plus haut, et « Tout
+  vérifier, page par page », un plan du site que le bandeau porte déjà.
+- *Un défaut visible.* Sur Pourquoi changer, les légendes des deux premiers
+  tableaux affichaient une ligne de `<span class="mot">` et de
+  `role="button"` : un mot du glossaire posé dans une légende, que
+  `g.tableau` échappe.
+- *Ce qui reste à trancher*, et qui n'a pas été touché : voir « Ce qui
+  reste ».
+
+**Ce qui a été fait.**
+
+- *Les deux légendes* redeviennent des phrases, des deux côtés du portage, et
+  `test_aucune_page_ne_montre_de_balise_echappee` refuse toute balise échappée
+  sur les dix pages. Poussé seul, en premier.
+- *L'accueil n'a plus qu'une liste repliée* : treize questions, là où il y
+  avait vingt titres en deux piles. Chaque développement est rangé derrière la
+  réponse courte de la question qu'il traite, sous son titre d'origine — le
+  plancher sous « Et les petites retraites ? », la part capitalisée sous « Mon
+  argent sera-t-il placé en Bourse ? », les impôts supprimés sous la fiche de
+  paie, les points de blocage sous le coût, la note signée sous « Ces chiffres
+  sont-ils fiables ? ». Deux questions s'ajoutent pour ce qui n'en avait pas :
+  « Pourquoi changer de système ? » (le système actuel, puis en quoi le compte
+  serait plus juste, et un lien vers la page Pourquoi changer) et « Comment
+  passe-t-on d'un système à l'autre ? » (les six étapes). Les deux dépliants
+  qui redisaient sont partis ; « taux plein », « décote » et « surcote »
+  gardent leur bulle, dans la réponse sur l'âge, qui renvoie aussi à Méthode.
+- *Les renvois visent ce qu'ils nomment.* « Le calcul, en trois gestes » mène
+  aux trois gestes eux-mêmes, et « Ce que cela change pour une veuve » au
+  passage sur la veuve, non plus en haut du dépliant du plancher. Les
+  identifiants des anciens dépliants sont portés par les questions qui les ont
+  reçus.
+- *La carte 02* perd la décomposition du taux d'aujourd'hui (11,3 % +
+  16,7 %) et la phrase qui renvoyait au simulateur : quatre pourcentages au
+  lieu de six, dans la carte la plus dense du premier écran. Ses quatre
+  phrases du catalogue des affirmations sont intactes.
+- *Une redite adjacente de moins* : « aucune action, aucun pari » se lisait
+  deux fois dans le même dépliant une fois les deux rangés ensemble.
+- `test_l_accueil_range_chaque_sujet_sous_une_seule_question` tient la liste
+  unique, l'ordre des treize questions et la place de chaque développement.
+
+**Ce que ça a déplacé.** Aucun chiffre du modèle : seuls les témoins de
+l'accueil et de Pourquoi changer ont changé. L'accueil tout déplié passe de
+5 199 à 4 884 mots, et de vingt dépliants à treize ; ouvert, de 454 à 439 mots
+de prose. Les chiffres clés — 18 %, 5 %, 1 050 € — y reviennent autant de fois
+qu'avant, mais chacun dans le dépliant de son sujet, la réponse courte puis
+son développement, au lieu de deux endroits de la page.
+
+**Ce qui reste**, proposé à l'utilisateur et non tranché ici, parce que chaque
+point retire ou déplace quelque chose qu'une demande précédente a posé :
+
+- *Le bandeau, sur un téléphone* : quatre rangées et dix liens avant le titre.
+  Replier le groupe « Pour vérifier » derrière un seul bouton en ferait deux.
+- *Dix pages, dont plusieurs se recoupent* : Cumul versé redit le dépliant
+  « Ce que chaque système finit par verser » des résultats ; Méthode et
+  Sources pourraient n'en faire qu'une.
+- *Les montants au centime* sur les barres des résultats (« 3 840,19 ») là où
+  « En bref » arrondit à l'euro.
+- *Le même déficit en trois unités* selon la page : 5,1 Md € et 1,2 % de la
+  facture sur Coût et Pourquoi changer, 0,17 % du PIB sur Carrières types.
+- *« 10 % qui vous appartiennent »*, le titre de la part capitalisée, à côté
+  de « 18 % + 5 % » sur la carte et de « 5 %, et ce que vous y ajoutez » dans
+  la réponse qui le précède : dix, c'est cinq obligatoires et cinq que
+  personne n'impose, et un nouveau venu lit deux chiffres pour une chose.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
+`tests/test_web.py`, `tests/temoins/pages.json`, `README.md`,
+`docs/parcours_presentation.md`.

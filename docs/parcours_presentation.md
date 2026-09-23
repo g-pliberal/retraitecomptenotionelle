@@ -355,14 +355,17 @@ vérifiez plutôt que de nous croire.
   que partir plus tôt « rapporte plus ».
 - **Partager** : quatre cartes prêtes à publier, au format des réseaux, avec
   leur message rédigé.
-- Les sections « Pour aller plus loin » de chaque page, toutes repliées.
+- Les sections repliées de chaque page : « Pour aller plus loin », et sur
+  l'accueil les treize « Vos questions », dont chacune range derrière sa
+  réponse courte le développement qui la traite.
 
 ## Les questions à attendre, et où est la réponse
 
 - **« C'est de la capitalisation ? »** Non. Rien n'est placé, les cotisations
   de l'année paient les pensions de l'année. Seuls les 5 % du pilier
   capitalisé, en plus des 18 %, constituent un capital, sur des titres sans
-  risque, transmissible. Programme, dépliant « La part capitalisée ».
+  risque, transmissible. Programme, question « Mon argent sera-t-il placé en
+  Bourse ? ».
 - **« Les pensions baissent de 30 % ? »** Par rapport à ce que le système
   actuel promet, c'est l'ordre de grandeur, et le site le dit sans détour :
   le tableau de l'accueil et sa première question annoncent d'un quart à un
