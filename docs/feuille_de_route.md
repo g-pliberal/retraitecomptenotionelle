@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 412<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 046<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 141<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14920,7 +14920,8 @@ du côté des usages.
   qui est versé, se découvre en faisant glisser. Une disposition verticale
   propre aux écrans étroits le ferait tenir sans défiler.
 - L'année est celle de la bascule, comme dans le tableau poste par poste. La
-  cascade laisse choisir la sienne ; le schéma ne le fait pas encore.
+  cascade laisse choisir la sienne ; le schéma ne le fait pas encore. *Fait le
+  jour même, voir plus bas.*
 - L'image que compose « Partager » fait 1 200 × 2 100 : un fil la montrera
   recadrée, le premier schéma entier et le second en partie.
 
@@ -14931,6 +14932,40 @@ poste qui lit le même compte) ; `index.html` (la composition de l'image) ;
 `README.md` ; `data/reference/site/affirmations.yaml` ;
 `tests/test_web.py`, `tests/test_affirmations.py`, `tests/temoins/pages.json` ;
 `moteur/style.css`.
+
+**Le 23 septembre 2026, plus tard : l'année des schémas se choisit.** Demande :
+« Rends l'année des schémas réglable, comme la cascade. » Un sélecteur « Année
+des schémas » est posé au-dessus des deux schémas, sur le modèle de celui de la
+cascade : il offre les années de la cascade à compter de la bascule — avant
+elle, le régime unique n'a pas de caisse à dessiner. L'année voyage dans
+l'adresse, `#/cout?flux=2070`, comme une vue et non comme un réglage ; chacun
+des deux sélecteurs garde dans ses liens l'année que l'autre a posée, et une
+valeur qui n'est pas offerte retombe sur la bascule. Trois choses ont changé en
+chemin.
+
+- *Le compte d'une année.* `_compte_flux` — `compteFlux` en JavaScript —
+  remplace, pour la carte, le compte de la bascule, que seul le tableau poste
+  par poste lit encore. Chaque flux reste une part du PIB de son année,
+  convertie en milliards par la règle que l'action 118 a donnée au site
+  entier, `_pib_de_conversion` : une année projetée l'est au PIB de la
+  dernière année publiée, et deux années se comparent ainsi flux à flux, sans
+  que la croissance supposée grossisse le schéma.
+- *La garantie vieillesse suit la trajectoire*, celle que la cascade pose, et
+  non la lecture du tableau poste par poste, calculée une fois sur la
+  distribution de l'enquête et qui n'a pas d'année. À la bascule, la carte dit
+  donc 14 Md € où la ligne pour mémoire du tableau dit 12,9 — la plus basse
+  des lectures que donne le dépliant de la garantie.
+- *Les successions paient avec l'impôt.* Ce qu'elles rendent des avances de la
+  garantie est une recette du budget de l'État la même année, et le schéma lui
+  donne son ruban : 0,2 Md € à la bascule, 4,3 en 2070 sur une garantie de
+  8,0, plus de la moitié.
+
+Le budget de lecture de la page passe de 950 à 970 mots. Un témoin de plus,
+`cout_flux_horizon`, pose les schémas en 2070 et la cascade en 2040 ; celui de
+l'année refusée refuse aussi 2025 aux schémas. Fichiers : `web/pages.py` et
+`moteur/js/pages.js` (`_annees_flux`, `_annee_flux`, `_vues_cout`, `_lien_vue`,
+`_compte_flux`, `_cout_carte_flux`), `scripts/construire_temoins.py`,
+`tests/test_web.py`, `tests/test_affirmations.py`, `tests/temoins/pages.json`.
 
 ### 116. Deux activités à la fois : le cumul se déclare, et le modèle ne devine rien — `fait`
 

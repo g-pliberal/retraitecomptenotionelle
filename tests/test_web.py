@@ -29,8 +29,11 @@ from retraite_notionnelle.donnees.chargement import (
     charger_periodes_non_travaillees,
 )
 from retraite_notionnelle.web.pages import (
-    _bilan_bascule,
+    _annee_flux,
+    _annees_cascade,
+    _annees_flux,
     _caisse_flux,
+    _compte_flux,
     _date_en_clair,
     _libelles_cascade,
     _marches_cascade,
@@ -4442,8 +4445,11 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # le montant de chacun des nœuds de ses deux schémas, que le décompte ne
     # sait pas distinguer d'une phrase. Les tracés ouverts restent deux : un
     # schéma de Sankey n'est pas un graphique dans le temps, et le test de la
-    # page le compte à part.
-    "/cout": (950, 2, 0, 0),
+    # page le compte à part. Son année se choisit depuis le même jour, comme
+    # celle de la cascade : vingt-deux mots de plus — le sélecteur, une phrase
+    # de la source qui dit à quel PIB les flux sont comptés, et les
+    # successions, qui rendent une part de la garantie et paient avec l'impôt.
+    "/cout": (970, 2, 0, 0),
     # LA SEULE PAGE DU SITE QUI DÉPASSE LE MILLIER DE MOTS, et c'est son objet
     # même. Elle affirme qu'il existe trente-neuf avantages non contributifs :
     # elle doit donc les NOMMER tous, dire ce que chacun coûte, et — pour les
@@ -4860,10 +4866,11 @@ def test_la_carte_des_flux_dessine_le_compte_de_la_bascule(contexte):
     qu'elle brasse, et ses usages aussi. Le système actuel encaisse l'impôt ;
     le régime unique de la proposition ne l'encaisse pas, et l'impôt paie à
     part la garantie vieillesse, comme le pilier capitalisé est placé à part.
+    Par défaut, l'année est celle de la bascule.
     """
-    bilan = _bilan_bascule(contexte)
+    bilan = _compte_flux(contexte, contexte.base.annee_bascule)
     ligne = bilan.ligne
-    caisses = {s: _caisse_flux(bilan, s, s, "Cotisations")
+    caisses = {s: _caisse_flux(ligne, bilan.pib, s, s, "Cotisations")
                for s in ("actuel", "notionnel_liberal")}
     for systeme, caisse in caisses.items():
         # Au dix-millième : les parts que le COR publie, arrondies, ne somment
@@ -4903,6 +4910,87 @@ def test_la_carte_des_flux_dessine_le_compte_de_la_bascule(contexte):
 
 def _milliards_flux(meur: float) -> str:
     return g.nombre(meur / 1000, 0 if meur >= 10_000 else 1) + "\u202fMd\u202f\u20ac"
+
+
+def test_les_schemas_offrent_les_annees_de_la_cascade_a_compter_de_la_bascule(contexte):
+    """Comme la cascade, mais jamais avant la bascule : la proposition n'y est
+    pas encore appliquée, et son schéma serait celui du système actuel sous un
+    autre nom. Une année qu'on ne propose pas retombe sur la première, sans
+    erreur — une adresse partagée doit afficher les schémas."""
+    solde = contexte.cout().solde
+    obs, fin = solde.derniere_annee_observee, solde.derniere_annee
+    bascule = contexte.base.annee_bascule
+    assert bascule > obs, "le témoin suppose une bascule postérieure à l'année mesurée"
+    offertes = _annees_flux(solde, bascule)
+    assert offertes == tuple(a for a in _annees_cascade(solde, bascule) if a >= bascule)
+    assert offertes[0] == bascule and offertes[-1] == fin and obs not in offertes
+    # Une bascule déjà passée : l'année mesurée ouvre la liste, comme celle de
+    # la cascade ; une bascule à l'horizon : l'horizon seul.
+    assert _annees_flux(solde, obs - 5)[0] == obs
+    assert _annees_flux(solde, fin) == (fin,)
+    for demandee, attendue in (("", bascule), ("2070", 2070), (str(obs), bascule),
+                               ("2035", bascule), ("deux mille", bascule),
+                               ('"><script>', bascule)):
+        assert _annee_flux(solde, bascule, {"flux": demandee}) == attendue, demandee
+    assert _annee_flux(solde, bascule, None) == bascule
+
+
+def test_chaque_annee_des_schemas_tombe_juste(contexte):
+    """Pour toutes les années offertes, chaque caisse brasse ce qu'elle reçoit
+    et ce qu'elle verse. La garantie de l'année est payée par l'impôt et, de
+    plus en plus, par ce que les successions en rendent : les deux somment à
+    la garantie, et la part des successions croît avec les années."""
+    solde = contexte.cout().solde
+    bascule = contexte.base.annee_bascule
+    reprises = []
+    for annee in _annees_flux(solde, bascule):
+        compte = _compte_flux(contexte, annee)
+        for systeme in ("actuel", "notionnel_liberal"):
+            caisse = _caisse_flux(compte.ligne, compte.pib, systeme, systeme, "C")
+            assert sum(n.valeur for n in caisse.sources) == pytest.approx(
+                caisse.valeur, rel=1e-4), (annee, systeme)
+            assert sum(n.valeur for n in caisse.usages) == pytest.approx(
+                caisse.valeur), (annee, systeme)
+        assert 0.0 <= compte.reprises < compte.garantie, annee
+        assert compte.garantie == pytest.approx(
+            compte.ligne.postes_depenses("notionnel_liberal")["garantie_vieillesse"])
+        # Les milliards suivent la règle du site entier, et nulle autre.
+        assert compte.pib == _pib_de_conversion(contexte.comptes(), annee)
+        reprises.append(compte.reprises / compte.garantie)
+    assert reprises[-1] > reprises[0], "les successions rendent plus à l'horizon"
+
+
+def test_l_annee_des_schemas_se_choisit_et_garde_celle_de_la_cascade(contexte):
+    """``flux`` pose l'année des schémas ; les deux sélecteurs de la page se
+    gardent l'un l'autre ; le tableau poste par poste reste à la bascule."""
+    bascule = contexte.base.annee_bascule
+    corps = rendre(contexte, "/cout", {"flux": "2070", "cascade": "2040"})[1]
+    carte = re.search(r'<section class="cle" id="cout-flux".*?</section>', corps, re.S)
+    assert carte
+    carte = carte.group(0)
+    choix = re.search(r'<div class="bascule" role="group" aria-label="Année des '
+                      r'schémas">.*?</div>', carte).group(0)
+    assert '<span class="actif" aria-current="true">2070</span>' in choix
+    liens = re.findall(r'<a href="([^"]+)">(\d{4})</a>', choix)
+    assert liens and all(adresse == f"#/cout?cascade=2040&flux={annee}"
+                         for adresse, annee in liens), liens
+    cascade = re.search(r'<div class="bascule" role="group" aria-label="Année '
+                        r'décomposée">.*?</div>', corps).group(0)
+    assert '<span class="actif" aria-current="true">2040</span>' in cascade
+    assert all(adresse.endswith("&flux=2070") for adresse, _ in
+               re.findall(r'<a href="([^"]+)">(\d{4})</a>', cascade))
+    texte = html.unescape(re.sub(r"[ \t\n]+", " ", carte))
+    assert "Le système actuel, en 2070" in texte and "Notre proposition, en 2070" in texte
+    assert "En 2070, le régime unique" in texte and "part du PIB de 2070" in texte
+    # En 2070 les successions rendent une part de la garantie : un payeur de plus.
+    assert ">Successions</text>" in carte
+    # Le tableau poste par poste, lui, reste à l'année de la bascule.
+    assert f"Ressources et dépenses du système de retraite en {bascule}," in corps
+    # Une valeur qui n'est pas une année offerte ne voyage pas : elle est
+    # ramenée, et c'est l'année ramenée que les liens de la cascade portent.
+    corps = rendre(contexte, "/cout", {"flux": '"><script>alert(1)</script>'})[1]
+    assert "<script>alert" not in corps
+    assert f'<a href="#/cout?cascade=2030&flux={bascule}">2030</a>' in corps
 
 
 def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture(contexte):

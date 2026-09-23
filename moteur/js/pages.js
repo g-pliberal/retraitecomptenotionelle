@@ -2321,7 +2321,7 @@ export function rendre(contexte, chemin, parametres = null) {
  * que pour sa page. Copie de `_VUES_DE_PAGE` dans `web/pages.py`.
  */
 const VUES_DE_PAGE = {
-  "/cout": ["cascade"],
+  "/cout": ["cascade", "flux"],
 };
 
 /**
@@ -7334,10 +7334,8 @@ que de ${premiereVentilee} à ${derniereVentilee}.`,
 
   // -- la troisième carte : qui paie quoi ------------------------------------
   //
-  // Le compte de la bascule est lu une fois, ici : la carte le dessine, le
-  // tableau poste par poste l'écrit, et les deux disent les mêmes nombres.
-  const compteBascule = bilanBascule(contexte);
-  const carteFlux = coutCarteFlux(contexte, compteBascule);
+  // Son année se choisit, comme celle de la cascade : `regards` la porte.
+  const carteFlux = coutCarteFlux(contexte, regards);
 
   // Le détail est rendu AVANT le gabarit final : c'est de lui, et des trois
   // cartes, que le plan de la page se déduit.
@@ -7372,7 +7370,7 @@ plus large que les cartes).
     coutDetailScenarios(contexte),
     coutDetailCascade(contexte, regards),
     coutDetailEquilibre(contexte),
-    coutDetailPostes(contexte, compteBascule),
+    coutDetailPostes(contexte),
     coutDetailDette(contexte),
     coutDetailFrise(contexte),
     coutDetailGarantie(contexte),
@@ -8911,6 +8909,25 @@ function anneeCascade(solde, bascule, regards) {
 }
 
 /**
+ * Les millésimes que les schémas de Sankey proposent : ceux de la cascade, à
+ * compter de la bascule — avant elle, la proposition n'est pas appliquée. Voir
+ * `_annees_flux` dans `web/pages.py`.
+ */
+function anneesFlux(solde, bascule) {
+  return anneesCascade(solde, bascule).filter((annee) => annee >= bascule);
+}
+
+/** L'année que l'adresse demande aux schémas, ou la première offerte. */
+function anneeFlux(solde, bascule, regards) {
+  const offertes = anneesFlux(solde, bascule);
+  const demandee = (regards || {}).flux || "";
+  if (estEntier(demandee) && offertes.includes(Number(demandee))) {
+    return Number(demandee);
+  }
+  return offertes[0];
+}
+
+/**
  * Le PIB qui convertit une part en milliards, et s'il est celui de l'année. Le
  * compte du COR tient ses deux bouts en part du PIB de 2002 à 2070 ; le PIB,
  * lui, n'est publié que jusqu'à l'année mesurée, et au-delà la cascade suit la
@@ -8923,13 +8940,30 @@ function pibCascade(contexte, annee) {
 }
 
 /**
- * L'adresse de la page Coût, cascade posée sur cette année-là. Les réglages de
- * modélisation que `g.lien` porte déjà sont conservés : le sélecteur change ce
- * qu'on REGARDE, jamais sous quelles règles la page se calcule.
+ * Les regards que l'adresse de la page Coût porte, chacun ramené à une année
+ * offerte : deux sélecteurs, et l'un garde l'autre. Seules les années RAMENÉES
+ * voyagent, jamais le texte de l'adresse. Copie de `_vues_cout`.
  */
-function lienCascade(annee) {
+function vuesCout(contexte, regards) {
+  const demandes = regards || {};
+  const solde = contexte.cout().solde;
+  const bascule = contexte.base.annee_bascule;
+  const vues = {};
+  if ("cascade" in demandes) { vues.cascade = anneeCascade(solde, bascule, demandes); }
+  if ("flux" in demandes) { vues.flux = anneeFlux(solde, bascule, demandes); }
+  return vues;
+}
+
+/**
+ * L'adresse de la page Coût, ce regard posé sur `annee`, les autres gardés. Les
+ * réglages de modélisation que `g.lien` porte déjà sont conservés : un sélecteur
+ * change ce qu'on REGARDE, jamais sous quelles règles la page se calcule.
+ */
+function lienVue(vues, cle, annee) {
   const adresse = g.lien("/cout");
-  return adresse + (adresse.includes("?") ? "&" : "?") + `cascade=${annee}`;
+  const poses = { ...vues, [cle]: annee };
+  const requete = Object.keys(poses).sort().map((nom) => `${nom}=${poses[nom]}`).join("&");
+  return adresse + (adresse.includes("?") ? "&" : "?") + requete;
 }
 
 /**
@@ -8983,9 +9017,10 @@ function coutDetailCascade(contexte, regards = null) {
     1, 0, "Mesure");
 
   const ecart = (depense - arriveeMeur) / 1000;
+  const vues = vuesCout(contexte, regards);
   const choix = g.bascule(
     "Année décomposée",
-    offertes.map((millesime) => [String(millesime), lienCascade(millesime)]),
+    offertes.map((millesime) => [String(millesime), lienVue(vues, "cascade", millesime)]),
     String(annee));
   // La phrase sur la cotisation unique ne vaut que tant qu'elle ne déplace
   // rien, c'est-à-dire avant la bascule.
@@ -9276,9 +9311,10 @@ const SYSTEMES_BILAN = ["actuel", "notionnel_liberal"];
 
 /**
  * Le compte de l'année de bascule, poste par poste, et ce qui est hors du
- * compte : la garantie vieillesse, en millions d'euros, et le pilier capitalisé,
- * en part de PIB. Le tableau poste par poste l'écrit, la carte des flux le
- * dessine, et les deux lisent ces nombres-ci. Copie de `_bilan_bascule`.
+ * compte : la garantie vieillesse, en millions d'euros, dans sa lecture la plus
+ * basse, et le pilier capitalisé, en part de PIB. C'est ce que le tableau poste
+ * par poste écrit ; la carte des flux lit `compteFlux`, à l'année qu'on lui
+ * choisit. Copie de `_bilan_bascule`.
  */
 function bilanBascule(contexte) {
   const comptes = contexte.comptes();
@@ -9347,10 +9383,10 @@ function montantFlux(meur) {
 /**
  * La caisse de répartition d'un système : ses payeurs, lus sur
  * `postesRessources` par groupe, ce qui manque — emprunté, donc une source —,
- * ses pensions, et ce qui reste — placé, donc un usage. Copie de `_caisse_flux`.
+ * ses pensions, et ce qui reste — placé, donc un usage. `pib` est celui de la
+ * dernière année publiée. Copie de `_caisse_flux`.
  */
-function caisseFlux(bilan, systeme, libelle, cotisations) {
-  const { ligne, pib } = bilan;
+function caisseFlux(ligne, pib, systeme, libelle, cotisations) {
   const postes = ligne.postesRessources(systeme);
   const sources = [];
   for (const groupe of GROUPES) {
@@ -9383,41 +9419,91 @@ function caisseFlux(bilan, systeme, libelle, cotisations) {
 }
 
 /**
- * Qui paie quoi : le système actuel et la proposition, en deux schémas de
- * Sankey à la même échelle, l'année de la bascule. Aujourd'hui un seul pot ;
- * dans la proposition, trois caisses — le régime unique, la garantie
- * vieillesse que paie l'impôt, le pilier capitalisé. Copie de
- * `_cout_carte_flux`, où l'argument est développé.
+ * Ce que les schémas de Sankey dessinent, une année donnée : tout en part du
+ * PIB de l'année, converti par la règle du site, `pibDeConversion` ; la garantie
+ * vieillesse de la trajectoire, portée au compte du COR comme dans la cascade,
+ * et ce que les successions en rendent ; le pilier capitalisé. Copie de
+ * `_compte_flux`.
  */
-function coutCarteFlux(contexte, bilan) {
+function compteFlux(contexte, annee) {
+  const comptes = contexte.comptes();
+  const c = contexte.cout();
   const base = contexte.base;
-  const { ligne, pib, annee } = bilan;
+  const ligne = c.solde.annee(annee);
+  const garantie = ligne.postesDepenses("notionnel_liberal").garantie_vieillesse;
+  // La part que les successions rendent, en fraction de ce que la garantie a
+  // versé : le rapport que la trajectoire porte, et que la cascade lit.
+  const projetee = c.avenir.annee(annee);
+  const garantieModele = projetee ? projetee.coutConstants(COMPOSANTE_GARANTIE) : 0.0;
+  const partReprise = (projetee && garantieModele)
+    ? projetee.reprisesConstants() / garantieModele : 0.0;
+  // Le pilier capitalisé : 5 % de la même assiette que les 18 %.
+  const capitalise = ligne.recetteParAssiette
+    ? ligne.postesRessources("notionnel_liberal").cotisations
+      * base.taux_capitalisation_obligatoire / base.taux_cotisation_liberal
+    : 0.0;
+  return {
+    annee,
+    ligne,
+    anneePib: Math.min(annee, comptes.pib.derniereAnnee),
+    pib: pibDeConversion(comptes, annee),
+    garantie,
+    reprises: garantie * partReprise,
+    capitalise,
+  };
+}
+
+/**
+ * Qui paie quoi : le système actuel et la proposition, en deux schémas de
+ * Sankey à la même échelle. Aujourd'hui un seul pot ; dans la proposition,
+ * trois caisses — le régime unique, la garantie vieillesse que paient l'impôt
+ * et les successions, le pilier capitalisé. L'année se choisit, comme celle de
+ * la cascade. Copie de `_cout_carte_flux`, où l'argument est développé.
+ */
+function coutCarteFlux(contexte, regards = null) {
+  const base = contexte.base;
+  const solde = contexte.cout().solde;
+  const bascule = base.annee_bascule;
+  const offertes = anneesFlux(solde, bascule);
+  const annee = anneeFlux(solde, bascule, regards);
+  const compte = compteFlux(contexte, annee);
+  const { ligne, pib } = compte;
   const tauxLiberal = g.pourcentage(base.taux_cotisation_liberal, false, 0);
   const tauxCapitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
   const couleurs = Object.fromEntries(GROUPES.map((groupe) => [groupe.code, groupe.couleur]));
 
-  const actuel = [caisseFlux(bilan, "actuel", "Régimes de retraite", "Cotisations")];
+  const actuel = [caisseFlux(ligne, pib, "actuel", "Régimes de retraite", "Cotisations")];
   // Le taux unique ne s'écrit que là où il s'applique.
   const proposition = [caisseFlux(
-    bilan, "notionnel_liberal", "Régime unique",
+    ligne, pib, "notionnel_liberal", "Régime unique",
     ligne.recetteParAssiette ? `Cotisations ${tauxLiberal}` : "Cotisations",
   )];
-  const garantie = bilan.garantieMeur / pib;
-  if (garantie > 0.0) {
-    const montant = montantFlux(bilan.garantieMeur);
+  if (compte.garantie > 0.0) {
+    // L'impôt ne paie de la garantie que ce que les successions ne rendent pas.
+    const impot = compte.garantie - compte.reprises;
+    const payeurs = [];
+    if (impot > 0.0) {
+      payeurs.push(new g.NoeudSankey("Impôts", impot, montantFlux(impot * pib),
+        couleurs.impots));
+    }
+    if (compte.reprises > 0.0) {
+      payeurs.push(new g.NoeudSankey("Successions", compte.reprises,
+        montantFlux(compte.reprises * pib), "var(--serie-8)"));
+    }
+    const montant = montantFlux(compte.garantie * pib);
     proposition.push(new g.CaisseSankey(
-      "Budget de l'État", garantie, montant,
-      [new g.NoeudSankey("Impôts", garantie, montant, couleurs.impots)],
-      [new g.NoeudSankey("Garantie vieillesse", garantie, montant, "var(--serie-3)")],
+      "Budget de l'État", compte.garantie, montant, payeurs,
+      [new g.NoeudSankey("Garantie vieillesse", compte.garantie, montant,
+        "var(--serie-3)")],
     ));
   }
-  if (bilan.capitalise > 0.0) {
-    const montant = montantFlux(bilan.capitalise * pib);
+  if (compte.capitalise > 0.0) {
+    const montant = montantFlux(compte.capitalise * pib);
     proposition.push(new g.CaisseSankey(
-      "Pilier capitalisé", bilan.capitalise, montant,
-      [new g.NoeudSankey(`Capitalisation ${tauxCapitalise}`, bilan.capitalise,
+      "Pilier capitalisé", compte.capitalise, montant,
+      [new g.NoeudSankey(`Capitalisation ${tauxCapitalise}`, compte.capitalise,
         montant, couleurs.salaires)],
-      [new g.NoeudSankey("Épargne à votre nom", bilan.capitalise, montant,
+      [new g.NoeudSankey("Épargne à votre nom", compte.capitalise, montant,
         "var(--serie-8)")],
     ));
   }
@@ -9426,6 +9512,11 @@ function coutCarteFlux(contexte, bilan) {
     proposition.reduce((somme, caisse) => somme + caisse.valeur, 0),
   );
   const colonnes = ["D'où vient l'argent", "Où il va"];
+  const vues = vuesCout(contexte, regards);
+  const choix = g.bascule(
+    "Année des schémas",
+    offertes.map((millesime) => [String(millesime), lienVue(vues, "flux", millesime)]),
+    String(annee));
   const schemas = g.sankey(
     `D'où vient l'argent du système actuel et où il va, en ${annee}, `
     + "en milliards d'euros",
@@ -9448,6 +9539,10 @@ function coutCarteFlux(contexte, bilan) {
   const [verbeActuel, montantActuel] = soldeEnClair("actuel");
   const actuelEnClair = verbeActuel === verbe ? montantActuel
     : `${verbeActuel} ${montantActuel}`;
+  // Les milliards suivent la règle du site entier, et la source dit lesquels.
+  const milliards = annee > compte.anneePib
+    ? `en milliards au PIB de ${compte.anneePib}, dernière année publiée`
+    : `en milliards du PIB que l'INSEE publie pour ${annee}`;
 
   return g.cle(
     "Qui paie quoi, aujourd'hui et avec notre proposition ?",
@@ -9457,11 +9552,11 @@ sa caisse</strong> : les cotisations vont aux pensions, l'impôt à la garantie
 vieillesse, et ${tauxCapitalise} des salaires sont placés à votre nom. En
 ${annee}, le régime unique ${verbe} ${montant}, le système actuel
 ${actuelEnClair}.`,
-    schemas,
+    choix + schemas,
     // La source se lit aussi dans l'image que compose « Partager ».
     `Sources : Conseil d'orientation des retraites pour le système actuel,
-le modèle pour la proposition. En milliards d'euros de ${annee}, au PIB de
-${bilan.anneePib}. Les deux schémas sont à la même échelle.`,
+le modèle pour la proposition. Chaque flux est sa part du PIB de ${annee},
+${milliards}. Les deux schémas sont à la même échelle.`,
     "cout-flux",
   );
 }
@@ -9471,12 +9566,12 @@ ${bilan.anneePib}. Les deux schémas sont à la même échelle.`,
  * le tableau 2.2 du rapport annuel du COR refait pour deux systèmes, la même
  * année, avec les dépenses en face et le solde en bas. `ressourcesDe` et
  * `depense` y sont écrits ligne à ligne, et les lignes somment au total.
- * L'année et les lignes « pour mémoire » viennent de `bilanBascule`, que la
- * carte des flux lit aussi.
+ * L'année et les lignes « pour mémoire » viennent de `bilanBascule`.
  */
-function coutDetailPostes(contexte, bilan) {
+function coutDetailPostes(contexte) {
   const base = contexte.base;
   const comptes = contexte.comptes();
+  const bilan = bilanBascule(contexte);
   const { annee, ligne, anneePib, pib, derniereVentilee } = bilan;
   const systemes = SYSTEMES_BILAN;
   const recettes = Object.fromEntries(systemes.map((s) => [s, ligne.postesRessources(s)]));

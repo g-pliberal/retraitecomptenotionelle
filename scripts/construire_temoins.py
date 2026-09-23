@@ -876,9 +876,16 @@ def _pages(contexte: Contexte) -> dict:
         # comparé que sur son année par défaut — c'est-à-dire sur la seule
         # branche où la moitié du code ne passe pas.
         ("cout_cascade_horizon", "/cout", {"cascade": "2070"}),
+        # Les schémas des flux sur l'horizon, la cascade ailleurs : le seul
+        # témoin où les successions paient une vraie part de la garantie, et
+        # où chacun des deux sélecteurs doit garder dans ses liens l'année que
+        # l'autre a posée.
+        ("cout_flux_horizon", "/cout", {"flux": "2070", "cascade": "2040"}),
         # Et une année refusée : elle doit retomber sur l'année mesurée, des
-        # deux côtés du portage, plutôt que lever quoi que ce soit.
-        ("cout_cascade_hors_liste", "/cout", {"cascade": "1999"}),
+        # deux côtés du portage, plutôt que lever quoi que ce soit. Celle des
+        # schémas retombe sur la bascule : 2025 est une année de la cascade,
+        # pas des schémas, qui ne dessinent pas une caisse qui n'existe pas.
+        ("cout_cascade_hors_liste", "/cout", {"cascade": "1999", "flux": "2025"}),
         # La page Coût sous une VARIANTE DE COMPTE, et c'est le seul témoin qui
         # emprunte ce chemin. Depuis le 21 septembre 2026, le scénario demandé
         # ne déplace plus seulement ce que le modèle calcule : il choisit aussi
