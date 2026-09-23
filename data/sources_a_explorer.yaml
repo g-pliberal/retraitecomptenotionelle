@@ -2051,7 +2051,12 @@ sources:
     regimes: [crpnpac, crpnpac_tranche_2]
     a_en_tirer: >-
       Rapports et règlement du personnel navigant : deux fiches `partiel`.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Rapports et page de publications parcourus ; rien que les notices ne
+      donnent mieux. Ce qui a servi est dans
+      `data/reference/regimes/regimes_speciaux.yaml` et `docs/limites.md`.
 
   - id: crpn_comprendre_retraite
     url: https://www.crpn.fr/je-suis-retraite/comprendre-ma-retraite/
@@ -2061,7 +2066,12 @@ sources:
     a_en_tirer: >-
       Le calcul de la pension des navigants, ses deux tranches et son âge de
       départ dérogatoire.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
+    note: >-
+      Deux tranches, 1,85 % et 1,40 % par annuité, trente annuités pour le
+      taux plein : conforme aux fiches de
+      `data/reference/regimes/regimes_speciaux.yaml`.
 
   - id: crpn_cotisations_employeur
     url: https://www.crpn.fr/je-represente-un-employeur/calculer-les-cotisations/
@@ -2071,7 +2081,13 @@ sources:
     a_en_tirer: >-
       Les taux salarié et employeur par tranche — la part patronale est l'un
       des axes de tête de la feuille de route.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
+    note: >-
+      Notice « Comment calculer vos cotisations 2026 » : 21,30 % appelé à
+      111 %, soit 23,64 %, porté dans `data/reference/regimes/regimes_speciaux.yaml`
+      pour 2026 ; plafond de huit PASS ; fonds de majoration à 1,08 % sous un
+      PASS, non porté.
 
   - id: crpn_acquerir_des_droits
     url: https://www.crpn.fr/je-suis-salarie/acquerir-des-droits/
@@ -2081,7 +2097,13 @@ sources:
     a_en_tirer: >-
       L'acquisition des droits chez les navigants : annuités, bonifications de
       vol, et ce que l'inaptitude ouvre.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
+    note: >-
+      Annuités au jour près (jours validés divisés par 360), trente pour le
+      taux plein, vingt pour ouvrir le droit : la décote par la durée seule
+      est portée dans `data/reference/regimes/regimes_speciaux.yaml`
+      (`decote_par_la_duree_seule`).
 
   - id: crpn_notices_formulaires
     url: https://www.crpn.fr/je-suis-salarie/notices-et-formulaires/
@@ -2091,7 +2113,15 @@ sources:
     a_en_tirer: >-
       Les notices : documents d'application, souvent porteurs d'exemples
       chiffrés que les pages n'ont pas.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
+    note: >-
+      Notices des conditions de liquidation de 2012 à 2021 et depuis le 1er
+      novembre 2023 : âge d'annulation de soixante ans, porté dans
+      `data/reference/regimes/regimes_speciaux.yaml` ; dispositif transitoire
+      des navigants nés avant 1971 et conditions montantes de 2012 à 2021,
+      notés dans `docs/limites.md`. La notice des nouvelles prestations de
+      mars 2026 (fonds de majoration) reste à lire.
 
   - id: crpcen_montant_pension
     url: https://www.crpcen.fr/affilies/le-montant-de-votre-pension

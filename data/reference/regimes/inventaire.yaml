@@ -528,9 +528,10 @@ inventaire:
       - {reference: "code de l'aviation civile, R. 426-1 et suivants (abrogés au 1er novembre 2023)", id: null}
       - {reference: "code des transports, partie réglementaire, depuis le 1er novembre 2023", id: null}
     manque: >-
-      Les fiches s'arrêtent à l'état de 2023, quand le régime est passé du code
-      de l'aviation civile au code des transports ; le taux d'appel de 1995 à
-      2011 n'est pas appliqué.
+      Le taux d'appel de 1995 à 2011 n'est pas appliqué, ceux de 2016 à 2025
+      ne sont pas publiés (105 % retenu, 111 % en 2026) ; le dispositif
+      transitoire des navigants nés avant 1971 et les conditions montantes de
+      2012 à 2021 ne sont pas portés.
 
   - code: crpnpac_tranche_2
     nom: Caisse de retraite du personnel navigant, tranche 2
@@ -546,7 +547,7 @@ inventaire:
     textes:
       - {reference: "code de l'aviation civile, R. 426-16-1-1", id: null}
     manque: >-
-      Même limite que la tranche 1 : état de 2023.
+      Mêmes limites que la tranche 1 : taux d'appel de 2016 à 2025 non publiés, dispositif transitoire et conditions de 2012 à 2021 non portés.
 
   - code: ircec_raap
     nom: Régime des artistes-auteurs professionnels (IRCEC)

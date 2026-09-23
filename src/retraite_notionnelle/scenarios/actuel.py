@@ -3304,7 +3304,14 @@ class ScenarioActuel:
         manquants_age = float(_au_trimestre_superieur(
             (age_annulation - age_liquidation) * 4
         ))
-        if periode.decote_annulee_par_la_duree:
+        if periode.decote_par_la_duree_seule:
+            # La CRPN depuis 2022 : la durée seule compte, et l'âge d'annulation
+            # ne fait qu'effacer la décote une fois atteint (R. 6527-22 et
+            # R. 6527-23 du code des transports).
+            trimestres_decote = (
+                0.0 if manquants_age <= 0 else float(max(0, requis - trimestres))
+            )
+        elif periode.decote_annulee_par_la_duree:
             # La SNCF compte la décote par la durée sur une cible abaissée de
             # deux à dix trimestres selon la génération (décret n° 2008-639,
             # article 35, II) ; partout ailleurs, rien n'est retranché.

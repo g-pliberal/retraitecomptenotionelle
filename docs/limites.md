@@ -6682,6 +6682,37 @@ rémunération quand la capitalisation n'est pas isolée : le plafond, règle du
 RAFP, n'y a pas cours. La ligne `rafp_assiette_plafond` du registre de veille
 en tient le détail.
 
+### Les navigants décotaient jusqu'à soixante-cinq ans, et la loi dit soixante
+
+La caisse des navigants de l'aviation civile (CRPN) écarte la décote « à
+compter d'un âge au moins égal à celui mentionné au premier alinéa de
+l'article L. 6521-4 du code des transports » (R. 426-12, puis R. 6527-23). La
+fiche en avait fait soixante-cinq ans, la limite d'âge de vol. L. 6521-4, lu
+sur Légifrance, dit autre chose : l'activité de pilote « ne peut être exercée
+dans le transport aérien public au-delà de l'âge de soixante ans ».
+Soixante-cinq ans n'est que la borne des prolongations annuelles, au
+troisième alinéa. Les notices de la caisse le confirment : « droit à pension
+différé à 60 ans » de 2012 à 2021, « pension à 60 ans sans décote » depuis
+2023. Toutes les périodes depuis 2012 portent maintenant soixante ans.
+
+**Depuis 2022, la durée seule.** « Une décote égale à 5 % par annuité
+manquante » sous trente annuités (R. 6527-22), sans condition d'âge. Le moteur
+prenait partout le plus petit des deux manques, âge et durée, et décotait donc
+trop peu un navigant proche de soixante ans à la carrière courte : 15 % au lieu
+de 25 % à cinquante-sept ans avec vingt-cinq annuités. Un champ nouveau,
+`decote_par_la_duree_seule`, compte la durée seule dans les deux moteurs.
+
+**Le taux d'appel de 2026 est de 111 %**, soit 23,64 % au lieu des 22,37 % que
+la fiche portait depuis 2016. Les taux des années 2016 à 2025 ne sont pas
+publiés là où une session les trouve : ces années gardent 105 %.
+
+**Ce qui reste approché.** Le dispositif transitoire des navigants nés avant
+1971 — taux plein à cinquante-cinq ans avec 21 annuités pour la génération
+1962, une de plus par génération jusqu'à 29 pour 1970 — n'est pas porté. Les
+conditions de 2012 à 2021, qui montaient chaque année (âge de 50 à 55 ans,
+« couple » âge plus annuités de 76 à 80), non plus. La caisse compte les
+annuités au jour près ; le modèle, au trimestre.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi

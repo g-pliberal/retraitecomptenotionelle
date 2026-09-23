@@ -5116,3 +5116,35 @@ def test_les_avocats_cotisent_au_bareme_de_leur_annee(simulateur):
     assert base.periode(2017).pension_forfaitaire_annee == 2017
     assert base.periode(2026).pension_forfaitaire_annuelle == 19154
     assert base.periode(2020).cotisation_forfaitaire_euros == 1190
+
+
+# -- action 89 : la décote des navigants de l'aviation civile -----------------
+
+
+def test_la_crpn_decote_par_la_duree_seule_jusqu_a_soixante_ans(simulateur):
+    """R. 6527-22 du code des transports : « une décote égale à 5 % par annuité
+    manquante » sous trente annuités, sans condition d'âge depuis 2022 ; et
+    R. 6527-23 : aucune décote à partir de l'âge du premier alinéa de
+    L. 6521-4, soixante ans — non soixante-cinq, comme la fiche le portait.
+    Un navigant de cinquante-sept ans avec vingt-cinq annuités perd vingt
+    trimestres, 25 % ; le plus petit des deux manques ne lui en retirait que
+    douze. À soixante ans, plus rien.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1970, sexe="H", affiliation="personnel_navigant",
+        age_debut=32, age_liquidation=57,
+    )
+    for code in ("crpnpac", "crpnpac_tranche_2"):
+        recente = _periode(simulateur, code, 2026)
+        assert recente.decote_par_la_duree_seule
+        assert recente.age_taux_plein == pytest.approx(60.0)
+        assert recente.taux_cotisation_retraite == pytest.approx(0.2130 * 1.11, abs=1e-5)
+        assert scenario._trimestres_de_decote(
+            recente, carriere, 100, 120, 57.0, 60.0) == pytest.approx(20.0)
+        assert scenario._trimestres_de_decote(
+            recente, carriere, 100, 120, 60.0, 60.0) == 0.0
+        avant = _periode(simulateur, code, 2018)
+        assert not avant.decote_par_la_duree_seule
+        assert avant.age_taux_plein == pytest.approx(60.0)
+

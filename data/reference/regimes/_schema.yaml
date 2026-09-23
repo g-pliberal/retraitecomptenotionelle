@@ -348,6 +348,16 @@ champs_periode:
       périodes antérieures, où le taux ne dépendait QUE de l'âge.
     defaut: true
 
+  decote_par_la_duree_seule:
+    description: >-
+      La décote se compte sur la SEULE durée manquante, l'âge `age_taux_plein`
+      ne faisant que l'annuler une fois atteint. C'est la CRPN depuis le 1er
+      janvier 2022 : 5 % par annuité manquante sous trente annuités (R. 6527-22
+      du code des transports), sans décote à partir de soixante ans, l'âge du
+      premier alinéa de L. 6521-4 (R. 6527-23). Prime sur
+      `decote_annulee_par_la_duree`.
+    defaut: false
+
   decote_trimestres_maximum:
     description: >-
       Nombre maximal de trimestres de décote opposables. Vingt dans tous les
