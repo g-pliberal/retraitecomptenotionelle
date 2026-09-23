@@ -14932,7 +14932,8 @@ les sept que citait ce journal ont été reportées, et `CLAUDE.md` dit comment
 reprendre un clone antérieur, par `git merge-base --fork-point`. Ce qu'une
 session ne peut pas faire reste à la main. Les deux tags, qu'elle n'a pas le
 droit d'écrire, se replacent par `.github/workflows/tags-reecrits.yml`, à
-lancer une fois depuis l'onglet Actions, puis à supprimer. GitHub sert les
+lancer une fois depuis l'onglet Actions, puis à supprimer — lancé le jour
+même, il a replacé les deux tags, et a été supprimé. GitHub sert les
 anciens commits tant que son support ne les a pas purgés — la pull request
 n° 1 les retient —, et les exécutions Actions qui les nomment se suppriment
 depuis ce même onglet.
