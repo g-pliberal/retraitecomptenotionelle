@@ -1127,9 +1127,11 @@ def recette(**reglages: str) -> float:
     ``quoi=impots`` : les impôts et taxes affectés ; ``quoi=taux_prelevement``
     : ce que le système prélève sur l'assiette des revenus d'activité, en % ;
     ``quoi=tva`` : la TVA à taux unique que le scénario 6 reçoit, garantie
-    comprise.
-    ``en=milliards`` dit le retrait, le versement ou les impôts en Md€, à la
-    règle de ``_milliards_de_part``.
+    comprise ; ``quoi=majorations_stock`` : ce que la branche famille
+    rembourse encore aux scénarios 3 et 5 après leur bascule, les majorations
+    des pensions liquidées avant elle. ``en=milliards`` dit le retrait, le
+    versement, la TVA, ce remboursement ou les impôts en Md€, à la règle de
+    ``_milliards_de_part``.
     """
     from retraite_notionnelle.donnees.equilibre import ORGANISMES
 
@@ -1175,6 +1177,10 @@ def recette(**reglages: str) -> float:
         if en_milliards:
             return _milliards_de_part(tva, ligne.annee)
         return tva * 100
+    if quoi == "majorations_stock":
+        if en_milliards:
+            return _milliards_de_part(ligne.majorations_stock, ligne.annee)
+        return ligne.majorations_stock * 100
     raise ValueError(f"quoi inconnu « {quoi} »")
 
 

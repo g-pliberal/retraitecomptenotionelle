@@ -167,8 +167,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->926<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 287<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->927<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 290<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Huit pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -884,9 +884,9 @@ contrôle et non identité.
 |---|---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(solde?scenario=1&annee=2025)-->−0,17<!--/--> % du PIB, <!--chiffre:mesure(solde?scenario=1&annee=2025&en=milliards)-->−5,1<!--/--> Md€ | **<!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %**, <!--chiffre:mesure(solde_moyen?scenario=1&en=milliards)-->−34<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=1)-->0,84<!--/-->** |
 | 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(solde?scenario=2&annee=2025)-->+9,14<!--/--> %, <!--chiffre:mesure(solde?scenario=2&annee=2025&en=milliards)-->+273<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=2)-->+7,96<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=2&en=milliards)-->+238<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=2)-->2,62<!--/--> |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−0,16<!--/--> %, <!--chiffre:mesure(solde?scenario=3&annee=2025&en=milliards)-->−4,7<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,54<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=3&en=milliards)-->+46<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/-->** |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−0,16<!--/--> %, <!--chiffre:mesure(solde?scenario=3&annee=2025&en=milliards)-->−4,7<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,60<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=3&en=milliards)-->+48<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/-->** |
 | 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(solde?scenario=4&annee=2025)-->+3,83<!--/--> %, <!--chiffre:mesure(solde?scenario=4&annee=2025&en=milliards)-->+114<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=4)-->+2,03<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=4&en=milliards)-->+61<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=4)-->1,17<!--/--> |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−0,16<!--/--> %, <!--chiffre:mesure(solde?scenario=5&annee=2025&en=milliards)-->−4,8<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,06<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=5&en=milliards)-->−1,8<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=5)-->1,10<!--/--> |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−0,16<!--/--> %, <!--chiffre:mesure(solde?scenario=5&annee=2025&en=milliards)-->−4,8<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=5)-->+0,00<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=5&en=milliards)-->+0,0<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=5)-->1,10<!--/--> |
 | 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+3,83<!--/--> %, <!--chiffre:mesure(solde?scenario=6&annee=2025&en=milliards)-->+114<!--/--> Md€ | **<!--chiffre:mesure(solde_moyen?scenario=6)-->+0,55<!--/--> %**, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->+16<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=6)-->1,25<!--/-->** |
 
 Les milliards sont ceux de 2025 pour le solde de 2025, et la même part du PIB
@@ -948,7 +948,11 @@ toujours. Les scénarios 3 et 5 ne les perdent qu'à la bascule : avant elle, il
 SONT le système actuel, en servent les pensions et en encaissent toutes les
 recettes. Jusqu'au 23 septembre 2026, le modèle les leur retirait dès 2013, et
 leur prêtait en 2025 un déficit de plus d'un point de PIB, plus de trente
-milliards, que leur seule construction fabriquait. Le système actuel, lui,
+milliards, que leur seule construction fabriquait. Après la bascule, ils
+servent encore, telles quelles, les pensions liquidées avant elle, majorations
+pour enfants comprises : la branche famille continue de leur rembourser
+celles-là, <!--chiffre:mesure(recette?quoi=majorations_stock&annee=2026)-->0,19<!--/--> point de PIB en 2026, <!--chiffre:mesure(recette?quoi=majorations_stock&annee=2026&en=milliards)-->5,7<!--/--> Md€, puis de moins en
+moins à mesure que ces retraités disparaissent. Le système actuel, lui,
 encaisse tout, et son solde reste celui du COR.
 
 **La recette suit aussi le TAUX, et cela ne concerne que le scénario 6.** Il
@@ -1272,7 +1276,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2348 tests Python
+tests/                          2350 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1326,7 +1330,7 @@ Sans cible, la suite se répartit d'elle-même sur les cœurs (pytest-xdist) ;
 avec une cible — un fichier, un test —, elle tourne en série, ce qui est plus
 lisible pour un seul test.
 
-<!--chiffre:tests()-->2348<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2350<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

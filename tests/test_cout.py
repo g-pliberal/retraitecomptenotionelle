@@ -1759,13 +1759,19 @@ def test_la_recette_suit_le_droit(cout: Cout, comptes: ComptesRetraite):
         assert ligne.versements["chomage"] > 0.0
         assert ligne.retrait == pytest.approx(
             ligne.versements["famille"] + ligne.versements["solidarite"])
-    # À la bascule, la recette leur est retirée comme aux autres.
+    # À la bascule, la recette leur est retirée comme aux autres, sauf ce que
+    # la branche famille rembourse des majorations des pensions qu'ils servent
+    # encore — ``test_une_reforme_prospective_garde_le_remboursement_des_
+    # majorations_qu_elle_sert`` en tient le montant. Jusqu'au 23 septembre
+    # 2026, ce test exigeait le retrait entier.
     ligne = solde.annee(bascule)
+    assert ligne.majorations_stock > 0.0
     for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
         rapport = ligne.rapports_recettes.get(scenario, 1.0)
         cotisees = ligne.ressources * ligne.part_contributive
         assert ligne.ressources_de(scenario) == pytest.approx(
-            cotisees * rapport + ligne.ressources - cotisees - ligne.retrait)
+            cotisees * rapport + ligne.ressources - cotisees - ligne.retrait
+            + ligne.majorations_stock)
     # Plus d'un point de PIB, toutes les années connues, depuis que le fonds
     # de solidarité vieillesse est entré dans le compte.
     for annee in comptes.annees_transferts():
@@ -2026,9 +2032,12 @@ def test_seul_le_scenario_6_change_ce_qui_est_preleve(cout: Cout):
                          "notionnel_prospectif_employeur"):
             # Avant la bascule, les scénarios 3 et 5 sont le système actuel,
             # et n'ont rien à retirer : voir `test_la_recette_suit_le_droit`.
-            avant = (scenario in CLES_PROSPECTIVES
-                     and ligne.annee < ligne.annee_bascule)
-            attendu = ligne.ressources if avant else ligne.ressources - ligne.retrait
+            # Après, ils gardent les majorations du stock qu'ils servent encore.
+            prospectif = scenario in CLES_PROSPECTIVES
+            avant = prospectif and ligne.annee < ligne.annee_bascule
+            garde = ligne.majorations_stock if prospectif else 0.0
+            attendu = (ligne.ressources if avant
+                       else ligne.ressources - ligne.retrait + garde)
             assert ligne.ressources_de(scenario) == pytest.approx(attendu), (
                 ligne.annee, scenario)
 
@@ -2247,6 +2256,107 @@ def test_une_reforme_prospective_ne_retire_la_reversion_qu_a_compter_de_sa_bascu
             assert point.depense(scenario) == pytest.approx(
                 point.depenses * (1.0 - point.part_derives)
                 * point.rapports[scenario]), (point.annee, scenario)
+
+
+def test_une_reforme_prospective_garde_le_remboursement_des_majorations_qu_elle_sert(
+        cout_assiette: Cout, comptes: ComptesRetraite):
+    """La recette suit le droit, et le droit du stock survit à la bascule.
+
+    Les scénarios 3 et 5 rendent telles quelles les pensions liquidées au plus
+    tard l'année de leur bascule, majorations pour enfants comprises : ils les
+    servent donc encore, et la branche famille continue de les leur
+    rembourser, au prorata de ce que ces pensions pèsent dans la masse. Ils
+    perdaient tout le remboursement jusqu'au 23 septembre 2026, près de deux
+    dixièmes de point de PIB l'année de la bascule. Un scénario rétroactif, qui
+    recalcule tout le monde, n'en garde rien.
+    """
+    bascule = Parametres().annee_bascule
+    avenir = cout_assiette.avenir
+    parts = [avenir.annee(a).part_stock for a in range(bascule, HORIZON + 1)]
+    # Presque tout le stock la première année, rien à l'horizon, et jamais de
+    # retour : une pension liquidée avant la bascule ne se crée pas après.
+    assert parts[0] > 0.9, parts[0]
+    assert parts[-1] < 0.01, parts[-1]
+    assert all(suivante <= courante + 1e-12
+               for courante, suivante in zip(parts, parts[1:])), parts
+
+    ligne = cout_assiette.solde.annee(bascule)
+    attendu = (comptes.versement_ligne(bascule, "cnaf_majorations")
+               * avenir.annee(bascule).part_stock)
+    assert ligne.majorations_stock == pytest.approx(attendu, rel=1e-12)
+    assert 0.001 < ligne.majorations_stock < ligne.versements["famille"]
+    for scenario in CLES_PROSPECTIVES:
+        # Même rapport de recette qu'un rétroactif : l'écart est ce
+        # remboursement, et lui seul, rangé dans la ligne de la famille.
+        assert ligne.ressources_de(scenario) == pytest.approx(
+            ligne.ressources_de("notionnel_retroactif") + ligne.majorations_stock,
+            rel=1e-12), scenario
+        assert ligne.postes_ressources(scenario)["transferts_famille"] == pytest.approx(
+            ligne.majorations_stock, rel=1e-12), scenario
+    assert ligne.postes_ressources("notionnel_retroactif")["transferts_famille"] == 0.0
+
+
+def test_le_portage_javascript_rend_les_memes_recettes_aux_six_scenarios():
+    """Les recettes de chaque scénario, Python et JavaScript, au milliardième.
+
+    Les témoins du portage passent par les pages, et les pages ne montrent que
+    quatre systèmes : les scénarios 3 et 5 n'y paraissent pas, et une
+    divergence de leurs recettes n'aurait fait échouer aucun test. Celui-ci
+    demande au moteur JavaScript les recettes des six scénarios, et ce que la
+    branche famille verse à chacun, trois années après la bascule.
+    """
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    from retraite_notionnelle.web.pages import Contexte
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    bascule = Parametres().annee_bascule
+    annees = [bascule, bascule + 14, bascule + 34]
+    scenarios = [cle for cle, _ in SCENARIOS]
+    script = """
+import { readFileSync } from "node:fs";
+import { Contexte } from "./moteur/js/pages.js";
+const [annees, scenarios] = process.argv.slice(1).map((texte) => JSON.parse(texte));
+const contexte = new Contexte(JSON.parse(readFileSync("moteur/donnees.json", "utf8")));
+const solde = contexte.cout().solde;
+const sortie = {};
+for (const annee of annees) {
+  const ligne = solde.annee(annee);
+  sortie[annee] = {
+    majorations_stock: ligne.majorationsStock,
+    ressources: Object.fromEntries(scenarios.map((s) => [s, ligne.ressourcesDe(s)])),
+    famille: Object.fromEntries(
+      scenarios.map((s) => [s, ligne.postesRessources(s).transferts_famille])),
+  };
+}
+console.log(JSON.stringify(sortie));
+"""
+    calcul = subprocess.run(
+        ["node", "--input-type=module", "-e", script,
+         json.dumps(annees), json.dumps(scenarios)],
+        capture_output=True, text=True, encoding="utf-8", cwd=racine, check=False,
+    )
+    assert calcul.returncode == 0, calcul.stderr[-2000:]
+    portage = json.loads(calcul.stdout)
+
+    solde = Contexte().cout().solde
+    for annee in annees:
+        ligne = solde.annee(annee)
+        attendu = portage[str(annee)]
+        assert ligne.majorations_stock > 0.0, annee
+        assert attendu["majorations_stock"] == pytest.approx(
+            ligne.majorations_stock, rel=1e-9), annee
+        for scenario in scenarios:
+            assert attendu["ressources"][scenario] == pytest.approx(
+                ligne.ressources_de(scenario), rel=1e-9), (annee, scenario)
+            assert attendu["famille"][scenario] == pytest.approx(
+                ligne.postes_ressources(scenario)["transferts_famille"],
+                rel=1e-9, abs=1e-15), (annee, scenario)
 
 
 def test_le_systeme_actuel_garde_sa_base_intacte(cout_assiette: Cout):

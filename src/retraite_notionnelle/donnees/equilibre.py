@@ -820,6 +820,21 @@ class ComptesRetraite:
         return (self.transfert_part_pib(organisme, reference)
                 / self.ressource(reference) * self.ressource(annee))
 
+    def versement_ligne(self, annee: int, code: str) -> float:
+        """Ce qu'une seule ligne de transfert verse, en part du PIB.
+
+        La règle de :meth:`versement`, pour une ligne au lieu d'un payeur : la
+        branche famille paie deux droits, l'AVPF des parents d'aujourd'hui et
+        les majorations des pensions servies, et un scénario qui ne supprime
+        que le premier doit pouvoir garder le second.
+        """
+        premiere, derniere = self.premiere_annee_transferts, self.derniere_annee_transferts
+        reference = min(max(annee, premiere), derniere)
+        part = self.transfert(code, reference) / self.pib(reference)
+        if reference == annee:
+            return part
+        return part / self.ressource(reference) * self.ressource(annee)
+
     def recette_non_acquise(self, annee: int, *, par_impot: bool | None = None,
                             organisme: str | None = None) -> float:
         """Ce qu'un scénario notionnel doit retirer de ses ressources, en part du PIB.
