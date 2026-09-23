@@ -74,6 +74,31 @@
 #   plein 65 ans », quatre mois de plus par génération jusqu'à « 1961 (nés
 #   jusqu'au 31 août) […] 67 ans » ; âge minimal de 60 ans à 62 ans, du même
 #   pas. Au-delà, l'âge de L. 161-17-2 et celui du 1° de L. 351-8 : 67 ans.
+#
+# LA SNCF, LA RATP ET LES IEG, PAR GÉNÉRATION ET POUR TOUT LE MONDE. Leurs fiches
+# portaient un âge par PÉRIODE de liquidation — celui de la génération qui
+# l'atteint cette année-là —, juste pour elle seule et faux pour les autres :
+# un agent des IEG né en 1965 parti en 2030 se voyait opposer 58 ans et 3 mois
+# au lieu de 56 ans et 4 mois. Le droit indexe ces âges sur la génération ; les
+# tables le font, et chaque période nomme la sienne, parce que le calendrier a
+# lui-même changé en 2025 :
+#   `sncf_conduite_2011`, `ratp_roulant_2011` — relèvement du décret n° 2011-291
+#       (SNCF, article 37-1) et n° 2011-292 (RATP, article 51-1, tableau B),
+#       pensions de 2009 à 2024 : cinquante ans avant la génération 1967, quatre
+#       mois de plus par génération jusqu'à cinquante-deux ans pour 1972 ; âge de
+#       référence de la décote cinq ans au-dessus.
+#   `sncf_conduite_2023`, `ratp_roulant_2023` — décrets n° 2023-967 et n° 2023-690,
+#       pensions de 2025 et après : le même calendrier, puis trois mois de plus
+#       par génération jusqu'à cinquante-quatre ans pour 1980 ; l'âge de
+#       référence ne dépasse plus cinquante-sept ans (SNCF, article 13 ; RATP,
+#       article 24 et VII de l'article 51-1).
+#   `ieg_actif_2011` — décret n° 2011-290 : cinquante-cinq ans avant 1962, quatre
+#       mois de plus par génération jusqu'à cinquante-sept ans pour 1967 ;
+#       référence cinq ans au-dessus.
+#   `ieg_actif_2023` — annexe 3, article 45, V, 2° (LEGIARTI000052046924) : le
+#       même calendrier, puis trois mois de plus par génération jusqu'à
+#       cinquante-huit ans et neuf mois pour 1974, cinquante-neuf ans à compter
+#       de 1975 ; référence à soixante-deux ans (article 45 et I de l'article 10).
 table,generation,age_ouverture,age_taux_plein,fiabilite,decote_par_trimestre
 cavom,1900,60,65,certifiee,
 cavom,1956,60.5,65.5,certifiee,
@@ -100,3 +125,69 @@ carpimko_2016,1958,61,66,certifiee,
 carpimko_2016,1959,61.333333,66.333333,certifiee,
 carpimko_2016,1960,61.666667,66.666667,certifiee,
 carpimko_2016,1961,,67,certifiee,
+sncf_conduite_2011,1900,50,55,haute,
+sncf_conduite_2011,1967,50.33,55.33,haute,
+sncf_conduite_2011,1968,50.67,55.67,haute,
+sncf_conduite_2011,1969,51,56,haute,
+sncf_conduite_2011,1970,51.33,56.33,haute,
+sncf_conduite_2011,1971,51.67,56.67,haute,
+sncf_conduite_2011,1972,52,57,haute,
+sncf_conduite_2023,1900,50,55,haute,
+sncf_conduite_2023,1967,50.33,55.33,haute,
+sncf_conduite_2023,1968,50.67,55.67,haute,
+sncf_conduite_2023,1969,51,56,haute,
+sncf_conduite_2023,1970,51.33,56.33,haute,
+sncf_conduite_2023,1971,51.67,56.67,haute,
+sncf_conduite_2023,1972,52,57,haute,
+sncf_conduite_2023,1973,52.25,57,haute,
+sncf_conduite_2023,1974,52.5,57,haute,
+sncf_conduite_2023,1975,52.75,57,haute,
+sncf_conduite_2023,1976,53,57,haute,
+sncf_conduite_2023,1977,53.25,57,haute,
+sncf_conduite_2023,1978,53.5,57,haute,
+sncf_conduite_2023,1979,53.75,57,haute,
+sncf_conduite_2023,1980,54,57,haute,
+ratp_roulant_2011,1900,50,55,haute,
+ratp_roulant_2011,1967,50.33,55.33,haute,
+ratp_roulant_2011,1968,50.67,55.67,haute,
+ratp_roulant_2011,1969,51,56,haute,
+ratp_roulant_2011,1970,51.33,56.33,haute,
+ratp_roulant_2011,1971,51.67,56.67,haute,
+ratp_roulant_2011,1972,52,57,haute,
+ratp_roulant_2023,1900,50,55,haute,
+ratp_roulant_2023,1967,50.33,55.33,haute,
+ratp_roulant_2023,1968,50.67,55.67,haute,
+ratp_roulant_2023,1969,51,56,haute,
+ratp_roulant_2023,1970,51.33,56.33,haute,
+ratp_roulant_2023,1971,51.67,56.67,haute,
+ratp_roulant_2023,1972,52,57,haute,
+ratp_roulant_2023,1973,52.25,57,haute,
+ratp_roulant_2023,1974,52.5,57,haute,
+ratp_roulant_2023,1975,52.75,57,haute,
+ratp_roulant_2023,1976,53,57,haute,
+ratp_roulant_2023,1977,53.25,57,haute,
+ratp_roulant_2023,1978,53.5,57,haute,
+ratp_roulant_2023,1979,53.75,57,haute,
+ratp_roulant_2023,1980,54,57,haute,
+ieg_actif_2011,1900,55,60,haute,
+ieg_actif_2011,1962,55.33,60.33,haute,
+ieg_actif_2011,1963,55.67,60.67,haute,
+ieg_actif_2011,1964,56,61,haute,
+ieg_actif_2011,1965,56.33,61.33,haute,
+ieg_actif_2011,1966,56.67,61.67,haute,
+ieg_actif_2011,1967,57,62,haute,
+ieg_actif_2023,1900,55,62,haute,
+ieg_actif_2023,1962,55.33,62,haute,
+ieg_actif_2023,1963,55.67,62,haute,
+ieg_actif_2023,1964,56,62,haute,
+ieg_actif_2023,1965,56.33,62,haute,
+ieg_actif_2023,1966,56.67,62,haute,
+ieg_actif_2023,1967,57,62,haute,
+ieg_actif_2023,1968,57.25,62,haute,
+ieg_actif_2023,1969,57.5,62,haute,
+ieg_actif_2023,1970,57.75,62,haute,
+ieg_actif_2023,1971,58,62,haute,
+ieg_actif_2023,1972,58.25,62,haute,
+ieg_actif_2023,1973,58.5,62,haute,
+ieg_actif_2023,1974,58.75,62,haute,
+ieg_actif_2023,1975,59,62,haute,

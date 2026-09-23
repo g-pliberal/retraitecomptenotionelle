@@ -27,7 +27,7 @@ import {
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
   DureesProratisation, DureesRequises, DureesRequisesAvantSoixanteAns,
   DureesRequisesAvantSuspension,
-  DureesRequisesFonctionPublique, DureesRequisesRegimes,
+  DureesRequisesFonctionPublique, DureesRequisesRegimes, CalendriersDureeRequise,
   GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
   DureesServicesMilitaires,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
@@ -123,6 +123,7 @@ export class ScenarioActuel {
     this.dureesRequises = new DureesRequises(paquet);
     this.dureesRequisesAvantSuspension = new DureesRequisesAvantSuspension(paquet);
     this.dureesRequisesRegimes = new DureesRequisesRegimes(paquet);
+    this.calendriersDureeRequise = new CalendriersDureeRequise(paquet);
     this.dureesRequisesFonctionPublique = new DureesRequisesFonctionPublique(paquet);
     this.dureesRequisesAvantSoixanteAns = new DureesRequisesAvantSoixanteAns(paquet);
     this.dureesProratisation = new DureesProratisation(paquet);
@@ -451,16 +452,12 @@ export class ScenarioActuel {
    */
   /** @returns {[number, number|null]} durée requise opposable, et fiabilité. */
   dureeRequise(periode, carriere) {
-    // UN RÉGIME SPÉCIAL QUI ÉCRIT SA TABLE PASSE AVANT LA TABLE COMMUNE : la
-    // SNCF, la RATP et les IEG. En deçà de sa première génération, la table commune
-    // reste le repli.
-    if (periode.duree_requise_table) {
-      const propre = this.dureesRequisesRegimes.ligne(
-        periode.duree_requise_table, carriere.generation,
-      );
-      if (propre !== null) {
-        return [propre[0], propre[2]];
-      }
+    // UN RÉGIME SPÉCIAL QUI ÉCRIT SES TABLES PASSE AVANT LA TABLE COMMUNE : la
+    // SNCF, la RATP et les IEG — tables par génération à compter de leur date
+    // d'effet, puis calendrier de 2008 lu au mois où les conditions sont réunies.
+    const propre = this.dureePropre(periode, carriere);
+    if (propre !== null) {
+      return [propre[0], propre[2]];
     }
     // La fonction publique a sa propre montée en charge, 2004-2008, lue à
     // l'année d'ouverture du droit ; elle passe avant la table par génération.
@@ -1356,13 +1353,44 @@ export class ScenarioActuel {
    */
   /** Trimestres retranchés à la durée requise pour compter la décote. */
   retrancheDecote(periode, carriere) {
-    if (!periode.duree_requise_table) {
-      return 0;
-    }
-    const propre = this.dureesRequisesRegimes.ligne(
-      periode.duree_requise_table, carriere.generation,
-    );
+    const propre = this.dureePropre(periode, carriere);
     return propre === null ? 0 : propre[1];
+  }
+
+  /** Rang du mois où l'assuré réunit les conditions : l'âge d'ouverture
+   * atteint, ou la liquidation si elle vient avant. */
+  moisOuvertureDesDroits(periode, carriere) {
+    let rang = carriere.dateNaissance.plusMois(
+      enMois(this.ageOuverture(periode, carriere)),
+    ).rang;
+    if (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined) {
+      rang = Math.min(rang, carriere.dateLiquidation.rang);
+    }
+    return rang;
+  }
+
+  /** Durée requise propre au régime : [trimestres, retranchés, fiabilité] ou null. */
+  dureePropre(periode, carriere) {
+    const tables = periode.duree_requise_table ?? [];
+    if (tables.length === 0 && !periode.duree_requise_calendrier) {
+      return null;
+    }
+    const ouverture = this.moisOuvertureDesDroits(periode, carriere);
+    for (const table of tables) {
+      const ligne = this.dureesRequisesRegimes.ligne(table, carriere.generation, ouverture);
+      if (ligne !== null) {
+        return ligne;
+      }
+    }
+    if (periode.duree_requise_calendrier) {
+      const lu = this.calendriersDureeRequise.trimestres(
+        periode.duree_requise_calendrier, ouverture,
+      );
+      if (lu !== null) {
+        return [lu[0], 0, lu[1]];
+      }
+    }
+    return null;
   }
 
   trimestresDeDecote(periode, carriere, trimestres, requis, ageLiquidation,
@@ -2315,8 +2343,9 @@ export class ScenarioActuel {
           continue;
         }
         // Une complémentaire qui a SES âges ne dit pas quand le droit s'ouvre :
-        // c'est le régime de base qu'elle accompagne qui le dit.
-        if (periode.age_table) {
+        // c'est le régime de base qu'elle accompagne qui le dit. Un régime de
+        // base en annuités qui a les siens — SNCF, RATP, IEG — le dit, lui.
+        if (periode.age_table && periode.type_calcul !== "annuites") {
           continue;
         }
         requisReference = Math.max(requisReference, this.dureeRequise(periode, carriere)[0]);

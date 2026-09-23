@@ -4507,9 +4507,12 @@ def test_la_derogation_ne_deborde_pas_sur_un_regime_special(simulateur):
     sncf = simulateur.catalogue["sncf"].periode(2023)
     cnracl = simulateur.catalogue["cnracl"].periode(2023)
     assert "categorie_active" in sncf.avantages_non_contributifs
-    assert scenario._age_ouverture(sncf, carriere) == pytest.approx(51.67, abs=0.01)
+    # L'âge SNCF est celui de SA génération — cinquante ans et cinquante-cinq
+    # pour un agent de conduite né avant 1967 —, non celui de la génération
+    # qui atteint l'âge en 2023, que la fiche portait par année (51,67).
+    assert scenario._age_ouverture(sncf, carriere) == pytest.approx(50.0)
     assert scenario._age_ouverture(cnracl, carriere) == pytest.approx(57.0)
-    assert scenario._age_taux_plein(sncf, carriere) == pytest.approx(56.67, abs=0.01)
+    assert scenario._age_taux_plein(sncf, carriere) == pytest.approx(55.0)
     assert scenario._age_taux_plein(cnracl, carriere) == pytest.approx(62.0)
 
 

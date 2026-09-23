@@ -82,14 +82,46 @@ export class DureesRequisesRegimes {
   constructor(paquet) {
     this._tables = Object.fromEntries(
       Object.entries(paquet.durees_requises_regimes ?? {})
-        .map(([table, valeurs]) => [table, new TableParGeneration(valeurs)]),
+        .map(([table, { depuis, lignes }]) => [
+          table, { depuis, lignes: new TableParGeneration(lignes) },
+        ]),
     );
   }
 
-  /** @returns {[number, number, number] | null} trimestres, retranchés pour la décote, fiabilité. */
-  ligne(table, generation) {
+  /**
+   * Une table ne répond qu'à qui réunit les conditions à compter de sa date
+   * d'effet (`ouverture`, rang du mois) — portage de `DureesRequisesRegimes`.
+   * @returns {[number, number, number] | null} trimestres, retranchés pour la décote, fiabilité.
+   */
+  ligne(table, generation, ouverture) {
     const lue = this._tables[table];
-    return lue === undefined ? null : lue.valeur(generation);
+    if (lue === undefined || ouverture < lue.depuis) {
+      return null;
+    }
+    return lue.lignes.valeur(generation);
+  }
+}
+
+/**
+ * Durée requise lue au MOIS où l'assuré réunit les conditions : le calendrier
+ * de la réforme de 2008 des régimes spéciaux, 150 puis 151 à 166 trimestres —
+ * portage de `CalendriersDureeRequise`.
+ */
+export class CalendriersDureeRequise {
+  constructor(paquet) {
+    this._table = paquet.calendriers_duree_requise ?? {};
+  }
+
+  /** @returns {[number, number] | null} trimestres et fiabilité. */
+  trimestres(calendrier, ouverture) {
+    let retenue = null;
+    for (const [depuis, trimestres, fiabilite] of this._table[calendrier] ?? []) {
+      if (depuis > ouverture) {
+        break;
+      }
+      retenue = [trimestres, fiabilite];
+    }
+    return retenue;
   }
 }
 

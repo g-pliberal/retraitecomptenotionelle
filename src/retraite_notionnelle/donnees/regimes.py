@@ -124,7 +124,11 @@ class PeriodeRegime:
     #: avant la table commune : `sncf_conduite`, `ratp`, `ieg_actif_*`
     #: (`legislation/duree_requise_regimes_speciaux.csv`). Leurs décrets
     #: écrivent chacun la sienne, et la suspension de 2026 ne les a pas touchés.
-    duree_requise_table: str | None
+    duree_requise_table: tuple[str, ...]
+    #: Le calendrier de durée requise lu à la DATE où l'assuré réunit les
+    #: conditions, quand aucune table par génération ne répond :
+    #: `regimes_speciaux_2008` (`legislation/duree_requise_calendriers.csv`).
+    duree_requise_calendrier: str | None
     #: La surcote se compte-t-elle depuis l'âge du calendrier propre à la SNCF
     #: et à la RATP (`legislation/age_surcote_regimes_speciaux.csv`), et non
     #: depuis l'âge d'ouverture de la fiche ?
@@ -963,7 +967,12 @@ class CatalogueRegimes:
                 duree_requise_par_generation=bool(
                     p.get("duree_requise_par_generation", False)
                 ),
-                duree_requise_table=p.get("duree_requise_table"),
+                duree_requise_table=(
+                    (p["duree_requise_table"],)
+                    if isinstance(p.get("duree_requise_table"), str)
+                    else tuple(p.get("duree_requise_table") or ())
+                ),
+                duree_requise_calendrier=p.get("duree_requise_calendrier"),
                 age_surcote_regimes_speciaux=bool(
                     p.get("age_surcote_regimes_speciaux", False)
                 ),

@@ -553,7 +553,8 @@ def _regimes() -> list[dict]:
                     "age_taux_plein": p.age_taux_plein,
                     "duree_requise_trimestres": p.duree_requise_trimestres,
                     "duree_requise_par_generation": p.duree_requise_par_generation,
-                    "duree_requise_table": p.duree_requise_table,
+                    "duree_requise_table": list(p.duree_requise_table),
+                    "duree_requise_calendrier": p.duree_requise_calendrier,
                     "age_surcote_regimes_speciaux": p.age_surcote_regimes_speciaux,
                     "duree_proratisation_par_generation":
                         p.duree_proratisation_par_generation,
@@ -960,19 +961,34 @@ def _minimum_contributif() -> dict:
 
 
 def _durees_requises_regimes() -> dict:
-    """Durée requise propre à un régime spécial, par table et par génération."""
+    """Durée requise propre à un régime spécial, par table et par génération,
+    avec le mois (rang) à compter duquel chaque table vaut."""
     from retraite_notionnelle.scenarios.actuel import DureesRequisesRegimes
 
+    tables = DureesRequisesRegimes(DONNEES)
     return {
         table: {
-            (str(int(generation)) if float(generation).is_integer()
-             else str(generation)): [trimestres, retranche, int(fiabilite)]
-            for generation, (trimestres, retranche, fiabilite)
-            in sorted(valeurs.items())
+            "depuis": tables._depuis[table],
+            "lignes": {
+                (str(int(generation)) if float(generation).is_integer()
+                 else str(generation)): [trimestres, retranche, int(fiabilite)]
+                for generation, (trimestres, retranche, fiabilite)
+                in sorted(valeurs.items())
+            },
         }
-        for table, valeurs in sorted(DureesRequisesRegimes(DONNEES)._table.items())
+        for table, valeurs in sorted(tables._table.items())
     }
 
+
+def _calendriers_duree_requise() -> dict:
+    """Durée requise lue au mois où les conditions sont réunies (rang)."""
+    from retraite_notionnelle.scenarios.actuel import CalendriersDureeRequise
+
+    return {
+        nom: [[depuis, trimestres, int(fiabilite)]
+              for depuis, trimestres, fiabilite in valeurs]
+        for nom, valeurs in sorted(CalendriersDureeRequise(DONNEES)._table.items())
+    }
 
 def _durees_requises_fonction_publique() -> dict:
     """Durée de services de la fonction publique, 2004-2008, par année d'ouverture."""
@@ -1417,6 +1433,7 @@ def construire(bilan: bytes) -> bytes:
         "durees_requises_avant_suspension": _table_par_generation(
             DureesRequisesAvantSuspension),
         "durees_requises_regimes": _durees_requises_regimes(),
+        "calendriers_duree_requise": _calendriers_duree_requise(),
         "durees_proratisation": _table_par_generation(DureesProratisation),
         "revalorisation_salaires": _revalorisation_salaires(),
         "revalorisation_pensions": _revalorisation_pensions(),

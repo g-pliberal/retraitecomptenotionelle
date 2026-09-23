@@ -1,0 +1,44 @@
+# Durée requise lue à la DATE où l'assuré réunit les conditions d'ouverture
+# ------------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# LA RÉFORME DE 2008 DES RÉGIMES SPÉCIAUX NE SUIT PAS LA GÉNÉRATION. Les trois
+# décrets du 30 juin 2008 écrivent la même phrase — SNCF, article 35, I
+# (LEGIARTI000029165209) ; RATP, article 51, I (LEGIARTI000029137521) ; IEG,
+# annexe 3, article 45, I (LEGIARTI000042597001) — : la durée « est fixée à
+# 151 trimestres pour les personnes remplissant les conditions […] entre le
+# 1er juillet et le 31 décembre 2008 inclus. Pour les personnes remplissant les
+# conditions […] postérieurement au 31 décembre 2008, elle augmente d'un
+# trimestre au 1er janvier et au 1er juillet de chaque année jusqu'au
+# 1er juillet 2012 inclus, d'un trimestre au 1er décembre 2012, puis d'un
+# trimestre au 1er juillet de chaque année jusqu'à atteindre la durée de
+# 166 trimestres au 1er juillet 2018 ». Avant le 1er juillet 2008, les
+# 150 trimestres d'avant la réforme.
+#
+# LES FICHES LEUR OPPOSAIENT LA TABLE COMMUNE PAR GÉNÉRATION, et c'était faux
+# pour tous leurs retraités de 2008 à 2024 : un agent de conduite né en 1960,
+# qui réunit les conditions à cinquante ans en 2010, doit 154 trimestres, et le
+# modèle lui en demandait 167.
+#
+# `depuis` est le mois (AAAA-MM) à compter duquel la valeur vaut ; la lecture
+# prend la dernière ligne dont le mois ne dépasse pas celui où l'assuré réunit
+# les conditions. `haute` : lu dans le texte de l'index LEGI, non recontrôlé
+# par un récupérateur.
+calendrier,depuis,trimestres,fiabilite
+regimes_speciaux_2008,1900-01,150,haute
+regimes_speciaux_2008,2008-07,151,haute
+regimes_speciaux_2008,2009-01,152,haute
+regimes_speciaux_2008,2009-07,153,haute
+regimes_speciaux_2008,2010-01,154,haute
+regimes_speciaux_2008,2010-07,155,haute
+regimes_speciaux_2008,2011-01,156,haute
+regimes_speciaux_2008,2011-07,157,haute
+regimes_speciaux_2008,2012-01,158,haute
+regimes_speciaux_2008,2012-07,159,haute
+regimes_speciaux_2008,2012-12,160,haute
+regimes_speciaux_2008,2013-07,161,haute
+regimes_speciaux_2008,2014-07,162,haute
+regimes_speciaux_2008,2015-07,163,haute
+regimes_speciaux_2008,2016-07,164,haute
+regimes_speciaux_2008,2017-07,165,haute
+regimes_speciaux_2008,2018-07,166,haute

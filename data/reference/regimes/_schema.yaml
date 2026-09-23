@@ -49,16 +49,25 @@ champs_periode:
 
   duree_requise_table:
     description: >-
-      Table de durée requise PROPRE au régime, par génération, qui passe avant
-      la table commune : `sncf_conduite`, `ratp`, `ieg_actif_5` à `ieg_actif_17`
-      (`legislation/duree_requise_regimes_speciaux.csv`). Leurs décrets
-      écrivent chacun la leur, et la suspension de 2026, qui a abaissé la table
-      commune, ne les a pas touchés. En deçà de la première génération de la
-      table, la table commune reste le repli. La table de la SNCF porte en plus
-      les trimestres que le II de l'article 35 du décret n° 2008-639 retranche
-      à la durée requise pour compter la décote par la durée.
-    valeurs: [null, "sncf_conduite", "ratp", "ieg_actif_5", "ieg_actif_8",
-              "ieg_actif_11", "ieg_actif_14", "ieg_actif_17"]
+      Tables de durée requise PROPRES au régime, par génération, essayées dans
+      l'ordre avant la table commune (`legislation/duree_requise_regimes_speciaux.csv`).
+      Chaque table ne répond qu'à qui RÉUNIT LES CONDITIONS à compter de sa date
+      d'effet — 2019-07 pour `sncf_2014`, `ratp_2014`, `ieg_2014`, 2025-01 pour
+      `sncf_conduite`, `ratp` et `ieg_actif_5` à `ieg_actif_17` —, parce que les
+      décrets de 2023 gardent « les règles applicables avant » à qui les a
+      réunies plus tôt. La table de la SNCF de 2023 porte en plus les trimestres
+      que le II de l'article 35 du décret n° 2008-639 retranche à la durée
+      requise pour compter la décote par la durée. Une liste, ou un nom seul.
+    defaut: []
+
+  duree_requise_calendrier:
+    description: >-
+      Calendrier de durée requise lu au MOIS où l'assuré réunit les conditions,
+      quand aucune table de `duree_requise_table` ne répond :
+      `regimes_speciaux_2008` (`legislation/duree_requise_calendriers.csv`),
+      150 trimestres avant juillet 2008 puis 151 à 166 jusqu'en juillet 2018.
+      C'est la durée des retraités de la SNCF, de la RATP et des IEG partis de
+      2008 à 2024.
     defaut: null
 
   age_surcote_regimes_speciaux:
@@ -95,7 +104,9 @@ champs_periode:
       plein qu'écrit le règlement d'une section, quand ce ne sont pas ceux du
       régime général. Elle passe avant `age_ouverture_par_generation` et
       `age_taux_plein_par_generation`, qui reprennent la main pour une
-      génération que la table ne couvre pas. `cavom` : 60 et 65 ans avant la
+      génération que la table ne couvre pas. Elle sert aussi aux régimes de base
+      en annuités qui écrivent leurs âges par génération — `sncf_conduite_2011`,
+      `sncf_conduite_2023`, `ratp_roulant_*`, `ieg_actif_*`. `cavom` : 60 et 65 ans avant la
       génération 1956, 62 et 67 de 1959 à 1964, 64 et 67 dès 1968. La table
       peut aussi porter, génération par génération, le coefficient de
       minoration (`decote_par_trimestre`), qui passe alors avant celui de la
