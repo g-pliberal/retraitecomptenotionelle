@@ -9654,7 +9654,9 @@ function coutDetailGarantie(contexte) {
   const simulateur = contexte.simulateur();
   const base = contexte.base;
   const millesime = distribution.millesime;
-  const effectifRetraites = simulateur.effectifs.effectif("tous_regimes", millesime);
+  // Les retraités qui résident en France, les seuls que la garantie sert.
+  const effectifRetraites = simulateur.effectifs.effectif("tous_regimes", millesime)
+    * distribution.partResidents;
   const versEnquete = simulateur.macro.coefficientPrix(
     base.annee_euros_garantie_vieillesse, millesime,
   );
@@ -9672,6 +9674,8 @@ function coutDetailGarantie(contexte) {
   const plancherSeul = (base.garantie_vieillesse_mensuelle
     + base.allocation_isolement_mensuelle) * versEnquete;
   const caracteristiques = new CaracteristiquesRetraites(contexte.paquet);
+  // La part des femmes parmi les retraités résidant en France.
+  const partFemmesGarantie = distribution.partFemmesResidents ?? caracteristiques.partFemmes;
   const rapportMesure = caracteristiques.rapportDeplacement();
   const ligneBascule = c.avenir.annee(base.annee_bascule);
   const garantieBascule = ligneBascule !== null ? ligneBascule.garantie : null;
@@ -9691,7 +9695,7 @@ function coutDetailGarantie(contexte) {
     parSexe.set(rapport, coutGarantieParSexe(
       new DistributionPensions(contexte.paquet, "F"),
       new DistributionPensions(contexte.paquet, "H"),
-      caracteristiques.partFemmes, effectifRetraites, plancherSeul, facteur,
+      partFemmesGarantie, effectifRetraites, plancherSeul, facteur,
       rapport,
     ));
   }
@@ -9722,7 +9726,7 @@ function coutDetailGarantie(contexte) {
   parSexe.set(rapportMesure * rapportMinima, coutGarantieParSexe(
     new DistributionPensions(contexte.paquet, "F"),
     new DistributionPensions(contexte.paquet, "H"),
-    caracteristiques.partFemmes, effectifRetraites, plancherSeul, facteur,
+    partFemmesGarantie, effectifRetraites, plancherSeul, facteur,
     rapportMesure * rapportMinima,
   ));
   const coutUniforme = parSexe.get(1.0).coutAnnuelMeur;

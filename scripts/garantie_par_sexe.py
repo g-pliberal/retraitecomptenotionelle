@@ -71,10 +71,11 @@ l'agrégat, et le script ne fait que le RÉPARTIR entre les deux sexes.
 
     w·μ_F·f_F + (1−w)·μ_H·f_H = f·(w·μ_F + (1−w)·μ_H)
 
-``w`` est la part des femmes dans la population de l'enquête — 52,8 %, lue
-sur le fichier par ``donnees.distribution.part_femmes`` —, ``μ`` la pension
-moyenne de chaque sexe, et ``f`` le facteur d'ensemble de l'année de
-l'enquête. À ``r = 1`` le script redonne EXACTEMENT le coût de la page :
+``w`` est la part des femmes parmi les retraités de l'enquête qui résident
+en France, les seuls que la garantie sert — 54,0 %, lue sur la feuille
+« Naissance-Résidence » par ``part_femmes_residents`` —, ``μ`` la pension
+moyenne de chaque sexe parmi eux, et ``f`` le facteur d'ensemble de l'année
+de l'enquête. À ``r = 1`` le script redonne EXACTEMENT le coût de la page :
 c'est son contrôle, et ``tests/test_garantie_par_sexe.py`` le tient.
 
 COMMENT SE LIT ``r``
@@ -105,7 +106,6 @@ from retraite_notionnelle.donnees.assiette import AssietteActivite  # noqa: E402
 from retraite_notionnelle.donnees.depenses import DepensesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.distribution import (  # noqa: E402
     DistributionPensions,
-    part_femmes,
 )
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
@@ -167,11 +167,13 @@ def calculer(parametres: Parametres | None = None,
         simulateur, DepensesRetraite(racine), Population(racine),
         ComptesRetraite(racine), assiette=AssietteActivite(racine))
     millesime = simulateur.distribution.millesime
+    # Les résidents en France, comme la page : la garantie ne sert qu'eux.
     colonnes = {
-        sexe: DistributionPensions(racine, sexe=sexe, millesime=millesime)
+        sexe: DistributionPensions(racine, sexe=sexe, millesime=millesime,
+                                   residence="france")
         for sexe in ("F", "H")
     }
-    poids_femmes = part_femmes(racine, millesime)
+    poids_femmes = simulateur.distribution.part_femmes_residents
     # Le rapport MESURÉ prend sa place dans le parcours : c'est celui que le
     # modèle applique depuis le 21 septembre 2026, et la colonne « 1,00 » n'est
     # plus que le repère de ce que la convention uniforme valait.
@@ -186,7 +188,8 @@ def calculer(parametres: Parametres | None = None,
         parametres.annee_euros_garantie_vieillesse, millesime)
     vers_constants = simulateur.macro.coefficient_prix(
         millesime, parametres.annee_euros_constants)
-    effectif = simulateur.effectifs.effectif("tous_regimes", millesime)
+    effectif = (simulateur.effectifs.effectif("tous_regimes", millesime)
+                * simulateur.distribution.part_residents)
     recours = parametres.taux_recours_garantie
     moyenne_ensemble = (poids_femmes * moyennes["F"]
                         + (1.0 - poids_femmes) * moyennes["H"])

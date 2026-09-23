@@ -776,7 +776,13 @@ institutions:
           droit direct avec et sans les majorations pour enfants, dont l'écart
           joue à l'envers. Le classeur porte en outre les effectifs par sexe,
           que le dépôt AJUSTAIT jusque-là sur les trois colonnes de la
-          distribution faute de les lire quelque part.
+          distribution faute de les lire quelque part. Sa feuille
+          « Naissance-Résidence » est lue aussi, depuis le 23 septembre 2026,
+          et écrite dans data/reference/macro/pensions_residence.csv : les
+          effectifs, les pensions moyennes et les onze quantiles des retraités
+          qui résident en France et de ceux qui résident à l'étranger. La
+          garantie vieillesse, qui ne sert que les premiers, s'en sert pour
+          retirer les seconds de la distribution.
 
       - id: drees_age_conjoncturel
         titre: Âge conjoncturel moyen de départ à la retraite, selon le sexe

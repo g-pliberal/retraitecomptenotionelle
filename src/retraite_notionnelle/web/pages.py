@@ -1845,9 +1845,14 @@ class Contexte:
             "population", lambda: Population(self.base.racine_donnees))
 
     def distribution(self) -> DistributionPensions:
-        """La distribution des pensions — elle seule chiffre un plancher."""
+        """La distribution des pensions — elle seule chiffre un plancher.
+
+        Celle des retraités qui résident en France : la garantie ne sert
+        qu'eux, et c'est celle que le site lit dans son paquet.
+        """
         return self._donnee(
-            "distribution", lambda: DistributionPensions(self.base.racine_donnees))
+            "distribution", lambda: DistributionPensions(self.base.racine_donnees,
+                                                         residence="france"))
 
     def assiette(self) -> AssietteActivite:
         """Sur quoi l'on prélève : sans elle, un taux ne devient pas une recette."""
@@ -2951,8 +2956,8 @@ def _programme_garantie(contexte: Contexte) -> str:
         base.annee_euros_garantie_vieillesse, millesime)
     sous_plancher = {
         sexe: cout_garantie(
-            DistributionPensions(base.racine_donnees, sexe=sexe), 1.0,
-            plancher_seul * vers_enquete, 1.0)
+            DistributionPensions(base.racine_donnees, sexe=sexe, residence="france"),
+            1.0, plancher_seul * vers_enquete, 1.0)
         for sexe in ("F", "H")
     }
     couple = simulateur.vie_en_couple
@@ -11299,7 +11304,13 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
     simulateur = contexte.simulateur()
     base = contexte.base
     millesime = distribution.millesime
-    effectif_retraites = simulateur.effectifs.effectif("tous_regimes", millesime)
+    # Les retraités qui résident en France, les seuls que la garantie sert :
+    # l'échelle de la DREES les compte avec les autres, la distribution dit
+    # quelle part ils en font.
+    effectif_retraites = (simulateur.effectifs.effectif("tous_regimes", millesime)
+                          * distribution.part_residents)
+    part_femmes = getattr(distribution, "part_femmes_residents",
+                          simulateur.caracteristiques.part_femmes)
     vers_enquete = simulateur.macro.coefficient_prix(
         base.annee_euros_garantie_vieillesse, millesime)
     annee_enquete = cout.annee(millesime)
@@ -11337,7 +11348,7 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
         rapport: cout_garantie_par_sexe(
             simulateur.distributions_par_sexe["F"],
             simulateur.distributions_par_sexe["H"],
-            caracteristiques.part_femmes, effectif_retraites, plancher_seul,
+            part_femmes, effectif_retraites, plancher_seul,
             facteur, rapport)
         for rapport in (1.0, rapport_mesure)
     }
@@ -11368,7 +11379,7 @@ def _cout_detail_garantie(contexte: Contexte) -> str:
     par_sexe[rapport_mesure * rapport_minima] = cout_garantie_par_sexe(
         simulateur.distributions_par_sexe["F"],
         simulateur.distributions_par_sexe["H"],
-        caracteristiques.part_femmes, effectif_retraites, plancher_seul,
+        part_femmes, effectif_retraites, plancher_seul,
         facteur, rapport_mesure * rapport_minima,
     )
     cout_uniforme = par_sexe[1.0].cout_annuel_meur

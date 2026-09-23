@@ -979,6 +979,58 @@ def test_les_deux_sexes_recomposent_la_colonne_dont_le_cout_est_tire(distributio
         assert melange == pytest.approx(parts["ensemble"], abs=5e-4), facteur
 
 
+def _quantiles(distribution: DistributionPensions, rangs) -> list[float]:
+    """Les quantiles d'une distribution par tranches, uniforme dans chacune."""
+    resultat = []
+    for rang in rangs:
+        cumul = 0.0
+        for tranche in distribution.tranches:
+            if tranche.part > 0 and cumul + tranche.part >= rang and not tranche.ouverte:
+                largeur = tranche.borne_superieure - tranche.borne_inferieure
+                resultat.append(tranche.borne_inferieure
+                                + (rang - cumul) / tranche.part * largeur)
+                break
+            cumul += tranche.part
+    return resultat
+
+
+def test_la_distribution_des_residents_redonne_les_deciles_publies():
+    """Retirer les résidents à l'étranger redonne la distribution de ceux de France.
+
+    La garantie ne sert que les résidents, comme l'ASPA qu'elle remplace
+    (article L. 815-1), et le tableau de l'enquête compte aussi les autres.
+    La DREES ne publie pas la distribution des résidents par tranches ; elle
+    publie leurs quantiles, et ceux des résidents à l'étranger. Le dépôt retire
+    donc de chaque tranche ce que les seconds y mettent — et ce test est le
+    contrôle externe : les déciles qui en sortent sont ceux que l'enquête
+    publie pour les résidents en France, à trente euros près, pour chaque
+    sexe, une fois les deux grandeurs ramenées l'une à l'autre.
+    """
+    from retraite_notionnelle.donnees.distribution import (
+        QUANTILES_PUBLIES, ResidenceRetraites,
+    )
+    residence = ResidenceRetraites(RACINE_DONNEES)
+    for sexe in ("ensemble", "F", "H"):
+        residents = DistributionPensions(RACINE_DONNEES, sexe=sexe, residence="france")
+        assert residents.somme_des_parts == pytest.approx(1.0, abs=1e-9)
+        assert residents.part_residents == pytest.approx(
+            residence.valeur("france", "effectifs", sexe)
+            / residence.valeur("ensemble", "effectifs", sexe))
+        echelle = (residence.valeur("france", "pension_droit_direct", sexe)
+                   / residence.valeur("france", "pension_droit_direct_majorations", sexe))
+        obtenus = _quantiles(residents, [rang for _, rang in QUANTILES_PUBLIES])
+        for (code, _), obtenu in zip(QUANTILES_PUBLIES, obtenus):
+            publie = residence.valeur("france", code, sexe) * echelle
+            assert obtenu == pytest.approx(publie, abs=30.0), (sexe, code)
+        # Et ils pèsent sur la queue basse : sous 700 €, les résidents sont
+        # nettement moins nombreux que les retraités de l'enquête — en
+        # effectif, rapporté à ceux-ci.
+        tous = DistributionPensions(RACINE_DONNEES, sexe=sexe)
+        assert (residents.part_sous(700.0) * residents.part_residents
+                < tous.part_sous(700.0) - 0.025), sexe
+    assert 0.93 < DistributionPensions(RACINE_DONNEES, residence="france").part_residents < 0.96
+
+
 def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distribution):
     """La ligne « dont garantie » ne vient plus des cas types.
 
@@ -1028,7 +1080,7 @@ def test_la_garantie_de_la_trajectoire_est_lue_sur_la_distribution(cout, distrib
     attendu = cout_garantie_par_sexe(
         simulateur.distributions_par_sexe["F"],
         simulateur.distributions_par_sexe["H"],
-        caracteristiques.part_femmes, projetee.effectif,
+        simulateur.distribution.part_femmes_residents, projetee.effectif,
         plancher * vers_enquete, projetee.facteur,
         caracteristiques.rapport_deplacement(),
         (plancher + parametres.allocation_isolement_mensuelle) * vers_enquete,
@@ -1154,8 +1206,11 @@ def test_les_reprises_sur_succession_suivent_les_avances(cout):
         assert 15.0 < projetee.duree_avances < 24.0
         assert projetee.population_mortalite is not None
         # Les femmes ont les pensions les plus basses : elles sont la majorité
-        # sous le plancher, et leur longévité allonge les avances.
-        assert 0.55 < projetee.part_femmes < 0.8
+        # sous le plancher, et leur longévité allonge les avances. Quatre sur
+        # cinq depuis que la garantie ne compte que les résidents en France
+        # (23 septembre 2026) : les résidents à l'étranger qu'elle comptait,
+        # dont la pension française est petite, sont surtout des hommes.
+        assert 0.55 < projetee.part_femmes < 0.85
         # Un couple de deux bénéficiaires laisse deux avances sur une
         # succession : le nombre moyen est entre un et deux, et strictement
         # au-dessus de un puisque des bénéficiaires vivent en couple.

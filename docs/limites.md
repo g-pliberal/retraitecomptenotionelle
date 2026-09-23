@@ -5324,6 +5324,19 @@ complément euro pour euro, et c'est ce qui coûte le moins à l'impôt. Le mod�
 laissait jusque-là cette rente hors du calcul, faute que la question — de
 droit, pas de modèle — ait été tranchée.
 
+**La garantie ne sert que les retraités qui résident en France.** *Corrigé
+le 23 septembre 2026.* Elle remplace l'ASPA, qui exige une résidence stable et
+régulière en France (article L. 815-1), et en garde la condition. L'enquête
+sur laquelle son coût se chiffre compte aussi les retraités partis à
+l'étranger — <!--chiffre:cellule(data/reference/macro/pensions_residence.csv:valeur?annee=2020&residence=etranger&indicateur=effectifs&sexe=ensemble)-->905<!--/--> milliers en 2020, dont la pension française moyenne est de
+<!--chiffre:cellule(data/reference/macro/pensions_residence.csv:valeur?annee=2020&residence=etranger&indicateur=pension_droit_direct&sexe=ensemble)-->437<!--/--> € brut par mois, parce que leur carrière française a été courte : presque
+tous sont sous le plancher. Le dépôt les servait, et le coût de la garantie
+s'en trouvait gonflé d'un cinquième environ. Il les retire de la distribution
+par la seule information que l'enquête publie sur eux — leur effectif et leurs
+quantiles —, et vérifie que les déciles des résidents en France qui en
+sortent sont ceux qu'elle publie. Ce qui reste d'approché : entre deux
+quantiles, leur répartition est supposée uniforme.
+
 **Les montants sont des euros de 2026, déflatés par les prix.** <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> € et <!--chiffre:mesure(parametre?nom=allocation_isolement_mensuelle)-->250<!--/--> €
 sont ceux de la proposition ; une liquidation de 1995 les reçoit ramenés par
 l'indice des prix, comme l'ASPA entre deux ancres de son barème. Ce n'est
@@ -5335,10 +5348,10 @@ appliqué, année par année, à la distribution des pensions de l'échantillon
 interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
 Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,07<!--/--> en 2070. La garantie coûte
-<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,55<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->17<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->3,1<!--/--> millions de
-bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,42<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->16<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,9<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->735<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 572<!--/--> depuis 1959. Ces chiffres
+<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,45<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,7<!--/--> millions de
+bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,32<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->12<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,5<!--/--> millions —, soit
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->575<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 431<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 
@@ -8795,7 +8808,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2306<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2307<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

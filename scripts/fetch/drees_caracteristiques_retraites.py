@@ -111,6 +111,50 @@ INDICATEURS: dict[str, str] = {
 
 SEXES = {"Femme": "F", "Homme": "H", "Ensemble": "ensemble"}
 
+#: La troisième feuille lue : les retraités selon leur lieu de NAISSANCE et de
+#: RÉSIDENCE. Elle sert à retirer de la distribution des pensions ceux qui
+#: résident à l'étranger, que la garantie vieillesse — comme l'ASPA qu'elle
+#: remplace, article L. 815-1 — ne sert pas. Le tableau de la distribution
+#: les compte : « résidants en France ou à l'étranger », dit sa note.
+FEUILLE_RESIDENCE = "Naissance-Résidence"
+
+#: Les trois colonnes retenues, sous le code que le dépôt leur donne et
+#: l'en-tête exact du classeur. Les autres croisent la naissance, qui ne
+#: sert pas ici.
+COLONNES_RESIDENCE: dict[str, str] = {
+    "etranger": "Retraités résidents à l'étranger",
+    "france": "Retraités résidents en France",
+    "ensemble": "Ensemble",
+}
+
+#: Les indicateurs de la feuille : l'effectif, les deux pensions moyennes de
+#: droit direct — sans et avec les majorations pour enfants —, et les onze
+#: quantiles que le classeur publie de la seconde. Le début du libellé suffit,
+#: à une précaution près : les quantiles de la pension TOTALE, réversion
+#: comprise, commencent pareil jusqu'à « des pensions de » — c'est la suite
+#: qui les sépare.
+INDICATEURS_RESIDENCE: dict[str, str] = {
+    "effectifs": "Effectifs (en milliers)",
+    "pension_droit_direct": (
+        "Montant moyen de la pension de retraite de droit direct brute"
+    ),
+    "pension_droit_direct_majorations": (
+        "Montant moyen de la pension de droit direct (dont les majorations pour "
+        "enfants) brute"
+    ),
+    "d1": "Premier décile des pensions de droit direct",
+    "d2": "Deuxième décile des pensions de droit direct",
+    "q1": "Premier quartile des pensions de droit direct",
+    "d3": "Troisième décile des pensions de droit direct",
+    "d4": "Quatrième décile des pensions de droit direct",
+    "mediane": "Médiane des pensions de droit direct",
+    "d6": "Sixième décile des pensions de droit direct",
+    "d7": "Septième décile des pensions de droit direct",
+    "q3": "Troisième quartile des pensions de droit direct",
+    "d8": "Huitième décile des pensions de droit direct",
+    "d9": "Neuvième décile des pensions de droit direct",
+}
+
 
 def classeur_le_plus_recent() -> tuple[int, str, bytes]:
     """Le classeur « tous les retraités » du millésime le plus élevé."""
@@ -211,6 +255,56 @@ def lire_beneficiaires(contenu: bytes) -> dict[str, dict[str, float]]:
     return valeurs
 
 
+def lire_residence(contenu: bytes) -> dict[str, dict[str, dict[str, float]]]:
+    """Les indicateurs de la feuille de résidence : colonne, indicateur, sexe.
+
+    Les colonnes sont CHERCHÉES par leur en-tête, et la plus longue gagne pour
+    la même raison que dans la feuille des minima. Un quantile de la pension
+    de droit direct se reconnaît au début de son libellé, pris juste avant la
+    parenthèse que le classeur écrit différemment d'une ligne à l'autre.
+    """
+    grille = feuilles(contenu)[FEUILLE_RESIDENCE]
+    derniere_colonne = max(colonne for _, colonne in grille)
+    derniere_ligne = max(ligne for ligne, _ in grille)
+    colonnes: dict[str, int] = {}
+    for code, entete in COLONNES_RESIDENCE.items():
+        for colonne in range(derniere_colonne + 1):
+            if str(grille.get((0, colonne), "")).strip() == entete:
+                colonnes[code] = colonne
+                break
+    manquantes = set(COLONNES_RESIDENCE) - set(colonnes)
+    if manquantes:
+        raise RuntimeError(
+            f"feuille {FEUILLE_RESIDENCE!r} : colonnes absentes — "
+            f"{', '.join(sorted(manquantes))}"
+        )
+
+    valeurs: dict[str, dict[str, dict[str, float]]] = {
+        residence: {code: {} for code in INDICATEURS_RESIDENCE}
+        for residence in COLONNES_RESIDENCE
+    }
+    for ligne in range(1, derniere_ligne + 1):
+        sexe = SEXES.get(str(grille.get((ligne, 0), "")).strip())
+        libelle = " ".join(str(grille.get((ligne, 2), "")).split())
+        if sexe is None or not libelle:
+            continue
+        for code, debut in INDICATEURS_RESIDENCE.items():
+            if not libelle.startswith(" ".join(debut.split())):
+                continue
+            for residence, colonne in colonnes.items():
+                valeur = grille.get((ligne, colonne))
+                # Un indicateur figure deux fois — en brut, puis en net pour
+                # les pensions : la PREMIÈRE occurrence est la brute.
+                if (isinstance(valeur, (int, float))
+                        and sexe not in valeurs[residence][code]):
+                    valeurs[residence][code][sexe] = float(valeur)
+    manquants = [f"{residence}/{code}" for residence, serie in valeurs.items()
+                 for code, parsexe in serie.items() if len(parsexe) < 3]
+    if manquants:
+        raise RuntimeError(f"résidence illisible : {', '.join(manquants)}")
+    return valeurs
+
+
 def main() -> int:
     try:
         annee, titre, contenu = classeur_le_plus_recent()
@@ -226,6 +320,7 @@ def main() -> int:
         "millesime": annee,
         "mesure": "caractéristiques des retraités par sexe",
         "valeurs": valeurs,
+        "residence": lire_residence(contenu),
     }
     SORTIE.parent.mkdir(parents=True, exist_ok=True)
     SORTIE.write_text(

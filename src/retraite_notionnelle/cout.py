@@ -2104,7 +2104,10 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
     return GarantieDistribution(
         distribution=distribution,
         distributions_sexe=simulateur.distributions_par_sexe,
-        part_femmes=caracteristiques.part_femmes,
+        # La part des femmes parmi ceux que la distribution décrit : les
+        # résidents en France, si elle ne garde qu'eux.
+        part_femmes=getattr(distribution, "part_femmes_residents",
+                            caracteristiques.part_femmes),
         rapport_deplacement=rapport,
         plancher_mensuel=plancher * macro.coefficient_prix(
             parametres.annee_euros_garantie_vieillesse, millesime),
@@ -2113,8 +2116,12 @@ def _garantie_distribution(simulateur: Simulateur, pensionnes: list[Pensionne],
         part_seule=part_seule,
         population_mortalite=population_mortalite,
         pension_reference=reference,
+        # L'échelle est celle des retraités de la DREES, résidents à
+        # l'étranger compris : la distribution qui ne garde que les résidents
+        # en France en porte la part, et l'effectif la suit.
         effectif_par_tete=(
-            simulateur.effectifs.effectif("tous_regimes", millesime) / toutes
+            simulateur.effectifs.effectif("tous_regimes", millesime)
+            * distribution.part_residents / toutes
             if toutes > 0.0 else 0.0
         ),
         vers_constants=macro.coefficient_prix(
@@ -2522,8 +2529,11 @@ def _reprises_successions(lignes: list[AvenirAnnuel], simulateur: Simulateur,
     # avances autre chose que ce que la dépense dit, sur la même population.
     poids_femmes = calage.part_femmes
     facteur_f, facteur_h = calage.facteurs_des_sexes(deplacement)
+    # Les mêmes retraités que le calage : les résidents en France, si la
+    # distribution qui le porte ne garde qu'eux.
     par_sexe = {
-        sexe: DistributionPensions(parametres.racine_donnees, sexe=sexe)
+        sexe: DistributionPensions(parametres.racine_donnees, sexe=sexe,
+                                   residence=getattr(distribution, "residence", "tous"))
         for sexe in ("F", "H")
     }
     majore = (calage.plancher_majore if calage.plancher_majore is not None

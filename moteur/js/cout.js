@@ -727,12 +727,15 @@ function garantieDistribution(simulateur, liste, population, poids, revalorisati
     distribution,
     plancher * macro.coefficientPrix(parametres.annee_euros_garantie_vieillesse, millesime),
     reference,
+    // L'échelle des retraités de la DREES, résidents à l'étranger compris,
+    // ramenée aux résidents en France que la distribution décrit.
     toutesTetes > 0
-      ? simulateur.effectifs.effectif("tous_regimes", millesime) / toutesTetes : 0,
+      ? simulateur.effectifs.effectif("tous_regimes", millesime)
+        * distribution.partResidents / toutesTetes : 0,
     macro.coefficientPrix(millesime, parametres.annee_euros_constants),
     parametres.taux_recours_garantie,
     distributionsSexe,
-    caracteristiques.partFemmes,
+    distribution.partFemmesResidents ?? caracteristiques.partFemmes,
     rapport,
     plancherMajore * versEnquete,
     partSeule,

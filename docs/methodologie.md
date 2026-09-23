@@ -1433,7 +1433,17 @@ capitalisée réunis à partir de <!--chiffre:mesure(constante?de=retraite_notio
 système actuel l'année de l'enquête, un rapport par sexe, les femmes perdant
 davantage de droits non cotisés (`GarantieDistribution` dans `cout.py`,
 `rapport_deplacement_sexe` dans les paramètres). La forme de la distribution
-est tenue constante, le passé comme l'avenir. Sur le passé, la page Coût ne
+est tenue constante, le passé comme l'avenir. Elle est celle des retraités qui
+RÉSIDENT en France : la garantie remplace l'ASPA et en garde la condition de
+résidence (article L. 815-1), quand l'enquête compte aussi les retraités partis
+à l'étranger — <!--chiffre:cellule(data/reference/macro/pensions_residence.csv:valeur?annee=2020&residence=etranger&indicateur=effectifs&sexe=ensemble)-->905<!--/--> milliers en 2020, et presque tous sous le plancher,
+leur carrière française ayant été courte. L'enquête ne publie pas leur
+distribution par tranches, mais leurs quantiles et leur effectif : le dépôt
+retire de chaque tranche ce que leur répartition y met (`DistributionPensions`,
+`residence="france"`), et les déciles qui en sortent retombent à une vingtaine
+d'euros près sur ceux qu'elle publie pour les résidents en France. Jusqu'au 23
+septembre 2026, la garantie servait les uns et les autres, et son coût s'en
+trouvait gonflé d'un cinquième. Sur le passé, la page Coût ne
 voit pas non plus le taux unique — aucune pension servie avant la bascule n'a
 une année cotisée à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % — et la courbe du scénario 6 y est celle du
 scénario 4 plus la garantie ; c'est d'ici 2070 que le taux se voit.

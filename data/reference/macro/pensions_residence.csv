@@ -1,0 +1,157 @@
+# Les retraités selon leur lieu de résidence
+# source_id: drees_eir_caracteristiques
+# unite: milliers de retraités (effectifs), euros bruts par mois
+# fiabilite:
+#   certifiee : feuille « Naissance-Résidence » du classeur
+#             « Caractéristiques de tous les retraités » de l'EIR,
+#             diffusé par la DREES et recontrôlé par
+#             scripts/verifier_donnees.py.
+#
+# `residence` : etranger, france, ensemble — les colonnes « Retraités
+# résidents à l'étranger », « Retraités résidents en France » et
+# « Ensemble ». `indicateur` : effectifs ; pension_droit_direct et
+# pension_droit_direct_majorations, les deux moyennes de droit direct,
+# sans et avec les majorations pour enfants ; d1 à d9, q1, mediane et
+# q3, les quantiles publiés de la seconde.
+#
+# À QUOI CETTE SÉRIE SERT
+# ------------------------
+# À retirer de la distribution des pensions les retraités qui résident
+# à l'étranger. Le tableau de la distribution les compte — « résidants
+# en France ou à l'étranger », dit sa note —, et la garantie vieillesse
+# du scénario 6 ne les sert pas : elle remplace l'ASPA, qui exige une
+# résidence stable et régulière en France (article L. 815-1). Ils
+# sont 5,5 % des retraités, et presque tous sous le plancher : leur
+# pension française moyenne est de 437 € brut par mois, parce que leur
+# carrière française a été courte. Les compter gonflait le coût de la
+# garantie d'un sixième environ.
+#
+# Ne pas modifier les valeurs certifiées à la main : elles seraient
+# écrasées au prochain scripts/verifier_donnees.py --appliquer.
+annee,residence,indicateur,sexe,valeur,fiabilite
+2020,ensemble,d1,F,253.0,certifiee
+2020,ensemble,d1,H,545.0,certifiee
+2020,ensemble,d1,ensemble,298.0,certifiee
+2020,ensemble,d2,F,447.0,certifiee
+2020,ensemble,d2,H,993.0,certifiee
+2020,ensemble,d2,ensemble,626.0,certifiee
+2020,ensemble,d3,F,666.0,certifiee
+2020,ensemble,d3,H,1266.0,certifiee
+2020,ensemble,d3,ensemble,873.0,certifiee
+2020,ensemble,d4,F,839.0,certifiee
+2020,ensemble,d4,H,1476.0,certifiee
+2020,ensemble,d4,ensemble,1090.0,certifiee
+2020,ensemble,d6,F,1202.0,certifiee
+2020,ensemble,d6,H,1896.0,certifiee
+2020,ensemble,d6,ensemble,1559.0,certifiee
+2020,ensemble,d7,F,1444.0,certifiee
+2020,ensemble,d7,H,2154.0,certifiee
+2020,ensemble,d7,ensemble,1830.0,certifiee
+2020,ensemble,d8,F,1774.0,certifiee
+2020,ensemble,d8,H,2521.0,certifiee
+2020,ensemble,d8,ensemble,2155.0,certifiee
+2020,ensemble,d9,F,2216.0,certifiee
+2020,ensemble,d9,H,3172.0,certifiee
+2020,ensemble,d9,ensemble,2695.0,certifiee
+2020,ensemble,effectifs,F,8736.0,certifiee
+2020,ensemble,effectifs,H,7816.0,certifiee
+2020,ensemble,effectifs,ensemble,16552.0,certifiee
+2020,ensemble,mediane,F,987.0,certifiee
+2020,ensemble,mediane,H,1670.0,certifiee
+2020,ensemble,mediane,ensemble,1329.0,certifiee
+2020,ensemble,pension_droit_direct,F,1122.0,certifiee
+2020,ensemble,pension_droit_direct,H,1784.0,certifiee
+2020,ensemble,pension_droit_direct,ensemble,1435.0,certifiee
+2020,ensemble,pension_droit_direct_majorations,F,1152.0,certifiee
+2020,ensemble,pension_droit_direct_majorations,H,1840.0,certifiee
+2020,ensemble,pension_droit_direct_majorations,ensemble,1476.0,certifiee
+2020,ensemble,q1,F,560.0,certifiee
+2020,ensemble,q1,H,1137.0,certifiee
+2020,ensemble,q1,ensemble,772.0,certifiee
+2020,ensemble,q3,F,1592.0,certifiee
+2020,ensemble,q3,H,2317.0,certifiee
+2020,ensemble,q3,ensemble,1987.0,certifiee
+2020,etranger,d1,F,61.0,certifiee
+2020,etranger,d1,H,30.0,certifiee
+2020,etranger,d1,ensemble,34.0,certifiee
+2020,etranger,d2,F,96.0,certifiee
+2020,etranger,d2,H,49.0,certifiee
+2020,etranger,d2,ensemble,61.0,certifiee
+2020,etranger,d3,F,129.0,certifiee
+2020,etranger,d3,H,77.0,certifiee
+2020,etranger,d3,ensemble,93.0,certifiee
+2020,etranger,d4,F,165.0,certifiee
+2020,etranger,d4,H,112.0,certifiee
+2020,etranger,d4,ensemble,130.0,certifiee
+2020,etranger,d6,F,268.0,certifiee
+2020,etranger,d6,H,236.0,certifiee
+2020,etranger,d6,ensemble,250.0,certifiee
+2020,etranger,d7,F,356.0,certifiee
+2020,etranger,d7,H,366.0,certifiee
+2020,etranger,d7,ensemble,362.0,certifiee
+2020,etranger,d8,F,530.0,certifiee
+2020,etranger,d8,H,664.0,certifiee
+2020,etranger,d8,ensemble,617.0,certifiee
+2020,etranger,d9,F,983.0,certifiee
+2020,etranger,d9,H,1298.0,certifiee
+2020,etranger,d9,ensemble,1199.0,certifiee
+2020,etranger,effectifs,F,285.0,certifiee
+2020,etranger,effectifs,H,620.0,certifiee
+2020,etranger,effectifs,ensemble,905.0,certifiee
+2020,etranger,mediane,F,207.0,certifiee
+2020,etranger,mediane,H,162.0,certifiee
+2020,etranger,mediane,ensemble,179.0,certifiee
+2020,etranger,pension_droit_direct,F,391.0,certifiee
+2020,etranger,pension_droit_direct,H,458.0,certifiee
+2020,etranger,pension_droit_direct,ensemble,437.0,certifiee
+2020,etranger,pension_droit_direct_majorations,F,403.0,certifiee
+2020,etranger,pension_droit_direct_majorations,H,475.0,certifiee
+2020,etranger,pension_droit_direct_majorations,ensemble,453.0,certifiee
+2020,etranger,q1,F,113.0,certifiee
+2020,etranger,q1,H,62.0,certifiee
+2020,etranger,q1,ensemble,76.0,certifiee
+2020,etranger,q3,F,423.0,certifiee
+2020,etranger,q3,H,480.0,certifiee
+2020,etranger,q3,ensemble,454.0,certifiee
+2020,france,d1,F,283.0,certifiee
+2020,france,d1,H,872.0,certifiee
+2020,france,d1,ensemble,402.0,certifiee
+2020,france,d2,F,489.0,certifiee
+2020,france,d2,H,1148.0,certifiee
+2020,france,d2,ensemble,729.0,certifiee
+2020,france,d3,F,703.0,certifiee
+2020,france,d3,H,1374.0,certifiee
+2020,france,d3,ensemble,933.0,certifiee
+2020,france,d4,F,860.0,certifiee
+2020,france,d4,H,1555.0,certifiee
+2020,france,d4,ensemble,1156.0,certifiee
+2020,france,d6,F,1227.0,certifiee
+2020,france,d6,H,1964.0,certifiee
+2020,france,d6,ensemble,1604.0,certifiee
+2020,france,d7,F,1466.0,certifiee
+2020,france,d7,H,2218.0,certifiee
+2020,france,d7,ensemble,1872.0,certifiee
+2020,france,d8,F,1796.0,certifiee
+2020,france,d8,H,2583.0,certifiee
+2020,france,d8,ensemble,2190.0,certifiee
+2020,france,d9,F,2229.0,certifiee
+2020,france,d9,H,3242.0,certifiee
+2020,france,d9,ensemble,2730.0,certifiee
+2020,france,effectifs,F,8452.0,certifiee
+2020,france,effectifs,H,7196.0,certifiee
+2020,france,effectifs,ensemble,15647.0,certifiee
+2020,france,mediane,F,1013.0,certifiee
+2020,france,mediane,H,1745.0,certifiee
+2020,france,mediane,ensemble,1382.0,certifiee
+2020,france,pension_droit_direct,F,1147.0,certifiee
+2020,france,pension_droit_direct,H,1898.0,certifiee
+2020,france,pension_droit_direct,ensemble,1492.0,certifiee
+2020,france,pension_droit_direct_majorations,F,1177.0,certifiee
+2020,france,pension_droit_direct_majorations,H,1957.0,certifiee
+2020,france,pension_droit_direct_majorations,ensemble,1536.0,certifiee
+2020,france,q1,F,598.0,certifiee
+2020,france,q1,H,1269.0,certifiee
+2020,france,q1,ensemble,844.0,certifiee
+2020,france,q3,F,1613.0,certifiee
+2020,france,q3,H,2381.0,certifiee
+2020,france,q3,ensemble,2019.0,certifiee

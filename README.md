@@ -166,8 +166,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->906<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 237<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->907<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 240<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Dix pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -201,7 +201,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->3 526<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->3 527<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->73<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -223,7 +223,7 @@ Il est traité de front : **le Python de `src/` reste la référence**, et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->54<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->82 643<!--/--> nombres,
-dont <!--chiffre:portage(identiques)-->88,7<!--/--> % identiques
+dont <!--chiffre:portage(identiques)-->88,8<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->11,8<!--/--> · 10⁻¹⁵, quelques dizaines
 d'*ulp* (un *ulp* vaut 2 · 10⁻¹⁶, la précision d'un flottant). Les pages, elles, sont comparées caractère par caractère : le
 formatage à la française reproduit jusqu'à l'arrondi au pair de Python, faute de
@@ -715,7 +715,7 @@ de chaque cas type :
 | 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->7 182<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->14 987<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
 | 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->7 182<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−52,1<!--/--> % |
-| *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 572<!--/--> Md €* | |
+| *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 431<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
 ce n'est pas un défaut du calcul : leur bascule est fixée à 2026, aucune pension
@@ -748,11 +748,13 @@ s'y ajoute, payée par l'impôt et non par les cotisations. C'est une allocation
 coût est celui de la queue basse de la distribution des pensions, et <!--chiffre:mesure(grille?quoi=cas_types)-->13<!--/-->
 carrières ne décrivent pas une distribution. Le barème est donc appliqué, année
 par année, à la distribution que publie l'échantillon interrégimes de la DREES
-pour 2020, déplacée du seul facteur que la grille sait donner — la pension
+pour 2020 — celle des retraités qui résident en France, les seuls que la
+garantie sert, comme l'ASPA qu'elle remplace ; l'enquête compte aussi les
+autres, et le dépôt les en retire —, déplacée du seul facteur que la grille sait donner — la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020 :
 <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> cette année-là, <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,07<!--/--> en 2070. Sur la trajectoire, elle coûte
-**<!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->17<!--/--> milliards en 2026** (<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,6<!--/--> % du PIB), et <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->16<!--/--> milliards en 2070
-(<!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,4<!--/--> %) : les pensions montent face à un plancher indexé sur les prix. Ces
+**<!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards en 2026** (<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,4<!--/--> % du PIB), et <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->12<!--/--> milliards en 2070
+(<!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,3<!--/--> %) : les pensions montent face à un plancher indexé sur les prix. Ces
 coûts comptent les <!--chiffre:mesure(parametre?nom=taux_recours_garantie)-->50<!--/--> % d'ayants droit qui la réclament, le taux que la DREES
 mesure sur l'ASPA. Elle remplace quatre minima, et la page Coût dit ce qu'ils
 coûtent et ce que l'impôt paierait en plus.
@@ -1247,7 +1249,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2306 tests Python
+tests/                          2307 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1296,7 +1298,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->2306<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2307<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

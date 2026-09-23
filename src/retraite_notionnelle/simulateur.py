@@ -755,9 +755,10 @@ class Simulateur:
 
         Aucune pension n'en dépend. Elle ne sert qu'à la garantie vieillesse de
         la page « Coût », qui est une allocation différentielle et ne se lit
-        pas sur treize carrières.
+        pas sur treize carrières. Celle des retraités qui RÉSIDENT en France :
+        la garantie, comme l'ASPA qu'elle remplace, ne sert qu'eux.
         """
-        return DistributionPensions(self.parametres.racine_donnees)
+        return DistributionPensions(self.parametres.racine_donnees, residence="france")
 
     @cached_property
     def distributions_par_sexe(self) -> dict[str, DistributionPensions]:
@@ -769,7 +770,8 @@ class Simulateur:
         détiennent plus souvent.
         """
         return {
-            sexe: DistributionPensions(self.parametres.racine_donnees, sexe=sexe)
+            sexe: DistributionPensions(self.parametres.racine_donnees, sexe=sexe,
+                                       residence="france")
             for sexe in ("F", "H")
         }
 
