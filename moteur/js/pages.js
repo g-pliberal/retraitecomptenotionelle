@@ -9243,10 +9243,11 @@ const SYSTEMES_BILAN = ["actuel", "notionnel_liberal"];
 
 /**
  * Le compte de l'année de bascule, poste par poste, et ce qui est hors du
- * compte : la garantie vieillesse, en millions d'euros, dans sa lecture la plus
- * basse, et le pilier capitalisé, en part de PIB. C'est ce que le tableau poste
- * par poste écrit ; la carte des flux lit `compteFlux`, à l'année qu'on lui
- * choisit. Copie de `_bilan_bascule`.
+ * compte : la garantie vieillesse que la trajectoire compte cette année-là, en
+ * millions d'euros, et le pilier capitalisé, en part de PIB. C'est ce que le
+ * tableau poste par poste écrit ; la carte des flux lit `compteFlux`, à l'année
+ * qu'on lui choisit, et dit la même garantie à la bascule. Copie de
+ * `_bilan_bascule`.
  */
 function bilanBascule(contexte) {
   const comptes = contexte.comptes();
@@ -9260,25 +9261,10 @@ function bilanBascule(contexte) {
   // l'INSEE le publie, celui de la dernière année publiée sinon. Voir le Python.
   const anneePib = Math.min(annee, comptes.pib.derniereAnnee);
 
-  // La garantie vieillesse, lue sur la vraie distribution des pensions comme
-  // le fait le dépliant qui lui est consacré — plancher de base, pensions de
-  // la proposition : la lecture la plus basse des deux qu'il donne.
-  const distribution = contexte.distribution();
-  const simulateur = contexte.simulateur();
-  const versEnquete = simulateur.macro.coefficientPrix(
-    base.annee_euros_garantie_vieillesse, distribution.millesime,
-  );
-  // Le facteur est celui de la trajectoire : la pension moyenne que la garantie
-  // regarde, sur celle du système actuel l'année de l'enquête — le même que le
-  // dépliant de la garantie (voir `GarantieDistribution` dans cout.js).
-  const anneeEnquete = c.annee(distribution.millesime);
-  const facteurContributif = anneeEnquete && anneeEnquete.garantie
-    ? anneeEnquete.garantie.facteur : 1.0;
-  const garantie = coutGarantie(
-    distribution,
-    simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
-    base.garantie_vieillesse_mensuelle * versEnquete, facteurContributif,
-  );
+  // La garantie vieillesse de l'ANNÉE, celle que la trajectoire compte et que
+  // la carte des flux dessine : une part de PIB, convertie comme toutes les
+  // lignes du tableau. Voir le Python pour ce qu'elle remplace.
+  const garantie = ligne.postesDepenses("notionnel_liberal").garantie_vieillesse;
   // Le pilier capitalisé : 5 % de la même assiette que les 18 %.
   const capitalise = ligne.recetteParAssiette
     ? ligne.postesRessources("notionnel_liberal").cotisations
@@ -9290,8 +9276,7 @@ function bilanBascule(contexte) {
     anneePib,
     pib: comptes.pib.valeur(anneePib),
     derniereVentilee: comptes.anneesVentilees().at(-1),
-    // Un ayant droit sur deux réclame : le même recours que le dépliant.
-    garantieMeur: garantie.coutAnnuelMeur * base.taux_recours_garantie / versEnquete,
+    garantieMeur: garantie * comptes.pib.valeur(anneePib),
     capitalise,
   };
 }
@@ -9613,8 +9598,9 @@ compte notionnel ne sert plus, l'assurance chômage des cotisations qu'il
 porte. Côté dépenses, les
 pensions sont recalculées au franc le franc des cotisations, et la réversion
 n'est plus servie, ce que la dernière note détaille. La garantie vieillesse qui remplace l'ASPA est financée par l'impôt,
-hors du compte des cotisants ; le dépliant qui lui est consacré en donne
-quatre lectures, et la ligne pour mémoire porte la plus basse. Le pilier
+hors du compte des cotisants ; la ligne pour mémoire porte ce que la
+trajectoire en compte cette année-là, et le dépliant qui lui est consacré en
+donne quatre lectures sur la distribution de l'enquête. Le pilier
 capitalisé ne passe pas par les caisses et n'est ni une ressource ni une
 dépense du système : il est rappelé pour que rien ne manque.</div>
 
