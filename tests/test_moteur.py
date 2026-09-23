@@ -1028,3 +1028,63 @@ def test_le_mois_de_liquidation_designe_la_circulaire_de_revalorisation(macro):
     # La colonne ne s'applique qu'à compter de sa date d'effet.
     assert lu(2015, 2022, 6) == pytest.approx(janvier)
     assert lu(2015, 2022, 12) == pytest.approx(juillet)
+
+
+# -- le cœur notionnel, recomposé sans le moteur ------------------------------
+
+
+def test_le_compte_notionnel_se_recompose_a_la_main():
+    """Le capital, la pension et le diviseur, recalculés ici par leur définition.
+
+    Jusqu'au 23 septembre 2026, aucun test ne contrôlait le cœur notionnel
+    autrement que par des instantanés : une année de revalorisation en moins,
+    un capital multiplié par 0,95 ne faisaient échouer que des témoins, que
+    l'on régénère. Ce test écrit la règle et la confronte au moteur :
+
+    - chaque année de la carrière, de la première à celle de la liquidation
+      incluse, porte sa ligne de cotisation ;
+    - une cotisation versée l'année t est revalorisée des taux des années t+1
+      à la liquidation incluse — le produit est écrit ici, sans passer par
+      ``Indexation.coefficient`` ;
+    - la pension est le capital divisé par le diviseur ;
+    - à taux d'actualisation nul, le diviseur est l'espérance de vie
+      résiduelle, que ``test_mortalite`` confronte aux tables publiées.
+    """
+    simulateur = Simulateur(Parametres())
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1975, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=22, age_liquidation=64, niveau_salaire=0.9,
+    )
+    resultat = simulateur.simuler(carriere).notionnel_retroactif_employeur
+    compte = resultat.compte
+    liquidation = compte.annee_liquidation
+    annees = [ligne.annee for ligne in compte.cotisations]
+    # Jusqu'à la liquidation incluse quand la carrière y porte des mois — une
+    # liquidation au 1er janvier n'en porte aucun.
+    fin = min(liquidation, carriere.derniere_annee)
+    assert annees == list(range(carriere.premiere_annee, fin + 1))
+
+    indexation = simulateur.indexation
+    attendu = 0.0
+    for ligne in compte.cotisations:
+        facteur = 1.0
+        for annee in range(ligne.annee + 1, liquidation + 1):
+            facteur *= 1.0 + indexation.taux(annee).taux
+        attendu += ligne.cotisation * facteur
+    assert compte.capital == pytest.approx(attendu, rel=1e-12)
+    assert compte.capital > 0.0
+
+    conversion = resultat.conversion
+    assert resultat.pension_annuelle == pytest.approx(compte.capital / conversion.diviseur)
+    # Un taux d'actualisation positif rend le diviseur plus petit que
+    # l'espérance de vie résiduelle ; nul, il lui est égal.
+    assert conversion.taux_anticipe >= 0.0
+    assert conversion.diviseur <= conversion.esperance_residuelle + 1e-9
+    sans_actualisation = Convertisseur(
+        simulateur.mortalite,
+        Parametres(taux_anticipe_conversion=0.0),
+    ).coefficient(conversion.age_liquidation, conversion.annee_liquidation,
+                  None, carriere.mois_liquidation)
+    assert sans_actualisation.diviseur == pytest.approx(
+        sans_actualisation.esperance_residuelle)
+
