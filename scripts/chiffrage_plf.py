@@ -131,9 +131,14 @@ class Chiffrage:
             # première année projetée, et mêler les deux ferait un tableau dont
             # les lignes ne se comparent pas. L'écart vaut une quinzaine de
             # milliards sur la garantie, ce qui se voit.
-            self.cumul_depense = sum(self.avenir[a].cout_constants(LIBERAL)
+            # ET LA MÊME BASE que les tableaux annuels, celle du COR que porte
+            # ``Solde``. ``Avenir`` porte la sienne, la dépense que le modèle
+            # projette lui-même, plus haute de trois points de PIB en 2070 :
+            # cumuler sur elle surestimait l'économie d'environ neuf pour cent,
+            # jusqu'au 23 septembre 2026.
+            self.cumul_depense = sum(self.pensions_constants(a, LIBERAL)
                                      for a in self.annees)
-            self.cumul_depense_actuel = sum(self.avenir[a].cout_constants("actuel")
+            self.cumul_depense_actuel = sum(self.pensions_constants(a, "actuel")
                                             for a in self.annees)
             self.cumul_garantie = sum(
                 self.avenir[a].cout_constants(C.COMPOSANTE_GARANTIE)
@@ -158,6 +163,17 @@ class Chiffrage:
     def pensions(self, annee: int) -> float:
         return self.solde[annee].depense(LIBERAL)
 
+    def pensions_constants(self, annee: int, scenario: str) -> float:
+        """La dépense de pensions d'un système, en millions d'euros constants.
+
+        Sur la base du COR, celle des tableaux annuels : la part de PIB que
+        ``Solde`` porte, multipliée par le PIB projeté et ramenée aux euros
+        constants par le coefficient de l'année.
+        """
+        ligne = self.avenir[annee]
+        return (self.solde[annee].depense(scenario) * ligne.pib
+                * ligne.coefficient_constants)
+
     def garantie(self, annee: int) -> float:
         """La garantie vieillesse NETTE de ce que les successions en reprennent."""
         ligne = self.avenir[annee]
@@ -176,10 +192,13 @@ class Chiffrage:
     def solde_elargi(self, annee: int) -> float:
         """Le solde du régime, diminué de la garantie que le contribuable porte.
 
-        Ce n'est PAS un solde toutes administrations publiques : les impôts et
-        taxes affectés que la proposition cesse d'encaisser sortent du compte
-        de la retraite sans que le programme dise si l'État cesse de les lever.
-        Le document le dit en tête de ses hypothèses fragiles.
+        Ce n'est PAS un solde toutes administrations publiques, pour deux
+        raisons. Les impôts et taxes affectés que la proposition cesse
+        d'encaisser sortent du compte de la retraite sans que le programme dise
+        si l'État cesse de les lever — le document le dit en tête de ses
+        hypothèses fragiles. Et ce que l'État et la branche famille cessent de
+        verser, ``versements_publics_retires``, est une recette en moins pour
+        la retraite mais une dépense en moins pour eux.
         """
         return self.solde_regime(annee) - self.garantie(annee)
 
@@ -195,6 +214,29 @@ class Chiffrage:
     def poste_recette(self, annee: int, poste: str, scenario: str) -> float:
         return self.solde[annee].postes_ressources(scenario)[poste]
 
+    def retire(self, annee: int, poste: str) -> float:
+        """Ce que la proposition retire d'un poste de recettes, en part de PIB."""
+        return (self.poste_recette(annee, poste, LIBERAL)
+                - self.poste_recette(annee, poste, "actuel"))
+
+    def versements_publics_retires(self, annee: int) -> float:
+        """Ce que d'autres administrations cessent de verser au système.
+
+        La contribution d'équilibre de l'État employeur, les subventions
+        d'équilibre de son budget, et ce que la branche famille verse pour
+        l'assurance vieillesse des parents au foyer. Ce sont des recettes pour
+        la retraite, mais des DÉPENSES pour leur payeur : au niveau des
+        administrations publiques consolidées, elles s'annulent. Le solde du
+        document est celui de la retraite, garantie comprise, et non le solde
+        public ; c'est ce poste qui fait la différence la plus nette entre les
+        deux. Il n'est pas tout ce que l'État garde : employeur, il paie aussi
+        sa part du taux unique, qui est dans les cotisations du scénario 6, et
+        le modèle ne sépare pas les employeurs publics des autres.
+        """
+        return (self.retire(annee, "contribution_equilibre_etat")
+                + self.retire(annee, "subventions_equilibre")
+                + self.retire(annee, "transferts_famille"))
+
     def pilier_obligatoire(self, annee: int) -> float:
         """Les 5 % capitalisés imposés, en part de PIB.
 
@@ -209,10 +251,21 @@ class Chiffrage:
         return cotisations * taux / self.parametres.taux_cotisation_liberal
 
     def prelevements_actuels(self, annee: int) -> float:
-        """Ce que le système actuel prélève : cotisations, contribution, impôts, subventions."""
+        """Ce que le système actuel prélève : les cotisations et les impôts affectés.
+
+        La contribution d'équilibre de l'État et ses subventions n'en sont pas :
+        ce sont des dépenses de son budget, financées par l'impôt général, et la
+        comptabilité nationale ne compte pas la première — une cotisation
+        IMPUTÉE — parmi les prélèvements obligatoires. Elles les grossissaient
+        de près de deux points de PIB jusqu'au 23 septembre 2026.
+        """
         postes = self.solde[annee].postes_ressources("actuel")
-        return (postes["cotisations"] + postes["contribution_equilibre_etat"]
-                + postes["impots_et_taxes"] + postes["subventions_equilibre"])
+        return postes["cotisations"] + postes["impots_et_taxes"]
+
+    def versements_etat(self, annee: int) -> float:
+        """Ce que le budget de l'État verse au système actuel : contribution et subventions."""
+        postes = self.solde[annee].postes_ressources("actuel")
+        return postes["contribution_equilibre_etat"] + postes["subventions_equilibre"]
 
     def prelevements_proposes(self, annee: int) -> float:
         return self.poste_recette(annee, "cotisations", LIBERAL) + self.pilier_obligatoire(annee)
@@ -249,21 +302,37 @@ def tableau_annuel(chiffrage: Chiffrage, annees: tuple[int, ...]) -> str:
 
 
 def tableau_fait_central(retro: Chiffrage, prosp: Chiffrage) -> str:
-    """Les quatre chiffres qu'un rapporteur retient, l'année de la bascule."""
+    """Les chiffres qu'un rapporteur retient, l'année de la bascule.
+
+    Les recettes retirées sont décomposées, parce qu'elles ne sont pas de même
+    nature : des cotisations et des impôts, que des ménages et des entreprises
+    cessent de payer, et des versements que d'autres administrations cessent
+    de faire, et qu'elles gardent. L'écart est celui du système de retraite,
+    garantie comprise — pas le solde public, que le document ne chiffre pas.
+    """
     an = PREMIERE_ANNEE
     recettes = retro.recettes(an) - retro.solde[an].ressources_de("actuel")
     depense = retro.depense(an) - retro.solde[an].depense("actuel")
+
+    def ligne(libelle: str, valeur: float, gras: bool = False) -> str:
+        part = nombre(valeur * 100, 2, True)
+        euros = nombre(retro.md(an, valeur), 0, True)
+        if gras:
+            return f"| **{libelle}** | **{part}** | **{euros}** |"
+        return f"| {libelle} | {part} | {euros} |"
+
     lignes = [
         f"| En {an} | Points de PIB | Milliards d'euros |",
         "|---|---:|---:|",
-        f"| Recettes retirées au système de retraite | {nombre(recettes * 100, 2, True)} "
-        f"| {nombre(retro.md(an, recettes), 0, True)} |",
-        f"| Dépense publique retirée (pensions et garantie) | {nombre(depense * 100, 2, True)} "
-        f"| {nombre(retro.md(an, depense), 0, True)} |",
-        f"| **Écart de solde public, variante rétroactive** "
-        f"| **{nombre(retro.ecart(an) * 100, 2, True)}** "
-        f"| **{nombre(retro.md(an, retro.ecart(an)), 0, True)}** |",
-        f"| **Écart de solde public, variante prospective** "
+        ligne("Recettes retirées au système de retraite", recettes),
+        ligne("dont cotisations, au taux unique", retro.retire(an, "cotisations")),
+        ligne("dont impôts et taxes affectés", retro.retire(an, "impots_et_taxes")),
+        ligne("dont versements de l'État et de la branche famille",
+              retro.versements_publics_retires(an)),
+        ligne("Dépense publique retirée (pensions et garantie)", depense),
+        ligne("Écart de solde de la retraite, garantie comprise, variante rétroactive",
+              retro.ecart(an), gras=True),
+        f"| **Écart de solde de la retraite, garantie comprise, variante prospective** "
         f"| **{nombre(prosp.ecart(an) * 100, 2, True)}** "
         f"| **{nombre(prosp.md(an, prosp.ecart(an)), 0, True)}** |",
     ]
@@ -296,17 +365,25 @@ def tableau_arbitrages(retro: Chiffrage, prosp: Chiffrage) -> str:
 
 
 def tableau_prelevements(retro: Chiffrage) -> str:
+    """Ce que chaque système prélève, et, à part, ce que l'État lui verse.
+
+    Les totaux et l'écart ne portent que sur les prélèvements : la
+    contribution d'équilibre et les subventions sont des dépenses du budget de
+    l'État, et le tableau les montre pour qu'on voie qu'elles disparaissent,
+    pas pour les compter.
+    """
     lignes = [
-        "| Année | Cotisations + contribution d'équilibre (sc. 1) | Impôts et taxes "
-        "affectés (sc. 1) | Subventions d'équilibre (sc. 1) | **Total sc. 1** "
-        "| Cotisations 18 % (sc. 6) | Pilier obligatoire 5 % (sc. 6) "
-        "| **Total sc. 6** | Écart |",
+        "| Année | Cotisations (sc. 1) | Impôts et taxes affectés (sc. 1) "
+        "| **Prélèvements sc. 1** | Cotisations 18 % (sc. 6) "
+        "| Pilier obligatoire 5 % (sc. 6) | **Prélèvements sc. 6** | Écart "
+        "| Versé par l'État au sc. 1, hors prélèvements |",
         "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for annee in ANNEES_PRELEVEMENTS:
         postes = retro.solde[annee].postes_ressources("actuel")
-        cotisations = postes["cotisations"] + postes["contribution_equilibre_etat"]
-        impots, subventions = postes["impots_et_taxes"], postes["subventions_equilibre"]
+        cotisations = postes["cotisations"]
+        impots = postes["impots_et_taxes"]
+        etat = retro.versements_etat(annee)
         total_actuel = retro.prelevements_actuels(annee)
         propose = retro.poste_recette(annee, "cotisations", LIBERAL)
         pilier = retro.pilier_obligatoire(annee)
@@ -319,10 +396,11 @@ def tableau_prelevements(retro: Chiffrage) -> str:
 
         lignes.append(
             f"| {annee} | {cellule(cotisations)} | {cellule(impots)} "
-            f"| {cellule(subventions)} | {cellule(total_actuel, True)} "
+            f"| {cellule(total_actuel, True)} "
             f"| {cellule(propose)} | {cellule(pilier)} "
             f"| {cellule(total_propose, True)} "
-            f"| {nombre((total_propose - total_actuel) * 100, 2, True)} |"
+            f"| {nombre((total_propose - total_actuel) * 100, 2, True)} "
+            f"| {cellule(etat)} |"
         )
     return "\n".join(lignes)
 
