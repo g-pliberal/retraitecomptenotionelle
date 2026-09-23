@@ -32,7 +32,7 @@ comparables :
 
 Les comptes sont revalorisés, par défaut, sur la croissance de la **masse
 salariale** — l'assiette des cotisations, donc le rendement qu'un système en
-répartition peut servir sans changer son taux de cotisation. Sept autres règles
+répartition peut servir sans changer son taux de cotisation. Huit autres règles
 sont disponibles, dont le **triple lock inversé** qui a donné son cahier des
 charges à ce dépôt : `indexation=triple_lock_inverse`. Le choix pèse lourd,
 et le simulateur affiche d'office ce qu'il déplace.
@@ -256,7 +256,7 @@ python -m http.server 8000        # puis http://127.0.0.1:8000
 
 ## En Python, hors du site
 
-Le site expose le modèle en six pages. Pour l'interroger autrement — un
+Le site expose le modèle en dix pages. Pour l'interroger autrement — un
 calcul par lots, une variante de paramètres, un chiffre à vérifier à la main —
 le modèle de référence s'appelle directement. La seule dépendance est PyYAML.
 
@@ -1248,7 +1248,7 @@ src/retraite_notionnelle/
 index.html                      le site : charge les données, puis le moteur JavaScript
 .nojekyll                       servir les fichiers sans transformation
 moteur/                         ce que le navigateur charge, et rien d'autre
-  donnees.json                  séries, tables, régimes et inventaire (2874 Ko, produit par script)
+  donnees.json                  séries, tables, régimes et inventaire (produit par script)
   style.css                     extraite de gabarit.py (produite par script)
   js/                           portage du modèle, sans bibliothèque ni étape de build
 
@@ -1284,7 +1284,8 @@ lissage_indexation     moyenne glissante appliquée à la règle choisie (défau
                        aucun lissage). PIB_NOMINAL lissé sur 5 ans est la règle
                        italienne
 mode_age_reference     ModeAgeReference.{CLIQUET_LEGAL
-                       | CLIQUET_PUIS_ESPERANCE_VIE | LEGAL_SANS_CLIQUET}
+                       | CLIQUET_PUIS_ESPERANCE_VIE | LEGAL_SANS_CLIQUET
+                       | FIXE_APRES_BASCULE}   défaut : FIXE_APRES_BASCULE
 age_conversion_droits_acquis  AgeConversionDroitsAcquis.{REFERENCE | LIQUIDATION}
 part_cotisation        PartCotisation.{SALARIALE | TOTALE | TOTALE_ALIGNEE}
 table_conversion       TableConversion.{UNISEXE | PAR_SEXE}
@@ -1305,8 +1306,12 @@ JSON ».
 ## Tests
 
 ```bash
-python -m pytest tests
+python -m pytest
 ```
+
+Sans cible, la suite se répartit d'elle-même sur les cœurs (pytest-xdist) ;
+avec une cible — un fichier, un test —, elle tourne en série, ce qui est plus
+lisible pour un seul test.
 
 <!--chiffre:tests()-->2354<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
@@ -1324,9 +1329,10 @@ déclare plus son accessibilité — cette déclaration appartient à l'éditeur
 site d'accueil —, mais il continue de la mesurer à chaque modification : une
 promesse écrite se périme, ces contrôles-là non.
 
-Deux d'entre eux lancent `node` pour rejouer le calcul côté JavaScript — les
-cas-témoins figés, puis des carrières tirées au hasard ; ils sont ignorés si
-`node` est absent. On peut exécuter les premiers seuls :
+Une douzaine d'entre eux lancent `node` pour rejouer le calcul côté
+JavaScript — les cas-témoins figés, des carrières et des pages tirées au
+hasard, les refus de saisie, les pictogrammes ; ils sont ignorés si `node` est
+absent. On peut exécuter les témoins seuls :
 
 ```bash
 node --test tests/js/moteur.test.js

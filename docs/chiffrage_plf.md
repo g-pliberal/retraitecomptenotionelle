@@ -33,7 +33,11 @@ budgétaire du dossier.**
 - **Prospective** — les droits acquis sont figés à la bascule, débarrassés des
   avantages non contributifs et convertis en capital ; les pensions déjà
   liquidées ne bougent pas. C'est la variante juridiquement soutenable, et
-  `scripts/proposition_prospective.py` dit pourquoi.
+  `scripts/proposition_prospective.py` dit pourquoi. *Précisé le 23 septembre
+  2026* : ce sont les pensions de DROIT DIRECT déjà liquidées qui ne bougent
+  pas ; les pensions de réversion en cours de service cessent à la bascule,
+  comme dans toutes les variantes notionnelles (hypothèse n° 9), et c'est
+  1,45 point de PIB de dépense en moins dès 2026. La phrase le taisait.
 
 ## Conventions de lecture
 

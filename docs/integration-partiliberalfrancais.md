@@ -54,10 +54,11 @@ le navigateur, aucune route n'a besoin d'être configurée côté serveur.
 
 | Adresse | Ce qu'elle montre |
 |---|---|
-| `/retraite/` | L'accueil : le programme, puis les liens vers les cinq autres pages. |
+| `/retraite/` | L'accueil : le programme, puis les liens vers les neuf autres pages. |
 | `/retraite/#/simuler` | Le formulaire de simulation, vide de tout résultat. |
 | `/retraite/#/simuler?…` | Une simulation, tous paramètres dans l'adresse : elle se partage, se cite, se recharge. Exemple : `#/simuler?naissance=1965-03-01&sexe=H&statut=salarie_prive_non_cadre&debut=1985-09-01&liquidation=2029-03-01`. |
-| `/retraite/#/cas-types`, `#/cout`, `#/methode`, `#/donnees` | Les autres pages. |
+| `/retraite/#/cout`, `#/risque`, `#/partager` | Les autres pages de l'électeur : le coût, pourquoi changer, les chiffres à partager. |
+| `/retraite/#/trajectoire`, `#/cas-types`, `#/avantages`, `#/methode`, `#/donnees` | Les pages qui prouvent : le cumul versé, les carrières types, les droits non cotisés, la méthode, les sources. |
 
 Ces adresses sont celles que les pages du simulateur écrivent elles-mêmes ;
 elles ne changeront pas sans que ce fichier le dise. Les anciennes adresses de
@@ -69,7 +70,7 @@ Une analyse d'usage, pas un avis sur le fond.
 
 | | `/retraite/` | `/retraite/#/simuler` |
 |---|---|---|
-| Ce qu'on voit | Le programme (proposition, trois chiffres, quatre idées, le plancher), la navigation vers Simuler | Le formulaire, cinq champs préremplis, le bouton « Calculer les six scénarios » |
+| Ce qu'on voit | Le programme (proposition, trois chiffres, quatre idées, le plancher), la navigation vers Simuler | Le formulaire, cinq champs préremplis, le bouton « Calculer les quatre systèmes » |
 | Gestes avant un premier résultat | Deux : cliquer « Simuler », puis « Calculer » (ou ajuster puis calculer) | Un : « Calculer » — ou ajuster puis calculer |
 | Contexte perdu en arrivant direct sur le formulaire | Aucun de nécessaire : le formulaire est autonome, chaque champ porte son aide, et « Programme » reste dans le bandeau, à un clic | — |
 | Correspond littéralement à un lien nommé « simulateur » | Non : c'est une page de programme qui mène au simulateur | Oui |
@@ -247,7 +248,8 @@ Stable :
   `--fond-carte`, `--fond-appui`, `--texte`, `--texte-doux`, `--trait`,
   `--trait-champ`, `--accent`, `--accent-doux`, `--bandeau`,
   `--bandeau-texte`, `--bandeau-doux`, `--bandeau-vif`, `--or`, `--alerte`,
-  les six couleurs de scénario et les neuf de série. Leurs **noms** sont
+  les quatre couleurs de système (`--actuel`, `--retroactif`,
+  `--retroactif-employeur`, `--liberal`) et les neuf de série. Leurs **noms** sont
   stables ; leurs valeurs peuvent bouger. Un hôte qui tient absolument à
   ajuster une couleur les redéfinit dans une feuille chargée après, et ne
   touche à rien d'autre. Le thème sombre du simulateur les redéfinit sous

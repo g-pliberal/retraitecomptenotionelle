@@ -3,7 +3,12 @@
 Ce fichier est la liste des chantiers à mener, classés par ce qu'ils déplacent
 dans les résultats du dépôt. Il sert de point d'entrée à une session de travail :
 prendre l'action la plus haute qui n'est pas commencée, la mener au bout, puis
-mettre à jour ce fichier. Il ne remplace ni `limites.md`, qui dit ce que vaut
+mettre à jour ce fichier. *Précisé le 23 septembre 2026* : aucune action n'est
+plus « à faire », la liste s'allongeant par la fin à mesure que les sessions
+ouvrent les leurs ; une session commence donc par les actions `en cours` et ce
+que leurs dernières notes laissent ouvert. Deux numéros servent deux fois,
+37 et 38 : chaque paire se distingue par son titre, et les renvois du dépôt
+nomment l'une ou l'autre. Il ne remplace ni `limites.md`, qui dit ce que vaut
 chaque chiffre, ni `regimes.md`, journal de la campagne sur les régimes.
 
 **Comment le tenir.** Une action a un état — `à faire`, `en cours`, `fait` — et
@@ -27,11 +32,13 @@ Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie de
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 671<!--/--> lignes)
 et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 424<!--/--> lignes), puis dans les
-témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
-les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
-et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
-L'action 13 ne touche pas le modèle du tout : un script de certification, le
+témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
+les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
+l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
+L'action 13 n'a pas touché le modèle du tout : un script de certification, le
 format de son journal, et une phrase de la page Données en deux exemplaires.
+Toutes sont faites ; ce paragraphe, écrit quand elles étaient à mener, est
+passé au passé le 23 septembre 2026.
 
 ---
 
@@ -96,7 +103,9 @@ fin 2020).
   au COR : l'écart avec le seul contrôle externe de la page double. La
   pondération a retiré une compensation accidentelle — voir l'action 8, ouverte
   pour cette raison. La borne du test de vraisemblance a été portée de 18 à
-  20 %, et son texte dit que c'est un aveu.
+  20 %, et son texte dit que c'est un aveu. *Le mot a disparu du test depuis ;
+  le 23 septembre 2026, son texte dit que la borne a suivi le modèle, et
+  l'écart au COR, lu dans son compte, y est tenu à part sous 3,5 points.*
 
 ### 2. La part patronale du public, lue dans les comptes des régimes — `fait`
 
@@ -14564,7 +14573,7 @@ origine.
 `tests/temoins/pages.json` régénérés, `tests/test_formulaire.py` et
 `tests/js/bascules.test.js` (nouveaux), `tests/test_web.py` (une assertion).
 
-### 111. L'audit du 23 septembre 2026 : formules, chiffres, tests et consignes — `en cours`
+### 111. L'audit du 23 septembre 2026 : formules, chiffres, tests et consignes — `fait`
 
 **Demande.** « Est-ce qu'on aurait pu faire des erreurs de formule
 mathématique ? Des erreurs de chiffres ? Est-ce que des tests vérifient de
@@ -14617,8 +14626,62 @@ du 1er janvier, et non par ceux de l'année même. Le seuil de la première
 tranche du RCI de 2014 à 2023 reste à lire : son effet est inférieur au
 millième de la pension, et le registre de veille le déclare.
 
-**Restent** les lots 3 (mécanique notionnelle et coût), 4 (chiffres du site
-et données), 5 (tests mal orientés) et 6 (consignes périmées).
+**Lot 3, la mécanique notionnelle et le coût — fait.** Le repère du COR que la
+page Coût opposait à sa projection était celui de juin 2025 (14,2 %) ; il est
+lu dans le compte de juin 2026 (15,3 %). Les scénarios 3 et 5, qui sont le
+système actuel avant la bascule, perdaient déjà les recettes qu'ils ne
+reconduisent qu'après : leur « déficit de 2025 » était un artefact. Le pilier
+capitalisé s'ouvrait en 2026 quelle que soit la bascule, sur la somme des
+assiettes d'avant elle ; il s'ouvre à la bascule. Une année de chômage ou de
+maladie indemnisée après la bascule était créditée au taux plein sur le
+salaire d'avant : le compte ne porte plus que ce qu'un tiers verse, et
+l'assurance chômage garde sa recette. La garantie comptait la rente du pilier
+comme une pension indexée sur les salaires et les pensions d'avant la bascule
+hors de la règle du stock ; elle ne servait qu'aux retraités résidant en
+France — l'ASPA en exige la résidence — et en servait aussi les 905 000 partis
+à l'étranger : 16,9 → 13,8 Md€ en 2026, la distribution des résidents
+certifiée sur la feuille « Naissance-Résidence » de la DREES. Le chiffrage PLF
+appelait « solde public » le solde de la retraite et comptait des dépenses de
+l'État parmi les prélèvements obligatoires, et son tableau F cumulait sur une
+autre base que ses tableaux annuels (−9 %). Le coût du passé multipliait par
+le rapport des pensions l'aide à l'autonomie et la retraite supplémentaire : il
+ne porte plus que la répartition obligatoire.
+
+**Lot 4, les chiffres du site et les données — fait.** L'AGS à 0,25 % ; les
+seuils de CSG des pensions de 2026 et la CASA due dès le taux médian ; le SMIC
+du 1er juin 2026, dont la projection part désormais ; le taux déplafonné
+« 2,41 % » qui n'a jamais existé ; le taux uniforme par défaut (25,74 %, tenu
+par un test) ; le taux d'appel, présent dans les données et appliqué ; « vivre
+seul », qui est « hors couple ». À l'accueil, les points de blocage citent une
+table que cinq tests recalculent, et la colonne de l'ASPA sert l'ASPA — 1 020 €
+au couple modeste, qui en recevrait 1 000 sous la garantie.
+
+**Lot 5, les tests — fait.** Un contrôle indépendant du cœur notionnel, qui
+attrape une année de revalorisation en moins et une pension réduite de 5 % ;
+le test « cinq pour cent » du pilier, qui mesurait dix points ; le solde réécrit
+sept fois, réduit à ses propriétés ; l'arrondi de la décote, le plafond de la
+majoration Agirc-Arrco et le minimum contributif de 2025, vérifiés par un
+chemin indépendant ; trois coefficients de la Cnav lus à la main ; l'écart au
+COR tenu à part de la fourchette de vraisemblance.
+
+**Lot 6, les consignes — fait.** `CLAUDE.md` (le hook `Stop` qui est dans le
+dépôt, la durée de la suite, les trois gestes du script, l'index LEGI des
+scripts de certification, la réforme sans veille datée de 2023, le cache des
+lois de mortalité), le README (dix pages, huit règles d'indexation,
+`FIXE_APRES_BASCULE`, une douzaine de tests `node`, `python -m pytest` sans
+cible), le document de l'hébergeur (neuf autres pages, toutes les routes,
+quatre systèmes et leurs couleurs), `.gitattributes` (une seule recette, et
+deux fichiers fabriqués de plus en `-merge`), et l'en-tête de ce fichier.
+
+**Reste**, relevé par l'audit et non corrigé. Le passif acquis du scénario 1
+est revalorisé par la règle notionnelle dans `calculer_engagements` alors que
+ses masses restent sur les prix (579 % du PIB en 2021 au lieu de 522, face aux
+397 % d'Eurostat) ; après la bascule, les retraités d'avant 2026 gardent leurs
+majorations pour enfants dans les scénarios prospectifs, mais le
+remboursement de la branche famille en est retiré (0,2 point en 2026) ; le
+tableau poste par poste de la page Coût ne montre pas la même garantie que la
+trajectoire l'année de la bascule. Et, du lot 2, le seuil de la première
+tranche du RCI de 2014 à 2023.
 
 ### 112. Le retraité voit la pension qu'il touche aujourd'hui, et un cas type la refait à la main — `fait`
 
