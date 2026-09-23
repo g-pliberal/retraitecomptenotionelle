@@ -121,13 +121,25 @@ export function navigation(cheminActif = "/") {
   const liensDuGroupe = (liens) => liens.map(([chemin, libelle]) => `<a href="${lien(chemin)}"`
     + (chemin === cheminActif ? ' aria-current="page"' : "")
     + `>${echapper(libelle)}</a>`).join("");
-  const classe = (etiquette) => (etiquette === GROUPE_SECONDAIRE
-    ? "groupe secondaire" : "groupe");
-  return GROUPES_NAVIGATION.map(([etiquette, liens]) => (
-    `<span class="${classe(etiquette)}"><span class="etiquette">`
-    + `${echapper(etiquette)}</span>`
-    + `<span class="liens">${liensDuGroupe(liens)}</span></span>`
-  )).join("");
+  const groupe = (etiquette, liens) => {
+    const entree = `<span class="etiquette">${echapper(etiquette)}</span>`;
+    if (etiquette !== GROUPE_SECONDAIRE) {
+      return `<span class="groupe">${entree}`
+        + `<span class="liens">${liensDuGroupe(liens)}</span></span>`;
+    }
+    // Sur un téléphone, le groupe se replie derrière un bouton, ouvert de
+    // lui-même quand la page courante en est. Voir `navigation` en Python.
+    const ouvert = liens.some(([chemin]) => chemin === cheminActif);
+    const bouton = '<button type="button" class="deplier" '
+      + `aria-expanded="${ouvert ? "true" : "false"}" `
+      + `aria-controls="pages-a-verifier">${echapper(etiquette)}`
+      + `${icone("chevron-down")}</button>`;
+    return `<span class="groupe secondaire">${entree}${bouton}`
+      + '<span class="liens" id="pages-a-verifier">'
+      + `${liensDuGroupe(liens)}</span></span>`;
+  };
+  return GROUPES_NAVIGATION.map(([etiquette, liens]) => groupe(etiquette, liens))
+    .join("");
 }
 
 /**

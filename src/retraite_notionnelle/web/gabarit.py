@@ -309,16 +309,32 @@ header.bandeau nav .groupe.secondaire a {
   font-size: 0.8125rem; font-weight: 600; letter-spacing: 0;
   text-transform: none;
 }
-/* Sur un téléphone, le groupe prend sa propre rangée, séparée par un filet
-   horizontal plutôt que vertical — un trait debout au bord gauche de l'écran
-   ne sépare rien —, et des lignes un peu moins hautes : le bandeau n'y est
-   pas collé, mais il ne doit pas repousser le titre de la page d'un écran. */
+/* Le bouton qui replie le groupe sur un téléphone. Il n'existe pas au-delà :
+   l'étiquette y est un texte, et les liens restent sous les yeux. */
+nav .deplier { display: none; }
+/* Sur un téléphone, le groupe tenait deux rangées à lui seul, sous les deux
+   des onglets : quatre rangées avant le titre de la page. Il se replie
+   derrière un bouton qui porte son nom, et ce bouton se range à la suite des
+   onglets — le groupe n'est plus une boîte, ses enfants rejoignent la barre —,
+   si bien qu'à 390 points la barre tient en deux rangées. Ouvert, ses liens
+   viennent à la suite, en casse normale : le bouton ne bouge pas sous le
+   doigt. Les onglets y sont un peu plus serrés — voir la règle des écrans de
+   34 rem —, pour laisser au bouton la place de rester sur la seconde rangée. */
 @media (max-width: 48rem) {
-  nav .groupe.secondaire { flex-basis: 100%; border-top: 1px solid var(--trait); }
-  nav .groupe.secondaire .etiquette {
-    border-left: 0; margin-left: 0; padding-left: 0.55rem; min-height: 2.25rem;
+  nav .groupe.secondaire { display: contents; }
+  nav .groupe.secondaire .etiquette { display: none; }
+  nav .deplier {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    min-height: 2.75rem; margin: 0; padding: 0 0.4rem;
+    background: none; border: 0; border-bottom: 2px solid transparent;
+    font: inherit; font-size: 0.6875rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap;
+    color: var(--texte-doux); cursor: pointer;
   }
-  header.bandeau nav .groupe.secondaire a { min-height: 2.25rem; }
+  nav .deplier:hover { color: var(--bandeau-texte); }
+  nav .deplier .icone { color: var(--or); transition: transform 0.15s; }
+  nav .deplier[aria-expanded="true"] .icone { transform: rotate(180deg); }
+  nav .deplier[aria-expanded="false"] + .liens { display: none; }
 }
 /* Un onglet. Toute la hauteur de la barre — 56 px, bien plus que les 44 de la
    cible tactile (WCAG 2.5.8) —, capitales serrées, et un filet sous chacun :
@@ -351,6 +367,11 @@ header.bandeau nav a[aria-current="page"] {
   header.bandeau .nom { flex: 1 1 100%; min-height: 2.75rem; padding-top: 0.25rem; }
   header.bandeau nav { width: 100%; margin-left: -0.55rem; }
   header.bandeau nav a { min-height: 2.75rem; }
+}
+/* Les liens du groupe « Pour vérifier », une fois ouvert sur un téléphone,
+   gardent leurs lignes plus basses. */
+@media (max-width: 48rem) {
+  header.bandeau nav .groupe.secondaire a { min-height: 2.25rem; }
 }
 
 /* Les titres de l'affiche. Le premier de chaque page est massif, en capitales,
@@ -1802,7 +1823,12 @@ body.calcul-en-cours::after {
      qu'on vient chercher. */
   header.bandeau { position: static; }
   header.bandeau nav { margin-left: -0.5rem; margin-right: -0.5rem; }
-  header.bandeau nav a { padding: 0 0.5rem; font-size: 0.75rem; }
+  /* Les onglets et le bouton « Pour vérifier » un peu plus serrés : mesuré
+     au navigateur le 23 septembre 2026, c'est ce qui fait tenir la barre en
+     deux rangées dès 390 points — trois à 360 —, quand elle en prenait
+     quatre. */
+  header.bandeau nav a { padding: 0 0.35rem; font-size: 0.75rem; letter-spacing: 0.04em; }
+  nav .deplier { padding: 0 0.35rem; letter-spacing: 0.06em; gap: 0.2rem; }
   .plan a { padding: 0 0.5rem; font-size: 0.8125rem; }
   .affiche { padding: 2rem 0 1.5rem; }
   .scenario .entete { flex-direction: column; gap: 0.15rem; }
@@ -2090,14 +2116,27 @@ def navigation(chemin_actif: str = "/") -> str:
             + f">{escape(libelle)}</a>"
             for chemin, libelle in liens
         )
-    def classe(etiquette: str) -> str:
-        return "groupe secondaire" if etiquette == GROUPE_SECONDAIRE else "groupe"
-    return "".join(
-        f'<span class="{classe(etiquette)}"><span class="etiquette">'
-        f'{escape(etiquette)}</span>'
-        f'<span class="liens">{liens_du_groupe(liens)}</span></span>'
-        for etiquette, liens in GROUPES_NAVIGATION
-    )
+    def groupe(etiquette: str, liens: tuple) -> str:
+        entree = f'<span class="etiquette">{escape(etiquette)}</span>'
+        if etiquette != GROUPE_SECONDAIRE:
+            return (f'<span class="groupe">{entree}'
+                    f'<span class="liens">{liens_du_groupe(liens)}</span></span>')
+        # SUR UN TÉLÉPHONE, LE GROUPE SE REPLIE DERRIÈRE UN BOUTON. Ses liens
+        # y prenaient deux rangées de plus, avant même le titre de la page :
+        # quatre rangées d'onglets au total (23 septembre 2026). Le bouton
+        # porte le nom du groupe et son état, et n'existe qu'à l'écran étroit ;
+        # au-delà, l'étiquette reste un texte et les liens restent sous les
+        # yeux. Le groupe s'ouvre de lui-même quand la page courante en est.
+        ouvert = any(chemin == chemin_actif for chemin, _ in liens)
+        bouton = (f'<button type="button" class="deplier" '
+                  f'aria-expanded="{"true" if ouvert else "false"}" '
+                  f'aria-controls="pages-a-verifier">{escape(etiquette)}'
+                  f'{icone("chevron-down")}</button>')
+        return (f'<span class="groupe secondaire">{entree}{bouton}'
+                f'<span class="liens" id="pages-a-verifier">'
+                f'{liens_du_groupe(liens)}</span></span>')
+    return "".join(groupe(etiquette, liens)
+                   for etiquette, liens in GROUPES_NAVIGATION)
 
 
 def entete(chemin_actif: str = "/") -> str:

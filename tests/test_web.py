@@ -6332,7 +6332,8 @@ def test_la_navigation_met_l_electeur_d_abord():
     """
     entete = g.entete("/cout")
     groupes = re.findall(r'<span class="(groupe(?: secondaire)?)"><span class="etiquette">(.*?)</span>'
-                         r'<span class="liens">(.*?)</span></span>', entete)
+                         r'(?:<button type="button" class="deplier"[^>]*>.*?</button>)?'
+                         r'<span class="liens"(?: id="[^"]+")?>(.*?)</span></span>', entete)
     assert [(classe, etiquette) for classe, etiquette, _ in groupes] == [
         ("groupe", "L&#x27;essentiel"), ("groupe", "Faire connaître"),
         ("groupe secondaire", "Pour vérifier")]
@@ -6367,6 +6368,44 @@ def test_la_navigation_met_l_electeur_d_abord():
     # épais le marque, et `aria-current` l'annonce.
     actif = g.FEUILLE_DE_STYLE.split('nav a[aria-current="page"] {')[1].split("}")[0]
     assert "border-bottom-color" in actif
+
+
+def test_sur_un_telephone_le_groupe_pour_verifier_se_replie():
+    """« Le menu sur téléphone occupe quatre lignes avant même le titre »
+    (23 septembre 2026). Le groupe « Pour vérifier » en prenait deux à lui
+    seul : il se replie derrière un bouton qui porte son nom et son état, à la
+    suite des onglets, et la barre tient en deux rangées à 390 points.
+
+    Le bouton n'existe qu'à l'écran étroit : au-delà, l'étiquette reste un
+    texte et les liens restent sous les yeux. Il s'ouvre de lui-même quand la
+    page courante est dans le groupe, pour que l'onglet courant se voie. Le
+    basculement vit dans ``index.html``, en écoute déléguée : le bandeau est
+    réécrit à chaque page, un gestionnaire posé sur le bouton partirait avec.
+    """
+    def bouton(chemin: str) -> str:
+        entete = g.entete(chemin)
+        trouves = re.findall(r'<button type="button" class="deplier"[^>]*>', entete)
+        assert len(trouves) == 1, f"{chemin} : {len(trouves)} boutons de repli"
+        cible = re.search(r'aria-controls="([^"]+)"', trouves[0]).group(1)
+        assert f'<span class="liens" id="{cible}">' in entete
+        return trouves[0]
+
+    assert 'aria-expanded="false"' in bouton("/")
+    assert 'aria-expanded="false"' in bouton("/cout")
+    secondaires = dict(g.GROUPES_NAVIGATION)[g.GROUPE_SECONDAIRE]
+    for chemin, _ in secondaires:
+        assert 'aria-expanded="true"' in bouton(chemin), chemin
+
+    style = g.FEUILLE_DE_STYLE
+    assert "nav .deplier { display: none; }" in style
+    etroit = style.split("@media (max-width: 48rem) {\n  nav .groupe.secondaire { display: contents; }")
+    assert len(etroit) == 2, "le repli n'est plus réservé à l'écran étroit"
+    assert 'nav .deplier[aria-expanded="false"] + .liens { display: none; }' in etroit[1]
+
+    from pathlib import Path
+    script = (Path(__file__).resolve().parents[1] / "index.html").read_text(encoding="utf-8")
+    assert 'closest?.("nav button.deplier")' in script
+    assert 'bouton.setAttribute("aria-expanded", String(ouvrir));' in script
 
 
 def test_les_pages_complementaires_se_renvoient_l_une_a_l_autre(contexte):
