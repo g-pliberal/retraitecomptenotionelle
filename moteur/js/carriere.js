@@ -145,6 +145,86 @@ function montantAssietteMinimale(regle, pass, smicHoraire, part) {
   return proratise ? montant * part : montant;
 }
 
+/**
+ * Article R. 351-12, 4°, d : le chômage NON indemnisé ne valide rien avant
+ * 1980, et dans des limites ensuite ; la limite de la première période est
+ * choisie par l'année de la PÉRIODE (décret n° 2011-934, article 2). Portage
+ * de `CHOMAGE_NON_INDEMNISE_PREMIERE` et `CHOMAGE_NON_INDEMNISE_ULTERIEURE`
+ * de `carriere.py`, qui citent le texte.
+ */
+const CHOMAGE_NON_INDEMNISE_PREMIERE = {
+  valideDepuis: 1980, trimestres: 6, trimestresAvant: 4, periodesDepuis: 2011,
+};
+const CHOMAGE_NON_INDEMNISE_ULTERIEURE = {
+  trimestres: 4, trimestresSenior: 20, ageSenior: 55, cotisesSenior: 80,
+};
+
+/**
+ * Les trimestres que le chômage non indemnisé valide VRAIMENT — portage de
+ * `limiter_chomage_non_indemnise` : rien avant 1980, la première période
+ * prend l'enveloppe de la première période (quatre trimestres pour une année
+ * d'avant 2011, six depuis), une série qui suit un chômage indemnisé en prend
+ * quatre (vingt pour le senior qui ne retravaille pas), les années dont un
+ * relevé porte les trimestres sont laissées telles quelles.
+ */
+export function limiterChomageNonIndemnise(lignes, anneeNaissance,
+  declarees = new Set()) {
+  const premiere = CHOMAGE_NON_INDEMNISE_PREMIERE;
+  const ulterieure = CHOMAGE_NON_INDEMNISE_ULTERIEURE;
+  const ordre = lignes.map((_, i) => i).sort((a, b) => lignes[a].annee - lignes[b].annee);
+  const resultat = lignes.slice();
+  let cotises = 0;
+  let precedente = null;
+  let premiereVue = false;
+  let prisPremiere = 0;
+  let resteSerie = 0;
+  let seriePremiere = true;
+  ordre.forEach((indice, rang) => {
+    const ligne = lignes[indice];
+    if (ligne.type_periode !== "chomage_non_indemnise" || declarees.has(ligne.annee)) {
+      if (ligne.cotisations_versees) {
+        cotises += ligne.trimestres_valides;
+      }
+      precedente = ligne;
+      return;
+    }
+    const debutSerie = precedente === null
+      || precedente.type_periode !== "chomage_non_indemnise"
+      || precedente.annee !== ligne.annee - 1;
+    if (debutSerie) {
+      const suitIndemnise = precedente !== null
+        && precedente.type_periode === "chomage_indemnise"
+        && precedente.annee === ligne.annee - 1;
+      seriePremiere = !premiereVue || !suitIndemnise;
+      if (!seriePremiere) {
+        const retravaille = ordre.slice(rang + 1)
+          .some((j) => lignes[j].cotisations_versees);
+        const senior = ligne.annee - anneeNaissance >= ulterieure.ageSenior
+          && cotises >= ulterieure.cotisesSenior && !retravaille;
+        resteSerie = senior ? ulterieure.trimestresSenior : ulterieure.trimestres;
+      }
+    }
+    let accordes;
+    if (ligne.annee < premiere.valideDepuis) {
+      accordes = 0;
+    } else if (seriePremiere) {
+      premiereVue = true;
+      const plafond = ligne.annee >= premiere.periodesDepuis
+        ? premiere.trimestres : premiere.trimestresAvant;
+      accordes = Math.min(ligne.trimestres_valides, Math.max(0, plafond - prisPremiere));
+      prisPremiere += accordes;
+    } else {
+      accordes = Math.min(ligne.trimestres_valides, resteSerie);
+      resteSerie -= accordes;
+    }
+    if (accordes !== ligne.trimestres_valides) {
+      resultat[indice] = new AnneeCarriere({ ...ligne, trimestres_valides: accordes });
+    }
+    precedente = ligne;
+  });
+  return resultat;
+}
+
 function ligneAnnuelle({
   annee,
   revenu,
@@ -537,7 +617,7 @@ export class Carriere {
     // La pension prend effet ce mois-là : il n'est plus travaillé.
     const fin = dateNaissance.plusMois(enMois(age_liquidation));
 
-    const lignes = releve.map((ligne) => {
+    const lues = releve.map((ligne) => {
       const mois = ligne.annee < fin.annee ? MOIS_PAR_AN : fin.mois - 1;
       if (ligne.annee > fin.annee || mois <= 0) {
         throw new Error(
@@ -557,6 +637,11 @@ export class Carriere {
         trimestresDeclares: ligne.trimestres ?? null,
       });
     });
+    const lignes = limiterChomageNonIndemnise(
+      lues, annee_naissance,
+      new Set(releve.filter((l) => l.trimestres !== null && l.trimestres !== undefined)
+        .map((l) => l.annee)),
+    );
 
     return new Carriere({
       annee_naissance, sexe, lignes, mois_naissance, age_liquidation,
@@ -708,6 +793,7 @@ export class Carriere {
         trimestresMaximum,
       }));
     }
+    const limitees = limiterChomageNonIndemnise(lignes, annee_naissance);
 
     const datesEntree = {};
     for (const { metier, ouverture } of periodes) {
@@ -717,7 +803,7 @@ export class Carriere {
     }
 
     return new Carriere({
-      annee_naissance, sexe, lignes, mois_naissance, age_liquidation,
+      annee_naissance, sexe, lignes: limitees, mois_naissance, age_liquidation,
       nombre_enfants, identifiant, dates_entree: datesEntree,
     });
   }

@@ -159,3 +159,36 @@ def test_le_portage_du_paquet_porte_les_deux_colonnes():
     assert paquet["chomage_indemnise"][4] is False
     assert paquet["maladie"][4] is True
     assert paquet["education_enfant"][5] == 12
+
+
+def test_les_bonifications_portent_le_taux_au_dela_de_75_pour_cent(simulateur):
+    """« Le pourcentage maximum fixé à l'article L 13 peut-être augmenté de
+    cinq points du chef des bonifications » (L. 12 CPCMR, dernier alinéa).
+
+    Le module plafonnait services et bonifications ENSEMBLE à la durée
+    requise : une mère de trois enfants nés avant 2004, à carrière complète,
+    recevait 75 % là où ses douze trimestres de bonification lui en valent près
+    de 80. Les services seuls restent plafonnés à la durée requise ; les
+    bonifications passent au-dessus, jusqu'à cinq points.
+    """
+    def pension(nombre_enfants, age_debut):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1962, sexe="F", affiliation="fonctionnaire_etat",
+            age_debut=age_debut, age_liquidation=64, nombre_enfants=nombre_enfants)
+        resultat = simulateur.scenario_actuel.calculer(carriere)
+        return next(p for p in resultat.pensions_par_regime
+                    if p.type_calcul == "annuites")
+
+    # 168 trimestres de services et douze de bonification, pour 169 requis :
+    # le prorata est de 180/169, et non plus de 169/169.
+    mere = pension(3, 22)
+    assert "× 180/169" in mere.detail
+    # Plus de services que la durée requise, et pas de bonification : le
+    # plafond reste la durée requise, soit 75 %.
+    sans_enfant = pension(0, 20)
+    assert "× 169/169" in sans_enfant.detail
+    # Avec des bonifications, le plafond est de 80 % — 80/75 de la durée
+    # requise —, et le détail le dit.
+    longue = pension(3, 20)
+    assert "taux maximum 80% atteint" in longue.detail
+    assert longue.montant / sans_enfant.montant == pytest.approx(80 / 75)

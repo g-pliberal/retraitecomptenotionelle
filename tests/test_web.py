@@ -2302,9 +2302,10 @@ def test_toute_formule_affichee_retrouve_le_montant_de_sa_ligne(contexte):
         ("fonctionnaire_etat", {"naissance": "1950", "statut": "fonctionnaire_etat",
                                 "debut": "40", "liquidation": "62",
                                 "unite_revenu": "moyen", "salaire": "0.3"}),
-        # Génération 1969 : la première dont l'âge légal est 64 ans depuis la
-        # suspension de 2026, donc quatre trimestres entre 63 ans et l'âge
-        # légal — pour 1965, la fenêtre s'est refermée avec la suspension.
+        # Génération 1969 : âge légal de 64 ans, donc quatre trimestres dans
+        # l'année qui le précède. La fenêtre reste ouverte aux générations 1965
+        # à 1968, dont la suspension de 2026 laisse l'âge légal entre 63 ans et
+        # 63 ans et 9 mois.
         ("surcote parentale", {"naissance": "1969", "sexe": "F", "enfants": "3",
                                "debut": "20", "liquidation": "64",
                                "unite_revenu": "moyen", "salaire": "1"}),

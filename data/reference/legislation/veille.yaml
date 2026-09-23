@@ -186,16 +186,31 @@ entrees:
     prochaine_veille: "2027-03-31"
 
   - id: surcote_parentale
-    regle: "1,25 % par trimestre acquis entre 63 ans et l'âge légal, quatre au plus, à qui détient un trimestre de majoration pour enfants."
-    textes: ["L. 351-1-2-1 CSS"]
+    regle: "1,25 % par trimestre cotisé dans l'année qui précède l'âge légal et au-delà de la durée requise, quatre au plus, dès que l'âge légal atteint 63 ans, à qui détient un trimestre de majoration de durée d'assurance pour enfants."
+    textes: ["L. 351-1-2-1 CSS (loi n° 2023-270, article 11 ; loi n° 2025-199, article 87)"]
     sources:
-      - {type: legifrance, reference: "L. 351-1-2-1 CSS, loi n° 2023-270", date: "2023-09-01"}
-    verifie_le: "2026-09-17"
+      - {type: legifrance, reference: "L. 351-1-2-1 CSS, LEGIARTI000047449229, version du 1er septembre 2023 : la durée cotisée « accomplie l'année précédant l'âge mentionné à l'article L. 161-17-2, lorsque celui-ci est égal ou supérieur à soixante-trois ans, et au delà de la limite mentionnée au deuxième alinéa de l'article L. 351-1 »", date: "2026-09-23"}
+      - {type: legifrance, reference: "L. 351-1-2-1 CSS, LEGIARTI000051289776, version du 28 février 2025 : l'âge de la surcote, « sous réserve qu'il soit égal ou supérieur à soixante-trois ans, est abaissé d'un an »", date: "2026-09-23"}
+    verifie_le: "2026-09-23"
     temoins: []
     reformes: [reforme_2023]
     etat: transcrit
-    effet: "Parents nés à partir de 1965 ; la suspension de 2026 réduit la fenêtre d'un trimestre pour 1964-1968."
-    a_faire: "Chercher un exemple publié (fiche service-public ou circulaire Cnav) et l'ajouter au témoin."
+    effet: >-
+      Parents dont l'âge légal atteint 63 ans, générations 1965 nées après mars
+      et suivantes. Jusqu'au 23 septembre 2026, le module faisait courir la
+      fenêtre de 63 ans à l'âge légal, et demandait la durée requise à
+      63 ans : zéro trimestre à la génération 1965 née après mars, un à 1966,
+      deux à 1967, trois à 1968, là où le texte en ouvre quatre à chacune ; et
+      rien du tout à qui atteignait la durée en cours de fenêtre, là où le
+      texte paie les trimestres qui la dépassent. La fenêtre est datée au
+      mois, les trimestres de chaque année répartis sur ses mois ;
+      `test_la_surcote_parentale_ne_compte_que_les_trimestres_au_dela_de_la_duree`
+      tient la règle.
+    a_faire: >-
+      Chercher la circulaire Cnav d'application du décret n° 2023-799 et son
+      exemple chiffré : la fiche F19643 de service-public (vérifiée le
+      1er janvier 2026) ne décrit pas la surcote parentale, et la circulaire
+      2026-07 non plus.
     prochaine_veille: "2027-03-31"
 
   - id: services_et_duree_fonction_publique
@@ -253,6 +268,32 @@ entrees:
       statutaire, seulement le motif, et présume l'agent en activité.
     prochaine_veille: "2027-06-30"
 
+  - id: taux_maximum_fonction_publique
+    regle: "Pourcentage maximum de la pension civile : 75 % du traitement, que les bonifications seules peuvent porter jusqu'à 80 % ; les services restent plafonnés à la durée requise."
+    textes: ["L. 12 CPCMR, dernier alinéa", "L. 13 CPCMR", "décret n° 2003-1306, article 15 III (CNRACL)", "décret n° 2004-1056, article 12 II (FSPOEIE)"]
+    sources:
+      - {type: legifrance, reference: "L. 12 CPCMR, LEGIARTI000053280361 : « Le pourcentage maximum fixé à l'article L 13 peut-être augmenté de cinq points du chef des bonifications »", date: "2026-09-23"}
+      - {type: legifrance, reference: "décret n° 2003-1306, article 15, LEGIARTI000054590023, et décret n° 2004-1056, article 12, LEGIARTI000054590048 : la même clause", date: "2026-09-23"}
+      - {type: autre, reference: "Service des retraites de l'État, « La formule de calcul » : « le pourcentage maximal de 75 % peut être porté à 80 % »", url: "https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-formule-de-calcul", date: "2026-09-23"}
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: []
+    etat: conforme
+    effet: >-
+      Fonctionnaires dont les services et les bonifications dépassent la durée
+      requise, mères surtout. Le module plafonnait les deux ENSEMBLE à la
+      durée requise : une mère de trois enfants nés avant 2004, 168 trimestres
+      de services et 12 de bonification pour 169 requis, était liquidée sur
+      169/169 et non sur 180/169, soit 6,5 % de pension en moins. Le champ
+      `taux_maximum_bonifie` des fiches porte les 80 % ;
+      `test_les_bonifications_portent_le_taux_au_dela_de_75_pour_cent` tient
+      la règle. Aucun exemple chiffré publié ne l'atteint.
+    a_faire: >-
+      Les règlements de la SNCF, de la RATP, des IEG, de l'Opéra et de la
+      Comédie-Française portent la même clause ; leurs bonifications ne sont
+      pas modélisées, et leurs fiches ne portent donc pas le champ.
+    prochaine_veille: "2027-06-30"
+
   - id: taux_plein_et_proratisation
     regle: "Pension = salaire annuel moyen × taux × durée dans le régime / durée requise ; durée de proratisation propre aux générations 1944-1948."
     textes: ["L. 351-1 CSS", "R. 351-6 CSS"]
@@ -296,15 +337,26 @@ entrees:
 
   # ---- Minima et majorations -------------------------------------------
   - id: minimum_contributif
-    regle: "Montant de base et montant majoré (120 trimestres cotisés), au prorata de la durée d'assurance et de la durée cotisée, réservés au taux plein, écrêtement de l'ensemble des pensions."
-    textes: ["L. 351-10 CSS", "D. 351-2-1 CSS", "L. 173-2 CSS"]
+    regle: "Montant de base et montant majoré (120 trimestres cotisés), au prorata de la durée d'assurance et de la durée cotisée, réservés au taux plein, écrêtement de l'ensemble des pensions ; pour les pensions prenant effet depuis le 1er avril 2009, la surcote se calcule sur la pension d'avant le minimum et s'y ajoute."
+    textes: ["L. 351-10 CSS", "D. 351-2-1 CSS, dernier alinéa (décret n° 2008-1509, articles 6 et 8)", "L. 173-2 CSS"]
     sources:
       - {type: service_public, reference: "actualité A15703, montants 2026", date: "2026-02-12"}
-    verifie_le: "2026-09-17"
+      - {type: legifrance, reference: "D. 351-2-1 CSS, LEGIARTI000047961314 : « La majoration prévue à l'article L. 351-1-2 est calculée sur la base du montant de pension avant qu'il ne soit porté au montant minimum » ; alinéa apparu dans la version du 1er avril 2009, LEGIARTI000020090091", date: "2026-09-23"}
+      - {type: legifrance, reference: "décret n° 2008-1509 du 30 décembre 2008, article 8, LEGIARTI000020057518 : ses articles 6 et 7 « sont applicables aux pensions prenant effet à compter du 1er avril 2009 »", date: "2026-09-23"}
+      - {type: circulaire_cnav, reference: "2018-04 du 1er février 2018, points 3.4.1 et 3.4.2 : avant avril 2009, 621 × 1,015 = 630,31 € portés au minimum de 633,61 € ; depuis, 621 + (645,07 − 621) + 15,52 = 660,59 €", date: "2018-02-01"}
+    verifie_le: "2026-09-23"
     temoins: [sp_a15703_minimum_contributif_2026]
     reformes: []
     etat: conforme
-    effet: "Petites pensions au taux plein."
+    effet: >-
+      Petites pensions au taux plein. Jusqu'au 23 septembre 2026, le module
+      servait le minimum SURCOTÉ — le plancher multiplié par le coefficient de
+      surcote —, ce qu'aucune des deux règles ne fait : 661,20 € au lieu de
+      660,59 € dans l'exemple de la circulaire, et l'écart grandit avec la
+      surcote et avec la distance au plancher. Les deux exemples de la
+      circulaire sont rejoués par
+      `test_la_surcote_s_ajoute_au_minimum_comme_la_circulaire_le_calcule` et
+      par son double JavaScript.
     a_faire: "Relire les montants à chaque revalorisation de janvier."
     prochaine_veille: "2027-01-31"
 
@@ -414,6 +466,34 @@ entrees:
     etat: transcrit
     effet: "Carrières interrompues pour enfant."
     a_faire: null
+    prochaine_veille: "2027-06-30"
+
+  - id: chomage_non_indemnise
+    regle: "Le chômage involontaire non indemnisé ne valide rien avant 1980 ; la première période, continue ou non, vaut quatre trimestres au plus pour les périodes d'avant 2011 et six depuis ; chaque période ultérieure ne compte que si elle suit sans interruption un chômage indemnisé, quatre trimestres au plus, vingt pour l'assuré de cinquante-cinq ans qui a vingt ans de cotisations et ne relève plus d'aucun régime."
+    textes: ["R. 351-12, 4°, d, CSS", "décret n° 2011-934 du 1er août 2011, article 2"]
+    sources:
+      - {type: legifrance, reference: "R. 351-12 CSS, LEGIARTI000054167657, version du 1er juillet 2026 : « la première période de chômage non indemnisé, qu'elle soit continue ou non, est prise en compte dans la limite d'un an et demi, sans que plus de six trimestres d'assurance puissent être comptés à ce titre » ; la version du 1er novembre 2026, LEGIARTI000054425288, laisse le d inchangé", date: "2026-09-23"}
+      - {type: legifrance, reference: "R. 351-12 CSS, LEGIARTI000006750030, version du 15 février 2004 : la première période « dans la limite d'un an »", date: "2026-09-23"}
+      - {type: legifrance, reference: "décret n° 2011-934, article 2, LEGIARTI000024436144 : la limite d'un an et demi s'applique « aux périodes de chômage involontaire non indemnisé postérieures au 31 décembre 2010 »", date: "2026-09-23"}
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: >-
+      Carrières coupées de chômage non indemnisé. Le modèle validait quatre
+      trimestres par année ainsi déclarée, sans limite : huit ans en faisaient
+      trente-deux, là où le droit en compte six au plus. Les trimestres qu'un
+      relevé de carrière porte font foi et ne sont pas limités.
+      `test_le_chomage_non_indemnise_ne_valide_que_dans_les_limites_de_r_351_12`
+      et son double JavaScript tiennent les sept cas.
+    a_faire: >-
+      Trois approximations. Les périodes se lisent à l'année civile, une série
+      d'années consécutives faisant une période. La condition d'âge — être
+      plus jeune que l'âge du taux plein de L. 351-8, 1° — n'est pas appliquée,
+      les carrières du modèle s'arrêtant avant. Et une première période qui
+      suit un chômage indemnisé garde la limite de la première période, sans
+      l'extension de cinq ans que le texte réserve aux périodes ultérieures.
+      Chercher la circulaire Cnav d'application de 2011 et son exemple.
     prochaine_veille: "2027-06-30"
 
   # ---- Départs anticipés ----------------------------------------------
@@ -953,6 +1033,33 @@ entrees:
       « la plus avantageuse des deux » ; le vérifier demanderait un exemple
       chiffré de la caisse, qu'elle ne publie pas.
     prochaine_veille: "2027-03-31"
+
+  - id: ircantec_valeurs_point
+    regle: "Valeur de service, salaire de référence et pourcentage d'appel du point Ircantec de 2022 à 2026 ; au-delà du dernier barème publié, les cotisations de l'Ircantec et de l'Agirc-Arrco achètent des points au rendement de ce barème."
+    textes: ["arrêté du 30 décembre 1970, article 16 (délibérations annuelles du conseil d'administration de l'Ircantec)"]
+    sources:
+      - {type: autre, reference: "Ircantec, « Valeur du point » et paramètres du régime : valeur de service 0,51211 € fin 2022, 0,51621 € en 2023, 0,54357 € en 2024, 0,55553 € en 2025, 0,56053 € en 2026 ; salaire de référence de 5,329 € à 5,787 € ; pourcentage d'appel de 125 %, puis 7,11 / 5,60 en 2026", url: "https://www.ircantec.retraites.fr/retraite/valeur-point", date: "2026-09-23"}
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: >-
+      Toute pension Ircantec. La table s'arrêtait à la valeur de janvier 2022,
+      0,49241 €, et le rendement moyen de 2009 à 2021, 8,52 %, prolongeait
+      tout le reste. Le rendement au-delà de 2026 est désormais celui du
+      barème de 2026, 7,63 %, et celui de l'Agirc-Arrco celui du sien, 5,61 %,
+      au lieu de la moyenne 2019-2026, 5,81 %. Mesuré sur un contractuel entré
+      à 22 ans et parti à 64 : la part Ircantec gagne 2,8 % pour la génération
+      1960, que les valeurs de 2022 à 2026 relèvent, et perd 3,2 % pour 1975,
+      6,5 % pour 1985 et 10,5 % pour 2005, que le rendement de prolongation
+      abaisse. Les valeurs passent par
+      `source_valeurs_point_ircantec_publiees` de `scripts/verifier_donnees.py`,
+      et non par une saisie dans le fichier, qui s'écrit par ce script.
+    a_faire: >-
+      Relire chaque 1er janvier la valeur du point et le salaire de référence
+      de l'Ircantec, que `scripts/fetch/cdc_ircantec.py` ne couvre que
+      jusqu'en 2021.
+    prochaine_veille: "2027-01-31"
 
   - id: plafond_des_trimestres_de_decote
     regle: >-
@@ -3881,3 +3988,35 @@ journal:
       la CAVEC et à la CPRN d'avant 2014 ; les prestations complémentaires de
       vieillesse des dentistes, des sages-femmes, des auxiliaires médicaux et
       des biologistes.
+
+  - date: "2026-09-23"
+    session: "audit des formules, lot 2 : cinq règles du scénario 1 écartées du texte"
+    consulte: >-
+      `scripts/veille_droit.py` ; index LEGI à jour de l'incrément du
+      22 septembre, sans incrément plus récent : L. 161-17-2 et L. 161-17-3
+      sans version postérieure au 31 décembre 2025. L. 12 CPCMR
+      (LEGIARTI000053280361), décret n° 2003-1306 article 15, décret
+      n° 2004-1056 article 12 ; D. 351-2-1 CSS dans ses six versions et le
+      décret n° 2008-1509 (articles 6 et 8) ; R. 351-12 CSS dans ses
+      dix-sept versions et le décret n° 2011-934 (article 2) ; L. 351-1-2-1
+      CSS dans ses deux versions. Circulaires Cnav 2018-04 (points 3.4 et
+      3.5) et 2026-07 ; fiche F19643 de service-public ; page « La formule
+      de calcul » du Service des retraites de l'État ; pages de l'Ircantec
+      sur la valeur du point.
+    trouve: >-
+      Cinq écarts au texte, corrigés dans les deux moteurs : le pourcentage
+      maximum de la pension civile, que les bonifications portent jusqu'à
+      80 % ; la surcote qui s'ajoute au minimum contributif au lieu de le
+      multiplier ; les limites du chômage non indemnisé, que le modèle
+      ignorait, datées par la période et non par la pension ; la fenêtre de
+      la surcote parentale, qui est l'année précédant l'âge légal et compte
+      les trimestres au-delà de la durée ; les valeurs du point Ircantec de
+      2022 à 2026. Lignes `taux_maximum_fonction_publique`,
+      `minimum_contributif`, `chomage_non_indemnise`, `surcote_parentale` et
+      `ircantec_valeurs_point`.
+    reste: >-
+      La majoration pour enfants de l'Agirc-Arrco par période d'acquisition
+      des points, et celle des régimes spéciaux par enfant au-delà du
+      troisième ; la date d'effet des durées de la loi de financement pour
+      2026 ; le minimum garanti de 2023 et le plafond du minimum contributif
+      de 2024 ; la circulaire d'application de la surcote parentale.

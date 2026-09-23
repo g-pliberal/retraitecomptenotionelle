@@ -18,7 +18,7 @@ niveaux d'entrée sont proposés, du plus précis au plus sommaire :
 from __future__ import annotations
 
 from collections.abc import Iterable
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from functools import cached_property
 from pathlib import Path
 
@@ -193,6 +193,96 @@ class LigneRelevee:
     trimestres: int | None = None
     #: Nature de la période, au sens de ``PERIODES_NON_COTISEES``.
     type_periode: str = "emploi"
+
+
+#: Article R. 351-12, 4°, d, du code de la sécurité sociale : le chômage NON
+#: indemnisé ne valide que « des périodes postérieures au 31 décembre 1979 »,
+#: et dans des limites. La première période, « qu'elle soit continue ou non »,
+#: « dans la limite d'un an et demi, sans que plus de six trimestres
+#: d'assurance puissent être comptés à ce titre » ; d'un an avant le décret
+#: n° 2011-934 du 1er août 2011, dont l'article 2 réserve la nouvelle limite
+#: « aux périodes de chômage involontaire non indemnisé postérieures au
+#: 31 décembre 2010 ». C'est donc l'année de la PÉRIODE qui choisit la
+#: limite, non la date de la pension.
+CHOMAGE_NON_INDEMNISE_PREMIERE = {"valide_depuis": 1980, "trimestres": 6,
+                                  "trimestres_avant": 4, "periodes_depuis": 2011}
+#: « Chaque période ultérieure […] à condition qu'elle succède sans solution
+#: de continuité à une période de chômage indemnisé, dans la limite d'un an ;
+#: cette dernière limite est portée à cinq ans lorsque l'assuré justifie d'une
+#: durée de cotisation d'au moins vingt ans, est âgé d'au moins cinquante-cinq
+#: ans […] et ne relève pas à nouveau d'un régime obligatoire ».
+CHOMAGE_NON_INDEMNISE_ULTERIEURE = {"trimestres": 4, "trimestres_senior": 20,
+                                    "age_senior": 55, "cotises_senior": 80}
+
+
+def limiter_chomage_non_indemnise(lignes: list[AnneeCarriere], annee_naissance: int,
+                                  declarees: frozenset[int] = frozenset()
+                                  ) -> list[AnneeCarriere]:
+    """Les trimestres que le chômage non indemnisé valide VRAIMENT.
+
+    Le modèle en validait quatre par an, sans limite : huit ans déclarés
+    comme tels faisaient trente-deux trimestres, là où le droit en compte six.
+    Rien avant 1980. La première période — la première série d'années, et ce
+    qui reste de son enveloppe pour une série qui ne suit pas un chômage
+    indemnisé — prend l'enveloppe de la première période, quatre trimestres
+    pour une année d'avant 2011, six depuis ; une série qui suit une année de
+    chômage indemnisé en prend quatre, vingt pour l'assuré de cinquante-cinq
+    ans qui a vingt ans de cotisations et ne retravaille pas.
+
+    ``declarees`` : les années dont un relevé porte les trimestres. La caisse
+    les a déjà limités, et ce qu'elle a validé fait foi.
+    """
+    premiere = CHOMAGE_NON_INDEMNISE_PREMIERE
+    ulterieure = CHOMAGE_NON_INDEMNISE_ULTERIEURE
+    ordre = sorted(range(len(lignes)), key=lambda i: lignes[i].annee)
+    resultat = list(lignes)
+    cotises = 0
+    precedente: AnneeCarriere | None = None
+    #: La première période a-t-elle commencé, et combien en a-t-elle pris ?
+    premiere_vue = False
+    pris_premiere = 0
+    reste_serie = 0
+    serie_premiere = True
+    for rang, indice in enumerate(ordre):
+        ligne = lignes[indice]
+        if (ligne.type_periode != "chomage_non_indemnise"
+                or ligne.annee in declarees):
+            if ligne.cotisations_versees:
+                cotises += ligne.trimestres_valides
+            precedente = ligne
+            continue
+        debut_serie = (precedente is None
+                       or precedente.type_periode != "chomage_non_indemnise"
+                       or precedente.annee != ligne.annee - 1)
+        if debut_serie:
+            suit_indemnise = (precedente is not None
+                              and precedente.type_periode == "chomage_indemnise"
+                              and precedente.annee == ligne.annee - 1)
+            serie_premiere = not premiere_vue or not suit_indemnise
+            if not serie_premiere:
+                retravaille = any(lignes[j].cotisations_versees
+                                  for j in ordre[rang + 1:])
+                senior = (ligne.annee - annee_naissance >= ulterieure["age_senior"]
+                          and cotises >= ulterieure["cotises_senior"]
+                          and not retravaille)
+                reste_serie = (ulterieure["trimestres_senior"] if senior
+                               else ulterieure["trimestres"])
+        if ligne.annee < premiere["valide_depuis"]:
+            accordes = 0
+        elif serie_premiere:
+            premiere_vue = True
+            plafond = (premiere["trimestres"]
+                       if ligne.annee >= premiere["periodes_depuis"]
+                       else premiere["trimestres_avant"])
+            accordes = min(ligne.trimestres_valides, max(0, plafond - pris_premiere))
+            pris_premiere += accordes
+        else:
+            accordes = min(ligne.trimestres_valides, reste_serie)
+            reste_serie -= accordes
+        if accordes != ligne.trimestres_valides:
+            resultat[indice] = replace(ligne, trimestres_valides=accordes)
+        precedente = ligne
+    return resultat
 
 
 def _ligne_annuelle(
@@ -653,6 +743,10 @@ class Carriere:
                 trimestres_maximum=trimestres_civils(mois),
                 trimestres_declares=ligne.trimestres,
             ))
+        lignes = limiter_chomage_non_indemnise(
+            lignes, annee_naissance,
+            frozenset(l.annee for l in releve if l.trimestres is not None),
+        )
 
         return cls(
             annee_naissance=annee_naissance,
@@ -855,6 +949,7 @@ class Carriere:
                 part_primes=part_primes,
                 trimestres_maximum=trimestres_maximum,
             ))
+        lignes = limiter_chomage_non_indemnise(lignes, annee_naissance)
 
         dates_entree: dict[str, DateMois] = {}
         for metier, ouverture, _ in periodes:

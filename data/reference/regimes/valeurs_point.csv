@@ -1,6 +1,10 @@
 # Valeurs d'achat et de service du point, régime par régime
 # source_id: agirc_arrco_valeurs_point (Agirc depuis 1947, Arrco et UNIRS),
 #            cdc_ircantec (Ircantec 1971-2021),
+#            ircantec_points (Ircantec 2022-2026 : valeur du point en
+#            vigueur au 31 décembre, salaire de référence et pourcentage
+#            d'appel, lus sur le site de l'Ircantec le 23 septembre 2026 ;
+#            source_valeurs_point_ircantec_publiees de verifier_donnees.py),
 #            ipp_points_independants (complémentaires artisans 1979-2012 et
 #            commerçants 2004-2012), openfisca_points (le reste)
 #
@@ -578,7 +582,11 @@ igrante,2018,valeur_service,0.478870,haute
 igrante,2019,valeur_service,0.480310,haute
 igrante,2020,valeur_service,0.485110,haute
 igrante,2021,valeur_service,0.487050,haute
-igrante,2022,valeur_service,0.492410,haute
+igrante,2022,valeur_service,0.512110,haute
+igrante,2023,valeur_service,0.516210,haute
+igrante,2024,valeur_service,0.543570,haute
+igrante,2025,valeur_service,0.555530,haute
+igrante,2026,valeur_service,0.560530,haute
 ipacte,1947,salaire_reference,0.040000,haute
 ipacte,1948,salaire_reference,0.560000,haute
 ipacte,1949,salaire_reference,0.064000,haute
@@ -696,7 +704,11 @@ ipacte,2018,valeur_service,0.478870,haute
 ipacte,2019,valeur_service,0.480310,haute
 ipacte,2020,valeur_service,0.485110,haute
 ipacte,2021,valeur_service,0.487050,haute
-ipacte,2022,valeur_service,0.492410,haute
+ipacte,2022,valeur_service,0.512110,haute
+ipacte,2023,valeur_service,0.516210,haute
+ipacte,2024,valeur_service,0.543570,haute
+ipacte,2025,valeur_service,0.555530,haute
+ipacte,2026,valeur_service,0.560530,haute
 ircantec,1949,valeur_service,0.009150,haute
 ircantec,1950,valeur_service,0.012200,haute
 ircantec,1951,valeur_service,0.016770,haute
@@ -873,7 +885,19 @@ ircantec,2021,salaire_reference,5.028000,certifiee
 ircantec,2021,taux_appel,1.250000,certifiee
 ircantec,2021,valeur_service,0.487050,certifiee
 ircantec,2022,salaire_reference,5.083000,haute
-ircantec,2022,valeur_service,0.492410,haute
+ircantec,2022,valeur_service,0.512110,haute
+ircantec,2023,salaire_reference,5.329000,haute
+ircantec,2023,taux_appel,1.250000,haute
+ircantec,2023,valeur_service,0.516210,haute
+ircantec,2024,salaire_reference,5.611000,haute
+ircantec,2024,taux_appel,1.250000,haute
+ircantec,2024,valeur_service,0.543570,haute
+ircantec,2025,salaire_reference,5.735000,haute
+ircantec,2025,taux_appel,1.250000,haute
+ircantec,2025,valeur_service,0.555530,haute
+ircantec,2026,salaire_reference,5.787000,haute
+ircantec,2026,taux_appel,1.269643,haute
+ircantec,2026,valeur_service,0.560530,haute
 msa_rco,2005,valeur_service,0.297200,certifiee
 msa_rco,2006,valeur_service,0.302300,certifiee
 msa_rco,2007,valeur_service,0.307700,certifiee

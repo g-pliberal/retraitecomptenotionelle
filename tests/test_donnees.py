@@ -523,6 +523,8 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "quotients_mortalite_anciens": "mortalite/quotients_periode.csv",
         "valeurs_point": "regimes/valeurs_point.csv",
         "valeurs_point_ircantec": "regimes/valeurs_point.csv",
+        # La suite de la Caisse des dépôts, lue sur la page du régime.
+        "valeurs_point_ircantec_publiees": "regimes/valeurs_point.csv",
         "valeurs_point_cnbf": "regimes/valeurs_point.csv",
         "valeurs_point_rafp": "regimes/valeurs_point.csv",
         "valeurs_point_cnavpl": "regimes/valeurs_point.csv",

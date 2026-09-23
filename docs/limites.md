@@ -31,7 +31,7 @@ Ce qui suit est le recensement complet de ses paramètres et de leur état.
 | Décote de la fonction publique | article L. 14, montée en charge 2006-2020 | **certifiée** (loi de 2003, article 66 III) jusqu'à 2019 ; la ligne 2020 est la jonction avec L. 14 |
 | Carrière longue | quatre étapes datées au mois, 2004, novembre 2012, septembre 2023, septembre 2026 ; la borne des vingt ans par génération | **certifiée** pour la règle générale de 2023 (L. 351-1-1, D. 351-1-1) ; les lignes par génération et celles de 2026 transcrites du II de l'article et de la circulaire Cnav 2026-17 |
 | Trimestres accordés au titre des enfants | MDA à <!--chiffre:cellule(data/reference/legislation/majoration_duree_assurance.csv:trimestres_par_enfant?dispositif=mda&debut=1972)-->4<!--/--> puis <!--chiffre:cellule(data/reference/legislation/majoration_duree_assurance.csv:trimestres_par_enfant?dispositif=mda&debut=1975)-->8<!--/--> trimestres par enfant (1972, 1975) ; bonification de la fonction publique à <!--chiffre:cellule(data/reference/legislation/majoration_duree_assurance.csv:trimestres_par_enfant?dispositif=bonifications&debut=1900)-->4<!--/--> puis <!--chiffre:cellule(data/reference/legislation/majoration_duree_assurance.csv:trimestres_par_enfant?dispositif=bonifications&debut=2004)-->2<!--/--> (2004) | reprise des textes, non recontrôlée |
-| Surcote parentale | <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:taux_par_trimestre*100?debut=2023)-->1,25<!--/--> % par trimestre entre <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:age_ouverture?debut=2023)-->63<!--/--> ans et l'âge légal, <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:trimestres_maximum?debut=2023)-->4<!--/--> au plus | reprise des textes (L. 351-1-2-1), non recontrôlée |
+| Surcote parentale | <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:taux_par_trimestre*100?debut=2023)-->1,25<!--/--> % par trimestre cotisé dans l'année qui précède l'âge légal, dès que celui-ci atteint <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:age_ouverture?debut=2023)-->63<!--/--> ans, <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:trimestres_maximum?debut=2023)-->4<!--/--> au plus | reprise des textes (L. 351-1-2-1), non recontrôlée |
 | Durée requise par génération | table 1934-1975, <!--chiffre:cellule(data/reference/legislation/duree_assurance_requise.csv:trimestres?generation=1934)-->151<!--/--> → <!--chiffre:maximum(data/reference/legislation/duree_assurance_requise.csv:trimestres)-->172<!--/--> trimestres, suspension de 2026 comprise (<!--chiffre:cellule(data/reference/legislation/duree_assurance_requise.csv:trimestres?generation=1965)-->170<!--/--> pour 1964 et le premier trimestre 1965, <!--chiffre:cellule(data/reference/legislation/duree_assurance_requise.csv:trimestres?generation=1965.25)-->171<!--/--> jusqu'à fin 1965, <!--chiffre:cellule(data/reference/legislation/duree_assurance_requise.csv:trimestres?generation=1966)-->172<!--/--> dès 1966) | **certifiée** depuis 1953 (L. 161-17-3 réécrit par la loi de financement pour 2026, relu dans l'index LEGI à jour ; décrets pour 1953-1957) et pour 1934-1942 (R. 351-45) ; 1943-1952 transcrite |
 | Durée de proratisation par génération | table 1900-1948, <!--chiffre:minimum(data/reference/legislation/duree_proratisation.csv:trimestres)-->150<!--/--> → <!--chiffre:maximum(data/reference/legislation/duree_proratisation.csv:trimestres)-->160<!--/--> trimestres | **certifiée** (R. 351-6 II) jusqu'à 1947 ; la ligne 1948 est la jonction avec la durée requise, que l'article ne fixe pas |
 | Heures de SMIC pour valider un trimestre | <!--chiffre:cellule(data/reference/legislation/validation_trimestres.csv:heures?annee=1972)-->200<!--/--> depuis 1972, <!--chiffre:cellule(data/reference/legislation/validation_trimestres.csv:heures?annee=2014)-->150<!--/--> depuis 2014 | **certifiée** (R. 351-9) |
@@ -108,9 +108,13 @@ se voit que sur un polypensionné.
   ordinaire ne récompense pas puisqu'elle ne compte qu'au-delà de l'âge légal.
   L'article L. 351-1-2-1 la paie 1,25 % par trimestre, quatre au plus, à qui
   détient au moins un trimestre de majoration pour enfants. Elle vaut jusqu'à
-  5 % de pension, et le modèle servait zéro. Sa montée en charge suit l'âge
-  légal de la génération : rien jusqu'à la génération 1964, un trimestre pour
-  1965, quatre à partir de 1968.
+  5 % de pension, et le modèle servait zéro. Il l'a ensuite servie sur une
+  fenêtre fausse, de 63 ans à l'âge légal, et à la seule condition d'avoir la
+  durée requise à 63 ans : zéro trimestre à la génération 1965 née après mars,
+  un à 1966, deux à 1967, trois à 1968. Le texte compte les trimestres cotisés
+  de l'année qui PRÉCÈDE l'âge légal, au-delà de la durée requise, dès que cet
+  âge atteint 63 ans : quatre au plus à chacune de ces générations. Corrigé le
+  23 septembre 2026.
 - **La surcote était restée à 0,75 % jusqu'en 2010.** La loi de financement de
   la sécurité sociale pour 2009 l'a portée à 1,25 % par trimestre au 1er janvier
   2009 — deux années de liquidations recevaient donc une surcote deux tiers trop
@@ -6499,7 +6503,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
-  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/--> en 2070 pour le scénario 3 ne se lit donc
+  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,69<!--/--> en 2070 pour le scénario 3 ne se lit donc
   pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->41<!--/--> % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
@@ -8056,7 +8060,7 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,34<!--/--> %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,17<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **trois
 points à l'arrivée**.
@@ -8439,10 +8443,10 @@ entrée à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.litteratur
 | | Salarié du privé non cadre | Fonctionnaire d'État |
 |---|---:|---:|
 | 2. Notionnel rétroactif, part salariale | **<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> %** | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=2)-->−77,3<!--/--> %** |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,7<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−22,9<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,7<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+40,2<!--/--> %** |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−7,9<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−11,5<!--/--> % |
-| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−34,7<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->+34,4<!--/--> % |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,5<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−22,9<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,5<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+40,2<!--/--> %** |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−7,6<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−11,5<!--/--> % |
+| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−34,5<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->+34,4<!--/--> % |
 
 ### Ce n'est pas une contradiction : c'est la somme de quatre choix
 
@@ -8453,7 +8457,7 @@ prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
    et l'un comme l'autre **conservent les droits déjà acquis**. Les scénarios 2
    et 4 recalculent la carrière ENTIÈRE depuis 1941. Le dépôt publie lui-même
    la mesure de ce choix : les scénarios 3 et 5, qui figent les droits acquis
-   comme le fait la littérature, ramènent l'écart de <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> % à <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,7<!--/--> % pour le
+   comme le fait la littérature, ramènent l'écart de <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> % à <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,5<!--/--> % pour le
    salarié du privé. **L'essentiel de l'écart est de la rétroactivité, rien
    d'autre.**
 2. **Les droits non contributifs.** La CNAV les CONSERVE et les convertit en
@@ -8468,7 +8472,7 @@ prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
    que la part SALARIALE, soit <!--chiffre:mesure(part_salariale_versee?exemple=litterature_prive)-->40<!--/--> % du total versé pour le salarié du privé et
    <!--chiffre:mesure(part_salariale_versee?exemple=litterature_etat)-->18<!--/--> % pour le fonctionnaire. La littérature raisonne toujours sur la
    cotisation entière. Le scénario 4 est la comparaison honnête, et il donne
-   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,7<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+40,2<!--/--> %** pour le fonctionnaire.
+   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,5<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+40,2<!--/--> %** pour le fonctionnaire.
 4. **L'âge de liquidation.** La CNAV suppose les âges de départ INCHANGÉS, et
    observe malgré tout que ses perdants partent à <!--chiffre:illustration()-->60<!--/--> ans et ses gagnants à 65.
    Ici, le diviseur est la seule sanction du départ précoce, et il n'est pas
@@ -8550,7 +8554,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2202<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2206<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

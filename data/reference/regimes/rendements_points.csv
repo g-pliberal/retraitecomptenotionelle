@@ -43,10 +43,18 @@ arrco,1990,1999,0.0861,haute
 arrco,2000,2009,0.0694,haute
 arrco,2010,2018,0.0645,haute
 unirs,1957,1961,0.1136,haute
-agirc_arrco,2019,2100,0.0581,haute
+agirc_arrco,2019,2026,0.0581,haute
+# Au-delà du dernier barème publié, le rendement de ce barème, comme pour le
+# RCI plus bas : la moyenne 2019-2026, 5,81 %, prêtait aux années projetées
+# un rendement que le régime ne sert plus depuis 2023. 2026 : 1,4386 /
+# (1,27 × 20,1877).
+agirc_arrco,2027,2100,0.0561,haute
 ircantec,1971,1989,0.2281,haute
 ircantec,1990,2008,0.1225,haute
-ircantec,2009,2100,0.0852,haute
+ircantec,2009,2026,0.0852,haute
+# Même règle : 8,52 % était la moyenne 2009-2021, quand le dernier barème,
+# lu sur le site de l'Ircantec, rend 0,56053 / (7,11 / 5,60 × 5,787) en 2026.
+ircantec,2027,2100,0.0763,haute
 # Artisans et commerçants : CES DEUX LIGNES NE SERVENT PLUS. Depuis que les
 # barèmes IPP versent le prix d'achat et la valeur de service de ces deux
 # régimes dans valeurs_point.csv, le moteur accumule de vrais points et ne

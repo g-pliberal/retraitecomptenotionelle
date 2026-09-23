@@ -121,6 +121,20 @@ champs_periode:
 
   taux_plein: "taux de liquidation maximal (0.50 = 50 %)"
 
+  taux_maximum_bonifie:
+    description: >-
+      Taux de liquidation que les BONIFICATIONS peuvent atteindre au-delà de
+      `taux_plein`, les services seuls ne le dépassant jamais. La fonction
+      publique le fixe à 80 % pour un maximum de 75 % : « Le pourcentage
+      maximum fixé à l'article L 13 peut-être augmenté de cinq points du chef
+      des bonifications » (L. 12 CPCMR) ; « peut être porté à 80 % par l'effet
+      des bonifications » (décret n° 2003-1306, art. 15 III, pour la CNRACL ;
+      décret n° 2004-1056, art. 12 II, pour les ouvriers de l'État). Les
+      trimestres liquidables valent alors au plus la durée requise, plus les
+      bonifications dans la limite de ces cinq points.
+    unite: "fraction, supérieure à `taux_plein`"
+    defaut: null
+
   salaire_reference:
     description: "assiette de calcul du salaire de référence"
     valeurs: ["dernier_salaire", "derniers_6_mois", "10_meilleures_annees",
