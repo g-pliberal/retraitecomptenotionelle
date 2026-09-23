@@ -1468,6 +1468,51 @@ institutions:
           lecteur, et le blocage reste `reseau` tant qu'une session ne joint
           pas l'hôte.
 
+      - id: ccomptes_retraites_fpe_2026
+        titre: >-
+          Les retraites des fonctionnaires de l'État, communication à la
+          commission des finances de l'Assemblée nationale (article 58-2 de la
+          LOLF), 22 septembre 2026
+        url: https://www.ccomptes.fr/fr/publications/les-retraites-des-fonctionnaires-de-letat
+        document: https://www.ccomptes.fr/sites/default/files/2026-09/20260922-Retraites-fonctionnaires-de-l-Etat.pdf
+        acces: document
+        sha256: 3d0a439f5bdf86ad8a6fe8409123573fa16c89b274b9662482dd00c5178e41db
+        statut_integration: controle
+        note: >-
+          Cent dix-huit pages, lues en entier le 23 septembre 2026 depuis une
+          session de bureau, qui a joint `ccomptes.fr` sans difficulté ; les
+          données de ses vingt-six graphiques sont publiées à côté
+          (`Open-data-58-2-Retraites-FPE.zip`, empreinte 10d8ac5b…be9c). Le
+          rapport n'alimente aucune valeur : il en CONTRÔLE, et il a fait
+          corriger le scénario 1. (1) Son tableau n° 20 (annexe
+          n° 3) donne la durée requise des emplois classés génération par
+          génération ; il a démenti la lecture que le dépôt faisait du « a) »
+          du XXIV de la loi de 2023, et c'est la seconde phrase du III de
+          L. 13 qui manquait : un droit ouvert avant soixante ans se voit
+          opposer la durée de la génération qui a soixante ans cette année-là
+          (`duree_requise_avant_soixante_ans.csv`, neuf lignes rejouées dans
+          `exemples_officiels.yaml`). (2) Il rappelle que la RAFP ne retient
+          les primes que dans la limite de 20 % du traitement indiciaire —
+          l'article 2 du décret n° 2004-569 depuis 2004 —, que l'action 119
+          de la feuille de route a appliqué le même jour
+          (`plafond_primes_traitement`). Ce qu'il CONFIRME :
+          le minimum garanti de 2026 (1 366,35 € par mois), le point d'indice
+          (4,923 € depuis juillet 2023), les taux de contribution employeur de
+          l'État de 2006 à 2026, la retenue de 7,85 % en 2010, 9,54 % en 2015
+          et 11,10 % depuis 2020, le minimum contributif majoré de 2026
+          (903,9 €). Deux écarts expliqués sans correction : son graphique
+          n° 23 donne 58,47 % pour l'État en 2009, moyenne de l'année, quand
+          le dépôt porte le taux appelé au 1er janvier (60,14 %, ramené à
+          40,14 % en décembre selon la note 3 du jaune pensions 2026, qui fait
+          de même pour 2013 : 44,28 % en décembre, 71,78 % en moyenne, que la
+          Cour ne reprend pas) ; et le plafond d'écrêtement du minimum
+          contributif qu'il cite, 1 410,89 €, est celui du 1er janvier 2026,
+          quand le dépôt porte celui du 1er juin (1 444,89 €, circulaire Cnav
+          2026/16). Le reste du rapport — la décomposition du taux de
+          contribution de l'État en 44,1 % (civils) et 51,2 % (militaires),
+          l'espérance de vie à 65 ans par catégorie, la part des primes, les
+          effectifs — est versé à l'action 120 de la feuille de route.
+
   progedo_adisp:
     nom: Progedo — Archives de données issues de la statistique publique (ADISP)
     role: >-

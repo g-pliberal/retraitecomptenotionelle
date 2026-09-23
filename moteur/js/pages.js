@@ -7495,6 +7495,23 @@ function ecartPlafondDecote(simulateur, generation) {
   return actif - sedentaire;
 }
 
+/**
+ * De combien le classement abaisse la durée requise, au même départ : les deux
+ * mêmes carrières. Un droit ouvert avant soixante ans a la durée de la
+ * génération qui a soixante ans cette année-là (L. 13, III) ; l'écart se
+ * calcule — voir `_ecart_duree_classement` en Python.
+ */
+function ecartDureeClassement(simulateur, generation) {
+  const cas = CAS_TYPES.find((c) => c.code === "fonctionnaire_actif");
+  const [actif, sedentaire] = [null, "fonctionnaire_territorial_hospitalier"].map(
+    (affiliation) => simulateur.simuler(carriereVariante(
+      simulateur, cas, generation, 57, affiliation,
+    )).actuel.trimestres_requis,
+  );
+  const ecart = sedentaire - actif;
+  return ecart === 1 ? "d'un trimestre" : `de ${ecart} trimestres`;
+}
+
 function avantages(contexte, regards = null) {
   const inventaire = contexte.inventaireAvantages();
   const c = contexte.avantages();
@@ -7769,8 +7786,9 @@ Un agent de catégorie active parti à 57 ans et un agent sédentaire parti le m
 jour butent donc tous deux sur le même plafond : leurs pensions ne diffèrent que
 de ${g.euros(ecartPlafondDecote(contexte.simulateur(), 1960))} par an pour la
 génération 1960, et de ${g.euros(ecartPlafondDecote(contexte.simulateur(), 1965))}
-pour celle de 1965, dont le classement abaisse par ailleurs la durée requise
-d'un trimestre. Le montant ne
+pour celle de 1965 ; le classement y abaisse par ailleurs la durée requise
+${ecartDureeClassement(contexte.simulateur(), 1960)} pour la première,
+${ecartDureeClassement(contexte.simulateur(), 1965)} pour la seconde. Le montant ne
 sait pas distinguer celui qui part cinq ans trop tôt ; la durée le sait.</p>
 <p>Le classement de l'emploi en porte
 ${g.pourcentage(partClassement, false, 0)}. Le reste se partage entre les

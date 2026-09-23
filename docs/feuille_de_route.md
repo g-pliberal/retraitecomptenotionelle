@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 412<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 141<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 554<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 278<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15308,3 +15308,197 @@ ligne `rafp_assiette_plafond` du registre de veille et le récit de
 `tests/test_simulateur.py`, `tests/js/moteur.test.js`, les témoins ;
 `data/reference/legislation/veille.yaml`, `data/sources_a_explorer.yaml`,
 `data/reference/prose/zones.yaml`, `docs/limites.md`.
+
+### 120. Le rapport de la Cour des comptes sur les retraites des fonctionnaires de l'État : une règle rendue au scénario 1, et ce qu'il reste à en tirer — `fait`
+
+**Demande.** « Regarde ce rapport […]. Prends tout ce qui pourrait être utile
+pour notre projet. » Le rapport est la communication de la Cour des comptes à
+la commission des finances de l'Assemblée nationale du 22 septembre 2026, « Les
+retraites des fonctionnaires de l'État » : cent dix-huit pages, lues en entier,
+et les données de ses vingt-six graphiques, publiées à côté. `data/sources.yaml`
+le porte sous `ccomptes_retraites_fpe_2026`, au statut `controle` : il n'alimente
+aucune valeur, il en contrôle.
+
+**Première règle : la durée d'un droit ouvert avant soixante ans.** Le tableau
+n° 20 de l'annexe n° 3 donne la durée requise des emplois classés génération
+par génération : 166 trimestres pour un super-actif né en 1965, 167 de 1966 à
+1968, 168 jusqu'en août 1971 ; 168 pour un actif né en 1965 et jusqu'en août
+1966. Le modèle opposait 169 au super-actif né en 1965, 169 ou 170 à ceux nés
+de 1966 à 1969, 171 à ceux nés en 1970 et 1971, et 169 à l'actif né en 1965 et
+1966. L'action 94 avait lu le
+« a) » du XXIV de la loi de 2023 — « celle applicable avant l'entrée en vigueur
+du présent XXIV » — comme l'ancienne table par génération ; il manquait la
+seconde phrase du III de L. 13 dans sa version de 2014 (LEGIARTI000028498258),
+relue dans l'index LEGI : « la durée des services et bonifications exigée des
+fonctionnaires de l'Etat et des militaires qui remplissent les conditions de
+liquidation d'une pension avant l'âge de soixante ans est celle exigée des
+fonctionnaires atteignant cet âge l'année à compter de laquelle la liquidation
+peut intervenir ». L'article 5, VI, de la loi de 2003 disait la même chose
+depuis 2010, et l'article 66 de la même loi, par année d'ouverture, depuis 2004
+— c'est la table de 2004-2008 que le dépôt lisait déjà à la bonne clé. Chaque
+valeur de la Cour est la durée de la génération qui a soixante ans l'année où
+le droit s'ouvre ; aucune n'est celle de la génération de l'agent. Et la
+« non-monotonie que le texte assume », que l'action 94 croyait lire — 171
+trimestres en juin 1971, 169 en octobre —, disparaît : 168, puis 169.
+
+La règle vaut aussi pour le militaire, qui ouvre son droit à une durée de
+services, avec deux étages de plus : avant 2004, la durée en vigueur était de
+150 trimestres (« Jusqu'en 2003 : 150 », article 66) ; à compter du
+1er septembre 2023, le C du XXIV lui en fixe une propre — 169, 170 en 2025, 171
+en 2027, 172 dès 2028. Le modèle lui opposait la durée de SA génération, lue
+à l'année de sa liquidation : 172 trimestres au sous-officier né en 1970 dont
+le droit s'ouvrait en 2002.
+
+`duree_requise_avant_soixante_ans.csv` porte les deux règles — par année
+d'ouverture de 2009 à 2033, par date d'ouverture pour le C —, et
+`_duree_requise_avant_soixante_ans` les lit quand la pension militaire ou le
+classement de l'emploi ouvre le droit avant soixante ans ; les lignes de
+`categorie_active.csv` qui portaient l'ancienne table sont vidées ou retirées.
+Ce que cela déplace, génération par génération, pour un départ à l'âge
+d'ouverture : de un à quatre trimestres de moins à l'actif né de 1954 à août
+1966, de deux à six au super-actif né de 1959 à août 1971, de douze à quinze
+au super-actif né de 1950 à 1953, dont le droit s'ouvrait avant 2004. En
+pension, à soixante ans pour l'actif et à cinquante-sept pour le super-actif :
++1,22 % à l'actif né en 1957, +0,60 % à ceux nés en 1962 et 1965, +3,09 % au
+super-actif né en 1960, +1,81 % et +1,79 % à ceux nés en 1965 et 1970. Pour un
+militaire entré à dix-huit ans et parti à quarante-cinq : +14,67 % au né en
+1970, +3,58 % au né en 1980 ; rien aux nés de 1985 et 1990, dont les services
+atteignent déjà le pourcentage maximum. Neuf lignes du tableau n° 20 entrent
+dans `exemples_officiels.yaml`, où la Cour devient le quatrième éditeur admis :
+elle n'applique pas la règle, mais elle est la seule à publier cette table.
+
+**Une seconde règle, que l'action 119 a portée le même jour.** Le rapport
+rappelle aussi que la RAFP ne retient les primes que dans la limite de 20 % du
+traitement indiciaire — l'article 2 du décret n° 2004-569 dans toutes ses
+versions depuis 2004 —, ce que la fiche écrivait sans qu'aucun moteur le lise.
+Cette session l'avait codé de son côté ; l'action 119 l'a poussé la première,
+avec un champ de période (`plafond_primes_traitement`) et un découpage unique
+du revenu (`part_du_revenu`), et c'est sa version qui reste. Le rapport en est
+une confirmation de plus.
+
+**Ce que les témoins ont vu.** Seuls des cas de la fonction publique bougent ;
+les autres écarts du fichier des simulations sont au seizième chiffre. Les
+emplois classés, sur l'État, la CNRACL et les ouvriers de l'État :
++2,06 % de pension au cas né en 1945, dont le droit s'ouvrait à cinquante-cinq
+ans en 2000 et qui se voit opposer 150 trimestres au lieu de 160 ; +1,16 % à
+celui né en 1955 (162 au lieu de 166) ; +1,20 % à celui né en 1965 (168 au lieu
+de 169 pour l'actif, 166 pour le super-actif). Les militaires : leur pension
+du scénario 1 ne bouge pas, leurs services atteignant le pourcentage maximum,
+mais la durée qu'on leur oppose — 150 trimestres au lieu de 170 pour le
+sous-officier né en 1965, 162 pour l'officier — relève les droits acquis que le
+scénario prospectif convertit : +6,2 % de pension figée pour le premier. Les
+agrégats ne bougent que d'un
+dixième : la dépense du système actuel en 2070 passe de 18,3 à 18,2 % du PIB,
+parce que la dépense de 2024 est calée sur l'observé et que la correction
+relève les pensions des générations parties avant 2023 sans toucher celles de
+2070 ; les avantages chiffrés de 2024, de 96,3 à 96,1 milliards, dont la ligne
+de la catégorie active de 0,6 à 0,7.
+
+**Trois tests et une phrase du site disaient l'ancienne lecture.** Les tests de
+l'action 94 attendaient 169 trimestres pour l'actif né en 1965, 168 pour celui
+né en 1963, et « l'escalier qui redescend » — 171 puis 169 — pour le super-actif
+de 1971 ; ils attendent désormais 168, 167, et 168 puis 169. La page Avantages
+écrivait que le classement abaisse la durée requise « d'un trimestre » pour la
+génération 1965 : il l'abaisse de quatre, et d'un pour 1960, et la phrase le
+calcule désormais des deux côtés du portage (`_ecart_duree_classement`).
+
+**Ce que le rapport confirme, et deux écarts qu'il explique.** Le minimum
+garanti de 2026 (1 366,35 € par mois), la valeur du point (4,923 € depuis
+juillet 2023), la retenue de 7,85 % en 2010, 9,54 % en 2015 et 11,10 % depuis
+2020, les taux de contribution de l'État de 2006 à 2026 (graphique n° 23), le
+minimum contributif majoré de 2026. Deux écarts, sans correction. La Cour
+donne 58,47 % pour l'État en 2009 là où le dépôt porte 60,14 % : c'est la
+moyenne de l'année, le taux ayant été ramené à 40,14 % en décembre (note 3 du
+jaune pensions 2026, qui fait de même pour 2013, à 44,28 % — ce que la Cour ne
+reprend pas, son graphique donnant 74,28 % pour 2013). Et le plafond
+d'écrêtement du minimum contributif qu'elle cite, 1 410,89 € par mois, est
+celui du 1er janvier 2026, quand le dépôt porte celui du 1er juin (1 444,89 €,
+circulaire Cnav 2026/16) — le barème de la Cnav, lisible par son interface
+(`/api/v1/baremes/baremesByFileLeafRef/retraite_personnelle_minimum_plafond_retraite_bar.aspx`),
+les donne l'un et l'autre avec leur circulaire. Ce barème montre en revanche
+un écart que le rapport n'a pas visé : 1 394,44 € au 1er novembre 2024 et au
+1er janvier 2025, là où le dépôt porte pour 2025 1 394,86 €, le plafond de
+janvier 2024 relevé de 2 % ; quarante-deux centimes par mois, que le
+récupérateur de ce barème, à écrire, trancherait.
+
+**Ce que le rapport apporte et qui reste à prendre.** Classé par ce que
+chaque chantier déplacerait.
+
+1. *La décomposition du taux de contribution de l'État.* Le compte
+   d'affectation spéciale appelle 78,28 % du traitement en 2025 pour un civil
+   et 126,07 % pour un militaire ; la Cour les décompose, en méthode qu'elle dit
+   réplicable chaque année, et n'en garde que 44,1 % et 51,2 % pour la retraite
+   au sens strict : 0,4 et 1,9 point pour l'invalidité avant 62 ans, 2,4 et 3,4
+   pour les majorations pour enfants, 1,5 et 33,8 pour les départs anticipés
+   (« avantages professionnels »), 35,3 et 21,9 pour le déséquilibre
+   démographique (tableau n° 15). Le scénario 4, et le 6 jusqu'à la bascule,
+   créditent aujourd'hui au compte la retenue et le taux civil du CAS,
+   militaires compris. Deux
+   questions en sortent, qui ne se tranchent pas sans l'utilisateur : le
+   militaire, dont l'employeur paie 126,07 %, doit-il se voir créditer le taux
+   civil ; et la part du taux qui finance l'invalidité, la solidarité et la
+   démographie est-elle une cotisation de l'assuré ? La décomposition de la
+   Cour est la réponse chiffrée que « La part patronale du public, et ce qu'on
+   n'en sait pas » (`limites.md`) attendait ; l'Institut des politiques
+   publiques, par une autre méthode, trouvait 34,7 % en 2020 (annexe n° 6).
+2. *La part des primes des cas types*, 18 %, 22 % et 25 %, n'a pas de source.
+   La Cour donne 20,0 % en 2015 et 23,1 % en 2023 pour l'ensemble des
+   fonctionnaires de l'État (graphique n° 13), 14 % dans l'enseignement
+   supérieur, 33 % aux ministères économiques et financiers, 60 % aux affaires
+   étrangères en 2024, et un cas type de catégorie B dont la part passe de 26 %
+   à 35 % de 2025 à 2050. Le paramètre commande le traitement indiciaire, donc
+   la pension civile ; au-dessus d'un sixième, la retraite additionnelle ne
+   suit plus les primes mais le traitement, que son plafond vise.
+3. *L'espérance de vie à 65 ans par catégorie*, moyenne 2015-2024 (tableau
+   n° 9) : 21,22 ans pour un homme sédentaire, 19,65 pour un super-actif,
+   19,91 pour un ancien de La Poste, 19,78 pour les autres actifs ; 24,57 et
+   24,84 pour une sédentaire et une institutrice. L'action 14 donne aux
+   fonctionnaires un facteur de mortalité unique ; l'espérance de vie des
+   emplois classés y est plus courte d'une année et demie, ce que le diviseur
+   ignore.
+4. *Les bonifications des militaires*, hors du modèle : le cinquième pèse
+   environ 10 % de la pension des militaires partis en 2025, les bénéfices de
+   campagne 7 %, les services aériens et sous-marins 5 %, et un quart de leur
+   durée validée (37 trimestres sur 150, génération 1953). C'est elles qui
+   décideraient si la durée requise, désormais juste, mord sur un militaire.
+5. *La même règle de durée dans les régimes spéciaux.* Le lot de l'action 89
+   a donné le même jour à la SNCF, à la RATP et aux IEG leur table par
+   génération (`duree_requise_regimes_speciaux.csv`), et lu « la durée d'avant »
+   comme l'ancienne table par génération — la lecture que l'action 94 avait
+   faite pour la fonction publique. Or l'index LEGI porte, au mot près, « avant
+   l'âge de soixante ans […] l'année à compter de laquelle la liquidation peut
+   intervenir » dans les versions de 2017 à 2023 de l'annexe 3 du statut des
+   IEG, dans l'article 23-1 du règlement de la RATP et, à cinquante-cinq ans,
+   dans l'article 12-1 du décret de la SNCF — l'un et l'autre « jusqu'au
+   31 décembre 2024 » —, et dans les régimes de la Banque de France, de l'Opéra
+   et de la Comédie-Française. Ces tables sont à relire à la même lumière.
+6. *La comparaison à la littérature.* La DREES (Chopard et al., 2022, modèle
+   Trajectoire) trouve qu'un sédentaire né en 1958 aurait une pension
+   supérieure de 1,5 % sous les règles du privé, avec 62 % de gagnants et
+   32 % de perdants, et aurait versé un quart de cotisations salariales de
+   plus ; la Cour montre sur un cas type que les vingt-cinq meilleures années
+   valent 15 % de plus que le dernier traitement si le point est gelé, 5 % s'il
+   suit le tiers des prix, 8 % de moins s'il suit les prix et 30 % de moins s'il
+   suit les salaires (tableau n° 6). Deux points de comparaison pour le
+   § 5 quater de `limites.md`.
+7. *Les effectifs.* Les cotisants et les retraités des civils et des
+   militaires de 2015 à 2025, et leur rapport projeté jusqu'en 2050
+   (graphiques n° 1, 4 et 10), là où `cotisants.csv` les porte sur une seule
+   ligne ; les anciens de La Poste et d'Orange, 50 000 cotisants pour 290 000
+   pensionnés en 2026.
+8. *À surveiller.* Le Président de la République a annoncé le 14 juillet 2026
+   l'intégration d'une part des primes des militaires dans le calcul de leur
+   pension à compter de 2027 : rien au Journal officiel à cette date. Le
+   rapport note aussi que la loi de financement pour 2026 transforme en
+   bonification l'un des deux trimestres de majoration par enfant né depuis
+   2004 — ce que `majoration_duree_assurance.csv` porte déjà.
+
+**Fichiers.** `data/reference/legislation/duree_requise_avant_soixante_ans.csv`
+(nouveau), `data/reference/legislation/categorie_active.csv`,
+`src/retraite_notionnelle/scenarios/actuel.py`, `moteur/js/regimes.js`,
+`moteur/js/scenario-actuel.js`, `scripts/construire_donnees.py`,
+`data/reference/legislation/veille.yaml`, `data/sources.yaml`,
+`tests/temoins/exemples_officiels.yaml`, `tests/test_oracle.py`,
+`tests/test_simulateur.py`, `src/retraite_notionnelle/web/pages.py`,
+`moteur/js/pages.js`, `docs/limites.md`, `docs/methodologie.md`,
+`docs/parcours_presentation.md`, et les fichiers fabriqués.

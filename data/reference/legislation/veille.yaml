@@ -678,13 +678,49 @@ entrees:
       1er septembre 1966 et le 31 décembre 1967, 170 jusqu'au 31 mars 1970, 171
       jusqu'à la fin de 1970, 172 à compter de 1971 ; les mêmes marches cinq ans
       plus tard pour la super-active. Pour ceux qui naissent avant, la durée est
-      « celle applicable avant l'entrée en vigueur » de la réforme de 2023,
-      c'est-à-dire l'ancienne rédaction de L. 161-17-3.
+      « celle applicable avant l'entrée en vigueur » de la réforme de 2023 :
+      non la durée de leur génération, mais celle des fonctionnaires qui
+      atteignent soixante ans l'année où leur droit s'ouvre (L. 13, III,
+      version de 2014).
     textes:
       - "loi n° 2023-270 du 14 avril 2023, article 10, XXIV, B (fonction publique d'État)"
       - "décret n° 2023-435 du 3 juin 2023, article 13, II, B (CNRACL et FSPOEIE)"
+      - "L. 13, III, du code des pensions civiles et militaires, version du 22 janvier 2014"
+      - "loi n° 2003-775 du 21 août 2003, article 5, VI, version du 11 novembre 2010"
       - "L. 161-17-3 CSS, version du 22 janvier 2014"
     sources:
+      - type: legifrance
+        reference: >-
+          L. 13 du code des pensions civiles et militaires, version
+          LEGIARTI000028498258 (22 janvier 2014 – 1er septembre 2023), III, lu
+          dans l'index LEGI : « Par dérogation, la durée des services et
+          bonifications exigée des fonctionnaires de l'Etat et des militaires
+          qui remplissent les conditions de liquidation d'une pension avant
+          l'âge de soixante ans est celle exigée des fonctionnaires atteignant
+          cet âge l'année à compter de laquelle la liquidation peut
+          intervenir. » C'est cette phrase que le « a) » garde en vigueur, et
+          que la lecture du 22 septembre avait manquée.
+        date: "2026-09-23"
+      - type: legifrance
+        reference: >-
+          Loi n° 2003-775, article 5, version LEGIARTI000023030932
+          (11 novembre 2010 – 22 janvier 2014), VI : la même règle, et son
+          extension « aux fonctionnaires affiliés à la Caisse nationale de
+          retraites des agents des collectivités locales et aux ouvriers des
+          établissements industriels de l'Etat ».
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          Cour des comptes, « Les retraites des fonctionnaires de l'État »,
+          communication à la commission des finances de l'Assemblée nationale,
+          22 septembre 2026, annexe n° 3, tableau n° 20 (« Source :
+          législation ») : super-active 166 trimestres pour la génération 1965,
+          167 de 1966 à 1968, 168 de 1969 à août 1971, 169 ensuite ; active 168
+          pour 1965 et jusqu'en août 1966, 169 ensuite. Chaque valeur est la
+          durée de la génération qui a soixante ans l'année où le droit
+          s'ouvre, et aucune n'est celle de la génération de l'agent.
+        url: "https://www.ccomptes.fr/fr/publications/les-retraites-des-fonctionnaires-de-letat"
+        date: "2026-09-22"
       - {type: legifrance, reference: "décret n° 2026-344, article 3 B", date: "2026-05-07"}
       - type: legifrance
         reference: >-
@@ -706,39 +742,124 @@ entrees:
         date: "2026-09-22"
       - type: legifrance
         reference: >-
-          L. 161-17-3 CSS, version LEGIARTI000028494794 du 22 janvier 2014 —
-          celle à laquelle renvoient les « a) » des deux textes : 167 trimestres
-          pour les nés de 1958 à 1960, 168 de 1961 à 1963, 169 de 1964 à 1966,
-          170 de 1967 à 1969, 171 de 1970 à 1972, 172 ensuite.
+          L. 161-17-3 CSS, version LEGIARTI000028494794 du 22 janvier 2014 :
+          167 trimestres pour les nés de 1958 à 1960, 168 de 1961 à 1963, 169 de
+          1964 à 1966, 170 de 1967 à 1969, 171 de 1970 à 1972, 172 ensuite.
+          Lue le 22 septembre comme la table des « a) », elle n'en est que
+          l'étage du dessous : ce qu'elle donne pour la génération qui a
+          soixante ans l'année où le droit de l'agent s'ouvre.
         date: "2026-09-22"
-    verifie_le: "2026-09-22"
-    temoins: []
+    verifie_le: "2026-09-23"
+    temoins:
+      - cdc_2026_tab20_super_active_1965
+      - cdc_2026_tab20_super_active_1968
+      - cdc_2026_tab20_super_active_1971_juin
+      - cdc_2026_tab20_super_active_1971_octobre
+      - cdc_2026_tab20_super_active_1975_juin
+      - cdc_2026_tab20_active_1965
+      - cdc_2026_tab20_active_1966_mars
+      - cdc_2026_tab20_active_1966_octobre
+      - cdc_2026_tab20_active_1968
     reformes: [lfss_2026_suspension]
     etat: conforme
     effet: >-
-      PORTÉ LE 22 SEPTEMBRE 2026, par une colonne de plus dans
-      `categorie_active.csv`, lue par `_duree_requise` quand la dérogation
-      active s'applique — c'est-à-dire aux mêmes quatre conditions que l'âge
-      anticipé, durée de services classés comprise. Ce que cela rend : +1,78 %
-      de pension à un fonctionnaire d'État de catégorie active né en 1967 parti
-      à soixante ans (169 trimestres requis au lieu de 172), +1,18 % à un né en
-      1969, +0,60 % à un né en 1962. La durée requise commandant aussi la
-      proratisation dans la fonction publique, le gain porte sur les deux.
+      PORTÉ LE 22 SEPTEMBRE 2026 pour les marches de 2023, par une colonne de
+      plus dans `categorie_active.csv` ; CORRIGÉ LE 23 SEPTEMBRE 2026 pour les
+      générations d'avant, par `duree_requise_avant_soixante_ans.csv`, que
+      `_duree_requise_avant_soixante_ans` lit à l'année d'ouverture du droit.
+      Le 22 septembre, ces générations recevaient la durée de LEUR génération
+      dans l'ancienne table : de un à quatre trimestres de trop à l'actif né
+      de 1954 à août 1966, de deux à six au super-actif né de 1959 à août 1971,
+      et de douze à quinze au super-actif né de 1950 à 1953, dont le droit
+      s'ouvrait avant 2004 à 150 trimestres. Les générations dont le droit
+      s'ouvrait de 2004 à 2008 étaient justes : la table de la loi de 2003 se
+      lisait déjà à l'année d'ouverture. Ce que la correction rend, à soixante ans pour
+      l'actif et à cinquante-sept pour le super-actif, trente-huit ou
+      trente-cinq ans de services : +1,22 % de pension à l'actif né en 1957,
+      +0,60 % à ceux nés en 1962 et 1965 ; +3,09 % au super-actif né en 1960,
+      +1,81 % à celui né en 1965, +1,79 % à celui né en 1970. La durée requise
+      commandant aussi la proratisation dans la fonction publique, le gain
+      porte sur le taux et sur le prorata à la fois.
     a_faire: >-
-      LA LECTURE DE L'ANCIENNE TABLE A ÉLARGI LE CHANTIER, et c'est ce qu'elle
-      devait faire : le « a) » des deux textes renvoie à la durée applicable
-      avant la réforme de 2023, si bien que la dérogation ne commence pas en
-      1966 mais dès 1961 — quatre générations que le registre ne visait pas.
-      Elles sont portées.
-      RESTE une non-monotonie que le texte assume et que la table reproduit :
-      un super-actif né en juin 1971 se voit opposer 171 trimestres par
-      l'ancienne table, celui qui naît en octobre 1971 seulement 169. Rien
-      n'indique que ce soit une erreur de plume du législateur, et le modèle
-      suit la lettre.
-      RESTE AUSSI à lire le C du même XXIV : la durée des fonctionnaires civils
-      et des militaires qui liquident avant soixante ans sans être classés —
-      169 trimestres, puis un de plus au 1er janvier 2025 et au 1er janvier
-      2027, la table commune à compter de 2028.
+      La « non-monotonie » que cette ligne disait assumée par le texte — 171
+      trimestres pour un super-actif né en juin 1971, 169 pour un né en
+      octobre — venait de la lecture, pas du texte : sous L. 13, III, le
+      premier doit 168 trimestres, et la durée monte d'un cran au 1er septembre
+      1971 sans jamais redescendre. RESTE, dans le C du XXIV, la durée des
+      fonctionnaires CIVILS non classés qui peuvent liquider avant soixante ans
+      (parents de trois enfants, handicap) : le modèle ne sert ces départs à
+      personne. Celle des militaires est portée, ligne `militaires_duree_requise`.
+    prochaine_veille: "2027-03-31"
+
+  - id: militaires_duree_requise
+    regle: >-
+      Durée de services et bonifications requise d'un militaire qui peut
+      liquider avant soixante ans : celle des fonctionnaires qui atteignent
+      soixante ans l'année où son droit s'ouvre (150 trimestres si c'est avant
+      2004, la table de la loi de 2003 de 2004 à 2008) ; et s'il peut liquider
+      à compter du 1er septembre 2023, 169 trimestres, 170 en 2025, 171 en
+      2027, 172 à compter de 2028.
+    textes:
+      - "loi n° 2003-775 du 21 août 2003, article 66 (tableau par année où sont réunies les conditions de L. 24)"
+      - "loi n° 2003-775 du 21 août 2003, article 5, VI, version du 11 novembre 2010"
+      - "L. 13, III, du code des pensions civiles et militaires, version du 22 janvier 2014"
+      - "loi n° 2023-270 du 14 avril 2023, article 10, XXIV, C"
+      - "L. 161-17-3 CSS, 6°, version du 31 décembre 2025"
+    sources:
+      - type: legifrance
+        reference: >-
+          Loi n° 2023-270, article 10, version LEGIARTI000053280920, XXIV, C,
+          lu dans l'index LEGI : « la durée de services et de bonifications
+          requise pour les fonctionnaires civils, autres que ceux mentionnés
+          aux A et B du présent XXIV, et les militaires remplissant les
+          conditions de liquidation de la pension avant l'âge de soixante ans
+          est égale : 1° Pour ceux pouvant liquider leur pension avant le
+          1er septembre 2023, à celle applicable avant l'entrée en vigueur du
+          présent XXIV ; 2° Pour ceux pouvant liquider leur pension à compter
+          du 1er septembre 2023, à 169 trimestres. Cette durée augmente d'un
+          trimestre au 1er janvier 2025 puis au 1er janvier 2027. A compter du
+          1er janvier 2028, cette durée est égale à la durée mentionnée au 6°
+          de l'article L. 161-17-3 du code de la sécurité sociale. »
+        date: "2026-09-23"
+      - type: legifrance
+        reference: >-
+          L. 13 du code des pensions, version LEGIARTI000028498258, III (« des
+          fonctionnaires de l'Etat et des militaires qui remplissent les
+          conditions de liquidation d'une pension avant l'âge de soixante
+          ans ») ; loi n° 2003-775, article 66, version LEGIARTI000006758610,
+          tableau « Jusqu'en 2003 : 150 ; 2004 : 152 […] 2008 : 160 » ;
+          L. 161-17-3, version LEGIARTI000053280903, 6° : 172 trimestres.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          Cour des comptes, « Les retraites des fonctionnaires de l'État »,
+          septembre 2026, chapitre I, III, A : pour les militaires, la durée
+          requise « n'est pas déterminée […] en fonction de l'année de
+          naissance, comme c'est le cas pour les civils. Elle l'est en
+          fonction de l'année où ils ont accompli le nombre d'années de
+          service requis pour bénéficier du droit à liquidation immédiate. »
+        url: "https://www.ccomptes.fr/fr/publications/les-retraites-des-fonctionnaires-de-letat"
+        date: "2026-09-22"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [reforme_2023, lfss_2026_suspension]
+    etat: transcrit
+    effet: >-
+      CORRIGÉ LE 23 SEPTEMBRE 2026. Le modèle opposait au militaire la durée
+      de sa génération, lue à l'année de sa liquidation : 172 trimestres au
+      sous-officier né en 1970 dont le droit s'ouvrait en 2002, là où la loi
+      de 2003 lui en garde 150. Ce que la correction rend, pour un militaire
+      entré à dix-huit ans et parti à quarante-cinq : +14,67 % de pension au né
+      en 1970, +3,58 % au né en 1980 (165 trimestres au lieu de 172) ; rien
+      aux nés de 1985 et 1990, dont les services atteignent déjà le
+      pourcentage maximum.
+    a_faire: >-
+      Aucun exemple chiffré publié : ni le SRE ni service-public ne donnent la
+      durée d'un militaire par année d'ouverture, et la Cour la décrit sans la
+      chiffrer. Les bonifications de service (cinquième, campagnes, services
+      aériens), qui portent un quart de la durée validée des militaires selon
+      la Cour, restent hors du modèle : c'est elles qui décideraient si la
+      durée requise mord.
     prochaine_veille: "2027-03-31"
 
   - id: retraite_anticipee_handicap
@@ -4739,3 +4860,48 @@ journal:
       convertis en points ; la cotisation volontaire des agents de l'État
       outre-mer depuis avril 2024. Et les ouvriers de l'État, que l'article 76
       n'admet pas au régime et que le modèle y affilie depuis 2005.
+
+  - date: "2026-09-23"
+    session: "rapport de la Cour des comptes sur les retraites des fonctionnaires de l'État (action 120)"
+    consulte: >-
+      Le rapport de la Cour des comptes « Les retraites des fonctionnaires de
+      l'État » (communication à la commission des finances de l'Assemblée
+      nationale, 22 septembre 2026), lu en entier, et les données de ses
+      vingt-six graphiques. Dans l'index LEGI : L. 13 du code des pensions
+      civiles et militaires dans ses quatre versions depuis 2004 ; l'article 5
+      de la loi n° 2003-775, version du 11 novembre 2010 ; son article 66 ;
+      l'article 10 de la loi n° 2023-270, version en vigueur, XXIV, A à C ;
+      L. 161-17-3 CSS, versions de 2014 et de 2025 ; l'article 2 du décret
+      n° 2004-569 dans toutes ses versions. Le barème de la Cnav du plafond du
+      minimum contributif, par son interface ; la note 3 du tableau des taux
+      du jaune pensions 2026.
+    trouve: >-
+      Une règle du scénario 1 que le modèle n'appliquait pas. La durée requise
+      d'un droit ouvert avant soixante ans — emploi classé né avant les marches
+      de 2023, militaire — est celle de la génération qui a soixante ans
+      l'année de l'ouverture (L. 13, III ; article 5, VI), et non celle de
+      l'agent : le tableau n° 20 de la Cour le montre génération par
+      génération, et démentait la lecture du 22 septembre ; le militaire qui
+      peut liquider depuis le 1er septembre 2023 relève du XXIV, C. Lignes
+      `categorie_active_duree_requise` (corrigée) et `militaires_duree_requise`.
+      Le rapport rappelle aussi le plafond de 20 % de l'assiette de la RAFP,
+      que la ligne `rafp_assiette_plafond` porte depuis le même jour, d'une
+      autre session. Confirmés par le rapport : minimum garanti et
+      minimum contributif majoré de 2026, point d'indice, retenue et taux
+      employeur de l'État de 2006 à 2026. Le 58,47 % que la Cour donne pour
+      2009 est la moyenne d'une année dont décembre était à 40,14 % ; son
+      1 410,89 € est le plafond du minimum contributif de janvier 2026, le
+      dépôt portant celui de juin.
+    reste: >-
+      La durée des fonctionnaires civils non classés qui peuvent liquider avant
+      soixante ans (XXIV, C), que le modèle ne fait pas partir. La même règle
+      « avant l'âge de soixante ans […] l'année à compter de laquelle la
+      liquidation peut intervenir » est écrite dans l'annexe 3 du statut des
+      IEG, le règlement de la RATP, le décret de la SNCF (à cinquante-cinq
+      ans), les régimes de la Banque de France, de l'Opéra et de la
+      Comédie-Française : à confronter aux tables que l'action 89 a données le
+      même jour à la SNCF, à la RATP et aux IEG. Le plafond du
+      minimum contributif de 2025 : 1 394,44 € au barème de la Cnav, 1 394,86 €
+      au dépôt. L'annonce du 14 juillet 2026 d'une part des primes des
+      militaires dans leur pension à compter de 2027 : rien au Journal
+      officiel à cette date.

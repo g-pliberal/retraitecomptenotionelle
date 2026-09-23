@@ -113,6 +113,51 @@ export class DureesRequisesFonctionPublique {
 }
 
 /**
+ * Durée requise d'un fonctionnaire dont le droit s'ouvre AVANT SOIXANTE ANS.
+ *
+ * Ce n'est pas celle de sa génération mais celle « exigée des fonctionnaires
+ * atteignant [soixante ans] l'année à compter de laquelle la liquidation peut
+ * intervenir » (article 5, VI, de la loi du 21 août 2003, puis L. 13, III, du
+ * code des pensions). Deux règles : ``l13_iii``, par année d'ouverture ;
+ * ``xxiv_c``, les militaires qui peuvent liquider à compter du 1er septembre
+ * 2023. Les clés du paquet sont des rangs de mois (``DateMois.rang``).
+ */
+export class DureesRequisesAvantSoixanteAns {
+  constructor(paquet) {
+    this._table = paquet.durees_requises_avant_soixante_ans ?? {};
+    this._rangs = {};
+    for (const [regle, valeurs] of Object.entries(this._table)) {
+      this._rangs[regle] = Object.keys(valeurs).map(Number).sort((a, b) => a - b);
+    }
+  }
+
+  _marche(regle, rang) {
+    const rangs = this._rangs[regle];
+    if (rangs === undefined || rangs.length === 0 || rang < rangs[0]) {
+      return null;
+    }
+    let retenu = rangs[0];
+    for (const candidat of rangs) {
+      if (candidat > rang) {
+        break;
+      }
+      retenu = candidat;
+    }
+    return this._table[regle][String(retenu)];
+  }
+
+  /** Règle de L. 13, III : la génération qui a soixante ans cette année. */
+  parAnnee(anneeOuverture) {
+    return this._marche("l13_iii", anneeOuverture * 12);
+  }
+
+  /** Règle du XXIV, C, 2° : null avant le 1er septembre 2023. */
+  depuis2023(ouverture) {
+    return this._marche("xxiv_c", ouverture.rang);
+  }
+}
+
+/**
  * Durée d'assurance MAXIMALE prise en compte par la proratisation.
  *
  * Ce n'est pas la durée requise pour le taux plein, et le moteur les
@@ -276,8 +321,9 @@ export class AgesCategorieActive {
       servicesRequis: ligne[2],
       fiabilite: ligne[3],
       // Durée de services et bonifications propre au classement, « par
-      // dérogation à l'article L. 13 ». Nulle quand la durée de la génération
-      // vaut, ce qui est le cas jusqu'à 1961.
+      // dérogation à l'article L. 13 ». Nulle avant les marches de 2023
+      // (septembre 1966, septembre 1971) : la durée est alors celle de
+      // l'année d'ouverture du droit (DureesRequisesAvantSoixanteAns).
       dureeRequise: ligne[4] ?? null,
     };
   }

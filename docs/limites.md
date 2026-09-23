@@ -546,17 +546,23 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   longue des nés en décembre 1965, fixée à <!--chiffre:illustration()-->60<!--/--> ans et 8 mois pour que la
   pension prenne effet le 1er septembre 2026, tombe ici en août 2026, sous le
   décret précédent, qui demande <!--chiffre:illustration()-->60<!--/--> ans et 9 mois.
-- **La durée requise des emplois classés : servie, sauf le C.** Le XXIV, B de
-  l'article 10 de la loi du 14 avril 2023 pour l'État, et le II, B de l'article
-  13 du décret n° 2023-435 pour la CNRACL et le FSPOEIE, donnent aux catégories
-  actives leur propre calendrier de durée — <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1967)-->169<!--/--> trimestres des nés de septembre
-  1966 à 1967, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1971)-->172<!--/--> dès 1971, les mêmes marches cinq ans plus tard pour la
-  super-active —, et `categorie_active.csv` le porte depuis le 22 septembre
-  2026, ancienne table comprise pour les générations d'avant. Reste dehors le C
-  du même XXIV : la durée des fonctionnaires civils et des militaires qui
-  liquident avant soixante ans SANS être classés, <!--chiffre:illustration()-->169<!--/--> trimestres puis un de plus
-  au 1er janvier 2025 et au 1er janvier 2027. Ceux-là se voient encore opposer
-  la durée de leur génération.
+- **La durée requise d'un droit ouvert avant soixante ans : servie, sauf au
+  civil non classé.** Le XXIV, B de l'article 10 de la loi du 14 avril 2023 pour
+  l'État, et le II, B de l'article 13 du décret n° 2023-435 pour la CNRACL et le
+  FSPOEIE, donnent aux catégories actives leur propre calendrier de durée —
+  <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1967)-->169<!--/--> trimestres des nés de septembre 1966 à 1967, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:duree_requise_trimestres?classement=active&generation=1971)-->172<!--/--> dès 1971, les
+  mêmes marches cinq ans plus tard pour la super-active —, et
+  `categorie_active.csv` le porte. Pour l'emploi classé né avant ces marches, et
+  pour le militaire qui pouvait liquider avant le 1er septembre 2023, la durée
+  n'est pas celle de sa génération mais celle de la génération qui a soixante
+  ans l'année où son droit s'ouvre (L. 13, III, du code des pensions, version de
+  2014) : `duree_requise_avant_soixante_ans.csv` la porte, et le super-actif né
+  en 1965 se voit opposer <!--chiffre:cellule(data/reference/legislation/duree_requise_avant_soixante_ans.csv:trimestres?regle=l13_iii&annee_ouverture=2017)-->166<!--/--> trimestres, comme le publie la Cour des comptes.
+  Le militaire qui peut liquider depuis relève du C du même XXIV : <!--chiffre:cellule(data/reference/legislation/duree_requise_avant_soixante_ans.csv:trimestres?regle=xxiv_c&annee_ouverture=2023.667)-->169<!--/-->
+  trimestres, puis un de plus au 1er janvier 2025 et au 1er janvier 2027. Reste
+  dehors le fonctionnaire CIVIL non classé qui liquide avant soixante ans —
+  parent de trois enfants, handicap — : le modèle ne sert ces départs à
+  personne.
 - **Ce qui compte en services dans les régimes spéciaux.** La pension des
   dix-huit régimes spéciaux du catalogue se proratise, comme celle de la
   fonction publique, sur des services et non sur une durée d'assurance ; mais
@@ -2891,7 +2897,7 @@ c'est de là que viennent les −7,2 % et +0,3 %.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->37<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->46<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -2910,6 +2916,7 @@ d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
 | circulaire Cnav 2022-26 | assiette de la majoration pour trois enfants : <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->10<!--/--> % de la retraite telle qu'elle est servie, surcotée, décotée ou pile au taux plein | **exact** |
 | ENIM, pages « Le mode de calcul » et « Les conditions d'attribution » | marin : bonification de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->5<!--/--> % dès deux enfants (R. 14), pension d'ancienneté ouverte à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->50<!--/--> ans pour <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->25<!--/--> ans de services et refusée un trimestre plus tôt (R. 2) | **exact** |
 | CARCDSF, CARMF et CAVAMAC, pages et document d'exemples des sections libérales | la mère de deux enfants au taux plein dès <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->65<!--/--> ans à la CARCDSF ; le coefficient de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->1,15<!--/--> à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->65<!--/--> ans de la CARMF ; à la CAVAMAC, la décote du régime de base au plus favorable de l'âge et de la durée (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->5<!--/--> %), sa surcote de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->7,5<!--/--> % pour six trimestres, et la décote de la complémentaire par l'âge seul (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->6,25<!--/--> %) | **exact**, une fois les complémentaires minorées par l'âge seul |
+| Cour des comptes, « Les retraites des fonctionnaires de l'État », tableau n° 20 | durée requise des emplois classés, génération par génération : super-active <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->166<!--/--> trimestres pour 1965, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->168<!--/--> jusqu'en août 1971, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->169<!--/--> ensuite ; active <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->168<!--/--> pour 1965 et jusqu'en août 1966 | **exact**, une fois la durée lue à l'année d'ouverture du droit |
 
 **Ce que la confrontation a trouvé, dans l'ordre.** Le premier exemple lu
 contredisait les tables certifiées du dépôt : non que le récupérateur se soit
@@ -2964,9 +2971,11 @@ certifiée l'est à une date, et une SOURCE aussi.
 
 **Ce que les exemples ne couvrent pas.** Ils restent courts par construction :
 une affiliation, pas de polypension, pas de carrière hachée. Les vingt-quatre
-et vingt-trois années des parents, les âges des catégories actives et leur
-durée requise propre n'ont pas d'exemple publié que le dépôt ait trouvé : ils
-sont transcrits du texte, et attendent le leur. Les trimestres réputés cotisés
+et vingt-trois années des parents et les âges des catégories actives n'ont pas
+d'exemple publié que le dépôt ait trouvé : ils sont transcrits du texte, et
+attendent le leur. La durée requise des catégories actives a trouvé le sien, et
+il ne vient pas d'une caisse : c'est la Cour des comptes qui la publie
+génération par génération, et sa table a démenti celle du dépôt. Les trimestres réputés cotisés
 de la carrière longue en ont un, maintenant lu — les trois exemples du point
 1.2 de la circulaire 2026-29 —, mais il ne se rejoue pas : il arbitre entre
 des périodes assimilées de nature différente, maladie, chômage, service
@@ -2979,8 +2988,8 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->37<!--/--> tombent justes ensemble, sur
-onze sources et neuf règles, c'est le droit que le modèle applique, et non une
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->46<!--/--> tombent justes ensemble, sur
+une douzaine de sources et autant de règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
 
 ### La cotisation déplafonnée est portée au compte
@@ -5274,6 +5283,19 @@ du tableau : son taux EST un taux d'équilibre. Un agent minier et un
 fonctionnaire d'État ne sont donc pas mesurés à la même aune, et la différence
 joue contre le mineur.
 
+**Et ce taux d'équilibre paie plus que la retraite de l'agent.** La Cour des
+comptes le décompose dans sa communication du 22 septembre 2026 sur les
+retraites des fonctionnaires de l'État : des <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2025&regime=fonction_publique_etat)-->78,28<!--/--> % appelés en 2025 pour un
+civil, elle ne garde que <!--chiffre:illustration()-->44,1<!--/--> % pour la retraite au sens strict ; le reste
+finance l'invalidité avant soixante-deux ans, les majorations pour enfants, les
+départs anticipés des emplois classés et, pour <!--chiffre:illustration()-->35,3<!--/--> points, le déséquilibre
+démographique du régime. Pour un militaire, dont l'employeur paie <!--chiffre:illustration()-->126,07<!--/--> %, elle
+garde <!--chiffre:illustration()-->51,2<!--/--> %. Le scénario 4, et le 6 jusqu'à la bascule, créditent au compte
+le taux entier, et le taux des civils au militaire : ils portent donc au compte
+d'un fonctionnaire d'État ce que son employeur verse pour d'autres, et au
+militaire moins que ce que le sien verse. L'action 120 de la feuille de route en
+fait une question à trancher, non une correction.
+
 **Ce que les documents budgétaires ajoutent, et ce qu'ils n'ajoutent pas.** Les
 projets annuels de performances annexés au PLF 2026 — programmes 195, 197 et
 198 —, lus le 20 septembre 2026 et saisis dans
@@ -6683,13 +6705,13 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   **La limite tient toujours, mais elle ne mord plus sur le chiffre publié**,
   parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
-  valent <!--chiffre:mesure(avantages?annee=2024)-->96,3<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,6<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
+  valent <!--chiffre:mesure(avantages?annee=2024)-->96,1<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,5<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
   total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
   et dix autres lignes dans les sous-postes des Comptes de la protection
   sociale, dont la majoration pour enfants à <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=majoration_enfants)-->7,8<!--/--> milliards — que le modèle
   chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
   l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
-  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,2<!--/--> milliards qu'il calcule encore lui-même
+  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,0<!--/--> milliards qu'il calcule encore lui-même
   restent soumis à cette limite. Vingt-sept dispositifs sur quarante-cinq ne
   portent aucun chiffre, chacun avec sa raison écrite.
 
@@ -6766,7 +6788,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   sans que rien ne le dise. Pour la génération 1965 l'écart tombe sous la centaine d'euros, le classement abaissant
   par ailleurs la durée requise d'un trimestre. Mesurer la
   valeur d'un avantage d'ÂGE par l'écart de MONTANT à date de départ fixe donne
-  donc un chiffre petit — <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=categorie_active)-->0,6<!--/--> milliard en 2024 pour la catégorie active — et ce
+  donc un chiffre petit — <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=categorie_active)-->0,7<!--/--> milliard en 2024 pour la catégorie active — et ce
   chiffre n'est pas faux, il est incomplet. Il porte de surcroît, depuis le
   22 septembre 2026, la durée requise propre aux emplois classés, que le
   contrôle d'isolement de `avantages.py` accepte pour ce seul avantage
@@ -6792,7 +6814,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
   niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/--> en 2070 pour le scénario 3 ne se lit donc
-  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->42<!--/--> % : il se lit comme la marge dont ce système
+  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->41<!--/--> % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
 - **Les ressources ne sont pas celles du risque vieillesse, et ne peuvent pas
@@ -8371,7 +8393,7 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,26<!--/--> %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,25<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **trois
 points à l'arrivée**.
@@ -8867,7 +8889,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2336<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2345<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -441,6 +441,65 @@ class DureesRequisesFonctionPublique:
         return self._table.get(annee_ouverture)
 
 
+class DureesRequisesAvantSoixanteAns:
+    """Durée requise d'un fonctionnaire dont le droit s'ouvre avant 60 ans.
+
+    Ce n'est pas celle de sa génération mais celle « exigée des fonctionnaires
+    atteignant [soixante ans] l'année à compter de laquelle la liquidation peut
+    intervenir » : article 5, VI, de la loi du 21 août 2003, puis article
+    L. 13, III, du code des pensions, que le XXIV de l'article 10 de la loi du
+    14 avril 2023 garde en vigueur par renvoi. Deux règles, que la table
+    distingue :
+
+    * ``l13_iii`` — la clé est l'ANNÉE d'ouverture, de 2009 à 2033 ; au-delà,
+      la dernière ligne vaut. Avant 2009, la fiche et la table de 2004-2008
+      répondent, et celle-ci rend ``None`` ;
+    * ``xxiv_c`` — les militaires qui peuvent liquider à compter du
+      1er septembre 2023 (XXIV, C, 2°) : une marche par date d'ouverture.
+
+    Le tableau n° 20 du rapport de la Cour des comptes de septembre 2026 sur
+    les retraites des fonctionnaires de l'État rejoue la première règle.
+    """
+
+    FICHIER = "duree_requise_avant_soixante_ans.csv"
+
+    def __init__(self, racine: Path) -> None:
+        # Clé : le rang du mois (``DateMois.rang``), pour qu'une année
+        # décimale écrite au millième — 2023.667, septembre — ne tombe pas à
+        # côté de la date qu'elle nomme.
+        self._table: dict[str, dict[int, tuple[int, Fiabilite]]] = {}
+        chemin = racine / "reference" / "legislation" / self.FICHIER
+        if chemin.exists():
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    self._table.setdefault(ligne["regle"], {})[
+                        round(float(ligne["annee_ouverture"]) * 12)
+                    ] = (int(ligne["trimestres"]),
+                         Fiabilite.depuis_texte(ligne["fiabilite"]))
+        self._cles = {regle: sorted(valeurs)
+                      for regle, valeurs in self._table.items()}
+
+    def _marche(self, regle: str, rang: int) -> tuple[int, Fiabilite] | None:
+        cles = self._cles.get(regle)
+        if not cles or rang < cles[0]:
+            return None
+        retenue = cles[0]
+        for candidate in cles:
+            if candidate > rang:
+                break
+            retenue = candidate
+        return self._table[regle][retenue]
+
+    def par_annee(self, annee_ouverture: int) -> tuple[int, Fiabilite] | None:
+        """Règle de L. 13, III : la génération qui a soixante ans cette année."""
+        return self._marche("l13_iii", DateMois(annee_ouverture, 1).rang)
+
+    def depuis_2023(self, ouverture: DateMois) -> tuple[int, Fiabilite] | None:
+        """Règle du XXIV, C, 2° : ``None`` avant le 1er septembre 2023."""
+        return self._marche("xxiv_c", ouverture.rang)
+
+
 class DureesProratisation(TableParGeneration):
     """Durée maximale d'assurance prise en compte par la proratisation.
 
@@ -533,7 +592,9 @@ class DerogationActive:
     services_requis: float
     #: Durée de services et bonifications requise, quand le classement en a une
     #: qui lui soit propre — « par dérogation à l'article L. 13 ». ``None``
-    #: quand la durée de la génération vaut, ce qui est le cas jusqu'à 1961.
+    #: avant les marches de 2023 (septembre 1966, septembre 1971) : la durée
+    #: est alors celle de l'année d'ouverture du droit, que
+    #: ``DureesRequisesAvantSoixanteAns`` porte.
     duree_requise: int | None
     fiabilite: Fiabilite
 
@@ -1866,6 +1927,9 @@ class ScenarioActuel:
         self.durees_requises_fonction_publique = DureesRequisesFonctionPublique(
             parametres.racine_donnees
         )
+        self.durees_requises_avant_soixante_ans = DureesRequisesAvantSoixanteAns(
+            parametres.racine_donnees
+        )
         self.decote_fonction_publique = DecoteFonctionPublique(
             parametres.racine_donnees
         )
@@ -2238,6 +2302,10 @@ class ScenarioActuel:
         SNCF, la RATP et les IEG (`legislation/duree_requise_regimes_speciaux.csv`).
         En deçà de la première génération qu'elle nomme, la table commune reste
         le repli.
+
+        Et ceux que ces marches ne visent pas — l'emploi classé né avant elles,
+        le militaire — n'ont pas davantage la durée de leur génération : voir
+        :meth:`_duree_requise_avant_soixante_ans`.
         """
         requis = periode.duree_requise_trimestres or 160
         if periode.duree_requise_table is not None:
@@ -2259,6 +2327,10 @@ class ScenarioActuel:
         derogation = self._derogation_active(periode, carriere)
         if derogation is not None and derogation.duree_requise is not None:
             return derogation.duree_requise, derogation.fiabilite
+        avant_soixante_ans = self._duree_requise_avant_soixante_ans(
+            periode, carriere, derogation)
+        if avant_soixante_ans is not None:
+            return avant_soixante_ans
         if periode.duree_requise_par_generation:
             # LA SUSPENSION NE VAUT QU'À COMPTER DU 1er SEPTEMBRE 2026 : avant,
             # les nés en 1964 et 1965 doivent la durée de la loi de 2023, que
@@ -2276,6 +2348,76 @@ class ScenarioActuel:
             if par_generation is not None:
                 return par_generation
         return requis, None
+
+    #: L'âge avant lequel un droit ouvert fait lire la durée à l'année
+    #: d'ouverture plutôt qu'à la génération : « avant l'âge de soixante
+    #: ans » (L. 13, III ; article 5, VI, de la loi du 21 août 2003).
+    AGE_DUREE_A_L_OUVERTURE = 60.0
+    #: Le XXIV, C, de l'article 10 de la loi du 14 avril 2023 ne vise que ceux
+    #: qui peuvent liquider à compter de ce mois.
+    DUREE_XXIV_C_DEPUIS = DateMois(2023, 9)
+
+    def _duree_requise_avant_soixante_ans(
+            self, periode: PeriodeRegime, carriere: Carriere,
+            derogation: DerogationActive | None,
+    ) -> tuple[int, Fiabilite | None] | None:
+        """La durée d'un droit qui s'ouvre avant soixante ans, ou ``None``.
+
+        Le militaire qui réunit ses services, l'emploi classé qui atteint son
+        âge anticipé ou minoré ne se voient pas opposer la durée de leur
+        génération, mais « celle exigée des fonctionnaires atteignant [soixante
+        ans] l'année à compter de laquelle la liquidation peut intervenir » —
+        article 5, VI, de la loi du 21 août 2003, puis L. 13, III, du code des
+        pensions, que le XXIV de la loi du 14 avril 2023 garde en vigueur pour
+        l'emploi classé né avant ses propres marches et pour le militaire qui
+        pouvait liquider avant le 1er septembre 2023. Un super-actif né en 1965
+        dont le droit s'ouvre à cinquante-deux ans, en 2017, se voit donc
+        opposer la durée de la génération 1957, 166 trimestres, et non les 169
+        de la sienne ; c'est ce que publie la Cour des comptes (tableau n° 20
+        de son rapport de septembre 2026).
+
+        Le militaire qui peut liquider à compter du 1er septembre 2023 relève du
+        C, 2°, du même XXIV : 169 trimestres, un de plus en 2025 et en 2027,
+        172 à compter de 2028.
+
+        Avant 2009 la table ne répond pas : de 2004 à 2008, celle de la loi de
+        2003 a déjà répondu (:meth:`_duree_requise` la lit d'abord, à la même
+        clé), et avant 2004 c'est la durée que la fiche portait l'année
+        d'ouverture — 150 trimestres, et non celle de la liquidation.
+
+        ``derogation`` est celle que :meth:`_duree_requise` vient de lire, pour
+        ne pas refaire le décompte des services classés.
+        """
+        if periode.bareme_decote != "fonction_publique":
+            return None
+        militaire = self._droit_militaire(periode, carriere)
+        if militaire is not None:
+            age = militaire.age_ouverture
+        elif derogation is not None:
+            age = derogation.age_ouverture
+        else:
+            return None
+        if age >= self.AGE_DUREE_A_L_OUVERTURE:
+            return None
+        ouverture = carriere.date_naissance.plus_mois(en_mois(age))
+        if carriere.age_liquidation is not None:
+            ouverture = DateMois.depuis_rang(min(
+                ouverture.rang,
+                carriere.date_naissance.plus_mois(
+                    en_mois(carriere.age_liquidation)).rang,
+            ))
+        if (militaire is not None
+                and ouverture.rang >= self.DUREE_XXIV_C_DEPUIS.rang):
+            return self.durees_requises_avant_soixante_ans.depuis_2023(ouverture)
+        for table in (self.durees_requises_fonction_publique.trimestres,
+                      self.durees_requises_avant_soixante_ans.par_annee):
+            lue = table(ouverture.annee)
+            if lue is not None:
+                return lue
+        en_vigueur = self.catalogue[periode.regime].periode(ouverture.annee)
+        if en_vigueur is None or en_vigueur.duree_requise_trimestres is None:
+            return None
+        return en_vigueur.duree_requise_trimestres, None
 
     def _duree_proratisation(self, periode: PeriodeRegime, carriere: Carriere,
                              requis: int) -> tuple[int, Fiabilite | None]:

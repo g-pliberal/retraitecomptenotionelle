@@ -897,7 +897,7 @@ ouvriers de l'État — et deux statuts militaires.
 * l'**âge d'ouverture** — l'âge anticipé de l'article L. 24, I, 1°, « l'âge
   mentionné au premier alinéa de l'article L. 161-17-2 du code de la sécurité
   sociale diminué de cinq années », et l'âge minoré, le même diminué de dix :
-  <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1964)-->57<!--/--> et <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1970)-->52<!--/--> ans avant la réforme de 2023,
+  <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> et <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1965)-->52<!--/--> ans avant la réforme de 2023,
   <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->59<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->54<!--/--> ans après elle, avec les deux
   montées en charge — celle de la loi du 9 novembre 2010, qui part de
   <!--chiffre:minimum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->55<!--/--> et <!--chiffre:minimum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->50<!--/--> ans, et celle du F du XXIV de l'article 10 de la loi du 14 avril 2023,
@@ -920,7 +920,7 @@ III de l'article L. 14 ne la donne qu'« au-delà de l'âge mentionné à l'arti
 L. 161-17-2 », et le D du XXIV de l'article 10 de la loi de 2023 le confirme
 pour les emplois classés — l'âge anticipé majoré de cinq années, l'âge minoré
 majoré de dix, c'est-à-dire l'âge légal dans les deux cas. La compter depuis
-<!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1964)-->57<!--/--> ans aurait payé deux fois l'avantage du classement.
+<!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans aurait payé deux fois l'avantage du classement.
 
 **La pension militaire ne s'ouvre pas à un âge mais à une durée.** Le II de
 l'article L. 24 : elle est liquidée « lorsqu'un officier […] réunit, à la date
@@ -1959,7 +1959,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,71<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->42<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,71<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.
@@ -1993,7 +1993,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->173<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->174<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->38<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 

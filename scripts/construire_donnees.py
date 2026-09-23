@@ -970,6 +970,18 @@ def _durees_requises_fonction_publique() -> dict:
     }
 
 
+def _durees_requises_avant_soixante_ans() -> dict:
+    """Durée des droits ouverts avant soixante ans, par règle et rang de mois."""
+    from retraite_notionnelle.scenarios.actuel import DureesRequisesAvantSoixanteAns
+
+    return {
+        regle: {str(rang): [trimestres, int(fiabilite)]
+                for rang, (trimestres, fiabilite) in sorted(valeurs.items())}
+        for regle, valeurs
+        in sorted(DureesRequisesAvantSoixanteAns(DONNEES)._table.items())
+    }
+
+
 def _decote_fonction_publique() -> dict:
     """Barème de décote de l'article L. 14, par année d'ouverture du droit."""
     from retraite_notionnelle.scenarios.actuel import DecoteFonctionPublique
@@ -1414,6 +1426,7 @@ def construire(bilan: bytes) -> bytes:
         "minimum_garanti": _minimum_garanti(),
         "minimum_vieillesse": _minimum_vieillesse(),
         "durees_requises_fonction_publique": _durees_requises_fonction_publique(),
+        "durees_requises_avant_soixante_ans": _durees_requises_avant_soixante_ans(),
         "decote_fonction_publique": _decote_fonction_publique(),
         "decote_regimes_speciaux": _decote_regimes_speciaux(),
         "carriere_longue": _carriere_longue(),
