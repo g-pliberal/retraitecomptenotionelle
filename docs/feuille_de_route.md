@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 671<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 441<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 340<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15218,6 +15218,12 @@ point retire ou déplace quelque chose qu'une demande précédente a posé :
   la réponse qui le précède : dix, c'est cinq obligatoires et cinq que
   personne n'impose, et un nouveau venu lit deux chiffres pour une chose.
 
+*Les cinq points ont été tranchés le jour même* : « Fait les 4 points », pour
+les quatre premiers — voir l'action 122. Le cinquième, le déficit en trois
+unités, l'a été en partie par l'action 118, qui écrit chaque part du PIB en
+euros aussi : les pages disent désormais toutes le déficit en milliards, à côté
+de leur part.
+
 **Fichiers.** `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
 `tests/test_web.py`, `tests/temoins/pages.json`, `README.md`,
 `docs/parcours_presentation.md`.
@@ -15639,3 +15645,80 @@ les plus anciennes ont liquidé avant 1990 : le balayage des témoins va de 1925
 à 1975 pour chaque statut, mais aucun test ne vérifie encore qu'une fiche
 réponde, pour toute génération de 1920 à aujourd'hui, par une règle datée qui
 vaut pour elle. C'est le test à écrire à la fin de ce chantier.
+
+### 122. Les quatre points de l'action 117 : un bouton sur le téléphone, huit pages, l'euro, et cinq plus cinq — `fait`
+
+**Demande.** « Fait les 4 points » (23 septembre 2026), en réponse aux quatre
+propositions laissées ouvertes par l'action 117 pour qu'un nouveau venu se
+perde moins : le bandeau sur téléphone, le nombre de pages, les montants au
+centime, et « 10 % qui vous appartiennent ».
+
+**Ce qui a été fait**, en quatre commits poussés l'un après l'autre.
+
+- *« 10 % » devient ce qu'il additionne.* Trois titres — l'accueil, les
+  résultats, Méthode — disaient « 10 % » à côté des « 18 % + 5 % » de la
+  carte. Ils disent désormais « 5 % obligatoires, et 5 % de plus si vous le
+  voulez » (« 5 % obligatoires, 5 % volontaires » sur Méthode), et se taisent
+  sur la part libre quand un réglage la ramène à zéro.
+- *La vue des résultats à l'euro.* « En bref » écrivait « 2 795 € », la barre
+  juste dessous « 2 795,42 ». Ce qui se lit sans rien déplier — les quatre
+  barres, la ligne qui compose le système 4, le RAFP servi à part, « Et pendant
+  que vous cotisez » — est à l'euro ; le centime, que la caisse verse, reste
+  dans les dépliants de détail, et la clé de lecture comme `methodologie.md` le
+  disent. Un écart de salaire de moins d'un demi-euro ne s'écrit plus. C'était
+  un choix documenté — `euros_centimes` le justifiait par les décrets de 1986 —,
+  que l'utilisateur a tranché : sa docstring dit maintenant où il vaut encore.
+- *Sur un téléphone, « Pour vérifier » se replie derrière un bouton*
+  (`button.deplier`, `aria-expanded`, `aria-controls`) posé à la suite des
+  onglets, ouvert de lui-même quand la page courante est dans le groupe ;
+  ouvert, ses liens viennent à la suite sans que le bouton bouge. Les onglets
+  sont un peu plus serrés sous 34 rem. Mesuré au navigateur, polices chargées :
+  le bandeau passe de 205 à 132 px à 390 points, deux rangées de liens au lieu
+  de quatre ; trois à 360 points. Rien ne change au-delà de 48 rem. Le
+  basculement vit dans `index.html`, en écoute déléguée.
+- *Huit pages au lieu de dix.* « Cumul versé » redisait, sur une page à elle,
+  le dépliant « Ce que chaque système finit par verser » des résultats — le
+  même graphique, de la même fonction ; il n'en reste que le dépliant,
+  identifié `cumul`. « Sources » est devenue la fin de la page Méthode, sous le
+  titre « D'où viennent les chiffres » (`id="sources"`) : ses trois chiffres,
+  sa réserve, ses cinq dépliants ; son « En clair » est devenu son
+  introduction — une page n'en porte qu'un — et son plan est parti, qui
+  annonçait cinq dépliants posés juste sous lui. L'onglet s'appelle « Méthode
+  et sources ». Les deux pages montraient ensemble 631 mots ouverts ; la page
+  fusionnée en montre 557, sous un budget de 600.
+- *Les anciennes adresses restent valides.* `ANCIENNES_ROUTES`, des deux côtés
+  du portage : `#/trajectoire` rend les résultats du simulateur et y ouvre le
+  cumul, `#/donnees` rend Méthode et sources et y descend à la partie des
+  sources. Le site parent et des partages les portent ;
+  `docs/integration-partiliberalfrancais.md` le dit.
+- *Un renvoi vers une section d'une autre page y atterrit.* `data-vers` ne
+  savait ouvrir qu'une section de la page courante : ailleurs, le lien menait
+  en haut de la page visée. Le routeur garde maintenant la section demandée et
+  l'ouvre après le rendu — ce qui sert aux liens vers les sources, et répare
+  au passage le renvoi de Carrières types vers le coefficient d'équilibre de
+  la page Coût, qui arrivait en haut de Coût.
+
+**Ce que ça a déplacé.** Aucun chiffre du modèle. Les témoins de page perdent
+les trois rendus des pages parties ; ceux de l'accueil, des résultats et de
+Méthode changent. Tests : un pour l'euro de la vue, un pour le bouton du
+bandeau, un pour les anciennes adresses (et son jumeau JavaScript) ; les
+tests qui visaient `/donnees` visent `/methode`.
+
+**Ce qui reste.**
+
+- À 360 points, le bandeau tient en trois rangées : les faire tenir en deux
+  demanderait de serrer encore des onglets déjà à 12 px.
+- L'image partageable du graphique du cumul est partie avec sa page : le
+  dépliant des résultats n'a pas de barre de partage.
+- Hors du champ de cette action, et relevé en passant : pour une carrière de
+  fonctionnaire de l'État en montants bruts (née en mars 1980, partie en 2045),
+  deux coordonnées du tracé du cumul diffèrent d'un dixième entre Python et
+  JavaScript. Aucun témoin ne couvre ce cas.
+
+**Fichiers.** `src/retraite_notionnelle/web/pages.py` et `web/gabarit.py`,
+`moteur/js/pages.js` et `moteur/js/gabarit.js`, `moteur/style.css`,
+`index.html`, `scripts/construire_temoins.py`,
+`data/reference/site/affirmations.yaml`, `tests/test_web.py`,
+`tests/js/moteur.test.js`, `tests/temoins/pages.json`, `README.md`,
+`docs/methodologie.md`, `docs/integration-partiliberalfrancais.md`,
+`docs/parcours_presentation.md`.

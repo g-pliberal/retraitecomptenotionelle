@@ -120,7 +120,7 @@ def page(contexte):
 # -- pages -------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("chemin", ["/", "/simuler", "/cas-types", "/methode", "/donnees"])
+@pytest.mark.parametrize("chemin", ["/", "/simuler", "/cas-types", "/methode"])
 def test_les_pages_repondent(page, chemin):
     texte = page(chemin)
     assert "Retraite à comptes notionnels" in texte
@@ -1670,7 +1670,7 @@ def test_cellule_teintee_selon_la_valeur():
 # -- rendu commun aux deux modes ---------------------------------------------
 
 
-@pytest.mark.parametrize("chemin", ["/", "/simuler", "/cas-types", "/methode", "/donnees"])
+@pytest.mark.parametrize("chemin", ["/", "/simuler", "/cas-types", "/methode"])
 def test_rendre_produit_un_corps_pour_chaque_page(contexte, chemin):
     titre, corps = rendre(contexte, chemin)
     assert titre
@@ -3386,7 +3386,7 @@ def test_la_page_des_donnees_dit_sous_quelle_licence_reprendre(contexte):
     du code, celle des infographies et l'obligation de citer le producteur
     d'une série, non — elles portent sur ce fichier-ci.
     """
-    _, corps = rendre(contexte, "/donnees", {})
+    _, corps = rendre(contexte, "/methode", {})
     assert "Apache 2.0" in corps
     assert "CC BY-SA" in corps
     assert "Licence Ouverte" in corps
@@ -4432,10 +4432,6 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # lignes et un bouton qui disent que le site est un simulateur.
     "/": (470, 0, 2, 240),
     "/simuler": (1500, 0, 0, 0),
-    # Trajectoire porte UN graphique, et c'est son sujet : il est donc ouvert,
-    # là où celui de Coût attend qu'on déplie. Le reste de la page tient en
-    # deux blocs de texte et le formulaire court.
-    "/trajectoire": (500, 1, 0, 0),
     # Partager ne porte que des cartes : leur texte est court par
     # construction — il doit tenir dans une image de 1200 × 675.
     "/partager": (400, 0, 0, 0),
@@ -4509,8 +4505,11 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     #
     # Le budget des tableaux vaut ``None`` : il se calcule sur l'inventaire.
     "/avantages": (1300, 5, 8, None),
-    "/methode": (400, 0, 1, 120),
-    "/donnees": (300, 0, 0, 0),
+    # Méthode et Sources font une page depuis le 23 septembre 2026. Leurs
+    # bornes s'additionnaient à 700 mots de prose, pour 631 lus ; la page
+    # fusionnée en montre 557 — un seul « En clair », plus de plan —, et sa
+    # borne est serrée d'autant.
+    "/methode": (600, 0, 1, 120),
     # Risque répond à la question d'un lecteur qui n'a pas fait d'économie
     # en deux cartes, chacune avec le tableau qui la montre : les cas
     # documentés à l'étranger, et le compte projeté du COR. Ce sont ces deux
@@ -4634,7 +4633,7 @@ def test_la_page_de_resultats_replie_son_detail(contexte):
 #: paragraphes, la seconde quatre cartes. Leur imposer trois sections repliées
 #: reviendrait à leur demander d'abord d'en écrire le contenu.
 @pytest.mark.parametrize("chemin", ["/", "/cas-types", "/cout", "/methode",
-                                    "/donnees", "/risque"])
+                                    "/risque"])
 def test_chaque_page_range_son_detail_dans_des_sections(contexte, chemin):
     """Replier n'est pas supprimer : ce qui sort du chemin doit y être rangé.
 
@@ -5389,7 +5388,7 @@ def test_aucune_page_ne_compte_plus_de_quatre_systemes(contexte, chemin):
     """
     corps = rendre(contexte, chemin,
                    {"naissance": "1975-01-01"}
-                   if chemin in ("/simuler", "/trajectoire") else {})[1]
+                   if chemin == "/simuler" else {})[1]
     texte = re.sub(r"\s+", " ", html.unescape(re.sub(r"<[^>]+>", " ", corps)))
 
     def fautes(motif: str) -> list[str]:
@@ -5467,8 +5466,6 @@ def test_les_pages_longues_portent_leur_plan(contexte):
                    "cout-dette",
                    "cout-frise", "cout-garantie", "cout-capitalisation", "cout-poids", "cout-sources",
                    "cout-limites"]),
-        ("/donnees", ["donnees-series", "donnees-fiabilite", "donnees-inventaire",
-                      "donnees-sources", "donnees-reutilisation"]),
     ):
         corps = rendre(contexte, chemin, {})[1]
         plan = re.search(r'<nav class="plan" aria-label="Dans cette page">.*?</nav>', corps, re.S)
@@ -5501,7 +5498,7 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
     from retraite_notionnelle.config import RACINE_DONNEES
     from retraite_notionnelle.donnees.regimes import charger_inventaire
 
-    corps = rendre(contexte, "/donnees", {})[1]
+    corps = rendre(contexte, "/methode", {})[1]
     lignes = charger_inventaire(RACINE_DONNEES)
     table = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
     rangs = re.findall(r'<tr data-famille="([^"]+)" data-couverture="([^"]+)" data-fiabilite="[^"]*">', table)
@@ -5521,8 +5518,10 @@ def test_l_inventaire_est_une_table_qui_se_filtre_et_se_trie(contexte):
         if ligne.couverture in ("modelise", "partiel"):
             assert ligne.code in catalogue, ligne.code
     assert ">certifiee<" in table or ">haute<" in table
-    # Et l'inventaire ne s'impose toujours pas : il reste replié.
-    assert "<table" not in _hors_depliants(corps)
+    # Et l'inventaire ne s'impose toujours pas : il reste replié. Depuis que
+    # Sources est la fin de la page Méthode, un tableau y est ouvert — celui
+    # des règles d'indexation, qui est la réponse de Méthode —, mais pas lui.
+    assert '<table id="inventaire">' not in _hors_depliants(corps)
 
     from pathlib import Path
 
@@ -5738,7 +5737,6 @@ def test_les_pages_techniques_s_ouvrent_en_langage_courant(contexte):
     for chemin, phrase in (
         ("/cout", "ont coûté un peu plus qu&#x27;elles n&#x27;ont rapporté"),
         ("/methode", "Votre pension serait votre\ncompte divisé par le nombre d&#x27;années"),
-        ("/donnees", "viennent des institutions qui les produisent"),
     ):
         corps = rendre(contexte, chemin, {})[1]
         resume = re.search(r'<div class="note resume"><strong>En clair\.</strong>(.*?)</div>',
@@ -5751,6 +5749,13 @@ def test_les_pages_techniques_s_ouvrent_en_langage_courant(contexte):
         if '<div class="fiches reperes">' in corps:
             assert resume.start() < corps.index('<div class="fiches reperes">'), chemin
         assert "En clair." in _hors_depliants(corps)
+    # La partie « D'où viennent les chiffres » de Méthode et sources, qui a été
+    # la page Sources, garde sa phrase en langage courant : elle est devenue
+    # l'introduction de la partie, une page ne portant qu'un « En clair ».
+    methode = rendre(contexte, "/methode", {})[1]
+    sources = methode[methode.index('<h2 id="sources" tabindex="-1">'):]
+    assert "viennent des\ninstitutions qui les produisent" in sources
+    assert methode.count("<strong>En clair.</strong>") == 1
 
 
 def test_l_autocritique_de_la_page_cout_est_un_encart_de_vigilance(contexte):
@@ -6321,7 +6326,7 @@ def test_la_navigation_met_l_electeur_d_abord():
     Dix onglets de même poids ne disaient pas par où commencer, et six d'entre
     eux ne répondent qu'à qui veut vérifier. Les pages qui répondent aux
     questions de l'électeur — le programme, sa retraite, le coût, pourquoi
-    changer — restent des onglets ; les cinq qui les prouvent passent derrière
+    changer — restent des onglets ; celles qui les prouvent passent derrière
     une étiquette qui SE VOIT, « Pour vérifier ». Les autres étiquettes restent
     dites aux synthèses vocales et sorties de l'écran, par `clip-path` et non
     par `display: none`.
@@ -6340,17 +6345,16 @@ def test_la_navigation_met_l_electeur_d_abord():
     pages = [re.findall(r'href="([^"]+)"', liens) for _, _, liens in groupes]
     assert pages == [["#/", "#/simuler", "#/cout", "#/risque"],
                      ["#/partager"],
-                     ["#/trajectoire", "#/cas-types", "#/avantages", "#/methode",
-                      "#/donnees"]]
+                     ["#/cas-types", "#/avantages", "#/methode"]]
     libelles = [re.findall(r">([^<]+)</a>", liens) for _, _, liens in groupes]
     assert libelles == [["Programme", "Simuler", "Coût", "Pourquoi changer"],
                         ["Partager"],
-                        ["Cumul versé", "Carrières types", "Droits non cotisés",
-                         "Méthode", "Sources"]]
+                        ["Carrières types", "Droits non cotisés",
+                         "Méthode et sources"]]
     assert 'href="#/cout" aria-current="page"' in entete
     assert [chemin for chemin, _ in g.LIENS] == [
-        "/", "/simuler", "/cout", "/risque", "/partager", "/trajectoire",
-        "/cas-types", "/avantages", "/methode", "/donnees"]
+        "/", "/simuler", "/cout", "/risque", "/partager",
+        "/cas-types", "/avantages", "/methode"]
     # Le titre de chaque page est le libellé de son onglet : c'est lui que
     # l'onglet du navigateur affiche.
     assert dict(g.LIENS) == TITRES
@@ -6368,6 +6372,35 @@ def test_la_navigation_met_l_electeur_d_abord():
     # épais le marque, et `aria-current` l'annonce.
     actif = g.FEUILLE_DE_STYLE.split('nav a[aria-current="page"] {')[1].split("}")[0]
     assert "border-bottom-color" in actif
+
+
+def test_les_adresses_des_pages_parties_menent_a_leur_contenu(contexte):
+    """Huit pages au lieu de dix (23 septembre 2026) : « Cumul versé » redisait
+    un dépliant des résultats, « Sources » est devenue la fin de Méthode.
+
+    Leurs adresses restent valides — le site parent et des partages les
+    portent — et rendent la page qui les a remplacées ; la section qui porte
+    leur contenu existe sur cette page, et le routeur d'``index.html`` l'ouvre.
+    """
+    from pathlib import Path
+
+    from retraite_notionnelle.web.pages import ANCIENNES_ROUTES
+
+    assert set(ANCIENNES_ROUTES) == {"/trajectoire", "/donnees"}
+    for ancienne, (page, section) in ANCIENNES_ROUTES.items():
+        assert ancienne not in TITRES and page in TITRES
+        parametres = SIMULATION_TEMOIN if page == "/simuler" else {}
+        titre, corps = rendre(contexte, ancienne, parametres)
+        assert (titre, corps) == rendre(contexte, page, parametres), ancienne
+        assert f'id="{section}"' in corps, (ancienne, section)
+
+    racine = Path(__file__).resolve().parents[1]
+    portage = (racine / "moteur" / "js" / "pages.js").read_text(encoding="utf-8")
+    assert '"/trajectoire": ["/simuler", "cumul"],' in portage
+    assert '"/donnees": ["/methode", "sources"],' in portage
+    script = (racine / "index.html").read_text(encoding="utf-8")
+    assert "ANCIENNES_ROUTES[route]" in script
+    assert "if (section) { ouvrirSection(section); }" in script
 
 
 def test_sur_un_telephone_le_groupe_pour_verifier_se_replie():
@@ -6440,7 +6473,7 @@ def test_la_methode_dit_comment_le_site_est_construit(contexte):
     dedans = section.group(1)
     for attendu in (f'href="{g.DEPOT}/tree/main/src"', "portage en JavaScript",
                     "comparée caractère par caractère", f'href="{g.DEPOT}/tree/main/tests"',
-                    'href="#/donnees"'):
+                    'href="#/methode" data-vers="sources"'):
         assert attendu in dedans, attendu
     assert not re.search(r"\b\d{3,} (?:tests|témoins|carrières)", dedans), (
         "un nombre de tests ou de témoins écrit à la main dériverait"
@@ -6557,7 +6590,7 @@ def test_la_page_risque_range_ses_sections_et_se_relie(contexte):
 def test_la_page_donnees_se_lit_comme_une_base(contexte):
     """Deux tables filtrables et triables : l'inventaire, croisé par famille,
     couverture et fiabilité, et les séries certifiées, par niveau."""
-    corps = rendre(contexte, "/donnees", {})[1]
+    corps = rendre(contexte, "/methode", {})[1]
     inventaire = re.search(r'<table id="inventaire">.*?</table>', corps, re.S).group(0)
     assert 'id="inventaire-fiabilite"' in corps and 'data-filtre="fiabilite"' in corps
     fiabilites = re.findall(r'data-fiabilite="([^"]*)"', inventaire)
@@ -6636,8 +6669,10 @@ def _prose(corps: str) -> str:
 #: n'interdisent pas l'incise, qui est une ponctuation française, elles
 #: interdisent d'y revenir comme à un tic.
 INCISES_MAXIMUM = {
-    "/": 3, "/simuler": 14, "/trajectoire": 5, "/cas-types": 9, "/cout": 22,
-    "/methode": 9, "/donnees": 6, "/partager": 4, "/risque": 4,
+    "/": 3, "/simuler": 14, "/cas-types": 9, "/cout": 22,
+    # Méthode et Sources ont fait une page le 23 septembre 2026 : ses bornes
+    # s'additionnent, 9 et 6.
+    "/methode": 15, "/partager": 4, "/risque": 4,
     # Celles qui restent sur Avantages sont citées et non rédigées : le
     # message de refus du garde-fou, et une énumération de choix que le dépôt
     # refuse de trancher à la place du lecteur.
@@ -6752,7 +6787,7 @@ def test_la_page_donnees_ne_promet_que_la_plus_ancienne_verification(contexte):
 
     journal = journal_certification(RACINE_DONNEES)
     dates = sorted(trace["verifiee_le"] for trace in journal["series"].values())
-    corps = rendre(contexte, "/donnees", {})[1]
+    corps = rendre(contexte, "/methode", {})[1]
     ancienne = _date_en_clair(dates[0])
     recente = _date_en_clair(dates[-1])
     assert f"la vérification la plus ancienne remonte au {ancienne}" in re.sub(
@@ -7148,7 +7183,7 @@ def test_aucune_adresse_du_site_ne_porte_deux_croisillons(contexte):
     """
     routes = [("/simuler", {"naissance": "1975", "montants": "net"}),
               ("/simuler", {"naissance": "1975", "montants": "brut"}),
-              ("/", {}), ("/cout", {}), ("/donnees", {}), ("/programme", {})]
+              ("/", {}), ("/cout", {}), ("/methode", {}), ("/programme", {})]
     for route, parametres in routes:
         corps = rendre(contexte, route, parametres)[1]
         for adresse in re.findall(r'href="([^"]*)"', corps):

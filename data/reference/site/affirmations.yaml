@@ -682,7 +682,7 @@ affirmations:
     controle: fiche_sans_prelevements_annexes
 
   - id: simuler.vivre_plus_longtemps
-    page: [/simuler, /trajectoire]
+    page: /simuler
     extrait: "vivre plus longtemps que la moyenne, c'est toucher plus que ce que la carrière a financé"
     porte: la pension servie sur l'espérance de vie rend exactement le capital
     etat: verifiee
@@ -1520,7 +1520,7 @@ affirmations:
     controle: cout_estime
 
   - id: en_clair
-    page: [/cout, /avantages, /methode, /donnees]
+    page: [/cout, /avantages, /methode]
     extrait: "En clair."
     porte: un titre
     etat: sans_portee
@@ -1935,35 +1935,35 @@ affirmations:
   # ------------------------------------------------------------------------
 
   - id: donnees.series_certifiees
-    page: /donnees
+    page: /methode
     extrait: "Les séries macroéconomiques sont certifiées de 1950 à 2025"
     porte: la fiabilité des séries macro sur 1950-2025 est « certifiée »
     etat: verifiee
     controle: series_macro_certifiees
 
   - id: donnees.deux_sources_pilier
-    page: /donnees
+    page: /methode
     extrait: "Les deux sources du pilier capitalisé."
     porte: la courbe des taux est une série certifiée, les frais des paramètres sourcés
     etat: verifiee
     controle: sources_du_pilier
 
   - id: donnees.bce
-    page: /donnees
+    page: /methode
     extrait: "Banque centrale européenne"
     porte: la courbe des taux vient de la BCE et est recontrôlée
     etat: verifiee
     controle: sources_du_pilier
 
   - id: donnees.opef
-    page: /donnees
+    page: /methode
     extrait: "Observatoire des produits d'épargne financière"
     porte: les frais viennent de l'OPEF
     etat: verifiee
     controle: sources_du_pilier
 
   - id: donnees.citer_le_producteur
-    page: /donnees
+    page: /methode
     extrait: "Qui reprend un chiffre d'ici cite le producteur, pas ce site."
     porte: une règle de citation
     etat: sans_portee

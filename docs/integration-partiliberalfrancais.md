@@ -54,11 +54,12 @@ le navigateur, aucune route n'a besoin d'être configurée côté serveur.
 
 | Adresse | Ce qu'elle montre |
 |---|---|
-| `/retraite/` | L'accueil : le programme, puis les liens vers les neuf autres pages. |
+| `/retraite/` | L'accueil : le programme, puis les liens vers les sept autres pages. |
 | `/retraite/#/simuler` | Le formulaire de simulation, vide de tout résultat. |
 | `/retraite/#/simuler?…` | Une simulation, tous paramètres dans l'adresse : elle se partage, se cite, se recharge. Exemple : `#/simuler?naissance=1965-03-01&sexe=H&statut=salarie_prive_non_cadre&debut=1985-09-01&liquidation=2029-03-01`. |
 | `/retraite/#/cout`, `#/risque`, `#/partager` | Les autres pages de l'électeur : le coût, pourquoi changer, les chiffres à partager. |
-| `/retraite/#/trajectoire`, `#/cas-types`, `#/avantages`, `#/methode`, `#/donnees` | Les pages qui prouvent : le cumul versé, les carrières types, les droits non cotisés, la méthode, les sources. |
+| `/retraite/#/cas-types`, `#/avantages`, `#/methode` | Les pages qui prouvent : les carrières types, les droits non cotisés, la méthode et les sources. |
+| `/retraite/#/trajectoire`, `#/donnees` | Les adresses de deux pages fondues dans d'autres le 23 septembre 2026, qui restent valides : la première rend les résultats du simulateur, cumul versé ouvert ; la seconde, la page Méthode et sources, à sa partie « D'où viennent les chiffres ». |
 
 Ces adresses sont celles que les pages du simulateur écrivent elles-mêmes ;
 elles ne changeront pas sans que ce fichier le dise. Les anciennes adresses de
@@ -139,7 +140,7 @@ couvrir `/retraite/` : l'identification de l'éditeur (loi n° 2004-575 du
 rien, comme décrit ci-dessus — et l'état d'accessibilité. Ce que le dépôt
 continue de porter, parce que lui seul le connaît, est sa licence : code sous
 Apache 2.0, infographies et textes sous CC BY-SA 4.0, séries à citer chez leur
-producteur ; c'est en pied de page et sous `#/donnees`, section « Licences et
+producteur ; c'est en pied de page et sous `#/methode`, section « Licences et
 réutilisation ».
 
 Une conséquence à peser : l'adresse GitHub Pages
