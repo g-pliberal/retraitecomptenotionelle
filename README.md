@@ -797,7 +797,8 @@ plus que quatre de ces six systèmes ; le modèle calcule toujours les six.
 Trois choses à lire dans ce tableau.
 
 **Le système actuel monte, et plus vite que ne le projette le COR.** Il passe
-de <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % du PIB en 2024 à <!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,3<!--/--> % en 2070, alors que le nombre de personnes
+de <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % du PIB en 2024 à <!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,3<!--/--> % en 2070, de <!--chiffre:mesure(cout_annee?scenario=1&annee=2024)-->410<!--/--> à <!--chiffre:mesure(cout_annee?scenario=1&annee=2070)-->711<!--/--> Md€
+constants de 2026, alors que le nombre de personnes
 de <!--chiffre:mesure(constante?de=retraite_notionnelle.cout&nom=AGE_DEPENDANCE)-->65<!--/--> ans ou plus rapporté aux 20-64 ans passe de <!--chiffre:mesure(dependance?annee=2024)-->0,39<!--/--> à <!--chiffre:mesure(dependance?annee=2070)-->0,62<!--/-->. Le COR, qui
 projette la même grandeur avec un modèle de population complet, trouve
 **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % en 2024 et <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** dans le scénario de référence de son
@@ -828,19 +829,19 @@ le défaut et faux sur son sens, et c'est la mesure qui le dit.
 
 Ces étapes sont celles de septembre 2026, et le tableau ci-dessus ne les
 recopie pas : il est recalculé, et la trajectoire 2070 y vaut
-<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,3<!--/--> %. [`docs/limites.md`](docs/limites.md) §5 ter porte le chiffrage et la piste
+<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,3<!--/--> %, <!--chiffre:mesure(cout_annee?scenario=1&annee=2070)-->711<!--/--> Md€. [`docs/limites.md`](docs/limites.md) §5 ter porte le chiffrage et la piste
 qui reste — le taux de remplacement du modèle ne recule pas, celui du COR
 recule.
 
 **Une réforme prospective met une génération à produire son effet.** Le scénario
 3 n'économise en 2026 que la réversion, qu'il cesse de servir à la bascule —
-<!--chiffre:mesure(economie_pib?scenario=3&annee=2026)-->1,4<!--/--> point de PIB, les droits acquis étant conservés —, et <!--chiffre:mesure(economie_pib?scenario=3&annee=2070)-->9,9<!--/--> points en
-2070. Décider vite ne fait pas économiser vite ; cela fait
+<!--chiffre:mesure(economie_pib?scenario=3&annee=2026)-->1,4<!--/--> point de PIB, <!--chiffre:mesure(economie_pib?scenario=3&annee=2026&en=milliards)-->44<!--/--> Md€, les droits acquis étant conservés —, et <!--chiffre:mesure(economie_pib?scenario=3&annee=2070)-->9,9<!--/--> points en
+2070, <!--chiffre:mesure(economie_pib?scenario=3&annee=2070&en=milliards)-->386<!--/--> Md€ constants de 2026. Décider vite ne fait pas économiser vite ; cela fait
 économiser longtemps.
 
 **L'écart entre 3 et 5 mesure encore une seule chose** : ce que verse
 l'employeur. Le scénario 5 économise <!--chiffre:mesure(economie_pib?scenario=3&moins=5&annee=2070)-->5<!--/--> points de PIB de moins que le
-scénario 3 en 2070, parce que son compte est alimenté par la cotisation entière.
+scénario 3 en 2070, <!--chiffre:mesure(economie_pib?scenario=3&moins=5&annee=2070&en=milliards)-->180<!--/--> Md€ constants, parce que son compte est alimenté par la cotisation entière.
 
 Ce que la projection suppose est écrit sur la page et dans
 [`docs/limites.md`](docs/limites.md) §5 ter : la démographie de l'INSEE
@@ -865,27 +866,30 @@ existe est le compte du *système de retraite*, que le COR consolide chaque ann�
 depuis les rapports à la Commission des comptes de la Sécurité sociale. On lui
 prend les **deux** colonnes, dépenses et ressources : un solde ne se fabrique pas
 en soustrayant deux périmètres. Le sien — régimes légalement obligatoires, FSV
-compris — vaut <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,86<!--/--> % du PIB en 2024 contre <!--chiffre:mesure(depense?annee=2024&quoi=part_pib_repartition)-->13,59<!--/--> % pour la répartition
-obligatoire de la DREES ; les deux se recoupent à <!--chiffre:mesure(depense?annee=2024&quoi=ecart_cor)-->0,28<!--/--> point, ce qui vaut
+compris — vaut <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,86<!--/--> % du PIB en 2024, <!--chiffre:mesure(depense?annee=2024&quoi=cor)-->407<!--/--> Md€, contre <!--chiffre:mesure(depense?annee=2024&quoi=part_pib_repartition)-->13,59<!--/--> %, <!--chiffre:mesure(depense?annee=2024&quoi=repartition)-->398,8<!--/--> Md€, pour la répartition
+obligatoire de la DREES ; les deux se recoupent à <!--chiffre:mesure(depense?annee=2024&quoi=ecart_cor)-->0,28<!--/--> point, <!--chiffre:mesure(depense?annee=2024&quoi=ecart_cor_milliards)-->8,2<!--/--> Md€, ce qui vaut
 contrôle et non identité.
 
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
-| 1. Système actuel | <!--chiffre:mesure(solde?scenario=1&annee=2025)-->−0,17<!--/--> % du PIB | **<!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %** | **<!--chiffre:mesure(coefficient?scenario=1)-->0,84<!--/-->** |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(solde?scenario=2&annee=2025)-->+9,13<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=2)-->+7,95<!--/--> % | <!--chiffre:mesure(coefficient?scenario=2)-->2,62<!--/--> |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−0,16<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,54<!--/--> % | **<!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/-->** |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(solde?scenario=4&annee=2025)-->+3,80<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=4)-->+2,02<!--/--> % | <!--chiffre:mesure(coefficient?scenario=4)-->1,17<!--/--> |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−0,16<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,07<!--/--> % | <!--chiffre:mesure(coefficient?scenario=5)-->1,10<!--/--> |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+3,81<!--/--> % | **<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,40<!--/--> %** | **<!--chiffre:mesure(coefficient?scenario=6)-->0,99<!--/-->** |
+| 1. Système actuel | <!--chiffre:mesure(solde?scenario=1&annee=2025)-->−0,17<!--/--> % du PIB, <!--chiffre:mesure(solde?scenario=1&annee=2025&en=milliards)-->−5,1<!--/--> Md€ | **<!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %**, <!--chiffre:mesure(solde_moyen?scenario=1&en=milliards)-->−34<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=1)-->0,84<!--/-->** |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(solde?scenario=2&annee=2025)-->+9,13<!--/--> %, <!--chiffre:mesure(solde?scenario=2&annee=2025&en=milliards)-->+273<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=2)-->+7,95<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=2&en=milliards)-->+238<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=2)-->2,62<!--/--> |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−0,16<!--/--> %, <!--chiffre:mesure(solde?scenario=3&annee=2025&en=milliards)-->−4,7<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,54<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=3&en=milliards)-->+46<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/-->** |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(solde?scenario=4&annee=2025)-->+3,80<!--/--> %, <!--chiffre:mesure(solde?scenario=4&annee=2025&en=milliards)-->+114<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=4)-->+2,02<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=4&en=milliards)-->+60<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=4)-->1,17<!--/--> |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−0,16<!--/--> %, <!--chiffre:mesure(solde?scenario=5&annee=2025&en=milliards)-->−4,8<!--/--> Md€ | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,07<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=5&en=milliards)-->−2,0<!--/--> Md€ | <!--chiffre:mesure(coefficient?scenario=5)-->1,10<!--/--> |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+3,81<!--/--> %, <!--chiffre:mesure(solde?scenario=6&annee=2025&en=milliards)-->+114<!--/--> Md€ | **<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,40<!--/--> %**, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−42<!--/--> Md€ | **<!--chiffre:mesure(coefficient?scenario=6)-->0,99<!--/-->** |
 
-Ce sont les chiffres que la page Coût affiche, Python et JavaScript à
-l'identique : la sonde de la prose les recalcule, et
+Les milliards sont ceux de 2025 pour le solde de 2025, et la même part du PIB
+de 2025 pour la moyenne des années projetées : c'est la règle de la page Coût,
+qui ne prête à aucune année projetée un PIB supposé. Ce sont les chiffres que la
+page Coût affiche, Python et JavaScript à l'identique : la sonde de la prose
+les recalcule, et
 `test_le_README_donne_le_solde_que_la_page_cout_calcule` les confronte en plus
 à la page, ligne par ligne. Ils ont été faux plusieurs jours de suite, chaque
 fois que le modèle de coût a bougé. Le scénario 6 ne s'équilibre sur aucune
-des années projetées — il en compte <!--chiffre:mesure(annees_equilibrees?scenario=6)-->0<!--/--> à l'équilibre : <!--chiffre:mesure(solde?scenario=6&annee=2026)-->−1,17<!--/--> point de PIB en 2026,
-<!--chiffre:mesure(solde?scenario=6&annee=2050)-->−1,89<!--/--> en 2050, <!--chiffre:mesure(solde?scenario=6&annee=2070)-->−0,04<!--/--> en 2070 —, et il accumule <!--chiffre:mesure(dette?scenario=6)-->98<!--/--> % du PIB de dette en
-2070, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel.
+des années projetées — il en compte <!--chiffre:mesure(annees_equilibrees?scenario=6)-->0<!--/--> à l'équilibre : <!--chiffre:mesure(solde?scenario=6&annee=2026)-->−1,17<!--/--> point de PIB en 2026 (<!--chiffre:mesure(solde?scenario=6&annee=2026&en=milliards)-->−35<!--/--> Md€ au PIB de 2025),
+<!--chiffre:mesure(solde?scenario=6&annee=2050)-->−1,89<!--/--> en 2050 (<!--chiffre:mesure(solde?scenario=6&annee=2050&en=milliards)-->−56<!--/--> Md€), <!--chiffre:mesure(solde?scenario=6&annee=2070)-->−0,04<!--/--> en 2070 (<!--chiffre:mesure(solde?scenario=6&annee=2070&en=milliards)-->−1,2<!--/--> Md€) —, et il accumule <!--chiffre:mesure(dette?scenario=6)-->98<!--/--> % du PIB de dette en
+2070, <!--chiffre:mesure(dette?scenario=6&en=milliards)-->2 917<!--/--> Md€, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel, <!--chiffre:mesure(dette?scenario=1&en=milliards)-->1 976<!--/--> Md€.
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
 <!--chiffre:mesure(solde?scenario=1&annee=2025&en=milliards)-->−5,1<!--/--> milliards de solde en 2025. C'est la vérification que le raccord
@@ -921,7 +925,7 @@ servent pas non plus : des trimestres pour des périodes non travaillées
 notionnels suppriment ces droits-là et ceux de la branche famille ; leur
 coefficient ne compte donc pas ces recettes, qui leur sont retirées année par
 année de 2013 à 2024, à part constante des ressources avant et sur tout
-l'horizon projeté — <!--chiffre:mesure(recette?quoi=retrait&annee=2025)-->1,05<!--/--> % du PIB en 2025. Ils gardent celle de l'assurance
+l'horizon projeté — <!--chiffre:mesure(recette?quoi=retrait&annee=2025)-->1,05<!--/--> % du PIB en 2025, <!--chiffre:mesure(recette?quoi=retrait&annee=2025&en=milliards)-->31<!--/--> Md€. Ils gardent celle de l'assurance
 chômage : pendant un chômage indemnisé, leur compte porte les cotisations
 complémentaires qu'elle verse — la seule période non travaillée qu'il
 crédite, parce que c'est la seule que quelqu'un paie. Le modèle la leur
@@ -930,9 +934,9 @@ ne portait rien au compte, quand elle y portait ces cotisations depuis
 toujours. Les scénarios 3 et 5 ne les perdent qu'à la bascule : avant elle, ils
 SONT le système actuel, en servent les pensions et en encaissent toutes les
 recettes. Jusqu'au 23 septembre 2026, le modèle les leur retirait dès 2013, et
-leur prêtait en 2025 un déficit de plus d'un point que leur seule construction
-fabriquait. Le système actuel, lui, encaisse tout, et son solde reste celui du
-COR.
+leur prêtait en 2025 un déficit de plus d'un point de PIB, plus de trente
+milliards, que leur seule construction fabriquait. Le système actuel, lui,
+encaisse tout, et son solde reste celui du COR.
 
 **La recette suit aussi le TAUX, et cela ne concerne que le scénario 6.** Il
 remplace tous les taux de cotisation par un seul, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %, parts salariale et
@@ -943,11 +947,11 @@ système de retraite y prélève aujourd'hui <!--chiffre:mesure(recette?quoi=tau
 proposition en prélèverait <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/-->. Elle ne reconduit pas non plus les
 subventions d'équilibre, dont la fusion supprime l'objet, ni les impôts
 affectés, qui n'acquièrent de droits à personne. Cela change le sens du
-tableau pour ce scénario : son solde moyen s'établit à <!--chiffre:mesure(solde_moyen?scenario=6)-->−1,40<!--/--> % du PIB, et
+tableau pour ce scénario : son solde moyen s'établit à <!--chiffre:mesure(solde_moyen?scenario=6)-->−1,40<!--/--> % du PIB, <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−42<!--/--> Md€ par an au PIB de 2025, et
 son coefficient est sous un sur chacune des années projetées,
 <!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,80<!--/--> au plus bas en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2046<!--/-->, <!--chiffre:mesure(coefficient?scenario=6)-->0,99<!--/--> en 2070. Il est le seul des trois systèmes
 rétroactifs à ne pas afficher de marge, et il passe sous le système actuel,
-qui est à <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %. Ce déficit est le coût de transition du taux unique :
+qui est à <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %, <!--chiffre:mesure(solde_moyen?scenario=1&en=milliards)-->−34<!--/--> Md€. Ce déficit est le coût de transition du taux unique :
 pendant trente ans, la caisse paie les pensions de l'ancien système avec une
 cotisation ramenée à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % de l'assiette, et aucune règle d'indexation ne le
 règle. Les quatre autres scénarios notionnels ne changent que ce qui est PORTÉ
@@ -967,7 +971,7 @@ subventions d'équilibre, les impôts et taxes affectés. La règle, décidée l
 dette** (`Parametres.part_rendue_aux_salaires`, <!--chiffre:mesure(parametre?nom=part_rendue_aux_salaires)-->50<!--/--> %), et la même moitié vaut
 pour les deux postes qui sortent d'une poche identifiable.
 
-Les impôts et taxes affectés valent <!--chiffre:mesure(recette?quoi=impots&annee=2026)-->2,14<!--/--> % du PIB en 2026, <!--chiffre:mesure(recette?quoi=impots_milliards&annee=2026)-->66<!--/--> Md€, dont la
+Les impôts et taxes affectés valent <!--chiffre:mesure(recette?quoi=impots&annee=2026)-->2,14<!--/--> % du PIB en 2026, <!--chiffre:mesure(recette?quoi=impots_milliards&annee=2026)-->64<!--/--> Md€ au PIB de 2025, dont la
 moitié est rendue. Le droit dit dans quel ordre, et ce qu'il dit est
 contre-intuitif. Deux impôts du poste seulement sortent d'une rémunération :
 **la taxe sur les salaires**, dont l'article L. 131-8, 1° du code de la
