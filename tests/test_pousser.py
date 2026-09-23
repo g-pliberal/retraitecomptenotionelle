@@ -61,8 +61,9 @@ def atelier(tmp_path: Path) -> tuple[Path, Path]:
 
     session = tmp_path / "session"
     subprocess.run(["git", "clone", "--quiet", str(distant), str(session)], check=True)
-    git(session, "config", "user.email", "session@exemple.fr")
-    git(session, "config", "user.name", "Session")
+    # L'identité d'une session web : la seule adresse qu'elle publie.
+    git(session, "config", "user.email", "noreply@anthropic.com")
+    git(session, "config", "user.name", "Claude")
     git(session, "checkout", "--quiet", "-b", "claude/essai")
     return distant, session
 
@@ -121,7 +122,54 @@ def test_il_rattrape_ce_que_main_a_recu_entre_temps(atelier, tmp_path):
     assert tete_distante(distant, "main") == git(session, "rev-parse", "HEAD")
 
 
+def test_l_adresse_noreply_du_compte_github_passe(atelier):
+    """L'adresse que GitHub attribue au compte ne désigne personne : elle part."""
+    distant, session = atelier
+    git(session, "config", "user.email", "240225789+g-pliberal@users.noreply.github.com")
+    tete = commiter(session, "travail.txt")
+
+    acheve = pousser(session)
+    assert acheve.returncode == 0, acheve.stderr
+    assert tete_distante(distant, "main") == tete
+
+
 # -- ce qu'il refuse ----------------------------------------------------------
+
+
+def test_il_refuse_une_adresse_nominative_sans_rien_pousser(atelier):
+    """Une adresse publiée ne s'efface qu'en réécrivant l'historique entier."""
+    distant, session = atelier
+    avant = tete_distante(distant, "main")
+    git(session, "config", "user.email", "prenom.nom@exemple.fr")
+    commiter(session, "travail.txt")
+
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "adresse nominative" in acheve.stderr
+    assert tete_distante(distant, "main") == avant, "rien poussé"
+
+
+def test_il_refuse_le_committer_nominatif_que_son_rebasage_a_pose(atelier, tmp_path):
+    """Un rebasage réécrit le committer à l'identité du poste : un commit signé
+    d'une session web en ressort signé du poste, et ne doit pas partir."""
+    distant, session = atelier
+    commiter(session, "mienne.txt")
+
+    autre = tmp_path / "autre"
+    subprocess.run(["git", "clone", "--quiet", str(distant), str(autre)], check=True)
+    git(autre, "config", "user.email", "autre@exemple.fr")
+    git(autre, "config", "user.name", "Autre")
+    sienne = commiter(autre, "sienne.txt")
+    git(autre, "push", "--quiet", "origin", "main")
+
+    git(session, "config", "user.email", "prenom.nom@exemple.fr")
+    acheve = pousser(session)
+    assert acheve.returncode != 0
+    assert "adresse nominative" in acheve.stderr
+    assert tete_distante(distant, "main") == sienne, "rien poussé"
+    assert git(session, "log", "-1", "--format=%ae %ce") == (
+        "noreply@anthropic.com prenom.nom@exemple.fr"
+    ), "l'auteur est resté, le committer est devenu le poste"
 
 
 def test_il_refuse_sans_ancetre_commun(atelier, tmp_path):
