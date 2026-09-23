@@ -3839,3 +3839,45 @@ journal:
       de la CNAVPL ; la majoration de durée d'assurance pour enfants et la
       surcote parentale des libéraux et des avocats ; l'arrondi à l'année de
       la minoration de la CAVOM, que le texte ne tranche pas.
+
+  - date: "2026-09-23"
+    session: "action 89, professions de santé (CARMF, CARCDSF, CAVP, CARPIMKO, CARPV)"
+    consulte: >-
+      `scripts/veille_droit.py` ; index LEGI et JORF, sans incrément depuis
+      ceux du 22 et du 23 septembre : L. 161-17-2 et L. 161-17-3 sans version
+      postérieure au 31 décembre 2025. Au Journal officiel, les arrêtés qui
+      approuvent les statuts et les règlements des cinq sections : CARMF (16
+      janvier 1964, titre seul ; 10 juillet 2026), CARCDSF (1er octobre 2007,
+      13 avril 2011, 9 juillet 2012, 27 décembre 2023, 10 juillet 2026), CAVP
+      (11 mai 2009, 23 juin 2011, 10 juillet 2026), CARPIMKO (31 juillet 2015,
+      27 décembre 2023, 10 juillet 2026), CARPV (18 octobre 2021, 10 juillet
+      2026) ; décret n° 2026-418, articles 3 à 6, 16 et 25 ; dans LEGI,
+      l'article 3 du décret n° 2011-1644. Côté caisses : les vingt et une
+      pages du lot, les calculettes de la CARMF en modes cotisations et cumul
+      sur quatre revenus, le simulateur de la CARCDSF et sa page « A quel âge
+      demander ses droits », la page d'âge de la CAVP.
+    trouve: >-
+      Six règles du scénario 1 que les fiches ne suivaient pas, lues au texte
+      et chez la caisse : la minoration par l'âge seul de la CARMF de 2000 à
+      2016 et celle de la CARPV, que la durée annulait ; la règle d'âge de la
+      CARCDSF (5 % par année de 2008 à 2010, table par génération de 2011 à
+      2023, plafond de 15 % depuis 2024, surcote de 1 puis 1,25 %, taux plein
+      anticipé des mères d'un an par enfant) ; les âges propres de la CAVP et
+      sa minoration à deux pentes ; l'escalier des générations 1956 à 1961 de
+      la CARPIMKO ; la majoration de 10 % pour trois enfants des cinq
+      complémentaires et de l'ASV des médecins. Lignes
+      `carmf_asv_minoration_enfants`, `carcdsf_minoration_age_seul`,
+      `cavp_minoration_deux_pentes`, `carpimko_ages_2015` et
+      `carpv_minoration_age_seul`. Le décret n° 2026-418 ne change aucun
+      paramètre des cinq fiches. La page de calcul de la CARMF compte 9,5
+      points d'ajustement de l'ASV au plus ; le décret et la calculette de la
+      caisse en comptent neuf, et la fiche suit le décret.
+    reste: >-
+      Le tableau de minoration de la CARCDSF de 2012, publié en image ;
+      l'annexe des statuts de la CAVP de 2011 et le coefficient de 0,96 ;
+      l'abattement des auxiliaires médicaux nés avant 1956 de 2016 à 2023 ;
+      les statuts antérieurs, au Bulletin officiel, et le texte de l'arrêté de
+      1964 de la CARMF ; la même forme de minoration à relire à la CAVAMAC, à
+      la CAVEC et à la CPRN d'avant 2014 ; les prestations complémentaires de
+      vieillesse des dentistes, des sages-femmes, des auxiliaires médicaux et
+      des biologistes.

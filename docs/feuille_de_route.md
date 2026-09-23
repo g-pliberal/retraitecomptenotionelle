@@ -12849,6 +12849,46 @@ service 2026 de la CNAVPL*, 0,6599 €, écrite par la CAVOM et la CPRN, à
 reprendre du recueil statistique à sa parution. *La majoration de durée
 d'assurance pour enfants* et la surcote parentale des libéraux et des avocats.
 
+**Passe du 23 septembre 2026 : les professions de santé (CARMF, CARCDSF,
+CAVP, CARPIMKO, CARPV).** Vingt et une adresses, réservées par un commit
+`en_cours` poussé seul ; les calculettes de la CARMF lancées sur une grille
+de revenus, puis les statuts et règlements des cinq sections lus au Journal
+officiel, et le décret n° 2026-418 dans ses articles de santé, qui ne change
+aucun paramètre des fiches. Les barèmes de 2026 étaient justes ; les règles
+d'âge ne l'étaient pas. Corrigé au scénario 1, dans les deux moteurs : la
+minoration par l'âge seul, que la durée annulait parce qu'une durée requise
+vide ne suffisait pas à le dire (CARMF de 2000 à 2016, CARPV) ; la règle
+d'âge de la CARCDSF — 5 % par année de 2008 à 2010, table par génération de
+2011, plafond de 15 % depuis 2024, surcote de 1 puis 1,25 % — et le taux
+plein anticipé des mères, un an par enfant ; les âges propres de la CAVP et
+sa minoration à deux pentes ; l'escalier des générations 1956 à 1961 de la
+CARPIMKO ; la majoration de 10 % pour trois enfants des cinq complémentaires
+et de l'ASV ; et les âges d'une carrière, qui ne lisent plus ceux d'un
+complémentaire. Quatre champs de période (`decote_palier_age`,
+`taux_plein_anticipe_par_enfant_annees` et leurs compagnons), une colonne de
+décote dans `ages_regimes.csv`. Témoins : dentistes −2 à −7 %, pharmaciens
+−3 à −4,5 %, vétérinaires −2,6 à −3,3 %, médecin né en 1945 −1,4 %. Deux
+exemples publiés entrent aux témoins officiels : la CARCDSF, deux enfants et
+le taux plein à 65 ans ; la CARMF, le coefficient de 1,15 à 65 ans. Récit
+dans `docs/limites.md`, « Les sections de santé minorent à l'âge » ; tests
+dans `tests/test_sections_sante.py`.
+
+**Ce que ce lot laisse ouvert, par ordre de poids.** *La même forme de
+minoration ailleurs* : la CAVAMAC, la CAVEC et la CPRN d'avant 2014 écrivent
+une décote en laissant la durée requise vide, et le moteur la laisse annuler
+par la durée — à relire contre leurs statuts avant de la corriger. *Les
+prestations complémentaires de vieillesse* des dentistes, des sages-femmes,
+des auxiliaires médicaux et des biologistes, dont les barèmes sont lus
+(décrets de 2007 et de 2017, pages des caisses) et qu'aucun statut ne reçoit.
+*Les tables transitoires* que l'index ne porte pas : la minoration des
+dentistes nés de juillet 1951 à 1954 (en image au JO du 21 juillet 2012), les
+coefficients des pharmaciens nés jusqu'en 1955 (annexe des statuts de 2011),
+l'abattement des auxiliaires nés avant 1956 de 2016 à 2023. *La participation
+de l'assurance maladie* à la cotisation de base des médecins de secteur 1, et
+les dispenses des premières années d'affiliation. *Les statuts antérieurs*,
+publiés au Bulletin officiel : CARCDSF avant 2007, CAVP avant 2009, CARPIMKO
+avant 2015, CARPV avant 2021.
+
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`
 (la forme), puis, selon ce qu'on trouve : `tests/temoins/exemples_officiels.yaml`,

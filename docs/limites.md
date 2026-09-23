@@ -6294,6 +6294,80 @@ avocats. Les lignes `cavom_ages_minoration`, `cavom_assiette_2016`,
 `majoration_enfants_liberaux_avocats` du registre de veille en tiennent le
 détail.
 
+### Les sections de santé minorent à l'âge, et la durée effaçait la minoration
+
+La passe du 23 septembre 2026 sur les professions de santé (action 89) a
+dépouillé les vingt et une adresses de la CARMF, de la CARCDSF, de la CAVP, de
+la CARPIMKO et de la CARPV — les calculettes de la CARMF lancées sur une
+grille de revenus —, puis lu au Journal officiel les statuts et les
+règlements des cinq sections, approuvés par arrêté, le dernier le 10 juillet
+2026. Les barèmes de cotisation de 2026 étaient justes partout ; les règles
+d'âge ne l'étaient nulle part.
+
+**Une durée requise vide ne dit pas « l'âge seul ».** Plusieurs fiches
+écrivaient une minoration par trimestre et laissaient
+`duree_requise_trimestres` vide, pour dire que la durée n'y jouait aucun
+rôle. Le moteur, lui, opposait à un régime en points la durée de la
+carrière, qui annulait la minoration : un médecin parti à 64 ans en 2009
+avec sa durée, un vétérinaire au même âge, ne perdaient rien de leur
+complémentaire. Les statuts disent le contraire — « 0,75 à 60 ans […] 0,95 à
+64 ans » à la CARMF jusqu'en 2016, « 1,25 % par trimestre manquant avant
+l'âge de soixante-cinq ans » à la CARPV. La règle s'écrit maintenant en
+clair, `abattement_points: cavom` ou `decote_annulee_par_la_duree: false`.
+La CAVAMAC, la CAVEC et la CPRN d'avant 2014 portent la même forme, et
+restent à relire contre leurs statuts.
+
+**Chaque section a sa règle d'âge, et les fiches lisaient celle du régime de
+base.** La CARCDSF minore de 5 % par année d'âge manquante sous ses statuts
+de 2007, puis, à partir de 2011, par génération — 5 % par année pour les nés
+avant juillet 1951, 1,5 % par trimestre pour les nés depuis 1955, un tableau
+entre les deux —, dans la limite de 15 % depuis 2024 ; elle majore de 1 %
+puis de 1,25 % par trimestre au-delà. La CAVP a ses propres âges du taux
+plein, de 65 à 67 ans selon la
+génération, et deux pentes : 1,25 % par trimestre jusqu'à 65 ans, 0,5 %
+au-delà. La CARPIMKO fait monter le sien de quatre mois par génération, de
+65 ans pour les nés en 1955 à 67 ans pour ceux de 1961. Une colonne de
+décote s'ajoute à `legislation/ages_regimes.csv`, quatre champs aux
+périodes — un palier de décote et sa seconde pente, le taux plein anticipé
+des mères et sa limite —, dans les deux moteurs. Et les âges d'ouverture et
+du taux plein d'une carrière ne lisent plus les âges propres d'un
+complémentaire : la CAVOM ouvrait à 60 ans la carrière d'un officier
+ministériel né en 1955, que le calcul refusait ensuite.
+
+**Les mères de la CARCDSF partent plus tôt, et trois enfants majorent
+partout.** Une chirurgienne-dentiste ou une sage-femme part sans
+minoration un an plus tôt par enfant, cinq au plus : la caisse en publie
+l'exemple, deux enfants et le taux plein dès 65 ans, devenu le témoin
+`carcdsf_deux_enfants_65_ans`. La majoration de 10 % pour trois enfants
+n'était portée par aucune des cinq fiches ; elle l'est à la date où un
+texte l'établit — 1964 à la CARMF, 1981 à l'ASV des médecins, 2008 à la
+CARCDSF, 2009 à la CAVP, 2022 à la CARPV, 2024 à la CARPIMKO. Au scénario 1,
+les témoins — des hommes sans enfant partis à 64 ans avec leur durée —
+perdent ce que la caisse leur retire : de 2 à 7 % pour les dentistes, de 3
+à 4,5 % pour les pharmaciens, de 2,6 à 3,3 % pour les vétérinaires, 1,4 %
+pour le médecin né en 1945.
+
+**Ce qui reste, et où il est écrit.** Le tableau de minoration des dentistes
+nés de juillet 1951 à 1954 n'est publié qu'en image (arrêté du 9 juillet
+2012), et 1,25 % par trimestre en tient lieu ; leurs aînés, minorés par
+année, le sont par trimestre de 2011 à 2016 ; et avant 2008, faute des
+statuts publiés au Bulletin officiel, la fiche garde la règle du régime de
+base. Les coefficients des pharmaciens nés jusqu'en 1955, « en annexe » des
+statuts de 2011, ne sont pas dans l'index, et leur valeur de service n'est
+pas affectée du coefficient de 0,96. L'abattement des auxiliaires
+médicaux nés avant 1956, de 2016 à 2023 — 4 % par année et 0,25 % par
+trimestre —, est remplacé par 1,25 % par trimestre. La règle d'âge de la CARPV n'est lue que depuis 2021 et
+supposée la même avant ; le taux de 1964 de la CARMF n'est connu que par le
+règlement de 2026. Lus et non portés : les dispenses des premières années,
+que l'exemple de la CARMF suppose sans points (une année pour la base, deux
+pour la complémentaire) ; la participation de l'assurance maladie à la
+cotisation de base des médecins de secteur 1 ; les prestations
+complémentaires de vieillesse des dentistes, des sages-femmes, des
+auxiliaires médicaux et des biologistes ; la part capitalisée de la CAVP.
+Les lignes `carmf_asv_minoration_enfants`, `carcdsf_minoration_age_seul`,
+`cavp_minoration_deux_pentes`, `carpimko_ages_2015` et
+`carpv_minoration_age_seul` du registre de veille en tiennent le détail.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
