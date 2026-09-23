@@ -5337,3 +5337,33 @@ def test_la_crpn_decote_par_la_duree_seule_jusqu_a_soixante_ans(simulateur):
         assert not avant.decote_par_la_duree_seule
         assert avant.age_taux_plein == pytest.approx(60.0)
 
+
+
+def test_le_salaire_de_reference_des_cultes_est_fait_du_forfait(simulateur):
+    """Le salaire annuel moyen de la CAVIMAC ne dépend pas du revenu déclaré.
+
+    Le régime des cultes liquide aux règles du régime général (L. 382-27) : son
+    salaire annuel moyen est fait des salaires qui ont porté cotisation, et la
+    cotisation porte sur le forfait du SMIC (R. 382-89). La caisse l'écrit :
+    « le salaire annuel est égal à la moyenne des salaires des 25 meilleures
+    années. Ces salaires correspondent à une base SMIC pour tous les assurés
+    cultuels. » Le moteur prenait le revenu saisi : à une fois et demie le
+    salaire moyen, la pension de base sortait 2,17 fois trop haute.
+    """
+    def cavimac(statut, niveau):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1965, sexe="H", affiliation=statut, age_debut=25,
+            age_liquidation=65, niveau_salaire=niveau,
+        )
+        return next(p for p in simulateur.scenario_actuel.calculer(
+            carriere).pensions_par_regime if p.regime == "cavimac")
+
+    reference = cavimac("ministre_du_culte", 1.0)
+    for statut, niveau in (("ministre_du_culte", 0.3), ("ministre_du_culte", 1.5),
+                           ("membre_congregation", 2.0)):
+        assert cavimac(statut, niveau).montant == pytest.approx(reference.montant, abs=1e-9)
+    # Vingt-cinq années de 1 820 heures de SMIC, revalorisées : autour du SMIC
+    # annuel de 2029, loin du salaire moyen.
+    salaire = float(reference.detail.split("SR ")[1].split(" €")[0].replace(",", ""))
+    smic_annuel = 1820 * simulateur.macro.smic_horaire(2029)
+    assert 0.85 * smic_annuel < salaire < 1.05 * smic_annuel

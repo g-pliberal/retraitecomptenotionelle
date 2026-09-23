@@ -288,6 +288,17 @@ export class ScenarioActuel {
         return forfaitGrille[0] * ligne.fraction_annee;
       }
     }
+    if (periode.assiette_forfaitaire) {
+      // L'ASSIETTE FORFAITAIRE EST AUSSI LE SALAIRE PORTÉ AU COMPTE : le
+      // salaire annuel moyen du régime des cultes est fait du forfait de
+      // l'année, « une base SMIC pour tous les assurés cultuels » (CAVIMAC).
+      // Voir `_assiette_de_reference` dans le Python.
+      const annuelle = this.catalogue.obtenir(periode.regime).periode(ligne.annee) ?? periode;
+      if (annuelle.assiette_repere_smic !== null && annuelle.assiette_repere_smic !== undefined) {
+        return annuelle.assiette_repere_smic
+          * this.macro.smic_horaire.valeur(ligne.annee) * ligne.fraction_annee;
+      }
+    }
     return assietteDeReference(periode, ligne);
   }
 

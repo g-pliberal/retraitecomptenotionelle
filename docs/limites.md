@@ -3378,14 +3378,18 @@ général. Il a fallu un drapeau au moteur, `assiette_forfaitaire` : un ministre
 du culte n'a pas de salaire dont on prélèverait une fraction, l'assiette EST le
 forfait, là où `assiette_plancher` ne relevait que les assiettes trop basses.
 
-**Ce que la fiche des cultes approxime.** Deux choses, et dans le même sens.
-Le passage du forfait de <!--chiffre:illustration()-->169<!--/--> à <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=HEURES_SMIC_PAR_MOIS)-->151,67<!--/--> heures mensuelles est daté de 2002, ce
+**Ce que la fiche des cultes approxime.** Le passage du forfait de <!--chiffre:illustration()-->169<!--/--> à <!--chiffre:mesure(constante?de=retraite_notionnelle.web.pages&nom=HEURES_SMIC_PAR_MOIS)-->151,67<!--/--> heures mensuelles est daté de 2002, ce
 que la clause transitoire de R. 382-89 rend probable sans l'écrire ; et la
 garantie mensuelle de rémunération qui, du 1<sup>er</sup> janvier 2002 au
 30 juin 2005, s'ajoutait à cette base n'est pas modélisée — ces quatre années
-sous-estiment donc la cotisation. Enfin, L. 382-27 réserve les périodes
-antérieures au 1<sup>er</sup> janvier 1998 aux règles d'avant, forfaitaires :
-le modèle applique les règles du régime général sur toute la durée. Cela ne
+sous-estiment donc la cotisation. L. 382-27 réserve les périodes antérieures
+au 1<sup>er</sup> janvier 1998 aux règles d'avant — la caisse porte leur
+fraction de pension au minimum contributif, ou au maximum de la pension
+« Cavimac » quand le taux est minoré — : le modèle applique les règles du
+régime général sur toute la durée, sur un salaire annuel moyen fait du forfait,
+comme celui que la caisse calcule. Et les années d'activité cultuelle d'avant
+1979, qu'elle valide gratuitement et dont elle sert une fraction de pension, ne
+sont pas comptées : le modèle n'ouvre rien avant la création du régime. Cela ne
 touche que le scénario 1 ; les comptes notionnels, eux, ne lisent que des
 cotisations, et celles-là sont sourcées de bout en bout.
 
@@ -6773,6 +6777,33 @@ relevé rattache toute ligne de la CAVIMAC au ministre rémunéré : c'est au
 formulaire de corriger. La ligne `cultes_retraite_complementaire` du registre
 de veille en tient le détail.
 
+### Le ministre du culte liquidait sur son revenu, et la caisse liquide sur le SMIC
+
+Le régime des cultes cotise sur un forfait, le SMIC mensuel (R. 382-89 et
+R. 382-90), et liquide aux règles du régime général (L. 382-27) : son salaire
+annuel moyen est fait des salaires qui ont porté cotisation, c'est-à-dire du
+forfait. La page de la CAVIMAC sur la retraite de base, lue le 23 septembre
+2026, l'écrit sans détour : « le salaire annuel est égal à la moyenne des
+salaires des 25 meilleures années. Ces salaires correspondent à une base SMIC
+pour tous les assurés cultuels. » Le moteur, lui, prélevait bien la cotisation
+sur le forfait, mais calculait la pension sur le revenu saisi.
+
+**Ce que cela déplaçait.** Tout, sauf pour qui déclarait un revenu voisin du
+SMIC. Le ministre né en 1965, parti à 65 ans, se voyait servir une pension de
+base de 20 771 € par an s'il avait déclaré une fois et demie le salaire moyen,
+de 9 988 € à la moitié ; elle est désormais de 9 554 € dans les deux cas, sur
+un salaire annuel moyen de 22 557 €. Le forfait qu'on retient est celui de
+l'année — 169 heures mensuelles avant 2002, 151,67 ensuite —, lu dans la fiche
+de l'année et non dans celle de la liquidation. Les comptes notionnels ne
+bougent pas : ils ne lisaient déjà que la cotisation.
+
+**Ce qui reste.** La même page décrit une pension en trois fractions : les
+années d'avant 1979, validées gratuitement, que le modèle ne compte pas ; celles
+de 1979 à 1997, cotisées au forfait mais liquidées à leurs règles propres,
+portées au minimum contributif ou au maximum de la pension « Cavimac » ; celles
+d'après 1998 seules suivent le régime général. La ligne
+`cultes_salaire_annuel_moyen` du registre de veille en tient le détail.
+
 ### Les navigants décotaient jusqu'à soixante-cinq ans, et la loi dit soixante
 
 La caisse des navigants de l'aviation civile (CRPN) écarte la décote « à
@@ -9025,7 +9056,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2351<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2352<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

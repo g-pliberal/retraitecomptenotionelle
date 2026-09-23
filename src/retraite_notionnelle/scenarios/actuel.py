@@ -2136,6 +2136,21 @@ class ScenarioActuel:
             )
             if forfait_grille is not None:
                 return forfait_grille[0] * ligne.fraction_annee
+        if periode.assiette_forfaitaire:
+            # L'ASSIETTE FORFAITAIRE EST AUSSI LE SALAIRE PORTÉ AU COMPTE. Le
+            # régime des cultes liquide aux règles du régime général (L. 382-27),
+            # dont le salaire annuel moyen est fait des salaires qui ont porté
+            # cotisation — ici le forfait de R. 382-89. La CAVIMAC l'écrit :
+            # « Ces salaires correspondent à une base SMIC pour tous les assurés
+            # cultuels. » Le moteur prenait le revenu saisi, et servait au
+            # ministre déclaré à une fois et demie le salaire moyen une pension
+            # de base plus de deux fois trop haute. Le forfait
+            # est celui de l'année — 169 heures mensuelles avant 2002, 151,67
+            # ensuite —, proratisé sur ses mois.
+            annuelle = self.catalogue[periode.regime].periode(ligne.annee) or periode
+            if annuelle.assiette_repere_smic is not None:
+                return (annuelle.assiette_repere_smic
+                        * self.macro.smic_horaire(ligne.annee) * ligne.fraction_annee)
         return _assiette_de_reference(periode, ligne)
 
     #: Pensions à compter desquelles le salaire annuel moyen des parents porte

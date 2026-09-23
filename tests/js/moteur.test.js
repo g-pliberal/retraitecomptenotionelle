@@ -579,3 +579,24 @@ test("le ministre du culte rémunéré cotise à l'Arrco sur le forfait", () => 
   assert.ok(Math.abs(rco("ministre_du_culte", 2.0).montant - pension.montant) < 1e-9);
   assert.ok(pension.detail.startsWith("1,348.24 points"), pension.detail);
 });
+
+/**
+ * Le salaire annuel moyen de la CAVIMAC est fait du forfait du SMIC, « une base
+ * SMIC pour tous les assurés cultuels » : le revenu déclaré n'y entre pas. Même
+ * arithmétique que `test_le_salaire_de_reference_des_cultes_est_fait_du_forfait`.
+ */
+test("le salaire de référence des cultes est fait du forfait", () => {
+  const contexte = new Contexte(paquet);
+  const simulateur = contexte.simulateur();
+  const cavimac = (statut, niveau) => simulateur.scenarioActuel.calculer(
+    simulateur.carriereSimple({
+      annee_naissance: 1965, sexe: "H", affiliation: statut, age_debut: 25,
+      age_liquidation: 65, niveau_salaire: niveau,
+    }),
+  ).pensions_par_regime.find((p) => p.regime === "cavimac");
+  const reference = cavimac("ministre_du_culte", 1.0);
+  for (const [statut, niveau] of [["ministre_du_culte", 0.3], ["ministre_du_culte", 1.5],
+    ["membre_congregation", 2.0]]) {
+    assert.ok(Math.abs(cavimac(statut, niveau).montant - reference.montant) < 1e-9);
+  }
+});

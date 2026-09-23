@@ -2271,6 +2271,13 @@ regimes:
           cotisation mise à la charge des salariés affiliés au régime
           général ». Assiette forfaitaire égale au SMIC mensuel, soit
           1820 heures de SMIC par an (151,67 heures par mois).
+          LE SALAIRE ANNUEL MOYEN EST FAIT DU FORFAIT, et non du revenu saisi :
+          la caisse le calcule « sur la base du SMIC [...] pour tous les assurés
+          cultuels » (page « Demander ma retraite de base », lue le 23 septembre
+          2026), ce que le moteur fait depuis dans `_assiette_de_reference`. Il
+          applique en revanche les règles d'après 1998 à toute la carrière, et
+          ne compte pas les années d'avant 1979, que la caisse valide
+          gratuitement : voir `docs/limites.md`.
 
   - code: crpnpac
     nom: >-
