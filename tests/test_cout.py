@@ -1578,25 +1578,43 @@ def test_la_fenetre_des_transferts_est_observee(comptes: ComptesRetraite):
 
 
 def test_la_recette_suit_le_droit(cout: Cout, comptes: ComptesRetraite):
-    """Les scénarios notionnels ne comptent pas ce que la CNAF et l'Unédic versent.
+    """Un scénario ne perd une recette qu'à partir du jour où il cesse d'en servir le droit.
 
     Le système actuel encaisse tout, et son solde reste celui du COR. Un
-    scénario notionnel se voit retirer, année par année, ce que la branche
-    famille et l'assurance chômage versent pour des droits qu'il ne sert pas ;
-    avant la bascule, où il sert encore les pensions du système actuel, son
-    solde est donc celui du COR MOINS cette recette, et rien d'autre.
+    scénario rétroactif se voit retirer, année par année, ce que la branche
+    famille et l'assurance chômage versent pour des droits qu'il ne sert pas.
+    Un scénario « dès la bascule », lui, EST le système actuel avant elle : il
+    en sert les pensions, en encaisse toutes les recettes, et son solde y est
+    celui du COR, exactement. Jusqu'au 23 septembre 2026, ce test exigeait le
+    solde du COR MOINS la recette retirée : il tenait l'erreur de
+    construction qui prêtait aux scénarios 3 et 5 un déficit de plus d'un point
+    de PIB avant qu'aucune de leurs règles eût changé.
     """
     solde = cout.solde
+    bascule = Parametres().annee_bascule
     for annee in comptes.annees_transferts():
+        assert annee < bascule
         ligne = solde.annee(annee)
         assert ligne.retrait == pytest.approx(comptes.transfert_supprime_part_pib(annee))
         assert ligne.ressources_de("actuel") == ligne.ressources
         assert ligne.solde("actuel") == pytest.approx(ligne.ressources - ligne.depenses)
         for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
             assert ligne.rapports[scenario] == pytest.approx(1.0)
-            assert ligne.solde(scenario) == pytest.approx(
-                ligne.solde("actuel") - ligne.retrait)
-            assert ligne.coefficient(scenario) < ligne.coefficient("actuel")
+            assert ligne.ressources_de(scenario) == ligne.ressources
+            assert ligne.solde(scenario) == pytest.approx(ligne.solde("actuel"))
+            assert ligne.coefficient(scenario) == pytest.approx(ligne.coefficient("actuel"))
+        for scenario in ("notionnel_retroactif", "notionnel_retroactif_employeur"):
+            rapport = ligne.rapports_recettes.get(scenario, 1.0)
+            cotisees = ligne.ressources * ligne.part_contributive
+            assert ligne.ressources_de(scenario) == pytest.approx(
+                cotisees * rapport + ligne.ressources - cotisees - ligne.retrait)
+    # À la bascule, la recette leur est retirée comme aux autres.
+    ligne = solde.annee(bascule)
+    for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
+        rapport = ligne.rapports_recettes.get(scenario, 1.0)
+        cotisees = ligne.ressources * ligne.part_contributive
+        assert ligne.ressources_de(scenario) == pytest.approx(
+            cotisees * rapport + ligne.ressources - cotisees - ligne.retrait)
     # Plus d'un point de PIB, toutes les années connues, depuis que le fonds
     # de solidarité vieillesse est entré dans le compte.
     for annee in comptes.annees_transferts():
@@ -1849,8 +1867,13 @@ def test_seul_le_scenario_6_change_ce_qui_est_preleve(cout: Cout):
         for scenario in ("notionnel_retroactif", "notionnel_prospectif",
                          "notionnel_retroactif_employeur",
                          "notionnel_prospectif_employeur"):
-            assert ligne.ressources_de(scenario) == pytest.approx(
-                ligne.ressources - ligne.retrait), (ligne.annee, scenario)
+            # Avant la bascule, les scénarios 3 et 5 sont le système actuel,
+            # et n'ont rien à retirer : voir `test_la_recette_suit_le_droit`.
+            avant = (scenario in CLES_PROSPECTIVES
+                     and ligne.annee < ligne.annee_bascule)
+            attendu = ligne.ressources if avant else ligne.ressources - ligne.retrait
+            assert ligne.ressources_de(scenario) == pytest.approx(attendu), (
+                ligne.annee, scenario)
 
 
 def test_le_taux_moyen_que_le_rapport_implique_est_celui_que_le_cor_publie(cout: Cout):

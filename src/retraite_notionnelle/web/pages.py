@@ -1601,13 +1601,6 @@ def _jour_en_clair(jour: int) -> str:
     return "1er" if jour == 1 else str(jour)
 
 
-#: Ce que le COR projette pour le système actuel, en part du PIB : le repère
-#: extérieur auquel la page se compare. Rapport annuel de juin 2025, champ
-#: « ensemble des régimes légalement obligatoires, y compris FSV, hors RAFP ».
-COR_2024 = 0.139
-COR_2070 = 0.142
-
-
 def _age(valeur: float) -> str:
     """Âge à la française, en ans et en mois : « 64 ans », « 64 ans et 9 mois ».
 
@@ -9572,6 +9565,11 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
     derniere = depenses.derniere_annee
     annees = tuple(ligne.annee for ligne in cout.annees)
     bascule = contexte.base.annee_bascule
+    # Le repère extérieur : ce que le COR projette pour le système actuel à
+    # l'horizon, LU dans son compte du système de retraite (scénario de
+    # référence du dernier rapport). La constante qui le tenait, 14,2 %, était
+    # celle du rapport de juin 2025 quand le dépôt porte celui de juin 2026.
+    cor_horizon = contexte.comptes().depense(avenir.derniere_annee)
 
     # Un scénario dont la courbe est exactement celle du système actuel serait
     # tracé PAR-DESSUS elle et la ferait disparaître : le graphique montrerait
@@ -9794,8 +9792,8 @@ obligatoire</strong> — {_milliards(depenses.repartition(derniere), 1)} en
 {derniere} —, il porte son propre niveau de dépense, et ce niveau s'écarte de
 celui du COR : il donne {g.pourcentage(horizon.part_pib("actuel"), decimales=1)} du PIB pour le
 système actuel en {avenir.derniere_annee}, quand le COR en projette
-{g.pourcentage(COR_2070, decimales=1)}. L'écart est de
-{g.nombre((horizon.part_pib("actuel") - COR_2070) * 100, 1)} points, et il n'est
+{g.pourcentage(cor_horizon, decimales=1)}. L'écart est de
+{g.nombre((horizon.part_pib("actuel") - cor_horizon) * 100, 1)} points, et il n'est
 pas flatteur : notre {g.terme("taux de remplacement")} ne recule pas, celui du
 COR recule. <a href="{g.DEPOT}/blob/main/docs/limites.md">Le § 5 ter des
 limites</a> porte la mesure. C'est pourquoi les cartes

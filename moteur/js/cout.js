@@ -1072,6 +1072,11 @@ class SoldeAnnuel {
    */
   ressourcesDe(scenario) {
     if (scenario === "actuel") return this.ressources;
+    // AVANT LA BASCULE, UN SCÉNARIO « DÈS LA BASCULE » EST LE SYSTÈME ACTUEL :
+    // il en sert les pensions, il en encaisse toutes les recettes.
+    if (CLES_PROSPECTIVES.has(scenario) && this.annee > 0 && this.annee < this.anneeBascule) {
+      return this.ressources;
+    }
     if (scenario === "notionnel_liberal" && this.recetteParAssiette) {
       // Le taux plein sur l'assiette mesurée. Trois postes ne sont pas
       // reconduits. LA CONTRIBUTION D'ÉQUILIBRE DE L'ÉTAT est remplacée par
@@ -1139,6 +1144,7 @@ class SoldeAnnuel {
    * dès la bascule, remplace les cotisations par 18 % de l'assiette et met à
    * zéro la contribution d'équilibre, les subventions et les impôts affectés ;
    * des transferts, elle ne garde que ce qui ne paie pas un droit supprimé.
+   * Les scénarios 3 et 5, avant la bascule, ont les postes du système actuel.
    * Les autres scénarios notionnels gardent chaque poste, la part cotisée
    * multipliée par le rapport de recette, et retranchent chez le payeur ce
    * qu'ils ne peuvent pas compter.
@@ -1151,7 +1157,9 @@ class SoldeAnnuel {
     const chomage = this.retraits.chomage ?? 0.0;
     const solidarite = this.retraits.solidarite ?? 0.0;
     let postes;
-    if (scenario === "actuel") {
+    // Les scénarios 3 et 5, avant la bascule, sont le système actuel.
+    if (scenario === "actuel" || (CLES_PROSPECTIVES.has(scenario)
+        && this.annee > 0 && this.annee < this.anneeBascule)) {
       postes = {};
       for (const code of POSTES_RESSOURCES) postes[code] = total * part(code);
       postes.transferts_famille = famille;

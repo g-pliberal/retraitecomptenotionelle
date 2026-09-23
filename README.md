@@ -167,7 +167,7 @@ Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses don
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
 chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->888<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 985<!--/--> Ko bruts) et prend quelques dixièmes
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 986<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Dix pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -870,9 +870,9 @@ contrôle et non identité.
 |---|---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(solde?scenario=1&annee=2025)-->−0,17<!--/--> % du PIB | **<!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %** | **<!--chiffre:mesure(coefficient?scenario=1)-->0,84<!--/-->** |
 | 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(solde?scenario=2&annee=2025)-->+8,99<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=2)-->+7,82<!--/--> % | <!--chiffre:mesure(coefficient?scenario=2)-->2,59<!--/--> |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−1,34<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,40<!--/--> % | **<!--chiffre:mesure(coefficient?scenario=3)-->1,69<!--/-->** |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−0,16<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,40<!--/--> % | **<!--chiffre:mesure(coefficient?scenario=3)-->1,69<!--/-->** |
 | 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(solde?scenario=4&annee=2025)-->+3,67<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=4)-->+1,88<!--/--> % | <!--chiffre:mesure(coefficient?scenario=4)-->1,16<!--/--> |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−1,34<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,20<!--/--> % | <!--chiffre:mesure(coefficient?scenario=5)-->1,09<!--/--> |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−0,16<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,20<!--/--> % | <!--chiffre:mesure(coefficient?scenario=5)-->1,09<!--/--> |
 | 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+3,67<!--/--> % | **<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,54<!--/--> %** | **<!--chiffre:mesure(coefficient?scenario=6)-->0,98<!--/-->** |
 
 Ce sont les chiffres que la page Coût affiche, Python et JavaScript à
@@ -918,9 +918,12 @@ servent pas non plus : des trimestres pour des périodes non travaillées
 notionnels suppriment ces droits ; leur coefficient ne compte donc pas ces
 recettes, qui leur sont retirées année par année de 2013 à 2024, à part
 constante des ressources avant et sur tout l'horizon projeté — <!--chiffre:mesure(recette?quoi=retrait&annee=2025)-->1,18<!--/--> % du PIB
-en 2025. C'est pourquoi les scénarios 3 et 5 sont déjà en déficit en 2025, où
-ils servent encore les pensions du système actuel. Le système actuel, lui,
-encaisse tout, et son solde reste celui du COR.
+en 2025. Les scénarios 3 et 5 ne les perdent qu'à la bascule : avant elle, ils
+SONT le système actuel, en servent les pensions et en encaissent toutes les
+recettes. Jusqu'au 23 septembre 2026, le modèle les leur retirait dès 2013, et
+leur prêtait en 2025 un déficit de plus d'un point que leur seule construction
+fabriquait. Le système actuel, lui, encaisse tout, et son solde reste celui du
+COR.
 
 **La recette suit aussi le TAUX, et cela ne concerne que le scénario 6.** Il
 remplace tous les taux de cotisation par un seul, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %, parts salariale et
