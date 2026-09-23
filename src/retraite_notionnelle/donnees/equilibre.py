@@ -46,7 +46,8 @@ système qui ne sert plus ces droits, c'est lui prêter dix milliards par an qui
 ne lui reviennent pas. La série ``transferts_retraite.csv`` dit ce que la CNAF
 et l'Unédic versent, année par année, lue chez celui qui paie (rapports à la
 Commission des comptes de la Sécurité sociale), et ``ORGANISMES`` dit lequel
-des deux finance un droit que le compte notionnel supprime.
+des deux finance un droit que le compte notionnel supprime : la branche
+famille, et non l'assurance chômage, dont le compte porte les cotisations.
 
 CE QUE LA STRUCTURE DES RESSOURCES SERT À DIRE
 -----------------------------------------------
@@ -244,12 +245,13 @@ class Organisme:
     explication: str
     #: Le compte notionnel du dépôt supprime-t-il les droits que ce transfert
     #: paie ? Oui pour la branche famille : ni AVPF ni majorations dans les
-    #: scénarios 2 à 6. Oui aussi pour l'assurance chômage, mais pour une autre
-    #: raison : une année de chômage indemnisé ne verse rien au compte
-    #: (``carriere.PERIODES_NON_COTISEES``), alors qu'un système notionnel réel
-    #: pourrait créditer ce que l'Unédic paie, qui est une cotisation assise
-    #: sur l'allocation. Tant que le modèle ne le fait pas, la recette suit le
-    #: droit.
+    #: scénarios 2 à 6. Oui pour le fonds de solidarité vieillesse. NON pour
+    #: l'assurance chômage : le compte porte, pendant un chômage indemnisé, les
+    #: cotisations complémentaires qu'elle verse sur le salaire d'avant
+    #: (``AnneeCarriere.familles_financees``). Le dépôt la retirait jusqu'au
+    #: 23 septembre 2026, au motif qu'une année de chômage ne portait rien au
+    #: compte ; elle y portait ces cotisations depuis toujours. La recette
+    #: suit le droit, dans les deux sens.
     droit_supprime: bool
     #: Sa recette arrive-t-elle par l'impôt plutôt que par un transfert ? Vrai
     #: du seul fonds de solidarité vieillesse : ce qu'il verse aux régimes est
@@ -315,10 +317,11 @@ ORGANISMES: tuple[Organisme, ...] = (
     Organisme(
         "chomage", "Assurance chômage",
         "L'Unédic paie les points de retraite complémentaire des chômeurs "
-        "indemnisés. Le compte notionnel du dépôt ne porte rien au compte "
-        "pendant une année de chômage : cette recette non plus n'est pas la "
-        "sienne, tant qu'il ne crédite pas ce que l'Unédic verse.",
-        True,
+        "indemnisés, et le compte notionnel du dépôt porte ce qu'elle verse : "
+        "le chômage indemnisé est la seule période non travaillée qu'il "
+        "crédite, parce que c'est la seule que quelqu'un paie. Cette recette "
+        "est donc la sienne, dans tous les scénarios.",
+        False,
     ),
     Organisme(
         "solidarite", "Fonds de solidarité vieillesse",
@@ -803,12 +806,27 @@ class ComptesRetraite:
                    and (par_impot is None or payeur.recette_par_impot is par_impot)
                    and (organisme is None or payeur.code == organisme))
 
+    def versement(self, annee: int, organisme: str) -> float:
+        """Ce qu'un payeur verse au système de retraite, en part du PIB.
+
+        Qu'un scénario notionnel le garde ou le perde : c'est le « dont » du
+        poste où ce versement arrive. Même fenêtre et même part constante des
+        ressources hors d'elle que :meth:`recette_non_acquise`.
+        """
+        premiere, derniere = self.premiere_annee_transferts, self.derniere_annee_transferts
+        if premiere <= annee <= derniere:
+            return self.transfert_part_pib(organisme, annee)
+        reference = min(max(annee, premiere), derniere)
+        return (self.transfert_part_pib(organisme, reference)
+                / self.ressource(reference) * self.ressource(annee))
+
     def recette_non_acquise(self, annee: int, *, par_impot: bool | None = None,
                             organisme: str | None = None) -> float:
         """Ce qu'un scénario notionnel doit retirer de ses ressources, en part du PIB.
 
         Dans la fenêtre où les quatre lignes sont connues, c'est ce que la
-        branche famille et l'assurance chômage ont réellement versé. En dehors
+        branche famille et le fonds de solidarité vieillesse ont réellement
+        versé. En dehors
         — avant 2013, et sur tout l'horizon projeté du COR —, c'est la même
         chose à PART CONSTANTE des ressources, celle de l'année connue la plus
         proche : personne ne projette ce que la CNAF versera en 2070, et une

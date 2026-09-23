@@ -809,7 +809,8 @@ def _periodes_non_travaillees() -> dict:
                 regle.avpf, regle.services_fonction_publique,
                 regle.services_plafond_trimestres_par_enfant,
                 regle.reputes_cotises_enveloppe,
-                regle.reputes_cotises_plafond]
+                regle.reputes_cotises_plafond,
+                regle.cotisations_complementaires_versees]
         for motif, regle in sorted(charger_periodes_non_travaillees(DONNEES).items())
     }
 

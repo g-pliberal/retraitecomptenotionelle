@@ -424,7 +424,11 @@ class ConstructeurCompte:
     def cotisation_annuelle(self, carriere: Carriere, annee: int,
                             regime_fusionne: RegimeFusionne | None = None) -> CotisationAnnuelle:
         ligne = carriere.ligne(annee)
-        if ligne is None or (not ligne.cotise and not ligne.familles_cotisantes):
+        # Une année non travaillée ne porte au compte que ce qu'un tiers a
+        # VERSÉ pour elle : les cotisations complémentaires que l'Unédic paie
+        # pendant un chômage indemnisé. Les points que l'Agirc-Arrco donne
+        # pour la maladie, sans contrepartie, n'y entrent pas.
+        if ligne is None or (not ligne.cotise and not ligne.familles_financees):
             return CotisationAnnuelle(
                 annee=annee, revenu=0.0, assiette_retenue=0.0, cotisation=0.0,
                 regimes=(), taux_effectif=0.0, hors_repartition=0.0,
@@ -444,18 +448,22 @@ class ConstructeurCompte:
             )
 
         # Pendant une période indemnisée, l'assiette est le salaire d'AVANT
-        # l'interruption : c'est sur lui que l'UNEDIC ou la Sécurité sociale
-        # versent leurs cotisations. La branche d'après la bascule lisait
-        # `ligne.revenu`, nul une année non travaillée, quand celle d'avant
-        # lisait `revenu_reference` — deux règles pour la même situation.
+        # l'interruption : c'est sur lui que l'Unédic verse ses cotisations.
         base_ligne = ligne.revenu if ligne.cotise else ligne.revenu_reference
         if part < ligne.fraction_annee:
             # La ligne déclare plus de mois que le départ n'en laisse : on ne
             # porte au compte que ceux qui l'ont précédé.
             base_ligne *= part / ligne.fraction_annee
 
-        # Après la bascule, un seul régime : le régime fusionné.
-        if regime_fusionne is not None and annee >= regime_fusionne.annee_bascule:
+        # Après la bascule, un seul régime : le régime fusionné, pour ce que
+        # l'assuré et son employeur versent. Une année indemnisée n'est pas de
+        # celles-là : l'Unédic y verse ce qu'elle versait avant la bascule, et
+        # c'est cela que le compte porte, par la branche des régimes. Elle
+        # prenait jusqu'au 23 septembre 2026 le taux unifié entier sur le
+        # salaire d'avant — et le pilier capitalisé avec —, que personne ne
+        # versait : trois ans de chômage y valaient trois ans de travail.
+        if (regime_fusionne is not None and annee >= regime_fusionne.annee_bascule
+                and ligne.cotise):
             assiette = self._assiette(base_ligne, annee, 0.0, None, part)
             taux, taux_employeur, origine, fiabilite_taux = self.taux_unifie(
                 ligne, annee, regime_fusionne
@@ -473,8 +481,9 @@ class ConstructeurCompte:
             )
 
         # Pendant une période indemnisée, seuls les régimes complémentaires
-        # encaissent, et sur le salaire d'avant l'interruption.
-        familles_admises = None if ligne.cotise else set(ligne.familles_cotisantes)
+        # que quelqu'un paie encaissent, et sur le salaire d'avant
+        # l'interruption.
+        familles_admises = None if ligne.cotise else set(ligne.familles_financees)
 
         codes = self.affiliations.regimes(
             ligne.affiliation, annee, carriere.date_entree(ligne.affiliation),

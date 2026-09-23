@@ -46,11 +46,26 @@
 #   chaque caisse et n'ont pas été lus. La règle ne s'applique donc qu'à la
 #   famille `fonction_publique` du catalogue, et `docs/limites.md` le dit.
 #
-# `ouvre_droits_complementaires` — l'UNEDIC et les organismes de sécurité
-#   sociale versent, eux, de véritables cotisations aux régimes COMPLÉMENTAIRES
-#   pendant ces périodes. Des points sont acquis, calculés sur le salaire de
-#   référence d'avant l'interruption. C'est pourquoi une année de chômage
-#   indemnisé n'est pas vide à l'Agirc-Arrco alors qu'elle l'est à la CNAV.
+# `ouvre_droits_complementaires` — l'Agirc-Arrco attribue des points pendant
+#   ces périodes, calculés sur le salaire d'avant l'interruption. C'est
+#   pourquoi une année de chômage indemnisé n'est pas vide à l'Agirc-Arrco
+#   alors qu'elle l'est à la CNAV. Le scénario 1 les sert tous.
+#
+# `cotisations_complementaires_versees` — QUI PAIE CES POINTS, et c'est ce que
+#   le compte notionnel regarde, lui qui ne porte que ce qui a été versé.
+#   Pour le CHÔMAGE INDEMNISÉ, de vraies cotisations : l'Unédic les verse à
+#   l'Agirc-Arrco (3,9 milliards en 2024 avec l'Ircantec, lus chez elle dans
+#   `transferts_retraite.csv`), et l'allocataire y contribue par une retenue
+#   sur son allocation. Pour la MALADIE, la MATERNITÉ, l'INVALIDITÉ et
+#   l'ACCIDENT DU TRAVAIL, personne : l'Agirc-Arrco attribue ces points
+#   « sans contrepartie de cotisations » (guide « Maternité, maladie et points
+#   de retraite complémentaire », n° 6, février 2017, p. 4), sur la moyenne
+#   journalière des points de l'année précédente, et les finance elle-même.
+#   Cette colonne disait jusqu'au 23 septembre 2026, dans ce commentaire, que
+#   « les organismes de sécurité sociale » versaient des cotisations pendant
+#   ces périodes : le compte notionnel portait donc ces points gratuits comme
+#   s'ils avaient été payés, et après la bascule il portait l'année entière
+#   au taux unifié, pilier capitalisé compris.
 #
 # `avpf` — l'assurance vieillesse des PARENTS AU FOYER, créée par la loi du
 #   3 janvier 1972. Ce n'est ni une période assimilée ni une cotisation de
@@ -96,13 +111,13 @@
 #   spécial, qu'il ne distingue pas.
 #
 # Un motif absent de cette table est traité comme `sans_activite`.
-motif,trimestres_assimiles,ouvre_droits_complementaires,avpf,services_fonction_publique,services_plafond_annees_par_enfant,reputes_cotises_enveloppe,reputes_cotises_plafond,fiabilite
-chomage_indemnise,4,oui,non,non,,chomage,4,haute
-chomage_non_indemnise,4,non,non,non,,,,haute
-maladie,4,oui,non,oui,,incapacite_temporaire,4,moyenne
-maternite,4,oui,non,oui,,maternite,,moyenne
-invalidite,4,oui,non,oui,,invalidite,2,moyenne
-accident_travail,4,oui,non,oui,,incapacite_temporaire,4,moyenne
-service_militaire,4,non,non,oui,,service_national,4,haute
-education_enfant,4,non,oui,plafonne,3,avpf,4,haute
-sans_activite,0,non,non,non,,,,certifiee
+motif,trimestres_assimiles,ouvre_droits_complementaires,cotisations_complementaires_versees,avpf,services_fonction_publique,services_plafond_annees_par_enfant,reputes_cotises_enveloppe,reputes_cotises_plafond,fiabilite
+chomage_indemnise,4,oui,oui,non,non,,chomage,4,haute
+chomage_non_indemnise,4,non,non,non,non,,,,haute
+maladie,4,oui,non,non,oui,,incapacite_temporaire,4,moyenne
+maternite,4,oui,non,non,oui,,maternite,,moyenne
+invalidite,4,oui,non,non,oui,,invalidite,2,moyenne
+accident_travail,4,oui,non,non,oui,,incapacite_temporaire,4,moyenne
+service_militaire,4,non,non,non,oui,,service_national,4,haute
+education_enfant,4,non,non,oui,plafonne,3,avpf,4,haute
+sans_activite,0,non,non,non,non,,,,certifiee

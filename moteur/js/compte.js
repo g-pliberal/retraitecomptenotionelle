@@ -312,8 +312,11 @@ export class ConstructeurCompte {
 
   cotisationAnnuelle(carriere, annee, regimeFusionne = null) {
     const ligne = carriere.ligne(annee);
+    // Une année non travaillée ne porte au compte que ce qu'un tiers a VERSÉ
+    // pour elle : les cotisations que l'Unédic paie pendant un chômage
+    // indemnisé. Les points gratuits de la maladie n'y entrent pas.
     if (ligne === null
-        || (!ligne.cotise && ligne.familles_cotisantes.length === 0)) {
+        || (!ligne.cotise && ligne.familles_financees.length === 0)) {
       return {
         annee, revenu: 0.0, assiette_retenue: 0.0, cotisation: 0.0,
         regimes: [], taux_effectif: 0.0, hors_repartition: 0.0,
@@ -337,10 +340,7 @@ export class ConstructeurCompte {
     }
 
     // Pendant une période indemnisée, l'assiette est le salaire d'AVANT
-    // l'interruption : c'est sur lui que l'UNEDIC ou la Sécurité sociale
-    // versent leurs cotisations. La branche d'après la bascule lisait
-    // `ligne.revenu`, nul une année non travaillée, quand celle d'avant lisait
-    // `revenu_reference` — deux règles pour la même situation.
+    // l'interruption : c'est sur lui que l'Unédic verse ses cotisations.
     let baseLigne = ligne.cotise ? ligne.revenu : ligne.revenu_reference;
     if (part < ligne.fraction_annee) {
       // La ligne déclare plus de mois que le départ n'en laisse : on ne porte
@@ -348,8 +348,12 @@ export class ConstructeurCompte {
       baseLigne *= part / ligne.fraction_annee;
     }
 
-    // Après la bascule, un seul régime : le régime fusionné.
-    if (regimeFusionne !== null && annee >= regimeFusionne.annee_bascule) {
+    // Après la bascule, un seul régime : le régime fusionné, pour ce que
+    // l'assuré et son employeur versent. Une année indemnisée passe par la
+    // branche des régimes, où l'Unédic verse ce qu'elle versait avant la
+    // bascule : voir compte.py.
+    if (regimeFusionne !== null && annee >= regimeFusionne.annee_bascule
+        && ligne.cotise) {
       const assiette = this._assiette(baseLigne, annee, 0.0, null, part);
       const [taux, tauxEmployeur, origine, fiabiliteTaux] = this.tauxUnifie(
         ligne, annee, regimeFusionne,
@@ -367,9 +371,9 @@ export class ConstructeurCompte {
       };
     }
 
-    // Pendant une période indemnisée, seuls les régimes complémentaires
-    // encaissent, et sur le salaire d'avant l'interruption.
-    const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);
+    // Pendant une période indemnisée, seuls les régimes complémentaires que
+    // quelqu'un paie encaissent, et sur le salaire d'avant l'interruption.
+    const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_financees);
 
     const codes = this.affiliations.regimes(
       ligne.affiliation, annee, carriere.dateEntree(ligne.affiliation),

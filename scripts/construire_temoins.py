@@ -726,6 +726,13 @@ def _pages(contexte: Contexte) -> dict:
             "liquidation": "2026-07", "metier2_debut": "2019-04",
             "metier2_statut": "chomage_indemnise",
         }),
+        # Le même départ, mais au travail jusqu'au bout : le pilier reçoit un
+        # seul versement, l'année de la bascule, et n'a pas un an pour
+        # rapporter. Sans emploi, il ne recevait rien — la page le dit.
+        ("simuler_depart_l_annee_de_la_bascule", "/simuler", {
+            **BASE, "naissance": "1962-03-15", "debut": "1984-09",
+            "liquidation": "2026-07",
+        }),
         # Une ligne de métier laissée à moitié remplie : la page doit le dire,
         # et dire ce qui manque.
         ("simuler_metier_incomplet", "/simuler", {**BASE, "metier2_debut": "40"}),

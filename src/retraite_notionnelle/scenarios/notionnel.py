@@ -426,7 +426,13 @@ class ScenarioNotionnel:
         """
         if self.capitalisation is None:
             return None
-        assiettes = {c.annee: c.assiette_retenue for c in resultat.compte.cotisations}
+        # Le pilier ne prélève que sur ce que l'assuré GAGNE : une année de
+        # chômage n'y verse rien, personne ne payant ses dix points. Le compte
+        # notionnel, lui, y porte ce que l'Unédic verse.
+        assiettes = {
+            c.annee: c.assiette_retenue for c in resultat.compte.cotisations
+            if (ligne := carriere.ligne(c.annee)) is not None and ligne.cotise
+        }
         return self.capitalisation.construire(
             assiettes=assiettes,
             annee_naissance=carriere.annee_naissance,

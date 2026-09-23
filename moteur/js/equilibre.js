@@ -206,11 +206,10 @@ export const CODES_TRANSFERTS = POSTES_TRANSFERTS.map((poste) => poste.code);
  * Qui paie, et si le compte notionnel du dépôt supprime ce qu'il finance.
  *
  * `droitSupprime` : oui pour la branche famille — ni AVPF ni majorations dans
- * les scénarios 2 à 6. Oui aussi pour l'assurance chômage, mais pour une autre
- * raison : une année de chômage indemnisé ne verse rien au compte, alors qu'un
- * système notionnel réel pourrait créditer ce que l'Unédic paie, qui est une
- * cotisation assise sur l'allocation. Tant que le modèle ne le fait pas, la
- * recette suit le droit.
+ * les scénarios 2 à 6 —, et pour le fonds de solidarité vieillesse. NON pour
+ * l'assurance chômage : le compte porte, pendant un chômage indemnisé, les
+ * cotisations complémentaires qu'elle verse. La recette suit le droit, dans
+ * les deux sens : voir equilibre.py.
  *
  * `recetteParImpot` : vrai du seul fonds de solidarité vieillesse. Ce qu'il
  * verse aux régimes est financé par la CSG, et cette CSG est DÉJÀ dans le
@@ -231,10 +230,11 @@ export const ORGANISMES = [
     code: "chomage",
     libelle: "Assurance chômage",
     explication: "L'Unédic paie les points de retraite complémentaire des "
-      + "chômeurs indemnisés. Le compte notionnel du dépôt ne porte rien au "
-      + "compte pendant une année de chômage : cette recette non plus n'est "
-      + "pas la sienne, tant qu'il ne crédite pas ce que l'Unédic verse.",
-    droitSupprime: true,
+      + "chômeurs indemnisés, et le compte notionnel du dépôt porte ce qu'elle "
+      + "verse : le chômage indemnisé est la seule période non travaillée "
+      + "qu'il crédite, parce que c'est la seule que quelqu'un paie. Cette "
+      + "recette est donc la sienne, dans tous les scénarios.",
+    droitSupprime: false,
   },
   {
     code: "solidarite",
@@ -595,13 +595,31 @@ export class ComptesRetraite {
   /**
    * Ce qu'un scénario notionnel doit retirer de ses ressources, en part du
    * PIB. Dans la fenêtre où les quatre lignes sont connues, c'est ce que la
-   * branche famille et l'assurance chômage ont réellement versé. En dehors —
+   * branche famille et le fonds de solidarité vieillesse ont réellement versé.
+   * En dehors —
    * avant 2013, et sur tout l'horizon projeté du COR —, c'est la même chose à
    * PART CONSTANTE des ressources, celle de l'année connue la plus proche :
    * personne ne projette ce que la CNAF versera en 2070, et une part constante
    * est l'hypothèse qui n'en ajoute aucune autre. `parImpot` passe à
    * `transfertSupprimePartPib` et y dit lesquels des quatre organismes compter.
    */
+  /**
+   * Ce qu'un payeur verse au système de retraite, en part du PIB, qu'un
+   * scénario notionnel le garde ou le perde : le « dont » du poste où ce
+   * versement arrive. Même fenêtre et même part constante hors d'elle que
+   * `recetteNonAcquise`.
+   */
+  versement(annee, organisme) {
+    const premiere = this.premiereAnneeTransferts;
+    const derniere = this.derniereAnneeTransferts;
+    if (annee >= premiere && annee <= derniere) {
+      return this.transfertPartPib(organisme, annee);
+    }
+    const reference = Math.min(Math.max(annee, premiere), derniere);
+    return this.transfertPartPib(organisme, reference) / this.ressource(reference)
+      * this.ressource(annee);
+  }
+
   recetteNonAcquise(annee, parImpot = null, organisme = null) {
     const premiere = this.premiereAnneeTransferts;
     const derniere = this.derniereAnneeTransferts;

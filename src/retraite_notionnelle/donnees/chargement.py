@@ -454,6 +454,13 @@ class PeriodeNonTravaillee:
     motif: str
     trimestres_assimiles: int
     ouvre_droits_complementaires: bool
+    #: Les points complémentaires de la période sont-ils PAYÉS par quelqu'un ?
+    #: Oui du chômage indemnisé, dont l'Unédic verse les cotisations ; non de
+    #: la maladie, de la maternité, de l'invalidité et de l'accident du
+    #: travail, que l'Agirc-Arrco attribue « sans contrepartie de
+    #: cotisations ». Le scénario 1 sert les uns et les autres ; un compte
+    #: notionnel, qui ne porte que ce qui a été versé, les premiers seuls.
+    cotisations_complementaires_versees: bool = False
     #: Le parent est-il affilié à l'assurance vieillesse des parents au foyer
     #: pendant cette période ? La CNAF cotise alors au régime général sur une
     #: assiette forfaitaire égale au SMIC, et ce salaire est PORTÉ AU COMPTE :
@@ -591,6 +598,10 @@ def charger_periodes_non_travaillees(racine: Path) -> dict[str, PeriodeNonTravai
                 trimestres_assimiles=int(ligne["trimestres_assimiles"]),
                 ouvre_droits_complementaires=(
                     ligne["ouvre_droits_complementaires"].strip().lower() == "oui"
+                ),
+                cotisations_complementaires_versees=(
+                    ligne.get("cotisations_complementaires_versees", "non")
+                    .strip().lower() == "oui"
                 ),
                 avpf=ligne.get("avpf", "non").strip().lower() == "oui",
                 services_fonction_publique=services,

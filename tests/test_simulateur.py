@@ -321,6 +321,60 @@ def test_la_periode_non_cotisee_du_releve_suit_les_memes_regles(simulateur):
     assert ligne.revenu == 0.0
     assert ligne.revenu_reference == 30000.0
     assert ligne.familles_cotisantes == ("complementaire_prive",)
+    assert ligne.familles_financees == ("complementaire_prive",)
+
+
+def test_le_compte_notionnel_ne_porte_que_ce_qu_un_tiers_verse(simulateur):
+    """Trois ans de chômage indemnisé portent ce que l'Unédic verse ; trois ans de maladie, rien.
+
+    L'Unédic verse de vraies cotisations à l'Agirc-Arrco sur le salaire
+    d'avant ; l'Agirc-Arrco attribue les points de la maladie « sans
+    contrepartie de cotisations » (guide n° 6, février 2017, p. 4). Le compte
+    notionnel ne porte que ce qui a été versé : les premières, pas les seconds,
+    avant la bascule comme après. Il portait jusqu'au 23 septembre 2026 les
+    points gratuits comme payés, et après la bascule l'année entière au taux
+    unifié sur le salaire d'avant, dix points au pilier capitalisé en plus :
+    trois ans de chômage y valaient alors trois ans de travail, et personne ne
+    les payait. Le scénario 1, lui, sert les points gratuits : c'est le droit.
+    """
+    commun = dict(annee_naissance=1985, sexe="H", affiliation="salarie_prive_non_cadre",
+                  age_debut=22, age_liquidation=64, profil_carriere="plat")
+
+    def resultat(motif, debut):
+        interruptions = {} if motif is None else {a: motif for a in range(debut, debut + 3)}
+        return simulateur.simuler(simulateur.carriere_simple(
+            **commun, interruptions=interruptions))
+
+    def complementaires(comparaison):
+        return sum(p.montant for p in comparaison.actuel.pensions_par_regime
+                   if p.type_calcul == "points")
+
+    for debut in (2016, 2030):  # avant la bascule, puis après
+        annees = range(debut, debut + 3)
+
+        def porte(comparaison):
+            return sum(c.cotisation for c in comparaison.notionnel_liberal.compte.cotisations
+                       if c.annee in annees)
+
+        def pilier(comparaison):
+            return sum(a.versement_brut
+                       for a in comparaison.notionnel_liberal.capitalisation.annees
+                       if a.annee in annees)
+
+        travail = resultat(None, debut)
+        chomage = resultat("chomage_indemnise", debut)
+        maladie = resultat("maladie", debut)
+        sans = resultat("chomage_non_indemnise", debut)
+
+        assert 0.0 < porte(chomage) < 0.6 * porte(travail), debut
+        assert all("regime_unifie" not in c.regimes
+                   for c in chomage.notionnel_liberal.compte.cotisations
+                   if c.annee in annees), debut
+        assert porte(maladie) == 0.0, debut
+        assert pilier(chomage) == 0.0 and pilier(maladie) == 0.0, debut
+        assert (debut < 2026) or pilier(travail) > 0.0
+        # Le droit en vigueur sert les points gratuits de la maladie.
+        assert complementaires(maladie) > complementaires(sans), debut
 
 
 # -- les trois scénarios -----------------------------------------------------
@@ -485,7 +539,7 @@ def test_une_carriere_sans_aucune_cotisation_ne_produit_pas_de_capital(simulateu
 def test_le_motif_de_l_interruption_change_les_droits_ouverts(simulateur):
     """Chômage indemnisé et non indemnisé n'ouvrent pas les mêmes droits.
 
-    Pendant un chômage indemnisé, l'UNEDIC verse de vraies cotisations aux
+    Pendant un chômage indemnisé, l'Unédic verse de vraies cotisations aux
     régimes complémentaires : des points sont acquis. Le régime de base, lui,
     ne reçoit rien — la période y est seulement assimilée. Le modèle
     enregistrait le motif sans jamais le lire, et traitait les deux à

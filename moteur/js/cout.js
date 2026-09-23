@@ -995,16 +995,16 @@ class SoldeAnnuel {
               tauxLiberal = 0.0, anneeBascule = 0,
               convention = CONVENTION_RAPPORT,
               partDerives = 0.0, reversionServie = false,
-              reformeEnVigueur = true, parts = {}, retraits = {}) {
+              reformeEnVigueur = true, parts = {}, versements = {}) {
     this.annee = annee;
     this.projete = projete;
     this.ressources = ressources;
     this.depenses = depenses;
     this.rapports = rapportsAnnee;
     this.pib = pib;
-    // Ce que la branche famille et l'assurance chômage versent pour des droits
-    // que les scénarios notionnels ne servent pas, en part de PIB : une
-    // recette du système actuel, jamais la leur.
+    // Ce que la branche famille et le fonds de solidarité vieillesse versent
+    // pour des droits que les scénarios notionnels ne servent pas, en part de
+    // PIB : une recette du système actuel, jamais la leur.
     this.retrait = retrait;
     // Rapport de la recette de chaque système à celle du système actuel, et
     // part des ressources qui est une cotisation — la seule sur laquelle un
@@ -1034,10 +1034,11 @@ class SoldeAnnuel {
     this.reversionServie = reversionServie;
     // La bascule a-t-elle eu lieu ? Ne sert qu'aux réformes prospectives.
     this.reformeEnVigueur = reformeEnVigueur;
-    // Part de chaque poste dans les ressources, au découpage du COR, et le
-    // retrait payeur par payeur : ne servent qu'au tableau poste par poste.
+    // Part de chaque poste dans les ressources, au découpage du COR, et ce
+    // que chaque payeur verse — CNAF, Unédic, FSV —, qu'il soit retiré ou
+    // non : ne servent qu'au tableau poste par poste.
     this.parts = parts;
-    this.retraits = retraits;
+    this.versements = versements;
   }
 
   /**
@@ -1153,9 +1154,20 @@ class SoldeAnnuel {
     const total = this.ressources;
     const parts = this.parts;
     const part = (code) => parts[code] ?? 0.0;
-    const famille = this.retraits.famille ?? 0.0;
-    const chomage = this.retraits.chomage ?? 0.0;
-    const solidarite = this.retraits.solidarite ?? 0.0;
+    const famille = this.versements.famille ?? 0.0;
+    const chomage = this.versements.chomage ?? 0.0;
+    const solidarite = this.versements.solidarite ?? 0.0;
+    // Ce qu'un scénario notionnel perd de chaque versement : tout, si son
+    // droit est supprimé, rien sinon.
+    const retire = {};
+    for (const organisme of ORGANISMES) {
+      if (organisme.droitSupprime) {
+        retire[organisme.code] = this.versements[organisme.code] ?? 0.0;
+      }
+    }
+    const retireFamille = retire.famille ?? 0.0;
+    const retireChomage = retire.chomage ?? 0.0;
+    const retireSolidarite = retire.solidarite ?? 0.0;
     let postes;
     // Les scénarios 3 et 5, avant la bascule, sont le système actuel.
     if (scenario === "actuel" || (CLES_PROSPECTIVES.has(scenario)
@@ -1171,10 +1183,10 @@ class SoldeAnnuel {
         contribution_equilibre_etat: 0.0,
         subventions_equilibre: 0.0,
         impots_et_taxes: 0.0,
-        transferts: total * part("transferts") - famille - chomage,
+        transferts: total * part("transferts") - retireFamille - retireChomage,
         autres_produits: total * part("autres_produits"),
-        transferts_famille: 0.0,
-        transferts_chomage: 0.0,
+        transferts_famille: famille - retireFamille,
+        transferts_chomage: chomage - retireChomage,
         impots_solidarite: 0.0,
       };
     } else {
@@ -1183,12 +1195,12 @@ class SoldeAnnuel {
         cotisations: total * part("cotisations") * rapport,
         contribution_equilibre_etat: total * part("contribution_equilibre_etat") * rapport,
         subventions_equilibre: total * part("subventions_equilibre"),
-        impots_et_taxes: total * part("impots_et_taxes") - solidarite,
-        transferts: total * part("transferts") - famille - chomage,
+        impots_et_taxes: total * part("impots_et_taxes") - retireSolidarite,
+        transferts: total * part("transferts") - retireFamille - retireChomage,
         autres_produits: total * part("autres_produits"),
-        transferts_famille: 0.0,
-        transferts_chomage: 0.0,
-        impots_solidarite: 0.0,
+        transferts_famille: famille - retireFamille,
+        transferts_chomage: chomage - retireChomage,
+        impots_solidarite: solidarite - retireSolidarite,
       };
     }
     postes.transferts_autres = postes.transferts - postes.transferts_famille
@@ -2102,9 +2114,8 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
       annee >= anneeBascule,
       Object.fromEntries(POSTES.map((poste) => [poste.code, comptes.part(poste.code, annee)])),
       Object.fromEntries(
-        ORGANISMES.filter((organisme) => organisme.droitSupprime)
-          .map((organisme) => [organisme.code,
-            comptes.recetteNonAcquise(annee, null, organisme.code)]),
+        ORGANISMES.map((organisme) => [organisme.code,
+          comptes.versement(annee, organisme.code)]),
       ),
     ));
   }

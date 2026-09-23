@@ -1084,23 +1084,32 @@ def recette(**reglages: str) -> float:
     """Ce qui entre dans le compte du système actuel une année, en % du PIB.
 
     ``quoi=retrait`` : ce que les scénarios notionnels ne peuvent pas compter
-    — les versements de la CNAF, de l'Unédic et du FSV ; ``payeurs=famille|chomage``
-    n'en garde que ceux-là, et ``sur=ressources`` le rapporte aux ressources
-    de l'année plutôt qu'au PIB. ``quoi=impots`` : les impôts et taxes
-    affectés ; ``quoi=taux_prelevement`` : ce que le système prélève sur
-    l'assiette des revenus d'activité, en %.
+    — les versements de la CNAF et du FSV ; ``quoi=versement`` : ce que les
+    payeurs versent, qu'un scénario notionnel le garde ou non — l'Unédic
+    comprise. ``payeurs=famille|chomage`` n'en garde que ceux-là, et
+    ``sur=ressources`` le rapporte aux ressources de l'année plutôt qu'au PIB.
+    ``quoi=impots`` : les impôts et taxes affectés ; ``quoi=taux_prelevement``
+    : ce que le système prélève sur l'assiette des revenus d'activité, en %.
     """
+    from retraite_notionnelle.donnees.equilibre import ORGANISMES
+
     ligne = _solde_annee(reglages)
     quoi = reglages["quoi"]
-    if quoi == "retrait":
-        retrait = ligne.retrait
+    if quoi in ("retrait", "versement"):
+        retires = {o.code for o in ORGANISMES if o.droit_supprime}
+        retrait = ligne.retrait if quoi == "retrait" else sum(ligne.versements.values())
         if "payeurs" in reglages:
             payeurs = reglages["payeurs"].split("|")
-            inconnus = [p for p in payeurs if p not in ligne.retraits]
+            inconnus = [p for p in payeurs if p not in ligne.versements]
             if inconnus:
                 raise ValueError(f"payeurs inconnus : {', '.join(inconnus)} ; "
-                                 f"il y a {', '.join(ligne.retraits)}")
-            retrait = sum(ligne.retraits[p] for p in payeurs)
+                                 f"il y a {', '.join(ligne.versements)}")
+            if quoi == "retrait":
+                ignores = [p for p in payeurs if p not in retires]
+                if ignores:
+                    raise ValueError(f"rien n'est retiré de {', '.join(ignores)} : "
+                                     "écrire quoi=versement")
+            retrait = sum(ligne.versements[p] for p in payeurs)
         if reglages.get("sur") == "ressources":
             return retrait / ligne.ressources * 100
         return retrait * 100

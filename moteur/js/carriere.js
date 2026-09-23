@@ -46,8 +46,16 @@ export class AnneeCarriere {
     quotite = 1.0,
     //: Trimestres validés au sens du système ACTUEL.
     trimestres_valides = 4,
+    //: Salaire d'avant l'interruption, sur lequel les complémentaires
+    //: attribuent des points pendant une période indemnisée.
     revenu_reference = 0.0,
+    //: Familles qui attribuent ces points : ce que le scénario 1 sert.
     familles_cotisantes = [],
+    //: Celles d'entre elles qui ENCAISSENT de vraies cotisations, versées par
+    //: un tiers — l'Unédic pendant un chômage indemnisé. C'est ce que le
+    //: compte notionnel porte ; les points gratuits de la maladie n'y entrent
+    //: pas. Voir carriere.py.
+    familles_financees = [],
     //: Des cotisations retraite ont-elles réellement été versées ? C'est le
     //: seul critère qui compte pour les comptes notionnels.
     cotisations_versees = true,
@@ -88,7 +96,8 @@ export class AnneeCarriere {
     Object.assign(this, {
       annee, revenu, affiliation, type_periode, quotite,
       trimestres_valides, cotisations_versees, part_primes,
-      revenu_reference, familles_cotisantes, revenu_avpf, fraction_annee,
+      revenu_reference, familles_cotisantes, familles_financees, revenu_avpf,
+      fraction_annee,
       services_fonction_publique, services_plafond_trimestres_par_enfant,
       reputes_cotises_enveloppe, reputes_cotises_plafond,
       assiette_minimale_base,
@@ -240,6 +249,9 @@ function ligneAnnuelle({
   const motifs = macro.paquet.periodes_non_travaillees ?? {};
   const regle = cotise ? null : (motifs[typePeriode] ?? motifs.sans_activite ?? null);
   const ouvreComplementaires = regle !== null && regle[1] === true;
+  // Ces points sont-ils PAYÉS ? Par l'Unédic pour le chômage ; la maladie les
+  // reçoit sans contrepartie de cotisations.
+  const complementairesVersees = ouvreComplementaires && regle[8] === true;
   const ouvreAvpf = regle !== null && regle[3] === true;
   // Services et durée d'assurance ne sont pas la même case : la première
   // proratise la pension de la fonction publique, la seconde celle du régime
@@ -280,11 +292,12 @@ function ligneAnnuelle({
     // soit le salaire.
     trimestres_valides: Math.min(trimestresMaximum, trimestres),
     assiette_minimale_base: minimale,
-    // Pendant une période indemnisée, l'UNEDIC ou la Sécurité sociale versent
-    // de vraies cotisations aux régimes complémentaires, assises sur le
-    // salaire d'avant.
+    // Pendant une période indemnisée, les régimes complémentaires attribuent
+    // des points sur le salaire d'avant. L'Unédic les paie pour le chômage ;
+    // l'Agirc-Arrco les donne pour la maladie, sans contrepartie.
     revenu_reference: ouvreComplementaires ? revenu : 0.0,
     familles_cotisantes: ouvreComplementaires ? ["complementaire_prive"] : [],
+    familles_financees: complementairesVersees ? ["complementaire_prive"] : [],
     cotisations_versees: cotise,
     fraction_annee: part,
     part_primes: partPrimes,
