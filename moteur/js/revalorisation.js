@@ -267,8 +267,13 @@ export function actuelAujourdhui(simulateur, carriere, resultat, annee = null) {
     && Boolean(simulateur.catalogue.obtenir(p.regime).hors_repartition);
   let majoration = 0;
   let aspaAuDepart = 0;
+  // La part de chaque régime dans la majoration pour enfants, plafond compris.
+  const partsMajoration = [];
   for (const a of resultat.avantages_appliques) {
-    if (a.code === "majoration_enfants") majoration += a.montant;
+    if (a.code === "majoration_enfants") {
+      majoration += a.montant;
+      partsMajoration.push(...(a.par_regime ?? []));
+    }
     if (a.code === "minimum_vieillesse") aspaAuDepart += a.montant;
   }
 
@@ -287,6 +292,20 @@ export function actuelAujourdhui(simulateur, carriere, resultat, annee = null) {
     return pondere / masse;
   };
 
+  // Chaque part suit le régime qui la porte ; sans parts, la moyenne.
+  const coefficientDeLaMajoration = (coefficients) => {
+    let masse = 0;
+    for (const [, part] of partsMajoration) masse += part;
+    if (masse <= 0) return coefficientMoyen(coefficients);
+    const parRegime = new Map();
+    pensions.forEach((p, rang) => { parRegime.set(p.regime, coefficients[rang]); });
+    let pondere = 0;
+    for (const [code, part] of partsMajoration) {
+      pondere += part * (parRegime.has(code) ? parRegime.get(code) : 1.0);
+    }
+    return pondere / masse;
+  };
+
   // Une pension qui prend effet en janvier 2020 n'était pas servie en
   // décembre : le montant du mois précédent était nul.
   let mensuel2019 = null;
@@ -296,7 +315,7 @@ export function actuelAujourdhui(simulateur, carriere, resultat, annee = null) {
       : 0.0));
     let somme = 0;
     pensions.forEach((p, rang) => { somme += p.montant * jusqu2019[rang]; });
-    mensuel2019 = (somme + majoration * coefficientMoyen(jusqu2019)) / 12.0;
+    mensuel2019 = (somme + majoration * coefficientDeLaMajoration(jusqu2019)) / 12.0;
   }
 
   const regimes = [];
@@ -318,7 +337,7 @@ export function actuelAujourdhui(simulateur, carriere, resultat, annee = null) {
       aujourd_hui: pension.montant * coefficient,
     });
   }
-  const coefficientMajoration = coefficientMoyen(coefficients);
+  const coefficientMajoration = coefficientDeLaMajoration(coefficients);
 
   let aspa = 0.0;
   if (parametres.minimum_vieillesse_dans_le_scenario_actuel

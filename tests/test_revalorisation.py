@@ -224,6 +224,30 @@ def test_la_tranche_de_2020_suit_la_retraite_de_decembre_2019(simulateur):
     assert base(petite) / base(grosse) == pytest.approx(1.01 / 1.003, rel=1e-12)
 
 
+def test_la_majoration_pour_enfants_suit_le_regime_qui_la_porte(simulateur):
+    """Un cadre de quatre enfants : sa majoration a trois parts, du régime
+    général, de l'Agirc et de l'Arrco, et chacune suit son régime — la base
+    ses coefficients, la complémentaire la valeur de son point, comme son
+    plafond. Ce n'est pas le coefficient moyen de toutes ses pensions, que le
+    modèle lui appliquait avant d'avoir les parts."""
+    comparaison = _retraite(simulateur, annee_naissance=1953, sexe="H",
+                            affiliation="salarie_prive_cadre", age_debut=22,
+                            age_liquidation=62, niveau_salaire=2.5, nombre_enfants=4)
+    majoration = next(a for a in comparaison.actuel.avantages_appliques
+                      if a.code == "majoration_enfants")
+    assert {code for code, _ in majoration.par_regime} == {"agirc", "arrco", "regime_general"}
+    actuel = comparaison.aujourd_hui.actuel
+    coefficients = {r.regime: r.coefficient for r in actuel.regimes}
+    parts = sum(part for _, part in majoration.par_regime)
+    assert parts == pytest.approx(majoration.montant, rel=1e-12)
+    assert actuel.coefficient_majoration == pytest.approx(
+        sum(part * coefficients[code] for code, part in majoration.par_regime) / parts,
+        rel=1e-12)
+    moyen = (sum(r.au_depart * r.coefficient for r in actuel.regimes)
+             / sum(r.au_depart for r in actuel.regimes))
+    assert actuel.coefficient_majoration != pytest.approx(moyen, rel=1e-6)
+
+
 def test_les_systemes_prospectifs_sont_le_systeme_1_pour_qui_etait_deja_parti(simulateur):
     """Qui a liquidé avant la bascule garde sa pension : elle a reçu les
     mêmes revalorisations que celle du système 1, au centime."""

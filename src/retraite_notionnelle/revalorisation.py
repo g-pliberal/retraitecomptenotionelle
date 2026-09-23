@@ -255,8 +255,8 @@ class ActuelAujourdhui:
     annee: int
     regimes: tuple[RegimeServi, ...]
     #: La majoration pour enfants, à la liquidation. Elle suit les régimes
-    #: qui la portent ; le modèle ne l'ayant qu'en un seul montant, elle suit
-    #: leur coefficient moyen, pondéré par leurs pensions.
+    #: qui la portent, chaque part au coefficient du sien : c'est le
+    #: coefficient qu'on lit ici, pondéré par les parts.
     majoration_enfants: float
     coefficient_majoration: float
     #: L'ASPA à la liquidation, puis celle d'aujourd'hui : un montant
@@ -450,6 +450,11 @@ def actuel_aujourd_hui(simulateur, carriere, resultat,
     aspa_au_depart = sum(a.montant for a in resultat.avantages_appliques
                          if a.code == "minimum_vieillesse")
 
+    #: La part de chaque régime dans la majoration pour enfants, plafond
+    #: compris (``AvantageApplique.par_regime``).
+    parts_majoration = [part for a in resultat.avantages_appliques
+                        if a.code == "majoration_enfants" for part in a.par_regime]
+
     def coefficient_moyen(coefficients: list[float]) -> float:
         repartition = [(p.montant, c) for p, c in zip(pensions, coefficients)
                        if not (isoler and simulateur.catalogue[p.regime].hors_repartition)]
@@ -457,6 +462,17 @@ def actuel_aujourd_hui(simulateur, carriere, resultat,
         if masse <= 0:
             return 1.0
         return sum(montant * c for montant, c in repartition) / masse
+
+    def coefficient_de_la_majoration(coefficients: list[float]) -> float:
+        """Chaque part suit le régime qui la porte : la base ses coefficients,
+        la complémentaire la valeur de son point — comme son plafond, que le
+        scénario 1 revalorise ainsi. Sans parts, la moyenne des régimes."""
+        masse = sum(part for _, part in parts_majoration)
+        if masse <= 0:
+            return coefficient_moyen(coefficients)
+        par_regime = {p.regime: c for p, c in zip(pensions, coefficients)}
+        return sum(part * par_regime.get(code, 1.0)
+                   for code, part in parts_majoration) / masse
 
     # LA TRANCHE DE 2020 se choisit sur le montant total de décembre 2019 :
     # toutes les retraites, de base, complémentaires et additionnelles,
@@ -474,7 +490,7 @@ def actuel_aujourd_hui(simulateur, carriere, resultat,
         ]
         mensuel_2019 = (
             sum(p.montant * c for p, c in zip(pensions, jusqu_2019))
-            + majoration * coefficient_moyen(jusqu_2019)
+            + majoration * coefficient_de_la_majoration(jusqu_2019)
         ) / 12.0
 
     regimes = []
@@ -493,7 +509,7 @@ def actuel_aujourd_hui(simulateur, carriere, resultat,
             fiabilite=fiabilite_regime,
             hors_repartition=isoler and simulateur.catalogue[pension.regime].hors_repartition,
         ))
-    coefficient_majoration = coefficient_moyen(coefficients)
+    coefficient_majoration = coefficient_de_la_majoration(coefficients)
 
     # L'ASPA D'AUJOURD'HUI, comme à la liquidation : différentielle, sur
     # TOUTES les pensions — le RAFP compris —, et à 65 ans révolus dans

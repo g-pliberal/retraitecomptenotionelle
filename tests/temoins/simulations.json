@@ -5847,11 +5847,11 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 11.798040716155704,
+     "coefficient_majoration": 11.881414628367045,
      "fiabilite": "moyenne",
      "majoration_enfants": 63.560887743218764,
-     "mensuel_decembre_2019": 610.9143407284333,
-     "minimum_vieillesse": 3999.5772082850726,
+     "mensuel_decembre_2019": 611.2504080726692,
+     "minimum_vieillesse": 3994.2778884102954,
      "par_regime": [
       {
        "au_depart": 72.64670080637535,
@@ -7334,11 +7334,11 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 8.626930689472802,
+     "coefficient_majoration": 8.658495539618611,
      "fiabilite": "moyenne",
      "majoration_enfants": 106.93707715134447,
-     "mensuel_decembre_2019": 742.7783051698025,
-     "minimum_vieillesse": 2162.9498220151163,
+     "mensuel_decembre_2019": 742.985475223812,
+     "minimum_vieillesse": 2159.574369199803,
      "par_regime": [
       {
        "au_depart": 139.38680017183552,
@@ -8490,10 +8490,10 @@
    },
    "aujourd_hui": {
     "actuel": {
-     "coefficient_majoration": 1.172084751996177,
+     "coefficient_majoration": 1.1810440320617164,
      "fiabilite": "haute",
      "majoration_enfants": 1547.085851329522,
-     "mensuel_decembre_2019": 1857.9428893335005,
+     "mensuel_decembre_2019": 1857.9473184058813,
      "minimum_vieillesse": 0.0,
      "par_regime": [
       {
@@ -8521,14 +8521,14 @@
        "regle": "regime_general"
       }
      ],
-     "pension_annuelle": 25822.11568368252,
+     "pension_annuelle": 25835.976459110014,
      "pension_hors_repartition": 0
     },
     "annee": 2026,
     "coefficients_notionnels": {
      "notionnel_liberal": 0.8180461205063827,
-     "notionnel_prospectif": 0.9520151455915012,
-     "notionnel_prospectif_employeur": 0.9520151455915012,
+     "notionnel_prospectif": 0.9525261675502849,
+     "notionnel_prospectif_employeur": 0.9525261675502849,
      "notionnel_retroactif": 0.8180461205063827,
      "notionnel_retroactif_employeur": 0.8180461205063827
     },
@@ -8536,8 +8536,8 @@
     "garantie_vieillesse": 4263.803877734257,
     "notionnels": {
      "notionnel_liberal": 12600.0,
-     "notionnel_prospectif": 25822.11568368252,
-     "notionnel_prospectif_employeur": 25822.11568368252,
+     "notionnel_prospectif": 25835.976459110014,
+     "notionnel_prospectif_employeur": 25835.976459110014,
      "notionnel_retroactif": 8336.196122265743,
      "notionnel_retroactif_employeur": 8336.196122265743
     },

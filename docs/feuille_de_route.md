@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 283<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->34 729<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->34 748<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14506,6 +14506,9 @@ prenait le montant saisi pour celui du départ.
   point d'indice puis les décrets puis L. 161-23-1 pour la fonction publique,
   la règle générale pour les régimes spéciaux, estimée avant 2009. L'ASPA
   d'aujourd'hui est recalculée à 65 ans révolus sur les pensions d'aujourd'hui.
+  La majoration pour enfants suit, part par part, le régime qui la porte :
+  les parts que l'action 111 a données à chaque régime ont remplacé, le jour
+  même, le coefficient moyen de toutes les pensions.
   Les systèmes 2 à 4 suivent la règle que la page Coût prête aux comptes
   notionnels, et la garantie vieillesse du système 4 se recalcule sur la
   pension d'aujourd'hui.
