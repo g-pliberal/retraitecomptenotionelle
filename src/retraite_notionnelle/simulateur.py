@@ -47,6 +47,13 @@ from .moteur.conversion import Convertisseur
 from .moteur.fusion import RegimeFusionne, fusionner
 from .moteur.indexation import Indexation
 from .remuneration import RemunerationActif, remuneration_de_la_carriere
+from .revalorisation import (
+    PensionAujourdhui,
+    RevalorisationServie,
+    RevalorisationsPensions,
+    actuel_aujourd_hui,
+    pension_aujourd_hui,
+)
 from .scenarios.actuel import ResultatActuel, ScenarioActuel
 from .scenarios.notionnel import ResultatNotionnel, ScenarioNotionnel
 
@@ -157,11 +164,26 @@ class Comparaison:
     #: :func:`niveau_pour_pension`. ``None`` partout ailleurs, c'est-à-dire
     #: chaque fois que le revenu est celui qu'on a donné.
     niveau_inverse: "NiveauInverse | None" = None
+    #: Pour qui a DÉJÀ liquidé — avant l'année courante —, ce que les six
+    #: systèmes lui servent aujourd'hui, en euros courants de l'année
+    #: courante : le système 1 revalorisé comme le droit l'a fait, les autres
+    #: comme leur règle le veut. ``None`` pour qui part cette année ou plus
+    #: tard, dont la pension du départ est la seule qu'il y ait à dire. Voir
+    #: :mod:`retraite_notionnelle.revalorisation`.
+    aujourd_hui: PensionAujourdhui | None = None
+    #: Passage des euros de l'année courante aux euros constants de
+    #: ``parametres.annee_euros_constants`` : le pendant, pour les montants
+    #: d'aujourd'hui, de :attr:`coefficient_euros_constants`.
+    coefficient_euros_aujourd_hui: float = 1.0
 
     # -- indicateurs ---------------------------------------------------------
 
     def en_euros_constants(self, montant: float) -> float:
         return montant * self.coefficient_euros_constants
+
+    def aujourd_hui_en_euros_constants(self, montant: float) -> float:
+        """Un montant d'aujourd'hui, dans les euros constants de la page."""
+        return montant * self.coefficient_euros_aujourd_hui
 
     @property
     def fiabilite(self) -> Fiabilite:
@@ -494,6 +516,7 @@ class Comparaison:
                 "regimes_fusionnes": list(self.regime_fusionne.regimes_fusionnes),
                 "origines": dict(self.regime_fusionne.origines),
             },
+            "aujourd_hui": _resume_aujourd_hui(self.aujourd_hui),
             "fiabilite": str(self.fiabilite),
         }
 
@@ -573,6 +596,40 @@ def _resume_notionnel(resultat: ResultatNotionnel, taux_remplacement: float,
             "differee": resultat.garantie_vieillesse.differee,
         },
         "fiabilite": str(resultat.fiabilite),
+    }
+
+
+def _resume_aujourd_hui(aujourd_hui: PensionAujourdhui | None) -> dict | None:
+    """La pension d'aujourd'hui, pour la sortie JSON — ``None`` pour qui n'a
+    pas encore liquidé."""
+    if aujourd_hui is None:
+        return None
+    actuel = aujourd_hui.actuel
+    return {
+        "annee": aujourd_hui.annee,
+        "actuel": {
+            "pension_annuelle": actuel.pension_annuelle,
+            "pension_hors_repartition": actuel.pension_hors_repartition,
+            "par_regime": [
+                {"regime": r.regime, "au_depart": r.au_depart,
+                 "coefficient": r.coefficient, "aujourd_hui": r.aujourd_hui,
+                 "regle": r.regle, "fiabilite": str(r.fiabilite)}
+                for r in actuel.regimes
+            ],
+            "majoration_enfants": actuel.majoration_enfants,
+            "coefficient_majoration": actuel.coefficient_majoration,
+            "minimum_vieillesse": actuel.minimum_vieillesse,
+            "mensuel_decembre_2019": actuel.mensuel_decembre_2019,
+            "fiabilite": str(actuel.fiabilite),
+        },
+        "notionnels": dict(aujourd_hui.notionnels),
+        "coefficients_notionnels": dict(aujourd_hui.coefficients_notionnels),
+        "garantie_vieillesse": aujourd_hui.garantie_vieillesse,
+        "rente_capitalisee": aujourd_hui.rente_capitalisee,
+        "rente_capitalisee_volontaire": aujourd_hui.rente_capitalisee_volontaire,
+        "garantie_ouverte": aujourd_hui.garantie_ouverte,
+        "plancher_garantie": aujourd_hui.plancher_garantie,
+        "ressources_garantie": aujourd_hui.ressources_garantie,
     }
 
 
@@ -762,6 +819,34 @@ class Simulateur:
     @cached_property
     def indexation(self) -> Indexation:
         return Indexation(self.macro, self.parametres)
+
+    @cached_property
+    def revalorisations(self) -> RevalorisationsPensions:
+        """Ce que le droit a servi aux pensions liquidées, date d'effet par date d'effet."""
+        return RevalorisationsPensions(self.parametres.racine_donnees)
+
+    @cached_property
+    def revalorisation_servie(self) -> RevalorisationServie:
+        """La règle que les systèmes notionnels prêtent aux pensions servies.
+
+        La même que celle de la page Coût, de la première année de la
+        répartition à l'année courante : le simulateur n'en lit que ce qui va
+        du départ à aujourd'hui.
+        """
+        return RevalorisationServie(self, self.parametres.annee_debut_repartition,
+                                    self.parametres.annee_courante)
+
+    def pension_actuelle_aujourd_hui(self, carriere: Carriere) -> float:
+        """Le système 1 servi l'année courante, en euros de cette année.
+
+        La grandeur que l'inversion cherche pour un retraité : la pension qu'il
+        lit sur son relevé, et non celle de son premier mois. Pour qui liquide
+        cette année ou plus tard, c'est la pension du départ, dans ses euros.
+        """
+        resultat = self.scenario_actuel.calculer(carriere)
+        if carriere.annee_liquidation >= self.parametres.annee_courante:
+            return resultat.pension_annuelle
+        return actuel_aujourd_hui(self, carriere, resultat).pension_annuelle
 
     @cached_property
     def convertisseur(self) -> Convertisseur:
@@ -981,7 +1066,7 @@ class Simulateur:
 
         # La mémoire des calibrations n'est plus écrite ici : c'est un fichier
         # versionné, dont `scripts/construire_donnees.py` est le seul écrivain.
-        return Comparaison(
+        comparaison = Comparaison(
             carriere=carriere,
             actuel=actuel,
             notionnel_retroactif=retroactif,
@@ -1000,6 +1085,12 @@ class Simulateur:
                 self.parametres,
             ),
         )
+        if carriere.annee_liquidation < self.parametres.annee_courante:
+            comparaison.aujourd_hui = pension_aujourd_hui(self, comparaison)
+            comparaison.coefficient_euros_aujourd_hui = self.macro.coefficient_prix(
+                self.parametres.annee_courante, self.parametres.annee_euros_constants
+            )
+        return comparaison
 
     def _verifier_fiabilite(self, carriere: Carriere) -> None:
         exigee = Fiabilite.depuis_texte(self.parametres.fiabilite_minimale)

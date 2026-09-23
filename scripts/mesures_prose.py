@@ -177,6 +177,30 @@ def pension(**reglages: str) -> float:
     raise ValueError(f"part inconnue « {part} »")
 
 
+def aujourd_hui(**reglages: str) -> float:
+    """La pension d'aujourd'hui d'un retraité, en écart à sa pension de départ
+    ramenée par l'indice des prix, en % — ce que la page lui affichait avant.
+
+    Mêmes réglages de carrière que ``ecart`` : la carrière doit être déjà
+    liquidée. ``quoi=coefficient&regime=…`` rend plutôt le coefficient nominal
+    que le texte d'un régime a appliqué depuis le départ.
+    """
+    comparaison = _comparaison_de(reglages)
+    if comparaison.aujourd_hui is None:
+        raise ValueError("cette carrière n'est pas encore liquidée")
+    actuel = comparaison.aujourd_hui.actuel
+    quoi = reglages.get("quoi", "ecart_aux_prix")
+    if quoi == "coefficient":
+        return next(r.coefficient for r in actuel.regimes if r.regime == reglages["regime"])
+    if quoi != "ecart_aux_prix":
+        raise ValueError(f"quoi inconnu « {quoi} »")
+    macro = _simulateur(_parametres(reglages.get("indexation", ""),
+                                    reglages.get("lissage", ""))).macro
+    par_les_prix = comparaison.actuel.pension_annuelle * macro.coefficient_prix(
+        comparaison.carriere.annee_liquidation, comparaison.aujourd_hui.annee)
+    return (actuel.pension_annuelle / par_les_prix - 1) * 100
+
+
 def part_salariale_versee(**reglages: str) -> float:
     """Part de la cotisation totale versée par l'assuré lui-même, en %, sur une carrière."""
     return 100 - part_employeur(**reglages)
@@ -1393,6 +1417,7 @@ MESURES = {
     "parametre": parametre,
     "ecart": ecart,
     "pension": pension,
+    "aujourd_hui": aujourd_hui,
     "part_employeur": part_employeur,
     "part_salariale_versee": part_salariale_versee,
     "cumul_indexation": cumul_indexation,

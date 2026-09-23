@@ -261,7 +261,8 @@ class RevalorisationStock(str, Enum):
     ouverts sous le nouveau régime suivent sa règle. ``REINDEXE`` : la réforme
     fait passer tout le stock à la règle du compte le jour de la bascule, ce
     que faisait le modèle jusqu'au 20 septembre 2026. Ne joue que sur la page
-    Coût, et que pour les systèmes 2 à 6 : le système 1 est le droit.
+    Coût et sur la pension d'aujourd'hui d'un retraité, et que pour les
+    systèmes 2 à 6 : le système 1 est le droit.
     """
 
     PRIX = "prix"

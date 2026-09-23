@@ -47,6 +47,13 @@ import { CaracteristiquesRetraites } from "./caracteristiques.js";
 import { DistributionPensions } from "./distribution.js";
 import { Fiabilite } from "./serie.js";
 import { ORGANISMES, POSTES } from "./equilibre.js";
+import { RevalorisationServie } from "./revalorisation.js";
+
+// La règle des pensions servies est née ici, pour la page Coût ; le
+// simulateur s'en sert aussi, pour dire ce qu'un retraité touche aujourd'hui,
+// et elle vit désormais dans `revalorisation.js`. Réexportée pour qui la
+// cherche encore ici.
+export { RevalorisationServie };
 
 /** Les six systèmes, dans l'ordre du tableau de comparaison. */
 export const SCENARIOS = [
@@ -446,75 +453,6 @@ export const CLES_REVALORISEES = new Set(
 export const CLES_PROSPECTIVES = new Set([
   "notionnel_prospectif", "notionnel_prospectif_employeur",
 ]);
-
-/**
- * Ce que devient une pension DÉJÀ LIQUIDÉE, année après année.
- *
- * Portage de `RevalorisationServie` dans `cout.py`, dont le raisonnement est
- * écrit en entier. En deux phrases : un système notionnel a DEUX règles
- * d'indexation — le compte pendant la carrière, la pension une fois servie —,
- * et le dépôt n'en portait qu'une, les masses figeant la pension en euros
- * constants pour toute la retraite. C'était une indexation sur les prix qui ne
- * disait pas son nom, correcte pour le scénario 1 où c'est la loi, fausse pour
- * les cinq autres, dont le diviseur de conversion suppose déjà que la rente
- * suit le taux qui a fait grossir le compte.
- */
-export class RevalorisationServie {
-  constructor(simulateur, premiereAnnee, derniereAnnee) {
-    const macro = simulateur.macro;
-    const indexation = simulateur.indexation;
-    // L'année à partir de laquelle une réforme PROSPECTIVE revalorise ce
-    // qu'elle sert : voir CLES_PROSPECTIVES.
-    this.anneeBascule = simulateur.parametres.annee_bascule;
-    // Le stock à la bascule garde-t-il les prix ? Voir `coefficientStock`.
-    this.stockSurLesPrix = simulateur.parametres.revalorisation_stock === "prix";
-    this.premiereAnnee = premiereAnnee;
-    this.derniereAnnee = Math.max(derniereAnnee, premiereAnnee);
-    let index = 1;
-    this._index = new Map([[this.premiereAnnee, index]]);
-    for (let annee = this.premiereAnnee + 1; annee <= this.derniereAnnee; annee += 1) {
-      // Le taux d'indexation est NOMINAL, les masses sont en euros constants :
-      // on le déflate année par année, et non en bloc.
-      index *= (1 + indexation.taux(annee).taux) * macro.coefficientPrix(annee, annee - 1);
-      this._index.set(annee, index);
-    }
-  }
-
-  _valeur(annee) {
-    const borne = Math.min(Math.max(annee, this.premiereAnnee), this.derniereAnnee);
-    return this._index.get(borne);
-  }
-
-  /**
-   * Ce que vaut en `annee`, en euros constants, un euro de pension liquidé en
-   * `anneeLiquidation`. Vaut exactement 1 l'année de la liquidation et avant.
-   */
-  coefficient(anneeLiquidation, annee) {
-    if (annee <= anneeLiquidation) return 1;
-    const depart = this._valeur(anneeLiquidation);
-    return depart ? this._valeur(annee) / depart : 1;
-  }
-
-  /**
-   * Le même coefficient, avec la règle du STOCK à la bascule — portage de
-   * `coefficient_stock`. Une pension liquidée à compter de la bascule suit la
-   * règle du compte depuis sa liquidation. Liquidée avant : sous `prix`, elle
-   * garde les prix à compter de la bascule (1 depuis toujours pour une réforme
-   * prospective, coefficient gelé à la bascule pour une rétroactive) ; sous
-   * `reindexe`, la prospective la prend à sa règle le jour de la bascule, la
-   * rétroactive l'a toujours revalorisée sur la sienne.
-   */
-  coefficientStock(anneeLiquidation, annee, prospectif) {
-    const bascule = this.anneeBascule;
-    if (anneeLiquidation >= bascule) return this.coefficient(anneeLiquidation, annee);
-    if (this.stockSurLesPrix) {
-      if (prospectif) return 1;
-      return this.coefficient(anneeLiquidation, Math.min(annee, bascule));
-    }
-    if (prospectif) return this.coefficient(bascule, annee);
-    return this.coefficient(anneeLiquidation, annee);
-  }
-}
 
 /**
  * Masse de pensions par système, une année donnée, et le nombre de couples.
