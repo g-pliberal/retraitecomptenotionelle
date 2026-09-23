@@ -87,6 +87,13 @@ const SERVICES_MINIMAUX_MILITAIRES = 15.0;
  */
 const TRIMESTRES_DECOTE_MILITAIRE = 10;
 
+/**
+ * Le seul dispositif pour enfants qu'un régime EN POINTS puisse porter : une
+ * majoration de durée d'assurance ne touche que la durée, qu'il oppose aussi ;
+ * une bonification entre aux services, qu'il n'a pas.
+ */
+const MAJORATION_DE_DUREE = "mda";
+
 /** Dernière année à compter dans les services, null si sans objet. */
 function borneCarriere(carriere) {
   return carriere.age_liquidation === null || carriere.age_liquidation === undefined
@@ -1656,6 +1663,11 @@ export class ScenarioActuel {
     }
     // Des trimestres civils ENTIERS : deux mois de plus ne valent rien.
     let ecoules = Math.floor((Math.max(0.0, fin - debut) + 1e-9) * 4);
+    if (periode.surcote_trimestres_cotises) {
+      // « Pour chaque année pleine COTISÉE dans le présent régime » (CAVAMAC
+      // depuis 2024) : le temps écoulé sans cotiser ne compte plus.
+      ecoules = Math.min(ecoules, trimestresCotisesApres(carriere, debut, anneeLiquidation));
+    }
     if (periode.surcote_trimestres_maximum !== null
         && periode.surcote_trimestres_maximum !== undefined) {
       ecoules = Math.min(ecoules, periode.surcote_trimestres_maximum);
@@ -1761,10 +1773,16 @@ export class ScenarioActuel {
       }
       const regime = this.catalogue.obtenir(code);
       const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
-      if (periode === null || periode.type_calcul !== "annuites") {
+      if (periode === null) {
         continue;
       }
       for (const dispositif of periode.avantages_non_contributifs) {
+        // Un régime EN POINTS ne porte que la majoration de DURÉE, qui ne joue
+        // que sur la durée d'assurance : la CNAVPL depuis 2010 (L. 643-1-1).
+        // Une bonification entre aux services, qu'il n'a pas.
+        if (periode.type_calcul !== "annuites" && dispositif !== MAJORATION_DE_DUREE) {
+          continue;
+        }
         const accorde = this.majorationsEnfants.parEnfant(
           dispositif, carriere.sexe, carriere.annee_naissance, anneeLiquidation,
           carriere.nombre_enfants,

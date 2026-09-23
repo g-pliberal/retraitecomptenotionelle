@@ -687,7 +687,7 @@ résumé :
 | Valeurs d'acquisition et de service du point, RAFP | <!--chiffre:minimum(data/reference/regimes/valeurs_point.csv:annee?regime=rafp&fiabilite=certifiee)-->2005<!--/-->-<!--chiffre:maximum(data/reference/regimes/valeurs_point.csv:annee?regime=rafp&fiabilite=certifiee)-->2026<!--/--> | **certifiée** | ERAFP, dont le conseil d'administration les fixe |
 | Valeurs d'achat et de service du point, autres | RCI 2013-2023, IGRANTE et IPACTE 1947-2022 | haute | OpenFisca-France-Pension |
 | Valeurs du point, complémentaire des avocats | <!--chiffre:minimum(data/reference/regimes/valeurs_point.csv:annee?regime=cnbf_complementaire&fiabilite=certifiee)-->2017<!--/-->-<!--chiffre:maximum(data/reference/regimes/valeurs_point.csv:annee?regime=cnbf_complementaire&fiabilite=certifiee)-->2026<!--/--> | **certifiée** | CNBF, ses barèmes annuels |
-| Valeur du point, base des professions libérales | <!--chiffre:minimum(data/reference/regimes/valeurs_point.csv:annee?regime=cnavpl&mesure=valeur_service&fiabilite=certifiee)-->2021<!--/-->-<!--chiffre:maximum(data/reference/regimes/valeurs_point.csv:annee?regime=cnavpl&mesure=valeur_service&fiabilite=certifiee)-->2025<!--/--> | **certifiée** | CNAVPL, ses recueils statistiques |
+| Valeur du point, base des professions libérales | <!--chiffre:minimum(data/reference/regimes/valeurs_point.csv:annee?regime=cnavpl&mesure=valeur_service&fiabilite=certifiee)-->2004<!--/-->-<!--chiffre:maximum(data/reference/regimes/valeurs_point.csv:annee?regime=cnavpl&mesure=valeur_service&fiabilite=certifiee)-->2026<!--/--> | **certifiée** | CNAVPL, ses recueils statistiques |
 | Taux des deux tranches, base des professions libérales | <!--chiffre:minimum(data/reference/regimes/valeurs_point.csv:annee?regime=cnavpl&mesure=taux_t1&fiabilite=certifiee)-->2020<!--/-->-<!--chiffre:maximum(data/reference/regimes/valeurs_point.csv:annee?regime=cnavpl&mesure=taux_t1&fiabilite=certifiee)-->2026<!--/--> | **certifiée** | CNAVPL, le tableau des cotisations de ses recueils, exercice par exercice |
 | Valeur de service du point, complémentaire agricole | <!--chiffre:minimum(data/reference/regimes/valeurs_point.csv:annee?regime=msa_rco&fiabilite=certifiee)-->2005<!--/-->-<!--chiffre:maximum(data/reference/regimes/valeurs_point.csv:annee?regime=msa_rco&fiabilite=certifiee)-->2025<!--/--> | **certifiée** | DILA, base LEGI, code rural `D. 732-166` |
 | Valeur du point, base agricole et valeurs d'achat RCO | — | absentes | hors du code ; voir plus bas |
@@ -2878,7 +2878,7 @@ c'est de là que viennent les −7,2 % et +0,3 %.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->34<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->37<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -2896,6 +2896,7 @@ d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
 | fiche F37311 | bonification de la fonction publique : quatre trimestres par enfant né avant 2004, deux pour ceux nés depuis | **exact** |
 | circulaire Cnav 2022-26 | assiette de la majoration pour trois enfants : <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->10<!--/--> % de la retraite telle qu'elle est servie, surcotée, décotée ou pile au taux plein | **exact** |
 | ENIM, pages « Le mode de calcul » et « Les conditions d'attribution » | marin : bonification de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->5<!--/--> % dès deux enfants (R. 14), pension d'ancienneté ouverte à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->50<!--/--> ans pour <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->25<!--/--> ans de services et refusée un trimestre plus tôt (R. 2) | **exact** |
+| CARCDSF, CARMF et CAVAMAC, pages et document d'exemples des sections libérales | la mère de deux enfants au taux plein dès <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->65<!--/--> ans à la CARCDSF ; le coefficient de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->1,15<!--/--> à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->65<!--/--> ans de la CARMF ; à la CAVAMAC, la décote du régime de base au plus favorable de l'âge et de la durée (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->5<!--/--> %), sa surcote de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->7,5<!--/--> % pour six trimestres, et la décote de la complémentaire par l'âge seul (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->6,25<!--/--> %) | **exact**, une fois les complémentaires minorées par l'âge seul |
 
 **Ce que la confrontation a trouvé, dans l'ordre.** Le premier exemple lu
 contredisait les tables certifiées du dépôt : non que le récupérateur se soit
@@ -2965,7 +2966,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->34<!--/--> tombent justes ensemble, sur
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->37<!--/--> tombent justes ensemble, sur
 onze sources et neuf règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
 
@@ -6481,6 +6482,121 @@ valeurs de 2016 ramenées par les prix. Les barèmes d'une année s'appliquent
 aux revenus de la même année, comme partout dans le catalogue, alors que la
 caisse appelait avant 2025 ses cotisations sur un revenu antérieur.
 
+### Les dernières sections libérales : l'âge seul, trois enfants, et les trimestres des mères
+
+La passe du 23 septembre 2026 sur les sections libérales restantes (action 89)
+a dépouillé les vingt-trois adresses de la CNAVPL, de la Cipav, de la CAVAMAC
+et de la CAVEC — le guide 2026 de la caisse nationale en trois parties, les
+fiches pratiques et les documents des caisses, la calculette de la CAVEC et le
+modèle publicodes de mon-entreprise, interrogé hors navigateur —, puis lu au
+Journal officiel les statuts de la CAVAMAC de 2011 et leur réécriture de 2023,
+ceux de la CAVEC depuis 2008, et les articles 8, 13, 20 et 21 du décret
+n° 2026-418.
+
+**La même forme que chez les dentistes, et la durée l'effaçait encore.** La
+CAVAMAC et la CAVEC écrivent une minoration que la durée d'assurance
+n'annule pas, et les deux fiches la laissaient annuler. La CAVAMAC : taux
+plein à l'âge légal augmenté de cinq ans, 5 % par tranche de douze mois
+d'anticipation, jusqu'en 2023 (statuts approuvés le 23 juin 2011, articles
+15 et 16) ; 1,25 % par trimestre manquant jusqu'à 67 ans depuis le
+1er janvier 2024 (arrêté du 4 août 2023). La CAVEC : « à 65 ans à taux plein ;
+entre 60 et 65 ans, avec application d'un abattement définitif de 1,25 % par
+trimestre manquant », de 2008 au règlement de 2026, et 65 ans depuis 1983 au
+moins, dit son livre des soixante-dix ans. Un agent général ou un
+expert-comptable parti à l'âge légal avec sa durée ne perdait rien de sa
+complémentaire ; il perd ce que ses statuts lui retirent — de 5 à 15 % pour
+les témoins, partis à 64 ans. La note de la fiche de la CAVEC disait la règle
+depuis la passe des professions juridiques ; c'est le drapeau qui manquait.
+La surcote de la CAVAMAC, 5 % par année pleine au-delà du taux plein, ne
+compte depuis 2024 que les années COTISÉES : deux années d'attente après
+67 ans ne valent plus rien, et le moteur sait maintenant le dire. La caisse
+publie trois exemples chiffrés de ses deux régimes ; ils entrent aux témoins
+officiels, et le troisième — une décote de 6,25 % pour cinq trimestres,
+durée réunie — est celui que la fiche ne rendait pas.
+
+**Trois enfants, et trois dates.** La complémentaire de la CAVAMAC majore de
+10 % les points de qui a eu trois enfants depuis ses statuts de 2011 ; celle
+de la Cipav, depuis 2000 au moins — le décret n° 99-913 y promet aux
+géomètres « une bonification pour enfants dans les conditions prévues » par
+ses statuts, dont la forme n'est lue qu'aujourd'hui ; celle de la CAVEC,
+depuis l'arrêté du 4 juillet 2025, que le guide de mars 2026 de la caisse
+nationale ignore encore. Aucune des trois fiches ne la portait.
+
+**Les trimestres des mères, et un moteur qui ne les cherchait pas là.**
+L. 643-1-1 rend aux libérales la majoration de durée d'assurance de L. 351-4
+pour les pensions prenant effet depuis le 1er avril 2010, et la surcote
+parentale depuis septembre 2023. La fiche de la CNAVPL les disait « non
+portées », et le moteur ne les aurait pas servies : il ne cherchait la
+majoration que dans les régimes en annuités. Une majoration de durée ne joue
+pourtant que sur la durée d'assurance, qu'un régime en points oppose aussi ;
+`mda` est désormais lu dans toute fiche qui le porte — et seulement `mda`,
+les bonifications, qui entrent aux services, restant aux annuités. Une
+libérale née en 1964, mère de deux enfants, entrée à 24 ans et partie à l'âge
+légal, ne perd plus que ce que la loi lui retire : ses seize trimestres
+portent sa durée à 171, et sa décote de 18,75 % tombe à zéro, à la CNAVPL
+comme à la Cipav qui la suit.
+
+**Une valeur de service que la caisse publiait, et que le dépôt déduisait.**
+La CNAVPL imprime dans sa page « Cotiser pour sa retraite » la valeur de son
+point depuis 2004, chaque valeur avec sa date d'effet ; le dépôt ne la lisait
+que dans les recueils statistiques, depuis 2021, et ramenait la valeur de
+2021 vers le passé par les prix. Les pensions de base liquidées de 1989 à 2019
+en sortaient trop basses de 1,4 à 5 %. `scripts/fetch/cnavpl_valeur_service.py`
+lit la série, retient la valeur en vigueur au 31 décembre — 0,6027 € en 2022,
+année de deux revalorisations, là où le dépôt portait celle du 1er janvier —,
+et ne l'écrit qu'après l'avoir confrontée à D. 643-1 pour 2004 et 2005 et aux
+cinq recueils : la série est certifiée de 2004 à 2026. Elle stagne en 2014,
+en 2016 et en 2018, les trois années où le régime général n'a pas revalorisé
+non plus.
+
+**Deux défauts dans la carrière elle-même.** Un revenu qui tombe pile sur le
+seuil d'un trimestre ne le validait pas toujours : 450 SMIC horaires font
+trois seuils de 150, mais la division en virgule flottante rendait 2,999… en
+2025, et deux trimestres au lieu des trois que la CNAVPL et la CAVAMAC
+écrivent pour la cotisation minimale ; corrigé dans les deux moteurs. Et
+l'âge du taux plein des générations d'avant 1930, que la table du 1° de
+L. 351-8 ne porte pas, retombait sur les 67 ans de la fiche de la CAVAMAC :
+la fiche dit 65.
+
+**Ce qui reste, et où il est écrit.** Avant 2011 pour la CAVAMAC, avant 2008
+pour la CAVEC, les statuts ne sont publiés qu'au Bulletin officiel : leur
+règle d'âge est supposée la même, et le taux d'abattement de la CAVEC d'avant
+2008 n'est pas connu. Lus et non portés : le capital unique que la CAVAMAC
+verse sous 1 500 points (dix-huit fois la pension annuelle) et la CAVEC sous
+500 (quinze fois), la pension restant servie en rente ; la majoration de 5 %
+de la CAVAMAC par enfant ouvrant droit à l'allocation d'éducation de l'enfant
+handicapé ; son départ anticipé des carrières longues, à 62 ou 63 ans avec
+15 % de minoration, là où le modèle oppose la minoration ordinaire ; les cent
+points que la CNAVPL attribue au trimestre d'un accouchement (D. 643-1), que
+le modèle ne sait pas dater, faute de la date de naissance des enfants ;
+l'option pour la classe supérieure à la CAVEC et les rachats partout. La
+Cipav ne majore un départ différé que pour qui compte trente années
+d'affiliation, et sur les seuls points de ces trente années ; le modèle les
+majore tous. Les lignes `cavamac_minoration_age_seul`,
+`cavec_minoration_age_seul`, `sections_liberales_majoration_enfants`,
+`cnavpl_majoration_duree_assurance`, `cnavpl_valeur_service` et
+`decret_2026_418_liberaux` du registre de veille en tiennent le détail.
+
+**Ce que les caisses publient de travers.** Le dépôt n'a pas été le seul à
+se tromper. La fiche pratique 2026 de la Cipav applique à son régime de base
+8,23 % et un point pour 89,71 € de revenu — le taux et le barème d'avant 2025,
+posés sur le plafond de 2025 —, quand D. 642-3 écrit 8,73 % depuis le
+1er janvier 2025, et à sa complémentaire 9 et 22 % jusqu'à trois plafonds,
+quand le décret dit 11 et 21 % jusqu'à quatre ; son exemple de 40 000 € rend
+450,1 et 75,9 points là où le droit en ouvre 467,8 et 92,8. Sa page des âges
+donne 171 trimestres à la génération 1964, que la suspension a ramenée à 170.
+La calculette de la CAVEC ne connaît que huit classes quand la grille de 2026
+en compte neuf, et facture 25 627 € au-delà de 181 208 € de revenu au lieu de
+30 616 € ; elle oublie l'option pour la classe supérieure dans l'une d'elles,
+et calcule le conjoint collaborateur aux taux de 2004 à 2011. Le tableau de
+paramètres de la CAVAMAC fait régulariser 2025 à 8,23 % quand D. 642-3 écrit
+8,73 % pour les périodes courant depuis le 1er janvier 2025. Et le paquet
+`modele-social` que l'Urssaf publie sur npm, dans sa version du 16 juillet
+2026, porte encore 8,23 % et 525 points ; le site mon-entreprise, lui, charge
+un second modèle, `modele-ti`, qui a suivi la réforme, et dont les points
+tombent sur ceux du dépôt au dixième près sur une grille de quatorze revenus,
+de 2024 à 2026.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -8679,7 +8795,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2263<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2296<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -198,7 +198,10 @@ export class DonneesMacro {
     if (seuil <= 0) {
       return 4;
     }
-    return Math.max(0, Math.min(4, Math.floor(revenu / seuil)));
+    // Un revenu qui tombe pile sur le seuil le valide : 450 SMIC horaires font
+    // trois seuils, mais 450 × 11,88 / (150 × 11,88) vaut 2,999… en virgule
+    // flottante, et l'arrondi rendait deux trimestres en 2025.
+    return Math.max(0, Math.min(4, Math.floor(revenu / seuil + 1e-9)));
   }
 
   /**

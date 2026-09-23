@@ -1495,6 +1495,7 @@ inventaire:
       - {reference: "code de la sécurité sociale, L. 640-1 (professions affiliées, rédaction de la LFSS 2018)", id: LEGIARTI000036391511}
       - {reference: "loi n° 2017-1836 du 30 décembre 2017, article 15 (les libéraux hors L. 640-1 affiliés avant le 1er janvier 2019 restent à la CNAVPL et à la Cipav)", id: JORFARTI000036339157}
       - {reference: "code de la sécurité sociale, D. 643-1", id: LEGIARTI000029825121}
+      - {reference: "code de la sécurité sociale, L. 643-1-1 (majoration de durée d'assurance pour enfants, pensions prenant effet depuis le 1er avril 2010)", id: LEGIARTI000021537910}
     manque: >-
       Le libéral non réglementé installé depuis 2019 relève du régime général
       et du RCI, celui installé avant reste à la CNAVPL et à la Cipav : le
@@ -1502,6 +1503,9 @@ inventaire:
       Le droit d'option de 2019 à 2023, par lequel un affilié d'avant pouvait
       rejoindre la sécurité sociale des indépendants, n'est pas porté ; ni la
       cotisation de la CNAVPL sur les revenus d'avant 1949, qui n'existait pas.
+      Les cent points que D. 643-1 attribue au trimestre d'un accouchement ne
+      le sont pas non plus : le modèle ne connaît pas la date de naissance des
+      enfants.
 
   - code: carmf_complementaire
     nom: Complémentaire des médecins (CARMF)
@@ -1619,9 +1623,14 @@ inventaire:
     statuts: [agent_general_assurance]
     textes:
       - {reference: "décret n° 68-1101 du 5 décembre 1968 et délibérations du conseil d'administration", id: null}
+      - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 23 juin 2011, articles 15, 16 et 18 (âges, minoration, majorations)", id: JORFARTI000024270173}
+      - {reference: "arrêté du 4 août 2023 portant approbation des modifications des statuts (taux plein à 67 ans, minoration trimestrielle au 1er janvier 2024)", id: JORFARTI000047977908}
     manque: >-
       L'assiette est reconstituée par un facteur moyen de commissions, qui ne
-      décrit aucun assuré en particulier.
+      décrit aucun assuré en particulier. La règle d'âge d'avant 2011, publiée
+      au seul Bulletin officiel, est supposée celle des statuts de 2011 ; la
+      liquidation des carrières longues à 15 % de minoration et le capital
+      unique versé sous 1 500 points ne sont pas portés.
 
   - code: cavec_complementaire
     nom: Complémentaire des experts-comptables et commissaires aux comptes (CAVEC)
@@ -1636,6 +1645,8 @@ inventaire:
     statuts: [expert_comptable]
     textes:
       - {reference: "statuts du régime complémentaire de la CAVEC (arrêtés d'approbation)", id: null}
+      - {reference: "statuts approuvés par l'arrêté du 22 février 2008, article 3.13 (taux plein à 65 ans, abattement de 1,25 % par trimestre manquant dès 60 ans)", id: JORFARTI000018197778}
+      - {reference: "arrêté du 4 juillet 2025, article 20 des statuts (majoration de 10 % pour trois enfants)", id: JORFARTI000051849616}
 
   - code: cavom_complementaire
     nom: Complémentaire des officiers ministériels (CAVOM)
@@ -1675,6 +1686,8 @@ inventaire:
     textes:
       - {reference: "décret n° 79-262 du 21 mars 1979 instituant le complémentaire des architectes", id: null}
       - {reference: "arrêté du 9 mars 1987 portant approbation des régimes complémentaires (architectes, ingénieurs, techniciens, experts et conseils)", id: LEGIARTI000006784842}
+      - {reference: "décret n° 99-913 du 21 octobre 1999, article 6 (bonification pour enfants des géomètres intégrés au 1er janvier 2000)", id: JORFTEXT000000561136}
+      - {reference: "décret n° 2026-418 du 29 mai 2026, article 20 : articles 5-1 à 5-6 du décret n° 79-262 (âges, minoration, majoration pour trois enfants, report)", id: JORFARTI000054153655}
 
   - code: cprn_complementaire
     nom: Complémentaire des notaires (CPRN), section C

@@ -422,9 +422,11 @@ champs_periode:
       RACL de 2014 à 2024 : 5 % par année manquante, et seul l'âge ouvre le
       taux plein. `cavom` est la même règle, que le règlement de la CAVOM
       écrit « non susceptible de fractionnement » ; c'est aussi celle de la
-      CARMF de 2000 à 2016 (« 0,75 à 60 ans […] 0,95 à 64 ans ») et de la
+      CARMF de 2000 à 2016 (« 0,75 à 60 ans […] 0,95 à 64 ans »), de la
       CARCDSF de 2008 à 2010 (« 25 % pour un départ en retraite au cours de la
-      61e année […] 5 % […] au cours de la 65e année »).
+      61e année […] 5 % […] au cours de la 65e année ») et de la CAVAMAC de
+      2011 à 2023 (« 5 % lorsque la liquidation […] intervient dans les douze
+      mois précédant l'âge requis », 10 % du 13e au 24e mois, jusqu'à 25 %).
     valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec", "ircec", "ircec_age_seul", "cavom"]
     defaut: decote_du_regime_de_base
 
@@ -506,6 +508,16 @@ champs_periode:
       vous réunissez 30 années d'affiliation à la Cipav ». `null` : aucune
       condition.
     defaut: null
+
+  surcote_trimestres_cotises:
+    description: >-
+      `par_age_seul` seulement : ne compter que les trimestres COTISÉS depuis
+      l'âge de départ du décompte, et non le temps écoulé — « pour chaque
+      année pleine cotisée dans le présent régime » (CAVAMAC, statuts dans la
+      rédaction de l'arrêté du 4 août 2023, article 16, depuis le 1er janvier
+      2024 ; ils disaient « différée » auparavant). `false` : le temps écoulé
+      suffit, comme dans les autres sections.
+    defaut: false
 
   taux_majoration_enfants:
     description: >-
@@ -695,7 +707,11 @@ champs_periode:
     description: >-
       Liste des droits gratuits en vigueur sur la période. Tous sont NEUTRALISÉS
       dans les scénarios notionnels ; ils ne sont conservés que pour la
-      reconstitution du scénario « système actuel ».
+      reconstitution du scénario « système actuel ». `mda` et `bonifications`
+      se lisent dans `legislation/majoration_duree_assurance.csv` ; une fiche
+      EN POINTS ne sert que `mda`, qui ne joue que sur la durée d'assurance
+      — la CNAVPL depuis 2010 —, une bonification entrant aux services qu'elle
+      n'a pas.
     valeurs_usuelles: ["minimum_contributif", "minimum_garanti", "aspa",
                        "majoration_enfants", "mda", "avpf", "bonifications",
                        "periodes_assimilees", "categorie_active", "reversion"]

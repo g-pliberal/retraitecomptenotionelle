@@ -929,7 +929,24 @@ sources:
     a_en_tirer: >-
       Les cotisations Cipav par tranche, et les points acquis : à confronter
       aux pages de la Cipav elle-même.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      LE SITE CHARGE UN AUTRE MODÈLE QUE CELUI QUE L'URSSAF PUBLIE. Le paquet
+      npm `modele-social` 11.1.0 (16 juillet 2026) s'installe et s'interroge hors
+      navigateur, mais porte encore 8,23 % et 525 points pour la CNAVPL, 9 et 22 %
+      pour la Cipav : les paramètres d'avant 2025. Le simulateur en ligne, lu dans
+      Chromium, charge un second modèle, `modele-ti` (0.1.0), qui date la réforme
+      de l'assiette au 1er janvier 2025 ; interrogé sur une grille de quatorze
+      revenus de 2024 à 2026, il rend les points de la CNAVPL et les cotisations de
+      la Cipav du dépôt au dixième près. Deux écarts : un vrai défaut du dépôt —
+      l'assiette minimale de 2025 (450 SMIC horaires) ne validait que deux
+      trimestres, la division en virgule flottante rendant 2,999… ; corrigé dans
+      src/retraite_notionnelle/donnees/macro.py et moteur/js/macro.js, tenu par
+      tests/test_sections_liberales.py —, et un que le modèle ne peut pas lever :
+      `modele-ti` appelle la cotisation minimale à revenu nul, dont les
+      bénéficiaires du RSA sont dispensés. Récit dans docs/limites.md, « Les
+      dernières sections libérales ».
 
   - id: mon_entreprise_artiste_auteur
     url: https://mon-entreprise.urssaf.fr/simulateurs/artiste-auteur
@@ -955,7 +972,20 @@ sources:
       Les guides de la caisse nationale : le régime de base en points, commun
       aux dix sections, avec ses deux tranches et sa valeur de service. La
       fiche `cnavpl` est `partiel` ; ces guides sont ce qui la complète.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Le guide 2026 de la caisse nationale, en trois PDF composés sous Canva que
+      `lecture_pdf.py` ne lit pas (pdfminer les lit). La partie 2, les dix
+      complémentaires, a levé ce que les fiches ne portaient pas : la minoration
+      par l'âge seul de la CAVAMAC et de la CAVEC, la majoration de 10 % pour
+      trois enfants de la CAVAMAC et de la Cipav — chaque règle relue ensuite au
+      Journal officiel et portée dans data/reference/regimes/non_salaries.yaml,
+      avec ses lignes dans data/reference/legislation/veille.yaml. Le guide n'est
+      pas à jour de tout : il écrit de la CAVEC que « le régime ne prévoit pas de
+      majoration », que l'arrêté du 4 juillet 2025 a créée. Les documents se
+      téléchargent directement depuis une session, par l'adresse
+      `?wpdmdl=` de leur page.
 
   - id: cipav_calcul_retraite
     url: https://www.lacipav.fr/calcul-retraite
@@ -965,7 +995,17 @@ sources:
     a_en_tirer: >-
       Le calcul des deux étages Cipav, base et complémentaire, avec les
       classes de cotisation.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Les deux étages en un tableau : valeur de service 2026 de 0,6599 € pour la
+      base — la page la dit encore « revalorisée au 1er octobre », ce qui n'est plus
+      vrai depuis 2019 — et de 2,89 € pour la complémentaire ; taux plein de la
+      complémentaire à l'âge légal si la base est liquidée à taux plein, à 67 ans
+      sinon ; majoration réservée à qui réunit trente années d'affiliation à
+      67 ans. Tout est conforme aux fiches, relu contre les articles 5-1 et 5-2 du
+      décret n° 79-262 (décret n° 2026-418, article 20) ; la condition des trente
+      années, que le modèle ne pose pas, est écrite dans docs/limites.md.
 
   - id: cipav_cotiser
     url: https://www.lacipav.fr/cotiser-pour-acquerir-des-droits-retraite-prevoyance
@@ -975,7 +1015,17 @@ sources:
     a_en_tirer: >-
       Les classes A à H, leur prix et les points qu'elles rendent : le barème
       qui fait la fiche `cipav_complementaire`.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      La fiche pratique 2026 « Cotiser pour acquérir des droits à retraite »
+      n'est pas à jour : 8,23 % et un point pour 89,71 € de revenu à la base, 9 %
+      et 22 % jusqu'à trois plafonds à la complémentaire, là où D. 642-3 et le
+      décret n° 2025-1076 écrivent 8,73 %, 11 % et 21 % jusqu'à quatre. Son
+      exemple de 40 000 € rend 450,1 et 75,9 points ; le droit en ouvre 467,8 et
+      92,8, que le dépôt calcule. Les fiches suivent les textes ; l'écart est
+      consigné dans docs/limites.md, et la note de la fiche 2025 de
+      `cipav_complementaire` le disait déjà pour les taux.
 
   - id: cipav_age
     url: https://www.lacipav.fr/quel-age-prendre-retraite
@@ -985,7 +1035,16 @@ sources:
     a_en_tirer: >-
       Âge d'ouverture, taux plein, coefficients d'anticipation et d'ajournement
       propres à la complémentaire.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Âges, taux plein et abattement de la complémentaire — « le même abattement
+      que celui appliqué à votre retraite de base » entre l'âge légal et 67 ans —,
+      conformes aux fiches. Le tableau des âges mêle les deux calendriers : il
+      donne 62 ans et 9 mois à la génération 1964, âge de la suspension, mais
+      171 trimestres, durée d'avant la suspension, que la loi du 30 décembre 2025
+      a ramenée à 170. Consigné dans docs/limites.md ; rien à changer au dépôt, qui
+      suit la loi.
 
   - id: cipav_cumul
     url: https://www.lacipav.fr/cumul-emploi-retraite
@@ -994,7 +1053,15 @@ sources:
     regimes: [cnavpl, cipav_complementaire]
     a_en_tirer: >-
       Le cumul chez les libéraux, où il est plus libre qu'ailleurs.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Cumul intégral ou plafonné au plafond de la sécurité sociale, et, depuis le
+      1er janvier 2023, une seconde retraite de base ET complémentaire pour les
+      cotisations du cumul intégral, la Cipav ayant aligné sa complémentaire sur la
+      loi. Hors modèle, qui liquide une fois : ligne
+      `cumul_emploi_retraite_et_retraite_progressive` de
+      data/reference/legislation/veille.yaml. Rien à transcrire.
 
   - id: cipav_rachat
     url: https://www.lacipav.fr/racheter-trimestres
@@ -1004,7 +1071,15 @@ sources:
     a_en_tirer: >-
       Le prix d'un trimestre racheté chez un libéral : troisième barème de
       rachat, après l'ENSAP et la CNRACL.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Les conditions du rachat de trimestres chez les libéraux — de 20 à 67 ans,
+      douze trimestres au plus, barème annuel par arrêté selon l'âge et la moyenne
+      des revenus des trois dernières années —, sans le barème lui-même, qui est
+      dans l'arrêté. Hors modèle comme tous les rachats (ligne
+      `rachats_et_versements` de data/reference/legislation/veille.yaml) : rien à
+      transcrire.
 
   - id: cipav_documents
     url: https://www.lacipav.fr/documents-utiles
@@ -1014,7 +1089,16 @@ sources:
     a_en_tirer: >-
       Statuts, règlement, circulaires et notices : la source de droit de la
       section, là où les pages sont des résumés.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-23"
+    note: >-
+      Déroulé : les quatre fiches pratiques 2026 (calcul, cotisations, âges,
+      retraite des libéraux), lues, et dont les écarts sont consignés dans
+      docs/limites.md ; les guides pratiques de 2019 à 2023 et les rapports
+      d'activité, que ce lot n'a pas ouverts. Aucun statut ni règlement n'y est
+      publié : le droit de la complémentaire est dans le décret n° 79-262, que le
+      décret n° 2026-418 a réécrit et que ce lot a lu. Les rapports d'activité
+      restent à lire pour les effectifs par classe.
 
   - id: carmf_simulateur_cotisations
     url: https://www.carmf.fr/page.php?page=cdrom%2Fcalc%2Findex.php%3Fcalc%3Dcoti
@@ -1471,7 +1555,15 @@ sources:
     a_en_tirer: >-
       Une méthode de calcul rapide publiée par la caisse : elle expose le
       rendement du régime en clair, ce qu'aucune autre section ne fait.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Pas un simulateur : une fiche PDF qui fait le calcul à la main. Elle confirme
+      la minoration trimestrielle de la complémentaire depuis 2024 — 1,25 % par
+      trimestre manquant jusqu'à 67 ans — et le départ des carrières longues à 62
+      ou 63 ans avec 15 % de minoration, que le modèle ne porte pas (docs/limites.md
+      et ligne `cavamac_minoration_age_seul` de
+      data/reference/legislation/veille.yaml).
 
   - id: cavamac_calcul_pension
     url: https://www.cavamac.fr/je-pars-a-la-retraite/le-calcul-de-ma-pension/
@@ -1480,7 +1572,20 @@ sources:
     regimes: [cavamac_complementaire, cnavpl]
     a_en_tirer: >-
       Le calcul des pensions des agents généraux d'assurance.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      La page et le document qu'elle signale, « Décotes & surcotes : quelques
+      exemples », qui chiffre trois cas : la décote du régime de base au plus
+      favorable de l'âge et de la durée (5 %), la surcote de 7,5 % pour six
+      trimestres, la décote de la complémentaire par l'âge seul (6,25 % pour cinq
+      trimestres). Les trois entrent dans tests/temoins/exemples_officiels.yaml ;
+      le troisième a levé la minoration que la durée annulait. La page décrit
+      aussi la surcote parentale pour « les générations nées à partir du 1er avril
+      1965 », portée depuis 2024 (ligne `cnavpl_majoration_duree_assurance`). La
+      fiche des conditions de départ de la complémentaire a coupé la connexion
+      (« connection reset ») à la première requête ; les statuts au Journal
+      officiel en ont tenu lieu.
 
   - id: cavamac_cotisations_rbl
     url: https://www.cavamac.fr/je-suis-en-activite/mes-cotisations-rbl/
@@ -1490,7 +1595,16 @@ sources:
     a_en_tirer: >-
       Le régime de base des libéraux vu par la CAVAMAC : deuxième lecture du
       même barème national, contrôle croisé gratuit.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Le tableau des paramètres de janvier 2026 : assiette minimale de 5 346 € en
+      2025 (450 SMIC horaires), trois trimestres, et 7 128 € pour quatre — c'est lui
+      qui a fait voir que le dépôt n'en validait que deux en 2025 (corrigé dans les
+      deux moteurs, tenu par tests/test_sections_liberales.py). Il fait
+      régulariser 2025 à 8,23 %, quand D. 642-3 écrit 8,73 % pour les périodes
+      courant depuis le 1er janvier 2025 : la fiche suit le décret, l'écart est
+      dans docs/limites.md.
 
   - id: cavamac_cotisations_rco_rid
     url: https://www.cavamac.fr/je-suis-en-activite/mes-cotisations-rco-et-rid/
@@ -1500,7 +1614,14 @@ sources:
     a_en_tirer: >-
       Le complémentaire et le régime invalidité-décès : cotisation assise sur
       les commissions, cas unique parmi les sections.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Taux statutaire de 6,30 % appelé à 121,6 %, soit 7,66 % des commissions
+      limitées au plafond, dont 2,50 % à la charge des compagnies mandantes : déjà
+      porté par la fiche de `cavamac_complementaire` depuis 2026
+      (data/reference/regimes/non_salaries.yaml). Invalidité-décès, hors modèle.
+      Rien de neuf.
 
   - id: cavec_simulateur
     url: https://www.cavec.fr/simuler-vos-cotisations/
@@ -1510,7 +1631,18 @@ sources:
     a_en_tirer: >-
       Les cotisations des experts-comptables et commissaires aux comptes, par
       classe.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      La calculette calcule dans le navigateur, et son barème est en clair dans
+      `calculette-cotisations.js`, complété par les valeurs que la page injecte.
+      Trois défauts de la caisse, aucun du dépôt : huit classes de complémentaire
+      au lieu de neuf, si bien qu'au-delà de 181 208 € de revenu elle facture la
+      classe H (25 627 €) au lieu de la classe I (30 616 €) ; pas d'option pour la
+      classe supérieure dans l'une d'elles ; le conjoint collaborateur aux taux de
+      2004 à 2011, codés en dur. La grille du dépôt a ses neuf classes
+      (data/reference/regimes/classes_cotisation.csv). Consigné dans
+      docs/limites.md.
 
   - id: cavec_calcul_retraite
     url: https://www.cavec.fr/votre-retraite/votre-retraite/preparer-votre-retraite/le-calcul-de-votre-retraite/
@@ -1519,7 +1651,16 @@ sources:
     regimes: [cavec_complementaire, cnavpl]
     a_en_tirer: >-
       Le calcul de la pension, base et complémentaire.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      La page de calcul de la complémentaire : « une augmentation de 10 % de la
+      pension est accordée aux parents d'au moins 3 enfants », que le guide 2026 de
+      la CNAVPL nie ; l'arrêté du 4 juillet 2025 tranche pour la page. Portée à la
+      fiche depuis 2026 (data/reference/regimes/non_salaries.yaml, ligne
+      `sections_liberales_majoration_enfants` de
+      data/reference/legislation/veille.yaml). Âges et abattement, 65 ans et
+      1,25 % par trimestre dès 60 ans, conformes aux statuts lus.
 
   - id: cavec_montant_cotisations
     url: https://www.cavec.fr/votre-retraite/vos-cotisations/vos-cotisations-en-tant-que-liberal-tns/montant-de-vos-cotisations/
@@ -1528,7 +1669,18 @@ sources:
     regimes: [cavec_complementaire, cnavpl]
     a_en_tirer: >-
       Les classes et leur prix, écrits à côté du simulateur.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Une page-sommaire, dont la sous-page « Vos cotisations retraite, prévoyance
+      et options » porte la grille 2026 entière : neuf classes, de 898 € jusqu'à
+      14 919 € de revenus à 30 616 € au-delà de 181 208 €, identiques à
+      data/reference/regimes/classes_cotisation.csv, et les points de chacune — 54
+      à 1 841, soit 16,63 € le point dans toutes les classes. Avec la valeur de
+      service de 2026, 1,3850 €, le rendement est de 8,33 %, celui que porte
+      data/reference/regimes/rendements_points.csv. Base : cotisation minimale de
+      573 € sous 5 409 € de revenu, trois trimestres, conforme. Ouverte le
+      23 septembre 2026 en fin de passe, après que le lot l'eut crue lue.
 
   - id: cavec_guides
     url: https://www.cavec.fr/guides-et-documentations/
@@ -1537,7 +1689,16 @@ sources:
     regimes: [cavec_complementaire]
     a_en_tirer: >-
       Guides et statuts, pour la série historique.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Deux documents ont compté. Le guide « Bien préparer votre retraite » : âges
+      et abattement de la complémentaire, conformes aux statuts. Et le livre des
+      soixante-dix ans de la caisse, qui date la règle d'âge : en 1983, ses
+      administrateurs « choisissent de ne pas abaisser l'âge de départ en retraite
+      à 60 ans […]. Il reste et restera fixé à 65 ans. » C'est ce qui autorise la
+      fiche à porter 65 ans avant 2008 (data/reference/regimes/non_salaries.yaml,
+      ligne `cavec_minoration_age_seul`). Les rapports annuels n'ont pas été lus.
 
   - id: cavom_retraite
     url: https://www.cavom.net/vos-droits/votre-retraite/
@@ -2303,7 +2464,14 @@ sources:
       Le régime de base en points, ses deux tranches (jusqu'à 85 % du plafond,
       puis jusqu'à cinq fois), leurs taux et les points qu'elles rendent :
       c'est le cœur de la fiche `cnavpl`, aujourd'hui `partiel`.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Acquisition des droits : points par tranche, un trimestre par 150 SMIC
+      horaires dans la limite de quatre, assiette minimale validant trois
+      trimestres — ce que le modèle fait déjà (legislation/assiette_minimale_independants.csv),
+      à l'arrondi flottant près que ce lot a corrigé. Règles communes aux régimes
+      de base alignés : rien de neuf pour data/.
 
   - id: cnavpl_preparer_sa_retraite
     url: https://www.cnavpl.fr/preparer-sa-retraite/
@@ -2312,7 +2480,18 @@ sources:
     regimes: [cnavpl]
     a_en_tirer: >-
       Âge, taux plein, durée d'assurance et rachats chez les libéraux.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      La page « Cotiser pour sa retraite » imprime sous « Historique » la valeur
+      de service du point depuis 2004, chaque valeur avec sa date d'effet, et les
+      taux et plafonds de points des deux tranches depuis 2004. La série entre au
+      manifeste (`cnavpl_valeur_service`) et dans
+      data/reference/regimes/valeurs_point.csv, certifiée de 2004 à 2026 par
+      scripts/fetch/cnavpl_valeur_service.py : elle remplace la valeur de 2021
+      ramenée vers le passé par les prix, qui sous-estimait de 1,4 à 5 % les
+      pensions liquidées de 1989 à 2019, et corrige 2022 (0,6027 € au 31 décembre).
+      Taux et plafonds concordent avec les fiches.
 
   - id: cnavpl_comprendre_sa_retraite
     url: https://www.cnavpl.fr/comprendre-sa-retraite/
@@ -2322,7 +2501,18 @@ sources:
     a_en_tirer: >-
       Le calcul de la pension de base : valeur de service du point, décote,
       surcote, majorations.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Âges et durées de la suspension, exacts au trimestre près ; trimestres pour
+      enfants et surcote parentale, que la fiche disait non portés et que le
+      moteur n'aurait pas servis (portés depuis, ligne
+      `cnavpl_majoration_duree_assurance`) ; décote et surcote conformes. Deux
+      exemples de points sur les paramètres de 2025 — 238,6 points pour 20 000 € de
+      revenu, 565,5 pour 80 000 € — que le dépôt rend au dixième, tenus par
+      tests/test_sections_liberales.py. Les cent points du trimestre
+      d'accouchement (D. 643-1) ne sont pas portés, faute de la date de naissance
+      des enfants.
 
   - id: cnavpl_situations_particulieres
     url: https://www.cnavpl.fr/situations-particulieres/
@@ -2333,7 +2523,13 @@ sources:
       Maternité, maladie, invalidité, conjoint collaborateur, début d'activité :
       les points attribués sans cotisation chez les libéraux — un versant de
       la frontière contributive que le dépôt n'a lu que pour les salariés.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Cumul emploi-retraite, intégral ou partiel, avec création de droits depuis
+      2023, et statut du conjoint collaborateur : hors modèle l'un et l'autre (le
+      modèle liquide une fois ; il ne connaît pas le conjoint collaborateur) :
+      rien à transcrire.
 
   - id: cnavpl_complementaires_prevoyance
     url: https://www.cnavpl.fr/regimes-complementaires-et-prevoyance/
@@ -2344,7 +2540,13 @@ sources:
       La vue d'ensemble des dix sections et de leurs complémentaires : une
       table de comparaison que le dépôt devrait pouvoir reproduire fiche par
       fiche, et qui dira du premier coup d'œil lesquelles il décrit mal.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Page de présentation des complémentaires, de l'invalidité-décès et des
+      prestations complémentaires de vieillesse des professions de santé, avec
+      leurs références juridiques ; chacune renvoie à sa caisse. Rien de chiffré
+      que les lots de sections n'aient lu à la source ; rien à transcrire.
 
   - id: cnavpl_statuts
     url: https://www.cnavpl.fr/statuts-et-documents-de-reference/
@@ -2354,7 +2556,12 @@ sources:
     a_en_tirer: >-
       Statuts et décrets : la source de droit du régime de base, à citer dans
       la fiche plutôt qu'une page d'explication.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Les statuts de la caisse nationale et ses documents de référence :
+      gouvernance et organisation, sans paramètre de calcul : rien pour le
+      modèle.
 
   - id: cnavpl_ressources_documentaires
     url: https://www.cnavpl.fr/ressources-documentaires/
@@ -2365,7 +2572,14 @@ sources:
       Les recueils annuels — que `scripts/fetch/cnavpl_recueils.py` sait déjà
       lire depuis un document apporté : voir ce que cette page publie de plus,
       et si la récupération peut cesser de passer par `data/brut/`.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-23"
+    note: >-
+      Guides, recueils statistiques et documents de référence, tous
+      téléchargeables depuis une session par l'adresse `?wpdmdl=` de leur page —
+      la question que la ligne posait. Les recueils 2021 à 2025 étaient déjà au
+      manifeste (`cnavpl_recueils`) ; ils ont servi ici à recouper la série des
+      valeurs de service (data/reference/regimes/valeurs_point.csv).
 
   # ---- CPRN, les notaires -------------------------------------------------
 

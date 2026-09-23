@@ -2044,11 +2044,13 @@ def test_valeurs_du_point_des_avocats_sont_sourcees(simulateur):
 
 
 def test_valeur_du_point_des_liberaux_est_sourcee(simulateur):
-    """La CNAVPL publie sa valeur du point dans ses recueils, et nulle part ailleurs.
+    """La CNAVPL publie sa valeur du point, et elle seule.
 
     Le décret annuel ne fixe qu'un coefficient de revalorisation : ni le
     Journal officiel ni la législation consolidée ne portent le montant, ce que
-    quatre dépouillements ont établi. Ces valeurs viennent donc de la caisse.
+    quatre dépouillements ont établi. Ces valeurs viennent donc de la caisse :
+    de ses recueils depuis 2021, de sa page « Cotiser pour sa retraite » depuis
+    2004, chaque valeur avec sa date d'effet.
 
     Le moteur ne s'en sert pas encore : le prix d'acquisition d'un point se
     déduit du taux de tranche et d'un plafond de points que le recueil ne
@@ -2079,9 +2081,16 @@ def test_valeur_du_point_des_liberaux_est_sourcee(simulateur):
     assert valeurs[(2024, "taux_t1")] == pytest.approx(0.0823)
     assert valeurs[(2025, "taux_t2")] == pytest.approx(0.0187)
 
-    services = [valeurs[(a, "valeur_service")]
-                for a in sorted({a for a, m in valeurs if m == "valeur_service"})]
-    assert all(apres > avant for avant, apres in zip(services, services[1:]))
+    # La valeur ne baisse jamais, et ne stagne que les trois années où le régime
+    # général n'a pas revalorisé non plus : 2014 et 2016, revalorisations nulles
+    # d'octobre, et 2018, dont la revalorisation a été reportée au 1er janvier
+    # 2019. Une quatrième année plate serait une valeur mal datée.
+    services = {a: v for (a, m), v in valeurs.items() if m == "valeur_service"}
+    annees = sorted(services)
+    assert all(services[apres] >= services[avant]
+               for avant, apres in zip(annees, annees[1:]))
+    assert [apres for avant, apres in zip(annees, annees[1:])
+            if services[apres] == services[avant]] == [2014, 2016, 2018]
 
     # Faute de prix d'acquisition, le moteur doit rester sur le rendement.
     assert ValeursPoint(simulateur.parametres.racine_donnees).achat("cnavpl", 2025) is None
@@ -4112,11 +4121,14 @@ def test_toute_surcote_ecrite_par_une_fiche_en_points_est_servie(simulateur):
         if p.surcote_points in ("regime_general", "par_age_seul")
     }
     # La CARCDSF majore depuis ses statuts de 2011 (article 19, I, c), lus
-    # le 23 septembre 2026 : 1 % par trimestre, 1,25 % depuis 2024.
+    # le 23 septembre 2026 : 1 % par trimestre, 1,25 % depuis 2024. La CAVAMAC
+    # aussi, depuis les siens (article 16) : 5 % par année pleine différée
+    # au-delà du taux plein, par année pleine COTISÉE depuis 2024.
     assert servies == {
         "cnavpl", "msa_non_salaries", "carmf_complementaire", "asv_conventionnes",
         "cavec_complementaire", "cipav_complementaire", "carpimko_complementaire",
         "cavp_complementaire", "cprn_complementaire", "carcdsf_complementaire",
+        "cavamac_complementaire",
     }, servies
 
 

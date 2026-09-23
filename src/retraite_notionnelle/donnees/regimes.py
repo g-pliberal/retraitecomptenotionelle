@@ -268,6 +268,10 @@ class PeriodeRegime:
     surcote_palier_age: float | None
     surcote_par_trimestre_apres_palier: float | None
     surcote_affiliation_minimale_trimestres: int | None
+    #: ``par_age_seul`` ne compte que les trimestres COTISÉS depuis l'âge de
+    #: départ du décompte, et non le temps écoulé : la CAVAMAC majore depuis
+    #: 2024 « pour chaque année pleine cotisée dans le présent régime ».
+    surcote_trimestres_cotises: bool
     #: Plafond en euros de la majoration pour enfants, et année à laquelle il
     #: est publié. Le plafond suit ensuite la valeur de service du point.
     plafond_majoration_enfants: float | None
@@ -1051,6 +1055,7 @@ class CatalogueRegimes:
                     None if p.get("surcote_affiliation_minimale_trimestres") is None
                     else int(p["surcote_affiliation_minimale_trimestres"])
                 ),
+                surcote_trimestres_cotises=bool(p.get("surcote_trimestres_cotises", False)),
                 plafond_majoration_enfants=(
                     None if p.get("plafond_majoration_enfants") is None
                     else float(p["plafond_majoration_enfants"])
