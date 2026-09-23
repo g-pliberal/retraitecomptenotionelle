@@ -842,17 +842,20 @@ entrees:
     prochaine_veille: "2027-01-31"
 
   - id: revalorisation_des_pensions
-    regle: "Revalorisation annuelle des pensions liquidées au 1er janvier : coefficient égal à l'évolution moyenne annuelle des prix hors tabac sur les douze derniers indices mensuels (L. 161-25), que L. 161-23-1 applique au régime général et aux deux régimes agricoles. Au 1er janvier 2026 : 1,009, soit 0,9 %."
-    textes: ["L. 161-25 CSS", "L. 161-23-1 CSS (version du 1er janvier 2026, LEGIARTI000051289722)", "instruction interministérielle n° DSS/3A/DB/6BRS/2025/174 du 15 décembre 2025"]
+    regle: "Revalorisation annuelle des pensions liquidées au 1er janvier : coefficient égal à l'évolution moyenne annuelle des prix hors tabac sur les douze derniers indices mensuels (L. 161-25), que L. 161-23-1 applique au régime général et aux deux régimes agricoles. Au 1er janvier 2026 : 1,009, soit 0,9 %. Pour un retraité, toutes celles reçues depuis sa date d'effet : au régime général, chaque coefficient depuis 1949, dont les dérogations de 2019 (0,3 %) et de 2020 (cinq coefficients selon la retraite totale de décembre 2019) ; dans la fonction publique, la péréquation jusqu'en 2003, un décret par an de 2004 à 2008, puis L. 161-23-1 (L. 16 du code des pensions civiles et militaires)."
+    textes: ["L. 161-25 CSS", "L. 161-23-1 CSS (version du 1er janvier 2026, LEGIARTI000051289722)", "instruction interministérielle n° DSS/3A/DB/6BRS/2025/174 du 15 décembre 2025", "loi n° 2018-1203, art. 68 (JORFARTI000037847640)", "loi n° 2019-1446, art. 81 (JORFARTI000039675431)", "L. 16 CPCMR, trois rédactions (LEGIARTI000006362709, LEGIARTI000006362710, LEGIARTI000019959484)", "décrets n° 2003-1304, 2005-166, 2006-316 et 2007-60 ; loi n° 2008-1330, art. 6"]
     sources:
       - {type: circulaire_cnav, reference: "2025/29 du 22 décembre 2025, « Revalorisation à compter du 1er janvier 2026 » — coefficient 1,009, soit 0,9 %", date: "2025-12-22"}
       - {type: legifrance, reference: "L. 161-23-1, version en vigueur au 1er janvier 2026 (LEGIARTI000051289722), lue dans l'index LEGI du dépôt", date: "2026-01-01"}
-    verifie_le: "2026-09-22"
+      - {type: autre, reference: "Cnav, base de législation, barème « Coefficients de revalorisation des retraites », toutes les dates d'effet depuis le 1er janvier 1949 et les cinq tranches de 2020 (data/reference/legislation/revalorisation_pensions.csv)", date: "2026-09-23", url: "https://legislation.lassuranceretraite.fr/"}
+      - {type: legifrance, reference: "L. 16 CPCMR dans ses trois rédactions, et les décrets de revalorisation des pensions de l'État de 2003 à 2007, lus dans les index LEGI et JORF du dépôt (revalorisation_pensions_fonction_publique.csv)", date: "2026-09-23"}
+      - {type: autre, reference: "COR, rapport annuel de juin 2026, figure 3.14 et annexe méthodologique § 3.3 : pouvoir d'achat de la pension nette des cas types non-cadre et cadre, générations 1937 à 1952 (tests/temoins/cor_pouvoir_achat_retraite.json)", date: "2026-09-23", url: "https://www.cor-retraites.fr/"}
+    verifie_le: "2026-09-23"
     temoins: []
     reformes: []
     etat: conforme
-    effet: "N'entre pas dans la pension à la liquidation ; entre dans les trajectoires de la page Coût, qui revalorisent les pensions servies sur la règle d'indexation du scénario — les PRIX par défaut. La LFSS 2026 n'a pas dérogé à L. 161-25 pour 2026 : la recherche dans l'index LEGI ne trouve aucune version dérogatoire, et la circulaire Cnav applique la règle ordinaire. Le coefficient servi, 0,9 %, tombe à quatre centièmes de point de l'inflation 2025 que le dépôt porte, certifiée INSEE : 0,943 %. Le modèle et le droit disent donc la même chose pour 2026."
-    a_faire: "Rien pour 2026. Relire au 1er janvier 2027, et surtout si une loi de financement déroge à L. 161-25 — un gel ou une sous-indexation ne se verrait pas dans la série des prix, et c'est ce qui a séparé, plusieurs fois depuis 2014, le montant servi de ce que les prix auraient donné (`limites.md`, minimum garanti)."
+    effet: "N'entre pas dans la pension à la liquidation. Entre, depuis le 23 septembre 2026, dans la pension d'AUJOURD'HUI d'un retraité, que le simulateur affiche au lieu de sa pension de départ ramenée par les prix : chaque régime est revalorisé par son texte (src/retraite_notionnelle/revalorisation.py). Le cas type des tests — un non-cadre parti en janvier 2012 — touche en 2026 3,4 % de moins que sa pension de départ ramenée par les prix. Le COR, figure 3.14, est retrouvé à moins de trois centièmes de point pour le non-cadre en 2026, à 0,35 point pour le cadre (limites.md). Entre aussi dans les trajectoires de la page Coût, qui revalorisent les pensions servies sur la règle d'indexation du scénario — les PRIX par défaut. La LFSS 2026 n'a pas dérogé à L. 161-25 pour 2026 : la recherche dans l'index LEGI ne trouve aucune version dérogatoire, et la circulaire Cnav applique la règle ordinaire."
+    a_faire: "Chaque 1er janvier : relancer scripts/fetch/cnav_revalorisation_pensions.py et relire la circulaire de la Cnav ; surtout si une loi de financement déroge à L. 161-25 — un gel ou une sous-indexation ne se verrait pas dans la série des prix, et c'est ce qui a séparé, plusieurs fois depuis 2014, le montant servi de ce que les prix auraient donné. Reste à lire : la péréquation des pensions de l'État avant 2004 au-delà du point d'indice (tableaux d'assimilation), les revalorisations des régimes spéciaux avant 2009, un texte ou une circulaire du service des retraites de l'État qui dise si la revalorisation du jour du départ est servie depuis 2009 comme les décrets de 2004 à 2007 la servaient, et comment la tranche de 2020 a été appliquée aux pensions prenant effet le 1er janvier 2020 dans la fonction publique."
     prochaine_veille: "2027-01-31"
 
   # ---- Régimes autres que le régime général et la fonction publique -----
@@ -4097,3 +4100,36 @@ journal:
       La caisse Arrco d'avant 1999, que le modèle ne connaît pas ; la
       majoration pour enfants à charge de l'Agirc-Arrco ; les règlements des
       régimes spéciaux d'avant les textes lus ; le CESE et les assemblées.
+
+  - date: "2026-09-23"
+    session: "la pension d'aujourd'hui d'un retraité"
+    consulte: >-
+      `scripts/veille_droit.py` ; la base de législation de la Cnav, barème
+      « Coefficients de revalorisation des retraites » (toutes les dates
+      d'effet depuis 1949, et les cinq tranches de 2020) ; la circulaire Cnav
+      2025/29 ; dans l'index JORF, l'article 68 de la loi n° 2018-1203,
+      l'article 81 de la loi n° 2019-1446 et la décision n° 2019-795 DC, les
+      décrets n° 2003-1304, 2005-166, 2006-316 et 2007-60, l'article 6 de la
+      loi n° 2008-1330 ; dans l'index LEGI, l'article L. 16 du code des
+      pensions civiles et militaires dans ses trois rédactions. Le rapport
+      annuel du COR de juin 2026, figure 3.14, et son annexe méthodologique,
+      § 3.3.
+    trouve: >-
+      Le simulateur montrait à un retraité sa pension de départ ramenée par
+      les prix ; il lui montre celle qu'il touche, chaque régime revalorisé
+      par son texte. Le barème de la Cnav et les décrets de la fonction
+      publique entrent dans le dépôt (`revalorisation_pensions.csv`,
+      `revalorisation_pensions_fonction_publique.csv`). L'article 81 de la
+      LFSS 2020 choisit la tranche sur la retraite totale « reçue […] le mois
+      précédent » : nulle pour une pension prise en janvier 2020, ce que le
+      modèle applique à la lettre. Le COR est retrouvé à moins de trois
+      centièmes de point pour le non-cadre en 2026, à 0,35 point pour le
+      cadre ; ligne `revalorisation_des_pensions`.
+    reste: >-
+      Aucun texte lu ne redit, sous L. 161-23-1, que la fonction publique sert
+      la revalorisation du jour même du départ, comme les décrets de 2004 à
+      2007 l'écrivaient : le modèle le suppose depuis 2009. Aucune circulaire
+      lue ne dit comment la tranche de 2020 a été appliquée aux pensions de la
+      fonction publique prenant effet le 1er janvier 2020. La péréquation
+      d'avant 2004 au-delà du point d'indice ; les revalorisations des régimes
+      spéciaux avant 2009 ; l'écart du cadre du COR en 2026.

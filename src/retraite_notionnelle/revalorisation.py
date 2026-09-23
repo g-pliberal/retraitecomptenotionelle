@@ -369,8 +369,8 @@ class PensionServie:
             publiee = _derniere_valeur_publiee(self.actuel, bareme)
             if au_depart is not None and au_depart[0] > 0 and publiee is not None:
                 # Au-delà de la dernière valeur publiée, la règle générale
-                # prend le relais : c'est celle que suivent l'Ircantec et le
-                # régime de base des libéraux, dont la série s'arrête avant.
+                # prend le relais : c'est celle du régime de base des
+                # libéraux, dont la série s'arrête en 2025.
                 ancre = min(jusqu_a.year, publiee)
                 a_l_ancre = self.actuel.valeur_du_point(bareme, ancre)
                 # Un CHANGEMENT D'ÉCHELLE survenu depuis le départ convertit
