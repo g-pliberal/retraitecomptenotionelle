@@ -580,7 +580,13 @@ export class Saisie {
     Object.assign(this, DEFAUTS, champs);
   }
 
-  static depuisRequete(parametres) {
+  /**
+   * `tolerante` ne sert qu'à REMONTRER une saisie refusée : rien n'y est
+   * vérifié, et une ligne de métier incomplète arrête la lecture des métiers
+   * au lieu de la refuser. Une saisie lue ainsi ne se calcule jamais — voir
+   * `saisieRefusee`.
+   */
+  static depuisRequete(parametres, tolerante = false) {
     // Le premier métier se lit d'abord : les suivants héritent de son niveau de
     // revenu quand ils n'en portent pas.
     const statut = parametres.statut || DEFAUTS.statut;
@@ -624,7 +630,8 @@ export class Saisie {
       liquidation: ageSaisi(parametres, "liquidation", DEFAUTS.liquidation,
         anneeNaissance, moisNaissance),
       salaire,
-      metiers: metiersSaisis(parametres, salaire, anneeNaissance, moisNaissance),
+      metiers: metiersSaisis(parametres, salaire, anneeNaissance, moisNaissance,
+        tolerante),
       releve: (parametres.releve || "").trim(),
       profil: parmi(parametres, "profil", PROFILS, DEFAUTS.profil),
       primes: reel(parametres, "primes", DEFAUTS.primes),
@@ -661,7 +668,7 @@ export class Saisie {
       // avant.
       demandee: Object.keys(parametres).some((cle) => !CLES_MODELISATION.includes(cle)),
     });
-    saisie.verifier();
+    if (!tolerante) { saisie.verifier(); }
     return saisie;
   }
 
@@ -1347,7 +1354,8 @@ export class Saisie {
  * qu'elle reste vide, elle ne décrit rien. Une ligne partiellement remplie, en
  * revanche, est une intention manquée — elle est refusée, avec ce qui lui manque.
  */
-function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois) {
+function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois,
+  tolerante = false) {
   const metiers = [];
   let salaire = salairePrecedent;
   for (let rang = 2; rang <= METIERS_MAXIMUM; rang += 1) {
@@ -1356,6 +1364,11 @@ function metiersSaisis(parametres, salairePrecedent, naissance, naissanceMois) {
     const salaireBrut = String(parametres[`metier${rang}_salaire`] ?? "").trim();
     if (!debutBrut && !statut && !salaireBrut) {
       continue;
+    }
+    // Remontrée, la ligne incomplète n'est pas un métier : la lecture s'y
+    // arrête, et c'est la ligne vide du formulaire qui la reçoit.
+    if (tolerante && (!debutBrut || !statut)) {
+      break;
     }
     if (!debutBrut) {
       throw new ErreurSaisie(
@@ -2139,17 +2152,43 @@ export function rendre(contexte, chemin, parametres = null) {
     if (!(erreur instanceof ErreurSaisie)) {
       throw erreur;
     }
-    // Le formulaire repart de ses valeurs par défaut — c'est ce qui permet de
-    // le réafficher quoi qu'ait porté l'adresse —, mais il garde l'unité de
-    // saisie : sans cela, une faute de frappe sur l'année de naissance
-    // renverrait en euros quelqu'un qui raisonnait en multiples, avec des
-    // nombres de l'autre unité sous les yeux.
+    // UNE SAISIE REFUSÉE SE REMONTRE TELLE QU'ELLE A ÉTÉ ENVOYÉE, autant
+    // qu'elle se lit. Le formulaire repartait de l'exemple : une date de trop,
+    // et c'était toute la carrière à retaper — trois métiers, un revenu, les
+    // options — pour corriger un seul champ. Le refus dit quoi corriger ; le
+    // formulaire garde le reste.
+    const telle = saisieRefusee(requete);
+    if (telle) {
+      try {
+        return [TITRES["/simuler"],
+          messageErreur(erreur.message) + formulaire(telle, contexte)];
+      } catch (autre) {
+        if (fauteDeProgramme(autre)) throw autre;
+      }
+    }
+    // Ce qui ne se lit même pas ainsi — une adresse forgée à la main — ou ne
+    // se montre pas : le formulaire repart de ses valeurs par défaut — c'est
+    // ce qui permet de le réafficher quoi qu'ait porté l'adresse —, mais il
+    // garde l'unité de saisie : sans cela, une faute de frappe sur l'année de
+    // naissance renverrait en euros quelqu'un qui raisonnait en multiples, avec
+    // des nombres de l'autre unité sous les yeux.
     const unite = parmi(requete, "unite_revenu", UNITES_REVENU,
       DEFAUTS.unite_revenu);
+    // Il garde aussi ce qui décide de sa FORME : la situation, ce qu'on
+    // saisit, le net ou le brut. Un retraité qui se trompe de date retrouvait
+    // sinon le formulaire d'un actif, champ de revenu à la place de sa
+    // pension — et le script de la page, qui remet dans les champs ce qui
+    // vient d'être refusé, n'avait plus où poser la pension saisie. Rien de
+    // tout cela ne peut échouer : `parmi` retombe sur le défaut.
+    const situation = parmi(requete, "situation", SITUATIONS, DEFAUTS.situation);
     // La saisie de repli sert au chapeau ET au formulaire : « saisie » est
     // resté indéfini, la construction ayant échoué.
     saisie = new Saisie({
       demandee: false, unite_revenu: unite, salaire: SALAIRE_DEFAUT[unite],
+      montants: parmi(requete, "montants", MODES_MONTANT, DEFAUTS.montants),
+      situation,
+      saisie_par: parmi(requete, "saisie_par", SAISIES,
+        SAISIE_DE_LA_SITUATION[situation]),
     });
     return [TITRES["/simuler"],
       messageErreur(erreur.message) + formulaire(saisie, contexte)];
@@ -2392,6 +2431,19 @@ export function statuts(contexte) {
  * elles remontent jusqu'à index.html, qui dit « Le calcul a échoué » et en
  * montre le détail, sans mettre la faute sur personne.
  */
+/**
+ * La saisie refusée, lue sans rien vérifier, pour être remontrée dans le
+ * formulaire ; nulle si elle ne se lit même pas ainsi. Voir `rendre`.
+ */
+function saisieRefusee(requete) {
+  try {
+    return Saisie.depuisRequete(requete, true);
+  } catch (erreur) {
+    if (erreur instanceof ErreurSaisie) return null;
+    throw erreur;
+  }
+}
+
 function fauteDeProgramme(erreur) {
   return erreur instanceof TypeError
     || erreur instanceof ReferenceError
@@ -2536,13 +2588,7 @@ tant que vous ne les remettez pas :
  * lui-même sa requête, à partir de ses champs.
  */
 function reglages(saisie, chemin, regards = null) {
-  // Les deux réglages sans champ voyagent cachés : le formulaire les perdrait,
-  // et une adresse qui les portait se retrouverait silencieusement ramenée au
-  // défaut au premier « Recalculer ».
-  let caches = ["age_reference", "conversion_acquis"]
-    .filter((cle) => saisie[cle] !== DEFAUTS[cle])
-    .map((cle) => g.cache(cle, String(saisie[cle])))
-    .join("");
+  let caches = reglagesSansChamp(saisie);
   // Et les regards de la page, pour la même raison : ce que le lecteur
   // regardait, « Recalculer cette page » le lui rendait autrement au défaut.
   caches += Object.entries(regards || {}).sort()
@@ -2562,6 +2608,23 @@ function reglages(saisie, chemin, regards = null) {
   </form>
 </details>
 `;
+}
+
+/**
+ * Les deux réglages sans champ, en champs cachés.
+ *
+ * L'âge de référence et l'âge de conversion des droits acquis ne se règlent
+ * que par l'adresse : un formulaire qui ne les porte pas les perd, et une
+ * adresse qui les portait se retrouvait silencieusement ramenée au défaut au
+ * premier « Recalculer » — ou au premier « Calculer », le formulaire du
+ * simulateur ne les portant pas davantage. Au défaut, rien n'est écrit : le
+ * défaut n'a pas besoin de voyager.
+ */
+function reglagesSansChamp(saisie) {
+  return ["age_reference", "conversion_acquis"]
+    .filter((cle) => saisie[cle] !== DEFAUTS[cle])
+    .map((cle) => g.cache(cle, String(saisie[cle])))
+    .join("");
 }
 
 /**
@@ -2678,6 +2741,18 @@ function champsModelisation(saisie) {
   ].join("");
 }
 
+/**
+ * La consigne, sous le titre du formulaire. « L'exemple est déjà rempli » n'est
+ * vrai que du formulaire vierge : au-dessus d'une carrière saisie — la sienne,
+ * celle d'une adresse partagée, celle que le navigateur a retenue —, la même
+ * phrase faisait passer cette carrière pour l'exemple.
+ */
+function consigneDuFormulaire(saisie) {
+  return saisie.demandee
+    ? "Modifiez ce qu'il faut, puis recalculez."
+    : "L'exemple est déjà rempli. Calculez-le tel quel, ou saisissez la vôtre.";
+}
+
 function formulaire(saisie, contexte) {
   const affiliations = contexte.simulateur().affiliations;
   const echelle = contexte.echelle(saisie);
@@ -2747,16 +2822,23 @@ function formulaire(saisie, contexte) {
     "Votre carrière, calculée "
     + '<span class="cle-texte">quatre fois.</span>',
     "Le système actuel, les comptes notionnels appliqués depuis 1941 ou à "
-    + "partir de la bascule, et notre proposition. Tout se calcule dans "
-    + "votre navigateur : rien n'est envoyé, rien n'est conservé.",
+    + "partir de la bascule, et notre proposition. Tout se calcule et se "
+    + "garde dans votre navigateur : rien n'en sort.",
   );
+  // Le formulaire porte TOUT ce dont il dépend, et pas seulement ce qu'il
+  // montre : la situation et ce qu'on saisit décident des champs affichés, et
+  // un formulaire qui ne les renvoyait pas ramenait un retraité, au premier
+  // « Calculer », au formulaire d'un actif — sa pension ignorée, le calcul
+  // fait sur le salaire de l'exemple.
   return tete + `
 <form class="carte" method="get" action="${g.route("/simuler")}">
   ${g.cache("unite_revenu", saisie.unite_revenu)}
   ${g.cache("montants", saisie.montants)}
+  ${g.cache("situation", saisie.situation)}
+  ${g.cache("saisie_par", saisie.saisie_par)}
+  ${reglagesSansChamp(saisie)}
   <h2 class="serif" style="margin-top:0">Votre carrière${bulleDuTitre(saisie)}</h2>
-  <p style="margin-top:0.3rem">L'exemple est déjà rempli. Calculez-le tel
-  quel, ou saisissez la vôtre.</p>
+  <p class="consigne" style="margin-top:0.3rem">${consigneDuFormulaire(saisie)}</p>
   ${basculeSituation(saisie)}
   ${desaccordDeSituation(saisie, contexte)}
   <div class="grille">${identite}</div>
@@ -2773,7 +2855,8 @@ function formulaire(saisie, contexte) {
       + "projection)")}
     <div class="grille">${avance}</div>
   </details>
-  <p style="margin-top:1.4rem"><button type="submit">Calculer les quatre systèmes</button></p>
+  <p class="envoi" style="margin-top:1.4rem"><button type="submit">Calculer les quatre systèmes</button>
+  <button type="button" class="second oublier" hidden>Effacer ma saisie</button></p>
 </form>
 `;
 }
@@ -2831,7 +2914,8 @@ function releveFormulaire(saisie) {
     retraite », puis « Ma carrière ») : tous régimes, et à tout âge. Ou sur
     <a href="https://www.lassuranceretraite.fr/">lassuranceretraite.fr</a>, pour
     le seul régime général. Le fichier est lu <strong>dans votre navigateur</strong> :
-    il n'est envoyé nulle part, et rien n'en est conservé.</p>
+    il n'est envoyé nulle part, ni conservé. Seule la carrière qu'il écrit
+    ci-dessous est gardée, par votre navigateur, avec le reste de la saisie.</p>
     <p class="rapport-releve" role="status"></p>
   </div>
   <p class="discret">Ou, à la main, une ligne par année :
@@ -3102,6 +3186,26 @@ function aideProfil(paquet, profil, affiliation = null) {
  */
 function basculeUnite(saisie, echelle) {
   const versLesEuros = !saisie.revenu_en_euros;
+  const cible = `#/simuler?${echapper(saisie.requete(
+    remplacementsUnite(saisie, echelle)))}`;
+  // Le MÊME composant que la bascule des montants, juste au-dessus d'elle :
+  // deux réglages de même nature n'avaient pas la même forme, et l'un des deux
+  // ne se voyait pas.
+  const euros = "€ par mois";
+  const multiple = "× salaire moyen";
+  const branches = versLesEuros
+    ? [[euros, cible], [multiple, "#"]]
+    : [[euros, "#"], [multiple, cible]];
+  return g.bascule("Unité", branches, versLesEuros ? multiple : euros);
+}
+
+/**
+ * Ce que la bascule d'unité change dans l'adresse : l'unité, et chaque revenu
+ * déjà traduit dans l'autre. Le lien du rendu et `requeteBasculee` en
+ * dépendent tous deux : une seule traduction, où qu'elle se fasse.
+ */
+function remplacementsUnite(saisie, echelle) {
+  const versLesEuros = !saisie.revenu_en_euros;
   const autre = versLesEuros ? "euros_mois" : "moyen";
   // `niveaux` ramène les montants à l'unité du modèle quelle que soit celle de
   // la saisie : la traduction dans l'autre sens part donc toujours de là.
@@ -3113,16 +3217,46 @@ function basculeUnite(saisie, echelle) {
   valeurs.slice(1).forEach((valeur, index) => {
     remplacements[`metier${index + 2}_salaire`] = valeur;
   });
-  const cible = `#/simuler?${echapper(saisie.requete(remplacements))}`;
-  // Le MÊME composant que la bascule des montants, juste au-dessus d'elle :
-  // deux réglages de même nature n'avaient pas la même forme, et l'un des deux
-  // ne se voyait pas.
-  const euros = "€ par mois";
-  const multiple = "× salaire moyen";
-  const branches = versLesEuros
-    ? [[euros, cible], [multiple, "#"]]
-    : [[euros, "#"], [multiple, cible]];
-  return g.bascule("Unité", branches, versLesEuros ? multiple : euros);
+  return remplacements;
+}
+
+/**
+ * L'adresse d'une bascule du simulateur, refaite sur ce que le formulaire
+ * porte AU MOMENT DU CLIC.
+ *
+ * Les liens des bascules sont écrits au rendu, depuis la saisie qu'on vient de
+ * calculer, et ils emportent les montants de CETTE saisie, déjà traduits. Ce
+ * qui a été tapé depuis n'y est pas : suivre le lien le perdait. Une date de
+ * naissance changée revenait à celle de l'exemple, et un revenu de 3 333 €
+ * nets devenait, au clic sur « brut », le brut des 3 500 € de l'exemple. Le
+ * script de la page appelle donc ceci au clic, avec les champs du formulaire
+ * et l'adresse du lien, et suit l'adresse rendue.
+ *
+ * `formulaire` et `lien` sont des requêtes décodées, `{ clé: valeur }`. Le
+ * lien ne sert qu'à dire vers quoi l'on bascule, et cela se lit sur les quatre
+ * clés qu'une bascule touche ; ses montants, écrits pour l'ancienne saisie,
+ * sont refaits ici, par les mêmes `remplacementsUnite` et
+ * `remplacementsMontants` que le rendu. Lève `ErreurSaisie` si le formulaire
+ * ne se lit pas : il n'y a alors rien à traduire, et c'est le refus qu'il
+ * faut montrer.
+ */
+export function requeteBasculee(contexte, formulaire, lien) {
+  const saisie = Saisie.depuisRequete(formulaire);
+  const vers = (nom) => (nom in lien ? lien[nom] : saisie[nom]);
+  if (vers("montants") !== saisie.montants) {
+    const tauxPension = Montants.depuis(saisie, contexte.simulateur()).tauxPension;
+    return saisie.requete(
+      remplacementsMontants(saisie, contexte.echelle(saisie), tauxPension));
+  }
+  if (vers("unite_revenu") !== saisie.unite_revenu) {
+    return saisie.requete(remplacementsUnite(saisie, contexte.echelle(saisie)));
+  }
+  // La situation et ce qu'on saisit ne se traduisent pas : un revenu ne
+  // devient pas une pension sans simulation. Voir `basculeSituation`.
+  return saisie.requete({
+    situation: parmi(lien, "situation", SITUATIONS, saisie.situation),
+    saisie_par: parmi(lien, "saisie_par", SAISIES, saisie.saisie_par),
+  });
 }
 
 /**
@@ -4853,6 +4987,24 @@ function mentionConversion(saisie, echelle) {
  */
 function basculeMontants(saisie, echelle, tauxPension) {
   const versLeNet = !saisie.enNet;
+  // PAS D'ANCRE AU BOUT DE L'ADRESSE : la route vit déjà dans le fragment,
+  // et un second `#` allonge la dernière valeur de la requête au lieu de
+  // désigner une section — `montants=brut#resultats` n'est pas un mode.
+  const cible = `#/simuler?${echapper(saisie.requete(
+    remplacementsMontants(saisie, echelle, tauxPension)))}`;
+  // L'état courant n'a pas d'adresse : c'est celle où l'on est déjà.
+  const branches = versLeNet
+    ? [["net", cible], ["brut", "#"]]
+    : [["net", "#"], ["brut", cible]];
+  return g.bascule("Montants", branches, saisie.enNet ? "net" : "brut");
+}
+
+/**
+ * Ce que la bascule net/brut change dans l'adresse : le mode, et chaque
+ * montant saisi déjà traduit dans l'autre. Voir `remplacementsUnite`.
+ */
+function remplacementsMontants(saisie, echelle, tauxPension) {
+  const versLeNet = !saisie.enNet;
   const remplacements = { montants: versLeNet ? "net" : "brut" };
   // LA PENSION SAISIE SE TRADUIT COMME LES SALAIRES, et pour exactement la
   // même raison : le nombre du formulaire est un net en mode net. Le recopier
@@ -4882,15 +5034,7 @@ function basculeMontants(saisie, echelle, tauxPension) {
       remplacements[`metier${index + 2}_salaire`] = valeur;
     });
   }
-  // PAS D'ANCRE AU BOUT DE L'ADRESSE : la route vit déjà dans le fragment,
-  // et un second `#` allonge la dernière valeur de la requête au lieu de
-  // désigner une section — `montants=brut#resultats` n'est pas un mode.
-  const cible = `#/simuler?${echapper(saisie.requete(remplacements))}`;
-  // L'état courant n'a pas d'adresse : c'est celle où l'on est déjà.
-  const branches = versLeNet
-    ? [["net", cible], ["brut", "#"]]
-    : [["net", "#"], ["brut", cible]];
-  return g.bascule("Montants", branches, saisie.enNet ? "net" : "brut");
+  return remplacements;
 }
 
 /**
@@ -12185,10 +12329,17 @@ function simulateurCourt(contexte, vers = "/simuler") {
       "seul le mois compte", saisie.naissanceEnClair,
       { min: `${NAISSANCE_MINIMALE}-01-01`, max: `${NAISSANCE_MAXIMALE}-12-31`,
         autocomplete: "bday" }),
+    // Les bornes d'âge voyagent avec les dates, comme dans le formulaire
+    // entier : le script de la page déplace les bornes du calendrier quand la
+    // naissance change. Sans elles, ces bornes restaient celles d'un assuré né
+    // en 1975, et une naissance en 1990 rendait le départ à 64 ans
+    // impossible à envoyer.
     g.champDate("debut", "Début de carrière", saisie.jourDe(saisie.debut),
       "le premier mois cotisé", saisie.calculDe(saisie.debut),
       { min: saisie.jourDe(AGE_DEBUT_MINIMAL),
-        max: saisie.jourDe(AGE_DEBUT_MAXIMAL) }),
+        max: saisie.jourDe(AGE_DEBUT_MAXIMAL),
+        data_age_min: String(AGE_DEBUT_MINIMAL),
+        data_age_max: String(AGE_DEBUT_MAXIMAL) }),
     g.liste("statut", "Statut",
       optionsStatuts(affiliations, saisie.dateDe(saisie.debut)),
       saisie.statut, "celui du premier emploi"),
@@ -12196,7 +12347,9 @@ function simulateurCourt(contexte, vers = "/simuler") {
       saisie.jourDe(saisie.liquidation), "effectif, ou souhaité",
       saisie.calculDe(saisie.liquidation),
       { min: saisie.jourDe(AGE_LIQUIDATION_MINIMAL),
-        max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL) }),
+        max: saisie.jourDe(AGE_LIQUIDATION_MAXIMAL),
+        data_age_min: String(AGE_LIQUIDATION_MINIMAL),
+        data_age_max: String(AGE_LIQUIDATION_MAXIMAL) }),
   ].join("");
   return `
 <form class="creme simulateur-court" method="get" action="${g.route(vers)}">

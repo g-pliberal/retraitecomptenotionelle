@@ -674,7 +674,13 @@ class Saisie:
     demandee: bool = False
 
     @classmethod
-    def depuis_requete(cls, parametres: dict[str, str]) -> "Saisie":
+    def depuis_requete(cls, parametres: dict[str, str],
+                       tolerante: bool = False) -> "Saisie":
+        """``tolerante`` ne sert qu'à REMONTRER une saisie refusée : rien n'y
+        est vérifié, et une ligne de métier incomplète arrête la lecture des
+        métiers au lieu de la refuser. Une saisie lue ainsi ne se calcule
+        jamais — voir :func:`_saisie_refusee`.
+        """
         defauts = cls()
         # Le premier métier se lit d'abord : les suivants héritent de son niveau
         # de revenu quand ils n'en portent pas.
@@ -724,7 +730,7 @@ class Saisie:
                                    annee_naissance, mois_naissance),
             salaire=salaire,
             metiers=_metiers_saisis(parametres, salaire,
-                                    annee_naissance, mois_naissance),
+                                    annee_naissance, mois_naissance, tolerante),
             releve=(parametres.get("releve") or "").strip(),
             profil=_parmi(parametres, "profil", PROFILS, defauts.profil),
             primes=_reel(parametres, "primes", defauts.primes),
@@ -765,7 +771,8 @@ class Saisie:
             # demande un calcul, comme avant.
             demandee=any(cle not in CLES_MODELISATION for cle in parametres),
         )
-        saisie.verifier()
+        if not tolerante:
+            saisie.verifier()
         return saisie
 
     def verifier(self) -> None:
@@ -1389,7 +1396,8 @@ class Saisie:
 
 
 def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
-                    naissance: int, naissance_mois: int) -> list[MetierSaisi]:
+                    naissance: int, naissance_mois: int,
+                    tolerante: bool = False) -> list[MetierSaisi]:
     """Les métiers qui suivent le premier, lus dans « metier2_… », « metier3_… ».
 
     Le formulaire affiche toujours une ligne de plus qu'il n'y a de métiers :
@@ -1404,6 +1412,10 @@ def _metiers_saisis(parametres: dict[str, str], salaire_precedent: float,
         salaire = (parametres.get(f"metier{rang}_salaire") or "").strip()
         if not (debut or statut or salaire):
             continue
+        # Remontrée, la ligne incomplète n'est pas un métier : la lecture s'y
+        # arrête, et c'est la ligne vide du formulaire qui la reçoit.
+        if tolerante and not (debut and statut):
+            break
         if not debut:
             raise ErreurSaisie(
                 f"Métier n° {rang} : indiquer la date à laquelle il commence, "
@@ -2139,15 +2151,43 @@ def rendre(contexte: Contexte, chemin: str,
     try:
         saisie = Saisie.depuis_requete(parametres)
     except ErreurSaisie as erreur:
-        # Le formulaire repart de ses valeurs par défaut — c'est ce qui permet
-        # de le réafficher quoi qu'ait porté l'adresse —, mais il garde l'unité
-        # de saisie : sans cela, une faute de frappe sur l'année de naissance
-        # renverrait en euros quelqu'un qui raisonnait en multiples, avec des
-        # nombres de l'autre unité sous les yeux.
+        # UNE SAISIE REFUSÉE SE REMONTRE TELLE QU'ELLE A ÉTÉ ENVOYÉE, autant
+        # qu'elle se lit. Le formulaire repartait de l'exemple : une date de
+        # trop, et c'était toute la carrière à retaper — trois métiers, un
+        # revenu, les options — pour corriger un seul champ. Le refus dit quoi
+        # corriger ; le formulaire garde le reste.
+        telle = _saisie_refusee(parametres)
+        if telle is not None:
+            try:
+                return TITRES["/simuler"], (
+                    _erreur(str(erreur)) + _formulaire(telle, contexte)
+                )
+            except (ErreurSaisie, DonneeInsuffisante, KeyError, ValueError):
+                pass
+        # Ce qui ne se lit même pas ainsi — une adresse forgée à la main — ou
+        # ne se montre pas : le formulaire repart de ses valeurs par défaut —
+        # c'est ce qui permet de le réafficher quoi qu'ait porté l'adresse —,
+        # mais il garde l'unité de saisie : sans cela, une faute de frappe sur
+        # l'année de naissance renverrait en euros quelqu'un qui raisonnait en
+        # multiples, avec des nombres de l'autre unité sous les yeux.
         unite = _parmi(parametres, "unite_revenu", UNITES_REVENU,
                        Saisie.unite_revenu)
-        saisie = Saisie(demandee=False, unite_revenu=unite,
-                        salaire=SALAIRE_DEFAUT[unite])
+        # Il garde aussi ce qui décide de sa FORME : la situation, ce qu'on
+        # saisit, le net ou le brut. Un retraité qui se trompe de date
+        # retrouvait sinon le formulaire d'un actif, champ de revenu à la place
+        # de sa pension — et le script de la page, qui remet dans les champs ce
+        # qui vient d'être refusé, n'avait plus où poser la pension saisie.
+        # Rien de tout cela ne peut échouer : ``_parmi`` retombe sur le défaut.
+        situation = _parmi(parametres, "situation", SITUATIONS,
+                           Saisie.situation)
+        saisie = Saisie(
+            demandee=False, unite_revenu=unite, salaire=SALAIRE_DEFAUT[unite],
+            montants=_parmi(parametres, "montants", MODES_MONTANT,
+                            Saisie.montants),
+            situation=situation,
+            saisie_par=_parmi(parametres, "saisie_par", SAISIES,
+                              SAISIE_DE_LA_SITUATION[situation]),
+        )
         return TITRES["/simuler"], (
             _erreur(str(erreur)) + _formulaire(saisie, contexte)
         )
@@ -2159,6 +2199,16 @@ def rendre(contexte: Contexte, chemin: str,
         except (ErreurSaisie, DonneeInsuffisante, KeyError, ValueError) as erreur:
             corps += _erreur(str(erreur))
     return TITRES["/simuler"], corps
+
+
+def _saisie_refusee(parametres: dict[str, str]) -> Saisie | None:
+    """La saisie refusée, lue sans rien vérifier, pour être remontrée dans le
+    formulaire ; ``None`` si elle ne se lit même pas ainsi. Voir :func:`rendre`.
+    """
+    try:
+        return Saisie.depuis_requete(parametres, tolerante=True)
+    except ErreurSaisie:
+        return None
 
 
 def _agregee(chemin: str, contexte: Contexte, reglages: Saisie,
@@ -2724,10 +2774,17 @@ def _simulateur_court(contexte: Contexte, vers: str = "/simuler") -> str:
                      min=f"{NAISSANCE_MINIMALE}-01-01",
                      max=f"{NAISSANCE_MAXIMALE}-12-31",
                      autocomplete="bday"),
+        # Les bornes d'âge voyagent avec les dates, comme dans le formulaire
+        # entier : le script de la page déplace les bornes du calendrier quand
+        # la naissance change. Sans elles, ces bornes restaient celles d'un
+        # assuré né en 1975, et une naissance en 1990 rendait le départ à
+        # 64 ans impossible à envoyer.
         g.champ_date("debut", "Début de carrière", saisie.jour_de(saisie.debut),
                      "le premier mois cotisé", saisie.calcul_de(saisie.debut),
                      min=saisie.jour_de(AGE_DEBUT_MINIMAL),
-                     max=saisie.jour_de(AGE_DEBUT_MAXIMAL)),
+                     max=saisie.jour_de(AGE_DEBUT_MAXIMAL),
+                     data_age_min=str(AGE_DEBUT_MINIMAL),
+                     data_age_max=str(AGE_DEBUT_MAXIMAL)),
         # Une ligne d'aide, comme sous chaque date : sans elle, l'étiquette
         # était plus courte d'une ligne et le menu partait plus bas que les
         # champs voisins.
@@ -2738,7 +2795,9 @@ def _simulateur_court(contexte: Contexte, vers: str = "/simuler") -> str:
                      saisie.jour_de(saisie.liquidation), "effectif, ou souhaité",
                      saisie.calcul_de(saisie.liquidation),
                      min=saisie.jour_de(AGE_LIQUIDATION_MINIMAL),
-                     max=saisie.jour_de(AGE_LIQUIDATION_MAXIMAL)),
+                     max=saisie.jour_de(AGE_LIQUIDATION_MAXIMAL),
+                     data_age_min=str(AGE_LIQUIDATION_MINIMAL),
+                     data_age_max=str(AGE_LIQUIDATION_MAXIMAL)),
     ])
     return f"""
 <form class="creme simulateur-court" method="get" action="{g.route(vers)}">
@@ -3425,6 +3484,24 @@ tant que vous ne les remettez pas :
 </div>"""
 
 
+def _reglages_sans_champ(saisie: Saisie) -> str:
+    """Les deux réglages sans champ, en champs cachés.
+
+    L'âge de référence et l'âge de conversion des droits acquis ne se règlent
+    que par l'adresse : un formulaire qui ne les porte pas les perd, et une
+    adresse qui les portait se retrouvait silencieusement ramenée au défaut au
+    premier « Recalculer » — ou au premier « Calculer », le formulaire du
+    simulateur ne les portant pas davantage. Au défaut, rien n'est écrit : le
+    défaut n'a pas besoin de voyager.
+    """
+    defauts = Saisie()
+    return "".join(
+        g.cache(cle, str(getattr(saisie, cle)))
+        for cle in ("age_reference", "conversion_acquis")
+        if getattr(saisie, cle) != getattr(defauts, cle)
+    )
+
+
 def _reglages(saisie: Saisie, chemin: str,
               regards: dict[str, str] | None = None) -> str:
     """Les règles du calcul, et de quoi les changer sans quitter la page.
@@ -3436,15 +3513,7 @@ def _reglages(saisie: Saisie, chemin: str,
     Le formulaire vise la ROUTE et non le lien — voir :func:`gabarit.route` :
     il écrit lui-même sa requête, à partir de ses champs.
     """
-    defauts = Saisie()
-    # Les deux réglages sans champ voyagent cachés : le formulaire les perdrait,
-    # et une adresse qui les portait se retrouverait silencieusement ramenée au
-    # défaut au premier « Recalculer ».
-    caches = "".join(
-        g.cache(cle, str(getattr(saisie, cle)))
-        for cle in ("age_reference", "conversion_acquis")
-        if getattr(saisie, cle) != getattr(defauts, cle)
-    )
+    caches = _reglages_sans_champ(saisie)
     # Et les regards de la page, pour la même raison : ce que le lecteur
     # regardait, « Recalculer cette page » le lui rendait autrement au défaut.
     caches += "".join(g.cache(cle, valeur)
@@ -3590,6 +3659,20 @@ def _champs_modelisation(saisie: Saisie) -> str:
     ])
 
 
+def _consigne_du_formulaire(saisie: Saisie) -> str:
+    """La consigne, sous le titre du formulaire.
+
+    « L'exemple est déjà rempli » n'est vrai que du formulaire vierge : au-dessus
+    d'une carrière saisie — la sienne, celle d'une adresse partagée, celle que
+    le navigateur a retenue —, la même phrase faisait passer cette carrière
+    pour l'exemple.
+    """
+    if saisie.demandee:
+        return "Modifiez ce qu'il faut, puis recalculez."
+    return ("L'exemple est déjà rempli. Calculez-le tel quel, ou saisissez "
+            "la vôtre.")
+
+
 def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
     affiliations = contexte.simulateur().affiliations
     echelle = contexte.echelle(saisie)
@@ -3660,16 +3743,23 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
         "Votre carrière, calculée "
         '<span class="cle-texte">quatre fois.</span>',
         "Le système actuel, les comptes notionnels appliqués depuis 1941 ou à "
-        "partir de la bascule, et notre proposition. Tout se calcule dans "
-        "votre navigateur : rien n'est envoyé, rien n'est conservé.",
+        "partir de la bascule, et notre proposition. Tout se calcule et se "
+        "garde dans votre navigateur : rien n'en sort.",
     )
+    # Le formulaire porte TOUT ce dont il dépend, et pas seulement ce qu'il
+    # montre : la situation et ce qu'on saisit décident des champs affichés, et
+    # un formulaire qui ne les renvoyait pas ramenait un retraité, au premier
+    # « Calculer », au formulaire d'un actif — sa pension ignorée, le calcul
+    # fait sur le salaire de l'exemple.
     return tete + f"""
 <form class="carte" method="get" action="{g.route('/simuler')}">
   {g.cache("unite_revenu", saisie.unite_revenu)}
   {g.cache("montants", saisie.montants)}
+  {g.cache("situation", saisie.situation)}
+  {g.cache("saisie_par", saisie.saisie_par)}
+  {_reglages_sans_champ(saisie)}
   <h2 class="serif" style="margin-top:0">Votre carrière{_bulle_du_titre(saisie)}</h2>
-  <p style="margin-top:0.3rem">L'exemple est déjà rempli. Calculez-le tel
-  quel, ou saisissez la vôtre.</p>
+  <p class="consigne" style="margin-top:0.3rem">{_consigne_du_formulaire(saisie)}</p>
   {_bascule_situation(saisie)}
   {_desaccord_de_situation(saisie, contexte)}
   <div class="grille">{identite}</div>
@@ -3686,7 +3776,8 @@ def _formulaire(saisie: Saisie, contexte: Contexte) -> str:
                 "projection)")}
     <div class="grille">{avance}</div>
   </details>
-  <p style="margin-top:1.4rem"><button type="submit">Calculer les quatre systèmes</button></p>
+  <p class="envoi" style="margin-top:1.4rem"><button type="submit">Calculer les quatre systèmes</button>
+  <button type="button" class="second oublier" hidden>Effacer ma saisie</button></p>
 </form>
 """
 
@@ -3743,7 +3834,8 @@ def _releve(saisie: Saisie) -> str:
     retraite », puis « Ma carrière ») : tous régimes, et à tout âge. Ou sur
     <a href="https://www.lassuranceretraite.fr/">lassuranceretraite.fr</a>, pour
     le seul régime général. Le fichier est lu <strong>dans votre navigateur</strong> :
-    il n'est envoyé nulle part, et rien n'en est conservé.</p>
+    il n'est envoyé nulle part, ni conservé. Seule la carrière qu'il écrit
+    ci-dessous est gardée, par votre navigateur, avec le reste de la saisie.</p>
     <p class="rapport-releve" role="status"></p>
   </div>
   <p class="discret">Ou, à la main, une ligne par année :
