@@ -739,15 +739,21 @@ class Parametres:
     #: du Parti libéral, 23 septembre 2026, et ce qu'il rapporte DE PLUS que
     #: les quatre est affecté au scénario 6.
     #:
-    #: Pourquoi 21,1 % : c'est le taux qui couvre, chaque année de 2026 à
+    #: Pourquoi 19,7 % : c'est le taux qui couvre, chaque année de 2026 à
     #: 2070, le déficit de la proposition garantie vieillesse comprise, dans la
-    #: variante rétroactive, sans rien emprunter — le déficit culmine vers
-    #: 2044 et ce taux est celui du pic. Il n'a pas besoin de monter beaucoup
-    #: au-dessus de 20 % parce qu'il supprime les taux réduits : un taux unique
-    #: de 15,46 % rapporterait déjà ce que rapportent les quatre, et chaque
-    #: point au-delà rapporte 0,38 point de PIB. `donnees/tva.py` dit d'où
-    #: viennent ces assiettes — le modèle de la TVA théorique de la DG Trésor —
-    #: et ce que ce chiffrage statique ne compte pas.
+    #: variante rétroactive, sans rien emprunter — le taux de l'année la plus
+    #: exigeante, arrondi au dixième. Le déficit culmine vers 2048, où il faut
+    #: 19,69 %. Le même calcul donnait 21,1 % avant que la proposition ne fixe
+    #: son âge légal à 65 ans (``age_legal_liberal``) : les années que le report
+    #: fait travailler cotisent, et les pensions qu'il retarde ne sont pas
+    #: servies. La règle suppose, comme toute la page Coût, que ceux que le
+    #: report fait attendre sont en emploi : si la moitié seulement l'étaient,
+    #: il faudrait 20,3 %. Le taux reste sous les 20 % du taux normal parce
+    #: qu'il supprime les taux réduits : un taux unique de 15,46 % rapporterait
+    #: déjà ce que rapportent les quatre, et chaque point au-delà rapporte 0,38
+    #: point de PIB. `donnees/tva.py` dit d'où viennent ces assiettes — le
+    #: modèle de la TVA théorique de la DG Trésor — et ce que ce chiffrage
+    #: statique ne compte pas.
     #:
     #: Ce n'est pas une cotisation : la TVA n'est portée au compte de personne
     #: et n'ouvre aucun droit. Elle comble le déficit que le compte notionnel
@@ -757,7 +763,7 @@ class Parametres:
     #:
     #: Zéro rend l'ancienne convention, où la TVA n'était pas réformée : un
     #: test le vérifie.
-    taux_tva_liberal: float = 0.211
+    taux_tva_liberal: float = 0.197
 
     #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui
     #: remplace l'ASPA et en garde l'âge (65 ans) et le principe — porter les

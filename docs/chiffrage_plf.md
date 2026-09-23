@@ -24,15 +24,24 @@ garantie vieillesse de 800 € par personne (plus 250 € d'allocation
 d'isolement), individualisée, financée par l'impôt, qui remplace l'ASPA et tous
 les minima de pension.
 
-*Ajouté le 23 septembre 2026.* Et une **TVA à taux unique de 21,1 %**,
+*Ajouté le 23 septembre 2026.* Et une **TVA à taux unique de 19,7 %**,
 décidée ce jour-là : les quatre taux d'aujourd'hui — 20, 10, 5,5 et 2,1 % —
 cèdent la place à un seul, et ce qu'il rapporte de plus va à la retraite de la
 proposition, à sa garantie vieillesse d'abord, à son régime ensuite. Le taux
 est celui qui couvre chaque année le déficit de la variante rétroactive,
-garantie comprise, sans emprunter : celui du pic de 2044. Il n'a pas besoin de
-monter beaucoup au-dessus de 20 % parce qu'il supprime les taux réduits, qui
-coûtent 52 Md€ nets par an. Tous les tableaux la portent ; avant elle, le
-fait central affichait un écart de -1,44 point de PIB.
+garantie comprise, sans emprunter : celui du pic de 2048, 19,69 % exactement,
+arrondi au dixième. Il reste sous les 20 % du taux normal parce qu'il supprime
+les taux réduits, qui coûtent 52 Md€ nets par an. Tous les tableaux la
+portent ; avant elle, le fait central affichait un écart de -1,44 point de PIB.
+
+*Ajouté le même jour, le soir.* Et un **âge légal de départ de 65 ans** à
+compter de la bascule : toute pension que la proposition liquide l'est à cet
+âge au plus tôt, et qui serait parti avant travaille et cotise jusque-là. Le
+taux de TVA a été fixé d'abord à 21,1 %, par la même règle, avant que la
+proposition ne prenne cet âge ; celui-ci fait cotiser davantage et servir
+moins de pensions, et la même règle donne alors 19,7 %. Elle le donne en
+supposant, comme la page Coût, que ceux que le report fait attendre sont en
+emploi : si la moitié seulement l'étaient, il faudrait 20,3 %.
 
 **Deux variantes sont chiffrées, et l'écart entre elles est le premier fait
 budgétaire du dossier.**
@@ -69,7 +78,7 @@ budgétaire du dossier.**
   Elle paie d'abord la garantie nette, et entre au régime pour le reste :
   « Recettes » la compte en entier, « Solde régime » est pris après la
   garantie, et « Solde + garantie » ne retranche plus que la part de la
-  garantie qu'elle ne couvre pas — aucune, à 21,1 %. C'est pourquoi les deux
+  garantie qu'elle ne couvre pas — aucune, à 19,7 %. C'est pourquoi les deux
   soldes sont égaux dans les tableaux A à D.
 - **Solde + garantie** : le précédent, diminué de la garantie que le
   contribuable porte. **Ce n'est pas un solde toutes administrations
@@ -100,10 +109,10 @@ budgétaire du dossier.**
 | dont cotisations, au taux unique | -1,40 | -43 |
 | dont impôts et taxes affectés | -2,14 | -66 |
 | dont versements de l'État et de la branche famille | -2,26 | -69 |
-| TVA à taux unique de 21,1 %, affectée à la retraite | +2,17 | +66 |
+| TVA à taux unique de 19,7 %, affectée à la retraite | +1,63 | +50 |
 | Dépense publique retirée (pensions et garantie) | -4,89 | -150 |
-| **Écart de solde de la retraite, garantie comprise, variante rétroactive** | **+1,25** | **+38** |
-| **Écart de solde de la retraite, garantie comprise, variante prospective** | **-1,90** | **-58** |
+| **Écart de solde de la retraite, garantie comprise, variante rétroactive** | **+0,72** | **+22** |
+| **Écart de solde de la retraite, garantie comprise, variante prospective** | **-2,43** | **-75** |
 <!-- fait_central:fin -->
 
 La proposition retire à la fois des recettes et de la dépense, et **elle en
@@ -129,8 +138,9 @@ ne renonce plus à cette recette, elle en **change l'assiette**, de la CSG, de
 la taxe sur les salaires, du forfait social et de la C3S vers la
 consommation. Ce qui reste, c'est une dépense qui baisse davantage que les
 cotisations et les versements publics réunis. La variante prospective, elle,
-demeure en déficit : 21,1 % ne la couvre pas, et il lui faudrait 28,2 % la
-première année.
+demeure en déficit : 21,1 % ne la couvrait pas, et il lui aurait fallu 28,2 %
+la première année. Avec l'âge légal de 65 ans, il lui faudrait 26,5 %, et
+19,7 % la laisse en déficit jusqu'en 2062.
 
 ## Les quatre arbitrages qui déplacent le chiffrage
 
@@ -150,8 +160,8 @@ l'excédent permettrait de les relever — ce que personne ne propose.
 | Impôts et taxes affectés, si l'État continue de les lever | +2,14 pt | +66 |
 | Subventions d'équilibre, même question | +0,25 pt | +8 |
 | Renoncer à la rétroactivité (variante prospective) | -3,15 pt | -97 |
-| Renoncer à la TVA à taux unique de 21,1 % | -2,17 pt | -66 |
-| Appliquer le coefficient d'équilibre, non appliqué ici | 1,12 sur toutes les pensions | soit 12,4 % de plus |
+| Renoncer à la TVA à taux unique de 19,7 % | -1,63 pt | -50 |
+| Appliquer le coefficient d'équilibre, non appliqué ici | 1,06 sur toutes les pensions | soit 6,3 % de plus |
 <!-- arbitrages:fin -->
 
 ## Tableaux annuels
@@ -161,21 +171,21 @@ l'excédent permettrait de les relever — ce que personne ne propose.
 <!-- annuel_retroactif:debut -->
 | Année | Pensions | Garantie nette | Dépense totale | Recettes | Solde régime | Solde + garantie | Rappel sc. 1 | Écart |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 8,80 (270) | 0,44 (14) | 9,24 (283) | 10,33 (317) | +1,09 (+33) | +1,09 (+33) | -0,16 (-5) | +1,25 |
-| 2027 | 8,76 (275) | 0,43 (14) | 9,19 (289) | 10,52 (331) | +1,33 (+42) | +1,33 (+42) | -0,22 (-7) | +1,55 |
-| 2028 | 8,69 (281) | 0,42 (13) | 9,10 (294) | 10,64 (344) | +1,54 (+50) | +1,54 (+50) | -0,24 (-8) | +1,78 |
-| 2029 | 8,62 (287) | 0,40 (13) | 9,02 (300) | 10,67 (355) | +1,65 (+55) | +1,65 (+55) | -0,17 (-6) | +1,83 |
-| 2030 | 8,77 (301) | 0,39 (13) | 9,15 (314) | 10,67 (366) | +1,52 (+52) | +1,52 (+52) | -0,20 (-7) | +1,71 |
-| 2031 | 8,97 (317) | 0,37 (13) | 9,34 (330) | 10,55 (373) | +1,20 (+43) | +1,20 (+43) | -0,24 (-9) | +1,45 |
-| 2032 | 9,04 (329) | 0,36 (13) | 9,40 (342) | 10,58 (385) | +1,19 (+43) | +1,19 (+43) | -0,26 (-10) | +1,45 |
-| 2033 | 9,05 (339) | 0,34 (13) | 9,40 (352) | 10,61 (397) | +1,21 (+45) | +1,21 (+45) | -0,27 (-10) | +1,48 |
-| 2034 | 9,18 (353) | 0,33 (13) | 9,51 (366) | 10,59 (408) | +1,08 (+42) | +1,08 (+42) | -0,34 (-13) | +1,42 |
-| 2035 | 9,26 (366) | 0,31 (12) | 9,58 (379) | 10,60 (419) | +1,02 (+40) | +1,02 (+40) | -0,38 (-15) | +1,40 |
-| 2036 | 9,35 (379) | 0,30 (12) | 9,65 (392) | 10,60 (430) | +0,95 (+39) | +0,95 (+39) | -0,43 (-17) | +1,38 |
-| 2037 | 9,44 (393) | 0,29 (12) | 9,72 (405) | 10,62 (442) | +0,89 (+37) | +0,89 (+37) | -0,49 (-20) | +1,38 |
-| 2038 | 9,52 (407) | 0,27 (12) | 9,79 (418) | 10,60 (453) | +0,81 (+35) | +0,81 (+35) | -0,53 (-23) | +1,34 |
-| 2039 | 9,59 (421) | 0,26 (11) | 9,85 (432) | 10,58 (464) | +0,73 (+32) | +0,73 (+32) | -0,57 (-25) | +1,30 |
-| 2040 | 9,65 (434) | 0,25 (11) | 9,90 (445) | 10,57 (476) | +0,68 (+31) | +0,68 (+31) | -0,61 (-27) | +1,29 |
+| 2026 | 8,80 (270) | 0,44 (14) | 9,24 (283) | 9,80 (300) | +0,55 (+17) | +0,55 (+17) | -0,16 (-5) | +0,72 |
+| 2027 | 8,76 (275) | 0,43 (14) | 9,19 (289) | 9,98 (314) | +0,79 (+25) | +0,79 (+25) | -0,22 (-7) | +1,01 |
+| 2028 | 8,69 (281) | 0,42 (13) | 9,10 (294) | 10,11 (327) | +1,00 (+32) | +1,00 (+32) | -0,24 (-8) | +1,24 |
+| 2029 | 8,62 (287) | 0,40 (13) | 9,02 (300) | 10,13 (337) | +1,12 (+37) | +1,12 (+37) | -0,17 (-6) | +1,29 |
+| 2030 | 8,77 (301) | 0,39 (13) | 9,15 (314) | 10,13 (347) | +0,98 (+33) | +0,98 (+33) | -0,20 (-7) | +1,18 |
+| 2031 | 8,97 (317) | 0,37 (13) | 9,34 (330) | 10,01 (353) | +0,67 (+24) | +0,67 (+24) | -0,24 (-9) | +0,91 |
+| 2032 | 9,04 (329) | 0,36 (13) | 9,40 (342) | 10,05 (365) | +0,65 (+24) | +0,65 (+24) | -0,26 (-10) | +0,91 |
+| 2033 | 9,05 (339) | 0,34 (13) | 9,40 (352) | 10,07 (377) | +0,67 (+25) | +0,67 (+25) | -0,27 (-10) | +0,94 |
+| 2034 | 9,18 (353) | 0,33 (13) | 9,51 (366) | 10,05 (387) | +0,54 (+21) | +0,54 (+21) | -0,34 (-13) | +0,88 |
+| 2035 | 9,26 (366) | 0,31 (12) | 9,58 (379) | 10,06 (398) | +0,48 (+19) | +0,48 (+19) | -0,38 (-15) | +0,86 |
+| 2036 | 9,35 (379) | 0,30 (12) | 9,65 (392) | 10,06 (408) | +0,41 (+17) | +0,41 (+17) | -0,43 (-17) | +0,84 |
+| 2037 | 9,44 (393) | 0,29 (12) | 9,72 (405) | 10,08 (420) | +0,36 (+15) | +0,36 (+15) | -0,49 (-20) | +0,84 |
+| 2038 | 9,52 (407) | 0,27 (12) | 9,79 (418) | 10,06 (430) | +0,27 (+12) | +0,27 (+12) | -0,53 (-23) | +0,80 |
+| 2039 | 9,59 (421) | 0,26 (11) | 9,85 (432) | 10,04 (441) | +0,19 (+8) | +0,19 (+8) | -0,57 (-25) | +0,76 |
+| 2040 | 9,65 (434) | 0,25 (11) | 9,90 (445) | 10,04 (452) | +0,14 (+6) | +0,14 (+6) | -0,61 (-27) | +0,75 |
 <!-- annuel_retroactif:fin -->
 
 ### B. Variante rétroactive — horizon long
@@ -183,12 +193,12 @@ l'excédent permettrait de les relever — ce que personne ne propose.
 <!-- horizon_retroactif:debut -->
 | Année | Pensions | Garantie nette | Dépense totale | Recettes | Solde régime | Solde + garantie | Rappel sc. 1 | Écart |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2045 | 9,83 (498) | 0,19 (10) | 10,03 (507) | 10,61 (537) | +0,58 (+29) | +0,58 (+29) | -0,89 (-45) | +1,47 |
-| 2050 | 9,87 (555) | 0,16 (9) | 10,03 (564) | 10,60 (596) | +0,57 (+32) | +0,57 (+32) | -1,22 (-68) | +1,79 |
-| 2055 | 9,69 (603) | 0,14 (9) | 9,83 (612) | 10,59 (659) | +0,75 (+47) | +0,75 (+47) | -1,54 (-96) | +2,29 |
-| 2060 | 9,27 (638) | 0,14 (9) | 9,41 (648) | 10,58 (728) | +1,17 (+81) | +1,17 (+81) | -1,77 (-122) | +2,94 |
-| 2065 | 8,79 (667) | 0,14 (10) | 8,92 (677) | 10,58 (804) | +1,66 (+126) | +1,66 (+126) | -2,11 (-160) | +3,77 |
-| 2070 | 8,24 (688) | 0,14 (12) | 8,38 (700) | 10,68 (892) | +2,30 (+192) | +2,30 (+192) | -2,39 (-200) | +4,69 |
+| 2045 | 9,83 (498) | 0,19 (10) | 10,03 (507) | 10,07 (510) | +0,04 (+2) | +0,04 (+2) | -0,89 (-45) | +0,93 |
+| 2050 | 9,87 (555) | 0,16 (9) | 10,03 (564) | 10,06 (566) | +0,03 (+2) | +0,03 (+2) | -1,22 (-68) | +1,25 |
+| 2055 | 9,69 (603) | 0,14 (9) | 9,83 (612) | 10,05 (625) | +0,22 (+13) | +0,22 (+13) | -1,54 (-96) | +1,75 |
+| 2060 | 9,27 (638) | 0,14 (9) | 9,41 (648) | 10,04 (691) | +0,63 (+44) | +0,63 (+44) | -1,77 (-122) | +2,40 |
+| 2065 | 8,79 (667) | 0,14 (10) | 8,92 (677) | 10,04 (763) | +1,12 (+85) | +1,12 (+85) | -2,11 (-160) | +3,23 |
+| 2070 | 8,24 (688) | 0,14 (12) | 8,38 (700) | 10,14 (847) | +1,76 (+147) | +1,76 (+147) | -2,39 (-200) | +4,15 |
 <!-- horizon_retroactif:fin -->
 
 ### C. Variante prospective — trajectoire annuelle
@@ -196,21 +206,21 @@ l'excédent permettrait de les relever — ce que personne ne propose.
 <!-- annuel_prospectif:debut -->
 | Année | Pensions | Garantie nette | Dépense totale | Recettes | Solde régime | Solde + garantie | Rappel sc. 1 | Écart |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 12,16 (373) | 0,24 (7) | 12,39 (380) | 10,33 (317) | -2,06 (-63) | -2,06 (-63) | -0,16 (-5) | -1,90 |
-| 2027 | 12,07 (380) | 0,24 (7) | 12,31 (387) | 10,52 (331) | -1,79 (-56) | -1,79 (-56) | -0,22 (-7) | -1,57 |
-| 2028 | 11,88 (384) | 0,23 (8) | 12,11 (392) | 10,64 (344) | -1,47 (-47) | -1,47 (-47) | -0,24 (-8) | -1,23 |
-| 2029 | 11,69 (389) | 0,23 (8) | 11,92 (397) | 10,67 (355) | -1,25 (-42) | -1,25 (-42) | -0,17 (-6) | -1,08 |
-| 2030 | 11,80 (404) | 0,23 (8) | 12,02 (412) | 10,67 (366) | -1,36 (-47) | -1,36 (-47) | -0,20 (-7) | -1,16 |
-| 2031 | 11,98 (423) | 0,22 (8) | 12,20 (431) | 10,55 (373) | -1,66 (-58) | -1,66 (-58) | -0,24 (-9) | -1,41 |
-| 2032 | 11,98 (436) | 0,22 (8) | 12,20 (444) | 10,58 (385) | -1,61 (-59) | -1,61 (-59) | -0,26 (-10) | -1,35 |
-| 2033 | 11,91 (446) | 0,22 (8) | 12,13 (454) | 10,61 (397) | -1,52 (-57) | -1,52 (-57) | -0,27 (-10) | -1,25 |
-| 2034 | 11,98 (461) | 0,21 (8) | 12,19 (469) | 10,59 (408) | -1,60 (-62) | -1,60 (-62) | -0,34 (-13) | -1,26 |
-| 2035 | 11,99 (474) | 0,21 (8) | 12,19 (482) | 10,60 (419) | -1,60 (-63) | -1,60 (-63) | -0,38 (-15) | -1,22 |
-| 2036 | 12,00 (487) | 0,20 (8) | 12,21 (495) | 10,60 (430) | -1,61 (-65) | -1,61 (-65) | -0,43 (-17) | -1,18 |
-| 2037 | 12,03 (501) | 0,20 (8) | 12,23 (509) | 10,62 (442) | -1,61 (-67) | -1,61 (-67) | -0,49 (-20) | -1,12 |
-| 2038 | 12,04 (515) | 0,19 (8) | 12,23 (523) | 10,60 (453) | -1,63 (-70) | -1,63 (-70) | -0,53 (-23) | -1,10 |
-| 2039 | 12,05 (528) | 0,18 (8) | 12,23 (537) | 10,58 (464) | -1,65 (-72) | -1,65 (-72) | -0,57 (-25) | -1,08 |
-| 2040 | 12,03 (541) | 0,18 (8) | 12,21 (549) | 10,57 (476) | -1,64 (-74) | -1,64 (-74) | -0,61 (-27) | -1,03 |
+| 2026 | 12,16 (373) | 0,24 (7) | 12,39 (380) | 9,80 (300) | -2,60 (-80) | -2,60 (-80) | -0,16 (-5) | -2,43 |
+| 2027 | 12,07 (380) | 0,24 (7) | 12,31 (387) | 9,98 (314) | -2,33 (-73) | -2,33 (-73) | -0,22 (-7) | -2,11 |
+| 2028 | 11,88 (384) | 0,23 (8) | 12,11 (392) | 10,11 (327) | -2,01 (-65) | -2,01 (-65) | -0,24 (-8) | -1,77 |
+| 2029 | 11,69 (389) | 0,23 (8) | 11,92 (397) | 10,13 (337) | -1,79 (-60) | -1,79 (-60) | -0,17 (-6) | -1,62 |
+| 2030 | 11,80 (404) | 0,23 (8) | 12,02 (412) | 10,13 (347) | -1,90 (-65) | -1,90 (-65) | -0,20 (-7) | -1,70 |
+| 2031 | 11,98 (423) | 0,22 (8) | 12,20 (431) | 10,01 (353) | -2,19 (-77) | -2,19 (-77) | -0,24 (-9) | -1,95 |
+| 2032 | 11,98 (436) | 0,22 (8) | 12,20 (444) | 10,05 (365) | -2,15 (-78) | -2,15 (-78) | -0,26 (-10) | -1,89 |
+| 2033 | 11,91 (446) | 0,22 (8) | 12,13 (454) | 10,07 (377) | -2,06 (-77) | -2,06 (-77) | -0,27 (-10) | -1,79 |
+| 2034 | 11,98 (461) | 0,21 (8) | 12,19 (469) | 10,05 (387) | -2,14 (-82) | -2,14 (-82) | -0,34 (-13) | -1,80 |
+| 2035 | 11,99 (474) | 0,21 (8) | 12,19 (482) | 10,06 (398) | -2,14 (-84) | -2,14 (-84) | -0,38 (-15) | -1,75 |
+| 2036 | 12,00 (487) | 0,20 (8) | 12,21 (495) | 10,06 (408) | -2,15 (-87) | -2,15 (-87) | -0,43 (-17) | -1,72 |
+| 2037 | 12,03 (501) | 0,20 (8) | 12,23 (509) | 10,08 (420) | -2,15 (-89) | -2,15 (-89) | -0,49 (-20) | -1,66 |
+| 2038 | 12,04 (515) | 0,19 (8) | 12,23 (523) | 10,06 (430) | -2,17 (-93) | -2,17 (-93) | -0,53 (-23) | -1,64 |
+| 2039 | 12,05 (528) | 0,18 (8) | 12,23 (537) | 10,04 (441) | -2,19 (-96) | -2,19 (-96) | -0,57 (-25) | -1,61 |
+| 2040 | 12,03 (541) | 0,18 (8) | 12,21 (549) | 10,04 (452) | -2,17 (-98) | -2,17 (-98) | -0,61 (-27) | -1,56 |
 <!-- annuel_prospectif:fin -->
 
 ### D. Variante prospective — horizon long
@@ -218,26 +228,26 @@ l'excédent permettrait de les relever — ce que personne ne propose.
 <!-- horizon_prospectif:debut -->
 | Année | Pensions | Garantie nette | Dépense totale | Recettes | Solde régime | Solde + garantie | Rappel sc. 1 | Écart |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2045 | 11,88 (601) | 0,15 (8) | 12,03 (609) | 10,61 (537) | -1,42 (-72) | -1,42 (-72) | -0,89 (-45) | -0,53 |
-| 2050 | 11,56 (650) | 0,13 (7) | 11,70 (657) | 10,60 (596) | -1,10 (-62) | -1,10 (-62) | -1,22 (-68) | +0,12 |
-| 2055 | 11,05 (688) | 0,12 (8) | 11,17 (695) | 10,59 (659) | -0,58 (-36) | -0,58 (-36) | -1,54 (-96) | +0,95 |
-| 2060 | 10,31 (710) | 0,12 (8) | 10,43 (718) | 10,58 (728) | +0,14 (+10) | +0,14 (+10) | -1,77 (-122) | +1,91 |
-| 2065 | 9,55 (725) | 0,12 (9) | 9,68 (735) | 10,58 (804) | +0,91 (+69) | +0,91 (+69) | -2,11 (-160) | +3,01 |
-| 2070 | 8,76 (732) | 0,13 (11) | 8,89 (743) | 10,68 (892) | +1,79 (+149) | +1,79 (+149) | -2,39 (-200) | +4,18 |
+| 2045 | 11,88 (601) | 0,15 (8) | 12,03 (609) | 10,07 (510) | -1,96 (-99) | -1,96 (-99) | -0,89 (-45) | -1,07 |
+| 2050 | 11,56 (650) | 0,13 (7) | 11,70 (657) | 10,06 (566) | -1,64 (-92) | -1,64 (-92) | -1,22 (-68) | -0,42 |
+| 2055 | 11,05 (688) | 0,12 (8) | 11,17 (695) | 10,05 (625) | -1,12 (-70) | -1,12 (-70) | -1,54 (-96) | +0,42 |
+| 2060 | 10,31 (710) | 0,12 (8) | 10,43 (718) | 10,04 (691) | -0,39 (-27) | -0,39 (-27) | -1,77 (-122) | +1,37 |
+| 2065 | 9,55 (725) | 0,12 (9) | 9,68 (735) | 10,04 (763) | +0,37 (+28) | +0,37 (+28) | -2,11 (-160) | +2,48 |
+| 2070 | 8,76 (732) | 0,13 (11) | 8,89 (743) | 10,14 (847) | +1,25 (+104) | +1,25 (+104) | -2,39 (-200) | +3,64 |
 <!-- horizon_prospectif:fin -->
 
 ### E. Prélèvements retraite, avant et après, et ce que l'État verse à part
 
 <!-- prelevements:debut -->
-| Année | Cotisations (sc. 1) | Impôts et taxes affectés (sc. 1) | **Prélèvements sc. 1** | Cotisations 18 % (sc. 6) | Pilier obligatoire 5 % (sc. 6) | TVA 21,1 % (sc. 6) | **Prélèvements sc. 6** | Écart | Versé par l'État au sc. 1, hors prélèvements |
+| Année | Cotisations (sc. 1) | Impôts et taxes affectés (sc. 1) | **Prélèvements sc. 1** | Cotisations 18 % (sc. 6) | Pilier obligatoire 5 % (sc. 6) | TVA 19,7 % (sc. 6) | **Prélèvements sc. 6** | Écart | Versé par l'État au sc. 1, hors prélèvements |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 9,16 (281) | 2,14 (66) | **11,30 (346)** | 7,76 (238) | 2,16 (66) | 2,17 (66) | **12,09 (371)** | +0,78 | 1,88 (58) |
-| 2030 | 9,10 (312) | 2,13 (73) | **11,23 (385)** | 8,10 (278) | 2,25 (77) | 2,17 (74) | **12,52 (429)** | +1,29 | 1,87 (64) |
-| 2035 | 8,93 (353) | 2,08 (82) | **11,01 (435)** | 8,04 (318) | 2,23 (88) | 2,17 (86) | **12,43 (492)** | +1,42 | 1,84 (73) |
-| 2040 | 8,81 (397) | 2,06 (93) | **10,87 (489)** | 8,02 (361) | 2,23 (100) | 2,17 (98) | **12,41 (559)** | +1,54 | 1,81 (82) |
-| 2050 | 8,63 (485) | 2,01 (113) | **10,64 (598)** | 8,05 (453) | 2,24 (126) | 2,17 (122) | **12,45 (700)** | +1,81 | 1,77 (100) |
-| 2060 | 8,51 (586) | 1,99 (137) | **10,50 (722)** | 8,04 (553) | 2,23 (154) | 2,17 (149) | **12,44 (856)** | +1,94 | 1,75 (120) |
-| 2070 | 8,47 (708) | 1,98 (165) | **10,45 (873)** | 8,14 (680) | 2,26 (189) | 2,17 (181) | **12,57 (1 050)** | +2,12 | 1,74 (146) |
+| 2026 | 9,16 (281) | 2,14 (66) | **11,30 (346)** | 7,76 (238) | 2,16 (66) | 1,63 (50) | **11,55 (354)** | +0,25 | 1,88 (58) |
+| 2030 | 9,10 (312) | 2,13 (73) | **11,23 (385)** | 8,10 (278) | 2,25 (77) | 1,63 (56) | **11,98 (411)** | +0,75 | 1,87 (64) |
+| 2035 | 8,93 (353) | 2,08 (82) | **11,01 (435)** | 8,04 (318) | 2,23 (88) | 1,63 (64) | **11,90 (470)** | +0,88 | 1,84 (73) |
+| 2040 | 8,81 (397) | 2,06 (93) | **10,87 (489)** | 8,02 (361) | 2,23 (100) | 1,63 (73) | **11,88 (534)** | +1,00 | 1,81 (82) |
+| 2050 | 8,63 (485) | 2,01 (113) | **10,64 (598)** | 8,05 (453) | 2,24 (126) | 1,63 (92) | **11,92 (670)** | +1,28 | 1,77 (100) |
+| 2060 | 8,51 (586) | 1,99 (137) | **10,50 (722)** | 8,04 (553) | 2,23 (154) | 1,63 (112) | **11,90 (819)** | +1,40 | 1,75 (120) |
+| 2070 | 8,47 (708) | 1,98 (165) | **10,45 (873)** | 8,14 (680) | 2,26 (189) | 1,63 (136) | **12,03 (1 005)** | +1,58 | 1,74 (146) |
 <!-- prelevements:fin -->
 
 *Corrigé le 23 septembre 2026.* Le tableau comptait jusque-là, parmi les
@@ -265,9 +275,9 @@ salaire net affiché par le simulateur est celui qui les laisse au salarié.
 | Garantie vieillesse brute cumulée | 534 | 411 | — |
 | Reprises sur succession | -188 | -156 | — |
 | Garantie nette cumulée | 345 | 255 | — |
-| Solde moyen, points de PIB | +1,07 | -0,73 | -1,13 |
-| Dette accumulée en 2070, points de PIB | -69 | +61 | +66 |
-| Première année d'équilibre | 2026 | 2060 | jamais |
+| Solde moyen, points de PIB | +0,54 | -1,27 | -1,13 |
+| Dette accumulée en 2070, points de PIB | -33 | +97 | +66 |
+| Première année d'équilibre | 2026 | 2063 | jamais |
 <!-- agregats:fin -->
 
 La variante rétroactive ne fait pas mieux que le droit en vigueur sur la
@@ -282,6 +292,13 @@ millièmes de point de PIB — le taux exact du pic est 21,12 % —, et elle
 accumule d'ici 2070 des réserves, non une dette. La variante prospective reste
 en déficit jusqu'en 2061 et accumule encore une dette, moins de la moitié de
 celle d'avant la TVA.
+
+*Corrigé le 23 septembre 2026 au soir, avec l'âge légal de 65 ans et la TVA
+ramenée à 19,7 %.* La variante rétroactive est à l'équilibre ou en excédent
+chaque année, au plus juste en 2048, où le taux exact est de 19,69 %, et elle
+aborde 2070 avec des réserves d'un tiers du PIB. La variante prospective, à qui
+le taux n'est pas ajusté, reste en déficit de 2026 à 2062, et sa dette atteint
+97 % du PIB en 2070, au-dessus de celle du système actuel.
 
 *Corrigé le 23 septembre 2026.* Les deux premières lignes cumulaient la
 dépense que le modèle projette lui-même, plus haute que celle du COR de trois
@@ -505,8 +522,8 @@ tient le calcul. Ce qu'il ne compte pas :
   effets induits sur les comportements de consommation » ;
 - **une répercussion intégrale et symétrique** dans les prix, alors que les
   baisses de TVA passent moins dans les prix que les hausses ;
-- **aucun effet de prix sur les dépenses indexées** : à 21,1 %, l'alimentation
-  prend 14,8 %, les médicaments remboursables 18,6 %, et toute pension ou
+- **aucun effet de prix sur les dépenses indexées** : à 19,7 %, l'alimentation
+  prend 13,5 %, les médicaments remboursables 17,2 %, et toute pension ou
   prestation qui suit l'indice des prix suivrait ;
 - **une assiette tenue à sa part de PIB de 2025**, 38,4 %, comme la
   consommation qui la fait ;

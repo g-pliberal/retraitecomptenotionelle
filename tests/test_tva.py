@@ -13,8 +13,10 @@ proposition. C'est ce qui interdit de la compter deux fois.
 
 Puis que ZÉRO rend l'ancienne convention, où la TVA n'était pas réformée.
 
-Enfin que 21,1 % tient ce qu'il promet : le déficit de la variante rétroactive,
-garantie comprise, couvert chaque année — à l'arrondi du taux près.
+Enfin que le taux par défaut, 19,7 %, tient ce qu'il promet — le déficit de la
+variante rétroactive, garantie comprise, couvert chaque année — et qu'il est
+bien celui que la règle donne : le taux de l'année la plus exigeante, arrondi
+au dixième.
 """
 
 from __future__ import annotations
@@ -67,8 +69,8 @@ def test_le_cout_des_taux_reduits_recoupe_celui_du_cpo(tva):
 
 def test_l_assiette_nette_pese_un_peu_moins_de_quarante_pour_cent_du_pib(tva):
     assert 0.37 < tva.part_pib() < 0.40
-    assert tva.recette_supplementaire(0.211) == pytest.approx(
-        (0.211 - tva.taux_moyen()) * tva.part_pib())
+    assert tva.recette_supplementaire(0.197) == pytest.approx(
+        (0.197 - tva.taux_moyen()) * tva.part_pib())
 
 
 # -- le partage ----------------------------------------------------------------
@@ -143,23 +145,29 @@ def test_zero_rend_l_ancienne_convention(tva):
 
 
 def test_le_taux_par_defaut_est_celui_que_le_parti_a_decide():
-    assert Parametres().taux_tva_liberal == pytest.approx(0.211)
+    assert Parametres().taux_tva_liberal == pytest.approx(0.197)
 
 
-# -- ce que 21,1 % promet -------------------------------------------------------
+# -- ce que le taux promet ------------------------------------------------------
 
 
-def test_vingt_et_un_virgule_un_couvre_chaque_annee_de_la_variante_retroactive():
+def test_le_taux_couvre_chaque_annee_de_la_variante_retroactive(tva):
     """Le solde du régime est pris APRÈS la garantie, que la TVA paie d'abord :
-    à l'équilibre ou en excédent chaque année, sauf au pic de 2044-2045, où le
-    taux exact est de 21,12 % et où il manque moins d'un centième de point."""
+    à l'équilibre ou en excédent chaque année. Et le taux est celui que la
+    règle donne : le taux requis par l'année la plus exigeante — 2048, où il
+    faut 19,69 % —, arrondi au dixième. Elle donnait 21,1 %, au pic de 2044,
+    avant que la proposition ne fixe son âge légal à 65 ans."""
     bilan = charger_bilan(RACINE_DONNEES)
     projetees = [a for a in bilan.annees if a.projete and a.annee >= 2026]
     assert projetees
     soldes = {a.annee: a.solde("notionnel_liberal") for a in projetees}
     assert min(soldes.values()) > -1e-4
-    en_deficit = [annee for annee, solde in soldes.items() if solde < 0.0]
-    assert set(en_deficit) <= {2044, 2045}
+    # Un point de taux de plus rapporte ``part_pib`` point de PIB au régime,
+    # tant que la TVA couvre déjà la garantie : le taux requis d'une année
+    # s'en déduit.
+    taux = Parametres().taux_tva_liberal
+    requis = max(taux - solde / tva.part_pib() for solde in soldes.values())
+    assert round(requis, 3) == pytest.approx(taux), requis
 
 
 def test_l_accueil_cite_ce_que_la_tva_rapporte(tva):

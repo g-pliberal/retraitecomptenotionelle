@@ -312,13 +312,14 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: Le TAUX UNIQUE DE TVA que la proposition substitue, à compter de la
   //: bascule, aux quatre taux d'aujourd'hui. Décision du Parti libéral,
   //: 23 septembre 2026 : ce qu'il rapporte DE PLUS que les quatre est affecté
-  //: au scénario 6. 21,1 % couvre chaque année le déficit de la proposition,
+  //: au scénario 6. 19,7 % couvre chaque année le déficit de la proposition,
   //: garantie comprise, dans la variante rétroactive, sans rien emprunter —
-  //: c'est le taux du pic de 2044. `tva.js` dit d'où viennent les assiettes.
+  //: c'est le taux du pic de 2048, arrondi au dixième ; 21,1 % avant l'âge
+  //: légal de 65 ans. `tva.js` dit d'où viennent les assiettes.
   //: Ce n'est pas une cotisation : la TVA n'ouvre aucun droit, elle comble ce
   //: que le compte notionnel laisse. Zéro rend l'ancienne convention, où la
   //: TVA n'était pas réformée.
-  taux_tva_liberal: 0.211,
+  taux_tva_liberal: 0.197,
   //: Montants MENSUELS, en euros de `annee_euros_garantie_vieillesse`, ramenés
   //: à l'année de liquidation par l'indice des prix. 800 + 250 = 1 050 € seul,
   //: 800 € par personne à deux.

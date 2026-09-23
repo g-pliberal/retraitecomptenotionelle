@@ -3412,20 +3412,21 @@ MESURES_BLOCAGES: dict[str, float] = {
     # Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
     # l'horizon, en points de PIB, en % du PIB et en valeur.
     # Avec la TVA à taux unique depuis le 23 septembre 2026 : la dette de
-    # 2070 est NÉGATIVE, ce sont des réserves.
+    # 2070 est NÉGATIVE, ce sont des réserves. Mesurés avec l'âge légal de
+    # 65 ans et la TVA à 19,7 % qu'il permet (le soir du 23 septembre).
     "solde_moyen_proposition": 0.5,
     "solde_moyen_actuel": -1.1,
-    "dette_2070_proposition": -31,
+    "dette_2070_proposition": -33,
     "dette_2070_actuel": 66,
     "coefficient_minimum": 1.00,
     "decennie_coefficient_minimum": 2040,
-    "coefficient_2070": 1.25,
+    "coefficient_2070": 1.21,
     # donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
     # quatre taux d'aujourd'hui, en points de PIB.
-    "tva_affectee": 2.2,
+    "tva_affectee": 1.6,
     # proposition_prospective.py : le solde moyen de la variante qui laisse le
     # stock intact, en points de PIB, TVA comprise.
-    "solde_moyen_prospectif": -1.5,
+    "solde_moyen_prospectif": -1.3,
     # stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au
     # lieu de celui de 65 ans, en points de PIB par an.
     "cout_diviseur_age_legal": 0.2,
@@ -3458,6 +3459,10 @@ def _programme_blocages(contexte: Contexte) -> str:
 
     def pt(valeur: float, decimales: int = 1) -> str:
         return g.nombre(valeur, decimales).replace("-", "−")
+
+    def accord_point(valeur: float) -> str:
+        """« 1,9 point », « 2,2 points » : le pluriel à partir de deux."""
+        return "point" if abs(valeur) < 2 else "points"
 
     points = g.tableau(
         ["Le point", "Ce que nous avons regardé", "Ce que nous en retenons"],
@@ -3492,10 +3497,12 @@ def _programme_blocages(contexte: Contexte) -> str:
             ["Le taux de 18 %",
              f"Face au taux d'aujourd'hui, {pt(m['taux_regime_unique'])} % part "
              "patronale comprise, les 18 % coûtent "
-             f"{pt(m['cout_18_pour_cent'])} points de PIB par an sur 2026-2070, "
+             f"{pt(m['cout_18_pour_cent'])} {accord_point(m['cout_18_pour_cent'])} "
+             "de PIB par an sur 2026-2070, "
              f"{md(m['cout_18_pour_cent'])} {au_pib}, sous les mêmes règles de "
              "recette et l'âge légal de 65 ans compris. La TVA à taux unique rapporte "
-             f"{pt(m['tva_affectee'])} points de PIB par an de plus que les quatre "
+             f"{pt(m['tva_affectee'])} {accord_point(m['tva_affectee'])} de PIB "
+             "par an de plus que les quatre "
              f"taux d'aujourd'hui, {md(m['tva_affectee'])}. Avec elle, la "
              "proposition dégage en moyenne un excédent de "
              f"{pt(m['solde_moyen_proposition'])} point par an quand le système "
@@ -11066,6 +11073,13 @@ def _cout_note_tva(contexte: Contexte, annee: int, ligne: SoldeAnnuel, pib: floa
     def hausse(taux_actuel: float) -> str:
         return g.nombre(tva.variation_prix(taux, taux_actuel) * 100, 1)
 
+    # Sous 20 %, le taux unique BAISSE le prix de ce qui est taxé au taux
+    # normal : « monteraient de −0,2 % » ne se lirait pas.
+    normal = tva.variation_prix(taux, 0.20)
+    au_taux_normal = ("ceux de ce qui est taxé à 20 % aujourd'hui "
+                      + (f"monteraient de {hausse(0.20)} %" if normal >= 0.0
+                         else f"baisseraient de {g.nombre(-normal * 100, 1)} %"))
+
     return f"""
 <div class="note"><strong>Ce que la proposition ajoute : une TVA à taux
 unique.</strong> Les quatre taux de TVA d'aujourd'hui, 20, 10, 5,5 et 2,1 %,
@@ -11081,8 +11095,8 @@ d'équilibre qui rognerait sinon toutes les pensions. Les assiettes de chaque
 taux sont celles que publie la direction générale du Trésor, tenues à leur part
 du PIB de {tva.annee}. Le chiffrage est statique : il suppose que les achats ne
 baissent pas quand les prix montent, et que les prix répercutent la TVA en
-entier : ceux de l'alimentation monteraient de {hausse(0.055)} %, ceux de ce qui
-est taxé à 20 % aujourd'hui de {hausse(0.20)} %.</div>"""
+entier : ceux de l'alimentation monteraient de {hausse(0.055)} %,
+{au_taux_normal}.</div>"""
 
 
 def _cout_note_restitution(contexte: Contexte, annee: int, pib: float,

@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 831<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 311<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 321<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15872,6 +15872,10 @@ que le simulateur affiche, qui ignore la TVA. Les excédents d'après 2050 ne
 sont employés à rien : un taux qui redescendrait après le pic, ou un
 coefficient appliqué, les rendrait. Et le premier arbitrage du chiffrage reste
 ouvert : l'État cesse-t-il de lever les impôts affectés que la TVA remplace ?
+
+*Ramené à 19,7 % le soir même, quand la proposition a pris son âge légal de
+65 ans : action 125.*
+
 ### 124. L'âge légal de la proposition passe à 65 ans, et l'âge de référence le suit — `fait`
 
 **La demande**, le 22 septembre 2026 : « repasse l'âge de départ à la retraite
@@ -16015,3 +16019,95 @@ dans son statut, là où un agent de conduite ou un militaire en changerait.
 `scripts/mesures_prose.py` (réglage `age_legal=aucun`, pour que la prose dise
 ce que la mesure déplace) ; les témoins, le paquet de données et le chiffrage
 budgétaire, régénérés.
+
+**Repris le 23 septembre 2026 au soir, et intégré à `main`.** Le chantier
+avait été mené sur une branche, `age-legal-65`, ouverte en demande de fusion,
+puis rebasé sur la TVA à taux unique sans être fini. Il est porté sur `main`
+en trois commits : celui de la branche, rebasé ; une correction ; la TVA
+(action 125). Ce qu'il fallait encore, et ce qui a été trouvé en le relisant :
+
+- *Les chiffres ci-dessus sont d'avant la TVA à taux unique.* Les soldes de
+  −1,40 et −0,88, la dette de 59 %, le coefficient de 0,85 et les valeurs de
+  `MESURES_BLOCAGES` citées plus haut ont été mesurés sans elle ; ceux que le
+  site affiche sont dans l'action 125.
+- *La prolongation ne poursuivait que la DERNIÈRE LIGNE de la carrière.* Une
+  activité cumulée venant après l'activité principale, le salarié qui
+  exerçait aussi en libéral ne gardait que son revenu libéral pendant le
+  report : le témoin `cumul_salarie_et_liberal` perdait en 2039 un salaire de
+  64 000 €, et sur un relevé le résultat dépendait de l'ordre de saisie. Toute
+  la dernière année se prolonge maintenant, chaque activité à son revenu ; une
+  activité cumulée qui s'arrête avant le départ ne reprend pas. La pension du
+  scénario 6 de ce témoin passe de 2 025 à 2 062 € par mois ; la grille de la
+  page Coût n'a pas de cumul, et ne bouge pas d'un bit.
+- *`MESURES_BLOCAGES` n'était plus le même dans les deux moteurs* : 2,4 et 0,1
+  dans `pages.js` quand `pages.py` passait à 1,9 et 0,2. C'était le test
+  JavaScript que la branche laissait rouge.
+- Trois retouches : `_masses` lit la règle de revalorisation du scénario 6 dans
+  `regle_revalorisation`, comme l'engagement, au lieu de la redire ; la doc de
+  `simuler` reprend sa place dans `simulateur.js` ; un test ne prétend plus
+  qu'un seul paramètre tient l'âge de référence et l'âge légal, qui sont deux.
+
+**Ce que l'âge légal doit à l'hypothèse d'emploi, mesuré à cette occasion**
+(TVA à 21,1 %, réglages par défaut). Il fait passer le solde moyen de la
+proposition de +0,55 à +1,07 point de PIB. Sans l'élargissement de l'assiette
+— les pensions gardant les droits des cotisations supplémentaires, ce qui en
+fait une borne basse trop sévère —, il ne le porterait qu'à +0,60 : le report
+épargne des pensions jusque vers 2045 (+0,59 point en 2030), puis sert plus
+tard des pensions plus fortes, et le solde de 2070 y perd 0,25 point. Le gain
+de l'âge légal tient donc pour l'essentiel à l'hypothèse que tous ceux qu'il
+fait attendre sont en emploi, que `limites.md` appelle un plafond.
+
+### 125. La TVA à taux unique baisse à 19,7 %, l'âge légal de 65 ans finançant le reste — `fait`
+
+**La demande**, le 23 septembre 2026 au soir : « reprends la branche et baisse
+la TVA ». Le taux de 21,1 % avait été fixé le matin (action 123), avant que la
+proposition ne prenne son âge légal de 65 ans (action 124) ; avec lui, la
+proposition dégageait en moyenne +1,07 point de PIB et abordait 2070 avec des
+réserves de 69 % du PIB, 2 072 milliards.
+
+**La règle, inchangée** : le taux qui couvre chaque année de 2026 à 2070 le
+déficit de la variante rétroactive, garantie vieillesse comprise, sans rien
+emprunter — le taux de l'année la plus exigeante, arrondi au dixième. Elle
+donne **19,69 %, en 2048**, soit 19,7 %. Refaite sans l'âge légal, elle
+redonne 21,10 % en 2044 : les données du jour n'ont pas déplacé l'ancien
+calibrage. Un taux unique de 19,7 % reste sous les 20 % du taux normal, parce
+qu'il supprime les taux réduits : il rapporte 1,63 point de PIB de plus que
+les quatre taux d'aujourd'hui, au lieu de 2,17.
+
+**Ce que ça déplace** (page Coût, réglages par défaut). Le scénario 6 est à
+l'équilibre ou en excédent chaque année : +0,55 point de PIB en 2026, +0,03
+en 2050, +1,76 en 2070, et au plus juste en 2048, +0,005 point.
+Son solde moyen revient à +0,54 point, celui qu'il avait à 21,1 % sans l'âge
+légal ; ses réserves de 2070 à 33 % du PIB, 1 002 milliards ; son coefficient
+d'équilibre ne descend qu'à 1,00 en 2048 et vaut 1,21 en 2070. L'accueil
+(`MESURES_BLOCAGES`, deux moteurs) cite désormais une TVA qui rapporte 1,6
+point, des réserves de 33 %, un coefficient de 1,21 en 2070, et une variante
+prospective à −1,3 point par an au lieu de −1,5 ; le chiffrage pour un PLF
+porte le nouveau taux, et l'écart de solde de 2026 y vaut +0,72 point dans la
+variante rétroactive, −2,43 dans la prospective, qui reste en déficit jusqu'en
+2062 et à qui il faudrait 26,5 % la première année. La note de la page Coût
+disait que les prix de ce qui est taxé à 20 % « monteraient » : à 19,7 %, ils
+baissent de 0,2 %, et elle le dit ; l'accueil écrit « 1,9 point » et « 1,6
+point », que le pluriel faussait.
+
+**La sensibilité à l'hypothèse d'emploi.** La règle est appliquée à la page
+Coût telle qu'elle est, donc au plafond de recette de l'âge légal. Si la
+moitié seulement de ceux que le report fait attendre travaillaient, il
+faudrait **20,3 %** ; sans aucun élargissement de l'assiette, 20,9 % — une
+borne haute, pour la raison dite à l'action 124. Mesuré en réduisant le
+facteur d'assiette, sans toucher aux pensions : le modèle n'a pas de
+paramètre pour la part des reportés qui travaillent.
+
+**Ce qui reste.** Ce paramètre justement : une part des reportés en emploi,
+qui réduirait l'assiette ET les droits acquis pendant l'attente, et ferait de
+19,7 % un taux central plutôt qu'un plancher. Les excédents d'après 2050 ne
+sont toujours employés à rien. Et le chiffrage de la TVA reste statique
+(action 123).
+
+**Fichiers.** `config.py` et `config.js` (le taux et sa raison),
+`donnees/tva.py`, `web/pages.py` et `pages.js` (`MESURES_BLOCAGES`, la note de
+la page Coût, l'accord de « point »), `tests/test_tva.py` (le taux par défaut,
+et la règle elle-même : le taux requis par l'année la plus exigeante, arrondi
+au dixième, doit être le taux par défaut), `scripts/chiffrage_plf.py`,
+`docs/chiffrage_plf.md`, `README.md`, `docs/limites.md` ; le paquet, les
+témoins et le chiffrage, régénérés.
