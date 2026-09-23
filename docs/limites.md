@@ -5786,10 +5786,14 @@ d'un parcours ou d'un relevé : un relevé n'a pas de profil à prolonger. Elle
 fait travailler l'agent de conduite, l'agent des IEG ou le militaire dans
 leur statut jusqu'à l'âge légal, là où beaucoup en changeraient ; mais à
 compter de la bascule tout le monde cotise au même taux unique sur le même
-revenu, et c'est le revenu seul qui compte. Qui finissait sa carrière au
-chômage la finit au chômage, et une carrière qui s'arrêtait avant son départ
-— un relevé dont les dernières années sont vides — ne gagne aucune année
-travaillée.
+revenu, et c'est le revenu seul qui compte. C'est TOUTE la dernière année qui
+se prolonge : l'activité principale et chaque activité cumulée qui court
+encore au départ, chacune à son revenu — jusqu'au 23 septembre 2026, seule la
+dernière ligne de l'année le faisait, et le salarié qui exerçait aussi en
+libéral perdait son salaire pendant les années du report. Qui finissait sa
+carrière au chômage la finit au chômage, et une carrière qui s'arrêtait avant
+son départ — un relevé dont les dernières années sont vides — ne gagne aucune
+année travaillée.
 
 **Le report est immédiat.** Toute liquidation qui prendrait effet à compter du
 1<sup>er</sup> janvier de la bascule est portée à l'âge légal, sans montée en
@@ -9120,7 +9124,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2363<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2366<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

@@ -2006,10 +2006,11 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     masses[MASSE_STOCK] = 0.0
     tetes = {TETES_TOUTES: 0.0, TETES_GARANTIE: 0.0}
     vivants = 0
-    # La proposition suit la règle du stock des réformes prospectives dès
-    # qu'on la range parmi elles — ce que fait
-    # `scripts/proposition_prospective.py`. Lu à l'appel, comme la liste.
-    liberale_prospective = "notionnel_liberal" in CLES_PROSPECTIVES
+    # La règle du scénario 6 est celle que `regle_revalorisation` lui donne,
+    # la même fonction décidant pour la masse et pour l'engagement : celle du
+    # stock des réformes prospectives dès qu'on la range parmi elles — ce que
+    # fait `scripts/proposition_prospective.py`. Lue à l'appel, comme la liste.
+    regle_liberale = regle_revalorisation("notionnel_liberal")
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
         if part <= 0.0:
@@ -2048,8 +2049,11 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             depart = volet.annee_liquidation + decalage
             if annee < depart:
                 continue
-            masse_liberale += effectif * revalorisation.coefficient_stock(
-                depart, annee, prospectif=liberale_prospective
+            # L'ordre des produits est celui du portage, au bit près.
+            masse_liberale += effectif * (
+                1.0 if regle_liberale == REGLE_PRIX
+                else revalorisation.coefficient_stock(
+                    depart, annee, prospectif=regle_liberale == REGLE_PROSPECTIVE)
             ) * volet.pension
             # La garantie n'entre qu'à 65 ans, même pour qui est parti plus
             # tôt : avant, on ne touche pas le minimum vieillesse. Ce qu'elle

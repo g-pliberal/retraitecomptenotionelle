@@ -453,7 +453,10 @@ export class Carriere {
    * tôt sous le droit en vigueur : il travaille jusqu'à l'âge légal. Rien de
    * ce qui précède ne bouge. LA CONVENTION, ET IL N'Y EN A QU'UNE : la
    * dernière année se prolonge — même statut, même nature de période, même
-   * salaire RELATIF, avancé chaque année au rythme du salaire moyen. Une
+   * salaire RELATIF, avancé chaque année au rythme du salaire moyen —, TOUTE
+   * la dernière année : l'activité principale et chaque activité cumulée qui
+   * court encore au départ, à son propre revenu. Une activité cumulée qui
+   * s'arrête dans la dernière année, avant le départ, ne se prolonge pas. Une
    * carrière qui s'arrêtait avant son départ finissait sans activité, et le
    * report n'ajoute alors aucune ligne. Rend la carrière elle-même quand le
    * départ demandé ne tombe pas après le sien. Voir `carriere.py`.
@@ -465,25 +468,34 @@ export class Carriere {
     }
     const initiale = this.dateLiquidation;
     const fin = this.dateNaissance.plusMois(enMois(ageLiquidation));
-    const derniere = this.lignes[this.lignes.length - 1];
-    const cotisee = derniere.type_periode === "emploi";
-    // Le revenu annualisé de la dernière ligne : ce qui a été perçu pour une
-    // année d'emploi, le salaire de référence pour une interruption.
-    const percu = cotisee ? derniere.revenu : derniere.revenu_reference;
-    const base = derniere.fraction_annee > 0 ? percu / derniere.fraction_annee : 0.0;
-    const reference = salaireMoyenAnnuel(macro, derniere.annee);
+    const derniereAnnee = this.lignes[this.lignes.length - 1].annee;
+    const finales = this.lignesDe(derniereAnnee);
+    const principale = finales[0];
+    const veille = new Set(this.lignesDe(derniereAnnee - 1).map((l) => l.affiliation));
+    // L'activité de cette ligne court-elle encore au départ initial ?
+    const poursuivie = (ligne) => ligne === principale
+      || Math.round(ligne.fraction_annee * MOIS_PAR_AN)
+        >= Math.round(principale.fraction_annee * MOIS_PAR_AN)
+      || !veille.has(ligne.affiliation);
+    const reference = salaireMoyenAnnuel(macro, derniereAnnee);
 
-    const ligne = (annee, mois) => {
+    // `source` poursuivie `mois` mois de `annee`.
+    const ligne = (source, annee, mois) => {
+      // Le revenu annualisé de la ligne : ce qui a été perçu pour une année
+      // d'emploi, le salaire de référence pour une interruption.
+      const percu = source.type_periode === "emploi"
+        ? source.revenu : source.revenu_reference;
+      const base = source.fraction_annee > 0 ? percu / source.fraction_annee : 0.0;
       const facteur = reference > 0
         ? salaireMoyenAnnuel(macro, annee) / reference : 1.0;
       return ligneAnnuelle({
         annee,
         revenu: base * facteur * mois / MOIS_PAR_AN,
-        affiliation: derniere.affiliation,
-        type_periode: derniere.type_periode,
+        affiliation: source.affiliation,
+        type_periode: source.type_periode,
         macro,
         part: mois / MOIS_PAR_AN,
-        part_primes: derniere.part_primes,
+        part_primes: source.part_primes,
         trimestresMaximum: trimestresCivils(mois),
       });
     };
@@ -494,19 +506,26 @@ export class Carriere {
       return 0;
     };
 
-    const contigue = derniere.annee === initiale.annee
-      || (derniere.annee === initiale.annee - 1 && initiale.mois === 1);
+    const contigue = derniereAnnee === initiale.annee
+      || (derniereAnnee === initiale.annee - 1 && initiale.mois === 1);
     const lignes = [...this.lignes];
     if (contigue) {
-      const ajoutes = finTravaillee(derniere.annee, fin)
-        - finTravaillee(derniere.annee, initiale);
+      const sources = finales.filter(poursuivie);
+      const ajoutes = finTravaillee(derniereAnnee, fin)
+        - finTravaillee(derniereAnnee, initiale);
       if (ajoutes > 0) {
-        const mois = Math.round(derniere.fraction_annee * MOIS_PAR_AN) + ajoutes;
-        lignes[lignes.length - 1] = ligne(derniere.annee, Math.min(mois, MOIS_PAR_AN));
+        for (const source of sources) {
+          const mois = Math.round(source.fraction_annee * MOIS_PAR_AN) + ajoutes;
+          lignes[lignes.indexOf(source)] = ligne(
+            source, derniereAnnee, Math.min(mois, MOIS_PAR_AN));
+        }
       }
-      for (let annee = derniere.annee + 1; annee <= fin.annee; annee += 1) {
+      // L'activité principale en tête de chaque année, les cumulées ensuite.
+      for (let annee = derniereAnnee + 1; annee <= fin.annee; annee += 1) {
         const mois = finTravaillee(annee, fin);
-        if (mois > 0) lignes.push(ligne(annee, mois));
+        if (mois > 0) {
+          for (const source of sources) lignes.push(ligne(source, annee, mois));
+        }
       }
     }
     return new Carriere({
