@@ -21,6 +21,12 @@ regimes:
       à compter du 1er janvier 2020 (loi du 27 juin 2018) : les nouveaux
       entrants relèvent du régime général et de l'Agirc-Arrco.
     hors_repartition: false
+    # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+    # — décret n° 2008-639, article 16 (LEGIARTI000048240189) : « une
+    # majoration de 10 % » pour trois enfants, « 5 % de la pension […]
+    # pour chaque enfant au-delà du troisième ». Le règlement d'avant
+    # juillet 2008 n'est pas dans l'index LEGI : le même barème lui est
+    # prêté. Barème `taux_majoration_enfants` de chaque période.
     periodes:
       - debut: 1930
         fin: 2008
@@ -35,6 +41,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           Ouverture à 50 ans pour les agents de conduite, 55 ans pour les autres
@@ -56,6 +63,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0075
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, portée ici par le décret n°
@@ -88,6 +96,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0075
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -112,6 +121,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -136,6 +146,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -160,6 +171,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -184,6 +196,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -208,6 +221,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -232,6 +246,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -266,6 +281,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -300,6 +316,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -334,6 +351,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -368,6 +386,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -402,6 +421,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -436,6 +456,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -470,6 +491,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -503,6 +525,11 @@ regimes:
       Agents statutaires de la RATP. Fermé aux agents recrutés à compter du
       1er septembre 2023 (loi du 14 avril 2023).
     hors_repartition: false
+    # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+    # — décret n° 2008-637, article 25 (LEGIARTI000047910443) : 10 % pour
+    # les trois premiers enfants et 5 % par enfant au-delà. Le règlement
+    # d'avant juillet 2008 n'est pas dans l'index LEGI : le même barème
+    # lui est prêté. Barème `taux_majoration_enfants` de chaque période.
     periodes:
       - debut: 1930
         fin: 2008
@@ -517,6 +544,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: 50 ans pour les tables de roulement, 55 ans pour les autres agents.
       - debut: 2009
@@ -534,6 +562,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, et elle ne touche pas tout en même
@@ -571,6 +600,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -595,6 +625,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -619,6 +650,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -643,6 +675,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -667,6 +700,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -691,6 +725,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -715,6 +750,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -749,6 +785,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -783,6 +820,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -817,6 +855,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -851,6 +890,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -885,6 +925,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -919,6 +960,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -953,6 +995,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
@@ -986,6 +1029,11 @@ regimes:
       Agents statutaires d'EDF, GDF et des entreprises de la branche.
       Fermé aux embauches à compter du 1er septembre 2023.
     hors_repartition: false
+    # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+    # — statut national, annexe 3, article 21 (LEGIARTI000052046924), et
+    # déjà la version de 1946 (LEGIARTI000006632496) : « 10 % pour trois
+    # enfants ; 5 % en sus par enfant au-delà du troisième ». Barème
+    # `taux_majoration_enfants` de chaque période.
     periodes:
       - debut: 1946
         fin: 1983
@@ -1000,6 +1048,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           Statut national du personnel des IEG (décret du 22 juin 1946).
@@ -1022,6 +1071,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           SEPT POUR CENT AU 1ER JANVIER 1984 : le décret n° 84-63 du 27
@@ -1050,6 +1100,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           Décret n° 86-874 du 29 juillet 1986 (LEGIARTI000006769455) : « le taux défini au paragraphe 2 de l'article 24 du décret du 22 juin 1946 est porté à 7,7 p. 100 » pour les rémunérations versées à compter du 1er août 1986.
@@ -1067,6 +1118,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           Décret n° 87-468 du 30 juin 1987 (LEGIARTI000006770396), relèvement temporaire à 7,9 % du 1er juillet 1987 au 30 juin 1988, puis décret n° 88-792 du 22 juin 1988 (LEGIARTI000006773015) : 7,9 % à compter du 1er juillet 1988.
@@ -1084,6 +1136,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           Décret n° 88-1221 du 30 décembre 1988 (LEGIARTI000006773684) : 8,9 % pour les rémunérations versées à compter du 1er janvier 1989.
@@ -1101,6 +1154,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           Décret n° 91-159 du 12 février 1991, article 6 (LEGIARTI000006775720) : « le taux de la participation du personnel prévue au paragraphe 2 de l'article 24 du statut national […] est fixé à 7,85 p. 100 ». C'est le taux que la fiche portait sur toute la période 1946-2008.
@@ -1120,6 +1174,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           RÉFORME DES RÉGIMES SPÉCIAUX DE 2008 : décote, durée alignée. Les bornes
@@ -1155,6 +1210,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -1179,6 +1235,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -1203,6 +1260,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -1227,6 +1285,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -1251,6 +1310,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -1275,6 +1335,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
@@ -1299,6 +1360,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 : le décret n° 2023-692 du
@@ -1354,6 +1416,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 : le décret n° 2023-692 du
@@ -1539,6 +1602,11 @@ regimes:
       Mineurs et assimilés. Fermé aux nouveaux entrants au 1er septembre 2010 ;
       régime en extinction, gestion transférée à la CDC puis à la CNAV.
     hors_repartition: false
+    # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+    # — décret n° 46-2769, article 139 (LEGIARTI000006765039) : pensions «
+    # majorées d'un dixième » pour qui a eu au moins trois enfants, sans
+    # supplément au-delà. La fiche ne la déclarait pas, et le mineur père
+    # ou mère de trois enfants n'en recevait rien.
     periodes:
       - debut: 1930
         fin: 1973
@@ -1554,7 +1622,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 11.32
         valeur_point_annee: 1974
         notes: >-
@@ -1587,7 +1655,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 11.32
         valeur_point_annee: 1974
         notes: >-
@@ -1640,7 +1708,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 12.4
         valeur_point_annee: 1975
         notes: >-
@@ -1693,7 +1761,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 13.58
         valeur_point_annee: 1976
         notes: >-
@@ -1746,7 +1814,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 14.87
         valeur_point_annee: 1977
         notes: >-
@@ -1799,7 +1867,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 16.29
         valeur_point_annee: 1978
         notes: >-
@@ -1852,7 +1920,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 17.84
         valeur_point_annee: 1979
         notes: >-
@@ -1905,7 +1973,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 19.54
         valeur_point_annee: 1980
         notes: >-
@@ -1958,7 +2026,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 21.41
         valeur_point_annee: 1981
         notes: >-
@@ -2011,7 +2079,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 23.44
         valeur_point_annee: 1982
         notes: >-
@@ -2064,7 +2132,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 25.68
         valeur_point_annee: 1983
         notes: >-
@@ -2117,7 +2185,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 28.13
         valeur_point_annee: 1984
         notes: >-
@@ -2170,7 +2238,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 30.8
         valeur_point_annee: 1985
         notes: >-
@@ -2223,7 +2291,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 33.74
         valeur_point_annee: 1986
         notes: >-
@@ -2276,7 +2344,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 36.95
         valeur_point_annee: 1987
         notes: >-
@@ -2329,7 +2397,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 40.48
         valeur_point_annee: 1988
         notes: >-
@@ -2382,7 +2450,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 44.33
         valeur_point_annee: 1989
         notes: >-
@@ -2435,7 +2503,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 48.56
         valeur_point_annee: 1990
         notes: >-
@@ -2488,7 +2556,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 53.18
         valeur_point_annee: 1991
         notes: >-
@@ -2541,7 +2609,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 58.25
         valeur_point_annee: 1992
         notes: >-
@@ -2564,7 +2632,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 69.22
         valeur_point_annee: 2002
         notes: >-
@@ -2587,7 +2655,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 82.83
         valeur_point_annee: 2013
         notes: >-
@@ -3234,6 +3302,11 @@ regimes:
       (loi n° 2023-270, art. 1er III, JORFARTI000047445082) ; les recrutés
       depuis relèvent du régime général et de l'Agirc-Arrco pour la vieillesse.
     hors_repartition: false
+    # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+    # — décret n° 90-1215, article 94 (LEGIARTI000047909826, et la version
+    # de 1990) : 10 % pour les trois premiers enfants et 5 % par enfant
+    # au-delà. Avant 1990, le même barème est prêté. Barème
+    # `taux_majoration_enfants` de chaque période.
     periodes:
       - debut: 1937
         fin: 2007
@@ -3248,6 +3321,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           Loi du 12 juillet 1937, appliquée par le décret n° 90-1215 du
@@ -3283,6 +3357,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3320,6 +3395,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3357,6 +3433,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3394,6 +3471,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3431,6 +3509,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3468,6 +3547,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3505,6 +3585,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3542,6 +3623,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3579,6 +3661,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3616,6 +3699,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3653,6 +3737,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3690,6 +3775,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3727,6 +3813,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3764,6 +3851,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           L'ÂGE SUIT L'ARTICLE 84 DU DÉCRET N° 90-1215, VERSION PAR VERSION. Depuis
@@ -3803,6 +3891,7 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [majoration_enfants, reversion]
         notes: >-
           Loi du 14 avril 2023 : l'âge d'ouverture passe à 64 ans. La fiche
@@ -3829,6 +3918,11 @@ regimes:
       n° 2007-262, art. 1er, LEGIARTI000047909408) ; 2007 est l'année de la
       réforme du règlement, non d'une fermeture.
     hors_repartition: false
+    # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+    # — décret n° 2007-262, annexe, article 35 IV (LEGIARTI000047909725) :
+    # « 8, 5 % de son montant pour les trois premiers enfants et à 4, 25 %
+    # par enfant au-delà du troisième ». Avant 2007, le même barème est
+    # prêté. Barème `taux_majoration_enfants` de chaque période.
     periodes:
       - debut: 1930
         fin: 2007
@@ -3843,6 +3937,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: Aligné sur le code des pensions civiles à compter de 2007.
       - debut: 2008
@@ -3862,6 +3957,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0075
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -3889,6 +3985,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -3910,6 +4007,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -3944,6 +4042,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -3978,6 +4077,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4012,6 +4112,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4046,6 +4147,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4080,6 +4182,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4114,6 +4217,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4148,6 +4252,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4182,6 +4287,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4216,6 +4322,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4250,6 +4357,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4282,6 +4390,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4311,6 +4420,7 @@ regimes:
         bareme_decote: fonction_publique
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.085, 0.1275, 0.17, 0.2125, 0.255, 0.2975, 0.34, 0.3825, 0.425, 0.4675]
         avantages_non_contributifs:
           [bonifications, categorie_active, majoration_enfants, reversion, minimum_garanti]
         notes: >-
@@ -4338,6 +4448,10 @@ regimes:
     integre_dans: null
     population: Personnels de l'Opéra national de Paris.
     hors_repartition: false
+    # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+    # — décret n° 68-382, article 18 (LEGIARTI000019138600) : 10 % pour
+    # les trois premiers enfants et 5 % par enfant au-delà. La fiche ne la
+    # déclarait pas. Barème `taux_majoration_enfants` de chaque période.
     periodes:
       - debut: 1930
         fin: 2001
@@ -4352,7 +4466,8 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           TRENTE-SEPT ANNUITÉS ET DEMIE, et non vingt-cinq. L'article 14 du
           décret n° 68-382 du 5 avril 1968 le dit depuis l'origine : « chaque
@@ -4387,7 +4502,8 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           L'ÂGE DE LA DANSE CESSE DE DÉPENDRE DU SEXE. L'article 6, dans sa
           rédaction en vigueur le 14 mars 2002, ouvre le droit « à quarante ans
@@ -4411,7 +4527,8 @@ regimes:
         bareme_decote: regimes_speciaux_age_fixe
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           RÉFORME DES RÉGIMES SPÉCIAUX. L'article 14 du décret, réécrit en
           2008, fixe « le nombre de trimestres nécessaire pour obtenir le
@@ -4450,7 +4567,8 @@ regimes:
         bareme_decote: regimes_speciaux_age_fixe
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
-        avantages_non_contributifs: [bonifications, categorie_active, reversion]
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           CENT SOIXANTE-DOUZE TRIMESTRES, ÉCRITS EN TOUTES LETTRES. L'article
           14, depuis le 26 juin 2014, ne renvoie plus à la fonction publique :
@@ -4489,6 +4607,10 @@ regimes:
     integre_dans: null
     population: Personnels de la Comédie-Française.
     hors_repartition: false
+    # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+    # — décret n° 68-960, article 16 VI (LEGIARTI000006765450) : 10 % pour
+    # les trois premiers enfants et 5 % par enfant au-delà. La fiche ne la
+    # déclarait pas. Barème `taux_majoration_enfants` de chaque période.
     periodes:
       - debut: 1930
         fin: 1992
@@ -4503,7 +4625,8 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, reversion]
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           DEUX POUR CENT PAR ANNUITÉ, TRENTE-SEPT ANNUITÉS ET DEMIE, et la fiche
           portait vingt-cinq : l'article 12 du décret n° 68-960 du 11 octobre 1968
@@ -4530,7 +4653,8 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
-        avantages_non_contributifs: [bonifications, reversion]
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Décret du 25 mars 1993 : « le droit à pension est acquis […] 1° à l'âge
           de soixante ans, pour les artistes aux appointements et pour les employés
@@ -4552,7 +4676,8 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
-        avantages_non_contributifs: [bonifications, reversion]
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           RÉFORME DES RÉGIMES SPÉCIAUX, portée ici par le décret n° 2008-658 du
           2 juillet 2008 : coefficient de minoration et durée d'assurance alignée
@@ -4577,7 +4702,8 @@ regimes:
         bareme_decote: regimes_speciaux
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
-        avantages_non_contributifs: [bonifications, reversion]
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Décret n° 2011-1134 du 21 septembre 2011 : « le droit à pension est
           acquis 1° à l'âge de soixante-deux ans, pour les artistes aux
@@ -4637,6 +4763,10 @@ regimes:
       Personnel de la Société d'exploitation industrielle des tabacs et
       allumettes. Régime fermé, en extinction, financé par l'État.
     hors_repartition: false
+    # MAJORATION POUR ENFANTS, lue le 23 septembre 2026 dans l'index LEGI
+    # — décret n° 62-766, article 118 (LEGIARTI000006324645) : 10 % pour
+    # les trois premiers enfants et 5 % par enfant au-delà. Barème
+    # `taux_majoration_enfants` de chaque période.
     periodes:
       - debut: 1935
         fin: 1983
@@ -4651,6 +4781,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Exemple de régime ÉTEINT dont les pensions restent servies :
@@ -4704,6 +4835,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Exemple de régime ÉTEINT dont les pensions restent servies :
@@ -4757,6 +4889,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Exemple de régime ÉTEINT dont les pensions restent servies :
@@ -4810,6 +4943,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Exemple de régime ÉTEINT dont les pensions restent servies :
@@ -4863,6 +4997,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Exemple de régime ÉTEINT dont les pensions restent servies :
@@ -4916,6 +5051,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Exemple de régime ÉTEINT dont les pensions restent servies :
@@ -4969,6 +5105,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Exemple de régime ÉTEINT dont les pensions restent servies :
@@ -5022,6 +5159,7 @@ regimes:
         perimetre_taux: agent_seul
         decote_par_trimestre: null
         surcote_par_trimestre: null
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, majoration_enfants, reversion]
         notes: >-
           Exemple de régime ÉTEINT dont les pensions restent servies :

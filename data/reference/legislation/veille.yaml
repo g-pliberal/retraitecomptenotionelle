@@ -409,7 +409,7 @@ entrees:
     prochaine_veille: "2026-12-31"
 
   - id: majoration_dix_pour_cent
-    regle: "Majoration de 10 % pour trois enfants, plafonnée à l'Agirc-Arrco."
+    regle: "Majoration de 10 % pour trois enfants au régime général, sur la retraite telle que calculée ; plafonnée en euros à l'Agirc-Arrco, dont les taux sont ceux de la ligne `majoration_enfants_agirc_arrco`."
     textes: ["L. 351-12 CSS", "accord national interprofessionnel Agirc-Arrco"]
     sources:
       - {type: autre, reference: "Agirc-Arrco, plafond de la majoration familiale (novembre 2025)", date: "2025-11-01"}
@@ -426,6 +426,59 @@ entrees:
       mesurant le TAUX et son assiette, pas l'écrêtement en euros de la
       complémentaire.
     prochaine_veille: "2026-11-30"
+
+  - id: majoration_enfants_agirc_arrco
+    regle: "Majoration pour enfants nés ou élevés de l'Agirc-Arrco par année d'acquisition des points : 10 à 30 % pour l'Arrco d'avant 1999 si le règlement de la caisse la prévoyait, 5 % pour l'Arrco de 1999 à 2011, 8 à 24 % pour l'Agirc d'avant 2012, 10 % depuis ; plafond en euros sur l'ensemble."
+    textes: ["accord national interprofessionnel du 17 novembre 2017, article 94"]
+    sources:
+      - {type: legifrance, reference: "ANI du 17 novembre 2017, article 94, base KALI (KALIARTI000036731850), version étendue en vigueur", url: "https://www.legifrance.gouv.fr/conv_coll/id/KALIARTI000036731850/?idConteneur=KALICONT000046709421", date: "2026-09-23"}
+      - {type: autre, reference: "Agirc-Arrco, dépliant « Décrypter la majoration pour enfants » (mars 2025), tableau des taux par période et exemple de Justine, 414,31 € par an", date: "2026-09-23"}
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: []
+    etat: conforme
+    effet: >-
+      Parents de trois enfants salariés du privé avant 2019. Le modèle servait
+      10 % à tous les points ; les points Arrco de 1999 à 2011 n'en valent que
+      5, ceux de l'Agirc d'avant 2012 de 8 à 24 % selon le nombre d'enfants.
+      Une non-cadre née en 1962 et entrée à 22 ans voit sa pension Arrco
+      majorée de 7,9 % pour trois enfants, et non de 10. La table est
+      `majoration_enfants_points.csv` ; l'exemple de la caisse est rejoué par
+      `test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition`, hors la
+      ligne de la Capaves.
+    a_faire: >-
+      Le modèle ne connaît pas la caisse Arrco d'avant 1999, et présume que
+      son règlement prévoyait la majoration, au barème de l'accord : la
+      Capaves de l'exemple n'en servait pas, la Camarca des salariés agricoles
+      servait 2,5 % par enfant. La majoration pour enfants à charge
+      (article 95, 5 % par enfant) n'est pas modélisée.
+    prochaine_veille: "2027-06-30"
+
+  - id: majoration_enfants_regimes_speciaux
+    regle: "Majoration pour enfants des régimes spéciaux : 10 % pour trois enfants et 5 % par enfant au-delà à la SNCF, à la RATP, aux IEG, à la CRPCEN, au SEITA, à l'Opéra et à la Comédie-Française ; 8,5 % puis 4,25 % à la Banque de France ; un dixième, sans supplément, aux mines."
+    textes: ["décret n° 2008-639, article 16", "décret n° 2008-637, article 25", "statut national des IEG, annexe 3, article 21", "décret n° 90-1215, article 94", "décret n° 62-766, article 118", "décret n° 68-382, article 18", "décret n° 68-960, article 16", "décret n° 2007-262, annexe, article 35", "décret n° 46-2769, article 139"]
+    sources:
+      - {type: legifrance, reference: "SNCF LEGIARTI000048240189, RATP LEGIARTI000047910443, IEG LEGIARTI000052046924 et sa version de 1946 LEGIARTI000006632496, CRPCEN LEGIARTI000047909826, SEITA LEGIARTI000006324645, lus dans l'index LEGI du dépôt", date: "2026-09-23"}
+      - {type: legifrance, reference: "Opéra LEGIARTI000019138600, Comédie-Française LEGIARTI000006765450, Banque de France LEGIARTI000047909725 (« 8, 5 % » et « 4, 25 % »), mines LEGIARTI000006765039", date: "2026-09-23"}
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: >-
+      Parents de quatre enfants et plus dans ces régimes : le modèle servait
+      10 % quel que soit le nombre d'enfants, 20 % sont dus à cinq ; la Banque
+      de France servait 10 % au lieu de 8,5. Et rien du tout aux mineurs, à
+      l'Opéra ni à la Comédie-Française, dont les fiches ne déclaraient pas la
+      majoration. Barème `taux_majoration_enfants` de chaque période ;
+      `test_les_regimes_speciaux_majorent_par_enfant_au_dela_de_trois`.
+    a_faire: >-
+      Les règlements d'avant les textes lus — SNCF et RATP avant juillet 2008,
+      Banque de France avant février 2007, CRPCEN avant 1990 — ne sont pas
+      dans l'index LEGI : le même barème leur est prêté. Le plafond de la
+      pension majorée au traitement ou à la rémunération n'est pas appliqué,
+      comme dans la fonction publique. Le CESE et les assemblées gardent
+      10 % sans supplément, faute de texte lu.
+    prochaine_veille: "2027-06-30"
 
   - id: minimum_garanti
     regle: "Plancher de la pension civile, barème en escalier sur la durée de services, référence gelée en 2004 puis indexée sur les prix."
@@ -4020,3 +4073,27 @@ journal:
       troisième ; la date d'effet des durées de la loi de financement pour
       2026 ; le minimum garanti de 2023 et le plafond du minimum contributif
       de 2024 ; la circulaire d'application de la surcote parentale.
+
+  - date: "2026-09-23"
+    session: "audit des formules, lot 2 (suite) : la majoration pour enfants"
+    consulte: >-
+      Accord national interprofessionnel du 17 novembre 2017, articles 94 et
+      95, sur Légifrance ; dépliant de l'Agirc-Arrco « Décrypter la majoration
+      pour enfants » (mars 2025) ; dans l'index LEGI, les articles de
+      majoration pour enfants des règlements de la SNCF, de la RATP, des IEG
+      (depuis 1946), de la CRPCEN, du SEITA, de l'Opéra, de la
+      Comédie-Française, de la Banque de France et des mines ; décret
+      n° 59-601 du CESE, qui n'en dit rien.
+    trouve: >-
+      La majoration de l'Agirc-Arrco dépend de l'année d'acquisition de chaque
+      point, que le modèle ignorait ; les régimes spéciaux ajoutent 5 % par
+      enfant au-delà du troisième, la Banque de France 4,25 % sur une base de
+      8,5 % ; trois régimes — mines, Opéra, Comédie-Française — la servent et
+      leur fiche ne la déclarait pas. Lignes `majoration_enfants_agirc_arrco`
+      et `majoration_enfants_regimes_speciaux`. Le témoin officiel de la Cnav
+      rapportait la majoration de tous les régimes à toutes les pensions : il
+      la rapporte désormais au seul régime de base.
+    reste: >-
+      La caisse Arrco d'avant 1999, que le modèle ne connaît pas ; la
+      majoration pour enfants à charge de l'Agirc-Arrco ; les règlements des
+      régimes spéciaux d'avant les textes lus ; le CESE et les assemblées.

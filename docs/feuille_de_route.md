@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 171<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 774<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 245<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 829<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14447,11 +14447,19 @@ légal (quatre trimestres aux générations 1965 à 1968, qui en recevaient zér
 `verifier_donnees.py` et non saisies dans le fichier. Deux tests mesuraient
 autre chose que leur titre : la fenêtre parentale figée à trois trimestres
 pour 1968, et la majoration de la fonction publique rapportée au total des
-pensions, RAFP compris. Restent au lot 2 : la majoration pour enfants de
-l'Agirc-Arrco par période d'acquisition et celle des régimes spéciaux par
-enfant au-delà du troisième ; la date d'effet des durées de la loi de
-financement pour 2026 ; le minimum garanti de 2023 et le plafond du minimum
-contributif de 2024.
+pensions, RAFP compris.
+
+La majoration pour enfants, ensuite : à l'Agirc-Arrco, chaque point porte le
+taux de son année d'acquisition (article 94 de l'accord du 17 novembre 2017,
+table `majoration_enfants_points.csv`, l'exemple du dépliant de la caisse
+rejoué) — une non-cadre de 1962 a sa pension Arrco majorée de 7,9 % et non de
+10 ; les régimes spéciaux ajoutent 5 % par enfant au-delà du troisième, la
+Banque de France sert 8,5 % puis 4,25 %, et les mines, l'Opéra et la
+Comédie-Française, qui la servent, ne la déclaraient pas. Le témoin de la Cnav
+rapportait la majoration de tous les régimes à toutes les pensions : il la
+rapporte au régime de base. Restent au lot 2 : la date d'effet des durées de
+la loi de financement pour 2026 ; le minimum garanti de 2023 et le plafond du
+minimum contributif de 2024.
 
 **Restent** les lots 3 (mécanique notionnelle et coût), 4 (chiffres du site
 et données), 5 (tests mal orientés) et 6 (consignes périmées).

@@ -997,8 +997,13 @@ précédent, et le modèle en prenait deux à l'envers.
    répartis sur ses mois. C'est le trimestre pour enfants qui ouvre le droit, et
    non le sexe.
 6. **Majoration pour trois enfants et plus** — <!--chiffre:tenu(test_la_majoration_de_10_pour_cent_n_apparait_qu_a_trois_enfants)-->10<!--/--> %, davantage dans la fonction
-   publique, calculée sur le montant DÉJÀ RELEVÉ par les minima, et plafonnée en
-   euros à la complémentaire.
+   publique et dans la plupart des régimes spéciaux, qui ajoutent un
+   supplément par enfant au-delà du troisième, calculée sur le montant DÉJÀ
+   RELEVÉ par les minima, et plafonnée en euros à la complémentaire. À
+   l'Agirc-Arrco, chaque point porte le taux de son année d'acquisition
+   (accord du 17 novembre 2017, article 94) : la pension Arrco d'une
+   non-cadre née en 1962 et entrée à vingt-deux ans se majore de <!--chiffre:tenu(test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition)-->7,9<!--/--> %
+   pour trois enfants, et non de dix pour cent.
 7. **Minimum vieillesse** — allocation différentielle qui complète tout le
    reste, majorations comprises, jusqu'au barème d'une personne seule. Servie à
    partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et toujours affichée comme une ligne séparée : ce n'est pas
@@ -1961,7 +1966,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->168<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->169<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->38<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 

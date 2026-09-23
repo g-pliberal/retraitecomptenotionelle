@@ -727,6 +727,29 @@ export class SurcoteParentale {
 }
 
 /**
+ * Majoration pour enfants de l'Agirc-Arrco, par période d'ACQUISITION des
+ * points — portage de `MajorationsEnfantsPoints` : 10 à 30 % pour l'Arrco
+ * d'avant 1999, 5 % de 1999 à 2011, 8 à 24 % pour l'Agirc d'avant 2012, 10 %
+ * depuis (accord du 17 novembre 2017, article 94).
+ */
+export class MajorationsEnfantsPoints {
+  constructor(paquet) {
+    // { régime : [[début, fin, barème, fiabilité], …] }
+    this._table = paquet.majoration_enfants_points ?? {};
+  }
+
+  /** Taux des points que `regime` a inscrits en `annee`, ou `null`. */
+  taux(regime, annee, nombreEnfants) {
+    for (const [debut, fin, bareme] of this._table[regime] ?? []) {
+      if (annee >= debut && annee <= fin) {
+        return bareme[Math.min(nombreEnfants, bareme.length - 1)];
+      }
+    }
+    return null;
+  }
+}
+
+/**
  * Départ anticipé pour carrière longue — article L. 351-1-1.
  *
  * La principale porte d'entrée avant l'âge légal, et la seule qui se déduise de

@@ -1,0 +1,49 @@
+# Majoration pour enfants nés ou élevés de l'Agirc-Arrco, par période
+# d'ACQUISITION des points
+# --------------------------------------------------------------------------
+# source_id: agirc_arrco_majorations_familiales
+#
+# Le taux ne dépend pas de la date du départ mais de l'année où chaque point a
+# été acquis, et du régime qui l'a inscrit. Accord national interprofessionnel
+# du 17 novembre 2017, article 94 (lu sur Légifrance le 23 septembre 2026) :
+#
+#   * « Pour les périodes antérieures au 1er janvier 1999, lorsqu'une
+#     majoration pour enfant né ou élevé est prévue par un règlement d'un
+#     ancien régime ARRCO au titre duquel relèvent les points inscrits
+#     antérieurement à 1999, la majoration de ces droits est égale à » 10 %
+#     pour trois enfants, 15 % pour quatre, 20 % pour cinq, 25 % pour six,
+#     30 % pour sept et plus ;
+#   * « Pour les points inscrits entre 1999 et 2011 au titre de l'ancien
+#     régime ARRCO, la majoration est égale à 5 % » ;
+#   * pour les points de l'ancien régime AGIRC d'avant 2012 : 8 % pour trois
+#     enfants, 12 % pour quatre, 16 % pour cinq, 20 % pour six, 24 % pour sept
+#     et plus ;
+#   * « Pour la part de l'allocation correspondant aux périodes à compter de
+#     2012, la majoration est égale à 10 % ».
+#
+# Le plafond en euros s'applique à la majoration entière, toutes périodes
+# confondues (même article) : c'est `plafond_majoration_enfants` des fiches.
+#
+# L'EXEMPLE DE LA CAISSE. Le dépliant « Décrypter la majoration pour enfants »
+# (Agirc-Arrco, mars 2025) chiffre Justine, non-cadre, trois enfants : 900
+# points AGRR de 1979 à 1989 à 10 %, 828 points Capaves de 1989 à 1998 sans
+# majoration, 1 260 points Arrco de 1999 à 2011 à 5 %, 720 de 2012 à 2018 et
+# 630 depuis 2019 à 10 %, au point de 1,4386 € : 129,47 + 0 + 90,63 + 103,58
+# + 90,63 = 414,31 € par an. `test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition`
+# le rejoue.
+#
+# CE QUE LE MODÈLE APPROCHE. Il ne connaît pas la caisse Arrco d'avant 1999, et
+# donc pas si son règlement prévoyait une majoration : il la présume, au barème
+# de l'accord — d'où la fiabilité `moyenne` de la première ligne. La Capaves de
+# l'exemple n'en servait pas, et la Camarca des salariés agricoles servait
+# 2,5 % par enfant.
+#
+# `regimes` liste les fiches qui inscrivent ces points ; `bareme`, le taux par
+# nombre d'enfants à partir de zéro, le dernier valant au-delà.
+regimes,acquis_debut,acquis_fin,bareme,fiabilite
+arrco arrco_tranche_2 arrco_tranche_2_entreprises_nouvelles unirs,1900,1998,0 0 0 0.10 0.15 0.20 0.25 0.30,moyenne
+arrco arrco_tranche_2 arrco_tranche_2_entreprises_nouvelles,1999,2011,0 0 0 0.05,haute
+arrco arrco_tranche_2 arrco_tranche_2_entreprises_nouvelles,2012,2018,0 0 0 0.10,haute
+agirc agirc_entreprises_nouvelles,1900,2011,0 0 0 0.08 0.12 0.16 0.20 0.24,haute
+agirc agirc_entreprises_nouvelles,2012,2018,0 0 0 0.10,haute
+agirc_arrco,2019,2100,0 0 0 0.10,haute

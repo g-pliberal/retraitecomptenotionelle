@@ -1244,6 +1244,90 @@ def test_sans_enfant_aucun_avantage_familial_n_est_cite(simulateur):
     assert actuel.total_contributif == pytest.approx(actuel.pension_annuelle)
 
 
+def test_les_regimes_speciaux_majorent_par_enfant_au_dela_de_trois(simulateur):
+    """Leurs textes ajoutent un supplément par enfant, et le modèle l'ignorait.
+
+    Le module servait 10 % à trois enfants comme à cinq dans tous les régimes
+    spéciaux, et rien aux mineurs, à l'Opéra ni à la Comédie-Française. Lus le
+    23 septembre 2026 : SNCF (décret n° 2008-639, article 16), RATP
+    (n° 2008-637, article 25), IEG (statut national, annexe 3, article 21),
+    CRPCEN (n° 90-1215, article 94), Opéra (n° 68-382, article 18),
+    Comédie-Française (n° 68-960, article 16) : 10 % pour trois enfants, 5 %
+    par enfant au-delà. Banque de France (n° 2007-262, annexe, article 35) :
+    8,5 % puis 4,25 %. Mines (n° 46-2769, article 139) : « un dixième », sans
+    supplément.
+    """
+    def taux(affiliation, enfants, annee_naissance=1960):
+        resultat = simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
+            annee_naissance=annee_naissance, sexe="F", affiliation=affiliation,
+            age_debut=22, age_liquidation=62, nombre_enfants=enfants))
+        majoration = next(a for a in resultat.avantages_appliques
+                          if a.code == "majoration_enfants")
+        pensions = {p.regime: p.montant for p in resultat.pensions_par_regime}
+        return {code: part / pensions[code] for code, part in majoration.par_regime}
+
+    for affiliation, regime in (("agent_sncf", "sncf"), ("agent_ratp", "ratp"),
+                                ("agent_ieg", "ieg"), ("clerc_de_notaire", "crpcen"),
+                                ("personnel_opera", "opera_de_paris"),
+                                ("personnel_comedie_francaise", "comedie_francaise")):
+        assert taux(affiliation, 3)[regime] == pytest.approx(0.10), affiliation
+        assert taux(affiliation, 5)[regime] == pytest.approx(0.20), affiliation
+    assert taux("agent_banque_de_france", 3)["banque_de_france"] == pytest.approx(0.085)
+    assert taux("agent_banque_de_france", 5)["banque_de_france"] == pytest.approx(0.17)
+    assert taux("mineur", 5, annee_naissance=1950)["mines"] == pytest.approx(0.10)
+
+
+def test_la_majoration_agirc_arrco_suit_la_periode_d_acquisition(simulateur):
+    """Chaque point à son taux, celui de son année d'acquisition.
+
+    Accord du 17 novembre 2017, article 94 : 10 à 30 % pour l'Arrco d'avant
+    1999 quand le règlement de la caisse la prévoyait, 5 % pour l'Arrco de 1999
+    à 2011, 8 à 24 % pour l'Agirc d'avant 2012, 10 % depuis. Le modèle servait
+    10 % à tous les points.
+
+    L'exemple du dépliant de la caisse (« Décrypter la majoration pour
+    enfants », mars 2025) : Justine, non-cadre, trois enfants, point à
+    1,4386 €. 900 points AGRR de 1979 à 1989 à 10 %, 1 260 points Arrco de 1999
+    à 2011 à 5 %, 720 de 2012 à 2018 et 630 depuis 2019 à 10 % : 129,47 +
+    90,63 + 103,58 + 90,63. Ses 828 points Capaves de 1989 à 1998 n'ont rien,
+    cette caisse ne servant pas de majoration : le modèle, qui ne connaît pas
+    la caisse, la présume — c'est la seule ligne de l'exemple qu'il ne peut pas
+    rejouer, et il la sert au barème de l'accord.
+    """
+    from retraite_notionnelle.scenarios.actuel import MajorationsEnfantsPoints
+
+    table = MajorationsEnfantsPoints(simulateur.scenario_actuel.parametres.racine_donnees)
+    point = 1.4386
+    justine = [("arrco", 1985, 900), ("arrco", 2005, 1260),
+               ("arrco", 2015, 720), ("agirc_arrco", 2022, 630)]
+    montants = [round(points * table.taux(regime, annee, 3) * point, 2)
+                for regime, annee, points in justine]
+    assert montants == [129.47, 90.63, 103.58, 90.63]
+    assert sum(montants) + 0.0 == pytest.approx(414.31)
+    assert table.taux("arrco", 1993, 3) == 0.10       # la Capaves n'en servait pas
+    # Le barème par enfant d'avant 2012 à l'Agirc, et d'avant 1999 à l'Arrco.
+    assert [table.taux("agirc", 2005, n) for n in (2, 3, 4, 7, 9)] == [
+        0.0, 0.08, 0.12, 0.24, 0.24]
+    assert [table.taux("arrco", 1990, n) for n in (3, 5, 8)] == [0.10, 0.20, 0.30]
+
+    # Dans le calcul : une non-cadre née en 1962, entrée à 22 ans, trois
+    # enfants. Ses points Arrco de 1984 à 2018 se majorent en moyenne de 7,9 %,
+    # ceux du régime unifié de 10 %, sa pension de base de 10 %.
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1962, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=22, age_liquidation=64, nombre_enfants=3)
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    majoration = next(a for a in resultat.avantages_appliques
+                      if a.code == "majoration_enfants")
+    pensions = {p.regime: p.montant for p in resultat.pensions_par_regime}
+    taux = {code: part / pensions[code] for code, part in majoration.par_regime}
+    assert taux["regime_general"] == pytest.approx(0.10)
+    assert taux["agirc_arrco"] == pytest.approx(0.10)
+    assert taux["arrco"] == pytest.approx(0.079, abs=0.0005)
+    assert sum(part for _, part in majoration.par_regime) == pytest.approx(
+        majoration.montant)
+
+
 def test_la_fonction_publique_majore_de_cinq_points_par_enfant_au_dela_de_trois():
     """10 % à trois enfants, puis 5 % par enfant supplémentaire.
 
