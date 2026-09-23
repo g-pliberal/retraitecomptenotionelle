@@ -227,6 +227,66 @@ test("les âges et la bonification des marins sont ceux du Python", () => {
   assert.ok(Math.abs(taux(5) - 0.15) < 1e-9);
 });
 
+/**
+ * Les sections de santé (action 89, 23 septembre 2026) : minoration par l'âge
+ * seul, à deux pentes à la CAVP, par génération à la CARCDSF de 2011 à 2023,
+ * taux plein anticipé des mères, majoration pour trois enfants. Les témoins
+ * figés n'ont ni mère ni enfant : cet essai rejoue ce que
+ * `tests/test_sections_sante.py` tient côté Python.
+ */
+test("les sections de santé minorent comme leurs règlements", () => {
+  const contexte = new Contexte(paquet);
+  const simulateur = contexte.simulateur();
+  const scenario = simulateur.scenarioActuel;
+  const calculer = (affiliation, naissance, age, sexe = "H", enfants = 0, debut = 21) =>
+    scenario.calculer(simulateur.carriereParcours({
+      annee_naissance: naissance, sexe, age_liquidation: age,
+      nombre_enfants: enfants, profil_carriere: "ascendant",
+      metiers: [{ affiliation, age_debut: debut, niveau_salaire: 1 }],
+    }));
+  const coefficient = (resultat, regime) => {
+    const detail = resultat.pensions_par_regime.find((p) => p.regime === regime).detail;
+    const lu = /coefficient (?:d'anticipation|de majoration) ([0-9.]+)/.exec(detail);
+    return lu ? Number(lu[1]) : 1;
+  };
+  const proche = (a, b) => assert.ok(Math.abs(a - b) < 1e-9, `${a} ≠ ${b}`);
+
+  const dentiste = "chirurgien_dentiste_ou_sage_femme";
+  proche(coefficient(calculer(dentiste, 1945, 63.25), "carcdsf_complementaire"), 0.90);
+  proche(coefficient(calculer(dentiste, 1955, 64), "carcdsf_complementaire"), 0.82);
+  proche(coefficient(calculer(dentiste, 1953, 63), "carcdsf_complementaire"), 0.8375);
+  proche(coefficient(calculer(dentiste, 1965, 63), "carcdsf_complementaire"), 0.85);
+  proche(coefficient(calculer(dentiste, 1960, 65, "F", 2), "carcdsf_complementaire"), 1);
+  proche(coefficient(calculer(dentiste, 1960, 64.75, "F", 2), "carcdsf_complementaire"), 0.8875);
+  proche(coefficient(calculer(dentiste, 1960, 65, "H", 2), "carcdsf_complementaire"), 0.90);
+  proche(coefficient(calculer(dentiste, 1957, 69), "carcdsf_complementaire"), 1.10);
+
+  proche(coefficient(calculer("pharmacien", 1975, 64), "cavp_complementaire"), 0.91);
+  proche(coefficient(calculer("pharmacien", 1954, 64), "cavp_complementaire"), 0.93);
+  proche(coefficient(calculer("pharmacien", 1960, 62), "cavp_complementaire"), 0.81);
+  proche(coefficient(calculer("veterinaire", 1945, 64), "carpv_complementaire"), 0.95);
+  proche(coefficient(calculer("medecin_liberal", 1950, 62.5), "carmf_complementaire"), 0.85);
+  proche(coefficient(calculer("auxiliaire_medical", 1958, 62, "H", 0, 30),
+    "carpimko_complementaire"), 0.80);
+
+  for (const statut of ["medecin_liberal", dentiste, "pharmacien", "auxiliaire_medical",
+    "veterinaire"]) {
+    const r = calculer(statut, 1960, 67, "F", 3);
+    const majoration = r.avantages_appliques
+      .filter((a) => a.code === "majoration_enfants")
+      .reduce((somme, a) => somme + a.montant, 0);
+    const pensions = r.pensions_par_regime.reduce((somme, p) => somme + p.montant, 0);
+    proche(majoration / pensions, 0.10);
+  }
+
+  const officier = simulateur.carriereParcours({
+    annee_naissance: 1955, sexe: "H", age_liquidation: 64, nombre_enfants: 0,
+    profil_carriere: "ascendant",
+    metiers: [{ affiliation: "officier_ministeriel", age_debut: 22, niveau_salaire: 1 }],
+  });
+  assert.equal(scenario.ageOuvertureDroit(officier), 62);
+});
+
 test("le seuil d'affiliation de l'élu local est lu comme en Python", () => {
   // L. 382-31 : le régime général n'est dû qu'au-dessus de la moitié du
   // plafond ; en deçà, l'élu n'a que l'Ircantec. Sans revenu, la liste des

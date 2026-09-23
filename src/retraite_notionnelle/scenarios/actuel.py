@@ -48,6 +48,7 @@ tous calculés sur les mêmes carrières et les mêmes séries.
 from __future__ import annotations
 
 import csv
+from bisect import bisect_right
 from dataclasses import dataclass, field, replace
 from pathlib import Path
 
@@ -306,6 +307,12 @@ class DureesRequisesRegimes:
         return valeur_par_generation(self._table[table], generations, generation)
 
 
+def _age_ou_rien(texte: str | None) -> float | None:
+    """Un âge de ``ages_regimes.csv``, ou ``None`` quand la case est vide."""
+    texte = (texte or "").strip()
+    return float(texte) if texte else None
+
+
 class AgesRegimes:
     """Âges PROPRES à un régime, par génération : ouverture et taux plein.
 
@@ -317,32 +324,65 @@ class AgesRegimes:
     celle de 1959, puis de six mois encore de 1965 à 1968 — sans rien devoir
     à la suspension de 2026. La fiche nomme sa table (``age_table``) ; la
     lecture est en escalier, comme celle des tables communes.
+
+    **La table peut aussi porter le coefficient de minoration**, quand le
+    règlement le fait dépendre de la génération : la CARCDSF minorait de
+    1,50 % par trimestre les nés depuis 1955 et de 5 % par année ceux d'avant
+    juillet 1951 (statuts approuvés le 13 avril 2011, bornes de l'arrêté du
+    9 juillet 2012). Colonne vide : le taux de la fiche.
     """
 
     FICHIER = "ages_regimes.csv"
 
     def __init__(self, racine: Path) -> None:
         self._table: dict[str, dict[float, tuple[float, float, Fiabilite]]] = {}
+        self._decotes: dict[str, dict[float, float | None]] = {}
         chemin = racine / "reference" / "legislation" / self.FICHIER
         if chemin.exists():
             with chemin.open(encoding="utf-8") as flux:
                 lignes = (l for l in flux if not l.lstrip().startswith("#"))
                 for ligne in csv.DictReader(lignes):
-                    self._table.setdefault(ligne["table"], {})[
-                        float(ligne["generation"])
-                    ] = (float(ligne["age_ouverture"]),
-                         float(ligne["age_taux_plein"]),
-                         Fiabilite.depuis_texte(ligne["fiabilite"]))
+                    generation = float(ligne["generation"])
+                    self._table.setdefault(ligne["table"], {})[generation] = (
+                        _age_ou_rien(ligne["age_ouverture"]),
+                        _age_ou_rien(ligne["age_taux_plein"]),
+                        Fiabilite.depuis_texte(ligne["fiabilite"]),
+                    )
+                    decote = (ligne.get("decote_par_trimestre") or "").strip()
+                    self._decotes.setdefault(ligne["table"], {})[generation] = (
+                        float(decote) if decote else None
+                    )
         self._generations = {cle: tuple(sorted(valeurs))
                              for cle, valeurs in self._table.items()}
 
-    def ages(self, table: str,
-             generation: float) -> tuple[float, float, Fiabilite] | None:
-        """Âge d'ouverture, âge du taux plein, fiabilité ; ``None`` hors table."""
+    def ages(self, table: str, generation: float
+             ) -> tuple[float | None, float | None, Fiabilite] | None:
+        """Âge d'ouverture, âge du taux plein, fiabilité ; ``None`` hors table.
+
+        Un âge laissé vide dans la table vaut ``None`` : le règlement renvoie
+        alors à l'âge de droit commun, que les tables communes portent déjà —
+        la CAVP ouvre sa complémentaire à l'âge de L. 161-17-2 et n'écrit en
+        propre que l'âge de son taux plein.
+        """
         generations = self._generations.get(table)
         if not generations:
             return None
         return valeur_par_generation(self._table[table], generations, generation)
+
+    def decote(self, table: str,
+               generation: float) -> tuple[float, Fiabilite] | None:
+        """Coefficient de minoration par trimestre que la table écrit pour
+        cette génération, et sa fiabilité ; ``None`` si la ligne n'en porte
+        pas, et la fiche garde alors le sien."""
+        generations = self._generations.get(table)
+        if not generations or generation < generations[0]:
+            return None
+        rang = bisect_right(generations, generation)
+        cle = generations[rang - 1]
+        decote = self._decotes[table].get(cle)
+        if decote is None:
+            return None
+        return decote, self._table[table][cle][2]
 
 
 class DureesRequisesFonctionPublique:
@@ -2533,7 +2573,7 @@ class ScenarioActuel:
         """
         if periode.age_table:
             propres = self.ages_regimes.ages(periode.age_table, carriere.generation)
-            if propres is not None:
+            if propres is not None and propres[0] is not None:
                 return propres[0]
         if periode.age_ouverture_par_generation:
             par_generation = self.ages_ouverture.age(carriere.generation)
@@ -2601,6 +2641,7 @@ class ScenarioActuel:
         d'âge à proposer, et non un âge de zéro.
         """
         annuites, autres = self._periodes_parcourues(carriere)
+        autres = self._sans_ages_propres(autres)
         retenues = annuites or autres
         if not retenues:
             return None
@@ -2611,6 +2652,25 @@ class ScenarioActuel:
         if anticipe is not None and anticipe < ouverture:
             return anticipe
         return ouverture
+
+    @staticmethod
+    def _sans_ages_propres(
+            periodes: list[tuple[str, PeriodeRegime]],
+    ) -> list[tuple[str, PeriodeRegime]]:
+        """Les périodes en points, moins les complémentaires qui ont leurs âges.
+
+        Une complémentaire qui a SES âges — la CAVOM, la CARPIMKO et la CAVP
+        ouvraient la leur à soixante ans aux générations d'avant 1956 et la
+        servaient au taux plein à soixante-cinq — ne dit pas quand le droit
+        s'ouvre ni quand il est entier : c'est le régime de base qu'elle
+        accompagne toujours qui le dit, et :meth:`calculer` l'écarte déjà. Les
+        deux règles d'âge des cas types la gardaient, et proposaient soixante
+        ans à un officier ministériel né en 1955 que le calcul refusait à cet
+        âge. Si rien d'autre ne reste, on la garde.
+        """
+        communes = [(code, periode) for code, periode in periodes
+                    if not periode.age_table]
+        return communes or periodes
 
     def _age_carriere_longue(self, carriere: Carriere,
                              periodes: list[tuple[str, PeriodeRegime]]
@@ -2705,6 +2765,7 @@ class ScenarioActuel:
         ``None`` dans le même cas que :meth:`age_ouverture_droit`.
         """
         annuites, autres = self._periodes_parcourues(carriere)
+        autres = self._sans_ages_propres(autres)
         retenues = annuites or autres
         if not retenues:
             return None
@@ -2785,7 +2846,7 @@ class ScenarioActuel:
             return derogation.age_annulation
         if periode.age_table:
             propres = self.ages_regimes.ages(periode.age_table, carriere.generation)
-            if propres is not None:
+            if propres is not None and propres[1] is not None:
                 return propres[1]
         if periode.age_taux_plein_par_generation:
             par_generation = self.ages_annulation_decote.age(carriere.generation)
@@ -2854,6 +2915,12 @@ class ScenarioActuel:
             return coefficient, age_annulation - trimestres_avant / 4.0, fiabilite
         if periode.decote_par_trimestre is None:
             return None, age_annulation, None
+        if periode.age_table:
+            # Le taux que le règlement de la section écrit pour la génération,
+            # quand il en écrit un : la CARCDSF de 2011 à 2023.
+            propre = self.ages_regimes.decote(periode.age_table, carriere.generation)
+            if propre is not None:
+                return propre[0], age_annulation, propre[1]
         if periode.decote_par_generation:
             par_generation = self.coefficients_minoration.coefficient(
                 carriere.generation
@@ -3106,6 +3173,9 @@ class ScenarioActuel:
                 periode, carriere, trimestres, requis,
                 age_liquidation, annee_liquidation,
             )
+        if abattement < 1.0 and self._taux_plein_anticipe(
+                periode, carriere, age_liquidation):
+            abattement = 1.0
 
         if abattement < 1.0:
             # ABATTU ET MAJORÉ NE SE RENCONTRENT PAS. Les deux majorations de
@@ -3119,12 +3189,52 @@ class ScenarioActuel:
             age_liquidation, annee_liquidation, trimestres_regime,
         )
 
+    def _taux_plein_anticipe(self, periode: PeriodeRegime, carriere: Carriere,
+                             age_liquidation: float) -> bool:
+        """Le taux plein qu'une section ouvre aux mères avant son âge.
+
+        La CARCDSF permet « un départ anticipé à la retraite sans qu'il soit
+        fait application du taux de minoration […] aux affiliées
+        chirurgiens-dentistes ou sages-femmes, au titre de l'incidence sur leur
+        vie professionnelle de la maternité […] à raison d'une année
+        d'anticipation par enfant mis au monde, dans la limite de 5 années
+        maximum » (statuts approuvés le 13 avril 2011, article 19 II, puis
+        règlement du 10 juillet 2026, article 3 II) ; ses statuts de 2007
+        l'écrivaient déjà, de 64 ans pour un enfant à 60 ans pour cinq.
+
+        Les dispositions générales et particulières « sont exclusives les unes
+        des autres » (article 4) : l'anticipation n'abaisse pas l'âge dont se
+        compte la minoration, elle ouvre le taux plein à un âge. Une mère de
+        deux enfants partie à 65 ans n'en perd rien ; partie à 64, elle est
+        minorée comme tout affilié, depuis 67 ans.
+        """
+        if (periode.taux_plein_anticipe_par_enfant_annees is None
+                or carriere.sexe != "F" or carriere.nombre_enfants <= 0):
+            return False
+        anticipation = (carriere.nombre_enfants
+                        * periode.taux_plein_anticipe_par_enfant_annees)
+        if periode.taux_plein_anticipe_maximum_annees is not None:
+            anticipation = min(anticipation,
+                               periode.taux_plein_anticipe_maximum_annees)
+        return (age_liquidation
+                >= self._age_taux_plein(periode, carriere) - anticipation - 1e-9)
+
     def _abattement_regime_de_base(self, periode: PeriodeRegime,
                                    carriere: Carriere, trimestres: int,
                                    requis: int, age_liquidation: float,
                                    annee_liquidation: int) -> float:
         """Coefficient qui reprend la décote du régime de base : un taux par
-        trimestre manquant, au plus favorable de l'âge et de la durée."""
+        trimestre manquant, au plus favorable de l'âge et de la durée.
+
+        **Deux pentes, quand la fiche en écrit deux.** La CAVP minore « de
+        1,25 % par trimestre d'anticipation entre l'âge d'ouverture des droits
+        et 65 ans ; 0,5 % par trimestre d'anticipation entre 65 ans et l'âge
+        fixé au 1° de l'article L. 351-8 » (règlement approuvé le 10 juillet
+        2026, article 12, déjà dans ses statuts depuis l'arrêté du 23 juin
+        2011). Les trimestres d'avant le palier se comptent au premier taux,
+        les autres au second : un pharmacien parti à soixante-quatre ans en
+        perd quatre à 1,25 % et huit à 0,5 %, soit 9 %.
+        """
         decote, age_annulation, _ = self._decote(
             periode, carriere, annee_liquidation
         )
@@ -3134,6 +3244,14 @@ class ScenarioActuel:
             periode, carriere, trimestres, requis, age_liquidation,
             age_annulation
         )
+        if (periode.decote_palier_age is not None
+                and periode.decote_par_trimestre_apres_palier is not None
+                and trimestres_decote > 0):
+            avant = min(trimestres_decote, max(0, _au_trimestre_superieur(
+                (periode.decote_palier_age - age_liquidation) * 4)))
+            apres = trimestres_decote - avant
+            return max(0.0, 1.0 - decote * avant
+                       - periode.decote_par_trimestre_apres_palier * apres)
         return max(0.0, 1.0 - decote * trimestres_decote)
 
     def _abattement_ircec(self, periode: PeriodeRegime, carriere: Carriere,

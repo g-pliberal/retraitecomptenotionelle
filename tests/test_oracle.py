@@ -1599,6 +1599,17 @@ def test_les_exemples_publies_par_les_caisses_sont_reproduits(simulateur, exempl
             base = next(p.montant for p in resultat.pensions_par_regime
                         if p.regime == "regime_general")
             assert base / sam == pytest.approx(valeur, abs=1e-9)
+        elif cle == "coefficients_des_regimes":
+            # Le coefficient d'anticipation ou de majoration qu'une section
+            # applique à sa complémentaire, tel que la formule affichée
+            # l'écrit ; aucun coefficient écrit vaut 1.
+            pensions = {p.regime: p for p in resultat.pensions_par_regime}
+            for regime, coefficient in valeur.items():
+                detail = pensions[regime].detail
+                lu = re.search(r"coefficient (?:d'anticipation|de majoration) ([0-9.]+)",
+                               detail)
+                assert (float(lu.group(1)) if lu else 1.0) == pytest.approx(
+                    coefficient, abs=1e-9), (cle, regime, detail)
         elif cle == "pension_regime_general_mensuelle":
             base = next(p.montant for p in resultat.pensions_par_regime
                         if p.regime == "regime_general")
@@ -1611,7 +1622,8 @@ def test_le_temoin_des_exemples_officiels_est_source():
     """Chaque exemple dit qui l'a publié, où, et quand il a été vérifié."""
     for exemple in _charger_exemples():
         source = exemple["source"]
-        assert source["editeur"] in ("service-public.gouv.fr", "Cnav", "ENIM"), exemple["id"]
+        assert source["editeur"] in ("service-public.gouv.fr", "Cnav", "ENIM",
+                                     "CARCDSF", "CARMF"), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]
         assert len(exemple["enonce"].split()) >= 12, exemple["id"]

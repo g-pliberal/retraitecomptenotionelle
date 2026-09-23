@@ -145,7 +145,24 @@ export class AgesRegimes {
    */
   ages(table, generation) {
     const lue = this._tables.get(table);
-    return lue ? lue.valeur(generation) : null;
+    const ligne = lue ? lue.valeur(generation) : null;
+    return ligne ? ligne.slice(0, 3) : null;
+  }
+
+  /**
+   * Coefficient de minoration par trimestre que la table écrit pour cette
+   * génération — la CARCDSF de 2011 à 2023 —, et sa fiabilité ; `null` si
+   * la ligne n'en porte pas, et la fiche garde alors le sien.
+   *
+   * @returns {[number, number] | null}
+   */
+  decote(table, generation) {
+    const lue = this._tables.get(table);
+    const ligne = lue ? lue.valeur(generation) : null;
+    if (!ligne || ligne[3] === null || ligne[3] === undefined) {
+      return null;
+    }
+    return [ligne[3], ligne[2]];
   }
 }
 

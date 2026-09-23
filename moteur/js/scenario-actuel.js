@@ -869,7 +869,8 @@ export class ScenarioActuel {
   ageOuvertureCommun(periode, carriere) {
     if (periode.age_table) {
       const propres = this.agesRegimes.ages(periode.age_table, carriere.generation);
-      if (propres !== null) {
+      // Un âge vide renvoie au droit commun, que les tables communes portent.
+      if (propres !== null && propres[0] !== null) {
         return propres[0];
       }
     }
@@ -939,7 +940,8 @@ export class ScenarioActuel {
    * répondent. `null` quand aucun régime connu n'est parcouru.
    */
   ageOuvertureDroit(carriere) {
-    const { annuites, autres } = this.periodesParcourues(carriere);
+    const { annuites, autres: enPoints } = this.periodesParcourues(carriere);
+    const autres = this.sansAgesPropres(enPoints);
     const retenues = annuites.length > 0 ? annuites : autres;
     if (retenues.length === 0) {
       return null;
@@ -1028,8 +1030,21 @@ export class ScenarioActuel {
       && periode.abattement_points !== "ircantec");
   }
 
+  /**
+   * Les périodes en points, moins les complémentaires qui ont leurs âges : une
+   * complémentaire qui a SES âges ne dit pas quand le droit s'ouvre ni quand il
+   * est entier, c'est le régime de base qu'elle accompagne qui le dit, et
+   * `calculer` l'écarte déjà. Si rien d'autre ne reste, on la garde. Voir le
+   * modèle Python.
+   */
+  sansAgesPropres(periodes) {
+    const communes = periodes.filter(([, periode]) => !periode.age_table);
+    return communes.length > 0 ? communes : periodes;
+  }
+
   ageTauxPleinDroit(carriere) {
-    const { annuites, autres } = this.periodesParcourues(carriere);
+    const { annuites, autres: enPoints } = this.periodesParcourues(carriere);
+    const autres = this.sansAgesPropres(enPoints);
     const retenues = annuites.length > 0 ? annuites : autres;
     if (retenues.length === 0) {
       return null;
@@ -1102,7 +1117,7 @@ export class ScenarioActuel {
     }
     if (periode.age_table) {
       const propres = this.agesRegimes.ages(periode.age_table, carriere.generation);
-      if (propres !== null) {
+      if (propres !== null && propres[1] !== null) {
         return propres[1];
       }
     }
@@ -1159,6 +1174,14 @@ export class ScenarioActuel {
     }
     if (periode.decote_par_trimestre === null) {
       return [null, ageAnnulation, null];
+    }
+    if (periode.age_table) {
+      // Le taux que le règlement de la section écrit pour la génération,
+      // quand il en écrit un : la CARCDSF de 2011 à 2023.
+      const propre = this.agesRegimes.decote(periode.age_table, carriere.generation);
+      if (propre !== null) {
+        return [propre[0], ageAnnulation, propre[1]];
+      }
     }
     if (periode.decote_par_generation) {
       const parGeneration = this.coefficientsMinoration.coefficient(
@@ -1284,7 +1307,12 @@ export class ScenarioActuel {
       / (passAnnuel - 2 * minimumContributif));
   }
 
-  /** Coefficient qui reprend la décote du régime de base. */
+  /**
+   * Coefficient qui reprend la décote du régime de base — à deux pentes quand
+   * la fiche en écrit deux : la CAVP minore de 1,25 % par trimestre jusqu'à
+   * 65 ans et de 0,5 % de 65 ans à l'âge du taux plein. Les trimestres d'avant
+   * le palier se comptent au premier taux. Voir le modèle Python.
+   */
   abattementRegimeDeBase(periode, carriere, trimestres, requis, ageLiquidation,
     anneeLiquidation) {
     const [decote, ageAnnulation] = this.decote(periode, carriere, anneeLiquidation);
@@ -1294,7 +1322,36 @@ export class ScenarioActuel {
     const trimestresDecote = this.trimestresDeDecote(
       periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
     );
+    const palier = periode.decote_palier_age ?? null;
+    const tauxApres = periode.decote_par_trimestre_apres_palier ?? null;
+    if (palier !== null && tauxApres !== null && trimestresDecote > 0) {
+      const avant = Math.min(
+        trimestresDecote, auTrimestreSuperieur((palier - ageLiquidation) * 4),
+      );
+      const apres = trimestresDecote - avant;
+      return Math.max(0.0, 1.0 - decote * avant - tauxApres * apres);
+    }
     return Math.max(0.0, 1.0 - decote * trimestresDecote);
+  }
+
+  /**
+   * Le taux plein qu'une section ouvre aux mères avant son âge : une année
+   * par enfant à la CARCDSF, cinq au plus. Les dispositions générales et
+   * particulières « sont exclusives les unes des autres » : l'anticipation
+   * ouvre le taux plein à un âge, elle n'abaisse pas l'âge dont se compte la
+   * minoration. Voir le modèle Python.
+   */
+  tauxPleinAnticipe(periode, carriere, ageLiquidation) {
+    const parEnfant = periode.taux_plein_anticipe_par_enfant_annees ?? null;
+    if (parEnfant === null || carriere.sexe !== "F" || carriere.nombre_enfants <= 0) {
+      return false;
+    }
+    let anticipation = carriere.nombre_enfants * parEnfant;
+    const maximum = periode.taux_plein_anticipe_maximum_annees ?? null;
+    if (maximum !== null) {
+      anticipation = Math.min(anticipation, maximum);
+    }
+    return ageLiquidation >= this.ageTauxPlein(periode, carriere) - anticipation - 1e-9;
   }
 
   /**
@@ -1371,6 +1428,9 @@ export class ScenarioActuel {
       abattement = this.abattementRegimeDeBase(
         periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
       );
+    }
+    if (abattement < 1.0 && this.tauxPleinAnticipe(periode, carriere, ageLiquidation)) {
+      abattement = 1.0;
     }
 
     // Abattu et majoré ne se rencontrent pas : les deux majorations de

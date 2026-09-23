@@ -594,6 +594,7 @@ def _regimes() -> list[dict]:
                     "avantages_non_contributifs": list(p.avantages_non_contributifs),
                     "notes": p.notes,
                     **_regles_des_marins(p),
+                    **_regles_des_sections(p),
                 }
                 for p in regime.periodes
             ],
@@ -618,6 +619,23 @@ def _regles_des_marins(p) -> dict:
             p.pension_speciale_age_sans_autre_pension,
         "taux_majoration_enfants": (list(p.taux_majoration_enfants)
                                     if p.taux_majoration_enfants else None),
+    }
+    return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
+
+
+def _regles_des_sections(p) -> dict:
+    """Les champs que seules quelques sections libérales portent, et seulement là.
+
+    La décote à deux pentes de la CAVP, le taux plein anticipé des mères de la
+    CARCDSF : même raison que pour les marins, le moteur JavaScript lit leur
+    absence comme leur nullité.
+    """
+    champs = {
+        "decote_palier_age": p.decote_palier_age,
+        "decote_par_trimestre_apres_palier": p.decote_par_trimestre_apres_palier,
+        "taux_plein_anticipe_par_enfant_annees":
+            p.taux_plein_anticipe_par_enfant_annees,
+        "taux_plein_anticipe_maximum_annees": p.taux_plein_anticipe_maximum_annees,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 
@@ -815,17 +833,20 @@ def _table_par_generation(classe) -> dict:
 
 
 def _ages_regimes() -> dict:
-    """Âges propres à un régime, par génération : ouverture et taux plein."""
+    """Âges propres à un régime, par génération : ouverture, taux plein,
+    fiabilité et, quand la table en écrit un, coefficient de minoration."""
     from retraite_notionnelle.scenarios.actuel import AgesRegimes
 
+    ages = AgesRegimes(DONNEES)
     return {
         table: {
             (str(int(generation)) if float(generation).is_integer()
-             else str(generation)): [ouverture, taux_plein, int(fiabilite)]
+             else str(generation)): [ouverture, taux_plein, int(fiabilite),
+                                     ages._decotes[table].get(generation)]
             for generation, (ouverture, taux_plein, fiabilite)
             in sorted(lignes.items())
         }
-        for table, lignes in sorted(AgesRegimes(DONNEES)._table.items())
+        for table, lignes in sorted(ages._table.items())
     }
 
 

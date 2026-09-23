@@ -210,6 +210,18 @@ class PeriodeRegime:
     #: régimes qui en appliquent une : au-delà, le taux ne descend plus.
     #: ``None`` lève le plafond.
     decote_trimestres_maximum: int | None
+    #: Décote à DEUX PENTES d'un régime en points : les trimestres manquants
+    #: au-delà de cet âge se comptent au second taux. La CAVP minore de 1,25 %
+    #: par trimestre jusqu'à 65 ans et de 0,5 % de 65 ans à l'âge du taux
+    #: plein. ``None`` : un seul taux.
+    decote_palier_age: float | None
+    decote_par_trimestre_apres_palier: float | None
+    #: Taux plein ANTICIPÉ d'une affiliée, par enfant : d'autant d'années
+    #: avant l'âge du taux plein, dans la limite du maximum. La CARCDSF l'ouvre
+    #: « à raison d'une année d'anticipation par enfant mis au monde, dans la
+    #: limite de 5 années ». ``None`` : aucun.
+    taux_plein_anticipe_par_enfant_annees: float | None
+    taux_plein_anticipe_maximum_annees: float | None
     surcote_par_trimestre: float | None
     #: Barème DATÉ de la surcote — ``regime_general`` ou ``fonction_publique`` —,
     #: lu dans ``legislation/surcote_baremes.csv`` trimestre par trimestre ;
@@ -967,6 +979,22 @@ class CatalogueRegimes:
                     None if "decote_trimestres_maximum" in p
                     and p["decote_trimestres_maximum"] is None
                     else int(p.get("decote_trimestres_maximum", 20))
+                ),
+                decote_palier_age=(
+                    None if p.get("decote_palier_age") is None
+                    else float(p["decote_palier_age"])
+                ),
+                decote_par_trimestre_apres_palier=(
+                    None if p.get("decote_par_trimestre_apres_palier") is None
+                    else float(p["decote_par_trimestre_apres_palier"])
+                ),
+                taux_plein_anticipe_par_enfant_annees=(
+                    None if p.get("taux_plein_anticipe_par_enfant_annees") is None
+                    else float(p["taux_plein_anticipe_par_enfant_annees"])
+                ),
+                taux_plein_anticipe_maximum_annees=(
+                    None if p.get("taux_plein_anticipe_maximum_annees") is None
+                    else float(p["taux_plein_anticipe_maximum_annees"])
                 ),
                 surcote_par_trimestre=(
                     None if p.get("surcote_par_trimestre") is None
