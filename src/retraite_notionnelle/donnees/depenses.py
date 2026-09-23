@@ -305,5 +305,25 @@ class DepensesRetraite:
             for systeme in SYSTEMES if systeme.repartition
         )
 
+    def part_repartition(self, annee: int) -> float:
+        """La part du total publié qui est une pension de répartition obligatoire.
+
+        C'est la seule part de la dépense que le rapport de masses d'un
+        scénario décrit : les cas types ne touchent ni l'allocation
+        personnalisée d'autonomie, ni la retraite supplémentaire, ni le minimum
+        vieillesse. Jusqu'au 23 septembre 2026, le coût du passé appliquait
+        pourtant le rapport au total du risque, et un système qui versait moitié
+        moins de pensions y versait aussi moitié moins d'aide à l'autonomie.
+
+        Lue sur la ventilation là où elle existe — 90,3 % en 1990, 93,5 % en
+        2024. AVANT 1990, la DREES ne ventile pas, et la part de 1990 est
+        reconduite : c'est une hypothèse, et elle est prudente dans un sens
+        connu — l'aide à l'autonomie n'existait pas, mais le minimum vieillesse
+        pesait plus lourd, et la retraite supplémentaire moins.
+        """
+        reperee = min(max(annee, self.premiere_annee_ventilee), self.derniere_annee)
+        total = self.depense(reperee)
+        return self.repartition(reperee) / total if total else 1.0
+
     def fiabilite(self, annee: int) -> Fiabilite:
         return min(self.total.fiabilite(annee), self.pib.fiabilite(annee))

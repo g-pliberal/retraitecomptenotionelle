@@ -251,6 +251,18 @@ export class DepensesRetraite {
     return somme;
   }
 
+  /**
+   * La part du total publié qui est une pension de répartition obligatoire :
+   * la seule que le rapport de masses d'un scénario décrit. Lue sur la
+   * ventilation, et reconduite avant sa première année — voir le modèle Python.
+   */
+  partRepartition(annee) {
+    const reperee = Math.min(Math.max(annee, this.premiereAnneeVentilee),
+                             this.derniereAnnee);
+    const total = this.depense(reperee);
+    return total ? this.repartition(reperee) / total : 1.0;
+  }
+
   fiabilite(annee) {
     return Math.min(this.total.fiabilite(annee), this.pib.fiabilite(annee));
   }

@@ -44,6 +44,7 @@ from retraite_notionnelle.cout import (
     CONVENTION_REVERSION_SUPPRIMEE,
     Dette,
     calculer_dette,
+    masse_du_scenario,
 )
 from retraite_notionnelle.donnees.assiette import (
     POSTES_ASSIETTE,
@@ -194,11 +195,47 @@ def test_les_generations_couvrent_la_fenetre():
 
 
 def test_le_cout_du_systeme_actuel_est_la_depense_observee(cout):
-    """L'étalon n'est pas corrigé : son rapport vaut un, année après année."""
+    """L'étalon n'est pas corrigé : son rapport vaut un, année après année, et
+    son coût est la dépense de pensions observée."""
     for ligne in cout.annees:
         assert ligne.rapports["actuel"] == 1.0
-        assert ligne.cout("actuel") == ligne.observee
-    assert cout.cumul("actuel") == pytest.approx(cout.cumul_observe())
+        assert ligne.cout("actuel") == ligne.pensions
+    assert cout.cumul("actuel") == pytest.approx(
+        sum(ligne.pensions * ligne.coefficient_constants for ligne in cout.annees))
+
+
+def test_le_rapport_ne_touche_que_les_pensions_de_repartition(cout, depenses):
+    """L'aide à l'autonomie, la retraite supplémentaire et le minimum vieillesse
+    sont dans le risque vieillesse-survie, et ne sont la pension d'aucun système.
+    Le rapport de masses ne les multiplie donc pas : la base de tous les
+    systèmes est la répartition obligatoire, lue sur la ventilation, et sa part
+    de 1990 avant que la ventilation commence. Jusqu'au 23 septembre 2026, le
+    rapport multipliait le total, et les économies du passé en étaient grossies
+    de près d'un dixième."""
+    premiere = depenses.premiere_annee_ventilee
+    part_premiere = depenses.repartition(premiere) / depenses.depense(premiere)
+    for ligne in cout.annees:
+        if ligne.annee >= premiere:
+            assert ligne.pensions == pytest.approx(depenses.repartition(ligne.annee))
+        else:
+            assert ligne.part_repartition == pytest.approx(part_premiere)
+        assert 0.85 < ligne.part_repartition < 0.95, ligne.annee
+        # Ce qui n'est pas une pension reste hors du compte : le coût d'un
+        # système est la base, droits directs multipliés, et rien d'autre.
+        assert ligne.cout("notionnel_retroactif") == pytest.approx(
+            ligne.pensions * (1.0 - ligne.part_derives)
+            * ligne.rapports["notionnel_retroactif"])
+    # L'économie du passé est une économie de pensions : elle ne dépasse pas
+    # les pensions observées, et elle est plus petite que si le rapport
+    # multipliait le total.
+    economie = cout.cumul("actuel") - cout.cumul("notionnel_retroactif")
+    sur_le_total = sum(
+        (ligne.observee - masse_du_scenario(
+            ligne.observee, ligne.part_derives, ligne.rapports["notionnel_retroactif"],
+            "notionnel_retroactif", ligne.reversion_servie, ligne.reforme_en_vigueur))
+        * ligne.coefficient_constants for ligne in cout.annees)
+    assert 0.0 < economie < cout.cumul("actuel")
+    assert 0.05 < 1.0 - economie / sur_le_total < 0.15
 
 
 def test_une_reforme_prospective_ne_deplace_rien_avant_sa_bascule(cout):
@@ -2166,7 +2203,7 @@ def test_le_systeme_actuel_garde_sa_base_intacte(cout_assiette: Cout):
         assert point.depense("actuel") == point.depenses, point.annee
         assert point.rapports["actuel"] == 1.0, point.annee
     for point in cout_assiette.annees:
-        assert point.cout("actuel") == point.observee, point.annee
+        assert point.cout("actuel") == point.pensions, point.annee
 
 
 def test_les_postes_somment_au_total_de_chaque_systeme(cout_assiette: Cout):

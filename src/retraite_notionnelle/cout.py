@@ -475,10 +475,31 @@ class CoutAnnuel:
     #: sont le système actuel avant elle et servent donc sa réversion ;
     #: après, elles ne la servent plus, à personne.
     reforme_en_vigueur: bool = True
+    #: La part de la dépense observée qui est une pension de répartition
+    #: obligatoire : la seule que le rapport décrit.
+    #: ``DepensesRetraite.part_repartition`` dit d'où elle vient.
+    part_repartition: float = 1.0
+
+    @property
+    def pensions(self) -> float:
+        """Les pensions de répartition obligatoire, en millions d'euros courants.
+
+        C'est la base de tous les systèmes, le système actuel compris. Le reste
+        du risque vieillesse-survie — aide à l'autonomie, retraite
+        supplémentaire, minimum vieillesse — n'est la pension d'aucun d'eux :
+        le compter dans le système actuel et le réduire dans les autres
+        faisait passer pour une économie de retraite ce qui n'en était pas une.
+        """
+        return self.observee * self.part_repartition
+
+    @property
+    def part_pib_pensions(self) -> float:
+        """La part de ces pensions dans le PIB de l'année."""
+        return self.part_pib * self.part_repartition
 
     def cout(self, scenario: str) -> float:
         """Coût du système, en millions d'euros courants de l'année."""
-        return masse_du_scenario(self.observee, self.part_derives,
+        return masse_du_scenario(self.pensions, self.part_derives,
                                  self.rapports[scenario], scenario,
                                  self.reversion_servie, self.reforme_en_vigueur)
 
@@ -3263,18 +3284,21 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
         observee = depenses.depense(annee)
         coefficient = macro.coefficient_prix(annee, annee_euros)
         part_derives = depenses.part_droits_derives(annee)
+        part_repartition = depenses.part_repartition(annee)
         projetee = garantie.chiffrer(masses, tetes)
         lignes.append(CoutAnnuel(
             annee=annee,
             observee=observee,
             coefficient_constants=coefficient,
             part_pib=depenses.part_pib(annee),
-            rapports=_rapports(masses, projetee, observee * coefficient, part_derives),
+            rapports=_rapports(masses, projetee,
+                               observee * part_repartition * coefficient, part_derives),
             garantie=projetee,
             pensionnes=vivants,
             part_derives=part_derives,
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
+            part_repartition=part_repartition,
         ))
 
     fiabilite = min(
