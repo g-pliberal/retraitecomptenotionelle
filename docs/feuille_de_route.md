@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 283<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->34 817<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->34 910<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14594,3 +14594,98 @@ préchargement du module), `scripts/fetch/cnav_revalorisation_pensions.py`,
 (nouveau), `tests/test_web.py`, `tests/test_affirmations.py`,
 `data/reference/site/affirmations.yaml`, `tests/temoins/`,
 `data/reference/legislation/veille.yaml`, `docs/limites.md` §3.
+
+### 113. De combien la retraite baisse : l'ordre de grandeur, dit à l'électeur — `fait`
+
+**Demande.** « Tu ajouter l'indication de combien baissent les retraites entre
+la situation actuelle et la situation du parti libéral français ? J'aimerais
+qu'on donne l'ordre de grandeur pour que les gens aient une idée de la
+baisse. » (23 septembre 2026)
+
+**Ce qui manquait.** À « Ma retraite va-t-elle baisser ? », l'accueil
+répondait « le plus souvent, elle sera plus basse que ce que le système actuel
+promet », sans dire de combien. Le chiffre était ailleurs, carrière par
+carrière — la glose de la barre 4, la grille des cas types —, et nulle part en
+un ordre de grandeur. La page Carrières types, elle, ouvrait sur « Ces
+pourcentages ne sont pas des baisses de pension » : une phrase du 17 septembre,
+écrite quand on croyait le coefficient de la proposition supérieur à un, une
+marge qui aurait relevé ses cases. Il est passé sous un le 20, et la phrase
+était restée.
+
+**Ce qui a été mesuré**, sur la grille — treize carrières, sept générations,
+réglages de référence —, l'écart médian de la proposition au système actuel :
+
+- 31 % de moins pour les cinquante carrières pas encore liquidées en 2026,
+  sans rien ajouter : la répartition et les cinq points capitalisés
+  obligatoires ;
+- 24 % en plaçant les cinq points rendus, l'écart que la grille affiche ;
+- 26 % sur la pension d'aujourd'hui des quarante et une carrières déjà
+  liquidées, recalculée, garantie vieillesse comprise. Au départ, la grille en
+  affiche 47 : la garantie ne s'ouvre qu'à 65 ans, et les deux pensions n'ont
+  pas été revalorisées de la même façon depuis.
+
+D'où « de l'ordre d'un quart à un tiers ». Quatre contre-épreuves, laissées
+hors du site parce qu'elles disent la même chose : pondérées par les effectifs
+de retraités de 2024, les trois médianes font 33, 25 et 27 % ; pour un couple
+plutôt qu'une personne seule, 31, 24 et 27 % ; ramenées chacune au coefficient
+d'équilibre de son année de départ, les carrières à venir perdent 29 % au lieu
+de 24 — le réglage n'aurait pas relevé la proposition, il l'aurait abaissée ;
+et en masse, la part contributive de la proposition — hors garantie, payée par
+l'impôt, et hors rente capitalisée — est inférieure de 35 % à la dépense du
+système actuel en 2026, de 30 % en 2040.
+
+**Ce qui a été fait.**
+
+- *Le modèle* : `castypes.ecarts_medians` et `EcartsMedians`, trois médianes
+  basses de la grille, à la convention de `_deplacement_des_ecarts`.
+- *Le bilan figé les porte.* `scripts/construire_donnees.py` les écrit dans
+  `data/derive/equilibre.json`, sous `ecarts_medians`, et les deux portages
+  les relisent (`EcartsFiges`). L'accueil ne simule toujours rien : il lit ces
+  médianes comme la page des résultats lit les coefficients, sous les
+  réglages de référence qui sont toujours les siens. Cinq secondes de plus à
+  la construction.
+- *L'accueil les dit à deux endroits.* Le tableau « Ce que cela change »,
+  ouvert, gagne une ligne : « Votre retraite — ce que votre régime promet — de
+  l'ordre d'un quart à un tiers de moins, en médiane ». La première question
+  porte le même ordre de grandeur dans sa phrase en gras, puis les trois
+  médianes et un lien vers la grille ; celle du retraité, la sienne.
+  L'ordre de grandeur est CALCULÉ — la fraction la plus proche de chacun des
+  deux écarts qu'on touche sans rien ajouter —, et non écrit : l'épargne
+  volontaire n'entre pas dans le chiffre de tête.
+- *Un paquet d'avant.* Le site lit son paquet en `force-cache` : un lecteur
+  revenu avec le nouveau code et l'ancien paquet ne perd pas l'accueil, la
+  réponse et le tableau se taisent sur le chiffre. Tenu des deux côtés.
+- *La clé de Carrières types* dit « Ces pourcentages se lisent contre une
+  promesse » : chaque case rapporte ce qu'un système servirait à ce que le
+  système actuel promet à la même carrière ; ce que la grille mesure le plus
+  sûrement reste l'écart entre ses lignes, et le niveau dépend aussi du
+  coefficient. Démentir la baisse un clic après l'avoir annoncée aurait fait
+  dire au site deux choses.
+- *Le catalogue des affirmations* : trois entrées sous
+  `ordre_de_grandeur_de_la_baisse`, qui recalcule les médianes case par case
+  et exige que le bilan figé porte celles du modèle, et que ce soient des
+  baisses ; la clé de Carrières types sous
+  `les_cases_se_lisent_contre_la_promesse`.
+- *Le parcours de présentation* faisait répondre « ce ne sont pas des
+  baisses » à « tout est rouge, donc les pensions baissent ? ». Il répond
+  désormais oui, par rapport à la promesse, et prévient que la diapositive 12
+  du diaporama du 20 septembre dit l'inverse.
+
+**Ce que ça a déplacé.** Aucun chiffre du modèle. Trois témoins de page —
+l'accueil, Carrières types sous deux jeux de règles — et une clé de plus dans
+le bilan figé. L'accueil passe de 215 à 233 mots de tableau ouverts, sur 240.
+
+**Ce qui reste.**
+
+- Carrières types n'écrit pas les médianes : sa prose ouverte est à quelques
+  mots de son budget. La grille les montre case par case, et le simulateur la
+  pension d'aujourd'hui d'un retraité.
+- La diapositive 12 du diaporama du 20 septembre, fichier binaire daté.
+
+**Fichiers.** `src/retraite_notionnelle/castypes.py`,
+`src/retraite_notionnelle/donnees/bilan.py`, `moteur/js/bilan.js`,
+`src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
+`scripts/construire_donnees.py`, `data/derive/equilibre.json`,
+`moteur/donnees.json`, `data/reference/site/affirmations.yaml`,
+`tests/test_affirmations.py`, `tests/test_web.py`, `tests/js/moteur.test.js`,
+`tests/temoins/pages.json`, `docs/parcours_presentation.md`.

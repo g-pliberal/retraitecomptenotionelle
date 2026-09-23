@@ -1273,7 +1273,17 @@ def _bilan(contexte=None) -> dict:
     engagement = calculer_engagements(
         contexte.simulateur(), contexte.depenses(), contexte.population(),
         annee_engagement, scenarios)
+    # LES ÉCARTS MÉDIANS DE LA GRILLE, que l'accueil écrit en réponse à « ma
+    # retraite va-t-elle baisser ? ». Cinq secondes de plus, et pour la même
+    # raison : l'accueil ne simule rien, et il se rend toujours sous les
+    # réglages de référence, ceux de cette table.
+    from dataclasses import asdict
+
+    from retraite_notionnelle.castypes import calculer_cas_types, ecarts_medians
+
+    ecarts = ecarts_medians(calculer_cas_types(contexte.simulateur()))
     return {
+        "ecarts_medians": asdict(ecarts),
         "engagements": {
             "annee": engagement.annee,
             "horizon": engagement.horizon,

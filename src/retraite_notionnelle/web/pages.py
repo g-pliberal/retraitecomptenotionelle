@@ -2287,6 +2287,7 @@ def _programme(contexte: Contexte) -> str:
              f"vos {g.terme('25 meilleures années', 'salaire de référence')}, "
              "un taux, une durée",
              "votre compte, divisé par votre espérance de vie"],
+            *_ligne_du_montant(contexte.bilan().ecarts),
             ["Partir un an plus tôt",
              f"une {g.terme('décote')}, dont le barème change à chaque réforme",
              "un an de cotisation en moins, un an de pension en plus"],
@@ -2474,6 +2475,56 @@ retraite</a><a href="{g.lien("/cout")}">Ce que ça coûte, et qui paie</a></p>
 """
 
 
+#: Les fractions dans lesquelles l'accueil dit un ordre de grandeur. « 31 % »
+#: se lit ; « un tiers » se retient, et c'est ce qu'on répète en sortant.
+FRACTIONS_EN_MOTS: tuple[tuple[float, str], ...] = (
+    (1 / 10, "un dixième"), (1 / 5, "un cinquième"), (1 / 4, "un quart"),
+    (1 / 3, "un tiers"), (2 / 5, "deux cinquièmes"), (1 / 2, "la moitié"),
+    (3 / 5, "trois cinquièmes"), (2 / 3, "deux tiers"), (3 / 4, "trois quarts"),
+)
+
+
+def _fraction_en_mots(part: float) -> str:
+    """La fraction de ``FRACTIONS_EN_MOTS`` la plus proche de ``part``."""
+    valeur, mots = FRACTIONS_EN_MOTS[0]
+    for candidate, texte in FRACTIONS_EN_MOTS[1:]:
+        if abs(candidate - part) < abs(valeur - part):
+            valeur, mots = candidate, texte
+    return mots
+
+
+def _ordre_de_grandeur(ecarts) -> str:
+    """« de l'ordre d'un quart à un tiers » : la baisse, dite en fractions.
+
+    CALCULÉE, ET NON ÉCRITE : les bornes sont les fractions les plus proches
+    des deux écarts médians de ce qu'on touche sans rien ajouter — la carrière
+    à venir, la pension déjà versée. Les cinq points volontaires n'y entrent
+    pas : un ordre de grandeur annoncé en tête ne suppose pas une épargne que
+    personne n'oblige. Le signe, lui, n'est pas lu ici : c'est le contrôle
+    ``ordre_de_grandeur_de_la_baisse`` qui refuse une « baisse » positive.
+    """
+    parts = sorted((-ecarts.a_venir, -ecarts.deja_liquidees))
+    bas, haut = (_fraction_en_mots(part) for part in parts)
+    texte = bas if bas == haut else f"{bas} à {haut}"
+    return "de l'ordre " + ("d'" if texte.startswith("un") else "de ") + texte
+
+
+def _ligne_du_montant(ecarts) -> list[list[str]]:
+    """La ligne « Votre retraite » du tableau de l'accueil, ou aucune.
+
+    CE QUE CELA DONNE, que le tableau taisait : il opposait les deux systèmes
+    terme à terme sans dire le seul terme que tout le monde cherche. L'ordre de
+    grandeur est celui de la première question, lu au même endroit ; la réponse
+    en donne le détail. Sans écarts dans le bilan — un paquet d'avant eux —, la
+    ligne n'est pas écrite.
+    """
+    if ecarts is None:
+        return []
+    return [["Votre retraite",
+             "ce que votre régime promet",
+             f"{_ordre_de_grandeur(ecarts)} de moins, en médiane"]]
+
+
 def _programme_questions(contexte: Contexte) -> str:
     """Les questions qu'un électeur pose, et la réponse en quelques lignes.
 
@@ -2495,6 +2546,12 @@ def _programme_questions(contexte: Contexte) -> str:
     simulateur la montrera : le plus souvent, la pension de la proposition est
     plus basse que la promesse du système actuel. L'électeur l'apprendrait en
     trois clics ; la lui taire ici lui ferait lire le reste comme une réclame.
+    Elle dit DE COMBIEN depuis le 23 septembre 2026 — « pour que les gens aient
+    une idée de la baisse » : un ordre de grandeur en fractions, puis les trois
+    écarts médians de la grille des cas types. Ceux-là ne sont pas simulés
+    ici non plus : l'accueil les lit dans le bilan figé, où
+    ``scripts/construire_donnees.py`` les a écrits sous les réglages de
+    référence — ceux sous lesquels l'accueil se rend toujours.
     """
     base = contexte.base
     regimes = len(contexte.simulateur().catalogue)
@@ -2533,23 +2590,44 @@ def _programme_questions(contexte: Contexte) -> str:
         if points > 0.0:
             csg = f", et la CSG baisse de {g.nombre(points * 100, 2)} point"
 
+    # De combien : trois médianes de la grille des cas types, lues dans le
+    # bilan figé. Des BAISSES, dites sans signe : la phrase porte le sens. Une
+    # table écrite avant elles n'en porte pas, et les deux réponses se taisent
+    # alors sur le chiffre plutôt que d'emporter la page — c'est ce que verrait
+    # un navigateur qui a gardé en cache un paquet d'avant le 23 septembre 2026.
+    ecarts = contexte.bilan().ecarts
+    ordre = combien = combien_retraite = ""
+    if ecarts is not None:
+        ordre = f", {_ordre_de_grandeur(ecarts)}"
+        cas_types = f'<a href="{g.lien("/cas-types")}">treize carrières types</a>'
+        baisse_retraite = g.pourcentage(-ecarts.deja_liquidees, decimales=0)
+        combien = f""" Sur nos {cas_types}, la baisse médiane est de
+{g.pourcentage(-ecarts.a_venir, decimales=0)} pour qui n'est pas encore à la
+retraite, de {g.pourcentage(-ecarts.a_venir_volontaire, decimales=0)} s'il
+place aussi les {volontaire} que la proposition lui rend sur son salaire, et de
+{baisse_retraite} sur la pension d'un retraité d'aujourd'hui, garantie
+vieillesse comprise."""
+        combien_retraite = f""" Sur nos carrières types, la pension
+d'aujourd'hui baisse ainsi de {baisse_retraite} en médiane."""
+
     questions = [
         ("Ma retraite va-t-elle baisser ?", f"""
 <p><strong>Le plus souvent, elle sera plus basse que ce que le système actuel
-promet.</strong> Elle vaudra ce que vous aurez cotisé, alors que le système
-actuel promet davantage que ce que les cotisations paient, et que ses recettes
-ne suffisent déjà plus à tenir cette promesse. En échange, un salarié du privé
-cotise {impose} au lieu de {aujourd_hui}, et son salaire net augmente. Pour
-votre carrière, {simulateur} met les deux montants côte à côte, avec ce que
-chacun des deux systèmes a vraiment de quoi payer.</p>"""),
+promet{ordre}.</strong>{combien} Votre retraite vaudra ce que vous aurez
+cotisé, alors que le système actuel promet davantage que ce que les cotisations
+paient, et que ses recettes ne suffisent déjà plus à tenir cette promesse. En
+échange, un salarié du privé cotise {impose} au lieu de {aujourd_hui}, et son
+salaire net augmente. Pour votre carrière, {simulateur} met les deux montants
+côte à côte, avec ce que chacun des deux systèmes a vraiment de quoi
+payer.</p>"""),
         ("Je suis déjà à la retraite : qu'est-ce qui change pour moi ?", f"""
 <p><strong>Votre pension serait recalculée sur ce qui a été réellement
 cotisé</strong>, depuis la première cotisation : ce que le système actuel
 ajoute sans cotisation n'est plus servi. Elle reste ensuite revalorisée sur les
 prix. Si elle est modeste, la garantie vieillesse la complète à partir de {age}
 ans, jusqu'à {seul} par mois pour qui vit seul et {garantie} chacun en couple ;
-c'est une avance, reprise sur la succession. Pour votre cas, choisissez « à la
-retraite » dans {simulateur}.</p>"""),
+c'est une avance, reprise sur la succession.{combien_retraite} Pour votre cas,
+choisissez « à la retraite » dans {simulateur}.</p>"""),
         ("Que deviennent mes trimestres et mes points ?", f"""
 <p><strong>Toute votre carrière est recalculée depuis la première
 cotisation</strong>, comme si le compte avait toujours existé. Chaque
@@ -7850,12 +7928,16 @@ def _cas_types(contexte: Contexte, regards: dict[str, str] | None = None) -> str
     ``hidden`` : là où ``:has()`` n'existe pas, le premier reste visible et
     les autres restent cachés, ce qui dit moins mais rien de faux.
 
-    CE QU'ELLE DIT EST UN ÉCART ENTRE LIGNES, JAMAIS UN NIVEAU. Le modèle
-    calcule ce que chaque carrière acquiert ; il n'applique pas le coefficient
-    d'équilibre, qui multiplierait toutes les pensions par un même facteur et
-    déplacerait donc toute la grille en bloc. C'est écrit en tête, et non en
-    note de bas de page : sans cette phrase, la grille se lit comme une baisse
-    générale, ce qu'elle n'est pas.
+    CE QU'ELLE DIT SE LIT CONTRE UNE PROMESSE, celle du système actuel à la
+    même carrière. Elle a dit « jamais un niveau » jusqu'au 23 septembre 2026,
+    et sa clé de lecture ouvrait sur « ces pourcentages ne sont pas des baisses
+    de pension » : la phrase datait d'un coefficient de la proposition qu'on
+    croyait supérieur à un, une marge qui aurait relevé ses cases. Il est passé
+    sous un, et l'accueil dit désormais l'ordre de grandeur de la baisse, lu sur
+    cette grille : la nier ici, un clic plus loin, aurait fait dire au site deux
+    choses. Ce que la grille mesure le plus sûrement reste l'écart entre ses
+    lignes ; le niveau dépend AUSSI du coefficient d'équilibre, que le modèle
+    n'applique pas, et la clé le dit en tête, non en note de bas de page.
     """
     simulateur = contexte.simulateur()
     resultat = calculer_cas_types(simulateur)
@@ -8007,13 +8089,13 @@ de chaque système paient de la pension qu'il promet.""")
     return f"""
 {tete}
 
-<div class="note"><strong>Ces pourcentages ne sont pas des baisses de
-pension.</strong> Chaque case compare deux carrières calculées sous la même
-règle, et ce que la grille mesure est l'écart entre ses lignes : ce qu'un
-militaire touche de plus ou de moins qu'un artisan, à cotisation égale. Le
-niveau général, lui, dépend d'un
-{g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle calcule
-mais n'applique jamais — et <strong>chaque système a le sien</strong>.\
+<div class="note"><strong>Ces pourcentages se lisent contre une
+promesse</strong> : chaque case rapporte ce qu'un système servirait à ce que le
+système actuel promet à la même carrière. Ce que la grille mesure le plus
+sûrement est l'écart entre ses lignes : ce qu'un militaire touche de plus ou de
+moins qu'un artisan, à cotisation égale. Le niveau général, lui, dépend aussi
+d'un {g.terme("réglage annuel", "coefficient d'équilibre")} que le modèle
+calcule mais n'applique jamais — et <strong>chaque système a le sien</strong>.\
 {bulle_ecarts}
 {_lecture_reglage_proposition(reglage)}
 <a href="{g.lien("/cout")}" data-vers="cout-equilibre">La page Coût le

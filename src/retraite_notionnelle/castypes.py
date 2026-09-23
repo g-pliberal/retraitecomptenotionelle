@@ -531,3 +531,92 @@ def calculer_cas_types(
             except (ValueError, KeyError) as erreur:
                 resultat.echecs[cle] = str(erreur)
     return resultat
+
+
+@dataclass(frozen=True)
+class EcartsMedians:
+    """L'ordre de grandeur de ce que la proposition change, lu sur la grille.
+
+    La grille dit carrière par carrière ce que la proposition sert, rapporté à
+    ce que le système actuel promet. La question qu'on lui pose d'abord est
+    plus courte — « de combien ma retraite baisse-t-elle ? » — et elle appelle
+    trois nombres, parce qu'elle a trois lecteurs.
+
+    - Qui n'est PAS ENCORE à la retraite, et ne place rien : la répartition et
+      les cinq points capitalisés obligatoires, la rente des cinq points rendus
+      retirée. C'est ce qu'il touche sans rien ajouter.
+    - Le même, les cinq points rendus placés : l'écart que la grille affiche,
+      le « jusqu'à » du simulateur.
+    - Qui est DÉJÀ à la retraite : sa pension d'AUJOURD'HUI, recalculée et
+      garantie vieillesse comprise, rapportée à celle qu'il touche. Pas celle
+      du départ, que la grille affiche : la garantie ne s'ouvre qu'à
+      soixante-cinq ans, les deux pensions n'ont pas été revalorisées de la
+      même façon depuis, et c'est la pension d'aujourd'hui que la bascule
+      recalculerait.
+
+    DES MÉDIANES, parce qu'un ordre de grandeur doit dire la carrière du
+    milieu, pas celle que la moyenne tire vers les régimes à départ précoce.
+    Médiane basse — l'élément de rang ``n // 2`` des écarts rangés par ordre
+    croissant —, la convention de ``_deplacement_des_ecarts``. Les cases
+    pèsent chacune autant, comme sur la page qui affiche la grille ; l'action
+    113 de la feuille de route dit ce qu'une pondération par les effectifs y
+    changerait.
+
+    Des nombres signés : négatifs quand la proposition sert moins.
+    """
+
+    a_venir: float
+    a_venir_volontaire: float
+    deja_liquidees: float
+    cases_a_venir: int
+    cases_deja_liquidees: int
+
+
+def _mediane_basse(valeurs: list[float]) -> float:
+    rangees = sorted(valeurs)
+    return rangees[len(rangees) // 2]
+
+
+def ecarts_medians(resultat: ResultatCasTypes,
+                   scenario: str = "notionnel_liberal") -> EcartsMedians:
+    """Les trois écarts médians de ``scenario`` au système actuel.
+
+    Une carrière est déjà à la retraite si le simulateur lui a calculé une
+    pension d'aujourd'hui, c'est-à-dire si elle a liquidé avant l'année
+    courante ; les autres sont à venir. Un groupe vide est une erreur, et non
+    une médiane qui vaudrait zéro : l'accueil l'écrirait.
+    """
+    a_venir: list[float] = []
+    a_venir_volontaire: list[float] = []
+    deja_liquidees: list[float] = []
+    for comparaison in resultat.resultats.values():
+        aujourd_hui = comparaison.aujourd_hui
+        if aujourd_hui is None:
+            reference = comparaison.actuel.pension_annuelle
+            if reference <= 0.0:
+                continue
+            totale = comparaison.pension_totale(scenario)
+            volontaire = comparaison.rente_capitalisee_volontaire(scenario)
+            a_venir.append((totale - volontaire) / reference - 1.0)
+            a_venir_volontaire.append(totale / reference - 1.0)
+        else:
+            reference = aujourd_hui.pension("actuel")
+            if reference <= 0.0:
+                continue
+            servie = (aujourd_hui.pension_totale(scenario)
+                      - (aujourd_hui.rente_capitalisee_volontaire
+                         if scenario == "notionnel_liberal" else 0.0))
+            deja_liquidees.append(servie / reference - 1.0)
+    if not a_venir or not deja_liquidees:
+        raise ValueError(
+            "écarts médians : aucune carrière "
+            + ("à venir" if not a_venir else "déjà liquidée")
+            + " dans la grille"
+        )
+    return EcartsMedians(
+        a_venir=_mediane_basse(a_venir),
+        a_venir_volontaire=_mediane_basse(a_venir_volontaire),
+        deja_liquidees=_mediane_basse(deja_liquidees),
+        cases_a_venir=len(a_venir),
+        cases_deja_liquidees=len(deja_liquidees),
+    )

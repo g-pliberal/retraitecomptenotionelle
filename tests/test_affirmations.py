@@ -92,9 +92,11 @@ from retraite_notionnelle.web.pages import (
     Saisie,
     _cumuls_indexation,
     _deplacement_des_ecarts,
+    _fraction_en_mots,
     _libelles_cascade,
     _marches_cascade,
     _options_statuts,
+    _ordre_de_grandeur,
     _reglage_proposition,
 )
 
@@ -535,6 +537,74 @@ def _(m: Modele):
               for comparaison in m.grille_cas_types.resultats.values()]
     assert ecarts
     assert sum(ecart < 0.0 for ecart in ecarts) > len(ecarts) / 2
+
+
+@controle("ordre_de_grandeur_de_la_baisse")
+def _(m: Modele):
+    """De combien la retraite baisse, que l'accueil écrit à deux endroits.
+
+    Trois médianes de la grille, recalculées ici case par case sans passer par
+    ``ecarts_medians`` : la carrière à venir sans rien ajouter, la même les
+    cinq points volontaires placés, et la pension d'AUJOURD'HUI d'un retraité,
+    garantie vieillesse comprise. L'accueil ne les calcule pas, il les lit dans
+    le bilan figé : ce contrôle exige que la table porte celles du modèle, que
+    ce soient des baisses, et que les points volontaires la réduisent. Le jour
+    où l'une d'elles change de signe, la réponse est à réécrire.
+    """
+    a_venir: list[float] = []
+    volontaire: list[float] = []
+    deja: list[float] = []
+    for comparaison in m.grille_cas_types.resultats.values():
+        aujourd_hui = comparaison.aujourd_hui
+        if aujourd_hui is None:
+            reference = comparaison.actuel.pension_annuelle
+            liberal = comparaison.notionnel_liberal
+            a_venir.append((liberal.pension_totale
+                            - liberal.rente_capitalisation_volontaire) / reference - 1.0)
+            volontaire.append(liberal.pension_totale / reference - 1.0)
+        else:
+            servie = (aujourd_hui.pension_totale("notionnel_liberal")
+                      - aujourd_hui.rente_capitalisee_volontaire)
+            deja.append(servie / aujourd_hui.pension("actuel") - 1.0)
+
+    def mediane(valeurs: list[float]) -> float:
+        return sorted(valeurs)[len(valeurs) // 2]
+
+    fige = m.contexte.bilan().ecarts
+    assert fige is not None, "le bilan figé ne porte pas les écarts médians"
+    assert (fige.cases_a_venir, fige.cases_deja_liquidees) == (len(a_venir), len(deja))
+    for nom, attendu in (("a_venir", mediane(a_venir)),
+                         ("a_venir_volontaire", mediane(volontaire)),
+                         ("deja_liquidees", mediane(deja))):
+        assert _proche(getattr(fige, nom), attendu, 1e-12), (nom, getattr(fige, nom), attendu)
+    assert fige.a_venir < fige.a_venir_volontaire < 0.0
+    assert fige.deja_liquidees < 0.0
+    # L'ordre de grandeur annoncé en tête ne suppose pas l'épargne volontaire :
+    # ses bornes sont les fractions des deux écarts qu'on touche sans rien
+    # ajouter, et chacun a la sienne dans la phrase.
+    ordre = _ordre_de_grandeur(fige)
+    for ecart in (fige.a_venir, fige.deja_liquidees):
+        assert _fraction_en_mots(-ecart) in ordre
+
+
+@controle("les_cases_se_lisent_contre_la_promesse")
+def _(m: Modele):
+    """La clé de Carrières types : chaque case se lit contre une promesse.
+
+    Celle du système actuel à la même carrière : la pension que la règle du
+    scénario 1 calcule, rapportée telle quelle, sans coefficient d'équilibre
+    — ni sur elle, ni sur la pension du système comparé.
+    """
+    for comparaison in m.grille_cas_types.resultats.values():
+        promesse = comparaison.actuel.pension_annuelle
+        for scenario in SCENARIOS_MONTRES[1:]:
+            assert _proche(comparaison.variation_totale(scenario),
+                           comparaison.pension_totale(scenario) / promesse - 1.0)
+    ligne = m.horizon
+    for scenario in SCENARIOS_MONTRES:
+        assert _proche(ligne.coefficient(scenario) * ligne.depense(scenario),
+                       ligne.ressources_de(scenario))
+    assert not _proche(ligne.coefficient("actuel"), 1.0, 1e-3)
 
 
 @controle("quatre_systemes_meme_carriere")

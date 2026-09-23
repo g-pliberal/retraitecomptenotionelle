@@ -130,6 +130,22 @@ test("les pages rendent le même HTML que le modèle Python", () => {
   }
 });
 
+test("un paquet d'avant les écarts médians ne fait pas tomber l'accueil", () => {
+  // Le site lit son paquet en `force-cache` : un lecteur revenu après le
+  // 23 septembre 2026 peut recevoir le nouveau code et l'ancien paquet, dont le
+  // bilan ne porte pas les écarts médians. L'accueil se tait alors sur le
+  // chiffre, comme `test_un_paquet_sans_ecarts_ne_fait_pas_tomber_l_accueil`
+  // l'exige du Python.
+  const bilan = { ...paquet.bilan_equilibre };
+  delete bilan.ecarts_medians;
+  const [, corps] = rendre(new Contexte({ ...paquet, bilan_equilibre: bilan }), "/", {});
+  const texte = corps.replace(/[ \n]+/g, " ");
+  assert.ok(texte.includes("<strong>Le plus souvent, elle sera plus basse que ce "
+    + "que le système actuel promet.</strong> Votre retraite vaudra"));
+  assert.ok(!texte.includes("baisse médiane"));
+  assert.ok(!texte.includes("Votre retraite</th>"));
+});
+
 /**
  * Le bloc JSON de la page reprend les chiffres déjà comparés un à un ; ne
  * subsisterait que l'écriture des flottants, que Python et JavaScript ne

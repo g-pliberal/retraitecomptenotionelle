@@ -43,7 +43,11 @@ Ouvrir en mode présentateur pour lire les notes.
 relit : un fichier binaire ne se compare pas à une page. Il porte sa date
 dans son nom pour cette raison. Avant de le projeter, ouvrir le site à côté
 et vérifier les quatre montants de la page Simuler ; s'ils ont bougé, c'est
-ce document-ci qui fait foi, puisque son test le tient.
+ce document-ci qui fait foi, puisque son test le tient. Sa diapositive 12 et
+ses notes répondent aussi à « tout est rouge, donc les pensions baissent ? »
+comme le site le faisait avant le 23 septembre 2026 — « ce ne sont pas des
+baisses de pension » : ne pas la projeter telle quelle, c'est la réponse de
+la section Cas types ci-dessous qui vaut désormais.
 
 ## L'idée en une phrase
 
@@ -76,11 +80,16 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
 - Le tableau **« Le plancher regarde chacun, pas le couple »** : à 300 € et
   1 500 € de pension dans un couple, l'ASPA ne sert rien, la garantie sert
   500 € au premier. C'est l'exemple le plus parlant de la page.
-- Le tableau **« Ce que cela change »** : sept lignes, aujourd'hui contre le
+- Le tableau **« Ce que cela change »** : huit lignes, aujourd'hui contre le
   programme. Deux à lire à voix haute : « Changer de métier : changer de
   régime, et de règle de calcul → rien, le compte est le même » et « Tenir
   l'équilibre : une réforme tous les huit ans en moyenne → un chiffre publié
-  chaque année ».
+  chaque année ». Et une à ne pas sauter, parce que la salle la cherche :
+  « Votre retraite : ce que votre régime promet → de l'ordre d'un quart à un
+  tiers de moins, en médiane ». La première des « Vos questions », « Ma
+  retraite va-t-elle baisser ? », en donne le détail : 31 % pour qui n'est
+  pas encore à la retraite, 24 % s'il place les cinq points rendus, 26 % sur
+  la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
   cliquer « Calculer », ça ouvre la page Simuler déjà remplie. Le parcours
@@ -232,13 +241,16 @@ Trois choses à montrer :
   ou le 3, ce qui montre ce que chaque ingrédient déplace.
 
 **La question qui vient à coup sûr : « tout est rouge, donc les pensions
-baissent ? »** La page y répond dans son deuxième paragraphe, à lire tel
-quel : ces pourcentages ne sont pas des baisses de pension. Chaque case
-compare deux carrières calculées sous la même règle, et la grille mesure
-l'écart entre ses lignes : ce qu'un militaire touche de plus ou de moins
-qu'un artisan, à cotisation égale. Le niveau général dépend d'un réglage
-annuel, le coefficient d'équilibre, que le modèle calcule mais n'applique
-jamais. **Ne pas promettre de marge** : pour la proposition, ce coefficient
+baissent ? »** Oui, par rapport à ce que le système actuel promet, et
+l'accueil le dit lui-même : de l'ordre d'un quart à un tiers en médiane. Ne
+pas le nier — le site a cessé de le faire le 23 septembre 2026. La page le dit
+à sa façon dans son deuxième paragraphe, à lire tel quel : ces pourcentages
+se lisent contre une promesse, celle que le système actuel fait à la même
+carrière. Ce que la grille mesure le plus sûrement est l'écart entre ses
+lignes : ce qu'un militaire touche de plus ou de moins qu'un artisan, à
+cotisation égale. Le niveau général dépend aussi d'un réglage annuel, le
+coefficient d'équilibre, que le modèle calcule mais n'applique jamais.
+**Ne pas promettre de marge** : pour la proposition, ce coefficient
 est inférieur à un sur toute la projection (0,90 en 2026, 0,79 au plus bas en
 2049, 0,92 en 2070), et la page le dit dans la phrase qui suit. C'est le coût
 de transition du taux unique : pendant trente ans, la caisse paie les
@@ -351,11 +363,13 @@ vérifiez plutôt que de nous croire.
   de l'année paient les pensions de l'année. Seuls les 5 % du pilier
   capitalisé, en plus des 18 %, constituent un capital, sur des titres sans
   risque, transmissible. Programme, dépliant « La part capitalisée ».
-- **« Les pensions baissent de 30 % ? »** Voir la section Cas types plus
-  haut : les écarts mesurent la redistribution entre carrières, avant le
-  réglage annuel. Ne pas laisser entendre que ce réglage relèverait les
-  cases : pour la proposition, il les abaisserait, de 8 % en 2070 et
-  davantage avant. Le système actuel, lui, est projeté en déficit de 16 % de
+- **« Les pensions baissent de 30 % ? »** Par rapport à ce que le système
+  actuel promet, c'est l'ordre de grandeur, et le site le dit sans détour :
+  le tableau de l'accueil et sa première question annoncent d'un quart à un
+  tiers de moins en médiane sur les treize carrières types, retraités
+  d'aujourd'hui compris. Ne pas laisser entendre que le réglage annuel
+  relèverait les cases : pour la proposition, il les abaisserait, de 8 % en
+  2070 et davantage avant. Le système actuel, lui, est projeté en déficit de 16 % de
   la facture en 2070, sans règle qui le règle.
 - **« Et les petites pensions ? »** Le plancher : 800 € par personne plus
   250 € pour qui vit seul, dès 65 ans, individualisé, payé par l'impôt.
