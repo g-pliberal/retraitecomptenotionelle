@@ -1,0 +1,97 @@
+# Durée requise d'un fonctionnaire qui PEUT LIQUIDER AVANT SOIXANTE ANS
+# ---------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# Le militaire qui réunit ses dix-sept ans de services, l'agent d'un emploi
+# classé en catégorie active ou super-active : leur droit s'ouvre avant
+# soixante ans, et la durée qu'on leur oppose N'EST PAS CELLE DE LEUR
+# GÉNÉRATION. C'est celle des fonctionnaires qui atteignent soixante ans
+# l'année où leur propre droit s'ouvre. Trois textes le disent l'un après
+# l'autre, au mot près :
+#
+#   - article 5, VI, de la loi n° 2003-775 du 21 août 2003, version du
+#     11 novembre 2010 (LEGIARTI000023030932) : « la durée des services et
+#     bonifications exigée des fonctionnaires de l'Etat et des militaires qui
+#     remplissent les conditions de liquidation d'une pension avant l'âge
+#     mentionné au troisième alinéa du I [soixante ans] est celle exigée des
+#     fonctionnaires atteignant l'âge mentionné au même troisième alinéa
+#     l'année à compter de laquelle la liquidation peut intervenir » — et le
+#     même VI s'étend à la CNRACL et aux ouvriers de l'État ;
+#   - article L. 13, III, du code des pensions civiles et militaires, version
+#     du 22 janvier 2014 au 1er septembre 2023 (LEGIARTI000028498258) : la même
+#     phrase, « avant l'âge de soixante ans », étendue à la CNRACL et au
+#     FSPOEIE par le IV de l'article 2 de la loi n° 2014-40 ;
+#   - article 10, XXIV, de la loi n° 2023-270 du 14 avril 2023, version en
+#     vigueur (LEGIARTI000053280920), qui abroge ce III mais le garde en
+#     vigueur par renvoi à « celle applicable avant l'entrée en vigueur du
+#     présent XXIV » : pour la catégorie active née avant le 1er septembre
+#     1966 (B, 1°, a), la super-active née avant le 1er septembre 1971
+#     (B, 2°, a), et les militaires qui peuvent liquider avant le 1er septembre
+#     2023 (C, 1°).
+#
+# LA RÈGLE `l13_iii` : la clé est l'ANNÉE où le droit s'ouvre, Y, et la valeur
+# la durée de la génération Y − 60 sous le droit d'avant 2023 — les décrets
+# pris pour l'article 5 de la loi de 2003 jusqu'à la génération 1957 (lus dans
+# `duree_assurance_requise.csv`, niveau `certifiee`), puis l'article
+# L. 161-17-3 dans sa version du 22 janvier 2014 (LEGIARTI000028494794) :
+# 167 trimestres de 1958 à 1960, 168 de 1961 à 1963, 169 de 1964 à 1966,
+# 170 de 1967 à 1969, 171 de 1970 à 1972, 172 à partir de 1973. Cette version
+# n'est plus celle de la table commune pour les générations 1961 à 1972, que
+# la réforme de 2023 et la suspension de 2026 ont réécrites : c'est pourquoi
+# les lignes sont écrites ici, et non lues dans la table commune.
+# Avant 2004, la fiche du régime porte la durée en vigueur (150) ; de 2004 à
+# 2008, c'est `duree_requise_fonction_publique.csv`, lu à la même clé.
+#
+# LA RÈGLE `xxiv_c` : les militaires qui peuvent liquider à compter du
+# 1er septembre 2023 (XXIV, C, 2°) — 169 trimestres, « cette durée augmente
+# d'un trimestre au 1er janvier 2025 puis au 1er janvier 2027. A compter du
+# 1er janvier 2028, cette durée est égale à la durée mentionnée au 6° de
+# l'article L. 161-17-3 », soit 172 (LEGIARTI000053280903). La clé est la DATE
+# d'ouverture, en année décimale au mois près : 2023.667 est septembre 2023.
+#
+# CE QUE LA COUR DES COMPTES PUBLIE, et qui rejoue cette table. Le tableau
+# n° 20 de son rapport « Les retraites des fonctionnaires de l'État »
+# (septembre 2026, annexe n° 3) donne la durée requise de la super-active,
+# génération par génération : 166 trimestres pour 1965 (droit ouvert à
+# cinquante-deux ans, en 2017, génération 1957), 167 de 1966 à 1968, 168 de
+# 1969 à août 1971 ; et de la catégorie active : 168 pour 1965 et jusqu'en
+# août 1966 (droit ouvert à cinquante-sept ans en 2022 et 2023, générations
+# 1962 et 1963). `tests/temoins/exemples_officiels.yaml` en porte les lignes.
+# Le modèle opposait jusque-là la durée de la génération : de un à quatre
+# trimestres de trop à l'actif né de 1954 à août 1966, de deux à six au
+# super-actif né de 1959 à août 1971, de douze à quinze au super-actif né de
+# 1950 à 1953, et jusqu'à vingt-deux au militaire dont le droit s'ouvrait
+# avant 2004. Seules les ouvertures de 2004 à 2008 étaient justes.
+#
+# Niveau `haute` : mise en table d'articles lus dans la base LEGI, non la
+# sortie d'un script de collecte.
+regle,annee_ouverture,trimestres,fiabilite
+l13_iii,2009,161,haute
+l13_iii,2010,162,haute
+l13_iii,2011,163,haute
+l13_iii,2012,164,haute
+l13_iii,2013,165,haute
+l13_iii,2014,165,haute
+l13_iii,2015,166,haute
+l13_iii,2016,166,haute
+l13_iii,2017,166,haute
+l13_iii,2018,167,haute
+l13_iii,2019,167,haute
+l13_iii,2020,167,haute
+l13_iii,2021,168,haute
+l13_iii,2022,168,haute
+l13_iii,2023,168,haute
+l13_iii,2024,169,haute
+l13_iii,2025,169,haute
+l13_iii,2026,169,haute
+l13_iii,2027,170,haute
+l13_iii,2028,170,haute
+l13_iii,2029,170,haute
+l13_iii,2030,171,haute
+l13_iii,2031,171,haute
+l13_iii,2032,171,haute
+l13_iii,2033,172,haute
+xxiv_c,2023.667,169,haute
+xxiv_c,2025,170,haute
+xxiv_c,2027,171,haute
+xxiv_c,2028,172,haute

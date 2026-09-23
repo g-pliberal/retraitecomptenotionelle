@@ -4281,20 +4281,21 @@ def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulate
     actif = _pension_actuelle(
         simulateur, "fonctionnaire_territorial_hospitalier_actif", 1965, 60)
     assert actif.pension_annuelle / sedentaire.pension_annuelle == (
-        pytest.approx(0.9 / 0.75 * 172 / 169, abs=0.01))
+        pytest.approx(0.9 / 0.75 * 172 / 168, abs=0.01))
     # À cinquante-sept ans, les deux décotes butent sur le plafond de vingt
     # trimestres : l'écart de TAUX disparaît, et il ne reste que celui des
-    # durées requises — 169 trimestres pour l'actif, depuis que le modèle lit
-    # le XXIV, B de l'article 10 de la loi de 2023, 172 pour le sédentaire
-    # parti en 2022. Trois trimestres de dénominateur.
+    # durées requises — 168 trimestres pour l'actif, la durée de la génération
+    # qui a soixante ans en 2022, l'année où son droit s'ouvre (L. 13, III ;
+    # le tableau n° 20 de la Cour des comptes donne la même), 172 pour le
+    # sédentaire parti en 2022. Quatre trimestres de dénominateur.
     classe = _pension_actuelle(
         simulateur, "fonctionnaire_territorial_hospitalier_actif", 1965, 57)
     non_classe = _pension_actuelle(
         simulateur, "fonctionnaire_territorial_hospitalier", 1965, 57)
-    assert classe.trimestres_requis == 169
+    assert classe.trimestres_requis == 168
     assert non_classe.trimestres_requis == 172
     assert classe.pension_annuelle / non_classe.pension_annuelle == (
-        pytest.approx(172 / 169, abs=1e-4))
+        pytest.approx(172 / 168, abs=1e-4))
 
 
 def test_le_classement_oppose_sa_propre_duree_requise(simulateur):
@@ -4309,11 +4310,15 @@ def test_le_classement_oppose_sa_propre_duree_requise(simulateur):
     170 jusqu'au 31 mars 1970, 171 jusqu'à la fin de 1970, 172 à compter de
     1971 — cinq ans plus tard pour la super-active.
 
-    Deux choses s'y vérifient, et la seconde surprend. La première : un actif né
-    en 1967 doit 169 trimestres quand le droit commun en oppose 172. La seconde :
-    **l'escalier redescend** pour la super-active, le texte remettant leur
-    compteur à 169 au moment où leur âge commence à monter — un super-actif né
-    en août 1971 doit 171 trimestres, celui de septembre 169.
+    Deux choses s'y vérifient. La première : un actif né en 1967 doit 169
+    trimestres quand le droit commun en oppose 172. La seconde : avant ces
+    marches, la durée « applicable avant l'entrée en vigueur » n'est pas celle
+    de la génération de l'agent mais celle de la génération qui a soixante ans
+    l'année où son droit s'ouvre (L. 13, III, version de 2014) — 167 pour un
+    actif né en 1963, parti à cinquante-sept ans en 2020. Ce test croyait voir
+    l'escalier redescendre pour la super-active, 171 trimestres en août 1971
+    puis 169 en septembre ; le tableau n° 20 de la Cour des comptes (septembre
+    2026) donne 168 puis 169, et c'est ce que le texte dit.
 
     La dérogation ne vaut que pour qui EXERCE le droit au départ anticipé : le
     sédentaire du même régime et de la même génération reste au droit commun.
@@ -4330,7 +4335,7 @@ def test_le_classement_oppose_sa_propre_duree_requise(simulateur):
     sedentaire = "fonctionnaire_territorial_hospitalier"
 
     # L'escalier de la catégorie active, marche par marche.
-    assert requis(actif, 1963) == 168
+    assert requis(actif, 1963) == 167
     assert requis(actif, 1967) == 169
     assert requis(actif, 1969) == 170
     assert requis(actif, 1971) == 172
@@ -4338,8 +4343,8 @@ def test_le_classement_oppose_sa_propre_duree_requise(simulateur):
     assert requis(sedentaire, 1967) == 172
     assert requis(sedentaire, 1969) == 172
 
-    # La super-active, et la marche qui descend au 1er septembre 1971.
-    assert requis(super_actif, 1971, mois=8) == 171
+    # La super-active, et la marche du 1er septembre 1971, qui monte.
+    assert requis(super_actif, 1971, mois=8) == 168
     assert requis(super_actif, 1971, mois=9) == 169
     assert requis(super_actif, 1974) == 170
     assert requis(super_actif, 1976) == 172
@@ -4784,14 +4789,17 @@ def test_la_super_active_suit_les_memes_marches_cinq_ans_plus_tard(simulateur):
 def test_avant_la_reforme_l_emploi_classe_garde_l_ancienne_table(simulateur):
     """« Celle applicable avant l'entrée en vigueur du présent XXIV ».
 
-    C'est l'article L. 161-17-3 dans sa version du 22 janvier 2014 : 168
-    trimestres pour les nés de 1961 à 1963, 169 de 1964 à 1966. La table des
-    sédentaires, elle, a déjà monté — 169 pour un né en 1962, 170 pour un né
-    en 1965. Sans cette lecture, la correction se serait arrêtée à 1966 et
-    aurait laissé quatre générations sur la mauvaise durée.
+    C'est le III de l'article L. 13 du code des pensions dans sa version du
+    22 janvier 2014 : pour qui peut liquider avant soixante ans, « celle exigée
+    des fonctionnaires atteignant cet âge l'année à compter de laquelle la
+    liquidation peut intervenir ». Un actif né en 1962 ouvre son droit à
+    cinquante-sept ans, en 2019 : il doit les 167 trimestres de la génération
+    1959, non les 168 que L. 161-17-3 donnait à la sienne ; né en 1965, les 168
+    de la génération 1962 — ce que le tableau n° 20 de la Cour des comptes
+    publie. La lecture du 22 septembre 2026 s'était arrêtée à L. 161-17-3.
     """
-    assert _actif(simulateur, 1962, "fonctionnaire_etat_actif", 60.0)[0] == 168
-    assert _actif(simulateur, 1965, "fonctionnaire_etat_actif", 60.0)[0] == 169
+    assert _actif(simulateur, 1962, "fonctionnaire_etat_actif", 60.0)[0] == 167
+    assert _actif(simulateur, 1965, "fonctionnaire_etat_actif", 60.0)[0] == 168
 
 
 def test_le_sedentaire_garde_la_duree_de_sa_generation(simulateur):

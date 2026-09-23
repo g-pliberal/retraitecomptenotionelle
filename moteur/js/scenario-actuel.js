@@ -25,7 +25,8 @@ import {
   AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
   AgesOuverture, AgesRegimes, AgesSurcoteRegimesSpeciaux, AnneesSalaireReference, CarriereLongue,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
-  DureesProratisation, DureesRequises, DureesRequisesAvantSuspension,
+  DureesProratisation, DureesRequises, DureesRequisesAvantSoixanteAns,
+  DureesRequisesAvantSuspension,
   DureesRequisesFonctionPublique, DureesRequisesRegimes,
   GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
   DureesServicesMilitaires,
@@ -37,6 +38,13 @@ import { Fiabilite } from "./serie.js";
 
 /** Premier trimestre que la surcote puisse compter (loi du 21 août 2003). */
 const SURCOTE_DEPUIS = new DateMois(2004, 1);
+/**
+ * L'âge avant lequel un droit ouvert fait lire la durée à l'année d'ouverture
+ * plutôt qu'à la génération : « avant l'âge de soixante ans » (L. 13, III).
+ */
+const AGE_DUREE_A_L_OUVERTURE = 60.0;
+/** Le XXIV, C, de la loi du 14 avril 2023 ne vise que ceux qui peuvent liquider depuis ce mois. */
+const DUREE_XXIV_C_DEPUIS = new DateMois(2023, 9);
 /** Âge au-delà duquel le barème de 2007-2008 sert 1,25 %. */
 const SURCOTE_AGE_MAJORE = 65;
 
@@ -116,6 +124,7 @@ export class ScenarioActuel {
     this.dureesRequisesAvantSuspension = new DureesRequisesAvantSuspension(paquet);
     this.dureesRequisesRegimes = new DureesRequisesRegimes(paquet);
     this.dureesRequisesFonctionPublique = new DureesRequisesFonctionPublique(paquet);
+    this.dureesRequisesAvantSoixanteAns = new DureesRequisesAvantSoixanteAns(paquet);
     this.dureesProratisation = new DureesProratisation(paquet);
     this.agesOuverture = new AgesOuverture(paquet);
     this.agesSurcoteRegimesSpeciaux = new AgesSurcoteRegimesSpeciaux(paquet);
@@ -475,6 +484,12 @@ export class ScenarioActuel {
     if (derogation !== null && derogation.dureeRequise !== null) {
       return [derogation.dureeRequise, derogation.fiabilite];
     }
+    // Et ceux que ces marches ne visent pas — l'emploi classé né avant elles,
+    // le militaire — n'ont pas davantage la durée de leur génération.
+    const avantSoixanteAns = this.dureeRequiseAvantSoixanteAns(periode, carriere, derogation);
+    if (avantSoixanteAns !== null) {
+      return avantSoixanteAns;
+    }
     if (periode.duree_requise_par_generation) {
       // LA SUSPENSION NE VAUT QU'À COMPTER DU 1er SEPTEMBRE 2026 : avant, les
       // nés en 1964 et 1965 doivent la durée de la loi de 2023.
@@ -496,6 +511,64 @@ export class ScenarioActuel {
       }
     }
     return [periode.duree_requise_trimestres || 160, null];
+  }
+
+  /**
+   * La durée d'un droit qui s'ouvre avant soixante ans, ou null.
+   *
+   * Le militaire qui réunit ses services, l'emploi classé qui atteint son âge
+   * anticipé ou minoré ne se voient pas opposer la durée de leur génération,
+   * mais « celle exigée des fonctionnaires atteignant [soixante ans] l'année à
+   * compter de laquelle la liquidation peut intervenir » — article 5, VI, de
+   * la loi du 21 août 2003, puis L. 13, III, du code des pensions, que le XXIV
+   * de la loi du 14 avril 2023 garde en vigueur par renvoi. Le militaire qui
+   * peut liquider à compter du 1er septembre 2023 relève du C, 2°, du même
+   * XXIV. Avant 2004, c'est la durée que la fiche portait l'année d'ouverture.
+   * ``derogation`` est celle que dureeRequise vient de lire.
+   *
+   * @returns {[number, number|null] | null}
+   */
+  dureeRequiseAvantSoixanteAns(periode, carriere, derogation) {
+    if (periode.bareme_decote !== "fonction_publique") {
+      return null;
+    }
+    const militaire = this.droitMilitaire(periode, carriere);
+    let age;
+    if (militaire !== null) {
+      age = militaire.ageOuverture;
+    } else if (derogation !== null) {
+      age = derogation.ageOuverture;
+    } else {
+      return null;
+    }
+    if (age >= AGE_DUREE_A_L_OUVERTURE) {
+      return null;
+    }
+    let ouverture = carriere.dateNaissance.plusMois(enMois(age));
+    if (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined) {
+      ouverture = DateMois.depuisRang(Math.min(
+        ouverture.rang,
+        carriere.dateNaissance.plusMois(enMois(carriere.age_liquidation)).rang,
+      ));
+    }
+    if (militaire !== null && ouverture.rang >= DUREE_XXIV_C_DEPUIS.rang) {
+      return this.dureesRequisesAvantSoixanteAns.depuis2023(ouverture);
+    }
+    const transitoire = this.dureesRequisesFonctionPublique.trimestres(ouverture.annee);
+    if (transitoire !== null) {
+      return transitoire;
+    }
+    const parAnnee = this.dureesRequisesAvantSoixanteAns.parAnnee(ouverture.annee);
+    if (parAnnee !== null) {
+      return parAnnee;
+    }
+    const enVigueur = this.catalogue.obtenir(periode.regime).periode(ouverture.annee);
+    if (enVigueur === null || enVigueur === undefined
+        || enVigueur.duree_requise_trimestres === null
+        || enVigueur.duree_requise_trimestres === undefined) {
+      return null;
+    }
+    return [enVigueur.duree_requise_trimestres, null];
   }
 
   /**

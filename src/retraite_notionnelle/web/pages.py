@@ -8791,6 +8791,29 @@ def _ecart_plafond_decote(simulateur: Simulateur, generation: int) -> float:
     return actif - sedentaire
 
 
+def _ecart_duree_classement(simulateur: Simulateur, generation: int) -> str:
+    """De combien le classement abaisse la durée requise, au même départ.
+
+    Les deux mêmes carrières que :func:`_ecart_plafond_decote`. Un droit
+    ouvert avant soixante ans se voit opposer la durée de la génération qui a
+    soixante ans cette année-là (L. 13, III, du code des pensions), et non
+    celle de l'agent : l'écart n'est donc pas fixe, et la phrase le disait
+    « d'un trimestre » pour la génération 1965, qui en perd quatre depuis que
+    le modèle lit cette règle (23 septembre 2026). Il se calcule.
+    """
+    cas = next(c for c in CAS_TYPES if c.code == "fonctionnaire_actif")
+    actif, sedentaire = (
+        simulateur.simuler(carriere_variante(
+            simulateur, cas, generation, 57, affiliation=affiliation,
+        )).actuel.trimestres_requis
+        for affiliation in (None, "fonctionnaire_territorial_hospitalier")
+    )
+    ecart = sedentaire - actif
+    if ecart == 1:
+        return "d'un trimestre"
+    return f"de {ecart} trimestres"
+
+
 def _avantages(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
     """Tous les avantages non contributifs, depuis quand, et ce qu'ils coûtent.
 
@@ -9139,8 +9162,9 @@ Un agent de catégorie active parti à 57 ans et un agent sédentaire parti le m
 jour butent donc tous deux sur le même plafond : leurs pensions ne diffèrent que
 de {g.euros(_ecart_plafond_decote(contexte.simulateur(), 1960))} par an pour la
 génération 1960, et de {g.euros(_ecart_plafond_decote(contexte.simulateur(), 1965))}
-pour celle de 1965, dont le classement abaisse par ailleurs la durée requise
-d'un trimestre. Le montant ne
+pour celle de 1965 ; le classement y abaisse par ailleurs la durée requise
+{_ecart_duree_classement(contexte.simulateur(), 1960)} pour la première,
+{_ecart_duree_classement(contexte.simulateur(), 1965)} pour la seconde. Le montant ne
 sait pas distinguer celui qui part cinq ans trop tôt ; la durée le sait.</p>
 <p>Le classement de l'emploi en porte
 {g.pourcentage(part_classement, decimales=0)}. Le reste se partage entre les

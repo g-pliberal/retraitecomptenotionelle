@@ -482,3 +482,98 @@ exemples:
       reste.
     carriere: {naissance: "1960-08", sexe: H, affiliation: agent_general_assurance, liquidation: "2026-07", age_debut: 22}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {cavamac_complementaire: 0.9375}}
+
+  # ---- Cour des comptes ----------------------------------------------------
+  # La Cour n'applique pas la règle, elle la contrôle ; mais le tableau n° 20
+  # de son rapport « Les retraites des fonctionnaires de l'État »
+  # (communication à la commission des finances de l'Assemblée nationale,
+  # 22 septembre 2026, annexe n° 3, « Source : législation ») est la seule
+  # table publiée de la durée requise des emplois classés, génération par
+  # génération, et elle a démenti le modèle. Pour ceux que les marches de 2023
+  # ne visent pas, la durée n'est pas celle de la génération de l'agent mais
+  # celle de la génération qui a soixante ans l'année où son droit s'ouvre
+  # (L. 13, III, du code des pensions, dans sa version de 2014 à 2023) : le
+  # super-actif né en 1965 part à cinquante-deux ans en 2017, et se voit
+  # opposer les 166 trimestres de la génération 1957, non les 169 de la
+  # sienne. Chaque ligne ci-dessous liquide à l'âge d'ouverture, avec
+  # vingt-cinq à trente ans de services classés.
+  - id: cdc_2026_tab20_super_active_1965
+    source: {editeur: "Cour des comptes", reference: "Les retraites des fonctionnaires de l'État, septembre 2026, annexe n° 3, tableau n° 20", verifie_le: "2026-09-23"}
+    enonce: >-
+      Durée d'assurance requise par génération selon le type de liquidation :
+      catégories « super actives », génération 1965, 166 trimestres ; les
+      sédentaires de la même génération en doivent 170 ou 171.
+    carriere: {naissance: "1965-03", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2017-03", age_debut: 22}
+    attendu: {trimestres_requis: 166, liquidation_ouverte: true}
+
+  - id: cdc_2026_tab20_super_active_1968
+    source: {editeur: "Cour des comptes", reference: "Les retraites des fonctionnaires de l'État, septembre 2026, annexe n° 3, tableau n° 20", verifie_le: "2026-09-23"}
+    enonce: >-
+      Catégories « super actives » : 167 trimestres pour les générations 1966,
+      1967 et 1968, dont le droit s'ouvre à cinquante-deux ans, de 2018 à
+      2020.
+    carriere: {naissance: "1968-06", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2020-06", age_debut: 22}
+    attendu: {trimestres_requis: 167, liquidation_ouverte: true}
+
+  - id: cdc_2026_tab20_super_active_1971_juin
+    source: {editeur: "Cour des comptes", reference: "Les retraites des fonctionnaires de l'État, septembre 2026, annexe n° 3, tableau n° 20", verifie_le: "2026-09-23"}
+    enonce: >-
+      Catégories « super actives », génération 1971 : 168 trimestres pour
+      les nés avant septembre, 169 pour les nés à compter de septembre.
+      Ici un agent né en juin 1971, parti à cinquante-deux ans en juin 2023.
+    carriere: {naissance: "1971-06", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2023-06", age_debut: 22}
+    attendu: {trimestres_requis: 168, liquidation_ouverte: true}
+
+  - id: cdc_2026_tab20_super_active_1971_octobre
+    source: {editeur: "Cour des comptes", reference: "Les retraites des fonctionnaires de l'État, septembre 2026, annexe n° 3, tableau n° 20", verifie_le: "2026-09-23"}
+    enonce: >-
+      Catégories « super actives », génération 1971, né à compter de
+      septembre : 169 trimestres. L'âge minoré est alors de cinquante-deux ans
+      et trois mois, atteint en janvier 2024.
+    carriere: {naissance: "1971-10", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2024-01", age_debut: 22}
+    attendu: {trimestres_requis: 169, liquidation_ouverte: true}
+
+  - id: cdc_2026_tab20_super_active_1975_juin
+    source: {editeur: "Cour des comptes", reference: "Les retraites des fonctionnaires de l'État, septembre 2026, annexe n° 3, tableau n° 20", verifie_le: "2026-09-23"}
+    enonce: >-
+      Catégories « super actives », génération 1975 : 170 trimestres pour
+      les nés avant avril, 171 pour les nés à compter d'avril ; 172 pour la
+      génération 1976 et les suivantes.
+    carriere: {naissance: "1975-06", sexe: H, affiliation: fonctionnaire_etat_super_actif, liquidation: "2028-06", age_debut: 22}
+    attendu: {trimestres_requis: 171, liquidation_ouverte: true}
+
+  - id: cdc_2026_tab20_active_1965
+    source: {editeur: "Cour des comptes", reference: "Les retraites des fonctionnaires de l'État, septembre 2026, annexe n° 3, tableau n° 20", verifie_le: "2026-09-23"}
+    enonce: >-
+      Catégories actives, génération 1965 : 168 trimestres, là où les
+      sédentaires de la même génération en doivent 170 ou 171. Le droit
+      s'ouvre à cinquante-sept ans, en 2022.
+    carriere: {naissance: "1965-06", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2022-06", age_debut: 22}
+    attendu: {trimestres_requis: 168, liquidation_ouverte: true}
+
+  - id: cdc_2026_tab20_active_1966_mars
+    source: {editeur: "Cour des comptes", reference: "Les retraites des fonctionnaires de l'État, septembre 2026, annexe n° 3, tableau n° 20", verifie_le: "2026-09-23"}
+    enonce: >-
+      Catégories actives, génération 1966 : 168 trimestres pour les nés avant
+      septembre, 169 pour les nés à compter de septembre. Ici un agent né en
+      mars 1966, parti à cinquante-sept ans en mars 2023.
+    carriere: {naissance: "1966-03", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2023-03", age_debut: 22}
+    attendu: {trimestres_requis: 168, liquidation_ouverte: true}
+
+  - id: cdc_2026_tab20_active_1966_octobre
+    source: {editeur: "Cour des comptes", reference: "Les retraites des fonctionnaires de l'État, septembre 2026, annexe n° 3, tableau n° 20", verifie_le: "2026-09-23"}
+    enonce: >-
+      Catégories actives, génération 1966, né à compter de septembre : 169
+      trimestres. L'âge anticipé est alors de cinquante-sept ans et trois
+      mois, atteint en janvier 2024.
+    carriere: {naissance: "1966-10", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2024-01", age_debut: 22}
+    attendu: {trimestres_requis: 169, liquidation_ouverte: true}
+
+  - id: cdc_2026_tab20_active_1968
+    source: {editeur: "Cour des comptes", reference: "Les retraites des fonctionnaires de l'État, septembre 2026, annexe n° 3, tableau n° 20", verifie_le: "2026-09-23"}
+    enonce: >-
+      Catégories actives : 170 trimestres pour les générations 1968 et 1969,
+      et pour la génération 1970 née avant avril ; 171 à compter d'avril 1970,
+      172 à partir de 1971.
+    carriere: {naissance: "1968-06", sexe: H, affiliation: fonctionnaire_etat_actif, liquidation: "2026-03", age_debut: 22}
+    attendu: {trimestres_requis: 170, liquidation_ouverte: true}
