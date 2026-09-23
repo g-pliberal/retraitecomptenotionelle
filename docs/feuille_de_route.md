@@ -14784,14 +14784,16 @@ branche et de chaque tag est resté identique à l'octet, et aucun objet de
 l'historique ne porte plus rien de nominatif. Toutes les empreintes ont changé :
 les sept que citait ce journal ont été reportées, et `CLAUDE.md` dit comment
 reprendre un clone antérieur, par `git merge-base --fork-point`. Ce qu'une
-session ne peut pas faire reste à la main : GitHub sert les anciens commits
-tant que son support ne les a pas purgés — la pull request n° 1 les retient —,
-et les exécutions Actions qui les nomment se suppriment depuis l'onglet
-Actions.
+session ne peut pas faire reste à la main. Les deux tags, qu'elle n'a pas le
+droit d'écrire, se replacent par `.github/workflows/tags-reecrits.yml`, à
+lancer une fois depuis l'onglet Actions, puis à supprimer. GitHub sert les
+anciens commits tant que son support ne les a pas purgés — la pull request
+n° 1 les retient —, et les exécutions Actions qui les nomment se suppriment
+depuis ce même onglet.
 
 **Fichiers.** `scripts/pousser.sh`, `tests/test_pousser.py`, `CLAUDE.md`,
-`README.md` et `docs/limites.md` (le compte des tests), et ce journal (les
-empreintes reportées).
+`README.md` et `docs/limites.md` (le compte des tests), ce journal (les
+empreintes reportées), `.github/workflows/tags-reecrits.yml`.
 
 ### 115. Qui paie quoi : deux schémas de Sankey sur la page Coût — `fait`
 

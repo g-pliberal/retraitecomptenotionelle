@@ -1,0 +1,44 @@
+# Replace les tags « index-dila » et « documents-apportes » sur l'historique
+# réécrit le 23 septembre 2026 (voir CLAUDE.md, et l'action 114 de la feuille
+# de route). Tant qu'ils désignent l'ancien historique, un `git clone` le
+# télécharge encore. Le jeton d'une session n'a pas le droit d'écrire un tag ;
+# celui d'un workflow, avec `contents: write`, l'a.
+#
+# À lancer une fois, à la main (onglet Actions, « Run workflow »). Chaque tag
+# n'est déplacé que s'il désigne encore l'ancien commit, et vers son équivalent
+# réécrit, qui est dans main : relancé, le workflow ne fait rien. Une release
+# suit son tag par le nom, et garde ses fichiers. Ce fichier se supprime
+# ensuite.
+
+name: Tags réécrits
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  replacer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Replacer les deux tags sur l'historique réécrit
+        run: |
+          set -euo pipefail
+          replacer() {
+            local tag=$1 ancien=$2 neuf=$3 actuel
+            actuel=$(git ls-remote origin "refs/tags/$tag" | cut -f1)
+            if [ "$actuel" = "$neuf" ]; then
+              echo "$tag : déjà sur ${neuf:0:7}"
+              return
+            fi
+            git merge-base --is-ancestor "$neuf" origin/main
+            git push --force-with-lease="refs/tags/$tag:$ancien" origin "$neuf:refs/tags/$tag"
+            echo "$tag : ${ancien:0:7} -> ${neuf:0:7}"
+          }
+          replacer index-dila ad6afca09f14840135e3db0aefcb4c3b93e99573 bf2bebea3da56c5c49875f94b2621de88ce69138
+          replacer documents-apportes b31866d5f0af540442697601ccb53e74dcfbba92 d11c72ec4d89cd27cbcfb6d616a1e1be9db3d5ec
