@@ -726,6 +726,31 @@ class Parametres:
     #: vérifie. Un donne la baisse d'impôt intégrale.
     part_rendue_aux_salaires: float = 0.5
 
+    #: Le TAUX UNIQUE DE TVA que la proposition substitue, à compter de la
+    #: bascule, aux quatre taux d'aujourd'hui — 20, 10, 5,5 et 2,1 %. Décision
+    #: du Parti libéral, 23 septembre 2026, et ce qu'il rapporte DE PLUS que
+    #: les quatre est affecté au scénario 6.
+    #:
+    #: Pourquoi 21,1 % : c'est le taux qui couvre, chaque année de 2026 à
+    #: 2070, le déficit de la proposition garantie vieillesse comprise, dans la
+    #: variante rétroactive, sans rien emprunter — le déficit culmine vers
+    #: 2044 et ce taux est celui du pic. Il n'a pas besoin de monter beaucoup
+    #: au-dessus de 20 % parce qu'il supprime les taux réduits : un taux unique
+    #: de 15,46 % rapporterait déjà ce que rapportent les quatre, et chaque
+    #: point au-delà rapporte 0,38 point de PIB. `donnees/tva.py` dit d'où
+    #: viennent ces assiettes — le modèle de la TVA théorique de la DG Trésor —
+    #: et ce que ce chiffrage statique ne compte pas.
+    #:
+    #: Ce n'est pas une cotisation : la TVA n'est portée au compte de personne
+    #: et n'ouvre aucun droit. Elle comble le déficit que le compte notionnel
+    #: laisse, et tient lieu du coefficient d'équilibre, qui rognerait sinon
+    #: toutes les pensions. Elle entre donc au poste des impôts et taxes
+    #: affectés, que le scénario 6 vidait de tout le reste.
+    #:
+    #: Zéro rend l'ancienne convention, où la TVA n'était pas réformée : un
+    #: test le vérifie.
+    taux_tva_liberal: float = 0.211
+
     #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui
     #: remplace l'ASPA et en garde l'âge (65 ans) et le principe — porter les
     #: ressources à un plancher —, mais individualise le plancher. Chacun est

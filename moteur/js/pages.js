@@ -25,6 +25,7 @@ import {
   sousRegimeTaux,
 } from "./config.js";
 import { AssietteActivite } from "./assiette.js";
+import { AssietteTva } from "./tva.js";
 import {
   LIBELLES_MOTIFS, LIGNES_LUES, MOTIFS, NEUTRALISATIONS, calculerAvantages,
   carriereVariante, chargerAvantages,
@@ -6670,6 +6671,19 @@ function reglageProposition(solde) {
   };
 }
 
+/**
+ * Assez de décimales pour qu'un coefficient sous un ne s'écrive pas 1,00 : avec
+ * la TVA à taux unique, le plus bas de la proposition est de 0,999. Copie de
+ * `_decimales_sous_un`.
+ */
+function decimalesSousUn(valeur) {
+  for (const decimales of [2, 3, 4]) {
+    const facteur = 10 ** decimales;
+    if (Math.round(valeur * facteur) / facteur < 1.0) return decimales;
+  }
+  return 4;
+}
+
 /** La phrase de Cas types : de quel côté de un, et de combien. */
 function lectureReglageProposition(r) {
   if (r.sousUn === 0) {
@@ -6690,8 +6704,10 @@ function lectureReglageProposition(r) {
   }
   return `Pour la proposition, ce facteur est inférieur à un ${r.sousUn} `
     + `années sur ${r.total} entre ${r.debut} et ${r.fin}, au plus `
-    + `bas ${g.nombre(r.minimum, 2)} en ${r.anneeMinimum}, et `
-    + "supérieur à un les autres. Au-dessus de un, le système aurait de quoi "
+    + `bas ${g.nombre(r.minimum, decimalesSousUn(r.minimum))} en `
+    + `${r.anneeMinimum}, et `
+    + `supérieur à un les autres, jusqu'à ${g.nombre(r.dernier, 2)} en `
+    + `${r.fin}. Au-dessus de un, le système aurait de quoi `
     + "relever toutes les cases d'autant ; au-dessous, il aurait fallu les "
     + "abaisser, ou financer la différence autrement.";
 }
@@ -6713,9 +6729,10 @@ function noteLectureCoefficient(r) {
       + `${g.pourcentage(1 - r.minimum, false, 0)} : le coût `
       + "de transition du taux unique.";
   } else if (r.minimum < 1.0) {
-    lecture += `, et son plus bas, ${g.nombre(r.minimum, 2)} en `
+    const decimales = decimalesSousUn(r.minimum);
+    lecture += `, et son plus bas, ${g.nombre(r.minimum, decimales)} en `
       + `${r.anneeMinimum}, un manque de `
-      + `${g.pourcentage(1 - r.minimum, false, 0)}.`;
+      + `${g.pourcentage(1 - r.minimum, false, decimales - 2)}.`;
   } else {
     lecture += ".";
   }
@@ -9173,8 +9190,9 @@ const LIGNES_RECETTES = [
   ["cotisations", "Cotisations sociales", "poste"],
   ["contribution_equilibre_etat", "Contribution d'équilibre de l'État", "poste"],
   ["subventions_equilibre", "Subventions d'équilibre aux régimes spéciaux", "poste"],
-  ["impots_et_taxes", "Impôts et taxes affectés, dont CSG", "poste"],
+  ["impots_et_taxes", "Impôts et taxes affectés", "poste"],
   ["impots_solidarite", "Dont fonds de solidarité vieillesse", "dont"],
+  ["impots_tva", "Dont TVA à taux unique", "dont"],
   ["transferts", "Transferts d'organismes extérieurs", "poste"],
   ["transferts_famille", "Dont branche famille", "dont"],
   ["transferts_chomage", "Dont assurance chômage", "dont"],
@@ -9197,6 +9215,37 @@ const LIGNES_DEPENSES = [
  * moitié éteint de la dette. Le partage est un RÉGLAGE, et la note se tait
  * quand il vaut zéro.
  */
+function coutNoteTva(contexte, annee, ligne, pib, anneePib) {
+  // Ce que la proposition ajoute : une TVA à taux unique (Parti libéral,
+  // 23 septembre 2026), ce que la garantie en prend d'abord, et ce que le
+  // chiffrage ne compte pas. Copie de `_cout_note_tva` ; se tait quand la TVA
+  // n'est pas réformée, ou pas encore.
+  const garantie = ligne.tvaGarantie("notionnel_liberal");
+  const regime = ligne.tvaDe("notionnel_liberal");
+  const total = garantie + regime;
+  if (total <= 0.0) return "";
+  const tva = new AssietteTva(contexte.paquet);
+  const taux = contexte.base.taux_tva_liberal;
+  const hausse = (tauxActuel) => g.nombre(tva.variationPrix(taux, tauxActuel) * 100, 1);
+  return `
+<div class="note"><strong>Ce que la proposition ajoute : une TVA à taux
+unique.</strong> Les quatre taux de TVA d'aujourd'hui, 20, 10, 5,5 et 2,1 %,
+cèdent la place à un seul, ${g.pourcentage(taux, false, 1)}, et ce qu'il
+rapporte de plus va à la retraite de la proposition :
+${g.pourcentage(total, false, 2)} du PIB en ${annee}, soit
+${milliards(total * pib, 0)} au PIB de ${anneePib}. Il paie d'abord la garantie
+vieillesse, ${milliards(garantie * pib, 0)}, et le reste,
+${milliards(regime * pib, 0)}, entre au régime unique : c'est la ligne « Dont
+TVA à taux unique ». Ce n'est pas une cotisation : il n'ouvre de droit à
+personne, et comble ce que le compte laisse, à la place du coefficient
+d'équilibre qui rognerait sinon toutes les pensions. Les assiettes de chaque
+taux sont celles que publie la direction générale du Trésor, tenues à leur part
+du PIB de ${tva.annee}. Le chiffrage est statique : il suppose que les achats ne
+baissent pas quand les prix montent, et que les prix répercutent la TVA en
+entier : ceux de l'alimentation monteraient de ${hausse(0.055)} %, ceux de ce qui
+est taxé à 20 % aujourd'hui de ${hausse(0.20)} %.</div>`;
+}
+
 function coutNoteRestitution(contexte, annee, pib, anneePib) {
   const restitution = contexte.restitution();
   if (!restitution || restitution.partRendue <= 0) {
@@ -9309,10 +9358,11 @@ function caisseFlux(ligne, pib, systeme, libelle, cotisations) {
   for (const groupe of GROUPES) {
     const part = groupe.postes.reduce((somme, code) => somme + postes[code], 0);
     if (part > 0.0) {
-      sources.push(new g.NoeudSankey(
-        groupe.code === "salaires" ? cotisations : LIBELLES_FLUX[groupe.code],
-        part, montantFlux(part * pib), groupe.couleur,
-      ));
+      // L'impôt de la proposition n'est que sa TVA à taux unique : il est nommé.
+      let nom = LIBELLES_FLUX[groupe.code];
+      if (groupe.code === "salaires") nom = cotisations;
+      else if (groupe.code === "impots" && ligne.tvaDe(systeme) > 0.0) nom = "TVA";
+      sources.push(new g.NoeudSankey(nom, part, montantFlux(part * pib), groupe.couleur));
     }
   }
   const depenses_ = ligne.postesDepenses(systeme);
@@ -9373,8 +9423,9 @@ function compteFlux(contexte, annee) {
 /**
  * Qui paie quoi : le système actuel et la proposition, en deux schémas de
  * Sankey à la même échelle. Aujourd'hui un seul pot ; dans la proposition,
- * trois caisses — le régime unique, la garantie vieillesse que paient l'impôt
- * et les successions, le pilier capitalisé. L'année se choisit, comme celle de
+ * trois caisses — le régime unique, où n'entre d'impôt que la TVA à taux
+ * unique, la garantie vieillesse que paient cette TVA et les successions, le
+ * pilier capitalisé. L'année se choisit, comme celle de
  * la cascade. Copie de `_cout_carte_flux`, où l'argument est développé.
  */
 function coutCarteFlux(contexte, regards = null) {
@@ -9400,7 +9451,9 @@ function coutCarteFlux(contexte, regards = null) {
     const impot = compte.garantie - compte.reprises;
     const payeurs = [];
     if (impot > 0.0) {
-      payeurs.push(new g.NoeudSankey("Impôts", impot, montantFlux(impot * pib),
+      // La TVA à taux unique paie la garantie avant d'entrer au régime.
+      const nom = ligne.tvaGarantie("notionnel_liberal") > 0.0 ? "TVA" : "Impôts";
+      payeurs.push(new g.NoeudSankey(nom, impot, montantFlux(impot * pib),
         couleurs.impots));
     }
     if (compte.reprises > 0.0) {
@@ -9461,12 +9514,15 @@ function coutCarteFlux(contexte, regards = null) {
     ? `en milliards au PIB de ${compte.anneePib}, dernière année publiée`
     : `en milliards du PIB que l'INSEE publie pour ${annee}`;
 
+  const impotEnClair = ligne.tvaGarantie("notionnel_liberal") > 0.0
+    ? "la TVA à la garantie vieillesse d'abord, aux pensions ensuite"
+    : "l'impôt à la garantie vieillesse";
   return g.cle(
     "Qui paie quoi, aujourd'hui et avec notre proposition ?",
     `Aujourd'hui, cotisations, impôts et versements d'autres caisses se
 mêlent pour payer les pensions. Avec notre proposition, <strong>chaque euro a
-sa caisse</strong> : les cotisations vont aux pensions, l'impôt à la garantie
-vieillesse, et ${tauxCapitalise} des salaires sont placés à votre nom. En
+sa caisse</strong> : les cotisations vont aux pensions, ${impotEnClair}, et
+${tauxCapitalise} des salaires sont placés à votre nom. En
 ${annee}, le régime unique ${verbe} ${montant}, le système actuel
 ${actuelEnClair}.`,
     choix + schemas,
@@ -9548,6 +9604,13 @@ function coutDetailPostes(contexte) {
     ...(capitalise ? cellules(capitalise, 0.0) : ["—", "—", "—"]),
   ]);
 
+  // La TVA à taux unique remplace les impôts affectés, et la note qui lui est
+  // consacrée le détaille : la phrase se tait quand elle n'est pas réformée.
+  const tvaRemplace = ligne.tvaDe("notionnel_liberal")
+    + ligne.tvaGarantie("notionnel_liberal") > 0.0
+    ? " Un impôt les remplace, et un seul : la TVA à taux unique, que la note "
+      + "suivante détaille."
+    : "";
   const sourceMilliards = annee > anneePib
     ? `Les parts de PIB sont celles du compte du COR pour ${annee}, année `
       + `projetée. Le PIB de ${annee} n'est pas publié : les milliards sont `
@@ -9592,9 +9655,9 @@ statuts. Trois postes disparaissent : la contribution d'équilibre de l'État,
 remplacée par ces ${g.pourcentage(base.taux_cotisation_liberal, false, 0)}
 appliqués aux traitements des fonctionnaires ; les subventions d'équilibre,
 dont la fusion des régimes supprime l'objet ; les impôts et taxes affectés, qui
-n'acquièrent de droits à personne. Des transferts, seule reste la part qui ne
-paie pas un droit supprimé : la branche famille finance des droits que le
-compte notionnel ne sert plus, l'assurance chômage des cotisations qu'il
+n'acquièrent de droits à personne.${tvaRemplace} Des transferts, seule reste la
+part qui ne paie pas un droit supprimé : la branche famille finance des droits
+que le compte notionnel ne sert plus, l'assurance chômage des cotisations qu'il
 porte. Côté dépenses, les
 pensions sont recalculées au franc le franc des cotisations, et la réversion
 n'est plus servie, ce que la dernière note détaille. La garantie vieillesse qui remplace l'ASPA est financée par l'impôt,
@@ -9617,6 +9680,8 @@ d'activité, et ce système ne reconduit donc aucune des trois ressources qui
 n'acquièrent de droits à personne, celles que la note du dessus nomme. Trois
 postes : 27 % des ressources en 2024, 29 % en 2070. Les cinq autres systèmes
 les encaissent tous, faute qu'aucun programme dise ce qu'il en ferait.</div>
+
+${coutNoteTva(contexte, annee, ligne, pib, anneePib)}
 
 ${coutNoteRestitution(contexte, annee, pib, anneePib)}
 
@@ -12887,6 +12952,7 @@ function programmeQuestions(contexte) {
   const regimes = contexte.simulateur().catalogue.taille;
   const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
   const capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
+  const tva = g.pourcentage(base.taux_tva_liberal, false, 1);
   const volontaire = g.pourcentage(tauxCapitalisationVolontaireApplique(base),
     false, 0);
   const impose = g.pourcentage(base.taux_cotisation_liberal
@@ -13018,10 +13084,11 @@ agents, l'autre moitié aux pensions déjà promises.</p>`, ""],
     ["Comment passe-t-on d'un système à l'autre ?",
       programmeTransition(contexte), "la-transition"],
     ["Combien cela coûte-t-il, et qui paie ?", `
-<p>Baisser la cotisation à ${taux} a un prix : pendant la transition, la
-proposition encaisse moins qu'elle ne verse, et son déficit dépasse celui du
-système actuel. ${cout} le chiffre année par année, garantie vieillesse
-comprise.</p>
+<p>Baisser la cotisation à ${taux} a un prix, et la consommation le paie : une
+TVA à taux unique de ${tva} remplace les quatre taux d'aujourd'hui, et ce
+qu'elle rapporte de plus va à la retraite, à la garantie vieillesse d'abord.
+Elle est fixée pour couvrir le déficit du nouveau système, garantie comprise,
+jusqu'à son pic des années 2040. ${cout} le chiffre année par année.</p>
 ${programmeBlocages(contexte)}`, "les-blocages"],
     ["Ces chiffres sont-ils fiables ?", `
 <p>Ils viennent des institutions publiques (INSEE, Conseil d'orientation des
@@ -13529,6 +13596,14 @@ function programmeRestitution(contexte) {
   // dernière année publiée sinon.
   const pib = pibDeConversion(comptes, annee);
   const poids = comptes.part("impots_et_taxes", annee);
+  // La TVA à taux unique prend leur place dans le financement de la retraite :
+  // la phrase se tait quand elle n'est pas réformée.
+  const tvaALeurPlace = base.taux_tva_liberal > 0.0
+    ? " À leur place, la retraite reçoit la TVA à taux unique de "
+      + `${g.pourcentage(base.taux_tva_liberal, false, 1)} : un impôt sur la `
+      + "consommation plutôt que sur les revenus, qui n'ouvre de droit à personne "
+      + "lui non plus."
+    : "";
   return `
 <h3>Les impôts que nous supprimons : ${milliards(part.rendu * pib, 0)} rendus aux
 salaires</h3>
@@ -13536,7 +13611,7 @@ salaires</h3>
 <strong>impôts</strong> (${milliards(part.posteAbandonne * pib, 0)} en
 ${annee}) qui n'ouvrent de droit à personne. Un compte notionnel ne sait pas les porter au crédit de qui que ce
 soit : il ne rend que ce qui a été cotisé. <strong>Nous cessons donc de les
-affecter à la retraite.</strong></p>
+affecter à la retraite.</strong>${tvaALeurPlace}</p>
 <p><strong>Et nous ne les gardons pas.</strong> Ne rien dire de cette recette
 reviendrait à la laisser au budget, c'est-à-dire à la consacrer tout entière au
 déficit. Nous la partageons en deux :
@@ -13580,14 +13655,15 @@ n'est pas petite.</p>`;
 export const MESURES_BLOCAGES = {
   taux_regime_unique: 25.8,
   cout_18_pour_cent: 2.4,
-  solde_moyen_proposition: -1.4,
+  solde_moyen_proposition: 0.5,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 97,
+  dette_2070_proposition: -31,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.80,
+  coefficient_minimum: 1.00,
   decennie_coefficient_minimum: 2040,
-  coefficient_2070: 1.00,
-  solde_moyen_prospectif: -3.5,
+  coefficient_2070: 1.25,
+  tva_affectee: 2.2,
+  solde_moyen_prospectif: -1.5,
   cout_diviseur_age_legal: 0.1,
 };
 
@@ -13632,29 +13708,33 @@ function programmeBlocages(contexte) {
         + `${pt(m.cout_diviseur_age_legal)} point de PIB par an, `
         + `${md(m.cout_diviseur_age_legal)} ${auPibDe}, et plus rien en 2050.`,
         "Le recalcul est maintenu. La version qui laisse le stock intact a été "
-        + `chiffrée et écartée : ${pt(m.solde_moyen_prospectif)} points de PIB `
-        + "par an en moyenne jusqu'en 2070, un besoin de "
-        + `${md(m.solde_moyen_prospectif)} par an ${auPibDe} : elle n'est pas `
-        + "finançable."],
+        + "chiffrée et écartée : même avec la TVA à taux unique, "
+        + `${pt(m.solde_moyen_prospectif)} point de PIB par an en moyenne `
+        + `jusqu'en 2070, un besoin de ${md(m.solde_moyen_prospectif)} par an `
+        + `${auPibDe} : elle n'est pas finançable.`],
       ["Le taux de 18 %",
         `Face au taux d'aujourd'hui, ${pt(m.taux_regime_unique)} % part `
         + "patronale comprise, les 18 % coûtent "
         + `${pt(m.cout_18_pour_cent)} points de PIB par an sur 2026-2070, `
         + `${md(m.cout_18_pour_cent)} ${auPibDe}, sous les mêmes règles de `
-        + "recette. Le solde de la proposition est de "
-        + `${pt(m.solde_moyen_proposition)} point par an en moyenne contre `
-        + `${pt(m.solde_moyen_actuel)} pour le système actuel, un besoin de `
+        + "recette. La TVA à taux unique rapporte "
+        + `${pt(m.tva_affectee)} points de PIB par an de plus que les quatre `
+        + `taux d'aujourd'hui, ${md(m.tva_affectee)}. Avec elle, la `
+        + "proposition dégage en moyenne un excédent de "
+        + `${pt(m.solde_moyen_proposition)} point par an quand le système `
+        + `actuel accuse un déficit de ${pt(-m.solde_moyen_actuel)} point, `
         + `${md(m.solde_moyen_proposition)} par an contre `
-        + `${md(m.solde_moyen_actuel)}, et la dette qu'elle accumule en 2070 `
-        + `vaut ${pt(m.dette_2070_proposition, 0)} % du PIB contre `
-        + `${pt(m.dette_2070_actuel, 0)} %, ${md(m.dette_2070_proposition)} `
-        + `contre ${md(m.dette_2070_actuel)}.`,
-        "C'est le prix d'un prélèvement plus bas, et il est écrit sur la page "
-        + "Coût plutôt que caché. Le pilotage annuel, que ces chiffres n'appliquent "
-        + "pas, est ce qui le tient : le coefficient d'équilibre descend à "
-        + `${pt(m.coefficient_minimum, 2)} dans les années `
-        + `${m.decennie_coefficient_minimum} et revient à `
-        + `${pt(m.coefficient_2070, 2)} en 2070.`],
+        + `${md(m.solde_moyen_actuel)}, et elle aborde 2070 avec des réserves `
+        + `de ${pt(-m.dette_2070_proposition, 0)} % du PIB quand il y porte `
+        + `une dette de ${pt(m.dette_2070_actuel, 0)} %, `
+        + `${md(m.dette_2070_proposition)} contre ${md(m.dette_2070_actuel)}.`,
+        "Le prix d'un prélèvement plus bas est payé par la consommation plutôt "
+        + "que par le travail, et il est écrit sur la page Coût plutôt que caché. "
+        + "Le coefficient d'équilibre, que ces chiffres n'appliquent pas, ne "
+        + `descend plus qu'à ${pt(m.coefficient_minimum, 2)} dans les années `
+        + `${m.decennie_coefficient_minimum}, au pic du déficit, et monte à `
+        + `${pt(m.coefficient_2070, 2)} en 2070 : la TVA tient lieu du `
+        + "pilotage."],
       ["La garantie vieillesse",
         "Le préambule de 1946 garantit aux vieux travailleurs des moyens "
         + "convenables d'existence, et un compte purement contributif y répond mal.",

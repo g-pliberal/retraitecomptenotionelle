@@ -1,0 +1,43 @@
+# Rendement d'un point de TVA en 2025, taux par taux — France
+# source_id: dgtresor_point_tva
+# unite: millions d'euros courants de 2025, par point de taux
+# fiabilite:
+#   haute (2025) : tableaux 1 et 2 du Trésor-Éco n° 371 de la DG Trésor,
+#             « Analyse de la composition des recettes de TVA »,
+#             septembre 2025, recopiés à la main. Le modèle de la TVA
+#             théorique du Trésor, calé sur le compte semi-définitif 2022
+#             de l'INSEE et vieilli sur les recettes de 2023 à 2025.
+#
+# CE QUE PORTE UNE LIGNE
+# -----------------------
+# Ce que rapporterait un point de plus sur UN taux, les autres restant ce
+# qu'ils sont : 8 900 M€ pour passer de 20 à 21 %. Un point étant un
+# centième, l'assiette taxée à ce taux en est le centuple : 890 Md€ à
+# 20 %, 190 à 10 %, 240 à 5,5 %, 40 à 2,1 %. C'est la seule publication
+# française qui donne ces assiettes : les données fiscales ne ventilent
+# par taux que la TVA brute collectée, avant déduction, et non ce que
+# supportent en bout de chaîne les ménages, les administrations et les
+# secteurs exonérés.
+#
+# BRUT ET NET
+# -----------
+# `point_brut_meur` compte toute la TVA, y compris celle que paient les
+# administrations publiques sur leurs achats — hôpitaux, collectivités,
+# médicaments remboursés. `point_net_meur` la retire, parce qu'une
+# hausse de TVA augmente d'autant leurs dépenses : c'est le gain des
+# finances publiques prises ensemble, et la colonne que le dépôt emploie.
+# Le Trésor publie aussi les deux totaux, 13 700 et 11 400 M€ ; les
+# lignes, arrondies au dixième de milliard, somment à 13 600 et 11 500.
+#
+# CE QUE LE DÉPÔT EN TIRE
+# ------------------------
+# Le taux moyen de la TVA sur l'assiette nette, 15,46 %, qui est aussi le
+# taux unique qui rapporterait exactement ce que rapportent les quatre
+# taux d'aujourd'hui ; et la part de PIB de cette assiette, 38,4 % en
+# 2025. `donnees/tva.py` dit comment, et ce que ce chiffrage statique ne
+# compte pas.
+annee,taux,point_brut_meur,point_net_meur,fiabilite
+2025,0.021,400,400,haute
+2025,0.055,2400,2000,haute
+2025,0.10,1900,1600,haute
+2025,0.20,8900,7500,haute

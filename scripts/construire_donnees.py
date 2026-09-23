@@ -322,6 +322,38 @@ def _comptes_retraite() -> dict:
     return {nom: _serie(serie) for nom, serie in sorted(series.items())}
 
 
+def _tva() -> dict:
+    """Les assiettes de la TVA, taux par taux : ce que le scénario 6 en tire.
+
+    Ce que rapporte, en 2025, un point de plus sur chaque taux — brut, et net
+    de la TVA que paient les administrations elles-mêmes —, lu dans le
+    Trésor-Éco n° 371. Le portage en tire, comme ``donnees/tva.py``, ce que la
+    TVA à taux unique de la proposition rapporte de plus que les quatre taux
+    d'aujourd'hui. Les lignes gardent l'ordre du fichier : les sommes se font
+    dans le même ordre des deux côtés, et tombent donc au bit près.
+    """
+    from retraite_notionnelle.donnees.chargement import charger_table_csv
+    from retraite_notionnelle.donnees.tva import AssietteTva
+
+    chemin = DONNEES / "reference" / "macro" / "assiette_tva.csv"
+    brut, fiabilites = charger_table_csv(chemin, ("annee", "taux"), "point_brut_meur")
+    net, _ = charger_table_csv(chemin, ("annee", "taux"), "point_net_meur")
+    annee = AssietteTva(DONNEES).annee
+    return {
+        "annee": annee,
+        "lignes": [
+            {
+                "taux": float(taux),
+                "point_brut_meur": brut[(millesime, taux)],
+                "point_net_meur": net[(millesime, taux)],
+                "fiabilite": int(fiabilite),
+            }
+            for (millesime, taux), fiabilite in zip(brut, fiabilites)
+            if int(millesime) == annee
+        ],
+    }
+
+
 def _effectifs_retraites() -> dict:
     """Retraités de droit direct par caisse — la pondération des cas types.
 
@@ -1471,6 +1503,7 @@ def construire(bilan: bytes) -> bytes:
         "surcote_baremes": _surcote_baremes(),
         "depenses": _depenses(),
         "comptes_retraite": _comptes_retraite(),
+        "tva": _tva(),
         "population": _population(),
         "effectifs_retraites": _effectifs_retraites(),
         "effectifs_cotisants": _effectifs_cotisants(),

@@ -1125,7 +1125,9 @@ def recette(**reglages: str) -> float:
     comprise. ``payeurs=famille|chomage`` n'en garde que ceux-là, et
     ``sur=ressources`` le rapporte aux ressources de l'année plutôt qu'au PIB.
     ``quoi=impots`` : les impôts et taxes affectés ; ``quoi=taux_prelevement``
-    : ce que le système prélève sur l'assiette des revenus d'activité, en %.
+    : ce que le système prélève sur l'assiette des revenus d'activité, en % ;
+    ``quoi=tva`` : la TVA à taux unique que le scénario 6 reçoit, garantie
+    comprise.
     ``en=milliards`` dit le retrait, le versement ou les impôts en Md€, à la
     règle de ``_milliards_de_part``.
     """
@@ -1165,6 +1167,14 @@ def recette(**reglages: str) -> float:
         return _milliards_de_part(ligne.ressources * ligne.part_impots, ligne.annee)
     if quoi == "taux_prelevement":
         return ligne.taux_prelevement * 100
+    if quoi == "tva":
+        # La TVA à taux unique que la proposition affecte à sa retraite, toute
+        # entière : la part qui paie la garantie et celle qui entre au régime.
+        tva = (ligne.tva_garantie("notionnel_liberal")
+               + ligne.tva_de("notionnel_liberal"))
+        if en_milliards:
+            return _milliards_de_part(tva, ligne.annee)
+        return tva * 100
     raise ValueError(f"quoi inconnu « {quoi} »")
 
 

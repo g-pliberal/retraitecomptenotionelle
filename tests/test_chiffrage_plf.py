@@ -33,10 +33,13 @@ def test_les_recettes_retirees_se_decomposent_sans_reste(retro):
     Un poste qu'on cesserait de reconduire sans l'y ranger ferait un reste, et
     le tableau cesserait de dire d'où vient l'écart."""
     for annee in retro.annees:
-        total = (retro.recettes(annee)
+        # La TVA à taux unique n'est pas une recette retirée mais ajoutée : le
+        # fait central la met sur sa ligne, hors des trois « dont ».
+        total = (retro.recettes(annee) - retro.tva(annee)
                  - retro.solde[annee].ressources_de("actuel"))
         dont = (retro.retire(annee, "cotisations")
                 + retro.retire(annee, "impots_et_taxes")
+                - retro.retire(annee, "impots_tva")
                 + retro.versements_publics_retires(annee))
         assert dont == pytest.approx(total, abs=1e-12), annee
         # Ce que l'État et la branche famille cessent de verser est un retrait,

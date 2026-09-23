@@ -2050,6 +2050,36 @@ institutions:
           les gérants de débits de tabac. Le document de mission reprend les
           trois programmes mot pour mot.
 
+  dg_tresor:
+    nom: Direction générale du Trésor
+    role: >-
+      Modèle de la TVA théorique : assiettes de la TVA par taux, rendement
+      d'un point.
+    jeux:
+      - id: dgtresor_point_tva
+        titre: >-
+          « Analyse de la composition des recettes de TVA », Trésor-Éco
+          n° 371, septembre 2025, tableaux 1 et 2 : rendement brut et net
+          d'un point de TVA en 2025, par taux
+        url: https://www.tresor.economie.gouv.fr/Articles/2025/09/25/analyse-de-la-composition-des-recettes-de-tva
+        acces: document
+        statut_integration: saisi
+        millesime: septembre 2025
+        cible: data/reference/macro/assiette_tva.csv
+        note: >-
+          Lu le 23 septembre 2026, pour la TVA à taux unique que le Parti
+          libéral affecte au scénario 6. Ce que rapporte un point de chaque
+          taux en 2025 — 0,4, 2,4, 1,9 et 8,9 Md€ à 2,1, 5,5, 10 et 20 %,
+          13,7 en tout ; 11,4 une fois retirée la TVA que paient les
+          administrations elles-mêmes —, c'est-à-dire, au centuple, l'assiette
+          de chaque taux. Aucune autre publication ne la donne : les données
+          fiscales ne ventilent par taux que la TVA brute collectée, avant
+          déduction. Chiffrage STATIQUE, dit le producteur : hors effets
+          induits sur les comportements de consommation. Recoupement : le
+          Conseil des prélèvements obligatoires chiffrait le coût des taux
+          réduits à 47 Md€ en 2021 (rapport de 2023 sur la TVA) ; ces
+          assiettes en donnent 52 en 2025.
+
   erafp:
     nom: Établissement de retraite additionnelle de la fonction publique
     role: >-

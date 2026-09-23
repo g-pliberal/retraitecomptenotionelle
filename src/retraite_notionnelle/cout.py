@@ -151,6 +151,7 @@ from .donnees.distribution import (
 )
 from .donnees.taux import CourbeTauxSansRisque
 from .donnees.equilibre import ORGANISMES, POSTES, ComptesRetraite
+from .donnees.tva import AssietteTva
 from .donnees.population import Population
 from .garantie import (
     CoutGarantie,
@@ -283,14 +284,15 @@ CONVENTIONS_REVERSION: tuple[str, ...] = (
 #: poste la règle que ``ressources_de`` applique au total : les deux se
 #: somment exactement, et un test le tient. Les six premiers codes sont ceux
 #: de ``equilibre.POSTES`` ; les trois « dont » ventilent le poste des
-#: transferts par celui qui paie, et le quatrième l'impôt par ce qu'en verse
-#: le fonds de solidarité vieillesse, seule part de ce poste que le modèle
-#: sache nommer.
+#: transferts par celui qui paie, et les suivants l'impôt : ce qu'en verse le
+#: fonds de solidarité vieillesse, seule part de ce poste que le modèle sache
+#: nommer au système actuel, et la TVA à taux unique que la proposition y
+#: affecte (``Parametres.taux_tva_liberal``).
 POSTES_RESSOURCES: tuple[str, ...] = tuple(poste.code for poste in POSTES)
 DONT_TRANSFERTS: tuple[str, ...] = (
     "transferts_famille", "transferts_chomage", "transferts_autres",
 )
-DONT_IMPOTS: tuple[str, ...] = ("impots_solidarite", "impots_autres")
+DONT_IMPOTS: tuple[str, ...] = ("impots_solidarite", "impots_tva", "impots_autres")
 
 #: Ce qu'un système verse, en trois lignes que ``masse_du_scenario`` sépare
 #: déjà sans les nommer : les pensions de droit direct, la garantie vieillesse
@@ -763,6 +765,56 @@ class SoldeAnnuel:
     #: font ``retrait`` ; l'assurance chômage ne l'est plus, le compte portant
     #: les cotisations qu'elle verse.
     versements: dict[str, float] = field(default_factory=dict)
+    #: Ce que la TVA à taux unique rapporte DE PLUS que les quatre taux
+    #: d'aujourd'hui, en part de PIB, et que la proposition affecte à sa
+    #: retraite : zéro avant la bascule, et zéro quand la TVA n'est pas
+    #: réformée. ``tva_garantie`` et ``tva_de`` disent où elle va.
+    tva_liberal: float = 0.0
+    #: La garantie vieillesse de la proposition, nette de ce que les
+    #: successions en reprennent, en part de PIB : celle de la trajectoire
+    #: (``AvenirAnnuel``), que le chiffrage pour une loi de finances compte.
+    #: Zéro avant la bascule. C'est la première chose que la TVA paie.
+    garantie_liberal: float = 0.0
+
+    def _tva_affectee(self, scenario: str) -> float:
+        """Toute la TVA affectée à un système, en part de PIB : au scénario 6 seul.
+
+        Jamais négative : un taux unique sous le taux moyen d'aujourd'hui
+        coûterait, et une baisse de TVA ne se prend pas sur la retraite.
+        """
+        if scenario != "notionnel_liberal" or not 0 < self.annee_bascule <= self.annee:
+            return 0.0
+        return max(self.tva_liberal, 0.0)
+
+    def tva_garantie(self, scenario: str) -> float:
+        """La part de la TVA qui paie la garantie vieillesse, en part de PIB.
+
+        LA TVA PAIE D'ABORD LA GARANTIE. Décision du Parti libéral, 23
+        septembre 2026 : la garantie vieillesse est « financée par l'impôt »,
+        et la TVA à taux unique est cet impôt. Elle en paie donc le coût net,
+        et le régime unique ne reçoit que ce qui reste — sans quoi il
+        afficherait un excédent qui n'est pas le sien, puisqu'il paie la
+        garantie, et un coefficient d'équilibre qui promettrait de relever
+        toutes les pensions avec l'argent des plus modestes. Quand la TVA ne
+        suffit pas à la garantie, le reste est à la charge du budget, comme
+        avant elle.
+        """
+        return min(self._tva_affectee(scenario), max(self.garantie_liberal, 0.0))
+
+    def tva_de(self, scenario: str) -> float:
+        """La TVA qui entre au régime d'un système, en part de PIB.
+
+        DÉCISION DU PARTI LIBÉRAL, 23 SEPTEMBRE 2026. Les quatre taux de TVA
+        cèdent la place à un taux unique, et ce qu'il rapporte de plus va à la
+        retraite de la proposition, à compter de la bascule : la garantie
+        vieillesse d'abord (``tva_garantie``), le régime unique ensuite. Ce
+        n'est pas une cotisation : elle n'est portée au compte de personne et
+        n'ouvre aucun droit. Elle comble ce que le compte notionnel laisse, et
+        tient lieu du coefficient d'équilibre, qui rognerait sinon toutes les
+        pensions. Aucun autre système ne la reçoit : ils ne sont pas la
+        proposition.
+        """
+        return self._tva_affectee(scenario) - self.tva_garantie(scenario)
 
     def depense(self, scenario: str) -> float:
         """Ce que le système coûterait cette année-là, en part de PIB.
@@ -835,6 +887,15 @@ class SoldeAnnuel:
         à personne ; le porter au crédit d'un système qui ne rend que ce qui a
         été cotisé, c'est lui prêter une recette sans contrepartie.
 
+        LA TVA À TAUX UNIQUE Y RENTRE, et elle seule. Décision du Parti
+        libéral, 23 septembre 2026 : ce qu'un taux unique de TVA rapporte de
+        plus que les quatre taux d'aujourd'hui est affecté à la proposition, à
+        compter de la bascule — à sa garantie vieillesse d'abord, à son régime
+        ensuite. Le même argument la laisse hors de tout compte — elle
+        n'acquiert de droits à personne —, mais elle n'y prétend pas : elle
+        comble le déficit que les comptes laissent. ``tva_de`` dit pourquoi,
+        et ``donnees/tva.py`` combien.
+
         ET IL FAUT LE RETIRER UNE FOIS, PAS DEUX. Un tiers de ce poste est la
         CSG du fonds de solidarité vieillesse — ce que le fonds verse aux
         régimes, 19,6 des 57 milliards de 2024 —, et elle sortait DÉJÀ par
@@ -863,12 +924,14 @@ class SoldeAnnuel:
                                         - self.part_subventions
                                         - self.part_impots)
             # La CSG du fonds de solidarité vieillesse vient de sortir avec le
-            # poste : la retirer encore ici la retirerait deux fois.
-            return pleine + autres - (self.retrait - self.retrait_par_impot)
+            # poste : la retirer encore ici la retirerait deux fois. La TVA à
+            # taux unique y rentre, à sa place : voir ``tva_de``.
+            return (pleine + autres - (self.retrait - self.retrait_par_impot)
+                    + self.tva_de(scenario))
         rapport = self.rapports_recettes.get(scenario, 1.0)
         cotisees = self.ressources * self.part_contributive
         autres = self.ressources - cotisees
-        return cotisees * rapport + autres - self.retrait
+        return cotisees * rapport + autres - self.retrait + self.tva_de(scenario)
 
     @property
     def recette_par_assiette(self) -> bool:
@@ -934,13 +997,16 @@ class SoldeAnnuel:
 
         LA PROPOSITION, à compter de la bascule et sous la convention de
         l'assiette, remplace la ligne des cotisations par 18 % de l'assiette
-        des revenus d'activité, et met trois postes à zéro — la contribution
+        des revenus d'activité, et met deux postes à zéro — la contribution
         d'équilibre de l'État, remplacée par ces 18 % appliqués aux
         traitements ; les subventions d'équilibre, dont la fusion des régimes
-        supprime l'objet ; les impôts et taxes affectés, qui n'acquièrent de
-        droits à personne. Des transferts, elle ne garde que ce qui ne paie
-        pas un droit qu'elle a supprimé. ``ressources_de`` dit pourquoi,
-        décision par décision.
+        supprime l'objet. Les impôts et taxes affectés, qui n'acquièrent de
+        droits à personne, ne sont pas reconduits : le poste ne porte plus
+        que la TVA à taux unique qu'elle leur substitue — ce qu'il en reste
+        une fois la garantie vieillesse payée —, sur sa ligne ``impots_tva``.
+        Des transferts, elle ne garde que ce qui ne paie pas un droit qu'elle
+        a supprimé. ``ressources_de`` dit pourquoi, décision
+        par décision.
 
         LES SCÉNARIOS 3 ET 5, avant la bascule, sont le système actuel, et
         leurs postes sont les siens : ``ressources_de`` dit pourquoi.
@@ -969,12 +1035,14 @@ class SoldeAnnuel:
             postes["transferts_famille"] = famille
             postes["transferts_chomage"] = chomage
             postes["impots_solidarite"] = solidarite
+            postes["impots_tva"] = 0.0
         elif scenario == "notionnel_liberal" and self.recette_par_assiette:
+            tva = self.tva_de(scenario)
             postes = {
                 "cotisations": total * self.taux_liberal / self.taux_prelevement,
                 "contribution_equilibre_etat": 0.0,
                 "subventions_equilibre": 0.0,
-                "impots_et_taxes": 0.0,
+                "impots_et_taxes": tva,
                 "transferts": (total * parts.get("transferts", 0.0)
                                - retire.get("famille", 0.0)
                                - retire.get("chomage", 0.0)),
@@ -982,16 +1050,18 @@ class SoldeAnnuel:
                 "transferts_famille": garde_famille,
                 "transferts_chomage": garde_chomage,
                 "impots_solidarite": 0.0,
+                "impots_tva": tva,
             }
         else:
             rapport = self.rapports_recettes.get(scenario, 1.0)
+            tva = self.tva_de(scenario)
             postes = {
                 "cotisations": total * parts.get("cotisations", 0.0) * rapport,
                 "contribution_equilibre_etat":
                     total * parts.get("contribution_equilibre_etat", 0.0) * rapport,
                 "subventions_equilibre": total * parts.get("subventions_equilibre", 0.0),
                 "impots_et_taxes": (total * parts.get("impots_et_taxes", 0.0)
-                                    - retire.get("solidarite", 0.0)),
+                                    - retire.get("solidarite", 0.0) + tva),
                 "transferts": (total * parts.get("transferts", 0.0)
                                - retire.get("famille", 0.0)
                                - retire.get("chomage", 0.0)),
@@ -999,10 +1069,12 @@ class SoldeAnnuel:
                 "transferts_famille": garde_famille,
                 "transferts_chomage": garde_chomage,
                 "impots_solidarite": garde_solidarite,
+                "impots_tva": tva,
             }
         postes["transferts_autres"] = (postes["transferts"] - postes["transferts_famille"]
                                        - postes["transferts_chomage"])
-        postes["impots_autres"] = postes["impots_et_taxes"] - postes["impots_solidarite"]
+        postes["impots_autres"] = (postes["impots_et_taxes"] - postes["impots_solidarite"]
+                                   - postes["impots_tva"])
         return postes
 
     def postes_depenses(self, scenario: str) -> dict[str, float]:
@@ -2900,7 +2972,7 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
            derniere_annee_pib: int, assiette: AssietteActivite | None,
            taux_liberal: float, annee_bascule: int,
            convention: str, depenses: DepensesRetraite,
-           reversion_servie: bool = False) -> Solde:
+           reversion_servie: bool = False, tva_liberal: float = 0.0) -> Solde:
     """Le bilan, obtenu en croisant le compte du COR et les rapports du modèle.
 
     Aucune pension n'est resimulée ici : les rapports de masses sont ceux que
@@ -2914,6 +2986,11 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
     pas celui sur lequel il a été calculé. La dépense du système actuel, elle,
     reste celle du COR de bout en bout : c'est ce qui fait que le solde du
     scénario 1 est exactement le solde publié, et non une reconstitution.
+
+    ``tva_liberal`` est ce que la TVA à taux unique rapporte de plus, en part
+    de PIB : la même chaque année, l'assiette gardant sa part de PIB, et nulle
+    avant la bascule — voir ``donnees/tva.py``. Elle paie d'abord la garantie
+    vieillesse de la trajectoire, que chaque ligne reçoit pour cela.
     """
     par_annee = {ligne.annee: ligne for ligne in avenir.annees}
 
@@ -2968,6 +3045,10 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
                 organisme.code: comptes.versement(annee, organisme.code)
                 for organisme in ORGANISMES
             },
+            tva_liberal=tva_liberal if annee >= annee_bascule else 0.0,
+            garantie_liberal=(par_annee[annee].part_pib(COMPOSANTE_GARANTIE)
+                              - par_annee[annee].part_pib_reprises()
+                              if annee >= annee_bascule else 0.0),
         )
         for annee in comptes.annees() if annee in par_annee
     ]
@@ -3353,11 +3434,16 @@ def calculer_cout(simulateur: Simulateur, depenses: DepensesRetraite,
     )
     avenir = _avenir(pensionnes, depenses, population, simulateur, poids,
                      revalorisation, reversion_servie, poids_cotisants, garantie)
+    # La TVA à taux unique que la proposition affecte à sa retraite : lue ici
+    # plutôt que passée, pour que tout appelant la reçoive — elle est un terme
+    # de la proposition, pas un réglage de page.
+    tva = AssietteTva(simulateur.parametres.racine_donnees)
     solde = _solde(
         avenir, comptes, depenses.pib.derniere_annee, assiette,
         simulateur.parametres.taux_cotisation_liberal,
         simulateur.parametres.annee_bascule, convention_recette,
         depenses, reversion_servie,
+        tva.recette_supplementaire(simulateur.parametres.taux_tva_liberal),
     ) if comptes is not None and avenir.annees else Solde()
     return Cout(
         annees=lignes,
