@@ -8326,7 +8326,7 @@ dans `web/pages.py` et `moteur/js/pages.js` ; feuille de style et témoins
 régénérés.
 ---
 
-### 41. Tarir la prose périmée, au lieu de la réparer un chiffre à la fois — `en cours`
+### 41. Tarir la prose périmée, au lieu de la réparer un chiffre à la fois — `fait`
 
 **Pourquoi.** Le dépôt affirme des milliers de chiffres en prose, et une
 vingtaine seulement étaient tenus par un test. Les autres étaient des
@@ -8664,6 +8664,70 @@ qui restent `a_declarer` pour la raison dite plus haut.
 seulement un nombre : « la bascule ne reprend aucun droit acquis » lui est
 invisible. C'est l'action 34, et les deux se complètent — l'une tient les
 chiffres du dépôt, l'autre les affirmations du site.
+
+**Le 23 septembre 2026 : les deux cliquets à zéro, et l'action close.** Six
+sections restaient à déclarer et deux chiffres portaient l'aveu `a_verifier` ;
+il n'en reste aucun. Quatre passes, poussées une à une.
+
+*Les trois sections de la méthodologie* — le scénario 6, le pilier capitalisé,
+le solde — portaient quatre-vingt-douze chiffres nus, et l'ancrage a trouvé ce
+que la relecture ne voyait plus. Le coefficient d'équilibre du scénario 3 en
+2070 était écrit 1,87 et l'économie qu'on lirait à tort 46 %, pour 1,67 et 40 %
+à l'ancrage, puis 1,71 et 41 % une heure plus tard. L'État verse 82,28 points pour ses
+fonctionnaires en 2026, et le texte disait « soixante-dix ». La recette que les
+scénarios notionnels ne peuvent pas compter y était donnée pour 3,7 % des
+ressources : c'est la part de la CNAF et de l'Unédic, et le modèle retire aussi
+celle du FSV, 8,5 % en tout. La carrière des tests d'allocation verse 31 ans,
+pas 36. La garantie y restait « financée par l'impôt », sans la reprise sur
+succession ni le recours d'un ayant droit sur deux que l'action 47 y a mis.
+Et la colonne « ASPA actuelle » du tableau des couples appliquait en fait au
+foyer les planchers de la garantie : elle le dit, à côté de l'ASPA de 2026
+lue dans sa table. Quatre mesures ont rejoint le registre (`garantie_foyer`,
+`frais_reserve`, `allocation`, `derive_revalorisation`), `parametre`
+additionne et `recette` ventile son retrait par payeur.
+
+*« Divise la dérive par dix »* était écrit en cinq endroits, sans que
+personne dise de quelle dérive. En médiane sur les années de perception, la
+colonne de 2019 reconstruite depuis 2026 s'écarte de 0,135 %, depuis la
+suivante de 0,007 % ; au pire, toutes colonnes confondues, de 0,26 % contre
+0,12 %, un facteur deux, et c'est ce pire que le test tient. Le tableau de
+`limites.md` datait d'avant la colonne de 2025 et était gelé comme un
+procès-verbal : il se recalcule, et les docstrings ne recopient plus de
+chiffre.
+
+*Les deux dettes du README* ne demandaient qu'une sonde qui sache lancer
+`node`. `portage` fait le compte de `tests/js/comparer.mjs` sur les témoins,
+dans un processus à part : 73 846 nombres comparés et non 10 615, dont
+88,1 % identiques au bit près et non 97,9, l'écart maximal à 7,8 · 10⁻¹⁵.
+
+*Les trois sections de l'outillage* restaient non déclarées parce que leurs
+tailles décrivent des logiciels installés hors du dépôt. Mais elles décrivent
+une VERSION, et une version publiée ne change plus :
+`test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees` lie chacune
+à la sienne et échoue dès que le dépôt en fige une autre. Remesurées le même
+jour : 16 089 424 octets pour le moteur 0.1.5, 5 constats et 8 000 caractères
+par défaut pour son hook, 196 289 395 octets pour l'archive de Chrome for
+Testing 154.0.8037.0 qu'attend le CLI 0.1.20.
+
+**Ce que la passe a appris.** Une autre session corrigeait au même moment les
+lois de mortalité projetées, restées calées sur d'anciennes cibles ; moins
+d'une heure après leur ancrage, trois chiffres de la méthodologie avaient
+bougé, et `--corriger` les a réécrits sans qu'on les cherche. C'est l'argument de
+l'action. Le même « 8 % de rente » était écrit en dur dans un commentaire de
+`config.py` et dans deux notes du fichier des frais, dont l'une disait encore
+que le modèle ne retient pas le frais sur la réserve : la prose non déclarée
+vieillit aussi, et c'est une mesure devenue disponible qui l'a montré.
+
+**Ce qui reste, et ce n'est plus une dette.** Les angles morts que
+`docs/fraicheur.md` nomme : les petits nombres en toutes lettres, les blocs
+de code — le compte des tests de l'arborescence du README est tenu par son
+propre test —, et les phrases, qui sont l'objet de l'action 34. Une
+découverte, laissée à une session qui tient les pages : le tableau d'accueil
+du site, « Ce que le plancher individualisé change », intitule « Aujourd'hui
+(ASPA) » une colonne qui applique au foyer les planchers de la garantie —
+1 000 € pour un couple à 300 et 300 €, 750 € pour une personne seule à
+300 € —, quand l'ASPA de 2026 en servirait environ 1 020 et 743,59. Le
+libellé est un choix du programme, et il se fait dans les deux moteurs.
 
 **Fichiers.** `scripts/verifier_prose.py`, `data/reference/prose/zones.yaml`,
 `tests/test_prose.py`, `docs/fraicheur.md` (neufs) ; les ancres posées dans
