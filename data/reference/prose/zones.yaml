@@ -509,6 +509,7 @@ fichiers:
       "Les sections de santé minorent à l'âge, et la durée effaçait la minoration": recit
       "Les dernières sections libérales : l'âge seul, trois enfants, et les trimestres des mères": recit
       "Le RAFP prenait toutes les primes, et le décret s'arrête à 20 % du traitement": recit
+      "La RCO ne servait que les points cotisés, et le code rural en donne cent par année de chef d'avant 2003": recit
   # Ce que le modèle calcule, et pourquoi ainsi : tout y est au présent, et une
   # méthodologie périmée décrit un autre modèle que celui qui tourne. Le régime
   # visé est donc `etat` de bout en bout, et ce qui l'empêche n'est jamais le

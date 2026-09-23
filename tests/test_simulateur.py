@@ -3092,9 +3092,85 @@ def test_la_complementaire_agricole_ouvre_cent_points_a_l_assiette_minimale(simu
     pension = next(p for p in simulateur.scenario_actuel.calculer(
         carriere).pensions_par_regime if p.regime == "msa_rco")
     points = float(pension.detail.split(" points")[0].replace(",", ""))
-    # 2003 à 2023 inclus, cent points par an au minimum.
+    # 2003 à 2023 inclus, cent points par an au minimum. Pas un point gratuit
+    # pour les années d'avant : à ce revenu, trois trimestres validés par an
+    # ne font pas le taux plein à 64 ans (voir le test suivant).
     assert points == pytest.approx(100 * 21, rel=0.01)
     assert pension.montant > 0
+
+
+def _rco(resultat):
+    """La pension de RCO et la ligne de cascade de ses points gratuits."""
+    pension = next((p for p in resultat.pensions_par_regime
+                    if p.regime == "msa_rco"), None)
+    ligne = next((a for a in resultat.avantages_appliques
+                  if a.code == "points_gratuits_rco"), None)
+    return pension, ligne
+
+
+def test_le_chef_d_exploitation_recoit_ses_points_gratuits_de_rco(simulateur):
+    """Cent points par année de chef d'avant 2003, dans la limite de 37,5 ans
+    moins les années de RCO (D. 732-154 du code rural).
+
+    La page de la MSA l'écrit : « 100 points pour les années de chef
+    d'exploitation accomplies avant le 1er janvier 2003 dans la limite de la
+    différence entre 37,5 ans et le nombre d'années d'affiliation à la RCO ». Le
+    modèle ne les servait pas : le chef installé en 1975 et parti en 2019 ne
+    touchait que ses 1 708 points cotisés, quand le droit lui en donne 2 150 de
+    plus — plus de la moitié de sa complémentaire.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def chef(naissance, debut, depart):
+        return simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="H", affiliation="exploitant_agricole",
+            age_debut=debut, age_liquidation=depart, niveau_salaire=0.5,
+        )
+
+    # Installé en 1975, parti en janvier 2019 : 28 années d'avant 2003, 16 de
+    # RCO, donc 37,5 - 16 = 21,5 années retenues, 2 150 points.
+    carriere = chef(1955, 20, 64)
+    resultat = scenario.calculer(carriere)
+    pension, ligne = _rco(resultat)
+    assert "(dont 2,150.00 points gratuits)" in pension.detail
+    sans, _ = _rco(scenario.calculer(carriere, points_gratuits=False))
+    assert "gratuits" not in sans.detail
+    # La cascade isole exactement ce que les points ajoutent à la RCO, et le
+    # sous-total contributif ne les compte pas.
+    assert ligne.montant == pytest.approx(pension.montant - sans.montant, abs=1e-6)
+    assert ligne.montant > 0.5 * pension.montant
+    assert resultat.pension_annuelle - resultat.total_contributif == pytest.approx(
+        sum(a.montant for a in resultat.avantages_appliques), abs=1e-6)
+    # Les droits acquis du scénario prospectif sont du contributif pur.
+    contributif, _ = _rco(scenario.calculer(carriere, avantages_non_contributifs=False))
+    assert contributif.montant == pytest.approx(sans.montant, abs=1e-9)
+
+    # Parti en janvier 2003, avant d'avoir rien cotisé à la RCO : 44 années de
+    # chef, retenues dans la limite de 37,5.
+    pension, ligne = _rco(scenario.calculer(chef(1939, 20, 64)))
+    assert pension.detail.startswith("3,750.00 points")
+    assert "(dont 3,750.00 points gratuits)" in pension.detail
+
+    # Liquidé en 2025 à 67 ans, sans la durée requise : le taux plein par l'âge
+    # suffit depuis le 1er septembre 2023 (loi n° 2023-270, art. 18, VI). Quinze
+    # années d'avant 2003, 22 de RCO : 15 retenues, sous le plafond de 15,5.
+    pension, _ = _rco(scenario.calculer(chef(1958, 30, 67)))
+    assert "(dont 1,500.00 points gratuits)" in pension.detail
+
+    # Liquidé en 2019 à 64 ans sans la durée requise : avant le 1er septembre
+    # 2023, il fallait l'avoir réunie. Huit années d'avant 2003, rien.
+    pension, ligne = _rco(scenario.calculer(chef(1955, 40, 64)))
+    assert "gratuits" not in pension.detail and ligne is None
+
+    # Dix années de chef, de 1975 à 1984, puis salarié : il manque les dix-sept
+    # ans et demi comme chef que demande D. 732-151, et rien n'est attribué.
+    carriere = simulateur.carriere_parcours(
+        annee_naissance=1955, sexe="H", age_liquidation=64,
+        metiers=[Metier("exploitant_agricole", 20, 0.5),
+                 Metier("salarie_prive_non_cadre", 30, 0.8)],
+    )
+    resultat = scenario.calculer(carriere)
+    assert _rco(resultat) == (None, None)
 
 
 # -- minimum contributif, désormais sourcé dans le code ----------------------

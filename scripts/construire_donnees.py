@@ -655,6 +655,7 @@ def _regimes() -> list[dict]:
                     **_regles_des_marins(p),
                     **_regles_des_sections(p),
                     **_plafond_des_primes(p),
+                    **_points_gratuits(p),
                 }
                 for p in regime.periodes
             ],
@@ -711,6 +712,25 @@ def _plafond_des_primes(p) -> dict:
     if p.plafond_primes_traitement is None:
         return {}
     return {"plafond_primes_traitement": p.plafond_primes_traitement}
+
+
+def _points_gratuits(p) -> dict:
+    """Les points gratuits de la RCO agricole, et seulement là.
+
+    Même raison que pour les marins. La date se transmet en (année, mois), la
+    forme que le moteur compare au mois de liquidation.
+    """
+    regle = p.points_gratuits
+    if regle is None:
+        return {}
+    return {"points_gratuits": {
+        "regime": regle.regime,
+        "avant": regle.avant,
+        "points_par_annee": regle.points_par_annee,
+        "annees_minimum": regle.annees_minimum,
+        "annees_maximum": regle.annees_maximum,
+        "taux_plein_depuis": list(regle.taux_plein_depuis),
+    }}
 
 
 def _affiliations() -> dict:

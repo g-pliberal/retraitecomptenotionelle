@@ -516,3 +516,42 @@ test("les adresses des pages parties rendent celles qui les ont remplacées", ()
   assert.deepEqual(cumul, rendre(contexte, "/simuler", carriere));
   assert.match(cumul[1], /<details class="section" id="cumul">/);
 });
+
+/**
+ * Les points gratuits de la RCO agricole : cent par année de chef d'avant
+ * 2003, dans la limite de 37,5 ans moins les années de RCO (D. 732-154), au
+ * taux plein — par la durée avant septembre 2023, par la durée ou l'âge depuis.
+ * Même arithmétique que `test_le_chef_d_exploitation_recoit_ses_points_gratuits_de_rco`.
+ */
+test("le chef d'exploitation reçoit ses points gratuits de RCO", () => {
+  const contexte = new Contexte(paquet);
+  const simulateur = contexte.simulateur();
+  const scenario = simulateur.scenarioActuel;
+  const chef = (naissance, debut, depart) => simulateur.carriereSimple({
+    annee_naissance: naissance, sexe: "H", affiliation: "exploitant_agricole",
+    age_debut: debut, age_liquidation: depart, niveau_salaire: 0.5,
+  });
+  const rco = (resultat) => [
+    resultat.pensions_par_regime.find((p) => p.regime === "msa_rco") ?? null,
+    resultat.avantages_appliques.find((a) => a.code === "points_gratuits_rco") ?? null,
+  ];
+
+  const carriere = chef(1955, 20, 64);
+  const resultat = scenario.calculer(carriere);
+  const [pension, ligne] = rco(resultat);
+  assert.ok(pension.detail.includes("(dont 2,150.00 points gratuits)"), pension.detail);
+  const [sans] = rco(scenario.calculer(carriere, false, true, true, true, false));
+  assert.ok(!sans.detail.includes("gratuits"));
+  assert.ok(Math.abs(ligne.montant - (pension.montant - sans.montant)) < 1e-6);
+  const somme = resultat.avantages_appliques.reduce((s, a) => s + a.montant, 0);
+  assert.ok(Math.abs(resultat.pension_annuelle - resultat.total_contributif - somme) < 1e-6);
+  const [contributif] = rco(scenario.calculer(carriere, false, false));
+  assert.ok(Math.abs(contributif.montant - sans.montant) < 1e-9);
+
+  const [depart2003] = rco(scenario.calculer(chef(1939, 20, 64)));
+  assert.ok(depart2003.detail.startsWith("3,750.00 points"), depart2003.detail);
+  const [parAge] = rco(scenario.calculer(chef(1958, 30, 67)));
+  assert.ok(parAge.detail.includes("(dont 1,500.00 points gratuits)"), parAge.detail);
+  const [avant2023, ligneAvant2023] = rco(scenario.calculer(chef(1955, 40, 64)));
+  assert.ok(!avant2023.detail.includes("gratuits") && ligneAvant2023 === null);
+});

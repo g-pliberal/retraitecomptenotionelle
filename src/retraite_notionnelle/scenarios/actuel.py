@@ -2014,6 +2014,19 @@ class ScenarioActuel:
         self.carriere_longue = CarriereLongue(parametres.racine_donnees)
         self.surcote_baremes = SurcoteBaremes(parametres.racine_donnees)
         self.minimum_vieillesse = MinimumVieillesse(parametres.racine_donnees, macro)
+        #: Les régimes qui attribuent des POINTS GRATUITS, rangés sous le régime
+        #: de base dont les années les ouvrent : une carrière qui n'a validé
+        #: aucun trimestre dans ce dernier n'a rien à chercher. Voir
+        #: :meth:`_points_gratuits`.
+        self._points_gratuits_par_base: dict[str, tuple[str, ...]] = {}
+        for regime in catalogue:
+            for periode in regime.periodes:
+                if periode.points_gratuits is None:
+                    continue
+                base = periode.points_gratuits.regime
+                attribuants = self._points_gratuits_par_base.get(base, ())
+                if regime.code not in attribuants:
+                    self._points_gratuits_par_base[base] = (*attribuants, regime.code)
 
     # -- valorisation des points ---------------------------------------------
 
@@ -4081,13 +4094,68 @@ class ScenarioActuel:
             services=services, fiabilite=fiabilite,
         )
 
+    def _points_gratuits(self, periode: PeriodeRegime, carriere: Carriere,
+                         assurance: dict[str, dict[int, int]], trimestres: int,
+                         age_liquidation: float
+                         ) -> tuple[float, Fiabilite | None]:
+        """Points que ce régime attribue sans cotisation à la liquidation, et
+        la fiabilité de la durée requise qui les conditionne.
+
+        La RCO des non-salariés agricoles est née en 2003. Le chef
+        d'exploitation qui liquide depuis reçoit « 100 points de retraite
+        complémentaire pour chacune des années de chef d'exploitation [...]
+        accomplies avant le 1er janvier 2003 », retenues « dans la limite de
+        la différence entre trente-sept années et demie et le nombre d'années
+        ayant donné lieu à affiliation » à la RCO (D. 732-154). Deux
+        conditions, que le III de L. 732-56 prend au 2° de son II : dix-sept
+        ans et demi comme chef à la date d'effet, toute la carrière
+        (D. 732-151), et le taux plein du régime de base — en réunir la durée
+        requise, tous régimes, jusqu'au 31 août 2023 ; l'avoir LIQUIDÉ au taux
+        plein depuis, par la durée ou par l'âge (loi n° 2023-270, art. 18, VI).
+        Le modèle ne servait aucun de ces points : un chef installé en 1975 et
+        parti en 2019 perdait plus de la moitié de sa complémentaire.
+
+        Une année se compte en trimestres validés au régime de base, divisés
+        par quatre et bornés aux trimestres civils de l'année. Le modèle ne
+        distingue pas l'activité principale de la secondaire : toute année de
+        chef compte.
+        """
+        regle = periode.points_gratuits
+        base = self.catalogue[regle.regime]
+        periode_base = base.periode(
+            min(carriere.annee_liquidation, _derniere_annee(base)))
+        if periode_base is None:
+            return 0.0, None
+
+        def valides(code: str, avant: int | None = None) -> int:
+            return sum(min(nombre, carriere.plafond_trimestres(annee))
+                       for annee, nombre in assurance.get(code, {}).items()
+                       if avant is None or annee < avant)
+
+        if valides(regle.regime) < regle.annees_minimum * 4:
+            return 0.0, None
+        requis, fiabilite = self._duree_requise(periode_base, carriere)
+        taux_plein = trimestres >= requis
+        if (not taux_plein and carriere.date_liquidation.rang
+                >= DateMois(*regle.taux_plein_depuis).rang):
+            taux_plein = (age_liquidation
+                          >= self._age_taux_plein(periode_base, carriere))
+        if not taux_plein:
+            return 0.0, fiabilite
+        retenus = min(
+            valides(regle.regime, regle.avant),
+            max(0.0, regle.annees_maximum * 4 - valides(periode.regime)),
+        )
+        return regle.points_par_annee * retenus / 4, fiabilite
+
     # -- calcul --------------------------------------------------------------
 
     def calculer(self, carriere: Carriere,
                  ignorer_penalite_age: bool = False,
                  avantages_non_contributifs: bool = True,
                  avpf: bool = True,
-                 liquider_successions: bool = True) -> ResultatActuel:
+                 liquider_successions: bool = True,
+                 points_gratuits: bool | None = None) -> ResultatActuel:
         """Pension servie par le système en vigueur.
 
         ``ignorer_penalite_age`` neutralise la décote et la surcote liées à
@@ -4116,7 +4184,15 @@ class ScenarioActuel:
         droit, et le défaut ; à FAUX, chaque nom de caisse est liquidé sur ses
         seules années, comme le modèle le faisait, et la variante ne sert qu'à
         mesurer ce que la correction déplace.
+
+        ``points_gratuits`` commande les points que la RCO agricole attribue
+        sans cotisation (:meth:`_points_gratuits`). ``None`` suit
+        ``avantages_non_contributifs`` : la valorisation des droits acquis n'en
+        veut pas, puisqu'elle mesure du contributif pur. Les recalculs de la
+        cascade le fixent, eux, pour que chaque avantage soit retiré seul.
         """
+        if points_gratuits is None:
+            points_gratuits = avantages_non_contributifs
         annee_liquidation = carriere.annee_liquidation
         age_liquidation = carriere.age_liquidation or 0.0
 
@@ -4533,6 +4609,40 @@ class ScenarioActuel:
                             * self.macro.coefficient_prix(ligne.annee, annee_liquidation)
                         )
 
+        # POINTS GRATUITS : la RCO agricole attribue à la liquidation des
+        # points pour les années de chef d'exploitation d'avant sa création.
+        # Ils entrent au compte de points du régime comme des points acquis —
+        # un chef parti en janvier 2003 n'a encore rien cotisé à la RCO, et
+        # c'est ici qu'elle entre dans les régimes liquidés —, et la cascade
+        # les isole plus bas. Voir `_points_gratuits`.
+        #: Points attribués, et année avant laquelle comptent les années.
+        gratuits_attribues: dict[str, tuple[float, int]] = {}
+        if points_gratuits:
+            for base, attribuants in self._points_gratuits_par_base.items():
+                if base not in par_annee["assurance"]:
+                    continue
+                for code in attribuants:
+                    regime = self.catalogue[code]
+                    periode = regime.periode(
+                        min(annee_liquidation, _derniere_annee(regime)))
+                    if periode is None or periode.points_gratuits is None:
+                        continue
+                    gratuits, fiabilite_duree = self._points_gratuits(
+                        periode, carriere, par_annee["assurance"], trimestres,
+                        age_liquidation,
+                    )
+                    if gratuits <= 0:
+                        continue
+                    gratuits_attribues[code] = (
+                        gratuits, periode.points_gratuits.avant)
+                    points_acquis[code] = points_acquis.get(code, 0.0) + gratuits
+                    fiabilite_points[code] = min(
+                        fiabilite_points.get(code, Fiabilite.CERTIFIEE),
+                        regime.fiabilite,
+                        (Fiabilite.CERTIFIEE if fiabilite_duree is None
+                         else fiabilite_duree),
+                    )
+
         # Durée requise de référence : celle du régime de base. C'est elle qui
         # commande le taux plein, donc aussi l'abattement des complémentaires —
         # un assuré au taux plein liquide sa complémentaire sans abattement,
@@ -4683,11 +4793,17 @@ class ScenarioActuel:
                         fiabilite_regime = min(
                             fiabilite_regime, fiabilite_service, fiabilite_points[code]
                         )
+                        gratuits = gratuits_attribues.get(code, (0.0, 0))[0]
                         details.append(
                             f"{points:,.2f} points × valeur de service "
                             f"{_sans_zeros_inutiles(service, 6)} €"
                             + ("" if coefficient_duree == 1.0
                                else f" × {coefficient_duree:.4f}")
+                            # Les points gratuits sont DANS le compte : la
+                            # formule se refait sur le total, et le lecteur
+                            # voit d'où vient ce qu'il n'a pas cotisé.
+                            + ("" if not gratuits
+                               else f" (dont {gratuits:,.2f} points gratuits)")
                         )
 
                 # RÉGIME MIXTE : une part forfaitaire s'ajoute aux points. Le
@@ -5026,8 +5142,9 @@ class ScenarioActuel:
 
         # Avantages non contributifs du droit positif, DANS L'ORDRE OÙ LE DROIT
         # LES APPLIQUE, et l'ordre commande le résultat : la majoration de durée
-        # d'assurance et l'AVPF d'abord, qui déplacent la décote, la
-        # proratisation et le salaire annuel moyen ; puis les deux minima, qui
+        # d'assurance, l'AVPF et les points gratuits de la RCO d'abord, qui
+        # déplacent la décote, la proratisation, le salaire annuel moyen ou le
+        # compte de points ; puis les deux minima, qui
         # portent la pension de base à son plancher ; puis seulement la
         # majoration pour enfants, qui se calcule SUR CE plancher ; l'ASPA
         # enfin, qui est différentielle et complète tout le reste.
@@ -5047,6 +5164,7 @@ class ScenarioActuel:
             sans_mda = self.calculer(
                 carriere, ignorer_penalite_age, avantages_non_contributifs=False,
                 avpf=avpf, liquider_successions=liquider_successions,
+                points_gratuits=points_gratuits,
             )
             # Les deux termes doivent porter sur le même périmètre : celui
             # d'en face est déjà net de la capitalisation.
@@ -5079,6 +5197,7 @@ class ScenarioActuel:
                 carriere, ignorer_penalite_age,
                 avantages_non_contributifs=False, avpf=False,
                 liquider_successions=liquider_successions,
+                points_gratuits=points_gratuits,
             )
             effet_avpf = total_contributif - sans_avpf.total_contributif
             total_contributif = sans_avpf.total_contributif
@@ -5088,6 +5207,32 @@ class ScenarioActuel:
                     libelle="Assurance vieillesse des parents au foyer",
                     montant=effet_avpf,
                     detail="salaire forfaitaire au SMIC porté au compte",
+                ))
+
+        if avantages_non_contributifs and points_gratuits and gratuits_attribues:
+            # Effet des POINTS GRATUITS de la RCO agricole, mesuré comme celui
+            # de l'AVPF : la même carrière sans eux, la MDA et l'AVPF déjà
+            # retirées. Ils ne tiennent qu'à la durée et à l'âge : retirer
+            # l'AVPF ne les touche pas, retirer la MDA peut les faire tomber —
+            # leur effet est alors compté dans celui de la MDA, qui les a
+            # ouverts, et le recalcul ci-dessous n'en trouve plus rien.
+            sans_gratuits = self.calculer(
+                carriere, ignorer_penalite_age,
+                avantages_non_contributifs=False, avpf=False,
+                liquider_successions=liquider_successions,
+                points_gratuits=False,
+            )
+            effet_gratuits = total_contributif - sans_gratuits.total_contributif
+            total_contributif = sans_gratuits.total_contributif
+            if abs(effet_gratuits) > 1e-9:
+                points_cites = sum(p for p, _ in gratuits_attribues.values())
+                avant = min(a for _, a in gratuits_attribues.values())
+                avantages.insert(0, AvantageApplique(
+                    code="points_gratuits_rco",
+                    libelle="Points gratuits de la complémentaire agricole",
+                    montant=effet_gratuits,
+                    detail=(f"{points_cites:,.2f} points pour les années de chef "
+                            f"d'exploitation d'avant {avant}"),
                 ))
 
         if avantages_non_contributifs and eligibles_minimum:

@@ -2,7 +2,7 @@
 
 Le scénario 1 est le droit en vigueur. Un compte notionnel ne sert que ce qui a
 été cotisé. **Tout ce qui sépare les deux est ici** :
-<!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->45<!--/--> dispositifs,
+<!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages)-->46<!--/--> dispositifs,
 sous un code, avec leur base légale, les régimes qui les servent, l'état du
 modèle à leur égard et le moyen d'en chiffrer le coût.
 
@@ -47,7 +47,7 @@ code employé par l'une des trois ait sa ligne, sous son code ou sous un alias.
 
 | État | Combien | Ce que ça veut dire |
 |---|---|---|
-| **chiffré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=chiffre)-->8<!--/--> | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
+| **chiffré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=chiffre)-->9<!--/--> | Le scénario 1 le sert, et la cascade en isole le montant en euros. La somme des lignes chiffrées vaut *exactement* `pension_annuelle − total_contributif` : c'est vérifié à chaque simulation. |
 | **intégré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=integre)-->11<!--/--> | Le scénario 1 le sert, mais l'effet passe par un trimestre, un âge ou une assiette. Il ne s'isole qu'en recalculant la pension une seconde fois, avantage retiré. **Huit le sont désormais**, par retrait : voir les §4 bis et 4 ter. Les trois derniers ne sont pas des dispositifs. |
 | **déclaré** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=declare)-->3<!--/--> | Une fiche de régime le déclare, aucun code ne le sert. La déclaration est une intention — mais la réversion, qui est de ceux-là, a désormais son coût, LU dans les séries de la DREES : voir le §4 quater. |
 | **absent** | <!--chiffre:entrees(data/reference/legislation/avantages_non_contributifs.yaml:avantages?etat_modele=absent)-->23<!--/--> | Ni déclaré ni servi. C'est un écart au droit positif — que les comptes de la protection sociale comblent pour dix d'entre eux, qu'ils publient poste par poste : voir les §4 quinquies et 4 sexies. |

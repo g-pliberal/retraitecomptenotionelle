@@ -3250,7 +3250,7 @@ on ignore le sens de l'erreur ne se corrige pas dans la tête du lecteur.
 | Professions libérales (CNAVPL) | la SECTION B du complémentaire des notaires, dont les bornes de classes ne sont publiées nulle part ; le volet CAPITALISÉ de la CAVP ; le complémentaire de la CAVOM d'avant 2016, qui prélevait par classes et dont la grille n'est nulle part ; le montant de la cotisation FORFAITAIRE du régime de base d'avant 2004 — qui ne commande plus la pension, seulement le flux versé au compte notionnel | le régime de base, en points plafonnés à <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnavpl.periodes.debut=2025.points_maximum)-->557<!--/-->, PLUS le complémentaire de la section : les DIX sections en ont un maintenant — CARMF, CARCDSF, CNBF, CAVEC, CAVP (volet réparti), CARPIMKO, CARPV, CAVOM (depuis 2016), CAVAMAC, CPRN (section C), et la Cipav pour le statut générique | **sous-estime** la pension d'un notaire de près de quatre dixièmes de son complémentaire, et celle d'un officier ministériel de tout son complémentaire d'avant 2016. Pour la CAVAMAC et la CPRN, l'assiette elle-même est reconstituée par un FACTEUR moyen — commissions, produits de l'office — et ne décrit aucun assuré en particulier |
 | Marins (ENIM) | les salaires forfaitaires d'avant 2008, que les textes de l'index ne chiffrent pas ; la CATÉGORIE du marin, que le décret définit par le métier et qu'une carrière saisie ne porte pas, et la catégorie MOYENNE des trente-six derniers mois qui fait le salaire de référence (R. 11) ; le décompte des services au semestre (R. 12) ; la pension d'invalidité, seule exception au plafond de vingt-cinq annuités qui ne soit pas servie | la grille des vingt forfaits lue au Journal officiel depuis 2008, la catégorie la plus proche du revenu — convention nommée —, et la grille de 2008 ramenée par le salaire moyen avant ; le plafond de vingt-cinq annuités avant cinquante-cinq ans est porté | **estimé** avant 2008, la grille de 2008 étant ramenée par le salaire moyen ; l'écart de catégorie et de décompte tient à une catégorie et à un trimestre au plus ; la levée du plafond à cinquante-deux ans et demi pour trente-sept annuités et demie est servie depuis le 22 septembre 2026 |
 | Avocats (CNBF) | la progression de la cotisation forfaitaire sur les cinq premières années (au barème 2026, <!--chiffre:illustration()-->363<!--/--> € la première, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.cotisation_forfaitaire_euros)-->1 510<!--/--> € à partir de la sixième) ; la contribution équivalente aux droits de plaidoirie ; les tranches de la grille complémentaire d'avant 2019 | la cotisation proportionnelle de <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.taux_cotisation_retraite*100)-->3,00<!--/--> % ET le forfait à sa valeur de croisière, <!--chiffre:valeur(data/reference/regimes/non_salaries.yaml:regimes.code=cnbf.periodes.debut=2004.cotisation_forfaitaire_euros)-->1 510<!--/--> € ; les années d'avant 2019 restent au rendement instantané | **surestime de <!--chiffre:illustration()-->4 586<!--/--> € sur une carrière**, au barème 2026, le flux des cinq premières années, contre près de <!--chiffre:illustration()-->70 000<!--/--> € qui manquaient quand le forfait n'était pas porté du tout. Sans effet sur la pension actuelle, qui est forfaitaire |
-| Non-salariés agricoles | les points gratuits de la RCO — <!--chiffre:illustration()-->66<!--/--> par an aux conjoints et aides familiaux avant 2011, dans la limite de <!--chiffre:illustration()-->17<!--/--> ans ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, EN VIGUEUR depuis le 1er janvier 2026 et non calculable : deux de ses trois paramètres sont renvoyés à un décret que la base ne porte pas | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà, seule dont les paramètres existent | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
+| Non-salariés agricoles | les points gratuits de la RCO des conjoints, aides familiaux et collaborateurs — <!--chiffre:illustration()-->66<!--/--> par an pour leurs années d'avant 2011, dans la limite de <!--chiffre:illustration()-->17<!--/--> ans —, le modèle ne connaissant que le statut de chef ; le barème de points du régime de base AVANT 1990, l'article qui l'écrit ne l'ouvrant qu'à cette date ; la réforme du 28 février 2025, EN VIGUEUR depuis le 1er janvier 2026 et non calculable : deux de ses trois paramètres sont renvoyés à un décret que la base ne porte pas | le barème en points de 1990 à aujourd'hui, la retraite forfaitaire et la RCO, tous trois lus dans le code rural, avec les points gratuits des chefs d'exploitation pour leurs années d'avant 2003 ; le rendement instantané pour les années d'avant 1990 ; la formule d'avant la réforme pour les liquidations de 2026 et au-delà, seule dont les paramètres existent | **sous-estime** la pension des carrières de conjoint et d'aide familial, qui sont précisément les plus modestes du régime |
 | Régimes spéciaux résiduels | des paramètres certifiés — mais plus des textes : l'Opéra, la Comédie-Française, la SEITA, les clercs de notaires, la Banque de France, le fonds spécial des ouvriers de l'État et le personnel navigant ont leurs décrets lus VERSION PAR VERSION dans la base LEGI, et passent au niveau `moyenne`. Restent au niveau `estimee` les mines — dont dix-huit millésimes sont interpolés entre deux valeurs sourcées —, les marins, le port autonome de Strasbourg et les chemins de fer secondaires | pour les quatre derniers, les textes fondateurs sans recontrôle ; le port de Strasbourg n'a rien dans LEGI que des décrets de compensation, son règlement de retraite étant un acte de l'établissement | **indéterminé** pour ces quatre-là, et c'est le seul cas où le dépôt ne sait pas dire le sens. Ces régimes portent peu d'assurés ; leur poids dans les agrégats est faible |
 
 **Ce qui a été refermé depuis la version précédente de ce tableau.** Le régime
@@ -5385,8 +5385,8 @@ moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
 Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,07<!--/--> en 2070. La garantie coûte
 <!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,45<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,7<!--/--> millions de
 bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,32<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->13<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,5<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->575<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 432<!--/--> depuis 1959. Ces chiffres
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->577<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 433<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 
@@ -6688,6 +6688,54 @@ rémunération quand la capitalisation n'est pas isolée : le plafond, règle du
 RAFP, n'y a pas cours. La ligne `rafp_assiette_plafond` du registre de veille
 en tient le détail.
 
+### La RCO ne servait que les points cotisés, et le code rural en donne cent par année de chef d'avant 2003
+
+La complémentaire des non-salariés agricoles est née le 1er janvier 2003. Le
+chef d'exploitation qui liquide depuis n'y a cotisé qu'une partie de sa
+carrière, et le droit lui reconstitue le reste : « 100 points de retraite
+complémentaire pour chacune des années de chef d'exploitation ou d'entreprise
+agricole à titre exclusif ou principal accomplies avant le 1er janvier 2003 »,
+retenues « dans la limite de la différence entre trente-sept années et demie
+et le nombre d'années ayant donné lieu à affiliation » à la RCO (D. 732-154 du
+code rural, dans ses trois versions depuis 2005). Deux conditions : dix-sept
+ans et demi d'assurance comme chef à la date d'effet (D. 732-151), et le taux
+plein de la retraite de base — en réunir la durée requise jusqu'au 31 août
+2023, l'avoir liquidée au taux plein, par la durée ou par l'âge, depuis
+(L. 732-56, II, 2°, modifié par l'article 18 de la loi du 14 avril 2023). La
+fiche le taisait, et aucun des deux moteurs ne servait ces points. La page de
+la MSA, lue le 23 septembre 2026, écrit la règle des cent points à l'identique ;
+elle décrit encore la condition de durée d'avant 2023, et c'est le code rural
+qui fait foi.
+
+**Ce que cela déplaçait.** Pour qui s'est installé jeune et a liquidé tôt, les
+points gratuits font plus de la moitié de la complémentaire : un chef né en
+1955, installé en 1975 et parti en 2019 à la moitié du salaire moyen, reçoit
+2 150 points gratuits pour 1 708 points cotisés — 729 € par an sur une RCO de
+1 309 €. Quatre témoins bougent sur 509, les quatre chefs d'exploitation du
+simulateur, au salaire moyen : leur pension du scénario 1 monte de 7,5 % pour
+la génération 1945, 4,3 % pour 1955, 2,1 % pour 1965, et de 0,25 % pour 1975,
+qui n'a que sept années d'avant 2003. Les comptes notionnels rétroactifs ne
+servent que ce qui a été cotisé, et l'écart qui les sépare du scénario 1 se
+creuse d'autant ; le prospectif garde leur pension aux générations déjà
+parties et ne compte pas ces points dans les droits acquis des autres. La page
+Avantages chiffre la ligne à 0,64 Md € en 2024. Un champ de période,
+`points_gratuits`, porte la règle, que `_points_gratuits` lit en Python comme
+en JavaScript ; la cascade l'isole sous la ligne `points_gratuits_rco`, mesurée
+comme l'AVPF, par un second calcul de la même carrière sans eux.
+
+**Ce qui reste.** Les points gratuits du V et du VI de L. 732-56 — 66 par an,
+dix-sept annuités au plus — pour les années de conjoint, d'aide familial ou de
+collaborateur d'avant 2011, et pour celles du chef qui n'a pas dix-sept ans et
+demi comme chef : il lui faut alors dix-sept ans et demi d'activité non
+salariée agricole à quelque titre que ce soit, que le modèle, qui ne connaît
+que le statut de chef, ne peut réunir sans que la règle des cent points
+s'applique d'abord. Les majorations de durée d'assurance que D. 732-151 compte
+dans les dix-sept ans et demi depuis 2026, quand la fiche du régime de base
+n'en déclare aucune. La révision des pensions prises avant le 1er septembre
+2023, que la loi fait aussi bénéficier de la nouvelle condition pour leurs
+arrérages suivants. La ligne `rco_points_gratuits` du registre de veille en
+tient le détail.
+
 ### Les navigants décotaient jusqu'à soixante-cinq ans, et la loi dit soixante
 
 La caisse des navigants de l'aviation civile (CRPN) écarte la décote « à
@@ -6742,13 +6790,13 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   **La limite tient toujours, mais elle ne mord plus sur le chiffre publié**,
   parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
-  valent <!--chiffre:mesure(avantages?annee=2024)-->96,1<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,5<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
+  valent <!--chiffre:mesure(avantages?annee=2024)-->96,7<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,7<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
   total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
   et dix autres lignes dans les sous-postes des Comptes de la protection
   sociale, dont la majoration pour enfants à <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=majoration_enfants)-->7,8<!--/--> milliards — que le modèle
   chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
   l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
-  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,0<!--/--> milliards qu'il calcule encore lui-même
+  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,6<!--/--> milliards qu'il calcule encore lui-même
   restent soumis à cette limite. Vingt-sept dispositifs sur quarante-cinq ne
   portent aucun chiffre, chacun avec sa raison écrite.
 
@@ -7922,7 +7970,7 @@ le 19 septembre 2026 :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,0<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,0<!--/--> % — et faux du
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,1<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> % — et faux du
    scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,7<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
@@ -8173,7 +8221,7 @@ année.
 | — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->196<!--/--> % |
 | — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->324<!--/--> % |
 | Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->383<!--/--> % |
-| Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->168<!--/--> % |
+| Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->167<!--/--> % |
 | Publié par Eurostat, tableau 29 | <!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % |
 
 La proposition doit moins parce qu'elle promet moins : c'est la même règle qui
@@ -8444,7 +8492,7 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,26<!--/--> %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,23<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **trois
 points à l'arrivée**.
@@ -8940,7 +8988,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2347<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2348<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

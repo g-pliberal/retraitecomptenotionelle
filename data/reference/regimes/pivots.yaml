@@ -193,7 +193,12 @@ pivots:
     - {texte: "Code rural", num: D732-42, parametres: [surcote_par_trimestre]}
   msa_rco:
     - {texte: "Code rural", num: D732-166, parametres: [valeur_point]}
-    - {texte: "Code rural", num: L732-56, parametres: [affiliation]}
+    # Le 2° du II, auquel le III renvoie, porte la condition de taux plein des
+    # points gratuits : sa version du 1er septembre 2023 est la date
+    # `taux_plein_depuis` de la fiche, et non une coupure de période.
+    - {texte: "Code rural", num: L732-56, parametres: [affiliation, points_gratuits]}
+    - {texte: "Code rural", num: D732-154, parametres: [points_gratuits]}
+    - {texte: "Code rural", num: D732-151, parametres: [points_gratuits]}
 
   # --- Régimes spéciaux --------------------------------------------------
   sncf:

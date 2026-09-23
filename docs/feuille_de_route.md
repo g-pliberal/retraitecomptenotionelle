@@ -30,8 +30,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 671<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 581<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 816<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 713<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15335,11 +15335,12 @@ README confronte désormais ses milliards à ceux de la page.
 `docs/methodologie.md`, `docs/limites.md`, `tests/test_web.py`,
 `tests/temoins/pages.json`.
 
-### 119. Les complémentaires relues : le plafond du RAFP, et cinq trous que rien ne disait — `en cours`
+### 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, et quatre trous que rien ne disait — `en cours`
 
 **Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
 régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste
-faite : « vas-y, commence par le plafond RAFP » (23 septembre 2026).
+faite : « vas-y, commence par le plafond RAFP », et « vas-y » pour la suite
+(23 septembre 2026).
 
 **Ce que la relecture a trouvé.** Les manques connus des complémentaires sont
 écrits dans l'inventaire, dans `limites.md` §4 et au registre de veille. La
@@ -15398,23 +15399,63 @@ cas types publics cotisaient sur une assiette trop forte de 10, 41 et 67 %.
 Aucun écart entre scénarios ne bouge, le RAFP étant servi à l'identique dans
 les six.
 
-**Ce qui reste**, dans l'ordre où le prendre : les points gratuits de RCO
-des chefs d'exploitation ; l'Arrco des ministres des cultes, statut à scinder ;
-les ouvriers de l'État hors du RAFP ; le barème de l'Ircantec pour enfants ; le
-routage calédonien et sa ligne d'inventaire ; les deux exceptions au plafond
-du RAFP — la GIPA, cotisée en entier, les jours de compte épargne-temps
-convertis — et la cotisation volontaire des agents de l'État outre-mer. La
-ligne `rafp_assiette_plafond` du registre de veille et le récit de
-`limites.md` (« Le RAFP prenait toutes les primes ») en tiennent le détail.
+**Ce qui a été fait ensuite : les points gratuits de la RCO.** Cent points
+par année de chef d'avant 2003, dans la limite de trente-sept ans et demi
+moins les années de RCO, à qui a dix-sept ans et demi comme chef et le taux
+plein de sa retraite de base (D. 732-154, D. 732-151, L. 732-56, II, 2° et
+III du code rural, lus dans toutes leurs versions de l'index LEGI). Le taux
+plein a changé de nature le 1er septembre 2023 : il fallait en réunir la durée,
+il suffit depuis d'avoir liquidé au taux plein, par l'âge aussi (loi
+n° 2023-270, art. 18, VI). La page de la MSA sur les non-salariés agricoles,
+réservée puis lue en ses quatre onglets, écrit la règle des cent points à
+l'identique et la condition d'avant 2023. Un champ de période,
+`points_gratuits`, que `_points_gratuits` lit dans les deux moteurs ; les
+points entrent au compte de la RCO, la formule le dit (« dont … points
+gratuits »), et la cascade les isole sous une neuvième ligne chiffrée,
+`points_gratuits_rco`, mesurée comme l'AVPF par un second calcul. Le régime
+des 66 points (V et VI de L. 732-56) ne peut pas s'ouvrir dans le modèle : il
+demande dix-sept ans et demi d'activité non salariée agricole à un autre titre
+que celui de chef, que le modèle ne connaît pas.
 
-**Fichiers.** `data/reference/regimes/_schema.yaml` et
-`data/reference/regimes/fonction_publique.yaml` ;
+**Ce que ça a déplacé.** Quatre témoins sur 509, les chefs d'exploitation du
+simulateur : leur pension du scénario 1 monte de 7,5 % pour la génération
+1945, 4,3 % pour 1955, 2,1 % pour 1965 et 0,25 % pour 1975. Pour un chef né en
+1955, installé à vingt ans et payé la moitié du salaire moyen, les points
+gratuits font 56 % de la RCO. La page
+Avantages chiffre la ligne à 0,64 Md € en 2024, et le chiffrable passe de 96,1
+à 96,7 Md €. Les écarts des comptes notionnels rétroactifs se creusent
+d'autant pour ces carrières.
+
+**Deux pistes sorties de la page de la MSA**, pour le régime de base : elle
+donne 3 940,51 € de retraite forfaitaire intégrale au 1er janvier 2026 et
+4,631 € de point de proportionnelle, quand la fiche, qui les indexe sur les
+prix, en tire 3 801,89 € et 4,6693 € ; et la version de D. 732-166 en vigueur
+depuis le 14 février 2026 fixe encore la valeur de service de la RCO « pour
+l'année 2025 », 0,3919 €, quand le modèle extrapole 2026. À reprendre avec la
+réforme des vingt-cinq meilleures années.
+
+**Ce qui reste**, dans l'ordre où le prendre : l'Arrco des ministres des
+cultes, statut à scinder ; les ouvriers de l'État hors du RAFP ; le barème de
+l'Ircantec pour enfants ; le routage calédonien et sa ligne d'inventaire ; les
+deux exceptions au plafond du RAFP — la GIPA, cotisée en entier, les jours de
+compte épargne-temps convertis — et la cotisation volontaire des agents de
+l'État outre-mer ; les 66 points gratuits des conjoints, aides familiaux et
+collaborateurs, qui demandent de connaître ces statuts. Les lignes
+`rafp_assiette_plafond` et `rco_points_gratuits` du registre de veille et les
+deux récits de `limites.md` (« Le RAFP prenait toutes les primes », « La RCO
+ne servait que les points cotisés ») en tiennent le détail.
+
+**Fichiers.** `data/reference/regimes/_schema.yaml`,
+`data/reference/regimes/fonction_publique.yaml`, `non_salaries.yaml`,
+`inventaire.yaml` et `pivots.yaml` ;
 `src/retraite_notionnelle/donnees/regimes.py`, `scenarios/actuel.py`,
 `moteur/compte.py`, et leurs pendants `moteur/js/regimes.js`,
 `scenario-actuel.js`, `compte.js` ; `scripts/construire_donnees.py` ;
 `tests/test_simulateur.py`, `tests/js/moteur.test.js`, les témoins ;
-`data/reference/legislation/veille.yaml`, `data/sources_a_explorer.yaml`,
-`data/reference/prose/zones.yaml`, `docs/limites.md`.
+`data/reference/legislation/veille.yaml`,
+`data/reference/legislation/avantages_non_contributifs.yaml`,
+`data/sources_a_explorer.yaml`, `data/reference/prose/zones.yaml`,
+`docs/limites.md`, `docs/regimes.md`, `docs/parcours_presentation.md`.
 
 ### 120. Le rapport de la Cour des comptes sur les retraites des fonctionnaires de l'État : une règle rendue au scénario 1, et ce qu'il reste à en tirer — `fait`
 

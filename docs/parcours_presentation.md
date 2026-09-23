@@ -322,17 +322,17 @@ Si le temps manque, garder cette page pour les questions : elle répond seule
 
 Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
-39 dispositifs en vigueur, du minimum vieillesse à la bonification du
-cinquième ; 96,1 Md € en 2024 pour les 18 que le modèle sait chiffrer, dont
+40 dispositifs en vigueur, du minimum vieillesse à la bonification du
+cinquième ; 96,7 Md € en 2024 pour les 19 que le modèle sait chiffrer, dont
 38,3 Md € de réversion, qui est lue et non calculée ; 10,9 Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.
 
 Deux comptes se croisent sur cette page, et il vaut mieux le savoir avant
-qu'on le demande : **39 dispositifs sont en vigueur aujourd'hui**, et le
-tableau du bas en recense **45 dispositifs** depuis 1831, ceux d'hier
-compris. Les 18 que le modèle chiffre se comptent sur les 45.
+qu'on le demande : **40 dispositifs sont en vigueur aujourd'hui**, et le
+tableau du bas en recense **46 dispositifs** depuis 1831, ceux d'hier
+compris. Les 19 que le modèle chiffre se comptent sur les 46.
 
 ### 6. Méthode et Données — deux minutes, pour finir
 

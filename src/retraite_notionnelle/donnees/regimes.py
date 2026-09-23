@@ -99,6 +99,57 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
 
 
 @dataclass(frozen=True)
+class PointsGratuits:
+    """Points attribués à la liquidation, sans cotisation, pour des années
+    antérieures à la création du régime.
+
+    C'est la RCO des non-salariés agricoles : créée en 2003, elle attribue au
+    chef d'exploitation qui liquide depuis « 100 points de retraite
+    complémentaire pour chacune des années de chef d'exploitation [...]
+    accomplies avant le 1er janvier 2003 », dans la limite de « la différence
+    entre trente-sept années et demie et le nombre d'années ayant donné lieu à
+    affiliation » à la RCO (D. 732-154 du code rural), s'il réunit dix-sept
+    ans et demi comme chef (D. 732-151) et le taux plein de son régime de base
+    (L. 732-56, II, 2°, auquel renvoie le III).
+    """
+
+    #: Le régime de BASE dont les années ouvrent les points, celui où se
+    #: comptent les dix-sept ans et demi, et dont le taux plein est la
+    #: condition : le régime des non-salariés agricoles.
+    regime: str
+    #: Seules comptent les années accomplies AVANT le 1er janvier de cette
+    #: année-là — celle où le régime qui attribue les points a été créé.
+    avant: int
+    points_par_annee: float
+    #: Années validées dans ``regime`` à la date d'effet, toute la carrière,
+    #: sans lesquelles rien n'est attribué.
+    annees_minimum: float
+    #: Plafond des années retenues, diminué des années d'affiliation au régime
+    #: qui attribue les points.
+    annees_maximum: float
+    #: Date d'effet, (année, mois), à compter de laquelle la condition est
+    #: d'avoir LIQUIDÉ au taux plein, par la durée ou par l'âge ; avant elle,
+    #: il fallait réunir la durée requise pour ce taux (L. 732-56, II, 2°, dans
+    #: sa version antérieure à la loi n° 2023-270 du 14 avril 2023).
+    taux_plein_depuis: tuple[int, int]
+
+
+def _points_gratuits(fiche: dict | None) -> PointsGratuits | None:
+    """La règle écrite dans une fiche, dates « AAAA-MM » comprises."""
+    if not fiche:
+        return None
+    annee, mois = str(fiche["taux_plein_depuis"]).split("-")
+    return PointsGratuits(
+        regime=str(fiche["regime"]),
+        avant=int(fiche["avant"]),
+        points_par_annee=float(fiche["points_par_annee"]),
+        annees_minimum=float(fiche["annees_minimum"]),
+        annees_maximum=float(fiche["annees_maximum"]),
+        taux_plein_depuis=(int(annee), int(mois)),
+    )
+
+
+@dataclass(frozen=True)
 class PeriodeRegime:
     """Jeu de paramètres d'un régime sur une plage d'années."""
 
@@ -445,6 +496,10 @@ class PeriodeRegime:
     #: celle du taux plafonné : en 2025, le salarié porte 0,40 point sur 2,42,
     #: soit 16,6 %, contre 44,7 % sur la part plafonnée.
     part_salariale_deplafonnee: float = 0.0
+    #: POINTS GRATUITS attribués à la liquidation pour les années d'avant la
+    #: création du régime : voir :class:`PointsGratuits`. ``None`` partout
+    #: ailleurs qu'à la RCO des non-salariés agricoles.
+    points_gratuits: PointsGratuits | None = None
     notes: str = ""
 
     @property
@@ -1196,6 +1251,7 @@ class CatalogueRegimes:
                     else int(p["cotisation_forfaitaire_annee"])
                 ),
                 avantages_non_contributifs=tuple(p.get("avantages_non_contributifs") or ()),
+                points_gratuits=_points_gratuits(p.get("points_gratuits")),
                 notes=(p.get("notes") or "").strip(),
             )
             for p in fiche.get("periodes", [])
