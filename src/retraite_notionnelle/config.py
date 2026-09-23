@@ -887,7 +887,8 @@ class Parametres:
     #: 22 contrats sur 34 en 2021, de 0,60 à 1 % par an : 0,80 % au milieu de
     #: la fourchette, sur 22/34 des contrats, soit 0,52 % en moyenne. Il pèse
     #: bien plus que les arrérages : au diviseur du modèle, 0,52 % par an sur
-    #: la réserve valent 8 % de rente.
+    #: la réserve valent quelque 7 % de rente — la méthodologie le recalcule
+    #: (``frais_reserve`` dans ``scripts/mesures_prose.py``).
     frais_versement_capitalisation: float = 0.0109
     frais_gestion_capitalisation: float = 0.0076
     frais_arrerages_capitalisation: float = 0.0099

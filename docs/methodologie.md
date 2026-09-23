@@ -1685,7 +1685,7 @@ milieu est le rapport de l'ancien diviseur au nouveau, sur la courbe de survie
 du modèle à la liquidation, et il vaut exactement 1 sans frais. Il est appliqué
 au diviseur plutôt que substitué à lui, pour que la rente reste comparable au
 centime à la pension notionnelle. Au diviseur du modèle, pour un départ à
-<!--chiffre:illustration()-->64<!--/--> ans en 2040, <!--chiffre:mesure(parametre?nom=frais_encours_rente_capitalisation)-->0,52<!--/--> % par an valent <!--chiffre:mesure(frais_reserve?age=64&annee=2040)-->8<!--/--> % de rente.
+<!--chiffre:illustration()-->64<!--/--> ans en 2040, <!--chiffre:mesure(parametre?nom=frais_encours_rente_capitalisation)-->0,52<!--/--> % par an valent <!--chiffre:mesure(frais_reserve?age=64&annee=2040)-->7<!--/--> % de rente.
 
 `G` est le diviseur du modèle, sur la même table de génération, unisexe et
 au vingtile de niveau de vie de la carrière par défaut, avec un taux technique nul
@@ -1919,7 +1919,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,67<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->40<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,71<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.
