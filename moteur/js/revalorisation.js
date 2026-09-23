@@ -432,8 +432,10 @@ export function pensionAujourdhui(simulateur, comparaison) {
     : liberal.pension_annuelle;
   const reel = revalorisation.coefficientStock(liquidation, annee, false);
   const contributiveAujourdhui = contributive * versAujourdhui * reel;
-  const rente = liberal.rente_capitalisation_obligatoire * versAujourdhui;
-  const volontaire = liberal.rente_capitalisation_volontaire * versAujourdhui;
+  // La rente du pilier est nominale et constante : elle vaut aujourd'hui, en
+  // euros d'aujourd'hui, ce qu'elle valait à la liquidation. Voir le Python.
+  const rente = liberal.rente_capitalisation_obligatoire;
+  const volontaire = liberal.rente_capitalisation_volontaire;
   let plancher = parametres.garantie_vieillesse_mensuelle;
   if (parametres.situation_foyer === SituationFoyer.SEUL) {
     plancher += parametres.allocation_isolement_mensuelle;
@@ -477,6 +479,8 @@ export class RevalorisationServie {
   constructor(simulateur, premiereAnnee, derniereAnnee) {
     const macro = simulateur.macro;
     const indexation = simulateur.indexation;
+    // Les prix, pour ce qui n'est revalorisé sur RIEN : `coefficientNominal`.
+    this._macro = macro;
     // L'année à partir de laquelle une réforme PROSPECTIVE revalorise ce
     // qu'elle sert : voir CLES_PROSPECTIVES dans `cout.js`.
     this.anneeBascule = simulateur.parametres.annee_bascule;
@@ -507,6 +511,16 @@ export class RevalorisationServie {
     if (annee <= anneeLiquidation) return 1;
     const depart = this._valeur(anneeLiquidation);
     return depart ? this._valeur(annee) / depart : 1;
+  }
+
+  /**
+   * Ce que vaut en `annee`, en euros constants, un euro de rente NOMINALE et
+   * constante liquidé en `anneeLiquidation` : la rente du pilier capitalisé,
+   * que rien ne revalorise et que les prix seuls déprécient. Voir le Python.
+   */
+  coefficientNominal(anneeLiquidation, annee) {
+    if (annee <= anneeLiquidation) return 1;
+    return this._macro.coefficientPrix(annee, anneeLiquidation);
   }
 
   /**

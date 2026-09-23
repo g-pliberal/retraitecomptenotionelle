@@ -596,8 +596,12 @@ def pension_aujourd_hui(simulateur, comparaison) -> PensionAujourdhui:
                     else liberal.pension_annuelle)
     reel = revalorisation.coefficient_stock(liquidation, annee, False)
     contributive_aujourd_hui = contributive * vers_aujourd_hui * reel
-    rente = liberal.rente_capitalisation_obligatoire * vers_aujourd_hui
-    volontaire = liberal.rente_capitalisation_volontaire * vers_aujourd_hui
+    # La rente du pilier est NOMINALE et constante : elle vaut aujourd'hui,
+    # en euros d'aujourd'hui, exactement ce qu'elle valait à la liquidation.
+    # La porter sur les prix, comme ce calcul le faisait jusqu'au 23 septembre
+    # 2026, lui donnait une indexation que le contrat ne prévoit pas.
+    rente = liberal.rente_capitalisation_obligatoire
+    volontaire = liberal.rente_capitalisation_volontaire
     plancher = parametres.garantie_vieillesse_mensuelle
     if parametres.situation_foyer is SituationFoyer.SEUL:
         plancher += parametres.allocation_isolement_mensuelle
@@ -667,6 +671,9 @@ class RevalorisationServie:
                  premiere_annee: int, derniere_annee: int) -> None:
         macro = simulateur.macro
         indexation = simulateur.indexation
+        #: Les prix, pour ce qui n'est revalorisé sur RIEN : voir
+        #: :meth:`coefficient_nominal`.
+        self._macro = macro
         #: L'année à partir de laquelle une réforme PROSPECTIVE revalorise ce
         #: qu'elle sert : voir :data:`CLES_PROSPECTIVES`.
         self.annee_bascule = simulateur.parametres.annee_bascule
@@ -704,6 +711,21 @@ class RevalorisationServie:
             return 1.0
         depart = self._valeur(annee_liquidation)
         return self._valeur(annee) / depart if depart else 1.0
+
+    def coefficient_nominal(self, annee_liquidation: int, annee: int) -> float:
+        """Ce que vaut en ``annee``, en euros constants, un euro de rente
+        NOMINALE et constante liquidé en ``annee_liquidation``.
+
+        C'est la rente du pilier capitalisé : un contrat à taux technique nul,
+        que rien ne revalorise. Les prix seuls la déprécient, et ce coefficient
+        est leur rapport — un l'année de la liquidation, moins ensuite. Le
+        compte des flux du pilier la sert ainsi ; la garantie, qui la regarde,
+        la revalorisait jusqu'au 23 septembre 2026 comme une pension
+        notionnelle, sur la masse salariale.
+        """
+        if annee <= annee_liquidation:
+            return 1.0
+        return self._macro.coefficient_prix(annee, annee_liquidation)
 
     def coefficient_stock(self, annee_liquidation: int, annee: int,
                           prospectif: bool) -> float:

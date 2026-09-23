@@ -1184,6 +1184,33 @@ def test_la_garantie_regarde_les_deux_etages_obligatoires(simulateur):
         assert garantie.complement < garantie.plancher_annuel - garantie.pension_contributive
 
 
+def test_la_rente_du_pilier_ne_se_revalorise_pas_d_ici_l_ouverture(simulateur):
+    """Partie à 62 ans, la retraitée n'a sa garantie qu'à 65 : d'ici là, la
+    pension notionnelle suit la masse salariale, la rente du pilier ne suit rien.
+
+    La rente est un contrat à taux technique nul, nominal et constant : le
+    compte des flux du pilier la sert ainsi, et les prix seuls la déprécient
+    en euros de la liquidation. La garantie la revalorisait jusqu'au 23
+    septembre 2026 comme la pension, sur la masse salariale : elle lui prêtait
+    des ressources que le contrat ne verse pas, et sous-estimait le complément.
+    """
+    comparaison = simulateur.simuler(simulateur.carriere_simple(
+        annee_naissance=1975, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=30, age_liquidation=62, niveau_salaire=0.45,
+    ))
+    garantie = comparaison.notionnel_liberal.garantie_vieillesse
+    annee = comparaison.carriere.annee_liquidation
+    assert not garantie.age_atteint and garantie.rente_capitalisee > 0.0
+    erosion = simulateur.macro.coefficient_prix(garantie.annee_ouverture, annee)
+    assert garantie.erosion_rente == pytest.approx(erosion)
+    assert erosion < 1.0 < garantie.revalorisation_differee
+    assert garantie.ressources_a_l_ouverture == pytest.approx(
+        garantie.pension_contributive * garantie.revalorisation_differee
+        + garantie.rente_capitalisee * erosion)
+    assert garantie.complement == pytest.approx(
+        max(0.0, garantie.plancher_annuel - garantie.ressources_a_l_ouverture))
+
+
 def test_le_plancher_suit_les_prix_depuis_2026(simulateur):
     """800 € et 250 € sont des euros de 2026 : une liquidation de 2025 les
     déflate par l'indice des prix, exactement comme l'ASPA entre deux ancres."""

@@ -202,11 +202,16 @@ export class ScenarioNotionnel {
     // Ce que la pension gagne en termes réels d'ici l'ouverture : la
     // revalorisation nominale de la règle d'indexation, ramenée aux euros de la
     // liquidation, qui sont ceux du plancher. Vaut un si la règle suit les prix.
-    const revalorisation = ouverture > annee
-      ? this.constructeur.indexation.coefficient(annee, ouverture)
-        * this.constructeur.macro.coefficientPrix(ouverture, annee)
+    const erosion = ouverture > annee
+      ? this.constructeur.macro.coefficientPrix(ouverture, annee)
       : 1.0;
-    const aLOuverture = ressources * revalorisation;
+    const revalorisation = ouverture > annee
+      ? this.constructeur.indexation.coefficient(annee, ouverture) * erosion
+      : 1.0;
+    // La rente du pilier, nominale et constante, ne gagne rien : les prix
+    // seuls la déprécient d'ici l'ouverture.
+    const aLOuverture = pensionContributive * revalorisation
+      + renteCapitalisee * erosion;
     const complement = Math.max(0.0, plancher - aLOuverture);
     return {
       situation: parametres.situation_foyer,
@@ -221,6 +226,7 @@ export class ScenarioNotionnel {
       ressources,
       revalorisation_differee: revalorisation,
       ressources_a_l_ouverture: aLOuverture,
+      erosion_rente: erosion,
       complement,
       servie: complement > 0,
       servie_a_la_liquidation: ageAtteint && complement > 0,
