@@ -1461,6 +1461,17 @@ document.addEventListener("submit", (evenement) => {
   naviguer(`#${route}?${requete}`);
 });
 
+// Le groupe « Pour vérifier » du bandeau, replié sur un téléphone derrière un
+// `<button class="deplier" aria-expanded>` que le gabarit écrit : la feuille de
+// style montre ses liens quand l'état dit « ouvert », et c'est tout ce que ce
+// geste change. Au-delà de l'écran étroit, le bouton n'est pas affiché.
+document.addEventListener("click", (evenement) => {
+  const bouton = evenement.target.closest?.("nav button.deplier");
+  if (!bouton) { return; }
+  const ouvrir = bouton.getAttribute("aria-expanded") !== "true";
+  bouton.setAttribute("aria-expanded", String(ouvrir));
+});
+
 // -- les mots du glossaire ---------------------------------------------------
 //
 // Un mot de spécialiste porte sa définition, et elle s'ouvre sur place. Le
