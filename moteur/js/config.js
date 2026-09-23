@@ -96,8 +96,8 @@ export const ModeAgeReference = Object.freeze({
   CLIQUET_PUIS_ESPERANCE_VIE: "cliquet_puis_esperance_vie",
   //: Âge du taux plein de l'année de liquidation, sans cliquet — contrefactuel.
   LEGAL_SANS_CLIQUET: "legal_sans_cliquet",
-  //: Cliquet légal jusqu'à la bascule, puis un âge fixe — 64 ans, l'âge légal
-  //: d'ouverture des droits. C'est le défaut.
+  //: Cliquet légal jusqu'à la bascule, puis un âge fixe — 65 ans, l'âge légal
+  //: de départ de la proposition (`age_legal_liberal`). C'est le défaut.
   FIXE_APRES_BASCULE: "fixe_apres_bascule",
 });
 
@@ -235,7 +235,10 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   // --- Âge de référence -----------------------------------------------------
   mode_age_reference: ModeAgeReference.FIXE_APRES_BASCULE,
   //: Âge de référence servi à partir de la bascule en mode FIXE_APRES_BASCULE.
-  age_reference_fixe: 64,
+  //: 65 ans depuis le 22 septembre 2026, l'âge légal de la proposition ; 64,
+  //: celui de la loi du 14 avril 2023, du 19 au 22. Il ne pèse que sur la
+  //: conversion des droits acquis des scénarios prospectifs 3 et 5.
+  age_reference_fixe: 65,
   ratio_cible_retraite_carriere: 0.5,
 
   // --- Conversion en rente --------------------------------------------------
@@ -279,11 +282,12 @@ export const PARAMETRES_DEFAUT = Object.freeze({
 
   // --- Scénario 6 : la proposition libérale ----------------------------------
   //: Le scénario 6 est le scénario 4 — compte rétroactif, cotisation entière,
-  //: mêmes âges, même indexation — à deux différences près : à compter de la
-  //: bascule, un TAUX UNIQUE, salariale et patronale additionnées, le même
-  //: pour tous, prélevé une fois sur la rémunération (avant elle, les taux
-  //: réels du scénario 4) ; et une GARANTIE VIEILLESSE qui remplace l'ASPA,
-  //: différentielle, individualisée, financée par l'impôt, ouverte à 65 ans.
+  //: même indexation — à trois différences près : à compter de la bascule, un
+  //: TAUX UNIQUE, salariale et patronale additionnées, le même pour tous,
+  //: prélevé une fois sur la rémunération (avant elle, les taux réels du
+  //: scénario 4) ; une GARANTIE VIEILLESSE qui remplace l'ASPA,
+  //: différentielle, individualisée, financée par l'impôt, ouverte à 65 ans ;
+  //: et un ÂGE LÉGAL DE DÉPART de 65 ans (`age_legal_liberal`, plus bas).
   taux_cotisation_liberal: 0.18,
   //: Partage du taux unique entre l'assuré et son employeur. La proposition
   //: dit « 18 %, salariale et patronale additionnées » et ne dit pas qui porte
@@ -320,6 +324,15 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: 800 € par personne à deux.
   garantie_vieillesse_mensuelle: 800.0,
   allocation_isolement_mensuelle: 250.0,
+  //: La troisième : un ÂGE LÉGAL DE DÉPART DE 65 ANS à compter de la bascule
+  //: (22 septembre 2026). Qui serait parti plus tôt sous le droit en vigueur
+  //: part à cet âge sous la proposition, et travaille jusque-là dans la
+  //: situation de sa dernière année (`Carriere.prolongee`) : des cotisations
+  //: de plus, un diviseur plus petit, donc une pension mensuelle plus forte,
+  //: servie moins longtemps. Qui partait à 65 ans ou après n'y gagne rien, qui
+  //: a liquidé avant la bascule n'est pas touché. Seul le scénario 6 le porte ;
+  //: `null` retire la mesure. Voir `config.py`.
+  age_legal_liberal: 65.0,
   // Part des ayants droit qui réclament la garantie : l'hypothèse de l'ASPA,
   // un sur deux. Ne joue que sur le coût lu sur la distribution.
   taux_recours_garantie: 0.5,

@@ -64,6 +64,8 @@ export class Comparaison {
     regimeFusionne, parametres, coefficientEurosConstants = 1.0,
     dernierRevenuAnnualise = 0.0, remuneration = null, niveauInverse = null,
     aujourdhui = null, coefficientEurosAujourdhui = 1.0,
+    carriereLiberal = null, coefficientEurosConstantsLiberal = null,
+    dernierRevenuAnnualiseLiberal = null,
   }) {
     this.carriere = carriere;
     this.actuel = actuel;
@@ -98,17 +100,58 @@ export class Comparaison {
     //: Passage des euros de l'année courante aux euros constants de
     //: `parametres.annee_euros_constants`.
     this.coefficient_euros_aujourd_hui = coefficientEurosAujourdhui;
+    //: La carrière sur laquelle la PROPOSITION est calculée, quand son âge
+    //: légal de 65 ans reporte le départ : la même, poursuivie jusqu'à cet âge
+    //: (voir `Simulateur.carriereProposition`). `null` quand le départ n'est
+    //: pas reporté.
+    this.carriere_liberal = carriereLiberal;
+    //: Les deux grandeurs qui dépendent de la DATE du départ, prises à celle
+    //: du scénario 6 quand elle est reportée.
+    this.coefficient_euros_constants_liberal = coefficientEurosConstantsLiberal;
+    this.dernier_revenu_annualise_liberal = dernierRevenuAnnualiseLiberal;
   }
 
-  /** Pension rapportée au dernier revenu d'activité, à la date du départ. */
-  _taux(pension) {
-    const revenu = this.dernier_revenu_annualise;
+  /** L'âge légal de la proposition reporte-t-il le départ du scénario 6 ? */
+  get departReporte() {
+    return this.carriere_liberal !== null;
+  }
+
+  _reporte(scenario) {
+    return scenario === "notionnel_liberal" && this.departReporte;
+  }
+
+  /** La carrière sur laquelle ce scénario est calculé. */
+  carriereDe(scenario) {
+    return this._reporte(scenario) ? this.carriere_liberal : this.carriere;
+  }
+
+  /**
+   * Le passage aux euros constants des montants de ce scénario. Chaque montant
+   * est en euros courants de SON année de liquidation, et le scénario 6
+   * reporté liquide plus tard que les autres.
+   */
+  coefficientDe(scenario = null) {
+    return this._reporte(scenario)
+      ? this.coefficient_euros_constants_liberal
+      : this.coefficient_euros_constants;
+  }
+
+  /**
+   * Pension rapportée au dernier revenu d'activité, à la date du départ DU
+   * SCÉNARIO : le scénario 6 reporté se rapporte au dernier revenu de la
+   * carrière prolongée.
+   */
+  _taux(pension, scenario = null) {
+    const revenu = this._reporte(scenario)
+      ? this.dernier_revenu_annualise_liberal
+      : this.dernier_revenu_annualise;
     if (pension <= 0 || revenu <= 0) return 0.0;
     return pension / revenu;
   }
 
-  enEurosConstants(montant) {
-    return montant * this.coefficient_euros_constants;
+  /** Un montant de `scenario` en euros constants — l'étalon si omis. */
+  enEurosConstants(montant, scenario = null) {
+    return montant * this.coefficientDe(scenario);
   }
 
   /** Un montant d'aujourd'hui, dans les euros constants de la page. */
@@ -153,13 +196,24 @@ export class Comparaison {
     };
   }
 
-  /** Écart relatif d'un scénario notionnel au système actuel. */
+  /**
+   * Écart relatif d'un scénario notionnel au système actuel. En euros
+   * constants quand le scénario liquide à une autre date que l'étalon.
+   */
   variation(scenario) {
+    return this._ecart(this[scenario].pension_annuelle, scenario);
+  }
+
+  _ecart(montant, scenario) {
     const reference = this.actuel.pension_annuelle;
     if (reference <= 0) {
       return NaN;
     }
-    return this[scenario].pension_annuelle / reference - 1.0;
+    if (!this._reporte(scenario)) {
+      return montant / reference - 1.0;
+    }
+    return this.enEurosConstants(montant, scenario)
+      / this.enEurosConstants(reference) - 1.0;
   }
 
   get tauxRemplacementActuel() {
@@ -176,7 +230,7 @@ export class Comparaison {
 
   /** Taux de remplacement de n'importe lequel des scénarios notionnels. */
   tauxRemplacement(scenario) {
-    return this._taux(this[scenario].pension_annuelle);
+    return this._taux(this[scenario].pension_annuelle, scenario);
   }
 
   // -- avec le pilier capitalisé ---------------------------------------------
@@ -205,13 +259,11 @@ export class Comparaison {
 
   /** Écart au système actuel, pilier capitalisé compris. */
   variationTotale(scenario) {
-    const reference = this.actuel.pension_annuelle;
-    if (reference <= 0) return Number.NaN;
-    return this.pensionTotale(scenario) / reference - 1.0;
+    return this._ecart(this.pensionTotale(scenario), scenario);
   }
 
   tauxRemplacementTotal(scenario) {
-    return this._taux(this.pensionTotale(scenario));
+    return this._taux(this.pensionTotale(scenario), scenario);
   }
 
   /** Forme sérialisable, pour un export ou une comparaison. */
@@ -267,9 +319,19 @@ export class Comparaison {
           cle,
           resumeNotionnel(
             this[cle], this.tauxRemplacement(cle), this.variation(cle),
-            this.coefficient_euros_constants,
+            this.coefficientDe(cle),
           ),
         ])),
+      },
+      // Le départ de la proposition, qui n'est celui des autres que tant que
+      // son âge légal ne le reporte pas.
+      liquidation_liberal: {
+        reportee: this.departReporte,
+        age_legal: this.parametres.age_legal_liberal,
+        age_liquidation: this.carriereDe("notionnel_liberal").age_liquidation,
+        annee_liquidation: this.carriereDe("notionnel_liberal").anneeLiquidation,
+        mois_liquidation: this.carriereDe("notionnel_liberal").moisLiquidation,
+        coefficient_euros_constants: this.coefficientDe("notionnel_liberal"),
       },
       contribution_employeur: {
         total: this.contributionEmployeur.total,
@@ -639,8 +701,46 @@ export class Simulateur {
   }
 
   /** Calcule les six scénarios pour une carrière. */
+  /**
+   * La carrière que la proposition fait liquider : la même, sauf l'âge. Son
+   * âge légal ne s'applique qu'aux départs qu'elle régit, ceux qui prennent
+   * effet à compter du 1er janvier de la bascule ; un départ plus précoce est
+   * reporté à l'âge légal, et la carrière poursuivie jusque-là
+   * (`Carriere.prolongee`). Rend la carrière elle-même dans tous les autres
+   * cas. Voir `simulateur.py`.
+   */
+  carriereProposition(carriere) {
+    const ageLegal = this.parametres.age_legal_liberal;
+    if (ageLegal === null || ageLegal === undefined
+        || carriere.age_liquidation === null) {
+      return carriere;
+    }
+    if (carriere.dateLiquidation.annee < this.parametres.annee_bascule) {
+      return carriere;
+    }
+    return carriere.prolongee(ageLegal, this.macro);
+  }
+
+  /**
+   * Le scénario 6 sur cette carrière-là, telle quelle — sans âge légal : c'est
+   * à `carriereProposition` de dire à quel âge la proposition fait partir. La
+   * page Coût s'en sert pour les cohortes que la bascule sépare de leur
+   * génération de la grille.
+   */
+  proposition(carriere) {
+    const fusionne = this.parametres.fusion_au_plus_defavorable ? this.regimeFusionne : null;
+    return this.scenarioLiberal.liberal(carriere, fusionne);
+  }
+
   simuler(carriere) {
     this._verifierFiabilite(carriere);
+    const proposition = this.carriereProposition(carriere);
+    const reporte = proposition !== carriere;
+    if (reporte) {
+      // Les années que le report fait travailler entrent dans le calcul :
+      // elles ont à tenir la même exigence que les autres.
+      this._verifierFiabilite(proposition);
+    }
 
     const fusionne = this.parametres.fusion_au_plus_defavorable ? this.regimeFusionne : null;
 
@@ -657,7 +757,7 @@ export class Simulateur {
         carriere, this.regimeFusionne,
         "Comptes notionnels à compter de la bascule, cotisation salariale et patronale",
       ),
-      notionnelLiberal: this.scenarioLiberal.liberal(carriere, fusionne),
+      notionnelLiberal: this.proposition(proposition),
       regimeFusionne: this.regimeFusionne,
       parametres: this.parametres,
       coefficientEurosConstants: this.macro.coefficientPrix(
@@ -668,6 +768,15 @@ export class Simulateur {
         carriere, this.macro, this.catalogue, this.affiliations,
         this.parametres, this.baremePrelevements, this.paquet,
       ),
+      carriereLiberal: reporte ? proposition : null,
+      coefficientEurosConstantsLiberal: reporte
+        ? this.macro.coefficientPrix(
+          proposition.anneeLiquidation, this.parametres.annee_euros_constants,
+        )
+        : null,
+      dernierRevenuAnnualiseLiberal: reporte
+        ? dernierRevenuAnnualise(proposition, this.macro)
+        : null,
     });
     if (carriere.anneeLiquidation < this.parametres.annee_courante) {
       comparaison.aujourd_hui = pensionAujourdhui(this, comparaison);

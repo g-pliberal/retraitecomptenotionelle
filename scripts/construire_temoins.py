@@ -779,9 +779,11 @@ def _pages(contexte: Contexte) -> dict:
         }),
         # Le même départ, mais au travail jusqu'au bout : le pilier reçoit un
         # seul versement, l'année de la bascule, et n'a pas un an pour
-        # rapporter. Sans emploi, il ne recevait rien — la page le dit.
+        # rapporter. Sans emploi, il ne recevait rien — la page le dit. Née
+        # en 1961 et partie à 65 ans passés : l'âge légal de la proposition ne
+        # reporte pas ce départ.
         ("simuler_depart_l_annee_de_la_bascule", "/simuler", {
-            **BASE, "naissance": "1962-03-15", "debut": "1984-09",
+            **BASE, "naissance": "1961-03-15", "debut": "1984-09",
             "liquidation": "2026-07",
         }),
         # Une activité AJOUTÉE à celle en cours : la légende dit « en plus »,

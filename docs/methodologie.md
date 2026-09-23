@@ -367,7 +367,7 @@ restatent pas.
 L'âge de référence est l'âge auquel une liquidation est réputée « à l'heure ».
 Il se lit en deux temps, séparés par l'année de bascule.
 
-**À partir de la bascule, il vaut <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans** : l'âge légal d'ouverture des droits
+**À partir de la bascule, il vaut <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans** : l'âge légal d'ouverture des droits
 que la loi du 14 avril 2023 a fixé, et que la génération <!--chiffre:minimum(data/reference/legislation/age_ouverture_requis.csv:generation?age=64.00)-->1969<!--/--> sera la première à
 atteindre — l'article 105 de la loi n° 2025-1403 du 30 décembre 2025, qui
 suspend la réforme, en a retardé la montée d'un trimestre par génération. C'est
@@ -389,7 +389,7 @@ une liquidation de 1990 se mesure donc à son époque, et non à la nôtre.
 | 1982-2010 | **<!--chiffre:cellule(data/reference/legislation/ages_reference.csv:age_taux_plein_legal?annee=1982)-->60<!--/--> ans** (ordonnance du 26 mars 1982) | **<!--chiffre:mesure(age_reference?annee=1990)-->65<!--/--> ans** — le cliquet tient |
 | 2011-2016 | montée en charge 65 → 67 | 65 → <!--chiffre:mesure(age_reference?annee=2020)-->67<!--/--> ans |
 | 2017-2025 | <!--chiffre:cellule(data/reference/legislation/ages_reference.csv:age_taux_plein_legal?annee=2017)-->67<!--/--> ans | <!--chiffre:mesure(age_reference?annee=2020)-->67<!--/--> ans |
-| 2026- | <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_taux_plein_legal)-->67<!--/--> ans | **<!--chiffre:mesure(age_reference?annee=2026)-->64<!--/--> ans** — l'âge fixe prend le relais |
+| 2026- | <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_taux_plein_legal)-->67<!--/--> ans | **<!--chiffre:mesure(age_reference?annee=2026)-->65<!--/--> ans** — l'âge fixe prend le relais |
 
 Conséquences directes sur la période à cliquet, conformes à la demande :
 
@@ -406,10 +406,10 @@ par défaut. L'anticipation est déjà sanctionnée deux fois, mécaniquement :
 2. la rente est servie plus longtemps, donc le diviseur est plus élevé.
 
 Ordre de grandeur du second effet seul : cinq ans d'anticipation sur
-<!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans en 2026 augmentent le diviseur de <!--chiffre:mesure(anticipation?avance=5&annee=2026&quoi=esperance)-->4,7<!--/--> années d'espérance de vie, soit
+<!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans en 2026 augmentent le diviseur de <!--chiffre:mesure(anticipation?avance=5&annee=2026&quoi=esperance)-->4,6<!--/--> années d'espérance de vie, soit
 une pension annuelle inférieure de <!--chiffre:mesure(anticipation?avance=5&annee=2026)-->17<!--/--> %. En ajoutant les cinq années de
 cotisations manquantes sur une carrière de <!--chiffre:illustration()-->42<!--/--> ans, la perte totale approche
-<!--chiffre:mesure(anticipation?avance=5&annee=2026&carriere=42)-->26<!--/--> %.
+<!--chiffre:mesure(anticipation?avance=5&annee=2026&carriere=42)-->27<!--/--> %.
 
 Une décote explicite supplémentaire reste disponible
 (`ModeCoefficientEcart.EXPLICITE`), mais c'est alors une double peine assumée.
@@ -423,12 +423,13 @@ et par un seul canal — le diviseur auquel les droits acquis sont convertis à 
 bascule (§5). Partout ailleurs, il est une grandeur affichée : l'écart
 d'anticipation que le rapport de simulation imprime.
 
-Ce canal unique n'est pas léger pour autant. Passer de 67 à <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans prend un
-diviseur plus élevé, donc un capital d'ouverture plus gros, et le cadeau va tout
-entier aux générations de transition. Les deux scénarios prospectifs y gagnent
-un demi-point de PIB de dépense, une quinzaine de milliards d'euros par an au
-PIB de 2025 : le scénario 5 repasse sous le système actuel en solde moyen, le 3
-recule son année d'équilibre de 2044 à 2049.
+Ce canal unique n'est pas léger pour autant. Un âge de référence plus bas
+prend un diviseur plus élevé, donc un capital d'ouverture plus gros, et le
+cadeau va tout entier aux générations de transition. Le défaut suit l'âge légal
+de départ de la proposition, <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans : moins que les <!--chiffre:maximum(data/reference/legislation/ages_reference.csv:age_reference)-->67<!--/--> ans du
+cliquet, et les deux scénarios prospectifs dépensent donc davantage qu'avec
+lui. Leurs soldes moyens sont, sous le défaut, de <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,74<!--/--> et <!--chiffre:mesure(solde_moyen?scenario=5)-->+0,14<!--/--> % du
+PIB, contre <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système actuel.
 
 ### Variantes
 
@@ -1078,12 +1079,12 @@ diviseurs diffèrent, la conversion n'est pas neutre.
 | `liquidation` | l'âge de départ effectif | aucun : la conversion est neutre |
 
 Pour un salarié né en 1975, entré à <!--chiffre:illustration()-->21<!--/--> ans et partant à <!--chiffre:illustration()-->62<!--/--> ans, l'âge de
-référence est de <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->64<!--/--> ans : les droits acquis sont convertis au diviseur
-`G(64, 2026)`, <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_conversion)-->24,58<!--/--> années, puis servis à `G(62, 2037)`,
-<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_service)-->27,50<!--/--> années. L'écart entre les deux, environ <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=ecart_diviseurs)-->12<!--/--> %, est retiré de
+référence est de <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans : les droits acquis sont convertis au diviseur
+`G(64, 2026)`, <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_conversion)-->23,66<!--/--> années, puis servis à `G(62, 2037)`,
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=diviseur_service)-->27,50<!--/--> années. L'écart entre les deux, environ <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=ecart_diviseurs)-->16<!--/--> %, est retiré de
 droits que le système actuel aurait servis sans décote — l'anticipation est
 payée une seconde fois, sur le passé. La pension du scénario 3 passe de
-<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=pension)-->25 713<!--/--> € à <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&conversion=liquidation&quoi=pension)-->27 464<!--/--> € par an lorsqu'on retient l'autre convention. Un
+<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&quoi=pension)-->24 854<!--/--> € à <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=62&conversion=liquidation&quoi=pension)-->27 464<!--/--> € par an lorsqu'on retient l'autre convention. Un
 départ à l'âge de référence lui-même ne sépare pas les deux : le diviseur est
 alors le même.
 
@@ -1091,7 +1092,7 @@ alors le même.
 raison de fond. Sur une carrière témoin — né en 1975, homme, salarié du privé
 non cadre entré à <!--chiffre:illustration()-->21<!--/--> ans, au salaire moyen et à profil plat, soit trente années
 cotisées avant la bascule et un droit figé de <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=figee)-->19 052<!--/--> € par an —, le pot vaut
-sous `reference` **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=pot)-->468 239<!--/--> € quel que soit l'âge de départ**. Sous
+sous `reference` **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=64&quoi=pot)-->450 853<!--/--> € quel que soit l'âge de départ**. Sous
 `liquidation`, le même passé vaudrait **<!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=60&conversion=liquidation&quoi=pot)-->539 966<!--/--> € pour un départ à <!--chiffre:illustration()-->60<!--/--> ans et
 <!--chiffre:mesure(droits_acquis?generation=1975&debut=21&depart=67&conversion=liquidation&quoi=pot)-->416 821<!--/--> € pour un départ à <!--chiffre:illustration()-->67<!--/--> ans** : <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&conversion=liquidation&quoi=pot&de=67&a=60)-->30<!--/--> % d'écart pour un passé identique,
 parce que le diviseur qui constitue le pot rétrécit avec l'âge. Un test tient
@@ -1104,7 +1105,7 @@ représente, l'autre la RENTE ANNUELLE qu'il promettait —, et la mesure a
 tranché entre elles : sous `liquidation`, le pot rétrécit avec l'âge à peu près
 au rythme où les cotisations nouvelles le remplissent, si bien que sept années
 de travail supplémentaires ne feraient monter le capital total que de <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&conversion=liquidation&quoi=capital&de=60&a=67)-->1,1<!--/--> %
-contre <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&quoi=capital&de=60&a=67)-->27<!--/--> % aujourd'hui. Un compte notionnel promet qu'on retrouve ce qu'on
+contre <!--chiffre:mesure(droits_acquis_variation?generation=1975&debut=21&quoi=capital&de=60&a=67)-->28<!--/--> % aujourd'hui. Un compte notionnel promet qu'on retrouve ce qu'on
 verse ; c'est cette promesse-là que le défaut tient. Le détail de la mesure est
 sous « Ce qui est délibérément en bas » de `feuille_de_route.md`, à l'action 24,
 abandonnée pour ce motif.
@@ -1337,9 +1338,10 @@ reconnaître. C'est précisément la question que pose le scénario 6.
 
 Le scénario 6 est la proposition du Parti libéral français. C'est **exactement
 le scénario 4** — compte rétroactif depuis l'origine de la répartition,
-cotisation salariale et patronale confondues, mêmes âges de départ et de
-référence, même indexation, même coefficient de conversion — à trois différences
-près, qui sont les trois termes de la proposition.
+cotisation salariale et patronale confondues, même âge de référence, même
+indexation, même coefficient de conversion — à quatre différences près, qui
+sont les quatre termes de la proposition : le taux unique, la garantie
+vieillesse, le pilier capitalisé, et l'âge légal de départ.
 
 **Un taux unique de <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %, à compter de la bascule.** Parts salariale et
 patronale additionnées, le même pour tous les statuts, prélevé une fois sur la
@@ -1421,7 +1423,7 @@ mesure par mesure » de `limites.md` dit comment chacune de ces grandeurs est
 établie.
 
 Une réserve, et une méthode. Le modèle liquide et s'arrête : un assuré parti à
-<!--chiffre:illustration()-->62<!--/--> ans avec une petite pension reçoit la garantie à <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et la page de
+<!--chiffre:illustration()-->62<!--/--> ans avant la bascule avec une petite pension reçoit la garantie à <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et la page de
 simulation dit l'année et le montant. Mais une allocation différentielle ne se
 chiffre pas sur <!--chiffre:mesure(grille?quoi=cas_types)-->13<!--/--> carrières, parce que son coût est tout entier celui de
 la queue basse de la distribution des pensions, et une grille choisie pour
@@ -1777,6 +1779,50 @@ au-dessus.
 
 ---
 
+#### L'âge légal de départ
+
+C'est le quatrième terme de la proposition, posé le 22 septembre 2026 : un âge
+légal de départ de <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans à compter de la bascule
+(`age_legal_liberal`). Toute liquidation que la proposition régit — celles qui
+prennent effet à compter du 1<sup>er</sup> janvier de la bascule — a lieu à
+cet âge au plus tôt. Qui serait parti avant sous le droit en vigueur part à
+<!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans sous la proposition ; qui partait à cet âge ou après, et qui a
+liquidé avant la bascule, n'est pas touché.
+
+**Le report se calcule en prolongeant la carrière** (`Carriere.prolongee`) :
+la dernière année se poursuit jusqu'à l'âge légal — même statut, même nature
+de période, même salaire relatif, avancé au rythme du salaire moyen. La
+proposition est alors calculée sur cette carrière-là, et sur elle seule : les
+scénarios 1 à 5 partent à l'âge saisi. Le simulateur (`Simulateur.simuler`) le
+fait d'un seul geste, `Simulateur.carriere_proposition`, et la comparaison
+porte les deux carrières (`Comparaison.carriere_de`). Deux grandeurs dépendent
+de la date du départ et sont prises à celle de la proposition quand elle est
+reportée : le passage aux euros constants, qui ramène chaque montant de SON
+année, et le dernier revenu du taux de remplacement. L'écart au système
+actuel se lit donc en euros constants.
+
+**Ce que ça fait à une pension.** Dans un compte notionnel, un départ plus
+tardif ajoute des cotisations et raccourcit la retraite : le capital grossit,
+le diviseur diminue, et la pension mensuelle MONTE. Ce qui se perd, ce sont
+les mois de pension d'avant l'âge légal. Qui partait déjà à cet âge ou après
+ne gagne rien, faute de décote ou de surcote à déplacer. Et la garantie
+vieillesse, ouverte au même âge, est due dès le départ à toute liquidation que
+la proposition régit.
+
+**Ce que ça fait au coût** (§8 bis). La grille des cas types porte, pour
+chaque couple, la proposition telle que sa génération la vit — son départ, sa
+pension, ses cotisations, son pilier — et, quand la bascule passe entre les
+cinq cohortes qu'une génération représente, telle que la cohorte de l'autre
+côté la vit (`Pensionne.volet`) : une cohorte partie avant la bascule l'est
+sans report. Moins de pensions sont servies, plus de cotisations encaissées.
+Du côté des recettes, l'assiette que le COR projette est celle des âges
+d'aujourd'hui ; elle est élargie du rapport des revenus d'activité de la grille
+sous les deux âges (`SoldeAnnuel.facteur_assiette`). C'est un plafond, et
+`limites.md` dit pourquoi.
+
+`age_legal_liberal=None` retire la mesure : la proposition part alors aux âges
+du scénario 4.
+
 ## 8 bis. Du droit individuel au coût collectif
 
 Les huit sections qui précèdent décrivent un calcul de DROIT : ce qu'une carrière
@@ -1959,7 +2005,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,71<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->42<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,74<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->43<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.

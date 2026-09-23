@@ -1033,7 +1033,9 @@ function abscisse(annee, premiere, derniere) {
   if (derniere === premiere) {
     return MARGE_GAUCHE + largeur / 2;
   }
-  return MARGE_GAUCHE + largeur * ((annee - premiere) / (derniere - premiere));
+  // Le même ordre d'opérations que `_abscisse` dans gabarit.py : l'autre
+  // tombait parfois de l'autre côté d'un arrondi au dixième.
+  return MARGE_GAUCHE + largeur * (annee - premiere) / (derniere - premiere);
 }
 
 /**
@@ -1657,7 +1659,7 @@ export class Marche {
 /** Le centre de la colonne de rang `rang`, sur `marches` colonnes. */
 function abscisseCascade(rang, marches) {
   const largeur = LARGEUR_CASCADE - MARGE_GAUCHE_CASCADE - MARGE_DROITE_CASCADE;
-  return MARGE_GAUCHE_CASCADE + largeur * ((rang + 0.5) / marches);
+  return MARGE_GAUCHE_CASCADE + largeur * (rang + 0.5) / marches;
 }
 
 function ordonneeCascade(valeur, sommet, plancher) {

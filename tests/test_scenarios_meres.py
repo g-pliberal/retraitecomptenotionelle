@@ -42,10 +42,13 @@ def test_la_majoration_de_10_pour_cent_n_apparait_qu_a_trois_enfants(lignes):
 
 
 def test_la_garantie_vieillesse_porte_le_mi_temps_au_plancher_a_65_ans(lignes):
+    """La mère qui partait avant 65 ans part à 65 ans sous la proposition,
+    son âge légal : la garantie lui est donc due dès la liquidation, comme à
+    celle qui partait déjà à cet âge — elle n'était jusque-là que différée."""
     par_code = {l.situation.code: l for l in lignes}
     avant = par_code["mitemps_arret6_3"]
     a_65 = par_code["mitemps_65_arret6_3"]
-    assert avant.garantie > 0 and not avant.garantie_servie
+    assert avant.garantie > 0 and avant.garantie_servie
     assert a_65.garantie_servie
     # 800 + 250 € par mois pour une personne seule, en euros de 2026.
     assert abs(a_65.liberal - 1050.0) < 1.0

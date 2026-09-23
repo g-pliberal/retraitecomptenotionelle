@@ -245,8 +245,12 @@ def fois_prix(**reglages: str) -> float:
 
 
 @lru_cache(maxsize=None)
-def _cout(ponderation: str = "effectifs"):
-    """Le coût agrégé, sous les règles par défaut — celui de la page Coût."""
+def _cout(ponderation: str = "effectifs", age_legal: str = ""):
+    """Le coût agrégé, sous les règles par défaut — celui de la page Coût.
+
+    ``age_legal=aucun`` retire l'âge légal de la proposition : elle part alors
+    aux âges du scénario 4, et la prose peut dire ce que la mesure déplace.
+    """
     from retraite_notionnelle import cout as C
     from retraite_notionnelle.donnees.assiette import AssietteActivite
     from retraite_notionnelle.donnees.depenses import DepensesRetraite
@@ -254,6 +258,10 @@ def _cout(ponderation: str = "effectifs"):
     from retraite_notionnelle.donnees.population import Population
 
     parametres = _parametres()
+    if age_legal == "aucun":
+        parametres = replace(parametres, age_legal_liberal=None)
+    elif age_legal:
+        raise ValueError(f"age_legal attend « aucun », reçu « {age_legal} »")
     racine = parametres.racine_donnees
     return C.calculer_cout(
         _simulateur(parametres), DepensesRetraite(racine), Population(racine),
@@ -262,7 +270,7 @@ def _cout(ponderation: str = "effectifs"):
 
 
 def _cout_de(reglages: dict[str, str]):
-    return _cout(reglages.get("ponderation", "effectifs"))
+    return _cout(reglages.get("ponderation", "effectifs"), reglages.get("age_legal", ""))
 
 
 def cumul_passe(**reglages: str) -> float:

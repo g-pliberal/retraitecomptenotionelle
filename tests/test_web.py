@@ -6786,7 +6786,7 @@ def test_la_rubrique_des_reserves_de_la_page_cout_ne_suit_plus_le_patron(context
     liste = cout[debut:cout.index("</ul>", debut)]
     assert 3 <= liste.count("<li><strong>") <= RESERVES_MAXIMUM, liste.count("<li><strong>")
     # Les réserves déplacées sont lues là où elles se règlent ou se décrivent.
-    assert "La recette réagit sur trois points" in cout[cout.index('id="cout-postes"'):]
+    assert "La recette réagit sur quatre points" in cout[cout.index('id="cout-postes"'):]
     assert "Seul le système actuel sert la pension de" in cout[cout.index('id="cout-postes"'):]
     assert "sans toucher aux écarts entre carrières" in cout[cout.index('id="cout-equilibre"'):]
     simuler = rendre(contexte, "/simuler", {})[1]
@@ -7089,12 +7089,15 @@ def test_le_taux_de_remplacement_parle_la_langue_du_mode(contexte):
     en_brut = taux({**commun, "salaire": "3158", "montants": "brut"})
     en_net = taux({**commun, "salaire": "2500", "montants": "net"})
     assert len(en_brut) == 4
-    for brut, net in zip(en_brut, en_net):
+    for rang, (brut, net) in enumerate(zip(en_brut, en_net)):
         assert net > brut, "le taux net doit dépasser le taux brut"
         # Le rapport des deux prélèvements : 0,909 de pension contre environ
         # 0,79 de salaire. Une fourchette large suffit — elle n'est pas là pour
         # valider un dixième de point, mais pour attraper un taux resté brut.
-        assert 1.10 < net / brut < 1.20, f"{net} / {brut}"
+        # La proposition, quatrième ligne, se rapporte à SA fiche de paie, qui
+        # prélève moins sur le même brut : son rapport est plus bas.
+        bornes = (1.03, 1.12) if rang == 3 else (1.10, 1.20)
+        assert bornes[0] < net / brut < bornes[1], f"{net} / {brut}"
 
 
 def test_la_bascule_ecrit_ses_deux_etats_et_dit_lequel_s_applique(contexte):

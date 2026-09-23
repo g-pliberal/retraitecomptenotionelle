@@ -1,11 +1,12 @@
 """Âge de référence et écart d'anticipation.
 
-Le DÉFAUT fixe l'âge de référence à 64 ans — l'âge légal d'ouverture des droits
-— à partir de l'année de bascule, et garde le cliquet ci-dessous avant elle. Le
-système proposé ne reconduit pas le taux plein à 67 ans, qui est une condition
-de DURÉE D'ASSURANCE, notion qu'un compte notionnel n'a pas ; et 64 ans
-n'existait dans aucun droit avant 2030, si bien qu'une liquidation de 1990 se
-mesure à son époque et non à la nôtre.
+Le DÉFAUT fixe l'âge de référence à 65 ans — l'âge légal de départ de la
+proposition, ``Parametres.age_legal_liberal`` — à partir de l'année de
+bascule, et garde le cliquet ci-dessous avant elle. Le système proposé ne
+reconduit pas le taux plein à 67 ans, qui est une condition de DURÉE
+D'ASSURANCE, notion qu'un compte notionnel n'a pas ; et une liquidation de 1990
+se mesure à son époque et non à la nôtre. L'âge fixe a valu 64 ans, l'âge
+légal de la loi du 14 avril 2023, du 19 au 22 septembre 2026.
 
 Le cliquet reste offert en variante, et c'est lui que décrit la suite. Règle
 demandée : *chaque fois que l'âge de départ a été abaissé, la pension doit être

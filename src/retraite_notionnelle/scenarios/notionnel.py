@@ -65,9 +65,11 @@ ce qui a été consacré aux pensions avait été porté au compte des actifs ? 
 à elle seule.
 
 **Scénario 6 : la proposition libérale.** C'est le scénario 4 — compte
-rétroactif, cotisation salariale et patronale confondues, mêmes âges de départ,
-même indexation, même liquidation — à deux différences près, et ce sont les deux
-termes de la proposition du Parti libéral français.
+rétroactif, cotisation salariale et patronale confondues, même indexation, même
+liquidation — à quatre différences près, et ce sont les termes de la
+proposition du Parti libéral français : un taux unique, une garantie
+vieillesse, un pilier capitalisé (``moteur/capitalisation.py``), et un âge
+légal de départ.
 
 Un **taux unique de 18 % à compter de la bascule**, salariale et patronale
 additionnées, le même pour tous les statuts, prélevé une fois sur la
@@ -88,6 +90,13 @@ La garantie garde de l'ASPA son âge — 65 ans — et sa place : une ligne à p
 servie en dernier, après la pension contributive. Elle est portée dans
 :class:`GarantieVieillesse`, avec chacune de ses étapes, pour que la page puisse
 dire ce qui vient des cotisations et ce qui vient de l'impôt.
+
+L'**âge légal de départ**, 65 ans à compter de la bascule
+(``Parametres.age_legal_liberal``), ne se voit pas ici : :meth:`liberal`
+calcule la carrière qu'on lui donne. C'est le simulateur qui la prolonge
+jusqu'à l'âge légal quand la proposition reporte le départ
+(``Simulateur.carriere_proposition``), et la garantie, ouverte au même âge, est
+alors due dès la liquidation.
 """
 
 from __future__ import annotations

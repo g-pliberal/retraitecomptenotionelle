@@ -1,4 +1,4 @@
-"""Le stock converti à 64 ans pour qui est parti à l'âge légal : ce que le script
+"""Le stock converti à l'âge de référence pour qui est parti à l'âge légal : ce que le script
 déplace, et rien d'autre."""
 
 from __future__ import annotations
@@ -94,15 +94,19 @@ def test_le_contexte_rend_ses_attributs():
 
 
 def test_l_accueil_cite_ce_que_coute_le_diviseur_de_l_age_de_l_assure(reference, droit_commun):
-    """Un dixième de point de PIB par an en moyenne, et plus rien en 2050 : la
-    phrase de l'accueil, recalculée."""
+    """Deux dixièmes de point de PIB par an en moyenne, et plus rien à partir
+    de 2060 : la phrase de l'accueil, recalculée. C'était un dixième, et plus
+    rien dès 2050, avant que la proposition ne fixe son âge légal à 65 ans :
+    le report garde plus longtemps dans le compte ceux que le diviseur de leur
+    âge avantageait."""
     from retraite_notionnelle.web.pages import MESURES_BLOCAGES
 
     liberal = "notionnel_liberal"
     ecart = (reference.lectures[liberal].solde_moyen
              - droit_commun.lectures[liberal].solde_moyen) * 100
     assert round(ecart, 1) == MESURES_BLOCAGES["cout_diviseur_age_legal"]
-    en_2050 = (reference.lectures[liberal].soldes[2050]
-               - droit_commun.lectures[liberal].soldes[2050]) * 100
-    assert abs(en_2050) < 0.05
+    for annee in (2060, 2070):
+        ecart_annee = (reference.lectures[liberal].soldes[annee]
+                       - droit_commun.lectures[liberal].soldes[annee]) * 100
+        assert abs(ecart_annee) < 0.05, annee
 
