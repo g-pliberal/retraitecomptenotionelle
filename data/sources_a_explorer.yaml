@@ -1025,7 +1025,11 @@ sources:
       Les cotisations d'un médecin, les trois étages compris (base, complémentaire,
       ASV) : la CARMF est la section la mieux outillée, et son simulateur donne
       le barème entier en une grille de revenus.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carmf_simulateur_cumul
     url: https://www.carmf.fr/page.php?page=cdrom%2Fcalc%2Findex.php%3Fcalc%3Dcumul
@@ -1035,7 +1039,11 @@ sources:
     a_en_tirer: >-
       Le cumul emploi-retraite des médecins, et sa cotisation sans droits —
       poste que l'action 81 chiffre sous « cotiser sans rien acquérir ».
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carmf_simulateur_conjoint
     url: https://www.carmf.fr/page.php?page=cdrom%2Fcalc%2Findex.php%3Fcalc%3Dconjcollab
@@ -1045,7 +1053,11 @@ sources:
     a_en_tirer: >-
       Le conjoint collaborateur : statut que le dépôt ne porte pour aucun
       régime, et qui existe chez tous les indépendants.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carmf_capim
     url: https://www.carmf.fr/page.php?page=cdrom/capim/capim-calculette-calcul.php
@@ -1056,7 +1068,11 @@ sources:
       La calculette du capital décès-invalidité : hors champ retraite, mais
       elle dit ce que la cotisation couvre en plus de la vieillesse — utile à
       docs/frontiere_contributive.md.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carmf_calcul_retraite
     url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-calcul.htm
@@ -1066,7 +1082,11 @@ sources:
     a_en_tirer: >-
       Le calcul des trois pensions d'un médecin, chacune avec sa valeur de
       point.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carmf_age
     url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-age.htm
@@ -1075,7 +1095,11 @@ sources:
     regimes: [carmf_complementaire]
     a_en_tirer: >-
       Les âges et les coefficients d'anticipation propres à la CARMF.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carmf_taux_2026
     url: https://www.carmf.fr/page.php?page=chiffrescles/stats/2026/taux2026.htm
@@ -1086,7 +1110,11 @@ sources:
       Les taux et valeurs de l'année, publiés par le producteur : à saisir
       dans la fiche, et à remonter dans le temps par les années voisines de
       la même adresse (2025, 2024…).
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carmf_documents
     url: https://www.carmf.fr/page.php?page=doc/documents.htm
@@ -1096,7 +1124,11 @@ sources:
     a_en_tirer: >-
       Statuts, rapports et documentation : la série historique des valeurs de
       point s'y trouve, et c'est elle qui manque.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carcdsf_simulateur
     url: https://www.carcdsf.fr/cotisations-du-praticien/simulation-des-cotisations
@@ -1106,7 +1138,11 @@ sources:
     a_en_tirer: >-
       Les cotisations d'un chirurgien-dentiste ou d'une sage-femme, par revenu :
       la fiche `carcdsf_complementaire` est `partiel`.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carcdsf_regimes
     url: https://www.carcdsf.fr/retraite/quels-regimes-composent-ma-retraite
@@ -1115,7 +1151,11 @@ sources:
     regimes: [carcdsf_complementaire, asv_conventionnes, cnavpl]
     a_en_tirer: >-
       Les trois étages et leurs règles respectives.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carcdsf_montant_cotisations
     url: https://www.carcdsf.fr/cotisations-du-praticien/montant-des-cotisations
@@ -1125,7 +1165,11 @@ sources:
     a_en_tirer: >-
       Le barème écrit, à côté du simulateur : les deux doivent dire la même
       chose, et l'écart éventuel est un résultat.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: cavp_calcul
     url: https://www.cavp.fr/préparer-votre-retraite/comment-votre-retraite-est-elle-calculée
@@ -1137,7 +1181,11 @@ sources:
       CAPITALISATION. Sa règle de calcul est donc doublement utile : elle
       complète une fiche `partiel`, et elle donne un cas réel de pilier
       capitalisé obligatoire, à côté du pilier que la proposition construit.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carpimko_simulateur
     url: https://www2.carpimko.com/simulateur
@@ -1147,7 +1195,11 @@ sources:
     a_en_tirer: >-
       Le simulateur des auxiliaires médicaux : cotisations et droits, par
       revenu.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carpimko_calcul_retraite
     url: https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/calcul-de-ma-retraite
@@ -1156,7 +1208,11 @@ sources:
     regimes: [carpimko_complementaire, cnavpl, asv_conventionnes]
     a_en_tirer: >-
       Le calcul des trois étages, dont l'ASV des conventionnés.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carpimko_age
     url: https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/age-de-ma-retraite
@@ -1165,7 +1221,11 @@ sources:
     regimes: [carpimko_complementaire]
     a_en_tirer: >-
       Âges et coefficients propres à la section.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carpimko_rachats
     url: https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/rachats-du-regime-de-base
@@ -1175,7 +1235,11 @@ sources:
     a_en_tirer: >-
       Le rachat dans le régime de base des libéraux : barème de la CNAVPL vu
       par une section.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carpimko_cotisations
     url: https://www.carpimko.com/je-suis-en-activite/cotisations/selon-mes-revenus
@@ -1184,7 +1248,11 @@ sources:
     regimes: [carpimko_complementaire, cnavpl]
     a_en_tirer: >-
       Les tranches de cotisation et les points qu'elles rendent.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carpimko_prelevements
     url: https://www.carpimko.com/je-suis-retraite/mes-pensions-de-retraite/prelevements-sociaux
@@ -1193,7 +1261,11 @@ sources:
     regimes: [carpimko_complementaire]
     a_en_tirer: >-
       Les prélèvements sur les pensions libérales, à recouper avec la Cnav.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carpimko_reversion
     url: https://www.carpimko.com/je-suis-retraite/droits-du-conjoint-survivant/pension-de-reversion
@@ -1202,7 +1274,11 @@ sources:
     regimes: [carpimko_complementaire]
     a_en_tirer: >-
       La réversion chez les libéraux, dont les conditions diffèrent du privé.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carpimko_reglements
     url: https://www.carpimko.com/nous-connaitre/la-caisse-de-retraite/reglements-et-rapports
@@ -1212,7 +1288,11 @@ sources:
     a_en_tirer: >-
       Les règlements et rapports : le texte du régime, et les séries de
       valeurs de point dans les rapports annuels.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: carpv_cotisations
     url: https://www.carpv.fr/vos-retraites/comprendre-vos-cotisations-et-vos-appels-de-cotisations/
@@ -1221,7 +1301,11 @@ sources:
     regimes: [carpv_complementaire, cnavpl]
     a_en_tirer: >-
       Les cotisations des vétérinaires, fiche `partiel` à l'inventaire.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions de santé (CARMF,
+      CARCDSF, CAVP, CARPIMKO, CARPV).
 
   - id: cavamac_ordre_de_grandeur
     url: https://www.cavamac.fr/actus/calculer-rapidement-lordre-de-grandeur-de-mes-retraites/
