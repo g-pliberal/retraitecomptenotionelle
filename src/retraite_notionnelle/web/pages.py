@@ -33,6 +33,7 @@ from ..castypes import CAS_TYPES, GENERATIONS, calculer_cas_types
 from ..config import (
     RACINE_DONNEES,
     AgeConversionDroitsAcquis,
+    ContributionEtat,
     PartCotisation,
     ModeAgeReference,
     ModeIndexation,
@@ -178,6 +179,13 @@ PARTS_COTISATION = [
     ("salariale", "Part salariale seule (défaut)"),
     ("totale", "Salariale et patronale"),
     ("totale_alignee", "Salariale et patronale, public aligné sur le privé"),
+]
+
+#: Ce que le compte d'un agent de l'État reçoit de son employeur, là où la
+#: part patronale y est portée : le taux versé, ou sa part « retraite ».
+CONTRIBUTIONS_ETAT = [
+    ("entiere", "Entière, telle que l'État l'a versée (défaut)"),
+    ("retraite_seule", "Sa part « retraite seule », selon la Cour des comptes"),
 ]
 
 CONVERSIONS_ACQUIS = [
@@ -599,9 +607,9 @@ class MetierSaisi:
 #: portent le leur.
 CLES_MODELISATION = (
     "indexation", "lissage", "age_reference", "table", "population",
-    "rattachement", "conversion_acquis", "part_cotisation", "foyer",
-    "projection", "emploi", "stock", "reprise", "frais", "taux", "bascule",
-    "euros",
+    "rattachement", "conversion_acquis", "part_cotisation",
+    "contribution_etat", "foyer", "projection", "emploi", "stock", "reprise",
+    "frais", "taux", "bascule", "euros",
 )
 
 
@@ -670,6 +678,7 @@ class Saisie:
     rattachement: str = "salaire"
     conversion_acquis: str = "reference"
     part_cotisation: str = "salariale"
+    contribution_etat: str = "entiere"
     #: Seul ou en couple : la situation de foyer de la garantie vieillesse du
     #: système 4. Le défaut est la personne seule, comme pour l'ASPA du
     #: système 1, de sorte que les deux planchers se comparent.
@@ -773,6 +782,10 @@ class Saisie:
             part_cotisation=_parmi(
                 parametres, "part_cotisation", PARTS_COTISATION,
                 defauts.part_cotisation,
+            ),
+            contribution_etat=_parmi(
+                parametres, "contribution_etat", CONTRIBUTIONS_ETAT,
+                defauts.contribution_etat,
             ),
             foyer=_parmi(parametres, "foyer", SITUATIONS_FOYER, defauts.foyer),
             projection=_parmi(parametres, "projection", PROJECTIONS, defauts.projection),
@@ -1167,6 +1180,7 @@ class Saisie:
             part_cotisation=PartCotisation(
                 self.part_cotisation
             ),
+            contribution_etat=ContributionEtat(self.contribution_etat),
             situation_foyer=SituationFoyer(self.foyer),
             scenario_projection=self.projection,
             trajectoire_emploi=self.emploi,
@@ -1423,6 +1437,7 @@ class Saisie:
             "population": self.population, "rattachement": self.rattachement,
             "conversion_acquis": self.conversion_acquis,
             "part_cotisation": self.part_cotisation,
+            "contribution_etat": self.contribution_etat,
             "foyer": self.foyer,
             "projection": self.projection, "emploi": self.emploi,
             "stock": self.stock,
@@ -3822,6 +3837,8 @@ LIBELLES_MODELISATION = {
     "rattachement": ("rattachement au niveau de vie", RATTACHEMENTS),
     "conversion_acquis": ("âge de conversion des droits acquis", CONVERSIONS_ACQUIS),
     "part_cotisation": ("part de la cotisation portée au compte", PARTS_COTISATION),
+    "contribution_etat": ("contribution de l'État portée au compte",
+                          CONTRIBUTIONS_ETAT),
     "foyer": ("situation de foyer", SITUATIONS_FOYER),
     "projection": ("scénario macroéconomique", PROJECTIONS),
     "emploi": ("emploi projeté", TRAJECTOIRES_EMPLOI),
@@ -3967,6 +3984,17 @@ def _champs_modelisation(saisie: Saisie) -> str:
                 PARTS_COTISATION, saisie.part_cotisation,
                 "salariale seule, ou salariale et patronale",
                 complement=g.GLOSSAIRE["part patronale"]),
+        g.liste("contribution_etat", "Contribution de l'État portée au compte",
+                CONTRIBUTIONS_ETAT, saisie.contribution_etat,
+                "systèmes 3 et 4, agents de l'État seulement",
+                complement="L'État ne verse pas une cotisation : il verse ce "
+                "qu'il faut pour payer toutes les pensions de l'année, et le "
+                "compte le reçoit entier. La Cour des comptes n'en rattache à "
+                "la retraite de l'agent lui-même qu'un peu plus de la moitié "
+                "pour un civil ; le reste paie l'invalidité, les majorations "
+                "pour enfants, les départs anticipés et un déséquilibre "
+                "démographique. Mesurée pour une seule année, la même "
+                "proportion est prêtée aux autres."),
         g.liste("foyer", "Situation de foyer",
                 SITUATIONS_FOYER, saisie.foyer,
                 "la proposition libérale seulement",
@@ -6465,6 +6493,8 @@ NATURES_PART_EMPLOYEUR = {
     "appelee": "contribution appelée par décret ou par arrêté",
     "implicite": "taux implicite reconstitué par les documents budgétaires",
     "repli": "aucune série publiée : effort du privé de la même année",
+    "retraite_seule":
+        "part « retraite seule » du taux de l'État, selon la Cour des comptes",
 }
 
 
@@ -6648,6 +6678,14 @@ d'affectation spéciale « Pensions » soit à l'équilibre, donc pour payer les
 pensions d'aujourd'hui. Le porter au compte répond à une question précise —
 « et si tout ce qui a été consacré aux pensions avait été porté au compte des
 actifs ? » — et à elle seule.</p>"""
+        if "retraite_seule" in employeur.annees_par_origine:
+            public += """
+<p class="discret">Ici, le compte n'en reçoit que la part que la Cour des
+comptes rattache à la retraite de l'agent lui-même : ce que l'État verse paie
+aussi l'invalidité, les majorations pour enfants, les départs anticipés et un
+déséquilibre démographique, et rien de cela n'est un droit acquis en cotisant.
+La Cour n'a mesuré cette part que pour une année ; les autres en reçoivent la
+même proportion.</p>"""
 
     return g.depliant("Qui verse la cotisation", f"""
 <p>Une cotisation retraite a deux parts : ce que l'assuré supporte, et ce que

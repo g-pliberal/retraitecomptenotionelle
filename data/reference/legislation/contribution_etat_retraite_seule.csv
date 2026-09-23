@@ -1,0 +1,71 @@
+# Ce que paie la contribution de l'État employeur, poste par poste, en 2025
+# source_id: ccomptes_retraites_fpe_2026
+# unite: montant — milliards d'euros de 2025 ; taux — fraction de l'assiette de
+#        la retenue pour pension (traitement indiciaire brut et NBI), NETTE de
+#        la retenue de l'agent : la grandeur de contribution_employeur_public.csv
+#
+# Tableau n° 15 du rapport de la Cour des comptes « Les retraites des
+# fonctionnaires de l'État » (22 septembre 2026, page 90), recopié ligne à
+# ligne : « étapes successives de calcul du taux de contribution employeur
+# d'équilibre dans le compte corrigé, en 2025 ». La Cour part de ce que coûte
+# le régime et en retire, dans l'ordre, ce qui ne paie pas la retraite de
+# l'agent lui-même :
+#
+#   invalidite                  les pensions d'invalidité servies avant 62 ans,
+#                               que les comptes de la sécurité sociale rangent
+#                               déjà en maladie ;
+#   solidarite                  les majorations de pension pour trois enfants ;
+#   avantages_professionnels    les pensions des catégories actives et des
+#                               militaires servies AVANT l'âge de droit commun ;
+#   desequilibre_demographique  la part des pensions qu'un rapport
+#                               démographique de 1,25 cotisant par retraité
+#                               « en équivalent carrière complète », contre 2,05
+#                               tous régimes confondus, met à la charge du
+#                               régime civil (1,52 pour les militaires, dont ne
+#                               sont comptés que les retraités de 62 ans et
+#                               plus) — tableau n° 14, méthode de l'Institut
+#                               des politiques publiques, échantillon
+#                               interrégimes de retraités de 2020.
+#
+# Ce qui reste, `retraite_stricto_sensu`, est le taux qui équilibrerait les
+# seules pensions de retraite des agents, cotisation salariale déduite :
+# 44,1 % pour les civils, 51,2 % pour les militaires. La Cour ne le mesure que
+# pour 2025. Les sous-totaux sont ceux qu'elle imprime ; ils tombent sur la
+# somme des lignes à l'arrondi près, ce que tests/test_donnees.py vérifie.
+#
+# CE QUE LE MODÈLE EN FAIT. Rien par défaut. Sous le réglage
+# `contribution_etat=retraite_seule`, le compte d'un agent de l'État ne reçoit
+# plus le taux appelé entier mais sa part « retraite seule » : 44,1 / 78,28 du
+# taux de l'année pour un civil, 51,2 / 78,28 pour un militaire, 78,28 % étant
+# le taux appelé de 2025 (contribution_employeur_public.csv). Le militaire est
+# rapporté au taux CIVIL parce que c'est la série que le modèle lui crédite ;
+# son taux appelé, 126,07 %, n'y est pas. En 2025, le compte reçoit donc
+# exactement les deux taux de la Cour ; les autres années, la même PROPORTION
+# du taux de l'année, et c'est une hypothèse : fiabilité `estimee`.
+#
+# Pourquoi une proportion plutôt que 44,1 % chaque année. L'annexe n° 6 du
+# rapport donne le seul autre point de repère : l'Institut des politiques
+# publiques, qui a fait l'analyse pour 2020 sur un taux d'équilibre de 75 % au
+# lieu de 83,6 %, aboutit à 34,7 %, et la Cour impute cinq points de l'écart à
+# la seule différence d'année — environ 39 % pour 2020 par sa propre méthode.
+# La part « retraite seule » suit donc le taux d'équilibre plutôt qu'elle ne
+# reste fixe. Pour 2020, la proportion donne 41,8 %, un taux fixe 44,1 %.
+annee,population,poste,montant,taux,fiabilite
+2025,civils,depenses_totales,53.9,0.836,haute
+2025,civils,invalidite,-0.2,-0.004,haute
+2025,civils,depenses_vieillesse,53.7,0.833,haute
+2025,civils,solidarite,-1.4,-0.024,haute
+2025,civils,vieillesse_hors_majorations,52.3,0.808,haute
+2025,civils,avantages_professionnels,-0.9,-0.015,haute
+2025,civils,vieillesse_hors_majorations_et_avantages,51.5,0.793,haute
+2025,civils,desequilibre_demographique,-20.1,-0.353,haute
+2025,civils,retraite_stricto_sensu,31.4,0.441,haute
+2025,militaires,depenses_totales,11.2,1.123,haute
+2025,militaires,invalidite,-0.2,-0.019,haute
+2025,militaires,depenses_vieillesse,11.0,1.104,haute
+2025,militaires,solidarite,-0.3,-0.034,haute
+2025,militaires,vieillesse_hors_majorations,10.7,1.069,haute
+2025,militaires,avantages_professionnels,-3.1,-0.338,haute
+2025,militaires,vieillesse_hors_majorations_et_avantages,7.6,0.731,haute
+2025,militaires,desequilibre_demographique,-2.0,-0.219,haute
+2025,militaires,retraite_stricto_sensu,5.7,0.512,haute

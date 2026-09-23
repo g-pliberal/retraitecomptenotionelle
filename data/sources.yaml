@@ -1477,13 +1477,19 @@ institutions:
         document: https://www.ccomptes.fr/sites/default/files/2026-09/20260922-Retraites-fonctionnaires-de-l-Etat.pdf
         acces: document
         sha256: 3d0a439f5bdf86ad8a6fe8409123573fa16c89b274b9662482dd00c5178e41db
-        statut_integration: controle
+        statut_integration: saisi
         note: >-
           Cent dix-huit pages, lues en entier le 23 septembre 2026 depuis une
           session de bureau, qui a joint `ccomptes.fr` sans difficulté ; les
           données de ses vingt-six graphiques sont publiées à côté
           (`Open-data-58-2-Retraites-FPE.zip`, empreinte 10d8ac5b…be9c). Le
-          rapport n'alimente aucune valeur : il en CONTRÔLE, et il a fait
+          rapport alimente UNE table, saisie à la main : son tableau n° 15
+          (page 90), qui décompose le taux de contribution de l'État de 2025
+          poste par poste et n'en garde que 44,1 % (civils) et 51,2 %
+          (militaires) pour la retraite au sens strict —
+          `legislation/contribution_etat_retraite_seule.csv`, que seul le
+          réglage `contribution_etat=retraite_seule` lit (action 129 de la
+          feuille de route). Pour le reste, il CONTRÔLE, et il a fait
           corriger le scénario 1. (1) Son tableau n° 20 (annexe
           n° 3) donne la durée requise des emplois classés génération par
           génération ; il a démenti la lecture que le dépôt faisait du « a) »
@@ -1508,10 +1514,9 @@ institutions:
           Cour ne reprend pas) ; et le plafond d'écrêtement du minimum
           contributif qu'il cite, 1 410,89 €, est celui du 1er janvier 2026,
           quand le dépôt porte celui du 1er juin (1 444,89 €, circulaire Cnav
-          2026/16). Le reste du rapport — la décomposition du taux de
-          contribution de l'État en 44,1 % (civils) et 51,2 % (militaires),
-          l'espérance de vie à 65 ans par catégorie, la part des primes, les
-          effectifs — est versé à l'action 120 de la feuille de route.
+          2026/16). Le reste du rapport — l'espérance de vie à 65 ans par
+          catégorie, la part des primes, les effectifs — est versé à
+          l'action 120 de la feuille de route.
 
   progedo_adisp:
     nom: Progedo — Archives de données issues de la statistique publique (ADISP)

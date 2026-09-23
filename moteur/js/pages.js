@@ -17,7 +17,8 @@ import {
   CAS_TYPES, GENERATIONS, ageLiquidationPour, calculerCasTypes,
 } from "./castypes.js";
 import {
-  AgeConversionDroitsAcquis, ModeAgeReference, ModeIndexation, PARAMETRES_DEFAUT, PartCotisation,
+  AgeConversionDroitsAcquis, ContributionEtat, ModeAgeReference, ModeIndexation,
+  PARAMETRES_DEFAUT, PartCotisation,
   RevalorisationStock, SituationFoyer, TableConversion, avec, cleParametres,
   tauxCapitalisationApplique, tauxCapitalisationVolontaireApplique,
   tauxRetraitePropose,
@@ -128,6 +129,13 @@ export const PARTS_COTISATION = [
   ["salariale", "Part salariale seule (défaut)"],
   ["totale", "Salariale et patronale"],
   ["totale_alignee", "Salariale et patronale, public aligné sur le privé"],
+];
+
+// Ce que le compte d'un agent de l'État reçoit de son employeur, là où la part
+// patronale y est portée : le taux versé, ou sa part « retraite ».
+export const CONTRIBUTIONS_ETAT = [
+  ["entiere", "Entière, telle que l'État l'a versée (défaut)"],
+  ["retraite_seule", "Sa part « retraite seule », selon la Cour des comptes"],
 ];
 
 export const CONVERSIONS_ACQUIS = [
@@ -504,9 +512,9 @@ export class ErreurSaisie extends Error {}
  */
 export const CLES_MODELISATION = Object.freeze([
   "indexation", "lissage", "age_reference", "table", "population",
-  "rattachement", "conversion_acquis", "part_cotisation", "foyer",
-  "projection", "emploi", "stock", "reprise", "frais", "taux", "bascule",
-  "euros",
+  "rattachement", "conversion_acquis", "part_cotisation",
+  "contribution_etat", "foyer", "projection", "emploi", "stock", "reprise",
+  "frais", "taux", "bascule", "euros",
 ]);
 
 const DEFAUTS = Object.freeze({
@@ -566,6 +574,7 @@ const DEFAUTS = Object.freeze({
   rattachement: "salaire",
   conversion_acquis: "reference",
   part_cotisation: "salariale",
+  contribution_etat: "entiere",
   // Seul ou en couple : la situation de foyer de la garantie vieillesse du
   // système 4. Le défaut est la personne seule, comme pour l'ASPA.
   foyer: "seul",
@@ -660,6 +669,10 @@ export class Saisie {
       part_cotisation: parmi(
         parametres, "part_cotisation", PARTS_COTISATION,
         DEFAUTS.part_cotisation,
+      ),
+      contribution_etat: parmi(
+        parametres, "contribution_etat", CONTRIBUTIONS_ETAT,
+        DEFAUTS.contribution_etat,
       ),
       foyer: parmi(parametres, "foyer", SITUATIONS_FOYER, DEFAUTS.foyer),
       projection: parmi(parametres, "projection", PROJECTIONS, DEFAUTS.projection),
@@ -1025,6 +1038,8 @@ export class Saisie {
         AgeConversionDroitsAcquis[cleEnum(AgeConversionDroitsAcquis, this.conversion_acquis)],
       part_cotisation: PartCotisation[
         cleEnum(PartCotisation, this.part_cotisation)],
+      contribution_etat: ContributionEtat[
+        cleEnum(ContributionEtat, this.contribution_etat)],
       situation_foyer: SituationFoyer[cleEnum(SituationFoyer, this.foyer)],
       scenario_projection: this.projection,
       trajectoire_emploi: this.emploi,
@@ -1364,6 +1379,7 @@ export class Saisie {
       population: this.population, rattachement: this.rattachement,
       conversion_acquis: this.conversion_acquis,
       part_cotisation: this.part_cotisation,
+      contribution_etat: this.contribution_etat,
       foyer: this.foyer,
       projection: this.projection, emploi: this.emploi, stock: this.stock,
       reprise: this.reprise === null ? "" : this.reprise,
@@ -2628,6 +2644,7 @@ const LIBELLES_MODELISATION = Object.freeze({
   rattachement: ["rattachement au niveau de vie", RATTACHEMENTS],
   conversion_acquis: ["âge de conversion des droits acquis", CONVERSIONS_ACQUIS],
   part_cotisation: ["part de la cotisation portée au compte", PARTS_COTISATION],
+  contribution_etat: ["contribution de l'État portée au compte", CONTRIBUTIONS_ETAT],
   foyer: ["situation de foyer", SITUATIONS_FOYER],
   projection: ["scénario macroéconomique", PROJECTIONS],
   emploi: ["emploi projeté", TRAJECTOIRES_EMPLOI],
@@ -2767,6 +2784,16 @@ function champsModelisation(saisie) {
       PARTS_COTISATION, saisie.part_cotisation,
       "salariale seule, ou salariale et patronale", {},
       g.GLOSSAIRE["part patronale"]),
+    g.liste("contribution_etat", "Contribution de l'État portée au compte",
+      CONTRIBUTIONS_ETAT, saisie.contribution_etat,
+      "systèmes 3 et 4, agents de l'État seulement", {},
+      "L'État ne verse pas une cotisation : il verse ce qu'il faut pour payer "
+      + "toutes les pensions de l'année, et le compte le reçoit entier. La Cour "
+      + "des comptes n'en rattache à la retraite de l'agent lui-même qu'un peu "
+      + "plus de la moitié pour un civil ; le reste paie l'invalidité, les "
+      + "majorations pour enfants, les départs anticipés et un déséquilibre "
+      + "démographique. Mesurée pour une seule année, la même proportion est "
+      + "prêtée aux autres."),
     g.liste("foyer", "Situation de foyer",
       SITUATIONS_FOYER, saisie.foyer,
       "la proposition libérale seulement", {},
@@ -5234,6 +5261,7 @@ const NATURES_PART_EMPLOYEUR = {
   appelee: "contribution appelée par décret ou par arrêté",
   implicite: "taux implicite reconstitué par les documents budgétaires",
   repli: "aucune série publiée : effort du privé de la même année",
+  retraite_seule: "part « retraite seule » du taux de l'État, selon la Cour des comptes",
 };
 
 /**
@@ -5975,6 +6003,15 @@ d'affectation spéciale « Pensions » soit à l'équilibre, donc pour payer les
 pensions d'aujourd'hui. Le porter au compte répond à une question précise —
 « et si tout ce qui a été consacré aux pensions avait été porté au compte des
 actifs ? » — et à elle seule.</p>`;
+    if ("retraite_seule" in employeur.annees_par_origine) {
+      public_ += `
+<p class="discret">Ici, le compte n'en reçoit que la part que la Cour des
+comptes rattache à la retraite de l'agent lui-même : ce que l'État verse paie
+aussi l'invalidité, les majorations pour enfants, les départs anticipés et un
+déséquilibre démographique, et rien de cela n'est un droit acquis en cotisant.
+La Cour n'a mesuré cette part que pour une année ; les autres en reçoivent la
+même proportion.</p>`;
+    }
   }
 
   return g.depliant("Qui verse la cotisation", `

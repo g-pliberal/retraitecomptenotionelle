@@ -181,8 +181,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->939<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 344<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->941<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 350<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Huit pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -679,7 +679,12 @@ L'employeur verse ici <!--chiffre:mesure(part_employeur?exemple=fonctionnaire)--
 d'**équilibre**, et c'est la limite du scénario 4 : <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> % ne signifie pas
 qu'un fonctionnaire acquiert <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82<!--/--> % de son traitement en droits nouveaux, mais
 qu'il faut aujourd'hui cette contribution pour payer les pensions
-d'aujourd'hui — démographie et engagements hérités compris.
+d'aujourd'hui — démographie et engagements hérités compris. La Cour des
+comptes n'en rattache à la retraite de l'agent lui-même que <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=civils&poste=retraite_stricto_sensu)-->44,1<!--/--> % en 2025 ;
+sous le réglage `contribution_etat=retraite_seule`, qui ne porte que cette part
+au compte, l'écart de cette fonctionnaire au système actuel tombe de <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->+45,0<!--/--> %
+à <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=retraite_seule)-->−1,3<!--/--> % dans le scénario 4. `docs/limites.md` dit le reste, sous « La part
+patronale du public, et ce qu'on n'en sait pas ».
 
 Quatre limites à connaître. Pour le public, la série couvre <!--chiffre:distinctes(data/reference/legislation/contribution_employeur_public.csv:regime)-->8<!--/--> régimes :
 sept autres — FSPOEIE, marins, CRPCEN, Banque de France, port de Strasbourg,
@@ -698,7 +703,10 @@ qui, par construction, n'existe plus.
 Un quatrième réglage conserve l'ancienne convention, comme contrefactuel :
 `part_cotisation=totale_alignee` prête au public la part employeur du privé,
 et fait retrouver à un fonctionnaire et à un salarié de même rémunération
-exactement la même pension.
+exactement la même pension. Un cinquième ne touche que l'État, le seul
+employeur dont le taux est un taux d'équilibre : `contribution_etat=retraite_seule`
+ne porte au compte d'un de ses agents que la part de ce taux que la Cour des
+comptes rattache à sa retraite.
 
 ---
 
@@ -1297,7 +1305,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2368 tests Python
+tests/                          2375 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1326,6 +1334,8 @@ mode_age_reference     ModeAgeReference.{CLIQUET_LEGAL
                        | FIXE_APRES_BASCULE}   défaut : FIXE_APRES_BASCULE
 age_conversion_droits_acquis  AgeConversionDroitsAcquis.{REFERENCE | LIQUIDATION}
 part_cotisation        PartCotisation.{SALARIALE | TOTALE | TOTALE_ALIGNEE}
+contribution_etat      ContributionEtat.{ENTIERE | RETRAITE_SEULE}
+                       (défaut : ENTIERE ; ne joue que sous TOTALE)
 table_conversion       TableConversion.{UNISEXE | PAR_SEXE}
 scenario_projection    cor_reference | cor_productivite_basse
                        | cor_productivite_haute   (défaut : cor_reference,
@@ -1351,7 +1361,7 @@ Sans cible, la suite se répartit d'elle-même sur les cœurs (pytest-xdist) ;
 avec une cible — un fichier, un test —, elle tourne en série, ce qui est plus
 lisible pour un seul test.
 
-<!--chiffre:tests()-->2368<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2375<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

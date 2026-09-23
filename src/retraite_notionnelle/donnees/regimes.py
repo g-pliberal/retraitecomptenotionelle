@@ -695,6 +695,64 @@ class ContributionsEmployeurPubliques:
 
 
 @dataclass(frozen=True)
+class PosteContributionEtat:
+    """Une ligne du tableau de la Cour : un poste, ce qu'il coûte, ce qu'il pèse."""
+
+    population: str
+    poste: str
+    #: Milliards d'euros de l'année mesurée ; négatif pour une déduction.
+    montant: float
+    #: En points de l'assiette de la retenue, cotisation de l'agent déduite.
+    taux: float
+
+
+class PartRetraiteSeuleEtat:
+    """Ce que paie la contribution de l'État employeur, poste par poste.
+
+    Le taux que l'État verse au compte d'affectation spéciale « Pensions » est
+    un taux d'ÉQUILIBRE : il paie toutes les pensions de l'année. La Cour des
+    comptes l'a décomposé pour 2025 et n'en rattache à la retraite de l'agent
+    lui-même que 44,1 % du traitement pour un civil et 51,2 % pour un
+    militaire ; le reste paie l'invalidité avant 62 ans, les majorations pour
+    enfants, les départs anticipés et un rapport démographique plus
+    défavorable que celui de l'ensemble des régimes.
+
+    Une seule année est mesurée : ``annee``. La table ne sert que sous
+    ``ContributionEtat.RETRAITE_SEULE``, qui en tire une proportion.
+    """
+
+    def __init__(self, racine: Path) -> None:
+        self.annee: int | None = None
+        self.postes: tuple[PosteContributionEtat, ...] = ()
+        chemin = (racine / "reference" / "legislation"
+                  / "contribution_etat_retraite_seule.csv")
+        if not chemin.exists():
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = list(csv.DictReader(
+                l for l in flux if not l.lstrip().startswith("#")))
+        annees = {int(ligne["annee"]) for ligne in lignes}
+        if len(annees) != 1:
+            raise ValueError(f"{chemin.name} : une seule année attendue, {sorted(annees)}")
+        self.annee = annees.pop()
+        self.postes = tuple(
+            PosteContributionEtat(ligne["population"], ligne["poste"],
+                                  float(ligne["montant"]), float(ligne["taux"]))
+            for ligne in lignes
+        )
+
+    def __bool__(self) -> bool:
+        return bool(self.postes)
+
+    def taux(self, population: str) -> float:
+        """Taux « retraite seule » de l'année mesurée : ``civils`` ou ``militaires``."""
+        for poste in self.postes:
+            if poste.population == population and poste.poste == "retraite_stricto_sensu":
+                return poste.taux
+        raise KeyError(population)
+
+
+@dataclass(frozen=True)
 class ClasseCotisation:
     """Un palier : jusqu'à ce revenu, ce montant."""
 
