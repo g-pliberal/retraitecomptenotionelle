@@ -808,8 +808,8 @@ reformes:
 
   - code: cprn_report_2014
     date: 2014-01-01
-    texte: {reference: "arrêté du 16 décembre 2013 portant approbation des modifications apportées aux statuts de la section professionnelle des notaires, article 16", id: JORFARTI000028387445}
-    parametres: [surcote_par_trimestre, surcote_points]
+    texte: {reference: "arrêté du 16 décembre 2013 portant approbation des modifications apportées aux statuts de la section professionnelle des notaires, articles 15 et 16 (âges de L. 161-17-2 différés de vingt-quatre mois, taux plein cinq ans plus tard, minoration de 1,25 % par trimestre d'âge, surcote de 0,5 % jusqu'à 70 ans)", id: JORFARTI000028387445}
+    parametres: [surcote_par_trimestre, surcote_points, age_ouverture, age_taux_plein, decote_par_trimestre]
     regimes: [cprn_complementaire]
     absorbee_par: []
     non_appliquee: {}
@@ -848,8 +848,8 @@ reformes:
 
   - code: cprn_report_2024
     date: 2024-01-01
-    texte: {reference: "arrêté du 29 novembre 2023 portant approbation des modifications apportées aux statuts de la section professionnelle des notaires (CPRN), article 23 : 1 % par trimestre jusqu'à la fin d'activité", id: JORFARTI000048679350}
-    parametres: [surcote_par_trimestre, surcote_age_maximum]
+    texte: {reference: "arrêté du 29 novembre 2023 portant approbation des modifications apportées aux statuts de la section professionnelle des notaires (CPRN), article 18 : âges de L. 161-17-2 et du 1° de L. 351-8 ; article 23 : 1 % par trimestre jusqu'à la fin d'activité, majoration de 10 % pour trois enfants", id: JORFARTI000048679350}
+    parametres: [surcote_par_trimestre, surcote_age_maximum, age_ouverture, age_taux_plein, avantages_non_contributifs]
     regimes: [cprn_complementaire]
     absorbee_par: []
     non_appliquee: {}

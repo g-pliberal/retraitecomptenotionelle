@@ -2103,12 +2103,17 @@ sources:
     a_en_tirer: >-
       Les cotisations des notaires, section C comprise : la fiche
       `cprn_complementaire` est `partiel`.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Section C à 4,10 % de la moyenne des produits de trois exercices,
+      confirmée ; section B en huit classes de 10 à 80 points, sans bornes
+      publiées ; régime de base aux paramètres de la CNAVPL, dont la valeur de
+      service 2026, 0,6599 €, que la CAVOM écrit aussi. La grille des montants de
+      la section B est dans la plaquette du congrès 2025 (k fois 2 758 €), et la
+      règle des bornes dans le décret n° 2026-418 : un huitième des notaires par
+      classe. Écrit dans la fiche `cprn_complementaire` et dans
+      data/reference/regimes/inventaire.yaml ; la section B reste à modéliser.
   - id: cprn_age_depart
     url: https://cprn.fr/je-suis-affilie/je-suis-actif/preparer-sa-retraite-en-toute-serenite/lage-de-depart-a-la-retraite/
     nature: regle
@@ -2116,12 +2121,16 @@ sources:
     regimes: [cprn_complementaire]
     a_en_tirer: >-
       Les âges et les coefficients propres à la caisse des notaires.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Décote du complémentaire de 1,25 % par trimestre d'anticipation, plafonnée
+      à 25 %, par l'âge seul ; surcote de 1 % par trimestre ; les âges suivent la
+      suspension de 2026. Recoupé avec les statuts de 2013, 2017 et 2023 et le
+      règlement de 2026 lus au JORF : `decote_annulee_par_la_duree: false` et
+      table `cprn_2014` (data/reference/legislation/ages_regimes.csv) pour 2014-2023,
+      ligne `cprn_ages_decote_enfants` de veille.yaml, tenu par
+      tests/test_sections_juridiques.py. Les tableaux de la page sont des images.
   - id: cprn_conjoint_collaborateur
     url: https://cprn.fr/je-suis-affilie/je-suis-actif/conjoint-collaborateur/
     nature: regle
@@ -2131,12 +2140,13 @@ sources:
       Le statut de conjoint collaborateur, deuxième source après la CARMF :
       deux régimes qui le décrivent valent un recoupement sur un statut que le
       dépôt ne porte pas du tout.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Le conjoint collaborateur cotise au quart ou à la moitié de la cotisation
+      du notaire, au quart à défaut de choix (statuts, article 11 ; décret
+      n° 49-578, article 2-1). Le dépôt ne porte pas ce statut : rien à
+      transcrire.
   - id: cprn_revalorisation
     url: https://cprn.fr/je-suis-affilie/je-suis-retraite/la-revalorisation-de-mes-pensions/
     nature: bareme
@@ -2146,12 +2156,14 @@ sources:
       La règle de revalorisation des pensions servies : dans un régime en
       points, c'est elle qui fait le rendement réel, et le dépôt la fixe par
       convention pour la plupart des régimes.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Le conseil d'administration fixe chaque année, en novembre, les valeurs de
+      service des points B et C ; la page annonce pour 2026 une revalorisation
+      « très supérieure à l'inflation » mais la donne dans une image. Les
+      rendements de la section C sont dans data/reference/regimes/rendements_points.csv
+      jusqu'en 2026 ; rien de nouveau à transcrire.
   - id: cprn_reversion
     url: https://cprn.fr/je-suis-affilie/je-suis-beneficiaire/tout-savoir-sur-la-reversion/
     nature: regle
@@ -2160,12 +2172,15 @@ sources:
     a_en_tirer: >-
       La réversion chez les notaires, dont la condition de ressources et le
       partage entre conjoints successifs diffèrent du régime général.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Réversion du complémentaire à 60 % dès 52 ans (50 ans si le décès précède
+      2014), sans condition de ressources, deux ans de mariage ; option à 100 %
+      contre un abattement selon l'écart d'âge ; 30 % par enfant à charge. Le
+      modèle déclare la réversion sans la calculer
+      (data/reference/legislation/avantages_non_contributifs.yaml) : rien à
+      transcrire.
   - id: cprn_statuts
     url: https://cprn.fr/ma-caisse/les-statuts-cprn/
     nature: index
@@ -2173,12 +2188,16 @@ sources:
     regimes: [cprn_complementaire]
     a_en_tirer: >-
       Les statuts : le texte du régime, avec ses barèmes en annexe.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Statuts de 2024 (PDF) lus en entier, puis recoupés avec les arrêtés du 16
+      décembre 2013, du 31 mai 2017, du 29 novembre 2023 et le règlement du 10
+      juillet 2026 au JORF : âges de 2014 à 2023, décote par l'âge seul,
+      majoration de 10 % pour trois enfants depuis 2024, dans
+      data/reference/regimes/non_salaries.yaml et
+      data/reference/legislation/ages_regimes.csv. Article 9 : huit classes de
+      section B, montants k fois la classe 1, bornes fixées par le conseil.
   - id: cprn_publications
     url: https://cprn.fr/ma-caisse/les-publications-2/
     nature: index
@@ -2186,14 +2205,14 @@ sources:
     regimes: [cprn_complementaire]
     a_en_tirer: >-
       Rapports annuels et séries de valeurs de point.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
-  # ---- Assurance retraite : les règles du régime général -------------------
-
+      Index : statuts, plaquettes, guides. La plaquette du congrès 2025 donne la
+      grille de la section B pour 2025 (classe 1 à 2 758 €, 10 points ; classe 8
+      à 22 065 €, 80 points) et un coefficient d'âge de 1,15 pour un nouveau
+      notaire ; les rapports d'activité ne donnent pas les bornes. Rien d'autre à
+      transcrire.
   - id: cnav_annees_civiles_retenues
     url: https://www.lassuranceretraite.fr/portail-info/hors-menu/annexe/salaries/montant-retraite/nombre-annees-civiles-retenues.html
     nature: bareme

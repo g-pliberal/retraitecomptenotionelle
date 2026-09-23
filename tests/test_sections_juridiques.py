@@ -23,6 +23,14 @@ soixante-quatre ans avec sa durée ne perdait rien de sa complémentaire.
 cotisation proportionnelle de 2016 dans la limite de quatre plafonds, puis
 cinq, six et sept, avant les huit de 2020 ; l'assiette ne peut descendre sous
 le quart du plafond, puis sous 19 % depuis 2019.
+
+**La décote de la CPRN ne connaît que l'âge.** « 1,25 % par trimestre séparant
+l'âge de l'affilié à la date de liquidation de l'âge du taux plein », écrivent
+ses statuts depuis 2014 ; la fiche laissait la durée d'assurance l'annuler. Et
+de 2014 à 2023, cet âge n'était pas celui du régime général : l'âge légal
+« différé de vingt-quatre mois », et le taux plein cinq ans plus tard — 64 et
+69 ans pour les générations nées depuis 1955. Depuis 2024, une majoration de
+10 % pour trois enfants.
 """
 
 from __future__ import annotations
@@ -129,3 +137,42 @@ def test_le_plafond_de_la_cavom_monte_par_marches(simulateur):
         assert periode.bornes_assiette_en_pass() == (0.0, plafonds), annee
         assert periode.assiette_minimale_pass == pytest.approx(minimum), annee
         assert periode.taux_cotisation_retraite == pytest.approx(0.125), annee
+
+
+# -- la CPRN -------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("naissance,liquidation,coefficient", [
+    # 2014-2023 : nés avant 1954, 60 et 65 ans.
+    (1952, 62.0, 0.85),
+    # 2014-2023 : génération 1958, taux plein à 69 ans ; vingt trimestres au
+    # plus, soit 25 %.
+    (1958, 64.0, 0.75),
+    # Depuis 2024 : l'âge du 1° de L. 351-8, 67 ans ; la durée n'y change rien.
+    (1958, 66.0, 0.95),
+    (1962, 64.0, 0.85),
+])
+def test_la_decote_de_la_cprn_ne_connait_que_l_age(
+        simulateur, naissance, liquidation, coefficient):
+    """« 1,25 % par trimestre séparant l'âge de l'affilié à la date de
+    liquidation de l'âge du taux plein » : une carrière complète n'y change
+    rien, et l'âge du taux plein est celui des statuts de l'année."""
+    resultat, pensions = _calculer(simulateur, "notaire", naissance, 22.0,
+                                   liquidation)
+    assert resultat.liquidation_ouverte
+    cprn = pensions["cprn_complementaire"]
+    assert cprn.montant > 0
+    assert _coefficient(cprn.detail) == pytest.approx(coefficient)
+
+
+def test_la_cprn_majore_de_dix_pour_cent_pour_trois_enfants_depuis_2024(simulateur):
+    """Article 23 des statuts depuis l'arrêté du 29 novembre 2023."""
+    avec, pensions = _calculer(simulateur, "notaire", 1962, 22.0, 67.0,
+                               enfants=3)
+    majoration = sum(a.montant for a in avec.avantages_appliques
+                     if a.code == "majoration_enfants")
+    assert majoration > 0
+    assert majoration >= 0.10 * pensions["cprn_complementaire"].montant - 0.01
+    sans, _ = _calculer(simulateur, "notaire", 1962, 22.0, 67.0, enfants=2)
+    assert not [a for a in sans.avantages_appliques
+                if a.code == "majoration_enfants"]

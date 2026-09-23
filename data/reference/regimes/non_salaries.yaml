@@ -6470,6 +6470,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cprn_2014
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
@@ -6477,6 +6478,7 @@ regimes:
         assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.045
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: 0.005
         surcote_points: par_age_seul
         surcote_age_maximum: 70
@@ -6546,6 +6548,18 @@ regimes:
           (JORFARTI000034975971, article 23) le répète. La fiche portait 1
           %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
           lisait pas.
+          LES ÂGES DE 2014 À 2023 NE SONT PAS CEUX DU RÉGIME GÉNÉRAL. L'article
+          18 des statuts, dans la rédaction de l'arrêté du 16 décembre 2013
+          (JORFTEXT000028387437, en vigueur au 1er janvier 2014) reprise par
+          celui du 31 mai 2017, ouvre la retraite à 60 ans et la sert à taux
+          plein à 65 aux nés avant 1954 ; aux suivants, à l'âge de L. 161-17-2
+          « différé de vingt-quatre mois », et à taux plein à ce même âge
+          « augmenté de cinq ans » : 64 et 69 ans pour les générations 1955 et
+          suivantes (`age_table: cprn_2014`). LA DÉCOTE NE CONNAÎT QUE L'ÂGE :
+          « 1,25 % par trimestre séparant l'âge de l'affilié à la date de
+          liquidation de l'âge du taux plein » ; la durée d'assurance ne
+          l'annule pas (`decote_annulee_par_la_duree: false`). La fiche lisait
+          les tables du régime général et laissait la durée effacer la décote.
       - debut: 2017
         fin: 2017
         type_calcul: points
@@ -6553,6 +6567,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cprn_2014
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
@@ -6560,6 +6575,7 @@ regimes:
         assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.0414
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: 0.005
         surcote_points: par_age_seul
         surcote_age_maximum: 70
@@ -6586,6 +6602,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cprn_2014
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
@@ -6593,6 +6610,7 @@ regimes:
         assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.041
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: 0.005
         surcote_points: par_age_seul
         surcote_age_maximum: 70
@@ -6616,6 +6634,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cprn_2014
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
@@ -6623,6 +6642,7 @@ regimes:
         assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.040
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: 0.005
         surcote_points: par_age_seul
         surcote_age_maximum: 70
@@ -6648,6 +6668,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cprn_2014
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
@@ -6655,6 +6676,7 @@ regimes:
         assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.041
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: 0.005
         surcote_points: par_age_seul
         surcote_age_maximum: 70
@@ -6701,9 +6723,10 @@ regimes:
         assiette_facteur_revenu: 2.553
         taux_cotisation_retraite: 0.041
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: 0.01
         surcote_points: par_age_seul
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           4,10 % DEPUIS 2022, sur la moyenne des produits de base des trois
           années précédant l'année antérieure — en 2026, les exercices 2022,
@@ -6730,6 +6753,31 @@ regimes:
           trimestre au-delà de l'âge du taux plein, jusqu'à l'âge de fin
           d'activité ». Le « jusqu'au soixante-dixième anniversaire » du
           guide 2022 était donc déjà périmé.
+          DEPUIS 2024, LES ÂGES SONT CEUX DU RÉGIME GÉNÉRAL — l'âge de
+          L. 161-17-2 et celui du 1° de L. 351-8, écrit l'article 18 dans la
+          rédaction de l'arrêté du 29 novembre 2023 —, mais la décote reste
+          celle de l'âge seul (`decote_annulee_par_la_duree: false`), et le même
+          arrêté ajoute à l'article 23 « une majoration de 10 % pour tout affilié
+          ayant eu un nombre minimum de 3 enfants dans les conditions définies à
+          l'article L. 351-12 », que le règlement de 2026 reprend (article 9,
+          3°) : `majoration_enfants`. La majoration de 30 % par enfant à charge
+          de moins de vingt et un ans, temporaire, n'est pas portée.
+          CE QUE LA SECTION B EST DEVENUE, LU LE 23 SEPTEMBRE 2026. Les bornes
+          restent hors de tout texte, mais leur RÈGLE est désormais écrite : le
+          décret n° 2026-418 (article 2, JORFARTI000054153399) fait fixer par
+          le conseil d'administration, chaque année, des bornes en pourcentage
+          de la moyenne des produits du notariat « afin que chaque tranche
+          regroupe environ 1/8e de la population en activité » — des octiles.
+          Et la grille des montants est publiée : la plaquette du congrès 2025
+          de la caisse donne huit classes à 2 758 €, 5 516 €, … 22 065 €, pour
+          10 à 80 points — la classe k vaut k fois la classe 1 que fixe le
+          décret annuel (2 758,10 € en 2025, décret n° 2025-1076, article 12),
+          et ouvre 10 k points. Le coût de chaque notaire est ce montant
+          multiplié par un coefficient d'âge à la date de changement de classe,
+          de 1,000 jusqu'à 33 ans à 1,681 à 65 ans (annexe 1 du décret
+          n° 49-578 depuis le décret n° 2026-418). Avec la loi des revenus que
+          la section C calibre, les huit classes se laissent donc estimer ;
+          c'est une action à part, que la feuille de route nomme.
   - code: cnbf
     nom: Caisse nationale des barreaux français
     famille: liberal

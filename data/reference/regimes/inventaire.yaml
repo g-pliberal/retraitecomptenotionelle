@@ -1676,10 +1676,14 @@ inventaire:
     textes:
       - {reference: "statuts du régime complémentaire de la CPRN (arrêtés d'approbation)", id: null}
     manque: >-
-      La section B, par classes, dont les bornes ne sont publiées nulle
-      part, n'est pas modélisée ; les versions de 1983, 2005 et 2014 de
-      l'article 2 du décret n° 49-578 datent la section C à 4,5 % des
-      produits de l'office, mais rien n'est consolidé avant 1983.
+      La section B, par classes, n'est pas modélisée : ses bornes ne sont
+      publiées nulle part, mais le décret n° 2026-418 en écrit la règle —
+      huit classes d'environ un huitième des notaires en activité chacune —
+      et la caisse la grille des montants, k fois la classe 1 pour 10 k
+      points. Les versions de 1983, 2005 et 2014 de l'article 2 du décret
+      n° 49-578 datent la section C à 4,5 % des produits de l'office, mais
+      rien n'est consolidé avant 1983 ; les statuts d'avant 2014 ne sont
+      pas dans l'index.
 
   - code: crea
     nom: Caisse de retraite de l'enseignement, des arts appliqués, du sport et du tourisme (CREA)
