@@ -10906,10 +10906,9 @@ class BilanBascule:
 
     C'est ce que le tableau « Recettes et dépenses, poste par poste » écrit :
     la ligne du solde de la bascule, et ses deux lignes « pour mémoire » — la
-    garantie vieillesse, dans la lecture la plus basse que donne la
-    distribution des pensions, et le pilier capitalisé. La carte des flux lit,
-    elle, :class:`CompteFlux`, à l'année qu'on lui choisit : une lecture qui
-    n'a pas d'année ne peut pas la suivre.
+    garantie vieillesse que la trajectoire compte cette année-là, et le pilier
+    capitalisé. La carte des flux lit :class:`CompteFlux` à l'année qu'on lui
+    choisit ; à celle de la bascule, les deux disent la même garantie.
     """
 
     #: L'année de la bascule, bornée à la fenêtre du compte.
@@ -10921,8 +10920,8 @@ class BilanBascule:
     annee_pib: int
     pib: float
     derniere_ventilee: int
-    #: La garantie vieillesse lue sur la distribution des pensions, en
-    #: millions d'euros — la ligne « pour mémoire, hors du compte ».
+    #: La garantie vieillesse de la trajectoire, en millions d'euros au PIB de
+    #: conversion — la ligne « pour mémoire, hors du compte ».
     garantie_meur: float
     #: Le pilier capitalisé obligatoire, en part de PIB — la ligne « pour
     #: mémoire, hors du système ».
@@ -10950,24 +10949,13 @@ def _bilan_bascule(contexte: Contexte) -> BilanBascule:
     # publié ne l'était pas.
     annee_pib = min(annee, comptes.pib.derniere_annee)
 
-    # La garantie vieillesse, lue sur la vraie distribution des pensions comme
-    # le fait le dépliant qui lui est consacré — jamais sur les cas types, dont
-    # ce dépliant dit pourquoi le chiffre est faux. Plancher de base, pensions
-    # de la proposition : la lecture la plus basse des deux qu'il donne.
-    distribution = contexte.distribution()
-    simulateur = contexte.simulateur()
-    vers_enquete = simulateur.macro.coefficient_prix(
-        base.annee_euros_garantie_vieillesse, distribution.millesime)
-    # Le facteur est celui de la trajectoire : la pension moyenne que la
-    # garantie regarde, sur celle du système actuel l'année de l'enquête —
-    # voir ``GarantieDistribution``. Le même que le dépliant de la garantie.
-    annee_enquete = cout.annee(distribution.millesime)
-    facteur_contributif = annee_enquete.garantie.facteur if annee_enquete.garantie else 1.0
-    garantie = cout_garantie(
-        distribution,
-        simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
-        base.garantie_vieillesse_mensuelle * vers_enquete, facteur_contributif,
-    )
+    # La garantie vieillesse de l'ANNÉE, celle que la trajectoire compte et
+    # que la carte des flux dessine : une part de PIB, convertie comme toutes
+    # les lignes du tableau. Jusqu'au 23 septembre 2026, la ligne lisait la
+    # distribution de l'enquête sous le plancher de base, sans année, et en y
+    # comptant les retraités partis à l'étranger, que l'ASPA exclut : 12,9 Md €
+    # à la bascule, là où la carte des flux en dessinait 13,7.
+    garantie = ligne.postes_depenses("notionnel_liberal")["garantie_vieillesse"]
     # Le pilier capitalisé : 5 % de la même assiette que les 18 %, donc les
     # cotisations de la proposition multipliées par le rapport des deux taux.
     capitalise = (
@@ -10981,9 +10969,7 @@ def _bilan_bascule(contexte: Contexte) -> BilanBascule:
         annee_pib=annee_pib,
         pib=comptes.pib(annee_pib),
         derniere_ventilee=comptes.derniere_annee_ventilee,
-        # Un ayant droit sur deux réclame : le même recours que le dépliant.
-        garantie_meur=(garantie.cout_annuel_meur * base.taux_recours_garantie
-                       / vers_enquete),
+        garantie_meur=garantie * comptes.pib(annee_pib),
         capitalise=capitalise,
     )
 
@@ -11087,9 +11073,8 @@ class CompteFlux:
 def _compte_flux(contexte: Contexte, annee: int) -> CompteFlux:
     """Le compte d'une année, pour les schémas de Sankey : voir :class:`CompteFlux`.
 
-    LA GARANTIE SUIT LA TRAJECTOIRE, et non la lecture que le tableau poste
-    par poste en donne : celle-ci est calculée une fois, sur la distribution
-    de l'enquête, et n'a pas d'année. La trajectoire, elle, déplace la
+    LA GARANTIE SUIT LA TRAJECTOIRE, comme la ligne pour mémoire du tableau
+    poste par poste, qui la lit la même année. La trajectoire déplace la
     distribution d'année en année — c'est celle que la cascade pose —, et ce
     que les successions rendent n'y vaut presque rien à la bascule, puis la
     moitié de la garantie.
@@ -11272,9 +11257,8 @@ def _cout_detail_postes(contexte: Contexte) -> str:
 
     L'année et les deux lignes « pour mémoire » viennent de
     :func:`_bilan_bascule`. À l'année de la bascule, la carte des flux dit les
-    mêmes nombres pour tout ce qui passe par une caisse de répartition ; la
-    garantie vieillesse y suit la trajectoire de la page, dont ce tableau
-    retient la lecture la plus basse.
+    mêmes nombres pour tout ce qui passe par une caisse de répartition, et la
+    même garantie vieillesse : celle de la trajectoire de la page.
     """
     base = contexte.base
     comptes = contexte.comptes()
@@ -11395,8 +11379,9 @@ compte notionnel ne sert plus, l'assurance chômage des cotisations qu'il
 porte. Côté dépenses, les
 pensions sont recalculées au franc le franc des cotisations, et la réversion
 n'est plus servie, ce que la dernière note détaille. La garantie vieillesse qui remplace l'ASPA est financée par l'impôt,
-hors du compte des cotisants ; le dépliant qui lui est consacré en donne
-quatre lectures, et la ligne pour mémoire porte la plus basse. Le pilier
+hors du compte des cotisants ; la ligne pour mémoire porte ce que la
+trajectoire en compte cette année-là, et le dépliant qui lui est consacré en
+donne quatre lectures sur la distribution de l'enquête. Le pilier
 capitalisé ne passe pas par les caisses et n'est ni une ressource ni une
 dépense du système : il est rappelé pour que rien ne manque.</div>
 

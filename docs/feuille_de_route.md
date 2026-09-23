@@ -14683,12 +14683,19 @@ sans que l'engagement du système actuel bouge. Le tableau de `limites.md` qui
 le chiffre est ancré sur la table figée (`mesure(engagement)`), et l'arrêté
 du SMIC de juin, que le lot 4 laissait à lire, l'a été dans l'index JORF.
 
+**La garantie du tableau poste par poste — fait, le même jour.** Sa ligne
+pour mémoire lisait la distribution de l'enquête sous le plancher de base, sans
+année, et comptait les retraités partis à l'étranger, que la trajectoire
+n'avait plus comptés depuis le lot 3 : 12,9 Md € à la bascule, là où la carte
+des flux dessinait 13,7. Elle lit désormais la garantie que la trajectoire
+compte cette année-là, dans les deux moteurs, et le tableau et la carte disent
+le même nombre.
+
 **Reste**, relevé par l'audit et non corrigé. Après la bascule, les retraités
 d'avant 2026 gardent leurs majorations pour enfants dans les scénarios
 prospectifs, mais le remboursement de la branche famille en est retiré
-(0,2 point en 2026) ; le tableau poste par poste de la page Coût ne montre pas
-la même garantie que la trajectoire l'année de la bascule. Et, du lot 2, le
-seuil de la première tranche du RCI de 2014 à 2023.
+(0,2 point en 2026). Et, du lot 2, le seuil de la première tranche du RCI de
+2014 à 2023.
 
 ### 112. Le retraité voit la pension qu'il touche aujourd'hui, et un cas type la refait à la main — `fait`
 
