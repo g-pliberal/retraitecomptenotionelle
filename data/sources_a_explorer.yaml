@@ -471,7 +471,7 @@ sources:
       Les points acquis pour une assiette donnée : c'est le versant
       acquisition du même barème, et le moyen de vérifier l'assiette (20 % du
       traitement indiciaire, primes comprises) que le dépôt retient.
-    statut: a_explorer
+    statut: en_cours
 
   - id: rafp_cotisations_points
     url: https://www.rafp.fr/actif/activite/calculer-vos-cotisations-et-vos-points-rafp
@@ -481,7 +481,7 @@ sources:
     a_en_tirer: >-
       L'assiette, le plafond de 20 %, le partage 5 %/5 % : la règle écrite
       derrière les deux calculettes.
-    statut: a_explorer
+    statut: en_cours
 
   - id: rafp_retraite
     url: https://www.rafp.fr/retraite
