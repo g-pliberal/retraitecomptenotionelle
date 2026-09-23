@@ -13675,6 +13675,20 @@ sont transcrites sans lecteur : il faudrait compter les années actives de la
 carrière. Et l'âge d'ouverture de la fiche n'a pas été confronté à la
 suspension de 2026 — c'est la question que ce lot laisse.
 
+**L'âge d'ouverture des IEG, confronté à la suspension : elle n'y change rien,
+mais la fiche était fausse.** Jusqu'à la génération 1974, l'âge des actifs est
+écrit dans le 2° du V de l'article 45 de l'annexe, que l'article 105 de la loi
+du 30 décembre 2025 ne touche pas ; à compter de 1975, c'est l'âge de
+L. 161-17-2 abaissé de cinq ans, soixante-quatre moins cinq avant comme après la
+suspension. La fiche, elle, avait lu l'âge dans le seul article 16 réécrit en
+2023 : 58 ans et 9 mois dès 2025, 59 ans dès 2027, quand l'article 45 laisse
+partir la génération 1968 à 57 ans et 3 mois et la génération 1974 à 58 ans et
+9 mois — jusqu'à six trimestres trop tard. Elle suit désormais le calendrier
+par année de liquidation, huit périodes de 2025 à 2034. Et la surcote des IEG
+partait, comme celle de la SNCF avant le lot précédent, de l'âge d'ouverture :
+elle part de l'âge du 1° du I de l'article 16, soixante-quatre ans à compter de
+1970.
+
 ### 97. Quel salaire faut-il rentrer ? Celui du travail, et jamais la pension — `fait`
 
 **Demande.** « Sur le simulateur, il faut rentrer quel salaire ? Moi je rentre

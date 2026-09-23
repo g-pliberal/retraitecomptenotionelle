@@ -586,6 +586,7 @@ def _cas() -> list[dict]:
         ("ratp_duree_propre", "agent_ratp", 1966, "60"),
         ("sncf_surcote_apres_soixante_quatre_ans", "agent_sncf", 1975, "66"),
         ("ieg_duree_par_anciennete_active", "agent_ieg", 1968, "60"),
+        ("ieg_depart_a_l_ouverture", "agent_ieg", 1968, "57.25"),
     ):
         cas_statut(nom, statut, naissance)
         assert cas[-1][0] == nom, f"{nom} : aucun âge d'entrée admissible"

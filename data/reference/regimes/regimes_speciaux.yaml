@@ -1532,6 +1532,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -1568,6 +1569,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -1593,6 +1595,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -1618,6 +1621,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -1643,6 +1647,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -1668,6 +1673,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -1693,6 +1699,7 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
@@ -1704,7 +1711,433 @@ regimes:
           portait la période précédente. L'âge de référence de la décote
           (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
       - debut: 2025
+        fin: 2025
+        type_calcul: annuites
+        age_ouverture: 57.25
+        age_taux_plein: 62
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        duree_requise_table: ieg_actif_17
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
+          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
+          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
+          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
+          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
+          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
+          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
+          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
+          avant 1962, quatre mois de plus par génération jusqu'à
+          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
+          cinquante-huit ans et neuf mois pour 1974. La fiche portait
+          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
+          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
+          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
+          par année de liquidation — l'âge de la génération qui l'atteint
+          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
+          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
+          rédaction suspendue comme dans la précédente, et le calendrier des
+          générations antérieures est écrit dans l'annexe, que l'article 105
+          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
+          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
+          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
+          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
+          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
+          du I bis de l'article 45, une table par durée de services actifs ;
+          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
+          celui des dix-sept ans, et la fiche lit leur table
+          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
+          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
+          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
+          170 pour 1967. Elle portait la table commune, suspension de 2026
+          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
+          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
+          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
+          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
+          I de l'article 10 de l'annexe 3, dans sa version en vigueur
+          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
+          trimestres de minoration jusqu'à « un âge de référence correspondant
+          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
+          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
+          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
+          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
+          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
+          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
+          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
+          : elle décotait un agent liquidant à soixante-deux ans de sept
+          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
+          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
+          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
+          d'annulation de la décote au plus tard à 67 ans ».
+
+      - debut: 2026
         fin: 2026
+        type_calcul: annuites
+        age_ouverture: 57.5
+        age_taux_plein: 62
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        duree_requise_table: ieg_actif_17
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
+          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
+          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
+          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
+          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
+          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
+          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
+          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
+          avant 1962, quatre mois de plus par génération jusqu'à
+          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
+          cinquante-huit ans et neuf mois pour 1974. La fiche portait
+          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
+          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
+          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
+          par année de liquidation — l'âge de la génération qui l'atteint
+          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
+          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
+          rédaction suspendue comme dans la précédente, et le calendrier des
+          générations antérieures est écrit dans l'annexe, que l'article 105
+          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
+          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
+          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
+          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
+          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
+          du I bis de l'article 45, une table par durée de services actifs ;
+          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
+          celui des dix-sept ans, et la fiche lit leur table
+          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
+          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
+          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
+          170 pour 1967. Elle portait la table commune, suspension de 2026
+          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
+          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
+          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
+          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
+          I de l'article 10 de l'annexe 3, dans sa version en vigueur
+          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
+          trimestres de minoration jusqu'à « un âge de référence correspondant
+          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
+          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
+          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
+          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
+          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
+          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
+          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
+          : elle décotait un agent liquidant à soixante-deux ans de sept
+          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
+          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
+          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
+          d'annulation de la décote au plus tard à 67 ans ».
+
+      - debut: 2027
+        fin: 2028
+        type_calcul: annuites
+        age_ouverture: 57.75
+        age_taux_plein: 62
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        duree_requise_table: ieg_actif_17
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
+          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
+          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
+          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
+          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
+          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
+          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
+          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
+          avant 1962, quatre mois de plus par génération jusqu'à
+          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
+          cinquante-huit ans et neuf mois pour 1974. La fiche portait
+          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
+          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
+          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
+          par année de liquidation — l'âge de la génération qui l'atteint
+          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
+          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
+          rédaction suspendue comme dans la précédente, et le calendrier des
+          générations antérieures est écrit dans l'annexe, que l'article 105
+          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
+          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
+          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
+          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
+          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
+          du I bis de l'article 45, une table par durée de services actifs ;
+          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
+          celui des dix-sept ans, et la fiche lit leur table
+          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
+          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
+          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
+          170 pour 1967. Elle portait la table commune, suspension de 2026
+          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
+          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
+          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
+          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
+          I de l'article 10 de l'annexe 3, dans sa version en vigueur
+          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
+          trimestres de minoration jusqu'à « un âge de référence correspondant
+          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
+          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
+          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
+          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
+          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
+          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
+          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
+          : elle décotait un agent liquidant à soixante-deux ans de sept
+          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
+          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
+          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
+          d'annulation de la décote au plus tard à 67 ans ».
+
+      - debut: 2029
+        fin: 2029
+        type_calcul: annuites
+        age_ouverture: 58
+        age_taux_plein: 62
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        duree_requise_table: ieg_actif_17
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
+          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
+          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
+          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
+          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
+          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
+          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
+          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
+          avant 1962, quatre mois de plus par génération jusqu'à
+          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
+          cinquante-huit ans et neuf mois pour 1974. La fiche portait
+          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
+          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
+          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
+          par année de liquidation — l'âge de la génération qui l'atteint
+          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
+          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
+          rédaction suspendue comme dans la précédente, et le calendrier des
+          générations antérieures est écrit dans l'annexe, que l'article 105
+          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
+          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
+          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
+          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
+          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
+          du I bis de l'article 45, une table par durée de services actifs ;
+          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
+          celui des dix-sept ans, et la fiche lit leur table
+          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
+          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
+          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
+          170 pour 1967. Elle portait la table commune, suspension de 2026
+          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
+          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
+          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
+          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
+          I de l'article 10 de l'annexe 3, dans sa version en vigueur
+          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
+          trimestres de minoration jusqu'à « un âge de référence correspondant
+          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
+          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
+          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
+          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
+          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
+          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
+          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
+          : elle décotait un agent liquidant à soixante-deux ans de sept
+          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
+          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
+          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
+          d'annulation de la décote au plus tard à 67 ans ».
+
+      - debut: 2030
+        fin: 2030
+        type_calcul: annuites
+        age_ouverture: 58.25
+        age_taux_plein: 62
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        duree_requise_table: ieg_actif_17
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
+          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
+          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
+          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
+          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
+          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
+          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
+          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
+          avant 1962, quatre mois de plus par génération jusqu'à
+          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
+          cinquante-huit ans et neuf mois pour 1974. La fiche portait
+          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
+          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
+          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
+          par année de liquidation — l'âge de la génération qui l'atteint
+          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
+          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
+          rédaction suspendue comme dans la précédente, et le calendrier des
+          générations antérieures est écrit dans l'annexe, que l'article 105
+          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
+          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
+          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
+          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
+          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
+          du I bis de l'article 45, une table par durée de services actifs ;
+          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
+          celui des dix-sept ans, et la fiche lit leur table
+          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
+          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
+          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
+          170 pour 1967. Elle portait la table commune, suspension de 2026
+          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
+          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
+          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
+          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
+          I de l'article 10 de l'annexe 3, dans sa version en vigueur
+          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
+          trimestres de minoration jusqu'à « un âge de référence correspondant
+          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
+          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
+          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
+          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
+          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
+          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
+          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
+          : elle décotait un agent liquidant à soixante-deux ans de sept
+          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
+          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
+          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
+          d'annulation de la décote au plus tard à 67 ans ».
+
+      - debut: 2031
+        fin: 2031
+        type_calcul: annuites
+        age_ouverture: 58.5
+        age_taux_plein: 62
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        duree_requise_table: ieg_actif_17
+        taux_plein: 0.75
+        salaire_reference: derniers_6_mois
+        assiette: hors_primes
+        taux_cotisation_retraite: 0.1229
+        perimetre_taux: agent_seul
+        decote_par_trimestre: 0.0125
+        bareme_decote: regimes_speciaux
+        surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
+        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
+        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
+        notes: >-
+          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
+          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
+          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
+          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
+          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
+          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
+          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
+          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
+          avant 1962, quatre mois de plus par génération jusqu'à
+          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
+          cinquante-huit ans et neuf mois pour 1974. La fiche portait
+          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
+          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
+          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
+          par année de liquidation — l'âge de la génération qui l'atteint
+          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
+          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
+          rédaction suspendue comme dans la précédente, et le calendrier des
+          générations antérieures est écrit dans l'annexe, que l'article 105
+          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
+          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
+          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
+          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
+          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
+          du I bis de l'article 45, une table par durée de services actifs ;
+          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
+          celui des dix-sept ans, et la fiche lit leur table
+          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
+          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
+          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
+          170 pour 1967. Elle portait la table commune, suspension de 2026
+          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
+          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
+          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
+          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
+          I de l'article 10 de l'annexe 3, dans sa version en vigueur
+          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
+          trimestres de minoration jusqu'à « un âge de référence correspondant
+          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
+          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
+          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
+          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
+          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
+          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
+          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
+          : elle décotait un agent liquidant à soixante-deux ans de sept
+          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
+          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
+          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
+          d'annulation de la décote au plus tard à 67 ans ».
+
+      - debut: 2032
+        fin: 2033
         type_calcul: annuites
         age_ouverture: 58.75
         age_taux_plein: 62
@@ -1719,52 +2152,62 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 : le décret n° 2023-692 du
-          28 juillet 2023 (JORFTEXT000047903232, article 2
-          JORFARTI000047903271) réécrit l'article 16 de l'annexe 3 du statut
-          national — l'âge de soixante-deux ans devient « l'âge mentionné à
-          l'article L. 161-17-2 du code de la sécurité sociale », celui de
-          cinquante-sept ans « cet âge abaissé de cinq ans » — aux pensions
-          prenant effet à compter du 1er janvier 2025 (article 3,
-          JORFARTI000047903346). LEGI ne consolide pas cette rédaction
-          (articles 1er et 2 datés 2999) : elle est lue au Journal officiel.
-          Par génération, l'âge des services actifs va de cinquante-sept ans
-          (nés avant 1961) à cinquante-neuf ans (nés à compter de 1968), trois
-          mois par année de naissance ; en 2025, la génération 1967 l'atteint
-          à cinquante-huit ans et neuf mois, la génération 1968 à cinquante-
-          neuf ans en 2027 — la fiche suit ce calendrier par année de
-          liquidation, l'âge de référence de la décote cinq ans au-dessus. La
-          durée requise est celle du I bis de l'article 45, une table par
-          durée de services actifs ; l'âge d'ouverture de la fiche, l'âge légal
-          abaissé de cinq ans, est celui des dix-sept ans, et la fiche lit
-          leur table (`duree_requise_table: ieg_actif_17`) : 170 trimestres
-          pour les nés de 1968 à 1970, 171 pour 1971-1972, 172 à compter de
-          1973, et en deçà la table d'avant le décret n° 2023-692 — 169 pour
-          1964-1966, 170 pour 1967. Elle portait la table commune, suspension
-          de 2026 comprise, que l'annexe n'a pas reprise. Le
-          régime est fermé aux agents recrutés à compter du 1er septembre 2023
-          (annexe 3, art. 1er), ce que le routage porte.
-          L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM MAJORÉ DE TROIS ANS, ET NON DE
-          CINQ, DEPUIS LE 1er JANVIER 2025. Le I de l'article 10 de l'annexe 3,
-          dans sa version en vigueur (LEGIARTI000052046924, lue le 22 septembre
-          2026), compte les trimestres de minoration jusqu'à « un âge de
-          référence correspondant à l'âge minimum d'ouverture du droit à pension
-          applicable à l'assuré majoré de trois ans ou, lorsque celui-ci relève
-          du 7° de l'article 16, de cinq ans » ; et son article 45 fixe, « pour
-          les pensions prenant effet à compter du 1er janvier 2025 », l'âge
-          d'annulation à soixante-deux ans pour les agents du 2° du I de
-          l'article 16 nés avant le 1er janvier 1975. La fiche portait l'âge
-          d'ouverture majoré de CINQ ans — 63,75 puis 64 ans —, règle d'avant la
-          réforme de 2023 : elle décotait un agent liquidant à soixante-deux ans
-          de sept trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit
-          de son côté en toutes lettres : « à compter du 1er janvier 2025 […]
-          âge minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
+          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
+          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
+          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
+          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
+          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
+          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
+          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
+          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
+          avant 1962, quatre mois de plus par génération jusqu'à
+          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
+          cinquante-huit ans et neuf mois pour 1974. La fiche portait
+          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
+          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
+          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
+          par année de liquidation — l'âge de la génération qui l'atteint
+          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
+          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
+          rédaction suspendue comme dans la précédente, et le calendrier des
+          générations antérieures est écrit dans l'annexe, que l'article 105
+          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
+          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
+          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
+          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
+          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
+          du I bis de l'article 45, une table par durée de services actifs ;
+          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
+          celui des dix-sept ans, et la fiche lit leur table
+          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
+          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
+          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
+          170 pour 1967. Elle portait la table commune, suspension de 2026
+          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
+          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
+          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
+          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
+          I de l'article 10 de l'annexe 3, dans sa version en vigueur
+          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
+          trimestres de minoration jusqu'à « un âge de référence correspondant
+          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
+          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
+          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
+          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
+          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
+          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
+          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
+          : elle décotait un agent liquidant à soixante-deux ans de sept
+          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
+          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
+          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
           d'annulation de la décote au plus tard à 67 ans ».
 
-      - debut: 2027
+      - debut: 2034
         fin: null
         type_calcul: annuites
         age_ouverture: 59
@@ -1780,49 +2223,59 @@ regimes:
         decote_par_trimestre: 0.0125
         bareme_decote: regimes_speciaux
         surcote_par_trimestre: 0.0125
+        age_surcote_regimes_speciaux: true
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 : le décret n° 2023-692 du
-          28 juillet 2023 (JORFTEXT000047903232, article 2
-          JORFARTI000047903271) réécrit l'article 16 de l'annexe 3 du statut
-          national — l'âge de soixante-deux ans devient « l'âge mentionné à
-          l'article L. 161-17-2 du code de la sécurité sociale », celui de
-          cinquante-sept ans « cet âge abaissé de cinq ans » — aux pensions
-          prenant effet à compter du 1er janvier 2025 (article 3,
-          JORFARTI000047903346). LEGI ne consolide pas cette rédaction
-          (articles 1er et 2 datés 2999) : elle est lue au Journal officiel.
-          Par génération, l'âge des services actifs va de cinquante-sept ans
-          (nés avant 1961) à cinquante-neuf ans (nés à compter de 1968), trois
-          mois par année de naissance ; en 2025, la génération 1967 l'atteint
-          à cinquante-huit ans et neuf mois, la génération 1968 à cinquante-
-          neuf ans en 2027 — la fiche suit ce calendrier par année de
-          liquidation, l'âge de référence de la décote cinq ans au-dessus. La
-          durée requise est celle du I bis de l'article 45, une table par
-          durée de services actifs ; l'âge d'ouverture de la fiche, l'âge légal
-          abaissé de cinq ans, est celui des dix-sept ans, et la fiche lit
-          leur table (`duree_requise_table: ieg_actif_17`) : 170 trimestres
-          pour les nés de 1968 à 1970, 171 pour 1971-1972, 172 à compter de
-          1973, et en deçà la table d'avant le décret n° 2023-692 — 169 pour
-          1964-1966, 170 pour 1967. Elle portait la table commune, suspension
-          de 2026 comprise, que l'annexe n'a pas reprise. Le
-          régime est fermé aux agents recrutés à compter du 1er septembre 2023
-          (annexe 3, art. 1er), ce que le routage porte.
-          L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM MAJORÉ DE TROIS ANS, ET NON DE
-          CINQ, DEPUIS LE 1er JANVIER 2025. Le I de l'article 10 de l'annexe 3,
-          dans sa version en vigueur (LEGIARTI000052046924, lue le 22 septembre
-          2026), compte les trimestres de minoration jusqu'à « un âge de
-          référence correspondant à l'âge minimum d'ouverture du droit à pension
-          applicable à l'assuré majoré de trois ans ou, lorsque celui-ci relève
-          du 7° de l'article 16, de cinq ans » ; et son article 45 fixe, « pour
-          les pensions prenant effet à compter du 1er janvier 2025 », l'âge
-          d'annulation à soixante-deux ans pour les agents du 2° du I de
-          l'article 16 nés avant le 1er janvier 1975. La fiche portait l'âge
-          d'ouverture majoré de CINQ ans — 63,75 puis 64 ans —, règle d'avant la
-          réforme de 2023 : elle décotait un agent liquidant à soixante-deux ans
-          de sept trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit
-          de son côté en toutes lettres : « à compter du 1er janvier 2025 […]
-          âge minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
+          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
+          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
+          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
+          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
+          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
+          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
+          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
+          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
+          avant 1962, quatre mois de plus par génération jusqu'à
+          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
+          cinquante-huit ans et neuf mois pour 1974. La fiche portait
+          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
+          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
+          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
+          par année de liquidation — l'âge de la génération qui l'atteint
+          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
+          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
+          rédaction suspendue comme dans la précédente, et le calendrier des
+          générations antérieures est écrit dans l'annexe, que l'article 105
+          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
+          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
+          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
+          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
+          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
+          du I bis de l'article 45, une table par durée de services actifs ;
+          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
+          celui des dix-sept ans, et la fiche lit leur table
+          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
+          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
+          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
+          170 pour 1967. Elle portait la table commune, suspension de 2026
+          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
+          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
+          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
+          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
+          I de l'article 10 de l'annexe 3, dans sa version en vigueur
+          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
+          trimestres de minoration jusqu'à « un âge de référence correspondant
+          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
+          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
+          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
+          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
+          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
+          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
+          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
+          : elle décotait un agent liquidant à soixante-deux ans de sept
+          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
+          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
+          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
           d'annulation de la décote au plus tard à 67 ans ».
   - code: marins
     nom: Établissement national des invalides de la marine (ENIM)
