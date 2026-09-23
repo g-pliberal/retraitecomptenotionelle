@@ -30,7 +30,12 @@
 #         227 × 52,7558 = 11 975,57 €. Deux chemins indépendants, même chiffre.
 #   2020  1 174,33 €/mois — déduit du montant publié pour quinze ans de
 #         services, 675,24 €, qui en représente 57,5 %.
-#   2023  1 248,33 €/mois — montant publié au 1er mai 2023.
+#   2023  1 258,32 €/mois — celui du 1er janvier 2023. La ligne portait
+#         1 248,33 €, « publié au 1er mai 2023 » : c'est la valeur du
+#         1er juillet 2022, d'avant la revalorisation de 0,8 % du 1er janvier
+#         2023, que des pages de 2023 recopiaient encore. Les deux chemins
+#         officiels se rejoignent : 1 248,33 × 1,008 = 1 258,32, et le montant
+#         de 2024, 1 325,01 €, divisé par sa revalorisation de 5,3 % = 1 258,32.
 #   2024  1 325,01 €/mois — montant publié au 1er janvier 2024.
 #   2025  1 354,16 €/mois — montant publié au 1er janvier 2025.
 #
@@ -59,7 +64,7 @@
 annee,valeur,fiabilite
 2004,11975.570000,certifiee
 2020,14091.960000,haute
-2023,14979.960000,haute
+2023,15099.840000,haute
 2024,15900.120000,haute
 2025,16249.920000,haute
 2026,16396.190000,certifiee

@@ -342,7 +342,17 @@ export function ageLiquidationPour(cas, simulateur, generation, variante = "droi
       continue;
     }
     const confirme = ageProposeCasType(cas, simulateur, generation, propose);
-    if (confirme === null || confirme > propose + 1e-9) {
+    if (confirme === null) {
+      break;
+    }
+    if (confirme > propose + 1e-9) {
+      // L'âge plus précoce n'est pas ouvert sous SES règles, mais le droit peut
+      // s'ouvrir entre les deux (durée datée par la date d'effet depuis la
+      // suspension de 2026) : on essaie l'âge qu'il oppose alors.
+      if (confirme < age - 1e-9) {
+        age = confirme;
+        continue;
+      }
       break;
     }
     age = propose;

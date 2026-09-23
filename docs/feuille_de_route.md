@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 245<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->34 681<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 283<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->34 729<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14457,9 +14457,20 @@ rejoué) — une non-cadre de 1962 a sa pension Arrco majorée de 7,9 % et non d
 Banque de France sert 8,5 % puis 4,25 %, et les mines, l'Opéra et la
 Comédie-Française, qui la servent, ne la déclaraient pas. Le témoin de la Cnav
 rapportait la majoration de tous les régimes à toutes les pensions : il la
-rapporte au régime de base. Restent au lot 2 : la date d'effet des durées de
-la loi de financement pour 2026 ; le minimum garanti de 2023 et le plafond du
-minimum contributif de 2024.
+rapporte au régime de base.
+
+Puis quatre valeurs datées à tort. Les durées de la suspension de 2026 ne
+valent que pour les pensions prenant effet à compter du 1er septembre 2026 :
+avant, les nés en 1964 et 1965 doivent 171 et 172 trimestres
+(`duree_requise_avant_suspension.csv`), et les témoins de carrière longue de la
+circulaire 2026-29, qui rejouaient sa règle en 2024 et 2025, liquident en
+septembre 2026. Le minimum garanti de 2023 était celui de juillet 2022, le
+plafond du minimum contributif de 2024 celui de novembre. Et les valeurs de
+point qu'aucun barème ne couvre encore — le point RCO et celui de la CNAVPL en
+2026 — se prolongent par les prix de l'année écoulée, comme la revalorisation
+du 1er janvier, et non par ceux de l'année même. Le seuil de la première
+tranche du RCI de 2014 à 2023 reste à lire : son effet est inférieur au
+millième de la pension, et le registre de veille le déclare.
 
 **Restent** les lots 3 (mécanique notionnelle et coût), 4 (chiffres du site
 et données), 5 (tests mal orientés) et 6 (consignes périmées).

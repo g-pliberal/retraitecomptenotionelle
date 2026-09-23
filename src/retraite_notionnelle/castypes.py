@@ -125,8 +125,9 @@ class CasType:
         Le second n'est pas décoratif — la CANCAVA ouvrait à soixante-cinq ans
         jusqu'en 1972 et à soixante à partir de 1973, si bien qu'un artisan né
         en 1910 « ouvre » à soixante ans un droit que son année de départ lui
-        refuse. Dans ce cas la règle ne descend pas, et le dit en restant où
-        elle est.
+        refuse. Dans ce cas la règle ne descend pas plus bas que l'âge que ce
+        départ-là confirme, et reste où elle est s'il n'y en a pas de plus
+        précoce.
         """
         if variante not in VARIANTES_LIQUIDATION:
             raise ValueError(
@@ -150,7 +151,18 @@ class CasType:
                 age = propose
                 continue
             confirme = self._age_propose(simulateur, generation, propose)
-            if confirme is None or confirme > propose + 1e-9:
+            if confirme is None:
+                break
+            if confirme > propose + 1e-9:
+                # L'âge plus précoce n'est pas ouvert sous SES règles, mais le
+                # droit peut s'ouvrir entre les deux : depuis la suspension de
+                # 2026, la durée opposable dépend de la date d'effet, et un né
+                # en 1965 que la règle de 2027 ferait partir à 60 ans et 9 mois
+                # part à 61 ans sous celle de 2026. On essaie donc l'âge que le
+                # droit oppose alors, s'il reste plus précoce que l'âge retenu.
+                if confirme < age - 1e-9:
+                    age = confirme
+                    continue
                 break
             age = propose
         return age

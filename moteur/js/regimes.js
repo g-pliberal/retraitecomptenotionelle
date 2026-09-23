@@ -51,6 +51,26 @@ export class DureesRequises extends TableParGeneration {
 }
 
 /**
+ * Durée requise que la suspension de 2026 remplace, pour les pensions prenant
+ * effet avant le 1er septembre 2026 : 171 trimestres pour les nés en 1964, 172
+ * pour ceux de 1965 — portage de `DureesRequisesAvantSuspension`.
+ */
+export class DureesRequisesAvantSuspension extends TableParGeneration {
+  constructor(paquet) {
+    super(paquet.durees_requises_avant_suspension);
+  }
+
+  /** @returns {[number, number] | null} trimestres et fiabilité. */
+  trimestres(generation) {
+    return this.valeur(generation);
+  }
+}
+
+/** Première date d'effet de la table de la suspension, et ses générations. */
+export const SUSPENSION_2026_EFFET = [2026, 9];
+export const GENERATIONS_SUSPENSION = [1964.0, 1966.0];
+
+/**
  * Durée de services requise dans la fonction publique, 2004-2008.
  *
  * Le II de l'article 66 de la loi du 21 août 2003 fait monter le nombre de

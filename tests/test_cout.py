@@ -805,9 +805,13 @@ def test_la_carriere_longue_date_le_depart_du_cas_type_qui_y_a_droit():
     simulateur = Simulateur(Parametres())
     actuel = simulateur.scenario_actuel
     smic = next(cas for cas in CAS_TYPES if cas.code == "smic_carriere_complete")
-    # 60 ans sous le décret de 2012, 60 ans et 9 mois pour la génération 1965
-    # (D. 351-1-1, II, suspension de 2026 comprise), 62 ans à compter de 1971.
-    for generation, attendu in ((1955, 60.0), (1960, 60.0), (1965, 60.75), (1975, 62.0)):
+    # 60 ans sous le décret de 2012, 62 ans à compter de 1971. La génération
+    # 1965 aurait 60 ans et 9 mois sous la règle de septembre 2026 — mais cet
+    # âge tombe en octobre 2025, quand la loi de 2023 exige encore 172
+    # trimestres, que le salarié entré à dix-huit ans n'a qu'en janvier 2026 :
+    # 61 ans. Le test attendait 60 ans et 9 mois, sous une règle pas encore
+    # applicable à cette date.
+    for generation, attendu in ((1955, 60.0), (1960, 60.0), (1965, 61.0), (1975, 62.0)):
         assert smic.age_liquidation_pour(simulateur, generation) == pytest.approx(attendu)
         resultat = actuel.calculer(smic.construire(simulateur, generation))
         assert resultat.liquidation_ouverte

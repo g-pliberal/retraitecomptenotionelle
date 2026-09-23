@@ -190,29 +190,62 @@ exemples:
   # Ses âges et ses durées ont été relus ligne à ligne le 21 septembre 2026 :
   # aucun n'a bougé, mais c'est la circulaire EN VIGUEUR qui fait foi, et une
   # circulaire annulée ne certifie plus rien.
+  #
+  # ELLE NE VAUT QUE POUR LES RETRAITES PRENANT EFFET À COMPTER DU
+  # 1er SEPTEMBRE 2026 — son titre le dit. Jusqu'au 23 septembre 2026, les
+  # témoins de 1964 et 1965 la rejouaient à son âge d'ouverture, c'est-à-dire
+  # en septembre 2024, en novembre 2025 et en avril 2026 : sous une règle qui
+  # ne leur était pas encore opposable, et que le modèle appliquait à tort
+  # (voir `duree_requise_avant_suspension.csv`). Ils liquident désormais en
+  # septembre 2026, au-delà de cet âge ; le refus un trimestre plus tôt, qui
+  # tomberait avant septembre 2026, ne peut plus s'y rejouer.
   - id: cnav_2026_29_racl_1964
     source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, Retraite anticipée pour carrière longue à compter du 1er septembre 2026, point 1.1.1 et annexe 3", verifie_le: "2026-09-04"}
     enonce: >-
       Nés en 1964, début d'activité avant 20 ans : départ anticipé à
       compter de 60 ans et 6 mois, 170 trimestres cotisés.
-    carriere: {naissance: "1964-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2024-09", age_debut: 17.75}
-    attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue, liquidation_ouverte: true, non_ouverte_un_trimestre_plus_tot: true}
+    carriere: {naissance: "1964-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-09", age_debut: 17.75}
+    attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue, liquidation_ouverte: true}
 
   - id: cnav_2026_29_racl_1965_premier_trimestre
     source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3", verifie_le: "2026-09-04"}
     enonce: >-
       Nés du 1er janvier au 31 mars 1965, début avant 20 ans : 60 ans et
       9 mois, 170 trimestres cotisés.
-    carriere: {naissance: "1965-02", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2025-11", age_debut: 17.75}
-    attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
+    carriere: {naissance: "1965-02", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-09", age_debut: 17.75}
+    attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue, liquidation_ouverte: true}
 
   - id: cnav_2026_29_racl_1965_apres_avril
     source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3", verifie_le: "2026-09-04"}
     enonce: >-
       Nés du 1er avril au 30 novembre 1965, début avant 20 ans : 60 ans et
       9 mois, 171 trimestres cotisés.
+    carriere: {naissance: "1965-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-09", age_debut: 17.75}
+    attendu: {trimestres_requis: 171, motif_ouverture: carriere_longue, liquidation_ouverte: true}
+
+  # ---- Cnav, circulaire 2026-07 du 5 mars 2026, point 2.1 ----------------
+  # Le revers de la date d'effet : avant le 1er septembre 2026, la durée de la
+  # loi de 2023 demeure. Deux départs anticipés de ces générations, avant cette
+  # date.
+  - id: cnav_2026_07_duree_1964_avant_septembre
+    source: {editeur: "Cnav", reference: "circulaire 2026-07 du 5 mars 2026, Âge légal de la retraite et durée d'assurance, point 2.1", verifie_le: "2026-03-05"}
+    enonce: >-
+      « La durée de 171 trimestres pour les assurés nés en 1964 et celle de
+      172 trimestres pour les assurés nés en 1965 reste opposable aux assurés
+      prenant leur retraite avant le 1er septembre 2026. » Né en mars 1964,
+      départ anticipé en septembre 2025 : 171 trimestres, et non les 170 de la
+      suspension.
+    carriere: {naissance: "1964-03", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2025-09", age_debut: 17.75}
+    attendu: {trimestres_requis: 171}
+
+  - id: cnav_2026_07_duree_1965_avant_septembre
+    source: {editeur: "Cnav", reference: "circulaire 2026-07 du 5 mars 2026, point 2.1", verifie_le: "2026-03-05"}
+    enonce: >-
+      Né en juillet 1965, départ anticipé en avril 2026 : 172 trimestres,
+      ceux de la loi de 2023, et non les 171 que la suspension fixe à cette
+      génération pour les retraites de septembre 2026 et après.
     carriere: {naissance: "1965-07", sexe: H, affiliation: salarie_prive_non_cadre, liquidation: "2026-04", age_debut: 17.75}
-    attendu: {trimestres_requis: 171, motif_ouverture: carriere_longue, non_ouverte_un_trimestre_plus_tot: true}
+    attendu: {trimestres_requis: 172}
 
   - id: cnav_2026_29_racl_1967
     source: {editeur: "Cnav", reference: "circulaire 2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3", verifie_le: "2026-09-04"}

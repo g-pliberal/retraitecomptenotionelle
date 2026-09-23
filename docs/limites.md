@@ -2878,7 +2878,7 @@ c'est de là que viennent les −7,2 % et +0,3 %.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->32<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->34<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -2965,7 +2965,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->32<!--/--> tombent justes ensemble, sur
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->34<!--/--> tombent justes ensemble, sur
 onze sources et neuf règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
 
@@ -6471,13 +6471,13 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   **La limite tient toujours, mais elle ne mord plus sur le chiffre publié**,
   parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
-  valent <!--chiffre:mesure(avantages?annee=2024)-->96,2<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,5<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
+  valent <!--chiffre:mesure(avantages?annee=2024)-->96,3<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,6<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
   total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
   et dix autres lignes dans les sous-postes des Comptes de la protection
   sociale, dont la majoration pour enfants à <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=majoration_enfants)-->7,8<!--/--> milliards — que le modèle
   chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
   l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
-  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,1<!--/--> milliards qu'il calcule encore lui-même
+  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,2<!--/--> milliards qu'il calcule encore lui-même
   restent soumis à cette limite. Vingt-sept dispositifs sur quarante-cinq ne
   portent aucun chiffre, chacun avec sa raison écrite.
 
@@ -6554,14 +6554,14 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   sans que rien ne le dise. Pour la génération 1965 l'écart tombe sous la centaine d'euros, le classement abaissant
   par ailleurs la durée requise d'un trimestre. Mesurer la
   valeur d'un avantage d'ÂGE par l'écart de MONTANT à date de départ fixe donne
-  donc un chiffre petit — <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=categorie_active)-->0,5<!--/--> milliard en 2024 pour la catégorie active — et ce
+  donc un chiffre petit — <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=categorie_active)-->0,6<!--/--> milliard en 2024 pour la catégorie active — et ce
   chiffre n'est pas faux, il est incomplet. Il porte de surcroît, depuis le
   22 septembre 2026, la durée requise propre aux emplois classés, que le
   contrôle d'isolement de `avantages.py` accepte pour ce seul avantage
   (`DUREE_REQUISE_EST_L_AVANTAGE`), le texte la donnant « au titre de la
   catégorie active ». Ce que l'avantage coûte, ce sont les annuités
-  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **<!--chiffre:mesure(avantages?annee=2024&quoi=anticipees)-->12,8<!--/--> milliards en 2024**, dont <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=classement)-->6,6<!--/--> pour le
-  classement, <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=regime_special)-->2,2<!--/--> pour les régimes spéciaux et <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=carriere_longue)-->4,0<!--/--> pour la carrière longue
+  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **<!--chiffre:mesure(avantages?annee=2024&quoi=anticipees)-->10,8<!--/--> milliards en 2024**, dont <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=classement)-->6,6<!--/--> pour le
+  classement, <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=regime_special)-->2,2<!--/--> pour les régimes spéciaux et <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=carriere_longue)-->2,0<!--/--> pour la carrière longue
   (`scripts/cout_avantages.py --duree`). Ce sont des annuités anticipées et non
   un surcoût net — partir tôt, c'est aussi cotiser moins et mourir plus tôt en
   moyenne ; c'est exactement l'arbitrage qu'un coefficient de conversion
@@ -8136,7 +8136,7 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,17<!--/--> %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,26<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **trois
 points à l'arrivée**.
@@ -8317,19 +8317,21 @@ calcul du coût. Six cas types se déplacent ; l'artisan entre à 21,5 ans au
 lieu de 24, le contractuel à 21 au lieu de 24, le salarié au SMIC à 20 au lieu
 de 18.
 
-**Les cinq scénarios notionnels ne bougent pas** : moins d'un dixième de point
-de PIB en 2070, de −0,03 à +0,03. L'erreur d'âge leur est invisible, et la
+**Les cinq scénarios notionnels bougent cinq fois moins que le système
+actuel** : de −0,10 à −0,03 point de PIB en 2070, mesuré le 23 septembre 2026
+(le 21, de −0,03 à +0,03). L'erreur d'âge leur est presque invisible, et la
 raison est dans le mécanisme — dans un compte notionnel, partir plus tôt
 allonge le diviseur autant que la carrière raccourcie retire au capital, et les
 deux termes se répondent. C'est la raison chiffrée de ne réécrire aucune fiche
 pour ce que le site argumente.
 
-**Le système actuel bouge, et dans le mauvais sens** : 18,35 % du PIB en 2070
-sous les fiches, 18,96 % sous le contrefactuel. L'écart avec la projection du
-COR passe de 4,15 à 4,76 points — corriger les âges ÉLOIGNE le modèle du COR
-au lieu de l'en rapprocher. **L'âge de départ n'explique donc pas l'écart que
+**Le système actuel bouge, et dans le mauvais sens** : 18,26 % du PIB en 2070
+sous les fiches, 18,77 % sous le contrefactuel, mesuré le 23 septembre 2026.
+L'écart avec la projection du COR de juin 2026, 15,3 %, passe de 2,96 à 3,47
+points — corriger les âges ÉLOIGNE le modèle du COR au lieu de l'en
+rapprocher. **L'âge de départ n'explique donc pas l'écart que
 cette section laisse ouvert**, et la piste du taux de remplacement reste
-entière. Une réserve sur ce +0,61 point : déplacer l'âge d'entrée déplace aussi
+entière. Une réserve sur ce +0,51 point : déplacer l'âge d'entrée déplace aussi
 la DURÉE de carrière, et le chiffre mêle les deux effets — c'est d'ailleurs la
 durée qui domine, puisque cinq des sept cas types déplacés entrent PLUS TÔT.
 
@@ -8630,7 +8632,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2229<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2231<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.
