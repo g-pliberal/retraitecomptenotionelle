@@ -1394,12 +1394,14 @@ sources:
       et complémentaire par classe. La fiche `cnbf` du régime de base est
       `partiel`, et le barème forfaitaire par année d'exercice est précisément
       ce qui lui manque.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Un formulaire (statut, revenu estimé, classe) dont le calcul est fait par le
+      serveur de la caisse ; il n'a pas été interrogé. Les paramètres qu'il
+      applique sont ceux des barèmes annuels, lus en entier sous `cnbf_baremes`,
+      et la cotisation n'entre pas dans le scénario 1, dont la base est
+      forfaitaire.
   - id: cnbf_prelevements
     url: https://www.cnbf.fr/espace-avocats/calcul-de-prelevements-sociaux/
     nature: simulateur
@@ -1407,12 +1409,13 @@ sources:
     regimes: [cnbf, cnbf_complementaire]
     a_en_tirer: >-
       Les prélèvements sur les pensions d'avocat, calculés.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Calcul de la CSG, de la CRDS et de la CASA d'une pension à partir du revenu
+      fiscal de référence et du nombre de parts : les taux sont ceux de L. 136-8
+      que le modèle applique déjà (journal de veille du 19 septembre 2026). Non
+      interrogé ; rien à transcrire.
   - id: cnbf_baremes
     url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=baremes
     nature: index
@@ -1420,12 +1423,18 @@ sources:
     regimes: [cnbf, cnbf_complementaire]
     a_en_tirer: >-
       Les barèmes publiés, année par année : la série que le dépôt n'a pas.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Onze barèmes de 2016 à 2026 (2024 manque, 2016 est une image) relus en
+      entier. La surcote à deux taux, 0,75 % puis 1,25 % depuis le 1er juillet
+      2010, recoupée avec R. 723-39 et R. 653-3 : barème `cnbf` dans
+      data/reference/legislation/surcote_baremes.csv. Les 68 € et 163 € que la
+      fiche prêtait aux droits de plaidoirie sont la cotisation
+      d'invalidité-décès. La série de la retraite forfaitaire (16 664 € en 2017,
+      19 154 € en 2026) et celle de la cotisation forfaitaire par ancienneté sont
+      écrites dans la note de la fiche `cnbf` ; les porter demande une série par
+      année dans le moteur, action à part.
   - id: cnbf_fiches_pratiques
     url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=fiches-pratiques
     nature: index
@@ -1433,12 +1442,16 @@ sources:
     regimes: [cnbf, cnbf_complementaire]
     a_en_tirer: >-
       Les fiches pratiques, qui portent les exemples chiffrés.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Onze fiches. « Ma retraite CNBF : quel montant ? » (janvier 2024) confirme
+      la retraite forfaitaire de 2024, 18 665 €, la valeur du point
+      complémentaire de 2024, 0,9913 €, la surcote à deux taux, et la majoration
+      de 10 % pour trois enfants sur la base et la complémentaire : portée par
+      data/reference/regimes/non_salaries.yaml depuis 2024, après lecture de
+      L. 653-3 et de l'arrêté du 11 décembre 2023. Surcote parentale et
+      majoration de durée d'assurance pour enfants non portées.
   - id: ircec_quel_regime
     url: https://www.ircec.fr/ircec/quel-est-mon-regime/
     nature: regle

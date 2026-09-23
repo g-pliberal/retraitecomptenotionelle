@@ -1604,6 +1604,91 @@ entrees:
       n'est pas portée ; les statuts d'avant 2014 restent à trouver.
     prochaine_veille: "2027-03-31"
 
+  - id: cnbf_surcote
+    regle: >-
+      Régime de base des avocats : la pension est majorée de 0,75 % par
+      trimestre cotisé accompli du 1er janvier 2004 au 30 juin 2010, et de
+      1,25 % par trimestre accompli depuis le 1er juillet 2010, après l'âge de
+      L. 351-1 et au-delà de la durée requise.
+    textes:
+      - "code de la sécurité sociale, R. 723-39, versions du 30 décembre 2004 (LEGIARTI000006752431) et du 2 juillet 2010 (LEGIARTI000022417476)"
+      - "code de la sécurité sociale, R. 653-3, versions du 8 juillet 2019 (LEGIARTI000038770288) et du 1er septembre 2023 (LEGIARTI000047985846)"
+    sources:
+      - type: legifrance
+        reference: >-
+          R. 723-39 et R. 653-3 dans toutes leurs versions, lus dans l'index
+          LEGI du dépôt : « 0,75 % par trimestre accompli à compter du 1er
+          janvier 2004 et avant le 1er juillet 2010 et à 1,25 % par trimestre
+          accompli à compter du 1er juillet 2010 ».
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CNBF, barèmes des cotisations et prestations de 2017 à 2026, même
+          phrase sous « majoration de pension éventuelle ».
+        url: "https://www.cnbf.fr/medias/documents/?_sft_thematique-media=baremes"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: []
+    etat: conforme
+    effet: >-
+      La fiche servait 0,75 % à tout trimestre de surcote : un avocat né en
+      1945, parti à 68 ans en 2013, recevait 24 % au lieu de 28,25 %. Depuis
+      le 23 septembre 2026, `surcote_bareme: cnbf` et deux lignes de
+      `legislation/surcote_baremes.csv` ; tenu par
+      tests/test_sections_juridiques.py.
+    a_faire: >-
+      Le second mode de calcul que le barème annonce, « majoration au-delà de
+      220 trimestres à la CNBF », n'est lu dans aucun article de l'index ; la
+      surcote parentale de 2023 (R. 653-3, dernier alinéa) n'est pas portée.
+    prochaine_veille: "2027-03-31"
+
+  - id: majoration_enfants_liberaux_avocats
+    regle: >-
+      Majoration de 10 % pour trois enfants (L. 351-12) étendue au régime de
+      base des professions libérales (L. 643-1-1) et à celui des avocats
+      (L. 653-3) pour les pensions prenant effet à compter du 1er septembre
+      2023 ; au régime complémentaire des avocats depuis le 1er janvier 2024
+      (article 16-1 de son règlement).
+    textes:
+      - "loi n° 2023-270 du 14 avril 2023, article 21 ; code de la sécurité sociale, L. 643-1-1 (LEGIARTI000047453363) et L. 653-3 (LEGIARTI000047453367)"
+      - "arrêté du 11 décembre 2023 (JORFTEXT000048567119), article 16-1 du règlement du régime complémentaire de la CNBF"
+    sources:
+      - type: legifrance
+        reference: >-
+          L. 643-1-1 et L. 653-3, version du 1er septembre 2023, lus dans
+          l'index LEGI du dépôt ; l'arrêté du 11 décembre 2023 dans l'index
+          JORF.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CNBF, fiche pratique « Ma retraite CNBF : quel montant ? » (janvier
+          2024) : « le montant de votre pension (régime de base et
+          complémentaire) est augmenté de 10 % », pour les pensions prenant
+          effet « au 1er octobre 2023 ou postérieure pour le régime de base ;
+          au 1er janvier 2024 ou postérieure pour le régime complémentaire ».
+          CAVOM, page « La retraite » : « Taux de majoration = 10 % si 3
+          enfants et plus à compter du 1er octobre 2023 ».
+        url: "https://www.cnbf.fr/medias/documents/?_sft_thematique-media=fiches-pratiques"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [majoration_enfants_liberaux_2023, cnbf_complementaire_enfants_2024]
+    etat: approximation
+    effet: >-
+      Les fiches de la CNAVPL, de la CNBF et de sa complémentaire ne la
+      portaient pas : 10 % de pension en moins pour tout parent de trois
+      enfants liquidant depuis 2023. Depuis le 23 septembre 2026,
+      `majoration_enfants` sur leurs périodes de 2024 et après ; tenu par
+      tests/test_sections_juridiques.py. Approximation : la maille est
+      l'année, les pensions prenant effet de septembre à décembre 2023 en
+      sont privées.
+    a_faire: >-
+      La majoration de durée d'assurance pour enfants que les mêmes articles
+      ouvrent (L. 351-4 à L. 351-4-2) n'est portée ni à la CNAVPL ni à la
+      CNBF ; la surcote parentale non plus.
+    prochaine_veille: "2027-03-31"
+
 journal:
   - date: "2026-09-19"
     session: "le net et le brut, d'un bout à l'autre du simulateur"

@@ -25,6 +25,11 @@
 # pensions civiles et militaires) :
 #   2004-2008  0,75 % par trimestre, vingt trimestres au plus
 #   2009-      1,25 %, sans plafond pour les trimestres accomplis depuis 2009
+# Avocats (`cnbf`, article R. 653-3 du code de la sécurité sociale, qui reprend
+# en 2019 l'ancien R. 723-39) : « 0,75 % par trimestre accompli à compter du
+# 1er janvier 2004 et avant le 1er juillet 2010 et [...] 1,25 % par trimestre
+# accompli à compter du 1er juillet 2010 » — le barème de la CNBF l'imprime
+# chaque année dans les mêmes termes.
 #
 # Colonnes : `debut` et `fin` sont des années décimales du premier mois du
 # trimestre (2008.917 = trimestre commençant en décembre 2008, c'est-à-dire
@@ -46,3 +51,5 @@ regime_general,2007,2008.917,1,1,0.0125,,haute
 regime_general,2009,2100,1,0,0.0125,,haute
 fonction_publique,2004,2008.917,1,0,0.0075,20,haute
 fonction_publique,2009,2100,1,0,0.0125,,haute
+cnbf,2004,2010.25,1,0,0.0075,,haute
+cnbf,2010.5,2100,1,0,0.0125,,haute

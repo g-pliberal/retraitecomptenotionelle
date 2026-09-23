@@ -31,6 +31,15 @@ de 2014 à 2023, cet âge n'était pas celui du régime général : l'âge léga
 « différé de vingt-quatre mois », et le taux plein cinq ans plus tard — 64 et
 69 ans pour les générations nées depuis 1955. Depuis 2024, une majoration de
 10 % pour trois enfants.
+
+**La surcote des avocats a deux taux.** 0,75 % par trimestre accompli de 2004
+au 30 juin 2010, 1,25 % depuis le 1er juillet 2010 (R. 723-39 puis R. 653-3) ;
+la fiche servait 0,75 % à tous.
+
+**Trois enfants majorent aussi la base des libéraux et des avocats.** La loi
+du 14 avril 2023 leur étend L. 351-12 (L. 643-1-1 et L. 653-3), et le
+règlement de la complémentaire des avocats l'a suivie en 2024 ; aucune des
+trois fiches ne la portait.
 """
 
 from __future__ import annotations
@@ -176,3 +185,50 @@ def test_la_cprn_majore_de_dix_pour_cent_pour_trois_enfants_depuis_2024(simulate
     sans, _ = _calculer(simulateur, "notaire", 1962, 22.0, 67.0, enfants=2)
     assert not [a for a in sans.avantages_appliques
                 if a.code == "majoration_enfants"]
+
+
+# -- la CNBF -------------------------------------------------------------------
+
+
+def test_la_surcote_des_avocats_passe_a_un_quart_le_1er_juillet_2010(simulateur):
+    """R. 653-3 : « 0,75 % par trimestre accompli à compter du 1er janvier
+    2004 et avant le 1er juillet 2010 et [...] 1,25 % par trimestre accompli à
+    compter du 1er juillet 2010 ». La fiche servait 0,75 % à tous."""
+    from retraite_notionnelle.calendrier import DateMois
+
+    baremes = simulateur.scenario_actuel.surcote_baremes
+    assert baremes.connait("cnbf")
+    avril, juillet = DateMois(2010, 4), DateMois(2010, 7)
+    coefficient, _ = baremes.coefficient("cnbf", [(avril, False), (juillet, False)])
+    assert coefficient == pytest.approx(1.0 + 0.0075 + 0.0125)
+    (periode,) = simulateur.catalogue["cnbf"].periodes_actives(2026)
+    assert periode.surcote_bareme == "cnbf"
+
+
+def test_un_avocat_qui_prolonge_au_dela_de_2010_surcote_aux_deux_taux(simulateur):
+    """Né en 1945, entré à vingt ans, parti à soixante-huit ans en 2013 : la
+    surcote court depuis 2005, vingt et un trimestres à 0,75 % puis dix à
+    1,25 %, soit 28,25 % — là où la fiche en servait 24 %."""
+    _, pensions = _calculer(simulateur, "avocat", 1945, 20.0, 68.0)
+    assert "taux 128.250%" in pensions["cnbf"].detail
+
+
+@pytest.mark.parametrize("statut,majorees", [
+    # L. 653-3 pour la base, article 16-1 du règlement pour la complémentaire.
+    ("avocat", ("cnbf", "cnbf_complementaire")),
+    # L. 643-1-1 pour la base ; le règlement de la CAVOM n'en porte aucune.
+    ("officier_ministeriel", ("cnavpl",)),
+    # La CPRN depuis 2024, et la base avec elle.
+    ("notaire", ("cnavpl", "cprn_complementaire")),
+])
+def test_trois_enfants_majorent_la_base_des_liberaux_et_des_avocats(
+        simulateur, statut, majorees):
+    """La loi du 14 avril 2023 étend L. 351-12 aux professions libérales et
+    aux avocats, pour les pensions prenant effet depuis le 1er septembre 2023.
+    Aucune des trois fiches ne la portait."""
+    resultat, pensions = _calculer(simulateur, statut, 1962, 22.0, 67.0,
+                                   enfants=3)
+    majoration = sum(a.montant for a in resultat.avantages_appliques
+                     if a.code == "majoration_enfants")
+    attendue = 0.10 * sum(pensions[code].montant for code in majorees)
+    assert majoration == pytest.approx(attendue, rel=1e-6)
