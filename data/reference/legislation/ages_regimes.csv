@@ -1,0 +1,48 @@
+# Âges PROPRES à un régime, par génération : ouverture des droits et taux plein
+# -----------------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# Le règlement d'une section libérale écrit souvent ses âges lui-même,
+# génération par génération, et ce ne sont pas ceux du régime général. Une
+# fiche nomme sa table par `age_table` ; la table passe alors avant
+# `age_ouverture_par_generation` et `age_taux_plein_par_generation`. Lecture en
+# escalier : une génération non renseignée prend la valeur de la dernière
+# renseignée avant elle, et la dernière vaut pour toutes les suivantes.
+#
+# `cavom` — régime complémentaire de la CAVOM. Article 14 des statuts, dans la
+#   rédaction de l'arrêté du 12 décembre 2024 (JORF du 24 décembre 2024), puis
+#   article 1er, I, 1° et 2° du règlement approuvé par l'arrêté du 10 juillet
+#   2026 (JORF du 17 juillet 2026), mot pour mot : ouverture à « 60 ans pour
+#   les affiliés nés avant le 1er janvier 1956 », six mois de plus par
+#   génération jusqu'à « 62 ans pour les affiliés nés entre le 1er janvier 1959
+#   et le 31 décembre 1964 inclus », puis 62 ans et 6 mois, 63 ans, 63 ans et
+#   6 mois, et « 64 ans à compter de la génération 1968 » ; taux plein à
+#   « 65 ans pour les affiliés nés avant le 1er janvier 1956 », six mois de
+#   plus par génération jusqu'à « 67 ans à compter de la génération 1959 ». La
+#   suspension de 2026 n'y touche pas. La caisse écrit la même table sur sa
+#   page de la retraite, lue le 23 septembre 2026.
+#
+# `cprn_2014` — régime complémentaire de la CPRN, de 2014 à 2023. Article 18
+#   des statuts dans la rédaction de l'arrêté du 16 décembre 2013, reprise par
+#   celui du 31 mai 2017 : « pour les affiliés nés avant le 1er janvier 1954 »,
+#   ouverture à 60 ans et taux plein à 65 ; à compter de 1954, « l'âge légal
+#   d'ouverture des droits est celui visé à l'article L. 161-17-2 du code de la
+#   sécurité sociale différé de vingt-quatre mois », et le taux plein ce même
+#   âge « augmenté de cinq ans ». L. 161-17-2 donnait 61 ans et 7 mois à la
+#   génération 1954, 62 ans aux suivantes : d'où 63 ans et 7 mois et 68 ans et
+#   7 mois, puis 64 et 69. L'arrêté du 29 novembre 2023 a rendu la section à
+#   l'âge légal et à 67 ans ; la fiche ne nomme cette table que sur ses
+#   périodes de 2014 à 2023.
+table,generation,age_ouverture,age_taux_plein,fiabilite
+cavom,1900,60,65,certifiee
+cavom,1956,60.5,65.5,certifiee
+cavom,1957,61,66,certifiee
+cavom,1958,61.5,66.5,certifiee
+cavom,1959,62,67,certifiee
+cavom,1965,62.5,67,certifiee
+cavom,1966,63,67,certifiee
+cavom,1967,63.5,67,certifiee
+cavom,1968,64,67,certifiee
+cprn_2014,1900,60,65,certifiee
+cprn_2014,1954,63.583333,68.583333,certifiee
+cprn_2014,1955,64,69,certifiee

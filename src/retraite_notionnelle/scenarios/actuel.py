@@ -306,6 +306,45 @@ class DureesRequisesRegimes:
         return valeur_par_generation(self._table[table], generations, generation)
 
 
+class AgesRegimes:
+    """Âges PROPRES à un régime, par génération : ouverture et taux plein.
+
+    Le règlement d'une section libérale écrit souvent ses âges en toutes
+    lettres, génération par génération, et ce ne sont pas ceux du régime
+    général. Celui de la CAVOM (arrêté du 10 juillet 2026) ouvre la retraite
+    complémentaire à soixante ans aux nés avant 1956 et la sert à taux plein à
+    soixante-cinq, monte de six mois par génération jusqu'à 62 et 67 ans pour
+    celle de 1959, puis de six mois encore de 1965 à 1968 — sans rien devoir
+    à la suspension de 2026. La fiche nomme sa table (``age_table``) ; la
+    lecture est en escalier, comme celle des tables communes.
+    """
+
+    FICHIER = "ages_regimes.csv"
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[str, dict[float, tuple[float, float, Fiabilite]]] = {}
+        chemin = racine / "reference" / "legislation" / self.FICHIER
+        if chemin.exists():
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    self._table.setdefault(ligne["table"], {})[
+                        float(ligne["generation"])
+                    ] = (float(ligne["age_ouverture"]),
+                         float(ligne["age_taux_plein"]),
+                         Fiabilite.depuis_texte(ligne["fiabilite"]))
+        self._generations = {cle: tuple(sorted(valeurs))
+                             for cle, valeurs in self._table.items()}
+
+    def ages(self, table: str,
+             generation: float) -> tuple[float, float, Fiabilite] | None:
+        """Âge d'ouverture, âge du taux plein, fiabilité ; ``None`` hors table."""
+        generations = self._generations.get(table)
+        if not generations:
+            return None
+        return valeur_par_generation(self._table[table], generations, generation)
+
+
 class DureesRequisesFonctionPublique:
     """Durée de services requise dans la fonction publique, 2004-2008.
 
@@ -614,10 +653,14 @@ _PALIERS_ANTICIPATION: tuple[tuple[int, float], ...] = (
     (12, 0.01), (20, 0.0125), (40, 0.0175),
 )
 
-#: Les deux barèmes de minoration des régimes de l'IRCEC (RAAP, RACD, RACL),
-#: qui comptent des années manquantes et non des trimestres : voir
-#: ``_abattement_ircec``.
-_ABATTEMENTS_IRCEC = ("ircec", "ircec_age_seul")
+#: Les barèmes de minoration qui comptent des ANNÉES manquantes et non des
+#: trimestres : les deux de l'IRCEC (RAAP, RACD, RACL) et celui de la CAVOM,
+#: qui est le second sous un autre nom. Voir ``_abattement_ircec``.
+_ABATTEMENTS_IRCEC = ("ircec", "ircec_age_seul", "cavom")
+
+#: Ceux des précédents que seul l'âge annule : la durée d'assurance n'y ouvre
+#: pas le taux plein.
+_ABATTEMENTS_PAR_ANNEE_AGE_SEUL = ("ircec_age_seul", "cavom")
 
 #: Dernière ligne de la table des âges : dix ans d'anticipation. Au-delà, le
 #: barème ne descend plus.
@@ -1676,6 +1719,7 @@ class ScenarioActuel:
         self.durees_proratisation = DureesProratisation(parametres.racine_donnees)
         self.ages_ouverture = AgesOuverture(parametres.racine_donnees)
         self.ages_annulation_decote = AgesAnnulationDecote(parametres.racine_donnees)
+        self.ages_regimes = AgesRegimes(parametres.racine_donnees)
         self.ages_categorie_active = AgesCategorieActive(parametres.racine_donnees)
         self.durees_services_militaires = DureesServicesMilitaires(
             parametres.racine_donnees
@@ -2487,6 +2531,10 @@ class ScenarioActuel:
         les deux cas. Compter la surcote depuis cinquante-sept ans aurait payé
         deux fois l'avantage du classement.
         """
+        if periode.age_table:
+            propres = self.ages_regimes.ages(periode.age_table, carriere.generation)
+            if propres is not None:
+                return propres[0]
         if periode.age_ouverture_par_generation:
             par_generation = self.ages_ouverture.age(carriere.generation)
             if par_generation is not None:
@@ -2735,6 +2783,10 @@ class ScenarioActuel:
         derogation = self._derogation_active(periode, carriere)
         if derogation is not None:
             return derogation.age_annulation
+        if periode.age_table:
+            propres = self.ages_regimes.ages(periode.age_table, carriere.generation)
+            if propres is not None:
+                return propres[1]
         if periode.age_taux_plein_par_generation:
             par_generation = self.ages_annulation_decote.age(carriere.generation)
             if par_generation is not None:
@@ -3112,9 +3164,21 @@ class ScenarioActuel:
         tous trois 1,25 % par trimestre depuis soixante-sept ans : vingt-cinq
         pour cent à soixante-deux ans pour qui n'a pas sa durée, là où l'IRCEC
         en retire vingt.
+
+        ``cavom`` est la même règle, écrite par un autre règlement : « 5 % par
+        année manquante entre l'âge auquel est demandée la liquidation […] et
+        l'âge prévu au 2° », et « ce coefficient n'est pas susceptible de
+        fractionnement » (règlement du régime complémentaire de la CAVOM,
+        article 1er, I, 3°, approuvé par l'arrêté du 10 juillet 2026, déjà dans
+        ses statuts depuis l'arrêté du 12 décembre 2024). Le texte ne dit pas
+        si l'année entamée compte ; le modèle la compte, comme l'IRCEC l'écrit
+        en toutes lettres. La durée d'assurance n'y ouvre pas le taux plein :
+        la fiche lui opposait la décote du régime de base, que la durée
+        annule, et un officier ministériel parti à l'âge légal avec sa durée
+        ne perdait rien de sa complémentaire.
         """
         age_taux_plein = self._age_taux_plein(periode, carriere)
-        age_seul = periode.abattement_points == "ircec_age_seul"
+        age_seul = periode.abattement_points in _ABATTEMENTS_PAR_ANNEE_AGE_SEUL
         if age_liquidation >= age_taux_plein - 1e-9:
             return 1.0
         if not age_seul and trimestres >= requis:
@@ -3906,6 +3970,12 @@ class ScenarioActuel:
                 if periode is None or periode.type_calcul not in calculs:
                     continue
                 if periode.abattement_points in ("agirc_arrco", "ircantec"):
+                    continue
+                # Une complémentaire qui a SES âges — la CAVOM ouvre la sienne
+                # à soixante ans aux nés avant 1956 — ne dit pas quand le droit
+                # s'ouvre : c'est le régime de base qu'elle accompagne toujours
+                # qui le dit, et elle suit.
+                if periode.age_table:
                     continue
                 requis_reference = max(
                     requis_reference, self._duree_requise(periode, carriere)[0]

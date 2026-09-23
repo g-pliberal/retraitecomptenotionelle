@@ -124,6 +124,32 @@ export class AgesAnnulationDecote extends TableParGeneration {
 }
 
 /**
+ * Âges PROPRES à un régime, par génération : ouverture et taux plein.
+ *
+ * Le règlement d'une section libérale écrit souvent ses âges génération par
+ * génération, et ce ne sont pas ceux du régime général : celui de la CAVOM
+ * ouvre la complémentaire à soixante ans aux nés avant 1956. La fiche nomme
+ * sa table (`age_table`) ; la lecture est en escalier. Voir le modèle Python.
+ */
+export class AgesRegimes {
+  constructor(paquet) {
+    this._tables = new Map(
+      Object.entries(paquet.ages_regimes ?? {})
+        .map(([table, lignes]) => [table, new TableParGeneration(lignes)]),
+    );
+  }
+
+  /**
+   * @returns {[number, number, number] | null} âge d'ouverture, âge du taux
+   *   plein, fiabilité ; `null` hors table.
+   */
+  ages(table, generation) {
+    const lue = this._tables.get(table);
+    return lue ? lue.valeur(generation) : null;
+  }
+}
+
+/**
  * Âges de la catégorie active et de la super-active, par génération.
  *
  * Le drapeau `categorie_active` existait dans la configuration sans qu'aucun
@@ -992,6 +1018,10 @@ export const BORNES_ASSIETTE = Object.freeze({
   // CAVOM depuis 2016 : 12,5 % du revenu, jusqu'à huit plafonds. C'est la
   // borne la plus haute du catalogue libéral, et le décret la fixe en
   // plafonds — 384 480 € en 2026.
+  // CAVOM de 2016 à 2019 : quatre plafonds, puis cinq, six et sept
+  // (décret n° 2015-1875), huit depuis 2020.
+  plafonnee_6_pass: [0.0, 6.0],
+  plafonnee_7_pass: [0.0, 7.0],
   plafonnee_8_pass: [0.0, 8.0],
   tranche_1_2_pass: [1.0, 2.0],
   plafonnee_033_pass: [0.0, 0.3333333333333333],

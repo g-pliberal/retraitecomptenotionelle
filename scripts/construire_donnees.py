@@ -518,6 +518,7 @@ def _regimes() -> list[dict]:
                     "perimetre_taux": p.perimetre_taux,
                     "part_salariale": p.part_salariale,
                     "age_taux_plein_par_generation": p.age_taux_plein_par_generation,
+                    "age_table": p.age_table,
                     "decote_par_generation": p.decote_par_generation,
                     "salaire_reference_par_generation": p.salaire_reference_par_generation,
                     "decote_par_trimestre": p.decote_par_trimestre,
@@ -786,6 +787,21 @@ def _table_par_generation(classe) -> dict:
     return {(str(int(generation)) if float(generation).is_integer()
              else str(generation)): [valeur, int(fiabilite)]
             for generation, (valeur, fiabilite) in sorted(classe(DONNEES)._table.items())}
+
+
+def _ages_regimes() -> dict:
+    """Âges propres à un régime, par génération : ouverture et taux plein."""
+    from retraite_notionnelle.scenarios.actuel import AgesRegimes
+
+    return {
+        table: {
+            (str(int(generation)) if float(generation).is_integer()
+             else str(generation)): [ouverture, taux_plein, int(fiabilite)]
+            for generation, (ouverture, taux_plein, fiabilite)
+            in sorted(lignes.items())
+        }
+        for table, lignes in sorted(AgesRegimes(DONNEES)._table.items())
+    }
 
 
 def _categorie_active() -> dict:
@@ -1242,6 +1258,7 @@ def construire(bilan: bytes) -> bytes:
         "revalorisation_salaires": _revalorisation_salaires(),
         "ages_ouverture": _table_par_generation(AgesOuverture),
         "ages_annulation_decote": _table_par_generation(AgesAnnulationDecote),
+        "ages_regimes": _ages_regimes(),
         "categorie_active": _categorie_active(),
         "durees_services_militaires": _durees_services_militaires(),
         "ages_jouissance_militaire": _table_par_generation(AgesJouissanceMilitaire),

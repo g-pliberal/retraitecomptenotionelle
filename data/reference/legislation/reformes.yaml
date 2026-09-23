@@ -381,10 +381,18 @@ reformes:
 
   - code: cavom_2016
     date: 2016-01-01
-    texte: {reference: "décret n° 2015-1667 du 14 décembre 2015 (CAVOM, cotisation proportionnelle)", id: null}
-    parametres: [taux_cotisation_retraite, cotisation_par_classes]
+    texte: {reference: "décret n° 2015-1875 du 30 décembre 2015 (CAVOM, cotisation proportionnelle, plafond de quatre à huit PASS de 2016 à 2020)", id: JORFTEXT000031740732}
+    parametres: [taux_cotisation_retraite, cotisation_par_classes, assiette]
     regimes: [cavom_complementaire]
     absorbee_par: []
+    non_appliquee: {}
+
+  - code: cavom_ages_2025
+    date: 2025-01-01
+    texte: {reference: "arrêté du 12 décembre 2024 portant approbation des modifications apportées aux statuts de la CAVOM (article 14 : ouverture portée de 62 à 64 ans des générations 1965 à 1968, âges des générations antérieures, coefficient d'anticipation de 5 % par année), repris par le règlement approuvé le 10 juillet 2026", id: JORFTEXT000050823047}
+    parametres: [age_ouverture, age_taux_plein, decote_par_trimestre]
+    regimes: [cavom_complementaire]
+    absorbee_par: [age_table]
     non_appliquee: {}
 
   - code: speciaux_bornes_2017
@@ -479,9 +487,9 @@ reformes:
         soixante-cinq ans et l'anticipation dès soixante ans : la loi de 2023
         ne s'y applique pas.
       cavom_complementaire: >-
-        L'âge seul commande ce régime, lu à la génération par
-        `age_ouverture_par_generation` ; il n'a pas de durée requise à
-        relever.
+        L'âge seul commande ce régime, et ce sont les siens : son règlement
+        les écrit génération par génération (`age_table: cavom`), et la loi
+        de 2023 n'y a rien changé ; il n'a pas de durée requise à relever.
       cavamac_complementaire: >-
         Même situation que la CAVOM : l'âge seul commande, lu à la génération
         ; aucune durée requise dans la fiche.
@@ -874,7 +882,12 @@ reformes:
               ircec_raap, ircec_raap_taux_amenage, ircec_racd, ircec_racl, msa_non_salaries, msa_rco, msa_salaries,
               opera_de_paris, rafp, ratp, rci, regime_general, sncf]
     absorbee_par: [age_ouverture_par_generation, duree_requise_par_generation]
-    non_appliquee: {}
+    non_appliquee:
+      cavom_complementaire: >-
+        La suspension ne touche que l'âge de L. 161-17-2 et la durée ; le
+        règlement de la CAVOM approuvé le 10 juillet 2026, après elle, garde
+        ses propres âges — 62 ans et 6 mois pour la génération 1965, 64 ans
+        dès 1968 — que la fiche lit dans sa table.
 
   - code: parents_2026
     date: 2026-09-01
