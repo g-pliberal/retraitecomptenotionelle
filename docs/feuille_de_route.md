@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 831<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 515<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 649<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15632,6 +15632,8 @@ chaque chantier déplacerait.
    Cour est la réponse chiffrée que « La part patronale du public, et ce qu'on
    n'en sait pas » (`limites.md`) attendait ; l'Institut des politiques
    publiques, par une autre méthode, trouvait 34,7 % en 2020 (annexe n° 6).
+   L'action 129 en a fait un réglage, `contribution_etat=retraite_seule`, sans
+   toucher au défaut.
 2. *La part des primes des cas types*, 18 %, 22 % et 25 %, n'a pas de source.
    La Cour donne 20,0 % en 2015 et 23,1 % en 2023 pour l'ensemble des
    fonctionnaires de l'État (graphique n° 13), 14 % dans l'enseignement
@@ -16305,3 +16307,90 @@ recettes), `scripts/chiffrage_plf.py`, `scripts/mesures_prose.py`,
 `tests/test_tva.py`, `tests/test_cout.py`, `tests/test_web.py`,
 `tests/test_affirmations.py`, `README.md`, `docs/limites.md`,
 `docs/chiffrage_plf.md` ; le paquet, les témoins et le chiffrage, régénérés.
+
+### 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, pour voir — `en cours`
+
+**Demande.** « Dis-moi en plus sur le taux seulement dédié à la retraite, ça
+m'intéresse — ça peut changer beaucoup de choses », puis : « intègre-le comme
+réglage d'abord, pour voir ». C'est le premier chantier de l'action 120.
+
+**Ce qui est fait.** Un paramètre, `contribution_etat` (`ContributionEtat`),
+dans les deux moteurs et dans les options du site — « Contribution de l'État
+portée au compte ». Il ne joue que sous `part_cotisation=totale`, donc dans les
+scénarios 4 et 5 et dans le 6 jusqu'à la bascule, et que pour l'État, seul
+employeur dont le taux est un taux d'équilibre. `entiere`, le défaut, porte au
+compte le taux versé, comme avant. `retraite_seule` n'en porte que la part que
+la Cour des comptes rattache à la retraite de l'agent lui-même : son tableau
+n° 15, recopié ligne à ligne dans `legislation/contribution_etat_retraite_seule.csv`
+— le rapport passe au manifeste du statut `controle` à `saisi` —, garde 44,1 %
+pour un civil et 51,2 % pour un militaire en 2025, sur les 78,28 % versés pour
+un civil. Cette année-là, le compte reçoit exactement ces deux taux, en
+fiabilité `haute`. Les autres années reçoivent la même proportion du taux de
+l'année — 56,3 % pour un civil, 65,4 % pour un militaire, rapportés au taux
+civil que le modèle lui crédite —, et c'est une hypothèse, en fiabilité
+`estimee`. Avant 1995, l'État n'a pas de série et le compte reçoit déjà l'effort
+d'un salarié du privé : le réglage n'y touche pas. Sous la simulation,
+l'origine de la part patronale le dit année par année, et un paragraphe de plus
+dit ce que le compte n'a pas reçu.
+
+**Pourquoi une proportion, et non 44,1 % chaque année.** Les deux conventions
+ont été mesurées avant d'écrire le réglage, et l'annexe n° 6 du rapport les
+départage : l'Institut des politiques publiques, qui a fait l'analyse pour 2020
+sur un taux d'équilibre de 75 % au lieu de 83,6 %, trouve 34,7 %, et la Cour
+impute cinq points de l'écart à la seule différence d'année — environ 39 % pour
+2020 par sa méthode. La part « retraite seule » suit donc le taux d'équilibre.
+Pour 2020, la proportion donne 41,8 %, le taux fixe 44,1 %.
+
+**Ce qu'il déplace**, mesuré le 24 septembre 2026 sur `main` (cbe5678, la
+proposition avec son âge légal de 65 ans). L'écart au système actuel de la
+fonctionnaire de l'exemple du README, née en 1975, passe de +45,0 % à −1,3 %
+dans le scénario 4, de +44,9 % à −3,4 % dans la proposition. Dans la
+proposition toujours : la sédentaire née en 1975 de +16,7 % à −21,2 %, l'actif
+né en 1975 parti à 60 ans de +46,5 % à −0,8 %, le militaire né en 1985 parti à
+45 ans de +102,9 % à +59,4 % — l'âge légal de 65 ans le fait cotiser vingt ans
+de plus —, la sédentaire née en 1995 de −38,9 % à −48,0 %. Le solde moyen de
+la proposition passe de −0,87 % à −0,48 % du PIB — de −26,1 à −14,4 milliards
+d'euros par an —, et de −1,44 % à −0,98 % en 2050 : les droits qu'elle reprend
+à la bascule étaient gonflés de ce qui payait d'autres pensions. Le cumul passé
+du scénario 4 recule de 6 598 à 6 522 milliards. Le privé, la CNRACL, le
+scénario 1 et la part salariale ne bougent pas, et un test le tient. La veille,
+avant l'âge légal de 65 ans, le solde moyen passait de −1,40 % à −1,00 %.
+
+**Ce qui reste avant d'en faire le défaut.**
+
+1. *Une vraie série, année par année.* La proportion de 2025 est prêtée à
+   trente ans de taux. La Cour recommande que les documents budgétaires en
+   rendent compte dès le projet de loi de finances pour 2027, et les
+   ingrédients existent : les dépenses d'invalidité avant 62 ans, les
+   majorations et les départs anticipés au Service des retraites de l'État,
+   les effectifs de la compensation démographique chaque année, les durées
+   validées tous les quatre ans par l'échantillon interrégimes. Le point dur
+   est le déséquilibre démographique des années passées.
+2. *Le militaire.* Le modèle lui crédite la série civile ; son taux appelé,
+   126,07 % en 2025, n'est dans aucune table. Le réglage lui donne les 51,2 %
+   de la Cour cette année-là, mais la proportion qu'il prête aux autres est
+   celle d'un taux qui n'est pas le sien.
+3. *Le choix.* La doctrine du projet — ce qui n'est pas contributif se finance
+   par l'impôt, non par le compte — plaide pour `retraite_seule` ; c'est aussi
+   le résultat le plus lu du site qui bouge, de +45 % à −1 %. La décision est
+   à l'utilisateur.
+4. *Le passage sur `main`.* Le travail a été remis le 24 septembre 2026 dans
+   une pull request, à la demande de l'utilisateur, pour être poursuivi dans
+   une session cloud : les fichiers fabriqués n'y sont PAS régénérés — ils le
+   seront par la session qui la reprend, sur sa machine, avant de pousser
+   (`construire_donnees.py`, `construire_temoins.py`,
+   `construire_tableaux_md.py`, `chiffrage_plf.py`, `verifier_prose.py
+   --corriger`).
+
+**Fichiers.** `data/reference/legislation/contribution_etat_retraite_seule.csv`
+(nouveau), `src/retraite_notionnelle/config.py`,
+`src/retraite_notionnelle/donnees/regimes.py`,
+`src/retraite_notionnelle/moteur/compte.py`, `src/retraite_notionnelle/web/pages.py`,
+`moteur/js/config.js`, `moteur/js/regimes.js`, `moteur/js/compte.js`,
+`moteur/js/pages.js`, `scripts/construire_donnees.py`,
+`scripts/construire_temoins.py` (trois cas, une page, et le réglage dans le jeu
+de règles des pages agrégées), `scripts/mesures_prose.py` (la sonde
+`retraite_seule`, et `contribution_etat` dans les sondes de carrière et de
+coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`,
+`README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
+fabriqués.

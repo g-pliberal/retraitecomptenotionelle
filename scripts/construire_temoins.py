@@ -381,6 +381,19 @@ def _cas() -> list[dict]:
     # le facteur est calé sur le rapport à l'ensemble de l'étude — le seul
     # chemin de calibration qui passe par cette règle.
     cas.append(("population_niveau_de_vie_modeste", {"population": "niveau_de_vie_v01"}))
+    # LA PART « RETRAITE SEULE » DU TAUX DE L'ÉTAT : le compte d'un agent de
+    # l'État n'en reçoit que ce que la Cour des comptes rattache à sa retraite.
+    # Un civil, dont la carrière passe par l'année que la Cour a mesurée ; un
+    # militaire, qui a sa propre proportion ; et un civil né en 1955, dont la
+    # carrière commence avant la série de l'État — le repli sur l'effort du
+    # privé, que le réglage ne touche pas — et la traverse ensuite.
+    for nom, statut, naissance in (
+        ("contribution_etat_retraite_seule", "fonctionnaire_etat", "1975"),
+        ("contribution_etat_retraite_seule_militaire", "militaire", "1975"),
+        ("contribution_etat_retraite_seule_1955", "fonctionnaire_etat", "1955"),
+    ):
+        cas.append((nom, {"contribution_etat": "retraite_seule",
+                          "statut": statut, "naissance": naissance}))
     # Le rattachement par la pension : circulaire sous un compte notionnel, et
     # résolu par point fixe — le chemin que le témoin doit tenir des deux côtés.
     cas.append(("rattachement_pension", {"rattachement": "pension"}))
@@ -657,6 +670,10 @@ REGLES_AUTRES = {
     # Et le stock réindexé à la bascule : la convention d'avant le
     # 20 septembre 2026, qui ne touche que la page Coût.
     "stock": "reindexe",
+    # Et le taux de l'État ramené à sa part « retraite seule » : ce que la
+    # page Coût chiffre quand le compte d'un fonctionnaire ne reçoit que ce
+    # que la Cour des comptes rattache à sa retraite.
+    "contribution_etat": "retraite_seule",
 }
 
 
@@ -825,6 +842,13 @@ def _pages(contexte: Contexte) -> dict:
         ("simuler_indexation_par_defaut", "/simuler", {**BASE, "indexation": "masse_salariale"}),
         ("simuler_rafp", "/simuler", {
             **BASE, "statut": "fonctionnaire_etat", "primes": "0.2",
+        }),
+        # Le même fonctionnaire, le taux de l'État ramené à sa part « retraite
+        # seule » : l'origine de la part patronale le dit, année par année, et
+        # un paragraphe de plus dit ce que le compte n'a pas reçu.
+        ("simuler_contribution_etat_retraite_seule", "/simuler", {
+            **BASE, "statut": "fonctionnaire_etat", "primes": "0.2",
+            "contribution_etat": "retraite_seule",
         }),
         ("simuler_minimum_contributif", "/simuler", {
             **BASE, "salaire": "0.35", "debut": "20", "liquidation": "67",

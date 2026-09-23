@@ -18,6 +18,7 @@ from retraite_notionnelle.carriere import (
 from retraite_notionnelle.config import (
     RACINE_DONNEES,
     AgeConversionDroitsAcquis,
+    ContributionEtat,
     ModeAgeReference,
     PartCotisation,
     ModeIndexation,
@@ -26,6 +27,7 @@ from retraite_notionnelle.config import (
     SituationFoyer,
     SourceCotisations,
 )
+from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Simulateur
 
 #: Témoins versionnés : ce que des sources extérieures ont réellement publié.
@@ -1037,6 +1039,112 @@ def test_les_scenarios_4_et_5_ne_qualifient_pas_la_fiabilite_d_ensemble(simulate
     )
     assert (comparaison.notionnel_retroactif_employeur.fiabilite
             <= comparaison.notionnel_retroactif.fiabilite)
+
+
+# -- la part « retraite seule » du taux de l'État ----------------------------
+
+
+@pytest.fixture(scope="module")
+def retraite_seule() -> Simulateur:
+    return Simulateur(Parametres().avec(
+        contribution_etat=ContributionEtat.RETRAITE_SEULE))
+
+
+def _part_employeur_etat(simulateur, annee, militaire=False):
+    """Le taux employeur que le scénario 4 porte au compte d'un agent de l'État."""
+    periode = next(iter(
+        simulateur.catalogue["fonction_publique_etat"].periodes_actives(annee)))
+    _, employeur, origine, fiabilite = simulateur.constructeur_employeur.taux_effectif(
+        "fonction_publique_etat", periode, annee, militaire=militaire)
+    return employeur, origine, fiabilite
+
+
+def test_le_taux_de_l_etat_est_porte_entier_par_defaut(simulateur):
+    """Le réglage n'est pas le défaut : le compte reçoit ce que l'État a versé."""
+    assert Parametres().contribution_etat is ContributionEtat.ENTIERE
+    employeur, origine, _ = _part_employeur_etat(simulateur, 2025)
+    assert employeur == pytest.approx(0.7828)
+    assert origine == "appelee"
+
+
+def test_la_part_retraite_seule_est_celle_de_la_cour_l_annee_mesuree(retraite_seule):
+    """44,1 % pour un civil, 51,2 % pour un militaire : le tableau n° 15.
+
+    C'est la seule année que la Cour des comptes a mesurée, et le compte y
+    reçoit exactement ses deux taux. Le militaire les reçoit du taux CIVIL,
+    qui est la série que le modèle lui crédite.
+    """
+    civil, origine, fiabilite = _part_employeur_etat(retraite_seule, 2025)
+    militaire, _, _ = _part_employeur_etat(retraite_seule, 2025, militaire=True)
+    assert civil == pytest.approx(0.441)
+    assert militaire == pytest.approx(0.512)
+    assert origine == "retraite_seule"
+    assert fiabilite is Fiabilite.HAUTE
+
+
+def test_les_autres_annees_recoivent_la_meme_proportion_supposee(retraite_seule):
+    """Hors de 2025, la proportion est une hypothèse, et le résultat le dit.
+
+    Le taux implicite d'avant 2006 comme le taux appelé ensuite, et la
+    projection au-delà de 2026 : 56 % de ce que l'État a versé pour un civil.
+    """
+    proportion = 0.441 / 0.7828
+    for annee, verse in ((2000, 0.492), (2006, 0.499), (2020, 0.7428),
+                         (2026, 0.8228), (2040, 0.8228)):
+        employeur, origine, fiabilite = _part_employeur_etat(retraite_seule, annee)
+        assert employeur == pytest.approx(verse * proportion), annee
+        assert origine == "retraite_seule", annee
+        assert fiabilite is Fiabilite.ESTIMEE, annee
+
+
+def test_la_part_retraite_seule_ne_touche_que_l_etat_et_la_part_patronale(
+        simulateur, retraite_seule):
+    """Le privé, la CNRACL, le scénario 1 et la part salariale ne bougent pas.
+
+    La CNRACL verse un taux de cotisation, pas un taux d'équilibre : la Cour ne
+    le décompose pas, et le réglage ne le touche pas.
+    """
+    commun = dict(annee_naissance=1975, sexe="F", age_debut=23, age_liquidation=64)
+    for affiliation in ("salarie_prive_non_cadre", "fonctionnaire_territorial_hospitalier"):
+        avant = simulateur.simuler(simulateur.carriere_simple(
+            affiliation=affiliation, **commun))
+        apres = retraite_seule.simuler(retraite_seule.carriere_simple(
+            affiliation=affiliation, **commun))
+        for cle in ("actuel", *(cle for cle, _, _ in SCENARIOS_NOTIONNELS)):
+            assert (getattr(apres, cle).pension_annuelle
+                    == pytest.approx(getattr(avant, cle).pension_annuelle)), (affiliation, cle)
+
+    avant = simulateur.simuler(simulateur.carriere_simple(
+        affiliation="fonctionnaire_etat", **commun))
+    apres = retraite_seule.simuler(retraite_seule.carriere_simple(
+        affiliation="fonctionnaire_etat", **commun))
+    for cle in ("actuel", "notionnel_retroactif", "notionnel_prospectif"):
+        assert (getattr(apres, cle).pension_annuelle
+                == pytest.approx(getattr(avant, cle).pension_annuelle)), cle
+    for cle in ("notionnel_retroactif_employeur", "notionnel_liberal"):
+        assert getattr(apres, cle).pension_annuelle < getattr(avant, cle).pension_annuelle, cle
+
+
+def test_avant_la_serie_de_l_etat_le_repli_ne_change_pas(simulateur, retraite_seule):
+    """Avant 1995, l'État n'a pas de série : le compte reçoit l'effort du privé.
+
+    Cette estimation-là n'est pas un taux d'équilibre, et le réglage n'a rien
+    à en retirer. Une carrière commencée en 1978 le montre : ses dix-sept
+    premières années sont les mêmes sous les deux conventions.
+    """
+    commun = dict(annee_naissance=1955, sexe="H", affiliation="fonctionnaire_etat",
+                  age_debut=23, age_liquidation=62)
+    avant = simulateur.simuler(simulateur.carriere_simple(**commun))
+    apres = retraite_seule.simuler(retraite_seule.carriere_simple(**commun))
+    origines = apres.contribution_employeur.annees_par_origine
+    assert set(origines) == {"repli", "retraite_seule"}
+    assert origines["repli"] == avant.contribution_employeur.annees_repli == 17
+    cotisations_avant = {c.annee: c for c in
+                         avant.notionnel_retroactif_employeur.compte.cotisations}
+    for cotisation in apres.notionnel_retroactif_employeur.compte.cotisations:
+        if cotisation.annee < 1995:
+            assert cotisation.cotisation == pytest.approx(
+                cotisations_avant[cotisation.annee].cotisation), cotisation.annee
 
 
 # -- scénario 6 : la proposition libérale --------------------------------------

@@ -19,15 +19,21 @@ Trois principes tiennent tout le reste :
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from functools import cached_property
 
 from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
-from ..config import Parametres, PartCotisation, SourceCotisations
+from ..config import ContributionEtat, Parametres, PartCotisation, SourceCotisations
 from ..donnees.chargement import Fiabilite
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation,
-                              ContributionsEmployeurPubliques, SalairesForfaitaires)
+                              ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
+                              SalairesForfaitaires)
 from .fusion import RegimeFusionne
 from .indexation import Indexation
+
+
+#: Le seul régime dont la contribution employeur est un taux d'équilibre.
+REGIME_ETAT = "fonction_publique_etat"
 
 
 @dataclass(frozen=True)
@@ -47,8 +53,10 @@ class CotisationAnnuelle:
     #: si l'année n'en compte aucun ;
     #: ``appelee`` ou ``implicite`` si la contribution réellement versée a été
     #: trouvée ; ``repli`` si elle ne l'a pas été et que le taux du statut pivot
-    #: privé lui a été substitué. Ne vaut que dans les scénarios 4 et 5 —
-    #: ailleurs, la question ne se pose pas.
+    #: privé lui a été substitué ; ``retraite_seule`` si c'est la part du taux
+    #: de l'État que la Cour des comptes rattache à la retraite de l'agent
+    #: (``ContributionEtat.RETRAITE_SEULE``). Ne vaut que dans les scénarios 4
+    #: et 5 — ailleurs, la question ne se pose pas.
     origine_part_employeur: str = ""
     #: Part de ``cotisation`` versée par l'employeur, en euros. Nulle sous
     #: ``SALARIALE``, qui ne porte rien de lui au compte, et pour un
@@ -130,6 +138,33 @@ class ConstructeurCompte:
         self.grilles = SalairesForfaitaires(parametres.racine_donnees)
 
     # -- taux ----------------------------------------------------------------
+
+    @cached_property
+    def statuts_militaires(self) -> frozenset[str]:
+        """Les statuts dont l'État paie la pension au titre des militaires."""
+        return frozenset(self.affiliations.categories_militaires)
+
+    @cached_property
+    def parts_retraite_seule(self) -> dict[bool, float]:
+        """Part du taux de l'État que la Cour rattache à la retraite de l'agent.
+
+        Indexée par « militaire ? ». C'est le taux « retraite seule » de l'année
+        que la Cour a mesurée, rapporté au taux que l'État a versé cette même
+        année : 44,1 / 78,28 pour un civil, 51,2 / 78,28 pour un militaire. Le
+        militaire est rapporté au taux CIVIL parce que c'est la série que le
+        modèle lui crédite — son propre taux appelé, 126,07 % en 2025, n'y est
+        pas — et c'est ce qui lui fait recevoir exactement les 51,2 % de la
+        Cour cette année-là.
+        """
+        table = PartRetraiteSeuleEtat(self.parametres.racine_donnees)
+        verse = self.contributions_publiques.taux(REGIME_ETAT, table.annee).taux
+        return {False: table.taux("civils") / verse,
+                True: table.taux("militaires") / verse}
+
+    @cached_property
+    def annee_retraite_seule(self) -> int:
+        """L'année que la Cour a mesurée — la seule où la part n'est pas supposée."""
+        return PartRetraiteSeuleEtat(self.parametres.racine_donnees).annee
 
     def taux_pivot_prive(self, annee: int) -> float:
         """Taux total salarié + employeur du statut pivot privé, cette année-là.
@@ -213,6 +248,7 @@ class ConstructeurCompte:
     def taux_effectif(self, regime: str, periode, annee: int,
                       sans_employeur: bool = False,
                       part_salariale_seule: bool = False,
+                      militaire: bool = False,
                       ) -> tuple[float, float, str, Fiabilite]:
         """Taux à porter au compte, sa part employeur, d'où elle vient et ce
         qu'elle vaut.
@@ -222,9 +258,11 @@ class ConstructeurCompte:
         régimes dont la fiche s'arrête à la retenue de l'agent : il dit si la
         contribution réellement versée par l'employeur public a été trouvée pour
         cette année-là (``appelee``, ``implicite``) ou s'il a fallu lui
-        substituer le taux du statut pivot privé (``repli``). Le quatrième
-        qualifie le résultat : la fiabilité de la série employeur quand elle a
-        servi, ``estimee`` quand il a fallu s'en passer.
+        substituer le taux du statut pivot privé (``repli``), ou si c'est la
+        part « retraite seule » du taux de l'État (``retraite_seule``). Le
+        quatrième qualifie le résultat : la fiabilité de la série employeur
+        quand elle a servi, ``estimee`` quand il a fallu s'en passer — ou la
+        supposer, hors de l'année que la Cour a mesurée.
         """
         part = self.parametres.part_cotisation
         taux = periode.taux_cotisation_retraite
@@ -258,6 +296,16 @@ class ConstructeurCompte:
             # La retenue de l'agent, plus ce que l'employeur public a versé.
             contribution = self.contributions_publiques.taux(regime, annee)
             if contribution is not None:
+                if (regime == REGIME_ETAT and self.parametres.contribution_etat
+                        is ContributionEtat.RETRAITE_SEULE):
+                    # Ce que l'État a versé paie aussi ce qui n'est pas la
+                    # retraite de l'agent : n'en porter que la part que la Cour
+                    # lui rattache. Mesurée pour une année, supposée ailleurs.
+                    employeur = contribution.taux * self.parts_retraite_seule[militaire]
+                    fiabilite = min(contribution.fiabilite, Fiabilite.HAUTE
+                                    if annee == self.annee_retraite_seule
+                                    else Fiabilite.ESTIMEE)
+                    return taux + employeur, employeur, "retraite_seule", fiabilite
                 return (taux + contribution.taux, contribution.taux,
                         contribution.nature, contribution.fiabilite)
             # Aucune série pour ce régime cette année-là : plutôt que de laisser
@@ -539,6 +587,7 @@ class ConstructeurCompte:
         sans_employeur = self.affiliations.sans_employeur(ligne.affiliation)
         part_salariale_seule = self.affiliations.part_salariale_seule(
             ligne.affiliation)
+        militaire = ligne.affiliation in self.statuts_militaires
         cotisation = 0.0
         assiette_totale = 0.0
         hors_repartition = 0.0
@@ -668,7 +717,8 @@ class ConstructeurCompte:
                     continue
 
                 taux, taux_employeur, origine, fiabilite_taux = self.taux_effectif(
-                    code, periode, annee, sans_employeur, part_salariale_seule
+                    code, periode, annee, sans_employeur, part_salariale_seule,
+                    militaire,
                 )
                 if origine:
                     origines.append(origine)

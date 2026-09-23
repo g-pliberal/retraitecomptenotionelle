@@ -12,12 +12,16 @@
  * partage.
  */
 
-import { SourceCotisations, PartCotisation } from "./config.js";
+import { ContributionEtat, SourceCotisations, PartCotisation } from "./config.js";
 import { salaireMoyenAnnuel } from "./carriere.js";
 import {
-  ClassesCotisation, ContributionsEmployeurPubliques, SalairesForfaitaires,
+  ClassesCotisation, ContributionsEmployeurPubliques, PartRetraiteSeuleEtat,
+  SalairesForfaitaires,
 } from "./regimes.js";
 import { Fiabilite } from "./serie.js";
+
+/** Le seul régime dont la contribution employeur est un taux d'équilibre. */
+const REGIME_ETAT = "fonction_publique_etat";
 
 /** Construit un compte notionnel à partir d'une carrière. */
 export class ConstructeurCompte {
@@ -31,9 +35,44 @@ export class ConstructeurCompte {
     this.contributionsPubliques = new ContributionsEmployeurPubliques(macro.paquet);
     this.classes = new ClassesCotisation(macro.paquet);
     this.grilles = new SalairesForfaitaires(macro.paquet);
+    this._statutsMilitaires = null;
+    this._partsRetraiteSeule = null;
   }
 
   // -- taux ------------------------------------------------------------------
+
+  /** Les statuts dont l'État paie la pension au titre des militaires. */
+  get statutsMilitaires() {
+    if (this._statutsMilitaires === null) {
+      this._statutsMilitaires = new Set(
+        Object.keys(this.affiliations.categoriesMilitaires));
+    }
+    return this._statutsMilitaires;
+  }
+
+  /**
+   * Part du taux de l'État que la Cour rattache à la retraite de l'agent,
+   * civil et militaire, et l'année qu'elle a mesurée.
+   *
+   * Le taux « retraite seule » de cette année-là, rapporté au taux que l'État
+   * a versé la même année : 44,1 / 78,28 pour un civil, 51,2 / 78,28 pour un
+   * militaire, rapporté au taux CIVIL parce que c'est la série que le modèle
+   * lui crédite.
+   *
+   * @returns {{civil: number, militaire: number, annee: number}}
+   */
+  get partsRetraiteSeule() {
+    if (this._partsRetraiteSeule === null) {
+      const table = new PartRetraiteSeuleEtat(this.macro.paquet);
+      const verse = this.contributionsPubliques.taux(REGIME_ETAT, table.annee)[0];
+      this._partsRetraiteSeule = {
+        civil: table.taux("civils") / verse,
+        militaire: table.taux("militaires") / verse,
+        annee: table.annee,
+      };
+    }
+    return this._partsRetraiteSeule;
+  }
 
   /**
    * Taux total salarié + employeur du statut pivot privé, cette année-là.
@@ -106,7 +145,7 @@ export class ConstructeurCompte {
    *   fiabilité.
    */
   tauxEffectif(regime, periode, annee, sansEmployeur = false,
-    partSalarialeSeule = false) {
+    partSalarialeSeule = false, militaire = false) {
     const part = this.parametres.part_cotisation;
     const taux = periode.taux_cotisation_retraite;
 
@@ -136,6 +175,18 @@ export class ConstructeurCompte {
     if (part === PartCotisation.TOTALE) {
       const contribution = this.contributionsPubliques.taux(regime, annee);
       if (contribution !== null) {
+        if (regime === REGIME_ETAT
+            && this.parametres.contribution_etat === ContributionEtat.RETRAITE_SEULE) {
+          // Ce que l'État a versé paie aussi ce qui n'est pas la retraite de
+          // l'agent : n'en porter que la part que la Cour lui rattache.
+          // Mesurée pour une année, supposée ailleurs.
+          const parts = this.partsRetraiteSeule;
+          const employeur = contribution[0]
+            * (militaire ? parts.militaire : parts.civil);
+          const fiabilite = Math.min(contribution[2], annee === parts.annee
+            ? Fiabilite.HAUTE : Fiabilite.ESTIMEE);
+          return [taux + employeur, employeur, "retraite_seule", fiabilite];
+        }
         return [taux + contribution[0], contribution[0], contribution[1], contribution[2]];
       }
       // Aucune série : on retombe sur l'effort total d'un salarié du privé de
@@ -425,6 +476,7 @@ export class ConstructeurCompte {
     );
     const sansEmployeur = this.affiliations.sansEmployeur(ligne.affiliation);
     const partSalarialeSeule = this.affiliations.partSalarialeSeule(ligne.affiliation);
+    const militaire = this.statutsMilitaires.has(ligne.affiliation);
     let cotisation = 0.0;
     let assietteTotale = 0.0;
     let horsRepartition = 0.0;
@@ -551,7 +603,7 @@ export class ConstructeurCompte {
         }
 
         const [taux, tauxEmployeur, origine, fiabiliteTaux] = this.tauxEffectif(
-          code, periode, annee, sansEmployeur, partSalarialeSeule,
+          code, periode, annee, sansEmployeur, partSalarialeSeule, militaire,
         );
         if (origine) {
           origines.push(origine);

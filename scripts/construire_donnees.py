@@ -879,6 +879,17 @@ def _contribution_employeur_public() -> dict:
     }
 
 
+def _contribution_etat_retraite_seule() -> dict:
+    """Le tableau de la Cour qui décompose la contribution de l'État, poste par poste."""
+    from retraite_notionnelle.donnees.regimes import PartRetraiteSeuleEtat
+
+    table = PartRetraiteSeuleEtat(DONNEES)
+    return {
+        "annee": table.annee,
+        "postes": [[p.population, p.poste, p.montant, p.taux] for p in table.postes],
+    }
+
+
 def _assiette_minimale_independants() -> list:
     """Assiette minimale du régime de base des indépendants, règle par règle."""
     from retraite_notionnelle.donnees.chargement import charger_assiettes_minimales
@@ -1508,6 +1519,7 @@ def construire(bilan: bytes) -> bytes:
             "profil_salaire_statut_public.csv", "statut"),
         "profil_salaire_secteur": _profil_salaire_secteur(),
         "contribution_employeur_public": _contribution_employeur_public(),
+        "contribution_etat_retraite_seule": _contribution_etat_retraite_seule(),
         "minimum_contributif": _minimum_contributif(),
         "minimum_garanti": _minimum_garanti(),
         "minimum_vieillesse": _minimum_vieillesse(),

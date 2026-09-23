@@ -59,16 +59,23 @@ def _scenario(nom: str) -> str:
 
 
 @lru_cache(maxsize=None)
-def _parametres(indexation: str = "", lissage: str = ""):
-    """Les paramètres par défaut, sous la règle et le lissage demandés."""
+def _parametres(indexation: str = "", lissage: str = "", contribution_etat: str = ""):
+    """Les paramètres par défaut, sous la règle et le lissage demandés.
+
+    ``contribution_etat=retraite_seule`` : le taux de l'État ramené à sa part
+    « retraite seule », le réglage que la prose mesure sans qu'il soit le défaut.
+    """
     from retraite_notionnelle import Parametres
-    from retraite_notionnelle.config import ModeIndexation
+    from retraite_notionnelle.config import ContributionEtat, ModeIndexation
 
     parametres = Parametres()
     if indexation:
         parametres = replace(parametres, mode_indexation=ModeIndexation(indexation))
     if lissage:
         parametres = replace(parametres, lissage_indexation=int(lissage))
+    if contribution_etat:
+        parametres = replace(parametres,
+                             contribution_etat=ContributionEtat(contribution_etat))
     return parametres
 
 
@@ -114,8 +121,9 @@ EXEMPLES = {
 @lru_cache(maxsize=None)
 def _comparaison(generation: int, indexation: str, lissage: str,
                  affiliation: str, sexe: str, debut: int, depart: int,
-                 primes: float, profil: str, niveau: float):
-    simulateur = _simulateur(_parametres(indexation, lissage))
+                 primes: float, profil: str, niveau: float,
+                 contribution_etat: str = ""):
+    simulateur = _simulateur(_parametres(indexation, lissage, contribution_etat))
     options = {"part_primes": primes} if primes else {}
     if niveau:
         options["niveau_salaire"] = niveau
@@ -136,7 +144,8 @@ def _comparaison_de(reglages: dict[str, str]):
                         voulu.get("lissage", ""), voulu["affiliation"],
                         voulu["sexe"], int(voulu["debut"]), int(voulu["depart"]),
                         float(voulu.get("primes", 0) or 0), voulu.get("profil", ""),
-                        float(voulu.get("niveau", 0) or 0))
+                        float(voulu.get("niveau", 0) or 0),
+                        voulu.get("contribution_etat", ""))
 
 
 def ecart(**reglages: str) -> float:
@@ -211,6 +220,22 @@ def part_employeur(**reglages: str) -> float:
     return _comparaison_de(reglages).contribution_employeur.part * 100
 
 
+def retraite_seule(**reglages: str) -> float:
+    """Sous ``contribution_etat=retraite_seule``, ce que l'État porte au compte, en %.
+
+    Sans ``annee`` : la proportion du taux versé, la même chaque année. Avec :
+    le taux porté au compte cette année-là. ``militaire=1`` pour un militaire.
+    """
+    constructeur = _simulateur(
+        _parametres(contribution_etat="retraite_seule")).constructeur_employeur
+    part = constructeur.parts_retraite_seule[reglages.get("militaire") == "1"]
+    if "annee" not in reglages:
+        return part * 100
+    verse = constructeur.contributions_publiques.taux(
+        "fonction_publique_etat", int(reglages["annee"]))
+    return verse.taux * part * 100
+
+
 def cumul_indexation(**reglages: str) -> float:
     """Ce qu'une règle d'indexation fait d'un euro, de ``de`` à ``a``.
 
@@ -245,13 +270,17 @@ def fois_prix(**reglages: str) -> float:
 
 
 @lru_cache(maxsize=None)
-def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: str = ""):
+def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: str = "",
+          contribution_etat: str = ""):
     """Le coût agrégé, sous les règles par défaut — celui de la page Coût.
 
     ``age_legal=aucun`` retire l'âge légal de la proposition : elle part alors
     aux âges du scénario 4, et la prose peut dire ce que la mesure déplace.
     ``emploi_reportes=0.5`` règle la part des reportés en emploi
     (``Parametres.part_reportes_en_emploi``), un par défaut.
+    ``contribution_etat=retraite_seule`` ramène le taux de l'État à sa part
+    « retraite seule » : vingt secondes de plus, et seulement pour la prose
+    qui le cite.
     """
     from retraite_notionnelle import cout as C
     from retraite_notionnelle.donnees.assiette import AssietteActivite
@@ -259,7 +288,7 @@ def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: 
     from retraite_notionnelle.donnees.equilibre import ComptesRetraite
     from retraite_notionnelle.donnees.population import Population
 
-    parametres = _parametres()
+    parametres = _parametres(contribution_etat=contribution_etat)
     if age_legal == "aucun":
         parametres = replace(parametres, age_legal_liberal=None)
     elif age_legal:
@@ -278,7 +307,7 @@ def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: 
 
 def _cout_de(reglages: dict[str, str]):
     return _cout(reglages.get("ponderation", "effectifs"), reglages.get("age_legal", ""),
-                 reglages.get("emploi_reportes", ""))
+                 reglages.get("emploi_reportes", ""), reglages.get("contribution_etat", ""))
 
 
 def cumul_passe(**reglages: str) -> float:
@@ -1555,6 +1584,7 @@ MESURES = {
     "pension": pension,
     "aujourd_hui": aujourd_hui,
     "part_employeur": part_employeur,
+    "retraite_seule": retraite_seule,
     "part_salariale_versee": part_salariale_versee,
     "cumul_indexation": cumul_indexation,
     "conserve": conserve,

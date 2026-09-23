@@ -1298,6 +1298,18 @@ patronale du public empruntée au privé — comme contrefactuel : elle répond 
 légitime mais différente, et sous elle un fonctionnaire et un salarié de même
 rémunération retrouvent exactement la même pension.
 
+Un second paramètre, `contribution_etat`, ne joue que sous `totale` et que pour
+l'État. Son taux n'est pas une cotisation mais un taux d'équilibre : il paie
+toutes les pensions de l'année, et `entiere` — le défaut — le porte tel quel au
+compte. `retraite_seule` n'en porte que la part que la Cour des comptes
+rattache à la retraite de l'agent lui-même (tableau n° 15 de son rapport du
+22 septembre 2026) : <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=civils&poste=retraite_stricto_sensu)-->44,1<!--/--> % pour un civil et <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> % pour un militaire en 2025, sur
+les <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2025&regime=fonction_publique_etat)-->78,28<!--/--> % versés pour un civil. Les autres années reçoivent la même
+proportion du taux de l'année, qui est une hypothèse — la fiabilité retombe à
+`estimee` —, et le militaire la reçoit du taux civil, parce que c'est la série
+que le modèle lui crédite. `ConstructeurCompte.parts_retraite_seule` la calcule,
+`legislation/contribution_etat_retraite_seule.csv` porte le tableau.
+
 #### Après la bascule, le régime unique tranche
 
 À compter de la bascule il n'y a plus ni fonction publique ni régimes spéciaux :
