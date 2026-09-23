@@ -199,6 +199,22 @@ quatre de ses leçons valent pour toutes les autres.
   régime spécial dont l'âge est « fixé pour l'entrée en jouissance » mérite
   la même question : à quel âge le DROIT s'acquiert-il ?
 
+Le lot des professions juridiques, le 23 septembre 2026, en a ajouté deux.
+
+- **Une section libérale écrit ses règles dans des arrêtés, pas dans un
+  code.** Les âges, la décote et les majorations de la CAVOM et de la CPRN ne
+  sont dans aucun article de l'index LEGI : ils sont dans les statuts, puis
+  les règlements, que des arrêtés approuvent et que le Journal officiel
+  publie en annexe. `dila_cherche.py jorf 'Arrêté AND statuts AND
+  notaires'` les trouve tous, du premier au dernier, et c'est la seule
+  façon de dater une règle que la page de la caisse ne décrit qu'au présent.
+- **Une fiche qui suit le régime général par défaut se trompe en silence.**
+  Trois fiches lisaient les âges des tables communes et laissaient la durée
+  annuler leur décote, parce que c'est ce que font les drapeaux par défaut.
+  Pour chaque complémentaire de section, poser deux questions : quels âges
+  son règlement écrit-il, et la durée d'assurance y annule-t-elle la
+  minoration ?
+
 ## Où va ce qu'on en tire
 
 Rien ne reste dans un fichier de notes : chaque trouvaille a sa destination,

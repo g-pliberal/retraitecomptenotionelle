@@ -12752,6 +12752,39 @@ tenu par trois tests (`test_simulateur.py`, `test_donnees.py`,
 `test_remuneration.py`). Détail dans `docs/limites.md`, « Les artistes-auteurs
 n'ont pas d'employeur ».
 
+**Passe du 23 septembre 2026 : les professions juridiques (CNBF, CAVOM,
+CPRN).** Seize adresses, réservées par un commit `en_cours` poussé seul, puis
+les statuts et règlements des deux sections lus au Journal officiel, le décret
+n° 2026-418 et les articles du code propres aux avocats. Corrigé au scénario
+1, dans les deux moteurs : les âges propres de la CAVOM et de la CPRN de 2014
+à 2023 (champ `age_table`, `legislation/ages_regimes.csv`) ; leurs décotes par
+l'âge seul, que la durée n'annule plus (`abattement_points: cavom`,
+`decote_annulee_par_la_duree: false`) ; le plafond de la CAVOM de quatre à
+huit PASS de 2016 à 2020 et son assiette minimale ; la surcote des avocats à
+1,25 % depuis le 1er juillet 2010 (barème `cnbf`) ; la majoration de 10 %
+pour trois enfants de la CNAVPL, de la CNBF et de sa complémentaire, de la
+CPRN. Témoins : officier ministériel -7 % et jusqu'à +65 % avant 1950, faute
+de rendement jusque-là ; notaire -6 à -9 % ; avocat +1 à +2 %. Récit dans
+`docs/limites.md`, « Les sections juridiques écrivaient leurs règles » ; tests
+dans `tests/test_sections_juridiques.py`.
+
+**Ce que ce lot laisse ouvert, par ordre de poids.** *La section B de la
+CPRN*, quatre dixièmes du complémentaire d'un notaire : la règle des bornes
+est écrite (un huitième des notaires par classe, décret n° 2026-418), la
+grille des montants publiée (k fois la classe 1 du décret annuel, 10 k
+points ; plaquette du congrès 2025), les valeurs de point dans les rapports
+d'activité de 2016 à 2025 ; il reste à estimer les huit bornes sur la loi des
+revenus que la section C calibre, et à décider de la classe 1 d'office
+d'avant 2014. *La série de la retraite forfaitaire des avocats*, 2017-2026 dans
+les barèmes, à porter comme une série par année — le modèle la ramène de 2026
+par les prix, 5 % de moins pour une liquidation de 2017 —, avec celle de la
+cotisation forfaitaire par ancienneté. *Le rendement de la section C de la
+CPRN* de 2016 à 2023, que les rapports d'activité donnent année par année et
+que `rendements_points.csv` tient à 4,12 % sur douze ans. *La valeur de
+service 2026 de la CNAVPL*, 0,6599 €, écrite par la CAVOM et la CPRN, à
+reprendre du recueil statistique à sa parution. *La majoration de durée
+d'assurance pour enfants* et la surcote parentale des libéraux et des avocats.
+
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`
 (la forme), puis, selon ce qu'on trouve : `tests/temoins/exemples_officiels.yaml`,

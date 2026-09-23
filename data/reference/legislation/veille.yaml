@@ -3565,3 +3565,35 @@ journal:
       de la Sécurité sociale des artistes-auteurs la disent un jour ; la
       fiche de paie propre aux auteurs, précompte et contribution du
       diffuseur, qui n'existe pas.
+
+  - date: "2026-09-23"
+    session: "action 89, professions juridiques (CNBF, CAVOM, CPRN)"
+    consulte: >-
+      `scripts/veille_droit.py` ; index LEGI et JORF mis à jour de l'incrément
+      du 23 septembre : L. 161-17-2 et L. 161-17-3 sans version postérieure au
+      31 décembre 2025. Décret n° 2026-418 (articles 2 et 22) ; décret
+      n° 79-265, article 2, dans ses sept versions ; décret n° 2015-1875 ;
+      arrêtés du 16 décembre 2013, du 31 mai 2017, du 29 novembre 2023, du
+      11 décembre 2023, du 12 décembre 2024 et du 10 juillet 2026 (CAVOM,
+      CPRN) ; L. 643-1-1, L. 653-2, L. 653-3, R. 653-3, R. 723-39 ; décrets
+      annuels des cotisations des sections, de 2010 à 2025. Côté caisses : les
+      pages, guides, statuts et tableaux de paramètres de la CAVOM et de la
+      CPRN, les onze barèmes et onze fiches pratiques de la CNBF, huit
+      rapports d'activité de la CPRN.
+    trouve: >-
+      Cinq règles du scénario 1 que les fiches ne suivaient pas, toutes lues
+      au texte et chez la caisse : les âges propres de la CAVOM et ceux de la
+      CPRN de 2014 à 2023 ; leurs décotes par l'âge seul ; le plafond et
+      l'assiette minimale de la CAVOM de 2016 à 2020 ; la surcote des avocats
+      à 1,25 % depuis juillet 2010 ; la majoration de 10 % pour trois enfants
+      de la CNAVPL, de la CNBF et des complémentaires de la CNBF et de la
+      CPRN. Lignes `cavom_ages_minoration`, `cavom_assiette_2016`,
+      `cprn_ages_decote_enfants`, `cnbf_surcote` et
+      `majoration_enfants_liberaux_avocats`.
+    reste: >-
+      La section B de la CPRN, dont la règle des bornes et la grille sont
+      désormais connues ; la série de la retraite forfaitaire des avocats ;
+      le rendement de la section C de 2016 à 2023 ; la valeur de service 2026
+      de la CNAVPL ; la majoration de durée d'assurance pour enfants et la
+      surcote parentale des libéraux et des avocats ; l'arrondi à l'année de
+      la minoration de la CAVOM, que le texte ne tranche pas.

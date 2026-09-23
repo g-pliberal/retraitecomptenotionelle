@@ -6230,6 +6230,61 @@ chômage, l'Agirc-Arrco et un employeur payant une quarantaine de points.
 Mieux vaut rien qu'un net faux ; un net saisi est lu comme un brut, et le site
 le dit sous le formulaire.
 
+### Les sections juridiques écrivaient leurs règles, et les fiches ne les lisaient pas
+
+La passe du 23 septembre 2026 sur les professions juridiques (action 89) a
+dépouillé les seize adresses de la CNBF, de la CAVOM et de la CPRN, puis lu au
+Journal officiel les textes qu'elles appliquent : les statuts et les
+règlements des deux sections, approuvés par arrêté — le dernier le 10 juillet
+2026 —, le décret n° 2026-418 qui les a réécrits, et les articles du code de
+la sécurité sociale propres aux avocats. Les trois fiches suivaient le régime
+général là où les textes ne le suivent pas.
+
+**Les âges n'étaient pas les bons.** La complémentaire de la CAVOM s'ouvre à
+60 ans et se sert à taux plein à 65 pour les générations nées avant 1956,
+puis monte de six mois par génération jusqu'à 62 et 67 ans ; celle de la
+CPRN, de 2014 à 2023, ouvrait à l'âge légal « différé de vingt-quatre mois »
+et servait le taux plein cinq ans plus tard — 64 et 69 ans pour les
+générations nées depuis 1955. Les fiches lisaient les tables du régime
+général. Une table par régime (`legislation/ages_regimes.csv`, champ
+`age_table`) les porte maintenant, dans les deux moteurs.
+
+**La durée effaçait des décotes que les textes ne lui laissent pas
+effacer.** Les deux complémentaires ne connaissent que l'âge : 5 % par année
+manquante « non susceptible de fractionnement » à la CAVOM, 1,25 % par
+trimestre « séparant l'âge de l'affilié […] de l'âge du taux plein » à la
+CPRN. Les fiches leur opposaient la décote du régime de base, qu'une carrière
+complète annule : un officier ministériel ou un notaire parti à l'âge légal
+avec sa durée ne perdait rien de sa complémentaire, là où les caisses lui en
+retirent 15 %. Les témoins des deux statuts perdent de 6 à 9 % au scénario 1.
+Le texte de la CAVOM ne dit pas si l'année entamée compte ; le modèle la
+compte, comme l'IRCEC l'écrit pour la même règle.
+
+**Trois autres règles manquaient.** La surcote des avocats passe de 0,75 % à
+1,25 % par trimestre au 1er juillet 2010 (R. 653-3), et la fiche servait
+0,75 % à tous. La loi du 14 avril 2023 étend la majoration de 10 % pour trois
+enfants au régime de base des libéraux et des avocats, et les règlements de
+la CPRN et de la complémentaire des avocats l'ont suivie en 2024 : aucune
+fiche ne la portait. Le plafond de la CAVOM est monté de quatre à huit
+plafonds de 2016 à 2020, avec une assiette minimale ; la fiche portait huit
+plafonds dès 2016, et ses officiers ministériels partis avant 2016 ne
+recevaient aucune complémentaire, faute de rendement.
+
+**Ce qui reste, et où il est écrit.** La section B de la CPRN, quatre
+dixièmes du complémentaire d'un notaire : le décret n° 2026-418 en donne
+désormais la règle des bornes — un huitième des notaires en activité par
+classe — et la caisse la grille des montants, k fois la classe 1 pour 10 k
+points, avec ses valeurs de point dans ses rapports d'activité ; la fiche dit
+comment l'estimer. La retraite forfaitaire des avocats, que les barèmes
+donnent de 2017 à 2026 et que le modèle ramène de 2026 par les prix — 5 % de
+moins pour une liquidation de 2017. Les classes de la CAVOM d'avant 2016,
+dont les bornes ne sont dans aucun texte de l'index. La majoration de durée
+d'assurance pour enfants et la surcote parentale des libéraux et des
+avocats. Les lignes `cavom_ages_minoration`, `cavom_assiette_2016`,
+`cprn_ages_decote_enfants`, `cnbf_surcote` et
+`majoration_enfants_liberaux_avocats` du registre de veille en tiennent le
+détail.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
