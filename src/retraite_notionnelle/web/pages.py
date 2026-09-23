@@ -12802,15 +12802,18 @@ contributifs que la carrière suffit à déterminer :</p>
   taux plein, proratisé par la durée d'assurance acquise dans le régime, et sa
   majoration au titre des périodes cotisées proratisée par la seule durée
   cotisée, puis écrêté quand le total des pensions personnelles dépasse le
-  plafond de l'article L. 173-2 ;</li>
+  plafond de l'article L. 173-2. La surcote se calcule sur la pension d'avant
+  le minimum et s'y ajoute, comme le veut l'article D. 351-2-1 depuis
+  avril 2009 ;</li>
   <li><strong>le minimum garanti</strong> de la fonction publique, barème en
   escalier sur la durée de services — 57,5 % de la référence à quinze ans, 95 %
   à trente, la totalité à quarante ;</li>
   <li><strong>la surcote parentale</strong>, créée par la loi du 14 avril 2023 :
-  1,25 % par trimestre acquis entre 63 ans et l'âge légal, quatre au plus, à qui
-  justifie de la durée requise à 63 ans et détient un trimestre de majoration
-  pour enfants. C'est la contrepartie du recul de l'âge légal, et elle se cumule
-  avec la surcote ordinaire, qui ne compte qu'au-delà de cet âge ;</li>
+  1,25 % par trimestre cotisé dans l'année qui précède l'âge légal au-delà de la
+  durée requise, quatre au plus, dès que cet âge atteint 63 ans, à qui détient
+  un trimestre de majoration pour enfants. C'est la contrepartie du recul de
+  l'âge légal, et elle se cumule avec la surcote ordinaire, qui ne compte
+  qu'au-delà de cet âge ;</li>
   <li><strong>la majoration pour enfants</strong>, calculée sur le montant
   déjà relevé par les minima et plafonnée en euros à la complémentaire : 10 %
   dès trois enfants, 5 % de plus par enfant au-delà dans la fonction publique,

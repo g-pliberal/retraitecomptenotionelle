@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 055<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 592<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 171<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->33 774<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14418,3 +14418,40 @@ origine.
 (`.envoi`, `.memoire`, le trait d'attente), `moteur/style.css` et
 `tests/temoins/pages.json` régénérés, `tests/test_formulaire.py` et
 `tests/js/bascules.test.js` (nouveaux), `tests/test_web.py` (une assertion).
+
+### 111. L'audit du 23 septembre 2026 : formules, chiffres, tests et consignes — `en cours`
+
+**Demande.** « Est-ce qu'on aurait pu faire des erreurs de formule
+mathématique ? Des erreurs de chiffres ? Est-ce que des tests vérifient de
+mauvaises choses ? Est-ce qu'il y a des consignes qui sont périmées ? », puis
+« Corrige tout ». L'audit a rendu six lots ; ils sont menés dans l'ordre de ce
+qu'ils déplacent.
+
+**Lot 1, la mortalité — fait.** La mémoire des calibrations n'était indexée
+que sur l'année et le sexe : les 112 lois de 2025 à 2080 étaient restées
+calées sur les anciennes cibles saisies à la main, jusqu'à 1,1 an d'espérance
+à 65 ans de trop. Chaque loi porte désormais l'empreinte de ses entrées, et
+deux tests lisent la table que le modèle utilise, non une table recalculée.
+
+**Lot 2, le scénario 1 — en partie.** Cinq règles écartées du texte, lues
+dans l'index LEGI et chez la caisse, corrigées dans les deux moteurs, inscrites
+au registre de veille et tenues par un test : le pourcentage maximum de la
+pension civile, que les bonifications portent à 80 % (une mère fonctionnaire
+de trois enfants, +6,5 %) ; la surcote qui s'ajoute au minimum contributif au
+lieu de le multiplier (les deux exemples de la circulaire Cnav 2018-04) ; les
+limites du chômage non indemnisé de R. 351-12, datées par la période (huit ans
+validaient trente-deux trimestres, quatre au plus pour des années d'avant
+2011) ; la fenêtre de la surcote parentale, qui est l'année précédant l'âge
+légal (quatre trimestres aux générations 1965 à 1968, qui en recevaient zéro
+à trois) ; les valeurs du point Ircantec de 2022 à 2026, versées par
+`verifier_donnees.py` et non saisies dans le fichier. Deux tests mesuraient
+autre chose que leur titre : la fenêtre parentale figée à trois trimestres
+pour 1968, et la majoration de la fonction publique rapportée au total des
+pensions, RAFP compris. Restent au lot 2 : la majoration pour enfants de
+l'Agirc-Arrco par période d'acquisition et celle des régimes spéciaux par
+enfant au-delà du troisième ; la date d'effet des durées de la loi de
+financement pour 2026 ; le minimum garanti de 2023 et le plafond du minimum
+contributif de 2024.
+
+**Restent** les lots 3 (mécanique notionnelle et coût), 4 (chiffres du site
+et données), 5 (tests mal orientés) et 6 (consignes périmées).

@@ -535,6 +535,7 @@ def _regimes() -> list[dict]:
                         p.duree_proratisation_par_generation,
                     "age_ouverture_par_generation": p.age_ouverture_par_generation,
                     "taux_plein": p.taux_plein,
+                    "taux_maximum_bonifie": p.taux_maximum_bonifie,
                     "salaire_reference": p.salaire_reference,
                     "assiette": p.assiette,
                     "taux_cotisation_retraite": p.taux_cotisation_retraite,

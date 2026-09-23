@@ -14,14 +14,22 @@
 # accomplis APRÈS l'âge légal. La surcote parentale comble ce trou, mais pour
 # les seuls parents — d'où son nom. Trois conditions cumulatives :
 #
-#   * avoir 63 ans ;
-#   * justifier de la durée d'assurance requise pour le taux plein À CET ÂGE ;
+#   * un âge légal d'au moins 63 ans — c'est la colonne `age_ouverture` ;
+#   * justifier de la durée d'assurance requise pour le taux plein un an
+#     AVANT l'âge légal ;
 #   * détenir au moins UN trimestre de majoration de durée d'assurance au titre
 #     des enfants — maternité, adoption, éducation, enfant handicapé, ou congé
 #     parental.
 #
-# Elle majore alors la pension de 1,25 % par trimestre acquis entre 63 ans et
-# l'âge légal, dans la limite de quatre trimestres, soit 5 %. Père comme mère
+# Elle majore alors la pension de 1,25 % par trimestre acquis dans l'année qui
+# précède l'âge légal — « accomplie l'année précédant l'âge mentionné à
+# l'article L. 161-17-2, lorsque celui-ci est égal ou supérieur à
+# soixante-trois ans » (version de 2023) ; l'âge de la surcote « est abaissé
+# d'un an » (version du 28 février 2025, LEGIARTI000051289776) —, dans la
+# limite de quatre trimestres, soit 5 %. Jusqu'au 23 septembre 2026, le modèle
+# faisait courir la fenêtre de 63 ans à l'âge légal : exact pour un âge légal
+# de 64 ans, faux depuis que la suspension de 2026 le fixe entre 62 ans et
+# 9 mois et 63 ans et 9 mois pour les générations 1964 à 1968. Père comme mère
 # peuvent en bénéficier, dès lors qu'ils détiennent le trimestre exigé — c'est
 # ce trimestre-là, et non le sexe, qui ouvre le droit.
 #
@@ -31,11 +39,12 @@
 # pensions prenant effet à compter du 1er septembre 2023 : le modèle ne
 # connaissant que l'année, la ligne s'ouvre en 2023.
 #
-# CE QUE LE MODÈLE APPROCHE. Il lit la condition de durée sur la durée
-# d'assurance tous régimes acquise avant l'année des 63 ans, trimestres pour
-# enfants compris, et compte les trimestres COTISÉS des années où l'assuré a
-# 63 ans révolus et n'a pas encore l'âge légal. C'est la règle, à la
-# granularité de l'année près : le modèle ne date pas les trimestres au jour.
+# CE QUE LE MODÈLE APPROCHE. Il compte, dans l'année qui précède l'âge
+# légal, datée au mois, les trimestres COTISÉS accomplis « au delà de la
+# limite » de durée : tous si la durée requise est atteinte à l'ouverture de
+# la fenêtre, trimestres pour enfants compris, ceux d'après la limite si elle
+# l'est en cours de fenêtre. Le modèle ne date pas les trimestres au jour : il
+# répartit ceux d'une année sur ses mois, et arrondit au trimestre inférieur.
 #
 # Quels régimes la servent : leur fiche le dit, par l'avantage
 # `surcote_parentale`. La loi vise les régimes de base — régime général,

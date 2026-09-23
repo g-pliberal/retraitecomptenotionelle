@@ -1822,6 +1822,12 @@ export class ScenarioActuel {
     const majorationEnfants = avantagesNonContributifs
       ? this.majorationPourEnfants(carriere, trimestresParRegime, anneeLiquidation)
       : null;
+    // Les BONIFICATIONS, à part des services : seules elles peuvent porter le
+    // taux au-delà du maximum (`taux_maximum_bonifie`).
+    const bonificationsParRegime = new Map();
+    if (majorationEnfants !== null) {
+      bonificationsParRegime.set(majorationEnfants.regime, majorationEnfants.services);
+    }
     if (majorationEnfants !== null) {
       // LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE, et la majoration se
       // range dans les deux : tout ce qui est accordé joue sur la durée
@@ -2345,7 +2351,19 @@ export class ScenarioActuel {
         this.catalogue.obtenir(code).famille === "fonction_publique"
           ? servicesParRegime : trimestresParRegime
       );
-      let trimestresRegime = Math.min(sommeMembres(acquisParRegime), proratisation);
+      // Le plafond est la durée requise, que les BONIFICATIONS seules peuvent
+      // dépasser, dans la limite d'un taux : « Le pourcentage maximum fixé à
+      // l'article L 13 peut-être augmenté de cinq points du chef des
+      // bonifications » (L. 12 CPCMR).
+      const bonifications = (periode.taux_maximum_bonifie && periode.taux_plein)
+        ? sommeMembres(bonificationsParRegime) : 0;
+      let trimestresRegime = Math.min(
+        sommeMembres(acquisParRegime), proratisation + bonifications,
+      );
+      // Rapport des trimestres liquidables à la durée requise, borné au taux
+      // maximum — 80/75 avec des bonifications, un sans elles.
+      const rapportMaximum = bonifications
+        ? periode.taux_maximum_bonifie / periode.taux_plein : 1.0;
       if (periode.duree_maximum_avant_age !== null
           && periode.duree_maximum_avant_age !== undefined
           && periode.duree_maximum_avant_age_trimestres !== null
@@ -2426,6 +2444,7 @@ export class ScenarioActuel {
       }
 
       tauxRetenu = Math.max(tauxRetenu, taux);
+      const prorata = Math.min(trimestresRegime / proratisation, rapportMaximum);
       if (periode.avantages_non_contributifs.includes("minimum_contributif")) {
         // Le minimum ne relève que les régimes de base qui le portent, au
         // prorata de la durée acquise DANS CE régime — durée d'assurance pour
@@ -2438,7 +2457,7 @@ export class ScenarioActuel {
         );
         eligiblesMinimum.push({
           indice: indicePension,
-          prorataAssurance: trimestresRegime / proratisation,
+          prorataAssurance: prorata,
           prorataCotise: cotisesRegime / proratisation,
           tauxPlein: trimestres >= requis
             || ageLiquidation >= this.ageTauxPlein(periode, carriere),
@@ -2460,7 +2479,7 @@ export class ScenarioActuel {
       }
       pensions.push({
         regime: code,
-        montant: salaireReference * taux * (trimestresRegime / proratisation),
+        montant: salaireReference * taux * prorata,
         type_calcul: "annuites",
         // Salaire de référence au centime et taux au millième : à l'euro et au
         // centième, refaire « SR × taux × durée » ratait le montant de 1,20 €
@@ -2468,6 +2487,9 @@ export class ScenarioActuel {
         detail: `${forfaitaire ? "forfait" : "SR"} `
           + `${formatFixe(salaireReference, 2, true)} € `
           + `× taux ${formatPourcentage(taux, 3)} × ${trimestresRegime}/${proratisation}`
+          + (trimestresRegime / proratisation > rapportMaximum
+            ? `, taux maximum ${formatPourcentage(periode.taux_maximum_bonifie, 0)} atteint`
+            : "")
           // La succession est DITE : sans elle, le lecteur cherche la ligne
           // de la CANCAVA et ne la trouve pas.
           + (membres.length === 1 ? "" : `, ${membres.length} caisses liquidées ensemble `
@@ -2569,16 +2591,21 @@ export class ScenarioActuel {
           continue;
         }
         const pension = pensions[eligible.indice];
-        // Le minimum se compare à la pension AVANT surcote : le droit porte la
-        // pension au plancher, puis applique la surcote au montant relevé.
+        // Le minimum se compare à la pension AVANT surcote, et la surcote,
+        // calculée sur cette pension nue, s'ajoute au minimum (D. 351-2-1) :
+        // voir `complementMinimum`, qui porte aussi la règle d'avant 2009.
         const nue = pension.montant / eligible.surcote;
         let plancher = montantBase * Math.min(1.0, eligible.prorataAssurance);
         if (majorationOuverte) {
           plancher += (montantMajore - montantBase)
             * Math.min(1.0, eligible.prorataCotise);
         }
-        if (nue > 0 && nue < plancher) {
-          complements.set(eligible.indice, (plancher - nue) * eligible.surcote);
+        const complement = complementMinimum(
+          nue, plancher, eligible.surcote,
+          [anneeLiquidation, carriere.moisLiquidation],
+        );
+        if (complement > 0) {
+          complements.set(eligible.indice, complement);
         }
       }
       let releve = [...complements.values()].reduce((a, b) => a + b, 0.0);
@@ -2677,13 +2704,13 @@ export class ScenarioActuel {
     // Surcote parentale (L. 351-1-2-1) : après les minima, avant la majoration
     // pour enfants qui se calcule sur la pension surcotée. Elle ne compte pas
     // les mêmes trimestres que la surcote ordinaire — celle-ci au-delà de l'âge
-    // légal, celle-là entre 63 ans et l'âge légal — et les deux se cumulent.
+    // légal, celle-là dans l'année qui le précède — et les deux se cumulent.
     const parametresParentale = (avantagesNonContributifs
       && majorationEnfants !== null && !ignorerPenaliteAge)
       ? this.surcoteParentale.parametres(anneeLiquidation)
       : null;
     if (parametresParentale !== null) {
-      const [ageParental, tauxParental, maximum, fiabiliteParentale] = parametresParentale;
+      const [ageLegalMinimal, tauxParental, maximum, fiabiliteParentale] = parametresParentale;
       let gainParental = 0.0;
       let trimestresParentaux = 0;
       for (let indice = 0; indice < pensions.length; indice += 1) {
@@ -2696,19 +2723,30 @@ export class ScenarioActuel {
         }
         const ageLegal = this.ageOuverture(periode, carriere);
         const requis = this.dureeRequise(periode, carriere)[0];
-        // La durée s'apprécie À 63 ANS, trimestres pour enfants compris.
-        const acquis = majorationEnfants.trimestres
-          + trimestresValidesAvant(carriere, ageParental, anneeLiquidation);
-        if (requis <= 0 || acquis < requis) {
+        // LA FENÊTRE EST L'ANNÉE QUI PRÉCÈDE L'ÂGE LÉGAL, dès que cet âge
+        // atteint 63 ans (L. 351-1-2-1) : voir le Python, qui cite le texte.
+        if (ageLegal < ageLegalMinimal) {
           continue;
         }
-        // La fenêtre ne dure quatre trimestres que si l'âge légal est de
-        // 64 ans : la génération 1965, âge légal 63 ans et trois mois, n'en a
-        // qu'un. Le modèle ne date pas les trimestres au jour, d'où ce plafond.
-        const fenetre = Math.round((ageLegal - ageParental) * 4);
-        const trimestres = Math.min(maximum, fenetre, trimestresCotisesEntre(
-          carriere, ageParental, ageLegal, anneeLiquidation,
-        ));
+        // Au MOIS près : l'âge légal tombe en cours d'année depuis 2026.
+        const dateLegale = carriere.dateNaissance.plusMois(enMois(ageLegal));
+        const debutFenetre = dateLegale.plusMois(-12);
+        // Seuls comptent les trimestres cotisés de la fenêtre accomplis « au
+        // delà de la limite » de durée, trimestres pour enfants compris.
+        if (requis <= 0) {
+          continue;
+        }
+        const avant = majorationEnfants.trimestres + trimestresEntreDates(
+          carriere, new DateMois(carriere.annee_naissance, 1), debutFenetre, false,
+        );
+        const validesFenetre = trimestresEntreDates(
+          carriere, debutFenetre, dateLegale, false,
+        );
+        const trimestres = Math.min(
+          maximum,
+          trimestresEntreDates(carriere, debutFenetre, dateLegale, true),
+          Math.max(0, avant + validesFenetre - requis),
+        );
         if (trimestres <= 0) {
           continue;
         }
@@ -2731,8 +2769,8 @@ export class ScenarioActuel {
           montant: gainParental,
           detail: `${formatPourcentage(tauxParental * trimestresParentaux, 2)} pour `
             + `${trimestresParentaux} trimestre`
-            + `${trimestresParentaux > 1 ? "s" : ""} entre ${ageParental} ans `
-            + "et l'âge légal",
+            + `${trimestresParentaux > 1 ? "s" : ""} dans `
+            + "l'année qui précède l'âge légal",
         });
       }
     }
@@ -2837,6 +2875,31 @@ export class ScenarioActuel {
  * de base est dû.
  */
 const TRIMESTRES_COTISES_MINIMUM_MAJORE = 120;
+
+/**
+ * Première date d'effet, [année, mois], où la surcote s'AJOUTE au minimum
+ * contributif au lieu d'entrer dans la pension qu'on lui compare : décret
+ * n° 2008-1509, dernier alinéa de D. 351-2-1.
+ */
+const SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS = [2009, 4];
+
+/**
+ * Ce que le minimum contributif ajoute à une pension, surcote comprise —
+ * portage de `complement_minimum` : depuis avril 2009, `plancher − nue` (la
+ * surcote, calculée sur la pension nue, s'ajoute au minimum) ; avant,
+ * `max(0, plancher − nue × coefficient)`. Circulaire Cnav 2018-04, 3.4.
+ */
+export function complementMinimum(nue, plancher, coefficientSurcote, dateEffet) {
+  if (nue <= 0) {
+    return 0.0;
+  }
+  const [annee, mois] = dateEffet;
+  const [anneeRegle, moisRegle] = SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS;
+  if (annee > anneeRegle || (annee === anneeRegle && mois >= moisRegle)) {
+    return Math.max(0.0, plancher - nue);
+  }
+  return Math.max(0.0, plancher - nue * coefficientSurcote);
+}
 
 /** Dernière année pour laquelle le régime a des paramètres. */
 function derniereAnnee(regime) {
@@ -3033,8 +3096,37 @@ function trimestresValidesAvant(carriere, age, anneeLiquidation) {
 }
 
 /**
- * Trimestres cotisés entre deux âges — bas inclus, haut exclu. C'est la fenêtre
- * qu'ouvre la surcote parentale, là où la surcote ordinaire ne compte rien.
+ * Trimestres acquis entre deux DATES, au mois près — `fin` exclue. Portage de
+ * `_trimestres_entre_dates` : chaque ligne répartit ses trimestres sur ses
+ * mois (les premiers de l'année du départ, les derniers de celle de
+ * l'entrée), seuls comptent ceux de la plage, arrondi au trimestre inférieur.
+ */
+function trimestresEntreDates(carriere, debut, fin, cotisesSeulement) {
+  let total = 0.0;
+  for (const ligne of carriere.lignes) {
+    if (cotisesSeulement && !ligne.cotise) {
+      continue;
+    }
+    const retenus = carriere.trimestresRetenus(ligne);
+    const moisLigne = Math.round(carriere.partRetenue(ligne.annee) * 12);
+    if (retenus <= 0 || moisLigne <= 0) {
+      continue;
+    }
+    const premier = (moisLigne === 12 || ligne.annee === carriere.anneeLiquidation)
+      ? new DateMois(ligne.annee, 1)
+      : new DateMois(ligne.annee, 13 - moisLigne);
+    const dernier = premier.plusMois(moisLigne);
+    const recouvrement = Math.min(fin.rang, dernier.rang) - Math.max(debut.rang, premier.rang);
+    if (recouvrement > 0) {
+      total += retenus * recouvrement / moisLigne;
+    }
+  }
+  return Math.floor(total + 1e-9);
+}
+
+/**
+ * Trimestres cotisés entre deux âges — bas inclus, haut exclu, à l'âge atteint
+ * dans l'année.
  */
 function trimestresCotisesEntre(carriere, ageBas, ageHaut, anneeLiquidation) {
   let total = 0;

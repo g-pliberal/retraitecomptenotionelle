@@ -700,11 +700,12 @@ MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE = 30;
 /**
  * Surcote parentale — article L. 351-1-2-1 du code de la sécurité sociale.
  *
- * Contrepartie du recul de l'âge légal : un assuré qui avait sa durée requise à
- * 63 ans s'est vu imposer par la loi du 14 avril 2023 une année de travail de
- * plus qui ne lui rapportait rien, la surcote ordinaire ne comptant qu'au-delà
- * de l'âge légal. La loi comble ce trou pour les parents : 1,25 % par trimestre
- * acquis entre 63 ans et l'âge légal, quatre au plus.
+ * Contrepartie du recul de l'âge légal : un assuré qui avait sa durée requise un
+ * an avant l'âge légal s'est vu imposer par la loi du 14 avril 2023 une année de
+ * travail de plus qui ne lui rapportait rien, la surcote ordinaire ne comptant
+ * qu'au-delà de l'âge légal. La loi comble ce trou pour les parents : 1,25 % par
+ * trimestre cotisé dans l'année qui précède l'âge légal, quatre au plus, dès
+ * que cet âge atteint 63 ans.
  */
 export class SurcoteParentale {
   constructor(paquet) {
@@ -712,7 +713,7 @@ export class SurcoteParentale {
   }
 
   /**
-   * @returns {[number, number, number, number]|null} âge d'ouverture, taux par
+   * @returns {[number, number, number, number]|null} âge légal minimal, taux par
    * trimestre, plafond de trimestres, fiabilité.
    */
   parametres(anneeLiquidation) {

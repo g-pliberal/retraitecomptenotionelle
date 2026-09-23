@@ -945,9 +945,10 @@ class SurcoteParentale:
     s'est vu imposer par la loi du 14 avril 2023 une année de travail de plus
     qui ne lui rapportait rien, la surcote ordinaire ne récompensant que les
     trimestres accomplis APRÈS l'âge légal. La loi comble ce trou pour les
-    seuls parents : 1,25 % par trimestre acquis entre 63 ans et l'âge légal,
-    quatre trimestres au plus, à qui détient au moins un trimestre de
-    majoration de durée d'assurance au titre des enfants.
+    seuls parents : 1,25 % par trimestre acquis dans l'année qui précède
+    l'âge légal, quatre trimestres au plus, dès que cet âge atteint 63 ans, à
+    qui détient au moins un trimestre de majoration de durée d'assurance au
+    titre des enfants.
 
     C'est ce trimestre-là qui ouvre le droit, et non le sexe : un père qui
     détient des trimestres pour enfants y a droit comme la mère.
@@ -972,7 +973,12 @@ class SurcoteParentale:
 
     def parametres(self, annee_liquidation: int
                    ) -> tuple[float, float, int, Fiabilite] | None:
-        """Âge d'ouverture, taux par trimestre, plafond et fiabilité."""
+        """Âge légal minimal, taux par trimestre, plafond et fiabilité.
+
+        L'âge est celui que l'âge légal doit atteindre pour que la surcote
+        parentale existe — 63 ans — et non le début de la fenêtre, qui est
+        l'âge légal moins un an.
+        """
         for debut, fin, age, taux, maximum, fiabilite in self._table:
             if debut <= annee_liquidation <= fin:
                 return age, taux, maximum, fiabilite
@@ -3770,6 +3776,13 @@ class ScenarioActuel:
                 carriere, trimestres_par_regime, annee_liquidation
             ) if avantages_non_contributifs else None
         )
+        # Les BONIFICATIONS, à part des services : seules elles peuvent porter
+        # le taux au-delà du maximum (`taux_maximum_bonifie`).
+        bonifications_par_regime: dict[str, int] = {}
+        if majoration_enfants is not None:
+            bonifications_par_regime[majoration_enfants.regime] = (
+                majoration_enfants.services
+            )
         if majoration_enfants is not None:
             # LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE, et la
             # majoration se range dans les deux : tout ce qui est accordé joue
@@ -4337,9 +4350,24 @@ class ScenarioActuel:
                 if self.catalogue[code].famille == "fonction_publique"
                 else trimestres_par_regime
             )
-            trimestres_regime = min(
-                sum(acquis_par_regime.get(m, 0) for m in membres), proratisation
+            # Le plafond est la durée requise, que les BONIFICATIONS seules
+            # peuvent dépasser, et dans la limite d'un taux : « Le pourcentage
+            # maximum fixé à l'article L 13 peut-être augmenté de cinq points du
+            # chef des bonifications » (L. 12 CPCMR). Le module plafonnait
+            # services et bonifications ensemble à la durée requise, et servait
+            # 75 % à une mère de trois enfants à qui le droit en doit près de 80.
+            bonifications = (
+                sum(bonifications_par_regime.get(m, 0) for m in membres)
+                if periode.taux_maximum_bonifie and periode.taux_plein else 0
             )
+            trimestres_regime = min(
+                sum(acquis_par_regime.get(m, 0) for m in membres),
+                proratisation + bonifications,
+            )
+            #: Rapport des trimestres liquidables à la durée requise, borné au
+            #: taux maximum — 80/75 avec des bonifications, un sans elles.
+            rapport_maximum = (periode.taux_maximum_bonifie / periode.taux_plein
+                               if bonifications else 1.0)
             if (periode.duree_maximum_avant_age is not None
                     and periode.duree_maximum_avant_age_trimestres is not None
                     and age_liquidation < periode.duree_maximum_avant_age):
@@ -4426,7 +4454,8 @@ class ScenarioActuel:
                     taux *= coefficient_surcote
 
             taux_retenu = max(taux_retenu, taux)
-            montant = salaire_reference * taux * (trimestres_regime / proratisation)
+            prorata = min(trimestres_regime / proratisation, rapport_maximum)
+            montant = salaire_reference * taux * prorata
             if "minimum_contributif" in periode.avantages_non_contributifs:
                 # Le minimum ne relève que les régimes de base qui le portent,
                 # et au prorata de la durée acquise DANS CE régime — durée
@@ -4448,7 +4477,7 @@ class ScenarioActuel:
                 )
                 eligibles_minimum.append(_EligibleMinimum(
                     indice=len(pensions),
-                    prorata_assurance=trimestres_regime / proratisation,
+                    prorata_assurance=prorata,
                     prorata_cotise=cotises_regime / proratisation,
                     taux_plein=(
                         trimestres >= requis
@@ -4483,6 +4512,8 @@ class ScenarioActuel:
                     # taux arrondi pesant à lui seul 0,89 €.
                     f"{salaire_reference:,.2f} € × taux {taux:.3%} "
                     f"× {trimestres_regime}/{proratisation}"
+                    + (f", taux maximum {periode.taux_maximum_bonifie:.0%} atteint"
+                       if trimestres_regime / proratisation > rapport_maximum else "")
                     # La succession est DITE : sans elle, le lecteur cherche
                     # la ligne de la CANCAVA et ne la trouve pas.
                     + ("" if len(membres) == 1 else
@@ -4601,21 +4632,22 @@ class ScenarioActuel:
                 if not eligible.taux_plein:
                     continue
                 pension = pensions[eligible.indice]
-                # Le minimum se compare à la pension AVANT surcote : le droit
-                # porte la pension au plancher, puis applique la surcote au
-                # montant relevé. Comparer une pension déjà surcotée au
-                # plancher refusait le minimum à qui a travaillé plus
-                # longtemps que la durée requise pour un salaire minime.
+                # Le minimum se compare à la pension AVANT surcote, et la
+                # surcote, calculée sur cette pension nue, s'ajoute au minimum
+                # (D. 351-2-1) : voir :func:`complement_minimum`, qui porte
+                # aussi la règle d'avant avril 2009.
                 nue = pension.montant / eligible.surcote
                 plancher = montant_base * min(1.0, eligible.prorata_assurance)
                 if majoration_ouverte:
                     plancher += (montant_majore - montant_base) * min(
                         1.0, eligible.prorata_cotise
                     )
-                if 0 < nue < plancher:
-                    complements[eligible.indice] = (
-                        (plancher - nue) * eligible.surcote
-                    )
+                complement = complement_minimum(
+                    nue, plancher, eligible.surcote,
+                    (annee_liquidation, carriere.mois_liquidation),
+                )
+                if complement > 0:
+                    complements[eligible.indice] = complement
             releve = sum(complements.values())
             if releve > 0:
                 # Écrêtement de l'article L. 173-2 : le complément est rogné de
@@ -4702,7 +4734,7 @@ class ScenarioActuel:
         # comme la surcote ordinaire, et AVANT la majoration pour enfants, qui
         # se calcule sur la pension surcotée. Elle ne récompense pas les mêmes
         # trimestres que la surcote ordinaire — celle-ci ne compte qu'au-delà
-        # de l'âge légal, celle-là entre 63 ans et l'âge légal — et les deux se
+        # de l'âge légal, celle-là dans l'année qui le précède — et les deux se
         # cumulent donc sans se recouvrir.
         parametres_parentale = (
             self.surcote_parentale.parametres(annee_liquidation)
@@ -4711,7 +4743,7 @@ class ScenarioActuel:
             else None
         )
         if parametres_parentale is not None:
-            age_parental, taux_parental, maximum, fiabilite_parentale = (
+            age_legal_minimal, taux_parental, maximum, fiabilite_parentale = (
                 parametres_parentale
             )
             gain_parental = 0.0
@@ -4726,25 +4758,44 @@ class ScenarioActuel:
                     continue
                 age_legal = self._age_ouverture(periode, carriere)
                 requis = self._duree_requise(periode, carriere)[0]
-                # La durée s'apprécie À 63 ANS, trimestres pour enfants
-                # compris : c'est bien la durée qu'oppose la loi, et l'assuré
-                # les détient déjà à cet âge.
-                acquis = majoration_enfants.trimestres + _trimestres_valides_avant(
-                    carriere, age_parental, annee_liquidation
-                )
-                if requis <= 0 or acquis < requis:
+                # LA FENÊTRE EST L'ANNÉE QUI PRÉCÈDE L'ÂGE LÉGAL, dès que cet
+                # âge atteint 63 ans : « accomplie l'année précédant l'âge
+                # mentionné à l'article L. 161-17-2, lorsque celui-ci est égal
+                # ou supérieur à soixante-trois ans » (L. 351-1-2-1, 2023) ;
+                # l'âge de la surcote « est abaissé d'un an » (version de 2025).
+                # Le module la faisait courir de 63 ans à l'âge légal : la
+                # génération 1966, âge légal 63 ans et trois mois, n'y trouvait
+                # qu'un trimestre là où le texte en ouvre quatre, et la
+                # génération 1965 d'avril, âge légal 63 ans, aucun.
+                if age_legal < age_legal_minimal:
                     continue
-                # La fenêtre ne dure quatre trimestres que si l'âge légal est
-                # de 64 ans : la génération 1965, dont l'âge légal est de
-                # 63 ans et trois mois, n'en a qu'un à faire valoir. Le modèle
-                # ne date pas les trimestres au jour, et lui en compterait
-                # quatre — d'où ce plafond, qui est la largeur de la fenêtre.
-                fenetre = round((age_legal - age_parental) * 4)
+                # Au MOIS près : l'âge légal tombe en cours d'année depuis la
+                # suspension de 2026, et une fenêtre lue à l'année entière n'y
+                # trouvait qu'un trimestre pour la génération 1966.
+                date_legale = carriere.date_naissance.plus_mois(en_mois(age_legal))
+                debut_fenetre = date_legale.plus_mois(-12)
+                # Ne comptent que les trimestres cotisés de la fenêtre
+                # accomplis « au delà de la limite » de durée (L. 351-1-2-1) :
+                # tous, si la durée requise est atteinte à l'ouverture de la
+                # fenêtre, trimestres pour enfants compris ; ceux d'après la
+                # limite, si elle l'est en cours de fenêtre ; aucun sinon.
+                if requis <= 0:
+                    continue
+                avant = majoration_enfants.trimestres + _trimestres_entre_dates(
+                    carriere, DateMois(carriere.annee_naissance, 1), debut_fenetre,
+                    cotises_seulement=False,
+                )
+                valides_fenetre = _trimestres_entre_dates(
+                    carriere, debut_fenetre, date_legale, cotises_seulement=False,
+                )
                 # Surtout pas `trimestres` : c'est la durée d'assurance tous
                 # régimes, et l'écraser ici la faisait tomber à quatre.
-                acquis_parentaux = min(maximum, fenetre, _trimestres_cotises_entre(
-                    carriere, age_parental, age_legal, annee_liquidation
-                ))
+                acquis_parentaux = min(
+                    maximum,
+                    _trimestres_entre_dates(carriere, debut_fenetre, date_legale,
+                                            cotises_seulement=True),
+                    max(0, avant + valides_fenetre - requis),
+                )
                 if acquis_parentaux <= 0:
                     continue
                 supplement = pension.montant * taux_parental * acquis_parentaux
@@ -4765,8 +4816,8 @@ class ScenarioActuel:
                     montant=gain_parental,
                     detail=(f"{taux_parental * trimestres_parentaux:.2%} pour "
                             f"{trimestres_parentaux} trimestre"
-                            f"{'s' if trimestres_parentaux > 1 else ''} entre "
-                            f"{age_parental:g} ans et l'âge légal"),
+                            f"{'s' if trimestres_parentaux > 1 else ''} dans "
+                            "l'année qui précède l'âge légal"),
                 ))
 
         if avantages_non_contributifs and carriere.nombre_enfants >= 2:
@@ -4907,12 +4958,44 @@ def _trimestres_valides_avant(carriere: Carriere, age: float,
     )
 
 
+def _trimestres_entre_dates(carriere: Carriere, debut: DateMois, fin: DateMois,
+                            cotises_seulement: bool) -> int:
+    """Trimestres acquis entre deux DATES, au mois près — ``fin`` exclue.
+
+    Le pas du moteur est l'année, et les deux aides voisines comparent l'âge
+    atteint dans l'année à un seuil. C'est juste quand le seuil tombe sur un
+    âge entier ; c'est faux quand il tombe en cours d'année, ce qui est
+    devenu la règle depuis que l'âge légal compte des mois. Chaque ligne voit
+    ici ses trimestres répartis sur ses mois — les premiers de l'année pour
+    celle du départ, les derniers pour celle de l'entrée —, et seuls comptent
+    ceux de la plage ; la somme est arrondie au trimestre inférieur.
+    """
+    total = 0.0
+    for ligne in carriere.lignes:
+        if cotises_seulement and not ligne.cotise:
+            continue
+        retenus = carriere.trimestres_retenus(ligne)
+        mois_ligne = round(carriere.part_retenue(ligne.annee) * 12)
+        if retenus <= 0 or mois_ligne <= 0:
+            continue
+        premier = (DateMois(ligne.annee, 1)
+                   if mois_ligne == 12 or ligne.annee == carriere.annee_liquidation
+                   else DateMois(ligne.annee, 13 - mois_ligne))
+        dernier = premier.plus_mois(mois_ligne)
+        recouvrement = (min(fin.rang, dernier.rang) - max(debut.rang, premier.rang))
+        if recouvrement > 0:
+            total += retenus * recouvrement / mois_ligne
+    return int(total + 1e-9)
+
+
 def _trimestres_cotises_entre(carriere: Carriere, age_bas: float, age_haut: float,
                               annee_liquidation: int) -> int:
     """Trimestres cotisés entre deux âges — bas inclus, haut exclu.
 
-    C'est la fenêtre qu'ouvre la surcote parentale : entre 63 ans et l'âge
-    légal, là où la surcote ordinaire ne compte encore rien.
+    C'est la fenêtre de la surcote de l'Ircantec à la durée, entre l'âge
+    d'ouverture et l'âge du taux plein, lue à l'âge atteint dans l'année. La
+    surcote parentale, dont la fenêtre tombe en cours d'année, se compte au
+    mois près : :func:`_trimestres_entre_dates`.
     """
     return sum(
         carriere.trimestres_retenus(ligne)
@@ -4948,6 +5031,39 @@ def _derniere_annee(regime) -> int:
 #: au titre des périodes cotisées (article L. 351-10 du code de la sécurité
 #: sociale). En deçà, seul le montant de base est dû.
 TRIMESTRES_COTISES_MINIMUM_MAJORE = 120
+
+#: Première date d'effet, (année, mois), où la surcote s'AJOUTE au minimum
+#: contributif au lieu d'entrer dans la pension qu'on lui compare : décret
+#: n° 2008-1509 du 30 décembre 2008, dernier alinéa de D. 351-2-1.
+SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS = (2009, 4)
+
+
+def complement_minimum(nue: float, plancher: float, coefficient_surcote: float,
+                       date_effet: tuple[int, int]) -> float:
+    """Ce que le minimum contributif ajoute à une pension, surcote comprise.
+
+    ``nue`` est la pension calculée avant surcote, ``plancher`` le minimum
+    dû au régime, ``coefficient_surcote`` le facteur de la surcote (1,025 pour
+    deux trimestres à 1,25 %). La règle dépend de la date d'effet :
+
+    - depuis le 1er avril 2009, la surcote « est calculée sur la base du
+      montant de pension avant qu'il ne soit porté au montant minimum »
+      (D. 351-2-1) et s'ajoute au minimum : la pension servie vaut
+      ``plancher + nue × (coefficient − 1)``, et le complément ``plancher −
+      nue``. Circulaire Cnav 2018-04, 3.4.2 : 621 + (645,07 − 621) + 15,52 =
+      660,59 € ;
+    - jusqu'au 1er mars 2009, la surcote entrait dans la pension comparée au
+      minimum : ``max(nue × coefficient, plancher)``. Même circulaire, 3.4.1 :
+      621 × 1,015 = 630,31 € < 633,61 €, portés à 633,61 €.
+
+    Le module servait ``plancher × coefficient`` : il surcotait le minimum
+    lui-même, ce qu'aucune des deux règles ne fait.
+    """
+    if nue <= 0.0:
+        return 0.0
+    if date_effet >= SURCOTE_AJOUTEE_AU_MINIMUM_DEPUIS:
+        return max(0.0, plancher - nue)
+    return max(0.0, plancher - nue * coefficient_surcote)
 
 #: Année à partir de laquelle chaque montant suit le SMIC et non plus les prix.
 #: Le plafond d'écrêtement bascule avec le décret du 14 février 2014, qui le

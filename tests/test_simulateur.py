@@ -518,6 +518,54 @@ def test_le_motif_de_l_interruption_change_les_droits_ouverts(simulateur):
             < resultats["chomage_non_indemnise"].actuel.trimestres_valides)
 
 
+def test_le_chomage_non_indemnise_ne_valide_que_dans_les_limites_de_r_351_12(
+        simulateur):
+    """Quatre trimestres par an sans limite : c'est ce que le modèle validait.
+
+    L'article R. 351-12, 4°, d, ne retient que « des périodes postérieures au
+    31 décembre 1979 ». La première période, « qu'elle soit continue ou non »,
+    vaut un an et demi et six trimestres au plus — un an pour les périodes
+    d'avant 2011, le décret n° 2011-934 ne visant que celles « postérieures au
+    31 décembre 2010 ». Chaque période ultérieure ne compte que si elle suit
+    sans interruption un chômage indemnisé, un an au plus, cinq ans pour qui a
+    cinquante-cinq ans, vingt ans de cotisations et ne retravaille pas.
+    """
+    def valides(annee_naissance, interruptions, age_liquidation=64):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=annee_naissance, sexe="H",
+            affiliation="salarie_prive_non_cadre", age_debut=20,
+            age_liquidation=age_liquidation, interruptions=interruptions)
+        return {ligne.annee: ligne.trimestres_valides for ligne in carriere.lignes
+                if ligne.annee in interruptions}
+
+    def non_indemnise(debut, fin):
+        return {annee: "chomage_non_indemnise" for annee in range(debut, fin + 1)}
+
+    # Rien avant 1980 ; la première période prend ensuite sa limite d'avant 2011.
+    assert valides(1955, non_indemnise(1977, 1981)) == {
+        1977: 0, 1978: 0, 1979: 0, 1980: 4, 1981: 0}
+    # Six trimestres depuis 2011, quatre avant — l'année de la PÉRIODE choisit.
+    assert sum(valides(1975, non_indemnise(2012, 2015)).values()) == 6
+    assert sum(valides(1975, non_indemnise(2003, 2005)).values()) == 4
+    assert valides(1975, non_indemnise(2009, 2012)) == {
+        2009: 4, 2010: 0, 2011: 2, 2012: 0}
+    # Une période ultérieure qui ne suit pas un chômage indemnisé ne prend que
+    # ce qui reste de l'enveloppe de la première.
+    assert valides(1975, {2003: "chomage_non_indemnise",
+                          **non_indemnise(2015, 2016)}) == {2003: 4, 2015: 2, 2016: 0}
+    # Celle qui suit un chômage indemnisé prend un an…
+    assert valides(1975, {2003: "chomage_non_indemnise", 2008: "chomage_indemnise",
+                          **non_indemnise(2009, 2011)}) == {
+        2003: 4, 2008: 4, 2009: 4, 2010: 0, 2011: 0}
+    # … et cinq pour l'assuré de 55 ans qui a vingt ans de cotisations.
+    senior = {1990: "chomage_non_indemnise", 2012: "chomage_indemnise",
+              **non_indemnise(2013, 2016)}
+    assert sum(valides(1955, senior, age_liquidation=62)[a]
+               for a in range(2013, 2017)) == 16
+    assert sum(valides(1965, senior, age_liquidation=62)[a]
+               for a in range(2013, 2017)) == 4
+
+
 def test_un_temps_tres_partiel_ne_valide_pas_quatre_trimestres(simulateur):
     """Un trimestre s'acquiert par un montant cotisé, pas par le temps.
 
@@ -1197,9 +1245,16 @@ def test_sans_enfant_aucun_avantage_familial_n_est_cite(simulateur):
 
 
 def test_la_fonction_publique_majore_de_cinq_points_par_enfant_au_dela_de_trois():
-    """10 % à trois enfants, puis 5 % par enfant supplémentaire."""
+    """10 % à trois enfants, puis 5 % par enfant supplémentaire.
+
+    Le taux se lit sur la pension qu'il majore, celle du régime de la fonction
+    publique. Le test le lisait sur le total des pensions, RAFP compris, que
+    la majoration ne touche pas : le rapport ne valait deux qu'à condition que
+    la part du RAFP ne bouge pas avec le nombre d'enfants — ce qu'elle fait dès
+    que les bonifications portent la pension au-delà de 75 %.
+    """
     simulateur = Simulateur(Parametres())
-    montants = {}
+    taux = {}
     for enfants in (3, 5):
         carriere = simulateur.carriere_simple(
             annee_naissance=1965, sexe="F", affiliation="fonctionnaire_etat",
@@ -1209,9 +1264,12 @@ def test_la_fonction_publique_majore_de_cinq_points_par_enfant_au_dela_de_trois(
         majoration = next(
             a for a in actuel.avantages_appliques if a.code == "majoration_enfants"
         )
-        montants[enfants] = majoration.montant / actuel.total_contributif
-    # 20 % à cinq enfants contre 10 % à trois : le rapport doit valoir 2.
-    assert montants[5] / montants[3] == pytest.approx(2.0, rel=0.02)
+        fonction_publique = next(
+            p.montant for p in actuel.pensions_par_regime
+            if p.type_calcul == "annuites")
+        taux[enfants] = majoration.montant / fonction_publique
+    assert taux[3] == pytest.approx(0.10)
+    assert taux[5] == pytest.approx(0.20)
 
 
 def test_la_surcote_suit_l_age_legal_de_la_generation():
@@ -1255,6 +1313,34 @@ def test_le_minimum_contributif_releve_les_petites_pensions(simulateur):
     )
     resultat = simulateur.simuler(carriere).actuel
     assert resultat.minimum_applique is True
+
+
+def test_la_surcote_s_ajoute_au_minimum_comme_la_circulaire_le_calcule():
+    """Les deux exemples de la circulaire Cnav 2018-04, point 3.4, rejoués.
+
+    Depuis le 1er avril 2009, la surcote se calcule sur la pension AVANT
+    qu'elle soit portée au minimum, et s'y ajoute (D. 351-2-1) : 621 € portés
+    à un minimum majoré de 645,07 €, plus 2,5 % de 621 €, font 660,59 €.
+    Jusqu'au 1er mars 2009, elle entrait dans la pension comparée au minimum :
+    621 × 1,015 = 630,31 € < 633,61 €, portés à 633,61 €. Le modèle servait
+    le minimum surcoté — 661,20 € et 643,11 € —, ce qu'aucune règle ne fait.
+
+    Et le point 3.5 : la majoration pour enfants se calcule sur l'ensemble,
+    10 % × (693,51 + 22,50) = 71,60 € pour une pension de 600 € surcotée de
+    3,75 % et portée au minimum majoré de 2017.
+    """
+    from retraite_notionnelle.scenarios.actuel import complement_minimum
+
+    servie = 621 * 1.025 + complement_minimum(621, 645.07, 1.025, (2009, 10))
+    assert servie == pytest.approx(660.59, abs=0.01)
+    servie = 621 * 1.015 + complement_minimum(621, 633.61, 1.015, (2008, 1))
+    assert servie == pytest.approx(633.61, abs=0.01)
+    # Au-dessus du minimum, rien n'est ajouté, quelle que soit la date.
+    assert complement_minimum(700, 645.07, 1.025, (2009, 10)) == 0.0
+    assert complement_minimum(630, 633.61, 1.015, (2008, 1)) == 0.0
+    servie = 600 * 1.0375 + complement_minimum(600, 693.51, 1.0375, (2017, 1))
+    assert servie == pytest.approx(716.01, abs=0.01)
+    assert 0.10 * servie == pytest.approx(71.60, abs=0.01)
 
 
 def test_le_minimum_contributif_est_refuse_a_une_pension_decotee(simulateur):
@@ -2514,27 +2600,57 @@ def test_la_surcote_parentale_recompense_l_annee_imposee_par_la_reforme_de_2023(
                      if a.code == "surcote_parentale"), None)
 
     # Génération 1969 : âge légal 64 ans, donc quatre trimestres entre 63 et 64.
-    # (C'était la génération 1968 avant la suspension de 2026, qui lui laisse
-    # 63 ans et 9 mois, donc trois trimestres.)
     acquise = surcote()
     assert acquise is not None
     assert "4 trimestres" in acquise.detail and "5.00%" in acquise.detail
-    assert "3 trimestres" in surcote(annee_naissance=1968).detail
+    # LA FENÊTRE EST L'ANNÉE QUI PRÉCÈDE L'ÂGE LÉGAL, non la plage de 63 ans à
+    # l'âge légal. Le test demandait ici trois trimestres à la génération 1968,
+    # dont la suspension de 2026 fixe l'âge légal à 63 ans et 9 mois : c'était
+    # l'erreur du module, que ce test figeait. Le texte en ouvre quatre à
+    # toutes les générations dont l'âge légal atteint 63 ans : le module en
+    # servait zéro à celle de 1965 née après mars, un à 1966, deux à 1967.
+    for annee_naissance in (1966, 1967, 1968):
+        assert "4 trimestres" in surcote(annee_naissance=annee_naissance).detail
+    assert "4 trimestres" in surcote(annee_naissance=1965, mois_naissance=6).detail
 
     # Sans trimestre pour enfants, pas de surcote parentale : c'est ce trimestre
     # qui ouvre le droit, et il va par défaut à la mère.
     assert surcote(sexe="H") is None
     assert surcote(nombre_enfants=0) is None
 
-    # Sans la durée requise à 63 ans, pas de surcote parentale non plus.
+    # Sans la durée requise dans l'année qui précède l'âge légal, pas de
+    # surcote parentale non plus.
     assert surcote(age_debut=30) is None
 
     # Avant le 1er septembre 2023, le dispositif n'existe pas.
     assert surcote(annee_naissance=1955) is None
 
-    # Génération 1958 : l'âge légal est de 62 ans, la fenêtre 63 → âge légal est
-    # vide, et la surcote ordinaire prend seule le relais.
+    # Génération 1958 : l'âge légal est de 62 ans, sous les 63 ans que la loi
+    # exige, et la surcote ordinaire prend seule le relais.
     assert surcote(annee_naissance=1958) is None
+
+
+def test_la_surcote_parentale_ne_compte_que_les_trimestres_au_dela_de_la_duree(
+        simulateur):
+    """« accomplie l'année précédant l'âge […] et au delà de la limite ».
+
+    L. 351-1-2-1 ne demande pas la durée requise à l'ouverture de la fenêtre :
+    il compte les trimestres cotisés de cette année-là qui la DÉPASSENT. Le
+    module servait tout ou rien — quatre trimestres si la durée était atteinte
+    à 63 ans, aucun sinon. Une mère de deux enfants née en janvier 1969,
+    entrée à vingt-quatre ans et demi, a 170 trimestres à l'ouverture de la
+    fenêtre pour 172 requis : les deux derniers de l'année sont au-delà.
+    """
+    def surcote(age_debut):
+        resultat = simulateur.scenario_actuel.calculer(simulateur.carriere_simple(
+            annee_naissance=1969, sexe="F", affiliation="salarie_prive_non_cadre",
+            age_debut=age_debut, age_liquidation=64, nombre_enfants=2))
+        return next((a.detail for a in resultat.avantages_appliques
+                     if a.code == "surcote_parentale"), None)
+
+    assert "4 trimestres" in surcote(24)
+    assert "2 trimestres" in surcote(24.5)
+    assert surcote(25) is None
 
 
 def test_la_surcote_est_passee_a_1_25_pour_cent_au_1er_janvier_2009(simulateur):
@@ -2639,8 +2755,8 @@ def test_le_bareme_2007_de_la_surcote_majore_au_dela_de_65_ans(simulateur):
 
 
 def test_la_surcote_parentale_se_cumule_avec_la_surcote_ordinaire(simulateur):
-    """Les deux ne comptent pas les mêmes trimestres : l'une entre 63 ans et
-    l'âge légal, l'autre au-delà. Elles s'ajoutent sans se recouvrir."""
+    """Les deux ne comptent pas les mêmes trimestres : l'une dans l'année qui
+    précède l'âge légal, l'autre au-delà. Elles s'ajoutent sans se recouvrir."""
     commun = dict(annee_naissance=1969, sexe="F",
                   affiliation="salarie_prive_non_cadre",
                   age_debut=18, nombre_enfants=2)

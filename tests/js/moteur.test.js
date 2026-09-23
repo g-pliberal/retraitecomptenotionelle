@@ -18,6 +18,8 @@ import { dirname, join } from "node:path";
 
 import { Contexte, Saisie, rendre } from "../../moteur/js/pages.js";
 import { Affiliations } from "../../moteur/js/regimes.js";
+import { complementMinimum } from "../../moteur/js/scenario-actuel.js";
+import { AnneeCarriere, limiterChomageNonIndemnise } from "../../moteur/js/carriere.js";
 import * as gabarit from "../../moteur/js/gabarit.js";
 import { Fiabilite, SerieAnnuelle } from "../../moteur/js/serie.js";
 
@@ -386,4 +388,68 @@ test("le ruban d'écart se tait sur une année manquante", () => {
     "", false, 0, true, null, "", [], "Année", [0, 1]);
   assert.equal((peint.match(/class="ecart plus"/g) || []).length, 1);
   assert.equal((peint.match(/class="ecart moins"/g) || []).length, 1);
+});
+
+/**
+ * La surcote et le minimum contributif, sur les exemples de la circulaire
+ * Cnav 2018-04 (point 3.4) : le même calcul que le Python, chiffre pour
+ * chiffre, y compris la règle d'avant avril 2009 qu'aucun témoin n'atteint.
+ */
+test("la surcote s'ajoute au minimum comme la circulaire le calcule", () => {
+  const apres2009 = 621 * 1.025 + complementMinimum(621, 645.07, 1.025, [2009, 10]);
+  assert.ok(Math.abs(apres2009 - 660.59) < 0.01, `${apres2009}`);
+  const avant2009 = 621 * 1.015 + complementMinimum(621, 633.61, 1.015, [2008, 1]);
+  assert.ok(Math.abs(avant2009 - 633.61) < 0.01, `${avant2009}`);
+  assert.equal(complementMinimum(700, 645.07, 1.025, [2009, 10]), 0);
+  assert.equal(complementMinimum(630, 633.61, 1.015, [2008, 1]), 0);
+  assert.equal(complementMinimum(621, 645.07, 1.025, [2009, 3]),
+    Math.max(0, 645.07 - 621 * 1.025));
+});
+
+/**
+ * Les limites de R. 351-12 au chômage non indemnisé, sur les cas du test
+ * Python `test_le_chomage_non_indemnise_ne_valide_que_dans_les_limites_de_r_351_12` :
+ * rien avant 1980, la première période à quatre trimestres avant 2011 et six
+ * depuis, une période ultérieure à un an après un chômage indemnisé, cinq ans
+ * pour le senior qui ne retravaille pas. Le témoin `fin_activite_chomage_non_indemnise`
+ * n'atteint que la première période.
+ */
+test("le chômage non indemnisé ne valide que dans les limites de R. 351-12", () => {
+  const carriere = (anneeNaissance, debut, fin, motifs) => {
+    const lignes = [];
+    for (let annee = debut; annee <= fin; annee += 1) {
+      const motif = motifs[annee] ?? "emploi";
+      lignes.push(new AnneeCarriere({
+        annee, revenu: motif === "emploi" ? 30000 : 0,
+        affiliation: "salarie_prive_non_cadre", type_periode: motif,
+        trimestres_valides: 4, cotisations_versees: motif === "emploi",
+      }));
+    }
+    const limitees = limiterChomageNonIndemnise(lignes, anneeNaissance);
+    return Object.fromEntries(limitees.filter((l) => motifs[l.annee])
+      .map((l) => [l.annee, l.trimestres_valides]));
+  };
+  const nonIndemnise = (debut, fin) => Object.fromEntries(
+    Array.from({ length: fin - debut + 1 }, (_, i) => [debut + i, "chomage_non_indemnise"]));
+  const somme = (valides) => Object.values(valides).reduce((a, b) => a + b, 0);
+
+  assert.deepEqual(carriere(1955, 1975, 2018, nonIndemnise(1977, 1981)),
+    { 1977: 0, 1978: 0, 1979: 0, 1980: 4, 1981: 0 });
+  assert.equal(somme(carriere(1975, 1995, 2039, nonIndemnise(2012, 2015))), 6);
+  assert.equal(somme(carriere(1975, 1995, 2039, nonIndemnise(2003, 2005))), 4);
+  assert.deepEqual(carriere(1975, 1995, 2039, nonIndemnise(2009, 2012)),
+    { 2009: 4, 2010: 0, 2011: 2, 2012: 0 });
+  assert.deepEqual(carriere(1975, 1995, 2039,
+    { 2003: "chomage_non_indemnise", ...nonIndemnise(2015, 2016) }),
+  { 2003: 4, 2015: 2, 2016: 0 });
+  assert.deepEqual(carriere(1975, 1995, 2039, {
+    2003: "chomage_non_indemnise", 2008: "chomage_indemnise", ...nonIndemnise(2009, 2011),
+  }), { 2003: 4, 2008: 4, 2009: 4, 2010: 0, 2011: 0 });
+  const senior = {
+    1990: "chomage_non_indemnise", 2012: "chomage_indemnise", ...nonIndemnise(2013, 2016),
+  };
+  const ulterieures = (valides) => [2013, 2014, 2015, 2016]
+    .reduce((total, annee) => total + valides[annee], 0);
+  assert.equal(ulterieures(carriere(1955, 1975, 2016, senior)), 16);
+  assert.equal(ulterieures(carriere(1965, 1985, 2016, senior)), 4);
 });

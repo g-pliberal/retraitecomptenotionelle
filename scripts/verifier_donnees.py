@@ -2022,8 +2022,9 @@ def source_valeurs_point_ircantec() -> dict[tuple, float]:
     """Barèmes de l'Ircantec publiés par la Caisse des dépôts, qui la gère.
 
     Producteur de la donnée, donc seule source de ce fichier qui puisse être
-    certifiée. Elle couvre 1971-2021 ; ce qui déborde reste transcrit
-    d'OpenFisca.
+    certifiée. Elle couvre 1971-2021 ; la suite vient de la page du régime
+    (:func:`source_valeurs_point_ircantec_publiees`), ce qui précède reste
+    transcrit d'OpenFisca.
     """
     return {
         tuple(cle.split("|")): valeur
@@ -2031,6 +2032,44 @@ def source_valeurs_point_ircantec() -> dict[tuple, float]:
             _serie_json("cdc_ircantec.json", "scripts/fetch/cdc_ircantec.py").items()
         )
     }
+
+
+#: Valeur du point, salaire de référence et pourcentage d'appel de l'Ircantec
+#: au-delà de la série de la Caisse des dépôts, lus sur la page « Valeur du
+#: point » de l'Ircantec (https://www.ircantec.retraites.fr/retraite/valeur-point)
+#: et dans ses paramètres annuels, le 23 septembre 2026. Même convention que la
+#: Caisse des dépôts : la valeur en vigueur en FIN d'année — 0,47887 € en 2017,
+#: fixée au 1er octobre 2017 —, soit pour 2022 celle du 1er juillet, 0,51211 €,
+#: et non celle du 1er janvier, 0,49241 €, qu'OpenFisca transcrivait. Les points
+#: de l'IGRANTE et de l'IPACTE sont servis à la valeur de l'Ircantec. Le
+#: pourcentage d'appel de 2026 est le rapport du taux de cotisation appelé au
+#: taux contractuel de la tranche A, 7,11 % / 5,60 %.
+VALEURS_POINT_IRCANTEC_PUBLIEES = {
+    2022: {"valeur_service": 0.51211},
+    2023: {"valeur_service": 0.51621, "salaire_reference": 5.329, "taux_appel": 1.25},
+    2024: {"valeur_service": 0.54357, "salaire_reference": 5.611, "taux_appel": 1.25},
+    2025: {"valeur_service": 0.55553, "salaire_reference": 5.735, "taux_appel": 1.25},
+    2026: {"valeur_service": 0.56053, "salaire_reference": 5.787,
+           "taux_appel": round(7.11 / 5.60, 6)},
+}
+
+
+def source_valeurs_point_ircantec_publiees() -> dict[tuple, float]:
+    """Les barèmes de l'Ircantec depuis 2022, là où la Caisse des dépôts
+    s'arrête : saisis depuis la page du régime, voir
+    :data:`VALEURS_POINT_IRCANTEC_PUBLIEES`.
+
+    La table s'arrêtait à la valeur de janvier 2022, et le rendement moyen de
+    2009 à 2021 prolongeait tout le reste.
+    """
+    valeurs: dict[tuple, float] = {}
+    for annee, mesures in VALEURS_POINT_IRCANTEC_PUBLIEES.items():
+        for mesure, valeur in mesures.items():
+            valeurs[("ircantec", str(annee), mesure)] = valeur
+        for predecesseur in ("igrante", "ipacte"):
+            valeurs[(predecesseur, str(annee), "valeur_service")] = (
+                mesures["valeur_service"])
+    return dict(sorted(valeurs.items()))
 
 
 def source_valeurs_point_agirc_arrco() -> dict[tuple, float]:
@@ -2112,7 +2151,9 @@ def source_valeurs_point() -> dict[tuple, float]:
     """
     valeurs = _cles_points("serie", substituees=False)
     producteurs: set[tuple] = set()
-    for source in (source_valeurs_point_ircantec, source_valeurs_point_agirc_arrco,
+    for source in (source_valeurs_point_ircantec,
+                   source_valeurs_point_ircantec_publiees,
+                   source_valeurs_point_agirc_arrco,
                    source_valeurs_point_agirc_arrco_en_cours,
                    source_valeurs_point_erafp):
         try:
@@ -5192,6 +5233,18 @@ CERTIFICATIONS = (
         origine="Caisse des dépôts, barèmes Ircantec (IRC_BAR_01 et IRC_BAR_02)",
         decimales=6,
         tolerance=5e-7,
+    ),
+    Certification(
+        nom="valeurs_point_ircantec_publiees",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_point_ircantec_publiees,
+        origine="Ircantec, page « Valeur du point » et paramètres annuels, "
+                "2022-2026, lus le 23 septembre 2026",
+        decimales=6,
+        tolerance=5e-7,
+        niveau="haute",
     ),
     Certification(
         nom="valeurs_point_agirc_arrco",

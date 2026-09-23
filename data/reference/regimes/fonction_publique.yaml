@@ -72,6 +72,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.06
@@ -102,6 +103,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.07
@@ -122,6 +124,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.077
@@ -146,6 +149,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.079
@@ -171,6 +175,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.089
@@ -199,6 +204,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0785
@@ -230,6 +236,7 @@ regimes:
         duree_requise_trimestres: 160
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0785
@@ -254,6 +261,7 @@ regimes:
         duree_requise_trimestres: 160
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0785
@@ -278,6 +286,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0812
@@ -307,6 +316,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0839
@@ -331,6 +341,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0876
@@ -354,6 +365,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0914
@@ -377,6 +389,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0954
@@ -400,6 +413,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0994
@@ -423,6 +437,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1029
@@ -446,6 +461,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1056
@@ -469,6 +485,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1083
@@ -492,6 +509,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.111
@@ -516,6 +534,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1110
@@ -559,6 +578,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.06
@@ -587,6 +607,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.07
@@ -607,6 +628,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.077
@@ -631,6 +653,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.079
@@ -656,6 +679,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.089
@@ -686,6 +710,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0785
@@ -719,6 +744,7 @@ regimes:
         duree_requise_trimestres: 160
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0785
@@ -740,6 +766,7 @@ regimes:
         duree_requise_trimestres: 160
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0785
@@ -764,6 +791,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0812
@@ -795,6 +823,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0839
@@ -819,6 +848,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0876
@@ -842,6 +872,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0914
@@ -865,6 +896,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0954
@@ -888,6 +920,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0994
@@ -911,6 +944,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1029
@@ -934,6 +968,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1056
@@ -957,6 +992,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1083
@@ -980,6 +1016,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.111
@@ -1004,6 +1041,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1110
@@ -1091,6 +1129,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.06
@@ -1120,6 +1159,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.07
@@ -1141,6 +1181,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.077
@@ -1166,6 +1207,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.079
@@ -1192,6 +1234,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.089
@@ -1220,6 +1263,7 @@ regimes:
         age_taux_plein: 60
         duree_requise_trimestres: 150
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0785
@@ -1251,6 +1295,7 @@ regimes:
         duree_requise_trimestres: 160
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0785
@@ -1274,6 +1319,7 @@ regimes:
         duree_requise_trimestres: 160
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0785
@@ -1296,6 +1342,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0812
@@ -1324,6 +1371,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0839
@@ -1348,6 +1396,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0876
@@ -1371,6 +1420,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0914
@@ -1394,6 +1444,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0954
@@ -1417,6 +1468,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.0994
@@ -1440,6 +1492,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1029
@@ -1463,6 +1516,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1056
@@ -1486,6 +1540,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.1083
@@ -1509,6 +1564,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.111
@@ -1533,6 +1589,7 @@ regimes:
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 0.75
+        taux_maximum_bonifie: 0.80
         salaire_reference: derniers_6_mois
         assiette: hors_primes
         taux_cotisation_retraite: 0.111

@@ -503,7 +503,7 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   en compte, l'exploitant agricole <!--chiffre:mesure(mortalite_population?population=vingtile&cas=exploitant_agricole&generation=1975&quoi=annees&abs=1)-->3,3<!--/--> de moins, le cadre <!--chiffre:mesure(mortalite_population?population=vingtile&cas=cadre&generation=1975&quoi=annees&abs=1)-->2,4<!--/--> de plus, le
   libéral <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=annees&abs=1)-->2,8<!--/--> de plus. Un diviseur commun transfère donc des modestes vers
   les aisés : <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=ecart&abs=1)-->11,2<!--/--> % de pension notionnelle à capital égal pour le SMIC,
-  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,1<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->42 844<!--/--> € retirés
+  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,1<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->42 744<!--/--> € retirés
   au premier et <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=transfert&abs=1)-->165 814<!--/--> € ajoutés au second sous le système actuel — qui
   transfère autant que les autres, n'ayant aucun diviseur pour le savoir.
   Cette mesure est celle que le défaut applique désormais ; ses chiffres
@@ -613,7 +613,11 @@ distinguer, et ils ne suivent pas la même règle :
   base sans aucune cotisation. Ils protègent de la décote et entrent dans la
   proratisation, mais n'ajoutent aucun salaire au compte, donc rien au salaire
   de référence. Le scénario 1 les conserve, les scénarios notionnels les
-  suppriment ;
+  suppriment. Le chômage NON indemnisé n'en ouvre que sous les limites de
+  l'article R. 351-12 : rien avant 1980, la première période à un an — un an et
+  demi pour les périodes postérieures à 2010 —, chaque période ultérieure à un
+  an si elle suit un chômage indemnisé, cinq ans pour l'assuré de cinquante-cinq
+  ans qui a vingt ans de cotisations, et rien sinon ;
 - les **points complémentaires** sont, eux, de vrais droits contributifs :
   pendant un chômage indemnisé, l'UNEDIC verse des cotisations à l'Agirc-Arrco,
   calculées sur le salaire d'avant l'interruption. Ils sont donc acquis dans
@@ -969,8 +973,11 @@ précédent, et le modèle en prenait deux à l'envers.
    montant de base suit la durée d'assurance acquise dans le régime, sa
    majoration au titre des périodes cotisées suit la seule durée cotisée
    (D. 351-2-2), et cette majoration demande en outre <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=TRIMESTRES_COTISES_MINIMUM_MAJORE)-->120<!--/--> trimestres cotisés
-   tous régimes. Il se compare à la pension AVANT surcote, puis est écrêté de ce
-   qui ferait dépasser le plafond de l'article L. 173-2 — plafond auquel se
+   tous régimes. Il se compare à la pension AVANT surcote, et la surcote,
+   calculée sur cette pension, s'ajoute au minimum pour les pensions prenant
+   effet depuis le 1er avril 2009 (D. 351-2-1, dernier alinéa) ; avant, elle
+   entrait dans la pension comparée au minimum. Il est enfin écrêté de ce qui
+   ferait dépasser le plafond de l'article L. 173-2 — plafond auquel se
    comparent les pensions personnelles, majorations pour enfants exclues.
 4. **Minimum garanti** de la fonction publique (L. 17) — non pas un plancher
    proratisé mais un barème en escalier sur la durée de services : <!--chiffre:tenu(test_le_minimum_garanti_de_la_fonction_publique_est_servi)-->57,5<!--/--> % de la
@@ -978,16 +985,17 @@ précédent, et le modèle en prenait deux à l'envers.
    est le traitement de l'indice majoré 227 au 1er janvier 2004, revalorisé
    comme les pensions depuis. Il n'est dû qu'au taux plein depuis la loi du
    9 novembre 2010.
-5. **Surcote parentale** (L. 351-1-2-1) — <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:taux_par_trimestre*100?debut=2023)-->1,25<!--/--> % par trimestre acquis entre
-   <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:age_ouverture?debut=2023)-->63<!--/--> ans et l'âge légal, quatre au plus, à l'assuré qui justifie de la durée
-   requise à <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:age_ouverture?debut=2023)-->63<!--/--> ans et détient au moins un trimestre de majoration pour enfants.
-   C'est la contrepartie du recul de l'âge légal voulu par la loi du 14 avril
-   2023 : l'année de travail qu'elle impose à qui avait déjà sa durée ne
-   rapportait rien, la surcote ordinaire ne comptant qu'au-delà de l'âge légal.
-   Les deux se cumulent donc sans se recouvrir. Sa montée en charge est celle de
-   l'âge légal : rien jusqu'à la génération 1964, un trimestre pour 1965, quatre
-   à partir de 1968. C'est le trimestre pour enfants qui ouvre le droit, et non
-   le sexe.
+5. **Surcote parentale** (L. 351-1-2-1) — <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:taux_par_trimestre*100?debut=2023)-->1,25<!--/--> % par trimestre cotisé
+   dans l'année qui précède l'âge légal au-delà de la durée requise, quatre au
+   plus, dès que l'âge légal atteint <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:age_ouverture?debut=2023)-->63<!--/--> ans, à l'assuré qui détient au moins un
+   trimestre de majoration pour enfants. C'est la contrepartie du recul de l'âge
+   légal voulu par la loi du 14 avril 2023 : l'année de travail qu'elle impose à
+   qui avait déjà sa durée ne rapportait rien, la surcote ordinaire ne comptant
+   qu'au-delà de l'âge légal. Les deux se cumulent donc sans se recouvrir. Elle
+   s'ouvre avec cet âge minimal : rien jusqu'à la génération 1964 ni pour les
+   assurés nés au premier trimestre 1965, quatre trimestres au plus ensuite. La fenêtre est datée au mois, les trimestres de chaque année
+   répartis sur ses mois. C'est le trimestre pour enfants qui ouvre le droit, et
+   non le sexe.
 6. **Majoration pour trois enfants et plus** — <!--chiffre:tenu(test_la_majoration_de_10_pour_cent_n_apparait_qu_a_trois_enfants)-->10<!--/--> %, davantage dans la fonction
    publique, calculée sur le montant DÉJÀ RELEVÉ par les minima, et plafonnée en
    euros à la complémentaire.
@@ -1919,7 +1927,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,71<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,69<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.

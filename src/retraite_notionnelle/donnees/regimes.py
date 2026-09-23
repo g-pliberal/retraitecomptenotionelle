@@ -173,6 +173,12 @@ class PeriodeRegime:
     pension_speciale_services_annees: float | None
     pension_speciale_age_sans_autre_pension: float | None
     taux_plein: float | None
+    #: Taux de liquidation que les BONIFICATIONS peuvent porter au-delà de
+    #: ``taux_plein`` : « Le pourcentage maximum fixé à l'article L 13 peut-être
+    #: augmenté de cinq points du chef des bonifications » (L. 12 CPCMR), soit
+    #: 80 % pour un maximum de 75 %. Les services seuls ne le dépassent jamais.
+    #: ``None`` : aucune bonification ne passe le maximum.
+    taux_maximum_bonifie: float | None
     salaire_reference: str
     assiette: str
     taux_cotisation_retraite: float
@@ -956,6 +962,10 @@ class CatalogueRegimes:
                     else float(p["pension_speciale_age_sans_autre_pension"])
                 ),
                 taux_plein=None if p.get("taux_plein") is None else float(p["taux_plein"]),
+                taux_maximum_bonifie=(
+                    None if p.get("taux_maximum_bonifie") is None
+                    else float(p["taux_maximum_bonifie"])
+                ),
                 salaire_reference=p.get("salaire_reference", "sans_objet"),
                 assiette=p.get("assiette", "deplafonnee"),
                 taux_cotisation_retraite=float(p["taux_cotisation_retraite"]),
