@@ -200,8 +200,8 @@ frais:
       par an, sans en donner la moyenne. 0,80 % au milieu de la fourchette,
       sur 22/34 des contrats, font 0,52 %. Ce frais s'applique chaque année à
       la réserve qui porte la rente ; au diviseur du modèle et à taux
-      technique nul, 0,52 % par an valent 8 % de rente en moins, quatre fois
-      l'effet des arrérages retenus. L'OPEF ne le mesure pas.
+      technique nul, 0,52 % par an valent quelque 7 % de rente en moins,
+      bien plus que les arrérages retenus. L'OPEF ne le mesure pas.
 
 # CE QUE VALENT CES MOYENNES, ET CE QU'ON SAIT DES MÉDIANES
 # ----------------------------------------------------------
@@ -280,14 +280,15 @@ distributions:
   # 0,60 % et un maximum de 1 % par an ». C'est un prélèvement annuel sur la
   # réserve qui porte la rente, distinct des frais sur arrérages, et l'OPEF ne
   # le mesure pas. Sur la table du modèle, à taux technique nul, un tel frais
-  # équivaut à une rente réduite de 9 % (0,60 %) à 15 % (1 %), quelle que soit
-  # la génération : il pèse quatre à sept fois les 2,20 % d'arrérages. Le
-  # modèle ne le retient pas, comme il ne retient pas la table de mortalité
-  # prudente d'un assureur : sa rente est celle d'un régime qui convertit au
-  # diviseur du compte notionnel. docs/limites.md §5 ante le chiffre.
+  # équivaut à une rente réduite de 8 % (0,60 %) à 14 % (1 %), à un point près
+  # quel que soit l'âge de liquidation : il pèse quatre à six fois les 2,20 %
+  # d'arrérages. Le nom du bloc date d'avant le 20 septembre 2026 : le modèle
+  # le retient depuis, au milieu de la fourchette et sur la part des contrats
+  # qui facturent (`frais.encours_rente`, 0,52 %). docs/limites.md §5 ante le
+  # chiffre.
   encours_de_rentes_non_modelise:
     ccsf_2021_contrats_facturant: 22
     ccsf_2021_contrats_panel: 34
     minimum_annuel: 0.006
     maximum_annuel: 0.010
-    effet_sur_la_rente_au_diviseur_du_modele: de -9 % à -15 %
+    effet_sur_la_rente_au_diviseur_du_modele: de -8 % à -14 %
