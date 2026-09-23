@@ -5904,6 +5904,7 @@ def test_chaque_renvoi_vise_une_section_qui_existe(contexte):
 QUESTIONS_DE_L_ELECTEUR = (
     "Ma retraite va-t-elle baisser ?",
     "Je suis déjà à la retraite : qu'est-ce qui change pour moi ?",
+    "Pourquoi changer de système ?",
     "Que deviennent mes trimestres et mes points ?",
     "À quel âge pourrai-je partir ?",
     "Qu'est-ce qui change sur ma fiche de paie ?",
@@ -5911,9 +5912,55 @@ QUESTIONS_DE_L_ELECTEUR = (
     "Et si je meurs ? Et mon conjoint ?",
     "Mon argent sera-t-il placé en Bourse ?",
     "Et les fonctionnaires, les régimes spéciaux ?",
+    "Comment passe-t-on d'un système à l'autre ?",
     "Combien cela coûte-t-il, et qui paie ?",
     "Ces chiffres sont-ils fiables ?",
 )
+
+
+#: Ce que chaque question de l'accueil range derrière sa réponse courte : le
+#: titre du développement qui la traitait, jusqu'au 23 septembre 2026, dans
+#: un second empilement de dépliants, « Pour aller plus loin ».
+DEVELOPPEMENTS_DES_QUESTIONS = {
+    "Pourquoi changer de système ?": "En quoi ce serait plus juste",
+    "Qu'est-ce qui change sur ma fiche de paie ?": "Les impôts que nous supprimons",
+    "Et les petites retraites ?":
+        "Le plancher, et ce qu'il change pour les petites pensions",
+    "Mon argent sera-t-il placé en Bourse ?": "La part capitalisée :",
+    "Combien cela coûte-t-il, et qui paie ?":
+        "Ce qui pouvait nous arrêter, et ce que nous en avons fait",
+    "Ces chiffres sont-ils fiables ?": "Pourquoi ce site.",
+}
+
+
+def test_l_accueil_range_chaque_sujet_sous_une_seule_question(contexte):
+    """« Même moi je m'y perds » (23 septembre 2026).
+
+    L'accueil alignait deux piles de dépliants : onze questions de l'électeur,
+    puis neuf « Pour aller plus loin » qui reprenaient les mêmes sujets dans la
+    voix du programme — le plancher, la part capitalisée, le coût —, et vers
+    lesquels chaque réponse courte renvoyait : vingt titres en deux voix. Il
+    n'y a plus qu'une liste de treize questions : chaque développement est
+    rangé derrière la réponse courte de la question qu'il traite, et les deux
+    dépliants qui ne faisaient que redire sont partis — le calcul, que les
+    trois gestes disent en clair, et un plan du site que le bandeau porte.
+    """
+    corps = html.unescape(rendre(contexte, "/", {})[1])
+    assert "Pour aller plus loin" not in corps
+    depliants = re.findall(
+        r'<details class="section"(?: id="[^"]+")?><summary>.*?<span>(.*?)</span>'
+        r"</summary>(.*?)</details>", corps, re.S)
+    # Une seule liste, faite de questions.
+    assert [titre for titre, _ in depliants] == list(QUESTIONS_DE_L_ELECTEUR)
+    reponses = dict(depliants)
+    for question, developpement in DEVELOPPEMENTS_DES_QUESTIONS.items():
+        assert developpement in reponses[question], (question, developpement)
+        # La réponse courte vient d'abord, le développement ensuite.
+        assert reponses[question].index("<p>") < reponses[question].index(
+            developpement), question
+    # Les trois gestes ne se disent qu'une fois : en clair, sous leur titre.
+    assert corps.count("On inscrit</strong>") == 1
+    assert corps.count("On revalorise</strong>") == 1
 
 
 def test_l_accueil_repond_aux_questions_de_l_electeur(contexte):
@@ -6466,11 +6513,13 @@ def test_le_programme_casse_ses_triades_et_porte_une_voix(contexte):
     site, pourquoi, et avec quelles réserves.
 
     La note a changé de place à la refonte en affiche. Elle était le quatrième
-    bloc de texte du premier écran ; elle est maintenant dans le dépliant qui
-    dit comment vérifier, parce que c'est le même geste — et parce que le
-    premier écran doit tenir son budget de lecture. Ce qui reste visible est
-    l'engagement, en une phrase sur le panneau crème : tout est chiffré, sur
-    des données publiques et un modèle ouvert."""
+    bloc de texte du premier écran ; elle est allée dans le dépliant qui disait
+    comment vérifier, parce que c'est le même geste — et parce que le premier
+    écran doit tenir son budget de lecture. Ce dépliant, un plan du site que le
+    bandeau porte déjà, est parti le 23 septembre 2026 : la note répond
+    désormais à « Ces chiffres sont-ils fiables ? », qui est la même question.
+    Ce qui reste visible est l'engagement, en une phrase sur le panneau
+    crème : tout est chiffré, sur des données publiques et un modèle ouvert."""
     corps = rendre(contexte, "/", {})[1]
     assert "Il est illisible." not in corps and "Il n'est pas piloté." not in corps
     assert "Illisible, d'abord." in corps and "Et personne ne le pilote." in corps
@@ -6479,10 +6528,12 @@ def test_le_programme_casse_ses_triades_et_porte_une_voix(contexte):
     assert "Nous avons choisi" in note.group(1)
     assert "Nos réserves sont écrites" in note.group(1)
     assert "Le Parti libéral français, septembre 2026." in note.group(1)
-    # Elle est rangée, pas supprimée : dans le dépliant « Tout vérifier ».
+    # Elle est rangée, pas supprimée : sous la question de la fiabilité.
     assert "Pourquoi ce site." not in _hors_depliants(corps)
-    verifier = corps[corps.index("Tout vérifier, page par page"):]
-    assert "Pourquoi ce site." in verifier
+    fiables = re.search(
+        r'<details class="section" id="tout-verifier"><summary>.*?'
+        r"Ces chiffres sont-ils fiables \?.*?</details>", corps, re.S)
+    assert fiables and "Pourquoi ce site." in fiables.group(0)
     # Et l'engagement, lui, reste sous les yeux.
     visible = _hors_depliants(corps)
     assert "Vérifiez plutôt que de nous croire" in visible

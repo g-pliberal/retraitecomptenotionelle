@@ -2348,18 +2348,21 @@ def _programme(contexte: Contexte) -> str:
     ELLE SE LIT EN UNE MINUTE. C'est la contrainte, et elle tient à ce qu'est
     cette page : un programme politique, lu par quelqu'un qui n'a pas demandé à
     le lire. Quatre propositions, un tableau qui les oppose terme à terme au
-    système actuel, et un lien pour vérifier. Le reste — pourquoi le système
-    actuel ne va pas, en quoi c'est plus juste, comment on y va — est replié :
-    présent pour qui veut, hors du chemin pour qui n'a que trente secondes.
+    système actuel, les questions de l'électeur, et un lien pour vérifier.
+
+    UNE SEULE LISTE REPLIÉE, ET CHAQUE SUJET À UN SEUL ENDROIT. La page en
+    alignait deux, l'une sous l'autre : onze questions de l'électeur, puis neuf
+    dépliants « Pour aller plus loin » qui traitaient les mêmes sujets dans la
+    voix du programme — le plancher, la part capitalisée, le coût —, et chaque
+    réponse courte renvoyait plus bas vers l'un d'eux : vingt titres, et le
+    lecteur ne savait laquelle des deux piles ouvrir. Chaque développement est
+    désormais rangé sous la question à laquelle il répond
+    (:func:`_programme_questions`), et les deux dépliants qui ne faisaient que
+    redire ont disparu : le calcul, que les trois gestes disent en clair plus
+    haut, et le plan du site, que le bandeau porte sur chaque page
+    (23 septembre 2026).
     """
-    base = contexte.base
-    simulateur = contexte.simulateur()
-    regimes = len(simulateur.catalogue)
-    inventaire = len(charger_inventaire(base.racine_donnees))
-    comptes = contexte.comptes()
-    annee_solde = comptes.derniere_annee_observee
-    taux = g.pourcentage(base.taux_cotisation_liberal, decimales=0)
-    plancher = g.euros(base.garantie_vieillesse_mensuelle)
+    regimes = len(contexte.simulateur().catalogue)
 
     differences = g.tableau(
         ["", "Aujourd'hui", "Avec notre programme"],
@@ -2398,84 +2401,6 @@ def _programme(contexte: Contexte) -> str:
         entete_de_ligne=True,
     )
 
-    # Les dépliants sont bâtis à part : leur corps est lui-même un texte à
-    # trous, et Python n'accepte pas un bloc entre triples guillemets à
-    # l'intérieur d'un autre.
-    depliant_actuel = g.depliant("Pourquoi le système actuel ne va pas", f"""
-<p>La retraite française ? Un empilement de régimes, plus qu'un système.
-Ce site en <a href="{g.lien("/donnees")}">recense {inventaire}</a>, actuels et
-disparus, et en calcule {regimes}. Chacun a son âge de départ, son assiette, son
-taux, sa durée exigée et son minimum.</p>
-<ul class="serree">
-  <li><strong>Illisible, d'abord.</strong> Le montant dépend de sept règles qui ne
-  se lisent sur aucune fiche de paie. Personne, pas même les caisses, ne sait
-  dire à un actif ce qu'il a acquis, autrement qu'en trimestres et en points.</li>
-  <li><strong>Inégal, ensuite.</strong> À salaire et à durée égaux, la pension
-  change selon le statut, et l'écart ne vient d'aucune différence de cotisation.
-  <a href="{g.lien("/cas-types")}">Treize carrières le mesurent</a>.</li>
-  <li><strong>Et personne ne le pilote.</strong> L'équilibre se rattrape par
-  des réformes (1993, 2003, 2010, 2014, 2023), qui déplacent chaque fois
-  l'effort sur ceux qui n'ont pas encore pris leur retraite.
-  <a href="{g.lien("/cout")}">Le solde est ici</a>.</li>
-</ul>""", "pourquoi-changer")
-
-    depliant_calcul = g.depliant("Comment une pension serait calculée", f"""
-<p>Un compte notionnel est un compte <em>virtuel</em> : aucun capital n'est
-placé, les cotisations de l'année paient les pensions de l'année. C'est toujours
-de la répartition. Ce qui change, c'est le calcul du droit.</p>
-<ol>
-  <li><strong>On inscrit</strong> chaque cotisation versée sur le compte, au
-  premier euro et sans plafond.</li>
-  <li><strong>On revalorise</strong> le compte chaque année, au rythme auquel
-  progresse la masse des salaires, c'est-à-dire au rendement que la
-  répartition peut servir sans changer son taux.</li>
-  <li><strong>On divise</strong>, au départ en retraite, le solde du compte par
-  le nombre d'années qu'il reste statistiquement à vivre, lu sur la table de
-  votre propre génération. Le résultat est la pension.</li>
-</ol>
-<p>Un âge minimum subsiste, on ne part pas à trente ans. Mais il n'y a plus
-d'âge du {g.terme("taux plein")}, ni {g.terme("décote")}, ni
-{g.terme("surcote")} : partir plus tôt donne une pension
-plus faible, partir plus tard une pension plus forte, dans le rapport exact de
-ce que l'un et l'autre coûtent.
-<a href="{g.lien("/methode")}">Le détail du calcul</a>.</p>""", "le-calcul")
-
-    depliant_verifier = g.depliant("Tout vérifier, page par page", f"""
-<div class="note signee">
-<p><strong>Pourquoi ce site.</strong> Nous avons choisi de publier un modèle
-plutôt qu'un slogan. Une proposition de retraite se juge sur ce qu'elle verse
-à chacun et sur ce qu'elle coûte à tous, et nous voulions que n'importe qui
-puisse le vérifier sur sa propre carrière. Nos réserves sont écrites page par
-page : le modèle reste un modèle, ses séries d'avant 1950 sont fragiles, et le
-niveau des pensions notionnelles dépend d'un réglage annuel qu'il calcule sans
-l'appliquer. Nous préférons un chiffre discutable à une promesse qu'on ne peut
-pas discuter.</p>
-<p class="discret">Le Parti libéral français, septembre 2026.</p>
-</div>
-<ul class="serree">
-  <li><a href="{g.lien("/simuler")}">Simuler</a> : votre carrière, ou votre
-  relevé collé tel quel, sous les quatre systèmes.</li>
-  <li><a href="{g.lien("/cout")}">Coût</a> : ce qui rentre, ce qui sort, et ce
-  qui manque, de 1959 à 2070.</li>
-  <li><a href="{g.lien("/risque")}">Pourquoi changer</a> : votre retraite
-  sera-t-elle payée, et ce que la recherche en sait.</li>
-  <li><a href="{g.lien("/trajectoire")}">Cumul versé</a> : ce que chaque système
-  vous aura versé, du départ jusqu'à 105 ans.</li>
-  <li><a href="{g.lien("/cas-types")}">Carrières types</a> : treize carrières sur
-  sept générations.</li>
-  <li><a href="{g.lien("/avantages")}">Droits non cotisés</a> : ce que la retraite
-  verse sans cotisation, dispositif par dispositif.</li>
-  <li><a href="{g.lien("/methode")}">Méthode</a> : ce que le modèle calcule, et
-  ce qu'il supprime.</li>
-  <li><a href="{g.lien("/donnees")}">Sources</a> : l'état de fiabilité de chaque
-  série, source par source.</li>
-</ul>
-<p class="discret">Le modèle, les données et cette page sont publiés sous
-licence libre : <a href="{g.DEPOT}">le dépôt</a>. Solde du système de retraite
-en {annee_solde} :
-{g.pourcentage(comptes.solde(annee_solde), signe=True, decimales=2)} du PIB.</p>""",
-        "tout-verifier")
-
     # Les trois gestes du calcul. Ils étaient au format du texte courant, et se
     # lisaient comme une note de bas de page à côté du tableau qui leur fait
     # face — alors qu'ils pèsent autant. Chiffres de 50 px, texte de 24, un
@@ -2502,6 +2427,10 @@ en {annee_solde} :
         "pas de surprise.</strong>",
     )
 
+    # Les trois gestes portent l'identifiant « le-calcul », que visait le
+    # dépliant « Comment une pension serait calculée » : la réponse sur les
+    # trimestres y renvoie, et le script de la page y pose le focus — d'où
+    # `tabindex="-1"`, qu'un bloc sans lien ni champ n'a pas de naissance.
     return f"""
 {tete}
 
@@ -2510,7 +2439,7 @@ en {annee_solde} :
 {_engagements(contexte)}
 
 <div class="paire">
-  <div>
+  <div id="le-calcul" tabindex="-1">
     <p class="surtitre">Le calcul</p>
     <h2 style="margin-top:0">Comment ça marche, en trois gestes</h2>
     <ol class="gestes">{gestes}</ol>
@@ -2541,22 +2470,63 @@ et un modèle ouvert.</h2>
 <p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Simuler ma
 retraite</a><a href="{g.lien("/cout")}">Ce que ça coûte, et qui paie</a></p>
 </div>
-
-<h2>Pour aller plus loin</h2>
-
-{depliant_actuel}
-
-{depliant_calcul}
-
-{_programme_justice(contexte)}
-{_programme_garantie(contexte)}
-{_programme_capitalisation(contexte)}
-{_programme_restitution(contexte)}
-{_programme_transition(contexte)}
-{_programme_blocages(contexte)}
-
-{depliant_verifier}
 """
+
+
+def _programme_pourquoi(contexte: Contexte) -> str:
+    """Pourquoi le système actuel ne va pas : la réponse à « pourquoi changer ».
+
+    C'était le premier des neuf dépliants « Pour aller plus loin ». Il répond à
+    une question que l'électeur pose dans ses mots, et il est rangé sous elle,
+    suivi de ce qui la prolonge : en quoi le compte serait plus juste.
+    """
+    base = contexte.base
+    regimes = len(contexte.simulateur().catalogue)
+    inventaire = len(charger_inventaire(base.racine_donnees))
+    return f"""
+<p>La retraite française ? Un empilement de régimes, plus qu'un système.
+Ce site en <a href="{g.lien("/donnees")}">recense {inventaire}</a>, actuels et
+disparus, et en calcule {regimes}. Chacun a son âge de départ, son assiette, son
+taux, sa durée exigée et son minimum.</p>
+<ul class="serree">
+  <li><strong>Illisible, d'abord.</strong> Le montant dépend de sept règles qui ne
+  se lisent sur aucune fiche de paie. Personne, pas même les caisses, ne sait
+  dire à un actif ce qu'il a acquis, autrement qu'en trimestres et en points.</li>
+  <li><strong>Inégal, ensuite.</strong> À salaire et à durée égaux, la pension
+  change selon le statut, et l'écart ne vient d'aucune différence de cotisation.
+  <a href="{g.lien("/cas-types")}">Treize carrières le mesurent</a>.</li>
+  <li><strong>Et personne ne le pilote.</strong> L'équilibre se rattrape par
+  des réformes (1993, 2003, 2010, 2014, 2023), qui déplacent chaque fois
+  l'effort sur ceux qui n'ont pas encore pris leur retraite.
+  <a href="{g.lien("/cout")}">Le solde est ici</a>.</li>
+</ul>
+<p>Votre retraite sera-t-elle payée, et que dit la recherche du risque d'une
+retraite par répartition ? C'est l'objet de la page
+<a href="{g.lien("/risque")}">Pourquoi changer</a>.</p>"""
+
+
+def _programme_signature() -> str:
+    """La note signée : qui publie ce site, pourquoi, et avec quelles réserves.
+
+    Elle était dans le dépliant « Tout vérifier, page par page », avec une liste
+    des huit autres pages que le bandeau porte déjà, en tête de chacune. La
+    liste est partie ; la note reste, sous « Ces chiffres sont-ils fiables ? »,
+    parce que c'est la même question.
+    """
+    return f"""
+<div class="note signee">
+<p><strong>Pourquoi ce site.</strong> Nous avons choisi de publier un modèle
+plutôt qu'un slogan. Une proposition de retraite se juge sur ce qu'elle verse
+à chacun et sur ce qu'elle coûte à tous, et nous voulions que n'importe qui
+puisse le vérifier sur sa propre carrière. Nos réserves sont écrites page par
+page : le modèle reste un modèle, ses séries d'avant 1950 sont fragiles, et le
+niveau des pensions notionnelles dépend d'un réglage annuel qu'il calcule sans
+l'appliquer. Nous préférons un chiffre discutable à une promesse qu'on ne peut
+pas discuter.</p>
+<p class="discret">Le Parti libéral français, septembre 2026.</p>
+</div>
+<p class="discret">Le modèle, les données et cette page sont publiés sous
+licence libre : <a href="{g.DEPOT}">le dépôt</a>.</p>"""
 
 
 #: Les fractions dans lesquelles l'accueil dit un ordre de grandeur. « 31 % »
@@ -2636,6 +2606,18 @@ def _programme_questions(contexte: Contexte) -> str:
     ici non plus : l'accueil les lit dans le bilan figé, où
     ``scripts/construire_donnees.py`` les a écrits sous les réglages de
     référence — ceux sous lesquels l'accueil se rend toujours.
+
+    LA RÉPONSE COURTE D'ABORD, LE DÉVELOPPEMENT ENSUITE, DANS LE MÊME DÉPLIANT.
+    Les neuf dépliants « Pour aller plus loin » répondaient aux mêmes
+    questions, plus bas, dans la voix du programme, et chaque réponse courte
+    finissait par un renvoi vers l'un d'eux. Ils sont maintenant rangés sous
+    la question qu'ils traitent, derrière la réponse courte et sous leur titre
+    d'origine : le plancher sous les petites retraites, la part capitalisée
+    sous la Bourse, les impôts supprimés sous la fiche de paie, les points de
+    blocage sous le coût, la note signée sous la fiabilité. Deux questions
+    s'ajoutent pour ceux qui n'en avaient aucune : pourquoi changer, et
+    comment on passe d'un système à l'autre. Treize questions en une liste, au
+    lieu de vingt titres en deux.
     """
     base = contexte.base
     regimes = len(contexte.simulateur().catalogue)
@@ -2658,10 +2640,8 @@ def _programme_questions(contexte: Contexte) -> str:
 
     simulateur = f'<a href="{g.lien("/simuler")}">le simulateur</a>'
     calcul = vers("le-calcul", "Le calcul, en trois gestes")
-    plancher = vers("le-plancher", "Le plancher en détail")
-    veuve = vers("le-plancher", "Ce que cela change pour une veuve")
-    capitalisation = vers("la-part-capitalisee", "La part capitalisée en détail")
-    blocages = vers("les-blocages", "« Ce qui pouvait nous arrêter »")
+    veuve = vers("la-veuve", "Ce que cela change pour une veuve")
+    methode = f'<a href="{g.lien("/methode")}">Le détail du calcul</a>'
     cout = f'<a href="{g.lien("/cout")}">La page Coût</a>'
     sources = f'<a href="{g.lien("/donnees")}">D\'où viennent les chiffres</a>'
 
@@ -2694,6 +2674,9 @@ vieillesse comprise."""
         combien_retraite = f""" Sur nos carrières types, la pension
 d'aujourd'hui baisse ainsi de {baisse_retraite} en médiane."""
 
+    # Chaque question porte, derrière sa réponse courte, le développement qui
+    # la traitait ailleurs sur la page ; l'identifiant est celui du dépliant
+    # d'origine, pour que les renvois qui le visaient l'atteignent encore.
     questions = [
         ("Ma retraite va-t-elle baisser ?", f"""
 <p><strong>Le plus souvent, elle sera plus basse que ce que le système actuel
@@ -2703,7 +2686,7 @@ paient, et que ses recettes ne suffisent déjà plus à tenir cette promesse. En
 échange, un salarié du privé cotise {impose} au lieu de {aujourd_hui}, et son
 salaire net augmente. Pour votre carrière, {simulateur} met les deux montants
 côte à côte, avec ce que chacun des deux systèmes a vraiment de quoi
-payer.</p>"""),
+payer.</p>""", ""),
         ("Je suis déjà à la retraite : qu'est-ce qui change pour moi ?", f"""
 <p><strong>Votre pension serait recalculée sur ce qui a été réellement
 cotisé</strong>, depuis la première cotisation : ce que le système actuel
@@ -2711,68 +2694,79 @@ ajoute sans cotisation n'est plus servi. Elle reste ensuite revalorisée sur les
 prix. Si elle est modeste, la garantie vieillesse la complète à partir de {age}
 ans, jusqu'à {seul} par mois pour qui vit seul et {garantie} chacun en couple ;
 c'est une avance, reprise sur la succession.{combien_retraite} Pour votre cas,
-choisissez « à la retraite » dans {simulateur}.</p>"""),
+choisissez « à la retraite » dans {simulateur}.</p>""", ""),
+        ("Pourquoi changer de système ?",
+         _programme_pourquoi(contexte) + _programme_justice(contexte),
+         "pourquoi-changer"),
         ("Que deviennent mes trimestres et mes points ?", f"""
 <p><strong>Toute votre carrière est recalculée depuis la première
 cotisation</strong>, comme si le compte avait toujours existé. Chaque
 cotisation versée, la vôtre et celle de votre employeur, y est inscrite, puis
 revalorisée chaque année au rythme des salaires. Trimestres et points
 disparaissent, et avec eux les droits qu'aucune cotisation n'a payés :
-trimestres gratuits, majorations, minimums. {calcul}.</p>"""),
+trimestres gratuits, majorations, minimums. {calcul}.</p>""", ""),
         ("À quel âge pourrai-je partir ?", f"""
 <p>C'est vous qui choisissez, au-dessus d'un âge minimum. Il n'y a plus d'âge
-du taux plein, ni décote, ni surcote : <strong>partir plus tôt donne une pension
-plus faible, partir plus tard une pension plus forte</strong>, dans le rapport
-exact de ce que cela coûte. La garantie vieillesse, elle, n'est versée qu'à
-partir de {age} ans.</p>"""),
+du {g.terme("taux plein")}, ni {g.terme("décote")}, ni {g.terme("surcote")} :
+<strong>partir plus tôt donne une pension plus faible, partir plus tard une
+pension plus forte</strong>, dans le rapport exact de ce que cela coûte. La
+garantie vieillesse, elle, n'est versée qu'à partir de {age} ans.
+{methode}.</p>""", ""),
         ("Qu'est-ce qui change sur ma fiche de paie ?", f"""
 <p>Pour un salarié du privé, la cotisation retraite passe de {aujourd_hui} du
 salaire brut, employeur compris, à {impose} : {taux} pour la retraite de tous,
 {capitalise} épargnés à votre nom. <strong>Les {volontaire} d'écart vous
 reviennent en salaire</strong>{csg}. Libre à vous d'épargner aussi ces
 {volontaire} : {simulateur} montre ce qu'ils vous rapporteraient, et ce qu'il
-vous reste alors chaque mois.</p>"""),
+vous reste alors chaque mois.</p>{_programme_restitution(contexte)}""",
+         "les-impots"),
         ("Et les petites retraites ?", f"""
 <p>Les quatre minimums d'aujourd'hui sont remplacés par <strong>une garantie
 unique, calculée pour chacun</strong>, sans regarder les ressources du
 conjoint : {seul} par mois pour une personne seule, {garantie} chacun en
 couple, à partir de {age} ans, payés par l'impôt. C'est une avance, reprise sur
-la succession sans que les héritiers paient jamais de leur poche.
-{plancher}.</p>"""),
+la succession sans que les héritiers paient jamais de leur poche.</p>
+{_programme_garantie(contexte)}""", "le-plancher"),
         ("Et si je meurs ? Et mon conjoint ?", f"""
 <p>Si vous mourez avant votre retraite, <strong>le capital de votre épargne
 retraite revient à vos héritiers</strong>, en entier. La pension de
 répartition, elle, s'éteint avec vous, et notre système ne sert pas de pension
 de réversion : chacun reçoit ce qu'il a cotisé. Pour un conjoint survivant aux
 ressources modestes, c'est la garantie vieillesse qui prend le relais.
-{veuve}.</p>"""),
+{veuve}.</p>""", ""),
         ("Mon argent sera-t-il placé en Bourse ?", f"""
 <p><strong>Non.</strong> La retraite reste une retraite par répartition : les
 cotisations de l'année paient les pensions de l'année, et rien n'est placé.
 Seule l'épargne à votre nom l'est ({capitalise}, et ce que vous y ajoutez), sur
 des titres d'État parmi les mieux notés de la zone euro, gardés jusqu'à leur
-échéance : aucune action, aucun pari. {capitalisation}.</p>"""),
+échéance : aucune action, aucun pari.</p>
+{_programme_capitalisation(contexte)}""", "la-part-capitalisee"),
         ("Et les fonctionnaires, les régimes spéciaux ?", f"""
 <p>Ils rejoignent le même compte, au même taux que tout le monde :
 <strong>à cotisation égale, pension égale</strong>, quel que soit le statut, et
 les {regimes} barèmes d'aujourd'hui disparaissent. L'État cotisera {taux} comme
 tout employeur ; la moitié de ce qu'il cesse de verser ira au traitement de ses
-agents, l'autre moitié aux pensions déjà promises.</p>"""),
+agents, l'autre moitié aux pensions déjà promises.</p>""", ""),
+        ("Comment passe-t-on d'un système à l'autre ?",
+         _programme_transition(contexte), "la-transition"),
         ("Combien cela coûte-t-il, et qui paie ?", f"""
 <p>Baisser la cotisation à {taux} a un prix : pendant la transition, la
 proposition encaisse moins qu'elle ne verse, et son déficit dépasse celui du
 système actuel. {cout} le chiffre année par année, garantie vieillesse
-comprise ; le dépliant {blocages} dit ce que nous en faisons.</p>"""),
+comprise.</p>
+{_programme_blocages()}""", "les-blocages"),
         ("Ces chiffres sont-ils fiables ?", f"""
 <p>Ils viennent des institutions publiques (INSEE, Conseil d'orientation des
 retraites, caisses de retraite), et un programme les recontrôle contre leur
 source. Le modèle est public : chacun peut le relire et le refaire tourner. Il
 ne vaut pas relevé de carrière pour autant : pour vos droits, seule votre
 caisse fait foi, sur <a href="https://www.info-retraite.fr/">info-retraite.fr</a>.
-{sources}.</p>"""),
+{sources}.</p>
+{_programme_signature()}""", "tout-verifier"),
     ]
     return "<h2>Vos questions</h2>\n" + "\n".join(
-        g.depliant(question, reponse) for question, reponse in questions
+        g.depliant(question, reponse, identifiant)
+        for question, reponse, identifiant in questions
     )
 
 
@@ -2780,12 +2774,13 @@ def _programme_justice(contexte: Contexte) -> str:
     """En quoi le compte notionnel est plus juste, entre métiers et entre âges.
 
     Deux questions qu'on pose toujours, et dont les réponses tiennent chacune en
-    quatre lignes. Elles sont repliées ensemble parce qu'elles se répondent :
-    l'une regarde deux carrières de la même génération, l'autre deux générations
-    de la même carrière.
+    quatre lignes. Elles sont rangées ensemble, sous « Pourquoi changer de
+    système ? », parce qu'elles se répondent : l'une regarde deux carrières de
+    la même génération, l'autre deux générations de la même carrière.
     """
     regimes = len(contexte.simulateur().catalogue)
-    return g.depliant("En quoi ce serait plus juste", f"""
+    return f"""
+<h3>En quoi ce serait plus juste</h3>
 <h4>Entre deux personnes</h4>
 <ul class="serree">
   <li><strong>À cotisation égale, pension égale.</strong> Un fonctionnaire, un
@@ -2819,7 +2814,7 @@ sans que personne ne l'ait voté.</p>
   devraient financer.</li>
   <li><strong>L'écart se solde chaque année</strong>, au lieu de s'accumuler en
   silence jusqu'à la réforme suivante.</li>
-</ul>""", "plus-juste")
+</ul>"""
 
 
 #: Le taux de cotisation retraite d'aujourd'hui, parts salariale et patronale
@@ -2892,15 +2887,18 @@ def _engagements(contexte: Contexte) -> str:
          # 18 + 5 + 5. Dans l'autre ordre, trois pourcentages arrivaient avant
          # le repère qui permet de les lire, et « restent 5 % rendus » laissait
          # l'électeur chercher d'où ils restaient.
+         #
+         # La décomposition du taux d'aujourd'hui — 11,3 % + 16,7 % — est
+         # partie le 23 septembre 2026 : deux pourcentages de plus dans la
+         # carte qui en comptait déjà quatre, pour une précision que la
+         # fiche de paie du simulateur donne ligne à ligne.
          f"Aujourd'hui, {g.pourcentage(TAUX_ACTUEL_TOTAL, decimales=0)} du "
-         "salaire brut d'un salarié du privé, employeur compris "
-         f"({g.pourcentage(TAUX_ACTUEL_SALARIAL)} + "
-         f"{g.pourcentage(TAUX_ACTUEL_PATRONAL)}). Demain, "
+         "salaire brut d'un salarié du privé, employeur compris. Demain, "
          '<strong class="cle-texte">le même taux pour tout le monde</strong> : '
          f"{taux} pour la retraite de tous, {capitalise} placés sans risque à "
          'votre nom, <strong class="cle-texte">qui vous appartiennent</strong> '
-         f"et se transmettent, et {volontaire} rendus sur votre salaire. Le "
-         "simulateur montre ce qu'ils donnent si vous les épargnez aussi, "
+         f"et se transmettent, et {volontaire} rendus sur votre salaire, que "
+         "vous pouvez épargner aussi, "
          '<strong class="cle-texte">à effort inchangé</strong>.'),
         ("1 compte",
          '<strong class="cle-texte">en euros</strong>, lisible par tous.',
@@ -3018,8 +3016,10 @@ def _tableau_garantie() -> str:
 def _programme_garantie(contexte: Contexte) -> str:
     """Le plancher, et le seul changement qui compte : il regarde une personne.
 
-    Le tableau, lui, est en haut de page (:func:`_tableau_garantie`) : ce
-    dépliant dit ce qu'il remplace et comment il est financé.
+    Le tableau, lui, est en haut de page (:func:`_tableau_garantie`) : cette
+    section dit ce qu'il remplace et comment il est financé. Elle suit la
+    réponse courte à « Et les petites retraites ? », et son passage sur la
+    veuve porte l'identifiant que vise la réponse à « Et si je meurs ? ».
     """
     base = contexte.base
     plancher_seul = (base.garantie_vieillesse_mensuelle
@@ -3039,7 +3039,8 @@ def _programme_garantie(contexte: Contexte) -> str:
         for sexe in ("F", "H")
     }
     couple = simulateur.vie_en_couple
-    return g.depliant("Le plancher, et ce qu'il change pour les petites pensions", f"""
+    return f"""
+<h3>Le plancher, et ce qu'il change pour les petites pensions</h3>
 <p>Le système actuel superpose l'ASPA, le minimum contributif, le minimum
 garanti de la fonction publique, l'assurance vieillesse des parents au foyer,
 les majorations de durée et la majoration pour trois enfants. Chacun a son
@@ -3109,7 +3110,8 @@ quelqu'un. Les femmes vivent plus longtemps, elles épousent des hommes plus
 âgés, et elles finissent seules : la <strong>veuve pauvre</strong> est la
 figure centrale de ce dispositif, hier comme demain.</p>
 
-<h3>Ce que cela change pour une veuve, et pour ses enfants</h3>
+<h3 id="la-veuve" tabindex="-1">Ce que cela change pour une veuve, et pour ses
+enfants</h3>
 <p>Il faut le dire sans détour, parce que c'est le point où notre proposition
 prend le plus. Aujourd'hui, une veuve touche une <strong>pension de
 réversion</strong> : une part de la pension de son mari, versée jusqu'à sa
@@ -3140,7 +3142,7 @@ La garantie regarde chacun, et sert 500 € au premier. C'est ce changement
 d'assiette, plus que le montant, qui fait la différence pour les femmes aux
 pensions les plus faibles.
 <a href="{g.lien("/cout")}">Ce qu'elle coûterait</a> est calculé sur la
-distribution réelle des pensions, non sur des cas types.</p>""", "le-plancher")
+distribution réelle des pensions, non sur des cas types.</p>"""
 
 
 
@@ -3161,9 +3163,8 @@ def _programme_capitalisation(contexte: Contexte) -> str:
         base.taux_cotisation_liberal + base.taux_capitalisation_obligatoire,
         decimales=0)
     propose = g.pourcentage(base.taux_retraite_propose, decimales=0)
-    return g.depliant(
-        f"La part capitalisée : {total} qui vous appartiennent",
-        f"""
+    return f"""
+<h3>La part capitalisée : {total} qui vous appartiennent</h3>
 <p>À compter de {base.annee_bascule}, {taux} de votre rémunération
 sont prélevés <strong>en plus</strong> des {repartition_} de la répartition, et
 placés à votre nom sur des titres sans risque. Ce capital ne passe pas par le
@@ -3190,9 +3191,9 @@ toucheriez sans.</p>
   principale, pas de sortie anticipée : l'argent n'en sort qu'en rente viagère,
   ou par l'héritage. C'est vrai des {taux} obligatoires comme des {volontaire}
   que vous ajoutez.</li>
-  <li><strong>Il est placé sans risque.</strong> Des titres d'État parmi les
-  mieux notés de la zone euro, portés jusqu'à leur échéance : longue tant que la
-  retraite est loin, courte à l'approche du départ. Aucune action, aucun pari.</li>
+  <li><strong>Il est placé sans risque.</strong> Des titres d'État portés
+  jusqu'à leur échéance : longue tant que la retraite est loin, courte à
+  l'approche du départ.</li>
   <li><strong>Il ne remplace rien.</strong> La retraite par répartition reste ce
   qu'elle est, et le compte notionnel la calcule sans regarder ce capital. Les
   deux montants sont affichés côte à côte, jamais confondus.</li>
@@ -3200,9 +3201,7 @@ toucheriez sans.</p>
 <p>Ce que cela coûte est chiffré : l'enveloppe prélève des frais, et le
 simulateur les montre euro par euro, comme il montre le rendement qui reste. La
 page <a href="{g.lien("/methode")}">Méthode</a> dit à quels
-taux l'argent est placé, d'où ils viennent et ce qu'ils supposent.</p>""",
-        "la-part-capitalisee",
-    )
+taux l'argent est placé, d'où ils viennent et ce qu'ils supposent.</p>"""
 
 
 def _programme_transition(contexte: Contexte) -> str:
@@ -3249,12 +3248,11 @@ def _programme_transition(contexte: Contexte) -> str:
         titre="Du système actuel au régime unique",
         entete_de_ligne=True,
     )
-    return g.depliant("Comment on y va, étape par étape", f"""
+    return f"""
 <p>La bascule recalcule tout, depuis la première cotisation.</p>
 {etapes}
 <p>Après la bascule, un seul régime : départ possible à
-{_age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>""",
-                      "la-transition")
+{_age(fusionne.age_ouverture)}, assiette déplafonnée, même taux pour tous.</p>"""
 
 
 def _programme_restitution(contexte: Contexte) -> str:
@@ -3266,8 +3264,9 @@ def _programme_restitution(contexte: Contexte) -> str:
     Sans cela, le lecteur suppose — à raison — qu'elles vont combler un
     déficit.
 
-    Le dépliant se tait quand le partage vaut zéro : il n'y a alors rien à
-    raconter.
+    La section se tait quand le partage vaut zéro : il n'y a alors rien à
+    raconter, et la question de la fiche de paie s'arrête à sa réponse
+    courte.
     """
     base = contexte.base
     restitution = contexte.restitution()
@@ -3280,10 +3279,9 @@ def _programme_restitution(contexte: Contexte) -> str:
         return ""
     pib = comptes.pib(comptes.pib.derniere_annee)
     poids = comptes.part("impots_et_taxes", annee)
-    return g.depliant(
-        f"Les impôts que nous supprimons : {_milliards(part.rendu * pib, 0)} "
-        f"rendus aux salaires",
-        f"""
+    return f"""
+<h3>Les impôts que nous supprimons : {_milliards(part.rendu * pib, 0)} rendus aux
+salaires</h3>
 <p>La retraite est financée à {g.pourcentage(poids, decimales=0)} par des
 <strong>impôts</strong> ({_milliards(part.poste_abandonne * pib, 0)} en
 {annee}) qui n'ouvrent de droit à personne. Un compte notionnel ne sait pas les porter au crédit de qui que ce
@@ -3320,10 +3318,10 @@ prix du travail mais le solde qui équilibre le régime. Il cotisera
 employeur, et la moitié de ce qu'il cesse de verser ira au traitement des
 agents ; l'autre moitié paiera les pensions déjà promises, qui restent dues.
 C'est la seule augmentation de traitement que ce programme contienne, et elle
-n'est pas petite.</p>""", "les-impots")
+n'est pas petite.</p>"""
 
 
-def _programme_blocages(contexte: Contexte) -> str:
+def _programme_blocages() -> str:
     """Les points de blocage regardés avant de choisir, et ce qu'on en a fait.
 
     Les chiffres sont DATÉS, et la page le dit : ils viennent de trois scripts
@@ -3387,11 +3385,11 @@ def _programme_blocages(contexte: Contexte) -> str:
         titre="Cinq points de blocage, regardés avant de choisir",
         entete_de_ligne=True,
     )
-    return g.depliant("Ce qui pouvait nous arrêter, et ce que nous en avons fait", f"""
+    return f"""
+<h3>Ce qui pouvait nous arrêter, et ce que nous en avons fait</h3>
 <p>Nous avons cherché ce qui arrêterait cette proposition avant de la défendre. Voici les cinq points, ce que nous avons mesuré, et ce que nous en faisons.</p>
 {points}
-<p class="discret">Mesures des 20 et 21 septembre 2026, par trois scripts du dépôt : le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective. Cette page ne les recalcule pas ; leur détail, décision par décision, est dans la feuille de route du <a href="{g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a>.</p>""",
-                      "les-blocages")
+<p class="discret">Mesures des 20 et 21 septembre 2026, par trois scripts du dépôt : le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective. Cette page ne les recalcule pas ; leur détail, décision par décision, est dans la feuille de route du <a href="{g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a>.</p>"""
 
 
 def _verifier_statuts_ouverts(affiliations: Affiliations, carriere,

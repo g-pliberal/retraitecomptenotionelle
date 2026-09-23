@@ -167,13 +167,13 @@ Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses don
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
 chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->912<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 257<!--/--> Ko bruts) et prend quelques dixièmes
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 255<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Dix pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
 l'accueil — la proposition du Parti libéral français pour les retraites, ce
 qu'elle change terme à terme, et les questions qu'un électeur pose, chacune
-repliée sur sa réponse courte ; **Simuler** (une carrière — en un ou plusieurs
+repliée sur sa réponse courte et sur ce qui la développe ; **Simuler** (une carrière — en un ou plusieurs
 métiers, ou bien **lue sur votre relevé** année par année —, résumée en trois
 phrases avant les quatre montants, avec le détail du calcul et la
 décomposition de l'écart règle par règle), **Coût** (ce qui rentre, ce qui sort
@@ -223,8 +223,8 @@ Il est traité de front : **le Python de `src/` reste la référence**, et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->56<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->82 959<!--/--> nombres,
-dont <!--chiffre:portage(identiques)-->92,8<!--/--> % identiques
-au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->5,8<!--/--> · 10⁻¹⁵, quelques dizaines
+dont <!--chiffre:portage(identiques)-->91,3<!--/--> % identiques
+au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->11,8<!--/--> · 10⁻¹⁵, quelques dizaines
 d'*ulp* (un *ulp* vaut 2 · 10⁻¹⁶, la précision d'un flottant). Les pages, elles, sont comparées caractère par caractère : le
 formatage à la française reproduit jusqu'à l'arrondi au pair de Python, faute de
 quoi un « <!--chiffre:illustration()-->−12,5<!--/--> % » deviendrait
@@ -1249,7 +1249,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2330 tests Python
+tests/                          2331 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1298,7 +1298,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->2330<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2331<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,
