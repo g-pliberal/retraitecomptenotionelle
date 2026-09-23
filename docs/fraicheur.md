@@ -122,7 +122,7 @@ de `zones.yaml`, qui ne peuvent que décroître :
 - **les sections non déclarées**, aujourd'hui
   <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.sections_a_declarer)-->3<!--/--> ;
 - **les chiffres qui portent l'aveu `a_verifier`**, aujourd'hui
-  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.chiffres_a_verifier)-->2<!--/-->.
+  <!--chiffre:valeur(data/reference/prose/zones.yaml:cliquet.chiffres_a_verifier)-->0<!--/-->.
 
 Une section nouvelle dans un fichier non déclaré fait monter le premier, et le
 test échoue jusqu'à ce qu'on ait dit ce qu'elle engage. Une session qui déclare

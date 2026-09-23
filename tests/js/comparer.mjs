@@ -7,7 +7,9 @@
  * ``{requete, erreur}`` quand le modèle Python refuse de calculer. C'est le
  * format que produit ``tests/test_web.py``, qui tire des carrières au hasard :
  * les témoins figés de ``tests/temoins/`` couvrent des cas choisis, celui-ci
- * couvre ceux auxquels personne n'a pensé.
+ * couvre ceux auxquels personne n'a pensé. Un dictionnaire de cas nommés —
+ * ``tests/temoins/simulations.json`` lui-même — se lit aussi : c'est ainsi
+ * que ``scripts/verifier_prose.py`` compte ce que le README en affirme.
  *
  * Sortie : un compte rendu sur la sortie standard, et un code de retour non nul
  * dès la première divergence.
@@ -26,7 +28,10 @@ if (!fichierCas) {
   process.exit(2);
 }
 
-const cas = JSON.parse(readFileSync(fichierCas, "utf8"));
+const brut = JSON.parse(readFileSync(fichierCas, "utf8"));
+const cas = Array.isArray(brut)
+  ? brut
+  : Object.entries(brut).map(([nom, temoin]) => ({ nom, ...temoin }));
 const contexte = new Contexte(JSON.parse(readFileSync(fichierPaquet, "utf8")));
 
 const divergences = [];
