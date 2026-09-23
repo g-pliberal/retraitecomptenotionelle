@@ -231,8 +231,10 @@ class CourbeTauxSansRisque:
         """Taux annuel d'un placement fait en ``annee_placement`` pour ``duree`` ans.
 
         Le différé se compte en années pleines depuis l'année de la courbe. Un
-        placement antérieur à la courbe — il n'y en a pas, le pilier s'ouvre
-        l'année de la bascule — serait traité comme un placement comptant.
+        placement antérieur à la courbe est traité comme un placement comptant,
+        au taux coté du jour : il n'y en a que sous une bascule choisie avant
+        l'année de la courbe, puisque le pilier s'ouvre l'année de la bascule,
+        et la courbe ne dit rien des taux d'alors.
 
         Le taux rendu est le forward SANS PRIME de la période, augmenté de la
         prime de la maturité achetée. Sans ``prime_terme``, les deux morceaux

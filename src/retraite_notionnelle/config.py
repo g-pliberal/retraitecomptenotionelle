@@ -409,9 +409,15 @@ class Parametres:
     #: actifs. Mettre 1945 pour partir des ordonnances créant la Sécurité sociale.
     annee_debut_repartition: int = 1941
 
-    #: Année de bascule du scénario prospectif : les droits acquis jusqu'à cette
-    #: année incluse sont calculés selon les règles actuelles, les droits
-    #: postérieurs selon le compte notionnel du régime fusionné.
+    #: Année de bascule : la première du régime fusionné. Les droits acquis
+    #: jusqu'à l'année qui la PRÉCÈDE sont calculés selon les règles actuelles,
+    #: ceux de l'année de bascule et des suivantes selon le compte notionnel —
+    #: le compte y bascule dès le 1er janvier (``annee >= annee_bascule``).
+    #: C'est aussi la première année de cotisation au pilier capitalisé de la
+    #: proposition, pour qu'elle change tout le même jour. Un paramètre à part,
+    #: ``annee_debut_capitalisation``, a tenu cette date jusqu'au 23 septembre
+    #: 2026 : figé à 2026, il ouvrait le pilier en 2026 quelle que fût la
+    #: bascule choisie, et sur la somme des assiettes des régimes d'avant elle.
     annee_bascule: int = 2026
 
     #: Dernière année disponible dans les séries macroéconomiques.
@@ -863,13 +869,6 @@ class Parametres:
     #: cotisation notionnelle de l'année, EN PLUS d'elle : l'effort contributif
     #: monte de cinq points à compter de la bascule, il n'est pas redéployé.
     taux_capitalisation_obligatoire: float = 0.05
-
-    #: Première année de cotisation au pilier. Les années antérieures gardent
-    #: les taux qui étaient les leurs et ne versent rien : qui a liquidé avant
-    #: n'a pas de pilier, et qui liquide après n'en a que les années d'après.
-    #: C'est l'année de bascule, pour que la proposition change tout le même
-    #: jour.
-    annee_debut_capitalisation: int = 2026
 
     #: Les frais du PER l'année de la bascule, tels que le marché les pratique
     #: en 2025 d'après le rapport 2026 de l'Observatoire des produits d'épargne

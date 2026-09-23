@@ -1999,7 +1999,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
     const projete = annee > dernierePubliee;
     const coefficient = macro.coefficientPrix(annee, anneeEuros);
     let pilier = null;
-    if (annee >= simulateur.parametres.annee_debut_capitalisation) {
+    if (annee >= simulateur.parametres.annee_bascule) {
       const flux = massesPilier(liste, population, annee, poidsCotisants(annee), poidsAnnee);
       if (flux.versements > 0) {
         const rapportsPilier = {};

@@ -2547,7 +2547,7 @@ def test_le_pilier_de_tous_les_cotisants_est_donne_par_euro_verse(cout):
     frais sont une fraction des versements, l'encours grossit, les rentes
     montent avec les liquidations."""
     from retraite_notionnelle.config import Parametres
-    bascule = Parametres().annee_debut_capitalisation
+    bascule = Parametres().annee_bascule
     avenir = cout.avenir
     assert all(ligne.pilier is None for ligne in avenir.annees if ligne.annee < bascule)
     lignes = [ligne for ligne in avenir.annees if ligne.annee >= bascule]

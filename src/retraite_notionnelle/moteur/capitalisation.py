@@ -606,11 +606,18 @@ class ConstructeurCapitalisation:
         ``assiettes`` porte, année par année, l'assiette sur laquelle la
         cotisation notionnelle a été prélevée : le pilier s'appuie sur elle et
         n'en construit pas une autre.
+
+        IL S'OUVRE À LA BASCULE, celle que la simulation a choisie. Il
+        s'ouvrait jusqu'au 23 septembre 2026 à une date à lui, figée à 2026 :
+        une bascule en 2040 lui laissait quatorze années de plus, prélevées
+        sur l'assiette d'AVANT la bascule — la somme des assiettes des
+        régimes, qui compte deux fois la première tranche d'un salarié du
+        privé, régime général et Agirc-Arrco. Un cadre au salaire moyen né en
+        1990 y gagnait 15 318 € de rente annuelle, contre 10 338 € sous une
+        bascule en 2026 et 5 357 € sous la sienne.
         """
-        ouverture = max(
-            self.parametres.annee_debut_capitalisation,
-            min(assiettes) if assiettes else self.parametres.annee_debut_capitalisation,
-        )
+        bascule = self.parametres.annee_bascule
+        ouverture = max(bascule, min(assiettes) if assiettes else bascule)
         conversion = self.convertisseur.coefficient(
             age_liquidation, annee_liquidation,
             None if self.parametres.table_conversion is TableConversion.UNISEXE else sexe,

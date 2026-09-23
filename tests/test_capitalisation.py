@@ -649,9 +649,36 @@ def test_rien_avant_l_annee_de_bascule(simulateur):
         age_debut=20, age_liquidation=64,
     ))
     pilier = comparaison.notionnel_liberal.capitalisation
-    assert pilier.annee_ouverture == simulateur.parametres.annee_debut_capitalisation
+    assert pilier.annee_ouverture == simulateur.parametres.annee_bascule
     assert min(a.annee for a in pilier.annees) == 2026
     assert all(a.versement_brut == 0 for a in pilier.annees if a.annee < 2026)
+
+
+def test_le_pilier_s_ouvre_a_la_bascule_choisie():
+    """Une bascule en 2040 ouvre le pilier en 2040, sur l'assiette du régime fusionné.
+
+    Le pilier avait sa propre date, figée à 2026 : une bascule en 2040 lui
+    laissait quatorze années prélevées sur l'assiette d'AVANT la bascule, la
+    somme des assiettes des régimes, soit deux fois le salaire d'un cadre au
+    salaire moyen — régime général et Agirc-Arrco sur la même première
+    tranche. Sa rente dépassait alors de moitié celle d'une bascule en 2026,
+    pour quatorze années de cotisation en moins.
+    """
+    carriere = dict(annee_naissance=1990, sexe="H", affiliation="salarie_prive_cadre",
+                    age_debut=22, age_liquidation=64, niveau_salaire=1.0)
+    rentes = {}
+    for bascule in (2026, 2040):
+        simulateur = Simulateur(Parametres(annee_bascule=bascule))
+        resultat = simulateur.simuler(simulateur.carriere_simple(**carriere)).notionnel_liberal
+        pilier = resultat.capitalisation
+        assert pilier.annee_ouverture == bascule
+        assert min(a.annee for a in pilier.annees) == bascule
+        revenus = {c.annee: c.revenu for c in resultat.compte.cotisations}
+        for annee in pilier.annees:
+            # L'assiette du régime fusionné : le revenu, sous le plafond global.
+            assert annee.assiette <= revenus.get(annee.annee, 0.0) * (1 + 1e-12)
+        rentes[bascule] = pilier.rente_annuelle
+    assert 0.0 < rentes[2040] < 0.6 * rentes[2026]
 
 
 def test_qui_a_liquide_avant_la_bascule_n_a_pas_de_pilier(simulateur):

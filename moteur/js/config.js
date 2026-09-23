@@ -182,8 +182,10 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: Année d'origine du système par répartition. 1941 = allocation aux vieux
   //: travailleurs salariés, premier mécanisme financé par les cotisations.
   annee_debut_repartition: 1941,
-  //: Les droits acquis jusqu'à cette année incluse suivent les règles
-  //: actuelles, les droits postérieurs le compte notionnel du régime fusionné.
+  //: La première année du régime fusionné : les droits acquis jusqu'à l'année
+  //: qui la précède suivent les règles actuelles, ceux de l'année de bascule
+  //: et des suivantes le compte notionnel. C'est aussi la première année de
+  //: cotisation au pilier capitalisé : voir config.py.
   annee_bascule: 2026,
   annee_courante: 2026,
   //: Année dans les euros de laquelle les résultats sont exprimés.
@@ -357,9 +359,6 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: Prélevé sur la MÊME assiette que la cotisation notionnelle de l'année, EN
   //: PLUS d'elle : l'effort monte de cinq points à compter de la bascule.
   taux_capitalisation_obligatoire: 0.05,
-  //: Première année de cotisation au pilier. Les années antérieures gardent
-  //: leurs taux et ne versent rien : qui a liquidé avant n'a pas de pilier.
-  annee_debut_capitalisation: 2026,
   //: Les frais du PER l'année de la bascule, aux vraies moyennes du marché de
   //: 2025 (OPEF, support en euros) : sur versement et sur encours, les
   //: moyennes pondérées ; sur arrérages, la moyenne sur TOUS les déclarants
