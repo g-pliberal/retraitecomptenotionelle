@@ -1469,21 +1469,25 @@ ul.legende .lu {
    à la distance qui sépare deux paragraphes : c'est la même figure, dite
    autrement. Déplié, il est borné en hauteur, et ses en-têtes de colonne
    restent visibles pendant qu'on le parcourt. */
-.donnees-graphique, .donnees-frise, .donnees-cascade { margin: -1.4rem 0 1.7rem; }
+.donnees-graphique, .donnees-frise, .donnees-cascade,
+.donnees-sankey { margin: -1.4rem 0 1.7rem; }
 .donnees-graphique .defilant, .donnees-frise .defilant,
-.donnees-cascade .defilant { max-height: 24rem; overflow-y: auto; }
+.donnees-cascade .defilant, .donnees-sankey .defilant {
+  max-height: 24rem; overflow-y: auto;
+}
 .donnees-graphique table, .donnees-frise table,
-.donnees-cascade table { font-size: 0.9rem; }
+.donnees-cascade table, .donnees-sankey table { font-size: 0.9rem; }
 .donnees-graphique th, .donnees-graphique td,
 .donnees-frise th, .donnees-frise td,
-.donnees-cascade th, .donnees-cascade td { padding: 0.25rem 0.6rem; }
+.donnees-cascade th, .donnees-cascade td,
+.donnees-sankey th, .donnees-sankey td { padding: 0.25rem 0.6rem; }
 .donnees-graphique thead th, .donnees-frise thead th,
-.donnees-cascade thead th {
+.donnees-cascade thead th, .donnees-sankey thead th {
   position: sticky; top: 0; background: var(--fond-defilant);
   box-shadow: inset 0 -2px 0 var(--or);
 }
 .donnees-graphique caption, .donnees-frise caption,
-.donnees-cascade caption { padding-bottom: 0.35rem; }
+.donnees-cascade caption, .donnees-sankey caption { padding-bottom: 0.35rem; }
 /* La frise des flux : une colonne par année, lue de gauche à droite dans une
    boîte qui défile. Le SVG garde sa largeur en pixels — c'est la boîte qui
    défile, pas le dessin qui rétrécit —, sans quoi quarante-cinq années
@@ -1567,6 +1571,43 @@ ul.legende .lu {
 }
 .cascade:focus-within .aide-clavier { visibility: visible; }
 .cascade .defilant:focus-visible { outline: 3px solid var(--or); outline-offset: 4px; }
+/* Le schéma de Sankey : ce qui paie à gauche, la caisse au milieu, ce qu'elle
+   verse à droite, chaque ruban de l'épaisseur de son montant. Comme la
+   cascade, il DÉFILE sur un téléphone au lieu de rétrécir : réduites à la
+   largeur de l'écran, ses étiquettes tomberaient à six pixels. Au large, il
+   ne dépasse pas 56 rem : à pleine largeur, deux schémas l'un sous l'autre
+   prenaient deux écrans, pour des textes plus grands que ceux de la page. */
+.sankey { margin: 1.75rem 0 1.5rem; }
+.sankey > figcaption {
+  margin: 0 0 0.35rem; font-size: 1.0625rem; font-weight: 800; color: var(--texte);
+}
+.sankey .defilant { padding-bottom: 0.25rem; }
+.sankey svg { display: block; width: 100%; max-width: 56rem; height: auto; }
+.sankey .defilant:focus-visible { outline: 3px solid var(--or); outline-offset: 4px; }
+/* Les rubans sont un fond : translucides, ils se lisent comme ce qui va d'un
+   nœud à l'autre sans rivaliser avec eux. Aucun ne passe sur un autre — la
+   caisse les reçoit dans l'ordre de leurs nœuds —, si bien que la
+   translucidité ne fabrique jamais une couleur absente des étiquettes. Le
+   survol en désigne un. */
+.sankey .ruban { opacity: 0.68; }
+.sankey .ruban:hover { opacity: 0.9; }
+/* La caisse n'est pas une catégorie : elle est le pot. Elle porte donc la
+   couleur du texte, et aucune des teintes qui disent qui paie. */
+.sankey .caisse { fill: var(--texte); }
+/* Le texte porte les teintes du texte, jamais celle de son ruban : un jaune
+   ou un vert clair ne se lisent pas en lettres sur le vert profond. C'est le
+   nœud, à côté, qui dit la couleur. */
+.sankey .nom {
+  fill: var(--texte); font-family: inherit; font-size: 13px; font-weight: 700;
+}
+.sankey .montant {
+  fill: var(--texte-doux); font-family: inherit; font-size: 13px; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.sankey .colonne {
+  fill: var(--texte-tres-doux); font-family: inherit; font-size: 12px;
+  font-weight: 600;
+}
 ul.legende {
   list-style: none; margin: 0.75rem 0 0; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; font-size: 0.9375rem;
@@ -1846,6 +1887,11 @@ body.calcul-en-cours::after {
   .cascade .graduation { font-size: 16px; }
   .cascade .valeur { font-size: 18px; stroke-width: 5px; }
   .cascade .etiquette { font-size: 16px; }
+  /* Le schéma de Sankey aussi, et sans grossir ses textes : ses étiquettes
+     sont taillées au plus juste de part et d'autre des nœuds, et un corps
+     plus grand les ferait sortir du cadre. Il défile donc un peu plus large
+     que la cascade, où ses treize unités font encore douze pixels. */
+  .sankey svg { min-width: 42rem; }
 }
 
 /* Mouvement réduit : la jauge d'attente glisse sans fin, et une animation qui
@@ -1894,7 +1940,7 @@ body.calcul-en-cours::after {
   h2 { font-size: 15pt; }
   .chapeau, .affiche .chapeau { font-size: 12pt; }
   .defilant { overflow: visible; background: none; }
-  .carte, .note, table, .graphique, .cascade, .scenario, section.cle,
+  .carte, .note, table, .graphique, .cascade, .sankey, .scenario, section.cle,
   .encadre {
     break-inside: avoid;
   }
