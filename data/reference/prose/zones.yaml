@@ -260,6 +260,9 @@ fichiers:
       "La pension d'aujourd'hui d'un retraité : ce qui est lu, et ce qui est reconstitué": etat
       "Ce que vaut une série qu'on ne peut pas certifier": etat
       "La part patronale du public, et ce qu'on n'en sait pas": etat
+      # Posée le 22 septembre 2026 avec l'âge légal de la proposition : les
+      # conventions du report, sans un chiffre qui ne lise son paramètre.
+      "L'âge légal de la proposition : ce que le report suppose": etat
       "Ce que la comparaison valide": etat
       # La comparaison à la littérature : les résultats publiés sont des
       # citations datées, qui ne peuvent pas devenir fausses ; ceux du dépôt
@@ -577,6 +580,9 @@ fichiers:
       "Le lissage pluriannuel, qui n'est pas une règle": etat
       "Comment l'écart pèse sur la pension": etat
       "Ce que l'âge de référence déplace, et ce qu'il ne déplace pas": etat
+      # Posée le 22 septembre 2026 avec la mesure : son seul chiffre lit le
+      # paramètre qu'elle décrit.
+      "L'âge légal de départ": etat
       "6. Les neutralisations": etat
       "Le droit ouvre-t-il cette liquidation ?": etat
       "Après la bascule, le régime unique tranche": etat

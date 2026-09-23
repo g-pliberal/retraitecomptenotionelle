@@ -10,12 +10,13 @@ Les scénarios rétroactifs — 2, 4 et 6, la proposition — recalculent les
 pensions déjà servies comme des comptes notionnels : capital cotisé, divisé
 par le diviseur de l'âge de départ. Ils ne lisent AUCUN âge de référence
 (``docs/methodologie.md`` §4) ; ce qui fait baisser la pension d'un départ
-précoce est le diviseur lui-même, plus long à 60 ans qu'à 64. Devant le
+précoce est le diviseur lui-même, plus long à 60 ans qu'à 65. Devant le
 juge constitutionnel, c'est une atteinte aux effets légitimement attendus
 d'une situation acquise : l'assuré parti à 60 ans en 2010 est parti à l'âge
 que sa loi lui ouvrait, et la réforme lui compte après coup quatre années
 de rente en plus. Ce script chiffre la parade : convertir le stock au
-diviseur de l'âge de référence, 64 ans, dès lors que l'assuré est parti à
+diviseur de l'âge de référence — ``Parametres.age_reference_fixe``, 65 ans
+depuis le 22 septembre 2026, 64 avant —, dès lors que l'assuré est parti à
 l'âge légal ou après. Qui est parti avant garde son propre diviseur.
 
 TROIS VARIANTES
@@ -32,8 +33,9 @@ TROIS VARIANTES
 ``acquis``        la même règle pour les scénarios PROSPECTIFS 3 et 5, où
                   seuls les droits acquis avant la bascule sont convertis à
                   l'âge de référence : ils le sont à l'âge légal de la
-                  génération quand il est plus bas que 64 ans — les
-                  générations 1961 à 1967, 62 ans à 63 ans et neuf mois.
+                  génération quand il est plus bas que lui — sous une
+                  référence de 65 ans, toutes les générations que la bascule
+                  trouve en activité, dont l'âge légal va de 62 à 64 ans.
 
 CE QUE LE STOCK VEUT DIRE ICI
 -----------------------------
@@ -85,7 +87,7 @@ CAS_STOCK: tuple[tuple[str, int], ...] = (
 
 
 class StockALAgeLegal:
-    """Le temps d'un calcul : le stock converti à 64 ans pour qui est parti à l'heure."""
+    """Le temps d'un calcul : le stock converti à l'âge de référence pour qui est parti à l'heure."""
 
     def __init__(self, variante: str, simulateur: Simulateur) -> None:
         if variante not in VARIANTES:
@@ -203,7 +205,8 @@ def calculer(variante: str, parametres: Parametres, depenses: DepensesRetraite,
         if comparaison is None:
             continue
         pensions[f"{code}|{generation}"] = {
-            scenario: comparaison.en_euros_constants(getattr(comparaison, scenario).pension_annuelle)
+            scenario: comparaison.en_euros_constants(
+                getattr(comparaison, scenario).pension_annuelle, scenario)
             for scenario, _ in C.SCENARIOS
         }
     solde = cout.solde

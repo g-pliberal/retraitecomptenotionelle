@@ -191,6 +191,12 @@ COMPOSANTE_GARANTIE = "garantie_vieillesse_liberal"
 #: plancher — voir :class:`GarantieDistribution`.
 RESSOURCES_GARANTIE = "ressources_garantie_liberal"
 
+#: Les clés de la grille qui suivent la carrière de la PROPOSITION, et donc sa
+#: date de départ : le scénario 6 et ce que sa garantie regarde. Son âge légal
+#: de 65 ans peut les faire liquider après les autres
+#: (:meth:`Pensionne.volet`).
+CLES_LIBERALES: frozenset[str] = frozenset({"notionnel_liberal", RESSOURCES_GARANTIE})
+
 #: Tout ce que la grille des cas types sait calculer : les six systèmes, et
 #: les ressources que la garantie regarde.
 CLES_CAS_TYPES: tuple[str, ...] = tuple(scenario for scenario, _ in SCENARIOS) + (
@@ -216,6 +222,15 @@ CLES_MASSES: tuple[str, ...] = tuple(scenario for scenario, _ in SCENARIOS) + (
 #: faux.
 TAUX_REELS = "taux_reels"
 CLES_RECETTES: tuple[str, ...] = (TAUX_REELS, "notionnel_liberal")
+
+#: Les REVENUS D'ACTIVITÉ de la grille, sous les âges du droit en vigueur et
+#: sous ceux de la proposition. Ils ne diffèrent que par les années que l'âge
+#: légal de 65 ans fait travailler en plus (``Parametres.age_legal_liberal``),
+#: et leur rapport est de combien la proposition ÉLARGIT l'assiette que le COR
+#: projette aux âges d'aujourd'hui : voir ``SoldeAnnuel.facteur_assiette``.
+ASSIETTE_ACTUELLE = "assiette_actuelle"
+ASSIETTE_LIBERALE = "assiette_liberale"
+CLES_ASSIETTES: tuple[str, ...] = (ASSIETTE_ACTUELLE, ASSIETTE_LIBERALE)
 
 #: Les deux façons d'établir la recette du scénario 6, et elles ne posent pas
 #: la même question.
@@ -359,21 +374,71 @@ class Pensionne:
     generation: int
     #: Année de liquidation : avant elle, aucune pension n'est servie.
     annee_liquidation: int
-    #: Année où la garantie vieillesse s'ouvre : celle de la liquidation si
-    #: elle a lieu à 65 ans ou plus, celle des 65 ans sinon. Avant elle, on ne
-    #: touche pas le minimum vieillesse, et la masse de la composante ne porte
-    #: donc rien — c'est la seule clé dont la date d'entrée diffère.
-    annee_ouverture_garantie: int
-    #: Pension annuelle en euros constants, par scénario.
+    #: Pension annuelle en euros constants, par scénario. Celles du scénario 6
+    #: et de ce que sa garantie regarde sont celles de :attr:`propre` ; les
+    #: masses les lisent par :meth:`volet`, cohorte par cohorte.
     pensions: dict[str, float]
-    #: Ce que cette carrière VERSE, année par année, sous chacun des deux
-    #: barèmes de prélèvement. En euros courants de chaque année : seul le
-    #: rapport des deux est lu, et il est sans dimension.
+    #: La proposition telle que la génération de la grille la vit : sa date de
+    #: départ, que l'âge légal de 65 ans peut reporter, et tout ce qui en
+    #: dépend. Voir :class:`VoletLiberal`.
+    propre: "VoletLiberal"
+    #: La même, de l'AUTRE CÔTÉ DE LA BASCULE : pour les cohortes voisines que
+    #: la bascule sépare de la génération de la grille. ``None`` quand aucune
+    #: ne l'est, ou quand l'âge légal ne change rien à ce couple.
+    autre: "VoletLiberal | None" = None
+    #: L'année de bascule, qui dit de quel côté tombe chaque cohorte.
+    bascule: int = 0
+    #: Ce que cette carrière VERSE, année par année, sous le droit en vigueur,
+    #: et ses revenus d'activité. En euros courants de chaque année : seul le
+    #: rapport à ce que la proposition prélève est lu, et il est sans
+    #: dimension. Ce que prélève la proposition est dans les volets.
     cotisations: dict[str, dict[int, float]] = field(default_factory=dict)
-    #: Ce que le PILIER CAPITALISÉ de cette carrière encaisse, prélève et
-    #: détient, année par année, en euros courants : versement brut, frais sur
-    #: versement, frais de gestion, encours de fin d'année. Vide pour qui n'a
-    #: pas de pilier.
+
+    def volet(self, decalage: int) -> "VoletLiberal":
+        """La proposition de la cohorte née ``decalage`` ans après la grille.
+
+        Chaque génération de la grille en représente cinq, qui liquident
+        chacune à sa date — celle de la grille, décalée d'autant. Une cohorte
+        dont le départ tombe avant la bascule est partie sous le droit en
+        vigueur, SANS report ; une cohorte qui la franchit part, elle, à l'âge
+        légal. Quand la bascule passe entre deux cohortes d'une même
+        génération, chacune reçoit le volet de son côté : faute de quoi le
+        report de la génération ferait disparaître, dès 2025, des pensions que
+        la réforme n'a pas pu toucher.
+        """
+        if self.autre is None:
+            return self.propre
+        franchit = self.annee_liquidation + decalage >= self.bascule
+        grille_franchit = self.annee_liquidation >= self.bascule
+        return self.propre if franchit == grille_franchit else self.autre
+
+
+@dataclass(frozen=True)
+class VoletLiberal:
+    """Ce que la proposition sert et prélève à un couple, pour UNE date de départ.
+
+    Les montants de la grille qui dépendent de l'âge auquel la proposition fait
+    partir : tout le reste du couple n'en dépend pas.
+    """
+
+    #: Année de liquidation de la proposition : avant elle, rien n'est servi.
+    annee_liquidation: int
+    #: Année où la garantie vieillesse s'ouvre : celle de la liquidation si
+    #: elle a lieu à 65 ans ou plus, celle des 65 ans sinon.
+    annee_ouverture_garantie: int
+    #: La pension CONTRIBUTIVE, en euros constants : la garantie est financée
+    #: par l'impôt, et la porter ici la ferait payer deux fois.
+    pension: float
+    #: Ce que la garantie regarde — pension contributive et rente du pilier —,
+    #: en euros constants.
+    ressources_garantie: float
+    #: Ce que la proposition prélève, année par année, en euros courants.
+    cotisations: dict[int, float] = field(default_factory=dict)
+    #: Les revenus d'activité de la carrière qu'elle fait travailler.
+    assiette: dict[int, float] = field(default_factory=dict)
+    #: Ce que le PILIER CAPITALISÉ encaisse, prélève et détient, année par
+    #: année, en euros courants : versement brut, frais sur versement, frais
+    #: de gestion, encours de fin d'année. Vide pour qui n'a pas de pilier.
     pilier: dict[int, tuple[float, float, float, float]] = field(default_factory=dict)
     #: La rente du pilier, en euros courants de la liquidation : brute (le
     #: capital divisé par le diviseur) et nette des frais sur la réserve et
@@ -590,6 +655,11 @@ class AvenirAnnuel:
     #: Rapport de la RECETTE de chaque système à celle du système actuel. Un
     #: partout, sauf pour le scénario 6 à compter de la bascule.
     rapports_recettes: dict[str, float] = field(default_factory=dict)
+    #: De combien l'âge légal de la proposition ÉLARGIT l'assiette des revenus
+    #: d'activité, par rapport aux âges du droit en vigueur : un avant la
+    #: bascule, et partout où personne ne part avant 65 ans. Voir
+    #: ``SoldeAnnuel.facteur_assiette``.
+    facteur_assiette_liberal: float = 1.0
     #: Part de la masse versée qui est une pension de RÉVERSION, et que le
     #: rapport ne décrit pas — ``masse_du_scenario`` dit pourquoi.
     part_derives: float = 0.0
@@ -739,6 +809,13 @@ class SoldeAnnuel:
     taux_prelevement: float = 0.0
     #: Le taux unique que la proposition substitue à tous les autres.
     taux_liberal: float = 0.0
+    #: Ce que l'âge légal de 65 ans fait à l'ASSIETTE sur laquelle ce taux est
+    #: prélevé. L'assiette mesurée est celle que le COR projette, donc aux âges
+    #: de départ du droit en vigueur ; sous la proposition, qui partait avant
+    #: 65 ans travaille jusque-là, et cotise. Le facteur est le rapport des
+    #: revenus d'activité de la grille sous les deux âges, pondérée par les
+    #: cotisants comme la recette : un avant la bascule, plus de un après.
+    facteur_assiette: float = 1.0
     #: Année à compter de laquelle ce taux s'applique. Avant elle, le
     #: scénario 6 prélève les taux réels comme tout le monde.
     annee_bascule: int = 0
@@ -933,7 +1010,8 @@ class SoldeAnnuel:
             # fusion supprime l'objet ; les impôts affectés, qui n'acquièrent
             # de droits à personne. Ce qui reste : les transferts et les autres
             # produits, 7 % des ressources de 2024.
-            pleine = self.ressources * self.taux_liberal / self.taux_prelevement
+            pleine = (self.ressources * self.taux_liberal / self.taux_prelevement
+                      * self.facteur_assiette)
             autres = self.ressources * (1.0 - self.part_contributive
                                         - self.part_subventions
                                         - self.part_impots)
@@ -1068,7 +1146,8 @@ class SoldeAnnuel:
         elif scenario == "notionnel_liberal" and self.recette_par_assiette:
             tva = self.tva_de(scenario)
             postes = {
-                "cotisations": total * self.taux_liberal / self.taux_prelevement,
+                "cotisations": (total * self.taux_liberal / self.taux_prelevement
+                                * self.facteur_assiette),
                 "contribution_equilibre_etat": 0.0,
                 "subventions_equilibre": 0.0,
                 "impots_et_taxes": tva,
@@ -1690,18 +1769,24 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
         ).cotisations
         for (code, generation), comparaison in grille.resultats.items()
     }
-    pensionnes = [
-        Pensionne(
+    macro = simulateur.macro
+    annee_euros = simulateur.parametres.annee_euros_constants
+    bascule = simulateur.parametres.annee_bascule
+    pensionnes = []
+    for (code, generation), comparaison in grille.resultats.items():
+        propre = _volet(comparaison.carriere_de("notionnel_liberal"),
+                        comparaison.notionnel_liberal,
+                        comparaison.coefficient_de("notionnel_liberal"))
+        autre = _autre_volet(simulateur, comparaison.carriere, macro,
+                             annee_euros, bascule)
+        pensionnes.append(Pensionne(
             code=code,
             generation=generation,
             annee_liquidation=comparaison.carriere.annee_liquidation,
-            annee_ouverture_garantie=(
-                comparaison.notionnel_liberal.garantie_vieillesse.annee_ouverture
-            ),
             pensions={
                 **{
                     scenario: comparaison.en_euros_constants(
-                        getattr(comparaison, scenario).pension_annuelle
+                        getattr(comparaison, scenario).pension_annuelle, scenario
                     )
                     for scenario, _ in SCENARIOS
                 },
@@ -1710,18 +1795,17 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                 # cotisants, et la porter dans les deux lignes reviendrait à la
                 # faire payer deux fois. C'est la symétrie de ce que la recette
                 # fait déjà — la CSG de solidarité sort des ressources.
-                "notionnel_liberal": comparaison.en_euros_constants(
-                    comparaison.notionnel_liberal.garantie_vieillesse.pension_contributive
-                ),
+                "notionnel_liberal": propre.pension,
                 # Ce que la garantie regarde : la pension contributive ET la
                 # rente du pilier capitalisé, à la liquidation. La grille ne
                 # sert plus à chiffrer le complément — elle n'a pas de queue
                 # basse —, seulement à dire de combien les pensions du
                 # scénario 6 déplacent la distribution observée.
-                RESSOURCES_GARANTIE: comparaison.en_euros_constants(
-                    comparaison.notionnel_liberal.garantie_vieillesse.ressources
-                ),
+                RESSOURCES_GARANTIE: propre.ressources_garantie,
             },
+            propre=propre,
+            autre=autre,
+            bascule=bascule,
             cotisations={
                 # Le dénominateur ne peut pas être le compte du scénario 4.
                 # Celui-là fusionne les régimes à la bascule et prélève ensuite
@@ -1735,27 +1819,72 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
                     ligne.annee: ligne.cotisation
                     for ligne in reels[(code, generation)]
                 },
-                "notionnel_liberal": {
-                    ligne.annee: ligne.cotisation
-                    for ligne in comparaison.notionnel_liberal.compte.cotisations
-                },
+                # Les revenus d'activité aux âges du droit en vigueur ; ceux
+                # de la proposition sont dans ses volets.
+                ASSIETTE_ACTUELLE: _revenus_activite(comparaison.carriere),
             },
-            pilier=_flux_pilier(comparaison),
-            rente_pilier=_rente_pilier(comparaison),
-            rente_garantie=comparaison.en_euros_constants(
-                comparaison.notionnel_liberal.garantie_vieillesse.rente_capitalisee),
-        )
-        for (code, generation), comparaison in grille.resultats.items()
-    ]
+        ))
     motifs: dict[str, int] = {}
     for motif in grille.echecs.values():
         motifs[motif] = motifs.get(motif, 0) + 1
     return pensionnes, motifs
 
 
-def _flux_pilier(comparaison) -> dict[int, tuple[float, float, float, float]]:
+def _revenus_activite(carriere) -> dict[int, float]:
+    """Le revenu d'activité de chaque année de la carrière, en euros courants."""
+    return {ligne.annee: ligne.revenu for ligne in carriere.lignes if ligne.cotise}
+
+
+def _volet(carriere, liberal, coefficient: float) -> VoletLiberal:
+    """La proposition d'un couple pour un départ : celui de ``carriere``.
+
+    ``coefficient`` passe les euros de SON année de liquidation aux euros
+    constants.
+    """
+    garantie = liberal.garantie_vieillesse
+    return VoletLiberal(
+        annee_liquidation=carriere.annee_liquidation,
+        annee_ouverture_garantie=garantie.annee_ouverture,
+        pension=garantie.pension_contributive * coefficient,
+        ressources_garantie=garantie.ressources * coefficient,
+        cotisations={ligne.annee: ligne.cotisation
+                     for ligne in liberal.compte.cotisations},
+        assiette=_revenus_activite(carriere),
+        pilier=_flux_pilier(liberal),
+        rente_pilier=_rente_pilier(liberal),
+        rente_garantie=garantie.rente_capitalisee * coefficient,
+    )
+
+
+def _autre_volet(simulateur: Simulateur, carriere, macro, annee_euros: int,
+                 bascule: int) -> VoletLiberal | None:
+    """La proposition de l'autre côté de la bascule, si une cohorte y tombe.
+
+    Une génération de la grille en représente cinq, décalées de deux ans au
+    plus. Quand la bascule passe entre elles et que l'âge légal reporte ce
+    départ-là, les cohortes d'un côté partent sans report et celles de l'autre
+    à l'âge légal : il faut les deux volets. Le second se calcule sur la même
+    carrière, prolongée ou non — celle de la grille est l'un des deux.
+    """
+    age_legal = simulateur.parametres.age_legal_liberal
+    if age_legal is None or carriere.age_liquidation is None:
+        return None
+    reportee = carriere.prolongee(age_legal, macro)
+    if reportee is carriere:
+        return None
+    annee = carriere.annee_liquidation
+    if not annee - _DEMI_TRANCHE < bascule <= annee + _DEMI_TRANCHE:
+        return None
+    # La grille est d'un côté ; l'autre volet est celui de l'autre.
+    depart = carriere if annee >= bascule else reportee
+    liberal = simulateur.proposition(depart)
+    coefficient = macro.coefficient_prix(depart.annee_liquidation, annee_euros)
+    return _volet(depart, liberal, coefficient)
+
+
+def _flux_pilier(liberal) -> dict[int, tuple[float, float, float, float]]:
     """Les flux annuels du pilier capitalisé d'une carrière, en euros courants."""
-    pilier = comparaison.notionnel_liberal.capitalisation
+    pilier = liberal.capitalisation
     if pilier is None or not pilier.actif:
         return {}
     return {
@@ -1765,9 +1894,9 @@ def _flux_pilier(comparaison) -> dict[int, tuple[float, float, float, float]]:
     }
 
 
-def _rente_pilier(comparaison) -> tuple[float, float]:
+def _rente_pilier(liberal) -> tuple[float, float]:
     """La rente du pilier d'une carrière, brute puis nette de ses frais."""
-    pilier = comparaison.notionnel_liberal.capitalisation
+    pilier = liberal.capitalisation
     if pilier is None or not pilier.actif:
         return (0.0, 0.0)
     return (pilier.capital / pilier.conversion.diviseur, pilier.rente_annuelle)
@@ -1877,36 +2006,51 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     masses[MASSE_STOCK] = 0.0
     tetes = {TETES_TOUTES: 0.0, TETES_GARANTIE: 0.0}
     vivants = 0
+    # La proposition suit la règle du stock des réformes prospectives dès
+    # qu'on la range parmi elles — ce que fait
+    # `scripts/proposition_prospective.py`. Lu à l'appel, comme la liste.
+    liberale_prospective = "notionnel_liberal" in CLES_PROSPECTIVES
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
         if part <= 0.0:
             continue
         poids = 0.0
-        poids_garantie = 0.0
-        poids_garantie_revalorise = 0.0
-        poids_garantie_nominal = 0.0
         poids_revalorise = 0.0
         poids_revalorise_prospectif = 0.0
+        # La proposition se somme À PART, cohorte par cohorte : chacune a son
+        # volet (:meth:`Pensionne.volet`), sa date de départ — que l'âge légal
+        # peut reporter — et sa pension. Ses pensions ne sont pas servies dans
+        # les années que le report fait travailler.
+        masse_liberale = 0.0
+        masse_garantie = 0.0
+        poids_garantie = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
-            liquidation = pensionne.annee_liquidation + decalage
-            if annee < liquidation:
-                continue
             effectif = population.effectif(
                 annee - pensionne.generation - decalage, annee
             )
-            poids += effectif
-            # Le troisième poids porte la revalorisation des pensions SERVIES,
-            # et il faut qu'il soit à part : le coefficient dépend de l'année
-            # de liquidation, qui n'est pas la même pour les cinq cohortes de
-            # la tranche. Le sortir de la boucle appliquerait à toutes celui de
-            # la génération du milieu, soit deux ans d'indexation en trop d'un
-            # côté et en moins de l'autre.
-            poids_revalorise += effectif * revalorisation.coefficient_stock(
-                liquidation, annee, prospectif=False
-            )
-            poids_revalorise_prospectif += effectif * revalorisation.coefficient_stock(
-                liquidation, annee, prospectif=True
-            )
+            liquidation = pensionne.annee_liquidation + decalage
+            if annee >= liquidation:
+                poids += effectif
+                # Le poids revalorisé porte la revalorisation des pensions
+                # SERVIES, et il faut qu'il soit à part : le coefficient
+                # dépend de l'année de liquidation, qui n'est pas la même pour
+                # les cinq cohortes de la tranche. Le sortir de la boucle
+                # appliquerait à toutes celui de la génération du milieu, soit
+                # deux ans d'indexation en trop d'un côté et en moins de
+                # l'autre.
+                poids_revalorise += effectif * revalorisation.coefficient_stock(
+                    liquidation, annee, prospectif=False
+                )
+                poids_revalorise_prospectif += effectif * revalorisation.coefficient_stock(
+                    liquidation, annee, prospectif=True
+                )
+            volet = pensionne.volet(decalage)
+            depart = volet.annee_liquidation + decalage
+            if annee < depart:
+                continue
+            masse_liberale += effectif * revalorisation.coefficient_stock(
+                depart, annee, prospectif=liberale_prospective
+            ) * volet.pension
             # La garantie n'entre qu'à 65 ans, même pour qui est parti plus
             # tôt : avant, on ne touche pas le minimum vieillesse. Ce qu'elle
             # regarde se revalorise en DEUX morceaux : la pension du scénario 6
@@ -1914,13 +2058,13 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             # les prix aux pensions d'avant la bascule —, et la rente du pilier
             # comme le pilier la sert, nominale et constante. Les deux étaient
             # revalorisées sur la masse salariale jusqu'au 23 septembre 2026.
-            if annee >= pensionne.annee_ouverture_garantie + decalage:
+            if annee >= volet.annee_ouverture_garantie + decalage:
                 poids_garantie += effectif
-                poids_garantie_revalorise += effectif * revalorisation.coefficient_stock(
-                    liquidation, annee, prospectif=False
-                )
-                poids_garantie_nominal += effectif * revalorisation.coefficient_nominal(
-                    liquidation, annee
+                masse_garantie += effectif * (
+                    revalorisation.coefficient_stock(depart, annee, prospectif=False)
+                    * (volet.ressources_garantie - volet.rente_garantie)
+                    + revalorisation.coefficient_nominal(depart, annee)
+                    * volet.rente_garantie
                 )
         if poids <= 0.0:
             continue
@@ -1928,12 +2072,11 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         tetes[TETES_TOUTES] += part * poids
         tetes[TETES_GARANTIE] += part * poids_garantie
         for cle in CLES_CAS_TYPES:
+            if cle == "notionnel_liberal":
+                masses[cle] += part * masse_liberale
+                continue
             if cle == RESSOURCES_GARANTIE:
-                rente = pensionne.rente_garantie
-                masses[cle] += part * (
-                    poids_garantie_revalorise * (pensionne.pensions[cle] - rente)
-                    + poids_garantie_nominal * rente
-                )
+                masses[cle] += part * masse_garantie
                 continue
             regle = regle_revalorisation(cle)
             if regle == REGLE_PROSPECTIVE:
@@ -2314,7 +2457,8 @@ def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
     d'hier au lieu de leurs cotisants de demain, et poussaient le rapport vers
     le bas.
     """
-    masses = {cle: 0.0 for cle in CLES_RECETTES}
+    cles = CLES_RECETTES + CLES_ASSIETTES
+    masses = {cle: 0.0 for cle in cles}
     for pensionne in pensionnes:
         part = poids_cas.get(pensionne.code, 0.0)
         if part <= 0.0:
@@ -2323,8 +2467,18 @@ def _masses_cotisations(pensionnes: list[Pensionne], population: Population,
             poids = population.effectif(annee - pensionne.generation - decalage, annee)
             if poids <= 0.0:
                 continue
-            for cle in CLES_RECETTES:
-                versee = pensionne.cotisations.get(cle, {}).get(annee - decalage, 0.0)
+            # Ce que la proposition prélève, et sur quels revenus, est celui
+            # du volet de la cohorte : l'âge légal la fait peut-être cotiser
+            # plus longtemps.
+            volet = pensionne.volet(decalage)
+            for cle in cles:
+                if cle == "notionnel_liberal":
+                    serie = volet.cotisations
+                elif cle == ASSIETTE_LIBERALE:
+                    serie = volet.assiette
+                else:
+                    serie = pensionne.cotisations.get(cle, {})
+                versee = serie.get(annee - decalage, 0.0)
                 if versee:
                     masses[cle] += part * poids * versee
     return masses
@@ -2352,7 +2506,8 @@ def _masses_pilier(pensionnes: list[Pensionne], population: Population,
     masses = {cle: 0.0 for cle in ("versements", "frais_versement", "frais_gestion",
                                    "encours", "rentes_brutes", "rentes")}
     for pensionne in pensionnes:
-        if not pensionne.pilier:
+        if not pensionne.propre.pilier and not (
+                pensionne.autre is not None and pensionne.autre.pilier):
             continue
         part_cotisants = poids_cotisants.get(pensionne.code, 0.0)
         part_retraites = poids_retraites.get(pensionne.code, 0.0)
@@ -2360,16 +2515,23 @@ def _masses_pilier(pensionnes: list[Pensionne], population: Population,
             poids = population.effectif(annee - pensionne.generation - decalage, annee)
             if poids <= 0.0:
                 continue
-            flux = pensionne.pilier.get(annee)
+            # Le pilier est celui de la proposition, et celui du volet de la
+            # cohorte : il accumule jusqu'à SON départ, que l'âge légal de
+            # 65 ans peut avoir reporté.
+            volet = pensionne.volet(decalage)
+            if not volet.pilier:
+                continue
+            depart = volet.annee_liquidation + decalage
+            flux = volet.pilier.get(annee)
             if (flux is not None and part_cotisants > 0.0
-                    and annee <= pensionne.annee_liquidation + decalage):
+                    and annee <= depart):
                 versement, frais_v, frais_g, encours = flux
                 masses["versements"] += part_cotisants * poids * versement
                 masses["frais_versement"] += part_cotisants * poids * frais_v
                 masses["frais_gestion"] += part_cotisants * poids * frais_g
                 masses["encours"] += part_cotisants * poids * encours
-            if annee > pensionne.annee_liquidation + decalage and part_retraites > 0.0:
-                brute, nette = pensionne.rente_pilier
+            if annee > depart and part_retraites > 0.0:
+                brute, nette = volet.rente_pilier
                 masses["rentes_brutes"] += part_retraites * poids * brute
                 masses["rentes"] += part_retraites * poids * nette
     return masses
@@ -2399,6 +2561,21 @@ def _rapports_recettes(masses: dict[str, float], annee: int,
     if annee >= bascule and reference > 0.0:
         rapports["notionnel_liberal"] = masses["notionnel_liberal"] / reference
     return rapports
+
+
+def _facteur_assiette(masses: dict[str, float], annee: int, bascule: int) -> float:
+    """De combien l'âge légal de la proposition élargit l'assiette, en ``annee``.
+
+    Le rapport des revenus d'activité de la grille sous les âges de la
+    proposition à ceux du droit en vigueur. Un avant la bascule, par
+    construction et pour la raison que donne :func:`_rapports_recettes` : les
+    cohortes voisines d'une génération de la grille y verraient déjà des
+    années de travail que le report n'a pas encore imposées.
+    """
+    reference = masses.get(ASSIETTE_ACTUELLE, 0.0)
+    if annee < bascule or reference <= 0.0:
+        return 1.0
+    return masses.get(ASSIETTE_LIBERALE, 0.0) / reference
 
 
 def _ponderation(simulateur: Simulateur, mode: str,
@@ -2992,6 +3169,8 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             if actifs else 0.0,
             rapports_recettes=_rapports_recettes(
                 cotisations, annee, simulateur.parametres.annee_bascule),
+            facteur_assiette_liberal=_facteur_assiette(
+                cotisations, annee, simulateur.parametres.annee_bascule),
             part_derives=part_derives,
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
@@ -3079,6 +3258,7 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             part_subventions=comptes.part("subventions_equilibre", annee),
             taux_prelevement=taux_prelevement(annee),
             taux_liberal=taux_liberal,
+            facteur_assiette=par_annee[annee].facteur_assiette_liberal,
             annee_bascule=annee_bascule,
             convention_recette=convention,
             part_derives=depenses.part_droits_derives(annee),
@@ -3318,52 +3498,71 @@ def calculer_engagements(simulateur: Simulateur, depenses: DepensesRetraite,
     parts = {"retraites": 0.0, "actifs": 0.0, "hors_projection": 0.0}
     sensibilite = {ecart: 0.0 for ecart in ECARTS_ACTUALISATION}
 
+    communes = [cle for cle in cles if cle not in CLES_LIBERALES]
+    liberales = [cle for cle in cles if cle in CLES_LIBERALES]
     for pensionne in pensionnes:
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
             cohorte = pensionne.generation + decalage
-            fin_carriere = pensionne.annee_liquidation + decalage
             debut_carriere = cohorte + ages_debut[pensionne.code]
-            if fin_carriere <= debut_carriere:
-                continue
-            acquis = (annee - debut_carriere) / (fin_carriere - debut_carriere)
-            acquis = min(1.0, max(0.0, acquis))
-            if acquis <= 0.0:
-                continue
             courbe = survies.get(cohorte, ())
             effectif_bord = population.effectif(depart_survie - cohorte, depart_survie)
-            for millesime in range(max(annee, fin_carriere), horizon + 1):
-                part_caisse = poids_par_annee[millesime].get(pensionne.code, 0.0)
-                if part_caisse <= 0.0:
+            # Deux départs quand l'âge légal de la proposition reporte celui de
+            # la cohorte : son engagement court alors d'une carrière plus
+            # longue et d'une pension servie plus tard, celle de son volet.
+            volet = pensionne.volet(decalage)
+            montants_liberaux = {"notionnel_liberal": volet.pension,
+                                 RESSOURCES_GARANTIE: volet.ressources_garantie}
+            departs = [(pensionne.annee_liquidation, communes, True)]
+            if volet.annee_liquidation == pensionne.annee_liquidation:
+                departs[0] = (pensionne.annee_liquidation, communes + liberales, True)
+            elif liberales:
+                departs.append((volet.annee_liquidation, liberales, False))
+            for depart, cles_depart, etalon in departs:
+                fin_carriere = depart + decalage
+                if fin_carriere <= debut_carriere:
                     continue
-                if millesime <= depart_survie:
-                    effectif = population.effectif(millesime - cohorte, millesime)
-                else:
-                    rang = millesime - depart_survie
-                    effectif = effectif_bord * (courbe[rang] if rang < len(courbe) else 0.0)
-                if effectif <= 0.0:
+                acquis = (annee - debut_carriere) / (fin_carriere - debut_carriere)
+                acquis = min(1.0, max(0.0, acquis))
+                if acquis <= 0.0:
                     continue
-                commun = (
-                    acquis * part_caisse * effectif
-                    * ancrage / macro.coefficient_prix(millesime, annee_euros)
-                    / pib[millesime]
-                )
-                coefficients = {
-                    REGLE_PRIX: 1.0,
-                    REGLE_STOCK: revalorisation.coefficient_stock(
-                        fin_carriere, millesime, prospectif=False),
-                }
-                if REGLE_PROSPECTIVE in regles_utiles:
-                    coefficients[REGLE_PROSPECTIVE] = revalorisation.coefficient_stock(
-                        fin_carriere, millesime, prospectif=True)
-                for cle in cles:
-                    totaux[cle] += (commun * coefficients[regles[cle]]
-                                    * pensionne.pensions[cle])
-                valeur = commun * pensionne.pensions["actuel"]
-                parts["retraites" if acquis >= 1.0 else "actifs"] += valeur
-                if millesime > depart_survie:
-                    parts["hors_projection"] += valeur
-                for ecart, facteur in zip(ECARTS_ACTUALISATION, facteurs[millesime]):
-                    sensibilite[ecart] += valeur * facteur
+                for millesime in range(max(annee, fin_carriere), horizon + 1):
+                    part_caisse = poids_par_annee[millesime].get(pensionne.code, 0.0)
+                    if part_caisse <= 0.0:
+                        continue
+                    if millesime <= depart_survie:
+                        effectif = population.effectif(millesime - cohorte, millesime)
+                    else:
+                        rang = millesime - depart_survie
+                        effectif = effectif_bord * (courbe[rang] if rang < len(courbe) else 0.0)
+                    if effectif <= 0.0:
+                        continue
+                    commun = (
+                        acquis * part_caisse * effectif
+                        * ancrage / macro.coefficient_prix(millesime, annee_euros)
+                        / pib[millesime]
+                    )
+                    coefficients = {
+                        REGLE_PRIX: 1.0,
+                        REGLE_STOCK: revalorisation.coefficient_stock(
+                            fin_carriere, millesime, prospectif=False),
+                    }
+                    if REGLE_PROSPECTIVE in regles_utiles:
+                        coefficients[REGLE_PROSPECTIVE] = revalorisation.coefficient_stock(
+                            fin_carriere, millesime, prospectif=True)
+                    for cle in cles_depart:
+                        totaux[cle] += (commun * coefficients[regles[cle]]
+                                        * montants_liberaux.get(
+                                            cle, pensionne.pensions.get(cle, 0.0)))
+                    # Les parts et la sensibilité sont celles de l'ÉTALON, et
+                    # se lisent donc à sa date de départ.
+                    if not etalon:
+                        continue
+                    valeur = commun * pensionne.pensions["actuel"]
+                    parts["retraites" if acquis >= 1.0 else "actifs"] += valeur
+                    if millesime > depart_survie:
+                        parts["hors_projection"] += valeur
+                    for ecart, facteur in zip(ECARTS_ACTUALISATION, facteurs[millesime]):
+                        sensibilite[ecart] += valeur * facteur
 
     return EngagementAcquis(
         annee=annee,

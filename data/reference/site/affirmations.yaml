@@ -807,6 +807,17 @@ affirmations:
     etat: verifiee
     controle: pilier_sans_annee_pour_rapporter
 
+  # L'âge légal de la proposition, dit sous les résultats quand il reporte le
+  # départ : posé le 23 septembre 2026.
+  - id: simuler.age_legal_reporte
+    page: /simuler
+    extrait: "La proposition fixe l'âge légal de départ à 65 ans."
+    porte: >-
+      sous la proposition, un départ avant 65 ans à compter de la bascule est
+      reporté à 65 ans, la carrière prolongée jusque-là
+    etat: verifiee
+    controle: age_legal_reporte_le_depart
+
   - id: simuler.saisie_refusee
     page: /simuler
     extrait: "Saisie refusée."
@@ -1347,8 +1358,10 @@ affirmations:
 
   - id: cout.limite_recettes
     page: /cout
-    extrait: "La recette réagit sur trois points, et sur trois seulement."
-    porte: le retrait des transferts, le taux sur l'assiette, et trois postes non reconduits
+    extrait: "La recette réagit sur quatre points, et sur quatre seulement."
+    porte: >-
+      le retrait des transferts, le taux sur l'assiette, trois postes non
+      reconduits, et l'assiette élargie par l'âge légal de la proposition
     etat: verifiee
     controle: recettes_trois_reactions
 

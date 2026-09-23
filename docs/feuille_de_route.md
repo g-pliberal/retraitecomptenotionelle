@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 831<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 781<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 292<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15872,3 +15872,146 @@ que le simulateur affiche, qui ignore la TVA. Les excédents d'après 2050 ne
 sont employés à rien : un taux qui redescendrait après le pic, ou un
 coefficient appliqué, les rendrait. Et le premier arbitrage du chiffrage reste
 ouvert : l'État cesse-t-il de lever les impôts affectés que la TVA remplace ?
+### 124. L'âge légal de la proposition passe à 65 ans, et l'âge de référence le suit — `fait`
+
+**La demande**, le 22 septembre 2026 : « repasse l'âge de départ à la retraite
+à 65 ans, avec toutes les conséquences ». Précisée ensuite : l'âge légal de
+départ DE LA PROPOSITION, et l'âge de référence aligné sur lui. Le scénario 1
+est le droit, il n'y est pas touché.
+
+**Ce que la demande attendait, et ce que le modèle répond.** Trois intuitions
+accompagnaient la demande. *Le solde s'améliore* : oui, et nettement. *La
+retraite baisse pour qui partait tôt* : non, pas la pension mensuelle — dans un
+compte notionnel, partir plus tard ajoute des cotisations et raccourcit la
+retraite, et les deux la relèvent ; ce qui se perd, ce sont les années de
+pension d'avant 65 ans. *Elle monte pour qui part plus tard* : non plus — qui
+partait déjà à 65 ans ou après ne voit rien bouger, faute de décote ou de
+surcote à déplacer. L'intuition est celle du système actuel, où un âge pivot
+décide d'une décote et d'une surcote ; le compte notionnel n'en a pas.
+
+**Ce qui a été fait.**
+
+- `Parametres.age_legal_liberal = 65.0` (config.py, config.js). Toute
+  liquidation que la proposition régit — à compter du 1er janvier de la
+  bascule — a lieu à 65 ans au plus tôt. `Simulateur.carriere_proposition`
+  décide du report ; `Carriere.prolongee` poursuit la carrière jusque-là, la
+  dernière année se prolongeant à l'identique (statut, nature, salaire relatif
+  avancé au rythme du salaire moyen). Une carrière qui s'arrêtait avant son
+  départ n'est pas prolongée. Seul le scénario 6 part à 65 ans ; les
+  scénarios 2 à 5 gardent les âges du droit, pour mesurer le compte à carrière
+  égale.
+- `age_reference_fixe` passe de 64 à 65. Il ne pèse que sur la conversion des
+  droits acquis des scénarios 3 et 5.
+- La `Comparaison` porte les deux carrières (`carriere_de`), et les deux
+  grandeurs qui dépendent de la date du départ sont prises à celle du scénario :
+  le passage aux euros constants (`coefficient_de`) et le dernier revenu du
+  taux de remplacement. L'écart au système actuel d'un départ reporté se lit
+  donc en euros constants.
+- Page Coût : chaque couple de la grille porte la proposition telle que sa
+  génération la vit, et, quand la bascule passe entre ses cinq cohortes, telle
+  que la cohorte de l'autre côté la vit (`Pensionne.volet`,
+  `VoletLiberal`). Une cohorte partie avant la bascule l'est sans report.
+  La recette élargit l'assiette du COR du rapport des revenus d'activité de la
+  grille sous les deux âges (`SoldeAnnuel.facteur_assiette`). L'engagement
+  acquis court de la carrière et de la pension de chaque volet.
+- Simulateur du site : une note dit l'âge et la date du départ de la
+  proposition quand il est reporté ; le montant du système 4 est converti de
+  SON année ; le graphique des cumuls fait partir sa courbe à 65 ans ; le
+  financement, la garantie et le pilier sont lus à sa date ; la cascade de la
+  page Coût nomme l'âge légal dans la marche du taux unique, qu'il partage ;
+  la page Cas types dit que sa grille du système 4 part à 65 ans.
+- Documentation : `README.md` (tableau des scénarios, encadré de la
+  proposition), `limites.md` (« L'âge légal de la proposition : ce que le
+  report suppose », section d'état), `methodologie.md` (§ 8, « L'âge légal de
+  départ »), les docstrings de `notionnel.py`, `age_reference.py` et
+  `config.py`.
+
+**Ce que ça déplace, mesuré le 23 septembre 2026** (page Coût, convention de
+l'assiette, réglages par défaut). Solde moyen de la proposition de 2026 à 2070
+: −1,40 % du PIB sans l'âge légal, **−0,88 %** avec, contre −1,13 pour le
+système actuel. Par année : −1,16 puis **−0,64** en 2026, −1,40 puis **−0,28**
+en 2030, −1,86 puis **−1,25** en 2040, −1,88 puis **−1,44** en 2050, −0,03
+puis **+0,27** en 2070 ; deux années projetées à l'équilibre au lieu d'aucune,
+2069 et 2070, et une dette de 59 % du PIB en 2070 au lieu de 97. Les années
+d'avant la bascule ne bougent pas d'un centime, et un test le tient. L'assiette
+de la proposition est élargie de 7,1 % en 2030 et de 7,6 % en 2070 — un
+plafond, puisque tous ceux que le report fait attendre sont supposés en emploi.
+
+Sur les cas types, la pension MENSUELLE de la proposition, en euros constants,
+avant et après : génération 1985, au SMIC parti à 62 ans, 904 puis **1 069 €**
+(+18 %) ; au salaire moyen parti à 64 ans, 1 487 puis **1 573 €** (+6 %) ; en
+catégorie active partie à 59 ans, 1 307 puis **1 802 €** (+38 %) ; agent de
+conduite parti à 54 ans, 1 453 puis **2 488 €** (+71 %) ; militaire parti à 44
+ans, 854 puis **2 306 €** (+170 %) ; le cadre, parti à 66 ans, reste à 3 067 €.
+Ces hausses sont celles d'une pension servie plus tard : de 62 à 65 ans, le
+SMIC ne touche rien. Les cas partis à 65 ans ou après, et ceux qui ont liquidé
+avant la bascule, ne bougent pas.
+
+L'âge de référence à 65 ans plutôt qu'à 64 : solde moyen du scénario 3 de
++1,54 à **+1,74** % du PIB, du scénario 5 de −0,06 à **+0,14**. Le 5 passe
+ainsi en excédent moyen ; `test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si`
+tenait son signe négatif, il ne tient plus que son rang.
+
+Le report a aussi rendu faux le README sur le portage : l'écart relatif
+maximal entre les deux moteurs passe de 6 à 56 · 10⁻¹⁵, sur le complément de
+la garantie vieillesse de deux carrières que le report amène juste sous le
+plancher — une soustraction de deux nombres proches, que le README explique
+désormais au lieu d'annoncer « quelques dizaines d'*ulp* ». Et le contrôle
+`les_cases_se_lisent_contre_la_promesse`, venu entre-temps, rapportait les deux
+pensions sans les ramener chacune de son année ; il le fait.
+`test_la_rente_du_pilier_ne_se_revalorise_pas_d_ici_l_ouverture`, venu lui
+aussi, construisait une retraitée partie à 62 ans en 2037 : la proposition
+la fait partir à 65 ans, où la garantie est due dès le départ. Le test
+garde sa règle sur un simulateur sans âge légal.
+
+**Quatre erreurs trouvées en chemin, et corrigées.**
+
+1. *Le taux de remplacement NET de la proposition se lisait sur la fiche de
+   paie du droit en vigueur*, qu'elle ne prélève pas : le même brut y laisse un
+   net plus élevé, et le taux était surestimé d'autant. Il se lit désormais sur
+   sa propre fiche (`Montants.taux_remplacement`, deux moteurs).
+2. *La bulle « Ce que le système 4 change au système 3 » écrivait « sur ces
+   années-là, le 6 est le 4 »*, dans une page qui numérote les systèmes de 1 à
+   4 : c'est « le 4 est le 3 ».
+3. *`methodologie.md` § 4 affirmait que l'âge de référence à 64 ans faisait
+   repasser le scénario 5 sous le système actuel en solde moyen.* C'était vrai
+   le 19 septembre et ne l'était plus : les décisions des jours suivants
+   l'avaient remonté à −0,19 contre −1,13. Le paragraphe lit maintenant ses
+   trois soldes dans le modèle.
+4. *Le simulateur proposait l'âge de référence « 64 ans à partir de la
+   bascule (défaut) »*, libellé resté en arrière de la règle : 65 ans.
+
+**Ce que l'âge légal change à l'accueil.** `MESURES_BLOCAGES`, que des tests
+recalculent, prend les valeurs de l'âge légal : solde de la proposition à
+−0,9 point de PIB contre −1,1, dette de 59 % en 2070 contre 66,
+coefficient au plus bas à 0,85 dans les années 2040 et à 1,03 en 2070 ; les
+18 % coûtent 1,9 point face au taux d'aujourd'hui, âge légal compris — 2,4
+sans lui ; le stock converti au diviseur de 65 ans coûte 0,2 point par an, et
+plus rien à partir de 2060 et non plus de 2050, ce que
+`test_stock_age_legal.py` tient désormais ; la version prospective, −2,7
+points. Le tableau « Aujourd'hui / Avec notre programme » gagne la ligne de
+l'âge de départ, qu'il taisait, et la question « À quel âge pourrai-je
+partir ? » dit l'âge minimum au lieu de le taire.
+
+Et deux défauts de ce chantier lui-même, trouvés avant qu'ils ne partent :
+le report d'une génération de la grille décalait aussi les cohortes voisines
+parties AVANT la bascule — le solde de 2025 bougeait —, d'où les volets ; et
+`scripts/proposition_prospective.py`, qui range la proposition parmi les
+réformes prospectives, n'était plus entendu par la nouvelle somme des masses.
+
+**Ce qui reste, et c'est dit dans `limites.md`.** Le report est immédiat,
+sans montée en charge ; le PIB n'est pas relevé par l'emploi en plus ; la
+marche de la cascade mêle le taux et l'âge ; la dernière année se prolonge
+dans son statut, là où un agent de conduite ou un militaire en changerait.
+
+**Fichiers.** `src/retraite_notionnelle/config.py`, `carriere.py`,
+`simulateur.py`, `cout.py`, `scenarios/notionnel.py`,
+`moteur/age_reference.py`, `web/pages.py` ; leurs portages dans `moteur/js/` ;
+`scripts/stock_age_legal.py`, `scripts/mortalite_population.py`,
+`scripts/scenarios_meres.py` (chaque montant converti de sa propre année) ;
+`tests/test_simulateur.py`, `tests/test_cout.py`, `tests/test_moteur.py`,
+`tests/test_stock_age_legal.py` ; `README.md`, `docs/limites.md`,
+`docs/methodologie.md`, `data/reference/prose/zones.yaml`,
+`scripts/mesures_prose.py` (réglage `age_legal=aucun`, pour que la prose dise
+ce que la mesure déplace) ; les témoins, le paquet de données et le chiffrage
+budgétaire, régénérés.

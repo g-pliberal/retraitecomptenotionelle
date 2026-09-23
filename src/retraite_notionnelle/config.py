@@ -12,7 +12,8 @@ cherche à démontrer ; la règle demandée reste à un paramètre de distance.
   au modèle reste disponible, avec ses variantes (médiane, moyenne, tout en
   nominal), ainsi que la revalorisation réellement pratiquée par le régime
   général ;
-* âge de référence à cliquet ;
+* âge de référence à cliquet jusqu'à la bascule, fixé ensuite à l'âge légal
+  de départ de la proposition, 65 ans, que le scénario 6 applique aussi ;
 * neutralisation intégrale des droits non contributifs ;
 * fusion des régimes au cas le plus défavorable à compter de l'année de bascule.
 """
@@ -156,12 +157,13 @@ class ModeAgeReference(str, Enum):
     LEGAL_SANS_CLIQUET = "legal_sans_cliquet"
 
     #: Cliquet légal jusqu'à l'année de bascule, puis un âge FIXE —
-    #: ``Parametres.age_reference_fixe``, soit 64 ans, l'âge légal d'ouverture
-    #: des droits que la loi du 14 avril 2023 atteint en 2030. C'est le défaut :
-    #: le système proposé ne reconduit pas le taux plein à 67 ans, qui est une
-    #: condition de durée d'assurance, notion qu'un compte notionnel n'a pas.
-    #: Avant la bascule, le cliquet reste seul en vigueur : 64 ans n'existait
-    #: dans aucun droit, et une liquidation de 1990 se mesure à son époque.
+    #: ``Parametres.age_reference_fixe``, soit 65 ans, l'âge légal de départ
+    #: que la proposition fixe à compter de la bascule
+    #: (``Parametres.age_legal_liberal``). C'est le défaut : le système proposé
+    #: ne reconduit pas le taux plein à 67 ans, qui est une condition de durée
+    #: d'assurance, notion qu'un compte notionnel n'a pas. Avant la bascule, le
+    #: cliquet reste seul en vigueur : une liquidation de 1990 se mesure à son
+    #: époque.
     FIXE_APRES_BASCULE = "fixe_apres_bascule"
 
 
@@ -551,8 +553,13 @@ class Parametres:
     mode_age_reference: ModeAgeReference = ModeAgeReference.FIXE_APRES_BASCULE
 
     #: Âge de référence servi à partir de la bascule en mode
-    #: FIXE_APRES_BASCULE. 64 ans : l'âge légal d'ouverture des droits.
-    age_reference_fixe: float = 64.0
+    #: FIXE_APRES_BASCULE. 65 ans depuis le 22 septembre 2026 : l'âge légal de
+    #: départ de la proposition, ``age_legal_liberal``, et non plus les 64 ans
+    #: de la loi du 14 avril 2023, qu'il a valu du 19 au 22 septembre. Il ne
+    #: pèse que sur la conversion des droits acquis des scénarios PROSPECTIFS
+    #: (3 et 5) : un diviseur pris à 65 ans est plus petit qu'à 64, le capital
+    #: d'ouverture l'est donc aussi, d'environ 4 %.
+    age_reference_fixe: float = 65.0
 
     #: Ratio cible durée de retraite / durée de carrière, utilisé seulement en
     #: mode CLIQUET_PUIS_ESPERANCE_VIE.
@@ -641,9 +648,10 @@ class Parametres:
 
     # --- Scénario 6 : la proposition libérale --------------------------------
     #: Le scénario 6 est le scénario 4 — compte rétroactif, cotisation salariale
-    #: et patronale confondues, mêmes âges, même indexation, même liquidation —
-    #: à deux différences près, qui sont les deux termes de la proposition du
-    #: Parti libéral français.
+    #: et patronale confondues, même indexation, même liquidation — à trois
+    #: différences près, qui sont les termes de la proposition du Parti libéral
+    #: français : le taux unique, la garantie vieillesse, et l'âge légal de
+    #: départ de 65 ans (``age_legal_liberal``, plus bas).
     #:
     #: La première : un TAUX UNIQUE À COMPTER DE LA BASCULE, le même pour tous
     #: les statuts, parts salariale et patronale additionnées, prélevé une
@@ -766,6 +774,30 @@ class Parametres:
     #: Allocation d'isolement : s'ajoute au plancher d'une personne vivant
     #: seule. 800 + 250 = 1 050 € par mois seul, 800 € par personne à deux.
     allocation_isolement_mensuelle: float = 250.0
+
+    #: La troisième : un ÂGE LÉGAL DE DÉPART DE 65 ANS, à compter de la
+    #: bascule. Demandé le 22 septembre 2026. Personne ne liquide la pension de
+    #: la proposition avant cet âge : qui serait parti plus tôt sous le droit
+    #: en vigueur — à 62 ou 64 ans au régime général, à 52 ans à la SNCF, à 57
+    #: dans la catégorie active — part à 65 ans sous la proposition, et
+    #: TRAVAILLE JUSQUE-LÀ dans la situation de sa dernière année
+    #: (:meth:`Carriere.prolongee`). Qui partait à 65 ans ou après n'est pas
+    #: touché ; qui a liquidé avant la bascule non plus.
+    #:
+    #: CE QUE ÇA FAIT, ET CE QUE ÇA NE FAIT PAS. Dans un compte notionnel, un
+    #: départ plus tardif n'est pas une perte de pension MENSUELLE : c'est des
+    #: cotisations de plus et un diviseur plus petit, donc une pension plus
+    #: forte, servie moins longtemps. Ce qu'on perd, c'est les années de
+    #: pension d'avant 65 ans. Et qui partait déjà à 65 ans ou après ne gagne
+    #: rien : le compte ne connaît ni décote ni surcote à relever. Le solde,
+    #: lui, s'améliore des deux côtés — moins de pensions servies, plus de
+    #: cotisations encaissées.
+    #:
+    #: Seul le scénario 6 le porte. Les scénarios 2 à 5 gardent les âges du
+    #: droit en vigueur, parce qu'ils mesurent ce que change le COMPTE, à
+    #: carrière égale ; et le scénario 1 est le droit. ``None`` retire la
+    #: mesure : la proposition part alors aux âges du scénario 4.
+    age_legal_liberal: float | None = 65.0
 
     #: Année dans les euros de laquelle les deux montants ci-dessus sont fixés.
     annee_euros_garantie_vieillesse: int = 2026

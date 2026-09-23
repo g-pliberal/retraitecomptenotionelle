@@ -5386,10 +5386,10 @@ indexée sur les prix depuis 1941.
 appliqué, année par année, à la distribution des pensions de l'échantillon
 interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
-Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,07<!--/--> en 2070. La garantie coûte
+Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,15<!--/--> en 2070. La garantie coûte
 <!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,45<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,7<!--/--> millions de
-bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,32<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->13<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,5<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->577<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,29<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->11<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,3<!--/--> millions —, soit
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->548<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
 déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 433<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
@@ -5769,6 +5769,68 @@ le modèle donnait avant.
 
 Et le modèle ne dit rien de l'impôt lui-même : il compte ce qui est versé,
 jamais ce qui est prélevé.
+
+### L'âge légal de la proposition : ce que le report suppose
+
+La proposition fixe l'âge légal de départ à <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans à compter de la
+bascule (`Parametres.age_legal_liberal`). Qui serait parti plus tôt sous le
+droit en vigueur liquide la pension du scénario 6 à cet âge ; qui partait à
+cet âge ou après, et qui a liquidé avant la bascule, n'est pas touché. Le
+modèle le calcule en PROLONGEANT la carrière jusqu'à l'âge légal
+(`Carriere.prolongee`), et le report suppose cinq choses.
+
+**La dernière année se prolonge.** Même statut, même nature de période, même
+salaire relatif, avancé au rythme du salaire moyen. C'est une convention, et
+elle est la même pour toutes les carrières, qu'elles viennent d'un profil,
+d'un parcours ou d'un relevé : un relevé n'a pas de profil à prolonger. Elle
+fait travailler l'agent de conduite, l'agent des IEG ou le militaire dans
+leur statut jusqu'à l'âge légal, là où beaucoup en changeraient ; mais à
+compter de la bascule tout le monde cotise au même taux unique sur le même
+revenu, et c'est le revenu seul qui compte. Qui finissait sa carrière au
+chômage la finit au chômage, et une carrière qui s'arrêtait avant son départ
+— un relevé dont les dernières années sont vides — ne gagne aucune année
+travaillée.
+
+**Le report est immédiat.** Toute liquidation qui prendrait effet à compter du
+1<sup>er</sup> janvier de la bascule est portée à l'âge légal, sans montée en
+charge par génération comme en ont eu les réformes de 2010 et de 2023. La
+proposition n'en prévoit pas ; une montée en charge adoucirait les premières
+années, au prix du solde.
+
+**Tous ceux que le report fait attendre sont en emploi.** C'est ce qui fait de
+la recette un PLAFOND. Sur la page Coût, la recette de la proposition est son
+taux appliqué à l'assiette que le COR projette aux âges d'aujourd'hui ; le
+report l'élargit du rapport des revenus d'activité de la grille sous les deux
+âges (`SoldeAnnuel.facteur_assiette`). Or les carrières de la grille sont en
+emploi jusqu'à leur départ, ce que tous les seniors ne sont pas : qui arrive à
+l'âge légal au chômage ou en invalidité ne cotise pas davantage, et ce que
+l'assurance chômage ou l'invalidité lui verseraient pendant l'attente n'est
+compté nulle part.
+
+**Le PIB ne bouge pas.** Plus d'emploi ferait plus de production, et le modèle
+garde le PIB que le COR projette aux âges d'aujourd'hui. Toutes les parts de
+PIB de la proposition sont donc rapportées à un dénominateur un peu trop bas.
+
+**La dépense et la recette se lisent en une marche.** La cascade de la page
+Coût porte le taux unique et l'âge légal dans une seule marche, parce que le
+modèle ne calcule pas la proposition sans l'un des deux ; elle le dit dans son
+étiquette. Mesurer l'âge seul se fait en comparant le réglage par défaut à
+`age_legal_liberal=None`.
+
+Ce que le report n'est pas : une baisse de la pension mensuelle. Dans un compte
+notionnel, partir plus tard ajoute des cotisations et raccourcit la retraite,
+et les deux relèvent la pension ; ce qui se perd, ce sont les années de
+pension d'avant l'âge légal. Et il ne relève rien pour qui partait déjà à cet
+âge ou après, le compte n'ayant ni décote ni surcote à déplacer. La garantie
+vieillesse, ouverte au même âge, est désormais due dès le départ à toute
+liquidation que la proposition régit ; elle ne reste différée que pour les
+départs antérieurs à la bascule, que le scénario 6 recalcule rétroactivement.
+
+Les scénarios 2 à 5 gardent les âges du droit en vigueur : ils mesurent ce que
+change le compte, à carrière égale, et un âge différent y mêlerait deux effets.
+L'âge de référence des scénarios prospectifs suit l'âge légal
+(`age_reference_fixe`, <!--chiffre:mesure(parametre?nom=age_reference_fixe)-->65<!--/--> ans) ; il
+ne pèse que sur la conversion des droits acquis.
 
 ### La décote des régimes spéciaux avait quatre ans d'avance
 
@@ -6966,8 +7028,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
-  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/--> en 2070 pour le scénario 3 ne se lit donc
-  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->42<!--/--> % : il se lit comme la marge dont ce système
+  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,74<!--/--> en 2070 pour le scénario 3 ne se lit donc
+  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->43<!--/--> % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
 - **Les ressources ne sont pas celles du risque vieillesse, et ne peuvent pas
@@ -8288,7 +8350,7 @@ année.
 | Système actuel, convention du COR | **<!--chiffre:mesure(engagement)-->520<!--/--> %** |
 | — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->196<!--/--> % |
 | — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->324<!--/--> % |
-| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->383<!--/--> % |
+| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->379<!--/--> % |
 | Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->167<!--/--> % |
 | Publié par Eurostat, tableau 29 | <!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % |
 
@@ -8940,15 +9002,17 @@ dites <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−71<!--
 | **CEPII, Lettre n° 297, avril 2010** (OLGAMAP, équilibre général) | régime unique, **taux unique ~<!--chiffre:illustration()-->22<!--/--> %**, transition 2015-2030 | besoin de financement **−0,7 pt de PIB** en 2050 ; en variante à actualisation nulle, **−3,2 pts** et système excédentaire |
 
 Et ce que trouve ce dépôt, pour une carrière ascendante au salaire moyen,
-entrée à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.litterature_prive.debut)-->22<!--/--> ans, née en 1975, liquidée à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.litterature_prive.depart)-->64<!--/--> ans :
+entrée à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.litterature_prive.debut)-->22<!--/--> ans, née en 1975, liquidée à <!--chiffre:mesure(constante?de=mesures_prose&nom=EXEMPLES.litterature_prive.depart)-->64<!--/--> ans — à <!--chiffre:mesure(parametre?nom=age_legal_liberal)-->65<!--/--> ans sous la
+proposition, qui en fait son âge légal, et c'est ce qui la rapproche du
+scénario 4 :
 
 | | Salarié du privé non cadre | Fonctionnaire d'État |
 |---|---:|---:|
 | 2. Notionnel rétroactif, part salariale | **<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> %** | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=2)-->−77,3<!--/--> %** |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,5<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−22,9<!--/--> % |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−24,1<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−25,5<!--/--> % |
 | 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,5<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+40,2<!--/--> %** |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−7,6<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−11,5<!--/--> % |
-| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−34,5<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->+34,4<!--/--> % |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−10,2<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−14,1<!--/--> % |
+| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−30,4<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->+41,1<!--/--> % |
 
 ### Ce n'est pas une contradiction : c'est la somme de quatre choix
 
@@ -8959,7 +9023,7 @@ prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
    et l'un comme l'autre **conservent les droits déjà acquis**. Les scénarios 2
    et 4 recalculent la carrière ENTIÈRE depuis 1941. Le dépôt publie lui-même
    la mesure de ce choix : les scénarios 3 et 5, qui figent les droits acquis
-   comme le fait la littérature, ramènent l'écart de <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> % à <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−21,5<!--/--> % pour le
+   comme le fait la littérature, ramènent l'écart de <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> % à <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−24,1<!--/--> % pour le
    salarié du privé. **L'essentiel de l'écart est de la rétroactivité, rien
    d'autre.**
 2. **Les droits non contributifs.** La CNAV les CONSERVE et les convertit en
@@ -9056,7 +9120,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2352<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2363<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

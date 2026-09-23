@@ -596,13 +596,17 @@ def _(m: Modele):
 
     Celle du système actuel à la même carrière : la pension que la règle du
     scénario 1 calcule, rapportée telle quelle, sans coefficient d'équilibre
-    — ni sur elle, ni sur la pension du système comparé.
+    — ni sur elle, ni sur la pension du système comparé. Quand la proposition
+    reporte le départ à son âge légal, les deux pensions ne sont pas servies la
+    même année : chacune est ramenée en euros constants depuis la sienne.
     """
     for comparaison in m.grille_cas_types.resultats.values():
-        promesse = comparaison.actuel.pension_annuelle
+        promesse = comparaison.en_euros_constants(comparaison.actuel.pension_annuelle)
         for scenario in SCENARIOS_MONTRES[1:]:
+            servie = comparaison.en_euros_constants(
+                comparaison.pension_totale(scenario), scenario)
             assert _proche(comparaison.variation_totale(scenario),
-                           comparaison.pension_totale(scenario) / promesse - 1.0)
+                           servie / promesse - 1.0)
     ligne = m.horizon
     for scenario in SCENARIOS_MONTRES:
         assert _proche(ligne.coefficient(scenario) * ligne.depense(scenario),
@@ -1004,7 +1008,9 @@ def _(m: Modele):
 @controle("pilier_sort_en_rente")
 def _(m: Modele):
     pilier = m.defaut.notionnel_liberal.capitalisation
-    assert pilier.annee_liquidation == m.defaut.carriere.annee_liquidation
+    # À la liquidation DE LA PROPOSITION, que son âge légal peut reporter.
+    assert pilier.annee_liquidation == (
+        m.defaut.carriere_de("notionnel_liberal").annee_liquidation)
     attendue = (pilier.capital / pilier.conversion.diviseur
                 * pilier.facteur_encours_rente * (1 - pilier.frais_arrerages))
     assert _proche(pilier.rente_annuelle, attendue)
@@ -1056,16 +1062,34 @@ def _(m: Modele):
     # Qui travaille jusqu'à un départ l'année même de la bascule : un seul
     # versement, et pas une année pour rapporter. Le contrôle prenait une
     # carrière au chômage depuis 2019, dont le pilier recevait dix points que
-    # personne ne versait ; il n'en reçoit plus rien.
+    # personne ne versait ; il n'en reçoit plus rien. Née en 1961, partie à
+    # 65 ans passés : l'âge légal de la proposition ne reporte pas ce départ.
     comparaison = m.simuler_requete(
-        naissance="1962-03-15", debut="1984-09", liquidation="2026-07")
+        naissance="1961-03-15", debut="1984-09", liquidation="2026-07")
+    assert not comparaison.depart_reporte
     pilier = comparaison.notionnel_liberal.capitalisation
     assert pilier is not None and pilier.actif
     assert pilier.interets == 0.0 and pilier.taux_rendement_annuel == 0.0
     chomeur = m.simuler_requete(
-        naissance="1962-03-15", debut="1984-09", liquidation="2026-07",
+        naissance="1961-03-15", debut="1984-09", liquidation="2026-07",
         metier2_debut="2019-04", metier2_statut="chomage_indemnise")
     assert not chomeur.notionnel_liberal.capitalisation.actif
+
+
+@controle("age_legal_reporte_le_depart")
+def _(m: Modele):
+    """Un départ avant l'âge légal, à compter de la bascule, est reporté à
+    cet âge pour la seule proposition, et la carrière travaille jusque-là."""
+    age = m.base.age_legal_liberal
+    assert age == 65.0
+    comparaison = m.defaut
+    assert (comparaison.carriere.age_liquidation or 0.0) < age
+    assert comparaison.carriere.annee_liquidation >= m.base.annee_bascule
+    assert comparaison.depart_reporte
+    reportee = comparaison.carriere_de("notionnel_liberal")
+    assert reportee.age_liquidation == age
+    assert reportee.derniere_annee > comparaison.carriere.derniere_annee
+    assert comparaison.carriere_de("notionnel_retroactif_employeur") is comparaison.carriere
 
 
 @controle("frais_baissent_par_paliers")
@@ -1538,8 +1562,9 @@ def _(m: Modele):
                 f"{reglage['total']}")
     assert cote in cas_types, cote
     for nom, texte in (("cout", cout), ("cas_types", cas_types)):
-        assert normaliser(g.nombre(dernier, 2)) in texte, nom
-        if sous_un:
+        if nom == "cout" or sous_un:
+            assert normaliser(g.nombre(dernier, 2)) in texte, nom
+        if reglage["sous_un"]:
             assert normaliser(g.nombre(reglage["minimum"], 2)) in texte, nom
             assert str(reglage["annee_minimum"]) in texte, nom
 
@@ -1828,8 +1853,10 @@ def _(m: Modele):
     ligne = m.horizon
     assert m.base.taux_cotisation_liberal == 0.18
     assert ligne.recette_par_assiette and ligne.taux_liberal == 0.18
+    # L'assiette mesurée, élargie de ce que l'âge légal fait cotiser en plus.
     assert _proche(ligne.postes_ressources("notionnel_liberal")["cotisations"],
-                   ligne.ressources * ligne.taux_liberal / ligne.taux_prelevement)
+                   ligne.ressources * ligne.taux_liberal / ligne.taux_prelevement
+                   * ligne.facteur_assiette)
 
 
 @controle("autre_convention_de_recette")
@@ -1911,6 +1938,11 @@ def _(m: Modele):
     # pas une ressource reconduite mais ajoutée : voir `cout.tva_ajoutee`.
     assert all(postes[code] == 0.0 for code in disparus[:2])
     assert postes["impots_et_taxes"] == postes["impots_tva"]
+    # La quatrième réaction : l'âge légal élargit l'assiette, après la bascule
+    # et pas avant.
+    assert ligne.facteur_assiette > 1.0
+    assert all(l.facteur_assiette == 1.0 for l in m.solde.annees
+               if l.annee < m.base.annee_bascule)
     # « Trois postes : 27 % des ressources en 2024, 29 % en 2070 » — la prose
     # écrit ces deux parts en toutes lettres ; elles ne doivent pas dériver.
     for annee, attendu in ((2024, 0.27), (2070, 0.29)):

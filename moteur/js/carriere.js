@@ -444,6 +444,83 @@ export class Carriere {
     return (this.moisLiquidation - 1) / 12;
   }
 
+  // -- prolongation ----------------------------------------------------------
+
+  /**
+   * La même carrière, poursuivie jusqu'à un départ à `ageLiquidation`.
+   *
+   * C'est ce que fait l'âge légal de la proposition à qui serait parti plus
+   * tôt sous le droit en vigueur : il travaille jusqu'à l'âge légal. Rien de
+   * ce qui précède ne bouge. LA CONVENTION, ET IL N'Y EN A QU'UNE : la
+   * dernière année se prolonge — même statut, même nature de période, même
+   * salaire RELATIF, avancé chaque année au rythme du salaire moyen. Une
+   * carrière qui s'arrêtait avant son départ finissait sans activité, et le
+   * report n'ajoute alors aucune ligne. Rend la carrière elle-même quand le
+   * départ demandé ne tombe pas après le sien. Voir `carriere.py`.
+   */
+  prolongee(ageLiquidation, macro) {
+    if (this.age_liquidation === null
+        || enMois(ageLiquidation) <= enMois(this.age_liquidation)) {
+      return this;
+    }
+    const initiale = this.dateLiquidation;
+    const fin = this.dateNaissance.plusMois(enMois(ageLiquidation));
+    const derniere = this.lignes[this.lignes.length - 1];
+    const cotisee = derniere.type_periode === "emploi";
+    // Le revenu annualisé de la dernière ligne : ce qui a été perçu pour une
+    // année d'emploi, le salaire de référence pour une interruption.
+    const percu = cotisee ? derniere.revenu : derniere.revenu_reference;
+    const base = derniere.fraction_annee > 0 ? percu / derniere.fraction_annee : 0.0;
+    const reference = salaireMoyenAnnuel(macro, derniere.annee);
+
+    const ligne = (annee, mois) => {
+      const facteur = reference > 0
+        ? salaireMoyenAnnuel(macro, annee) / reference : 1.0;
+      return ligneAnnuelle({
+        annee,
+        revenu: base * facteur * mois / MOIS_PAR_AN,
+        affiliation: derniere.affiliation,
+        type_periode: derniere.type_periode,
+        macro,
+        part: mois / MOIS_PAR_AN,
+        part_primes: derniere.part_primes,
+        trimestresMaximum: trimestresCivils(mois),
+      });
+    };
+    // Le mois de liquidation n'est pas travaillé.
+    const finTravaillee = (annee, depart) => {
+      if (annee < depart.annee) return MOIS_PAR_AN;
+      if (annee === depart.annee) return depart.mois - 1;
+      return 0;
+    };
+
+    const contigue = derniere.annee === initiale.annee
+      || (derniere.annee === initiale.annee - 1 && initiale.mois === 1);
+    const lignes = [...this.lignes];
+    if (contigue) {
+      const ajoutes = finTravaillee(derniere.annee, fin)
+        - finTravaillee(derniere.annee, initiale);
+      if (ajoutes > 0) {
+        const mois = Math.round(derniere.fraction_annee * MOIS_PAR_AN) + ajoutes;
+        lignes[lignes.length - 1] = ligne(derniere.annee, Math.min(mois, MOIS_PAR_AN));
+      }
+      for (let annee = derniere.annee + 1; annee <= fin.annee; annee += 1) {
+        const mois = finTravaillee(annee, fin);
+        if (mois > 0) lignes.push(ligne(annee, mois));
+      }
+    }
+    return new Carriere({
+      annee_naissance: this.annee_naissance,
+      sexe: this.sexe,
+      lignes,
+      mois_naissance: this.mois_naissance,
+      age_liquidation: ageLiquidation,
+      nombre_enfants: this.nombre_enfants,
+      identifiant: this.identifiant,
+      dates_entree: { ...this.dates_entree },
+    });
+  }
+
   // -- agrégats --------------------------------------------------------------
 
   /** Année d'entrée dans ce statut, ou null s'il ne figure pas dans la carrière.
