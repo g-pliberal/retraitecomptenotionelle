@@ -10715,7 +10715,7 @@ function risque(contexte) {
     lignesSalaires,
     ["", "nombre", "nombre", "nombre", "nombre"],
     `Ce que la retraite prélève chaque mois sur un salarié du privé en `
-    + `${ficheMoyen.annee}, ${g.terme("part patronale")} comprise`,
+    + `${ficheMoyen.annee}, part patronale comprise`,
     true,
   );
 
@@ -10733,8 +10733,8 @@ function risque(contexte) {
     ["Année", "Pensions versées", "Recettes", "Part non financée"],
     lignesSoldes,
     ["", "nombre", "nombre", "nombre"],
-    `Ce que le système verse et ce qu'il encaisse, en `
-    + `${g.terme("part du PIB")}, de ${obs} à ${fin}`,
+    `Ce que le système verse et ce qu'il encaisse, en part `
+    + `du PIB, de ${obs} à ${fin}`,
     true,
   );
 
