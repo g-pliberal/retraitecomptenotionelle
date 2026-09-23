@@ -1201,6 +1201,28 @@ export class PeriodeRegime {
     }
     return this.assiette_minimale_pass * pass;
   }
+
+  /**
+   * Part de la rémunération que ce régime prend en compte : le traitement
+   * seul pour la pension civile, les primes seules pour le RAFP — et
+   * celles-ci dans la limite de `plafond_primes_traitement` du traitement,
+   * 20 % (décret n° 2004-569, art. 2) —, la rémunération entière ailleurs.
+   * Le scénario 1 et le compte notionnel découpent tous deux par ici.
+   */
+  partDuRevenu(revenu, partPrimes) {
+    if (this.assiette === "primes_uniquement") {
+      const primes = revenu * partPrimes;
+      const plafond = this.plafond_primes_traitement;
+      if (plafond === null || plafond === undefined) {
+        return primes;
+      }
+      return Math.min(primes, plafond * revenu * (1.0 - partPrimes));
+    }
+    if (this.assiette === "hors_primes") {
+      return revenu * (1.0 - partPrimes);
+    }
+    return revenu;
+  }
 }
 
 export class Regime {

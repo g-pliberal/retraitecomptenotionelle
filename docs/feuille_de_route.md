@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 418<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->35 993<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 412<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 014<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15188,3 +15188,84 @@ README confronte désormais ses milliards à ceux de la page.
 (`milliards`, `part_et_milliards`, le `pib` des graphiques, la frise),
 `web/pages.py` et `moteur/js/pages.js`, `scripts/mesures_prose.py`, `README.md`,
 `tests/test_web.py`, `tests/temoins/pages.json`.
+
+### 119. Les complémentaires relues : le plafond du RAFP, et cinq trous que rien ne disait — `en cours`
+
+**Demande.** « Il me semble qu'il manque encore pas mal de choses sur certains
+régimes complémentaires. Tu peux me dire ce qu'il manque ? », puis, la liste
+faite : « vas-y, commence par le plafond RAFP » (23 septembre 2026).
+
+**Ce que la relecture a trouvé.** Les manques connus des complémentaires sont
+écrits dans l'inventaire, dans `limites.md` §4 et au registre de veille. La
+relecture — inventaire, fiches, les deux moteurs, `sources_a_explorer.yaml`,
+puis les textes et les caisses — en a trouvé cinq qui ne l'étaient nulle part,
+ici par ordre de poids :
+
+1. *Les points gratuits de RCO des chefs d'exploitation, pour leurs années
+   d'avant 2003* : cent par an à qui a cotisé dix-sept ans et demi comme chef,
+   dans la limite de trente-sept ans et demi moins ses années de RCO ; sinon
+   soixante-six, sur dix-sept ans au plus, depuis 2014 (La retraite en clair,
+   le site du GIP Union Retraite). Le dépôt ne connaît que ceux des conjoints
+   et des aides familiaux. Tout exploitant parti depuis 2003 a donc une RCO
+   sous-estimée au scénario 1 — ce qui flatte les comptes notionnels, dont
+   ces points gratuits sont absents par construction.
+2. *L'Arrco des ministres des cultes*, obligatoire depuis 2006 pour qui
+   perçoit un revenu d'activité individuel, les membres des congrégations en
+   étant exclus (réponse ministérielle au Sénat de 2007, tableau des régimes
+   du GIP Union Retraite). Le statut `ministre_du_culte`, qui confond les deux
+   populations, ne route que la CAVIMAC.
+3. *Le plafond de l'assiette du RAFP* : fait, voir ci-dessous.
+4. *La majoration pour enfants de l'Ircantec* : 10, 15, 20, 25 puis 30 % de
+   trois à sept enfants, selon la base documentaire du régime. La fiche la
+   déclare sans barème, et le moteur sert 10 % à partir de trois.
+5. *La Nouvelle-Calédonie* : l'inventaire date l'Agirc-Arrco de l'accord
+   territorial de 1995 et dit que le statut ne route pas vers la
+   complémentaire, quand `affiliations.yaml` route l'Arrco dès 1961 ; le
+   compte notionnel y porte trente-quatre ans de cotisations jamais versées.
+
+Un sixième est sorti en lisant l'article 76 de la loi n° 2003-775 pour le
+RAFP : le régime n'est ouvert qu'aux fonctionnaires civils, aux magistrats et
+aux militaires, et le modèle y affilie les deux statuts d'ouvrier de l'État
+depuis 2005. Une piste, enfin, qu'aucun texte lu ne confirme encore : les droits
+gratuits accordés à la création de l'Agirc et des institutions de l'Arrco pour
+les années travaillées avant, dont le dépôt ne dit rien. Vérifiés et justes,
+en revanche : Mayotte et la Polynésie sans Agirc-Arrco, l'adhésion y étant
+facultative.
+
+**Ce qui a été fait : le plafond du RAFP.** Les primes n'y cotisent que
+« dans la limite de 20 % du traitement indiciaire brut total ou de la solde
+brute totale perçus au cours de l'année considérée » : l'article 2 du décret
+n° 2004-569 le dit dans ses six versions depuis 2004, l'ERAFP en tête de sa
+page sur les cotisations, et la fiche le citait sans qu'aucun moteur le lise.
+Un champ de période, `plafond_primes_traitement` ; une méthode,
+`PeriodeRegime.part_du_revenu` en Python et `partDuRevenu` en JavaScript, qui
+remplace les trois copies du découpage traitement/primes du scénario 1 et du
+compte notionnel ; le taux unique, lui, garde la rémunération entière. Les
+deux pages de l'ERAFP ont été réservées avant d'être ouvertes (action 89) :
+celle des cotisations est `explore`, la calculette, qui part des cotisations
+et non des primes, retourne au vivier avec ce qu'elle peut vraiment rendre.
+
+**Ce que ça a déplacé.** Deux témoins sur 505, les deux carrières de
+fonctionnaire à 22 % de primes : leur RAFP baisse de 29 %, au scénario 1 comme
+dans les compartiments de capitalisation des scénarios notionnels. Les trois
+cas types publics cotisaient sur une assiette trop forte de 10, 41 et 67 %.
+Aucun écart entre scénarios ne bouge, le RAFP étant servi à l'identique dans
+les six.
+
+**Ce qui reste**, dans l'ordre où le prendre : les points gratuits de RCO
+des chefs d'exploitation ; l'Arrco des ministres des cultes, statut à scinder ;
+les ouvriers de l'État hors du RAFP ; le barème de l'Ircantec pour enfants ; le
+routage calédonien et sa ligne d'inventaire ; les deux exceptions au plafond
+du RAFP — la GIPA, cotisée en entier, les jours de compte épargne-temps
+convertis — et la cotisation volontaire des agents de l'État outre-mer. La
+ligne `rafp_assiette_plafond` du registre de veille et le récit de
+`limites.md` (« Le RAFP prenait toutes les primes ») en tiennent le détail.
+
+**Fichiers.** `data/reference/regimes/_schema.yaml` et
+`data/reference/regimes/fonction_publique.yaml` ;
+`src/retraite_notionnelle/donnees/regimes.py`, `scenarios/actuel.py`,
+`moteur/compte.py`, et leurs pendants `moteur/js/regimes.js`,
+`scenario-actuel.js`, `compte.js` ; `scripts/construire_donnees.py` ;
+`tests/test_simulateur.py`, `tests/js/moteur.test.js`, les témoins ;
+`data/reference/legislation/veille.yaml`, `data/sources_a_explorer.yaml`,
+`data/reference/prose/zones.yaml`, `docs/limites.md`.

@@ -1703,6 +1703,41 @@ entrees:
       Vérifier si l'ERAFP interpole la majoration au mois comme la conversion.
     prochaine_veille: "2027-03-31"
 
+  - id: rafp_assiette_plafond
+    regle: >-
+      Assiette du RAFP : les éléments de rémunération qui n'entrent pas dans
+      celle de la pension civile ou de la CNRACL — primes, indemnités,
+      avantages en nature —, « dans la limite de 20 % du traitement indiciaire
+      brut total ou de la solde brute totale perçus au cours de l'année
+      considérée » ; cotisation de 10 %, moitié agent, moitié employeur.
+    textes:
+      - "décret n° 2004-569, article 2, six versions de LEGIARTI000006453300 (2004) à LEGIARTI000049424057 (en vigueur depuis le 17 avril 2024), la limite de 20 % dans toutes"
+      - "loi n° 2003-775, article 76, II (LEGIARTI000048691415) : bénéficiaires"
+    sources:
+      - {type: legifrance, reference: "article 2 en vigueur (LEGIARTI000049424057) : « Ces éléments sont pris en compte dans la limite de 20 % du traitement indiciaire brut total ou de la solde brute totale perçus au cours de l'année considérée » ; même limite, sans la solde avant 2019, dans les versions de 2004, 2017, 2018, 2019 et 2023 lues dans l'index LEGI du dépôt", date: "2026-09-23"}
+      - {type: autre, reference: "ERAFP, « Calculer vos cotisations et vos points RAFP » : « L'assiette de cotisation au RAFP est plafonnée à 20 % du traitement indiciaire brut », appréciée en cumul depuis le 1er janvier, sauf la GIPA et les jours de CET convertis", url: "https://www.rafp.fr/actif/activite/calculer-vos-cotisations-et-vos-points-rafp", date: "2026-09-23"}
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: []
+    etat: conforme
+    effet: >-
+      Fonctionnaires, magistrats et militaires dont les primes dépassent le
+      cinquième du traitement, soit un sixième de la rémunération. Le modèle
+      prenait toutes les primes : à 22 % de primes, le RAFP ressortait trop
+      haut de 41 %. Champ `plafond_primes_traitement` de la fiche, lu par
+      `PeriodeRegime.part_du_revenu` dans les deux moteurs, tenu par
+      `test_les_primes_au_dela_du_plafond_ne_cotisent_pas_au_rafp` et son
+      pendant JavaScript.
+    a_faire: >-
+      Les deux exceptions de l'ERAFP ne sont pas portées : la GIPA, cotisée
+      sans plafond, et les jours de compte épargne-temps convertis en points ;
+      ni la cotisation volontaire des agents de l'État outre-mer (loi de
+      finances pour 2024, article 201). Et l'article 76 de la loi de 2003
+      n'ouvre le régime qu'aux fonctionnaires civils, aux magistrats et aux
+      militaires, quand `affiliations.yaml` le donne aussi aux deux statuts
+      d'ouvrier de l'État.
+    prochaine_veille: "2027-09-30"
+
   - id: assiette_minimale_independants
     regle: >-
       Assiette minimale de la cotisation de base des artisans, commerçants et
@@ -4680,3 +4715,27 @@ journal:
     reste: >-
       La règle qui répartit le plafond de la Sécurité sociale entre plusieurs
       employeurs, ni lue ni modélisée.
+
+  - date: "2026-09-23"
+    session: "le plafond de l'assiette du RAFP"
+    consulte: >-
+      `scripts/veille_droit.py` ; index LEGI mis à jour par ses incréments du
+      21 et du 22 septembre. Dans LEGI : l'article 2 du décret n° 2004-569
+      dans ses six versions (LEGIARTI000006453300, …036070837, …037457096,
+      …039240968, …047751473, …049424057), ses articles 4 et 11, et
+      l'article 76 de la loi n° 2003-775 dans sa première version et dans
+      celle en vigueur depuis le 1er septembre 2024. Côté caisse : les pages
+      de l'ERAFP sur le calcul des cotisations et des points, et sa
+      calculette de points.
+    trouve: >-
+      La limite de 20 % du traitement indiciaire brut, dans toutes les
+      versions de l'article 2 depuis 2004 et en tête de la page de l'ERAFP :
+      la fiche la citait, aucun des deux moteurs ne l'appliquait. Elle l'est,
+      par un champ de période, `plafond_primes_traitement`. Les valeurs
+      d'acquisition et de service de 2025 et de 2026 que publie l'ERAFP sont
+      celles que le dépôt certifie. Ligne `rafp_assiette_plafond`.
+    reste: >-
+      La GIPA, cotisée sans plafond ; les jours de compte épargne-temps
+      convertis en points ; la cotisation volontaire des agents de l'État
+      outre-mer depuis avril 2024. Et les ouvriers de l'État, que l'article 76
+      n'admet pas au régime et que le modèle y affilie depuis 2005.

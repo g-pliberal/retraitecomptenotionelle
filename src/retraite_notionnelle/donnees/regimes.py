@@ -373,6 +373,14 @@ class PeriodeRegime:
     #: 50 % et 300 % du plafond (décret n° 2025-1076, art. 7 et 14). Un
     #: seuil qui relève l'assiette, et non un abattement qui la retranche.
     assiette_minimale_pass: float | None
+    #: PLAFOND DES PRIMES, en fraction du TRAITEMENT INDICIAIRE — la part du
+    #: revenu que les primes ne sont pas. Le RAFP cotise sur les primes « dans
+    #: la limite de 20 % du traitement indiciaire brut total [...] perçu au
+    #: cours de l'année considérée » (décret n° 2004-569, art. 2, dans toutes
+    #: ses versions depuis 2004) : des primes qui font 25 % de la rémunération
+    #: valent un tiers du traitement, et n'en cotisent que 15 %. Voir
+    #: :meth:`part_du_revenu`.
+    plafond_primes_traitement: float | None
     #: COTISATION PAR CLASSES : le régime ne prélève ni un taux ni un forfait
     #: mais un MONTANT par palier de revenu, lu dans `classes_cotisation.csv`.
     #: C'est la forme de la Cipav d'avant 2023.
@@ -446,6 +454,25 @@ class PeriodeRegime:
         if self.assiette_minimale_pass is None:
             return 0.0
         return self.assiette_minimale_pass * pass_annuel
+
+    def part_du_revenu(self, revenu: float, part_primes: float) -> float:
+        """Part de la rémunération que ce régime prend en compte.
+
+        Un fonctionnaire cotise à la pension civile sur son seul traitement
+        indiciaire, au RAFP sur ses seules primes, et les primes n'y entrent
+        que jusqu'à ``plafond_primes_traitement`` du traitement. Les autres
+        régimes prennent la rémunération entière. Le scénario 1 et le compte
+        notionnel découpent tous deux par ici, pour ne pas diverger.
+        """
+        if self.assiette == "primes_uniquement":
+            primes = revenu * part_primes
+            if self.plafond_primes_traitement is None:
+                return primes
+            return min(primes, self.plafond_primes_traitement
+                       * revenu * (1.0 - part_primes))
+        if self.assiette == "hors_primes":
+            return revenu * (1.0 - part_primes)
+        return revenu
 
     def couvre(self, annee: int) -> bool:
         return self.debut <= annee and (self.fin is None or annee <= self.fin)
@@ -1127,6 +1154,10 @@ class CatalogueRegimes:
                 assiette_minimale_pass=(
                     None if p.get("assiette_minimale_pass") is None
                     else float(p["assiette_minimale_pass"])
+                ),
+                plafond_primes_traitement=(
+                    None if p.get("plafond_primes_traitement") is None
+                    else float(p["plafond_primes_traitement"])
                 ),
                 cotisation_par_classes=bool(
                     p.get("cotisation_par_classes", False)

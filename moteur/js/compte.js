@@ -298,6 +298,13 @@ export class ConstructeurCompte {
     return fusionnees;
   }
 
+  /**
+   * La part de la rémunération qu'un GROUPE d'assiettes découpe, pour le seul
+   * taux uniforme. Le plafond des primes du RAFP n'y a pas cours : c'est une
+   * règle du RAFP, et un taux unique porte sur toute la rémunération. Le
+   * groupe des primes ne s'y forme que si `isoler_capitalisation` vaut faux ;
+   * sinon le RAFP garde son taux, son plafond et son compartiment.
+   */
   _baseSelonAssiette(assiette, baseLigne, partPrimes) {
     if (assiette === "primes_uniquement") {
       return baseLigne * partPrimes;
@@ -452,9 +459,10 @@ export class ConstructeurCompte {
           periode, annee, part,
         );
 
-        let base = this._baseSelonAssiette(
-          periode.assiette, baseLigne, ligne.part_primes,
-        );
+        // Traitement seul ou primes seules, celles du RAFP dans la limite de
+        // 20 % du traitement : `PeriodeRegime.partDuRevenu`, le découpage
+        // même du scénario 1.
+        let base = periode.partDuRevenu(baseLigne, ligne.part_primes);
         // L'ASSIETTE N'EST PAS TOUJOURS LE REVENU : commissions versées par
         // les compagnies pour la CAVAMAC, produits de l'office pour la CPRN.
         // Le facteur les reconstitue AVANT les bornes.

@@ -2020,12 +2020,9 @@ export class ScenarioActuel {
             borneBasse *= part;
             borneHaute = borneHaute === null ? null : borneHaute * part;
           }
-          let base = baseLigne;
-          if (periode.assiette === "primes_uniquement") {
-            base = baseLigne * ligne.part_primes;
-          } else if (periode.assiette === "hors_primes") {
-            base = baseLigne * (1.0 - ligne.part_primes);
-          }
+          // Traitement seul, primes seules — celles du RAFP dans la limite de
+          // 20 % du traitement : voir `partDuRevenu`.
+          let base = periode.partDuRevenu(baseLigne, ligne.part_primes);
           // Commissions de la CAVAMAC, produits de l'office de la CPRN : le
           // facteur reconstitue l'assiette depuis le revenu, avant les bornes.
           if (periode.assiette_facteur_revenu !== null
@@ -3209,13 +3206,7 @@ function tauxMajorationEnfants(regime, nombreEnfants, periode = null) {
 
 /** Part de la rémunération que ce régime prend en compte. */
 function assietteDeReference(periode, ligne) {
-  if (periode.assiette === "primes_uniquement") {
-    return ligne.revenu * ligne.part_primes;
-  }
-  if (periode.assiette === "hors_primes") {
-    return ligne.revenu * (1.0 - ligne.part_primes);
-  }
-  return ligne.revenu;
+  return periode.partDuRevenu(ligne.revenu, ligne.part_primes);
 }
 
 /**

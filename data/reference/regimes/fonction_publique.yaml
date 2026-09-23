@@ -1626,6 +1626,7 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: primes_uniquement
+        plafond_primes_traitement: 0.20   # décret 2004-569, art. 2
         taux_cotisation_retraite: 0.10
         part_salariale: 0.50   # décret 2004-569 : 5 % agent, 5 % employeur
         decote_par_trimestre: null
@@ -1638,7 +1639,19 @@ regimes:
           5 % agent + 5 % employeur sur les primes, dans la limite de 20 % du
           traitement indiciaire. Conformément à la demande, les droits RAFP sont
           isolés dans un compartiment de capitalisation distinct et ne sont pas
-          convertis en capital notionnel (cf. moteur/compartiments.py).
+          convertis en capital notionnel (cf. moteur/compte.py).
+          LE PLAFOND DE 20 % EST APPLIQUÉ (`plafond_primes_traitement`) : les
+          primes cotisent « dans la limite de 20 % du traitement indiciaire
+          brut total perçu au cours de l'année considérée », écrit l'article 2
+          du décret n° 2004-569 dans ses six versions, de la première
+          (LEGIARTI000006453300) à celle en vigueur depuis le 17 avril 2024
+          (LEGIARTI000049424057, « ou de la solde brute totale » pour les
+          militaires depuis 2019), et l'ERAFP le redit en tête de sa page sur
+          les cotisations. La fiche l'écrivait sans que le moteur le lise : un
+          agent dont les primes font 25 % de la rémunération cotisait sur 25 %
+          au lieu de 15 %. Les deux exceptions de l'ERAFP ne sont pas portées :
+          la GIPA, cotisée sans plafond, et les jours de compte épargne-temps
+          convertis en points.
           L'ÂGE EST DATÉ PAR L'ARTICLE 9 DU DÉCRET N° 2004-569 : jusqu'au 2 juin
           2011 (LEGIARTI000006453304), « l'ouverture des droits est subordonnée
           à la condition qu'ils aient atteint l'âge de soixante ans » ; la
@@ -1654,6 +1667,7 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: primes_uniquement
+        plafond_primes_traitement: 0.20   # décret 2004-569, art. 2
         taux_cotisation_retraite: 0.10
         part_salariale: 0.50   # décret 2004-569 : 5 % agent, 5 % employeur
         decote_par_trimestre: null
@@ -1664,9 +1678,10 @@ regimes:
         notes: >-
           RÉGIME PAR CAPITALISATION PROVISIONNÉE — EXCLU DU PÉRIMÈTRE NOTIONNEL.
           5 % agent + 5 % employeur sur les primes, dans la limite de 20 % du
-          traitement indiciaire. Conformément à la demande, les droits RAFP sont
-          isolés dans un compartiment de capitalisation distinct et ne sont pas
-          convertis en capital notionnel (cf. moteur/compartiments.py).
+          traitement indiciaire, plafond appliqué — voir la première période.
+          Conformément à la demande, les droits RAFP sont isolés dans un
+          compartiment de capitalisation distinct et ne sont pas convertis en
+          capital notionnel (cf. moteur/compte.py).
           Depuis le 3 juin 2011 (LEGIARTI000024113145, puis LEGIARTI000036070843),
           l'article 9 subordonne l'ouverture des droits à « l'âge mentionné à
           l'article L. 161-17-2 » : 62 ans pour la génération 1955, 64 pour

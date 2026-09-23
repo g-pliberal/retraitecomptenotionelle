@@ -665,6 +665,19 @@ champs_periode:
       incomplète.
     defaut: null
 
+  plafond_primes_traitement:
+    description: >-
+      `primes_uniquement` seulement : plafond de l'assiette, en fraction du
+      TRAITEMENT INDICIAIRE, c'est-à-dire de la part du revenu que les primes
+      ne sont pas. Le RAFP cotise sur les primes « dans la limite de 20 % du
+      traitement indiciaire brut total ou de la solde brute totale perçus au
+      cours de l'année considérée » (décret n° 2004-569, article 2, dans
+      toutes ses versions depuis 2004) : un agent dont les primes font 25 %
+      de la rémunération, soit un tiers de son traitement, n'en cotise que
+      15 %. Le plafond est ANNUEL — l'ERAFP l'apprécie en cumul depuis
+      janvier —, comme la carrière du modèle. `null` : pas de plafond.
+    defaut: null
+
   cotisation_forfaitaire_euros:
   cotisation_forfaitaire_annee:
     description: >-
