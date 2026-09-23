@@ -850,7 +850,7 @@ function rapports(total, garantie, baseConstants, partDerives) {
 class CoutAnnuel {
   constructor(annee, observee, coefficientConstants, partPib, rapportsAnnee, nombre,
               partDerives = 0.0, reversionServie = false, reformeEnVigueur = true,
-              garantie = null) {
+              garantie = null, partRepartition = 1.0) {
     this.annee = annee;
     // La garantie de l'année, lue sur la distribution des pensions.
     this.garantie = garantie;
@@ -865,11 +865,23 @@ class CoutAnnuel {
     this.reversionServie = reversionServie;
     // La bascule a-t-elle eu lieu ? Ne sert qu'aux réformes prospectives.
     this.reformeEnVigueur = reformeEnVigueur;
+    // La part de la dépense observée qui est une pension de répartition
+    // obligatoire : la seule que le rapport décrit.
+    this.partRepartition = partRepartition;
+  }
+
+  /** Les pensions de répartition obligatoire : la base de tous les systèmes. */
+  get pensions() {
+    return this.observee * this.partRepartition;
+  }
+
+  get partPibPensions() {
+    return this.partPib * this.partRepartition;
   }
 
   /** Coût du système, en millions d'euros courants de l'année. */
   cout(scenario) {
-    return masseDuScenario(this.observee, this.partDerives,
+    return masseDuScenario(this.pensions, this.partDerives,
                            this.rapports[scenario], scenario, this.reversionServie,
                            this.reformeEnVigueur);
   }
@@ -2205,18 +2217,20 @@ export function calculerCout(simulateur, depenses, population, comptes = null,
     const observee = depenses.depense(annee);
     const coefficient = macro.coefficientPrix(annee, anneeEuros);
     const partDerives = depenses.partDroitsDerives(annee);
+    const partRepartition = depenses.partRepartition(annee);
     const projetee = garantie.chiffrer(total, tetes);
     lignes.push(new CoutAnnuel(
       annee,
       observee,
       coefficient,
       depenses.partPib(annee),
-      rapports(total, projetee, observee * coefficient, partDerives),
+      rapports(total, projetee, observee * partRepartition * coefficient, partDerives),
       vivants,
       partDerives,
       reversionServie,
       annee >= simulateur.parametres.annee_bascule,
       projetee,
+      partRepartition,
     ));
   }
 

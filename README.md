@@ -167,7 +167,7 @@ Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses don
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
 chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->916<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 270<!--/--> Ko bruts) et prend quelques dixièmes
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 271<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Dix pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -690,7 +690,7 @@ chaque exécution.
 | dont répartition obligatoire | **<!--chiffre:mesure(depense?annee=2024&quoi=repartition)-->398,8<!--/--> Md €** |
 | dont dépendance, capitalisation, minimum vieillesse | <!--chiffre:mesure(depense?annee=2024&quoi=hors_repartition)-->27,9<!--/--> Md € |
 | Part du PIB en 2024 | <!--chiffre:mesure(depense?annee=2024&quoi=part_pib)-->14,5<!--/--> % |
-| Cumul 1959-2024, en euros constants de 2026 | **<!--chiffre:mesure(cumul_passe?scenario=1)-->14 987<!--/--> Md €** |
+| Cumul 1959-2024 de la répartition obligatoire, en euros constants de 2026 | **<!--chiffre:mesure(cumul_passe?scenario=1)-->13 767<!--/--> Md €** |
 
 C'est la deuxième ligne — la répartition obligatoire seule — qu'il faut
 rapprocher des « quelque <!--chiffre:illustration()-->420<!--/--> milliards » que l'on cite d'ordinaire pour l'année
@@ -702,19 +702,24 @@ nomenclature, dont les périmètres ne se raccordent pas à ceux d'après. Perso
 n'ayant publié le raccord, ces neuf années restent une impasse, et le total,
 lui, les couvre.
 
-Sur cette dépense observée, le modèle applique le rapport des masses de pension
-entre systèmes — les <!--chiffre:mesure(grille?quoi=cas_types)-->13<!--/--> cas types croisés avec <!--chiffre:mesure(grille?quoi=generations)-->28<!--/--> générations, pondérés
+Sur la part de cette dépense observée qui est une pension de répartition
+obligatoire, le modèle applique le rapport des masses de pension entre
+systèmes. L'aide à l'autonomie, la retraite supplémentaire et le minimum
+vieillesse n'y entrent pas : ils ne sont la pension d'aucun système, et le
+rapport les réduisait jusqu'au 23 septembre 2026 comme des pensions, ce qui
+grossissait les économies du passé de près d'un dixième. Avant 1990, que la DREES ne ventile pas, la part de la
+répartition est celle de 1990. Le rapport vient des <!--chiffre:mesure(grille?quoi=cas_types)-->13<!--/--> cas types croisés avec <!--chiffre:mesure(grille?quoi=generations)-->28<!--/--> générations, pondérés
 par l'effectif réel de chaque génération et par celui des retraités de la caisse
 de chaque cas type :
 
 | Système | Cumul 1959-2024, euros de 2026 | Écart |
 |---|---|---|
-| 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->14 987<!--/--> Md € | réf. |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->3 161<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> % |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->14 987<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->7 182<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> % |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->14 987<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->7 182<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−52,1<!--/--> % |
+| 1. Système actuel | <!--chiffre:mesure(cumul_passe?scenario=1)-->13 767<!--/--> Md € | réf. |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cumul_passe?scenario=2)-->2 907<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> % |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cumul_passe?scenario=3)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=3)-->+0,0<!--/--> % |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=4)-->6 608<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,0<!--/--> % |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cumul_passe?scenario=5)-->13 767<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=5)-->+0,0<!--/--> % |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cumul_passe?scenario=6)-->6 608<!--/--> Md € | <!--chiffre:mesure(ecart_passe?scenario=6)-->−52,0<!--/--> % |
 | *s'ajoute au 6 : sa garantie vieillesse, payée par l'impôt, lue sur la distribution des pensions* | *<!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 431<!--/--> Md €* | |
 
 **Les scénarios 3 et 5 coûtent exactement ce que coûte le système actuel**, et
@@ -737,8 +742,8 @@ cotisée à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/-
 retraités de sa caisse, publié par la DREES et lu année par année : l'agent de
 conduite pèse <!--chiffre:mesure(poids?cas=agent_sncf_conduite)-->0,7<!--/--> % et non <!--chiffre:mesure(poids?cas=agent_sncf_conduite&ponderation=egale)-->7,7<!--/--> %, les quatre carrières du privé <!--chiffre:mesure(poids?cas=smic_carriere_complete|salaire_moyen|cadre|carriere_interrompue)-->63<!--/--> % à elles
 quatre. Ce que la convention égalitaire valait est désormais mesuré plutôt
-qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,6<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,0<!--/--> % au
-scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> %. Le sens du biais n'était donc pas celui qu'on
+qu'argumenté — elle donne <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,6<!--/--> % au scénario 2 contre <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> %, et <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−54,9<!--/--> % au
+scénario 4 contre <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,0<!--/--> %. Le sens du biais n'était donc pas celui qu'on
 annonçait : la surreprésentation des départs très précoces faisait bien du
 scénario 4 un plancher, mais elle faisait du scénario 2 un plafond.
 
@@ -1253,7 +1258,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2331 tests Python
+tests/                          2333 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1302,7 +1307,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->2332<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2333<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

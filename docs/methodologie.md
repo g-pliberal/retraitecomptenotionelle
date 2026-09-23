@@ -1789,10 +1789,13 @@ Il n'est pas franchi par une extrapolation. La dépense affichée est
 vieillesse-survie, 1959-2024, certifiés contre l'API du producteur. Le modèle
 n'en calcule pas un euro. Ce qu'il calcule est le seul **rapport** entre cette
 dépense et ce que les quatre autres systèmes auraient versé aux mêmes
-retraités :
+retraités, et il ne l'applique qu'à la part qui est une pension de
+répartition obligatoire — ni l'aide à l'autonomie, ni la retraite
+supplémentaire, ni le minimum vieillesse ne sont la pension d'un système (part
+lue sur la ventilation depuis 1990, celle de 1990 reconduite avant) :
 
 ```
-coût du système S en t = dépense observée en t × (masse S en t / masse actuelle en t)
+coût du système S en t = pensions de répartition observées en t × (masse S en t / masse actuelle en t)
 ```
 
 La masse d'une année est reconstituée en croisant les treize cas types avec les

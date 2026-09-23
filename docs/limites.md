@@ -7825,9 +7825,17 @@ compter de 2020 les artisans et les commerçants, dont le régime a été adoss�
 la Cnav. La marche de 2020 est une réorganisation, pas une dépense nouvelle.
 
 **Le coût des quatre autres systèmes est estimé, et ne peut pas être autre
-chose.** Il est obtenu en multipliant la dépense observée par le rapport des
-masses de pension — la moyenne des écarts entre systèmes, pondérée par le poids
-de chaque génération dans la masse de l'année. Ce rapport porte quatre
+chose.** Il est obtenu en multipliant les pensions de répartition obligatoire
+observées par le rapport des masses de pension — la moyenne des écarts entre
+systèmes, pondérée par le poids de chaque génération dans la masse de l'année.
+*Corrigé le 23 septembre 2026* : le rapport multipliait jusque-là le risque
+vieillesse-survie entier, et réduisait donc comme des pensions l'aide à
+l'autonomie, la retraite supplémentaire et le minimum vieillesse, qui ne sont la
+pension d'aucun système. Les économies du passé en étaient grossies de près
+d'un dixième. Avant 1990, que la DREES ne ventile pas, la part de la
+répartition dans le total est celle de 1990 : une hypothèse, que l'aide à
+l'autonomie, inexistante alors, et le minimum vieillesse, plus lourd,
+tirent en sens contraires. Ce rapport porte quatre
 approximations, énoncées sur la page — la quatrième ayant cessé d'en être une
 le 19 septembre 2026 :
 
@@ -7849,7 +7857,7 @@ le 19 septembre 2026 :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,0<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> % — et faux du
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−54,9<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,0<!--/--> % — et faux du
    scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,6<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
@@ -8859,7 +8867,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2332<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2333<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

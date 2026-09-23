@@ -8503,7 +8503,7 @@ function coutDetailScenarios(contexte) {
       milliards(dernier.cout(scenario), 1),
       // La part de PIB suit la même règle que le coût : le rapport ne
       // multiplie que les droits directs de la base.
-      g.pourcentage(masseDuScenario(dernier.partPib, dernier.partDerives,
+      g.pourcentage(masseDuScenario(dernier.partPibPensions, dernier.partDerives,
                                     dernier.rapports[scenario], scenario,
                                     dernier.reversionServie,
                                     dernier.reformeEnVigueur), false, 1),
@@ -8511,7 +8511,7 @@ function coutDetailScenarios(contexte) {
   });
   // La part de PIB d'un scénario l'année « derniere », règle comprise.
   const partPibPasse = (scenario) => masseDuScenario(
-    dernier.partPib, dernier.partDerives, dernier.rapports[scenario], scenario,
+    dernier.partPibPensions, dernier.partDerives, dernier.rapports[scenario], scenario,
     dernier.reversionServie, dernier.reformeEnVigueur);
 
   // CETTE LIGNE N'EST PAS UN « DONT ». La garantie a quitté la masse
@@ -8525,7 +8525,7 @@ function coutDetailScenarios(contexte) {
     milliards(c.cumul(COMPOSANTE_GARANTIE), 0),
     "—",
     milliards(dernier.cout(COMPOSANTE_GARANTIE), 1),
-    g.pourcentage(masseDuScenario(dernier.partPib, dernier.partDerives,
+    g.pourcentage(masseDuScenario(dernier.partPibPensions, dernier.partDerives,
                                   dernier.rapports[COMPOSANTE_GARANTIE],
                                   COMPOSANTE_GARANTIE, dernier.reversionServie),
                   false, 1),
@@ -8645,6 +8645,12 @@ comparer à un système qui dérive.</p>
 modélisé, c'est le <strong>rapport</strong> entre ce qui a été versé et ce que
 chaque système aurait versé aux mêmes retraités — la moyenne des écarts de
 pension, pondérée par le poids de chaque génération dans la masse de l'année.
+Il ne s'applique qu'aux <strong>pensions de répartition obligatoire</strong>,
+${g.pourcentage(dernier.partRepartition, false, 1)} de la dépense
+vieillesse-survie en ${derniere} : l'aide à l'autonomie, la retraite
+supplémentaire et le minimum vieillesse ne sont la pension d'aucun des quatre
+systèmes. Avant ${depenses.premiereAnneeVentilee}, que la DREES ne ventile
+pas, la part de cette année-là est reconduite.
 Les poids sont les effectifs réels de chaque génération, lus dans la pyramide
 des âges de l'INSEE ; les écarts viennent des treize cas types croisés avec
 ${c.generations.length} générations, de ${c.generations[0]} à
