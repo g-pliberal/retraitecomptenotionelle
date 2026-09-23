@@ -507,9 +507,16 @@ def test_l_ecart_des_scenarios_prospectifs_se_creuse_sans_retour(avenir):
         # et la courbe ondule d'un ou deux dixièmes de point à l'intérieur du
         # pas — un autre test le borne. Comparer chaque année à celle d'un
         # pas plus tôt efface l'ondulation et garde la pente.
+        #
+        # Depuis que l'âge de référence est à 65 ans, le sursaut du scénario 5
+        # a disparu : son sommet est la bascule elle-même, et la bosse d'emploi
+        # n'y laisse qu'un plateau de deux millièmes jusqu'en 2035. La pente se
+        # lit donc au-delà de la bosse, et non d'un pas après le sommet.
         par_annee = {l.annee: l.rapports[scenario] for l in lignes}
+        fin_de_bosse = max(sommet.annee + PAS_GENERATIONS,
+                           avenir.annee_bascule + 3 * PAS_GENERATIONS)
         for ligne in lignes:
-            if ligne.annee < sommet.annee + PAS_GENERATIONS:
+            if ligne.annee < fin_de_bosse:
                 continue
             assert ligne.rapports[scenario] <= (
                 par_annee[ligne.annee - PAS_GENERATIONS] + 1e-12
@@ -550,11 +557,13 @@ def test_le_stock_sur_les_prix_efface_la_bosse_sans_toucher_l_horizon(
         assert reindexe.annees[-1].rapports[scenario] == pytest.approx(
             defaut[reindexe.annees[-1].annee].rapports[scenario], abs=1e-3)
     # Et la bosse elle-même : sous le défaut, le scénario 3 ne dépasse plus le
-    # système actuel, quand la variante le lui faisait dépasser de 4,9 %.
+    # système actuel, quand la variante le lui fait dépasser de 3,7 % — 4,9 %
+    # tant que l'âge de référence était à 64 ans, dont le capital d'ouverture
+    # était plus gros.
     assert max(l.rapports["notionnel_prospectif"]
                for l in avenir.annees if l.annee >= bascule) < 1.0
     assert max(l.rapports["notionnel_prospectif"]
-               for l in reindexe.annees if l.annee >= bascule) > 1.04
+               for l in reindexe.annees if l.annee >= bascule) > 1.03
 
 
 def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir, comptes):
@@ -738,10 +747,14 @@ def test_la_recette_pese_les_cotisants_et_la_depense_les_retraites(
                            convention_recette=CONVENTION_RAPPORT)
     assert ancien.poids_cotisants == ancien.poids
     for annee in (2030, 2050, 2070):
-        nouveau = cout.avenir.annee(annee).rapports_recettes["notionnel_liberal"]
+        ligne = cout.avenir.annee(annee)
+        nouveau = ligne.rapports_recettes["notionnel_liberal"]
         vieux = ancien.avenir.annee(annee).rapports_recettes["notionnel_liberal"]
         assert nouveau > vieux
-        assert 0.27 < 0.18 / nouveau < 0.29
+        # Le taux implicite du droit en vigueur, à assiette égale : le rapport
+        # de recettes porte aussi l'emploi que l'âge légal de la proposition
+        # ajoute, et le facteur d'assiette le lui retire.
+        assert 0.27 < 0.18 * ligne.facteur_assiette_liberal / nouveau < 0.29
     # Sous la convention `rapport`, le solde du scénario 6 en profite ; les
     # autres scénarios, dont le rapport vaut un, ne bougent pas.
     assert (cout.solde.solde_moyen("notionnel_liberal", 2026, 2070)
@@ -1903,7 +1916,9 @@ def test_la_recette_du_scenario_6_est_son_taux_sur_l_assiette(cout_assiette: Cou
         vues += 1
         assert ligne.recette_par_assiette, ligne.annee
         assert ligne.taux_liberal == taux
-        pleine = ligne.ressources * taux / ligne.taux_prelevement
+        # L'assiette mesurée, élargie de ce que l'âge légal de la proposition
+        # fait cotiser en plus.
+        pleine = ligne.ressources * taux / ligne.taux_prelevement * ligne.facteur_assiette
         # Trois postes sortent, tous le 19 septembre 2026 : la contribution
         # d'équilibre (remplacée par les 18 % sur les traitements), les
         # subventions (la fusion des régimes en supprime l'objet), les impôts
@@ -2164,6 +2179,7 @@ def test_le_scenario_6_ne_reconduit_pas_la_contribution_d_equilibre_de_l_Etat(
         #    — donc ni les cotisations, ni la contribution de l'État, ni les
         #    subventions, ni l'impôt.
         attendu = (point.ressources * point.taux_liberal / point.taux_prelevement
+                   * point.facteur_assiette
                    + point.ressources * (1.0 - point.part_contributive
                                          - point.part_subventions
                                          - point.part_impots)
@@ -2445,7 +2461,8 @@ def test_la_proposition_ne_compte_que_les_cotisations_et_deux_restes(cout_assiet
             # Des impôts, la seule TVA à taux unique (23 septembre 2026).
             assert postes["impots_et_taxes"] == postes["impots_tva"]
             assert postes["cotisations"] == pytest.approx(
-                point.ressources * point.taux_liberal / point.taux_prelevement)
+                point.ressources * point.taux_liberal / point.taux_prelevement
+                * point.facteur_assiette)
             assert point.postes_depenses("notionnel_liberal")["garantie_vieillesse"] > 0.0
         else:
             assert postes["cotisations"] == pytest.approx(actuel["cotisations"])
@@ -3164,3 +3181,78 @@ def test_le_plafond_de_l_axe_est_lu_sur_les_variantes():
         sommets += [variante.depense(a) for a in comptes.annees()]
     assert plafond == pytest.approx(max(sommets))
     assert plafond > comptes.depense(comptes.derniere_annee)
+
+
+# -- l'âge légal de la proposition -------------------------------------------
+
+
+@pytest.fixture(scope="module")
+def cout_sans_age_legal(depenses: DepensesRetraite, population: Population,
+                        comptes: ComptesRetraite, assiette: AssietteActivite):
+    """La page Coût sans l'âge légal de 65 ans : la proposition part aux âges
+    du scénario 4."""
+    return calculer_cout(Simulateur(Parametres(age_legal_liberal=None)), depenses,
+                         population, comptes, assiette=assiette,
+                         convention_recette=CONVENTION_ASSIETTE)
+
+
+def test_l_age_legal_ne_touche_rien_avant_la_bascule(cout_assiette, cout_sans_age_legal):
+    """Une cohorte partie avant la bascule l'est sans report, même quand sa
+    génération de la grille, elle, est reportée : les années d'avant la
+    réforme restent au centime ce qu'elles étaient."""
+    bascule = Parametres().annee_bascule
+    avec, sans = cout_assiette.solde, cout_sans_age_legal.solde
+    for ligne in avec.annees:
+        if ligne.annee >= bascule:
+            continue
+        autre = sans.annee(ligne.annee)
+        for scenario, _ in SCENARIOS:
+            assert ligne.solde(scenario) == pytest.approx(autre.solde(scenario), abs=1e-12)
+        assert ligne.facteur_assiette == 1.0
+
+
+def test_l_age_legal_ne_touche_que_la_proposition(cout_assiette, cout_sans_age_legal):
+    for ligne in cout_assiette.solde.projetees():
+        autre = cout_sans_age_legal.solde.annee(ligne.annee)
+        for scenario, _ in SCENARIOS:
+            if scenario == "notionnel_liberal":
+                continue
+            assert ligne.solde(scenario) == pytest.approx(autre.solde(scenario), abs=1e-12)
+
+
+def test_l_age_legal_ameliore_le_solde_de_la_proposition(cout_assiette, cout_sans_age_legal):
+    """Moins de pensions servies, plus de cotisations encaissées : le solde
+    moyen de la proposition s'améliore, et l'assiette s'élargit après la
+    bascule."""
+    avec, sans = cout_assiette.solde, cout_sans_age_legal.solde
+    debut, fin = avec.premiere_annee_projetee, avec.derniere_annee
+    assert (avec.solde_moyen("notionnel_liberal", debut, fin)
+            > sans.solde_moyen("notionnel_liberal", debut, fin) + 0.002)
+    bascule = Parametres().annee_bascule
+    apres = [ligne for ligne in avec.annees if ligne.annee > bascule]
+    assert apres and all(ligne.facteur_assiette > 1.0 for ligne in apres)
+    for ligne in apres:
+        autre = sans.annee(ligne.annee)
+        assert autre.facteur_assiette == 1.0
+        assert (ligne.ressources_de("notionnel_liberal")
+                > autre.ressources_de("notionnel_liberal"))
+
+
+def test_une_cohorte_prend_le_volet_de_son_cote_de_la_bascule():
+    """La génération de la grille part en 2027 et se reporte ; la cohorte née
+    deux ans plus tôt part en 2025, avant la bascule, et ne se reporte pas."""
+    from retraite_notionnelle.cout import Pensionne, VoletLiberal
+
+    reporte = VoletLiberal(annee_liquidation=2030, annee_ouverture_garantie=2030,
+                           pension=2.0, ressources_garantie=2.0)
+    sans_report = VoletLiberal(annee_liquidation=2027, annee_ouverture_garantie=2030,
+                               pension=1.0, ressources_garantie=1.0)
+    pensionne = Pensionne(code="x", generation=1965, annee_liquidation=2027,
+                          pensions={}, propre=reporte, autre=sans_report,
+                          bascule=2026)
+    assert pensionne.volet(-2) is sans_report
+    assert pensionne.volet(-1) is reporte
+    assert pensionne.volet(0) is reporte
+    assert pensionne.volet(2) is reporte
+    seul = replace(pensionne, autre=None)
+    assert seul.volet(-2) is reporte

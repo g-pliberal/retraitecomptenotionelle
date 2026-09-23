@@ -89,6 +89,13 @@ export const RESSOURCES_GARANTIE = "ressources_garantie_liberal";
 /** Tout ce que la grille sait calculer : les six systèmes, et ces ressources. */
 export const CLES_CAS_TYPES = [...SCENARIOS.map(([scenario]) => scenario), RESSOURCES_GARANTIE];
 
+/**
+ * Les clés de la grille qui suivent la carrière de la PROPOSITION, et donc sa
+ * date de départ : le scénario 6 et ce que sa garantie regarde. Son âge légal
+ * de 65 ans peut les faire liquider après les autres (`voletDe`).
+ */
+export const CLES_LIBERALES = new Set(["notionnel_liberal", RESSOURCES_GARANTIE]);
+
 /** Les deux comptes de TÊTES que la grille rend avec ses masses. */
 const TETES_TOUTES = "toutes";
 const TETES_GARANTIE = "garantie";
@@ -117,6 +124,25 @@ export const CLES_MASSES = [...SCENARIOS.map(([scenario]) => scenario), COMPOSAN
  */
 export const TAUX_REELS = "taux_reels";
 export const CLES_RECETTES = [TAUX_REELS, "notionnel_liberal"];
+
+/**
+ * Les REVENUS D'ACTIVITÉ de la grille, sous les âges du droit en vigueur et
+ * sous ceux de la proposition. Leur rapport est de combien l'âge légal de
+ * 65 ans ÉLARGIT l'assiette que le COR projette aux âges d'aujourd'hui : voir
+ * `SoldeAnnuel.facteurAssiette`.
+ */
+export const ASSIETTE_ACTUELLE = "assiette_actuelle";
+export const ASSIETTE_LIBERALE = "assiette_liberale";
+export const CLES_ASSIETTES = [ASSIETTE_ACTUELLE, ASSIETTE_LIBERALE];
+
+/** Le revenu d'activité de chaque année de la carrière, en euros courants. */
+function revenusActivite(carriere) {
+  const revenus = {};
+  for (const ligne of carriere.lignes) {
+    if (ligne.cotise) revenus[ligne.annee] = ligne.revenu;
+  }
+  return revenus;
+}
 
 /**
  * Les deux façons d'établir la recette du scénario 6, et elles ne posent pas
@@ -284,16 +310,9 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
     const pensions = {};
     for (const [scenario] of SCENARIOS) {
       pensions[scenario] = comparaison.enEurosConstants(
-        comparaison[scenario].pension_annuelle,
+        comparaison[scenario].pension_annuelle, scenario,
       );
     }
-    // Ce que la garantie regarde : la pension contributive ET la rente du
-    // pilier capitalisé, à la liquidation. La grille ne chiffre plus le
-    // complément — elle n'a pas de queue basse —, elle dit seulement de combien
-    // les pensions du scénario 6 déplacent la distribution observée.
-    pensions[RESSOURCES_GARANTIE] = comparaison.enEurosConstants(
-      comparaison.notionnel_liberal.garantie_vieillesse.ressources,
-    );
     // La clé de la grille est « code|génération » : la génération en est la
     // seconde moitié, et c'est elle qui dit quel âge ce couple a chaque année.
     // Ce que cette carrière VERSE, année par année, sous les deux barèmes. Le
@@ -302,7 +321,7 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
     // pour tout le monde, ce qui est déjà une réforme. On redemande donc le
     // même compte SANS régime fusionné, c'est-à-dire ce que le droit en vigueur
     // prélèverait sur la même carrière jusqu'en 2070.
-    const versements = { [TAUX_REELS]: {}, notionnel_liberal: {} };
+    const versements = { [TAUX_REELS]: {} };
     const reels = simulateur.constructeurEmployeur.construire(
       comparaison.carriere,
       comparaison.carriere.anneeLiquidation,
@@ -311,33 +330,34 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
     for (const ligne of reels.cotisations) {
       versements[TAUX_REELS][ligne.annee] = ligne.cotisation;
     }
-    for (const ligne of comparaison.notionnel_liberal.compte.cotisations) {
-      versements.notionnel_liberal[ligne.annee] = ligne.cotisation;
-    }
+    // Les revenus d'activité aux âges du droit en vigueur ; ceux de la
+    // proposition sont dans ses volets.
+    versements[ASSIETTE_ACTUELLE] = revenusActivite(comparaison.carriere);
+    // La proposition telle que la génération de la grille la vit, et, si la
+    // bascule sépare d'elle une cohorte voisine, telle que cette cohorte la
+    // vit : voir `Pensionne.volet` dans cout.py.
+    const propre = volet(comparaison.carriereDe("notionnel_liberal"),
+      comparaison.notionnel_liberal, comparaison.coefficientDe("notionnel_liberal"));
+    const autre = autreVolet(simulateur, comparaison.carriere);
     // Le scénario 6 est ramené à sa part CONTRIBUTIVE : la garantie est
-    // financée par l'impôt, elle ne pèse pas sur le compte des cotisants.
-    pensions.notionnel_liberal = comparaison.enEurosConstants(
-      comparaison.notionnel_liberal.garantie_vieillesse.pension_contributive,
-    );
+    // financée par l'impôt, elle ne pèse pas sur le compte des cotisants. Ce
+    // que la garantie regarde est la pension contributive ET la rente du
+    // pilier capitalisé, à la liquidation : la grille ne chiffre plus le
+    // complément, elle dit de combien les pensions du scénario 6 déplacent la
+    // distribution observée.
+    pensions.notionnel_liberal = propre.pension;
+    pensions[RESSOURCES_GARANTIE] = propre.ressourcesGarantie;
     liste.push({
       // Le code du cas type est la première moitié de la clé : c'est par lui
       // que le couple reçoit son poids.
       code: cle.slice(0, cle.indexOf("|")),
       generation: Number(cle.slice(cle.indexOf("|") + 1)),
       anneeLiquidation: comparaison.carriere.anneeLiquidation,
-      // Avant 65 ans, on ne touche pas le minimum vieillesse : la composante
-      // n'entre qu'à cette date, même pour qui est parti plus tôt.
-      anneeOuvertureGarantie:
-        comparaison.notionnel_liberal.garantie_vieillesse.annee_ouverture,
       pensions,
       cotisations: versements,
-      pilier: fluxPilier(comparaison),
-      rentePilier: rentePilier(comparaison),
-      // La part de ce que la garantie regarde qui est la rente du pilier : elle
-      // ne se revalorise pas comme la pension. Voir `masses`.
-      renteGarantie: comparaison.enEurosConstants(
-        comparaison.notionnel_liberal.garantie_vieillesse.rente_capitalisee,
-      ),
+      propre,
+      autre,
+      bascule: simulateur.parametres.annee_bascule,
     });
   }
   const motifs = new Map();
@@ -347,10 +367,72 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
   return { liste, motifs };
 }
 
+/**
+ * La proposition d'un couple pour un départ : celui de `carriere`. Tout ce que
+ * la grille sert et prélève sous elle et qui dépend de l'âge du départ.
+ * `coefficient` passe les euros de SON année de liquidation aux euros
+ * constants. Voir `VoletLiberal` dans cout.py.
+ */
+function volet(carriere, liberal, coefficient) {
+  const garantie = liberal.garantie_vieillesse;
+  const cotisations = {};
+  for (const ligne of liberal.compte.cotisations) {
+    cotisations[ligne.annee] = ligne.cotisation;
+  }
+  return {
+    anneeLiquidation: carriere.anneeLiquidation,
+    anneeOuvertureGarantie: garantie.annee_ouverture,
+    pension: garantie.pension_contributive * coefficient,
+    ressourcesGarantie: garantie.ressources * coefficient,
+    cotisations,
+    assiette: revenusActivite(carriere),
+    pilier: fluxPilier(liberal),
+    rentePilier: rentePilier(liberal),
+    // La part de ce que la garantie regarde qui est la rente du pilier : elle
+    // ne se revalorise pas comme la pension. Voir `masses`.
+    renteGarantie: garantie.rente_capitalisee * coefficient,
+  };
+}
+
+/**
+ * La proposition de l'autre côté de la bascule, si une cohorte y tombe : une
+ * génération de la grille en représente cinq, décalées de deux ans au plus, et
+ * quand la bascule passe entre elles alors que l'âge légal reporte ce départ,
+ * les unes partent sans report et les autres à l'âge légal.
+ */
+function autreVolet(simulateur, carriere) {
+  const ageLegal = simulateur.parametres.age_legal_liberal;
+  if (ageLegal === null || ageLegal === undefined || carriere.age_liquidation === null) {
+    return null;
+  }
+  const reportee = carriere.prolongee(ageLegal, simulateur.macro);
+  if (reportee === carriere) return null;
+  const bascule = simulateur.parametres.annee_bascule;
+  const annee = carriere.anneeLiquidation;
+  if (!(annee - DEMI_TRANCHE < bascule && bascule <= annee + DEMI_TRANCHE)) return null;
+  // La grille est d'un côté ; l'autre volet est celui de l'autre.
+  const depart = annee >= bascule ? carriere : reportee;
+  const liberal = simulateur.proposition(depart);
+  const coefficient = simulateur.macro.coefficientPrix(
+    depart.anneeLiquidation, simulateur.parametres.annee_euros_constants);
+  return volet(depart, liberal, coefficient);
+}
+
+/**
+ * La proposition de la cohorte née `decalage` ans après la génération de la
+ * grille : celle de son côté de la bascule. Voir `Pensionne.volet`.
+ */
+function voletDe(pensionne, decalage) {
+  if (pensionne.autre === null) return pensionne.propre;
+  const franchit = pensionne.anneeLiquidation + decalage >= pensionne.bascule;
+  const grilleFranchit = pensionne.anneeLiquidation >= pensionne.bascule;
+  return franchit === grilleFranchit ? pensionne.propre : pensionne.autre;
+}
+
 /** Les flux annuels du pilier capitalisé d'une carrière, en euros courants :
  * versement brut, frais sur versement, frais de gestion, encours. */
-function fluxPilier(comparaison) {
-  const pilier = comparaison.notionnel_liberal.capitalisation;
+function fluxPilier(liberal) {
+  const pilier = liberal.capitalisation;
   const flux = {};
   if (!pilier || !pilier.actif) return flux;
   for (const annee of pilier.annees) {
@@ -361,8 +443,8 @@ function fluxPilier(comparaison) {
 }
 
 /** La rente du pilier d'une carrière, brute puis nette de ses frais. */
-function rentePilier(comparaison) {
-  const pilier = comparaison.notionnel_liberal.capitalisation;
+function rentePilier(liberal) {
+  const pilier = liberal.capitalisation;
   if (!pilier || !pilier.actif) return [0.0, 0.0];
   return [pilier.capital / pilier.conversion.diviseur, pilier.rente_annuelle];
 }
@@ -420,26 +502,33 @@ function massesPilier(liste, population, annee, poidsCotisants, poidsRetraites) 
     versements: 0.0, frais_versement: 0.0, frais_gestion: 0.0, encours: 0.0,
     rentes_brutes: 0.0, rentes: 0.0,
   };
+  const aPilier = (voletPilier) => voletPilier !== null
+    && Object.keys(voletPilier.pilier).length > 0;
   for (const pensionne of liste) {
-    if (!pensionne.pilier || Object.keys(pensionne.pilier).length === 0) continue;
+    if (!aPilier(pensionne.propre) && !aPilier(pensionne.autre)) continue;
     const partCotisants = poidsCotisants[pensionne.code] || 0;
     const partRetraites = poidsRetraites[pensionne.code] || 0;
     for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
       const poids = population.effectif(annee - pensionne.generation - decalage, annee);
       if (poids <= 0) continue;
       // L'année CIVILE de la grille, non son âge : un pilier dépend de dates
-      // (la bascule, les paliers), voir `_masses_pilier` dans cout.py.
-      const flux = pensionne.pilier[annee];
+      // (la bascule, les paliers), voir `_masses_pilier` dans cout.py. Le
+      // pilier est celui du volet de la cohorte : il accumule jusqu'à SON
+      // départ, que l'âge légal de 65 ans peut avoir reporté.
+      const voletCohorte = voletDe(pensionne, decalage);
+      if (!aPilier(voletCohorte)) continue;
+      const depart = voletCohorte.anneeLiquidation + decalage;
+      const flux = voletCohorte.pilier[annee];
       if (flux !== undefined && partCotisants > 0
-          && annee <= pensionne.anneeLiquidation + decalage) {
+          && annee <= depart) {
         total.versements += partCotisants * poids * flux[0];
         total.frais_versement += partCotisants * poids * flux[1];
         total.frais_gestion += partCotisants * poids * flux[2];
         total.encours += partCotisants * poids * flux[3];
       }
-      if (annee > pensionne.anneeLiquidation + decalage && partRetraites > 0) {
-        total.rentes_brutes += partRetraites * poids * pensionne.rentePilier[0];
-        total.rentes += partRetraites * poids * pensionne.rentePilier[1];
+      if (annee > depart && partRetraites > 0) {
+        total.rentes_brutes += partRetraites * poids * voletCohorte.rentePilier[0];
+        total.rentes += partRetraites * poids * voletCohorte.rentePilier[1];
       }
     }
   }
@@ -487,6 +576,9 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
   total[MASSE_STOCK] = 0;
   const tetes = { [TETES_TOUTES]: 0, [TETES_GARANTIE]: 0 };
   let vivants = 0;
+  // La proposition suit la règle du stock des réformes prospectives dès qu'on
+  // la range parmi elles. Voir `_masses` dans cout.py.
+  const liberaleProspective = CLES_PROSPECTIVES.has("notionnel_liberal");
   for (const pensionne of liste) {
     // Deux pondérations se composent ici : celle de la GÉNÉRATION, démographique,
     // et celle du CAS TYPE, sociologique — combien de retraités ont eu cette
@@ -494,34 +586,44 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
     const part = poidsCas[pensionne.code] || 0;
     if (part <= 0) continue;
     let poids = 0;
-    let poidsGarantie = 0;
-    let poidsGarantieRevalorise = 0;
-    let poidsGarantieNominal = 0;
     let poidsRevalorise = 0;
     let poidsRevaloriseProspectif = 0;
+    // La proposition se somme À PART, cohorte par cohorte : chacune a son
+    // volet, sa date de départ — que l'âge légal peut reporter — et sa
+    // pension. Voir `_masses` dans cout.py.
+    let masseLiberale = 0;
+    let masseGarantie = 0;
+    let poidsGarantie = 0;
     for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
-      const liquidation = pensionne.anneeLiquidation + decalage;
-      if (annee < liquidation) continue;
       const effectif = population.effectif(annee - pensionne.generation - decalage, annee);
-      poids += effectif;
-      // Le troisième poids porte la revalorisation des pensions SERVIES, et il
-      // faut qu'il soit à part : le coefficient dépend de l'année de
-      // liquidation, qui n'est pas la même pour les cinq cohortes de la tranche.
-      poidsRevalorise += effectif * revalorisation.coefficientStock(liquidation, annee, false);
-      poidsRevaloriseProspectif += effectif * revalorisation.coefficientStock(
-        liquidation, annee, true,
-      );
+      const liquidation = pensionne.anneeLiquidation + decalage;
+      if (annee >= liquidation) {
+        poids += effectif;
+        // Le poids revalorisé porte la revalorisation des pensions SERVIES, et
+        // il faut qu'il soit à part : le coefficient dépend de l'année de
+        // liquidation, qui n'est pas la même pour les cinq cohortes.
+        poidsRevalorise += effectif * revalorisation.coefficientStock(liquidation, annee, false);
+        poidsRevaloriseProspectif += effectif * revalorisation.coefficientStock(
+          liquidation, annee, true,
+        );
+      }
+      const voletCohorte = voletDe(pensionne, decalage);
+      const depart = voletCohorte.anneeLiquidation + decalage;
+      if (annee < depart) continue;
+      masseLiberale += effectif
+        * revalorisation.coefficientStock(depart, annee, liberaleProspective)
+        * voletCohorte.pension;
       // La garantie n'entre qu'à 65 ans, même pour qui est parti plus tôt. Ce
       // qu'elle regarde se revalorise en deux morceaux : la pension comme le
       // scénario 6 la sert, règle du stock comprise, et la rente du pilier
       // comme le pilier la sert, nominale et constante.
-      if (annee >= pensionne.anneeOuvertureGarantie + decalage) {
+      if (annee >= voletCohorte.anneeOuvertureGarantie + decalage) {
         poidsGarantie += effectif;
-        poidsGarantieRevalorise += effectif * revalorisation.coefficientStock(
-          liquidation, annee, false,
-        );
-        poidsGarantieNominal += effectif * revalorisation.coefficientNominal(
-          liquidation, annee,
+        masseGarantie += effectif * (
+          revalorisation.coefficientStock(depart, annee, false)
+            * (voletCohorte.ressourcesGarantie - voletCohorte.renteGarantie)
+          + revalorisation.coefficientNominal(depart, annee)
+            * voletCohorte.renteGarantie
         );
       }
     }
@@ -530,10 +632,12 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
     tetes[TETES_TOUTES] += part * poids;
     tetes[TETES_GARANTIE] += part * poidsGarantie;
     for (const cle of CLES_CAS_TYPES) {
+      if (cle === "notionnel_liberal") {
+        total[cle] += part * masseLiberale;
+        continue;
+      }
       if (cle === RESSOURCES_GARANTIE) {
-        const rente = pensionne.renteGarantie ?? 0;
-        total[cle] += part * (poidsGarantieRevalorise * (pensionne.pensions[cle] - rente)
-          + poidsGarantieNominal * rente);
+        total[cle] += part * masseGarantie;
         continue;
       }
       let poidsCle = poids;
@@ -778,16 +882,25 @@ function garantieDistribution(simulateur, liste, population, poids, revalorisati
  * COR publie et projette régime par régime.
  */
 function massesCotisations(liste, population, annee, poidsCas) {
+  const cles = [...CLES_RECETTES, ...CLES_ASSIETTES];
   const total = {};
-  for (const cle of CLES_RECETTES) total[cle] = 0;
+  for (const cle of cles) total[cle] = 0;
   for (const pensionne of liste) {
     const part = poidsCas[pensionne.code] || 0;
     if (part <= 0) continue;
     for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
       const poids = population.effectif(annee - pensionne.generation - decalage, annee);
       if (poids <= 0) continue;
-      for (const cle of CLES_RECETTES) {
-        const versee = pensionne.cotisations[cle][annee - decalage] || 0;
+      // Ce que la proposition prélève, et sur quels revenus, est celui du
+      // volet de la cohorte : l'âge légal la fait peut-être cotiser plus
+      // longtemps.
+      const voletCohorte = voletDe(pensionne, decalage);
+      for (const cle of cles) {
+        let serie;
+        if (cle === "notionnel_liberal") serie = voletCohorte.cotisations;
+        else if (cle === ASSIETTE_LIBERALE) serie = voletCohorte.assiette;
+        else serie = pensionne.cotisations[cle] ?? {};
+        const versee = serie[annee - decalage] || 0;
         if (versee) total[cle] += part * poids * versee;
       }
     }
@@ -812,6 +925,18 @@ function rapportsRecettes(total, annee, bascule) {
     resultat.notionnel_liberal = total.notionnel_liberal / total[TAUX_REELS];
   }
   return resultat;
+}
+
+/**
+ * De combien l'âge légal de la proposition élargit l'assiette, en `annee` : le
+ * rapport des revenus d'activité de la grille sous ses âges à ceux du droit en
+ * vigueur. Un avant la bascule, par construction et pour la raison que donne
+ * `rapportsRecettes`.
+ */
+function facteurAssiette(total, annee, bascule) {
+  const reference = total[ASSIETTE_ACTUELLE] ?? 0;
+  if (annee < bascule || reference <= 0) return 1.0;
+  return (total[ASSIETTE_LIBERALE] ?? 0) / reference;
 }
 
 /**
@@ -927,11 +1052,15 @@ class AvenirAnnuel {
   constructor(annee, projete, base, coefficientConstants, pib, rapportsAnnee,
               dependance, recettes = {}, partDerives = 0.0,
               reversionServie = false, reformeEnVigueur = true, garantie = null,
-              pilier = null, partStock = 0.0) {
+              pilier = null, partStock = 0.0, facteurAssietteLiberal = 1.0) {
     this.annee = annee;
     // Part de la masse du système actuel que les scénarios 3 et 5 servent
     // encore selon le droit actuel : un avant la bascule, puis de moins en moins.
     this.partStock = partStock;
+    // De combien l'âge légal de la proposition ÉLARGIT l'assiette des revenus
+    // d'activité, par rapport aux âges du droit en vigueur : un avant la
+    // bascule. Voir `SoldeAnnuel.facteurAssiette`.
+    this.facteurAssietteLiberal = facteurAssietteLiberal;
     // La garantie de l'année, lue sur la distribution des pensions.
     this.garantie = garantie;
     // Le pilier capitalisé de l'année, tous cotisants ; null avant la bascule.
@@ -1054,13 +1183,19 @@ class SoldeAnnuel {
               partDerives = 0.0, reversionServie = false,
               reformeEnVigueur = true, parts = {}, versements = {},
               tvaLiberal = 0.0, garantieLiberal = 0.0,
-              majorationsStock = 0.0) {
+              majorationsStock = 0.0, facteurAssiette = 1.0) {
     this.annee = annee;
     // Ce que la branche famille rembourse encore aux scénarios 3 et 5 après
     // leur bascule : les majorations des pensions liquidées avant elle, qu'ils
     // servent toujours. Voir `majorations_stock` dans cout.py.
     this.majorationsStock = majorationsStock;
     this.projete = projete;
+    // Ce que l'âge légal de 65 ans fait à l'ASSIETTE du taux de la
+    // proposition : l'assiette mesurée est celle que le COR projette aux âges
+    // du droit en vigueur, et qui partait avant 65 ans travaille et cotise
+    // jusque-là. Rapport des revenus d'activité de la grille sous les deux
+    // âges : un avant la bascule, plus de un après.
+    this.facteurAssiette = facteurAssiette;
     this.ressources = ressources;
     this.depenses = depenses;
     this.rapports = rapportsAnnee;
@@ -1190,7 +1325,8 @@ class SoldeAnnuel {
       // et cette catégorie cesse d'exister. LES IMPÔTS ET TAXES AFFECTÉS
       // n'acquièrent de droits à personne : un compte notionnel ne crédite que
       // ce qui est assis sur un revenu d'activité.
-      const pleine = this.ressources * this.tauxLiberal / this.tauxPrelevement;
+      const pleine = this.ressources * this.tauxLiberal / this.tauxPrelevement
+        * this.facteurAssiette;
       const autres = this.ressources
         * (1 - this.partContributive - this.partSubventions - this.partImpots);
       // La CSG du fonds de solidarité vieillesse vient de sortir avec le
@@ -1301,7 +1437,8 @@ class SoldeAnnuel {
     } else if (scenario === "notionnel_liberal" && this.recetteParAssiette) {
       const tva = this.tvaDe(scenario);
       postes = {
-        cotisations: total * this.tauxLiberal / this.tauxPrelevement,
+        cotisations: total * this.tauxLiberal / this.tauxPrelevement
+          * this.facteurAssiette,
         contribution_equilibre_etat: 0.0,
         subventions_equilibre: 0.0,
         impots_et_taxes: tva,
@@ -2174,6 +2311,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       projetee,
       pilier,
       total[MASSE_STOCK] / total.actuel,
+      facteurAssiette(cotisations, annee, simulateur.parametres.annee_bascule),
     ));
   }
 
@@ -2251,6 +2389,7 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
         ? ligne.partPib(COMPOSANTE_GARANTIE) - ligne.partPibReprises()
         : 0.0,
       comptes.versementLigne(annee, "cnaf_majorations") * ligne.partStock,
+      ligne.facteurAssietteLiberal,
     ));
   }
   if (!lignes.length) return new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);

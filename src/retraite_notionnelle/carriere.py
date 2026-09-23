@@ -797,6 +797,97 @@ class Carriere:
     def affiliations_utilisees(self) -> tuple[str, ...]:
         return tuple(dict.fromkeys(ligne.affiliation for ligne in self.lignes))
 
+    # -- prolongation --------------------------------------------------------
+
+    def prolongee(self, age_liquidation: float, macro: DonneesMacro) -> "Carriere":
+        """La même carrière, poursuivie jusqu'à un départ à ``age_liquidation``.
+
+        C'est ce que fait l'âge légal de la proposition à qui serait parti plus
+        tôt sous le droit en vigueur (``Parametres.age_legal_liberal``) : il
+        travaille jusqu'à l'âge légal. Rien de ce qui précède ne bouge ; seules
+        s'ajoutent les années — et les mois de l'année du départ initial — que
+        le report fait travailler.
+
+        LA CONVENTION, ET IL N'Y EN A QU'UNE : LA DERNIÈRE ANNÉE SE PROLONGE.
+        Même statut, même nature de période, même salaire RELATIF — le revenu
+        annualisé de la dernière ligne, avancé chaque année au rythme du
+        salaire moyen, comme le fait déjà le dénominateur du taux de
+        remplacement. Elle vaut pour toutes les carrières, qu'elles viennent
+        d'un profil, d'un parcours ou d'un relevé, et c'est pourquoi elle ne
+        relit aucun profil : un relevé n'en a pas. Qui finissait sa carrière au
+        chômage la finit donc au chômage, trois ans plus tard.
+
+        Rend la carrière elle-même, inchangée, quand le départ demandé ne
+        tombe pas après celui qu'elle porte.
+        """
+        if (self.age_liquidation is None
+                or en_mois(age_liquidation) <= en_mois(self.age_liquidation)):
+            return self
+        initiale = self.date_liquidation
+        fin = self.date_naissance.plus_mois(en_mois(age_liquidation))
+        motifs = charger_periodes_non_travaillees(macro.racine)
+        derniere = self.lignes[-1]
+        cotisee = derniere.type_periode == "emploi"
+        # Le revenu annualisé de la dernière ligne : ce qui a été perçu pour
+        # une année d'emploi, le salaire de référence pour une interruption.
+        base = derniere.revenu if cotisee else derniere.revenu_reference
+        base = base / derniere.fraction_annee if derniere.fraction_annee > 0 else 0.0
+        reference = salaire_moyen_annuel(macro, derniere.annee)
+
+        def ligne(annee: int, mois: int) -> AnneeCarriere:
+            facteur = (salaire_moyen_annuel(macro, annee) / reference
+                       if reference > 0 else 1.0)
+            return _ligne_annuelle(
+                annee=annee,
+                revenu=base * facteur * mois / MOIS_PAR_AN,
+                affiliation=derniere.affiliation,
+                type_periode=derniere.type_periode,
+                macro=macro,
+                motifs=motifs,
+                part=mois / MOIS_PAR_AN,
+                part_primes=derniere.part_primes,
+                trimestres_maximum=trimestres_civils(mois),
+            )
+
+        # Le mois de liquidation n'est pas travaillé : l'année du départ
+        # initial s'arrêtait au mois d'avant, et une liquidation de janvier ne
+        # lui laissait aucune ligne.
+        def fin_travaillee(annee: int, depart: DateMois) -> int:
+            """Dernier mois travaillé de ``annee`` avant ``depart``, 0 à 12."""
+            if annee < depart.annee:
+                return MOIS_PAR_AN
+            if annee == depart.annee:
+                return depart.mois - 1
+            return 0
+
+        # Une carrière qui s'arrêtait AVANT son départ — un relevé dont les
+        # dernières années sont vides — finissait sans activité : c'est cette
+        # situation-là qui se prolonge, et le report n'ajoute aucune ligne.
+        contigue = (derniere.annee == initiale.annee
+                    or (derniere.annee == initiale.annee - 1 and initiale.mois == 1))
+        lignes = list(self.lignes)
+        if contigue:
+            ajoutes = (fin_travaillee(derniere.annee, fin)
+                       - fin_travaillee(derniere.annee, initiale))
+            if ajoutes > 0:
+                mois = round(derniere.fraction_annee * MOIS_PAR_AN) + ajoutes
+                lignes[-1] = ligne(derniere.annee, min(mois, MOIS_PAR_AN))
+            for annee in range(derniere.annee + 1, fin.annee + 1):
+                mois = fin_travaillee(annee, fin)
+                if mois > 0:
+                    lignes.append(ligne(annee, mois))
+
+        return Carriere(
+            annee_naissance=self.annee_naissance,
+            sexe=self.sexe,
+            lignes=lignes,
+            mois_naissance=self.mois_naissance,
+            age_liquidation=age_liquidation,
+            nombre_enfants=self.nombre_enfants,
+            identifiant=self.identifiant,
+            dates_entree=dict(self.dates_entree),
+        )
+
     # -- constructeurs -------------------------------------------------------
 
     @classmethod

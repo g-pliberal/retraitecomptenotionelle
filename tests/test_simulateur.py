@@ -1072,7 +1072,12 @@ def test_le_scenario_6_preleve_18_pour_cent_pour_tous_a_compter_de_la_bascule(si
         liberal = {c.annee: c for c in comparaison.notionnel_liberal.compte.cotisations}
         quatre = {c.annee: c for c in
                   comparaison.notionnel_retroactif_employeur.compte.cotisations}
-        assert set(liberal) == set(quatre)
+        # La proposition la fait partir à 65 ans et non à 64 : son compte a
+        # les années du scénario 4, et celle que l'âge légal ajoute.
+        assert comparaison.depart_reporte
+        assert set(quatre) <= set(liberal)
+        assert set(liberal) - set(quatre) == {
+            comparaison.carriere_de("notionnel_liberal").annee_liquidation - 1}
         avant = [a for a in liberal if a < bascule and not liberal[a].nulle]
         apres = [a for a in liberal if a >= bascule and not liberal[a].nulle]
         assert avant and apres, affiliation
@@ -1195,7 +1200,12 @@ def test_la_rente_du_pilier_ne_se_revalorise_pas_d_ici_l_ouverture(simulateur):
     en euros de la liquidation. La garantie la revalorisait jusqu'au 23
     septembre 2026 comme la pension, sur la masse salariale : elle lui prêtait
     des ressources que le contrat ne verse pas, et sous-estimait le complément.
+
+    L'âge légal de 65 ans de la proposition la fait partir à 65 ans, où la
+    garantie est due dès le départ : le cas se construit donc sans lui. La
+    règle reste celle du moteur dès que l'âge légal est levé.
     """
+    simulateur = Simulateur(Parametres(age_legal_liberal=None))
     comparaison = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=1975, sexe="F", affiliation="salarie_prive_non_cadre",
         age_debut=30, age_liquidation=62, niveau_salaire=0.45,
@@ -5338,7 +5348,6 @@ def test_la_crpn_decote_par_la_duree_seule_jusqu_a_soixante_ans(simulateur):
         assert avant.age_taux_plein == pytest.approx(60.0)
 
 
-
 def test_le_salaire_de_reference_des_cultes_est_fait_du_forfait(simulateur):
     """Le salaire annuel moyen de la CAVIMAC ne dépend pas du revenu déclaré.
 
@@ -5367,3 +5376,122 @@ def test_le_salaire_de_reference_des_cultes_est_fait_du_forfait(simulateur):
     salaire = float(reference.detail.split("SR ")[1].split(" €")[0].replace(",", ""))
     smic_annuel = 1820 * simulateur.macro.smic_horaire(2029)
     assert 0.85 * smic_annuel < salaire < 1.05 * smic_annuel
+
+
+# -- l'âge légal de la proposition -------------------------------------------
+
+
+def test_la_carriere_prolongee_garde_le_passe_et_travaille_jusqu_a_l_age_legal(simulateur):
+    """Rien de ce qui précède le départ initial ne bouge ; l'année du départ
+    se complète, les suivantes s'ajoutent, et le salaire relatif se prolonge au
+    rythme du salaire moyen."""
+    from retraite_notionnelle.carriere import salaire_moyen_annuel
+
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1965, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_debut=21, age_liquidation=62.5)
+    prolongee = carriere.prolongee(65.0, simulateur.macro)
+
+    assert prolongee.age_liquidation == 65.0
+    assert str(prolongee.date_liquidation) == "janvier 2030"
+    assert prolongee.lignes[:-3] == carriere.lignes[:-1]
+    # L'année du départ initial — juillet 2027 — était de six mois : elle
+    # devient pleine, au même revenu annualisé.
+    initiale, pleine = carriere.lignes[-1], prolongee.lignes[-3]
+    assert (initiale.annee, pleine.annee) == (2027, 2027)
+    assert initiale.fraction_annee == pytest.approx(0.5)
+    assert pleine.fraction_annee == pytest.approx(1.0)
+    assert pleine.revenu == pytest.approx(initiale.revenu_annualise)
+    # Puis 2028 et 2029, au salaire relatif de 2027 ; janvier 2030 est le
+    # mois du départ, et n'est pas travaillé.
+    assert [l.annee for l in prolongee.lignes[-2:]] == [2028, 2029]
+    macro = simulateur.macro
+    for ligne in prolongee.lignes[-2:]:
+        assert ligne.affiliation == initiale.affiliation
+        assert ligne.revenu == pytest.approx(
+            initiale.revenu_annualise * salaire_moyen_annuel(macro, ligne.annee)
+            / salaire_moyen_annuel(macro, 2027))
+
+
+def test_la_carriere_n_est_prolongee_que_vers_un_depart_plus_tardif(simulateur):
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1965, sexe="F", affiliation="salarie_prive_non_cadre",
+        age_debut=21, age_liquidation=66.0)
+    assert carriere.prolongee(65.0, simulateur.macro) is carriere
+    assert carriere.prolongee(66.0, simulateur.macro) is carriere
+
+
+def test_un_releve_qui_s_arrete_avant_le_depart_n_est_pas_prolonge(simulateur):
+    """Une carrière qui finissait sans activité continue sans activité : le
+    report ne fabrique pas d'années travaillées qu'elle n'avait pas."""
+    releve = [LigneRelevee(annee=annee, affiliation="salarie_prive_non_cadre",
+                           revenu=30_000.0) for annee in range(1990, 2020)]
+    carriere = simulateur.carriere_releve(1965, "H", releve, age_liquidation=63.0)
+    prolongee = carriere.prolongee(65.0, simulateur.macro)
+    assert prolongee.age_liquidation == 65.0
+    assert prolongee.lignes == carriere.lignes
+
+
+def test_l_age_legal_ne_reporte_que_les_departs_qu_il_regit(simulateur):
+    """Avant 65 ans et à compter de la bascule : reporté. Avant la bascule,
+    ou à 65 ans et plus : la carrière elle-même."""
+    def carriere(naissance: int, age: float):
+        return simulateur.carriere_simple(
+            annee_naissance=naissance, sexe="H",
+            affiliation="salarie_prive_non_cadre", age_debut=21,
+            age_liquidation=age)
+
+    avant_bascule = carriere(1962, 63.0)          # janvier 2025
+    assert simulateur.carriere_proposition(avant_bascule) is avant_bascule
+    a_65_ans = carriere(1970, 65.0)
+    assert simulateur.carriere_proposition(a_65_ans) is a_65_ans
+    precoce = carriere(1970, 62.0)
+    reportee = simulateur.carriere_proposition(precoce)
+    assert reportee.age_liquidation == 65.0
+    assert reportee.annee_liquidation == 2035
+
+    sans_age = Simulateur(Parametres(age_legal_liberal=None))
+    assert sans_age.carriere_proposition(precoce) is precoce
+
+
+def test_le_report_ne_touche_que_la_proposition(simulateur):
+    """Les scénarios 1 à 5 partent à l'âge saisi ; le 6 part à 65 ans, et ses
+    montants se comparent aux autres en euros constants."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1970, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_debut=21, age_liquidation=62.0)
+    comparaison = simulateur.simuler(carriere)
+    sans_age = Simulateur(Parametres(age_legal_liberal=None)).simuler(carriere)
+
+    assert comparaison.depart_reporte and not sans_age.depart_reporte
+    assert comparaison.carriere_de("notionnel_liberal").age_liquidation == 65.0
+    assert comparaison.carriere_de("notionnel_retroactif_employeur") is carriere
+    for cle in ("notionnel_retroactif", "notionnel_prospectif",
+                "notionnel_retroactif_employeur", "notionnel_prospectif_employeur"):
+        assert getattr(comparaison, cle).pension_annuelle == pytest.approx(
+            getattr(sans_age, cle).pension_annuelle)
+    assert comparaison.actuel.pension_annuelle == pytest.approx(
+        sans_age.actuel.pension_annuelle)
+
+    # Trois ans de cotisations en plus et un diviseur plus petit : la pension
+    # MENSUELLE de la proposition monte, en euros constants.
+    avant = sans_age.en_euros_constants(
+        sans_age.notionnel_liberal.pension_annuelle, "notionnel_liberal")
+    apres = comparaison.en_euros_constants(
+        comparaison.notionnel_liberal.pension_annuelle, "notionnel_liberal")
+    assert apres > avant * 1.1
+    assert (comparaison.notionnel_liberal.conversion.diviseur
+            < sans_age.notionnel_liberal.conversion.diviseur)
+
+    # L'écart se lit en euros constants, chaque montant ramené de son année.
+    attendu = apres / comparaison.en_euros_constants(
+        comparaison.actuel.pension_annuelle) - 1.0
+    assert comparaison.variation("notionnel_liberal") == pytest.approx(attendu)
+    assert comparaison.coefficient_de("notionnel_liberal") != (
+        comparaison.coefficient_euros_constants)
+
+    # À 65 ans, la garantie est due dès le départ : elle n'est plus différée.
+    assert comparaison.notionnel_liberal.garantie_vieillesse.age_atteint
+    sortie = comparaison.dictionnaire()["liquidation_liberal"]
+    assert sortie["reportee"] and sortie["age_liquidation"] == 65.0
+    assert sortie["annee_liquidation"] == 2035

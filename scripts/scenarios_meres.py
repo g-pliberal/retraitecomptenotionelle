@@ -271,8 +271,11 @@ class Grille:
             age = propose
         return age
 
-    def _mensuel(self, comparaison: Comparaison, montant: float) -> float:
-        return comparaison.en_euros_constants(montant) / 12.0
+    def _mensuel(self, comparaison: Comparaison, montant: float,
+                 scenario: str | None = None) -> float:
+        # Chaque montant en euros constants de SON départ : celui de la
+        # proposition peut être reporté à 65 ans, après celui des autres.
+        return comparaison.en_euros_constants(montant, scenario) / 12.0
 
     def calculer(self, situation: Situation) -> Ligne:
         # Une femme sans enfant n'a pas d'années d'éducation : ses années
@@ -288,11 +291,11 @@ class Grille:
         avec = self.simulateur.simuler(self._carriere(situation, situation.nombre_enfants, motif, age))
         sans = self.simulateur.simuler(self._carriere(situation, 0, "sans_activite", age))
         actuel = self._mensuel(avec, avec.actuel.pension_annuelle)
-        liberal = self._mensuel(avec, avec.pension_totale(LIBERAL))
+        liberal = self._mensuel(avec, avec.pension_totale(LIBERAL), LIBERAL)
         garantie = avec.notionnel_liberal.garantie_vieillesse
         conversion = avec.notionnel_liberal.conversion
         macro = self.simulateur.macro
-        annee_liquidation = avec.carriere.annee_liquidation
+        annee_liquidation = avec.carriere_de(LIBERAL).annee_liquidation
         aides = {annee: self.aide_par_enfant(annee)
                  for annee in self.annees_de_naissance(situation)}
         capital_aides = sum(
@@ -305,10 +308,12 @@ class Grille:
             liquidation_ouverte=avec.actuel.liquidation_ouverte,
             actuel=actuel,
             liberal=liberal,
-            garantie=self._mensuel(avec, garantie.complement) if garantie else 0.0,
+            garantie=(self._mensuel(avec, garantie.complement, LIBERAL)
+                      if garantie else 0.0),
             garantie_servie=bool(garantie and garantie.servie_a_la_liquidation),
             effet_enfants_actuel=actuel - self._mensuel(sans, sans.actuel.pension_annuelle),
-            effet_enfants_liberal=liberal - self._mensuel(sans, sans.pension_totale(LIBERAL)),
+            effet_enfants_liberal=liberal - self._mensuel(
+                sans, sans.pension_totale(LIBERAL), LIBERAL),
             trimestres=avec.actuel.trimestres_valides,
             trimestres_requis=avec.actuel.trimestres_requis,
             taux=avec.actuel.taux_liquidation,
@@ -319,7 +324,8 @@ class Grille:
             annees_pension=conversion.esperance_residuelle,
             aide_recue=sum(montant * macro.coefficient_prix(annee, ANNEE_EUROS)
                            for annee, montant in aides.items()),
-            aide_en_pension=self._mensuel(avec, capital_aides / conversion.diviseur),
+            aide_en_pension=self._mensuel(avec, capital_aides / conversion.diviseur,
+                                          LIBERAL),
         )
 
 

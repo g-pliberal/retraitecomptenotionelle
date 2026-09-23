@@ -123,15 +123,28 @@ def mesurer(population: str, cas_type, generation: int) -> dict | None:
     e_population = commun.mortalite.esperance_residuelle(age, date, population=population)
     lignes = []
     for cle, numero, libelle in SCENARIOS:
-        p_commune = avec.en_euros_constants(getattr(avec, cle).pension_annuelle)
-        p_population = sans.en_euros_constants(getattr(sans, cle).pension_annuelle)
+        p_commune = avec.en_euros_constants(getattr(avec, cle).pension_annuelle, cle)
+        p_population = sans.en_euros_constants(getattr(sans, cle).pension_annuelle, cle)
+        # La proposition peut partir plus tard que les autres — son âge légal
+        # est de 65 ans — et sa rente se sert alors sur l'espérance de CE
+        # départ-là.
+        depart = avec.carriere_de(cle)
+        if depart is carriere:
+            ecart_vie = e_population - e_commune
+        else:
+            date_s = depart.annee_liquidation + depart.fraction_annee_liquidation
+            ecart_vie = (
+                commun.mortalite.esperance_residuelle(
+                    depart.age_liquidation, date_s, population=population)
+                - commun.mortalite.esperance_residuelle(depart.age_liquidation, date_s)
+            )
         lignes.append({
             "numero": numero,
             "libelle": libelle.format(bascule=commun.parametres.annee_bascule),
             "pension_commune": p_commune,
             "pension_population": p_population,
             "ecart": (p_population / p_commune - 1.0) if p_commune else 0.0,
-            "transfert_vie": p_commune * (e_population - e_commune),
+            "transfert_vie": p_commune * ecart_vie,
         })
     return {
         "age_liquidation": age,

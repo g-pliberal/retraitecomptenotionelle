@@ -94,7 +94,7 @@ export const INDEXATIONS = [
 export const LISSAGE_MAXIMUM = 30;
 
 export const AGES_REFERENCE = [
-  ["fixe_apres_bascule", "64 ans à partir de la bascule (défaut)"],
+  ["fixe_apres_bascule", "65 ans à partir de la bascule (défaut)"],
   ["cliquet_legal", "Cliquet légal"],
   ["cliquet_puis_esperance_vie", "Cliquet puis espérance de vie"],
   ["legal_sans_cliquet", "Âge légal, sans cliquet"],
@@ -3627,6 +3627,17 @@ function lectureDesMontants(comparaison, saisie) {
       + "suivantes.";
   }
 
+  // Le système 4 a SA date quand l'âge légal de la proposition reporte le
+  // départ : son premier mois n'est pas celui des trois autres.
+  if (comparaison.departReporte) {
+    const reportee = comparaison.carriere_liberal;
+    quand += " Sauf celui du système 4 : la proposition fixe l'âge légal à "
+      + `${age(comparaison.parametres.age_legal_liberal)}, et son montant `
+      + "est celui de sa première pension, en "
+      + `${echapper(String(reportee.dateLiquidation))}, ramenée au même pouvoir `
+      + "d'achat que les autres.";
+  }
+
   let unites;
   if (annee < courante) {
     unites = saisie.euros === courante
@@ -3711,9 +3722,15 @@ function corpsTrajectoire(contexte, comparaison, saisie) {
 
   const annuel = {};
   for (const [cle] of TRAJECTOIRE) {
-    annuel[cle] = comparaison.enEurosConstants(comparaison[cle].pension_annuelle);
+    annuel[cle] = comparaison.enEurosConstants(comparaison[cle].pension_annuelle, cle);
   }
   if (Math.max(...Object.values(annuel)) <= 0) return "";
+  // Chaque courbe part de SON départ : celui de la proposition peut être
+  // reporté à son âge légal, et elle ne verse rien avant.
+  const departs = {};
+  for (const [cle] of TRAJECTOIRE) {
+    departs[cle] = comparaison.carriereDe(cle).age_liquidation || 0.0;
+  }
 
   const ages = [];
   for (let a = Math.floor(depart); a <= AGE_MAXIMUM_TRAJECTOIRE; a += 1) ages.push(a);
@@ -3726,7 +3743,8 @@ function corpsTrajectoire(contexte, comparaison, saisie) {
     // « max(0, âge - départ) » faisait partir la courbe de l'âge entier
     // précédent, soit jusqu'à onze mois de pension qui n'ont pas été versés.
     // La courbe commence maintenant au premier âge atteint.
-    ages.map((age) => (age < depart ? null : annuel[cle] * (age - depart) / 1000)),
+    ages.map((age) => (age < departs[cle]
+      ? null : annuel[cle] * (age - departs[cle]) / 1000)),
     `var(${couleur})`,
   ));
   const etiquettes = TRAJECTOIRE.map(([, , chiffre]) => chiffre);
@@ -3747,6 +3765,12 @@ function corpsTrajectoire(contexte, comparaison, saisie) {
     + (ecart >= 0 ? "moins" : "plus")
     + " que le système 1 ; l'écart se creuse ici d'autant d'années que la "
     + "retraite dure";
+  // Le report se lit sur le graphique ; encore faut-il dire pourquoi la
+  // quatrième courbe part plus tard que les autres.
+  const phraseReport = comparaison.departReporte
+    ? ` La courbe du système 4 part à ${age(departs.notionnel_liberal)}, `
+      + "l'âge légal de la proposition : rien n'est versé avant"
+    : "";
   // Unité brève : le libellé est ancré à gauche de l'axe et déborderait du
   // cadre au-delà d'une poignée de caractères — « milliers d'euros de 2026,
   // cumulés » sortait du viewBox par la gauche, et « k€ 2026 » y perdait encore
@@ -3793,7 +3817,7 @@ ${g.graphique(
 <p>Trait vertical : l'espérance de vie à ${age(depart)} —
 <strong>${g.nombre(esperance, 1)} ans</strong>, soit ${g.nombre(ageEsperance, 1)}
 ans d'âge, le nombre par lequel le capital notionnel est divisé.
-${phraseEcart}.${g.bulle(
+${phraseEcart}.${phraseReport}${phraseReport ? "." : ""}${g.bulle(
     "Une moyenne, et non une échéance",
     "D'après la même table, "
     + `<strong>${vivants(ageEsperance)}</strong> de ceux qui partent à `
@@ -4053,19 +4077,31 @@ function financements(contexte, comparaison) {
     ? Math.max(carriere.anneeLiquidation, comparaison.parametres.annee_courante)
     : carriere.anneeLiquidation;
   if (debut < bilan.premiereAnnee) return {};
-  const survie = courbeDeSurvie(
-    contexte, carriere, comparaison.notionnel_retroactif.conversion.table);
+  const table = comparaison.notionnel_retroactif.conversion.table;
   // Le poids d'une année est la part des partants encore en vie EN SON
   // MILIEU : une pension servie du 1er janvier au 31 décembre l'est à une
-  // population qui décroît pendant l'année.
-  const ecoule = debut - carriere.anneeLiquidation;
-  const poids = [];
-  for (let rang = 0; rang < Math.max(survie.length - 1 - ecoule, 0); rang += 1) {
-    poids.push(partVivante(survie, ecoule + rang + 0.5));
-  }
+  // population qui décroît pendant l'année. Une courbe PAR DÉPART : celui de
+  // la proposition peut être reporté à son âge légal.
+  const poidsParDepart = new Map();
   const resultat = {};
   for (const [cle, scenario] of Object.entries(SCENARIOS_DES_BARRES)) {
-    const part = financer(bilan, bilan.assiette, scenario, debut, poids);
+    const depart = comparaison.carriereDe(scenario);
+    if (!poidsParDepart.has(depart)) {
+      // Pour un retraité, la lecture commence aujourd'hui : le montant affiché
+      // est sa pension d'aujourd'hui, et les années déjà touchées sont passées.
+      const debutDepart = comparaison.aujourd_hui !== null
+        ? Math.max(depart.anneeLiquidation, comparaison.parametres.annee_courante)
+        : depart.anneeLiquidation;
+      const ecoule = debutDepart - depart.anneeLiquidation;
+      const survie = courbeDeSurvie(contexte, depart, table);
+      const poids = [];
+      for (let rang = 0; rang < Math.max(survie.length - 1 - ecoule, 0); rang += 1) {
+        poids.push(partVivante(survie, ecoule + rang + 0.5));
+      }
+      poidsParDepart.set(depart, [debutDepart, poids]);
+    }
+    const [debutDepart, poids] = poidsParDepart.get(depart);
+    const part = financer(bilan, bilan.assiette, scenario, debutDepart, poids);
     if (part !== null) resultat[cle] = part;
   }
   return resultat;
@@ -4504,18 +4540,22 @@ function montantsAffiches(comparaison) {
     // l'une et ce qui vient de l'autre.
     liberal: comparaison.notionnel_liberal.pension_totale,
   };
+  // Chaque montant en euros constants de SON départ : celui de la
+  // proposition peut être reporté par son âge légal de 65 ans.
   const constants = {};
   for (const [cle, montant] of Object.entries(courants)) {
-    constants[cle] = comparaison.enEurosConstants(montant);
+    constants[cle] = comparaison.enEurosConstants(montant, SCENARIOS_DES_BARRES[cle]);
   }
   // La part de la rente qui vient des cinq points VOLONTAIRES, nommée à part
   // sous la barre : c'est la seule ligne de la page que personne n'impose, et
   // le lecteur doit pouvoir la retrancher de l'œil.
+  // Chaque montant en euros constants de SON départ : celui de la
+  // proposition peut être reporté par son âge légal de 65 ans.
   return [constants,
     comparaison.enEurosConstants(
-      comparaison.notionnel_liberal.rente_capitalisation_obligatoire),
+      comparaison.notionnel_liberal.rente_capitalisation_obligatoire, "notionnel_liberal"),
     comparaison.enEurosConstants(
-      comparaison.notionnel_liberal.rente_capitalisation_volontaire)];
+      comparaison.notionnel_liberal.rente_capitalisation_volontaire, "notionnel_liberal")];
 }
 
 /**
@@ -4691,7 +4731,7 @@ function resultats(contexte, saisie) {
   </div>${partage}
   <div class="barre ${cle}">${barre}</div>
   <div class="glose">${glose} · ${g.terme("taux de remplacement")}
-    ${g.pourcentage(montants.tauxRemplacement(tauxRemplacement))} ·
+    ${g.pourcentage(montants.tauxRemplacement(tauxRemplacement, cle === "liberal"))} ·
     écart au système actuel : ${variationHtml}${gloseFinancement(finance)}</div>
 </div>`;
   };
@@ -4781,6 +4821,8 @@ function resultats(contexte, saisie) {
       + "ne décrit aucune pension que le système actuel servirait.</span></p>";
   }
 
+  const report = reportProposition(comparaison);
+
   const fiabilite = '<p class="discret" style="margin-top:1.5rem">Fiabilité du '
     + 'résultat : <span class="etiquette-fiabilite">'
     + `${echapper(g.fiabiliteEnClair(nomFiabilite(comparaison.fiabilite)))}</span></p>`;
@@ -4828,6 +4870,7 @@ ${revenuDeduit(contexte, comparaison, saisie, montants)}
   ${capitalisation}
   ${minimum}
   ${ouverture}
+  ${report}
 </div>
 <div class="carte">
   <div class="fiches">${fiches}</div>
@@ -4900,7 +4943,7 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
     const par_scenario = {};
     for (const [scenario] of SCENARIOS_AFFICHES) {
       par_scenario[scenario] = variante.enEurosConstants(
-        variante[scenario].pension_annuelle,
+        variante[scenario].pension_annuelle, scenario,
       );
     }
     montants.set(code, par_scenario);
@@ -5162,6 +5205,30 @@ ${reserve}
 `, "resultats-aujourdhui");
 }
 
+/**
+ * Ce que l'âge légal de la proposition fait au départ, quand il le reporte. Le
+ * montant du système 4 n'est alors pas servi à la même date que les trois
+ * autres : le taire ferait lire côte à côte deux pensions qui ne commencent
+ * pas le même mois. Voir `_report_proposition` dans pages.py.
+ */
+function reportProposition(comparaison) {
+  if (!comparaison.departReporte) return "";
+  const initiale = comparaison.carriere;
+  const reportee = comparaison.carriere_liberal;
+  const ecart = reportee.age_liquidation - (initiale.age_liquidation || 0.0);
+  return "<p class=\"note\"><strong>La proposition fixe l'âge légal de départ à "
+    + `${age(comparaison.parametres.age_legal_liberal)}.</strong> Sous elle, `
+    + `vous ne partiriez pas à ${age(initiale.age_liquidation || 0.0)} mais à `
+    + `${age(reportee.age_liquidation)}, en ${echapper(String(reportee.dateLiquidation))} : `
+    + "le montant du système 4 est celui de ce départ-là, servi "
+    + `${age(ecart)} plus tard que les trois autres. Jusque-là, vous restez `
+    + "dans la situation de votre dernière année — le même statut, le même "
+    + "salaire relatif —, et vous cotisez. Des cotisations en plus et une "
+    + "retraite plus courte font une pension mensuelle plus forte ; ce que "
+    + "le report retire, ce sont les mois de pension d'avant cet âge, et le "
+    + "graphique « Ce que chaque système finit par verser » les montre.</p>";
+}
+
 const NATURES_PART_EMPLOYEUR = {
   appelee: "contribution appelée par décret ou par arrêté",
   implicite: "taux implicite reconstitué par les documents budgétaires",
@@ -5217,30 +5284,37 @@ function eurosSigne(montant, centimes = true) {
  * sont bruts par nature, et le site les laisse tels quels.
  */
 export class Montants {
-  constructor(net, tauxPension, rapportNetBrutSalaire = 0) {
+  constructor(net, tauxPension, rapportNetBrutSalaire = 0, rapportNetBrutProposition = 0) {
     this.net = net;
     this.tauxPension = tauxPension;
     // Ce qu'un euro de salaire brut laisse en net, au DERNIER revenu
     // d'activité. Zéro quand le statut n'a pas de fiche de paie : le taux
     // reste alors brut, faute de pouvoir le netter honnêtement.
     this.rapportNetBrutSalaire = rapportNetBrutSalaire;
+    // Le même, sur la fiche de paie de la PROPOSITION.
+    this.rapportNetBrutProposition = rapportNetBrutProposition;
   }
 
   static depuis(saisie, simulateur, comparaison = null) {
     // Le rapport net/brut du salaire se lit sur la DERNIÈRE fiche de paie de
     // la carrière, celle de l'année du départ : c'est l'année dont le revenu
     // sert de dénominateur au taux de remplacement.
+    // La proposition a SA fiche de paie : elle prélève moins sur le même
+    // brut, et le dernier salaire net auquel sa pension se compare est le sien.
     let rapport = 0;
+    let rapportProposition = 0;
     const remuneration = comparaison ? comparaison.remuneration : null;
     if (remuneration !== null && remuneration !== undefined) {
-      const derniere = remuneration.annees[remuneration.annees.length - 1]
-        .droitEnVigueur;
-      if (derniere.brut > 0) {
-        rapport = derniere.net / derniere.brut;
+      const derniere = remuneration.annees[remuneration.annees.length - 1];
+      if (derniere.droitEnVigueur.brut > 0) {
+        rapport = derniere.droitEnVigueur.net / derniere.droitEnVigueur.brut;
+      }
+      if (derniere.proposition.brut > 0) {
+        rapportProposition = derniere.proposition.net / derniere.proposition.brut;
       }
     }
     return new Montants(saisie.enNet,
-      simulateur.baremePrelevements.pensions.tauxTotal, rapport);
+      simulateur.baremePrelevements.pensions.tauxTotal, rapport, rapportProposition);
   }
 
   /**
@@ -5253,11 +5327,14 @@ export class Montants {
    * dépasse le taux brut de plusieurs points. C'est un fait connu, et rarement
    * montré.
    */
-  tauxRemplacement(tauxBrut) {
-    if (!this.net || this.rapportNetBrutSalaire <= 0) {
+  tauxRemplacement(tauxBrut, proposition = false) {
+    // `proposition` prend le rapport de SA fiche de paie : le même brut y
+    // laisse un net plus élevé. Voir `Montants.taux_remplacement`.
+    const rapport = proposition ? this.rapportNetBrutProposition : this.rapportNetBrutSalaire;
+    if (!this.net || rapport <= 0) {
       return tauxBrut;
     }
-    return tauxBrut * (1 - this.tauxPension) / this.rapportNetBrutSalaire;
+    return tauxBrut * (1 - this.tauxPension) / rapport;
   }
 
   /** Une pension, une rente, une garantie : tout ce qui se sert après. */
@@ -5943,7 +6020,9 @@ function pilierCapitalise(comparaison, saisie) {
     pilier.taux_cotisation_volontaire, false, 0,
   );
   const avecVolontaire = pilier.taux_cotisation_volontaire > 0;
-  const depart = comparaison.carriere.anneeLiquidation;
+  // L'année du départ DE LA PROPOSITION : le pilier est le sien, et son âge
+  // légal peut l'avoir reportée après celle des autres systèmes.
+  const depart = comparaison.carriereDe("notionnel_liberal").anneeLiquidation;
   // Ce qui est imposé, puis ce qui est libre : « 10 % placés » additionnait
   // une cotisation obligatoire et une épargne que personne n'impose.
   const titre = `Le pilier capitalisé : ${tauxImpose} obligatoires dès `
@@ -6147,7 +6226,10 @@ function garantieVieillesse(comparaison, saisie) {
   const garantie = liberal.garantie_vieillesse;
   if (garantie === null) return "";
   const parametres = comparaison.parametres;
-  const annee = comparaison.carriere.anneeLiquidation;
+  // La garantie est chiffrée en euros du départ DE LA PROPOSITION, que son
+  // âge légal peut avoir reporté après celui des autres systèmes.
+  const depart = comparaison.carriereDe("notionnel_liberal");
+  const annee = depart.anneeLiquidation;
   const bascule = parametres.annee_bascule;
   const capital4 = comparaison.notionnel_retroactif_employeur.capital_notionnel;
   const taux = g.pourcentage(parametres.taux_cotisation_liberal, false, 0);
@@ -6156,7 +6238,17 @@ function garantieVieillesse(comparaison, saisie) {
   const annees18 = liberal.compte.cotisations
     .filter((c) => c.annee >= bascule && !c.nulle)
     .map((c) => c.annee);
-  const tauxUnique = annees18.length
+  // Deux départs, donc deux unités : chaque capital est dit dans les euros de
+  // SON année quand l'âge légal de la proposition reporte le sien.
+  const tauxUnique = annees18.length && comparaison.departReporte
+    ? `Ici, les années ${annees18[0]} à ${annees18[annees18.length - 1]} sont cotisées à `
+      + `${taux} ; celles d'avant ${bascule} le sont aux taux réels, et le `
+      + `capital vaut ${g.euros(liberal.capital_notionnel)} en euros de `
+      + `${annee}, au départ de la proposition, contre `
+      + `${g.euros(capital4)} en euros de `
+      + `${comparaison.carriere.anneeLiquidation} pour le système 3, qui `
+      + "part plus tôt."
+    : annees18.length
     ? `Ici, les années ${annees18[0]} à ${annees18[annees18.length - 1]} sont cotisées à `
       + `${taux} ; celles d'avant ${bascule} le sont aux taux réels, et le `
       + `capital vaut ${g.euros(liberal.capital_notionnel)} contre `
@@ -6233,7 +6325,7 @@ function garantieVieillesse(comparaison, saisie) {
       + "de ce que le système 4 verse.</p>";
   } else if (garantie.differee) {
     lecture = "<p>Ici, la liquidation a lieu à "
-      + `${age(comparaison.carriere.age_liquidation || 0.0)}, avant les 65 ans `
+      + `${age(depart.age_liquidation || 0.0)}, avant les 65 ans `
       + `de l'allocation : rien n'est servi jusqu'en ${garantie.annee_ouverture}. `
       + "À partir de là, la pension obligatoire — "
       + `${g.eurosCentimes(garantie.ressources / 12)} par mois au départ, `
@@ -6269,21 +6361,36 @@ function garantieVieillesse(comparaison, saisie) {
     ];
   });
 
+  // Ce que le système 4 change au système 3 : deux choses, et une troisième
+  // tant que la proposition porte un âge légal.
+  const ageLegal = parametres.age_legal_liberal ?? null;
+  let ceQuiChange = "Il est le système 3 — même compte rétroactif, cotisation "
+    + "salariale et patronale confondues, "
+    + (ageLegal !== null ? "" : "mêmes âges, ")
+    + "même indexation, même liquidation — à "
+    + (ageLegal !== null ? "trois" : "deux")
+    + ` différences près. La première : à compter de ${bascule}, un taux `
+    + `unique de ${taux}, parts salariale et patronale additionnées, le même `
+    + "pour tous les statuts, prélevé une fois sur la rémunération. Ce qui a "
+    + `été cotisé avant ${bascule} reste porté au compte tel qu'il a été `
+    + "prélevé, aux taux réels de chaque régime : sur ces années-là, le 4 est "
+    + `le 3. ${tauxUnique}`
+    + (ageLegal !== null ? " La deuxième" : " La seconde")
+    + " : une garantie vieillesse qui remplace l'ASPA.";
+  if (ageLegal !== null) {
+    ceQuiChange += ` La troisième : un âge légal de départ de ${age(ageLegal)} à `
+      + `compter de ${bascule} — qui serait parti plus tôt travaille `
+      + "jusque-là"
+      + (comparaison.departReporte ? ", et c'est votre cas." : ".");
+  }
+
   return g.depliant(
     "Le système 4 : un taux pour tous, et une garantie payée par l'impôt",
     `
 <p>La garantie vieillesse, étape par étape, en euros de ${annee} — l'année du
-départ.${g.bulle(
+départ${comparaison.departReporte ? " sous la proposition" : ""}.${g.bulle(
     "Ce que le système 4 change au système 3",
-    "Il est le système 3 — même compte rétroactif, cotisation salariale et "
-    + "patronale confondues, mêmes âges, même indexation, même liquidation — à "
-    + `deux différences près. La première : à compter de ${bascule}, un taux `
-    + `unique de ${taux}, parts salariale et patronale additionnées, le même `
-    + "pour tous les statuts, prélevé une fois sur la rémunération. Ce qui a "
-    + `été cotisé avant ${bascule} reste porté au compte tel qu'il a été `
-    + "prélevé, aux taux réels de chaque régime : sur ces années-là, le 6 est "
-    + `le 4. ${tauxUnique} La seconde : une garantie vieillesse qui remplace `
-    + "l'ASPA.",
+    ceQuiChange,
   )}</p>
 ${g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
@@ -6582,7 +6689,8 @@ const GRILLES_CAS_TYPES = [
     + "elle ne joue que pour qui cotise après la bascule, et d'autant plus "
     + "qu'il lui reste d'années à courir — la page Simuler en donne le "
     + "partage, carrière par carrière. La garantie, elle, ne se voit que sur "
-    + "les cas dont la pension reste sous le plancher, à partir de 65 ans.",
+    + "les cas dont la pension reste sous le plancher, à partir de 65 ans. "
+    + "Nul n'y part avant 65 ans après la bascule.",
   ],
   [
     "notionnel_retroactif",
@@ -6770,11 +6878,16 @@ function deplacementDesEcarts(resultat, solde, scenario) {
       const comparaison = resultat.resultats.get(`${cas.code}|${generation}`);
       if (comparaison === undefined) continue;
       const ligne = solde.annee(comparaison.carriere.anneeLiquidation);
-      if (ligne === null) continue;
+      // Chaque système à l'équilibre de SON année de départ : celle de la
+      // proposition peut suivre de quelques années celle de l'étalon.
+      const ligneScenario = solde.annee(
+        comparaison.carriereDe(scenario).anneeLiquidation);
+      if (ligne === null || ligneScenario === null) continue;
       const reference = ligne.coefficient("actuel");
       if (reference <= 0) continue;
       const ecart = comparaison.variationTotale(scenario);
-      const equilibre = ((1 + ecart) * ligne.coefficient(scenario)) / reference - 1;
+      const equilibre = ((1 + ecart) * ligneScenario.coefficient(scenario))
+        / reference - 1;
       deplacements.push(Math.abs(equilibre - ecart));
     }
   }
@@ -6858,7 +6971,7 @@ function casTypes(contexte, regards = null) {
     ) + g.fiche(
       "Ce qui les sépare",
       `${g.nombre((haut[0] - bas[0]) * 100, 0)} points`,
-      "à carrière et à durée identiques",
+      "à carrière identique jusqu'au départ",
     );
   }
 
@@ -6906,6 +7019,15 @@ function casTypes(contexte, regards = null) {
     "Qui sont ces treize carrières",
     g.gloses(CAS_TYPES.map((cas) => [cas.libelle, cas.commentaire])),
   );
+  // Les âges du tableau sont ceux du droit en vigueur ; la proposition en a
+  // un autre, et la grille de son onglet le suit.
+  const ageLegal = simulateur.parametres.age_legal_liberal ?? null;
+  const mentionProposition = ageLegal === null ? "" : (
+    " Ce sont les âges du tableau ci-dessous, ceux des systèmes 1 à 3. La "
+    + `proposition, elle, fixe un âge légal de ${age(ageLegal)} : qui part `
+    + `plus tôt à compter de ${simulateur.parametres.annee_bascule} part à `
+    + "cet âge dans la grille du système 4, et travaille jusque-là."
+  );
   const depliantAges = g.depliant(
     "À quel âge chacun part, et pourquoi ce n'est pas le même",
     '<p class="discret">Un cas type ne porte pas un âge de départ mais une '
@@ -6913,7 +7035,8 @@ function casTypes(contexte, regards = null) {
     + "au taux plein, le premier âge auquel la pension est servie entière, "
     + "qui dépend à la fois de l'âge légal et de la durée requise de la "
     + "génération. Ceux dont un statut commande le départ (catégorie active, agent de conduite, agent des IEG) partent à l'âge que ce statut leur "
-    + "ouvre. Le militaire, lui, part à une DURÉE de services, pas à un âge.</p>" + ages,
+    + "ouvre. Le militaire, lui, part à une DURÉE de services, pas à un âge."
+    + mentionProposition + "</p>" + ages,
   );
 
   const tete = g.affiche(
@@ -8736,10 +8859,14 @@ const MARCHES_SYSTEMES = {
     "ce que l'employeur verse ouvre désormais un droit à celui qui le voit "
     + "passer ; c'est la seule chose qui sépare cette marche de la précédente",
   ],
+  // La marche de la proposition porte AUSSI son âge légal : les deux mesures
+  // ne sont pas calculées l'une sans l'autre, et la marche le dit plutôt que
+  // de prêter au taux ce que le report fait.
   notionnel_liberal: [
-    "Cotisation unique de {taux}",
+    "Cotisation unique de {taux}{et_age}",
     "un taux unique pour tous les statuts, parts salariale et patronale "
-    + "additionnées, sur les seuls droits acquis à compter de {bascule}",
+    + "additionnées, sur les seuls droits acquis à compter de {bascule}"
+    + "{glose_age}",
   ],
 };
 
@@ -8773,11 +8900,17 @@ const MARCHES_HORS_SYSTEMES = {
  */
 function libellesCascade(contexte, partDerives, partReprise) {
   const base = contexte.base;
+  const ageLegal = base.age_legal_liberal ?? null;
   return {
     taux: g.pourcentage(base.taux_cotisation_liberal, false, 0),
     bascule: String(base.annee_bascule),
     reversion: g.pourcentage(partDerives, false, 1),
     reprise: g.pourcentage(partReprise, false, 0),
+    et_age: ageLegal === null ? "" : `, départ à ${age(ageLegal)}`,
+    glose_age: ageLegal === null ? "" : (
+      ` ; et un âge légal de ${age(ageLegal)} : qui partait plus tôt part `
+      + "plus tard, et touche une pension plus forte moins longtemps"
+    ),
   };
 }
 
@@ -9553,6 +9686,29 @@ function coutDetailPostes(contexte) {
   const totalDepenses = Object.fromEntries(systemes.map((s) => [s, ligne.depense(s)]));
   const { garantieMeur, capitalise } = bilan;
 
+  // L'âge légal de la proposition ÉLARGIT l'assiette : qui partait avant
+  // 65 ans cotise jusque-là. Le facteur est celui du bilan, lu sur la grille ;
+  // la note le dit dès qu'il s'écarte de un.
+  let elargie = "";
+  let suitLEmploi = "";
+  if (ligne.recetteParAssiette && ligne.facteurAssiette > 1.0 + 1e-9) {
+    const ageLegal = age(base.age_legal_liberal || 0.0);
+    elargie = ", sur une assiette élargie de "
+      + `${g.pourcentage(ligne.facteurAssiette - 1.0, false, 1)} en `
+      + `${annee} par l'âge légal de ${ageLegal} : qui serait parti plus `
+      + "tôt travaille et cotise jusque-là";
+    suitLEmploi = " Elle suit aussi l'emploi, et pour le seul système 4 encore : son "
+      + `âge légal de ${ageLegal} fait travailler jusque-là qui serait `
+      + "parti plus tôt, et l'assiette que le COR projette aux âges "
+      + "d'aujourd'hui grandit d'autant : "
+      + `${g.pourcentage(ligne.facteurAssiette - 1.0, false, 1)} en `
+      + `${annee}. C'est un plafond : le modèle suppose que tous ceux que `
+      + "le report fait attendre sont en emploi jusqu'à cet âge, comme "
+      + "les carrières de sa grille le sont jusqu'à leur départ ; qui "
+      + "arrive à l'âge légal au chômage ou en invalidité ne cotise pas "
+      + "davantage pour autant.";
+  }
+
   // Milliards, part de PIB, part du total — ou trois tirets.
   const cellules = (valeur, total, absent = false) => {
     if (absent) return ["—", "—", "—"];
@@ -9651,7 +9807,7 @@ système ne compte pas.</p>
 Les cotisations deviennent
 ${g.pourcentage(base.taux_cotisation_liberal, false, 0)} de l'assiette des
 revenus d'activité, parts salariale et patronale additionnées, pour tous les
-statuts. Trois postes disparaissent : la contribution d'équilibre de l'État,
+statuts${elargie}. Trois postes disparaissent : la contribution d'équilibre de l'État,
 remplacée par ces ${g.pourcentage(base.taux_cotisation_liberal, false, 0)}
 appliqués aux traitements des fonctionnaires ; les subventions d'équilibre,
 dont la fusion des régimes supprime l'objet ; les impôts et taxes affectés, qui
@@ -9667,7 +9823,7 @@ donne quatre lectures sur la distribution de l'enquête. Le pilier
 capitalisé ne passe pas par les caisses et n'est ni une ressource ni une
 dépense du système : il est rappelé pour que rien ne manque.</div>
 
-<div class="note"><strong>La recette réagit sur trois points, et sur trois
+<div class="note"><strong>La recette réagit sur ${elargie ? "quatre" : "trois"} points, et sur ${elargie ? "quatre" : "trois"}
 seulement.</strong> Elle suit le droit : ce que la branche famille et le fonds
 de solidarité vieillesse versent pour des droits que les systèmes notionnels ne
 servent pas leur est retiré, un peu plus d'un point de PIB :
@@ -9679,7 +9835,7 @@ système 4 : un compte notionnel ne crédite que ce qui est assis sur un revenu
 d'activité, et ce système ne reconduit donc aucune des trois ressources qui
 n'acquièrent de droits à personne, celles que la note du dessus nomme. Trois
 postes : 27 % des ressources en 2024, 29 % en 2070. Les cinq autres systèmes
-les encaissent tous, faute qu'aucun programme dise ce qu'il en ferait.</div>
+les encaissent tous, faute qu'aucun programme dise ce qu'il en ferait.${suitLEmploi}</div>
 
 ${coutNoteTva(contexte, annee, ligne, pib, anneePib)}
 
@@ -12736,6 +12892,7 @@ ${detail}
  * hors du chemin pour qui n'a que trente secondes.
  */
 function programme(contexte) {
+  const base = contexte.base;
   const regimes = contexte.simulateur().catalogue.taille;
 
   const differences = g.tableau(
@@ -12749,9 +12906,16 @@ function programme(contexte) {
         + "un taux, une durée",
         "votre compte, divisé par votre espérance de vie"],
       ...ligneDuMontant(contexte.bilan().ecarts),
+      // L'âge de départ, que la proposition fixe pour tous : sans cette ligne,
+      // le tableau laissait croire qu'elle gardait ceux du droit.
+      ...(base.age_legal_liberal !== null && base.age_legal_liberal !== undefined
+        ? [["L'âge de départ",
+          "selon génération et statut",
+          `${age(base.age_legal_liberal)} pour tous, dès ${base.annee_bascule}`]]
+        : []),
       ["Partir un an plus tôt",
-        `une ${g.terme("décote")}, dont le barème change à chaque réforme`,
-        "un an de cotisation en moins, un an de pension en plus"],
+        `une ${g.terme("décote")}, au barème revu à chaque réforme`,
+        "moins de cotisations, plus d'années de pension"],
       ["Changer de métier",
         "changer de régime, et de règle de calcul",
         "rien : le compte est le même"],
@@ -12962,6 +13126,12 @@ function programmeQuestions(contexte) {
   const seul = g.euros(base.garantie_vieillesse_mensuelle
     + base.allocation_isolement_mensuelle);
   const age = AGE_OUVERTURE_GARANTIE;
+  // L'âge minimum est celui de la proposition, et il se dit : le même pour
+  // tous, à compter de la bascule.
+  const minimum = base.age_legal_liberal === null || base.age_legal_liberal === undefined
+    ? "au-dessus d'un âge minimum"
+    : `à partir de ${formaterAge(base.age_legal_liberal)}, l'âge minimum de tous `
+      + `dès ${base.annee_bascule}`;
 
   // Les renvois. Vers une autre page, un lien ; vers un dépliant de celle-ci,
   // `data-vers`, que le script d'index.html ouvre sans toucher à la route.
@@ -13040,7 +13210,7 @@ revalorisée chaque année au rythme des salaires. Trimestres et points
 disparaissent, et avec eux les droits qu'aucune cotisation n'a payés :
 trimestres gratuits, majorations, minimums. ${calcul}.</p>`, ""],
     ["À quel âge pourrai-je partir ?", `
-<p>C'est vous qui choisissez, au-dessus d'un âge minimum. Il n'y a plus d'âge
+<p>C'est vous qui choisissez, ${minimum}. Il n'y a plus d'âge
 du ${g.terme("taux plein")}, ni ${g.terme("décote")}, ni ${g.terme("surcote")} :
 <strong>partir plus tôt donne une pension plus faible, partir plus tard une
 pension plus forte</strong>, dans le rapport exact de ce que cela coûte. La
@@ -13704,9 +13874,9 @@ function programmeBlocages(contexte) {
         + "pas été cotisé, l'indexation sur les prix est conservée, la garantie est "
         + "relevée dans le même texte. L'objection la plus forte, celle de l'assuré "
         + "parti à l'âge que sa loi lui ouvrait, a été chiffrée : lui prendre le "
-        + "diviseur de 64 ans plutôt que celui de son âge coûte "
+        + "diviseur de 65 ans plutôt que celui de son âge coûte "
         + `${pt(m.cout_diviseur_age_legal)} point de PIB par an, `
-        + `${md(m.cout_diviseur_age_legal)} ${auPibDe}, et plus rien en 2050.`,
+        + `${md(m.cout_diviseur_age_legal)} ${auPibDe}, et plus rien à partir de 2060.`,
         "Le recalcul est maintenu. La version qui laisse le stock intact a été "
         + "chiffrée et écartée : même avec la TVA à taux unique, "
         + `${pt(m.solde_moyen_prospectif)} point de PIB par an en moyenne `
@@ -13717,7 +13887,7 @@ function programmeBlocages(contexte) {
         + "patronale comprise, les 18 % coûtent "
         + `${pt(m.cout_18_pour_cent)} points de PIB par an sur 2026-2070, `
         + `${md(m.cout_18_pour_cent)} ${auPibDe}, sous les mêmes règles de `
-        + "recette. La TVA à taux unique rapporte "
+        + "recette et l'âge légal de 65 ans compris. La TVA à taux unique rapporte "
         + `${pt(m.tva_affectee)} points de PIB par an de plus que les quatre `
         + `taux d'aujourd'hui, ${md(m.tva_affectee)}. Avec elle, la `
         + "proposition dégage en moyenne un excédent de "

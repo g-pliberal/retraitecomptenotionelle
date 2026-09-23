@@ -145,7 +145,7 @@ INDEXATIONS = [
 LISSAGE_MAXIMUM = 30
 
 AGES_REFERENCE = [
-    ("fixe_apres_bascule", "64 ans à partir de la bascule (défaut)"),
+    ("fixe_apres_bascule", "65 ans à partir de la bascule (défaut)"),
     ("cliquet_legal", "Cliquet légal"),
     ("cliquet_puis_esperance_vie", "Cliquet puis espérance de vie"),
     ("legal_sans_cliquet", "Âge légal, sans cliquet"),
@@ -2371,6 +2371,7 @@ def _programme(contexte: Contexte) -> str:
     haut, et le plan du site, que le bandeau porte sur chaque page
     (23 septembre 2026).
     """
+    base = contexte.base
     regimes = len(contexte.simulateur().catalogue)
 
     differences = g.tableau(
@@ -2384,9 +2385,15 @@ def _programme(contexte: Contexte) -> str:
              "un taux, une durée",
              "votre compte, divisé par votre espérance de vie"],
             *_ligne_du_montant(contexte.bilan().ecarts),
+            # L'âge de départ, que la proposition fixe pour tous : sans cette
+            # ligne, le tableau laissait croire qu'elle gardait ceux du droit.
+            *([["L'âge de départ",
+                "selon génération et statut",
+                f"{_age(base.age_legal_liberal)} pour tous, dès {base.annee_bascule}"]]
+              if base.age_legal_liberal is not None else []),
             ["Partir un an plus tôt",
-             f"une {g.terme('décote')}, dont le barème change à chaque réforme",
-             "un an de cotisation en moins, un an de pension en plus"],
+             f"une {g.terme('décote')}, au barème revu à chaque réforme",
+             "moins de cotisations, plus d'années de pension"],
             ["Changer de métier",
              "changer de régime, et de règle de calcul",
              "rien : le compte est le même"],
@@ -2642,6 +2649,11 @@ def _programme_questions(contexte: Contexte) -> str:
     seul = g.euros(base.garantie_vieillesse_mensuelle
                    + base.allocation_isolement_mensuelle)
     age = MinimumVieillesse.AGE_OUVERTURE
+    # L'âge minimum est celui de la proposition, et il se dit : le même pour
+    # tous, à compter de la bascule.
+    minimum = ("au-dessus d'un âge minimum" if base.age_legal_liberal is None else
+               f"à partir de {_age(base.age_legal_liberal)}, l'âge minimum de tous "
+               f"dès {base.annee_bascule}")
 
     # Les renvois. Vers une autre page, un lien ; vers un dépliant de celle-ci,
     # `data-vers`, que le script d'index.html ouvre sans toucher à la route.
@@ -2717,7 +2729,7 @@ revalorisée chaque année au rythme des salaires. Trimestres et points
 disparaissent, et avec eux les droits qu'aucune cotisation n'a payés :
 trimestres gratuits, majorations, minimums. {calcul}.</p>""", ""),
         ("À quel âge pourrai-je partir ?", f"""
-<p>C'est vous qui choisissez, au-dessus d'un âge minimum. Il n'y a plus d'âge
+<p>C'est vous qui choisissez, {minimum}. Il n'y a plus d'âge
 du {g.terme("taux plein")}, ni {g.terme("décote")}, ni {g.terme("surcote")} :
 <strong>partir plus tôt donne une pension plus faible, partir plus tard une
 pension plus forte</strong>, dans le rapport exact de ce que cela coûte. La
@@ -3394,8 +3406,9 @@ MESURES_BLOCAGES: dict[str, float] = {
     # solde_fusion.py, hypothèse A : le taux du régime unique du modèle, en %.
     "taux_regime_unique": 25.8,
     # Le scénario 4 sous A moins la proposition, solde moyen 2026-2070, en
-    # points de PIB : ce que coûtent les 18 %.
-    "cout_18_pour_cent": 2.4,
+    # points de PIB : ce que coûtent les 18 %, l'âge légal de 65 ans de la
+    # proposition compris — il en rend un demi-point.
+    "cout_18_pour_cent": 1.9,
     # Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
     # l'horizon, en points de PIB, en % du PIB et en valeur.
     # Avec la TVA à taux unique depuis le 23 septembre 2026 : la dette de
@@ -3414,8 +3427,8 @@ MESURES_BLOCAGES: dict[str, float] = {
     # stock intact, en points de PIB, TVA comprise.
     "solde_moyen_prospectif": -1.5,
     # stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au
-    # lieu de celui de 64 ans, en points de PIB par an.
-    "cout_diviseur_age_legal": 0.1,
+    # lieu de celui de 65 ans, en points de PIB par an.
+    "cout_diviseur_age_legal": 0.2,
 }
 
 
@@ -3468,9 +3481,9 @@ def _programme_blocages(contexte: Contexte) -> str:
              "pas été cotisé, l'indexation sur les prix est conservée, la garantie est "
              "relevée dans le même texte. L'objection la plus forte, celle de l'assuré "
              "parti à l'âge que sa loi lui ouvrait, a été chiffrée : lui prendre le "
-             "diviseur de 64 ans plutôt que celui de son âge coûte "
+             "diviseur de 65 ans plutôt que celui de son âge coûte "
              f"{pt(m['cout_diviseur_age_legal'])} point de PIB par an, "
-             f"{md(m['cout_diviseur_age_legal'])} {au_pib}, et plus rien en 2050.",
+             f"{md(m['cout_diviseur_age_legal'])} {au_pib}, et plus rien à partir de 2060.",
              "Le recalcul est maintenu. La version qui laisse le stock intact a été "
              "chiffrée et écartée : même avec la TVA à taux unique, "
              f"{pt(m['solde_moyen_prospectif'])} point de PIB par an en moyenne "
@@ -3481,7 +3494,7 @@ def _programme_blocages(contexte: Contexte) -> str:
              "patronale comprise, les 18 % coûtent "
              f"{pt(m['cout_18_pour_cent'])} points de PIB par an sur 2026-2070, "
              f"{md(m['cout_18_pour_cent'])} {au_pib}, sous les mêmes règles de "
-             "recette. La TVA à taux unique rapporte "
+             "recette et l'âge légal de 65 ans compris. La TVA à taux unique rapporte "
              f"{pt(m['tva_affectee'])} points de PIB par an de plus que les quatre "
              f"taux d'aujourd'hui, {md(m['tva_affectee'])}. Avec elle, la "
              "proposition dégage en moyenne un excédent de "
@@ -4730,6 +4743,18 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
             "suivantes."
         )
 
+    # Le système 4 a SA date quand l'âge légal de la proposition reporte le
+    # départ : son premier mois n'est pas celui des trois autres.
+    if comparaison.depart_reporte:
+        reportee = comparaison.carriere_liberal
+        quand += (
+            " Sauf celui du système 4 : la proposition fixe l'âge légal à "
+            f"{_age(comparaison.parametres.age_legal_liberal)}, et son montant "
+            "est celui de sa première pension, en "
+            f"{escape(str(reportee.date_liquidation))}, ramenée au même pouvoir "
+            "d'achat que les autres."
+        )
+
     if annee < courante:
         unites = (
             f"Ils sont donnés en euros de {courante}, ceux de cette année : "
@@ -4836,11 +4861,19 @@ def _corps_trajectoire(contexte: Contexte, comparaison: Comparaison,
         return ""
 
     annuel = {
-        cle: comparaison.en_euros_constants(getattr(comparaison, cle).pension_annuelle)
+        cle: comparaison.en_euros_constants(
+            getattr(comparaison, cle).pension_annuelle, cle)
         for cle, _, _ in TRAJECTOIRE
     }
     if max(annuel.values(), default=0.0) <= 0:
         return ""
+    # Chaque courbe part de SON départ : celui de la proposition peut être
+    # reporté à son âge légal, et elle ne verse rien avant. C'est ici, et
+    # nulle part ailleurs sur la page, que ces années sans pension se voient.
+    departs = {
+        cle: comparaison.carriere_de(cle).age_liquidation or 0.0
+        for cle, _, _ in TRAJECTOIRE
+    }
 
     ages = tuple(range(int(math.floor(depart)), AGE_MAXIMUM_TRAJECTOIRE + 1))
     titres = dict(_titres_scenarios(saisie))
@@ -4854,7 +4887,8 @@ def _corps_trajectoire(contexte: Contexte, comparaison: Comparaison,
             # précédent, soit jusqu'à onze mois de pension qui n'ont pas été
             # versés. La courbe commence maintenant au premier âge atteint.
             valeurs=tuple(
-                None if age < depart else annuel[cle] * (age - depart) / 1000
+                None if age < departs[cle]
+                else annuel[cle] * (age - departs[cle]) / 1000
                 for age in ages
             ),
             couleur=f"var({couleur})",
@@ -4883,6 +4917,15 @@ def _corps_trajectoire(contexte: Contexte, comparaison: Comparaison,
         + " que le système 1 ; l'écart se creuse ici d'autant d'années que la "
         "retraite dure"
     )
+    # Le report se lit sur le graphique ; encore faut-il dire pourquoi la
+    # quatrième courbe part plus tard que les autres.
+    phrase_report = ""
+    if comparaison.depart_reporte:
+        reporte = departs["notionnel_liberal"]
+        phrase_report = (
+            f" La courbe du système 4 part à {_age(reporte)}, l'âge légal de "
+            "la proposition : rien n'est versé avant"
+        )
     # Unité brève : le libellé est ancré à gauche de l'axe et déborderait du
     # cadre au-delà d'une poignée de caractères — « milliers d'euros de 2026,
     # cumulés » sortait du viewBox par la gauche, et « k€ 2026 » y perdait
@@ -4935,7 +4978,7 @@ les additionne, année après année, à mesure que le retraité vieillit.{g.bul
 <p>Trait vertical : l'espérance de vie à {_age(depart)} —
 <strong>{g.nombre(esperance, 1)} ans</strong>, soit {g.nombre(age_esperance, 1)}
 ans d'âge, le nombre par lequel le capital notionnel est divisé.
-{phrase_ecart}.{g.bulle(
+{phrase_ecart}.{phrase_report}{"." if phrase_report else ""}{g.bulle(
     "Une moyenne, et non une échéance",
     "D'après la même table, "
     f"<strong>{vivants(age_esperance)}</strong> de ceux qui partent à "
@@ -5229,18 +5272,30 @@ def _financements(contexte: Contexte,
              if comparaison.aujourd_hui is not None else carriere.annee_liquidation)
     if debut < bilan.premiere_annee:
         return {}
-    survie = _survie(contexte, carriere,
-                     comparaison.notionnel_retroactif.conversion.table)
+    table = comparaison.notionnel_retroactif.conversion.table
     # Le poids d'une année est la part des partants encore en vie EN SON
     # MILIEU : une pension servie du 1er janvier au 31 décembre l'est à une
     # population qui décroît pendant l'année, et prendre la part du 1er
     # janvier la surestimerait d'une demi-année de mortalité.
-    ecoule = debut - carriere.annee_liquidation
-    poids = tuple(_part_vivante(survie, ecoule + rang + 0.5)
-                  for rang in range(max(len(survie) - 1 - ecoule, 0)))
+    #
+    # Une courbe PAR DÉPART : celui de la proposition peut être reporté à son
+    # âge légal, et sa pension est alors servie à partir d'une autre année,
+    # à des survivants d'un autre âge.
+    poids_par_depart: dict[int, tuple[int, tuple[float, ...]]] = {}
     financements = {}
     for cle, scenario in SCENARIOS_DES_BARRES.items():
-        part = financer(bilan, bilan.assiette, scenario, debut, poids)
+        depart = comparaison.carriere_de(scenario)
+        if id(depart) not in poids_par_depart:
+            debut_depart = (
+                max(depart.annee_liquidation, comparaison.parametres.annee_courante)
+                if comparaison.aujourd_hui is not None else depart.annee_liquidation)
+            ecoule = debut_depart - depart.annee_liquidation
+            survie = _survie(contexte, depart, table)
+            poids_par_depart[id(depart)] = (debut_depart, tuple(
+                _part_vivante(survie, ecoule + rang + 0.5)
+                for rang in range(max(len(survie) - 1 - ecoule, 0))))
+        debut_depart, poids = poids_par_depart[id(depart)]
+        part = financer(bilan, bilan.assiette, scenario, debut_depart, poids)
         if part is not None:
             financements[cle] = part
     return financements
@@ -5735,12 +5790,16 @@ def _montants_affiches(comparaison: Comparaison
     # proposition rend et que le site suppose remis au compte. Elle est nommée
     # à part sous la barre : c'est la seule ligne de la page que personne
     # n'impose, et le lecteur doit pouvoir la retrancher de l'œil.
-    return ({cle: comparaison.en_euros_constants(montant)
+    # Chaque montant en euros constants de SON départ : celui de la
+    # proposition peut être reporté par son âge légal de 65 ans.
+    return ({cle: comparaison.en_euros_constants(montant, SCENARIOS_DES_BARRES[cle])
              for cle, montant in courants.items()},
             comparaison.en_euros_constants(
-                comparaison.notionnel_liberal.rente_capitalisation_obligatoire),
+                comparaison.notionnel_liberal.rente_capitalisation_obligatoire,
+                "notionnel_liberal"),
             comparaison.en_euros_constants(
-                comparaison.notionnel_liberal.rente_capitalisation_volontaire))
+                comparaison.notionnel_liberal.rente_capitalisation_volontaire,
+                "notionnel_liberal"))
 
 
 def _ecarts_affiches(comparaison: Comparaison,
@@ -5935,7 +5994,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
   </div>{partage}
   <div class="barre {cle}">{barre}</div>
   <div class="glose">{glose} · {g.terme("taux de remplacement")}
-    {g.pourcentage(montants.taux_remplacement(taux_remplacement))} ·
+    {g.pourcentage(montants.taux_remplacement(taux_remplacement, cle == "liberal"))} ·
     écart au système actuel : {variation_html}{_glose_financement(finance)}</div>
 </div>"""
 
@@ -6039,6 +6098,8 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             "servirait.</span></p>"
         )
 
+    report = _report_proposition(comparaison)
+
     fiabilite = (
         '<p class="discret" style="margin-top:1.5rem">Fiabilité du résultat : '
         f'<span class="etiquette-fiabilite">{escape(g.fiabilite_en_clair(comparaison.fiabilite))}'
@@ -6096,6 +6157,7 @@ et, quand ses recettes n'y suffisent pas, ce qu'elles en paient
   {capitalisation}
   {minimum}
   {ouverture}
+  {report}
 </div>
 <div class="carte">
   <div class="fiches">{fiches}</div>
@@ -6304,6 +6366,34 @@ chaque régime — et non par les prix. Le tableau refait le chemin.</p>
 {reserve}
 """, identifiant="resultats-aujourdhui")
 
+def _report_proposition(comparaison: Comparaison) -> str:
+    """Ce que l'âge légal de la proposition fait au départ, quand il le reporte.
+
+    Le montant du système 4 n'est alors pas servi à la même date que les trois
+    autres : il l'est à 65 ans, après des années de travail et de cotisation
+    que les autres ne comptent pas. Le taire ferait lire côte à côte deux
+    pensions qui ne commencent pas le même mois, et prendre pour un gain du
+    compte ce qui est d'abord un départ plus tardif.
+    """
+    if not comparaison.depart_reporte:
+        return ""
+    initiale = comparaison.carriere
+    reportee = comparaison.carriere_liberal
+    ecart = reportee.age_liquidation - (initiale.age_liquidation or 0.0)
+    return (
+        "<p class=\"note\"><strong>La proposition fixe l'âge légal de départ à "
+        f"{_age(comparaison.parametres.age_legal_liberal)}.</strong> Sous elle, "
+        f"vous ne partiriez pas à {_age(initiale.age_liquidation or 0.0)} mais à "
+        f"{_age(reportee.age_liquidation)}, en {escape(str(reportee.date_liquidation))} : "
+        "le montant du système 4 est celui de ce départ-là, servi "
+        f"{_age(ecart)} plus tard que les trois autres. Jusque-là, vous restez "
+        "dans la situation de votre dernière année — le même statut, le même "
+        "salaire relatif —, et vous cotisez. Des cotisations en plus et une "
+        "retraite plus courte font une pension mensuelle plus forte ; ce que "
+        "le report retire, ce sont les mois de pension d'avant cet âge, et le "
+        "graphique « Ce que chaque système finit par verser » les montre.</p>"
+    )
+
 
 NATURES_PART_EMPLOYEUR = {
     "appelee": "contribution appelée par décret ou par arrêté",
@@ -6358,7 +6448,7 @@ les trois scénarios macroéconomiques, parce qu'aucun d'eux ne s'y applique.</p
             continue
         montants[code] = {
             scenario: variante.en_euros_constants(
-                getattr(variante, scenario).pension_annuelle)
+                getattr(variante, scenario).pension_annuelle, scenario)
             for scenario, _ in SCENARIOS_AFFICHES
         }
 
@@ -6536,7 +6626,9 @@ def _pilier_capitalise(comparaison: Comparaison, saisie: Saisie) -> str:
     taux_impose = g.pourcentage(pilier.taux_cotisation_obligatoire, decimales=0)
     taux_volontaire = g.pourcentage(pilier.taux_cotisation_volontaire, decimales=0)
     avec_volontaire = pilier.taux_cotisation_volontaire > 0
-    depart = comparaison.carriere.annee_liquidation
+    # L'année du départ DE LA PROPOSITION : le pilier est le sien, et son âge
+    # légal peut l'avoir reportée après celle des autres systèmes.
+    depart = comparaison.carriere_de("notionnel_liberal").annee_liquidation
     # Ce qui est imposé, puis ce qui est libre : « 10 % placés » additionnait
     # une cotisation obligatoire et une épargne que personne n'impose.
     titre = (f"Le pilier capitalisé : {taux_impose} obligatoires dès "
@@ -6752,14 +6844,30 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
     if garantie is None:
         return ""
     parametres = comparaison.parametres
-    annee = comparaison.carriere.annee_liquidation
+    # La garantie est chiffrée en euros du départ DE LA PROPOSITION, que son
+    # âge légal peut avoir reporté après celui des autres systèmes.
+    depart = comparaison.carriere_de("notionnel_liberal")
+    annee = depart.annee_liquidation
     bascule = parametres.annee_bascule
     capital_4 = comparaison.notionnel_retroactif_employeur.capital_notionnel
     # Les années cotisées à 18 % : celles de la bascule au départ. Avant, le
     # compte est celui du système 3, et le capital ne s'en écarte pas.
     annees_18 = [c.annee for c in liberal.compte.cotisations
                  if c.annee >= bascule and not c.nulle]
-    if annees_18:
+    if annees_18 and comparaison.depart_reporte:
+        # Deux départs, donc deux unités : chaque capital est dit dans les
+        # euros de SON année, et la phrase le nomme plutôt que de les opposer
+        # comme s'ils se comparaient terme à terme.
+        taux_unique = (
+            f"Ici, les années {annees_18[0]} à {annees_18[-1]} sont cotisées à "
+            f"{{taux}} ; celles d'avant {bascule} le sont aux taux réels, et le "
+            f"capital vaut {g.euros(liberal.capital_notionnel)} en euros de "
+            f"{annee}, au départ de la proposition, contre "
+            f"{g.euros(capital_4)} en euros de "
+            f"{comparaison.carriere.annee_liquidation} pour le système 3, qui "
+            "part plus tôt."
+        )
+    elif annees_18:
         taux_unique = (
             f"Ici, les années {annees_18[0]} à {annees_18[-1]} sont cotisées à "
             f"{{taux}} ; celles d'avant {bascule} le sont aux taux réels, et le "
@@ -6846,7 +6954,7 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
     elif garantie.differee:
         lecture = (
             f"<p>Ici, la liquidation a lieu à "
-            f"{_age(comparaison.carriere.age_liquidation or 0.0)}, avant les 65 ans "
+            f"{_age(depart.age_liquidation or 0.0)}, avant les 65 ans "
             f"de l'allocation : rien n'est servi jusqu'en "
             f"{garantie.annee_ouverture}. À partir de là, la pension "
             f"obligatoire — {g.euros_centimes(garantie.ressources / 12)} par "
@@ -6887,21 +6995,39 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
             detail if detail else "—",
         ])
 
+    # Ce que le système 4 change au système 3 : deux choses, et une troisième
+    # tant que la proposition porte un âge légal.
+    age_legal = parametres.age_legal_liberal
+    ce_qui_change = (
+        "Il est le système 3 — même compte rétroactif, cotisation salariale et "
+        "patronale confondues, "
+        + ("" if age_legal is not None else "mêmes âges, ")
+        + "même indexation, même liquidation — à "
+        + ("trois" if age_legal is not None else "deux")
+        + f" différences près. La première : à compter de {bascule}, un taux "
+        f"unique de {taux}, parts salariale et patronale additionnées, le même "
+        "pour tous les statuts, prélevé une fois sur la rémunération. Ce qui a "
+        f"été cotisé avant {bascule} reste porté au compte tel qu'il a été "
+        "prélevé, aux taux réels de chaque régime : sur ces années-là, le 4 est "
+        "le 3. " + taux_unique.format(taux=taux)
+        + (" La deuxième" if age_legal is not None else " La seconde")
+        + " : une garantie vieillesse qui remplace l'ASPA."
+    )
+    if age_legal is not None:
+        ce_qui_change += (
+            f" La troisième : un âge légal de départ de {_age(age_legal)} à "
+            f"compter de {bascule} — qui serait parti plus tôt travaille "
+            "jusque-là"
+            + (", et c'est votre cas." if comparaison.depart_reporte else ".")
+        )
+
     return g.depliant(
         "Le système 4 : un taux pour tous, et une garantie payée par l'impôt",
         f"""
 <p>La garantie vieillesse, étape par étape, en euros de {annee} — l'année du
-départ.{g.bulle(
+départ{" sous la proposition" if comparaison.depart_reporte else ""}.{g.bulle(
     "Ce que le système 4 change au système 3",
-    "Il est le système 3 — même compte rétroactif, cotisation salariale et "
-    "patronale confondues, mêmes âges, même indexation, même liquidation — à "
-    f"deux différences près. La première : à compter de {bascule}, un taux "
-    f"unique de {taux}, parts salariale et patronale additionnées, le même "
-    "pour tous les statuts, prélevé une fois sur la rémunération. Ce qui a été "
-    f"cotisé avant {bascule} reste porté au compte tel qu'il a été prélevé, "
-    "aux taux réels de chaque régime : sur ces années-là, le 6 est le 4. "
-    + taux_unique.format(taux=taux) +
-    " La seconde : une garantie vieillesse qui remplace l'ASPA.",
+    ce_qui_change,
 )}</p>
 {g.tableau(
     ["Étape", "Ce qu'elle fait", "Résultat"],
@@ -7006,14 +7132,20 @@ class Montants:
         # Le rapport net/brut du salaire se lit sur la DERNIÈRE fiche de paie
         # de la carrière, celle de l'année du départ : c'est l'année dont le
         # revenu sert de dénominateur au taux de remplacement.
-        rapport = 0.0
+        # La proposition a SA fiche de paie : elle prélève moins sur le même
+        # brut, et le dernier salaire net auquel sa pension se compare est le
+        # sien — celui que la ligne affiche à côté de sa pension.
+        rapport = rapport_proposition = 0.0
         remuneration = getattr(comparaison, "remuneration", None)
         if remuneration is not None:
-            derniere = remuneration.annees[-1].droit_en_vigueur
-            if derniere.brut > 0:
-                rapport = derniere.net / derniere.brut
+            derniere = remuneration.annees[-1]
+            if derniere.droit_en_vigueur.brut > 0:
+                rapport = derniere.droit_en_vigueur.net / derniere.droit_en_vigueur.brut
+            if derniere.proposition.brut > 0:
+                rapport_proposition = derniere.proposition.net / derniere.proposition.brut
         return cls(net=saisie.en_net, taux_pension=pensions.taux_total,
-                   rapport_net_brut_salaire=rapport)
+                   rapport_net_brut_salaire=rapport,
+                   rapport_net_brut_proposition=rapport_proposition)
 
     def pension(self, brut: float) -> float:
         """Une pension, une rente, une garantie : tout ce qui se sert après."""
@@ -7023,7 +7155,7 @@ class Montants:
         """Un salaire, lu sur la fiche de paie qui porte déjà les deux."""
         return fiche.net if self.net else fiche.brut
 
-    def taux_remplacement(self, taux_brut: float) -> float:
+    def taux_remplacement(self, taux_brut: float, proposition: bool = False) -> float:
         """Le taux de remplacement, dans la langue du mode.
 
         Le modèle le calcule brut sur brut : une pension brute rapportée au
@@ -7036,16 +7168,25 @@ class Montants:
         Le taux net vaut donc le taux brut multiplié par le rapport des deux
         prélèvements. C'est un fait connu, et rarement montré : en France, le
         taux de remplacement net dépasse le taux brut de plusieurs points.
+
+        ``proposition`` prend le rapport de SA fiche de paie : le même brut y
+        laisse un net plus élevé, et le taux de la proposition se comparait
+        jusqu'au 22 septembre 2026 au net du droit en vigueur, qu'elle ne
+        prélève pas.
         """
-        if not self.net or self.rapport_net_brut_salaire <= 0:
+        rapport = (self.rapport_net_brut_proposition if proposition
+                   else self.rapport_net_brut_salaire)
+        if not self.net or rapport <= 0:
             return taux_brut
-        return taux_brut * (1.0 - self.taux_pension) / self.rapport_net_brut_salaire
+        return taux_brut * (1.0 - self.taux_pension) / rapport
 
     #: Ce qu'un euro de salaire brut laisse en net, au DERNIER revenu
     #: d'activité — le dénominateur du taux de remplacement. Zéro quand le
     #: statut n'a pas de fiche de paie : le taux reste alors brut, faute de
     #: pouvoir le netter honnêtement.
     rapport_net_brut_salaire: float = 0.0
+    #: Le même, sur la fiche de paie de la PROPOSITION.
+    rapport_net_brut_proposition: float = 0.0
 
     @property
     def mot(self) -> str:
@@ -7914,7 +8055,8 @@ GRILLES_CAS_TYPES: tuple[tuple[str, str, str, str, str], ...] = (
         "elle ne joue que pour qui cotise après la bascule, et d'autant plus "
         "qu'il lui reste d'années à courir — la page Simuler en donne le "
         "partage, carrière par carrière. La garantie, elle, ne se voit que sur "
-        "les cas dont la pension reste sous le plancher, à partir de 65 ans.",
+        "les cas dont la pension reste sous le plancher, à partir de 65 ans. "
+        "Nul n'y part avant 65 ans après la bascule.",
     ),
     (
         "notionnel_retroactif",
@@ -8097,13 +8239,18 @@ def _deplacement_des_ecarts(resultat, solde, scenario: str) -> tuple[float, int]
             if comparaison is None:
                 continue
             ligne = solde.annee(comparaison.carriere.annee_liquidation)
-            if ligne is None:
+            # Chaque système à l'équilibre de SON année de départ : celle de la
+            # proposition peut suivre de quelques années celle de l'étalon.
+            ligne_scenario = solde.annee(
+                comparaison.carriere_de(scenario).annee_liquidation)
+            if ligne is None or ligne_scenario is None:
                 continue
             reference = ligne.coefficient("actuel")
             if reference <= 0.0:
                 continue
             ecart = comparaison.variation_totale(scenario)
-            equilibre = (1.0 + ecart) * ligne.coefficient(scenario) / reference - 1.0
+            equilibre = ((1.0 + ecart) * ligne_scenario.coefficient(scenario)
+                         / reference - 1.0)
             deplacements.append(abs(equilibre - ecart))
     if not deplacements:
         return 0.0, 0
@@ -8220,7 +8367,7 @@ de chaque système paient de la pension qu'il promet.""")
         ) + g.fiche(
             "Ce qui les sépare",
             g.nombre((haut[0] - bas[0]) * 100, 0) + " points",
-            "à carrière et à durée identiques",
+            "à carrière identique jusqu'au départ",
         )
 
     # Les onglets, puis les panneaux : deux frères, pour que la feuille de
@@ -8268,6 +8415,15 @@ de chaque système paient de la pension qu'il promet.""")
         "Qui sont ces treize carrières",
         g.gloses([(cas.libelle, cas.commentaire) for cas in CAS_TYPES]),
     )
+    # Les âges du tableau sont ceux du droit en vigueur ; la proposition en
+    # a un autre, et la grille de son onglet le suit.
+    age_legal = simulateur.parametres.age_legal_liberal
+    mention_proposition = "" if age_legal is None else (
+        " Ce sont les âges du tableau ci-dessous, ceux des systèmes 1 à 3. La "
+        f"proposition, elle, fixe un âge légal de {_age(age_legal)} : qui part "
+        f"plus tôt à compter de {simulateur.parametres.annee_bascule} part à "
+        "cet âge dans la grille du système 4, et travaille jusque-là."
+    )
     depliant_ages = g.depliant(
         "À quel âge chacun part, et pourquoi ce n'est pas le même",
         '<p class="discret">Un cas type ne porte pas un âge de départ mais une '
@@ -8275,7 +8431,8 @@ de chaque système paient de la pension qu'il promet.""")
         "au taux plein, le premier âge auquel la pension est servie entière, "
         "qui dépend à la fois de l'âge légal et de la durée requise de la "
         "génération. Ceux dont un statut commande le départ (catégorie active, agent de conduite, agent des IEG) partent à l'âge que ce statut leur "
-        "ouvre. Le militaire, lui, part à une DURÉE de services, pas à un âge.</p>" + ages,
+        "ouvre. Le militaire, lui, part à une DURÉE de services, pas à un âge."
+        + mention_proposition + "</p>" + ages,
     )
 
     tete = g.affiche(
@@ -10322,10 +10479,14 @@ MARCHES_SYSTEMES: dict[str, tuple[str, str]] = {
         "ce que l'employeur verse ouvre désormais un droit à celui qui le voit "
         "passer ; c'est la seule chose qui sépare cette marche de la précédente",
     ),
+    # La marche de la proposition porte AUSSI son âge légal : les deux mesures
+    # ne sont pas calculées l'une sans l'autre, et la marche le dit plutôt que
+    # de prêter au taux ce que le report fait.
     "notionnel_liberal": (
-        "Cotisation unique de {taux}",
+        "Cotisation unique de {taux}{et_age}",
         "un taux unique pour tous les statuts, parts salariale et patronale "
-        "additionnées, sur les seuls droits acquis à compter de {bascule}",
+        "additionnées, sur les seuls droits acquis à compter de {bascule}"
+        "{glose_age}",
     ),
 }
 
@@ -10367,11 +10528,17 @@ def _libelles_cascade(contexte: Contexte, part_derives: float,
     sans qu'une ligne de code soit fautive.
     """
     base = contexte.base
+    age = base.age_legal_liberal
     return {
         "taux": g.pourcentage(base.taux_cotisation_liberal, decimales=0),
         "bascule": str(base.annee_bascule),
         "reversion": g.pourcentage(part_derives, decimales=1),
         "reprise": g.pourcentage(part_reprise, decimales=0),
+        "et_age": "" if age is None else f", départ à {_age(age)}",
+        "glose_age": "" if age is None else (
+            f" ; et un âge légal de {_age(age)} : qui partait plus tôt part "
+            "plus tard, et touche une pension plus forte moins longtemps"
+        ),
     }
 
 
@@ -11364,6 +11531,31 @@ def _cout_detail_postes(contexte: Contexte) -> str:
     garantie_meur = bilan.garantie_meur
     capitalise = bilan.capitalise
 
+    # L'âge légal de la proposition ÉLARGIT l'assiette : qui partait avant
+    # 65 ans cotise jusque-là. Le facteur est celui du bilan, lu sur la
+    # grille ; la note le dit dès qu'il s'écarte de un.
+    elargie = suit_l_emploi = ""
+    if ligne.recette_par_assiette and ligne.facteur_assiette > 1.0 + 1e-9:
+        age_legal = _age(base.age_legal_liberal or 0.0)
+        elargie = (
+            ", sur une assiette élargie de "
+            f"{g.pourcentage(ligne.facteur_assiette - 1.0, decimales=1)} en "
+            f"{annee} par l'âge légal de {age_legal} : qui serait parti plus "
+            "tôt travaille et cotise jusque-là"
+        )
+        suit_l_emploi = (
+            " Elle suit aussi l'emploi, et pour le seul système 4 encore : son "
+            f"âge légal de {age_legal} fait travailler jusque-là qui serait "
+            "parti plus tôt, et l'assiette que le COR projette aux âges "
+            "d'aujourd'hui grandit d'autant : "
+            f"{g.pourcentage(ligne.facteur_assiette - 1.0, decimales=1)} en "
+            f"{annee}. C'est un plafond : le modèle suppose que tous ceux que "
+            "le report fait attendre sont en emploi jusqu'à cet âge, comme "
+            "les carrières de sa grille le sont jusqu'à leur départ ; qui "
+            "arrive à l'âge légal au chômage ou en invalidité ne cotise pas "
+            "davantage pour autant."
+        )
+
     def cellules(valeur: float, total: float, absent: bool = False) -> list[str]:
         """Milliards, part de PIB, part du total — ou trois tirets."""
         if absent:
@@ -11467,7 +11659,7 @@ système ne compte pas.</p>
 Les cotisations deviennent
 {g.pourcentage(base.taux_cotisation_liberal, decimales=0)} de l'assiette des
 revenus d'activité, parts salariale et patronale additionnées, pour tous les
-statuts. Trois postes disparaissent : la contribution d'équilibre de l'État,
+statuts{elargie}. Trois postes disparaissent : la contribution d'équilibre de l'État,
 remplacée par ces {g.pourcentage(base.taux_cotisation_liberal, decimales=0)}
 appliqués aux traitements des fonctionnaires ; les subventions d'équilibre,
 dont la fusion des régimes supprime l'objet ; les impôts et taxes affectés, qui
@@ -11483,7 +11675,7 @@ donne quatre lectures sur la distribution de l'enquête. Le pilier
 capitalisé ne passe pas par les caisses et n'est ni une ressource ni une
 dépense du système : il est rappelé pour que rien ne manque.</div>
 
-<div class="note"><strong>La recette réagit sur trois points, et sur trois
+<div class="note"><strong>La recette réagit sur {"quatre" if elargie else "trois"} points, et sur {"quatre" if elargie else "trois"}
 seulement.</strong> Elle suit le droit : ce que la branche famille et le fonds
 de solidarité vieillesse versent pour des droits que les systèmes notionnels ne
 servent pas leur est retiré, un peu plus d'un point de PIB :
@@ -11495,7 +11687,7 @@ système 4 : un compte notionnel ne crédite que ce qui est assis sur un revenu
 d'activité, et ce système ne reconduit donc aucune des trois ressources qui
 n'acquièrent de droits à personne, celles que la note du dessus nomme. Trois
 postes : 27 % des ressources en 2024, 29 % en 2070. Les cinq autres systèmes
-les encaissent tous, faute qu'aucun programme dise ce qu'il en ferait.</div>
+les encaissent tous, faute qu'aucun programme dise ce qu'il en ferait.{suit_l_emploi}</div>
 
 {_cout_note_tva(contexte, annee, ligne, pib, annee_pib)}
 

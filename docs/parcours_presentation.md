@@ -86,10 +86,10 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   régime, et de règle de calcul → rien, le compte est le même » et « Tenir
   l'équilibre : une réforme tous les huit ans en moyenne → un chiffre publié
   chaque année ». Et une à ne pas sauter, parce que la salle la cherche :
-  « Votre retraite : ce que votre régime promet → de l'ordre d'un quart à un
-  tiers de moins, en médiane ». La première des « Vos questions », « Ma
-  retraite va-t-elle baisser ? », en donne le détail : 31 % pour qui n'est
-  pas encore à la retraite, 25 % s'il place les cinq points rendus, 26 % sur
+  « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de moins,
+  en médiane ». La première des « Vos questions », « Ma
+  retraite va-t-elle baisser ? », en donne le détail : 23 % pour qui n'est
+  pas encore à la retraite, 11 % s'il place les cinq points rendus, 26 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -166,7 +166,9 @@ C'est ainsi que sont faites les trois adresses ci-dessous.
 
 Chaque adresse ouvre le simulateur avec la carrière déjà calculée. Toutes
 sont nées en janvier 1975 et partent en janvier 2039 à 64 ans, sauf la
-dernière. Les montants sont nets, par mois, en euros de 2026.
+dernière — et la proposition, dont l'âge légal est de 65 ans, les fait toutes
+partir un an plus tard : le site le dit sous les résultats. Les montants sont
+nets, par mois, en euros de 2026.
 
 **Au SMIC toute sa vie**, salarié du privé non cadre depuis 1996 à 1 443 €
 net :
@@ -176,13 +178,14 @@ net :
 |---|---|---|
 | 1. Actuel | 1 240 € | référence |
 | 3. Ce qui a été cotisé, deux parts | 990 € | -20,1 % |
-| 4. La proposition | 1 012 € | -18,4 % |
+| 4. La proposition | 1 086 € | -12,4 % |
 
-À montrer avec le plancher en tête : la garantie vieillesse, 1 050 € pour
-une personne seule dès 65 ans, passe au-dessus de cette pension. Elle n'est
-pas dans la ligne parce que cette carrière part à 64 ans, un an avant l'âge
-de la garantie ; le dépliant « Le système 4 : un taux pour tous, et une
-garantie payée par l'impôt », sous les résultats, en donne la règle.
+À montrer avec le plancher en tête : la garantie vieillesse, 1 050 € brut
+pour une personne seule dès 65 ans. Sous la proposition, cette carrière part
+à 65 ans, avec une année de cotisation en plus et un diviseur plus petit, et
+sa pension passe au-dessus du plancher : la garantie ne lui sert rien. Le
+dépliant « Le système 4 : un taux pour tous, et une garantie payée par
+l'impôt », sous les résultats, en donne la règle.
 
 **Fonctionnaire titulaire de l'État**, entré en septembre 1998, 3 000 € net :
 <https://g-pliberal.github.io/retraitecomptenotionelle/#/simuler?naissance=1975-01-01&debut=1998-09-01&statut=fonctionnaire_etat&salaire=3000&unite_revenu=euros_mois&montants=net&liquidation=2039-01-01>
@@ -191,7 +194,7 @@ garantie payée par l'impôt », sous les résultats, en donne la règle.
 |---|---|---|
 | 1. Actuel | 2 755 € | référence |
 | 3. Ce qui a été cotisé, deux parts | 3 465 € | +25,8 % |
-| 4. La proposition | 3 504 € | +27,2 % |
+| 4. La proposition | 3 673 € | +33,3 % |
 
 C'est le cas qui surprend, et il faut savoir le dire : l'État employeur
 cotise pour ses fonctionnaires bien au-delà de ce qu'un employeur privé verse
@@ -207,7 +210,7 @@ septembre 2022, départ en janvier 2064 à 64 ans :
 |---|---|---|
 | 1. Actuel | 2 441 € | référence |
 | 3. Ce qui a été cotisé, deux parts | 1 556 € | -36,3 % |
-| 4. La proposition | 1 795 € | -26,5 % |
+| 4. La proposition | 1 917 € | -21,5 % |
 
 C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large
@@ -230,10 +233,13 @@ moins. Vert : plus.
 
 Trois choses à montrer :
 
-- Les deux cartes en tête : la carrière la mieux traitée (chef d'exploitation
-  agricole, +2 % pour la génération 2000) et la moins bien traitée (agent
-  des industries électriques et gazières, -47 %), et les 49 points qui les
-  séparent à carrière et à durée identiques.
+- Les deux cartes en tête : la carrière la mieux traitée (militaire non
+  officier, +87 % pour la génération 2000) et la moins bien traitée (carrière
+  interrompue, -37 %), et les 124 points qui les séparent. Dire aussitôt
+  d'où vient le premier : le droit en vigueur laisse ce militaire partir à
+  44 ans, après vingt-cinq ans de services, et la proposition le fait servir
+  jusqu'à 65 ans —
+  une pension mensuelle bien plus forte, servie vingt et un ans plus tard.
 - La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -56 %
   pour la génération 1940 à +42 % pour la génération 1970 : la même règle
   donne des résultats opposés selon ce que l'État a réellement cotisé à

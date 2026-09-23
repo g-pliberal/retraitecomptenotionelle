@@ -175,11 +175,47 @@ class Comparaison:
     #: ``parametres.annee_euros_constants`` : le pendant, pour les montants
     #: d'aujourd'hui, de :attr:`coefficient_euros_constants`.
     coefficient_euros_aujourd_hui: float = 1.0
+    #: La carrière sur laquelle la PROPOSITION est calculée, quand son âge
+    #: légal de 65 ans reporte le départ : la même, poursuivie jusqu'à cet âge
+    #: (voir :meth:`Simulateur.carriere_proposition`). ``None`` quand le
+    #: départ n'est pas reporté — le scénario 6 part alors avec les autres.
+    carriere_liberal: Carriere | None = None
+    #: Les deux grandeurs qui dépendent de la DATE du départ, prises à celle du
+    #: scénario 6 quand elle est reportée : le passage aux euros constants, et
+    #: le dernier revenu du taux de remplacement.
+    coefficient_euros_constants_liberal: float | None = None
+    dernier_revenu_annualise_liberal: float | None = None
 
     # -- indicateurs ---------------------------------------------------------
 
-    def en_euros_constants(self, montant: float) -> float:
-        return montant * self.coefficient_euros_constants
+    @property
+    def depart_reporte(self) -> bool:
+        """L'âge légal de la proposition reporte-t-il le départ du scénario 6 ?"""
+        return self.carriere_liberal is not None
+
+    def _reporte(self, scenario: str | None) -> bool:
+        return scenario == "notionnel_liberal" and self.depart_reporte
+
+    def carriere_de(self, scenario: str) -> Carriere:
+        """La carrière sur laquelle ce scénario est calculé."""
+        return self.carriere_liberal if self._reporte(scenario) else self.carriere
+
+    def coefficient_de(self, scenario: str | None) -> float:
+        """Le passage aux euros constants des montants de ce scénario.
+
+        Chaque montant est en euros courants de SON année de liquidation. Le
+        scénario 6, quand son départ est reporté, liquide plus tard que les
+        autres : ses montants ne se comparent aux leurs qu'une fois ramenés,
+        chacun par son propre coefficient, aux euros de la même année.
+        """
+        if self._reporte(scenario):
+            return self.coefficient_euros_constants_liberal
+        return self.coefficient_euros_constants
+
+    def en_euros_constants(self, montant: float, scenario: str | None = None) -> float:
+        """Un montant de ``scenario`` en euros constants — l'étalon et les
+        scénarios 2 à 5 si ``scenario`` est omis."""
+        return montant * self.coefficient_de(scenario)
 
     def aujourd_hui_en_euros_constants(self, montant: float) -> float:
         """Un montant d'aujourd'hui, dans les euros constants de la page."""
@@ -213,12 +249,22 @@ class Comparaison:
         )
 
     def variation(self, scenario: str) -> float:
-        """Écart relatif d'un scénario notionnel au système actuel."""
+        """Écart relatif d'un scénario notionnel au système actuel.
+
+        En euros constants quand le scénario liquide à une autre date que
+        l'étalon : deux montants courants d'années différentes ne se divisent
+        pas l'un par l'autre.
+        """
+        return self._ecart(getattr(self, scenario).pension_annuelle, scenario)
+
+    def _ecart(self, montant: float, scenario: str) -> float:
         reference = self.actuel.pension_annuelle
         if reference <= 0:
             return float("nan")
-        cible = getattr(self, scenario).pension_annuelle
-        return cible / reference - 1.0
+        if not self._reporte(scenario):
+            return montant / reference - 1.0
+        return (self.en_euros_constants(montant, scenario)
+                / self.en_euros_constants(reference) - 1.0)
 
     @property
     def taux_remplacement_actuel(self) -> float:
@@ -232,16 +278,21 @@ class Comparaison:
     def taux_remplacement_prospectif(self) -> float:
         return self._taux(self.notionnel_prospectif.pension_annuelle)
 
-    def _taux(self, pension: float) -> float:
-        """Pension rapportée au dernier revenu d'activité, à la date du départ."""
-        revenu = self.dernier_revenu_annualise
+    def _taux(self, pension: float, scenario: str | None = None) -> float:
+        """Pension rapportée au dernier revenu d'activité, à la date du départ.
+
+        À la date du départ DU SCÉNARIO : le scénario 6 reporté se rapporte au
+        dernier revenu de la carrière prolongée, ramené à son année.
+        """
+        revenu = (self.dernier_revenu_annualise_liberal if self._reporte(scenario)
+                  else self.dernier_revenu_annualise)
         if pension <= 0 or revenu <= 0:
             return 0.0
         return pension / revenu
 
     def taux_remplacement(self, scenario: str) -> float:
         """Taux de remplacement de n'importe lequel des scénarios notionnels."""
-        return self._taux(getattr(self, scenario).pension_annuelle)
+        return self._taux(getattr(self, scenario).pension_annuelle, scenario)
 
     # -- avec le pilier capitalisé ------------------------------------------
     #
@@ -267,13 +318,10 @@ class Comparaison:
 
     def variation_totale(self, scenario: str) -> float:
         """Écart au système actuel, pilier capitalisé compris."""
-        reference = self.actuel.pension_annuelle
-        if reference <= 0:
-            return float("nan")
-        return self.pension_totale(scenario) / reference - 1.0
+        return self._ecart(self.pension_totale(scenario), scenario)
 
     def taux_remplacement_total(self, scenario: str) -> float:
-        return self._taux(self.pension_totale(scenario))
+        return self._taux(self.pension_totale(scenario), scenario)
 
     # -- restitution ---------------------------------------------------------
 
@@ -304,7 +352,8 @@ class Comparaison:
         ]
 
         def ligne(nom: str, montant: float,
-                  ecart_relatif: float | str | None) -> str:
+                  ecart_relatif: float | str | None,
+                  scenario: str | None = None) -> str:
             # Trois cas, et le troisième compte : l'étalon porte « réf. », un
             # scénario porte son écart, et une ligne qui ne se compare à rien —
             # un compartiment servi à part — ne porte rien du tout. Elle
@@ -314,7 +363,7 @@ class Comparaison:
             else:
                 variation = ("réf." if ecart_relatif is None
                              else f"{ecart_relatif:+.1%}")
-            constant = self.en_euros_constants(montant)
+            constant = self.en_euros_constants(montant, scenario)
             return (
                 f"{nom:<62} {montant:>10,.0f}€ {constant:>10,.0f}€ "
                 f"{constant/12:>8,.0f}€ {variation:>8}"
@@ -326,6 +375,7 @@ class Comparaison:
                 f"{numero}. " + titre.format(bascule=self.parametres.annee_bascule),
                 getattr(self, cle).pension_annuelle,
                 self.variation(cle),
+                cle,
             ))
 
         # Ce qui n'est pas de la répartition est servi À L'IDENTIQUE dans les
@@ -355,19 +405,20 @@ class Comparaison:
             if volontaire > 0:
                 lignes += [
                     ligne(f"   + rente capitalisée obligatoire, scénario {numero}",
-                          rente_capitalisee - volontaire, ""),
+                          rente_capitalisee - volontaire, "", "notionnel_liberal"),
                     ligne("   + rente capitalisée volontaire, les 5 points rendus",
-                          volontaire, ""),
+                          volontaire, "", "notionnel_liberal"),
                 ]
             else:
                 lignes += [
                     ligne(f"   + rente du pilier capitalisé, scénario {numero} seul",
-                          rente_capitalisee, ""),
+                          rente_capitalisee, "", "notionnel_liberal"),
                 ]
             lignes += [
                 ligne(f"   = total servi par le scénario {numero}",
                       self.notionnel_liberal.pension_totale,
-                      self.variation_totale("notionnel_liberal")),
+                      self.variation_totale("notionnel_liberal"),
+                      "notionnel_liberal"),
             ]
 
         lignes += [
@@ -404,6 +455,16 @@ class Comparaison:
                        if employeur.annees_repli else "")
                 )
 
+        if self.depart_reporte:
+            reporte = self.carriere_liberal
+            lignes.append(
+                f"Âge légal de la proposition : le scénario 6 liquide à "
+                f"{formater_age(reporte.age_liquidation)}, en "
+                f"{reporte.date_liquidation}, et non à "
+                f"{formater_age(self.carriere.age_liquidation)} : la carrière est "
+                "prolongée jusque-là, et son montant courant est en euros de "
+                f"{reporte.annee_liquidation}."
+            )
         if self.actuel.minimum_applique:
             lignes.append(
                 "Note : le minimum contributif s'applique dans le scénario 1 ; "
@@ -487,10 +548,20 @@ class Comparaison:
                 **{
                     cle: _resume_notionnel(
                         getattr(self, cle), self.taux_remplacement(cle),
-                        self.variation(cle), self.coefficient_euros_constants,
+                        self.variation(cle), self.coefficient_de(cle),
                     )
                     for cle, _, _ in SCENARIOS_NOTIONNELS
                 },
+            },
+            # Le départ de la proposition, qui n'est celui des autres que tant
+            # que son âge légal ne le reporte pas.
+            "liquidation_liberal": {
+                "reportee": self.depart_reporte,
+                "age_legal": self.parametres.age_legal_liberal,
+                "age_liquidation": self.carriere_de("notionnel_liberal").age_liquidation,
+                "annee_liquidation": self.carriere_de("notionnel_liberal").annee_liquidation,
+                "mois_liquidation": self.carriere_de("notionnel_liberal").mois_liquidation,
+                "coefficient_euros_constants": self.coefficient_de("notionnel_liberal"),
             },
             "contribution_employeur": {
                 "total": self.contribution_employeur.total,
@@ -1049,9 +1120,42 @@ class Simulateur:
                 + ", ".join(self.affiliations.codes)
             )
 
+    def carriere_proposition(self, carriere: Carriere) -> Carriere:
+        """La carrière que la proposition fait liquider : la même, sauf l'âge.
+
+        L'âge légal de la proposition (``Parametres.age_legal_liberal``, 65 ans)
+        ne s'applique qu'aux départs qu'elle régit, ceux qui prennent effet à
+        compter du 1er janvier de la bascule : qui a liquidé avant est parti
+        sous le droit en vigueur. Un départ plus précoce est reporté à l'âge
+        légal, et la carrière poursuivie jusque-là (:meth:`Carriere.prolongee`).
+        Rend la carrière elle-même dans tous les autres cas.
+        """
+        age_legal = self.parametres.age_legal_liberal
+        if age_legal is None or carriere.age_liquidation is None:
+            return carriere
+        if carriere.date_liquidation.annee < self.parametres.annee_bascule:
+            return carriere
+        return carriere.prolongee(age_legal, self.macro)
+
+    def proposition(self, carriere: Carriere) -> ResultatNotionnel:
+        """Le scénario 6 sur cette carrière-là, telle quelle.
+
+        Sans âge légal : c'est à :meth:`carriere_proposition` de dire à quel
+        âge la proposition fait partir. La page Coût s'en sert pour les
+        cohortes que la bascule sépare de leur génération de la grille.
+        """
+        fusionne = self.regime_fusionne if self.parametres.fusion_au_plus_defavorable else None
+        return self.scenario_liberal.liberal(carriere, fusionne)
+
     def simuler(self, carriere: Carriere) -> Comparaison:
         """Calcule les six scénarios pour une carrière."""
         self._verifier_fiabilite(carriere)
+        proposition = self.carriere_proposition(carriere)
+        reporte = proposition is not carriere
+        if reporte:
+            # Les années que le report fait travailler entrent dans le calcul :
+            # elles ont à tenir la même exigence que les autres.
+            self._verifier_fiabilite(proposition)
 
         fusionne = self.regime_fusionne if self.parametres.fusion_au_plus_defavorable else None
 
@@ -1067,7 +1171,7 @@ class Simulateur:
             libelle="Comptes notionnels à compter de la bascule, "
                     "cotisation salariale et patronale",
         )
-        liberal = self.scenario_liberal.liberal(carriere, fusionne)
+        liberal = self.proposition(proposition)
 
         # La mémoire des calibrations n'est plus écrite ici : c'est un fichier
         # versionné, dont `scripts/construire_donnees.py` est le seul écrivain.
@@ -1088,6 +1192,17 @@ class Simulateur:
             remuneration=remuneration_de_la_carriere(
                 carriere, self.macro, self.catalogue, self.affiliations,
                 self.parametres,
+            ),
+            carriere_liberal=proposition if reporte else None,
+            coefficient_euros_constants_liberal=(
+                self.macro.coefficient_prix(
+                    proposition.annee_liquidation,
+                    self.parametres.annee_euros_constants,
+                ) if reporte else None
+            ),
+            dernier_revenu_annualise_liberal=(
+                _dernier_revenu_annualise(proposition, self.macro)
+                if reporte else None
             ),
         )
         if carriere.annee_liquidation < self.parametres.annee_courante:

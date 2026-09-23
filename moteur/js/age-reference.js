@@ -2,8 +2,9 @@
  * Âge de référence et écart d'anticipation.
  *
  * Portage de ``src/retraite_notionnelle/moteur/age_reference.py``. Le DÉFAUT
- * fixe l'âge de référence à 64 ans — l'âge légal d'ouverture des droits — à
- * partir de l'année de bascule, et garde le cliquet avant elle. Le cliquet
+ * fixe l'âge de référence à 65 ans — l'âge légal de départ de la proposition,
+ * `age_legal_liberal` — à partir de l'année de bascule, et garde le cliquet
+ * avant elle. Le cliquet
  * reste offert en variante, et c'est lui que décrit la suite. Règle
  * demandée : chaque fois que l'âge de départ a été abaissé, la pension est
  * calculée comme si l'assuré était parti trop tôt. L'âge de référence ne
