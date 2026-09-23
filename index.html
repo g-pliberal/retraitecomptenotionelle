@@ -115,7 +115,7 @@
 <script type="module">
 import {
   CLES_MODELISATION, CODES_SANS_EMPLOI, Contexte, DESCRIPTIONS, RELEVE_MAXIMUM,
-  TITRES, rendre,
+  Saisie, TITRES, rendre, requeteBasculee,
 } from "./moteur/js/pages.js";
 import * as gabarit from "./moteur/js/gabarit.js";
 import { NOMS_DE_MOIS } from "./moteur/js/calendrier.js";
@@ -218,7 +218,19 @@ function chargement(message) {
 }
 
 function adresse() {
-  const brut = location.hash.replace(/^#/, "") || "/";
+  return lireAdresse(location.hash);
+}
+
+// La requête de l'adresse courante, telle qu'elle est écrite : c'est elle que
+// la mémoire du simulateur compare, au caractère près.
+function requeteDeLAdresse() {
+  const brut = location.hash;
+  const separation = brut.indexOf("?");
+  return separation === -1 ? "" : brut.slice(separation + 1);
+}
+
+function lireAdresse(ancre) {
+  const brut = String(ancre || "").replace(/^#/, "") || "/";
   const separation = brut.indexOf("?");
   const chemin = separation === -1 ? brut : brut.slice(0, separation);
   const requete = separation === -1 ? "" : brut.slice(separation + 1);
@@ -260,8 +272,40 @@ let optionsDepliees = false;
 // Le premier rendu ne déplace pas le focus — voir `reprendre`.
 let premierRendu = true;
 
+// La route dont la page est affichée, et la requête sous laquelle elle l'a
+// été : un rendu qui ne change pas de route se fait SUR PLACE — voir
+// `afficher`. Nulle tant que rien n'est affiché, ou quand le dernier rendu a
+// échoué.
+let routeAffichee = null;
+let requeteAffichee = "";
+
+// Un numéro par rendu. Deux rendus peuvent se chevaucher — un second clic
+// pendant un calcul long, un retour arrière — ; seul le plus récent pose sa
+// page, et l'autre s'efface sans rien toucher.
+let numeroDeRendu = 0;
+
+// Vrai dès qu'une page a été rendue sous des règles qui ne sont pas celles
+// par défaut. Voir `reprendreLaSaisie` : c'est ce qui dit si une adresse sans
+// règles est un choix du lecteur, ou une absence d'avis.
+let reglesVues = false;
+
 async function afficher() {
-  const cible = adresse();
+  const numero = ++numeroDeRendu;
+  // Ce que le lecteur vient de faire, s'il vient de faire quelque chose : un
+  // retour arrière n'a pas de déclencheur, et un déclencheur de plus de deux
+  // secondes n'est pas celui de ce rendu — un clic dont la navigation a été
+  // annulée, par exemple.
+  const action = declencheur && Date.now() - declencheur.temps < 2000
+    ? declencheur : null;
+  declencheur = null;
+
+  let cible = adresse();
+  // Qui revient sur le simulateur sans carrière dans l'adresse — par le
+  // bandeau, par un signet, le lendemain — retrouve la sienne.
+  const reprise = cible.chemin === "/simuler"
+    && !porteUneCarriere(cible.parametres) && reprendreLaSaisie(cible.parametres);
+  if (reprise) { cible = adresse(); }
+
   const contenu = document.getElementById("contenu");
   // `details.options`, et non le premier `<details>` venu : le formulaire en
   // porte deux depuis qu'on peut y coller un relevé de carrière, et le relevé
@@ -270,12 +314,28 @@ async function afficher() {
   const details = contenu.querySelector("form details.options");
   if (details) { optionsDepliees = details.open; }
 
+  // SUR PLACE, RIEN NE SE VIDE. Remplacer la page par l'écran d'attente la
+  // réduisait à quelques lignes : le navigateur ramenait le défilement en
+  // haut, puis le rendu le renvoyait plus bas — deux sauts à chaque clic sur
+  // une bascule, sur « Calculer », sur l'année de la cascade. Quand la route
+  // ne change pas, la page reste en place, estompée le temps du calcul, et
+  // l'on note ce qui était ouvert et où se trouvait ce qu'on a cliqué, pour
+  // le retrouver au même endroit de l'écran. Changer de page, en revanche, se
+  // lit depuis le haut : l'écran d'attente y a toute sa place.
+  const surPlace = cible.chemin === routeAffichee;
+  const ouverts = surPlace ? detailsOuverts(contenu) : [];
+  const repere = surPlace && action ? repereDe(action.element, contenu) : null;
+
   document.body.classList.add("calcul-en-cours");
-  contenu.innerHTML = chargement(
-    MESSAGES_ATTENTE[cible.chemin] || "Calcul en cours…",
-  );
+  contenu.setAttribute("aria-busy", "true");
+  if (!surPlace) {
+    contenu.innerHTML = chargement(
+      MESSAGES_ATTENTE[cible.chemin] || "Calcul en cours…",
+    );
+  }
   // Laisse le navigateur peindre l'attente avant de bloquer sur le calcul.
   await new Promise((suite) => { setTimeout(suite, 20); });
+  if (numero !== numeroDeRendu) { return; }
 
   let titre;
   let corps;
@@ -284,14 +344,19 @@ async function afficher() {
       cible.parametres);
   } catch (erreur) {
     document.body.classList.remove("calcul-en-cours");
+    contenu.removeAttribute("aria-busy");
     contenu.innerHTML = '<div class="erreur"><strong>Le calcul a échoué.</strong> '
       + neutraliser(erreur) + "</div>";
+    routeAffichee = null;
     annoncer(`Le calcul a échoué. ${String(erreur)}`);
     return;
   }
 
   document.getElementById("entete").innerHTML = gabarit.entete(cible.chemin);
   contenu.innerHTML = corps;
+  routeAffichee = cible.chemin;
+  requeteAffichee = requeteDeLAdresse();
+  if (gabarit.options()) { reglesVues = true; }
   document.title = `${titre} — Retraite en comptes notionnels`;
   // La description suit la route, comme le titre : c'est ce qu'un partage ou
   // un enregistrement de la page reprend. Le gabarit la porte, une par page.
@@ -300,17 +365,24 @@ async function afficher() {
     description.content = DESCRIPTIONS[cible.chemin];
   }
   document.body.classList.remove("calcul-en-cours");
-  annoncer(resume(titre, contenu));
+  contenu.removeAttribute("aria-busy");
 
   const nouveauDetails = contenu.querySelector("form details.options");
   if (nouveauDetails && optionsDepliees) { nouveauDetails.open = true; }
+  rouvrir(contenu, ouverts);
   daterStatuts(contenu);
   suivreLesDates(contenu);
   brancherLeDepot(contenu);
-  reprendre(contenu);
+  const memoire = retenir(contenu, cible, action, reprise);
+  preremplirLeSimulateurCourt(contenu);
+  annoncer((memoire ? `${memoire} ` : "") + resume(titre, contenu));
   for (const figure of contenu.querySelectorAll("figure.graphique")) {
     dimensionnerLecture(figure);
   }
+  // En dernier : tout ce qui change la hauteur de la page — dépliants
+  // rouverts, saisie remise dans ses champs, légendes dimensionnées — doit
+  // être fait avant qu'on mesure où poser la lecture.
+  reprendre(contenu, { action, surPlace, repere });
 }
 
 // -- les statuts, aux seules dates où leur régime recrutait -------------------
@@ -468,10 +540,33 @@ function suivreLesDates(contenu) {
 // le formulaire entier pour revenir là où l'on était. Le focus est donc reposé
 // à la main, sur ce que le lecteur vient de demander.
 //
-// Un calcul aboutit sur ses résultats, et non en haut de page : c'est ce qu'on
+// Trois cas, selon ce qui a déclenché le rendu.
+//
+// Un CALCUL aboutit sur ses résultats, et non en haut de page : c'est ce qu'on
 // vient de demander, et les faire défiler sous les yeux plutôt que renvoyer au
-// formulaire épargne la moitié d'un écran de retour en arrière. Une page
-// simplement ouverte, elle, se lit depuis son début.
+// formulaire épargne la moitié d'un écran de retour en arrière. Sur la même
+// page, le défilement est doux — c'est un déplacement qu'on doit pouvoir
+// suivre, pas un saut —, sauf pour qui a demandé à son système de réduire le
+// mouvement.
+//
+// Un geste SUR PLACE — une bascule, l'année de la cascade, « Recalculer cette
+// page » — ne déplace rien : ce qu'on a cliqué est retrouvé dans la nouvelle
+// page et reposé au même endroit de l'écran, au pixel près. Le contenu autour
+// change ; la page, elle, ne bouge pas. Un retour arrière, qui n'a pas de
+// déclencheur, garde le défilement que le navigateur a rendu.
+//
+// Une NAVIGATION vers une autre page se lit depuis son début.
+
+// Ce que le lecteur vient de faire : l'élément cliqué et la nature du geste.
+// Posé par les écouteurs de clic et de soumission, consommé — une fois — par
+// `afficher`, qui mesure où l'élément se trouve à l'écran juste avant de
+// recalculer la page : rien n'a bougé depuis le clic.
+let declencheur = null;
+
+function noterDeclencheur(element, nature, extra = {}) {
+  declencheur = { element, nature, temps: Date.now(), ...extra };
+}
+
 // Le cadre qui contient cette page, quand elle est ouverte dans un cadre de
 // même origine — c'est ainsi que le site partiliberalfrancais.fr la sert sur
 // son accueil. Nul hors cadre ; nul aussi depuis une autre origine, où le
@@ -480,36 +575,165 @@ function cadreHote() {
   try { return window.frameElement || null; } catch (erreur) { return null; }
 }
 
-// Faire voir `cible` quand la page est dans un cadre.
-//
-// L'hôte donne au cadre la hauteur de son contenu, et le remesure après coup,
-// toutes les demi-secondes. Ce document n'a donc pas d'ascenseur : c'est la
-// page hôte qui défile, et y faire défiler ce document ne montre rien. Pire,
-// juste après un rendu, le cadre a encore la hauteur de la page d'AVANT : un
-// clic en bas du programme laissait le lecteur sur la fin du formulaire et le
-// pied du site, et « Calculer » le laissait sur le haut du formulaire, sans un
-// résultat en vue. On règle donc soi-même la hauteur du cadre, puis on fait
-// défiler la page hôte jusqu'à la cible. Vrai si c'est fait ; faux hors cadre,
-// et l'appelant fait défiler ce document comme d'habitude.
-function montrerDansHote(cible) {
+function mouvementReduit() {
+  return Boolean(window.matchMedia?.("(prefers-reduced-motion: reduce)").matches);
+}
+
+// La hauteur de ce que le lecteur voit : la fenêtre, ou celle de la page hôte
+// — dans un cadre à la hauteur de son contenu, la fenêtre de ce document est
+// la page entière.
+function hauteurVisible() {
   const cadre = cadreHote();
-  if (!cadre) { return false; }
   try {
-    const style = getComputedStyle(document.body);
-    const hauteur = document.body.getBoundingClientRect().height
-      + parseFloat(style.marginTop || 0) + parseFloat(style.marginBottom || 0);
-    if (hauteur > 0) { cadre.style.height = `${Math.ceil(hauteur) + 2}px`; }
-    const hote = cadre.ownerDocument.defaultView;
-    const haut = cadre.getBoundingClientRect().top + hote.scrollY
-      + cible.getBoundingClientRect().top + window.scrollY;
-    hote.scrollTo({ top: Math.max(0, haut) });
-    return true;
+    if (cadre) { return cadre.ownerDocument.defaultView.innerHeight; }
   } catch (erreur) {
-    return false;
+    // L'hôte a refusé : on retombe sur ce document.
+  }
+  return window.innerHeight;
+}
+
+// Le haut d'un élément dans ce que le lecteur VOIT : la fenêtre, ou celle de
+// la page hôte quand le site est dans un cadre. L'hôte donne au cadre la
+// hauteur de son contenu : ce document n'a pas d'ascenseur, c'est la page
+// hôte qui défile, et c'est dans sa fenêtre que « au même endroit de
+// l'écran » a un sens.
+function hautVisible(element) {
+  const haut = element.getBoundingClientRect().top;
+  const cadre = cadreHote();
+  if (!cadre) { return haut; }
+  try { return cadre.getBoundingClientRect().top + haut; } catch (erreur) { return haut; }
+}
+
+// Fait défiler ce que le lecteur voit pour que le haut de `element` soit à
+// `haut` pixels du haut de l'écran.
+//
+// Dans un cadre, juste après un rendu, le cadre a encore la hauteur de la page
+// d'AVANT, et l'hôte ne la remesure que toutes les demi-secondes : un clic en
+// bas du programme laissait le lecteur sur la fin du formulaire et le pied du
+// site, et « Calculer » le laissait sur le haut du formulaire, sans un
+// résultat en vue. On règle donc soi-même la hauteur du cadre, puis on fait
+// défiler la page hôte.
+function amener(element, haut, doux = false) {
+  const comportement = doux && !mouvementReduit() ? "smooth" : "auto";
+  const cadre = cadreHote();
+  if (cadre) {
+    try {
+      const style = getComputedStyle(document.body);
+      const hauteur = document.body.getBoundingClientRect().height
+        + parseFloat(style.marginTop || 0) + parseFloat(style.marginBottom || 0);
+      if (hauteur > 0) { cadre.style.height = `${Math.ceil(hauteur) + 2}px`; }
+      cadre.ownerDocument.defaultView.scrollBy({
+        top: hautVisible(element) - haut, behavior: comportement,
+      });
+      return;
+    } catch (erreur) {
+      // L'hôte a refusé : on retombe sur ce document.
+    }
+  }
+  window.scrollBy({
+    top: element.getBoundingClientRect().top - haut, behavior: comportement,
+  });
+}
+
+// Les dépliants ouverts, pour les rouvrir après un rendu sur place : la page
+// est recalculée, pas relue, et le dépliant où l'on venait de cliquer — celui
+// de la cascade, sur la page Coût — se refermait sous le doigt. Un dépliant se
+// reconnaît à son identifiant s'il en a un, sinon à son titre, et à son rang
+// parmi ceux qui portent le même. Le titre est lu SANS SES CHIFFRES : celui
+// de la cascade dit « De 422 Md € à 279 Md € », et change avec l'année qu'on
+// vient de choisir. La ligne vide « Ajouter une période » n'en est pas :
+// remplie, elle devient un métier, et c'est la ligne vide SUIVANTE qui
+// porterait son titre.
+function clesDesDetails(contenu) {
+  const rangs = new Map();
+  return [...contenu.querySelectorAll("details")].map((details) => {
+    const titre = details.id ? `#${details.id}`
+      : (details.querySelector(":scope > summary")?.textContent || "")
+        .replace(/[\d\s\u202f\u00a0.,]+/g, " ").trim();
+    const rang = rangs.get(titre) || 0;
+    rangs.set(titre, rang + 1);
+    return [details, `${rang}:${titre}`];
+  }).filter(([details]) => !details.classList.contains("facultatif"));
+}
+
+function detailsOuverts(contenu) {
+  return clesDesDetails(contenu)
+    .filter(([details]) => details.open).map(([, cle]) => cle);
+}
+
+function rouvrir(contenu, cles) {
+  if (!cles.length) { return; }
+  const voulus = new Set(cles);
+  for (const [details, cle] of clesDesDetails(contenu)) {
+    if (voulus.has(cle)) { details.open = true; }
   }
 }
 
-function reprendre(contenu) {
+// Ce qui permet de retrouver, dans la page recalculée, l'endroit où l'on a
+// cliqué. Pas l'élément lui-même — le rendu l'a détruit —, mais ce qui le
+// contient et qui survit au rendu : le groupe de la bascule, désigné par sa
+// légende ; le formulaire, par sa cible ; à défaut, l'ancêtre identifié le
+// plus proche. Avec son rang parmi ses semblables : « Montants » est deux fois
+// sur la page du simulateur, au-dessus du formulaire et des résultats.
+function repereDe(element, contenu) {
+  if (!element || !element.isConnected || !contenu.contains(element)) { return null; }
+  let genre;
+  let cle;
+  let ancre = element.closest(".bascule[aria-label]");
+  if (ancre) {
+    genre = "bascule";
+    cle = ancre.getAttribute("aria-label");
+  } else if ((ancre = element.closest("form"))) {
+    genre = "formulaire";
+    cle = ancre.getAttribute("action") || "";
+  } else if ((ancre = element.closest("[id]")) && ancre !== contenu) {
+    genre = "identifiant";
+    cle = ancre.id;
+  } else {
+    return null;
+  }
+  const repere = { genre, cle, rang: 0, haut: 0, bouton: element.matches("button") };
+  repere.rang = semblables(contenu, repere).indexOf(ancre);
+  repere.haut = hautVisible(ancre);
+  return repere;
+}
+
+function semblables(contenu, repere) {
+  if (repere.genre === "bascule") {
+    return [...contenu.querySelectorAll(".bascule[aria-label]")]
+      .filter((groupe) => groupe.getAttribute("aria-label") === repere.cle);
+  }
+  if (repere.genre === "formulaire") {
+    return [...contenu.querySelectorAll("form")]
+      .filter((formulaire) => (formulaire.getAttribute("action") || "") === repere.cle);
+  }
+  const trouve = document.getElementById(repere.cle);
+  return trouve && contenu.contains(trouve) ? [trouve] : [];
+}
+
+// Où poser le focus une fois le repère retrouvé. Sur une bascule, l'état que
+// l'on vient de choisir — la synthèse vocale le lit, « brut », et la
+// tabulation repart de là ; sur un formulaire, son bouton ; sinon, le repère
+// lui-même.
+function foyerDe(ancre, repere) {
+  if (repere.genre === "bascule") {
+    const actif = ancre.querySelector(".actif");
+    if (actif) {
+      actif.setAttribute("tabindex", "-1");
+      return actif;
+    }
+  }
+  if (repere.genre === "formulaire" && repere.bouton) {
+    const bouton = ancre.querySelector("button[type=submit]");
+    if (bouton) { return bouton; }
+  }
+  if (!ancre.matches("a[href], button, input, select, textarea, [tabindex]")) {
+    ancre.setAttribute("tabindex", "-1");
+  }
+  return ancre;
+}
+
+function reprendre(contenu, { action, surPlace, repere }) {
   // Sauf au tout premier rendu : personne n'a encore rien demandé, le focus
   // est là où le navigateur l'a laissé — au début du document —, et le lien
   // d'évitement est le premier élément qu'une tabulation rencontre. Le
@@ -520,18 +744,461 @@ function reprendre(contenu) {
     return;
   }
 
-  const resultats = contenu.querySelector("#resultats");
-  if (resultats) {
-    resultats.focus({ preventScroll: true });
-    if (!montrerDansHote(resultats)) {
-      resultats.scrollIntoView({ block: "start" });
+  // Le défilement doux suppose qu'on reste sur la page : il montre où l'on
+  // va depuis où l'on était. Venu d'une autre page — le simulateur court de
+  // l'accueil —, on arrive sur une page neuve, et la traverser en entier pour
+  // descendre aux résultats ne montrerait rien.
+  if (action && action.nature === "calcul") {
+    const resultats = contenu.querySelector("#resultats");
+    if (resultats) {
+      resultats.focus({ preventScroll: true });
+      amener(resultats, 0, surPlace);
+      return;
     }
+    // Un calcul refusé aboutit sur son refus : la phrase qui dit quoi
+    // corriger, et non le haut de la page, où elle n'est pas toujours.
+    const refus = contenu.querySelector(".erreur");
+    if (refus) {
+      refus.setAttribute("tabindex", "-1");
+      refus.focus({ preventScroll: true });
+      amener(refus, Math.round(hauteurVisible() / 4), surPlace);
+      return;
+    }
+  }
+
+  // Effacer la saisie la fait recommencer : on remonte en haut du
+  // formulaire, où la phrase qui le confirme vient d'être posée.
+  if (action && action.effacement) {
+    const note = contenu.querySelector("form .memoire:not([hidden])");
+    const formulaire = formulaireDuSimulateur(contenu);
+    const cible = note || formulaire;
+    if (cible) {
+      cible.setAttribute("tabindex", "-1");
+      cible.focus({ preventScroll: true });
+      amener(formulaire || cible, 16, true);
+      return;
+    }
+  }
+
+  if (surPlace && !(action && action.nature === "navigation")) {
+    const ancre = repere ? semblables(contenu, repere)[repere.rang] : null;
+    if (ancre) {
+      // Ce qu'on vient de cliquer était visible : ses dépliants l'étaient.
+      for (let details = ancre.closest("details"); details;
+        details = details.parentElement?.closest("details")) {
+        details.open = true;
+      }
+      amener(ancre, repere.haut);
+      foyerDe(ancre, repere).focus({ preventScroll: true });
+      return;
+    }
+    // Rien à retrouver — un retour arrière, un repère que le rendu a fait
+    // disparaître : la page reste où elle est.
+    if (action) { contenu.focus({ preventScroll: true }); }
     return;
   }
-  if (!montrerDansHote(document.body)) {
-    window.scrollTo({ top: 0 });
-  }
+
+  if (cadreHote()) { amener(document.body, 0); } else { window.scrollTo({ top: 0 }); }
   contenu.focus({ preventScroll: true });
+}
+
+// -- la mémoire du simulateur -----------------------------------------------
+//
+// LE SIMULATEUR RETIENT CE QU'ON LUI A DIT. Jusqu'ici, l'adresse était sa
+// seule mémoire : il suffisait d'aller lire le programme ou la page Coût,
+// puis de revenir par le bandeau, pour retrouver l'exemple de 1975 à la place
+// de sa carrière ; et ce qu'on avait tapé sans encore calculer se perdait au
+// premier lien suivi. La saisie est donc gardée dans le stockage local du
+// navigateur, et rendue à qui revient.
+//
+// ELLE NE SORT PAS DU NAVIGATEUR, comme le reste : `localStorage` reste sur
+// cette machine, dans ce navigateur, et rien ne l'envoie nulle part. Un bouton
+// « Effacer ma saisie », sous le formulaire, l'en retire — c'est ce qu'il faut
+// sur un ordinateur partagé —, et le chapeau du simulateur le dit. Un
+// navigateur qui refuse le stockage — un réglage de confidentialité, un cadre
+// d'une autre origine — ne retient rien, et le simulateur marche comme avant.
+//
+// Deux choses sont gardées, sous une seule clé :
+//
+// - `requete`, la dernière simulation que le lecteur a produite lui-même —
+//   par « Calculer », par une bascule, ou en tapant dans le formulaire d'une
+//   simulation affichée. Une adresse partagée qu'on ne fait que regarder ne
+//   remplace pas la sienne ;
+// - `brouillon`, ce qui a été tapé depuis sans être calculé : la requête sous
+//   laquelle le formulaire a été rendu (`base`), et ce qu'il porte
+//   (`valeurs`). Il n'est remis dans les champs que sur cette même base : un
+//   brouillon tapé sur une autre simulation n'a pas de sens sur celle-ci.
+
+const MEMOIRE = "retraite-notionnelle.simulateur";
+
+// Ce qui ne sort pas intact du stockage — une autre version, une valeur
+// abîmée — n'est pas lu : un brouillon sans valeurs viderait le formulaire en
+// croyant le remplir.
+function lireMemoire() {
+  try {
+    const brut = window.localStorage.getItem(MEMOIRE);
+    const memoire = brut ? JSON.parse(brut) : null;
+    const texte = (valeur) => typeof valeur === "string" && valeur !== "";
+    const valide = memoire && memoire.version === 1
+      && (memoire.requete === null || texte(memoire.requete))
+      && (memoire.brouillon === null || (typeof memoire.brouillon?.base === "string"
+        && texte(memoire.brouillon?.valeurs)));
+    return valide ? memoire : null;
+  } catch (erreur) {
+    return null;
+  }
+}
+
+function ecrireMemoire(changements) {
+  try {
+    const memoire = { requete: null, brouillon: null, ...lireMemoire(), ...changements };
+    if (!memoire.requete && !memoire.brouillon) {
+      window.localStorage.removeItem(MEMOIRE);
+      return;
+    }
+    window.localStorage.setItem(MEMOIRE, JSON.stringify({ ...memoire, version: 1 }));
+  } catch (erreur) {
+    // Stockage refusé ou plein : on ne retient rien, le reste marche.
+  }
+}
+
+function oublierMemoire() {
+  try { window.localStorage.removeItem(MEMOIRE); } catch (erreur) { /* rien à oublier */ }
+}
+
+function memoireOccupee() {
+  const memoire = lireMemoire();
+  return Boolean(memoire && (memoire.requete || memoire.brouillon));
+}
+
+// Une requête en objet `{ clé: valeur }`, comme `adresse` la lit.
+function enObjet(requete) {
+  const objet = {};
+  new URLSearchParams(requete || "").forEach((valeur, cle) => { objet[cle] = valeur; });
+  return objet;
+}
+
+// Les champs d'un formulaire, écrits comme une requête : ce que « Calculer »
+// envoie, les champs vides en moins.
+function requeteDuFormulaire(formulaire) {
+  const parametres = new URLSearchParams();
+  new FormData(formulaire).forEach((valeur, cle) => {
+    if (String(valeur).trim() !== "") { parametres.set(cle, valeur); }
+  });
+  return parametres.toString();
+}
+
+// Vrai si une requête décrit une carrière, et pas seulement des règles —
+// `Saisie.demandee`, vu d'ici.
+function porteUneCarriere(parametres) {
+  return Object.keys(parametres).some((cle) => !CLES_MODELISATION.includes(cle));
+}
+
+// Les règles d'une requête, écrites comme le site les écrit : ce qui s'écarte
+// du défaut, et rien d'autre. Le formulaire du simulateur écrit toutes ses
+// règles, un lien n'écrit que celles qui changent : c'est ainsi qu'on voit
+// que les deux disent la même chose.
+function reglesDe(parametres) {
+  try {
+    return Saisie.modelisation(parametres).requeteModelisation();
+  } catch (erreur) {
+    return null;
+  }
+}
+
+function formulaireDuSimulateur(contenu) {
+  return contenu?.querySelector('form.carte[action="#/simuler"]') || null;
+}
+
+// La saisie retenue, telle que le formulaire la porterait : le brouillon s'il
+// y en a un, la dernière simulation sinon.
+function saisieRetenue() {
+  const memoire = lireMemoire();
+  if (!memoire) { return null; }
+  if (memoire.brouillon) { return enObjet(memoire.brouillon.valeurs); }
+  return memoire.requete ? enObjet(memoire.requete) : null;
+}
+
+// Les règles à emporter quand on rend au lecteur une saisie retenue.
+//
+// LES RÈGLES SUIVENT LE LECTEUR : tous les liens du site portent celles qu'il
+// a choisies, et c'est l'adresse qui les dit. Une adresse qui n'en porte pas
+// peut pourtant vouloir dire deux choses : qu'il les a remises au défaut —
+// il l'a fait sur une autre page, et y revenir ne doit pas les rétablir —, ou
+// qu'il n'en a encore rien dit — il ouvre le site, et ses options de la
+// dernière fois sont dans la saisie retenue. `reglesVues` fait la différence :
+// tant qu'aucune page de cette visite n'a été calculée sous d'autres règles
+// que celles par défaut, une adresse sans règles n'est pas un avis.
+function reglesAEmporter(retenue, ici) {
+  const reglesIci = reglesDe(ici);
+  if (reglesIci === "" && !reglesVues) {
+    return Object.fromEntries(Object.entries(retenue)
+      .filter(([cle]) => CLES_MODELISATION.includes(cle)));
+  }
+  return Object.fromEntries(Object.entries(ici)
+    .filter(([cle]) => CLES_MODELISATION.includes(cle)));
+}
+
+// Une saisie retenue, complétée des règles à emporter.
+function composer(retenue, regles, remplacements = {}) {
+  const parametres = new URLSearchParams();
+  for (const [cle, valeur] of Object.entries(retenue)) {
+    if (!CLES_MODELISATION.includes(cle)) { parametres.set(cle, valeur); }
+  }
+  for (const [cle, valeur] of Object.entries(regles)) { parametres.set(cle, valeur); }
+  for (const [cle, valeur] of Object.entries(remplacements)) { parametres.set(cle, valeur); }
+  return parametres.toString();
+}
+
+// Qui arrive sur le simulateur sans carrière dans l'adresse retrouve la
+// dernière qu'il a calculée. L'adresse est RÉÉCRITE, sans nouvelle entrée
+// d'historique : elle doit dire ce que la page montre — c'est elle qu'on
+// partage et qu'on recharge —, et le retour arrière doit toujours ramener à
+// la page d'où l'on venait. Vrai si une saisie a été reprise.
+function reprendreLaSaisie(ici) {
+  const memoire = lireMemoire();
+  if (!memoire || !memoire.requete) { return false; }
+  const retenue = enObjet(memoire.requete);
+  let requete = memoire.requete;
+  const regles = reglesAEmporter(retenue, ici);
+  if (reglesDe(regles) !== reglesDe(retenue)) {
+    requete = composer(retenue, regles);
+    // Le brouillon a été tapé sous les anciennes règles, que le formulaire
+    // porte aussi : le remettre les rétablirait en douce.
+    ecrireMemoire({ requete, brouillon: null });
+  }
+  history.replaceState(history.state, "", `#/simuler?${requete}`);
+  return true;
+}
+
+// « 1996-09 » → « 1996-09-01 » : un champ date n'accepte que la forme
+// entière, et les adresses du site écrivent les dates de carrière au mois.
+function enDate(valeur) {
+  return /^\d{4}-\d{2}$/.test(valeur) ? `${valeur}-01` : valeur;
+}
+
+// Remet des valeurs dans les champs d'un formulaire, et dit si quelque chose a
+// changé. Un champ absent de `valeurs` était vide quand elles ont été lues —
+// une requête ne porte pas les champs vides —, sauf si `noms` restreint ce
+// qu'on touche. LES CHAMPS CACHÉS NE SE REMPLISSENT PAS : ils disent la forme
+// du formulaire — la situation, l'unité, le net ou le brut —, que le rendu a
+// fixée, et les réécrire ferait envoyer une forme que la page ne montre pas.
+// Un dépliant dont un champ change s'ouvre : une valeur remise dans un champ
+// replié serait une saisie invisible.
+function remplir(formulaire, valeurs, noms = null) {
+  let change = false;
+  for (const champ of formulaire.elements) {
+    if (!champ.name || champ.type === "hidden" || champ.type === "file"
+        || champ.tagName === "BUTTON") { continue; }
+    if (noms && (!noms.includes(champ.name) || !(champ.name in valeurs))) { continue; }
+    const brut = champ.name in valeurs ? String(valeurs[champ.name]) : "";
+    const valeur = champ.type === "date" ? enDate(brut) : brut;
+    if (champ.value === valeur) { continue; }
+    if (champ.tagName === "SELECT"
+        && ![...champ.options].some((option) => option.value === valeur)) { continue; }
+    champ.value = valeur;
+    // Le navigateur refuse ce qui n'a pas la forme du champ — une date
+    // mal écrite reste vide : on n'insiste pas.
+    if (champ.value !== valeur) { continue; }
+    change = true;
+    for (let details = champ.closest("details"); details;
+      details = details.parentElement?.closest("details")) {
+      details.open = true;
+    }
+  }
+  // Comme au dépôt d'un relevé : les écouteurs qui suivent la saisie — l'âge
+  // sous chaque date, les statuts fermés — doivent l'apprendre.
+  if (change) { formulaire.dispatchEvent(new Event("input", { bubbles: true })); }
+  return change;
+}
+
+// Un brouillon ne se remet que sur la simulation sous laquelle il a été tapé.
+// Sur le formulaire de l'exemple, qui n'a pas de carrière dans l'adresse, il
+// suffit que les règles soient les mêmes.
+function brouillonSApplique(base, parametres) {
+  if (porteUneCarriere(enObjet(base))) { return base === requeteAffichee; }
+  return !porteUneCarriere(parametres) && reglesDe(enObjet(base)) === reglesDe(parametres);
+}
+
+// Une saisie refusée se rend avec le refus EN TÊTE, avant le formulaire ; une
+// erreur de calcul, après lui. Seule la première a pu perdre des champs.
+function estUnRefus(contenu, formulaire) {
+  const refus = contenu.querySelector(".erreur");
+  return Boolean(refus)
+    && Boolean(refus.compareDocumentPosition(formulaire) & Node.DOCUMENT_POSITION_FOLLOWING);
+}
+
+// Ce que la page dit de la mémoire : le bouton qui l'efface, et, quand une
+// saisie vient d'être reprise ou effacée, une phrase sous la consigne du
+// formulaire — qui prend alors sa place, « l'exemple est déjà rempli » n'étant
+// plus vrai.
+function montrerLaMemoire(formulaire, phrase = "") {
+  const bouton = formulaire.querySelector("button.oublier");
+  if (bouton) { bouton.hidden = !memoireOccupee(); }
+  if (!phrase) { return; }
+  let note = formulaire.querySelector(".memoire");
+  if (!note) {
+    note = document.createElement("p");
+    note.className = "memoire";
+    const consigne = formulaire.querySelector(".consigne");
+    if (consigne) { consigne.after(note); } else { formulaire.prepend(note); }
+  }
+  note.textContent = phrase;
+  const consigne = formulaire.querySelector(".consigne");
+  if (consigne) { consigne.hidden = true; }
+}
+
+const PHRASE_REPRISE = "Votre dernière saisie a été reprise. Votre navigateur la "
+  + "garde, et elle n'en sort pas.";
+const PHRASE_EFFACEE = "Votre saisie a été effacée : le simulateur ne la "
+  + "retient plus. L'exemple est de nouveau rempli.";
+
+// Après chaque rendu : ce que la page doit à la mémoire. Rend la phrase à
+// ajouter à l'annonce vocale, ou rien.
+function retenir(contenu, cible, action, reprise) {
+  const formulaire = formulaireDuSimulateur(contenu);
+  if (!formulaire) { return ""; }
+  const carriere = porteUneCarriere(cible.parametres);
+  // Ce que le formulaire porte au sortir du rendu : c'est de là que partent
+  // les liens des bascules, et c'est à cela qu'on compare pour savoir si le
+  // lecteur a tapé quelque chose depuis.
+  formulaire._rendue = requeteDuFormulaire(formulaire);
+
+  // Ce que le lecteur vient de faire devient sa saisie retenue.
+  if (action && action.nature !== "navigation" && carriere) {
+    ecrireMemoire({ requete: requeteAffichee, brouillon: null });
+  }
+
+  let reprisIci = false;
+  // Une saisie refusée est remontrée telle qu'elle se lit — voir `rendre`.
+  // Ce qui ne s'y lit pas, une ligne de métier à moitié remplie, est remis
+  // ici dans la ligne vide qui l'attend : il ne doit rester qu'à corriger la
+  // faute, et non à retaper. Seuls les champs envoyés : ceux qu'une adresse
+  // ne porte pas ont été rendus à leur défaut, qui est aussi ce que le calcul
+  // en aurait lu.
+  if (carriere && estUnRefus(contenu, formulaire)) {
+    remplir(formulaire, cible.parametres, Object.keys(cible.parametres));
+  }
+  // Puis ce qui avait été tapé sans être calculé, s'il appartient à cette
+  // simulation.
+  const brouillon = lireMemoire()?.brouillon;
+  if (brouillon && brouillonSApplique(brouillon.base, cible.parametres)) {
+    reprisIci = remplir(formulaire, enObjet(brouillon.valeurs));
+  }
+
+  if (action && action.effacement) {
+    montrerLaMemoire(formulaire, PHRASE_EFFACEE);
+    return PHRASE_EFFACEE;
+  }
+  if (reprise || reprisIci) {
+    montrerLaMemoire(formulaire, PHRASE_REPRISE);
+    return PHRASE_REPRISE;
+  }
+  montrerLaMemoire(formulaire);
+  return "";
+}
+
+// Chaque frappe dans le formulaire du simulateur est retenue. Taper dans le
+// formulaire d'une simulation affichée en fait SA simulation : c'est elle que
+// le lecteur retrouvera, avec ce qu'il y a changé.
+function noterLeBrouillon(formulaire) {
+  const valeurs = requeteDuFormulaire(formulaire);
+  const base = requeteAffichee;
+  ecrireMemoire({
+    requete: porteUneCarriere(enObjet(base)) ? base : null,
+    brouillon: valeurs === formulaire._rendue ? null : { base, valeurs },
+  });
+  montrerLaMemoire(formulaire);
+}
+
+for (const type of ["input", "change"]) {
+  document.addEventListener(type, (evenement) => {
+    const formulaire = evenement.target.closest?.("form");
+    if (formulaire && formulaire === formulaireDuSimulateur(
+      document.getElementById("contenu"))) {
+      noterLeBrouillon(formulaire);
+    }
+  });
+}
+
+// « Effacer ma saisie » : la mémoire est vidée, et le formulaire revient à
+// l'exemple, sous les règles en vigueur.
+document.addEventListener("click", (evenement) => {
+  const bouton = evenement.target.closest?.("button.oublier");
+  if (!bouton) { return; }
+  oublierMemoire();
+  const regles = gabarit.options();
+  noterDeclencheur(bouton, "sur-place", { effacement: true });
+  naviguer(`#/simuler${regles ? `?${regles}` : ""}`);
+});
+
+// Le simulateur court de l'accueil — « Et vous, ça donne combien ? » — est
+// une porte du même simulateur : il montre la saisie retenue, et l'envoie
+// entière. Sans cela, ses quatre champs repartaient de l'exemple, et
+// « Calculer » écrasait la carrière retenue par une carrière de quatre
+// champs, au revenu de l'exemple.
+function preremplirLeSimulateurCourt(contenu) {
+  const formulaire = contenu.querySelector('form.simulateur-court[action="#/simuler"]');
+  const retenue = formulaire ? saisieRetenue() : null;
+  if (!retenue) { return; }
+  remplir(formulaire, retenue, ["naissance", "debut", "statut", "liquidation"]);
+}
+
+function fusionnerAvecLaMemoire(courts) {
+  const retenue = saisieRetenue() || {};
+  return composer(retenue, reglesAEmporter(retenue, enObjet(gabarit.options())), courts);
+}
+
+// Les bascules du simulateur — en activité ou à la retraite, l'unité, le net
+// ou le brut — sont des liens écrits au rendu, depuis la saisie calculée. Si
+// le lecteur a tapé quelque chose depuis, les suivre le perdait : l'adresse
+// est donc refaite au clic, sur ce que le formulaire porte, par
+// `requeteBasculee` — la même traduction des montants que celle du rendu.
+// Tant que rien n'a été tapé, le lien est suivi tel quel.
+document.addEventListener("click", (evenement) => {
+  if (evenement.defaultPrevented || evenement.button !== 0 || evenement.metaKey
+      || evenement.ctrlKey || evenement.shiftKey || evenement.altKey) { return; }
+  const lien = evenement.target.closest?.('a[href^="#/simuler?"]');
+  const contenu = document.getElementById("contenu");
+  if (!lien || !contenu?.contains(lien) || routeAffichee !== "/simuler") { return; }
+  const formulaire = formulaireDuSimulateur(contenu);
+  if (!formulaire) { return; }
+  const valeurs = requeteDuFormulaire(formulaire);
+  if (valeurs === formulaire._rendue) { return; }
+  evenement.preventDefault();
+  // Ce que « Calculer » refuserait, la bascule le refuse aussi, et de la
+  // même façon : le navigateur montre le champ fautif.
+  if (!formulaire.reportValidity()) { return; }
+  let requete;
+  try {
+    requete = requeteBasculee(contexte, enObjet(valeurs),
+      enObjet(lien.getAttribute("href").split("?")[1]));
+  } catch (erreur) {
+    // La saisie ne se lit pas : il n'y a rien à traduire. Elle part telle
+    // quelle, et c'est le refus qui s'affiche — la saisie remise dans ses
+    // champs, pour qu'on la corrige avant de basculer.
+    requete = valeurs;
+  }
+  noterDeclencheur(lien, "sur-place");
+  naviguer(`#/simuler?${requete}`);
+});
+
+// Tout lien interne note ce qu'il est : un geste sur place s'il reste sur la
+// page affichée et part de son contenu, une navigation sinon. En capture,
+// pour passer avant les écouteurs qui pourraient suivre le lien autrement.
+document.addEventListener("click", (evenement) => {
+  const lien = evenement.target.closest?.('a[href^="#/"]');
+  if (!lien || lien.matches("a[data-vers], a.evitement")) { return; }
+  if (evenement.button !== 0 || evenement.metaKey || evenement.ctrlKey
+      || evenement.shiftKey || evenement.altKey) { return; }
+  const vers = lireAdresse(lien.getAttribute("href")).chemin;
+  const contenu = document.getElementById("contenu");
+  noterDeclencheur(lien, vers === routeAffichee && contenu?.contains(lien)
+    ? "sur-place" : "navigation");
+}, true);
+
+function naviguer(cible) {
+  if (location.hash === cible) { afficher(); } else { location.hash = cible; }
 }
 
 // -- le relevé de carrière déposé --------------------------------------------
@@ -754,16 +1421,21 @@ document.addEventListener("submit", (evenement) => {
   if (!formulaire) { return; }
   evenement.preventDefault();
 
-  const parametres = new URLSearchParams();
-  new FormData(formulaire).forEach((valeur, cle) => {
-    if (String(valeur).trim() !== "") { parametres.set(cle, valeur); }
-  });
+  let requete = requeteDuFormulaire(formulaire);
   // La route vient de l'action du formulaire, jamais d'une constante écrite
   // ici : le simulateur a changé d'adresse le jour où l'accueil est devenu le
   // programme, et une route figée aurait renvoyé chaque calcul sur l'accueil.
   const route = (formulaire.getAttribute("action") || "#/simuler").replace(/^#/, "");
-  const cible = `#${route}?${parametres.toString()}`;
-  if (location.hash === cible) { afficher(); } else { location.hash = cible; }
+  // Le simulateur court de l'accueil envoie la saisie retenue entière, ses
+  // quatre champs par-dessus — voir `preremplirLeSimulateurCourt`.
+  if (formulaire.matches(".simulateur-court") && route === "/simuler") {
+    requete = fusionnerAvecLaMemoire(enObjet(requete));
+  }
+  // Un formulaire qui simule mène à des résultats ; les autres — « Recalculer
+  // cette page » — recalculent la page sous les yeux du lecteur.
+  const simule = route === "/simuler" || route === "/trajectoire";
+  noterDeclencheur(evenement.submitter || formulaire, simule ? "calcul" : "sur-place");
+  naviguer(`#${route}?${requete}`);
 });
 
 // -- les mots du glossaire ---------------------------------------------------

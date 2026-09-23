@@ -728,6 +728,16 @@ button.second, a.bouton.second {
   font-weight: 700; text-transform: none; letter-spacing: 0;
 }
 button.second:hover, a.bouton.second:hover { border-color: var(--or); opacity: 1; }
+/* Le bas du formulaire : « Calculer », et « Effacer ma saisie » quand le
+   navigateur en garde une. Côte à côte, et l'un sous l'autre sur un
+   téléphone, sans que le second colle au premier. */
+.envoi { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+/* Ce que le simulateur a retenu : une phrase à la place de la consigne,
+   filetée d'or comme ce qui s'adresse au lecteur plutôt qu'à sa carrière. */
+form .memoire {
+  margin: 0.3rem 0 0; padding: 0.55rem 0.85rem; font-size: 0.92rem;
+  border-left: 3px solid var(--or); background: var(--fond-appui);
+}
 /* Les métiers de la carrière : une boîte par métier, la dernière en pointillé
    parce qu'elle n'en décrit encore aucun — c'est celle qui sert à en ajouter. */
 .metiers { display: grid; gap: 0.9rem; margin: 0.9rem 0 0; }
@@ -1701,6 +1711,15 @@ pre.json {
   100% { transform: translateX(333%); }
 }
 body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
+/* Un calcul SUR PLACE ne vide plus la page — c'est ce qui la faisait sauter
+   en haut puis en bas à chaque clic : elle reste là, estompée, et ce trait
+   glisse en haut de l'écran le temps du calcul, comme la jauge de l'écran
+   d'attente. */
+body.calcul-en-cours::after {
+  content: ""; position: fixed; top: 0; left: 0; z-index: 30;
+  width: 30%; height: 3px; background: var(--or);
+  animation: glisse 1.4s ease-in-out infinite;
+}
 /* Ce qui n'est lu que par les synthèses vocales : la description d'un
    graphique, l'annonce d'un changement de page. */
 .hors-ecran {
@@ -1841,6 +1860,7 @@ body.calcul-en-cours main { opacity: 0.45; transition: opacity 0.2s; }
     scroll-behavior: auto !important;
   }
   .chargement .jauge > span { width: 100%; }
+  body.calcul-en-cours::after { width: 100%; }
 }
 
 /* Impression : le lecteur qui imprime une simulation veut les chiffres, et il

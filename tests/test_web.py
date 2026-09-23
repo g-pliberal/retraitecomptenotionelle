@@ -3225,6 +3225,9 @@ def test_les_metiers_forment_des_groupes_de_champs_nommes(page):
 #: tout le reste attend qu'on le demande.
 def _mots_visibles(corps: str) -> int:
     texte = re.sub(r'<span class="bulle"[^>]*hidden>.*?</span>', " ", corps, flags=re.S)
+    # Un bouton caché ne se lit pas davantage : « Effacer ma saisie » ne paraît
+    # que lorsque le navigateur a retenu une saisie, et c'est alors un contrôle.
+    texte = re.sub(r"<button\b[^>]*\bhidden>.*?</button>", " ", texte, flags=re.S)
     texte = re.sub(r"<option\b.*?</option>", " ", texte, flags=re.S)
     texte = _sans_blocs(texte, "div", r'<div class="panneau"[^>]*\bhidden>')
 
@@ -3403,7 +3406,7 @@ def test_le_focus_ne_retombe_pas_au_debut_du_document_apres_un_rendu():
     assert 'main id="contenu" tabindex="-1"' in page, (
         "<main> doit pouvoir recevoir le focus"
     )
-    assert "function reprendre(" in page and "reprendre(contenu)" in page
+    assert "function reprendre(" in page and "reprendre(contenu, {" in page
 
     #: Sauf au tout premier rendu : le focus est alors là où le navigateur l'a
     #: laissé, c'est-à-dire au début du document — d'où le lien d'évitement est
