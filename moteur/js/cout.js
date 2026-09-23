@@ -93,6 +93,15 @@ export const CLES_CAS_TYPES = [...SCENARIOS.map(([scenario]) => scenario), RESSO
 const TETES_TOUTES = "toutes";
 const TETES_GARANTIE = "garantie";
 
+/**
+ * La masse que les scénarios 3 et 5 servent encore selon le DROIT ACTUEL : les
+ * pensions liquidées au plus tard l'année de la bascule, majorations pour
+ * enfants comprises. Rapportée à la masse du système actuel, elle dit quelle
+ * part des majorations la branche famille leur rembourse encore. Voir
+ * `MASSE_STOCK` dans cout.py.
+ */
+const MASSE_STOCK = "stock_avant_bascule";
+
 /** Tout ce dont une masse est calculée : les six systèmes, et la composante. */
 export const CLES_MASSES = [...SCENARIOS.map(([scenario]) => scenario), COMPOSANTE_GARANTIE];
 
@@ -452,10 +461,13 @@ export const CLES_REVALORISEES = new Set(
 
 /**
  * Les scénarios 3 et 5, dont la règle d'indexation NE COMMENCE QU'À LA BASCULE.
- * Une réforme prospective ne gèle pas l'indexation du stock : elle change la
- * règle pour toutes les pensions à compter du jour où elle s'applique, celles
- * déjà servies comprises. Ce qu'elle ne fait pas, c'est agir avant elle-même.
- * D'où `max(liquidation, bascule)` et non « liquidée après la bascule ».
+ * Ce qu'une réforme prospective fait du STOCK — les pensions déjà servies le
+ * jour où elle s'applique — est un choix, réglé par `revalorisation_stock`
+ * (voir `coefficientStock`). Par défaut, depuis le 20 septembre 2026, le stock
+ * garde les prix que le droit lui a promis, et la règle nouvelle ne vaut que
+ * pour les pensions liquidées à compter de la bascule ; en variante, tout le
+ * stock passe à sa règle le jour de la bascule. Dans les deux cas, elle
+ * n'agit jamais avant elle-même. Voir `CLES_PROSPECTIVES` dans cout.py.
  */
 export const CLES_PROSPECTIVES = new Set([
   "notionnel_prospectif", "notionnel_prospectif_employeur",
@@ -472,6 +484,7 @@ export const CLES_PROSPECTIVES = new Set([
 function masses(liste, population, annee, poidsCas, revalorisation) {
   const total = {};
   for (const cle of CLES_CAS_TYPES) total[cle] = 0;
+  total[MASSE_STOCK] = 0;
   const tetes = { [TETES_TOUTES]: 0, [TETES_GARANTIE]: 0 };
   let vivants = 0;
   for (const pensionne of liste) {
@@ -527,6 +540,11 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
       if (CLES_PROSPECTIVES.has(cle)) poidsCle = poidsRevaloriseProspectif;
       else if (CLES_REVALORISEES.has(cle)) poidsCle = poidsRevalorise;
       total[cle] += part * poidsCle * pensionne.pensions[cle];
+    }
+    // Le critère est celui du scénario prospectif lui-même : une carrière
+    // liquidée au plus tard l'année de la bascule y garde sa pension.
+    if (pensionne.anneeLiquidation <= revalorisation.anneeBascule) {
+      total[MASSE_STOCK] += part * poidsRevaloriseProspectif * pensionne.pensions.actuel;
     }
   }
   return { total, vivants, tetes };
@@ -909,8 +927,11 @@ class AvenirAnnuel {
   constructor(annee, projete, base, coefficientConstants, pib, rapportsAnnee,
               dependance, recettes = {}, partDerives = 0.0,
               reversionServie = false, reformeEnVigueur = true, garantie = null,
-              pilier = null) {
+              pilier = null, partStock = 0.0) {
     this.annee = annee;
+    // Part de la masse du système actuel que les scénarios 3 et 5 servent
+    // encore selon le droit actuel : un avant la bascule, puis de moins en moins.
+    this.partStock = partStock;
     // La garantie de l'année, lue sur la distribution des pensions.
     this.garantie = garantie;
     // Le pilier capitalisé de l'année, tous cotisants ; null avant la bascule.
@@ -1032,8 +1053,13 @@ class SoldeAnnuel {
               convention = CONVENTION_RAPPORT,
               partDerives = 0.0, reversionServie = false,
               reformeEnVigueur = true, parts = {}, versements = {},
-              tvaLiberal = 0.0, garantieLiberal = 0.0) {
+              tvaLiberal = 0.0, garantieLiberal = 0.0,
+              majorationsStock = 0.0) {
     this.annee = annee;
+    // Ce que la branche famille rembourse encore aux scénarios 3 et 5 après
+    // leur bascule : les majorations des pensions liquidées avant elle, qu'ils
+    // servent toujours. Voir `majorations_stock` dans cout.py.
+    this.majorationsStock = majorationsStock;
     this.projete = projete;
     this.ressources = ressources;
     this.depenses = depenses;
@@ -1177,8 +1203,18 @@ class SoldeAnnuel {
     // ressources observées est multipliée par un rapport de taux légaux.
     const rapport = this.rapportsRecettes[scenario] ?? 1.0;
     const cotisees = this.ressources * this.partContributive;
-    return cotisees * rapport + (this.ressources - cotisees) - this.retrait
+    return cotisees * rapport + (this.ressources - cotisees) - this.retraitDe(scenario)
       + this.tvaDe(scenario);
+  }
+
+  /**
+   * Ce qu'un scénario notionnel retire, une fois sa bascule passée : `retrait`
+   * entier, sauf pour les scénarios 3 et 5, dont les majorations du stock
+   * restent remboursées par la branche famille.
+   */
+  retraitDe(scenario) {
+    if (CLES_PROSPECTIVES.has(scenario)) return this.retrait - this.majorationsStock;
+    return this.retrait;
   }
 
   /** Ressources moins dépenses. Négatif : besoin de financement. */
@@ -1244,6 +1280,10 @@ class SoldeAnnuel {
       if (organisme.droitSupprime) {
         retire[organisme.code] = this.versements[organisme.code] ?? 0.0;
       }
+    }
+    // Les majorations du stock restent remboursées : voir `retraitDe`.
+    if (CLES_PROSPECTIVES.has(scenario) && "famille" in retire) {
+      retire.famille -= this.majorationsStock;
     }
     const retireFamille = retire.famille ?? 0.0;
     const retireChomage = retire.chomage ?? 0.0;
@@ -2133,6 +2173,7 @@ function construireAvenir(liste, depenses, population, simulateur, poids, revalo
       annee >= simulateur.parametres.annee_bascule,
       projetee,
       pilier,
+      total[MASSE_STOCK] / total.actuel,
     ));
   }
 
@@ -2209,6 +2250,7 @@ function construireSolde(avenir, comptes, derniereAnneePib, assiette,
       annee >= anneeBascule
         ? ligne.partPib(COMPOSANTE_GARANTIE) - ligne.partPibReprises()
         : 0.0,
+      comptes.versementLigne(annee, "cnaf_majorations") * ligne.partStock,
     ));
   }
   if (!lignes.length) return new Solde([], 0, Fiabilite.ESTIMEE, Fiabilite.ESTIMEE);

@@ -620,6 +620,21 @@ export class ComptesRetraite {
       * this.ressource(annee);
   }
 
+  /**
+   * Ce qu'une seule ligne de transfert verse, en part du PIB : la règle de
+   * `versement`, pour une ligne au lieu d'un payeur. La branche famille paie
+   * l'AVPF et les majorations, et un scénario qui ne supprime que la première
+   * doit pouvoir garder la seconde. Voir `versement_ligne` dans equilibre.py.
+   */
+  versementLigne(annee, code) {
+    const premiere = this.premiereAnneeTransferts;
+    const derniere = this.derniereAnneeTransferts;
+    const reference = Math.min(Math.max(annee, premiere), derniere);
+    const part = this.transfert(code, reference) / this.pib.valeur(reference);
+    if (reference === annee) return part;
+    return part / this.ressource(reference) * this.ressource(annee);
+  }
+
   recetteNonAcquise(annee, parImpot = null, organisme = null) {
     const premiere = this.premiereAnneeTransferts;
     const derniere = this.derniereAnneeTransferts;

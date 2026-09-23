@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 816<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 713<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 770<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14691,11 +14691,26 @@ des flux dessinait 13,7. Elle lit désormais la garantie que la trajectoire
 compte cette année-là, dans les deux moteurs, et le tableau et la carte disent
 le même nombre.
 
-**Reste**, relevé par l'audit et non corrigé. Après la bascule, les retraités
-d'avant 2026 gardent leurs majorations pour enfants dans les scénarios
-prospectifs, mais le remboursement de la branche famille en est retiré
-(0,2 point en 2026). Et, du lot 2, le seuil de la première tranche du RCI de
-2014 à 2023.
+**Les majorations du stock dans les scénarios 3 et 5 — fait, le même jour.**
+Après leur bascule, ils servent encore les pensions liquidées avant elle,
+majorations pour enfants comprises, mais le remboursement de la branche famille
+leur était retiré tout entier : 0,19 point de PIB en 2026. Ils le gardent
+désormais au prorata de ce que ces pensions pèsent dans la masse — la ligne
+« majorations » de la CNAF, lue seule (`versement_ligne`), fois la part du
+stock (`part_stock`) —, dans les deux moteurs. Leur solde moyen passe de +1,54
+à +1,60 point pour le 3, de −0,06 à −0,00 pour le 5. Un test compare les
+recettes des six scénarios entre Python et JavaScript : les témoins du
+portage ne passaient que par les pages, qui n'en montrent que quatre.
+
+**Reste**, relevé par l'audit et non corrigé : du lot 2, le seuil de la
+première tranche du RCI de 2014 à 2023. La règle de D. 635-7 — le plafond de
+2013, revalorisé chaque année du plus petit des deux coefficients, du revenu
+de référence et des pensions — ne redonne pas, appliquée aux séries du dépôt
+(le revenu de référence de `valeurs_point.csv`, les coefficients de
+`revalorisation_pensions.csv`), les 42 946 € que le COR publie pour 2024 :
+entre 40 469 et 42 087 € selon qu'on range la revalorisation de juillet 2022
+dans son année ou dans la suivante, et selon la tranche de 2020. La série se
+lit dans une source qui la publie ; elle ne se déduit pas.
 
 ### 112. Le retraité voit la pension qu'il touche aujourd'hui, et un cas type la refait à la main — `fait`
 

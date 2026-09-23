@@ -604,6 +604,10 @@ class AvenirAnnuel:
     #: Le pilier capitalisé de l'année, tous cotisants, par euro versé ;
     #: ``None`` avant la bascule.
     pilier: PilierAnnuel | None = None
+    #: Part de la masse du système actuel que les scénarios 3 et 5 servent
+    #: encore selon le droit actuel : ``MASSE_STOCK`` sur la masse du système
+    #: actuel. Un avant la bascule, puis de moins en moins.
+    part_stock: float = 0.0
 
     def cout_constants(self, scenario: str) -> float:
         """Coût du système, en millions d'euros constants de référence."""
@@ -775,6 +779,12 @@ class SoldeAnnuel:
     #: (``AvenirAnnuel``), que le chiffrage pour une loi de finances compte.
     #: Zéro avant la bascule. C'est la première chose que la TVA paie.
     garantie_liberal: float = 0.0
+    #: Ce que la branche famille rembourse encore aux scénarios 3 et 5 après
+    #: leur bascule, en part de PIB : les majorations pour enfants des
+    #: pensions liquidées avant elle, qu'ils servent toujours. La ligne
+    #: « majorations » de la CNAF, au prorata de ce que ces pensions pèsent
+    #: (``AvenirAnnuel.part_stock``).
+    majorations_stock: float = 0.0
 
     def _tva_affectee(self, scenario: str) -> float:
         """Toute la TVA affectée à un système, en part de PIB : au scénario 6 seul.
@@ -842,6 +852,10 @@ class SoldeAnnuel:
         bascule pour les scénarios 3 et 5, qui sont avant elle le système
         actuel. Ce que l'Unédic verse, il le garde : son compte porte les
         cotisations complémentaires qu'elle paie pendant un chômage indemnisé.
+        Et les scénarios 3 et 5 gardent, après leur bascule, ce que la
+        branche famille rembourse des majorations des pensions liquidées avant
+        elle : ils les servent toujours (``majorations_stock``). Ils les
+        perdaient toutes jusqu'au 23 septembre 2026, 0,19 point de PIB en 2026.
 
         LA RECETTE SUIT LE TAUX. Le scénario 6 remplace tous les taux par 18 %
         à compter de la bascule ; ce qui est prélevé baisse donc, et la part
@@ -931,7 +945,19 @@ class SoldeAnnuel:
         rapport = self.rapports_recettes.get(scenario, 1.0)
         cotisees = self.ressources * self.part_contributive
         autres = self.ressources - cotisees
-        return cotisees * rapport + autres - self.retrait + self.tva_de(scenario)
+        return (cotisees * rapport + autres - self._retrait_de(scenario)
+                + self.tva_de(scenario))
+
+    def _retrait_de(self, scenario: str) -> float:
+        """Ce qu'un scénario notionnel retire, une fois sa bascule passée.
+
+        ``retrait`` entier, sauf pour les scénarios 3 et 5 : les majorations
+        des pensions qu'ils servent encore selon le droit actuel restent
+        remboursées par la branche famille.
+        """
+        if scenario in CLES_PROSPECTIVES:
+            return self.retrait - self.majorations_stock
+        return self.retrait
 
     @property
     def recette_par_assiette(self) -> bool:
@@ -1026,6 +1052,9 @@ class SoldeAnnuel:
         # droit est supprimé, rien sinon.
         retire = {organisme.code: self.versements.get(organisme.code, 0.0)
                   for organisme in ORGANISMES if organisme.droit_supprime}
+        if scenario in CLES_PROSPECTIVES and "famille" in retire:
+            # Les majorations du stock restent remboursées : ``_retrait_de``.
+            retire["famille"] -= self.majorations_stock
         garde_famille = famille - retire.get("famille", 0.0)
         garde_chomage = chomage - retire.get("chomage", 0.0)
         garde_solidarite = solidarite - retire.get("solidarite", 0.0)
@@ -1808,6 +1837,14 @@ def regle_revalorisation(cle: str) -> str:
 TETES_TOUTES = "toutes"
 TETES_GARANTIE = "garantie"
 
+#: La masse que les scénarios 3 et 5 servent encore selon le DROIT ACTUEL : les
+#: pensions liquidées au plus tard l'année de la bascule, qu'ils rendent telles
+#: quelles — majorations pour enfants comprises (voir
+#: :meth:`~.scenarios.notionnel.ScenarioNotionnel.prospectif`). Rapportée à la
+#: masse du système actuel, elle dit quelle part des majorations la branche
+#: famille leur rembourse encore après la bascule.
+MASSE_STOCK = "stock_avant_bascule"
+
 
 def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             poids_cas: dict[str, float],
@@ -1837,6 +1874,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
     prix et que les masses sont déjà en euros constants.
     """
     masses = {cle: 0.0 for cle in CLES_CAS_TYPES}
+    masses[MASSE_STOCK] = 0.0
     tetes = {TETES_TOUTES: 0.0, TETES_GARANTIE: 0.0}
     vivants = 0
     for pensionne in pensionnes:
@@ -1905,6 +1943,11 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
             else:
                 poids_cle = poids
             masses[cle] += part * poids_cle * pensionne.pensions[cle]
+        # Le critère est celui du scénario prospectif lui-même : une carrière
+        # liquidée au plus tard l'année de la bascule y garde sa pension.
+        if pensionne.annee_liquidation <= revalorisation.annee_bascule:
+            masses[MASSE_STOCK] += (part * poids_revalorise_prospectif
+                                    * pensionne.pensions["actuel"])
     return masses, vivants, tetes
 
 
@@ -2953,6 +2996,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= simulateur.parametres.annee_bascule,
             pilier=pilier,
+            part_stock=masses[MASSE_STOCK] / masses["actuel"],
         ))
     _reprises_successions(lignes, simulateur, garantie)
 
@@ -3049,6 +3093,8 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             garantie_liberal=(par_annee[annee].part_pib(COMPOSANTE_GARANTIE)
                               - par_annee[annee].part_pib_reprises()
                               if annee >= annee_bascule else 0.0),
+            majorations_stock=(comptes.versement_ligne(annee, "cnaf_majorations")
+                               * par_annee[annee].part_stock),
         )
         for annee in comptes.annees() if annee in par_annee
     ]
