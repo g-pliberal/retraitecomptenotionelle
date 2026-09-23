@@ -827,14 +827,14 @@ système actuel. `limites.md` §5 porte les trois.
   scénario 6 rechiffré.** Demandé par l'utilisateur : le solde du scénario 6
   « n'est toujours pas bon », mettre à jour les graphiques de la page Coût et
   le rechiffrer. Trouvé en chemin : le commit qui a porté le réglage des frais
-  du pilier sur `main` (3d2f8bb) avait été rebasé sur celui de la reprise
-  calculée sur le patrimoine (53a7c44) sans que ses cinq conflits soient
+  du pilier sur `main` (391dd61) avait été rebasé sur celui de la reprise
+  calculée sur le patrimoine (602bd3e) sans que ses cinq conflits soient
   résolus — `moteur/js/pages.js` et `web/pages.py` portaient encore leurs
   marqueurs, le site ne se chargeait plus depuis ce commit, et le site publié
-  en était resté au commit d'avant. C'est la seconde fois (voir 2e2ab09).
+  en était resté au commit d'avant. C'est la seconde fois (voir edae501).
   Réparé en gardant les deux côtés — la reprise calculée sur le patrimoine
   (`reprise` vide) ET le réglage `frais` — par deux sessions à la fois, à
-  l'identique : celle des frais a poussé la sienne (22b5def) pendant que
+  l'identique : celle des frais a poussé la sienne (ebc6527) pendant que
   celle-ci faisait la même, et le rebasage n'a laissé que le rechiffrage.
   Témoins régénérés — ceux du commit fautif avaient été produits avant le
   rebasage et ne portaient pas le champ des frais. *Rechiffré*,
@@ -4607,7 +4607,7 @@ toucher aux moteurs de pension.
    *Les NIVEAUX ont bougé deux fois depuis la décision, le COÛT jamais* :
    −1,12 % et −2,51 % le 19 au soir, −0,28 % et −1,67 % une fois la réversion
    sortie des cinq scénarios notionnels, −0,76 % et −2,16 % depuis que le
-   profil de carrière est lu chez l'INSEE (37e9bb4). Le coût est resté
+   profil de carrière est lu chez l'INSEE (62c5b0d). Le coût est resté
    1,395 point aux trois mesures, à un millième près : c'est une PART des
    ressources, elle ne dépend pas de ce que les pensions coûtent.
    `docs/limites.md` § 5 bis porte la même table, et dit pourquoi elle existe.
@@ -5146,7 +5146,7 @@ et du 403 qui empêche d'en supprimer une.
 **Le diagnostic.** Le compteur ne se trompait pas de calcul, il se trompait de
 point de comparaison. Au démarrage d'une session web, la référence distante de
 sa branche `claude/…` existe déjà, posée sur le commit du clone :
-`origin/claude/clever-tesla-mln5zm` valait `3030cf6`, exactement `origin/main`.
+`origin/claude/clever-tesla-mln5zm` valait `670a258`, exactement `origin/main`.
 `git push origin HEAD:main` publie le travail mais ne touche pas cette
 référence, et `git push origin HEAD:main` ne pose pas d'amont non plus — la
 branche locale n'en avait aucun (`fatal: no upstream configured`). Le compteur
@@ -5162,15 +5162,15 @@ puis la référence de branche amenée sur `HEAD` — jamais créée si elle n'e
 pas, une session ne saurait pas la supprimer — et `origin/main` posé en amont
 de la branche locale. Les deux compteurs possibles lisent alors zéro. Le
 script est silencieux quand il n'y a rien à publier et écrit une ligne
-(`main ← 3030cf6 (2 commit(s))`) quand il a poussé. Les poussées et le `fetch`
+(`main ← 670a258 (2 commit(s))`) quand il a poussé. Les poussées et le `fetch`
 reprennent cinq fois, 2, 4, 8 puis 16 secondes, le réseau d'une session web
 lâchant sans prévenir.
 
 **Le cas qui s'est présenté pendant l'écriture même de ce script.** La
 première version refusait toute divergence, comme la recette manuscrite et son
 `--ff-only`. Elle a refusé de publier ce commit-ci : une autre session avait
-poussé `96abe3e` entre le clone et la fin du travail, et les deux lignées
-avaient chacune un commit depuis `3030cf6`. C'est le cas ORDINAIRE, et le
+poussé `6d2ad7d` entre le clone et la fin du travail, et les deux lignées
+avaient chacune un commit depuis `670a258`. C'est le cas ORDINAIRE, et le
 refus y rendait à l'utilisateur exactement la corvée qu'on lui enlevait. Le
 script rebase donc les commits de la session sur `origin/main` — ils n'ont
 jamais été publiés, rien n'est réécrit chez personne — et garde son refus pour
@@ -14722,8 +14722,24 @@ le re-signer. Trois tests de `tests/test_pousser.py` le tiennent, dont celui du
 committer que le rebasage du script pose lui-même sous un auteur anonyme.
 `CLAUDE.md` donne l'identité à poser sur un poste local.
 
+**Puis l'historique, le même jour.** Vingt-quatre commits, du 8 au 22
+septembre, portaient de telles signatures ; un ancien nom du compte figurait
+dans quarante-cinq versions de six fichiers et dans un message. L'historique
+entier a été réécrit par `git filter-repo` : les signatures remplacées par
+l'adresse `noreply` du compte, l'ancien nom par `g-pliberal` dans les fichiers
+et par « l'ancien nom du compte » dans le message. Le contenu final de chaque
+branche et de chaque tag est resté identique à l'octet, et aucun objet de
+l'historique ne porte plus rien de nominatif. Toutes les empreintes ont changé :
+les sept que citait ce journal ont été reportées, et `CLAUDE.md` dit comment
+reprendre un clone antérieur, par `git merge-base --fork-point`. Ce qu'une
+session ne peut pas faire reste à la main : GitHub sert les anciens commits
+tant que son support ne les a pas purgés — la pull request n° 1 les retient —,
+et les exécutions Actions qui les nomment se suppriment depuis l'onglet
+Actions.
+
 **Fichiers.** `scripts/pousser.sh`, `tests/test_pousser.py`, `CLAUDE.md`,
-`README.md` et `docs/limites.md` (le compte des tests).
+`README.md` et `docs/limites.md` (le compte des tests), et ce journal (les
+empreintes reportées).
 
 ### 115. Qui paie quoi : deux schémas de Sankey sur la page Coût — `fait`
 

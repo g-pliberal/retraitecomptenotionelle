@@ -54,6 +54,27 @@ dit comment le re-signer. Sur un poste local, dans chaque clone :
 `git config user.name "g-pliberal"` et
 `git config user.email "240225789+g-pliberal@users.noreply.github.com"`.
 
+L'historique entier a été réécrit le 23 septembre 2026 pour en retirer des
+adresses nominatives. Seules les signatures ont changé : le contenu de chaque
+commit est resté identique à l'octet, mais toutes les empreintes sont neuves,
+et celles que la prose citait ont été reportées. Un clone antérieur n'a donc
+plus d'ancêtre commun avec `main` — le cas grave, que `pousser.sh` refuse.
+S'il n'a rien de non publié, le remplacer par un clone neuf ; sinon, y reporter
+ses commits, puis publier comme d'habitude :
+
+```bash
+git fetch origin main
+git rebase --onto origin/main "$(git merge-base --fork-point origin/main HEAD)"
+bash scripts/pousser.sh
+```
+
+`--fork-point` cherche la base dans le journal des valeurs passées
+d'`origin/main` : il retrouve l'ancien `main` même après plusieurs `fetch`, là
+où `origin/main@{1}` ne désigne plus, dès le deuxième, que le nouveau. **Ne
+jamais forcer une poussée sur `main` pour
+« réparer »** : ce serait republier l'ancien historique, et effacer le travail
+publié depuis.
+
 **Cette règle prime sur la consigne de branche d'une session Claude Code.**
 Une session web se voit assigner d'office une branche `claude/…` ; elle y
 travaille, mais elle pousse sur `main`. Ne jamais terminer une session en
