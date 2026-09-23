@@ -110,7 +110,7 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 - **Le système 1 est la référence** : le droit en vigueur, minima et
   majorations compris, recalculé règle par règle sur cette carrière. Sa ligne
   porte un troisième chiffre, plus récent que le reste de ce parcours, et il
-  vaut d'être lu à voix haute : **financé, 2 556 €**, soit 91 % de ce qu'il
+  vaut d'être lu à voix haute : **financé, 2 559 €**, soit 91 % de ce qu'il
   promet. Le reste attend des cotisations que personne n'a versées. La barre
   sous la ligne le montre, et la page Risque le chiffre.
 - **Les systèmes 2 et 3 ne sont pas des propositions.** Ce sont des
@@ -165,8 +165,8 @@ net :
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 1 243 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 970 € | -22,0 % |
-| 4. La proposition | 992 € | -20,3 % |
+| 3. Ce qui a été cotisé, deux parts | 990 € | -20,4 % |
+| 4. La proposition | 1 012 € | -18,6 % |
 
 À montrer avec le plancher en tête : la garantie vieillesse, 1 050 € pour
 une personne seule dès 65 ans, passe au-dessus de cette pension. Elle n'est
@@ -180,8 +180,8 @@ garantie payée par l'impôt », sous les résultats, en donne la règle.
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 2 755 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 3 344 € | +21,4 % |
-| 4. La proposition | 3 382 € | +22,8 % |
+| 3. Ce qui a été cotisé, deux parts | 3 465 € | +25,8 % |
+| 4. La proposition | 3 504 € | +27,2 % |
 
 C'est le cas qui surprend, et il faut savoir le dire : l'État employeur
 cotise pour ses fonctionnaires bien au-delà de ce qu'un employeur privé verse
@@ -196,8 +196,8 @@ septembre 2022, départ en janvier 2064 à 64 ans :
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 2 462 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 1 593 € | -35,3 % |
-| 4. La proposition | 1 838 € | -25,3 % |
+| 3. Ce qui a été cotisé, deux parts | 1 556 € | -36,8 % |
+| 4. La proposition | 1 795 € | -27,1 % |
 
 C'est la carrière qui cotise presque entièrement après la bascule : la
 rente capitalisée y pèse le plus, et l'écart entre 3 et 4 est le plus large
@@ -221,11 +221,11 @@ moins. Vert : plus.
 Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (chef d'exploitation
-  agricole, +5 % pour la génération 2000) et la moins bien traitée (militaire
-  non officier, -45 %), et les 50 points qui les séparent à carrière et à
-  durée identiques.
-- La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -57 %
-  pour la génération 1940 à +35 % pour la génération 1970 : la même règle
+  agricole, +1 % pour la génération 2000) et la moins bien traitée (agent
+  des industries électriques et gazières, -47 %), et les 48 points qui les
+  séparent à carrière et à durée identiques.
+- La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -56 %
+  pour la génération 1940 à +42 % pour la génération 1970 : la même règle
   donne des résultats opposés selon ce que l'État a réellement cotisé à
   chaque époque.
 - Le sélecteur « Système affiché » : la grille se réécrit pour le système 2
@@ -289,7 +289,7 @@ cet ordre :
 | | |
 |---|---|
 | Prélevé chaque mois sur un salaire moyen | 940 €, cotisation salariale et patronale réunies |
-| Promis au-delà de ce que ces cotisations financent | 34 % de la pension |
+| Promis au-delà de ce que ces cotisations financent | 35 % de la pension |
 | Non financé en 2070, sans rien changer | 16 % |
 
 Le 940 € est le chiffre qui porte : c'est le premier poste de la fiche de

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Fabrique ce que le site charge : ``moteur/donnees.json`` et ``moteur/style.css``.
 
+Et deux tables que le modèle Python relit comme des données :
+``data/derive/equilibre.json``, le bilan figé, et
+``data/derive/calibrations_mortalite.json``, les lois de mortalité calibrées.
+
 Le site s'exécute en JavaScript ; les données, elles, restent écrites en YAML et
 en CSV dans ``data/``, où elles sont lisibles, commentées et recontrôlées contre
 leurs sources. Ce script fait le pont : il charge les données **par les
@@ -62,7 +66,10 @@ from retraite_notionnelle.avantages import charger_avantages  # noqa: E402
 from retraite_notionnelle.donnees.cotisants import EffectifsCotisants  # noqa: E402
 from retraite_notionnelle.donnees.effectifs import EffectifsRetraites  # noqa: E402
 from retraite_notionnelle.donnees.frais import FraisEpargneRetraite  # noqa: E402
-from retraite_notionnelle.donnees.mortalite import DonneesMortalite  # noqa: E402
+from retraite_notionnelle.donnees.mortalite import (  # noqa: E402
+    DonneesMortalite,
+    serialiser_calibrations,
+)
 from retraite_notionnelle.remuneration import charger_prelevements  # noqa: E402
 from retraite_notionnelle.restitution import POSTES_REMUNERATION  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
@@ -92,6 +99,10 @@ STYLE = RACINE / "moteur" / "style.css"
 #: dans ``data/`` parce que le modèle Python le relit comme une donnée — voir
 #: ``donnees/bilan.py`` —, et embarqué tel quel dans le paquet du navigateur.
 EQUILIBRE = DONNEES / "derive" / "equilibre.json"
+#: Les lois de mortalité calibrées, avec l'empreinte de leurs entrées. Écrites
+#: ici et nulle part ailleurs : le test de fraîcheur du paquet les vérifie, et
+#: une loi calée sur des cibles qui ont changé ne peut plus survivre en silence.
+CALIBRATIONS = DONNEES / "derive" / "calibrations_mortalite.json"
 
 #: Version du format. À incrémenter si la structure du paquet change, pour
 #: qu'un site en cache ne lise pas un paquet qu'il ne comprend pas.
@@ -442,6 +453,22 @@ def _quotients() -> dict:
     }
 
 
+_TABLE_CALIBRATIONS: dict[str, list] | None = None
+
+
+def _table_calibrations() -> dict[str, list]:
+    """Les lois de toutes les années de la série, avec leur empreinte.
+
+    Relues de ``data/derive/calibrations_mortalite.json`` quand leurs entrées
+    n'ont pas changé, recalibrées sinon. Calculées une fois par exécution : le
+    paquet et le fichier de calibration en sont deux lectures.
+    """
+    global _TABLE_CALIBRATIONS
+    if _TABLE_CALIBRATIONS is None:
+        _TABLE_CALIBRATIONS = DonneesMortalite(DONNEES).table_calibrations()
+    return _TABLE_CALIBRATIONS
+
+
 def _calibrations() -> dict:
     """Paramètres de Makeham pour TOUTES les années utiles, pas seulement celles
     déjà rencontrées.
@@ -450,14 +477,12 @@ def _calibrations() -> dict:
     domaine est donc fini et connu. En le calibrant intégralement ici, le
     navigateur n'a plus qu'à lire une table — il ne refait aucune bissection, et
     les deux implémentations partent des mêmes paramètres au bit près.
+
+    Rien n'est écrit ici : le fichier de calibration est une sortie comme les
+    autres (:func:`sorties`), et ``--verifier`` ne doit rien écrire.
     """
-    donnees = DonneesMortalite(DONNEES)
-    for sexe in DonneesMortalite.SEXES:
-        serie = donnees._e60[sexe]
-        for annee in range(serie.premiere_annee, serie.derniere_annee + 1):
-            donnees.loi(annee, sexe)
-    donnees.enregistrer_cache()
-    return {cle: list(valeur) for cle, valeur in sorted(donnees._cache.items())}
+    return {cle: list(valeur[:2])
+            for cle, valeur in sorted(_table_calibrations().items())}
 
 
 def _populations() -> dict:
@@ -1321,7 +1346,7 @@ def construire_style() -> bytes:
 
 
 def sorties(contexte=None) -> dict[Path, bytes]:
-    """Les trois fichiers versionnés, dans l'ordre où ils se construisent.
+    """Les quatre fichiers versionnés, dans l'ordre où ils se construisent.
 
     Le bilan vient d'abord, et le paquet reçoit ses octets plutôt que de le
     recalculer : la table de ``data/`` et celle du navigateur ne peuvent alors
@@ -1329,7 +1354,8 @@ def sorties(contexte=None) -> dict[Path, bytes]:
     """
     bilan = construire_bilan(contexte)
     return {EQUILIBRE: bilan, PAQUET: construire(bilan),
-            STYLE: construire_style()}
+            STYLE: construire_style(),
+            CALIBRATIONS: serialiser_calibrations(_table_calibrations()).encode("utf-8")}
 
 
 def main(argv: list[str] | None = None) -> int:

@@ -939,10 +939,13 @@ def test_les_scenarios_4_et_5_ne_qualifient_pas_la_fiabilite_d_ensemble(simulate
 
 
 def _carriere_modeste(simulateur, age_liquidation: float, **kwargs) -> Carriere:
-    """Un demi-salaire moyen, entré à 21 ans : sous le plancher à coup sûr."""
+    """Quatre dixièmes du salaire moyen, entré à 21 ans : sous le plancher,
+    avec de la marge. Un demi-salaire moyen l'était à peine, et l'a franchi
+    à 65 ans quand les lois de mortalité projetées ont été recalées sur
+    l'INSEE : le diviseur a baissé, la pension notionnelle monté de 4 %."""
     return simulateur.carriere_simple(
         annee_naissance=1960, sexe="F", affiliation="salarie_prive_non_cadre",
-        age_debut=21, age_liquidation=age_liquidation, niveau_salaire=0.5,
+        age_debut=21, age_liquidation=age_liquidation, niveau_salaire=0.4,
         **kwargs,
     )
 

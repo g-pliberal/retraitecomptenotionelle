@@ -1545,6 +1545,57 @@ def test_calibration_reproduit_les_esperances_publiees(mortalite, esperances):
         assert loi.esperance(65) == pytest.approx(esperances[(annee, sexe, "e65")], abs=0.05)
 
 
+def test_la_table_du_modele_reproduit_les_esperances_publiees(esperances):
+    """Le même contrôle, sur la table que le modèle et le site LISENT.
+
+    La fixture ``mortalite`` recalibre tout, sans la mémoire sur disque : elle
+    validait une loi que personne n'utilisait. Jusqu'au 23 septembre 2026, la
+    table servie gardait pour 2025 à 2080 des lois calées sur d'anciennes
+    projections — l'espérance à 65 ans d'une femme en 2040 y valait 25,2 ans
+    quand l'INSEE en projette 24,1 —, et ce test-ci l'aurait dit. Il porte sur
+    toutes les années projetées, pas sur quatre.
+    """
+    production = DonneesMortalite(RACINE_DONNEES)
+    ecarts = []
+    for (annee, sexe, mesure), cible in sorted(esperances.items()):
+        if annee < 2026 or mesure not in ("e60", "e65"):
+            continue
+        age = 60 if mesure == "e60" else 65
+        obtenue = production.loi(annee, sexe).esperance(age)
+        if abs(obtenue - cible) > 0.05:
+            ecarts.append((annee, sexe, mesure, round(obtenue, 2), cible))
+    assert not ecarts, ecarts[:10]
+
+
+def test_la_memoire_des_calibrations_est_a_jour():
+    """Chaque loi mémorisée porte l'empreinte des données d'aujourd'hui.
+
+    ``data/derive/calibrations_mortalite.json`` est indexé sur « année|sexe » :
+    rien ne le liait aux cibles dont ses lois sont tirées, et il a survécu au
+    remplacement des projections d'espérance de vie. Chaque entrée porte
+    désormais l'empreinte de ses entrées ; une empreinte qui ne correspond plus
+    est une loi périmée. S'il échoue : ``python scripts/construire_donnees.py``.
+    """
+    import json
+
+    chemin = RACINE_DONNEES / "derive" / "calibrations_mortalite.json"
+    table = json.loads(chemin.read_text(encoding="utf-8"))
+    modele = DonneesMortalite(RACINE_DONNEES, cache_disque=False)
+    attendues = {
+        f"{annee}|{sexe}"
+        for sexe in DonneesMortalite.SEXES
+        for annee in range(modele._e60[sexe].premiere_annee,
+                           modele._e60[sexe].derniere_annee + 1)
+    }
+    assert set(table) == attendues
+    perimees = [
+        cle for cle, entree in table.items()
+        if len(entree) != 3
+        or entree[2] != modele.empreinte(int(cle.split("|")[0]), cle.split("|")[1])
+    ]
+    assert not perimees, perimees[:10]
+
+
 def test_esperance_decroit_avec_l_age(mortalite):
     precedente = None
     for age in (55, 60, 65, 70, 75):

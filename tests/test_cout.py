@@ -271,9 +271,14 @@ def test_la_garantie_vieillesse_est_comptee_dans_le_6_et_redite_a_part(cout, ave
     assert cout.cumul(COMPOSANTE_GARANTIE) > 0.0
     projetees = avenir.projetees()
     assert all(ligne.rapports[COMPOSANTE_GARANTIE] > 0.0 for ligne in projetees)
-    # Décroissante sur la projection, de son entrée à l'horizon.
-    assert (projetees[-1].rapports[COMPOSANTE_GARANTIE]
-            < 0.5 * projetees[0].rapports[COMPOSANTE_GARANTIE])
+    # Décroissante sur la projection : la dernière décennie sous la première,
+    # et l'horizon sous l'entrée. Le test exigeait auparavant que l'horizon
+    # tombe sous la MOITIÉ de l'entrée — un instantané du modèle, pas une
+    # propriété : la correction des lois de mortalité projetées l'a posé à
+    # 50,4 % sans que le mécanisme décrit ci-dessus ait changé de sens.
+    garantie = [ligne.rapports[COMPOSANTE_GARANTIE] for ligne in projetees]
+    assert sum(garantie[-10:]) < sum(garantie[:10])
+    assert garantie[-1] < garantie[0]
 
 
 # -- la pyramide des âges ----------------------------------------------------
