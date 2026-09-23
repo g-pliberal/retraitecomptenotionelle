@@ -6578,7 +6578,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   page **Coût** sont celles d'un système qui ne se pilote pas. Le facteur étant
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
-  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,69<!--/--> en 2070 pour le scénario 3 ne se lit donc
+  niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/--> en 2070 pour le scénario 3 ne se lit donc
   pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->41<!--/--> % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
@@ -6797,10 +6797,10 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   prend en charge des cotisations pour des périodes non travaillées — 15,7 Md€
   en 2024, dont 13,0 au titre du chômage et 2,4 au titre de la maladie — et il
   paie le minimum vieillesse, 4,2 Md€. **Aucun scénario notionnel ne sert l'un
-  ni l'autre** : ils ne portent rien au compte pendant une année de chômage, et
-  la garantie vieillesse qui remplace le minimum vieillesse est financée à
-  part, par l'impôt, hors du compte des cotisants. C'est mot pour mot la règle
-  que le dépôt applique déjà à la CNAF et à l'Unédic — LA RECETTE SUIT LE
+  ni l'autre** : ils ne valident aucun trimestre pour une année non
+  travaillée, et la garantie vieillesse qui remplace le minimum vieillesse est
+  financée à part, par l'impôt, hors du compte des cotisants. C'est mot pour
+  mot la règle que le dépôt applique déjà à la CNAF — LA RECETTE SUIT LE
   DROIT —, et le Fonds de solidarité vieillesse y échappait parce que sa
   recette entre dans les comptes sous un autre nom. Le reste du poste — taxe
   sur les salaires, forfait social, contribution sociale de solidarité des
@@ -6809,7 +6809,8 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
 
   *Ce que cela donne, et c'est fait.* Le fonds est entré dans le retrait le
   19 septembre 2026, avec sa série certifiée, à côté de la branche famille et
-  de l'assurance chômage : ce qu'il VERSE — 15,2 Md€ de cotisations prises en
+  de l'assurance chômage — laquelle en est sortie le 23 septembre, voir
+  plus bas : ce qu'il VERSE — 15,2 Md€ de cotisations prises en
   charge et 4,3 de minimum vieillesse en 2024 — est retiré des ressources des
   cinq scénarios notionnels. Le retrait total passe d'un demi-point de PIB à
   **1,17 %**, et coûte 0,64 point de solde moyen à chacun d'eux.
@@ -6882,11 +6883,9 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   branche famille verse pour l'assurance vieillesse des parents au foyer et les
   majorations pour enfants — 10,9 milliards en 2024 — et ce que l'Unédic verse
   pour les points de retraite complémentaire des chômeurs — 3,9 milliards. Les
-  scénarios notionnels suppriment les premiers droits et ne portent rien au
-  compte pendant une année de chômage ; ils comptent pourtant ces recettes,
-  0,50 % du PIB et 3,7 % des ressources en 2024 — auxquels s'ajoute depuis le
-  19 septembre 2026 le fonds de solidarité vieillesse, 0,67 point de plus. La
-  série
+  scénarios notionnels suppriment les premiers droits ; ils comptaient
+  pourtant ces recettes, auxquelles s'ajoute depuis le 19 septembre 2026 le
+  fonds de solidarité vieillesse, 0,67 point de plus. La série
   `transferts_retraite.csv` les lit chez celui qui paie, dans les rapports à
   la Commission des comptes de la Sécurité sociale, de 2013 à 2024 (l'Unédic)
   ou 2025 (la CNAF) ; les rapports d'avant 2013 sont chiffrés ou compressés
@@ -6896,9 +6895,16 @@ valent aujourd'hui est au §6 du README, que la prose recalcule.
   l'horizon projeté — personne ne projette ce que la CNAF versera en 2070, et
   une part constante est l'hypothèse qui n'en ajoute aucune autre. Le jour où
   il est entré, cela ramenait le scénario 3 en 2070 de 1,94 à 1,87 et le
-  scénario 5 de 1,17 à 1,13 — ils valent aujourd'hui 1,67 et 1,08 —, et cela
-  met les deux en déficit en 2025, où ils servent encore les pensions du
-  système actuel. Le système actuel encaisse tout et garde le solde du COR.
+  scénario 5 de 1,17 à 1,13. **Deux choses y étaient fausses, et le sont
+  restées jusqu'au 23 septembre 2026.** L'Unédic était retirée au motif que
+  les scénarios notionnels ne portaient rien au compte pendant une année de
+  chômage : ils y portaient, depuis toujours, les cotisations complémentaires
+  qu'elle verse. Sa recette leur est rendue, et le retrait ne compte plus que
+  la branche famille et le fonds. Et le retrait frappait les scénarios 3 et 5
+  dès 2013, ce qui les mettait en déficit en 2025, où ils servent encore les
+  pensions du système actuel : avant la bascule, ils SONT ce système, et en
+  encaissent toutes les recettes. Le système actuel encaisse tout et garde le
+  solde du COR.
   Le coefficient n'est toujours pas appliqué, et ce que la branche famille
   ferait de ce qu'elle cesserait de verser est une décision de programme, pas
   un résultat du modèle. Depuis le 18 septembre 2026, ce retrait n'est plus la
@@ -8631,7 +8637,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2233<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2234<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

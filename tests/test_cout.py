@@ -1492,9 +1492,9 @@ def test_la_branche_famille_verse_dix_milliards(comptes: ComptesRetraite):
     """L'ordre de grandeur que la page doit pouvoir dire, et qui borne le coefficient.
 
     La CNAF verse une dizaine de milliards par an — AVPF et majorations, à
-    parts presque égales —, l'Unédic trois à quatre. Ensemble, un demi-point
-    de PIB que les scénarios notionnels comptent sans servir les droits que
-    cela paie.
+    parts presque égales —, l'Unédic trois à quatre. Les scénarios notionnels
+    ne servent pas les droits que la première paie ; ils portent au compte les
+    cotisations que la seconde verse, et gardent donc sa recette.
     """
     annee = comptes.derniere_annee_transferts
     assert 9_000 < comptes.transfert_organisme("famille", annee) < 13_000
@@ -1509,9 +1509,14 @@ def test_la_branche_famille_verse_dix_milliards(comptes: ComptesRetraite):
     assert (comptes.transfert_organisme("solidarite", annee)
             > comptes.transfert_organisme("famille", annee)
             + comptes.transfert_organisme("chomage", annee))
-    assert 0.010 < comptes.transfert_supprime_part_pib(annee) < 0.015
-    # Les trois organismes ont un droit supprimé : la recette suit le droit.
-    assert all(organisme.droit_supprime for organisme in ORGANISMES)
+    assert 0.009 < comptes.transfert_supprime_part_pib(annee) < 0.015
+    # La branche famille et le fonds ont un droit supprimé ; l'assurance
+    # chômage non, le compte portant ce qu'elle verse. La recette suit le
+    # droit, dans les deux sens.
+    assert {o.code for o in ORGANISMES if o.droit_supprime} == {"famille", "solidarite"}
+    assert comptes.transfert_supprime_part_pib(annee) == pytest.approx(
+        comptes.transfert_part_pib("famille", annee)
+        + comptes.transfert_part_pib("solidarite", annee))
 
 
 def test_les_deux_caisses_n_expliquent_pas_tout_le_poste_transferts(
@@ -1608,6 +1613,14 @@ def test_la_recette_suit_le_droit(cout: Cout, comptes: ComptesRetraite):
             cotisees = ligne.ressources * ligne.part_contributive
             assert ligne.ressources_de(scenario) == pytest.approx(
                 cotisees * rapport + ligne.ressources - cotisees - ligne.retrait)
+            # Ce que l'Unédic verse leur reste : le compte en porte les
+            # cotisations. Le « dont » du poste le dit.
+            postes = ligne.postes_ressources(scenario)
+            assert postes["transferts_chomage"] == pytest.approx(ligne.versements["chomage"])
+            assert postes["transferts_famille"] == 0.0
+        assert ligne.versements["chomage"] > 0.0
+        assert ligne.retrait == pytest.approx(
+            ligne.versements["famille"] + ligne.versements["solidarite"])
     # À la bascule, la recette leur est retirée comme aux autres.
     ligne = solde.annee(bascule)
     for scenario in ("notionnel_prospectif", "notionnel_prospectif_employeur"):
@@ -2149,18 +2162,19 @@ def test_la_proposition_ne_compte_que_les_cotisations_et_deux_restes(cout_assiet
     À compter de la bascule, sous la convention de l'assiette : la contribution
     d'équilibre, les subventions et les impôts affectés sont à zéro ; les
     cotisations valent 18 % de l'assiette, c'est-à-dire les ressources
-    multipliées par le rapport des deux taux ; ce que la branche famille et
-    l'assurance chômage versent est retiré des transferts, et les autres
-    produits sont reconduits tels quels. Avant la bascule, la proposition
-    prélève les taux réels comme tout le monde, et sa réversion n'est jamais
-    servie.
+    multipliées par le rapport des deux taux ; ce que la branche famille verse
+    est retiré des transferts, ce que l'assurance chômage verse y reste — le
+    compte porte les cotisations qu'elle paie —, et les autres produits sont
+    reconduits tels quels. Avant la bascule, la proposition prélève les taux
+    réels comme tout le monde, et sa réversion n'est jamais servie.
     """
     bascule = cout_assiette.solde.annees[0].annee_bascule
     for point in cout_assiette.solde.annees:
         postes = point.postes_ressources("notionnel_liberal")
         actuel = point.postes_ressources("actuel")
         assert postes["transferts_famille"] == 0.0
-        assert postes["transferts_chomage"] == 0.0
+        assert postes["transferts_chomage"] == pytest.approx(actuel["transferts_chomage"])
+        assert postes["transferts_chomage"] > 0.0
         assert postes["transferts_autres"] == pytest.approx(actuel["transferts_autres"])
         assert postes["autres_produits"] == pytest.approx(actuel["autres_produits"])
         assert point.postes_depenses("notionnel_liberal")["droits_derives"] == 0.0
@@ -2195,7 +2209,9 @@ def test_le_systeme_actuel_encaisse_chaque_poste_du_cor(cout_assiette: Cout, com
         comptes.transfert_part_pib("chomage", derniere))
     assert postes["impots_solidarite"] == pytest.approx(
         comptes.transfert_part_pib("solidarite", derniere))
-    assert postes["transferts_famille"] + postes["transferts_chomage"] + postes[
+    # Le retrait ne compte que les payeurs dont le droit est supprimé : la
+    # branche famille et le fonds, et non l'assurance chômage.
+    assert postes["transferts_famille"] + postes[
         "impots_solidarite"] == pytest.approx(point.retrait)
     assert point.postes_depenses("actuel")["droits_derives"] == pytest.approx(
         point.depenses * point.part_derives)
@@ -2349,9 +2365,9 @@ def test_la_csg_du_fonds_de_solidarite_ne_sort_qu_une_fois(
     for point in annees:
         attendu = comptes.recette_non_acquise(point.annee, par_impot=True)
         assert point.retrait_par_impot == pytest.approx(attendu), point.annee
-        # Elle est une part réelle du retrait, jamais sa totalité : la CNAF et
-        # l'Unédic versent, eux, par un transfert, et leur recette est dans le
-        # poste « transferts », qui reste.
+        # Elle est une part réelle du retrait, jamais sa totalité : la CNAF
+        # verse, elle, par un transfert, et sa recette est dans le poste
+        # « transferts », qui reste.
         assert 0.0 < point.retrait_par_impot < point.retrait, point.annee
         hors_impot = comptes.recette_non_acquise(point.annee, par_impot=False)
         assert (point.retrait_par_impot + hors_impot

@@ -166,8 +166,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->888<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 986<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->889<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->4 989<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Dix pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -219,7 +219,7 @@ Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->496<!--/--> simulations complètes et
-<!--chiffre:entrees(tests/temoins/pages.json:)-->53<!--/--> rendus de page, dans `tests/temoins/`.
+<!--chiffre:entrees(tests/temoins/pages.json:)-->54<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->81 574<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->88,7<!--/--> % identiques
@@ -869,19 +869,19 @@ contrôle et non identité.
 | Système | Solde 2025 | Solde moyen 2026-2070 | Coefficient 2070 |
 |---|---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(solde?scenario=1&annee=2025)-->−0,17<!--/--> % du PIB | **<!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %** | **<!--chiffre:mesure(coefficient?scenario=1)-->0,84<!--/-->** |
-| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(solde?scenario=2&annee=2025)-->+8,99<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=2)-->+7,82<!--/--> % | <!--chiffre:mesure(coefficient?scenario=2)-->2,59<!--/--> |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−0,16<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,40<!--/--> % | **<!--chiffre:mesure(coefficient?scenario=3)-->1,69<!--/-->** |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(solde?scenario=4&annee=2025)-->+3,67<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=4)-->+1,88<!--/--> % | <!--chiffre:mesure(coefficient?scenario=4)-->1,16<!--/--> |
-| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−0,16<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,20<!--/--> % | <!--chiffre:mesure(coefficient?scenario=5)-->1,09<!--/--> |
-| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+3,67<!--/--> % | **<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,54<!--/--> %** | **<!--chiffre:mesure(coefficient?scenario=6)-->0,98<!--/-->** |
+| 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(solde?scenario=2&annee=2025)-->+9,13<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=2)-->+7,95<!--/--> % | <!--chiffre:mesure(coefficient?scenario=2)-->2,62<!--/--> |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(solde?scenario=3&annee=2025)-->−0,16<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=3)-->+1,53<!--/--> % | **<!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/-->** |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(solde?scenario=4&annee=2025)-->+3,80<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=4)-->+2,01<!--/--> % | <!--chiffre:mesure(coefficient?scenario=4)-->1,17<!--/--> |
+| 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(solde?scenario=5&annee=2025)-->−0,16<!--/--> % | <!--chiffre:mesure(solde_moyen?scenario=5)-->−0,07<!--/--> % | <!--chiffre:mesure(coefficient?scenario=5)-->1,10<!--/--> |
+| 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(solde?scenario=6&annee=2025)-->+3,80<!--/--> % | **<!--chiffre:mesure(solde_moyen?scenario=6)-->−1,41<!--/--> %** | **<!--chiffre:mesure(coefficient?scenario=6)-->0,99<!--/-->** |
 
 Ce sont les chiffres que la page Coût affiche, Python et JavaScript à
 l'identique : la sonde de la prose les recalcule, et
 `test_le_README_donne_le_solde_que_la_page_cout_calcule` les confronte en plus
 à la page, ligne par ligne. Ils ont été faux plusieurs jours de suite, chaque
 fois que le modèle de coût a bougé. Le scénario 6 ne s'équilibre sur aucune
-des années projetées — il en compte <!--chiffre:mesure(annees_equilibrees?scenario=6)-->0<!--/--> à l'équilibre : <!--chiffre:mesure(solde?scenario=6&annee=2026)-->−1,31<!--/--> point de PIB en 2026,
-<!--chiffre:mesure(solde?scenario=6&annee=2050)-->−2,02<!--/--> en 2050, <!--chiffre:mesure(solde?scenario=6&annee=2070)-->−0,17<!--/--> en 2070 —, et il accumule <!--chiffre:mesure(dette?scenario=6)-->106<!--/--> % du PIB de dette en
+des années projetées — il en compte <!--chiffre:mesure(annees_equilibrees?scenario=6)-->0<!--/--> à l'équilibre : <!--chiffre:mesure(solde?scenario=6&annee=2026)-->−1,18<!--/--> point de PIB en 2026,
+<!--chiffre:mesure(solde?scenario=6&annee=2050)-->−1,89<!--/--> en 2050, <!--chiffre:mesure(solde?scenario=6&annee=2070)-->−0,04<!--/--> en 2070 —, et il accumule <!--chiffre:mesure(dette?scenario=6)-->98<!--/--> % du PIB de dette en
 2070, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel.
 
 **Le solde du système actuel est celui que le COR publie**, au dixième près :
@@ -891,7 +891,7 @@ construction, donc son solde doit être le solde publié, et il l'est.
 
 **Un coefficient supérieur à un n'est pas une économie, c'est une marge.** Un
 système notionnel réel *applique* son coefficient : il ne laisse pas dormir un
-excédent, il relève les pensions jusqu'à l'équilibre. Lire les <!--chiffre:mesure(coefficient?scenario=3)-->1,69<!--/--> du
+excédent, il relève les pensions jusqu'à l'équilibre. Lire les <!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/--> du
 scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->41<!--/--> % est donc un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, mais **autrement
 réparti entre les carrières** — ce qui est exactement ce que le reste de ce dépôt
@@ -915,10 +915,16 @@ les points de retraite complémentaire des chômeurs. Le fonds de solidarité
 vieillesse finance par la CSG deux choses que les scénarios notionnels ne
 servent pas non plus : des trimestres pour des périodes non travaillées
 (<!--chiffre:mesure(somme_postes?serie=transferts_retraite.csv&annee=2024&postes=fsv_cotisations)-->15,2<!--/--> Md€ en 2024) et le minimum vieillesse (<!--chiffre:mesure(somme_postes?serie=transferts_retraite.csv&annee=2024&postes=fsv_prestations)-->4,3<!--/--> Md€). Les scénarios
-notionnels suppriment ces droits ; leur coefficient ne compte donc pas ces
-recettes, qui leur sont retirées année par année de 2013 à 2024, à part
-constante des ressources avant et sur tout l'horizon projeté — <!--chiffre:mesure(recette?quoi=retrait&annee=2025)-->1,18<!--/--> % du PIB
-en 2025. Les scénarios 3 et 5 ne les perdent qu'à la bascule : avant elle, ils
+notionnels suppriment ces droits-là et ceux de la branche famille ; leur
+coefficient ne compte donc pas ces recettes, qui leur sont retirées année par
+année de 2013 à 2024, à part constante des ressources avant et sur tout
+l'horizon projeté — <!--chiffre:mesure(recette?quoi=retrait&annee=2025)-->1,05<!--/--> % du PIB en 2025. Ils gardent celle de l'assurance
+chômage : pendant un chômage indemnisé, leur compte porte les cotisations
+complémentaires qu'elle verse — la seule période non travaillée qu'il
+crédite, parce que c'est la seule que quelqu'un paie. Le modèle la leur
+retirait aussi jusqu'au 23 septembre 2026, au motif qu'une année de chômage
+ne portait rien au compte, quand elle y portait ces cotisations depuis
+toujours. Les scénarios 3 et 5 ne les perdent qu'à la bascule : avant elle, ils
 SONT le système actuel, en servent les pensions et en encaissent toutes les
 recettes. Jusqu'au 23 septembre 2026, le modèle les leur retirait dès 2013, et
 leur prêtait en 2025 un déficit de plus d'un point que leur seule construction
@@ -934,9 +940,9 @@ système de retraite y prélève aujourd'hui <!--chiffre:mesure(recette?quoi=tau
 proposition en prélèverait <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/-->. Elle ne reconduit pas non plus les
 subventions d'équilibre, dont la fusion supprime l'objet, ni les impôts
 affectés, qui n'acquièrent de droits à personne. Cela change le sens du
-tableau pour ce scénario : son solde moyen s'établit à <!--chiffre:mesure(solde_moyen?scenario=6)-->−1,54<!--/--> % du PIB, et
+tableau pour ce scénario : son solde moyen s'établit à <!--chiffre:mesure(solde_moyen?scenario=6)-->−1,41<!--/--> % du PIB, et
 son coefficient est sous un sur chacune des années projetées,
-<!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,79<!--/--> au plus bas en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2045<!--/-->, <!--chiffre:mesure(coefficient?scenario=6)-->0,98<!--/--> en 2070. Il est le seul des trois systèmes
+<!--chiffre:mesure(coefficient?scenario=6&quoi=minimum)-->0,80<!--/--> au plus bas en <!--chiffre:mesure(coefficient?scenario=6&quoi=annee_minimum)-->2046<!--/-->, <!--chiffre:mesure(coefficient?scenario=6)-->0,99<!--/--> en 2070. Il est le seul des trois systèmes
 rétroactifs à ne pas afficher de marge, et il passe sous le système actuel,
 qui est à <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> %. Ce déficit est le coût de transition du taux unique :
 pendant trente ans, la caisse paie les pensions de l'ancien système avec une
@@ -1240,7 +1246,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2233 tests Python
+tests/                          2234 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1289,7 +1295,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->2233<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2234<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

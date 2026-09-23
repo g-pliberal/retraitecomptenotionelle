@@ -99,7 +99,8 @@ def test_avant_la_bascule_rien_ne_change(resultat_a, reference):
 def test_la_recette_suit_la_regle_du_programme(resultat_a, reference):
     """Sous « assiette », la recette d'un scénario 2 à 5 est celle du scénario 6
     à son taux près : taux × assiette, plus les autres produits, moins ce que
-    la CNAF et l'Unédic versent pour des droits qu'il ne sert plus."""
+    la CNAF et le fonds de solidarité vieillesse versent pour des droits qu'il
+    ne sert plus."""
     ligne = reference.solde.annee(2030)
     attendu = (ligne.ressources * resultat_a.taux_effectif / ligne.taux_prelevement
                + ligne.ressources * (1.0 - ligne.part_contributive

@@ -980,12 +980,19 @@ def _(m: Modele):
 
 @controle("pilier_sans_annee_pour_rapporter")
 def _(m: Modele):
+    # Qui travaille jusqu'à un départ l'année même de la bascule : un seul
+    # versement, et pas une année pour rapporter. Le contrôle prenait une
+    # carrière au chômage depuis 2019, dont le pilier recevait dix points que
+    # personne ne versait ; il n'en reçoit plus rien.
     comparaison = m.simuler_requete(
-        naissance="1962-03-15", debut="1984-09", liquidation="2026-07",
-        metier2_debut="2019-04", metier2_statut="chomage_indemnise")
+        naissance="1962-03-15", debut="1984-09", liquidation="2026-07")
     pilier = comparaison.notionnel_liberal.capitalisation
     assert pilier is not None and pilier.actif
     assert pilier.interets == 0.0 and pilier.taux_rendement_annuel == 0.0
+    chomeur = m.simuler_requete(
+        naissance="1962-03-15", debut="1984-09", liquidation="2026-07",
+        metier2_debut="2019-04", metier2_statut="chomage_indemnise")
+    assert not chomeur.notionnel_liberal.capitalisation.actif
 
 
 @controle("frais_baissent_par_paliers")

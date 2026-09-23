@@ -4619,13 +4619,15 @@ def test_la_page_cout_ventile_ce_que_d_autres_caisses_versent(contexte):
     la seule chose que le coefficient ne dit pas : la recette suit le droit."""
     corps = rendre(contexte, "/cout", {})[1]
     texte = html.unescape(re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", corps)))
-    assert "Ce que la branche famille et l'assurance chômage versent" in texte
+    assert "Ce que d'autres caisses versent" in texte
     assert "Assurance vieillesse des parents au foyer" in texte
     assert "Points Agirc-Arrco des chômeurs" in texte
-    assert "Ces recettes financent des droits que les scénarios" in texte
-    # Le dépliant dit que le coefficient retire la recette, et ce qu'on lirait
-    # sans ce retrait, sur deux des systèmes comparés.
-    assert "Le coefficient d'équilibre du dépliant suivant les leur retire" in texte
+    assert "Deux de ces recettes financent des droits que les scénarios" in texte
+    # L'assurance chômage paie ce que le compte porte : sa recette reste.
+    assert "L'assurance chômage, elle, paie ce que le compte notionnel porte" in texte
+    # Le dépliant dit que le coefficient retire les deux autres, et ce qu'on
+    # lirait sans ce retrait, sur deux des systèmes comparés.
+    assert "Le coefficient d'équilibre du dépliant suivant retire les deux autres" in texte
     assert re.search(r"la proposition afficherait \d,\d\d en 20\d\d au lieu de \d,\d\d", texte)
     assert "et le système 2" in texte
 

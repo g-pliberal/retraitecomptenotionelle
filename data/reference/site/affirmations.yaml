@@ -956,15 +956,15 @@ affirmations:
 
   - id: cout.recettes_droits_supprimes
     page: /cout
-    extrait: "Ces recettes financent des droits que les scénarios notionnels ne servent pas."
-    porte: le régime unique ne sert aucun avantage non contributif, et la recette est retirée
+    extrait: "Deux de ces recettes financent des droits que les scénarios notionnels ne servent pas."
+    porte: le régime unique ne sert ni l'AVPF, ni les majorations, ni ce que le fonds de solidarité finance, et ces recettes sont retirées
     etat: verifiee
     controle: retrait_des_transferts
 
   - id: cout.coefficient_retire
     page: /cout
-    extrait: "Le coefficient d'équilibre du dépliant suivant les leur retire"
-    porte: les ressources des scénarios notionnels sont celles du système actuel moins le retrait
+    extrait: "Le coefficient d'équilibre du dépliant suivant retire les deux autres"
+    porte: les ressources des scénarios notionnels sont celles du système actuel moins le retrait, qui ne compte que la branche famille et le fonds
     etat: verifiee
     controle: retrait_des_transferts
 

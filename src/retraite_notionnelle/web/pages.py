@@ -6283,15 +6283,26 @@ def _pilier_capitalise(comparaison: Comparaison, saisie: Saisie) -> str:
     depart = comparaison.carriere.annee_liquidation
 
     if not pilier.actif:
-        return g.depliant(
-            f"Le pilier capitalisé : {taux} placés dès "
-            f"{parametres.annee_bascule}",
-            f"""
+        if depart < parametres.annee_bascule:
+            raison = f"""
 <p>Cette carrière ne cotise pas au pilier : elle s'achève en {depart}, et la
 cotisation capitalisée n'est due qu'à compter de
 {parametres.annee_bascule}. La proposition ne demande rien au
 passé — ni ce taux, ni un autre —, et qui a liquidé avant la bascule reçoit
-donc, du système 4, la seule pension de répartition.</p>""",
+donc, du système 4, la seule pension de répartition.</p>"""
+        else:
+            # La carrière court au-delà de la bascule sans revenu d'activité :
+            # le pilier ne prélève que sur ce que l'on gagne.
+            raison = f"""
+<p>Cette carrière ne verse rien au pilier : de {parametres.annee_bascule} à son
+départ, elle ne perçoit aucun revenu d'activité, et le pilier ne prélève que
+sur ce que l'on gagne. Une période sans emploi n'y verse rien, fût-elle
+indemnisée : l'Unédic paie des cotisations de retraite complémentaire, que le
+compte notionnel porte, et non une épargne au nom de l'assuré.</p>"""
+        return g.depliant(
+            f"Le pilier capitalisé : {taux} placés dès "
+            f"{parametres.annee_bascule}",
+            raison,
         )
 
     premiere = pilier.annees[0]
@@ -8181,8 +8192,8 @@ def _cout(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
     apres = {ligne.annee: ligne.depense(reforme) * 100
              for ligne in solde.annees if ligne.annee >= depart_reforme}
     # Et ce qu'elle encaisserait : 18 % sur les revenus d'activité, sans la
-    # contribution d'équilibre de l'État ni ce que la CNAF et l'Unédic versent
-    # pour des droits qu'elle ne sert plus. Deux courbes pour la proposition
+    # contribution d'équilibre de l'État ni ce que la CNAF et le fonds de
+    # solidarité vieillesse versent pour des droits qu'elle ne sert plus. Deux courbes pour la proposition
     # comme pour le système actuel, sinon on ne voit qu'une moitié de son
     # compte : ce qu'elle coûte, jamais ce qu'elle rapporte.
     encaisse = {ligne.annee: ligne.ressources_de(reforme) * 100
@@ -9519,26 +9530,29 @@ fait de versements plus petits, de l'assurance maladie et de l'État pour
 l'essentiel. Le fonds de solidarité vieillesse verse ses
 {g.pourcentage(part_par_impot, decimales=1)} de ressources par une CSG, rangée dans le poste
 « impôts et taxes affectés » du tableau précédent ; il est ici parce qu'il
-paie, comme les deux autres, des droits qu'aucun compte notionnel ne sert. Le COR ventile ce poste pour la dernière année de chaque rapport
+paie, comme la branche famille, des droits qu'aucun compte notionnel ne sert. Le COR ventile ce poste pour la dernière année de chaque rapport
 depuis 2023 : son « dont Unédic » est exactement la somme des deux lignes de
 l'assurance chômage, son « dont CNAF » s'écarte de quelques pour cent de ce que
 la branche famille déclare verser, consolidé du côté des régimes qui
 reçoivent.</p>
 
-<div class="note"><strong>Ces recettes financent des droits que les scénarios
-notionnels ne servent pas.</strong> Les systèmes notionnels suppriment l'assurance
-vieillesse des parents au foyer et les majorations pour enfants, et ne portent
-rien au compte pendant une année de chômage. Ils comptent pourtant, dans les
-ressources qu'ils supposent inchangées, les
+<div class="note"><strong>Deux de ces recettes financent des droits que les
+scénarios notionnels ne servent pas.</strong> Les systèmes notionnels suppriment
+l'assurance vieillesse des parents au foyer et les majorations pour enfants. Ils
+comptent pourtant, dans les ressources qu'ils supposent inchangées, les
 {_milliards(comptes.transfert_organisme("famille", derniere), 1)} de la branche
-famille et les {_milliards(comptes.transfert_organisme("chomage", derniere), 1)}
-de l'assurance chômage de {derniere}, soit
+famille de {derniere}, soit
 {g.pourcentage(supprime_caisses, decimales=2)} du PIB — et, avec les
 {_milliards(comptes.transfert_organisme("solidarite", derniere), 1)} que le
 fonds de solidarité vieillesse verse pour des trimestres que personne n'a
 cotisés, {g.pourcentage(supprime, decimales=2)} du PIB et
-{g.pourcentage(part_supprimee, decimales=1)} des ressources en tout. <strong>Le
-coefficient d'équilibre du dépliant suivant les leur retire</strong> : année
+{g.pourcentage(part_supprimee, decimales=1)} des ressources en tout. L'assurance
+chômage, elle, paie ce que le compte notionnel porte : pendant un chômage
+indemnisé, il crédite les cotisations complémentaires qu'elle verse, les
+{_milliards(comptes.transfert_organisme("chomage", derniere), 1)} de {derniere},
+et c'est la seule période non travaillée qu'il crédite, parce que c'est la
+seule que quelqu'un paie. Cette recette-là reste à tous. <strong>Le
+coefficient d'équilibre du dépliant suivant retire les deux autres</strong> : année
 par année là où on les connaît, à part constante des ressources avant et
 après, jusqu'à l'horizon du COR. Sans ce retrait, la proposition afficherait
 {g.nombre(sans_retrait(horizon, "notionnel_liberal"), 2)} en
@@ -10300,9 +10314,8 @@ dernière colonne ne regarde que les années projetées : le passé est ce qu'il
 été. Pour le système actuel, dont le rapport vaut un par construction, ces
 colonnes redonnent exactement le solde publié par le COR, ce qui dit que
 le raccord ne triche pas. Les trois autres systèmes ne comptent pas tout ce que
-le système actuel encaisse : ce que la branche famille, l'assurance chômage et
-le fonds de solidarité vieillesse versent pour des droits qu'ils ne servent
-pas, soit
+le système actuel encaisse : ce que la branche famille et le fonds de
+solidarité vieillesse versent pour des droits qu'ils ne servent pas, soit
 
 {g.pourcentage(observe.retrait, decimales=2)} du PIB en {obs}, leur est
 retiré, à part constante des ressources sur les années projetées. C'est ce
@@ -10572,8 +10585,9 @@ remplacée par ces {g.pourcentage(base.taux_cotisation_liberal, decimales=0)}
 appliqués aux traitements des fonctionnaires ; les subventions d'équilibre,
 dont la fusion des régimes supprime l'objet ; les impôts et taxes affectés, qui
 n'acquièrent de droits à personne. Des transferts, seule reste la part qui ne
-paie pas un droit supprimé : la branche famille et l'assurance chômage
-financent des droits que le compte notionnel ne sert plus. Côté dépenses, les
+paie pas un droit supprimé : la branche famille finance des droits que le
+compte notionnel ne sert plus, l'assurance chômage des cotisations qu'il
+porte. Côté dépenses, les
 pensions sont recalculées au franc le franc des cotisations, et la réversion
 n'est plus servie, ce que la dernière note détaille. La garantie vieillesse qui remplace l'ASPA est financée par l'impôt,
 hors du compte des cotisants ; le dépliant qui lui est consacré en donne
@@ -11787,8 +11801,8 @@ la Sécurité sociale</h4>
 {comptes.premiere_annee_transferts} à {comptes.derniere_annee_transferts} :
 la fiche de la CNAF pour l'assurance vieillesse des parents au foyer et les
 majorations pour enfants, celles de l'Agirc-Arrco et de l'Ircantec pour les
-points des chômeurs que l'Unédic paie. C'est la source du dépliant « Ce que la
-branche famille et l'assurance chômage versent ».</p>
+points des chômeurs que l'Unédic paie. C'est la source du dépliant « Ce que
+d'autres caisses versent ».</p>
 <p class="discret">Un rapport n'est lu que pour ses comptes arrêtés, et le
 premier qui arrête une année l'emporte. Les rapports d'avant 2013 sont chiffrés
 ou compressés d'une façon que le lecteur du dépôt n'ouvre pas : la série

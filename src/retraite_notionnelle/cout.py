@@ -118,9 +118,9 @@ pensions du système S pour que l'année tombe juste. Il vaut un quand le systè
 s'équilibre, moins de un quand il faut rogner. Pour le système actuel, dont le
 rapport vaut un par construction et qui encaisse tout, il redonne exactement le
 solde publié par le COR : c'est ce qui dit que le raccord ne triche pas. La
-recette non acquise est ce que ``donnees/equilibre.py`` appelle ainsi : un
-demi-point de PIB que la CNAF et l'Unédic versent pour des droits qu'aucun
-scénario notionnel ne sert.
+recette non acquise est ce que ``donnees/equilibre.py`` appelle ainsi : ce que
+la CNAF et le fonds de solidarité vieillesse versent pour des droits qu'aucun
+scénario notionnel ne sert, un peu plus d'un point de PIB.
 
 Le périmètre du COR n'est pas celui de la dépense observée plus haut — 13,86 %
 du PIB en 2024 contre 13,59 % pour la répartition obligatoire de la DREES. Rien
@@ -676,9 +676,9 @@ class SoldeAnnuel:
     rapports: dict[str, float]
     #: PIB en millions d'euros courants, ou zéro hors de la fenêtre publiée.
     pib: float
-    #: Ce que la branche famille et l'assurance chômage versent pour des droits
-    #: que les scénarios notionnels ne servent pas, en part de PIB : une recette
-    #: du système actuel, jamais la leur.
+    #: Ce que la branche famille et le fonds de solidarité vieillesse versent
+    #: pour des droits que les scénarios notionnels ne servent pas, en part de
+    #: PIB : une recette du système actuel, jamais la leur.
     retrait: float = 0.0
     #: Rapport de la recette de chaque système à celle du système actuel. Vide
     #: vaut un partout, c'est-à-dire l'ancienne convention : des recettes qui
@@ -731,10 +731,13 @@ class SoldeAnnuel:
     #: ``part_subventions`` en sont des sommes ; le détail sert au tableau
     #: poste par poste, et à rien d'autre.
     parts: dict[str, float] = field(default_factory=dict)
-    #: ``retrait``, payeur par payeur : ce que la branche famille, l'assurance
-    #: chômage et le fonds de solidarité vieillesse versent chacun pour des
-    #: droits qu'aucun scénario notionnel ne sert, en part de PIB.
-    retraits: dict[str, float] = field(default_factory=dict)
+    #: Ce que chaque payeur verse, en part de PIB : la branche famille,
+    #: l'assurance chômage, le fonds de solidarité vieillesse. Les « dont »
+    #: du tableau poste par poste. Seuls ceux dont le droit est supprimé
+    #: (``Organisme.droit_supprime``) sont retirés aux scénarios notionnels, et
+    #: font ``retrait`` ; l'assurance chômage ne l'est plus, le compte portant
+    #: les cotisations qu'elle verse.
+    versements: dict[str, float] = field(default_factory=dict)
 
     def depense(self, scenario: str) -> float:
         """Ce que le système coûterait cette année-là, en part de PIB.
@@ -754,12 +757,14 @@ class SoldeAnnuel:
         cause.
 
         LA RECETTE SUIT LE DROIT. Aucun scénario notionnel ne sert l'AVPF, les
-        majorations pour enfants, ni rien pendant une année de chômage : il ne
-        peut pas compter ce que la CNAF et l'Unédic versent pour ces droits-là.
-        C'est ``retrait``, et il vaut pour les cinq — à compter du jour où
-        chacun cesse de servir ces droits : dès l'origine pour les rétroactifs,
-        à la bascule pour les scénarios 3 et 5, qui sont avant elle le système
-        actuel.
+        majorations pour enfants, les trimestres des périodes non travaillées
+        ni le minimum vieillesse : il ne peut pas compter ce que la CNAF et le
+        fonds de solidarité vieillesse versent pour ces droits-là. C'est
+        ``retrait``, et il vaut pour les cinq — à compter du jour où chacun
+        cesse de servir ces droits : dès l'origine pour les rétroactifs, à la
+        bascule pour les scénarios 3 et 5, qui sont avant elle le système
+        actuel. Ce que l'Unédic verse, il le garde : son compte porte les
+        cotisations complémentaires qu'elle paie pendant un chômage indemnisé.
 
         LA RECETTE SUIT LE TAUX. Le scénario 6 remplace tous les taux par 18 %
         à compter de la bascule ; ce qui est prélevé baisse donc, et la part
@@ -923,9 +928,16 @@ class SoldeAnnuel:
         """
         total = self.ressources
         parts = self.parts
-        famille = self.retraits.get("famille", 0.0)
-        chomage = self.retraits.get("chomage", 0.0)
-        solidarite = self.retraits.get("solidarite", 0.0)
+        famille = self.versements.get("famille", 0.0)
+        chomage = self.versements.get("chomage", 0.0)
+        solidarite = self.versements.get("solidarite", 0.0)
+        # Ce qu'un scénario notionnel perd de chaque versement : tout, si son
+        # droit est supprimé, rien sinon.
+        retire = {organisme.code: self.versements.get(organisme.code, 0.0)
+                  for organisme in ORGANISMES if organisme.droit_supprime}
+        garde_famille = famille - retire.get("famille", 0.0)
+        garde_chomage = chomage - retire.get("chomage", 0.0)
+        garde_solidarite = solidarite - retire.get("solidarite", 0.0)
         if scenario == "actuel" or (scenario in CLES_PROSPECTIVES
                                     and 0 < self.annee < self.annee_bascule):
             postes = {code: total * parts.get(code, 0.0) for code in POSTES_RESSOURCES}
@@ -938,10 +950,12 @@ class SoldeAnnuel:
                 "contribution_equilibre_etat": 0.0,
                 "subventions_equilibre": 0.0,
                 "impots_et_taxes": 0.0,
-                "transferts": total * parts.get("transferts", 0.0) - famille - chomage,
+                "transferts": (total * parts.get("transferts", 0.0)
+                               - retire.get("famille", 0.0)
+                               - retire.get("chomage", 0.0)),
                 "autres_produits": total * parts.get("autres_produits", 0.0),
-                "transferts_famille": 0.0,
-                "transferts_chomage": 0.0,
+                "transferts_famille": garde_famille,
+                "transferts_chomage": garde_chomage,
                 "impots_solidarite": 0.0,
             }
         else:
@@ -951,12 +965,15 @@ class SoldeAnnuel:
                 "contribution_equilibre_etat":
                     total * parts.get("contribution_equilibre_etat", 0.0) * rapport,
                 "subventions_equilibre": total * parts.get("subventions_equilibre", 0.0),
-                "impots_et_taxes": total * parts.get("impots_et_taxes", 0.0) - solidarite,
-                "transferts": total * parts.get("transferts", 0.0) - famille - chomage,
+                "impots_et_taxes": (total * parts.get("impots_et_taxes", 0.0)
+                                    - retire.get("solidarite", 0.0)),
+                "transferts": (total * parts.get("transferts", 0.0)
+                               - retire.get("famille", 0.0)
+                               - retire.get("chomage", 0.0)),
                 "autres_produits": total * parts.get("autres_produits", 0.0),
-                "transferts_famille": 0.0,
-                "transferts_chomage": 0.0,
-                "impots_solidarite": 0.0,
+                "transferts_famille": garde_famille,
+                "transferts_chomage": garde_chomage,
+                "impots_solidarite": garde_solidarite,
             }
         postes["transferts_autres"] = (postes["transferts"] - postes["transferts_famille"]
                                        - postes["transferts_chomage"])
@@ -2870,10 +2887,9 @@ def _solde(avenir: Avenir, comptes: ComptesRetraite,
             reversion_servie=reversion_servie,
             reforme_en_vigueur=annee >= annee_bascule,
             parts={poste.code: comptes.part(poste.code, annee) for poste in POSTES},
-            retraits={
-                organisme.code: comptes.recette_non_acquise(
-                    annee, organisme=organisme.code)
-                for organisme in ORGANISMES if organisme.droit_supprime
+            versements={
+                organisme.code: comptes.versement(annee, organisme.code)
+                for organisme in ORGANISMES
             },
         )
         for annee in comptes.annees() if annee in par_annee

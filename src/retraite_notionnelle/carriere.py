@@ -80,12 +80,21 @@ class AnneeCarriere:
     #: C'est le seul critère qui compte pour les comptes notionnels.
     cotisations_versees: bool = True
     #: Salaire de référence d'avant l'interruption. Les régimes
-    #: complémentaires acquièrent des points sur cette base pendant les
-    #: périodes indemnisées, financés par l'UNEDIC ou la Sécurité sociale.
+    #: complémentaires attribuent des points sur cette base pendant les
+    #: périodes indemnisées : payés par l'Unédic pour le chômage, attribués
+    #: « sans contrepartie de cotisations » pour la maladie, la maternité,
+    #: l'invalidité et l'accident du travail.
     revenu_reference: float = 0.0
-    #: Familles de régimes qui encaissent des cotisations sur
-    #: ``revenu_reference`` alors que l'année n'est pas travaillée.
+    #: Familles de régimes qui attribuent des points sur ``revenu_reference``
+    #: alors que l'année n'est pas travaillée : ce que le scénario 1 sert.
     familles_cotisantes: tuple[str, ...] = ()
+    #: Celles d'entre elles qui ENCAISSENT de vraies cotisations pendant
+    #: l'année, versées par un tiers : l'Agirc-Arrco pendant un chômage
+    #: indemnisé, que l'Unédic paie. C'est ce que le compte notionnel porte,
+    #: lui qui ne porte que ce qui a été versé. Vide pour la maladie : ses
+    #: points sont gratuits, et le compte les portait comme payés jusqu'au
+    #: 23 septembre 2026.
+    familles_financees: tuple[str, ...] = ()
     #: Part de primes dans le revenu (fonction publique) : assiette du RAFP.
     part_primes: float = 0.0
     #: Part de l'année civile réellement couverte par la carrière. Vaut un
@@ -345,9 +354,10 @@ def _ligne_annuelle(
         trimestres_valides=min(trimestres_maximum, trimestres),
         assiette_minimale_base=minimale,
         cotisations_versees=cotise,
-        # Pendant une période indemnisée, l'UNEDIC ou la Sécurité sociale
-        # versent de vraies cotisations aux régimes complémentaires, assises
-        # sur le salaire d'avant.
+        # Pendant une période indemnisée, les régimes complémentaires
+        # attribuent des points sur le salaire d'avant. L'Unédic les paie pour
+        # le chômage ; l'Agirc-Arrco les donne pour la maladie, sans
+        # contrepartie de cotisations. Les deux familles le disent.
         revenu_reference=(
             0.0 if cotise or regle is None
             or not regle.ouvre_droits_complementaires else revenu
@@ -356,6 +366,13 @@ def _ligne_annuelle(
             () if cotise or regle is None
             or not regle.ouvre_droits_complementaires
             else ("complementaire_prive",)
+        ),
+        familles_financees=(
+            ("complementaire_prive",)
+            if not cotise and regle is not None
+            and regle.ouvre_droits_complementaires
+            and regle.cotisations_complementaires_versees
+            else ()
         ),
         fraction_annee=part,
         part_primes=part_primes,

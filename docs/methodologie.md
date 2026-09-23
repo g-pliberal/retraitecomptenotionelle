@@ -618,11 +618,18 @@ distinguer, et ils ne suivent pas la même règle :
   demi pour les périodes postérieures à 2010 —, chaque période ultérieure à un
   an si elle suit un chômage indemnisé, cinq ans pour l'assuré de cinquante-cinq
   ans qui a vingt ans de cotisations, et rien sinon ;
-- les **points complémentaires** sont, eux, de vrais droits contributifs :
-  pendant un chômage indemnisé, l'UNEDIC verse des cotisations à l'Agirc-Arrco,
-  calculées sur le salaire d'avant l'interruption. Ils sont donc acquis dans
-  les trois scénarios, y compris en notionnel — puisque des cotisations ont
-  bien été versées.
+- les **points complémentaires** ne sont pas tous de la même nature, et c'est
+  qui les paie qui les sépare. Pendant un chômage indemnisé, l'Unédic verse de
+  vraies cotisations à l'Agirc-Arrco, calculées sur le salaire d'avant
+  l'interruption : ces points sont acquis dans tous les scénarios, y compris
+  en notionnel, puisque des cotisations ont bien été versées — et après la
+  bascule aussi, où le compte porte ce que l'Unédic verse, jamais le taux
+  unifié entier ni le pilier capitalisé, que personne ne paie. Pendant une
+  maladie, une maternité, une invalidité ou un accident du travail, l'Agirc-
+  Arrco attribue ses points « sans contrepartie de cotisations » (guide
+  Agirc-Arrco n° 6, février 2017) : le scénario 1 les sert, les scénarios
+  notionnels non. Jusqu'au 23 septembre 2026, le modèle les portait au compte
+  comme payés, et après la bascule portait l'année entière au taux unifié.
 
 - les **services de la fonction publique** sont une troisième case, et la même
   période n'y compte pas de la même façon. La pension de l'État ne se proratise
@@ -1873,18 +1880,23 @@ que le RAPPORT des masses, qui est sans dimension et passe donc d'un périmètre
 à l'autre sans rien supposer.
 
 **La recette suit le droit.** Une part des ressources du système actuel paie
-des droits qu'aucun scénario notionnel ne sert, et trois payeurs la versent. La
+des droits qu'aucun scénario notionnel ne sert, et deux payeurs la versent. La
 branche famille paie l'assurance vieillesse des parents au foyer et les
-majorations pour enfants, l'assurance chômage les points des chômeurs :
-ensemble <!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=famille|chomage)-->0,5<!--/--> point de PIB,
-<!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=famille|chomage&sur=ressources)-->3,7<!--/--> % des ressources en 2024, lus chez celui qui paie dans les
+majorations pour enfants :
+<!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=famille)-->0,4<!--/--> point de PIB,
+<!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=famille&sur=ressources)-->2,7<!--/--> % des ressources en 2024, lus chez celui qui paie dans les
 rapports à la Commission des comptes de la Sécurité sociale. Le fonds de
 solidarité vieillesse, dont la CNAV reprend les missions au 1er janvier 2026,
 finance par la CSG des trimestres pour des périodes non travaillées et le
 minimum vieillesse : <!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=solidarite)-->0,7<!--/--> point de plus, qui arrive
 par l'impôt et sort donc de la ligne des impôts affectés, non de celle des
-transferts. Les scénarios 2 à 6 se voient retirer les trois,
-<!--chiffre:mesure(recette?annee=2024&quoi=retrait&sur=ressources)-->8,5<!--/--> % des ressources en 2024, année par année de 2013 à 2024 — la
+transferts. Le troisième payeur, l'assurance chômage, verse les points des
+chômeurs — <!--chiffre:mesure(recette?annee=2024&quoi=versement&payeurs=chomage)-->0,1<!--/--> point —, et
+ceux-là, le compte notionnel les porte : sa recette reste à tous. Le dépôt la
+retirait aussi jusqu'au 23 septembre 2026, au motif qu'une année de chômage
+ne portait rien au compte, ce qui n'a jamais été le cas. Les scénarios 2 à 6
+se voient retirer les deux autres,
+<!--chiffre:mesure(recette?annee=2024&quoi=retrait&sur=ressources)-->7,5<!--/--> % des ressources en 2024, année par année de 2013 à 2024 — la
 fenêtre où toutes les séries sont publiées —, à part constante des ressources
 avant et sur tout l'horizon projeté. Le système actuel encaisse tout, et son
 solde reste celui du COR.
@@ -1932,7 +1944,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,69<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,71<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.

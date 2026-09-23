@@ -143,8 +143,15 @@ export class ScenarioNotionnel {
    */
   _pilierCapitalise(carriere, resultat_) {
     if (this.capitalisation === null) return null;
+    // Le pilier ne prélève que sur ce que l'assuré GAGNE : une année de
+    // chômage n'y verse rien, personne ne payant ses dix points.
     const assiettes = new Map(
-      resultat_.compte.cotisations.map((c) => [c.annee, c.assiette_retenue]),
+      resultat_.compte.cotisations
+        .filter((c) => {
+          const ligne = carriere.ligne(c.annee);
+          return ligne !== null && ligne.cotise;
+        })
+        .map((c) => [c.annee, c.assiette_retenue]),
     );
     return this.capitalisation.construire({
       assiettes,
