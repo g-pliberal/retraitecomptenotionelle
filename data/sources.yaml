@@ -1687,6 +1687,31 @@ institutions:
           sont composés dans une police sans table de correspondance, et
           sortaient en glyphes. Elles se lisent avec pypdf.
 
+      - id: cnavpl_valeur_service
+        titre: Valeur de service du point du régime de base depuis 2004, datée
+        url: https://www.cnavpl.fr/preparer-sa-retraite/
+        acces: page
+        statut_integration: certifie
+        cible: data/reference/regimes/valeurs_point.csv
+        recuperation: scripts/fetch/cnavpl_valeur_service.py
+        note: >-
+          LA SÉRIE QUE LES RECUEILS METTAIENT EN GRAPHIQUE, LA CAISSE L'IMPRIME
+          EN CLAIR. Sa page « Cotiser pour sa retraite » donne, sous
+          « Historique », la valeur de service du point depuis le 1er janvier
+          2004, chaque valeur avec sa date d'entrée en vigueur — deux en 2008,
+          deux en 2022, aucune en 2018, dont la revalorisation est reportée au
+          1er janvier 2019. Le récupérateur retient la valeur en vigueur au
+          31 décembre, convention de `valeurs_point.csv`, et ne l'écrit qu'après
+          l'avoir confrontée à D. 643-1 pour 2004 et 2005 (0,484 € et 0,493 €,
+          les deux seules valeurs que le droit écrit) et aux recueils 2021 à
+          2025, qui datent la leur du 1er janvier. Lue le 23 septembre 2026
+          (action 89) ; avant, la valeur de 2021 était ramenée vers le passé par
+          les prix, et les pensions liquidées de 1989 à 2019 en sortaient trop
+          basses de 1,4 à 5 %. La même page porte les taux des deux tranches et
+          les plafonds de points depuis 2004 — 450 et 100 jusqu'en 2014, 525 et
+          25 de 2015 à 2024, 557 et 25 depuis 2025 — : ils concordent avec les
+          fiches, qui les lisent dans D. 642-3 et D. 643-1.
+
       - id: carpv_bareme
         titre: >-
           Grille des classes de cotisation et valeur du point du régime

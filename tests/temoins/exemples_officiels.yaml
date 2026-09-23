@@ -440,3 +440,45 @@ exemples:
       premier jour du trimestre civil qui suit ses 62 ans à la date d'effet.
     carriere: {naissance: "1960-11", sexe: H, affiliation: medecin_liberal, liquidation: "2026-01", age_debut: 30}
     attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carmf_complementaire: 1.15, asv_conventionnes: 1.15}}
+
+  # Le document d'exemples de la CAVAMAC, « Mode de calcul de vos retraites
+  # RBL & RCO — Décotes & surcotes : quelques exemples », lu le 23 septembre
+  # 2026 (action 89, lot des dernières sections libérales). Deux cas pour le
+  # régime de base, qu'elle gère pour la CNAVPL — la décote au plus favorable
+  # de l'âge et de la durée, la surcote de 1,25 % par trimestre —, un pour sa
+  # complémentaire, dont la décote ne regarde que l'âge. C'est ce troisième
+  # que la fiche ne rendait pas : la durée y annulait la minoration.
+  - id: cavamac_rbl_decote_66_ans
+    source: {editeur: "CAVAMAC", reference: "cavamac.fr, « Décotes & surcotes : quelques exemples », régime de base RBL, exemple de calcul avec décote", verifie_le: "2026-09-23"}
+    enonce: >-
+      M. Martin, né le 8 décembre 1959, prend sa retraite au 1er janvier 2026
+      à 66 ans révolus ; il devait justifier de 167 trimestres et en a 161.
+      « Par rapport à la date d'effet de sa retraite, 4 trimestres le
+      séparent de la date à laquelle sa retraite lui serait servie à taux
+      plein (67 ans révolus au 1/01/2027). Au lieu de 6 trimestres, seuls 4
+      trimestres ont donc été retenus » : minoration de 5 %.
+    carriere: {naissance: "1959-12", sexe: H, affiliation: agent_general_assurance, liquidation: "2026-01", trimestres_valides: 161}
+    attendu: {liquidation_ouverte: true, coefficients_des_regimes: {cnavpl: 0.95}}
+
+  - id: cavamac_rbl_surcote_six_trimestres
+    source: {editeur: "CAVAMAC", reference: "cavamac.fr, « Décotes & surcotes : quelques exemples », régime de base RBL, exemple de calcul avec surcote", verifie_le: "2026-09-23"}
+    enonce: >-
+      Mme Jean, née en juin 1962, prend sa retraite de base au 1er janvier
+      2027 ; au 31 décembre 2026 elle justifie de 175 trimestres au lieu de
+      169, six de plus, acquis après son âge légal de 62 ans et 6 mois : « une
+      majoration de 7,50 % de sa pension (soit 1,25 % par trimestre
+      supplémentaire) ».
+    carriere: {naissance: "1962-06", sexe: F, affiliation: agent_general_assurance, liquidation: "2027-01", trimestres_valides: 175}
+    attendu: {liquidation_ouverte: true, coefficients_des_regimes: {cnavpl: 1.075}}
+
+  - id: cavamac_rco_decote_cinq_trimestres
+    source: {editeur: "CAVAMAC", reference: "cavamac.fr, « Décotes & surcotes : quelques exemples », régime complémentaire RCO, exemple de calcul avec décote", verifie_le: "2026-09-23"}
+    enonce: >-
+      M. Martin, né le 8 août 1960, prend sa retraite complémentaire au
+      1er juillet 2026. Depuis le 1er janvier 2024, « la décote est de 1,25 %
+      par trimestre manquant, toujours par rapport à l'âge du taux plein »,
+      67 ans : 6,25 %, calculée sur 5 trimestres manquants. Sa durée n'y
+      entre pas — une carrière commencée à 22 ans la réunit, et la décote
+      reste.
+    carriere: {naissance: "1960-08", sexe: H, affiliation: agent_general_assurance, liquidation: "2026-07", age_debut: 22}
+    attendu: {liquidation_ouverte: true, coefficients_des_regimes: {cavamac_complementaire: 0.9375}}

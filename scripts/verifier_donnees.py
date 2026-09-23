@@ -2209,15 +2209,40 @@ def source_valeurs_point_cnbf() -> dict[tuple, float]:
 
 
 def source_valeurs_point_cnavpl() -> dict[tuple, float]:
-    """Valeur du point des professions libérales, dans les recueils CNAVPL.
+    """Taux des deux tranches des professions libérales, dans les recueils CNAVPL.
 
     La caisse est le producteur, et la seule à publier ce nombre : le décret
     annuel ne fixe qu'un coefficient de revalorisation, jamais le montant.
+
+    La VALEUR DE SERVICE que le recueil imprime n'est pas reprise ici : il la
+    date du 1er janvier, quand ``valeurs_point.csv`` porte la valeur en vigueur
+    au 31 décembre, et les deux diffèrent en 2022 — 0,5795 € au 1er janvier,
+    0,6027 € depuis le 1er juillet. Elle se certifie par
+    :func:`source_valeurs_service_cnavpl`, qui lit la série datée et contrôle
+    qu'elle rend, au 1er janvier, ce que chaque recueil imprime.
     """
     return {
         tuple(cle.split("|")): valeur
         for cle, valeur in sorted(
             _serie_json("cnavpl_recueils.json", "scripts/fetch/cnavpl_recueils.py").items()
+        )
+        if not cle.endswith("|valeur_service")
+    }
+
+
+def source_valeurs_service_cnavpl() -> dict[tuple, float]:
+    """Valeur de service du point des libéraux depuis 2004, datée par la CNAVPL.
+
+    La page « Cotiser pour sa retraite » de la caisse porte la série entière,
+    chaque valeur avec sa date d'effet ; le récupérateur en tire la valeur en
+    vigueur au 31 décembre de chaque année, après l'avoir confrontée à
+    D. 643-1 pour 2004 et 2005 et aux recueils statistiques depuis 2021.
+    """
+    return {
+        tuple(cle.split("|")): valeur
+        for cle, valeur in sorted(
+            _serie_json("cnavpl_valeur_service.json",
+                        "scripts/fetch/cnavpl_valeur_service.py").items()
         )
     }
 
@@ -5295,6 +5320,17 @@ CERTIFICATIONS = (
         colonne="valeur",
         source=source_valeurs_point_cnavpl,
         origine="CNAVPL, recueils statistiques annuels",
+        decimales=6,
+        tolerance=5e-7,
+    ),
+    Certification(
+        nom="valeurs_service_cnavpl",
+        chemin=REFERENCE / "regimes" / "valeurs_point.csv",
+        cles=("regime", "annee", "mesure"),
+        colonne="valeur",
+        source=source_valeurs_service_cnavpl,
+        origine="CNAVPL, « Cotiser pour sa retraite », valeur de service du "
+                "point depuis 2004, au 31 décembre",
         decimales=6,
         tolerance=5e-7,
     ),

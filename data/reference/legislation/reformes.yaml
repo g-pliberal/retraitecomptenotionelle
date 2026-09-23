@@ -205,6 +205,14 @@ reformes:
         regimes/conversions_points.csv (un point UNIRS vaut 0,387464 point
         Arrco) et non par une période de la fiche.
 
+  - code: cipav_geometres_2000
+    date: 2000-01-01
+    texte: {reference: "décret n° 99-913 du 21 octobre 1999 fixant les modalités d'intégration des géomètres experts et des experts agricoles et fonciers aux régimes de la Cipav, article 6 : « une bonification pour enfants dans les conditions prévues » par les statuts du régime complémentaire, pour les périodes postérieures au 1er janvier 2000", id: JORFTEXT000000561136}
+    parametres: [avantages_non_contributifs]
+    regimes: [cipav_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: rco_agricole_2003
     date: 2003-01-01
     texte: {reference: "loi n° 2002-308 du 4 mars 2002 tendant à la création d'un régime de retraite complémentaire obligatoire pour les non-salariés agricoles", id: null}
@@ -304,6 +312,14 @@ reformes:
     absorbee_par: []
     non_appliquee: {}
 
+  - code: cnavpl_mda_2010
+    date: 2010-04-01
+    texte: {reference: "loi n° 2009-1646 du 24 décembre 2009 de financement de la sécurité sociale pour 2010, article 65, VIII : L. 643-1-1 du code de la sécurité sociale, qui étend L. 351-4 aux assurés du régime de base des professions libérales pour les pensions prenant effet à compter du 1er avril 2010", id: LEGIARTI000021537910}
+    parametres: [avantages_non_contributifs]
+    regimes: [cnavpl]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: woerth_2010
     date: 2011-07-01
     texte: {reference: "loi n° 2010-1330 du 9 novembre 2010 portant réforme des retraites", id: LEGITEXT000023023907}
@@ -322,10 +338,27 @@ reformes:
         (LEGIARTI000054437680), sert toujours le taux plein à soixante-cinq
         ans et l'anticipation dès soixante ans à 1,25 % par trimestre : la
         section n'a pas suivi l'âge légal, et la fiche non plus.
+      cavec_complementaire: >-
+        Les statuts des experts-comptables n'ont pas suivi l'âge légal : « à
+        65 ans à taux plein ; entre 60 et 65 ans, avec application d'un
+        abattement définitif de 1,25 % par trimestre manquant » dans ceux de
+        2008 (JORFARTI000018197778, article 3.13), de 2018
+        (JORFARTI000037363871, article 12) et dans le règlement approuvé le
+        10 juillet 2026 (JORFARTI000054435943, article 1.1.3). La fiche lisait
+        les âges du régime général ; elle porte 60 et 65 ans fixes depuis le
+        23 septembre 2026.
       opera_de_paris: >-
         Le décret n° 2011-953 du 10 août 2011 reporte la montée en charge du
         régime de l'Opéra ; la fiche coupe en 2014 après lecture de ce décret,
         et les artistes du ballet gardent un âge fixe (V de l'article 14).
+
+  - code: cavamac_statuts_2011
+    date: 2011-07-01
+    texte: {reference: "arrêté du 23 juin 2011 portant approbation des statuts du régime d'assurance vieillesse complémentaire de la section professionnelle des agents généraux d'assurances (CAVAMAC), annexe, articles 15, 16 et 18 : taux plein à l'âge de L. 161-17-2 augmenté de cinq ans, 5 % par tranche de douze mois d'anticipation sans condition de durée, 5 % par année pleine différée, majoration de 10 % pour trois enfants", id: JORFARTI000024270173}
+    parametres: [age_taux_plein, decote_par_trimestre, surcote_par_trimestre, avantages_non_contributifs]
+    regimes: [cavamac_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
 
   - code: navigants_2012
     date: 2012-01-01
@@ -393,6 +426,14 @@ reformes:
     parametres: [surcote_par_trimestre]
     regimes: [cnbf]
     absorbee_par: [surcote_bareme]
+    non_appliquee: {}
+
+  - code: cavamac_2024
+    date: 2024-01-01
+    texte: {reference: "arrêté du 4 août 2023 portant approbation des modifications apportées aux statuts du régime d'assurance vieillesse complémentaire de la section professionnelle des agents généraux d'assurance (CAVAMAC), annexe (articles 15 et 16 : taux plein à 67 ans, minoration de 1,25 % par trimestre manquant, majoration de 5 % par année pleine cotisée) et article 2 (effet au 1er janvier 2024)", id: JORFARTI000047977908}
+    parametres: [age_taux_plein, decote_par_trimestre, surcote_par_trimestre]
+    regimes: [cavamac_complementaire]
+    absorbee_par: []
     non_appliquee: {}
 
   - code: cavom_ages_2025
@@ -499,8 +540,11 @@ reformes:
         les écrit génération par génération (`age_table: cavom`), et la loi
         de 2023 n'y a rien changé ; il n'a pas de durée requise à relever.
       cavamac_complementaire: >-
-        Même situation que la CAVOM : l'âge seul commande, lu à la génération
-        ; aucune durée requise dans la fiche.
+        Aucune durée requise : l'âge seul commande. L'ouverture suit l'âge
+        légal, lu à la génération ; la section a répondu à la loi par ses
+        propres statuts (arrêté du 4 août 2023, JORFARTI000047977908) — taux
+        plein fixé à 67 ans au 1er septembre 2023, minoration de 1,25 % par
+        trimestre au 1er janvier 2024 —, que la fiche coupe en 2024.
       cprn_complementaire: >-
         Même situation : âge lu à la génération, pas de durée requise, la
         section C liquide sur l'âge.
@@ -511,12 +555,25 @@ reformes:
       crpnpac_tranche_2: >-
         Même situation que la tranche 1 : paramètres propres du code des
         transports, inchangés par la loi de 2023.
+      cavec_complementaire: >-
+        Le règlement de la CAVEC approuvé le 10 juillet 2026
+        (JORFARTI000054435943, article 1.1.3) garde l'ouverture à 60 ans et
+        le taux plein à 65 ans des statuts de 2008 et de 2018 : ni l'âge
+        légal de 64 ans ni la durée requise n'y entrent.
 
   - code: avenant_17_2024
     date: 2024-01-01
     texte: {reference: "avenant n° 17 du 22 novembre 2023 à l'accord national interprofessionnel du 17 novembre 2017 : suppression des coefficients de solidarité et majorants, arrêté d'extension du 15 avril 2024", id: JORFTEXT000049424935}
     parametres: [avantages_non_contributifs]
     regimes: [agirc_arrco]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cavec_majoration_enfants_2025
+    date: 2025-07-06
+    texte: {reference: "arrêté du 4 juillet 2025 portant approbation des modifications apportées aux statuts de la section professionnelle des experts comptables et commissaires aux comptes (CAVEC), article 20 des statuts : majoration de 10 % de la première pension personnelle des assurés ayant eu au moins trois enfants", id: JORFARTI000051849616}
+    parametres: [avantages_non_contributifs]
+    regimes: [cavec_complementaire]
     absorbee_par: []
     non_appliquee: {}
 

@@ -532,6 +532,21 @@ def _cas() -> list[dict]:
     cas.append(("enfants_loi_boulin_enfant_unique", {
         **enfants, "enfants": "1", "naissance": "1913", "liquidation": "60",
     }))
+    # Une libérale : la CNAVPL rend aux mères la majoration de durée depuis le
+    # 1er avril 2010 (L. 643-1-1), et c'est un régime EN POINTS qui la porte.
+    # Deux enfants lui valent seize trimestres, et sa décote tombe à zéro.
+    cas.append(("enfants_liberale", {
+        **enfants, "statut": "profession_liberale", "enfants": "2",
+        "naissance": "1964", "debut": "24", "liquidation": "62.75",
+    }))
+    # La CAVAMAC ne majore depuis 2024 que les années COTISÉES au-delà de
+    # 67 ans : deux années de travail valent 10 %, deux années d'attente rien.
+    agent_general = {"statut": "agent_general_assurance", "naissance": "1960",
+                     "liquidation": "69"}
+    cas.append(("agent_general_surcote_cotisee", dict(agent_general)))
+    cas.append(("agent_general_surcote_sans_cotiser", {
+        **agent_general, "interruptions": "2027:2028:sans_activite",
+    }))
 
     # Surcote parentale : durée requise atteinte à 63 ans, trimestres pour
     # enfants, et une année de travail de plus que la loi de 2023 a imposée.

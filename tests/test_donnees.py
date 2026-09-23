@@ -528,6 +528,7 @@ def test_journal_de_certification_decrit_les_series_certifiees():
         "valeurs_point_cnbf": "regimes/valeurs_point.csv",
         "valeurs_point_rafp": "regimes/valeurs_point.csv",
         "valeurs_point_cnavpl": "regimes/valeurs_point.csv",
+        "valeurs_service_cnavpl": "regimes/valeurs_point.csv",
         # L'INSEE ne comble que la fin de série : depuis que la fédération
         # Agirc-Arrco est lue directement, elle n'a plus rien à ajouter, et sa
         # trace est retirée du journal plutôt que d'y affirmer une

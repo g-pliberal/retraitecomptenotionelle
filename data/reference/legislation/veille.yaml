@@ -1735,19 +1735,26 @@ entrees:
     sources:
       - {type: jorf, reference: "décret n° 2026-418, lu en partie dans l'index JORF le 22 septembre 2026 (articles sur l'ASV des auxiliaires médicaux, les rachats de la CARMF)", date: "2026-09-22"}
       - {type: jorf, reference: "décret n° 2026-418, articles 3, 4, 5, 6, 16 et 25 (CARMF, CAVP, CARCDSF, CARPV, ASV des médecins, CARPIMKO), lus en entier dans l'index JORF : une codification — affiliation, dispenses, rachats, classes, cotisations volontaires — qui ne change aucun des paramètres que les fiches portent", date: "2026-09-23"}
+      - {type: jorf, reference: "décret n° 2026-418, articles 8 (CAVEC), 13 (CAVAMAC), 20 et 21 (Cipav), lus en entier dans l'index JORF : pour la CAVEC et la CAVAMAC, affiliation, option pour la classe supérieure, exonérations, rachats, cotisation de fin de carrière, et le renvoi des conditions de service à un règlement ; pour la Cipav, les articles 5-1 à 5-6 du décret n° 79-262 — âges et minoration qui suivent le régime de base, majoration de 10 % pour trois enfants, majoration pour report réservée à trente années d'affiliation — et le régime d'invalidité-décès", date: "2026-09-23"}
     verifie_le: "2026-09-23"
     temoins: []
     reformes: []
-    etat: a_verifier
+    etat: transcrit
     effet: >-
-      Lu pour les sections juridiques (articles 2 et 22) le 23 septembre 2026,
-      puis pour les sections de santé (articles 3 à 6, 16 et 25) : aucun
-      paramètre des fiches ne bouge. Restent les articles de la CAVEC (8), de
-      la CAVAMAC (13) et de la Cipav (20 et 21).
+      Lu pour les sections juridiques (articles 2 et 22), les sections de
+      santé (articles 3 à 6, 16 et 25), puis, le même jour, pour la CAVEC
+      (8), la CAVAMAC (13) et la Cipav (20 et 21) : aucun paramètre des fiches
+      ne bouge. L'article 20 écrit la majoration pour trois enfants de la
+      Cipav, que la fiche porte désormais depuis 2000 (ligne
+      `sections_liberales_majoration_enfants`).
     a_faire: >-
-      Lire les articles 8, 13, 20 et 21 contre les fiches de la CAVEC, de la
-      CAVAMAC et de la Cipav.
-    prochaine_veille: "2026-10-31"
+      Non portés : l'inscription d'office en classe A la première année à la
+      CAVEC, l'option pour la classe supérieure et les rachats de points ; la
+      condition de trente années d'affiliation de la majoration pour report de
+      la Cipav, qui ne porte que sur les points de ces trente années, là où
+      le modèle les majore tous ; le versement forfaitaire unique des petites
+      pensions.
+    prochaine_veille: "2027-03-31"
 
   - id: cavom_ages_minoration
     regle: >-
@@ -1972,8 +1979,9 @@ entrees:
       sont privées.
     a_faire: >-
       La majoration de durée d'assurance pour enfants que les mêmes articles
-      ouvrent (L. 351-4 à L. 351-4-2) n'est portée ni à la CNAVPL ni à la
-      CNBF ; la surcote parentale non plus.
+      ouvrent (L. 351-4 à L. 351-4-2), et la surcote parentale, sont portées à
+      la CNAVPL depuis le 23 septembre 2026 (ligne
+      `cnavpl_majoration_duree_assurance`) ; elles ne le sont pas à la CNBF.
     prochaine_veille: "2027-03-31"
 
   - id: carcdsf_minoration_age_seul
@@ -2170,6 +2178,237 @@ entrees:
       Lire des statuts de la CARPV antérieurs à 2021 pour dater la
       bonification et la règle d'âge.
     prochaine_veille: "2027-03-31"
+
+  - id: cavamac_minoration_age_seul
+    regle: >-
+      Régime complémentaire de la CAVAMAC : jusqu'en 2023, taux plein à l'âge
+      de L. 161-17-2 augmenté de cinq ans, liquidation dès l'âge légal avec
+      une minoration de 5 % par tranche de douze mois d'anticipation, que la
+      durée d'assurance n'annule pas, et majoration de 5 % par année pleine
+      différée dans la limite de 25 % ; depuis le 1er janvier 2024, taux plein
+      à 67 ans, minoration de 1,25 % par trimestre manquant pour l'atteindre,
+      et majoration de 5 % par année pleine COTISÉE au-delà, hors cumul
+      emploi-retraite.
+    textes:
+      - "statuts du régime complémentaire, articles 15 et 16, approuvés par l'arrêté du 23 juin 2011 (JORFARTI000024270156, annexe JORFARTI000024270173)"
+      - "statuts, articles 15 et 16, dans la rédaction de l'arrêté du 4 août 2023 (annexe JORFARTI000047977908 ; dates d'effet à l'article 2, JORFARTI000047977903)"
+      - "décret du 22 décembre 1967, dans la rédaction de l'article 13 du décret n° 2026-418 (JORFARTI000054153565), qui renvoie les conditions de service à un règlement de la section"
+    sources:
+      - type: jorf
+        reference: >-
+          Les deux arrêtés et l'article 13 du décret n° 2026-418, lus en entier
+          dans l'index JORF du dépôt. Les statuts de 1967 et leurs
+          modifications jusqu'en 2007 n'ont été publiés qu'au Bulletin
+          officiel : le Journal officiel n'en porte que des titres, ou des
+          articles sans rapport avec l'âge.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CAVAMAC, « Mode de calcul de vos retraites RBL & RCO — Décotes &
+          surcotes : quelques exemples » : « au lieu d'une décote uniforme de
+          5 % par année civile d'anticipation par rapport à l'âge du taux plein
+          (67 ans) la décote est de 1,25 % par trimestre manquant, toujours par
+          rapport à l'âge du taux plein » ; un départ au 1er juillet 2026 d'un
+          assuré né le 8 août 1960, 6,25 % ; « une surcote de 5 % du nombre de
+          points retraite est appliquée pour chaque année pleine cotisée, dans
+          la limite de 25 % ». Fiche « Calculer rapidement l'ordre de grandeur
+          de mes retraites » et guide 2026 de la CNAVPL, partie 2 : mêmes
+          règles.
+        url: "https://www.cavamac.fr/documents/calcul-des-decotes-surcotes-rbl-rco-quelques-exemples/"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: [cavamac_rco_decote_cinq_trimestres]
+    reformes: [cavamac_statuts_2011, cavamac_2024]
+    etat: approximation
+    effet: >-
+      La fiche opposait la décote du régime de base, que la durée annule : un
+      agent général parti à l'âge légal avec sa durée ne perdait rien de sa
+      complémentaire, là où ses statuts lui retirent de 5 à 25 %. Depuis le
+      23 septembre 2026, `abattement_points: cavom` jusqu'en 2023,
+      `decote_annulee_par_la_duree: false` partout, la surcote par années
+      pleines, et `surcote_trimestres_cotises` depuis 2024, qui ne compte que
+      les trimestres cotisés au-delà de 67 ans ; tenu par
+      tests/test_sections_liberales.py. Approximation : la règle de 2011 est
+      supposée la même avant, faute des statuts publiés ; la liquidation dès
+      62 ou 63 ans des carrières longues, à 15 % de minoration, n'est pas
+      portée — le modèle leur oppose la minoration ordinaire.
+    a_faire: >-
+      Lire les statuts d'avant 2011 au Bulletin officiel, s'ils sont
+      numérisés ; lire le règlement de la section, que le décret n° 2026-418
+      appelle, quand un arrêté l'aura approuvé.
+    prochaine_veille: "2027-03-31"
+
+  - id: cavec_minoration_age_seul
+    regle: >-
+      Régime complémentaire de la CAVEC : liquidation « à 65 ans à taux plein ;
+      entre 60 et 65 ans, avec application d'un abattement définitif de 1,25 %
+      par trimestre manquant », sans condition de durée d'assurance, pour
+      toutes les générations ; 65 ans depuis 1983 au moins.
+    textes:
+      - "statuts, article 3.13, approuvés par l'arrêté du 22 février 2008 (JORFARTI000018197778)"
+      - "statuts dans leurs rédactions de 2018 à 2025, et règlement du régime approuvé par l'arrêté du 10 juillet 2026 (LEGIARTI000054437585)"
+      - "décret du 21 mai 1953, dans la rédaction de l'article 8 du décret n° 2026-418 (JORFARTI000054153497)"
+    sources:
+      - type: jorf
+        reference: >-
+          L'arrêté de 2008, ceux qui l'ont modifié jusqu'au 4 juillet 2025,
+          l'arrêté du 10 juillet 2026 et l'article 8 du décret n° 2026-418,
+          lus dans l'index JORF du dépôt : ni la loi de 2010 ni celle de 2023
+          n'y déplacent les âges de la section.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CAVEC, « Depuis 1949, une histoire d'avenir, le livre des 70 ans » :
+          en 1983, ses administrateurs « choisissent de ne pas abaisser l'âge
+          de départ en retraite à 60 ans (comme annoncé pour le régime général
+          […]). Il reste et restera fixé à 65 ans. » Guide « Bien préparer
+          votre retraite » et page « Le calcul de votre retraite » : mêmes
+          âges.
+        url: "https://www.cavec.fr/wp-content/uploads/Cavec-depuis-1949-une-histoire-davenir-le-livre-des-70-ans.pdf"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [cavec_report_2008, woerth_2010, reforme_2023, cavec_report_2026]
+    etat: approximation
+    effet: >-
+      La note de la fiche disait la règle, mais la période laissait la durée
+      annuler la minoration, et lisait avant 2008 les âges du régime général :
+      un expert-comptable parti à 62 ans avec sa durée ne perdait rien, là où
+      l'article 3.13 lui retire 15 %. Depuis le 23 septembre 2026, ouverture à
+      60 ans et taux plein à 65 ans pour toutes les générations,
+      `decote_annulee_par_la_duree: false` partout ; la loi de 2010 et celle
+      de 2023 sont déclarées `non_appliquee` à la section ; tenu par
+      tests/test_sections_liberales.py. Approximation : avant 2008, le taux
+      de l'abattement n'est pas connu, et celui de 2008 en tient lieu.
+    a_faire: >-
+      Dater le taux de l'abattement d'avant 2008, que seuls les statuts
+      publiés au Bulletin officiel portent.
+    prochaine_veille: "2027-03-31"
+
+  - id: sections_liberales_majoration_enfants
+    regle: >-
+      Majoration de 10 % pour trois enfants dans trois complémentaires
+      libérales : la CAVAMAC depuis ses statuts de 2011 (article 18), la Cipav
+      depuis l'intégration des géomètres au 1er janvier 2000 au moins,
+      « au profit du demandeur ayant eu au moins trois enfants » ou les ayant
+      élevés neuf ans, la CAVEC depuis l'arrêté du 4 juillet 2025.
+    textes:
+      - "statuts du régime complémentaire de la CAVAMAC, article 18, approuvés par l'arrêté du 23 juin 2011 (JORFARTI000024270173)"
+      - "décret n° 99-913 du 21 octobre 1999, article 6 (JORFTEXT000000561136) ; décret n° 79-262 du 21 mars 1979, article 5-2, dans la rédaction de l'article 20 du décret n° 2026-418 (JORFARTI000054153655)"
+      - "statuts de la CAVEC, article 20, dans la rédaction de l'arrêté du 4 juillet 2025 (JORFARTI000051849616), puis article 1.3.1 du règlement approuvé le 10 juillet 2026"
+    sources:
+      - type: jorf
+        reference: >-
+          Les cinq textes lus dans l'index JORF du dépôt. Pour la Cipav, le
+          décret de 1999 atteste la bonification sans en donner la forme, que
+          seul le décret n° 2026-418 écrit.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          Guide 2026 de la CNAVPL, partie 2, pour la CAVAMAC et la Cipav ; page
+          « Le calcul de votre retraite » de la CAVEC, « une augmentation de
+          10 % de la pension est accordée aux parents d'au moins 3 enfants »,
+          là où le guide de la CNAVPL, édité en mars 2026, écrit encore de la
+          CAVEC que « le régime ne prévoit pas de majoration ».
+        url: "https://www.cavec.fr/votre-retraite/votre-retraite/preparer-votre-retraite/le-calcul-de-votre-retraite/"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [cipav_geometres_2000, cavamac_statuts_2011, cavec_majoration_enfants_2025]
+    etat: approximation
+    effet: >-
+      Aucune des trois fiches ne la portait : 10 % de complémentaire en moins
+      pour tout parent de trois enfants. Depuis le 23 septembre 2026,
+      `majoration_enfants` à la CAVAMAC depuis 2012, à la Cipav depuis 2000,
+      à la CAVEC depuis 2026 ; tenu par tests/test_sections_liberales.py.
+      Approximation : la maille est l'année, la forme de la bonification de
+      la Cipav est supposée celle d'aujourd'hui depuis 2000, et la majoration
+      de 5 % de la CAVAMAC par enfant ouvrant droit à l'allocation
+      d'éducation de l'enfant handicapé n'est pas portée.
+    a_faire: >-
+      Lire les statuts de la Cipav d'avant 2026 pour dater la forme de sa
+      bonification.
+    prochaine_veille: "2027-03-31"
+
+  - id: cnavpl_majoration_duree_assurance
+    regle: >-
+      Régime de base des professions libérales : majoration de durée
+      d'assurance pour enfants de L. 351-4 pour les pensions prenant effet
+      depuis le 1er avril 2010 (L. 643-1-1), étendue à L. 351-4-1 et
+      L. 351-4-2 en 2023 ; surcote parentale de L. 351-1-2-1 pour les pensions
+      prenant effet depuis le 1er septembre 2023 (I de L. 643-3).
+    textes:
+      - "loi n° 2009-1646 du 24 décembre 2009, article 65, VIII : L. 643-1-1 CSS (LEGIARTI000021537910)"
+      - "loi n° 2023-270 du 14 avril 2023 : L. 643-1-1 CSS (LEGIARTI000047453363) et I de L. 643-3 CSS (LEGIARTI000047453031)"
+    sources:
+      - type: legifrance
+        reference: >-
+          L. 643-1-1 dans ses versions de 2009 et de 2023, et L. 643-3 dans sa
+          version de 2023, lus dans l'index LEGI du dépôt.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CNAVPL, page « Comprendre sa retraite » et guide 2026, partie 1 :
+          trimestres pour enfants et surcote parentale ; CAVAMAC, page « Le
+          calcul de ma pension », qui la décrit pour « les générations nées à
+          partir du 1er avril 1965 ».
+        url: "https://www.cnavpl.fr/comprendre-sa-retraite/"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [cnavpl_mda_2010, majoration_enfants_liberaux_2023]
+    etat: approximation
+    effet: >-
+      La fiche les disait non portés, et le moteur ne cherchait la majoration
+      de durée que dans les régimes en annuités : une libérale qui n'avait
+      cotisé qu'à sa section perdait jusqu'à 1,25 % de sa pension par
+      trimestre que la loi lui donne. Depuis le 23 septembre 2026, `mda` sur
+      les périodes de la CNAVPL depuis 2010, lu dans toute fiche qui le porte
+      — les bonifications restant aux annuités —, et `surcote_parentale`
+      depuis 2024 ; tenu par tests/test_sections_liberales.py et le témoin
+      `enfants_liberale`. Approximation : la maille est l'année, les pensions
+      d'avril à décembre 2010 et de septembre à décembre 2023 en sont privées.
+    a_faire: >-
+      Les cent points par trimestre d'accouchement de D. 643-1, que le modèle
+      ne sait pas dater faute de la date de naissance des enfants.
+    prochaine_veille: "2027-03-31"
+
+  - id: cnavpl_valeur_service
+    regle: >-
+      Valeur de service du point du régime de base des professions
+      libérales, fixée par la caisse et revalorisée comme les pensions du
+      régime général : 0,484 € en 2004, 0,6599 € au 1er janvier 2026, deux
+      valeurs en 2022 (0,5795 € au 1er janvier, 0,6027 € au 1er juillet).
+    textes:
+      - "D. 643-1 CSS dans ses rédactions de 2004 et 2005 (LEGIARTI000006738137, LEGIARTI000006738138)"
+      - "L. 161-23-1 CSS pour la revalorisation"
+    sources:
+      - type: legifrance
+        reference: >-
+          D. 643-1, versions de 2004 et 2005, dans l'index LEGI du dépôt : les
+          deux seules valeurs que le droit écrit en toutes lettres.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CNAVPL, page « Cotiser pour sa retraite », tableau « Valeur de
+          service du point depuis 2004 », chaque valeur avec sa date d'effet ;
+          recoupée avec les recueils statistiques 2021 à 2025.
+        url: "https://www.cnavpl.fr/preparer-sa-retraite/"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: >-
+      Le dépôt ne lisait la valeur que dans les recueils, depuis 2021, et
+      ramenait celle de 2021 vers le passé par les prix : les pensions de base
+      liquidées de 1989 à 2019 en sortaient trop basses de 1,4 à 5 %. La
+      série est certifiée de 2004 à 2026 par
+      `scripts/fetch/cnavpl_valeur_service.py` et `verifier_donnees.py`, à
+      la valeur en vigueur au 31 décembre.
+    a_faire: >-
+      Rien d'autre que la valeur de 2027, quand la caisse l'aura publiée.
+    prochaine_veille: "2027-01-31"
 
   - id: carmf_asv_minoration_enfants
     regle: >-
@@ -4375,3 +4614,44 @@ journal:
       Le compte des années actives, sans lequel les quatre autres tables ne
       servent pas ; la table des sédentaires ; l'âge d'ouverture de la fiche
       face à la suspension de 2026.
+
+  - date: "2026-09-23"
+    session: "action 89, dernières sections libérales (CNAVPL, Cipav, CAVAMAC, CAVEC)"
+    consulte: >-
+      `scripts/veille_droit.py` ; index LEGI et JORF, sans incrément depuis
+      ceux du 22 et du 23 septembre. Au Journal officiel : les statuts de la
+      CAVAMAC (arrêtés du 23 juin 2011 et du 4 août 2023 ; titres seuls avant),
+      ceux de la CAVEC (arrêté du 22 février 2008 et ses modifications
+      jusqu'au 4 juillet 2025, arrêté du 10 juillet 2026), le décret
+      n° 99-913 et le décret n° 2026-418, articles 8, 13, 20 et 21. Dans
+      LEGI : L. 643-1-1 dans ses versions de 2009 et de 2023, L. 643-3,
+      D. 643-1 de 2004 et 2005, D. 642-3 et D. 642-4. Côté caisses : les
+      vingt-trois adresses du lot — pages de la CNAVPL et son guide 2026 en
+      trois parties, recueils statistiques 2021 à 2025 ; pages, fiches
+      pratiques et documents de la Cipav, de la CAVAMAC (dont son document
+      d'exemples de décote et de surcote) et de la CAVEC (dont sa calculette
+      de cotisations et le livre de ses soixante-dix ans) ; le simulateur
+      Cipav de mon-entreprise, par ses deux modèles publicodes.
+    trouve: >-
+      Cinq règles du scénario 1 que les fiches ne suivaient pas : la
+      minoration par l'âge seul de la CAVAMAC et de la CAVEC, que la durée
+      annulait ; la surcote de la CAVAMAC, par années pleines, cotisées
+      depuis 2024 ; la majoration de 10 % pour trois enfants de la CAVAMAC, de
+      la Cipav et de la CAVEC ; la majoration de durée d'assurance des
+      libérales depuis 2010 et leur surcote parentale depuis 2023. La valeur
+      de service de la CNAVPL est certifiée de 2004 à 2026, et celle de 2022
+      corrigée ; un revenu tombant pile sur le seuil d'un trimestre le valide
+      à nouveau. Lignes `cavamac_minoration_age_seul`,
+      `cavec_minoration_age_seul`, `sections_liberales_majoration_enfants`,
+      `cnavpl_majoration_duree_assurance` et `cnavpl_valeur_service` ; la
+      ligne `decret_2026_418_liberaux` est close. Trois exemples de la
+      CAVAMAC entrent aux témoins officiels.
+    reste: >-
+      Les statuts de la CAVAMAC d'avant 2011 et de la CAVEC d'avant 2008, au
+      Bulletin officiel ; le taux de l'abattement de la CAVEC d'avant 2008 ;
+      la liquidation des carrières longues à 15 % de la CAVAMAC ; la
+      condition de trente années d'affiliation de la surcote de la Cipav ; les
+      cent points par trimestre d'accouchement de D. 643-1 ; les capitaux
+      uniques des petites pensions ; la majoration de durée d'assurance et la
+      surcote parentale des avocats, que L. 653-3 leur ouvre comme L. 643-1-1
+      aux libéraux.

@@ -494,7 +494,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-09-22"
+   "verifiee_le": "2026-09-23"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -967,7 +967,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-09-22"
+   "verifiee_le": "2026-09-23"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1072,12 +1072,12 @@
    "ajoutees": 0,
    "colonne": "valeur",
    "corrigees": 0,
-   "empreinte": "0d82ac84181a353c",
-   "identiques": 19,
+   "empreinte": "ffc6820a63003da9",
+   "identiques": 14,
    "niveau": "certifiee",
    "source": "CNAVPL, recueils statistiques annuels",
-   "valeurs": 19,
-   "verifiee_le": "2026-09-13"
+   "valeurs": 14,
+   "verifiee_le": "2026-09-23"
   },
   "valeurs_point_cnbf": {
    "ajoutees": 0,
@@ -1188,6 +1188,17 @@
    "source": "UNIRS tenant lieu de point Arrco avant 1999 — barème de la fédération Agirc-Arrco, substitution du dépôt",
    "valeurs": 123,
    "verifiee_le": "2026-09-13"
+  },
+  "valeurs_service_cnavpl": {
+   "ajoutees": 18,
+   "colonne": "valeur",
+   "corrigees": 1,
+   "empreinte": "91cd4e6fb29dd908",
+   "identiques": 4,
+   "niveau": "certifiee",
+   "source": "CNAVPL, « Cotiser pour sa retraite », valeur de service du point depuis 2004, au 31 décembre",
+   "valeurs": 23,
+   "verifiee_le": "2026-09-23"
   },
   "validation_trimestres": {
    "ajoutees": 0,

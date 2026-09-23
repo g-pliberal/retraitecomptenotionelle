@@ -261,7 +261,12 @@ class DonneesMacro:
         seuil = heures(annee) * self.smic_horaire(annee)
         if seuil <= 0:
             return 4
-        return max(0, min(4, int(revenu // seuil)))
+        # UN REVENU QUI TOMBE PILE SUR LE SEUIL LE VALIDE. L'assiette minimale
+        # des indépendants vaut 450 SMIC horaires, trois seuils exactement ;
+        # mais 450 × 11,88 / (150 × 11,88) donne 2,999… en virgule flottante,
+        # et la division entière rendait deux trimestres en 2025 là où la
+        # CNAVPL et la CAVAMAC en écrivent trois.
+        return max(0, min(4, int(revenu / seuil + 1e-9)))
 
     @cached_property
     def plafond_securite_sociale(self) -> SerieAnnuelle:

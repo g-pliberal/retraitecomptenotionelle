@@ -738,6 +738,11 @@ _ABATTEMENTS_IRCEC = ("ircec", "ircec_age_seul", "cavom")
 #: pas le taux plein.
 _ABATTEMENTS_PAR_ANNEE_AGE_SEUL = ("ircec_age_seul", "cavom")
 
+#: Le seul dispositif pour enfants qu'un régime EN POINTS puisse porter : une
+#: majoration de durée d'assurance ne touche que la durée, qu'il oppose aussi ;
+#: une bonification entre aux services, qu'il n'a pas.
+_MAJORATION_DE_DUREE = "mda"
+
 #: Dernière ligne de la table des âges : dix ans d'anticipation. Au-delà, le
 #: barème ne descend plus.
 _COEFFICIENT_ANTICIPATION_PLANCHER = 0.43
@@ -3637,6 +3642,12 @@ class ScenarioActuel:
             fin = min(fin, periode.surcote_age_maximum)
         # Des trimestres civils ENTIERS : deux mois de plus ne valent rien.
         ecoules = int((max(0.0, fin - debut) + 1e-9) * 4)
+        if periode.surcote_trimestres_cotises:
+            # « Pour chaque année pleine COTISÉE dans le présent régime »
+            # (CAVAMAC, statuts dans la rédaction de l'arrêté du 4 août 2023,
+            # article 16) : le temps écoulé sans cotiser ne compte plus.
+            ecoules = min(ecoules, _trimestres_cotises_apres(
+                carriere, debut, annee_liquidation))
         if periode.surcote_trimestres_maximum is not None:
             ecoules = min(ecoules, periode.surcote_trimestres_maximum)
         pas = max(1, periode.surcote_pas_trimestres)
@@ -3741,6 +3752,16 @@ class ScenarioActuel:
         trimestres ; à égalité encore, le dernier code par ordre alphabétique,
         pour que le résultat ne dépende pas de l'ordre d'un dictionnaire.
 
+        **Un régime en points porte aussi la majoration de DURÉE.** Elle ne
+        joue que sur la durée d'assurance — la décote et la surcote —, et un
+        régime en points qui en oppose une s'en sert comme un régime en
+        annuités : c'est la CNAVPL, à qui L. 643-1-1 rend L. 351-4 depuis le
+        1er avril 2010. Le moteur ne la cherchait que dans les annuités, et une
+        libérale qui n'avait cotisé qu'à sa section n'en recevait aucun
+        trimestre. Une BONIFICATION, elle, entre aux services, que seul un
+        régime en annuités proratise : les mines, en points, en déclarent une,
+        et elle reste hors de ce décompte.
+
         Renvoie ``None`` quand rien n'est dû : pas d'enfant, aucun régime
         porteur, dispositif pas encore né, ou assuré qui n'en est pas le
         bénéficiaire.
@@ -3753,9 +3774,12 @@ class ScenarioActuel:
                 continue
             regime = self.catalogue[code]
             periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
-            if periode is None or periode.type_calcul != "annuites":
+            if periode is None:
                 continue
             for dispositif in periode.avantages_non_contributifs:
+                if (periode.type_calcul != "annuites"
+                        and dispositif != _MAJORATION_DE_DUREE):
+                    continue
                 accorde = self.majorations_enfants.par_enfant(
                     dispositif, carriere.sexe, carriere.annee_naissance,
                     annee_liquidation, carriere.nombre_enfants,

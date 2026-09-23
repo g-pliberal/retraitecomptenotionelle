@@ -236,6 +236,38 @@ Le lot des professions de santé, le même jour, en a ajouté trois.
   la calculette de la même caisse aussi. La fiche suit le décret, et l'écart
   est écrit dans la note de la source.
 
+Le lot des dernières sections libérales — CNAVPL, Cipav, CAVAMAC, CAVEC —, le
+même jour encore, en a ajouté quatre.
+
+- **Le modèle qu'on télécharge n'est pas forcément celui que le site
+  exécute.** L'Urssaf publie sur npm le modèle publicodes de mon-entreprise,
+  `modele-social`, qui s'installe et s'interroge hors navigateur : dans sa
+  version du 16 juillet 2026, il portait encore les taux de 2024. Le
+  simulateur en ligne charge un second modèle, `modele-ti`, qui a suivi la
+  réforme. Avant de conclure qu'un simulateur se trompe, regarder dans
+  Chromium quels scripts la page charge vraiment.
+- **Une calculette qui calcule dans le navigateur livre son barème — et ses
+  défauts.** Celle de la CAVEC porte ses classes en clair dans son script,
+  complétées par des valeurs que la page injecte : il faut lire les deux. Elle
+  en connaît huit, la grille de la caisse neuf. Lire la grille publiée à côté,
+  toujours.
+- **Le guide de la caisse nationale peut retarder sur la section, et le
+  Journal officiel départage.** Le guide 2026 de la CNAVPL, édité en mars,
+  écrit que la CAVEC ne majore pas pour trois enfants ; la CAVEC écrit 10 % ;
+  l'arrêté du 4 juillet 2025 donne raison à la CAVEC. Même chose des fiches
+  pratiques 2026 de la Cipav, qui impriment les taux de 2024, et du tableau
+  de la CAVAMAC, qui régularise 2025 à l'ancien taux.
+- **Une table par génération a une première ligne, et le moteur fait
+  quelque chose avant.** L'âge du taux plein du 1° de L. 351-8 commence à la
+  génération 1930 ; avant, le moteur retombe sur l'âge de la fiche — et c'est
+  un témoin né en 1925, minoré de 15 %, qui l'a fait voir. Pour toute table
+  que lit une fiche, demander ce qu'elle rend avant son début.
+
+Et une leçon de clôture : relire la liste du lot contre les requêtes
+réellement faites, avant de le déclarer dépouillé. Deux des vingt-trois
+adresses, crues lues, ne l'avaient pas été ; l'une d'elles portait la grille
+2026 de la CAVEC avec ses points, qui a confirmé le rendement du dépôt.
+
 ## Où va ce qu'on en tire
 
 Rien ne reste dans un fichier de notes : chaque trouvaille a sa destination,

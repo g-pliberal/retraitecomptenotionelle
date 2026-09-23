@@ -632,8 +632,8 @@ def _regles_des_sections(p) -> dict:
     """Les champs que seules quelques sections libérales portent, et seulement là.
 
     La décote à deux pentes de la CAVP, le taux plein anticipé des mères de la
-    CARCDSF : même raison que pour les marins, le moteur JavaScript lit leur
-    absence comme leur nullité.
+    CARCDSF, la surcote par années cotisées de la CAVAMAC : même raison que
+    pour les marins, le moteur JavaScript lit leur absence comme leur nullité.
     """
     champs = {
         "decote_palier_age": p.decote_palier_age,
@@ -641,6 +641,8 @@ def _regles_des_sections(p) -> dict:
         "taux_plein_anticipe_par_enfant_annees":
             p.taux_plein_anticipe_par_enfant_annees,
         "taux_plein_anticipe_maximum_annees": p.taux_plein_anticipe_maximum_annees,
+        # La surcote de la CAVAMAC depuis 2024, par années COTISÉES.
+        "surcote_trimestres_cotises": p.surcote_trimestres_cotises or None,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 
