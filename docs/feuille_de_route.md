@@ -14311,3 +14311,110 @@ calculée. Elle l'est désormais, des deux côtés du portage
 `src/retraite_notionnelle/web/pages.py`, `moteur/js/pages.js`,
 `tests/temoins/pages.json`,
 `tests/test_affirmations.py` (docstring).
+
+### 110. Le simulateur garde ce qu'on lui a dit, et la page ne saute plus — `fait`
+
+**Demande.** « Que le simulateur garde en mémoire ce qui lui a été mis comme
+information. De plus, la page "saute" à chaque fois qu'on clique sur un
+bouton. » (23 septembre 2026)
+
+**Ce qui a été mesuré d'abord**, dans Chromium, à 1 280 et 360 points, avant
+de toucher à quoi que ce soit.
+
+- *Le saut.* Chaque clic sur une bascule, sur « Calculer », sur une année de
+  la cascade faisait deux mouvements : en haut, puis plus bas. « brut » dans
+  le formulaire : défilement 874 → 0 → 1 588 ; « Calculer » : 1 077 → 0 →
+  1 588 ; une année de la cascade sur Coût : 3 992 → 0, et le dépliant de la
+  cascade refermé. La cause était unique : `afficher` remplaçait la page par
+  l'écran d'attente avant chaque calcul, la page tombait à quelques lignes, le
+  navigateur ramenait le défilement à zéro, et `reprendre` redescendait ensuite
+  aux résultats.
+- *La mémoire, perdue de quatre façons.* Les bascules — en activité ou à la
+  retraite, l'unité, le net ou le brut — sont des liens écrits au rendu depuis
+  la saisie calculée : ce qui avait été tapé depuis disparaissait, et 3 333 €
+  nets tapés devenaient, au clic sur « brut », les 4 423 € bruts des 3 500 € de
+  l'exemple. Le formulaire d'un retraité ne renvoyait ni sa situation ni ce
+  qu'il saisissait : « Calculer » le ramenait au formulaire d'un actif, sa
+  pension ignorée, le calcul fait sur le salaire de l'exemple — le formulaire
+  perdait de même l'âge de référence et l'âge de conversion réglés par
+  l'adresse. Aller lire une autre page puis revenir par le bandeau rendait
+  l'exemple de 1975. Et une saisie refusée se rendait sur le formulaire de
+  l'exemple : une date de trop, trois métiers à retaper.
+
+**Ce qui a été fait.**
+
+- *Sur place, rien ne se vide.* Un rendu qui ne change pas de route garde la
+  page, estompée, un trait d'or en haut de l'écran le temps du calcul. Les
+  dépliants ouverts sont rouverts — reconnus à leur titre lu sans ses
+  chiffres, celui de la cascade disant « De 422 Md € à 279 Md € » et changeant
+  avec l'année. Ce qu'on a cliqué est retrouvé — le groupe de la bascule, le
+  formulaire, l'ancêtre identifié — et reposé au même endroit de l'écran, le
+  focus sur l'état choisi. « Calculer » descend aux résultats en un seul
+  mouvement, doux sauf mouvement réduit ou arrivée d'une autre page. Dans le
+  cadre de partiliberalfrancais.fr, c'est la page hôte qui défile, et la mesure
+  se fait dans sa fenêtre.
+- *La mémoire.* Le stockage local du navigateur garde, sous une seule clé, la
+  dernière simulation que le lecteur a produite lui-même — par « Calculer »,
+  par une bascule, ou en tapant — et ce qu'il a tapé depuis sans calculer. Qui
+  revient sur Simuler sans carrière dans l'adresse la retrouve, l'adresse
+  réécrite sans entrée d'historique ; une phrase prend la place de la
+  consigne, et « Effacer ma saisie », à côté de « Calculer », vide la mémoire.
+  Les règles suivent le lecteur : celles de l'adresse l'emportent, sauf tant
+  qu'aucune page de la visite n'a été rendue sous d'autres règles que celles
+  par défaut — une adresse sans règles n'est alors pas un avis. Le simulateur
+  court de l'accueil montre la saisie retenue et l'envoie entière. Un
+  navigateur qui refuse le stockage ne retient rien, et marche comme avant.
+- *Les bascules refont leur adresse au clic*, sur ce que le formulaire porte,
+  par `requeteBasculee` : la même traduction des montants que le rendu,
+  `remplacementsUnite` et `remplacementsMontants` servant aux deux.
+- *Le formulaire porte tout ce dont il dépend* : la situation et ce qu'on
+  saisit, en champs cachés, et les deux réglages sans champ quand ils
+  s'écartent du défaut. Une saisie refusée se remontre telle qu'elle a été
+  envoyée : lue sans rien vérifier, les métiers jusqu'à la première ligne
+  incomplète, que le script de la page remet dans la ligne vide qui l'attend ;
+  ce qui ne se lit même pas ainsi repart de l'exemple sans perdre la forme du
+  formulaire.
+- *Trois phrases.* « L'exemple est déjà rempli » ne se dit plus qu'au-dessus
+  de l'exemple. Le chapeau disait « rien n'est conservé » : il dit « votre
+  saisie n'est gardée que par lui », le navigateur. Et le fichier d'un relevé
+  n'est pas conservé, mais la carrière qu'il écrit l'est.
+- *Les bornes du simulateur court.* Ses dates ne portaient pas leurs âges
+  limites : les bornes du calendrier restaient celles d'un assuré né en 1975,
+  et une naissance en 1990 rendait un départ à 64 ans impossible à envoyer.
+
+**Ce que ça a déplacé.** Aucun chiffre du modèle : `simulations.json` est
+intact. Après correction : « brut » 874 → 874, la bascule à 378 points du haut
+de l'écran avant comme après ; « Calculer », un seul mouvement ; l'année de la
+cascade 3 992 → 3 992, dépliant ouvert ; « Recalculer cette page » garde son
+formulaire à un point près quand la page au-dessus grandit de 198 points. Le
+parcours de mémoire — brouillon, rechargement, nouvel onglet, accueil, saisie
+refusée, effacement, règles remises au défaut, stockage refusé — passe à
+1 280 et à 360 points ; la bascule et le calcul, dans un cadre de même
+origine.
+
+**Ce qui reste.**
+
+- La suite ne charge pas `index.html` dans un navigateur : ce qui précède a été
+  vérifié par un script Playwright hors du dépôt. `tests/test_formulaire.py`
+  tient ce qui se tient sans navigateur — le formulaire renvoie tout ce qu'il a
+  reçu, la saisie refusée se remontre, le stockage n'est touché que par trois
+  fonctions protégées — et `tests/js/bascules.test.js` la traduction des
+  bascules. Un vrai essai de navigateur demanderait Playwright dans `.[dev]`.
+- L'historique du navigateur garde les adresses des simulations, puisque
+  l'adresse est la saisie : « Effacer ma saisie » vide la mémoire du
+  simulateur, pas l'historique, et la phrase qui confirme l'effacement le dit
+  ainsi.
+- Saisie par la pension, les revenus de la carrière n'ont pas de champ et ne
+  voyagent pas : repasser par « Ou saisir ce que vous gagniez » rend le revenu
+  de l'exemple. Le simulateur court de la page Trajectoire n'est pas prérempli.
+- Le bandeau se dit collé en haut (`position: sticky`) et ne l'est pas : son
+  conteneur `#entete` a exactement sa hauteur, et il défile avec la page. Le
+  coller demanderait une marge de défilement sur toutes les cibles — les
+  résultats, le plan des pages longues, le lien d'évitement —, que ce chantier
+  n'a pas touchées.
+
+**Fichiers.** `index.html`, `moteur/js/pages.js`,
+`src/retraite_notionnelle/web/pages.py`, `src/retraite_notionnelle/web/gabarit.py`
+(`.envoi`, `.memoire`, le trait d'attente), `moteur/style.css` et
+`tests/temoins/pages.json` régénérés, `tests/test_formulaire.py` et
+`tests/js/bascules.test.js` (nouveaux), `tests/test_web.py` (une assertion).
