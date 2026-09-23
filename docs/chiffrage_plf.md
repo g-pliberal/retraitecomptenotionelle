@@ -5,7 +5,11 @@
 les modifier à la main : `tests/test_prose.py` refuse un document qui ne serait
 plus celui que le script produit. La prose, elle, est datée du
 22 septembre 2026 et relève du régime `recit` de `docs/fraicheur.md` : elle
-raconte ce que ces chiffres voulaient dire ce jour-là.
+raconte ce que ces chiffres voulaient dire ce jour-là. Elle a été corrigée le
+23 septembre 2026 là où elle nommait mal ce qu'elle chiffrait — un « solde
+public » qui n'était que celui de la retraite, des « prélèvements
+obligatoires » qui comptaient des dépenses de l'État —, et chaque correction
+le dit à sa place.
 
 La série annuelle complète, année par année et pour les deux variantes, est
 dans `docs/chiffrage_plf.csv` — séparateur `;`, virgule décimale, ouvrable
@@ -52,7 +56,15 @@ budgétaire du dossier.**
   compte du COR, qui consolide dépenses et ressources de l'ensemble des régimes
   légalement obligatoires, fonds de solidarité vieillesse compris.
 - **Écart** : « Solde + garantie » moins « Rappel sc. 1 ». Négatif, la
-  proposition dégrade le solde public par rapport au droit en vigueur.
+  proposition dégrade le solde de la retraite, garantie comprise, par rapport
+  au droit en vigueur. *Corrigé le 23 septembre 2026* : le document l'appelait
+  « écart de solde public », et ce n'en est pas un. Une part des recettes que
+  la retraite perd sont des versements d'autres administrations — la
+  contribution d'équilibre de l'État employeur, ses subventions, la branche
+  famille —, qui sont autant de dépenses que leur payeur cesse de faire : au
+  niveau des administrations publiques consolidées, ils s'annulent. Le fait
+  central les isole ; le document ne chiffre pas le solde consolidé, faute de
+  séparer, dans les cotisations, ce que paient les employeurs publics.
 - La pondération est celle du dépôt : chaque cas type porte l'effectif de
   retraités de sa caisse dans les masses de pensions, et ses cotisants dans les
   masses de cotisations.
@@ -63,15 +75,29 @@ budgétaire du dossier.**
 | En 2026 | Points de PIB | Milliards d'euros |
 |---|---:|---:|
 | Recettes retirées au système de retraite | -5,96 | -183 |
+| dont cotisations, au taux unique | -1,56 | -48 |
+| dont impôts et taxes affectés | -2,14 | -66 |
+| dont versements de l'État et de la branche famille | -2,26 | -69 |
 | Dépense publique retirée (pensions et garantie) | -4,50 | -138 |
-| **Écart de solde public, variante rétroactive** | **-1,45** | **-45** |
-| **Écart de solde public, variante prospective** | **-4,72** | **-145** |
+| **Écart de solde de la retraite, garantie comprise, variante rétroactive** | **-1,45** | **-45** |
+| **Écart de solde de la retraite, garantie comprise, variante prospective** | **-4,72** | **-145** |
 <!-- fait_central:fin -->
 
 La proposition retire à la fois des recettes et de la dépense, et **elle en
 retire plus du côté des recettes**. C'est le résultat que tout le reste du
 document décline : une dépense de pensions qui baisse de plus d'un tiers ne suffit pas
 à compenser des prélèvements qui baissent davantage.
+
+*Corrigé le 23 septembre 2026.* La dernière phrase est fausse, et la
+décomposition des recettes, ajoutée ce jour-là au tableau, le montre : ce que
+les ménages et les entreprises cessent de payer — les cotisations et les impôts
+affectés — baisse MOINS que la dépense. Ce qui fait passer les recettes
+retirées au-dessus de la dépense retirée, ce sont les versements de l'État et
+de la branche famille, que la retraite ne reçoit plus et que leurs payeurs
+gardent. Le déficit que la proposition creuse est donc celui du système de
+retraite, et le solde public consolidé s'en écarte, dans le sens favorable à
+la proposition, d'une somme du même ordre — moins la part du taux unique que
+l'État paierait comme employeur, qui est dans les cotisations.
 
 ## Les quatre arbitrages qui déplacent le chiffrage
 
@@ -160,19 +186,27 @@ plus que l'écart de solde que le tableau précédent affiche.
 | 2070 | 8,63 (721) | 0,14 (12) | 8,77 (733) | 7,94 (663) | -0,69 (-58) | -0,83 (-69) | -2,39 (-200) | +1,56 |
 <!-- horizon_prospectif:fin -->
 
-### E. Prélèvements obligatoires retraite, avant et après
+### E. Prélèvements retraite, avant et après, et ce que l'État verse à part
 
 <!-- prelevements:debut -->
-| Année | Cotisations + contribution d'équilibre (sc. 1) | Impôts et taxes affectés (sc. 1) | Subventions d'équilibre (sc. 1) | **Total sc. 1** | Cotisations 18 % (sc. 6) | Pilier obligatoire 5 % (sc. 6) | **Total sc. 6** | Écart |
+| Année | Cotisations (sc. 1) | Impôts et taxes affectés (sc. 1) | **Prélèvements sc. 1** | Cotisations 18 % (sc. 6) | Pilier obligatoire 5 % (sc. 6) | **Prélèvements sc. 6** | Écart | Versé par l'État au sc. 1, hors prélèvements |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 10,79 (331) | 2,14 (66) | 0,25 (8) | **13,19 (404)** | 7,60 (233) | 2,11 (65) | **9,72 (298)** | -3,47 |
-| 2030 | 10,72 (368) | 2,13 (73) | 0,25 (9) | **13,10 (449)** | 7,57 (259) | 2,10 (72) | **9,67 (331)** | -3,43 |
-| 2035 | 10,52 (416) | 2,08 (82) | 0,25 (10) | **12,85 (508)** | 7,57 (299) | 2,10 (83) | **9,67 (382)** | -3,18 |
-| 2040 | 10,38 (467) | 2,06 (93) | 0,24 (11) | **12,69 (571)** | 7,57 (341) | 2,10 (95) | **9,67 (435)** | -3,02 |
-| 2050 | 10,16 (571) | 2,01 (113) | 0,24 (13) | **12,41 (698)** | 7,57 (425) | 2,10 (118) | **9,67 (544)** | -2,75 |
-| 2060 | 10,02 (690) | 1,99 (137) | 0,24 (16) | **12,25 (843)** | 7,57 (521) | 2,10 (145) | **9,67 (666)** | -2,58 |
-| 2070 | 9,98 (833) | 1,98 (165) | 0,23 (20) | **12,19 (1 018)** | 7,57 (632) | 2,10 (176) | **9,67 (808)** | -2,52 |
+| 2026 | 9,16 (281) | 2,14 (66) | **11,30 (346)** | 7,60 (233) | 2,11 (65) | **9,72 (298)** | -1,58 | 1,88 (58) |
+| 2030 | 9,10 (312) | 2,13 (73) | **11,23 (385)** | 7,57 (259) | 2,10 (72) | **9,67 (331)** | -1,56 | 1,87 (64) |
+| 2035 | 8,93 (353) | 2,08 (82) | **11,01 (435)** | 7,57 (299) | 2,10 (83) | **9,67 (382)** | -1,34 | 1,84 (73) |
+| 2040 | 8,81 (397) | 2,06 (93) | **10,87 (489)** | 7,57 (341) | 2,10 (95) | **9,67 (435)** | -1,20 | 1,81 (82) |
+| 2050 | 8,63 (485) | 2,01 (113) | **10,64 (598)** | 7,57 (425) | 2,10 (118) | **9,67 (544)** | -0,97 | 1,77 (100) |
+| 2060 | 8,51 (586) | 1,99 (137) | **10,50 (722)** | 7,57 (521) | 2,10 (145) | **9,67 (666)** | -0,83 | 1,75 (120) |
+| 2070 | 8,47 (708) | 1,98 (165) | **10,45 (873)** | 7,57 (632) | 2,10 (176) | **9,67 (808)** | -0,78 | 1,74 (146) |
 <!-- prelevements:fin -->
+
+*Corrigé le 23 septembre 2026.* Le tableau comptait jusque-là, parmi les
+prélèvements du système actuel, la contribution d'équilibre de l'État employeur
+et ses subventions d'équilibre, et affichait un écart de prélèvements de près
+de trois points et demi. Ce sont des dépenses de son budget, financées par
+l'impôt général, et la comptabilité nationale ne range pas la première — une
+cotisation *imputée* — parmi les prélèvements obligatoires. Elles sont
+désormais dans une colonne à part, hors des totaux et de l'écart.
 
 Le pilier obligatoire n'est pas une recette publique : il constitue un capital
 au nom de chacun, hors du compte de la répartition. Il figure ici parce qu'un
@@ -186,8 +220,8 @@ salaire net affiché par le simulateur est celui qui les laisse au salarié.
 <!-- agregats:debut -->
 | Sur 2026-2070 | Rétroactive | Prospective | Système actuel |
 |---|---:|---:|---:|
-| Dépense de pensions cumulée, Md € constants de 2026 | 16 348 | 19 821 | 25 384 |
-| Écart de dépense au système actuel | -9 036 | -5 563 | — |
+| Dépense de pensions cumulée, Md € constants de 2026 | 15 157 | 18 449 | 23 442 |
+| Écart de dépense au système actuel | -8 285 | -4 993 | — |
 | Garantie vieillesse brute cumulée | 561 | 423 | — |
 | Reprises sur succession | -200 | -162 | — |
 | Garantie nette cumulée | 360 | 261 | — |
@@ -200,6 +234,13 @@ La variante rétroactive ne fait pas mieux que le droit en vigueur sur la
 moyenne de la projection : elle est meilleure après le milieu du siècle, pire
 avant, et le stock de dette qu'elle accumule d'ici 2070 dépasse celui du
 système actuel. La variante prospective en accumule plusieurs fois plus.
+
+*Corrigé le 23 septembre 2026.* Les deux premières lignes cumulaient la
+dépense que le modèle projette lui-même, plus haute que celle du COR de trois
+points de PIB en 2070, quand les tableaux A à D, le solde moyen et la dette
+portent celle du COR. L'économie en était surestimée d'environ 9 % : 9 036
+milliards au lieu de 8 285 pour la variante rétroactive. Toutes les lignes
+sont désormais sur la même base.
 
 ## La pondération du recensement
 
@@ -241,6 +282,15 @@ régimes supprime l'objet de la subvention — il n'y a plus de retraité sans
 cotisants dès lors qu'il n'y a plus qu'un régime —, mais pas la dépense. Les
 pensions de la SNCF, des mines et des marins restent servies, portées par les
 cotisants du régime unifié, et le modèle le fait bien.
+
+*Ajouté le 23 septembre 2026.* Le solde consolidé est meilleur, en outre, de
+ce que l'État employeur et la branche famille cessent de verser à la retraite :
+la contribution d'équilibre, qui couvre les pensions des fonctionnaires de
+l'État, et l'assurance vieillesse des parents au foyer. Le fait central les
+isole, avec les subventions : ce ne sont pas des impôts qu'on lève ou qu'on
+abandonne, mais des dépenses que leur payeur ne fait plus. Moins, pour l'État,
+sa part d'employeur du taux unique, que le modèle ne sépare pas des autres
+cotisations.
 
 Rien ne devrait être déposé avant que ce point soit écrit.
 
