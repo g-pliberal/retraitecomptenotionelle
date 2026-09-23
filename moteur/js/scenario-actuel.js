@@ -422,7 +422,7 @@ export class ScenarioActuel {
   /** @returns {[number, number|null]} durée requise opposable, et fiabilité. */
   dureeRequise(periode, carriere) {
     // UN RÉGIME SPÉCIAL QUI ÉCRIT SA TABLE PASSE AVANT LA TABLE COMMUNE : la
-    // SNCF et la RATP. En deçà de sa première génération, la table commune
+    // SNCF, la RATP et les IEG. En deçà de sa première génération, la table commune
     // reste le repli.
     if (periode.duree_requise_table) {
       const propre = this.dureesRequisesRegimes.ligne(

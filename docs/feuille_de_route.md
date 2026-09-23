@@ -13606,6 +13606,20 @@ dépôt ne sait pas choisir. Restent aussi la table des agents sédentaires de
 la SNCF, qu'aucune fiche ne modélise, et les carrières longues des deux
 régimes.
 
+**Les IEG, le lendemain : la table des dix-sept ans.** Le I bis de l'article
+45 n'a pas quatre tables mais cinq, une par seuil de services actifs — cinq,
+huit, onze, quatorze et dix-sept ans, les mêmes qui abaissent l'âge
+d'ouverture d'un à cinq ans. Le choix, que le dépôt « ne savait pas faire »,
+est fait par la fiche elle-même : elle ouvre le droit à l'âge légal abaissé
+de cinq ans, c'est-à-dire aux dix-sept ans, et lit leur table
+(`ieg_actif_17`). En deçà de la génération 1968, le texte renvoie à la durée
+d'avant le décret n° 2023-692, qui n'est pas la table actuelle du I mais
+celle de 2014, lue dans la version de 2020. Un agent né en 1968 doit 170
+trimestres, la table commune lui en demandait 172. Les quatre autres tables
+sont transcrites sans lecteur : il faudrait compter les années actives de la
+carrière. Et l'âge d'ouverture de la fiche n'a pas été confronté à la
+suspension de 2026 — c'est la question que ce lot laisse.
+
 ### 97. Quel salaire faut-il rentrer ? Celui du travail, et jamais la pension — `fait`
 
 **Demande.** « Sur le simulateur, il faut rentrer quel salaire ? Moi je rentre

@@ -1710,6 +1710,7 @@ regimes:
         age_taux_plein: 62
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
+        duree_requise_table: ieg_actif_17
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -1736,10 +1737,14 @@ regimes:
           à cinquante-huit ans et neuf mois, la génération 1968 à cinquante-
           neuf ans en 2027 — la fiche suit ce calendrier par année de
           liquidation, l'âge de référence de la décote cinq ans au-dessus. La
-          durée requise du I bis de l'article 45 (170 trimestres pour les nés
-          de 1964 à 1966, 171 pour 1967-1968, 172 à compter de 1969, pour cinq
-          ans de services actifs) est plus exigeante d'un à trois trimestres
-          que la table nationale lue à la génération : écart non porté. Le
+          durée requise est celle du I bis de l'article 45, une table par
+          durée de services actifs ; l'âge d'ouverture de la fiche, l'âge légal
+          abaissé de cinq ans, est celui des dix-sept ans, et la fiche lit
+          leur table (`duree_requise_table: ieg_actif_17`) : 170 trimestres
+          pour les nés de 1968 à 1970, 171 pour 1971-1972, 172 à compter de
+          1973, et en deçà la table d'avant le décret n° 2023-692 — 169 pour
+          1964-1966, 170 pour 1967. Elle portait la table commune, suspension
+          de 2026 comprise, que l'annexe n'a pas reprise. Le
           régime est fermé aux agents recrutés à compter du 1er septembre 2023
           (annexe 3, art. 1er), ce que le routage porte.
           L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM MAJORÉ DE TROIS ANS, ET NON DE
@@ -1766,6 +1771,7 @@ regimes:
         age_taux_plein: 62
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
+        duree_requise_table: ieg_actif_17
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -1792,10 +1798,14 @@ regimes:
           à cinquante-huit ans et neuf mois, la génération 1968 à cinquante-
           neuf ans en 2027 — la fiche suit ce calendrier par année de
           liquidation, l'âge de référence de la décote cinq ans au-dessus. La
-          durée requise du I bis de l'article 45 (170 trimestres pour les nés
-          de 1964 à 1966, 171 pour 1967-1968, 172 à compter de 1969, pour cinq
-          ans de services actifs) est plus exigeante d'un à trois trimestres
-          que la table nationale lue à la génération : écart non porté. Le
+          durée requise est celle du I bis de l'article 45, une table par
+          durée de services actifs ; l'âge d'ouverture de la fiche, l'âge légal
+          abaissé de cinq ans, est celui des dix-sept ans, et la fiche lit
+          leur table (`duree_requise_table: ieg_actif_17`) : 170 trimestres
+          pour les nés de 1968 à 1970, 171 pour 1971-1972, 172 à compter de
+          1973, et en deçà la table d'avant le décret n° 2023-692 — 169 pour
+          1964-1966, 170 pour 1967. Elle portait la table commune, suspension
+          de 2026 comprise, que l'annexe n'a pas reprise. Le
           régime est fermé aux agents recrutés à compter du 1er septembre 2023
           (annexe 3, art. 1er), ce que le routage porte.
           L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM MAJORÉ DE TROIS ANS, ET NON DE

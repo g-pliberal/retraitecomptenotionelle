@@ -1208,38 +1208,33 @@ entrees:
     prochaine_veille: "2027-03-31"
 
   - id: duree_requise_ieg
-    regle: "Durée d'assurance requise du régime spécial des IEG : le régime a SA table par génération, qui n'est pas celle du régime général."
-    textes: ["annexe 3 du décret n° 46-1541 du 22 juin 1946, article 45 (LEGIARTI000052046924)"]
+    regle: "Durée d'assurance requise des agents actifs des IEG depuis le 1er janvier 2025 : une table par durée de services actifs (I bis de l'article 45), et en deçà de sa première génération la table d'avant le décret n° 2023-692 ; ni la table commune ni celle des sédentaires."
+    textes: ["annexe 3 du décret n° 46-1541 du 22 juin 1946, article 45, I et I bis (LEGIARTI000052046924), et article 16, I, 2°", "décret n° 2023-692 du 28 juillet 2023"]
     sources:
-      - {type: legifrance, reference: "annexe 3 du statut national des IEG : « A compter du 1er juillet 2019, elle est fixée à : 167 trimestres, pour les agents nés entre le 1er juillet 1959 et le 31 décembre 1960 ; 168 pour 1961-1962 ; 169 pour 1963 ; 170 pour 1964-1965 ; 171 pour 1966-1967 ; 172 à partir de 1968 »", date: "2026-09-22"}
-      - {type: autre, reference: "CNIEG, réglementation, « Tableau des durées d'assurance » applicable à compter du 1er janvier 2025 : mêmes valeurs, par génération et par motif d'anticipation", url: "https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance/tableau-duree-assurance.html", date: "2026-09-22"}
-    verifie_le: "2026-09-22"
+      - {type: legifrance, reference: "annexe 3 du statut national des IEG, article 45, I bis, version du 6 août 2025 (LEGIARTI000052046924) : pour au moins cinq, huit, onze, quatorze et dix-sept ans de services effectifs actifs, insalubres et militaires, 170 trimestres à compter des générations 1964, 1965, 1966, 1967 et 1968, 171 trois ans plus tard, 172 cinq ans plus tard ; « pour ceux nés avant », la durée « applicable avant l'entrée en vigueur du décret n° 2023-692 ». Lu dans l'index LEGI du dépôt", date: "2026-09-23"}
+      - {type: legifrance, reference: "même article, version du 3 décembre 2020 (LEGIARTI000042597001), la table d'avant le décret n° 2023-692 : 167 trimestres des nés du 1er juillet 1959 à 1960, 168 pour 1961-1963, 169 pour 1964-1966, 170 pour 1967-1969, 171 pour 1970-1972, 172 à compter de 1973", date: "2026-09-23"}
+      - {type: autre, reference: "CNIEG, réglementation, « Tableau des durées d'assurance » applicable à compter du 1er janvier 2025, par génération et par motif d'anticipation", url: "https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance/tableau-duree-assurance.html", date: "2026-09-22"}
+    verifie_le: "2026-09-23"
     temoins: []
-    reformes: [reforme_2023]
-    etat: manque
+    reformes: [reforme_2023, lfss_2026_suspension]
+    etat: conforme
     effet: >-
-      LE CAS TYPE N'EST PAS UN SÉDENTAIRE, et la table ci-dessus ne le vise
-      pas : relu le 22 septembre 2026, le I bis du même article 45 donne,
-      « à compter du 1er janvier 2025 », aux agents du 2° du I de l'article 16
-      une durée par ANCIENNETÉ DE SERVICES ACTIFS — cinq ans : 170 trimestres
-      des nés de 1964 à 1966, 171 pour 1967-1968, 172 à compter de 1969 ; huit
-      ans, onze ans, quatorze ans : les mêmes marches décalées d'une
-      génération chaque fois. C'est la « table par motif d'anticipation » de
-      la CNIEG. La fiche des IEG porte `duree_requise_par_generation: true`,
-      qui lit la table du régime général. Trois générations y diffèrent : 1963 (169
-      trimestres aux IEG, 170 au commun), 1966 et 1967 (171 contre 172). Un
-      trimestre de trop vaut 1,25 % de décote ou un cent-soixante-douzième de
-      prorata, soit environ 0,6 % de pension. La CNIEG publie en outre une
-      table par MOTIF D'ANTICIPATION — hors anticipation, anticipation de cinq
-      ans au titre de quinze ans de services actifs, de quatre ans au titre de
-      douze ans —, que le dépôt ne porte pour aucun régime spécial.
+      La fiche lisait la table commune, suspension de 2026 comprise. Le cas
+      type des IEG part à l'âge légal abaissé de cinq ans, celui des dix-sept
+      ans de services actifs (2° du I de l'article 16) : il lit désormais leur
+      table, `ieg_actif_17` dans `legislation/duree_requise_regimes_speciaux.csv`
+      — 169 trimestres pour les nés de 1964 à 1966, 170 pour 1967 à 1970, 171
+      pour 1971-1972, 172 à compter de 1973. Un agent né en 1968 doit 170
+      trimestres au lieu de 172. Les quatre autres tables, de cinq à quatorze
+      ans, sont transcrites sans qu'aucune fiche ne les lise. La lecture du
+      22 septembre, qui voulait brancher la table du I, se trompait de
+      population : elle est celle des sédentaires.
     a_faire: >-
-      Le mécanisme existe depuis le lot de la SNCF et de la RATP : une fiche
-      nomme sa table (`duree_requise_table`) dans
-      `legislation/duree_requise_regimes_speciaux.csv`, lue par
-      `DureesRequisesRegimes` et son portage. Il manque la donnée qui choisit
-      la bonne des quatre tables du I bis : la durée de services actifs de la
-      carrière. La fiche des mines reste à lire.
+      Une carrière qui déclarerait moins de dix-sept ans de services actifs
+      devrait lire une autre table et partir plus tard : le modèle ne compte
+      pas les années actives aux IEG, et la fiche ne porte qu'un âge. La table
+      des sédentaires (le I) n'est pas transcrite. Et l'âge d'ouverture de la
+      fiche, 59 ans en 2027, n'a pas été confronté à la suspension de 2026.
     prochaine_veille: "2027-03-31"
 
   - id: age_reference_decote_sncf_ratp
@@ -4362,3 +4357,21 @@ journal:
       Aucun barème d'avant 2016. Les fiches pratiques, les deux simulateurs
       de la caisse (cotisations, prélèvements sociaux) restent à dépouiller.
       Rien de la réglementation d'âge ou de décote n'a changé.
+
+  - date: "2026-09-23"
+    session: "action 89, IEG : la durée requise par ancienneté active"
+    consulte: >-
+      Dans l'index LEGI : l'article 45 de l'annexe 3 du statut des IEG dans sa
+      version en vigueur (6 août 2025) et dans celle du 3 décembre 2020, et son
+      article 16.
+    trouve: >-
+      Cinq tables et non quatre au I bis — cinq, huit, onze, quatorze et
+      dix-sept ans de services actifs —, et un renvoi, pour les générations
+      antérieures, à la table d'avant le décret n° 2023-692, qui est celle de
+      2014 et non l'actuelle du I. Le cas type, parti à l'âge légal abaissé de
+      cinq ans, relève des dix-sept ans : un agent né en 1968 doit 170
+      trimestres, le modèle lui en demandait 172.
+    reste: >-
+      Le compte des années actives, sans lequel les quatre autres tables ne
+      servent pas ; la table des sédentaires ; l'âge d'ouverture de la fiche
+      face à la suspension de 2026.

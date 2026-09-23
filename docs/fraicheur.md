@@ -14,7 +14,7 @@ et « douze mille lignes » au portage, qui en fait
 <!--chiffre:lignes(moteur/js/*.js)-->35 408<!--/--> ; le README annonçait un
 premier chargement de 310 Ko quand il en transfère plus du double, et
 « 123 simulations » quand les témoins en figent
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->499<!--/-->.
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->500<!--/-->.
 
 Le mal est qu'on ne pouvait pas savoir. **Le dépôt écrit son ÉTAT et son
 HISTOIRE dans les mêmes fichiers, dans la même typographie, sans frontière.**

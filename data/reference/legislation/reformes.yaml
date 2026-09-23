@@ -912,6 +912,12 @@ reformes:
         règlement de la CAVOM approuvé le 10 juillet 2026, après elle, garde
         ses propres âges — 62 ans et 6 mois pour la génération 1965, 64 ans
         dès 1968 — que la fiche lit dans sa table.
+      ieg: >-
+        La durée requise des agents actifs est celle du I bis de l'article 45
+        de l'annexe 3, et non celle de L. 161-17-3 ; sa dernière
+        version est du 6 août 2025 (LEGIARTI000052046924, index LEGI relu le
+        23 septembre 2026). La fiche lit donc la table du régime
+        (`duree_requise_table: ieg_actif_17`), non la table commune suspendue.
       ratp: >-
         La loi ne réécrit que L. 161-17-2, L. 161-17-3 et le XXIV de la loi de
         2023 ; le décret n° 2008-637 garde ses propres tables — âges du II de
