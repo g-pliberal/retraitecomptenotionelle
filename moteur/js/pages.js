@@ -9360,6 +9360,11 @@ function coutNoteTva(contexte, annee, ligne, pib, anneePib) {
   const tva = new AssietteTva(contexte.paquet);
   const taux = contexte.base.taux_tva_liberal;
   const hausse = (tauxActuel) => g.nombre(tva.variationPrix(taux, tauxActuel) * 100, 1);
+  // Sous 20 %, le taux unique BAISSE le prix de ce qui est taxé au taux normal.
+  const normal = tva.variationPrix(taux, 0.20);
+  const auTauxNormal = "ceux de ce qui est taxé à 20 % aujourd'hui "
+    + (normal >= 0.0 ? `monteraient de ${hausse(0.20)} %`
+      : `baisseraient de ${g.nombre(-normal * 100, 1)} %`);
   return `
 <div class="note"><strong>Ce que la proposition ajoute : une TVA à taux
 unique.</strong> Les quatre taux de TVA d'aujourd'hui, 20, 10, 5,5 et 2,1 %,
@@ -9375,8 +9380,8 @@ d'équilibre qui rognerait sinon toutes les pensions. Les assiettes de chaque
 taux sont celles que publie la direction générale du Trésor, tenues à leur part
 du PIB de ${tva.annee}. Le chiffrage est statique : il suppose que les achats ne
 baissent pas quand les prix montent, et que les prix répercutent la TVA en
-entier : ceux de l'alimentation monteraient de ${hausse(0.055)} %, ceux de ce qui
-est taxé à 20 % aujourd'hui de ${hausse(0.20)} %.</div>`;
+entier : ceux de l'alimentation monteraient de ${hausse(0.055)} %,
+${auTauxNormal}.</div>`;
 }
 
 function coutNoteRestitution(contexte, annee, pib, anneePib) {
@@ -13827,13 +13832,13 @@ export const MESURES_BLOCAGES = {
   cout_18_pour_cent: 1.9,
   solde_moyen_proposition: 0.5,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: -31,
+  dette_2070_proposition: -33,
   dette_2070_actuel: 66,
   coefficient_minimum: 1.00,
   decennie_coefficient_minimum: 2040,
-  coefficient_2070: 1.25,
-  tva_affectee: 2.2,
-  solde_moyen_prospectif: -1.5,
+  coefficient_2070: 1.21,
+  tva_affectee: 1.6,
+  solde_moyen_prospectif: -1.3,
   cout_diviseur_age_legal: 0.2,
 };
 
@@ -13852,6 +13857,8 @@ function programmeBlocages(contexte) {
   const m = MESURES_BLOCAGES;
   const md = (points) => pointsEnMilliards(comptes, Math.abs(points));
   const pt = (valeur, decimales = 1) => g.nombre(valeur, decimales).replace("-", "−");
+  // « 1,9 point », « 2,2 points » : le pluriel à partir de deux.
+  const accordPoint = (valeur) => (Math.abs(valeur) < 2 ? "point" : "points");
   const points = g.tableau(
     ["Le point", "Ce que nous avons regardé", "Ce que nous en retenons"],
     [
@@ -13885,10 +13892,12 @@ function programmeBlocages(contexte) {
       ["Le taux de 18 %",
         `Face au taux d'aujourd'hui, ${pt(m.taux_regime_unique)} % part `
         + "patronale comprise, les 18 % coûtent "
-        + `${pt(m.cout_18_pour_cent)} points de PIB par an sur 2026-2070, `
+        + `${pt(m.cout_18_pour_cent)} ${accordPoint(m.cout_18_pour_cent)} `
+        + "de PIB par an sur 2026-2070, "
         + `${md(m.cout_18_pour_cent)} ${auPibDe}, sous les mêmes règles de `
         + "recette et l'âge légal de 65 ans compris. La TVA à taux unique rapporte "
-        + `${pt(m.tva_affectee)} points de PIB par an de plus que les quatre `
+        + `${pt(m.tva_affectee)} ${accordPoint(m.tva_affectee)} de PIB `
+        + "par an de plus que les quatre "
         + `taux d'aujourd'hui, ${md(m.tva_affectee)}. Avec elle, la `
         + "proposition dégage en moyenne un excédent de "
         + `${pt(m.solde_moyen_proposition)} point par an quand le système `

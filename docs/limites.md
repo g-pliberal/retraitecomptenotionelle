@@ -5809,7 +5809,13 @@ report l'élargit du rapport des revenus d'activité de la grille sous les deux
 emploi jusqu'à leur départ, ce que tous les seniors ne sont pas : qui arrive à
 l'âge légal au chômage ou en invalidité ne cotise pas davantage, et ce que
 l'assurance chômage ou l'invalidité lui verseraient pendant l'attente n'est
-compté nulle part.
+compté nulle part. C'est aussi l'élargissement qui porte l'essentiel de ce que
+l'âge légal fait au solde : sans lui, le report n'épargne des pensions qu'une
+vingtaine d'années, et relève ensuite celles, plus fortes, qu'il sert plus
+tard. La TVA à taux unique en hérite, puisqu'elle est fixée pour couvrir
+chaque année ce qui reste : un report qui ne trouverait pas d'emploi à tous
+demanderait un taux plus haut. L'action 125 de `docs/feuille_de_route.md` le
+chiffre.
 
 **Le PIB ne bouge pas.** Plus d'emploi ferait plus de production, et le modèle
 garde le PIB que le COR projette aux âges d'aujourd'hui. Toutes les parts de

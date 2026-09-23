@@ -208,7 +208,7 @@ class Chiffrage:
 
         La TVA à taux unique paie la garantie AVANT d'entrer au régime : le
         solde du régime l'a donc déjà payée, et seule la part que la TVA ne
-        couvre pas est encore retranchée ici — rien, à 21,1 %.
+        couvre pas est encore retranchée ici — rien, au taux par défaut.
 
         Ce n'est PAS un solde toutes administrations publiques, pour deux
         raisons. Les impôts et taxes affectés que la proposition cesse
