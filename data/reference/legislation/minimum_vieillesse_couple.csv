@@ -1,0 +1,20 @@
+# Minimum vieillesse (ASPA) — plafond de ressources et montant maximal d'un COUPLE
+# ----------------------------------------------------------------------------------
+# source_id: service_public_aspa
+#
+# `minimum_vieillesse.csv` porte le barème d'une personne seule, le seul que le
+# scénario 1 sert : le modèle ne connaît qu'un individu. Ce fichier porte celui
+# d'un couple dont les deux membres sont allocataires, pour la seule page qui
+# compare un foyer : l'accueil, où la garantie individualisée se lit face à
+# l'ASPA d'aujourd'hui. Le plafond d'un couple n'est pas le double de celui
+# d'une personne seule — 1 620,18 € par mois contre 1 043,59 € en 2026.
+#
+# Jusqu'au 23 septembre 2026, l'accueil affichait pour l'ASPA les montants de
+# la garantie appliqués au foyer — 1 000 € pour un couple à 300 € et 300 €,
+# 750 € pour une personne seule à 300 € — et cachait ainsi que l'ASPA sert
+# aujourd'hui 1 020 € au premier et 744 € à la seconde.
+#
+# Montants EN EUROS PAR AN (le montant mensuel publié, multiplié par douze),
+# lus sur la fiche F16871 de service-public.fr, mise à jour le 23 juin 2026.
+annee,valeur,fiabilite
+2026,19442.160000,haute

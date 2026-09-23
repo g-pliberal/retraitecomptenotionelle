@@ -7604,13 +7604,19 @@ coefficient maximal, <!--chiffre:valeur(data/reference/legislation/prelevements_
 salarié au SMIC ne supporte aujourd'hui que ses <!--chiffre:mesure(fiche?exemple=smic&quoi=salarie)-->11,3<!--/--> points salariaux, et que
 baisser la part patronale ne lui rend rien. Le partage retenu ne touche pas à
 cette part : il ramène la retenue de l'assuré à <!--chiffre:mesure(fiche?exemple=smic&quoi=salarie&systeme=proposition)-->6,33<!--/--> points, et le gain au SMIC
-est de **+<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->89<!--/--> € par mois le premier mois**, moins une fois le brut stabilisé.
+est de **+<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->89<!--/--> € par mois à coût du travail inchangé**, et davantage le premier
+mois, à brut inchangé. *Corrigé le 23 septembre 2026* : la phrase disait
+l'inverse, ce chiffre pour celui du premier mois.
 
 **Deux réserves subsistent au SMIC, et elles sont de sens opposé.** Le coût du
-travail y monte de **66 € par mois**, seul niveau de salaire où il bouge : la
-part patronale du pilier capitalisé est hors du périmètre de la réduction
-générale, donc l'employeur la verse pour de bon, là où la réduction absorbait
-ce que le régime général lui prenait. Et la lecture de long terme y est
+travail y monte, à brut inchangé, de **66 € par mois** : la part patronale du
+pilier capitalisé est hors du périmètre de la réduction générale, donc
+l'employeur la verse pour de bon, là où la réduction absorbait ce que le
+régime général lui prenait. Ce n'est pas le seul niveau où il bouge, comme
+cette réserve l'écrivait jusqu'au 23 septembre 2026 : la réduction s'éteignant
+à mesure que le salaire monte, la hausse diminue — 48 € à 1,2 SMIC, 30 € à 1,5,
+12 € à 2 — et devient une baisse à 3 SMIC, où la réduction ne mord plus.
+`scripts/partage_taux_unique.py` imprime la colonne entière. Et la lecture de long terme y est
 impossible en droit, comme la réserve 4 le dit : elle supposerait un brut
 inférieur au salaire minimum.
 
@@ -8926,7 +8932,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2347<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2353<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

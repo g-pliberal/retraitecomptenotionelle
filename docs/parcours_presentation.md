@@ -323,7 +323,7 @@ Onglet **Avantages**. La page qui explique les écarts du simulateur : ce que
 le système actuel verse sans que personne l'ait cotisé. Trois chiffres :
 39 dispositifs en vigueur, du minimum vieillesse à la bonification du
 cinquième ; 96,1 Md € en 2024 pour les 18 que le modèle sait chiffrer, dont
-38,3 Md € de réversion, qui est lue et non calculée ; 10,8 Md € de pensions
+38,3 Md € de réversion, qui est lue et non calculée ; 10,9 Md € de pensions
 servies avant l'âge légal. La page dit que ces deux montants sont des
 planchers. Le graphique du haut compte les dispositifs année par année depuis
 1831, où il n'y en avait qu'un.

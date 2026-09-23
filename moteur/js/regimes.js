@@ -745,22 +745,34 @@ export class MinimumVieillesse {
     this.macro = macro;
     this._table = paquet.minimum_vieillesse ?? {};
     this._annees = Object.keys(this._table).map(Number).sort((a, b) => a - b);
+    // Le barème d'un couple d'allocataires : l'accueil seul s'en sert.
+    this._tableCouple = paquet.minimum_vieillesse_couple ?? {};
+  }
+
+  _enVigueur(table, annee) {
+    const annees = Object.keys(table).map(Number).sort((a, b) => a - b);
+    if (annees.length === 0) {
+      return null;
+    }
+    if (table[String(annee)] !== undefined) {
+      return table[String(annee)];
+    }
+    const anterieures = annees.filter((a) => a < annee);
+    const ancre = anterieures.length
+      ? anterieures[anterieures.length - 1]
+      : annees[0];
+    const [valeur, fiabilite] = table[String(ancre)];
+    return [valeur * this.macro.coefficientPrix(ancre, annee), fiabilite];
   }
 
   /** Montant maximal d'une personne seule, l'année demandée. */
   plafond(annee) {
-    if (this._annees.length === 0) {
-      return null;
-    }
-    if (this._table[String(annee)] !== undefined) {
-      return this._table[String(annee)];
-    }
-    const anterieures = this._annees.filter((a) => a < annee);
-    const ancre = anterieures.length
-      ? anterieures[anterieures.length - 1]
-      : this._annees[0];
-    const [valeur, fiabilite] = this._table[String(ancre)];
-    return [valeur * this.macro.coefficientPrix(ancre, annee), fiabilite];
+    return this._enVigueur(this._table, annee);
+  }
+
+  /** Montant maximal d'un couple d'allocataires, l'année demandée. */
+  plafondCouple(annee) {
+    return this._enVigueur(this._tableCouple, annee);
   }
 }
 

@@ -12863,7 +12863,7 @@ ${engagements(contexte)}
     <p>Aujourd'hui, le minimum vieillesse (l'ASPA) regarde les ressources du
     couple : à 300 € et 1 500 € de pension, il ne reçoit rien. Notre garantie
     regarde chacun :</p>
-    ${tableauGarantie()}
+    ${tableauGarantie(contexte)}
   </div>
 </div>
 
@@ -13333,20 +13333,36 @@ function simulateurCourt(contexte, vers = "/simuler") {
 </form>`;
 }
 
+/** Les foyers du tableau de l'accueil : les pensions mensuelles de chacun. */
+const FOYERS_GARANTIE = [[300, 300], [300, 1500], [900, 900], [300, 5000], [300]];
+
 /**
  * Ce que le plancher individualisé change, en cinq lignes : l'argument le
- * plus immédiatement parlant du site, en haut de l'accueil.
+ * plus immédiatement parlant du site, en haut de l'accueil. Les deux colonnes
+ * sont calculées : l'ASPA sur ses deux barèmes lus, la garantie sur ses deux
+ * montants — voir le Python.
  */
-function tableauGarantie() {
+function tableauGarantie(contexte) {
+  const base = contexte.base;
+  const annee = base.annee_euros_garantie_vieillesse;
+  const minimum = contexte.simulateur().scenarioActuel.minimumVieillesse;
+  const seul = minimum.plafond(annee)[0] / 12;
+  const couple = minimum.plafondCouple(annee)[0] / 12;
+  const plancher = base.garantie_vieillesse_mensuelle;
+  const isolement = base.allocation_isolement_mensuelle;
+  const somme = (pensions) => pensions.reduce((total, p) => total + p, 0);
+  const aspa = (pensions) => Math.max(
+    0, (pensions.length === 1 ? seul : couple) - somme(pensions));
+  const garantie = (pensions) => (pensions.length === 1
+    ? Math.max(0, plancher + isolement - pensions[0])
+    : somme(pensions.map((p) => Math.max(0, plancher - p))));
+  const libelle = (pensions) => (pensions.length === 1
+    ? `Personne seule, ${g.euros(pensions[0])}`
+    : `${g.euros(pensions[0])} et ${g.euros(pensions[1])}`);
   return g.tableau(
-    ["Pensions des deux personnes", "Aujourd'hui (ASPA)", "Avec la garantie"],
-    [
-      ["300 € et 300 €", "1 000 €", "1 000 €"],
-      ["300 € et 1 500 €", "0 €", "500 €"],
-      ["900 € et 900 €", "0 €", "0 €"],
-      ["300 € et 5 000 €", "0 €", "500 €"],
-      ["Personne seule, 300 €", "750 €", "750 €"],
-    ],
+    ["Pensions des deux personnes", `Aujourd'hui (ASPA ${annee})`, "Avec la garantie"],
+    FOYERS_GARANTIE.map((foyer) => [
+      libelle(foyer), g.euros(aspa(foyer)), g.euros(garantie(foyer))]),
     ["", "nombre", "nombre"],
     "Ce que le plancher individualisé change, par mois",
     true,
@@ -13659,18 +13675,39 @@ n'est pas petite.</p>`;
 
 
 /**
+ * Ce que la section des points de blocage CITE, à la précision où elle le
+ * cite : la table `MESURES_BLOCAGES` du Python, que des tests recalculent.
+ * Les deux doivent rester identiques, et les témoins de page le vérifient.
+ */
+export const MESURES_BLOCAGES = {
+  taux_regime_unique: 25.8,
+  cout_18_pour_cent: 2.4,
+  solde_moyen_proposition: -1.4,
+  solde_moyen_actuel: -1.1,
+  dette_2070_proposition: 97,
+  dette_2070_actuel: 66,
+  coefficient_minimum: 0.80,
+  decennie_coefficient_minimum: 2040,
+  coefficient_2070: 1.00,
+  solde_moyen_prospectif: -3.5,
+  cout_diviseur_age_legal: 0.1,
+};
+
+/**
  * Les points de blocage regardés avant de choisir, et ce qu'on en a fait.
  *
- * Les chiffres sont DATÉS, et la page le dit : ils viennent de trois scripts
- * du dépôt que le portage ne porte pas. La page d'accueil ne calcule rien, et
- * cette section pas davantage.
+ * Les chiffres sont CITÉS, et la page le dit : ils viennent de trois scripts
+ * du dépôt que le portage ne porte pas, et du coût par défaut. La page
+ * d'accueil ne calcule rien, et cette section pas davantage.
  */
 function programmeBlocages(contexte) {
   // Les points de PIB mesurés, dits aussi en milliards au PIB de la dernière
   // année publiée. Voir le Python.
   const comptes = contexte.comptes();
   const auPibDe = `au PIB de ${comptes.pib.derniereAnnee}`;
-  const md = (points) => pointsEnMilliards(comptes, points);
+  const m = MESURES_BLOCAGES;
+  const md = (points) => pointsEnMilliards(comptes, Math.abs(points));
+  const pt = (valeur, decimales = 1) => g.nombre(valeur, decimales).replace("-", "−");
   const points = g.tableau(
     ["Le point", "Ce que nous avons regardé", "Ce que nous en retenons"],
     [
@@ -13680,7 +13717,7 @@ function programmeBlocages(contexte) {
         + "général seul, la moyenne des régimes. Un taux plus bas n'est pas plus "
         + "négociable, il est impayable : les pensions déjà acquises sont servies "
         + "avec moins de cotisations, et sous les deux derniers barèmes le déficit "
-        + `dépasse cinq points de PIB par an jusqu'en 2050, plus de ${md(5)} `
+        + `dépasse cinq points de PIB par an de 2030 à 2040, plus de ${md(5)} `
         + `${auPibDe}.`,
         "Un régime unique se vote par une loi ordinaire : le projet de 2020 l'a "
         + "établi, et le Conseil d'État n'y a vu aucun obstacle de principe, ni "
@@ -13693,24 +13730,33 @@ function programmeBlocages(contexte) {
         + "pas été cotisé, l'indexation sur les prix est conservée, la garantie est "
         + "relevée dans le même texte. L'objection la plus forte, celle de l'assuré "
         + "parti à l'âge que sa loi lui ouvrait, a été chiffrée : lui prendre le "
-        + "diviseur de 64 ans plutôt que celui de son âge coûte un dixième de point "
-        + `de PIB par an, ${md(0.1)} ${auPibDe}, et plus rien en 2050.`,
+        + "diviseur de 64 ans plutôt que celui de son âge coûte "
+        + `${pt(m.cout_diviseur_age_legal)} point de PIB par an, `
+        + `${md(m.cout_diviseur_age_legal)} ${auPibDe}, et plus rien en 2050.`,
         "Le recalcul est maintenu. La version qui laisse le stock intact a été "
-        + "chiffrée et écartée : −3,9 points de PIB par an en moyenne jusqu'en "
-        + `2070, un besoin de ${md(3.9)} par an ${auPibDe} : elle n'est pas `
+        + `chiffrée et écartée : ${pt(m.solde_moyen_prospectif)} points de PIB `
+        + "par an en moyenne jusqu'en 2070, un besoin de "
+        + `${md(m.solde_moyen_prospectif)} par an ${auPibDe} : elle n'est pas `
         + "finançable."],
       ["Le taux de 18 %",
-        "Face au taux d'aujourd'hui, 25,8 % part patronale comprise, les 18 % "
-        + `coûtent 2,3 points de PIB par an sur 2026-2070, ${md(2.3)} ${auPibDe}, `
-        + "sous les mêmes règles de recette. Le solde de la proposition est de "
-        + "−1,5 point par an en moyenne contre −1,1 pour le système actuel, un "
-        + `besoin de ${md(1.5)} par an contre ${md(1.1)}, et la dette qu'elle `
-        + "accumule en 2070 vaut 103 % du PIB contre 66 %, "
-        + `${md(103)} contre ${md(66)}.`,
+        `Face au taux d'aujourd'hui, ${pt(m.taux_regime_unique)} % part `
+        + "patronale comprise, les 18 % coûtent "
+        + `${pt(m.cout_18_pour_cent)} points de PIB par an sur 2026-2070, `
+        + `${md(m.cout_18_pour_cent)} ${auPibDe}, sous les mêmes règles de `
+        + "recette. Le solde de la proposition est de "
+        + `${pt(m.solde_moyen_proposition)} point par an en moyenne contre `
+        + `${pt(m.solde_moyen_actuel)} pour le système actuel, un besoin de `
+        + `${md(m.solde_moyen_proposition)} par an contre `
+        + `${md(m.solde_moyen_actuel)}, et la dette qu'elle accumule en 2070 `
+        + `vaut ${pt(m.dette_2070_proposition, 0)} % du PIB contre `
+        + `${pt(m.dette_2070_actuel, 0)} %, ${md(m.dette_2070_proposition)} `
+        + `contre ${md(m.dette_2070_actuel)}.`,
         "C'est le prix d'un prélèvement plus bas, et il est écrit sur la page "
         + "Coût plutôt que caché. Le pilotage annuel, que ces chiffres n'appliquent "
-        + "pas, est ce qui le tient : le coefficient d'équilibre de 2070 est de "
-        + "0,92."],
+        + "pas, est ce qui le tient : le coefficient d'équilibre descend à "
+        + `${pt(m.coefficient_minimum, 2)} dans les années `
+        + `${m.decennie_coefficient_minimum} et revient à `
+        + `${pt(m.coefficient_2070, 2)} en 2070.`],
       ["La garantie vieillesse",
         "Le préambule de 1946 garantit aux vieux travailleurs des moyens "
         + "convenables d'existence, et un compte purement contributif y répond mal.",
@@ -13733,5 +13779,5 @@ function programmeBlocages(contexte) {
 <h3>Ce qui pouvait nous arrêter, et ce que nous en avons fait</h3>
 <p>Nous avons cherché ce qui arrêterait cette proposition avant de la défendre. Voici les cinq points, ce que nous avons mesuré, et ce que nous en faisons.</p>
 ${points}
-<p class="discret">Mesures des 20 et 21 septembre 2026, par trois scripts du dépôt : le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective. Cette page ne les recalcule pas ; leur détail, décision par décision, est dans la feuille de route du <a href="${g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a>.</p>`;
+<p class="discret">Mesures de trois scripts du dépôt — le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective — et du coût par défaut. Cette page ne les recalcule pas : elle les cite, et des tests les recalculent à chaque modification du modèle. Leur détail, décision par décision, est dans la feuille de route du <a href="${g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a>.</p>`;
 }

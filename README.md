@@ -115,7 +115,8 @@ Scénario                                                          Courants   Co
 > **<!--chiffre:mesure(fiche?exemple=salaire_moyen&quoi=salarie&systeme=proposition)-->6,33<!--/-->**. C'est le seul partage dont la baisse arrive sur la fiche le
 > lendemain de la réforme, sans supposer qu'un employeur rende son économie, et
 > le seul qui rende quelque chose au voisinage du SMIC : +<!--chiffre:mesure(gain_net?exemple=salaire_moyen&en=mensuel)-->203<!--/--> € par mois au
-> salaire moyen dès le premier mois, +<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->89<!--/--> € au SMIC. Le prix à payer est que le
+> salaire moyen, +<!--chiffre:mesure(gain_net?exemple=smic&en=mensuel)-->89<!--/--> € au SMIC, à coût du travail inchangé — et davantage le
+> premier mois, avant que le brut ne s'ajuste. Le prix à payer est que le
 > salaire **brut** ne monte pas, donc ni les droits qui en dépendent, ni le
 > crédit au compte notionnel ; le partage inverse le ferait monter,
 > mais des années plus tard et amputé du quart par la CSG et les autres
@@ -166,8 +167,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->919<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 263<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->920<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 266<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Dix pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -223,8 +224,8 @@ Il est traité de front : **le Python de `src/` reste la référence**, et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->57<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->83 621<!--/--> nombres,
-dont <!--chiffre:portage(identiques)-->92,9<!--/--> % identiques
-au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->5,8<!--/--> · 10⁻¹⁵, quelques dizaines
+dont <!--chiffre:portage(identiques)-->88,9<!--/--> % identiques
+au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->11,8<!--/--> · 10⁻¹⁵, quelques dizaines
 d'*ulp* (un *ulp* vaut 2 · 10⁻¹⁶, la précision d'un flottant). Les pages, elles, sont comparées caractère par caractère : le
 formatage à la française reproduit jusqu'à l'arrondi au pair de Python, faute de
 quoi un « <!--chiffre:illustration()-->−12,5<!--/--> % » deviendrait
@@ -1258,7 +1259,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2347 tests Python
+tests/                          2353 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1307,7 +1308,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->2347<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2353<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,
