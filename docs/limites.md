@@ -2458,22 +2458,31 @@ en théorie, à en reconstruire toutes les autres.
 
 En pratique, non — et c'est mesuré. La caisse arrondit sa table publiée à trois
 décimales et repart chaque année de la précédente : les arrondis s'accumulent, et
-reconstruire une colonne depuis une autre dérive avec la distance.
+reconstruire une colonne depuis une autre dérive avec la distance. Le tableau
+donne l'écart relatif entre une colonne publiée et sa reconstruction, en
+médiane sur les années de perception qu'elle porte :
 
-| Colonne reconstruite | depuis 2026 | depuis la colonne voisine |
+| Colonne de janvier reconstruite | depuis 2026 | depuis la colonne suivante |
 |---|---|---|
-| 2024 (2 ans) | 0,02 % | 0,02 % |
-| 2023 (3 ans) | 0,07 % | 0,01 % |
-| 2022 (4 ans) | 0,10 % | 0,03 % |
-| 2021 (5 ans) | 0,13 % | 0,01 % |
-| 2020 (6 ans) | 0,14 % | 0,01 % |
-| 2019 (7 ans) | 0,16 % | 0,01 % |
+| 2025 (1 an) | <!--chiffre:mesure(derive_revalorisation?annee=2025&ancre=2026)-->0,012<!--/--> % | <!--chiffre:mesure(derive_revalorisation?annee=2025&ancre=voisine)-->0,012<!--/--> % |
+| 2024 (<!--chiffre:illustration()-->2<!--/--> ans) | <!--chiffre:mesure(derive_revalorisation?annee=2024&ancre=2026)-->0,019<!--/--> % | <!--chiffre:mesure(derive_revalorisation?annee=2024&ancre=voisine)-->0,005<!--/--> % |
+| 2023 (<!--chiffre:illustration()-->3<!--/--> ans) | <!--chiffre:mesure(derive_revalorisation?annee=2023&ancre=2026)-->0,059<!--/--> % | <!--chiffre:mesure(derive_revalorisation?annee=2023&ancre=voisine)-->0,009<!--/--> % |
+| 2022 (<!--chiffre:illustration()-->4<!--/--> ans) | <!--chiffre:mesure(derive_revalorisation?annee=2022&ancre=2026)-->0,096<!--/--> % | <!--chiffre:mesure(derive_revalorisation?annee=2022&ancre=voisine)-->0,028<!--/--> % |
+| 2021 (<!--chiffre:illustration()-->5<!--/--> ans) | <!--chiffre:mesure(derive_revalorisation?annee=2021&ancre=2026)-->0,127<!--/--> % | <!--chiffre:mesure(derive_revalorisation?annee=2021&ancre=voisine)-->0,005<!--/--> % |
+| 2020 (<!--chiffre:illustration()-->6<!--/--> ans) | <!--chiffre:mesure(derive_revalorisation?annee=2020&ancre=2026)-->0,130<!--/--> % | <!--chiffre:mesure(derive_revalorisation?annee=2020&ancre=voisine)-->0,006<!--/--> % |
+| 2019 (<!--chiffre:illustration()-->7<!--/--> ans) | <!--chiffre:mesure(derive_revalorisation?annee=2019&ancre=2026)-->0,135<!--/--> % | <!--chiffre:mesure(derive_revalorisation?annee=2019&ancre=voisine)-->0,007<!--/--> % |
 
 Le dépôt n'a d'abord gardé que la colonne la plus récente, en annonçant 0,13 %
-sur la foi d'un seul recoupement. **Dix colonnes sont maintenant dans le dépôt**,
-de 2017 à 2026 : le modèle sert la colonne publiée quand elle existe — l'écart
-est alors nul, pas petit — et ancre sinon sur la plus proche, ce qui divise la
-dérive par dix. Le récupérateur recoupe chaque colonne contre chacune des autres
+sur la foi d'un seul recoupement.
+
+**Le dépôt porte maintenant <!--chiffre:distinctes(data/reference/legislation/revalorisation_salaires.csv:date_effet)-->10<!--/--> colonnes**, de 2017 à 2026 : le modèle sert
+la colonne publiée quand elle existe — l'écart est alors nul, pas petit — et
+ancre sinon sur la plus proche. Ce que cela gagne dépend de ce qu'on mesure. En
+médiane, la reconstruction de la colonne la plus éloignée tombe de
+<!--chiffre:mesure(derive_revalorisation?annee=2019&ancre=2026)-->0,135<!--/--> à <!--chiffre:mesure(derive_revalorisation?annee=2019&ancre=voisine)-->0,007<!--/--> %. Au pire, toutes colonnes et toutes années de perception
+confondues, elle ne tombe que de <!--chiffre:mesure(derive_revalorisation?ancre=recente&stat=max)-->0,26<!--/--> à <!--chiffre:mesure(derive_revalorisation?ancre=voisine&stat=max)-->0,12<!--/--> %, et c'est ce pire que
+`test_la_reconstruction_entre_colonnes_reste_dans_sa_derive` tient sous
+<!--chiffre:tenu(test_la_reconstruction_entre_colonnes_reste_dans_sa_derive)-->0,2<!--/--> %. Le récupérateur recoupe chaque colonne contre chacune des autres
 à chaque exécution et refuse d'écrire si l'une s'écarte, et deux tests rejouent
 les colonnes figées dans `tests/temoins/`.
 

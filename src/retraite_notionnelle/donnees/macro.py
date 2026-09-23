@@ -387,7 +387,8 @@ class DonneesMacro:
            3,9 % ;
         2. sinon la colonne publiée la PLUS PROCHE, par rapport de deux de ses
            valeurs. Ancrer sur la plus proche plutôt que sur la plus récente
-           divise la dérive par dix : 0,01 % au lieu de 0,16 % ;
+           réduit la dérive que les arrondis de la caisse accumulent, beaucoup
+           en moyenne, deux fois au pire ;
         3. hors de toute colonne, l'ancienne approximation, ancrée sur la borne
            connue quand il y en a une.
 
