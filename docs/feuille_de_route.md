@@ -12899,6 +12899,52 @@ année ; les valeurs du point de 2024 sont certifiées. Écrit dans
 `docs/limites.md` (« Les avocats cotisaient au taux de 2026 depuis 2019 »).
 Restent du lot : les fiches pratiques et les deux simulateurs de la caisse.
 
+**Passe du 23 septembre 2026 : les dernières sections libérales (CNAVPL,
+Cipav, CAVAMAC, CAVEC).** Vingt-trois adresses, réservées par un commit
+`en_cours` poussé seul : le guide 2026 de la CNAVPL en trois parties, ses pages
+et ses recueils, les fiches pratiques de la Cipav, les documents de la CAVAMAC,
+la calculette de la CAVEC lue dans son script, et le simulateur Cipav de
+mon-entreprise interrogé hors navigateur par ses deux modèles publicodes ;
+puis, au Journal officiel, les statuts de la CAVAMAC de 2011 et de 2023, ceux
+de la CAVEC depuis 2008, et les articles 8, 13, 20 et 21 du décret
+n° 2026-418, ce qui clôt sa ligne de veille. Corrigé au scénario 1, dans les
+deux moteurs : la minoration par l'âge seul de la CAVAMAC et de la CAVEC, que
+la durée annulait (`abattement_points: cavom` jusqu'en 2023,
+`decote_annulee_par_la_duree: false`, 65 ans à la CAVEC pour toutes les
+générations) ; la surcote de la CAVAMAC, par années pleines, et depuis 2024
+par années COTISÉES (champ `surcote_trimestres_cotises`) ; la majoration de
+10 % pour trois enfants de la CAVAMAC (2012), de la Cipav (2000) et de la
+CAVEC (2026) ; la majoration de durée d'assurance des libérales depuis 2010
+— le moteur ne la cherchait que dans les régimes en annuités, et lit
+désormais `mda` dans toute fiche qui le porte — et leur surcote parentale
+depuis 2024. La valeur de service de la CNAVPL est certifiée de 2004 à 2026,
+lue dans la page que la caisse publie (`scripts/fetch/cnavpl_valeur_service.py`) :
+les pensions de base liquidées de 1989 à 2019 remontent de 1,4 à 5 %. Et deux
+défauts de carrière : un revenu pile sur un seuil de trimestre en validait un
+de moins (virgule flottante), l'âge du taux plein d'avant la génération 1930
+retombait sur 67 ans. Témoins : agent général −5 à −15 % sur sa
+complémentaire, expert-comptable −5 %, libérale mère de deux enfants sans
+décote. Trois exemples de la CAVAMAC entrent aux témoins officiels, et les deux
+exemples de points de la CNAVPL sont rejoués. Récit dans `docs/limites.md`,
+« Les dernières sections libérales » ; tests dans
+`tests/test_sections_liberales.py`.
+
+**Ce que ce lot laisse ouvert, par ordre de poids.** *La CPRN d'avant 2014*,
+dernière fiche de section à porter une minoration que la durée annule, à
+relire contre ses statuts. *La majoration de durée d'assurance et la surcote
+parentale des avocats*, que L. 653-3 leur ouvre comme L. 643-1-1 aux
+libéraux, et que la fiche de la CNBF ne porte pas. *Les statuts d'avant 2011 de la CAVAMAC et d'avant 2008 de la CAVEC*,
+au Bulletin officiel, et le taux d'abattement de la CAVEC d'avant 2008. *La
+condition de trente années d'affiliation* de la majoration pour report de la
+Cipav, qui ne porte que sur les points de ces trente années. *La liquidation
+des carrières longues à 15 %* de la CAVAMAC. *Les cent points par trimestre
+d'accouchement* de D. 643-1, qui demandent la date de naissance des enfants.
+Les rapports d'activité de la Cipav et de la CAVEC, non ouverts, pour les
+effectifs par classe. Les caisses, elles, publient de travers — la Cipav ses
+taux de 2024, la calculette de la CAVEC huit classes sur neuf, le paquet
+`modele-social` de l'Urssaf les paramètres d'avant la réforme — : c'est écrit
+dans `docs/limites.md`, et c'est le droit que le dépôt suit.
+
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`
 (la forme), puis, selon ce qu'on trouve : `tests/temoins/exemples_officiels.yaml`,
