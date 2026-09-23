@@ -14689,3 +14689,28 @@ le bilan figé. L'accueil passe de 215 à 233 mots de tableau ouverts, sur 240.
 `moteur/donnees.json`, `data/reference/site/affirmations.yaml`,
 `tests/test_affirmations.py`, `tests/test_web.py`, `tests/js/moteur.test.js`,
 `tests/temoins/pages.json`, `docs/parcours_presentation.md`.
+
+### 114. Aucune adresse nominative ne part sur GitHub — `fait`
+
+**Demande.** Que rien, dans le dépôt, ne permette de remonter à une personne.
+(23 septembre 2026)
+
+**Ce qui a été cherché.** L'arbre courant ; chaque version de chaque fichier de
+l'historique ; les messages et les signatures de tous les commits ; les
+métadonnées des deux documents binaires (le PDF de l'OPEF, la présentation du
+20 septembre) ; les releases, la pull request et les exécutions GitHub
+Actions. L'arbre courant ne porte que l'identité du projet : le Parti libéral
+français, son site, le compte `g-pliberal`. Ce qui désignait une personne était
+ailleurs, dans les signatures de commits — auteur et committer —, qu'un poste
+local tire de sa propre configuration git, et qu'un rebasage réécrit à
+l'identité du poste qui le fait.
+
+**Ce qui a été fait.** `scripts/pousser.sh` refuse désormais, sans rien
+pousser, tout commit dont l'auteur ou le committer n'a pas une adresse
+`noreply` (Anthropic, GitHub, ou `…@users.noreply.github.com`), et dit comment
+le re-signer. Trois tests de `tests/test_pousser.py` le tiennent, dont celui du
+committer que le rebasage du script pose lui-même sous un auteur anonyme.
+`CLAUDE.md` donne l'identité à poser sur un poste local.
+
+**Fichiers.** `scripts/pousser.sh`, `tests/test_pousser.py`, `CLAUDE.md`,
+`README.md` et `docs/limites.md` (le compte des tests).

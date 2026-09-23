@@ -78,6 +78,29 @@ fi
 tete=$(git rev-parse HEAD)
 avance=$(git rev-list --count origin/main..HEAD)
 
+# Aucune adresse nominative ne part sur GitHub. L'auteur et le committer d'un
+# commit publié s'y lisent par tous, adresse comprise, et ne s'effacent ensuite
+# qu'en réécrivant l'historique entier. Une session web signe
+# noreply@anthropic.com ; un poste local signe de l'identité git de la machine,
+# et un rebasage — celui de ce script compris — en fait le committer. Ne
+# passent que les adresses qui ne désignent personne. `grep -c` lit toute son
+# entrée : un `grep -q` sortirait tôt, et sous pipefail le SIGPIPE de `git log`
+# ferait passer le commit qu'il vient de trouver.
+if [ "$avance" -gt 0 ]; then
+    nominatives=$(git log --format='%ae%n%ce' origin/main..HEAD \
+        | grep -c -v -E '^(noreply@anthropic\.com|noreply@github\.com|[^@]+@users\.noreply\.github\.com)$')
+    if [ "$nominatives" -gt 0 ]; then
+        cat >&2 <<'FIN'
+pousser: un commit à publier est signé d'une adresse nominative, rien poussé.
+Donner au dépôt l'identité anonyme du compte, puis re-signer ces commits :
+    git config user.name "g-pliberal"
+    git config user.email "240225789+g-pliberal@users.noreply.github.com"
+    git rebase origin/main --exec "git commit --amend --no-edit --reset-author"
+FIN
+        exit 1
+    fi
+fi
+
 if [ "$avance" -gt 0 ]; then
     avec_reprises git push --quiet origin HEAD:main || {
         echo "pousser: push vers main impossible après 5 essais" >&2; exit 1; }

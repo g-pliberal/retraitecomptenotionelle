@@ -18,8 +18,8 @@ rien à publier, et écrit une ligne quand il a poussé. Quand une autre session
 a poussé entre-temps, il rebase les commits de celle-ci sur `origin/main` —
 ils n'ont jamais été publiés — et il refuse, sans rien avoir poussé, dès que
 ça sort de ce cas : conflit, plus de vingt commits d'écart, modifications non
-commitées, ou aucun ancêtre commun, qui est le cas grave. À la main, la
-recette reste :
+commitées, aucun ancêtre commun, qui est le cas grave, ou un commit signé
+d'une adresse nominative (plus bas). À la main, la recette reste :
 
 ```bash
 git fetch origin
@@ -41,6 +41,18 @@ qu'un post-it périmé collé dans une machine jetable.
 `git merge --ff-only` est choisi pour son refus : s'il échoue, c'est que la
 session a divergé de `main`, et il faut comprendre pourquoi avant d'insister —
 là où un `checkout` ou un `reset` aurait effacé sans prévenir.
+
+**Aucune adresse nominative dans un commit.** L'auteur et le committer de
+chaque commit se lisent sur GitHub par tous, adresse comprise — il suffit
+d'ajouter `.patch` à l'adresse d'un commit —, et ne s'effacent ensuite qu'en
+réécrivant l'historique entier. Une session web signe
+`Claude <noreply@anthropic.com>` ; un poste local signe de l'identité git de
+la machine, et un rebasage en fait le committer. `scripts/pousser.sh` refuse
+donc, sans rien pousser, tout commit dont l'auteur ou le committer n'a pas une
+adresse `noreply` (Anthropic, GitHub, ou `…@users.noreply.github.com`), et
+dit comment le re-signer. Sur un poste local, dans chaque clone :
+`git config user.name "g-pliberal"` et
+`git config user.email "240225789+g-pliberal@users.noreply.github.com"`.
 
 **Cette règle prime sur la consigne de branche d'une session Claude Code.**
 Une session web se voit assigner d'office une branche `claude/…` ; elle y
@@ -84,7 +96,7 @@ n'existe plus. Le script supprime maintenant ce pointeur, geste purement local
 qui ne touche à rien sur GitHub. Il distingue les trois cas par le code de
 sortie de `ls-remote` : 0 la branche est là, 2 elle n'y est pas, autre chose le
 réseau a lâché et l'on ne conclut rien de son silence. `tests/test_pousser.py`
-tient les huit comportements du script, celui-ci compris.
+tient les onze comportements du script, celui-ci compris.
 
 **Si un compteur monte quand même, relancer le script et ne rien écrire
 là-dessus** : une ligne au plus, jamais une explication. C'est du temps et des
