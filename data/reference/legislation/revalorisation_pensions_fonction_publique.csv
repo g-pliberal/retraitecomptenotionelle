@@ -1,0 +1,39 @@
+# Revalorisation des pensions civiles et militaires, là où elle ne suit pas encore l'article L. 161-23-1
+# -------------------------------------------------------------------------------------------------------
+# source_id: jorf_revalorisation_pensions_fonction_publique
+#
+# L'article L. 16 du code des pensions civiles et militaires de retraite a
+# connu trois rédactions, lues dans l'index LEGI du dépôt :
+#
+# * jusqu'au 31 décembre 2003 (LEGIARTI000006362709), la PÉRÉQUATION : la
+#   pension suit le traitement de l'indice auquel elle a été liquidée, « fixé
+#   conformément à un tableau d'assimilation » en cas de réforme statutaire. Le
+#   modèle la suit par la valeur du point d'indice
+#   (point_indice_fonction_publique.csv), et ne suit pas les tableaux
+#   d'assimilation — une réforme du statut qui relevait l'indice d'un grade
+#   relevait aussi les pensions de ce grade, et cela, aucune série ne le dit ;
+# * du 1er janvier 2004 au 18 décembre 2008 (LEGIARTI000006362710), une
+#   revalorisation par DÉCRET, sur les prix prévus : ce sont les lignes
+#   ci-dessous, une par décret ;
+# * depuis le 19 décembre 2008 (LEGIARTI000019959484), « dans les conditions
+#   prévues à l'article L. 161-23-1 du code de la sécurité sociale » : les
+#   coefficients sont ceux du régime général (revalorisation_pensions.csv).
+#
+# Ces lignes ne s'écartent du régime général qu'une fois : 1,5 % au
+# 1er janvier 2004, là où l'arrêté du 23 décembre 2003 donnait 1,7 % au régime
+# général, rattrapage de 2003 compris. 2005 à 2008 coïncident, et restent
+# écrites pour que la série de la fonction publique se lise en entier dans
+# ses propres textes. Le décret de 2008 n'est pas dans l'index ; l'article 6
+# de la loi n° 2008-1330 écrit, pour les deux codes à la fois, que le
+# coefficient de 1,008 du 1er septembre 2008 « ne se substitue pas au
+# coefficient de 1,011 appliqué au 1er janvier 2008 ».
+#
+# fiabilite : `certifiee`, chaque ligne lue dans le texte qui la fixe (index
+# JORF du dépôt, le 23 septembre 2026).
+date_effet,coefficient,reference,fiabilite
+2004-01-01,1.015,"Décret n° 2003-1304 du 26 décembre 2003, art. 1 et 2 (JORFARTI000001093222)",certifiee
+2005-01-01,1.02,"Décret n° 2005-166 du 22 février 2005, art. 1 et 2 (JORFARTI000001290937)",certifiee
+2006-01-01,1.018,"Décret n° 2006-316 du 17 mars 2006, art. 1 et 2 (JORFARTI000002468365)",certifiee
+2007-01-01,1.018,"Décret n° 2007-60 du 12 janvier 2007, art. 1 et 2 (JORFARTI000001661604)",certifiee
+2008-01-01,1.011,"Loi n° 2008-1330 du 17 décembre 2008, art. 6 (JORFARTI000019943000)",certifiee
+2008-09-01,1.008,"Loi n° 2008-1330 du 17 décembre 2008, art. 6 (JORFARTI000019943000)",certifiee

@@ -491,6 +491,29 @@ institutions:
         acces: document
         statut_integration: saisi
         cible: data/reference/regimes/*.yaml
+      - id: cor_pouvoir_achat_retraite
+        titre: >-
+          Évolutions nettes du pouvoir d'achat au cours de la retraite, cas
+          types non-cadre et cadre, générations 1937 à 1952 (rapport annuel de
+          juin 2026, figure 3.14)
+        url: https://www.cor-retraites.fr/sites/default/files/2026-06/Donn%C3%A9es_RA2026_P3_2.xlsx
+        acces: fichier
+        statut_integration: controle
+        cible: tests/temoins/cor_pouvoir_achat_retraite.json
+        recuperation: scripts/fetch/cor_pouvoir_achat_retraite.py
+        millesime: juin 2026
+        note: >-
+          Le calcul que le dépôt fait pour un retraité — sa pension de départ
+          menée jusqu'à aujourd'hui par les textes de chaque régime —, fait par
+          d'autres et publié avec ses conventions (annexe méthodologique en
+          ligne, § 3.3) : pension nette d'un non-cadre (70 % Cnav, 30 % Arrco)
+          et d'un cadre (36 % Cnav, 15 % Arrco, 49 % Agirc), partis en janvier
+          à 60 ans en 1997, 2002, 2007 et 2012, déflatée des prix. Il
+          n'alimente aucune valeur. Le dépôt retrouve le non-cadre à moins de
+          trois centièmes de point en 2026 pour les quatre générations, et la
+          génération 1952 année après année à un quart de point ; le cadre à
+          0,16 point en 2025 et 0,35 en 2026, écart déclaré dans `limites.md`.
+
       - id: cor_projection_emploi
         titre: >-
           Rapport annuel du COR de juin 2026 — données de la partie 1 :
@@ -1059,6 +1082,30 @@ institutions:
           connue et prolonge par son approximation. Avant 2017, aucune
           circulaire n'est accessible en ligne : la dérive de la reconstruction
           y est invérifiable.
+
+      - id: cnav_revalorisation_pensions
+        titre: Coefficients de revalorisation des pensions servies, date d'effet par date d'effet, 1949-2026
+        url: https://legislation.lassuranceretraite.fr/#/bareme?file_leaf_ref=revalorisation_coefficient_revalorisation_retraite_bar.aspx
+        acces: api
+        statut_integration: automatise
+        cible: data/reference/legislation/revalorisation_pensions.csv
+        recuperation: scripts/fetch/cnav_revalorisation_pensions.py
+        note: >-
+          Ce qu'une pension DÉJÀ LIQUIDÉE a reçu depuis son départ : le barème
+          « Coefficients de revalorisation des retraites » de la base de
+          législation de la caisse, servi par la même API publique que
+          `cnav_baremes_rci`, lu le 23 septembre 2026. Une ligne par date
+          d'effet depuis le 1er janvier 1949, avec le texte qui l'a fixée. Les
+          années sans revalorisation n'ont pas de ligne — 2014, 2016, 2018 —, et
+          c'est exact ; 2020 en a cinq, selon le montant total brut mensuel des
+          retraites de décembre 2019 (loi n° 2019-1446, art. 81, relue dans
+          l'index JORF). Le simulateur en fait la pension d'AUJOURD'HUI d'un
+          retraité, au lieu de sa pension de départ ramenée par les prix.
+          Fiabilité `haute`, jamais `certifiee`, pour la raison de
+          `cnav_revalorisation_salaires` : la caisse transcrit l'arrêté, la loi
+          de financement ou l'instruction interministérielle. Là où le droit
+          confond les deux coefficients, le barème recoupe la colonne des
+          salaires portés au compte (tests/test_revalorisation.py).
 
       - id: cnav_baremes
         titre: Barèmes et paramètres du régime général (circulaires)
@@ -2907,6 +2954,25 @@ institutions:
           grille. Le script les lit dans l'index JORF du dépôt et retient la
           grille en vigueur au 1er juillet ; avant 2008, les textes de l'index
           n'en portent que le titre ou le visa.
+
+      - id: jorf_revalorisation_pensions_fonction_publique
+        titre: Revalorisation des pensions civiles et militaires par décret, 2004-2008
+        url: https://echanges.dila.gouv.fr/OPENDATA/JORF/
+        acces: document
+        statut_integration: certifie
+        cible: data/reference/legislation/revalorisation_pensions_fonction_publique.csv
+        note: >-
+          Entre la fin de la péréquation (31 décembre 2003) et le renvoi de
+          l'article L. 16 du code des pensions civiles et militaires à
+          l'article L. 161-23-1 (19 décembre 2008), les pensions de l'État, de
+          la CNRACL et des ouvriers de l'État ont été revalorisées par un
+          décret par an : n° 2003-1304, 2005-166, 2006-316 et 2007-60, puis
+          l'article 6 de la loi n° 2008-1330 pour les deux coefficients de
+          2008. Six lignes, lues une à une dans l'index JORF du dépôt le
+          23 septembre 2026 — d'où `certifiee`. Elles ne s'écartent du régime
+          général qu'en 2004 : 1,5 % contre 1,7 %. Avant 2004, la péréquation
+          est suivie par le point d'indice ; depuis 2009, ce sont les
+          coefficients de `cnav_revalorisation_pensions`.
 
       - id: jorf_plafond_securite_sociale
         titre: Plafond de la Sécurité sociale, décrets de fixation, 1963-2025
