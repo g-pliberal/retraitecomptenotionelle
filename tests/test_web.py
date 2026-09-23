@@ -4503,7 +4503,10 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # documentés à l'étranger, et le compte projeté du COR. Ce sont ces deux
     # tableaux, et le plan de douze sections, qui portent le budget ; la
     # prose ouverte tient en trois cents mots. Tout le reste est replié.
-    "/risque": (650, 0, 2, 250),
+    # Les tableaux sont passés de 250 à 270 mots le 23 septembre 2026 : le
+    # compte du COR y dit chaque part du PIB aussi en milliards, dix cases de
+    # quatre mots de plus, et rien d'autre n'y est entré.
+    "/risque": (650, 0, 2, 270),
 }
 
 

@@ -225,6 +225,20 @@ export function pourcentage(valeur, signe = false, decimales = 1) {
   return `${texte}${FINE}%`;
 }
 
+/**
+ * Un montant en millions d'euros, écrit en milliards à la précision qui se lit :
+ * une décimale sous dix milliards, aucune au-dessus. Portage de `milliards`
+ * dans `gabarit.py`, qui dit pourquoi le seuil est posé à 9,95 milliards.
+ */
+export function milliards(millions, signe = false) {
+  const decimales = Math.abs(millions) < 9950.0 ? 1 : 0;
+  let texte = nombre(millions / 1000, decimales);
+  if (signe && millions >= 0) {
+    texte = `+${texte}`;
+  }
+  return `${texte}${FINE}Md${FINE}€`;
+}
+
 const GROUPES = /\d{1,3}(?:,\d{3})+(?:\.\d+)?/g;
 const DECIMAL = /\d+\.\d+/g;
 const AVANT_POURCENT = /(\d)%/g;
@@ -1292,7 +1306,7 @@ export function graphique(titre, annees, series, unite = "", empile = false,
                           libelleRepere = "", etiquettes = [],
                           nomAbscisse = "Année", ecart = null,
                           libelleEcart = "", decimalesDonnees = null,
-                          sommetMinimal = 0.0) {
+                          sommetMinimal = 0.0, pib = null) {
   if (!annees.length || !series.length) {
     return "";
   }
@@ -1399,7 +1413,16 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     + '<p class="aide-clavier">Flèches gauche et droite : parcourir les '
     + 'années. Échap : quitter.</p></figure>'
     + donneesDuGraphique(titre, annees, series, unite,
-      decimalesDonnees === null ? decimales : decimalesDonnees, nomAbscisse);
+      decimalesDonnees === null ? decimales : decimalesDonnees, nomAbscisse, pib);
+}
+
+/**
+ * Un pourcentage du PIB, et ce qu'il vaut en milliards : « 14,1 % · 422 Md € ».
+ * `valeur` est en POURCENTAGE, `pib` en millions d'euros. Portage de
+ * `part_et_milliards`.
+ */
+export function partEtMilliards(valeur, pib, decimales = 1) {
+  return `${nombre(valeur, decimales)}${FINE}% · ${milliards(valeur * pib / 100.0)}`;
 }
 
 /**
@@ -1422,17 +1445,22 @@ export function graphique(titre, annees, series, unite = "", empile = false,
  * part ailleurs.
  */
 export function donneesDuGraphique(titre, annees, series, unite = "",
-                                   decimales = 0, nomAbscisse = "Année") {
+                                   decimales = 0, nomAbscisse = "Année", pib = null) {
   if (!annees.length || !series.length) {
     return "";
   }
-  const enTete = unite ? echapper(unite) : "";
+  // Avec `pib`, chaque case porte ses deux unités et l'en-tête n'en répète
+  // aucune : c'est la case que la lecture au survol affiche.
+  const enTete = unite && pib === null ? echapper(unite) : "";
   const entetes = [nomAbscisse].concat(
     series.map((serie) => serie.libelle + (enTete ? ` (${enTete})` : "")));
+  const caseDe = (valeur, rang) => (pib === null
+    ? nombre(valeur, decimales)
+    : partEtMilliards(valeur, pib[rang], decimales));
   const lignes = annees.map((annee, rang) => [String(annee)].concat(
     series.map((serie) => (rang < serie.valeurs.length
       && serie.valeurs[rang] !== null && serie.valeurs[rang] !== undefined
-      ? nombre(serie.valeurs[rang], decimales)
+      ? caseDe(serie.valeurs[rang], rang)
       : "—"))));
   const grille = tableau(entetes, lignes,
     [""].concat(series.map(() => "nombre")), titre, true);
@@ -1447,18 +1475,21 @@ export function donneesDuGraphique(titre, annees, series, unite = "",
  * Géométrie de la frise des flux, en unités SVG : une colonne par année, un
  * point de PIB vaut `ECHELLE_FRISE` pixels. Portage de `frise_flux`.
  */
-const COLONNE_FRISE = 200;
+const COLONNE_FRISE = 260;
 const MARGE_FRISE = 16;
-const HAUTEUR_FRISE = 330;
+const HAUTEUR_FRISE = 346;
 const HAUT_FRISE = 40;
 const ECHELLE_FRISE = 7.0;
 const LARGEUR_NOEUD_FRISE = 14;
+/** Là où finissent les milliards du stock, depuis le bord gauche de la colonne. */
+const DROITE_MILLIARDS_FRISE = 246;
 
 /**
  * Une année de la frise, en POINTS de PIB — sauf la croissance, en fraction.
+ * `pib` est le PIB, en millions d'euros, qui dit ces points en milliards.
  */
 export class AnneeFrise {
-  constructor(annee, rentre, sort, interets, debut, fin, croissance) {
+  constructor(annee, rentre, sort, interets, debut, fin, croissance, pib) {
     this.annee = annee;
     this.rentre = rentre;
     this.sort = sort;
@@ -1466,6 +1497,7 @@ export class AnneeFrise {
     this.debut = debut;
     this.fin = fin;
     this.croissance = croissance;
+    this.pib = pib;
   }
 }
 
@@ -1479,14 +1511,16 @@ export function friseFlux(titre, annees) {
   const largeur = MARGE_FRISE * 2 + COLONNE_FRISE * annees.length;
   const demi = LARGEUR_NOEUD_FRISE / 2;
   const xRentre = 20;
-  const xCaisse = 93;
-  const xSort = 166;
+  const xCaisse = 113;
+  const xSort = 206;
   const basBarres = HAUT_FRISE + ECHELLE_FRISE * 16;
   const pts = (valeur) => `${nombre(valeur, 1)}${FINE}%`;
   const largeurNoeud = nombreBrut(LARGEUR_NOEUD_FRISE);
 
   const dessins = [];
   annees.forEach((ligne, rang) => {
+    // Des points de PIB de l'année, en milliards.
+    const md = (points) => milliards(points * ligne.pib / 100.0);
     const x = MARGE_FRISE + COLONNE_FRISE * rang;
     const hRentre = ECHELLE_FRISE * ligne.rentre;
     const hSort = ECHELLE_FRISE * ligne.sort;
@@ -1521,30 +1555,33 @@ export function friseFlux(titre, annees) {
         : "")
       + `<rect class="noeud sort" x="${droite}" y="${haut}" `
       + `width="${largeurNoeud}" height="${nombreBrut(hSort)}"/>`
-      + `<text class="graduation" x="${nombreBrut(x + xRentre + demi)}" `
-      + `y="${nombreBrut(basBarres + 18)}" text-anchor="middle">Rentre</text>`
-      + `<text class="graduation" x="${nombreBrut(x + xRentre + demi)}" `
-      + `y="${nombreBrut(basBarres + 34)}" text-anchor="middle">${pts(ligne.rentre)}</text>`
-      + `<text class="graduation ${teinte}" x="${nombreBrut(x + xCaisse + demi)}" `
-      + `y="${nombreBrut(basBarres + 18)}" text-anchor="middle">`
-      + `${solde >= 0.0 ? "Reste" : "Manque"}</text>`
-      + `<text class="graduation ${teinte}" x="${nombreBrut(x + xCaisse + demi)}" `
-      + `y="${nombreBrut(basBarres + 34)}" text-anchor="middle">${pts(Math.abs(solde))}</text>`
-      + `<text class="graduation" x="${nombreBrut(x + xSort + demi)}" `
-      + `y="${nombreBrut(basBarres + 18)}" text-anchor="middle">Sort</text>`
-      + `<text class="graduation" x="${nombreBrut(x + xSort + demi)}" `
-      + `y="${nombreBrut(basBarres + 34)}" text-anchor="middle">${pts(ligne.sort)}</text>`
+      + [
+        ["Rentre", xRentre, ligne.rentre, ""],
+        [solde >= 0.0 ? "Reste" : "Manque", xCaisse, Math.abs(solde), ` ${teinte}`],
+        ["Sort", xSort, ligne.sort, ""],
+      ].map(([nom, position, valeur, classe]) =>
+        `<text class="graduation${classe}" x="${nombreBrut(x + position + demi)}" `
+        + `y="${nombreBrut(basBarres + 18)}" text-anchor="middle">${nom}</text>`
+        + `<text class="graduation${classe}" x="${nombreBrut(x + position + demi)}" `
+        + `y="${nombreBrut(basBarres + 34)}" text-anchor="middle">${pts(valeur)}</text>`
+        + `<text class="graduation${classe}" x="${nombreBrut(x + position + demi)}" `
+        + `y="${nombreBrut(basBarres + 50)}" text-anchor="middle">${md(valeur)}</text>`).join("")
       + `<text class="graduation" x="${nombreBrut(x + xRentre)}" `
-      + `y="${nombreBrut(basBarres + 66)}">PIB : ${pourcentage(ligne.croissance, true, 1)}</text>`
-      + `<text class="graduation" x="${nombreBrut(x + xRentre)}" `
-      + `y="${nombreBrut(basBarres + 86)}">1er janv. : ${pts(ligne.debut)}</text>`
-      + `<text class="graduation" x="${nombreBrut(x + xRentre)}" `
-      + `y="${nombreBrut(basBarres + 106)}">intérêts : ${pts(ligne.interets)}</text>`
-      + `<text class="graduation ${teinte}" x="${nombreBrut(x + xRentre)}" `
-      + `y="${nombreBrut(basBarres + 126)}">`
-      + `${solde >= 0.0 ? "placé" : "emprunt"} : ${pts(Math.abs(solde))}</text>`
-      + `<text class="titre" x="${nombreBrut(x + xRentre)}" `
-      + `y="${nombreBrut(basBarres + 148)}">31 déc. : ${pts(ligne.fin)}</text>`,
+      + `y="${nombreBrut(basBarres + 82)}">PIB : ${pourcentage(ligne.croissance, true, 1)}</text>`
+      // Le stock : la part à gauche, ses milliards alignés à droite de la
+      // colonne, sur la même ligne.
+      + [
+        ["1er janv.", 102, ligne.debut, "graduation", ""],
+        ["intérêts", 122, ligne.interets, "graduation", ""],
+        [solde >= 0.0 ? "placé" : "emprunt", 142, Math.abs(solde),
+          `graduation ${teinte}`, ` ${teinte}`],
+        ["31 déc.", 164, ligne.fin, "titre", ""],
+      ].map(([nom, ecart, valeur, classe, teinteMd]) =>
+        `<text class="${classe}" x="${nombreBrut(x + xRentre)}" `
+        + `y="${nombreBrut(basBarres + ecart)}">${nom} : ${pts(valeur)}</text>`
+        + `<text class="graduation${teinteMd}" `
+        + `x="${nombreBrut(x + DROITE_MILLIARDS_FRISE)}" `
+        + `y="${nombreBrut(basBarres + ecart)}" text-anchor="end">${md(valeur)}</text>`).join(""),
     );
   });
 
@@ -1560,13 +1597,11 @@ export function friseFlux(titre, annees) {
   const grille = tableau(
     ["Année", "Rentre", "Sort", "Solde", "Intérêts",
       "Stock au 1er janvier", "Stock au 31 décembre"],
-    annees.map((ligne) => [
-      String(ligne.annee), nombre(ligne.rentre, 2), nombre(ligne.sort, 2),
-      nombre(ligne.rentre - ligne.sort, 2), nombre(ligne.interets, 2),
-      nombre(ligne.debut, 2), nombre(ligne.fin, 2),
-    ]),
+    annees.map((ligne) => [String(ligne.annee)].concat(
+      [ligne.rentre, ligne.sort, ligne.rentre - ligne.sort, ligne.interets,
+        ligne.debut, ligne.fin].map((valeur) => partEtMilliards(valeur, ligne.pib, 2)))),
     [""].concat(Array(6).fill("nombre")),
-    `${titre}, en points de PIB`, true,
+    `${titre}, en points de PIB et en milliards d'euros`, true,
   );
   return `<figure class="frise" role="group" aria-label="${echapper(titre)}">`
     + `<div class="defilant" tabindex="0" role="region" aria-label="${echapper(titre)}">`
