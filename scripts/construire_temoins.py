@@ -587,6 +587,12 @@ def _cas() -> list[dict]:
         ("sncf_surcote_apres_soixante_quatre_ans", "agent_sncf", 1975, "66"),
         ("ieg_duree_par_anciennete_active", "agent_ieg", 1968, "60"),
         ("ieg_depart_a_l_ouverture", "agent_ieg", 1968, "57.25"),
+        # Des RETRAITÉS : la durée se lit au mois où ils ont réuni les
+        # conditions (calendrier de 2008, table de 2014), l'âge à leur
+        # génération — et non à l'année où ils sont partis.
+        ("sncf_retraite_de_2010", "agent_sncf", 1960, "50"),
+        ("ieg_generation_1965_partie_en_2025", "agent_ieg", 1965, "60"),
+        ("ratp_generation_1970", "agent_ratp", 1970, "56"),
     ):
         cas_statut(nom, statut, naissance)
         assert cas[-1][0] == nom, f"{nom} : aucun âge d'entrée admissible"

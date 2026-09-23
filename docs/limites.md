@@ -5384,9 +5384,9 @@ interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
 Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,07<!--/--> en 2070. La garantie coûte
 <!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,45<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,7<!--/--> millions de
-bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,32<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->12<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,5<!--/--> millions —, soit
+bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,32<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->13<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,5<!--/--> millions —, soit
 <!--chiffre:mesure(cumul_avenir?scenario=garantie)-->575<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 431<!--/--> depuis 1959. Ces chiffres
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 432<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 
@@ -6831,8 +6831,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   contrôle d'isolement de `avantages.py` accepte pour ce seul avantage
   (`DUREE_REQUISE_EST_L_AVANTAGE`), le texte la donnant « au titre de la
   catégorie active ». Ce que l'avantage coûte, ce sont les annuités
-  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **<!--chiffre:mesure(avantages?annee=2024&quoi=anticipees)-->10,8<!--/--> milliards en 2024**, dont <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=classement)-->6,6<!--/--> pour le
-  classement, <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=regime_special)-->2,2<!--/--> pour les régimes spéciaux et <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=carriere_longue)-->2,0<!--/--> pour la carrière longue
+  servies avant l'âge légal, que nulle décote ne rattrape. Elles valent **<!--chiffre:mesure(avantages?annee=2024&quoi=anticipees)-->10,9<!--/--> milliards en 2024**, dont <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=classement)-->6,6<!--/--> pour le
+  classement, <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=regime_special)-->2,3<!--/--> pour les régimes spéciaux et <!--chiffre:mesure(avantages?annee=2024&quoi=anticipees&motif=carriere_longue)-->2,0<!--/--> pour la carrière longue
   (`scripts/cout_avantages.py --duree`). Ce sont des annuités anticipées et non
   un surcoût net — partir tôt, c'est aussi cotiser moins et mourir plus tôt en
   moyenne ; c'est exactement l'arbitrage qu'un coefficient de conversion
@@ -7916,8 +7916,8 @@ le 19 septembre 2026 :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−54,9<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,0<!--/--> % — et faux du
-   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,6<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> % : la pondération donne aux
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,0<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,0<!--/--> % — et faux du
+   scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,7<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
    l'autre.
@@ -8430,7 +8430,7 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,27<!--/--> %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,26<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **trois
 points à l'arrivée**.

@@ -49,12 +49,15 @@ regimes:
           50 ans avec 150 trimestres donnait 75 % du dernier traitement.
           C'est le cas où l'écart à l'âge de référence atteint 15 ans.
       - debut: 2009
-        fin: 2016
+        fin: 2017
         type_calcul: annuites
-        age_ouverture: 50
-        age_taux_plein: 55
+        age_ouverture: 52
+        age_taux_plein: 57
         duree_requise_trimestres: 160
         duree_requise_par_generation: true
+        age_table: sncf_conduite_2011
+        duree_requise_table: [sncf_2014]
+        duree_requise_calendrier: regimes_speciaux_2008
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -69,156 +72,41 @@ regimes:
         notes: >-
           RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, portée ici par le décret n°
           2008-639 du 30 juin 2008 : décote, durée alignée progressivement. LA
-          DÉCOTE ARRIVE AVEC QUATRE ANS DE RETARD, et la fiche la servait pleine
-          dès 2009. Le calendrier est écrit mot pour mot, et à l'identique, dans
-          chacun des décrets de la réforme : « le coefficient de minoration […]
-          n'est applicable qu'aux personnes remplissant les conditions […] à
-          compter du 1er juillet 2010 […] il est fixé par trimestre manquant à un
-          dixième du taux prévu […] ce taux augmente du même montant au 1er
-          juillet de chaque année ». Un départ de 2011 décotait donc de 0,125 %
-          par trimestre manquant, non de 1,25 % : dix fois moins, et le plafond de
-          vingt trimestres retirait 2,5 % de la pension au lieu de 25 %. L'âge
-          d'annulation monte de même, de l'âge de référence diminué de seize
-          trimestres en 2010 jusqu'à l'âge de référence lui-même en 2024. La
-          période branche donc `bareme_decote: regimes_speciaux`, qui lit ce
-          calendrier dans `legislation/decote_regimes_speciaux.csv`.
-      - debut: 2017
-        fin: 2017
-        type_calcul: annuites
-        age_ouverture: 50.33
-        age_taux_plein: 55.33
-        duree_requise_trimestres: 160
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.0892
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0075
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 37-1 du décret n° 2008-639 (LEGIARTI000023732614, en vigueur au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          agent de conduite à cinquante ans pour les agents nés avant 1967, cinquante ans et quatre mois pour 1967, et huit mois pour 1968, cinquante et un ans pour 1969, et quatre mois pour 1970, et huit mois pour 1971, cinquante-deux ans à compter de 1972 ; cinquante-cinq à cinquante-sept ans, générations 1962 à 1967, pour les autres agents. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
+          DÉCOTE ARRIVE AVEC QUATRE ANS DE RETARD, et la fiche la servait
+          pleine dès 2009. Le calendrier est écrit mot pour mot, et à
+          l'identique, dans chacun des décrets de la réforme : « le
+          coefficient de minoration […] n'est applicable qu'aux personnes
+          remplissant les conditions […] à compter du 1er juillet 2010 […] il
+          est fixé par trimestre manquant à un dixième du taux prévu […] ce
+          taux augmente du même montant au 1er juillet de chaque année ». Un
+          départ de 2011 décotait donc de 0,125 % par trimestre manquant, non
+          de 1,25 % : dix fois moins, et le plafond de vingt trimestres
+          retirait 2,5 % de la pension au lieu de 25 %. L'âge d'annulation
+          monte de même, de l'âge de référence diminué de seize trimestres en
+          2010 jusqu'à l'âge de référence lui-même en 2024. La période branche
+          donc `bareme_decote: regimes_speciaux`, qui lit ce calendrier dans
+          `legislation/decote_regimes_speciaux.csv`. LA DURÉE REQUISE SE LIT À
+          LA DATE OÙ L'AGENT RÉUNIT LES CONDITIONS, pour les retraités comme
+          pour les actifs. La réforme de 2008 la fait monter de 151 à 166
+          trimestres selon cette date, de juillet 2008 à juillet 2018
+          (`duree_requise_calendrier: regimes_speciaux_2008`) ; la table par
+          génération de 2014 ne vaut qu'à compter du 1er juillet 2019, et
+          celle de 2023 qu'à compter du 1er janvier 2025, les décrets gardant
+          « les règles applicables avant » à qui a réuni les conditions plus
+          tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
+          opposait à tous la table commune par génération : 167 trimestres à
+          un agent né en 1960 parti en 2010, dont le droit en demande 154.
+
       - debut: 2018
-        fin: 2019
-        type_calcul: annuites
-        age_ouverture: 50.67
-        age_taux_plein: 55.67
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 37-1 du décret n° 2008-639 (LEGIARTI000023732614, en vigueur au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          agent de conduite à cinquante ans pour les agents nés avant 1967, cinquante ans et quatre mois pour 1967, et huit mois pour 1968, cinquante et un ans pour 1969, et quatre mois pour 1970, et huit mois pour 1971, cinquante-deux ans à compter de 1972 ; cinquante-cinq à cinquante-sept ans, générations 1962 à 1967, pour les autres agents. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2020
-        fin: 2020
-        type_calcul: annuites
-        age_ouverture: 51
-        age_taux_plein: 56
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 37-1 du décret n° 2008-639 (LEGIARTI000023732614, en vigueur au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          agent de conduite à cinquante ans pour les agents nés avant 1967, cinquante ans et quatre mois pour 1967, et huit mois pour 1968, cinquante et un ans pour 1969, et quatre mois pour 1970, et huit mois pour 1971, cinquante-deux ans à compter de 1972 ; cinquante-cinq à cinquante-sept ans, générations 1962 à 1967, pour les autres agents. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2021
-        fin: 2021
-        type_calcul: annuites
-        age_ouverture: 51.33
-        age_taux_plein: 56.33
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 37-1 du décret n° 2008-639 (LEGIARTI000023732614, en vigueur au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          agent de conduite à cinquante ans pour les agents nés avant 1967, cinquante ans et quatre mois pour 1967, et huit mois pour 1968, cinquante et un ans pour 1969, et quatre mois pour 1970, et huit mois pour 1971, cinquante-deux ans à compter de 1972 ; cinquante-cinq à cinquante-sept ans, générations 1962 à 1967, pour les autres agents. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2022
-        fin: 2023
-        type_calcul: annuites
-        age_ouverture: 51.67
-        age_taux_plein: 56.67
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 37-1 du décret n° 2008-639 (LEGIARTI000023732614, en vigueur au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          agent de conduite à cinquante ans pour les agents nés avant 1967, cinquante ans et quatre mois pour 1967, et huit mois pour 1968, cinquante et un ans pour 1969, et quatre mois pour 1970, et huit mois pour 1971, cinquante-deux ans à compter de 1972 ; cinquante-cinq à cinquante-sept ans, générations 1962 à 1967, pour les autres agents. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2024
         fin: 2024
         type_calcul: annuites
         age_ouverture: 52
         age_taux_plein: 57
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
+        age_table: sncf_conduite_2011
+        duree_requise_table: [sncf_2014]
+        duree_requise_calendrier: regimes_speciaux_2008
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -231,427 +119,41 @@ regimes:
         age_surcote_regimes_speciaux: true
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 37-1 du décret n° 2008-639 (LEGIARTI000023732614, en vigueur au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          agent de conduite à cinquante ans pour les agents nés avant 1967, cinquante ans et quatre mois pour 1967, et huit mois pour 1968, cinquante et un ans pour 1969, et quatre mois pour 1970, et huit mois pour 1971, cinquante-deux ans à compter de 1972 ; cinquante-cinq à cinquante-sept ans, générations 1962 à 1967, pour les autres agents. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
+          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par
+          année de naissance : l'article 37-1 du décret n° 2008-639
+          (LEGIARTI000023732614, en vigueur au 1er janvier 2017) fixe l'âge
+          d'ouverture de la catégorie agent de conduite à cinquante ans pour
+          les agents nés avant 1967, cinquante ans et quatre mois pour 1967,
+          et huit mois pour 1968, cinquante et un ans pour 1969, et quatre
+          mois pour 1970, et huit mois pour 1971, cinquante-deux ans à compter
+          de 1972 ; cinquante-cinq à cinquante-sept ans, générations 1962 à
+          1967, pour les autres agents. La fiche le lit PAR GÉNÉRATION
+          (`age_table`) : chaque agent a l'âge de sa génération, quelle que
+          soit l'année où il part, et non celui de la seule génération qui
+          l'atteint l'année de la liquidation, comme le faisaient ses périodes
+          annuelles. L'âge de référence de la décote (`bareme_decote:
+          regimes_speciaux`) suit, cinq ans au-dessus. LA DURÉE REQUISE SE LIT
+          À LA DATE OÙ L'AGENT RÉUNIT LES CONDITIONS, pour les retraités comme
+          pour les actifs. La réforme de 2008 la fait monter de 151 à 166
+          trimestres selon cette date, de juillet 2008 à juillet 2018
+          (`duree_requise_calendrier: regimes_speciaux_2008`) ; la table par
+          génération de 2014 ne vaut qu'à compter du 1er juillet 2019, et
+          celle de 2023 qu'à compter du 1er janvier 2025, les décrets gardant
+          « les règles applicables avant » à qui a réuni les conditions plus
+          tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
+          opposait à tous la table commune par génération : 167 trimestres à
+          un agent né en 1960 parti en 2010, dont le droit en demande 154.
+
       - debut: 2025
-        fin: 2025
-        type_calcul: annuites
-        age_ouverture: 52.25
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: sncf_conduite
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
-          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
-          (LEGIARTI000048896987, en vigueur, relu le 22 septembre 2026) porte
-          l'âge d'ouverture de la catégorie agent de conduite de cinquante-deux
-          ans (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
-          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
-          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
-          compter de 1980 ; l'âge des autres agents de cinquante-sept à
-          cinquante-neuf ans, générations 1968 à 1975. La fiche suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE NE MONTE PAS AVEC L'ÂGE D'OUVERTURE :
-          le 1° du I de l'article 13, dans sa rédaction issue du même décret
-          (LEGIARTI000048897107, puis LEGIARTI000054622824 depuis le décret n°
-          2026-738 du 4 août 2026, qui n'y touche pas), le FIXE « à
-          cinquante-sept ans pour les agents mentionnés au 1° du I de l'article
-          1 et à soixante-deux ans pour les agents mentionnés au 2° ». La
-          fiche le faisait monter cinq ans au-dessus de l'âge d'ouverture,
-          jusqu'à cinquante-neuf ans : un agent de conduite né en 1980 parti à
-          cinquante-quatre ans se voyait opposer vingt trimestres de décote au
-          lieu de douze, soit 10 % de pension. La CPRPSNCF l'écrit de son côté
-          (« Réforme des retraites 2023 », lue le 22 septembre 2026) : « L'âge
-          d'annulation de la décote est inchangé », cinquante-sept ans pour les
-          agents de conduite nés à compter de 1975. Les soixante-deux à
-          soixante-quatre ans des générations 1963 à 1970 que la fiche prenait
-          pour l'âge d'annulation sont ceux de la SURCOTE (IV de l'article 37-1,
-          qui renvoie au II de l'article 13).
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 35 (LEGIARTI000048897024) donne aux agents de conduite
-          167 trimestres des nés de novembre 1968 à 1969, puis un de plus par
-          marche jusqu'à 172 à compter de 1978, et son II en retranche deux à
-          dix pour compter la décote par la durée
-          (`duree_requise_table: sncf_conduite`). La suspension de 2026 n'a pas
-          été reprise par le décret de la SNCF. Un ou deux trimestres sont
-          retranchés aux durées des carrières longues des générations 1968-1977
-          (VI de l'article 37-1, non porté).
-      - debut: 2026
-        fin: 2026
-        type_calcul: annuites
-        age_ouverture: 52.5
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: sncf_conduite
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
-          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
-          (LEGIARTI000048896987, en vigueur, relu le 22 septembre 2026) porte
-          l'âge d'ouverture de la catégorie agent de conduite de cinquante-deux
-          ans (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
-          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
-          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
-          compter de 1980 ; l'âge des autres agents de cinquante-sept à
-          cinquante-neuf ans, générations 1968 à 1975. La fiche suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE NE MONTE PAS AVEC L'ÂGE D'OUVERTURE :
-          le 1° du I de l'article 13, dans sa rédaction issue du même décret
-          (LEGIARTI000048897107, puis LEGIARTI000054622824 depuis le décret n°
-          2026-738 du 4 août 2026, qui n'y touche pas), le FIXE « à
-          cinquante-sept ans pour les agents mentionnés au 1° du I de l'article
-          1 et à soixante-deux ans pour les agents mentionnés au 2° ». La
-          fiche le faisait monter cinq ans au-dessus de l'âge d'ouverture,
-          jusqu'à cinquante-neuf ans : un agent de conduite né en 1980 parti à
-          cinquante-quatre ans se voyait opposer vingt trimestres de décote au
-          lieu de douze, soit 10 % de pension. La CPRPSNCF l'écrit de son côté
-          (« Réforme des retraites 2023 », lue le 22 septembre 2026) : « L'âge
-          d'annulation de la décote est inchangé », cinquante-sept ans pour les
-          agents de conduite nés à compter de 1975. Les soixante-deux à
-          soixante-quatre ans des générations 1963 à 1970 que la fiche prenait
-          pour l'âge d'annulation sont ceux de la SURCOTE (IV de l'article 37-1,
-          qui renvoie au II de l'article 13).
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 35 (LEGIARTI000048897024) donne aux agents de conduite
-          167 trimestres des nés de novembre 1968 à 1969, puis un de plus par
-          marche jusqu'à 172 à compter de 1978, et son II en retranche deux à
-          dix pour compter la décote par la durée
-          (`duree_requise_table: sncf_conduite`). La suspension de 2026 n'a pas
-          été reprise par le décret de la SNCF. Un ou deux trimestres sont
-          retranchés aux durées des carrières longues des générations 1968-1977
-          (VI de l'article 37-1, non porté).
-      - debut: 2027
-        fin: 2028
-        type_calcul: annuites
-        age_ouverture: 52.75
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: sncf_conduite
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
-          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
-          (LEGIARTI000048896987, en vigueur, relu le 22 septembre 2026) porte
-          l'âge d'ouverture de la catégorie agent de conduite de cinquante-deux
-          ans (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
-          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
-          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
-          compter de 1980 ; l'âge des autres agents de cinquante-sept à
-          cinquante-neuf ans, générations 1968 à 1975. La fiche suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE NE MONTE PAS AVEC L'ÂGE D'OUVERTURE :
-          le 1° du I de l'article 13, dans sa rédaction issue du même décret
-          (LEGIARTI000048897107, puis LEGIARTI000054622824 depuis le décret n°
-          2026-738 du 4 août 2026, qui n'y touche pas), le FIXE « à
-          cinquante-sept ans pour les agents mentionnés au 1° du I de l'article
-          1 et à soixante-deux ans pour les agents mentionnés au 2° ». La
-          fiche le faisait monter cinq ans au-dessus de l'âge d'ouverture,
-          jusqu'à cinquante-neuf ans : un agent de conduite né en 1980 parti à
-          cinquante-quatre ans se voyait opposer vingt trimestres de décote au
-          lieu de douze, soit 10 % de pension. La CPRPSNCF l'écrit de son côté
-          (« Réforme des retraites 2023 », lue le 22 septembre 2026) : « L'âge
-          d'annulation de la décote est inchangé », cinquante-sept ans pour les
-          agents de conduite nés à compter de 1975. Les soixante-deux à
-          soixante-quatre ans des générations 1963 à 1970 que la fiche prenait
-          pour l'âge d'annulation sont ceux de la SURCOTE (IV de l'article 37-1,
-          qui renvoie au II de l'article 13).
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 35 (LEGIARTI000048897024) donne aux agents de conduite
-          167 trimestres des nés de novembre 1968 à 1969, puis un de plus par
-          marche jusqu'à 172 à compter de 1978, et son II en retranche deux à
-          dix pour compter la décote par la durée
-          (`duree_requise_table: sncf_conduite`). La suspension de 2026 n'a pas
-          été reprise par le décret de la SNCF. Un ou deux trimestres sont
-          retranchés aux durées des carrières longues des générations 1968-1977
-          (VI de l'article 37-1, non porté).
-      - debut: 2029
-        fin: 2029
-        type_calcul: annuites
-        age_ouverture: 53
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: sncf_conduite
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
-          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
-          (LEGIARTI000048896987, en vigueur, relu le 22 septembre 2026) porte
-          l'âge d'ouverture de la catégorie agent de conduite de cinquante-deux
-          ans (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
-          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
-          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
-          compter de 1980 ; l'âge des autres agents de cinquante-sept à
-          cinquante-neuf ans, générations 1968 à 1975. La fiche suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE NE MONTE PAS AVEC L'ÂGE D'OUVERTURE :
-          le 1° du I de l'article 13, dans sa rédaction issue du même décret
-          (LEGIARTI000048897107, puis LEGIARTI000054622824 depuis le décret n°
-          2026-738 du 4 août 2026, qui n'y touche pas), le FIXE « à
-          cinquante-sept ans pour les agents mentionnés au 1° du I de l'article
-          1 et à soixante-deux ans pour les agents mentionnés au 2° ». La
-          fiche le faisait monter cinq ans au-dessus de l'âge d'ouverture,
-          jusqu'à cinquante-neuf ans : un agent de conduite né en 1980 parti à
-          cinquante-quatre ans se voyait opposer vingt trimestres de décote au
-          lieu de douze, soit 10 % de pension. La CPRPSNCF l'écrit de son côté
-          (« Réforme des retraites 2023 », lue le 22 septembre 2026) : « L'âge
-          d'annulation de la décote est inchangé », cinquante-sept ans pour les
-          agents de conduite nés à compter de 1975. Les soixante-deux à
-          soixante-quatre ans des générations 1963 à 1970 que la fiche prenait
-          pour l'âge d'annulation sont ceux de la SURCOTE (IV de l'article 37-1,
-          qui renvoie au II de l'article 13).
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 35 (LEGIARTI000048897024) donne aux agents de conduite
-          167 trimestres des nés de novembre 1968 à 1969, puis un de plus par
-          marche jusqu'à 172 à compter de 1978, et son II en retranche deux à
-          dix pour compter la décote par la durée
-          (`duree_requise_table: sncf_conduite`). La suspension de 2026 n'a pas
-          été reprise par le décret de la SNCF. Un ou deux trimestres sont
-          retranchés aux durées des carrières longues des générations 1968-1977
-          (VI de l'article 37-1, non porté).
-      - debut: 2030
-        fin: 2030
-        type_calcul: annuites
-        age_ouverture: 53.25
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: sncf_conduite
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
-          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
-          (LEGIARTI000048896987, en vigueur, relu le 22 septembre 2026) porte
-          l'âge d'ouverture de la catégorie agent de conduite de cinquante-deux
-          ans (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
-          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
-          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
-          compter de 1980 ; l'âge des autres agents de cinquante-sept à
-          cinquante-neuf ans, générations 1968 à 1975. La fiche suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE NE MONTE PAS AVEC L'ÂGE D'OUVERTURE :
-          le 1° du I de l'article 13, dans sa rédaction issue du même décret
-          (LEGIARTI000048897107, puis LEGIARTI000054622824 depuis le décret n°
-          2026-738 du 4 août 2026, qui n'y touche pas), le FIXE « à
-          cinquante-sept ans pour les agents mentionnés au 1° du I de l'article
-          1 et à soixante-deux ans pour les agents mentionnés au 2° ». La
-          fiche le faisait monter cinq ans au-dessus de l'âge d'ouverture,
-          jusqu'à cinquante-neuf ans : un agent de conduite né en 1980 parti à
-          cinquante-quatre ans se voyait opposer vingt trimestres de décote au
-          lieu de douze, soit 10 % de pension. La CPRPSNCF l'écrit de son côté
-          (« Réforme des retraites 2023 », lue le 22 septembre 2026) : « L'âge
-          d'annulation de la décote est inchangé », cinquante-sept ans pour les
-          agents de conduite nés à compter de 1975. Les soixante-deux à
-          soixante-quatre ans des générations 1963 à 1970 que la fiche prenait
-          pour l'âge d'annulation sont ceux de la SURCOTE (IV de l'article 37-1,
-          qui renvoie au II de l'article 13).
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 35 (LEGIARTI000048897024) donne aux agents de conduite
-          167 trimestres des nés de novembre 1968 à 1969, puis un de plus par
-          marche jusqu'à 172 à compter de 1978, et son II en retranche deux à
-          dix pour compter la décote par la durée
-          (`duree_requise_table: sncf_conduite`). La suspension de 2026 n'a pas
-          été reprise par le décret de la SNCF. Un ou deux trimestres sont
-          retranchés aux durées des carrières longues des générations 1968-1977
-          (VI de l'article 37-1, non porté).
-      - debut: 2031
-        fin: 2031
-        type_calcul: annuites
-        age_ouverture: 53.5
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: sncf_conduite
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
-          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
-          (LEGIARTI000048896987, en vigueur, relu le 22 septembre 2026) porte
-          l'âge d'ouverture de la catégorie agent de conduite de cinquante-deux
-          ans (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
-          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
-          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
-          compter de 1980 ; l'âge des autres agents de cinquante-sept à
-          cinquante-neuf ans, générations 1968 à 1975. La fiche suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE NE MONTE PAS AVEC L'ÂGE D'OUVERTURE :
-          le 1° du I de l'article 13, dans sa rédaction issue du même décret
-          (LEGIARTI000048897107, puis LEGIARTI000054622824 depuis le décret n°
-          2026-738 du 4 août 2026, qui n'y touche pas), le FIXE « à
-          cinquante-sept ans pour les agents mentionnés au 1° du I de l'article
-          1 et à soixante-deux ans pour les agents mentionnés au 2° ». La
-          fiche le faisait monter cinq ans au-dessus de l'âge d'ouverture,
-          jusqu'à cinquante-neuf ans : un agent de conduite né en 1980 parti à
-          cinquante-quatre ans se voyait opposer vingt trimestres de décote au
-          lieu de douze, soit 10 % de pension. La CPRPSNCF l'écrit de son côté
-          (« Réforme des retraites 2023 », lue le 22 septembre 2026) : « L'âge
-          d'annulation de la décote est inchangé », cinquante-sept ans pour les
-          agents de conduite nés à compter de 1975. Les soixante-deux à
-          soixante-quatre ans des générations 1963 à 1970 que la fiche prenait
-          pour l'âge d'annulation sont ceux de la SURCOTE (IV de l'article 37-1,
-          qui renvoie au II de l'article 13).
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 35 (LEGIARTI000048897024) donne aux agents de conduite
-          167 trimestres des nés de novembre 1968 à 1969, puis un de plus par
-          marche jusqu'à 172 à compter de 1978, et son II en retranche deux à
-          dix pour compter la décote par la durée
-          (`duree_requise_table: sncf_conduite`). La suspension de 2026 n'a pas
-          été reprise par le décret de la SNCF. Un ou deux trimestres sont
-          retranchés aux durées des carrières longues des générations 1968-1977
-          (VI de l'article 37-1, non porté).
-      - debut: 2032
-        fin: 2033
-        type_calcul: annuites
-        age_ouverture: 53.75
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: sncf_conduite
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1085
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
-          dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
-          (LEGIARTI000048896987, en vigueur, relu le 22 septembre 2026) porte
-          l'âge d'ouverture de la catégorie agent de conduite de cinquante-deux
-          ans (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
-          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
-          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
-          compter de 1980 ; l'âge des autres agents de cinquante-sept à
-          cinquante-neuf ans, générations 1968 à 1975. La fiche suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE NE MONTE PAS AVEC L'ÂGE D'OUVERTURE :
-          le 1° du I de l'article 13, dans sa rédaction issue du même décret
-          (LEGIARTI000048897107, puis LEGIARTI000054622824 depuis le décret n°
-          2026-738 du 4 août 2026, qui n'y touche pas), le FIXE « à
-          cinquante-sept ans pour les agents mentionnés au 1° du I de l'article
-          1 et à soixante-deux ans pour les agents mentionnés au 2° ». La
-          fiche le faisait monter cinq ans au-dessus de l'âge d'ouverture,
-          jusqu'à cinquante-neuf ans : un agent de conduite né en 1980 parti à
-          cinquante-quatre ans se voyait opposer vingt trimestres de décote au
-          lieu de douze, soit 10 % de pension. La CPRPSNCF l'écrit de son côté
-          (« Réforme des retraites 2023 », lue le 22 septembre 2026) : « L'âge
-          d'annulation de la décote est inchangé », cinquante-sept ans pour les
-          agents de conduite nés à compter de 1975. Les soixante-deux à
-          soixante-quatre ans des générations 1963 à 1970 que la fiche prenait
-          pour l'âge d'annulation sont ceux de la SURCOTE (IV de l'article 37-1,
-          qui renvoie au II de l'article 13).
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 35 (LEGIARTI000048897024) donne aux agents de conduite
-          167 trimestres des nés de novembre 1968 à 1969, puis un de plus par
-          marche jusqu'à 172 à compter de 1978, et son II en retranche deux à
-          dix pour compter la décote par la durée
-          (`duree_requise_table: sncf_conduite`). La suspension de 2026 n'a pas
-          été reprise par le décret de la SNCF. Un ou deux trimestres sont
-          retranchés aux durées des carrières longues des générations 1968-1977
-          (VI de l'article 37-1, non porté).
-      - debut: 2034
         fin: null
         type_calcul: annuites
         age_ouverture: 54
         age_taux_plein: 57
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
-        duree_requise_table: sncf_conduite
+        age_table: sncf_conduite_2023
+        duree_requise_table: [sncf_conduite, sncf_2014]
+        duree_requise_calendrier: regimes_speciaux_2008
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -669,39 +171,48 @@ regimes:
           compter du 1er janvier 2025 : l'article 37-1 du décret n° 2008-639,
           dans sa rédaction du décret n° 2023-967 du 20 octobre 2023
           (LEGIARTI000048896987, en vigueur, relu le 22 septembre 2026) porte
-          l'âge d'ouverture de la catégorie agent de conduite de cinquante-deux
-          ans (nés en 1972) à cinquante-deux ans et trois mois (1973), six mois
-          (1974), neuf mois (1975), cinquante-trois ans (1976), et trois mois
-          (1977), six mois (1978), neuf mois (1979), cinquante-quatre ans à
-          compter de 1980 ; l'âge des autres agents de cinquante-sept à
-          cinquante-neuf ans, générations 1968 à 1975. La fiche suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE NE MONTE PAS AVEC L'ÂGE D'OUVERTURE :
-          le 1° du I de l'article 13, dans sa rédaction issue du même décret
+          l'âge d'ouverture de la catégorie agent de conduite de
+          cinquante-deux ans (nés en 1972) à cinquante-deux ans et trois mois
+          (1973), six mois (1974), neuf mois (1975), cinquante-trois ans
+          (1976), et trois mois (1977), six mois (1978), neuf mois (1979),
+          cinquante-quatre ans à compter de 1980 ; l'âge des autres agents de
+          cinquante-sept à cinquante-neuf ans, générations 1968 à 1975. La
+          fiche le lit PAR GÉNÉRATION (`age_table`), pour tous les agents.
+          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE NE MONTE PAS AVEC L'ÂGE D'OUVERTURE
+          : le 1° du I de l'article 13, dans sa rédaction issue du même décret
           (LEGIARTI000048897107, puis LEGIARTI000054622824 depuis le décret n°
           2026-738 du 4 août 2026, qui n'y touche pas), le FIXE « à
-          cinquante-sept ans pour les agents mentionnés au 1° du I de l'article
-          1 et à soixante-deux ans pour les agents mentionnés au 2° ». La
-          fiche le faisait monter cinq ans au-dessus de l'âge d'ouverture,
-          jusqu'à cinquante-neuf ans : un agent de conduite né en 1980 parti à
-          cinquante-quatre ans se voyait opposer vingt trimestres de décote au
-          lieu de douze, soit 10 % de pension. La CPRPSNCF l'écrit de son côté
-          (« Réforme des retraites 2023 », lue le 22 septembre 2026) : « L'âge
-          d'annulation de la décote est inchangé », cinquante-sept ans pour les
-          agents de conduite nés à compter de 1975. Les soixante-deux à
-          soixante-quatre ans des générations 1963 à 1970 que la fiche prenait
-          pour l'âge d'annulation sont ceux de la SURCOTE (IV de l'article 37-1,
-          qui renvoie au II de l'article 13).
+          cinquante-sept ans pour les agents mentionnés au 1° du I de
+          l'article 1 et à soixante-deux ans pour les agents mentionnés au 2°
+          ». La fiche le faisait monter cinq ans au-dessus de l'âge
+          d'ouverture, jusqu'à cinquante-neuf ans : un agent de conduite né en
+          1980 parti à cinquante-quatre ans se voyait opposer vingt trimestres
+          de décote au lieu de douze, soit 10 % de pension. La CPRPSNCF
+          l'écrit de son côté (« Réforme des retraites 2023 », lue le 22
+          septembre 2026) : « L'âge d'annulation de la décote est inchangé »,
+          cinquante-sept ans pour les agents de conduite nés à compter de
+          1975. Les soixante-deux à soixante-quatre ans des générations 1963 à
+          1970 que la fiche prenait pour l'âge d'annulation sont ceux de la
+          SURCOTE (IV de l'article 37-1, qui renvoie au II de l'article 13).
           LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
           de l'article 35 (LEGIARTI000048897024) donne aux agents de conduite
           167 trimestres des nés de novembre 1968 à 1969, puis un de plus par
           marche jusqu'à 172 à compter de 1978, et son II en retranche deux à
-          dix pour compter la décote par la durée
-          (`duree_requise_table: sncf_conduite`). La suspension de 2026 n'a pas
-          été reprise par le décret de la SNCF. Un ou deux trimestres sont
-          retranchés aux durées des carrières longues des générations 1968-1977
-          (VI de l'article 37-1, non porté).
+          dix pour compter la décote par la durée (`duree_requise_table:
+          sncf_conduite`). La suspension de 2026 n'a pas été reprise par le
+          décret de la SNCF. Un ou deux trimestres sont retranchés aux durées
+          des carrières longues des générations 1968-1977 (VI de l'article
+          37-1, non porté). LA DURÉE REQUISE SE LIT À LA DATE OÙ L'AGENT
+          RÉUNIT LES CONDITIONS, pour les retraités comme pour les actifs. La
+          réforme de 2008 la fait monter de 151 à 166 trimestres selon cette
+          date, de juillet 2008 à juillet 2018 (`duree_requise_calendrier:
+          regimes_speciaux_2008`) ; la table par génération de 2014 ne vaut
+          qu'à compter du 1er juillet 2019, et celle de 2023 qu'à compter du
+          1er janvier 2025, les décrets gardant « les règles applicables avant
+          » à qui a réuni les conditions plus tôt (`duree_requise_table`,
+          essayées dans l'ordre). La fiche opposait à tous la table commune
+          par génération : 167 trimestres à un agent né en 1960 parti en 2010,
+          dont le droit en demande 154.
   - code: ratp
     nom: Caisse de retraites du personnel de la RATP (CRPRATP)
     famille: special
@@ -741,10 +252,13 @@ regimes:
       - debut: 2009
         fin: 2016
         type_calcul: annuites
-        age_ouverture: 50
-        age_taux_plein: 55
+        age_ouverture: 52
+        age_taux_plein: 57
         duree_requise_trimestres: 160
         duree_requise_par_generation: true
+        age_table: ratp_roulant_2011
+        duree_requise_table: [ratp_2014]
+        duree_requise_calendrier: regimes_speciaux_2008
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -757,163 +271,46 @@ regimes:
         age_surcote_regimes_speciaux: true
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
-          RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, et elle ne touche pas tout en même
-          temps. Le décret n° 2008-637 du 30 juin 2008 crée la décote et aligne la
-          durée, mais les BORNES D'ÂGE ne bougent qu'à partir de 2017, et par
-          génération. La fiche portait 52 et 57 ans dès 2009 : elle opposait à un
-          machiniste parti en 2012 un âge que le régime ne lui demandait que cinq
-          ans plus tard.
-          LA DÉCOTE ARRIVE AVEC QUATRE ANS DE RETARD, et la fiche la servait
-          pleine dès 2009. Le calendrier est écrit mot pour mot, et à
-          l'identique, dans chacun des décrets de la réforme : « le
-          coefficient de minoration […] n'est applicable qu'aux personnes
-          remplissant les conditions […] à compter du 1er juillet 2010 […] il
-          est fixé par trimestre manquant à un dixième du taux prévu […] ce
-          taux augmente du même montant au 1er juillet de chaque année ». Un
-          départ de 2011 décotait donc de 0,125 % par trimestre manquant, non
-          de 1,25 % : dix fois moins, et le plafond de vingt trimestres
-          retirait 2,5 % de la pension au lieu de 25 %. L'âge d'annulation
-          monte de même, de l'âge de référence diminué de seize trimestres en
-          2010 jusqu'à l'âge de référence lui-même en 2024. La période branche
-          donc `bareme_decote: regimes_speciaux`, qui lit ce calendrier dans
-          `legislation/decote_regimes_speciaux.csv`.
+          RÉFORME DES RÉGIMES SPÉCIAUX DE 2008, et elle ne touche pas tout en
+          même temps. Le décret n° 2008-637 du 30 juin 2008 crée la décote et
+          aligne la durée, mais les BORNES D'ÂGE ne bougent qu'à partir de
+          2017, et par génération. La fiche portait 52 et 57 ans dès 2009 :
+          elle opposait à un machiniste parti en 2012 un âge que le régime ne
+          lui demandait que cinq ans plus tard. LA DÉCOTE ARRIVE AVEC QUATRE
+          ANS DE RETARD, et la fiche la servait pleine dès 2009. Le calendrier
+          est écrit mot pour mot, et à l'identique, dans chacun des décrets de
+          la réforme : « le coefficient de minoration […] n'est applicable
+          qu'aux personnes remplissant les conditions […] à compter du 1er
+          juillet 2010 […] il est fixé par trimestre manquant à un dixième du
+          taux prévu […] ce taux augmente du même montant au 1er juillet de
+          chaque année ». Un départ de 2011 décotait donc de 0,125 % par
+          trimestre manquant, non de 1,25 % : dix fois moins, et le plafond de
+          vingt trimestres retirait 2,5 % de la pension au lieu de 25 %. L'âge
+          d'annulation monte de même, de l'âge de référence diminué de seize
+          trimestres en 2010 jusqu'à l'âge de référence lui-même en 2024. La
+          période branche donc `bareme_decote: regimes_speciaux`, qui lit ce
+          calendrier dans `legislation/decote_regimes_speciaux.csv`. LA DURÉE
+          REQUISE SE LIT À LA DATE OÙ L'AGENT RÉUNIT LES CONDITIONS, pour les
+          retraités comme pour les actifs. La réforme de 2008 la fait monter
+          de 151 à 166 trimestres selon cette date, de juillet 2008 à juillet
+          2018 (`duree_requise_calendrier: regimes_speciaux_2008`) ; la table
+          par génération de 2014 ne vaut qu'à compter du 1er juillet 2019, et
+          celle de 2023 qu'à compter du 1er janvier 2025, les décrets gardant
+          « les règles applicables avant » à qui a réuni les conditions plus
+          tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
+          opposait à tous la table commune par génération : 167 trimestres à
+          un agent né en 1960 parti en 2010, dont le droit en demande 154.
+
       - debut: 2017
-        fin: 2017
-        type_calcul: annuites
-        age_ouverture: 50.33
-        age_taux_plein: 55.33
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 51-1 II du décret n° 2008-637 (LEGIARTI000023732424, décret n° 2011-292 du 18 mars 2011, effet au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          tableau B (cinquante-deux ans) à cinquante ans pour les agents nés avant 1967, puis quatre mois de plus par année de naissance jusqu'à cinquante-deux ans pour les agents nés à compter de 1972 ; même calendrier de cinquante-cinq à cinquante-sept ans pour le tableau A. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2018
-        fin: 2019
-        type_calcul: annuites
-        age_ouverture: 50.67
-        age_taux_plein: 55.67
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 51-1 II du décret n° 2008-637 (LEGIARTI000023732424, décret n° 2011-292 du 18 mars 2011, effet au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          tableau B (cinquante-deux ans) à cinquante ans pour les agents nés avant 1967, puis quatre mois de plus par année de naissance jusqu'à cinquante-deux ans pour les agents nés à compter de 1972 ; même calendrier de cinquante-cinq à cinquante-sept ans pour le tableau A. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2020
-        fin: 2020
-        type_calcul: annuites
-        age_ouverture: 51
-        age_taux_plein: 56
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 51-1 II du décret n° 2008-637 (LEGIARTI000023732424, décret n° 2011-292 du 18 mars 2011, effet au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          tableau B (cinquante-deux ans) à cinquante ans pour les agents nés avant 1967, puis quatre mois de plus par année de naissance jusqu'à cinquante-deux ans pour les agents nés à compter de 1972 ; même calendrier de cinquante-cinq à cinquante-sept ans pour le tableau A. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2021
-        fin: 2021
-        type_calcul: annuites
-        age_ouverture: 51.33
-        age_taux_plein: 56.33
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 51-1 II du décret n° 2008-637 (LEGIARTI000023732424, décret n° 2011-292 du 18 mars 2011, effet au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          tableau B (cinquante-deux ans) à cinquante ans pour les agents nés avant 1967, puis quatre mois de plus par année de naissance jusqu'à cinquante-deux ans pour les agents nés à compter de 1972 ; même calendrier de cinquante-cinq à cinquante-sept ans pour le tableau A. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2022
-        fin: 2023
-        type_calcul: annuites
-        age_ouverture: 51.67
-        age_taux_plein: 56.67
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 51-1 II du décret n° 2008-637 (LEGIARTI000023732424, décret n° 2011-292 du 18 mars 2011, effet au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          tableau B (cinquante-deux ans) à cinquante ans pour les agents nés avant 1967, puis quatre mois de plus par année de naissance jusqu'à cinquante-deux ans pour les agents nés à compter de 1972 ; même calendrier de cinquante-cinq à cinquante-sept ans pour le tableau A. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2024
         fin: 2024
         type_calcul: annuites
         age_ouverture: 52
         age_taux_plein: 57
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
+        age_table: ratp_roulant_2011
+        duree_requise_table: [ratp_2014]
+        duree_requise_calendrier: regimes_speciaux_2008
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -926,406 +323,41 @@ regimes:
         age_surcote_regimes_speciaux: true
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'article 51-1 II du décret n° 2008-637 (LEGIARTI000023732424, décret n° 2011-292 du 18 mars 2011, effet au 1er janvier 2017) fixe l'âge d'ouverture de la catégorie
-          tableau B (cinquante-deux ans) à cinquante ans pour les agents nés avant 1967, puis quatre mois de plus par année de naissance jusqu'à cinquante-deux ans pour les agents nés à compter de 1972 ; même calendrier de cinquante-cinq à cinquante-sept ans pour le tableau A. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
+          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par
+          année de naissance : l'article 51-1 II du décret n° 2008-637
+          (LEGIARTI000023732424, décret n° 2011-292 du 18 mars 2011, effet au
+          1er janvier 2017) fixe l'âge d'ouverture de la catégorie tableau B
+          (cinquante-deux ans) à cinquante ans pour les agents nés avant 1967,
+          puis quatre mois de plus par année de naissance jusqu'à
+          cinquante-deux ans pour les agents nés à compter de 1972 ; même
+          calendrier de cinquante-cinq à cinquante-sept ans pour le tableau A.
+          La fiche le lit PAR GÉNÉRATION (`age_table`) : chaque agent a l'âge
+          de sa génération, quelle que soit l'année où il part, et non celui
+          de la seule génération qui l'atteint l'année de la liquidation,
+          comme le faisaient ses périodes annuelles. L'âge de référence de la
+          décote (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
+          LA DURÉE REQUISE SE LIT À LA DATE OÙ L'AGENT RÉUNIT LES CONDITIONS,
+          pour les retraités comme pour les actifs. La réforme de 2008 la fait
+          monter de 151 à 166 trimestres selon cette date, de juillet 2008 à
+          juillet 2018 (`duree_requise_calendrier: regimes_speciaux_2008`) ;
+          la table par génération de 2014 ne vaut qu'à compter du 1er juillet
+          2019, et celle de 2023 qu'à compter du 1er janvier 2025, les décrets
+          gardant « les règles applicables avant » à qui a réuni les
+          conditions plus tôt (`duree_requise_table`, essayées dans l'ordre).
+          La fiche opposait à tous la table commune par génération : 167
+          trimestres à un agent né en 1960 parti en 2010, dont le droit en
+          demande 154.
+
       - debut: 2025
-        fin: 2025
-        type_calcul: annuites
-        age_ouverture: 52.25
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ratp
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : le 1° du II de l'article 51-1 du décret
-          n° 2008-637, dans sa rédaction du décret n° 2023-690 du 28 juillet
-          2023 (LEGIARTI000047914257, en vigueur, relu le 22 septembre 2026),
-          porte l'âge d'ouverture des emplois du tableau B — le personnel
-          roulant, cinquante-quatre ans au 2° du II de l'article 6
-          (LEGIARTI000047913991) — de cinquante-deux ans (nés en 1972) à
-          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
-          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
-          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
-          son 2° celui du tableau A de cinquante-sept à cinquante-neuf ans,
-          générations 1968 à 1975 ; son 3° celui des autres agents de soixante
-          à soixante-quatre ans. La fiche suit le tableau B par année de
-          liquidation — l'âge de la génération qui l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE EST L'ÂGE D'OUVERTURE FINAL MAJORÉ DE
-          TROIS ANS, ET NON L'ÂGE DE L'ASSURÉ MAJORÉ DE CINQ. Le 1° du I de
-          l'article 24 (LEGIARTI000047914227) le fixe à « l'âge minimum
-          d'ouverture du droit à pension applicable à l'assuré majoré de trois
-          ans à l'issue des dispositions prévues aux 1°, 2° et 3° du II de
-          l'article 51-1 » — cinquante-quatre plus trois, cinquante-sept ans au
-          tableau B —, et le 2° du VII de l'article 51-1 garde de 2025 à 2033
-          l'âge de référence d'avant 2023, l'âge d'ouverture majoré de cinq
-          ans, qui vaut aussi cinquante-sept ans pour les nés à compter de 1972.
-          La fiche le faisait monter jusqu'à cinquante-neuf : un machiniste né
-          en 1980 parti à cinquante-quatre ans se voyait opposer huit
-          trimestres de décote de trop, soit 10 % de pension. La CRP RATP ne
-          publie pas cette règle hors de l'espace de ses affiliés.
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 51 (LEGIARTI000052292971) porte 167 trimestres des nés
-          du 1er juillet 1959 à 1960, puis un de plus par marche jusqu'à 172 à
-          compter de 1968 (`duree_requise_table: ratp`). La suspension de 2026
-          n'a pas été reprise par le décret de la RATP. Un ou deux trimestres
-          sont retranchés aux durées des carrières longues des générations
-          1963-1972 (VIII de l'article 51-1, non porté).
-      - debut: 2026
-        fin: 2026
-        type_calcul: annuites
-        age_ouverture: 52.5
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ratp
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : le 1° du II de l'article 51-1 du décret
-          n° 2008-637, dans sa rédaction du décret n° 2023-690 du 28 juillet
-          2023 (LEGIARTI000047914257, en vigueur, relu le 22 septembre 2026),
-          porte l'âge d'ouverture des emplois du tableau B — le personnel
-          roulant, cinquante-quatre ans au 2° du II de l'article 6
-          (LEGIARTI000047913991) — de cinquante-deux ans (nés en 1972) à
-          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
-          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
-          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
-          son 2° celui du tableau A de cinquante-sept à cinquante-neuf ans,
-          générations 1968 à 1975 ; son 3° celui des autres agents de soixante
-          à soixante-quatre ans. La fiche suit le tableau B par année de
-          liquidation — l'âge de la génération qui l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE EST L'ÂGE D'OUVERTURE FINAL MAJORÉ DE
-          TROIS ANS, ET NON L'ÂGE DE L'ASSURÉ MAJORÉ DE CINQ. Le 1° du I de
-          l'article 24 (LEGIARTI000047914227) le fixe à « l'âge minimum
-          d'ouverture du droit à pension applicable à l'assuré majoré de trois
-          ans à l'issue des dispositions prévues aux 1°, 2° et 3° du II de
-          l'article 51-1 » — cinquante-quatre plus trois, cinquante-sept ans au
-          tableau B —, et le 2° du VII de l'article 51-1 garde de 2025 à 2033
-          l'âge de référence d'avant 2023, l'âge d'ouverture majoré de cinq
-          ans, qui vaut aussi cinquante-sept ans pour les nés à compter de 1972.
-          La fiche le faisait monter jusqu'à cinquante-neuf : un machiniste né
-          en 1980 parti à cinquante-quatre ans se voyait opposer huit
-          trimestres de décote de trop, soit 10 % de pension. La CRP RATP ne
-          publie pas cette règle hors de l'espace de ses affiliés.
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 51 (LEGIARTI000052292971) porte 167 trimestres des nés
-          du 1er juillet 1959 à 1960, puis un de plus par marche jusqu'à 172 à
-          compter de 1968 (`duree_requise_table: ratp`). La suspension de 2026
-          n'a pas été reprise par le décret de la RATP. Un ou deux trimestres
-          sont retranchés aux durées des carrières longues des générations
-          1963-1972 (VIII de l'article 51-1, non porté).
-      - debut: 2027
-        fin: 2028
-        type_calcul: annuites
-        age_ouverture: 52.75
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ratp
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : le 1° du II de l'article 51-1 du décret
-          n° 2008-637, dans sa rédaction du décret n° 2023-690 du 28 juillet
-          2023 (LEGIARTI000047914257, en vigueur, relu le 22 septembre 2026),
-          porte l'âge d'ouverture des emplois du tableau B — le personnel
-          roulant, cinquante-quatre ans au 2° du II de l'article 6
-          (LEGIARTI000047913991) — de cinquante-deux ans (nés en 1972) à
-          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
-          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
-          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
-          son 2° celui du tableau A de cinquante-sept à cinquante-neuf ans,
-          générations 1968 à 1975 ; son 3° celui des autres agents de soixante
-          à soixante-quatre ans. La fiche suit le tableau B par année de
-          liquidation — l'âge de la génération qui l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE EST L'ÂGE D'OUVERTURE FINAL MAJORÉ DE
-          TROIS ANS, ET NON L'ÂGE DE L'ASSURÉ MAJORÉ DE CINQ. Le 1° du I de
-          l'article 24 (LEGIARTI000047914227) le fixe à « l'âge minimum
-          d'ouverture du droit à pension applicable à l'assuré majoré de trois
-          ans à l'issue des dispositions prévues aux 1°, 2° et 3° du II de
-          l'article 51-1 » — cinquante-quatre plus trois, cinquante-sept ans au
-          tableau B —, et le 2° du VII de l'article 51-1 garde de 2025 à 2033
-          l'âge de référence d'avant 2023, l'âge d'ouverture majoré de cinq
-          ans, qui vaut aussi cinquante-sept ans pour les nés à compter de 1972.
-          La fiche le faisait monter jusqu'à cinquante-neuf : un machiniste né
-          en 1980 parti à cinquante-quatre ans se voyait opposer huit
-          trimestres de décote de trop, soit 10 % de pension. La CRP RATP ne
-          publie pas cette règle hors de l'espace de ses affiliés.
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 51 (LEGIARTI000052292971) porte 167 trimestres des nés
-          du 1er juillet 1959 à 1960, puis un de plus par marche jusqu'à 172 à
-          compter de 1968 (`duree_requise_table: ratp`). La suspension de 2026
-          n'a pas été reprise par le décret de la RATP. Un ou deux trimestres
-          sont retranchés aux durées des carrières longues des générations
-          1963-1972 (VIII de l'article 51-1, non porté).
-      - debut: 2029
-        fin: 2029
-        type_calcul: annuites
-        age_ouverture: 53
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ratp
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : le 1° du II de l'article 51-1 du décret
-          n° 2008-637, dans sa rédaction du décret n° 2023-690 du 28 juillet
-          2023 (LEGIARTI000047914257, en vigueur, relu le 22 septembre 2026),
-          porte l'âge d'ouverture des emplois du tableau B — le personnel
-          roulant, cinquante-quatre ans au 2° du II de l'article 6
-          (LEGIARTI000047913991) — de cinquante-deux ans (nés en 1972) à
-          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
-          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
-          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
-          son 2° celui du tableau A de cinquante-sept à cinquante-neuf ans,
-          générations 1968 à 1975 ; son 3° celui des autres agents de soixante
-          à soixante-quatre ans. La fiche suit le tableau B par année de
-          liquidation — l'âge de la génération qui l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE EST L'ÂGE D'OUVERTURE FINAL MAJORÉ DE
-          TROIS ANS, ET NON L'ÂGE DE L'ASSURÉ MAJORÉ DE CINQ. Le 1° du I de
-          l'article 24 (LEGIARTI000047914227) le fixe à « l'âge minimum
-          d'ouverture du droit à pension applicable à l'assuré majoré de trois
-          ans à l'issue des dispositions prévues aux 1°, 2° et 3° du II de
-          l'article 51-1 » — cinquante-quatre plus trois, cinquante-sept ans au
-          tableau B —, et le 2° du VII de l'article 51-1 garde de 2025 à 2033
-          l'âge de référence d'avant 2023, l'âge d'ouverture majoré de cinq
-          ans, qui vaut aussi cinquante-sept ans pour les nés à compter de 1972.
-          La fiche le faisait monter jusqu'à cinquante-neuf : un machiniste né
-          en 1980 parti à cinquante-quatre ans se voyait opposer huit
-          trimestres de décote de trop, soit 10 % de pension. La CRP RATP ne
-          publie pas cette règle hors de l'espace de ses affiliés.
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 51 (LEGIARTI000052292971) porte 167 trimestres des nés
-          du 1er juillet 1959 à 1960, puis un de plus par marche jusqu'à 172 à
-          compter de 1968 (`duree_requise_table: ratp`). La suspension de 2026
-          n'a pas été reprise par le décret de la RATP. Un ou deux trimestres
-          sont retranchés aux durées des carrières longues des générations
-          1963-1972 (VIII de l'article 51-1, non porté).
-      - debut: 2030
-        fin: 2030
-        type_calcul: annuites
-        age_ouverture: 53.25
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ratp
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : le 1° du II de l'article 51-1 du décret
-          n° 2008-637, dans sa rédaction du décret n° 2023-690 du 28 juillet
-          2023 (LEGIARTI000047914257, en vigueur, relu le 22 septembre 2026),
-          porte l'âge d'ouverture des emplois du tableau B — le personnel
-          roulant, cinquante-quatre ans au 2° du II de l'article 6
-          (LEGIARTI000047913991) — de cinquante-deux ans (nés en 1972) à
-          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
-          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
-          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
-          son 2° celui du tableau A de cinquante-sept à cinquante-neuf ans,
-          générations 1968 à 1975 ; son 3° celui des autres agents de soixante
-          à soixante-quatre ans. La fiche suit le tableau B par année de
-          liquidation — l'âge de la génération qui l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE EST L'ÂGE D'OUVERTURE FINAL MAJORÉ DE
-          TROIS ANS, ET NON L'ÂGE DE L'ASSURÉ MAJORÉ DE CINQ. Le 1° du I de
-          l'article 24 (LEGIARTI000047914227) le fixe à « l'âge minimum
-          d'ouverture du droit à pension applicable à l'assuré majoré de trois
-          ans à l'issue des dispositions prévues aux 1°, 2° et 3° du II de
-          l'article 51-1 » — cinquante-quatre plus trois, cinquante-sept ans au
-          tableau B —, et le 2° du VII de l'article 51-1 garde de 2025 à 2033
-          l'âge de référence d'avant 2023, l'âge d'ouverture majoré de cinq
-          ans, qui vaut aussi cinquante-sept ans pour les nés à compter de 1972.
-          La fiche le faisait monter jusqu'à cinquante-neuf : un machiniste né
-          en 1980 parti à cinquante-quatre ans se voyait opposer huit
-          trimestres de décote de trop, soit 10 % de pension. La CRP RATP ne
-          publie pas cette règle hors de l'espace de ses affiliés.
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 51 (LEGIARTI000052292971) porte 167 trimestres des nés
-          du 1er juillet 1959 à 1960, puis un de plus par marche jusqu'à 172 à
-          compter de 1968 (`duree_requise_table: ratp`). La suspension de 2026
-          n'a pas été reprise par le décret de la RATP. Un ou deux trimestres
-          sont retranchés aux durées des carrières longues des générations
-          1963-1972 (VIII de l'article 51-1, non porté).
-      - debut: 2031
-        fin: 2031
-        type_calcul: annuites
-        age_ouverture: 53.5
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ratp
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : le 1° du II de l'article 51-1 du décret
-          n° 2008-637, dans sa rédaction du décret n° 2023-690 du 28 juillet
-          2023 (LEGIARTI000047914257, en vigueur, relu le 22 septembre 2026),
-          porte l'âge d'ouverture des emplois du tableau B — le personnel
-          roulant, cinquante-quatre ans au 2° du II de l'article 6
-          (LEGIARTI000047913991) — de cinquante-deux ans (nés en 1972) à
-          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
-          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
-          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
-          son 2° celui du tableau A de cinquante-sept à cinquante-neuf ans,
-          générations 1968 à 1975 ; son 3° celui des autres agents de soixante
-          à soixante-quatre ans. La fiche suit le tableau B par année de
-          liquidation — l'âge de la génération qui l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE EST L'ÂGE D'OUVERTURE FINAL MAJORÉ DE
-          TROIS ANS, ET NON L'ÂGE DE L'ASSURÉ MAJORÉ DE CINQ. Le 1° du I de
-          l'article 24 (LEGIARTI000047914227) le fixe à « l'âge minimum
-          d'ouverture du droit à pension applicable à l'assuré majoré de trois
-          ans à l'issue des dispositions prévues aux 1°, 2° et 3° du II de
-          l'article 51-1 » — cinquante-quatre plus trois, cinquante-sept ans au
-          tableau B —, et le 2° du VII de l'article 51-1 garde de 2025 à 2033
-          l'âge de référence d'avant 2023, l'âge d'ouverture majoré de cinq
-          ans, qui vaut aussi cinquante-sept ans pour les nés à compter de 1972.
-          La fiche le faisait monter jusqu'à cinquante-neuf : un machiniste né
-          en 1980 parti à cinquante-quatre ans se voyait opposer huit
-          trimestres de décote de trop, soit 10 % de pension. La CRP RATP ne
-          publie pas cette règle hors de l'espace de ses affiliés.
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 51 (LEGIARTI000052292971) porte 167 trimestres des nés
-          du 1er juillet 1959 à 1960, puis un de plus par marche jusqu'à 172 à
-          compter de 1968 (`duree_requise_table: ratp`). La suspension de 2026
-          n'a pas été reprise par le décret de la RATP. Un ou deux trimestres
-          sont retranchés aux durées des carrières longues des générations
-          1963-1972 (VIII de l'article 51-1, non porté).
-      - debut: 2032
-        fin: 2033
-        type_calcul: annuites
-        age_ouverture: 53.75
-        age_taux_plein: 57
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ratp
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        age_surcote_regimes_speciaux: true
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
-          trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : le 1° du II de l'article 51-1 du décret
-          n° 2008-637, dans sa rédaction du décret n° 2023-690 du 28 juillet
-          2023 (LEGIARTI000047914257, en vigueur, relu le 22 septembre 2026),
-          porte l'âge d'ouverture des emplois du tableau B — le personnel
-          roulant, cinquante-quatre ans au 2° du II de l'article 6
-          (LEGIARTI000047913991) — de cinquante-deux ans (nés en 1972) à
-          cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
-          (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
-          (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
-          son 2° celui du tableau A de cinquante-sept à cinquante-neuf ans,
-          générations 1968 à 1975 ; son 3° celui des autres agents de soixante
-          à soixante-quatre ans. La fiche suit le tableau B par année de
-          liquidation — l'âge de la génération qui l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE EST L'ÂGE D'OUVERTURE FINAL MAJORÉ DE
-          TROIS ANS, ET NON L'ÂGE DE L'ASSURÉ MAJORÉ DE CINQ. Le 1° du I de
-          l'article 24 (LEGIARTI000047914227) le fixe à « l'âge minimum
-          d'ouverture du droit à pension applicable à l'assuré majoré de trois
-          ans à l'issue des dispositions prévues aux 1°, 2° et 3° du II de
-          l'article 51-1 » — cinquante-quatre plus trois, cinquante-sept ans au
-          tableau B —, et le 2° du VII de l'article 51-1 garde de 2025 à 2033
-          l'âge de référence d'avant 2023, l'âge d'ouverture majoré de cinq
-          ans, qui vaut aussi cinquante-sept ans pour les nés à compter de 1972.
-          La fiche le faisait monter jusqu'à cinquante-neuf : un machiniste né
-          en 1980 parti à cinquante-quatre ans se voyait opposer huit
-          trimestres de décote de trop, soit 10 % de pension. La CRP RATP ne
-          publie pas cette règle hors de l'espace de ses affiliés.
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 51 (LEGIARTI000052292971) porte 167 trimestres des nés
-          du 1er juillet 1959 à 1960, puis un de plus par marche jusqu'à 172 à
-          compter de 1968 (`duree_requise_table: ratp`). La suspension de 2026
-          n'a pas été reprise par le décret de la RATP. Un ou deux trimestres
-          sont retranchés aux durées des carrières longues des générations
-          1963-1972 (VIII de l'article 51-1, non porté).
-      - debut: 2034
         fin: null
         type_calcul: annuites
         age_ouverture: 54
         age_taux_plein: 57
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
-        duree_requise_table: ratp
+        age_table: ratp_roulant_2023
+        duree_requise_table: [ratp, ratp_2014]
+        duree_requise_calendrier: regimes_speciaux_2008
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -1340,39 +372,49 @@ regimes:
         notes: >-
           LE RELÈVEMENT DE LA LOI DU 14 AVRIL 2023 EST ÉTALÉ PAR GÉNÉRATION,
           trois mois par année de naissance, aux pensions prenant effet à
-          compter du 1er janvier 2025 : le 1° du II de l'article 51-1 du décret
-          n° 2008-637, dans sa rédaction du décret n° 2023-690 du 28 juillet
-          2023 (LEGIARTI000047914257, en vigueur, relu le 22 septembre 2026),
-          porte l'âge d'ouverture des emplois du tableau B — le personnel
-          roulant, cinquante-quatre ans au 2° du II de l'article 6
+          compter du 1er janvier 2025 : le 1° du II de l'article 51-1 du
+          décret n° 2008-637, dans sa rédaction du décret n° 2023-690 du 28
+          juillet 2023 (LEGIARTI000047914257, en vigueur, relu le 22 septembre
+          2026), porte l'âge d'ouverture des emplois du tableau B — le
+          personnel roulant, cinquante-quatre ans au 2° du II de l'article 6
           (LEGIARTI000047913991) — de cinquante-deux ans (nés en 1972) à
           cinquante-deux ans et trois mois (1973), six mois (1974), neuf mois
           (1975), cinquante-trois ans (1976), et trois mois (1977), six mois
           (1978), neuf mois (1979), cinquante-quatre ans à compter de 1980 ;
           son 2° celui du tableau A de cinquante-sept à cinquante-neuf ans,
           générations 1968 à 1975 ; son 3° celui des autres agents de soixante
-          à soixante-quatre ans. La fiche suit le tableau B par année de
-          liquidation — l'âge de la génération qui l'atteint cette année-là.
-          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE EST L'ÂGE D'OUVERTURE FINAL MAJORÉ DE
-          TROIS ANS, ET NON L'ÂGE DE L'ASSURÉ MAJORÉ DE CINQ. Le 1° du I de
+          à soixante-quatre ans. La fiche lit le tableau B PAR GÉNÉRATION (`age_table:
+          ratp_roulant_2023`), pour tous les agents.
+          L'ÂGE DE RÉFÉRENCE DE LA DÉCOTE EST L'ÂGE D'OUVERTURE FINAL MAJORÉ
+          DE TROIS ANS, ET NON L'ÂGE DE L'ASSURÉ MAJORÉ DE CINQ. Le 1° du I de
           l'article 24 (LEGIARTI000047914227) le fixe à « l'âge minimum
           d'ouverture du droit à pension applicable à l'assuré majoré de trois
           ans à l'issue des dispositions prévues aux 1°, 2° et 3° du II de
-          l'article 51-1 » — cinquante-quatre plus trois, cinquante-sept ans au
-          tableau B —, et le 2° du VII de l'article 51-1 garde de 2025 à 2033
-          l'âge de référence d'avant 2023, l'âge d'ouverture majoré de cinq
-          ans, qui vaut aussi cinquante-sept ans pour les nés à compter de 1972.
-          La fiche le faisait monter jusqu'à cinquante-neuf : un machiniste né
-          en 1980 parti à cinquante-quatre ans se voyait opposer huit
-          trimestres de décote de trop, soit 10 % de pension. La CRP RATP ne
-          publie pas cette règle hors de l'espace de ses affiliés.
-          LA DURÉE REQUISE EST CELLE DU RÉGIME, et non la table commune : le I
-          de l'article 51 (LEGIARTI000052292971) porte 167 trimestres des nés
-          du 1er juillet 1959 à 1960, puis un de plus par marche jusqu'à 172 à
+          l'article 51-1 » — cinquante-quatre plus trois, cinquante-sept ans
+          au tableau B —, et le 2° du VII de l'article 51-1 garde de 2025 à
+          2033 l'âge de référence d'avant 2023, l'âge d'ouverture majoré de
+          cinq ans, qui vaut aussi cinquante-sept ans pour les nés à compter
+          de 1972. La fiche le faisait monter jusqu'à cinquante-neuf : un
+          machiniste né en 1980 parti à cinquante-quatre ans se voyait opposer
+          huit trimestres de décote de trop, soit 10 % de pension. La CRP RATP
+          ne publie pas cette règle hors de l'espace de ses affiliés. LA DURÉE
+          REQUISE EST CELLE DU RÉGIME, et non la table commune : le I de
+          l'article 51 (LEGIARTI000052292971) porte 167 trimestres des nés du
+          1er juillet 1959 à 1960, puis un de plus par marche jusqu'à 172 à
           compter de 1968 (`duree_requise_table: ratp`). La suspension de 2026
           n'a pas été reprise par le décret de la RATP. Un ou deux trimestres
           sont retranchés aux durées des carrières longues des générations
-          1963-1972 (VIII de l'article 51-1, non porté).
+          1963-1972 (VIII de l'article 51-1, non porté). LA DURÉE REQUISE SE
+          LIT À LA DATE OÙ L'AGENT RÉUNIT LES CONDITIONS, pour les retraités
+          comme pour les actifs. La réforme de 2008 la fait monter de 151 à
+          166 trimestres selon cette date, de juillet 2008 à juillet 2018
+          (`duree_requise_calendrier: regimes_speciaux_2008`) ; la table par
+          génération de 2014 ne vaut qu'à compter du 1er juillet 2019, et
+          celle de 2023 qu'à compter du 1er janvier 2025, les décrets gardant
+          « les règles applicables avant » à qui a réuni les conditions plus
+          tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
+          opposait à tous la table commune par génération : 167 trimestres à
+          un agent né en 1960 parti en 2010, dont le droit en demande 154.
   - code: ieg
     nom: Régime des industries électriques et gazières (CNIEG)
     famille: special
@@ -1520,10 +562,13 @@ regimes:
       - debut: 2009
         fin: 2016
         type_calcul: annuites
-        age_ouverture: 55
-        age_taux_plein: 60
+        age_ouverture: 57
+        age_taux_plein: 62
         duree_requise_trimestres: 160
         duree_requise_par_generation: true
+        age_table: ieg_actif_2011
+        duree_requise_table: [ieg_2014]
+        duree_requise_calendrier: regimes_speciaux_2008
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -1536,12 +581,12 @@ regimes:
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
-          RÉFORME DES RÉGIMES SPÉCIAUX DE 2008 : décote, durée alignée. Les bornes
-          d'âge, elles, ne bougent qu'à partir de 2017 et par génération. La fiche
-          portait 57 et 62 ans dès 2009, et opposait donc à un agent parti en 2012
-          un âge que le régime ne lui demandait pas encore.
-          LA DÉCOTE ARRIVE AVEC QUATRE ANS DE RETARD, et la fiche la servait
-          pleine dès 2009. Le calendrier est écrit mot pour mot, et à
+          RÉFORME DES RÉGIMES SPÉCIAUX DE 2008 : décote, durée alignée. Les
+          bornes d'âge, elles, ne bougent qu'à partir de 2017 et par
+          génération. La fiche portait 57 et 62 ans dès 2009, et opposait donc
+          à un agent parti en 2012 un âge que le régime ne lui demandait pas
+          encore. LA DÉCOTE ARRIVE AVEC QUATRE ANS DE RETARD, et la fiche la
+          servait pleine dès 2009. Le calendrier est écrit mot pour mot, et à
           l'identique, dans chacun des décrets de la réforme : « le
           coefficient de minoration […] n'est applicable qu'aux personnes
           remplissant les conditions […] à compter du 1er juillet 2010 […] il
@@ -1553,144 +598,28 @@ regimes:
           monte de même, de l'âge de référence diminué de seize trimestres en
           2010 jusqu'à l'âge de référence lui-même en 2024. La période branche
           donc `bareme_decote: regimes_speciaux`, qui lit ce calendrier dans
-          `legislation/decote_regimes_speciaux.csv`.
+          `legislation/decote_regimes_speciaux.csv`. LA DURÉE REQUISE SE LIT À
+          LA DATE OÙ L'AGENT RÉUNIT LES CONDITIONS, pour les retraités comme
+          pour les actifs. La réforme de 2008 la fait monter de 151 à 166
+          trimestres selon cette date, de juillet 2008 à juillet 2018
+          (`duree_requise_calendrier: regimes_speciaux_2008`) ; la table par
+          génération de 2014 ne vaut qu'à compter du 1er juillet 2019, et
+          celle de 2023 qu'à compter du 1er janvier 2025, les décrets gardant
+          « les règles applicables avant » à qui a réuni les conditions plus
+          tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
+          opposait à tous la table commune par génération : 167 trimestres à
+          un agent né en 1960 parti en 2010, dont le droit en demande 154.
+
       - debut: 2017
-        fin: 2017
-        type_calcul: annuites
-        age_ouverture: 55.33
-        age_taux_plein: 60.33
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'annexe 3 du statut national, dans sa version du 21 mars 2011 (LEGIARTI000023733902, décret n° 2011-290) fixe l'âge d'ouverture de la catégorie
-          services actifs (cinquante-sept ans) à cinquante-cinq ans pour les agents nés avant 1962, puis quatre mois de plus par année de naissance jusqu'à cinquante-sept ans pour les agents nés à compter de 1967 ; soixante à soixante-deux ans, générations 1957 à 1962, pour les services sédentaires. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2018
-        fin: 2019
-        type_calcul: annuites
-        age_ouverture: 55.67
-        age_taux_plein: 60.67
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'annexe 3 du statut national, dans sa version du 21 mars 2011 (LEGIARTI000023733902, décret n° 2011-290) fixe l'âge d'ouverture de la catégorie
-          services actifs (cinquante-sept ans) à cinquante-cinq ans pour les agents nés avant 1962, puis quatre mois de plus par année de naissance jusqu'à cinquante-sept ans pour les agents nés à compter de 1967 ; soixante à soixante-deux ans, générations 1957 à 1962, pour les services sédentaires. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2020
-        fin: 2020
-        type_calcul: annuites
-        age_ouverture: 56
-        age_taux_plein: 61
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'annexe 3 du statut national, dans sa version du 21 mars 2011 (LEGIARTI000023733902, décret n° 2011-290) fixe l'âge d'ouverture de la catégorie
-          services actifs (cinquante-sept ans) à cinquante-cinq ans pour les agents nés avant 1962, puis quatre mois de plus par année de naissance jusqu'à cinquante-sept ans pour les agents nés à compter de 1967 ; soixante à soixante-deux ans, générations 1957 à 1962, pour les services sédentaires. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2021
-        fin: 2021
-        type_calcul: annuites
-        age_ouverture: 56.33
-        age_taux_plein: 61.33
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'annexe 3 du statut national, dans sa version du 21 mars 2011 (LEGIARTI000023733902, décret n° 2011-290) fixe l'âge d'ouverture de la catégorie
-          services actifs (cinquante-sept ans) à cinquante-cinq ans pour les agents nés avant 1962, puis quatre mois de plus par année de naissance jusqu'à cinquante-sept ans pour les agents nés à compter de 1967 ; soixante à soixante-deux ans, générations 1957 à 1962, pour les services sédentaires. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2022
-        fin: 2023
-        type_calcul: annuites
-        age_ouverture: 56.67
-        age_taux_plein: 61.67
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'annexe 3 du statut national, dans sa version du 21 mars 2011 (LEGIARTI000023733902, décret n° 2011-290) fixe l'âge d'ouverture de la catégorie
-          services actifs (cinquante-sept ans) à cinquante-cinq ans pour les agents nés avant 1962, puis quatre mois de plus par année de naissance jusqu'à cinquante-sept ans pour les agents nés à compter de 1967 ; soixante à soixante-deux ans, générations 1957 à 1962, pour les services sédentaires. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
-      - debut: 2024
         fin: 2024
         type_calcul: annuites
         age_ouverture: 57
         age_taux_plein: 62
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
+        age_table: ieg_actif_2011
+        duree_requise_table: [ieg_2014]
+        duree_requise_calendrier: regimes_speciaux_2008
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -1703,518 +632,41 @@ regimes:
         taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
-          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par année de
-          naissance : l'annexe 3 du statut national, dans sa version du 21 mars 2011 (LEGIARTI000023733902, décret n° 2011-290) fixe l'âge d'ouverture de la catégorie
-          services actifs (cinquante-sept ans) à cinquante-cinq ans pour les agents nés avant 1962, puis quatre mois de plus par année de naissance jusqu'à cinquante-sept ans pour les agents nés à compter de 1967 ; soixante à soixante-deux ans, générations 1957 à 1962, pour les services sédentaires. La fiche ne portant qu'un âge par période, elle suit ce
-          calendrier par année de liquidation — l'âge de la génération qui
-          l'atteint cette année-là —, au lieu de la marche d'un coup que
-          portait la période précédente. L'âge de référence de la décote
-          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus.
+          LE RELÈVEMENT DE 2017 EST ÉTALÉ PAR GÉNÉRATION, quatre mois par
+          année de naissance : l'annexe 3 du statut national, dans sa version
+          du 21 mars 2011 (LEGIARTI000023733902, décret n° 2011-290) fixe
+          l'âge d'ouverture de la catégorie services actifs (cinquante-sept
+          ans) à cinquante-cinq ans pour les agents nés avant 1962, puis
+          quatre mois de plus par année de naissance jusqu'à cinquante-sept
+          ans pour les agents nés à compter de 1967 ; soixante à soixante-deux
+          ans, générations 1957 à 1962, pour les services sédentaires. La
+          fiche le lit PAR GÉNÉRATION (`age_table`) : chaque agent a l'âge de
+          sa génération, quelle que soit l'année où il part, et non celui de
+          la seule génération qui l'atteint l'année de la liquidation, comme
+          le faisaient ses périodes annuelles. L'âge de référence de la décote
+          (`bareme_decote: regimes_speciaux`) suit, cinq ans au-dessus. LA
+          DURÉE REQUISE SE LIT À LA DATE OÙ L'AGENT RÉUNIT LES CONDITIONS,
+          pour les retraités comme pour les actifs. La réforme de 2008 la fait
+          monter de 151 à 166 trimestres selon cette date, de juillet 2008 à
+          juillet 2018 (`duree_requise_calendrier: regimes_speciaux_2008`) ;
+          la table par génération de 2014 ne vaut qu'à compter du 1er juillet
+          2019, et celle de 2023 qu'à compter du 1er janvier 2025, les décrets
+          gardant « les règles applicables avant » à qui a réuni les
+          conditions plus tôt (`duree_requise_table`, essayées dans l'ordre).
+          La fiche opposait à tous la table commune par génération : 167
+          trimestres à un agent né en 1960 parti en 2010, dont le droit en
+          demande 154.
+
       - debut: 2025
-        fin: 2025
-        type_calcul: annuites
-        age_ouverture: 57.25
-        age_taux_plein: 62
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ieg_actif_17
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
-          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
-          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
-          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
-          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
-          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
-          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
-          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
-          avant 1962, quatre mois de plus par génération jusqu'à
-          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
-          cinquante-huit ans et neuf mois pour 1974. La fiche portait
-          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
-          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
-          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
-          par année de liquidation — l'âge de la génération qui l'atteint
-          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
-          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
-          rédaction suspendue comme dans la précédente, et le calendrier des
-          générations antérieures est écrit dans l'annexe, que l'article 105
-          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
-          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
-          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
-          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
-          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
-          du I bis de l'article 45, une table par durée de services actifs ;
-          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
-          celui des dix-sept ans, et la fiche lit leur table
-          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
-          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
-          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
-          170 pour 1967. Elle portait la table commune, suspension de 2026
-          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
-          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
-          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
-          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
-          I de l'article 10 de l'annexe 3, dans sa version en vigueur
-          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
-          trimestres de minoration jusqu'à « un âge de référence correspondant
-          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
-          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
-          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
-          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
-          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
-          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
-          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
-          : elle décotait un agent liquidant à soixante-deux ans de sept
-          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
-          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
-          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
-          d'annulation de la décote au plus tard à 67 ans ».
-
-      - debut: 2026
-        fin: 2026
-        type_calcul: annuites
-        age_ouverture: 57.5
-        age_taux_plein: 62
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ieg_actif_17
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
-          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
-          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
-          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
-          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
-          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
-          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
-          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
-          avant 1962, quatre mois de plus par génération jusqu'à
-          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
-          cinquante-huit ans et neuf mois pour 1974. La fiche portait
-          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
-          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
-          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
-          par année de liquidation — l'âge de la génération qui l'atteint
-          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
-          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
-          rédaction suspendue comme dans la précédente, et le calendrier des
-          générations antérieures est écrit dans l'annexe, que l'article 105
-          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
-          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
-          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
-          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
-          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
-          du I bis de l'article 45, une table par durée de services actifs ;
-          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
-          celui des dix-sept ans, et la fiche lit leur table
-          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
-          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
-          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
-          170 pour 1967. Elle portait la table commune, suspension de 2026
-          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
-          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
-          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
-          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
-          I de l'article 10 de l'annexe 3, dans sa version en vigueur
-          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
-          trimestres de minoration jusqu'à « un âge de référence correspondant
-          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
-          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
-          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
-          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
-          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
-          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
-          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
-          : elle décotait un agent liquidant à soixante-deux ans de sept
-          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
-          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
-          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
-          d'annulation de la décote au plus tard à 67 ans ».
-
-      - debut: 2027
-        fin: 2028
-        type_calcul: annuites
-        age_ouverture: 57.75
-        age_taux_plein: 62
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ieg_actif_17
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
-          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
-          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
-          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
-          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
-          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
-          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
-          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
-          avant 1962, quatre mois de plus par génération jusqu'à
-          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
-          cinquante-huit ans et neuf mois pour 1974. La fiche portait
-          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
-          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
-          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
-          par année de liquidation — l'âge de la génération qui l'atteint
-          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
-          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
-          rédaction suspendue comme dans la précédente, et le calendrier des
-          générations antérieures est écrit dans l'annexe, que l'article 105
-          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
-          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
-          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
-          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
-          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
-          du I bis de l'article 45, une table par durée de services actifs ;
-          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
-          celui des dix-sept ans, et la fiche lit leur table
-          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
-          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
-          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
-          170 pour 1967. Elle portait la table commune, suspension de 2026
-          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
-          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
-          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
-          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
-          I de l'article 10 de l'annexe 3, dans sa version en vigueur
-          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
-          trimestres de minoration jusqu'à « un âge de référence correspondant
-          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
-          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
-          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
-          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
-          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
-          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
-          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
-          : elle décotait un agent liquidant à soixante-deux ans de sept
-          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
-          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
-          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
-          d'annulation de la décote au plus tard à 67 ans ».
-
-      - debut: 2029
-        fin: 2029
-        type_calcul: annuites
-        age_ouverture: 58
-        age_taux_plein: 62
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ieg_actif_17
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
-          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
-          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
-          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
-          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
-          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
-          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
-          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
-          avant 1962, quatre mois de plus par génération jusqu'à
-          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
-          cinquante-huit ans et neuf mois pour 1974. La fiche portait
-          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
-          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
-          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
-          par année de liquidation — l'âge de la génération qui l'atteint
-          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
-          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
-          rédaction suspendue comme dans la précédente, et le calendrier des
-          générations antérieures est écrit dans l'annexe, que l'article 105
-          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
-          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
-          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
-          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
-          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
-          du I bis de l'article 45, une table par durée de services actifs ;
-          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
-          celui des dix-sept ans, et la fiche lit leur table
-          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
-          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
-          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
-          170 pour 1967. Elle portait la table commune, suspension de 2026
-          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
-          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
-          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
-          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
-          I de l'article 10 de l'annexe 3, dans sa version en vigueur
-          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
-          trimestres de minoration jusqu'à « un âge de référence correspondant
-          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
-          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
-          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
-          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
-          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
-          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
-          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
-          : elle décotait un agent liquidant à soixante-deux ans de sept
-          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
-          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
-          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
-          d'annulation de la décote au plus tard à 67 ans ».
-
-      - debut: 2030
-        fin: 2030
-        type_calcul: annuites
-        age_ouverture: 58.25
-        age_taux_plein: 62
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ieg_actif_17
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
-          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
-          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
-          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
-          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
-          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
-          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
-          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
-          avant 1962, quatre mois de plus par génération jusqu'à
-          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
-          cinquante-huit ans et neuf mois pour 1974. La fiche portait
-          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
-          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
-          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
-          par année de liquidation — l'âge de la génération qui l'atteint
-          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
-          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
-          rédaction suspendue comme dans la précédente, et le calendrier des
-          générations antérieures est écrit dans l'annexe, que l'article 105
-          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
-          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
-          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
-          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
-          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
-          du I bis de l'article 45, une table par durée de services actifs ;
-          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
-          celui des dix-sept ans, et la fiche lit leur table
-          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
-          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
-          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
-          170 pour 1967. Elle portait la table commune, suspension de 2026
-          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
-          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
-          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
-          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
-          I de l'article 10 de l'annexe 3, dans sa version en vigueur
-          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
-          trimestres de minoration jusqu'à « un âge de référence correspondant
-          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
-          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
-          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
-          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
-          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
-          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
-          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
-          : elle décotait un agent liquidant à soixante-deux ans de sept
-          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
-          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
-          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
-          d'annulation de la décote au plus tard à 67 ans ».
-
-      - debut: 2031
-        fin: 2031
-        type_calcul: annuites
-        age_ouverture: 58.5
-        age_taux_plein: 62
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ieg_actif_17
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
-          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
-          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
-          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
-          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
-          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
-          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
-          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
-          avant 1962, quatre mois de plus par génération jusqu'à
-          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
-          cinquante-huit ans et neuf mois pour 1974. La fiche portait
-          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
-          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
-          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
-          par année de liquidation — l'âge de la génération qui l'atteint
-          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
-          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
-          rédaction suspendue comme dans la précédente, et le calendrier des
-          générations antérieures est écrit dans l'annexe, que l'article 105
-          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
-          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
-          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
-          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
-          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
-          du I bis de l'article 45, une table par durée de services actifs ;
-          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
-          celui des dix-sept ans, et la fiche lit leur table
-          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
-          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
-          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
-          170 pour 1967. Elle portait la table commune, suspension de 2026
-          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
-          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
-          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
-          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
-          I de l'article 10 de l'annexe 3, dans sa version en vigueur
-          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
-          trimestres de minoration jusqu'à « un âge de référence correspondant
-          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
-          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
-          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
-          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
-          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
-          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
-          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
-          : elle décotait un agent liquidant à soixante-deux ans de sept
-          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
-          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
-          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
-          d'annulation de la décote au plus tard à 67 ans ».
-
-      - debut: 2032
-        fin: 2033
-        type_calcul: annuites
-        age_ouverture: 58.75
-        age_taux_plein: 62
-        duree_requise_trimestres: 172
-        duree_requise_par_generation: true
-        duree_requise_table: ieg_actif_17
-        taux_plein: 0.75
-        salaire_reference: derniers_6_mois
-        assiette: hors_primes
-        taux_cotisation_retraite: 0.1229
-        perimetre_taux: agent_seul
-        decote_par_trimestre: 0.0125
-        bareme_decote: regimes_speciaux
-        surcote_par_trimestre: 0.0125
-        age_surcote_regimes_speciaux: true
-        taux_majoration_enfants: [0.0, 0.0, 0.0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55]
-        avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
-        notes: >-
-          L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
-          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
-          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
-          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
-          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
-          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
-          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
-          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
-          avant 1962, quatre mois de plus par génération jusqu'à
-          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
-          cinquante-huit ans et neuf mois pour 1974. La fiche portait
-          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
-          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
-          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
-          par année de liquidation — l'âge de la génération qui l'atteint
-          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
-          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
-          rédaction suspendue comme dans la précédente, et le calendrier des
-          générations antérieures est écrit dans l'annexe, que l'article 105
-          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
-          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
-          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
-          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
-          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
-          du I bis de l'article 45, une table par durée de services actifs ;
-          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
-          celui des dix-sept ans, et la fiche lit leur table
-          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
-          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
-          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
-          170 pour 1967. Elle portait la table commune, suspension de 2026
-          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
-          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
-          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
-          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
-          I de l'article 10 de l'annexe 3, dans sa version en vigueur
-          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
-          trimestres de minoration jusqu'à « un âge de référence correspondant
-          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
-          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
-          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
-          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
-          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
-          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
-          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
-          : elle décotait un agent liquidant à soixante-deux ans de sept
-          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
-          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
-          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
-          d'annulation de la décote au plus tard à 67 ans ».
-
-      - debut: 2034
         fin: null
         type_calcul: annuites
         age_ouverture: 59
         age_taux_plein: 62
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
-        duree_requise_table: ieg_actif_17
+        age_table: ieg_actif_2023
+        duree_requise_table: [ieg_actif_17, ieg_2014]
+        duree_requise_calendrier: regimes_speciaux_2008
         taux_plein: 0.75
         salaire_reference: derniers_6_mois
         assiette: hors_primes
@@ -2228,55 +680,66 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         notes: >-
           L'ÂGE DES SERVICES ACTIFS SUIT LE CALENDRIER DE L'ARTICLE 45, ET NON
-          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023
-          réécrit l'article 16 de l'annexe 3 — l'âge des actifs devient «
-          l'âge mentionné à l'article L. 161-17-2 du code de la sécurité
-          sociale […] abaissé de cinq ans » —, mais le 2° du V de l'article
-          45, dans sa version en vigueur (LEGIARTI000052046924, lue le 23
-          septembre 2026), ne l'applique qu'« aux agents nés à compter du 1er
-          janvier 1975 » et l'abaisse pour les autres : cinquante-cinq ans
-          avant 1962, quatre mois de plus par génération jusqu'à
-          cinquante-sept ans pour 1967, trois mois de plus ensuite jusqu'à
-          cinquante-huit ans et neuf mois pour 1974. La fiche portait
-          cinquante-huit ans et neuf mois dès 2025 et cinquante-neuf ans dès
-          2027, lus dans l'article 16 seul : jusqu'à six trimestres trop tard
-          pour les générations 1968 à 1974. Elle suit désormais ce calendrier
-          par année de liquidation — l'âge de la génération qui l'atteint
-          cette année-là. LA SUSPENSION DE 2026 N'Y CHANGE RIEN : pour les nés
-          à compter de 1975, L. 161-17-2 donne soixante-quatre ans dans sa
-          rédaction suspendue comme dans la précédente, et le calendrier des
-          générations antérieures est écrit dans l'annexe, que l'article 105
-          de la loi du 30 décembre 2025 ne touche pas. LA SURCOTE ne se compte
-          qu'au-delà de l'âge du 1° du I de l'article 16 (II de l'article 10),
-          dont le 1° du V de l'article 45 écrit le même calendrier que la SNCF
-          et la RATP, soixante ans avant 1957, soixante-quatre ans à compter
-          de 1970 (`age_surcote_regimes_speciaux`). La durée requise est celle
-          du I bis de l'article 45, une table par durée de services actifs ;
-          l'âge d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est
-          celui des dix-sept ans, et la fiche lit leur table
-          (`duree_requise_table: ieg_actif_17`) : 170 trimestres pour les nés
-          de 1968 à 1970, 171 pour 1971-1972, 172 à compter de 1973, et en
-          deçà la table d'avant le décret n° 2023-692 — 169 pour 1964-1966,
-          170 pour 1967. Elle portait la table commune, suspension de 2026
-          comprise, que l'annexe n'a pas reprise. Le régime est fermé aux
-          agents recrutés à compter du 1er septembre 2023 (annexe 3, art.
-          1er), ce que le routage porte. L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM
-          MAJORÉ DE TROIS ANS, ET NON DE CINQ, DEPUIS LE 1er JANVIER 2025. Le
-          I de l'article 10 de l'annexe 3, dans sa version en vigueur
-          (LEGIARTI000052046924, lue le 22 septembre 2026), compte les
-          trimestres de minoration jusqu'à « un âge de référence correspondant
-          à l'âge minimum d'ouverture du droit à pension applicable à l'assuré
-          majoré de trois ans ou, lorsque celui-ci relève du 7° de l'article
-          16, de cinq ans » ; et son article 45 fixe, « pour les pensions
-          prenant effet à compter du 1er janvier 2025 », l'âge d'annulation à
-          soixante-deux ans pour les agents du 2° du I de l'article 16 nés
-          avant le 1er janvier 1975. La fiche portait l'âge d'ouverture majoré
-          de CINQ ans — 63,75 puis 64 ans —, règle d'avant la réforme de 2023
-          : elle décotait un agent liquidant à soixante-deux ans de sept
-          trimestres de trop, soit 8,75 % de pension. La CNIEG l'écrit de son
-          côté en toutes lettres : « à compter du 1er janvier 2025 […] âge
-          minimum + 3 ans (sauf exceptions) », « de façon à maintenir un âge
-          d'annulation de la décote au plus tard à 67 ans ».
+          LE SEUL ARTICLE 16. Le décret n° 2023-692 du 28 juillet 2023 réécrit
+          l'article 16 de l'annexe 3 — l'âge des actifs devient « l'âge
+          mentionné à l'article L. 161-17-2 du code de la sécurité sociale […]
+          abaissé de cinq ans » —, mais le 2° du V de l'article 45, dans sa
+          version en vigueur (LEGIARTI000052046924, lue le 23 septembre 2026),
+          ne l'applique qu'« aux agents nés à compter du 1er janvier 1975 » et
+          l'abaisse pour les autres : cinquante-cinq ans avant 1962, quatre
+          mois de plus par génération jusqu'à cinquante-sept ans pour 1967,
+          trois mois de plus ensuite jusqu'à cinquante-huit ans et neuf mois
+          pour 1974. La fiche portait cinquante-huit ans et neuf mois dès 2025
+          et cinquante-neuf ans dès 2027, lus dans l'article 16 seul : jusqu'à
+          six trimestres trop tard pour les générations 1968 à 1974. Elle le
+          lit désormais PAR GÉNÉRATION (`age_table: ieg_actif_2023`), pour
+          tous les agents, et non pour la seule génération qui l'atteint
+          l'année de la liquidation. LA SUSPENSION DE 2026 N'Y CHANGE RIEN :
+          pour les nés à compter de 1975, L. 161-17-2 donne soixante-quatre
+          ans dans sa rédaction suspendue comme dans la précédente, et le
+          calendrier des générations antérieures est écrit dans l'annexe, que
+          l'article 105 de la loi du 30 décembre 2025 ne touche pas. LA
+          SURCOTE ne se compte qu'au-delà de l'âge du 1° du I de l'article 16
+          (II de l'article 10), dont le 1° du V de l'article 45 écrit le même
+          calendrier que la SNCF et la RATP, soixante ans avant 1957,
+          soixante-quatre ans à compter de 1970
+          (`age_surcote_regimes_speciaux`). La durée requise est celle du I
+          bis de l'article 45, une table par durée de services actifs ; l'âge
+          d'ouverture de la fiche, l'âge légal abaissé de cinq ans, est celui
+          des dix-sept ans, et la fiche lit leur table (`duree_requise_table:
+          ieg_actif_17`) : 170 trimestres pour les nés de 1968 à 1970, 171
+          pour 1971-1972, 172 à compter de 1973, et en deçà la table d'avant
+          le décret n° 2023-692 — 169 pour 1964-1966, 170 pour 1967. Elle
+          portait la table commune, suspension de 2026 comprise, que l'annexe
+          n'a pas reprise. Le régime est fermé aux agents recrutés à compter
+          du 1er septembre 2023 (annexe 3, art. 1er), ce que le routage porte.
+          L'ÂGE DE RÉFÉRENCE EST L'ÂGE MINIMUM MAJORÉ DE TROIS ANS, ET NON DE
+          CINQ, DEPUIS LE 1er JANVIER 2025. Le I de l'article 10 de l'annexe
+          3, dans sa version en vigueur (LEGIARTI000052046924, lue le 22
+          septembre 2026), compte les trimestres de minoration jusqu'à « un
+          âge de référence correspondant à l'âge minimum d'ouverture du droit
+          à pension applicable à l'assuré majoré de trois ans ou, lorsque
+          celui-ci relève du 7° de l'article 16, de cinq ans » ; et son
+          article 45 fixe, « pour les pensions prenant effet à compter du 1er
+          janvier 2025 », l'âge d'annulation à soixante-deux ans pour les
+          agents du 2° du I de l'article 16 nés avant le 1er janvier 1975. La
+          fiche portait l'âge d'ouverture majoré de CINQ ans — 63,75 puis 64
+          ans —, règle d'avant la réforme de 2023 : elle décotait un agent
+          liquidant à soixante-deux ans de sept trimestres de trop, soit 8,75
+          % de pension. La CNIEG l'écrit de son côté en toutes lettres : « à
+          compter du 1er janvier 2025 […] âge minimum + 3 ans (sauf
+          exceptions) », « de façon à maintenir un âge d'annulation de la
+          décote au plus tard à 67 ans ». LA DURÉE REQUISE SE LIT À LA DATE OÙ
+          L'AGENT RÉUNIT LES CONDITIONS, pour les retraités comme pour les
+          actifs. La réforme de 2008 la fait monter de 151 à 166 trimestres
+          selon cette date, de juillet 2008 à juillet 2018
+          (`duree_requise_calendrier: regimes_speciaux_2008`) ; la table par
+          génération de 2014 ne vaut qu'à compter du 1er juillet 2019, et
+          celle de 2023 qu'à compter du 1er janvier 2025, les décrets gardant
+          « les règles applicables avant » à qui a réuni les conditions plus
+          tôt (`duree_requise_table`, essayées dans l'ordre). La fiche
+          opposait à tous la table commune par génération : 167 trimestres à
+          un agent né en 1960 parti en 2010, dont le droit en demande 154.
   - code: marins
     nom: Établissement national des invalides de la marine (ENIM)
     famille: special

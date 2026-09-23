@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 561<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 297<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 653<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 358<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15525,3 +15525,53 @@ chaque chantier déplacerait.
 `tests/test_simulateur.py`, `src/retraite_notionnelle/web/pages.py`,
 `moteur/js/pages.js`, `docs/limites.md`, `docs/methodologie.md`,
 `docs/parcours_presentation.md`, et les fichiers fabriqués.
+### 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes — `en cours`
+
+**Demande.** « Il faut prendre en compte la loi applicable pour tout le monde
+et pas seulement pour les derniers entrants ou sortants » ; « il faut aussi
+prendre le cas des personnes déjà à la retraite » ; « mon site doit
+représenter toutes les personnes encore vivantes sur lesquelles la réforme du
+scénario du Parti libéral français pourrait s'appliquer ».
+
+**Le défaut.** Une fiche ne porte qu'un âge par PÉRIODE de liquidation. Quand
+le droit indexe l'âge sur la génération, les fiches écrivaient, pour chaque
+année, l'âge de la génération qui l'atteint cette année-là : juste pour elle,
+faux pour toutes les autres. Un agent des IEG né en 1965 parti en 2030 se
+voyait opposer 58 ans et 3 mois au lieu de 56 ans et 4 mois. Et la durée
+requise des régimes spéciaux, que la réforme de 2008 indexe sur la DATE où
+l'assuré réunit les conditions, leur était lue dans la table commune par
+génération : 167 trimestres à un cheminot parti en 2010, dont le droit en
+demande 154. Ce sont les retraités, et les générations qui ne partent pas à
+l'âge, qui payaient l'approximation.
+
+**Fait le 23 septembre 2026 : la SNCF, la RATP et les IEG.** Les âges se lisent
+par génération dans `legislation/ages_regimes.csv` (`age_table`, tables
+`sncf_conduite_2011` et `_2023`, `ratp_roulant_2011` et `_2023`,
+`ieg_actif_2011` et `_2023`) ; le moteur, qui réservait cette table aux
+complémentaires, l'ouvre aux régimes de base en annuités. La durée se lit au
+mois où l'agent réunit les conditions : calendrier de 2008
+(`legislation/duree_requise_calendriers.csv`), puis tables par génération de
+2014 à compter du 1er juillet 2019, de 2023 à compter du 1er janvier 2025
+(colonne `depuis` de `legislation/duree_requise_regimes_speciaux.csv`). Les
+quinze périodes annuelles de chaque fiche deviennent trois. Un agent de
+conduite né en 1955 doit 150 trimestres et non 166, né en 1960 154 et non 167,
+né en 1968 166 et non 172 ; un agent des IEG né en 1960 ouvre à 55 ans et
+doit 162 trimestres, né en 1965 ouvre à 56 ans et 4 mois. Les pensions du
+scénario 1 de leurs retraités remontent de 3 à 11 %. Trois témoins de retraités.
+
+**Ce qui reste, fiche par fiche, et chacune demande de lire son texte.** Le même
+relevé, une période par année et aucune lecture par génération depuis 2011,
+signale dix autres fiches : `cps_saint_pierre_et_miquelon`, `cssm_mayotte`,
+`cps_polynesie`, `cafat_nouvelle_caledonie`, `fonctionnaires_pacifique`,
+`crpnpac` et `crpnpac_tranche_2`, `crpcen`, `comedie_francaise`,
+`assemblees_parlementaires`. Pour chacune : dire si son texte indexe l'âge sur
+la génération ou sur l'année — les deux existent —, et, s'il s'agit de la
+génération, la table dans `ages_regimes.csv`. Puis la durée requise de même :
+toute fiche qui lit la table commune par génération sur des années où son texte
+la fixe à la date des conditions réunies se trompe pour ses retraités.
+
+**Et la couverture.** Les générations vivantes remontent aux années 1920, et
+les plus anciennes ont liquidé avant 1990 : le balayage des témoins va de 1925
+à 1975 pour chaque statut, mais aucun test ne vérifie encore qu'une fiche
+réponde, pour toute génération de 1920 à aujourd'hui, par une règle datée qui
+vaut pour elle. C'est le test à écrire à la fin de ce chantier.

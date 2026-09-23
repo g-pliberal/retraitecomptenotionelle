@@ -289,13 +289,22 @@ SUSPENSION_2026_EFFET = (2026, 9)
 GENERATIONS_SUSPENSION = (1964.0, 1966.0)
 
 
+def _rang_mois(texte: str) -> int:
+    """« AAAA-MM » -> rang absolu du mois, celui de :class:`DateMois`."""
+    annee, mois = texte.strip().split("-")
+    return DateMois(int(annee), int(mois)).rang
+
+
 class DureesRequisesRegimes:
     """Durée requise propre à un régime spécial, par génération.
 
     La SNCF, la RATP et les IEG écrivent chacune leur table dans leur texte, et
     la suspension de 2026, qui a abaissé la table commune, ne les a pas
-    touchées. La fiche nomme la sienne (`duree_requise_table`) sur ses périodes
-    de 2025 et après.
+    touchées. Une table ne vaut qu'à compter de la date où l'assuré RÉUNIT LES
+    CONDITIONS — colonne `depuis` : le 1er juillet 2019 pour les tables de 2014,
+    le 1er janvier 2025 pour celles de 2023, dont les décrets gardent « les
+    règles applicables avant » à qui les a réunies plus tôt. La fiche nomme les
+    siennes (`duree_requise_table`), essayées dans l'ordre.
 
     La table de la SNCF porte en plus ce que le II de l'article 35 du décret
     n° 2008-639 retranche à la durée requise pour compter la décote par la
@@ -306,6 +315,7 @@ class DureesRequisesRegimes:
 
     def __init__(self, racine: Path) -> None:
         self._table: dict[str, dict[float, tuple[int, int, Fiabilite]]] = {}
+        self._depuis: dict[str, int] = {}
         chemin = racine / "reference" / "legislation" / self.FICHIER
         if chemin.exists():
             with chemin.open(encoding="utf-8") as flux:
@@ -315,16 +325,58 @@ class DureesRequisesRegimes:
                         float(ligne["generation"])
                     ] = (int(ligne["trimestres"]), int(ligne["retranche_decote"]),
                          Fiabilite.depuis_texte(ligne["fiabilite"]))
+                    self._depuis[ligne["table"]] = _rang_mois(ligne["depuis"])
         self._generations = {cle: tuple(sorted(valeurs))
                              for cle, valeurs in self._table.items()}
 
-    def ligne(self, table: str,
-              generation: float) -> tuple[int, int, Fiabilite] | None:
-        """Trimestres requis, trimestres retranchés pour la décote, fiabilité."""
+    def ligne(self, table: str, generation: float,
+              ouverture: int) -> tuple[int, int, Fiabilite] | None:
+        """Trimestres requis, trimestres retranchés pour la décote, fiabilité.
+
+        ``ouverture`` est le rang du mois où l'assuré réunit les conditions ;
+        avant la date d'effet de la table, elle ne répond pas.
+        """
         generations = self._generations.get(table)
-        if not generations:
+        if not generations or ouverture < self._depuis[table]:
             return None
         return valeur_par_generation(self._table[table], generations, generation)
+
+
+class CalendriersDureeRequise:
+    """Durée requise lue à la DATE où l'assuré réunit les conditions.
+
+    La réforme de 2008 des régimes spéciaux ne suit pas la génération : 151
+    trimestres pour qui réunit les conditions au second semestre 2008, un de
+    plus au 1er janvier et au 1er juillet jusqu'en juillet 2012, un au
+    1er décembre 2012, puis un chaque 1er juillet jusqu'à 166 en 2018 ; 150
+    avant. C'est le calendrier que les fiches de la SNCF, de la RATP et des IEG
+    nomment (`duree_requise_calendrier`), et celui qui vaut pour leurs
+    retraités de 2008 à 2024.
+    """
+
+    FICHIER = "duree_requise_calendriers.csv"
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[str, list[tuple[int, int, Fiabilite]]] = {}
+        chemin = racine / "reference" / "legislation" / self.FICHIER
+        if chemin.exists():
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    self._table.setdefault(ligne["calendrier"], []).append(
+                        (_rang_mois(ligne["depuis"]), int(ligne["trimestres"]),
+                         Fiabilite.depuis_texte(ligne["fiabilite"])))
+        for valeurs in self._table.values():
+            valeurs.sort()
+
+    def trimestres(self, calendrier: str,
+                   ouverture: int) -> tuple[int, Fiabilite] | None:
+        retenue = None
+        for depuis, trimestres, fiabilite in self._table.get(calendrier, ()):
+            if depuis > ouverture:
+                break
+            retenue = (trimestres, fiabilite)
+        return retenue
 
 
 def _age_ou_rien(texte: str | None) -> float | None:
@@ -1904,6 +1956,9 @@ class ScenarioActuel:
         self.durees_requises_avant_suspension = DureesRequisesAvantSuspension(
             parametres.racine_donnees)
         self.durees_requises_regimes = DureesRequisesRegimes(parametres.racine_donnees)
+        self.calendriers_duree_requise = CalendriersDureeRequise(
+            parametres.racine_donnees
+        )
         self.durees_proratisation = DureesProratisation(parametres.racine_donnees)
         self.ages_ouverture = AgesOuverture(parametres.racine_donnees)
         self.ages_surcote_regimes_speciaux = AgesSurcoteRegimesSpeciaux(
@@ -2298,22 +2353,23 @@ class ScenarioActuel:
         super-active. Le modèle leur opposait celle des sédentaires, soit
         jusqu'à trois trimestres de trop.
 
-        UN RÉGIME SPÉCIAL QUI ÉCRIT SA TABLE PASSE AVANT LA TABLE COMMUNE : la
-        SNCF, la RATP et les IEG (`legislation/duree_requise_regimes_speciaux.csv`).
-        En deçà de la première génération qu'elle nomme, la table commune reste
-        le repli.
+        UN RÉGIME SPÉCIAL QUI ÉCRIT SES TABLES PASSE AVANT LA TABLE COMMUNE : la
+        SNCF, la RATP et les IEG. Leurs tables par génération ne valent qu'à
+        compter de la date où l'assuré réunit les conditions
+        (`legislation/duree_requise_regimes_speciaux.csv`) ; avant, c'est le
+        calendrier de la réforme de 2008, lu à cette même date
+        (`legislation/duree_requise_calendriers.csv`). C'est ce qui donne à un
+        cheminot parti en 2010 les 154 trimestres de son droit, et non les 167
+        de sa génération au régime général.
 
         Et ceux que ces marches ne visent pas — l'emploi classé né avant elles,
         le militaire — n'ont pas davantage la durée de leur génération : voir
         :meth:`_duree_requise_avant_soixante_ans`.
         """
         requis = periode.duree_requise_trimestres or 160
-        if periode.duree_requise_table is not None:
-            propre = self.durees_requises_regimes.ligne(
-                periode.duree_requise_table, carriere.generation
-            )
-            if propre is not None:
-                return propre[0], propre[2]
+        propre = self._duree_propre(periode, carriere)
+        if propre is not None:
+            return propre[0], propre[2]
         if periode.bareme_decote == "fonction_publique":
             transitoire = self.durees_requises_fonction_publique.trimestres(
                 self._annee_ouverture_des_droits(
@@ -3335,12 +3391,47 @@ class ScenarioActuel:
 
     def _retranche_decote(self, periode: PeriodeRegime, carriere: Carriere) -> int:
         """Trimestres retranchés à la durée requise pour compter la décote."""
-        if periode.duree_requise_table is None:
-            return 0
-        propre = self.durees_requises_regimes.ligne(
-            periode.duree_requise_table, carriere.generation
-        )
+        propre = self._duree_propre(periode, carriere)
         return 0 if propre is None else propre[1]
+
+    def _mois_ouverture_des_droits(self, periode: PeriodeRegime,
+                                   carriere: Carriere) -> int:
+        """Rang du mois où l'assuré réunit les conditions d'ouverture.
+
+        L'âge d'ouverture atteint, ou la liquidation si elle vient avant —
+        carrière longue, départ anticipé : c'est le mois que les décrets des
+        régimes spéciaux visent, « les personnes remplissant les conditions ».
+        """
+        rang = carriere.date_naissance.plus_mois(
+            en_mois(self._age_ouverture(periode, carriere))
+        ).rang
+        if carriere.age_liquidation is not None:
+            rang = min(rang, carriere.date_liquidation.rang)
+        return rang
+
+    def _duree_propre(self, periode: PeriodeRegime, carriere: Carriere
+                      ) -> tuple[int, int, Fiabilite | None] | None:
+        """Durée requise propre au régime : trimestres, retranchés, fiabilité.
+
+        Les tables nommées par la fiche, dans l'ordre, puis son calendrier ;
+        ``None`` pour une fiche qui n'en nomme aucun.
+        """
+        if not periode.duree_requise_table and not periode.duree_requise_calendrier:
+            return None
+        ouverture = self._mois_ouverture_des_droits(periode, carriere)
+        for table in periode.duree_requise_table:
+            ligne = self.durees_requises_regimes.ligne(
+                table, carriere.generation, ouverture
+            )
+            if ligne is not None:
+                return ligne
+        if periode.duree_requise_calendrier:
+            lu = self.calendriers_duree_requise.trimestres(
+                periode.duree_requise_calendrier, ouverture
+            )
+            if lu is not None:
+                return lu[0], 0, lu[1]
+        return None
 
     def _valeur_point_fiche(self, periode: PeriodeRegime, annee: int) -> float:
         """Valeur de service du point écrite dans la fiche, à l'année demandée.
@@ -4473,8 +4564,9 @@ class ScenarioActuel:
                 # Une complémentaire qui a SES âges — la CAVOM ouvre la sienne
                 # à soixante ans aux nés avant 1956 — ne dit pas quand le droit
                 # s'ouvre : c'est le régime de base qu'elle accompagne toujours
-                # qui le dit, et elle suit.
-                if periode.age_table:
+                # qui le dit, et elle suit. Un régime de base en annuités qui
+                # a les siens — la SNCF, la RATP, les IEG — le dit, lui.
+                if periode.age_table and periode.type_calcul != "annuites":
                     continue
                 requis_reference = max(
                     requis_reference, self._duree_requise(periode, carriere)[0]
