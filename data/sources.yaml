@@ -2464,9 +2464,11 @@ institutions:
           de départ de la projection, un SMIC ne baissant pas. Ajouté le
           23 septembre 2026 pour le relèvement automatique du 1er juin 2026 —
           12,31 € de l'heure, 2,4 % au titre de l'article L. 3231-5 du code du
-          travail —, que le modèle ignorait. Le texte n'est pas dans l'index
-          LEGI, qui ne consolide pas les textes du SMIC postérieurs à 2017 :
-          transcrit, niveau `haute`.
+          travail —, que le modèle ignorait. Lu dans l'index JORF du dépôt :
+          l'article 1 de l'arrêté (JORFARTI000054126607) porte le SMIC « à
+          12,31 € l'heure » à compter du 1er juin 2026. L'index LEGI ne
+          consolide pas les textes du SMIC postérieurs à 2017, et aucun script
+          ne relit la ligne : niveau `haute`.
 
       - id: service_public_aspa
         titre: ASPA, montants et plafonds d'une personne seule et d'un couple (fiche F16871)
