@@ -2754,7 +2754,7 @@ def _avenir(pensionnes: list[Pensionne], depenses: DepensesRetraite,
         projete = annee > derniere_publiee
         coefficient = macro.coefficient_prix(annee, annee_euros)
         pilier = None
-        if annee >= simulateur.parametres.annee_debut_capitalisation:
+        if annee >= simulateur.parametres.annee_bascule:
             flux = _masses_pilier(pensionnes, population, annee,
                                   poids_cotisants(annee), poids_annee)
             if flux["versements"] > 0.0:

@@ -302,11 +302,11 @@ export class ConstructeurCapitalisation {
     assiettes, anneeNaissance, ageLiquidation, anneeLiquidation,
     moisLiquidation = 1, sexe = null, population = null,
   }) {
-    const debutPossible = assiettes.size > 0
-      ? Math.min(...assiettes.keys()) : this.parametres.annee_debut_capitalisation;
-    const ouverture = Math.max(
-      this.parametres.annee_debut_capitalisation, debutPossible,
-    );
+    // Le pilier s'ouvre à la bascule choisie, et à nulle autre date : voir
+    // capitalisation.py.
+    const bascule = this.parametres.annee_bascule;
+    const debutPossible = assiettes.size > 0 ? Math.min(...assiettes.keys()) : bascule;
+    const ouverture = Math.max(bascule, debutPossible);
     const sexeTable = this.parametres.table_conversion === TableConversion.UNISEXE
       ? null : sexe;
     const conversion = this.convertisseur.coefficient(

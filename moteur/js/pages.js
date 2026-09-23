@@ -5896,13 +5896,13 @@ function pilierCapitalise(comparaison, saisie) {
   const avecVolontaire = pilier.taux_cotisation_volontaire > 0;
   const depart = comparaison.carriere.anneeLiquidation;
   const titre = `Le pilier capitalisé : ${taux} placés dès `
-    + `${parametres.annee_debut_capitalisation}`;
+    + `${parametres.annee_bascule}`;
 
   if (!pilier.actif) {
     return g.depliant(titre, `
 <p>Cette carrière ne cotise pas au pilier : elle s'achève en ${depart}, et la
 cotisation capitalisée n'est due qu'à compter de
-${parametres.annee_debut_capitalisation}. La proposition ne demande rien au
+${parametres.annee_bascule}. La proposition ne demande rien au
 passé — ni ce taux, ni un autre —, et qui a liquidé avant la bascule reçoit
 donc, du système 4, la seule pension de répartition.</p>`);
   }
@@ -6037,7 +6037,7 @@ sur votre fiche de paie : c'est le même argent, et c'est vous qui
 choisissez.</p>` : "";
 
   return g.depliant(titre, `
-<p>À compter de ${parametres.annee_debut_capitalisation}, ${taux} de la
+<p>À compter de ${parametres.annee_bascule}, ${taux} de la
 rémunération sont prélevés <strong>en plus</strong> de la cotisation de
 répartition, et placés. Ils ne passent pas par le compte notionnel : ils
 constituent un capital, au nom du cotisant, dans un plan d'épargne retraite —
@@ -9942,7 +9942,7 @@ function coutPilierTrajectoire(contexte) {
     return montants;
   };
 
-  const bascule = base.annee_debut_capitalisation;
+  const bascule = base.annee_bascule;
   const lignes = [];
   for (const ecart of ETAPES_PILIER) {
     const ligne = avenir.annee(bascule + ecart);
@@ -10016,7 +10016,7 @@ function coutDetailCapitalisation(contexte) {
   return g.depliant(
     "Ce que le pilier capitalisé prélève, et pourquoi il n'est pas dans ce bilan",
     `
-<p>À compter de ${base.annee_debut_capitalisation}, le système 4 prélève
+<p>À compter de ${base.annee_bascule}, le système 4 prélève
 ${g.pourcentage(capitalise, false, 0)} de la rémunération <strong>en plus</strong>
 des ${g.pourcentage(repartition_, false, 0)} de la répartition. Ces
 ${g.pourcentage(capitalise, false, 0)} ne paient aucune pension : ils
@@ -11326,7 +11326,7 @@ function methodeCapitalisation(contexte) {
   return g.depliant(
     `Le pilier capitalisé : ${totalCapitalise} placés, ce que cela suppose`,
     `
-<p>La proposition ajoute, à compter de ${base.annee_debut_capitalisation}, une
+<p>La proposition ajoute, à compter de ${base.annee_bascule}, une
 cotisation de ${taux} prélevée sur la même assiette que la cotisation de
 répartition, <strong>en plus</strong> d'elle : elle ne s'y substitue pas. Elle
 n'entre pas au compte notionnel, elle constitue un capital au nom du cotisant,
@@ -12846,7 +12846,7 @@ function programmeCapitalisation(contexte) {
   return g.depliant(
     `La part capitalisée : ${total} qui vous appartiennent`,
     `
-<p>À compter de ${base.annee_debut_capitalisation}, ${taux} de votre rémunération
+<p>À compter de ${base.annee_bascule}, ${taux} de votre rémunération
 sont prélevés <strong>en plus</strong> des ${repartition_} de la répartition, et
 placés à votre nom sur des titres sans risque. Ce capital ne passe pas par le
 compte notionnel : il vous revient, dans un plan d'épargne retraite, l'enveloppe

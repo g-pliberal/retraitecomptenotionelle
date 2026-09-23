@@ -3002,7 +3002,7 @@ def _programme_capitalisation(contexte: Contexte) -> str:
     return g.depliant(
         f"La part capitalisée : {total} qui vous appartiennent",
         f"""
-<p>À compter de {base.annee_debut_capitalisation}, {taux} de votre rémunération
+<p>À compter de {base.annee_bascule}, {taux} de votre rémunération
 sont prélevés <strong>en plus</strong> des {repartition_} de la répartition, et
 placés à votre nom sur des titres sans risque. Ce capital ne passe pas par le
 compte notionnel : il vous revient, dans un plan d'épargne retraite, l'enveloppe
@@ -6285,11 +6285,11 @@ def _pilier_capitalise(comparaison: Comparaison, saisie: Saisie) -> str:
     if not pilier.actif:
         return g.depliant(
             f"Le pilier capitalisé : {taux} placés dès "
-            f"{parametres.annee_debut_capitalisation}",
+            f"{parametres.annee_bascule}",
             f"""
 <p>Cette carrière ne cotise pas au pilier : elle s'achève en {depart}, et la
 cotisation capitalisée n'est due qu'à compter de
-{parametres.annee_debut_capitalisation}. La proposition ne demande rien au
+{parametres.annee_bascule}. La proposition ne demande rien au
 passé — ni ce taux, ni un autre —, et qui a liquidé avant la bascule reçoit
 donc, du système 4, la seule pension de répartition.</p>""",
         )
@@ -6433,9 +6433,9 @@ choisissez.</p>"""
 
     return g.depliant(
         f"Le pilier capitalisé : {taux} placés dès "
-        f"{parametres.annee_debut_capitalisation}",
+        f"{parametres.annee_bascule}",
         f"""
-<p>À compter de {parametres.annee_debut_capitalisation}, {taux} de la
+<p>À compter de {parametres.annee_bascule}, {taux} de la
 rémunération sont prélevés <strong>en plus</strong> de la cotisation de
 répartition, et placés. Ils ne passent pas par le compte notionnel : ils
 constituent un capital, au nom du cotisant, dans un plan d'épargne retraite —
@@ -11446,7 +11446,7 @@ def _cout_detail_capitalisation(contexte: Contexte) -> str:
     return g.depliant(
         "Ce que le pilier capitalisé prélève, et pourquoi il n'est pas dans ce bilan",
         f"""
-<p>À compter de {base.annee_debut_capitalisation}, le système 4 prélève
+<p>À compter de {base.annee_bascule}, le système 4 prélève
 {g.pourcentage(capitalise, decimales=0)} de la rémunération <strong>en plus</strong>
 des {g.pourcentage(repartition_, decimales=0)} de la répartition. Ces
 {g.pourcentage(capitalise, decimales=0)} ne paient aucune pension : ils
@@ -11551,7 +11551,7 @@ def _cout_pilier_trajectoire(contexte: Contexte) -> str:
         montants["part_pib_encours"] = part * ligne.pilier.encours
         return montants
 
-    bascule = base.annee_debut_capitalisation
+    bascule = base.annee_bascule
     lignes = []
     for ecart in _ETAPES_PILIER:
         ligne = avenir.annee(bascule + ecart)
@@ -12892,7 +12892,7 @@ def _methode_capitalisation(contexte: Contexte) -> str:
     return g.depliant(
         f"Le pilier capitalisé : {total_capitalise} placés, ce que cela suppose",
         f"""
-<p>La proposition ajoute, à compter de {base.annee_debut_capitalisation}, une
+<p>La proposition ajoute, à compter de {base.annee_bascule}, une
 cotisation de {taux} prélevée sur la même assiette que la cotisation de
 répartition, <strong>en plus</strong> d'elle : elle ne s'y substitue pas. Elle
 n'entre pas au compte notionnel, elle constitue un capital au nom du cotisant,

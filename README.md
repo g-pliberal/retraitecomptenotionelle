@@ -1240,7 +1240,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2232 tests Python
+tests/                          2233 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1289,7 +1289,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->2232<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2233<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

@@ -1443,7 +1443,7 @@ silence à une pension de répartition. Le code le tient à part
 nom qui le dit (`pension_totale`).
 
 **Ce qui l'alimente.** DEUX cotisations, prélevées à compter de l'année de
-bascule (`annee_debut_capitalisation`, <!--chiffre:mesure(parametre?nom=annee_debut_capitalisation)-->2026<!--/-->) sur la **même assiette** que la
+bascule (`annee_bascule`, <!--chiffre:mesure(parametre?nom=annee_bascule)-->2026<!--/-->) sur la **même assiette** que la
 cotisation notionnelle de l'année, et **en plus** d'elle.
 
 La première est obligatoire : <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> % (`taux_capitalisation_obligatoire`). L'effort
