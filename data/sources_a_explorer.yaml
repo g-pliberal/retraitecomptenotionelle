@@ -2034,7 +2034,7 @@ sources:
     regimes: [crpnpac, crpnpac_tranche_2]
     a_en_tirer: >-
       Rapports et règlement du personnel navigant : deux fiches `partiel`.
-    statut: a_explorer
+    statut: en_cours
 
   - id: crpn_comprendre_retraite
     url: https://www.crpn.fr/je-suis-retraite/comprendre-ma-retraite/
@@ -2044,7 +2044,7 @@ sources:
     a_en_tirer: >-
       Le calcul de la pension des navigants, ses deux tranches et son âge de
       départ dérogatoire.
-    statut: a_explorer
+    statut: en_cours
 
   - id: crpn_cotisations_employeur
     url: https://www.crpn.fr/je-represente-un-employeur/calculer-les-cotisations/
@@ -2054,7 +2054,7 @@ sources:
     a_en_tirer: >-
       Les taux salarié et employeur par tranche — la part patronale est l'un
       des axes de tête de la feuille de route.
-    statut: a_explorer
+    statut: en_cours
 
   - id: crpn_acquerir_des_droits
     url: https://www.crpn.fr/je-suis-salarie/acquerir-des-droits/
@@ -2064,7 +2064,7 @@ sources:
     a_en_tirer: >-
       L'acquisition des droits chez les navigants : annuités, bonifications de
       vol, et ce que l'inaptitude ouvre.
-    statut: a_explorer
+    statut: en_cours
 
   - id: crpn_notices_formulaires
     url: https://www.crpn.fr/je-suis-salarie/notices-et-formulaires/
@@ -2074,7 +2074,7 @@ sources:
     a_en_tirer: >-
       Les notices : documents d'application, souvent porteurs d'exemples
       chiffrés que les pages n'ont pas.
-    statut: a_explorer
+    statut: en_cours
 
   - id: crpcen_montant_pension
     url: https://www.crpcen.fr/affilies/le-montant-de-votre-pension
