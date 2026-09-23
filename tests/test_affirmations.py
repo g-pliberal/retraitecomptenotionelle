@@ -74,7 +74,6 @@ from retraite_notionnelle.web import gabarit as g
 from retraite_notionnelle.web.pages import (
     CLES_MODELISATION,
     COMPOSANTE_GARANTIE,
-    COR_2070,
     INDEXATIONS,
     LIGNES_DEPENSES,
     LIGNES_RECETTES,
@@ -1675,8 +1674,12 @@ def _(m: Modele):
 
 @controle("projection_s_ecarte_du_cor")
 def _(m: Modele):
+    # Le repère du COR est LU dans son compte, comme la page le lit : une
+    # constante de juin 2025 tenait ce contrôle quand le dépôt portait le
+    # rapport de juin 2026.
     avenir = m.cout.avenir
-    assert abs(avenir.annee(avenir.derniere_annee).part_pib("actuel") - COR_2070) > 0.005
+    cor = m.contexte.comptes().depense(avenir.derniere_annee)
+    assert abs(avenir.annee(avenir.derniere_annee).part_pib("actuel") - cor) > 0.005
 
 
 @controle("projection_du_cor")

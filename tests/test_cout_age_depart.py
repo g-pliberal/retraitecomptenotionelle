@@ -194,7 +194,8 @@ def test_corriger_les_ages_eloigne_le_modele_du_COR(mesure):
     avant = mesure["reference"]["actuel"]
     apres = mesure["contrefactuel"]["actuel"]
     assert apres > avant
-    assert abs(apres - CAD.COR_HORIZON) > abs(avant - CAD.COR_HORIZON)
+    cor = CAD.cor_horizon(Parametres().racine_donnees)
+    assert abs(apres - cor) > abs(avant - cor)
     assert 0.002 < apres - avant < 0.02
 
 

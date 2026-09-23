@@ -756,7 +756,10 @@ class SoldeAnnuel:
         LA RECETTE SUIT LE DROIT. Aucun scénario notionnel ne sert l'AVPF, les
         majorations pour enfants, ni rien pendant une année de chômage : il ne
         peut pas compter ce que la CNAF et l'Unédic versent pour ces droits-là.
-        C'est ``retrait``, et il vaut pour les cinq.
+        C'est ``retrait``, et il vaut pour les cinq — à compter du jour où
+        chacun cesse de servir ces droits : dès l'origine pour les rétroactifs,
+        à la bascule pour les scénarios 3 et 5, qui sont avant elle le système
+        actuel.
 
         LA RECETTE SUIT LE TAUX. Le scénario 6 remplace tous les taux par 18 %
         à compter de la bascule ; ce qui est prélevé baisse donc, et la part
@@ -810,6 +813,13 @@ class SoldeAnnuel:
         elle est rendue au retrait à l'instant où le poste s'en va.
         """
         if scenario == "actuel":
+            return self.ressources
+        if scenario in CLES_PROSPECTIVES and 0 < self.annee < self.annee_bascule:
+            # AVANT LA BASCULE, UN SCÉNARIO « DÈS LA BASCULE » EST LE SYSTÈME
+            # ACTUEL : il en sert les pensions — son rapport de dépense vaut un
+            # —, il en encaisse donc toutes les recettes. Leur retirer déjà les
+            # transferts des droits non contributifs, 1,18 point de PIB en 2025,
+            # leur prêtait un déficit que leur construction seule fabriquait.
             return self.ressources
         if scenario == "notionnel_liberal" and self.recette_par_assiette:
             # Le taux plein sur l'assiette mesurée. Trois postes ne sont pas
@@ -902,6 +912,9 @@ class SoldeAnnuel:
         pas un droit qu'elle a supprimé. ``ressources_de`` dit pourquoi,
         décision par décision.
 
+        LES SCÉNARIOS 3 ET 5, avant la bascule, sont le système actuel, et
+        leurs postes sont les siens : ``ressources_de`` dit pourquoi.
+
         LES AUTRES SCÉNARIOS NOTIONNELS, et la proposition avant sa bascule,
         gardent chaque poste à sa valeur, la part cotisée multipliée par le
         rapport de recette, et retranchent chez le payeur ce qu'ils ne peuvent
@@ -913,7 +926,8 @@ class SoldeAnnuel:
         famille = self.retraits.get("famille", 0.0)
         chomage = self.retraits.get("chomage", 0.0)
         solidarite = self.retraits.get("solidarite", 0.0)
-        if scenario == "actuel":
+        if scenario == "actuel" or (scenario in CLES_PROSPECTIVES
+                                    and 0 < self.annee < self.annee_bascule):
             postes = {code: total * parts.get(code, 0.0) for code in POSTES_RESSOURCES}
             postes["transferts_famille"] = famille
             postes["transferts_chomage"] = chomage

@@ -1586,12 +1586,6 @@ function ageSaisi(parametres, nom, defaut, naissance, naissanceMois) {
  * Le modèle date la liquidation au mois : l'écrire « 64,75 » demanderait au
  * lecteur de multiplier par douze pour retrouver ce qu'il a saisi.
  */
-// Ce que le COR projette pour le système actuel, en part du PIB : le repère
-// extérieur auquel la page se compare. Rapport annuel de juin 2025, champ
-// « ensemble des régimes légalement obligatoires, y compris FSV, hors RAFP ».
-const COR_2024 = 0.139;
-const COR_2070 = 0.142;
-
 function age(valeur) {
   return formaterAge(valeur);
 }
@@ -8255,6 +8249,8 @@ function coutDetailScenarios(contexte) {
   const derniere = depenses.derniereAnnee;
   const annees = c.annees.map((ligne) => ligne.annee);
   const bascule = contexte.base.annee_bascule;
+  // Le repère extérieur, LU dans le compte du COR : voir le Python.
+  const corHorizon = contexte.comptes().depense(avenir.derniereAnnee);
 
   // Un scénario dont la courbe est exactement celle du système actuel serait
   // tracé PAR-DESSUS elle et la ferait disparaître : le graphique montrerait
@@ -8464,8 +8460,8 @@ obligatoire</strong> — ${milliards(depenses.repartition(derniere), 1)} en
 ${derniere} —, il porte son propre niveau de dépense, et ce niveau s'écarte de
 celui du COR : il donne ${g.pourcentage(horizon.partPib("actuel"), false, 1)} du PIB pour le
 système actuel en ${avenir.derniereAnnee}, quand le COR en projette
-${g.pourcentage(COR_2070, false, 1)}. L'écart est de
-${g.nombre((horizon.partPib("actuel") - COR_2070) * 100, 1)} points, et il n'est
+${g.pourcentage(corHorizon, false, 1)}. L'écart est de
+${g.nombre((horizon.partPib("actuel") - corHorizon) * 100, 1)} points, et il n'est
 pas flatteur : notre ${g.terme("taux de remplacement")} ne recule pas, celui du
 COR recule. <a href="${g.DEPOT}/blob/main/docs/limites.md">Le § 5 ter des
 limites</a> porte la mesure. C'est pourquoi les cartes

@@ -95,10 +95,17 @@ PORTEE = 8.0
 #: plus à celle que la fiche décrit.
 ENTREE_MINIMALE, ENTREE_MAXIMALE = 14.0, 32.0
 
-#: Ce que le COR projette pour le système actuel en 2070, en part de PIB.
-#: C'est la valeur que la page Coût oppose à celle du modèle, et le § 5 ter de
-#: `limites.md` la question ouverte qu'elle pose.
-COR_HORIZON = 0.142
+def cor_horizon(racine: Path, horizon: int = C.HORIZON) -> float:
+    """Ce que le COR projette pour le système actuel à l'horizon, en part de PIB.
+
+    C'est la valeur que la page Coût oppose à celle du modèle, et le § 5 ter
+    de `limites.md` la question ouverte qu'elle pose. Elle est LUE dans le
+    compte du système de retraite (`comptes_retraite.csv`, scénario de
+    référence du dernier rapport annuel) : la constante qui la tenait,
+    14,2 %, était celle du rapport de juin 2025, quand le dépôt porte celui de
+    juin 2026, 15,3 %.
+    """
+    return ComptesRetraite(racine).depense(horizon)
 
 #: Résidu en deçà duquel on considère le couloir atteint. Un couloir réduit à
 #: un point ne s'atteint pas au pas d'une demi-année ; un dixième d'année est
@@ -210,8 +217,8 @@ def trajectoire(simulateur: Simulateur, donnees, cas_types: tuple[CasType, ...],
     """La part de PIB de chaque système à l'horizon, sous cette grille.
 
     `part_pib` et non `depense` : c'est le NIVEAU de dépense propre au modèle,
-    celui que la page Coût oppose aux 14,2 % du COR, et donc la grandeur sur
-    laquelle porte la question ouverte du § 5 ter.
+    celui que la page Coût oppose à la projection du COR (`cor_horizon`), et
+    donc la grandeur sur laquelle porte la question ouverte du § 5 ter.
     """
     depenses, population, comptes, assiette = donnees
     cout = C.calculer_cout(simulateur, depenses, population, comptes,
@@ -263,9 +270,10 @@ def imprimer(decalages: list[Decalage], reference: dict[str, float],
         print(f"{scenario:34} {avant * 100:>8.2f}% {apres * 100:>14.2f}% "
               f"{(apres - avant) * 100:>+8.2f}")
 
-    ecart_avant = (reference["actuel"] - COR_HORIZON) * 100
-    ecart_apres = (contrefactuel["actuel"] - COR_HORIZON) * 100
-    print(f"\nÉcart au COR ({COR_HORIZON * 100:.1f} % en {horizon}) : "
+    cor = cor_horizon(Parametres().racine_donnees, horizon)
+    ecart_avant = (reference["actuel"] - cor) * 100
+    ecart_apres = (contrefactuel["actuel"] - cor) * 100
+    print(f"\nÉcart au COR ({cor * 100:.1f} % en {horizon}) : "
           f"{ecart_avant:+.2f} points sous les fiches, "
           f"{ecart_apres:+.2f} sous le contrefactuel.")
     sens = "ÉLOIGNE" if abs(ecart_apres) > abs(ecart_avant) else "rapproche"
@@ -301,7 +309,7 @@ def main(argv: list[str] | None = None) -> int:
             "decalages": [asdict(d) for d in decalages],
             "reference": reference,
             "contrefactuel": contrefactuel,
-            "cor_horizon": COR_HORIZON,
+            "cor_horizon": cor_horizon(racine),
             "concordance_fiches": concordances[0],
             "concordance_contrefactuelle": concordances[1],
         }, ensure_ascii=False, indent=1), encoding="utf-8")
