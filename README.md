@@ -221,10 +221,10 @@ Il est traité de front : **le Python de `src/` reste la référence**, et
 <!--chiffre:entrees(tests/temoins/simulations.json:)-->495<!--/--> simulations complètes et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->53<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
-<!--chiffre:a_verifier(le compte des nombres comparés demande de lancer node --test)-->10 615<!--/--> nombres,
-dont <!--chiffre:a_verifier(la part identique au bit près demande de lancer node --test)-->97,9<!--/--> % identiques
-au bit près, l'écart maximal étant de quelques *ulp* (5 · 10⁻¹⁵ ; un *ulp* vaut
-2 · 10⁻¹⁶, la précision d'un flottant). Les pages, elles, sont comparées caractère par caractère : le
+<!--chiffre:portage(valeurs)-->73 846<!--/--> nombres,
+dont <!--chiffre:portage(identiques)-->88,1<!--/--> % identiques
+au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->7,8<!--/--> · 10⁻¹⁵, quelques dizaines
+d'*ulp* (un *ulp* vaut 2 · 10⁻¹⁶, la précision d'un flottant). Les pages, elles, sont comparées caractère par caractère : le
 formatage à la française reproduit jusqu'à l'arrondi au pair de Python, faute de
 quoi un « <!--chiffre:illustration()-->−12,5<!--/--> % » deviendrait
 « <!--chiffre:illustration()-->−13<!--/--> % » d'un côté et « <!--chiffre:illustration()-->−12<!--/--> % » de l'autre.

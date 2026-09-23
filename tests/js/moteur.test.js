@@ -7,7 +7,7 @@
  * ``scripts/construire_temoins.py``. Toute divergence, sur n'importe quelle
  * valeur de l'un des cas, fait échouer le test.
  *
- *     node --test tests/js/
+ *     node --test tests/js/*.test.js
  */
 
 import assert from "node:assert/strict";

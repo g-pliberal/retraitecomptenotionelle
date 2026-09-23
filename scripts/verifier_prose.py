@@ -408,6 +408,39 @@ def sonde_tests(_: str = "") -> float:
     return _COMPTE_TESTS[0]
 
 
+_PORTAGE: dict[str, float] = {}
+
+
+def sonde_portage(quoi: str) -> float:
+    """Ce que le JavaScript retrouve des témoins Python, compté par ``node``.
+
+    ``valeurs`` : les nombres que la comparaison confronte ; ``identiques`` :
+    la part qui l'est au bit près, en % ; ``pire`` : l'écart relatif maximal,
+    en unités de 10⁻¹⁵. C'est le compte rendu de ``tests/js/comparer.mjs`` sur
+    ``tests/temoins/simulations.json``, dans un processus à part et une fois
+    par exécution, comme ``tests``. Le README en portait deux chiffres qu'il
+    avouait ne pas tenir, faute de savoir lancer ``node`` ; le premier était
+    devenu sept fois trop petit.
+    """
+    if not _PORTAGE:
+        compte = subprocess.run(
+            ["node", str(RACINE / "tests" / "js" / "comparer.mjs"),
+             str(RACINE / "tests" / "temoins" / "simulations.json")],
+            capture_output=True, text=True, encoding="utf-8", cwd=RACINE,
+        )
+        valeurs = re.search(r"(\d+) valeurs numériques, (\d+) identiques", compte.stdout)
+        pire = re.search(r"écart relatif maximal : ([\d.]+e[+-]\d+)", compte.stdout)
+        if not (valeurs and pire):
+            raise ValueError(f"compte rendu illisible : {compte.stdout[-300:]}"
+                             f"{compte.stderr[-300:]}")
+        total, exactes = int(valeurs.group(1)), int(valeurs.group(2))
+        _PORTAGE.update(valeurs=float(total), identiques=100 * exactes / total,
+                        pire=float(pire.group(1)) * 1e15)
+    if quoi not in _PORTAGE:
+        raise ValueError(f"« {quoi} » n'est pas compté ; il y a {', '.join(_PORTAGE)}")
+    return _PORTAGE[quoi]
+
+
 def sonde_tenu(nom: str) -> None:
     """Le chiffre est tenu ailleurs, par un test qu'on nomme.
 
@@ -478,6 +511,7 @@ SONDES = {
     "entrees": sonde_entrees,
     "valeur": sonde_valeur,
     "tests": sonde_tests,
+    "portage": sonde_portage,
     "mesure": sonde_mesure,
 }
 
