@@ -15387,12 +15387,12 @@ du scénario 1 ne bouge pas, leurs services atteignant le pourcentage maximum,
 mais la durée qu'on leur oppose — 150 trimestres au lieu de 170 pour le
 sous-officier né en 1965, 162 pour l'officier — relève les droits acquis que le
 scénario prospectif convertit : +6,2 % de pension figée pour le premier. Les
-agrégats ne bougent que d'un
-dixième : la dépense du système actuel en 2070 passe de 18,3 à 18,2 % du PIB,
-parce que la dépense de 2024 est calée sur l'observé et que la correction
-relève les pensions des générations parties avant 2023 sans toucher celles de
-2070 ; les avantages chiffrés de 2024, de 96,3 à 96,1 milliards, dont la ligne
-de la catégorie active de 0,6 à 0,7.
+agrégats bougent à peine : la dépense du système actuel en 2070 passe de 18,26
+à 18,25 % du PIB, de 711 à 710 milliards, parce que la dépense de 2024 est
+calée sur l'observé et que la correction relève les pensions des générations
+parties avant 2023 sans toucher celles de 2070 ; les avantages chiffrés de
+2024, de 96,3 à 96,1 milliards, dont la ligne de la catégorie active de 0,6 à
+0,7.
 
 **Trois tests et une phrase du site disaient l'ancienne lecture.** Les tests de
 l'action 94 attendaient 169 trimestres pour l'actif né en 1965, 168 pour celui
