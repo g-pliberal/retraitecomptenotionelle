@@ -975,6 +975,10 @@ reformes:
         version est du 6 août 2025 (LEGIARTI000052046924, index LEGI relu le
         23 septembre 2026). La fiche lit donc la table du régime
         (`duree_requise_table: ieg_actif_17`), non la table commune suspendue.
+        L'âge d'ouverture des actifs, lui, suit le calendrier du 2° du V de
+        l'article 45 jusqu'à la génération 1974, puis l'âge de L. 161-17-2
+        abaissé de cinq ans, soixante-quatre moins cinq pour les nés à compter
+        de 1975 avant comme après la suspension : relu le 23 septembre 2026.
       ratp: >-
         La loi ne réécrit que L. 161-17-2, L. 161-17-3 et le XXIV de la loi de
         2023 ; le décret n° 2008-637 garde ses propres tables — âges du II de
