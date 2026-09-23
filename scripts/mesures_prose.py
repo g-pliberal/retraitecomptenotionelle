@@ -357,8 +357,13 @@ def parametre(**reglages: str) -> float:
     unité — ``annee_bascule``, ``age_reference`` ; un rang désigne l'élément
     d'un tuple, ``frais_gestion_paliers.3.1`` le taux du quatrième palier et
     ``.3.0`` son année. C'est le réglage que le site prend quand on ne lui dit
-    rien, et celui que la prose décrit.
+    rien, et celui que la prose décrit. Plusieurs noms joints par ``+``
+    s'additionnent : « 18 + 5 = 23 % » est une somme de deux paramètres, et
+    la prose l'écrit.
     """
+    if "+" in reglages["nom"]:
+        return sum(parametre(**{**reglages, "nom": nom})
+                   for nom in reglages["nom"].split("+"))
     parametres = _parametres()
     nom, *rangs = reglages["nom"].split(".")
     if not hasattr(parametres, nom):
@@ -1002,14 +1007,26 @@ def recette(**reglages: str) -> float:
     """Ce qui entre dans le compte du système actuel une année, en % du PIB.
 
     ``quoi=retrait`` : ce que les scénarios notionnels ne peuvent pas compter
-    — les versements de la CNAF, de l'Unédic et du FSV ; ``quoi=impots`` : les
-    impôts et taxes affectés ; ``quoi=taux_prelevement`` : ce que le système
-    prélève sur l'assiette des revenus d'activité, en %.
+    — les versements de la CNAF, de l'Unédic et du FSV ; ``payeurs=famille|chomage``
+    n'en garde que ceux-là, et ``sur=ressources`` le rapporte aux ressources
+    de l'année plutôt qu'au PIB. ``quoi=impots`` : les impôts et taxes
+    affectés ; ``quoi=taux_prelevement`` : ce que le système prélève sur
+    l'assiette des revenus d'activité, en %.
     """
     ligne = _solde_annee(reglages)
     quoi = reglages["quoi"]
     if quoi == "retrait":
-        return ligne.retrait * 100
+        retrait = ligne.retrait
+        if "payeurs" in reglages:
+            payeurs = reglages["payeurs"].split("|")
+            inconnus = [p for p in payeurs if p not in ligne.retraits]
+            if inconnus:
+                raise ValueError(f"payeurs inconnus : {', '.join(inconnus)} ; "
+                                 f"il y a {', '.join(ligne.retraits)}")
+            retrait = sum(ligne.retraits[p] for p in payeurs)
+        if reglages.get("sur") == "ressources":
+            return retrait / ligne.ressources * 100
+        return retrait * 100
     if quoi == "impots":
         return ligne.ressources * ligne.part_impots * 100
     if quoi == "impots_milliards":
@@ -1151,6 +1168,147 @@ def garantie_complement(**reglages: str) -> float:
     return max(0.0, _parametres().garantie_vieillesse_mensuelle - float(reglages["pension"]))
 
 
+@lru_cache(maxsize=None)
+def _garantie_mensuelle(pension: float, situation: str):
+    """La garantie que le moteur sert à une pension mensuelle, dans une situation.
+
+    Sur une liquidation de l'année des euros de la garantie, à soixante-six
+    ans : ni prix à déflater, ni ouverture à attendre — la carrière de
+    ``test_la_garantie_reproduit_le_tableau_de_la_proposition``.
+    """
+    from retraite_notionnelle.config import SituationFoyer
+
+    parametres = replace(_parametres(), situation_foyer=SituationFoyer(situation))
+    simulateur = _simulateur(parametres)
+    carriere = simulateur.carriere_simple(
+        annee_naissance=parametres.annee_euros_garantie_vieillesse - 66, sexe="H",
+        affiliation="salarie_prive_non_cadre", age_debut=20, age_liquidation=66)
+    return simulateur.scenario_liberal._garantie_vieillesse(carriere, pension * 12.0)
+
+
+def garantie_foyer(**reglages: str) -> float:
+    """Ce que la garantie sert à un foyer, par mois, en euros : ``pension=300&conjoint=1500``.
+
+    Sans ``conjoint``, une personne seule ; avec, un couple, où chacun est
+    comparé à son propre plancher — la règle du moteur, ``_garantie_vieillesse``.
+    ``base=foyer`` compare plutôt les ressources du couple à la somme des deux
+    planchers : la même garantie si elle regardait le ménage comme l'ASPA,
+    c'est-à-dire ce que l'individualisation change à montants égaux.
+    ``quoi=plancher`` rend le plancher du foyer, ``personnes=1`` ou ``2``
+    tenant lieu de pensions. Pas de liste « a|b » : ces ancres vivent dans
+    des tableaux, où le trait vertical couperait la cellule.
+    """
+    if "pension" in reglages:
+        pensions = [float(reglages["pension"])]
+        if "conjoint" in reglages:
+            pensions.append(float(reglages["conjoint"]))
+    else:
+        pensions = [0.0] * int(reglages["personnes"])
+    if len(pensions) not in (1, 2):
+        raise ValueError("un foyer compte une ou deux personnes")
+    situation = "seul" if len(pensions) == 1 else "couple"
+    garanties = [_garantie_mensuelle(p, situation) for p in pensions]
+    plancher = sum(g.plancher_annuel for g in garanties) / 12
+    if reglages.get("quoi") == "plancher":
+        return plancher
+    if reglages.get("base") == "foyer":
+        return max(0.0, plancher - sum(pensions))
+    return sum(g.complement for g in garanties) / 12
+
+
+def frais_reserve(**reglages: str) -> float:
+    """Ce qu'un frais annuel sur la réserve de la rente lui retire, en % de rente.
+
+    ``age`` et ``annee`` de la liquidation ; ``frais``, en fraction, vaut par
+    défaut celui des paramètres, le marché de 2025. Sur la courbe de survie
+    du modèle, population générale : ``_facteur_encours_rente``.
+    """
+    parametres = _parametres()
+    frais = float(reglages.get("frais", parametres.frais_encours_rente_capitalisation))
+    facteur = _simulateur(parametres).constructeur_capitalisation._facteur_encours_rente(
+        frais, float(reglages["age"]), int(reglages["annee"]), None, None)
+    return (1 - facteur) * 100
+
+
+def _echelle_glissante(horizon: int) -> tuple[tuple[int, float], ...]:
+    """L'échelle 2/10/30 que le pilier pratiquait jusqu'en septembre 2026.
+
+    Reconstituée comme les deux tests de ``test_capitalisation.py`` la
+    reconstituent, pour ne pas avoir à la garder dans le moteur.
+    """
+    if horizon <= 0:
+        return ()
+    borner = lambda v: min(1.0, max(0.0, v))  # noqa: E731
+    longue = 0.75 * borner((horizon - 10) / 20)
+    courte = 0.75 * borner((10 - horizon) / 8)
+    cumul: dict[int, float] = {}
+    for maturite, part in zip((2, 10, 30), (courte, 1.0 - courte - longue, longue)):
+        if part > 0:
+            effective = min(maturite, horizon)
+            cumul[effective] = cumul.get(effective, 0.0) + part
+    return tuple(sorted(cumul.items()))
+
+
+def _roulement(horizon: int) -> tuple[tuple[int, float], ...]:
+    """Un placement à un an, renouvelé jusqu'au départ."""
+    return ((1, 1.0),) if horizon > 0 else ()
+
+
+@lru_cache(maxsize=None)
+def _pilier_alloue(regle: str, prime: float):
+    """Le pilier de la carrière témoin, sous une règle d'allocation et une prime.
+
+    La carrière de ``test_avec_une_prime_de_terme_l_adossement_domine`` : une
+    assiette de 30 000 € par an à partir de 2030, née en 1996, partie à
+    64 ans en 2060. La règle s'échange le temps du calcul, comme le test
+    l'échange : le moteur n'en porte qu'une, l'adossement.
+    """
+    from retraite_notionnelle.donnees.taux import CourbeTauxSansRisque
+    from retraite_notionnelle.moteur import capitalisation as module
+    from retraite_notionnelle.moteur.conversion import Convertisseur
+
+    regles = {"adosse": module.repartition, "echelle": _echelle_glissante,
+              "roule": _roulement}
+    if regle not in regles:
+        raise ValueError(f"règle inconnue « {regle} » ; il y a {', '.join(regles)}")
+    parametres = replace(_parametres(), prime_terme_trente_ans=prime)
+    mortalite = _simulateur(_parametres()).mortalite
+    constructeur = module.ConstructeurCapitalisation(
+        CourbeTauxSansRisque(parametres.racine_donnees, prime), mortalite,
+        Convertisseur(mortalite, parametres), parametres)
+    ancienne = module.repartition
+    module.repartition = regles[regle]
+    try:
+        return constructeur.construire(
+            {annee: 30_000.0 for annee in range(2030, 2066)}, 1996, 64.0, 2060)
+    finally:
+        module.repartition = ancienne
+
+
+def allocation(**reglages: str) -> float:
+    """Ce que l'adossement rapporte face à une autre allocation, sous une prime de terme.
+
+    ``contre=echelle`` (l'échelle glissante d'avant septembre 2026) ou
+    ``contre=roule`` (un roulement à un an) ; ``prime``, en fraction, vaut par
+    défaut le milieu de la fourchette. ``quoi=capital`` : l'écart de capital,
+    en % ; ``quoi=rente`` : l'écart de rente mensuelle, en euros ;
+    ``quoi=annees`` : les années de versement de la carrière témoin.
+    """
+    from retraite_notionnelle.config import PRIME_TERME_MILIEU
+
+    prime = float(reglages.get("prime", PRIME_TERME_MILIEU))
+    adosse = _pilier_alloue("adosse", prime)
+    quoi = reglages.get("quoi", "capital")
+    if quoi == "annees":
+        return adosse.annees_cotisees
+    autre = _pilier_alloue(reglages["contre"], prime)
+    if quoi == "capital":
+        return (adosse.capital / autre.capital - 1) * 100
+    if quoi == "rente":
+        return adosse.rente_mensuelle - autre.rente_mensuelle
+    raise ValueError(f"quoi inconnu « {quoi} »")
+
+
 MESURES = {
     "solde": solde,
     "solde_moyen": solde_moyen,
@@ -1163,6 +1321,9 @@ MESURES = {
     "gain_net": gain_net,
     "fiche": fiche,
     "garantie_complement": garantie_complement,
+    "garantie_foyer": garantie_foyer,
+    "frais_reserve": frais_reserve,
+    "allocation": allocation,
     "avance": avance,
     "profils_oracle": profils_oracle,
     "ecart_openfisca": ecart_openfisca,

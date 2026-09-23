@@ -1312,7 +1312,7 @@ pas parmi les scénarios 2 à 5 parce qu'elle ne répond pas à la même questio
 elle ne mesure plus ce qui a été versé, mais ce qu'une réforme choisirait de
 reconnaître. C'est précisément la question que pose le scénario 6.
 
-### Scénario 6 — la proposition libérale : 18 % pour tous dès la bascule, 5 + 5 % capitalisés, et une garantie vieillesse
+### Scénario 6 — la proposition libérale : un taux unique dès la bascule, un pilier capitalisé, et une garantie vieillesse
 
 Le scénario 6 est la proposition du Parti libéral français. C'est **exactement
 le scénario 4** — compte rétroactif depuis l'origine de la répartition,
@@ -1320,52 +1320,61 @@ cotisation salariale et patronale confondues, mêmes âges de départ et de
 référence, même indexation, même coefficient de conversion — à trois différences
 près, qui sont les trois termes de la proposition.
 
-**Un taux unique de 18 %, à compter de la bascule.** Parts salariale et
+**Un taux unique de <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %, à compter de la bascule.** Parts salariale et
 patronale additionnées, le même pour tous les statuts, prélevé une fois sur la
 rémunération — comme le taux d'acquisition commun ci-dessus, mais seulement à
 partir de l'année de bascule (`taux_cotisation_liberal`,
 `source_cotisations = taux_historiques_puis_uniforme`). Avant la bascule, rien
 ne change : ce qui a été cotisé sous le système actuel est porté au compte tel
 qu'il a été prélevé, aux taux réels de chaque régime, salariale et patronale
-confondues — c'est le scénario 4. Une personne née en 1975, entrée à 21 ans et
-partie à 64, cotise donc aux taux réels de 1996 à 2025, puis à 18 % de 2026 à
-2038. Qui a liquidé avant la bascule n'a aucune année à 18 % : son compte est
+confondues — c'est le scénario 4. Une personne née en 1975, entrée à <!--chiffre:illustration()-->21<!--/--> ans et
+partie à <!--chiffre:illustration()-->64<!--/--> ans, cotise donc aux taux réels de chacune de ses années
+jusqu'à la bascule, puis à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % de <!--chiffre:mesure(parametre?nom=annee_bascule)-->2026<!--/--> à son départ, en 2039. Qui a
+liquidé avant la bascule n'a aucune année à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % : son compte est
 celui du scénario 4, et seule la garantie peut l'en séparer. Pour les années
 d'après, un fonctionnaire, un artisan et un salarié du privé de même
 rémunération acquièrent le même capital : les statuts qui cotisaient plus de
-18 % descendent sous le scénario 4, ceux qui cotisaient moins remontent,
+<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % descendent sous le scénario 4, ceux qui cotisaient moins remontent,
 d'autant plus que la carrière est récente.
 
-**Une garantie vieillesse, financée par l'impôt.** Elle remplace l'ASPA et en
+**Une garantie vieillesse, avancée par l'impôt.** Elle remplace l'ASPA et en
 garde le principe — une allocation différentielle, qui porte les ressources à
-un plancher — et l'âge, 65 ans. Elle en change une chose, et c'est la seule :
-le plancher est **individualisé**. Chaque personne est comparée au sien, sans
-que la pension du conjoint entre dans le calcul :
+un plancher — et l'âge, <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans. Elle en change deux choses. La première est
+que le plancher est **individualisé** : chaque personne est comparée au sien,
+sans que la pension du conjoint entre dans le calcul.
 
-| | Plancher mensuel, en euros de 2026 |
+| | Plancher mensuel, en euros de <!--chiffre:mesure(parametre?nom=annee_euros_garantie_vieillesse)-->2026<!--/--> |
 |---|---|
-| Garantie de base, par personne | 800 € |
-| Allocation d'isolement, pour qui vit seul | + 250 € |
-| **Personne seule** | **1 050 €** |
-| **À deux** | **800 € chacun, soit 1 600 €** |
+| Garantie de base, par personne | <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> € |
+| Allocation d'isolement, pour qui vit seul | + <!--chiffre:mesure(parametre?nom=allocation_isolement_mensuelle)-->250<!--/--> € |
+| **Personne seule** | **<!--chiffre:mesure(garantie_foyer?quoi=plancher&personnes=1)-->1 050<!--/--> €** |
+| **À deux** | **<!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> € chacun, soit <!--chiffre:mesure(garantie_foyer?quoi=plancher&personnes=2)-->1 600<!--/--> €** |
 
-Ce que l'individualisation change, sur les couples de la proposition :
+Ce que l'individualisation change, à montants égaux, sur les couples de la
+proposition :
 
-| Pensions mensuelles des deux personnes | ASPA actuelle du couple | Garantie individualisée |
+| Pensions mensuelles des deux personnes | Plancher du foyer, comme l'ASPA | Garantie individualisée |
 |---|---:|---:|
-| 300 € et 300 € | 1 000 € | 1 000 € |
-| 300 € et 1 500 € | 0 € | 500 € |
-| 900 € et 900 € | 0 € | 0 € |
-| 300 € et 5 000 € | 0 € | 500 € |
-| personne seule, 300 € | 750 € | 750 € |
+| <!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->300<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=300&base=foyer)-->1 000<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=300)-->1 000<!--/--> € |
+| <!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->1 500<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=1500&base=foyer)-->0<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=1500)-->500<!--/--> € |
+| <!--chiffre:illustration()-->900<!--/--> € et <!--chiffre:illustration()-->900<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=900&conjoint=900&base=foyer)-->0<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=900&conjoint=900)-->0<!--/--> € |
+| <!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->5 000<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=5000&base=foyer)-->0<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&conjoint=5000)-->500<!--/--> € |
+| personne seule, <!--chiffre:illustration()-->300<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300&base=foyer)-->750<!--/--> € | <!--chiffre:mesure(garantie_foyer?pension=300)-->750<!--/--> € |
 
-L'ASPA regarde les ressources du foyer : à 300 € et 1 500 €, le couple dépasse
-son plafond et ne reçoit rien. La garantie regarde chacun : le premier reçoit
-800 − 300 = 500 €, le second rien. Un test rejoue ces cinq lignes par la règle
-que le moteur applique, et la page de simulation les recalcule sous les yeux du
-lecteur.
+La première colonne applique au foyer les montants de la garantie, comme l'ASPA
+applique les siens ; ceux de l'ASPA en sont proches — <!--chiffre:cellule(data/reference/legislation/minimum_vieillesse.csv:valeur/12?annee=2026)-->1 043,59<!--/--> € par mois
+pour une personne seule en 2026, à quelques euros du plancher d'une personne
+seule —, si bien que l'écart entre les deux colonnes est celui de la seule
+individualisation. Regarder le foyer, c'est
+opposer <!--chiffre:illustration()-->1 800<!--/--> € de ressources au plafond du couple, <!--chiffre:mesure(garantie_foyer?quoi=plancher&personnes=2)-->1 600<!--/--> € : à
+<!--chiffre:illustration()-->300<!--/--> € et <!--chiffre:illustration()-->1 500<!--/--> €, le couple le dépasse et ne reçoit rien. La
+garantie regarde chacun : le premier reçoit <!--chiffre:mesure(parametre?nom=garantie_vieillesse_mensuelle)-->800<!--/--> − <!--chiffre:illustration()-->300<!--/--> =
+<!--chiffre:mesure(garantie_complement?pension=300)-->500<!--/--> €, le second rien. Les deux colonnes
+sont calculées par la règle que le moteur applique,
+`test_la_garantie_reproduit_le_tableau_de_la_proposition` rejoue la seconde
+ligne à ligne, et la page de simulation la recalcule sous les yeux du lecteur.
 
-Les montants sont fixés en euros de 2026 (`annee_euros_garantie_vieillesse`) et
+Les montants sont fixés en euros de <!--chiffre:mesure(parametre?nom=annee_euros_garantie_vieillesse)-->2026<!--/--> (`annee_euros_garantie_vieillesse`) et
 ramenés à l'année de liquidation par l'indice des prix — la convention déjà
 retenue pour l'ASPA du scénario 1 entre deux ancres de son barème. La
 situation de foyer est un paramètre (`situation_foyer`, `seul` par défaut comme
@@ -1375,28 +1384,39 @@ ne joue que sur l'allocation d'isolement.
 La garantie est servie **en dernier**, après la pension contributive, et gardée
 à part dans le résultat (`garantie_vieillesse`, avec chacune de ses étapes) :
 c'est la seule ligne des scénarios notionnels qui ne vienne pas d'une
-cotisation. Elle est **financée par l'impôt** et non par les cotisations, et la
+cotisation. Elle est **avancée par l'impôt** et non par les cotisations, et la
 page Coût la compte à part, pour que l'on voie ce que ce scénario retire aux
 cotisations et ce qu'il demande au contribuable.
 
+**La seconde chose qu'elle change : c'est une avance.** Ce qu'elle verse est une
+créance de l'État, qui porte intérêt et se reprend sur la succession dès le
+premier euro, là où l'ASPA n'est récupérée qu'au-delà d'un seuil d'actif net —
+et jamais au-delà de ce que la succession contient, les héritiers ne payant pas
+de leur poche. La page Coût la donne donc en trois lignes, brute, reprise et
+nette. Elle se demande, enfin, comme l'ASPA : le programme retient que
+<!--chiffre:mesure(parametre?nom=taux_recours_garantie)-->50<!--/--> % des ayants droit la réclament (`taux_recours_garantie`), l'hypothèse
+que la DREES mesure sur l'ASPA. La sous-section « La garantie du scénario 6,
+mesure par mesure » de `limites.md` dit comment chacune de ces grandeurs est
+établie.
+
 Une réserve, et une méthode. Le modèle liquide et s'arrête : un assuré parti à
-62 ans avec une petite pension reçoit la garantie à 65 ans, et la page de
+<!--chiffre:illustration()-->62<!--/--> ans avec une petite pension reçoit la garantie à <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, et la page de
 simulation dit l'année et le montant. Mais une allocation différentielle ne se
-chiffre pas sur treize carrières, parce que son coût est tout entier celui de
+chiffre pas sur <!--chiffre:mesure(grille?quoi=cas_types)-->13<!--/--> carrières, parce que son coût est tout entier celui de
 la queue basse de la distribution des pensions, et une grille choisie pour
 couvrir les configurations du système n'en a pas. La masse de garantie de la
 page Coût n'est donc pas tirée des cas types : le barème est appliqué, année
 par année, à la distribution que publie l'échantillon interrégimes de retraités
 de la DREES, et la grille ne sert qu'à dire de combien cette distribution
 bouge — la pension moyenne que la garantie regarde, compte notionnel et rente
-capitalisée réunis à partir de 65 ans, rapportée à la pension moyenne du
-système actuel l'année de l'enquête (`GarantieDistribution` dans `cout.py`).
-La forme de la distribution est tenue constante, le passé comme l'avenir. Sur
-le passé, la page Coût ne voit pas non plus le taux unique — aucune pension
-servie avant la bascule n'a une année cotisée à 18 % — et la courbe du
-scénario 6 y est celle du scénario 4 plus la garantie ; c'est d'ici 2070 que
-le taux se voit.
-
+capitalisée réunis à partir de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MinimumVieillesse.AGE_OUVERTURE)-->65<!--/--> ans, rapportée à la pension moyenne du
+système actuel l'année de l'enquête, un rapport par sexe, les femmes perdant
+davantage de droits non cotisés (`GarantieDistribution` dans `cout.py`,
+`rapport_deplacement_sexe` dans les paramètres). La forme de la distribution
+est tenue constante, le passé comme l'avenir. Sur le passé, la page Coût ne
+voit pas non plus le taux unique — aucune pension servie avant la bascule n'a
+une année cotisée à <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % — et la courbe du scénario 6 y est celle du
+scénario 4 plus la garantie ; c'est d'ici 2070 que le taux se voit.
 
 #### Le pilier de capitalisation obligatoire
 
@@ -1410,25 +1430,25 @@ silence à une pension de répartition. Le code le tient à part
 nom qui le dit (`pension_totale`).
 
 **Ce qui l'alimente.** DEUX cotisations, prélevées à compter de l'année de
-bascule (`annee_debut_capitalisation`, 2026) sur la **même assiette** que la
+bascule (`annee_debut_capitalisation`, <!--chiffre:mesure(parametre?nom=annee_debut_capitalisation)-->2026<!--/-->) sur la **même assiette** que la
 cotisation notionnelle de l'année, et **en plus** d'elle.
 
-La première est obligatoire : 5 % (`taux_capitalisation_obligatoire`). L'effort
-contributif monte donc de cinq points, il n'est pas redéployé — la répartition
-reçoit toujours ses 18 %, et le compte notionnel du scénario 6 est identique,
+La première est obligatoire : <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> % (`taux_capitalisation_obligatoire`). L'effort
+contributif monte donc d'autant, il n'est pas redéployé — la répartition
+reçoit toujours ses <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> %, et le compte notionnel du scénario 6 est identique,
 au centime, à ce qu'il serait sans le pilier ; un test l'exige. Le total imposé
-reste alors inférieur à celui d'aujourd'hui : 18 + 5 = 23 %, contre 28 % pour
-un salarié du privé.
+reste alors inférieur à celui d'aujourd'hui : <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> = <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal+taux_capitalisation_obligatoire)-->23<!--/--> %, contre <!--chiffre:mesure(fiche?quoi=total&exemple=salaire_moyen)-->28<!--/--> % pour
+un salarié du privé au salaire moyen.
 
-La seconde est **volontaire** : 5 % encore (`taux_capitalisation_volontaire`),
+La seconde est **volontaire** : <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> % encore (`taux_capitalisation_volontaire`),
 et c'est la seule pièce du modèle que personne n'impose. Elle remet au compte
-les cinq points que la proposition rend, de sorte que l'effort revienne à
-18 + 5 + 5 = 28 %, c'est-à-dire à ce qu'il est déjà. Ce n'est pas une
+les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> points que la proposition rend, de sorte que l'effort revienne à
+<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> = <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal+taux_capitalisation_obligatoire+taux_capitalisation_volontaire)-->28<!--/--> %, c'est-à-dire à ce qu'il est déjà. Ce n'est pas une
 prévision de comportement mais une **convention de comparaison** : sans elle,
 le site opposerait deux systèmes qui ne coûtent pas le même prix, et une partie
 de l'écart de pension se lirait comme un effet des règles alors qu'elle
 viendrait d'un effort moindre. `capitalisation_volontaire=False` la retire, et
-la proposition redevient 18 + 5 ; un test le vérifie.
+la proposition redevient <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> + <!--chiffre:mesure(parametre?nom=taux_capitalisation_obligatoire)-->5<!--/--> ; un test le vérifie.
 
 Le pilier ne distingue les deux nulle part ailleurs qu'en **proportion** : même
 assiette, même échelle de maturités, mêmes frais, même table de mortalité. Tout
@@ -1439,9 +1459,9 @@ pourcentages, l'allocation ne dépend que de l'horizon, aucun seuil n'intervient
 au calcul complet fait à taux réduit.
 
 Deux endroits les séparent, et deux seulement. Sur la **fiche de paie**, les
-cinq points volontaires n'y sont pas : la fiche de la proposition s'arrête aux
-vingt-trois points imposés, partagés avec l'employeur, et le net qu'elle
-affiche est le net plein. Le placement des cinq points rendus est chiffré
+<!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> points volontaires n'y sont pas : la fiche de la proposition s'arrête aux
+<!--chiffre:mesure(fiche?quoi=total&exemple=salaire_moyen&systeme=proposition)-->23<!--/--> points imposés, partagés avec l'employeur, et le net qu'elle
+affiche est le net plein. Le placement des <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> points rendus est chiffré
 sous ce net, sur la même assiette que le pilier, et porté en entier par
 l'assuré — personne ne cofinance une épargne qu'on décide seul —, si bien
 qu'activer la cotisation volontaire ne change ni le coût du travail, ni le
@@ -1464,7 +1484,7 @@ notionnel a retenues, et rien d'autre.
 et choisis pour tomber l'année du départ. La courbe retenue est la structure par terme des souverains **AAA de la zone
 euro**, estimée et publiée chaque jour ouvré par la BCE
 (`data/reference/macro/courbe_taux_sans_risque.csv`, jeu `YC`, modèle de
-Svensson, composition continue). L'OAT française rend davantage — 51 points de
+Svensson, composition continue). L'OAT française rend davantage — <!--chiffre:illustration()-->51<!--/--> points de
 base au dix ans le 17 septembre 2026 — mais cet écart rémunère un risque de
 crédit, qu'un régime obligatoire promettant une rente ne peut pas compter comme
 un rendement acquis. Le choix est donc **prudent**, et il réduit la rente
@@ -1487,7 +1507,7 @@ Ce qu'elle suppose doit être dit : prendre le forward pour le taux futur est
 l'**hypothèse des anticipations pures**, qui néglige la prime de terme. Quand
 la courbe monte, le forward excède le taux futur moyen attendu, et le pilier
 s'en trouve légèrement flatté. Au-delà de la dernière maturité publiée
-(trente ans), le taux zéro-coupon est prolongé à plat, et tout placement qui
+(<!--chiffre:mesure(constante?de=retraite_notionnelle.moteur.capitalisation&nom=MATURITE_MAXIMALE)-->30<!--/--> ans), le taux zéro-coupon est prolongé à plat, et tout placement qui
 en dépend est déclaré `estimee`.
 
 Elle a un second effet, moins visible et décisif pour ce qui suit : sous les
@@ -1498,7 +1518,7 @@ précisément ce que l'arbitrage impose au forward. Les frais n'y changent rien 
 un prélèvement annuel de `g` multiplie une ligne par `(1 − g)` autant de fois
 qu'elle passe d'années dans l'enveloppe, et ce nombre-là ne dépend pas non plus
 du découpage. Un test l'exige sur quatre règles d'allocation que tout sépare,
-et il conclut **à 0,01 € près sur une carrière de trente-six ans**.
+et il conclut **à <!--chiffre:tenu(test_sous_les_anticipations_pures_l_echelle_est_sans_effet)-->0,01<!--/--> € près, sur <!--chiffre:mesure(allocation?quoi=annees)-->31<!--/--> ans de versements**.
 
 `Parametres.prime_terme_trente_ans` ouvre cette porte, et c'est le seul réglage
 sous lequel l'allocation pèse. Il décompose le taux observé en `z(T) = z*(T) +
@@ -1516,11 +1536,11 @@ dans l'adresse et s'applique au simulateur comme aux pages qui agrègent, à cô
 de celui des frais : `Parametres.sous_regime_taux` définit une fois les trois
 régimes, et le portage les applique sans les redéfinir.
 
-| Réglage | Prime à 30 ans | Ce qu'il dit |
+| Réglage | Prime à <!--chiffre:mesure(constante?de=retraite_notionnelle.donnees.taux&nom=MATURITE_PRIME)-->30<!--/--> ans | Ce qu'il dit |
 |---|---:|---|
 | `forwards` (défaut) | 0 | Les taux à terme de la courbe, tels qu'elle les implique |
-| `prime` | 0,50 pt | La prime retirée, au milieu de la fourchette |
-| `prime_haute` | 1 pt | La prime retirée, au haut de la fourchette |
+| `prime` | <!--chiffre:mesure(constante?de=retraite_notionnelle.config&nom=PRIME_TERME_MILIEU&echelle=100)-->0,50<!--/--> pt | La prime retirée, au milieu de la fourchette |
+| `prime_haute` | <!--chiffre:mesure(constante?de=retraite_notionnelle.config&nom=PRIME_TERME_HAUTE&echelle=100)-->1<!--/--> pt | La prime retirée, au haut de la fourchette |
 
 Il ne traverse que la courbe du PILIER (`Simulateur.courbe_taux_pilier`). Celle
 que lit le taux d'emprunt de la dette du chiffrage reste la courbe publiée,
@@ -1552,12 +1572,12 @@ trente ans.
 
 | Années avant le départ | Maturité achetée |
 |---:|---|
-| 40 | 30 ans, puis 10 ans à l'échéance |
-| 30 | 30 ans, qui tombe l'année du départ |
-| 20 | 20 ans, qui tombe l'année du départ |
-| 10 | 10 ans, qui tombe l'année du départ |
-| 5 | 5 ans, qui tombe l'année du départ |
-| 2 | 2 ans, qui tombe l'année du départ |
+| 40 | le bout de courbe, <!--chiffre:mesure(constante?de=retraite_notionnelle.moteur.capitalisation&nom=MATURITE_MAXIMALE)-->30<!--/--> ans, puis ce qui reste à l'échéance |
+| <!--chiffre:mesure(constante?de=retraite_notionnelle.moteur.capitalisation&nom=MATURITE_MAXIMALE)-->30<!--/--> | <!--chiffre:mesure(constante?de=retraite_notionnelle.moteur.capitalisation&nom=MATURITE_MAXIMALE)-->30<!--/--> ans, qui tombe l'année du départ |
+| 20 | <!--chiffre:illustration()-->20<!--/--> ans, qui tombe l'année du départ |
+| 10 | <!--chiffre:illustration()-->10<!--/--> ans, qui tombe l'année du départ |
+| 5 | <!--chiffre:illustration()-->5<!--/--> ans, qui tombe l'année du départ |
+| 2 | <!--chiffre:illustration()-->2<!--/--> ans, qui tombe l'année du départ |
 
 **Ce que cette règle a remplacé, et pourquoi.** Jusqu'en septembre 2026, le
 pilier pratiquait une échelle de trois maturités — 2, 10 et 30 ans — glissant du
@@ -1583,10 +1603,11 @@ couvre l'horizon, et à un seul replacement au-delà de trente ans.
 
 Les deux raisons pointent dans le même sens, et la prime de terme donne le
 chiffre : à `prime_terme_trente_ans = 0,005` — le milieu de la fourchette que la
-littérature retient, voir `docs/limites.md` —, sur une carrière de trente-six
-ans partant en 2060, l'adossement rend **1,6 % de capital de plus** que
-l'échelle glissante — 7 € de rente mensuelle — et **6,2 % de plus** qu'un
-roulement à un an. C'est ce que l'allocation vaut, et elle ne vaut que cela :
+littérature retient, voir `docs/limites.md` —, sur la carrière de ce test,
+<!--chiffre:mesure(allocation?quoi=annees)-->31<!--/--> ans de versements jusqu'à un départ en 2060, l'adossement rend
+**<!--chiffre:mesure(allocation?contre=echelle)-->1,6<!--/--> % de capital de plus** que l'échelle glissante —
+<!--chiffre:mesure(allocation?contre=echelle&quoi=rente)-->7<!--/--> € de rente mensuelle — et
+**<!--chiffre:mesure(allocation?contre=roule)-->6,2<!--/--> % de plus** qu'un roulement à un an. C'est ce que l'allocation vaut, et elle ne vaut que cela :
 sans prime de terme, les trois règles donnent le même euro.
 
 **La convention de date, et pourquoi c'est celle du compte notionnel.** Le
@@ -1606,33 +1627,33 @@ K = Σ_a  V_a (1 − f_versement) × [(1 + r)(1 − f_gestion)]^(L − a)
 PER individuel en 2025, mesurées par l'Observatoire des produits d'épargne
 financière (CCSF, Banque de France) sur les remises de l'ACPR, support en
 euros, lues sur le rapport lui-même et confrontées par
-`scripts/fetch/opef_frais_per.py` : 1,09 % sur chaque versement et 0,76 % par
-an sur l'encours, moyennes pondérées par les primes et par l'encours ; 0,99 %
+`scripts/fetch/opef_frais_per.py` : <!--chiffre:mesure(parametre?nom=frais_versement_capitalisation)-->1,09<!--/--> % sur chaque versement et <!--chiffre:mesure(parametre?nom=frais_gestion_capitalisation)-->0,76<!--/--> % par
+an sur l'encours, moyennes pondérées par les primes et par l'encours ; <!--chiffre:mesure(parametre?nom=frais_arrerages_capitalisation)-->0,99<!--/--> %
 sur chaque arrérage de rente, moyenne sur tous les assureurs déclarants et non
-sur les seuls neuf sur vingt qui facturent (2,20 %, médiane nulle) ; et
-0,52 % par an sur la réserve qui porte la rente, un frais que l'OPEF ne mesure
-pas et que le rapport du CCSF de 2021 relevait sur 22 contrats sur 34, de
-0,60 à 1 % par an (`data/reference/macro/frais_epargne_retraite.yaml`).
+sur les seuls neuf sur vingt qui facturent (<!--chiffre:valeur(data/reference/macro/frais_epargne_retraite.yaml:frais.arrerages.valeur*100)-->2,20<!--/--> %, médiane nulle) ; et
+<!--chiffre:mesure(parametre?nom=frais_encours_rente_capitalisation)-->0,52<!--/--> % par an sur la réserve qui porte la rente, un frais que l'OPEF ne mesure
+pas et que le rapport du CCSF de 2021 relevait sur <!--chiffre:valeur(data/reference/macro/frais_epargne_retraite.yaml:distributions.encours_de_rentes_non_modelise.ccsf_2021_contrats_facturant)-->22<!--/--> contrats sur <!--chiffre:valeur(data/reference/macro/frais_epargne_retraite.yaml:distributions.encours_de_rentes_non_modelise.ccsf_2021_contrats_panel)-->34<!--/-->, de
+<!--chiffre:valeur(data/reference/macro/frais_epargne_retraite.yaml:distributions.encours_de_rentes_non_modelise.minimum_annuel*100)-->0,60<!--/--> à <!--chiffre:valeur(data/reference/macro/frais_epargne_retraite.yaml:distributions.encours_de_rentes_non_modelise.maximum_annuel*100)-->1<!--/--> % par an (`data/reference/macro/frais_epargne_retraite.yaml`).
 
 **Ils baissent, par paliers, et d'abord sur les nouveaux dépôts.** Partout où
 une épargne retraite obligatoire existe, les frais sont tombés bien au-dessous
-de ceux d'un produit vendu au détail, et par à-coups : plafond de 0,75 % au
-Royaume-Uni en 2015 (0,48 % constatés en 2020), appel d'offres tous les deux
-ans au Chili (la commission du gagnant passe de 1,14 % à 0,77 %, 0,47 %,
-0,41 %, remonte à 0,69 % en 2018, puis 0,46 % en 2025), remise imposée aux
-gérants en Suède (0,31 % net en 2013, 0,11 % en 2026). Là où seule la
-concurrence joue, la baisse est continue : 1,04 % à 0,40 % pour les fonds
-actions américains en vingt-neuf ans, soit 3,3 % par an. Chaque poste a donc
+de ceux d'un produit vendu au détail, et par à-coups : plafond de <!--chiffre:illustration()-->0,75<!--/--> % au
+Royaume-Uni en 2015 (<!--chiffre:illustration()-->0,48<!--/--> % constatés en 2020), appel d'offres tous les deux
+ans au Chili (la commission du gagnant passe de <!--chiffre:illustration()-->1,14<!--/--> % à <!--chiffre:illustration()-->0,77<!--/--> %, <!--chiffre:illustration()-->0,47<!--/--> %,
+<!--chiffre:illustration()-->0,41<!--/--> %, remonte à <!--chiffre:illustration()-->0,69<!--/--> % en 2018, puis <!--chiffre:illustration()-->0,46<!--/--> % en 2025), remise imposée aux
+gérants en Suède (<!--chiffre:illustration()-->0,31<!--/--> % net en 2013, <!--chiffre:illustration()-->0,11<!--/--> % en 2026). Là où seule la
+concurrence joue, la baisse est continue : <!--chiffre:illustration()-->1,04<!--/--> % à <!--chiffre:illustration()-->0,40<!--/--> % pour les fonds
+actions américains en vingt-neuf ans, soit <!--chiffre:illustration()-->3,3<!--/--> % par an. Chaque poste a donc
 ses paliers `(année, taux)` dans `Parametres` : le frais de gestion suit le
 rythme américain par marches de dix ans jusqu'au plancher de l'ERAFP
-(0,20 %), le frais sur versement rejoint l'assurance-vie, le contrat de
+(<!--chiffre:mesure(parametre?nom=frais_gestion_paliers.3.1)-->0,20<!--/--> %), le frais sur versement rejoint l'assurance-vie, le contrat de
 capitalisation puis zéro, le frais sur arrérages s'éteint en vingt ans. Un
 frais de gestion étant contractuel, chaque versement entre au tarif de son
 année et le garde : les lignes de l'échelle portent le tarif de leur cohorte,
-et ne referment chaque année qu'une fraction `convergence_frais_stock` (0,10)
+et ne referment chaque année qu'une fraction `convergence_frais_stock` (<!--chiffre:mesure(parametre?nom=convergence_frais_stock)-->0,10<!--/-->)
 de leur écart avec le tarif des nouveaux dépôts. L'OPEF montre le mécanisme :
-en deux ans, le frais sur versement, mesuré sur les primes de l'année, a
-baissé de 1,20 % à 1,09 %, quand le frais de gestion, mesuré sur tout
+de 2023 à 2025, le frais sur versement, mesuré sur les primes de l'année, a
+baissé de <!--chiffre:illustration()-->1,20<!--/--> % à <!--chiffre:illustration()-->1,09<!--/--> %, quand le frais de gestion, mesuré sur tout
 l'encours, n'a pas bougé. Le simulateur affiche le coût complet des frais, qui
 dépasse les frais prélevés, parce que ce qui est prélevé ne produit plus
 d'intérêts ; `docs/limites.md` §5 ante donne les sources de chaque palier et
@@ -1663,8 +1684,8 @@ technique nul, revient à actualiser au taux `−f_réserve` : le facteur du
 milieu est le rapport de l'ancien diviseur au nouveau, sur la courbe de survie
 du modèle à la liquidation, et il vaut exactement 1 sans frais. Il est appliqué
 au diviseur plutôt que substitué à lui, pour que la rente reste comparable au
-centime à la pension notionnelle. Au diviseur du modèle, 0,52 % par an valent
-8 % de rente.
+centime à la pension notionnelle. Au diviseur du modèle, pour un départ à
+<!--chiffre:illustration()-->64<!--/--> ans en 2040, <!--chiffre:mesure(parametre?nom=frais_encours_rente_capitalisation)-->0,52<!--/--> % par an valent <!--chiffre:mesure(frais_reserve?age=64&annee=2040)-->8<!--/--> % de rente.
 
 `G` est le diviseur du modèle, sur la même table de génération, unisexe et
 au vingtile de niveau de vie de la carrière par défaut, avec un taux technique nul
@@ -1716,7 +1737,7 @@ de retraite, rente capitalisée comprise. La question — un pilier capitalisé
 doit-il réduire une allocation différentielle ? — est une question de droit,
 pas de modèle, et le programme l'a tranchée : une allocation différentielle
 compte les ressources et non leur origine, comme l'ASPA d'aujourd'hui compte
-une pension personnelle. Les cinq points **volontaires** y entrent comme les
+une pension personnelle. Les <!--chiffre:mesure(parametre?nom=taux_capitalisation_volontaire)-->5<!--/--> points **volontaires** y entrent comme les
 autres, et la conséquence est rude : pour qui reste sous le plancher après
 avoir versé, ils ne rapportent **rien** en pension, la garantie les reprenant
 euro pour euro. Il leur reste ce que la répartition ne donne à personne, un
@@ -1829,8 +1850,8 @@ le seul à les consolider, si bien que ces valeurs entrent au niveau `haute`.
 
 **On lui prend les DEUX colonnes**, et non les seules ressources. Son périmètre
 — régimes légalement obligatoires, FSV compris, RAFP exclu — n'est pas celui de
-la dépense affichée plus haut : 13,86 % du PIB en 2024 contre 13,59 % pour la
-répartition obligatoire de la DREES et 14,54 % pour le risque vieillesse-survie
+la dépense affichée plus haut : <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,86<!--/--> % du PIB en 2024 contre <!--chiffre:mesure(depense?annee=2024&quoi=part_pib_repartition)-->13,59<!--/--> % pour la
+répartition obligatoire de la DREES et <!--chiffre:mesure(depense?annee=2024&quoi=part_pib)-->14,54<!--/--> % pour le risque vieillesse-survie
 entier. Soustraire l'une de l'autre fabriquerait un solde de deux périmètres ;
 en gardant la dépense du COR au dénominateur, le solde du scénario 1 redonne
 exactement celui qu'il publie, et le voisinage des deux séries devient un
@@ -1839,14 +1860,21 @@ que le RAPPORT des masses, qui est sans dimension et passe donc d'un périmètre
 à l'autre sans rien supposer.
 
 **La recette suit le droit.** Une part des ressources du système actuel paie
-des droits qu'aucun scénario notionnel ne sert : ce que la branche famille
-verse pour l'assurance vieillesse des parents au foyer et les majorations pour
-enfants, ce que l'assurance chômage verse pour les points des chômeurs — un
-demi-point de PIB, 3,7 % des ressources en 2024, lus chez celui qui paie dans
-les rapports à la Commission des comptes de la Sécurité sociale. Les scénarios
-2 à 6 se la voient retirer, année par année de 2013 à 2024, à part constante
-des ressources avant et sur tout l'horizon projeté. Le système actuel encaisse
-tout, et son solde reste celui du COR.
+des droits qu'aucun scénario notionnel ne sert, et trois payeurs la versent. La
+branche famille paie l'assurance vieillesse des parents au foyer et les
+majorations pour enfants, l'assurance chômage les points des chômeurs :
+ensemble <!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=famille|chomage)-->0,5<!--/--> point de PIB,
+<!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=famille|chomage&sur=ressources)-->3,7<!--/--> % des ressources en 2024, lus chez celui qui paie dans les
+rapports à la Commission des comptes de la Sécurité sociale. Le fonds de
+solidarité vieillesse, dont la CNAV reprend les missions au 1er janvier 2026,
+finance par la CSG des trimestres pour des périodes non travaillées et le
+minimum vieillesse : <!--chiffre:mesure(recette?annee=2024&quoi=retrait&payeurs=solidarite)-->0,7<!--/--> point de plus, qui arrive
+par l'impôt et sort donc de la ligne des impôts affectés, non de celle des
+transferts. Les scénarios 2 à 6 se voient retirer les trois,
+<!--chiffre:mesure(recette?annee=2024&quoi=retrait&sur=ressources)-->8,5<!--/--> % des ressources en 2024, année par année de 2013 à 2024 — la
+fenêtre où toutes les séries sont publiées —, à part constante des ressources
+avant et sur tout l'horizon projeté. Le système actuel encaisse tout, et son
+solde reste celui du COR.
 
 **Et ce que la proposition n'encaisse plus, elle ne le garde pas.** Le
 scénario 6 ne reconduit ni la contribution d'équilibre de l'État, ni les
@@ -1859,14 +1887,15 @@ partage : **la moitié est rendue aux salaires, la moitié éteint de la dette**
 
 Ce qui est rendu l'est dans l'ordre que le droit impose. Deux impôts du poste
 seulement sortent d'une rémunération : la **taxe sur les salaires**, dont
-l'article L. 131-8, 1° du code de la sécurité sociale verse 58,35 % à la
-branche vieillesse, et le **forfait social**, que l'article L. 241-3, 1° lui
-donne en entier — ensemble 28 % du poste, une part stable depuis 2019. Ils sont
+l'article L. 131-8, 1° du code de la sécurité sociale verse <!--chiffre:illustration()-->58,35<!--/--> % à la
+branche vieillesse dans sa version en vigueur au 1er février 2026, et le
+**forfait social**, que l'article L. 241-3, 1° lui donne en entier — ensemble
+<!--chiffre:mesure(restitution?quoi=part_du_poste&annee=2024)-->28<!--/--> % du poste en 2024, entre <!--chiffre:mesure(restitution?quoi=part_du_poste&annee=2019)-->27<!--/--> % en 2019 et <!--chiffre:mesure(restitution?quoi=part_du_poste&annee=2020)-->29<!--/--> % en 2020. Ils sont
 supprimés. Le solde revient par une baisse de la CSG sur les revenus
-d'activité, un peu plus d'un point.
+d'activité, de <!--chiffre:mesure(restitution?quoi=points_csg&annee=2026)-->1,1<!--/--> point en 2026.
 
 Et il faut dire ce que cette baisse n'est pas. **La CSG sur les revenus
-d'activité ne finance aujourd'hui aucune retraite** : ses 9,20 points vont à la
+d'activité ne finance aujourd'hui aucune retraite** : ses <!--chiffre:illustration()-->9,20<!--/--> points vont à la
 CNAF (0,95), aux régimes obligatoires d'assurance maladie (4,25), à la CADES
 (0,45), à l'Unédic (1,47) et à la CNSA (2,08), soit 9,20 exactement, article
 L. 131-8, 3°, version en vigueur au 1er février 2026. Ce que la branche
@@ -1877,9 +1906,9 @@ recette que la retraite abandonne — pas une restitution.
 La contribution d'équilibre d'un employeur public suit la même règle, et c'est
 `Incidence.PARTAGEE` dans `remuneration.py` : la moitié de ce qu'il cesse de
 verser remonte dans le traitement, l'autre moitié paie la dette de pensions
-déjà promises. Ni l'incidence intégrale, qui prêterait à l'agent les
-soixante-dix points comme s'ils avaient été son salaire différé ; ni l'assiette
-fixe, qui ne lui en rendrait aucun.
+déjà promises. Ni l'incidence intégrale, qui prêterait à un fonctionnaire de
+l'État les <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> points que son employeur verse en 2026 comme s'ils avaient
+été son salaire différé ; ni l'assiette fixe, qui ne lui en rendrait aucun.
 
 **Rien de tout cela ne déplace un solde du système de retraite** : ces recettes
 en étaient déjà sorties. Ce que le partage déplace est la fiche de paie, et le
@@ -1890,7 +1919,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les 1,87 du scénario 3 en 2070 comme une économie de 46 % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,67<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->40<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.
