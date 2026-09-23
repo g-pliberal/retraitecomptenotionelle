@@ -323,6 +323,8 @@ champs_periode:
       quatre premiers trimestres puis 1 %, et 1,25 % après soixante-cinq ans ;
       1,25 % depuis 2009 (D. 351-1-4). `fonction_publique` : 0,75 % dans la
       limite de vingt trimestres jusqu'en 2008, 1,25 % depuis (L. 14 III).
+      `cnbf` : 0,75 % pour les trimestres accomplis du 1er janvier 2004 au 30
+      juin 2010, 1,25 % depuis le 1er juillet 2010 (R. 653-3).
       Les trimestres se comptent par trimestres civils depuis celui qui suit
       l'âge légal, ou le mois qui suit la durée requise ;
       `legislation/surcote_baremes.csv` porte les taux. `null` : le taux plat

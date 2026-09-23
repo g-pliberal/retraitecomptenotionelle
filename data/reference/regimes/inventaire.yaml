@@ -1754,10 +1754,15 @@ inventaire:
     textes:
       - {reference: "loi n° 48-1490 du 31 décembre 1948", id: null}
       - {reference: "code de la sécurité sociale, L. 723-1 (rédaction de 1985)", id: LEGIARTI000006744085}
+      - {reference: "code de la sécurité sociale, R. 653-3 (surcote à 0,75 % puis 1,25 % depuis le 1er juillet 2010)", id: LEGIARTI000047985846}
+      - {reference: "code de la sécurité sociale, L. 653-3 (majoration pour trois enfants depuis 2023)", id: LEGIARTI000047453367}
     manque: >-
       La progression de la cotisation forfaitaire sur les cinq premières années
       et la contribution équivalente aux droits de plaidoirie ne sont pas
-      portées.
+      portées ; la retraite forfaitaire et la cotisation de croisière sont
+      ramenées de 2026 par les prix, quand les barèmes de 2017 à 2026 en
+      donnent la série ; ni la majoration de durée d'assurance pour enfants
+      ni la surcote parentale.
 
   - code: cnbf_complementaire
     nom: Complémentaire des avocats (CNBF)

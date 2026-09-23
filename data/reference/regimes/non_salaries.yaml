@@ -1191,7 +1191,7 @@ regimes:
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         surcote_points: regime_general
-        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        avantages_non_contributifs: [minimum_vieillesse, reversion, majoration_enfants]
         notes: >-
           De 2015 à 2024 : première tranche de 0 à 1 plafond, 525 points au
           maximum. Chaque section professionnelle gère en outre un régime
@@ -1205,6 +1205,14 @@ regimes:
           pleine ; les trimestres d'avant septembre 2023 y sont donc servis
           à 1,25 % au lieu de 0,75 %, même approximation que la fiche du
           régime général en 2009.
+          TROIS ENFANTS, DEPUIS 2023. L. 643-1-1, créé par l'article 21 de la
+          loi n° 2023-270, étend aux professions libérales L. 351-12, la
+          majoration de 10 % pour trois enfants, pour les pensions prenant
+          effet depuis le 1er septembre 2023 : `majoration_enfants` sur les
+          périodes de 2024 et après, à l'année près. La majoration de durée
+          d'assurance que le même article ouvre (L. 351-4 à L. 351-4-2) n'est
+          pas portée. Lu le 23 septembre 2026 (LEGIARTI000047453363) ; la CAVOM
+          l'écrit dans sa formule de la pension.
       - debut: 2025
         fin: null
         type_calcul: points
@@ -1223,7 +1231,7 @@ regimes:
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         surcote_points: regime_general
-        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        avantages_non_contributifs: [minimum_vieillesse, reversion, majoration_enfants]
         notes: >-
           LE TAUX DE T1 PASSE À 8,73 % EN 2025, et le barème en points suit :
           557 points au plafond au lieu de 525, soit exactement le rapport des
@@ -1310,7 +1318,7 @@ regimes:
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0125
         surcote_points: regime_general
-        avantages_non_contributifs: [minimum_vieillesse, reversion]
+        avantages_non_contributifs: [minimum_vieillesse, reversion, majoration_enfants]
         notes: >-
           Seconde tranche depuis 2015 : 0 à 5 plafonds, 25 points au maximum.
           Elle part de zéro et recouvre donc la première — c'est bien la règle
@@ -6823,7 +6831,7 @@ regimes:
           suppose que le forfait les a suivis, ce qui est vrai depuis les années
           2000 mais l'est moins avant.
       - debut: 2004
-        fin: null
+        fin: 2023
         type_calcul: forfaitaire
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -6841,6 +6849,7 @@ regimes:
         pension_forfaitaire_annee: 2026
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: 0.0075
+        surcote_bareme: cnbf
         avantages_non_contributifs: [reversion]
         notes: >-
           RÉGIME DE BASE SEUL, depuis que la fiche a été scindée. Sa pension est
@@ -6875,10 +6884,58 @@ regimes:
           `cotisation_forfaitaire_euros`, indexé sur les prix comme la pension
           forfaitaire.
           RESTE DEHORS la contribution équivalente aux droits de plaidoirie,
-          68 € par avocat en 2026 plus 163 € appelés auprès du barreau, et les
-          tranches d'ancienneté d'avant 2019, que les barèmes en ligne ne
-          couvrent pas.
+          que l'avocat dont la plaidoirie n'est pas l'activité principale doit
+          sur son revenu, dans la limite de 297 549 € en 2026 ; le barème donne
+          la valeur d'un droit, 13 €, et sa « valeur en revenu », 574 €. Les 68 € et
+          163 € que cette note lui attribuait sont la cotisation
+          d'INVALIDITÉ-DÉCÈS, appelée auprès de l'avocat et du barreau : le
+          barème de 2026, relu le 23 septembre 2026, les range sous ce régime.
+          LA SURCOTE A DEUX TAUX. « 0,75 % par trimestre accompli à compter du
+          1er janvier 2004 et avant le 1er juillet 2010 et [...] 1,25 % par
+          trimestre accompli à compter du 1er juillet 2010 » (R. 653-3, qui
+          reprend en 2019 l'ancien R. 723-39 ; le barème de la caisse
+          l'imprime chaque année) : `surcote_bareme: cnbf` compte chaque
+          trimestre au taux de sa date. La fiche servait 0,75 % à tous.
+          LE FORFAIT N'A PAS SUIVI LES PRIX. Les barèmes publiés de 2017 à
+          2026 donnent la retraite de base à taux plein année par année :
+          16 664 € en 2017, 17 169 € en 2020, 18 299 € en 2023, 18 964 € en
+          2025, 19 154 € en 2026 ; la cotisation forfaitaire de croisière de
+          1 525 € à 1 988 €. Ramenés de 2026 par les prix, comme la fiche le
+          fait, ils sont sous-estimés d'environ 5 % pour une liquidation de
+          2017 à 2020, et la cotisation surestimée d'environ 8 % : la série
+          reste à porter.
 
+      - debut: 2024
+        fin: null
+        type_calcul: forfaitaire
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: sans_objet
+        assiette: deplafonnee
+        taux_cotisation_retraite: 0.0320
+        cotisation_forfaitaire_euros: 1988
+        cotisation_forfaitaire_annee: 2026
+        pension_forfaitaire_annuelle: 19154
+        pension_forfaitaire_annee: 2026
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: 0.0075
+        surcote_bareme: cnbf
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: >-
+          Même régime que la période précédente, dont la note dit tout ; une
+          seule différence, pour les pensions prenant effet depuis le 1er
+          septembre 2023 : L. 653-3, créé par l'article 21 de la loi
+          n° 2023-270, étend aux avocats L. 351-12, la majoration de 10 % pour
+          trois enfants (`majoration_enfants`). La fiche la date de 2024, à
+          l'année près, comme la surcote de la CNAVPL de la même loi ; la caisse
+          écrit « au 1er octobre 2023 ou postérieure pour le régime de base ».
+          La majoration de durée d'assurance que le même article ouvre
+          (L. 351-4 à L. 351-4-2) n'est pas portée.
   - code: cnbf_complementaire
     nom: Régime complémentaire obligatoire des avocats (CNBF)
     famille: liberal
@@ -6917,7 +6974,7 @@ regimes:
           progressivité par tranches n'est donc pas reproduite ici.
 
       - debut: 2019
-        fin: null
+        fin: 2023
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -6951,8 +7008,32 @@ regimes:
           option, et le modèle ne prête jamais à personne un avantage
           facultatif — même règle que pour les minima sous condition de demande.
 
-      - debut: 2019
+      - debut: 2024
         fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        borne_basse_euros: 0
+        borne_haute_euros: 42507
+        taux_cotisation_retraite: 0.0700
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: >-
+          La même tranche depuis 2024, avec la majoration de 10 % pour trois
+          enfants que l'article 16-1 du règlement du régime complémentaire,
+          approuvé par l'arrêté du 11 décembre 2023 (JORFARTI000048567124),
+          attribue « dans les mêmes conditions que celles prévues aux articles
+          L. 653-3 et L. 351-12 » pour le régime de base.
+      - debut: 2019
+        fin: 2023
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -6971,8 +7052,34 @@ regimes:
         avantages_non_contributifs: [reversion]
         notes: Deuxième tranche de la grille, classe C1 (barème 2026).
 
-      - debut: 2019
+      - debut: 2024
         fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        borne_basse_euros: 42507
+        borne_haute_euros: 85014
+        taux_cotisation_retraite: 0.1040
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: Deuxième tranche de la grille, classe C1 (barème 2026).
+
+        notes: >-
+          La même tranche depuis 2024, avec la majoration de 10 % pour trois
+          enfants que l'article 16-1 du règlement du régime complémentaire,
+          approuvé par l'arrêté du 11 décembre 2023 (JORFARTI000048567124),
+          attribue « dans les mêmes conditions que celles prévues aux articles
+          L. 653-3 et L. 351-12 » pour le régime de base.
+      - debut: 2019
+        fin: 2023
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -6991,8 +7098,34 @@ regimes:
         avantages_non_contributifs: [reversion]
         notes: Troisième tranche de la grille, classe C1 (barème 2026).
 
-      - debut: 2019
+      - debut: 2024
         fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        borne_basse_euros: 85014
+        borne_haute_euros: 127521
+        taux_cotisation_retraite: 0.1220
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: Troisième tranche de la grille, classe C1 (barème 2026).
+
+        notes: >-
+          La même tranche depuis 2024, avec la majoration de 10 % pour trois
+          enfants que l'article 16-1 du règlement du régime complémentaire,
+          approuvé par l'arrêté du 11 décembre 2023 (JORFARTI000048567124),
+          attribue « dans les mêmes conditions que celles prévues aux articles
+          L. 653-3 et L. 351-12 » pour le régime de base.
+      - debut: 2019
+        fin: 2023
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -7011,8 +7144,34 @@ regimes:
         avantages_non_contributifs: [reversion]
         notes: Quatrième tranche de la grille, classe C1 (barème 2026).
 
-      - debut: 2019
+      - debut: 2024
         fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        borne_basse_euros: 127521
+        borne_haute_euros: 170028
+        taux_cotisation_retraite: 0.1400
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: Quatrième tranche de la grille, classe C1 (barème 2026).
+
+        notes: >-
+          La même tranche depuis 2024, avec la majoration de 10 % pour trois
+          enfants que l'article 16-1 du règlement du régime complémentaire,
+          approuvé par l'arrêté du 11 décembre 2023 (JORFARTI000048567124),
+          attribue « dans les mêmes conditions que celles prévues aux articles
+          L. 653-3 et L. 351-12 » pour le régime de base.
+      - debut: 2019
+        fin: 2023
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -7034,6 +7193,30 @@ regimes:
           Au-delà de 212 535 €, la cotisation ne progresse plus : le revenu
           excédentaire n'ouvre aucun droit complémentaire.
 
+      - debut: 2024
+        fin: null
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: deplafonnee
+        borne_basse_euros: 170028
+        borne_haute_euros: 212535
+        taux_cotisation_retraite: 0.1580
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: >-
+          La même tranche depuis 2024, avec la majoration de 10 % pour trois
+          enfants que l'article 16-1 du règlement du régime complémentaire,
+          approuvé par l'arrêté du 11 décembre 2023 (JORFARTI000048567124),
+          attribue « dans les mêmes conditions que celles prévues aux articles
+          L. 653-3 et L. 351-12 » pour le régime de base.
   - code: msa_salaries
     nom: Régime des salariés agricoles (MSA)
     famille: agricole

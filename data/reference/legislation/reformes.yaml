@@ -387,6 +387,14 @@ reformes:
     absorbee_par: []
     non_appliquee: {}
 
+  - code: cnbf_surcote_2010
+    date: 2010-07-01
+    texte: {reference: "article R. 723-39 du code de la sécurité sociale, version du 2 juillet 2010 (1,25 % par trimestre accompli à compter du 1er juillet 2010), repris par R. 653-3 en 2019", id: LEGIARTI000022417476}
+    parametres: [surcote_par_trimestre]
+    regimes: [cnbf]
+    absorbee_par: [surcote_bareme]
+    non_appliquee: {}
+
   - code: cavom_ages_2025
     date: 2025-01-01
     texte: {reference: "arrêté du 12 décembre 2024 portant approbation des modifications apportées aux statuts de la CAVOM (article 14 : ouverture portée de 62 à 64 ans des générations 1965 à 1968, âges des générations antérieures, coefficient d'anticipation de 5 % par année), repris par le règlement approuvé le 10 juillet 2026", id: JORFTEXT000050823047}
@@ -843,6 +851,22 @@ reformes:
     texte: {reference: "code de la sécurité sociale, R. 643-8 dans sa rédaction du décret n° 2023-799 du 21 août 2023 : 1,25 % par trimestre accompli à compter du 1er septembre 2023", id: LEGIARTI000047985850}
     parametres: [surcote_par_trimestre]
     regimes: [cnavpl]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: majoration_enfants_liberaux_2023
+    date: 2023-09-01
+    texte: {reference: "loi n° 2023-270 du 14 avril 2023, article 21 : L. 643-1-1 (professions libérales) et L. 653-3 (avocats) du code de la sécurité sociale, qui leur étendent L. 351-4 à L. 351-4-2 et L. 351-12 pour les pensions prenant effet à compter du 1er septembre 2023", id: LEGIARTI000047453363}
+    parametres: [avantages_non_contributifs]
+    regimes: [cnavpl, cnbf]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cnbf_complementaire_enfants_2024
+    date: 2024-01-01
+    texte: {reference: "arrêté du 11 décembre 2023 portant approbation des modifications apportées au règlement du régime de retraite complémentaire de la CNBF (article 16-1 : majoration de 10 % pour trois enfants)", id: JORFTEXT000048567119}
+    parametres: [avantages_non_contributifs]
+    regimes: [cnbf_complementaire]
     absorbee_par: []
     non_appliquee: {}
 
