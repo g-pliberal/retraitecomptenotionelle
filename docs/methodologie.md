@@ -2176,8 +2176,11 @@ au multiple de 50 centimes immédiatement supérieur (circulaire Cnav 21/71 du
 
 Le modèle ne fait donc **aucun arrondi monétaire**, dans aucun des cinq
 scénarios, et c'est la lecture conforme au droit pour le scénario 1 comme pour
-les autres. Le site affiche les cinq pensions **au centime**, pour la même
-raison : l'euro rond laissait croire à un arrondi que la caisse ne fait pas.
+les autres. Le site affiche les pensions **au centime** là où l'on refait le
+calcul, pour la même raison : l'euro rond laissait croire à un arrondi que la
+caisse ne fait pas. La vue des résultats, elle — les quatre barres, et ce que le
+salaire devient —, les arrondit à l'euro, comme le résumé qui la précède : le
+lecteur y lisait deux écritures du même nombre. Sa clé de lecture le dit.
 
 Trois arrondis subsistent en droit, et voici ce que le modèle en fait :
 

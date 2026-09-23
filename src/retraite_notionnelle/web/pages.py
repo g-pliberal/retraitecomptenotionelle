@@ -4741,10 +4741,11 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
     # enseigne l'erreur à qui prend la peine de la lire.
     if saisie.en_net:
         prelevements = (
-            "Montants <strong>nets</strong> et au centime, tels qu'ils "
+            "Montants <strong>nets</strong>, arrondis à l'euro, tels qu'ils "
             "arrivent sur le compte : après CSG, CRDS et Casa — 9,10 %, le "
             "taux plein, appliqué ici à tout le monde — et avant impôt sur le "
-            "revenu, comme le revenu d'activité saisi plus haut. Le "
+            "revenu, comme le revenu d'activité saisi plus haut. Le détail du "
+            "calcul les donne au centime. Le "
             "<strong>taux de remplacement</strong> rapporte la pension "
             "annuelle au dernier revenu d'activité ramené à l'année pleine — "
             "un net sur un net, donc plus haut qu'un taux calculé sur des "
@@ -4752,9 +4753,10 @@ def _lecture_des_montants(comparaison: Comparaison, saisie: Saisie) -> str:
         )
     else:
         prelevements = (
-            "Montants <strong>bruts</strong> et au centime, comme la caisse "
-            "les verse : avant CSG, CRDS et impôt, comme le revenu d'activité "
-            "saisi plus haut. Le <strong>taux de remplacement</strong> "
+            "Montants <strong>bruts</strong>, arrondis à l'euro : avant CSG, "
+            "CRDS et impôt, comme le revenu d'activité saisi plus haut. Le "
+            "détail du calcul les donne au centime, comme la caisse les verse. "
+            "Le <strong>taux de remplacement</strong> "
             "rapporte la pension annuelle au dernier revenu d'activité ramené "
             "à l'année pleine — un brut sur un brut, donc plus bas qu'un taux "
             "calculé sur des nets."
@@ -5887,14 +5889,17 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             return ""
         net = nets[cle]
         ecart = net - nets["actuel"]
+        # À l'euro, comme les montants : un écart de moins d'un demi-euro par
+        # mois s'écrirait « +0 € », et ne s'écrit donc pas.
         mention = (
-            f'<span class="ecart">{_euros_signe(ecart / 12.0)} par mois</span>'
-            if abs(ecart) >= 0.005 else ""
+            f'<span class="ecart">{_euros_signe(ecart / 12.0, centimes=False)} '
+            "par mois</span>"
+            if abs(ecart / 12.0) >= 0.5 else ""
         )
         return f"""
       <span class="chiffre salaire">
         <span class="categorie">salaire</span>
-        <span class="somme">{g.nombre(net / 12.0)}</span>
+        <span class="somme">{g.nombre(net / 12.0, 0)}</span>
         <span class="unite">{montants.unite_salaire}</span>
         {mention}
       </span>"""
@@ -5942,19 +5947,19 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             # pas par un coup de bourse.
             detail = (
                 f"""
-        {g.euros_centimes(montants.pension(part_capitalisee - part_volontaire) / 12)}
+        {g.euros(montants.pension(part_capitalisee - part_volontaire) / 12)}
         de rente capitalisée obligatoire — soit
-        {g.euros_centimes(montants.pension(montant - part_volontaire) / 12)} par
+        {g.euros(montants.pension(montant - part_volontaire) / 12)} par
         mois sans rien ajouter — et
-        {g.euros_centimes(montants.pension(part_volontaire) / 12)} de plus si
+        {g.euros(montants.pension(part_volontaire) / 12)} de plus si
         vous placez les cinq points rendus, sans risque"""
                 if part_volontaire > 0 else
                 f"""
-        {g.euros_centimes(montants.pension(part_capitalisee) / 12)} de rente
+        {g.euros(montants.pension(part_capitalisee) / 12)} de rente
         capitalisée, par mois"""
             )
             partage = f"""
-      <span class="composition">{g.euros_centimes(montants.pension(repartition) / 12)}
+      <span class="composition">{g.euros(montants.pension(repartition) / 12)}
         de pension par répartition +{detail}</span>"""
         # Le troisième chiffre n'apparaît QUE là où le coefficient est sous un,
         # c'est-à-dire là où le système promet plus que ses comptes ne
@@ -5974,10 +5979,15 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
             chiffre_finance = f"""
       <span class="chiffre finance">
         <span class="categorie">vraiment payé</span>
-        <span class="somme">{g.nombre(montants.pension(servie) / 12)}</span>
+        <span class="somme">{g.nombre(montants.pension(servie) / 12, 0)}</span>
         <span class="unite">{montants.unite_pension}</span>
         <span class="ecart">il manque {g.euros(manque_mensuel)} par mois</span>
       </span>"""
+        # LES MONTANTS DE LA VUE SONT À L'EURO depuis le 23 septembre 2026.
+        # Ils étaient au centime, parce que la caisse verse au centime ; mais
+        # « En bref », juste au-dessus, arrondit à l'euro, et le lecteur lisait
+        # deux écritures du même nombre — « 2 795 € », puis « 2 795,42 ». Le
+        # centime reste là où l'on refait le calcul : les dépliants de détail.
         return f"""
 <div class="scenario">
   <div class="entete">
@@ -5986,7 +5996,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
       <span class="chiffre principal">
         <span class="categorie">{"retraite jusqu'à" if part_volontaire > 0
                                  else "retraite"}</span>
-        <span class="somme">{g.nombre(montants.pension(montant) / 12)}</span>
+        <span class="somme">{g.nombre(montants.pension(montant) / 12, 0)}</span>
         <span class="unite">{montants.unite_pension}</span>
       </span>{chiffre_finance}
     </span>
@@ -6058,7 +6068,7 @@ def _resultats(contexte: Contexte, saisie: Saisie) -> str:
         )
         capitalisation = (
             f'<p class="discret">Hors répartition, servi à part : '
-            f"{g.euros_centimes(montant / 12)} par mois de RAFP, en euros de "
+            f"{g.euros(montant / 12)} par mois de RAFP, en euros de "
             f"{saisie.euros} comme les quatre montants ci-dessus."
             + g.bulle(
                 "Pourquoi le RAFP est servi à part",
@@ -7257,9 +7267,9 @@ def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
 
     ouverture = "".join([
         g.fiche(f"votre {net} en {reference.annee}",
-                g.euros_centimes(avant.net / 12.0)),
-        g.fiche("avec le système 4", g.euros_centimes(apres.net / 12.0)),
-        g.fiche("par mois", _euros_signe(gain)),
+                g.euros(avant.net / 12.0)),
+        g.fiche("avec le système 4", g.euros(apres.net / 12.0)),
+        g.fiche("par mois", _euros_signe(gain, centimes=False)),
     ])
     sens = "de plus" if gain >= 0 else "de MOINS"
     duree = len(remuneration.annees)
@@ -7289,11 +7299,11 @@ def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
   rente qu'il affiche plus haut suppose en plus que vous placez les
   <strong>{g.pourcentage(parametres.taux_capitalisation_volontaire_applique, decimales=0)}
   de capitalisation volontaire</strong> que la proposition vous rend — soit
-  {g.euros_centimes(remuneration.epargne_volontaire_mensuelle)} par mois virés
+  {g.euros(remuneration.epargne_volontaire_mensuelle)} par mois virés
   de votre {net} sur un compte à votre nom, pas une retenue —, pour cotiser
   {g.pourcentage(parametres.taux_retraite_propose, decimales=0)} en tout, comme
-  aujourd'hui. Il vous reste alors {g.euros_centimes(reste_apres)} par mois,
-  soit {_euros_signe(ecart_apres)} par rapport à aujourd'hui. Si vous ne les
+  aujourd'hui. Il vous reste alors {g.euros(reste_apres)} par mois,
+  soit {_euros_signe(ecart_apres, centimes=False)} par rapport à aujourd'hui. Si vous ne les
   placez pas, vous gardez le {net} plein, et la rente du système 4 baisse de la
   part nommée « des cinq points volontaires »."""
         )
@@ -7325,7 +7335,7 @@ chaque mois. Les systèmes 1, 2 et 3 prélèvent la même chose — ils ne chang
 que ce qui est porté au compte. Le système 4, lui, y touche.</p>
 <div class="carte">
   <div class="fiches">{ouverture}</div>
-  <p>Soit <strong>{_euros_signe(gain)} {sens} sur votre fiche de paie</strong>,
+  <p>Soit <strong>{_euros_signe(gain, centimes=False)} {sens} sur votre fiche de paie</strong>,
   {sous_quelle_hypothese}.{reste}{volontaire}</p>{rendu}
   {_salaire_net_detail(comparaison, remuneration, saisie)}
 </div>"""
