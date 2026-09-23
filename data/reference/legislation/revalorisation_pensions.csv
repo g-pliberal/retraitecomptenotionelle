@@ -1,0 +1,131 @@
+# Coefficients de revalorisation des pensions de vieillesse servies
+# -----------------------------------------------------------------
+# source_id: cnav_revalorisation_pensions
+#
+# Fichier écrit par scripts/fetch/cnav_revalorisation_pensions.py :
+# ne pas modifier à la main.
+#
+# UNE LIGNE PAR DATE D'EFFET, telle que la Cnav la publie dans son barème
+# « Coefficients de revalorisation des retraites » : le coefficient multiplie
+# toute pension du régime général ayant pris effet AVANT cette date. C'est la
+# règle de l'article L. 161-23-1 du code de la sécurité sociale, que suivent
+# aussi les régimes alignés, les deux régimes agricoles et, par renvoi de
+# l'article L. 16 de leur code, les pensions civiles et militaires depuis le
+# 19 décembre 2008 (voir revalorisation_pensions_fonction_publique.csv pour
+# les années d'avant).
+#
+# Une année sans ligne est une année sans revalorisation : 2014 (gel), 2016,
+# 2018 (date d'effet reportée au 1er janvier 2019). Un coefficient manquant
+# vaut un.
+#
+# 2020 porte CINQ lignes, selon le montant total brut mensuel des retraites de
+# base et complémentaires du mois précédent (loi n° 2019-1446, art. 81) :
+# `mensuel_superieur_a` exclu, `mensuel_au_plus` inclus, en euros par mois.
+# Vides ailleurs.
+#
+# fiabilite : `haute`. Le barème est la publication de la caisse, non le
+# Journal officiel : il transcrit l'arrêté, la loi ou l'instruction qu'il cite.
+date_effet,coefficient,mensuel_superieur_a,mensuel_au_plus,reference,fiabilite
+1949-01-01,1.17,,,Arrêté du 23/06/1949,haute
+1949-04-01,1.15,,,Arrêté du 16/08/1949,haute
+1950-01-01,1.15,,,Arrêté du 19/04/1950,haute
+1951-01-01,1.16,,,Arrêté du 16/04/1951,haute
+1952-04-01,1.1,,,Arrêté du 02/10/1952,haute
+1953-04-01,1.2,,,Arrêté du 03/10/1953,haute
+1955-04-01,1.09,,,Arrêté du 08/04/1955,haute
+1956-04-01,1.085,,,Arrêté du 30/04/1956,haute
+1957-04-01,1.12,,,Arrêté du 18/04/1957,haute
+1958-04-01,1.075,,,Arrêté du 14/04/1958,haute
+1959-04-01,1.135,,,Arrêté du 04/05/1959,haute
+1960-04-01,1.105,,,Arrêté du 11/05/1960,haute
+1961-04-01,1.077,,,Arrêté du 25/04/1961,haute
+1962-04-01,1.15,,,Arrêté du 14/04/1962,haute
+1963-04-01,1.16,,,Arrêté du 25/03/1963,haute
+1964-04-01,1.12,,,Arrêté du 13/04/1964,haute
+1965-04-01,1.11,,,Arrêté du 22/04/1965,haute
+1966-04-01,1.069,,,Arrêté du 14/04/1966,haute
+1967-04-01,1.058,,,Arrêté du 31/03/1967,haute
+1968-04-01,1.056,,,Arrêté du 08/05/1968,haute
+1969-01-01,1.04,,,Arrêté du 27/01/1969,haute
+1969-04-01,1.0435,,,Arrêté du 09/04/1969,haute
+1969-11-01,1.03,,,Arrêté du 01/10/1969,haute
+1970-04-01,1.119,,,Arrêté du 25/03/1970,haute
+1971-04-01,1.101,,,Arrêté du 04/03/1971,haute
+1972-04-01,1.115,,,Arrêté du 14/03/1972,haute
+1973-04-01,1.109,,,Arrêté du 02/03/1973,haute
+1974-01-01,1.082,,,Décret 73/1212 du 29/12/1973,haute
+1974-07-01,1.067,,,Arrêté du 15/07/1974,haute
+1975-01-01,1.063,,,Arrêté du 15/07/1974,haute
+1975-07-01,1.096,,,Arrêté du 04/07/1975,haute
+1976-01-01,1.083,,,Arrêté du 04/07/1975,haute
+1976-07-01,1.082,,,Arrêté du 25/06/1976,haute
+1977-01-01,1.086,,,Arrêté du 25/06/1976,haute
+1977-07-01,1.071,,,Arrêté du 27/06/1977,haute
+1978-01-01,1.082,,,Arrêté du 27/06/1977,haute
+1978-07-01,1.044,,,Arrêté du 26/06/1978,haute
+1979-01-01,1.065,,,Arrêté du 26/06/1978,haute
+1979-07-01,1.04,,,Arrêté du 28/06/1979,haute
+1980-01-01,1.054,,,Arrêté du 28/06/1979,haute
+1980-07-01,1.064,,,Arrêté du 30/06/1980,haute
+1981-01-01,1.067,,,Arrêté du 31/12/1980,haute
+1981-07-01,1.062,,,Arrêté du 30/06/1981,haute
+1982-01-01,1.067,,,Arrêté du 30/06/1981,haute
+1982-07-01,1.074,,,Arrêté du 06/07/1982,haute
+1983-01-01,1.04,,,Arrêté du 29/12/1982,haute
+1983-07-01,1.04,,,Arrêté du 29/12/1982,haute
+1984-01-01,1.018,,,Arrêté du 17/01/1984,haute
+1984-07-01,1.022,,,Arrêté du 17/01/1984,haute
+1985-01-01,1.034,,,Arrêté du 28/12/1984,haute
+1985-07-01,1.028,,,Arrêté du 28/12/1984,haute
+1986-01-01,1.013,,,Arrêté du 08/01/1986,haute
+1986-10-01,1.005,,,Arrêté du 09/10/1986,haute
+1987-01-01,1.018,,,Loi 87/39 du 27/01/1987,haute
+1987-07-01,1.01,,,Loi 87/39 du 27/01/1987,haute
+1988-01-01,1.026,,,Loi 88/16 du 05/01/1988,haute
+1988-07-01,1.013,,,Loi 88/16 du 05/01/1988,haute
+1989-01-01,1.013,,,Loi 89/18 du 13/01/1989,haute
+1989-07-01,1.012,,,Loi 89/18 du 13/01/1989,haute
+1990-01-01,1.0215,,,Loi 90/86 du 23/01/1990,haute
+1990-07-01,1.013,,,Loi 90/86 du 23/01/1990,haute
+1991-01-01,1.017,,,Loi 91/73 du 18/01/1991,haute
+1991-07-01,1.008,,,Loi 91/738 du 31/07/1991,haute
+1992-01-01,1.01,,,Loi 91/1406 du 31/12/1991,haute
+1992-07-01,1.018,,,Loi 91/1406 du 31/12/1991,haute
+1993-01-01,1.013,,,Arrêté du 22/01/1993,haute
+1994-01-01,1.02,,,Arrêté du 24/01/1994,haute
+1995-01-01,1.012,,,Arrêté du 27/01/1995,haute
+1995-07-01,1.005,,,Arrêté du 31/07/1995,haute
+1996-01-01,1.02,,,Arrêté du 30/01/1996,haute
+1997-01-01,1.012,,,Arrêté du 30/12/1996,haute
+1998-01-01,1.011,,,Arrêté du 29/12/1997,haute
+1999-01-01,1.012,,,Arrêté du 29/12/1998,haute
+2000-01-01,1.005,,,Arrêté du 29/12/1999,haute
+2001-01-01,1.022,,,Arrêté du 26/12/2000,haute
+2002-01-01,1.022,,,Arrêté du 25/01/2002,haute
+2003-01-01,1.015,,,Arrêté du 31/12/2002,haute
+2004-01-01,1.017,,,Arrêté du 23/12/2003,haute
+2005-01-01,1.02,,,Arrêté du 16/12/2004,haute
+2006-01-01,1.018,,,Arrêté du 23/12/2005,haute
+2007-01-01,1.018,,,Arrêté du 19/12/2006,haute
+2008-01-01,1.011,,,Arrêté du 21/12/2007,haute
+2008-09-01,1.008,,,Circulaire Cnav 2008/45 du 12/08/2008,haute
+2009-04-01,1.01,,,Circulaire Cnav 2009/31 du 16/04/2009,haute
+2010-04-01,1.009,,,Circulaire Cnav 2010/43 du 23/04/2010,haute
+2011-04-01,1.021,,,Circulaire Cnav 2011/30 du 14/04/2011,haute
+2012-04-01,1.021,,,Circulaire Cnav 2012/35 du 17/04/2012,haute
+2013-04-01,1.013,,,Circulaire Cnav 2013/29 du 18/04/2013,haute
+2015-10-01,1.001,,,Circulaire Cnav 2015/48 du 19/10/2015,haute
+2017-10-01,1.008,,,Circulaire Cnav 2017/32 du 26/09/2017,haute
+2019-01-01,1.003,,,Circulaire Cnav 2019/4 du 09/01/2019,haute
+2020-01-01,1.01,,2000,"Loi n° 2019-1446 du 24/12/2019, art. 81 ; circulaire Cnav 2020/9 du 04/02/2020",haute
+2020-01-01,1.008,2000,2008,"Loi n° 2019-1446 du 24/12/2019, art. 81 ; circulaire Cnav 2020/9 du 04/02/2020",haute
+2020-01-01,1.006,2008,2012,"Loi n° 2019-1446 du 24/12/2019, art. 81 ; circulaire Cnav 2020/9 du 04/02/2020",haute
+2020-01-01,1.004,2012,2014,"Loi n° 2019-1446 du 24/12/2019, art. 81 ; circulaire Cnav 2020/9 du 04/02/2020",haute
+2020-01-01,1.003,2014,,"Loi n° 2019-1446 du 24/12/2019, art. 81 ; circulaire Cnav 2020/9 du 04/02/2020",haute
+2021-01-01,1.004,,,Circulaire Cnav 2021/1 du 11/01/2021,haute
+2022-01-01,1.011,,,Circulaire Cnav 2022/3 du 11/01/2022,haute
+2022-07-01,1.04,,,Circulaire Cnav 2022/19 du 18/08/2022,haute
+2023-01-01,1.008,,,Circulaire Cnav 2023/3 du 09/01/2023,haute
+2024-01-01,1.053,,,Circulaire Cnav 2023/34 du 29/12/2023,haute
+2025-01-01,1.022,,,Circulaire Cnav 2024/39 du 23/12/2024,haute
+2026-01-01,1.009,,,Circulaire Cnav 2025/29 du 22/12/2025,haute
