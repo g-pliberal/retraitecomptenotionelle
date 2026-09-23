@@ -12401,7 +12401,7 @@ def _risque(contexte: Contexte) -> str:
         lignes_salaires,
         ["", "nombre", "nombre", "nombre", "nombre"],
         titre=f"Ce que la retraite prélève chaque mois sur un salarié du privé "
-              f"en {fiche_moyen.annee}, {g.terme('part patronale')} comprise",
+              f"en {fiche_moyen.annee}, part patronale comprise",
         entete_de_ligne=True,
     )
 
@@ -12421,8 +12421,8 @@ def _risque(contexte: Contexte) -> str:
         ["Année", "Pensions versées", "Recettes", "Part non financée"],
         lignes_soldes,
         ["", "nombre", "nombre", "nombre"],
-        titre=f"Ce que le système verse et ce qu'il encaisse, en "
-              f"{g.terme('part du PIB')}, de {obs} à {fin}",
+        titre=f"Ce que le système verse et ce qu'il encaisse, en part "
+              f"du PIB, de {obs} à {fin}",
         entete_de_ligne=True,
     )
 

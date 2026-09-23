@@ -4081,6 +4081,23 @@ def test_chaque_mot_du_glossaire_porte_sa_definition(contexte, chemin):
         assert bulle and bulle.group(1).strip(), f"{chemin} : mot sans définition"
 
 
+@pytest.mark.parametrize("chemin", list(TITRES))
+def test_aucune_page_ne_montre_de_balise_echappee(contexte, chemin):
+    """Une balise échappée s'affiche en toutes lettres au lecteur.
+
+    La légende d'un tableau est échappée par ``g.tableau``, et c'est voulu :
+    elle n'est qu'une phrase. Deux légendes de la page Pourquoi changer y
+    avaient pourtant reçu un mot du glossaire, et le visiteur lisait, sous le
+    titre « Combien la retraite vous prend-elle chaque mois ? », une ligne de
+    ``<span class="mot">`` et de ``role="button"`` — la première chose qu'un
+    nouveau venu y voyait, relevée le 23 septembre 2026. Le mot du glossaire
+    se pose dans une phrase, jamais dans une légende.
+    """
+    corps = rendre(contexte, chemin, {})[1]
+    echappees = re.findall(r"&lt;/?[a-z][a-z0-9]*\b", corps)
+    assert not echappees, f"{chemin} : balises affichées en clair, {echappees[:3]}"
+
+
 # -- la bibliothèque de pictogrammes -----------------------------------------
 
 
