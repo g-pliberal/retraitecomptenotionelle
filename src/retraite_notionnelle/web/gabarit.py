@@ -1482,21 +1482,25 @@ ul.legende .lu {
    à la distance qui sépare deux paragraphes : c'est la même figure, dite
    autrement. Déplié, il est borné en hauteur, et ses en-têtes de colonne
    restent visibles pendant qu'on le parcourt. */
-.donnees-graphique, .donnees-frise, .donnees-cascade { margin: -1.4rem 0 1.7rem; }
+.donnees-graphique, .donnees-frise, .donnees-cascade,
+.donnees-sankey { margin: -1.4rem 0 1.7rem; }
 .donnees-graphique .defilant, .donnees-frise .defilant,
-.donnees-cascade .defilant { max-height: 24rem; overflow-y: auto; }
+.donnees-cascade .defilant, .donnees-sankey .defilant {
+  max-height: 24rem; overflow-y: auto;
+}
 .donnees-graphique table, .donnees-frise table,
-.donnees-cascade table { font-size: 0.9rem; }
+.donnees-cascade table, .donnees-sankey table { font-size: 0.9rem; }
 .donnees-graphique th, .donnees-graphique td,
 .donnees-frise th, .donnees-frise td,
-.donnees-cascade th, .donnees-cascade td { padding: 0.25rem 0.6rem; }
+.donnees-cascade th, .donnees-cascade td,
+.donnees-sankey th, .donnees-sankey td { padding: 0.25rem 0.6rem; }
 .donnees-graphique thead th, .donnees-frise thead th,
-.donnees-cascade thead th {
+.donnees-cascade thead th, .donnees-sankey thead th {
   position: sticky; top: 0; background: var(--fond-defilant);
   box-shadow: inset 0 -2px 0 var(--or);
 }
 .donnees-graphique caption, .donnees-frise caption,
-.donnees-cascade caption { padding-bottom: 0.35rem; }
+.donnees-cascade caption, .donnees-sankey caption { padding-bottom: 0.35rem; }
 /* La frise des flux : une colonne par année, lue de gauche à droite dans une
    boîte qui défile. Le SVG garde sa largeur en pixels — c'est la boîte qui
    défile, pas le dessin qui rétrécit —, sans quoi quarante-cinq années
@@ -1580,6 +1584,43 @@ ul.legende .lu {
 }
 .cascade:focus-within .aide-clavier { visibility: visible; }
 .cascade .defilant:focus-visible { outline: 3px solid var(--or); outline-offset: 4px; }
+/* Le schéma de Sankey : ce qui paie à gauche, la caisse au milieu, ce qu'elle
+   verse à droite, chaque ruban de l'épaisseur de son montant. Comme la
+   cascade, il DÉFILE sur un téléphone au lieu de rétrécir : réduites à la
+   largeur de l'écran, ses étiquettes tomberaient à six pixels. Au large, il
+   ne dépasse pas 56 rem : à pleine largeur, deux schémas l'un sous l'autre
+   prenaient deux écrans, pour des textes plus grands que ceux de la page. */
+.sankey { margin: 1.75rem 0 1.5rem; }
+.sankey > figcaption {
+  margin: 0 0 0.35rem; font-size: 1.0625rem; font-weight: 800; color: var(--texte);
+}
+.sankey .defilant { padding-bottom: 0.25rem; }
+.sankey svg { display: block; width: 100%; max-width: 56rem; height: auto; }
+.sankey .defilant:focus-visible { outline: 3px solid var(--or); outline-offset: 4px; }
+/* Les rubans sont un fond : translucides, ils se lisent comme ce qui va d'un
+   nœud à l'autre sans rivaliser avec eux. Aucun ne passe sur un autre — la
+   caisse les reçoit dans l'ordre de leurs nœuds —, si bien que la
+   translucidité ne fabrique jamais une couleur absente des étiquettes. Le
+   survol en désigne un. */
+.sankey .ruban { opacity: 0.68; }
+.sankey .ruban:hover { opacity: 0.9; }
+/* La caisse n'est pas une catégorie : elle est le pot. Elle porte donc la
+   couleur du texte, et aucune des teintes qui disent qui paie. */
+.sankey .caisse { fill: var(--texte); }
+/* Le texte porte les teintes du texte, jamais celle de son ruban : un jaune
+   ou un vert clair ne se lisent pas en lettres sur le vert profond. C'est le
+   nœud, à côté, qui dit la couleur. */
+.sankey .nom {
+  fill: var(--texte); font-family: inherit; font-size: 13px; font-weight: 700;
+}
+.sankey .montant {
+  fill: var(--texte-doux); font-family: inherit; font-size: 13px; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.sankey .colonne {
+  fill: var(--texte-tres-doux); font-family: inherit; font-size: 12px;
+  font-weight: 600;
+}
 ul.legende {
   list-style: none; margin: 0.75rem 0 0; padding: 0;
   display: flex; flex-wrap: wrap; gap: 0.4rem 1.5rem; font-size: 0.9375rem;
@@ -1859,6 +1900,11 @@ body.calcul-en-cours::after {
   .cascade .graduation { font-size: 16px; }
   .cascade .valeur { font-size: 18px; stroke-width: 5px; }
   .cascade .etiquette { font-size: 16px; }
+  /* Le schéma de Sankey aussi, et sans grossir ses textes : ses étiquettes
+     sont taillées au plus juste de part et d'autre des nœuds, et un corps
+     plus grand les ferait sortir du cadre. Il défile donc un peu plus large
+     que la cascade, où ses treize unités font encore douze pixels. */
+  .sankey svg { min-width: 42rem; }
 }
 
 /* Mouvement réduit : la jauge d'attente glisse sans fin, et une animation qui
@@ -1907,7 +1953,7 @@ body.calcul-en-cours::after {
   h2 { font-size: 15pt; }
   .chapeau, .affiche .chapeau { font-size: 12pt; }
   .defilant { overflow: visible; background: none; }
-  .carte, .note, table, .graphique, .cascade, .scenario, section.cle,
+  .carte, .note, table, .graphique, .cascade, .sankey, .scenario, section.cle,
   .encadre {
     break-inside: avoid;
   }
@@ -2933,8 +2979,13 @@ def cle(question: str, reponse: str, corps: str, source: str = "",
     # l'image compose, et une carte qui n'en a pas — celle qui porte un
     # tableau, ou une liste — donnerait un bouton qui échoue. Le savoir se lit
     # dans le corps de la carte plutôt que de se déclarer en paramètre : un
-    # appelant n'a pas à redire ce que son propre contenu dit déjà.
-    partage = barre_partage() if '<figure class="graphique"' in corps else ""
+    # appelant n'a pas à redire ce que son propre contenu dit déjà. Un schéma
+    # de Sankey est un tracé comme un autre : `imageDuGraphique` le compose.
+    partage = (
+        barre_partage()
+        if '<figure class="graphique"' in corps or '<figure class="sankey"' in corps
+        else ""
+    )
     # Identifiée, la carte est joignable depuis le plan de la page ; le
     # `tabindex` lui permet de recevoir le focus quand on y arrive par lui.
     cible = f' id="{escape(identifiant)}" tabindex="-1"' if identifiant else ""
@@ -4019,6 +4070,285 @@ def cascade(titre: str, marches: tuple[Marche, ...], unite: str = "",
         + sommaire(f"Les chiffres de cette cascade, marche par marche "
                    f"({len(marches)} lignes)")
         + f"{grille_html}</details>"
+    )
+
+
+# -- le schéma de Sankey --------------------------------------------------------
+#
+# CE QUI PAIE, LA CAISSE QUI REÇOIT, CE QU'ELLE VERSE. Les courbes disent
+# combien entre et combien sort ; elles ne disent pas qui apporte quelle part
+# d'un même argent, ni où chaque part s'en va. Un schéma de Sankey le montre
+# d'un coup : chaque ruban a l'épaisseur de son montant, et c'est toute sa
+# règle.
+#
+# IL EST FAIT DE CAISSES, et non d'un réseau quelconque. Chacune a ses payeurs
+# à gauche, ses usages à droite et elle-même au milieu ; plusieurs caisses
+# s'empilent de haut en bas. C'est ce qu'il faut pour dire les deux systèmes
+# que la page Coût compare — un seul pot aujourd'hui, trois caisses séparées
+# dans la proposition —, et c'est ce qui rend le placement trivial : les rubans
+# d'une caisse s'y empilent dans l'ordre de leurs nœuds, si bien qu'aucun n'en
+# croise un autre, et aucune étiquette n'est à écarter après coup, puisque
+# l'écart entre deux nœuds est déjà la hauteur de deux étiquettes.
+#
+# L'ÉCHELLE EST UN PARAMÈTRE. Deux schémas qu'on compare doivent peindre le
+# même milliard de la même épaisseur : c'est l'appelant, qui les connaît tous
+# les deux, qui la fixe, et ``echelle_sankey`` la tire du plus gros.
+
+#: Géométrie du schéma, en unités du ``viewBox``. La largeur est celle des
+#: courbes : posé dans la même colonne qu'un graphique, le schéma s'affiche à
+#: la même échelle, et ses textes à la même taille.
+LARGEUR_SANKEY = 720
+LARGEUR_NOEUD_SANKEY = 14
+#: Abscisses des deux colonnes extrêmes. Ce qui reste de part et d'autre loge
+#: les étiquettes, et les deux nombres y sont taillés : 144 unités à gauche pour
+#: « Capitalisation 5 % », 170 à droite pour « Pensions de réversion ». Taillés
+#: sur la police de REPLI et non sur Public Sans : l'image que compose le bouton
+#: « Partager » dessine le SVG hors de la page, où la police du site n'est pas
+#: chargée, et la police du système, plus large, y rognait le « C » de
+#: « Capitalisation » — mesuré au navigateur, 130 unités contre 112.
+X_SOURCES_SANKEY = 152
+X_USAGES_SANKEY = 528
+#: La caisse, à mi-chemin des deux colonnes.
+X_CAISSE_SANKEY = (X_SOURCES_SANKEY + LARGEUR_NOEUD_SANKEY + X_USAGES_SANKEY
+                   - LARGEUR_NOEUD_SANKEY) // 2
+#: L'écart entre deux nœuds d'une même colonne. Deux étiquettes de deux lignes y
+#: tiennent l'une sous l'autre même quand leurs nœuds sont des filets : c'est
+#: ce qui dispense de les écarter après coup.
+ECART_NOEUDS_SANKEY = 32
+#: L'écart entre deux caisses : l'étiquette de la seconde se pose dedans.
+ECART_CAISSES_SANKEY = 64
+#: Au-dessus de la première caisse, son étiquette et les titres des colonnes ;
+#: sous la dernière, ce que déborde l'étiquette d'un nœud trop mince pour la
+#: porter.
+MARGE_HAUT_SANKEY = 44
+MARGE_BAS_SANKEY = 6
+#: L'épaisseur, empilée, de tout ce que brasse le plus gros des schémas
+#: comparés. Les autres prennent la leur à la même échelle.
+HAUTEUR_SANKEY = 240
+#: Ce qui sépare une étiquette de son nœud.
+RETRAIT_SANKEY = 8
+
+
+@dataclass(frozen=True)
+class NoeudSankey:
+    """Un payeur ou un usage : un libellé, un montant, une couleur.
+
+    ``valeur`` décide de l'épaisseur ; ``montant`` est ce qui s'écrit sous le
+    libellé — « 274 Md € ». L'un et l'autre viennent de l'appelant : lui seul
+    sait dans quelle unité il compte, et le schéma n'a pas à le deviner.
+    """
+
+    libelle: str
+    valeur: float
+    montant: str
+    couleur: str
+
+
+@dataclass(frozen=True)
+class CaisseSankey:
+    """Une caisse, ce qui l'alimente à gauche et ce qu'elle verse à droite.
+
+    LE COMPTE DOIT TOMBER JUSTE : ``valeur`` vaut la somme des sources ET celle
+    des usages, et c'est à l'appelant d'y veiller, en portant le déficit parmi
+    les sources — ce qui manque est emprunté, c'est donc une source — ou
+    l'excédent parmi les usages. Un compte qui ne tombe pas juste se VOIT : les
+    rubans ne remplissent plus la caisse, ou la débordent.
+    """
+
+    libelle: str
+    valeur: float
+    montant: str
+    sources: tuple[NoeudSankey, ...]
+    usages: tuple[NoeudSankey, ...]
+
+
+def echelle_sankey(*totaux: float) -> float:
+    """L'échelle commune de plusieurs schémas, en unités de repère par unité.
+
+    Le plus gros des totaux prend ``HAUTEUR_SANKEY`` ; les autres, l'épaisseur
+    que leur montant leur donne à la même échelle. Zéro s'il n'y a rien à
+    dessiner.
+    """
+    plus_gros = max(totaux, default=0.0)
+    return HAUTEUR_SANKEY / plus_gros if plus_gros > 0.0 else 0.0
+
+
+def _ruban_sankey(x1: float, haut1: float, x2: float, haut2: float,
+                  epaisseur: float) -> str:
+    """Un ruban d'épaisseur constante : deux courbes de Bézier et deux bords.
+
+    Les points de contrôle sont à mi-chemin, à la hauteur de chaque bout : le
+    ruban part et arrive à l'horizontale, et ne se pince jamais en route.
+    """
+    gauche = nombre_brut(x1)
+    droite = nombre_brut(x2)
+    milieu = nombre_brut((x1 + x2) / 2)
+    return (
+        f"M{gauche} {nombre_brut(haut1)} "
+        f"C{milieu} {nombre_brut(haut1)} {milieu} {nombre_brut(haut2)} "
+        f"{droite} {nombre_brut(haut2)} "
+        f"L{droite} {nombre_brut(haut2 + epaisseur)} "
+        f"C{milieu} {nombre_brut(haut2 + epaisseur)} "
+        f"{milieu} {nombre_brut(haut1 + epaisseur)} "
+        f"{gauche} {nombre_brut(haut1 + epaisseur)} Z"
+    )
+
+
+def _etiquette_sankey(x: float, milieu: float, ancre: str, libelle: str,
+                      montant: str) -> str:
+    """Le libellé et son montant, sur deux lignes centrées sur ``milieu``."""
+    return (
+        f'<text class="nom" x="{nombre_brut(x)}" y="{nombre_brut(milieu - 4)}" '
+        f'text-anchor="{ancre}">{escape(libelle)}</text>'
+        f'<text class="montant" x="{nombre_brut(x)}" '
+        f'y="{nombre_brut(milieu + 12)}" text-anchor="{ancre}">'
+        f"{escape(montant)}</text>"
+    )
+
+
+def _colonne_sankey(noeuds: tuple[NoeudSankey, ...], haut: float,
+                    echelle: float) -> list[tuple[NoeudSankey, float, float]]:
+    """Les nœuds d'une colonne empilés depuis ``haut`` : nœud, haut, épaisseur."""
+    places: list[tuple[NoeudSankey, float, float]] = []
+    y = haut
+    for noeud in noeuds:
+        epaisseur = noeud.valeur * echelle
+        places.append((noeud, y, epaisseur))
+        y = y + epaisseur + ECART_NOEUDS_SANKEY
+    return places
+
+
+def sankey(titre: str, nom: str, caisses: tuple[CaisseSankey, ...],
+           echelle: float, colonnes: tuple[str, str] = ("", "")) -> str:
+    """Un schéma de Sankey : d'où vient l'argent, où il va, caisse par caisse.
+
+    ``titre`` nomme le schéma pour qui ne le voit pas — il est aussi la légende
+    du tableau des chiffres —, ``nom`` est le titre court écrit au-dessus.
+    ``colonnes`` titre la colonne des payeurs et celle des usages, au-dessus
+    de la première caisse.
+
+    TOUT EST ALIGNÉ EN HAUT DE LA CAISSE : ses payeurs, elle-même, ses usages.
+    Aucun ruban ne monte donc au-dessus d'elle, et son étiquette, posée
+    au-dessus, ne se trouve jamais sur un ruban — ce qu'elle faisait,
+    centrée, dès que les payeurs étaient plus nombreux que les usages.
+
+    Le dessin a son tableau, replié dessous : flux par flux, de qui à qui, et
+    combien. Un schéma est une image, et le RGAA demande pour une image
+    complexe une description détaillée ; pour un Sankey, c'est la liste de ses
+    rubans.
+    """
+    if not caisses:
+        return ""
+    sortie_sources = X_SOURCES_SANKEY + LARGEUR_NOEUD_SANKEY
+    sortie_caisse = X_CAISSE_SANKEY + LARGEUR_NOEUD_SANKEY
+    centre_caisse = X_CAISSE_SANKEY + LARGEUR_NOEUD_SANKEY / 2
+    x_sources = X_SOURCES_SANKEY - RETRAIT_SANKEY
+    x_usages = X_USAGES_SANKEY + LARGEUR_NOEUD_SANKEY + RETRAIT_SANKEY
+
+    rubans: list[str] = []
+    noeuds: list[str] = []
+    textes: list[str] = []
+    lignes: list[list[str]] = []
+
+    gauche, droite = colonnes
+    y_titres = nombre_brut(MARGE_HAUT_SANKEY - 22)
+    if gauche:
+        textes.append(
+            f'<text class="colonne" x="{nombre_brut(sortie_sources)}" '
+            f'y="{y_titres}" text-anchor="end">{escape(gauche)}</text>'
+        )
+    if droite:
+        textes.append(
+            f'<text class="colonne" x="{nombre_brut(X_USAGES_SANKEY)}" '
+            f'y="{y_titres}" text-anchor="start">{escape(droite)}</text>'
+        )
+
+    haut = float(MARGE_HAUT_SANKEY)
+    bas = haut
+    for rang, caisse in enumerate(caisses):
+        if rang > 0:
+            haut = bas + ECART_CAISSES_SANKEY
+        sources = _colonne_sankey(caisse.sources, haut, echelle)
+        usages = _colonne_sankey(caisse.usages, haut, echelle)
+        epaisseur_caisse = caisse.valeur * echelle
+
+        # Les rubans d'abord : ils sont un fond, et les nœuds se posent dessus.
+        # Ils entrent dans la caisse et en sortent dans l'ordre de leurs
+        # nœuds : c'est ce qui les empêche de se croiser.
+        entree = haut
+        for noeud, y, epaisseur in sources:
+            rubans.append(
+                f'<path class="ruban" fill="{noeud.couleur}" '
+                f'd="{_ruban_sankey(sortie_sources, y, X_CAISSE_SANKEY, entree, epaisseur)}"/>'
+            )
+            entree = entree + epaisseur
+        sortie = haut
+        for noeud, y, epaisseur in usages:
+            rubans.append(
+                f'<path class="ruban" fill="{noeud.couleur}" '
+                f'd="{_ruban_sankey(sortie_caisse, sortie, X_USAGES_SANKEY, y, epaisseur)}"/>'
+            )
+            sortie = sortie + epaisseur
+
+        # Un nœud minuscule reste un filet d'une unité : invisible, son
+        # étiquette flotterait à côté de rien.
+        for x, places in ((X_SOURCES_SANKEY, sources), (X_USAGES_SANKEY, usages)):
+            for noeud, y, epaisseur in places:
+                noeuds.append(
+                    f'<rect class="noeud" fill="{noeud.couleur}" '
+                    f'x="{nombre_brut(x)}" y="{nombre_brut(y)}" '
+                    f'width="{nombre_brut(LARGEUR_NOEUD_SANKEY)}" '
+                    f'height="{nombre_brut(max(epaisseur, 1.0))}"/>'
+                )
+        noeuds.append(
+            f'<rect class="noeud caisse" x="{nombre_brut(X_CAISSE_SANKEY)}" '
+            f'y="{nombre_brut(haut)}" '
+            f'width="{nombre_brut(LARGEUR_NOEUD_SANKEY)}" '
+            f'height="{nombre_brut(max(epaisseur_caisse, 1.0))}"/>'
+        )
+
+        textes.append(
+            f'<text class="nom" x="{nombre_brut(centre_caisse)}" '
+            f'y="{nombre_brut(haut - 22)}" text-anchor="middle">'
+            f"{escape(caisse.libelle)}</text>"
+            f'<text class="montant" x="{nombre_brut(centre_caisse)}" '
+            f'y="{nombre_brut(haut - 7)}" text-anchor="middle">'
+            f"{escape(caisse.montant)}</text>"
+        )
+        fond = haut + epaisseur_caisse
+        for x, ancre, places in ((x_sources, "end", sources),
+                                 (x_usages, "start", usages)):
+            for noeud, y, epaisseur in places:
+                milieu = y + epaisseur / 2
+                textes.append(_etiquette_sankey(x, milieu, ancre, noeud.libelle,
+                                                noeud.montant))
+                # L'étiquette d'un nœud mince déborde sous lui : le cadre la
+                # loge.
+                fond = max(fond, y + epaisseur, milieu + 16)
+
+        for noeud in caisse.sources:
+            lignes.append([escape(noeud.libelle), escape(caisse.libelle),
+                           escape(noeud.montant)])
+        for noeud in caisse.usages:
+            lignes.append([escape(caisse.libelle), escape(noeud.libelle),
+                           escape(noeud.montant)])
+        bas = fond
+
+    hauteur = math.ceil(bas + MARGE_BAS_SANKEY)
+    grille = tableau(["De", "Vers", "Montant"], lignes, ["", "", "nombre"],
+                     titre=titre, entete_de_ligne=True)
+    return (
+        f'<figure class="sankey" role="group" aria-label="{escape(titre)}">'
+        f"<figcaption>{escape(nom)}</figcaption>"
+        f'<div class="defilant" tabindex="0" role="region" '
+        f'aria-label="{escape(titre)}">'
+        f'<svg viewBox="0 0 {LARGEUR_SANKEY} {hauteur}" role="img" '
+        f'aria-label="{escape(titre)}">'
+        f"{''.join(rubans)}{''.join(noeuds)}{''.join(textes)}</svg></div>"
+        "</figure>"
+        '<details class="donnees-sankey">'
+        + sommaire(f"Les chiffres de ce schéma, flux par flux ({len(lignes)} lignes)")
+        + f"{grille}</details>"
     )
 
 

@@ -50,6 +50,7 @@ from ..frontiere import charger_frontiere
 from ..cout import (
     COMPOSANTE_GARANTIE,
     PensionFinancee,
+    SoldeAnnuel,
     calculer_cout,
     calculer_dette,
     financer,
@@ -8179,6 +8180,10 @@ def _cout(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
       depuis 1959, le bilan jusqu'en 2070, l'effet de la réforme — n'en font
       plus qu'un : ils répondaient à la même question sur trois fenêtres, et
       obligeaient à recomposer de tête ce qu'un seul cadre montre d'un coup.
+      La troisième carte n'est pas un graphique de plus sur la même question :
+      ses deux schémas de Sankey montrent une seule année, et ce qu'aucune
+      courbe ne montre — qui paie quoi, dans le système actuel et dans la
+      proposition. Voir ``_cout_carte_flux``.
     * **Tout le reste est replié.** Le détail par régime, les six
       contrefactuels, les périmètres, les limites : rien n'est retiré — une page
       qui ne peut pas se justifier n'est pas honnête —, mais rien n'oblige à le
@@ -8397,6 +8402,13 @@ que de {premiere_ventilee} à {derniere_ventilee}.""",
         identifiant="cout-provenance",
     )
 
+    # -- la troisième carte : qui paie quoi ----------------------------------
+    #
+    # Le compte de la bascule est lu une fois, ici : la carte le dessine, le
+    # tableau poste par poste l'écrit, et les deux disent les mêmes nombres.
+    compte_bascule = _bilan_bascule(contexte)
+    carte_flux = _cout_carte_flux(contexte, compte_bascule)
+
     # -- ce que personne n'a cotisé -----------------------------------------
     #
     # UN CHIFFRE, ET SON DÉNOMINATEUR AVEC LUI. La part des avantages non
@@ -8431,7 +8443,7 @@ plus large que les cartes).
         _cout_detail_scenarios(contexte),
         _cout_detail_cascade(contexte, regards),
         _cout_detail_equilibre(contexte),
-        _cout_detail_postes(contexte),
+        _cout_detail_postes(contexte, compte_bascule),
         _cout_detail_dette(contexte),
         _cout_detail_frise(contexte),
         _cout_detail_garantie(contexte),
@@ -8440,7 +8452,7 @@ plus large que les cartes).
         _cout_detail_sources(contexte),
         _cout_detail_limites(contexte),
     ])
-    plan = g.plan(carte_bilan + carte_provenance + detail, "/cout")
+    plan = g.plan(carte_bilan + carte_provenance + carte_flux + detail, "/cout")
 
     tete = g.affiche(
         "Le coût",
@@ -8471,6 +8483,8 @@ lieu d'attendre une réforme.</div>
 {carte_bilan}
 
 {carte_provenance}
+
+{carte_flux}
 {non_cotise}
 <div class="note"><strong>Dépenser moins n'est pas économiser.</strong> Un
 système en {g.terme("comptes notionnels", "compte notionnel")} ne laisse pas d'argent
@@ -10520,22 +10534,46 @@ def _sans_numero(libelle: str) -> str:
     return libelle.split(". ", 1)[1] if ". " in libelle else libelle
 
 
-def _cout_detail_postes(contexte: Contexte) -> str:
-    """Recettes et dépenses poste par poste, le système actuel et la proposition.
+#: Les deux systèmes que le bilan de la bascule met face à face : le droit en
+#: vigueur et la proposition, ceux entre lesquels la décision se prend.
+SYSTEMES_BILAN: tuple[str, ...] = ("actuel", "notionnel_liberal")
 
-    C'est le tableau 2.2 du rapport annuel du COR — la structure des
-    ressources, en milliards et en pourcentage du total — refait pour DEUX
-    systèmes, la même année, avec les dépenses en face et le solde en bas.
-    Tout ce qu'il contient est déjà dans le bilan de la page : ``ressources_de``
-    et ``depense`` y sont simplement écrits ligne à ligne, et les lignes
-    somment au total. Rien n'y est calculé qui ne le soit ailleurs ; ce qui est
-    nouveau, c'est qu'on VOIT ce que chaque décision de la proposition retire
-    ou remplace, poste par poste, au lieu de le lire dans une note.
+
+@dataclass(frozen=True)
+class BilanBascule:
+    """Le compte de l'année de bascule, poste par poste, et ce qui est hors du compte.
+
+    DEUX ENDROITS DE LA PAGE COÛT LE LISENT, ET ILS DOIVENT DIRE LA MÊME
+    CHOSE : le tableau « Recettes et dépenses, poste par poste » l'écrit en
+    chiffres, la carte des flux le dessine. Ce qui ne se lit pas directement
+    sur la ligne du solde — la garantie vieillesse, tirée de la distribution
+    des pensions, et le pilier capitalisé — est donc calculé ici une fois, et
+    non deux fois à deux endroits qui pourraient diverger.
+    """
+
+    #: L'année de la bascule, bornée à la fenêtre du compte.
+    annee: int
+    ligne: SoldeAnnuel
+    #: La dernière année dont le PIB est publié, et ce PIB, en millions
+    #: d'euros : celui de l'année de bascule ne l'est pas encore.
+    annee_pib: int
+    pib: float
+    derniere_ventilee: int
+    #: La garantie vieillesse lue sur la distribution des pensions, en
+    #: millions d'euros — la ligne « pour mémoire, hors du compte ».
+    garantie_meur: float
+    #: Le pilier capitalisé obligatoire, en part de PIB — la ligne « pour
+    #: mémoire, hors du système ».
+    capitalise: float
+
+
+def _bilan_bascule(contexte: Contexte) -> BilanBascule:
+    """Le compte de la bascule : voir :class:`BilanBascule`.
 
     L'année est celle de la bascule : c'est la première où la proposition
     s'applique, et c'est de là que la décision se prend. Le compte du COR y est
     projeté, et le PIB n'y est pas publié ; les milliards sont donc ceux d'un
-    point de PIB de la dernière année publiée, ce que le tableau dit.
+    point de PIB de la dernière année publiée.
     """
     comptes = contexte.comptes()
     cout = contexte.cout()
@@ -10544,13 +10582,6 @@ def _cout_detail_postes(contexte: Contexte) -> str:
     annee = min(max(base.annee_bascule, solde.premiere_annee), solde.derniere_annee)
     ligne = solde.annee(annee)
     annee_pib = comptes.pib.derniere_annee
-    pib = comptes.pib(annee_pib)
-    derniere_ventilee = comptes.derniere_annee_ventilee
-    systemes = ("actuel", "notionnel_liberal")
-    recettes = {s: ligne.postes_ressources(s) for s in systemes}
-    depenses_ = {s: ligne.postes_depenses(s) for s in systemes}
-    total_recettes = {s: ligne.ressources_de(s) for s in systemes}
-    total_depenses = {s: ligne.depense(s) for s in systemes}
 
     # La garantie vieillesse, lue sur la vraie distribution des pensions comme
     # le fait le dépliant qui lui est consacré — jamais sur les cas types, dont
@@ -10570,15 +10601,214 @@ def _cout_detail_postes(contexte: Contexte) -> str:
         simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
         base.garantie_vieillesse_mensuelle * vers_enquete, facteur_contributif,
     )
-    # Un ayant droit sur deux réclame : le même recours que le dépliant.
-    garantie_meur = garantie.cout_annuel_meur * base.taux_recours_garantie / vers_enquete
     # Le pilier capitalisé : 5 % de la même assiette que les 18 %, donc les
     # cotisations de la proposition multipliées par le rapport des deux taux.
     capitalise = (
-        recettes["notionnel_liberal"]["cotisations"]
+        ligne.postes_ressources("notionnel_liberal")["cotisations"]
         * base.taux_capitalisation_obligatoire / base.taux_cotisation_liberal
         if ligne.recette_par_assiette else 0.0
     )
+    return BilanBascule(
+        annee=annee,
+        ligne=ligne,
+        annee_pib=annee_pib,
+        pib=comptes.pib(annee_pib),
+        derniere_ventilee=comptes.derniere_annee_ventilee,
+        # Un ayant droit sur deux réclame : le même recours que le dépliant.
+        garantie_meur=(garantie.cout_annuel_meur * base.taux_recours_garantie
+                       / vers_enquete),
+        capitalise=capitalise,
+    )
+
+
+#: Les groupes de ressources, tels que le schéma des flux les nomme. Ce sont
+#: ceux du graphique « Qui paie ? », juste au-dessus, et dans ses couleurs : qui
+#: y a appris que l'impôt est jaune le retrouve jaune ici. Les libellés sont
+#: raccourcis : « Versements d'autres caisses » ne tiendrait pas dans les cent
+#: quarante-quatre unités que le schéma laisse à gauche de ses nœuds.
+LIBELLES_FLUX: dict[str, str] = {
+    "salaires": "Cotisations",
+    "impots": "Impôts",
+    "transferts": "Autres caisses",
+    "reste": "Le reste",
+}
+
+
+def _montant_flux(meur: float) -> str:
+    """Un montant du schéma des flux : au milliard près, au dixième sous dix.
+
+    « 0 Md € » se lirait comme un flux nul, et c'est un flux petit.
+    """
+    return _milliards(meur, 0 if meur >= 10_000 else 1)
+
+
+def _caisse_flux(bilan: BilanBascule, systeme: str, libelle: str,
+                 cotisations: str) -> g.CaisseSankey:
+    """La caisse de répartition d'un système : ses payeurs, ses pensions.
+
+    Les payeurs sont les quatre groupes de ``GROUPES``, lus sur
+    ``postes_ressources`` — la même règle que le tableau poste par poste, donc
+    les mêmes nombres ; un groupe que le système n'encaisse pas n'a pas de
+    nœud. Ce qui manque pour payer les pensions est EMPRUNTÉ : c'est donc une
+    source, en rouge comme le ruban d'écart du bilan ; ce qui reste est placé,
+    et c'est un usage, en vert. Le compte tombe ainsi juste des deux côtés.
+    """
+    ligne, pib = bilan.ligne, bilan.pib
+    postes = ligne.postes_ressources(systeme)
+    sources: list[g.NoeudSankey] = []
+    for groupe in GROUPES:
+        part = sum(postes[code] for code in groupe.postes)
+        if part > 0.0:
+            sources.append(g.NoeudSankey(
+                cotisations if groupe.code == "salaires" else LIBELLES_FLUX[groupe.code],
+                part, _montant_flux(part * pib), groupe.couleur,
+            ))
+    depenses_ = ligne.postes_depenses(systeme)
+    usages = [g.NoeudSankey("Pensions directes", depenses_["droits_directs"],
+                            _montant_flux(depenses_["droits_directs"] * pib),
+                            "var(--serie-2)")]
+    if depenses_["droits_derives"] > 0.0:
+        usages.append(g.NoeudSankey(
+            "Pensions de réversion", depenses_["droits_derives"],
+            _montant_flux(depenses_["droits_derives"] * pib), "var(--serie-4)"))
+    solde = ligne.solde(systeme)
+    if solde < 0.0:
+        sources.append(g.NoeudSankey("Ce qui manque", -solde,
+                                     _montant_flux(-solde * pib), "var(--manque)"))
+    elif solde > 0.0:
+        usages.append(g.NoeudSankey("Ce qui reste", solde,
+                                    _montant_flux(solde * pib), "var(--reste)"))
+    valeur = max(ligne.ressources_de(systeme), ligne.depense(systeme))
+    return g.CaisseSankey(libelle, valeur, _montant_flux(valeur * pib),
+                          tuple(sources), tuple(usages))
+
+
+def _cout_carte_flux(contexte: Contexte, bilan: BilanBascule) -> str:
+    """Qui paie quoi : le système actuel et la proposition, en deux schémas.
+
+    CE QUE LES DEUX COURBES DU HAUT NE MONTRENT PAS. Elles disent combien
+    rentre et combien sort, année après année ; elles ne disent ni qui apporte
+    quelle part, ni à quoi chaque part sert. Deux schémas de Sankey le disent,
+    l'année de la bascule, sur le compte même du tableau poste par poste :
+    aujourd'hui, un seul pot où cotisations, impôts et versements d'autres
+    caisses se mêlent ; dans la proposition, trois caisses — le régime unique,
+    où aucun impôt n'entre, la garantie vieillesse, que paie l'impôt, et le
+    pilier capitalisé, placé au nom de chacun.
+
+    LA MÊME ÉCHELLE POUR LES DEUX : un milliard y a la même épaisseur. Sans
+    elle, chaque schéma remplirait son cadre, et un système qui brasse deux
+    tiers de l'autre paraîtrait aussi gros.
+
+    L'ANNÉE EST CELLE DE LA BASCULE, pour la raison du tableau : c'est la
+    première où la proposition s'applique. Le déficit qu'elle montre alors est
+    celui des courbes, et il n'est pas caché : il est un payeur, en rouge.
+
+    Demandée le 23 septembre 2026 : la page tenait jusque-là en deux
+    graphiques, et cette carte est la troisième.
+    """
+    base = contexte.base
+    ligne, pib, annee = bilan.ligne, bilan.pib, bilan.annee
+    taux_liberal = g.pourcentage(base.taux_cotisation_liberal, decimales=0)
+    taux_capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, decimales=0)
+    couleurs = {groupe.code: groupe.couleur for groupe in GROUPES}
+
+    actuel = (_caisse_flux(bilan, "actuel", "Régimes de retraite", "Cotisations"),)
+    # Le taux unique ne s'écrit que là où il s'applique : une bascule posée
+    # au-delà de la fenêtre du compte laisse la proposition aux taux réels.
+    proposition = [_caisse_flux(
+        bilan, "notionnel_liberal", "Régime unique",
+        f"Cotisations {taux_liberal}" if ligne.recette_par_assiette else "Cotisations",
+    )]
+    garantie = bilan.garantie_meur / pib
+    if garantie > 0.0:
+        montant = _montant_flux(bilan.garantie_meur)
+        proposition.append(g.CaisseSankey(
+            "Budget de l'État", garantie, montant,
+            (g.NoeudSankey("Impôts", garantie, montant, couleurs["impots"]),),
+            (g.NoeudSankey("Garantie vieillesse", garantie, montant,
+                           "var(--serie-3)"),),
+        ))
+    if bilan.capitalise > 0.0:
+        montant = _montant_flux(bilan.capitalise * pib)
+        proposition.append(g.CaisseSankey(
+            "Pilier capitalisé", bilan.capitalise, montant,
+            (g.NoeudSankey(f"Capitalisation {taux_capitalise}", bilan.capitalise,
+                           montant, couleurs["salaires"]),),
+            (g.NoeudSankey("Épargne à votre nom", bilan.capitalise, montant,
+                           "var(--serie-8)"),),
+        ))
+    echelle = g.echelle_sankey(sum(caisse.valeur for caisse in actuel),
+                               sum(caisse.valeur for caisse in proposition))
+    colonnes = ("D'où vient l'argent", "Où il va")
+    schemas = g.sankey(
+        f"D'où vient l'argent du système actuel et où il va, en {annee}, "
+        "en milliards d'euros",
+        f"Le système actuel, en {annee}", actuel, echelle, colonnes,
+    ) + g.sankey(
+        f"D'où viendrait l'argent de la proposition et où il irait, en {annee}, "
+        "en milliards d'euros",
+        f"Notre proposition, en {annee}", tuple(proposition), echelle, colonnes,
+    )
+
+    # Ce qui manque est emprunté, ce qui reste est placé. Le verbe n'est redit
+    # pour le système actuel que s'il change : « le régime unique emprunterait
+    # 35 Md €, le système actuel 4,8 ».
+    def solde_en_clair(systeme: str) -> tuple[str, str]:
+        solde_meur = ligne.solde(systeme) * pib
+        if solde_meur < 0.0:
+            return "emprunterait", _montant_flux(-solde_meur)
+        return "placerait", _montant_flux(solde_meur)
+
+    verbe, montant = solde_en_clair("notionnel_liberal")
+    verbe_actuel, montant_actuel = solde_en_clair("actuel")
+    actuel_en_clair = (montant_actuel if verbe_actuel == verbe
+                       else f"{verbe_actuel} {montant_actuel}")
+
+    return g.cle(
+        "Qui paie quoi, aujourd'hui et avec notre proposition ?",
+        f"""Aujourd'hui, cotisations, impôts et versements d'autres caisses se
+mêlent pour payer les pensions. Avec notre proposition, <strong>chaque euro a
+sa caisse</strong> : les cotisations vont aux pensions, l'impôt à la garantie
+vieillesse, et {taux_capitalise} des salaires sont placés à votre nom. En
+{annee}, le régime unique {verbe} {montant}, le système actuel
+{actuel_en_clair}.""",
+        schemas,
+        # La source se lit aussi dans l'image que compose « Partager » : elle
+        # ne renvoie donc à rien qui ne soit que dans la page.
+        f"""Sources : Conseil d'orientation des retraites pour le système actuel,
+le modèle pour la proposition. En milliards d'euros de {annee}, au PIB de
+{bilan.annee_pib}. Les deux schémas sont à la même échelle.""",
+        identifiant="cout-flux",
+    )
+
+
+def _cout_detail_postes(contexte: Contexte, bilan: BilanBascule) -> str:
+    """Recettes et dépenses poste par poste, le système actuel et la proposition.
+
+    C'est le tableau 2.2 du rapport annuel du COR — la structure des
+    ressources, en milliards et en pourcentage du total — refait pour DEUX
+    systèmes, la même année, avec les dépenses en face et le solde en bas.
+    Tout ce qu'il contient est déjà dans le bilan de la page : ``ressources_de``
+    et ``depense`` y sont simplement écrits ligne à ligne, et les lignes
+    somment au total. Rien n'y est calculé qui ne le soit ailleurs ; ce qui est
+    nouveau, c'est qu'on VOIT ce que chaque décision de la proposition retire
+    ou remplace, poste par poste, au lieu de le lire dans une note.
+
+    L'année et les deux lignes « pour mémoire » viennent de
+    :func:`_bilan_bascule`, que la carte des flux lit aussi : le schéma et le
+    tableau disent donc les mêmes nombres.
+    """
+    base = contexte.base
+    annee, ligne = bilan.annee, bilan.ligne
+    annee_pib, pib = bilan.annee_pib, bilan.pib
+    derniere_ventilee = bilan.derniere_ventilee
+    systemes = SYSTEMES_BILAN
+    recettes = {s: ligne.postes_ressources(s) for s in systemes}
+    depenses_ = {s: ligne.postes_depenses(s) for s in systemes}
+    total_recettes = {s: ligne.ressources_de(s) for s in systemes}
+    total_depenses = {s: ligne.depense(s) for s in systemes}
+    garantie_meur = bilan.garantie_meur
+    capitalise = bilan.capitalise
 
     def cellules(valeur: float, total: float, absent: bool = False) -> list[str]:
         """Milliards, part de PIB, part du total — ou trois tirets."""

@@ -29,6 +29,8 @@ from retraite_notionnelle.donnees.chargement import (
     charger_periodes_non_travaillees,
 )
 from retraite_notionnelle.web.pages import (
+    _bilan_bascule,
+    _caisse_flux,
     _date_en_clair,
     _libelles_cascade,
     _marches_cascade,
@@ -4415,7 +4417,14 @@ BUDGETS_DE_LECTURE: dict[str, tuple[int, int, int]] = {
     # la trajectoire du système actuel pour l'une, le résumé en langage
     # courant pour l'autre. Les bornes suivent, d'un paragraphe chacune.
     "/cas-types": (500, 0, 1, 310),
-    "/cout": (700, 2, 0, 0),
+    # Coût tenait à 700 mots, et les atteignait exactement. La carte des flux,
+    # le 23 septembre 2026, en ajoute deux cent trente : cent dix de prose — sa
+    # question, sa réponse, sa source — et cent vingt d'étiquettes, le nom et
+    # le montant de chacun des nœuds de ses deux schémas, que le décompte ne
+    # sait pas distinguer d'une phrase. Les tracés ouverts restent deux : un
+    # schéma de Sankey n'est pas un graphique dans le temps, et le test de la
+    # page le compte à part.
+    "/cout": (950, 2, 0, 0),
     # LA SEULE PAGE DU SITE QUI DÉPASSE LE MILLIER DE MOTS, et c'est son objet
     # même. Elle affirme qu'il existe trente-neuf avantages non contributifs :
     # elle doit donc les NOMMER tous, dire ce que chacun coûte, et — pour les
@@ -4652,6 +4661,9 @@ def test_la_page_cout_tient_en_deux_graphiques_et_sans_tableau_ouvert(contexte):
 
     traces = visible.count('<figure class="graphique"')
     assert traces <= 2, f"{traces} graphiques ouverts sur la page Coût"
+    # Et les deux schémas de Sankey de la carte des flux : une seule année,
+    # deux systèmes, et ce qu'aucune courbe ne montre — qui paie quoi.
+    assert visible.count('<figure class="sankey"') == 2
     assert visible.count("<table") == 0, (
         "un tableau déplié sur la page Coût : les chiffres se rangent sous le "
         "graphique qu'ils décrivent, ou dans une section repliée"
@@ -4677,7 +4689,7 @@ def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse(contexte):
     """
     corps = rendre(contexte, "/cout", {})[1]
     cartes = re.findall(r'<section class="cle"[^>]*>(.*?)</section>', corps, re.S)
-    assert len(cartes) == 2, f"{len(cartes)} cartes, deux attendues"
+    assert len(cartes) == 3, f"{len(cartes)} cartes, trois attendues"
     for carte in cartes:
         titre = re.match(r"<h3>(.*?)</h3>", carte, re.S)
         assert titre, carte[:80]
@@ -4697,6 +4709,178 @@ def test_chaque_carte_de_la_page_cout_porte_sa_question_et_sa_reponse(contexte):
         assert '<button type="button" class="partager">' in carte, (
             "une carte doit pouvoir sortir du site en image"
         )
+
+
+# -- le schéma de Sankey --------------------------------------------------------
+
+
+def _caisses_d_essai() -> tuple[g.CaisseSankey, ...]:
+    """Deux caisses dont le compte tombe juste : un déficit, puis un passage."""
+    n = g.NoeudSankey
+    return (
+        g.CaisseSankey(
+            "Caisse", 100.0, "100",
+            (n("A", 60.0, "60", "var(--serie-5)"),
+             n("B & <C>", 30.0, "30", "var(--serie-6)"),
+             n("Manque", 10.0, "10", "var(--manque)")),
+            (n("X", 90.0, "90", "var(--serie-2)"), n("Y", 10.0, "10", "var(--serie-4)")),
+        ),
+        g.CaisseSankey("Seconde", 20.0, "20", (n("D", 20.0, "20", "var(--serie-7)"),),
+                       (n("Z", 20.0, "20", "var(--serie-3)"),)),
+    )
+
+
+def _rubans_sankey(html: str) -> list[tuple[float, float, float, float, float, float]]:
+    """Chaque ruban d'un schéma : abscisse, haut et bas à son départ, puis à son arrivée.
+
+    Le tracé est ``M x1 h1 C … x2 h2 L x2 b2 C … x1 b1 Z`` : ses bords se
+    lisent aux positions fixes de ses nombres.
+    """
+    rubans = []
+    for trace in re.findall(r'<path class="ruban" fill="[^"]+" d="([^"]+)"/>', html):
+        v = [float(x) for x in re.findall(r"-?\d+\.\d", trace)]
+        rubans.append((v[0], v[1], v[15], v[6], v[7], v[9]))
+    return rubans
+
+
+def test_un_schema_de_sankey_remplit_exactement_ses_caisses():
+    """Le compte tombe juste, et le dessin le montre : les rubans qui entrent
+    dans une caisse la couvrent de haut en bas, bord à bord, sans se chevaucher,
+    et ceux qui en sortent aussi. Chaque ruban garde son épaisseur d'un bout à
+    l'autre, et cette épaisseur est son montant à l'échelle."""
+    echelle = 2.0
+    html = g.sankey("Essai", "Un essai", _caisses_d_essai(), echelle)
+    caisses = [(float(y), float(h)) for y, h in re.findall(
+        r'<rect class="noeud caisse" x="[^"]+" y="([^"]+)" width="[^"]+" height="([^"]+)"/>',
+        html)]
+    assert len(caisses) == 2
+    rubans = _rubans_sankey(html)
+    assert len(rubans) == 3 + 2 + 1 + 1
+    entree = g.X_CAISSE_SANKEY
+    sortie = g.X_CAISSE_SANKEY + g.LARGEUR_NOEUD_SANKEY
+    for (haut, hauteur), caisse in zip(caisses, _caisses_d_essai()):
+        assert hauteur == pytest.approx(caisse.valeur * echelle)
+        for bords in (
+            # Le bord droit des rubans qui entrent, le bord gauche de ceux qui sortent.
+            sorted((h2, b2) for x1, h1, b1, x2, h2, b2 in rubans
+                   if x2 == entree and haut <= h2 < haut + hauteur),
+            sorted((h1, b1) for x1, h1, b1, x2, h2, b2 in rubans
+                   if x1 == sortie and haut <= h1 < haut + hauteur),
+        ):
+            assert bords[0][0] == pytest.approx(haut)
+            for (_, bas), (suivant, _) in zip(bords, bords[1:]):
+                assert suivant == pytest.approx(bas, abs=0.11)
+            assert bords[-1][1] == pytest.approx(haut + hauteur, abs=0.11)
+    epaisseurs = sorted(round(b1 - h1, 1) for _, h1, b1, _, h2, b2 in rubans)
+    assert epaisseurs == sorted(round(b2 - h2, 1) for _, h1, b1, _, h2, b2 in rubans)
+    attendues = [noeud.valeur * echelle for caisse in _caisses_d_essai()
+                 for noeud in caisse.sources + caisse.usages]
+    assert epaisseurs == sorted(attendues)
+
+
+def test_un_schema_de_sankey_ne_superpose_aucune_etiquette():
+    """Les nœuds minuscules sont ceux où deux étiquettes se chevaucheraient :
+    l'écart entre deux nœuds d'une colonne est fait pour en loger deux, et le
+    cadre descend assez bas pour loger la dernière."""
+    n = g.NoeudSankey
+    minuscules = tuple(n(f"N{rang}", 0.01, "0,0", "var(--serie-5)") for rang in range(4))
+    caisse = g.CaisseSankey("Caisse", 0.04, "0,0", minuscules,
+                            (n("U", 0.04, "0,0", "var(--serie-2)"),))
+    html = g.sankey("Essai", "Un essai", (caisse,), 1.0)
+    noms = [float(y) for y in re.findall(
+        r'<text class="nom" x="[^"]+" y="([^"]+)" text-anchor="end">', html)]
+    assert len(noms) == 4
+    for haut, bas in zip(noms, noms[1:]):
+        # Deux lignes de treize unités, plus de quoi respirer.
+        assert bas - haut >= g.ECART_NOEUDS_SANKEY >= 30
+    hauteur = float(re.search(r'viewBox="0 0 \d+ (\d+)"', html).group(1))
+    montants = [float(y) for y in re.findall(r'<text class="montant" x="[^"]+" y="([^"]+)"', html)]
+    assert max(montants) + 4 <= hauteur
+
+
+def test_un_schema_de_sankey_se_lit_aussi_en_tableau():
+    """Un schéma est une image : chacun de ses rubans est redit dans le tableau
+    replié dessous, de qui à qui et combien, et le texte est échappé partout."""
+    html = g.sankey("Essai", "Un essai", _caisses_d_essai(), 1.0,
+                    ("D'où", "Où"))
+    assert html.startswith('<figure class="sankey" role="group" aria-label="Essai">')
+    assert "<figcaption>Un essai</figcaption>" in html
+    tableau = html[html.index('<details class="donnees-sankey">'):]
+    assert "(7 lignes)" in tableau
+    lignes = re.findall(
+        r'<tr><th class="" scope="row">(.*?)</th><td class="">(.*?)</td>'
+        r'<td class="nombre">(.*?)</td></tr>', tableau)
+    assert lignes == [
+        ("A", "Caisse", "60"), ("B &amp; &lt;C&gt;", "Caisse", "30"),
+        ("Manque", "Caisse", "10"), ("Caisse", "X", "90"), ("Caisse", "Y", "10"),
+        ("D", "Seconde", "20"), ("Seconde", "Z", "20"),
+    ]
+    assert "B & <C>" not in html and html.count("B &amp; &lt;C&gt;") == 2
+    # Les titres de colonne ne se posent qu'une fois, au-dessus de la première caisse.
+    assert html.count('class="colonne"') == 2
+    assert g.sankey("Rien", "Rien", (), 1.0) == ""
+
+
+def test_deux_schemas_comparés_partagent_leur_echelle():
+    """Le plus gros prend toute la hauteur prévue ; l'autre, la sienne à la
+    même échelle — sans quoi un système deux fois plus petit paraîtrait aussi
+    gros."""
+    echelle = g.echelle_sankey(400.0, 200.0)
+    assert echelle * 400.0 == pytest.approx(g.HAUTEUR_SANKEY)
+    assert g.echelle_sankey() == 0.0 and g.echelle_sankey(0.0) == 0.0
+
+
+def test_la_carte_des_flux_dessine_le_compte_de_la_bascule(contexte):
+    """Qui paie quoi, dans les deux systèmes, sur le compte même du tableau
+    poste par poste — et à la même échelle.
+
+    Chaque caisse tombe juste : ses payeurs, déficit compris, somment à ce
+    qu'elle brasse, et ses usages aussi. Le système actuel encaisse l'impôt ;
+    le régime unique de la proposition ne l'encaisse pas, et l'impôt paie à
+    part la garantie vieillesse, comme le pilier capitalisé est placé à part.
+    """
+    bilan = _bilan_bascule(contexte)
+    ligne = bilan.ligne
+    caisses = {s: _caisse_flux(bilan, s, s, "Cotisations")
+               for s in ("actuel", "notionnel_liberal")}
+    for systeme, caisse in caisses.items():
+        # Au dix-millième : les parts que le COR publie, arrondies, ne somment
+        # pas tout à fait à un — la tolérance de `test_cout.py`, pour la même
+        # raison. Un millième de milliard, que le dessin ne peut pas montrer.
+        assert sum(n.valeur for n in caisse.sources) == pytest.approx(
+            caisse.valeur, rel=1e-4)
+        assert sum(n.valeur for n in caisse.usages) == pytest.approx(caisse.valeur)
+        assert caisse.valeur == pytest.approx(
+            max(ligne.ressources_de(systeme), ligne.depense(systeme)))
+    sources = {s: {n.libelle for n in c.sources} for s, c in caisses.items()}
+    assert "Impôts" in sources["actuel"]
+    assert "Impôts" not in sources["notionnel_liberal"]
+    assert {n.libelle for n in caisses["actuel"].usages} >= {"Pensions de réversion"}
+
+    corps = rendre(contexte, "/cout", {})[1]
+    carte = re.search(r'<section class="cle" id="cout-flux".*?</section>', corps, re.S)
+    assert carte, "la carte des flux a disparu de la page Coût"
+    schemas = re.findall(r'<figure class="sankey".*?</figure>', carte.group(0), re.S)
+    assert len(schemas) == 2
+    assert "Budget de l&#x27;État" in schemas[1] and "Pilier capitalisé" in schemas[1]
+    assert "Budget de l&#x27;État" not in schemas[0]
+    # La même échelle : les deux caisses de répartition sont dans le rapport de
+    # ce qu'elles brassent.
+    hauteurs = [float(re.search(r'<rect class="noeud caisse"[^>]*height="([^"]+)"',
+                                schema).group(1)) for schema in schemas]
+    assert hauteurs[0] / hauteurs[1] == pytest.approx(
+        caisses["actuel"].valeur / caisses["notionnel_liberal"].valeur, rel=2e-3)
+    # Le déficit n'est pas caché : il est un payeur, et la réponse le chiffre.
+    solde = -ligne.solde("notionnel_liberal") * bilan.pib
+    assert solde > 0
+    # Les blancs de la source sont repliés, mais pas les espaces fines des
+    # montants : `\s` les attraperait aussi.
+    assert f"emprunterait {_milliards_flux(solde)}" in html.unescape(
+        re.sub(r"[ \t\n]+", " ", carte.group(0)))
+
+
+def _milliards_flux(meur: float) -> str:
+    return g.nombre(meur / 1000, 0 if meur >= 10_000 else 1) + "\u202fMd\u202f\u20ac"
 
 
 def test_chaque_carte_a_publier_part_d_un_bouton_et_non_d_une_capture(contexte):
@@ -4808,8 +4992,11 @@ def test_le_script_du_site_sait_lire_et_exporter_un_graphique():
     assert '"pointermove"' in page and "ArrowLeft" in page
     # Les chiffres viennent du tableau de points, et de nulle part ailleurs.
     assert 'nextElementSibling?.querySelector("table")' in page
-    # La composition de l'image, et sa signature.
+    # La composition de l'image, et sa signature. Elle sait composer les deux
+    # schémas de Sankey d'une carte, chacun à ses proportions.
     assert '.closest("button.partager")' in page
+    assert '"figure.graphique, figure.sankey"' in page
+    assert "svg.viewBox.baseVal" in page
     assert "toBlob" in page and "navigator.share" in page
     assert "SIGNATURE" in page and "SIGNATURE_SITE" in page
     # Les DEUX gestes de la barre, et le compte rendu qui les suit. Le libellé
@@ -5158,7 +5345,8 @@ def test_les_pages_longues_portent_leur_plan(contexte):
     Les autres pages, courtes, n'ont pas de plan.
     """
     for chemin, attendus in (
-        ("/cout", ["cout-bilan", "cout-provenance", "cout-depenses", "cout-ressources",
+        ("/cout", ["cout-bilan", "cout-provenance", "cout-flux", "cout-depenses",
+                   "cout-ressources",
                    "cout-transferts", "cout-scenarios", "cout-cascade",
                    "cout-equilibre", "cout-postes",
                    "cout-dette",

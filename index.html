@@ -1908,8 +1908,11 @@ function svgAutonome(svg) {
   // Elle décrit un geste, pas une donnée : une image n'a pas de pointeur.
   copies[originaux.indexOf(svg.querySelector(".survol"))]?.remove();
   clone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-  clone.setAttribute("width", "1440");
-  clone.setAttribute("height", "600");
+  // Le double du repère : 1440 × 600 pour une courbe, et la hauteur propre
+  // d'un schéma de Sankey, dont chaque exemplaire a la sienne.
+  const boite = svg.viewBox.baseVal;
+  clone.setAttribute("width", String(2 * (boite?.width || 720)));
+  clone.setAttribute("height", String(2 * (boite?.height || 300)));
   return "data:image/svg+xml;charset=utf-8,"
     + encodeURIComponent(new XMLSerializer().serializeToString(clone));
 }
@@ -2072,14 +2075,45 @@ function texteDe(carte, selecteur) {
   return texteDuNoeud(carte.querySelector(selecteur)).replace(/\n/g, " ");
 }
 
-async function imageDuGraphique(carte) {
-  const figure = carte.querySelector("figure.graphique");
-  const svg = figure?.querySelector("svg");
-  if (!svg) { return null; }
+/** Les entrées de la légende d'un graphique, avec leurs pastilles.
+ *
+ * Une entrée porte une pastille, sauf celle du ruban d'écart, qui en porte
+ * deux — une par teinte. Les dessiner toutes est la seule façon de rendre
+ * lisible « vert s'il en reste, rouge s'il en manque ».
+ */
+function legendesDe(figure) {
+  return [...figure.querySelectorAll("figcaption li")].map((item) => ({
+    texte: [...item.children].filter((enfant) => !enfant.classList.contains("pastille"))
+      .map((enfant) => enfant.textContent).join(" ").replace(/\s+/g, " ").trim(),
+    couleurs: [...item.querySelectorAll(".pastille")].map((pastille) => {
+      const calcule = getComputedStyle(pastille);
+      return { fond: calcule.backgroundColor, voile: Number(calcule.opacity) };
+    }),
+  }));
+}
 
-  const image = new Image();
-  image.src = svgAutonome(svg);
-  await image.decode();
+async function imageDuGraphique(carte) {
+  // Les tracés de la carte, dans leur ordre : la courbe d'un graphique, ou les
+  // deux schémas de Sankey de la carte des flux. Un schéma porte son titre en
+  // tête, un graphique sa légende en pied ; chacun garde les proportions de son
+  // repère — une courbe fait 720 × 300, un schéma la hauteur de ses caisses.
+  const figures = [...carte.querySelectorAll("figure.graphique, figure.sankey")]
+    .filter((figure) => figure.querySelector("svg"));
+  if (!figures.length) { return null; }
+  const traces = await Promise.all(figures.map(async (figure) => {
+    const svg = figure.querySelector("svg");
+    const image = new Image();
+    image.src = svgAutonome(svg);
+    await image.decode();
+    const boite = svg.viewBox.baseVal;
+    const sankey = figure.classList.contains("sankey");
+    return {
+      image,
+      rapport: boite?.width ? boite.height / boite.width : 300 / 720,
+      titre: sankey ? texteDuNoeud(figure.querySelector("figcaption")) : "",
+      legendes: sankey ? [] : legendesDe(figure),
+    };
+  }));
 
   const style = getComputedStyle(document.body);
   const fond = style.backgroundColor;
@@ -2097,22 +2131,16 @@ async function imageDuGraphique(carte) {
   mesure.font = `19px ${SERIF}`;
   const source = enLignes(mesure, texteDe(carte, ".source"), largeurTexte);
 
-  // Une entrée de légende porte une pastille, sauf celle du ruban d'écart, qui
-  // en porte deux — une par teinte. Les dessiner toutes est la seule façon de
-  // rendre lisible « vert s'il en reste, rouge s'il en manque ».
-  const legendes = [...figure.querySelectorAll("figcaption li")].map((item) => ({
-    texte: [...item.children].filter((enfant) => !enfant.classList.contains("pastille"))
-      .map((enfant) => enfant.textContent).join(" ").replace(/\s+/g, " ").trim(),
-    couleurs: [...item.querySelectorAll(".pastille")].map((pastille) => {
-      const calcule = getComputedStyle(pastille);
-      return { fond: calcule.backgroundColor, voile: Number(calcule.opacity) };
-    }),
-  }));
-
-  const hauteurTrace = Math.round(largeurTexte * 300 / 720);
-  const hauteurLegende = legendes.length * 30;
+  // La hauteur de chaque tracé suit son repère. Le titre d'un schéma prend une
+  // ligne au-dessus de lui, plus aérée entre deux schémas qu'après la réponse ;
+  // un graphique seul retrouve exactement la mise en page d'avant les schémas.
+  for (const trace of traces) { trace.hauteur = Math.round(largeurTexte * trace.rapport); }
+  const avantTitre = (rang) => (rang === 0 ? 10 : 34);
+  const hauteurTraces = traces.reduce((somme, trace, rang) => somme
+    + (trace.titre ? avantTitre(rang) + 40 : 0) + trace.hauteur + 16
+    + trace.legendes.length * 30 + (rang < traces.length - 1 ? 16 : 0), 0);
   const hauteur = MARGE_IMAGE + titre.length * 48 + 14 + reponse.length * 40
-    + 22 + hauteurTrace + 16 + hauteurLegende + 26 + source.length * 28
+    + 22 + hauteurTraces + 26 + source.length * 28
     + 30 + 18 + 59 + MARGE_IMAGE;
 
   const toile = document.createElement("canvas");
@@ -2133,21 +2161,31 @@ async function imageDuGraphique(carte) {
   for (const ligne of reponse) { dessin.fillText(ligne, MARGE_IMAGE, y); y += 40; }
 
   y += 22;
-  dessin.drawImage(image, MARGE_IMAGE, y - 30, largeurTexte, hauteurTrace);
-  y += hauteurTrace - 14;
+  traces.forEach((trace, rang) => {
+    if (trace.titre) {
+      y += avantTitre(rang);
+      dessin.font = `700 24px ${SANS}`;
+      dessin.fillStyle = encre;
+      dessin.fillText(trace.titre, MARGE_IMAGE, y);
+      y += 40;
+    }
+    dessin.drawImage(trace.image, MARGE_IMAGE, y - 30, largeurTexte, trace.hauteur);
+    y += trace.hauteur - 14;
 
-  dessin.font = `20px ${SERIF}`;
-  for (const entree of legendes) {
-    entree.couleurs.forEach((pastille, position) => {
-      dessin.globalAlpha = Number.isFinite(pastille.voile) ? pastille.voile : 1;
-      dessin.fillStyle = pastille.fond;
-      dessin.fillRect(MARGE_IMAGE + position * 16, y - 11, 13, 13);
-    });
-    dessin.globalAlpha = 1;
-    dessin.fillStyle = doux;
-    dessin.fillText(entree.texte, MARGE_IMAGE + entree.couleurs.length * 16 + 8, y);
-    y += 30;
-  }
+    dessin.font = `20px ${SERIF}`;
+    for (const entree of trace.legendes) {
+      entree.couleurs.forEach((pastille, position) => {
+        dessin.globalAlpha = Number.isFinite(pastille.voile) ? pastille.voile : 1;
+        dessin.fillStyle = pastille.fond;
+        dessin.fillRect(MARGE_IMAGE + position * 16, y - 11, 13, 13);
+      });
+      dessin.globalAlpha = 1;
+      dessin.fillStyle = doux;
+      dessin.fillText(entree.texte, MARGE_IMAGE + entree.couleurs.length * 16 + 8, y);
+      y += 30;
+    }
+    if (rang < traces.length - 1) { y += 16; }
+  });
 
   y += 26;
   dessin.font = `19px ${SERIF}`;

@@ -869,8 +869,10 @@ export function cle(question, reponse, corps, source = "", identifiant = "") {
   // Le `<span class="etat">` porte le compte rendu, le `<textarea>` le repli du
   // presse-papiers : vides et masqués tant qu'on n'en a pas besoin.
   // La barre n'apparaît que si la carte porte un TRACÉ : c'est lui que l'image
-  // compose, et une carte qui n'en a pas donnerait un bouton qui échoue.
+  // compose, et une carte qui n'en a pas donnerait un bouton qui échoue. Un
+  // schéma de Sankey est un tracé comme un autre : `imageDuGraphique` le compose.
   const partage = corps.includes('<figure class="graphique"')
+    || corps.includes('<figure class="sankey"')
     ? barrePartage()
     : "";
   // Identifiée, la carte est joignable depuis le plan de la page ; le
@@ -1799,6 +1801,208 @@ export function cascade(titre, marches, unite = "", decimales = 1,
     + sommaire(`Les chiffres de cette cascade, marche par marche `
       + `(${marches.length} lignes)`)
     + `${grilleHtml}</details>`;
+}
+
+// -- le schéma de Sankey ------------------------------------------------------
+//
+// Ce qui paie à gauche, la caisse au milieu, ce qu'elle verse à droite, chaque
+// ruban de l'épaisseur de son montant. Voir `sankey` dans `gabarit.py`, dont ce
+// portage reprend les nombres ET l'ordre des opérations : les deux rendus sont
+// comparés caractère par caractère.
+
+const LARGEUR_SANKEY = 720;
+const LARGEUR_NOEUD_SANKEY = 14;
+const X_SOURCES_SANKEY = 152;
+const X_USAGES_SANKEY = 528;
+const X_CAISSE_SANKEY = Math.floor(
+  (X_SOURCES_SANKEY + LARGEUR_NOEUD_SANKEY + X_USAGES_SANKEY - LARGEUR_NOEUD_SANKEY) / 2,
+);
+const ECART_NOEUDS_SANKEY = 32;
+const ECART_CAISSES_SANKEY = 64;
+const MARGE_HAUT_SANKEY = 44;
+const MARGE_BAS_SANKEY = 6;
+const HAUTEUR_SANKEY = 240;
+const RETRAIT_SANKEY = 8;
+
+/**
+ * Un payeur ou un usage : un libellé, un montant, une couleur. `valeur` décide
+ * de l'épaisseur, `montant` est ce qui s'écrit sous le libellé.
+ */
+export class NoeudSankey {
+  constructor(libelle, valeur, montant, couleur) {
+    this.libelle = libelle;
+    this.valeur = valeur;
+    this.montant = montant;
+    this.couleur = couleur;
+  }
+}
+
+/**
+ * Une caisse, ce qui l'alimente à gauche et ce qu'elle verse à droite. Le
+ * compte doit tomber juste : `valeur` vaut la somme des sources et celle des
+ * usages, le déficit porté parmi les sources, l'excédent parmi les usages.
+ */
+export class CaisseSankey {
+  constructor(libelle, valeur, montant, sources, usages) {
+    this.libelle = libelle;
+    this.valeur = valeur;
+    this.montant = montant;
+    this.sources = sources;
+    this.usages = usages;
+  }
+}
+
+/** L'échelle commune de plusieurs schémas : le plus gros prend `HAUTEUR_SANKEY`. */
+export function echelleSankey(...totaux) {
+  const plusGros = totaux.length ? Math.max(...totaux) : 0.0;
+  return plusGros > 0.0 ? HAUTEUR_SANKEY / plusGros : 0.0;
+}
+
+/** Un ruban d'épaisseur constante : deux courbes de Bézier et deux bords. */
+function rubanSankey(x1, haut1, x2, haut2, epaisseur) {
+  const gauche = nombreBrut(x1);
+  const droite = nombreBrut(x2);
+  const milieu = nombreBrut((x1 + x2) / 2);
+  return `M${gauche} ${nombreBrut(haut1)} `
+    + `C${milieu} ${nombreBrut(haut1)} ${milieu} ${nombreBrut(haut2)} `
+    + `${droite} ${nombreBrut(haut2)} `
+    + `L${droite} ${nombreBrut(haut2 + epaisseur)} `
+    + `C${milieu} ${nombreBrut(haut2 + epaisseur)} `
+    + `${milieu} ${nombreBrut(haut1 + epaisseur)} `
+    + `${gauche} ${nombreBrut(haut1 + epaisseur)} Z`;
+}
+
+/** Le libellé et son montant, sur deux lignes centrées sur `milieu`. */
+function etiquetteSankey(x, milieu, ancre, libelle, montant) {
+  return `<text class="nom" x="${nombreBrut(x)}" y="${nombreBrut(milieu - 4)}" `
+    + `text-anchor="${ancre}">${echapper(libelle)}</text>`
+    + `<text class="montant" x="${nombreBrut(x)}" `
+    + `y="${nombreBrut(milieu + 12)}" text-anchor="${ancre}">`
+    + `${echapper(montant)}</text>`;
+}
+
+/** Les nœuds d'une colonne empilés depuis `haut` : [nœud, haut, épaisseur]. */
+function colonneSankey(noeuds, haut, echelle) {
+  const places = [];
+  let y = haut;
+  for (const noeud of noeuds) {
+    const epaisseur = noeud.valeur * echelle;
+    places.push([noeud, y, epaisseur]);
+    y = y + epaisseur + ECART_NOEUDS_SANKEY;
+  }
+  return places;
+}
+
+/**
+ * Un schéma de Sankey : d'où vient l'argent, où il va, caisse par caisse. Tout
+ * est aligné en haut de la caisse — ses payeurs, elle-même, ses usages —, si
+ * bien qu'aucun ruban ne passe sous l'étiquette qu'elle porte au-dessus d'elle.
+ * Le tableau des flux, replié dessous, en est la description détaillée.
+ */
+export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""]) {
+  if (!caisses.length) {
+    return "";
+  }
+  const sortieSources = X_SOURCES_SANKEY + LARGEUR_NOEUD_SANKEY;
+  const sortieCaisse = X_CAISSE_SANKEY + LARGEUR_NOEUD_SANKEY;
+  const centreCaisse = X_CAISSE_SANKEY + LARGEUR_NOEUD_SANKEY / 2;
+  const xSources = X_SOURCES_SANKEY - RETRAIT_SANKEY;
+  const xUsages = X_USAGES_SANKEY + LARGEUR_NOEUD_SANKEY + RETRAIT_SANKEY;
+
+  const rubans = [];
+  const noeuds = [];
+  const textes = [];
+  const lignes = [];
+
+  const [gauche, droite] = colonnes;
+  const yTitres = nombreBrut(MARGE_HAUT_SANKEY - 22);
+  if (gauche) {
+    textes.push(`<text class="colonne" x="${nombreBrut(sortieSources)}" `
+      + `y="${yTitres}" text-anchor="end">${echapper(gauche)}</text>`);
+  }
+  if (droite) {
+    textes.push(`<text class="colonne" x="${nombreBrut(X_USAGES_SANKEY)}" `
+      + `y="${yTitres}" text-anchor="start">${echapper(droite)}</text>`);
+  }
+
+  let haut = MARGE_HAUT_SANKEY;
+  let bas = haut;
+  caisses.forEach((caisse, rang) => {
+    if (rang > 0) {
+      haut = bas + ECART_CAISSES_SANKEY;
+    }
+    const sources = colonneSankey(caisse.sources, haut, echelle);
+    const usages = colonneSankey(caisse.usages, haut, echelle);
+    const epaisseurCaisse = caisse.valeur * echelle;
+
+    // Les rubans d'abord, dans l'ordre de leurs nœuds : ils ne se croisent pas.
+    let entree = haut;
+    for (const [noeud, y, epaisseur] of sources) {
+      rubans.push(`<path class="ruban" fill="${noeud.couleur}" `
+        + `d="${rubanSankey(sortieSources, y, X_CAISSE_SANKEY, entree, epaisseur)}"/>`);
+      entree = entree + epaisseur;
+    }
+    let sortie = haut;
+    for (const [noeud, y, epaisseur] of usages) {
+      rubans.push(`<path class="ruban" fill="${noeud.couleur}" `
+        + `d="${rubanSankey(sortieCaisse, sortie, X_USAGES_SANKEY, y, epaisseur)}"/>`);
+      sortie = sortie + epaisseur;
+    }
+
+    // Un nœud minuscule reste un filet d'une unité.
+    for (const [x, places] of [[X_SOURCES_SANKEY, sources], [X_USAGES_SANKEY, usages]]) {
+      for (const [noeud, y, epaisseur] of places) {
+        noeuds.push(`<rect class="noeud" fill="${noeud.couleur}" `
+          + `x="${nombreBrut(x)}" y="${nombreBrut(y)}" `
+          + `width="${nombreBrut(LARGEUR_NOEUD_SANKEY)}" `
+          + `height="${nombreBrut(Math.max(epaisseur, 1.0))}"/>`);
+      }
+    }
+    noeuds.push(`<rect class="noeud caisse" x="${nombreBrut(X_CAISSE_SANKEY)}" `
+      + `y="${nombreBrut(haut)}" `
+      + `width="${nombreBrut(LARGEUR_NOEUD_SANKEY)}" `
+      + `height="${nombreBrut(Math.max(epaisseurCaisse, 1.0))}"/>`);
+
+    textes.push(`<text class="nom" x="${nombreBrut(centreCaisse)}" `
+      + `y="${nombreBrut(haut - 22)}" text-anchor="middle">`
+      + `${echapper(caisse.libelle)}</text>`
+      + `<text class="montant" x="${nombreBrut(centreCaisse)}" `
+      + `y="${nombreBrut(haut - 7)}" text-anchor="middle">`
+      + `${echapper(caisse.montant)}</text>`);
+    let fond = haut + epaisseurCaisse;
+    for (const [x, ancre, places] of [[xSources, "end", sources], [xUsages, "start", usages]]) {
+      for (const [noeud, y, epaisseur] of places) {
+        const milieu = y + epaisseur / 2;
+        textes.push(etiquetteSankey(x, milieu, ancre, noeud.libelle, noeud.montant));
+        // L'étiquette d'un nœud mince déborde sous lui : le cadre la loge.
+        fond = Math.max(fond, y + epaisseur, milieu + 16);
+      }
+    }
+
+    for (const noeud of caisse.sources) {
+      lignes.push([echapper(noeud.libelle), echapper(caisse.libelle),
+        echapper(noeud.montant)]);
+    }
+    for (const noeud of caisse.usages) {
+      lignes.push([echapper(caisse.libelle), echapper(noeud.libelle),
+        echapper(noeud.montant)]);
+    }
+    bas = fond;
+  });
+
+  const hauteur = Math.ceil(bas + MARGE_BAS_SANKEY);
+  const grille = tableau(["De", "Vers", "Montant"], lignes, ["", "", "nombre"],
+    titre, true);
+  return `<figure class="sankey" role="group" aria-label="${echapper(titre)}">`
+    + `<figcaption>${echapper(nom)}</figcaption>`
+    + `<div class="defilant" tabindex="0" role="region" aria-label="${echapper(titre)}">`
+    + `<svg viewBox="0 0 ${LARGEUR_SANKEY} ${hauteur}" role="img" `
+    + `aria-label="${echapper(titre)}">`
+    + `${rubans.join("")}${noeuds.join("")}${textes.join("")}</svg></div>`
+    + "</figure>"
+    + '<details class="donnees-sankey">'
+    + sommaire(`Les chiffres de ce schéma, flux par flux (${lignes.length} lignes)`)
+    + `${grille}</details>`;
 }
 
 /**

@@ -166,8 +166,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->893<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 105<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->898<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 125<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Dix pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -177,8 +177,9 @@ repliée sur sa réponse courte ; **Simuler** (une carrière — en un ou plusie
 métiers, ou bien **lue sur votre relevé** année par année —, résumée en trois
 phrases avant les quatre montants, avec le détail du calcul et la
 décomposition de l'écart règle par règle), **Coût** (ce qui rentre, ce qui sort
-et ce qui manque — trois chiffres et deux graphiques en tête de page, qui se
-lisent au survol et se téléchargent en image), **Pourquoi changer** (votre
+et ce qui manque — trois chiffres, deux graphiques qui se lisent au survol, et
+deux schémas de Sankey qui disent qui paie quoi, aujourd'hui et avec la
+proposition ; chaque carte se télécharge en image), **Pourquoi changer** (votre
 retraite sera-t-elle payée, et ce que la recherche universitaire en sait) et
 **Partager**. Puis, derrière l'étiquette « Pour vérifier », celles qui
 prouvent : **Cumul versé**, **Carrières types** (la grille 13 carrières ×
@@ -222,8 +223,8 @@ Il est traité de front : **le Python de `src/` reste la référence**, et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->54<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
 <!--chiffre:portage(valeurs)-->81 574<!--/--> nombres,
-dont <!--chiffre:portage(identiques)-->92,8<!--/--> % identiques
-au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->5,8<!--/--> · 10⁻¹⁵, quelques dizaines
+dont <!--chiffre:portage(identiques)-->88,7<!--/--> % identiques
+au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->11,8<!--/--> · 10⁻¹⁵, quelques dizaines
 d'*ulp* (un *ulp* vaut 2 · 10⁻¹⁶, la précision d'un flottant). Les pages, elles, sont comparées caractère par caractère : le
 formatage à la française reproduit jusqu'à l'arrondi au pair de Python, faute de
 quoi un « <!--chiffre:illustration()-->−12,5<!--/--> % » deviendrait
@@ -1246,7 +1247,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2256 tests Python
+tests/                          2263 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1295,7 +1296,7 @@ JSON ».
 python -m pytest tests
 ```
 
-<!--chiffre:tests()-->2256<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2263<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

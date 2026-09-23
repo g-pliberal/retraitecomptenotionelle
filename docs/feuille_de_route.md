@@ -26,7 +26,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 283<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->34 954<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->35 328<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14724,3 +14724,80 @@ committer que le rebasage du script pose lui-même sous un auteur anonyme.
 
 **Fichiers.** `scripts/pousser.sh`, `tests/test_pousser.py`, `CLAUDE.md`,
 `README.md` et `docs/limites.md` (le compte des tests).
+
+### 115. Qui paie quoi : deux schémas de Sankey sur la page Coût — `fait`
+
+**Demande.** « J'aimerais qu'on rajoute un diagramme de Sankey concernant les
+coûts du système actuel sur un diagramme et les coûts sur le scénario du parti
+libéral sur un autre diagramme. » (23 septembre 2026)
+
+**Ce qui a été fait.**
+
+- *Une troisième carte sur la page Coût*, « Qui paie quoi, aujourd'hui et avec
+  notre proposition ? », posée après « Qui paie ? » et avant les notes. Deux
+  schémas de Sankey, l'année de la bascule, sur le compte même du tableau
+  « Recettes et dépenses, poste par poste » : à gauche ce qui paie — les quatre
+  groupes de `GROUPES`, dans les couleurs du graphique « Qui paie ? », et ce
+  qui manque, emprunté, en rouge comme le ruban d'écart du bilan —, au milieu
+  la caisse, à droite ce qu'elle verse — pensions de droit direct, réversion,
+  et ce qui reste, en vert, les années où il en reste. La proposition a trois
+  caisses : le régime unique, que les cotisations alimentent ; le budget de
+  l'État, qui paie la garantie vieillesse avec l'impôt ; le pilier capitalisé,
+  placé au nom de chacun. Les deux schémas sont à la même échelle : un
+  milliard y a la même épaisseur.
+- *Une brique de plus au gabarit*, `sankey()` dans `gabarit.py` et son jumeau
+  dans `gabarit.js`, identiques au caractère près. Un schéma est fait de
+  caisses empilées, chacune alignée en haut avec ses payeurs et ses usages :
+  aucun ruban ne croise un autre, aucun ne passe sous l'étiquette de la
+  caisse, et l'écart entre deux nœuds d'une colonne est la hauteur de deux
+  étiquettes, si bien qu'aucune n'est à écarter après coup. Le tableau des
+  flux, de qui à qui et combien, est replié dessous. `echelle_sankey` tire
+  l'échelle commune du plus gros des schémas.
+- *Le compte de la bascule, lu une fois.* `_bilan_bascule` — `bilanBascule` en
+  JavaScript — calcule l'année, le PIB, la garantie vieillesse lue sur la
+  distribution des pensions et le pilier capitalisé ; le tableau poste par
+  poste et la carte le lisent tous deux, et disent donc les mêmes nombres.
+- *Le bouton « Partager » compose les schémas.* `imageDuGraphique` prend toutes
+  les figures d'une carte, chacune aux proportions de son repère, le titre
+  d'un schéma au-dessus de lui ; une courbe seule garde exactement la mise en
+  page d'avant. Les étiquettes ont été taillées sur la police de REPLI : l'image
+  dessine le SVG hors de la page, où Public Sans n'est pas chargée, et la
+  police du système, plus large, rognait le « C » de « Capitalisation 5 % ».
+- *La règle « deux graphiques, et pas un de plus » tient toujours* pour les
+  graphiques dans le temps ; la carte des flux répond à une autre question,
+  sur une seule année. Le budget de lecture de la page passe de 700 à
+  950 mots — la carte en ajoute 230, dont 120 d'étiquettes. « Chaque euro a
+  sa caisse » entre au catalogue des affirmations, avec un contrôle qui
+  interroge le modèle : aucun impôt ni budget de l'État n'entre au régime
+  unique, quand le système actuel encaisse les trois.
+
+**Ce que ça a déplacé.** Aucun chiffre du modèle : les simulations sont
+inchangées, et seuls les cinq témoins de la page Coût gagnent la carte. En
+2026, au PIB de 2025, le système actuel brasse 423 Md € — 323 de cotisations,
+contribution d'équilibre de l'État comprise, 64 d'impôts, 16 d'autres caisses,
+15 du reste et 4,8 empruntés — pour 379 de pensions de droit direct et 43 de
+réversion. La proposition en brasse 275 au régime unique — 227 de cotisations
+à 18 %, 5,1 d'autres caisses, ce que l'assurance chômage verse et que le
+régime garde depuis « Périodes indemnisées », le même jour, 7,0 du reste et 35
+empruntés —, plus 15 d'impôt pour la garantie vieillesse et 63 placés au
+pilier capitalisé. Sous les règles du témoin qui bascule en 2030, le régime
+unique place 39 Md € au lieu d'en emprunter, et le schéma le montre en vert,
+du côté des usages.
+
+**Ce qui reste.**
+
+- Sur un téléphone, le schéma défile comme la cascade : la moitié droite, ce
+  qui est versé, se découvre en faisant glisser. Une disposition verticale
+  propre aux écrans étroits le ferait tenir sans défiler.
+- L'année est celle de la bascule, comme dans le tableau poste par poste. La
+  cascade laisse choisir la sienne ; le schéma ne le fait pas encore.
+- L'image que compose « Partager » fait 1 200 × 2 100 : un fil la montrera
+  recadrée, le premier schéma entier et le second en partie.
+
+**Fichiers.** `src/retraite_notionnelle/web/gabarit.py` (la brique `sankey`
+et son style) et `moteur/js/gabarit.js` ; `web/pages.py` et `moteur/js/pages.js`
+(`_bilan_bascule`, `_caisse_flux`, `_cout_carte_flux`, le tableau poste par
+poste qui lit le même compte) ; `index.html` (la composition de l'image) ;
+`README.md` ; `data/reference/site/affirmations.yaml` ;
+`tests/test_web.py`, `tests/test_affirmations.py`, `tests/temoins/pages.json` ;
+`moteur/style.css`.

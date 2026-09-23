@@ -6944,7 +6944,9 @@ function milliards(millions, decimales = 0) {
  *  * **Deux graphiques, et pas un de plus.** Les trois qui traçaient une part du
  *    PIB dans le temps — l'histoire depuis 1959, le bilan jusqu'en 2070, l'effet
  *    de la réforme — n'en font plus qu'un : ils répondaient à la même question
- *    sur trois fenêtres.
+ *    sur trois fenêtres. La troisième carte n'en est pas un de plus : ses deux
+ *    schémas de Sankey montrent une seule année, et qui paie quoi — voir
+ *    `coutCarteFlux`.
  *  * **Tout le reste est replié.** Rien n'est retiré — une page qui ne peut pas
  *    se justifier n'est pas honnête —, mais rien n'oblige à le traverser. Les
  *    cascades de `coutDetailCascade` en sont : elles font le pont du système
@@ -7143,7 +7145,14 @@ que de ${premiereVentilee} à ${derniereVentilee}.`,
     "cout-provenance",
   );
 
-  // Le détail est rendu AVANT le gabarit final : c'est de lui, et des deux
+  // -- la troisième carte : qui paie quoi ------------------------------------
+  //
+  // Le compte de la bascule est lu une fois, ici : la carte le dessine, le
+  // tableau poste par poste l'écrit, et les deux disent les mêmes nombres.
+  const compteBascule = bilanBascule(contexte);
+  const carteFlux = coutCarteFlux(contexte, compteBascule);
+
+  // Le détail est rendu AVANT le gabarit final : c'est de lui, et des trois
   // cartes, que le plan de la page se déduit.
   // -- ce que personne n'a cotisé -------------------------------------------
   //
@@ -7176,7 +7185,7 @@ plus large que les cartes).
     coutDetailScenarios(contexte),
     coutDetailCascade(contexte, regards),
     coutDetailEquilibre(contexte),
-    coutDetailPostes(contexte),
+    coutDetailPostes(contexte, compteBascule),
     coutDetailDette(contexte),
     coutDetailFrise(contexte),
     coutDetailGarantie(contexte),
@@ -7185,7 +7194,7 @@ plus large que les cartes).
     coutDetailSources(contexte),
     coutDetailLimites(contexte),
   ].join("");
-  const plan = g.plan(carteBilan + carteProvenance + detail, "/cout");
+  const plan = g.plan(carteBilan + carteProvenance + carteFlux + detail, "/cout");
 
   const tete = g.affiche(
     "Le coût",
@@ -7216,6 +7225,8 @@ ${plan}
 ${carteBilan}
 
 ${carteProvenance}
+
+${carteFlux}
 ${nonCotise}
 <div class="note"><strong>Dépenser moins n'est pas économiser.</strong> Un
 système en ${g.terme("comptes notionnels", "compte notionnel")} ne laisse pas d'argent
@@ -9035,15 +9046,16 @@ function sansNumero(libelle) {
   return coupe >= 0 ? libelle.slice(coupe + 2) : libelle;
 }
 
+/** Le droit en vigueur et la proposition : ceux que le bilan de la bascule oppose. */
+const SYSTEMES_BILAN = ["actuel", "notionnel_liberal"];
+
 /**
- * Recettes et dépenses poste par poste, le système actuel et la proposition :
- * le tableau 2.2 du rapport annuel du COR refait pour deux systèmes, la même
- * année, avec les dépenses en face et le solde en bas. `ressourcesDe` et
- * `depense` y sont écrits ligne à ligne, et les lignes somment au total.
- * L'année est celle de la bascule ; le PIB n'y est pas publié, et les
- * milliards sont ceux d'un point de PIB de la dernière année publiée.
+ * Le compte de l'année de bascule, poste par poste, et ce qui est hors du
+ * compte : la garantie vieillesse, en millions d'euros, et le pilier capitalisé,
+ * en part de PIB. Le tableau poste par poste l'écrit, la carte des flux le
+ * dessine, et les deux lisent ces nombres-ci. Copie de `_bilan_bascule`.
  */
-function coutDetailPostes(contexte) {
+function bilanBascule(contexte) {
   const comptes = contexte.comptes();
   const c = contexte.cout();
   const solde = c.solde;
@@ -9052,13 +9064,6 @@ function coutDetailPostes(contexte) {
                          solde.derniereAnnee);
   const ligne = solde.annee(annee);
   const anneePib = comptes.pib.derniereAnnee;
-  const pib = comptes.pib.valeur(anneePib);
-  const derniereVentilee = comptes.anneesVentilees().at(-1);
-  const systemes = ["actuel", "notionnel_liberal"];
-  const recettes = Object.fromEntries(systemes.map((s) => [s, ligne.postesRessources(s)]));
-  const depenses_ = Object.fromEntries(systemes.map((s) => [s, ligne.postesDepenses(s)]));
-  const totalRecettes = Object.fromEntries(systemes.map((s) => [s, ligne.ressourcesDe(s)]));
-  const totalDepenses = Object.fromEntries(systemes.map((s) => [s, ligne.depense(s)]));
 
   // La garantie vieillesse, lue sur la vraie distribution des pensions comme
   // le fait le dépliant qui lui est consacré — plancher de base, pensions de
@@ -9079,13 +9084,178 @@ function coutDetailPostes(contexte) {
     simulateur.effectifs.effectif("tous_regimes", distribution.millesime),
     base.garantie_vieillesse_mensuelle * versEnquete, facteurContributif,
   );
-  // Un ayant droit sur deux réclame : le même recours que le dépliant.
-  const garantieMeur = garantie.coutAnnuelMeur * base.taux_recours_garantie / versEnquete;
   // Le pilier capitalisé : 5 % de la même assiette que les 18 %.
   const capitalise = ligne.recetteParAssiette
-    ? recettes.notionnel_liberal.cotisations
+    ? ligne.postesRessources("notionnel_liberal").cotisations
       * base.taux_capitalisation_obligatoire / base.taux_cotisation_liberal
     : 0.0;
+  return {
+    annee,
+    ligne,
+    anneePib,
+    pib: comptes.pib.valeur(anneePib),
+    derniereVentilee: comptes.anneesVentilees().at(-1),
+    // Un ayant droit sur deux réclame : le même recours que le dépliant.
+    garantieMeur: garantie.coutAnnuelMeur * base.taux_recours_garantie / versEnquete,
+    capitalise,
+  };
+}
+
+/**
+ * Les groupes de ressources, tels que le schéma des flux les nomme : ceux du
+ * graphique « Qui paie ? », dans ses couleurs, aux libellés raccourcis.
+ */
+const LIBELLES_FLUX = {
+  salaires: "Cotisations",
+  impots: "Impôts",
+  transferts: "Autres caisses",
+  reste: "Le reste",
+};
+
+/** Un montant du schéma des flux : au milliard près, au dixième sous dix. */
+function montantFlux(meur) {
+  return milliards(meur, meur >= 10000 ? 0 : 1);
+}
+
+/**
+ * La caisse de répartition d'un système : ses payeurs, lus sur
+ * `postesRessources` par groupe, ce qui manque — emprunté, donc une source —,
+ * ses pensions, et ce qui reste — placé, donc un usage. Copie de `_caisse_flux`.
+ */
+function caisseFlux(bilan, systeme, libelle, cotisations) {
+  const { ligne, pib } = bilan;
+  const postes = ligne.postesRessources(systeme);
+  const sources = [];
+  for (const groupe of GROUPES) {
+    const part = groupe.postes.reduce((somme, code) => somme + postes[code], 0);
+    if (part > 0.0) {
+      sources.push(new g.NoeudSankey(
+        groupe.code === "salaires" ? cotisations : LIBELLES_FLUX[groupe.code],
+        part, montantFlux(part * pib), groupe.couleur,
+      ));
+    }
+  }
+  const depenses_ = ligne.postesDepenses(systeme);
+  const usages = [new g.NoeudSankey("Pensions directes", depenses_.droits_directs,
+    montantFlux(depenses_.droits_directs * pib), "var(--serie-2)")];
+  if (depenses_.droits_derives > 0.0) {
+    usages.push(new g.NoeudSankey(
+      "Pensions de réversion", depenses_.droits_derives,
+      montantFlux(depenses_.droits_derives * pib), "var(--serie-4)"));
+  }
+  const solde = ligne.solde(systeme);
+  if (solde < 0.0) {
+    sources.push(new g.NoeudSankey("Ce qui manque", -solde,
+      montantFlux(-solde * pib), "var(--manque)"));
+  } else if (solde > 0.0) {
+    usages.push(new g.NoeudSankey("Ce qui reste", solde,
+      montantFlux(solde * pib), "var(--reste)"));
+  }
+  const valeur = Math.max(ligne.ressourcesDe(systeme), ligne.depense(systeme));
+  return new g.CaisseSankey(libelle, valeur, montantFlux(valeur * pib), sources, usages);
+}
+
+/**
+ * Qui paie quoi : le système actuel et la proposition, en deux schémas de
+ * Sankey à la même échelle, l'année de la bascule. Aujourd'hui un seul pot ;
+ * dans la proposition, trois caisses — le régime unique, la garantie
+ * vieillesse que paie l'impôt, le pilier capitalisé. Copie de
+ * `_cout_carte_flux`, où l'argument est développé.
+ */
+function coutCarteFlux(contexte, bilan) {
+  const base = contexte.base;
+  const { ligne, pib, annee } = bilan;
+  const tauxLiberal = g.pourcentage(base.taux_cotisation_liberal, false, 0);
+  const tauxCapitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
+  const couleurs = Object.fromEntries(GROUPES.map((groupe) => [groupe.code, groupe.couleur]));
+
+  const actuel = [caisseFlux(bilan, "actuel", "Régimes de retraite", "Cotisations")];
+  // Le taux unique ne s'écrit que là où il s'applique.
+  const proposition = [caisseFlux(
+    bilan, "notionnel_liberal", "Régime unique",
+    ligne.recetteParAssiette ? `Cotisations ${tauxLiberal}` : "Cotisations",
+  )];
+  const garantie = bilan.garantieMeur / pib;
+  if (garantie > 0.0) {
+    const montant = montantFlux(bilan.garantieMeur);
+    proposition.push(new g.CaisseSankey(
+      "Budget de l'État", garantie, montant,
+      [new g.NoeudSankey("Impôts", garantie, montant, couleurs.impots)],
+      [new g.NoeudSankey("Garantie vieillesse", garantie, montant, "var(--serie-3)")],
+    ));
+  }
+  if (bilan.capitalise > 0.0) {
+    const montant = montantFlux(bilan.capitalise * pib);
+    proposition.push(new g.CaisseSankey(
+      "Pilier capitalisé", bilan.capitalise, montant,
+      [new g.NoeudSankey(`Capitalisation ${tauxCapitalise}`, bilan.capitalise,
+        montant, couleurs.salaires)],
+      [new g.NoeudSankey("Épargne à votre nom", bilan.capitalise, montant,
+        "var(--serie-8)")],
+    ));
+  }
+  const echelle = g.echelleSankey(
+    actuel.reduce((somme, caisse) => somme + caisse.valeur, 0),
+    proposition.reduce((somme, caisse) => somme + caisse.valeur, 0),
+  );
+  const colonnes = ["D'où vient l'argent", "Où il va"];
+  const schemas = g.sankey(
+    `D'où vient l'argent du système actuel et où il va, en ${annee}, `
+    + "en milliards d'euros",
+    `Le système actuel, en ${annee}`, actuel, echelle, colonnes,
+  ) + g.sankey(
+    `D'où viendrait l'argent de la proposition et où il irait, en ${annee}, `
+    + "en milliards d'euros",
+    `Notre proposition, en ${annee}`, proposition, echelle, colonnes,
+  );
+
+  // Ce qui manque est emprunté, ce qui reste est placé ; le verbe n'est redit
+  // pour le système actuel que s'il change.
+  const soldeEnClair = (systeme) => {
+    const soldeMeur = ligne.solde(systeme) * pib;
+    return soldeMeur < 0.0
+      ? ["emprunterait", montantFlux(-soldeMeur)]
+      : ["placerait", montantFlux(soldeMeur)];
+  };
+  const [verbe, montant] = soldeEnClair("notionnel_liberal");
+  const [verbeActuel, montantActuel] = soldeEnClair("actuel");
+  const actuelEnClair = verbeActuel === verbe ? montantActuel
+    : `${verbeActuel} ${montantActuel}`;
+
+  return g.cle(
+    "Qui paie quoi, aujourd'hui et avec notre proposition ?",
+    `Aujourd'hui, cotisations, impôts et versements d'autres caisses se
+mêlent pour payer les pensions. Avec notre proposition, <strong>chaque euro a
+sa caisse</strong> : les cotisations vont aux pensions, l'impôt à la garantie
+vieillesse, et ${tauxCapitalise} des salaires sont placés à votre nom. En
+${annee}, le régime unique ${verbe} ${montant}, le système actuel
+${actuelEnClair}.`,
+    schemas,
+    // La source se lit aussi dans l'image que compose « Partager ».
+    `Sources : Conseil d'orientation des retraites pour le système actuel,
+le modèle pour la proposition. En milliards d'euros de ${annee}, au PIB de
+${bilan.anneePib}. Les deux schémas sont à la même échelle.`,
+    "cout-flux",
+  );
+}
+
+/**
+ * Recettes et dépenses poste par poste, le système actuel et la proposition :
+ * le tableau 2.2 du rapport annuel du COR refait pour deux systèmes, la même
+ * année, avec les dépenses en face et le solde en bas. `ressourcesDe` et
+ * `depense` y sont écrits ligne à ligne, et les lignes somment au total.
+ * L'année et les lignes « pour mémoire » viennent de `bilanBascule`, que la
+ * carte des flux lit aussi.
+ */
+function coutDetailPostes(contexte, bilan) {
+  const base = contexte.base;
+  const { annee, ligne, anneePib, pib, derniereVentilee } = bilan;
+  const systemes = SYSTEMES_BILAN;
+  const recettes = Object.fromEntries(systemes.map((s) => [s, ligne.postesRessources(s)]));
+  const depenses_ = Object.fromEntries(systemes.map((s) => [s, ligne.postesDepenses(s)]));
+  const totalRecettes = Object.fromEntries(systemes.map((s) => [s, ligne.ressourcesDe(s)]));
+  const totalDepenses = Object.fromEntries(systemes.map((s) => [s, ligne.depense(s)]));
+  const { garantieMeur, capitalise } = bilan;
 
   // Milliards, part de PIB, part du total — ou trois tirets.
   const cellules = (valeur, total, absent = false) => {
