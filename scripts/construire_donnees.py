@@ -1056,12 +1056,13 @@ def _minimum_garanti() -> dict:
     }
 
 
-def _minimum_vieillesse() -> dict:
-    """Barème de l'ASPA, personne seule, par année."""
+def _minimum_vieillesse(couple: bool = False) -> dict:
+    """Barème de l'ASPA par année : personne seule, ou couple d'allocataires."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
     from retraite_notionnelle.scenarios.actuel import MinimumVieillesse
 
-    table = MinimumVieillesse(DONNEES, DonneesMacro(DONNEES))._table
+    minimum = MinimumVieillesse(DONNEES, DonneesMacro(DONNEES))
+    table = minimum._table_couple if couple else minimum._table
     return {str(annee): [valeur, int(fiabilite)]
             for annee, (valeur, fiabilite) in sorted(table.items())}
 
@@ -1458,6 +1459,7 @@ def construire(bilan: bytes) -> bytes:
         "minimum_contributif": _minimum_contributif(),
         "minimum_garanti": _minimum_garanti(),
         "minimum_vieillesse": _minimum_vieillesse(),
+        "minimum_vieillesse_couple": _minimum_vieillesse(couple=True),
         "durees_requises_fonction_publique": _durees_requises_fonction_publique(),
         "durees_requises_avant_soixante_ans": _durees_requises_avant_soixante_ans(),
         "decote_fonction_publique": _decote_fonction_publique(),

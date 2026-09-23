@@ -2468,6 +2468,21 @@ institutions:
           LEGI, qui ne consolide pas les textes du SMIC postérieurs à 2017 :
           transcrit, niveau `haute`.
 
+      - id: service_public_aspa
+        titre: ASPA, montants et plafonds d'une personne seule et d'un couple (fiche F16871)
+        url: https://www.service-public.gouv.fr/particuliers/vosdroits/F16871
+        acces: page
+        statut_integration: saisi
+        cible: data/reference/legislation/minimum_vieillesse_couple.csv
+        note: >-
+          service-public.fr, qu'édite la DILA, publie les deux barèmes de
+          l'ASPA : 1 043,59 € par mois pour une personne seule en 2026,
+          1 620,18 € pour un couple d'allocataires (mise à jour du 23 juin
+          2026). Le premier est déjà certifié dans minimum_vieillesse.csv ; le
+          second n'y était pas, faute que le modèle serve un couple. Ajouté le
+          23 septembre 2026 pour que l'accueil compare la garantie à l'ASPA
+          réellement servie, et non à ses propres montants appliqués au foyer.
+
       - id: dila_legi_point_indice
         titre: Point d'indice de la fonction publique, 1996-2027
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/

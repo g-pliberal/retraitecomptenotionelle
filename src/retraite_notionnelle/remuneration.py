@@ -62,10 +62,12 @@ arrive **le lendemain** de la réforme, en entier, sans rien supposer de ce
 qu'un employeur rendra : +182 € par mois au salaire moyen, +91 € au SMIC. Elle
 ne **fuit pas** : le brut ne bouge pas, donc ni la CSG ni les autres branches
 ne grossissent avec lui, là où une baisse de la part patronale leur en laisse
-le quart en remontant. Et le **coût du travail ne bouge pas**, à tous les
-niveaux de salaire sauf un — au SMIC, il monte de 66 € par mois, parce que la
-part patronale du pilier capitalisé est hors du périmètre de la réduction
-générale et que l'employeur la verse pour de bon.
+le quart en remontant. Et le **coût du travail bouge peu** : au SMIC, il monte
+de 66 € par mois au jour 1, parce que la part patronale du pilier capitalisé
+est hors du périmètre de la réduction générale et que l'employeur la verse
+pour de bon ; la hausse diminue à mesure que la réduction s'éteint — 48 € à
+1,2 SMIC, 30 € à 1,5, 12 € à 2 — et devient une baisse à 3 SMIC. Ce
+paragraphe disait « à tous les niveaux sauf un » jusqu'au 23 septembre 2026.
 
 Ce qu'il ne fait pas, et qu'il faut dire : il ne fait pas monter le salaire
 BRUT, donc ni le crédit au compte ni les droits assis sur le brut. Le partage

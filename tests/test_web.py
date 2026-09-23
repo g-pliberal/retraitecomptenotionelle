@@ -6283,7 +6283,10 @@ def test_le_tableau_du_plancher_est_en_haut_de_l_accueil(contexte):
     visible = _hors_depliants(corps)
     assert "Ce que le plancher individualisé change, par mois" in visible
     # Des espaces insécables : « 1 500 / € » se coupait en deux sur un téléphone.
-    assert visible.index("300\u00a0€ et 1\u00a0500\u00a0€") < visible.index("Le système actuel et notre programme")
+    # Les montants sont ceux du site, à espace fine insécable, depuis que les
+    # deux colonnes sont calculées (23 septembre 2026).
+    assert "\u202f€ et 1\u202f500\u202f€" in visible
+    assert visible.index("300\u202f€ et 1\u202f500\u202f€") < visible.index("Le système actuel et notre programme")
     assert corps.count("<caption><span>Ce que le plancher individualisé change, par mois</span></caption>") == 1
     assert "Le tableau du haut de page le montre" in corps
 
@@ -7171,3 +7174,26 @@ def test_le_reglage_des_frais_du_pilier_voyage_avec_les_autres():
     assert saisie.requete_modelisation() == "frais=detail"
     # Une valeur inconnue retombe sur le défaut, sans erreur.
     assert Saisie.depuis_requete({"frais": "gratuit"}).frais == "paliers"
+
+
+def test_la_colonne_aspa_de_l_accueil_sert_le_bareme_de_l_aspa():
+    """« Aujourd'hui (ASPA) » : ce que l'ASPA sert vraiment, sur ses deux barèmes
+    lus — personne seule, couple d'allocataires —, et non les montants de la
+    garantie appliqués au foyer, que la colonne recopiait jusqu'au
+    23 septembre 2026. Le couple à 300 € et 300 € reçoit aujourd'hui 1 020 € et
+    en recevrait 1 000 ; la personne seule à 300 €, 744 € contre 750."""
+    from retraite_notionnelle.web import gabarit as g
+    from retraite_notionnelle.web.pages import Contexte, FOYERS_GARANTIE, _tableau_garantie
+
+    contexte = Contexte()
+    annee = contexte.base.annee_euros_garantie_vieillesse
+    minimum = contexte.simulateur().scenario_actuel.minimum_vieillesse
+    seul = minimum.plafond(annee)[0] / 12
+    couple = minimum.plafond_couple(annee)[0] / 12
+    assert seul == pytest.approx(1043.59) and couple == pytest.approx(1620.18)
+    rendu = _tableau_garantie(contexte)
+    for foyer in FOYERS_GARANTIE:
+        plafond = seul if len(foyer) == 1 else couple
+        assert g.euros(max(0.0, plafond - sum(foyer))) in rendu, foyer
+    assert g.euros(1020.18) in rendu and g.euros(743.59) in rendu
+

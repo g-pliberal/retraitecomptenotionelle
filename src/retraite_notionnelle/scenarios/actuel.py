@@ -1277,29 +1277,47 @@ class MinimumVieillesse:
 
     def __init__(self, racine: Path, macro: DonneesMacro) -> None:
         self.macro = macro
-        self._table: dict[int, tuple[float, Fiabilite]] = {}
-        chemin = racine / "reference" / "legislation" / "minimum_vieillesse.csv"
+        self._table = self._lire(racine / "reference" / "legislation"
+                                 / "minimum_vieillesse.csv")
+        self._annees = sorted(self._table)
+        #: Le barème d'un couple dont les deux membres sont allocataires :
+        #: l'accueil seul s'en sert, pour comparer un foyer.
+        self._table_couple = self._lire(racine / "reference" / "legislation"
+                                        / "minimum_vieillesse_couple.csv")
+
+    @staticmethod
+    def _lire(chemin: Path) -> dict[int, tuple[float, Fiabilite]]:
+        table: dict[int, tuple[float, Fiabilite]] = {}
         if not chemin.exists():
-            return
+            return table
         with chemin.open(encoding="utf-8") as flux:
             lignes = (l for l in flux if not l.lstrip().startswith("#"))
             for ligne in csv.DictReader(lignes):
-                self._table[int(ligne["annee"])] = (
+                table[int(ligne["annee"])] = (
                     float(ligne["valeur"]),
                     Fiabilite.depuis_texte(ligne["fiabilite"]),
                 )
-        self._annees = sorted(self._table)
+        return table
+
+    def _en_vigueur(self, table: dict[int, tuple[float, Fiabilite]],
+                    annee: int) -> tuple[float, Fiabilite] | None:
+        if not table:
+            return None
+        if annee in table:
+            return table[annee]
+        annees = sorted(table)
+        anterieures = [a for a in annees if a < annee]
+        ancre = max(anterieures) if anterieures else annees[0]
+        valeur, fiabilite = table[ancre]
+        return valeur * self.macro.coefficient_prix(ancre, annee), fiabilite
 
     def plafond(self, annee: int) -> tuple[float, Fiabilite] | None:
         """Montant maximal d'une personne seule, l'année demandée."""
-        if not self._table:
-            return None
-        if annee in self._table:
-            return self._table[annee]
-        anterieures = [a for a in self._annees if a < annee]
-        ancre = max(anterieures) if anterieures else self._annees[0]
-        valeur, fiabilite = self._table[ancre]
-        return valeur * self.macro.coefficient_prix(ancre, annee), fiabilite
+        return self._en_vigueur(self._table, annee)
+
+    def plafond_couple(self, annee: int) -> tuple[float, Fiabilite] | None:
+        """Montant maximal d'un couple d'allocataires, l'année demandée."""
+        return self._en_vigueur(self._table_couple, annee)
 
 
 class CarriereLongue:

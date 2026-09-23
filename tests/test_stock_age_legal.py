@@ -91,3 +91,18 @@ def test_le_contexte_rend_ses_attributs():
     with stock_age_legal.StockALAgeLegal("tout_droit", simulateur):
         assert ScenarioNotionnel.retroactif is not avant[0]
     assert (ScenarioNotionnel.retroactif, ScenarioNotionnel._droits_acquis) == avant
+
+
+def test_l_accueil_cite_ce_que_coute_le_diviseur_de_l_age_de_l_assure(reference, droit_commun):
+    """Un dixième de point de PIB par an en moyenne, et plus rien en 2050 : la
+    phrase de l'accueil, recalculée."""
+    from retraite_notionnelle.web.pages import MESURES_BLOCAGES
+
+    liberal = "notionnel_liberal"
+    ecart = (reference.lectures[liberal].solde_moyen
+             - droit_commun.lectures[liberal].solde_moyen) * 100
+    assert round(ecart, 1) == MESURES_BLOCAGES["cout_diviseur_age_legal"]
+    en_2050 = (reference.lectures[liberal].soldes[2050]
+               - droit_commun.lectures[liberal].soldes[2050]) * 100
+    assert abs(en_2050) < 0.05
+

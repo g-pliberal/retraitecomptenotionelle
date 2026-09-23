@@ -2452,7 +2452,7 @@ def _programme(contexte: Contexte) -> str:
     <p>Aujourd'hui, le minimum vieillesse (l'ASPA) regarde les ressources du
     couple : à 300 € et 1 500 € de pension, il ne reçoit rien. Notre garantie
     regarde chacun :</p>
-    {_tableau_garantie()}
+    {_tableau_garantie(contexte)}
   </div>
 </div>
 
@@ -2989,24 +2989,53 @@ def _simulateur_court(contexte: Contexte, vers: str = "/simuler") -> str:
 </form>"""
 
 
-def _tableau_garantie() -> str:
+#: Les foyers du tableau de l'accueil : les pensions mensuelles de chacun.
+FOYERS_GARANTIE: tuple[tuple[float, ...], ...] = (
+    (300.0, 300.0), (300.0, 1500.0), (900.0, 900.0), (300.0, 5000.0), (300.0,),
+)
+
+
+def _tableau_garantie(contexte: Contexte) -> str:
     """Ce que le plancher individualisé change, en cinq lignes.
 
     Le tableau fait le travail que trois paragraphes faisaient mal. Quatre
     couples, deux colonnes : ce que l'ASPA sert aujourd'hui, ce que la garantie
-    servirait. La ligne « 300 € et 1 500 € » dit tout — c'est l'argument le
-    plus immédiatement parlant du site, et il est en haut de l'accueil, non
-    plus dans un dépliant après trois tableaux denses.
+    servirait. La ligne des pensions de 300 et 1 500 euros dit tout — c'est
+    l'argument le plus immédiatement parlant du site, et il est en haut de
+    l'accueil, non plus dans un dépliant après trois tableaux denses.
+
+    LES DEUX COLONNES SONT CALCULÉES. L'ASPA sur ses deux barèmes lus — une
+    personne seule, un couple d'allocataires —, la garantie sur ses deux
+    montants. Jusqu'au 23 septembre 2026, la première colonne recopiait la
+    seconde appliquée au foyer : elle cachait qu'un couple à 300 et 300 euros
+    reçoit aujourd'hui 1 020 euros et en recevrait 1 000, et qu'une personne
+    seule à 300 euros en reçoit 744 et en recevrait 750.
     """
+    base = contexte.base
+    annee = base.annee_euros_garantie_vieillesse
+    minimum = contexte.simulateur().scenario_actuel.minimum_vieillesse
+    seul = minimum.plafond(annee)[0] / 12
+    couple = minimum.plafond_couple(annee)[0] / 12
+    plancher = base.garantie_vieillesse_mensuelle
+    isolement = base.allocation_isolement_mensuelle
+
+    def aspa(pensions: tuple[float, ...]) -> float:
+        return max(0.0, (seul if len(pensions) == 1 else couple) - sum(pensions))
+
+    def garantie(pensions: tuple[float, ...]) -> float:
+        if len(pensions) == 1:
+            return max(0.0, plancher + isolement - pensions[0])
+        return sum(max(0.0, plancher - pension) for pension in pensions)
+
+    def libelle(pensions: tuple[float, ...]) -> str:
+        if len(pensions) == 1:
+            return f"Personne seule, {g.euros(pensions[0])}"
+        return f"{g.euros(pensions[0])} et {g.euros(pensions[1])}"
+
     return g.tableau(
-        ["Pensions des deux personnes", "Aujourd'hui (ASPA)", "Avec la garantie"],
-        [
-            ["300 € et 300 €", "1 000 €", "1 000 €"],
-            ["300 € et 1 500 €", "0 €", "500 €"],
-            ["900 € et 900 €", "0 €", "0 €"],
-            ["300 € et 5 000 €", "0 €", "500 €"],
-            ["Personne seule, 300 €", "750 €", "750 €"],
-        ],
+        ["Pensions des deux personnes", f"Aujourd'hui (ASPA {annee})", "Avec la garantie"],
+        [[libelle(foyer), g.euros(aspa(foyer)), g.euros(garantie(foyer))]
+         for foyer in FOYERS_GARANTIE],
         ["", "nombre", "nombre"],
         titre="Ce que le plancher individualisé change, par mois",
         entete_de_ligne=True,
@@ -3323,15 +3352,51 @@ C'est la seule augmentation de traitement que ce programme contienne, et elle
 n'est pas petite.</p>"""
 
 
+#: Ce que la section des points de blocage CITE, à la précision où elle le
+#: cite. La page d'accueil ne calcule rien : ces valeurs viennent de trois
+#: scripts du dépôt — ``solde_fusion.py``, ``stock_age_legal.py``,
+#: ``proposition_prospective.py`` — et du coût par défaut, et chacune est
+#: RECALCULÉE par un test (``test_solde_fusion.py``, ``test_stock_age_legal.py``,
+#: ``test_proposition_prospective.py``) : un changement du modèle qui en
+#: déplace une fait échouer la suite au lieu de laisser la page dire faux.
+#: Jusqu'au 23 septembre 2026 elles étaient écrites dans le texte, et quatre
+#: avaient vieilli sans que rien ne le dise — un solde de −1,5 point, une dette
+#: de 103 % du PIB, un coefficient de 0,92, une variante prospective à −3,9.
+#: Le portage porte la même table.
+MESURES_BLOCAGES: dict[str, float] = {
+    # solde_fusion.py, hypothèse A : le taux du régime unique du modèle, en %.
+    "taux_regime_unique": 25.8,
+    # Le scénario 4 sous A moins la proposition, solde moyen 2026-2070, en
+    # points de PIB : ce que coûtent les 18 %.
+    "cout_18_pour_cent": 2.4,
+    # Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
+    # l'horizon, en points de PIB, en % du PIB et en valeur.
+    "solde_moyen_proposition": -1.4,
+    "solde_moyen_actuel": -1.1,
+    "dette_2070_proposition": 97,
+    "dette_2070_actuel": 66,
+    "coefficient_minimum": 0.80,
+    "decennie_coefficient_minimum": 2040,
+    "coefficient_2070": 1.00,
+    # proposition_prospective.py : le solde moyen de la variante qui laisse le
+    # stock intact, en points de PIB.
+    "solde_moyen_prospectif": -3.5,
+    # stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au
+    # lieu de celui de 64 ans, en points de PIB par an.
+    "cout_diviseur_age_legal": 0.1,
+}
+
+
 def _programme_blocages(contexte: Contexte) -> str:
     """Les points de blocage regardés avant de choisir, et ce qu'on en a fait.
 
-    Les chiffres sont DATÉS, et la page le dit : ils viennent de trois scripts
+    Les chiffres sont CITÉS, et la page le dit : ils viennent de trois scripts
     du dépôt qui refont le solde sous d'autres régimes uniques, sous un autre
     traitement du stock et sous une version prospective de la proposition —
     vingt secondes de calcul chacun, et des points d'entrée que le portage ne
-    porte pas. La page d'accueil ne calcule rien, et cette section pas
-    davantage : elle cite ce qui a été mesuré, et où.
+    porte pas —, et du coût par défaut. La page d'accueil ne calcule rien, et
+    cette section pas davantage : elle cite ``MESURES_BLOCAGES``, que des tests
+    recalculent.
 
     Les points de PIB mesurés sont dits aussi en milliards, au PIB de la
     dernière année publiée — la règle de tout le site, ``_pib_de_conversion``.
@@ -3340,10 +3405,14 @@ def _programme_blocages(contexte: Contexte) -> str:
     """
     comptes = contexte.comptes()
     au_pib = f"au PIB de {comptes.pib.derniere_annee}"
+    m = MESURES_BLOCAGES
 
     def md(points: float) -> str:
         """Des points de PIB mesurés, en milliards au PIB de la dernière année."""
-        return _points_en_milliards(comptes, points)
+        return _points_en_milliards(comptes, abs(points))
+
+    def pt(valeur: float, decimales: int = 1) -> str:
+        return g.nombre(valeur, decimales).replace("-", "−")
 
     points = g.tableau(
         ["Le point", "Ce que nous avons regardé", "Ce que nous en retenons"],
@@ -3354,7 +3423,7 @@ def _programme_blocages(contexte: Contexte) -> str:
              "général seul, la moyenne des régimes. Un taux plus bas n'est pas plus "
              "négociable, il est impayable : les pensions déjà acquises sont servies "
              "avec moins de cotisations, et sous les deux derniers barèmes le déficit "
-             f"dépasse cinq points de PIB par an jusqu'en 2050, plus de {md(5)} "
+             f"dépasse cinq points de PIB par an de 2030 à 2040, plus de {md(5)} "
              f"{au_pib}.",
              "Un régime unique se vote par une loi ordinaire : le projet de 2020 l'a "
              "établi, et le Conseil d'État n'y a vu aucun obstacle de principe, ni "
@@ -3367,24 +3436,33 @@ def _programme_blocages(contexte: Contexte) -> str:
              "pas été cotisé, l'indexation sur les prix est conservée, la garantie est "
              "relevée dans le même texte. L'objection la plus forte, celle de l'assuré "
              "parti à l'âge que sa loi lui ouvrait, a été chiffrée : lui prendre le "
-             "diviseur de 64 ans plutôt que celui de son âge coûte un dixième de point "
-             f"de PIB par an, {md(0.1)} {au_pib}, et plus rien en 2050.",
+             "diviseur de 64 ans plutôt que celui de son âge coûte "
+             f"{pt(m['cout_diviseur_age_legal'])} point de PIB par an, "
+             f"{md(m['cout_diviseur_age_legal'])} {au_pib}, et plus rien en 2050.",
              "Le recalcul est maintenu. La version qui laisse le stock intact a été "
-             "chiffrée et écartée : −3,9 points de PIB par an en moyenne jusqu'en "
-             f"2070, un besoin de {md(3.9)} par an {au_pib} : elle n'est pas "
+             f"chiffrée et écartée : {pt(m['solde_moyen_prospectif'])} points de PIB "
+             "par an en moyenne jusqu'en 2070, un besoin de "
+             f"{md(m['solde_moyen_prospectif'])} par an {au_pib} : elle n'est pas "
              "finançable."],
             ["Le taux de 18 %",
-             "Face au taux d'aujourd'hui, 25,8 % part patronale comprise, les 18 % "
-             f"coûtent 2,3 points de PIB par an sur 2026-2070, {md(2.3)} {au_pib}, "
-             "sous les mêmes règles de recette. Le solde de la proposition est de "
-             "−1,5 point par an en moyenne contre −1,1 pour le système actuel, un "
-             f"besoin de {md(1.5)} par an contre {md(1.1)}, et la dette qu'elle "
-             "accumule en 2070 vaut 103 % du PIB contre 66 %, "
-             f"{md(103)} contre {md(66)}.",
+             f"Face au taux d'aujourd'hui, {pt(m['taux_regime_unique'])} % part "
+             "patronale comprise, les 18 % coûtent "
+             f"{pt(m['cout_18_pour_cent'])} points de PIB par an sur 2026-2070, "
+             f"{md(m['cout_18_pour_cent'])} {au_pib}, sous les mêmes règles de "
+             "recette. Le solde de la proposition est de "
+             f"{pt(m['solde_moyen_proposition'])} point par an en moyenne contre "
+             f"{pt(m['solde_moyen_actuel'])} pour le système actuel, un besoin de "
+             f"{md(m['solde_moyen_proposition'])} par an contre "
+             f"{md(m['solde_moyen_actuel'])}, et la dette qu'elle accumule en 2070 "
+             f"vaut {pt(m['dette_2070_proposition'], 0)} % du PIB contre "
+             f"{pt(m['dette_2070_actuel'], 0)} %, {md(m['dette_2070_proposition'])} "
+             f"contre {md(m['dette_2070_actuel'])}.",
              "C'est le prix d'un prélèvement plus bas, et il est écrit sur la page "
              "Coût plutôt que caché. Le pilotage annuel, que ces chiffres n'appliquent "
-             "pas, est ce qui le tient : le coefficient d'équilibre de 2070 est de "
-             "0,92."],
+             "pas, est ce qui le tient : le coefficient d'équilibre descend à "
+             f"{pt(m['coefficient_minimum'], 2)} dans les années "
+             f"{int(m['decennie_coefficient_minimum'])} et revient à "
+             f"{pt(m['coefficient_2070'], 2)} en 2070."],
             ["La garantie vieillesse",
              "Le préambule de 1946 garantit aux vieux travailleurs des moyens "
              "convenables d'existence, et un compte purement contributif y répond mal.",
@@ -3407,7 +3485,7 @@ def _programme_blocages(contexte: Contexte) -> str:
 <h3>Ce qui pouvait nous arrêter, et ce que nous en avons fait</h3>
 <p>Nous avons cherché ce qui arrêterait cette proposition avant de la défendre. Voici les cinq points, ce que nous avons mesuré, et ce que nous en faisons.</p>
 {points}
-<p class="discret">Mesures des 20 et 21 septembre 2026, par trois scripts du dépôt : le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective. Cette page ne les recalcule pas ; leur détail, décision par décision, est dans la feuille de route du <a href="{g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a>.</p>"""
+<p class="discret">Mesures de trois scripts du dépôt — le solde sous quatre régimes uniques, le stock à l'âge légal, la proposition prospective — et du coût par défaut. Cette page ne les recalcule pas : elle les cite, et des tests les recalculent à chaque modification du modèle. Leur détail, décision par décision, est dans la feuille de route du <a href="{g.DEPOT}/blob/main/docs/feuille_de_route.md">dépôt</a>.</p>"""
 
 
 def _verifier_statuts_ouverts(affiliations: Affiliations, carriere,
