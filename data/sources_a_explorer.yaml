@@ -1306,7 +1306,11 @@ sources:
     regimes: [cavom_complementaire, cnavpl]
     a_en_tirer: >-
       Le calcul chez les officiers ministériels, fiche `partiel`.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cavom_cotisations
     url: https://www.cavom.net/vos-cotisations/vous-etes-professionnel-liberal/
@@ -1315,7 +1319,11 @@ sources:
     regimes: [cavom_complementaire, cnavpl]
     a_en_tirer: >-
       Les classes de cotisation et les points acquis.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cavom_cumul
     url: https://www.cavom.net/vos-droits/le-cumul-emploi-retraite/
@@ -1325,7 +1333,11 @@ sources:
     a_en_tirer: >-
       Le cumul, section par section : les règles diffèrent, et le dépôt n'en
       porte aucune.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cavom_reversion
     url: https://www.cavom.net/vos-droits/la-reversion/
@@ -1334,7 +1346,11 @@ sources:
     regimes: [cavom_complementaire]
     a_en_tirer: >-
       La réversion chez les officiers ministériels.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cavom_publications
     url: https://www.cavom.net/nos-medias/publications/
@@ -1343,7 +1359,11 @@ sources:
     regimes: [cavom_complementaire]
     a_en_tirer: >-
       Rapports et statuts, pour dater les valeurs.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cnbf_simulateur_cotisations
     url: https://www.cnbf.fr/espace-avocats/simulation-des-cotisations/
@@ -1355,7 +1375,11 @@ sources:
       et complémentaire par classe. La fiche `cnbf` du régime de base est
       `partiel`, et le barème forfaitaire par année d'exercice est précisément
       ce qui lui manque.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cnbf_prelevements
     url: https://www.cnbf.fr/espace-avocats/calcul-de-prelevements-sociaux/
@@ -1364,7 +1388,11 @@ sources:
     regimes: [cnbf, cnbf_complementaire]
     a_en_tirer: >-
       Les prélèvements sur les pensions d'avocat, calculés.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cnbf_baremes
     url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=baremes
@@ -1373,7 +1401,11 @@ sources:
     regimes: [cnbf, cnbf_complementaire]
     a_en_tirer: >-
       Les barèmes publiés, année par année : la série que le dépôt n'a pas.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cnbf_fiches_pratiques
     url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=fiches-pratiques
@@ -1382,7 +1414,11 @@ sources:
     regimes: [cnbf, cnbf_complementaire]
     a_en_tirer: >-
       Les fiches pratiques, qui portent les exemples chiffrés.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: ircec_quel_regime
     url: https://www.ircec.fr/ircec/quel-est-mon-regime/
@@ -2048,7 +2084,11 @@ sources:
     a_en_tirer: >-
       Les cotisations des notaires, section C comprise : la fiche
       `cprn_complementaire` est `partiel`.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cprn_age_depart
     url: https://cprn.fr/je-suis-affilie/je-suis-actif/preparer-sa-retraite-en-toute-serenite/lage-de-depart-a-la-retraite/
@@ -2057,7 +2097,11 @@ sources:
     regimes: [cprn_complementaire]
     a_en_tirer: >-
       Les âges et les coefficients propres à la caisse des notaires.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cprn_conjoint_collaborateur
     url: https://cprn.fr/je-suis-affilie/je-suis-actif/conjoint-collaborateur/
@@ -2068,7 +2112,11 @@ sources:
       Le statut de conjoint collaborateur, deuxième source après la CARMF :
       deux régimes qui le décrivent valent un recoupement sur un statut que le
       dépôt ne porte pas du tout.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cprn_revalorisation
     url: https://cprn.fr/je-suis-affilie/je-suis-retraite/la-revalorisation-de-mes-pensions/
@@ -2079,7 +2127,11 @@ sources:
       La règle de revalorisation des pensions servies : dans un régime en
       points, c'est elle qui fait le rendement réel, et le dépôt la fixe par
       convention pour la plupart des régimes.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cprn_reversion
     url: https://cprn.fr/je-suis-affilie/je-suis-beneficiaire/tout-savoir-sur-la-reversion/
@@ -2089,7 +2141,11 @@ sources:
     a_en_tirer: >-
       La réversion chez les notaires, dont la condition de ressources et le
       partage entre conjoints successifs diffèrent du régime général.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cprn_statuts
     url: https://cprn.fr/ma-caisse/les-statuts-cprn/
@@ -2098,7 +2154,11 @@ sources:
     regimes: [cprn_complementaire]
     a_en_tirer: >-
       Les statuts : le texte du régime, avec ses barèmes en annexe.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   - id: cprn_publications
     url: https://cprn.fr/ma-caisse/les-publications-2/
@@ -2107,7 +2167,11 @@ sources:
     regimes: [cprn_complementaire]
     a_en_tirer: >-
       Rapports annuels et séries de valeurs de point.
-    statut: a_explorer
+    statut: en_cours
+    note: >-
+      Réservée le 23 septembre 2026 par la session « nouvelle passe de
+      l'action 89 », avec tout le lot des professions juridiques
+      (CNBF, CAVOM, CPRN).
 
   # ---- Assurance retraite : les règles du régime général -------------------
 
