@@ -3724,17 +3724,22 @@ def test_la_cprn_majore_un_demi_pour_cent_jusqu_a_70_ans_puis_un_pour_cent_sans_
     vigueur le 1er janvier 2024 : « 1 % » et « fin d'activité ».
     """
     scenario = simulateur.scenario_actuel
-    # Né en 1956 : l'âge du taux plein, lu à la génération, est 67 ans.
+    # Né en 1956 : de 2014 à 2023, l'âge du taux plein est l'âge légal
+    # « différé de vingt-quatre mois » et « augmenté de cinq ans », soit 69
+    # ans (article 15 des statuts de 2013) ; depuis 2024, 67 ans.
     carriere = simulateur.carriere_simple(
         annee_naissance=1956, sexe="H", affiliation="notaire",
         age_debut=28, age_liquidation=72,
     )
     avant = _periode(simulateur, "cprn_complementaire", 2020)
     assert avant.surcote_age_maximum == 70.0
+    # À 68 ans, un an AVANT le taux plein de 2014 : quatre trimestres de
+    # décote, que la durée d'assurance n'annule pas.
     assert scenario._abattement_points(
-        avant, carriere, 176, 169, 68.0, 2023) == pytest.approx(1.02)
+        avant, carriere, 176, 169, 68.0, 2023) == pytest.approx(0.95)
+    # À 72 ans : de 69 à 70 ans seulement, quatre trimestres à 0,5 %.
     assert scenario._abattement_points(
-        avant, carriere, 176, 169, 72.0, 2023) == pytest.approx(1.06)
+        avant, carriere, 176, 169, 72.0, 2023) == pytest.approx(1.02)
     apres = _periode(simulateur, "cprn_complementaire", 2025)
     assert apres.surcote_age_maximum is None
     assert scenario._abattement_points(
