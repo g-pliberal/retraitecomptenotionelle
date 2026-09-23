@@ -312,13 +312,16 @@ def economie_pib(**reglages: str) -> float:
 
     La différence des parts de PIB du système actuel et du système désigné ;
     ``moins=5`` retranche l'économie d'un second système, pour dire de combien
-    l'un économise plus que l'autre.
+    l'un économise plus que l'autre. ``en=milliards`` : la même économie en
+    Md€ constants, ceux de la trajectoire dont les parts sont tirées.
     """
     ligne = _avenir(reglages)
-    economie = ligne.part_pib("actuel") - ligne.part_pib(_scenario(reglages["scenario"]))
+    mesure = (ligne.cout_constants if reglages.get("en") == "milliards"
+              else ligne.part_pib)
+    economie = mesure("actuel") - mesure(_scenario(reglages["scenario"]))
     if "moins" in reglages:
-        economie -= ligne.part_pib("actuel") - ligne.part_pib(_scenario(reglages["moins"]))
-    return economie * 100
+        economie -= mesure("actuel") - mesure(_scenario(reglages["moins"]))
+    return economie / 1000 if reglages.get("en") == "milliards" else economie * 100
 
 
 def emploi_projete(**_: str) -> float:
@@ -875,6 +878,8 @@ def depense(**reglages: str) -> float:
     dépendance, minimum vieillesse —, ``part_pib`` pour la totale en % du PIB,
     ``part_pib_repartition`` pour la seule répartition, et ``ecart_cor`` pour
     ce qui sépare de celle-ci le compte du COR, en points de PIB.
+    ``quoi=cor`` rend la dépense du compte du COR en Md€ de l'année, et
+    ``ecart_cor_milliards`` l'écart en Md€.
     """
     from retraite_notionnelle.donnees.depenses import SYSTEMES
 
@@ -884,13 +889,17 @@ def depense(**reglages: str) -> float:
         return depenses.depense(annee) / 1000
     if quoi == "part_pib":
         return depenses.part_pib(annee) * 100
-    if quoi in ("part_pib_repartition", "ecart_cor"):
+    if quoi in ("part_pib_repartition", "ecart_cor", "cor", "ecart_cor_milliards"):
         repartition = sum(depenses.depense_systeme(s.code, annee) for s in SYSTEMES
                           if s.repartition) / depenses.pib(annee) * 100
         if quoi == "part_pib_repartition":
             return repartition
         cor = next(float(l["part_pib"]) for l in _csv("comptes_retraite.csv")
                    if l["annee"] == str(annee) and l["poste"] == "depenses")
+        if quoi == "cor":
+            return _milliards_de_part(cor, annee)
+        if quoi == "ecart_cor_milliards":
+            return _milliards_de_part(cor - repartition / 100, annee)
         return cor * 100 - repartition
     if quoi in ("repartition", "hors_repartition"):
         voulu = quoi == "repartition"
@@ -1029,12 +1038,29 @@ def _solde_annee(reglages: dict[str, str]):
     return ligne
 
 
+def _milliards_de_part(part: float, annee: int) -> float:
+    """Une part du PIB de ``annee`` (en fraction), en milliards d'euros.
+
+    La règle du site, ``_pib_de_conversion`` dans ``web/pages.py`` : le PIB de
+    l'année quand l'INSEE le publie, celui de la dernière année publiée pour
+    une année projetée — la même part de l'économie d'aujourd'hui. C'est ce qui
+    fait qu'un milliard de la prose est celui que la page Coût affiche au même
+    endroit, et qu'aucun n'emporte d'hypothèse de croissance.
+    """
+    pib = _depenses().pib
+    return part * pib(min(annee, pib.derniere_annee)) / 1000
+
+
 def solde(**reglages: str) -> float:
-    """Solde d'un système une année, en % du PIB ; ``en=milliards`` en Md€ courants."""
+    """Solde d'un système une année, en % du PIB ; ``en=milliards`` en Md€.
+
+    Les milliards suivent ``_milliards_de_part`` : ceux de l'année jusqu'à la
+    dernière publiée, la même part du PIB de celle-ci au-delà.
+    """
     ligne = _solde_annee(reglages)
     scenario = _scenario(reglages["scenario"])
     if reglages.get("en") == "milliards":
-        return ligne.solde_meur(scenario) / 1000
+        return _milliards_de_part(ligne.solde(scenario), ligne.annee)
     return ligne.solde(scenario) * 100
 
 
@@ -1042,10 +1068,14 @@ def solde_moyen(**reglages: str) -> float:
     """Solde moyen d'un système sur les années projetées, en % du PIB.
 
     La fenêtre de la page Coût : de la première année projetée à l'horizon.
+    ``en=milliards`` : la même moyenne, au PIB de la dernière année publiée.
     """
     solde = _cout_de(reglages).solde
-    return solde.solde_moyen(_scenario(reglages["scenario"]),
-                             solde.premiere_annee_projetee, solde.derniere_annee) * 100
+    moyen = solde.solde_moyen(_scenario(reglages["scenario"]),
+                              solde.premiere_annee_projetee, solde.derniere_annee)
+    if reglages.get("en") == "milliards":
+        return _milliards_de_part(moyen, solde.derniere_annee)
+    return moyen * 100
 
 
 def coefficient(**reglages: str) -> float:
@@ -1074,10 +1104,16 @@ def annees_equilibrees(**reglages: str) -> float:
 
 
 def dette(**reglages: str) -> float:
-    """Le stock que les soldes accumulent, en % du PIB, une année — l'horizon si on l'omet."""
+    """Le stock que les soldes accumulent, en % du PIB, une année — l'horizon si on l'omet.
+
+    ``en=milliards`` : le même stock en Md€, à la règle de ``_milliards_de_part``.
+    """
     dette = _cout_de(reglages).dette
     annee = int(reglages.get("annee", dette.derniere_annee))
-    return dette.stock(_scenario(reglages["scenario"]), annee) * 100
+    stock = dette.stock(_scenario(reglages["scenario"]), annee)
+    if reglages.get("en") == "milliards":
+        return _milliards_de_part(stock, annee)
+    return stock * 100
 
 
 def recette(**reglages: str) -> float:
@@ -1090,11 +1126,14 @@ def recette(**reglages: str) -> float:
     ``sur=ressources`` le rapporte aux ressources de l'année plutôt qu'au PIB.
     ``quoi=impots`` : les impôts et taxes affectés ; ``quoi=taux_prelevement``
     : ce que le système prélève sur l'assiette des revenus d'activité, en %.
+    ``en=milliards`` dit le retrait, le versement ou les impôts en Md€, à la
+    règle de ``_milliards_de_part``.
     """
     from retraite_notionnelle.donnees.equilibre import ORGANISMES
 
     ligne = _solde_annee(reglages)
     quoi = reglages["quoi"]
+    en_milliards = reglages.get("en") == "milliards"
     if quoi in ("retrait", "versement"):
         retires = {o.code for o in ORGANISMES if o.droit_supprime}
         retrait = ligne.retrait if quoi == "retrait" else sum(ligne.versements.values())
@@ -1112,14 +1151,18 @@ def recette(**reglages: str) -> float:
             retrait = sum(ligne.versements[p] for p in payeurs)
         if reglages.get("sur") == "ressources":
             return retrait / ligne.ressources * 100
+        if en_milliards:
+            return _milliards_de_part(retrait, ligne.annee)
         return retrait * 100
     if quoi == "impots":
+        if en_milliards:
+            return _milliards_de_part(ligne.ressources * ligne.part_impots, ligne.annee)
         return ligne.ressources * ligne.part_impots * 100
     if quoi == "impots_milliards":
-        # Le bilan met le PIB à zéro hors de la fenêtre publiée, à dessein : les
-        # euros d'une année projetée se lisent au PIB PROJETÉ de la trajectoire.
-        pib = _cout_de(reglages).avenir.annee(ligne.annee).pib
-        return ligne.ressources * ligne.part_impots * pib / 1000
+        # Au PIB PROJETÉ de la trajectoire jusqu'au 23 septembre 2026, quand la
+        # page Coût, elle, disait la même part au PIB de la dernière année
+        # publiée : 66 milliards ici, 64 là-bas. La règle du site l'emporte.
+        return _milliards_de_part(ligne.ressources * ligne.part_impots, ligne.annee)
     if quoi == "taux_prelevement":
         return ligne.taux_prelevement * 100
     raise ValueError(f"quoi inconnu « {quoi} »")

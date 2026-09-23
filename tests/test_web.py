@@ -35,6 +35,8 @@ from retraite_notionnelle.web.pages import (
     _libelles_cascade,
     _marches_cascade,
     _milliards,
+    _part_et_milliards,
+    _pib_de_conversion,
     COMPOSANTE_GARANTIE,
     MARCHES_HORS_SYSTEMES,
     MARCHES_SYSTEMES,
@@ -5542,23 +5544,33 @@ def test_le_README_donne_le_solde_que_la_page_cout_calcule(contexte):
 
     readme = (Path(__file__).resolve().parents[1] / "README.md").read_text(encoding="utf-8")
     solde = contexte.cout().solde
+    comptes = contexte.comptes()
     observe = solde.annee(solde.derniere_annee_observee)
     horizon = solde.annee(solde.derniere_annee)
 
+    # Les deux soldes se lisent en part du PIB ET en milliards, sur la page
+    # (« −0,17 % · −5,1 Md € ») comme dans le README (« −0,17 % du PIB,
+    # −5,1 Md€ ») : la normalisation efface la seule différence, la typographie.
     def normaliser(texte: str) -> str:
         texte = re.sub(r"<!--.*?-->", "", texte)
         return (texte.replace("**", "").replace("−", "-").replace(" du PIB", "")
-                .replace("\u202f", " ").replace("\u00a0", " ").strip())
+                .replace("\u202f", " ").replace("\u00a0", " ")
+                .replace(" \u00b7 ", ", ").replace("Md €", "Md€").strip())
 
     for numero, (scenario, _libelle) in enumerate(SCENARIOS, start=1):
         ligne = re.search(rf"^\| {numero}\. [^|]*\|([^|]*)\|([^|]*)\|([^|]*)\|$",
                           readme, re.M)
         assert ligne, f"le README n'a plus de ligne {numero} dans le tableau des soldes"
+        moyen = solde.solde_moyen(scenario, solde.premiere_annee_projetee,
+                                  solde.derniere_annee)
         attendu = [
-            g.pourcentage(observe.solde(scenario), signe=True, decimales=2),
-            g.pourcentage(solde.solde_moyen(scenario, solde.premiere_annee_projetee,
-                                            solde.derniere_annee),
-                          signe=True, decimales=2),
+            _part_et_milliards(
+                observe.solde(scenario),
+                observe.solde(scenario) * _pib_de_conversion(comptes, observe.annee),
+                decimales=2, signe=True),
+            _part_et_milliards(
+                moyen, moyen * _pib_de_conversion(comptes, solde.derniere_annee),
+                decimales=2, signe=True),
             g.nombre(horizon.coefficient(scenario), 2),
         ]
         assert [normaliser(c) for c in ligne.groups()] == [normaliser(a) for a in attendu], (
