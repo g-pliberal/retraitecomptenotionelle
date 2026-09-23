@@ -19,8 +19,9 @@
 # l'article L. 3231-5 du code du travail quand l'indice des prix des ménages
 # du premier quintile a progressé d'au moins 2 % depuis le dernier relèvement.
 # Arrêté du 22 mai 2026 relatif au relèvement du salaire minimum de croissance
-# (JORF du 24 mai 2026, JORFTEXT000054126589) ; le texte n'est pas dans l'index
-# LEGI du dépôt, qui ne consolide pas les textes du SMIC postérieurs à 2017 :
-# transcrit, au niveau `haute`.
+# (JORF du 24 mai 2026, JORFTEXT000054126589), lu dans l'index JORF du dépôt :
+# son article 1 (JORFARTI000054126607) porte le SMIC « à 12,31 € l'heure » à
+# compter du 1er juin 2026. L'index LEGI ne consolide pas les textes du SMIC
+# postérieurs à 2017, et aucun script ne relit cette ligne : niveau `haute`.
 date_effet,smic_horaire,fiabilite
 2026-06-01,12.310000,haute
