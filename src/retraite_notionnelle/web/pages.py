@@ -2754,7 +2754,7 @@ agents, l'autre moitié aux pensions déjà promises.</p>""", ""),
 proposition encaisse moins qu'elle ne verse, et son déficit dépasse celui du
 système actuel. {cout} le chiffre année par année, garantie vieillesse
 comprise.</p>
-{_programme_blocages()}""", "les-blocages"),
+{_programme_blocages(contexte)}""", "les-blocages"),
         ("Ces chiffres sont-ils fiables ?", f"""
 <p>Ils viennent des institutions publiques (INSEE, Conseil d'orientation des
 retraites, caisses de retraite), et un programme les recontrôle contre leur
@@ -3277,7 +3277,9 @@ def _programme_restitution(contexte: Contexte) -> str:
     part = restitution.annuelle(annee)
     if part.poste_abandonne <= 0.0:
         return ""
-    pib = comptes.pib(comptes.pib.derniere_annee)
+    # La règle de tout le site : le PIB de l'année s'il est publié, celui de la
+    # dernière année publiée sinon — voir ``_pib_de_conversion``.
+    pib = _pib_de_conversion(comptes, annee)
     poids = comptes.part("impots_et_taxes", annee)
     return f"""
 <h3>Les impôts que nous supprimons : {_milliards(part.rendu * pib, 0)} rendus aux
@@ -3321,7 +3323,7 @@ C'est la seule augmentation de traitement que ce programme contienne, et elle
 n'est pas petite.</p>"""
 
 
-def _programme_blocages() -> str:
+def _programme_blocages(contexte: Contexte) -> str:
     """Les points de blocage regardés avant de choisir, et ce qu'on en a fait.
 
     Les chiffres sont DATÉS, et la page le dit : ils viennent de trois scripts
@@ -3330,7 +3332,19 @@ def _programme_blocages() -> str:
     vingt secondes de calcul chacun, et des points d'entrée que le portage ne
     porte pas. La page d'accueil ne calcule rien, et cette section pas
     davantage : elle cite ce qui a été mesuré, et où.
+
+    Les points de PIB mesurés sont dits aussi en milliards, au PIB de la
+    dernière année publiée — la règle de tout le site, ``_pib_de_conversion``.
+    Ce n'est pas un calcul de plus : c'est la même mesure, dans l'unité où on
+    la lit.
     """
+    comptes = contexte.comptes()
+    au_pib = f"au PIB de {comptes.pib.derniere_annee}"
+
+    def md(points: float) -> str:
+        """Des points de PIB mesurés, en milliards au PIB de la dernière année."""
+        return _points_en_milliards(comptes, points)
+
     points = g.tableau(
         ["Le point", "Ce que nous avons regardé", "Ce que nous en retenons"],
         [
@@ -3340,7 +3354,8 @@ def _programme_blocages() -> str:
              "général seul, la moyenne des régimes. Un taux plus bas n'est pas plus "
              "négociable, il est impayable : les pensions déjà acquises sont servies "
              "avec moins de cotisations, et sous les deux derniers barèmes le déficit "
-             "dépasse cinq points de PIB par an jusqu'en 2050.",
+             f"dépasse cinq points de PIB par an jusqu'en 2050, plus de {md(5)} "
+             f"{au_pib}.",
              "Un régime unique se vote par une loi ordinaire : le projet de 2020 l'a "
              "établi, et le Conseil d'État n'y a vu aucun obstacle de principe, ni "
              "pour les fonctionnaires ni pour les complémentaires. Le taux, lui, est "
@@ -3353,16 +3368,19 @@ def _programme_blocages() -> str:
              "relevée dans le même texte. L'objection la plus forte, celle de l'assuré "
              "parti à l'âge que sa loi lui ouvrait, a été chiffrée : lui prendre le "
              "diviseur de 64 ans plutôt que celui de son âge coûte un dixième de point "
-             "de PIB par an, et plus rien en 2050.",
+             f"de PIB par an, {md(0.1)} {au_pib}, et plus rien en 2050.",
              "Le recalcul est maintenu. La version qui laisse le stock intact a été "
              "chiffrée et écartée : −3,9 points de PIB par an en moyenne jusqu'en "
-             "2070, elle n'est pas finançable."],
+             f"2070, un besoin de {md(3.9)} par an {au_pib} : elle n'est pas "
+             "finançable."],
             ["Le taux de 18 %",
              "Face au taux d'aujourd'hui, 25,8 % part patronale comprise, les 18 % "
-             "coûtent 2,3 points de PIB par an sur 2026-2070, sous les mêmes règles de "
-             "recette. Le solde de la proposition est de −1,5 point par an en moyenne "
-             "contre −1,1 pour le système actuel, et la dette qu'elle accumule en 2070 "
-             "vaut 103 % du PIB contre 66 %.",
+             f"coûtent 2,3 points de PIB par an sur 2026-2070, {md(2.3)} {au_pib}, "
+             "sous les mêmes règles de recette. Le solde de la proposition est de "
+             "−1,5 point par an en moyenne contre −1,1 pour le système actuel, un "
+             f"besoin de {md(1.5)} par an contre {md(1.1)}, et la dette qu'elle "
+             "accumule en 2070 vaut 103 % du PIB contre 66 %, "
+             f"{md(103)} contre {md(66)}.",
              "C'est le prix d'un prélèvement plus bas, et il est écrit sur la page "
              "Coût plutôt que caché. Le pilotage annuel, que ces chiffres n'appliquent "
              "pas, est ce qui le tient : le coefficient d'équilibre de 2070 est de "
@@ -4992,6 +5010,11 @@ def _partager(contexte: Contexte) -> str:
     isolement = base.allocation_isolement_mensuelle
     manque = abs(horizon.solde("actuel"))
     depense = horizon.depense("actuel")
+    # Les mêmes parts en milliards, à la règle du site : l'horizon est
+    # projeté, donc au PIB de la dernière année publiée.
+    comptes = contexte.comptes()
+    pib = _pib_de_conversion(comptes, solde.derniere_annee)
+    au_pib = _au_pib(comptes, solde.derniere_annee)
 
     tete = g.affiche(
         "Partager",
@@ -5030,10 +5053,12 @@ def _partager(contexte: Contexte) -> str:
             "Le déficit",
             "Ce que le système actuel ne paie plus",
             f"{g.nombre(manque * 100, 1)} points de PIB",
-            f"c'est l'écart annuel à combler en {solde.derniere_annee}, sans "
-            "réforme.",
-            f"{g.pourcentage(depense, decimales=1)} du PIB de dépenses contre "
-            f"{g.pourcentage(depense - manque, decimales=1)} de ressources. "
+            f"soit {g.milliards(manque * pib)} par an{au_pib} : l'écart à "
+            f"combler en {solde.derniere_annee}, sans réforme.",
+            f"{g.pourcentage(depense, decimales=1)} du PIB de dépenses, "
+            f"{g.milliards(depense * pib)}, contre "
+            f"{g.pourcentage(depense - manque, decimales=1)} de ressources, "
+            f"{g.milliards((depense - manque) * pib)}. "
             "Source : COR, comptes du système de retraite.",
             classes="deficit",
         ),
@@ -8246,10 +8271,12 @@ compare pas.</p>
 <div class="panneaux">{panneaux}</div>
 <p class="discret">« Aujourd'hui » n'est pas un point fixe. Le système actuel,
 colonne de référence de ces grilles, manque déjà de
-{g.pourcentage(-comptes.solde(obs), decimales=2)} du PIB en {obs}, et le
-Conseil d'orientation des retraites projette qu'il en manquera
-{g.pourcentage(-comptes.solde(horizon), decimales=2)} en {horizon}. Le choix
-réel se joue entre le notionnel et un système
+{g.pourcentage(-comptes.solde(obs), decimales=2)} du PIB en {obs},
+{_en_milliards(comptes, -comptes.solde(obs), obs)}, et le Conseil d'orientation
+des retraites projette qu'il en manquera
+{g.pourcentage(-comptes.solde(horizon), decimales=2)} en {horizon},
+{_en_milliards(comptes, -comptes.solde(horizon), horizon)}{_au_pib(comptes, horizon)}.
+Le choix réel se joue entre le notionnel et un système
 qui dérive ; le système stable, lui, n'existe pas.</p>
 
 <p class="actions"><a class="bouton" href="{g.lien("/simuler")}">Calculer sur ma
@@ -8288,6 +8315,70 @@ COULEURS_SCENARIOS = {
 def _milliards(millions: float, decimales: int = 0) -> str:
     """Un montant en millions d'euros, écrit en milliards."""
     return g.nombre(millions / 1000, decimales) + "\u202fMd\u202f\u20ac"
+
+
+def _pib_de_conversion(comptes, annee: int) -> float:
+    """Le PIB, en millions d'euros, qui dit en euros une part du PIB de ``annee``.
+
+    UNE PART DU PIB SE DIT AUSSI EN EUROS, partout sur le site : tout le monde
+    n'a pas le PIB pour repère, tout le monde en a un pour « soixante-dix
+    milliards ». La règle est la même d'un bout à l'autre, pour que deux
+    montants de deux pages se comparent :
+
+    * une année dont l'INSEE publie le PIB est convertie au PIB de cette
+      année-là : c'est ce qui a réellement été versé, encaissé ou dû ;
+    * une année projetée est convertie au PIB de la DERNIÈRE année publiée :
+      la même part de l'économie d'aujourd'hui, et la page l'écrit — « au PIB
+      de 2025 ». Un PIB de 2070 serait une hypothèse de croissance déguisée en
+      observation, et des euros de 2070 gonfleraient de toute l'inflation d'ici
+      là les montants lointains. C'est la règle que le tableau poste par poste
+      et le simulateur suivaient déjà.
+
+    Seule la trajectoire du modèle y échappe, dans le dépliant des quatre
+    systèmes : elle est tenue en euros constants depuis toujours, ses tableaux
+    le disent, et ses parts de PIB en sont tirées plutôt que l'inverse.
+    """
+    return comptes.pib(min(annee, comptes.pib.derniere_annee))
+
+
+def _en_milliards(comptes, part: float, annee: int, signe: bool = False) -> str:
+    """Une part du PIB de ``annee``, en milliards — voir ``_pib_de_conversion``."""
+    return g.milliards(part * _pib_de_conversion(comptes, annee), signe)
+
+
+def _part_et_milliards(part: float, millions: float, decimales: int = 1,
+                       signe: bool = False) -> str:
+    """« 14,1 % · 422 Md € » : une part du PIB, et ce qu'elle vaut en milliards.
+
+    C'est la forme d'une case de tableau qui porte une part du PIB : les deux
+    unités côte à côte, dans la même case, comme dans le tableau de chaque
+    graphique. ``millions`` est le montant déjà converti — par
+    ``_pib_de_conversion``, ou en euros constants dans la trajectoire du modèle.
+    """
+    return (f"{g.pourcentage(part, signe=signe, decimales=decimales)} \u00b7 "
+            f"{g.milliards(millions, signe)}")
+
+
+def _au_pib(comptes, annee: int) -> str:
+    """« au PIB de 2025 » pour une année projetée ; rien pour une année publiée."""
+    derniere = comptes.pib.derniere_annee
+    return f" au PIB de {derniere}" if annee > derniere else ""
+
+
+def _points_en_milliards(comptes, points: float, annee: int | None = None) -> str:
+    """Des points de PIB CITÉS — 2,4 et non 0,024 —, en milliards.
+
+    Au PIB de ``annee`` quand l'INSEE le publie, à celui de la dernière année
+    publiée sinon, ou faute d'année : c'est ``_en_milliards`` pour un chiffre
+    tel qu'une source l'écrit, et que la page recopie sans le recalculer.
+    """
+    millesime = comptes.pib.derniere_annee if annee is None else annee
+    return _en_milliards(comptes, points / 100, millesime)
+
+
+def _pib_des_annees(comptes, annees: tuple[int, ...]) -> tuple[float, ...]:
+    """Le PIB de conversion de chaque année d'un graphique en part du PIB."""
+    return tuple(_pib_de_conversion(comptes, annee) for annee in annees)
 
 
 def _cout(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
@@ -8457,8 +8548,22 @@ def _cout(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
         # lu et non écrit.
         sommet_minimal=depense_maximale_toutes_variantes(
             contexte.base.racine_donnees) * 100,
+        # Chaque point se lit aussi en milliards, au survol et dans le tableau.
+        pib=_pib_des_annees(comptes, annees_toutes),
     )
     equilibre = solde.premiere_annee_equilibree(reforme)
+    # L'étalon des années projetées, dit sous la carte : ce que vaut un point.
+    # Dans une bulle et non dans la phrase : la carte est au plafond de son
+    # budget de lecture, et la lecture au survol montre déjà les milliards —
+    # la bulle dit seulement lesquels.
+    annee_pib = comptes.pib.derniere_annee
+    point_de_pib = _milliards(comptes.pib(annee_pib) / 100, 1)
+    en_milliards = g.bulle(
+        "Et en milliards d'euros ?",
+        f"Pointez une année : chaque part s'y lit aussi en milliards d'euros, "
+        f"ceux de l'année jusqu'en {annee_pib}, puis la même part du PIB de "
+        f"{annee_pib}, où un point vaut {point_de_pib}.",
+    )
 
     # -- le second graphique : d'où vient l'argent ---------------------------
     annees_ventilees = tuple(comptes.annees_ventilees())
@@ -8478,6 +8583,7 @@ def _cout(contexte: Contexte, regards: dict[str, str] | None = None) -> str:
         f"{premiere_ventilee} à {derniere_ventilee}, en part du PIB",
         annees_ventilees, bandes, unite="% du PIB", empile=True,
         decimales_donnees=1,
+        pib=_pib_des_annees(comptes, annees_ventilees),
     )
     part_salaires = comptes.part_groupe("salaires", derniere_ventilee)
     part_impots_debut = comptes.part_groupe("impots", premiere_ventilee)
@@ -8507,7 +8613,7 @@ de la facture. En comptes notionnels dès {bascule}, {retour_equilibre}.""",
         f"""Sources : DREES jusqu'en {solde.premiere_annee - 1}, Conseil
 d'orientation des retraites ensuite — c'est lui qui projette, pas nous. En
 {g.terme("part du PIB")} : sur 100 € produits en France, combien vont aux
-retraites.""",
+retraites.{en_milliards}""",
         identifiant="cout-bilan",
     )
 
@@ -9773,7 +9879,8 @@ famille de {derniere}, soit
 {g.pourcentage(supprime_caisses, decimales=2)} du PIB — et, avec les
 {_milliards(comptes.transfert_organisme("solidarite", derniere), 1)} que le
 fonds de solidarité vieillesse verse pour des trimestres que personne n'a
-cotisés, {g.pourcentage(supprime, decimales=2)} du PIB et
+cotisés, {g.pourcentage(supprime, decimales=2)} du PIB,
+{_en_milliards(comptes, supprime, derniere)}, et
 {g.pourcentage(part_supprimee, decimales=1)} des ressources en tout. L'assurance
 chômage, elle, paie ce que le compte notionnel porte : pendant un chômage
 indemnisé, il crédite les cotisations complémentaires qu'elle verse, les
@@ -9802,6 +9909,7 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
     cout = contexte.cout()
     avenir = cout.avenir
     solde_actuel = cout.solde
+    comptes = contexte.comptes()
     depenses = contexte.depenses()
     euros = cout.annee_euros
     derniere = depenses.derniere_annee
@@ -9963,24 +10071,38 @@ def _cout_detail_scenarios(contexte: Contexte) -> str:
         ligne = avenir.annee(millesime)
         if ligne is None:
             continue
-        horizons.append([
-            str(millesime),
-            g.nombre(ligne.dependance, 2),
-            g.pourcentage(ligne.part_pib("actuel"), decimales=1),
-            g.pourcentage(ligne.part_pib("notionnel_retroactif_employeur"),
-                          decimales=1),
-            g.pourcentage(ligne.part_pib("notionnel_liberal"), decimales=1),
+        # La trajectoire du modèle est tenue en euros constants, et ses parts
+        # de PIB en sont tirées : les milliards de la case sont les siens,
+        # ceux des deux tableaux du dessus.
+        horizons.append([str(millesime), g.nombre(ligne.dependance, 2)] + [
+            _part_et_milliards(ligne.part_pib(scenario),
+                               ligne.cout_constants(scenario))
+            for scenario in ("actuel", "notionnel_retroactif_employeur",
+                             "notionnel_liberal")
         ])
 
+    manque_obs = -solde_actuel.annee(solde_actuel.derniere_annee_observee).solde("actuel")
+    manque_fin = -solde_actuel.annee(solde_actuel.derniere_annee).solde("actuel")
+    # La garantie de l'horizon, et le total de la proposition avec elle : en
+    # part du PIB et en euros constants, comme la trajectoire les tient.
+    garantie_fin = horizon.cout_constants(COMPOSANTE_GARANTIE)
+    total_fin = horizon.cout_constants("notionnel_liberal") + garantie_fin
+    # Ce que le COR projette, converti comme le modèle convertit ses propres
+    # parts : au PIB que la trajectoire projette, en euros constants.
+    cor_fin = cor_horizon * horizon.pib * horizon.coefficient_constants
+    modele_fin = horizon.cout_constants("actuel")
     return g.depliant("Les quatre systèmes comparés, du passé jusqu'à 2070", f"""
 <p>La carte du haut ne montre que la proposition. Voici les quatre systèmes que
 le site compare, sur le passé puis sur l'avenir. Le
 « système actuel » de ces tableaux est la ligne de référence, pas un
 équilibre : il manque de
-{g.pourcentage(-solde_actuel.annee(solde_actuel.derniere_annee_observee).solde("actuel"), decimales=2)}
-du PIB en {solde_actuel.derniere_annee_observee}, et de
-{g.pourcentage(-solde_actuel.annee(solde_actuel.derniere_annee).solde("actuel"), decimales=2)}
-en {solde_actuel.derniere_annee} — comparer un scénario à lui, c'est le
+{g.pourcentage(manque_obs, decimales=2)}
+du PIB en {solde_actuel.derniere_annee_observee},
+{_en_milliards(comptes, manque_obs, solde_actuel.derniere_annee_observee)}, et de
+{g.pourcentage(manque_fin, decimales=2)}
+en {solde_actuel.derniere_annee},
+{_en_milliards(comptes, manque_fin, solde_actuel.derniere_annee)}{_au_pib(comptes, solde_actuel.derniere_annee)}
+— comparer un scénario à lui, c'est le
 comparer à un système qui dérive.</p>
 
 <h4>Ce qu'ils auraient coûté depuis {cout.premiere_annee}</h4>
@@ -10033,10 +10155,12 @@ des cartes du haut. Le modèle décrit ici des <strong>pensions de répartition
 obligatoire</strong> — {_milliards(depenses.repartition(derniere), 1)} en
 {derniere} —, il porte son propre niveau de dépense, et ce niveau s'écarte de
 celui du COR : il donne {g.pourcentage(horizon.part_pib("actuel"), decimales=1)} du PIB pour le
-système actuel en {avenir.derniere_annee}, quand le COR en projette
-{g.pourcentage(cor_horizon, decimales=1)}. L'écart est de
-{g.nombre((horizon.part_pib("actuel") - cor_horizon) * 100, 1)} points, et il n'est
-pas flatteur : notre {g.terme("taux de remplacement")} ne recule pas, celui du
+système actuel en {avenir.derniere_annee}, {g.milliards(modele_fin)} en euros
+constants de {euros}, quand le COR en projette
+{g.pourcentage(cor_horizon, decimales=1)}, {g.milliards(cor_fin)}. L'écart est de
+{g.nombre((horizon.part_pib("actuel") - cor_horizon) * 100, 1)} points,
+{g.milliards(modele_fin - cor_fin)}, et il n'est pas flatteur : notre
+{g.terme("taux de remplacement")} ne recule pas, celui du
 COR recule. <a href="{g.DEPOT}/blob/main/docs/limites.md">Le § 5 ter des
 limites</a> porte la mesure. C'est pourquoi les cartes
 du haut n'utilisent du modèle que son <strong>rapport</strong> entre systèmes,
@@ -10071,7 +10195,8 @@ rétroactive, et c'est elle qu'il s'agit de chiffrer.</p>
      "Compte notionnel, les deux parts", "La proposition libérale"],
     horizons,
     ["", "nombre", "nombre", "nombre", "nombre"],
-    titre="Dépendance démographique et part de la dépense dans le PIB, par horizon",
+    titre="Dépendance démographique et part de la dépense dans le PIB, par "
+          f"horizon, et ce qu'elle vaut en milliards d'euros constants de {euros}",
     entete_de_ligne=True,
 )}
 <p class="discret">La première colonne est le rapport de dépendance
@@ -10087,13 +10212,16 @@ chose autrement, par le diviseur d'espérance de vie, mais ils le font
 proposition ne porte que ses <strong>pensions contributives</strong> : sa
 garantie vieillesse y ajoute
 {g.pourcentage(horizon.part_pib(COMPOSANTE_GARANTIE), decimales=1)} du PIB en
-{avenir.derniere_annee}, ce qui porte son total à
+{avenir.derniere_annee}, {g.milliards(garantie_fin)}, ce qui porte son total à
 {g.pourcentage(horizon.part_pib("notionnel_liberal")
-               + horizon.part_pib(COMPOSANTE_GARANTIE), decimales=1)}, ou
+               + horizon.part_pib(COMPOSANTE_GARANTIE), decimales=1)},
+{g.milliards(total_fin)}, ou
 {g.pourcentage(horizon.part_pib("notionnel_liberal")
                + horizon.part_pib(COMPOSANTE_GARANTIE)
-               - horizon.part_pib_reprises(), decimales=1)} net des reprises
-sur succession.</p>
+               - horizon.part_pib_reprises(), decimales=1)},
+{g.milliards(total_fin - horizon.reprises_constants())}, net des reprises
+sur succession. Ici comme dans les tableaux du dessus, les milliards sont des
+euros constants de {euros} : ceux de la trajectoire du modèle.</p>
 """, identifiant="cout-scenarios")
 
 
@@ -10272,23 +10400,27 @@ def _annee_cascade(solde, bascule: int, regards: dict[str, str] | None) -> int:
 
 
 def _pib_cascade(contexte: Contexte, annee: int) -> tuple[float, bool]:
-    """Le PIB qui convertit une part en milliards, et s'il est publié.
+    """Le PIB qui convertit une part en milliards, et s'il est celui de l'année.
 
-    LE COMPTE DU COR TIENT SES DEUX BOUTS EN PART DU PIB, de 2002 à 2070 ; il
-    ne publie un PIB en euros que jusqu'à l'année mesurée. Au-delà, c'est le
-    modèle qui en projette un — le même que la trajectoire emploie pour ses
-    propres parts —, et les deux coïncident exactement à l'année mesurée, si
-    bien que la suite des milliards ne saute pas au passage.
+    LE COMPTE DU COR TIENT SES DEUX BOUTS EN PART DU PIB, de 2002 à 2070 ; le
+    PIB, lui, n'est publié que jusqu'à l'année mesurée. Au-delà, la cascade
+    suit la règle du site entier, ``_pib_de_conversion`` : la même part du PIB
+    de la dernière année publiée.
+
+    ELLE EN SUIVAIT UNE AUTRE JUSQU'AU 23 SEPTEMBRE 2026 : le PIB que le modèle
+    projette, en euros courants de l'année. La dépense de 2070 y valait
+    1 278 milliards, quand la carte du haut en donne 458 au même endroit, pour
+    la même part du PIB, et rien sur la page ne permettait de réconcilier les
+    deux montants — l'un portait quarante-cinq ans d'inflation et de croissance
+    supposées, l'autre aucune.
 
     Le second terme du couple dit lequel des deux on a pris, et la page l'écrit
-    sous la figure : un milliard de 2060 est une part du PIB multipliée par un
-    PIB supposé, et cela ne se devine pas.
+    sous la figure : un milliard de 2060 n'est pas une dépense de 2060, c'est
+    la même part de l'économie d'aujourd'hui, et cela ne se devine pas.
     """
-    ligne = contexte.cout().solde.annee(annee)
-    if ligne is not None and ligne.pib:
-        return ligne.pib, True
-    projete = contexte.cout().avenir.annee(annee)
-    return (projete.pib if projete else 0.0), False
+    comptes = contexte.comptes()
+    return (_pib_de_conversion(comptes, annee),
+            annee <= comptes.pib.derniere_annee)
 
 
 def _cout_detail_cascade(contexte: Contexte,
@@ -10334,6 +10466,8 @@ def _cout_detail_cascade(contexte: Contexte,
     annee = _annee_cascade(solde, bascule, regards)
     ligne = solde.annee(annee)
     pib, publie = _pib_cascade(contexte, annee)
+    comptes = contexte.comptes()
+    annee_pib = comptes.pib.derniere_annee
 
     # La dépense de l'année, en millions : une part du PIB multipliée par le
     # PIB. À l'année mesurée, cela redonne exactement ce que le COR publie.
@@ -10372,7 +10506,10 @@ def _cout_detail_cascade(contexte: Contexte,
     figure = g.cascade(
         f"De la dépense du système actuel à celle de la proposition en "
         f"{annee}, mesure par mesure, en milliards d'euros",
-        tuple(marches), unite=f"Md € {annee}", decimales=1,
+        tuple(marches),
+        unite=(f"Md\u202f€ {annee}" if publie
+               else f"Md\u202f€, au PIB de {annee_pib}"),
+        decimales=1,
         libelle_marche="Mesure",
     )
 
@@ -10397,12 +10534,12 @@ une année plus tardive dans le sélecteur ci-dessus. Les reprises sur
 successions sont dans le même cas.</div>
 """
     source_pib = (
-        f"Le compte du COR publie un PIB en euros jusqu'en {obs} ; au-delà, la "
-        f"part du PIB est multipliée par le PIB que le modèle projette, celui-là "
-        f"même dont la trajectoire se sert. Les deux coïncident en {obs}, si "
-        f"bien que la suite des milliards ne saute pas au passage."
+        f"Le PIB n'est publié que jusqu'en {annee_pib} ; au-delà, les milliards "
+        f"sont ceux de la même part du PIB de {annee_pib}, comme partout sur le "
+        f"site : la dépense de {annee} ramenée à l'économie d'aujourd'hui, sans "
+        f"hypothèse de croissance ni d'inflation."
         if not publie else
-        f"Les milliards sont ceux du PIB que le COR publie pour {annee}."
+        f"Les milliards sont ceux du PIB que l'INSEE publie pour {annee}."
     )
     return g.depliant(
         f"De {_milliards(depense, 0)} à {_milliards(arrivee_meur, 0)} : "
@@ -10418,7 +10555,8 @@ pas où elle retombe.</p>
 {choix}
 
 <p>En {annee}, la dépense passe de {_milliards(depense, 0)} à
-{_milliards(arrivee_meur, 0)}, soit {_milliards(ecart * 1000, 0)} de moins,
+{_milliards(arrivee_meur, 0)}{_au_pib(comptes, annee)}, soit
+{_milliards(ecart * 1000, 0)} de moins,
 {g.pourcentage(ecart * 1000 / depense, decimales=0)} de la facture. Tout est
 pris sur le compte du <a href="{g.lien("/donnees")}">Conseil d'orientation des
 retraites</a>, le même que les cartes du haut, et il tient ses deux bouts
@@ -10466,21 +10604,29 @@ def _cout_detail_equilibre(contexte: Contexte) -> str:
     """Le coefficient d'équilibre : de combien il faudrait rogner, ou pouvoir servir."""
     cout = contexte.cout()
     solde = cout.solde
+    comptes = contexte.comptes()
     assiette = contexte.assiette()
     annee_assiette = assiette.derniere_annee
     obs = solde.derniere_annee_observee
     observe = solde.annee(obs)
     horizon = solde.annee(solde.derniere_annee)
+    annee_pib = comptes.pib.derniere_annee
     lignes = []
     for scenario, libelle in SCENARIOS_COMPARES:
         equilibre = solde.premiere_annee_equilibree(scenario)
+        # Le solde moyen des années projetées, en euros : la moyenne des parts,
+        # chacune convertie au PIB de la dernière année publiée — la règle du
+        # site, qui fait de la moyenne des milliards celle des parts.
+        moyen = solde.solde_moyen(scenario, solde.premiere_annee_projetee,
+                                  solde.derniere_annee)
         lignes.append([
             _nom_scenario(scenario, libelle),
-            g.pourcentage(observe.solde(scenario), signe=True, decimales=2),
-            g.pourcentage(
-                solde.solde_moyen(scenario, solde.premiere_annee_projetee,
-                                  solde.derniere_annee),
-                signe=True, decimales=2),
+            _part_et_milliards(observe.solde(scenario),
+                               observe.solde(scenario) * _pib_de_conversion(comptes, obs),
+                               decimales=2, signe=True),
+            _part_et_milliards(moyen,
+                               moyen * _pib_de_conversion(comptes, solde.derniere_annee),
+                               decimales=2, signe=True),
             g.nombre(observe.coefficient(scenario), 2),
             g.nombre(horizon.coefficient(scenario), 2),
             str(equilibre) if equilibre else "jamais",
@@ -10529,11 +10675,13 @@ rogner, plus de un quand il pourrait servir davantage.</p>
      "Équilibre atteint en"],
     lignes,
     ["", "nombre", "nombre", "nombre", "nombre", "nombre"],
-    titre="Solde et coefficient d'équilibre de chaque système, en part du PIB",
+    titre="Solde et coefficient d'équilibre de chaque système, en part du PIB "
+          "et en milliards d'euros",
     entete_de_ligne=True,
 )}
-<p class="discret">Les deux premières colonnes sont en part du PIB. Le
-coefficient vaut {g.nombre(observe.coefficient("actuel"), 2)} pour le système
+<p class="discret">Les deux premières colonnes sont en part du PIB, et en
+milliards : ceux de {obs} pour la première, la même part du PIB de {annee_pib}
+pour la moyenne des années projetées. Le coefficient vaut {g.nombre(observe.coefficient("actuel"), 2)} pour le système
 actuel en {obs} (il faudrait rogner de
 
 {g.pourcentage(1 - observe.coefficient("actuel"), decimales=1)}), et
@@ -10545,9 +10693,10 @@ le raccord ne triche pas. Les trois autres systèmes ne comptent pas tout ce que
 le système actuel encaisse : ce que la branche famille et le fonds de
 solidarité vieillesse versent pour des droits qu'ils ne servent pas, soit
 
-{g.pourcentage(observe.retrait, decimales=2)} du PIB en {obs}, leur est
-retiré, à part constante des ressources sur les années projetées. C'est ce
-retrait qui creuse leur solde : un système notionnel qui ne sert plus ces
+{g.pourcentage(observe.retrait, decimales=2)} du PIB en {obs},
+{_en_milliards(comptes, observe.retrait, obs)}, leur est retiré, à part
+constante des ressources sur les années projetées. C'est ce retrait qui creuse
+leur solde : un système notionnel qui ne sert plus ces
 droits ne peut pas en garder les recettes.</p>
 
 <div class="note"><strong>Dix-huit pour cent de quoi ?</strong> Le système 4
@@ -10574,7 +10723,9 @@ ne rentre pas en entier. Compter ainsi revient à supposer que la proposition
 garde la même architecture d'exonérations, ce que son texte ne dit pas, et à
 lui laisser du même mouvement les impôts affectés et les subventions
 d'équilibre que la lecture retenue ne reconduit pas. Son solde moyen projeté
-est meilleur d'environ un point de PIB. Les deux lectures se défendent, elles
+est meilleur d'environ un point de PIB, environ
+{g.milliards(comptes.pib(annee_pib) / 100)} par an au PIB de {annee_pib}. Les
+deux lectures se défendent, elles
 sont toutes deux calculées, et la page a retenu la plus sévère.</div>
 
 {_note_lecture_coefficient(_reglage_proposition(solde))}
@@ -10680,8 +10831,9 @@ class BilanBascule:
     #: L'année de la bascule, bornée à la fenêtre du compte.
     annee: int
     ligne: SoldeAnnuel
-    #: La dernière année dont le PIB est publié, et ce PIB, en millions
-    #: d'euros : celui de l'année de bascule ne l'est pas encore.
+    #: L'année dont le PIB convertit les parts en milliards, et ce PIB, en
+    #: millions d'euros : celle de la bascule quand l'INSEE en publie le PIB,
+    #: la dernière publiée sinon.
     annee_pib: int
     pib: float
     derniere_ventilee: int
@@ -10707,7 +10859,12 @@ def _bilan_bascule(contexte: Contexte) -> BilanBascule:
     base = contexte.base
     annee = min(max(base.annee_bascule, solde.premiere_annee), solde.derniere_annee)
     ligne = solde.annee(annee)
-    annee_pib = comptes.pib.derniere_annee
+    # Le PIB qui convertit les parts en milliards : celui de l'année quand
+    # l'INSEE le publie, celui de la dernière année publiée sinon — la règle de
+    # tout le site, ``_pib_de_conversion``. Une bascule réglée sur une année
+    # passée lisait jusqu'ici le PIB de 2025, et la note affirmait qu'un PIB
+    # publié ne l'était pas.
+    annee_pib = min(annee, comptes.pib.derniere_annee)
 
     # La garantie vieillesse, lue sur la vraie distribution des pensions comme
     # le fait le dépliant qui lui est consacré — jamais sur les cas types, dont
@@ -10925,6 +11082,7 @@ def _cout_detail_postes(contexte: Contexte, bilan: BilanBascule) -> str:
     tableau disent donc les mêmes nombres.
     """
     base = contexte.base
+    comptes = contexte.comptes()
     annee, ligne = bilan.annee, bilan.ligne
     annee_pib, pib = bilan.annee_pib, bilan.pib
     derniere_ventilee = bilan.derniere_ventilee
@@ -10989,6 +11147,17 @@ def _cout_detail_postes(contexte: Contexte, bilan: BilanBascule) -> str:
         + (cellules(capitalise, 0.0) if capitalise else ["—", "—", "—"])
     )
 
+    source_milliards = (
+        f"Les parts de PIB sont celles du compte du COR pour {annee}, année "
+        f"projetée. Le PIB de {annee} n'est pas publié : les milliards sont "
+        f"ceux d'un point de PIB de {annee_pib}, dernière année connue "
+        f"({_milliards(pib, 0)}), et donnent l'ordre de grandeur, pas la "
+        f"valeur de {annee}."
+        if annee > annee_pib else
+        f"Les parts de PIB sont celles du compte du COR pour {annee}, et les "
+        f"milliards ceux du PIB que l'INSEE publie pour cette année-là "
+        f"({_milliards(pib, 0)})."
+    )
     return g.depliant(
         "Recettes et dépenses, poste par poste", f"""
 <p>Le Conseil d'orientation des retraites publie chaque année la structure des
@@ -11009,11 +11178,7 @@ courbes.</p>
     entete_de_ligne=True,
 )}
 
-<p class="discret">Les parts de PIB sont celles du compte du COR pour {annee},
-année projetée. Le PIB de {annee} n'est pas publié : les milliards sont ceux
-d'un point de PIB de {annee_pib}, dernière année connue
-({_milliards(pib, 0)}), et donnent l'ordre de grandeur, pas la valeur de
-{annee}. La structure des ressources du système actuel est celle de
+<p class="discret">{source_milliards} La structure des ressources du système actuel est celle de
 {derniere_ventilee}, dernière année que le COR ventile, reconduite ; les
 « dont » sont ce que chaque payeur a réellement versé la dernière année connue,
 à part constante des ressources. « Part » rapporte chaque ligne au total des
@@ -11040,10 +11205,11 @@ capitalisé ne passe pas par les caisses et n'est ni une ressource ni une
 dépense du système : il est rappelé pour que rien ne manque.</div>
 
 <div class="note"><strong>La recette réagit sur trois points, et sur trois
-seulement.</strong> Elle suit le droit : ce que la branche famille, l'assurance
-chômage et le fonds de solidarité vieillesse versent pour des droits que les
-systèmes notionnels ne servent pas leur est retiré, un peu plus d'un point de
-PIB. Elle suit le taux : le système 4 prélève ses {g.pourcentage(base.taux_cotisation_liberal, decimales=0)} sur
+seulement.</strong> Elle suit le droit : ce que la branche famille et le fonds
+de solidarité vieillesse versent pour des droits que les systèmes notionnels ne
+servent pas leur est retiré, un peu plus d'un point de PIB :
+{g.milliards(ligne.retrait * pib)} en {annee}{_au_pib(comptes, annee)}. Elle
+suit le taux : le système 4 prélève ses {g.pourcentage(base.taux_cotisation_liberal, decimales=0)} sur
 l'assiette mesurée des revenus d'activité au lieu de la part cotisée des
 ressources d'aujourd'hui. Elle suit enfin le principe, et pour le seul
 système 4 : un compte notionnel ne crédite que ce qui est assis sur un revenu
@@ -11125,9 +11291,14 @@ def _cout_detail_dette(contexte: Contexte) -> str:
         return ""
     solde = cout.solde
     avenir = cout.avenir
+    comptes = contexte.comptes()
     courbe = contexte.simulateur().courbe_taux
     depart = dette.annee_depart
     fin = dette.derniere_annee
+    # Un stock en part du PIB se dit en euros comme un flux : à la même part
+    # du PIB de la dernière année publiée, pour toute année projetée.
+    pib_fin = _pib_de_conversion(comptes, fin)
+    au_pib_fin = _au_pib(comptes, fin)
     moins = calculer_dette(solde, avenir, courbe, -ECART_TAUX_DETTE)
     plus = calculer_dette(solde, avenir, courbe, ECART_TAUX_DETTE)
     annees = tuple(range(depart, fin + 1))
@@ -11145,21 +11316,28 @@ def _cout_detail_dette(contexte: Contexte) -> str:
         "en part du PIB — une dette au-dessus de l'axe, une réserve en dessous",
         annees, series, "% du PIB", False, 0, True, None, "",
         tuple(libelle.split(".")[0] for _, libelle in SCENARIOS_COMPARES),
-        "Année", None, "", 1,
+        "Année", None, "", 1, 0.0, _pib_des_annees(comptes, annees),
     )
     lignes = []
     for scenario, libelle in SCENARIOS_COMPARES:
         lignes.append([
             _nom_scenario(scenario, libelle),
-            g.pourcentage(dette.horizon(scenario), signe=True, decimales=0),
-            g.pourcentage(dette.annees[-1].interet(scenario), signe=True,
-                          decimales=1),
-            g.pourcentage(moins.horizon(scenario), signe=True, decimales=0),
-            g.pourcentage(plus.horizon(scenario), signe=True, decimales=0),
+            _part_et_milliards(dette.horizon(scenario),
+                               dette.horizon(scenario) * pib_fin,
+                               decimales=0, signe=True),
+            _part_et_milliards(dette.annees[-1].interet(scenario),
+                               dette.annees[-1].interet(scenario) * pib_fin,
+                               signe=True),
+            _part_et_milliards(moins.horizon(scenario),
+                               moins.horizon(scenario) * pib_fin,
+                               decimales=0, signe=True),
+            _part_et_milliards(plus.horizon(scenario),
+                               plus.horizon(scenario) * pib_fin,
+                               decimales=0, signe=True),
         ])
     premiere = dette.annees[0]
     cotee = dette.annee(dette.derniere_annee_cotee) or dette.annees[-1]
-    publique = _cout_dette_publique(dette, fin)
+    publique = _cout_dette_publique(dette, fin, comptes)
     return g.depliant(
         "Ce que le déficit accumule : la dette, si rien ne s'ajuste", f"""
 <p>Un solde est un flux : ce qui manque une année, ou ce qui reste. Un déficit
@@ -11177,27 +11355,32 @@ ce que le système détient.</p>
 <p><strong>Les déficits du système actuel, simplement additionnés de
 {premiere.annee} à {fin}, font
 {g.pourcentage(dette.cumul_soldes("actuel"), decimales=0)} du PIB.</strong>
-Avec les intérêts, et une fois le tout rapporté à un PIB qui grandit, la dette
+C'est {g.milliards(dette.cumul_soldes("actuel") * pib_fin)}{au_pib_fin}. Avec
+les intérêts, et une fois le tout rapporté à un PIB qui grandit, la dette
 atteint {g.pourcentage(dette.horizon("actuel"), decimales=0)} du PIB en {fin},
-et ses seuls intérêts coûtent cette année-là
-{g.pourcentage(dette.annees[-1].interet("actuel"), decimales=1)} du PIB. Elle
+{g.milliards(dette.horizon("actuel") * pib_fin)}, et ses seuls intérêts coûtent
+cette année-là {g.pourcentage(dette.annees[-1].interet("actuel"), decimales=1)}
+du PIB, {g.milliards(dette.annees[-1].interet("actuel") * pib_fin)}. Elle
 s'ajouterait à celle que le pays porte déjà, que le second graphique pose
 dessous. La proposition, qui fixe le taux à 18 % et ne fixe pas les pensions,
 en accumule {g.pourcentage(dette.horizon("notionnel_liberal"), decimales=0)} du
-PIB au même horizon.</p>
+PIB au même horizon,
+{g.milliards(dette.horizon("notionnel_liberal") * pib_fin)}.</p>
 
 {g.tableau(
     ["Système", f"Dette en {fin}", f"Intérêts de l'année {fin}",
      "Taux un point plus bas", "Taux un point plus haut"],
     lignes,
     ["", "nombre", "nombre", "nombre", "nombre"],
-    titre=f"Stock accumulé par chaque système en {fin}, en part du PIB, "
-    "et ce qu'un point de taux y change",
+    titre=f"Stock accumulé par chaque système en {fin}, en part du PIB et en "
+    f"milliards d'euros{au_pib_fin}, et ce qu'un point de taux y change",
     entete_de_ligne=True,
 )}
-<p class="discret">Tout est en part du PIB. Un chiffre négatif est une
-réserve : le système a encaissé plus qu'il n'a servi, et le stock lui rapporte
-au lieu de lui coûter. Les deux dernières colonnes refont le calcul avec un
+<p class="discret">Tout est en part du PIB, et en milliards : la même part du
+PIB de {comptes.pib.derniere_annee}, celui de la dernière année publiée. Un
+PIB de {fin} serait une hypothèse, et des euros de {fin} porteraient toute
+l'inflation d'ici là. Un chiffre négatif est une réserve : le système a
+encaissé plus qu'il n'a servi, et le stock lui rapporte au lieu de lui coûter. Les deux dernières colonnes refont le calcul avec un
 taux plus bas, puis plus haut, d'un point sur toute la période.</p>
 
 <div class="note"><strong>Un système notionnel n'accumule ni cette dette ni
@@ -11218,13 +11401,15 @@ même courbe qui fait le rendement du pilier capitalisé du système 4 : la dett
 et le pilier lisent le même marché, et personne n'a eu à prévoir un taux. Un
 point de plus ou de moins déplace la dette du système actuel en {fin} de
 {g.pourcentage(moins.horizon("actuel"), decimales=0)} à
-{g.pourcentage(plus.horizon("actuel"), decimales=0)} du PIB.</div>
+{g.pourcentage(plus.horizon("actuel"), decimales=0)} du PIB, de
+{g.milliards(moins.horizon("actuel") * pib_fin)} à
+{g.milliards(plus.horizon("actuel") * pib_fin)}{au_pib_fin}.</div>
 """,
         identifiant="cout-dette",
     )
 
 
-def _cout_dette_publique(dette, fin: int) -> str:
+def _cout_dette_publique(dette, fin: int, comptes) -> str:
     """La dette du pays, et ce que chaque système y ajoute : l'échelle du stock.
 
     LA DETTE OBSERVÉE D'ABORD, telle que l'INSEE la publie au sens de
@@ -11272,22 +11457,25 @@ def _cout_dette_publique(dette, fin: int) -> str:
         "projection",
         ("",) + tuple(LIBELLES_SYSTEMES[scenario].split(".")[0]
                       for scenario in SYSTEMES_DETTE_PUBLIQUE),
-        "Année", None, "", 0,
+        "Année", None, "", 0, 0.0, _pib_des_annees(comptes, annees),
     )
     actuel = dette.dette_publique("actuel", fin)
     proposition = dette.dette_publique("notionnel_liberal", fin)
     ecart = proposition - actuel
+    pib_fin = _pib_de_conversion(comptes, fin)
     if abs(ecart) < 0.005:
         lecture = "la proposition et le système actuel laissent le pays au même point"
     elif ecart > 0:
         lecture = (
             f"la proposition laisse le pays {g.pourcentage(ecart, decimales=0)} "
-            "du PIB plus endetté que le système actuel"
+            f"du PIB plus endetté que le système actuel, "
+            f"{g.milliards(ecart * pib_fin)} de plus"
         )
     else:
         lecture = (
             f"la proposition laisse le pays {g.pourcentage(-ecart, decimales=0)} "
-            "du PIB moins endetté que le système actuel"
+            f"du PIB moins endetté que le système actuel, "
+            f"{g.milliards(-ecart * pib_fin)} de moins"
         )
     return f"""
 <p>Ce stock ne part pas de rien : le pays porte déjà une dette. Le graphique
@@ -11303,11 +11491,17 @@ ajoute se lit à côté de ce que le pays doit déjà.</p>
 
 <p><strong>La dette publique faisait
 {g.pourcentage(dette.dette_publique_depart, decimales=0)} du PIB fin
-{annee_dette}.</strong> Si rien d'autre ne bougeait, le système actuel la
-porterait à {g.pourcentage(actuel, decimales=0)} du PIB en {fin}, et la
-proposition à {g.pourcentage(proposition, decimales=0)} : {lecture}. L'écart
-entre les deux courbes est exactement l'écart entre les deux stocks du
-graphique précédent, et c'est lui qui se lit ici, à l'échelle du pays.</p>
+{annee_dette}.</strong> Soit
+{_en_milliards(comptes, dette.dette_publique_depart, annee_dette)}. Si rien
+d'autre ne bougeait, le système actuel la porterait à
+{g.pourcentage(actuel, decimales=0)} du PIB en {fin},
+{g.milliards(actuel * pib_fin)}{_au_pib(comptes, fin)}, et la proposition à
+{g.pourcentage(proposition, decimales=0)}, {g.milliards(proposition * pib_fin)} :
+{lecture}. L'écart entre les deux courbes est exactement l'écart entre les deux
+stocks du graphique précédent, et c'est lui qui se lit ici, à l'échelle du
+pays. Pointez une année : chaque part s'y lit aussi en milliards, ceux de
+l'année jusqu'en {comptes.pib.derniere_annee}, puis la même part du PIB de
+{comptes.pib.derniere_annee}.</p>
 
 <div class="note"><strong>Ce n'est pas une prévision de la dette
 publique.</strong> Le reste des administrations publiques (l'État hors
@@ -11343,6 +11537,7 @@ def _cout_detail_frise(contexte: Contexte) -> str:
     if not dette.annees:
         return ""
     solde = cout.solde
+    comptes = contexte.comptes()
     depart = dette.annee_depart
     fin = dette.derniere_annee
 
@@ -11359,6 +11554,7 @@ def _cout_detail_frise(contexte: Contexte) -> str:
                 precedent / (1.0 + ligne.croissance) * 100,
                 ligne.stock(scenario) * 100,
                 ligne.croissance,
+                _pib_de_conversion(comptes, ligne.annee),
             ))
             precedent = ligne.stock(scenario)
         return g.frise_flux(
@@ -11391,8 +11587,12 @@ est placé. Dessous, en chiffres, le stock : ce qu'il était au 1er janvier,
 les intérêts de l'année, l'emprunt ou le placement, et ce qu'il est au 31
 décembre. Chaque colonne tombe juste : le 31 décembre d'une année, rapporté au
 PIB de la suivante, est son 1er janvier.</p>
-<p class="discret">Tout est en part du PIB de l'année, comme sur la courbe. Le
-stock n'est pas dessiné à l'échelle des flux, dont il vaut jusqu'à cinquante
+<p class="discret">Tout est en part du PIB de l'année, comme sur la courbe, et
+chaque part se lit aussi en milliards : la même part du PIB de
+{comptes.pib.derniere_annee}, la dernière année publiée. En milliards comme en
+points, le 1er janvier reste un peu en deçà du 31 décembre de la veille : la
+même dette, ou la même réserve, pèse moins dans un PIB qui a grandi. Le stock
+n'est pas dessiné à l'échelle des flux, dont il vaut jusqu'à cinquante
 fois la hauteur : il est écrit. Un stock négatif est une réserve, et ses intérêts lui
 rapportent au lieu de lui coûter. La frise défile de {depart + 1} à {fin} ;
 ses chiffres sont redits, ligne par ligne, dans le tableau replié dessous.</p>
@@ -12153,9 +12353,13 @@ def _cout_detail_sources(contexte: Contexte) -> str:
     annee_engagements = annees_engagements[-1]
     engagements_dernier = comptes.engagements(annee_engagements)
     engagements_serie = ", ".join(
-        f"{g.pourcentage(comptes.engagements(annee), decimales=0)} en {annee}"
+        f"{g.pourcentage(comptes.engagements(annee), decimales=0)} en {annee} "
+        f"({_en_milliards(comptes, comptes.engagements(annee), annee)})"
         for annee in annees_engagements
     )
+    # L'écart des transmissions, en euros : au PIB de la dernière d'entre elles.
+    ecart_engagements = (max(comptes.engagements(a) for a in annees_engagements)
+                         - min(comptes.engagements(a) for a in annees_engagements))
     # Le nôtre, figé sous les réglages de référence comme le reste du bilan :
     # sommer quatre-vingts années de flux chez le lecteur n'est pas possible.
     engagement = contexte.bilan().engagements
@@ -12171,8 +12375,8 @@ dimension.</p>
 convention, de {solde.premiere_annee} à {solde.derniere_annee}. Champ : régimes
 légalement obligatoires, FSV compris, RAFP exclu — ni dépendance, ni
 capitalisation. {g.pourcentage(comptes.depense(derniere), decimales=2)} du PIB
-en {derniere}. C'est la source des deux premières cartes et de celle sur la
-réforme.</p>
+en {derniere}, {_en_milliards(comptes, comptes.depense(derniere), derniere)}.
+C'est la source des deux premières cartes et de celle sur la réforme.</p>
 <p class="discret">On lui prend les DEUX colonnes, jamais une seule : un solde
 ne se fabrique pas en soustrayant deux périmètres. On aurait voulu les
 ressources du même producteur que la dépense ci-dessous ; elles n'existent
@@ -12185,10 +12389,12 @@ Le compte est tenu en « équilibre permanent des régimes » : ce que l'État v
 au régime de ses fonctionnaires et aux régimes spéciaux y suit, année par
 année, ce qu'il faut pour les équilibrer. Ces régimes ne montrent donc jamais
 de déficit, et le {g.pourcentage(comptes.solde(annee_eec), signe=True, decimales=1)}
-du PIB affiché pour {annee_eec} est un déficit APRÈS ce bouclage, non avant. Le
-COR publie aussi l'autre convention, où l'effort de l'État est figé en part de
-PIB : le solde y serait de
-{g.pourcentage(comptes.solde_eec(annee_eec), signe=True, decimales=1)}. L'écart
+du PIB affiché pour {annee_eec},
+{_en_milliards(comptes, comptes.solde(annee_eec), annee_eec, signe=True)}{_au_pib(comptes, annee_eec)},
+est un déficit APRÈS ce bouclage, non avant. Le COR publie aussi l'autre
+convention, où l'effort de l'État est figé en part de PIB : le solde y serait
+de {g.pourcentage(comptes.solde_eec(annee_eec), signe=True, decimales=1)},
+{_en_milliards(comptes, comptes.solde_eec(annee_eec), annee_eec, signe=True)}. L'écart
 change de signe : l'effort figé est SOUS le besoin jusqu'en {croisement}, et
 au-dessus ensuite. Aucune des deux ne flatte ; elles déplacent
 le déficit dans le temps, et l'État n'a promis ni l'une ni l'autre.</p>
@@ -12197,8 +12403,10 @@ comptées ici sont celles qui sont versées, avant la contribution sociale
 généralisée, la CRDS et la CASA. Au taux plein, ces trois-là prélèvent
 {g.pourcentage(pensions_nettes.taux_total, decimales=1)} d'une pension : la
 masse nette vaut donc au plus
-{g.pourcentage(masse_nette, decimales=2)} du PIB en {annee_masse}, contre
-{g.pourcentage(masse_brute, decimales=2)} en brut. « Au plus », parce que les
+{g.pourcentage(masse_nette, decimales=2)} du PIB en {annee_masse},
+{g.milliards(masse_nette * pib_masse)}, contre
+{g.pourcentage(masse_brute, decimales=2)} en brut,
+{g.milliards(masse_brute * pib_masse)}. « Au plus », parce que les
 pensions modestes en sont exonérées ou au taux réduit, et que le dépôt ne sait
 pas dire combien le sont : il faudrait le revenu fiscal du foyer, que personne
 ne publie par tranche de pension.</p>
@@ -12219,11 +12427,14 @@ ce qui sort dans l'année. L'autre moitié d'un compte est ce que le système do
 DÉJÀ, au titre des droits que les vivants ont acquis : le règlement européen sur
 les comptes nationaux le fait publier tous les trois ans, et pour la France il
 vaut {g.pourcentage(engagements_dernier, decimales=0)} du PIB en
-{annee_engagements}, presque tout par répartition : <strong>près de quatre
+{annee_engagements},
+{_en_milliards(comptes, engagements_dernier, annee_engagements)}, presque tout
+par répartition : <strong>près de quatre
 années de production</strong>, contre quatorze pour-cent de dépense annuelle. Ce n'est pas une
 dette : un droit acquis à date est une somme actualisée, et les trois
-transmissions donnent {engagements_serie}. Soixante points de PIB d'écart sans
-qu'aucun droit ait changé : c'est le taux qui les actualise qui a bougé. L'ordre de
+transmissions donnent {engagements_serie}. Soixante points de PIB d'écart,
+{_en_milliards(comptes, ecart_engagements, annee_engagements)} au PIB de
+{annee_engagements}, sans qu'aucun droit ait changé : c'est le taux qui les actualise qui a bougé. L'ordre de
 grandeur est tout ce qu'on en retient.</p>
 <p class="discret"><strong>Et le dépôt calcule le sien.</strong> Sous la
 convention du COR, dont la note dit que « le taux d'actualisation est supposé
@@ -12231,12 +12442,16 @@ convention du COR, dont la note dit que « le taux d'actualisation est supposé
 sommer les flux en part de PIB : le modèle porte donc l'engagement sans
 convention de plus. Il trouve
 {g.pourcentage(engagement.part_pib(), decimales=0)} du PIB en {engagement.annee}
-pour le système actuel, dont
-{g.pourcentage(engagement.retraites, decimales=0)} déjà liquidés et
+pour le système actuel,
+{_en_milliards(comptes, engagement.part_pib(), engagement.annee)}, dont
+{g.pourcentage(engagement.retraites, decimales=0)} déjà liquidés
+({_en_milliards(comptes, engagement.retraites, engagement.annee)}) et
 {g.pourcentage(engagement.actifs, decimales=0)} au prorata des carrières en
-cours. La proposition en doit
-{g.pourcentage(engagement.part_pib("notionnel_liberal"), decimales=0)} : elle
-promet moins, elle doit moins.</p>
+cours ({_en_milliards(comptes, engagement.actifs, engagement.annee)}). La
+proposition en doit
+{g.pourcentage(engagement.part_pib("notionnel_liberal"), decimales=0)},
+{_en_milliards(comptes, engagement.part_pib("notionnel_liberal"), engagement.annee)} :
+elle promet moins, elle doit moins.</p>
 <p class="discret"><strong>Et l'écart avec les
 {g.pourcentage(engagement.publie, decimales=0)} publiés est un TAUX, pas un
 droit.</strong> Les mêmes droits, actualisés
@@ -12262,10 +12477,13 @@ commence là.</p>
 <p>La dépense, risque par risque, depuis {cout.premiere_annee}. Le risque
 <strong>vieillesse-survie</strong> entier vaut
 {g.pourcentage(depenses.part_pib(derniere), decimales=2)} du PIB en {derniere},
-et la <strong>répartition obligatoire</strong> seule
-{g.pourcentage(depenses.repartition(derniere) / depenses.pib(derniere), decimales=2)}.
+{g.milliards(depenses.depense(derniere))}, et la <strong>répartition
+obligatoire</strong> seule
+{g.pourcentage(depenses.repartition(derniere) / depenses.pib(derniere), decimales=2)},
+{g.milliards(depenses.repartition(derniere))}.
 C'est la source de la carte « est-ce que ça a toujours coûté autant ».</p>
-<p class="discret">Moins de trois dixièmes de point séparent cette répartition
+<p class="discret">Moins de trois dixièmes de point, moins de
+{_en_milliards(comptes, 0.003, derniere)}, séparent cette répartition
 obligatoire du périmètre du COR : c'est le meilleur recoupement dont ces deux
 séries disposent, et un test du dépôt le tient.</p>
 
@@ -12302,7 +12520,9 @@ def _cout_detail_limites(contexte: Contexte) -> str:
     cout = contexte.cout()
     solde = cout.solde
     avenir = cout.avenir
-    observe = solde.annee(solde.derniere_annee_observee)
+    comptes = contexte.comptes()
+    obs = solde.derniere_annee_observee
+    observe = solde.annee(obs)
     return g.depliant("À lire avant de citer ces chiffres", f"""
 <p>Une page de chiffres vaut par ce qu'elle laisse de côté. Rien de ce qui
 suit n'est certifié, et ne peut l'être : une projection est une hypothèse,
@@ -12339,8 +12559,11 @@ peut ni changer ni lire ailleurs.</p>
   retour à l'équilibre se lit à quelques années près.</strong> Une cohorte qui
   part juste avant la bascule est représentée par une génération qui part
   juste après : les courbes de réforme s'écartent d'un ou deux dixièmes de
-  point avant même la bascule, et un test borne l'effet à un demi-point. Le
-  déficit actuel vaut {g.pourcentage(abs(observe.solde("actuel")), decimales=2)} du PIB, c'est-à-dire
+  point avant même la bascule, {_en_milliards(comptes, 0.001, obs)} à
+  {_en_milliards(comptes, 0.002, obs)} en {obs}, et un test borne l'effet à un
+  demi-point, {_en_milliards(comptes, 0.005, obs)}. Le déficit actuel vaut
+  {g.pourcentage(abs(observe.solde("actuel")), decimales=2)} du PIB,
+  {_en_milliards(comptes, abs(observe.solde("actuel")), obs)}, c'est-à-dire
   l'ordre de grandeur de l'écart que ce pas introduit à lui seul autour de la
   bascule : l'année où une courbe repasse zéro en dépend.</li>
   <li><strong>Le modèle compte des générations, non des personnes.</strong> Il
@@ -12492,6 +12715,7 @@ def _risque(contexte: Contexte) -> str:
     La recherche n'en connaît pas, et le dire vaut mieux que d'en inventer une.
     """
     solde = contexte.cout().solde
+    comptes = contexte.comptes()
     obs = solde.derniere_annee_observee
     observe = solde.annee(obs)
     fin = solde.derniere_annee
@@ -12532,6 +12756,8 @@ def _risque(contexte: Contexte) -> str:
          "Part du brut", "Net touché"],
         lignes_salaires,
         ["", "nombre", "nombre", "nombre", "nombre"],
+        # Du texte seul, comme toute légende de tableau : voir le tableau du
+        # solde, plus bas.
         titre=f"Ce que la retraite prélève chaque mois sur un salarié du privé "
               f"en {fiche_moyen.annee}, part patronale comprise",
         entete_de_ligne=True,
@@ -12542,10 +12768,12 @@ def _risque(contexte: Contexte) -> str:
     lignes_soldes = []
     for annee in jalons:
         ligne = solde.annee(annee)
+        pib = _pib_de_conversion(comptes, annee)
         lignes_soldes.append([
             str(annee) + ("" if ligne.projete else " (observé)"),
-            g.pourcentage(ligne.depense("actuel"), decimales=1),
-            g.pourcentage(ligne.ressources, decimales=1),
+            _part_et_milliards(ligne.depense("actuel"),
+                               ligne.depense("actuel") * pib),
+            _part_et_milliards(ligne.ressources, ligne.ressources * pib),
             g.pourcentage(-ligne.solde("actuel") / ligne.depense("actuel"),
                           decimales=1),
         ])
@@ -12553,8 +12781,8 @@ def _risque(contexte: Contexte) -> str:
         ["Année", "Pensions versées", "Recettes", "Part non financée"],
         lignes_soldes,
         ["", "nombre", "nombre", "nombre"],
-        titre=f"Ce que le système verse et ce qu'il encaisse, en part "
-              f"du PIB, de {obs} à {fin}",
+        titre=f"Ce que le système verse et ce qu'il encaisse, en part du PIB "
+              f"et en milliards d'euros, de {obs} à {fin}",
         entete_de_ligne=True,
     )
 
@@ -12606,7 +12834,9 @@ promise. Le reste attend des cotisants qui ne sont pas nés, et il manque déjà
         tableau_soldes,
         f"""Sources : le modèle du site pour la part financée, les comptes du
 Conseil d'orientation des retraites pour le solde, observés puis projetés dans
-son scénario de référence. Le détail année par année est sur la page
+son scénario de référence. Les milliards sont ceux de {obs}, puis la même part
+du PIB de {comptes.pib.derniere_annee} pour les années projetées. Le détail
+année par année est sur la page
 <a href="{g.lien("/cout")}">Coût</a>. Ce que les recettes paient de VOTRE
 pension, à VOTRE date de départ, est sur
 <a href="{g.lien("/simuler")}">le simulateur</a>.""",
@@ -12615,11 +12845,11 @@ pension, à VOTRE date de départ, est sur
 
     detail = "".join([
         _risque_salaire(contexte),
-        _risque_croissance(),
+        _risque_croissance(comptes),
         _risque_pauvres(),
         _risque_jeunes(),
-        _risque_evince(),
-        _risque_deja_eu_lieu(),
+        _risque_evince(comptes),
+        _risque_deja_eu_lieu(comptes),
         _risque_objections(contexte),
         _risque_ailleurs(),
         _risque_droit(),
@@ -12736,13 +12966,16 @@ l'autre est une inférence.</p>""",
     )
 
 
-def _risque_croissance() -> str:
+def _risque_croissance(comptes) -> str:
     """Ce que le financement de la répartition coûte à la croissance.
 
     L'argument n'a pas besoin d'un travail contesté : le COR le porte
     lui-même, sur trois modèles indépendants, et il nomme les dépenses que
     l'effet récessif met en difficulté. Le reste de la section suit l'ordre de
     la solidité des résultats, du plus établi au plus discuté, et le dit.
+
+    Les points de PIB cités sont dits aussi en milliards, au PIB de la
+    dernière année publiée : ``_points_en_milliards``.
     """
     return g.depliant(
         "Ce que le financement coûte à la croissance, dit par le COR lui-même",
@@ -12818,13 +13051,14 @@ davantage, <strong>sauf dans les pays dotés d'une répartition généreuse, où
 cet effet disparaît</strong>. Vivre plus longtemps n'y conduit plus à mettre
 de côté.</p>
 <p class="discret">Deux bornes d'honnêteté. Martin Feldstein chiffrait en 1996
-la perte à un point de PIB par an à perpétuité, soit un cinquième des
-cotisations ; son travail fondateur de 1974 portait une erreur de
-programmation révélée par Dean Leimer et Selig Lesnoy en 1982, et son
-estimation est restée discutée depuis. Hans-Werner Sinn (2000) objecte qu'en
-valeur actuelle rien ne se gagne à une transition, puisqu'il faut de toute
-façon payer les retraités en place. Notre argument ne repose sur aucun des
-deux.</p>
+la perte à un point de PIB par an à perpétuité,
+{_points_en_milliards(comptes, 1.0)} par an au PIB de
+{comptes.pib.derniere_annee}, soit un cinquième des cotisations ; son travail
+fondateur de 1974 portait une erreur de programmation révélée par Dean Leimer
+et Selig Lesnoy en 1982, et son estimation est restée discutée depuis.
+Hans-Werner Sinn (2000) objecte qu'en valeur actuelle rien ne se gagne à une
+transition, puisqu'il faut de toute façon payer les retraités en place. Notre
+argument ne repose sur aucun des deux.</p>
 
 <h3>Ce qu'un compte notionnel y change</h3>
 <p>Feldstein et Jeffrey Liebman l'ont chiffré (2002) : rendre le lien visible
@@ -12929,26 +13163,37 @@ dans un pillage.</p>""",
     )
 
 
-def _risque_evince() -> str:
-    """Le premier poste de la dépense publique, et ce qui recule à côté."""
+def _risque_evince(comptes) -> str:
+    """Le premier poste de la dépense publique, et ce qui recule à côté.
+
+    Les parts de PIB citées sont dites aussi en milliards, au PIB de la
+    dernière année publiée : c'est ce qui rend comparables deux années que
+    trente ans séparent, et un pays qui n'est pas le nôtre.
+    """
+    annee_pib = comptes.pib.derniere_annee
     return g.depliant(
         "Le premier poste du budget, et ce qui recule à côté",
-        """
+        f"""
 <p>En 2025, la retraite a coûté <strong>422 milliards d'euros, 14,1 % du PIB
 et 24,3 % de l'ensemble des dépenses publiques</strong>. Le COR écrit que
 l'évolution de cette dépense « explique à elle seule une grande partie de la
 progression des dépenses publiques depuis une vingtaine d'années ». Rapportée
 au PIB, la France y consacre le deuxième montant de l'OCDE, derrière l'Italie,
-et quatre points de plus que l'Allemagne.</p>
+et quatre points de PIB de plus que l'Allemagne, {_points_en_milliards(comptes, 4.0)}
+par an au PIB de {annee_pib}.</p>
 
 <p>Pendant que ce poste montait, d'autres reculaient. La dépense d'éducation
-est passée de <strong>7,8 % du PIB en 1995 à 6,7 % en 2023</strong>. La France
+est passée de <strong>7,8 % du PIB en 1995 à 6,7 % en 2023</strong> : au PIB de
+{annee_pib}, {_points_en_milliards(comptes, 7.8)} puis
+{_points_en_milliards(comptes, 6.7)}, {_points_en_milliards(comptes, 1.1)} de
+moins chaque année. La France
 dépense aujourd'hui 13 % de moins que la moyenne de l'OCDE par élève du
 primaire, tout en dépensant 24 % de plus par lycéen. Ses résultats en
 mathématiques à l'enquête PISA de 2022 comptent parmi les plus bas jamais
 mesurés, et la baisse récente y est qualifiée de sans précédent. L'effort de
-recherche plafonne à 2,18 % du PIB, pour un objectif de 3 % et une Allemagne à
-3,1 %.</p>
+recherche plafonne à 2,18 % du PIB, {_points_en_milliards(comptes, 2.18)} au PIB
+de {annee_pib}, pour un objectif de 3 %, {_points_en_milliards(comptes, 3.0)}, et
+une Allemagne à 3,1 %.</p>
 
 <p class="discret">Ce rapprochement décrit un arbitrage, il ne démontre pas un
 mécanisme : aucun travail n'établit que la dépense de retraite cause le recul
@@ -12960,11 +13205,15 @@ autres que les retraites, à l'instar de l'école, la santé ou la sécurité »
     )
 
 
-def _risque_deja_eu_lieu() -> str:
-    """Le défaut silencieux : ce que les réformes ont déjà retiré."""
+def _risque_deja_eu_lieu(comptes) -> str:
+    """Le défaut silencieux : ce que les réformes ont déjà retiré.
+
+    Les points de PIB que l'INSEE chiffre sont dits aussi en milliards : au PIB
+    de 2018 pour 2018, au PIB de la dernière année publiée pour 2070.
+    """
     return g.depliant(
         "La promesse a déjà été rompue : 1993, 2003, 2010, 2014, 2023",
-        """
+        f"""
 <p>La France n'a jamais baissé une pension en euros courants. Elle a fait
 autre chose, à cinq reprises. En 1993, le régime général passe des dix aux
 vingt-cinq meilleures années et revalorise les salaires portés au compte sur
@@ -12975,8 +13224,10 @@ durée monte à 43 ans. En 2023, l'âge passe à 64 ans, avant d'être suspendu 
 
 <p><strong>Ce que ces réformes ont retiré se mesure.</strong> L'INSEE a
 calculé que sans elles, les dépenses de retraite seraient supérieures de
-3,7 points de PIB en 2018 et de <strong>6,3 points en 2070</strong>, dont 2,6
-pour la seule revalorisation sur les prix. Sur les pensions déjà versées, la
+3,7 points de PIB en 2018, {_points_en_milliards(comptes, 3.7, 2018)}, et de
+<strong>6,3 points en 2070</strong>, {_points_en_milliards(comptes, 6.3, 2070)}
+au PIB de {comptes.pib.derniere_annee}, dont 2,6 pour la seule revalorisation
+sur les prix, {_points_en_milliards(comptes, 2.6, 2070)}. Sur les pensions déjà versées, la
 Caisse nationale d'assurance vieillesse a mesuré l'effet de la réforme de
 1993 : six retraités sur dix touchés, 6 % de moins en moyenne, et jusqu'à 20 %
 sur vingt-cinq ans de retraite. Patrick Aubert et Simon Rabaté (2014) ont
@@ -13005,24 +13256,38 @@ def _risque_objections(contexte: Contexte) -> str:
     """
     solde = contexte.cout().solde
     fin = solde.derniere_annee
+    # Les points de PIB que le COR publie, dits aussi en milliards au PIB de
+    # la dernière année publiée : ``_points_en_milliards``.
+    comptes = contexte.comptes()
+    annee_pib = comptes.pib.derniere_annee
+
+    def md(points: float) -> str:
+        return _points_en_milliards(comptes, points)
+
+    # Les « 2,4 » qui reviennent trois fois sont le solde de l'horizon que le
+    # site lit dans le même compte : ses milliards sont ceux de la page Coût,
+    # au lieu d'un arrondi d'arrondi.
+    manque_fin = _en_milliards(comptes, -solde.annee(fin).solde("actuel"), fin)
+
     return g.depliant(
         "« Il n'y a pas de problème » : ce qu'on vous répondra, et ce qui suit",
         f"""
 <h3>« Le déficit est faible : un demi-point de PIB »</h3>
 <p>Vrai jusqu'en 2030, faux ensuite. Le COR projette −0,2 point de PIB en 2030,
-<strong>−0,9 en 2045 et −2,4 en {fin}</strong>. L'argument tire sa force d'un
-horizon qui s'arrête là où la courbe part. Henri Sterdyniak, qui le porte,
-écrit d'ailleurs dans la même note que la stabilité des dépenses « ne
-proviendrait que de l'hypothèse d'une nette baisse à l'avenir du rapport
-retraite/salaire », et nomme la chose : « l'acceptation de la paupérisation
-progressive des retraités ».</p>
+<strong>−0,9 en 2045 et −2,4 en {fin}</strong> : au PIB de {annee_pib}, un
+besoin de {md(0.2)} par an, puis de {md(0.9)}, puis de {manque_fin}.
+L'argument tire sa force d'un horizon qui s'arrête là où la courbe part.
+Henri Sterdyniak, qui le porte, écrit d'ailleurs dans la même note que la
+stabilité des dépenses « ne proviendrait que de l'hypothèse d'une nette baisse
+à l'avenir du rapport retraite/salaire », et nomme la chose : « l'acceptation
+de la paupérisation progressive des retraités ».</p>
 
 <h3>« Le déficit vient du désengagement de l'État, pas du système »</h3>
 <p>Le COR a calculé le solde sous la convention qui annule exactement ce
 désengagement, en figeant la contribution de l'État en part de PIB. Le besoin
-de financement reste de <strong>1,5 point de PIB</strong> en 2070. Le retrait
-de l'État explique 0,9 point sur 2,4. Il est une partie du problème, il n'est
-pas le problème.</p>
+de financement reste de <strong>1,5 point de PIB</strong> en 2070, {md(1.5)} au
+PIB de {annee_pib}. Le retrait de l'État explique 0,9 point sur 2,4, {md(0.9)}
+sur {manque_fin}. Il est une partie du problème, il n'est pas le problème.</p>
 
 <h3>« La part des retraites dans le PIB est stable »</h3>
 <p>Elle l'est, et le COR dit pourquoi dans la phrase qui suit : cette stabilité
@@ -13042,8 +13307,9 @@ publiques autres que les retraites ».</p>
 <h3>« Le problème, c'est le chômage »</h3>
 <p>Le COR a chiffré la variante. Un chômage ramené à 5 % améliorerait le solde
 de 2070 de <strong>0,2 point sur les 2,4 qui manquent</strong>, soit un
-douzième. La France n'est pas passée sous 7 % depuis 1982. Une productivité
-haute laisserait encore 1,7 point de déficit, et le COR conclut que « le
+douzième : {md(0.2)} sur {manque_fin} au PIB de {annee_pib}. La France n'est pas
+passée sous 7 % depuis 1982. Une productivité haute laisserait encore
+1,7 point de déficit, {md(1.7)}, et le COR conclut que « le
 système de retraite demeurerait durablement en besoin de financement dans
 l'ensemble des scénarios considérés ».</p>
 

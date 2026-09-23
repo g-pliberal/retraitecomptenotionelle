@@ -2220,6 +2220,23 @@ def pourcentage(valeur: float, signe: bool = False, decimales: int = 1) -> str:
     return texte + "\u202f%"
 
 
+def milliards(millions: float, signe: bool = False) -> str:
+    """Un montant en millions d'euros, écrit en milliards à la précision qui se lit.
+
+    Une décimale sous dix milliards, aucune au-dessus : « 5,1 Md € », « 422 Md € ».
+    C'est l'unité où une part du PIB se dit en euros, partout sur le site : la
+    part porte la précision, les milliards l'ordre de grandeur. Le seuil est
+    posé sur la valeur NON arrondie, à 9,95 milliards, pour qu'aucun montant ne
+    s'écrive « 10,0 ». ``signe`` écrit le « + » des montants positifs, pour
+    accompagner une part qui le porte.
+    """
+    decimales = 1 if abs(millions) < 9950.0 else 0
+    texte = nombre(millions / 1000, decimales)
+    if signe and millions >= 0:
+        texte = "+" + texte
+    return texte + "\u202fMd\u202f\u20ac"
+
+
 _GROUPES = re.compile(r"\d{1,3}(?:,\d{3})+(?:\.\d+)?")
 _DECIMAL = re.compile(r"\d+\.\d+")
 _AVANT_POURCENT = re.compile(r"(\d)%")
@@ -3398,7 +3415,8 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
               ecart: tuple[int, int] | None = None,
               libelle_ecart: str = "",
               decimales_donnees: int | None = None,
-              sommet_minimal: float = 0.0) -> str:
+              sommet_minimal: float = 0.0,
+              pib: tuple[float, ...] | None = None) -> str:
     """Graphique en courbes, ou en bandes empilées si ``empile``.
 
     ``titre`` n'est pas affiché : il est le texte alternatif du SVG, c'est-à-dire
@@ -3434,6 +3452,14 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
     graphique, la seule chose qui compte entre des recettes et des dépenses —
     laquelle des deux l'emporte, et de combien. ``libelle_ecart`` en dit un mot
     dans la légende, faute de quoi la couleur serait seule à porter le sens.
+
+    ``pib`` dit que le graphique est tracé en POURCENTAGE DU PIB, et donne, pour
+    chaque année, le PIB en millions d'euros qui convertit ce pourcentage en
+    milliards. Le tracé n'en change pas ; ses chiffres, si : chaque point du
+    tableau — donc de la lecture au survol, qui le relit — s'écrit dans les deux
+    unités, « 14,1 % · 422 Md € ». Une part du PIB ne parle qu'à qui a le PIB
+    pour repère ; tout le monde en a un pour des milliards. Quel PIB convertit
+    quelle année est l'affaire de la page, qui le dit sous la figure.
     """
     if not annees or not series:
         return ""
@@ -3554,13 +3580,25 @@ def graphique(titre: str, annees: tuple[int, ...], series: tuple[Serie, ...],
         + donnees_du_graphique(
             titre, annees, series, unite,
             decimales if decimales_donnees is None else decimales_donnees,
-            nom_abscisse)
+            nom_abscisse, pib)
     )
+
+
+def part_et_milliards(valeur: float, pib: float, decimales: int = 1) -> str:
+    """Un pourcentage du PIB, et ce qu'il vaut en milliards : « 14,1 % · 422 Md € ».
+
+    ``valeur`` est en POURCENTAGE (14,1 et non 0,141), comme les séries des
+    graphiques ; ``pib`` en millions d'euros. Voir ``milliards`` pour la
+    précision des milliards.
+    """
+    return (nombre(valeur, decimales) + "\u202f% \u00b7 "
+            + milliards(valeur * pib / 100.0))
 
 
 def donnees_du_graphique(titre: str, annees: tuple[int, ...],
                          series: tuple[Serie, ...], unite: str = "",
-                         decimales: int = 0, nom_abscisse: str = "Année") -> str:
+                         decimales: int = 0, nom_abscisse: str = "Année",
+                         pib: tuple[float, ...] | None = None) -> str:
     """Les chiffres du graphique, année par année.
 
     Un tracé est une image : ce que dit son ``aria-label`` — de quoi il parle,
@@ -3578,16 +3616,26 @@ def donnees_du_graphique(titre: str, annees: tuple[int, ...],
     parce que c'est ce qui rend le graphique lisible sans le voir — et parce
     qu'un lecteur qui veut le chiffre exact d'une année le trouve là, et nulle
     part ailleurs.
+
+    Avec ``pib``, chaque case porte ses deux unités, la part et les milliards,
+    et l'en-tête n'en répète aucune : c'est la case que la lecture au survol
+    affiche, et elle doit se suffire.
     """
     if not annees or not series:
         return ""
-    en_tete = escape(unite) if unite else ""
+    en_tete = escape(unite) if unite and pib is None else ""
     entetes = [nom_abscisse] + [
         serie.libelle + (f" ({en_tete})" if en_tete else "") for serie in series
     ]
+
+    def case(valeur: float, rang: int) -> str:
+        if pib is None:
+            return nombre(valeur, decimales)
+        return part_et_milliards(valeur, pib[rang], decimales)
+
     lignes = [
         [str(annee)] + [
-            nombre(serie.valeurs[rang], decimales)
+            case(serie.valeurs[rang], rang)
             if rang < len(serie.valeurs) and serie.valeurs[rang] is not None
             else "—"
             for serie in series
@@ -3612,17 +3660,30 @@ def donnees_du_graphique(titre: str, annees: tuple[int, ...],
 #: elles, et sous la caisse ce qui manque ou ce qui reste. Un point de PIB
 #: vaut ``ECHELLE_FRISE`` pixels, le même pour toutes les années et tous les
 #: systèmes, pour que deux colonnes se comparent à l'œil.
-COLONNE_FRISE = 200
+#:
+#: 260 et non 200 depuis que chaque chiffre s'y lit aussi en milliards : les
+#: milliards du stock s'alignent à droite de la colonne, face à leur part, et
+#: la réserve du système 2, plus de cinq fois le PIB en 2070, doit y tenir sans
+#: que les deux textes se touchent — mesuré au navigateur, il reste au plus
+#: serré vingt unités de blanc. Les milliards des flux ajoutent une ligne, d'où
+#: seize unités de plus en hauteur.
+COLONNE_FRISE = 260
 MARGE_FRISE = 16
-HAUTEUR_FRISE = 330
+HAUTEUR_FRISE = 346
 HAUT_FRISE = 40
 ECHELLE_FRISE = 7.0
 LARGEUR_NOEUD_FRISE = 14
+#: Là où finissent les milliards du stock, depuis le bord gauche de la colonne.
+DROITE_MILLIARDS_FRISE = 246
 
 
 @dataclass(frozen=True)
 class AnneeFrise:
-    """Une année de la frise, en POINTS de PIB — sauf la croissance, en fraction."""
+    """Une année de la frise, en POINTS de PIB — sauf la croissance, en fraction.
+
+    ``pib`` est le PIB, en millions d'euros, qui dit ces points en milliards :
+    la frise écrit chaque chiffre dans les deux unités.
+    """
 
     annee: int
     #: Ce qui rentre dans la caisse : cotisations, impôts, transferts.
@@ -3637,6 +3698,8 @@ class AnneeFrise:
     fin: float
     #: La croissance nominale du PIB sur l'année.
     croissance: float
+    #: Le PIB qui convertit les points de l'année en euros, en millions.
+    pib: float
 
 
 def frise_flux(titre: str, annees: tuple[AnneeFrise, ...]) -> str:
@@ -3651,7 +3714,9 @@ def frise_flux(titre: str, annees: tuple[AnneeFrise, ...]) -> str:
     n'est pas dessiné à l'échelle des flux : il en vaut jusqu'à cinquante fois
     un, et une barre à cette hauteur écraserait tout le reste.
 
-    Tout est en part du PIB. Une valeur négative du stock est une réserve.
+    Tout est en part du PIB, et chaque part se lit aussi en milliards : sous
+    chaque flux, et en face de chaque ligne du stock, alignés à droite. Une
+    valeur négative du stock est une réserve.
 
     Le dessin est rendu dans une boîte qui défile, à largeur fixe : c'est le
     lecteur qui avance dans les années, comme il tournerait les pages d'un
@@ -3663,7 +3728,7 @@ def frise_flux(titre: str, annees: tuple[AnneeFrise, ...]) -> str:
         return ""
     largeur = MARGE_FRISE * 2 + COLONNE_FRISE * len(annees)
     demi = LARGEUR_NOEUD_FRISE / 2
-    x_rentre, x_caisse, x_sort = 20, 93, 166
+    x_rentre, x_caisse, x_sort = 20, 113, 206
     bas_barres = HAUT_FRISE + ECHELLE_FRISE * 16
 
     def pts(valeur: float) -> str:
@@ -3671,6 +3736,10 @@ def frise_flux(titre: str, annees: tuple[AnneeFrise, ...]) -> str:
 
     dessins: list[str] = []
     for rang, ligne in enumerate(annees):
+        def md(points: float, pib: float = ligne.pib) -> str:
+            """Des points de PIB de l'année, en milliards."""
+            return milliards(points * pib / 100.0)
+
         x = MARGE_FRISE + COLONNE_FRISE * rang
         h_rentre = ECHELLE_FRISE * ligne.rentre
         h_sort = ECHELLE_FRISE * ligne.sort
@@ -3707,30 +3776,38 @@ def frise_flux(titre: str, annees: tuple[AnneeFrise, ...]) -> str:
             )
             + f'<rect class="noeud sort" x="{droite}" y="{haut}" '
             f'width="{nombre_brut(LARGEUR_NOEUD_FRISE)}" height="{nombre_brut(h_sort)}"/>'
-            f'<text class="graduation" x="{nombre_brut(x + x_rentre + demi)}" '
-            f'y="{nombre_brut(bas_barres + 18)}" text-anchor="middle">Rentre</text>'
-            f'<text class="graduation" x="{nombre_brut(x + x_rentre + demi)}" '
-            f'y="{nombre_brut(bas_barres + 34)}" text-anchor="middle">{pts(ligne.rentre)}</text>'
-            f'<text class="graduation {teinte}" x="{nombre_brut(x + x_caisse + demi)}" '
-            f'y="{nombre_brut(bas_barres + 18)}" text-anchor="middle">'
-            f'{"Reste" if solde >= 0.0 else "Manque"}</text>'
-            f'<text class="graduation {teinte}" x="{nombre_brut(x + x_caisse + demi)}" '
-            f'y="{nombre_brut(bas_barres + 34)}" text-anchor="middle">{pts(abs(solde))}</text>'
-            f'<text class="graduation" x="{nombre_brut(x + x_sort + demi)}" '
-            f'y="{nombre_brut(bas_barres + 18)}" text-anchor="middle">Sort</text>'
-            f'<text class="graduation" x="{nombre_brut(x + x_sort + demi)}" '
-            f'y="{nombre_brut(bas_barres + 34)}" text-anchor="middle">{pts(ligne.sort)}</text>'
-            f'<text class="graduation" x="{nombre_brut(x + x_rentre)}" '
-            f'y="{nombre_brut(bas_barres + 66)}">PIB : {pourcentage(ligne.croissance, True, 1)}</text>'
-            f'<text class="graduation" x="{nombre_brut(x + x_rentre)}" '
-            f'y="{nombre_brut(bas_barres + 86)}">1er janv. : {pts(ligne.debut)}</text>'
-            f'<text class="graduation" x="{nombre_brut(x + x_rentre)}" '
-            f'y="{nombre_brut(bas_barres + 106)}">intérêts : {pts(ligne.interets)}</text>'
-            f'<text class="graduation {teinte}" x="{nombre_brut(x + x_rentre)}" '
-            f'y="{nombre_brut(bas_barres + 126)}">'
-            f'{"placé" if solde >= 0.0 else "emprunt"} : {pts(abs(solde))}</text>'
-            f'<text class="titre" x="{nombre_brut(x + x_rentre)}" '
-            f'y="{nombre_brut(bas_barres + 148)}">31 déc. : {pts(ligne.fin)}</text>'
+            + "".join(
+                f'<text class="graduation{classe}" x="{nombre_brut(x + position + demi)}" '
+                f'y="{nombre_brut(bas_barres + 18)}" text-anchor="middle">{nom}</text>'
+                f'<text class="graduation{classe}" x="{nombre_brut(x + position + demi)}" '
+                f'y="{nombre_brut(bas_barres + 34)}" text-anchor="middle">{pts(valeur)}</text>'
+                f'<text class="graduation{classe}" x="{nombre_brut(x + position + demi)}" '
+                f'y="{nombre_brut(bas_barres + 50)}" text-anchor="middle">{md(valeur)}</text>'
+                for nom, position, valeur, classe in (
+                    ("Rentre", x_rentre, ligne.rentre, ""),
+                    ("Reste" if solde >= 0.0 else "Manque", x_caisse, abs(solde),
+                     f" {teinte}"),
+                    ("Sort", x_sort, ligne.sort, ""),
+                )
+            )
+            + f'<text class="graduation" x="{nombre_brut(x + x_rentre)}" '
+            f'y="{nombre_brut(bas_barres + 82)}">PIB : {pourcentage(ligne.croissance, True, 1)}</text>'
+            # Le stock : la part à gauche, ses milliards alignés à droite de
+            # la colonne, sur la même ligne.
+            + "".join(
+                f'<text class="{classe}" x="{nombre_brut(x + x_rentre)}" '
+                f'y="{nombre_brut(bas_barres + ecart)}">{nom} : {pts(valeur)}</text>'
+                f'<text class="graduation{teinte_md}" '
+                f'x="{nombre_brut(x + DROITE_MILLIARDS_FRISE)}" '
+                f'y="{nombre_brut(bas_barres + ecart)}" text-anchor="end">{md(valeur)}</text>'
+                for nom, ecart, valeur, classe, teinte_md in (
+                    ("1er janv.", 102, ligne.debut, "graduation", ""),
+                    ("intérêts", 122, ligne.interets, "graduation", ""),
+                    ("placé" if solde >= 0.0 else "emprunt", 142, abs(solde),
+                     f"graduation {teinte}", f" {teinte}"),
+                    ("31 déc.", 164, ligne.fin, "titre", ""),
+                )
+            )
         )
 
     legende = (
@@ -3748,13 +3825,16 @@ def frise_flux(titre: str, annees: tuple[AnneeFrise, ...]) -> str:
         ["Année", "Rentre", "Sort", "Solde", "Intérêts",
          "Stock au 1er janvier", "Stock au 31 décembre"],
         [
-            [str(ligne.annee), nombre(ligne.rentre, 2), nombre(ligne.sort, 2),
-             nombre(ligne.rentre - ligne.sort, 2), nombre(ligne.interets, 2),
-             nombre(ligne.debut, 2), nombre(ligne.fin, 2)]
+            [str(ligne.annee)] + [
+                part_et_milliards(valeur, ligne.pib, 2)
+                for valeur in (ligne.rentre, ligne.sort, ligne.rentre - ligne.sort,
+                               ligne.interets, ligne.debut, ligne.fin)
+            ]
             for ligne in annees
         ],
         [""] + ["nombre"] * 6,
-        titre=titre + ", en points de PIB", entete_de_ligne=True,
+        titre=titre + ", en points de PIB et en milliards d'euros",
+        entete_de_ligne=True,
     )
     return (
         f'<figure class="frise" role="group" aria-label="{escape(titre)}">'
