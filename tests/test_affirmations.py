@@ -90,8 +90,9 @@ from retraite_notionnelle.web.pages import (
     Contexte,
     ErreurSaisie,
     Saisie,
-    _bilan_bascule,
+    _annees_flux,
     _caisse_flux,
+    _compte_flux,
     _cumuls_indexation,
     _deplacement_des_ecarts,
     _fraction_en_mots,
@@ -1729,37 +1730,43 @@ def _(m: Modele):
 def _(m: Modele):
     """Dans la proposition, chaque recette a UNE caisse, et une seule.
 
-    L'année est celle de la carte des flux : la bascule, lue par
-    ``_bilan_bascule`` comme le tableau poste par poste la lit.
+    Et cela À CHAQUE ANNÉE que la carte des flux propose : le lecteur choisit
+    la sienne, de la bascule à l'horizon, et la phrase doit tenir sur toutes.
     """
-    bilan = _bilan_bascule(m.contexte)
-    ligne = bilan.ligne
-    assert ligne.recette_par_assiette, "la bascule doit appliquer le taux unique"
+    annees = _annees_flux(m.solde, m.base.annee_bascule)
+    assert annees[0] == m.base.annee_bascule and annees[-1] == m.solde.derniere_annee
     # Le budget de l'État n'entre plus au régime unique, sous aucune forme :
     # ni impôt affecté, ni contribution d'équilibre, ni subvention. Le système
     # actuel, lui, encaisse les trois.
     budget = ("impots_et_taxes", "contribution_equilibre_etat", "subventions_equilibre")
-    proposition = ligne.postes_ressources("notionnel_liberal")
-    actuel = ligne.postes_ressources("actuel")
-    for code in budget:
-        assert proposition[code] == 0.0, code
-        assert actuel[code] > 0.0, code
-    # Ce qui reste au régime unique : les cotisations au taux unique, et deux
-    # lignes qui ne viennent pas de l'impôt.
-    assert proposition["cotisations"] > 0.0
-    # L'impôt paie la garantie HORS du compte du régime : elle n'est pas dans
-    # sa dépense, qui n'est faite que de pensions.
-    depenses = ligne.postes_depenses("notionnel_liberal")
-    assert bilan.garantie_meur > 0.0
-    assert _proche(depenses["droits_directs"] + depenses["droits_derives"],
-                   ligne.depense("notionnel_liberal"))
-    # Le pilier est placé à part : sa recette n'est pas une ressource du régime.
-    assert bilan.capitalise > 0.0
-    # Et la carte le dessine ainsi : aucun ruban d'impôt n'entre au régime
-    # unique, quand il en entre un aux régimes d'aujourd'hui.
     libelles = lambda caisse: {noeud.libelle for noeud in caisse.sources}
-    assert "Impôts" not in libelles(_caisse_flux(bilan, "notionnel_liberal", "", "C"))
-    assert "Impôts" in libelles(_caisse_flux(bilan, "actuel", "", "C"))
+    for annee in annees:
+        compte = _compte_flux(m.contexte, annee)
+        ligne = compte.ligne
+        assert ligne.recette_par_assiette, (annee, "le taux unique doit s'appliquer")
+        proposition = ligne.postes_ressources("notionnel_liberal")
+        actuel = ligne.postes_ressources("actuel")
+        for code in budget:
+            assert proposition[code] == 0.0, (annee, code)
+            assert actuel[code] > 0.0, (annee, code)
+        # Ce qui reste au régime unique : les cotisations au taux unique, et
+        # deux lignes qui ne viennent pas de l'impôt.
+        assert proposition["cotisations"] > 0.0, annee
+        # L'impôt paie la garantie HORS du compte du régime : elle n'est pas
+        # dans sa dépense, qui n'est faite que de pensions.
+        depenses = ligne.postes_depenses("notionnel_liberal")
+        assert compte.garantie > 0.0, annee
+        assert _proche(depenses["droits_directs"] + depenses["droits_derives"],
+                       ligne.depense("notionnel_liberal")), annee
+        # Le pilier est placé à part : sa recette n'est pas une ressource du
+        # régime.
+        assert compte.capitalise > 0.0, annee
+        # Et la carte le dessine ainsi : aucun ruban d'impôt n'entre au régime
+        # unique, quand il en entre un aux régimes d'aujourd'hui.
+        pib = compte.pib
+        assert "Impôts" not in libelles(
+            _caisse_flux(ligne, pib, "notionnel_liberal", "", "C")), annee
+        assert "Impôts" in libelles(_caisse_flux(ligne, pib, "actuel", "", "C")), annee
 
 
 @controle("depense_totale_et_repartition")
