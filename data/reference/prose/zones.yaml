@@ -636,12 +636,11 @@ fichiers:
       # récit qui fonde les trois outils, et ses chiffres sont ceux de ce
       # jour-là — dont le « 63 ans et 171 trimestres » qui était l'erreur.
       Ce qui s'est passé le 17 septembre 2026: recit
-  # Le fichier entier reste à arbitrer, et le passer en `etat` a été essayé :
-  # il porte trois tailles — celles du moteur d'Impeccable, de Chromium et d'un
-  # plafond de caractères — dont deux désignent des logiciels installés HORS du
-  # dépôt. Aucune sonde ne les atteint depuis un clone, et les ancrer
-  # demanderait de mesurer ce qu'on n'a pas. Les deux sections ci-dessous sont
-  # déclarées parce qu'elles, on sait ce qu'elles engagent.
+  # Un fichier qui décrit des logiciels installés HORS du dépôt : le moteur
+  # d'Impeccable, le Chromium du CLI Playwright, les réglages du hook. Ses
+  # trois tailles sont restées `a_declarer` jusqu'au 23 septembre 2026, faute
+  # qu'une sonde les atteigne depuis un clone ; elles sont désormais liées à la
+  # version figée sur laquelle chacune a été lue (voir plus bas).
   docs/outillage_interface.md:
     defaut: a_declarer
     sections:
@@ -655,6 +654,15 @@ fichiers:
       "Outillage d'audit d'interface — ce qu'une machine neuve reçoit, et ce qu'elle doit encore faire": etat
       Playwright CLI: etat
       "Web Interface Guidelines : règles figées": etat
+      # Les trois sections qui portent les tailles de logiciels installés hors
+      # du dépôt. Aucune sonde ne les atteint depuis un clone, mais une version
+      # publiée ne change plus : chaque chiffre est lié à la version figée sur
+      # laquelle il a été lu, et
+      # `test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees` échoue
+      # dès que le dépôt en fige une autre.
+      "Ce qu'un clone frais contient déjà": etat
+      "Ce qui demande le réseau, et une seule fois": etat
+      Impeccable: etat
   # La remise au mainteneur du site d'accueil : elle dit ce que l'hôte doit
   # savoir AUJOURD'HUI — la frontière des deux dépôts, les adresses, ce que le
   # simulateur attend d'un hébergement, la liste de vérification. Une remise
@@ -702,7 +710,7 @@ fichiers:
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.
   # Il ne peut que décroître : `--inventaire` les liste.
-  sections_a_declarer: 3
+  sections_a_declarer: 0
   # Nombre de chiffres qui portent une ancre « a_verifier » : une dette avouée,
   # que seule une sonde qui les recalcule peut éteindre.
   chiffres_a_verifier: 0

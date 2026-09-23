@@ -416,10 +416,9 @@ def test_l_outillage_annonce_les_versions_qu_il_installe():
 
     C'est la dérive que l'action 41 poursuit, dans un coin où le contrôle par
     ancre ne peut rien : `verifier_prose.py` ne lit pas un numéro de version —
-    « 0.1.20 » n'est pas un chiffre au sens de son motif —, et les trois
-    sections de ce document restent `a_declarer` pour une autre raison, leurs
-    poids en mégaoctets décrivant des artefacts extérieurs que rien ici ne
-    recalcule. Les VERSIONS, elles, sont dans le dépôt : la compétence porte la
+    « 0.1.20 » n'est pas un chiffre au sens de son motif. Les poids en
+    mégaoctets que ces versions portent, eux, sont tenus par le test suivant.
+    Les VERSIONS sont dans le dépôt : la compétence porte la
     sienne dans son en-tête, le moteur dans son fichier `VERSION`, et le CLI
     Playwright dans le script d'installation. Une prose qui les cite et un
     script qui en installe d'autres se seraient séparés sans bruit.
@@ -453,6 +452,55 @@ def test_l_outillage_annonce_les_versions_qu_il_installe():
         "docs/outillage_interface.md ne dit plus les versions que le dépôt "
         "porte — " + " ; ".join(manquants)
     )
+
+
+#: Ce que `docs/outillage_interface.md` affirme de logiciels installés HORS du
+#: dépôt, et la version figée sur laquelle chaque chiffre a été lu. Aucune
+#: sonde n'atteint un binaire qu'un clone n'a pas ; mais une version publiée ne
+#: change plus, et ce qu'on a mesuré sur elle reste vrai tant que le dépôt la
+#: fige. Chaque ligne : la phrase du document, l'outil, la version mesurée, et
+#: comment la mesure a été faite.
+MESURES_HORS_DEPOT = (
+    ("le moteur natif (16 Mo)", "moteur", "0.1.5",
+     "16 089 424 octets, le binaire linux-x64 de ~/.impeccable/bin/0.1.5/, "
+     "le 23 septembre 2026"),
+    ("(« Chrome for Testing », une archive de ~190 Mo)", "playwright", "0.1.20",
+     "196 289 395 octets : l'archive linux64 de Chrome for Testing "
+     "154.0.8037.0, la révision 1244 que playwright-core 1.64.0-alpha-2026-09-14 "
+     "attend, lue sur cdn.playwright.dev le 23 septembre 2026"),
+    ("(activé, cinq constats, 8 000 caractères)", "moteur", "0.1.5",
+     "`impeccable hooks status` sans configuration, le 23 septembre 2026"),
+)
+
+
+def test_les_chiffres_de_l_outillage_sont_ceux_des_versions_figees():
+    """Trois chiffres du document décrivent des logiciels que le dépôt n'a pas.
+
+    Le poids du moteur d'Impeccable, celui du Chromium que le CLI Playwright
+    télécharge, le plafond de caractères du hook : `verifier_prose.py` ne peut
+    en recalculer aucun depuis un clone, et ils sont restés trois jours dans
+    des sections que personne ne déclarait. Ils ne sont pourtant pas des
+    souvenirs, puisqu'ils décrivent une VERSION, et qu'une version publiée ne
+    change plus. Ce test lie chacun à la sienne : il échoue dès que le dépôt
+    en fige une autre, et c'est le moment de remesurer — puis d'écrire ici le
+    nouveau chiffre et la nouvelle version. Le document les ancre sur lui.
+    """
+    doc = re.sub(r"<!--chiffre:[^>]*-->|<!--/-->", "",
+                 (RACINE / "docs" / "outillage_interface.md").read_text(encoding="utf-8"))
+    installe = (RACINE / "scripts" / "setup_ui_tools.sh").read_text(encoding="utf-8")
+    figees = {
+        "moteur": (RACINE / ".claude" / "skills" / "impeccable" / "scripts"
+                   / "VERSION").read_text(encoding="utf-8").strip(),
+        "playwright": re.search(r"^PLAYWRIGHT_CLI_VERSION=(\S+)$", installe,
+                                re.MULTILINE).group(1),
+    }
+    for phrase, outil, mesuree, comment in MESURES_HORS_DEPOT:
+        assert figees[outil] == mesuree, (
+            f"« {phrase} » a été mesuré sur {outil} {mesuree} ({comment}), et le "
+            f"dépôt fige désormais {figees[outil]} : remesurer, puis mettre à jour "
+            "MESURES_HORS_DEPOT et docs/outillage_interface.md"
+        )
+        assert phrase in doc, f"docs/outillage_interface.md ne dit plus « {phrase} »"
 
 
 def test_aucun_paragraphe_n_est_repete_a_la_suite():
