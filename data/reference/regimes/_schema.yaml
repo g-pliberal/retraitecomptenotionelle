@@ -72,7 +72,11 @@ champs_periode:
       régime général. Elle passe avant `age_ouverture_par_generation` et
       `age_taux_plein_par_generation`, qui reprennent la main pour une
       génération que la table ne couvre pas. `cavom` : 60 et 65 ans avant la
-      génération 1956, 62 et 67 de 1959 à 1964, 64 et 67 dès 1968.
+      génération 1956, 62 et 67 de 1959 à 1964, 64 et 67 dès 1968. La table
+      peut aussi porter, génération par génération, le coefficient de
+      minoration (`decote_par_trimestre`), qui passe alors avant celui de la
+      période : `carcdsf_2011` minore de 1,25 % les générations d'avant 1955
+      et de 1,50 % les suivantes.
     defaut: null
 
   decote_par_generation:
@@ -310,8 +314,40 @@ champs_periode:
     description: >-
       Nombre maximal de trimestres de décote opposables. Vingt dans tous les
       régimes qui en appliquent une : au-delà, le taux ne descend plus.
-      `null` lève le plafond.
+      `null` lève le plafond. La CARCDSF minore « dans la limite de 15 % »
+      depuis 2024 : douze trimestres à 1,25 %.
     defaut: 20
+
+  decote_palier_age:
+    description: >-
+      Régimes en points : âge au-delà duquel les trimestres de décote se
+      comptent au taux `decote_par_trimestre_apres_palier`, ceux d'avant
+      gardant `decote_par_trimestre`. La CAVP minore de 1,25 % par trimestre
+      d'anticipation jusqu'à 65 ans et de 0,5 % de 65 ans à l'âge du 1° de
+      L. 351-8 (statuts dans la rédaction de l'arrêté du 23 juin 2011,
+      article 15 ; règlement du 10 juillet 2026, article 12). `null` : un seul
+      taux.
+    defaut: null
+
+  decote_par_trimestre_apres_palier:
+    description: "taux par trimestre de décote au-delà de `decote_palier_age` (fraction, null sans palier)"
+    defaut: null
+
+  taux_plein_anticipe_par_enfant_annees:
+    description: >-
+      Régimes en points : années d'anticipation du taux plein qu'une AFFILIÉE
+      reçoit par enfant, sans minoration — « à raison d'une année
+      d'anticipation par enfant mis au monde, dans la limite de 5 années
+      maximum » (CARCDSF, statuts approuvés le 13 avril 2011, article 19 II ;
+      de 64 ans pour un enfant à 60 ans pour cinq dans ceux de 2007). Le taux
+      plein s'ouvre à l'âge ainsi avancé ; avant, la minoration se compte
+      depuis l'âge du taux plein, les deux voies étant « exclusives les unes
+      des autres ». `null` : aucune anticipation.
+    defaut: null
+
+  taux_plein_anticipe_maximum_annees:
+    description: "plafond, en années, de l'anticipation par enfant (null : sans plafond)"
+    defaut: null
 
   surcote_par_trimestre: "majoration par trimestre supplémentaire (fraction, null si aucune)"
 
@@ -347,7 +383,10 @@ champs_periode:
       de minoration si la durée requise est réunie. `ircec_age_seul` est le
       RACL de 2014 à 2024 : 5 % par année manquante, et seul l'âge ouvre le
       taux plein. `cavom` est la même règle, que le règlement de la CAVOM
-      écrit « non susceptible de fractionnement ».
+      écrit « non susceptible de fractionnement » ; c'est aussi celle de la
+      CARMF de 2000 à 2016 (« 0,75 à 60 ans […] 0,95 à 64 ans ») et de la
+      CARCDSF de 2008 à 2010 (« 25 % pour un départ en retraite au cours de la
+      61e année […] 5 % […] au cours de la 65e année »).
     valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec", "ircec", "ircec_age_seul", "cavom"]
     defaut: decote_du_regime_de_base
 

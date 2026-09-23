@@ -3690,6 +3690,12 @@ def test_la_carpimko_majore_depuis_l_age_du_taux_plein_lu_a_la_generation(simula
     """Article 12 ter, inséré par l'arrêté du 31 juillet 2015 : « 1,25 % par
     trimestre civil entier d'ajournement postérieur à l'âge du taux plein dans
     la limite de vingt trimestres ». Rien avant l'arrêté.
+
+    L'âge du taux plein est celui que l'article 12 quater écrit pour la
+    génération, et non celui du régime général : 65 ans et 4 mois pour les
+    nés en 1956 (table `carpimko_2016`, lue le 23 septembre 2026). Née en
+    janvier 1956, elle l'atteint en mai 2021 ; de juillet 2021 à son départ,
+    dix trimestres civils entiers.
     """
     scenario = simulateur.scenario_actuel
     carriere = simulateur.carriere_simple(
@@ -3697,9 +3703,9 @@ def test_la_carpimko_majore_depuis_l_age_du_taux_plein_lu_a_la_generation(simula
         age_debut=25, age_liquidation=68,
     )
     periode = _periode(simulateur, "carpimko_complementaire", 2024)
-    assert scenario._age_taux_plein(periode, carriere) == pytest.approx(67.0)
+    assert scenario._age_taux_plein(periode, carriere) == pytest.approx(65 + 4 / 12)
     assert scenario._abattement_points(
-        periode, carriere, 172, 169, 68.0, 2024) == pytest.approx(1.05)
+        periode, carriere, 172, 169, 68.0, 2024) == pytest.approx(1.125)
     assert scenario._abattement_points(
         periode, carriere, 172, 169, 73.0, 2029) == pytest.approx(1.25)
     assert scenario._abattement_points(
@@ -3818,10 +3824,12 @@ def test_toute_surcote_ecrite_par_une_fiche_en_points_est_servie(simulateur):
         for p in regime.periodes
         if p.surcote_points in ("regime_general", "par_age_seul")
     }
+    # La CARCDSF majore depuis ses statuts de 2011 (article 19, I, c), lus
+    # le 23 septembre 2026 : 1 % par trimestre, 1,25 % depuis 2024.
     assert servies == {
         "cnavpl", "msa_non_salaries", "carmf_complementaire", "asv_conventionnes",
         "cavec_complementaire", "cipav_complementaire", "carpimko_complementaire",
-        "cavp_complementaire", "cprn_complementaire",
+        "cavp_complementaire", "cprn_complementaire", "carcdsf_complementaire",
     }, servies
 
 

@@ -47,6 +47,10 @@
 #     que l'assiette est la retraite TELLE QUE CALCULÉE : appliquer les 10 %
 #     à la pension d'avant la surcote, ou d'avant la majoration de durée
 #     d'assurance, rendrait ici moins que le taux publié.
+#   coefficients_des_regimes — pour chaque régime en points nommé, le
+#     coefficient d'anticipation ou de majoration que le scénario 1 applique
+#     à sa pension, 1 s'il n'en applique aucun. C'est ce que les sections
+#     libérales publient : leur règle d'âge, et le coefficient qu'elle rend.
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -371,3 +375,32 @@ exemples:
       versement d'une pension d'ancienneté.
     carriere: {naissance: "1974-01", sexe: H, affiliation: marin, liquidation: "2024-01", age_debut: 25}
     attendu: {liquidation_ouverte: true, age_ouverture: 50.0, non_ouverte_un_trimestre_plus_tot: true}
+
+  # ---- Sections des professions libérales ---------------------------------
+  # Les pages que la CARCDSF et la CARMF consacrent à l'âge et au calcul de
+  # leur complémentaire, lues le 23 septembre 2026 (action 89, lot des
+  # professions de santé). Chacune écrit sa règle d'âge et donne un exemple ;
+  # la première a levé le taux plein anticipé des mères, que le modèle ne
+  # portait pas, et la minoration par l'âge seul que sa fiche laissait la
+  # durée annuler.
+  - id: carcdsf_deux_enfants_65_ans
+    source: {editeur: "CARCDSF", reference: "carcdsf.fr, Retraite, « A quel âge demander ses droits », régime complémentaire, retraites anticipées sans minoration", verifie_le: "2026-09-23"}
+    enonce: >-
+      Taux plein à 67 ans, minoration de 1,25 % par trimestre manquant avant ;
+      « les femmes ayant eu des enfants ont la possibilité d'anticiper leur
+      départ à la retraite sans minoration, à raison d'une année
+      d'anticipation par enfant mis au monde (dans la limite de 5 au
+      maximum). Exemple : si vous avez eu 2 enfants, vous pouvez bénéficier
+      du taux plein pour ce régime dès 65 ans. »
+    carriere: {naissance: "1961-01", sexe: F, affiliation: chirurgien_dentiste_ou_sage_femme, liquidation: "2026-01", age_debut: 27, nombre_enfants: 2}
+    attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carcdsf_complementaire: 1.0}}
+
+  - id: carmf_report_62_65_ans
+    source: {editeur: "CARMF", reference: "carmf.fr, Retraite, « Calculer votre retraite », exemple au 1er janvier 2026", verifie_le: "2026-09-23"}
+    enonce: >-
+      Médecin né le 10 novembre 1960, retraite à 65 ans : pour la
+      complémentaire comme pour l'ASV, « 3 ans de report soit 12 trimestres,
+      12 x 1,25 % = 15 % - coefficient : 1,15 », les trimestres courant du
+      premier jour du trimestre civil qui suit ses 62 ans à la date d'effet.
+    carriere: {naissance: "1960-11", sexe: H, affiliation: medecin_liberal, liquidation: "2026-01", age_debut: 30}
+    attendu: {liquidation_ouverte: true, coefficients_des_regimes: {carmf_complementaire: 1.15, asv_conventionnes: 1.15}}

@@ -9,6 +9,13 @@
 # escalier : une génération non renseignée prend la valeur de la dernière
 # renseignée avant elle, et la dernière vaut pour toutes les suivantes.
 #
+# Un âge laissé VIDE renvoie au droit commun : le règlement écrit « l'âge
+# prévu à l'article L. 161-17-2 », et ce sont alors les tables communes, que
+# la fiche lit par ses drapeaux `*_par_generation`, qui répondent. La colonne
+# `decote_par_trimestre`, quand elle est remplie, donne le coefficient de
+# minoration que le règlement écrit pour la génération ; vide, la fiche garde
+# le sien.
+#
 # `cavom` — régime complémentaire de la CAVOM. Article 14 des statuts, dans la
 #   rédaction de l'arrêté du 12 décembre 2024 (JORF du 24 décembre 2024), puis
 #   article 1er, I, 1° et 2° du règlement approuvé par l'arrêté du 10 juillet
@@ -33,16 +40,63 @@
 #   7 mois, puis 64 et 69. L'arrêté du 29 novembre 2023 a rendu la section à
 #   l'âge légal et à 67 ans ; la fiche ne nomme cette table que sur ses
 #   périodes de 2014 à 2023.
-table,generation,age_ouverture,age_taux_plein,fiabilite
-cavom,1900,60,65,certifiee
-cavom,1956,60.5,65.5,certifiee
-cavom,1957,61,66,certifiee
-cavom,1958,61.5,66.5,certifiee
-cavom,1959,62,67,certifiee
-cavom,1965,62.5,67,certifiee
-cavom,1966,63,67,certifiee
-cavom,1967,63.5,67,certifiee
-cavom,1968,64,67,certifiee
-cprn_2014,1900,60,65,certifiee
-cprn_2014,1954,63.583333,68.583333,certifiee
-cprn_2014,1955,64,69,certifiee
+#
+# `cavp` — volet par répartition de la complémentaire des pharmaciens. Article
+#   12 de ses statuts dans la rédaction de l'arrêté du 23 juin 2011 (JORF du
+#   29 juin 2011), repris par l'article 8 du règlement approuvé le 10 juillet
+#   2026 : la retraite entière est acquise « à l'âge permettant d'obtenir une
+#   pension de retraite à taux plein tel qu'il est fixé à l'article L. 351-8
+#   (1°) » pour les nés depuis 1956, et « de façon transitoire […] à 65 ans
+#   pour les affiliés nés jusqu'au 31 décembre 1952 et à 66 ans pour les
+#   affiliés nés en 1953, 1954 et 1955 ». Avant 2011, soixante-cinq ans pour
+#   tous (statuts approuvés le 11 mai 2009, article 12) : la table le rend
+#   aussi, les générations 1953 et suivantes n'ayant pu liquider avant. L'âge
+#   d'ouverture est celui de L. 161-17-2 (article 15) : case vide.
+#
+# `carcdsf_2011` — complémentaire des chirurgiens-dentistes et des
+#   sages-femmes, de 2011 à 2023. Article 19 de ses statuts approuvés le 13
+#   avril 2011 (JORF du 27 avril 2011), bornes modifiées par l'arrêté du 9
+#   juillet 2012 (JORF du 21 juillet 2012) : taux plein à l'âge de
+#   L. 161-17-2 « majoré de cinq ans », c'est-à-dire l'âge d'annulation des
+#   tables communes pour toutes ces générations — cases vides ; minoration
+#   « égal[e] à 5 % par année d'anticipation » pour les nés avant le 1er
+#   juillet 1951, 1,50 % par trimestre manquant pour les nés à compter du 1er
+#   janvier 1955. Entre les deux, « le tableau joint en annexe », que le
+#   Journal officiel ne publie qu'en image (JO n° 168 du 21 juillet 2012,
+#   texte 3) et que l'index ne porte donc pas : 1,25 % en tient lieu, le taux
+#   des générations précédentes, et ces lignes sont au niveau `estimee`.
+#
+# `carpimko_2016` — complémentaire des auxiliaires médicaux, depuis 2016.
+#   Article 12 quater de ses statuts dans la rédaction de l'arrêté du 31
+#   juillet 2015 (JORF du 2 octobre 2015), réécrit par celui du 27 décembre
+#   2023 (JORF du 9 janvier 2024), puis article 6 du règlement du 10 juillet
+#   2026, mot pour mot : « Génération 1955 et antérieures […] Âge du taux
+#   plein 65 ans », quatre mois de plus par génération jusqu'à « 1961 (nés
+#   jusqu'au 31 août) […] 67 ans » ; âge minimal de 60 ans à 62 ans, du même
+#   pas. Au-delà, l'âge de L. 161-17-2 et celui du 1° de L. 351-8 : 67 ans.
+table,generation,age_ouverture,age_taux_plein,fiabilite,decote_par_trimestre
+cavom,1900,60,65,certifiee,
+cavom,1956,60.5,65.5,certifiee,
+cavom,1957,61,66,certifiee,
+cavom,1958,61.5,66.5,certifiee,
+cavom,1959,62,67,certifiee,
+cavom,1965,62.5,67,certifiee,
+cavom,1966,63,67,certifiee,
+cavom,1967,63.5,67,certifiee,
+cavom,1968,64,67,certifiee,
+cprn_2014,1900,60,65,certifiee,
+cprn_2014,1954,63.583333,68.583333,certifiee,
+cprn_2014,1955,64,69,certifiee,
+cavp,1900,,65,certifiee,
+cavp,1953,,66,certifiee,
+cavp,1956,,67,certifiee,
+carcdsf_2011,1900,,,certifiee,0.0125
+carcdsf_2011,1951.5,,,estimee,0.0125
+carcdsf_2011,1955,,,certifiee,0.015
+carpimko_2016,1900,60,65,certifiee,
+carpimko_2016,1956,60.333333,65.333333,certifiee,
+carpimko_2016,1957,60.666667,65.666667,certifiee,
+carpimko_2016,1958,61,66,certifiee,
+carpimko_2016,1959,61.333333,66.333333,certifiee,
+carpimko_2016,1960,61.666667,66.666667,certifiee,
+carpimko_2016,1961,,67,certifiee,

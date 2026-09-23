@@ -2045,7 +2045,17 @@ regimes:
         cotisation_forfaitaire_annee: 1964
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: >-
+          TROIS ENFANTS, DEPUIS 1964. L'arrêté du 16 janvier 1964 (JORF du 2
+          février 1964, JORFTEXT000000482076) ajoute un article 22 au
+          règlement du régime pour les « allocataires ayant élevé au moins
+          trois enfants jusqu'à l'âge de seize ans » ; l'index n'en porte que
+          le titre, et le taux est celui de l'article 23 du règlement approuvé
+          le 10 juillet 2026 : « le montant total de la pension est majoré de
+          10 % au profit des allocataires ayant eu au moins trois enfants ».
+          `majoration_enfants` sur toutes les périodes depuis 1964 ; la fiche
+          n'en portait aucune.
       - debut: 1965
         fin: 1965
         type_calcul: points
@@ -2063,7 +2073,7 @@ regimes:
         cotisation_forfaitaire_annee: 1965
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1966
         fin: 1966
         type_calcul: points
@@ -2081,7 +2091,7 @@ regimes:
         cotisation_forfaitaire_annee: 1966
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1967
         fin: 1967
         type_calcul: points
@@ -2099,7 +2109,7 @@ regimes:
         cotisation_forfaitaire_annee: 1967
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1968
         fin: 1968
         type_calcul: points
@@ -2117,7 +2127,7 @@ regimes:
         cotisation_forfaitaire_annee: 1968
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1969
         fin: 1969
         type_calcul: points
@@ -2135,7 +2145,7 @@ regimes:
         cotisation_forfaitaire_annee: 1969
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1970
         fin: 1970
         type_calcul: points
@@ -2153,7 +2163,7 @@ regimes:
         cotisation_forfaitaire_annee: 1970
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1971
         fin: 1971
         type_calcul: points
@@ -2171,7 +2181,7 @@ regimes:
         cotisation_forfaitaire_annee: 1971
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1972
         fin: 1972
         type_calcul: points
@@ -2189,7 +2199,7 @@ regimes:
         cotisation_forfaitaire_annee: 1972
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1973
         fin: 1973
         type_calcul: points
@@ -2207,7 +2217,7 @@ regimes:
         cotisation_forfaitaire_annee: 1973
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1974
         fin: 1974
         type_calcul: points
@@ -2225,7 +2235,7 @@ regimes:
         cotisation_forfaitaire_annee: 1974
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1975
         fin: 1975
         type_calcul: points
@@ -2243,7 +2253,7 @@ regimes:
         cotisation_forfaitaire_annee: 1975
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1976
         fin: 1976
         type_calcul: points
@@ -2261,7 +2271,7 @@ regimes:
         cotisation_forfaitaire_annee: 1976
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1977
         fin: 1977
         type_calcul: points
@@ -2279,7 +2289,7 @@ regimes:
         cotisation_forfaitaire_annee: 1977
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1978
         fin: 1978
         type_calcul: points
@@ -2297,7 +2307,7 @@ regimes:
         cotisation_forfaitaire_annee: 1978
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1979
         fin: 1979
         type_calcul: points
@@ -2315,7 +2325,7 @@ regimes:
         cotisation_forfaitaire_annee: 1979
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1980
         fin: 1980
         type_calcul: points
@@ -2333,7 +2343,7 @@ regimes:
         cotisation_forfaitaire_annee: 1980
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1981
         fin: 1981
         type_calcul: points
@@ -2351,7 +2361,7 @@ regimes:
         cotisation_forfaitaire_annee: 1981
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1982
         fin: 1982
         type_calcul: points
@@ -2369,7 +2379,7 @@ regimes:
         cotisation_forfaitaire_annee: 1982
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1983
         fin: 1983
         type_calcul: points
@@ -2387,7 +2397,7 @@ regimes:
         cotisation_forfaitaire_annee: 1983
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           La cotisation proportionnelle apparaît, à 2 %, sans faire disparaître le
           forfait : les deux coexistent jusqu'en 1995. Le taux vient de la table
@@ -2410,7 +2420,7 @@ regimes:
         cotisation_forfaitaire_annee: 1984
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1985
         fin: 1985
         type_calcul: points
@@ -2428,7 +2438,7 @@ regimes:
         cotisation_forfaitaire_annee: 1985
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1986
         fin: 1986
         type_calcul: points
@@ -2446,7 +2456,7 @@ regimes:
         cotisation_forfaitaire_annee: 1986
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1987
         fin: 1987
         type_calcul: points
@@ -2464,7 +2474,7 @@ regimes:
         cotisation_forfaitaire_annee: 1987
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1988
         fin: 1988
         type_calcul: points
@@ -2482,7 +2492,7 @@ regimes:
         cotisation_forfaitaire_annee: 1988
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1989
         fin: 1989
         type_calcul: points
@@ -2500,7 +2510,7 @@ regimes:
         cotisation_forfaitaire_annee: 1989
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1990
         fin: 1990
         type_calcul: points
@@ -2518,7 +2528,7 @@ regimes:
         cotisation_forfaitaire_annee: 1990
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1991
         fin: 1991
         type_calcul: points
@@ -2536,7 +2546,7 @@ regimes:
         cotisation_forfaitaire_annee: 1991
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Le taux passe de 2 à 5 % avec la réforme du 1er janvier 1991, et le
           forfait RECULE du même coup — 2 405,65 € en 1990, 1 871,46 € en 1991 :
@@ -2566,7 +2576,7 @@ regimes:
         cotisation_forfaitaire_annee: 1992
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1993
         fin: 1993
         type_calcul: points
@@ -2584,7 +2594,7 @@ regimes:
         cotisation_forfaitaire_annee: 1993
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1994
         fin: 1994
         type_calcul: points
@@ -2602,7 +2612,7 @@ regimes:
         cotisation_forfaitaire_annee: 1994
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1995
         fin: 1995
         type_calcul: points
@@ -2620,7 +2630,7 @@ regimes:
         cotisation_forfaitaire_annee: 1995
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
       - debut: 1996
         fin: 1996
         type_calcul: points
@@ -2636,7 +2646,7 @@ regimes:
         taux_cotisation_retraite: 0.0750
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Le régime devient TOTALEMENT PROPORTIONNEL : la part forfaitaire disparaît et la cotisation maximale ouvre dix points pleins. À partir d'ici la fiche est exacte, taux et rendement venant tous deux des tables de la caisse.
       - debut: 1997
@@ -2654,7 +2664,7 @@ regimes:
         taux_cotisation_retraite: 0.0810
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
       - debut: 1999
@@ -2672,7 +2682,7 @@ regimes:
         taux_cotisation_retraite: 0.0870
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
       - debut: 2000
@@ -2689,11 +2699,12 @@ regimes:
         assiette: plafonnee_3_5_pass
         taux_cotisation_retraite: 0.0900
         decote_par_trimestre: 0.0125
+        abattement_points: cavom
         surcote_par_trimestre: 0.0125
         surcote_points: par_age_seul
         surcote_age_debut: 65
         surcote_pas_trimestres: 4
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
@@ -2708,6 +2719,17 @@ regimes:
           pleines. Cet article n'est lu que dans l'état consolidé des
           statuts, sans date d'origine : la fiche le sert à partir de 2000,
           borne de période, et rien avant.
+          LA MINORATION COMPTE DES ANNÉES D'ÂGE. « 0,75 à 60 ans, 0,80 à 61
+          ans, 0,85 à 62 ans, 0,90 à 63 ans, 0,95 à 64 ans » : l'âge atteint,
+          en années, et non les trimestres. La fiche l'écrivait en 1,25 % par
+          trimestre avec `duree_requise_trimestres: null` pour dire que la
+          durée n'y jouait aucun rôle ; or le moteur oppose à un régime en
+          points la durée de la carrière, qui annulait la minoration : un
+          médecin parti à soixante-quatre ans en 2009 avec sa durée ne perdait
+          rien. `abattement_points: cavom` — 5 % par année manquante jusqu'au
+          taux plein, l'année entamée comptant entière, et seul l'âge l'annule
+          — est cette règle-là. Corrigé le 23 septembre 2026 (action 89, lot
+          des professions de santé).
       - debut: 2008
         fin: 2008
         type_calcul: points
@@ -2722,11 +2744,12 @@ regimes:
         assiette: plafonnee_3_5_pass
         taux_cotisation_retraite: 0.0910
         decote_par_trimestre: 0.0125
+        abattement_points: cavom
         surcote_par_trimestre: 0.0125
         surcote_points: par_age_seul
         surcote_age_debut: 65
         surcote_pas_trimestres: 4
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
@@ -2755,11 +2778,12 @@ regimes:
         assiette: plafonnee_3_5_pass
         taux_cotisation_retraite: 0.0920
         decote_par_trimestre: 0.0125
+        abattement_points: cavom
         surcote_par_trimestre: 0.0125
         surcote_points: par_age_seul
         surcote_age_debut: 65
         surcote_pas_trimestres: 4
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
@@ -2788,11 +2812,12 @@ regimes:
         assiette: plafonnee_3_5_pass
         taux_cotisation_retraite: 0.0930
         decote_par_trimestre: 0.0125
+        abattement_points: cavom
         surcote_par_trimestre: 0.0125
         surcote_points: par_age_seul
         surcote_age_debut: 65
         surcote_pas_trimestres: 4
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
@@ -2821,11 +2846,12 @@ regimes:
         assiette: plafonnee_3_5_pass
         taux_cotisation_retraite: 0.0940
         decote_par_trimestre: 0.0125
+        abattement_points: cavom
         surcote_par_trimestre: 0.0125
         surcote_points: par_age_seul
         surcote_age_debut: 65
         surcote_pas_trimestres: 4
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
@@ -2854,11 +2880,12 @@ regimes:
         assiette: plafonnee_3_5_pass
         taux_cotisation_retraite: 0.0950
         decote_par_trimestre: 0.0125
+        abattement_points: cavom
         surcote_par_trimestre: 0.0125
         surcote_points: par_age_seul
         surcote_age_debut: 65
         surcote_pas_trimestres: 4
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
@@ -2887,11 +2914,12 @@ regimes:
         assiette: plafonnee_3_5_pass
         taux_cotisation_retraite: 0.0960
         decote_par_trimestre: 0.0125
+        abattement_points: cavom
         surcote_par_trimestre: 0.0125
         surcote_points: par_age_seul
         surcote_age_debut: 65
         surcote_pas_trimestres: 4
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI N'EXISTE PAS ENCORE : jusqu'au 31
@@ -2926,7 +2954,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
@@ -2964,7 +2992,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
@@ -3002,7 +3030,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
@@ -3040,7 +3068,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie de la CARMF.
           LA RETRAITE EN TEMPS CHOISI, depuis le 1er janvier 2017 (arrêté du
@@ -3078,7 +3106,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Taux de la table « Cotisations proportionnelles » de la chronologie
           de la CARMF. L'article 2 du décret n° 49-579 n'est consolidé dans
@@ -3219,7 +3247,7 @@ regimes:
         cotisation_forfaitaire_euros: 2690.4
         cotisation_forfaitaire_annee: 2020
       - debut: 2004
-        fin: 2008
+        fin: 2007
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -3236,20 +3264,62 @@ regimes:
         taux_cotisation_retraite: 0.095
         cotisation_forfaitaire_euros: 2690.4
         cotisation_forfaitaire_annee: 2020
-      - debut: 2009
-        fin: 2009
+      - debut: 2008
+        fin: 2008
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
-        age_taux_plein: 67
-        age_taux_plein_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: false
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         decote_par_trimestre: 0.0125
+        abattement_points: cavom
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        assiette: tranche_085_5_pass
+        taux_cotisation_retraite: 0.095
+        cotisation_forfaitaire_euros: 2690.4
+        cotisation_forfaitaire_annee: 2020
+        notes: >-
+          LES STATUTS DE 2007, PREMIERS LUS. L'arrêté du 1er octobre 2007
+          (JORFTEXT000000252172) approuve les statuts du régime complémentaire
+          de la caisse des chirurgiens-dentistes et abroge ceux de 1955, que
+          l'index ne porte pas, non plus que les modifications publiées au
+          Bulletin officiel (1985 à 1997) : la fiche les sert à partir de
+          2008, première année pleine, et rien avant. Article 20 : taux plein
+          « à partir de 65 ans », et avant « un coefficient de minoration,
+          fonction de l'âge » — 25 % au cours de la 61e année, 20 % de la 62e,
+          15 %, 10 % puis 5 % de la 65e, c'est-à-dire 5 % par année manquante,
+          l'année entamée comptant entière, et la durée d'assurance n'y peut
+          rien : `abattement_points: cavom`. La fiche portait 62, 67 et la
+          décote du régime de base, que la durée annule. Les adhérentes ayant
+          élevé des enfants partent sans minoration « à partir de 64 ans pour
+          un enfant » jusqu'à « 60 ans pour cinq enfants ou plus » :
+          `taux_plein_anticipe_par_enfant_annees`. Article 23 : « majoré de 10
+          % au profit des allocataires ayant eu au moins trois enfants ».
+          Aucune majoration pour report. Lu le 23 septembre 2026 (action 89).
+      - debut: 2009
+        fin: 2009
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: false
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        decote_par_trimestre: 0.0125
+        abattement_points: cavom
+        surcote_par_trimestre: null
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.099
         cotisation_forfaitaire_euros: 2690.4
@@ -3259,15 +3329,18 @@ regimes:
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
-        age_taux_plein: 67
-        age_taux_plein_par_generation: true
+        age_taux_plein: 65
+        age_taux_plein_par_generation: false
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         decote_par_trimestre: 0.0125
+        abattement_points: cavom
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.0995
         cotisation_forfaitaire_euros: 2690.4
@@ -3279,17 +3352,39 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.1
         cotisation_forfaitaire_euros: 2690.4
         cotisation_forfaitaire_annee: 2020
+        notes: >-
+          LES STATUTS DU 13 AVRIL 2011 (JORFTEXT000023909782). Ouverture à
+          l'âge de L. 161-17-2, taux plein à ce même âge « majoré de cinq ans
+          » — l'âge d'annulation des tables communes pour toutes les
+          générations concernées —, et une minoration « fonction de l'âge
+          atteint », que la durée n'annule pas : 5 % par année d'anticipation
+          pour les nés avant le 1er juillet 1951, 1,50 % par trimestre
+          manquant pour les nés à compter du 1er janvier 1955 depuis l'arrêté
+          du 9 juillet 2012 (JORFTEXT000026208359), et entre les deux un
+          tableau que le Journal officiel ne publie qu'en image, où 1,25 %
+          tient lieu. Les taux sont lus à la génération dans la table
+          `carcdsf_2011` de `legislation/ages_regimes.csv`. « A taux majoré »
+          : 1 % par trimestre civil entier d'exercice libéral au-delà de l'âge
+          du taux plein, dans la limite de 20 %. L'anticipation des mères
+          devient d'« une année d'anticipation par enfant mis au monde, dans
+          la limite de cinq années ».
       - debut: 2012
         fin: 2012
         type_calcul: points
@@ -3297,13 +3392,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.1005
         cotisation_forfaitaire_euros: 2690.4
@@ -3315,13 +3416,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.102
         cotisation_forfaitaire_euros: 2690.4
@@ -3333,13 +3440,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.103
         cotisation_forfaitaire_euros: 2690.4
@@ -3351,13 +3464,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.104
         cotisation_forfaitaire_euros: 2690.4
@@ -3369,13 +3488,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.105
         cotisation_forfaitaire_euros: 2690.4
@@ -3387,13 +3512,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.106
         cotisation_forfaitaire_euros: 2690.4
@@ -3405,13 +3536,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.1065
         cotisation_forfaitaire_euros: 2690.4
@@ -3426,13 +3563,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.1065
         cotisation_forfaitaire_euros: 2690.4
@@ -3456,13 +3599,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.1065
         cotisation_forfaitaire_euros: 2690.4
@@ -3474,13 +3623,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.1065
         cotisation_forfaitaire_euros: 2769.0
@@ -3495,13 +3650,19 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carcdsf_2011
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
         salaire_reference: carriere_entiere
-        decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_par_trimestre: 0.015
+        decote_annulee_par_la_duree: false
+        surcote_par_trimestre: 0.01
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.108
         cotisation_forfaitaire_euros: 2959.8
@@ -3526,8 +3687,14 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_annulee_par_la_duree: false
+        decote_trimestres_maximum: 12
+        surcote_par_trimestre: 0.0125
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.108
         cotisation_forfaitaire_euros: 3108.0
@@ -3535,6 +3702,18 @@ regimes:
         notes: >-
           Forfait 3 108 € pour six points — 518 € le point, servi 30,81 € —,
           assiette 39 413 € – 231 840 €.
+          L'ARRÊTÉ DU 27 DÉCEMBRE 2023 (JORFTEXT000048880697), repris par le
+          règlement du 10 juillet 2026 (article 3). Taux plein à l'âge du 1°
+          de L. 351-8 ; minoration de « 1,25 % par trimestre manquant […] dans
+          la limite de 15 % » — douze trimestres, `decote_trimestres_maximum:
+          12` — que la durée n'annule toujours pas ; majoration de 1 % par
+          trimestre accompli avant le 1er janvier 2024 dans la limite de 20 %,
+          de 1,25 % depuis dans la limite de 25 %. La fiche sert 1,25 % à tous
+          les trimestres des liquidations de 2024 et après, à l'année près. La
+          page de la caisse, lue le 23 septembre 2026, écrit les mêmes règles,
+          sans le plafond de 15 %, et donne l'exemple : « si vous avez eu 2
+          enfants, vous pouvez bénéficier du taux plein pour ce régime dès 65
+          ans ».
       - debut: 2025
         fin: 2025
         type_calcul: points
@@ -3547,8 +3726,14 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_annulee_par_la_duree: false
+        decote_trimestres_maximum: 12
+        surcote_par_trimestre: 0.0125
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_085_5_pass
         taux_cotisation_retraite: 0.108
         cotisation_forfaitaire_euros: 3178.8
@@ -3573,8 +3758,14 @@ regimes:
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         decote_par_trimestre: 0.0125
-        surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        decote_annulee_par_la_duree: false
+        decote_trimestres_maximum: 12
+        surcote_par_trimestre: 0.0125
+        surcote_points: par_age_seul
+        surcote_trimestres_maximum: 20
+        taux_plein_anticipe_par_enfant_annees: 1
+        taux_plein_anticipe_maximum_annees: 5
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: tranche_065_5_pass
         taux_cotisation_retraite: 0.1135
         cotisation_forfaitaire_euros: 3210.6
@@ -3712,6 +3903,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cavp
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -3719,8 +3911,9 @@ regimes:
         assiette: sans_objet
         taux_cotisation_retraite: 0.0
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         cotisation_forfaitaire_euros: 6880.00
         cotisation_forfaitaire_annee: 2024
         notes: >-
@@ -3737,6 +3930,19 @@ regimes:
           de majoration de pension pour un départ après 65 ans », dit son
           annexe pour les assurés nés avant le 30 juin 1951 ; la fiche
           portait 0,5 % sans texte, que le moteur ne lisait pas.
+          LES STATUTS DU 11 MAI 2009 (JORFTEXT000020694598), PREMIERS LUS :
+          ceux d'avant sont au Bulletin officiel, et la fiche ne les sert qu'à
+          partir de 2009. Article 12 : la retraite entière est acquise « à
+          l'âge de 65 ans » ; article 15 : dès 60 ans, « un coefficient
+          d'anticipation qui est fonction du nombre de trimestres manquants, à
+          la date d'effet des droits, pour atteindre l'âge de 65 ans. Ce
+          coefficient est égal à 1,25 % par trimestre manquant dans la limite
+          de 20 trimestres » — l'âge seul, la durée n'y peut rien :
+          `decote_annulee_par_la_duree: false`, et l'âge du taux plein lu dans
+          la table `cavp`. La fiche lisait l'âge d'annulation et la décote du
+          régime de base, que la durée annule. Article 17 : « une bonification
+          d'un dixième pour tout allocataire ayant eu au moins trois enfants »
+          : `majoration_enfants`. Lu le 23 septembre 2026 (action 89).
       - debut: 2012
         fin: 2014
         type_calcul: points
@@ -3744,6 +3950,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cavp
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -3751,10 +3958,13 @@ regimes:
         assiette: sans_objet
         taux_cotisation_retraite: 0.0
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
+        decote_palier_age: 65
+        decote_par_trimestre_apres_palier: 0.005
         surcote_par_trimestre: 0.005
         surcote_points: par_age_seul
         surcote_trimestres_maximum: 12
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         cotisation_forfaitaire_euros: 6880.00
         cotisation_forfaitaire_annee: 2024
         notes: >-
@@ -3779,6 +3989,25 @@ regimes:
           ans, reçoivent ici trois ans, et celles d'avant juillet 1951, qui
           n'en ont aucune, atteignaient l'âge du taux plein avant 2012.
           Servie à partir de 2012.
+          DEUX PENTES DEPUIS L'ARRÊTÉ DU 23 JUIN 2011 (JORFTEXT000024270202),
+          repris par l'article 12 du règlement du 10 juillet 2026. Taux plein
+          à l'âge du 1° de L. 351-8 pour les nés depuis 1956, à 65 ans
+          jusqu'en 1952 et à 66 ans de 1953 à 1955 (table `cavp`) ; minoration
+          « 1,25 % par trimestre manquant pour un âge de départ à la retraite
+          compris entre l'âge d'ouverture du droit à pension de retraite et 65
+          ans ; 0,5 % par trimestre manquant pour un âge de départ à la
+          retraite compris entre 65 ans et l'âge permettant d'obtenir une
+          pension de retraite à taux plein » : `decote_palier_age: 65`. Un
+          pharmacien né en 1975 parti à soixante-quatre ans perd 9 % de cette
+          retraite, qu'il ait ou non sa durée, là où la fiche ne lui retirait
+          rien. Pour les nés jusqu'en 1955, « les coefficients d'anticipation
+          figurent dans un tableau en annexe des présents statuts », que
+          l'index ne porte pas : les deux pentes leur sont appliquées depuis
+          leur propre âge du taux plein. Le montant des nés depuis 1956 est
+          majoré de 4 % et celui des nés de 1953 à 1955 de 2 %, ce que le
+          règlement de 2026 écrit en affectant la valeur de service des autres
+          générations de 0,96 et de 0,96/0,98 : non porté, le rendement de la
+          fiche étant calé sur les générations d'aujourd'hui.
       - debut: 2015
         fin: 2019
         type_calcul: points
@@ -3786,6 +4015,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cavp
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -3793,10 +4023,13 @@ regimes:
         assiette: sans_objet
         taux_cotisation_retraite: 0.0
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
+        decote_palier_age: 65
+        decote_par_trimestre_apres_palier: 0.005
         surcote_par_trimestre: 0.005
         surcote_points: par_age_seul
         surcote_trimestres_maximum: 12
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         cotisation_forfaitaire_euros: 6880.00
         cotisation_forfaitaire_annee: 2024
         notes: >-
@@ -3832,6 +4065,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cavp
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -3839,10 +4073,13 @@ regimes:
         assiette: sans_objet
         taux_cotisation_retraite: 0.0
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
+        decote_palier_age: 65
+        decote_par_trimestre_apres_palier: 0.005
         surcote_par_trimestre: 0.005
         surcote_points: par_age_seul
         surcote_trimestres_maximum: 12
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         cotisation_forfaitaire_euros: 6880.00
         cotisation_forfaitaire_annee: 2024
         notes: >-
@@ -3888,6 +4125,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cavp
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -3895,10 +4133,13 @@ regimes:
         assiette: sans_objet
         taux_cotisation_retraite: 0.0
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
+        decote_palier_age: 65
+        decote_par_trimestre_apres_palier: 0.005
         surcote_par_trimestre: 0.005
         surcote_points: par_age_seul
         surcote_trimestres_maximum: 12
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         cotisation_forfaitaire_euros: 7657.00
         cotisation_forfaitaire_annee: 2026
         notes: >-
@@ -4298,6 +4539,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4326,6 +4568,27 @@ regimes:
           de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
           l'âge du taux plein lu à la génération, à partir de 2016, première
           année pleine.
+          SES ÂGES, DEPUIS L'ARRÊTÉ DU 31 JUILLET 2015 (JORFTEXT000031255542).
+          Article 12 quater, repris par l'arrêté du 27 décembre 2023 et par
+          l'article 6 du règlement du 10 juillet 2026 : taux plein à 65 ans
+          pour les générations 1955 et antérieures, quatre mois de plus par
+          génération jusqu'à 67 ans pour 1961, âge minimal de 60 à 62 ans du
+          même pas ; au-delà, l'âge de L. 161-17-2 et celui du 1° de L. 351-8
+          (table `carpimko_2016`). La fiche lisait 67 ans dès la génération
+          1955, l'âge d'annulation du régime général. La durée d'assurance y
+          annule bien la minoration — « au profit des assurés remplissant les
+          conditions leur permettant de liquider leur pension du régime de
+          base sans abattement » —, et celle-ci est de 1,25 % par trimestre
+          manquant au régime de base, dans la limite des trimestres qui
+          séparent de l'âge du taux plein. SAUF POUR LES GÉNÉRATIONS 1955 ET
+          ANTÉRIEURES jusqu'en 2023 : « 4 % par année d'anticipation, plus
+          0,25 % par trimestre manquant pour pouvoir liquider la retraite de
+          base à taux plein, dans la limite du nombre de trimestres séparant
+          l'assuré de ses 65 ans » — non porté ; la fiche leur applique 1,25 %
+          par trimestre depuis 65 ans, ce qui les minore moins que la caisse
+          quand leur durée est presque complète. Les statuts d'avant 2015 sont
+          au Bulletin officiel (arrêté du 20 novembre 1996) et ne sont pas
+          lus. Lu le 23 septembre 2026 (action 89).
       - debut: 2017
         fin: 2017
         type_calcul: points
@@ -4333,6 +4596,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4368,6 +4632,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4403,6 +4668,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4438,6 +4704,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4473,6 +4740,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4508,6 +4776,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4543,6 +4812,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4578,6 +4848,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4586,7 +4857,7 @@ regimes:
         surcote_par_trimestre: 0.0125
         surcote_points: par_age_seul
         surcote_trimestres_maximum: 20
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: plafonnee_5_pass
         taux_cotisation_retraite: 0.03
         borne_basse_euros: 25246
@@ -4606,6 +4877,12 @@ regimes:
           de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
           l'âge du taux plein lu à la génération, à partir de 2016, première
           année pleine.
+          TROIS ENFANTS DEPUIS L'ARRÊTÉ DU 27 DÉCEMBRE 2023
+          (JORFTEXT000048880637) : « le montant de la pension des assurés
+          ayant eu au moins trois enfants est majoré de 10 % dans les mêmes
+          conditions que pour le régime de base, prévues aux articles L.
+          643-1-1 et L. 351-12 », repris par l'article 5 du règlement de 2026
+          : `majoration_enfants`.
       - debut: 2025
         fin: 2025
         type_calcul: points
@@ -4613,6 +4890,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4621,7 +4899,7 @@ regimes:
         surcote_par_trimestre: 0.0125
         surcote_points: par_age_seul
         surcote_trimestres_maximum: 20
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: plafonnee_5_pass
         taux_cotisation_retraite: 0.03
         borne_basse_euros: 25246
@@ -4649,6 +4927,7 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: carpimko_2016
         duree_requise_trimestres: 172
         duree_requise_par_generation: true
         taux_plein: 1.0
@@ -4657,7 +4936,7 @@ regimes:
         surcote_par_trimestre: 0.0125
         surcote_points: par_age_seul
         surcote_trimestres_maximum: 20
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         assiette: plafonnee_3_pass
         assiette_minimale_pass: 0.5
         taux_cotisation_retraite: 0.087
@@ -4730,6 +5009,7 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -4755,6 +5035,7 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -4781,6 +5062,7 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -4805,6 +5087,7 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -4830,6 +5113,7 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -4854,6 +5138,7 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -4881,6 +5166,7 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -4905,6 +5191,7 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -4932,8 +5219,9 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
           VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
@@ -4997,6 +5285,25 @@ regimes:
           davantage. La borne de début est celle du décret n° 50-1318 du 21
           octobre 1950, qui institue le régime au sein de la caisse créée deux
           ans plus tôt.
+          L'ÂGE SEUL, ET TROIS ENFANTS. Les statuts dans la rédaction de
+          l'arrêté du 18 octobre 2021 (JORFTEXT000044220734), premiers que
+          l'index porte en entier, puis l'article 2 du règlement du 10 juillet
+          2026 : « La pension de retraite complémentaire est attribuée à taux
+          plein à l'âge de soixante-cinq ans », et dès soixante ans « à un
+          taux réduit par application d'un coefficient d'anticipation fixé
+          suivant l'âge à l'entrée en jouissance, soit 1,25 % par trimestre
+          manquant avant l'âge de soixante-cinq ans ». La fiche le disait en
+          laissant `duree_requise_trimestres` vide ; le moteur opposait
+          pourtant à ce régime la durée de la carrière, qui annulait la
+          minoration — un vétérinaire parti à soixante-quatre ans avec sa
+          durée ne perdait rien, là où la caisse lui retire 5 %.
+          `decote_annulee_par_la_duree: false` l'écrit comme le moteur le lit,
+          sur toutes les périodes, la règle d'âge de la fiche étant la même
+          depuis 1950. Article 37, puis 5 : « une bonification de 10 % du
+          montant de la pension de retraite complémentaire est accordée aux
+          bénéficiaires ayant eu au moins trois enfants » — servie depuis
+          2022, première année pleine du texte lu. Aucune majoration pour
+          report. Lu le 23 septembre 2026 (action 89).
       - debut: 2026
         fin: null
         type_calcul: points
@@ -5009,8 +5316,9 @@ regimes:
         taux_cotisation_retraite: 0.0
         cotisation_par_classes: true
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           DÉCRET N° 50-1318 DU 21 OCTOBRE 1950, ARTICLE 2, LU VERSION PAR
           VERSION (onze versions dans LEGI, de 1950 à 2026). Les montants de
@@ -7965,7 +8273,7 @@ regimes:
     hors_repartition: false
     periodes:
       - debut: 1972
-        fin: 1984
+        fin: 1980
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
@@ -8008,6 +8316,37 @@ regimes:
           2011-1644, art. 4, LEGIARTI000024853556), prise pour valeur de 2011
           et ramenée aux prix de l'année de liquidation ; aucune valeur
           antérieure n'est dans l'index, niveau `estimee`.
+      - debut: 1981
+        fin: 1984
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        duree_requise_trimestres: 172
+        duree_requise_par_generation: true
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_5_pass
+        taux_cotisation_retraite: 0.000000
+        cotisation_forfaitaire_euros: 114.34
+        cotisation_forfaitaire_annee: 1985
+        points_par_trimestre_valide: 7.54
+        valeur_point_euros: 15.55
+        valeur_point_annee: 2011
+        decote_par_trimestre: 0.0125
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion, majoration_enfants]
+        notes: >-
+          TROIS ENFANTS, POUR LES PRESTATIONS LIQUIDÉES DEPUIS 1981. « Le
+          montant des prestations complémentaires liquidées avec une date
+          d'effet postérieure au 31 décembre 1980 est majoré de 10 % au profit
+          des allocataires ayant eu au moins trois enfants » (règlement du
+          régime des prestations complémentaires de vieillesse des médecins,
+          article 8, approuvé par l'arrêté du 10 juillet 2026,
+          JORFTEXT000054435848). La fiche n'en portait aucune ; la période de
+          1972 à 1984 est coupée en 1981 pour la servir à sa date. Lu le 23
+          septembre 2026 (action 89).
       - debut: 1985
         fin: 1992
         type_calcul: points
@@ -8028,7 +8367,7 @@ regimes:
         valeur_point_annee: 2011
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8073,7 +8412,7 @@ regimes:
         valeur_point_annee: 2011
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA PART DU MÉDECIN PASSE À LA MOITIÉ. Du 30 mars 1993 au 8 juillet
           1994 la cotisation des caisses « est égale à la cotisation exigible
@@ -8111,7 +8450,7 @@ regimes:
         valeur_point_annee: 2011
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           Même forfait de 45 C partagé par moitié (D. 645-2
           LEGIARTI000006738374, D. 645-3 LEGIARTI000006738167 jusqu'au 8
@@ -8144,7 +8483,7 @@ regimes:
         valeur_point_annee: 2011
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8186,7 +8525,7 @@ regimes:
         valeur_point_annee: 2011
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8227,7 +8566,7 @@ regimes:
         valeur_point_annee: 2011
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8270,7 +8609,7 @@ regimes:
         valeur_point_annee: 2012
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8320,7 +8659,7 @@ regimes:
         valeur_point_annee: 2012
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8358,7 +8697,7 @@ regimes:
         valeur_point_annee: 2012
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8395,7 +8734,7 @@ regimes:
         valeur_point_annee: 2012
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8431,7 +8770,7 @@ regimes:
         valeur_point_annee: 2012
         decote_par_trimestre: 0.0125
         surcote_par_trimestre: null
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8480,7 +8819,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8530,7 +8869,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8580,7 +8919,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8630,7 +8969,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8681,7 +9020,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8732,7 +9071,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8783,7 +9122,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8834,7 +9173,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la
@@ -8885,7 +9224,7 @@ regimes:
         surcote_age_maximum: 70
         surcote_palier_age: 65
         surcote_par_trimestre_apres_palier: 0.0075
-        avantages_non_contributifs: [reversion]
+        avantages_non_contributifs: [reversion, majoration_enfants]
         notes: >-
           LA FICHE PORTE LA PART DU MÉDECIN SEULE. Le statut `medecin_liberal`
           est `sans_employeur` : le moteur porte au compte tout ce que la

@@ -808,10 +808,10 @@ reformes:
 
   - code: cavp_report_2011
     date: 2011-06-29
-    texte: {reference: "arrêté du 23 juin 2011 portant approbation des modifications apportées aux statuts du régime d'assurance vieillesse complémentaire de la section professionnelle des pharmaciens (CAVP), article 12", id: JORFARTI000024270214}
-    parametres: [surcote_par_trimestre, surcote_points]
+    texte: {reference: "arrêté du 23 juin 2011 portant approbation des modifications apportées aux statuts du régime d'assurance vieillesse complémentaire de la section professionnelle des pharmaciens (CAVP), articles 12 et 15 (majoration de report, taux plein à l'âge du 1° de L. 351-8, minoration à deux pentes)", id: JORFARTI000024270214}
+    parametres: [surcote_par_trimestre, surcote_points, age_taux_plein, decote_par_trimestre]
     regimes: [cavp_complementaire]
-    absorbee_par: []
+    absorbee_par: [age_table]
     non_appliquee: {}
 
   - code: cprn_report_2014
@@ -824,10 +824,10 @@ reformes:
 
   - code: carpimko_report_2015
     date: 2015-10-02
-    texte: {reference: "arrêté du 31 juillet 2015 portant approbation des modifications apportées aux statuts de la section professionnelle des auxiliaires médicaux (CARPIMKO), article 12 ter", id: JORFARTI000031255547}
-    parametres: [surcote_par_trimestre, surcote_points]
+    texte: {reference: "arrêté du 31 juillet 2015 portant approbation des modifications apportées aux statuts de la section professionnelle des auxiliaires médicaux (CARPIMKO), articles 11, 12, 12 ter et 12 quater (âges par génération, majoration de report)", id: JORFARTI000031255547}
+    parametres: [surcote_par_trimestre, surcote_points, age_ouverture, age_taux_plein]
     regimes: [carpimko_complementaire]
-    absorbee_par: []
+    absorbee_par: [age_table]
     non_appliquee: {}
 
   - code: carmf_temps_choisi_2017
@@ -919,4 +919,81 @@ reformes:
     parametres: [salaire_reference]
     regimes: [regime_general, msa_salaries, cavimac]
     absorbee_par: [salaire_reference_par_generation]
+    non_appliquee: {}
+
+  # Les sections de santé, lues au Journal officiel le 23 septembre 2026
+  # (action 89) : statuts et règlements de la CARMF, de l'ASV, de la CARCDSF,
+  # de la CAVP, de la CARPV et de la CARPIMKO. Chaque texte date une coupure
+  # de fiche, ou une ligne de `legislation/ages_regimes.csv`.
+
+  - code: carmf_trois_enfants_1964
+    date: 1964-02-02
+    texte: {reference: "arrêté du 16 janvier 1964 portant adjonction d'un article 22 au règlement du régime d'assurance vieillesse complémentaire des médecins (allocataires ayant élevé au moins trois enfants jusqu'à l'âge de seize ans) ; le taux de 10 % est celui de l'article 23 du règlement approuvé le 10 juillet 2026", id: JORFTEXT000000482076}
+    parametres: [avantages_non_contributifs]
+    regimes: [carmf_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: asv_trois_enfants_1981
+    date: 1981-01-01
+    texte: {reference: "règlement du régime des prestations complémentaires de vieillesse des médecins, article 8 (majoration de 10 % pour trois enfants des prestations liquidées avec une date d'effet postérieure au 31 décembre 1980), approuvé par l'arrêté du 10 juillet 2026", id: JORFTEXT000054435848}
+    parametres: [avantages_non_contributifs]
+    regimes: [asv_conventionnes]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: carcdsf_statuts_2007
+    date: 2007-10-10
+    texte: {reference: "arrêté du 1er octobre 2007 portant approbation des statuts du régime complémentaire d'assurance vieillesse de la Caisse autonome de retraite des chirurgiens-dentistes, articles 20 et 23 (taux plein à 65 ans, minoration de 5 % par année d'âge, départ anticipé des mères, majoration pour trois enfants)", id: JORFTEXT000000252172}
+    parametres: [age_taux_plein, decote_par_trimestre, avantages_non_contributifs]
+    regimes: [carcdsf_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: cavp_statuts_2009
+    date: 2009-06-06
+    texte: {reference: "arrêté du 11 mai 2009 portant approbation des statuts du régime d'assurance vieillesse complémentaire de la section professionnelle des pharmaciens, articles 12, 15 et 17 (taux plein à 65 ans, anticipation de 1,25 % par trimestre à l'âge seul, bonification d'un dixième pour trois enfants)", id: JORFTEXT000020694598}
+    parametres: [age_taux_plein, decote_par_trimestre, avantages_non_contributifs]
+    regimes: [cavp_complementaire]
+    absorbee_par: [age_table]
+    non_appliquee: {}
+
+  - code: carcdsf_statuts_2011
+    date: 2011-04-27
+    texte: {reference: "arrêté du 13 avril 2011 portant approbation des statuts du régime d'assurance vieillesse complémentaire de la section professionnelle des chirurgiens-dentistes et des sages-femmes, article 19 (taux plein à l'âge légal majoré de cinq ans, minoration à l'âge seul par génération, majoration de 1 % par trimestre)", id: JORFTEXT000023909782}
+    parametres: [age_ouverture, age_taux_plein, decote_par_trimestre, surcote_par_trimestre, surcote_points]
+    regimes: [carcdsf_complementaire]
+    absorbee_par: [age_table]
+    non_appliquee: {}
+
+  - code: carcdsf_bornes_2012
+    date: 2012-07-21
+    texte: {reference: "arrêté du 9 juillet 2012 portant approbation des modifications apportées aux statuts de la section professionnelle des chirurgiens-dentistes et des sages-femmes, annexe I (1,50 % par trimestre dès la génération 1955, tableau transitoire pour les nés de juillet 1951 à 1954)", id: JORFTEXT000026208359}
+    parametres: [decote_par_trimestre]
+    regimes: [carcdsf_complementaire]
+    absorbee_par: [age_table]
+    non_appliquee: {}
+
+  - code: carpv_statuts_2021
+    date: 2021-10-19
+    texte: {reference: "arrêté du 18 octobre 2021 portant approbation des modifications apportées aux statuts de la section professionnelle des vétérinaires (CARPV), articles 34 et 37 (taux plein à 65 ans, anticipation de 1,25 % par trimestre à l'âge seul, bonification de 10 % pour trois enfants)", id: JORFTEXT000044220734}
+    parametres: [decote_par_trimestre, avantages_non_contributifs]
+    regimes: [carpv_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: carcdsf_2024
+    date: 2024-01-09
+    texte: {reference: "arrêté du 27 décembre 2023 portant approbation des modifications apportées aux statuts des régimes d'assurance vieillesse complémentaire, d'invalidité-décès et de prestations complémentaires de vieillesse de la section professionnelle des chirurgiens-dentistes et des sages-femmes, annexe I, 4° (article 35 : taux plein à l'âge du 1° de L. 351-8, minoration de 1,25 % par trimestre dans la limite de 15 %, majoration de 1,25 % par trimestre accompli depuis 2024)", id: JORFTEXT000048880697}
+    parametres: [age_taux_plein, decote_par_trimestre, surcote_par_trimestre]
+    regimes: [carcdsf_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
+  - code: carpimko_2024
+    date: 2024-01-09
+    texte: {reference: "arrêté du 27 décembre 2023 portant approbation des modifications apportées aux statuts du régime d'assurance vieillesse complémentaire de la section professionnelle des auxiliaires médicaux (CARPIMKO), articles 11, 12, 12 ter et 12 quater (taux plein à l'âge du 1° de L. 351-8, âges des nés avant septembre 1961, majoration de 10 % pour trois enfants)", id: JORFTEXT000048880637}
+    parametres: [age_taux_plein, avantages_non_contributifs]
+    regimes: [carpimko_complementaire]
+    absorbee_par: [age_table]
     non_appliquee: {}

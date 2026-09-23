@@ -1531,10 +1531,17 @@ inventaire:
     statuts: [chirurgien_dentiste_ou_sage_femme]
     textes:
       - {reference: "décret n° 2008-1490 du 30 décembre 2008 (fusion de la CARCD et de la CARSAF)", id: null}
+      - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 1er octobre 2007", id: JORFTEXT000000252172}
+      - {reference: "statuts du régime complémentaire approuvés par l'arrêté du 13 avril 2011", id: JORFTEXT000023909782}
+      - {reference: "règlement du régime complémentaire approuvé par l'arrêté du 10 juillet 2026", id: JORFTEXT000054435736}
     manque: >-
       La CARSAF des sages-femmes, fusionnée dans la CARCDSF en 2009, avait son
       propre barème avant : les sages-femmes d'avant 2009 reçoivent celui des
-      dentistes.
+      dentistes. Les statuts d'avant 2007, publiés au Bulletin officiel, ne
+      sont pas lus : avant 2008 la fiche garde la règle d'âge du régime de
+      base. Le tableau de minoration des nés de juillet 1951 à 1954 (arrêté du
+      9 juillet 2012) n'est publié qu'en image, et 1,25 % par trimestre en
+      tient lieu.
 
   - code: cavp_complementaire
     nom: Complémentaire des pharmaciens (CAVP)
@@ -1555,7 +1562,11 @@ inventaire:
       2015, onze classes depuis 2020), mais la cotisation de référence de
       chaque année n'est pas dans le texte : le forfait indexé sur les prix
       en tient lieu, et rien n'est consolidé avant 1978 ; le volet en
-      capitalisation par classes n'est pas chiffré.
+      capitalisation par classes n'est pas chiffré. Les coefficients
+      d'anticipation des nés jusqu'en 1955, « en annexe » des statuts de 2011,
+      ne sont pas dans l'index : les deux pentes de la minoration leur sont
+      appliquées depuis leur propre âge du taux plein, et leur valeur de
+      service n'est pas affectée du coefficient de 0,96.
 
   - code: carpimko_complementaire
     nom: Complémentaire des auxiliaires médicaux (CARPIMKO)
@@ -1590,7 +1601,10 @@ inventaire:
       AMV de 1998 à 2014, points depuis 2015), mais aucun montant d'époque
       n'est dans le texte — la valeur de l'acte et le prix du point sont
       fixés hors index — : la grille de 2016 indexée sur les prix tient lieu
-      de montant avant 2016.
+      de montant avant 2016. La règle d'âge — taux plein à 65 ans, 1,25 % par
+      trimestre avant, que la durée n'annule pas — et la bonification pour
+      trois enfants ne sont lues que dans les statuts de 2021 : la première
+      est supposée la même avant, la seconde n'est servie que depuis 2022.
 
   - code: cavamac_complementaire
     nom: Complémentaire des agents généraux d'assurance (CAVAMAC)

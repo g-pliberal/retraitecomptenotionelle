@@ -1450,16 +1450,19 @@ entrees:
       - "décret n° 2026-418 du 29 mai 2026 (JORF du 31 mai 2026)"
     sources:
       - {type: jorf, reference: "décret n° 2026-418, lu en partie dans l'index JORF le 22 septembre 2026 (articles sur l'ASV des auxiliaires médicaux, les rachats de la CARMF)", date: "2026-09-22"}
-    verifie_le: "2026-09-22"
+      - {type: jorf, reference: "décret n° 2026-418, articles 3, 4, 5, 6, 16 et 25 (CARMF, CAVP, CARCDSF, CARPV, ASV des médecins, CARPIMKO), lus en entier dans l'index JORF : une codification — affiliation, dispenses, rachats, classes, cotisations volontaires — qui ne change aucun des paramètres que les fiches portent", date: "2026-09-23"}
+    verifie_le: "2026-09-23"
     temoins: []
     reformes: []
     etat: a_verifier
     effet: >-
-      Inconnu tant que le décret n'est pas lu article par article contre les
-      fiches des dix sections.
+      Lu pour les sections juridiques (articles 2 et 22) le 23 septembre 2026,
+      puis pour les sections de santé (articles 3 à 6, 16 et 25) : aucun
+      paramètre des fiches ne bouge. Restent les articles de la CAVEC (8), de
+      la CAVAMAC (13) et de la Cipav (20 et 21).
     a_faire: >-
-      Lire les quelque quarante articles et reporter chaque changement de
-      paramètre dans sa fiche.
+      Lire les articles 8, 13, 20 et 21 contre les fiches de la CAVEC, de la
+      CAVAMAC et de la Cipav.
     prochaine_veille: "2026-10-31"
 
   - id: cavom_ages_minoration
@@ -1687,6 +1690,245 @@ entrees:
       La majoration de durée d'assurance pour enfants que les mêmes articles
       ouvrent (L. 351-4 à L. 351-4-2) n'est portée ni à la CNAVPL ni à la
       CNBF ; la surcote parentale non plus.
+    prochaine_veille: "2027-03-31"
+
+  - id: carcdsf_minoration_age_seul
+    regle: >-
+      Régime complémentaire de la CARCDSF : jusqu'en 2010, taux plein à 65
+      ans et minoration de 5 % par année d'âge manquante ; de 2011 à 2023,
+      taux plein à l'âge légal majoré de cinq ans, minoration à l'âge seul de
+      5 % par année pour les nés avant juillet 1951, 1,50 % par trimestre pour
+      les nés depuis 1955, un tableau entre les deux, et majoration de 1 % par
+      trimestre au-delà ; depuis 2024, taux plein à l'âge du 1° de L. 351-8,
+      minoration de 1,25 % par trimestre dans la limite de 15 %, majoration de
+      1,25 % par trimestre accompli depuis 2024 dans la limite de 25 %. Les
+      affiliées partent sans minoration une année plus tôt par enfant, cinq au
+      plus. Majoration de 10 % pour trois enfants.
+    textes:
+      - "statuts du régime complémentaire, articles 20 et 23, approuvés par l'arrêté du 1er octobre 2007 (JORFTEXT000000252172)"
+      - "statuts, article 19, approuvés par l'arrêté du 13 avril 2011 (JORFTEXT000023909782), modifiés par l'arrêté du 9 juillet 2012 (JORFTEXT000026208359)"
+      - "statuts, article 35, dans la rédaction de l'arrêté du 27 décembre 2023 (JORFTEXT000048880697)"
+      - "règlement du régime, articles 1er à 5, approuvé par l'arrêté du 10 juillet 2026 (JORFTEXT000054435736)"
+    sources:
+      - type: jorf
+        reference: >-
+          Les quatre arrêtés lus en entier dans l'index JORF du dépôt ; le
+          tableau transitoire de 2012 n'y est qu'une mention (« Vous pouvez
+          consulter le tableau dans le JO n° 168 du 21/07/2012 texte numéro
+          3 »), publié en image.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CARCDSF, page « A quel âge demander ses droits » : taux plein à 67
+          ans, « 1,25 % par trimestre manquant pour atteindre votre 67eme
+          anniversaire », majoration de « 1,25 % par trimestre civil cotisé
+          dans la limite de 25 », dix pour cent pour trois enfants, une année
+          d'anticipation par enfant pour les femmes, « si vous avez eu 2
+          enfants, vous pouvez bénéficier du taux plein pour ce régime dès 65
+          ans » ; page « Montant des cotisations » 2026 (forfait de 3 210,60 €,
+          11,35 % de 0,65 à 5 plafonds), conforme à la fiche.
+        url: "https://www.carcdsf.fr/retraite/a-quel-age-demander-ses-droits-56"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: [carcdsf_deux_enfants_65_ans]
+    reformes: [carcdsf_statuts_2007, carcdsf_statuts_2011, carcdsf_bornes_2012, carcdsf_2024]
+    etat: approximation
+    effet: >-
+      La fiche lisait 62 et 67 ans et la décote du régime de base, que la
+      durée annule : un dentiste parti à 64 ans avec sa durée ne perdait rien
+      de sa complémentaire, là où la caisse lui retire 15 % depuis 2024 et
+      18 % de 2017 à 2023. Depuis le 23 septembre 2026, `abattement_points:
+      cavom` de 2008 à 2010, table `carcdsf_2011`, `decote_annulee_par_la_duree:
+      false`, `decote_trimestres_maximum: 12`, majoration `par_age_seul` et
+      `taux_plein_anticipe_par_enfant_annees`, dans les deux moteurs ; tenu par
+      tests/test_sections_sante.py. Approximations : le tableau des nés de
+      juillet 1951 à 1954 n'est pas lu (1,25 % en tient lieu) ; les nés avant
+      juillet 1951 sont minorés par trimestre et non par année de 2011 à 2016 ;
+      la majoration sert un seul taux par année de liquidation ; les statuts
+      d'avant 2007, au Bulletin officiel, ne sont pas lus et la fiche garde
+      avant 2008 la règle du régime de base.
+    a_faire: >-
+      Retrouver le tableau de l'arrêté du 9 juillet 2012 (JO n° 168, texte 3)
+      et les statuts d'avant 2007.
+    prochaine_veille: "2027-03-31"
+
+  - id: cavp_minoration_deux_pentes
+    regle: >-
+      Volet par répartition de la complémentaire de la CAVP : jusqu'en 2011,
+      retraite entière à 65 ans et anticipation de 1,25 % par trimestre à
+      l'âge seul ; depuis l'arrêté du 23 juin 2011, retraite entière à l'âge
+      du 1° de L. 351-8 pour les nés depuis 1956 (65 ans jusqu'en 1952, 66 ans
+      de 1953 à 1955) et minoration de 1,25 % par trimestre jusqu'à 65 ans puis
+      de 0,5 % de 65 ans à cet âge, que la durée n'annule pas. Bonification
+      d'un dixième pour trois enfants.
+    textes:
+      - "statuts du régime complémentaire, articles 12, 15 et 17, approuvés par l'arrêté du 11 mai 2009 (JORFTEXT000020694598)"
+      - "statuts, articles 12 et 15, dans la rédaction de l'arrêté du 23 juin 2011 (JORFTEXT000024270202)"
+      - "règlement du régime, articles 8, 12 et 15, approuvé par l'arrêté du 10 juillet 2026 (JORFTEXT000054436076)"
+    sources:
+      - type: jorf
+        reference: >-
+          Les trois textes lus dans l'index JORF du dépôt ; le tableau des
+          coefficients des nés jusqu'en 1955, « en annexe des présents
+          statuts » de 2011, n'y figure pas.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CAVP, pages « Comment votre retraite de pharmacien libéral est-elle
+          calculée ? » (328,80 € par annuité en 2026, minoration avant l'âge
+          du taux plein, majoration de 10 % pour trois enfants) et « À quel
+          âge prendre votre retraite ? » (taux plein de la répartition à 67 ans
+          pour les générations nées à compter de 1956).
+        url: "https://www.cavp.fr/pr%C3%A9parer-votre-retraite/comment-votre-retraite-est-elle-calcul%C3%A9e"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [cavp_statuts_2009, cavp_report_2011]
+    etat: approximation
+    effet: >-
+      La fiche lisait la décote du régime de base, que la durée annule : un
+      pharmacien parti à 64 ans avec sa durée ne perdait rien de sa
+      complémentaire, là où la caisse lui retire 9 %. Depuis le 23 septembre
+      2026, table `cavp`, `decote_annulee_par_la_duree: false` et
+      `decote_palier_age: 65`, dans les deux moteurs. Approximations : les
+      nés jusqu'en 1955 reçoivent les deux pentes depuis leur propre âge, leur
+      tableau n'étant pas lu ; la valeur de service n'est pas affectée de 0,96
+      ou de 0,96/0,98 pour ces générations ; le départ anticipé pour carrière
+      longue, minoré « jusqu'à l'âge de 65 ans » seulement depuis 2024, reçoit
+      les deux pentes dans la limite de vingt trimestres ; les statuts d'avant
+      2009 ne sont pas lus.
+    a_faire: >-
+      Lire l'annexe des statuts de 2011 et les statuts d'avant 2009.
+    prochaine_veille: "2027-03-31"
+
+  - id: carpimko_ages_2015
+    regle: >-
+      Régime complémentaire de la CARPIMKO depuis l'arrêté du 31 juillet
+      2015 : taux plein à 65 ans pour les générations 1955 et antérieures,
+      quatre mois de plus par génération jusqu'à 67 ans en 1961, âge minimal de
+      60 à 62 ans du même pas ; taux plein avant cet âge avec la durée du
+      régime de base ; abattement de 1,25 % par trimestre manquant au régime de
+      base dans la limite des trimestres qui séparent de l'âge du taux plein
+      (jusqu'en 2023 : 4 % par année d'anticipation plus 0,25 % par trimestre
+      manquant pour les générations 1955 et antérieures). Majoration de 10 %
+      pour trois enfants depuis 2024.
+    textes:
+      - "statuts, articles 11, 12, 12 ter et 12 quater, dans la rédaction de l'arrêté du 31 juillet 2015 (JORFTEXT000031255542)"
+      - "arrêté du 27 décembre 2023 (JORFTEXT000048880637)"
+      - "règlement du régime, articles 3 à 6, approuvé par l'arrêté du 10 juillet 2026 (JORFTEXT000054435904)"
+    sources:
+      - type: jorf
+        reference: >-
+          Les trois textes lus dans l'index JORF du dépôt ; les statuts
+          antérieurs, publiés au Bulletin officiel (arrêté du 20 novembre
+          1996), n'y sont pas.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CARPIMKO, page « Age de ma retraite » : 62 à 64 ans, taux plein à 67
+          ans ou avec la durée, décote et surcote ; l'ASV des auxiliaires, 60
+          et 65 ans. Elle ne décrit pas la table des générations d'avant
+          septembre 1961.
+        url: "https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/age-de-ma-retraite"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [carpimko_report_2015, carpimko_2024]
+    etat: approximation
+    effet: >-
+      La fiche lisait 67 ans dès la génération 1955 ; la table `carpimko_2016`
+      arrête la décote et fait partir la majoration à l'âge que l'article 12
+      quater écrit, depuis 2016. Trois enfants majorent la pension depuis
+      2024. Approximations : l'abattement des générations 1955 et antérieures
+      de 2016 à 2023 (4 % par année plus 0,25 % par trimestre) n'est pas porté,
+      et la fiche leur applique 1,25 % par trimestre depuis 65 ans ; les
+      statuts d'avant 2015 ne sont pas lus.
+    a_faire: >-
+      Porter l'abattement des générations 1955 et antérieures si un témoin
+      ou un cas type l'exige ; lire les statuts d'avant 2015.
+    prochaine_veille: "2027-03-31"
+
+  - id: carpv_minoration_age_seul
+    regle: >-
+      Régime complémentaire de la CARPV : taux plein à 65 ans, anticipation
+      dès 60 ans à « 1,25 % par trimestre manquant avant l'âge de soixante-cinq
+      ans », que la durée n'annule pas ; aucune majoration pour report ;
+      bonification de 10 % pour trois enfants.
+    textes:
+      - "statuts, articles 34 et 37, dans la rédaction de l'arrêté du 18 octobre 2021 (JORFTEXT000044220734)"
+      - "règlement du régime, articles 2 et 5, approuvé par l'arrêté du 10 juillet 2026 (JORFTEXT000054436022)"
+    sources:
+      - type: jorf
+        reference: >-
+          Les deux textes lus dans l'index JORF du dépôt ; les modifications
+          antérieures (1999 à 2017) n'y portent que des titres ou des articles
+          sans rapport.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CARPV, page « Comprendre vos cotisations et vos appels de
+          cotisations » (classes de 2026), conforme à la fiche.
+        url: "https://www.carpv.fr/vos-retraites/comprendre-vos-cotisations-et-vos-appels-de-cotisations/"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [carpv_statuts_2021]
+    etat: approximation
+    effet: >-
+      La fiche écrivait la règle d'âge en laissant sa durée requise vide ; le
+      moteur opposait la durée de la carrière, qui annulait la minoration : un
+      vétérinaire parti à 64 ans avec sa durée ne perdait rien, là où la
+      caisse lui retire 5 %. `decote_annulee_par_la_duree: false` sur toutes
+      les périodes, et `majoration_enfants` depuis 2022. Approximation : la
+      règle d'âge est supposée la même avant 2021, comme la fiche le faisait
+      déjà ; la bonification n'est servie qu'à partir de 2022.
+    a_faire: >-
+      Lire des statuts de la CARPV antérieurs à 2021 pour dater la
+      bonification et la règle d'âge.
+    prochaine_veille: "2027-03-31"
+
+  - id: carmf_asv_minoration_enfants
+    regle: >-
+      Complémentaire de la CARMF : de 2000 à 2016, taux plein à 65 ans et
+      coefficients d'anticipation par année d'âge — 0,75 à 60 ans jusqu'à
+      0,95 à 64 ans —, sans condition de durée ; majoration pour trois enfants
+      depuis l'arrêté du 16 janvier 1964, de 10 % selon le règlement de 2026.
+      ASV des médecins : 10 % pour trois enfants sur les prestations
+      liquidées depuis le 1er janvier 1981.
+    textes:
+      - "arrêté du 16 janvier 1964 portant adjonction d'un article 22 au règlement du régime (JORFTEXT000000482076), titre seul dans l'index"
+      - "règlement du régime complémentaire, article 23, et règlement du régime des prestations complémentaires de vieillesse, article 8, approuvés par l'arrêté du 10 juillet 2026 (JORFTEXT000054435848)"
+    sources:
+      - type: jorf
+        reference: >-
+          L'arrêté de 1964 (titre) et celui du 10 juillet 2026 (texte entier),
+          dans l'index JORF du dépôt.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CARMF, pages « Âge de départ en retraite » (complémentaire et ASV dès
+          l'âge légal, majoration de 1,25 % par trimestre après 62 ans et de
+          0,75 % de 65 à 70 ans) et « Calculer votre retraite » (exemple d'un
+          médecin né le 10 novembre 1960, parti à 65 ans : 12 trimestres de
+          report, « 12 x 1,25 % = 15 % - coefficient : 1,15 », « hors majoration
+          familiale »).
+        url: "https://www.carmf.fr/page.php?page=cdrom/retr/retr-calcul.htm"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: [carmf_report_62_65_ans]
+    reformes: [carmf_trois_enfants_1964, asv_trois_enfants_1981]
+    etat: approximation
+    effet: >-
+      De 2000 à 2016, la fiche disait l'âge seul sans que le moteur le lise :
+      un médecin parti à 64 ans avec sa durée n'était pas minoré. Depuis le 23
+      septembre 2026, `abattement_points: cavom` sur ces périodes, et
+      `majoration_enfants` depuis 1964 à la complémentaire, depuis 1981 à
+      l'ASV. Approximation : le taux de 1964 n'est pas lu, seul le titre de
+      l'arrêté l'étant.
+    a_faire: >-
+      Lire le texte de l'arrêté du 16 janvier 1964 (Bulletin officiel ou
+      Journal officiel en image) et la date d'origine de l'article 15 des
+      statuts de la CARMF.
     prochaine_veille: "2027-03-31"
 
 journal:
