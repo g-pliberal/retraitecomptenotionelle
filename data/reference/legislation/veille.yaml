@@ -785,13 +785,14 @@ entrees:
     textes: ["R. 351-9 CSS", "R. 351-5 CSS", "R. 173-4-4-1, 2° CSS", "décret n° 2003-1306, article 20"]
     sources:
       - {type: legifrance, reference: "R. 351-9 CSS, certifié par le récupérateur", date: "2026-09-13"}
+      - {type: legifrance, reference: "R. 351-5 CSS, LEGIARTI000006749346, version du 21 décembre 1985 toujours en vigueur, lue dans l'index LEGI : les trimestres des articles R. 351-3 et R. 351-4 ne portent pas au-delà de quatre le nombre de trimestres d'assurance d'une même année civile, majorations de durée exceptées", date: "2026-09-22"}
       - {type: legifrance, reference: "R. 173-4-4-1 CSS, LEGIARTI000053335493, version du 1er janvier 2026, lue dans l'index LEGI : « La limite de quatre trimestres d'assurance par année civile fixée à l'article R. 351-5 […] s'apprécie en tenant compte des périodes mentionnées au 1° » — celles des trois régimes alignés", date: "2026-09-22"}
       - {type: legifrance, reference: "décret n° 2003-1306 du 26 décembre 2003, article 20, LEGIARTI000054590030, version du 1er août 2026 : pour la durée d'assurance tous régimes, « une année civile ne peut compter plus de quatre trimestres »", date: "2026-09-22"}
     verifie_le: "2026-09-22"
     temoins: []
     reformes: []
     etat: approximation
-    effet: "DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux moteurs : chacune verse à son régime, sur son revenu, et les régimes distincts servent chacun leur pension ; la durée tous régimes, la durée cotisée et, dans un groupe liquidé ensemble, la durée du groupe sont bornées à quatre trimestres par année civile. Rien n'est supposé : une activité n'est cumulée que si elle le déclare (`Metier.cumul`). Le formulaire du site ne le propose pas encore. Reste une approximation : l'année d'un CHANGEMENT de métier principal relève d'un seul régime, celui qui en occupe le plus de mois ; limites.md le mesure."
+    effet: "DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux moteurs : chacune verse à son régime, sur son revenu, et les régimes distincts servent chacun leur pension ; la durée tous régimes, la durée cotisée et, dans un groupe liquidé ensemble, la durée du groupe sont bornées à quatre trimestres par année civile. Rien n'est supposé : une activité n'est cumulée que si elle le déclare (`Metier.cumul`). Le formulaire du site le propose : un menu « remplace / s'ajoute », réglé sur « remplace ». Reste une approximation : l'année d'un CHANGEMENT de métier principal relève d'un seul régime, celui qui en occupe le plus de mois ; limites.md le mesure."
     a_faire: null
     prochaine_veille: "2027-09-30"
 
@@ -4657,3 +4658,25 @@ journal:
       uniques des petites pensions ; la majoration de durée d'assurance et la
       surcote parentale des avocats, que L. 653-3 leur ouvre comme L. 643-1-1
       aux libéraux.
+
+  - date: "2026-09-22"
+    session: "action 116 : deux activités à la fois"
+    consulte: >-
+      L'index LEGI du dépôt : R. 351-5 CSS (LEGIARTI000006749346, version de
+      1985 toujours en vigueur), R. 351-12 CSS dans ses versions successives,
+      R. 173-4-4-1 CSS (LEGIARTI000053335493, version du 1er janvier 2026),
+      l'article 20 du décret n° 2003-1306 (LEGIARTI000054590030, version du
+      1er août 2026) et ses homologues des décrets des ouvriers de l'État et
+      de la Banque de France.
+    trouve: >-
+      La limite de quatre trimestres d'assurance par année civile est posée
+      par R. 351-5 pour le régime général, majorations de durée exceptées ; le 2° de R. 173-4-4-1 l'apprécie sur la réunion des trois
+      régimes alignés, et les décrets de la CNRACL, des ouvriers de l'État et
+      de la Banque de France l'écrivent pour la durée tous régimes. R. 351-12
+      ne borne que les périodes assimilées. Le modèle applique maintenant
+      cette limite aux activités cumulées que l'assuré déclare, et somme les
+      revenus d'une même année dans la liquidation unique ; aucune carrière à
+      une activité ne bouge.
+    reste: >-
+      La règle qui répartit le plafond de la Sécurité sociale entre plusieurs
+      employeurs, ni lue ni modélisée.

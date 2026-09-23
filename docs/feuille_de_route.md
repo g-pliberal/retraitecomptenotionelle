@@ -25,8 +25,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 363<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->35 441<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 418<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->35 813<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 ne touchent que les données et la page Coût ;
 les actions 7, 9, 10 et 11 touchent les deux moteurs, comme l'a fait l'action 5,
 et l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -14931,3 +14931,83 @@ poste qui lit le même compte) ; `index.html` (la composition de l'image) ;
 `README.md` ; `data/reference/site/affirmations.yaml` ;
 `tests/test_web.py`, `tests/test_affirmations.py`, `tests/temoins/pages.json` ;
 `moteur/style.css`.
+
+### 116. Deux activités à la fois : le cumul se déclare, et le modèle ne devine rien — `fait`
+
+**Demande.** Pouvoir cumuler plusieurs activités dans le simulateur, à
+condition que la personne indique elle-même qu'il s'agit d'activités en plus :
+rien ne doit être deviné. C'est aussi la réserve laissée par l'action 95, dont
+le libéral n'a pas de carrière antérieure — mais celle-là porte sur un cas
+type, et reste un chantier distinct.
+
+**Ce qui existait.** Des activités SUCCESSIVES, jusqu'à six lignes dans le
+formulaire, chacune déclarée — le statut d'une ligne n'est jamais
+présélectionné. Rien pour deux activités sur la même période : les métiers
+devaient se suivre, et le moteur ne tenait qu'une ligne, donc un statut, par
+année civile.
+
+**Ce qui est fait, dans les deux moteurs.** `Metier` porte `cumul` (faux par
+défaut) et `age_fin`. Une activité cumulée s'ajoute à l'activité principale de
+son âge de début à son âge de fin ou au départ, et l'année porte une ligne par
+statut — deux lignes de la même année ne partagent jamais le leur, et
+`ligne(annee)` rend l'activité principale. Chaque activité cotise à son régime
+et chaque régime sert ses droits. Ce que le droit compte TOUS RÉGIMES — durée
+d'assurance, durée cotisée, carrière longue, surcote, durée d'un groupe liquidé
+ensemble — ne dépasse pas quatre trimestres par année civile : R. 351-5, le 2°
+de R. 173-4-4-1 pour la réunion des régimes alignés, et l'article 20 du décret
+n° 2003-1306 pour la CNRACL, tous trois lus dans l'index LEGI. La liquidation
+unique somme les revenus d'une même année avant de les écrêter une fois au
+plafond — la moitié de la Lura qu'un parcours à un métier à la fois ne
+produisait jamais. Le compte notionnel porte la cotisation de chaque activité.
+
+**Ce que ça a déplacé : rien.** Les témoins régénérés sont identiques au
+chiffre près : aucune carrière à une activité ne bouge. La preuve de la règle
+est dans `tests/test_cumul_activites.py` — un salarié au-dessus du plafond
+qui ajoute une activité d'artisan garde la même retraite de base, parce que le
+revenu de l'année est déjà écrêté et que la durée ne gagne rien sur des années
+pleines ; le même salarié qui exerce en libéral reçoit la pension de la caisse
+des libéraux en plus. Et quarante parcours cumulés tirés au hasard sont
+confrontés valeur par valeur entre Python et JavaScript
+(`tests/js/comparer-cumul.mjs`) ; une faute injectée dans le plafond annuel
+du portage y a été prise.
+
+**Le formulaire.** Chaque ligne de métier à partir de la deuxième porte un
+menu « Cette activité : remplace la précédente / s'ajoute à celle en cours »,
+réglé sur « remplace » — le comportement d'avant —, et une date de fin qui ne
+sert qu'à l'activité ajoutée ; le script de la page la masque tant que
+« s'ajoute » n'est pas choisi. Une date de fin sans cumul déclaré est refusée,
+comme une période sans emploi déclarée cumulée, et le cumul en saisie par la
+pension, qui ne cherche qu'un niveau pour toute la carrière. Le résumé du
+parcours dit « et en même temps » là où il disait « puis », et « une année
+n'a qu'une activité principale » là où il disait « qu'un statut ». Deux
+simulations et deux pages témoins de plus, que le portage rend au chiffre et
+à l'octet près.
+
+**Deux trouvailles en chemin.** Le tirage au hasard Python/JavaScript a pris,
+au rebasage, une interaction avec la limite du chômage non indemnisé arrivée
+entre-temps sur `main` : le portage calculait la limite sur les lignes
+principales puis rendait CE tableau-là, et les lignes cumulées, ajoutées
+après, n'arrivaient jamais dans la carrière. Elles sont ajoutées au tableau
+limité, comme en Python. Et un nom : la fonction qui crédite les trimestres
+par année s'appelait `crediter`, comme celle que `main` venait d'écrire pour
+les points majorés — le JavaScript refusait le doublon, le Python aurait
+écrasé la première sans rien dire. Elle s'appelle `crediter_trimestres`.
+
+**Ce qui reste.** Trois approximations que `limites.md` nomme : le plafond global d'assiette du compte notionnel
+s'applique activité par activité, deux statuts qui versent au même
+complémentaire y cotisent chacun sous un plafond entier, et la fiche de paie de
+la page Rémunération ne montre que l'activité principale.
+
+**Une leçon de manipulation.** Sous Windows, un fichier réécrit par un script
+Python ouvert en mode texte repasse en CRLF, que `.gitattributes` refuse dans
+le répertoire de travail. Ouvrir avec `newline=''`.
+
+**Fichiers.** `src/retraite_notionnelle/carriere.py`,
+`src/retraite_notionnelle/scenarios/actuel.py`,
+`src/retraite_notionnelle/moteur/compte.py`,
+`src/retraite_notionnelle/moteur/conversion.py`,
+`src/retraite_notionnelle/simulateur.py`, `src/retraite_notionnelle/web/pages.py`,
+et leurs portages dans `moteur/js/` (`regimes.js` pour la carrière longue),
+`index.html` ; `scripts/construire_temoins.py`, `tests/temoins/` ; `tests/test_cumul_activites.py`,
+`tests/js/comparer-cumul.mjs` ; `data/reference/legislation/veille.yaml` ;
+`docs/methodologie.md`, `docs/limites.md`.

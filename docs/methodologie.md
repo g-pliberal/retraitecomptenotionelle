@@ -2343,8 +2343,9 @@ Deux conventions le bornent, l'une et l'autre imposées par la maille des donné
   2° de R. 173-4-4-1 pour la liquidation unique des régimes alignés), et la
   liquidation unique somme les revenus d'une même année avant de les écrêter
   une seule fois au plafond. Servi par les deux moteurs, qu'un tirage au
-  hasard de parcours cumulés confronte valeur par valeur ; le formulaire du
-  site ne le propose pas encore.
+  hasard de parcours cumulés confronte valeur par valeur. Le formulaire le
+  propose par un menu « remplace la précédente / s'ajoute à celle en cours »,
+  réglé sur « remplace ».
 
 Le formulaire du site en accepte six, ce qui n'est pas une limite du moteur :
 au-delà, ce n'est plus une suite de métiers qu'on décrit mais un relevé de
