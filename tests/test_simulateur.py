@@ -2982,7 +2982,10 @@ def test_les_montants_reellement_servis_priment_sur_toute_projection(simulateur)
     # quelques centimes près, douze mensualités arrondies contre un annuel.
     servis = {
         2020: (642.93 * 12, 702.55 * 12, 1191.57 * 12),
-        2024: (733.03 * 12, 876.13 * 12, 1394.86 * 12),
+        # De janvier à octobre 2024 : le plafond de 1 367,51 €, et non celui du
+        # 1er novembre, 1 394,86 €, que le test demandait à côté des minima de
+        # janvier. Le SMIC a bougé deux fois cette année-là.
+        2024: (733.03 * 12, 876.13 * 12, 1367.51 * 12),
         2025: (747.69 * 12, 893.39 * 12, 1394.86 * 12),
     }
     for annee, (base, majore, plafond) in servis.items():
@@ -4125,10 +4128,14 @@ def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulate
     """L'article L. 14 retranche ses trimestres de la LIMITE D'ÂGE du grade :
     soixante-deux ans en catégorie active, non soixante-sept. Un agent classé
     parti à soixante ans subit huit trimestres de décote quand un sédentaire du
-    même âge en subit dix-huit — seize pour cent de pension d'écart (c'était
-    vingt trimestres et vingt pour cent avant que la suspension de 2026 ne
-    ramène la durée requise de la génération 1965 à cent soixante-dix), là où
-    le plafond de vingt trimestres éteint l'écart de TAUX à cinquante-sept ans.
+    même âge en subit vingt — vingt pour cent de pension d'écart, et un peu plus
+    par les dénominateurs, là où le plafond de vingt trimestres éteint l'écart
+    de TAUX à cinquante-sept ans.
+
+    Le départ tombe en janvier 2025 : la durée requise du sédentaire est celle
+    de la loi de 2023, 172 trimestres. Le test la prenait à 170 — la table de
+    la suspension, que la loi réserve aux pensions de septembre 2026 et après —
+    et comptait dix-huit trimestres de décote.
     """
     periode = simulateur.catalogue["cnracl"].periode(2023)
     carriere = simulateur.carriere_simple(
@@ -4144,20 +4151,20 @@ def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulate
     actif = _pension_actuelle(
         simulateur, "fonctionnaire_territorial_hospitalier_actif", 1965, 60)
     assert actif.pension_annuelle / sedentaire.pension_annuelle == (
-        pytest.approx(0.9 / 0.775, abs=0.01))
+        pytest.approx(0.9 / 0.75 * 172 / 169, abs=0.01))
     # À cinquante-sept ans, les deux décotes butent sur le plafond de vingt
     # trimestres : l'écart de TAUX disparaît, et il ne reste que celui des
-    # durées requises — 169 trimestres pour l'actif, 170 pour le sédentaire,
-    # depuis que le modèle lit le XXIV, B de l'article 10 de la loi de 2023.
-    # Un trimestre de dénominateur, soit six dixièmes de pour-cent.
+    # durées requises — 169 trimestres pour l'actif, depuis que le modèle lit
+    # le XXIV, B de l'article 10 de la loi de 2023, 172 pour le sédentaire
+    # parti en 2022. Trois trimestres de dénominateur.
     classe = _pension_actuelle(
         simulateur, "fonctionnaire_territorial_hospitalier_actif", 1965, 57)
     non_classe = _pension_actuelle(
         simulateur, "fonctionnaire_territorial_hospitalier", 1965, 57)
     assert classe.trimestres_requis == 169
-    assert non_classe.trimestres_requis == 170
+    assert non_classe.trimestres_requis == 172
     assert classe.pension_annuelle / non_classe.pension_annuelle == (
-        pytest.approx(170 / 169, abs=1e-4))
+        pytest.approx(172 / 169, abs=1e-4))
 
 
 def test_le_classement_oppose_sa_propre_duree_requise(simulateur):
@@ -4490,10 +4497,13 @@ def test_carriere_longue_quatre_trimestres_pour_qui_est_ne_au_dernier_trimestre(
     assert actuel.calculer(novembre).motif_ouverture == "carriere_longue"
     # Né en septembre, la porte des vingt ans reste la seule : 60 ans et
     # 9 mois pour la génération 1965 (D. 351-1-1, II). Né en novembre, celle
-    # des dix-huit ans s'ouvre, à soixante ans, et la durée cotisée y est
-    # (171 trimestres pour un né après mars 1965, suspension comprise).
+    # des dix-huit ans s'ouvre, mais à 60 ans et 3 mois, en février 2026 : à
+    # cette date, c'est la durée de la loi de 2023 qui vaut, 172 trimestres,
+    # et non les 171 de la suspension, réservée aux pensions de septembre 2026
+    # et après (loi n° 2025-1403, article 105 VI). Le test attendait soixante
+    # ans, sous la règle d'une date à venir.
     assert actuel.age_ouverture_droit(septembre) == pytest.approx(60.75)
-    assert actuel.age_ouverture_droit(novembre) == pytest.approx(60.0)
+    assert actuel.age_ouverture_droit(novembre) == pytest.approx(60.25)
 
 
 # --- Les périodes que le droit RÉPUTE cotisées (D. 351-1-2) ----------------

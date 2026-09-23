@@ -272,6 +272,23 @@ class DureesRequises(TableParGeneration):
         return None if valeur is None else (int(valeur[0]), valeur[1])
 
 
+class DureesRequisesAvantSuspension(DureesRequises):
+    """Durée requise que la suspension de 2026 remplace, pour les pensions
+    prenant effet avant le 1er septembre 2026 : 171 trimestres pour les nés en
+    1964, 172 pour ceux de 1965 (loi n° 2025-1403, article 105 VI ; circulaire
+    Cnav 2026-07, point 2.1). Voir ``duree_requise_avant_suspension.csv``."""
+
+    def __init__(self, racine: Path) -> None:
+        TableParGeneration.__init__(
+            self, racine, "duree_requise_avant_suspension.csv", "trimestres")
+
+
+#: Première date d'effet, (année, mois), où la table de la suspension vaut, et
+#: les générations qu'elle a changées : avant, la table de 2023 demeure.
+SUSPENSION_2026_EFFET = (2026, 9)
+GENERATIONS_SUSPENSION = (1964.0, 1966.0)
+
+
 class DureesRequisesRegimes:
     """Durée requise propre à un régime spécial, par génération.
 
@@ -1800,6 +1817,8 @@ class ScenarioActuel:
         self.classes = ClassesCotisation(parametres.racine_donnees)
         self.grilles = SalairesForfaitaires(parametres.racine_donnees)
         self.durees_requises = DureesRequises(parametres.racine_donnees)
+        self.durees_requises_avant_suspension = DureesRequisesAvantSuspension(
+            parametres.racine_donnees)
         self.durees_requises_regimes = DureesRequisesRegimes(parametres.racine_donnees)
         self.durees_proratisation = DureesProratisation(parametres.racine_donnees)
         self.ages_ouverture = AgesOuverture(parametres.racine_donnees)
@@ -1859,7 +1878,8 @@ class ScenarioActuel:
 
         Quand la chaîne s'arrête — plus de successeur, ou aucun coefficient
         déclaré — la dernière valeur publiée est ramenée en euros de la
-        liquidation par l'indice des prix. C'est une approximation, signalée
+        liquidation par l'indice des prix, pris un an plus tôt comme la
+        revalorisation du 1er janvier le prend. C'est une approximation, signalée
         comme telle par la fiabilité renvoyée ; c'est surtout un aveu
         d'ignorance, préférable à un coefficient inventé.
         """
@@ -1891,10 +1911,16 @@ class ScenarioActuel:
             reprise = (self.conversions_points.fusion(courant, successeur)
                        if successeur else None)
             if reprise is None:
+                # AVEC UN AN DE RETARD : une valeur revalorisée au 1er janvier
+                # l'est des prix de l'année écoulée (L. 161-25, moyenne des
+                # douze derniers indices mensuels). La prolonger par les prix de
+                # l'année même donnait à la valeur 2026 du point RCO et de la
+                # CNAVPL les +1,75 % de l'hypothèse d'inflation, là où la
+                # revalorisation de 2026 est de 0,9 %.
                 ancienne = self.valeurs_point.service(courant, derniere)
                 return (
                     conversion * ancienne[0]
-                    * self.macro.coefficient_prix(derniere, annee_liquidation),
+                    * self.macro.coefficient_prix(derniere - 1, annee_liquidation - 1),
                     min(fiabilite, ancienne[1], Fiabilite.MOYENNE),
                 )
 
@@ -2175,6 +2201,18 @@ class ScenarioActuel:
         if derogation is not None and derogation.duree_requise is not None:
             return derogation.duree_requise, derogation.fiabilite
         if periode.duree_requise_par_generation:
+            # LA SUSPENSION NE VAUT QU'À COMPTER DU 1er SEPTEMBRE 2026 : avant,
+            # les nés en 1964 et 1965 doivent la durée de la loi de 2023, que
+            # le module ne leur opposait plus.
+            if (carriere.age_liquidation is not None
+                    and GENERATIONS_SUSPENSION[0] <= carriere.generation
+                    < GENERATIONS_SUSPENSION[1]
+                    and (carriere.annee_liquidation, carriere.mois_liquidation)
+                    < SUSPENSION_2026_EFFET):
+                avant = self.durees_requises_avant_suspension.trimestres(
+                    carriere.generation)
+                if avant is not None:
+                    return avant
             par_generation = self.durees_requises.trimestres(carriere.generation)
             if par_generation is not None:
                 return par_generation

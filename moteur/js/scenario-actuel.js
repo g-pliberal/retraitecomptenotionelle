@@ -25,7 +25,8 @@ import {
   AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
   AgesOuverture, AgesRegimes, AnneesSalaireReference, CarriereLongue,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
-  DureesProratisation, DureesRequises, DureesRequisesFonctionPublique,
+  DureesProratisation, DureesRequises, DureesRequisesAvantSuspension,
+  DureesRequisesFonctionPublique, GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
   DureesServicesMilitaires,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
@@ -104,6 +105,7 @@ export class ScenarioActuel {
     this.classes = new ClassesCotisation(paquet);
     this.grilles = new SalairesForfaitaires(paquet);
     this.dureesRequises = new DureesRequises(paquet);
+    this.dureesRequisesAvantSuspension = new DureesRequisesAvantSuspension(paquet);
     this.dureesRequisesFonctionPublique = new DureesRequisesFonctionPublique(paquet);
     this.dureesProratisation = new DureesProratisation(paquet);
     this.agesOuverture = new AgesOuverture(paquet);
@@ -185,10 +187,12 @@ export class ScenarioActuel {
         ? this.conversionsPoints.fusion(courant, successeur)
         : null;
       if (reprise === null) {
+        // AVEC UN AN DE RETARD : la revalorisation du 1er janvier suit les prix
+        // de l'année écoulée (L. 161-25). Voir le Python.
         const ancienne = this.valeursPoint.service(courant, derniere);
         return [
           conversion * ancienne[0]
-            * this.macro.coefficientPrix(derniere, anneeLiquidation),
+            * this.macro.coefficientPrix(derniere - 1, anneeLiquidation - 1),
           Math.min(fiabilite, ancienne[1], Fiabilite.MOYENNE),
         ];
       }
@@ -437,6 +441,20 @@ export class ScenarioActuel {
       return [derogation.dureeRequise, derogation.fiabilite];
     }
     if (periode.duree_requise_par_generation) {
+      // LA SUSPENSION NE VAUT QU'À COMPTER DU 1er SEPTEMBRE 2026 : avant, les
+      // nés en 1964 et 1965 doivent la durée de la loi de 2023.
+      const [anneeEffet, moisEffet] = SUSPENSION_2026_EFFET;
+      if (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined
+          && carriere.generation >= GENERATIONS_SUSPENSION[0]
+          && carriere.generation < GENERATIONS_SUSPENSION[1]
+          && (carriere.anneeLiquidation < anneeEffet
+            || (carriere.anneeLiquidation === anneeEffet
+              && carriere.moisLiquidation < moisEffet))) {
+        const avant = this.dureesRequisesAvantSuspension.trimestres(carriere.generation);
+        if (avant !== null) {
+          return avant;
+        }
+      }
       const parGeneration = this.dureesRequises.trimestres(carriere.generation);
       if (parGeneration !== null) {
         return parGeneration;

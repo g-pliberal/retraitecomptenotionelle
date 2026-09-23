@@ -29,6 +29,13 @@
 #     transcriptions — et le moteur les préfère à toute projection dès qu'une
 #     année en porte un.
 #
+# UNE LIGNE PAR ANNÉE, ET LA VALEUR DE L'ESSENTIEL DE L'ANNÉE. En 2024, les
+# trois montants ont bougé deux fois, avec le SMIC, au 1er janvier et au
+# 1er novembre : la ligne 2024 porte ceux de janvier à octobre — 733,03 € et
+# 876,13 € par mois, plafond de 1 367,51 € —, la ligne 2025 ceux de novembre.
+# Jusqu'au 23 septembre 2026, la ligne 2024 portait le plafond de NOVEMBRE,
+# 1 394,86 €, à côté des minima de janvier, et le test le confirmait.
+#
 # Ce n'est pas un détail de méthode. Projeter l'ancre la plus proche donnait
 # pour le minimum majoré de 2020 un montant supérieur de 7,6 % à celui que
 # l'État a répondu à une question écrite : la réforme de 2023 a relevé ce
@@ -75,6 +82,6 @@ montant_majore,2026,10847.160000,haute
 plafond_ecretement,2012,12060.000000,certifiee
 plafond_ecretement,2014,13440.000000,certifiee
 plafond_ecretement,2020,14298.840000,haute
-plafond_ecretement,2024,16738.320000,haute
+plafond_ecretement,2024,16410.120000,haute
 plafond_ecretement,2025,16738.320000,haute
 plafond_ecretement,2026,17338.680000,haute

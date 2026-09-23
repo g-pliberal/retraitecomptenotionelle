@@ -98,17 +98,26 @@ entrees:
     prochaine_veille: "2026-12-31"
 
   - id: duree_requise_par_generation
-    regle: "Durée d'assurance requise pour le taux plein et dénominateur du prorata, par génération."
-    textes: ["L. 161-17-3 CSS (réécrit par la loi n° 2025-1403, article 105)", "L. 351-1 CSS"]
+    regle: "Durée d'assurance requise pour le taux plein et dénominateur du prorata, par génération ; pour les pensions prenant effet avant le 1er septembre 2026, les nés en 1964 et 1965 doivent celle de la loi de 2023, 171 et 172 trimestres."
+    textes: ["L. 161-17-3 CSS (réécrit par la loi n° 2025-1403, article 105)", "loi n° 2025-1403, article 105 VI", "L. 351-1 CSS"]
     sources:
       - {type: legifrance, reference: "L. 161-17-3 CSS, LEGIARTI000053280903, version du 31 décembre 2025, lue par le récupérateur dans l'index LEGI à jour au 16 septembre 2026", date: "2026-09-17"}
-      - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 2.1", date: "2026-03-05"}
+      - {type: legifrance, reference: "L. 161-17-3 CSS, LEGIARTI000053280903 : « s'appliquent aux pensions prenant effet à compter du 1er septembre 2026 » ; version du 1er septembre 2023, LEGIARTI000047452764 : « 171 trimestres, pour les assurés nés en 1964 ; 172 trimestres, pour les assurés nés à partir du 1er janvier 1965 »", date: "2026-09-23"}
+      - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 2.1 : « La durée de 171 trimestres pour les assurés nés en 1964 et celle de 172 trimestres pour les assurés nés en 1965 reste opposable aux assurés prenant leur retraite avant le 1er septembre 2026 »", date: "2026-03-05"}
       - {type: service_public, reference: "fiche F14044", date: "2026-08-14"}
-    verifie_le: "2026-09-17"
-    temoins: [cnav_2026_07_age_legal_1964, cnav_2026_07_age_legal_1965_apres_avril, sp_f19666_decote, sp_f21552_taux_plein_170]
+    verifie_le: "2026-09-23"
+    temoins: [cnav_2026_07_age_legal_1964, cnav_2026_07_age_legal_1965_apres_avril, sp_f19666_decote, sp_f21552_taux_plein_170, cnav_2026_07_duree_1964_avant_septembre, cnav_2026_07_duree_1965_avant_septembre]
     reformes: [reforme_2023, lfss_2026_suspension]
     etat: conforme
-    effet: "Taux et proratisation de toute liquidation. Les vingt segments depuis 1958 sont certifiés (action 27)."
+    effet: >-
+      Taux et proratisation de toute liquidation. Les vingt segments depuis
+      1958 sont certifiés (action 27). Jusqu'au 23 septembre 2026, le modèle
+      opposait la table de la suspension à toute pension de ces générations,
+      quelle que soit sa date d'effet : un à deux trimestres de moins aux
+      départs anticipés de 1964 et 1965 antérieurs à septembre 2026. Table
+      `duree_requise_avant_suspension.csv` ; les témoins de carrière longue de
+      la circulaire 2026-29, qui rejouaient sa règle en 2024 et 2025, liquident
+      désormais en septembre 2026.
     a_faire: null
     prochaine_veille: "2026-12-31"
 
@@ -349,7 +358,11 @@ entrees:
     reformes: []
     etat: conforme
     effet: >-
-      Petites pensions au taux plein. Jusqu'au 23 septembre 2026, le module
+      Petites pensions au taux plein. Le plafond d'écrêtement de la ligne 2024
+      était celui de novembre, 1 394,86 €, à côté des minima de janvier : il est
+      celui de janvier à octobre, 1 367,51 € — le plafond suit le SMIC, que
+      le 1er novembre 2024 a relevé de 2 % : 1 367,51 × 1,02 = 1 394,86. Le
+      test le fixe. Jusqu'au 23 septembre 2026, le module
       servait le minimum SURCOTÉ — le plancher multiplié par le coefficient de
       surcote —, ce qu'aucune des deux règles ne fait : 661,20 € au lieu de
       660,59 € dans l'exemple de la circulaire, et l'écart grandit avec la
@@ -490,7 +503,13 @@ entrees:
     reformes: []
     etat: transcrit
     effet: "Fonctionnaires à carrière courte."
-    a_faire: "Chercher une fiche de calcul publiée par le SRE."
+    a_faire: >-
+      Chercher une fiche de calcul publiée par le SRE. Le montant de 2023 du
+      fichier (1 248,33 € par mois) était celui du 1er juillet 2022 : il est
+      corrigé le 23 septembre 2026 à 1 258,32 €, valeur du 1er janvier 2023,
+      que deux chemins officiels donnent — la revalorisation de 0,8 %, et le
+      montant publié de 2024 divisé par la sienne. Aucune page lue ne la publie
+      en toutes lettres.
     prochaine_veille: "2027-03-31"
 
   - id: minimum_vieillesse
@@ -1482,6 +1501,28 @@ entrees:
     a_faire: >-
       Confronter à la calculette de la Cipav quand elle sera joignable.
     prochaine_veille: "2027-03-31"
+
+  - id: rci_seuil_premiere_tranche
+    regle: "De 2013 à 2024, la première tranche du RCI (7 %) s'arrête à un plafond propre au régime — le plafond de la sécurité sociale de 2013, puis revalorisé du plus petit des coefficients du revenu de référence et des pensions —, et non au plafond de chaque année."
+    textes: ["D. 635-7 CSS, versions du 1er janvier 2013 au 6 juillet 2024"]
+    sources:
+      - {type: legifrance, reference: "D. 635-7 CSS, LEGIARTI000025263581 (2013), LEGIARTI000034624601 (2017), LEGIARTI000041966498 (2020) : « Au titre de l'exercice 2013, le montant du plafond mentionné au 1° est fixé au plafond annuel […] en vigueur au 1er janvier 2013 »", date: "2026-09-23"}
+      - {type: autre, reference: "COR, fiche « Régime complémentaire des indépendants » (juillet 2024) : 7 % « jusqu'à un plafond spécifique (42 946 euros) » en 2024", url: "https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_RCI_0.pdf", date: "2026-09-23"}
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [rci_2013]
+    etat: manque
+    effet: >-
+      Artisans et commerçants au-dessus du seuil, de 2014 à 2024 : la fiche
+      coupe la première tranche au plafond de chaque année (46 368 € en 2024),
+      le texte à un seuil plus bas (42 946 €), au-delà duquel le taux est de
+      8 % et non de 7. Sur la tranche d'écart, un point de cotisation de moins :
+      en 2024, une trentaine d'euros de cotisation et deux euros de pension par
+      an, moins d'un millième de la pension RCI.
+    a_faire: >-
+      Lire la série des seuils de 2014 à 2023, que le COR ne publie que pour
+      2024, et porter une assiette propre à la première tranche.
+    prochaine_veille: "2027-06-30"
 
   - id: rci_valeurs_point
     regle: >-
@@ -4133,3 +4174,25 @@ journal:
       fonction publique prenant effet le 1er janvier 2020. La péréquation
       d'avant 2004 au-delà du point d'indice ; les revalorisations des régimes
       spéciaux avant 2009 ; l'écart du cadre du COR en 2026.
+
+  - date: "2026-09-23"
+    session: "audit des formules, lot 2 (fin) : quatre valeurs datées à tort"
+    consulte: >-
+      Index LEGI : L. 161-17-3 CSS dans ses versions de 2023 et de 2025 ;
+      D. 732-166 du code rural et le décret n° 2026-78 (valeur du point RCO de
+      2025, fixée en février 2026) ; D. 635-7 CSS de 2013 à 2024. Circulaire
+      Cnav 2026-07, point 2.1 ; fiche RCI du COR (juillet 2024) ; page
+      « Minimum garanti » de la CNRACL.
+    trouve: >-
+      Les durées de la suspension ne valent que pour les pensions de
+      septembre 2026 et après ; le minimum garanti de 2023 et le plafond du
+      minimum contributif de 2024 étaient ceux d'une autre partie de l'année ;
+      les valeurs de point non publiées se prolongeaient par les prix de
+      l'année même, non de l'année écoulée. Lignes
+      `duree_requise_par_generation`, `minimum_garanti`,
+      `minimum_contributif` et `rci_seuil_premiere_tranche`.
+    reste: >-
+      La série des seuils de la première tranche du RCI de 2014 à 2023 ; le
+      montant du minimum garanti de 2023 en toutes lettres dans une
+      publication ; la valeur 2026 du point RCO et de la CNAVPL, quand elles
+      seront fixées.

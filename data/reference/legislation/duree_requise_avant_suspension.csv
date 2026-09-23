@@ -1,0 +1,27 @@
+# Durée d'assurance requise que la suspension de 2026 remplace, et qui reste
+# opposable aux pensions prenant effet AVANT le 1er septembre 2026
+# ------------------------------------------------------------------------
+# source_id: legifrance_textes, cnav_circulaires
+#
+# La loi n° 2025-1403 du 30 décembre 2025 a réécrit l'article L. 161-17-3 :
+# 170 trimestres pour les assurés nés du 1er janvier 1963 au 31 mars 1965, 171
+# jusqu'à la fin de 1965, 172 ensuite (`duree_assurance_requise.csv`). Mais le
+# VI de son article 105 réserve la nouvelle table « aux pensions prenant effet
+# à compter du 1er septembre 2026 ». Avant, la version du 1er septembre 2023
+# (LEGIARTI000047452764, lue dans l'index LEGI le 23 septembre 2026) demeure :
+# « 5° 171 trimestres, pour les assurés nés en 1964 ; 6° 172 trimestres, pour
+# les assurés nés à partir du 1er janvier 1965 ». La circulaire Cnav 2026-07
+# du 5 mars 2026 (point 2.1) l'écrit : « La durée de 171 trimestres pour les
+# assurés nés en 1964 et celle de 172 trimestres pour les assurés nés en 1965
+# reste opposable aux assurés prenant leur retraite avant le 1er septembre
+# 2026. »
+#
+# Qui cela touche : les générations 1964 et 1965 parties avant septembre 2026,
+# c'est-à-dire par un départ anticipé — carrière longue surtout. Le modèle leur
+# opposait la table de la suspension, un ou deux trimestres de moins.
+#
+# Ne sert que pour ces deux générations et ces dates : voir
+# `ScenarioActuel._duree_requise`.
+generation,trimestres,fiabilite
+1964,171,haute
+1965,172,haute
