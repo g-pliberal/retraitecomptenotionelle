@@ -202,13 +202,13 @@ fichiers:
       - "**Une circulaire annulée ne certifie plus rien.**"
       # Et l'enquête sur le salaire de référence, dans la confrontation à
       # OpenFisca : l'approximation d'avant, l'écart de sa table à la
-      # circulaire de janvier 2023, la dérive des colonnes reconstruites, le
-      # mois qui désignait la mauvaise colonne. Des mesures faites un jour,
-      # sur des tables qui ne bougent plus.
+      # circulaire de janvier 2023, la première mesure de la dérive des
+      # colonnes reconstruites, le mois qui désignait la mauvaise colonne. Des
+      # mesures faites un jour. La dérive elle-même ne l'est plus : chaque
+      # colonne publiée la déplace, et son tableau se recalcule.
       - "Il s'écartait de +0,30 % à +7,55 %"
       - "- de **−3 % à −5,5 %**"
       - "- de **−17 % à +10 %**"
-      - "| Colonne reconstruite"
       - "Le dépôt n'a d'abord gardé que la colonne la plus récente"
       - "Ce document a un temps affirmé"
       - "- **Le mois existe désormais"

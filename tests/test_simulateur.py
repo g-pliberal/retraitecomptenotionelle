@@ -2023,10 +2023,13 @@ def test_la_reconstruction_entre_colonnes_reste_dans_sa_derive(simulateur):
 
     La dérive vient de la caisse elle-même : elle arrondit sa table à trois
     décimales et repart chaque année de la précédente, si bien que les arrondis
-    s'accumulent. Mesuré : 0,01 % depuis la colonne voisine, contre 0,16 %
-    depuis celle de 2026. C'est ce rapport de dix qui justifie d'ancrer sur la
-    plus proche plutôt que sur la plus récente, et c'est lui que ce test
-    protège.
+    s'accumulent. Ce test en prend le PIRE, toutes colonnes et toutes années de
+    perception confondues, et exige deux choses : qu'il reste sous deux
+    millièmes depuis la colonne voisine, et sous ce qu'il vaut depuis la plus
+    récente — sans quoi ancrer sur la plus proche ne vaudrait plus sa
+    complexité. Le gain est d'un facteur deux au pire, bien plus en moyenne :
+    ``docs/limites.md`` en donne le tableau, que la prose recalcule
+    (``derive_revalorisation`` dans ``scripts/mesures_prose.py``).
     """
     import json
 
@@ -2087,7 +2090,8 @@ def test_le_coefficient_de_revalorisation_est_le_rapport_de_deux_valeurs(simulat
     assert lu(1970, derniere) == pytest.approx(recente[1970])
 
     # Une année de liquidation sans colonne publiée passe par la PLUS PROCHE,
-    # et non par la plus récente : c'est ce qui divise la dérive par dix.
+    # et non par la plus récente : c'est ce qui réduit la dérive des arrondis,
+    # que le test précédent mesure.
     proche = min(colonnes, key=lambda c: abs(c[0] - 1990))[2]
     assert lu(1970, 1990) == pytest.approx(proche[1970] / proche[1990])
     assert lu(1970, 1990) != pytest.approx(recente[1970] / recente[1990])

@@ -46,8 +46,10 @@ maximal, sur toutes les perceptions de la colonne :
 La cause n'est pas le droit mais l'impression : la caisse arrondit sa table
 publiée à trois décimales et repart chaque année de la précédente, si bien que
 les arrondis s'accumulent. Garder toutes les colonnes publiées et ancrer sur la
-PLUS PROCHE divise la dérive par dix. `tests/test_simulateur.py` rejoue cette
-mesure sur les colonnes figées dans `tests/temoins/`.
+PLUS PROCHE réduit l'écart médian d'un ordre de grandeur sur les colonnes les
+plus éloignées, et l'écart maximal d'un facteur deux à trois seulement.
+`tests/test_simulateur.py` rejoue cette mesure sur les colonnes figées dans
+`tests/temoins/`, et `docs/limites.md` en tient le tableau à jour.
 
 Les colonnes dont la date d'effet n'est pas le 1er janvier — octobre 2017,
 juillet 2022 — ne sont jamais servies telles quelles : le modèle raisonne à

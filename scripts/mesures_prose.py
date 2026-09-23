@@ -567,6 +567,59 @@ def ecart_colonnes(**reglages: str) -> float:
     return (min(a[annee] / de[annee] for annee in de if annee in a) - 1) * 100
 
 
+def derive_revalorisation(**reglages: str) -> float:
+    """Ce que coûte de reconstruire une colonne de revalorisation depuis une autre, en %.
+
+    L'écart relatif entre la colonne publiée de l'année ``annee`` et celle
+    qu'on en reconstruit, par rapport de deux valeurs, depuis ``ancre`` : une
+    année, ``recente`` (la dernière colonne publiée) ou ``voisine`` (la
+    suivante, la seule qui porte l'année reconstruite parmi ses perceptions).
+    ``stat=mediane`` (défaut), ``moyenne`` ou ``max`` sur les années de
+    perception — la médiane et le maximum sont ce que le récupérateur des
+    circulaires tabule ; sans ``annee``, le pire de toutes les colonnes. Ce
+    sont les colonnes de janvier, comme dans
+    ``test_la_reconstruction_entre_colonnes_reste_dans_sa_derive``.
+    """
+    import csv
+    from statistics import median
+
+    chemin = RACINE / "data/reference/legislation/revalorisation_salaires.csv"
+    tables: dict[int, dict[int, float]] = {}
+    with chemin.open(encoding="utf-8") as flux:
+        for ligne in csv.DictReader(r for r in flux if not r.startswith("#")):
+            if ligne["date_effet"].endswith("-01-01"):
+                tables.setdefault(int(ligne["date_effet"][:4]), {})[
+                    int(ligne["annee_perception"])] = float(ligne["coefficient"])
+
+    def derive(annee: int) -> float:
+        ancre = reglages.get("ancre", "voisine")
+        if ancre == "voisine":
+            suivantes = [a for a in tables if a > annee and annee in tables[a]]
+            if not suivantes:
+                raise ValueError(f"aucune colonne après {annee} ne porte cette année")
+            ancre = min(suivantes)
+        else:
+            ancre = max(tables) if ancre == "recente" else int(ancre)
+        if ancre == annee or annee not in tables.get(ancre, {}):
+            raise ValueError(f"la colonne {ancre} ne reconstruit pas {annee}")
+        diviseur = tables[ancre][annee]
+        ecarts = [abs(tables[ancre][perception] / diviseur - publie) / publie
+                  for perception, publie in tables[annee].items()
+                  if perception < annee and perception in tables[ancre]]
+        stat = reglages.get("stat", "mediane")
+        if stat == "max":
+            return max(ecarts) * 100
+        if stat == "moyenne":
+            return sum(ecarts) / len(ecarts) * 100
+        if stat == "mediane":
+            return median(ecarts) * 100
+        raise ValueError(f"stat inconnue « {stat} »")
+
+    if "annee" in reglages:
+        return derive(int(reglages["annee"]))
+    return max(derive(annee) for annee in tables if annee < max(tables))
+
+
 def taux_statut(**reglages: str) -> float:
     """Ce que prélèvent ensemble des régimes une année, en % : ``regimes=a|b&annee=2023``.
 
@@ -1364,6 +1417,7 @@ MESURES = {
     "droits_acquis_variation": droits_acquis_variation,
     "approximation_revalorisation": approximation_revalorisation,
     "ecart_colonnes": ecart_colonnes,
+    "derive_revalorisation": derive_revalorisation,
     "taux_statut": taux_statut,
     "mortalite_population": mortalite_population,
     "table_mortalite": table_mortalite,
