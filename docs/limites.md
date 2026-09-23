@@ -6805,7 +6805,8 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   du COR — régimes légalement obligatoires, FSV compris, RAFP exclu —, dont on
   prend les DEUX colonnes, dépenses et ressources, pour ne pas soustraire deux
   périmètres. Les deux se recoupent à moins de trois dixièmes de point de PIB
-  (<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,86<!--/--> % contre <!--chiffre:mesure(depense?annee=2024&quoi=part_pib_repartition)-->13,59<!--/--> % en 2024), ce qui vaut contrôle et non identité ; seul
+  (<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,86<!--/--> % contre <!--chiffre:mesure(depense?annee=2024&quoi=part_pib_repartition)-->13,59<!--/--> % en 2024, <!--chiffre:mesure(depense?annee=2024&quoi=cor)-->407<!--/--> contre <!--chiffre:mesure(depense?annee=2024&quoi=repartition)-->398,8<!--/--> Md€), ce qui
+  vaut contrôle et non identité ; seul
   le RAPPORT des masses, qui est sans dimension, passe de l'une à l'autre. Ce
   compte vaut `haute` et jamais `certifiee` : le COR consolide des comptes
   produits par les régimes, c'est le critère 1 du manifeste des sources.
