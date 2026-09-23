@@ -4965,3 +4965,36 @@ journal:
     reste: >-
       Le dispositif transitoire des navigants nés avant 1971, les conditions
       montantes de 2012 à 2021, les taux d'appel de 2016 à 2025.
+
+  - date: "2026-09-23"
+    session: "l'audit des formules : AGS, CSG des pensions, SMIC de juin"
+    consulte: >-
+      Le communiqué de l'AGS « Maintien des taux de cotisation de l'AGS »
+      (17 décembre 2025, mis à jour le 12 janvier 2026) et la presse sociale
+      du 2 juillet 2026 ; la fiche F2971 de service-public.fr sur la CSG, la
+      CRDS et la CASA des pensions, mise à jour le 1er juin 2026 ; dans
+      l'index LEGI, l'article L. 137-41 du code de la sécurité sociale
+      (LEGIARTI000042675242) et l'ancien 1° bis de L. 14-10-4 du code de
+      l'action sociale et des familles (LEGIARTI000038836971) ; l'arrêté du
+      22 mai 2026 relatif au relèvement du SMIC (JORFTEXT000054126589), que
+      l'index ne porte pas, par sa reprise au ministère du Travail et dans
+      la presse.
+    trouve: >-
+      L'AGS est à 0,25 % depuis le 1er juillet 2024 et le reste en 2026 : le
+      fichier portait 0,20 %, le taux de janvier à juin 2024. Les seuils de
+      CSG des pensions pour 2026 (revenus de 2024) sont 13 048, 17 057 et
+      26 472 € pour une part : le fichier portait sous l'étiquette « 2026 »
+      les montants de base de 2019 que l'article L. 136-8 écrit avant
+      revalorisation. La CASA exclut les foyers jusqu'au seuil du taux réduit
+      (L. 137-41, II 1°) : elle est due dès le taux médian, et non au seul taux
+      plein. Le SMIC horaire est de 12,31 € depuis le 1er juin 2026,
+      relèvement automatique de 2,4 % de l'article L. 3231-5 du code du
+      travail : le barème du 1er janvier reste celui qui valide les trimestres
+      de l'année, mais la projection part désormais du relèvement, un SMIC ne
+      baissant pas (`smic_horaire_releves.csv`).
+    reste: >-
+      Aucune ligne du registre ci-dessus ne change d'état : ni l'AGS, ni la
+      CSG, ni la CASA ne touchent une pension calculée, et le SMIC de juin
+      ne déplace que la projection d'après 2026. Le texte de l'arrêté du
+      22 mai 2026 reste à lire à la source, l'index LEGI ne consolidant pas
+      les textes du SMIC postérieurs à 2017.

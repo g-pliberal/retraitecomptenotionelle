@@ -2452,6 +2452,22 @@ institutions:
           Attention à la date : celle du décret n'est pas celle de son effet, et
           Mayotte a ses propres décrets dans le même dump.
 
+      - id: jorf_smic_releves
+        titre: SMIC horaire, relèvements en cours d'année (arrêté du 22 mai 2026)
+        url: https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000054126589
+        acces: page
+        statut_integration: saisi
+        cible: data/reference/macro/smic_horaire_releves.csv
+        note: >-
+          Le barème du 1er janvier valide les trimestres de l'année ; un
+          relèvement en cours d'année ne le change pas, mais il fixe le point
+          de départ de la projection, un SMIC ne baissant pas. Ajouté le
+          23 septembre 2026 pour le relèvement automatique du 1er juin 2026 —
+          12,31 € de l'heure, 2,4 % au titre de l'article L. 3231-5 du code du
+          travail —, que le modèle ignorait. Le texte n'est pas dans l'index
+          LEGI, qui ne consolide pas les textes du SMIC postérieurs à 2017 :
+          transcrit, niveau `haute`.
+
       - id: dila_legi_point_indice
         titre: Point d'indice de la fonction publique, 1996-2027
         url: https://echanges.dila.gouv.fr/OPENDATA/LEGI/

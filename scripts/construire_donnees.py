@@ -52,6 +52,7 @@ from retraite_notionnelle.donnees.chargement import (  # noqa: E402
     journal_certification,
 )
 from retraite_notionnelle.donnees.depenses import CATEGORIES_DROITS, SYSTEMES  # noqa: E402
+from retraite_notionnelle.donnees.macro import lire_smic_releve  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import (  # noqa: E402
     POSTES,
     POSTES_TRANSFERTS,
@@ -166,6 +167,19 @@ def _series() -> dict:
     series["age_reference"] = _charger_ages(ages, "age_reference")
 
     return {nom: _serie(serie) for nom, serie in sorted(series.items())}
+
+
+def _smic_horaire_releve() -> list | None:
+    """Le dernier relèvement du SMIC en cours de la dernière année du barème.
+
+    ``[mois, valeur]``, ou ``None`` : le portage en part pour prolonger la série
+    comme le modèle, depuis le dernier SMIC en vigueur et non depuis janvier.
+    """
+    serie = charger_serie_annuelle(
+        DONNEES / "reference" / "macro" / "smic_horaire.csv", "smic_horaire",
+        nom="smic_horaire")
+    releve = lire_smic_releve(DONNEES, serie.derniere_annee)
+    return None if releve is None else [releve[0], releve[1]]
 
 
 def _depenses() -> dict:
@@ -1381,6 +1395,7 @@ def construire(bilan: bytes) -> bytes:
     paquet = {
         "version": VERSION,
         "series": _series(),
+        "smic_horaire_releve": _smic_horaire_releve(),
         "hypotheses": _hypotheses(),
         "courbe_taux_sans_risque": _courbe_taux_sans_risque(),
         "frais_epargne_retraite": _frais_epargne_retraite(),

@@ -315,10 +315,17 @@ postes_regime_general: &postes_regime_general
     dans_la_reduction_generale: false
     salarie: [{jusqu_en_plafonds: null, taux: 0.0000}]
     employeur:
-      - {jusqu_en_plafonds: 4, taux: 0.0020}
+      - {jusqu_en_plafonds: 4, taux: 0.0025}
       - {jusqu_en_plafonds: null, taux: 0.0000}
+    note: >-
+      0,25 % depuis le 1er juillet 2024, maintenu pour 2026 par le conseil
+      d'administration de l'AGS (communiqué du 17 décembre 2025, mis à jour le
+      12 janvier 2026) puis au 1er juillet 2026. Le fichier portait 0,20 %,
+      le taux de janvier à juin 2024 que reprenait OpenFisca, jusqu'au
+      23 septembre 2026.
     textes:
       - "Articles L. 3253-6 et L. 3253-18 du code du travail"
+      - "AGS, communiqué « Maintien des taux de cotisation de l'AGS » (17 décembre 2025, mis à jour le 12 janvier 2026)"
 
   - code: logement
     libelle: "Fonds national d'aide au logement (FNAL)"
@@ -681,12 +688,17 @@ profils:
 # --------------------------------------------
 # L'article L. 136-8 fait dépendre ce taux du REVENU FISCAL DE RÉFÉRENCE du
 # foyer, perçu l'avant-dernière année, et en tire quatre cas pour une part de
-# quotient familial (montants 2026, revalorisés chaque année sur les prix) :
+# quotient familial (montants 2026, revenus de 2024, revalorisés chaque année
+# sur les prix) :
 #
-#     exonéré     revenu fiscal de référence ≤ 11 128 €
-#     3,80 %      11 128 € < revenu ≤ 14 548 €
-#     6,60 %      14 548 € < revenu < 22 580 €
-#     8,30 %      revenu ≥ 22 580 €
+#     exonéré     revenu fiscal de référence ≤ 13 048 €
+#     3,80 %      13 048 € < revenu ≤ 17 057 €
+#     6,60 %      17 057 € < revenu ≤ 26 472 €
+#     8,30 %      revenu > 26 472 €
+#
+# Les seuils du fichier étaient ceux de 2019 — 11 128, 14 548 et 22 580 € —
+# jusqu'au 23 septembre 2026 ; ceux-ci sont lus sur la fiche F2971 de
+# service-public.fr, mise à jour le 1er juin 2026.
 #
 # Le simulateur ne connaît pas ce revenu : il ne demande ni la composition du
 # foyer, ni les autres ressources, ni un revenu d'il y a deux ans. **Le dépôt
@@ -738,19 +750,23 @@ pensions:
   csg_affectee_vieillesse: 0.0294
   #: Les quatre cas de l'article L. 136-8, pour mémoire et pour la page : le
   #: modèle applique le taux plein, mais le lecteur doit pouvoir situer sa
-  #: propre situation. Montants 2026, pour une part de quotient familial.
+  #: propre situation. Montants 2026 (revenus de 2024), pour une part de
+  #: quotient familial, lus sur la fiche F2971 de service-public.fr.
   bareme_csg:
-    - {libelle: "exonéré", taux: 0.0, revenu_fiscal_maximum: 11128}
-    - {libelle: "taux réduit", taux: 0.038, revenu_fiscal_maximum: 14548}
-    - {libelle: "taux médian", taux: 0.066, revenu_fiscal_maximum: 22580}
+    - {libelle: "exonéré", taux: 0.0, revenu_fiscal_maximum: 13048}
+    - {libelle: "taux réduit", taux: 0.038, revenu_fiscal_maximum: 17057}
+    - {libelle: "taux médian", taux: 0.066, revenu_fiscal_maximum: 26472}
     - {libelle: "taux plein", taux: 0.083, revenu_fiscal_maximum: null}
   note: >-
     CSG 8,30 %, CRDS 0,50 %, CASA 0,30 % : 9,10 % au total, sans abattement.
-    La CASA n'est due qu'au taux plein de CSG, ce que la convention du dépôt
-    rend toujours vrai.
+    La CASA est due dès le taux médian de CSG — elle n'exclut que les pensions
+    des foyers sous le seuil du taux réduit —, ce que la convention du dépôt,
+    qui applique partout le taux plein, rend toujours vrai. Le fichier la
+    disait due au seul taux plein jusqu'au 23 septembre 2026.
   textes:
     - "Article L. 136-8 du code de la sécurité sociale, version en vigueur du 31 décembre 2025 (LEGIARTI000053278668), II 2° pour le taux de 8,30 %, III et III bis pour les taux réduits et leurs seuils"
-    - "Article L. 14-10-4, 1° bis, du code de l'action sociale et des familles (CASA, 0,30 %, due au-delà du seuil du taux plein de CSG)"
+    - "Article L. 137-41 du code de la sécurité sociale, en vigueur depuis le 1er janvier 2021 (LEGIARTI000042675242), II 1° : la CASA de 0,30 % exclut les pensions des foyers dont le revenu n'excède pas les seuils du 2° du III de L. 136-8"
     - "Ordonnance n° 96-50 du 24 janvier 1996, articles 14 et 19 (CRDS, 0,50 %)"
+    - "service-public.fr, fiche F2971 « CSG, CRDS et Casa sur les pensions de retraite », mise à jour le 1er juin 2026"
 
 fiabilite: haute

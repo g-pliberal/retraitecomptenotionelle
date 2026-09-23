@@ -88,7 +88,7 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart à un
   tiers de moins, en médiane ». La première des « Vos questions », « Ma
   retraite va-t-elle baisser ? », en donne le détail : 31 % pour qui n'est
-  pas encore à la retraite, 24 % s'il place les cinq points rendus, 26 % sur
+  pas encore à la retraite, 25 % s'il place les cinq points rendus, 26 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -145,7 +145,7 @@ Comment les lire, et c'est la chose la plus importante de la présentation :
 Puis, sous les quatre lignes, le bloc **« Et pendant que vous cotisez »** :
 une réforme change aussi la fiche de paie. Sur l'exemple, le salaire net
 mensuel passe de 3 840 € à 4 137 €, soit **+297 € par mois** à coût du
-travail inchangé pour l'employeur, et +48 916 € sur les treize années qui
+travail inchangé pour l'employeur, et +48 886 € sur les treize années qui
 restent avant le départ. C'est le net plein : la proposition prélève 23 %
 pour la retraite et rien d'autre, quand le droit en vigueur en prélève 28.
 Celui qui verse en plus les 5 % volontaires retrouve l'effort d'aujourd'hui,
@@ -230,8 +230,8 @@ moins. Vert : plus.
 Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (chef d'exploitation
-  agricole, +1 % pour la génération 2000) et la moins bien traitée (agent
-  des industries électriques et gazières, -47 %), et les 48 points qui les
+  agricole, +2 % pour la génération 2000) et la moins bien traitée (agent
+  des industries électriques et gazières, -47 %), et les 49 points qui les
   séparent à carrière et à durée identiques.
 - La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -56 %
   pour la génération 1940 à +42 % pour la génération 1970 : la même règle

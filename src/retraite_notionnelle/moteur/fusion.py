@@ -122,8 +122,11 @@ def _taux_total(periode: PeriodeRegime) -> float:
     """Tout ce qui est prélevé pour la retraite, plafonné ou non.
 
     L'assiette du régime unifié est DÉPLAFONNÉE : la cotisation déplafonnée du
-    régime général — 2,41 % en 2023, prélevés sur la totalité du salaire — y
-    porte donc sur la même base que la part plafonnée, et s'y ajoute. L'oublier
+    régime général — 2,30 % jusqu'en 2023, 2,42 % en 2024 et 2025, 2,51 % en
+    2026, prélevés sur la totalité du salaire — y porte donc sur la même base
+    que la part plafonnée, et s'y ajoute. La fiche en porte la moyenne de
+    période, 2,41 %, que ``taux_cotisation_annuels.csv`` remplace année par
+    année. L'oublier
     faisait perdre au compte notionnel, après la bascule, ce que la correction
     d'avant la bascule venait précisément d'y porter.
     """
