@@ -121,7 +121,7 @@ class PeriodeRegime:
     #: régimes spéciaux. La valeur ci-dessus sert alors de repli.
     duree_requise_par_generation: bool
     #: La table de durée requise PROPRE au régime, par génération, qui passe
-    #: avant la table commune : `sncf_conduite`, `ratp`
+    #: avant la table commune : `sncf_conduite`, `ratp`, `ieg_actif_*`
     #: (`legislation/duree_requise_regimes_speciaux.csv`). Leurs décrets
     #: écrivent chacun la sienne, et la suspension de 2026 ne les a pas touchés.
     duree_requise_table: str | None

@@ -2,7 +2,7 @@
 # --------------------------------------------------------
 # source_id: legifrance_textes
 #
-# LA SNCF ET LA RATP N'ONT PAS LA DURÉE DU RÉGIME GÉNÉRAL. Chacun de
+# LA SNCF, LA RATP ET LES IEG N'ONT PAS LA DURÉE DU RÉGIME GÉNÉRAL. Chacun de
 # leurs décrets écrit sa table, et les fiches leur opposaient celle de l'article
 # L. 161-17-3 (`duree_assurance_requise.csv`) : jusqu'à cinq trimestres d'écart
 # pour un agent de conduite de la SNCF, qui atteint les 172 trimestres treize
@@ -30,14 +30,26 @@
 #       27 septembre 2025) : tous les assurés. 167 des nés du 1er juillet 1959
 #       à 1960, 168 pour 1961-1962, 169 pour 1963, 170 pour 1964-1965, 171 pour
 #       1966-1967, 172 à compter de 1968.
+#   `ieg_actif_5` à `ieg_actif_17` — annexe 3 du statut national des IEG,
+#       article 45, I bis (LEGIARTI000052046924, version du 6 août 2025, lue le
+#       23 septembre 2026) : « à compter du 1er janvier 2025 », une table par
+#       durée de services effectifs actifs, insalubres et militaires des agents
+#       du 2° du I de l'article 16 — au moins cinq, huit, onze, quatorze et
+#       dix-sept ans, ceux-là mêmes qui abaissent l'âge d'ouverture d'un à cinq
+#       ans. Chacune fixe 170, 171 puis 172 trimestres, la première marche à la
+#       génération 1964, 1965, 1966, 1967 ou 1968. En deçà, le texte renvoie à
+#       la durée « applicable avant l'entrée en vigueur du décret n° 2023-692 » :
+#       la table de la réforme de 2014, lue dans la version du 3 décembre 2020
+#       (LEGIARTI000042597001) — 167 trimestres des nés du 1er juillet 1959 à
+#       1960, 168 pour 1961-1963, 169 pour 1964-1966, 170 pour 1967-1969. C'est
+#       elle, et non la table actuelle du I (169 pour 1963), qui vaut.
 #
-# LES IEG N'Y SONT PAS, et c'est voulu. Le I de l'article 45 de leur annexe 3
-# porte les mêmes marches que la RATP, mais pour les SÉDENTAIRES ; le cas type
-# du dépôt est un agent en services actifs, et le I bis du même article lui
-# donne, depuis 2025, une table par durée de services actifs — cinq, huit,
-# onze, quatorze ans et plus —, chacune décalée d'une génération. La porter
-# demande de savoir combien d'années actives compte la carrière : c'est la
-# ligne `duree_requise_ieg` du registre de veille.
+# LA FICHE DES IEG LIT `ieg_actif_17`, et elle seule. Son âge d'ouverture de
+# 2025 et après est l'âge légal abaissé de cinq ans : c'est celui des dix-sept
+# ans de services actifs, et la table va avec. Les quatre autres sont
+# transcrites pour qu'une carrière qui en déclarerait moins les trouve ; le
+# modèle ne sait pas encore la compter. La table des agents SÉDENTAIRES, le I
+# du même article, n'est pas transcrite : aucune fiche ne les modélise.
 #
 # LA COLONNE `retranche_decote` N'EXISTE QUE POUR LA SNCF. Le II de l'article 35
 # du décret n° 2008-639 ajoute : « Pour le calcul du nombre de trimestres
@@ -48,8 +60,8 @@
 # à compter de 1980. La décote se compte donc, par la durée, sur une cible plus
 # basse que celle du taux plein — ce que le relèvement de 2023 a pris d'une
 # main, cet alinéa le rend de l'autre pour la décote. La proratisation et la
-# surcote gardent la durée entière. La RATP n'écrit rien de tel : sa colonne
-# est à zéro.
+# surcote gardent la durée entière. Ni la RATP ni les IEG n'écrivent rien de
+# tel : leur colonne est à zéro.
 #
 # `haute` : lues dans le texte en vigueur de l'index LEGI, non recontrôlées par
 # un récupérateur.
@@ -70,3 +82,33 @@ ratp,1963,169,0,haute
 ratp,1964,170,0,haute
 ratp,1966,171,0,haute
 ratp,1968,172,0,haute
+ieg_actif_5,1959.5,167,0,haute
+ieg_actif_5,1961,168,0,haute
+ieg_actif_5,1964,170,0,haute
+ieg_actif_5,1967,171,0,haute
+ieg_actif_5,1969,172,0,haute
+ieg_actif_8,1959.5,167,0,haute
+ieg_actif_8,1961,168,0,haute
+ieg_actif_8,1964,169,0,haute
+ieg_actif_8,1965,170,0,haute
+ieg_actif_8,1968,171,0,haute
+ieg_actif_8,1970,172,0,haute
+ieg_actif_11,1959.5,167,0,haute
+ieg_actif_11,1961,168,0,haute
+ieg_actif_11,1964,169,0,haute
+ieg_actif_11,1966,170,0,haute
+ieg_actif_11,1969,171,0,haute
+ieg_actif_11,1971,172,0,haute
+ieg_actif_14,1959.5,167,0,haute
+ieg_actif_14,1961,168,0,haute
+ieg_actif_14,1964,169,0,haute
+ieg_actif_14,1967,170,0,haute
+ieg_actif_14,1970,171,0,haute
+ieg_actif_14,1972,172,0,haute
+ieg_actif_17,1959.5,167,0,haute
+ieg_actif_17,1961,168,0,haute
+ieg_actif_17,1964,169,0,haute
+ieg_actif_17,1967,170,0,haute
+ieg_actif_17,1968,170,0,haute
+ieg_actif_17,1971,171,0,haute
+ieg_actif_17,1973,172,0,haute

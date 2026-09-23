@@ -73,7 +73,7 @@ export const GENERATIONS_SUSPENSION = [1964.0, 1966.0];
 /**
  * Durée requise propre à un régime spécial, par génération.
  *
- * La SNCF et la RATP écrivent chacune leur table dans leur décret, et la
+ * La SNCF, la RATP et les IEG écrivent chacune leur table dans leur texte, et la
  * suspension de 2026, qui a abaissé la table commune, ne les a pas touchées. La
  * table de la SNCF porte en plus ce que le II de l'article 35 du décret
  * n° 2008-639 retranche à la durée requise pour compter la décote par la durée.

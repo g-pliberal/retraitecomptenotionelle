@@ -167,7 +167,7 @@ Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses don
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
 chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->901<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 207<!--/--> Ko bruts) et prend quelques dixièmes
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 208<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Dix pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -201,7 +201,7 @@ consultable en JSON au bas de la page.
 <summary>Comment la page fonctionne, et comment on sait qu'elle dit vrai</summary>
 
 `index.html` charge deux choses : `moteur/donnees.json`
-(<!--chiffre:poids(moteur/donnees.json)-->3 496<!--/--> Ko — les séries, les
+(<!--chiffre:poids(moteur/donnees.json)-->3 498<!--/--> Ko — les séries, les
 tables de mortalité observées de 1899 à 2024, la pyramide des âges de 1962 à
 2070, les <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise|partiel)-->73<!--/--> fiches de régime) et
 `moteur/js/`, un portage du modèle en JavaScript sans aucune bibliothèque. Le site est servi depuis la racine
@@ -219,10 +219,10 @@ poids de ce qu'on voulait exécuter.
 Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->499<!--/--> simulations complètes et
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->500<!--/--> simulations complètes et
 <!--chiffre:entrees(tests/temoins/pages.json:)-->54<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
-<!--chiffre:portage(valeurs)-->82 033<!--/--> nombres,
+<!--chiffre:portage(valeurs)-->82 192<!--/--> nombres,
 dont <!--chiffre:portage(identiques)-->92,8<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->5,8<!--/--> · 10⁻¹⁵, quelques dizaines
 d'*ulp* (un *ulp* vaut 2 · 10⁻¹⁶, la précision d'un flottant). Les pages, elles, sont comparées caractère par caractère : le
@@ -382,7 +382,7 @@ print(simulateur.simuler(carriere).tableau())
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut <!--chiffre:cellule(data/reference/regimes/conversions_points.csv:coefficient?regime=agirc)-->0,347791548<!--/-->, le rapport de leurs valeurs de service au 31 décembre 2018 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
-| Portage vérifié, pas cru sur parole | Le site rejoue <!--chiffre:entrees(tests/temoins/simulations.json:)-->499<!--/--> simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
+| Portage vérifié, pas cru sur parole | Le site rejoue <!--chiffre:entrees(tests/temoins/simulations.json:)-->500<!--/--> simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
 
 ---
 
@@ -782,7 +782,7 @@ pyramide des âges, et les pensions que chaque génération acquiert.
 |---|---|---|---|---|
 | 1. Système actuel | <!--chiffre:mesure(cout_annee?scenario=1&annee=2070)-->711<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,3<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=1)-->25 806<!--/--> Md € | réf. |
 | 2. Notionnel rétroactif, part salariale | <!--chiffre:mesure(cout_annee?scenario=2&annee=2070)-->212<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=2&annee=2070)-->5,4<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=2)-->7 790<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=2)-->−69,8<!--/--> % |
-| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cout_annee?scenario=3&annee=2070)-->325<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=3&annee=2070)-->8,3<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=3)-->18 932<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=3)-->−26,6<!--/--> % |
+| 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(cout_annee?scenario=3&annee=2070)-->325<!--/--> Md € | **<!--chiffre:mesure(part_pib?scenario=3&annee=2070)-->8,3<!--/-->** % | <!--chiffre:mesure(cumul_avenir?scenario=3)-->18 933<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=3)-->−26,6<!--/--> % |
 | 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=4&annee=2070)-->474<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=4&annee=2070)-->12,2<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=4)-->18 388<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=4)-->−28,7<!--/--> % |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(cout_annee?scenario=5&annee=2070)-->504<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=5&annee=2070)-->13,0<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=5)-->22 008<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=5)-->−14,7<!--/--> % |
 | 6. Notionnel rétroactif, <!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026, garantie vieillesse | <!--chiffre:mesure(cout_annee?scenario=6&annee=2070)-->371<!--/--> Md € | <!--chiffre:mesure(part_pib?scenario=6&annee=2070)-->9,5<!--/--> % | <!--chiffre:mesure(cumul_avenir?scenario=6)-->16 621<!--/--> Md € | <!--chiffre:mesure(ecart_avenir?scenario=6)-->−35,6<!--/--> % |

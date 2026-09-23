@@ -292,7 +292,7 @@ GENERATIONS_SUSPENSION = (1964.0, 1966.0)
 class DureesRequisesRegimes:
     """Durée requise propre à un régime spécial, par génération.
 
-    La SNCF et la RATP écrivent chacune leur table dans leur décret, et
+    La SNCF, la RATP et les IEG écrivent chacune leur table dans leur texte, et
     la suspension de 2026, qui a abaissé la table commune, ne les a pas
     touchées. La fiche nomme la sienne (`duree_requise_table`) sur ses périodes
     de 2025 et après.
@@ -2206,7 +2206,7 @@ class ScenarioActuel:
         jusqu'à trois trimestres de trop.
 
         UN RÉGIME SPÉCIAL QUI ÉCRIT SA TABLE PASSE AVANT LA TABLE COMMUNE : la
-        SNCF et la RATP (`legislation/duree_requise_regimes_speciaux.csv`).
+        SNCF, la RATP et les IEG (`legislation/duree_requise_regimes_speciaux.csv`).
         En deçà de la première génération qu'elle nomme, la table commune reste
         le repli.
         """

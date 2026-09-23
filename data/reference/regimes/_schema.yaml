@@ -50,14 +50,15 @@ champs_periode:
   duree_requise_table:
     description: >-
       Table de durée requise PROPRE au régime, par génération, qui passe avant
-      la table commune : `sncf_conduite`, `ratp`
+      la table commune : `sncf_conduite`, `ratp`, `ieg_actif_5` à `ieg_actif_17`
       (`legislation/duree_requise_regimes_speciaux.csv`). Leurs décrets
       écrivent chacun la leur, et la suspension de 2026, qui a abaissé la table
       commune, ne les a pas touchés. En deçà de la première génération de la
       table, la table commune reste le repli. La table de la SNCF porte en plus
       les trimestres que le II de l'article 35 du décret n° 2008-639 retranche
       à la durée requise pour compter la décote par la durée.
-    valeurs: [null, "sncf_conduite", "ratp"]
+    valeurs: [null, "sncf_conduite", "ratp", "ieg_actif_5", "ieg_actif_8",
+              "ieg_actif_11", "ieg_actif_14", "ieg_actif_17"]
     defaut: null
 
   age_surcote_regimes_speciaux:
