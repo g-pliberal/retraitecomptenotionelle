@@ -1,0 +1,26 @@
+# SMIC horaire brut relevé EN COURS D'ANNÉE, après le barème du 1er janvier
+# ---------------------------------------------------------------------------
+# source_id: jorf_smic_releves
+#
+# `smic_horaire.csv` porte le barème du 1er JANVIER : c'est celui qu'oppose la
+# caisse pour valider les trimestres de l'année entière, et un relèvement en
+# cours d'année n'y change rien. Il change en revanche le POINT DE DÉPART de la
+# projection. Un SMIC ne baisse pas : celui de janvier suivant ne peut être
+# inférieur au dernier en vigueur, et le modèle, qui prolongeait le barème de
+# janvier au rythme du salaire moyen, donnait pour janvier 2027 un SMIC à peine
+# égal à celui de juin 2026. Il part désormais du dernier relèvement, porté à
+# janvier suivant au même rythme, au prorata des mois qui restent.
+#
+# Ce fichier ne garde que les relèvements postérieurs au dernier barème de
+# janvier connu : dès que `smic_horaire.csv` porte l'année suivante, la ligne
+# ne sert plus, et le chargeur l'ignore.
+#
+# 2026-06-01 : 12,31 € de l'heure, relèvement automatique de 2,4 % prévu par
+# l'article L. 3231-5 du code du travail quand l'indice des prix des ménages
+# du premier quintile a progressé d'au moins 2 % depuis le dernier relèvement.
+# Arrêté du 22 mai 2026 relatif au relèvement du salaire minimum de croissance
+# (JORF du 24 mai 2026, JORFTEXT000054126589) ; le texte n'est pas dans l'index
+# LEGI du dépôt, qui ne consolide pas les textes du SMIC postérieurs à 2017 :
+# transcrit, au niveau `haute`.
+date_effet,smic_horaire,fiabilite
+2026-06-01,12.310000,haute

@@ -18,6 +18,23 @@ from .chargement import Fiabilite, SerieAnnuelle, charger_serie_annuelle, charge
 ANNEE_REVALORISATION_SUR_LES_PRIX = 1987
 
 
+def lire_smic_releve(racine: Path, annee: int) -> tuple[int, float] | None:
+    """Le dernier relèvement du SMIC en cours d'``annee``, lu sur le fichier."""
+    import csv
+
+    chemin = racine / "reference" / "macro" / "smic_horaire_releves.csv"
+    if not chemin.exists():
+        return None
+    dernier: tuple[int, float] | None = None
+    with chemin.open(encoding="utf-8") as flux:
+        lignes = (l for l in flux if not l.lstrip().startswith("#"))
+        for ligne in csv.DictReader(lignes):
+            an, mois, _ = (int(x) for x in ligne["date_effet"].split("-"))
+            if an == annee and mois > 1 and (dernier is None or mois >= dernier[0]):
+                dernier = (mois, float(ligne["smic_horaire"]))
+    return dernier
+
+
 @dataclass
 class DonneesMacro:
     """Accès unifié aux séries annuelles servant à l'indexation et aux assiettes.
@@ -227,10 +244,27 @@ class DonneesMacro:
         valeurs = {a: serie.brut(a) for a in serie.annees()}
         courant = serie(serie.derniere_annee)
         croissance = float(self.projection["salaire_moyen_nominal"])
+        releve = self.smic_horaire_releve(serie.derniere_annee)
         for annee in range(serie.derniere_annee + 1, self.projection["fin"] + 1):
-            courant *= 1 + croissance
+            if releve is not None and annee == serie.derniere_annee + 1:
+                # UN SMIC NE BAISSE PAS : janvier suivant part du dernier
+                # relèvement en vigueur, porté au même rythme sur les mois qui
+                # restent — voir ``smic_horaire_releves.csv``.
+                mois, valeur = releve
+                courant = valeur * (1 + croissance) ** ((13 - mois) / 12)
+            else:
+                courant *= 1 + croissance
             valeurs[annee] = ValeurAnnuelle(annee, courant, Fiabilite.ESTIMEE)
         return SerieAnnuelle(valeurs, "smic_horaire", "escalier")
+
+    def smic_horaire_releve(self, annee: int) -> tuple[int, float] | None:
+        """Le dernier relèvement du SMIC en cours d'``annee`` : (mois, valeur).
+
+        ``None`` si l'année n'en a pas connu après son barème de janvier, ou si
+        le fichier n'existe pas. Seul le dernier compte : c'est lui qui est en
+        vigueur au 31 décembre.
+        """
+        return lire_smic_releve(self.racine, annee)
 
     @cached_property
     def heures_par_trimestre(self) -> SerieAnnuelle:

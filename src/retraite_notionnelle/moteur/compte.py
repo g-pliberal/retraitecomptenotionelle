@@ -678,8 +678,10 @@ class ConstructeurCompte:
 
                 # LA COTISATION DÉPLAFONNÉE. Le régime général prélève, en
                 # plus de la cotisation plafonnée, un taux sur la TOTALITÉ du
-                # salaire — 2,41 % depuis 2023 —, et cette part n'ouvre aucun
-                # droit : elle finance la solidarité. Le scénario 1 a donc
+                # salaire — 2,42 % en 2024 et 2025, 2,51 % en 2026, lus année
+                # par année ; la fiche en porte la moyenne de période, 2,41 % —,
+                # et cette part n'ouvre aucun droit : elle finance la
+                # solidarité. Le scénario 1 a donc
                 # raison de l'ignorer.
                 #
                 # Un compte notionnel, lui, porte au compte ce qui a été VERSÉ.

@@ -5627,7 +5627,13 @@ l'on vit. Le recensement le dit, lui, âge par âge et par sexe, et le dépôt l
 lisait DÉJÀ pour les reprises sur succession. Il le lit désormais ici aussi :
 pesé sur les années vécues après 65 ans, **57,9 % des femmes vivent seules
 contre 30,0 % des hommes**, et les deux planchers se mélangent dans cette
-proportion, sexe par sexe. Les deux se composent — les femmes vivent seules
+proportion, sexe par sexe. *Précisé le 23 septembre 2026* : « seules » veut
+dire ici HORS COUPLE, au sens de l'ASPA, dont la personne seule est celle qui
+ne vit ni mariée, ni pacsée, ni en concubinage — qu'elle vive ou non avec un
+enfant ou un proche. C'est la grandeur que le plancher majoré demande, et celle
+que le modèle lit. Celles qui vivent réellement seules dans leur logement sont
+moins nombreuses : 41,5 % des femmes et 21,6 % des hommes, sur les mêmes années
+et avec la même table. Les deux se composent — les femmes vivent seules
 plus souvent ET tombent sous le plancher plus souvent —, si bien qu'un partage
 global les manquerait.
 
@@ -6845,7 +6851,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   commun, l'appliquer déplacerait les niveaux sans toucher aux ÉCARTS ENTRE
   CARRIÈRES, qui sont l'objet du modèle — mais il déplacerait bel et bien les
   niveaux, et un coefficient de <!--chiffre:mesure(coefficient?scenario=3)-->1,71<!--/--> en 2070 pour le scénario 3 ne se lit donc
-  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->41<!--/--> % : il se lit comme la marge dont ce système
+  pas comme une économie de <!--chiffre:mesure(coefficient?scenario=3&quoi=economie)-->42<!--/--> % : il se lit comme la marge dont ce système
   disposerait pour servir davantage à prélèvement inchangé.
 
 - **Les ressources ne sont pas celles du risque vieillesse, et ne peuvent pas
@@ -7733,7 +7739,7 @@ Quatre réserves, dont la première commande tout le reste.
 monde.** L'article L. 136-8 le fait dépendre du revenu fiscal de référence du
 foyer, perçu l'avant-dernière année, et en tire quatre cas pour une part de
 quotient familial (montants 2026, revalorisés chaque année sur les prix) :
-exonéré jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=exonéré.revenu_fiscal_maximum)-->11 128<!--/--> €, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux réduit.taux*100)-->3,80<!--/--> % jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux réduit.revenu_fiscal_maximum)-->14 548<!--/--> €, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux médian.taux*100)-->6,60<!--/--> % jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux médian.revenu_fiscal_maximum)-->22 580<!--/--> €,
+exonéré jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=exonéré.revenu_fiscal_maximum)-->13 048<!--/--> €, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux réduit.taux*100)-->3,80<!--/--> % jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux réduit.revenu_fiscal_maximum)-->17 057<!--/--> €, <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux médian.taux*100)-->6,60<!--/--> % jusqu'à <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux médian.revenu_fiscal_maximum)-->26 472<!--/--> €,
 <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.bareme_csg.libelle=taux plein.taux*100)-->8,30<!--/--> % au-delà. Le simulateur ne demande ni la composition du foyer, ni les
 autres ressources, ni un revenu d'il y a deux ans : il applique donc <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.csg_taux_plein*100)-->8,30<!--/--> %,
 plus <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.crds*100)-->0,50<!--/--> % de CRDS et <!--chiffre:valeur(data/reference/legislation/prelevements_remuneration.yaml:pensions.casa*100)-->0,30<!--/--> % de CASA, soit **<!--chiffre:mesure(prelevement_pension)-->9,10<!--/--> %**.
@@ -8424,7 +8430,7 @@ trajectoire avancerait par marches de cinq ans.
 un modèle de population complet et une méthode qui n'a rien de commun avec
 celle-ci : il trouve <!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2024&poste=depenses)-->13,9<!--/--> % du PIB en 2024 et **<!--chiffre:cellule(data/reference/macro/comptes_retraite.csv:part_pib*100?annee=2070&poste=depenses)-->15,3<!--/--> % en 2070** (rapport annuel
 de juin 2026, champ « ensemble des régimes légalement obligatoires, y compris
-FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,25<!--/--> %**. Trois dixièmes de point
+FSV, hors RAFP »). Le dépôt trouve <!--chiffre:mesure(part_pib?scenario=1&annee=2024)-->13,6<!--/--> % et **<!--chiffre:mesure(part_pib?scenario=1&annee=2070)-->18,27<!--/--> %**. Trois dixièmes de point
 d'écart au départ — l'affaire du périmètre, la répartition obligatoire des
 Comptes de la protection sociale n'étant pas exactement celle du COR — et **trois
 points à l'arrivée**.
@@ -8920,7 +8926,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2346<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2347<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest tests`.
   Aucun test n'accède au réseau : les sources sont simulées.

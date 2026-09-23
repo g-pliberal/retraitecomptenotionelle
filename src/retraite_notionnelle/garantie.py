@@ -198,8 +198,8 @@ def cout_garantie_par_sexe(femmes: DistributionPensions,
     800 € par personne, plus 250 € à qui vit seul : le plancher d'un individu
     dépend d'un fait, sa situation de foyer, et celui d'une POPULATION dépend
     donc de la répartition de ce fait. ``plancher_majore`` et ``part_seule``
-    portent cette répartition, sexe par sexe — les femmes vivent seules bien
-    plus souvent, et elles sont aussi bien plus souvent sous le plancher, si
+    portent cette répartition, sexe par sexe — les femmes vivent hors couple
+    bien plus souvent, et elles sont aussi bien plus souvent sous le plancher, si
     bien que les deux se composent et qu'un partage global les manquerait.
     Sans eux, le plancher unique s'applique à tout le monde : c'est la
     convention d'avant le 21 septembre 2026, qui servait le plancher majoré à

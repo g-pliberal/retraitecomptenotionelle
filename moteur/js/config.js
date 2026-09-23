@@ -218,7 +218,7 @@ export const PARAMETRES_DEFAUT = Object.freeze({
 
   // --- Cotisations ----------------------------------------------------------
   source_cotisations: SourceCotisations.TAUX_HISTORIQUES,
-  taux_cotisation_uniforme: 0.2531,
+  taux_cotisation_uniforme: 0.2574,
   // Il n'y a pas non plus de paramètre « le taux d'appel ouvre-t-il des
   // droits » : le compte porte ce qui a été PRÉLEVÉ, taux d'appel compris.
   //: Part de la cotisation portée au compte : celle de l'assuré seul, ou celle

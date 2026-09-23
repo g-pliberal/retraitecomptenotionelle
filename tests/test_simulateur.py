@@ -1260,6 +1260,24 @@ def test_le_taux_uniforme_ne_compte_pas_deux_fois_la_meme_tranche():
         assert cotisation.cotisation <= cotisation.revenu * taux + 1e-6, cotisation.annee
 
 
+def test_le_taux_uniforme_par_defaut_est_l_effort_du_prive_en_2025():
+    """Le taux uniforme par défaut dit ce qu'il est : l'effort contributif
+    retraite d'un salarié du privé non cadre sous le plafond en 2025, salarié et
+    employeur. Il est donc égal à ce que le compte d'un tel salarié porte cette
+    année-là, part patronale comprise — et le dépôt écrivait 25,31 % quand le
+    compte en portait 25,74."""
+    simulateur = Simulateur(Parametres())
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1975, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_debut=23, age_liquidation=64, niveau_salaire=0.9,
+    )
+    compte = simulateur.simuler(carriere).notionnel_retroactif_employeur.compte
+    annee = next(c for c in compte.cotisations if c.annee == 2025)
+    assert annee.revenu < simulateur.macro.plafond_securite_sociale(2025)
+    assert Parametres().taux_cotisation_uniforme == pytest.approx(
+        annee.cotisation / annee.revenu, abs=5e-5)
+
+
 def test_le_taux_uniforme_est_bien_le_taux_retenu():
     """Un salarié non cadre sous le plafond doit voir exactement le taux choisi."""
     simulateur = Simulateur(Parametres().avec(

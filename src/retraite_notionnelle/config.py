@@ -244,8 +244,12 @@ class TableConversion(str, Enum):
 
     #: Table unisexe (moyenne pondérée hommes/femmes). Choix par défaut :
     #: c'est la pratique des systèmes notionnels suédois et italien, et une
-    #: table sexuée ferait mécaniquement baisser la pension des femmes de
-    #: 8 à 12 % à capital notionnel identique.
+    #: table sexuée ferait mécaniquement baisser la pension des femmes à
+    #: capital notionnel identique — de 6 % environ pour une liquidation de
+    #: 2026 à 62 ou 64 ans, de 4 à 5 % vers 2040-2050, et de 9 à 11 % dans les
+    #: années 1990, quand l'écart d'espérance de vie était plus grand. Le
+    #: dépôt écrivait « 8 à 12 % » jusqu'au 23 septembre 2026 : c'étaient les
+    #: écarts des années 1990.
     UNISEXE = "unisexe"
 
     #: Table par sexe. Actuariellement exacte, juridiquement inapplicable en
@@ -493,13 +497,17 @@ class Parametres:
     # --- Cotisations --------------------------------------------------------
     source_cotisations: SourceCotisations = SourceCotisations.TAUX_HISTORIQUES
 
-    #: Taux utilisé si ``source_cotisations == TAUX_UNIFORME``. 25,31 % est
+    #: Taux utilisé si ``source_cotisations == TAUX_UNIFORME``. 25,74 % est
     #: l'effort contributif retraite total — salarié et employeur — d'un salarié
-    #: du privé non cadre sous le plafond en 2025 : le taux que le privé
-    #: supporte déjà. Aucun des scénarios 2 à 5 ne l'emploie ; c'est un
-    #: contrefactuel, à activer explicitement. Le scénario 6 emploie, lui,
-    #: ``taux_cotisation_liberal`` — à compter de la bascule seulement.
-    taux_cotisation_uniforme: float = 0.2531
+    #: du privé non cadre sous le plafond en 2025 : 17,87 % au régime général
+    #: (15,45 % plafonné, 2,42 % déplafonné) et 7,87 % à l'Agirc-Arrco en
+    #: tranche 1, le taux que le privé supporte déjà et que le compte d'un tel
+    #: salarié porte cette année-là. Le dépôt écrivait 25,31 % jusqu'au
+    #: 23 septembre 2026, et un test tient désormais l'égalité. Aucun des
+    #: scénarios 2 à 5 ne l'emploie ; c'est un contrefactuel, à activer
+    #: explicitement. Le scénario 6 emploie, lui, ``taux_cotisation_liberal`` —
+    #: à compter de la bascule seulement.
+    taux_cotisation_uniforme: float = 0.2574
 
     # NOTE : il n'y a pas non plus de paramètre « le taux d'appel ouvre-t-il des
     # droits ». Le compte notionnel porte ce qui a été PRÉLEVÉ, taux d'appel

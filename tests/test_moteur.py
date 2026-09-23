@@ -787,9 +787,10 @@ def test_fusion_deplafonne_l_assiette(catalogue):
 def test_fusion_somme_les_taux_du_statut_pivot(catalogue):
     """Et la cotisation DÉPLAFONNÉE en fait partie.
 
-    L'assiette du régime unifié est déplafonnée : les 2,41 % que le régime
-    général prélève sur la totalité du salaire y portent donc sur la même base
-    que la part plafonnée, et s'y ajoutent. Les omettre faisait perdre au compte
+    L'assiette du régime unifié est déplafonnée : ce que le régime général
+    prélève sur la totalité du salaire — 2,41 % en moyenne sur la période de
+    la fiche, 2,51 % en 2026 — y porte donc sur la même base
+    que la part plafonnée, et s'y ajoute. L'omettre faisait perdre au compte
     notionnel, après la bascule, exactement ce que la séparation des deux taux
     venait d'y porter avant elle.
     """

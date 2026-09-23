@@ -504,7 +504,7 @@ G(a, L) = Σ_t  (probabilité de survie t années après la liquidation) × (1+�
   en compte, l'exploitant agricole <!--chiffre:mesure(mortalite_population?population=vingtile&cas=exploitant_agricole&generation=1975&quoi=annees&abs=1)-->3,3<!--/--> de moins, le cadre <!--chiffre:mesure(mortalite_population?population=vingtile&cas=cadre&generation=1975&quoi=annees&abs=1)-->2,4<!--/--> de plus, le
   libéral <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=annees&abs=1)-->2,8<!--/--> de plus. Un diviseur commun transfère donc des modestes vers
   les aisés : <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=ecart&abs=1)-->11,2<!--/--> % de pension notionnelle à capital égal pour le SMIC,
-  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,1<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->42 744<!--/--> € retirés
+  <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=ecart&abs=1)-->11,1<!--/--> % dans l'autre sens pour le libéral, et sur la vie <!--chiffre:mesure(mortalite_population?population=vingtile&cas=smic_carriere_complete&generation=1975&quoi=transfert&abs=1)-->43 177<!--/--> € retirés
   au premier et <!--chiffre:mesure(mortalite_population?population=vingtile&cas=profession_liberale&generation=1975&quoi=transfert&abs=1)-->165 486<!--/--> € ajoutés au second sous le système actuel — qui
   transfère autant que les autres, n'ayant aucun diviseur pour le savoir.
   Cette mesure est celle que le défaut applique désormais ; ses chiffres
@@ -1959,7 +1959,7 @@ quater le dit.
 un système notionnel réel relèverait ses pensions jusqu'à l'équilibre, ou les
 abaisserait, par un facteur commun à toutes les pensions de l'année. Un
 coefficient supérieur à un n'est donc pas une économie mais une MARGE, et lire
-les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,71<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->41<!--/--> % est un contresens : à
+les <!--chiffre:mesure(coefficient?scenario=3&annee=2070)-->1,71<!--/--> du scénario 3 en 2070 comme une économie de <!--chiffre:mesure(coefficient?scenario=3&annee=2070&quoi=economie)-->42<!--/--> % est un contresens : à
 prélèvement inchangé, ce système servirait autant que le nôtre, autrement
 réparti entre les carrières. Le facteur étant commun, l'appliquer déplacerait
 les niveaux sans toucher aux écarts, qui sont l'objet du modèle.
@@ -1993,7 +1993,7 @@ d'attendre une réforme.
 
 ### Sources
 
-`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->174<!--/--> jeux de données des
+`data/sources.yaml` recense les <!--chiffre:entrees(data/sources.yaml:institutions.*.jeux)-->175<!--/--> jeux de données des
 <!--chiffre:entrees(data/sources.yaml:institutions)-->38<!--/--> institutions, avec pour chacun l'URL, le mode
 d'accès et l'état d'intégration.
 

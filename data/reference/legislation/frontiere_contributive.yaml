@@ -1431,14 +1431,14 @@ bascules_hors_legi:
     dispositifs: []
     source: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1073.pdf
     lu_le: 2026-09-21
-    portee_modele: non_applique
+    portee_modele: applique
     effet_modele: >-
-      Le moteur porte la valeur d'achat du point et la valeur de service, non
-      le taux d'appel : il calcule les points à partir de la cotisation
-      appelée divisée par la valeur d'achat, et la fédération publie cette
-      valeur d'achat DÉJÀ nette du taux d'appel. Le résultat est juste ; ce
-      qui manque est la lecture — rien ne dit, dans le dépôt, quelle part du
-      versement n'achète rien.
+      Le moteur porte le taux d'appel, année par année, dans
+      `valeurs_point.csv` — 0,78 à l'Agirc en 1952, 0,85 à partir de 1955 —,
+      et le scénario 1 en tire les points acquis : la cotisation divisée par
+      le taux d'appel et par le salaire de référence. Le rabais y est donc
+      servi tel qu'il l'a été. Cette fiche disait, jusqu'au 23 septembre 2026,
+      le taux d'appel absent des données : il y était déjà, et appliqué.
 
   - code: taux_appel_supplement
     date: 1995-01-01
@@ -1454,11 +1454,13 @@ bascules_hors_legi:
     dispositifs: []
     source: https://www.cor-retraites.fr/sites/default/files/2019-06/doc-1073.pdf
     lu_le: 2026-09-21
-    portee_modele: non_applique
+    portee_modele: applique
     effet_modele: >-
-      Même remarque : le taux d'appel n'est nulle part dans les données du
-      dépôt. `reformes.yaml` le mentionne dans la note d'une réforme de 1994,
-      sans table ni valeur.
+      Même lecture : `valeurs_point.csv` porte le taux d'appel de chaque année
+      et de chaque régime, et le scénario 1 n'achète des points qu'avec la
+      part du versement qui en achète — 100 € sur 125 à partir de 1995. Le
+      compte notionnel, lui, porte tout ce qui a été versé, taux d'appel
+      compris : c'est la part que la proposition cesse de stériliser.
 
   - code: contributions_equilibre_2019
     date: 2019-01-01

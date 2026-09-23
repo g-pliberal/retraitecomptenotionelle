@@ -71,7 +71,8 @@ export class DonneesMacro {
     this.pib_nominal = this._prolongeAvecEmploi(serie("pib_nominal"), "pib_nominal");
     this.productivite = prolonger(serie("productivite"), "productivite_reelle");
     this.plafond_securite_sociale = this._plafond(serie("pass"), hypotheses);
-    this.smic_horaire = this._prolongeParSalaire(serie("smic_horaire"), "smic_horaire");
+    this.smic_horaire = this._prolongeParSalaire(serie("smic_horaire"), "smic_horaire",
+                                                 paquet.smic_horaire_releve ?? null);
     this.heures_par_trimestre = serie("heures_par_trimestre");
 
     this._coefficientsPrix = new Map();
@@ -165,14 +166,21 @@ export class DonneesMacro {
    * C'est l'indexation légale du SMIC, à laquelle s'ajoutent des coups de
    * pouce que le modèle ne prétend pas anticiper.
    */
-  _prolongeParSalaire(serie, nom) {
+  _prolongeParSalaire(serie, nom, releve = null) {
     const annees = serie.annees.slice();
     const valeurs = serie.valeurs.slice();
     const fiabilites = serie.fiabilites.slice();
     let courant = serie.valeur(serie.derniereAnnee);
     const croissance = Number(this.projection.salaire_moyen_nominal);
     for (let annee = serie.derniereAnnee + 1; annee <= this.projection.fin; annee += 1) {
-      courant *= 1 + croissance;
+      if (releve !== null && annee === serie.derniereAnnee + 1) {
+        // Un SMIC ne baisse pas : janvier suivant part du dernier relèvement
+        // en vigueur, porté au même rythme sur les mois qui restent.
+        const [mois, valeur] = releve;
+        courant = valeur * (1 + croissance) ** ((13 - mois) / 12);
+      } else {
+        courant *= 1 + croissance;
+      }
       annees.push(annee);
       valeurs.push(courant);
       fiabilites.push(Fiabilite.ESTIMEE);
