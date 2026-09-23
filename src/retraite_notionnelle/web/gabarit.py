@@ -2209,6 +2209,11 @@ def euros_centimes(montant: float) -> str:
     50 centimes supérieur, loi n° 50-147 du 3 février 1950 — a été supprimée à
     cette date. Afficher l'euro rond laissait croire à un arrondi que le droit
     ne fait pas.
+
+    C'est donc l'unité du DÉTAIL, là où l'on refait un calcul. La vue des
+    résultats — les quatre barres, et ce que le salaire devient — arrondit à
+    l'euro depuis le 23 septembre 2026, comme « En bref » qui la précède, et
+    sa clé de lecture le dit.
     """
     return nombre(montant, 2) + "\u202f\u20ac"
 

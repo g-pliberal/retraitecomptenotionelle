@@ -3658,16 +3658,18 @@ function lectureDesMontants(comparaison, saisie) {
   // montants nets, et « un brut sur un brut, donc plus bas qu'un taux calculé
   // sur des nets » au-dessus d'un taux calculé, précisément, sur des nets.
   const prelevements = saisie.enNet
-    ? "Montants <strong>nets</strong> et au centime, tels qu'ils arrivent sur "
-      + "le compte : après CSG, CRDS et Casa — 9,10 %, le taux plein, appliqué "
-      + "ici à tout le monde — et avant impôt sur le revenu, comme le revenu "
-      + "d'activité saisi plus haut. Le <strong>taux de remplacement</strong> "
+    ? "Montants <strong>nets</strong>, arrondis à l'euro, tels qu'ils arrivent "
+      + "sur le compte : après CSG, CRDS et Casa — 9,10 %, le taux plein, "
+      + "appliqué ici à tout le monde — et avant impôt sur le revenu, comme le "
+      + "revenu d'activité saisi plus haut. Le détail du calcul les donne au "
+      + "centime. Le <strong>taux de remplacement</strong> "
       + "rapporte la pension annuelle au dernier revenu d'activité ramené à "
       + "l'année pleine — un net sur un net, donc plus haut qu'un taux calculé "
       + "sur des bruts."
-    : "Montants <strong>bruts</strong> et au centime, comme la caisse les "
-      + "verse : avant CSG, CRDS et impôt, comme le revenu d'activité saisi "
-      + "plus haut. Le <strong>taux de remplacement</strong> rapporte la "
+    : "Montants <strong>bruts</strong>, arrondis à l'euro : avant CSG, CRDS et "
+      + "impôt, comme le revenu d'activité saisi plus haut. Le détail du calcul "
+      + "les donne au centime, comme la caisse les verse. Le "
+      + "<strong>taux de remplacement</strong> rapporte la "
       + "pension annuelle au dernier revenu d'activité ramené à l'année "
       + "pleine — un brut sur un brut, donc plus bas qu'un taux calculé sur "
       + "des nets.";
@@ -4681,13 +4683,16 @@ function resultats(contexte, saisie) {
     }
     const net = nets[cle];
     const ecart = net - nets.actuel;
-    const mention = Math.abs(ecart) >= 0.005
-      ? `<span class="ecart">${eurosSigne(ecart / 12)} par mois</span>`
+    // À l'euro, comme les montants : un écart de moins d'un demi-euro par
+    // mois s'écrirait « +0 € », et ne s'écrit donc pas.
+    const mention = Math.abs(ecart / 12) >= 0.5
+      ? `<span class="ecart">${eurosSigne(ecart / 12, false)} `
+        + "par mois</span>"
       : "";
     return `
       <span class="chiffre salaire">
         <span class="categorie">salaire</span>
-        <span class="somme">${g.nombre(net / 12)}</span>
+        <span class="somme">${g.nombre(net / 12, 0)}</span>
         <span class="unite">${montants.uniteSalaire}</span>
         ${mention}
       </span>`;
@@ -4728,16 +4733,16 @@ function resultats(contexte, saisie) {
       // le montant du haut s'atteint par une décision, pas par un coup de
       // bourse.
       const detail = partVolontaire > 0 ? `
-        ${g.eurosCentimes(montants.pension(partCapitalisee - partVolontaire) / 12)}
+        ${g.euros(montants.pension(partCapitalisee - partVolontaire) / 12)}
         de rente capitalisée obligatoire — soit
-        ${g.eurosCentimes(montants.pension(montant - partVolontaire) / 12)} par
+        ${g.euros(montants.pension(montant - partVolontaire) / 12)} par
         mois sans rien ajouter — et
-        ${g.eurosCentimes(montants.pension(partVolontaire) / 12)} de plus si
+        ${g.euros(montants.pension(partVolontaire) / 12)} de plus si
         vous placez les cinq points rendus, sans risque` : `
-        ${g.eurosCentimes(montants.pension(partCapitalisee) / 12)} de rente
+        ${g.euros(montants.pension(partCapitalisee) / 12)} de rente
         capitalisée, par mois`;
       partage = `
-      <span class="composition">${g.eurosCentimes(montants.pension(repartition) / 12)}
+      <span class="composition">${g.euros(montants.pension(repartition) / 12)}
         de pension par répartition +${detail}</span>`;
     }
     // Le troisième chiffre n'apparaît QUE là où le coefficient est sous un,
@@ -4758,7 +4763,7 @@ function resultats(contexte, saisie) {
       chiffreFinance = `
       <span class="chiffre finance">
         <span class="categorie">vraiment payé</span>
-        <span class="somme">${g.nombre(montants.pension(servie) / 12)}</span>
+        <span class="somme">${g.nombre(montants.pension(servie) / 12, 0)}</span>
         <span class="unite">${montants.unitePension}</span>
         <span class="ecart">il manque ${g.euros(manqueMensuel)} par mois</span>
       </span>`;
@@ -4771,7 +4776,7 @@ function resultats(contexte, saisie) {
       <span class="chiffre principal">
         <span class="categorie">${partVolontaire > 0 ? "retraite jusqu'à"
     : "retraite"}</span>
-        <span class="somme">${g.nombre(montants.pension(montant) / 12)}</span>
+        <span class="somme">${g.nombre(montants.pension(montant) / 12, 0)}</span>
         <span class="unite">${montants.unitePension}</span>
       </span>${chiffreFinance}
     </span>
@@ -4833,7 +4838,7 @@ function resultats(contexte, saisie) {
         comparaison.aujourd_hui.actuel.pension_hors_repartition)
       : comparaison.enEurosConstants(comparaison.actuel.pension_hors_repartition);
     capitalisation = '<p class="discret">Hors répartition, servi à part : '
-      + `${g.eurosCentimes(montant / 12)} par mois de RAFP, en euros de ${saisie.euros} `
+      + `${g.euros(montant / 12)} par mois de RAFP, en euros de ${saisie.euros} `
       + "comme les quatre montants ci-dessus."
       + g.bulle(
         "Pourquoi le RAFP est servi à part",
@@ -5507,9 +5512,9 @@ function salaireNet(comparaison, saisie) {
 
   const net = echapper(remuneration.libelleNet.toLowerCase());
   const ouverture = [
-    g.fiche(`votre ${net} en ${reference.annee}`, g.eurosCentimes(avant.net / 12)),
-    g.fiche("avec le système 4", g.eurosCentimes(apres.net / 12)),
-    g.fiche("par mois", eurosSigne(gain)),
+    g.fiche(`votre ${net} en ${reference.annee}`, g.euros(avant.net / 12)),
+    g.fiche("avec le système 4", g.euros(apres.net / 12)),
+    g.fiche("par mois", eurosSigne(gain, false)),
   ].join("");
   const sens = gain >= 0 ? "de plus" : "de MOINS";
   const duree = remuneration.annees.length;
@@ -5554,11 +5559,11 @@ function salaireNet(comparaison, saisie) {
   rente qu'il affiche plus haut suppose en plus que vous placez les
   <strong>${g.pourcentage(tauxCapitalisationVolontaireApplique(parametres), false, 0)}
   de capitalisation volontaire</strong> que la proposition vous rend — soit
-  ${g.eurosCentimes(remuneration.epargneVolontaireMensuelle)} par mois virés
+  ${g.euros(remuneration.epargneVolontaireMensuelle)} par mois virés
   de votre ${net} sur un compte à votre nom, pas une retenue —, pour cotiser
   ${g.pourcentage(tauxRetraitePropose(parametres), false, 0)} en tout, comme
-  aujourd'hui. Il vous reste alors ${g.eurosCentimes(resteApres)} par mois,
-  soit ${eurosSigne(ecartApres)} par rapport à aujourd'hui. Si vous ne les
+  aujourd'hui. Il vous reste alors ${g.euros(resteApres)} par mois,
+  soit ${eurosSigne(ecartApres, false)} par rapport à aujourd'hui. Si vous ne les
   placez pas, vous gardez le ${net} plein, et la rente du système 4 baisse de la
   part nommée « des cinq points volontaires ».`;
   }
@@ -5571,7 +5576,7 @@ chaque mois. Les systèmes 1, 2 et 3 prélèvent la même chose — ils ne chang
 que ce qui est porté au compte. Le système 4, lui, y touche.</p>
 <div class="carte">
   <div class="fiches">${ouverture}</div>
-  <p>Soit <strong>${eurosSigne(gain)} ${sens} sur votre fiche de paie</strong>,
+  <p>Soit <strong>${eurosSigne(gain, false)} ${sens} sur votre fiche de paie</strong>,
   ${sousQuelleHypothese}.${reste}${volontaire}</p>${rendu}
   ${salaireNetDetail(comparaison, remuneration, saisie)}
 </div>`;

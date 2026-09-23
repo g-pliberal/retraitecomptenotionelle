@@ -847,16 +847,19 @@ def _pension_affichee(contexte, corps: str) -> float:
     valoir ce qu'il a tapé, et un contrôle qui relancerait le modèle ne dirait
     rien de la chaîne d'affichage — mensualisation, net, euros constants — que
     l'inversion doit traverser À L'ENVERS pour poser sa cible.
+
+    À l'euro depuis le 23 septembre 2026, comme toute la vue des résultats :
+    une pension saisie en euros ronds s'y relit donc à l'identique.
     """
     depart = corps.find("1. Système de répartition actuel")
     assert depart >= 0, "la barre du système actuel a disparu de la page"
     montant = re.search(
         r'<span class="chiffre principal">.*?'
-        r'<span class="somme">([\d\u202f]+),(\d\d)</span>',
+        r'<span class="somme">([\d\u202f]+)</span>',
         corps[depart:], re.S,
     )
     assert montant, f"aucun montant lisible : {corps[depart:depart + 300]}"
-    return float(montant.group(1).replace("\u202f", "") + "." + montant.group(2))
+    return float(montant.group(1).replace("\u202f", ""))
 
 
 @pytest.mark.parametrize("pension,mode", [
@@ -2149,8 +2152,10 @@ def test_le_salaire_net_des_cartes_est_celui_de_la_fiche_de_paie(contexte):
     ligne = re.search(r"<strong>Salaire net</strong>.*?</tr>", corps, re.S).group(0)
     tableau = _nombres(re.sub(r"<[^>]+>", " ", ligne))
     assert len(tableau) == 2, f"la ligne du tableau porte {len(tableau)} nombres"
+    # La carte est à l'euro, la fiche de paie au centime : ils ne diffèrent
+    # que de l'arrondi.
     for rang, attendu in enumerate([tableau[0]] * 3 + [tableau[1]]):
-        assert abs(cartes[rang] - attendu) <= 0.005, (
+        assert abs(cartes[rang] - attendu) <= 0.5, (
             f"carte {rang + 1} : {cartes[rang]} en tête, {attendu} dans la fiche"
         )
 
@@ -5856,6 +5861,21 @@ def _somme_affichee(texte: str) -> float:
     return float(texte.replace("\u202f", "").replace(",", "."))
 
 
+def test_la_vue_des_resultats_est_a_l_euro(contexte):
+    """« 2 795 € » dans « En bref », « 2 795,42 » sur la barre juste dessous :
+    deux écritures du même nombre, relevées le 23 septembre 2026. Ce qui se
+    lit sans rien déplier — les quatre barres, la ligne qui compose le
+    système 4, ce que le salaire devient — est à l'euro. Le centime, que la
+    caisse verse, reste dans les dépliants, là où l'on refait le calcul.
+    """
+    corps = rendre(contexte, "/simuler", SIMULATION_TEMOIN)[1]
+    visible = _hors_depliants(corps)
+    au_centime = re.findall(
+        r'\d,\d\d\u202f€|<span class="somme">[\d\u202f]+,\d\d<', visible)
+    assert not au_centime, f"montants au centime sur la vue : {au_centime[:3]}"
+    assert re.search(r"\d,\d\d\u202f€", corps), "le détail a perdu ses centimes"
+
+
 def test_le_resume_des_resultats_redit_les_chiffres_des_barres(contexte):
     """« En bref » ne calcule rien : il redit, arrondis à l'euro, les montants
     que les barres affichent juste dessous — le système actuel, la
@@ -5885,7 +5905,7 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres(contexte):
     assert euro(principal(actuel)) in texte
     assert euro(principal(liberal)) in texte
     plancher = _somme_affichee(re.search(
-        r"soit\s+([\d\u202f]+,\d{2})\u202f€ par\s+mois sans rien ajouter",
+        r"soit\s+([\d\u202f]+)\u202f€ par\s+mois sans rien ajouter",
         liberal).group(1))
     assert f"serait de {euro(plancher)} nets par mois" in texte
     assert f"jusqu'à {euro(principal(liberal))}" in texte
@@ -5896,10 +5916,10 @@ def test_le_resume_des_resultats_redit_les_chiffres_des_barres(contexte):
         assert f"il manque {manque} par mois" in texte
     assert "Elle n'est pas entièrement financée" in texte
     assert "Elle non plus n'est pas entièrement financée" in texte
-    # Le salaire net, arrondi, celui que « Et pendant que vous cotisez »
-    # chiffre au centime.
+    # Le salaire net, celui que « Et pendant que vous cotisez » chiffre au même
+    # euro.
     gain = _somme_affichee(re.search(
-        r'<span class="ecart">\+([\d\u202f]+,\d{2})\u202f€ par mois</span>',
+        r'<span class="ecart">\+([\d\u202f]+)\u202f€ par mois</span>',
         liberal).group(1))
     assert f"augmente de {euro(gain)} par mois" in texte
     # Ni le 2 ni le 3 : leurs montants ne sont pas dans le résumé.
