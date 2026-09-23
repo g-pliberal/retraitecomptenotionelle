@@ -929,7 +929,7 @@ sources:
     a_en_tirer: >-
       Les cotisations Cipav par tranche, et les points acquis : à confronter
       aux pages de la Cipav elle-même.
-    statut: a_explorer
+    statut: en_cours
 
   - id: mon_entreprise_artiste_auteur
     url: https://mon-entreprise.urssaf.fr/simulateurs/artiste-auteur
@@ -955,7 +955,7 @@ sources:
       Les guides de la caisse nationale : le régime de base en points, commun
       aux dix sections, avec ses deux tranches et sa valeur de service. La
       fiche `cnavpl` est `partiel` ; ces guides sont ce qui la complète.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cipav_calcul_retraite
     url: https://www.lacipav.fr/calcul-retraite
@@ -965,7 +965,7 @@ sources:
     a_en_tirer: >-
       Le calcul des deux étages Cipav, base et complémentaire, avec les
       classes de cotisation.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cipav_cotiser
     url: https://www.lacipav.fr/cotiser-pour-acquerir-des-droits-retraite-prevoyance
@@ -975,7 +975,7 @@ sources:
     a_en_tirer: >-
       Les classes A à H, leur prix et les points qu'elles rendent : le barème
       qui fait la fiche `cipav_complementaire`.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cipav_age
     url: https://www.lacipav.fr/quel-age-prendre-retraite
@@ -985,7 +985,7 @@ sources:
     a_en_tirer: >-
       Âge d'ouverture, taux plein, coefficients d'anticipation et d'ajournement
       propres à la complémentaire.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cipav_cumul
     url: https://www.lacipav.fr/cumul-emploi-retraite
@@ -994,7 +994,7 @@ sources:
     regimes: [cnavpl, cipav_complementaire]
     a_en_tirer: >-
       Le cumul chez les libéraux, où il est plus libre qu'ailleurs.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cipav_rachat
     url: https://www.lacipav.fr/racheter-trimestres
@@ -1004,7 +1004,7 @@ sources:
     a_en_tirer: >-
       Le prix d'un trimestre racheté chez un libéral : troisième barème de
       rachat, après l'ENSAP et la CNRACL.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cipav_documents
     url: https://www.lacipav.fr/documents-utiles
@@ -1014,7 +1014,7 @@ sources:
     a_en_tirer: >-
       Statuts, règlement, circulaires et notices : la source de droit de la
       section, là où les pages sont des résumés.
-    statut: a_explorer
+    statut: en_cours
 
   - id: carmf_simulateur_cotisations
     url: https://www.carmf.fr/page.php?page=cdrom%2Fcalc%2Findex.php%3Fcalc%3Dcoti
@@ -1471,7 +1471,7 @@ sources:
     a_en_tirer: >-
       Une méthode de calcul rapide publiée par la caisse : elle expose le
       rendement du régime en clair, ce qu'aucune autre section ne fait.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cavamac_calcul_pension
     url: https://www.cavamac.fr/je-pars-a-la-retraite/le-calcul-de-ma-pension/
@@ -1480,7 +1480,7 @@ sources:
     regimes: [cavamac_complementaire, cnavpl]
     a_en_tirer: >-
       Le calcul des pensions des agents généraux d'assurance.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cavamac_cotisations_rbl
     url: https://www.cavamac.fr/je-suis-en-activite/mes-cotisations-rbl/
@@ -1490,7 +1490,7 @@ sources:
     a_en_tirer: >-
       Le régime de base des libéraux vu par la CAVAMAC : deuxième lecture du
       même barème national, contrôle croisé gratuit.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cavamac_cotisations_rco_rid
     url: https://www.cavamac.fr/je-suis-en-activite/mes-cotisations-rco-et-rid/
@@ -1500,7 +1500,7 @@ sources:
     a_en_tirer: >-
       Le complémentaire et le régime invalidité-décès : cotisation assise sur
       les commissions, cas unique parmi les sections.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cavec_simulateur
     url: https://www.cavec.fr/simuler-vos-cotisations/
@@ -1510,7 +1510,7 @@ sources:
     a_en_tirer: >-
       Les cotisations des experts-comptables et commissaires aux comptes, par
       classe.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cavec_calcul_retraite
     url: https://www.cavec.fr/votre-retraite/votre-retraite/preparer-votre-retraite/le-calcul-de-votre-retraite/
@@ -1519,7 +1519,7 @@ sources:
     regimes: [cavec_complementaire, cnavpl]
     a_en_tirer: >-
       Le calcul de la pension, base et complémentaire.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cavec_montant_cotisations
     url: https://www.cavec.fr/votre-retraite/vos-cotisations/vos-cotisations-en-tant-que-liberal-tns/montant-de-vos-cotisations/
@@ -1528,7 +1528,7 @@ sources:
     regimes: [cavec_complementaire, cnavpl]
     a_en_tirer: >-
       Les classes et leur prix, écrits à côté du simulateur.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cavec_guides
     url: https://www.cavec.fr/guides-et-documentations/
@@ -1537,7 +1537,7 @@ sources:
     regimes: [cavec_complementaire]
     a_en_tirer: >-
       Guides et statuts, pour la série historique.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cavom_retraite
     url: https://www.cavom.net/vos-droits/votre-retraite/
@@ -2282,7 +2282,7 @@ sources:
       Le régime de base en points, ses deux tranches (jusqu'à 85 % du plafond,
       puis jusqu'à cinq fois), leurs taux et les points qu'elles rendent :
       c'est le cœur de la fiche `cnavpl`, aujourd'hui `partiel`.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnavpl_preparer_sa_retraite
     url: https://www.cnavpl.fr/preparer-sa-retraite/
@@ -2291,7 +2291,7 @@ sources:
     regimes: [cnavpl]
     a_en_tirer: >-
       Âge, taux plein, durée d'assurance et rachats chez les libéraux.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnavpl_comprendre_sa_retraite
     url: https://www.cnavpl.fr/comprendre-sa-retraite/
@@ -2301,7 +2301,7 @@ sources:
     a_en_tirer: >-
       Le calcul de la pension de base : valeur de service du point, décote,
       surcote, majorations.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnavpl_situations_particulieres
     url: https://www.cnavpl.fr/situations-particulieres/
@@ -2312,7 +2312,7 @@ sources:
       Maternité, maladie, invalidité, conjoint collaborateur, début d'activité :
       les points attribués sans cotisation chez les libéraux — un versant de
       la frontière contributive que le dépôt n'a lu que pour les salariés.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnavpl_complementaires_prevoyance
     url: https://www.cnavpl.fr/regimes-complementaires-et-prevoyance/
@@ -2323,7 +2323,7 @@ sources:
       La vue d'ensemble des dix sections et de leurs complémentaires : une
       table de comparaison que le dépôt devrait pouvoir reproduire fiche par
       fiche, et qui dira du premier coup d'œil lesquelles il décrit mal.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnavpl_statuts
     url: https://www.cnavpl.fr/statuts-et-documents-de-reference/
@@ -2333,7 +2333,7 @@ sources:
     a_en_tirer: >-
       Statuts et décrets : la source de droit du régime de base, à citer dans
       la fiche plutôt qu'une page d'explication.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnavpl_ressources_documentaires
     url: https://www.cnavpl.fr/ressources-documentaires/
@@ -2344,7 +2344,7 @@ sources:
       Les recueils annuels — que `scripts/fetch/cnavpl_recueils.py` sait déjà
       lire depuis un document apporté : voir ce que cette page publie de plus,
       et si la récupération peut cesser de passer par `data/brut/`.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- CPRN, les notaires -------------------------------------------------
 
