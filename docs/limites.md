@@ -5289,16 +5289,36 @@ joue contre le mineur.
 
 **Et ce taux d'équilibre paie plus que la retraite de l'agent.** La Cour des
 comptes le décompose dans sa communication du 22 septembre 2026 sur les
-retraites des fonctionnaires de l'État : des <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2025&regime=fonction_publique_etat)-->78,28<!--/--> % appelés en 2025 pour un
-civil, elle ne garde que <!--chiffre:illustration()-->44,1<!--/--> % pour la retraite au sens strict ; le reste
-finance l'invalidité avant soixante-deux ans, les majorations pour enfants, les
-départs anticipés des emplois classés et, pour <!--chiffre:illustration()-->35,3<!--/--> points, le déséquilibre
-démographique du régime. Pour un militaire, dont l'employeur paie <!--chiffre:illustration()-->126,07<!--/--> %, elle
-garde <!--chiffre:illustration()-->51,2<!--/--> %. Le scénario 4, et le 6 jusqu'à la bascule, créditent au compte
-le taux entier, et le taux des civils au militaire : ils portent donc au compte
-d'un fonctionnaire d'État ce que son employeur verse pour d'autres, et au
-militaire moins que ce que le sien verse. L'action 120 de la feuille de route en
-fait une question à trancher, non une correction.
+retraites des fonctionnaires de l'État (tableau n° 15, recopié ligne à ligne
+dans `legislation/contribution_etat_retraite_seule.csv`) : des <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2025&regime=fonction_publique_etat)-->78,28<!--/--> % appelés
+en 2025 pour un civil, elle ne garde que <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=civils&poste=retraite_stricto_sensu)-->44,1<!--/--> % pour la retraite au sens
+strict ; le reste finance l'invalidité avant soixante-deux ans, les majorations
+pour enfants, les départs anticipés des emplois classés et, pour <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=civils&poste=desequilibre_demographique)-->35,3<!--/-->
+points, le déséquilibre démographique du régime. Pour un militaire, dont
+l'employeur paie <!--chiffre:illustration()-->126,07<!--/--> %, elle garde <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> %. Par défaut, le scénario 4, et le
+6 jusqu'à la bascule, créditent au compte le taux entier, et le taux des civils
+au militaire : ils portent donc au compte d'un fonctionnaire d'État ce que son
+employeur verse pour d'autres, et au militaire moins que ce que le sien verse.
+
+**Le réglage `contribution_etat=retraite_seule` ne leur porte que la part de la
+Cour** — « Contribution de l'État portée au compte » dans les options du site.
+L'année qu'elle a mesurée, le compte reçoit ses deux taux ; les autres années,
+la même proportion du taux versé — <!--chiffre:mesure(retraite_seule)-->56,3<!--/--> % pour un civil —, et c'est une
+hypothèse, que le résultat qualifie d'`estimee`. Pourquoi une proportion
+plutôt qu'un taux fixe : le rapport n'éclaire qu'une autre année, 2020, où le
+taux était de <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2020&regime=fonction_publique_etat)-->74,28<!--/--> % ; la proportion y donne <!--chiffre:mesure(retraite_seule?annee=2020)-->41,8<!--/--> %, un taux fixe <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=civils&poste=retraite_stricto_sensu)-->44,1<!--/-->, et
+la Cour — qui impute cinq points de l'écart avec l'Institut des politiques
+publiques à la seule différence d'année (annexe n° 6) — environ <!--chiffre:illustration()-->39<!--/-->.
+Ce que le réglage déplace est considérable. La fonctionnaire de l'exemple du
+README, née en 1975, passe de <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->+45,0<!--/--> % à <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=retraite_seule)-->−1,3<!--/--> % d'écart au système actuel dans le scénario 4,
+de <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->+44,9<!--/--> % à <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=retraite_seule)-->−3,4<!--/--> % dans la proposition ; le solde moyen de la
+proposition passe de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,87<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=retraite_seule)-->−0,48<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−26<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=retraite_seule)-->−14<!--/--> milliards
+d'euros par an, parce que les droits qu'elle reprend à la bascule étaient
+gonflés de ce qui payait d'autres pensions. Le privé, la CNRACL, le scénario 1
+et la part salariale ne bougent pas, ni les années d'avant 1995, où le compte
+reçoit déjà l'effort d'un salarié du privé. C'est un réglage et non le défaut :
+l'action 129 de la feuille de route dit ce qui reste à établir avant d'en
+décider.
 
 **Ce que les documents budgétaires ajoutent, et ce qu'ils n'ajoutent pas.** Les
 projets annuels de performances annexés au PLF 2026 — programmes 195, 197 et
@@ -9144,7 +9164,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2368<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2375<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

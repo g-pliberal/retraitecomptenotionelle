@@ -2001,3 +2001,32 @@ export class ContributionsEmployeurPubliques {
     return annees.get(applicable);
   }
 }
+
+/**
+ * Ce que paie la contribution de l'État employeur, poste par poste.
+ *
+ * Portage de ``PartRetraiteSeuleEtat``. La Cour des comptes a décomposé le
+ * taux que l'État verse au compte d'affectation spéciale « Pensions » pour
+ * 2025, et n'en rattache à la retraite de l'agent lui-même que 44,1 % du
+ * traitement pour un civil et 51,2 % pour un militaire. Une seule année est
+ * mesurée : ``annee``.
+ */
+export class PartRetraiteSeuleEtat {
+  constructor(paquet) {
+    const table = paquet.contribution_etat_retraite_seule ?? null;
+    this.annee = table === null ? null : table.annee;
+    this.postes = table === null ? [] : table.postes.map(
+      ([population, poste, montant, taux]) => ({ population, poste, montant, taux }),
+    );
+  }
+
+  /** Taux « retraite seule » de l'année mesurée : ``civils`` ou ``militaires``. */
+  taux(population) {
+    for (const poste of this.postes) {
+      if (poste.population === population && poste.poste === "retraite_stricto_sensu") {
+        return poste.taux;
+      }
+    }
+    throw new Error(`population inconnue : ${population}`);
+  }
+}

@@ -25,6 +25,7 @@ from retraite_notionnelle.donnees.mortalite import DonneesMortalite
 from retraite_notionnelle.donnees.regimes import (
     CatalogueRegimes,
     ContributionsEmployeurPubliques,
+    PartRetraiteSeuleEtat,
 )
 
 
@@ -1923,6 +1924,50 @@ def test_les_taux_employeur_publics_restent_plausibles(employeurs):
         for annee in range(debut, fin + 1):
             taux = employeurs.taux(regime, annee).taux
             assert 0.05 < taux < 1.0, (regime, annee, taux)
+
+
+# -- la part « retraite seule » de la contribution de l'État ------------------
+
+
+def test_le_tableau_de_la_cour_tombe_juste_a_l_arrondi_pres():
+    """Chaque sous-total est le précédent moins la déduction qui les sépare.
+
+    Le tableau n° 15 imprime des arrondis au dixième : la chaîne tombe juste à
+    un ou deux dixièmes près, en milliards comme en points. Une ligne mal
+    recopiée — un signe, une virgule, deux postes intervertis — la ferait
+    dévier bien au-delà.
+    """
+    table = PartRetraiteSeuleEtat(RACINE_DONNEES)
+    assert table.annee == 2025
+    for population in ("civils", "militaires"):
+        postes = [p for p in table.postes if p.population == population]
+        assert [p.poste for p in postes] == [
+            "depenses_totales", "invalidite", "depenses_vieillesse", "solidarite",
+            "vieillesse_hors_majorations", "avantages_professionnels",
+            "vieillesse_hors_majorations_et_avantages",
+            "desequilibre_demographique", "retraite_stricto_sensu",
+        ], population
+        for total, deduction, reste in zip(postes[::2], postes[1::2], postes[2::2]):
+            assert deduction.montant < 0 and deduction.taux < 0, deduction.poste
+            assert reste.montant == pytest.approx(
+                total.montant + deduction.montant, abs=0.15), reste.poste
+            assert reste.taux == pytest.approx(
+                total.taux + deduction.taux, abs=0.002), reste.poste
+    assert table.taux("civils") == pytest.approx(0.441)
+    assert table.taux("militaires") == pytest.approx(0.512)
+
+
+def test_l_annee_mesuree_par_la_cour_a_son_taux_verse(employeurs):
+    """La proportion se prend sur le taux que l'État a VERSÉ l'année mesurée.
+
+    Un taux publié, non prolongé : si la série de l'État s'arrêtait avant
+    l'année de la Cour, la proportion se calculerait sur une projection.
+    """
+    table = PartRetraiteSeuleEtat(RACINE_DONNEES)
+    contribution = employeurs.taux("fonction_publique_etat", table.annee)
+    assert not contribution.projetee
+    assert contribution.nature == "appelee"
+    assert contribution.taux == pytest.approx(0.7828)
 
 
 # -- répartition salarié / employeur ------------------------------------------
