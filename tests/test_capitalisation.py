@@ -781,19 +781,37 @@ def test_le_pilier_pese_ce_qu_une_carriere_entiere_a_cinq_pour_cent_peut_peser(s
     """Ordre de grandeur, sur une carrière complète cotisée dès la bascule.
 
     Une personne entrée dans la vie active en 2026 verse 5 % pendant plus de
-    quarante ans à un taux de l'ordre de 3 % : la rente doit peser une fraction
-    notable de la pension notionnelle, sans jamais s'en approcher — le compte
-    notionnel porte, lui, plus de vingt points de cotisation.
+    quarante ans : la rente de ces cinq points doit peser une fraction
+    notable de la pension, sans jamais s'en approcher — le compte notionnel
+    porte, lui, dix-huit points.
+
+    CE TEST MESURAIT DIX POINTS, et le disait cinq, jusqu'au 23 septembre 2026 :
+    ``rente_capitalisation_obligatoire`` réunit les cinq points imposés et les
+    cinq points volontaires que le site suppose placés, et sa borne haute était
+    passée de 0,40 à 0,45 le jour où les frais avaient baissé. Il mesure
+    désormais les cinq points imposés, sur deux bornes qui ne suivent pas le
+    modèle : la rente de cinq points ne peut peser moins que leur poids dans
+    les vingt-huit points versés — 5/28 —, puisque le pilier rapporte le marché
+    quand le compte notionnel rapporte le salaire moyen ; et le pilier entier,
+    dix points, pèse moins que la moitié de la pension.
     """
     comparaison = simulateur.simuler(simulateur.carriere_simple(
         annee_naissance=2004, sexe="H", affiliation="salarie_prive_non_cadre",
         age_debut=22, age_liquidation=64,
     ))
     resultat = comparaison.notionnel_liberal
-    part = resultat.rente_capitalisation_obligatoire / resultat.pension_totale
-    # Dix points capitalisés contre dix-huit notionnels, à des frais qui
-    # baissent : deux cinquièmes du total, pas la moitié.
-    assert 0.15 < part < 0.45
+    pilier = resultat.rente_capitalisation_obligatoire
+    volontaire = resultat.rente_capitalisation_volontaire
+    imposee = pilier - volontaire
+    parametres = simulateur.parametres
+    # Les deux moitiés du pilier ont le même taux : elles servent la même rente.
+    assert parametres.taux_capitalisation_volontaire == parametres.taux_capitalisation_obligatoire
+    assert imposee == pytest.approx(volontaire)
+    verse = (parametres.taux_cotisation_liberal + parametres.taux_capitalisation_obligatoire
+             + parametres.taux_capitalisation_volontaire)
+    part = imposee / resultat.pension_totale
+    assert parametres.taux_capitalisation_obligatoire / verse < part < 0.25
+    assert pilier / resultat.pension_totale < 0.5
     assert resultat.capitalisation.rendement_cumule > 1.3
 
 

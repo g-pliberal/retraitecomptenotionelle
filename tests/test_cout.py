@@ -551,12 +551,21 @@ def test_le_stock_sur_les_prix_efface_la_bosse_sans_toucher_l_horizon(
                for l in reindexe.annees if l.annee >= bascule) > 1.04
 
 
-def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir):
+def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir, comptes):
     """Contrôle de vraisemblance externe, et l'écart qu'il mesure aujourd'hui.
 
-    Le COR projette 13,9 % du PIB en 2024 et 14,2 % en 2070 pour le système
-    actuel (rapport annuel de juin 2025). Le dépôt trouve 13,6 % au départ et
-    19,3 % à l'arrivée : cinq points d'écart, contre quatre avant que chaque cas
+    *Mis à jour le 23 septembre 2026.* Le COR projette, dans son rapport de juin
+    2026 que le dépôt lit, 13,9 % du PIB en 2024 et 15,3 % en 2070 pour le
+    système actuel ; le dépôt trouve 18,3 % en 2070, trois points de plus. La
+    fourchette de 10 à 20 % ci-dessous est un garde-fou de méthode, et elle a
+    suivi le modèle une fois — sa borne haute était de 18 % avant le
+    14 septembre 2026 ; c'est pourquoi l'ÉCART AU COR, lu dans son compte et
+    non écrit ici, est tenu à part, sous le seuil que la page Coût et
+    ``limites.md`` § 5 ter commentent.
+
+    Ce qui suit est l'histoire de cet écart, à sa date. Le COR projetait 13,9 %
+    en 2024 et 14,2 % en 2070 dans son rapport de juin 2025. Le dépôt trouvait
+    13,6 % au départ et 19,3 % à l'arrivée : cinq points d'écart, contre quatre avant que chaque cas
     type ne liquide à l'âge de SA génération, et deux avant que les cas types ne
     soient pondérés par les effectifs de retraités de leur caisse.
 
@@ -594,6 +603,12 @@ def test_la_part_du_pib_reste_dans_un_ordre_de_grandeur_plausible(avenir):
     for ligne in avenir.annees:
         part = ligne.part_pib("actuel")
         assert 0.10 < part < 0.20, f"{ligne.annee} : {part:.1%}"
+    # L'écart au COR à l'horizon, lu dans son compte : trois points aujourd'hui,
+    # et une dérive au-delà de trois et demi relèverait d'une erreur de méthode
+    # plutôt que d'un désaccord d'hypothèses.
+    horizon = avenir.annees[-1]
+    ecart = horizon.part_pib("actuel") - comptes.depense(horizon.annee)
+    assert 0.0 < ecart < 0.035, f"{horizon.annee} : écart au COR {ecart:.2%}"
 
 
 def test_le_pib_projete_croit_moins_vite_que_l_hypothese_nominale(avenir):
@@ -1409,52 +1424,33 @@ def test_le_coefficient_dit_exactement_ce_que_dit_le_solde(solde):
 
 
 def test_le_systeme_actuel_ne_s_equilibre_jamais_et_le_notionnel_si(solde):
-    """Le résultat de fond de cette section, et il a changé de forme.
+    """Le résultat de fond de cette section, réduit à ce qui en est une PROPRIÉTÉ.
 
-    Le système actuel reste déficitaire sur toute la fenêtre projetée du COR,
-    et c'est le seul énoncé de ce test qui n'a jamais bougé. Les deux réformes
-    prospectives s'équilibrent dès la bascule. Ce qui les sépare est ce
-    qu'elles portent au compte : le 5 y ajoute la part patronale, donc des
-    droits, donc une dépense, et sa moyenne reste négative là où celle du 3 est
-    excédentaire.
+    Le système actuel reste déficitaire sur toute la fenêtre projetée du COR :
+    c'est son compte, lu, et le seul énoncé de ce test qui n'ait jamais bougé.
+    Le scénario 3 fait mieux que lui, et le scénario 5 fait moins bien que le 3,
+    parce qu'il porte la part patronale au compte, donc des droits, donc une
+    dépense : deux propriétés de construction, que les règles ne déplacent pas.
 
-    LE SCÉNARIO 5 EST PASSÉ SOUS LE SYSTÈME ACTUEL, puis repassé au-dessus, et
-    les deux mouvements se nomment. Il est tombé dessous quand l'âge de
-    référence a été fixé à 64 ans à partir de la bascule : converti à 64 ans et
-    non à 67, un droit déjà acquis prend un diviseur plus élevé, donc un
-    capital d'ouverture plus gros, et les deux réformes prospectives coûtent
-    chacune un demi-point de PIB de plus. Il est remonté quand les scénarios
-    notionnels ont cessé de servir la réversion — un avantage non contributif
-    de plus, retiré comme les trente-huit autres —, ce qui lui rend 1,19 point
-    de PIB, soit plus que ce que l'âge de référence lui avait coûté.
-
-    Il s'équilibre donc dès la bascule, comme les trois autres réformes, et sa
-    MOYENNE reste pourtant négative : l'équilibre des premières années ne tient
-    pas la charge des années 2040 et 2050. C'est elle qui compte, et c'est ce
-    qui le sépare encore des scénarios 2, 3 et 4.
+    CE TEST A ÉTÉ RÉÉCRIT SEPT FOIS, dont six le 19 septembre 2026, parce qu'il
+    affirmait aussi des RÉSULTATS — le signe de la moyenne du 3, celui du 5, le
+    rang du 5 face au système actuel — et que chaque changement du modèle les
+    déplaçait, et le test avec eux : il ne tenait plus rien. Ces résultats sont
+    désormais dits par la prose, ancrés sur des sondes qui les recalculent
+    (``solde_moyen`` dans le README), et plus par un test qui les suit.
     """
     debut, fin = solde.premiere_annee_projetee, solde.derniere_annee
     assert solde.premiere_annee_equilibree("actuel") is None
+    assert all(ligne.solde("actuel") < 0.0 for ligne in solde.projetees())
     assert solde.solde_moyen("actuel", debut, fin) < 0.0
-    # Le 3 s'équilibre, reste excédentaire en moyenne, et reste au-dessus du
-    # système actuel.
-    annee = solde.premiere_annee_equilibree("notionnel_prospectif")
-    assert annee is not None and annee >= debut
-    assert solde.solde_moyen("notionnel_prospectif", debut, fin) > 0.0
+    # Le 3 fait mieux que le système actuel : il ne sert que ce qui a été
+    # cotisé, part salariale seule.
     assert (solde.solde_moyen("notionnel_prospectif", debut, fin)
             > solde.solde_moyen("actuel", debut, fin))
-    # Le 5 s'équilibre dès la bascule, reste déficitaire EN MOYENNE, et repasse
-    # au-dessus du système actuel. Le dire vaut mieux que de l'arrondir dans un
-    # sens ou dans l'autre : une réforme qui porte la part patronale au compte
-    # porte des droits, et des droits se paient — mais elle ne sert plus la
-    # réversion, et cela lui rend 1,19 point de PIB.
-    annee_5 = solde.premiere_annee_equilibree("notionnel_prospectif_employeur")
-    assert annee_5 is not None and annee_5 >= debut, annee_5
-    assert solde.solde_moyen("actuel", debut, fin) < solde.solde_moyen(
-        "notionnel_prospectif_employeur", debut, fin) < 0.0
-    # Le scénario 5 porte plus de droits que le 3 : il coûte davantage.
-    assert (solde.solde_moyen("notionnel_prospectif_employeur", debut, fin)
-            < solde.solde_moyen("notionnel_prospectif", debut, fin))
+    # Le 5 porte plus de droits que le 3 : il coûte davantage, chaque année.
+    for ligne in solde.projetees():
+        assert (ligne.solde("notionnel_prospectif_employeur")
+                <= ligne.solde("notionnel_prospectif") + 1e-12), ligne.annee
 
 
 def test_le_solde_en_euros_s_arrete_ou_le_pib_publie_s_arrete(solde, depenses):

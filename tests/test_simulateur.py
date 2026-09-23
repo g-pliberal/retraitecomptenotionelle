@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 import csv
 from pathlib import Path
 
@@ -1843,6 +1845,7 @@ def test_les_trimestres_de_decote_sont_des_entiers(simulateur):
     """
     scenario = simulateur.scenario_actuel
     periode = simulateur.catalogue["regime_general"].periode(2015)
+    arrondis = 0
     for generation in range(1945, 1976):
         for age_depart in (60.0, 61.0, 62.0, 63.0, 64.0, 65.0):
             carriere = simulateur.carriere_simple(
@@ -1858,6 +1861,21 @@ def test_les_trimestres_de_decote_sont_des_entiers(simulateur):
                 age_annulation,
             )
             assert retenus == int(retenus), (generation, age_depart, retenus)
+            # Et arrondis À L'ENTIER SUPÉRIEUR, recalculés ici : un arrondi à
+            # l'entier inférieur, ou au plus proche, passait le test
+            # d'intégrité seul jusqu'au 23 septembre 2026.
+            par_age = math.ceil(round((age_annulation - age_depart) * 4, 6))
+            par_duree = max(0, 168 - carriere.trimestres_actuels)
+            attendu = max(0, min(par_age, par_duree))
+            if periode.decote_trimestres_maximum is not None:
+                attendu = min(attendu, periode.decote_trimestres_maximum)
+            assert retenus == attendu, (generation, age_depart, retenus, attendu)
+            brut = (age_annulation - age_depart) * 4
+            if abs(brut - round(brut)) > 1e-6 and 0 < par_age < par_duree:
+                arrondis += 1
+    # La grille passe bien par l'arrondi : des âges d'annulation qui ne tombent
+    # pas sur un trimestre entier, et que la durée ne couvre pas.
+    assert arrondis > 0
 
 
 def test_les_neutralisations_ne_commandent_rien(simulateur):
@@ -2284,8 +2302,10 @@ def test_les_coefficients_de_revalorisation_reproduisent_les_circulaires(simulat
     test oppose au modèle chacune d'elles, année de perception par année de
     perception.
 
-    C'est une vérification par la SOURCE, pas par une seconde implémentation :
-    la table d'OpenFisca, que le dépôt a d'abord reprise, s'écarte de la
+    C'est une vérification par la SOURCE, pas par une seconde implémentation
+    — à condition que la source ait été lue juste, ce que le témoin ne dit pas
+    à lui seul : voir la fin du test. La table d'OpenFisca, que le dépôt a
+    d'abord reprise, s'écarte de la
     circulaire de 2023 de −3 % à −5,5 % après 1990 (il lui manque la
     revalorisation exceptionnelle de 4 % du 1er juillet 2022) et de −17 % à
     +10 % sur les années 1950.
@@ -2322,6 +2342,15 @@ def test_les_coefficients_de_revalorisation_reproduisent_les_circulaires(simulat
     # l'écart est nul. Il ne reste que les colonnes que le témoin porte sans que
     # le CSV les serve — aucune aujourd'hui, d'où une borne très serrée.
     assert pire[0] < 1e-9, f"{pire[1]}, perception {pire[2]} : {pire[0]:.3%}"
+    # CE QUI PRÉCÈDE EST UNE IDENTITÉ, et il faut le dire : le témoin et le
+    # fichier de données sortent de la même lecture des mêmes PDF, et
+    # coïncident valeur pour valeur. Ce qui les contrôle, c'est une lecture
+    # À LA MAIN : trois coefficients recopiés de la circulaire Cnav 2025-29 du
+    # 22 décembre 2025, « Revalorisation à compter du 1er janvier 2026 », qu'un
+    # défaut de l'analyseur du PDF ne pourrait pas reproduire.
+    for perception, lu in ((1975, 5.535), (1990, 1.704), (2000, 1.48)):
+        assert macro.coefficient_revalorisation_portee_au_compte(perception, 2026) \
+            == pytest.approx(lu), perception
 
 
 def test_la_reconstruction_entre_colonnes_reste_dans_sa_derive(simulateur):
@@ -2692,6 +2721,20 @@ def test_la_majoration_pour_enfants_de_la_complementaire_est_plafonnee(simulateu
         complementaire + sum(p.montant for p in resultat.pensions_par_regime
                              if p.regime == "regime_general")
     )
+    # ET LE PLAFOND EST LE BON, au centime : 2 367 € pour les pensions servies
+    # depuis le 1er novembre 2025, revalorisés comme la valeur de service du
+    # point jusqu'à l'année de liquidation. L'inégalité seule passait un
+    # plafond multiplié par 0,01 comme par 1,2 jusqu'au 23 septembre 2026.
+    annee = carriere.annee_liquidation
+    valeur = simulateur.scenario_actuel.valeur_du_point
+    plafond = 2367.0 * valeur("agirc_arrco", annee)[0] / valeur("agirc_arrco", 2025)[0]
+    par_regime = dict(majoration.par_regime)
+    base = next(p.montant for p in resultat.pensions_par_regime
+                if p.regime == "regime_general")
+    assert par_regime["regime_general"] == pytest.approx(0.10 * base)
+    servie = sum(montant for code, montant in par_regime.items()
+                 if code in ("agirc", "arrco", "agirc_arrco"))
+    assert servie == pytest.approx(plafond, rel=1e-9)
 
 
 def test_la_mda_compte_dans_la_proratisation_du_regime_qui_la_porte(simulateur):
@@ -3095,10 +3138,14 @@ def test_le_minimum_contributif_est_revalorise_sur_le_smic(simulateur):
     assert porte == pytest.approx(ancre * macro.coefficient_smic(2014, 2018))
     assert porte > ancre * macro.coefficient_prix(2014, 2018)
 
-    # 2025, lui, a un montant connu : aucune projection ne s'y applique.
-    assert minimum._revalorise("plafond_ecretement", 2025)[0] == pytest.approx(
-        1394.86 * 12
-    )
+    # 2025, lui, a un montant connu : aucune projection ne s'y applique. Et ce
+    # montant se recoupe par un chemin INDÉPENDANT de sa ligne : l'ancre de 2014
+    # portée au SMIC de 2025 le redonne à 0,2 % près. Le test relisait jusqu'au
+    # 23 septembre 2026 la valeur qu'il vérifiait, et n'aurait vu ni une faute
+    # de frappe ni une ligne décalée d'un an.
+    connu = minimum._revalorise("plafond_ecretement", 2025)[0]
+    assert connu == pytest.approx(1394.86 * 12)
+    assert ancre * macro.coefficient_smic(2014, 2025) == pytest.approx(connu, rel=2e-3)
 
     # Les deux minima ne basculent qu'en 2023. Une année antérieure se
     # revalorise donc sur les prix, depuis l'ancre de 2007.
