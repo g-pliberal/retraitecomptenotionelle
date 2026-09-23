@@ -6145,11 +6145,16 @@ function garantieVieillesse(comparaison, saisie) {
       `${g.eurosCentimes(garantie.ressources)} par an`],
   ];
   if (!garantie.age_atteint) {
+    // La rente du pilier ne suit ni l'un ni l'autre : elle est nominale.
+    const rente = garantie.rente_capitalisee > 0
+      ? "; la rente du pilier, nominale et constante, perd "
+        + `${g.pourcentage(1.0 - garantie.erosion_rente)} sur les prix`
+      : "";
     lignes.push([
       `f′) ressources en ${garantie.annee_ouverture}`,
       "la pension notionnelle est revalorisée sur la masse salariale, le "
       + "plancher sur les prix comme l'ASPA : l'écart entre les deux se réduit "
-      + `de ${g.pourcentage(garantie.revalorisation_differee - 1.0)} d'ici l'ouverture`,
+      + `de ${g.pourcentage(garantie.revalorisation_differee - 1.0)} d'ici l'ouverture${rente}`,
       `${g.eurosCentimes(garantie.ressources_a_l_ouverture)} par an`,
     ]);
   }

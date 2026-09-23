@@ -377,6 +377,10 @@ class Pensionne:
     #: capital divisé par le diviseur) et nette des frais sur la réserve et
     #: sur arrérages. Le pilier sert une rente nominale constante.
     rente_pilier: tuple[float, float] = (0.0, 0.0)
+    #: La part de ``pensions[RESSOURCES_GARANTIE]`` qui est cette rente, en
+    #: euros constants à la liquidation. Elle ne se revalorise pas comme la
+    #: pension notionnelle : ``_masses`` les sépare.
+    rente_garantie: float = 0.0
 
 
 @dataclass(frozen=True)
@@ -1616,6 +1620,8 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
             },
             pilier=_flux_pilier(comparaison),
             rente_pilier=_rente_pilier(comparaison),
+            rente_garantie=comparaison.en_euros_constants(
+                comparaison.notionnel_liberal.garantie_vieillesse.rente_capitalisee),
         )
         for (code, generation), comparaison in grille.resultats.items()
     ]
@@ -1722,6 +1728,7 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         poids = 0.0
         poids_garantie = 0.0
         poids_garantie_revalorise = 0.0
+        poids_garantie_nominal = 0.0
         poids_revalorise = 0.0
         poids_revalorise_prospectif = 0.0
         for decalage in range(-_DEMI_TRANCHE, _DEMI_TRANCHE + 1):
@@ -1745,10 +1752,18 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
                 liquidation, annee, prospectif=True
             )
             # La garantie n'entre qu'à 65 ans, même pour qui est parti plus
-            # tôt : avant, on ne touche pas le minimum vieillesse.
+            # tôt : avant, on ne touche pas le minimum vieillesse. Ce qu'elle
+            # regarde se revalorise en DEUX morceaux : la pension du scénario 6
+            # comme ce scénario la sert — la règle du stock comprise, qui garde
+            # les prix aux pensions d'avant la bascule —, et la rente du pilier
+            # comme le pilier la sert, nominale et constante. Les deux étaient
+            # revalorisées sur la masse salariale jusqu'au 23 septembre 2026.
             if annee >= pensionne.annee_ouverture_garantie + decalage:
                 poids_garantie += effectif
-                poids_garantie_revalorise += effectif * revalorisation.coefficient(
+                poids_garantie_revalorise += effectif * revalorisation.coefficient_stock(
+                    liquidation, annee, prospectif=False
+                )
+                poids_garantie_nominal += effectif * revalorisation.coefficient_nominal(
                     liquidation, annee
                 )
         if poids <= 0.0:
@@ -1758,8 +1773,13 @@ def _masses(pensionnes: list[Pensionne], population: Population, annee: int,
         tetes[TETES_GARANTIE] += part * poids_garantie
         for cle in CLES_CAS_TYPES:
             if cle == RESSOURCES_GARANTIE:
-                poids_cle = poids_garantie_revalorise
-            elif cle in CLES_PROSPECTIVES:
+                rente = pensionne.rente_garantie
+                masses[cle] += part * (
+                    poids_garantie_revalorise * (pensionne.pensions[cle] - rente)
+                    + poids_garantie_nominal * rente
+                )
+                continue
+            if cle in CLES_PROSPECTIVES:
                 poids_cle = poids_revalorise_prospectif
             elif cle in CLES_REVALORISEES:
                 poids_cle = poids_revalorise

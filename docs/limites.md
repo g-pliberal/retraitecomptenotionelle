@@ -5333,10 +5333,10 @@ indexée sur les prix depuis 1941.
 appliqué, année par année, à la distribution des pensions de l'échantillon
 interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
-Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,13<!--/--> en 2070. La garantie coûte
+Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,07<!--/--> en 2070. La garantie coûte
 <!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,55<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->17<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->3,1<!--/--> millions de
-bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,39<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->15<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,8<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->702<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,42<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->16<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,9<!--/--> millions —, soit
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->735<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
 déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 572<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
@@ -7254,11 +7254,19 @@ et l'avantage fiscal à l'entrée — qui est une part réelle du rendement d'un
 pour un contribuable imposé — n'est pas compté. Il joue en sens inverse des
 points 1 et 2 : il minore la rente affichée.
 
-**6. La garantie vieillesse ignore la rente capitalisée.** Elle est servie sur
-la seule pension contributive de répartition. Si le droit décidait de compter
-la rente du pilier dans les ressources examinées, la garantie coûterait moins
-et servirait moins ; le modèle ne tranche pas une question qui n'est pas la
-sienne, et la page Coût chiffre la garantie sans ce pilier.
+**6. La garantie vieillesse compte la rente capitalisée, et la prend pour ce
+qu'elle est.** Le programme a tranché le 19 septembre 2026 : une allocation
+différentielle regarde toutes les ressources de retraite, la rente du pilier
+comprise, volontaire comme obligatoire. Ce paragraphe a dit l'inverse jusqu'au
+23 septembre 2026, bien après que le code l'eut réglé. Reste la manière de la
+compter entre le départ et l'ouverture, puis année après année : la rente est
+NOMINALE et constante, et les prix seuls la déprécient. La garantie la
+revalorisait jusqu'à la même date comme la pension notionnelle, sur la masse
+salariale, quand le compte des flux du pilier la servait nominale : deux
+conventions pour la même rente, et un complément sous-estimé d'autant. La
+rente prise nominale, et la règle du stock appliquée à la pension, ajoutaient
+le jour du changement <!--chiffre:illustration()-->0,9<!--/--> milliard de 2026 à la garantie de 2070 et
+<!--chiffre:illustration()-->33<!--/--> au cumul de 2026 à 2070.
 
 Une dernière chose, qui n'est pas une limite mais une convention à connaître :
 **l'espérance de capital transmis n'est pas conditionnée à la survie**. Elle se

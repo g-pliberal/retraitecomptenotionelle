@@ -322,6 +322,11 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
       cotisations: versements,
       pilier: fluxPilier(comparaison),
       rentePilier: rentePilier(comparaison),
+      // La part de ce que la garantie regarde qui est la rente du pilier : elle
+      // ne se revalorise pas comme la pension. Voir `masses`.
+      renteGarantie: comparaison.enEurosConstants(
+        comparaison.notionnel_liberal.garantie_vieillesse.rente_capitalisee,
+      ),
     });
   }
   const motifs = new Map();
@@ -476,6 +481,7 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
     let poids = 0;
     let poidsGarantie = 0;
     let poidsGarantieRevalorise = 0;
+    let poidsGarantieNominal = 0;
     let poidsRevalorise = 0;
     let poidsRevaloriseProspectif = 0;
     for (let decalage = -DEMI_TRANCHE; decalage <= DEMI_TRANCHE; decalage += 1) {
@@ -490,10 +496,18 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
       poidsRevaloriseProspectif += effectif * revalorisation.coefficientStock(
         liquidation, annee, true,
       );
-      // La garantie n'entre qu'à 65 ans, même pour qui est parti plus tôt.
+      // La garantie n'entre qu'à 65 ans, même pour qui est parti plus tôt. Ce
+      // qu'elle regarde se revalorise en deux morceaux : la pension comme le
+      // scénario 6 la sert, règle du stock comprise, et la rente du pilier
+      // comme le pilier la sert, nominale et constante.
       if (annee >= pensionne.anneeOuvertureGarantie + decalage) {
         poidsGarantie += effectif;
-        poidsGarantieRevalorise += effectif * revalorisation.coefficient(liquidation, annee);
+        poidsGarantieRevalorise += effectif * revalorisation.coefficientStock(
+          liquidation, annee, false,
+        );
+        poidsGarantieNominal += effectif * revalorisation.coefficientNominal(
+          liquidation, annee,
+        );
       }
     }
     if (poids <= 0) continue;
@@ -501,9 +515,14 @@ function masses(liste, population, annee, poidsCas, revalorisation) {
     tetes[TETES_TOUTES] += part * poids;
     tetes[TETES_GARANTIE] += part * poidsGarantie;
     for (const cle of CLES_CAS_TYPES) {
+      if (cle === RESSOURCES_GARANTIE) {
+        const rente = pensionne.renteGarantie ?? 0;
+        total[cle] += part * (poidsGarantieRevalorise * (pensionne.pensions[cle] - rente)
+          + poidsGarantieNominal * rente);
+        continue;
+      }
       let poidsCle = poids;
-      if (cle === RESSOURCES_GARANTIE) poidsCle = poidsGarantieRevalorise;
-      else if (CLES_PROSPECTIVES.has(cle)) poidsCle = poidsRevaloriseProspectif;
+      if (CLES_PROSPECTIVES.has(cle)) poidsCle = poidsRevaloriseProspectif;
       else if (CLES_REVALORISEES.has(cle)) poidsCle = poidsRevalorise;
       total[cle] += part * poidsCle * pensionne.pensions[cle];
     }

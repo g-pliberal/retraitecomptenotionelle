@@ -286,6 +286,35 @@ def test_la_garantie_vieillesse_se_calcule_aujourd_hui(simulateur):
         pytest.approx(plancher, rel=1e-12))
 
 
+def test_la_rente_du_pilier_d_aujourd_hui_est_celle_de_la_liquidation():
+    """La rente du pilier est nominale et constante : aujourd'hui, en euros
+    d'aujourd'hui, elle vaut ce qu'elle valait au départ. Ce calcul la portait
+    sur les prix jusqu'au 23 septembre 2026, une indexation que le contrat ne
+    prévoit pas. Il faut une bascule passée pour qu'un retraité d'aujourd'hui
+    ait un pilier : 2018, et un départ en 2022."""
+    simulateur = Simulateur(Parametres(annee_bascule=2018))
+    comparaison = _retraite(simulateur, annee_naissance=1958, sexe="F",
+                            affiliation="salarie_prive_non_cadre", age_debut=20,
+                            age_liquidation=64, niveau_salaire=0.8)
+    assert comparaison.carriere.annee_liquidation < comparaison.aujourd_hui.annee
+    liberal = comparaison.notionnel_liberal
+    assert liberal.rente_capitalisation_obligatoire > 0.0
+    assert comparaison.aujourd_hui.rente_capitalisee == liberal.rente_capitalisation_obligatoire
+    assert (comparaison.aujourd_hui.rente_capitalisee_volontaire
+            == liberal.rente_capitalisation_volontaire)
+
+
+def test_une_rente_nominale_ne_perd_que_les_prix(simulateur):
+    """Le coefficient de la rente du pilier, pour les masses de la page Coût :
+    un l'année de la liquidation, le rapport des prix ensuite."""
+    revalorisation = simulateur.revalorisation_servie
+    assert revalorisation.coefficient_nominal(2030, 2030) == 1.0
+    assert revalorisation.coefficient_nominal(2030, 2025) == 1.0
+    assert revalorisation.coefficient_nominal(2030, 2040) == pytest.approx(
+        simulateur.macro.coefficient_prix(2040, 2030))
+    assert revalorisation.coefficient_nominal(2030, 2040) < 1.0
+
+
 def test_le_stock_reindexe_suit_la_regle_du_compte_au_dela_de_la_bascule():
     """Sous la variante ``reindexe``, une bascule passée — 2020 — fait suivre
     au stock la règle du compte de 2021 à aujourd'hui, prospectif compris."""

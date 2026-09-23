@@ -6628,12 +6628,18 @@ def _garantie_vieillesse(comparaison: Comparaison, saisie: Saisie) -> str:
          g.euros_centimes(garantie.ressources) + " par an"],
     ]
     if not garantie.age_atteint:
+        # La rente du pilier ne suit ni l'un ni l'autre : elle est nominale.
+        rente = (
+            "; la rente du pilier, nominale et constante, perd "
+            f"{g.pourcentage(1.0 - garantie.erosion_rente)} sur les prix"
+            if garantie.rente_capitalisee > 0 else ""
+        )
         lignes.append([
             f"f′) ressources en {garantie.annee_ouverture}",
             "la pension notionnelle est revalorisée sur la masse salariale, le "
             "plancher sur les prix comme l'ASPA : l'écart entre les deux se "
             f"réduit de {g.pourcentage(garantie.revalorisation_differee - 1.0)} "
-            "d'ici l'ouverture",
+            f"d'ici l'ouverture{rente}",
             g.euros_centimes(garantie.ressources_a_l_ouverture) + " par an",
         ])
     reference = "f" if garantie.age_atteint else "f′"
