@@ -64,6 +64,17 @@ champs_periode:
       générations que la loi n'a jamais visées.
     defaut: false
 
+  age_table:
+    description: >-
+      Table d'âges PROPRE au régime, lue à l'ANNÉE DE NAISSANCE dans
+      `legislation/ages_regimes.csv` : l'âge d'ouverture et l'âge du taux
+      plein qu'écrit le règlement d'une section, quand ce ne sont pas ceux du
+      régime général. Elle passe avant `age_ouverture_par_generation` et
+      `age_taux_plein_par_generation`, qui reprennent la main pour une
+      génération que la table ne couvre pas. `cavom` : 60 et 65 ans avant la
+      génération 1956, 62 et 67 de 1959 à 1964, 64 et 67 dès 1968.
+    defaut: null
+
   decote_par_generation:
     description: >-
       Si vrai, le coefficient de minoration est lu dans
@@ -118,7 +129,8 @@ champs_periode:
               "tranche_b", "tranche_c", "hors_primes", "primes_uniquement", "forfaitaire",
               "plafonnee_085_pass", "tranche_085_5_pass", "plafonnee_5_pass",
               "plafonnee_3_pass", "plafonnee_4_pass", "tranche_1_4_pass",
-              "tranche_1_3_pass", "tranche_1_3_5_pass", "tranche_05_3_pass", "plafonnee_8_pass",
+              "tranche_1_3_pass", "tranche_1_3_5_pass", "tranche_05_3_pass",
+              "plafonnee_6_pass", "plafonnee_7_pass", "plafonnee_8_pass",
               "plafonnee_13_pass",
               "tranche_1_2_pass", "plafonnee_033_pass", "tranche_033_1_pass",
               "plafonnee_3_5_pass", "tranche_065_5_pass", "sans_objet"]
@@ -332,8 +344,9 @@ champs_periode:
       au-delà, ou la décote du régime de base si elle est plus favorable ; pas
       de minoration si la durée requise est réunie. `ircec_age_seul` est le
       RACL de 2014 à 2024 : 5 % par année manquante, et seul l'âge ouvre le
-      taux plein.
-    valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec", "ircec", "ircec_age_seul"]
+      taux plein. `cavom` est la même règle, que le règlement de la CAVOM
+      écrit « non susceptible de fractionnement ».
+    valeurs: ["decote_du_regime_de_base", "agirc_arrco", "ircantec", "ircec", "ircec_age_seul", "cavom"]
     defaut: decote_du_regime_de_base
 
   surcote_points:

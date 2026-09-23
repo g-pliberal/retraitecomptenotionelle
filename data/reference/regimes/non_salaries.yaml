@@ -5611,12 +5611,15 @@ regimes:
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cavom
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: plafonnee_8_pass
         taux_cotisation_retraite: 0.125
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
+        abattement_points: cavom
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
@@ -5630,84 +5633,181 @@ regimes:
           mêmes multiples. La classe dépend du revenu selon des bornes fixées
           par les statuts, HORS INDEX, et le montant de la classe spéciale par
           décret annuel : ni l'un ni l'autre ne permet de reconstituer la
-          cotisation. La réforme du 1er janvier 2016 (décret n° 2015-1667) a
-          converti le régime en cotisation proportionnelle de 12,5 % dans la
-          limite de huit plafonds, avec une montée du plafond de 4 à 7 PASS de
-          2016 à 2019 (LEGIARTI000031875318) ; ce taux est projeté en arrière
-          sur 1979-2015 comme équivalent moyen des classes, au niveau
-          `estimee`, plutôt que de laisser l'officier ministériel sans
-          complémentaire pendant trente-sept ans.
+          cotisation. La réforme du 1er janvier 2016 (décret n° 2015-1875 du
+          30 décembre 2015, article 1er) a converti le régime en cotisation
+          proportionnelle de 12,5 % dans la limite de huit plafonds, que le
+          même décret fait monter de 4 à 7 PASS de 2016 à 2019 ; ce taux est
+          projeté en arrière sur 1979-2015 comme équivalent moyen des classes,
+          au niveau `estimee`, plutôt que de laisser l'officier ministériel
+          sans complémentaire pendant trente-sept ans.
+          LES ÂGES ET LA MINORATION SONT CEUX QUE LE RÈGLEMENT ÉCRIT, et ils
+          valent ici comme après 2016 (`age_table: cavom`, `abattement_points:
+          cavom`) : la table des statuts de 2024 porte en toutes lettres les
+          générations nées avant 1956 — soixante ans, taux plein à soixante-
+          cinq —, qui ont toutes liquidé avant elle. Les versions antérieures
+          des statuts ne sont pas dans l'index ; la minoration de 5 % par année
+          d'anticipation y est supposée la même.
       - debut: 2016
+        fin: 2016
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        age_table: cavom
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_4_pass
+        assiette_minimale_pass: 0.25
+        taux_cotisation_retraite: 0.125
+        decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
+        abattement_points: cavom
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          LA RÉFORME DE 2016 REND LE RÉGIME PROPORTIONNEL : 12,50 % du revenu
+          non salarié (décret n° 79-265, article 2 dans la rédaction du décret
+          n° 2015-1875, LEGIARTI000031875318). LE PLAFOND MONTE PAR MARCHES :
+          « par dérogation », la cotisation est appelée « dans la limite d'un
+          plafond égal à » quatre plafonds de la Sécurité sociale en 2016,
+          cinq en 2017, six en 2018, sept en 2019 (article 1er, II, du même
+          décret), huit ensuite. L'ASSIETTE A UN MINIMUM, « le quart de ce
+          plafond » jusqu'en 2018, 19 % depuis le 1er janvier 2019 (décret
+          n° 2019-373, LEGIARTI000038427708) : la cotisation y est due, et les
+          points qu'elle achète sont acquis. La fiche portait huit plafonds dès
+          2016 et aucun minimum.
+          L'ARITHMÉTIQUE SE REFERME SUR ELLE-MÊME. Le guide 2026 imprime, en
+          regard du plafond, « 871,62 points » : huit plafonds à 12,5 % font
+          48 060 €, que 55,1390 € achètent 871,62 fois. Et « 20,70 points »
+          pour le minimum, soit 9 131 € à 12,5 %, divisés par le même prix.
+          LE RENDEMENT EST PUBLIÉ ET IL SE VÉRIFIE : la valeur de service de
+          2026, 3,3745 €, divisée par la valeur d'achat, 55,1390 €, donne les
+          6,12 % que le guide écrit et que `rendements_points.csv` porte pour
+          toute la période. La valeur d'achat de 2025, 54,4317 €, est au
+          Journal officiel (décret n° 2025-1076, article 12) ; celle de 2026
+          n'y figure pas — le même décret ne fixe pour 2026 que les paramètres
+          de trois sections — et se lit dans le tableau des paramètres de la
+          caisse.
+          « LA LIQUIDATION DU RÉGIME COMPLÉMENTAIRE EST OPÉRÉE UNIQUEMENT EN
+          FONCTION DE L'ÂGE » : ni durée requise, ni carrière longue. Les âges
+          sont ceux du règlement (article 1er, I, 1° et 2°, approuvé par
+          l'arrêté du 10 juillet 2026, et déjà dans les statuts depuis l'arrêté
+          du 12 décembre 2024) : 60 et 65 ans avant la génération 1956, six
+          mois de plus par génération jusqu'à 62 et 67 ans en 1959, puis
+          l'ouverture portée à 64 ans de la génération 1965 à celle de 1968 ;
+          `legislation/ages_regimes.csv` les porte, et la suspension de 2026
+          n'y touche pas. La fiche lisait les tables du régime général, qui
+          retardaient de deux ans l'ouverture des générations anciennes et leur
+          opposaient 67 ans au lieu de 65.
+          LA MINORATION EST DE 5 % PAR ANNÉE MANQUANTE, et elle ne se
+          fractionne pas (3° du même I) : `abattement_points: cavom`. La fiche
+          lui opposait la décote du régime de base, que la durée annule — un
+          officier ministériel parti à 64 ans avec sa durée ne perdait rien, là
+          où le règlement lui retire 15 %. « En cas de prolongation de
+          l'activité au-delà de l'âge du taux plein, aucune surcote n'est
+          applicable », et aucune majoration pour enfants n'est écrite.
+          LES SALARIÉS DU RÉGIME NE SONT PAS PORTÉS : ils cotisent à 7,50 %,
+          dont 60 % à la charge de l'employeur, et le statut qui route vers
+          cette fiche est celui d'un libéral. LA COTISATION FACULTATIVE de 20 %,
+          qui porte la réversion à 100 %, ne l'est pas non plus : le modèle ne
+          prête à personne une option.
+      - debut: 2017
+        fin: 2017
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        age_table: cavom
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_5_pass
+        assiette_minimale_pass: 0.25
+        taux_cotisation_retraite: 0.125
+        decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
+        abattement_points: cavom
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          2017 : même régime, plafond de cinq plafonds de la Sécurité sociale
+          (décret n° 2015-1875, article 1er, II) et assiette minimale de
+          25 % du plafond. Voir la période de 2016.
+      - debut: 2018
+        fin: 2018
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        age_table: cavom
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_6_pass
+        assiette_minimale_pass: 0.25
+        taux_cotisation_retraite: 0.125
+        decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
+        abattement_points: cavom
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          2018 : même régime, plafond de six plafonds de la Sécurité sociale
+          (décret n° 2015-1875, article 1er, II) et assiette minimale de
+          25 % du plafond. Voir la période de 2016.
+      - debut: 2019
+        fin: 2019
+        type_calcul: points
+        age_ouverture: 62
+        age_ouverture_par_generation: true
+        age_taux_plein: 67
+        age_taux_plein_par_generation: true
+        age_table: cavom
+        duree_requise_trimestres: null
+        taux_plein: 1.0
+        salaire_reference: carriere_entiere
+        assiette: plafonnee_7_pass
+        assiette_minimale_pass: 0.19
+        taux_cotisation_retraite: 0.125
+        decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
+        abattement_points: cavom
+        surcote_par_trimestre: null
+        avantages_non_contributifs: [reversion]
+        notes: >-
+          2019 : même régime, plafond de sept plafonds de la Sécurité sociale
+          (décret n° 2015-1875, article 1er, II) et assiette minimale de 19 %
+          du plafond depuis le 1er janvier 2019 (décret n° 2019-373). Voir la
+          période de 2016.
+      - debut: 2020
         fin: null
         type_calcul: points
         age_ouverture: 62
         age_ouverture_par_generation: true
         age_taux_plein: 67
         age_taux_plein_par_generation: true
+        age_table: cavom
         duree_requise_trimestres: null
         taux_plein: 1.0
         salaire_reference: carriere_entiere
         assiette: plafonnee_8_pass
+        assiette_minimale_pass: 0.19
         taux_cotisation_retraite: 0.125
         decote_par_trimestre: 0.0125
+        decote_annulee_par_la_duree: false
+        abattement_points: cavom
         surcote_par_trimestre: null
         avantages_non_contributifs: [reversion]
         notes: >-
-          LA RÉFORME DE 2016 REND LE RÉGIME PROPORTIONNEL, et c'est de là que
-          cette fiche part : 12,50 % du revenu non salarié, dans la limite de
-          huit plafonds — 384 480 € en 2026. Le décret annuel des sections
-          libérales porte ce taux sans discontinuer depuis 2016, et le guide de
-          la caisse la valeur d'achat du point, 55,1390 € en 2026.
-          L'ARITHMÉTIQUE SE REFERME SUR ELLE-MÊME. Le guide 2026 imprime, en
-          regard du plafond, « 871,62 points » : huit plafonds à 12,5 % font
-          48 060 €, que 55,1390 € achètent 871,62 fois. Et « 20,70 points »
-          pour le minimum, soit 9 131 € à 12,5 %, divisés par le même prix. Les
-          deux tombent juste à la deuxième décimale — le taux, l'assiette et le
-          prix du point disent la même chose.
-          LE RENDEMENT EST PUBLIÉ ET IL SE VÉRIFIE : « le taux de rendement du
-          régime complémentaire est de 6,12 % », écrit le guide, et la valeur de
-          service qu'il donne à la page d'en face, 3,3745 €, divisée par la
-          valeur d'achat 55,1390 €, donne 6,1200 %. C'est ce chiffre que porte
-          `rendements_points.csv` pour toute la période : seul l'exercice 2026
-          le prouve, les précédents le supposent stable.
-          CE QUI MANQUE AVANT 2016, ET POURQUOI. Le régime existe depuis le
-          décret n° 79-265 du 27 mars 1979 et prélevait alors par CLASSES — six,
-          selon le revenu de l'année N-2, plus une classe spéciale. La grille
-          n'est publiée nulle part : le décret annuel ne chiffre que la classe
-          spéciale (284 € en 2002, 694 € en 2015), et le seul autre point connu
-          est la sixième classe, 13 886 € en 2015 dès deux plafonds de revenus.
-          Entre les deux, rien — et une grille de six classes ne se devine pas
-          à partir de ses deux extrémités. La fiche ne commence donc qu'en 2016,
-          et une carrière d'officier ministériel antérieure à cette date est
-          sous-estimée de tout son complémentaire. C'est la plus grosse lacune
-          du catalogue libéral, et elle est nommée dans docs/limites.md.
-          L'ASSIETTE MINIMALE N'EST PAS PORTÉE. En dessous de 19 % du plafond —
-          9 131 € en 2026 —, comme pendant les deux premières années
-          d'activité, le revenu est « fixé forfaitairement » à ce seuil et la
-          cotisation ne descend pas sous 1 141 €. Le dépôt ne modélise aucune
-          assiette minimale libérale, pas plus celle-ci que celle du régime de
-          base ; l'écart ne joue que sur des revenus inférieurs à un cinquième
-          du plafond.
-          « LA LIQUIDATION DU RÉGIME COMPLÉMENTAIRE EST OPÉRÉE UNIQUEMENT EN
-          FONCTION DE L'ÂGE » — d'où une durée requise nulle, et aucune carrière
-          longue : la caisse écrit qu'à la différence de son régime de base, le
-          complémentaire n'en prévoit pas. Les bornes d'âge sont les siennes :
-          60-65 ans jusqu'à la génération 1955, relevées à 62-67 au rythme de
-          deux trimestres par génération depuis 1956, puis l'ouverture portée de
-          62 à 64 ans à partir de la génération 1965 depuis le 1er janvier 2025.
-          La fiche les lit dans les tables générales, qui donnent exactement
-          cela à partir de la génération 1968 et retardent l'ouverture de deux
-          ans au plus pour les générations les plus anciennes.
-          LA DÉCOTE NE SE FRACTIONNE PAS : « une décote définitive de 5 % par
-          année manquante peut être appliquée au montant de la pension, sans que
-          celle-ci puisse être fractionnée ». Le dépôt la compte par trimestre,
-          à 1,25 % — même pente, mais il minore là où la caisse attend l'année
-          entière. « En cas de prolongation de l'activité au-delà de l'âge du
-          taux plein, aucune surcote n'est applicable » : la fiche n'en porte
-          donc aucune.
-          LES SALARIÉS DU RÉGIME NE SONT PAS PORTÉS NON PLUS : ils cotisent à
-          7,50 %, dont 60 % à la charge de l'employeur, et le statut qui route
-          vers cette fiche est celui d'un libéral.
+          Depuis 2020 : huit plafonds de la Sécurité sociale — 384 480 € en
+          2026 — et une assiette minimale de 19 % du plafond, 9 131 € en 2026,
+          que l'article 2 du décret n° 79-265 applique aussi aux deux premières
+          années d'activité depuis le décret n° 2026-418 (LEGIARTI000054168585).
+          Voir la période de 2016.
   - code: cipav_complementaire
     nom: >-
       Régime complémentaire de la Caisse interprofessionnelle de prévoyance et

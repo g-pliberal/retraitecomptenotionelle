@@ -155,6 +155,7 @@ carpv_complementaire,2026,2100,0.0657,haute
 # le guide 2026 de la caisse, et ses deux valeurs le confirment — 3,3745 € de
 # valeur de service divisés par 55,1390 € de valeur d'achat font 6,1200 %. La
 # fiche ne commence qu'en 2016, faute de grille de classes avant cette date.
+cavom_complementaire,1979,2015,0.0612,estimee
 cavom_complementaire,2016,2100,0.0612,haute
 # CAVAMAC : la caisse publie le rendement et le pilote — « le coefficient de
 # référence, correspondant au prix d'achat d'un point de retraite : fixé à

@@ -65,7 +65,10 @@ BORNES_ASSIETTE: dict[str, tuple[float, float | None]] = {
     "tranche_05_3_pass": (0.5, 3.0),
     # CAVOM depuis 2016 : 12,5 % du revenu, jusqu'à huit plafonds. C'est la
     # borne la plus haute du catalogue libéral, et le décret la fixe en
-    # plafonds — 384 480 € en 2026.
+    # plafonds — 384 480 € en 2026. Le décret n° 2015-1875 y montait par
+    # marches : quatre plafonds en 2016, cinq, six, sept, huit en 2020.
+    "plafonnee_6_pass": (0.0, 6.0),
+    "plafonnee_7_pass": (0.0, 7.0),
     "plafonnee_8_pass": (0.0, 8.0),
     # Tranche B de la CPS polynésienne : entre 269 000 et 525 000 FCFP par
     # mois, soit 0,69 à 1,35 plafond national — la borne la plus proche.
@@ -123,6 +126,12 @@ class PeriodeRegime:
     #: L'âge d'annulation de la décote suit-il la génération ? Vrai depuis la
     #: loi du 9 novembre 2010 pour les régimes alignés (65 -> 67 ans).
     age_taux_plein_par_generation: bool
+    #: Table d'âges PROPRE au régime, lue à la génération dans
+    #: ``legislation/ages_regimes.csv`` : l'âge d'ouverture et l'âge du taux
+    #: plein que le règlement d'une section écrit lui-même, et qui ne sont pas
+    #: ceux du régime général. Elle passe avant les deux drapeaux ci-dessus ;
+    #: ``None`` les laisse faire.
+    age_table: str | None
     #: Le coefficient de minoration suit-il la génération ? Vrai pour les
     #: régimes alignés : la table de l'article R. 351-27 vaut aussi bien pour
     #: l'ancien droit (2,5 %) que pour la montée en charge de la loi Fillon.
@@ -894,6 +903,7 @@ class CatalogueRegimes:
                 age_taux_plein_par_generation=bool(
                     p.get("age_taux_plein_par_generation", False)
                 ),
+                age_table=p.get("age_table"),
                 decote_par_generation=bool(p.get("decote_par_generation", False)),
                 duree_proratisation_par_generation=bool(
                     p.get("duree_proratisation_par_generation", False)
@@ -1274,6 +1284,9 @@ DRAPEAUX_PAR_GENERATION = (
     "duree_requise_par_generation",
     "age_ouverture_par_generation",
     "age_taux_plein_par_generation",
+    # La table d'âges d'une section se lit à la génération, comme les deux
+    # drapeaux qui précèdent.
+    "age_table",
     "decote_par_generation",
     "duree_proratisation_par_generation",
     "salaire_reference_par_generation",

@@ -1635,13 +1635,16 @@ inventaire:
     couverture: partiel
     statuts: [officier_ministeriel]
     textes:
-      - {reference: "décret n° 2015-1667 du 14 décembre 2015 (passage à la cotisation proportionnelle)", id: null}
+      - {reference: "décret n° 79-265 du 27 mars 1979, article 2 (classes jusqu'en 2015, cotisation proportionnelle depuis 2016)", id: LEGIARTI000054168585}
+      - {reference: "décret n° 2015-1875 du 30 décembre 2015 (passage à la cotisation proportionnelle, plafond de quatre à huit PASS)", id: JORFTEXT000031740732}
+      - {reference: "arrêté du 12 décembre 2024 portant approbation des modifications des statuts (âges et coefficient d'anticipation)", id: JORFTEXT000050823047}
+      - {reference: "arrêté du 10 juillet 2026 portant approbation du règlement du régime complémentaire", id: JORFTEXT000054435960}
     manque: >-
       Le régime par classes de 1979 à 2015 (décret n° 79-265, art. 2, trois
       grilles de points) dépend de bornes de revenu fixées par les statuts,
       hors index, et de montants par décret annuel : le taux proportionnel
       de 2016 est projeté en arrière sur ces trente-sept ans au niveau
-      estimé.
+      estimé, et le rendement de 2016 avec lui.
 
   - code: cipav_complementaire
     nom: Complémentaire de la Cipav

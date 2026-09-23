@@ -23,7 +23,7 @@ import { assietteMinimale, salaireMoyenAnnuel } from "./carriere.js";
 import { formatFixe, formatPourcentage } from "./format.js";
 import {
   AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
-  AgesOuverture, AnneesSalaireReference, CarriereLongue,
+  AgesOuverture, AgesRegimes, AnneesSalaireReference, CarriereLongue,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
   DureesProratisation, DureesRequises, DureesRequisesFonctionPublique,
   DureesServicesMilitaires,
@@ -108,6 +108,7 @@ export class ScenarioActuel {
     this.dureesProratisation = new DureesProratisation(paquet);
     this.agesOuverture = new AgesOuverture(paquet);
     this.agesAnnulationDecote = new AgesAnnulationDecote(paquet);
+    this.agesRegimes = new AgesRegimes(paquet);
     this.agesCategorieActive = new AgesCategorieActive(paquet);
     this.dureesServicesMilitaires = new DureesServicesMilitaires(paquet);
     this.agesJouissanceMilitaire = new AgesJouissanceMilitaire(paquet);
@@ -866,6 +867,12 @@ export class ScenarioActuel {
    * cas.
    */
   ageOuvertureCommun(periode, carriere) {
+    if (periode.age_table) {
+      const propres = this.agesRegimes.ages(periode.age_table, carriere.generation);
+      if (propres !== null) {
+        return propres[0];
+      }
+    }
     if (periode.age_ouverture_par_generation) {
       const parGeneration = this.agesOuverture.age(carriere.generation);
       if (parGeneration !== null) {
@@ -1093,6 +1100,12 @@ export class ScenarioActuel {
     if (derogation !== null) {
       return derogation.ageAnnulation;
     }
+    if (periode.age_table) {
+      const propres = this.agesRegimes.ages(periode.age_table, carriere.generation);
+      if (propres !== null) {
+        return propres[1];
+      }
+    }
     if (periode.age_taux_plein_par_generation) {
       const parGeneration = this.agesAnnulationDecote.age(carriere.generation);
       if (parGeneration !== null) {
@@ -1294,7 +1307,10 @@ export class ScenarioActuel {
   abattementIrcec(periode, carriere, trimestres, requis, ageLiquidation,
     anneeLiquidation) {
     const ageTauxPlein = this.ageTauxPlein(periode, carriere);
-    const ageSeul = periode.abattement_points === "ircec_age_seul";
+    // `cavom` est la même règle que `ircec_age_seul`, sous un autre
+    // règlement : 5 % par année manquante, et seul l'âge ouvre le taux plein.
+    const ageSeul = periode.abattement_points === "ircec_age_seul"
+      || periode.abattement_points === "cavom";
     if (ageLiquidation >= ageTauxPlein - 1e-9) {
       return 1.0;
     }
@@ -1346,7 +1362,8 @@ export class ScenarioActuel {
         abattement = candidats.length ? Math.max(...candidats) : 1.0;
       }
     } else if (periode.abattement_points === "ircec"
-      || periode.abattement_points === "ircec_age_seul") {
+      || periode.abattement_points === "ircec_age_seul"
+      || periode.abattement_points === "cavom") {
       abattement = this.abattementIrcec(
         periode, carriere, trimestres, requis, ageLiquidation, anneeLiquidation,
       );
@@ -2030,6 +2047,11 @@ export class ScenarioActuel {
         }
         if (periode.abattement_points === "agirc_arrco"
           || periode.abattement_points === "ircantec") {
+          continue;
+        }
+        // Une complémentaire qui a SES âges ne dit pas quand le droit s'ouvre :
+        // c'est le régime de base qu'elle accompagne qui le dit.
+        if (periode.age_table) {
           continue;
         }
         requisReference = Math.max(requisReference, this.dureeRequise(periode, carriere)[0]);

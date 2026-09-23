@@ -1306,12 +1306,17 @@ sources:
     regimes: [cavom_complementaire, cnavpl]
     a_en_tirer: >-
       Le calcul chez les officiers ministériels, fiche `partiel`.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Âges et minoration du régime complémentaire, recoupés avec le règlement
+      approuvé par l'arrêté du 10 juillet 2026 et les statuts de 2024 lus au
+      JORF : table par génération dans data/reference/legislation/ages_regimes.csv
+      (`cavom`), minoration de 5 % par année manquante que la durée n'annule pas
+      (`abattement_points: cavom`), aucune surcote ni majoration pour enfants.
+      Ligne `cavom_ages_minoration` de veille.yaml ; tenu par
+      tests/test_sections_juridiques.py. La page donne aussi les âges et la
+      décote du régime de base, qui sont ceux de la CNAVPL.
   - id: cavom_cotisations
     url: https://www.cavom.net/vos-cotisations/vous-etes-professionnel-liberal/
     nature: bareme
@@ -1319,12 +1324,19 @@ sources:
     regimes: [cavom_complementaire, cnavpl]
     a_en_tirer: >-
       Les classes de cotisation et les points acquis.
-    statut: en_cours
+    statut: epuise
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      12,5 % jusqu'à huit plafonds et assiette minimale de 19 % du plafond,
+      recoupés avec l'article 2 du décret n° 79-265 dans ses rédactions de 2016,
+      2019 et 2026, qui donnent aussi la montée du plafond de quatre à sept PASS
+      de 2016 à 2019 et le minimum du quart du plafond jusqu'en 2018 : fiche
+      `cavom_complementaire` coupée en conséquence
+      (data/reference/regimes/non_salaries.yaml), ligne `cavom_assiette_2016`.
+      Le tableau des paramètres 2026 lié à la page donne la valeur de service du
+      point de la CNAVPL, 0,6599 €, que la CPRN écrit aussi : elle attend le
+      recueil statistique de la CNAVPL, source certifiée de la série, que
+      scripts/fetch/cnavpl_recueils.py lira à sa parution.
   - id: cavom_cumul
     url: https://www.cavom.net/vos-droits/le-cumul-emploi-retraite/
     nature: regle
@@ -1333,12 +1345,14 @@ sources:
     a_en_tirer: >-
       Le cumul, section par section : les règles diffèrent, et le dépôt n'en
       porte aucune.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Le cumul intégral et le cumul plafonné sont ceux de la CNAVPL ; la page
+      ajoute que le cumul intégral créateur de droits depuis 2023 ne vaut pas pour
+      le complémentaire de la CAVOM, et le règlement de 2026 que la cotisation y
+      est due sans ouvrir de points. Le modèle ne simule pas le cumul
+      emploi-retraite : rien à transcrire.
   - id: cavom_reversion
     url: https://www.cavom.net/vos-droits/la-reversion/
     nature: regle
@@ -1346,12 +1360,15 @@ sources:
     regimes: [cavom_complementaire]
     a_en_tirer: >-
       La réversion chez les officiers ministériels.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Réversion du complémentaire à 60 %, à 62 ans, sans condition de
+      ressources, deux ans de mariage, suspendue au remariage ; 100 % avec la
+      cotisation facultative de 20 %. Le règlement de 2026 le confirme (article
+      3). Le modèle déclare la réversion sans la calculer — il ne connaît pas de
+      conjoint (data/reference/legislation/avantages_non_contributifs.yaml) :
+      rien à transcrire.
   - id: cavom_publications
     url: https://www.cavom.net/nos-medias/publications/
     nature: index
@@ -1359,12 +1376,14 @@ sources:
     regimes: [cavom_complementaire]
     a_en_tirer: >-
       Rapports et statuts, pour dater les valeurs.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
     note: >-
-      Réservée le 23 septembre 2026 par la session « nouvelle passe de
-      l'action 89 », avec tout le lot des professions juridiques
-      (CNBF, CAVOM, CPRN).
-
+      Index des documents : décret n° 79-265 et règlements consolidés au 1er
+      juillet 2026, statuts généraux, guide 2026, tableau des paramètres 2026,
+      circulaire Cnav n° 2026-07. Ce qui en a servi est dans les notes de
+      `cavom_retraite` et `cavom_cotisations` ; aucune série historique des
+      valeurs du point ni les bornes des classes d'avant 2016.
   - id: cnbf_simulateur_cotisations
     url: https://www.cnbf.fr/espace-avocats/simulation-des-cotisations/
     nature: simulateur

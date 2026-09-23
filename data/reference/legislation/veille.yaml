@@ -1462,6 +1462,97 @@ entrees:
       paramètre dans sa fiche.
     prochaine_veille: "2026-10-31"
 
+  - id: cavom_ages_minoration
+    regle: >-
+      Régime complémentaire de la CAVOM : ouverture à 60 ans et taux plein à
+      65 ans pour les nés avant 1956, six mois de plus par génération jusqu'à
+      62 et 67 ans pour la génération 1959, puis ouverture à 62 ans et 6 mois,
+      63 ans, 63 ans et 6 mois et 64 ans pour les générations 1965 à 1968 ;
+      avant l'âge du taux plein, un coefficient d'anticipation de 5 % par
+      année manquante, « non susceptible de fractionnement », que la durée
+      d'assurance n'annule pas ; aucune surcote.
+    textes:
+      - "statuts du régime complémentaire de la CAVOM, article 14, rédaction de l'arrêté du 12 décembre 2024 (JORFTEXT000050823047), en vigueur au 1er janvier 2025"
+      - "règlement du régime complémentaire de la CAVOM, article 1er, I, approuvé par l'arrêté du 10 juillet 2026 (JORFTEXT000054435960)"
+    sources:
+      - type: jorf
+        reference: >-
+          Arrêté du 12 décembre 2024, annexe, II, 4° (JORFARTI000050823056), et
+          arrêté du 10 juillet 2026, annexe I (JORFARTI000054435969), lus dans
+          l'index JORF du dépôt : même table d'âges, même coefficient.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CAVOM, page « La retraite » (tables d'âges avant et depuis le 1er
+          janvier 2025, « une décote définitive de 5 % par année manquante
+          [...] sans que celle-ci puisse être fractionnée », « aucune surcote
+          n'est applicable ») et guide retraite et prévoyance 2026.
+        url: "https://www.cavom.net/vos-droits/votre-retraite/"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [cavom_ages_2025]
+    etat: approximation
+    effet: >-
+      La fiche lisait les tables du régime général et la décote du régime de
+      base, que la durée annule : un officier ministériel parti à l'âge légal
+      avec sa durée ne perdait rien de sa complémentaire, là où le règlement
+      lui retire 5 % par année jusqu'à 67 ans — 15 % à 64 ans. Depuis le 23
+      septembre 2026, `age_table: cavom` et `abattement_points: cavom`, dans
+      les deux moteurs ; tenu par tests/test_sections_juridiques.py.
+      Approximations : l'année entamée est comptée entière, comme l'IRCEC
+      l'écrit pour la même règle, le texte ne le disant pas ; les versions
+      des statuts antérieures à 2024 ne sont pas dans l'index, et la même
+      table et le même coefficient y sont supposés — la table de 2024 porte
+      elle-même les générations nées avant 1956.
+    a_faire: >-
+      Retrouver une version des statuts antérieure à 2016 (arrêtés
+      d'approbation hors index) pour dater la minoration et les âges d'avant
+      la réforme de 2016 ; vérifier l'arrondi à l'année sur un exemple de la
+      caisse.
+    prochaine_veille: "2027-03-31"
+
+  - id: cavom_assiette_2016
+    regle: >-
+      Depuis 2016, la cotisation au régime complémentaire de la CAVOM est de
+      12,5 % du revenu professionnel dans la limite de huit plafonds de la
+      Sécurité sociale, que le décret n° 2015-1875 fait appeler « dans la
+      limite d'un plafond égal à » quatre plafonds en 2016, cinq en 2017, six
+      en 2018 et sept en 2019 ; l'assiette ne peut être inférieure au quart
+      du plafond, puis à 19 % depuis le 1er janvier 2019.
+    textes:
+      - "décret n° 79-265 du 27 mars 1979, article 2, rédactions du 1er janvier 2016 (LEGIARTI000031875318), du 1er janvier 2019 (LEGIARTI000038427708) et du 1er juillet 2026 (LEGIARTI000054168585)"
+      - "décret n° 2015-1875 du 30 décembre 2015, article 1er, II (JORFTEXT000031740732)"
+    sources:
+      - type: legifrance
+        reference: >-
+          Article 2 du décret n° 79-265 dans ses trois rédactions depuis 2016,
+          lues dans l'index LEGI du dépôt, avec la dérogation de l'article 1er,
+          II, du décret n° 2015-1875 que chacune reproduit.
+        date: "2026-09-23"
+      - type: autre
+        reference: >-
+          CAVOM, page « Vous êtes professionnel libéral » et tableau des
+          paramètres 2026 : 12,50 % jusqu'à 8 PASS, 384 480 € ; cotisation
+          minimale sur 19 % du PASS, 9 131 €, soit 1 141 €.
+        url: "https://www.cavom.net/vos-cotisations/vous-etes-professionnel-liberal/"
+        date: "2026-09-23"
+    verifie_le: "2026-09-23"
+    temoins: []
+    reformes: [cavom_2016]
+    etat: transcrit
+    effet: >-
+      La fiche portait huit plafonds dès 2016 et aucune assiette minimale :
+      elle surestimait le complémentaire des revenus supérieurs à quatre
+      plafonds de 2016 à 2019, et ne servait rien aux revenus nuls ou très
+      bas que le décret fait cotiser. Coupée en 2016, 2017, 2018, 2019 et
+      2020 le 23 septembre 2026 ; champs `assiette_minimale_pass`,
+      `plafonnee_6_pass` et `plafonnee_7_pass`.
+    a_faire: >-
+      Rien de plus sur l'assiette ; les classes d'avant 2016 restent hors de
+      portée, faute des bornes de revenu des statuts.
+    prochaine_veille: "2027-03-31"
+
 journal:
   - date: "2026-09-19"
     session: "le net et le brut, d'un bout à l'autre du simulateur"
