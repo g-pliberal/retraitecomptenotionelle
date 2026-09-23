@@ -563,6 +563,7 @@ def _regimes() -> list[dict]:
                     "duree_maximum_avant_age_trimestres":
                         p.duree_maximum_avant_age_trimestres,
                     "decote_annulee_par_la_duree": p.decote_annulee_par_la_duree,
+                    "decote_par_la_duree_seule": p.decote_par_la_duree_seule,
                     "decote_trimestres_maximum": p.decote_trimestres_maximum,
                     "surcote_par_trimestre": p.surcote_par_trimestre,
                     "surcote_bareme": p.surcote_bareme,

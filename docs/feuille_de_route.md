@@ -12945,6 +12945,15 @@ taux de 2024, la calculette de la CAVEC huit classes sur neuf, le paquet
 `modele-social` de l'Urssaf les paramètres d'avant la réforme — : c'est écrit
 dans `docs/limites.md`, et c'est le droit que le dépôt suit.
 
+**Passe du 23 septembre 2026 : les navigants de l'aviation civile (CRPN).**
+Cinq adresses, réservées par un commit `en_cours` poussé seul. L'âge qui
+annule la décote est soixante ans (L. 6521-4, premier alinéa, lu sur
+Légifrance), non soixante-cinq ; depuis 2022, la décote se compte sur la
+seule durée (R. 6527-22), d'où le champ `decote_par_la_duree_seule` dans les
+deux moteurs ; le taux d'appel de 2026 est de 111 %. Restent, notés dans
+`docs/limites.md` : le dispositif transitoire des navigants nés avant 1971,
+les conditions montantes de 2012 à 2021, les taux d'appel de 2016 à 2025.
+
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`
 (la forme), puis, selon ce qu'on trouve : `tests/temoins/exemples_officiels.yaml`,

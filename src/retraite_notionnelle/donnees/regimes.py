@@ -221,6 +221,14 @@ class PeriodeRegime:
     #: diminués de 5 points par année anticipée ensuite. Une carrière longue
     #: n'y changeait rien.
     decote_annulee_par_la_duree: bool
+    #: La décote se compte-t-elle sur la SEULE durée, l'âge ne faisant que
+    #: l'annuler une fois atteint ? C'est la CRPN depuis le 1er janvier 2022 :
+    #: « une décote égale à 5 % par annuité manquante » sous trente annuités
+    #: (R. 6527-22 du code des transports), qui tombe à l'âge du premier alinéa
+    #: de L. 6521-4, soixante ans (R. 6527-23). Le plus petit des deux manques,
+    #: que le moteur prend partout ailleurs, retirait moins que le droit dès
+    #: que l'âge était proche et la carrière courte.
+    decote_par_la_duree_seule: bool
     #: Nombre maximal de trimestres de décote opposables. Vingt dans tous les
     #: régimes qui en appliquent une : au-delà, le taux ne descend plus.
     #: ``None`` lève le plafond.
@@ -1028,6 +1036,9 @@ class CatalogueRegimes:
                 bareme_decote=p.get("bareme_decote", "regime_aligne"),
                 decote_annulee_par_la_duree=bool(
                     p.get("decote_annulee_par_la_duree", True)
+                ),
+                decote_par_la_duree_seule=bool(
+                    p.get("decote_par_la_duree_seule", False)
                 ),
                 decote_trimestres_maximum=(
                     None if "decote_trimestres_maximum" in p

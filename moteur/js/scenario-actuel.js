@@ -1389,9 +1389,16 @@ export class ScenarioActuel {
     // La SNCF compte la décote par la durée sur une cible abaissée de deux à
     // dix trimestres selon la génération (décret n° 2008-639, article 35, II).
     const cible = requis - this.retrancheDecote(periode, carriere);
-    let trimestresDecote = periode.decote_annulee_par_la_duree
-      ? Math.min(Math.max(0, cible - trimestres), manquantsAge)
-      : manquantsAge;
+    // La CRPN depuis 2022 compte la durée seule, l'âge d'annulation ne faisant
+    // qu'effacer la décote (R. 6527-22 et R. 6527-23 du code des transports).
+    let trimestresDecote;
+    if (periode.decote_par_la_duree_seule) {
+      trimestresDecote = manquantsAge <= 0 ? 0 : Math.max(0, requis - trimestres);
+    } else {
+      trimestresDecote = periode.decote_annulee_par_la_duree
+        ? Math.min(Math.max(0, cible - trimestres), manquantsAge)
+        : manquantsAge;
+    }
     if (trimestresDecote <= 0) {
       return 0.0;
     }
