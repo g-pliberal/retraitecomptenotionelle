@@ -9747,6 +9747,18 @@ regimes:
         decote_par_trimestre: null
         surcote_par_trimestre: null
         avantages_non_contributifs: [pension_majoree_reference, reversion]
+        # Les points gratuits des chefs d'exploitation pour leurs années
+        # d'avant 2003 : D. 732-154 (100 points par année, dans la limite de
+        # 37,5 ans moins les années de RCO), D. 732-151 (17,5 ans comme chef),
+        # L. 732-56, II, 2° et III (taux plein ; liquidé au taux plein depuis
+        # le 1er septembre 2023, loi n° 2023-270, art. 18, VI).
+        points_gratuits:
+          regime: msa_non_salaries
+          avant: 2003
+          points_par_annee: 100
+          annees_minimum: 17.5
+          annees_maximum: 37.5
+          taux_plein_depuis: "2023-09"
         notes: >-
           Loi du 4 mars 2002, articles L. 732-56 et suivants du code rural.
           Étage scindé de la fiche `msa_non_salaries`, qui agrégeait les deux :
@@ -9765,9 +9777,21 @@ regimes:
           historique n'est pas sourcée : la RCO a démarré en 2003 à un taux plus
           bas. Cela ne déplace pas la pension calculée ici, qui ne dépend que du
           barème en points, mais seulement le flux versé au compte notionnel.
-          Restent hors du modèle les points GRATUITS — 66 par an aux conjoints
-          et aides familiaux pour les périodes antérieures à 2011, dans la
-          limite de dix-sept années.
+          LES POINTS GRATUITS DES CHEFS D'EXPLOITATION SONT SERVIS
+          (`points_gratuits`, lus sur Légifrance et sur la page de la MSA le 23
+          septembre 2026) : cent par année de chef d'avant 2003, dans la limite
+          de 37,5 ans moins les années de RCO, à qui réunit dix-sept ans et
+          demi comme chef et liquide au taux plein. Une année se compte en
+          trimestres validés au régime de base, divisés par quatre ; le modèle
+          ne sait pas si l'activité était exercée à titre principal. Restent
+          hors du modèle les points gratuits du V et du VI de L. 732-56 — 66
+          par an (D. 732-154-1), dix-sept annuités au plus (D. 732-154-3) —
+          pour les années de conjoint, d'aide familial ou de collaborateur
+          d'avant 2011, et pour celles du chef qui n'a pas ses dix-sept ans et
+          demi comme chef. Il faut alors dix-sept ans et demi d'activité non
+          salariée agricole à quelque titre que ce soit (D. 732-151-1) : le
+          modèle, qui ne connaît que le statut de chef, ne peut pas les réunir
+          sans que la règle des cent points s'applique d'abord.
 
   - code: asv_conventionnes
     nom: >-

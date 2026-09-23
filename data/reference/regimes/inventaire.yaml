@@ -1862,9 +1862,14 @@ inventaire:
     textes:
       - {reference: "loi n° 2002-308 du 4 mars 2002 tendant à la création d'un régime de retraite complémentaire obligatoire pour les non-salariés agricoles", id: null}
       - {reference: "code rural et de la pêche maritime, D. 732-166", id: null}
+      - {reference: "code rural et de la pêche maritime, L. 732-56, D. 732-151 et D. 732-154 : points gratuits des chefs d'exploitation", id: null}
     manque: >-
-      Les points gratuits attribués aux conjoints et aides familiaux — 66 par
-      an dans la limite de 17 ans — ne sont pas portés.
+      Les points gratuits des chefs d'exploitation pour leurs années d'avant
+      2003 sont servis ; ceux du V et du VI de L. 732-56 ne le sont pas — 66
+      par an, dix-sept annuités au plus, pour les années de conjoint, d'aide
+      familial ou de collaborateur d'avant 2011 et pour celles du chef qui n'a
+      pas dix-sept ans et demi comme chef —, le modèle ne connaissant que le
+      statut de chef.
 
   - code: cotisants_solidarite
     nom: Cotisants de solidarité agricoles

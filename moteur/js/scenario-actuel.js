@@ -150,6 +150,21 @@ export class ScenarioActuel {
     this.majorationsEnfants = new MajorationsPourEnfants(paquet);
     this.surcoteParentale = new SurcoteParentale(paquet);
     this.majorationsEnfantsPoints = new MajorationsEnfantsPoints(paquet);
+    // Les régimes qui attribuent des POINTS GRATUITS, rangés sous le régime de
+    // base dont les années les ouvrent : voir `pointsGratuits`.
+    this.pointsGratuitsParBase = new Map();
+    for (const regime of catalogue) {
+      for (const periode of regime.periodes) {
+        const regle = periode.points_gratuits;
+        if (regle === null || regle === undefined) {
+          continue;
+        }
+        const attribuants = this.pointsGratuitsParBase.get(regle.regime) ?? [];
+        if (!attribuants.includes(regime.code)) {
+          this.pointsGratuitsParBase.set(regle.regime, [...attribuants, regime.code]);
+        }
+      }
+    }
   }
 
   // -- valorisation des points -----------------------------------------------
@@ -1919,8 +1934,56 @@ export class ScenarioActuel {
     };
   }
 
+  /**
+   * Points que ce régime attribue sans cotisation à la liquidation, et la
+   * fiabilité de la durée requise qui les conditionne : cent points par année
+   * de chef d'exploitation d'avant 2003 à la RCO agricole (D. 732-154), dans
+   * la limite de 37,5 ans moins les années de RCO, à qui a dix-sept ans et
+   * demi comme chef (D. 732-151) et le taux plein de son régime de base
+   * (L. 732-56, II, 2°) — la durée requise jusqu'au 31 août 2023, la pension
+   * liquidée au taux plein depuis. Voir `_points_gratuits` dans le Python.
+   */
+  pointsGratuits(periode, carriere, assurance, trimestres, ageLiquidation) {
+    const regle = periode.points_gratuits;
+    const base = this.catalogue.obtenir(regle.regime);
+    const periodeBase = base.periode(
+      Math.min(carriere.anneeLiquidation, derniereAnnee(base)));
+    if (periodeBase === null) {
+      return [0.0, null];
+    }
+    const valides = (code, avant = null) => {
+      let total = 0;
+      for (const [annee, nombre] of assurance.get(code) ?? []) {
+        if (avant === null || annee < avant) {
+          total += Math.min(nombre, carriere.plafondTrimestres(annee));
+        }
+      }
+      return total;
+    };
+    if (valides(regle.regime) < regle.annees_minimum * 4) {
+      return [0.0, null];
+    }
+    const [requis, fiabilite] = this.dureeRequise(periodeBase, carriere);
+    let tauxPlein = trimestres >= requis;
+    const [anneeDepuis, moisDepuis] = regle.taux_plein_depuis;
+    if (!tauxPlein
+        && carriere.dateLiquidation.rang >= new DateMois(anneeDepuis, moisDepuis).rang) {
+      tauxPlein = ageLiquidation >= this.ageTauxPlein(periodeBase, carriere);
+    }
+    if (!tauxPlein) {
+      return [0.0, fiabilite];
+    }
+    const retenus = Math.min(
+      valides(regle.regime, regle.avant),
+      Math.max(0.0, regle.annees_maximum * 4 - valides(periode.regime)),
+    );
+    return [regle.points_par_annee * retenus / 4, fiabilite];
+  }
+
   calculer(carriere, ignorerPenaliteAge = false, avantagesNonContributifs = true,
-    avpf = true, liquiderSuccessions = true) {
+    avpf = true, liquiderSuccessions = true, pointsGratuits = null) {
+    // `pointsGratuits` nul suit `avantagesNonContributifs` : voir le Python.
+    const avecPointsGratuits = pointsGratuits ?? avantagesNonContributifs;
     const anneeLiquidation = carriere.anneeLiquidation;
     const ageLiquidation = carriere.age_liquidation || 0.0;
 
@@ -2301,6 +2364,41 @@ export class ScenarioActuel {
       }
     }
 
+    // POINTS GRATUITS : la RCO agricole attribue à la liquidation des points
+    // pour les années de chef d'exploitation d'avant sa création. Ils entrent au
+    // compte de points du régime comme des points acquis, et la cascade les
+    // isole plus bas. Voir `pointsGratuits`.
+    // Points attribués, et année avant laquelle comptent les années.
+    const gratuitsAttribues = new Map();
+    if (avecPointsGratuits) {
+      for (const [base, attribuants] of this.pointsGratuitsParBase) {
+        if (!parAnnee.assurance.has(base)) {
+          continue;
+        }
+        for (const code of attribuants) {
+          const regime = this.catalogue.obtenir(code);
+          const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+          if (periode === null || periode.points_gratuits === null
+              || periode.points_gratuits === undefined) {
+            continue;
+          }
+          const [gratuits, fiabiliteDuree] = this.pointsGratuits(
+            periode, carriere, parAnnee.assurance, trimestres, ageLiquidation,
+          );
+          if (gratuits <= 0) {
+            continue;
+          }
+          gratuitsAttribues.set(code, [gratuits, periode.points_gratuits.avant]);
+          pointsAcquis.set(code, (pointsAcquis.get(code) ?? 0.0) + gratuits);
+          fiabilitePoints.set(code, Math.min(
+            fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE,
+            regime.fiabilite,
+            fiabiliteDuree === null ? Fiabilite.CERTIFIEE : fiabiliteDuree,
+          ));
+        }
+      }
+    }
+
     const codes = [...new Set([...cumulCotisations.keys(), ...pointsAcquis.keys()])].sort();
 
     // Durée requise de référence : celle du régime de base. C'est elle qui
@@ -2438,10 +2536,14 @@ export class ScenarioActuel {
             fiabiliteRegime = Math.min(
               fiabiliteRegime, fiabiliteService, fiabilitePoints.get(code),
             );
+            const gratuits = (gratuitsAttribues.get(code) ?? [0.0, 0])[0];
             details.push(
               `${formatFixe(points, 2, true)} points × valeur de service `
               + `${sansZerosInutiles(service, 6)} €`
-              + (coefficientDuree === 1.0 ? "" : ` × ${formatFixe(coefficientDuree, 4)}`),
+              + (coefficientDuree === 1.0 ? "" : ` × ${formatFixe(coefficientDuree, 4)}`)
+              // Les points gratuits sont DANS le compte : la formule se refait
+              // sur le total, et le lecteur voit ce qu'il n'a pas cotisé.
+              + (!gratuits ? "" : ` (dont ${formatFixe(gratuits, 2, true)} points gratuits)`),
             );
           }
         }
@@ -2746,9 +2848,10 @@ export class ScenarioActuel {
     const avantages = [];
 
     // Avantages non contributifs du droit positif, DANS L'ORDRE OÙ LE DROIT
-    // LES APPLIQUE, et l'ordre commande le résultat : l'AVPF d'abord, qui
-    // déplace le salaire annuel moyen ; la majoration de durée d'assurance
-    // ensuite, qui change la décote et la proratisation ; puis le minimum
+    // LES APPLIQUE, et l'ordre commande le résultat : les points gratuits de la
+    // RCO et l'AVPF d'abord, qui déplacent le compte de points et le salaire
+    // annuel moyen ; la majoration de durée d'assurance ensuite, qui change la
+    // décote et la proratisation ; puis le minimum
     // contributif, qui porte la pension de base à son plancher ; puis seulement
     // la majoration pour enfants, qui se calcule SUR CE plancher ; l'ASPA
     // enfin, qui est différentielle et complète tout le reste.
@@ -2759,6 +2862,7 @@ export class ScenarioActuel {
       // sans eux, tout le reste égal.
       const sansMda = this.calculer(
         carriere, ignorerPenaliteAge, false, avpf, liquiderSuccessions,
+        avecPointsGratuits,
       );
       // Les deux termes doivent porter sur le même périmètre : celui d'en
       // face est déjà net de la capitalisation.
@@ -2788,6 +2892,7 @@ export class ScenarioActuel {
       // payée, où les années au SMIC s'ajoutent aux années retenues.
       const sansAvpf = this.calculer(
         carriere, ignorerPenaliteAge, false, false, liquiderSuccessions,
+        avecPointsGratuits,
       );
       const effetAvpf = totalContributif - sansAvpf.total_contributif;
       totalContributif = sansAvpf.total_contributif;
@@ -2797,6 +2902,33 @@ export class ScenarioActuel {
           libelle: "Assurance vieillesse des parents au foyer",
           montant: effetAvpf,
           detail: "salaire forfaitaire au SMIC porté au compte",
+        });
+      }
+    }
+
+    if (avantagesNonContributifs && avecPointsGratuits && gratuitsAttribues.size > 0) {
+      // Effet des POINTS GRATUITS de la RCO agricole, mesuré comme celui de
+      // l'AVPF : la même carrière sans eux, la MDA et l'AVPF déjà retirées. Si
+      // retirer la MDA les a fait tomber, leur effet est dans celui de la MDA,
+      // qui les a ouverts, et ce recalcul n'en trouve plus rien.
+      const sansGratuits = this.calculer(
+        carriere, ignorerPenaliteAge, false, false, liquiderSuccessions, false,
+      );
+      const effetGratuits = totalContributif - sansGratuits.total_contributif;
+      totalContributif = sansGratuits.total_contributif;
+      if (Math.abs(effetGratuits) > 1e-9) {
+        let pointsCites = 0.0;
+        let avant = Infinity;
+        for (const [points, annee] of gratuitsAttribues.values()) {
+          pointsCites += points;
+          avant = Math.min(avant, annee);
+        }
+        avantages.unshift({
+          code: "points_gratuits_rco",
+          libelle: "Points gratuits de la complémentaire agricole",
+          montant: effetGratuits,
+          detail: `${formatFixe(pointsCites, 2, true)} points pour les années de chef `
+            + `d'exploitation d'avant ${avant}`,
         });
       }
     }

@@ -1932,7 +1932,21 @@ sources:
       Retraite forfaitaire, retraite proportionnelle en points, RCO : les deux
       fiches agricoles non salariées sont `partiel`, et ce sont les deux
       régimes dont la structure ressemble le moins à celle du régime général.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
+    note: >-
+      Quatre onglets, mis à jour le 17 août 2026, lus par leurs adresses
+      `read_more=1` à `4`. La RCO : cent points gratuits par année de chef
+      d'avant 2003, que le modèle ne servait pas et qu'il sert (champ
+      `points_gratuits` de la fiche `msa_rco`, ligne `rco_points_gratuits` du
+      registre de veille) — la page décrit la condition de durée d'avant le
+      1er septembre 2023, le code rural fait foi ; le point à 0,3919 € depuis
+      le 1er janvier 2025, la valeur que le dépôt certifie. La base : la page
+      donne 3 940,51 € de retraite forfaitaire intégrale au 1er janvier 2026
+      et 4,631 € de point de proportionnelle, quand la fiche, qui les indexe
+      sur les prix depuis 2023 et 2025, en tire 3 801,89 € et 4,6693 € — à
+      reprendre, avec la réforme des vingt-cinq meilleures années
+      (`msa_reforme_25_meilleures_annees`).
 
   - id: msa_reforme_25_meilleures_annees
     url: https://www.msa.fr/lfp/retraite/reforme-exploitants-25-meilleures-annees

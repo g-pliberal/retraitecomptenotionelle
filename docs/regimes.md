@@ -170,7 +170,7 @@ repris par un autre.
 | Régime | Famille | Période | Couverture | Statuts | Ce qui manque, ou pourquoi |
 |---|---|---|---|---|---|
 | Assurance vieillesse des non-salariés agricoles (MSA) (`msa_non_salaries`) | agricole | depuis 1952 | ◐ partiel | `exploitant_agricole` | Le barème en points d'avant 1990 n'est pas lu ; la réforme du 28 février 2025, en vigueur depuis 2026, renvoie deux de ses trois paramètres à un décret absent de la base ; conjoints et aides familiaux sont sous-estimés. |
-| Retraite complémentaire obligatoire des non-salariés agricoles (`msa_rco`) | agricole | depuis 2003 | ◐ partiel | `exploitant_agricole` | Les points gratuits attribués aux conjoints et aides familiaux — 66 par an dans la limite de 17 ans — ne sont pas portés. |
+| Retraite complémentaire obligatoire des non-salariés agricoles (`msa_rco`) | agricole | depuis 2003 | ◐ partiel | `exploitant_agricole` | Les points gratuits des chefs d'exploitation pour leurs années d'avant 2003 sont servis ; ceux du V et du VI de L. 732-56 ne le sont pas — 66 par an, dix-sept annuités au plus, pour les années de conjoint, d'aide familial ou de collaborateur d'avant 2011 et pour celles du chef qui n'a pas dix-sept ans et demi comme chef —, le modèle ne connaissant que le statut de chef. |
 | Cotisants de solidarité agricoles | agricole | depuis 1980 | ⊘ hors champ | — | La cotisation de solidarité n'ouvre aucun droit à retraite : il n'y a rien à porter au compte. |
 
 <!-- tableaux:fin -->

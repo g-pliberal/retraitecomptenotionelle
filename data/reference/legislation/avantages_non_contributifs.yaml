@@ -20,7 +20,7 @@
 #      (data/reference/regimes/*.yaml) — seize codes, DATÉS et par régime,
 #      que le moteur lit vraiment, mais dont six ne commandent aucun calcul.
 #   3. La cascade `AvantageApplique`
-#      (src/retraite_notionnelle/scenarios/actuel.py) — sept codes, et les
+#      (src/retraite_notionnelle/scenarios/actuel.py) — huit codes, et les
 #      seuls CHIFFRÉS en euros : c'est la seule des trois qui réponde à
 #      « combien ».
 #
@@ -567,6 +567,33 @@ avantages:
         donne ce que l'assurance chômage verse à ce titre, 3,8 Md€ en 2024 —
         c'est le contrôle externe le plus direct de toute la liste, un seul
         payeur pour un seul objet.
+
+  - code: points_gratuits_rco
+    libelle: Points gratuits de la complémentaire agricole
+    famille: periodes_non_cotisees
+    quoi: >-
+      La RCO des non-salariés agricoles est née en 2003. Le chef d'exploitation
+      qui liquide depuis reçoit cent points par année de chef d'avant 2003,
+      dans la limite de trente-sept ans et demi moins ses années de RCO, s'il
+      a été chef dix-sept ans et demi et liquide au taux plein. Des années
+      cotisées au régime de base, jamais à la complémentaire : c'est la
+      complémentaire qui les reconstitue.
+    base_legale: [L. 732-56 code rural, D. 732-151 code rural, D. 732-154 code rural]
+    veille: [rco_points_gratuits]
+    creation: 2003
+    fin: null
+    regimes: non-salariés agricoles (RCO)
+    etat_modele: chiffre
+    ligne_cascade: points_gratuits_rco
+    cout:
+      mesurable_par: modele
+      note: >-
+        Mesurés comme l'AVPF, par un second calcul de la même carrière sans
+        eux. Ils s'éteignent d'eux-mêmes : une année de chef d'avant 2003 est
+        le fait de générations nées au plus tard au milieu des années 1980, et
+        chaque année de RCO cotisée en retire une du plafond. Ceux des conjoints, aides familiaux et
+        collaborateurs — 66 points par an pour leurs années d'avant 2011 — ne
+        sont pas servis : le modèle ne connaît que le statut de chef.
 
   - code: apprentissage
     libelle: Validation des trimestres d'apprentissage au-delà de l'assiette

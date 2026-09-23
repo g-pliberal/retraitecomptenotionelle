@@ -686,6 +686,25 @@ champs_periode:
       incomplète.
     defaut: null
 
+  points_gratuits:
+    description: >-
+      Points attribués À LA LIQUIDATION, sans cotisation, pour les années
+      antérieures à la création du régime : la RCO des non-salariés agricoles
+      donne cent points par année de chef d'exploitation d'avant 2003
+      (D. 732-154 du code rural). Une table : `regime`, le régime de base dont
+      les trimestres validés font les années ; `avant`, l'année de création —
+      seules comptent les années qui la précèdent ; `points_par_annee` ;
+      `annees_minimum`, les années validées dans `regime` à la date d'effet
+      sans lesquelles rien n'est dû (dix-sept et demie, D. 732-151) ;
+      `annees_maximum`, le plafond des années retenues, diminué des années
+      d'affiliation au régime qui attribue (trente-sept et demie) ;
+      `taux_plein_depuis`, « AAAA-MM », la date d'effet à compter de laquelle
+      la condition est d'avoir liquidé `regime` au taux plein, par la durée ou
+      par l'âge — avant elle, il fallait en réunir la durée requise (L. 732-56,
+      II, 2°, modifié par la loi n° 2023-270 du 14 avril 2023). `null` : aucun
+      point gratuit.
+    defaut: null
+
   plafond_primes_traitement:
     description: >-
       `primes_uniquement` seulement : plafond de l'assiette, en fraction du
