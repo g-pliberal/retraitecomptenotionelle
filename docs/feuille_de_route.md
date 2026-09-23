@@ -30,8 +30,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 816<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 770<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 831<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->36 781<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -15462,19 +15462,28 @@ l'Arrco puis de l'Agirc-Arrco ; `membre_congregation` n'a que la CAVIMAC. Le
 ministre du simulateur né en 1975 gagne 14 % de pension au scénario 1, celui
 né en 1955 6,2 %.
 
-**Ce qui reste**, dans l'ordre où le prendre : le salaire annuel moyen de la
-CAVIMAC, que la page de la caisse calcule « sur la base du SMIC » quand le
-modèle prend le revenu saisi, et ses années d'avant 1979, validées
-gratuitement quand le modèle n'en compte aucune ; les ouvriers de l'État hors
-du RAFP ; le barème de l'Ircantec pour enfants ; le routage calédonien et sa
+**Puis le salaire annuel moyen de la CAVIMAC.** La caisse le calcule « sur la
+base du SMIC [...] pour tous les assurés cultuels », comme L. 382-27 et le
+forfait de R. 382-89 le veulent ; le moteur prélevait la cotisation sur le
+forfait mais liquidait sur le revenu saisi. `_assiette_de_reference` prend
+désormais, dans les deux moteurs, le forfait de chaque année : à une fois et
+demie le salaire moyen, la pension de base du ministre était 2,17 fois trop
+haute. La page de la caisse, réservée puis lue, dit aussi que les années
+d'avant 1979 sont validées gratuitement, quand le statut affirmait qu'elles ne
+portaient aucun droit.
+
+**Ce qui reste**, dans l'ordre où le prendre : les fractions de pension de la
+CAVIMAC d'avant 1979, validées gratuitement, et de 1979 à 1997, portées au
+minimum contributif ou au maximum de la pension « Cavimac » ; les ouvriers de
+l'État hors du RAFP ; le barème de l'Ircantec pour enfants ; le routage calédonien et sa
 ligne d'inventaire ; les deux exceptions au plafond du RAFP — la GIPA, cotisée
 en entier, les jours de compte épargne-temps convertis — et la cotisation
 volontaire des agents de l'État outre-mer ; les 66 points gratuits des
 conjoints, aides familiaux et collaborateurs, qui demandent de connaître ces
 statuts ; les huit taux spécifiques de l'Arrco des cultes. Les lignes
-`rafp_assiette_plafond`, `rco_points_gratuits` et
-`cultes_retraite_complementaire` du registre de veille et les trois récits de
-`limites.md` en tiennent le détail.
+`rafp_assiette_plafond`, `rco_points_gratuits`,
+`cultes_retraite_complementaire` et `cultes_salaire_annuel_moyen` du registre
+de veille et les quatre récits de `limites.md` en tiennent le détail.
 
 **Fichiers.** `data/reference/regimes/_schema.yaml`,
 `data/reference/regimes/fonction_publique.yaml`, `non_salaries.yaml`,

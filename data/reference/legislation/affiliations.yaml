@@ -955,10 +955,14 @@ affiliations:
       - {debut: 1979, fin: 2005, regimes: [cavimac]}
       - {debut: 2006, fin: null, regimes: [cavimac, arrco_cultes]}
     note: >-
-      Avant 1979, aucun régime obligatoire : la loi du 2 janvier 1978 crée
-      celui-ci et ses cotisations commencent au 1er janvier 1979. Les années
-      antérieures ne portent donc aucun droit, ce qui est le droit lui-même et
-      non une lacune du modèle. Le statut n'est PAS marqué `sans_employeur` :
+      Avant 1979, aucune cotisation : la loi du 2 janvier 1978 crée le régime
+      et ses cotisations commencent au 1er janvier 1979. Les années d'activité
+      cultuelle antérieures ne sont pas perdues pour autant : la CAVIMAC les
+      valide gratuitement et en sert une fraction de pension (sa page sur la
+      retraite de base, la réponse ministérielle au Sénat du 16 janvier 2008).
+      Le modèle ne les compte pas, et sous-estime donc la pension des
+      générations entrées avant 1979 ; le statut disait jusqu'au 23 septembre
+      2026 que c'était « le droit lui-même ». Le statut n'est PAS marqué `sans_employeur` :
       la congrégation joue le rôle d'employeur et l'article R. 382-90 met à sa
       charge la part patronale du régime général, que les scénarios 4 et 5
       doivent donc compter.
@@ -978,12 +982,13 @@ affiliations:
     periodes:
       - {debut: 1979, fin: null, regimes: [cavimac]}
     note: >-
-      Le régime des cultes seul, depuis sa création en 1979 : L. 921-1 ne
-      donne l'Arrco qu'à qui « bénéficie d'un revenu d'activité perçu
-      individuellement », et le religieux qui vit de sa communauté n'en perçoit
-      pas. Pas plus que `ministre_du_culte`, le statut n'est marqué
-      `sans_employeur` : la congrégation paie la part collective de la base
-      (R. 382-90), que les scénarios 4 et 5 doivent compter.
+      Le régime des cultes seul, depuis sa création en 1979 — les années
+      d'avant, que la caisse valide gratuitement, ne sont pas comptées : voir
+      `ministre_du_culte`. L. 921-1 ne donne l'Arrco qu'à qui « bénéficie d'un
+      revenu d'activité perçu individuellement », et le religieux qui vit de sa
+      communauté n'en perçoit pas. Pas plus que `ministre_du_culte`, le statut
+      n'est marqué `sans_employeur` : la congrégation paie la part collective
+      de la base (R. 382-90), que les scénarios 4 et 5 doivent compter.
 
   sans_activite:
     libelle: Sans activité professionnelle

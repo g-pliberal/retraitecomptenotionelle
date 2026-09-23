@@ -3539,7 +3539,17 @@ sources:
     a_en_tirer: >-
       La liquidation du régime des cultes : conditions et montant, pour un
       régime que le dépôt modélise sur peu de sources.
-    statut: en_cours
+    statut: explore
+    explore_le: 2026-09-23
+    note: >-
+      Le salaire annuel moyen des cultes « calculé sur la base du SMIC » pour
+      tous : le modèle le prenait sur le revenu saisi, il le prend sur le
+      forfait (ligne `cultes_salaire_annuel_moyen` du registre de veille).
+      La page décrit aussi une pension en trois fractions — avant 1979,
+      validée gratuitement ; de 1979 à 1997, portée au minimum contributif ou
+      au maximum de la pension « Cavimac », 452,15 € par mois en 2026 ; depuis
+      1998, aux règles du régime général —, dont le modèle n'écrit que la
+      dernière. Le tableau des âges tient compte de la suspension de 2026.
 
   - id: cavimac_guide
     url: https://www.cavimac.fr/guide-cavimac
