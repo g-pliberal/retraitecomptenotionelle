@@ -515,6 +515,7 @@ fichiers:
       "La RCO ne servait que les points cotisés, et le code rural en donne cent par année de chef d'avant 2003": recit
       "Le ministre du culte n'avait pas d'Arrco, et L. 921-1 la lui donne depuis 2006": recit
       "Le ministre du culte liquidait sur son revenu, et la caisse liquide sur le SMIC": recit
+      "La fonction publique de l'État : le minimum de l'invalidité servi à tous, et la surcote des classés attendue trop tard": recit
   # Ce que le modèle calcule, et pourquoi ainsi : tout y est au présent, et une
   # méthodologie périmée décrit un autre modèle que celui qui tourne. Le régime
   # visé est donc `etat` de bout en bout, et ce qui l'empêche n'est jamais le

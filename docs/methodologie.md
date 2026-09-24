@@ -916,12 +916,17 @@ ouvriers de l'État — et deux statuts militaires.
   se prévaloir, au total, d'au moins dix-sept ans de services accomplis […] dits
   services actifs », et le modèle compte ces années sur la carrière elle-même.
 
-La **surcote**, elle, se compte toujours depuis l'âge légal de droit commun : le
-III de l'article L. 14 ne la donne qu'« au-delà de l'âge mentionné à l'article
-L. 161-17-2 », et le D du XXIV de l'article 10 de la loi de 2023 le confirme
-pour les emplois classés — l'âge anticipé majoré de cinq années, l'âge minoré
-majoré de dix, c'est-à-dire l'âge légal dans les deux cas. La compter depuis
-<!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans aurait payé deux fois l'avantage du classement.
+La **surcote** se compte depuis l'âge légal de droit commun pour le
+sédentaire : le III de l'article L. 14 ne la donne qu'« au-delà de l'âge
+mentionné à l'article L. 161-17-2 ». L'emploi classé a son propre âge : le D
+du XXIV de l'article 10 de la loi de 2023 lui donne l'âge anticipé majoré de
+cinq années, pour l'actif né à compter du 1<sup>er</sup> septembre 1966, et
+l'âge minoré majoré de dix, pour le super-actif né à compter du
+1<sup>er</sup> septembre 1971 — l'âge légal de la génération née cinq ou dix
+ans plus tôt, non de la sienne —, et soixante-deux ans aux générations
+d'avant. La compter depuis <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans aurait payé deux fois l'avantage du
+classement ; l'attendre à l'âge légal de sa propre génération le lui
+retirerait.
 
 **La pension militaire ne s'ouvre pas à un âge mais à une durée.** Le II de
 l'article L. 24 : elle est liquidée « lorsqu'un officier […] réunit, à la date
@@ -993,7 +998,11 @@ précédent, et le modèle en prenait deux à l'envers.
    référence à quinze ans, <!--chiffre:tenu(test_le_minimum_garanti_de_la_fonction_publique_est_servi)-->95<!--/--> % à trente, la totalité à quarante. La référence
    est le traitement de l'indice majoré 227 au 1er janvier 2004, revalorisé
    comme les pensions depuis. Il n'est dû qu'au taux plein depuis la loi du
-   9 novembre 2010.
+   9 novembre 2010, qui a aussi changé sa première marche : sous quinze ans de
+   services, la référence est rapportée, trimestre par trimestre, à la durée
+   qui ouvre le pourcentage maximum ; le quinzième de la marche de quinze ans
+   par année ne reste qu'à l'invalidité, que le modèle ne sert pas, et à qui
+   avait atteint l'âge d'ouverture de ses droits avant 2011.
 5. **Surcote parentale** (L. 351-1-2-1) — <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:taux_par_trimestre*100?debut=2023)-->1,25<!--/--> % par trimestre cotisé
    dans l'année qui précède l'âge légal au-delà de la durée requise, quatre au
    plus, dès que l'âge légal atteint <!--chiffre:cellule(data/reference/legislation/surcote_parentale.csv:age_ouverture?debut=2023)-->63<!--/--> ans, à l'assuré qui détient au moins un

@@ -268,6 +268,35 @@ réellement faites, avant de le déclarer dépouillé. Deux des vingt-trois
 adresses, crues lues, ne l'avaient pas été ; l'une d'elles portait la grille
 2026 de la CAVEC avec ses points, qui a confirmé le rendement du dépôt.
 
+Le lot de la fonction publique de l'État, le 24 septembre 2026, en a ajouté
+quatre.
+
+- **Une table dit plus qu'un exemple.** Les trois exemples chiffrés du
+  minimum garanti, de la formule et de la pension militaire que publie le
+  Service des retraites de l'État se trompent chacun — une durée de 168
+  trimestres pour 167, des années multipliées par un montant de trimestre, un
+  droit ouvert à dix-sept ans de services puis compté à dix-huit. La table de
+  la même page, elle, était juste, et c'est sa colonne « cas général », qui
+  divisait par 170 et non par soixante trimestres, qui a levé l'erreur du
+  modèle. Transcrire l'exemple sans la table aurait pris la faute de la page
+  pour une règle.
+- **Un exemple se date comme la caisse le date.** La fonction publique fait
+  prendre effet la pension le premier jour du mois qui suit la cessation ;
+  le SRE l'écrit en passant, « 62 ans 6 mois 11 jours ». Liquidé au mois de
+  la cessation, son exemple de surcote perdait un trimestre, et l'on aurait
+  conclu à un désaccord de règle là où il n'y avait qu'une date.
+- **Une calculette peut appliquer un barème abrogé.** Celle du rachat
+  d'études de l'ENSAP porte dans son script le barème du décret n° 2003-1310,
+  abrogé neuf mois plus tôt. Chercher au Journal officiel le texte EN VIGUEUR
+  du barème qu'on lit dans un script — ici le décret n° 2025-1340 — avant de
+  le transcrire : l'index JORF le trouve en une requête.
+- **Une déduction écrite dans le code n'est pas une lecture.** Une docstring
+  du moteur affirmait que l'âge anticipé majoré de cinq ans était l'âge légal
+  de la génération ; c'est celui de la génération née cinq ans plus tôt, et
+  le décret n° 2026-344 l'écrit en toutes lettres. Quand la page d'une caisse
+  contredit un commentaire du dépôt, relire le texte avant de croire le
+  commentaire.
+
 ## Où va ce qu'on en tire
 
 Rien ne reste dans un fichier de notes : chaque trouvaille a sa destination,
