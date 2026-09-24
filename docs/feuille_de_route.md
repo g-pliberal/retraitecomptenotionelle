@@ -16541,6 +16541,23 @@ seule » prise sur la série dont le taux vient), `remuneration.py` et
 — `limites.md`, `methodologie.md`, le README, `chiffrage_plf.md`, le parcours
 de présentation. Suite complète : 2 407 réussis, 0 échec.
 
+**Les deux suites, remises dans une pull request le 24 septembre 2026.** À la
+demande de l'utilisateur, pour être reprises dans une autre discussion : la
+décision sur la solde du militaire, et la série « retraite seule » année par
+année, le point 1. Pour éclairer la première, une mesure du même jour, sur
+`main` (b75f526) et la carrière de l'exemple du README. Si l'État gardait pour
+lui la part de son taux qui paie les départs anticipés, au lieu d'en rendre la
+moitié à la solde, le militaire gagnerait +40,3 % de solde nette au lieu de
++57,7 % — +42,2 % si les 33,8 points se retirent tels quels des 126,07 %
+appelés, plutôt qu'en proportion du taux d'équilibre de 112,3 %. Il reviendrait
+près du civil, qui passerait de +37,6 % à +36,9 % pour le point et demi de ses
+catégories actives. Retirer cette part du taux revient exactement à ce que
+l'État la garde entière : la dépense d'aujourd'hui et ce que la proposition
+libère baissent du même montant. La seconde attend le projet de loi de finances
+pour 2027, dans lequel la Cour demande que la décomposition soit publiée ; son
+jaune pensions se tirera du miroir de l'Assemblée nationale, comme celui de
+2026.
+
 **Fichiers.** `data/reference/legislation/contribution_etat_retraite_seule.csv`
 (nouveau), `src/retraite_notionnelle/config.py`,
 `src/retraite_notionnelle/donnees/regimes.py`,
