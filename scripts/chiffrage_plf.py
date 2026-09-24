@@ -344,7 +344,7 @@ def tableau_fait_central(retro: Chiffrage, prosp: Chiffrage) -> str:
     tva = retro.tva(an)
     recettes = retro.recettes(an) - tva - retro.solde[an].ressources_de("actuel")
     depense = retro.depense(an) - retro.solde[an].depense("actuel")
-    taux_tva = nombre(retro.parametres.taux_tva_liberal * 100, 1)
+    taux_tva = _taux_tva(retro.parametres.taux_tva_liberal)
 
     def ligne(libelle: str, valeur: float, gras: bool = False) -> str:
         part = nombre(valeur * 100, 2, True)
@@ -382,7 +382,7 @@ def tableau_arbitrages(retro: Chiffrage, prosp: Chiffrage) -> str:
     pilotage = 1.0 - retro.coefficient(an)
     sens = "de moins" if pilotage >= 0.0 else "de plus"
     tva = retro.tva(an)
-    taux_tva = nombre(retro.parametres.taux_tva_liberal * 100, 1)
+    taux_tva = _taux_tva(retro.parametres.taux_tva_liberal)
     lignes = [
         f"| Arbitrage ouvert | Ce qu'il déplace en {an} | En milliards |",
         "|---|---:|---:|",
@@ -411,7 +411,7 @@ def tableau_prelevements(retro: Chiffrage) -> str:
     l'État, et le tableau les montre pour qu'on voie qu'elles disparaissent,
     pas pour les compter.
     """
-    taux_tva = nombre(retro.parametres.taux_tva_liberal * 100, 1)
+    taux_tva = _taux_tva(retro.parametres.taux_tva_liberal)
     lignes = [
         "| Année | Cotisations (sc. 1) | Impôts et taxes affectés (sc. 1) "
         "| **Prélèvements sc. 1** | Cotisations 18 % (sc. 6) "
@@ -538,6 +538,11 @@ def remplacer(texte: str, repere: str, contenu: str) -> str:
     avant = texte.split(debut)[0]
     apres = texte.split(fin, 1)[1]
     return f"{avant}{debut}\n{contenu}\n{fin}{apres}"
+
+
+def _taux_tva(taux: float) -> str:
+    """Le taux de TVA tel qu'on l'écrit : « 20 », mais « 19,7 »."""
+    return nombre(taux * 100, 0 if round(taux * 1000) % 10 == 0 else 1)
 
 
 def blocs(retro: Chiffrage, prosp: Chiffrage) -> dict[str, str]:

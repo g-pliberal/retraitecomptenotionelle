@@ -739,22 +739,24 @@ class Parametres:
     #: du Parti libéral, 23 septembre 2026, et ce qu'il rapporte DE PLUS que
     #: les quatre est affecté au scénario 6.
     #:
-    #: Pourquoi 19,7 % : c'est le taux qui couvre, chaque année de 2026 à
-    #: 2070, le déficit de la proposition garantie vieillesse comprise, dans la
-    #: variante rétroactive, sans rien emprunter — le taux de l'année la plus
-    #: exigeante, arrondi au dixième. Le déficit culmine vers 2048, où il faut
-    #: 19,69 %. Le même calcul donnait 21,1 % avant que la proposition ne fixe
-    #: son âge légal à 65 ans (``age_legal_liberal``) : les années que le report
-    #: fait travailler cotisent, et les pensions qu'il retarde ne sont pas
-    #: servies. La règle suppose, comme la page Coût par défaut, que ceux que
-    #: le report fait attendre sont en emploi (``part_reportes_en_emploi``) :
-    #: si la moitié seulement l'étaient, il faudrait 20,1 %, et 20,6 % si aucun.
-    #: Le taux reste sous les 20 % du taux normal parce qu'il supprime les taux
-    #: réduits : un taux unique de 15,46 % rapporterait déjà ce que rapportent
-    #: les quatre, et chaque point au-delà rapporte 0,38 point de PIB.
-    #: `donnees/tva.py` dit d'où viennent ces assiettes — le modèle de la TVA
-    #: théorique de la DG Trésor — et ce que ce chiffrage statique ne compte
-    #: pas.
+    #: Pourquoi 20 % : c'est le taux normal d'aujourd'hui, FIXÉ le 24 septembre
+    #: 2026 pour ne plus bouger à chaque hypothèse. Il était jusque-là
+    #: CALCULÉ, par une règle — le taux qui couvre chaque année de 2026 à 2070
+    #: le déficit de la proposition garantie comprise, dans la variante
+    #: rétroactive, sans rien emprunter, arrondi au dixième — qui a donné 21,1 %,
+    #: puis 19,7 % quand la proposition a pris son âge légal de 65 ans. La
+    #: règle reste, comme INDICATEUR : ``cout.taux_tva_requis`` dit, sous les
+    #: hypothèses du moment, le taux qui couvrirait juste chaque année, et la
+    #: page Coût l'affiche à côté de celui-ci. Aux réglages par défaut, elle
+    #: demande 19,69 % ; 20 % couvre chaque année tant qu'environ deux reportés
+    #: sur trois travaillent (``part_reportes_en_emploi``), et en deçà la
+    #: réserve accumulée d'abord porte les années qui manquent. Un taux
+    #: unique égal au taux normal rapporte pourtant plus que les quatre taux
+    #: d'aujourd'hui, parce qu'il supprime les taux réduits : un taux unique de
+    #: 15,46 % rapporterait déjà autant, et chaque point au-delà rapporte 0,38
+    #: point de PIB. `donnees/tva.py` dit d'où viennent ces assiettes — le
+    #: modèle de la TVA théorique de la DG Trésor — et ce que ce chiffrage
+    #: statique ne compte pas.
     #:
     #: Ce n'est pas une cotisation : la TVA n'est portée au compte de personne
     #: et n'ouvre aucun droit. Elle comble le déficit que le compte notionnel
@@ -764,7 +766,7 @@ class Parametres:
     #:
     #: Zéro rend l'ancienne convention, où la TVA n'était pas réformée : un
     #: test le vérifie.
-    taux_tva_liberal: float = 0.197
+    taux_tva_liberal: float = 0.20
 
     #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui
     #: remplace l'ASPA et en garde l'âge (65 ans) et le principe — porter les
