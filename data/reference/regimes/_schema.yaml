@@ -298,11 +298,16 @@ champs_periode:
       Âge d'ouverture ABAISSÉ pour qui réunit `services_ouverture_annees` de
       services dans le régime, à la date de la liquidation. L'âge retenu est le
       plus tardif des deux : celui-ci, et celui où la durée est atteinte. Les
-      marins seuls le portent — « la double condition de cinquante ans d'âge
-      et de vingt-cinq années de services » (R. 2 de leur code) —, l'âge de
+      marins le portent — « la double condition de cinquante ans d'âge et de
+      vingt-cinq années de services » (R. 2 de leur code) —, l'âge de
       cinquante-cinq ans que R. 2 fixe ensuite n'étant que la borne de
       l'entrée en jouissance de qui continue à naviguer (L. 5552-5 du code des
-      transports).
+      transports). Les mines aussi : cinquante-cinq ans, abaissés « d'un an
+      par tranche de quatre années de service au fond et sans pouvoir être
+      inférieur à cinquante ans, pour les travailleurs comptant au moins
+      trente années d'affiliation » (article 127 du décret n° 46-2769). Le
+      modèle ne sait pas où le mineur a travaillé : il donne cinquante ans à
+      trente années, l'âge du fond.
     defaut: null
 
   services_ouverture_annees:
@@ -645,6 +650,36 @@ champs_periode:
       publier et dont `valeurs_point.csv` ne porte donc rien. Revalorisée sur
       les prix d'une année à l'autre, comme la loi le prescrit (L. 161-23-1).
       `valeurs_point.csv` prime quand il porte le régime.
+
+  bareme_trimestre:
+    description: >-
+      Nom d'une table `legislation/bareme_trimestre_<nom>.csv` qui donne, par
+      date d'effet, la valeur du trimestre et le coefficient de majoration de
+      la durée. La pension est alors trimestres × coefficient × valeur, lus à
+      la date de la liquidation, et la table prime sur `valeur_point_euros`.
+      Les mines seules la portent : « le produit de la durée de services par
+      la valeur du trimestre de services de l'année de leur prise d'effet »
+      (article 131 du décret n° 46-2769), durée « affectée d'un coefficient de
+      majoration déterminé en fonction de la date de prise d'effet de la
+      pension » (article 131-1).
+    defaut: null
+
+  trimestres_maximum:
+    description: >-
+      Plafond des trimestres qu'un régime à la durée liquide, levé pour ceux
+      accomplis avant `trimestres_maximum_leve_avant_age` : « le nombre
+      maximum de trimestres susceptibles d'être pris en compte pour le calcul
+      de la pension est de cent-vingt ; toutefois, pour les affiliés qui ont
+      réalisé cette durée avant l'âge de cinquante-cinq ans, les trimestres
+      accomplis postérieurement sont pris en compte jusqu'à ce que cet âge
+      soit atteint » (article 136 du décret n° 46-2769 ; article 147 dans sa
+      rédaction de 1974). Les trimestres retenus valent donc le plus petit du
+      total et du plus grand de 120 et des trimestres d'avant 55 ans.
+    defaut: null
+
+  trimestres_maximum_leve_avant_age:
+    description: "âge avant lequel les trimestres échappent à `trimestres_maximum`"
+    defaut: null
 
   points_maximum:
     description: >-

@@ -516,6 +516,8 @@ fichiers:
       "Le ministre du culte n'avait pas d'Arrco, et L. 921-1 la lui donne depuis 2006": recit
       "Le ministre du culte liquidait sur son revenu, et la caisse liquide sur le SMIC": recit
       "La fonction publique de l'État : le minimum de l'invalidité servi à tous, et la surcote des classés attendue trop tard": recit
+      "La pension du mineur : le coefficient de majoration manquait, et la valeur du trimestre suivait les prix": recit
+      "La CNRACL : la carrière longue lit sa durée à l'ouverture, et la surcote se compte en durée": recit
   # Ce que le modèle calcule, et pourquoi ainsi : tout y est au présent, et une
   # méthodologie périmée décrit un autre modèle que celui qui tourne. Le régime
   # visé est donc `etat` de bout en bout, et ce qui l'empêche n'est jamais le

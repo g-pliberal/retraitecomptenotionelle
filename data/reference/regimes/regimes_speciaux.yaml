@@ -895,9 +895,13 @@ regimes:
       - debut: 1930
         fin: 1973
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -928,9 +932,13 @@ regimes:
       - debut: 1974
         fin: 1974
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -981,9 +989,13 @@ regimes:
       - debut: 1975
         fin: 1975
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1034,9 +1046,13 @@ regimes:
       - debut: 1976
         fin: 1976
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1087,9 +1103,13 @@ regimes:
       - debut: 1977
         fin: 1977
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1140,9 +1160,13 @@ regimes:
       - debut: 1978
         fin: 1978
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1193,9 +1217,13 @@ regimes:
       - debut: 1979
         fin: 1979
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1246,9 +1274,13 @@ regimes:
       - debut: 1980
         fin: 1980
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1299,9 +1331,13 @@ regimes:
       - debut: 1981
         fin: 1981
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1352,9 +1388,13 @@ regimes:
       - debut: 1982
         fin: 1982
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1405,9 +1445,13 @@ regimes:
       - debut: 1983
         fin: 1983
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1458,9 +1502,13 @@ regimes:
       - debut: 1984
         fin: 1984
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1511,9 +1559,13 @@ regimes:
       - debut: 1985
         fin: 1985
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1564,9 +1616,13 @@ regimes:
       - debut: 1986
         fin: 1986
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1617,9 +1673,13 @@ regimes:
       - debut: 1987
         fin: 1987
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1670,9 +1730,13 @@ regimes:
       - debut: 1988
         fin: 1988
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1723,9 +1787,13 @@ regimes:
       - debut: 1989
         fin: 1989
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1776,9 +1844,13 @@ regimes:
       - debut: 1990
         fin: 1990
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1829,9 +1901,13 @@ regimes:
       - debut: 1991
         fin: 1991
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1882,9 +1958,13 @@ regimes:
       - debut: 1992
         fin: 2000
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1896,18 +1976,28 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 58.25
         valeur_point_annee: 1992
+        bareme_trimestre: mines
         notes: >-
           « Le montant de pension pour un trimestre de services s'élève, pour
           les pensions liquidées à compter du 1er juillet 1992, à 382,08 F »
           (article 131, rédaction du 1er janvier 1993), soit 58,25 € au taux
           officiel. Trente ans de mine valaient donc 45 850 F par an, moins de
-          7 000 €.
+          7 000 €. DEPUIS CETTE DATE, LA VALEUR SUIT LES PENSIONS, et non les
+          prix : `legislation/bareme_trimestre_mines.csv` la porte date par date,
+          chaîne des coefficients de revalorisation de la Cnav qui retombe au
+          centime sur 67,73 € en 2001, 69,22 € en 2002, 82,83 € en 2013 et
+          97,15 € en 2026 ; `bareme_trimestre` l'y fait lire. La valeur écrite
+          ci-dessus ne sert plus qu'avant juillet 1992.
       - debut: 2001
         fin: 2012
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1919,18 +2009,28 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 69.22
         valeur_point_annee: 2002
+        bareme_trimestre: mines
         notes: >-
           « La valeur du trimestre de services servant au calcul de ces pensions
           et allocation s'élève à 67,73 euros au 1er janvier 2001 et à 69,22
           euros au 1er janvier 2002 » (article 131, rédaction du 5 mai 2002).
-          C'est la seconde valeur qui est portée, et l'indice des prix la
-          ramène à 2001.
+          Ces deux valeurs sont dans `legislation/bareme_trimestre_mines.csv`,
+          qui porte aussi ce que la fiche ignorait : le COEFFICIENT DE
+          MAJORATION de la durée de services, créé par le décret n° 2002-800
+          (article 131-1) — 1,17 en 2002, 1,319 en 2013 —, et les 17 % dont
+          l'article 131-2 majore les trimestres des pensions prenant effet en
+          2001. Une pension de trente ans liquidée en 2012 valait 120 × 1,305 ×
+          81,77 € = 12 805 € par an, et la fiche en servait 9 891.
       - debut: 2013
         fin: null
         type_calcul: points
-        age_ouverture: 50
+        age_ouverture: 55
+        age_ouverture_services: 50
+        services_ouverture_annees: 30
         age_taux_plein: 55
         duree_requise_trimestres: 120
+        trimestres_maximum: 120
+        trimestres_maximum_leve_avant_age: 55
         taux_plein: 1.0
         points_par_trimestre_valide: 1
         salaire_reference: sans_objet
@@ -1942,13 +2042,25 @@ regimes:
         avantages_non_contributifs: [bonifications, categorie_active, majoration_enfants, reversion]
         valeur_point_euros: 82.83
         valeur_point_annee: 2013
+        bareme_trimestre: mines
         notes: >-
           « La valeur du trimestre de services […] s'élève à 82,83 euros au
           1er avril 2013 » (article 131, rédaction du 6 septembre 2015), et
           c'est la dernière que le décret porte : trente ans de mine valent
-          9 940 € par an, quarante ans 13 253 €. Les pensions liquidées sont
-          ensuite revalorisées comme les autres (article 181), d'où
-          l'indexation sur les prix au-delà de 2013.
+          9 940 € par an avant le coefficient de majoration de l'article 131-1,
+          qui la porte à 13 110 € (1,319 au 1er avril 2013). La valeur est
+          ensuite revalorisée comme les pensions (article 181) : 97,15 € en 2026,
+          avec un coefficient de 1,473, soit 17 172 € pour trente ans — la
+          fiche en servait 12 299, 28 % de moins, faute du coefficient, et
+          alors même qu'elle portait la valeur par les prix, à 102,49 €. Voir
+          `legislation/bareme_trimestre_mines.csv`. Et QUARANTE ANS NE VALENT
+          PAS PLUS QUE TRENTE, sauf ce qui précède cinquante-cinq ans : « le
+          nombre maximum de trimestres susceptibles d'être pris en compte pour
+          le calcul de la pension est de cent-vingt ; toutefois, pour les
+          affiliés qui ont réalisé cette durée avant l'âge de cinquante-cinq
+          ans, les trimestres accomplis postérieurement sont pris en compte
+          jusqu'à ce que cet âge soit atteint » (article 136 ; article 147 dès
+          1974). `trimestres_maximum` le porte, sur toutes les périodes.
           FERMÉ AUX NOUVEAUX ENTRANTS depuis le 1er septembre 2010 (décret
           n° 2010-975 du 27 août 2010), et à eux seuls : le mineur qui était
           déjà là garde son régime jusqu'à sa retraite, et ses règles ne
@@ -1956,14 +2068,21 @@ regimes:
           2014 et 2023 ont laissé où il était — l'article 125 garantit toujours
           la pension « aux affiliés âgés de cinquante-cinq ans au moins » —, et
           non un régime réformé.
-          L'ÂGE DE CINQUANTE ANS EST L'ÂGE ANTICIPÉ, et la fiche le sert à tous.
-          L'article 146, jusqu'en 1985, l'ouvrait « aux travailleurs qui
-          justifient, à cet âge, de trente années de service à la mine dont
-          vingt années au moins au fond » ; depuis 1985, l'âge « est abaissé à
-          raison d'un an par tranche de quatre années de service au fond pour
-          les travailleurs comptant au moins trente années d'affiliation ». Le
-          moteur ne sait pas où un mineur a travaillé : il lui donne l'âge du
-          fond, cinquante ans, quand celui du jour est cinquante-cinq.
+          L'ÂGE EST CINQUANTE-CINQ ANS, ET CINQUANTE AVEC TRENTE ANS DE MINE.
+          L'article 125 garantit la pension « aux affiliés âgés de cinquante-cinq
+          ans au moins » ; l'article 127 abaisse cet âge « à raison d'un an par
+          tranche de quatre années de service au fond et sans pouvoir être
+          inférieur à cinquante ans, pour les travailleurs comptant au moins
+          trente années d'affiliation » (article 146 de 1985 à 1992 ; avant 1985,
+          cinquante ans pour trente années dont vingt au fond). La page de la
+          Caisse des dépôts l'écrit en trimestres : 120 de services dont 16 au
+          fond pour 54 ans, 80 au fond pour 50. La fiche servait cinquante ans à
+          TOUS, même au mineur de dix ans ; elle sert désormais cinquante-cinq
+          ans, et cinquante à qui réunit trente ans de services
+          (`age_ouverture_services`). Le moteur ne sait toujours pas où un
+          mineur a travaillé : à trente ans de mine, il lui donne l'âge du fond,
+          et non la majoration de 0,15 % par trimestre au fond de l'article 138
+          — ce que `docs/limites.md` dit.
 
   - code: cavimac
     nom: >-

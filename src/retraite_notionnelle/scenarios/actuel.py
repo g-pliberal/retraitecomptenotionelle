@@ -1839,6 +1839,82 @@ class MinimumGaranti:
         return reference[0] * taux, reference[1]
 
 
+class BaremesTrimestre:
+    """Valeur du trimestre et coefficient de majoration, par date d'effet.
+
+    La pension minière n'est pas un salaire de référence multiplié par un taux,
+    mais une DURÉE multipliée par une valeur : « le produit de la durée de
+    services par la valeur du trimestre de services de l'année de leur prise
+    d'effet » (article 131 du décret n° 46-2769). Depuis le décret n° 2002-800,
+    cette durée est « affectée d'un coefficient de majoration déterminé en
+    fonction de la date de prise d'effet de la pension » (article 131-1) : 1,473
+    en 2026. La fiche du régime ne portait ni le coefficient, ni la bonne
+    indexation de la valeur — les pensions, et non les prix —, et servait en
+    2026 28 % de moins que ce que la caisse liquide.
+
+    Les deux grandeurs sont lues À LA DATE de la liquidation, au mois près : la
+    valeur change avec la revalorisation des pensions, le coefficient avec son
+    arrêté, et l'une et l'autre en cours d'année jusqu'en 2019. Au-delà de la
+    dernière ligne, la valeur suit les prix de l'année écoulée, comme la
+    revalorisation du 1er janvier ; le coefficient, le quotient de la loi — le
+    salaire moyen de l'année écoulée sur ses prix, jamais moins que un.
+    """
+
+    def __init__(self, racine: Path, macro: DonneesMacro) -> None:
+        self.macro = macro
+        self._tables: dict[str, list[tuple[int, float, float, Fiabilite]]] = {}
+        dossier = racine / "reference" / "legislation"
+        for chemin in sorted(dossier.glob("bareme_trimestre_*.csv")):
+            nom = chemin.stem.removeprefix("bareme_trimestre_")
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                table = []
+                for ligne in csv.DictReader(lignes):
+                    annee, mois, _ = (int(x) for x in ligne["date_effet"].split("-"))
+                    table.append((
+                        DateMois(annee, mois).rang,
+                        float(ligne["valeur_trimestre"]),
+                        float(ligne["coefficient"]),
+                        Fiabilite.depuis_texte(ligne["fiabilite"]),
+                    ))
+            self._tables[nom] = sorted(table)
+
+    def noms(self) -> tuple[str, ...]:
+        return tuple(sorted(self._tables))
+
+    def lignes(self, nom: str) -> list[tuple[int, float, float, Fiabilite]]:
+        return list(self._tables.get(nom, ()))
+
+    def valeurs(self, nom: str,
+                date: DateMois) -> tuple[float, float, Fiabilite] | None:
+        """``(valeur du trimestre, coefficient, fiabilité)`` en vigueur à la
+        date, ou ``None`` avant la première ligne — la fiche reprend alors."""
+        table = self._tables.get(nom)
+        if not table or date.rang < table[0][0]:
+            return None
+        retenue = table[0]
+        for ligne in table:
+            if ligne[0] > date.rang:
+                break
+            retenue = ligne
+        rang, valeur, coefficient, fiabilite = retenue
+        if retenue is not table[-1]:
+            return valeur, coefficient, fiabilite
+        derniere = DateMois.depuis_rang(rang).annee
+        if date.annee <= derniere:
+            return valeur, coefficient, fiabilite
+        # AU-DELÀ DE LA DERNIÈRE LIGNE : la valeur suit les prix de l'année
+        # écoulée, le coefficient le quotient de l'article 131-1.
+        valeur *= self.macro.coefficient_prix(derniere - 1, date.annee - 1)
+        for annee in range(derniere + 1, date.annee + 1):
+            coefficient *= max(
+                1.0,
+                (1.0 + self.macro.salaire_moyen(annee - 1))
+                / (1.0 + self.macro.inflation(annee - 1)),
+            )
+        return valeur, coefficient, Fiabilite.ESTIMEE
+
+
 @dataclass(frozen=True)
 class ConversionPoint:
     """Ce que devient un point à une fusion, ou à un changement d'unité."""
@@ -2056,7 +2132,12 @@ class ScenarioActuel:
         )
         self.minimum_contributif = MinimumContributif(parametres.racine_donnees, macro)
         self.minimum_garanti = MinimumGaranti(parametres.racine_donnees, macro)
+        self.baremes_trimestre = BaremesTrimestre(parametres.racine_donnees, macro)
         self.carriere_longue = CarriereLongue(parametres.racine_donnees)
+        #: Vrai pendant que :meth:`_ouverture_carriere_longue` date le droit :
+        #: la condition de durée qu'elle lit est celle de la génération, et non
+        #: celle que ce droit fait ensuite opposer au taux plein.
+        self._ouverture_carriere_longue_en_cours = False
         self.surcote_baremes = SurcoteBaremes(parametres.racine_donnees)
         self.minimum_vieillesse = MinimumVieillesse(parametres.racine_donnees, macro)
         #: Les régimes qui attribuent des POINTS GRATUITS, rangés sous le régime
@@ -2503,6 +2584,10 @@ class ScenarioActuel:
     #: Le XXIV, C, de l'article 10 de la loi du 14 avril 2023 ne vise que ceux
     #: qui peuvent liquider à compter de ce mois.
     DUREE_XXIV_C_DEPUIS = DateMois(2023, 9)
+    #: Les régimes que L. 13 du code des pensions et le XXIV visent : l'État,
+    #: et par renvoi la CNRACL et le FSPOEIE. La Banque de France, qui emprunte
+    #: le barème de leur décote, a son propre règlement.
+    REGIMES_CODE_DES_PENSIONS = frozenset({"fonction_publique_etat", "cnracl", "fspoeie"})
 
     def _duree_requise_avant_soixante_ans(
             self, periode: PeriodeRegime, carriere: Carriere,
@@ -2527,6 +2612,21 @@ class ScenarioActuel:
         C, 2°, du même XXIV : 169 trimestres, un de plus en 2025 et en 2027,
         172 à compter de 2028.
 
+        ET LE FONCTIONNAIRE SÉDENTAIRE DONT LA CARRIÈRE LONGUE OUVRE LE DROIT
+        AVANT SOIXANTE ANS AUSSI. Le C vise « les fonctionnaires civils, autres
+        que ceux mentionnés aux A et B du présent XXIV, et les militaires
+        remplissant les conditions de liquidation de la pension avant l'âge de
+        soixante ans » : le A ne porte que les générations d'avant septembre
+        1961, le B les emplois classés. Et L. 13, III, que le C, 1°, garde pour
+        qui pouvait liquider avant septembre 2023, disait déjà « les
+        fonctionnaires », sans restriction. La CNRACL l'écrit pour la carrière
+        longue, l'invalidité, le handicap et les parents de trois enfants :
+        « un fonctionnaire né en 1967 qui a un droit ouvert à 58 ans au titre
+        des carrières longues en 2025 aura une durée d'assurance requise de
+        170 trimestres (au lieu de 172 trimestres en fonction de sa
+        génération) ». Le modèle ne l'opposait qu'au militaire ; de ces
+        départs, il ne connaît que la carrière longue.
+
         Avant 2009 la table ne répond pas : de 2004 à 2008, celle de la loi de
         2003 a déjà répondu (:meth:`_duree_requise` la lit d'abord, à la même
         clé), et avant 2004 c'est la durée que la fiche portait l'année
@@ -2538,10 +2638,16 @@ class ScenarioActuel:
         if periode.bareme_decote != "fonction_publique":
             return None
         militaire = self._droit_militaire(periode, carriere)
+        carriere_longue = False
         if militaire is not None:
             age = militaire.age_ouverture
         elif derogation is not None:
             age = derogation.age_ouverture
+        elif periode.regime in self.REGIMES_CODE_DES_PENSIONS:
+            age = self._ouverture_carriere_longue(periode, carriere)
+            if age is None:
+                return None
+            carriere_longue = True
         else:
             return None
         if age >= self.AGE_DUREE_A_L_OUVERTURE:
@@ -2553,7 +2659,7 @@ class ScenarioActuel:
                 carriere.date_naissance.plus_mois(
                     en_mois(carriere.age_liquidation)).rang,
             ))
-        if (militaire is not None
+        if ((militaire is not None or carriere_longue)
                 and ouverture.rang >= self.DUREE_XXIV_C_DEPUIS.rang):
             return self.durees_requises_avant_soixante_ans.depuis_2023(ouverture)
         for table in (self.durees_requises_fonction_publique.trimestres,
@@ -2565,6 +2671,29 @@ class ScenarioActuel:
         if en_vigueur is None or en_vigueur.duree_requise_trimestres is None:
             return None
         return en_vigueur.duree_requise_trimestres, None
+
+    def _ouverture_carriere_longue(self, periode: PeriodeRegime,
+                                   carriere: Carriere) -> float | None:
+        """L'âge où la carrière longue ouvre le droit de ce fonctionnaire, s'il
+        l'ouvre au plus tard à la liquidation ; ``None`` sinon.
+
+        La condition de durée est celle de la génération : « au moins égale à
+        la durée mentionnée à l'article L. 161-17-3 du code de la sécurité
+        sociale » (D. 16-1 du code des pensions, rédaction du décret
+        n° 2026-345). Pendant qu'on la lit, :meth:`_duree_requise` ne doit donc
+        pas rendre la durée que ce droit fait opposer ensuite au taux plein —
+        ce serait la condition qui se lirait elle-même.
+        """
+        if self._ouverture_carriere_longue_en_cours or carriere.age_liquidation is None:
+            return None
+        self._ouverture_carriere_longue_en_cours = True
+        try:
+            age = self._age_carriere_longue(carriere, [(periode.regime, periode)])
+        finally:
+            self._ouverture_carriere_longue_en_cours = False
+        if age is None or age > carriere.age_liquidation + 1e-9:
+            return None
+        return age
 
     def _duree_proratisation(self, periode: PeriodeRegime, carriere: Carriere,
                              requis: int) -> tuple[int, Fiabilite | None]:
@@ -3876,11 +4005,35 @@ class ScenarioActuel:
         tiennent à aucune année — la majoration pour enfants — sont réputés
         acquis d'emblée : ils sont dus quelle que soit la date du départ, et la
         caisse ne les date pas davantage.
+
+        LA FONCTION PUBLIQUE COMPTE DES DURÉES, ET NON DES TRIMESTRES CIVILS.
+        L. 14, III, du code des pensions retient « le nombre de trimestres
+        d'assurance effectués après le 1er janvier 2004, au-delà de l'âge
+        [légal] et en sus du nombre de trimestres nécessaire » : la période
+        s'ouvre le jour où les conditions sont réunies, et se découpe en
+        trimestres de durée dont seuls les entiers comptent. La CNRACL en donne
+        l'exemple : l'agent né le 1er janvier 1962, à l'âge légal le 1er juillet
+        2024, qui travaille jusqu'au 31 décembre 2025, a « effectué 6
+        trimestres supplémentaires de services effectifs à partir du
+        01/07/2024 ». La règle du régime général, que le modèle lui appliquait,
+        n'ouvre la période qu'au trimestre civil suivant : partie en février
+        2026 après un âge légal atteint à la mi-octobre 2024, une fonctionnaire
+        a quinze mois de services au-delà, cinq trimestres entiers, et le
+        modèle lui en comptait quatre.
+
+        Le modèle datant au mois, la période s'ouvre le premier du mois qui
+        suit celui où l'âge est atteint. C'est exact pour qui est né après le
+        premier du mois — service-public.gouv.fr l'écrit ainsi pour un
+        fonctionnaire né le 9 octobre 1964, « taux plein à 62 ans et 9 mois
+        (1er août 2027) » —, et l'agent de la CNRACL, né un 1er janvier, a un
+        trimestre de plus que le modèle ne lui en compte.
         """
         annee_liquidation = carriere.annee_liquidation
         date_legal = carriere.date_naissance.plus_mois(en_mois(age_ouverture))
+        en_duree = periode.regime in self.REGIMES_CODE_DES_PENSIONS
         trimestre_legal = (date_legal.mois - 1) // 3
-        debut_age = DateMois(date_legal.annee, 1).plus_mois(3 * (trimestre_legal + 1))
+        debut_age = (date_legal.plus_mois(1) if en_duree
+                     else DateMois(date_legal.annee, 1).plus_mois(3 * (trimestre_legal + 1)))
 
         par_annee = carriere.trimestres_par_annee(
             ligne for ligne in carriere.lignes if ligne.annee <= annee_liquidation
@@ -3910,7 +4063,8 @@ class ScenarioActuel:
         # contient s'il commence en cours de trimestre : la durée acquise au
         # 30 juin ouvre la période au 1er juillet, celle acquise au 31 mai
         # l'ouvre au 1er juin, mais un trimestre civil ne se compte qu'entier.
-        if (debut.mois - 1) % 3:
+        # La fonction publique, qui compte des durées, n'arrondit pas.
+        if (debut.mois - 1) % 3 and not en_duree:
             debut = DateMois(debut.annee, 1).plus_mois(3 * ((debut.mois - 1) // 3 + 1))
         fin = carriere.date_liquidation
         date_65 = carriere.date_naissance.plus_mois(12 * self.SURCOTE_AGE_MAJORE)
@@ -3923,7 +4077,10 @@ class ScenarioActuel:
             if restants_par_annee.get(courant.annee, 0) > 0:
                 restants_par_annee[courant.annee] -= 1
                 apres_65 = (courant.annee, (courant.mois - 1) // 3) > trimestre_65
-                dates.append((courant, apres_65))
+                # Un trimestre de durée est accompli à son dernier mois, et
+                # c'est le taux de ce mois-là qu'il prend : celui de novembre
+                # 2008 à janvier 2009 est au 1,25 % de la LFSS pour 2009.
+                dates.append((courant.plus_mois(2) if en_duree else courant, apres_65))
             courant = courant.plus_mois(3)
         if not dates:
             return 1.0, None
@@ -4319,6 +4476,10 @@ class ScenarioActuel:
                 majoration_points[code] = majoration_points.get(code, 0.0) + points * taux
                 points_majores[code] = points_majores.get(code, 0.0) + points
         fiabilite_points: dict[str, Fiabilite] = {}
+        # Trimestres qu'un régime à la durée crédite, et ceux d'entre eux
+        # accomplis avant l'âge qui lève son plafond : voir
+        # `PeriodeRegime.trimestres_maximum`.
+        trimestres_plafonnables: dict[str, list[float]] = {}
         # Durée d'assurance validée dans chaque régime, PÉRIODES ASSIMILÉES
         # COMPRISES : le coefficient de proratisation du régime général porte
         # sur la durée d'assurance, pas sur les seules années cotisées. Une
@@ -4621,6 +4782,18 @@ class ScenarioActuel:
                         )
                         points = (periode.points_par_trimestre_valide
                                   * carriere.trimestres_retenus(ligne))
+                        if periode.trimestres_maximum is not None:
+                            # Le plafond se lit sur toute la durée : on note ici
+                            # les trimestres de la ligne, et ceux d'entre eux
+                            # qui précèdent l'âge qui le lève.
+                            suivi = trimestres_plafonnables.setdefault(code, [0.0, 0.0])
+                            suivi[0] += carriere.trimestres_retenus(ligne)
+                            if periode.trimestres_maximum_leve_avant_age is not None:
+                                suivi[1] += _trimestres_de_la_ligne_entre(
+                                    carriere, ligne, DateMois(carriere.annee_naissance, 1),
+                                    carriere.date_naissance.plus_mois(en_mois(
+                                        periode.trimestres_maximum_leve_avant_age)),
+                                )
                         if (periode.points_ajustement_par_forfait is not None
                                 and forfait > 0):
                             # Les points d'AJUSTEMENT de l'ASV des médecins :
@@ -4699,6 +4872,26 @@ class ScenarioActuel:
                             cotisation
                             * self.macro.coefficient_prix(ligne.annee, annee_liquidation)
                         )
+
+        # LE PLAFOND DE LA DURÉE, LEVÉ AVANT UN ÂGE. Cent vingt trimestres au
+        # plus aux mines, sauf ceux accomplis avant cinquante-cinq ans (article
+        # 136 du décret n° 46-2769, article 147 dans sa rédaction de 1974) : les
+        # trimestres retenus valent le plus petit du total et du plus grand du
+        # plafond et des trimestres d'avant l'âge. Le modèle les comptait tous,
+        # et payait au mineur entré à dix-huit ans et parti à soixante-deux ans
+        # sept années que la caisse ne liquide pas.
+        for code, (total, avant_age) in trimestres_plafonnables.items():
+            regime = self.catalogue[code]
+            periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
+            if periode is None or periode.trimestres_maximum is None or total <= 0:
+                continue
+            retenus = min(total, max(float(periode.trimestres_maximum), avant_age))
+            if retenus < total and code in points_acquis:
+                rapport = retenus / total
+                points_acquis[code] *= rapport
+                if code in majoration_points:
+                    majoration_points[code] *= rapport
+                    points_majores[code] *= rapport
 
         # POINTS GRATUITS : la RCO agricole attribue à la liquidation des
         # points pour les années de chef d'exploitation d'avant sa création.
@@ -4847,7 +5040,28 @@ class ScenarioActuel:
                 details = []
 
                 points = points_acquis.get(code, 0.0)
-                if points:
+                # BARÈME DU TRIMESTRE : la pension minière est la durée, majorée
+                # du coefficient de l'article 131-1, multipliée par la valeur du
+                # trimestre de la date d'effet — l'une et l'autre lues dans
+                # `bareme_trimestre_<nom>.csv`. La fiche ne portait que la
+                # seconde, et par les prix.
+                trimestre = (
+                    self.baremes_trimestre.valeurs(
+                        periode.bareme_trimestre, carriere.date_liquidation)
+                    if points and periode.bareme_trimestre else None
+                )
+                if trimestre is not None:
+                    valeur_trimestre, coefficient_duree, fiabilite_trimestre = trimestre
+                    montant += points * coefficient_duree * valeur_trimestre
+                    fiabilite_regime = min(
+                        fiabilite_regime, fiabilite_trimestre, fiabilite_points[code]
+                    )
+                    details.append(
+                        f"{points:,.2f} trimestres × coefficient de majoration de "
+                        f"la durée {coefficient_duree:.3f} × valeur du trimestre "
+                        f"{_sans_zeros_inutiles(valeur_trimestre, 2)} €"
+                    )
+                elif points:
                     valeur = self.valeur_du_point(
                         periode.points_de or code, annee_liquidation
                     )
@@ -5741,18 +5955,28 @@ def _trimestres_entre_dates(carriere: Carriere, debut: DateMois, fin: DateMois,
     for ligne in carriere.lignes:
         if cotises_seulement and not ligne.cotise:
             continue
-        retenus = carriere.trimestres_retenus(ligne)
-        mois_ligne = round(carriere.part_retenue(ligne.annee) * 12)
-        if retenus <= 0 or mois_ligne <= 0:
-            continue
-        premier = (DateMois(ligne.annee, 1)
-                   if mois_ligne == 12 or ligne.annee == carriere.annee_liquidation
-                   else DateMois(ligne.annee, 13 - mois_ligne))
-        dernier = premier.plus_mois(mois_ligne)
-        recouvrement = (min(fin.rang, dernier.rang) - max(debut.rang, premier.rang))
-        if recouvrement > 0:
-            total += retenus * recouvrement / mois_ligne
+        total += _trimestres_de_la_ligne_entre(carriere, ligne, debut, fin)
     return int(total + 1e-9)
+
+
+def _trimestres_de_la_ligne_entre(carriere: Carriere, ligne, debut: DateMois,
+                                  fin: DateMois) -> float:
+    """Part des trimestres d'UNE ligne acquise entre deux dates, ``fin`` exclue.
+
+    Les trimestres de la ligne sont répartis sur ses mois — les premiers de
+    l'année pour celle du départ, les derniers pour celle de l'entrée —, comme
+    le fait :func:`_trimestres_entre_dates`, qui en fait la somme.
+    """
+    retenus = carriere.trimestres_retenus(ligne)
+    mois_ligne = round(carriere.part_retenue(ligne.annee) * 12)
+    if retenus <= 0 or mois_ligne <= 0:
+        return 0.0
+    premier = (DateMois(ligne.annee, 1)
+               if mois_ligne == 12 or ligne.annee == carriere.annee_liquidation
+               else DateMois(ligne.annee, 13 - mois_ligne))
+    dernier = premier.plus_mois(mois_ligne)
+    recouvrement = (min(fin.rang, dernier.rang) - max(debut.rang, premier.rang))
+    return retenus * recouvrement / mois_ligne if recouvrement > 0 else 0.0
 
 
 def _trimestres_cotises_entre(carriere: Carriere, age_bas: float, age_haut: float,

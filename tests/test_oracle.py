@@ -382,10 +382,11 @@ def test_la_decote_de_la_pension_civile_se_lit_a_l_annee_d_ouverture_du_droit(
 #: les trimestres, quand l'article L. 14 III donne à chacun le taux en vigueur
 #: quand il a été accompli — 0,75 % jusqu'en 2008, 1,25 % depuis (LFSS 2009).
 #: Né en janvier 1948, à l'âge légal en janvier 2008, parti en janvier 2011 :
-#: trois trimestres de 2008 à 0,75 % et huit de 2009-2010 à 1,25 %, onze en
-#: tout depuis le trimestre civil qui suit l'âge légal ; OpenFisca en compte
-#: douze, tous à 1,25 %. Le test vérifie que chacun rend exactement ce que SA
-#: règle commande.
+#: onze trimestres de durée depuis le premier du mois qui suit l'âge légal,
+#: trois accomplis en 2008 à 0,75 % et huit en 2009 et 2010 à 1,25 % ;
+#: OpenFisca en compte douze, tous à 1,25 %, en datant l'âge au premier
+#: janvier. Le test vérifie que chacun rend exactement ce que SA règle
+#: commande.
 SURCOTE_CIVILE_DATEE = {"surcote_1948": ((3, 0.0075), (8, 0.0125))}
 
 
@@ -1624,6 +1625,13 @@ def test_les_exemples_publies_par_les_caisses_sont_reproduits(simulateur, exempl
             base = next(p.montant for p in resultat.pensions_par_regime
                         if p.regime == "regime_general")
             assert base / 12 == pytest.approx(valeur, abs=0.05), base / 12
+        elif cle == "pensions_annuelles_des_regimes":
+            # La pension annuelle brute d'un régime nommé : ce que publie un
+            # régime dont la pension ne tient ni à un taux ni à un salaire.
+            pensions = {p.regime: p.montant for p in resultat.pensions_par_regime}
+            for regime, montant in valeur.items():
+                assert pensions.get(regime, 0.0) == pytest.approx(montant, abs=0.5), (
+                    cle, regime, pensions.get(regime))
         else:
             raise AssertionError(f"grandeur inconnue dans le témoin : {cle}")
 
@@ -1632,9 +1640,10 @@ def test_le_temoin_des_exemples_officiels_est_source():
     """Chaque exemple dit qui l'a publié, où, et quand il a été vérifié."""
     for exemple in _charger_exemples():
         source = exemple["source"]
-        assert source["editeur"] in ("service-public.gouv.fr", "Cnav", "ENIM",
-                                     "CARCDSF", "CARMF", "CAVAMAC",
-                                     "Cour des comptes", "SRE"), exemple["id"]
+        assert source["editeur"] in (
+            "service-public.gouv.fr", "Cnav", "ENIM", "CARCDSF", "CARMF",
+            "CAVAMAC", "Cour des comptes", "SRE", "COR", "CNRACL",
+        ), exemple["id"]
         assert len(source["reference"].split()) >= 4, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]
         assert len(exemple["enonce"].split()) >= 12, exemple["id"]

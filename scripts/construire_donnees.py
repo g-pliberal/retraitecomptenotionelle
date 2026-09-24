@@ -637,6 +637,10 @@ def _regimes() -> list[dict]:
                     "points_de": p.points_de,
                     "valeur_point_euros": p.valeur_point_euros,
                     "valeur_point_annee": p.valeur_point_annee,
+                    "bareme_trimestre": p.bareme_trimestre,
+                    "trimestres_maximum": p.trimestres_maximum,
+                    "trimestres_maximum_leve_avant_age": (
+                        p.trimestres_maximum_leve_avant_age),
                     "borne_basse_euros": p.borne_basse_euros,
                     "borne_haute_euros": p.borne_haute_euros,
                     "pension_forfaitaire_annuelle": p.pension_forfaitaire_annuelle,
@@ -1130,6 +1134,22 @@ def _minimum_garanti() -> dict:
     }
 
 
+def _baremes_trimestre() -> dict:
+    """Valeur du trimestre et coefficient de majoration, par date d'effet."""
+    from retraite_notionnelle.calendrier import DateMois
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+    from retraite_notionnelle.scenarios.actuel import BaremesTrimestre
+
+    baremes = BaremesTrimestre(DONNEES, DonneesMacro(DONNEES))
+    return {
+        nom: [[date.annee, date.mois, valeur, coefficient, int(fiabilite)]
+              for date, valeur, coefficient, fiabilite
+              in ((DateMois.depuis_rang(rang), valeur, coefficient, fiabilite)
+                  for rang, valeur, coefficient, fiabilite in baremes.lignes(nom))]
+        for nom in baremes.noms()
+    }
+
+
 def _minimum_vieillesse(couple: bool = False) -> dict:
     """Barème de l'ASPA par année : personne seule, ou couple d'allocataires."""
     from retraite_notionnelle.donnees.macro import DonneesMacro
@@ -1534,6 +1554,7 @@ def construire(bilan: bytes) -> bytes:
         "contribution_etat_retraite_seule": _contribution_etat_retraite_seule(),
         "minimum_contributif": _minimum_contributif(),
         "minimum_garanti": _minimum_garanti(),
+        "baremes_trimestre": _baremes_trimestre(),
         "minimum_vieillesse": _minimum_vieillesse(),
         "minimum_vieillesse_couple": _minimum_vieillesse(couple=True),
         "durees_requises_fonction_publique": _durees_requises_fonction_publique(),

@@ -744,6 +744,66 @@ MinimumGaranti.ANNEE_GEL = 2004;
 MinimumGaranti.INDICE_REFERENCE = 227;
 
 /**
+ * Valeur du trimestre et coefficient de majoration, par date d'effet.
+ *
+ * Portage de `BaremesTrimestre` : la pension minière est la durée de services,
+ * majorée du coefficient de l'article 131-1 du décret n° 46-2769, multipliée
+ * par la valeur du trimestre de la date d'effet (article 131). Les deux
+ * grandeurs sont lues au mois de la liquidation ; au-delà de la dernière
+ * ligne, la valeur suit les prix de l'année écoulée, le coefficient le
+ * quotient du salaire moyen de l'année écoulée sur ses prix, jamais moins que
+ * un.
+ */
+export class BaremesTrimestre {
+  constructor(paquet, macro) {
+    this.macro = macro;
+    this._tables = new Map();
+    for (const [nom, lignes] of Object.entries(paquet.baremes_trimestre ?? {})) {
+      this._tables.set(nom, lignes
+        .map(([annee, mois, valeur, coefficient, fiabilite]) => (
+          [new DateMois(annee, mois).rang, valeur, coefficient, fiabilite]))
+        .sort((a, b) => a[0] - b[0]));
+    }
+  }
+
+  /**
+   * `[valeur du trimestre, coefficient, fiabilité]` en vigueur à la date, ou
+   * `null` avant la première ligne — la fiche reprend alors.
+   */
+  valeurs(nom, date) {
+    const table = this._tables.get(nom);
+    if (!table || table.length === 0 || date.rang < table[0][0]) {
+      return null;
+    }
+    let retenue = table[0];
+    for (const ligne of table) {
+      if (ligne[0] > date.rang) {
+        break;
+      }
+      retenue = ligne;
+    }
+    const [rang, valeurLue, coefficientLu, fiabilite] = retenue;
+    if (retenue !== table[table.length - 1]) {
+      return [valeurLue, coefficientLu, fiabilite];
+    }
+    const derniere = DateMois.depuisRang(rang).annee;
+    if (date.annee <= derniere) {
+      return [valeurLue, coefficientLu, fiabilite];
+    }
+    const valeur = valeurLue * this.macro.coefficientPrix(derniere - 1, date.annee - 1);
+    let coefficient = coefficientLu;
+    for (let annee = derniere + 1; annee <= date.annee; annee += 1) {
+      coefficient *= Math.max(
+        1.0,
+        (1.0 + this.macro.salaire_moyen.valeur(annee - 1))
+          / (1.0 + this.macro.inflation.valeur(annee - 1)),
+      );
+    }
+    return [valeur, coefficient, Fiabilite.ESTIMEE];
+  }
+}
+
+/**
  * Minimum vieillesse — allocation de solidarité aux personnes âgées (ASPA).
  *
  * Allocation DIFFÉRENTIELLE qui porte les ressources au montant du barème.

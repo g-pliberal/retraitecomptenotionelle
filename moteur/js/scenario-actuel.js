@@ -23,7 +23,8 @@ import { assietteMinimale, salaireMoyenAnnuel } from "./carriere.js";
 import { formatFixe, formatPourcentage } from "./format.js";
 import {
   AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
-  AgesOuverture, AgesRegimes, AgesSurcoteRegimesSpeciaux, AnneesSalaireReference, CarriereLongue,
+  AgesOuverture, AgesRegimes, AgesSurcoteRegimesSpeciaux, AnneesSalaireReference,
+  BaremesTrimestre, CarriereLongue,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
   DureesProratisation, DureesRequises, DureesRequisesAvantSoixanteAns,
   DureesRequisesAvantSuspension,
@@ -45,6 +46,8 @@ const SURCOTE_DEPUIS = new DateMois(2004, 1);
 const AGE_DUREE_A_L_OUVERTURE = 60.0;
 /** Le XXIV, C, de la loi du 14 avril 2023 ne vise que ceux qui peuvent liquider depuis ce mois. */
 const DUREE_XXIV_C_DEPUIS = new DateMois(2023, 9);
+/** Les régimes que L. 13 du code des pensions et le XXIV visent. */
+const REGIMES_CODE_DES_PENSIONS = new Set(["fonction_publique_etat", "cnracl", "fspoeie"]);
 /** Âge au-delà duquel le barème de 2007-2008 sert 1,25 %. */
 const SURCOTE_AGE_MAJORE = 65;
 
@@ -161,8 +164,11 @@ export class ScenarioActuel {
     this.decoteFonctionPublique = new DecoteFonctionPublique(paquet);
     this.decoteRegimesSpeciaux = new DecoteRegimesSpeciaux(paquet);
     this.minimumGaranti = new MinimumGaranti(paquet, macro);
+    this.baremesTrimestre = new BaremesTrimestre(paquet, macro);
     this.minimumVieillesse = new MinimumVieillesse(paquet, macro);
     this.carriereLongue = new CarriereLongue(paquet);
+    // Vrai pendant que `ouvertureCarriereLongue` date le droit : voir le Python.
+    this.ouvertureCarriereLongueEnCours = false;
     // Propriété d'instance, comme l'attribut de classe du Python : la mesure
     // des avantages non contributifs la repousse hors de portée pour lire ce
     // que la règle des parents ajoute à une pension.
@@ -578,10 +584,19 @@ export class ScenarioActuel {
     }
     const militaire = this.droitMilitaire(periode, carriere);
     let age;
+    let carriereLongue = false;
     if (militaire !== null) {
       age = militaire.ageOuverture;
     } else if (derogation !== null) {
       age = derogation.ageOuverture;
+    } else if (REGIMES_CODE_DES_PENSIONS.has(periode.regime)) {
+      // Le fonctionnaire sédentaire dont la carrière longue ouvre le droit
+      // avant soixante ans relève du même C du XXIV : voir le Python.
+      age = this.ouvertureCarriereLongue(periode, carriere);
+      if (age === null) {
+        return null;
+      }
+      carriereLongue = true;
     } else {
       return null;
     }
@@ -595,7 +610,7 @@ export class ScenarioActuel {
         carriere.dateNaissance.plusMois(enMois(carriere.age_liquidation)).rang,
       ));
     }
-    if (militaire !== null && ouverture.rang >= DUREE_XXIV_C_DEPUIS.rang) {
+    if ((militaire !== null || carriereLongue) && ouverture.rang >= DUREE_XXIV_C_DEPUIS.rang) {
       return this.dureesRequisesAvantSoixanteAns.depuis2023(ouverture);
     }
     const transitoire = this.dureesRequisesFonctionPublique.trimestres(ouverture.annee);
@@ -613,6 +628,30 @@ export class ScenarioActuel {
       return null;
     }
     return [enVigueur.duree_requise_trimestres, null];
+  }
+
+  /**
+   * L'âge où la carrière longue ouvre le droit de ce fonctionnaire, s'il l'ouvre
+   * au plus tard à la liquidation ; `null` sinon. La condition de durée est
+   * celle de la génération (D. 16-1 du code des pensions) : pendant qu'on la
+   * lit, `dureeRequise` ne rend pas la durée que ce droit fait opposer ensuite.
+   */
+  ouvertureCarriereLongue(periode, carriere) {
+    if (this.ouvertureCarriereLongueEnCours
+        || carriere.age_liquidation === null || carriere.age_liquidation === undefined) {
+      return null;
+    }
+    this.ouvertureCarriereLongueEnCours = true;
+    let age;
+    try {
+      age = this.ageCarriereLongue(carriere, [[periode.regime, periode]]);
+    } finally {
+      this.ouvertureCarriereLongueEnCours = false;
+    }
+    if (age === null || age === undefined || age > carriere.age_liquidation + 1e-9) {
+      return null;
+    }
+    return age;
   }
 
   /**
@@ -1738,8 +1777,13 @@ export class ScenarioActuel {
     ageOuverture) {
     const anneeLiquidation = carriere.anneeLiquidation;
     const dateLegal = carriere.dateNaissance.plusMois(enMois(ageOuverture));
+    // La fonction publique compte des durées, depuis le premier du mois qui
+    // suit l'âge, et non des trimestres civils : voir le Python.
+    const enDuree = REGIMES_CODE_DES_PENSIONS.has(periode.regime);
     const trimestreLegal = Math.floor((dateLegal.mois - 1) / 3);
-    const debutAge = new DateMois(dateLegal.annee, 1).plusMois(3 * (trimestreLegal + 1));
+    const debutAge = enDuree
+      ? dateLegal.plusMois(1)
+      : new DateMois(dateLegal.annee, 1).plusMois(3 * (trimestreLegal + 1));
 
     const parAnnee = carriere.trimestresParAnnee(carriere.lignes.filter(
       (ligne) => ligne.annee <= anneeLiquidation,
@@ -1770,7 +1814,7 @@ export class ScenarioActuel {
       return [1.0, null];
     }
     let debut = DateMois.depuisRang(Math.max(debutAge.rang, debutDuree.rang, SURCOTE_DEPUIS.rang));
-    if ((debut.mois - 1) % 3) {
+    if ((debut.mois - 1) % 3 && !enDuree) {
       debut = new DateMois(debut.annee, 1).plusMois(3 * (Math.floor((debut.mois - 1) / 3) + 1));
     }
     const fin = carriere.dateLiquidation;
@@ -1784,7 +1828,8 @@ export class ScenarioActuel {
       if ((restants.get(courant.annee) ?? 0) > 0) {
         restants.set(courant.annee, restants.get(courant.annee) - 1);
         const apres65 = courant.annee * 4 + Math.floor((courant.mois - 1) / 3) > trimestre65;
-        dates.push([courant, apres65]);
+        // Un trimestre de durée prend le taux de son dernier mois : voir le Python.
+        dates.push([enDuree ? courant.plusMois(2) : courant, apres65]);
       }
       courant = courant.plusMois(3);
     }
@@ -2077,6 +2122,9 @@ export class ScenarioActuel {
       }
     };
     const fiabilitePoints = new Map();
+    // Trimestres qu'un régime à la durée crédite, et ceux d'entre eux
+    // accomplis avant l'âge qui lève son plafond : voir le Python.
+    const trimestresPlafonnables = new Map();
     // Durée d'assurance validée dans chaque régime, PÉRIODES ASSIMILÉES
     // COMPRISES : le coefficient de proratisation porte sur la durée
     // d'assurance, pas sur les seules années cotisées.
@@ -2351,6 +2399,25 @@ export class ScenarioActuel {
               .echelle(bareme, ligne.annee, anneeLiquidation);
             let points = periode.points_par_trimestre_valide
               * carriere.trimestresRetenus(ligne);
+            if (periode.trimestres_maximum !== null
+                && periode.trimestres_maximum !== undefined) {
+              // Le plafond se lit sur toute la durée : on note ici les
+              // trimestres de la ligne, et ceux d'entre eux qui précèdent l'âge
+              // qui le lève.
+              if (!trimestresPlafonnables.has(code)) {
+                trimestresPlafonnables.set(code, [0.0, 0.0]);
+              }
+              const suivi = trimestresPlafonnables.get(code);
+              suivi[0] += carriere.trimestresRetenus(ligne);
+              if (periode.trimestres_maximum_leve_avant_age !== null
+                  && periode.trimestres_maximum_leve_avant_age !== undefined) {
+                suivi[1] += trimestresDeLaLigneEntre(
+                  carriere, ligne, new DateMois(carriere.annee_naissance, 1),
+                  carriere.dateNaissance.plusMois(
+                    enMois(periode.trimestres_maximum_leve_avant_age)),
+                );
+              }
+            }
             if (periode.points_ajustement_par_forfait !== null
                 && periode.points_ajustement_par_forfait !== undefined
                 && forfait > 0) {
@@ -2419,6 +2486,27 @@ export class ScenarioActuel {
             cumulCotisations.set(code, (cumulCotisations.get(code) ?? 0.0)
               + cotisation * this.macro.coefficientPrix(ligne.annee, anneeLiquidation));
           }
+        }
+      }
+    }
+
+    // LE PLAFOND DE LA DURÉE, LEVÉ AVANT UN ÂGE : cent vingt trimestres au plus
+    // aux mines, sauf ceux accomplis avant cinquante-cinq ans (article 136 du
+    // décret n° 46-2769). Voir le Python.
+    for (const [code, [total, avantAge]] of trimestresPlafonnables) {
+      const regime = this.catalogue.obtenir(code);
+      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
+      if (periode === null || periode.trimestres_maximum === null
+          || periode.trimestres_maximum === undefined || total <= 0) {
+        continue;
+      }
+      const retenus = Math.min(total, Math.max(periode.trimestres_maximum, avantAge));
+      if (retenus < total && pointsAcquis.has(code)) {
+        const rapport = retenus / total;
+        pointsAcquis.set(code, pointsAcquis.get(code) * rapport);
+        if (majorationPoints.has(code)) {
+          majorationPoints.set(code, majorationPoints.get(code) * rapport);
+          pointsMajores.set(code, pointsMajores.get(code) * rapport);
         }
       }
     }
@@ -2567,7 +2655,24 @@ export class ScenarioActuel {
         const details = [];
 
         const points = pointsAcquis.get(code) ?? 0.0;
-        if (points) {
+        // BARÈME DU TRIMESTRE : la pension minière est la durée, majorée du
+        // coefficient de l'article 131-1, multipliée par la valeur du trimestre
+        // de la date d'effet. Voir le Python.
+        const trimestre = (points && periode.bareme_trimestre)
+          ? this.baremesTrimestre.valeurs(periode.bareme_trimestre, carriere.dateLiquidation)
+          : null;
+        if (trimestre !== null) {
+          const [valeurTrimestre, coefficientDuree, fiabiliteTrimestre] = trimestre;
+          montant += points * coefficientDuree * valeurTrimestre;
+          fiabiliteRegime = Math.min(
+            fiabiliteRegime, fiabiliteTrimestre, fiabilitePoints.get(code),
+          );
+          details.push(
+            `${formatFixe(points, 2, true)} trimestres × coefficient de majoration de `
+            + `la durée ${formatFixe(coefficientDuree, 3)} × valeur du trimestre `
+            + `${sansZerosInutiles(valeurTrimestre, 2)} €`,
+          );
+        } else if (points) {
           let valeur = this.valeurDuPoint(periode.points_de ?? code, anneeLiquidation);
           if (valeur === null && periode.valeur_point_euros !== null
               && periode.valeur_point_euros !== undefined) {
@@ -3552,21 +3657,28 @@ function trimestresEntreDates(carriere, debut, fin, cotisesSeulement) {
     if (cotisesSeulement && !ligne.cotise) {
       continue;
     }
-    const retenus = carriere.trimestresRetenus(ligne);
-    const moisLigne = Math.round(carriere.partRetenue(ligne.annee) * 12);
-    if (retenus <= 0 || moisLigne <= 0) {
-      continue;
-    }
-    const premier = (moisLigne === 12 || ligne.annee === carriere.anneeLiquidation)
-      ? new DateMois(ligne.annee, 1)
-      : new DateMois(ligne.annee, 13 - moisLigne);
-    const dernier = premier.plusMois(moisLigne);
-    const recouvrement = Math.min(fin.rang, dernier.rang) - Math.max(debut.rang, premier.rang);
-    if (recouvrement > 0) {
-      total += retenus * recouvrement / moisLigne;
-    }
+    total += trimestresDeLaLigneEntre(carriere, ligne, debut, fin);
   }
   return Math.floor(total + 1e-9);
+}
+
+/**
+ * Part des trimestres d'UNE ligne acquise entre deux dates, `fin` exclue : ses
+ * trimestres sont répartis sur ses mois, comme le fait `trimestresEntreDates`,
+ * qui en fait la somme.
+ */
+function trimestresDeLaLigneEntre(carriere, ligne, debut, fin) {
+  const retenus = carriere.trimestresRetenus(ligne);
+  const moisLigne = Math.round(carriere.partRetenue(ligne.annee) * 12);
+  if (retenus <= 0 || moisLigne <= 0) {
+    return 0.0;
+  }
+  const premier = (moisLigne === 12 || ligne.annee === carriere.anneeLiquidation)
+    ? new DateMois(ligne.annee, 1)
+    : new DateMois(ligne.annee, 13 - moisLigne);
+  const dernier = premier.plusMois(moisLigne);
+  const recouvrement = Math.min(fin.rang, dernier.rang) - Math.max(debut.rang, premier.rang);
+  return recouvrement > 0 ? retenus * recouvrement / moisLigne : 0.0;
 }
 
 /**

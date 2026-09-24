@@ -181,20 +181,21 @@ entrees:
     prochaine_veille: "2027-06-30"
 
   - id: surcote_fonction_publique
-    regle: "1,25 % par trimestre depuis 2009 sans plafond ; 0,75 % dans la limite de vingt trimestres pour ceux d'avant 2009 ; décompte depuis l'âge légal de droit commun pour le sédentaire, et pour l'emploi classé depuis l'âge anticipé majoré de cinq ans (actifs nés depuis le 1er septembre 1966) ou l'âge minoré majoré de dix (super-actifs nés depuis le 1er septembre 1971), soixante-deux ans avant ces générations."
+    regle: "1,25 % par trimestre depuis 2009 sans plafond ; 0,75 % dans la limite de vingt trimestres pour ceux d'avant 2009 ; décompte depuis l'âge légal de droit commun pour le sédentaire, et pour l'emploi classé depuis l'âge anticipé majoré de cinq ans (actifs nés depuis le 1er septembre 1966) ou l'âge minoré majoré de dix (super-actifs nés depuis le 1er septembre 1971), soixante-deux ans avant ces générations ; trimestres de DURÉE depuis le jour où les conditions sont réunies, et non trimestres civils, chacun au taux de sa date d'achèvement."
     textes: ["L. 14 III CPCMR (version du 31 décembre 2023)", "loi n° 2008-1330, article 89", "loi n° 2023-270, article 10, XXIV, D (LEGIARTI000053280920)", "décret n° 2023-435, article 13, II, D, dans la rédaction du décret n° 2026-344 (LEGIARTI000054059137)"]
     sources:
       - {type: legifrance, reference: "L. 14 CPCMR, LEGIARTI000048844775", date: "2023-12-31"}
       - {type: legifrance, reference: "loi n° 2023-270, article 10, XXIV, D, lu dans l'index LEGI (versions du 16 avril 2023 et du 31 décembre 2025)", date: "2026-09-24"}
       - {type: service_public, reference: "fiche F16494", date: "2026-05-18"}
       - {type: autre, reference: "CNRACL, juris-cnracl, calcul de la surcote", date: "2026-09-17"}
+      - {type: autre, reference: "CNRACL, juris-cnracl, « Calcul de la surcote » : trimestres « réalisés à partir du moment où les trois conditions cumulatives […] sont remplies », « seuls les trimestres entiers sont pris en compte », et l'exemple 3 de la surcote de droit commun (« 6 trimestres supplémentaires de services effectifs à partir du 01/07/2024 »)", date: "2026-09-24", url: "https://www.juris-cnracl.retraites.fr/pension-normale/duree-dassurance-decote-et-surcote/calcul-de-la-surcote-0"}
       - {type: autre, reference: "Service des retraites de l'État, page « La surcote » : « âge d'ouverture des droits + 5 ans », « + 10 ans », exemple de Brigitte S.", date: "2026-09-24", url: "https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-surcote"}
     verifie_le: "2026-09-24"
     temoins: [sp_f16494_surcote_fonction_publique, sre_surcote_brigitte]
     reformes: [lfss_2009_surcote]
     etat: conforme
-    effet: "Fonctionnaires liquidant après l'âge légal avec la durée. Jusqu'au 24 septembre 2026, l'emploi classé attendait l'âge légal de SA génération : jusqu'à sept trimestres de surcote perdus pour un actif né de 1966 à 1973."
-    a_faire: "La version de 2009 de L. 14 III (plafond de vingt trimestres) n'a pas été lue sur Légifrance, seulement rapportée : la lire. Le décompte au trimestre civil vient de la circulaire Cnav 2018-04 ; aucun texte de la fonction publique ne l'écrit, et l'exemple du SRE ne le départage pas une fois la pension datée au premier du mois suivant la cessation."
+    effet: "Fonctionnaires liquidant après l'âge légal avec la durée. Jusqu'au 24 septembre 2026, l'emploi classé attendait l'âge légal de SA génération : jusqu'à sept trimestres de surcote perdus pour un actif né de 1966 à 1973. Et le décompte suivait la règle du régime général — trimestres civils à compter de celui qui suit l'âge —, quand la fonction publique compte des durées : une fonctionnaire à l'âge légal à la mi-octobre 2024, partie en février 2026, avait quatre trimestres au lieu de cinq (tests/test_cnracl.py)."
+    a_faire: "La version de 2009 de L. 14 III (plafond de vingt trimestres) n'a pas été lue sur Légifrance, seulement rapportée : la lire. Le modèle date au mois : la période s'ouvre au premier du mois qui suit l'âge, ce qui est exact pour qui n'est pas né le premier du mois — l'exemple 3 de la CNRACL, dont l'agent est né un 1er janvier, a un trimestre de plus. Les exemples de la CNRACL pour les générations 1963 à 1966 datent d'avant la suspension de 2026 et ne sont pas transcrits."
     prochaine_veille: "2027-03-31"
 
   - id: surcote_parentale
@@ -535,6 +536,38 @@ entrees:
       10 % sans supplément, faute de texte lu.
     prochaine_veille: "2027-06-30"
 
+  - id: pension_mines
+    regle: "Pension de vieillesse des mines : trimestres de services, affectés du coefficient de majoration de la date d'effet, multipliés par la valeur du trimestre de la date d'effet ; valeur revalorisée comme les pensions du régime général ; cent vingt trimestres au plus, sauf ceux accomplis avant cinquante-cinq ans ; ouverture à cinquante-cinq ans, abaissée d'un an par quatre années au fond jusqu'à cinquante ans pour trente années d'affiliation."
+    textes: ["décret n° 46-2769, article 125 (LEGIARTI000006765005)", "article 127 (LEGIARTI000006765008)", "article 131 (LEGIARTI000031137562, et ses versions de 1993 et 2002)", "article 131-1 (LEGIARTI000022750128)", "article 131-2 (LEGIARTI000006765153)", "article 136 (LEGIARTI000006765029)", "article 138 (LEGIARTI000006765036)", "article 181 (LEGIARTI000031137595)", "décret n° 2002-800 du 3 mai 2002", "arrêtés annuels du coefficient de majoration, 2003 à 2026"]
+    sources:
+      - {type: legifrance, reference: "décret n° 46-2769, articles 125, 127, 131, 131-1, 131-2, 136, 138 et 181, versions lues dans l'index LEGI du dépôt", date: "2026-09-24"}
+      - {type: jorf, reference: "arrêtés du coefficient de majoration des pensions minières : l'article 1er de celui du 27 décembre 2021 et de celui du 9 février 2026 dans l'index JORF, les autres sur Légifrance", date: "2026-09-24"}
+      - {type: autre, reference: "Caisse des dépôts, Retraite des mines, tableaux « Barèmes et revalorisations » de 2024, 2025 et 2026, et page « Droits directs »", date: "2026-09-24", url: "https://politiques-sociales.caissedesdepots.fr/retraite-des-mines/tableau-baremes-et-revalorisations-du-regime-des-mines"}
+      - {type: autre, reference: "COR, rapport annuel de juin 2024, fiche « Le régime des Mines », paragraphe 1", date: "2026-09-24", url: "https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_CANSSM%20(MINES)_vf.pdf"}
+    verifie_le: "2026-09-24"
+    temoins: [cor_mines_cent_vingt_trimestres_2024]
+    reformes: []
+    etat: approximation
+    effet: >-
+      Mineurs. Jusqu'au 24 septembre 2026, la fiche ne portait ni le
+      coefficient de majoration, ni la bonne indexation de la valeur du
+      trimestre, ni le plafond de cent vingt trimestres, et ouvrait la
+      pension à cinquante ans à tous : trente ans liquidés en 2026 valaient
+      12 299 € par an au lieu de 17 172, et l'exemple du COR 11 974 € au lieu
+      de 16 347. La table `bareme_trimestre_mines.csv` porte valeur et
+      coefficient date par date ; `tests/test_mines.py` refait la chaîne des
+      valeurs depuis la revalorisation des pensions.
+    a_faire: >-
+      L'âge du fond est prêté à tout mineur de trente années, et la
+      bonification de 0,15 % par trimestre au fond (article 138) n'est pas
+      servie : le modèle ne sait pas où le mineur a travaillé. Les
+      majorations de 0,5 à 14 % de l'article 131-2 pour les pensions de 1987
+      à 2000, dues à compter de 2001, ne passent pas dans la pension
+      d'aujourd'hui. Aucun arrêté trouvé pour 2002, 2005, 2014, 2016 et 2018.
+      Lire l'arrêté de 2027 dès sa parution, et le tableau de la caisse, qui
+      retardait d'un arrêté en 2026.
+    prochaine_veille: "2027-03-31"
+
   - id: minimum_garanti
     regle: "Plancher de la pension civile, barème en escalier sur la durée de services, référence gelée en 2004 puis indexée sur les prix. Sous quinze ans, depuis 2011, la référence rapportée à la durée qui ouvre le pourcentage maximum (L. 17, d), le quinzième de 57,5 % par année restant à l'invalidité et à qui avait atteint l'âge d'ouverture avant 2011 (L. 17, c). Sans la durée, ouvert à l'âge d'annulation de la décote, minoré de neuf, sept, cinq, trois et un trimestres pour un âge d'ouverture atteint de 2011 à 2015."
     textes: ["L. 17 CPCMR (versions LEGIARTI000006362712, LEGIARTI000023033916, LEGIARTI000048697797)", "loi n° 2003-775, article 66 V", "loi n° 2010-1330, articles 45 (IV et V) et 53 (V)", "décret n° 2010-1744 du 30 décembre 2010, article 3 (JORFARTI000023334941)"]
@@ -631,6 +664,44 @@ entrees:
     effet: "Tout départ avant l'âge légal. Les quatre-vingts portes de 2004 à 2026 sont lues et certifiées (action 27) : celles de 2011 et de 2012 génération par génération dans les versions abrogées (LEGIARTI000023397567, LEGIARTI000026139949), celles de 2004 dans LEGIARTI000006736521. Le moteur retient désormais une porte par couple (borne d'entrée, supplément) et non plus par borne seule."
     a_faire: null
     prochaine_veille: "2026-12-31"
+
+  - id: duree_requise_carriere_longue_fonction_publique
+    regle: >-
+      Durée de services et bonifications requise d'un fonctionnaire sédentaire
+      de l'État, de la CNRACL ou du FSPOEIE dont la carrière longue ouvre le
+      droit avant soixante ans : celle des fonctionnaires qui atteignent
+      soixante ans l'année où son droit s'ouvre, s'il s'ouvre avant le
+      1er septembre 2023 ; 169 trimestres à compter de cette date, 170 en
+      2025, 171 en 2027, la durée de sa génération à compter de 2028. La
+      condition de durée cotisée de la carrière longue reste celle de sa
+      génération.
+    textes:
+      - "loi n° 2023-270 du 14 avril 2023, article 10, XXIV, C (LEGIARTI000053280920)"
+      - "L. 13, III, du code des pensions civiles et militaires, version LEGIARTI000028498258"
+      - "D. 16-1 du code des pensions, rédaction du décret n° 2026-345 (LEGIARTI000054059616)"
+      - "décret n° 2023-435, article 13, II, C (CNRACL)"
+    sources:
+      - {type: legifrance, reference: "loi n° 2023-270, article 10, XXIV, A, B et C, lus dans l'index LEGI : le C vise « les fonctionnaires civils, autres que ceux mentionnés aux A et B du présent XXIV, et les militaires »", date: "2026-09-24"}
+      - {type: legifrance, reference: "D. 16-1 CPCMR, LEGIARTI000054059616 : durée cotisée « au moins égale à la durée mentionnée à l'article L. 161-17-3 »", date: "2026-09-24"}
+      - {type: autre, reference: "CNRACL, juris-cnracl, « Durée d'assurance requise - Fonctionnaire bénéficiant d'un départ anticipé avant 60 ans pour un autre motif » (mise à jour du 1er septembre 2026) et « Maintien de l'ancienne réglementation »", date: "2026-09-24", url: "https://www.juris-cnracl.retraites.fr/pension-normale/calcul-de-la-pension/duree-dassurance-requise-pour-beneficier-du-taux-maximal-de/duree-dassurance-requise-fonctionnaire-beneficiant-dun-depart-anticipe-avant-60-ans-pour-un-autre"}
+    verifie_le: "2026-09-24"
+    temoins: [cnracl_carriere_longue_avant_soixante_ans]
+    reformes: [reforme_2023]
+    etat: conforme
+    effet: >-
+      Fonctionnaires sédentaires partis en carrière longue. Jusqu'au
+      24 septembre 2026, le modèle leur opposait la durée de leur génération :
+      172 trimestres au lieu de 170 au fonctionnaire né en 1967 dont le droit
+      s'ouvre à cinquante-huit ans en 2025, 168 au lieu de 167 à celui de 1961
+      ouvert à cinquante-neuf ans en 2020. La pension n'en bouge que si les
+      services n'atteignent pas la durée — une carrière commencée ailleurs.
+      tests/test_cnracl.py ; la Banque de France, qui n'est pas au code des
+      pensions, garde la durée de sa génération.
+    a_faire: >-
+      Les autres départs avant soixante ans que la CNRACL range sous la même
+      règle — invalidité, handicap, parents de trois enfants, conjoint ou
+      enfant invalide — ne sont pas modélisés.
+    prochaine_veille: "2027-03-31"
 
   - id: carriere_longue_enfants_reputes_cotises
     regle: "Deux trimestres au plus de majoration pour enfants (maternité, adoption, éducation, congé parental, bonifications de la fonction publique) réputés cotisés pour la carrière longue, pensions dès le 1er septembre 2026."

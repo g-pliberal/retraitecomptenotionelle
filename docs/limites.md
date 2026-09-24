@@ -2913,7 +2913,7 @@ c'est de là que viennent les −7,2 % et +0,3 %.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->48<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->52<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -3005,7 +3005,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->48<!--/--> tombent justes ensemble, sur
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->52<!--/--> tombent justes ensemble, sur
 une douzaine de sources et autant de règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
 
@@ -7067,6 +7067,156 @@ deux mains. Le registre de veille en porte les lignes
 `temps_partiel_fonction_publique`, `majoration_enfants_plafond_fonction_publique`,
 `rachats_et_versements`).
 
+### La pension du mineur : le coefficient de majoration manquait, et la valeur du trimestre suivait les prix
+
+Le lot de la Caisse des dépôts (action 89, 24 septembre 2026) a lu la page
+« Droits directs » de la retraite des mines, les tableaux « Barèmes et
+revalorisations » que la caisse publie depuis 2024 et la fiche du régime que
+le COR a jointe à son rapport de juin 2024, puis le décret n° 46-2769 dans
+l'index LEGI — articles 125, 127, 131, 131-1, 131-2, 136, 139 et 181 —, le
+décret n° 2002-800 et les arrêtés annuels du coefficient. La correction de
+2026, qui avait fait de la pension minière un forfait par trimestre, était
+juste dans son principe ; il lui manquait un facteur sur trois, et la fiche
+indexait le deuxième de travers.
+
+**Le coefficient de majoration de la durée.** L'article 131-1, créé par le
+décret n° 2002-800 du 3 mai 2002 au terme d'un protocole de rattrapage,
+affecte la durée de services « d'un coefficient de majoration déterminé en
+fonction de la date de prise d'effet de la pension » : un arrêté le fixe
+depuis 2003 — 1,194 cette année-là, 1,319 en 2013, 1,446 de 2022 à 2024,
+1,473 en 2026. Le modèle ne le connaissait pas. Trente ans de mine liquidés
+en 2024 valent 120 × 1,446 × 94,21 € = 16 347 € par an, le produit des deux
+paramètres que publie le COR, qui l'arrondit à 16 300 € ; l'exemple est
+désormais rejoué parmi les témoins officiels, et le modèle en servait
+11 974.
+
+**La valeur du trimestre suit les pensions, non les prix.** L'article 181
+revalorise les pensions minières comme celles du régime général, et la valeur
+du trimestre avec elles. La fiche la portait par l'indice des prix depuis ses
+ancres de 1992, 2002 et 2013, et lui donnait 102,49 € en 2026 quand la caisse
+en publie 97,15. La table `legislation/bareme_trimestre_mines.csv` la porte
+maintenant date par date : la chaîne des coefficients de revalorisation de la
+Cnav, partie des 382,08 F de 1992, retombe au centime sur les sept valeurs que
+les textes et la caisse publient de 2001 à 2026 — à condition de n'arrondir
+qu'à la fin. Arrondie à chaque marche, elle donne 89,46 € en 2023, et la
+caisse en publie 89,47. Avec le coefficient et la bonne valeur, trente ans
+liquidés en 2026 valent 17 172 € par an, pour 12 299 servis jusqu'ici.
+
+**Cent vingt trimestres au plus, sauf ceux d'avant cinquante-cinq ans.**
+L'article 136 plafonne la durée liquidée à cent vingt trimestres, et ne
+compte au-delà que ceux accomplis avant cinquante-cinq ans. Le modèle les
+comptait tous : un mineur entré à vingt et un ans et parti à soixante-quatre
+recevait quarante-trois années, et la caisse en liquide trente-quatre.
+
+**L'âge est cinquante-cinq ans, et cinquante à trente années de services.**
+L'article 125 ouvre la pension à cinquante-cinq ans ; l'article 127 abaisse
+cet âge d'un an par tranche de quatre années au fond, jusqu'à cinquante ans,
+pour qui compte trente années d'affiliation. La fiche ouvrait la pension à
+cinquante ans à tous, même au mineur de dix ans de services.
+
+**Ce que les témoins disent.** Le mineur né en 1975, entré à vingt et un ans
+et parti à soixante-quatre, gagne 20,7 % : la liquidation de 2039 reçoit le
+coefficient et la valeur que la loi projette. Ceux de 1925 et de 1935
+perdent 20,9 et 20,5 % : leur liquidation précède le coefficient, et le
+plafond leur retire neuf années. Ceux de 1945, 1955 et 1965 gagnent 0,4, 4,9
+et 12,7 %, le coefficient l'emportant sur le plafond à mesure qu'il monte.
+
+**Ce qui reste.** Le moteur ne sait pas où le mineur a travaillé : à trente
+années de services, il lui prête l'âge du fond et ne sert pas la
+bonification de 0,15 % par trimestre au fond de l'article 138. Les
+majorations de 0,5 à 14 % que l'article 131-2 accorde aux pensions liquidées
+de 1987 à 2000 ne s'appliquent qu'à compter de 2001 : elles relèvent de la
+pension d'aujourd'hui, que le modèle reconstitue par la règle générale, et
+non de la liquidation. Aucun arrêté n'a été trouvé pour 2002, 2005, 2014,
+2016 et 2018 : le coefficient précédent reste en vigueur, et 2002 porte le
+plancher de 1,17 au niveau `estimee`. Avant juillet 1992, la valeur reste
+celle de la fiche, interpolée entre les ancres de 1974 et 1992 ; le plafond
+de cent vingt trimestres y est supposé le même qu'en 1974. Au-delà de 2026, la
+valeur suit les prix de l'année écoulée et le coefficient le quotient de
+l'article 131-1, salaire moyen sur prix, jamais moins que un. Enfin le
+tableau de la Caisse des dépôts daté de juin 2026 écrit encore 1,454 « au
+1er janvier 2025 » quand l'arrêté du 9 février 2026 a fixé 1,473 : c'est
+l'arrêté qui fait foi. Le registre de veille porte la ligne
+`pension_mines`.
+
+### La CNRACL : la carrière longue lit sa durée à l'ouverture, et la surcote se compte en durée
+
+Le même lot a lu les pages de la CNRACL, sa base juridique
+(juris-cnracl.retraites.fr), les pages du FSPOEIE à la Caisse des dépôts et
+quatre calculettes — le simulateur de 2010, le rachat des études, le cumul
+emploi-retraite, le convertisseur de validation —, puis les textes qu'elles
+appliquent : le décret n° 2003-1306, L. 13, L. 14 et D. 16-1 du code des
+pensions, le XXIV de l'article 10 de la loi du 14 avril 2023. Les pages
+confirment la fiche pour l'essentiel. Deux règles communes aux trois régimes
+du code des pensions — l'État, la CNRACL, le FSPOEIE — ne l'étaient pas, et
+trois exemples de la caisse entrent aux témoins officiels.
+
+**La carrière longue ouverte avant soixante ans lit sa durée à l'ouverture.**
+Le C du XXIV vise « les fonctionnaires civils, autres que ceux mentionnés aux
+A et B du présent XXIV, et les militaires remplissant les conditions de
+liquidation de la pension avant l'âge de soixante ans » : 169 trimestres pour
+qui peut liquider à compter du 1er septembre 2023, un de plus en 2025 et en
+2027, la durée de sa génération à compter de 2028. Avant cette date, L. 13,
+III, opposait la durée des fonctionnaires ayant soixante ans l'année de
+l'ouverture. Le modèle ne l'opposait qu'au militaire. La caisse l'écrit pour la
+carrière longue, l'invalidité, le handicap et les parents de trois enfants —
+« un fonctionnaire né en 1967 qui a un droit ouvert à 58 ans au titre des
+carrières longues en 2025 aura une durée d'assurance requise de 170 trimestres
+(au lieu de 172 trimestres en fonction de sa génération) » — ; de ces
+départs, le modèle ne connaît que la carrière longue. La condition de la
+carrière longue, elle, reste la durée de la génération : D. 16-1, dans la
+rédaction du décret n° 2026-345, demande une durée cotisée « au moins égale à
+la durée mentionnée à l'article L. 161-17-3 ». La pension n'en bouge que si
+les services n'atteignent pas la durée — une carrière commencée ailleurs. La
+Banque de France, qui emprunte le barème de décote de la fonction publique
+sans relever du code des pensions, garde la durée de sa génération.
+
+**La surcote de la fonction publique se compte en durée.** L. 14, III, retient
+« le nombre de trimestres d'assurance effectués » au-delà de l'âge légal et de
+la durée, et la caisse les décompte « à partir du moment où les trois
+conditions cumulatives […] sont remplies », en ne gardant « que les
+trimestres entiers ». Le modèle appliquait la règle que la circulaire Cnav
+2018-04 donne au régime général — des trimestres civils, à compter de celui
+qui suit l'âge —, et une fonctionnaire à l'âge légal à la mi-octobre 2024,
+partie en février 2026, avait quatre trimestres de surcote au lieu de cinq.
+Le modèle datant au mois, la période s'ouvre maintenant le premier du mois qui
+suit l'âge : c'est exact pour toute naissance après le premier du mois, et
+c'est ainsi que service-public.gouv.fr date le taux plein d'un fonctionnaire
+né le 9 octobre 1964, « 62 ans et 9 mois (1er août 2027) ». L'exemple 3 de la
+CNRACL — un agent né un 1er janvier, six trimestres depuis le 1er juillet
+2024 — en a un de plus que le modèle ne lui en compte, et n'est pas transcrit.
+Chaque trimestre de durée prend le taux de son dernier mois : celui de
+novembre 2008 à janvier 2009 est au 1,25 % de la loi de financement pour 2009.
+Aucun témoin ne bouge, leurs fonctionnaires partant à un anniversaire de
+janvier, où les deux décomptes coïncident.
+
+**Ce que les exemples et les calculettes disent encore.** Les deux exemples
+de décote de la caisse — une active née en 1967 partie à soixante ans, un
+sédentaire né en 1957 parti à soixante-six ans sous l'ancienne règle — sont
+reproduits au taux près. Ses exemples de surcote pour les générations 1963 à
+1966 datent d'avant la suspension de 2026 : leurs âges et leurs durées ne
+sont plus ceux du droit, et ils ne sont pas transcrits. La calculette du
+rachat des études applique, à chacun des quarante-sept âges, le barème de
+D. 7-1 en vigueur depuis le 1er janvier 2026, quand celle de l'ENSAP garde le
+précédent. Le convertisseur de validation de la Caisse des dépôts retrouve à
+2 % près les seuils du modèle de 1972 à 2020 ; avant 1972, il en porte que le
+modèle n'applique pas, validant quatre trimestres à toute année travaillée.
+
+**Ce qui reste.** L'interpénétration : un fonctionnaire passé de l'État à la
+CNRACL ou au FSPOEIE reçoit une seule pension, liquidée par le dernier
+régime sur l'ensemble des services, quand le modèle en liquide une par
+régime. Le rétablissement au régime général et à l'Ircantec de qui quitte la
+fonction publique avant la durée minimale — quinze ans avant 2011, deux ans
+depuis. La montée de quinze à dix-sept ans des services actifs, et les règles
+des emplois insalubres et des réseaux souterrains de la CNRACL. Et, trouvée
+en chemin, une erreur qui déborde la fonction publique : les générations nées
+de septembre 1961 à 1965 qui sont parties avant le 1er septembre 2023 se
+voient opposer la durée de la loi de 2023, quand leur pension relevait de la
+précédente — 169 trimestres au lieu de 168 à un salarié né en 1962 parti en
+carrière longue en janvier 2022. Le registre de veille porte les lignes
+`duree_requise_carriere_longue_fonction_publique` et
+`surcote_fonction_publique`.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -9290,7 +9440,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2407<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2434<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

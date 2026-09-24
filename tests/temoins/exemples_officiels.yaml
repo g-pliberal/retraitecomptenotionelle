@@ -53,7 +53,11 @@
 #   coefficients_des_regimes — pour chaque régime en points nommé, le
 #     coefficient d'anticipation ou de majoration que le scénario 1 applique
 #     à sa pension, 1 s'il n'en applique aucun. C'est ce que les sections
-#     libérales publient : leur règle d'âge, et le coefficient qu'elle rend.
+#     libérales publient : leur règle d'âge, et le coefficient qu'elle rend ;
+#   pensions_annuelles_des_regimes — pour chaque régime nommé, la pension
+#     annuelle brute que le scénario 1 lui fait servir, à cinquante centimes
+#     près. C'est ce que publie un régime dont la pension ne tient ni à un
+#     taux ni à un salaire — les mines : trimestres × coefficient × valeur.
 #
 # `carriere.trimestres_valides` demande au test de choisir l'âge d'entrée qui
 # donne exactement ce nombre de trimestres à la liquidation ; `age_debut`
@@ -413,6 +417,67 @@ exemples:
       La pension prend effet le 1er avril 2026.
     carriere: {naissance: "1962-03", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2026-04", trimestres_valides: 175}
     attendu: {trimestres_requis: 169, taux_liquidation: 0.80625}
+
+  # ---- CNRACL (documentation juridique de la Caisse des dépôts) ---------
+  # juris-cnracl.retraites.fr, lue le 24 septembre 2026 (action 89, lot de la
+  # CNRACL). Trois pages y donnent un exemple que le modèle rejoue ; le
+  # troisième exemple de surcote de droit commun ne l'est pas, son agent
+  # étant né un 1er janvier quand le modèle date au mois (voir
+  # `docs/limites.md`), et ceux des générations 1963 à 1966 datent d'avant la
+  # suspension de 2026.
+  - id: cnracl_carriere_longue_avant_soixante_ans
+    source: {editeur: "CNRACL", reference: "juris-cnracl.retraites.fr, « Durée d'assurance requise - Fonctionnaire bénéficiant d'un départ anticipé avant 60 ans pour un autre motif », mise à jour du 1er septembre 2026, second exemple", verifie_le: "2026-09-24"}
+    enonce: >-
+      « Un fonctionnaire né en 1967 qui a un droit ouvert à 58 ans au titre des
+      carrières longues en 2025 aura une durée d'assurance requise de 170
+      trimestres (au lieu de 172 trimestres en fonction de sa génération) » :
+      le C du XXIV de l'article 10 de la loi du 14 avril 2023, par date
+      d'ouverture du droit. Ici un agent entré à quinze ans, parti à
+      cinquante-huit.
+    carriere: {naissance: "1967-01", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2025-01", age_debut: 15}
+    attendu: {trimestres_requis: 170, motif_ouverture: carriere_longue}
+
+  - id: cnracl_decote_active_1967
+    source: {editeur: "CNRACL", reference: "juris-cnracl.retraites.fr, « Calcul de la pension avec application de la décote », exemple n° 1", verifie_le: "2026-09-24"}
+    enonce: >-
+      Agent né le 30 juin 1967, droit ouvert au titre de la catégorie active à
+      57 ans et 6 mois, départ à 60 ans le 1er juillet 2027 avec 165
+      trimestres pour 169 requis ; âge d'annulation de la décote 62 ans : 8
+      trimestres par l'âge, 4 par la durée, 4 retenus, 5 % de minoration. Le
+      modèle le fait actif toute sa carrière, quand l'exemple la finit sur un
+      emploi sédentaire : l'âge d'annulation, lié au motif d'ouverture, est le
+      même.
+    carriere: {naissance: "1967-06", sexe: H, affiliation: fonctionnaire_territorial_hospitalier_actif, liquidation: "2027-07", trimestres_valides: 165}
+    attendu: {trimestres_requis: 169, taux_liquidation: 0.7125}
+
+  - id: cnracl_decote_sedentaire_1957
+    source: {editeur: "CNRACL", reference: "juris-cnracl.retraites.fr, « Calcul de la pension avec application de la décote », exemple n° 2", verifie_le: "2026-09-24"}
+    enonce: >-
+      Agent sédentaire né le 1er octobre 1957, radié des cadres à 66 ans le
+      1er octobre 2023 avec 164 trimestres ; durée requise l'année de ses 60
+      ans, 166 trimestres ; âge d'annulation de la décote 66 ans et 9 mois :
+      3 trimestres par l'âge, 2 par la durée, 2 retenus, 2,5 % de minoration.
+    carriere: {naissance: "1957-10", sexe: H, affiliation: fonctionnaire_territorial_hospitalier, liquidation: "2023-10", trimestres_valides: 164}
+    attendu: {trimestres_requis: 166, taux_liquidation: 0.73125}
+
+  # ---- COR (régime des mines) -------------------------------------------
+  # La fiche « Le régime des Mines » que le Conseil d'orientation des
+  # retraites a jointe à son rapport de juin 2024, lue le 24 septembre 2026
+  # (action 89, lot de la Caisse des dépôts). Elle donne les deux paramètres
+  # au 1er janvier 2024 et le produit qu'ils font ; la Caisse des dépôts,
+  # gestionnaire du régime, publie les mêmes dans son tableau des barèmes.
+  # Le modèle servait à ce mineur 11 974 € : pas de coefficient, et une
+  # valeur du trimestre portée par les prix, 99,79 € pour 94,21.
+  - id: cor_mines_cent_vingt_trimestres_2024
+    source: {editeur: "COR", reference: "cor-retraites.fr, rapport annuel de juin 2024, fiche « Le régime des Mines » (Fiche_CANSSM (MINES)_vf.pdf), paragraphe 1", verifie_le: "2026-09-24"}
+    enonce: >-
+      Au 1er janvier 2024, valeur annuelle du trimestre 94,21 € et coefficient
+      de majoration des pensions 1,446 : « la liquidation en 2024 d'une pension
+      de 120 trimestres sans aucun avantage autre donne ainsi une pension
+      annuelle de 16 300 € » — 120 × 1,446 × 94,21 € = 16 347,32 €, que la
+      fiche arrondit à la centaine.
+    carriere: {naissance: "1969-07", sexe: H, affiliation: mineur, liquidation: "2024-07", age_debut: 25}
+    attendu: {trimestres_valides: 120, liquidation_ouverte: true, pensions_annuelles_des_regimes: {mines: 16347.32}}
 
   # ---- ENIM (régime des marins) ------------------------------------------
   # Les deux pages que l'Établissement national des invalides de la marine

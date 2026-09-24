@@ -100,9 +100,9 @@ commiter sur `main`.
 
 ## Ce que le registre porte aujourd'hui
 
-Le registre porte <!--chiffre:entrees(data/reference/legislation/veille.yaml:entrees)-->92<!--/--> lignes,
+Le registre porte <!--chiffre:entrees(data/reference/legislation/veille.yaml:entrees)-->94<!--/--> lignes,
 et ce qui y est `conforme` a été lu dans le texte comme dans son application,
-puis rejoué par les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->48<!--/--> exemples publiés
+puis rejoué par les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->52<!--/--> exemples publiés
 que `exemples_officiels.yaml` transcrit. Le 17 septembre 2026, l'action 27 a
 fait relire au récupérateur, dans l'index LEGI du dépôt tenu à jour des
 incréments de la DILA, les articles que la suspension a réécrits : les lignes

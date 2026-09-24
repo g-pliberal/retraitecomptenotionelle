@@ -416,6 +416,22 @@ class PeriodeRegime:
     #: Revalorisée sur les prix, comme la loi le prescrit (L. 161-23-1).
     valeur_point_euros: float | None
     valeur_point_annee: int | None
+    #: BARÈME DU TRIMESTRE : le nom d'une table ``legislation/bareme_trimestre_
+    #: <nom>.csv`` qui donne, par date d'effet, la valeur du trimestre et le
+    #: coefficient de majoration de la durée. La pension minière est « le
+    #: produit de la durée de services par la valeur du trimestre de services
+    #: de l'année de leur prise d'effet » (article 131 du décret n° 46-2769),
+    #: durée affectée d'un coefficient de majoration (article 131-1) ; la table
+    #: prime alors sur ``valeur_point_euros``.
+    bareme_trimestre: str | None
+    #: PLAFOND DE LA DURÉE LIQUIDÉE, levé pour les trimestres accomplis avant un
+    #: âge : « le nombre maximum de trimestres susceptibles d'être pris en
+    #: compte pour le calcul de la pension est de cent-vingt ; toutefois, pour
+    #: les affiliés qui ont réalisé cette durée avant l'âge de cinquante-cinq
+    #: ans, les trimestres accomplis postérieurement sont pris en compte
+    #: jusqu'à ce que cet âge soit atteint » (article 136 du même décret).
+    trimestres_maximum: int | None
+    trimestres_maximum_leve_avant_age: float | None
     #: Repère d'assiette, exprimé en heures de SMIC. ``None`` : le repère est
     #: la borne haute de l'assiette, en plafonds de la Sécurité sociale.
     assiette_repere_smic: float | None
@@ -1320,6 +1336,15 @@ class CatalogueRegimes:
                 valeur_point_annee=(
                     None if p.get("valeur_point_annee") is None
                     else int(p["valeur_point_annee"])
+                ),
+                bareme_trimestre=p.get("bareme_trimestre"),
+                trimestres_maximum=(
+                    None if p.get("trimestres_maximum") is None
+                    else int(p["trimestres_maximum"])
+                ),
+                trimestres_maximum_leve_avant_age=(
+                    None if p.get("trimestres_maximum_leve_avant_age") is None
+                    else float(p["trimestres_maximum_leve_avant_age"])
                 ),
                 assiette_repere_smic=(
                     None if p.get("assiette_repere_smic") is None
