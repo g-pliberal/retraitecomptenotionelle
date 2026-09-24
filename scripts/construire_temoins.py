@@ -450,6 +450,19 @@ def _cas() -> list[dict]:
         "metier3_debut": "48", "metier3_statut": "fonctionnaire_etat",
         "metier3_salaire": "1.3",
     }))
+    # LA PENSION DIFFÉRÉE : un fonctionnaire qui quitte la fonction publique
+    # avant de pouvoir liquider. Son dernier traitement suit les revalorisations
+    # des pensions de la radiation à la mise en paiement (L. 25 du code des
+    # pensions), et non le point d'indice ; radiation avant 2004 pour le second,
+    # que la péréquation porte jusqu'en 2003.
+    cas.append(("metiers_fonctionnaire_puis_prive", {
+        "naissance": "1962", "statut": "fonctionnaire_etat",
+        "metier2_debut": "50", "metier2_statut": "salarie_prive_non_cadre",
+    }))
+    cas.append(("metiers_hospitalier_parti_avant_2004", {
+        "naissance": "1955", "statut": "fonctionnaire_territorial_hospitalier",
+        "metier2_debut": "40", "metier2_statut": "salarie_prive_cadre",
+    }))
     # Six métiers : le maximum du formulaire, et cinq changements rapprochés —
     # une année entière ne revient alors à aucun métier en totalité.
     cas.append(("metiers_maximum", {

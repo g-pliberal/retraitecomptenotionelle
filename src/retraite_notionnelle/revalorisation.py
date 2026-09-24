@@ -225,6 +225,53 @@ class RevalorisationsPensions:
                                      inclure_depuis, mensuel_2019))
 
 
+def coefficient_traitement_differe(revalorisations: RevalorisationsPensions,
+                                   ratio_point_indice, perception: int,
+                                   radiation: date, paiement: date) -> float | None:
+    """Ce qui porte le dernier traitement d'une pension DIFFÉRÉE jusqu'à sa
+    mise en paiement, ou ``None`` si la série du point ne couvre pas l'année.
+
+    Le fonctionnaire radié des cadres avant de pouvoir liquider touche sa
+    pension des années plus tard, calculée sur le traitement qu'il détenait en
+    partant. Ce traitement ne reste pas figé, et ne suit pas davantage le
+    point d'indice des actifs : « Le traitement ou la solde mentionnés à
+    l'article L. 15 sont revalorisés pendant la période comprise entre la
+    radiation des cadres et la mise en paiement de la pension, conformément
+    aux dispositions de l'article L. 16 » (L. 25 du code des pensions, depuis
+    le 1er janvier 2004). La même phrase est à l'article 26 du décret
+    n° 2003-1306 pour la CNRACL et à l'article 22 du décret n° 2004-1056 pour
+    les ouvriers de l'État. Ce sont donc les revalorisations des PENSIONS
+    civiles — la péréquation, qui suivait le point, jusqu'en 2003, les décrets
+    de 2004 à 2008, l'article L. 161-23-1 ensuite —, depuis le traitement de
+    l'année ``perception`` porté au point jusqu'à la radiation.
+
+    Les bornes sont celles de la CNRACL : une revalorisation tombant le jour
+    de la radiation n'est pas due — la pension d'un agent radié le 1er janvier
+    ne l'est pas davantage —, celle du jour de la mise en paiement l'est :
+    « si la pension est due à compter de la date de revalorisation, le
+    traitement servant au calcul de la pension bénéficie de la revalorisation
+    des pensions ».
+
+    En 2020, le coefficient de l'article L. 161-25, 1 % : la dérogation de
+    0,3 % de l'article 81 de la loi n° 2019-1446 ne vise que « les montants
+    des prestations et pensions servies », et un traitement qui attend sa
+    pension n'en est pas une — la Cnav a revalorisé de même, cette année-là,
+    les salaires portés au compte.
+    """
+    fin_point = (radiation.year if radiation >= FIN_PEREQUATION
+                 else min(paiement.year, DERNIERE_ANNEE_PEREQUATION))
+    point = ratio_point_indice(perception, fin_point)
+    if point is None:
+        return None
+    decrets, _ = produit(RevalorisationsPensions.retenues(
+        revalorisations.fonction_publique, max(radiation, FIN_PEREQUATION),
+        min(paiement, DEBUT_REGLE_GENERALE_PUBLIC), radiation < FIN_PEREQUATION, None))
+    generale, _ = revalorisations.generale(
+        max(radiation, DEBUT_REGLE_GENERALE_PUBLIC), paiement,
+        radiation < DEBUT_REGLE_GENERALE_PUBLIC, 0.0)
+    return point * decrets * generale
+
+
 @dataclass(frozen=True)
 class RegimeServi:
     """La pension d'un régime, de la liquidation à aujourd'hui."""

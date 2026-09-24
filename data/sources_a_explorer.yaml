@@ -3576,19 +3576,20 @@ sources:
       Le traitement des six derniers mois : quel indice, quelle durée de
       détention exigée, ce qui entre dans l'assiette et ce qui n'y entre pas.
       Le modèle prend un salaire de fin de carrière ; voici la règle exacte.
-    statut: explore
+    statut: epuise
     explore_le: "2026-09-24"
     note: >-
       Le traitement indiciaire brut de l'emploi, du grade et de l'échelon
       détenus six mois à la cessation des services, primes exclues, compté à
       temps plein (décret n° 2003-1306, article 17) ; trois pages de règles et
       treize cas particuliers. Faute du grade, le modèle prend le traitement
-      de l'année du départ, hors primes. Un cas le touche : pour qui est radié
-      sans liquider aussitôt, l'article 26 revalorise le traitement jusqu'à la
-      mise en paiement comme les pensions ; le modèle le porte au point
-      d'indice (`ratio_point_indice`), +6,3 % de 2011 à 2026 quand les
-      pensions ont pris près de 25 %. Ni la veille ni docs/limites.md ne le
-      disent.
+      de l'année du départ, hors primes. Un cas le touchait : pour qui est
+      radié sans liquider aussitôt, l'article 26 revalorise le traitement
+      jusqu'à la mise en paiement comme les pensions, et le modèle le portait
+      au point d'indice, +6,3 % de 2011 à 2026 quand les pensions ont pris
+      près de 25 %. Corrigé le même jour pour les trois régimes du code des
+      pensions (L. 25, article 22 du décret n° 2004-1056) : tests/test_cnracl.py,
+      docs/limites.md, ligne `pension_differee_fonction_publique` de la veille.
 
   - id: juris_cnracl_temps_partiel
     url: https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/modalites-de-prise-en-compte-des-services-temps-partiel-et-non-complet

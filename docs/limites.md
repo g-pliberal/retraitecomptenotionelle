@@ -7237,6 +7237,45 @@ avaient leur durée cotisée avant septembre 2023 partent en carrière longue
 aux conditions d'avant, avec une pension proratisée sur la durée nouvelle ;
 le modèle ne la connaît pas.
 
+### La pension différée d'un fonctionnaire suivait le point d'indice, et la loi la fait suivre les pensions
+
+Le fonctionnaire qui quitte la fonction publique avant de pouvoir liquider —
+parti au privé, au chômage, ou nulle part — touche sa pension des années plus
+tard, calculée sur le traitement de l'indice qu'il détenait en partant. Le
+modèle portait ce traitement jusqu'à la liquidation par le point d'indice des
+actifs, comme s'il était resté en poste. La loi dit autre chose : « Le
+traitement ou la solde mentionnés à l'article L. 15 sont revalorisés pendant
+la période comprise entre la radiation des cadres et la mise en paiement de la
+pension, conformément aux dispositions de l'article L. 16 » (L. 25 du code des
+pensions, depuis le 1er janvier 2004), et la même phrase est à l'article 26 du
+décret n° 2003-1306 pour la CNRACL et à l'article 22 du décret n° 2004-1056
+pour les ouvriers de l'État. Ce sont donc les revalorisations des pensions
+civiles — les décrets de 2004 à 2008, l'article L. 161-23-1 ensuite — qui
+portent le traitement, et non le point, resté gelé de 2010 à 2016 : de 2012 à
+2026, les unes font 22,2 %, l'autre 6,3 %. Un fonctionnaire de l'État entré à
+vingt-deux ans, parti au privé à cinquante fin 2011 et liquidant en janvier
+2026, avait un traitement de référence de 34 739 € ; il est de 39 913 €,
+14,9 % de plus, et sa pension civile avec lui.
+
+Les bornes sont celles que la CNRACL écrit : la revalorisation du jour de la
+mise en paiement est due au traitement — « si la pension est due à compter de
+la date de revalorisation, le traitement servant au calcul de la pension
+bénéficie de la revalorisation des pensions » —, celle du jour de la
+radiation ne l'est pas, pas plus qu'à la pension d'un agent radié le
+1er janvier. Avant 2004, la péréquation faisait déjà suivre le point à toute
+pension civile, différée ou non, et rien ne change. En 2020, le traitement
+reçoit le coefficient de L. 161-25, 1 % : la dérogation de 0,3 % de l'article
+81 de la loi de financement pour 2020 ne vise que « les montants des
+prestations et pensions servies », et un traitement qui attend sa pension
+n'en est pas une — la Cnav a revalorisé de même, cette année-là, les salaires
+portés au compte. Le modèle date la radiation au 1er janvier qui suit la
+dernière année de service, faute du mois. Aucun témoin existant ne bouge,
+aucun cas type ne quittant la fonction publique avant de liquider ; deux
+parcours entrent aux témoins pour que les deux moteurs rejouent la règle. La
+Banque de France, dont le règlement n'écrit pas la phrase, garde la
+revalorisation des salaires. Le registre de veille porte la ligne
+`pension_differee_fonction_publique`.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -9465,7 +9504,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2438<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2444<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

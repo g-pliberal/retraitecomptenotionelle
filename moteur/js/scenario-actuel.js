@@ -36,6 +36,9 @@ import {
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
   MajorationsEnfantsPoints, SurcoteBaremes, SurcoteParentale, ValeursPoint,
 } from "./regimes.js";
+import {
+  FIN_PEREQUATION, RevalorisationsPensions, coefficientTraitementDiffere, dateIso,
+} from "./revalorisation.js";
 import { Fiabilite } from "./serie.js";
 
 /** Premier trimestre que la surcote puisse compter (loi du 21 août 2003). */
@@ -167,6 +170,9 @@ export class ScenarioActuel {
     this.decoteRegimesSpeciaux = new DecoteRegimesSpeciaux(paquet);
     this.minimumGaranti = new MinimumGaranti(paquet, macro);
     this.baremesTrimestre = new BaremesTrimestre(paquet, macro);
+    // Les revalorisations des pensions servies, qui portent aussi le
+    // traitement d'une pension différée : voir `coefficientTraitementDiffere`.
+    this.revalorisationsPensions = new RevalorisationsPensions(paquet);
     this.minimumVieillesse = new MinimumVieillesse(paquet, macro);
     this.carriereLongue = new CarriereLongue(paquet);
     // Vrai pendant que `ouvertureCarriereLongue` date le droit : voir le Python.
@@ -426,6 +432,9 @@ export class ScenarioActuel {
     }
 
     const revenus = [];
+    // Le dernier revenu avant revalorisation, et son année : ce qu'une pension
+    // différée revalorise autrement (voir plus bas).
+    let dernierBrut = null;
     for (const annee of [...parAnnee.keys()].sort((a, b) => a - b)) {
       let [revenu, fraction] = parAnnee.get(annee);
       if (plafonner) {
@@ -435,6 +444,7 @@ export class ScenarioActuel {
           revenu, this.macro.plafond_securite_sociale.valeur(annee) * fraction,
         );
       }
+      dernierBrut = [annee, revenu];
       revenus.push(revenu * revaloriser(annee, anneeLiquidation));
     }
 
@@ -485,6 +495,24 @@ export class ScenarioActuel {
           );
         }
         return traitement;
+      }
+      // LA PENSION DIFFÉRÉE : le traitement de l'agent radié suit les
+      // revalorisations des pensions de la radiation à la mise en paiement
+      // (L. 25 du code des pensions), et non le point d'indice. Voir le Python.
+      if (dernierBrut !== null && REGIMES_CODE_DES_PENSIONS.has(code)) {
+        const [derniereAnnee, brut] = dernierBrut;
+        const radiation = dateIso(derniereAnnee + 1, 1, 1);
+        const paiement = dateIso(anneeLiquidation, moisLiquidation, 1);
+        if (radiation < paiement && paiement >= FIN_PEREQUATION) {
+          const coefficient = coefficientTraitementDiffere(
+            this.revalorisationsPensions,
+            (depart, arrivee) => this.minimumGaranti.ratioPointIndice(depart, arrivee),
+            derniereAnnee, radiation, paiement,
+          );
+          if (coefficient !== null) {
+            return brut * coefficient;
+          }
+        }
       }
       return revenus[revenus.length - 1];
     } else {

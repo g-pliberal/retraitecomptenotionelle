@@ -133,6 +133,35 @@ export class RevalorisationsPensions {
   }
 }
 
+/**
+ * Ce qui porte le dernier traitement d'une pension DIFFÉRÉE jusqu'à sa mise en
+ * paiement, ou `null` si la série du point ne couvre pas l'année — portage de
+ * `coefficient_traitement_differe`. L. 25 du code des pensions (article 26 du
+ * décret n° 2003-1306, article 22 du décret n° 2004-1056) : le traitement est
+ * revalorisé comme les pensions civiles de la radiation à la mise en paiement,
+ * celle-ci comprise et celle-là non ; en 2020, le coefficient de L. 161-25.
+ * `radiation` et `paiement` sont des dates ISO.
+ */
+export function coefficientTraitementDiffere(revalorisations, ratioPointIndice,
+  perception, radiation, paiement) {
+  const finPoint = radiation >= FIN_PEREQUATION
+    ? Number(radiation.slice(0, 4))
+    : Math.min(Number(paiement.slice(0, 4)), DERNIERE_ANNEE_PEREQUATION);
+  const point = ratioPointIndice(perception, finPoint);
+  if (point === null || point === undefined) {
+    return null;
+  }
+  const [decrets] = produit(RevalorisationsPensions.retenues(
+    revalorisations.fonction_publique, plusGrande(radiation, FIN_PEREQUATION),
+    plusPetite(paiement, DEBUT_REGLE_GENERALE_PUBLIC), radiation < FIN_PEREQUATION, null,
+  ));
+  const [generale] = revalorisations.generale(
+    plusGrande(radiation, DEBUT_REGLE_GENERALE_PUBLIC), paiement,
+    radiation < DEBUT_REGLE_GENERALE_PUBLIC, 0.0,
+  );
+  return point * decrets * generale;
+}
+
 function derniereValeurPubliee(actuel, code) {
   let courant = code;
   for (let garde = 0; garde < actuel.catalogue.taille + 1; garde += 1) {

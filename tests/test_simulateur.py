@@ -3610,10 +3610,13 @@ def test_le_salaire_de_reference_ne_retient_que_les_annees_du_regime(simulateur)
     pension = {p.regime: p for p in melangee.pensions_par_regime}
     seule = {p.regime: p for p in publique_seule.pensions_par_regime}
     # Même assiette des deux côtés : la pension civile ne connaît que le
-    # traitement des années passées dans la fonction publique — celui de 1999,
-    # ramené à 2022 par le point d'indice, l'indice restant acquis.
-    assert "SR 22,361.92 €" in pension["fonction_publique_etat"].detail
-    assert "SR 22,361.92 €" in seule["fonction_publique_etat"].detail
+    # traitement des années passées dans la fonction publique — celui de 1999.
+    # Radié à la fin de 1999 et payé en 2022, c'est une pension DIFFÉRÉE : son
+    # traitement suit le point jusqu'en 2003, la péréquation, puis les
+    # revalorisations des pensions jusqu'à la mise en paiement (L. 25 du code
+    # des pensions). Le test attendait 22 361,92 €, le point jusqu'en 2022.
+    assert "SR 25,484.49 €" in pension["fonction_publique_etat"].detail
+    assert "SR 25,484.49 €" in seule["fonction_publique_etat"].detail
     # Et le salaire annuel moyen du régime général ne connaît que les années
     # privées : y verser les années publiques, plus faibles, l'abaissait.
     privee_seule = simulateur.scenario_actuel.calculer(Carriere(

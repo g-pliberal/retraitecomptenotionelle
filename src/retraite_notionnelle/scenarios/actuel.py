@@ -50,6 +50,7 @@ from __future__ import annotations
 import csv
 from bisect import bisect_right
 from dataclasses import dataclass, field, replace
+from datetime import date
 from pathlib import Path
 
 from ..calendrier import DateMois, en_mois
@@ -65,6 +66,8 @@ from ..donnees.chargement import (
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation, SalairesForfaitaires,
                               PeriodeRegime)
+from ..revalorisation import (FIN_PEREQUATION, RevalorisationsPensions,
+                              coefficient_traitement_differe)
 
 
 @dataclass(frozen=True)
@@ -2154,6 +2157,10 @@ class ScenarioActuel:
         self.minimum_contributif = MinimumContributif(parametres.racine_donnees, macro)
         self.minimum_garanti = MinimumGaranti(parametres.racine_donnees, macro)
         self.baremes_trimestre = BaremesTrimestre(parametres.racine_donnees, macro)
+        #: Les revalorisations des pensions servies, qui portent aussi le
+        #: traitement d'une pension différée : voir
+        #: :func:`~retraite_notionnelle.revalorisation.coefficient_traitement_differe`.
+        self.revalorisations_pensions = RevalorisationsPensions(parametres.racine_donnees)
         self.carriere_longue = CarriereLongue(parametres.racine_donnees)
         #: Vrai pendant que :meth:`_ouverture_carriere_longue` date le droit :
         #: la condition de durée qu'elle lit est celle de la génération, et non
@@ -2454,6 +2461,9 @@ class ScenarioActuel:
             cumul[1] = max(cumul[1], ligne.fraction_annee)
 
         revenus: list[float] = []
+        # Le dernier revenu avant revalorisation, et son année : ce qu'une
+        # pension différée revalorise autrement (voir plus bas).
+        dernier_brut: tuple[int, float] | None = None
         for annee in sorted(par_annee):
             revenu, fraction = par_annee[annee]
             if plafonner:
@@ -2465,6 +2475,7 @@ class ScenarioActuel:
                     revenu,
                     self.macro.plafond_securite_sociale(annee) * fraction,
                 )
+            dernier_brut = (annee, revenu)
             revenus.append(revenu * revaloriser(annee, annee_liquidation))
 
         if not revenus:
@@ -2522,6 +2533,28 @@ class ScenarioActuel:
                         self.macro.plafond_securite_sociale(annee_liquidation),
                     )
                 return traitement
+            # LA PENSION DIFFÉRÉE. L'agent n'est plus en service l'année de la
+            # liquidation : il a été radié des cadres au plus tard à la fin de
+            # sa dernière année de service, et sa pension attend l'âge. Le
+            # traitement qu'il détenait suit alors les revalorisations des
+            # PENSIONS, de la radiation à la mise en paiement (L. 25 du code
+            # des pensions, article 26 du décret n° 2003-1306, article 22 du
+            # décret n° 2004-1056), et non le point d'indice des actifs, que
+            # le moteur lui appliquait : +6,3 % de 2011 à 2026, quand les
+            # pensions prenaient près d'un quart. Avant 2004, la péréquation
+            # faisait suivre le point à toute pension : rien ne change.
+            if (dernier_brut is not None
+                    and code in self.REGIMES_CODE_DES_PENSIONS):
+                derniere_annee, brut = dernier_brut
+                radiation = date(derniere_annee + 1, 1, 1)
+                paiement = date(annee_liquidation, mois_liquidation, 1)
+                if radiation < paiement and paiement >= FIN_PEREQUATION:
+                    coefficient = coefficient_traitement_differe(
+                        self.revalorisations_pensions,
+                        self.minimum_garanti.ratio_point_indice,
+                        derniere_annee, radiation, paiement)
+                    if coefficient is not None:
+                        return brut * coefficient
             return revenus[-1]
         elif reference == "carriere_entiere":
             retenus = revenus

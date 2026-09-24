@@ -30,8 +30,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->6 193<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 100<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->6 226<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 157<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13071,6 +13071,24 @@ des services actifs. Et deux témoins possibles : les trois exemples de
 `taux_maximum_fonction_publique` de la page du montant, et le deuxième de la
 surcote parentale (génération 1969). Cent quatorze adresses restent
 `a_explorer`, dont le RAFP, voisin de ce lot.
+
+**Le même soir, la pension différée est corrigée.** Premier des restes du
+lot, sur demande. La règle est la même depuis 2004 pour les trois régimes du
+code des pensions — L. 25 pour l'État, l'article 26 du décret n° 2003-1306
+pour la CNRACL, l'article 22 du décret n° 2004-1056 pour le FSPOEIE — : le
+traitement de l'agent radié avant de pouvoir liquider suit les revalorisations
+des pensions civiles jusqu'à la mise en paiement, celle de ce jour-là
+comprise, et non le point d'indice des actifs, gelé de 2010 à 2016. Un
+fonctionnaire de l'État parti au privé à cinquante ans fin 2011 et liquidant
+en janvier 2026 avait un traitement de référence de 34 739 € ; il est de
+39 913 €, 14,9 % de plus. En 2020, le traitement prend le coefficient de
+L. 161-25, la dérogation de 0,3 % de la loi de financement ne visant que les
+pensions servies. Avant 2004, la péréquation faisait déjà suivre le point, et
+rien ne change ; la Banque de France, dont le règlement n'écrit pas la
+phrase, non plus. Aucun témoin existant ne bouge ; deux parcours entrent aux
+témoins pour que les deux moteurs rejouent la règle. Récit dans
+`docs/limites.md`, « La pension différée d'un fonctionnaire » ; tests dans
+`tests/test_cnracl.py`.
 
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`

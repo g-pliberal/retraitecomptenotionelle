@@ -519,6 +519,7 @@ fichiers:
       "La pension du mineur : le coefficient de majoration manquait, et la valeur du trimestre suivait les prix": recit
       "La CNRACL : la carrière longue lit sa durée à l'ouverture, et la surcote se compte en durée": recit
       "Les générations de 1961 à 1965 parties avant septembre 2023 devaient la durée de 2014": recit
+      "La pension différée d'un fonctionnaire suivait le point d'indice, et la loi la fait suivre les pensions": recit
   # Ce que le modèle calcule, et pourquoi ainsi : tout y est au présent, et une
   # méthodologie périmée décrit un autre modèle que celui qui tourne. Le régime
   # visé est donc `etat` de bout en bout, et ce qui l'empêche n'est jamais le

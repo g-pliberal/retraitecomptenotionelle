@@ -679,6 +679,45 @@ entrees:
     a_faire: null
     prochaine_veille: "2026-12-31"
 
+  - id: pension_differee_fonction_publique
+    regle: >-
+      Pension différée d'un fonctionnaire de l'État, de la CNRACL ou du
+      FSPOEIE radié des cadres avant de pouvoir liquider : le traitement de
+      référence, celui de l'indice détenu six mois à la cessation, est
+      revalorisé comme les pensions civiles de la radiation à la mise en
+      paiement — la revalorisation du jour de la mise en paiement comprise,
+      celle du jour de la radiation non — ; avant 2004, la péréquation lui
+      faisait suivre le point. En 2020, le coefficient de L. 161-25, 1 %, la
+      dérogation de 0,3 % ne visant que les pensions servies.
+    textes:
+      - "L. 25 du code des pensions civiles et militaires, versions du 1er janvier 2004 (LEGIARTI000006362732) au 1er septembre 2023 (LEGIARTI000047452796) ; L. 16 (LEGIARTI000019959484)"
+      - "décret n° 2003-1306, article 26 (LEGIARTI000006400893, LEGIARTI000023414098, LEGIARTI000047633343) et article 19 (LEGIARTI000020057034)"
+      - "décret n° 2004-1056, article 22 (LEGIARTI000006781496, LEGIARTI000023414145, LEGIARTI000047633370)"
+      - "loi n° 2019-1446, article 81 (JORFARTI000039675431)"
+    sources:
+      - {type: legifrance, reference: "L. 25 CPCMR : « Le traitement ou la solde mentionnés à l'article L. 15 sont revalorisés pendant la période comprise entre la radiation des cadres et la mise en paiement de la pension, conformément aux dispositions de l'article L. 16 » ; la même phrase aux articles 26 du décret n° 2003-1306 et 22 du décret n° 2004-1056, lus dans l'index LEGI ; absente de la version de L. 25 d'avant 2004", date: "2026-09-24"}
+      - {type: jorf, reference: "loi n° 2019-1446, article 81 : « les montants des prestations et pensions servies […] sont revalorisés de 0,3 % », sauf les pensions servies à des assurés dont le total ne dépasse pas 2 014 € par mois", date: "2026-09-24"}
+      - {type: autre, reference: "CNRACL, juris-cnracl, « Fonctionnaire radié des cadres sans liquidation immédiate de sa pension » et « Revalorisation des pensions, accessoires et minimas sociaux » : « si la pension est due à compter de la date de revalorisation, le traitement servant au calcul de la pension bénéficie de la revalorisation des pensions »", date: "2026-09-24", url: "https://www.juris-cnracl.retraites.fr/pension-normale/la-determination-du-traitement-de-base"}
+    verifie_le: "2026-09-24"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: >-
+      Fonctionnaires partis avant l'âge et qui liquident plus tard. Jusqu'au
+      24 septembre 2026, le modèle portait leur dernier traitement au point
+      d'indice des actifs jusqu'à la liquidation : pour un fonctionnaire de
+      l'État parti à cinquante ans fin 2011 et liquidant en janvier 2026, un
+      traitement de référence de 34 739 € au lieu de 39 913, 14,9 % de moins
+      — le point est resté gelé de 2010 à 2016. tests/test_cnracl.py, et deux
+      témoins de parcours rejouent la règle dans les deux moteurs.
+    a_faire: >-
+      Aucun exemple chiffré publié n'a été trouvé. Le modèle date la radiation
+      au 1er janvier qui suit la dernière année de service, faute du mois.
+      L'annexe du décret n° 2007-262 de la Banque de France n'écrit pas la
+      règle, et son agent parti avant l'âge garde la revalorisation des
+      salaires ; la lire en entier.
+    prochaine_veille: "2027-03-31"
+
   - id: duree_requise_carriere_longue_fonction_publique
     regle: >-
       Durée de services et bonifications requise d'un fonctionnaire sédentaire
@@ -5528,3 +5567,28 @@ journal:
       n° 2023-436 ; la bonification des mineurs au fond ; les seuils de
       validation d'avant 1972 ; le SP-CTI, la NBI et le supplément des
       aides-soignants.
+
+  - date: "2026-09-24"
+    session: "action 89, suite : la pension différée de la fonction publique"
+    consulte: >-
+      veille_droit.py, et la mise à jour de l'index LEGI : aucun incrément
+      nouveau, L. 161-17-2 sans version postérieure au 31 décembre 2025. Dans
+      l'index LEGI : L. 15, L. 16 et L. 25 du code des pensions dans leurs
+      versions depuis 1972, les articles 17, 19 et 26 du décret n° 2003-1306,
+      les articles 18 et 22 du décret n° 2004-1056, l'annexe du décret
+      n° 2007-262 de la Banque de France. Dans l'index JORF, l'article 81 de la
+      loi n° 2019-1446. Les pages de juris-cnracl sur la liquidation différée,
+      l'agent radié sans liquidation immédiate et la revalorisation des
+      pensions.
+    trouve: >-
+      Depuis 2004, la même règle pour l'État (L. 25), la CNRACL (article 26)
+      et le FSPOEIE (article 22) : le traitement de l'agent radié suit les
+      revalorisations des pensions jusqu'à la mise en paiement. Le modèle le
+      portait au point d'indice, 14,9 % de moins pour un départ fin 2011
+      liquidé en 2026. Corrigé dans les deux moteurs, avec les bornes que la
+      CNRACL écrit et, pour 2020, le coefficient de L. 161-25, la dérogation
+      de 0,3 % ne visant que les pensions servies.
+    reste: >-
+      Aucun exemple publié pour en faire un témoin officiel. La radiation est
+      datée au 1er janvier qui suit la dernière année de service, faute du
+      mois. L'annexe de la Banque de France, à lire en entier.
