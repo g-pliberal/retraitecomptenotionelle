@@ -484,6 +484,22 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   ENFANTS, elle, est servie : elle ne demande que le nombre d'enfants. Les
   autres supposent de connaître le CORPS d'appartenance et le détail des
   services, que la saisie ne demande pas.
+- **Le temps partiel.** Il compte à temps plein dans la durée d'assurance, et
+  seulement à sa quotité dans les services qui liquident une pension de la
+  fonction publique — sauf le temps partiel thérapeutique, le temps partiel de
+  droit pour un enfant né depuis 2004 et la surcotisation, bornée à quatre
+  trimestres. La saisie ne demande pas la quotité, et le champ `quotite` des
+  lignes de carrière n'est lu nulle part : un fonctionnaire qui a travaillé à
+  temps partiel sans surcotiser reçoit ici la pension d'un temps plein.
+- **Rachats, surcotisation, retraite progressive, cumul emploi-retraite.**
+  Le modèle liquide une fois, à une date, sur la carrière saisie : il ne
+  rachète pas d'années d'études, ne surcotise pas, ne sert pas de pension
+  partielle et ne suit pas le retraité qui reprend un emploi. Les barèmes
+  sont lus et rangés au registre de veille (`rachats_et_versements`,
+  `cumul_emploi_retraite_et_retraite_progressive`) — dont celui du rachat
+  d'études de la fonction publique, refait au premier janvier 2026, que la
+  calculette de l'ENSAP n'applique pas encore — et les règles du cumul
+  changent pour les pensions prenant effet en 2027.
 - **Catégorie active : servie, mais sur un classement déclaré.** L'âge anticipé
   de l'article L. 24 — <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active&generation=1960)-->57<!--/--> ans, <!--chiffre:cellule(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active&generation=1965)-->52<!--/--> pour la super-active, <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=active)-->59<!--/--> et <!--chiffre:maximum(data/reference/legislation/categorie_active.csv:age_ouverture?classement=super_active)-->54<!--/--> après la
   réforme de 2023 — est désormais opposé, ainsi que l'âge d'annulation de décote
@@ -2897,7 +2913,7 @@ c'est de là que viennent les −7,2 % et +0,3 %.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->46<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->48<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -2917,6 +2933,7 @@ d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
 | ENIM, pages « Le mode de calcul » et « Les conditions d'attribution » | marin : bonification de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->5<!--/--> % dès deux enfants (R. 14), pension d'ancienneté ouverte à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->50<!--/--> ans pour <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->25<!--/--> ans de services et refusée un trimestre plus tôt (R. 2) | **exact** |
 | CARCDSF, CARMF et CAVAMAC, pages et document d'exemples des sections libérales | la mère de deux enfants au taux plein dès <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->65<!--/--> ans à la CARCDSF ; le coefficient de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->1,15<!--/--> à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->65<!--/--> ans de la CARMF ; à la CAVAMAC, la décote du régime de base au plus favorable de l'âge et de la durée (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->5<!--/--> %), sa surcote de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->7,5<!--/--> % pour six trimestres, et la décote de la complémentaire par l'âge seul (<!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->6,25<!--/--> %) | **exact**, une fois les complémentaires minorées par l'âge seul |
 | Cour des comptes, « Les retraites des fonctionnaires de l'État », tableau n° 20 | durée requise des emplois classés, génération par génération : super-active <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->166<!--/--> trimestres pour 1965, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->168<!--/--> jusqu'en août 1971, <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->169<!--/--> ensuite ; active <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->168<!--/--> pour 1965 et jusqu'en août 1966 | **exact**, une fois la durée lue à l'année d'ouverture du droit |
+| Service des retraites de l'État, pages « La décote » et « La surcote » | la même fonctionnaire née en mars 1962, à l'âge légal avec <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->163<!--/--> trimestres sur <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->169<!--/--> : décote de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->7,5<!--/--> % ; à <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->64<!--/--> ans avec <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->175<!--/--> : surcote de <!--chiffre:tenu(test_les_exemples_publies_par_les_caisses_sont_reproduits)-->7,5<!--/--> % | **exact**, une fois la pension datée au premier du mois qui suit la cessation, comme la caisse la date |
 
 **Ce que la confrontation a trouvé, dans l'ordre.** Le premier exemple lu
 contredisait les tables certifiées du dépôt : non que le récupérateur se soit
@@ -2988,7 +3005,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->46<!--/--> tombent justes ensemble, sur
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->48<!--/--> tombent justes ensemble, sur
 une douzaine de sources et autant de règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
 
@@ -6941,6 +6958,102 @@ conditions de 2012 à 2021, qui montaient chaque année (âge de 50 à 55 ans,
 « couple » âge plus annuités de 76 à 80), non plus. La caisse compte les
 annuités au jour près ; le modèle, au trimestre.
 
+### La fonction publique de l'État : le minimum de l'invalidité servi à tous, et la surcote des classés attendue trop tard
+
+Le lot de la fonction publique de l'État (action 89, 24 septembre 2026) :
+treize pages du Service des retraites de l'État, deux fiches de
+service-public.gouv.fr, la FAQ de la DGAFP sur la retraite progressive et
+trois calculettes, puis les textes qu'elles appliquent, lus dans les index
+LEGI et JORF. Les pages confirment l'essentiel de la fiche — durées par
+génération avec la suspension, décote, surcote, carrière longue, retenue de
+2015 à 2026, barème du minimum garanti au centime — et deux exemples y
+entrent aux témoins officiels. Trois règles ne l'étaient pas.
+
+**Sous quinze ans, le minimum garanti de l'invalidité.** L'article L. 17 a
+deux règles pour une pension de moins de quinze ans de services : le c, un
+quinzième de 57,5 % de la référence par année, et le d, la référence
+rapportée, par année de services, à la durée qui ouvre le pourcentage
+maximum. La loi du 9 novembre 2010 (article 53, V) a réservé le c à la
+pension liquidée pour invalidité, et le d sert toutes les autres. Le modèle
+servait le c à tous, et le minimum d'une pension de treize ans valait
+680,90 € par mois en 2026 au lieu de 417,94 € — l'exemple de la fiche F21142,
+et la colonne « cas général » de la table du SRE, qui divise par 170. C'est
+63 % de trop, pour les fonctionnaires entrés tard ou sortis tôt, que leurs
+autres régimes portent au taux plein. Le c reste servi à qui avait atteint
+l'âge d'ouverture de ses droits avant 2011, comme le V de l'article 45 de la
+même loi le lui conserve ; la Banque de France, qui a son propre d depuis
+son décret de 2012, garde le c faute d'une fiche qui le date.
+
+**L'âge qui ouvre le minimum sans la durée était trop tardif.** Le IV de
+l'article 45 de la loi de 2010 minore l'âge d'annulation de la décote, pour
+l'ouverture du minimum garanti, d'un nombre de trimestres que l'article 3 du
+décret n° 2010-1744 fixe selon l'année où l'âge d'ouverture est atteint :
+neuf en 2011, sept, cinq, trois, un en 2015. Le modèle attendait l'âge
+d'annulation entier, et refusait le minimum à un sédentaire né en août 1951
+parti à soixante-trois ans avec une décote.
+
+**L'emploi classé surcote à l'âge anticipé majoré de cinq ans.** Le D du
+XXIV de l'article 10 de la loi du 14 avril 2023 déroge au III de L. 14 :
+l'actif né à compter du 1er septembre 1966 surcote à son âge anticipé majoré
+de cinq années, le super-actif né à compter du 1er septembre 1971 à son âge
+minoré majoré de dix, et les générations d'avant à soixante-deux ans. Le
+décret n° 2026-344 l'écrit pour la CNRACL en toutes lettres : soixante-deux
+ans et neuf mois pour les actifs nés de 1968 à mars 1970, soixante-quatre ans
+à partir de 1974. Le modèle opposait l'âge légal de LEUR génération, en
+croyant — une docstring le disait — que l'âge anticipé majoré de cinq ans y
+revenait : il revient à celui de la génération née cinq ans plus tôt. Un
+fonctionnaire de catégorie active né en 1969 attendait soixante-quatre ans
+une surcote que la loi lui ouvre à soixante-deux ans et neuf mois. Quatre
+témoins bougent, les super-actifs d'État et hospitaliers nés en 1965 et en
+1975 partis à soixante-quatre ans : +2,4 et +2,5 %. Le SRE, lui, écrit
+« + 5 ans » et « + 10 ans » sans dire qu'avant les marches de 2023 c'est
+soixante-deux ans.
+
+**Ce que les pages du SRE écrivent de travers.** L'exemple de la formule de
+calcul oppose 168 trimestres à un fonctionnaire né en 1958, quand la table
+de la même page et L. 161-17-3 en donnent 167 : dix euros de pension par
+mois. L'exemple du minimum garanti multiplie par douze ANNÉES un montant
+calculé par trimestre et divise par 168 quand la table divise par 170. Celui
+des militaires ouvre un droit en 2020 avec dix-sept ans de services puis en
+compte dix-huit et deux mois en 2024, et lui oppose 172 trimestres. La page
+de la retraite anticipée compte en réputés cotisés, pour la carrière longue,
+toutes les bonifications et majorations pour enfants, quand D. 16-2, I, 4°,
+dans la version du décret n° 2026-700, dit « dans la limite de deux
+trimestres » : le modèle suit le décret. Et la surcote de Brigitte S. n'est
+de six trimestres que si la pension prend effet le premier du mois qui suit
+la cessation — la règle de la fonction publique depuis 2011 —, ce que
+l'exemple de sa décote dit en passant (« 62 ans 6 mois 11 jours ») : datée
+au mois de la cessation, le décompte au trimestre civil n'en donnerait que
+cinq.
+
+**Ce que les calculettes appliquent de travers.** La calculette du rachat
+d'études de l'ENSAP, anonyme, calcule dans le navigateur, et son barème est
+dans son script : c'est celui du décret n° 2003-1310, abrogé au 1er janvier
+2026 par le décret n° 2025-1340, qui l'a remplacé par D. 7-1 du code des
+pensions — plus bas, et étendu jusqu'à soixante-six ans. En septembre 2026,
+elle facture un trimestre racheté pour la liquidation et la durée 9,5 % du
+traitement annuel à vingt ans au lieu de 8,83 %, 20,6 % à quarante ans au
+lieu de 19,80 %, et décrit l'abattement d'avant, dix ans après les études, au
+lieu de l'année des quarante ans. La page « Comment améliorer ma retraite »
+du SRE retarde de même. La calculette de surcotisation de l'académie
+d'Aix-Marseille applique la bonne formule — la retenue sur la quotité
+travaillée, plus 80 % de la retenue et du taux employeur de la CNRACL sur la
+quotité non travaillée (décret n° 2004-678) — avec le taux employeur de
+2025, 34,65 %, quand les taux que le SRE publie pour 2026 supposent 37,65 % :
+16,20 % au lieu de 16,68 % à 80 %. Aucune des deux ne touche le scénario 1,
+qui ne rachète ni ne surcotise.
+
+**Ce qui reste.** Le temps partiel (voir « Ce qui reste hors du modèle »),
+le plafond du dernier traitement de la majoration pour enfants (L. 18, V),
+qui ne mord qu'à sept enfants, l'écrêtement du minimum garanti par le total
+des pensions, dont le décret n'a pas été trouvé, la décote « carrière
+longue » des militaires, et la confrontation du barème du rachat à la
+neutralité actuarielle du compte notionnel — la même grandeur, calculée par
+deux mains. Le registre de veille en porte les lignes
+(`minimum_garanti`, `surcote_fonction_publique`,
+`temps_partiel_fonction_publique`, `majoration_enfants_plafond_fonction_publique`,
+`rachats_et_versements`).
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -9164,7 +9277,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2375<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2399<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

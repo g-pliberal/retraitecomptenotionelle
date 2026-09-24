@@ -530,7 +530,21 @@ sources:
     a_en_tirer: >-
       La formule que la caisse applique : 75 %, traitement des six derniers
       mois, durée des services. La fiche du régime est `partiel` à l'inventaire.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      La formule et les deux tables de durée — sédentaires avant la réforme de
+      2023, par génération avec la colonne de la suspension — recoupent le
+      dépôt ligne à ligne. L'exemple de Pierre P., né le 10 avril 1958, se
+      trompe de durée : « 168 trimestres » quand la table de la même page, et
+      L. 161-17-3, en donnent 167 ; 148/168 × 75 % = 66,07 % au lieu de
+      66,47 %, dix euros par mois. Non transcrit, écrit dans docs/limites.md.
+      La page voisine « L'âge de la retraite au taux plein » porte la durée des
+      emplois classés d'avant les marches de 2023, par année d'ouverture du
+      droit — 167 de 2018 à 2020, puis un trimestre de plus tous les trois
+      ans — : data/reference/legislation/duree_requise_avant_soixante_ans.csv
+      à l'identique ; sa table des super-actifs écrit « de 2024 à 2028 » pour
+      « de 2027 à 2029 ».
 
   - id: sre_decote
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-decote
@@ -541,7 +555,14 @@ sources:
       Le barème de décote et son âge d'annulation, avec ses exemples chiffrés :
       matière directe pour exemples_officiels.yaml, à côté de la fiche F20349
       déjà rejouée.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      1,25 % par trimestre, vingt au plus, le plus petit des deux décomptes,
+      annulation à 67 et 62 ans : le dépôt. L'exemple de Brigitte S. entre aux
+      témoins officiels (`sre_decote_brigitte`), daté comme la caisse le date
+      — « 62 ans 6 mois 11 jours », la pension prenant effet le premier du
+      mois suivant la cessation (tests/temoins/exemples_officiels.yaml).
 
   - id: sre_surcote
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-surcote
@@ -551,7 +572,17 @@ sources:
     a_en_tirer: >-
       La surcote de la fonction publique, ses trimestres entiers, et la
       surcote parentale ouverte en 2024.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      L'âge de la surcote des actifs, « âge d'ouverture + 5 ans », et des
+      super-actifs, « + 10 ans », est celui du D du XXIV de l'article 10 de la
+      loi n° 2023-270 : le modèle opposait l'âge légal de leur génération,
+      jusqu'à sept trimestres trop tard. Corrigé dans les deux moteurs
+      (tests/test_fonction_publique_etat.py). L'exemple de Brigitte S. — née «
+      le 2 mars », le 20 dans la page de la décote — entre aux témoins
+      (`sre_surcote_brigitte`). La table des âges et la surcote famille
+      recoupent le dépôt.
 
   - id: sre_duree_assurance
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-duree-dassurance
@@ -561,7 +592,13 @@ sources:
     a_en_tirer: >-
       Ce qui distingue durée de SERVICES et durée d'ASSURANCE — la confusion
       la plus coûteuse du régime, puisque l'une proratise et l'autre décote.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      La majoration de deux trimestres pour un enfant né depuis 2004, dont un
+      compte en services pour les pensions de septembre 2026 : le b ter de L.
+      12 que data/reference/legislation/majoration_duree_assurance.csv porte
+      déjà. Temps partiel compté à temps plein en durée d'assurance.
 
   - id: sre_majoration_enfants
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-majoration-pour-enfants
@@ -571,7 +608,12 @@ sources:
     a_en_tirer: >-
       10 % pour trois enfants, 5 % par enfant au-delà, plafond au dernier
       traitement : à joindre à l'action 43.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      10 % pour trois enfants, 5 % par enfant au-delà : le dépôt. Le plafond
+      du dernier traitement (L. 18, V) ne l'est pas ; il ne mord qu'à sept
+      enfants au taux de 80 %, ce que docs/limites.md dit.
 
   - id: sre_minimum_garanti
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/le-minimum-garanti
@@ -582,7 +624,18 @@ sources:
       Le barème du minimum garanti par années de services, et son indice
       majoré : le dépôt le projette (test_donnees.py le contrôle), il manque
       la lecture chez celui qui l'applique.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      La table de 2026 recoupe le barème du dépôt au centime, de 785,65 € à 1
+      366,35 €. Sous quinze ans, la colonne « cas général » divise par la
+      durée requise (L. 17, d, depuis la loi du 9 novembre 2010) ; le modèle
+      servait à tous le quinzième de 57,5 % de l'invalidité, 63 % de trop pour
+      treize ans. Corrigé dans les deux moteurs, avec l'âge minoré de
+      l'article 3 du décret n° 2010-1744. L'exemple de Laurence P. multiplie
+      par douze ANNÉES un montant par trimestre (1 171,16 € par an au lieu de
+      4 684,63 €) et divise par 168 quand la table divise par 170. Tenu par
+      tests/test_fonction_publique_etat.py.
 
   - id: sre_bonifications
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/les-bonifications
@@ -593,7 +646,14 @@ sources:
       Les bonifications, que le commit du 22 septembre 2026 vient de distinguer
       des majorations : dépaysement, campagne, enfants nés avant 2004. À lire
       pour vérifier que la distinction tient chez la caisse.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Bonification d'un an par enfant né avant 2004, d'un trimestre pour les
+      enfants nés depuis et les pensions de septembre 2026 : le dépôt. Les
+      bonifications de service — dépaysement, campagne, services aériens, le
+      cinquième — ne sont pas servies, faute du corps : déjà écrit dans
+      docs/limites.md.
 
   - id: sre_services_valables
     url: https://retraitesdeletat.gouv.fr/actif/carriere/les-services-valables-pour-ma-retraite
@@ -604,7 +664,13 @@ sources:
       Quels services comptent : stage, temps partiel, services auxiliaires
       validés. Le dépôt compte des années pleines ; voici ce que cette maille
       coûte.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Le temps partiel ne compte en services qu'à sa quotité, sauf
+      surcotisation, temps partiel thérapeutique ou temps partiel de droit
+      pour un enfant né depuis 2004. Le modèle compte toute année à temps
+      plein : aucune saisie ne porte la quotité. Écrit dans docs/limites.md.
 
   - id: sre_militaires
     url: https://retraitesdeletat.gouv.fr/actif/les-specificites-des-militaires/le-calcul-de-la-pension
@@ -615,7 +681,16 @@ sources:
       La pension militaire : jouissance immédiate, bonifications de campagne,
       durées de services minimales. Population que le dépôt range avec les
       civils, sans le dire.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      La décote « carrière courte » est celle que le modèle sert à tous les
+      militaires (II de L. 14) ; la « carrière longue », décote des civils,
+      vaut pour une limite d'âge d'au moins 57 ans et un départ à 52 ans ou
+      plus, que le modèle ne distingue pas faute du grade — déjà écrit.
+      L'exemple de Jacques B. se contredit (droit ouvert en 2020 à 17 ans de
+      services, 18 ans 2 mois en 2024) et oppose 172 trimestres à un droit de
+      2020 : non transcrit. PAGS et solde de réserve hors modèle.
 
   - id: ensap_rachat_etudes
     url: https://ensap.gouv.fr/web/calculette/rachatetudes
@@ -628,7 +703,18 @@ sources:
       la MÊME grandeur que le dépôt appelle neutralité actuarielle dans le
       système notionnel — le comparer au prix que l'État facture est un
       contrôle de premier ordre.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      La calculette calcule dans le navigateur, sans compte, et son barème est
+      dans son script (morceau 348 du bundle) : c'est celui du décret n°
+      2003-1310, ABROGÉ au 1er janvier 2026 par le décret n° 2025-1340, qui a
+      créé D. 7-1 à D. 7-3 et un barème plus bas jusqu'à 66 ans. En septembre
+      2026 elle facture 9,5 % du traitement par trimestre à 20 ans au lieu de
+      8,83 %, 20,6 % à 40 ans au lieu de 19,80 %, et décrit l'abattement
+      d'avant (dix ans après les études, au lieu de l'année des quarante ans).
+      Le rachat n'est pas modélisé ; reste à confronter le barème à la
+      neutralité du compte notionnel.
 
   - id: ensap_pecari
     url: https://ensap.gouv.fr/calculette/pecari/
@@ -639,7 +725,14 @@ sources:
       Calculette officielle de l'ENSAP : identifier ce qu'elle calcule
       exactement et si elle tourne sans compte (l'adresse répond 200 hors
       connexion), puis la balayer.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Calculette du cumul emploi-retraite, anonyme, qui calcule dans le
+      navigateur : plafond du tiers de la pension majoré de 8 198,04 € « au
+      1er janvier 2026 », lu dans le paramétrage public de l'ENSAP. Le cumul
+      n'est pas modélisé, et la règle change pour les pensions de 2027 (page
+      sre_cumul_emploi_retraite) : écrit dans docs/limites.md.
 
   # ---- CNRACL et Caisse des dépôts --------------------------------------
 
@@ -2327,7 +2420,15 @@ sources:
     a_en_tirer: >-
       Le montant de la retraite d'un agent public, avec exemples chiffrés :
       rejouables tels quels contre le scénario 1.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Vérifiée le 1er septembre 2026. Tables des sédentaires, des actifs et
+      des super-actifs avec la suspension : le dépôt. Trois exemples du
+      minimum garanti — 1 332,19 € pour 35 ans, 417,94 € pour 13 ans et 170
+      trimestres, 680,89 € pour 13 ans en invalidité — tenus par
+      tests/test_fonction_publique_etat.py ; le deuxième a levé l'erreur du
+      modèle sous quinze ans.
 
   - id: sp_f16336_montant_salarie
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F16336
@@ -2379,7 +2480,13 @@ sources:
     a_en_tirer: >-
       La durée d'assurance du fonctionnaire, et sa différence d'avec la durée
       de services — la distinction que le dépôt doit tenir des deux côtés.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Vérifiée le 1er janvier 2026, déjà avec la suspension. Durées par
+      génération : le dépôt. Temps partiel compté à temps plein en durée,
+      temps non complet à sa durée réelle. Rien que
+      data/reference/legislation/duree_assurance_requise.csv ne porte.
 
   - id: sp_f2971_csg_crds
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F2971
@@ -2850,7 +2957,19 @@ sources:
       Carrière longue, catégorie active, invalidité, parent de trois enfants :
       les départs anticipés de la fonction publique, dont plusieurs ont été
       fermés par étapes. Le dépôt doit dater chaque fermeture.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Tables de la carrière longue avant et après la suspension, dont 60 ans
+      et 8 mois pour les nés en décembre 1965 : le dépôt. La page compte en
+      réputés cotisés, pour les pensions de septembre 2026, les quatre
+      trimestres de bonification par enfant né avant 2004 et les deux de
+      majoration depuis, sans limite ; D. 16-2, I, 4°, dans sa version du
+      décret n° 2026-700 (lue dans l'index LEGI), dit « dans la limite de deux
+      trimestres », et le dépôt suit le décret
+      (data/reference/legislation/carriere_longue.csv et CarriereLongue).
+      Départ du parent de trois enfants (conditions au 1er janvier 2012) et du
+      handicap hors modèle.
 
   - id: sre_cumul_emploi_retraite
     url: https://retraitesdeletat.gouv.fr/actif/je-prepare-ma-retraite/jenvisage-dexercer-une-activite-pendant-ma-retraite
@@ -2860,7 +2979,13 @@ sources:
     a_en_tirer: >-
       Le cumul emploi-retraite d'un ancien fonctionnaire, avec son écrêtement
       propre : à mettre en regard de la CNRACL et de l'Agirc-Arrco.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Nouvelles règles pour les pensions de 2027 : revenu déduit de la pension
+      d'un départ anticipé, moitié du dépassement d'un seuil entre l'âge légal
+      et 67 ans, cumul libre et droits nouveaux ensuite. Le modèle ne suit pas
+      le retraité après sa liquidation : écrit dans docs/limites.md.
 
   - id: enim_reversion
     url: https://www.enim.eu/retraite/pension-de-reversion
@@ -3452,7 +3577,15 @@ sources:
       La retenue pour pension civile, sa série de taux et son assiette : la
       fiche de l'État est `partiel`, et la contribution employeur est portée à
       part dans `legislation/contribution_employeur_public.csv`.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      La retenue de 2015 à 2026 recoupe la fiche au dix-millième. Les taux de
+      surcotisation de 2026 — 16,68 % à 80 %, 25,05 % à 50 % — sont la formule
+      du décret n° 2004-678, repris au code : la retenue sur la quotité
+      travaillée, plus 80 % de la retenue et du taux employeur de la CNRACL
+      (37,65 % en 2026) sur la quotité non travaillée. La série est celle de
+      data/reference/regimes/fonction_publique.yaml.
 
   - id: sre_ameliorer_retraite
     url: https://retraitesdeletat.gouv.fr/actif/carriere/comment-ameliorer-ma-retraite
@@ -3463,7 +3596,14 @@ sources:
       Rachat d'études, surcotisation du temps partiel, prolongation : la liste
       des leviers, par le liquidateur, donc la liste de ce que le modèle doit
       savoir refuser ou appliquer.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Rachat d'études (douze trimestres, trois options), surcotisation du
+      temps partiel (quatre trimestres), prolongation : aucun n'est modélisé,
+      écrit dans docs/limites.md. La page décrit l'abattement du rachat
+      d'avant 2026 — « dans un délai de dix ans suivant la fin des études » —
+      que D. 7-3 a remplacé par le 31 décembre de l'année des quarante ans.
 
   - id: sre_retraite_progressive
     url: https://retraitesdeletat.gouv.fr/actif/lage-de-depart/la-retraite-progressive
@@ -3473,7 +3613,12 @@ sources:
     a_en_tirer: >-
       La retraite progressive des fonctionnaires d'État, ouverte en 2023 :
       conditions, quotité, et fraction de pension servie.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      60 ans, 150 trimestres, temps partiel de 50 à 90 %, pension partielle au
+      prorata de la quotité non travaillée, militaires exclus. Le modèle ne
+      liquide qu'une fois : écrit dans docs/limites.md.
 
   - id: surcot_ac_aix_marseille
     url: https://appli.ac-aix-marseille.fr/surcot/
@@ -3486,7 +3631,15 @@ sources:
       balayer donne le PRIX que l'État fait payer à un fonctionnaire pour
       racheter la quotité non travaillée — la grandeur que le système notionnel
       calcule, lui, par neutralité actuarielle.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      La formule est en clair dans son script (js/functions.js) : retenue sur
+      la quotité travaillée, plus 80 % de la retenue et d'un taux employeur
+      sur la quotité non travaillée. Le taux employeur est resté à 34,65 %,
+      celui de la CNRACL en 2025 ; le SRE publie pour 2026 des taux qui
+      supposent 37,65 %. À 80 %, 16,20 % au lieu de 16,68 %. La surcotisation
+      n'est pas modélisée : docs/limites.md.
 
   - id: rafp_calcul_paiement_prestation
     url: https://www.rafp.fr/actif/activite/calcul-et-paiement-votre-prestation-rafp
@@ -3517,7 +3670,12 @@ sources:
     a_en_tirer: >-
       La FAQ de la DGAFP : elle tranche les cas que les fiches laissent
       ouverts, et elle vaut pour les trois versants de la fonction publique.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      La FAQ de 2025 (PDF de 197 Ko) : 60 ans et 150 trimestres pour les trois
+      versants, actifs et super-actifs compris, militaires exclus, temps non
+      complet admis. Hors modèle, comme la page du SRE : docs/limites.md.
 
   - id: fonction_publique_rafp_volontaire
     url: https://www.fonction-publique.gouv.fr/toutes-les-actualites/tout-savoir-sur-la-cotisation-volontaire-au-regime-de-retraite-additionnelle-de-la-fonction-publique

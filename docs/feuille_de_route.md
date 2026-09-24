@@ -30,8 +30,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 831<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 649<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 934<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 727<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -12962,6 +12962,52 @@ seule durée (R. 6527-22), d'où le champ `decote_par_la_duree_seule` dans les
 deux moteurs ; le taux d'appel de 2026 est de 111 %. Restent, notés dans
 `docs/limites.md` : le dispositif transitoire des navigants nés avant 1971,
 les conditions montantes de 2012 à 2021, les taux d'appel de 2016 à 2025.
+
+**Passe du 24 septembre 2026 : la fonction publique de l'État (SRE, ENSAP,
+service-public).** Vingt adresses, réservées par un commit `en_cours` poussé
+seul : treize pages du Service des retraites de l'État, les fiches F21142 et
+F13736 de service-public, la FAQ de la DGAFP sur la retraite progressive, et
+trois calculettes lues dans leur script ; puis, dans les index LEGI et JORF,
+L. 14, L. 14 bis, L. 17 dans ses trois rédactions, L. 18, L. 25 bis et D. 16-2
+du code des pensions, les articles 45 et 53 de la loi n° 2010-1330, le décret
+n° 2010-1744, le XXIV de l'article 10 de la loi n° 2023-270 et l'article 13 du
+décret n° 2023-435 dans la version du décret n° 2026-344. Les pages
+confirment la fiche presque partout ; trois règles ne l'étaient pas, et sont
+corrigées au scénario 1 dans les deux moteurs. *Le minimum garanti d'une
+pension de moins de quinze ans* est, depuis 2011, la référence rapportée à la
+durée requise (L. 17, d) : le moteur servait à tous le quinzième de 57,5 % de
+l'invalidité, 63 % de trop pour treize ans de services ; le c reste à qui
+avait atteint l'âge d'ouverture avant 2011. *L'âge qui ouvre ce minimum sans
+la durée* est minoré de neuf trimestres pour un âge d'ouverture atteint en
+2011, puis sept, cinq, trois et un (`MINORATION_AGE_MINIMUM_GARANTI`). *L'emploi
+classé surcote à l'âge anticipé majoré de cinq ans*, l'âge minoré majoré de
+dix pour la super-active, et à soixante-deux ans avant les marches de 2023 :
+le moteur attendait l'âge légal de leur génération, jusqu'à sept trimestres
+de trop. Témoins : les super-actifs d'État et hospitaliers partis à 64 ans,
++2,4 et +2,5 %. Deux exemples du SRE entrent aux témoins officiels, le SRE
+devenant le huitième éditeur ; trois autres sont faux et écrits comme tels.
+La calculette du rachat d'études de l'ENSAP applique un barème abrogé au
+1er janvier 2026 (décret n° 2025-1340), celle de surcotisation d'Aix-Marseille
+le taux employeur de 2025. Récit dans `docs/limites.md`, « La fonction
+publique de l'État : le minimum de l'invalidité servi à tous, et la surcote
+des classés attendue trop tard » ; tests dans
+`tests/test_fonction_publique_etat.py`.
+
+**Ce que ce lot laisse ouvert, par ordre de poids.** *Le temps partiel*, que
+la saisie ne porte pas : le modèle compte à temps plein des services que la
+loi compte à leur quotité, et c'est le seul manque du lot qui touche une
+population nombreuse — il demande un champ de saisie, les services de la
+famille `fonction_publique` et la surcotisation bornée à quatre trimestres.
+*Le barème du rachat d'études* (D. 7-1, de 20 à 66 ans) confronté à la
+neutralité actuarielle du compte notionnel : deux mains qui calculent le prix
+d'un même trimestre. *L'écrêtement du minimum garanti* par le total des
+pensions (L. 17, sixième alinéa), dont le décret reste à trouver, et le
+plafond de L. 18, V, qui ne mord qu'à sept enfants. *La décote « carrière
+longue » des militaires* et la PAGS, qui demandent le grade. *Le d de L. 17 à
+la Banque de France*, que son décret de 2012 écrit et que sa fiche ne date
+pas. Les lots voisins restent `a_explorer` : la CNRACL et juris-cnracl, la
+Caisse des dépôts (FSPOEIE, mines), le RAFP — dont les règles corrigées ici
+valent déjà pour la CNRACL et le FSPOEIE.
 
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`

@@ -156,8 +156,9 @@ entrees:
     sources:
       - {type: service_public, reference: "fiche F20349", date: "2026-01-01"}
       - {type: autre, reference: "OpenFisca-France-Pension, témoins de la pension civile (tests/test_oracle.py)", date: "2026-09-13"}
-    verifie_le: "2026-09-17"
-    temoins: [sp_f20349_decote_fonction_publique]
+      - {type: autre, reference: "Service des retraites de l'État, page « La décote », exemple de Brigitte S.", date: "2026-09-24", url: "https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-decote"}
+    verifie_le: "2026-09-24"
+    temoins: [sp_f20349_decote_fonction_publique, sre_decote_brigitte]
     reformes: [reforme_2023]
     etat: conforme
     effet: "Fonctionnaires liquidant avant le taux plein."
@@ -180,18 +181,20 @@ entrees:
     prochaine_veille: "2027-06-30"
 
   - id: surcote_fonction_publique
-    regle: "1,25 % par trimestre depuis 2009 sans plafond ; 0,75 % dans la limite de vingt trimestres pour ceux d'avant 2009 ; décompte depuis l'âge légal de droit commun, jamais depuis l'âge anticipé."
-    textes: ["L. 14 III CPCMR (version du 31 décembre 2023)", "loi n° 2008-1330, article 89"]
+    regle: "1,25 % par trimestre depuis 2009 sans plafond ; 0,75 % dans la limite de vingt trimestres pour ceux d'avant 2009 ; décompte depuis l'âge légal de droit commun pour le sédentaire, et pour l'emploi classé depuis l'âge anticipé majoré de cinq ans (actifs nés depuis le 1er septembre 1966) ou l'âge minoré majoré de dix (super-actifs nés depuis le 1er septembre 1971), soixante-deux ans avant ces générations."
+    textes: ["L. 14 III CPCMR (version du 31 décembre 2023)", "loi n° 2008-1330, article 89", "loi n° 2023-270, article 10, XXIV, D (LEGIARTI000053280920)", "décret n° 2023-435, article 13, II, D, dans la rédaction du décret n° 2026-344 (LEGIARTI000054059137)"]
     sources:
       - {type: legifrance, reference: "L. 14 CPCMR, LEGIARTI000048844775", date: "2023-12-31"}
+      - {type: legifrance, reference: "loi n° 2023-270, article 10, XXIV, D, lu dans l'index LEGI (versions du 16 avril 2023 et du 31 décembre 2025)", date: "2026-09-24"}
       - {type: service_public, reference: "fiche F16494", date: "2026-05-18"}
       - {type: autre, reference: "CNRACL, juris-cnracl, calcul de la surcote", date: "2026-09-17"}
-    verifie_le: "2026-09-17"
-    temoins: [sp_f16494_surcote_fonction_publique]
+      - {type: autre, reference: "Service des retraites de l'État, page « La surcote » : « âge d'ouverture des droits + 5 ans », « + 10 ans », exemple de Brigitte S.", date: "2026-09-24", url: "https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-surcote"}
+    verifie_le: "2026-09-24"
+    temoins: [sp_f16494_surcote_fonction_publique, sre_surcote_brigitte]
     reformes: [lfss_2009_surcote]
     etat: conforme
-    effet: "Fonctionnaires liquidant après l'âge légal avec la durée."
-    a_faire: "La version de 2009 de L. 14 III (plafond de vingt trimestres) n'a pas été lue sur Légifrance, seulement rapportée : la lire."
+    effet: "Fonctionnaires liquidant après l'âge légal avec la durée. Jusqu'au 24 septembre 2026, l'emploi classé attendait l'âge légal de SA génération : jusqu'à sept trimestres de surcote perdus pour un actif né de 1966 à 1973."
+    a_faire: "La version de 2009 de L. 14 III (plafond de vingt trimestres) n'a pas été lue sur Légifrance, seulement rapportée : la lire. Le décompte au trimestre civil vient de la circulaire Cnav 2018-04 ; aucun texte de la fonction publique ne l'écrit, et l'exemple du SRE ne le départage pas une fois la pension datée au premier du mois suivant la cessation."
     prochaine_veille: "2027-03-31"
 
   - id: surcote_parentale
@@ -275,6 +278,45 @@ entrees:
       congés exceptés est transcrite motif par motif dans
       `periodes_non_travaillees.csv`, mais le modèle ne connaît pas la POSITION
       statutaire, seulement le motif, et présume l'agent en activité.
+    prochaine_veille: "2027-06-30"
+
+  - id: temps_partiel_fonction_publique
+    regle: >-
+      Le temps partiel compte à temps plein dans la durée d'assurance, et
+      seulement à sa quotité dans les services qui liquident la pension (L. 5
+      et L. 14 I CPCMR) — sauf le temps partiel thérapeutique, le temps partiel
+      de droit pour un enfant né depuis 2004 (trois ans par enfant) et la
+      surcotisation, quatre trimestres au plus (L. 11 bis).
+    textes: ["L. 5 CPCMR", "L. 11 bis CPCMR", "L. 14 I CPCMR, avant-dernier alinéa"]
+    sources:
+      - {type: autre, reference: "Service des retraites de l'État, pages « Les services valables pour ma retraite », « Mes cotisations » et « La formule de calcul » (exemple de Pierre P., dix ans à 80 %)", date: "2026-09-24"}
+      - {type: service_public, reference: "fiche F21142, « 5 ans à temps partiel à 80 % comptent pour 4 ans »", date: "2026-09-01"}
+    verifie_le: "2026-09-24"
+    temoins: []
+    reformes: []
+    etat: manque
+    effet: >-
+      Tout fonctionnaire qui a travaillé à temps partiel sans surcotiser : le
+      modèle compte chaque année à temps plein, aucune saisie ne portant la
+      quotité (le champ `quotite` des lignes de carrière n'est lu nulle part).
+      Dix ans à 80 % valent huit trimestres de services de trop : 3,5 points
+      des 75 % du taux plein à 170 trimestres, près d'un vingtième de la
+      pension.
+    a_faire: "Porter la quotité dans la saisie et dans les services de la famille fonction_publique ; la surcotisation se lit alors comme un choix, borné à quatre trimestres."
+    prochaine_veille: "2027-06-30"
+
+  - id: majoration_enfants_plafond_fonction_publique
+    regle: "La pension civile majorée pour enfants ne peut excéder le traitement qui l'a liquidée, revalorisé ; au-delà, pension et majoration sont réduites à due proportion."
+    textes: ["L. 18, V, CPCMR (LEGIARTI000047456782)"]
+    sources:
+      - {type: legifrance, reference: "L. 18 CPCMR, version du 1er septembre 2023, lu dans l'index LEGI", date: "2026-09-24"}
+      - {type: autre, reference: "Service des retraites de l'État, page « La majoration pour enfants » : « limité à 100 % de votre dernier traitement […] sauf en cas d'application d'une surcote »", date: "2026-09-24"}
+    verifie_le: "2026-09-24"
+    temoins: []
+    reformes: []
+    etat: manque
+    effet: "Ne mord qu'à partir de sept enfants au taux de 80 %, ou de six avec une surcote que la caisse excepte : quelques familles, que le modèle majore sans plafond."
+    a_faire: "Lire le texte qui excepte la surcote, que L. 18 ne porte pas, avant d'appliquer le plafond."
     prochaine_veille: "2027-06-30"
 
   - id: taux_maximum_fonction_publique
@@ -494,17 +536,23 @@ entrees:
     prochaine_veille: "2027-06-30"
 
   - id: minimum_garanti
-    regle: "Plancher de la pension civile, barème en escalier sur la durée de services, référence gelée en 2004 puis indexée sur les prix."
-    textes: ["L. 17 CPCMR", "loi n° 2003-775, article 66 V"]
+    regle: "Plancher de la pension civile, barème en escalier sur la durée de services, référence gelée en 2004 puis indexée sur les prix. Sous quinze ans, depuis 2011, la référence rapportée à la durée qui ouvre le pourcentage maximum (L. 17, d), le quinzième de 57,5 % par année restant à l'invalidité et à qui avait atteint l'âge d'ouverture avant 2011 (L. 17, c). Sans la durée, ouvert à l'âge d'annulation de la décote, minoré de neuf, sept, cinq, trois et un trimestres pour un âge d'ouverture atteint de 2011 à 2015."
+    textes: ["L. 17 CPCMR (versions LEGIARTI000006362712, LEGIARTI000023033916, LEGIARTI000048697797)", "loi n° 2003-775, article 66 V", "loi n° 2010-1330, articles 45 (IV et V) et 53 (V)", "décret n° 2010-1744 du 30 décembre 2010, article 3 (JORFARTI000023334941)"]
     sources:
       - {type: autre, reference: "Service des retraites de l'État, référence du minimum garanti (sre_minimum_garanti.py)", date: "2026-09-13"}
-    verifie_le: "2026-09-17"
+      - {type: autre, reference: "Service des retraites de l'État, page « Le minimum garanti », tables au 1er janvier 2026", date: "2026-09-24", url: "https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/le-minimum-garanti"}
+      - {type: service_public, reference: "fiche F21142, trois exemples (35 ans ; 13 ans et 170 trimestres ; 13 ans en invalidité)", date: "2026-09-01"}
+      - {type: jorf, reference: "loi n° 2010-1330, articles 45 et 53, et décret n° 2010-1744, lus dans l'index JORF", date: "2026-09-24"}
+    verifie_le: "2026-09-24"
     temoins: []
     reformes: []
-    etat: transcrit
-    effet: "Fonctionnaires à carrière courte."
+    etat: conforme
+    effet: "Fonctionnaires à carrière courte. Jusqu'au 24 septembre 2026, le modèle servait à toute pension de moins de quinze ans le quinzième de 57,5 % de l'invalidité : 680,90 € par mois pour treize ans en 2026, au lieu de 417,94 € (170 trimestres). Les exemples publiés sont rejoués par tests/test_fonction_publique_etat.py, le harnais des témoins officiels ne construisant qu'une affiliation."
     a_faire: >-
-      Chercher une fiche de calcul publiée par le SRE. Le montant de 2023 du
+      L'écrêtement du sixième alinéa de L. 17 — le minimum n'est servi que si
+      le total des pensions ne dépasse pas « un montant fixé par décret » —
+      n'est pas appliqué : le décret n'a pas été trouvé dans les index, et ni
+      le SRE ni service-public n'en parlent ; le chercher. Le montant de 2023 du
       fichier (1 248,33 € par mois) était celui du 1er juillet 2022 : il est
       corrigé le 23 septembre 2026 à 1 258,32 €, valeur du 1er janvier 2023,
       que deux chemins officiels donnent — la revalorisation de 0,8 %, et le
@@ -586,10 +634,12 @@ entrees:
 
   - id: carriere_longue_enfants_reputes_cotises
     regle: "Deux trimestres au plus de majoration pour enfants (maternité, adoption, éducation, congé parental, bonifications de la fonction publique) réputés cotisés pour la carrière longue, pensions dès le 1er septembre 2026."
-    textes: ["L. 351-1-1 3° CSS (loi n° 2025-1403, article 104)", "D. 351-1-2-1 CSS (décret n° 2026-700 du 29 juillet 2026)"]
+    textes: ["L. 351-1-1 3° CSS (loi n° 2025-1403, article 104)", "D. 351-1-2-1 CSS (décret n° 2026-700 du 29 juillet 2026)", "L. 25 bis 4° CPCMR (LEGIARTI000053280372)", "D. 16-2, I, 4° CPCMR (décret n° 2026-700, LEGIARTI000054589198)"]
     sources:
       - {type: circulaire_cnav, reference: "2026-29 du 4 septembre 2026, point 1.2.3.8 et annexe 4", date: "2026-09-04"}
-    verifie_le: "2026-09-17"
+      - {type: legifrance, reference: "D. 16-2 CPCMR, version du 1er août 2026, lu dans l'index LEGI : « dans la limite de deux trimestres »", date: "2026-09-24"}
+      - {type: autre, reference: "Service des retraites de l'État, page « La retraite anticipée » : quatre trimestres par enfant né avant 2004, deux depuis, sans la limite du décret", date: "2026-09-24"}
+    verifie_le: "2026-09-24"
     temoins: []
     reformes: [lfss_2026_suspension]
     etat: transcrit
@@ -947,10 +997,11 @@ entrees:
 
   - id: cumul_emploi_retraite_et_retraite_progressive
     regle: "Cumul emploi-retraite (trois régimes selon l'âge, seconde pension depuis 2023) et retraite progressive (dès 60 ans depuis septembre 2025)."
-    textes: ["L. 161-22 CSS et suivants", "L. 351-15 CSS"]
+    textes: ["L. 161-22 CSS et suivants", "L. 351-15 CSS", "L. 84 à L. 86 CPCMR", "L. 89 bis et D. 37-1 CPCMR"]
     sources:
       - {type: autre, reference: "L'Assurance retraite, mesures de la LFSS 2026", date: "2026-01-01"}
-    verifie_le: "2026-09-17"
+      - {type: autre, reference: "Service des retraites de l'État, pages du cumul (règles des pensions de 2027) et de la retraite progressive ; FAQ de la DGAFP de 2025 ; calculette PECARI de l'ENSAP (plafond de 8 198,04 € au 1er janvier 2026)", date: "2026-09-24"}
+    verifie_le: "2026-09-24"
     temoins: []
     reformes: []
     etat: hors_modele
@@ -959,10 +1010,12 @@ entrees:
     prochaine_veille: "2027-09-30"
 
   - id: rachats_et_versements
-    regle: "Rachats de trimestres (années d'études, années incomplètes), versements pour la retraite."
-    textes: ["L. 351-14-1 CSS"]
-    sources: []
-    verifie_le: "2026-09-17"
+    regle: "Rachats de trimestres (années d'études, années incomplètes), versements pour la retraite, surcotisation du temps partiel de la fonction publique."
+    textes: ["L. 351-14-1 CSS", "L. 9 bis et D. 7-1 à D. 7-3 CPCMR (décret n° 2025-1340 du 26 décembre 2025)", "L. 11 bis CPCMR"]
+    sources:
+      - {type: jorf, reference: "décret n° 2025-1340, article 1er (barème du rachat d'études de 20 à 66 ans, en vigueur au 1er janvier 2026)", date: "2026-09-24"}
+      - {type: autre, reference: "ENSAP, calculette du rachat d'études, qui applique encore en septembre 2026 le barème du décret n° 2003-1310 abrogé", date: "2026-09-24"}
+    verifie_le: "2026-09-24"
     temoins: []
     reformes: []
     etat: hors_modele
@@ -5273,3 +5326,38 @@ journal:
       validée gratuitement.
     reste: >-
       Les fractions d'avant 1979 et de 1979 à 1997.
+
+  - date: "2026-09-24"
+    session: "action 89, le lot de la fonction publique de l'État (SRE, ENSAP, service-public)"
+    consulte: >-
+      Treize pages du Service des retraites de l'État (formule, décote,
+      surcote, durée d'assurance, majoration pour enfants, minimum garanti,
+      bonifications, services valables, militaires, retraite anticipée, cumul,
+      cotisations, retraite progressive), les fiches F21142 (vérifiée le
+      1er septembre 2026) et F13736 de service-public.gouv.fr, la FAQ de la
+      DGAFP de 2025, les calculettes du rachat d'études et PECARI de l'ENSAP et
+      celle de surcotisation de l'académie d'Aix-Marseille, lues dans leur
+      script. Dans les index LEGI et JORF : L. 14, L. 14 bis, L. 17 (trois
+      versions), L. 18 et L. 25 bis du code des pensions, D. 16-2 dans la
+      version du décret n° 2026-700, les articles 45 et 53 de la loi
+      n° 2010-1330, le décret n° 2010-1744, le XXIV de l'article 10 de la loi
+      n° 2023-270, l'article 13 du décret n° 2023-435 dans la version du décret
+      n° 2026-344, le décret n° 2004-678 et le décret n° 2025-1340.
+    trouve: >-
+      Trois règles que le scénario 1 n'appliquait pas, corrigées dans les deux
+      moteurs : le minimum garanti d'une pension de moins de quinze ans est la
+      référence rapportée à la durée requise depuis 2011 (L. 17, d), le
+      quinzième de 57,5 % ne valant plus que pour l'invalidité ; l'âge qui
+      ouvre le minimum sans la durée est minoré de neuf à un trimestre pour un
+      âge d'ouverture atteint de 2011 à 2015 ; l'emploi classé surcote à l'âge
+      anticipé majoré de cinq ans ou minoré majoré de dix, soixante-deux ans
+      avant les marches de 2023. Deux exemples du SRE entrent aux témoins
+      officiels. Trois exemples du SRE sont faux, la page de la retraite
+      anticipée omet la limite de deux trimestres de D. 16-2, et la
+      calculette du rachat de l'ENSAP applique un barème abrogé au 1er janvier
+      2026.
+    reste: >-
+      Le temps partiel, que la saisie ne porte pas ; le plafond de L. 18, V ;
+      l'écrêtement du minimum garanti, dont le décret n'a pas été trouvé ; la
+      décote « carrière longue » des militaires ; la confrontation du barème du
+      rachat d'études à la neutralité du compte notionnel.
