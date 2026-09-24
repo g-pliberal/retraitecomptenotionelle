@@ -1309,10 +1309,16 @@ rémunération retrouvent exactement la même pension.
 
 Un second paramètre, `contribution_etat`, ne joue que sous `totale` et que pour
 l'État. Son taux n'est pas une cotisation mais un taux d'équilibre : il paie
-toutes les pensions de l'année, et `entiere` — le défaut — le porte tel quel au
-compte. `retraite_seule` n'en porte que la part que la Cour des comptes
-rattache à la retraite de l'agent lui-même (tableau n° 15 de son rapport du
-22 septembre 2026) : <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=civils&poste=retraite_stricto_sensu)-->44,1<!--/--> % pour un civil et <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> % pour un militaire en 2025, sur
+toutes les pensions de l'année, celles que l'agent n'acquiert pas en cotisant
+comprises. `retraite_seule`, le défaut depuis le 24 septembre 2026, n'en porte
+donc au compte que la part que la Cour des comptes rattache à la retraite de
+l'agent lui-même, parce que ce qui n'est pas contributif se finance par
+l'impôt et non par le compte ; pour un agent de l'État, l'écart du 4 au 2
+mesure cette part, et non tout ce que l'employeur verse. `entiere` porte le
+taux versé tel quel, et répond à la question du scénario 4 prise au pied de la
+lettre : « et si tout ce qui a été consacré aux pensions avait été porté au
+compte des actifs ? ». La part de la Cour vient du tableau n° 15 de son rapport
+du 22 septembre 2026 : <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=civils&poste=retraite_stricto_sensu)-->44,1<!--/--> % pour un civil et <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> % pour un militaire en 2025, sur
 les <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2025&regime=fonction_publique_etat)-->78,28<!--/--> % versés pour un civil. Les autres années reçoivent la même
 proportion du taux de l'année, qui est une hypothèse — la fiabilité retombe à
 `estimee` —, et le militaire la reçoit du taux civil, parce que c'est la série

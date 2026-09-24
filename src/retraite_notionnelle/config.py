@@ -220,18 +220,20 @@ class ContributionEtat(str, Enum):
     scénarios 4, 5 et 6 avant la bascule), et pour le seul État : les autres
     employeurs publics versent un taux de cotisation, lui un taux d'équilibre.
 
-    * ``ENTIERE`` (défaut) — le taux que l'État a versé au compte
-      d'affectation spéciale « Pensions » : 78,28 % du traitement en 2025 pour
-      un civil. Il paie toutes les pensions de l'année, et le compte en reçoit
-      tout.
-    * ``RETRAITE_SEULE`` — la part de ce taux que la Cour des comptes rattache
-      à la retraite de l'agent lui-même (tableau n° 15 de son rapport du
-      22 septembre 2026) : 44,1 % pour un civil et 51,2 % pour un militaire en
-      2025, la même proportion du taux de l'année les autres années. Le reste
-      paie l'invalidité avant 62 ans, les majorations pour enfants, les départs
-      anticipés et un rapport démographique plus défavorable que celui de
-      l'ensemble des régimes : rien de cela n'est un droit que l'agent aurait
-      acquis en cotisant. Voir ``legislation/contribution_etat_retraite_seule.csv``.
+    * ``RETRAITE_SEULE`` (défaut) — la part du taux versé que la Cour des
+      comptes rattache à la retraite de l'agent lui-même (tableau n° 15 de son
+      rapport du 22 septembre 2026) : 44,1 % pour un civil et 51,2 % pour un
+      militaire en 2025, la même proportion du taux de l'année les autres
+      années. Le reste paie l'invalidité avant 62 ans, les majorations pour
+      enfants, les départs anticipés et un rapport démographique plus
+      défavorable que celui de l'ensemble des régimes : rien de cela n'est un
+      droit que l'agent aurait acquis en cotisant, et la doctrine du projet
+      finance ce qui n'est pas contributif par l'impôt, non par le compte. Voir
+      ``legislation/contribution_etat_retraite_seule.csv``.
+    * ``ENTIERE`` — le taux que l'État a versé au compte d'affectation spéciale
+      « Pensions » : 78,28 % du traitement en 2025 pour un civil. Il paie
+      toutes les pensions de l'année, et le compte en reçoit tout. C'était le
+      défaut jusqu'au 24 septembre 2026.
     """
 
     ENTIERE = "entiere"
@@ -549,8 +551,8 @@ class Parametres:
     part_cotisation: PartCotisation = PartCotisation.SALARIALE
 
     #: Sous ``TOTALE``, le taux de l'État porté au compte d'un de ses agents :
-    #: entier, ou sa seule part « retraite ». Voir :class:`ContributionEtat`.
-    contribution_etat: ContributionEtat = ContributionEtat.ENTIERE
+    #: sa seule part « retraite », ou le taux entier. Voir :class:`ContributionEtat`.
+    contribution_etat: ContributionEtat = ContributionEtat.RETRAITE_SEULE
 
     #: Statut dont les taux servent de référence quand la part employeur du
     #: public est empruntée au privé (``TOTALE_ALIGNEE``), ou quand aucune série

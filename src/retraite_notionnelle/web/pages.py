@@ -184,8 +184,8 @@ PARTS_COTISATION = [
 #: Ce que le compte d'un agent de l'État reçoit de son employeur, là où la
 #: part patronale y est portée : le taux versé, ou sa part « retraite ».
 CONTRIBUTIONS_ETAT = [
-    ("entiere", "Entière, telle que l'État l'a versée (défaut)"),
-    ("retraite_seule", "Sa part « retraite seule », selon la Cour des comptes"),
+    ("retraite_seule", "Sa part « retraite seule », selon la Cour des comptes (défaut)"),
+    ("entiere", "Entière, telle que l'État l'a versée"),
 ]
 
 CONVERSIONS_ACQUIS = [
@@ -678,7 +678,7 @@ class Saisie:
     rattachement: str = "salaire"
     conversion_acquis: str = "reference"
     part_cotisation: str = "salariale"
-    contribution_etat: str = "entiere"
+    contribution_etat: str = "retraite_seule"
     #: Seul ou en couple : la situation de foyer de la garantie vieillesse du
     #: système 4. Le défaut est la personne seule, comme pour l'ASPA du
     #: système 1, de sorte que les deux planchers se comparent.
@@ -3451,14 +3451,17 @@ MESURES_BLOCAGES: dict[str, float] = {
     # Mesurés avec l'âge légal de 65 ans et SANS TVA à taux unique : la
     # proposition ne réforme plus la TVA depuis le 24 septembre 2026. Avec une
     # TVA (``tva_affectee`` positive), l'accueil lit ces mêmes clés autrement,
-    # une dette négative y étant des réserves.
-    "solde_moyen_proposition": -0.9,
+    # une dette négative y étant des réserves. Et le compte d'un agent de
+    # l'État ne reçoit, jusqu'à la bascule, que la part « retraite seule » du
+    # taux que l'État verse — le défaut depuis le même jour : sous le taux
+    # entier, la proposition était à −0,9, 59 % et 0,85, et 1,03 en 2070.
+    "solde_moyen_proposition": -0.5,
     "solde_moyen_actuel": -1.1,
-    "dette_2070_proposition": 59,
+    "dette_2070_proposition": 33,
     "dette_2070_actuel": 66,
-    "coefficient_minimum": 0.85,
+    "coefficient_minimum": 0.9,
     "decennie_coefficient_minimum": 2040,
-    "coefficient_2070": 1.03,
+    "coefficient_2070": 1.06,
     # donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
     # quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
     # réformée.
@@ -3988,13 +3991,14 @@ def _champs_modelisation(saisie: Saisie) -> str:
                 CONTRIBUTIONS_ETAT, saisie.contribution_etat,
                 "systèmes 3 et 4, agents de l'État seulement",
                 complement="L'État ne verse pas une cotisation : il verse ce "
-                "qu'il faut pour payer toutes les pensions de l'année, et le "
-                "compte le reçoit entier. La Cour des comptes n'en rattache à "
-                "la retraite de l'agent lui-même qu'un peu plus de la moitié "
-                "pour un civil ; le reste paie l'invalidité, les majorations "
-                "pour enfants, les départs anticipés et un déséquilibre "
-                "démographique. Mesurée pour une seule année, la même "
-                "proportion est prêtée aux autres."),
+                "qu'il faut pour payer toutes les pensions de l'année. La Cour "
+                "des comptes n'en rattache à la retraite de l'agent lui-même "
+                "qu'un peu plus de la moitié pour un civil ; le reste paie "
+                "l'invalidité, les majorations pour enfants, les départs "
+                "anticipés et un déséquilibre démographique. Par défaut, le "
+                "compte ne reçoit que cette part, mesurée pour une seule année "
+                "et prêtée aux autres dans la même proportion ; « entière » "
+                "lui porte tout ce que l'État a versé."),
         g.liste("foyer", "Situation de foyer",
                 SITUATIONS_FOYER, saisie.foyer,
                 "la proposition libérale seulement",
@@ -6670,7 +6674,20 @@ def _contribution_employeur(comparaison: Comparaison) -> str:
 part — reconstituée par les documents budgétaires de 1995 à 2005, appelée par
 décret depuis 2006 pour l'État, versée à une caisse depuis 1948 pour la fonction
 publique territoriale et hospitalière. Origine, année par année :</p>
-<ul class="serree">{origines}</ul>
+<ul class="serree">{origines}</ul>"""
+        if "retraite_seule" in employeur.annees_par_origine:
+            public += """
+<p class="discret">Pour un agent de l'État, le compte ne reçoit pas tout ce que
+l'employeur verse. Un taux de 82,28 % ne signifie pas qu'un fonctionnaire
+acquiert 82 % de son traitement en droits nouveaux : il est fixé pour que le
+compte d'affectation spéciale « Pensions » soit à l'équilibre, donc pour payer
+les pensions d'aujourd'hui, et il paie aussi l'invalidité, les majorations pour
+enfants, les départs anticipés et un déséquilibre démographique. Rien de cela
+n'est un droit acquis en cotisant : le compte n'en reçoit que la part que la
+Cour des comptes rattache à la retraite de l'agent lui-même. Elle ne l'a
+mesurée que pour une année ; les autres en reçoivent la même proportion.</p>"""
+        else:
+            public += """
 <p class="discret">Et c'est la limite de ces deux scénarios pour un agent
 public. Un taux de 82,28 % ne signifie pas qu'un fonctionnaire acquiert 82 % de
 son traitement en droits nouveaux : il est fixé pour que le compte
@@ -6678,14 +6695,6 @@ d'affectation spéciale « Pensions » soit à l'équilibre, donc pour payer les
 pensions d'aujourd'hui. Le porter au compte répond à une question précise —
 « et si tout ce qui a été consacré aux pensions avait été porté au compte des
 actifs ? » — et à elle seule.</p>"""
-        if "retraite_seule" in employeur.annees_par_origine:
-            public += """
-<p class="discret">Ici, le compte n'en reçoit que la part que la Cour des
-comptes rattache à la retraite de l'agent lui-même : ce que l'État verse paie
-aussi l'invalidité, les majorations pour enfants, les départs anticipés et un
-déséquilibre démographique, et rien de cela n'est un droit acquis en cotisant.
-La Cour n'a mesuré cette part que pour une année ; les autres en reçoivent la
-même proportion.</p>"""
 
     return g.depliant("Qui verse la cotisation", f"""
 <p>Une cotisation retraite a deux parts : ce que l'assuré supporte, et ce que

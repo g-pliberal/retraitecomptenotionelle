@@ -27,7 +27,7 @@ from .carriere import (
     Metier,
     salaire_moyen_annuel,
 )
-from .config import Parametres, PartCotisation, SourceCotisations
+from .config import ContributionEtat, Parametres, PartCotisation, SourceCotisations
 from .donnees.chargement import DonneeInsuffisante, Fiabilite
 from .donnees.cotisants import EffectifsCotisants
 from .donnees.caracteristiques import CaracteristiquesRetraites
@@ -962,6 +962,28 @@ class Simulateur:
         """
         return self._constructeur_variante(
             part_cotisation=PartCotisation.TOTALE,
+        )
+
+    @cached_property
+    def constructeur_prelevement(self) -> ConstructeurCompte:
+        """Ce que le droit en vigueur PRÉLÈVE, salariale et patronale : le
+        dénominateur du rapport de recettes de la page Coût (``cout.TAUX_REELS``).
+
+        C'est le constructeur des scénarios 4 et 5 tant que ce qu'ils portent
+        au compte est ce que l'employeur verse. Sous
+        ``ContributionEtat.RETRAITE_SEULE``, le défaut, ce n'est plus vrai pour
+        l'État : le compte d'un de ses agents ne reçoit que la part de son taux
+        que la Cour des comptes rattache à sa retraite, mais l'État verse le
+        taux entier, et c'est ce taux qui finance le système. Le réglage change
+        ce qui est PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ ; le confondre
+        gonflait de près de moitié la recette que la proposition garde des
+        agents de l'État.
+        """
+        if self.parametres.contribution_etat is ContributionEtat.ENTIERE:
+            return self.constructeur_employeur
+        return self._constructeur_variante(
+            part_cotisation=PartCotisation.TOTALE,
+            contribution_etat=ContributionEtat.ENTIERE,
         )
 
     @cached_property

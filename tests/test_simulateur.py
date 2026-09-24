@@ -937,13 +937,19 @@ def test_le_scenario_5_est_le_3_avec_les_cotisations_employeur(simulateur):
             == pytest.approx(prospectif.droits_acquis.capital))
 
 
-def test_le_scenario_5_reste_inferieur_au_scenario_4(simulateur):
-    """Le 5 ne compte l'employeur qu'à partir de la bascule, le 4 depuis 1995."""
-    carriere = simulateur.carriere_simple(
+def test_le_scenario_5_reste_inferieur_au_scenario_4(entiere):
+    """Le 5 ne compte l'employeur qu'à partir de la bascule, le 4 depuis 1995.
+
+    Sous le taux entier de l'État. Sous sa part « retraite seule », le défaut
+    depuis le 24 septembre 2026, les deux se rejoignent à un demi-point près :
+    ce que le 4 gagne à compter l'employeur plus tôt, il le perd à n'en porter
+    au compte qu'un peu plus de la moitié.
+    """
+    carriere = entiere.carriere_simple(
         annee_naissance=1975, sexe="F", affiliation="fonctionnaire_etat",
         age_debut=23, age_liquidation=64, part_primes=0.20,
     )
-    comparaison = simulateur.simuler(carriere)
+    comparaison = entiere.simuler(carriere)
     assert (comparaison.notionnel_prospectif_employeur.pension_annuelle
             < comparaison.notionnel_retroactif_employeur.pension_annuelle)
 
@@ -1009,13 +1015,16 @@ def test_une_carriere_sncf_a_cheval_sur_1992_melange_les_deux(simulateur):
     assert employeur.annees_trouvees == 13
 
 
-def test_la_part_employeur_est_decomposee(simulateur):
-    """Agent + employeur = total, et l'employeur pèse le plus lourd."""
-    carriere = simulateur.carriere_simple(
-        annee_naissance=1975, sexe="F", affiliation="fonctionnaire_etat",
-        age_debut=23, age_liquidation=64, part_primes=0.20,
-    )
-    employeur = simulateur.simuler(carriere).contribution_employeur
+def test_la_part_employeur_est_decomposee(simulateur, entiere):
+    """Agent + employeur = total, et l'employeur pèse le plus lourd.
+
+    Sous le taux entier, l'origine de chaque année dit d'où vient le taux de
+    l'État : implicite jusqu'en 2005, appelé ensuite. Sous sa part « retraite
+    seule », le défaut, ces mêmes années la disent, et l'agent verse autant.
+    """
+    commun = dict(annee_naissance=1975, sexe="F", affiliation="fonctionnaire_etat",
+                  age_debut=23, age_liquidation=64, part_primes=0.20)
+    employeur = entiere.simuler(entiere.carriere_simple(**commun)).contribution_employeur
     assert employeur.concerne_un_regime_public
     assert employeur.agent + employeur.employeur == pytest.approx(employeur.total)
     assert 0.7 < employeur.part < 0.95
@@ -1023,6 +1032,16 @@ def test_la_part_employeur_est_decomposee(simulateur):
     assert set(employeur.annees_par_origine) == {"implicite", "appelee"}
     assert employeur.annees_par_origine["implicite"] == 8
     assert employeur.annees_repli == 0
+
+    defaut = simulateur.simuler(simulateur.carriere_simple(**commun)).contribution_employeur
+    assert defaut.agent + defaut.employeur == pytest.approx(defaut.total)
+    assert defaut.agent == pytest.approx(employeur.agent)
+    assert defaut.employeur < employeur.employeur
+    assert 0.5 < defaut.part < employeur.part
+    assert set(defaut.annees_par_origine) == {"retraite_seule"}
+    assert (defaut.annees_par_origine["retraite_seule"]
+            == sum(employeur.annees_par_origine.values()))
+    assert defaut.annees_repli == 0
 
 
 def test_les_scenarios_4_et_5_ne_qualifient_pas_la_fiabilite_d_ensemble(simulateur):
@@ -1050,6 +1069,12 @@ def retraite_seule() -> Simulateur:
         contribution_etat=ContributionEtat.RETRAITE_SEULE))
 
 
+@pytest.fixture(scope="module")
+def entiere() -> Simulateur:
+    """Le taux de l'État porté entier : le défaut jusqu'au 24 septembre 2026."""
+    return Simulateur(Parametres().avec(contribution_etat=ContributionEtat.ENTIERE))
+
+
 def _part_employeur_etat(simulateur, annee, militaire=False):
     """Le taux employeur que le scénario 4 porte au compte d'un agent de l'État."""
     periode = next(iter(
@@ -1059,10 +1084,19 @@ def _part_employeur_etat(simulateur, annee, militaire=False):
     return employeur, origine, fiabilite
 
 
-def test_le_taux_de_l_etat_est_porte_entier_par_defaut(simulateur):
-    """Le réglage n'est pas le défaut : le compte reçoit ce que l'État a versé."""
-    assert Parametres().contribution_etat is ContributionEtat.ENTIERE
+def test_le_taux_de_l_etat_est_ramene_a_sa_part_retraite_par_defaut(simulateur):
+    """Le défaut depuis le 24 septembre 2026 : ce qui n'est pas contributif se
+    finance par l'impôt, non par le compte, et le compte d'un agent de l'État
+    ne reçoit que ce que la Cour des comptes rattache à sa retraite."""
+    assert Parametres().contribution_etat is ContributionEtat.RETRAITE_SEULE
     employeur, origine, _ = _part_employeur_etat(simulateur, 2025)
+    assert employeur == pytest.approx(0.441)
+    assert origine == "retraite_seule"
+
+
+def test_le_taux_entier_reste_un_reglage(entiere):
+    """Sous ``entiere``, le compte reçoit ce que l'État a versé, tel quel."""
+    employeur, origine, _ = _part_employeur_etat(entiere, 2025)
     assert employeur == pytest.approx(0.7828)
     assert origine == "appelee"
 
@@ -1098,7 +1132,7 @@ def test_les_autres_annees_recoivent_la_meme_proportion_supposee(retraite_seule)
 
 
 def test_la_part_retraite_seule_ne_touche_que_l_etat_et_la_part_patronale(
-        simulateur, retraite_seule):
+        entiere, retraite_seule):
     """Le privé, la CNRACL, le scénario 1 et la part salariale ne bougent pas.
 
     La CNRACL verse un taux de cotisation, pas un taux d'équilibre : la Cour ne
@@ -1106,7 +1140,7 @@ def test_la_part_retraite_seule_ne_touche_que_l_etat_et_la_part_patronale(
     """
     commun = dict(annee_naissance=1975, sexe="F", age_debut=23, age_liquidation=64)
     for affiliation in ("salarie_prive_non_cadre", "fonctionnaire_territorial_hospitalier"):
-        avant = simulateur.simuler(simulateur.carriere_simple(
+        avant = entiere.simuler(entiere.carriere_simple(
             affiliation=affiliation, **commun))
         apres = retraite_seule.simuler(retraite_seule.carriere_simple(
             affiliation=affiliation, **commun))
@@ -1114,7 +1148,7 @@ def test_la_part_retraite_seule_ne_touche_que_l_etat_et_la_part_patronale(
             assert (getattr(apres, cle).pension_annuelle
                     == pytest.approx(getattr(avant, cle).pension_annuelle)), (affiliation, cle)
 
-    avant = simulateur.simuler(simulateur.carriere_simple(
+    avant = entiere.simuler(entiere.carriere_simple(
         affiliation="fonctionnaire_etat", **commun))
     apres = retraite_seule.simuler(retraite_seule.carriere_simple(
         affiliation="fonctionnaire_etat", **commun))
@@ -1125,7 +1159,34 @@ def test_la_part_retraite_seule_ne_touche_que_l_etat_et_la_part_patronale(
         assert getattr(apres, cle).pension_annuelle < getattr(avant, cle).pension_annuelle, cle
 
 
-def test_avant_la_serie_de_l_etat_le_repli_ne_change_pas(simulateur, retraite_seule):
+def test_le_prelevement_du_droit_en_vigueur_ne_depend_pas_du_reglage(
+        entiere, retraite_seule):
+    """Le réglage change ce qui est PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ.
+
+    Le dénominateur du rapport de recettes de la page Coût — ce que le droit
+    en vigueur prélève sur une carrière — se calcule sur le taux entier de
+    l'État sous les deux réglages. Il a été calculé un moment sur la seule
+    part « retraite » : la recette que la proposition garde des agents de
+    l'État en était gonflée, et quatre tests de ``test_cout.py`` l'ont vu.
+    """
+    carriere = retraite_seule.carriere_simple(
+        annee_naissance=1975, sexe="F", affiliation="fonctionnaire_etat",
+        age_debut=23, age_liquidation=64)
+
+    def cotisations(constructeur):
+        compte = constructeur.construire(
+            carriere, annee_liquidation=carriere.annee_liquidation,
+            annee_debut=carriere.premiere_annee)
+        return {c.annee: c.cotisation for c in compte.cotisations}
+
+    prelevees = cotisations(entiere.constructeur_prelevement)
+    assert entiere.constructeur_prelevement is entiere.constructeur_employeur
+    assert cotisations(retraite_seule.constructeur_prelevement) == pytest.approx(prelevees)
+    portees = cotisations(retraite_seule.constructeur_employeur)
+    assert sum(portees.values()) < 0.8 * sum(prelevees.values())
+
+
+def test_avant_la_serie_de_l_etat_le_repli_ne_change_pas(entiere, retraite_seule):
     """Avant 1995, l'État n'a pas de série : le compte reçoit l'effort du privé.
 
     Cette estimation-là n'est pas un taux d'équilibre, et le réglage n'a rien
@@ -1134,7 +1195,7 @@ def test_avant_la_serie_de_l_etat_le_repli_ne_change_pas(simulateur, retraite_se
     """
     commun = dict(annee_naissance=1955, sexe="H", affiliation="fonctionnaire_etat",
                   age_debut=23, age_liquidation=62)
-    avant = simulateur.simuler(simulateur.carriere_simple(**commun))
+    avant = entiere.simuler(entiere.carriere_simple(**commun))
     apres = retraite_seule.simuler(retraite_seule.carriere_simple(**commun))
     origines = apres.contribution_employeur.annees_par_origine
     assert set(origines) == {"repli", "retraite_seule"}

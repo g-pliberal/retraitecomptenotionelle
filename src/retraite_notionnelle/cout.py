@@ -1805,9 +1805,11 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
     grille = calculer_cas_types(simulateur, cas_types, generations(), liquidation)
     # Ce que le droit en vigueur prélève sur chacune de ces carrières, année par
     # année et sans bascule : le dénominateur du rapport de recettes. Un compte
-    # de plus par couple, soit un sixième de calcul en plus sur la grille.
+    # de plus par couple, soit un sixième de calcul en plus sur la grille. Ce
+    # qui est PRÉLEVÉ, et non ce qui est porté au compte : de l'État, le taux
+    # entier (voir ``Simulateur.constructeur_prelevement``).
     reels = {
-        (code, generation): simulateur.constructeur_employeur.construire(
+        (code, generation): simulateur.constructeur_prelevement.construire(
             comparaison.carriere,
             annee_liquidation=comparaison.carriere.annee_liquidation,
             annee_debut=comparaison.carriere.premiere_annee,

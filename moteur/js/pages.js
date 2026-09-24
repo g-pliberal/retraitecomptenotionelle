@@ -134,8 +134,8 @@ export const PARTS_COTISATION = [
 // Ce que le compte d'un agent de l'État reçoit de son employeur, là où la part
 // patronale y est portée : le taux versé, ou sa part « retraite ».
 export const CONTRIBUTIONS_ETAT = [
-  ["entiere", "Entière, telle que l'État l'a versée (défaut)"],
-  ["retraite_seule", "Sa part « retraite seule », selon la Cour des comptes"],
+  ["retraite_seule", "Sa part « retraite seule », selon la Cour des comptes (défaut)"],
+  ["entiere", "Entière, telle que l'État l'a versée"],
 ];
 
 export const CONVERSIONS_ACQUIS = [
@@ -574,7 +574,7 @@ const DEFAUTS = Object.freeze({
   rattachement: "salaire",
   conversion_acquis: "reference",
   part_cotisation: "salariale",
-  contribution_etat: "entiere",
+  contribution_etat: "retraite_seule",
   // Seul ou en couple : la situation de foyer de la garantie vieillesse du
   // système 4. Le défaut est la personne seule, comme pour l'ASPA.
   foyer: "seul",
@@ -2788,12 +2788,13 @@ function champsModelisation(saisie) {
       CONTRIBUTIONS_ETAT, saisie.contribution_etat,
       "systèmes 3 et 4, agents de l'État seulement", {},
       "L'État ne verse pas une cotisation : il verse ce qu'il faut pour payer "
-      + "toutes les pensions de l'année, et le compte le reçoit entier. La Cour "
-      + "des comptes n'en rattache à la retraite de l'agent lui-même qu'un peu "
-      + "plus de la moitié pour un civil ; le reste paie l'invalidité, les "
-      + "majorations pour enfants, les départs anticipés et un déséquilibre "
-      + "démographique. Mesurée pour une seule année, la même proportion est "
-      + "prêtée aux autres."),
+      + "toutes les pensions de l'année. La Cour des comptes n'en rattache à la "
+      + "retraite de l'agent lui-même qu'un peu plus de la moitié pour un "
+      + "civil ; le reste paie l'invalidité, les majorations pour enfants, les "
+      + "départs anticipés et un déséquilibre démographique. Par défaut, le "
+      + "compte ne reçoit que cette part, mesurée pour une seule année et "
+      + "prêtée aux autres dans la même proportion ; « entière » lui porte tout "
+      + "ce que l'État a versé."),
     g.liste("foyer", "Situation de foyer",
       SITUATIONS_FOYER, saisie.foyer,
       "la proposition libérale seulement", {},
@@ -5995,7 +5996,20 @@ function contributionEmployeur(comparaison) {
 part — reconstituée par les documents budgétaires de 1995 à 2005, appelée par
 décret depuis 2006 pour l'État, versée à une caisse depuis 1948 pour la fonction
 publique territoriale et hospitalière. Origine, année par année :</p>
-<ul class="serree">${origines}</ul>
+<ul class="serree">${origines}</ul>`;
+    if ("retraite_seule" in employeur.annees_par_origine) {
+      public_ += `
+<p class="discret">Pour un agent de l'État, le compte ne reçoit pas tout ce que
+l'employeur verse. Un taux de 82,28 % ne signifie pas qu'un fonctionnaire
+acquiert 82 % de son traitement en droits nouveaux : il est fixé pour que le
+compte d'affectation spéciale « Pensions » soit à l'équilibre, donc pour payer
+les pensions d'aujourd'hui, et il paie aussi l'invalidité, les majorations pour
+enfants, les départs anticipés et un déséquilibre démographique. Rien de cela
+n'est un droit acquis en cotisant : le compte n'en reçoit que la part que la
+Cour des comptes rattache à la retraite de l'agent lui-même. Elle ne l'a
+mesurée que pour une année ; les autres en reçoivent la même proportion.</p>`;
+    } else {
+      public_ += `
 <p class="discret">Et c'est la limite de ces deux scénarios pour un agent
 public. Un taux de 82,28 % ne signifie pas qu'un fonctionnaire acquiert 82 % de
 son traitement en droits nouveaux : il est fixé pour que le compte
@@ -6003,14 +6017,6 @@ d'affectation spéciale « Pensions » soit à l'équilibre, donc pour payer les
 pensions d'aujourd'hui. Le porter au compte répond à une question précise —
 « et si tout ce qui a été consacré aux pensions avait été porté au compte des
 actifs ? » — et à elle seule.</p>`;
-    if ("retraite_seule" in employeur.annees_par_origine) {
-      public_ += `
-<p class="discret">Ici, le compte n'en reçoit que la part que la Cour des
-comptes rattache à la retraite de l'agent lui-même : ce que l'État verse paie
-aussi l'invalidité, les majorations pour enfants, les départs anticipés et un
-déséquilibre démographique, et rien de cela n'est un droit acquis en cotisant.
-La Cour n'a mesuré cette part que pour une année ; les autres en reçoivent la
-même proportion.</p>`;
     }
   }
 
@@ -13928,13 +13934,13 @@ n'est pas petite.</p>`;
 export const MESURES_BLOCAGES = {
   taux_regime_unique: 25.8,
   cout_18_pour_cent: 1.9,
-  solde_moyen_proposition: -0.9,
+  solde_moyen_proposition: -0.5,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: 59,
+  dette_2070_proposition: 33,
   dette_2070_actuel: 66,
-  coefficient_minimum: 0.85,
+  coefficient_minimum: 0.9,
   decennie_coefficient_minimum: 2040,
-  coefficient_2070: 1.03,
+  coefficient_2070: 1.06,
   tva_affectee: 0.0,
   solde_moyen_prospectif: -2.7,
   cout_diviseur_age_legal: 0.2,

@@ -5312,30 +5312,35 @@ en 2025 pour un civil, elle ne garde que <!--chiffre:cellule(data/reference/legi
 strict ; le reste finance l'invalidité avant soixante-deux ans, les majorations
 pour enfants, les départs anticipés des emplois classés et, pour <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=civils&poste=desequilibre_demographique)-->35,3<!--/-->
 points, le déséquilibre démographique du régime. Pour un militaire, dont
-l'employeur paie <!--chiffre:illustration()-->126,07<!--/--> %, elle garde <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> %. Par défaut, le scénario 4, et le
-6 jusqu'à la bascule, créditent au compte le taux entier, et le taux des civils
-au militaire : ils portent donc au compte d'un fonctionnaire d'État ce que son
-employeur verse pour d'autres, et au militaire moins que ce que le sien verse.
+l'employeur paie <!--chiffre:illustration()-->126,07<!--/--> %, elle garde <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> %. Créditer au compte le taux entier,
+comme le scénario 4, et le 6 jusqu'à la bascule, le faisaient jusqu'au
+24 septembre 2026, c'était porter au compte d'un fonctionnaire d'État ce que
+son employeur verse pour d'autres — et au militaire, à qui le modèle crédite le
+taux des civils, moins que ce que le sien verse.
 
-**Le réglage `contribution_etat=retraite_seule` ne leur porte que la part de la
-Cour** — « Contribution de l'État portée au compte » dans les options du site.
-L'année qu'elle a mesurée, le compte reçoit ses deux taux ; les autres années,
-la même proportion du taux versé — <!--chiffre:mesure(retraite_seule)-->56,3<!--/--> % pour un civil —, et c'est une
+**Le compte ne reçoit donc, par défaut, que la part de la Cour**
+(`contribution_etat=retraite_seule`) : ce qui n'est pas contributif se finance
+par l'impôt, non par le compte. Dans les options du site, « Contribution de
+l'État portée au compte » rétablit le taux entier. L'année que la Cour a
+mesurée, le compte reçoit ses deux taux ; les autres années, la même
+proportion du taux versé — <!--chiffre:mesure(retraite_seule)-->56,3<!--/--> % pour un civil —, et c'est une
 hypothèse, que le résultat qualifie d'`estimee`. Pourquoi une proportion
 plutôt qu'un taux fixe : le rapport n'éclaire qu'une autre année, 2020, où le
 taux était de <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2020&regime=fonction_publique_etat)-->74,28<!--/--> % ; la proportion y donne <!--chiffre:mesure(retraite_seule?annee=2020)-->41,8<!--/--> %, un taux fixe <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=civils&poste=retraite_stricto_sensu)-->44,1<!--/-->, et
 la Cour — qui impute cinq points de l'écart avec l'Institut des politiques
 publiques à la seule différence d'année (annexe n° 6) — environ <!--chiffre:illustration()-->39<!--/-->.
-Ce que le réglage déplace est considérable. La fonctionnaire de l'exemple du
-README, née en 1975, passe de <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->+45,0<!--/--> % à <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=retraite_seule)-->−1,3<!--/--> % d'écart au système actuel dans le scénario 4,
-de <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->+44,9<!--/--> % à <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=retraite_seule)-->−3,4<!--/--> % dans la proposition ; le solde moyen de la
-proposition passe de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,87<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=retraite_seule)-->−0,48<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−26<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=retraite_seule)-->−14<!--/--> milliards
+Ce que ce choix déplace est considérable. Sous le taux entier, la fonctionnaire
+de l'exemple du README, née en 1975, aurait <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=entiere)-->+45,0<!--/--> % d'écart au système
+actuel dans le scénario 4 ; sous la part de la Cour, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->−1,3<!--/--> %. Dans la
+proposition, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=entiere)-->+44,9<!--/--> % deviennent <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->−3,4<!--/--> %, et le solde moyen de la proposition
+passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−0,87<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,48<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−26<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−14<!--/--> milliards
 d'euros par an, parce que les droits qu'elle reprend à la bascule étaient
 gonflés de ce qui payait d'autres pensions. Le privé, la CNRACL, le scénario 1
 et la part salariale ne bougent pas, ni les années d'avant 1995, où le compte
-reçoit déjà l'effort d'un salarié du privé. C'est un réglage et non le défaut :
-l'action 129 de la feuille de route dit ce qui reste à établir avant d'en
-décider.
+reçoit déjà l'effort d'un salarié du privé. Deux points restent ouverts, que
+l'action 129 de la feuille de route détaille : une série mesurée année par
+année, plutôt qu'une proportion prêtée à trente ans de taux, et le taux propre
+du militaire.
 
 **Ce que les documents budgétaires ajoutent, et ce qu'ils n'ajoutent pas.** Les
 projets annuels de performances annexés au PLF 2026 — programmes 195, 197 et
@@ -5423,11 +5428,11 @@ indexée sur les prix depuis 1941.
 appliqué, année par année, à la distribution des pensions de l'échantillon
 interrégimes de 2020, déplacée du facteur que la grille donne : la pension
 moyenne que la garantie regarde, rapportée à celle du système actuel en 2020.
-Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,63<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,15<!--/--> en 2070. La garantie coûte
-<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,45<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,7<!--/--> millions de
-bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,29<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->11<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,3<!--/--> millions —, soit
-<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->548<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 433<!--/--> depuis 1959. Ces chiffres
+Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/--> en 2020 et <!--chiffre:mesure(garantie?annee=2070&quoi=facteur)-->1,12<!--/--> en 2070. La garantie coûte
+<!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,47<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,8<!--/--> millions de
+bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,30<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->12<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,3<!--/--> millions —, soit
+<!--chiffre:mesure(cumul_avenir?scenario=garantie)-->575<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 438<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 
@@ -5855,16 +5860,20 @@ sont celles de ce mélange (`VoletLiberal.melange`). Il ne joue que sur la page
 Coût ; le simulateur prolonge la situation de chacun.
 
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
-solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,87<!--/--> point de PIB quand
-tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−1,04<!--/--> quand la moitié le font, de
-<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−1,21<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,39<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
+solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,48<!--/--> point de PIB quand
+tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−0,65<!--/--> quand la moitié le font, de
+<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−0,82<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,00<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
 actuel : sans emploi, le report n'épargne guère que des années de pension, et
 sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
-et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->59<!--/--> % du
-PIB quand tous les reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0.5)-->71<!--/--> % quand la moitié le font,
-contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel. Son avantage sur le système
-actuel tient donc à ce que les reportés travaillent. La part reste à lire dans
+et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->33<!--/--> % du
+PIB quand tous les reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0.5)-->44<!--/--> % quand la moitié le font,
+de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->56<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->70<!--/--> % pour
+la proposition sans âge légal. L'ampleur de son avantage sur le système actuel
+tient donc à ce que les reportés travaillent ; qu'elle en ait un n'en dépend
+plus, depuis que le compte d'un fonctionnaire d'État ne reçoit que la part
+« retraite » du taux de l'État — sous le taux entier, la dette atteindrait
+<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->82<!--/--> % si aucun ne travaillait. La part reste à lire dans
 les évaluations de la réforme de 2010, qui a reculé l'âge légal de deux ans :
 elles ont suivi ce que sont devenus ceux qu'elle a fait attendre.
 
@@ -8257,7 +8266,7 @@ le 19 septembre 2026 :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,1<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,1<!--/--> % — et faux du
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,7<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,6<!--/--> % — et faux du
    scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,7<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
@@ -8507,7 +8516,7 @@ année.
 | Système actuel, convention du COR | **<!--chiffre:mesure(engagement)-->520<!--/--> %** |
 | — dont retraités (pension entière acquise) | <!--chiffre:mesure(engagement?quoi=retraites)-->196<!--/--> % |
 | — dont actifs, au prorata de la carrière faite | <!--chiffre:mesure(engagement?quoi=actifs)-->324<!--/--> % |
-| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->379<!--/--> % |
+| Proposition (système 6) | <!--chiffre:mesure(engagement?scenario=6)-->363<!--/--> % |
 | Notionnel part salariale (système 2) | <!--chiffre:mesure(engagement?scenario=2)-->167<!--/--> % |
 | Publié par Eurostat, tableau 29 | <!--chiffre:mesure(engagement?quoi=publie)-->397<!--/--> % |
 
@@ -9167,9 +9176,9 @@ scénario 4 :
 |---|---:|---:|
 | 2. Notionnel rétroactif, part salariale | **<!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=2)-->−70,7<!--/--> %** | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=2)-->−77,3<!--/--> %** |
 | 3. Notionnel dès 2026, part salariale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=3)-->−24,1<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=3)-->−25,5<!--/--> % |
-| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,5<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+40,2<!--/--> %** |
+| 4. Notionnel rétroactif, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,5<!--/--> % | **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−6,1<!--/--> %** |
 | 5. Notionnel dès 2026, salariale + patronale | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=5)-->−10,2<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=5)-->−14,1<!--/--> % |
-| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−30,4<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->+41,1<!--/--> % |
+| 6. Proposition libérale (<!--chiffre:mesure(parametre?nom=taux_cotisation_liberal)-->18<!--/--> % dès 2026) | <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=6)-->−30,4<!--/--> % | <!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=6)-->−7,1<!--/--> % |
 
 ### Ce n'est pas une contradiction : c'est la somme de quatre choix
 
@@ -9192,10 +9201,10 @@ prises ici et pas là-bas, et chacune est chiffrée ou chiffrable.
    pourquoi les écarts de ce dépôt sont, à carrière égale, plus durs pour les
    femmes.
 3. **Le périmètre de la cotisation.** Les scénarios 2 et 3 ne portent au compte
-   que la part SALARIALE, soit <!--chiffre:mesure(part_salariale_versee?exemple=litterature_prive)-->40<!--/--> % du total versé pour le salarié du privé et
-   <!--chiffre:mesure(part_salariale_versee?exemple=litterature_etat)-->18<!--/--> % pour le fonctionnaire. La littérature raisonne toujours sur la
+   que la part SALARIALE, soit <!--chiffre:mesure(part_salariale_versee?exemple=litterature_prive)-->40<!--/--> % de ce que le scénario 4 y porte pour le salarié
+   du privé et <!--chiffre:mesure(part_salariale_versee?exemple=litterature_etat)-->26<!--/--> % pour le fonctionnaire. La littérature raisonne toujours sur la
    cotisation entière. Le scénario 4 est la comparaison honnête, et il donne
-   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,5<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->+40,2<!--/--> %** pour le fonctionnaire.
+   <!--chiffre:mesure(ecart?exemple=litterature_prive&scenario=4)-->−27,5<!--/--> % pour le privé et **<!--chiffre:mesure(ecart?exemple=litterature_etat&scenario=4)-->−6,1<!--/--> %** pour le fonctionnaire.
 4. **L'âge de liquidation.** La CNAV suppose les âges de départ INCHANGÉS, et
    observe malgré tout que ses perdants partent à <!--chiffre:illustration()-->60<!--/--> ans et ses gagnants à 65.
    Ici, le diviseur est la seule sanction du départ précoce, et il n'est pas
@@ -9277,7 +9286,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2399<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2401<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.
