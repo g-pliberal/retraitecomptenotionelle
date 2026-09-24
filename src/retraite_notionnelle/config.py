@@ -734,39 +734,29 @@ class Parametres:
     #: vérifie. Un donne la baisse d'impôt intégrale.
     part_rendue_aux_salaires: float = 0.5
 
-    #: Le TAUX UNIQUE DE TVA que la proposition substitue, à compter de la
-    #: bascule, aux quatre taux d'aujourd'hui — 20, 10, 5,5 et 2,1 %. Décision
-    #: du Parti libéral, 23 septembre 2026, et ce qu'il rapporte DE PLUS que
-    #: les quatre est affecté au scénario 6.
+    #: Un TAUX UNIQUE DE TVA qui remplacerait, à compter de la bascule, les
+    #: quatre taux d'aujourd'hui — 20, 10, 5,5 et 2,1 % —, ce qu'il rapporte DE
+    #: PLUS que les quatre étant affecté au scénario 6. ZÉRO, le défaut depuis
+    #: le 24 septembre 2026 : LA PROPOSITION NE RÉFORME PAS LA TVA. Les quatre
+    #: taux restent, et rien de la TVA ne va aux retraites ; c'est la décision
+    #: du Parti libéral, qui avait retenu la veille un taux unique affecté à la
+    #: retraite — 21,1 %, puis 19,7 % avec l'âge légal de 65 ans, puis 20 % —
+    #: avant d'y renoncer (actions 123, 125, 127 et 128 de la feuille de route).
     #:
-    #: Pourquoi 20 % : c'est le taux normal d'aujourd'hui, FIXÉ le 24 septembre
-    #: 2026 pour ne plus bouger à chaque hypothèse. Il était jusque-là
-    #: CALCULÉ, par une règle — le taux qui couvre chaque année de 2026 à 2070
-    #: le déficit de la proposition garantie comprise, dans la variante
-    #: rétroactive, sans rien emprunter, arrondi au dixième — qui a donné 21,1 %,
-    #: puis 19,7 % quand la proposition a pris son âge légal de 65 ans. La
-    #: règle reste, comme INDICATEUR : ``cout.taux_tva_requis`` dit, sous les
-    #: hypothèses du moment, le taux qui couvrirait juste chaque année, et la
-    #: page Coût l'affiche à côté de celui-ci. Aux réglages par défaut, elle
-    #: demande 19,69 % ; 20 % couvre chaque année tant qu'environ deux reportés
-    #: sur trois travaillent (``part_reportes_en_emploi``), et en deçà la
-    #: réserve accumulée d'abord porte les années qui manquent. Un taux
-    #: unique égal au taux normal rapporte pourtant plus que les quatre taux
-    #: d'aujourd'hui, parce qu'il supprime les taux réduits : un taux unique de
-    #: 15,46 % rapporterait déjà autant, et chaque point au-delà rapporte 0,38
-    #: point de PIB. `donnees/tva.py` dit d'où viennent ces assiettes — le
-    #: modèle de la TVA théorique de la DG Trésor — et ce que ce chiffrage
-    #: statique ne compte pas.
+    #: Le mécanisme reste, comme variante. Un taux positif paie d'abord la
+    #: garantie vieillesse, et entre ensuite au régime, au poste des impôts
+    #: affectés (``SoldeAnnuel.tva_garantie`` et ``tva_de``) ; la page Coût en
+    #: dit alors le détail et, par ``cout.taux_tva_requis``, le taux qui
+    #: couvrirait juste chaque année. Un taux unique égal au taux normal
+    #: rapporterait déjà plus que les quatre, parce qu'il supprime les taux
+    #: réduits : un taux unique de 15,46 % rapporterait autant, et chaque point
+    #: au-delà rapporte 0,38 point de PIB. `donnees/tva.py` dit d'où viennent
+    #: ces assiettes — le modèle de la TVA théorique de la DG Trésor — et ce que
+    #: ce chiffrage statique ne compte pas.
     #:
-    #: Ce n'est pas une cotisation : la TVA n'est portée au compte de personne
-    #: et n'ouvre aucun droit. Elle comble le déficit que le compte notionnel
-    #: laisse, et tient lieu du coefficient d'équilibre, qui rognerait sinon
-    #: toutes les pensions. Elle entre donc au poste des impôts et taxes
-    #: affectés, que le scénario 6 vidait de tout le reste.
-    #:
-    #: Zéro rend l'ancienne convention, où la TVA n'était pas réformée : un
-    #: test le vérifie.
-    taux_tva_liberal: float = 0.20
+    #: Zéro veut dire « la TVA n'est pas réformée », et non « une TVA à zéro » :
+    #: un test le vérifie.
+    taux_tva_liberal: float = 0.0
 
     #: La seconde : une GARANTIE VIEILLESSE, allocation différentielle qui
     #: remplace l'ASPA et en garde l'âge (65 ans) et le principe — porter les
@@ -823,8 +813,8 @@ class Parametres:
     #:
     #: Un par défaut : tous travaillent, l'hypothèse que la page Coût faisait
     #: sans la nommer et que ``limites.md`` appelle un PLAFOND — c'est de lui
-    #: que vient l'essentiel de ce que l'âge légal fait au solde, et la TVA à
-    #: taux unique est fixée dessus. Ce que font réellement les reportés se lit
+    #: que vient l'essentiel de ce que l'âge légal fait au solde. Ce que font
+    #: réellement les reportés se lit
     #: dans les évaluations du passage de 60 à 62 ans, en 2010 ; une valeur
     #: retenue devra y avoir été lue.
     part_reportes_en_emploi: float = 1.0

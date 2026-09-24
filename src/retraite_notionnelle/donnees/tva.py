@@ -1,10 +1,12 @@
 """Ce que rapporte une TVA à taux unique : l'assiette de la TVA, taux par taux.
 
-Le Parti libéral affecte au scénario 6, depuis le 23 septembre 2026, une TVA à
-TAUX UNIQUE : les quatre taux d'aujourd'hui — 20, 10, 5,5 et 2,1 % — cèdent la
-place à un seul, et ce qu'il rapporte de plus va à la retraite. Ce module dit
-combien, et il ne sait le dire qu'avec une donnée que personne d'autre ne
-publie : l'ASSIETTE de chaque taux.
+Le Parti libéral a affecté au scénario 6, du 23 au 24 septembre 2026, une TVA
+à TAUX UNIQUE : les quatre taux d'aujourd'hui — 20, 10, 5,5 et 2,1 % — cédaient
+la place à un seul, et ce qu'il rapportait de plus allait à la retraite. Il y a
+renoncé : la proposition garde les quatre taux, et le taux unique n'est plus
+qu'une variante (``Parametres.taux_tva_liberal``, zéro par défaut). Ce module
+dit ce qu'elle rapporterait, et il ne sait le dire qu'avec une donnée que
+personne d'autre ne publie : l'ASSIETTE de chaque taux.
 
 D'OÙ VIENT L'ASSIETTE
 ----------------------

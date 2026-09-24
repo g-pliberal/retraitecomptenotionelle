@@ -1123,8 +1123,10 @@ def tva_requise(**reglages: str) -> float:
     """Le taux unique de TVA qui couvrirait juste chaque année, en %, non arrondi.
 
     L'indicateur de ``cout.taux_tva_requis`` : la règle qui a fixé le taux
-    jusqu'au 24 septembre 2026, avant qu'il ne soit figé à 20 %. Les réglages
-    sont ceux du coût : ``emploi_reportes=0.5`` le donne quand la moitié des
+    jusqu'au 24 septembre 2026, avant qu'il ne soit figé à 20 %, puis que la
+    TVA ne soit retirée de la proposition. Il vaut zéro sous les réglages par
+    défaut, qui ne réforment pas la TVA, et la prose ne le cite plus ; il
+    reste pour la variante. Les réglages sont ceux du coût : ``emploi_reportes=0.5`` le donne quand la moitié des
     reportés travaillent, ``age_legal=aucun`` sans âge légal ; ``quoi=annee``
     rend l'année la plus exigeante.
     """

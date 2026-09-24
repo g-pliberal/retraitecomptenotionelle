@@ -3357,39 +3357,22 @@ def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_a_mi_emploi, tmp_pa
             scenario, solde.premiere_annee_projetee, solde.derniere_annee), rel=1e-9)
 
 
-# -- la TVA fixée, et la règle devenue indicateur -----------------------------
+# -- la TVA, que la proposition ne réforme plus -------------------------------
 
 
-def test_le_taux_fixe_laisse_une_marge_que_l_indicateur_mesure(cout_assiette):
-    """La TVA est fixée à 20 % ; l'indicateur dit ce que la règle d'avant
-    demanderait. C'est le taux qui annulerait juste le solde de l'année la
-    plus serrée, et il reste sous le taux fixé : chaque année est couverte."""
+def test_par_defaut_rien_de_la_tva_ne_va_aux_retraites(cout_assiette):
+    """La proposition garde les quatre taux de TVA d'aujourd'hui depuis le
+    24 septembre 2026, et rien de la TVA ne va aux retraites : aucun système
+    n'en reçoit, aucune année, et l'indicateur du taux qui couvrirait le
+    déficit se tait."""
     from retraite_notionnelle.cout import taux_tva_requis
     from retraite_notionnelle.donnees.tva import AssietteTva
 
     parametres = Parametres()
-    tva = AssietteTva(RACINE_DONNEES)
-    requis, annee = taux_tva_requis(cout_assiette.solde, parametres, tva)
-    lignes = [ligne for ligne in cout_assiette.solde.projetees()
-              if ligne.annee >= parametres.annee_bascule]
-    serree = min(lignes, key=lambda ligne: ligne.solde("notionnel_liberal"))
-    assert annee == serree.annee
-    assert (serree.solde("notionnel_liberal")
-            + (requis - parametres.taux_tva_liberal) * tva.part_pib()) == pytest.approx(
-        0.0, abs=1e-15)
-    assert requis < parametres.taux_tva_liberal
-    assert serree.solde("notionnel_liberal") > 0.0
-    sans_reforme = replace(parametres, taux_tva_liberal=0.0)
-    assert taux_tva_requis(cout_assiette.solde, sans_reforme, tva) == (0.0, 0)
-
-
-def test_a_vingt_pour_cent_la_reserve_tient_meme_a_mi_emploi(cout_a_mi_emploi):
-    """Le taux ne suit plus les hypothèses : ce qui compte, c'est que la
-    réserve tienne quand elles bougent. Avec la moitié des reportés en
-    emploi, quelques années des années 2040 sont en déficit, et les excédents
-    d'avant les portent : la proposition n'emprunte jamais."""
-    stocks = [ligne.stock("notionnel_liberal") for ligne in cout_a_mi_emploi.dette.annees]
-    assert stocks and max(stocks) < 0.0
-    assert any(ligne.solde("notionnel_liberal") < 0.0
-               for ligne in cout_a_mi_emploi.solde.projetees() if ligne.annee >= 2026)
-
+    assert parametres.taux_tva_liberal == 0.0
+    for ligne in cout_assiette.solde.annees:
+        for scenario, _ in SCENARIOS:
+            assert ligne.tva_de(scenario) == 0.0 == ligne.tva_garantie(scenario), (
+                ligne.annee, scenario)
+    assert taux_tva_requis(cout_assiette.solde, parametres,
+                           AssietteTva(RACINE_DONNEES)) == (0.0, 0)

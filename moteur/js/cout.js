@@ -999,9 +999,9 @@ function rapportsRecettes(total, annee, bascule) {
 /**
  * Le taux unique de TVA qui couvrirait juste chaque année — un INDICATEUR : la
  * règle qui a fixé le taux jusqu'au 24 septembre 2026, rendue avec l'année la
- * plus exigeante. Le taux est désormais fixé ; celui-ci dit la marge qu'il
- * laisse. `[0, 0]` quand la TVA n'est pas réformée. Voir `taux_tva_requis`
- * dans cout.py.
+ * plus exigeante. La TVA n'est plus réformée depuis, sauf en variante ;
+ * celui-ci dit alors la marge que le taux choisi laisse. `[0, 0]` quand la TVA
+ * n'est pas réformée, le défaut. Voir `taux_tva_requis` dans cout.py.
  */
 export function tauxTvaRequis(solde, parametres, tva) {
   const taux = parametres.taux_tva_liberal;
