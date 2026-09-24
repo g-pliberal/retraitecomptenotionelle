@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 831<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 417<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 467<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -16103,7 +16103,8 @@ n'ont pas cotisés : 20,1 % et 20,6 % (action 126).*
 **Ce qui reste.** Ce paramètre justement : une part des reportés en emploi,
 qui réduirait l'assiette ET les droits acquis pendant l'attente, et ferait de
 19,7 % un taux central plutôt qu'un plancher — *posé le même soir, action 126 ;
-sa valeur reste à lire.* Les excédents d'après 2050 ne
+sa valeur reste à lire. Et le taux lui-même a été fixé à 20 % le lendemain,
+action 127.* Les excédents d'après 2050 ne
 sont toujours employés à rien. Et le chiffrage de la TVA reste statique
 (action 123).
 
@@ -16174,3 +16175,58 @@ du site, si la page Coût doit laisser le lecteur choisir la part.
 `scripts/mesures_prose.py` ; `tests/test_cout.py`, `tests/test_simulateur.py`,
 `tests/js/comparer-cout.mjs` ; `docs/limites.md`, `docs/chiffrage_plf.md`,
 `README.md` ; les témoins des pages, régénérés.
+
+### 127. La TVA à taux unique est fixée à 20 %, et la règle qui la calculait devient un indicateur — `fait`
+
+**La demande**, le 24 septembre 2026 : « je me demande si c'est vraiment une
+bonne idée de faire fluctuer la TVA », puis « fige la TVA à 20 % ». En une
+soirée, le taux était passé de 21,1 % à 19,7 %, et le paramètre de l'action
+126 le faisait dépendre de l'hypothèse la moins sûre du modèle. Le test de
+l'action 125, qui exigeait que le taux par défaut soit celui de la règle,
+aurait imposé d'en changer à chaque modification du modèle.
+
+**Ce qui a été fait.** `taux_tva_liberal = 0.20` (`config.py`, `config.js`) :
+le taux normal d'aujourd'hui, une décision et non plus un calcul. La règle —
+le taux qui couvre juste chaque année le déficit de la variante rétroactive,
+garantie comprise — devient `cout.taux_tva_requis` (deux moteurs), que la note
+TVA de la page Coût affiche à côté du taux fixé, avec l'année qui la fixe, et
+que la sonde `tva_requise` cite dans la prose. `test_tva.py` ne tient plus
+l'égalité du taux et de la règle, mais ce que le taux promet : chaque année
+couverte aux hypothèses par défaut ; `test_cout.py` tient la marge que
+l'indicateur mesure, et que la réserve ne devient pas une dette quand la
+moitié seulement des reportés travaillent. Le site écrit « 20 % » et non
+« 20,0 % », et la note ne dit plus que les prix de ce qui est taxé à 20 %
+« monteraient » ou « baisseraient » : ils ne bougent pas.
+
+**Ce que ça déplace** (réglages par défaut). Aucune année projetée en
+déficit, au plus juste en 2048 avec +0,12 point de PIB ; solde moyen
+2026-2070 de la proposition +0,65 point, réserves de 41 % du PIB en 2070,
+coefficient d'équilibre au plus bas à 1,01 ; la TVA rapporte 1,74 point de
+plus que les quatre taux d'aujourd'hui. Selon la part des reportés en emploi,
+à 20 % :
+
+| Part des reportés en emploi | Solde moyen 2026-2070 | Années projetées en déficit | Réserves en 2070 |
+|---|---:|---:|---:|
+| 100 % (défaut) | +0,65 | 0 | 41 % du PIB |
+| 65 % | +0,53 | une, 2048, à l'équilibre à l'arrondi près | 33 % |
+| 50 % | +0,48 | 8, de 2043 à 2050 | 29 % |
+| 0 % | +0,31 | 17, de 2038 à 2054 | 18 % |
+
+Dans aucun de ces cas la réserve ne devient une dette : les excédents des
+premières années portent les déficits qui suivent, de 2038 à 2054 au pire. L'accueil
+(`MESURES_BLOCAGES`, deux moteurs) cite un excédent moyen de 0,7 point, des
+réserves de 41 %, un coefficient de 1,01 puis 1,23, une TVA qui rapporte 1,7
+point, et une variante prospective à −1,1 ; le chiffrage pour un PLF porte le
+taux de 20 %, et sa variante prospective reste en déficit jusqu'en 2061.
+
+**Ce qui reste.** La part des reportés en emploi, à lire (action 126) : elle
+ne fait plus bouger le taux, mais elle dit si la marge de 20 % est confortable
+ou juste. Et ce que fait la réserve, que rien n'emploie : un taux qui
+baisserait une fois le pic passé, ou un coefficient appliqué aux pensions.
+
+**Fichiers.** `config.py`, `config.js`, `cout.py`, `cout.js` (l'indicateur),
+`web/pages.py`, `pages.js` (la note TVA, le programme, `MESURES_BLOCAGES`, le
+format du taux), `donnees/tva.py`, `scripts/mesures_prose.py`,
+`scripts/chiffrage_plf.py`, `tests/test_tva.py`, `tests/test_cout.py`,
+`README.md`, `docs/limites.md`, `docs/chiffrage_plf.md` ; le paquet, les
+témoins et le chiffrage, régénérés.

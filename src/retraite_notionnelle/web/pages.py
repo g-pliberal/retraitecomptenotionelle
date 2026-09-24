@@ -55,6 +55,7 @@ from ..cout import (
     calculer_dette,
     financer,
     masse_du_scenario,
+    taux_tva_requis,
 )
 from ..donnees.bilan import BilanFige, charger_bilan
 from ..donnees.assiette import AssietteActivite
@@ -2639,7 +2640,7 @@ def _programme_questions(contexte: Contexte) -> str:
     regimes = len(contexte.simulateur().catalogue)
     taux = g.pourcentage(base.taux_cotisation_liberal, decimales=0)
     capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, decimales=0)
-    tva = g.pourcentage(base.taux_tva_liberal, decimales=1)
+    tva = _pourcentage_tva(base.taux_tva_liberal)
     volontaire = g.pourcentage(base.taux_capitalisation_volontaire_applique,
                                decimales=0)
     impose = g.pourcentage(base.taux_cotisation_liberal
@@ -2776,8 +2777,9 @@ agents, l'autre moitié aux pensions déjà promises.</p>""", ""),
 <p>Baisser la cotisation à {taux} a un prix, et la consommation le paie : une
 TVA à taux unique de {tva} remplace les quatre taux d'aujourd'hui, et ce
 qu'elle rapporte de plus va à la retraite, à la garantie vieillesse d'abord.
-Elle est fixée pour couvrir le déficit du nouveau système, garantie comprise,
-jusqu'à son pic des années 2040. {cout} le chiffre année par année.</p>
+Elle est fixée au taux normal d'aujourd'hui, et couvre avec une marge le
+déficit du nouveau système, garantie comprise, jusqu'à son pic des années
+2040. {cout} le chiffre année par année.</p>
 {_programme_blocages(contexte)}""", "les-blocages"),
         ("Ces chiffres sont-ils fiables ?", f"""
 <p>Ils viennent des institutions publiques (INSEE, Conseil d'orientation des
@@ -3344,7 +3346,7 @@ def _programme_restitution(contexte: Contexte) -> str:
     # retraite : la phrase se tait quand elle n'est pas réformée.
     tva_a_leur_place = (
         " À leur place, la retraite reçoit la TVA à taux unique de "
-        f"{g.pourcentage(base.taux_tva_liberal, decimales=1)} : un impôt sur la "
+        f"{_pourcentage_tva(base.taux_tva_liberal)} : un impôt sur la "
         "consommation plutôt que sur les revenus, qui n'ouvre de droit à personne "
         "lui non plus."
         if base.taux_tva_liberal > 0.0 else ""
@@ -3413,20 +3415,20 @@ MESURES_BLOCAGES: dict[str, float] = {
     # l'horizon, en points de PIB, en % du PIB et en valeur.
     # Avec la TVA à taux unique depuis le 23 septembre 2026 : la dette de
     # 2070 est NÉGATIVE, ce sont des réserves. Mesurés avec l'âge légal de
-    # 65 ans et la TVA à 19,7 % qu'il permet (le soir du 23 septembre).
-    "solde_moyen_proposition": 0.5,
+    # 65 ans et la TVA fixée à 20 % (24 septembre 2026).
+    "solde_moyen_proposition": 0.7,
     "solde_moyen_actuel": -1.1,
-    "dette_2070_proposition": -33,
+    "dette_2070_proposition": -41,
     "dette_2070_actuel": 66,
-    "coefficient_minimum": 1.00,
+    "coefficient_minimum": 1.01,
     "decennie_coefficient_minimum": 2040,
-    "coefficient_2070": 1.21,
+    "coefficient_2070": 1.23,
     # donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
     # quatre taux d'aujourd'hui, en points de PIB.
-    "tva_affectee": 1.6,
+    "tva_affectee": 1.7,
     # proposition_prospective.py : le solde moyen de la variante qui laisse le
     # stock intact, en points de PIB, TVA comprise.
-    "solde_moyen_prospectif": -1.3,
+    "solde_moyen_prospectif": -1.1,
     # stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au
     # lieu de celui de 65 ans, en points de PIB par an.
     "cout_diviseur_age_legal": 0.2,
@@ -11052,6 +11054,11 @@ LIGNES_DEPENSES: tuple[tuple[str, str, str], ...] = (
 )
 
 
+def _pourcentage_tva(taux: float) -> str:
+    """Le taux de TVA tel qu'on l'écrit : « 20 % », mais « 19,7 % »."""
+    return g.pourcentage(taux, decimales=0 if round(taux * 1000) % 10 == 0 else 1)
+
+
 def _cout_note_tva(contexte: Contexte, annee: int, ligne: SoldeAnnuel, pib: float,
                    annee_pib: int) -> str:
     """Ce que la proposition ajoute : une TVA à taux unique, et où elle va.
@@ -11073,17 +11080,36 @@ def _cout_note_tva(contexte: Contexte, annee: int, ligne: SoldeAnnuel, pib: floa
     def hausse(taux_actuel: float) -> str:
         return g.nombre(tva.variation_prix(taux, taux_actuel) * 100, 1)
 
-    # Sous 20 %, le taux unique BAISSE le prix de ce qui est taxé au taux
-    # normal : « monteraient de −0,2 % » ne se lirait pas.
+    # Au taux normal, le prix de ce qui y est taxé ne bouge pas ; sous lui, il
+    # BAISSE : « monteraient de −0,2 % » ne se lirait pas.
     normal = tva.variation_prix(taux, 0.20)
-    au_taux_normal = ("ceux de ce qui est taxé à 20 % aujourd'hui "
-                      + (f"monteraient de {hausse(0.20)} %" if normal >= 0.0
-                         else f"baisseraient de {g.nombre(-normal * 100, 1)} %"))
+    if abs(normal) < 1e-12:
+        au_taux_normal = "ceux de ce qui est taxé à 20 % aujourd'hui ne bougeraient pas"
+    else:
+        au_taux_normal = ("ceux de ce qui est taxé à 20 % aujourd'hui "
+                          + (f"monteraient de {hausse(0.20)} %" if normal > 0.0
+                             else f"baisseraient de {g.nombre(-normal * 100, 1)} %"))
+
+    # La règle qui a fixé le taux jusqu'au 24 septembre 2026, devenue un
+    # indicateur : ce que les hypothèses de la page demanderaient, à côté du
+    # taux fixé, qui ne les suit plus.
+    requis, annee_requise = taux_tva_requis(contexte.cout().solde, contexte.base, tva)
+    indicateur = ""
+    if annee_requise:
+        couverture = ("chaque année est couverte, et l'excédent s'accumule en "
+                      "réserve" if requis <= taux + 1e-12
+                      else "certaines années sont en déficit")
+        indicateur = (
+            " Ce taux est fixé : il ne suit pas les hypothèses. Sous celles de "
+            "cette page, le taux qui couvrirait juste chaque année, garantie "
+            f"comprise, serait de {g.pourcentage(requis, decimales=1)}, en "
+            f"{annee_requise} ; à {_pourcentage_tva(taux)}, {couverture}."
+        )
 
     return f"""
 <div class="note"><strong>Ce que la proposition ajoute : une TVA à taux
 unique.</strong> Les quatre taux de TVA d'aujourd'hui, 20, 10, 5,5 et 2,1 %,
-cèdent la place à un seul, {g.pourcentage(taux, decimales=1)}, et ce qu'il
+cèdent la place à un seul, {_pourcentage_tva(taux)}, et ce qu'il
 rapporte de plus va à la retraite de la proposition :
 {g.pourcentage(total, decimales=2)} du PIB en {annee}, soit
 {_milliards(total * pib, 0)} au PIB de {annee_pib}. Il paie d'abord la garantie
@@ -11096,7 +11122,7 @@ taux sont celles que publie la direction générale du Trésor, tenues à leur p
 du PIB de {tva.annee}. Le chiffrage est statique : il suppose que les achats ne
 baissent pas quand les prix montent, et que les prix répercutent la TVA en
 entier : ceux de l'alimentation monteraient de {hausse(0.055)} %,
-{au_taux_normal}.</div>"""
+{au_taux_normal}.{indicateur}</div>"""
 
 
 def _cout_note_restitution(contexte: Contexte, annee: int, pib: float,

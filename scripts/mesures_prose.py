@@ -1120,24 +1120,21 @@ def annees_equilibrees(**reglages: str) -> float:
 
 
 def tva_requise(**reglages: str) -> float:
-    """Le taux unique de TVA que donne la règle de l'action 123, en %, non arrondi.
+    """Le taux unique de TVA qui couvrirait juste chaque année, en %, non arrondi.
 
-    Le taux qui couvre chaque année projetée, à compter de la bascule, le
-    déficit du régime de la proposition garantie comprise, sans emprunter :
-    celui de l'année la plus exigeante. Un point de taux rapporte au régime la
-    part de PIB de l'assiette de la TVA, tant qu'elle couvre déjà la garantie ;
-    le taux requis de chaque année s'en déduit. Les réglages sont ceux du
-    coût : ``emploi_reportes=0.5`` le donne quand la moitié des reportés
-    travaillent, ``age_legal=aucun`` sans âge légal.
+    L'indicateur de ``cout.taux_tva_requis`` : la règle qui a fixé le taux
+    jusqu'au 24 septembre 2026, avant qu'il ne soit figé à 20 %. Les réglages
+    sont ceux du coût : ``emploi_reportes=0.5`` le donne quand la moitié des
+    reportés travaillent, ``age_legal=aucun`` sans âge légal ; ``quoi=annee``
+    rend l'année la plus exigeante.
     """
+    from retraite_notionnelle.cout import taux_tva_requis
     from retraite_notionnelle.donnees.tva import AssietteTva
 
     parametres = _parametres()
-    part_pib = AssietteTva(parametres.racine_donnees).part_pib()
-    taux = parametres.taux_tva_liberal
-    lignes = [ligne for ligne in _cout_de(reglages).solde.projetees()
-              if ligne.annee >= parametres.annee_bascule]
-    return max(taux - ligne.solde("notionnel_liberal") / part_pib for ligne in lignes) * 100
+    requis, annee = taux_tva_requis(_cout_de(reglages).solde, parametres,
+                                    AssietteTva(parametres.racine_donnees))
+    return annee if reglages.get("quoi") == "annee" else requis * 100
 
 
 def dette(**reglages: str) -> float:

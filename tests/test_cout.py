@@ -3355,3 +3355,41 @@ def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_a_mi_emploi, tmp_pa
     for scenario, valeur in portage["soldes_moyens"].items():
         assert valeur == pytest.approx(solde.solde_moyen(
             scenario, solde.premiere_annee_projetee, solde.derniere_annee), rel=1e-9)
+
+
+# -- la TVA fixée, et la règle devenue indicateur -----------------------------
+
+
+def test_le_taux_fixe_laisse_une_marge_que_l_indicateur_mesure(cout_assiette):
+    """La TVA est fixée à 20 % ; l'indicateur dit ce que la règle d'avant
+    demanderait. C'est le taux qui annulerait juste le solde de l'année la
+    plus serrée, et il reste sous le taux fixé : chaque année est couverte."""
+    from retraite_notionnelle.cout import taux_tva_requis
+    from retraite_notionnelle.donnees.tva import AssietteTva
+
+    parametres = Parametres()
+    tva = AssietteTva(RACINE_DONNEES)
+    requis, annee = taux_tva_requis(cout_assiette.solde, parametres, tva)
+    lignes = [ligne for ligne in cout_assiette.solde.projetees()
+              if ligne.annee >= parametres.annee_bascule]
+    serree = min(lignes, key=lambda ligne: ligne.solde("notionnel_liberal"))
+    assert annee == serree.annee
+    assert (serree.solde("notionnel_liberal")
+            + (requis - parametres.taux_tva_liberal) * tva.part_pib()) == pytest.approx(
+        0.0, abs=1e-15)
+    assert requis < parametres.taux_tva_liberal
+    assert serree.solde("notionnel_liberal") > 0.0
+    sans_reforme = replace(parametres, taux_tva_liberal=0.0)
+    assert taux_tva_requis(cout_assiette.solde, sans_reforme, tva) == (0.0, 0)
+
+
+def test_a_vingt_pour_cent_la_reserve_tient_meme_a_mi_emploi(cout_a_mi_emploi):
+    """Le taux ne suit plus les hypothèses : ce qui compte, c'est que la
+    réserve tienne quand elles bougent. Avec la moitié des reportés en
+    emploi, quelques années des années 2040 sont en déficit, et les excédents
+    d'avant les portent : la proposition n'emprunte jamais."""
+    stocks = [ligne.stock("notionnel_liberal") for ligne in cout_a_mi_emploi.dette.annees]
+    assert stocks and max(stocks) < 0.0
+    assert any(ligne.solde("notionnel_liberal") < 0.0
+               for ligne in cout_a_mi_emploi.solde.projetees() if ligne.annee >= 2026)
+

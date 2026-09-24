@@ -995,6 +995,31 @@ function rapportsRecettes(total, annee, bascule) {
  * vigueur. Un avant la bascule, par construction et pour la raison que donne
  * `rapportsRecettes`.
  */
+
+/**
+ * Le taux unique de TVA qui couvrirait juste chaque année — un INDICATEUR : la
+ * règle qui a fixé le taux jusqu'au 24 septembre 2026, rendue avec l'année la
+ * plus exigeante. Le taux est désormais fixé ; celui-ci dit la marge qu'il
+ * laisse. `[0, 0]` quand la TVA n'est pas réformée. Voir `taux_tva_requis`
+ * dans cout.py.
+ */
+export function tauxTvaRequis(solde, parametres, tva) {
+  const taux = parametres.taux_tva_liberal;
+  const part = tva.partPib();
+  const lignes = solde.projetees().filter((ligne) => ligne.annee >= parametres.annee_bascule);
+  if (taux <= 0.0 || part <= 0.0 || !lignes.length) return [0.0, 0];
+  let exigeante = lignes[0];
+  let requis = taux - exigeante.solde("notionnel_liberal") / part;
+  for (const ligne of lignes.slice(1)) {
+    const valeur = taux - ligne.solde("notionnel_liberal") / part;
+    if (valeur > requis) {
+      requis = valeur;
+      exigeante = ligne;
+    }
+  }
+  return [requis, exigeante.annee];
+}
+
 function facteurAssiette(total, annee, bascule) {
   const reference = total[ASSIETTE_ACTUELLE] ?? 0;
   if (annee < bascule || reference <= 0) return 1.0;

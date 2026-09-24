@@ -38,6 +38,7 @@ import {
   calculerDette,
   financer,
   masseDuScenario,
+  tauxTvaRequis,
 } from "./cout.js";
 import { chargerBilan } from "./bilan.js";
 import { CaracteristiquesRetraites } from "./caracteristiques.js";
@@ -9348,6 +9349,11 @@ const LIGNES_DEPENSES = [
  * moitié éteint de la dette. Le partage est un RÉGLAGE, et la note se tait
  * quand il vaut zéro.
  */
+/** Le taux de TVA tel qu'on l'écrit : « 20 % », mais « 19,7 % ». */
+function pourcentageTva(taux) {
+  return g.pourcentage(taux, false, Math.round(taux * 1000) % 10 === 0 ? 0 : 1);
+}
+
 function coutNoteTva(contexte, annee, ligne, pib, anneePib) {
   // Ce que la proposition ajoute : une TVA à taux unique (Parti libéral,
   // 23 septembre 2026), ce que la garantie en prend d'abord, et ce que le
@@ -9360,15 +9366,33 @@ function coutNoteTva(contexte, annee, ligne, pib, anneePib) {
   const tva = new AssietteTva(contexte.paquet);
   const taux = contexte.base.taux_tva_liberal;
   const hausse = (tauxActuel) => g.nombre(tva.variationPrix(taux, tauxActuel) * 100, 1);
-  // Sous 20 %, le taux unique BAISSE le prix de ce qui est taxé au taux normal.
+  // Au taux normal, le prix ne bouge pas ; sous lui, il BAISSE.
   const normal = tva.variationPrix(taux, 0.20);
-  const auTauxNormal = "ceux de ce qui est taxé à 20 % aujourd'hui "
-    + (normal >= 0.0 ? `monteraient de ${hausse(0.20)} %`
-      : `baisseraient de ${g.nombre(-normal * 100, 1)} %`);
+  let auTauxNormal;
+  if (Math.abs(normal) < 1e-12) {
+    auTauxNormal = "ceux de ce qui est taxé à 20 % aujourd'hui ne bougeraient pas";
+  } else {
+    auTauxNormal = "ceux de ce qui est taxé à 20 % aujourd'hui "
+      + (normal > 0.0 ? `monteraient de ${hausse(0.20)} %`
+        : `baisseraient de ${g.nombre(-normal * 100, 1)} %`);
+  }
+  // La règle qui a fixé le taux jusqu'au 24 septembre 2026, devenue un
+  // indicateur. Voir `_cout_note_tva`.
+  const [requis, anneeRequise] = tauxTvaRequis(contexte.cout().solde, contexte.base, tva);
+  let indicateur = "";
+  if (anneeRequise) {
+    const couverture = requis <= taux + 1e-12
+      ? "chaque année est couverte, et l'excédent s'accumule en réserve"
+      : "certaines années sont en déficit";
+    indicateur = " Ce taux est fixé : il ne suit pas les hypothèses. Sous celles de "
+      + "cette page, le taux qui couvrirait juste chaque année, garantie "
+      + `comprise, serait de ${g.pourcentage(requis, false, 1)}, en `
+      + `${anneeRequise} ; à ${pourcentageTva(taux)}, ${couverture}.`;
+  }
   return `
 <div class="note"><strong>Ce que la proposition ajoute : une TVA à taux
 unique.</strong> Les quatre taux de TVA d'aujourd'hui, 20, 10, 5,5 et 2,1 %,
-cèdent la place à un seul, ${g.pourcentage(taux, false, 1)}, et ce qu'il
+cèdent la place à un seul, ${pourcentageTva(taux)}, et ce qu'il
 rapporte de plus va à la retraite de la proposition :
 ${g.pourcentage(total, false, 2)} du PIB en ${annee}, soit
 ${milliards(total * pib, 0)} au PIB de ${anneePib}. Il paie d'abord la garantie
@@ -9381,7 +9405,7 @@ taux sont celles que publie la direction générale du Trésor, tenues à leur p
 du PIB de ${tva.annee}. Le chiffrage est statique : il suppose que les achats ne
 baissent pas quand les prix montent, et que les prix répercutent la TVA en
 entier : ceux de l'alimentation monteraient de ${hausse(0.055)} %,
-${auTauxNormal}.</div>`;
+${auTauxNormal}.${indicateur}</div>`;
 }
 
 function coutNoteRestitution(contexte, annee, pib, anneePib) {
@@ -13135,7 +13159,7 @@ function programmeQuestions(contexte) {
   const regimes = contexte.simulateur().catalogue.taille;
   const taux = g.pourcentage(base.taux_cotisation_liberal, false, 0);
   const capitalise = g.pourcentage(base.taux_capitalisation_obligatoire, false, 0);
-  const tva = g.pourcentage(base.taux_tva_liberal, false, 1);
+  const tva = pourcentageTva(base.taux_tva_liberal);
   const volontaire = g.pourcentage(tauxCapitalisationVolontaireApplique(base),
     false, 0);
   const impose = g.pourcentage(base.taux_cotisation_liberal
@@ -13276,8 +13300,9 @@ agents, l'autre moitié aux pensions déjà promises.</p>`, ""],
 <p>Baisser la cotisation à ${taux} a un prix, et la consommation le paie : une
 TVA à taux unique de ${tva} remplace les quatre taux d'aujourd'hui, et ce
 qu'elle rapporte de plus va à la retraite, à la garantie vieillesse d'abord.
-Elle est fixée pour couvrir le déficit du nouveau système, garantie comprise,
-jusqu'à son pic des années 2040. ${cout} le chiffre année par année.</p>
+Elle est fixée au taux normal d'aujourd'hui, et couvre avec une marge le
+déficit du nouveau système, garantie comprise, jusqu'à son pic des années
+2040. ${cout} le chiffre année par année.</p>
 ${programmeBlocages(contexte)}`, "les-blocages"],
     ["Ces chiffres sont-ils fiables ?", `
 <p>Ils viennent des institutions publiques (INSEE, Conseil d'orientation des
@@ -13789,7 +13814,7 @@ function programmeRestitution(contexte) {
   // la phrase se tait quand elle n'est pas réformée.
   const tvaALeurPlace = base.taux_tva_liberal > 0.0
     ? " À leur place, la retraite reçoit la TVA à taux unique de "
-      + `${g.pourcentage(base.taux_tva_liberal, false, 1)} : un impôt sur la `
+      + `${pourcentageTva(base.taux_tva_liberal)} : un impôt sur la `
       + "consommation plutôt que sur les revenus, qui n'ouvre de droit à personne "
       + "lui non plus."
     : "";
@@ -13844,15 +13869,15 @@ n'est pas petite.</p>`;
 export const MESURES_BLOCAGES = {
   taux_regime_unique: 25.8,
   cout_18_pour_cent: 1.9,
-  solde_moyen_proposition: 0.5,
+  solde_moyen_proposition: 0.7,
   solde_moyen_actuel: -1.1,
-  dette_2070_proposition: -33,
+  dette_2070_proposition: -41,
   dette_2070_actuel: 66,
-  coefficient_minimum: 1.00,
+  coefficient_minimum: 1.01,
   decennie_coefficient_minimum: 2040,
-  coefficient_2070: 1.21,
-  tva_affectee: 1.6,
-  solde_moyen_prospectif: -1.3,
+  coefficient_2070: 1.23,
+  tva_affectee: 1.7,
+  solde_moyen_prospectif: -1.1,
   cout_diviseur_age_legal: 0.2,
 };
 

@@ -2637,6 +2637,30 @@ def _rapports_recettes(masses: dict[str, float], annee: int,
     return rapports
 
 
+def taux_tva_requis(solde: "Solde", parametres: Parametres,
+                    tva: AssietteTva) -> tuple[float, int]:
+    """Le taux unique de TVA qui couvrirait juste chaque année — un INDICATEUR.
+
+    C'est la règle qui a fixé le taux jusqu'au 24 septembre 2026 : le taux qui
+    couvre chaque année projetée, à compter de la bascule, le déficit du régime
+    de la proposition garantie comprise, sans emprunter — celui de l'année la
+    plus exigeante, rendue avec lui. Le taux, lui, est désormais FIXÉ
+    (``Parametres.taux_tva_liberal``) ; celui-ci dit la marge qu'il laisse sous
+    les hypothèses du moment. Un point de taux rapporte au régime la part de PIB
+    de l'assiette de la TVA, tant que la TVA couvre déjà la garantie : le taux
+    requis de chaque année s'en déduit, sans recalculer le coût. Rend
+    ``(0.0, 0)`` quand la TVA n'est pas réformée.
+    """
+    taux = parametres.taux_tva_liberal
+    part = tva.part_pib()
+    lignes = [ligne for ligne in solde.projetees()
+              if ligne.annee >= parametres.annee_bascule]
+    if taux <= 0.0 or part <= 0.0 or not lignes:
+        return (0.0, 0)
+    exigeante = max(lignes, key=lambda ligne: taux - ligne.solde("notionnel_liberal") / part)
+    return (taux - exigeante.solde("notionnel_liberal") / part, exigeante.annee)
+
+
 def _facteur_assiette(masses: dict[str, float], annee: int, bascule: int) -> float:
     """De combien l'âge légal de la proposition élargit l'assiette, en ``annee``.
 

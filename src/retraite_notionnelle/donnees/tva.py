@@ -30,7 +30,7 @@ Deux nombres, et tout le reste en découle :
 * la PART DE PIB de cette assiette, 38,4 % en 2025.
 
 Ce qu'un taux unique ``t`` rapporte DE PLUS est alors ``(t − taux moyen) ×
-part de PIB`` : 1,63 point de PIB à 19,7 %.
+part de PIB`` : 1,74 point de PIB à 20 %.
 
 LA CONVENTION DE PROJECTION
 ----------------------------
@@ -48,8 +48,8 @@ avoir en tête avant de citer un chiffre :
 * aucun effet de volume : les achats ne baissent pas quand les prix montent ;
 * une répercussion intégrale et symétrique, alors que les baisses de TVA
   passent moins dans les prix que les hausses ;
-* aucun effet de prix sur les dépenses indexées : à 19,7 %, l'alimentation
-  prend 13,5 %, les médicaments remboursables 17,2 %, et les pensions et
+* aucun effet de prix sur les dépenses indexées : à 20 %, l'alimentation
+  prend 13,7 %, les médicaments remboursables 17,5 %, et les pensions et
   prestations qui suivent l'indice des prix suivraient ;
 * les arrondis du Trésor, au dixième de milliard par taux, laissent le taux
   moyen entre 15,3 et 15,6 %.

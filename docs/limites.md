@@ -5818,16 +5818,21 @@ sont celles de ce mélange (`VoletLiberal.melange`). Il ne joue que sur la page
 Coût ; le simulateur prolonge la situation de chacun.
 
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
-solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->+0,54<!--/--> point de PIB quand
-tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->+0,36<!--/--> quand la moitié le font, de
-<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->+0,19<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->+0,01<!--/--> sans âge légal : sans emploi, le report
+solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->+0,65<!--/--> point de PIB quand
+tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->+0,48<!--/--> quand la moitié le font, de
+<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->+0,31<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->+0,13<!--/--> sans âge légal : sans emploi, le report
 n'épargne guère que des années de pension, et sert ensuite des pensions plus
-fortes. La TVA à taux unique en hérite, puisqu'elle est fixée pour couvrir
-chaque année ce qui reste : la même règle donne <!--chiffre:mesure(tva_requise)-->19,7<!--/--> % au défaut,
-<!--chiffre:mesure(tva_requise?emploi_reportes=0.5)-->20,1<!--/--> % quand la moitié des reportés travaillent, <!--chiffre:mesure(tva_requise?emploi_reportes=0)-->20,6<!--/--> % quand aucun.
-Le taux retenu, <!--chiffre:mesure(parametre?nom=taux_tva_liberal)-->19,7<!--/--> %, est donc un plancher tant que la part n'a pas été
-lue dans les évaluations de la réforme de 2010, qui a reculé l'âge légal de
-deux ans : elles ont suivi ce que sont devenus ceux qu'elle a fait attendre.
+fortes. La TVA à taux unique n'en hérite plus : elle est fixée, à <!--chiffre:mesure(parametre?nom=taux_tva_liberal)-->20<!--/--> %,
+le taux normal d'aujourd'hui. La règle qui la calculait — le taux qui couvre
+juste chaque année ce qui reste — n'est plus qu'un indicateur, que la page
+Coût affiche : elle demanderait <!--chiffre:mesure(tva_requise)-->19,7<!--/--> % au défaut, <!--chiffre:mesure(tva_requise?emploi_reportes=0.5)-->20,1<!--/--> % quand la moitié
+des reportés travaillent, <!--chiffre:mesure(tva_requise?emploi_reportes=0)-->20,6<!--/--> % quand aucun. Le taux fixé couvre donc chaque
+année tant qu'environ deux reportés sur trois travaillent ; avec la moitié
+seulement, quelques années de la décennie 2040 sont en déficit, et les
+excédents d'avant les portent : la réserve ne devient pas une dette, et un
+test le tient. La part reste à lire dans les évaluations de la réforme de
+2010, qui a reculé l'âge légal de deux ans : elles ont suivi ce que sont
+devenus ceux qu'elle a fait attendre.
 
 **Le PIB ne bouge pas.** Plus d'emploi ferait plus de production, et le modèle
 garde le PIB que le COR projette aux âges d'aujourd'hui. Toutes les parts de
@@ -9142,7 +9147,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2370<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2372<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

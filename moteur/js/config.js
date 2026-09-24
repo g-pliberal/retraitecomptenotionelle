@@ -312,14 +312,14 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: Le TAUX UNIQUE DE TVA que la proposition substitue, à compter de la
   //: bascule, aux quatre taux d'aujourd'hui. Décision du Parti libéral,
   //: 23 septembre 2026 : ce qu'il rapporte DE PLUS que les quatre est affecté
-  //: au scénario 6. 19,7 % couvre chaque année le déficit de la proposition,
-  //: garantie comprise, dans la variante rétroactive, sans rien emprunter —
-  //: c'est le taux du pic de 2048, arrondi au dixième ; 21,1 % avant l'âge
-  //: légal de 65 ans. `tva.js` dit d'où viennent les assiettes.
+  //: au scénario 6. 20 %, le taux normal d'aujourd'hui, FIXÉ le 24 septembre
+  //: 2026 : il ne suit plus la règle qui le calculait (21,1 %, puis 19,7 %),
+  //: devenue un indicateur que la page Coût affiche (`tauxTvaRequis`). Voir
+  //: `config.py`. `tva.js` dit d'où viennent les assiettes.
   //: Ce n'est pas une cotisation : la TVA n'ouvre aucun droit, elle comble ce
   //: que le compte notionnel laisse. Zéro rend l'ancienne convention, où la
   //: TVA n'était pas réformée.
-  taux_tva_liberal: 0.197,
+  taux_tva_liberal: 0.20,
   //: Montants MENSUELS, en euros de `annee_euros_garantie_vieillesse`, ramenés
   //: à l'année de liquidation par l'indice des prix. 800 + 250 = 1 050 € seul,
   //: 800 € par personne à deux.
