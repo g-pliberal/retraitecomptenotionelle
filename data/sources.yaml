@@ -1476,13 +1476,24 @@ institutions:
         url: https://www.ccomptes.fr/fr/publications/les-retraites-des-fonctionnaires-de-letat
         document: https://www.ccomptes.fr/sites/default/files/2026-09/20260922-Retraites-fonctionnaires-de-l-Etat.pdf
         acces: document
+        blocage: reseau
+        fichier_local: 20260922-Retraites-fonctionnaires-de-l-Etat.pdf
+        miroir: https://github.com/g-pliberal/retraitecomptenotionelle/releases/download/documents-apportes/20260922-Retraites-fonctionnaires-de-l-Etat.pdf
         sha256: 3d0a439f5bdf86ad8a6fe8409123573fa16c89b274b9662482dd00c5178e41db
         statut_integration: saisi
         note: >-
           Cent dix-huit pages, lues en entier le 23 septembre 2026 depuis une
           session de bureau, qui a joint `ccomptes.fr` sans difficulté ; les
           données de ses vingt-six graphiques sont publiées à côté
-          (`Open-data-58-2-Retraites-FPE.zip`, empreinte 10d8ac5b…be9c). Le
+          (`Open-data-58-2-Retraites-FPE.zip`, empreinte 10d8ac5b…be9c). Une
+          session cloud, elle, ne le joint pas : le 24 septembre 2026, la
+          page, le PDF et le zip ont rendu tous trois « Connection reset by
+          peer », le tunnel ouvert mais la poignée de main TLS restée sans
+          réponse onze secondes — le constat de `cdc_rapports_retraites` du
+          22 septembre. Le PDF et le zip sont donc déposés sur la release
+          `documents-apportes` du dépôt, sous leur nom et avec les mêmes
+          empreintes, vérifiées le même jour ; `source_locale.py --recuperer`
+          y reprend le PDF, et le zip se télécharge de la même adresse. Le
           rapport alimente UNE table, saisie à la main : son tableau n° 15
           (page 90), qui décompose le taux de contribution de l'État de 2025
           poste par poste et n'en garde que 44,1 % (civils) et 51,2 %
