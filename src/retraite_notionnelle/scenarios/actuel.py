@@ -158,6 +158,10 @@ class _EligibleMinimumGaranti:
     #: La pension est-elle liquidée au taux plein, ou l'assuré atteignait-il
     #: l'âge d'ouverture de ses droits avant 2011 ?
     ouvert: bool
+    #: Durée des services et bonifications qui ouvre le pourcentage maximum :
+    #: le d de L. 17 y rapporte le minimum d'une pension de moins de quinze
+    #: ans. ``None`` garde le c, un quinzième de 57,5 % par année.
+    duree_maximum: int | None = None
 
 
 @dataclass
@@ -788,6 +792,28 @@ SERVICES_MINIMAUX_MILITAIRES = 15.0
 #: Trimestres de services que le II de l'article L. 14 ajoute à la durée
 #: d'ouverture pour borner la décote militaire, et plafond de celle-ci.
 TRIMESTRES_DECOTE_MILITAIRE = 10
+
+#: Trimestres dont l'âge d'annulation de la décote est minoré, pour ouvrir le
+#: minimum garanti à qui n'a pas la durée, selon l'année où l'âge d'ouverture
+#: du droit est atteint : tableau de l'article 3 du décret n° 2010-1744 du
+#: 30 décembre 2010, pris pour le IV de l'article 45 de la loi n° 2010-1330.
+#: Aucun à partir de 2016.
+MINORATION_AGE_MINIMUM_GARANTI = {2011: 9, 2012: 7, 2013: 5, 2014: 3, 2015: 1}
+
+#: Surcote de l'emploi classé de la fonction publique (loi n° 2023-270, article
+#: 10, XXIV, D ; décret n° 2023-435, article 13, II, D) : première génération
+#: des marches de 2023 — nés à compter du 1er septembre 1966 pour l'active, du
+#: 1er septembre 1971 pour la super-active —, et années ajoutées à l'âge
+#: anticipé ou minoré pour obtenir l'âge de la surcote.
+SURCOTE_EMPLOIS_CLASSES = {
+    "active": (1966 + 8 / 12, 5.0),
+    "super_active": (1971 + 8 / 12, 10.0),
+}
+
+#: Âge de la surcote « applicable avant l'entrée en vigueur » de la réforme de
+#: 2023, que le même D laisse aux générations classées d'avant ces marches :
+#: l'âge de L. 161-17-2 pour les générations nées depuis 1955.
+AGE_SURCOTE_AVANT_2023 = 62.0
 
 
 @dataclass(frozen=True)
@@ -1771,9 +1797,26 @@ class MinimumGaranti:
             applicable = candidate
         return self._bareme[applicable]
 
-    def montant(self, annee_liquidation: int,
-                trimestres_services: int) -> tuple[float, Fiabilite] | None:
-        """Plancher opposable pour une durée de services donnée."""
+    def montant(self, annee_liquidation: int, trimestres_services: int,
+                duree_maximum: int | None = None
+                ) -> tuple[float, Fiabilite] | None:
+        """Plancher opposable pour une durée de services donnée.
+
+        **Sous quinze ans, deux règles, et le module n'en servait qu'une.** Le
+        c de L. 17 donne un quinzième de 57,5 % par année de services ; depuis
+        la loi du 9 novembre 2010 (article 53, V), il ne vaut plus que pour la
+        pension liquidée pour INVALIDITÉ, et le d sert toute autre pension :
+        « par année de services effectifs, [le montant plein] rapporté à la
+        durée des services et bonifications nécessaire pour obtenir le
+        pourcentage maximum ». Treize ans pour un sédentaire né en 1964 donnent
+        52/170 de la référence — 417,94 € par mois en 2026, l'exemple de
+        service-public.gouv.fr (fiche F21142) et la table du Service des
+        retraites de l'État —, et non les 680,90 € du c, que le modèle servait
+        à tous. ``duree_maximum`` est ce dénominateur ; ``None`` garde le c,
+        droit de qui avait atteint l'âge d'ouverture de ses droits avant 2011
+        (article 45, V, de la même loi) et de l'invalidité, que le modèle ne
+        sert pas.
+        """
         bareme = self.bareme(annee_liquidation)
         reference = self.reference(annee_liquidation)
         if bareme is None or reference is None:
@@ -1782,7 +1825,9 @@ class MinimumGaranti:
         duree = max(0, min(trimestres_services, self.SEUIL_HAUT))
         if duree <= 0:
             return None
-        if duree < self.SEUIL_BAS:
+        if duree < self.SEUIL_BAS and duree_maximum:
+            taux = duree / duree_maximum
+        elif duree < self.SEUIL_BAS:
             taux = part * duree / self.SEUIL_BAS
         elif duree >= self.SEUIL_HAUT:
             taux = 1.0
@@ -2953,11 +2998,13 @@ class ScenarioActuel:
 
         C'est lui, et non l'âge anticipé, qui commande la SURCOTE : le III de
         l'article L. 14 ne la donne qu'« au-delà de l'âge mentionné à l'article
-        L. 161-17-2 », et le D du XXIV de l'article 10 de la loi du 14 avril
-        2023 le confirme pour les emplois classés — l'âge anticipé majoré de
-        cinq années, l'âge minoré majoré de dix, c'est-à-dire l'âge légal dans
-        les deux cas. Compter la surcote depuis cinquante-sept ans aurait payé
-        deux fois l'avantage du classement.
+        L. 161-17-2 ». Compter la surcote depuis cinquante-sept ans aurait payé
+        deux fois l'avantage du classement. Mais l'emploi classé n'attend pas
+        l'âge légal de SA génération : le D du XXIV de l'article 10 de la loi
+        du 14 avril 2023 lui donne l'âge anticipé majoré de cinq années, qui
+        est l'âge légal de la génération née cinq ans plus tôt — voir
+        :meth:`_age_surcote`. Cette docstring disait « l'âge légal dans les deux
+        cas », et c'était faux de toute la montée en charge.
         """
         if periode.age_table:
             propres = self.ages_regimes.ages(periode.age_table, carriere.generation)
@@ -2975,12 +3022,41 @@ class ScenarioActuel:
         L'âge légal de droit commun, sauf pour la SNCF et la RATP, dont les
         décrets écrivent leur propre calendrier : le compter depuis leur âge
         d'ouverture payait la surcote dix ans trop tôt à un agent de conduite.
+
+        **Et sauf pour l'emploi classé de la fonction publique.** Le D du XXIV
+        de l'article 10 de la loi du 14 avril 2023 déroge au III de L. 14 :
+        l'âge de la surcote est l'âge anticipé majoré de cinq années pour les
+        actifs nés à compter du 1er septembre 1966, l'âge minoré majoré de dix
+        pour les super-actifs nés à compter du 1er septembre 1971, et, avant ces
+        dates, « celui applicable avant l'entrée en vigueur » de la réforme —
+        soixante-deux ans. Le II, D, de l'article 13 du décret n° 2023-435 dit
+        la même chose pour la CNRACL et le FSPOEIE, et le décret n° 2026-344
+        l'écrit en toutes lettres : soixante-deux ans et neuf mois pour les
+        actifs nés de 1968 à mars 1970, soixante-quatre ans à partir de 1974.
+        Le modèle leur opposait l'âge légal de LEUR génération, en croyant que
+        l'âge anticipé majoré de cinq ans y revenait ; il revient à celui de la
+        génération née cinq ans plus tôt, et un fonctionnaire actif né en 1969
+        attendait soixante-quatre ans une surcote que la loi lui ouvre à
+        soixante-deux ans et neuf mois.
         """
         if periode.age_surcote_regimes_speciaux:
             propre = self.ages_surcote_regimes_speciaux.age(carriere.generation)
             if propre is not None:
                 return propre[0]
-        return self._age_ouverture_commun(periode, carriere)
+        commun = self._age_ouverture_commun(periode, carriere)
+        if self.catalogue[periode.regime].famille != "fonction_publique":
+            return commun
+        derogation = self._derogation_active(periode, carriere)
+        if derogation is None:
+            return commun
+        classement = self._statut_dominant(carriere, self.affiliations.classements_actifs)
+        marche = SURCOTE_EMPLOIS_CLASSES.get(classement or "")
+        if marche is None:
+            return commun
+        premiere_generation, majoration = marche
+        if carriere.generation + 1e-9 >= premiere_generation:
+            return derogation.age_ouverture + majoration
+        return min(commun, AGE_SURCOTE_AVANT_2023)
 
     def _periodes_parcourues(
             self, carriere: Carriere
@@ -5013,6 +5089,9 @@ class ScenarioActuel:
             #: Trimestres de décote effectivement retenus : la condition
             #: d'ouverture du minimum garanti en dépend.
             trimestres_decote = 0.0
+            #: Âge d'annulation de la décote, que l'ouverture transitoire du
+            #: minimum garanti minore.
+            age_annulation: float | None = None
             if not ignorer_penalite_age:
                 decote, age_annulation, fiabilite_decote = self._decote(
                     periode, carriere, annee_liquidation
@@ -5101,15 +5180,38 @@ class ScenarioActuel:
                 # Depuis la loi du 9 novembre 2010, le minimum garanti n'est dû
                 # qu'au taux plein — décote nulle, ou durée requise atteinte.
                 # Les assurés qui atteignaient l'âge d'ouverture de leurs
-                # droits avant 2011 gardent le droit inconditionnel.
+                # droits avant 2011 gardent le droit inconditionnel, et le c
+                # de L. 17 sous quinze ans de services ; les autres ont le d,
+                # que la même loi a créé (voir `MinimumGaranti.montant`).
                 age_ouverture = self._age_ouverture(periode, carriere)
+                ancien_droit = carriere.annee_naissance + age_ouverture < 2011
+                # L'âge qui ouvre le minimum sans la durée est l'âge
+                # d'annulation de la décote, MINORÉ à titre transitoire selon
+                # l'année où l'âge d'ouverture est atteint (IV de l'article 45
+                # de la loi, article 3 du décret n° 2010-1744) : le modèle le
+                # refusait neuf trimestres trop longtemps à qui ouvrait ses
+                # droits en 2011.
+                fonction_publique = self.catalogue[code].famille == "fonction_publique"
+                minoration = MINORATION_AGE_MINIMUM_GARANTI.get(
+                    carriere.date_naissance.plus_mois(en_mois(age_ouverture)).annee, 0
+                ) if fonction_publique else 0
                 eligibles_garanti.append(_EligibleMinimumGaranti(
                     indice=len(pensions),
                     trimestres_services=cumul_plafonne("services", membres),
                     ouvert=(
-                        carriere.annee_naissance + age_ouverture < 2011
+                        ancien_droit
                         or trimestres_decote <= 0
                         or trimestres >= requis
+                        or (minoration > 0 and age_annulation is not None
+                            and age_liquidation + 1e-9
+                            >= age_annulation - minoration / 4.0)
+                    ),
+                    # Le d et la minoration ne valent que pour la fonction
+                    # publique : la Banque de France a les siens depuis son
+                    # décret de 2012, que sa fiche ne date pas.
+                    duree_maximum=(
+                        proratisation if fonction_publique and not ancien_droit
+                        else None
                     ),
                 ))
             pensions.append(PensionRegime(
@@ -5342,7 +5444,8 @@ class ScenarioActuel:
                 if not eligible.ouvert:
                     continue
                 plancher = self.minimum_garanti.montant(
-                    annee_liquidation, eligible.trimestres_services
+                    annee_liquidation, eligible.trimestres_services,
+                    eligible.duree_maximum,
                 )
                 if plancher is None:
                     continue

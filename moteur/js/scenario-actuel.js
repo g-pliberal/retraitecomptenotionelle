@@ -96,6 +96,27 @@ const SERVICES_MINIMAUX_MILITAIRES = 15.0;
 const TRIMESTRES_DECOTE_MILITAIRE = 10;
 
 /**
+ * Trimestres dont l'âge d'annulation de la décote est minoré pour ouvrir le
+ * minimum garanti sans la durée, selon l'année où l'âge d'ouverture est
+ * atteint : article 3 du décret n° 2010-1744 du 30 décembre 2010. Aucun à
+ * partir de 2016.
+ */
+const MINORATION_AGE_MINIMUM_GARANTI = { 2011: 9, 2012: 7, 2013: 5, 2014: 3, 2015: 1 };
+
+/**
+ * Surcote de l'emploi classé de la fonction publique (loi n° 2023-270, article
+ * 10, XXIV, D) : première génération des marches de 2023, et années ajoutées à
+ * l'âge anticipé ou minoré.
+ */
+const SURCOTE_EMPLOIS_CLASSES = {
+  active: [1966 + 8 / 12, 5.0],
+  super_active: [1971 + 8 / 12, 10.0],
+};
+
+/** Âge de la surcote d'avant la réforme de 2023, laissé aux classés plus âgés. */
+const AGE_SURCOTE_AVANT_2023 = 62.0;
+
+/**
  * Le seul dispositif pour enfants qu'un régime EN POINTS puisse porter : une
  * majoration de durée d'assurance ne touche que la durée, qu'il oppose aussi ;
  * une bonification entre aux services, qu'il n'a pas.
@@ -1020,6 +1041,16 @@ export class ScenarioActuel {
    * Âge au-delà duquel les trimestres cotisés ouvrent la surcote : l'âge légal
    * de droit commun, sauf pour la SNCF et la RATP, qui écrivent le leur.
    */
+  /**
+   * Âge au-delà duquel les trimestres cotisés ouvrent la surcote : l'âge légal
+   * de droit commun, sauf la SNCF et la RATP, qui ont leur calendrier, et
+   * l'emploi classé de la fonction publique. Pour lui, le D du XXIV de
+   * l'article 10 de la loi du 14 avril 2023 (et le II, D, de l'article 13 du
+   * décret n° 2023-435) donne l'âge anticipé majoré de cinq années aux actifs
+   * nés à compter du 1er septembre 1966, l'âge minoré majoré de dix aux
+   * super-actifs nés à compter du 1er septembre 1971, et soixante-deux ans
+   * avant — et non l'âge légal de leur génération.
+   */
   ageSurcote(periode, carriere) {
     if (periode.age_surcote_regimes_speciaux) {
       const propre = this.agesSurcoteRegimesSpeciaux.age(carriere.generation);
@@ -1027,7 +1058,24 @@ export class ScenarioActuel {
         return propre[0];
       }
     }
-    return this.ageOuvertureCommun(periode, carriere);
+    const commun = this.ageOuvertureCommun(periode, carriere);
+    if (this.catalogue.obtenir(periode.regime).famille !== "fonction_publique") {
+      return commun;
+    }
+    const derogation = this.derogationActive(periode, carriere);
+    if (derogation === null) {
+      return commun;
+    }
+    const classement = this.statutDominant(carriere, this.affiliations.classementsActifs);
+    const marche = SURCOTE_EMPLOIS_CLASSES[classement ?? ""];
+    if (marche === undefined) {
+      return commun;
+    }
+    const [premiereGeneration, majoration] = marche;
+    if (carriere.generation + 1e-9 >= premiereGeneration) {
+      return derogation.ageOuverture + majoration;
+    }
+    return Math.min(commun, AGE_SURCOTE_AVANT_2023);
   }
 
   ageOuvertureCommun(periode, carriere) {
@@ -2732,10 +2780,14 @@ export class ScenarioActuel {
       // Trimestres de décote effectivement retenus : la condition d'ouverture
       // du minimum garanti en dépend.
       let trimestresDecote = 0.0;
+      // Âge d'annulation de la décote, que l'ouverture transitoire du minimum
+      // garanti minore.
+      let ageAnnulation = null;
       if (!ignorerPenaliteAge) {
-        const [decote, ageAnnulation, fiabiliteDecote] = this.decote(
+        const [decote, ageAnnulationPeriode, fiabiliteDecote] = this.decote(
           periode, carriere, anneeLiquidation,
         );
+        ageAnnulation = ageAnnulationPeriode;
         trimestresDecote = this.trimestresDeDecote(
           periode, carriere, trimestres, requis, ageLiquidation, ageAnnulation,
         );
@@ -2749,9 +2801,11 @@ export class ScenarioActuel {
         }
         // La surcote ne récompense que les trimestres COTISÉS APRÈS l'âge
         // légal ET au-delà de la durée requise.
-        // Elle se compte depuis l'âge légal DE DROIT COMMUN, même pour un
-        // emploi classé, et le militaire n'en a aucune : le III de l'article
-        // L. 14 ne la donne qu'au « fonctionnaire civil ».
+        // Elle se compte depuis l'âge légal de droit commun — pour l'emploi
+        // classé, depuis l'âge anticipé ou minoré majoré de cinq ou dix ans
+        // (XXIV, D, de la loi du 14 avril 2023) —, et le militaire n'en a
+        // aucune : le III de l'article L. 14 ne la donne qu'au « fonctionnaire
+        // civil ».
         let supplementaires = Math.max(0, trimestres - requis);
         const ageOuverture = this.ageSurcote(periode, carriere);
         if (periode.surcote_par_trimestre && supplementaires > 0
@@ -2805,14 +2859,28 @@ export class ScenarioActuel {
       if (periode.avantages_non_contributifs.includes("minimum_garanti")) {
         // Depuis la loi du 9 novembre 2010, le minimum garanti n'est dû qu'au
         // taux plein. Les assurés qui atteignaient l'âge d'ouverture de leurs
-        // droits avant 2011 gardent le droit inconditionnel.
+        // droits avant 2011 gardent le droit inconditionnel, et le c de L. 17
+        // sous quinze ans ; les autres ont le d.
         const ageOuverturePeriode = this.ageOuverture(periode, carriere);
+        const ancienDroit = carriere.annee_naissance + ageOuverturePeriode < 2011;
+        // L'âge d'annulation de la décote qui ouvre le minimum est minoré à
+        // titre transitoire, selon l'année où l'âge d'ouverture est atteint
+        // (décret n° 2010-1744, article 3).
+        const fonctionPublique = this.catalogue.obtenir(code).famille === "fonction_publique";
+        const minoration = fonctionPublique
+          ? (MINORATION_AGE_MINIMUM_GARANTI[
+            carriere.dateNaissance.plusMois(enMois(ageOuverturePeriode)).annee] ?? 0)
+          : 0;
         eligiblesGaranti.push({
           indice: indicePension,
           trimestresServices: cumulPlafonne("services", membres),
-          ouvert: carriere.annee_naissance + ageOuverturePeriode < 2011
+          ouvert: ancienDroit
             || trimestresDecote <= 0
-            || trimestres >= requis,
+            || trimestres >= requis
+            || (minoration > 0 && ageAnnulation !== null
+              && ageLiquidation + 1e-9 >= ageAnnulation - minoration / 4),
+          // Le d et la minoration ne valent que pour la fonction publique.
+          dureeMaximum: fonctionPublique && !ancienDroit ? proratisation : null,
         });
       }
       pensions.push({
@@ -3029,7 +3097,7 @@ export class ScenarioActuel {
           continue;
         }
         const plancher = this.minimumGaranti.montant(
-          anneeLiquidation, eligible.trimestresServices,
+          anneeLiquidation, eligible.trimestresServices, eligible.dureeMaximum,
         );
         if (plancher === null) {
           continue;
