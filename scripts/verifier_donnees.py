@@ -3152,6 +3152,20 @@ def _employeur_du_journal_officiel(regime: str) -> dict[tuple, float]:
     }
 
 
+def source_employeur_etat_militaires() -> dict[tuple, float]:
+    """Contribution de l'État pour ses MILITAIRES, 2006-2026.
+
+    Le 1° de l'article L. 61 du code des pensions porte deux taux, un pour les
+    personnels civils et un pour les militaires ; le premier vient de la fiche
+    du Service des retraites de l'État, le second des décrets qui le fixent,
+    lus dans la base LEGI par ``dila_legi_contribution_employeur`` : 100 % en
+    2006, 126,07 % depuis 2013. Le texte, et non la fiche du service, qui
+    porte 106,83 % pour 2010 là où le décret n° 2010-53 fixe 108,63 %.
+    """
+    return {(annee,): taux for (annee, _), taux
+            in _employeur_du_journal_officiel("fonction_publique_etat_militaires").items()}
+
+
 def source_employeur_ratp() -> dict[tuple, float]:
     """Contribution de la RATP à la caisse de son personnel, 2007-2025.
 
@@ -6005,6 +6019,62 @@ CERTIFICATIONS = (
         decimales=6,
         tolerance=5e-7,
         gabarit={"nature": "appelee"},
+    ),
+    # -- l'État pour ses militaires : un second taux au 1° de l'article L. 61 --
+    # Un fichier à part, parce que ce n'est pas un régime de plus : c'est le
+    # même, pour une autre population, et la table des régimes publics compte
+    # ses régimes.
+    Certification(
+        nom="employeur_public_etat_militaires",
+        chemin=REFERENCE / "legislation" / "contribution_employeur_militaires.csv",
+        cles=("annee",),
+        colonne="taux",
+        source=source_employeur_etat_militaires,
+        origine="DILA, base LEGI, décrets fixant le taux de la contribution "
+                "employeur de l'État pour les personnels militaires (n° 2006-23 "
+                "à n° 2012-1507)",
+        decimales=6,
+        tolerance=5e-7,
+        entete=(
+            "# Contribution EMPLOYEUR de l'État pour ses MILITAIRES, par année",
+            "# source_id: dila_legi_contribution_employeur",
+            "# unite: fraction de l'assiette de la retenue pour pension (solde",
+            "#        indiciaire brut ; les primes en sont exclues)",
+            "#",
+            "# Le 1° de l'article L. 61 du code des pensions civiles et militaires de",
+            "# retraite fixe DEUX taux de contribution à la charge de l'État : l'un pour",
+            "# les personnels civils — la ligne `fonction_publique_etat` de",
+            "# contribution_employeur_public.csv —, l'autre pour les personnels",
+            "# militaires, ici. Celui des militaires est plus du double : 100 % en 2006,",
+            "# 126,07 % depuis 2013, quand le civil passait de 49,90 % à 74,28 %, puis",
+            "# à 82,28 % en 2026. Comme lui, c'est un taux d'ÉQUILIBRE : il paie toutes",
+            "# les pensions militaires de l'année, départs anticipés compris.",
+            "#",
+            "# D'OÙ VIENNENT CES TAUX. Des décrets qui les fixent, lus dans la base LEGI",
+            "# par scripts/fetch/dila_legi_contribution_employeur.py : n° 2006-23,",
+            "# 2006-1798, 2008-53, 2008-1534, 2010-53, 2011-11 et 2011-2037, puis",
+            "# l'article 1er du décret n° 2012-1507 du 27 décembre 2012 dans ses trois",
+            "# rédactions — les décrets n° 2025-61 et n° 2025-1341, qui ont relevé le",
+            "# taux civil, n'ont pas touché celui des militaires. Chaque taux est daté",
+            "# par l'entrée en vigueur que son décret écrit, le 1er janvier de l'année.",
+            "#",
+            "# DEUX SOURCES SE TROMPENT D'UNE ANNÉE, ET LE DÉCRET TRANCHE. La fiche",
+            "# « Historique des taux de cotisations » du Service des retraites de",
+            "# l'État porte 106,83 % pour 2010, là où le décret n° 2010-53 fixe",
+            "# 108,63 % : deux chiffres intervertis. Les données du graphique n° 23 de",
+            "# la Cour des comptes (22 septembre 2026) portent 101,5 % pour 2007, là où",
+            "# le décret n° 2006-1798 fixe 101,05 %. OpenFisca-France transcrit les",
+            "# deux années comme le décret.",
+            "#",
+            "# AVANT 2006, RIEN. L'État ne versait aucune contribution : les pensions",
+            "# étaient payées sur crédits budgétaires. Le taux implicite que l'annexe",
+            "# « pensions » au projet de loi de finances pour 2011 a reconstitué pour",
+            "# 1995-2005 est un seul taux pour l'État, et le modèle le prête au",
+            "# militaire comme au civil.",
+            "#",
+            "# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas",
+            "# modifier à la main.",
+        ),
     ),
     Certification(
         nom="taux_cotisation_avant_1967",

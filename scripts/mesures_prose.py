@@ -225,16 +225,17 @@ def retraite_seule(**reglages: str) -> float:
     """Sous ``contribution_etat=retraite_seule``, le défaut, ce que l'État porte au compte, en %.
 
     Sans ``annee`` : la proportion du taux versé, la même chaque année. Avec :
-    le taux porté au compte cette année-là. ``militaire=1`` pour un militaire.
+    le taux porté au compte cette année-là. ``militaire=1`` pour un militaire,
+    dont la proportion se prend sur son propre taux à partir de 2006.
     """
     constructeur = _simulateur(
         _parametres(contribution_etat="retraite_seule")).constructeur_employeur
-    part = constructeur.parts_retraite_seule[reglages.get("militaire") == "1"]
+    militaire = reglages.get("militaire") == "1"
     if "annee" not in reglages:
-        return part * 100
+        return constructeur.parts_retraite_seule[militaire, militaire] * 100
     verse = constructeur.contributions_publiques.taux(
-        "fonction_publique_etat", int(reglages["annee"]))
-    return verse.taux * part * 100
+        "fonction_publique_etat", int(reglages["annee"]), militaire)
+    return verse.taux * constructeur.parts_retraite_seule[militaire, verse.militaire] * 100
 
 
 def cumul_indexation(**reglages: str) -> float:

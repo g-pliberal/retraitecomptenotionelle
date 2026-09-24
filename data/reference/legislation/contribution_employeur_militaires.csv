@@ -1,0 +1,60 @@
+# Contribution EMPLOYEUR de l'État pour ses MILITAIRES, par année
+# source_id: dila_legi_contribution_employeur
+# unite: fraction de l'assiette de la retenue pour pension (solde
+#        indiciaire brut ; les primes en sont exclues)
+#
+# Le 1° de l'article L. 61 du code des pensions civiles et militaires de
+# retraite fixe DEUX taux de contribution à la charge de l'État : l'un pour
+# les personnels civils — la ligne `fonction_publique_etat` de
+# contribution_employeur_public.csv —, l'autre pour les personnels
+# militaires, ici. Celui des militaires est plus du double : 100 % en 2006,
+# 126,07 % depuis 2013, quand le civil passait de 49,90 % à 74,28 %, puis
+# à 82,28 % en 2026. Comme lui, c'est un taux d'ÉQUILIBRE : il paie toutes
+# les pensions militaires de l'année, départs anticipés compris.
+#
+# D'OÙ VIENNENT CES TAUX. Des décrets qui les fixent, lus dans la base LEGI
+# par scripts/fetch/dila_legi_contribution_employeur.py : n° 2006-23,
+# 2006-1798, 2008-53, 2008-1534, 2010-53, 2011-11 et 2011-2037, puis
+# l'article 1er du décret n° 2012-1507 du 27 décembre 2012 dans ses trois
+# rédactions — les décrets n° 2025-61 et n° 2025-1341, qui ont relevé le
+# taux civil, n'ont pas touché celui des militaires. Chaque taux est daté
+# par l'entrée en vigueur que son décret écrit, le 1er janvier de l'année.
+#
+# DEUX SOURCES SE TROMPENT D'UNE ANNÉE, ET LE DÉCRET TRANCHE. La fiche
+# « Historique des taux de cotisations » du Service des retraites de
+# l'État porte 106,83 % pour 2010, là où le décret n° 2010-53 fixe
+# 108,63 % : deux chiffres intervertis. Les données du graphique n° 23 de
+# la Cour des comptes (22 septembre 2026) portent 101,5 % pour 2007, là où
+# le décret n° 2006-1798 fixe 101,05 %. OpenFisca-France transcrit les
+# deux années comme le décret.
+#
+# AVANT 2006, RIEN. L'État ne versait aucune contribution : les pensions
+# étaient payées sur crédits budgétaires. Le taux implicite que l'annexe
+# « pensions » au projet de loi de finances pour 2011 a reconstitué pour
+# 1995-2005 est un seul taux pour l'État, et le modèle le prête au
+# militaire comme au civil.
+#
+# Fichier écrit par scripts/verifier_donnees.py --appliquer : ne pas
+# modifier à la main.
+annee,taux,fiabilite
+2006,1.000000,certifiee
+2007,1.010500,certifiee
+2008,1.035000,certifiee
+2009,1.083900,certifiee
+2010,1.086300,certifiee
+2011,1.141400,certifiee
+2012,1.215500,certifiee
+2013,1.260700,certifiee
+2014,1.260700,certifiee
+2015,1.260700,certifiee
+2016,1.260700,certifiee
+2017,1.260700,certifiee
+2018,1.260700,certifiee
+2019,1.260700,certifiee
+2020,1.260700,certifiee
+2021,1.260700,certifiee
+2022,1.260700,certifiee
+2023,1.260700,certifiee
+2024,1.260700,certifiee
+2025,1.260700,certifiee
+2026,1.260700,certifiee

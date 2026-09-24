@@ -168,8 +168,9 @@ des familles de statut : c'est celui de ce que l'on sait de l'employeur.
 LA DÉCISION QUI N'EST PAS MÉCANIQUE : LE COÛT DU TRAVAIL D'UN FONCTIONNAIRE
 ----------------------------------------------------------------------------
 La contribution de l'employeur public est un TAUX D'ÉQUILIBRE — 82,28 % du
-traitement en 2026 pour l'État, 37,65 % pour la CNRACL, voir
-``legislation/contribution_employeur_public.csv``. Il est fixé pour que le
+traitement en 2026 pour l'État, 126,07 % de la solde de ses militaires,
+37,65 % pour la CNRACL, voir ``legislation/contribution_employeur_public.csv``
+et ``legislation/contribution_employeur_militaires.csv``. Il est fixé pour que le
 compte d'affectation spéciale « Pensions » tombe juste, c'est-à-dire pour payer
 les pensions d'aujourd'hui, et non parce que l'agent acquerrait 82 % de son
 traitement en droits nouveaux.
@@ -1215,11 +1216,16 @@ def contribution_equilibre(racine_donnees: Path, affiliations, statut: str,
     Les régimes d'un statut sont additionnés parce qu'ils le sont déjà
     ailleurs : un agent peut relever d'un régime de base et d'un régime
     additionnel, et la contribution de son employeur est la somme des deux.
+
+    Pour un militaire, l'État verse son taux propre — 126,07 % de la solde en
+    2026, quand il verse 82,28 % du traitement d'un civil —, et c'est celui-là
+    qu'il cesserait de verser.
     """
     table = _contributions_publiques(racine_donnees)
+    militaire = statut in affiliations.categories_militaires
     total = 0.0
     for code in affiliations.regimes(statut, annee):
-        contribution = table.taux(code, annee)
+        contribution = table.taux(code, annee, militaire)
         if contribution is not None:
             total += contribution.taux
     return total

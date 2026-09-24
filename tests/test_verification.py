@@ -1595,3 +1595,52 @@ def test_la_table_des_chaines_partagees_survit_a_une_coupure():
     chaines = module._chaines_partagees([entete + simple + large + debut, suite])
     assert chaines == ["HELLO", "ÉTÉ", "BONIFICATI"], chaines
     assert len(chaines[2]) == 10
+
+
+def test_le_taux_des_militaires_est_date_par_l_entree_en_vigueur_du_decret():
+    """La base ouvre la version de 2011 le 6 janvier ; le décret dit le 1er.
+
+    Sans l'entrée en vigueur que le décret écrit, la règle du 1er janvier
+    prêterait à 2011 le taux de 2010. Et une chaîne trouée — un décret que la
+    base n'aurait pas gardé — est signalée, pas comblée en silence.
+    """
+    import sqlite3
+
+    module = _charger_script("dila_legi_contribution_employeur", "scripts", "fetch",
+                             "dila_legi_contribution_employeur.py")
+    db = sqlite3.connect(":memory:")
+    db.execute("CREATE TABLE doc (id TEXT, date TEXT, fin TEXT, nature TEXT, "
+               "num TEXT, titre TEXT, texte TEXT)")
+    fixation = ("portant fixation du taux de la contribution employeur due pour "
+                "la couverture des charges de pension")
+    db.executemany("INSERT INTO doc VALUES (?, ?, ?, ?, ?, ?, ?)", [
+        ("A06", "2006-01-01", "2010-01-01", "Article DECRET", "2",
+         "Décret n° 2006-23 du 5 janvier 2006 " + fixation,
+         "Le taux de la contribution employeur à la charge de l'Etat pour les "
+         "personnels militaires est fixé à 100 %."),
+        ("A10", "2010-01-01", "2011-01-01", "Article DECRET", "1",
+         "Décret n° 2010-53 du 14 janvier 2010 " + fixation,
+         "Le taux […] est fixé à 62,14 % pour les personnels civils et à "
+         "108, 63 % pour les personnels militaires."),
+        ("A11", "2011-01-06", "2999-01-01", "Article DECRET", "1",
+         "Décret n° 2011-11 du 4 janvier 2011 " + fixation,
+         "Le taux […] est fixé à 65,39 % pour les personnels civils et à "
+         "114,14 % pour les personnels militaires."),
+        ("E11", "2011-01-06", "2999-01-01", "Article DECRET", "4",
+         "Décret n° 2011-11 du 4 janvier 2011 " + fixation,
+         "Les dispositions du présent décret entrent en vigueur à compter du "
+         "1er janvier 2011."),
+    ])
+    serie, lus, griefs = module.serie_militaires(db)
+    assert serie[2006] == pytest.approx(1.0)
+    assert serie[2009] == pytest.approx(1.0)
+    assert serie[2010] == pytest.approx(1.0863)
+    assert serie[2011] == pytest.approx(1.1414)
+    assert serie[module.DERNIERE_ANNEE] == pytest.approx(1.1414)
+    assert lus == ["A06", "A10", "A11"]
+    assert griefs == []
+
+    db.execute("DELETE FROM doc WHERE id = 'A10'")
+    _, _, griefs = module.serie_militaires(db)
+    assert len(griefs) == 1
+    assert "A06" in griefs[0] and "A11" in griefs[0]

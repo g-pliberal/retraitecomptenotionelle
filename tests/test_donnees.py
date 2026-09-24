@@ -573,6 +573,10 @@ def test_journal_de_certification_decrit_les_series_certifiees():
             "legislation/contribution_employeur_public.csv",
         "employeur_public_comedie_francaise":
             "legislation/contribution_employeur_public.csv",
+        # Le second taux de l'État, celui de ses militaires : un fichier à part,
+        # lu dans les décrets qui le fixent.
+        "employeur_public_etat_militaires":
+            "legislation/contribution_employeur_militaires.csv",
         "effectifs_retraites": "regimes/effectifs_retraites.csv",
         "droits_derives": "macro/droits_derives.csv",
         "prestations_non_contributives":
@@ -1924,6 +1928,51 @@ def test_les_taux_employeur_publics_restent_plausibles(employeurs):
         for annee in range(debut, fin + 1):
             taux = employeurs.taux(regime, annee).taux
             assert 0.05 < taux < 1.0, (regime, annee, taux)
+
+
+def test_l_etat_a_un_taux_propre_pour_ses_militaires(employeurs):
+    """Le 1° de l'article L. 61 fixe deux taux : 82,28 % et 126,07 % en 2026.
+
+    Le second vient des décrets qui le fixent, lus dans LEGI : 100 % en 2006,
+    108,63 % en 2010 — et non les 106,83 % de la fiche du Service des retraites
+    de l'État —, 126,07 % depuis 2013. Il n'est pas un régime de plus : la
+    table en compte toujours huit.
+    """
+    assert employeurs.couverture_militaires() == (2006, 2026)
+    for annee, attendu in ((2006, 1.0), (2007, 1.0105), (2010, 1.0863),
+                           (2012, 1.2155), (2013, 1.2607), (2026, 1.2607)):
+        contribution = employeurs.taux("fonction_publique_etat", annee, militaire=True)
+        assert contribution.taux == pytest.approx(attendu), annee
+        assert contribution.militaire and contribution.nature == "appelee"
+        assert contribution.fiabilite is Fiabilite.CERTIFIEE, annee
+    # Le civil garde le sien, et le drapeau le dit.
+    civil = employeurs.taux("fonction_publique_etat", 2026)
+    assert civil.taux == pytest.approx(0.8228) and not civil.militaire
+    # Aucun autre régime n'a de taux militaire.
+    assert employeurs.taux("cnracl", 2026, militaire=True) == employeurs.taux("cnracl", 2026)
+    # Au-delà de 2026, le dernier taux est prolongé, comme partout.
+    projete = employeurs.taux("fonction_publique_etat", 2040, militaire=True)
+    assert projete.taux == pytest.approx(1.2607)
+    assert projete.projetee and projete.militaire
+    assert projete.fiabilite is Fiabilite.ESTIMEE
+
+
+def test_avant_2006_le_militaire_recoit_le_taux_de_tout_l_etat(employeurs):
+    """Pas de taux militaire avant le compte d'affectation spéciale : l'État ne
+    versait rien, et le taux implicite reconstitué est un seul taux."""
+    militaire = employeurs.taux("fonction_publique_etat", 2005, militaire=True)
+    assert militaire == employeurs.taux("fonction_publique_etat", 2005)
+    assert militaire.nature == "implicite" and not militaire.militaire
+
+
+def test_le_taux_des_militaires_reste_plausible(employeurs):
+    """Entre une et une fois et demie la solde : ni virgule ni ligne civile."""
+    debut, fin = employeurs.couverture_militaires()
+    for annee in range(debut, fin + 1):
+        taux = employeurs.taux("fonction_publique_etat", annee, militaire=True).taux
+        civil = employeurs.taux("fonction_publique_etat", annee).taux
+        assert 1.0 <= taux < 1.5, (annee, taux)
+        assert taux > 1.4 * civil, (annee, taux, civil)
 
 
 # -- la part « retraite seule » de la contribution de l'État ------------------

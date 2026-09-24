@@ -1264,9 +1264,12 @@ institutions:
           civil — 49,90 % en 2006, 74,28 % de 2013 à 2024, 78,28 % en 2025,
           82,28 % en 2026 (décret n° 2025-1341 du 26 décembre 2025). Source
           primaire, donc certifiable ; le récupérateur la recoupe en outre
-          contre la transcription OpenFisca des mêmes décrets. Les taux
-          militaires (126,07 %) et ceux des employeurs d'accueil ne sont pas
-          repris : le modèle ne distingue pas les corps.
+          contre la transcription OpenFisca des mêmes décrets. Ceux des
+          employeurs d'accueil ne sont pas repris. Celui des militaires ne
+          l'est pas d'ici : sa colonne porte 106,83 % pour 2010, là où le
+          décret n° 2010-53 fixe 108,63 %, deux chiffres intervertis, et le
+          modèle le lit dans les décrets (dila_legi_contribution_employeur),
+          constaté le 24 septembre 2026.
 
       - id: sre_minimum_garanti
         titre: Montant du minimum garanti, article L. 17 du code des pensions
@@ -1517,7 +1520,10 @@ institutions:
           (4,923 € depuis juillet 2023), les taux de contribution employeur de
           l'État de 2006 à 2026, la retenue de 7,85 % en 2010, 9,54 % en 2015
           et 11,10 % depuis 2020, le minimum contributif majoré de 2026
-          (903,9 €). Deux écarts expliqués sans correction : son graphique
+          (903,9 €), et le taux des militaires de 2006 à 2026, sauf en 2007 :
+          les données de son graphique n° 23 portent 101,5 % là où le décret
+          n° 2006-1798 fixe 101,05 % (contribution_employeur_militaires.csv).
+          Deux écarts expliqués sans correction : son graphique
           n° 23 donne 58,47 % pour l'État en 2009, moyenne de l'année, quand
           le dépôt porte le taux appelé au 1er janvier (60,14 %, ramené à
           40,14 % en décembre selon la note 3 du jaune pensions 2026, qui fait
@@ -2644,11 +2650,14 @@ institutions:
       - id: dila_legi_contribution_employeur
         titre: >-
           Contribution employeur de la RATP, des IEG, de la SNCF d'avant 2007,
-          des mines, de l'Opéra et de la Comédie-Française
+          des mines, de l'Opéra et de la Comédie-Française, et celle de l'État
+          pour ses militaires
         url: https://echanges.dila.gouv.fr/OPENDATA/
         acces: api
         statut_integration: certifie
-        cible: data/reference/legislation/contribution_employeur_public.csv
+        cible: >-
+          data/reference/legislation/contribution_employeur_public.csv,
+          data/reference/legislation/contribution_employeur_militaires.csv
         recuperation: scripts/fetch/dila_legi_contribution_employeur.py
         note: >-
           Six régimes que docs/limites.md rangeait sous une seule ligne — « rien
@@ -2699,6 +2708,18 @@ institutions:
           déjà 8,80 %, celui du 27 février 1991 déjà 28,44 %, l'article 8 est
           explicitement abrogé en 2007 et l'article 52 explicitement repris par
           l'article 90 en 1993.
+          L'ÉTAT POUR SES MILITAIRES, depuis le 24 septembre 2026. Le 1° de
+          l'article L. 61 du code des pensions a deux taux, et le modèle ne
+          prêtait au militaire que celui des civils. Le sien est lu dans les
+          décrets qui le fixent, versions datées de LEGI : 100 % en 2006
+          (décret n° 2006-23), 101,05 %, 103,5 %, 108,39 %, 108,63 % (décret
+          n° 2010-53), 114,14 %, 121,55 %, puis 126,07 % depuis 2013 (article
+          1er du décret n° 2012-1507, que les décrets n° 2025-61 et n° 2025-1341
+          n'ont modifié que pour le taux civil). Vingt et une valeurs au niveau
+          certifiee, dans contribution_employeur_militaires.csv. Chaque taux est
+          daté par l'entrée en vigueur que son décret écrit : la version de
+          2011 ne s'ouvre dans la base que le 6 janvier, et la règle du
+          1er janvier lui aurait prêté le taux de 2010.
 
       - id: dila_legi_taux_cotisation
         titre: >-

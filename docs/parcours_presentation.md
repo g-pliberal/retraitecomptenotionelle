@@ -240,8 +240,8 @@ moins. Vert : plus.
 Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (militaire non
-  officier, +74 % pour la génération 2000) et la moins bien traitée (carrière
-  interrompue, -37 %), et les 111 points qui les séparent. Dire aussitôt
+  officier, +75 % pour la génération 2000) et la moins bien traitée (carrière
+  interrompue, -37 %), et les 112 points qui les séparent. Dire aussitôt
   d'où vient le premier : le droit en vigueur laisse ce militaire partir à
   44 ans, après vingt-cinq ans de services, et la proposition le fait servir
   jusqu'à 65 ans —
@@ -353,8 +353,8 @@ Onglet **Méthode** : les trois opérations, en une phrase chacune, puis
 « Qu'est-ce qui décide du résultat ? ». On peut s'arrêter au titre.
 
 Onglet **Données**, et c'est la bonne page pour conclure : « Rien ici n'est à
-croire sur parole. » 42 349 valeurs recontrôlées automatiquement contre le
-fichier de l'institution qui les produit, sur 111 séries ; 91 régimes
+croire sur parole. » 42 370 valeurs recontrôlées automatiquement contre le
+fichier de l'institution qui les produit, sur 112 séries ; 91 régimes
 recensés dont 74 calculés ; 39 institutions citées. Ce compte mesure la
 fidélité de la recopie, non la justesse des pensions : si on vous le demande,
 la réponse est que les pensions se contrôlent ailleurs, sur les exemples

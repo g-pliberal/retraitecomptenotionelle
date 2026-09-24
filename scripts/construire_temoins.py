@@ -385,9 +385,10 @@ def _cas() -> list[dict]:
     # depuis le 24 septembre 2026, qui n'en porte que la part « retraite
     # seule » — le balayage des statuts la visite déjà, civils et militaires.
     # Un civil, dont la carrière passe par l'année que la Cour a mesurée ; un
-    # militaire, qui y reçoit le taux civil entier ; et un civil né en 1955,
-    # dont la carrière commence avant la série de l'État — le repli sur
-    # l'effort du privé, que le réglage ne touche pas — et la traverse ensuite.
+    # militaire, qui y reçoit le taux entier des militaires, 126,07 % depuis
+    # 2013 ; et un civil né en 1955, dont la carrière commence avant la série
+    # de l'État — le repli sur l'effort du privé, que le réglage ne touche
+    # pas — et la traverse ensuite.
     for nom, statut, naissance in (
         ("contribution_etat_entiere", "fonctionnaire_etat", "1975"),
         ("contribution_etat_entiere_militaire", "militaire", "1975"),

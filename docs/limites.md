@@ -5283,7 +5283,7 @@ est affiché sous la simulation.
 
 | Régime | Couvert | Découvert | Ce qui manque |
 |---|---|---|---|
-| Fonction publique d'État | 1995-2026 | 1930-1994 | rien à retrouver : l'État ne versait aucune cotisation, les pensions étaient payées sur crédits budgétaires, et le plus ancien chiffrage a posteriori — le jaune « pensions » — s'arrête à 1995 |
+| Fonction publique d'État | 1995-2026 | 1930-1994 | rien à retrouver : l'État ne versait aucune cotisation, les pensions étaient payées sur crédits budgétaires, et le plus ancien chiffrage a posteriori — le jaune « pensions » — s'arrête à 1995 ; ses militaires ont leur taux propre, appelé depuis 2006, dans `contribution_employeur_militaires.csv` |
 | CNRACL | 1948-2028 | 1945-1947 | le décret fondateur date du 19 septembre 1947 ; la convention « taux au 1er janvier » fait donc commencer la série en 1948 |
 | SNCF | 1992-2018 | 1930-1991, 2019- | avant 1992, aucun texte de la base LEGI ne porte le taux ; après 2018, le décret cesse de chiffrer la composante T2, qui évolue par formule |
 | RATP | 2007-2025 | 1930-2006, 2026- | rien à retrouver : avant l'adossement de 2006, la RATP payait les pensions sans qu'aucun texte fixe un taux, exactement comme l'État avant son compte d'affectation spéciale ; après 2025, la série n'a pas encore sa ligne, et le dernier taux est reconduit au niveau `estimee` |
@@ -5312,19 +5312,24 @@ en 2025 pour un civil, elle ne garde que <!--chiffre:cellule(data/reference/legi
 strict ; le reste finance l'invalidité avant soixante-deux ans, les majorations
 pour enfants, les départs anticipés des emplois classés et, pour <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=civils&poste=desequilibre_demographique)-->35,3<!--/-->
 points, le déséquilibre démographique du régime. Pour un militaire, dont
-l'employeur paie <!--chiffre:illustration()-->126,07<!--/--> %, elle garde <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> %. Créditer au compte le taux entier,
+l'employeur paie <!--chiffre:cellule(data/reference/legislation/contribution_employeur_militaires.csv:taux*100?annee=2025)-->126,07<!--/--> %, elle garde <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> %. Créditer au compte le taux entier,
 comme le scénario 4, et le 6 jusqu'à la bascule, le faisaient jusqu'au
 24 septembre 2026, c'était porter au compte d'un fonctionnaire d'État ce que
-son employeur verse pour d'autres — et au militaire, à qui le modèle crédite le
-taux des civils, moins que ce que le sien verse.
+son employeur verse pour d'autres. Le militaire, lui, recevait jusqu'au même
+jour le taux des civils, moins que ce que le sien verse : son taux propre, lu
+dans les décrets qui le fixent, est dans
+`legislation/contribution_employeur_militaires.csv` — <!--chiffre:cellule(data/reference/legislation/contribution_employeur_militaires.csv:taux*100?annee=2006)-->100<!--/--> % en 2006,
+<!--chiffre:cellule(data/reference/legislation/contribution_employeur_militaires.csv:taux*100?annee=2013)-->126,07<!--/--> % depuis 2013.
 
 **Le compte ne reçoit donc, par défaut, que la part de la Cour**
 (`contribution_etat=retraite_seule`) : ce qui n'est pas contributif se finance
 par l'impôt, non par le compte. Dans les options du site, « Contribution de
 l'État portée au compte » rétablit le taux entier. L'année que la Cour a
 mesurée, le compte reçoit ses deux taux ; les autres années, la même
-proportion du taux versé — <!--chiffre:mesure(retraite_seule)-->56,3<!--/--> % pour un civil —, et c'est une
-hypothèse, que le résultat qualifie d'`estimee`. Pourquoi une proportion
+proportion du taux versé à sa population — <!--chiffre:mesure(retraite_seule)-->56,3<!--/--> % pour un civil,
+<!--chiffre:mesure(retraite_seule?militaire=1)-->40,6<!--/--> % pour un militaire, soit <!--chiffre:mesure(retraite_seule?militaire=1&annee=2020)-->51,2<!--/--> % chaque année depuis 2013, son taux
+n'ayant pas bougé —, et c'est une hypothèse, que le résultat qualifie
+d'`estimee`. Pourquoi une proportion
 plutôt qu'un taux fixe : le rapport n'éclaire qu'une autre année, 2020, où le
 taux était de <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2020&regime=fonction_publique_etat)-->74,28<!--/--> % ; la proportion y donne <!--chiffre:mesure(retraite_seule?annee=2020)-->41,8<!--/--> %, un taux fixe <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=civils&poste=retraite_stricto_sensu)-->44,1<!--/-->, et
 la Cour — qui impute cinq points de l'écart avec l'Institut des politiques
@@ -5333,14 +5338,13 @@ Ce que ce choix déplace est considérable. Sous le taux entier, la fonctionnair
 de l'exemple du README, née en 1975, aurait <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4&contribution_etat=entiere)-->+45,0<!--/--> % d'écart au système
 actuel dans le scénario 4 ; sous la part de la Cour, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=4)-->−1,3<!--/--> %. Dans la
 proposition, <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6&contribution_etat=entiere)-->+44,9<!--/--> % deviennent <!--chiffre:mesure(ecart?exemple=fonctionnaire&scenario=6)-->−3,4<!--/--> %, et le solde moyen de la proposition
-passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−0,87<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,48<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−26<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−14<!--/--> milliards
+passe de <!--chiffre:mesure(solde_moyen?scenario=6&contribution_etat=entiere)-->−0,91<!--/--> % à <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,49<!--/--> % du PIB, de <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards&contribution_etat=entiere)-->−27<!--/--> à <!--chiffre:mesure(solde_moyen?scenario=6&en=milliards)-->−15<!--/--> milliards
 d'euros par an, parce que les droits qu'elle reprend à la bascule étaient
 gonflés de ce qui payait d'autres pensions. Le privé, la CNRACL, le scénario 1
 et la part salariale ne bougent pas, ni les années d'avant 1995, où le compte
-reçoit déjà l'effort d'un salarié du privé. Deux points restent ouverts, que
+reçoit déjà l'effort d'un salarié du privé. Un point reste ouvert, que
 l'action 129 de la feuille de route détaille : une série mesurée année par
-année, plutôt qu'une proportion prêtée à trente ans de taux, et le taux propre
-du militaire.
+année, plutôt qu'une proportion prêtée à trente ans de taux.
 
 **Ce que les documents budgétaires ajoutent, et ce qu'ils n'ajoutent pas.** Les
 projets annuels de performances annexés au PLF 2026 — programmes 195, 197 et
@@ -5860,20 +5864,20 @@ sont celles de ce mélange (`VoletLiberal.melange`). Il ne joue que sur la page
 Coût ; le simulateur prolonge la situation de chacun.
 
 C'est de cette part que dépend l'essentiel de ce que l'âge légal fait au
-solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,48<!--/--> point de PIB quand
-tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−0,65<!--/--> quand la moitié le font, de
-<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−0,82<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,00<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
+solde. Le solde moyen de la proposition est de <!--chiffre:mesure(solde_moyen?scenario=6)-->−0,49<!--/--> point de PIB quand
+tous les reportés travaillent, de <!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0.5)-->−0,66<!--/--> quand la moitié le font, de
+<!--chiffre:mesure(solde_moyen?scenario=6&emploi_reportes=0)-->−0,83<!--/--> quand aucun, contre <!--chiffre:mesure(solde_moyen?scenario=6&age_legal=aucun)-->−1,00<!--/--> sans âge légal et <!--chiffre:mesure(solde_moyen?scenario=1)-->−1,13<!--/--> pour le système
 actuel : sans emploi, le report n'épargne guère que des années de pension, et
 sert ensuite des pensions plus fortes. Aucun impôt ne couvre ce qui reste —
 la TVA à taux unique qui le faisait du 23 au 24 septembre 2026 est retirée —,
 et le déficit s'accumule : la dette de la proposition en 2070 est de <!--chiffre:mesure(dette?scenario=6)-->33<!--/--> % du
-PIB quand tous les reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0.5)-->44<!--/--> % quand la moitié le font,
+PIB quand tous les reportés travaillent, de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0.5)-->45<!--/--> % quand la moitié le font,
 de <!--chiffre:mesure(dette?scenario=6&emploi_reportes=0)-->56<!--/--> % quand aucun, contre <!--chiffre:mesure(dette?scenario=1)-->66<!--/--> % pour le système actuel et <!--chiffre:mesure(dette?scenario=6&age_legal=aucun)-->70<!--/--> % pour
 la proposition sans âge légal. L'ampleur de son avantage sur le système actuel
 tient donc à ce que les reportés travaillent ; qu'elle en ait un n'en dépend
 plus, depuis que le compte d'un fonctionnaire d'État ne reçoit que la part
 « retraite » du taux de l'État — sous le taux entier, la dette atteindrait
-<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->82<!--/--> % si aucun ne travaillait. La part reste à lire dans
+<!--chiffre:mesure(dette?scenario=6&emploi_reportes=0&contribution_etat=entiere)-->84<!--/--> % si aucun ne travaillait. La part reste à lire dans
 les évaluations de la réforme de 2010, qui a reculé l'âge légal de deux ans :
 elles ont suivi ce que sont devenus ceux qu'elle a fait attendre.
 
@@ -9286,7 +9290,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2401<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2407<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

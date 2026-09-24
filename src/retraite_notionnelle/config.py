@@ -223,17 +223,18 @@ class ContributionEtat(str, Enum):
     * ``RETRAITE_SEULE`` (défaut) — la part du taux versé que la Cour des
       comptes rattache à la retraite de l'agent lui-même (tableau n° 15 de son
       rapport du 22 septembre 2026) : 44,1 % pour un civil et 51,2 % pour un
-      militaire en 2025, la même proportion du taux de l'année les autres
-      années. Le reste paie l'invalidité avant 62 ans, les majorations pour
-      enfants, les départs anticipés et un rapport démographique plus
-      défavorable que celui de l'ensemble des régimes : rien de cela n'est un
-      droit que l'agent aurait acquis en cotisant, et la doctrine du projet
+      militaire en 2025, la même proportion de son taux de l'année les autres
+      années — le taux civil pour l'un, le taux militaire pour l'autre. Le
+      reste paie l'invalidité avant 62 ans, les majorations pour enfants, les
+      départs anticipés et un rapport démographique plus défavorable que celui
+      de l'ensemble des régimes : rien de cela n'est un droit que l'agent
+      aurait acquis en cotisant, et la doctrine du projet
       finance ce qui n'est pas contributif par l'impôt, non par le compte. Voir
       ``legislation/contribution_etat_retraite_seule.csv``.
     * ``ENTIERE`` — le taux que l'État a versé au compte d'affectation spéciale
-      « Pensions » : 78,28 % du traitement en 2025 pour un civil. Il paie
-      toutes les pensions de l'année, et le compte en reçoit tout. C'était le
-      défaut jusqu'au 24 septembre 2026.
+      « Pensions » : 78,28 % du traitement en 2025 pour un civil, 126,07 % pour
+      un militaire. Il paie toutes les pensions de l'année, et le compte en
+      reçoit tout. C'était le défaut jusqu'au 24 septembre 2026.
     """
 
     ENTIERE = "entiere"

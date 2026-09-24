@@ -145,21 +145,29 @@ class ConstructeurCompte:
         return frozenset(self.affiliations.categories_militaires)
 
     @cached_property
-    def parts_retraite_seule(self) -> dict[bool, float]:
+    def parts_retraite_seule(self) -> dict[tuple[bool, bool], float]:
         """Part du taux de l'État que la Cour rattache à la retraite de l'agent.
 
-        Indexée par « militaire ? ». C'est le taux « retraite seule » de l'année
-        que la Cour a mesurée, rapporté au taux que l'État a versé cette même
-        année : 44,1 / 78,28 pour un civil, 51,2 / 78,28 pour un militaire. Le
-        militaire est rapporté au taux CIVIL parce que c'est la série que le
-        modèle lui crédite — son propre taux appelé, 126,07 % en 2025, n'y est
-        pas — et c'est ce qui lui fait recevoir exactement les 51,2 % de la
-        Cour cette année-là.
+        Indexée par (l'agent est-il militaire ?, le taux est-il celui des
+        militaires ?). C'est le taux « retraite seule » que la Cour a mesuré
+        pour sa population, rapporté à ce que valait la même année la série
+        dont le taux vient : 44,1 / 78,28 pour un civil, 51,2 / 126,07 pour un
+        militaire sur son propre taux. Chacun reçoit ainsi exactement le taux
+        de la Cour l'année qu'elle a mesurée, et la même proportion de sa série
+        les autres années.
+
+        Avant 2006, le militaire n'a pas de taux propre : il reçoit le taux
+        implicite de tout l'État, dont la part est 51,2 / 78,28 — rapportée au
+        taux civil, ce qui garde entre militaire et civil le rapport que la
+        Cour mesure entre leurs deux parts.
         """
         table = PartRetraiteSeuleEtat(self.parametres.racine_donnees)
-        verse = self.contributions_publiques.taux(REGIME_ETAT, table.annee).taux
-        return {False: table.taux("civils") / verse,
-                True: table.taux("militaires") / verse}
+        civil = self.contributions_publiques.taux(REGIME_ETAT, table.annee).taux
+        militaire = self.contributions_publiques.taux(
+            REGIME_ETAT, table.annee, militaire=True).taux
+        return {(False, False): table.taux("civils") / civil,
+                (True, True): table.taux("militaires") / militaire,
+                (True, False): table.taux("militaires") / civil}
 
     @cached_property
     def annee_retraite_seule(self) -> int:
@@ -293,15 +301,18 @@ class ConstructeurCompte:
                     Fiabilite.CERTIFIEE)
 
         if part is PartCotisation.TOTALE:
-            # La retenue de l'agent, plus ce que l'employeur public a versé.
-            contribution = self.contributions_publiques.taux(regime, annee)
+            # La retenue de l'agent, plus ce que l'employeur public a versé —
+            # pour un militaire de l'État, le taux propre aux militaires.
+            contribution = self.contributions_publiques.taux(regime, annee, militaire)
             if contribution is not None:
                 if (regime == REGIME_ETAT and self.parametres.contribution_etat
                         is ContributionEtat.RETRAITE_SEULE):
                     # Ce que l'État a versé paie aussi ce qui n'est pas la
                     # retraite de l'agent : n'en porter que la part que la Cour
-                    # lui rattache. Mesurée pour une année, supposée ailleurs.
-                    employeur = contribution.taux * self.parts_retraite_seule[militaire]
+                    # lui rattache. Mesurée pour une année, supposée ailleurs,
+                    # et prise sur la série dont le taux vient.
+                    employeur = contribution.taux * self.parts_retraite_seule[
+                        militaire, contribution.militaire]
                     fiabilite = min(contribution.fiabilite, Fiabilite.HAUTE
                                     if annee == self.annee_retraite_seule
                                     else Fiabilite.ESTIMEE)

@@ -1321,8 +1321,13 @@ compte des actifs ? ». La part de la Cour vient du tableau n° 15 de son rappor
 du 22 septembre 2026 : <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=civils&poste=retraite_stricto_sensu)-->44,1<!--/--> % pour un civil et <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> % pour un militaire en 2025, sur
 les <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2025&regime=fonction_publique_etat)-->78,28<!--/--> % versés pour un civil. Les autres années reçoivent la même
 proportion du taux de l'année, qui est une hypothèse — la fiabilité retombe à
-`estimee` —, et le militaire la reçoit du taux civil, parce que c'est la série
-que le modèle lui crédite. `ConstructeurCompte.parts_retraite_seule` la calcule,
+`estimee` —, prise sur le taux de chaque population. Celui du militaire est le
+sien, <!--chiffre:cellule(data/reference/legislation/contribution_employeur_militaires.csv:taux*100?annee=2025)-->126,07<!--/--> % de la solde en 2025, lu dans les décrets qui le fixent
+(`legislation/contribution_employeur_militaires.csv`), et sa part en est
+<!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> sur <!--chiffre:cellule(data/reference/legislation/contribution_employeur_militaires.csv:taux*100?annee=2025)-->126,07<!--/-->. Avant 2006, il n'a pas de taux propre : il reçoit le taux
+implicite de tout l'État, dont sa part est <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*100?population=militaires&poste=retraite_stricto_sensu)-->51,2<!--/--> sur <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2025&regime=fonction_publique_etat)-->78,28<!--/-->, ce qui garde entre
+militaire et civil le rapport que la Cour mesure entre leurs deux parts.
+`ConstructeurCompte.parts_retraite_seule` la calcule,
 `legislation/contribution_etat_retraite_seule.csv` porte le tableau.
 
 #### Après la bascule, le régime unique tranche
