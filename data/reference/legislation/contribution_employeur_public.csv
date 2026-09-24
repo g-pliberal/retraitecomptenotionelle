@@ -169,7 +169,10 @@
 # Régimes couverts. fonction_publique_etat (implicite 1995-2005, appelée
 # depuis 2006), cnracl (depuis 1948), sncf (28,44 % de 1992 à 2006, puis
 # T1 + T2 de 2007 à 2018), ratp (2007-2025), ieg (2005-2020), mines
-# (1984-2026), opera_de_paris et comedie_francaise (1992-2026).
+# (1984-2026), opera_de_paris et comedie_francaise (1992-2026). La ligne de
+# l'État est celle de ses CIVILS : le 1° de l'article L. 61 du code des
+# pensions fixe un second taux pour ses militaires — 126,07 % depuis 2013 —,
+# qui est dans contribution_employeur_militaires.csv.
 #
 # Les régimes à `perimetre_taux: agent_seul` qui restent sans série — FSPOEIE,
 # marins, CRPCEN, Banque de France, port de Strasbourg, SEITA, chemins de fer

@@ -749,9 +749,12 @@ export function contributionEquilibre(paquet, affiliations, statut, annee) {
     table = new ContributionsEmployeurPubliques(paquet);
     MEMOIRE_CONTRIBUTIONS.set(paquet, table);
   }
+  // Pour un militaire, l'État verse son taux propre, et c'est celui-là qu'il
+  // cesserait de verser.
+  const militaire = statut in affiliations.categoriesMilitaires;
   let total = 0;
   for (const code of affiliations.regimes(statut, annee)) {
-    const contribution = table.taux(code, annee);
+    const contribution = table.taux(code, annee, militaire);
     if (contribution !== null && contribution !== undefined) {
       total += contribution[0];
     }

@@ -1,5 +1,5 @@
 {
- "dernier_passage_le": "2026-09-23",
+ "dernier_passage_le": "2026-09-24",
  "series": {
   "age_annulation_decote_openfisca": {
    "ajoutees": 0,
@@ -365,15 +365,15 @@
    "verifiee_le": "2026-09-22"
   },
   "employeur_public_comedie_francaise": {
-   "ajoutees": 35,
+   "ajoutees": 0,
    "colonne": "taux",
    "corrigees": 0,
    "empreinte": "8216396ec705630f",
-   "identiques": 0,
+   "identiques": 35,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 7 II",
    "valeurs": 35,
-   "verifiee_le": "2026-09-15"
+   "verifiee_le": "2026-09-24"
   },
   "employeur_public_etat": {
    "ajoutees": 0,
@@ -397,49 +397,60 @@
    "valeurs": 11,
    "verifiee_le": "2026-09-22"
   },
+  "employeur_public_etat_militaires": {
+   "ajoutees": 21,
+   "colonne": "taux",
+   "corrigees": 0,
+   "empreinte": "d6314d2957228ac1",
+   "identiques": 0,
+   "niveau": "certifiee",
+   "source": "DILA, base LEGI, décrets fixant le taux de la contribution employeur de l'État pour les personnels militaires (n° 2006-23 à n° 2012-1507)",
+   "valeurs": 21,
+   "verifiee_le": "2026-09-24"
+  },
   "employeur_public_ieg": {
-   "ajoutees": 16,
+   "ajoutees": 0,
    "colonne": "taux",
    "corrigees": 0,
    "empreinte": "a43043673f6c8639",
-   "identiques": 0,
+   "identiques": 16,
    "niveau": "certifiee",
    "source": "DILA, arrêtés annuels pris pour l'article 3 du décret n° 2005-278 du 24 mars 2005",
    "valeurs": 16,
-   "verifiee_le": "2026-09-15"
+   "verifiee_le": "2026-09-24"
   },
   "employeur_public_mines": {
-   "ajoutees": 43,
+   "ajoutees": 0,
    "colonne": "taux",
    "corrigees": 0,
    "empreinte": "aa83653a18554a82",
-   "identiques": 0,
+   "identiques": 43,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 46-2769 du 27 novembre 1946, articles 52 puis 90",
    "valeurs": 43,
-   "verifiee_le": "2026-09-15"
+   "verifiee_le": "2026-09-24"
   },
   "employeur_public_opera": {
-   "ajoutees": 35,
+   "ajoutees": 0,
    "colonne": "taux",
    "corrigees": 0,
    "empreinte": "78f83f9466b8dda2",
-   "identiques": 0,
+   "identiques": 35,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 6 II",
    "valeurs": 35,
-   "verifiee_le": "2026-09-15"
+   "verifiee_le": "2026-09-24"
   },
   "employeur_public_ratp": {
-   "ajoutees": 19,
+   "ajoutees": 0,
    "colonne": "taux",
    "corrigees": 0,
    "empreinte": "6ec2dee310929770",
-   "identiques": 0,
+   "identiques": 19,
    "niveau": "certifiee",
    "source": "DILA, arrêtés annuels pris pour l'article 2 du décret n° 2005-1637 du 26 décembre 2005",
    "valeurs": 19,
-   "verifiee_le": "2026-09-15"
+   "verifiee_le": "2026-09-24"
   },
   "employeur_public_sncf": {
    "ajoutees": 0,
@@ -453,15 +464,15 @@
    "verifiee_le": "2026-09-22"
   },
   "employeur_public_sncf_avant_2007": {
-   "ajoutees": 15,
+   "ajoutees": 0,
    "colonne": "taux",
    "corrigees": 0,
    "empreinte": "f093d49ffbf5ef09",
-   "identiques": 0,
+   "identiques": 15,
    "niveau": "certifiee",
    "source": "DILA, base LEGI, décret n° 91-613 du 28 juin 1991, article 8 II",
    "valeurs": 15,
-   "verifiee_le": "2026-09-15"
+   "verifiee_le": "2026-09-24"
   },
   "employeur_public_sncf_textes": {
    "ajoutees": 0,
@@ -494,7 +505,7 @@
    "niveau": "haute",
    "source": "dérivée des quotients INED de Vallin et Meslé",
    "valeurs": 28,
-   "verifiee_le": "2026-09-23"
+   "verifiee_le": "2026-09-24"
   },
   "esperances_projetees": {
    "ajoutees": 0,
@@ -978,7 +989,7 @@
    "niveau": "haute",
    "source": "la série du régime général du dépôt, que les cultes, Mayotte et Saint-Pierre-et-Miquelon portent faute d'un barème propre",
    "valeurs": 512,
-   "verifiee_le": "2026-09-23"
+   "verifiee_le": "2026-09-24"
   },
   "taux_cotisation_annuels": {
    "ajoutees": 0,
@@ -1143,7 +1154,7 @@
    "niveau": "haute",
    "source": "Ircantec, page « Valeur du point » et paramètres annuels, 2022-2026, lus le 23 septembre 2026",
    "valeurs": 23,
-   "verifiee_le": "2026-09-23"
+   "verifiee_le": "2026-09-24"
   },
   "valeurs_point_msa": {
    "ajoutees": 0,

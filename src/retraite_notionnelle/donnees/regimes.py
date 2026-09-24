@@ -623,6 +623,9 @@ class ContributionEmployeur:
     fiabilite: Fiabilite
     #: Vrai si la valeur prolonge la dernière année connue au-delà de la série.
     projetee: bool = False
+    #: Vrai si c'est le taux que l'État verse pour ses MILITAIRES, et non celui
+    #: de ses civils : le 1° de l'article L. 61 du code des pensions en fixe deux.
+    militaire: bool = False
 
 
 class ContributionsEmployeurPubliques:
@@ -645,23 +648,45 @@ class ContributionsEmployeurPubliques:
       toute projection du modèle et avec la même conséquence : la fiabilité
       retombe à ``estimee``. Sans cela, une carrière qui se poursuit jusqu'en
       2060 basculerait au milieu sur une autre convention de calcul.
+
+    L'État a DEUX taux, un pour ses civils et un pour ses militaires — 82,28 %
+    et 126,07 % en 2026. Le second est dans un fichier à part,
+    ``contribution_employeur_militaires.csv``, parce que ce n'est pas un régime
+    de plus ; ``taux(..., militaire=True)`` le sert à partir de 2006, première
+    année où l'État a versé une contribution. Avant, il n'y a qu'un taux
+    implicite pour tout l'État, et le militaire le reçoit comme le civil.
     """
+
+    #: Le régime dont les militaires ont leur propre taux.
+    REGIME_DES_MILITAIRES = "fonction_publique_etat"
 
     def __init__(self, racine: Path) -> None:
         self._table: dict[str, dict[int, ContributionEmployeur]] = {}
-        chemin = racine / "reference" / "legislation" / "contribution_employeur_public.csv"
-        if not chemin.exists():
-            return
-        with chemin.open(encoding="utf-8") as flux:
-            lignes = (l for l in flux if not l.lstrip().startswith("#"))
-            for ligne in csv.DictReader(lignes):
-                self._table.setdefault(ligne["regime"], {})[int(ligne["annee"])] = (
-                    ContributionEmployeur(
-                        taux=float(ligne["taux"]),
-                        nature=ligne["nature"],
-                        fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
+        self._militaires: dict[int, ContributionEmployeur] = {}
+        dossier = racine / "reference" / "legislation"
+        chemin = dossier / "contribution_employeur_public.csv"
+        if chemin.exists():
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    self._table.setdefault(ligne["regime"], {})[int(ligne["annee"])] = (
+                        ContributionEmployeur(
+                            taux=float(ligne["taux"]),
+                            nature=ligne["nature"],
+                            fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
+                        )
                     )
-                )
+        chemin = dossier / "contribution_employeur_militaires.csv"
+        if chemin.exists():
+            with chemin.open(encoding="utf-8") as flux:
+                lignes = (l for l in flux if not l.lstrip().startswith("#"))
+                for ligne in csv.DictReader(lignes):
+                    self._militaires[int(ligne["annee"])] = ContributionEmployeur(
+                        taux=float(ligne["taux"]),
+                        nature=ligne.get("nature") or "appelee",
+                        fiabilite=Fiabilite.depuis_texte(ligne["fiabilite"]),
+                        militaire=True,
+                    )
 
     def __bool__(self) -> bool:
         return bool(self._table)
@@ -675,9 +700,27 @@ class ContributionsEmployeurPubliques:
         annees = self._table.get(regime)
         return (min(annees), max(annees)) if annees else None
 
-    def taux(self, regime: str, annee: int) -> ContributionEmployeur | None:
-        """Contribution employeur du régime cette année-là, ``None`` si inconnue."""
-        annees = self._table.get(regime)
+    def couverture_militaires(self) -> tuple[int, int] | None:
+        """Première et dernière année du taux propre aux militaires."""
+        annees = self._militaires
+        return (min(annees), max(annees)) if annees else None
+
+    def taux(self, regime: str, annee: int,
+             militaire: bool = False) -> ContributionEmployeur | None:
+        """Contribution employeur du régime cette année-là, ``None`` si inconnue.
+
+        ``militaire`` : l'agent est un militaire. Pour l'État, et à partir de la
+        première année de son taux propre, c'est ce taux qui est rendu ; il
+        porte alors ``militaire=True``.
+        """
+        if (militaire and regime == self.REGIME_DES_MILITAIRES and self._militaires
+                and annee >= min(self._militaires)):
+            return self._en_vigueur(self._militaires, annee)
+        return self._en_vigueur(self._table.get(regime), annee)
+
+    @staticmethod
+    def _en_vigueur(annees: dict[int, ContributionEmployeur] | None,
+                    annee: int) -> ContributionEmployeur | None:
         if not annees:
             return None
         if annee in annees:
@@ -687,8 +730,8 @@ class ContributionsEmployeurPubliques:
             return None
         if annee > derniere:
             base = annees[derniere]
-            return ContributionEmployeur(base.taux, base.nature,
-                                         Fiabilite.ESTIMEE, projetee=True)
+            return ContributionEmployeur(base.taux, base.nature, Fiabilite.ESTIMEE,
+                                         projetee=True, militaire=base.militaire)
         # Trou interne : le taux reste en vigueur jusqu'à sa modification.
         precedente = max(a for a in annees if a < annee)
         return annees[precedente]

@@ -1095,18 +1095,27 @@ def test_le_taux_de_l_etat_est_ramene_a_sa_part_retraite_par_defaut(simulateur):
 
 
 def test_le_taux_entier_reste_un_reglage(entiere):
-    """Sous ``entiere``, le compte reçoit ce que l'État a versé, tel quel."""
+    """Sous ``entiere``, le compte reçoit ce que l'État a versé, tel quel —
+    pour un militaire, le taux des militaires : 126,07 % de la solde en 2025."""
     employeur, origine, _ = _part_employeur_etat(entiere, 2025)
     assert employeur == pytest.approx(0.7828)
     assert origine == "appelee"
+    militaire, origine, fiabilite = _part_employeur_etat(entiere, 2025, militaire=True)
+    assert militaire == pytest.approx(1.2607)
+    assert origine == "appelee" and fiabilite is Fiabilite.CERTIFIEE
+    # 2010 : le décret n° 2010-53, et non la fiche du Service des retraites.
+    assert _part_employeur_etat(entiere, 2010, militaire=True)[0] == pytest.approx(1.0863)
+    # Avant 2006, pas de taux propre : le taux implicite de tout l'État.
+    assert (_part_employeur_etat(entiere, 2005, militaire=True)
+            == _part_employeur_etat(entiere, 2005))
 
 
 def test_la_part_retraite_seule_est_celle_de_la_cour_l_annee_mesuree(retraite_seule):
     """44,1 % pour un civil, 51,2 % pour un militaire : le tableau n° 15.
 
     C'est la seule année que la Cour des comptes a mesurée, et le compte y
-    reçoit exactement ses deux taux. Le militaire les reçoit du taux CIVIL,
-    qui est la série que le modèle lui crédite.
+    reçoit exactement ses deux taux, chacun pris sur le taux de sa population :
+    78,28 % pour le civil, 126,07 % pour le militaire.
     """
     civil, origine, fiabilite = _part_employeur_etat(retraite_seule, 2025)
     militaire, _, _ = _part_employeur_etat(retraite_seule, 2025, militaire=True)
@@ -1129,6 +1138,30 @@ def test_les_autres_annees_recoivent_la_meme_proportion_supposee(retraite_seule)
         assert employeur == pytest.approx(verse * proportion), annee
         assert origine == "retraite_seule", annee
         assert fiabilite is Fiabilite.ESTIMEE, annee
+
+
+def test_le_militaire_recoit_la_meme_proportion_de_son_propre_taux(retraite_seule):
+    """51,2 / 126,07 de ce que l'État verse pour ses militaires, chaque année.
+
+    Son taux n'a pas bougé depuis 2013 : le compte y reçoit donc 51,2 % chaque
+    année. Avant, la même proportion d'un taux plus bas — 40,6 % de la solde en
+    2006. Avant 2006, il n'a pas de taux propre : il reçoit le taux implicite
+    de tout l'État, dont sa part est prise sur le taux civil de 2025, 51,2 /
+    78,28, ce qui garde le rapport que la Cour mesure entre les deux parts.
+    """
+    for annee in (2013, 2020, 2026, 2040):
+        employeur, origine, _ = _part_employeur_etat(retraite_seule, annee, militaire=True)
+        assert employeur == pytest.approx(0.512), annee
+        assert origine == "retraite_seule"
+    assert _part_employeur_etat(retraite_seule, 2006, militaire=True)[0] == pytest.approx(
+        1.0 * 0.512 / 1.2607)
+    assert _part_employeur_etat(retraite_seule, 2010, militaire=True)[0] == pytest.approx(
+        1.0863 * 0.512 / 1.2607)
+    assert _part_employeur_etat(retraite_seule, 2005, militaire=True)[0] == pytest.approx(
+        0.594 * 0.512 / 0.7828)
+    # Le civil ne bouge pas.
+    assert _part_employeur_etat(retraite_seule, 2010)[0] == pytest.approx(
+        0.6214 * 0.441 / 0.7828)
 
 
 def test_la_part_retraite_seule_ne_touche_que_l_etat_et_la_part_patronale(

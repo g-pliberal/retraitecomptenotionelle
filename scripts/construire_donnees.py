@@ -879,6 +879,17 @@ def _contribution_employeur_public() -> dict:
     }
 
 
+def _contribution_employeur_militaires() -> dict:
+    """Part employeur de l'État pour ses militaires, indexée par année."""
+    from retraite_notionnelle.donnees.regimes import ContributionsEmployeurPubliques
+
+    table = ContributionsEmployeurPubliques(DONNEES)._militaires
+    return {
+        str(annee): [contribution.taux, contribution.nature, int(contribution.fiabilite)]
+        for annee, contribution in sorted(table.items())
+    }
+
+
 def _contribution_etat_retraite_seule() -> dict:
     """Le tableau de la Cour qui décompose la contribution de l'État, poste par poste."""
     from retraite_notionnelle.donnees.regimes import PartRetraiteSeuleEtat
@@ -1519,6 +1530,7 @@ def construire(bilan: bytes) -> bytes:
             "profil_salaire_statut_public.csv", "statut"),
         "profil_salaire_secteur": _profil_salaire_secteur(),
         "contribution_employeur_public": _contribution_employeur_public(),
+        "contribution_employeur_militaires": _contribution_employeur_militaires(),
         "contribution_etat_retraite_seule": _contribution_etat_retraite_seule(),
         "minimum_contributif": _minimum_contributif(),
         "minimum_garanti": _minimum_garanti(),

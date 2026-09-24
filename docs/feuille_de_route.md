@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 934<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 754<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 805<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -16415,7 +16415,8 @@ avant l'âge légal de 65 ans, le solde moyen passait de −1,40 % à −1,00 %.
 2. *Le militaire.* Le modèle lui crédite la série civile ; son taux appelé,
    126,07 % en 2025, n'est dans aucune table. Le réglage lui donne les 51,2 %
    de la Cour cette année-là, mais la proportion qu'il prête aux autres est
-   celle d'un taux qui n'est pas le sien.
+   celle d'un taux qui n'est pas le sien. Fait le même jour : voir « Le taux
+   propre des militaires », plus bas.
 3. *Le choix.* La doctrine du projet — ce qui n'est pas contributif se finance
    par l'impôt, non par le compte — plaide pour `retraite_seule` ; c'est aussi
    le résultat le plus lu du site qui bouge, de +45 % à −1 %. La décision est
@@ -16491,6 +16492,54 @@ deux paragraphes datés de `chiffrage_plf.md`, et le parcours de présentation,
 où le fonctionnaire n'est plus « le cas qui surprend ». Suite complète,
 rebasée sur le lot de la fonction publique de l'État poussé entre-temps par une
 autre session : 2 400 réussis, 1 ignoré, 0 échec.
+
+**Le taux propre des militaires, le 24 septembre 2026.** Le point 2, à la
+demande de l'utilisateur. Le 1° de l'article L. 61 du code des pensions fixe
+deux taux de contribution à la charge de l'État, et le modèle ne prêtait au
+militaire que celui des civils. Le sien est lu dans les décrets qui le fixent,
+versions datées de la base LEGI (`dila_legi_contribution_employeur.py`) : 100 %
+en 2006, 101,05 %, 103,5 %, 108,39 %, 108,63 %, 114,14 %, 121,55 %, puis
+126,07 % depuis 2013, que les deux décrets de 2025 qui ont relevé le taux civil
+n'ont pas touché. Vingt et une valeurs certifiées, dans
+`legislation/contribution_employeur_militaires.csv` — un fichier à part, parce
+que ce n'est pas un régime de plus. Deux sources se trompaient d'une année, et
+le décret a tranché : la fiche du Service des retraites de l'État porte
+106,83 % pour 2010, où le décret n° 2010-53 fixe 108,63 %, et les données du
+graphique n° 23 de la Cour 101,5 % pour 2007, où le décret n° 2006-1798 fixe
+101,05 %. La version de 2011 ne s'ouvre dans la base que le 6 janvier : chaque
+taux est donc daté par l'entrée en vigueur que son décret écrit, faute de quoi
+2011 aurait reçu le taux de 2010.
+
+Sous `retraite_seule`, le militaire reçoit 51,2 / 126,07 de son propre taux,
+soit 51,2 % chaque année depuis 2013 et 40,6 % en 2006 ; avant 2006, où il n'a
+pas de taux propre, le taux implicite de tout l'État, dont sa part reste prise
+sur le taux civil (51,2 / 78,28). Sous `entiere`, 126,07 % de sa solde. Le cas
+type militaire gagne deux à trois points sous le défaut : −60 % au lieu de
+−62 % pour la génération 1970 dans le scénario 4, +51 % au lieu de +47 % pour
+1990 dans la proposition. Le solde moyen de la proposition passe de −0,48 à
+−0,49 point de PIB, et de −0,87 à −0,91 sous le taux entier.
+
+**La fiche de paie du militaire, et la question qu'elle pose.** Le même taux
+entre dans la fiche de paie, où la moitié de ce que l'État cesserait de verser
+remonte dans la solde (règle du partage, 20 septembre 2026). Le militaire y
+gagne désormais +57,7 % de solde nette sur la carrière de l'exemple du README,
+là où un civil gagne +37,6 % — et où il gagnait +37,6 % lui aussi quand le
+modèle lui prêtait le taux civil. C'est la règle appliquée à ce que l'État
+verse vraiment, non une décision nouvelle. Mais le taux des militaires paie
+aussi leurs départs anticipés — 33,8 points dans la décomposition que la Cour
+fait de leur taux d'équilibre en 2025 —, que la proposition supprime en portant
+l'âge de départ à 65 ans : rendre à la solde la moitié de ces points-là est un
+choix, et il reste à l'utilisateur.
+
+Ce que le changement a touché : `dila_legi_contribution_employeur.py` (la
+lecture, et un test sur une base en mémoire), `verifier_donnees.py` (la
+certification et l'en-tête du fichier), `donnees/regimes.py` et `regimes.js`
+(`taux(..., militaire)`), `moteur/compte.py` et `compte.js` (la part « retraite
+seule » prise sur la série dont le taux vient), `remuneration.py` et
+`remuneration.js`, `construire_donnees.py`, les textes du site qui citaient
+82,28 % comme le taux de tous les agents de l'État, le manifeste, et la prose
+— `limites.md`, `methodologie.md`, le README, `chiffrage_plf.md`, le parcours
+de présentation. Suite complète : 2 407 réussis, 0 échec.
 
 **Fichiers.** `data/reference/legislation/contribution_etat_retraite_seule.csv`
 (nouveau), `src/retraite_notionnelle/config.py`,

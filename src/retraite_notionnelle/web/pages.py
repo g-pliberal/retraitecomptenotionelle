@@ -3993,7 +3993,8 @@ def _champs_modelisation(saisie: Saisie) -> str:
                 complement="L'État ne verse pas une cotisation : il verse ce "
                 "qu'il faut pour payer toutes les pensions de l'année. La Cour "
                 "des comptes n'en rattache à la retraite de l'agent lui-même "
-                "qu'un peu plus de la moitié pour un civil ; le reste paie "
+                "qu'un peu plus de la moitié pour un civil, deux cinquièmes "
+                "pour un militaire ; le reste paie "
                 "l'invalidité, les majorations pour enfants, les départs "
                 "anticipés et un déséquilibre démographique. Par défaut, le "
                 "compte ne reçoit que cette part, mesurée pour une seule année "
@@ -6678,8 +6679,9 @@ publique territoriale et hospitalière. Origine, année par année :</p>
         if "retraite_seule" in employeur.annees_par_origine:
             public += """
 <p class="discret">Pour un agent de l'État, le compte ne reçoit pas tout ce que
-l'employeur verse. Un taux de 82,28 % ne signifie pas qu'un fonctionnaire
-acquiert 82 % de son traitement en droits nouveaux : il est fixé pour que le
+l'employeur verse. Un taux de 82,28 % — 126,07 % pour un militaire — ne
+signifie pas qu'un fonctionnaire acquiert 82 % de son traitement en droits
+nouveaux : il est fixé pour que le
 compte d'affectation spéciale « Pensions » soit à l'équilibre, donc pour payer
 les pensions d'aujourd'hui, et il paie aussi l'invalidité, les majorations pour
 enfants, les départs anticipés et un déséquilibre démographique. Rien de cela
@@ -6689,8 +6691,8 @@ mesurée que pour une année ; les autres en reçoivent la même proportion.</p>
         else:
             public += """
 <p class="discret">Et c'est la limite de ces deux scénarios pour un agent
-public. Un taux de 82,28 % ne signifie pas qu'un fonctionnaire acquiert 82 % de
-son traitement en droits nouveaux : il est fixé pour que le compte
+public. Un taux de 82,28 % — 126,07 % pour un militaire — ne signifie pas qu'un
+fonctionnaire acquiert 82 % de son traitement en droits nouveaux : il est fixé pour que le compte
 d'affectation spéciale « Pensions » soit à l'équilibre, donc pour payer les
 pensions d'aujourd'hui. Le porter au compte répond à une question précise —
 « et si tout ce qui a été consacré aux pensions avait été porté au compte des
@@ -7790,8 +7792,8 @@ CSG.</p>"""
     return f"""<p><strong>Votre {assiette} est tenu fixe, et le site n'affiche pas de
 coût du travail pour votre statut.</strong> Ce n'est pas un oubli, c'est un
 refus. Ce que verse votre employeur n'est pas le prix de votre travail mais un
-<strong>taux d'équilibre</strong> — jusqu'à 82,28 % du traitement pour l'État en
-2026 —, fixé pour que le compte « Pensions » tombe juste, c'est-à-dire pour
+<strong>taux d'équilibre</strong> — 82,28 % du traitement pour l'État en 2026,
+126,07 % de la solde de ses militaires —, fixé pour que le compte « Pensions » tombe juste, c'est-à-dire pour
 payer les pensions d'aujourd'hui, et non parce que vous acquerriez 82 % de votre
 traitement en droits nouveaux. Le traiter comme un coût du travail et supposer
 qu'une baisse vous reviendrait en salaire afficherait une augmentation de

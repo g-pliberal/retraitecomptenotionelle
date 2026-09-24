@@ -51,23 +51,28 @@ export class ConstructeurCompte {
   }
 
   /**
-   * Part du taux de l'État que la Cour rattache à la retraite de l'agent,
-   * civil et militaire, et l'année qu'elle a mesurée.
+   * Part du taux de l'État que la Cour rattache à la retraite de l'agent, et
+   * l'année qu'elle a mesurée.
    *
-   * Le taux « retraite seule » de cette année-là, rapporté au taux que l'État
-   * a versé la même année : 44,1 / 78,28 pour un civil, 51,2 / 78,28 pour un
-   * militaire, rapporté au taux CIVIL parce que c'est la série que le modèle
-   * lui crédite.
+   * Le taux « retraite seule » de la population de l'agent, rapporté à ce que
+   * valait cette année-là la série dont le taux vient : 44,1 / 78,28 pour un
+   * civil, 51,2 / 126,07 pour un militaire sur son propre taux, et 51,2 /
+   * 78,28 pour un militaire d'avant 2006, qui reçoit le taux implicite de tout
+   * l'État. Voir le Python.
    *
-   * @returns {{civil: number, militaire: number, annee: number}}
+   * @returns {{civil: number, militaire: number, militaireSurTauxCivil: number,
+   *   annee: number}}
    */
   get partsRetraiteSeule() {
     if (this._partsRetraiteSeule === null) {
       const table = new PartRetraiteSeuleEtat(this.macro.paquet);
-      const verse = this.contributionsPubliques.taux(REGIME_ETAT, table.annee)[0];
+      const civil = this.contributionsPubliques.taux(REGIME_ETAT, table.annee)[0];
+      const militaire = this.contributionsPubliques.taux(
+        REGIME_ETAT, table.annee, true)[0];
       this._partsRetraiteSeule = {
-        civil: table.taux("civils") / verse,
-        militaire: table.taux("militaires") / verse,
+        civil: table.taux("civils") / civil,
+        militaire: table.taux("militaires") / militaire,
+        militaireSurTauxCivil: table.taux("militaires") / civil,
         annee: table.annee,
       };
     }
@@ -173,16 +178,21 @@ export class ConstructeurCompte {
     }
 
     if (part === PartCotisation.TOTALE) {
-      const contribution = this.contributionsPubliques.taux(regime, annee);
+      // Pour un militaire de l'État, le taux propre aux militaires.
+      const contribution = this.contributionsPubliques.taux(regime, annee, militaire);
       if (contribution !== null) {
         if (regime === REGIME_ETAT
             && this.parametres.contribution_etat === ContributionEtat.RETRAITE_SEULE) {
           // Ce que l'État a versé paie aussi ce qui n'est pas la retraite de
           // l'agent : n'en porter que la part que la Cour lui rattache.
-          // Mesurée pour une année, supposée ailleurs.
+          // Mesurée pour une année, supposée ailleurs, et prise sur la série
+          // dont le taux vient.
           const parts = this.partsRetraiteSeule;
-          const employeur = contribution[0]
-            * (militaire ? parts.militaire : parts.civil);
+          let proportion = parts.civil;
+          if (militaire) {
+            proportion = contribution[3] ? parts.militaire : parts.militaireSurTauxCivil;
+          }
+          const employeur = contribution[0] * proportion;
           const fiabilite = Math.min(contribution[2], annee === parts.annee
             ? Fiabilite.HAUTE : Fiabilite.ESTIMEE);
           return [taux + employeur, employeur, "retraite_seule", fiabilite];

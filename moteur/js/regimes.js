@@ -1954,6 +1954,10 @@ export class ValeursPoint {
  * Avant la première année d'un régime, la table ne rend rien : il n'y a rien à
  * extrapoler, et l'appelant estime alors la part patronale. Après la
  * dernière, le dernier taux est prolongé, avec la fiabilité d'une projection.
+ *
+ * L'État a deux taux, un pour ses civils et un pour ses militaires : le second
+ * est servi à part, à partir de sa première année, et sa ligne porte un
+ * quatrième élément, ``true``. Voir le Python.
  */
 export class ContributionsEmployeurPubliques {
   constructor(paquet) {
@@ -1969,9 +1973,21 @@ export class ContributionsEmployeurPubliques {
     }
     this._bornes = new Map();
     for (const [regime, annees] of this._table) {
-      const liste = [...annees.keys()].sort((a, b) => a - b);
-      this._bornes.set(regime, [liste[0], liste[liste.length - 1], liste]);
+      this._bornes.set(regime, ContributionsEmployeurPubliques._bornesDe(annees));
     }
+    this._militaires = new Map();
+    for (const [annee, [taux, nature, fiabilite]] of Object.entries(
+      paquet.contribution_employeur_militaires ?? {},
+    )) {
+      this._militaires.set(Number(annee), [taux, nature, fiabilite, true]);
+    }
+    this._bornesMilitaires = this._militaires.size
+      ? ContributionsEmployeurPubliques._bornesDe(this._militaires) : null;
+  }
+
+  static _bornesDe(annees) {
+    const liste = [...annees.keys()].sort((a, b) => a - b);
+    return [liste[0], liste[liste.length - 1], liste];
   }
 
   /** Première et dernière année publiées, ou ``null`` si le régime est absent. */
@@ -1980,26 +1996,43 @@ export class ContributionsEmployeurPubliques {
     return bornes === undefined ? null : [bornes[0], bornes[1]];
   }
 
+  /** Première et dernière année du taux propre aux militaires. */
+  couvertureMilitaires() {
+    const bornes = this._bornesMilitaires;
+    return bornes === null ? null : [bornes[0], bornes[1]];
+  }
+
   /**
-   * Contribution employeur du régime cette année-là.
+   * Contribution employeur du régime cette année-là. ``militaire`` : pour
+   * l'État, et à partir de sa première année, le taux propre aux militaires.
    *
-   * @returns {[number, string, number]|null} taux, nature, fiabilité.
+   * @returns {Array|null} taux, nature, fiabilité — et ``true`` en quatrième
+   *   position pour une ligne du taux militaire.
    */
-  taux(regime, annee) {
+  taux(regime, annee, militaire = false) {
+    if (militaire && regime === REGIME_DES_MILITAIRES
+        && this._bornesMilitaires !== null && annee >= this._bornesMilitaires[0]) {
+      return ContributionsEmployeurPubliques._enVigueur(
+        this._militaires, this._bornesMilitaires, annee);
+    }
     const annees = this._table.get(regime);
     if (annees === undefined) {
       return null;
     }
+    return ContributionsEmployeurPubliques._enVigueur(
+      annees, this._bornes.get(regime), annee);
+  }
+
+  static _enVigueur(annees, [premiere, derniere, liste], annee) {
     if (annees.has(annee)) {
       return annees.get(annee);
     }
-    const [premiere, derniere, liste] = this._bornes.get(regime);
     if (annee < premiere) {
       return null;
     }
     if (annee > derniere) {
-      const [taux, nature] = annees.get(derniere);
-      return [taux, nature, 0];
+      const [taux, nature, , militaire] = annees.get(derniere);
+      return militaire ? [taux, nature, 0, true] : [taux, nature, 0];
     }
     let applicable = premiere;
     for (const candidate of liste) {
@@ -2011,6 +2044,9 @@ export class ContributionsEmployeurPubliques {
     return annees.get(applicable);
   }
 }
+
+/** Le régime dont les militaires ont leur propre taux. */
+const REGIME_DES_MILITAIRES = "fonction_publique_etat";
 
 /**
  * Ce que paie la contribution de l'État employeur, poste par poste.

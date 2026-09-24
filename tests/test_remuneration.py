@@ -549,6 +549,25 @@ def test_la_moitie_de_ce_que_l_etat_libere_remonte_dans_le_traitement(pieces):
         (1.0 - PARAMETRES.part_rendue_aux_salaires) * libere, rel=1e-6)
 
 
+def test_pour_un_militaire_l_etat_cesserait_de_verser_son_propre_taux(pieces):
+    """126,07 % de la solde, et non les 82,28 % du traitement d'un civil.
+
+    C'est ce que l'État verse pour ses militaires (1° de l'article L. 61 du code
+    des pensions), et c'est donc celui-là que la proposition libère : la
+    moitié de l'écart remonte dans la solde, comme pour un civil, et elle
+    remonte d'autant plus que l'écart est grand.
+    """
+    militaire = contribution_equilibre(
+        PARAMETRES.racine_donnees, pieces["affiliations"], "militaire", ANNEE)
+    civil = contribution_equilibre(
+        PARAMETRES.racine_donnees, pieces["affiliations"], "fonctionnaire_etat", ANNEE)
+    assert militaire == pytest.approx(1.2607)
+    assert civil == pytest.approx(0.8228)
+    _, avant, apres = _fiches_du_statut(pieces, "militaire")
+    _, avant_civil, apres_civil = _fiches_du_statut(pieces, "fonctionnaire_etat")
+    assert apres.brut / avant.brut > apres_civil.brut / avant_civil.brut > 1.0
+
+
 def test_le_net_d_un_fonctionnaire_vaut_environ_79_pour_cent_du_traitement(pieces):
     """11,10 points de retenue et 9,53 de CSG-CRDS après abattement : 79,4 %.
 

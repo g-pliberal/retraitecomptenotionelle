@@ -436,6 +436,93 @@ def textes(db: sqlite3.Connection, motif_titre: str) -> list[tuple[str, str, str
 
 
 # ---------------------------------------------------------------------------
+# L'État, pour ses militaires : des décrets annuels, puis un article consolidé
+# ---------------------------------------------------------------------------
+
+
+#: « à 126,07 % pour les personnels militaires » depuis 2009, « pour les
+#: personnels militaires est fixé à 100 % » de 2006 à 2008. La base écrit
+#: parfois « 108, 39 % », une espace après la virgule.
+TAUX_MILITAIRES = re.compile(
+    r"personnels militaires est fix[ée]e?\s*[àa]\s*(\d{2,3}(?:,\s?\d+)?)\s*%"
+    r"|[àa]\s*(\d{2,3}(?:,\s?\d+)?)\s*%\s*pour les personnels militaires")
+
+#: « Les dispositions du présent décret entrent en vigueur à compter du
+#: 1er janvier 2011 » : la date que le décret se donne. La base ouvre parfois
+#: sa version quelques jours plus tard — le 6 janvier pour celui de 2011 —, et
+#: la règle du 1er janvier prêterait alors à 2011 le taux de 2010.
+ENTREE_EN_VIGUEUR = re.compile(
+    r"entrent en vigueur [àa] compter du 1\s?er janvier (\d{4})", re.I)
+
+#: Le taux d'un militaire est plus du double de celui d'un civil : ce qui sort
+#: de cette plage parle d'autre chose.
+PLAUSIBLE_MILITAIRES = (0.9, 1.5)
+
+
+def _entree_en_vigueur(db: sqlite3.Connection, titre: str, texte: str) -> date | None:
+    """La date d'effet que le décret écrit, dans l'article lu ou dans un autre."""
+    trouve = ENTREE_EN_VIGUEUR.search(texte)
+    if trouve is None:
+        for (autre,) in db.execute(
+                "SELECT texte FROM doc WHERE titre = ? AND nature LIKE '%Article%' "
+                "AND texte LIKE '%entrent en vigueur%'", (titre,)):
+            trouve = ENTREE_EN_VIGUEUR.search(autre or "")
+            if trouve is not None:
+                break
+    return date(int(trouve.group(1)), 1, 1) if trouve else None
+
+
+def serie_militaires(db: sqlite3.Connection
+                     ) -> tuple[dict[int, float], list[str], list[str]]:
+    """Contribution de l'État pour ses MILITAIRES, au 1er janvier de chaque année.
+
+    Le 1° de l'article L. 61 du code des pensions a deux taux, l'un pour les
+    personnels civils, l'autre pour les militaires, et le décret qui les fixe
+    les écrit dans la même phrase depuis 2009. Huit décrets s'y succèdent, du
+    n° 2006-23 au n° 2011-2037, chacun abrogé par le suivant ; le décret
+    n° 2012-1507 porte ensuite 126,07 % depuis 2013, et les deux décrets de
+    2025 qui ont relevé le taux civil n'ont remplacé que lui. La base LEGI
+    garde tout cela en versions datées, et c'est elle qui est lue.
+
+    Chaque taux est daté par l'ENTRÉE EN VIGUEUR que son décret écrit, quand
+    elle précède l'ouverture de la version. Et la chaîne doit être contiguë :
+    une version qui ne commence pas où la précédente finit dirait qu'un décret
+    manque à la base, et c'est signalé.
+
+    Rend la série, les articles lus et les signalements.
+    """
+    lignes = db.execute(
+        "SELECT id, date, fin, titre, texte FROM doc WHERE nature LIKE '%Article%' "
+        "AND texte LIKE '%personnels militaires%' AND titre LIKE '%contribution%' "
+        "AND titre LIKE '%pension%'").fetchall()
+    par_date: dict[date, float] = {}
+    periodes: list[tuple[date, date, str]] = []
+    for ident, debut, fin, titre, texte in lignes:
+        trouve = TAUX_MILITAIRES.search(texte or "")
+        if trouve is None:
+            continue
+        taux = _nombre(trouve.group(1) or trouve.group(2)) / 100
+        if not PLAUSIBLE_MILITAIRES[0] <= taux <= PLAUSIBLE_MILITAIRES[1]:
+            continue
+        try:
+            ouverture, cloture = date.fromisoformat(debut), date.fromisoformat(fin)
+        except ValueError:
+            continue
+        ecrite = _entree_en_vigueur(db, titre, texte or "")
+        effet = min(ouverture, ecrite) if ecrite else ouverture
+        par_date[effet] = taux
+        periodes.append((effet, cloture, ident))
+    periodes.sort()
+    griefs = [
+        f"militaires : {avant[2]} court jusqu'au {avant[1]}, {apres[2]} commence "
+        f"le {apres[0]} — un décret manque peut-être à la base"
+        for avant, apres in zip(periodes, periodes[1:])
+        if avant[1] != apres[0]
+    ]
+    return serie_annuelle(par_date, None), [p[2] for p in periodes], griefs
+
+
+# ---------------------------------------------------------------------------
 # Assemblage
 # ---------------------------------------------------------------------------
 
@@ -520,7 +607,8 @@ SERIES_ARRETEES = {
 #: Ce qu'on attend de chaque série : sans ce minimum, la mise en page d'un texte
 #: a changé ou une recherche a manqué sa cible, et il vaut mieux le savoir.
 MINIMUM = {"sncf": 14, "opera_de_paris": 34, "comedie_francaise": 34,
-           "mines": 42, "ratp": 18, "ieg": 15}
+           "mines": 42, "ratp": 18, "ieg": 15,
+           "fonction_publique_etat_militaires": 21}
 
 
 def _serie_datee(db: sqlite3.Connection, nom: str) -> tuple[dict[int, float], list[str]]:
@@ -604,6 +692,15 @@ def main() -> int:
                        for annee, taux in sorted(serie.items())}
         origines[nom], ecarts[nom] = lus, desaccords
 
+    # L'État pour ses militaires : les versions datées de LEGI, décret après
+    # décret. Le taux civil, lui, vient de la fiche du Service des retraites de
+    # l'État (scripts/fetch/contribution_employeur_public.py).
+    serie, lus, dits = serie_militaires(legi)
+    griefs += dits
+    series["fonction_publique_etat_militaires"] = {
+        str(annee): round(taux, 6) for annee, taux in sorted(serie.items())}
+    origines["fonction_publique_etat_militaires"] = lus
+
     for nom, minimum in MINIMUM.items():
         if len(series.get(nom, {})) < minimum:
             print(f"ÉCHEC   {nom} : {len(series.get(nom, {}))} années lues, "
@@ -649,7 +746,12 @@ def main() -> int:
                 "subvention de l'Opéra — n'y sont pas : ce ne sont pas des "
                 "cotisations d'employeur.",
         "textes": {**{nom: reglage["texte"] for nom, reglage in SERIES_DATEES.items()},
-                   **{nom: reglage["texte"] for nom, reglage in SERIES_ARRETEES.items()}},
+                   **{nom: reglage["texte"] for nom, reglage in SERIES_ARRETEES.items()},
+                   "fonction_publique_etat_militaires":
+                       "décrets fixant le taux de la contribution employeur de "
+                       "l'État prévue au 1° de l'article L. 61 du code des "
+                       "pensions, du n° 2006-23 au n° 2012-1507, pour les "
+                       "personnels militaires"},
         "series": series,
         "arretes_lus": origines,
         "corrections": ecarts,
