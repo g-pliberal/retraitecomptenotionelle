@@ -19,6 +19,9 @@
  *    l'employeur est un taux d'ÉQUILIBRE — l'employeur public —, c'est le
  *    PARTAGE : la moitié de ce qu'il cesse de verser remonte dans le
  *    traitement, l'autre moitié paie la dette de pensions qu'il finançait.
+ *    Sauf ce que son taux payait de départs anticipés, que la proposition
+ *    supprime : l'État le garde en entier, et seul le reste se partage
+ *    (`departsAnticipes`, décision du 24 septembre 2026).
  * 2. **Le partage salarial/patronal du taux unique n'est pas neutre**, bien
  *    qu'on l'attende. La CSG est assise sur le BRUT, que le partage déplace ;
  *    et la réduction générale n'efface que des cotisations patronales. Le
@@ -42,7 +45,7 @@
  */
 
 import { tauxCapitalisationVolontaireApplique } from "./config.js";
-import { ContributionsEmployeurPubliques } from "./regimes.js";
+import { ContributionsEmployeurPubliques, PartRetraiteSeuleEtat } from "./regimes.js";
 import { pointsCsgRendus } from "./restitution.js";
 import { Fiabilite } from "./serie.js";
 
@@ -317,6 +320,7 @@ export class BlocRetraite {
   constructor({
     libelle, composantes, remplaceLesContributionsDEquilibre = false,
     csgRendue = 0, partRendueAuxSalaires = 0, contributionEquilibreActuelle = 0,
+    departsAnticipes = 0,
   }) {
     this.libelle = libelle;
     this.composantes = composantes;
@@ -327,10 +331,12 @@ export class BlocRetraite {
     // social supprimés : voir `restitution.js`.
     this.csgRendue = csgRendue;
     // Ne servent qu'à `Incidence.PARTAGEE` : la part de la contribution
-    // d'équilibre d'un employeur public qui remonte dans le traitement, et le
-    // taux d'équilibre qu'il verse aujourd'hui.
+    // d'équilibre d'un employeur public qui remonte dans le traitement, le
+    // taux d'équilibre qu'il verse aujourd'hui, et ce que ce taux paie de
+    // départs anticipés — qu'il GARDE en entier, seul le reste se partageant.
     this.partRendueAuxSalaires = partRendueAuxSalaires;
     this.contributionEquilibreActuelle = contributionEquilibreActuelle;
+    this.departsAnticipes = departsAnticipes;
   }
 
   /**
@@ -574,7 +580,10 @@ export class ConstructeurFiche {
    *     dépense actuelle = traitement × (1 + taux d'équilibre)
    *     libéré           = cette dépense, moins ce que la proposition
    *                        prélèverait sur le même traitement
-   *     dépense retenue  = dépense actuelle − (1 − part rendue) × libéré
+   *     gardé            = ce que le taux d'équilibre paie de départs
+   *                        anticipés, que la proposition supprime
+   *     dépense retenue  = dépense actuelle − gardé
+   *                        − (1 − part rendue) × (libéré − gardé)
    *
    * et le traitement est celui qui épuise la dépense retenue sous les nouveaux
    * taux. Sans taux d'équilibre connu on retombe sur l'assiette fixe : un
@@ -591,7 +600,9 @@ export class ConstructeurFiche {
       0, actuelle.brut, plafondAnnuel, smicAnnuel, bloc, cadre,
     ).coutDuTravail;
     const libere = Math.max(0, depenseActuelle - aTraitementInchange);
-    const retenue = depenseActuelle - (1 - bloc.partRendueAuxSalaires) * libere;
+    const garde = Math.min(libere, actuelle.brut * bloc.departsAnticipes);
+    const retenue = depenseActuelle - garde
+      - (1 - bloc.partRendueAuxSalaires) * (libere - garde);
     return this.brutACoutDonne(retenue, plafondAnnuel, smicAnnuel, bloc, cadre);
   }
 
@@ -694,7 +705,7 @@ export function blocDroitEnVigueur(catalogue, affiliations, statut, annee) {
  */
 export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
   partSalariale = 0.0633 / 0.23, csgRendue = 0, partRendueAuxSalaires = 0,
-  contributionEquilibreActuelle = 0) {
+  contributionEquilibreActuelle = 0, departsAnticipes = 0) {
   const composantes = [new ComposanteRetraite({
     code: "regime_unifie",
     libelle: "Retraite, compte notionnel",
@@ -720,6 +731,7 @@ export function blocTauxUnique(tauxRepartition, tauxCapitalisation = 0,
     csgRendue,
     partRendueAuxSalaires,
     contributionEquilibreActuelle,
+    departsAnticipes,
   });
 }
 
@@ -762,7 +774,52 @@ export function contributionEquilibre(paquet, affiliations, statut, annee) {
   return total;
 }
 
+/**
+ * Ce que ce taux paie de départs anticipés, en fraction du traitement : l'État
+ * le garde en entier quand la proposition supprime ces départs.
+ *
+ * Le poste « avantages professionnels » du tableau de la Cour, rapporté au
+ * taux versé l'année qu'elle mesure sur la série dont le taux de l'agent
+ * vient : la convention du compte pour la part « retraite seule ». Soit
+ * 1,5 / 78,28 pour un civil, et 33,8 / 126,07 pour un militaire sur son propre
+ * taux, donc 33,8 points chaque année depuis 2013. Zéro pour tout autre
+ * employeur : seul l'État a sa décomposition.
+ */
+export function departsAnticipes(paquet, affiliations, statut, annee) {
+  let cour = MEMOIRE_COUR.get(paquet);
+  if (!cour) {
+    cour = new PartRetraiteSeuleEtat(paquet);
+    MEMOIRE_COUR.set(paquet, cour);
+  }
+  if (cour.annee === null) {
+    return 0;
+  }
+  let table = MEMOIRE_CONTRIBUTIONS.get(paquet);
+  if (!table) {
+    table = new ContributionsEmployeurPubliques(paquet);
+    MEMOIRE_CONTRIBUTIONS.set(paquet, table);
+  }
+  const militaire = statut in affiliations.categoriesMilitaires;
+  const population = militaire ? "militaires" : "civils";
+  let total = 0;
+  for (const code of affiliations.regimes(statut, annee)) {
+    if (code !== REGIME_ETAT) {
+      continue;
+    }
+    const contribution = table.taux(code, annee, militaire);
+    if (contribution === null || contribution === undefined) {
+      continue;
+    }
+    const verse = table.taux(code, cour.annee, contribution[3] === true)[0];
+    total += contribution[0]
+      * -cour.taux(population, "avantages_professionnels") / verse;
+  }
+  return total;
+}
+
+const REGIME_ETAT = "fonction_publique_etat";
 const MEMOIRE_CONTRIBUTIONS = new Map();
+const MEMOIRE_COUR = new Map();
 
 /**
  * La fiche de paie sait-elle décrire ce statut ?
@@ -925,6 +982,11 @@ export class RemunerationActif {
     return this.reference.contributionEquilibre;
   }
 
+  /** Ce qu'il en garde en entier, l'année de référence : les départs anticipés. */
+  get departsAnticipes() {
+    return this.reference.departsAnticipes ?? 0;
+  }
+
   get gainNetMensuel() {
     return this.reference.gainNet / 12;
   }
@@ -1032,6 +1094,8 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
       parametres.part_salariale_taux_unique, csg, rendue,
       partage && paquet
         ? contributionEquilibre(paquet, affiliations, statut, annee) : 0,
+      partage && paquet
+        ? departsAnticipes(paquet, affiliations, statut, annee) : 0,
     );
   };
 
@@ -1062,6 +1126,7 @@ export function remunerationDeLaCarriere(carriere, macro, catalogue, affiliation
       // supplémentaire d'un agent public.
       csgRendue: propose.csgRendue,
       contributionEquilibre: propose.contributionEquilibreActuelle,
+      departsAnticipes: propose.departsAnticipes,
       droitEnVigueur: ficheActuelle,
       proposition: constructeur.fiche(
         annee, brutPropose, plafond, smic, propose, cadre,

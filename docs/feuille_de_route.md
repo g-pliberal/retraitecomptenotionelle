@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->6 193<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 013<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 100<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -16603,6 +16603,64 @@ seule » prise sur la série dont le taux vient), `remuneration.py` et
 82,28 % comme le taux de tous les agents de l'État, le manifeste, et la prose
 — `limites.md`, `methodologie.md`, le README, `chiffrage_plf.md`, le parcours
 de présentation. Suite complète : 2 407 réussis, 0 échec.
+
+**La fiche de paie du militaire : l'État garde les départs anticipés, le
+24 septembre 2026.** Cette question et la série du point 1 avaient été remises
+le même jour dans une pull request, à la demande de l'utilisateur, pour être
+reprises dans une autre discussion. Celle-ci les a reprises le soir même, et
+l'utilisateur a tranché la première au vu de la mesure qu'elle portait. L'État
+garde en entier ce que son taux payait de départs anticipés, et seul le reste se
+partage avec la solde ou le traitement. La raison est celle du défaut du compte :
+un avantage non contributif se finance par l'impôt, et sa suppression ne se
+convertit pas plus en salaire qu'elle ne se porte au compte. Rendre à la solde
+la moitié de ces points aurait augmenté le militaire d'autant plus qu'il perdait
+l'avantage.
+
+La part gardée est le poste `avantages_professionnels` du tableau n° 15 de la
+Cour, pris comme la part « retraite seule » du compte : rapporté au taux versé
+l'année mesurée, sur la série dont le taux de l'agent vient. Pour un militaire,
+c'est 33,8 / 126,07, soit 33,8 points chaque année depuis 2013 ; pour un civil,
+1,5 / 78,28, soit 1,6 point en 2026. C'est la variante « tels quels » de la
+mesure, retenue pour les deux populations. La variante « en proportion »
+rapportait les 33,8 points au taux d'équilibre de la Cour, 112,3 %, et comptait
+donc parmi les départs anticipés une partie des 13,8 points que l'État appelle
+au-delà : elle sortait de la convention du compte.
+
+Sur la carrière de l'exemple du README, le militaire gagne désormais +42,2 % de
+solde nette au lieu de +57,7 %, soit 1 275 € par mois au lieu de 1 746 € ; le
+civil, +36,9 % au lieu de +37,6 %, soit 1 114 € au lieu de 1 136 €. Garder la
+part revient exactement à la retirer du taux : la dépense d'aujourd'hui et ce
+que la proposition libère baissent du même montant, et un test le tient. Rien
+d'autre ne bouge : la fiche de paie ne fait ni la pension, ni le compte, ni le
+solde, et la CNRACL, qui n'a pas de décomposition, garde tout son partage. Les
+témoins ne changent que sur la page du programme et sur les deux simulations
+d'un fonctionnaire d'État qu'ils figent. Aucune ne porte un militaire : sa fiche
+a été comparée à part entre les deux moteurs, avec celles d'un officier, d'un
+civil actif et d'un agent de la CNRACL, et les dix pages sont identiques. Le
+chiffrage budgétaire n'a rien eu à réécrire. En passant, la réserve 5 de la
+fiche de paie, dans `limites.md`, disait encore le traitement d'un agent public
+tenu fixe, quatre jours après le partage ; elle dit désormais les deux
+décisions. Et l'en-tête de `contribution_etat_retraite_seule.csv` disait le
+réglage sans effet par défaut et le militaire rapporté au taux civil ; il dit
+maintenant ce que font les deux lignes lues.
+
+Le point 1 reste ouvert, et il attend un document. Le projet de loi de finances
+pour 2027, où la Cour demande que la décomposition soit publiée, passe en
+Conseil des ministres le 30 septembre selon la presse, et doit être déposé au
+plus tard le 6 octobre. Son jaune pensions se tirera du miroir de l'Assemblée
+nationale, comme celui de 2026. `PartRetraiteSeuleEtat`, qui refuse aujourd'hui
+plus d'une année, devra alors en accepter plusieurs, dans les deux moteurs.
+
+Ce que le changement a touché : `remuneration.py` et `remuneration.js`
+(`departs_anticipes`, le champ du bloc, la formule de `brut_partage`),
+`donnees/regimes.py` et `regimes.js` (`PartRetraiteSeuleEtat.taux` lit tout
+poste), `web/pages.py` et `pages.js` (le paragraphe de la fiche de paie,
+l'hypothèse sous le chiffre, les deux phrases du programme),
+`test_remuneration.py` (deux tests, et le partage vérifié avec sa part gardée),
+`test_donnees.py`, le manifeste, l'en-tête de la table de la Cour, le README,
+`methodologie.md` et `limites.md`. Suite complète, rebasée sur deux commits
+poussés entre-temps par d'autres sessions (le lot des mines et de la CNRACL, la
+durée des générations 1961 à 1965) : 2 437 réussis, 1 ignoré, 0 échec.
 
 **Fichiers.** `data/reference/legislation/contribution_etat_retraite_seule.csv`
 (nouveau), `src/retraite_notionnelle/config.py`,

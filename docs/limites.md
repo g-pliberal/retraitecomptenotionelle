@@ -8157,13 +8157,18 @@ que le compte d'affectation spéciale « Pensions » tombe juste, non parce que
 l'agent acquerrait <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82<!--/--> % de son traitement en droits nouveaux, et poser dessus
 l'incidence intégrale afficherait une hausse de salaire de soixante-dix points
 qui n'existe pas — la dette de pensions qu'il finance, elle, reste à payer. Pour
-ces statuts, le traitement indiciaire brut est tenu fixe et seule la retenue de
-l'agent bouge : c'est la lecture prudente. Le gain affiché vaut donc **environ
-la moitié** de ce qu'une lecture intégrale donnerait, et le mettre en regard de
-celui d'un salarié du privé compare deux hypothèses et non deux statuts. La page
-le dit à l'endroit où elle affiche le chiffre. Un indépendant tient lui aussi
-son revenu fixe, mais là ce n'est pas une hypothèse : il n'a pas d'employeur,
-donc rien à répercuter.
+ces statuts, le traitement n'est donc ni tenu fixe ni porté à l'incidence
+intégrale : la moitié de ce que l'employeur cesse de verser remonte dans le
+traitement, l'autre moitié paie la dette de pensions déjà promises
+(`Incidence.PARTAGEE`, décidée le 20 septembre 2026). L'État garde en entier ce
+que son taux payait de départs anticipés, que la proposition supprime
+(<!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=militaires&poste=avantages_professionnels)-->33,8<!--/--> points de la solde d'un militaire, <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=civils&poste=avantages_professionnels)-->1,5<!--/--> point du traitement d'un civil
+dans le tableau de la Cour des comptes) : seul le reste se partage, depuis le
+24 septembre 2026. Le partage est une décision, non une mesure, et mettre le
+gain qu'il donne en regard de celui d'un salarié du privé compare deux
+hypothèses et non deux statuts. La page le dit à l'endroit où elle affiche le
+chiffre. Un indépendant, lui, tient son revenu fixe, et là ce n'est pas une
+hypothèse : il n'a pas d'employeur, donc rien à répercuter.
 
 **5 bis. Quatre familles de statut ne reçoivent toujours aucune fiche de paie.**
 Les salariés et exploitants agricoles — la MSA a ses propres taux hors
@@ -9460,7 +9465,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2436<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2438<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

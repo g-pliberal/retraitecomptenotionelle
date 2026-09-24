@@ -776,8 +776,11 @@ class PartRetraiteSeuleEtat:
     enfants, les départs anticipés et un rapport démographique plus
     défavorable que celui de l'ensemble des régimes.
 
-    Une seule année est mesurée : ``annee``. La table ne sert que sous
-    ``ContributionEtat.RETRAITE_SEULE``, qui en tire une proportion.
+    Une seule année est mesurée : ``annee``. Deux postes servent, chacun en
+    proportion du taux versé cette année-là : ``retraite_stricto_sensu``, ce
+    que le compte reçoit sous ``ContributionEtat.RETRAITE_SEULE``, et
+    ``avantages_professionnels``, les départs anticipés, que l'État garde en
+    entier sur la fiche de paie de la proposition (``remuneration.py``).
     """
 
     def __init__(self, racine: Path) -> None:
@@ -803,12 +806,17 @@ class PartRetraiteSeuleEtat:
     def __bool__(self) -> bool:
         return bool(self.postes)
 
-    def taux(self, population: str) -> float:
-        """Taux « retraite seule » de l'année mesurée : ``civils`` ou ``militaires``."""
-        for poste in self.postes:
-            if poste.population == population and poste.poste == "retraite_stricto_sensu":
-                return poste.taux
-        raise KeyError(population)
+    def taux(self, population: str, poste: str = "retraite_stricto_sensu") -> float:
+        """Taux d'un poste l'année mesurée : ``civils`` ou ``militaires``.
+
+        Le taux « retraite seule » par défaut. Un poste que la Cour RETIRE est
+        négatif, comme elle l'imprime : les départs anticipés d'un militaire
+        valent −0,338.
+        """
+        for ligne in self.postes:
+            if ligne.population == population and ligne.poste == poste:
+                return ligne.taux
+        raise KeyError((population, poste))
 
 
 @dataclass(frozen=True)

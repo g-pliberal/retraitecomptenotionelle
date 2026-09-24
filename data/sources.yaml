@@ -1522,9 +1522,11 @@ institutions:
           (page 90), qui décompose le taux de contribution de l'État de 2025
           poste par poste et n'en garde que 44,1 % (civils) et 51,2 %
           (militaires) pour la retraite au sens strict —
-          `legislation/contribution_etat_retraite_seule.csv`, que seul le
-          réglage `contribution_etat=retraite_seule` lit (action 129 de la
-          feuille de route). Pour le reste, il CONTRÔLE, et il a fait
+          `legislation/contribution_etat_retraite_seule.csv`, que lisent le
+          réglage `contribution_etat=retraite_seule`, le défaut, et la fiche
+          de paie de la proposition, où l'État garde en entier ce que son
+          taux payait de départs anticipés (action 129 de la feuille de
+          route). Pour le reste, il CONTRÔLE, et il a fait
           corriger le scénario 1. (1) Son tableau n° 20 (annexe
           n° 3) donne la durée requise des emplois classés génération par
           génération ; il a démenti la lecture que le dépôt faisait du « a) »

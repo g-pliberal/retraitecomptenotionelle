@@ -2027,6 +2027,12 @@ verser remonte dans le traitement, l'autre moitié paie la dette de pensions
 déjà promises. Ni l'incidence intégrale, qui prêterait à un fonctionnaire de
 l'État les <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> points que son employeur verse en 2026 comme s'ils avaient
 été son salaire différé ; ni l'assiette fixe, qui ne lui en rendrait aucun.
+L'État garde en entier ce que son taux payait de départs anticipés, que la
+proposition supprime : le poste « avantages professionnels » du tableau n° 15
+de la Cour des comptes, <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=militaires&poste=avantages_professionnels)-->33,8<!--/--> points de la solde d'un militaire et <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=civils&poste=avantages_professionnels)-->1,5<!--/--> point du
+traitement d'un civil en 2025, rapporté au taux versé comme la part « retraite
+seule » du compte. Seul le reste se partage : cet avantage non contributif se
+finance par l'impôt, et sa suppression ne se convertit pas en salaire.
 
 **Rien de tout cela ne déplace un solde du système de retraite** : ces recettes
 en étaient déjà sorties. Ce que le partage déplace est la fiche de paie, et le

@@ -2809,8 +2809,9 @@ des titres d'État parmi les mieux notés de la zone euro, gardés jusqu'à leur
 <p>Ils rejoignent le même compte, au même taux que tout le monde :
 <strong>à cotisation égale, pension égale</strong>, quel que soit le statut, et
 les {regimes} barèmes d'aujourd'hui disparaissent. L'État cotisera {taux} comme
-tout employeur ; la moitié de ce qu'il cesse de verser ira au traitement de ses
-agents, l'autre moitié aux pensions déjà promises.</p>""", ""),
+tout employeur ; il gardera ce qu'il payait pour des départs anticipés, qui
+disparaissent, et du reste de ce qu'il cesse de verser, la moitié ira au
+traitement de ses agents, l'autre moitié aux pensions déjà promises.</p>""", ""),
         ("Comment passe-t-on d'un système à l'autre ?",
          _programme_transition(contexte), "la-transition"),
         ("Combien cela coûte-t-il, et qui paie ?", f"""
@@ -3422,10 +3423,11 @@ impôt, avec de l'argent que la retraite n'encaisse plus.</p>
 aujourd'hui, pour la retraite de ses fonctionnaires, un taux qui n'est pas un
 prix du travail mais le solde qui équilibre le régime. Il cotisera
 {g.pourcentage(base.taux_cotisation_liberal, decimales=0)} comme tout
-employeur, et la moitié de ce qu'il cesse de verser ira au traitement des
-agents ; l'autre moitié paiera les pensions déjà promises, qui restent dues.
-C'est la seule augmentation de traitement que ce programme contienne, et elle
-n'est pas petite.</p>"""
+employeur. Il gardera ce qu'il payait pour des départs anticipés, puisque nous
+les supprimons ; du reste de ce qu'il cesse de verser, la moitié ira au
+traitement des agents, l'autre moitié paiera les pensions déjà promises, qui
+restent dues. C'est la seule augmentation de traitement que ce programme
+contienne, et elle n'est pas petite.</p>"""
 
 
 #: Ce que la section des points de blocage CITE, à la précision où elle le
@@ -7502,6 +7504,8 @@ def _salaire_net(comparaison: Comparaison, saisie: Saisie) -> str:
         sous_quelle_hypothese = (
             f"la moitié de ce que votre employeur cesse de verser revenant à "
             f"votre {escape(remuneration.libelle_assiette.lower())}")
+        if remuneration.departs_anticipes > 0:
+            sous_quelle_hypothese += ", hors ce qui payait des départs anticipés"
     elif remuneration.affiche_cout_du_travail:
         sous_quelle_hypothese = "à coût du travail inchangé pour votre employeur"
     else:
@@ -7546,7 +7550,9 @@ def _salaire_net_rendu(remuneration, net: str) -> str:
     LE TRAITEMENT D'UN AGENT PUBLIC. Son employeur verse un taux d'ÉQUILIBRE,
     et la proposition le ramène à la part patronale du taux unique. La moitié
     de ce qu'il cesse de verser remonte dans le traitement, l'autre moitié paie
-    la dette de pensions déjà promises — qui, elle, reste due.
+    la dette de pensions déjà promises — qui, elle, reste due. Sauf, pour
+    l'État, ce que son taux payait de départs anticipés : la proposition les
+    supprime, et il le garde en entier.
     """
     morceaux = []
     if remuneration.csg_rendue > 0:
@@ -7564,15 +7570,25 @@ def _salaire_net_rendu(remuneration, net: str) -> str:
   un impôt qu'on supprime. L'autre moitié éteint de la dette.</p>""")
     if (remuneration.incidence is Incidence.PARTAGEE
             and remuneration.contribution_equilibre > 0):
+        assiette = escape(remuneration.libelle_assiette.lower())
+        if remuneration.departs_anticipes > 0:
+            partage = f"""La proposition le ramène à
+  la part employeur du taux unique. De ce qu'il cesse de verser, il garde en
+  entier les {g.pourcentage(remuneration.departs_anticipes)} de votre {assiette}
+  qui payaient des départs anticipés, puisque la proposition les supprime ; la
+  moitié du reste revient à votre {assiette}, l'autre moitié paie la dette de
+  pensions déjà promises, qui reste due."""
+        else:
+            partage = f"""La proposition le ramène à
+  la part employeur du taux unique, et la moitié de ce qu'il cesse de verser
+  revient à votre {assiette} — l'autre
+  moitié paie la dette de pensions déjà promises, qui reste due."""
         morceaux.append(f"""
   <p><strong>Votre employeur verse aujourd'hui
   {g.pourcentage(remuneration.contribution_equilibre)} de votre
-  {escape(remuneration.libelle_assiette.lower())}</strong> pour votre retraite.
+  {assiette}</strong> pour votre retraite.
   Ce n'est pas un prix du travail : c'est le taux qui équilibre le régime,
-  c'est-à-dire qui paie les pensions d'aujourd'hui. La proposition le ramène à
-  la part employeur du taux unique, et la moitié de ce qu'il cesse de verser
-  revient à votre {escape(remuneration.libelle_assiette.lower())} — l'autre
-  moitié paie la dette de pensions déjà promises, qui reste due. C'est pourquoi
+  c'est-à-dire qui paie les pensions d'aujourd'hui. {partage} C'est pourquoi
   votre {net} monte de plus que ne le ferait une simple baisse de retenue.</p>""")
     return "".join(morceaux)
 

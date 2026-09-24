@@ -42,6 +42,7 @@ from retraite_notionnelle.remuneration import (
     bloc_taux_unique_sans_employeur,
     charger_prelevements,
     contribution_equilibre,
+    departs_anticipes,
     fiche_de_paie_possible,
     profil_de_la_fiche,
     smic_annuel,
@@ -439,12 +440,15 @@ def test_les_quatre_familles_couvertes_le_sont(pieces):
 
 
 def _fiches_du_statut(pieces, statut: str, niveau: float = 1.6,
-                      part_rendue: float | None = None):
+                      part_rendue: float | None = None,
+                      gardes: bool = True):
     """Les deux fiches d'un statut à un niveau de revenu, comme le site les fait.
 
     ``part_rendue`` force le partage des impôts abandonnés ; à ``None``, c'est
     celui des paramètres. Le mettre à zéro redonne l'ancienne convention, et
     c'est ce dont un test se sert pour dire ce que la décision a déplacé.
+    ``gardes=False`` partage aussi ce qui payait des départs anticipés, comme
+    avant le 24 septembre 2026.
     """
     rendue = (PARAMETRES.part_rendue_aux_salaires if part_rendue is None
               else part_rendue)
@@ -470,6 +474,9 @@ def _fiches_du_statut(pieces, statut: str, niveau: float = 1.6,
             contribution_equilibre_actuelle=contribution_equilibre(
                 PARAMETRES.racine_donnees, pieces["affiliations"], statut, ANNEE)
             if profil.incidence is Incidence.PARTAGEE else 0.0,
+            departs_anticipes=departs_anticipes(
+                PARAMETRES.racine_donnees, pieces["affiliations"], statut, ANNEE)
+            if profil.incidence is Incidence.PARTAGEE and gardes else 0.0,
         )
     brut = niveau * pieces["smic"]
     avant = constructeur.fiche(
@@ -526,27 +533,35 @@ def test_la_moitie_de_ce_que_l_etat_libere_remonte_dans_le_traitement(pieces):
     """La formule du partage, vérifiée sur ses deux termes plutôt que sur un chiffre.
 
     L'État verse 82,28 % du traitement en 2026 ; la proposition ramène sa part à
-    11,50 points — la moitié patronale de 18 + 5. La dépense publique par agent
-    baisse donc de la MOITIÉ de l'écart, l'autre moitié revenant au traitement.
+    11,50 points — la moitié patronale de 18 + 5. Il garde d'abord ce que son
+    taux payait de départs anticipés ; la dépense publique par agent baisse
+    donc de cette part, puis de la MOITIÉ du reste de l'écart, l'autre moitié
+    revenant au traitement.
     """
     _, avant, apres = _fiches_du_statut(pieces, "fonctionnaire_etat")
     equilibre = contribution_equilibre(
         PARAMETRES.racine_donnees, pieces["affiliations"],
         "fonctionnaire_etat", ANNEE)
+    garde = departs_anticipes(
+        PARAMETRES.racine_donnees, pieces["affiliations"],
+        "fonctionnaire_etat", ANNEE)
     assert equilibre > 0.8
+    assert 0.0 < garde < 0.02
     patronal = (PARAMETRES.taux_cotisation_liberal
                 + PARAMETRES.taux_capitalisation_obligatoire
                 ) * (1.0 - PARAMETRES.part_salariale_taux_unique)
     attendu = avant.brut * (1.0 + patronal
                             + PARAMETRES.part_rendue_aux_salaires
-                            * (equilibre - patronal)) / (1.0 + patronal)
+                            * (equilibre - garde - patronal)) / (1.0 + patronal)
     assert apres.brut == pytest.approx(attendu, rel=1e-6)
-    # Et la dépense publique baisse bien de l'autre moitié.
+    # Et la dépense publique baisse bien de la part gardée et de l'autre moitié.
     depense_avant = avant.brut * (1.0 + equilibre)
     depense_apres = apres.brut * (1.0 + patronal)
     libere = avant.brut * (equilibre - patronal)
     assert depense_avant - depense_apres == pytest.approx(
-        (1.0 - PARAMETRES.part_rendue_aux_salaires) * libere, rel=1e-6)
+        avant.brut * garde
+        + (1.0 - PARAMETRES.part_rendue_aux_salaires) * (libere - avant.brut * garde),
+        rel=1e-6)
 
 
 def test_pour_un_militaire_l_etat_cesserait_de_verser_son_propre_taux(pieces):
@@ -555,7 +570,8 @@ def test_pour_un_militaire_l_etat_cesserait_de_verser_son_propre_taux(pieces):
     C'est ce que l'État verse pour ses militaires (1° de l'article L. 61 du code
     des pensions), et c'est donc celui-là que la proposition libère : la
     moitié de l'écart remonte dans la solde, comme pour un civil, et elle
-    remonte d'autant plus que l'écart est grand.
+    remonte d'autant plus que l'écart est grand — même une fois retirés les
+    départs anticipés, que l'État garde.
     """
     militaire = contribution_equilibre(
         PARAMETRES.racine_donnees, pieces["affiliations"], "militaire", ANNEE)
@@ -566,6 +582,64 @@ def test_pour_un_militaire_l_etat_cesserait_de_verser_son_propre_taux(pieces):
     _, avant, apres = _fiches_du_statut(pieces, "militaire")
     _, avant_civil, apres_civil = _fiches_du_statut(pieces, "fonctionnaire_etat")
     assert apres.brut / avant.brut > apres_civil.brut / avant_civil.brut > 1.0
+
+
+def test_l_etat_garde_ce_que_son_taux_payait_de_departs_anticipes(pieces):
+    """Le poste « avantages professionnels » de la Cour, gardé en entier.
+
+    L'année qu'elle a mesurée, c'est son chiffre exactement : 33,8 points de la
+    solde d'un militaire, 1,5 point du traitement d'un civil. Les autres
+    années, la même proportion du taux versé — la convention du compte pour la
+    part « retraite seule » —, donc 33,8 points chaque année depuis 2013 pour
+    le militaire, dont le taux n'a pas bougé. Aucun autre employeur n'a de
+    décomposition : rien n'y est gardé.
+    """
+    racine, affiliations = PARAMETRES.racine_donnees, pieces["affiliations"]
+    for statut in ("militaire", "militaire_officier"):
+        for annee in (2025, ANNEE):
+            assert departs_anticipes(
+                racine, affiliations, statut, annee) == pytest.approx(0.338)
+    for statut in ("fonctionnaire_etat", "fonctionnaire_etat_actif"):
+        assert departs_anticipes(
+            racine, affiliations, statut, 2025) == pytest.approx(0.015)
+        assert departs_anticipes(
+            racine, affiliations, statut, ANNEE) == pytest.approx(
+            0.015 * contribution_equilibre(racine, affiliations, statut, ANNEE)
+            / 0.7828)
+    for statut in ("fonctionnaire_territorial_hospitalier", STATUT):
+        assert departs_anticipes(racine, affiliations, statut, ANNEE) == 0.0
+
+
+def test_garder_les_departs_anticipes_revient_a_les_retirer_du_taux(pieces):
+    """La part gardée n'entre pas dans le partage, et c'est tout ce qu'elle fait.
+
+    Retirer du taux d'équilibre ce qui payait les départs anticipés, sans rien
+    garder, rend le même traitement : la dépense d'aujourd'hui et ce que la
+    proposition libère baissent du même montant. Le militaire y perd
+    l'essentiel de son avance sur le civil, sans la perdre toute ; et à part
+    rendue nulle, sa solde ne bouge toujours pas.
+    """
+    racine, affiliations = PARAMETRES.racine_donnees, pieces["affiliations"]
+    profil, avant, apres = _fiches_du_statut(pieces, "militaire")
+    equilibre = contribution_equilibre(racine, affiliations, "militaire", ANNEE)
+    garde = departs_anticipes(racine, affiliations, "militaire", ANNEE)
+    retire = bloc_taux_unique(
+        PARAMETRES.taux_cotisation_liberal,
+        PARAMETRES.taux_capitalisation_obligatoire,
+        PARAMETRES.part_salariale_taux_unique,
+        csg_rendue=points_csg_rendus(
+            racine, ANNEE, PARAMETRES.part_rendue_aux_salaires),
+        part_rendue_aux_salaires=PARAMETRES.part_rendue_aux_salaires,
+        contribution_equilibre_actuelle=equilibre - garde,
+    )
+    assert apres.brut == pytest.approx(ConstructeurFiche(profil).brut_sous_la_proposition(
+        avant, pieces["plafond"], pieces["smic"], retire), rel=1e-9)
+    _, _, tout_partage = _fiches_du_statut(pieces, "militaire", gardes=False)
+    _, avant_civil, apres_civil = _fiches_du_statut(pieces, "fonctionnaire_etat")
+    assert tout_partage.brut > apres.brut
+    assert apres.brut / avant.brut > apres_civil.brut / avant_civil.brut
+    _, avant_nul, apres_nul = _fiches_du_statut(pieces, "militaire", part_rendue=0.0)
+    assert apres_nul.brut == pytest.approx(avant_nul.brut)
 
 
 def test_le_net_d_un_fonctionnaire_vaut_environ_79_pour_cent_du_traitement(pieces):

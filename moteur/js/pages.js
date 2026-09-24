@@ -5547,6 +5547,9 @@ function salaireNet(comparaison, saisie) {
   if (remuneration.incidence === Incidence.PARTAGEE) {
     sousQuelleHypothese = "la moitié de ce que votre employeur cesse de verser "
       + `revenant à votre ${echapper(remuneration.libelleAssiette.toLowerCase())}`;
+    if (remuneration.departsAnticipes > 0) {
+      sousQuelleHypothese += ", hors ce qui payait des départs anticipés";
+    }
   } else if (remuneration.afficheCoutDuTravail) {
     sousQuelleHypothese = "à coût du travail inchangé pour votre employeur";
   } else {
@@ -5626,15 +5629,25 @@ function salaireNetRendu(remuneration, net) {
   if (remuneration.incidence === Incidence.PARTAGEE
       && remuneration.contributionEquilibre > 0) {
     const assiette = echapper(remuneration.libelleAssiette.toLowerCase());
+    // Ce que le taux de l'État payait de départs anticipés, il le garde en
+    // entier : la proposition les supprime, et seul le reste se partage.
+    const partage = remuneration.departsAnticipes > 0
+      ? `La proposition le ramène à
+  la part employeur du taux unique. De ce qu'il cesse de verser, il garde en
+  entier les ${g.pourcentage(remuneration.departsAnticipes)} de votre ${assiette}
+  qui payaient des départs anticipés, puisque la proposition les supprime ; la
+  moitié du reste revient à votre ${assiette}, l'autre moitié paie la dette de
+  pensions déjà promises, qui reste due.`
+      : `La proposition le ramène à
+  la part employeur du taux unique, et la moitié de ce qu'il cesse de verser
+  revient à votre ${assiette} — l'autre
+  moitié paie la dette de pensions déjà promises, qui reste due.`;
     morceaux.push(`
   <p><strong>Votre employeur verse aujourd'hui
   ${g.pourcentage(remuneration.contributionEquilibre)} de votre
   ${assiette}</strong> pour votre retraite.
   Ce n'est pas un prix du travail : c'est le taux qui équilibre le régime,
-  c'est-à-dire qui paie les pensions d'aujourd'hui. La proposition le ramène à
-  la part employeur du taux unique, et la moitié de ce qu'il cesse de verser
-  revient à votre ${assiette} — l'autre
-  moitié paie la dette de pensions déjà promises, qui reste due. C'est pourquoi
+  c'est-à-dire qui paie les pensions d'aujourd'hui. ${partage} C'est pourquoi
   votre ${net} monte de plus que ne le ferait une simple baisse de retenue.</p>`);
   }
   return morceaux.join("");
@@ -13364,8 +13377,9 @@ ${programmeCapitalisation(contexte)}`, "la-part-capitalisee"],
 <p>Ils rejoignent le même compte, au même taux que tout le monde :
 <strong>à cotisation égale, pension égale</strong>, quel que soit le statut, et
 les ${regimes} barèmes d'aujourd'hui disparaissent. L'État cotisera ${taux} comme
-tout employeur ; la moitié de ce qu'il cesse de verser ira au traitement de ses
-agents, l'autre moitié aux pensions déjà promises.</p>`, ""],
+tout employeur ; il gardera ce qu'il payait pour des départs anticipés, qui
+disparaissent, et du reste de ce qu'il cesse de verser, la moitié ira au
+traitement de ses agents, l'autre moitié aux pensions déjà promises.</p>`, ""],
     ["Comment passe-t-on d'un système à l'autre ?",
       programmeTransition(contexte), "la-transition"],
     ["Combien cela coûte-t-il, et qui paie ?", `
@@ -13921,10 +13935,11 @@ impôt, avec de l'argent que la retraite n'encaisse plus.</p>
 aujourd'hui, pour la retraite de ses fonctionnaires, un taux qui n'est pas un
 prix du travail mais le solde qui équilibre le régime. Il cotisera
 ${g.pourcentage(base.taux_cotisation_liberal, false, 0)} comme tout
-employeur, et la moitié de ce qu'il cesse de verser ira au traitement des
-agents ; l'autre moitié paiera les pensions déjà promises, qui restent dues.
-C'est la seule augmentation de traitement que ce programme contienne, et elle
-n'est pas petite.</p>`;
+employeur. Il gardera ce qu'il payait pour des départs anticipés, puisque nous
+les supprimons ; du reste de ce qu'il cesse de verser, la moitié ira au
+traitement des agents, l'autre moitié paiera les pensions déjà promises, qui
+restent dues. C'est la seule augmentation de traitement que ce programme
+contienne, et elle n'est pas petite.</p>`;
 }
 
 

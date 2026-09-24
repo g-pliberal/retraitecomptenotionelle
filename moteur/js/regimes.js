@@ -2135,7 +2135,10 @@ const REGIME_DES_MILITAIRES = "fonction_publique_etat";
  * taux que l'État verse au compte d'affectation spéciale « Pensions » pour
  * 2025, et n'en rattache à la retraite de l'agent lui-même que 44,1 % du
  * traitement pour un civil et 51,2 % pour un militaire. Une seule année est
- * mesurée : ``annee``.
+ * mesurée : ``annee``. Deux postes servent : ``retraite_stricto_sensu``, ce
+ * que le compte reçoit, et ``avantages_professionnels``, les départs
+ * anticipés, que l'État garde en entier sur la fiche de paie de la
+ * proposition (``remuneration.js``).
  */
 export class PartRetraiteSeuleEtat {
   constructor(paquet) {
@@ -2146,13 +2149,17 @@ export class PartRetraiteSeuleEtat {
     );
   }
 
-  /** Taux « retraite seule » de l'année mesurée : ``civils`` ou ``militaires``. */
-  taux(population) {
-    for (const poste of this.postes) {
-      if (poste.population === population && poste.poste === "retraite_stricto_sensu") {
-        return poste.taux;
+  /**
+   * Taux d'un poste l'année mesurée : ``civils`` ou ``militaires``. Le taux
+   * « retraite seule » par défaut ; un poste que la Cour RETIRE est négatif,
+   * comme elle l'imprime.
+   */
+  taux(population, poste = "retraite_stricto_sensu") {
+    for (const ligne of this.postes) {
+      if (ligne.population === population && ligne.poste === poste) {
+        return ligne.taux;
       }
     }
-    throw new Error(`population inconnue : ${population}`);
+    throw new Error(`poste inconnu : ${population}, ${poste}`);
   }
 }

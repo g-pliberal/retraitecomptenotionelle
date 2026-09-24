@@ -2004,6 +2004,10 @@ def test_le_tableau_de_la_cour_tombe_juste_a_l_arrondi_pres():
                 total.taux + deduction.taux, abs=0.002), reste.poste
     assert table.taux("civils") == pytest.approx(0.441)
     assert table.taux("militaires") == pytest.approx(0.512)
+    # Les départs anticipés, que l'État garde sur la fiche de paie : négatifs,
+    # comme la Cour imprime ce qu'elle retire.
+    assert table.taux("civils", "avantages_professionnels") == pytest.approx(-0.015)
+    assert table.taux("militaires", "avantages_professionnels") == pytest.approx(-0.338)
 
 
 def test_l_annee_mesuree_par_la_cour_a_son_taux_verse(employeurs):

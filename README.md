@@ -182,8 +182,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->948<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 455<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->949<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 459<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Huit pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -1045,14 +1045,18 @@ La contribution d'équilibre de l'employeur public suit la même règle :
 <!--chiffre:cellule(data/reference/legislation/contribution_employeur_public.csv:taux*100?annee=2026&regime=fonction_publique_etat)-->82,28<!--/--> % du traitement d'un fonctionnaire d'État en 2026, ramenés à la part
 patronale du taux unique, et la moitié de ce qui est libéré remonte dans le
 traitement — l'autre moitié paie la dette de pensions déjà promises, qui reste
-due. Sur la fiche de paie de la fonctionnaire de l'exemple du §3, c'est
-**+<!--chiffre:mesure(gain_net?exemple=fonctionnaire)-->37,6<!--/--> % de traitement net** en 2026, et à tous les niveaux de traitement :
+due. Une part n'entre pas dans ce partage : ce que le taux payait de départs
+anticipés, que la proposition supprime, et que l'État garde en entier. Sur la
+fiche de paie de la fonctionnaire de l'exemple du §3, c'est
+**+<!--chiffre:mesure(gain_net?exemple=fonctionnaire)-->36,9<!--/--> % de traitement net** en 2026, et à tous les niveaux de traitement :
 ni réduction générale ni plafond ne viennent courber le calcul. Ce n'est ni
 l'incidence intégrale, qui lui prêterait toute la contribution comme si elle
 avait été son salaire différé, ni l'assiette fixe, qui ne lui en rendrait
 rien : mettre le partage à zéro rend l'ancienne convention. Pour un militaire,
-l'État verse <!--chiffre:cellule(data/reference/legislation/contribution_employeur_militaires.csv:taux*100?annee=2026)-->126,07<!--/--> % de la solde, et la même moitié d'un écart plus grand fait
-**+<!--chiffre:mesure(gain_net?exemple=fonctionnaire&affiliation=militaire)-->57,7<!--/--> %** de solde nette sur la même carrière.
+l'État verse <!--chiffre:cellule(data/reference/legislation/contribution_employeur_militaires.csv:taux*100?annee=2026)-->126,07<!--/--> % de la solde, dont <!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=militaires&poste=avantages_professionnels)-->33,8<!--/--> points paient ses départs anticipés (<!--chiffre:cellule(data/reference/legislation/contribution_etat_retraite_seule.csv:taux*-100?population=civils&poste=avantages_professionnels)-->1,5<!--/--> point
+pour un civil, au tableau n° 15 de la Cour des comptes). L'État garde ces
+points ; la même moitié de ce qui reste, un écart plus grand que celui d'un
+civil, fait **+<!--chiffre:mesure(gain_net?exemple=fonctionnaire&affiliation=militaire)-->42,2<!--/--> %** de solde nette sur la même carrière.
 
 **Et les pensions LIQUIDÉES suivent la règle d'indexation, comme le compte qui
 les a produites.** Un système notionnel a deux règles d'indexation — celle du
@@ -1310,7 +1314,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2436 tests Python
+tests/                          2438 tests Python
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1366,7 +1370,7 @@ Sans cible, la suite se répartit d'elle-même sur les cœurs (pytest-xdist) ;
 avec une cible — un fichier, un test —, elle tourne en série, ce qui est plus
 lisible pour un seul test.
 
-<!--chiffre:tests()-->2436<!--/--> tests couvrent le chargement et la fiabilité des données, la
+<!--chiffre:tests()-->2438<!--/--> tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,

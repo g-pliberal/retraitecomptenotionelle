@@ -192,6 +192,20 @@ vérifie. La ligne « coût du travail » reste absente : un taux d'équilibre n
 toujours pas un prix du travail, et l'afficher comme tel dirait le contraire de
 ce que ce partage suppose.
 
+**Sauf ce qui payait des départs anticipés : l'État le garde en entier.**
+Décision du 24 septembre 2026. Le taux d'équilibre de l'État paie aussi les
+pensions servies avant l'âge de droit commun, aux catégories actives et
+surtout aux militaires, et la proposition supprime ces départs. En rendre la
+moitié à la solde aurait augmenté le militaire d'autant plus qu'il perdait un
+avantage non contributif. Or ce qui n'est pas contributif se finance par
+l'impôt, pas plus par le salaire que par le compte : seul le reste se partage. La part gardée est ``departs_anticipes`` : le poste
+« avantages professionnels » du tableau n° 15 de la Cour des comptes
+(``legislation/contribution_etat_retraite_seule.csv``), 33,8 points de la solde
+d'un militaire et 1,5 point du traitement d'un civil en 2025, pris les autres
+années dans la même proportion du taux versé que la part « retraite seule » du
+compte. Les autres employeurs publics n'ont pas de décomposition : rien n'y est
+gardé.
+
 Le traitement d'un fonctionnaire d'État monte ainsi d'un tiers. C'est beaucoup,
 et deux réserves l'accompagnent dans ``docs/limites.md`` : la pension, elle,
 reste calculée sur le revenu de la carrière et non sur ce traitement-là ; et le
@@ -213,7 +227,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from .donnees.chargement import Fiabilite, charger_yaml
-from .donnees.regimes import ContributionsEmployeurPubliques
+from .donnees.regimes import ContributionsEmployeurPubliques, PartRetraiteSeuleEtat
 from .restitution import points_csg_rendus
 
 #: Heures d'un temps plein sur une année : 35 heures sur 52 semaines. Sert à
@@ -726,6 +740,10 @@ class BlocRetraite:
     #: Taux d'équilibre que l'employeur public verse AUJOURD'HUI, en fraction
     #: du traitement. Ne sert qu'à ``Incidence.PARTAGEE``.
     contribution_equilibre_actuelle: float = 0.0
+    #: Ce que ce taux paie de départs anticipés, en fraction du traitement :
+    #: l'employeur le GARDE en entier, et seul le reste se partage. Ne sert
+    #: qu'à ``Incidence.PARTAGEE``.
+    departs_anticipes: float = 0.0
 
     def taux_employeur(self, brut: float, plafond_annuel: float) -> float:
         """Ce que l'employeur verse pour la retraite, rapporté au brut."""
@@ -1029,11 +1047,16 @@ class ConstructeurFiche:
             dépense si rien ne bougeait = ce que la proposition prélève sur le
                                           même traitement
             libéré            = la différence
-            dépense retenue   = dépense actuelle − (1 − part rendue) × libéré
+            gardé             = ce que le taux d'équilibre paie de départs
+                                anticipés, que la proposition supprime
+            dépense retenue   = dépense actuelle − gardé
+                                − (1 − part rendue) × (libéré − gardé)
 
         et le traitement est celui qui épuise la dépense retenue sous les
         nouveaux taux. À part rendue nulle, on retrouve l'assiette fixe ; à un,
-        l'incidence intégrale.
+        l'incidence intégrale de ce que l'employeur ne garde pas. Garder une
+        part revient exactement à la retirer du taux d'équilibre : la dépense
+        actuelle et le libéré baissent du même montant.
 
         **Sans taux d'équilibre connu, on retombe sur l'assiette fixe.** Un
         régime dont la série employeur ne couvre pas l'année ne libère rien
@@ -1049,7 +1072,9 @@ class ConstructeurFiche:
             0, actuelle.brut, plafond_annuel, smic_annuel, bloc, cadre
         ).cout_du_travail
         libere = max(0.0, depense_actuelle - a_traitement_inchange)
-        retenue = depense_actuelle - (1.0 - bloc.part_rendue_aux_salaires) * libere
+        garde = min(libere, actuelle.brut * bloc.departs_anticipes)
+        retenue = (depense_actuelle - garde
+                   - (1.0 - bloc.part_rendue_aux_salaires) * (libere - garde))
         return self.brut_a_cout_donne(
             retenue, plafond_annuel, smic_annuel, bloc, cadre)
 
@@ -1146,6 +1171,7 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
                      csg_rendue: float = 0.0,
                      part_rendue_aux_salaires: float = 0.0,
                      contribution_equilibre_actuelle: float = 0.0,
+                     departs_anticipes: float = 0.0,
                      ) -> BlocRetraite:
     """Le bloc de la proposition : un taux unique, au premier euro, sans plafond.
 
@@ -1187,6 +1213,7 @@ def bloc_taux_unique(taux_repartition: float, taux_capitalisation: float = 0.0,
         csg_rendue=csg_rendue,
         part_rendue_aux_salaires=part_rendue_aux_salaires,
         contribution_equilibre_actuelle=contribution_equilibre_actuelle,
+        departs_anticipes=departs_anticipes,
     )
 
 
@@ -1231,9 +1258,49 @@ def contribution_equilibre(racine_donnees: Path, affiliations, statut: str,
     return total
 
 
+def departs_anticipes(racine_donnees: Path, affiliations, statut: str,
+                      annee: int) -> float:
+    """Ce que ce taux paie de départs anticipés, en fraction du traitement.
+
+    L'État le garde en entier quand la proposition supprime ces départs :
+    voir le docstring du module. C'est le poste « avantages professionnels »
+    du tableau de la Cour, rapporté au taux versé l'année qu'elle mesure, sur
+    la série dont le taux de l'agent vient. C'est la convention du compte pour
+    la part « retraite seule » (``parts_retraite_seule``, dans
+    ``moteur/compte.py``) : 1,5 / 78,28 pour un civil, 33,8 / 126,07 pour un
+    militaire sur son propre taux. Chacun garde ainsi exactement le chiffre de
+    la Cour l'année qu'elle a mesurée. Pour un militaire, c'est 33,8 points
+    chaque année depuis 2013, son taux n'ayant pas bougé.
+
+    Zéro pour tout autre employeur : seul l'État a sa décomposition.
+    """
+    cour = _part_retraite_seule(racine_donnees)
+    if not cour:
+        return 0.0
+    table = _contributions_publiques(racine_donnees)
+    militaire = statut in affiliations.categories_militaires
+    population = "militaires" if militaire else "civils"
+    total = 0.0
+    for code in affiliations.regimes(statut, annee):
+        if code != table.REGIME_DES_MILITAIRES:
+            continue
+        contribution = table.taux(code, annee, militaire)
+        if contribution is None:
+            continue
+        verse = table.taux(code, cour.annee, contribution.militaire).taux
+        total += (contribution.taux
+                  * -cour.taux(population, "avantages_professionnels") / verse)
+    return total
+
+
 @lru_cache(maxsize=4)
 def _contributions_publiques(racine: Path) -> ContributionsEmployeurPubliques:
     return ContributionsEmployeurPubliques(racine)
+
+
+@lru_cache(maxsize=4)
+def _part_retraite_seule(racine: Path) -> PartRetraiteSeuleEtat:
+    return PartRetraiteSeuleEtat(racine)
 
 
 # -- à quel profil un statut appartient --------------------------------------
@@ -1344,6 +1411,9 @@ class AnneeComparee:
     #: autre profil. Gardé pour la même raison : la page doit pouvoir écrire
     #: d'où vient le traitement supplémentaire.
     contribution_equilibre: float = 0.0
+    #: Ce que ce taux paie de départs anticipés, que l'employeur garde en
+    #: entier. Gardé pour que la page dise ce qui ne se partage pas.
+    departs_anticipes: float = 0.0
 
     @property
     def gain_net(self) -> float:
@@ -1457,6 +1527,11 @@ class RemunerationActif:
         return self.reference.contribution_equilibre
 
     @property
+    def departs_anticipes(self) -> float:
+        """Ce qu'il en garde en entier, l'année de référence : les départs anticipés."""
+        return self.reference.departs_anticipes
+
+    @property
     def reference(self) -> AnneeComparee:
         """La première année pleine sous le nouveau système : celle qu'on affiche."""
         return self.annees[0]
@@ -1566,6 +1641,9 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
             contribution_equilibre_actuelle=contribution_equilibre(
                 parametres.racine_donnees, affiliations, statut, annee)
             if partage else 0.0,
+            departs_anticipes=departs_anticipes(
+                parametres.racine_donnees, affiliations, statut, annee)
+            if partage else 0.0,
         )
 
     comparees: list[AnneeComparee] = []
@@ -1596,6 +1674,7 @@ def remuneration_de_la_carriere(carriere, macro, catalogue, affiliations,
             taux_epargne_volontaire=volontaire,
             csg_rendue=propose.csg_rendue,
             contribution_equilibre=propose.contribution_equilibre_actuelle,
+            departs_anticipes=propose.departs_anticipes,
             _smic=smic,
         ))
 
