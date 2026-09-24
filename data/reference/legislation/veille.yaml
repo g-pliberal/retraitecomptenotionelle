@@ -1078,11 +1078,11 @@ entrees:
     textes: ["loi n° 2025-1403, article 105 VI"]
     sources:
       - {type: circulaire_cnav, reference: "2026-07 du 5 mars 2026, point 1.1", date: "2026-03-05"}
-    verifie_le: "2026-09-22"
+    verifie_le: "2026-09-24"
     temoins: []
     reformes: [lfss_2026_suspension]
     etat: a_verifier
-    effet: "Tout changement de calendrier touche les générations 1965 et suivantes. Relu le 22 septembre 2026, index LEGI à jour de l'incrément du 21 : la version du 31 décembre 2025 de L. 161-17-2 (LEGIARTI000053280889) et de L. 161-17-3 (LEGIARTI000053280903) est toujours la dernière, sans date de fin. La suspension tient, et cette ligne reste `a_verifier` parce que c'est un calendrier politique, non une lacune du dépôt."
+    effet: "Tout changement de calendrier touche les générations 1965 et suivantes. Relu le 24 septembre 2026, index LEGI à jour de l'incrément du 23 : la version du 31 décembre 2025 de L. 161-17-2 (LEGIARTI000053280889) et de L. 161-17-3 (LEGIARTI000053280903) est toujours la dernière, sans date de fin. La suspension tient, et cette ligne reste `a_verifier` parce que c'est un calendrier politique, non une lacune du dépôt."
     a_faire: "À chaque session : `python scripts/fetch/dila_index.py legi --mettre-a-jour`, puis vérifier que L. 161-17-2 et L. 161-17-3 n'ont pas de version postérieure au 31 décembre 2025 (`dila_cherche.py legi --num L161-17-2`)."
     prochaine_veille: "2027-01-31"
 
@@ -5361,3 +5361,43 @@ journal:
       l'écrêtement du minimum garanti, dont le décret n'a pas été trouvé ; la
       décote « carrière longue » des militaires ; la confrontation du barème du
       rachat d'études à la neutralité du compte notionnel.
+
+  - date: "2026-09-24"
+    session: "action 129, le taux de contribution de l'État pour ses militaires"
+    consulte: >-
+      Dans l'index LEGI, à jour de l'incrément du 20 septembre : le 1° de
+      l'article L. 61 du code des pensions, et les décrets qui fixent la
+      contribution de l'État pour ses militaires — n° 2006-23, 2006-1798,
+      2008-53, 2008-1534, 2010-53, 2011-11 et 2011-2037, puis l'article 1er du
+      décret n° 2012-1507 dans ses trois rédactions, les deux dernières dues
+      aux décrets n° 2025-61 et n° 2025-1341. Pour recouper : la fiche
+      « Historique des taux de cotisations » du Service des retraites de
+      l'État, les données du graphique n° 23 et le tableau n° 15 du rapport de
+      la Cour des comptes du 22 septembre 2026, tirés de la release
+      documents-apportes (ccomptes.fr ne répond pas depuis une session cloud),
+      et la transcription d'OpenFisca-France. En fin de journée, l'index mis à
+      jour de l'incrément du 23 septembre : L. 161-17-2 et L. 161-17-3.
+    trouve: >-
+      Le modèle prêtait au militaire le taux des civils. Le sien est de 100 %
+      en 2006 et de 126,07 % depuis 2013, les décrets de 2025 n'ayant relevé
+      que le taux civil : vingt et une valeurs certifiées dans
+      contribution_employeur_militaires.csv, chacune datée par l'entrée en
+      vigueur que son décret écrit — la version de 2011 ne s'ouvre dans la base
+      que le 6 janvier. Deux sources se trompent d'une année, et le décret
+      tranche : la fiche du Service des retraites de l'État (106,83 % pour
+      108,63 % en 2010) et les données de la Cour (101,5 % pour 101,05 % en
+      2007) ; OpenFisca-France suit les décrets. Aucune règle du scénario 1
+      n'est touchée : le taux n'entre qu'au compte des scénarios qui portent
+      la part patronale — sous le défaut « retraite seule », 51,2 % de la
+      solde chaque année depuis 2013 — et dans ce que la proposition rend à la
+      solde. L. 161-17-2 et L. 161-17-3 n'ont toujours pas de version
+      postérieure au 31 décembre 2025 : la suspension tient.
+    reste: >-
+      La part « retraite seule » n'est chiffrée par la Cour que pour 2025 ; les
+      autres années en reçoivent la proportion, en attendant la série qu'elle
+      demande aux documents budgétaires dès le projet de loi de finances pour
+      2027. Avant 2006, pas de taux propre : le militaire reçoit le taux
+      implicite des civils. Et le taux des militaires paie leurs départs
+      anticipés — 33,8 points de leur taux d'équilibre de 2025 —, que la
+      proposition supprime : en rendre la moitié à la solde est un choix
+      laissé à l'utilisateur.
