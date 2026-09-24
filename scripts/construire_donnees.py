@@ -88,7 +88,7 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     CoefficientsMinoration,
     DureesProratisation,
     DureesRequises,
-    DureesRequisesAvantSuspension,
+    DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
     MajorationsPourEnfants,
     Rendements,
     SurcoteParentale,
@@ -1527,6 +1527,8 @@ def construire(bilan: bytes) -> bytes:
         "durees_requises": _table_par_generation(DureesRequises),
         "durees_requises_avant_suspension": _table_par_generation(
             DureesRequisesAvantSuspension),
+        "durees_requises_avant_reforme_2023": _table_par_generation(
+            DureesRequisesAvantReforme2023),
         "durees_requises_regimes": _durees_requises_regimes(),
         "calendriers_duree_requise": _calendriers_duree_requise(),
         "durees_proratisation": _table_par_generation(DureesProratisation),

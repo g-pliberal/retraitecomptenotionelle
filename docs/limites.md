@@ -2913,7 +2913,7 @@ c'est de là que viennent les −7,2 % et +0,3 %.
 OpenFisca est un autre modèle ; les caisses, elles, publient des EXEMPLES —
 une carrière de trois lignes dont la réponse est écrite par l'organisme qui
 applique la règle. `tests/temoins/exemples_officiels.yaml` en transcrit
-<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->52<!--/-->, chacun avec sa source et sa date de vérification, et
+<!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->54<!--/-->, chacun avec sa source et sa date de vérification, et
 `tests/test_oracle.py` les rejoue : le test construit la carrière — une
 affiliation, un salaire constant, le nombre de trimestres de l'exemple, l'âge
 d'entrée cherché au mois près — et compare la grandeur que l'exemple nomme.
@@ -3005,7 +3005,7 @@ de veille dit toujours.
 circulaire est antérieur à la règle qui le suit — ceux de 2018 valent pour le
 droit de 2018 — et une fiche de service-public est réécrite sans que son
 exemple le soit toujours : chaque désaccord se tranche par le texte, jamais
-par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->52<!--/--> tombent justes ensemble, sur
+par l'exemple seul. Mais quand les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->54<!--/--> tombent justes ensemble, sur
 une douzaine de sources et autant de règles, c'est le droit que le modèle applique, et non une
 lecture qu'il aurait de lui.
 
@@ -7209,13 +7209,33 @@ régime. Le rétablissement au régime général et à l'Ircantec de qui quitte 
 fonction publique avant la durée minimale — quinze ans avant 2011, deux ans
 depuis. La montée de quinze à dix-sept ans des services actifs, et les règles
 des emplois insalubres et des réseaux souterrains de la CNRACL. Et, trouvée
-en chemin, une erreur qui déborde la fonction publique : les générations nées
-de septembre 1961 à 1965 qui sont parties avant le 1er septembre 2023 se
-voient opposer la durée de la loi de 2023, quand leur pension relevait de la
-précédente — 169 trimestres au lieu de 168 à un salarié né en 1962 parti en
-carrière longue en janvier 2022. Le registre de veille porte les lignes
+en chemin, une erreur qui déborde la fonction publique, corrigée le même
+jour : voir la section suivante. Le registre de veille porte les lignes
 `duree_requise_carriere_longue_fonction_publique` et
 `surcote_fonction_publique`.
+
+### Les générations de 1961 à 1965 parties avant septembre 2023 devaient la durée de 2014
+
+La loi du 14 avril 2023 a accéléré la montée de la durée requise pour les
+assurés nés à compter du 1er septembre 1961 — 169 trimestres jusqu'à la fin de
+1962, 170 pour 1963, 171 pour 1964, 172 à partir de 1965 —, mais le B du XXX
+de son article 10 la réserve « aux pensions prenant effet à compter du
+1er septembre 2023 ». Avant, L. 161-17-3 dans sa version du 22 janvier 2014
+demeure : 168 trimestres de 1961 à 1963, 169 de 1964 à 1966. La circulaire
+Cnav 2023-19 le dit, et son exemple de réversion oppose 169 trimestres à un
+assuré né en 1965 dont la pension aurait pris effet avant cette date. Le
+modèle lisait la table de 2023 quelle que soit la date d'effet — la même
+erreur que celle que la suspension de 2026 avait fait corriger à l'autre
+bout, en sens inverse. Ceux qu'elle touchait sont partis par un départ
+anticipé, carrière longue surtout, de un à trois trimestres de trop : le
+salarié né en 1962 parti en janvier 2022 doit 168 trimestres, et non 169.
+Deux exemples de la circulaire entrent aux témoins officiels, et la table
+`legislation/duree_requise_avant_reforme_2023.csv` s'applique dans les deux
+moteurs, avant celle de la suspension. Reste la clause de sauvegarde de
+l'article 8 du décret n° 2023-436 : les nés de septembre 1961 à 1963 qui
+avaient leur durée cotisée avant septembre 2023 partent en carrière longue
+aux conditions d'avant, avec une pension proratisée sur la durée nouvelle ;
+le modèle ne la connaît pas.
 
 ---
 
@@ -7240,13 +7260,13 @@ n'est plus une limite : c'est un paramètre connu du résultat.
 
   **La limite tient toujours, mais elle ne mord plus sur le chiffre publié**,
   parce que le chiffre publié n'est plus calculé. Les avantages non contributifs
-  valent <!--chiffre:mesure(avantages?annee=2024)-->96,7<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,7<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
+  valent <!--chiffre:mesure(avantages?annee=2024)-->96,6<!--/--> milliards en 2024, soit <!--chiffre:mesure(avantages?annee=2024&quoi=part_depense)-->22,6<!--/--> % de la dépense, et **<!--chiffre:mesure(avantages?annee=2024&quoi=part_lue)-->85<!--/--> % de ce
   total est LU** : la réversion dans l'enquête de la DREES auprès des caisses,
   et dix autres lignes dans les sous-postes des Comptes de la protection
   sociale, dont la majoration pour enfants à <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=majoration_enfants)-->7,8<!--/--> milliards — que le modèle
   chiffrait à zéro. Le COR chiffre l'ensemble des droits de solidarité à « de
   l'ordre d'un cinquième » : on y est. Ce que le modèle apporte n'est donc pas
-  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,6<!--/--> milliards qu'il calcule encore lui-même
+  le chiffre mais la LISTE, et les <!--chiffre:mesure(avantages?annee=2024&quoi=calculees)-->14,5<!--/--> milliards qu'il calcule encore lui-même
   restent soumis à cette limite. Vingt-sept dispositifs sur quarante-cinq ne
   portent aucun chiffre, chacun avec sa raison écrite.
 
@@ -7323,7 +7343,7 @@ n'est plus une limite : c'est un paramètre connu du résultat.
   sans que rien ne le dise. Pour la génération 1965 l'écart tombe sous la centaine d'euros, le classement abaissant
   par ailleurs la durée requise d'un trimestre. Mesurer la
   valeur d'un avantage d'ÂGE par l'écart de MONTANT à date de départ fixe donne
-  donc un chiffre petit — <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=categorie_active)-->0,7<!--/--> milliard en 2024 pour la catégorie active — et ce
+  donc un chiffre petit — <!--chiffre:mesure(avantages?annee=2024&quoi=ligne&cle=categorie_active)-->0,6<!--/--> milliard en 2024 pour la catégorie active — et ce
   chiffre n'est pas faux, il est incomplet. Il porte de surcroît, depuis le
   22 septembre 2026, la durée requise propre aux emplois classés, que le
   contrôle d'isolement de `avantages.py` accepte pour ce seul avantage
@@ -9440,7 +9460,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2434<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2436<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

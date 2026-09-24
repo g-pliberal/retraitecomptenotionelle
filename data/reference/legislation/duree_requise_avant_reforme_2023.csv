@@ -1,0 +1,37 @@
+# Durée d'assurance requise que la réforme de 2023 a relevée, et qui reste
+# opposable aux pensions prenant effet AVANT le 1er septembre 2023
+# ------------------------------------------------------------------------
+# source_id: legifrance_textes, cnav_circulaires
+#
+# La loi n° 2023-270 du 14 avril 2023 (article 10, I) a accéléré la montée de
+# la durée pour les assurés nés à compter du 1er septembre 1961 : 169
+# trimestres jusqu'à la fin de 1962, 170 pour 1963, 171 pour 1964, 172 à
+# partir de 1965. Mais le B du XXX du même article la réserve « aux pensions
+# prenant effet à compter du 1er septembre 2023 ». Avant, L. 161-17-3 dans sa
+# version du 22 janvier 2014 (LEGIARTI000028494794, lue dans l'index LEGI le
+# 24 septembre 2026) demeure : « 2° 168 trimestres, pour les assurés nés entre
+# le 1er janvier 1961 et le 31 décembre 1963 ; 3° 169 trimestres, pour les
+# assurés nés entre le 1er janvier 1964 et le 31 décembre 1966 ; 4° 170
+# trimestres, pour les assurés nés entre le 1er janvier 1967 et le 31 décembre
+# 1969 ; 5° 171 trimestres, pour les assurés nés entre le 1er janvier 1970 et
+# le 31 décembre 1972 ; 6° 172 trimestres, pour les assurés nés à partir du
+# 1er janvier 1973 ». La circulaire Cnav 2023/19 du 15 septembre 2023
+# (point 2) l'écrit : ces dispositions « s'appliquent aux retraites
+# personnelles prenant effet à compter du 1er septembre 2023 » ; et son
+# exemple de réversion oppose 169 trimestres à un assuré né en 1965 dont la
+# pension aurait pris effet avant cette date, 172 après.
+#
+# Qui cela touche : les générations nées de septembre 1961 à 1965 parties
+# avant septembre 2023, c'est-à-dire par un départ anticipé — carrière longue
+# surtout. Le modèle leur opposait la table de 2023, ou pour 1964 et 1965 celle
+# que la suspension de 2026 garde aux départs d'avant septembre 2026 : de un à
+# trois trimestres de trop.
+#
+# Ne sert que pour ces générations et ces dates : voir
+# `ScenarioActuel._duree_requise`.
+generation,trimestres,fiabilite
+1961.667,168,certifiee
+1964,169,certifiee
+1967,170,certifiee
+1970,171,certifiee
+1973,172,certifiee

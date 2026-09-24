@@ -27,9 +27,10 @@ import {
   BaremesTrimestre, CarriereLongue,
   CoefficientsMinoration, DecoteFonctionPublique, DecoteRegimesSpeciaux,
   DureesProratisation, DureesRequises, DureesRequisesAvantSoixanteAns,
-  DureesRequisesAvantSuspension,
+  DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
   DureesRequisesFonctionPublique, DureesRequisesRegimes, CalendriersDureeRequise,
   GENERATIONS_SUSPENSION, SUSPENSION_2026_EFFET,
+  GENERATION_REFORME_2023, REFORME_2023_EFFET,
   DureesServicesMilitaires,
   MajorationsPourEnfants, MinimumContributif, MinimumGaranti, MinimumVieillesse,
   ClassesCotisation, ConversionsPoints, Rendements, SalairesForfaitaires,
@@ -146,6 +147,7 @@ export class ScenarioActuel {
     this.grilles = new SalairesForfaitaires(paquet);
     this.dureesRequises = new DureesRequises(paquet);
     this.dureesRequisesAvantSuspension = new DureesRequisesAvantSuspension(paquet);
+    this.dureesRequisesAvantReforme2023 = new DureesRequisesAvantReforme2023(paquet);
     this.dureesRequisesRegimes = new DureesRequisesRegimes(paquet);
     this.calendriersDureeRequise = new CalendriersDureeRequise(paquet);
     this.dureesRequisesFonctionPublique = new DureesRequisesFonctionPublique(paquet);
@@ -541,6 +543,20 @@ export class ScenarioActuel {
       return avantSoixanteAns;
     }
     if (periode.duree_requise_par_generation) {
+      // LA RÉFORME DE 2023 NE VAUT QU'À COMPTER DU 1er SEPTEMBRE 2023 : avant,
+      // les nés à compter du 1er septembre 1961 doivent la durée de la version
+      // de 2014 de L. 161-17-3. Voir le Python.
+      const [anneeReforme, moisReforme] = REFORME_2023_EFFET;
+      if (carriere.age_liquidation !== null && carriere.age_liquidation !== undefined
+          && carriere.generation >= GENERATION_REFORME_2023
+          && (carriere.anneeLiquidation < anneeReforme
+            || (carriere.anneeLiquidation === anneeReforme
+              && carriere.moisLiquidation < moisReforme))) {
+        const avant = this.dureesRequisesAvantReforme2023.trimestres(carriere.generation);
+        if (avant !== null) {
+          return avant;
+        }
+      }
       // LA SUSPENSION NE VAUT QU'À COMPTER DU 1er SEPTEMBRE 2026 : avant, les
       // nés en 1964 et 1965 doivent la durée de la loi de 2023.
       const [anneeEffet, moisEffet] = SUSPENSION_2026_EFFET;

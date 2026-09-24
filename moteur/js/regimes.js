@@ -71,6 +71,26 @@ export const SUSPENSION_2026_EFFET = [2026, 9];
 export const GENERATIONS_SUSPENSION = [1964.0, 1966.0];
 
 /**
+ * Durée requise que la loi du 14 avril 2023 a relevée, pour les pensions
+ * prenant effet avant le 1er septembre 2023 : L. 161-17-3 dans sa version du
+ * 22 janvier 2014 — portage de `DureesRequisesAvantReforme2023`.
+ */
+export class DureesRequisesAvantReforme2023 extends TableParGeneration {
+  constructor(paquet) {
+    super(paquet.durees_requises_avant_reforme_2023);
+  }
+
+  /** @returns {[number, number] | null} trimestres et fiabilité. */
+  trimestres(generation) {
+    return this.valeur(generation);
+  }
+}
+
+/** Première date d'effet de la table de 2023, et sa première génération. */
+export const REFORME_2023_EFFET = [2023, 9];
+export const GENERATION_REFORME_2023 = 1961.667;
+
+/**
  * Durée requise propre à un régime spécial, par génération.
  *
  * La SNCF, la RATP et les IEG écrivent chacune leur table dans leur texte, et la

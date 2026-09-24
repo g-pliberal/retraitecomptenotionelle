@@ -4684,16 +4684,19 @@ def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulate
     # trimestres : l'écart de TAUX disparaît, et il ne reste que celui des
     # durées requises — 168 trimestres pour l'actif, la durée de la génération
     # qui a soixante ans en 2022, l'année où son droit s'ouvre (L. 13, III ;
-    # le tableau n° 20 de la Cour des comptes donne la même), 172 pour le
-    # sédentaire parti en 2022. Quatre trimestres de dénominateur.
+    # le tableau n° 20 de la Cour des comptes donne la même), 169 pour le
+    # sédentaire parti en 2022 : celle de sa génération dans la version de
+    # 2014 de L. 161-17-3, la loi de 2023 ne valant qu'à compter de septembre
+    # 2023. Le test en attendait 172, la table de 2023. Un trimestre de
+    # dénominateur.
     classe = _pension_actuelle(
         simulateur, "fonctionnaire_territorial_hospitalier_actif", 1965, 57)
     non_classe = _pension_actuelle(
         simulateur, "fonctionnaire_territorial_hospitalier", 1965, 57)
     assert classe.trimestres_requis == 168
-    assert non_classe.trimestres_requis == 172
+    assert non_classe.trimestres_requis == 169
     assert classe.pension_annuelle / non_classe.pension_annuelle == (
-        pytest.approx(172 / 168, abs=1e-4))
+        pytest.approx(169 / 168, abs=1e-4))
 
 
 def test_le_classement_oppose_sa_propre_duree_requise(simulateur):

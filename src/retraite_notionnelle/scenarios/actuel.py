@@ -293,6 +293,25 @@ SUSPENSION_2026_EFFET = (2026, 9)
 GENERATIONS_SUSPENSION = (1964.0, 1966.0)
 
 
+class DureesRequisesAvantReforme2023(DureesRequises):
+    """Durée requise que la loi du 14 avril 2023 a relevée, pour les pensions
+    prenant effet avant le 1er septembre 2023 : L. 161-17-3 dans sa version du
+    22 janvier 2014 — 168 trimestres pour les nés de 1961 à 1963, 169 de 1964
+    à 1966 (B du XXX de l'article 10 de la loi n° 2023-270 ; circulaire Cnav
+    2023/19, point 2). Voir ``duree_requise_avant_reforme_2023.csv``."""
+
+    def __init__(self, racine: Path) -> None:
+        TableParGeneration.__init__(
+            self, racine, "duree_requise_avant_reforme_2023.csv", "trimestres")
+
+
+#: Première date d'effet où la table de 2023 vaut, et la première génération
+#: qu'elle a changée — le 1er septembre 1961 : avant, la version de 2014 de
+#: L. 161-17-3 demeure.
+REFORME_2023_EFFET = (2023, 9)
+GENERATION_REFORME_2023 = 1961.667
+
+
 def _rang_mois(texte: str) -> int:
     """« AAAA-MM » -> rang absolu du mois, celui de :class:`DateMois`."""
     annee, mois = texte.strip().split("-")
@@ -2092,6 +2111,8 @@ class ScenarioActuel:
         self.classes = ClassesCotisation(parametres.racine_donnees)
         self.grilles = SalairesForfaitaires(parametres.racine_donnees)
         self.durees_requises = DureesRequises(parametres.racine_donnees)
+        self.durees_requises_avant_reforme_2023 = DureesRequisesAvantReforme2023(
+            parametres.racine_donnees)
         self.durees_requises_avant_suspension = DureesRequisesAvantSuspension(
             parametres.racine_donnees)
         self.durees_requises_regimes = DureesRequisesRegimes(parametres.racine_donnees)
@@ -2560,6 +2581,20 @@ class ScenarioActuel:
         if avant_soixante_ans is not None:
             return avant_soixante_ans
         if periode.duree_requise_par_generation:
+            # LA RÉFORME DE 2023 NE VAUT QU'À COMPTER DU 1er SEPTEMBRE 2023 : le
+            # B du XXX de son article 10 la réserve aux pensions prenant effet à
+            # cette date. Avant, les nés à compter du 1er septembre 1961 — partis
+            # par un départ anticipé — doivent la durée de la version de 2014 de
+            # L. 161-17-3 : 168 trimestres au né en 1962 parti en carrière
+            # longue en janvier 2022, à qui le module en opposait 169.
+            if (carriere.age_liquidation is not None
+                    and carriere.generation >= GENERATION_REFORME_2023
+                    and (carriere.annee_liquidation, carriere.mois_liquidation)
+                    < REFORME_2023_EFFET):
+                avant = self.durees_requises_avant_reforme_2023.trimestres(
+                    carriere.generation)
+                if avant is not None:
+                    return avant
             # LA SUSPENSION NE VAUT QU'À COMPTER DU 1er SEPTEMBRE 2026 : avant,
             # les nés en 1964 et 1965 doivent la durée de la loi de 2023, que
             # le module ne leur opposait plus.
