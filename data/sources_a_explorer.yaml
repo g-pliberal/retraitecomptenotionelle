@@ -746,7 +746,7 @@ sources:
       applique le droit de son époque. Deux usages — vérifier le modèle SUR
       LE PASSÉ, ce qu'aucune autre source ne permet, et voir ce qu'une
       calculette vieillie fait dire de faux aujourd'hui.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnracl_rachat_etudes
     url: https://www.cnracl.retraites.fr/rachat-etudes-superieures/
@@ -756,7 +756,7 @@ sources:
     a_en_tirer: >-
       Le barème de rachat d'années d'études côté territorial, à comparer à
       celui de l'ENSAP : deux prix pour la même chose, chez le même État.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnracl_cumul_emploi_retraite
     url: https://www.cnracl.retraites.fr/simulateur-cumul-emploi-retraite
@@ -766,7 +766,7 @@ sources:
     a_en_tirer: >-
       Le plafond de cumul et son écrêtement, calculés : règle que le dépôt
       ne porte pas.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnracl_calcul_pension
     url: https://www.cnracl.retraites.fr/actif/ma-future-retraite/montant-de-ma-pension/le-calcul-de-la-pension
@@ -775,7 +775,7 @@ sources:
     regimes: [cnracl]
     a_en_tirer: >-
       La formule côté affilié, avec ses exemples.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnracl_montant_initial
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/calcul-du-montant-initial-de-la-pension
@@ -785,7 +785,7 @@ sources:
     a_en_tirer: >-
       Les pages EMPLOYEUR sont la documentation technique du régime : elles
       disent l'ordre des opérations, que les pages grand public taisent.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnracl_decote_surcote
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/pension-decotee-et-surcotee-limpact-de-la-duree-dassurance
@@ -794,7 +794,7 @@ sources:
     regimes: [cnracl]
     a_en_tirer: >-
       Décote, surcote et durée d'assurance tous régimes, avec exemples chiffrés.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnracl_minimum_garanti
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-pension/minimum-garanti
@@ -804,7 +804,7 @@ sources:
     a_en_tirer: >-
       Le barème du minimum garanti territorial, et sa condition de taux plein
       depuis 2010.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnracl_enfants
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/droits-lies-aux-enfants-la-bonification-et-les-majorations
@@ -815,7 +815,7 @@ sources:
       Bonification pour enfant né avant 2004 et majoration de pension : la page
       qui sépare les deux, exactement la distinction que le dépôt vient de
       faire sienne.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cnracl_montant_definitif
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/montant-definitif-de-la-pension-calcul-et-plafonnement
@@ -825,7 +825,7 @@ sources:
     a_en_tirer: >-
       Le plafonnement du montant définitif : plafond global des bonifications
       et majorations, que le dépôt n'applique pas.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cdc_convertisseur_validation
     url: https://www.cdc.retraites.fr/outils/ConvertisseurValidation/Convertisseur.html
@@ -836,7 +836,7 @@ sources:
       La conversion des durées en trimestres et en jours, telle que la Caisse
       des dépôts la fait. Le dépôt arrondit à l'année ou au trimestre ; ce
       convertisseur dit ce que l'arrondi coûte.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cdc_fspoeie_future_retraite
     url: https://politiques-sociales.caissedesdepots.fr/FSPOEIE/ma-future-retraite-fspoeie
@@ -846,7 +846,7 @@ sources:
     a_en_tirer: >-
       Les conditions d'ouverture du fonds des ouvriers de l'État, catégories
       insalubres comprises.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cdc_fspoeie_montant
     url: https://politiques-sociales.caissedesdepots.fr/FSPOEIE/le-montant-de-ma-pension-fspoeie
@@ -856,7 +856,7 @@ sources:
     a_en_tirer: >-
       Le montant : salaire de référence, taux, et ce qui distingue le FSPOEIE
       des pensions civiles.
-    statut: a_explorer
+    statut: en_cours
 
   - id: cdc_mines_droits_directs
     url: https://politiques-sociales.caissedesdepots.fr/retraite-des-mines/droits-directs-retraite-des-mines
@@ -867,7 +867,7 @@ sources:
       Le régime minier, fermé depuis 2010 mais servant encore : conditions,
       coefficients, services au fond. Le dépôt le modélise ; cette page le
       recontrôle chez le gestionnaire.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- DREES : les modèles publics ---------------------------------------
   # Ce lot est d'une autre nature que les autres : ce n'est pas une règle à
@@ -3399,7 +3399,7 @@ sources:
       La table des matières de la pension normale : c'est d'ici que partent
       toutes les règles de liquidation du régime, et l'ordre dans lequel la
       caisse les applique.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_traitement_de_base
     url: https://www.juris-cnracl.retraites.fr/pension-normale/la-determination-du-traitement-de-base
@@ -3410,7 +3410,7 @@ sources:
       Le traitement des six derniers mois : quel indice, quelle durée de
       détention exigée, ce qui entre dans l'assiette et ce qui n'y entre pas.
       Le modèle prend un salaire de fin de carrière ; voici la règle exacte.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_temps_partiel
     url: https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/modalites-de-prise-en-compte-des-services-temps-partiel-et-non-complet
@@ -3421,7 +3421,7 @@ sources:
       Le temps partiel compte pour sa durée en DURÉE D'ASSURANCE et pour sa
       quotité en SERVICES : c'est la règle qui sépare les deux durées, et le
       modèle ne porte pas le temps partiel.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_coordination
     url: https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/regles-de-coordination-avec-les-autres-regimes
@@ -3432,7 +3432,7 @@ sources:
       Ce qui arrive aux services d'un agent qui part sans droit à pension :
       rétablissement au régime général et à l'Ircantec. Le dépôt route un
       statut vers un régime et ne défait jamais l'affiliation.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_montant_pension
     url: https://www.juris-cnracl.retraites.fr/pension-normale/calcul-de-la-pension/determination-du-montant-de-la-pension
@@ -3442,7 +3442,7 @@ sources:
     a_en_tirer: >-
       L'ordre des opérations : prorata, décote, surcote, minimum garanti,
       plafonnement — avec les exemples chiffrés de la base.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_decote
     url: https://www.juris-cnracl.retraites.fr/pension-normale/duree-dassurance-decote-et-surcote/calcul-de-la-decote
@@ -3453,7 +3453,7 @@ sources:
       La décote territoriale, son taux par génération et son âge d'annulation,
       chez celui qui la liquide : le dépôt les tient d'un récupérateur LEGI
       (`dila_legi_decote_fonction_publique.py`), sans source d'application.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_surcote
     url: https://www.juris-cnracl.retraites.fr/pension-normale/duree-dassurance-decote-et-surcote/calcul-de-la-surcote-0
@@ -3463,7 +3463,7 @@ sources:
     a_en_tirer: >-
       La surcote : trimestres entiers, point de départ, et la surcote parentale
       ouverte en 2024.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_minimum_garanti
     url: https://www.juris-cnracl.retraites.fr/pension-normale/minimum-garanti
@@ -3475,7 +3475,7 @@ sources:
       taux plein depuis 2010 : le dépôt le projette, et
       `tests/test_donnees.py` contrôle la projection sans que personne l'ait
       lu chez le liquidateur.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_sp_cti
     url: https://www.juris-cnracl.retraites.fr/pension-normale/les-accessoires-de-pension/supplement-de-pension-au-titre-du-complement-de-traitement-indiciaire-sp-cti
@@ -3486,7 +3486,7 @@ sources:
       Le supplément de pension du complément de traitement indiciaire — le
       « Ségur » des hospitaliers : une pension qui s'ajoute hors formule, pour
       une population nombreuse, et que le dépôt ignore entièrement.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_nbi
     url: https://www.juris-cnracl.retraites.fr/pension-normale/les-accessoires-de-pension/la-liquidation-de-la-nouvelle-bonification-indiciaire-nbi
@@ -3498,7 +3498,7 @@ sources:
       de pension proportionnel. C'est de la rémunération indiciaire qui n'est
       pas dans le traitement de base, donc un morceau d'assiette que le modèle
       ne voit pas.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_surcotisation
     url: https://www.juris-cnracl.retraites.fr/gestion-des-carrieres/surcotisation
@@ -3509,7 +3509,7 @@ sources:
       La surcotisation du temps partiel : l'agent paie sur un temps plein pour
       que sa quotité compte pleinement. Un prix payé pour un droit, à comparer
       au prix actuariel du système notionnel.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_surcotisation_historique
     url: https://www.juris-cnracl.retraites.fr/surcotisation-historique-des-taux-applicables
@@ -3518,7 +3518,7 @@ sources:
     regimes: [cnracl]
     a_en_tirer: >-
       La SÉRIE des taux de surcotisation, année par année.
-    statut: a_explorer
+    statut: en_cours
 
   - id: juris_cnracl_taux_cotisations
     url: https://www.juris-cnracl.retraites.fr/cotisations/taux-de-cotisations
