@@ -3,9 +3,11 @@
  *
  * Portage de ``src/retraite_notionnelle/donnees/tva.py``.
  *
- * Le Parti libéral affecte au scénario 6, depuis le 23 septembre 2026, une TVA
- * à TAUX UNIQUE : les quatre taux d'aujourd'hui cèdent la place à un seul, et
- * ce qu'il rapporte de plus va à la retraite. Les assiettes viennent du modèle
+ * Le Parti libéral a affecté au scénario 6, du 23 au 24 septembre 2026, une
+ * TVA à TAUX UNIQUE : les quatre taux d'aujourd'hui cédaient la place à un
+ * seul, et ce qu'il rapportait de plus allait à la retraite. Il y a renoncé, et
+ * le taux unique n'est plus qu'une variante (`taux_tva_liberal`, zéro par
+ * défaut). Les assiettes viennent du modèle
  * de la TVA théorique de la DG Trésor (Trésor-Éco n° 371, septembre 2025), qui
  * publie ce que rapporterait en 2025 un point de plus sur chaque taux : un
  * point étant un centième, l'assiette en est le centuple. Le point NET retire

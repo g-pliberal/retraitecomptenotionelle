@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 831<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 467<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 515<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -16230,3 +16230,78 @@ format du taux), `donnees/tva.py`, `scripts/mesures_prose.py`,
 `scripts/chiffrage_plf.py`, `tests/test_tva.py`, `tests/test_cout.py`,
 `README.md`, `docs/limites.md`, `docs/chiffrage_plf.md` ; le paquet, les
 témoins et le chiffrage, régénérés.
+
+*Retirée le même jour : « 20 % » voulait dire les taux d'aujourd'hui, et la
+TVA n'est plus réformée — action 128.*
+
+### 128. La TVA n'est plus réformée : la proposition garde les quatre taux, et rien de la TVA ne va aux retraites — `fait`
+
+**La demande**, le 24 septembre 2026 : « Quand je disais 20 %, je voulais dire
+revenir aux taux actuels avec les différentes tranches et je ne veux pas que
+la TVA aille dans les retraites. » L'action 127 avait compris un taux unique
+de 20 % ; il fallait comprendre les quatre taux d'aujourd'hui, 20, 10, 5,5 et
+2,1 %, et aucune TVA affectée à la retraite.
+
+**Ce qui a été fait.** `taux_tva_liberal = 0.0` (`config.py`, `config.js`) :
+zéro veut dire « la TVA n'est pas réformée », la convention d'avant l'action
+123. Le mécanisme reste, comme variante inerte par défaut :
+`SoldeAnnuel.tva_garantie` et `tva_de` valent zéro, la note TVA de la page
+Coût se tait, `cout.taux_tva_requis` rend `(0, 0)`, et la ligne « Dont TVA à
+taux unique » du tableau des recettes n'est plus rendue quand elle est nulle
+partout. L'accueil ne dit plus que la consommation paie la baisse de la
+cotisation : sa réponse à « qui paie » dit le déficit de transition contre
+celui du système actuel, et les points de blocage — la variante prospective,
+le taux de 18 % — disent le solde, la dette et le coefficient sans TVA ;
+`MESURES_BLOCAGES` est remesurée, dans les deux moteurs. Le chiffrage pour un
+PLF perd la ligne TVA de son fait central, l'arbitrage « Renoncer à la TVA »
+et la colonne TVA des prélèvements, que le script ne rend plus que si un taux
+est posé ; sa prose, datée, dit ce qui a été retiré. L'affirmation
+`cout.tva_ajoutee` et son contrôle quittent le catalogue ; `test_tva.py` tient
+que le défaut est zéro, `test_cout.py` que rien de la TVA ne va aux retraites
+par défaut. Le README, `limites.md` (la part des reportés en emploi), la
+source de la DG Trésor et les en-têtes de `tva.py` et `tva.js` le disent. Sur
+Cas types, le coefficient de la proposition revient à la lecture mêlée — sous
+un la plupart des années, au-dessus en fin d'horizon —, plus longue que celle
+d'un coefficient partout au-dessus de un : la phrase est resserrée de sept
+mots dans les deux moteurs, et la page retombe à 497 mots de prose ouverte
+pour un budget de 500.
+
+**Ce que ça déplace** (réglages par défaut : âge légal de 65 ans, tous les
+reportés en emploi). La proposition est en déficit de 2026 à 2068, au plus bas
+en 2048, et ne revient à l'équilibre qu'en 2069 ; solde moyen 2026-2070 de
+−0,87 point de PIB, contre −1,13 pour le système actuel ; dette de 59 % du PIB
+en 2070, contre 66 % ; coefficient d'équilibre sous un 43 années sur 45, au
+plus bas à 0,85 en 2049, à 1,03 en 2070. Selon la part des reportés en
+emploi :
+
+| Réglage | Solde moyen 2026-2070 | Dette en 2070 |
+|---|---:|---:|
+| Tous les reportés en emploi (défaut) | −0,87 | 59 % du PIB |
+| La moitié | −1,04 | 71 % |
+| Aucun | −1,21 | 82 % |
+| Sans âge légal | −1,39 | 97 % |
+| Système actuel | −1,13 | 66 % |
+
+Le déficit moyen de la proposition reste sous celui du système actuel quand
+la moitié des reportés travaillent, plus quand aucun ; sa dette de 2070, elle,
+dépasse celle du système actuel dès la moitié. Dans le chiffrage pour un PLF, l'écart de solde de 2026
+est de −0,91 point de PIB (−28 Md€) dans la variante rétroactive, de −4,06
+(−125 Md€) dans la prospective. Le scénario 1 ne bouge pas, ni aucune
+pension : aucun des 515 témoins de simulation n'a changé.
+
+**Ce qui reste.** Le déficit de transition n'a plus de financement : ni TVA,
+ni autre impôt. La dette qu'il accumule, et le coefficient sous un jusqu'à la
+fin des années 2060, sont ce que le programme devra dire — un emprunt assumé,
+un coefficient appliqué aux pensions, ou une autre recette. La part des
+reportés en emploi reste à lire (action 126), et pèse maintenant sur la dette.
+Si la variante ne sert plus, le mécanisme de la TVA peut quitter le code
+(`donnees/tva.py`, `tva.js`, `assiette_tva.csv`, la note, l'indicateur).
+
+**Fichiers.** `config.py`, `config.js`, `cout.py`, `cout.js` (l'indicateur),
+`donnees/tva.py`, `tva.js` (leurs en-têtes), `web/pages.py`, `pages.js` (le
+programme, les points de blocage, `MESURES_BLOCAGES`, le tableau des
+recettes), `scripts/chiffrage_plf.py`, `scripts/mesures_prose.py`,
+`data/reference/site/affirmations.yaml`, `data/sources.yaml`,
+`tests/test_tva.py`, `tests/test_cout.py`, `tests/test_web.py`,
+`tests/test_affirmations.py`, `README.md`, `docs/limites.md`,
+`docs/chiffrage_plf.md` ; le paquet, les témoins et le chiffrage, régénérés.

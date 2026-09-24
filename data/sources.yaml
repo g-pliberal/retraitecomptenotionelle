@@ -2068,7 +2068,9 @@ institutions:
         cible: data/reference/macro/assiette_tva.csv
         note: >-
           Lu le 23 septembre 2026, pour la TVA à taux unique que le Parti
-          libéral affecte au scénario 6. Ce que rapporte un point de chaque
+          libéral a affectée au scénario 6 jusqu'au lendemain : retirée le
+          24 septembre, elle n'est plus qu'une variante
+          (`Parametres.taux_tva_liberal`, zéro par défaut). Ce que rapporte un point de chaque
           taux en 2025 — 0,4, 2,4, 1,9 et 8,9 Md€ à 2,1, 5,5, 10 et 20 %,
           13,7 en tout ; 11,4 une fois retirée la TVA que paient les
           administrations elles-mêmes —, c'est-à-dire, au centuple, l'assiette

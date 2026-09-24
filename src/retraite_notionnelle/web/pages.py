@@ -2666,6 +2666,31 @@ def _programme_questions(contexte: Contexte) -> str:
     veuve = vers("la-veuve", "Ce que cela change pour une veuve")
     methode = f'<a href="{g.lien("/methode")}">Le détail du calcul</a>'
     cout = f'<a href="{g.lien("/cout")}">La page Coût</a>'
+    # Qui paie la baisse de la cotisation. Une TVA à taux unique l'a payée du
+    # 23 au 24 septembre 2026 ; sans elle, le déficit de transition se lit
+    # contre celui du système actuel, sur les mesures des points de blocage.
+    if base.taux_tva_liberal > 0.0:
+        qui_paie = (
+            f"Baisser la cotisation à {taux} a un prix, et la consommation le "
+            f"paie : une TVA à taux unique de {tva} remplace les quatre taux "
+            "d'aujourd'hui, et ce qu'elle rapporte de plus va à la retraite, à la "
+            "garantie vieillesse d'abord. Elle couvre le déficit du nouveau "
+            f"système, garantie comprise, jusqu'à son pic des années 2040. {cout} "
+            "le chiffre année par année."
+        )
+    else:
+        mesures = MESURES_BLOCAGES
+        rapport = ("reste inférieur à" if mesures["solde_moyen_proposition"]
+                   > mesures["solde_moyen_actuel"] else "dépasse")
+        deficit = f"déficit moyen {rapport} celui du système actuel."
+        consequence = (f" Son {deficit}" if base.age_legal_liberal is None else
+                       f" L'âge légal de {_age(base.age_legal_liberal)} en rend une "
+                       f"part : son {deficit}")
+        qui_paie = (
+            f"Baisser la cotisation à {taux} a un prix : pendant la transition, la "
+            f"proposition encaisse moins qu'elle ne verse.{consequence} {cout} le "
+            "chiffre année par année, garantie vieillesse comprise."
+        )
     sources = (f'<a href="{g.lien("/methode")}" data-vers="sources">'
                "D'où viennent les chiffres</a>")
 
@@ -2774,12 +2799,7 @@ agents, l'autre moitié aux pensions déjà promises.</p>""", ""),
         ("Comment passe-t-on d'un système à l'autre ?",
          _programme_transition(contexte), "la-transition"),
         ("Combien cela coûte-t-il, et qui paie ?", f"""
-<p>Baisser la cotisation à {taux} a un prix, et la consommation le paie : une
-TVA à taux unique de {tva} remplace les quatre taux d'aujourd'hui, et ce
-qu'elle rapporte de plus va à la retraite, à la garantie vieillesse d'abord.
-Elle est fixée au taux normal d'aujourd'hui, et couvre avec une marge le
-déficit du nouveau système, garantie comprise, jusqu'à son pic des années
-2040. {cout} le chiffre année par année.</p>
+<p>{qui_paie}</p>
 {_programme_blocages(contexte)}""", "les-blocages"),
         ("Ces chiffres sont-ils fiables ?", f"""
 <p>Ils viennent des institutions publiques (INSEE, Conseil d'orientation des
@@ -3413,22 +3433,24 @@ MESURES_BLOCAGES: dict[str, float] = {
     "cout_18_pour_cent": 1.9,
     # Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
     # l'horizon, en points de PIB, en % du PIB et en valeur.
-    # Avec la TVA à taux unique depuis le 23 septembre 2026 : la dette de
-    # 2070 est NÉGATIVE, ce sont des réserves. Mesurés avec l'âge légal de
-    # 65 ans et la TVA fixée à 20 % (24 septembre 2026).
-    "solde_moyen_proposition": 0.7,
+    # Mesurés avec l'âge légal de 65 ans et SANS TVA à taux unique : la
+    # proposition ne réforme plus la TVA depuis le 24 septembre 2026. Avec une
+    # TVA (``tva_affectee`` positive), l'accueil lit ces mêmes clés autrement,
+    # une dette négative y étant des réserves.
+    "solde_moyen_proposition": -0.9,
     "solde_moyen_actuel": -1.1,
-    "dette_2070_proposition": -41,
+    "dette_2070_proposition": 59,
     "dette_2070_actuel": 66,
-    "coefficient_minimum": 1.01,
+    "coefficient_minimum": 0.85,
     "decennie_coefficient_minimum": 2040,
-    "coefficient_2070": 1.23,
+    "coefficient_2070": 1.03,
     # donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
-    # quatre taux d'aujourd'hui, en points de PIB.
-    "tva_affectee": 1.7,
+    # quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
+    # réformée.
+    "tva_affectee": 0.0,
     # proposition_prospective.py : le solde moyen de la variante qui laisse le
-    # stock intact, en points de PIB, TVA comprise.
-    "solde_moyen_prospectif": -1.1,
+    # stock intact, en points de PIB.
+    "solde_moyen_prospectif": -2.7,
     # stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au
     # lieu de celui de 65 ans, en points de PIB par an.
     "cout_diviseur_age_legal": 0.2,
@@ -3466,6 +3488,69 @@ def _programme_blocages(contexte: Contexte) -> str:
         """« 1,9 point », « 2,2 points » : le pluriel à partir de deux."""
         return "point" if abs(valeur) < 2 else "points"
 
+    # La TVA à taux unique, quand la proposition la porte : les mesures le
+    # disent, et deux lignes en changent de lecture. Sans elle — le défaut
+    # depuis le 24 septembre 2026, les quatre taux restant ceux d'aujourd'hui —,
+    # le solde se lit contre celui du système actuel, et le pilotage revient au
+    # coefficient d'équilibre.
+    avec_tva = m["tva_affectee"] > 0.0
+    prospectif = (
+        "Le recalcul est maintenu. La version qui laisse le stock intact a été "
+        "chiffrée et écartée : "
+        + ("même avec la TVA à taux unique, " if avec_tva else "")
+        + f"{pt(m['solde_moyen_prospectif'])} {accord_point(m['solde_moyen_prospectif'])} "
+        "de PIB par an en moyenne "
+        f"jusqu'en 2070, un besoin de {md(m['solde_moyen_prospectif'])} par an "
+        f"{au_pib} : elle n'est pas finançable."
+    )
+    cout_18 = (
+        f"Face au taux d'aujourd'hui, {pt(m['taux_regime_unique'])} % part "
+        "patronale comprise, les 18 % coûtent "
+        f"{pt(m['cout_18_pour_cent'])} {accord_point(m['cout_18_pour_cent'])} "
+        "de PIB par an sur 2026-2070, "
+        f"{md(m['cout_18_pour_cent'])} {au_pib}, sous les mêmes règles de "
+        "recette et l'âge légal de 65 ans compris."
+    )
+    if avec_tva:
+        taux_18 = [
+            cout_18 + " La TVA à taux unique rapporte "
+            f"{pt(m['tva_affectee'])} {accord_point(m['tva_affectee'])} de PIB "
+            "par an de plus que les quatre "
+            f"taux d'aujourd'hui, {md(m['tva_affectee'])}. Avec elle, la "
+            "proposition dégage en moyenne un excédent de "
+            f"{pt(m['solde_moyen_proposition'])} point par an quand le système "
+            f"actuel accuse un déficit de {pt(-m['solde_moyen_actuel'])} point, "
+            f"{md(m['solde_moyen_proposition'])} par an contre "
+            f"{md(m['solde_moyen_actuel'])}, et elle aborde 2070 avec des réserves "
+            f"de {pt(-m['dette_2070_proposition'], 0)} % du PIB quand il y porte "
+            f"une dette de {pt(m['dette_2070_actuel'], 0)} %, "
+            f"{md(m['dette_2070_proposition'])} contre {md(m['dette_2070_actuel'])}.",
+            "Le prix d'un prélèvement plus bas est payé par la consommation plutôt "
+            "que par le travail, et il est écrit sur la page Coût plutôt que caché. "
+            "Le coefficient d'équilibre, que ces chiffres n'appliquent pas, ne "
+            f"descend plus qu'à {pt(m['coefficient_minimum'], 2)} dans les années "
+            f"{int(m['decennie_coefficient_minimum'])}, au pic du déficit, et monte à "
+            f"{pt(m['coefficient_2070'], 2)} en 2070 : la TVA tient lieu du "
+            "pilotage.",
+        ]
+    else:
+        taux_18 = [
+            cout_18 + " Le solde de la proposition est de "
+            f"{pt(m['solde_moyen_proposition'])} point par an en moyenne contre "
+            f"{pt(m['solde_moyen_actuel'])} pour le système actuel, un besoin de "
+            f"{md(m['solde_moyen_proposition'])} par an contre "
+            f"{md(m['solde_moyen_actuel'])}, et la dette qu'elle accumule en 2070 "
+            f"vaut {pt(m['dette_2070_proposition'], 0)} % du PIB contre "
+            f"{pt(m['dette_2070_actuel'], 0)} %, {md(m['dette_2070_proposition'])} "
+            f"contre {md(m['dette_2070_actuel'])}.",
+            "C'est le prix d'un prélèvement plus bas, et il est écrit sur la page "
+            "Coût plutôt que caché. Le pilotage annuel, que ces chiffres "
+            "n'appliquent pas, est ce qui le tient : le coefficient d'équilibre "
+            f"descend à {pt(m['coefficient_minimum'], 2)} dans les années "
+            f"{int(m['decennie_coefficient_minimum'])} et revient à "
+            f"{pt(m['coefficient_2070'], 2)} en 2070.",
+        ]
+
     points = g.tableau(
         ["Le point", "Ce que nous avons regardé", "Ce que nous en retenons"],
         [
@@ -3491,36 +3576,8 @@ def _programme_blocages(contexte: Contexte) -> str:
              "diviseur de 65 ans plutôt que celui de son âge coûte "
              f"{pt(m['cout_diviseur_age_legal'])} point de PIB par an, "
              f"{md(m['cout_diviseur_age_legal'])} {au_pib}, et plus rien à partir de 2060.",
-             "Le recalcul est maintenu. La version qui laisse le stock intact a été "
-             "chiffrée et écartée : même avec la TVA à taux unique, "
-             f"{pt(m['solde_moyen_prospectif'])} point de PIB par an en moyenne "
-             f"jusqu'en 2070, un besoin de {md(m['solde_moyen_prospectif'])} par an "
-             f"{au_pib} : elle n'est pas finançable."],
-            ["Le taux de 18 %",
-             f"Face au taux d'aujourd'hui, {pt(m['taux_regime_unique'])} % part "
-             "patronale comprise, les 18 % coûtent "
-             f"{pt(m['cout_18_pour_cent'])} {accord_point(m['cout_18_pour_cent'])} "
-             "de PIB par an sur 2026-2070, "
-             f"{md(m['cout_18_pour_cent'])} {au_pib}, sous les mêmes règles de "
-             "recette et l'âge légal de 65 ans compris. La TVA à taux unique rapporte "
-             f"{pt(m['tva_affectee'])} {accord_point(m['tva_affectee'])} de PIB "
-             "par an de plus que les quatre "
-             f"taux d'aujourd'hui, {md(m['tva_affectee'])}. Avec elle, la "
-             "proposition dégage en moyenne un excédent de "
-             f"{pt(m['solde_moyen_proposition'])} point par an quand le système "
-             f"actuel accuse un déficit de {pt(-m['solde_moyen_actuel'])} point, "
-             f"{md(m['solde_moyen_proposition'])} par an contre "
-             f"{md(m['solde_moyen_actuel'])}, et elle aborde 2070 avec des réserves "
-             f"de {pt(-m['dette_2070_proposition'], 0)} % du PIB quand il y porte "
-             f"une dette de {pt(m['dette_2070_actuel'], 0)} %, "
-             f"{md(m['dette_2070_proposition'])} contre {md(m['dette_2070_actuel'])}.",
-             "Le prix d'un prélèvement plus bas est payé par la consommation plutôt "
-             "que par le travail, et il est écrit sur la page Coût plutôt que caché. "
-             "Le coefficient d'équilibre, que ces chiffres n'appliquent pas, ne "
-             f"descend plus qu'à {pt(m['coefficient_minimum'], 2)} dans les années "
-             f"{int(m['decennie_coefficient_minimum'])}, au pic du déficit, et monte à "
-             f"{pt(m['coefficient_2070'], 2)} en 2070 : la TVA tient lieu du "
-             "pilotage."],
+             prospectif],
+            ["Le taux de 18 %", *taux_18],
             ["La garantie vieillesse",
              "Le préambule de 1946 garantit aux vieux travailleurs des moyens "
              "convenables d'existence, et un compte purement contributif y répond mal.",
@@ -8176,10 +8233,10 @@ def _lecture_reglage_proposition(reglage: dict) -> str:
         f"années sur {r['total']} entre {r['debut']} et {r['fin']}, au plus "
         f"bas {g.nombre(r['minimum'], _decimales_sous_un(r['minimum']))} en "
         f"{r['annee_minimum']}, et "
-        f"supérieur à un les autres, jusqu'à {g.nombre(r['dernier'], 2)} en "
-        f"{r['fin']}. Au-dessus de un, le système aurait de quoi "
-        "relever toutes les cases d'autant ; au-dessous, il aurait fallu les "
-        "abaisser, ou financer la différence autrement."
+        f"supérieur les autres, jusqu'à {g.nombre(r['dernier'], 2)} en "
+        f"{r['fin']}. Au-dessus de un, il permettrait de relever les cases "
+        "d'autant ; au-dessous, il faudrait les abaisser, ou financer l'écart "
+        "autrement."
     )
 
 
@@ -11063,11 +11120,12 @@ def _cout_note_tva(contexte: Contexte, annee: int, ligne: SoldeAnnuel, pib: floa
                    annee_pib: int) -> str:
     """Ce que la proposition ajoute : une TVA à taux unique, et où elle va.
 
-    Décision du Parti libéral, 23 septembre 2026. Le tableau du dessus en
-    porte la part qui entre au régime ; cette note dit le tout, ce que la
-    garantie en prend d'abord, et ce que le chiffrage ne compte pas. Elle se
-    tait quand la TVA n'est pas réformée, ou pas encore : il n'y a alors rien
-    à raconter.
+    Décision du Parti libéral le 23 septembre 2026, retirée le 24 : la TVA
+    n'est plus réformée par défaut, et la note ne parle que pour la variante.
+    Le tableau du dessus en porte la part qui entre au régime ; cette note dit
+    le tout, ce que la garantie en prend d'abord, et ce que le chiffrage ne
+    compte pas. Elle se tait quand la TVA n'est pas réformée, ou pas encore :
+    il n'y a alors rien à raconter.
     """
     garantie = ligne.tva_garantie("notionnel_liberal")
     regime = ligne.tva_de("notionnel_liberal")
@@ -11299,8 +11357,9 @@ def _caisse_flux(ligne: SoldeAnnuel, pib: float, systeme: str, libelle: str,
     for groupe in GROUPES:
         part = sum(postes[code] for code in groupe.postes)
         if part > 0.0:
-            # L'impôt de la proposition n'est que sa TVA à taux unique : il est
-            # nommé, et non « impôts » comme le mélange d'aujourd'hui.
+            # Dans la variante qui porte une TVA à taux unique, l'impôt de la
+            # proposition n'est qu'elle : il est nommé, et non « impôts » comme
+            # le mélange d'aujourd'hui.
             if groupe.code == "salaires":
                 nom = cotisations
             elif groupe.code == "impots" and ligne.tva_de(systeme) > 0.0:
@@ -11409,10 +11468,10 @@ def _cout_carte_flux(contexte: Contexte,
     quelle part, ni à quoi chaque part sert. Deux schémas de Sankey le disent,
     sur le compte même du tableau poste par poste : aujourd'hui, un seul pot où
     cotisations, impôts et versements d'autres caisses se mêlent ; dans la
-    proposition, trois caisses — le régime unique, où n'entre d'impôt que la
-    TVA à taux unique, la garantie vieillesse, que paient cette TVA et ce que
-    les successions en rendent, et le pilier capitalisé, placé au nom de
-    chacun.
+    proposition, trois caisses — le régime unique, où n'entre aucun impôt
+    (sauf la TVA à taux unique, dans la variante qui la porte), la garantie
+    vieillesse, que paient l'impôt et ce que les successions en rendent, et le
+    pilier capitalisé, placé au nom de chacun.
 
     LA MÊME ÉCHELLE POUR LES DEUX : un milliard y a la même épaisseur. Sans
     elle, chaque schéma remplirait son cadre, et un système qui brasse deux
@@ -11639,6 +11698,12 @@ def _cout_detail_postes(contexte: Contexte) -> str:
 
     lignes: list[list[str]] = []
     for code, libelle, rang in LIGNES_RECETTES:
+        # La ligne de la TVA à taux unique se tait quand aucun système n'en
+        # reçoit : la proposition ne réforme plus la TVA depuis le
+        # 24 septembre 2026, et une ligne de tirets laisserait croire le
+        # contraire.
+        if code == "impots_tva" and not any(recettes[s][code] for s in systemes):
+            continue
         lignes.append(rangee(libelle, rang, {s: recettes[s][code] for s in systemes},
                              total_recettes))
     lignes.append(rangee("Total des ressources", "total", total_recettes, total_recettes))

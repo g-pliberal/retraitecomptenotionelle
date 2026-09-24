@@ -2644,8 +2644,9 @@ def taux_tva_requis(solde: "Solde", parametres: Parametres,
     C'est la règle qui a fixé le taux jusqu'au 24 septembre 2026 : le taux qui
     couvre chaque année projetée, à compter de la bascule, le déficit du régime
     de la proposition garantie comprise, sans emprunter — celui de l'année la
-    plus exigeante, rendue avec lui. Le taux, lui, est désormais FIXÉ
-    (``Parametres.taux_tva_liberal``) ; celui-ci dit la marge qu'il laisse sous
+    plus exigeante, rendue avec lui. Le taux a été FIXÉ à 20 % ce jour-là, puis
+    la TVA retirée de la proposition : elle n'est plus qu'une variante
+    (``Parametres.taux_tva_liberal`` positif), dont celui-ci dit la marge sous
     les hypothèses du moment. Un point de taux rapporte au régime la part de PIB
     de l'assiette de la TVA, tant que la TVA couvre déjà la garantie : le taux
     requis de chaque année s'en déduit, sans recalculer le coût. Rend

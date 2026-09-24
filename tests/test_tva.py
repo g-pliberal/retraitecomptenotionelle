@@ -13,11 +13,10 @@ proposition. C'est ce qui interdit de la compter deux fois.
 
 Puis que ZÉRO rend l'ancienne convention, où la TVA n'était pas réformée.
 
-Enfin que le taux fixé, 20 %, tient ce qu'il promet sous les hypothèses par
-défaut : le déficit de la variante rétroactive, garantie comprise, couvert
-chaque année. La règle qui le calculait jusqu'au 24 septembre 2026 n'est plus
-qu'un indicateur, et ce test ne la lui impose plus : il ne bougerait pas à
-chaque hypothèse.
+Enfin que le défaut NE RÉFORME PAS la TVA : depuis le 24 septembre 2026, la
+proposition garde les quatre taux d'aujourd'hui, et rien de la TVA ne va aux
+retraites. Le mécanisme reste, comme variante, et les tests du partage le
+tiennent sur des taux posés à la main.
 """
 
 from __future__ import annotations
@@ -29,7 +28,6 @@ import pytest
 from retraite_notionnelle import Parametres
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.cout import DONT_IMPOTS, SoldeAnnuel
-from retraite_notionnelle.donnees.bilan import charger_bilan
 from retraite_notionnelle.donnees.tva import AssietteTva
 
 
@@ -146,32 +144,14 @@ def test_zero_rend_l_ancienne_convention(tva):
 
 
 def test_le_taux_par_defaut_est_celui_que_le_parti_a_decide():
-    """Le taux normal d'aujourd'hui, fixé le 24 septembre 2026."""
-    assert Parametres().taux_tva_liberal == pytest.approx(0.20)
-
-
-# -- ce que le taux promet ------------------------------------------------------
-
-
-def test_le_taux_fixe_couvre_chaque_annee_de_la_variante_retroactive(tva):
-    """Le solde du régime est pris APRÈS la garantie, que la TVA paie d'abord :
-    à 20 %, en excédent chaque année aux hypothèses par défaut. Le taux ne
-    suit plus la règle qui le calculait — celle-ci en demanderait 19,7 %, en
-    2048 — : ce test tient ce qu'il promet, et non qu'il soit celui qu'elle
-    donne."""
-    bilan = charger_bilan(RACINE_DONNEES)
-    projetees = [a for a in bilan.annees if a.projete and a.annee >= 2026]
-    assert projetees
-    soldes = {a.annee: a.solde("notionnel_liberal") for a in projetees}
-    assert min(soldes.values()) > 0.0
-    taux = Parametres().taux_tva_liberal
-    requis = max(taux - solde / tva.part_pib() for solde in soldes.values())
-    assert requis < taux
+    """Zéro : la proposition ne réforme pas la TVA (24 septembre 2026)."""
+    assert Parametres().taux_tva_liberal == 0.0
 
 
 def test_l_accueil_cite_ce_que_la_tva_rapporte(tva):
     """Les points de blocage de l'accueil citent ce que la TVA rapporte de plus
-    que les quatre taux d'aujourd'hui, à la précision où ils l'écrivent."""
+    que les quatre taux d'aujourd'hui, à la précision où ils l'écrivent : zéro
+    quand elle n'est pas réformée, et l'accueil n'en dit alors rien."""
     from retraite_notionnelle.web.pages import MESURES_BLOCAGES
 
     rapporte = tva.recette_supplementaire(Parametres().taux_tva_liberal) * 100

@@ -4888,9 +4888,10 @@ def test_la_carte_des_flux_dessine_le_compte_de_la_bascule(contexte):
     sources = {s: {n.libelle for n in c.sources} for s, c in caisses.items()}
     assert "Impôts" in sources["actuel"]
     assert "Impôts" not in sources["notionnel_liberal"]
-    # La TVA à taux unique entre au régime unique sous son nom (23 septembre
-    # 2026), et elle seule des impôts.
-    assert "TVA" in sources["notionnel_liberal"]
+    # Une TVA à taux unique entrerait au régime unique sous son nom, et elle
+    # seule des impôts ; la proposition ne réforme plus la TVA depuis le
+    # 24 septembre 2026, et aucun impôt n'y entre.
+    assert ("TVA" in sources["notionnel_liberal"]) == (contexte.base.taux_tva_liberal > 0.0)
     assert {n.libelle for n in caisses["actuel"].usages} >= {"Pensions de réversion"}
 
     corps = rendre(contexte, "/cout", {})[1]
@@ -4907,8 +4908,7 @@ def test_la_carte_des_flux_dessine_le_compte_de_la_bascule(contexte):
     assert hauteurs[0] / hauteurs[1] == pytest.approx(
         caisses["actuel"].valeur / caisses["notionnel_liberal"].valeur, rel=2e-3)
     # Le solde n'est pas caché : un déficit est un payeur, un excédent un
-    # usage, et la réponse chiffre l'un ou l'autre. Avec la TVA à taux unique,
-    # la bascule est en excédent.
+    # usage, et la réponse chiffre l'un ou l'autre.
     solde = ligne.solde("notionnel_liberal") * bilan.pib
     verbe = "placerait" if solde >= 0 else "emprunterait"
     # Les blancs de la source sont repliés, mais pas les espaces fines des
