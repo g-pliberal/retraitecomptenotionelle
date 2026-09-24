@@ -7276,6 +7276,68 @@ Banque de France, dont le règlement n'écrit pas la phrase, garde la
 revalorisation des salaires. Le registre de veille porte la ligne
 `pension_differee_fonction_publique`.
 
+### Les trimestres des enfants : un seul régime les accorde, et R. 173-15 dit lequel
+
+Une mère passée par deux régimes ne reçoit pas deux fois les trimestres de ses
+enfants, ni ceux du régime qui en accorde le plus : l'article R. 173-15 du code
+de la sécurité sociale désigne le régime qui les accorde. Le modèle retenait le
+plus favorable — seize trimestres du régime général pour deux enfants, contre
+huit de bonification à l'État — et servait donc à la fonctionnaire passée par
+le privé les trimestres du régime général. Le droit suit un ordre, le même
+depuis la version de 1985 : le régime spécial accorde « en priorité […] si
+celui-ci est susceptible d'accorder en vertu de ses propres règles une pension
+à l'intéressé » ; sinon le régime général, prioritaire parmi les régimes
+alignés ; sans lui, le régime de la dernière affiliation. La CNRACL l'écrit,
+jugement à l'appui : l'agent ne peut pas renoncer à la bonification qu'elle
+sert pour la faire servir par un autre régime (TA Amiens, 2 juin 2017).
+
+Pouvoir servir une pension, c'est avoir servi la durée que le régime exige, et
+le modèle ne la connaissait nulle part. Elle est dans
+`services_ouvrant_pension.csv`, lue régime par régime. Quinze ans partout
+avant les réformes ; deux ans pour les fonctionnaires radiés depuis 2011
+(R. 4-1 du code des pensions) ; un an pour les agents partis de la SNCF, de
+la RATP, des IEG et de l'Opéra depuis le 1er juillet 2008. Aucune durée à la
+Banque de France depuis 2012, à la Comédie-Française depuis 2008, ni pour la
+pension spéciale des marins. À la SEITA, quinze ans pour qui part avant
+l'âge, aucune durée pour qui l'atteint en fonctions. Les règlements de la
+SNCF et de la RATP d'avant 2008 ne sont pas dans l'index : leurs quinze ans
+viennent des fiches du COR, au niveau `moyenne`.
+
+Et le droit doit être ouvert, ce qui se lit sur la date de naissance des
+enfants, que le modèle fixe aux trente ans de la mère. Pour un enfant né
+depuis 2004, L. 12 bis ne sert que les femmes « ayant accouché postérieurement
+à leur recrutement ». Pour un enfant né avant, R. 13 sert tout enfant jusqu'en
+2003, l'enfant né en service de 2004 à 2010, et, depuis 2011, l'enfant né
+avant la radiation, le congé de maternité du code de la sécurité sociale
+suffisant. Une femme recrutée à quarante ans après des enfants nés en 2010
+reçoit donc la majoration du régime général ; si ses enfants sont nés en
+1992, elle reçoit la bonification de l'État.
+
+Moins de trimestres ne veut pas toujours dire moins de pension. Prenons une
+fonctionnaire de l'État entrée à vingt-deux ans, passée au privé à cinquante
+et liquidant en 2026, mère de deux enfants : elle perd huit trimestres et
+755 € par an, de 34 147 à 33 392 €. Une salariée du privé recrutée par
+l'État à quarante ans, du même âge et mère de deux enfants nés avant son
+recrutement, gagne au contraire 407 €, de 33 603 à 34 011 € : huit trimestres
+au prorata d'une pension civile à 79,7 % du dernier traitement valent plus
+que seize au prorata d'une pension du régime général calculée sur un salaire
+annuel moyen plus bas. Parmi les régimes alignés, la priorité
+du régime général déplace aussi la majoration d'une artisane passée au
+salariat avant la liquidation unique : de 21 091 à 21 526 €.
+
+Ce que le modèle ne fait pas, et le dit. Il applique à tous les régimes
+spéciaux les conditions de la fonction publique, comme il leur applique déjà
+sa table des bonifications. Il ne distingue pas les militaires, qui ont gardé
+quinze ans jusqu'en 2014. Il présume pouvoir pensionner, au niveau
+`estimee`, les régimes dont aucun texte n'est dans l'index : le port de
+Strasbourg, la caisse de Nouvelle-Calédonie, les chemins de fer secondaires,
+les pensions d'avant 1948. Il ne rétablit pas au régime général l'agent qui
+n'a pas la durée : faute de régime aligné pour la recevoir, sa majoration
+reste donc au régime spécial. Et trois cas restent hors du modèle :
+l'exception de la CRPCEN, dont la fiche ne déclare pas de bonification ; la
+pension statutaire liquidée avant la naissance ; l'enfant handicapé. Le
+registre de veille porte la ligne `priorite_majorations_enfants`.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -9504,7 +9566,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2444<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2478<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

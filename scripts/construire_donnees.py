@@ -91,6 +91,7 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
     DureesRequisesAvantReforme2023, DureesRequisesAvantSuspension,
     MajorationsPourEnfants,
     Rendements,
+    ServicesOuvrantPension,
     SurcoteParentale,
     ValeursPoint,
 )
@@ -1172,6 +1173,16 @@ def _majorations_enfants() -> list:
     ]
 
 
+def _services_ouvrant_pension() -> dict:
+    """Durée de services qui ouvre une pension, par régime spécial et par date
+    de radiation : la condition de priorité de R. 173-15."""
+    return {
+        regime: [[depuis, annees, en_fonctions, int(fiabilite)]
+                 for depuis, annees, en_fonctions, fiabilite in regles]
+        for regime, regles in sorted(ServicesOuvrantPension(DONNEES)._table.items())
+    }
+
+
 def _surcote_parentale() -> list:
     """Surcote parentale : âge d'ouverture, taux, plafond, par période."""
     return [
@@ -1565,6 +1576,7 @@ def construire(bilan: bytes) -> bytes:
         "decote_regimes_speciaux": _decote_regimes_speciaux(),
         "carriere_longue": _carriere_longue(),
         "majorations_enfants": _majorations_enfants(),
+        "services_ouvrant_pension": _services_ouvrant_pension(),
         "surcote_parentale": _surcote_parentale(),
         "majoration_enfants_points": _majoration_enfants_points(),
         "surcote_baremes": _surcote_baremes(),

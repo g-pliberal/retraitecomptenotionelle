@@ -624,6 +624,21 @@ class Carriere:
         return sum(ligne.fraction_annee
                    for ligne in self._lignes_de_service(affiliations, jusqu_a))
 
+    def bornes_de_service(self, affiliations: Iterable[str],
+                          jusqu_a: int | None = None) -> tuple[int, int] | None:
+        """Première et dernière années servies dans ces statuts, ``None`` sans
+        aucune.
+
+        Le recrutement et la radiation, à l'année près : ce sont eux que les
+        règles des enfants opposent — une majoration « aux femmes ayant
+        accouché postérieurement à leur recrutement », une bonification pour
+        les enfants nés avant la radiation.
+        """
+        lignes = self._lignes_de_service(affiliations, jusqu_a)
+        if not lignes:
+            return None
+        return lignes[0].annee, lignes[-1].annee
+
     def date_de_service(self, affiliations: Iterable[str],
                         annees: float) -> DateMois | None:
         """Mois où la durée de service demandée est atteinte, ``None`` sinon.

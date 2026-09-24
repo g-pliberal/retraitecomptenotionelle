@@ -904,6 +904,26 @@ _ABATTEMENTS_PAR_ANNEE_AGE_SEUL = ("ircec_age_seul", "cavom")
 #: une bonification entre aux services, qu'il n'a pas.
 _MAJORATION_DE_DUREE = "mda"
 
+#: Le régime à qui R. 173-15 donne la priorité parmi les régimes alignés.
+_REGIME_GENERAL = "regime_general"
+
+#: Quand le droit à la bonification d'un régime spécial est OUVERT, dans les
+#: trois versions de R. 13 du code des pensions. Jusqu'en 2003, elle vaut pour
+#: chacun des enfants (LEGIARTI000006362901). De 2004 à 2010, elle suppose une
+#: interruption d'activité dans un congé du statut — l'enfant est donc né en
+#: service (LEGIARTI000006362902). Depuis 2011, le congé de maternité du code
+#: de la sécurité sociale suffit (LEGIARTI000023449727), mais l'enfant doit
+#: être né avant la radiation des cadres (juris-cnracl, « Bonification pour
+#: enfants »). Les deux bornes se lisent à l'année de liquidation.
+_BONIFICATION_NE_EN_SERVICE_DEPUIS = 2004
+_BONIFICATION_NE_AVANT_RADIATION_DEPUIS = 2011
+
+#: Pour les enfants nés depuis 2004, la majoration de L. 12 bis ne va qu'aux
+#: femmes « ayant accouché postérieurement à leur recrutement » — condition
+#: que les régimes spéciaux reprennent mot pour mot (décrets n° 2003-1306,
+#: article 21 ; n° 2008-639, article 13 ; n° 2008-637, article 24…).
+_MAJORATION_APRES_RECRUTEMENT_DEPUIS = 2004
+
 #: Dernière ligne de la table des âges : dix ans d'anticipation. Au-delà, le
 #: barème ne descend plus.
 _COEFFICIENT_ANTICIPATION_PLANCHER = 0.43
@@ -1137,6 +1157,56 @@ class MajorationsPourEnfants:
                 services = 0
             return trimestres, services, fiabilite
         return None
+
+
+class ServicesOuvrantPension:
+    """La durée de services qui ouvre une pension dans chaque régime spécial.
+
+    C'est la condition dont l'article R. 173-15 du code de la sécurité sociale
+    fait dépendre la priorité du régime spécial pour les trimestres des
+    enfants : il les accorde « si celui-ci est susceptible d'accorder en vertu
+    de ses propres règles une pension à l'intéressé ». Quinze ans partout,
+    jusqu'aux réformes qui l'ont ramenée à un an ou deux pour les agents radiés
+    après leur date d'effet ; les textes, régime par régime, sont dans
+    l'en-tête de ``legislation/services_ouvrant_pension.csv``.
+    """
+
+    def __init__(self, racine: Path) -> None:
+        self._table: dict[str, list[tuple[str, float, float | None, Fiabilite]]] = {}
+        chemin = racine / "reference" / "legislation" / "services_ouvrant_pension.csv"
+        if not chemin.exists():
+            return
+        with chemin.open(encoding="utf-8") as flux:
+            lignes = (l for l in flux if not l.lstrip().startswith("#"))
+            for ligne in csv.DictReader(lignes):
+                en_fonctions = (ligne["annees_en_fonctions"] or "").strip()
+                self._table.setdefault(ligne["regime"], []).append((
+                    ligne["radiation_depuis"],
+                    float(ligne["annees"]),
+                    float(en_fonctions) if en_fonctions else None,
+                    Fiabilite.depuis_texte(ligne["fiabilite"]),
+                ))
+        for regles in self._table.values():
+            regles.sort(key=lambda regle: regle[0])
+
+    def annees(self, regime: str, radiation: str,
+               en_fonctions: bool) -> tuple[float, Fiabilite] | None:
+        """Années de services exigées de l'agent radié à cette date (ISO), et
+        la fiabilité de la ligne ; ``None`` pour un régime que la table ne
+        porte pas.
+
+        ``en_fonctions`` dit que l'agent part en fonctions, sa radiation ne
+        précédant pas son départ : la SEITA n'exige alors plus rien
+        (article 110 du décret n° 62-766).
+        """
+        retenue = None
+        for depuis, annees, annees_en_fonctions, fiabilite in self._table.get(regime, ()):
+            if depuis > radiation:
+                break
+            exigees = (annees_en_fonctions
+                       if en_fonctions and annees_en_fonctions is not None else annees)
+            retenue = (exigees, fiabilite)
+        return retenue
 
 
 class SurcoteParentale:
@@ -2139,6 +2209,7 @@ class ScenarioActuel:
         self.coefficients_minoration = CoefficientsMinoration(parametres.racine_donnees)
         self.annees_salaire_reference = AnneesSalaireReference(parametres.racine_donnees)
         self.majorations_enfants = MajorationsPourEnfants(parametres.racine_donnees)
+        self.services_ouvrant_pension = ServicesOuvrantPension(parametres.racine_donnees)
         self.surcote_parentale = SurcoteParentale(parametres.racine_donnees)
         self.majorations_enfants_points = MajorationsEnfantsPoints(
             parametres.racine_donnees)
@@ -4355,11 +4426,31 @@ class ScenarioActuel:
         majoration de durée d'assurance ne joue que sur la décote tous régimes
         confondus. C'est le champ `services` du résultat qui les sépare, et
         c'est lui, non `trimestres`, que l'appelant ajoute au compte du régime.
-        On retient donc, parmi les régimes en annuités dont la fiche de
-        l'année de liquidation porte un dispositif que la table sert, celui
-        qui accorde le plus ; à égalité, celui où l'assuré a validé le plus de
-        trimestres ; à égalité encore, le dernier code par ordre alphabétique,
-        pour que le résultat ne dépende pas de l'ordre d'un dictionnaire.
+
+        **Un seul régime les accorde, et l'article R. 173-15 du code de la
+        sécurité sociale dit lequel.** Le modèle retenait celui qui accordait
+        le plus. Le droit suit un ordre, et ne laisse pas le choix à l'assurée :
+
+        1. un RÉGIME SPÉCIAL — une fiche qui déclare ``bonifications`` — passe
+           le premier « si celui-ci est susceptible d'accorder en vertu de ses
+           propres règles une pension à l'intéressé », c'est-à-dire si
+           l'assurée y a servi la durée qu'il exige
+           (:class:`ServicesOuvrantPension`) et si le droit y est ouvert pour
+           ses enfants (:meth:`_bonification_ouverte`). Il passe même quand il
+           accorde moins : la CNRACL le rappelle, jugement à l'appui (TA
+           Amiens, 2 juin 2017, n° 1501559), l'agent ne peut pas renoncer à sa
+           bonification pour les huit trimestres du régime général. Entre deux
+           régimes spéciaux, le dernier servi ;
+        2. sinon le RÉGIME GÉNÉRAL, prioritaire parmi les régimes alignés ;
+        3. sans lui, le régime de la dernière affiliation et, entre deux
+           affiliations simultanées, celui qui compte le plus de trimestres :
+           c'est ainsi que le modèle approche « le régime susceptible
+           d'attribuer la pension la plus élevée ».
+
+        Un régime spécial qui ne peut pas servir de pension rétablit l'agent au
+        régime général. Le modèle ne fait pas ce rétablissement et garde les
+        services dans le régime spécial : sans régime aligné pour recevoir la
+        majoration, c'est donc ce régime spécial qui la porte, faute de mieux.
 
         **Un régime en points porte aussi la majoration de DURÉE.** Elle ne
         joue que sur la durée d'assurance — la décote et la surcote —, et un
@@ -4372,12 +4463,19 @@ class ScenarioActuel:
         et elle reste hors de ce décompte.
 
         Renvoie ``None`` quand rien n'est dû : pas d'enfant, aucun régime
-        porteur, dispositif pas encore né, ou assuré qui n'en est pas le
-        bénéficiaire.
+        porteur, dispositif pas encore né, droit fermé, ou assuré qui n'en est
+        pas le bénéficiaire.
         """
         if carriere.nombre_enfants <= 0:
             return None
-        candidats: list[tuple[int, int, str, str, Fiabilite]] = []
+        # Les régimes spéciaux qui peuvent pensionner, ceux qui ne le peuvent
+        # pas, et les régimes alignés : (trimestres validés, majoration).
+        speciaux: dict[str, tuple[int, _MajorationEnfants]] = {}
+        sans_pension: dict[str, tuple[int, _MajorationEnfants]] = {}
+        alignes: dict[str, tuple[int, _MajorationEnfants]] = {}
+        # Ce qu'a coûté d'écarter un régime spécial : la fiabilité de la règle
+        # qui l'a écarté, que la majoration servie ailleurs hérite.
+        fiabilite_ecartes = Fiabilite.CERTIFIEE
         for code, valides in trimestres_par_regime.items():
             if code not in self.catalogue:
                 continue
@@ -4396,19 +4494,140 @@ class ScenarioActuel:
                 if accorde is None:
                     continue
                 trimestres, services, fiabilite = accorde
-                candidats.append((
-                    trimestres * carriere.nombre_enfants, valides, dispositif,
-                    code, services * carriere.nombre_enfants, fiabilite,
-                ))
-        if not candidats:
+                majoration = _MajorationEnfants(
+                    regime=code, dispositif=dispositif,
+                    trimestres=trimestres * carriere.nombre_enfants,
+                    services=services * carriere.nombre_enfants,
+                    fiabilite=fiabilite,
+                )
+                if dispositif == _MAJORATION_DE_DUREE:
+                    alignes[code] = (valides, majoration)
+                    continue
+                droit = self._droit_regime_special(periode, carriere,
+                                                   annee_liquidation)
+                if droit is None:
+                    continue
+                pension, ouvert, fiabilite_regle = droit
+                if not ouvert:
+                    # Le droit fermé se lit sur la date de naissance que le
+                    # modèle prête aux enfants : la ligne le dit déjà.
+                    fiabilite_ecartes = min(fiabilite_ecartes, fiabilite)
+                    continue
+                majoration = replace(
+                    majoration, fiabilite=min(fiabilite, fiabilite_regle))
+                if pension:
+                    speciaux[code] = (valides, majoration)
+                else:
+                    fiabilite_ecartes = min(fiabilite_ecartes, fiabilite_regle)
+                    sans_pension[code] = (valides, majoration)
+        if speciaux:
+            return self._derniere_affiliation(carriere, speciaux, annee_liquidation)
+        if _REGIME_GENERAL in alignes:
+            retenue = alignes[_REGIME_GENERAL][1]
+        elif alignes:
+            retenue = self._derniere_affiliation(carriere, alignes, annee_liquidation)
+        elif sans_pension:
+            return self._derniere_affiliation(carriere, sans_pension, annee_liquidation)
+        else:
             return None
-        trimestres, _, dispositif, code, services, fiabilite = max(
-            candidats, key=lambda c: (c[0], c[1], c[3])
-        )
-        return _MajorationEnfants(
-            regime=code, dispositif=dispositif, trimestres=trimestres,
-            services=services, fiabilite=fiabilite,
-        )
+        if fiabilite_ecartes < retenue.fiabilite:
+            retenue = replace(retenue, fiabilite=fiabilite_ecartes)
+        return retenue
+
+    def _droit_regime_special(self, periode: PeriodeRegime, carriere: Carriere,
+                              annee_liquidation: int
+                              ) -> tuple[bool, bool, Fiabilite] | None:
+        """Ce que ce régime spécial peut pour les enfants de cette assurée.
+
+        Rend ``(pension, ouvert, fiabilite)`` : peut-il lui servir une pension
+        — a-t-elle servi la durée qu'il exige à la date de sa radiation —, le
+        droit y est-il ouvert pour ses enfants, et la fiabilité de la durée
+        exigée. ``None`` si elle n'y a jamais servi.
+
+        La radiation est datée comme pour la pension différée : au 1er janvier
+        qui suit la dernière année de services. Quand elle ne précède pas le
+        départ, l'agent part en fonctions, et c'est le départ qui la date. Un
+        régime que la table ne porte pas est présumé pouvoir pensionner, au
+        niveau ``estimee``.
+        """
+        statuts, servies = self._services_dans_le_regime(periode, carriere)
+        bornes = carriere.bornes_de_service(statuts, self._borne_carriere(carriere))
+        if bornes is None:
+            return None
+        recrutement, derniere = bornes
+        mois = (carriere.date_liquidation.mois
+                if carriere.age_liquidation is not None else 1)
+        depart = f"{annee_liquidation:04d}-{mois:02d}-01"
+        radiation = f"{derniere + 1:04d}-01-01"
+        en_fonctions = radiation >= depart
+        regle = self.services_ouvrant_pension.annees(
+            periode.regime, depart if en_fonctions else radiation, en_fonctions)
+        exigees, fiabilite = regle if regle is not None else (0.0, Fiabilite.ESTIMEE)
+        return (servies + 1e-9 >= exigees,
+                self._bonification_ouverte(carriere, recrutement, derniere,
+                                           annee_liquidation),
+                fiabilite)
+
+    @staticmethod
+    def _bonification_ouverte(carriere: Carriere, recrutement: int, derniere: int,
+                              annee_liquidation: int) -> bool:
+        """Le droit aux trimestres d'enfants d'un régime spécial est-il ouvert ?
+
+        Le modèle présume les enfants nés aux trente ans de leur mère
+        (:attr:`MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE`) et lit, sur
+        cette date, la condition que le texte pose à chaque génération
+        d'enfants :
+
+        * né depuis 2004, la majoration de L. 12 bis ne va qu'à la femme
+          « ayant accouché postérieurement à [son] recrutement » ;
+        * né avant 2004, la bonification de L. 12 b vaut pour tout enfant
+          jusqu'en 2003, pour l'enfant né en service de 2004 à 2010 — R. 13
+          n'admet alors que les congés du statut —, pour l'enfant né avant la
+          radiation depuis 2011 — R. 13 admet le congé de maternité du code
+          de la sécurité sociale. Les deux bornes se lisent à la liquidation.
+
+        Hors la fonction publique, les régimes spéciaux reprennent la première
+        condition mot pour mot ; le modèle leur applique la seconde, comme il
+        leur applique déjà la table de la fonction publique.
+        """
+        naissance = (carriere.annee_naissance
+                     + MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE)
+        if naissance >= _MAJORATION_APRES_RECRUTEMENT_DEPUIS:
+            return naissance >= recrutement
+        if annee_liquidation >= _BONIFICATION_NE_AVANT_RADIATION_DEPUIS:
+            return naissance <= derniere
+        if annee_liquidation >= _BONIFICATION_NE_EN_SERVICE_DEPUIS:
+            return recrutement <= naissance <= derniere
+        return True
+
+    def _derniere_affiliation(self, carriere: Carriere,
+                              candidats: dict[str, tuple[int, _MajorationEnfants]],
+                              annee_liquidation: int) -> _MajorationEnfants:
+        """Le candidat du régime où l'assurée a été affiliée en dernier lieu.
+
+        À égalité — deux affiliations simultanées —, celui qui compte le plus
+        de trimestres, puis le dernier code par ordre alphabétique, pour que le
+        résultat ne dépende pas de l'ordre d'un dictionnaire. La dernière année
+        se lit sur les lignes que chaque régime reçoit ; on ne la cherche que
+        s'il faut départager.
+        """
+        if len(candidats) == 1:
+            return next(iter(candidats.values()))[1]
+        dernieres: dict[str, int] = {}
+        for ligne in carriere.lignes:
+            if (ligne.annee > annee_liquidation
+                    or carriere.trimestres_retenus(ligne) <= 0):
+                continue
+            for code in self.affiliations.regimes(
+                    ligne.affiliation, ligne.annee,
+                    carriere.date_entree(ligne.affiliation),
+                    revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
+                    plafond=self.macro.plafond_securite_sociale(ligne.annee)):
+                if code in candidats:
+                    dernieres[code] = max(dernieres.get(code, 0), ligne.annee)
+        code = max(candidats,
+                   key=lambda c: (dernieres.get(c, 0), candidats[c][0], c))
+        return candidats[code][1]
 
     def _points_gratuits(self, periode: PeriodeRegime, carriere: Carriere,
                          assurance: dict[str, dict[int, int]], trimestres: int,
@@ -4640,11 +4859,10 @@ class ScenarioActuel:
         # des régimes : le droit les attribue DANS un régime, et ils comptent
         # donc aussi dans sa proratisation, pas seulement dans la décote tous
         # régimes confondus. Les ignorer là amputait la pension d'une mère de
-        # famille de la part que la majoration est censée lui rendre. Le régime
-        # retenu est celui qui accorde le plus — exact pour une carrière
-        # mono-affiliée, qui est le cas ordinaire, approché pour un
-        # polypensionné, à qui le droit ferait porter la majoration par chacun
-        # de ses régimes.
+        # famille de la part que la majoration est censée lui rendre. UN SEUL
+        # régime les accorde, celui que désigne R. 173-15 : le régime spécial
+        # qui peut pensionner, sinon le régime général — voir
+        # `_majoration_pour_enfants`.
         majoration_enfants = (
             self._majoration_pour_enfants(
                 carriere, trimestres_par_regime, annee_liquidation

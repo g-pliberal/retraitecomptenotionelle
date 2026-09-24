@@ -566,6 +566,35 @@ def _cas() -> list[dict]:
     cas.append(("enfants_fonction_publique_nes_depuis_2004", {
         **enfants, "statut": "fonctionnaire_etat", "naissance": "1985",
     }))
+    # UN SEUL RÉGIME accorde ces trimestres, et R. 173-15 dit lequel : le
+    # régime spécial qui peut servir une pension et où le droit est ouvert,
+    # sinon le régime général. La fonctionnaire passée au privé garde sa
+    # bonification, moins favorable que la MDA ; celle qui n'a servi qu'un an
+    # avant 2011 n'a pas les quinze ans et reçoit la MDA ; celle recrutée après
+    # la naissance d'un enfant né depuis 2004 aussi, faute d'avoir accouché
+    # après son recrutement ; l'agente de la SNCF partie avant juillet 2008
+    # sans ses quinze ans, de même.
+    mixte = {"enfants": "2", "sexe": "F", "debut": "22"}
+    cas.append(("enfants_fonctionnaire_puis_prive", {
+        **mixte, "naissance": "1962", "statut": "fonctionnaire_etat",
+        "metier2_debut": "50", "metier2_statut": "salarie_prive_non_cadre",
+    }))
+    cas.append(("enfants_fonctionnaire_un_an_puis_prive", {
+        **mixte, "naissance": "1962", "statut": "fonctionnaire_etat",
+        "metier2_debut": "23", "metier2_statut": "salarie_prive_non_cadre",
+    }))
+    cas.append(("enfants_prive_puis_fonctionnaire_nes_avant_2004", {
+        **mixte, "naissance": "1962",
+        "metier2_debut": "40", "metier2_statut": "fonctionnaire_etat",
+    }))
+    cas.append(("enfants_prive_puis_fonctionnaire_nes_depuis_2004", {
+        **mixte, "naissance": "1980",
+        "metier2_debut": "40", "metier2_statut": "fonctionnaire_etat",
+    }))
+    cas.append(("enfants_sncf_partie_avant_2008", {
+        **mixte, "naissance": "1962", "statut": "agent_sncf",
+        "metier2_debut": "35", "metier2_statut": "salarie_prive_non_cadre",
+    }))
     # Artisane liquidant avant l'absorption du RSI par la CNAV : c'est bien son
     # régime aligné qui porte les trimestres, comme l'article L. 634-2 le veut.
     cas.append(("enfants_regime_aligne", {

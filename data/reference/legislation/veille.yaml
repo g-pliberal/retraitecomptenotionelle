@@ -475,6 +475,58 @@ entrees:
       de calcul publiée en donnera un prorata chiffré.
     prochaine_veille: "2026-12-31"
 
+  - id: priorite_majorations_enfants
+    regle: >-
+      Un seul régime accorde les trimestres des enfants. Le régime spécial qui
+      prévoit une majoration ou une bonification pour enfants les accorde en
+      priorité s'il peut servir une pension à l'assurée selon ses propres
+      règles — la durée de services qu'il exige à la radiation — et si le
+      droit y est ouvert pour ses enfants, même quand le régime général
+      accorderait plus. Sinon le régime général, prioritaire parmi les
+      régimes alignés ; sans lui, le régime de la dernière affiliation et,
+      entre affiliations simultanées, celui qui servirait la pension la plus
+      élevée. Le droit à la bonification pour un enfant né avant 2004 vaut
+      pour tout enfant jusqu'en 2003, pour l'enfant né en service de 2004 à
+      2010, pour l'enfant né avant la radiation depuis 2011 ; la majoration
+      pour un enfant né depuis 2004 suppose d'avoir accouché après le
+      recrutement.
+    textes:
+      - "R. 173-15 du code de la sécurité sociale, six versions de 1985 (LEGIARTI000006747882) à celle du 6 mai 2017 (LEGIARTI000034595998)"
+      - "R. 13 du code des pensions civiles et militaires, versions de 1964 (LEGIARTI000006362901), 2004 (LEGIARTI000006362902) et 2011 (LEGIARTI000023449727) ; L. 12 bis (LEGIARTI000006362697)"
+      - "L. 4 (LEGIARTI000006362667, LEGIARTI000023096809) et R. 4-1 (LEGIARTI000023388607) du code des pensions ; décret n° 2003-1306, article 7 ; décret n° 2004-1056, article 3"
+      - "décret n° 2008-639, article 3 ; décret n° 2008-637, article 6 ; décret n° 46-1541, annexe 3 ; décret n° 2007-262, annexe, article 7 ; décret n° 68-382, article 6 ; décret n° 68-960, article 6 ; décret n° 62-766, articles 110 et 112 ; code des transports, L. 5552-11"
+    sources:
+      - {type: legifrance, reference: "R. 173-15 CSS, lu dans l'index LEGI : la majoration « est accordée en priorité par le régime spécial si celui-ci est susceptible d'accorder en vertu de ses propres règles une pension à l'intéressé » ; même phrase dans la version de 1985", date: "2026-09-24"}
+      - {type: legifrance, reference: "durées de services de chaque régime spécial, lues dans l'index LEGI : quinze ans, puis deux pour les fonctionnaires radiés depuis 2011 et un an pour les agents de la SNCF, de la RATP, des IEG et de l'Opéra partis depuis le 1er juillet 2008 ; aucune à la Banque de France depuis le 9 mai 2012 ; voir l'en-tête de services_ouvrant_pension.csv", date: "2026-09-24"}
+      - {type: autre, reference: "CNRACL, juris-cnracl, « Règles de coordination avec les autres régimes » : la CNRACL accorde en priorité dès qu'elle peut servir une pension et que le droit est ouvert ; « l'agent ne peut pas renoncer à une bonification ou une majoration de durée d'assurance servie par la CNRACL pour qu'elle le soit par un autre régime » (TA Amiens, 2 juin 2017, n° 1501559)", date: "2026-09-24", url: "https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/regles-de-coordination-avec-les-autres-regimes"}
+      - {type: autre, reference: "CNRACL, juris-cnracl, « Bonification pour enfants » (enfants nés avant la radiation des cadres ; interruption d'activité possible hors de la fonction publique depuis le décret n° 2010-1741) et « Femmes fonctionnaires qui ont accouché après le 01/01/2004 et après leur recrutement »", date: "2026-09-24", url: "https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/les-bonifications/bonification-pour-enfants"}
+      - {type: autre, reference: "COR, fiches CPRPF (SNCF) et CRP RATP de juillet 2024 : quinze ans de services exigés des agents partis avant le 1er juillet 2008 ; en deçà, à la RATP, une pension de coordination calculée selon les règles du régime général", date: "2026-09-24", url: "https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_RATP_vf.pdf"}
+    verifie_le: "2026-09-24"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: >-
+      Toute mère passée par un régime spécial et par un régime aligné. Jusqu'au
+      24 septembre 2026, le modèle donnait les trimestres au régime qui en
+      accordait le plus : une fonctionnaire de l'État passée au privé recevait
+      les seize trimestres du régime général pour deux enfants nés avant 2004,
+      au lieu des huit de sa bonification. tests/test_priorite_enfants.py, et
+      cinq témoins de parcours rejouent la règle dans les deux moteurs.
+    a_faire: >-
+      Aucun exemple chiffré publié n'a été trouvé. Quatre approximations sont
+      assumées. Le modèle date la radiation au 1er janvier qui suit la dernière
+      année de services et fait naître les enfants aux trente ans de leur mère.
+      Il applique à tous les régimes spéciaux les conditions de la fonction
+      publique (L. 12 bis, R. 13), comme il leur applique déjà sa table. Il ne
+      distingue pas les militaires, qui ont gardé quinze ans jusqu'au 22 janvier
+      2014 (L. 6). Hors du modèle : l'exception de la CRPCEN, dont la fiche ne
+      déclare pas de bonification ; la pension statutaire liquidée avant la
+      naissance ; l'enfant handicapé, qui va au dernier régime spécial ; le
+      rétablissement au régime général de qui n'a pas la durée, dont le modèle
+      garde les services dans le régime spécial. Avant 1985, R. 173-15 n'est
+      pas dans l'index, et le modèle applique la même règle.
+    prochaine_veille: "2027-03-31"
+
   - id: majoration_dix_pour_cent
     regle: "Majoration de 10 % pour trois enfants au régime général, sur la retraite telle que calculée ; plafonnée en euros à l'Agirc-Arrco, dont les taux sont ceux de la ligne `majoration_enfants_agirc_arrco`."
     textes: ["L. 351-12 CSS", "accord national interprofessionnel Agirc-Arrco"]
@@ -5592,3 +5644,37 @@ journal:
       Aucun exemple publié pour en faire un témoin officiel. La radiation est
       datée au 1er janvier qui suit la dernière année de service, faute du
       mois. L'annexe de la Banque de France, à lire en entier.
+
+  - date: "2026-09-24"
+    session: "action 89, suite : la priorité du régime spécial pour les trimestres des enfants"
+    consulte: >-
+      Dans l'index LEGI : R. 173-15 du code de la sécurité sociale dans ses
+      six versions depuis 1985 ; R. 13, L. 4, L. 6, L. 12 bis et R. 4-1 du
+      code des pensions dans leurs versions ; les articles qui fixent la
+      durée de services de chaque régime spécial — décrets n° 65-773,
+      2003-1306, 65-836, 2004-1056, 2008-639, 2008-637, 46-1541 (annexe 3),
+      2007-262, 68-382, 68-960, 62-766, et L. 5552-11 du code des transports ;
+      les majorations « aux femmes ayant accouché postérieurement à leur
+      recrutement » de chaque régime. Dans l'index JORF, le décret
+      n° 2008-47 de la SNCF. Les pages de juris-cnracl sur la coordination,
+      la bonification pour enfants et la majoration des enfants nés depuis
+      2004 ; les fiches CPRPF et CRP RATP du COR de juillet 2024.
+    trouve: >-
+      Le modèle donnait les trimestres des enfants au régime qui en accordait
+      le plus ; R. 173-15 les donne au régime spécial qui peut pensionner et
+      où le droit est ouvert, puis au régime général, puis au dernier régime.
+      Une fonctionnaire de l'État passée au privé perd ainsi huit trimestres
+      pour deux enfants nés avant 2004, que l'État ne lui a jamais dus. La
+      durée qui ouvre une pension est partout de quinze ans avant les
+      réformes, de deux ans pour les fonctionnaires radiés depuis 2011, d'un
+      an pour les agents partis de la SNCF, de la RATP, des IEG et de l'Opéra
+      depuis le 1er juillet 2008 ; la Banque de France, la Comédie-Française
+      et la pension spéciale des marins n'en exigent aucune. Corrigé dans les
+      deux moteurs, avec une table de ces durées.
+    reste: >-
+      Aucun exemple publié pour en faire un témoin officiel. Les règlements de
+      la SNCF et de la RATP d'avant 2008 ne sont pas dans l'index : leurs
+      quinze ans viennent des fiches du COR. Le port de Strasbourg, la caisse
+      de Nouvelle-Calédonie, les chemins de fer secondaires et les pensions
+      d'avant 1948 restent sans durée lue. Hors du modèle : le rétablissement,
+      l'interpénétration, l'exception de la CRPCEN, l'enfant handicapé.

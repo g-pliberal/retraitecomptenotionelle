@@ -631,6 +631,24 @@ export class Carriere {
   }
 
   /**
+   * Première et dernière années servies dans ces statuts, null sans aucune.
+   *
+   * Le recrutement et la radiation, à l'année près : ce sont eux que les règles
+   * des enfants opposent — une majoration « aux femmes ayant accouché
+   * postérieurement à leur recrutement », une bonification pour les enfants nés
+   * avant la radiation.
+   *
+   * @returns {[number, number]|null}
+   */
+  bornesDeService(affiliations, jusquA = null) {
+    const lignes = this._lignesDeService(affiliations, jusquA);
+    if (lignes.length === 0) {
+      return null;
+    }
+    return [lignes[0].annee, lignes[lignes.length - 1].annee];
+  }
+
+  /**
    * Mois où la durée de service demandée est atteinte, null sinon.
    *
    * CONVENTION DE PLACEMENT DANS L'ANNÉE : une année pleine sert de janvier à

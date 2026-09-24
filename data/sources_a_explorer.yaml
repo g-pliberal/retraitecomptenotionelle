@@ -3632,10 +3632,13 @@ sources:
       pension unique) ; les trimestres des sapeurs-pompiers volontaires ; la
       priorité de R. 173-15, qui fait accorder les avantages pour enfants par
       la CNRACL dès qu'elle peut servir une pension, même quand le régime
-      général donnerait plus (TA Amiens, 2 juin 2017). Le modèle retient le
-      régime qui accorde le plus (`_majoration_pour_enfants`) : une
-      fonctionnaire passée par le privé y reçoit les huit trimestres par
-      enfant du régime général. Ni la veille ni docs/limites.md ne le disent.
+      général donnerait plus (TA Amiens, 2 juin 2017). Le modèle retenait le
+      régime qui accorde le plus (`_majoration_pour_enfants`), et une
+      fonctionnaire passée par le privé y recevait les huit trimestres par
+      enfant du régime général. Corrigé le même jour dans les deux moteurs,
+      avec la durée de services qui ouvre une pension dans chaque régime
+      spécial (`services_ouvrant_pension.csv`) : ligne de veille
+      `priorite_majorations_enfants`.
 
   - id: juris_cnracl_montant_pension
     url: https://www.juris-cnracl.retraites.fr/pension-normale/calcul-de-la-pension/determination-du-montant-de-la-pension

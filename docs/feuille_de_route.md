@@ -30,8 +30,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->6 226<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 157<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->6 444<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 377<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13089,6 +13089,26 @@ phrase, non plus. Aucun témoin existant ne bouge ; deux parcours entrent aux
 témoins pour que les deux moteurs rejouent la règle. Récit dans
 `docs/limites.md`, « La pension différée d'un fonctionnaire » ; tests dans
 `tests/test_cnracl.py`.
+
+**Puis la priorité du régime spécial pour les trimestres des enfants.**
+Deuxième reste du lot, sur demande. R. 173-15 fait accorder ces trimestres
+par UN régime : le régime spécial qui peut servir une pension à la mère et où
+le droit est ouvert pour ses enfants, sinon le régime général, sinon le
+dernier régime aligné. Le moteur retenait le plus favorable. Il sait
+désormais quelle durée de services ouvre une pension dans chaque régime
+spécial, lue au texte : quinze ans avant les réformes, deux pour les
+fonctionnaires radiés depuis 2011, un pour les agents partis de la SNCF, de
+la RATP, des IEG et de l'Opéra depuis juillet 2008
+(`services_ouvrant_pension.csv`). Il sait aussi quand le droit est ouvert :
+un enfant né depuis 2004 doit l'être après le recrutement (L. 12 bis), un
+enfant né avant selon les trois versions de R. 13. Une fonctionnaire de
+l'État passée au privé à cinquante ans perd huit trimestres pour deux
+enfants et 755 € par an ; une salariée recrutée par l'État à quarante ans en
+gagne 407, ses huit trimestres de bonification entrant au prorata de sa
+pension civile. Cinq parcours entrent aux témoins. Restent hors du modèle le
+rétablissement, l'interpénétration, l'exception de la CRPCEN et l'enfant
+handicapé. Récit dans `docs/limites.md`, « Les trimestres des enfants » ;
+tests dans `tests/test_priorite_enfants.py`.
 
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`

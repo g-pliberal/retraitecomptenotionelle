@@ -936,6 +936,42 @@ export class MajorationsPourEnfants {
 MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE = 30;
 
 /**
+ * La durée de services qui ouvre une pension dans chaque régime spécial.
+ *
+ * C'est la condition dont l'article R. 173-15 du code de la sécurité sociale
+ * fait dépendre la priorité du régime spécial pour les trimestres des enfants :
+ * il les accorde « si celui-ci est susceptible d'accorder en vertu de ses
+ * propres règles une pension à l'intéressé ». Les textes, régime par régime,
+ * sont dans l'en-tête de `legislation/services_ouvrant_pension.csv`.
+ */
+export class ServicesOuvrantPension {
+  constructor(paquet) {
+    this._table = paquet.services_ouvrant_pension ?? {};
+  }
+
+  /**
+   * Années de services exigées de l'agent radié à cette date (ISO), et la
+   * fiabilité de la ligne ; null pour un régime que la table ne porte pas.
+   * `enFonctions` dit que l'agent part en fonctions, sa radiation ne précédant
+   * pas son départ : la SEITA n'exige alors plus rien (article 110 du décret
+   * n° 62-766).
+   *
+   * @returns {[number, number]|null} années exigées, fiabilité.
+   */
+  annees(regime, radiation, enFonctions) {
+    let retenue = null;
+    for (const [depuis, annees, anneesEnFonctions, fiabilite] of this._table[regime] ?? []) {
+      if (depuis > radiation) {
+        break;
+      }
+      const exigees = enFonctions && anneesEnFonctions !== null ? anneesEnFonctions : annees;
+      retenue = [exigees, fiabilite];
+    }
+    return retenue;
+  }
+}
+
+/**
  * Surcote parentale — article L. 351-1-2-1 du code de la sécurité sociale.
  *
  * Contrepartie du recul de l'âge légal : un assuré qui avait sa durée requise un

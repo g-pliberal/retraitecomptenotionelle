@@ -1,0 +1,120 @@
+# Durée de services qui ouvre une pension dans chaque régime spécial
+# ------------------------------------------------------------------
+# source_id: legifrance_textes
+#
+# À quoi cela sert dans ce modèle. Les trimestres accordés au titre des enfants
+# ne se cumulent pas d'un régime à l'autre : l'article R. 173-15 du code de la
+# sécurité sociale désigne celui qui les accorde. Le régime général passe avant
+# les régimes alignés, et le RÉGIME SPÉCIAL passe avant le régime général « si
+# celui-ci est susceptible d'accorder en vertu de ses propres règles une
+# pension à l'intéressé » (LEGIARTI000034595998, et déjà la version de 1985,
+# LEGIARTI000006747882). Le modèle retenait le régime qui accordait le plus, et
+# servait donc à une fonctionnaire passée par le privé les huit trimestres par
+# enfant du régime général, là où la CNRACL lui accorde sa bonification et
+# où elle ne peut pas y renoncer (juris-cnracl, « Règles de coordination avec
+# les autres régimes » ; TA Amiens, 2 juin 2017, n° 1501559).
+#
+# Être « susceptible d'accorder une pension », c'est avoir la durée de services
+# que le régime exige. En deçà, le régime spécial ne pensionne pas : la
+# fonction publique rétablit l'agent au régime général et à l'Ircantec, la
+# RATP lui sert une « pension de sécurité sociale de coordination » calculée
+# selon les règles du régime général — le cas même que R. 173-15 renvoie au
+# régime général. Cette table porte cette durée, régime par régime.
+#
+# UNE BASCULE PAR RÉGIME, ET ELLE SE LIT À LA RADIATION. Tous les régimes lus
+# exigeaient quinze ans ; les réformes les ont ramenés à un an ou deux, pour
+# les agents radiés après leur date d'effet — le décret n° 2008-639 le dit en
+# toutes lettres : « ces dispositions ne sont pas applicables aux agents ayant
+# quitté la SNCF avant le 1er juillet 2008 ». `radiation_depuis` est la date à
+# partir de laquelle la ligne vaut ; la ligne retenue est la dernière dont la
+# date n'est pas postérieure à la radiation. Le modèle date la radiation au
+# 1er janvier qui suit la dernière année de services dans le régime, comme
+# pour la pension différée, et au départ lui-même quand l'agent sert encore
+# l'année où il liquide.
+#
+#   fonction_publique_etat  Quinze années « accomplies de services civils et
+#       militaires effectifs » (L. 4, 1°, du code des pensions, version de
+#       1964, LEGIARTI000006362667), puis la durée fixée par décret (L. 4,
+#       LEGIARTI000023096809) : deux années, pour les fonctionnaires radiés
+#       à compter du 1er janvier 2011 (R. 4-1, LEGIARTI000023388607).
+#       Les militaires ont gardé quinze ans jusqu'au 22 janvier 2014 (L. 6,
+#       LEGIARTI000006362672) : le modèle ne les distingue pas ici.
+#   cnracl  Quinze années (décret n° 65-773, article 6, LEGIARTI000006368184 ;
+#       décret n° 2003-1306, article 7, LEGIARTI000006400865), deux depuis le
+#       1er janvier 2011 (article 7, LEGIARTI000023414028).
+#   fspoeie  Quinze années (décret n° 65-836, article 3, LEGIARTI000006766741 ;
+#       décret n° 2004-1056, article 3, LEGIARTI000006781471), deux depuis le
+#       1er janvier 2011 (article 3, LEGIARTI000023414025).
+#   sncf  Une année de services effectifs dans le cadre permanent pour qui
+#       quitte la SNCF depuis le 1er juillet 2008 (décret n° 2008-639,
+#       article 3, LEGIARTI000019108259). Avant, quinze ans : le règlement des
+#       retraites d'alors n'est pas dans l'index, et c'est la fiche du COR
+#       sur la CPRPF (juillet 2024, note 3) qui le dit — « pour les ex-agents
+#       ayant quitté la SNCF avant le 1er juillet 2008, la durée de services
+#       exigée pour pouvoir bénéficier d'une pension proportionnelle est de
+#       15 ans ». D'où le niveau `moyenne`.
+#   ratp  « Le droit à pension est subordonné à une durée de services
+#       effectifs d'au moins un an » (décret n° 2008-637, article 6,
+#       LEGIARTI000019104813). Avant le 1er juillet 2008, quinze ans, que la
+#       fiche du COR sur la CRP RATP (juillet 2024, note 1) donne seule :
+#       en deçà, une pension de coordination selon les règles du régime
+#       général.
+#   ieg  « Pour avoir droit aux prestations : pension proportionnelle, l'agent
+#       doit totaliser quinze ans de service » (annexe 3 du statut national,
+#       version de 1946, LEGIARTI000006632496) ; depuis le 1er juillet 2008,
+#       « une durée minimale d'affiliation d'un an » (annexe 3, article 1er,
+#       LEGIARTI000019226006).
+#   banque_de_france  Quinze années de services effectifs (annexe du décret
+#       n° 2007-262, article 7, LEGIARTI000006778516), puis aucune durée
+#       depuis le 9 mai 2012 : « le droit à pension est acquis aux agents
+#       titulaires ayant assuré des services effectifs » (LEGIARTI000025882187).
+#       Avant le décret de 2007, le règlement de la Banque n'est pas dans
+#       l'index : le modèle y prolonge les quinze ans, au niveau `moyenne`.
+#   opera_de_paris  Quinze ans de services effectifs au théâtre (décret
+#       n° 68-382, article 6, LEGIARTI000006765537), un an depuis le 1er juillet
+#       2008 (article 6, II, LEGIARTI000018253874) — quinze pour qui part sans
+#       condition d'âge, départ que le modèle ne sert pas.
+#   comedie_francaise  Quinze années de services (décret n° 68-960, article 6,
+#       LEGIARTI000006765429) ; depuis le 1er juillet 2008, l'article 6 ne pose
+#       plus qu'une condition d'âge (LEGIARTI000018253642).
+#   seita  Quinze années pour l'agent qui part avant l'âge (décret n° 62-766,
+#       article 112, LEGIARTI000006324587) ; AUCUNE pour celui qui atteint
+#       soixante ans en fonctions (article 110, LEGIARTI000006324569). C'est
+#       la seule ligne où `annees_en_fonctions` diffère.
+#   marins  Aucune : le marin qui n'a droit ni à la pension d'ancienneté ni à
+#       la proportionnelle « a droit à une pension spéciale calculée en
+#       fonction de la durée de ses services » (code des transports,
+#       L. 5552-11, LEGIARTI000023079245).
+#
+# `annees_en_fonctions` est la durée exigée de l'agent qui sert encore l'année
+# où il liquide ; vide, elle est celle de `annees`.
+#
+# CE QUE LA TABLE NE PORTE PAS, ET CE QUE LE MODÈLE EN FAIT. Un régime spécial
+# absent — le port autonome de Strasbourg, la caisse locale de Nouvelle-
+# Calédonie, les chemins de fer secondaires, les pensions civiles d'avant
+# 1948 — est présumé pouvoir servir une pension dès qu'on y a servi, au niveau
+# `estimee` : aucun de leurs textes n'est dans l'index. Les lignes de 1900
+# prolongent en arrière la plus ancienne version lue (1964 pour l'État, 1946
+# pour les IEG, 1962 pour la SEITA). Les mines, en points, et la CRPCEN, dont
+# la fiche ne déclare pas de bonification, n'entrent pas dans la question.
+regime,radiation_depuis,annees,annees_en_fonctions,texte,identifiant,fiabilite
+fonction_publique_etat,1900-01-01,15,,"code des pensions civiles et militaires, L. 4 (1°)",LEGIARTI000006362667,haute
+fonction_publique_etat,2011-01-01,2,,"code des pensions civiles et militaires, L. 4 et R. 4-1",LEGIARTI000023388607,haute
+cnracl,1900-01-01,15,,"décret n° 65-773, art. 6 ; décret n° 2003-1306, art. 7",LEGIARTI000006400865,haute
+cnracl,2011-01-01,2,,"décret n° 2003-1306, art. 7",LEGIARTI000023414028,haute
+fspoeie,1900-01-01,15,,"décret n° 65-836, art. 3 ; décret n° 2004-1056, art. 3",LEGIARTI000006781471,haute
+fspoeie,2011-01-01,2,,"décret n° 2004-1056, art. 3",LEGIARTI000023414025,haute
+sncf,1900-01-01,15,,"fiche CPRPF du COR (juillet 2024), note 3",,moyenne
+sncf,2008-07-01,1,,"décret n° 2008-639, art. 3",LEGIARTI000019108259,haute
+ratp,1900-01-01,15,,"fiche CRP RATP du COR (juillet 2024), note 1",,moyenne
+ratp,2008-07-01,1,,"décret n° 2008-637, art. 6",LEGIARTI000019104813,haute
+ieg,1900-01-01,15,,"décret n° 46-1541, annexe 3, art. 3",LEGIARTI000006632496,haute
+ieg,2008-07-01,1,,"décret n° 46-1541, annexe 3, art. 1er",LEGIARTI000019226006,haute
+banque_de_france,1900-01-01,15,,"décret n° 2007-262, annexe, art. 7",LEGIARTI000006778516,moyenne
+banque_de_france,2012-05-09,0,,"décret n° 2007-262, annexe, art. 7",LEGIARTI000025882187,haute
+opera_de_paris,1900-01-01,15,,"décret n° 68-382, art. 6",LEGIARTI000006765537,haute
+opera_de_paris,2008-07-01,1,,"décret n° 68-382, art. 6, II",LEGIARTI000018253874,haute
+comedie_francaise,1900-01-01,15,,"décret n° 68-960, art. 6",LEGIARTI000006765429,haute
+comedie_francaise,2008-07-01,0,,"décret n° 68-960, art. 6",LEGIARTI000018253642,haute
+seita,1900-01-01,15,0,"décret n° 62-766, art. 110 et 112",LEGIARTI000006324587,haute
+marins,1900-01-01,0,,"code des transports, L. 5552-11",LEGIARTI000023079245,haute
