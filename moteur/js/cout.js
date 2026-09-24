@@ -322,7 +322,9 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
     // même compte SANS régime fusionné, c'est-à-dire ce que le droit en vigueur
     // prélèverait sur la même carrière jusqu'en 2070.
     const versements = { [TAUX_REELS]: {} };
-    const reels = simulateur.constructeurEmployeur.construire(
+    // Ce qui est PRÉLEVÉ, non ce qui est porté au compte : de l'État, le
+    // taux entier (voir `constructeurPrelevement`).
+    const reels = simulateur.constructeurPrelevement.construire(
       comparaison.carriere,
       comparaison.carriere.anneeLiquidation,
       comparaison.carriere.premiereAnnee,

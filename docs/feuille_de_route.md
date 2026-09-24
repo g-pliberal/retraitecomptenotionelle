@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 934<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 727<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 754<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -16354,7 +16354,7 @@ recettes), `scripts/chiffrage_plf.py`, `scripts/mesures_prose.py`,
 `tests/test_affirmations.py`, `README.md`, `docs/limites.md`,
 `docs/chiffrage_plf.md` ; le paquet, les témoins et le chiffrage, régénérés.
 
-### 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, pour voir — `en cours`
+### 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut — `en cours`
 
 **Demande.** « Dis-moi en plus sur le taux seulement dédié à la retraite, ça
 m'intéresse — ça peut changer beaucoup de choses », puis : « intègre-le comme
@@ -16402,7 +16402,7 @@ du scénario 4 recule de 6 598 à 6 522 milliards. Le privé, la CNRACL, le
 scénario 1 et la part salariale ne bougent pas, et un test le tient. La veille,
 avant l'âge légal de 65 ans, le solde moyen passait de −1,40 % à −1,00 %.
 
-**Ce qui reste avant d'en faire le défaut.**
+**Ce qui restait à établir avant d'en faire le défaut.**
 
 1. *Une vraie série, année par année.* La proportion de 2025 est prêtée à
    trente ans de taux. La Cour recommande que les documents budgétaires en
@@ -16419,7 +16419,8 @@ avant l'âge légal de 65 ans, le solde moyen passait de −1,40 % à −1,00 %.
 3. *Le choix.* La doctrine du projet — ce qui n'est pas contributif se finance
    par l'impôt, non par le compte — plaide pour `retraite_seule` ; c'est aussi
    le résultat le plus lu du site qui bouge, de +45 % à −1 %. La décision est
-   à l'utilisateur.
+   à l'utilisateur. Elle a été prise le même jour : voir « Le défaut », plus
+   bas.
 
 **Le passage sur `main`, le 24 septembre 2026.** Le travail avait été remis
 dans une pull request, à la demande de l'utilisateur, pour être poursuivi dans
@@ -16440,6 +16441,56 @@ l'ampleur du choix qui reste : dans le scénario 4, le fonctionnaire sédentaire
 né en 1970 passe de +41 % à −6 %, celui de 1960 de +26 % à −16 %, quand le
 salarié moyen du privé des mêmes générations perd 30 % et 33 % sous les deux
 réglages.
+
+**Le défaut, le 24 septembre 2026.** L'utilisateur a tranché le point 3 au vu
+des chiffres : `retraite_seule` est le défaut, dans les deux moteurs et dans le
+formulaire du site, et `entiere` reste une option. La raison est la doctrine du
+projet, et la cohérence qui en découle : l'État était le seul employeur crédité
+d'un taux d'équilibre plutôt que d'un taux de cotisation, et c'est ce qui
+faisait gagner 41 % au fonctionnaire sédentaire né en 1970, dans le scénario 4,
+quand le salarié du privé de la même génération y perd 30 %. Sous le nouveau
+défaut, la fonctionnaire de l'exemple du README passe de +45,0 % à −1,3 % dans
+le scénario 4, et de +44,9 % à −3,4 % dans la proposition. Le solde moyen de la
+proposition passe de −0,87 à −0,48 point de PIB, sa dette en 2070 de 59 % à
+33 % du PIB (66 % pour le système actuel), et son coefficient d'équilibre, au
+plus bas, de 0,85 à 0,90. Son régime est en léger excédent de 2028 à 2030, en
+déficit de 2031 à 2065, en excédent ensuite. Et son avantage sur le système
+actuel ne dépend plus de ce que les reportés travaillent : si aucun ne
+travaillait, sa dette serait de 56 % du PIB en 2070, quand le taux entier la
+portait à 82 %. Le privé, la CNRACL, le scénario 1, la part salariale et la
+variante prospective ne bougent pas. Les points 1 et 2 restent ouverts : ils
+ne décident plus du défaut, ils en affinent la valeur.
+
+**Un défaut du réglage, trouvé en changeant le défaut.** Le dénominateur du
+rapport de recettes de la page Coût — ce que le droit en vigueur prélève sur
+chaque carrière de la grille — était calculé par le constructeur des scénarios
+4 et 5, celui qui porte la part patronale AU COMPTE. Sous `retraite_seule`, il
+comptait donc que l'État verse 46 % du traitement en 2026 au lieu de 82 %, et
+la recette que la proposition garde des agents de l'État en était gonflée
+d'autant. Le solde par défaut lit la recette sur l'assiette, non sur ce
+rapport, et n'était pas touché ; la lecture « rapport » l'était, et les quatre
+tests de `test_cout.py` qui recoupent le taux moyen qu'elle implique avec celui
+du COR l'ont vu. `Simulateur.constructeur_prelevement`, dans les deux moteurs,
+dit désormais ce qui est PRÉLEVÉ, avec le taux entier de l'État, et un test
+tient qu'il ne dépend pas du réglage. Le réglage change ce qui est porté au
+compte, jamais ce que l'employeur paie.
+
+Ce que le changement a touché : `config.py` et `config.js` ; `simulateur.py`,
+`simulateur.js`, `cout.py` et `cout.js` (le constructeur du prélèvement) ;
+`web/pages.py` et `pages.js`, où l'option passe en tête avec « (défaut) », où
+l'aide le dit, et où le paragraphe sous la simulation dit ce que le compte ne
+reçoit pas — la question « et si tout avait été porté au compte ? » n'y paraît
+plus que sous `entiere` ; `MESURES_BLOCAGES`, remesuré dans les deux moteurs ;
+les témoins, dont les trois cas, la page du réglage et le jeu de règles des
+pages agrégées portent désormais `entiere`, que le balayage des statuts ne
+visite plus ; les tests du réglage, qui ont leur fixture `entiere`, et deux
+tests du simulateur qui décrivaient le taux entier et le font désormais sous
+lui ; les sondes de `mesures_prose.py` ; la prose — le README, `limites.md`,
+dont la conclusion sur les reportés en emploi ne tenait plus, `methodologie.md`,
+deux paragraphes datés de `chiffrage_plf.md`, et le parcours de présentation,
+où le fonctionnaire n'est plus « le cas qui surprend ». Suite complète,
+rebasée sur le lot de la fonction publique de l'État poussé entre-temps par une
+autre session : 2 400 réussis, 1 ignoré, 0 échec.
 
 **Fichiers.** `data/reference/legislation/contribution_etat_retraite_seule.csv`
 (nouveau), `src/retraite_notionnelle/config.py`,

@@ -62,8 +62,9 @@ def _scenario(nom: str) -> str:
 def _parametres(indexation: str = "", lissage: str = "", contribution_etat: str = ""):
     """Les paramètres par défaut, sous la règle et le lissage demandés.
 
-    ``contribution_etat=retraite_seule`` : le taux de l'État ramené à sa part
-    « retraite seule », le réglage que la prose mesure sans qu'il soit le défaut.
+    ``contribution_etat=entiere`` : le taux de l'État porté entier au compte,
+    le défaut jusqu'au 24 septembre 2026 ; la prose le mesure pour dire ce que
+    sa part « retraite seule », le défaut depuis, a déplacé.
     """
     from retraite_notionnelle import Parametres
     from retraite_notionnelle.config import ContributionEtat, ModeIndexation
@@ -221,7 +222,7 @@ def part_employeur(**reglages: str) -> float:
 
 
 def retraite_seule(**reglages: str) -> float:
-    """Sous ``contribution_etat=retraite_seule``, ce que l'État porte au compte, en %.
+    """Sous ``contribution_etat=retraite_seule``, le défaut, ce que l'État porte au compte, en %.
 
     Sans ``annee`` : la proportion du taux versé, la même chaque année. Avec :
     le taux porté au compte cette année-là. ``militaire=1`` pour un militaire.
@@ -278,9 +279,9 @@ def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: 
     aux âges du scénario 4, et la prose peut dire ce que la mesure déplace.
     ``emploi_reportes=0.5`` règle la part des reportés en emploi
     (``Parametres.part_reportes_en_emploi``), un par défaut.
-    ``contribution_etat=retraite_seule`` ramène le taux de l'État à sa part
-    « retraite seule » : vingt secondes de plus, et seulement pour la prose
-    qui le cite.
+    ``contribution_etat=entiere`` porte au compte le taux de l'État entier, et
+    non sa seule part « retraite » : vingt secondes de plus, et seulement pour
+    la prose qui le cite.
     """
     from retraite_notionnelle import cout as C
     from retraite_notionnelle.donnees.assiette import AssietteActivite

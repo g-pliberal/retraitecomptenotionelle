@@ -7,7 +7,9 @@
  */
 
 import { Carriere, salaireMoyenAnnuel } from "./carriere.js";
-import { PARAMETRES_DEFAUT, PartCotisation, SourceCotisations } from "./config.js";
+import {
+  ContributionEtat, PARAMETRES_DEFAUT, PartCotisation, SourceCotisations,
+} from "./config.js";
 import { ConstructeurCompte } from "./compte.js";
 import { Convertisseur } from "./conversion.js";
 import { AgeReference } from "./age-reference.js";
@@ -575,6 +577,22 @@ export class Simulateur {
       this.macro, this.catalogue, this.affiliations, this.indexation,
       { ...parametres, part_cotisation: PartCotisation.TOTALE },
     );
+    // Sauf sous `retraite_seule`, le défaut : le compte d'un agent de l'État
+    // n'y reçoit que la part de son taux que la Cour des comptes rattache à sa
+    // retraite, quand l'État verse le taux entier. Le réglage change ce qui est
+    // PORTÉ AU COMPTE, non ce qui est PRÉLEVÉ, et le dénominateur du rapport de
+    // recettes se calcule sur le taux entier. Voir le Python.
+    this.constructeurPrelevement =
+      parametres.contribution_etat === ContributionEtat.ENTIERE
+        ? this.constructeurEmployeur
+        : new ConstructeurCompte(
+          this.macro, this.catalogue, this.affiliations, this.indexation,
+          {
+            ...parametres,
+            part_cotisation: PartCotisation.TOTALE,
+            contribution_etat: ContributionEtat.ENTIERE,
+          },
+        );
     this.scenarioEmployeur = new ScenarioNotionnel(
       this.constructeurEmployeur,
       this.convertisseur, this.ageReference, this.scenarioActuel, parametres,

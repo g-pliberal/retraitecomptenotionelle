@@ -72,11 +72,12 @@ export const PartCotisation = Object.freeze({
  * Ce que le compte d'un agent de l'État reçoit de son employeur, sous
  * `totale`.
  *
- * `entiere` (défaut) : le taux que l'État a versé au compte d'affectation
- * spéciale « Pensions », 78,28 % du traitement en 2025 pour un civil.
- * `retraite_seule` : la part de ce taux que la Cour des comptes rattache à la
- * retraite de l'agent lui-même — 44,1 % pour un civil et 51,2 % pour un
- * militaire en 2025, la même proportion du taux de l'année ailleurs.
+ * `retraite_seule` (défaut) : la part du taux versé que la Cour des comptes
+ * rattache à la retraite de l'agent lui-même — 44,1 % pour un civil et 51,2 %
+ * pour un militaire en 2025, la même proportion du taux de l'année ailleurs.
+ * `entiere` : le taux que l'État a versé au compte d'affectation spéciale
+ * « Pensions », 78,28 % du traitement en 2025 pour un civil — le défaut
+ * jusqu'au 24 septembre 2026.
  */
 export const ContributionEtat = Object.freeze({
   ENTIERE: "entiere",
@@ -239,7 +240,7 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: Part de la cotisation portée au compte : celle de l'assuré seul, ou celle
   //: de l'assuré et de son employeur.
   part_cotisation: PartCotisation.SALARIALE,
-  contribution_etat: ContributionEtat.ENTIERE,
+  contribution_etat: ContributionEtat.RETRAITE_SEULE,
   statut_pivot_cotisations: "salarie_prive_non_cadre",
   //: Plafonnement de l'assiette notionnelle, en multiples du plafond annuel de
   //: la Sécurité sociale. ``null`` = assiette déplafonnée, et c'est le défaut :

@@ -105,8 +105,8 @@ budgétaire du dossier.**
 | dont cotisations, au taux unique | -1,40 | -43 |
 | dont impôts et taxes affectés | -2,14 | -66 |
 | dont versements de l'État et de la branche famille | -2,26 | -69 |
-| Dépense publique retirée (pensions et garantie) | -4,89 | -150 |
-| **Écart de solde de la retraite, garantie comprise, variante rétroactive** | **-0,91** | **-28** |
+| Dépense publique retirée (pensions et garantie) | -5,17 | -158 |
+| **Écart de solde de la retraite, garantie comprise, variante rétroactive** | **-0,63** | **-19** |
 | **Écart de solde de la retraite, garantie comprise, variante prospective** | **-4,06** | **-125** |
 <!-- fait_central:fin -->
 
@@ -142,6 +142,14 @@ signe : -0,91 point de PIB en 2026 dans la variante rétroactive, -4,06 dans la
 prospective. L'âge légal de 65 ans, venu entre-temps, en rend une part : sans
 lui, la variante rétroactive était à -1,44.
 
+*Corrigé le 24 septembre 2026, la contribution de l'État ramenée à sa part
+« retraite seule ».* Le fait central passe à -0,63 point de PIB en 2026 dans la
+variante rétroactive. Jusqu'à la bascule, le compte d'un fonctionnaire d'État
+ne reçoit plus le taux d'équilibre que l'État verse, mais la seule part que la
+Cour des comptes rattache à sa retraite : les droits que cette variante
+reprend à la bascule en sont moins gonflés, et elle sert moins de pensions. La
+variante prospective, qui ne reprend aucun droit à la bascule, ne bouge pas.
+
 ## Les quatre arbitrages qui déplacent le chiffrage
 
 Aucun de ces quatre points n'est tranché par le programme écrit. Deux d'entre
@@ -162,8 +170,8 @@ il faudrait rogner les pensions.
 |---|---:|---:|
 | Impôts et taxes affectés, si l'État continue de les lever | +2,14 pt | +66 |
 | Subventions d'équilibre, même question | +0,25 pt | +8 |
-| Renoncer à la rétroactivité (variante prospective) | -3,15 pt | -97 |
-| Appliquer le coefficient d'équilibre, non appliqué ici | 0,93 sur toutes les pensions | soit 7,2 % de moins |
+| Renoncer à la rétroactivité (variante prospective) | -3,43 pt | -105 |
+| Appliquer le coefficient d'équilibre, non appliqué ici | 0,96 sur toutes les pensions | soit 3,9 % de moins |
 <!-- arbitrages:fin -->
 
 ## Tableaux annuels
@@ -173,21 +181,21 @@ il faudrait rogner les pensions.
 <!-- annuel_retroactif:debut -->
 | Année | Pensions | Garantie nette | Dépense totale | Recettes | Solde régime | Solde + garantie | Rappel sc. 1 | Écart |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2026 | 8,80 (270) | 0,44 (14) | 9,24 (283) | 8,17 (250) | -0,63 (-19) | -1,07 (-33) | -0,16 (-5) | -0,91 |
-| 2027 | 8,76 (275) | 0,43 (14) | 9,19 (289) | 8,35 (263) | -0,41 (-13) | -0,84 (-26) | -0,22 (-7) | -0,62 |
-| 2028 | 8,69 (281) | 0,42 (13) | 9,10 (294) | 8,48 (274) | -0,21 (-7) | -0,63 (-20) | -0,24 (-8) | -0,39 |
-| 2029 | 8,62 (287) | 0,40 (13) | 9,02 (300) | 8,50 (283) | -0,11 (-4) | -0,51 (-17) | -0,17 (-6) | -0,34 |
-| 2030 | 8,77 (301) | 0,39 (13) | 9,15 (314) | 8,50 (291) | -0,27 (-9) | -0,65 (-22) | -0,20 (-7) | -0,45 |
-| 2031 | 8,97 (317) | 0,37 (13) | 9,34 (330) | 8,38 (296) | -0,59 (-21) | -0,96 (-34) | -0,24 (-9) | -0,72 |
-| 2032 | 9,04 (329) | 0,36 (13) | 9,40 (342) | 8,42 (306) | -0,62 (-23) | -0,98 (-36) | -0,26 (-10) | -0,72 |
-| 2033 | 9,05 (339) | 0,34 (13) | 9,40 (352) | 8,44 (316) | -0,61 (-23) | -0,96 (-36) | -0,27 (-10) | -0,68 |
-| 2034 | 9,18 (353) | 0,33 (13) | 9,51 (366) | 8,42 (324) | -0,76 (-29) | -1,09 (-42) | -0,34 (-13) | -0,75 |
-| 2035 | 9,26 (366) | 0,31 (12) | 9,58 (379) | 8,43 (333) | -0,84 (-33) | -1,15 (-45) | -0,38 (-15) | -0,77 |
-| 2036 | 9,35 (379) | 0,30 (12) | 9,65 (392) | 8,43 (342) | -0,92 (-37) | -1,22 (-49) | -0,43 (-17) | -0,79 |
-| 2037 | 9,44 (393) | 0,29 (12) | 9,72 (405) | 8,45 (352) | -0,99 (-41) | -1,27 (-53) | -0,49 (-20) | -0,79 |
-| 2038 | 9,52 (407) | 0,27 (12) | 9,79 (418) | 8,43 (360) | -1,08 (-46) | -1,35 (-58) | -0,53 (-23) | -0,82 |
-| 2039 | 9,59 (421) | 0,26 (11) | 9,85 (432) | 8,41 (369) | -1,18 (-52) | -1,44 (-63) | -0,57 (-25) | -0,86 |
-| 2040 | 9,65 (434) | 0,25 (11) | 9,90 (445) | 8,41 (378) | -1,24 (-56) | -1,49 (-67) | -0,61 (-27) | -0,88 |
+| 2026 | 8,50 (261) | 0,46 (14) | 8,96 (275) | 8,17 (250) | -0,33 (-10) | -0,79 (-24) | -0,16 (-5) | -0,63 |
+| 2027 | 8,46 (266) | 0,45 (14) | 8,91 (280) | 8,35 (263) | -0,11 (-3) | -0,56 (-18) | -0,22 (-7) | -0,34 |
+| 2028 | 8,37 (271) | 0,43 (14) | 8,81 (285) | 8,48 (274) | +0,10 (+3) | -0,33 (-11) | -0,24 (-8) | -0,09 |
+| 2029 | 8,29 (276) | 0,42 (14) | 8,71 (290) | 8,50 (283) | +0,22 (+7) | -0,20 (-7) | -0,17 (-6) | -0,03 |
+| 2030 | 8,42 (289) | 0,41 (14) | 8,83 (303) | 8,50 (291) | +0,08 (+3) | -0,33 (-11) | -0,20 (-7) | -0,13 |
+| 2031 | 8,61 (304) | 0,39 (14) | 9,00 (318) | 8,38 (296) | -0,23 (-8) | -0,62 (-22) | -0,24 (-9) | -0,37 |
+| 2032 | 8,66 (315) | 0,38 (14) | 9,04 (329) | 8,42 (306) | -0,24 (-9) | -0,62 (-23) | -0,26 (-10) | -0,36 |
+| 2033 | 8,66 (324) | 0,36 (14) | 9,02 (338) | 8,44 (316) | -0,22 (-8) | -0,58 (-22) | -0,27 (-10) | -0,31 |
+| 2034 | 8,78 (338) | 0,34 (13) | 9,12 (351) | 8,42 (324) | -0,35 (-14) | -0,70 (-27) | -0,34 (-13) | -0,36 |
+| 2035 | 8,85 (350) | 0,33 (13) | 9,18 (363) | 8,43 (333) | -0,42 (-17) | -0,75 (-30) | -0,38 (-15) | -0,37 |
+| 2036 | 8,92 (362) | 0,32 (13) | 9,24 (375) | 8,43 (342) | -0,49 (-20) | -0,81 (-33) | -0,43 (-17) | -0,38 |
+| 2037 | 9,00 (375) | 0,30 (13) | 9,30 (387) | 8,45 (352) | -0,55 (-23) | -0,85 (-36) | -0,49 (-20) | -0,37 |
+| 2038 | 9,07 (388) | 0,29 (12) | 9,36 (400) | 8,43 (360) | -0,64 (-27) | -0,93 (-40) | -0,53 (-23) | -0,40 |
+| 2039 | 9,14 (401) | 0,27 (12) | 9,42 (413) | 8,41 (369) | -0,73 (-32) | -1,00 (-44) | -0,57 (-25) | -0,43 |
+| 2040 | 9,19 (414) | 0,26 (12) | 9,45 (425) | 8,41 (378) | -0,79 (-35) | -1,05 (-47) | -0,61 (-27) | -0,44 |
 <!-- annuel_retroactif:fin -->
 
 ### B. Variante rétroactive — horizon long
@@ -195,12 +203,12 @@ il faudrait rogner les pensions.
 <!-- horizon_retroactif:debut -->
 | Année | Pensions | Garantie nette | Dépense totale | Recettes | Solde régime | Solde + garantie | Rappel sc. 1 | Écart |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| 2045 | 9,83 (498) | 0,19 (10) | 10,03 (507) | 8,44 (427) | -1,39 (-70) | -1,59 (-80) | -0,89 (-45) | -0,70 |
-| 2050 | 9,87 (555) | 0,16 (9) | 10,03 (564) | 8,43 (474) | -1,44 (-81) | -1,60 (-90) | -1,22 (-68) | -0,38 |
-| 2055 | 9,69 (603) | 0,14 (9) | 9,83 (612) | 8,42 (524) | -1,27 (-79) | -1,41 (-88) | -1,54 (-96) | +0,13 |
-| 2060 | 9,27 (638) | 0,14 (9) | 9,41 (648) | 8,41 (579) | -0,86 (-59) | -1,00 (-69) | -1,77 (-122) | +0,77 |
-| 2065 | 8,79 (667) | 0,14 (10) | 8,92 (677) | 8,42 (639) | -0,37 (-28) | -0,51 (-38) | -2,11 (-160) | +1,60 |
-| 2070 | 8,24 (688) | 0,14 (12) | 8,38 (700) | 8,51 (711) | +0,27 (+23) | +0,14 (+11) | -2,39 (-200) | +2,53 |
+| 2045 | 9,37 (474) | 0,20 (10) | 9,57 (484) | 8,44 (427) | -0,92 (-47) | -1,13 (-57) | -0,89 (-45) | -0,24 |
+| 2050 | 9,41 (529) | 0,17 (9) | 9,58 (538) | 8,43 (474) | -0,98 (-55) | -1,14 (-64) | -1,22 (-68) | +0,07 |
+| 2055 | 9,26 (576) | 0,15 (9) | 9,41 (586) | 8,42 (524) | -0,84 (-52) | -0,99 (-62) | -1,54 (-96) | +0,55 |
+| 2060 | 8,90 (613) | 0,14 (10) | 9,04 (622) | 8,41 (579) | -0,49 (-34) | -0,63 (-43) | -1,77 (-122) | +1,14 |
+| 2065 | 8,48 (644) | 0,14 (11) | 8,62 (655) | 8,42 (639) | -0,07 (-5) | -0,21 (-16) | -2,11 (-160) | +1,90 |
+| 2070 | 8,02 (670) | 0,14 (12) | 8,16 (681) | 8,51 (711) | +0,50 (+41) | +0,35 (+30) | -2,39 (-200) | +2,74 |
 <!-- horizon_retroactif:fin -->
 
 ### C. Variante prospective — trajectoire annuelle
@@ -272,14 +280,14 @@ salaire net affiché par le simulateur est celui qui les laisse au salarié.
 <!-- agregats:debut -->
 | Sur 2026-2070 | Rétroactive | Prospective | Système actuel |
 |---|---:|---:|---:|
-| Dépense de pensions cumulée, Md € constants de 2026 | 15 094 | 18 023 | 23 442 |
-| Écart de dépense au système actuel | -8 348 | -5 419 | — |
-| Garantie vieillesse brute cumulée | 534 | 411 | — |
-| Reprises sur succession | -188 | -156 | — |
-| Garantie nette cumulée | 345 | 255 | — |
-| Solde moyen, points de PIB | -0,87 | -2,73 | -1,13 |
-| Dette accumulée en 2070, points de PIB | +59 | +194 | +66 |
-| Première année d'équilibre | 2069 | jamais | jamais |
+| Dépense de pensions cumulée, Md € constants de 2026 | 14 461 | 18 023 | 23 442 |
+| Écart de dépense au système actuel | -8 981 | -5 419 | — |
+| Garantie vieillesse brute cumulée | 560 | 411 | — |
+| Reprises sur succession | -198 | -156 | — |
+| Garantie nette cumulée | 362 | 255 | — |
+| Solde moyen, points de PIB | -0,48 | -2,73 | -1,13 |
+| Dette accumulée en 2070, points de PIB | +33 | +194 | +66 |
+| Première année d'équilibre | 2028 | jamais | jamais |
 <!-- agregats:fin -->
 
 La variante rétroactive ne fait pas mieux que le droit en vigueur sur la
@@ -313,6 +321,13 @@ déficit chaque année jusqu'en 2068, au plus bas en 2048, et accumule d'ici 207
 une dette de 59 % du PIB, contre 66 % pour le système actuel : l'âge légal de
 65 ans la fait passer sous lui. La variante prospective ne revient jamais à
 l'équilibre, et sa dette atteint 194 % du PIB.
+
+*Corrigé le 24 septembre 2026, la contribution de l'État ramenée à sa part
+« retraite seule ».* Le régime de la variante rétroactive est en léger excédent
+de 2028 à 2030, en déficit de 2031 à 2065, au plus bas en 2049, et de nouveau en
+excédent à partir de 2066. Son solde moyen passe de -0,87 à -0,48 point de PIB,
+et la dette qu'elle accumule d'ici 2070 de 59 % à 33 % du PIB, contre 66 % pour
+le système actuel. La variante prospective ne bouge pas.
 
 *Corrigé le 23 septembre 2026.* Les deux premières lignes cumulaient la
 dépense que le modèle projette lui-même, plus haute que celle du COR de trois

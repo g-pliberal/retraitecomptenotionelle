@@ -89,7 +89,7 @@ C'est l'accueil. Descendre lentement, sans rien cliquer.
   « Votre retraite : ce que votre régime promet → de l'ordre d'un quart de moins,
   en médiane ». La première des « Vos questions », « Ma
   retraite va-t-elle baisser ? », en donne le détail : 23 % pour qui n'est
-  pas encore à la retraite, 11 % s'il place les cinq points rendus, 26 % sur
+  pas encore à la retraite, 12 % s'il place les cinq points rendus, 27 % sur
   la pension d'aujourd'hui d'un retraité, garantie vieillesse comprise.
 - Le bloc « Et vous, ça donne combien ? » en haut de page est un raccourci
   vers le simulateur : on peut y saisir une date de naissance et un statut et
@@ -193,14 +193,20 @@ l'impôt », sous les résultats, en donne la règle.
 | Système | Pension nette par mois | Écart |
 |---|---|---|
 | 1. Actuel | 2 755 € | référence |
-| 3. Ce qui a été cotisé, deux parts | 3 465 € | +25,8 % |
-| 4. La proposition | 3 673 € | +33,3 % |
+| 3. Ce qui a été cotisé, deux parts | 2 360 € | -14,3 % |
+| 4. La proposition | 2 532 € | -8,1 % |
 
-C'est le cas qui surprend, et il faut savoir le dire : l'État employeur
-cotise pour ses fonctionnaires bien au-delà de ce qu'un employeur privé verse
-(jusqu'à 82 % du traitement en 2026). Porté au compte, ce que l'État a
-réellement versé donne une pension supérieure à celle que le régime sert.
-Le compte rend ce qui a été cotisé, dans les deux sens.
+C'est le cas qu'on attend au tournant, et il faut savoir le dire : l'État
+employeur verse pour ses fonctionnaires bien au-delà de ce qu'un employeur
+privé verse (jusqu'à 82 % du traitement en 2026). Mais ce taux n'est pas une
+cotisation : il paie toutes les pensions de l'année, celles de La Poste et
+d'Orange, l'invalidité, les majorations pour enfants, les départs anticipés.
+Le compte n'en reçoit que la part que la Cour des comptes rattache à la
+retraite de l'agent lui-même, un peu plus de la moitié, et la pension reste
+alors sous celle que le régime sert. Si la salle demande ce que donnerait le taux entier : le compte recevait tout
+jusqu'au 24 septembre 2026, et la pension passait au-dessus de celle du
+régime ; c'était porter au compte de l'agent ce que l'État verse pour
+d'autres.
 
 **Née en 2000, salariée du privé au salaire moyen**, 2 751 € net, entrée en
 septembre 2022, départ en janvier 2064 à 64 ans :
@@ -234,16 +240,17 @@ moins. Vert : plus.
 Trois choses à montrer :
 
 - Les deux cartes en tête : la carrière la mieux traitée (militaire non
-  officier, +87 % pour la génération 2000) et la moins bien traitée (carrière
-  interrompue, -37 %), et les 124 points qui les séparent. Dire aussitôt
+  officier, +74 % pour la génération 2000) et la moins bien traitée (carrière
+  interrompue, -37 %), et les 111 points qui les séparent. Dire aussitôt
   d'où vient le premier : le droit en vigueur laisse ce militaire partir à
   44 ans, après vingt-cinq ans de services, et la proposition le fait servir
   jusqu'à 65 ans —
   une pension mensuelle bien plus forte, servie vingt et un ans plus tard.
-- La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -56 %
-  pour la génération 1940 à +42 % pour la génération 1970 : la même règle
-  donne des résultats opposés selon ce que l'État a réellement cotisé à
-  chaque époque.
+- La ligne **« Fonctionnaire sédentaire (catégorie B) »**, qui va de -61 %
+  pour la génération 1940 à -5 % pour la génération 1970 : la même règle
+  donne des résultats très éloignés selon ce que l'État a versé à chaque
+  époque, et le compte n'en reçoit que la part que la Cour des comptes
+  rattache à la retraite de l'agent.
 - Le sélecteur « Système affiché » : la grille se réécrit pour le système 2
   ou le 3, ce qui montre ce que chaque ingrédient déplace.
 
@@ -258,8 +265,8 @@ lignes : ce qu'un militaire touche de plus ou de moins qu'un artisan, à
 cotisation égale. Le niveau général dépend aussi d'un réglage annuel, le
 coefficient d'équilibre, que le modèle calcule mais n'applique jamais.
 **Ne pas promettre de marge** : pour la proposition, ce coefficient
-est inférieur à un sur toute la projection (0,90 en 2026, 0,79 au plus bas en
-2049, 0,92 en 2070), et la page le dit dans la phrase qui suit. C'est le coût
+est inférieur à un 37 années sur 45 (0,96 en 2026, 0,90 au plus bas en 2049,
+1,06 en 2070), et la page le dit dans la phrase qui suit. C'est le coût
 de transition du taux unique : pendant trente ans, la caisse paie les
 pensions de l'ancien système avec dix points de cotisation en moins. Ce qu'on
 peut dire, et qui est vrai : le système actuel est à 0,84 en 2070 et ne se
