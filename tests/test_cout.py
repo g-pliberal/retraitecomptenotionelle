@@ -3256,3 +3256,102 @@ def test_une_cohorte_prend_le_volet_de_son_cote_de_la_bascule():
     assert pensionne.volet(2) is reporte
     seul = replace(pensionne, autre=None)
     assert seul.volet(-2) is reporte
+
+
+# -- la part des reportés en emploi ------------------------------------------
+
+
+def test_deux_volets_se_melent_par_tete():
+    """Une cohorte dont le quart travaille jusqu'à l'âge légal et le reste
+    l'attend sans activité : chaque montant est la moyenne pondérée des deux,
+    année par année, et un volet pris en entier est rendu tel quel."""
+    from retraite_notionnelle.cout import VoletLiberal
+
+    en_emploi = VoletLiberal(
+        annee_liquidation=2030, annee_ouverture_garantie=2030, pension=4.0,
+        ressources_garantie=5.0, cotisations={2028: 8.0, 2029: 8.0},
+        assiette={2028: 40.0, 2029: 40.0}, pilier={2029: (4.0, 0.4, 0.2, 40.0)},
+        rente_pilier=(2.0, 1.6), rente_garantie=1.0)
+    sans_activite = VoletLiberal(
+        annee_liquidation=2030, annee_ouverture_garantie=2030, pension=2.0,
+        ressources_garantie=3.0, cotisations={2028: 8.0}, assiette={2028: 40.0},
+        pilier={2029: (0.0, 0.0, 0.2, 36.0)}, rente_pilier=(1.0, 0.8),
+        rente_garantie=0.5)
+    quart = en_emploi.melange(sans_activite, 0.25)
+    assert quart.pension == pytest.approx(2.5)
+    assert quart.ressources_garantie == pytest.approx(3.5)
+    assert quart.cotisations == pytest.approx({2028: 8.0, 2029: 2.0})
+    assert quart.assiette == pytest.approx({2028: 40.0, 2029: 10.0})
+    assert quart.pilier[2029] == pytest.approx((1.0, 0.1, 0.2, 37.0))
+    assert quart.rente_pilier == pytest.approx((1.25, 1.0))
+    assert quart.rente_garantie == pytest.approx(0.625)
+    assert en_emploi.melange(sans_activite, 1.0) is en_emploi
+    assert en_emploi.melange(sans_activite, 0.0) is sans_activite
+    with pytest.raises(ValueError):
+        en_emploi.melange(replace(sans_activite, annee_liquidation=2031), 0.5)
+
+
+@pytest.fixture(scope="module")
+def cout_a_mi_emploi(depenses: DepensesRetraite, population: Population,
+                     comptes: ComptesRetraite, assiette: AssietteActivite):
+    """La page Coût quand la moitié seulement des reportés travaillent."""
+    return calculer_cout(Simulateur(Parametres(part_reportes_en_emploi=0.5)),
+                         depenses, population, comptes, assiette=assiette,
+                         convention_recette=CONVENTION_ASSIETTE)
+
+
+def test_la_part_des_reportes_en_emploi_elargit_l_assiette_en_proportion(
+        cout_assiette, cout_a_mi_emploi, cout_sans_age_legal):
+    """La moitié des reportés en emploi : l'assiette s'élargit deux fois moins,
+    et le solde de la proposition se range entre celui où tous travaillent et
+    celui où elle n'a pas d'âge légal. Les cinq autres systèmes ne bougent
+    pas : la part ne touche que la proposition."""
+    tous, moitie, sans = (cout_assiette.solde, cout_a_mi_emploi.solde,
+                          cout_sans_age_legal.solde)
+    for ligne in moitie.projetees():
+        plein = tous.annee(ligne.annee)
+        assert ligne.facteur_assiette - 1.0 == pytest.approx(
+            0.5 * (plein.facteur_assiette - 1.0), abs=1e-12), ligne.annee
+        for scenario, _ in SCENARIOS:
+            if scenario != "notionnel_liberal":
+                assert ligne.solde(scenario) == pytest.approx(
+                    plein.solde(scenario), abs=1e-12), (ligne.annee, scenario)
+    debut, fin = moitie.premiere_annee_projetee, moitie.derniere_annee
+    moyens = [s.solde_moyen("notionnel_liberal", debut, fin) for s in (sans, moitie, tous)]
+    assert moyens == sorted(moyens) and len(set(moyens)) == 3, moyens
+
+
+def test_le_portage_suit_la_part_des_reportes_en_emploi(cout_a_mi_emploi, tmp_path):
+    """Le site n'expose pas la part des reportés en emploi, et aucune page
+    témoin ne la couvre : ``tests/js/comparer-cout.mjs`` refait le coût en
+    JavaScript sous la même part, et chaque solde doit être celui du Python."""
+    import json
+    import shutil
+    import subprocess
+    from pathlib import Path
+
+    if shutil.which("node") is None:
+        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
+    racine = Path(__file__).resolve().parents[1]
+    annees = [2025, 2026, 2030, 2040, 2050, 2070]
+    demande = tmp_path / "cout.json"
+    demande.write_text(json.dumps({"parametres": {"part_reportes_en_emploi": 0.5},
+                                   "annees": annees}), encoding="utf-8")
+    calcul = subprocess.run(
+        ["node", str(racine / "tests" / "js" / "comparer-cout.mjs"), str(demande)],
+        capture_output=True, text=True, encoding="utf-8", cwd=racine, check=False,
+    )
+    assert calcul.returncode == 0, calcul.stderr[-2000:]
+    portage = json.loads(calcul.stdout)
+
+    solde = cout_a_mi_emploi.solde
+    for annee in annees:
+        ligne = solde.annee(annee)
+        lu = portage["annees"][str(annee)]
+        assert lu["facteur_assiette"] == pytest.approx(ligne.facteur_assiette, rel=1e-12)
+        for scenario, valeur in lu["soldes"].items():
+            assert valeur == pytest.approx(ligne.solde(scenario), rel=1e-9, abs=1e-15), (
+                annee, scenario)
+    for scenario, valeur in portage["soldes_moyens"].items():
+        assert valeur == pytest.approx(solde.solde_moyen(
+            scenario, solde.premiere_annee_projetee, solde.derniere_annee), rel=1e-9)

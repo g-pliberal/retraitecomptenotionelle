@@ -459,12 +459,26 @@ export class Carriere {
    * s'arrête dans la dernière année, avant le départ, ne se prolonge pas. Une
    * carrière qui s'arrêtait avant son départ finissait sans activité, et le
    * report n'ajoute alors aucune ligne. Rend la carrière elle-même quand le
-   * départ demandé ne tombe pas après le sien. Voir `carriere.py`.
+   * départ demandé ne tombe pas après le sien. `attenteTravaillee = false`
+   * fait l'autre hypothèse : l'attente se passe sans activité, aucune ligne
+   * ne s'ajoute. Voir `carriere.py`.
    */
-  prolongee(ageLiquidation, macro) {
+  prolongee(ageLiquidation, macro, attenteTravaillee = true) {
     if (this.age_liquidation === null
         || enMois(ageLiquidation) <= enMois(this.age_liquidation)) {
       return this;
+    }
+    if (!attenteTravaillee) {
+      return new Carriere({
+        annee_naissance: this.annee_naissance,
+        sexe: this.sexe,
+        lignes: [...this.lignes],
+        mois_naissance: this.mois_naissance,
+        age_liquidation: ageLiquidation,
+        nombre_enfants: this.nombre_enfants,
+        identifiant: this.identifiant,
+        dates_entree: { ...this.dates_entree },
+      });
     }
     const initiale = this.dateLiquidation;
     const fin = this.dateNaissance.plusMois(enMois(ageLiquidation));

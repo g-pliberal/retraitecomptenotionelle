@@ -245,11 +245,13 @@ def fois_prix(**reglages: str) -> float:
 
 
 @lru_cache(maxsize=None)
-def _cout(ponderation: str = "effectifs", age_legal: str = ""):
+def _cout(ponderation: str = "effectifs", age_legal: str = "", emploi_reportes: str = ""):
     """Le coût agrégé, sous les règles par défaut — celui de la page Coût.
 
     ``age_legal=aucun`` retire l'âge légal de la proposition : elle part alors
     aux âges du scénario 4, et la prose peut dire ce que la mesure déplace.
+    ``emploi_reportes=0.5`` règle la part des reportés en emploi
+    (``Parametres.part_reportes_en_emploi``), un par défaut.
     """
     from retraite_notionnelle import cout as C
     from retraite_notionnelle.donnees.assiette import AssietteActivite
@@ -262,6 +264,11 @@ def _cout(ponderation: str = "effectifs", age_legal: str = ""):
         parametres = replace(parametres, age_legal_liberal=None)
     elif age_legal:
         raise ValueError(f"age_legal attend « aucun », reçu « {age_legal} »")
+    if emploi_reportes:
+        part = float(emploi_reportes)
+        if not 0.0 <= part <= 1.0:
+            raise ValueError(f"emploi_reportes attend une part entre 0 et 1, reçu « {emploi_reportes} »")
+        parametres = replace(parametres, part_reportes_en_emploi=part)
     racine = parametres.racine_donnees
     return C.calculer_cout(
         _simulateur(parametres), DepensesRetraite(racine), Population(racine),
@@ -270,7 +277,8 @@ def _cout(ponderation: str = "effectifs", age_legal: str = ""):
 
 
 def _cout_de(reglages: dict[str, str]):
-    return _cout(reglages.get("ponderation", "effectifs"), reglages.get("age_legal", ""))
+    return _cout(reglages.get("ponderation", "effectifs"), reglages.get("age_legal", ""),
+                 reglages.get("emploi_reportes", ""))
 
 
 def cumul_passe(**reglages: str) -> float:
@@ -1111,6 +1119,27 @@ def annees_equilibrees(**reglages: str) -> float:
     return sum(1 for l in _cout_de(reglages).solde.projetees() if l.solde(scenario) >= 0)
 
 
+def tva_requise(**reglages: str) -> float:
+    """Le taux unique de TVA que donne la règle de l'action 123, en %, non arrondi.
+
+    Le taux qui couvre chaque année projetée, à compter de la bascule, le
+    déficit du régime de la proposition garantie comprise, sans emprunter :
+    celui de l'année la plus exigeante. Un point de taux rapporte au régime la
+    part de PIB de l'assiette de la TVA, tant qu'elle couvre déjà la garantie ;
+    le taux requis de chaque année s'en déduit. Les réglages sont ceux du
+    coût : ``emploi_reportes=0.5`` le donne quand la moitié des reportés
+    travaillent, ``age_legal=aucun`` sans âge légal.
+    """
+    from retraite_notionnelle.donnees.tva import AssietteTva
+
+    parametres = _parametres()
+    part_pib = AssietteTva(parametres.racine_donnees).part_pib()
+    taux = parametres.taux_tva_liberal
+    lignes = [ligne for ligne in _cout_de(reglages).solde.projetees()
+              if ligne.annee >= parametres.annee_bascule]
+    return max(taux - ligne.solde("notionnel_liberal") / part_pib for ligne in lignes) * 100
+
+
 def dette(**reglages: str) -> float:
     """Le stock que les soldes accumulent, en % du PIB, une année — l'horizon si on l'omet.
 
@@ -1498,6 +1527,7 @@ MESURES = {
     "solde_moyen": solde_moyen,
     "coefficient": coefficient,
     "annees_equilibrees": annees_equilibrees,
+    "tva_requise": tva_requise,
     "dette": dette,
     "recette": recette,
     "somme_postes": somme_postes,

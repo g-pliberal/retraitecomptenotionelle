@@ -746,14 +746,15 @@ class Parametres:
     #: 19,69 %. Le même calcul donnait 21,1 % avant que la proposition ne fixe
     #: son âge légal à 65 ans (``age_legal_liberal``) : les années que le report
     #: fait travailler cotisent, et les pensions qu'il retarde ne sont pas
-    #: servies. La règle suppose, comme toute la page Coût, que ceux que le
-    #: report fait attendre sont en emploi : si la moitié seulement l'étaient,
-    #: il faudrait 20,3 %. Le taux reste sous les 20 % du taux normal parce
-    #: qu'il supprime les taux réduits : un taux unique de 15,46 % rapporterait
-    #: déjà ce que rapportent les quatre, et chaque point au-delà rapporte 0,38
-    #: point de PIB. `donnees/tva.py` dit d'où viennent ces assiettes — le
-    #: modèle de la TVA théorique de la DG Trésor — et ce que ce chiffrage
-    #: statique ne compte pas.
+    #: servies. La règle suppose, comme la page Coût par défaut, que ceux que
+    #: le report fait attendre sont en emploi (``part_reportes_en_emploi``) :
+    #: si la moitié seulement l'étaient, il faudrait 20,1 %, et 20,6 % si aucun.
+    #: Le taux reste sous les 20 % du taux normal parce qu'il supprime les taux
+    #: réduits : un taux unique de 15,46 % rapporterait déjà ce que rapportent
+    #: les quatre, et chaque point au-delà rapporte 0,38 point de PIB.
+    #: `donnees/tva.py` dit d'où viennent ces assiettes — le modèle de la TVA
+    #: théorique de la DG Trésor — et ce que ce chiffrage statique ne compte
+    #: pas.
     #:
     #: Ce n'est pas une cotisation : la TVA n'est portée au compte de personne
     #: et n'ouvre aucun droit. Elle comble le déficit que le compte notionnel
@@ -804,6 +805,27 @@ class Parametres:
     #: carrière égale ; et le scénario 1 est le droit. ``None`` retire la
     #: mesure : la proposition part alors aux âges du scénario 4.
     age_legal_liberal: float | None = 65.0
+
+    #: La PART DES REPORTÉS EN EMPLOI : de ceux que l'âge légal fait attendre,
+    #: combien travaillent jusqu'à lui. Ajoutée le 24 septembre 2026, et elle
+    #: ne joue que sur la page Coût : dans le simulateur, chacun connaît sa
+    #: propre situation, et la sienne se prolonge (:meth:`Carriere.prolongee`).
+    #:
+    #: Un agrégat, lui, doit dire ce que font ceux qui attendent. Une part
+    #: travaille et cotise jusqu'à l'âge légal, et le compte de chacun d'eux
+    #: grossit d'autant ; le reste attend sans activité — au chômage, en
+    #: invalidité, sans rien —, ne cotise pas, et liquide au même âge un
+    #: compte que seule la revalorisation a fait grossir. Chaque cohorte
+    #: reportée de la grille est le mélange des deux, ses recettes comme ses
+    #: pensions (:meth:`VoletLiberal.melange`).
+    #:
+    #: Un par défaut : tous travaillent, l'hypothèse que la page Coût faisait
+    #: sans la nommer et que ``limites.md`` appelle un PLAFOND — c'est de lui
+    #: que vient l'essentiel de ce que l'âge légal fait au solde, et la TVA à
+    #: taux unique est fixée dessus. Ce que font réellement les reportés se lit
+    #: dans les évaluations du passage de 60 à 62 ans, en 2010 ; une valeur
+    #: retenue devra y avoir été lue.
+    part_reportes_en_emploi: float = 1.0
 
     #: Année dans les euros de laquelle les deux montants ci-dessus sont fixés.
     annee_euros_garantie_vieillesse: int = 2026

@@ -31,7 +31,7 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
 (<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->5 831<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 321<!--/--> lignes), puis dans les
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->37 417<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -16096,11 +16096,14 @@ moitié seulement de ceux que le report fait attendre travaillaient, il
 faudrait **20,3 %** ; sans aucun élargissement de l'assiette, 20,9 % — une
 borne haute, pour la raison dite à l'action 124. Mesuré en réduisant le
 facteur d'assiette, sans toucher aux pensions : le modèle n'a pas de
-paramètre pour la part des reportés qui travaillent.
+paramètre pour la part des reportés qui travaillent. *Remesuré le même soir
+avec ce paramètre, qui retire aussi aux reportés sans emploi les droits qu'ils
+n'ont pas cotisés : 20,1 % et 20,6 % (action 126).*
 
 **Ce qui reste.** Ce paramètre justement : une part des reportés en emploi,
 qui réduirait l'assiette ET les droits acquis pendant l'attente, et ferait de
-19,7 % un taux central plutôt qu'un plancher. Les excédents d'après 2050 ne
+19,7 % un taux central plutôt qu'un plancher — *posé le même soir, action 126 ;
+sa valeur reste à lire.* Les excédents d'après 2050 ne
 sont toujours employés à rien. Et le chiffrage de la TVA reste statique
 (action 123).
 
@@ -16111,3 +16114,63 @@ et la règle elle-même : le taux requis par l'année la plus exigeante, arrondi
 au dixième, doit être le taux par défaut), `scripts/chiffrage_plf.py`,
 `docs/chiffrage_plf.md`, `README.md`, `docs/limites.md` ; le paquet, les
 témoins et le chiffrage, régénérés.
+
+### 126. La part des reportés en emploi devient un paramètre — `fait`
+
+**La demande**, le 23 septembre 2026 au soir : « ajoute le paramètre ». La
+page Coût supposait, sans la nommer, que tous ceux que l'âge légal fait
+attendre travaillent jusqu'à 65 ans, et c'est de cette hypothèse que venait
+l'essentiel de ce que l'âge légal fait au solde (actions 124 et 125).
+
+**Ce qui a été fait.** `Parametres.part_reportes_en_emploi`, un par défaut
+(`config.py`, `config.js`). Il ne joue que sur la page Coût : chaque cohorte
+reportée de la grille y mêle, dans cette part, ceux qui travaillent et
+cotisent jusqu'à l'âge légal — le calcul d'avant —, et dans le reste ceux qui
+l'attendent sans activité : même carrière, arrêtée à son départ d'avant
+(`Carriere.prolongee(…, attente_travaillee=False)`), aucune cotisation, aucun
+droit en plus, liquidation au même âge. Le mélange porte sur tout ce que les
+masses lisent d'un départ — pensions, garantie, cotisations, revenus
+d'activité, pilier (`VoletLiberal.melange`) — et il est exact, les masses se
+sommant par tête. À un, rien ne se calcule de plus, et le bilan est identique
+au bit près. Le simulateur garde la situation de chacun. Le site n'exposant
+pas ce paramètre, aucune page témoin ne le couvrait : `tests/js/comparer-cout.mjs`
+refait le coût en JavaScript sous une autre part, et `test_cout.py` le compare
+au Python (5 · 10⁻¹⁵ d'écart relatif à 0,5). La page Coût nomme l'hypothèse ;
+`scripts/mesures_prose.py` prend le réglage `emploi_reportes=` et une sonde
+`tva_requise`, par lesquels `limites.md` cite ce que la part déplace.
+
+**Ce que ça déplace** (TVA à 19,7 %, réglages par défaut) :
+
+| Part des reportés en emploi | Solde moyen 2026-2070 | TVA que donne la règle | Années projetées en déficit | Réserves en 2070 |
+|---|---:|---:|---:|---:|
+| 100 % (défaut) | +0,54 | 19,69 % | 0 | 33 % du PIB |
+| 75 % | +0,45 | 19,91 % | 10 | 28 % |
+| 50 % | +0,36 | 20,13 % | 14 | 22 % |
+| 25 % | +0,28 | 20,36 % | 18 | 16 % |
+| 0 % | +0,19 | 20,59 % | 20 | 10 % |
+| sans âge légal | +0,01 | 21,10 % | 30 | une dette de 5 % |
+
+Deux chiffres de la même soirée en sont corrigés. La sensibilité de l'action
+125 — 20,3 % et 20,9 % — laissait aux reportés sans emploi les droits de
+cotisations qu'ils n'ont pas versées ; c'est 20,1 % et 20,6 %. Et la
+décomposition de l'action 124 attribuait presque tout le gain de l'âge légal
+à l'emploi : mesuré de façon cohérente, il rapporte +0,18 point de solde
+moyen même quand aucun reporté ne travaille, +0,53 quand tous travaillent —
+un tiers de son effet ne dépend pas de l'emploi.
+
+**Ce qui reste.** La valeur. Elle doit être lue dans les évaluations de la
+réforme de 2010, qui a reculé l'âge légal de 60 à 62 ans — DREES, Insee,
+travaux universitaires —, qui ont suivi ce que sont devenus ceux qu'elle a
+fait attendre ; aucune n'a été lue ici, et le défaut reste à un, un plafond.
+Ensuite : ce que l'attente sans emploi coûte hors du système de retraite
+(chômage, invalidité, minima sociaux) ; l'engagement acquis, qui étale
+l'acquisition des droits de la part sans emploi jusqu'à l'âge légal alors
+qu'elle s'arrête à son départ d'avant, écart de second ordre ; et un réglage
+du site, si la page Coût doit laisser le lecteur choisir la part.
+
+**Fichiers.** `config.py` et `config.js` ; `carriere.py` et `carriere.js`
+(l'attente sans activité) ; `cout.py` et `cout.js` (`VoletLiberal.melange`,
+`_reporte`) ; `web/pages.py` et `pages.js` (la note de la page Coût) ;
+`scripts/mesures_prose.py` ; `tests/test_cout.py`, `tests/test_simulateur.py`,
+`tests/js/comparer-cout.mjs` ; `docs/limites.md`, `docs/chiffrage_plf.md`,
+`README.md` ; les témoins des pages, régénérés.
