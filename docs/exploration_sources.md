@@ -296,6 +296,29 @@ quatre.
   le décret n° 2026-344 l'écrit en toutes lettres. Quand la page d'une caisse
   contredit un commentaire du dépôt, relire le texte avant de croire le
   commentaire.
+- **Une valeur publiée au centime cache une chaîne qui a plus de décimales.**
+  La valeur du trimestre minier se reconstitue par les revalorisations des
+  pensions depuis les 382,08 F de 1992 : arrondie à chaque marche, la chaîne
+  manque d'un centime la valeur que la Caisse des dépôts publie pour 2023 ;
+  arrondie à la fin seulement, elle retombe sur les sept valeurs publiées de
+  2001 à 2026. Quand on reconstruit une série depuis ses coefficients,
+  essayer les deux conventions contre TOUTES les ancres, et garder celle qui
+  les tient toutes.
+- **Un site construit en JavaScript a souvent une API, et elle cherche
+  mieux que nous.** Le site des circulaires de la Cnav
+  (`legislation.lassuranceretraite.fr`, sans `www`, qui répond 502) est une
+  application Angular ; son script principal nomme `/api/v1/search/custom`,
+  qui prend en POST un JSON `{"phraseExacte": "…", "typeContenu":
+  "REFERENCE"}` et rend les circulaires qui contiennent la phrase, avec leur
+  nom de fichier sous `/Pdf/`. C'est ainsi que la circulaire 2023-19 a été
+  trouvée en une requête.
+- **Deux exemples officiels peuvent se contredire au jour près.** La CNRACL
+  compte six trimestres de surcote à un agent né un 1er janvier, depuis le
+  1er juillet 2024 ; service-public date le taux plein d'un fonctionnaire né
+  un 9 au premier du mois suivant. Le modèle, qui date au mois, ne peut pas
+  les tenir tous deux : il retient la convention exacte pour toute naissance
+  après le premier du mois, et écrit l'exemple qu'il manque comme tel au lieu
+  de le forcer.
 
 ## Où va ce qu'on en tire
 

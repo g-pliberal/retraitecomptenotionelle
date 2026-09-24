@@ -746,7 +746,19 @@ sources:
       applique le droit de son époque. Deux usages — vérifier le modèle SUR
       LE PASSÉ, ce qu'aucune autre source ne permet, et voir ce qu'une
       calculette vieillie fait dire de faux aujourd'hui.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Pas un simulateur de pension : le « Calcul des validations de
+      services », à jour des taux de retenue du décret n° 2010-1749 modifié en
+      2012. Date de la demande, indice majoré du jour, jusqu'à trente périodes
+      par employeur ; un horaire incomplet devient un taux d'activité sur la
+      durée légale de l'époque (45 heures avant juin 1968, 35 depuis 2002),
+      les périodes de moins de 45 jours sont écartées, le reste est éclaté par
+      année en durées et en cotisations. Barème (`tab.js`) non capturé,
+      simulateur non interrogé. La validation, ouverte aux titularisés au plus
+      tard le 1er janvier 2013, n'est ni modélisée — le contractuel reste au
+      régime général et à l'Ircantec — ni écrite dans docs/limites.md.
 
   - id: cnracl_rachat_etudes
     url: https://www.cnracl.retraites.fr/rachat-etudes-superieures/
@@ -756,7 +768,19 @@ sources:
     a_en_tirer: >-
       Le barème de rachat d'années d'études côté territorial, à comparer à
       celui de l'ENSAP : deux prix pour la même chose, chez le même État.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      La calculette, anonyme, calcule dans le navigateur, et son barème est
+      dans son script (`rachat_tabag.js`, « version V8 du 01/01/2026 ») :
+      trois options — liquidation, durée, les deux — aux quarante-sept âges de
+      20 à 66 ans, en pourcentage du traitement indiciaire annuel au point de
+      59,0734 €. C'est à chaque âge le barème de D. 7-1 en vigueur depuis le
+      1er janvier 2026 (option 3 : 8,83 % à 20 ans, 19,80 % à 40 ans), quand
+      celle de l'ENSAP garde l'ancien ; seule sa note cite encore le décret
+      n° 2003-1308, abrogé par le décret n° 2024-1281. Le scénario 1 ne
+      rachète pas (docs/limites.md) ; la confrontation à la neutralité du
+      compte notionnel reste sous `ensap_rachat_etudes`.
 
   - id: cnracl_cumul_emploi_retraite
     url: https://www.cnracl.retraites.fr/simulateur-cumul-emploi-retraite
@@ -766,7 +790,19 @@ sources:
     a_en_tirer: >-
       Le plafond de cumul et son écrêtement, calculés : règle que le dépôt
       ne porte pas.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Un formulaire en deux écrans : montants bruts mensuels de la pension, de
+      la majoration pour enfants, de la NBI, de la rente d'invalidité, du
+      supplément des aides-soignants et du CTI, pour rendre « le plafond de
+      revenus d'activité cumulables », l'excédent étant remboursé dans la
+      limite de la pension annuelle ; les pensions d'invalidité sont hors du
+      cumul plafonné. Le calcul se fait sur le serveur, la page n'en écrit pas
+      la règle, et le simulateur n'a pas été interrogé. Le cumul n'est pas
+      modélisé (docs/limites.md, ligne
+      `cumul_emploi_retraite_et_retraite_progressive`) ; reste à le balayer
+      pour lire le plafond de 2026 et le rapprocher de `ensap_pecari`.
 
   - id: cnracl_calcul_pension
     url: https://www.cnracl.retraites.fr/actif/ma-future-retraite/montant-de-ma-pension/le-calcul-de-la-pension
@@ -775,7 +811,18 @@ sources:
     regimes: [cnracl]
     a_en_tirer: >-
       La formule côté affilié, avec ses exemples.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      La page de l'affilié, mise à jour le 7 juillet 2026 : trimestres,
+      « année de référence », traitement indiciaire détenu six mois, primes
+      exclues, et la formule 75 % × trimestres / trimestres requis, puis
+      décote ou surcote, minimum garanti, majoration pour trois enfants, NBI
+      et suppléments. Elle note que depuis le 1er septembre 2023 la durée
+      requise suit la génération et le motif de départ, non plus les soixante
+      ans. Rien que data/reference/regimes/fonction_publique.yaml ne porte
+      déjà ; la NBI et les suppléments sont sous `juris_cnracl_nbi` et
+      `juris_cnracl_sp_cti`.
 
   - id: cnracl_montant_initial
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/calcul-du-montant-initial-de-la-pension
@@ -785,7 +832,19 @@ sources:
     a_en_tirer: >-
       Les pages EMPLOYEUR sont la documentation technique du régime : elles
       disent l'ordre des opérations, que les pages grand public taisent.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      La formule — dernier traitement indiciaire détenu six mois × 75 % ×
+      durée en liquidation / durée requise —, ce qui entre dans la durée en
+      liquidation (services au prorata du temps travaillé, sauf temps partiel
+      pour un enfant né depuis 2004 et mi-temps thérapeutique ; bonifications
+      et majorations familiales ; services assimilés) et la table sédentaire à
+      deux colonnes : 171 trimestres pour 1964 et 172 pour 1965 avant le
+      1er septembre 2026, 170, 170 et 171 après. Les deux colonnes sont à
+      l'identique dans data/reference/legislation/duree_assurance_requise.csv
+      et duree_requise_avant_suspension.csv ; le prorata du temps partiel est
+      dans docs/limites.md.
 
   - id: cnracl_decote_surcote
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/pension-decotee-et-surcotee-limpact-de-la-duree-dassurance
@@ -794,7 +853,19 @@ sources:
     regimes: [cnracl]
     a_en_tirer: >-
       Décote, surcote et durée d'assurance tous régimes, avec exemples chiffrés.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Décote de 1,25 % par trimestre, vingt au plus, annulée à 67, 62 et
+      57 ans ; surcote de 1,25 % par trimestre, « soit 90 jours entiers » — le
+      décompte en durée que le modèle applique désormais —, avec les seules
+      bonifications pour enfants et handicap ; la table des âges de surcote de
+      septembre 2026 ; surcote parentale perdue par les générations 1964 et du
+      début de 1965, sous 63 ans : le modèle. La table des durées écrit deux
+      fois « du 01/01/1965 au 31/03/1965 », la seconde pour avril à décembre.
+      Reste l'agent qui a opté pour la catégorie sédentaire (loi n° 2010-751),
+      décote annulée à 65 ans, surcote à l'âge du sédentaire né deux ans plus
+      tôt : le modèle ne le distingue pas, docs/limites.md ne le nomme pas.
 
   - id: cnracl_minimum_garanti
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-pension/minimum-garanti
@@ -804,7 +875,19 @@ sources:
     a_en_tirer: >-
       Le barème du minimum garanti territorial, et sa condition de taux plein
       depuis 2010.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Tables de 2026 : de 785,65 € par mois pour 60 trimestres à 1 366,35 €
+      pour 160 ; en deçà, le quinzième de 57,5 % par année pour l'invalidité,
+      la référence rapportée à 170 trimestres pour le cas général. C'est le
+      barème de data/reference/legislation/minimum_garanti.csv sur
+      16 396,19 €, au centime d'arrondi près, sauf deux cellules : 1 330,46 €
+      pour 139 trimestres au lieu de 1 330,48 €, 563,96 € pour 43 trimestres
+      d'invalidité au lieu de 563,05 €. Conditions — durée requise, ou 67, 62
+      ou 57 ans — et revalorisation sur les prix : le modèle. L'attribution
+      sans condition (invalidité, enfant ou conjoint invalide, handicap) vise
+      des départs qu'il ne modélise pas.
 
   - id: cnracl_enfants
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/droits-lies-aux-enfants-la-bonification-et-les-majorations
@@ -815,7 +898,19 @@ sources:
       Bonification pour enfant né avant 2004 et majoration de pension : la page
       qui sépare les deux, exactement la distinction que le dépôt vient de
       faire sienne.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Les deux dispositifs que le dépôt sépare depuis le 22 septembre 2026 :
+      pour un enfant né avant 2004, une bonification de quatre trimestres en
+      liquidation si l'agent a interrompu ou réduit son activité deux mois
+      (quatre, cinq ou sept mois de temps partiel de droit à 50, 60 ou 70 %) ;
+      depuis, une majoration de deux trimestres de durée d'assurance, dont un
+      compte en liquidation pour les pensions de septembre 2026 ; et 10 % de
+      pension pour trois enfants élevés neuf ans, 5 % par enfant au-delà.
+      C'est data/reference/legislation/majoration_duree_assurance.csv ; la
+      condition d'interruption, présumée remplie par la mère, est dans
+      docs/limites.md.
 
   - id: cnracl_montant_definitif
     url: https://www.cnracl.retraites.fr/employeur/droits-et-demande-de-pension/calcul-de-la-pension/montant-definitif-de-la-pension-calcul-et-plafonnement
@@ -825,7 +920,18 @@ sources:
     a_en_tirer: >-
       Le plafonnement du montant définitif : plafond global des bonifications
       et majorations, que le dépôt n'applique pas.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Un tableau des plafonds, en pourcentage du dernier traitement : 75 %
+      pour la pension seule, 80 % avec des bonifications ; la surcote sans
+      plafond ; 75 % avec la majoration du fonctionnaire handicapé ; 100 %
+      avec la majoration pour enfants, la surcote restant servie au-delà ; les
+      suppléments (aides-soignants, NBI, CTI) jamais plafonnés. Les 80 % sont
+      au modèle (`taux_maximum_bonifie`) ; le plafond de 100 % ne l'est pas,
+      et la ligne `majoration_enfants_plafond_fonction_publique` de
+      data/reference/legislation/veille.yaml attend toujours le texte qui en
+      excepte la surcote, que la page affirme sans le citer.
 
   - id: cdc_convertisseur_validation
     url: https://www.cdc.retraites.fr/outils/ConvertisseurValidation/Convertisseur.html
@@ -836,7 +942,19 @@ sources:
       La conversion des durées en trimestres et en jours, telle que la Caisse
       des dépôts la fait. Le dépôt arrondit à l'année ou au trimestre ; ce
       convertisseur dit ce que l'arrondi coûte.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Le « convertisseur de salaires en nombre de trimestres régime
+      général » : une année, un lieu — métropole, Antilles-Guyane, Réunion —,
+      un salaire annuel, et le script rend de zéro à quatre trimestres sur le
+      seuil de l'année, de 216 anciens francs en 1946 à 1 522,50 € en 2020,
+      plus deux lignes pour 1930-1945 ; rien après 2020. De 1972 à 2020, ses
+      seuils de métropole retrouvent à 2 % près ceux du modèle ; avant 1972,
+      il en porte que le modèle n'applique pas, validant quatre trimestres par
+      année travaillée (docs/limites.md). Les colonnes d'outre-mer, plus
+      basses jusqu'en 1995, n'y sont pas, et portent en 2015 le seuil de 2014.
+      Reste à transcrire les seuils de 1946 à 1971.
 
   - id: cdc_fspoeie_future_retraite
     url: https://politiques-sociales.caissedesdepots.fr/FSPOEIE/ma-future-retraite-fspoeie
@@ -846,7 +964,19 @@ sources:
     a_en_tirer: >-
       Les conditions d'ouverture du fonds des ouvriers de l'État, catégories
       insalubres comprises.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Une page de portail, qui dit deux choses : un mi-temps vaut quatre
+      trimestres de durée d'assurance et deux liquidables ; une première
+      pension de base prise après le 31 décembre 2014 ôte tout droit nouveau à
+      l'activité poursuivie (loi n° 2014-40, article 19). Pour le reste — âge
+      légal, limite d'âge, maintien en activité, calcul, émoluments de base,
+      décote et surcote, minimum garanti, périodes liquidables — elle renvoie
+      à dix pages de la documentation juridique du fonds (« DJF »), non
+      capturées. Les conditions d'ouverture et les travaux insalubres que la
+      ligne venait chercher y sont, et restent à dérouler ;
+      `cdc_fspoeie_montant` en donne les âges de 2010.
 
   - id: cdc_fspoeie_montant
     url: https://politiques-sociales.caissedesdepots.fr/FSPOEIE/le-montant-de-ma-pension-fspoeie
@@ -856,7 +986,19 @@ sources:
     a_en_tirer: >-
       Le montant : salaire de référence, taux, et ce qui distingue le FSPOEIE
       des pensions civiles.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      La liquidation des ouvriers d'État (décret n° 2004-1056) : 75 % des
+      émoluments, 80 % avec des bonifications, et trois exemples à
+      160 trimestres requis — 163 ramenés à 160, 150 + 25 à 80 %, 165 + 5 à
+      77,34 % — : la règle de `taux_maximum_bonifie`. La durée se lit à
+      l'année d'ouverture pour qui part avant 60 ans (`l13_iii` au dépôt) ; sa
+      table des durées par génération date de 2014. Hors modèle : l'assiette
+      des ouvriers payés aux salaires de l'industrie (salaire horaire ×
+      1 759 × le coefficient de l'article 14), la majoration de l'ouvrier
+      handicapé (1 200 € portés à 1 500 € dans l'exemple), les parents de
+      trois enfants.
 
   - id: cdc_mines_droits_directs
     url: https://politiques-sociales.caissedesdepots.fr/retraite-des-mines/droits-directs-retraite-des-mines
@@ -867,7 +1009,19 @@ sources:
       Le régime minier, fermé depuis 2010 mais servant encore : conditions,
       coefficients, services au fond. Le dépôt le modélise ; cette page le
       recontrôle chez le gestionnaire.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Pension à 55 ans, abaissée pour 120 trimestres de services miniers :
+      54 ans pour 16 trimestres au fond, 53 pour 32, 52 pour 48, 51 pour 64,
+      50 pour 80 ; au-delà de 120 trimestres, rien de ce qui suit 55 ans ne
+      compte. Avec les barèmes de 2024 à 2026 (`cdc_mines_baremes`), elle a
+      fait corriger la fiche : coefficient de l'article 131-1, valeur du
+      trimestre indexée sur les pensions, plafond de l'article 136, âge de
+      55 ans ; trente ans liquidés en 2026 valaient 12 299 € au lieu de
+      17 172 € (legislation/bareme_trimestre_mines.csv, exemple du COR aux
+      témoins). Reste la bonification de 0,15 % par trimestre au fond (article
+      138), dans docs/limites.md.
 
   # ---- DREES : les modèles publics ---------------------------------------
   # Ce lot est d'une autre nature que les autres : ce n'est pas une règle à
@@ -3399,7 +3553,19 @@ sources:
       La table des matières de la pension normale : c'est d'ici que partent
       toutes les règles de liquidation du régime, et l'ordre dans lequel la
       caisse les applique.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      La table des matières ouvre 33 liens — huit rubriques, vingt-cinq pages
+      — et 86 pages une fois déroulée : constitution du droit (11), traitement
+      de base (18), trimestres liquidables (16, dont dix sur les
+      bonifications), calcul de la pension (10, dont six sur la durée
+      requise), durée d'assurance, décote et surcote (14), minimum garanti
+      (9), accessoires (7), cessation d'activité (1). Elles ont donné la durée
+      de la carrière longue ouverte avant 60 ans, le décompte de la surcote et
+      deux exemples de décote (docs/limites.md,
+      tests/temoins/exemples_officiels.yaml) ; le reste est dans les notes des
+      lignes `juris_cnracl_*`, hors le supplément des aides-soignants.
 
   - id: juris_cnracl_traitement_de_base
     url: https://www.juris-cnracl.retraites.fr/pension-normale/la-determination-du-traitement-de-base
@@ -3410,7 +3576,19 @@ sources:
       Le traitement des six derniers mois : quel indice, quelle durée de
       détention exigée, ce qui entre dans l'assiette et ce qui n'y entre pas.
       Le modèle prend un salaire de fin de carrière ; voici la règle exacte.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Le traitement indiciaire brut de l'emploi, du grade et de l'échelon
+      détenus six mois à la cessation des services, primes exclues, compté à
+      temps plein (décret n° 2003-1306, article 17) ; trois pages de règles et
+      treize cas particuliers. Faute du grade, le modèle prend le traitement
+      de l'année du départ, hors primes. Un cas le touche : pour qui est radié
+      sans liquider aussitôt, l'article 26 revalorise le traitement jusqu'à la
+      mise en paiement comme les pensions ; le modèle le porte au point
+      d'indice (`ratio_point_indice`), +6,3 % de 2011 à 2026 quand les
+      pensions ont pris près de 25 %. Ni la veille ni docs/limites.md ne le
+      disent.
 
   - id: juris_cnracl_temps_partiel
     url: https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/modalites-de-prise-en-compte-des-services-temps-partiel-et-non-complet
@@ -3421,7 +3599,19 @@ sources:
       Le temps partiel compte pour sa durée en DURÉE D'ASSURANCE et pour sa
       quotité en SERVICES : c'est la règle qui sépare les deux durées, et le
       modèle ne porte pas le temps partiel.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Temps partiel, temps non complet et cessation progressive comptent
+      pleinement dans la constitution du droit, et pour la durée travaillée
+      dans la liquidation : un an à mi-temps et un an à temps plein font six
+      trimestres liquidables. Trois exceptions : le mi-temps thérapeutique ;
+      la surcotisation depuis 2004, quatre trimestres au plus, huit pour le
+      fonctionnaire handicapé ; le temps partiel de droit pour un enfant né ou
+      adopté depuis 2004, compté plein trois ans par enfant. C'est la ligne
+      `temps_partiel_fonction_publique` de la veille, à l'état `manque`, faute
+      de quotité dans la saisie (docs/limites.md) ; les deux exemples de la
+      page attendent qu'elle y soit.
 
   - id: juris_cnracl_coordination
     url: https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/regles-de-coordination-avec-les-autres-regimes
@@ -3432,7 +3622,19 @@ sources:
       Ce qui arrive aux services d'un agent qui part sans droit à pension :
       rétablissement au régime général et à l'Ircantec. Le dépôt route un
       statut vers un régime et ne défait jamais l'affiliation.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Pas le rétablissement (« Gestion des carrières », et docs/limites.md),
+      mais trois partages : les services militaires (option de L. 77, choix de
+      l'agent entre deux régimes, dernier régime pour les interpénétrés, à
+      pension unique) ; les trimestres des sapeurs-pompiers volontaires ; la
+      priorité de R. 173-15, qui fait accorder les avantages pour enfants par
+      la CNRACL dès qu'elle peut servir une pension, même quand le régime
+      général donnerait plus (TA Amiens, 2 juin 2017). Le modèle retient le
+      régime qui accorde le plus (`_majoration_pour_enfants`) : une
+      fonctionnaire passée par le privé y reçoit les huit trimestres par
+      enfant du régime général. Ni la veille ni docs/limites.md ne le disent.
 
   - id: juris_cnracl_montant_pension
     url: https://www.juris-cnracl.retraites.fr/pension-normale/calcul-de-la-pension/determination-du-montant-de-la-pension
@@ -3442,7 +3644,19 @@ sources:
     a_en_tirer: >-
       L'ordre des opérations : prorata, décote, surcote, minimum garanti,
       plafonnement — avec les exemples chiffrés de la base.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      L'ordre de la liquidation (décret n° 2003-1306) : traitement × 75 % ×
+      trimestres / durée requise, services plafonnés à la durée, bonifications
+      seules jusqu'à 80 % ; décote ou surcote ; majoration du fonctionnaire
+      handicapé sous 75 % ; majoration pour enfants sous 100 % ; NBI,
+      supplément des aides-soignants et SP-CTI sans plafond. Ses trois
+      exemples — 171 trimestres ramenés à 169 ; 165 + 20 ramenés à 80 % ;
+      171 + 5 à 77,21 % — illustrent la ligne `taux_maximum_fonction_publique`
+      de la veille, qui dit n'en connaître aucun ; le deuxième écrit 169 + 20
+      pour 165 + 20, sans effet sur les 80 %. Hors modèle : le plafond de
+      vingt trimestres des bonifications actives et militaires.
 
   - id: juris_cnracl_decote
     url: https://www.juris-cnracl.retraites.fr/pension-normale/duree-dassurance-decote-et-surcote/calcul-de-la-decote
@@ -3453,7 +3667,19 @@ sources:
       La décote territoriale, son taux par génération et son âge d'annulation,
       chez celui qui la liquide : le dépôt les tient d'un récupérateur LEGI
       (`dila_legi_decote_fonction_publique.py`), sans source d'application.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Le calcul : 1,25 % par trimestre manquant, le moindre des décomptes par
+      l'âge et par la durée, arrondi au supérieur, vingt au plus ; ses deux
+      exemples sont rejoués (tests/temoins/exemples_officiels.yaml).
+      L'ancienne réglementation — montée en charge de 2006 à 2020, durées de
+      150 trimestres en 2003 à 167 en 2020 — est à l'identique dans
+      data/reference/legislation/decote_fonction_publique.csv et les tables de
+      durée. Les conditions : annulation à 65 ans pour l'agent qui a opté pour
+      les nouveaux corps (loi n° 2010-751), le parent d'un enfant handicapé,
+      l'aidant familial ; ni décote en invalidité ni à 50 % d'incapacité. Le
+      modèle ne distingue pas ces cas, que docs/limites.md ne nomme pas.
 
   - id: juris_cnracl_surcote
     url: https://www.juris-cnracl.retraites.fr/pension-normale/duree-dassurance-decote-et-surcote/calcul-de-la-surcote-0
@@ -3463,7 +3689,19 @@ sources:
     a_en_tirer: >-
       La surcote : trimestres entiers, point de départ, et la surcote parentale
       ouverte en 2024.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      La règle que le modèle appliquait mal : trimestres de durée, comptés du
+      jour où l'âge, des services après 2004 et une durée « surcote » au-delà
+      de la durée requise sont réunis, trimestres entiers, sans plafond ; il
+      comptait des trimestres civils, comme au régime général (corrigé,
+      tests/test_cnracl.py). L'exemple 3 de droit commun, d'un agent né un
+      1er janvier, n'est pas transcrit, le modèle datant au mois ; ceux des
+      générations 1963 à 1966 sont d'avant la suspension. Reste l'exemple 2 de
+      la surcote au titre des enfants, génération 1969, deux trimestres de
+      63 ans et 6 mois à 64 ans, que la suspension ne touche pas : la ligne
+      `surcote_parentale`, sans témoin, pourrait le prendre.
 
   - id: juris_cnracl_minimum_garanti
     url: https://www.juris-cnracl.retraites.fr/pension-normale/minimum-garanti
@@ -3475,7 +3713,19 @@ sources:
       taux plein depuis 2010 : le dépôt le projette, et
       `tests/test_donnees.py` contrôle la projection sans que personne l'ait
       lu chez le liquidateur.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Deux réglementations, huit pages. L'ancienne (sans condition, 57,5 % à
+      quinze ans) reste due à qui en réunissait les conditions avant 2011 ; la
+      nouvelle demande la durée, ou l'âge d'annulation minoré de neuf à un
+      trimestre de 2011 à 2015, et proratise sous quinze ans sur la durée
+      requise, sauf invalidité : la ligne `minimum_garanti` de
+      data/reference/legislation/veille.yaml, et le modèle. Elle tranche ce
+      que la ligne laissait ouvert : l'écrêtement par les autres pensions et
+      la condition de les avoir toutes liquidées, prévus en juillet 2013, « ne
+      [sont] pas appliqué[s] en l'absence de décret d'application », pas plus
+      que dans le modèle.
 
   - id: juris_cnracl_sp_cti
     url: https://www.juris-cnracl.retraites.fr/pension-normale/les-accessoires-de-pension/supplement-de-pension-au-titre-du-complement-de-traitement-indiciaire-sp-cti
@@ -3486,7 +3736,19 @@ sources:
       Le supplément de pension du complément de traitement indiciaire — le
       « Ségur » des hospitaliers : une pension qui s'ajoute hors formule, pour
       une population nombreuse, et que le dépôt ignore entièrement.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Supplément du complément de traitement indiciaire (loi n° 2020-1576,
+      article 48 ; décret n° 2003-1306, article 28 bis), pour qui a perçu le
+      CTI un jour au moins dans ses six derniers mois et est radié depuis le
+      2 septembre 2020 : points du CTI (24, puis 49 depuis décembre 2020) ×
+      valeur du point × 75 % × trimestres liquidables / durée requise, quelle
+      qu'ait été la durée de perception ; sans décote ni surcote, hors minimum
+      garanti, hors plafond de 100 % et hors majoration pour enfants. Au
+      mois : 49 × 4,69 € × 75 % = 172,35 € au taux plein, 166,20 € à
+      162 trimestres sur 168. Le modèle l'ignore — la saisie ne dit pas qui a
+      perçu le CTI — et docs/limites.md ne le nomme pas.
 
   - id: juris_cnracl_nbi
     url: https://www.juris-cnracl.retraites.fr/pension-normale/les-accessoires-de-pension/la-liquidation-de-la-nouvelle-bonification-indiciaire-nbi
@@ -3498,7 +3760,18 @@ sources:
       de pension proportionnel. C'est de la rémunération indiciaire qui n'est
       pas dans le traitement de base, donc un morceau d'assiette que le modèle
       ne voit pas.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      La NBI versée depuis le 1er août 1990, cotisée, ouvre un supplément qui
+      s'ajoute à la pension (décret n° 2003-1306, article 28) : moyenne
+      annuelle des points de NBI, multipliée par la durée de perception et par
+      le taux de l'année d'ouverture des droits. L'exemple d'une directrice de
+      crèche — 15 points pendant 990 jours, dont une année à mi-temps — donne
+      11 trimestres, un coefficient de 0,71 % et 37,46 € par an, aux valeurs
+      de 2004 (1,974 % par annuité, 5 275,58 € les cent points). La saisie du
+      modèle ne distingue pas la NBI, le supplément n'est pas servi, et
+      docs/limites.md ne le dit pas.
 
   - id: juris_cnracl_surcotisation
     url: https://www.juris-cnracl.retraites.fr/gestion-des-carrieres/surcotisation
@@ -3509,7 +3782,19 @@ sources:
       La surcotisation du temps partiel : l'agent paie sur un temps plein pour
       que sa quotité compte pleinement. Un prix payé pour un droit, à comparer
       au prix actuariel du système notionnel.
-    statut: en_cours
+    statut: explore
+    explore_le: "2026-09-24"
+    note: >-
+      Depuis 2004, l'agent à temps partiel ou non complet peut cotiser sur un
+      temps plein pour que la quotité non travaillée compte, quatre trimestres
+      au plus : deux ans à 50 %, cinq à 80 %, dix à 90 %. Taux de D. 5 —
+      retenue sur la quotité travaillée, plus 80 % de la retenue et du taux
+      employeur sur l'autre —, 16,68 % à 80 % en 2026, sur le traitement à
+      temps plein, NBI et CTI compris ; qui a demandé avant le 2 février 2024
+      garde 11,10 % et 33,40 % (décret n° 2024-49). Exemples : 285,71 € et
+      306,28 € de retenue sur 1 836,20 €. Le modèle ne surcotise pas
+      (docs/limites.md) ; reste à rapprocher ce prix de celui d'un trimestre
+      dans le compte notionnel, ce que la ligne venait chercher.
 
   - id: juris_cnracl_surcotisation_historique
     url: https://www.juris-cnracl.retraites.fr/surcotisation-historique-des-taux-applicables
@@ -3518,7 +3803,17 @@ sources:
     regimes: [cnracl]
     a_en_tirer: >-
       La SÉRIE des taux de surcotisation, année par année.
-    statut: en_cours
+    statut: epuise
+    explore_le: "2026-09-24"
+    note: >-
+      Pas une série depuis 2004 : cinq tables, pour 2018, 2019, du 1er janvier
+      2020 au 1er février 2024, du 2 février au 31 décembre 2024 et pour 2025,
+      de 50 à 90 % de quotité. Les vingt-cinq taux se recalculent au centième
+      par la formule de D. 5 depuis la retenue et la contribution employeur de
+      la CNRACL que data/reference/regimes/fonction_publique.yaml et
+      data/reference/legislation/contribution_employeur_public.csv portent
+      (21,76 % à 50 % en 2018, 16,20 % à 80 % en 2025) : rien à entrer, le
+      modèle ne surcotisant pas.
 
   - id: juris_cnracl_taux_cotisations
     url: https://www.juris-cnracl.retraites.fr/cotisations/taux-de-cotisations

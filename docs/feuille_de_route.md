@@ -13009,6 +13009,69 @@ pas. Les lots voisins restent `a_explorer` : la CNRACL et juris-cnracl, la
 Caisse des dépôts (FSPOEIE, mines), le RAFP — dont les règles corrigées ici
 valent déjà pour la CNRACL et le FSPOEIE.
 
+**Passe du 24 septembre 2026, suite : la CNRACL et la Caisse des dépôts
+(juris-cnracl, FSPOEIE, mines).** Vingt-cinq adresses, réservées par un
+commit `en_cours` poussé seul : six pages et trois calculettes de la CNRACL,
+douze pages de sa base juridique — d'où 369 pages ont été déroulées —, le
+convertisseur de validation de la Caisse des dépôts, deux pages du FSPOEIE et
+celle des droits directs des mines ; puis les tableaux « Barèmes et
+revalorisations » des mines de 2024 à 2026, la fiche du COR, et dans les
+index LEGI et JORF le décret n° 46-2769, le décret n° 2002-800, les arrêtés du
+coefficient de majoration, L. 13, L. 14 et D. 16-1 du code des pensions, le
+décret n° 2003-1306, R. 173-15, deux versions de L. 161-17-3 et l'article 10
+de la loi n° 2023-270. Quatre règles corrigées au scénario 1, dans les deux
+moteurs. *La pension du mineur* est trimestres × coefficient de majoration ×
+valeur du trimestre : le moteur n'avait pas le coefficient (1,473 en 2026),
+portait la valeur par les prix au lieu des pensions, ne plafonnait pas la
+durée à cent vingt trimestres hors ceux d'avant cinquante-cinq ans, et
+ouvrait la pension à cinquante ans à tous — 17 172 € dus pour trente ans
+liquidés en 2026, 12 299 servis (`legislation/bareme_trimestre_mines.csv`,
+dont la chaîne retombe au centime sur les sept valeurs publiées). *La
+carrière longue d'un fonctionnaire ouverte avant soixante ans* lit sa durée à
+la date d'ouverture (C du XXIV ; L. 13, III, avant septembre 2023) : 170
+trimestres et non 172 au né en 1967 parti à cinquante-huit ans en 2025. *La
+surcote de la fonction publique* se compte en trimestres de durée depuis le
+premier du mois qui suit l'âge, non en trimestres civils. *Et, trouvée en
+chemin, la durée des générations nées de septembre 1961 à 1965 parties avant
+le 1er septembre 2023* est celle de la version de 2014 de L. 161-17-3 : le
+moteur leur opposait la loi de 2023, jusqu'à trois trimestres de trop. Six
+exemples entrent aux témoins officiels — un du COR, trois de la CNRACL, deux
+de la circulaire Cnav 2023-19 —, et le COR et la CNRACL deviennent éditeurs.
+Témoins : les mineurs, de −21 % (générations 1925 et 1935, que le plafond
+prive de neuf années) à +21 % (1975) ; les autres corrections ne touchent
+aucun cas type — tous partent à un anniversaire de janvier, et aucun des
+générations 1961 à 1965 avant septembre 2023 —, et le chiffrable de la page
+Avantages passe de 96,7 à 96,6 Md €. La CNRACL tranche aussi une question de la passe précédente : elle n'applique
+pas l'écrêtement du minimum garanti, faute de décret. Récit dans
+`docs/limites.md`, « La pension du mineur », « La CNRACL » et « Les
+générations de 1961 à 1965 » ; tests dans `tests/test_mines.py` et
+`tests/test_cnracl.py`. La piste des mines qu'ouvrait le lot de l'ENIM est
+refermée.
+
+**Ce que ce lot laisse ouvert, par ordre de poids.** *La pension différée* :
+l'article 26 du décret n° 2003-1306 revalorise le traitement de l'agent
+radié comme les pensions, de la radiation à la mise en paiement, et le
+moteur le porte au point d'indice — +6,3 % de 2011 à 2026 quand les pensions
+ont pris près d'un quart ; toute carrière qui quitte la fonction publique
+avant de liquider en est sous-évaluée. *La priorité du régime spécial* pour
+les majorations pour enfants (R. 173-15, et ses exceptions) : le moteur
+retient la plus favorable, et sert à une fonctionnaire passée par le privé
+les trimestres du régime général. *L'interpénétration* : un fonctionnaire
+passé de l'État à la CNRACL ou au FSPOEIE reçoit une pension unique,
+liquidée par le dernier régime ; les groupes de succession du moteur seraient
+le point d'appui. *Le rétablissement* au régime général et à l'Ircantec de
+qui quitte la fonction publique avant deux ans de services (quinze avant
+2011), que le moteur pensionne au prorata. *La clause de sauvegarde* du
+décret n° 2023-436 pour les carrières longues des nés de septembre 1961 à
+1963. *La bonification de 0,15 % par trimestre au fond* des mineurs, qui
+demande de savoir où il a travaillé. *Les seuils de validation d'avant 1972*
+que porte le convertisseur, le SP-CTI, la NBI, le supplément des
+aides-soignants, les emplois insalubres, la montée de quinze à dix-sept ans
+des services actifs. Et deux témoins possibles : les trois exemples de
+`taux_maximum_fonction_publique` de la page du montant, et le deuxième de la
+surcote parentale (génération 1969). Cent quatorze adresses restent
+`a_explorer`, dont le RAFP, voisin de ce lot.
+
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`
 (la forme), puis, selon ce qu'on trouve : `tests/temoins/exemples_officiels.yaml`,
