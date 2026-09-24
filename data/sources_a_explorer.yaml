@@ -3638,7 +3638,9 @@ sources:
       enfant du régime général. Corrigé le même jour dans les deux moteurs,
       avec la durée de services qui ouvre une pension dans chaque régime
       spécial (`services_ouvrant_pension.csv`) : ligne de veille
-      `priorite_majorations_enfants`.
+      `priorite_majorations_enfants`. La pension unique des régimes
+      interpénétrés — l'État, la CNRACL, le FSPOEIE — l'est aussi : ligne
+      `interpenetration_fonction_publique`.
 
   - id: juris_cnracl_montant_pension
     url: https://www.juris-cnracl.retraites.fr/pension-normale/calcul-de-la-pension/determination-du-montant-de-la-pension

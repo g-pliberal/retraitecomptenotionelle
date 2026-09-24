@@ -7338,6 +7338,60 @@ l'exception de la CRPCEN, dont la fiche ne déclare pas de bonification ; la
 pension statutaire liquidée avant la naissance ; l'enfant handicapé. Le
 registre de veille porte la ligne `priorite_majorations_enfants`.
 
+### L'État, la CNRACL et le FSPOEIE ne servent qu'une pension : celle du dernier régime
+
+Les trois régimes du code des pensions sont interpénétrés. L'État compte et
+liquide les services accomplis « par les fonctionnaires titulaires et
+stagiaires mentionnés à l'article 2 de la loi n° 83-634 » — ceux des trois
+fonctions publiques — et ceux des ouvriers de ses établissements industriels
+(L. 5 et L. 11 du code des pensions). La CNRACL compte « les services de
+titulaire ou de stagiaire accomplis dans la fonction publique d'État » et ceux
+des affiliés du FSPOEIE (articles 8 et 13 du décret n° 2003-1306). Le FSPOEIE
+compte les services de L. 5 (articles 4 et 10 du décret n° 2004-1056). Le
+régime de la dernière affiliation sert donc une pension unique, qui
+« rémunère l'ensemble de sa carrière » (juris-cnracl). Elle est calculée sur
+un seul traitement, celui des six derniers mois de la carrière publique, et
+proratisée sur tous ses services. La règle est ancienne : L. 5 comptait déjà
+en 1964 les « services accomplis dans les cadres permanents des
+administrations des départements, des communes », et l'article 8 du décret
+CNRACL de 1965 les services de l'État.
+
+Le modèle liquidait chaque régime sur ses seules années et sur son propre
+traitement. Prenons un fonctionnaire de l'État entré à vingt-deux ans, devenu
+territorial à quarante et liquidant en 2026. Il touchait deux pensions : une
+de l'État, calculée sur son traitement de 2001, et une de la CNRACL, au
+prorata de ses vingt-quatre dernières années. Soit 28 123 € par an, quand la
+pension unique en vaut 32 731 : 14,1 % de moins.
+Dans l'autre sens, un territorial devenu fonctionnaire de l'État perdait
+15,8 %, et un ouvrier de l'État devenu fonctionnaire 16,3 %. Le passage par
+le privé ne défait rien. Une fonctionnaire partie de l'État après huit ans,
+restée quinze ans au privé puis revenue à l'hôpital, liquide ses vingt-sept
+ans de services publics à la CNRACL, et sa pension totale gagne 10,6 %.
+Partie en 1992 sans ses quinze ans, elle aurait été rétablie au régime
+général ; l'article 64 du décret n° 2003-1306 annule ce rétablissement à son
+retour.
+
+Le moteur avait déjà l'outil. Ses groupes de succession liquidaient ensemble
+un régime et celui qui lui a succédé, sur un salaire de référence et une
+proratisation communs, sous les règles du dernier. Les trois régimes y
+entrent sous une même clé, comme les régimes alignés de la liquidation
+unique. La priorité des trimestres d'enfants suit : la durée qui ouvre une
+pension et les dates de recrutement et de radiation se lisent désormais sur
+les trois régimes ensemble. Les services actifs se comptaient déjà
+« indifféremment » dans les trois (L. 24, article 25 du décret
+n° 2003-1306).
+
+Deux limites. Le militaire titulaire d'une pension militaire la garde, et n'y
+renonce pour une pension unique que par un choix exprès (L. 77) : le modèle
+laisse donc à part une carrière d'État seulement militaire. Mais il ne scinde
+pas la pension de l'État entre services civils et militaires : un militaire
+devenu fonctionnaire civil reçoit une pension unique, comme s'il avait
+renoncé à la sienne. Par ailleurs, les lignes du modèle ne sont pas datées au
+mois : quand deux régimes du groupe finissent la même année, il retient
+celui que désigne la chaîne des successions. Aucun exemple chiffré publié n'a
+été trouvé. Le registre de veille porte la ligne
+`interpenetration_fonction_publique`.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -9566,7 +9620,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2478<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2487<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

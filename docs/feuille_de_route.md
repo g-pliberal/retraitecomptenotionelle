@@ -30,8 +30,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->6 444<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 377<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->6 498<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 435<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13109,6 +13109,24 @@ pension civile. Cinq parcours entrent aux témoins. Restent hors du modèle le
 rétablissement, l'interpénétration, l'exception de la CRPCEN et l'enfant
 handicapé. Récit dans `docs/limites.md`, « Les trimestres des enfants » ;
 tests dans `tests/test_priorite_enfants.py`.
+
+**Et l'interpénétration.** Troisième reste du lot, sur demande. L'État, la
+CNRACL et le FSPOEIE comptent et liquident chacun les services des deux
+autres (L. 5 et L. 11 du code des pensions, articles 8 et 13 du décret
+n° 2003-1306, articles 4 et 10 du décret n° 2004-1056, depuis au moins 1964),
+et le dernier régime sert une pension unique : un traitement, celui de fin de
+carrière publique, et une proratisation sur tous les services. Le moteur en
+liquidait une par régime, chacune sur son propre traitement. Un fonctionnaire
+de l'État devenu territorial à quarante ans perdait 14,1 % de sa pension, un
+territorial devenu fonctionnaire de l'État 15,8 %, un ouvrier de l'État
+devenu fonctionnaire 16,3 %. Les groupes de succession, qui liquidaient déjà
+ensemble un régime et son successeur, réunissent désormais les trois sous
+une même clé. La durée qui ouvre une pension, pour la priorité des trimestres
+d'enfants, se compte sur les trois. Le militaire garde sa pension militaire
+(L. 77), et sa carrière d'État seulement militaire reste à part. Cinq
+parcours entrent aux témoins. Reste le rétablissement de qui n'a pas la durée
+minimale. Récit dans `docs/limites.md`, « L'État, la CNRACL et le FSPOEIE ne
+servent qu'une pension » ; tests dans `tests/test_interpenetration.py`.
 
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`

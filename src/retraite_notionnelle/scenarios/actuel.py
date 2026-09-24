@@ -2915,6 +2915,35 @@ class ScenarioActuel:
     #: La clé sous laquelle les régimes alignés se réunissent quand la LURA
     #: s'applique : ce n'est pas un régime, c'est un groupe.
     REGIMES_ALIGNES_TETE = "regimes_alignes"
+    #: LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS. Chacun compte
+    #: et liquide les services des deux autres — L. 5 et L. 11 du code des
+    #: pensions, articles 8 et 13 du décret n° 2003-1306, articles 4 et 10 du
+    #: décret n° 2004-1056 —, et c'est le régime de la dernière affiliation
+    #: qui sert une PENSION UNIQUE. Ils se réunissent sous cette clé comme les
+    #: régimes alignés sous la leur.
+    REGIMES_INTERPENETRES_TETE = "regimes_interpenetres"
+
+    def _regimes_interpenetres(self, carriere: Carriere) -> frozenset[str]:
+        """Les régimes du code des pensions que cette carrière réunit en une
+        pension unique.
+
+        Les trois, sauf l'État quand l'assuré n'y a servi que sous l'uniforme :
+        le militaire garde sa pension militaire, et n'y renonce pour une
+        pension unique que par un choix exprès (L. 77 du code des pensions,
+        article 57 du décret n° 2003-1306). Le modèle suit ce défaut. Les
+        services militaires d'un fonctionnaire civil de l'État restent, eux,
+        dans la pension de l'État, que le catalogue ne scinde pas.
+        """
+        militaires = self.affiliations.categories_militaires
+        etat = ("fonction_publique_etat", "pensions_civiles_1853")
+        civil = any(
+            ligne.cotise and ligne.affiliation not in militaires
+            and not self._regimes_routes([ligne.affiliation]).isdisjoint(etat)
+            for ligne in carriere.lignes
+        )
+        if civil:
+            return self.REGIMES_CODE_DES_PENSIONS
+        return self.REGIMES_CODE_DES_PENSIONS - {"fonction_publique_etat"}
 
     def _lura_applicable(self, carriere: Carriere) -> bool:
         """La liquidation unique vaut-elle pour cette carrière ?
@@ -2974,9 +3003,21 @@ class ScenarioActuel:
         « SR 29 069 € × 80/167 » là où la caisse calcule un seul salaire de
         référence. Les deux conditions de la loi sont opposées :
         :meth:`_lura_applicable`.
+
+        **ET LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS.** L'État,
+        la CNRACL et le FSPOEIE comptent et liquident chacun les services des
+        deux autres, et le régime de la dernière affiliation sert une pension
+        unique : un traitement, celui des six derniers mois de la carrière
+        publique entière, et une proratisation sur tous ses services. Le modèle
+        liquidait chaque régime sur ses seules années : un fonctionnaire de
+        l'État devenu territorial touchait une pension de l'État sur son
+        traitement de départ, revalorisé comme une pension, et une de la CNRACL
+        au prorata de ses dernières années. Voir :meth:`_regimes_interpenetres`.
         """
         par_tete: dict[str, list[str]] = {}
         lura = carriere is not None and self._lura_applicable(carriere)
+        interpenetres = (self._regimes_interpenetres(carriere)
+                         if carriere is not None else frozenset())
         for code in codes:
             regime = self.catalogue[code]
             periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
@@ -2984,6 +3025,8 @@ class ScenarioActuel:
                 continue
             tete = (self.REGIMES_ALIGNES_TETE if lura and code in self.REGIMES_ALIGNES
                     else self._tete_de_succession(code, annee_liquidation))
+            if tete in interpenetres:
+                tete = self.REGIMES_INTERPENETRES_TETE
             par_tete.setdefault(tete, []).append(code)
         groupes: dict[str, tuple[str, ...]] = {}
         for membres in par_tete.values():
@@ -4549,9 +4592,20 @@ class ScenarioActuel:
         départ, l'agent part en fonctions, et c'est le départ qui la date. Un
         régime que la table ne porte pas est présumé pouvoir pensionner, au
         niveau ``estimee``.
+
+        Les trois régimes interpénétrés se lisent ensemble : la durée exigée
+        porte sur tous les services de L. 5, et le recrutement comme la
+        radiation sont ceux de la carrière publique entière
+        (:meth:`_regimes_interpenetres`).
         """
-        statuts, servies = self._services_dans_le_regime(periode, carriere)
-        bornes = carriere.bornes_de_service(statuts, self._borne_carriere(carriere))
+        regimes = self._regimes_interpenetres(carriere)
+        if periode.regime not in regimes:
+            regimes = frozenset((periode.regime,))
+        statuts = [code for code in self.affiliations.codes
+                   if not self._regimes_routes([code]).isdisjoint(regimes)]
+        borne = self._borne_carriere(carriere)
+        servies = carriere.duree_de_service(statuts, borne)
+        bornes = carriere.bornes_de_service(statuts, borne)
         if bornes is None:
             return None
         recrutement, derniere = bornes

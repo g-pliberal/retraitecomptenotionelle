@@ -67,6 +67,14 @@ const REGIMES_ALIGNES = new Set([
 ]);
 /** La clé sous laquelle ils se réunissent : ce n'est pas un régime. */
 const REGIMES_ALIGNES_TETE = "regimes_alignes";
+/**
+ * LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS : chacun compte et
+ * liquide les services des deux autres (L. 5 et L. 11 du code des pensions,
+ * articles 8 et 13 du décret n° 2003-1306, articles 4 et 10 du décret
+ * n° 2004-1056), et le régime de la dernière affiliation sert une PENSION
+ * UNIQUE. La clé sous laquelle ils se réunissent. Voir le Python.
+ */
+const REGIMES_INTERPENETRES_TETE = "regimes_interpenetres";
 /** Assurés nés à compter de 1953 (article 51 de la LFSS pour 2016). */
 const LURA_PREMIERE_GENERATION = 1953;
 /** Pensions prenant effet au 1er juillet 2017 (décret n° 2017-737, art. 4). */
@@ -836,6 +844,12 @@ export class ScenarioActuel {
    * le couple régime général / indépendants par la chaîne d'absorption, qui
    * ne ferme le RSI qu'en 2018, et pas du tout pour les salariés agricoles.
    *
+   * ET LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS : l'État, la
+   * CNRACL et le FSPOEIE liquident chacun les services des deux autres, et le
+   * régime de la dernière affiliation sert une pension unique, sur le
+   * traitement des six derniers mois de la carrière publique entière. Voir
+   * `regimesInterpenetres`.
+   *
    * @returns {Map<string, string[]>}
    */
   groupesDeSuccession(codes, anneeLiquidation, derniereAnneeParRegime, carriere = null) {
@@ -843,15 +857,19 @@ export class ScenarioActuel {
     const lura = carriere !== null
       && carriere.generation >= LURA_PREMIERE_GENERATION
       && carriere.dateLiquidation.rang >= LURA_DATE_EFFET;
+    const interpenetres = carriere !== null ? this.regimesInterpenetres(carriere) : new Set();
     for (const code of codes) {
       const regime = this.catalogue.obtenir(code);
       const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
       if (periode === null || periode.type_calcul !== "annuites") {
         continue;
       }
-      const tete = lura && REGIMES_ALIGNES.has(code)
+      let tete = lura && REGIMES_ALIGNES.has(code)
         ? REGIMES_ALIGNES_TETE
         : this.teteDeSuccession(code, anneeLiquidation);
+      if (interpenetres.has(tete)) {
+        tete = REGIMES_INTERPENETRES_TETE;
+      }
       if (!parTete.has(tete)) {
         parTete.set(tete, []);
       }
@@ -882,6 +900,30 @@ export class ScenarioActuel {
       }
     }
     return groupes;
+  }
+
+  /**
+   * Les régimes du code des pensions que cette carrière réunit en une pension
+   * unique : les trois, sauf l'État quand l'assuré n'y a servi que sous
+   * l'uniforme — le militaire garde sa pension militaire, et n'y renonce que
+   * par un choix exprès (L. 77). Voir `_regimes_interpenetres` du Python.
+   *
+   * @returns {Set<string>}
+   */
+  regimesInterpenetres(carriere) {
+    const militaires = this.affiliations.categoriesMilitaires;
+    const civil = carriere.lignes.some((ligne) => {
+      if (!ligne.cotise || Object.prototype.hasOwnProperty.call(militaires, ligne.affiliation)) {
+        return false;
+      }
+      const routes = this.regimesRoutes([ligne.affiliation]);
+      return routes.has("fonction_publique_etat") || routes.has("pensions_civiles_1853");
+    });
+    const regimes = new Set(REGIMES_CODE_DES_PENSIONS);
+    if (!civil) {
+      regimes.delete("fonction_publique_etat");
+    }
+    return regimes;
   }
 
   /** Les membres dans l'ordre de la chaîne, du plus ancien à l'absorbant. */
@@ -2185,8 +2227,24 @@ export class ScenarioActuel {
    * « estimée ».
    */
   droitRegimeSpecial(periode, carriere, anneeLiquidation) {
-    const { statuts, servies } = this.servicesDansLeRegime(periode, carriere);
-    const bornes = carriere.bornesDeService(statuts, borneCarriere(carriere));
+    // Les trois régimes interpénétrés se lisent ensemble : la durée exigée
+    // porte sur tous les services de L. 5, et le recrutement comme la
+    // radiation sont ceux de la carrière publique entière.
+    let regimes = this.regimesInterpenetres(carriere);
+    if (!regimes.has(periode.regime)) {
+      regimes = new Set([periode.regime]);
+    }
+    const statuts = this.affiliations.codes.filter((code) => {
+      for (const route of this.regimesRoutes([code])) {
+        if (regimes.has(route)) {
+          return true;
+        }
+      }
+      return false;
+    });
+    const borne = borneCarriere(carriere);
+    const servies = carriere.dureeDeService(statuts, borne);
+    const bornes = carriere.bornesDeService(statuts, borne);
     if (bornes === null) {
       return null;
     }

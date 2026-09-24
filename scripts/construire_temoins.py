@@ -463,6 +463,28 @@ def _cas() -> list[dict]:
         "naissance": "1955", "statut": "fonctionnaire_territorial_hospitalier",
         "metier2_debut": "40", "metier2_statut": "salarie_prive_cadre",
     }))
+    # L'INTERPÉNÉTRATION : l'État, la CNRACL et le FSPOEIE liquident chacun les
+    # services des deux autres, et le dernier régime sert une pension unique,
+    # sur le traitement de fin de carrière et tous les services — même quand
+    # un passage au privé les sépare. Le militaire qui devient territorial
+    # garde, lui, sa pension militaire (L. 77).
+    cas.append(("metiers_etat_puis_territorial", {
+        "naissance": "1962", "statut": "fonctionnaire_etat",
+        "metier2_debut": "40", "metier2_statut": "fonctionnaire_territorial_hospitalier",
+    }))
+    cas.append(("metiers_ouvrier_etat_puis_etat", {
+        "naissance": "1962", "statut": "ouvrier_etat",
+        "metier2_debut": "45", "metier2_statut": "fonctionnaire_etat",
+    }))
+    cas.append(("metiers_etat_prive_hospitalier", {
+        "naissance": "1962", "statut": "fonctionnaire_etat",
+        "metier2_debut": "30", "metier2_statut": "salarie_prive_non_cadre",
+        "metier3_debut": "45", "metier3_statut": "fonctionnaire_territorial_hospitalier",
+    }))
+    cas.append(("metiers_militaire_puis_territorial", {
+        "naissance": "1962", "statut": "militaire", "debut": "18",
+        "metier2_debut": "38", "metier2_statut": "fonctionnaire_territorial_hospitalier",
+    }))
     # Six métiers : le maximum du formulaire, et cinq changements rapprochés —
     # une année entière ne revient alors à aucun métier en totalité.
     cas.append(("metiers_maximum", {
@@ -594,6 +616,16 @@ def _cas() -> list[dict]:
     cas.append(("enfants_sncf_partie_avant_2008", {
         **mixte, "naissance": "1962", "statut": "agent_sncf",
         "metier2_debut": "35", "metier2_statut": "salarie_prive_non_cadre",
+    }))
+    # Un an à l'État, un an à la CNRACL : chacun seul n'a pas les deux ans de
+    # R. 4-1, mais les régimes interpénétrés se comptent ensemble, et c'est le
+    # dernier, la CNRACL, qui accorde.
+    cas.append(("enfants_etat_et_territorial_un_an_chacun", {
+        **mixte, "naissance": "1980",
+        "metier2_debut": "23", "metier2_statut": "fonctionnaire_etat",
+        "metier3_debut": "24", "metier3_statut": "salarie_prive_non_cadre",
+        "metier4_debut": "40", "metier4_statut": "fonctionnaire_territorial_hospitalier",
+        "metier5_debut": "41", "metier5_statut": "salarie_prive_non_cadre",
     }))
     # Artisane liquidant avant l'absorption du RSI par la CNAV : c'est bien son
     # régime aligné qui porte les trimestres, comme l'article L. 634-2 le veut.
