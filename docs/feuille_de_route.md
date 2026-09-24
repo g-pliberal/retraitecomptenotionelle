@@ -16374,13 +16374,26 @@ avant l'âge légal de 65 ans, le solde moyen passait de −1,40 % à −1,00 %.
    par l'impôt, non par le compte — plaide pour `retraite_seule` ; c'est aussi
    le résultat le plus lu du site qui bouge, de +45 % à −1 %. La décision est
    à l'utilisateur.
-4. *Le passage sur `main`.* Le travail a été remis le 24 septembre 2026 dans
-   une pull request, à la demande de l'utilisateur, pour être poursuivi dans
-   une session cloud : les fichiers fabriqués n'y sont PAS régénérés — ils le
-   seront par la session qui la reprend, sur sa machine, avant de pousser
-   (`construire_donnees.py`, `construire_temoins.py`,
-   `construire_tableaux_md.py`, `chiffrage_plf.py`, `verifier_prose.py
-   --corriger`).
+
+**Le passage sur `main`, le 24 septembre 2026.** Le travail avait été remis
+dans une pull request, à la demande de l'utilisateur, pour être poursuivi dans
+une session cloud, les fichiers fabriqués NON régénérés : calculés sous
+Windows, ils auraient différé des témoins au dernier chiffre. La session cloud
+qui l'a reprise a tiré le rapport et le zip des données de ses graphiques de la
+release `documents-apportes`, aux empreintes du manifeste. `ccomptes.fr`, lui,
+ne répond pas depuis le cloud : « Connection reset by peer » sur la page, le
+PDF et le zip. Le manifeste le déclare donc (`blocage: reseau`, la release pour
+`miroir`), et `source_locale.py --recuperer` en reprend le PDF. Tout a ensuite
+été régénéré sous Linux. Le paquet de données porte la nouvelle table, et les
+témoins gagnent trois simulations et une page. Les chiffres ne bougent que
+dans les trois pages agrégées calculées sous le jeu de règles qui porte le
+réglage (cas types, coût, avantages) ; les autres ne gagnent que l'option. Le
+chiffrage budgétaire n'a rien eu à réécrire. Suite complète : 2 374 réussis,
+1 ignoré, 0 échec. Les cas types de l'État mesurés le même jour disent
+l'ampleur du choix qui reste : dans le scénario 4, le fonctionnaire sédentaire
+né en 1970 passe de +41 % à −6 %, celui de 1960 de +26 % à −16 %, quand le
+salarié moyen du privé des mêmes générations perd 30 % et 33 % sous les deux
+réglages.
 
 **Fichiers.** `data/reference/legislation/contribution_etat_retraite_seule.csv`
 (nouveau), `src/retraite_notionnelle/config.py`,

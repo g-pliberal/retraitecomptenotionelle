@@ -182,7 +182,7 @@ Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses don
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
 chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->941<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 350<!--/--> Ko bruts) et prend quelques dixièmes
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 351<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Huit pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -238,11 +238,11 @@ poids de ce qu'on voulait exécuter.
 Le risque d'un portage, c'est qu'il déplace un chiffre sans que rien n'échoue.
 Il est traité de front : **le Python de `src/` reste la référence**, et
 `scripts/construire_temoins.py` fige depuis lui
-<!--chiffre:entrees(tests/temoins/simulations.json:)-->515<!--/--> simulations complètes et
-<!--chiffre:entrees(tests/temoins/pages.json:)-->54<!--/--> rendus de page, dans `tests/temoins/`.
+<!--chiffre:entrees(tests/temoins/simulations.json:)-->518<!--/--> simulations complètes et
+<!--chiffre:entrees(tests/temoins/pages.json:)-->55<!--/--> rendus de page, dans `tests/temoins/`.
 `node --test` rejoue le tout côté JavaScript et compare valeur par valeur —
-<!--chiffre:portage(valeurs)-->87 192<!--/--> nombres,
-dont <!--chiffre:portage(identiques)-->88,1<!--/--> % identiques
+<!--chiffre:portage(valeurs)-->87 697<!--/--> nombres,
+dont <!--chiffre:portage(identiques)-->88,0<!--/--> % identiques
 au bit près, l'écart relatif maximal étant de <!--chiffre:portage(pire)-->55,6<!--/--> · 10⁻¹⁵ (un *ulp*, la précision d'un flottant, vaut 2 · 10⁻¹⁶). Ce pire
 écart n'est pas celui d'un calcul mais d'une soustraction : le complément de
 la garantie vieillesse retranche d'un plancher une pension qui en est proche,
@@ -404,7 +404,7 @@ print(simulateur.simuler(carriere).tableau())
 | Salaires revalorisés par la circulaire, pas par une règle | Les coefficients qui revalorisent les salaires portés au compte sont LUS dans les circulaires de la Cnav — dix colonnes publiées, perceptions depuis 1930 : la règle « les salaires jusqu'en 1986, les prix depuis » les sur-revaluait, et le salaire de référence retient les N *meilleures* années — changer les coefficients change lesquelles |
 | Deux durées là où le droit en a deux | La durée requise pour le taux plein (L. 161-17-3) et la durée maximale prise en compte par la proratisation (R. 351-6), que le modèle confondait |
 | Points convertis à leur vraie unité | Les coefficients des fusions sont LUS dans les accords — un point Arrco vaut un point Agirc-Arrco, un point Agirc en vaut <!--chiffre:cellule(data/reference/regimes/conversions_points.csv:coefficient?regime=agirc)-->0,347791548<!--/-->, le rapport de leurs valeurs de service au 31 décembre 2018 —, et l'unification Arrco de 1999 est traitée comme le changement d'unité qu'elle est |
-| Portage vérifié, pas cru sur parole | Le site rejoue <!--chiffre:entrees(tests/temoins/simulations.json:)-->515<!--/--> simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
+| Portage vérifié, pas cru sur parole | Le site rejoue <!--chiffre:entrees(tests/temoins/simulations.json:)-->518<!--/--> simulations témoins figées depuis le modèle Python — chaque statut d’affiliation à six générations, née en 1925, 1935, 1945, 1955, 1965 et 1975, pour que les règles anciennes de chaque régime soient visitées autant que les récentes ; un test oblige ce balayage à couvrir tous les statuts et toutes ces générations |
 
 ---
 
