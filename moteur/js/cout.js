@@ -336,8 +336,11 @@ function pensionnes(simulateur, casTypes, liquidation = "droit") {
     // La proposition telle que la génération de la grille la vit, et, si la
     // bascule sépare d'elle une cohorte voisine, telle que cette cohorte la
     // vit : voir `Pensionne.volet` dans cout.py.
-    const propre = volet(comparaison.carriereDe("notionnel_liberal"),
+    let propre = volet(comparaison.carriereDe("notionnel_liberal"),
       comparaison.notionnel_liberal, comparaison.coefficientDe("notionnel_liberal"));
+    if (comparaison.departReporte) {
+      propre = reporte(simulateur, comparaison.carriere, propre);
+    }
     const autre = autreVolet(simulateur, comparaison.carriere);
     // Le scénario 6 est ramené à sa part CONTRIBUTIVE : la garantie est
     // financée par l'impôt, elle ne pèse pas sur le compte des cotisants. Ce
@@ -415,7 +418,66 @@ function autreVolet(simulateur, carriere) {
   const liberal = simulateur.proposition(depart);
   const coefficient = simulateur.macro.coefficientPrix(
     depart.anneeLiquidation, simulateur.parametres.annee_euros_constants);
-  return volet(depart, liberal, coefficient);
+  const voletAutre = volet(depart, liberal, coefficient);
+  return depart === reportee ? reporte(simulateur, carriere, voletAutre) : voletAutre;
+}
+
+/**
+ * Le volet d'un départ que l'âge légal reporte, pour toute la cohorte : la part
+ * des reportés en emploi travaille jusqu'à l'âge légal (`enEmploi`), le reste
+ * l'attend sans activité et liquide au même âge. Rien ne se calcule de plus
+ * quand tous travaillent. Voir `_reporte` dans cout.py.
+ */
+function reporte(simulateur, carriere, enEmploi) {
+  const part = simulateur.parametres.part_reportes_en_emploi ?? 1.0;
+  if (part >= 1.0) return enEmploi;
+  const attente = carriere.prolongee(
+    simulateur.parametres.age_legal_liberal, simulateur.macro, false);
+  const coefficient = simulateur.macro.coefficientPrix(
+    attente.anneeLiquidation, simulateur.parametres.annee_euros_constants);
+  return melange(enEmploi, volet(attente, simulateur.proposition(attente), coefficient), part);
+}
+
+/**
+ * Une cohorte dont `part` vit le volet `un`, et le reste `deux` : les deux
+ * partent la même année, et tout ce que les masses lisent d'un volet s'y
+ * somme par tête. Pris en entier, un volet est rendu tel quel. Voir
+ * `VoletLiberal.melange` dans cout.py.
+ */
+function melange(un, deux, part) {
+  if (part >= 1.0) return un;
+  if (part <= 0.0) return deux;
+  if (un.anneeLiquidation !== deux.anneeLiquidation
+      || un.anneeOuvertureGarantie !== deux.anneeOuvertureGarantie) {
+    throw new Error("deux volets ne se mêlent que s'ils partent la même année");
+  }
+  const reste = 1.0 - part;
+  const somme = (a, b) => part * a + reste * b;
+  const annees = (a, b) => [...new Set([...Object.keys(a), ...Object.keys(b)])]
+    .map(Number).sort((x, y) => x - y);
+  const serie = (a, b) => {
+    const resultat = {};
+    for (const annee of annees(a, b)) resultat[annee] = somme(a[annee] ?? 0.0, b[annee] ?? 0.0);
+    return resultat;
+  };
+  const vide = [0.0, 0.0, 0.0, 0.0];
+  const pilier = {};
+  for (const annee of annees(un.pilier, deux.pilier)) {
+    const a = un.pilier[annee] ?? vide;
+    const b = deux.pilier[annee] ?? vide;
+    pilier[annee] = a.map((valeur, rang) => somme(valeur, b[rang]));
+  }
+  return {
+    anneeLiquidation: un.anneeLiquidation,
+    anneeOuvertureGarantie: un.anneeOuvertureGarantie,
+    pension: somme(un.pension, deux.pension),
+    ressourcesGarantie: somme(un.ressourcesGarantie, deux.ressourcesGarantie),
+    cotisations: serie(un.cotisations, deux.cotisations),
+    assiette: serie(un.assiette, deux.assiette),
+    pilier,
+    rentePilier: un.rentePilier.map((valeur, rang) => somme(valeur, deux.rentePilier[rang])),
+    renteGarantie: somme(un.renteGarantie, deux.renteGarantie),
+  };
 }
 
 /**

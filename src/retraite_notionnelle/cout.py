@@ -449,6 +449,51 @@ class VoletLiberal:
     #: pension notionnelle : ``_masses`` les sépare.
     rente_garantie: float = 0.0
 
+    def melange(self, autre: "VoletLiberal", part: float) -> "VoletLiberal":
+        """Une cohorte dont ``part`` vit ce volet-ci, et le reste ``autre``.
+
+        C'est la part des reportés en emploi
+        (``Parametres.part_reportes_en_emploi``) : ceux qui travaillent jusqu'à
+        l'âge légal et ceux qui l'attendent sans activité partent la même
+        année, et tout ce que les masses lisent d'un volet — pensions,
+        cotisations, revenus d'activité, flux du pilier — s'y somme par tête.
+        Le mélange est donc exact, et un volet pris en entier est rendu tel
+        quel : à un, le calcul est celui d'avant le paramètre, au bit près.
+        """
+        if part >= 1.0:
+            return self
+        if part <= 0.0:
+            return autre
+        if (self.annee_liquidation, self.annee_ouverture_garantie) != (
+                autre.annee_liquidation, autre.annee_ouverture_garantie):
+            raise ValueError("deux volets ne se mêlent que s'ils partent la même année")
+        reste = 1.0 - part
+
+        def somme(un: float, deux: float) -> float:
+            return part * un + reste * deux
+
+        def serie(un: dict[int, float], deux: dict[int, float]) -> dict[int, float]:
+            return {annee: somme(un.get(annee, 0.0), deux.get(annee, 0.0))
+                    for annee in sorted(set(un) | set(deux))}
+
+        vide = (0.0, 0.0, 0.0, 0.0)
+        return VoletLiberal(
+            annee_liquidation=self.annee_liquidation,
+            annee_ouverture_garantie=self.annee_ouverture_garantie,
+            pension=somme(self.pension, autre.pension),
+            ressources_garantie=somme(self.ressources_garantie, autre.ressources_garantie),
+            cotisations=serie(self.cotisations, autre.cotisations),
+            assiette=serie(self.assiette, autre.assiette),
+            pilier={
+                annee: tuple(somme(un, deux) for un, deux in zip(
+                    self.pilier.get(annee, vide), autre.pilier.get(annee, vide)))
+                for annee in sorted(set(self.pilier) | set(autre.pilier))
+            },
+            rente_pilier=tuple(somme(un, deux) for un, deux in zip(
+                self.rente_pilier, autre.rente_pilier)),
+            rente_garantie=somme(self.rente_garantie, autre.rente_garantie),
+        )
+
 
 @dataclass(frozen=True)
 class PilierAnnuel:
@@ -1777,6 +1822,9 @@ def _pensionnes(simulateur: Simulateur, cas_types: tuple[CasType, ...],
         propre = _volet(comparaison.carriere_de("notionnel_liberal"),
                         comparaison.notionnel_liberal,
                         comparaison.coefficient_de("notionnel_liberal"))
+        if comparaison.depart_reporte:
+            propre = _reporte(simulateur, comparaison.carriere, propre, macro,
+                              annee_euros)
         autre = _autre_volet(simulateur, comparaison.carriere, macro,
                              annee_euros, bascule)
         pensionnes.append(Pensionne(
@@ -1879,7 +1927,29 @@ def _autre_volet(simulateur: Simulateur, carriere, macro, annee_euros: int,
     depart = carriere if annee >= bascule else reportee
     liberal = simulateur.proposition(depart)
     coefficient = macro.coefficient_prix(depart.annee_liquidation, annee_euros)
-    return _volet(depart, liberal, coefficient)
+    volet = _volet(depart, liberal, coefficient)
+    if depart is reportee:
+        volet = _reporte(simulateur, carriere, volet, macro, annee_euros)
+    return volet
+
+
+def _reporte(simulateur: Simulateur, carriere, en_emploi: VoletLiberal, macro,
+             annee_euros: int) -> VoletLiberal:
+    """Le volet d'un départ que l'âge légal reporte, pour toute la cohorte.
+
+    ``en_emploi`` est celui de qui travaille jusqu'à l'âge légal ; la part
+    ``1 − Parametres.part_reportes_en_emploi`` attend sans activité, sur la
+    même carrière arrêtée à son départ d'avant, et liquide au même âge. Rien
+    ne se calcule de plus quand tous travaillent.
+    """
+    part = simulateur.parametres.part_reportes_en_emploi
+    if part >= 1.0:
+        return en_emploi
+    attente = carriere.prolongee(simulateur.parametres.age_legal_liberal, macro,
+                                 attente_travaillee=False)
+    coefficient = macro.coefficient_prix(attente.annee_liquidation, annee_euros)
+    sans_activite = _volet(attente, simulateur.proposition(attente), coefficient)
+    return en_emploi.melange(sans_activite, part)
 
 
 def _flux_pilier(liberal) -> dict[int, tuple[float, float, float, float]]:

@@ -40,8 +40,9 @@ compter de la bascule : toute pension que la proposition liquide l'est à cet
 taux de TVA a été fixé d'abord à 21,1 %, par la même règle, avant que la
 proposition ne prenne cet âge ; celui-ci fait cotiser davantage et servir
 moins de pensions, et la même règle donne alors 19,7 %. Elle le donne en
-supposant, comme la page Coût, que ceux que le report fait attendre sont en
-emploi : si la moitié seulement l'étaient, il faudrait 20,3 %.
+supposant, comme la page Coût par défaut, que ceux que le report fait attendre
+sont en emploi (`part_reportes_en_emploi`) : si la moitié seulement l'étaient,
+il faudrait 20,1 %, et 20,6 % si aucun.
 
 **Deux variantes sont chiffrées, et l'écart entre elles est le premier fait
 budgétaire du dossier.**

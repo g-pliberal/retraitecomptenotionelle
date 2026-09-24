@@ -11551,23 +11551,38 @@ def _cout_detail_postes(contexte: Contexte) -> str:
     elargie = suit_l_emploi = ""
     if ligne.recette_par_assiette and ligne.facteur_assiette > 1.0 + 1e-9:
         age_legal = _age(base.age_legal_liberal or 0.0)
+        # La part des reportés en emploi : tous par défaut, et c'est alors un
+        # plafond ; une part seulement si on la règle, le reste attendant
+        # sans activité.
+        part = base.part_reportes_en_emploi
+        tous = part >= 1.0
+        qui = ("qui serait parti plus tôt travaille et cotise jusque-là" if tous
+               else f"{g.pourcentage(part, decimales=0)} de ceux qui seraient "
+                    "partis plus tôt travaillent et cotisent jusque-là")
         elargie = (
             ", sur une assiette élargie de "
             f"{g.pourcentage(ligne.facteur_assiette - 1.0, decimales=1)} en "
-            f"{annee} par l'âge légal de {age_legal} : qui serait parti plus "
-            "tôt travaille et cotise jusque-là"
+            f"{annee} par l'âge légal de {age_legal} : {qui}"
+        )
+        hypothese = (
+            "C'est un plafond : le modèle suppose que tous ceux que le report "
+            "fait attendre sont en emploi jusqu'à cet âge, comme les carrières "
+            "de sa grille le sont jusqu'à leur départ. "
+            "<code>part_reportes_en_emploi</code> porte cette hypothèse, un par "
+            "défaut ; qui arrive à l'âge légal au chômage ou en invalidité ne "
+            "cotise pas davantage pour autant." if tous else
+            f"Le modèle suppose que {g.pourcentage(part, decimales=0)} de ceux "
+            "que le report fait attendre sont en emploi jusqu'à cet âge "
+            "(<code>part_reportes_en_emploi</code>) ; les autres l'attendent "
+            "sans activité, sans cotiser ni acquérir de droits."
         )
         suit_l_emploi = (
             " Elle suit aussi l'emploi, et pour le seul système 4 encore : son "
-            f"âge légal de {age_legal} fait travailler jusque-là qui serait "
-            "parti plus tôt, et l'assiette que le COR projette aux âges "
+            f"âge légal de {age_legal} retient au travail qui serait parti "
+            "plus tôt, et l'assiette que le COR projette aux âges "
             "d'aujourd'hui grandit d'autant : "
             f"{g.pourcentage(ligne.facteur_assiette - 1.0, decimales=1)} en "
-            f"{annee}. C'est un plafond : le modèle suppose que tous ceux que "
-            "le report fait attendre sont en emploi jusqu'à cet âge, comme "
-            "les carrières de sa grille le sont jusqu'à leur départ ; qui "
-            "arrive à l'âge légal au chômage ou en invalidité ne cotise pas "
-            "davantage pour autant."
+            f"{annee}. {hypothese}"
         )
 
     def cellules(valeur: float, total: float, absent: bool = False) -> list[str]:

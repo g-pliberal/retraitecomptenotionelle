@@ -799,7 +799,8 @@ class Carriere:
 
     # -- prolongation --------------------------------------------------------
 
-    def prolongee(self, age_liquidation: float, macro: DonneesMacro) -> "Carriere":
+    def prolongee(self, age_liquidation: float, macro: DonneesMacro,
+                  attente_travaillee: bool = True) -> "Carriere":
         """La même carrière, poursuivie jusqu'à un départ à ``age_liquidation``.
 
         C'est ce que fait l'âge légal de la proposition à qui serait parti plus
@@ -827,12 +828,28 @@ class Carriere:
         elle y couvre moins de mois que l'activité principale alors qu'elle
         courait déjà l'année d'avant.
 
+        ``attente_travaillee=False`` fait l'autre hypothèse : l'attente se passe
+        SANS ACTIVITÉ, aucune ligne ne s'ajoute, et le compte n'y est que
+        revalorisé jusqu'au départ. C'est ce que la page Coût mêle à la
+        première, dans la part ``1 − Parametres.part_reportes_en_emploi``.
+
         Rend la carrière elle-même, inchangée, quand le départ demandé ne
         tombe pas après celui qu'elle porte.
         """
         if (self.age_liquidation is None
                 or en_mois(age_liquidation) <= en_mois(self.age_liquidation)):
             return self
+        if not attente_travaillee:
+            return Carriere(
+                annee_naissance=self.annee_naissance,
+                sexe=self.sexe,
+                lignes=list(self.lignes),
+                mois_naissance=self.mois_naissance,
+                age_liquidation=age_liquidation,
+                nombre_enfants=self.nombre_enfants,
+                identifiant=self.identifiant,
+                dates_entree=dict(self.dates_entree),
+            )
         initiale = self.date_liquidation
         fin = self.date_naissance.plus_mois(en_mois(age_liquidation))
         motifs = charger_periodes_non_travaillees(macro.racine)

@@ -5494,6 +5494,22 @@ def test_la_prolongation_d_un_releve_ne_depend_pas_de_l_ordre_des_lignes(simulat
                 == pytest.approx(sum(l.revenu for l in autre.lignes_de(annee))))
 
 
+def test_une_attente_sans_activite_n_ajoute_aucune_ligne(simulateur):
+    """L'autre hypothèse de la page Coût : le reporté attend sans activité. La
+    carrière garde ses lignes, part à l'âge légal, et son compte n'y gagne que
+    sa revalorisation — une pension plus faible que s'il avait travaillé."""
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1970, sexe="H", affiliation="salarie_prive_non_cadre",
+        age_debut=21, age_liquidation=62.0)
+    attente = carriere.prolongee(65.0, simulateur.macro, attente_travaillee=False)
+    travaillee = carriere.prolongee(65.0, simulateur.macro)
+    assert attente.lignes == carriere.lignes
+    assert attente.age_liquidation == travaillee.age_liquidation == 65.0
+    assert (simulateur.proposition(attente).pension_annuelle
+            < simulateur.proposition(travaillee).pension_annuelle)
+    assert carriere.prolongee(62.0, simulateur.macro, attente_travaillee=False) is carriere
+
+
 def test_l_age_legal_ne_reporte_que_les_departs_qu_il_regit(simulateur):
     """Avant 65 ans et à compter de la bascule : reporté. Avant la bascule,
     ou à 65 ans et plus : la carrière elle-même."""

@@ -334,6 +334,12 @@ export const PARAMETRES_DEFAUT = Object.freeze({
   //: a liquidé avant la bascule n'est pas touché. Seul le scénario 6 le porte ;
   //: `null` retire la mesure. Voir `config.py`.
   age_legal_liberal: 65.0,
+  //: La PART DES REPORTÉS EN EMPLOI : de ceux que l'âge légal fait attendre,
+  //: combien travaillent jusqu'à lui. Elle ne joue que sur la page Coût, où
+  //: chaque cohorte reportée mêle ceux qui travaillent et cotisent jusqu'à
+  //: l'âge légal et ceux qui l'attendent sans activité. Un par défaut : tous
+  //: travaillent, un plafond. Voir `config.py`.
+  part_reportes_en_emploi: 1.0,
   // Part des ayants droit qui réclament la garantie : l'hypothèse de l'ASPA,
   // un sur deux. Ne joue que sur le coût lu sur la distribution.
   taux_recours_garantie: 0.5,

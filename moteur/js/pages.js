@@ -9698,20 +9698,34 @@ function coutDetailPostes(contexte) {
   let suitLEmploi = "";
   if (ligne.recetteParAssiette && ligne.facteurAssiette > 1.0 + 1e-9) {
     const ageLegal = age(base.age_legal_liberal || 0.0);
+    // La part des reportés en emploi : tous par défaut, et c'est alors un
+    // plafond. Voir le Python.
+    const part = base.part_reportes_en_emploi ?? 1.0;
+    const tous = part >= 1.0;
+    const qui = tous
+      ? "qui serait parti plus tôt travaille et cotise jusque-là"
+      : `${g.pourcentage(part, false, 0)} de ceux qui seraient `
+        + "partis plus tôt travaillent et cotisent jusque-là";
     elargie = ", sur une assiette élargie de "
       + `${g.pourcentage(ligne.facteurAssiette - 1.0, false, 1)} en `
-      + `${annee} par l'âge légal de ${ageLegal} : qui serait parti plus `
-      + "tôt travaille et cotise jusque-là";
+      + `${annee} par l'âge légal de ${ageLegal} : ${qui}`;
+    const hypothese = tous
+      ? "C'est un plafond : le modèle suppose que tous ceux que le report "
+        + "fait attendre sont en emploi jusqu'à cet âge, comme les carrières "
+        + "de sa grille le sont jusqu'à leur départ. "
+        + "<code>part_reportes_en_emploi</code> porte cette hypothèse, un par "
+        + "défaut ; qui arrive à l'âge légal au chômage ou en invalidité ne "
+        + "cotise pas davantage pour autant."
+      : `Le modèle suppose que ${g.pourcentage(part, false, 0)} de ceux `
+        + "que le report fait attendre sont en emploi jusqu'à cet âge "
+        + "(<code>part_reportes_en_emploi</code>) ; les autres l'attendent "
+        + "sans activité, sans cotiser ni acquérir de droits.";
     suitLEmploi = " Elle suit aussi l'emploi, et pour le seul système 4 encore : son "
-      + `âge légal de ${ageLegal} fait travailler jusque-là qui serait `
-      + "parti plus tôt, et l'assiette que le COR projette aux âges "
+      + `âge légal de ${ageLegal} retient au travail qui serait parti `
+      + "plus tôt, et l'assiette que le COR projette aux âges "
       + "d'aujourd'hui grandit d'autant : "
       + `${g.pourcentage(ligne.facteurAssiette - 1.0, false, 1)} en `
-      + `${annee}. C'est un plafond : le modèle suppose que tous ceux que `
-      + "le report fait attendre sont en emploi jusqu'à cet âge, comme "
-      + "les carrières de sa grille le sont jusqu'à leur départ ; qui "
-      + "arrive à l'âge légal au chômage ou en invalidité ne cotise pas "
-      + "davantage pour autant.";
+      + `${annee}. ${hypothese}`;
   }
 
   // Milliards, part de PIB, part du total — ou trois tirets.
