@@ -136,6 +136,14 @@ class AnneeCarriere:
     #: réputée cotisée sans limite, ce qui n'est vrai que de la maternité.
     reputes_cotises_enveloppe: str = ""
     reputes_cotises_plafond: int = 0
+    #: Salaire porté au compte du régime général quand l'année est RÉTABLIE :
+    #: celle d'un fonctionnaire parti sans droit à pension, que L. 65 du code
+    #: des pensions rétablit au régime général et à l'Ircantec. C'est le
+    #: dernier traitement soumis à retenue, sur la fraction de l'année
+    #: (D. 173-16) ; le plafond de l'année s'applique ensuite. Zéro pour toute
+    #: autre année : seul le scénario 1 le renseigne, sur sa propre copie de
+    #: la carrière (voir `ScenarioActuel._retablie`).
+    revenu_retabli: float = 0.0
 
     @property
     def cotise(self) -> bool:
@@ -813,6 +821,23 @@ class Carriere:
         return tuple(dict.fromkeys(ligne.affiliation for ligne in self.lignes))
 
     # -- prolongation --------------------------------------------------------
+
+    def avec_lignes(self, lignes: list[AnneeCarriere]) -> "Carriere":
+        """La même carrière, portant d'autres lignes.
+
+        Une carrière ne se modifie pas après son constructeur — ses mémoires en
+        dépendent — : qui veut en changer les lignes en construit une autre.
+        """
+        return Carriere(
+            annee_naissance=self.annee_naissance,
+            sexe=self.sexe,
+            lignes=list(lignes),
+            mois_naissance=self.mois_naissance,
+            age_liquidation=self.age_liquidation,
+            nombre_enfants=self.nombre_enfants,
+            identifiant=self.identifiant,
+            dates_entree=dict(self.dates_entree),
+        )
 
     def prolongee(self, age_liquidation: float, macro: DonneesMacro,
                   attente_travaillee: bool = True) -> "Carriere":

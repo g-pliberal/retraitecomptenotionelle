@@ -21,6 +21,14 @@
 # selon les règles du régime général — le cas même que R. 173-15 renvoie au
 # régime général. Cette table porte cette durée, régime par régime.
 #
+# ELLE SERT DONC DEUX FOIS. À la priorité des trimestres d'enfants, et au
+# RÉTABLISSEMENT lui-même : l'agent de l'État, de la CNRACL, du FSPOEIE ou de
+# la SEITA qui part sans l'avoir servie est « rétabli, en ce qui concerne
+# l'assurance vieillesse, dans la situation qu'il aurait eue s'il avait été
+# affilié au régime général [...] et à l'Ircantec » (L. 65 du code des
+# pensions ; D. 173-15 et D. 173-16 du code de la sécurité sociale), et le
+# modèle route ses années vers ces deux régimes (`_retablie`).
+#
 # UNE BASCULE PAR RÉGIME, ET ELLE SE LIT À LA RADIATION. Tous les régimes lus
 # exigeaient quinze ans ; les réformes les ont ramenés à un an ou deux, pour
 # les agents radiés après leur date d'effet — le décret n° 2008-639 le dit en
@@ -37,8 +45,18 @@
 #       1964, LEGIARTI000006362667), puis la durée fixée par décret (L. 4,
 #       LEGIARTI000023096809) : deux années, pour les fonctionnaires radiés
 #       à compter du 1er janvier 2011 (R. 4-1, LEGIARTI000023388607).
-#       Les militaires ont gardé quinze ans jusqu'au 22 janvier 2014 (L. 6,
-#       LEGIARTI000006362672) : le modèle ne les distingue pas ici.
+#   militaires  Ce n'est pas un régime : c'est la règle des militaires dans
+#       le régime de l'État, que le modèle lit pour une carrière d'État
+#       seulement militaire. Quinze ans de services (L. 6, 1°, version de
+#       1972, LEGIARTI000006362671 ; de 2005, LEGIARTI000006362672) ; depuis
+#       le 22 janvier 2014, « la durée fixée par le décret en Conseil d'Etat
+#       mentionné au 1° de l'article L. 4 » (LEGIARTI000028498970), soit les
+#       deux ans de R. 4-1 — mais pour les seuls « militaires dont le premier
+#       engagement a été conclu à compter du 1er janvier 2014 » (loi
+#       n° 2014-40, article 42, II, JORFARTI000028493863). Le militaire
+#       engagé avant garde ses quinze ans, quelle que soit sa radiation : pour
+#       cette clé, `radiation_depuis` se lit donc au PREMIER ENGAGEMENT — au
+#       1er janvier de la première année de services, faute du mois.
 #   cnracl  Quinze années (décret n° 65-773, article 6, LEGIARTI000006368184 ;
 #       décret n° 2003-1306, article 7, LEGIARTI000006400865), deux depuis le
 #       1er janvier 2011 (article 7, LEGIARTI000023414028).
@@ -100,6 +118,8 @@
 regime,radiation_depuis,annees,annees_en_fonctions,texte,identifiant,fiabilite
 fonction_publique_etat,1900-01-01,15,,"code des pensions civiles et militaires, L. 4 (1°)",LEGIARTI000006362667,haute
 fonction_publique_etat,2011-01-01,2,,"code des pensions civiles et militaires, L. 4 et R. 4-1",LEGIARTI000023388607,haute
+militaires,1900-01-01,15,,"code des pensions civiles et militaires, L. 6 (1°)",LEGIARTI000006362671,haute
+militaires,2014-01-01,2,,"code des pensions civiles et militaires, L. 6 et R. 4-1 ; loi n° 2014-40, art. 42, II",LEGIARTI000028498970,haute
 cnracl,1900-01-01,15,,"décret n° 65-773, art. 6 ; décret n° 2003-1306, art. 7",LEGIARTI000006400865,haute
 cnracl,2011-01-01,2,,"décret n° 2003-1306, art. 7",LEGIARTI000023414028,haute
 fspoeie,1900-01-01,15,,"décret n° 65-836, art. 3 ; décret n° 2004-1056, art. 3",LEGIARTI000006781471,haute

@@ -3640,7 +3640,11 @@ sources:
       spécial (`services_ouvrant_pension.csv`) : ligne de veille
       `priorite_majorations_enfants`. La pension unique des régimes
       interpénétrés — l'État, la CNRACL, le FSPOEIE — l'est aussi : ligne
-      `interpenetration_fonction_publique`.
+      `interpenetration_fonction_publique`. Puis le rétablissement lui-même,
+      lu dans les pages « Rétablissement » de « Gestion des carrières » : les
+      années de l'agent parti sans droit passent au régime général, sur le
+      dernier traitement écrêté au plafond, et à l'Ircantec ; ligne
+      `retablissement_fonction_publique`.
 
   - id: juris_cnracl_montant_pension
     url: https://www.juris-cnracl.retraites.fr/pension-normale/calcul-de-la-pension/determination-du-montant-de-la-pension

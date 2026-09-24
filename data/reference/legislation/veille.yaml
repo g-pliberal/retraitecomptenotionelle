@@ -518,13 +518,17 @@ entrees:
       année de services et fait naître les enfants aux trente ans de leur mère.
       Il applique à tous les régimes spéciaux les conditions de la fonction
       publique (L. 12 bis, R. 13), comme il leur applique déjà sa table. Il ne
-      distingue pas les militaires, qui ont gardé quinze ans jusqu'au 22 janvier
-      2014 (L. 6). Hors du modèle : l'exception de la CRPCEN, dont la fiche ne
-      déclare pas de bonification ; la pension statutaire liquidée avant la
-      naissance ; l'enfant handicapé, qui va au dernier régime spécial ; le
-      rétablissement au régime général de qui n'a pas la durée, dont le modèle
-      garde les services dans le régime spécial. Avant 1985, R. 173-15 n'est
-      pas dans l'index, et le modèle applique la même règle.
+      lit la règle des militaires — quinze ans pour qui s'est engagé avant le
+      1er janvier 2014 (L. 6 ; loi n° 2014-40, article 42, II) — que pour une
+      carrière d'État seulement militaire, depuis le 24 septembre 2026, et date
+      le premier engagement au 1er janvier de sa première année. Hors du
+      modèle : l'exception de la CRPCEN, dont la fiche ne déclare pas de
+      bonification ; la pension statutaire liquidée avant la naissance ;
+      l'enfant handicapé, qui va au dernier régime spécial. Avant 1985,
+      R. 173-15 n'est pas dans l'index, et le modèle applique la même règle.
+      Le rétablissement au régime général de qui n'a pas la durée est fait
+      depuis le 24 septembre 2026 (`retablissement_fonction_publique`) : la
+      mère rétablie reçoit les trimestres de ses enfants du régime général.
     prochaine_veille: "2027-03-31"
 
   - id: majoration_dix_pour_cent
@@ -809,7 +813,66 @@ entrees:
       pas la pension de l'État entre services civils et militaires : un
       militaire devenu fonctionnaire civil reçoit une pension unique, comme
       s'il avait renoncé à sa pension militaire. Le rétablissement de qui n'a
-      pas la durée minimale reste hors du modèle.
+      pas la durée minimale est fait depuis le 24 septembre 2026
+      (`retablissement_fonction_publique`), et c'est la même lecture des trois
+      régimes ensemble qui l'annule au retour dans l'un d'eux.
+    prochaine_veille: "2027-03-31"
+
+  - id: retablissement_fonction_publique
+    regle: >-
+      Le fonctionnaire de l'État, de la CNRACL ou des ouvriers de l'État, le
+      militaire et l'agent de la SEITA qui quittent le service sans droit à
+      pension sont rétablis au régime général et à l'Ircantec pour toute la
+      période où ils ont relevé de leur régime. Sans droit : moins de quinze
+      ans de services pour qui est radié avant 2011, moins de deux depuis, les
+      trois régimes interpénétrés comptés ensemble ; moins de quinze pour le
+      militaire engagé avant le 1er janvier 2014. Le régime général porte au
+      compte, chaque année, le dernier traitement soumis à retenue, dans la
+      limite du plafond ; l'Ircantec valide les services suivant sa propre
+      réglementation ; les primes restent au RAFP. Pour qui a quitté son
+      régime après le 28 janvier 1950. Le retour dans un régime interpénétré
+      annule le rétablissement.
+    textes:
+      - "L. 65 du code des pensions civiles et militaires, versions de 1964 (LEGIARTI000006362812 : le régime général seul), de 1991 (LEGIARTI000006362813 : l'Ircantec ajoutée), de 1996 (LEGIARTI000006362814) et de 2005 (LEGIARTI000006362815)"
+      - "D. 173-15 (LEGIARTI000006735534), D. 173-16 (LEGIARTI000006735535, LEGIARTI000025766876) et D. 173-17 (LEGIARTI000006735536) du code de la sécurité sociale"
+      - "décret n° 2003-1306, article 64 (LEGIARTI000006400936) ; décret n° 70-1277, article 9 (LEGIARTI000036754954)"
+      - "L. 6 du code des pensions (LEGIARTI000006362671, LEGIARTI000006362672, LEGIARTI000028498970) et loi n° 2014-40, article 42 (JORFARTI000028493863)"
+    sources:
+      - {type: legifrance, reference: "L. 65, D. 173-15 à D. 173-17, article 64 du décret n° 2003-1306, article 9 du décret n° 70-1277 et L. 6, lus dans l'index LEGI : « Cette période entre en compte, quel qu'ait été le montant de sa rémunération [...] Ce versement est calculé sur la base des derniers émoluments soumis à retenues pour pensions au titre du régime spécial de retraites, compte tenu du ou des plafonds » (D. 173-16) ; la validation de l'Ircantec « obligatoire et simultanée au rétablissement » pour les radiés depuis le 1er janvier 1990, faite « sur demande » avant (article 9, II)", date: "2026-09-24"}
+      - {type: jorf, reference: "loi n° 2014-40, article 42, II, lu dans l'index JORF : les deux ans ne valent que pour les « militaires dont le premier engagement a été conclu à compter du 1er janvier 2014 »", date: "2026-09-24"}
+      - {type: circulaire_cnav, reference: "2011/38 du 18 mai 2011, tableau « Rétablissement dans les droits » : « Pour les assurés qui, après le 28 janvier 1950, ont quitté leur régime spécial sans droit à pension : Salaires reconstitués à partir des cotisations rétroactives calculées sur la base des derniers émoluments ou de la dernière solde soumis à retenues pour pension au titre du régime spécial de retraites, dans la limite du plafond en vigueur » ; pour les militaires, des salaires forfaitaires par catégorie (arrêté du 17 décembre 1970)", date: "2011-05-18"}
+      - {type: autre, reference: "CNRACL, juris-cnracl, « Rétablissement » et ses pages : le versement au régime général « calculé sur la base du dernier traitement soumis à retenue au titre de la CNRACL, compte tenu du ou des plafonds » ; la validation à l'Ircantec, « opéré[e] d'office pour les agents radiés des cadres depuis le 1er janvier 1990 et sur demande pour ceux qui ont été radiés des cadres antérieurement » ; la NBI, exclue du régime général et retenue par l'Ircantec ; l'annulation du rétablissement au retour dans un régime interpénétré", date: "2026-09-24", url: "https://www.juris-cnracl.retraites.fr/gestion-des-carrieres/retablissement"}
+    verifie_le: "2026-09-24"
+    temoins: []
+    reformes: []
+    etat: transcrit
+    effet: >-
+      Tout agent parti de la fonction publique sans la durée qui ouvre une
+      pension. Jusqu'au 24 septembre 2026, le modèle lui servait une pension
+      de son régime au prorata de ses années, et laissait le régime général
+      sans elles : un agent hospitalier de vingt-deux à trente-cinq ans, parti
+      au privé en 1997 et liquidant en 2026, touchait 26 312 € au lieu de
+      28 718 €, 8,4 % de moins ; dix ans sous l'uniforme, 1,9 % de moins. Le
+      sens peut s'inverser : la mère de deux enfants passée un an par l'État
+      en 1984, qui a déjà sa durée au régime général, touchait une pension
+      civile qui ne lui était pas due, 1,0 % de trop.
+      tests/test_retablissement.py, et six témoins de parcours rejouent la
+      règle dans les deux moteurs.
+    a_faire: >-
+      Aucun exemple chiffré publié n'a été trouvé. Six approximations. Le
+      militaire reçoit au régime général sa dernière solde, et non les
+      salaires forfaitaires par catégorie de l'arrêté du 17 décembre 1970
+      (D. 173-17). L'Ircantec valide le traitement de chaque année, hors
+      primes, sans la NBI qu'elle retient. La validation de l'Ircantec, faite
+      sur demande pour qui a été radié avant 1990, est présumée demandée. Les
+      services d'avant le 1er juillet 1930, que D. 173-16 exclut, sont rétablis
+      comme les autres. Radiation et premier engagement sont datés au
+      1er janvier, faute du mois. Et un agent parti avant le 29 janvier 1950
+      garde la pension au prorata que le modèle lui servait, le droit d'alors
+      n'ayant pas été lu. Hors du modèle : les pensions de coordination des
+      autres régimes spéciaux (SNCF, RATP, IEG), et la Banque de France, que
+      l'article 9 du décret n° 70-1277 nomme ; l'Imprimerie nationale, que
+      D. 173-15 nomme aussi, est un régime éteint que le modèle ne calcule pas.
     prochaine_veille: "2027-03-31"
 
   - id: duree_requise_carriere_longue_fonction_publique
@@ -5748,3 +5811,36 @@ journal:
       sa pension militaire (L. 77), mais la pension de l'État d'un militaire
       devenu fonctionnaire civil n'est pas scindée. Le rétablissement de qui
       n'a pas la durée minimale reste hors du modèle.
+
+  - date: "2026-09-24"
+    session: "action 89, suite : le rétablissement de la fonction publique"
+    consulte: >-
+      veille_droit.py, et la mise à jour de l'index LEGI : aucun incrément
+      nouveau, L. 161-17-2 sans version postérieure au 31 décembre 2025. Dans
+      l'index LEGI : L. 65 du code des pensions dans ses quatre versions
+      depuis 1964, L. 6 dans ses trois versions depuis 1972 ; D. 173-15 à
+      D. 173-17 du code de la sécurité sociale ; l'article 64 du décret
+      n° 2003-1306 ; l'article 9 du décret n° 70-1277. Dans l'index JORF,
+      l'article 42 de la loi n° 2014-40. La circulaire Cnav 2011/38, parmi les
+      références que la base de la Cnav rattache à D. 173-16. Les pages
+      « Rétablissement » de juris-cnracl : les radiés et leurs conséquences,
+      le versement au régime général, la validation à l'Ircantec, la
+      renonciation, les stagiaires, l'annulation, la NBI, le CTI, les
+      services outre-mer.
+    trouve: >-
+      L'agent parti de l'État, de la CNRACL, du FSPOEIE ou de la SEITA sans la
+      durée qui ouvre une pension n'a pas de pension de son régime : ses
+      années passent au régime général, sur le dernier traitement écrêté au
+      plafond de chaque année, et à l'Ircantec. Le modèle lui servait une
+      pension au prorata : un agent hospitalier parti au privé après treize
+      ans touchait 26 312 € au lieu de 28 718 €. Corrigé dans les deux
+      moteurs, les années rétablies gardant leur statut et changeant de
+      régimes. Et la durée des militaires : quinze ans pour qui s'est engagé
+      avant 2014, la loi n° 2014-40 ne donnant les deux ans qu'aux engagés
+      depuis ; la table la lit désormais au premier engagement.
+    reste: >-
+      Aucun exemple publié pour en faire un témoin officiel. Les salaires
+      forfaitaires des militaires (D. 173-17, arrêté du 17 décembre 1970), la
+      NBI à l'Ircantec, les services d'avant juillet 1930, les départs d'avant
+      le 29 janvier 1950 ; les coordinations propres de la SNCF, de la RATP,
+      des IEG et de la Banque de France.

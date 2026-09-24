@@ -54,7 +54,7 @@ from datetime import date
 from pathlib import Path
 
 from ..calendrier import DateMois, en_mois
-from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
+from ..carriere import Affiliations, AnneeCarriere, Carriere, salaire_moyen_annuel
 from ..config import Parametres
 from ..donnees.chargement import (
     assiette_minimale,
@@ -118,6 +118,38 @@ class _MajorationEnfants:
     #: `legislation/majoration_duree_assurance.csv`.
     services: int
     fiabilite: Fiabilite
+
+
+@dataclass(frozen=True)
+class _DroitPension:
+    """Ce qu'un régime spécial doit à un agent : la durée qui ouvre une pension,
+    et ce qu'il en a servi. Voir :meth:`ScenarioActuel._droit_a_pension`."""
+
+    #: Les régimes dont les services se comptent ensemble — les trois
+    #: régimes interpénétrés, ou le seul régime demandé.
+    regimes: frozenset[str]
+    #: Les années servies, une par année civile, dans l'ordre.
+    lignes: tuple[AnneeCarriere, ...]
+    #: Services effectifs, en années.
+    servies: float
+    #: Durée exigée à la radiation, et fiabilité de la ligne qui la donne.
+    exigees: float
+    fiabilite: Fiabilite
+    #: Date de la radiation, ISO : le 1er janvier qui suit la dernière année
+    #: de services, ou le départ quand l'agent part en fonctions.
+    radiation: str
+
+    @property
+    def pension(self) -> bool:
+        return self.servies + 1e-9 >= self.exigees
+
+    @property
+    def recrutement(self) -> int:
+        return self.lignes[0].annee
+
+    @property
+    def derniere(self) -> int:
+        return self.lignes[-1].annee
 
 
 #: Ce que chaque dispositif s'appelle dans la cascade des avantages.
@@ -1193,7 +1225,8 @@ class ServicesOuvrantPension:
                en_fonctions: bool) -> tuple[float, Fiabilite] | None:
         """Années de services exigées de l'agent radié à cette date (ISO), et
         la fiabilité de la ligne ; ``None`` pour un régime que la table ne
-        porte pas.
+        porte pas. La clé des militaires se lit, elle, à la date du premier
+        engagement.
 
         ``en_fonctions`` dit que l'agent part en fonctions, sa radiation ne
         précédant pas son départ : la SEITA n'exige alors plus rien
@@ -2353,7 +2386,12 @@ class ScenarioActuel:
         catégorie — le marin liquide « sur le salaire forfaitaire de la
         catégorie dans laquelle il a été classé » (R. 11), non sur sa paie.
         Le forfait est proratisé sur les mois de l'année, comme le revenu.
+
+        Une année RÉTABLIE porte au compte le dernier traitement de l'agent,
+        non ce qu'il a perçu cette année-là (voir :meth:`_retablie`).
         """
+        if ligne.revenu_retabli > 0 and periode.assiette != "primes_uniquement":
+            return ligne.revenu_retabli
         if periode.assiette_grille:
             forfait_grille = self.grilles.forfait(
                 periode.assiette_grille, ligne.annee, ligne.revenu_annualise,
@@ -2488,8 +2526,8 @@ class ScenarioActuel:
         for ligne in carriere.lignes:
             if ligne.annee >= annee_liquidation:
                 continue
-            if codes_admis.isdisjoint(self.affiliations.regimes(
-                    ligne.affiliation, ligne.annee,
+            if codes_admis.isdisjoint(self._regimes_de(
+                    ligne, ligne.annee,
                     carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                     plafond=self.macro.plafond_securite_sociale(ligne.annee))):
@@ -2583,16 +2621,16 @@ class ScenarioActuel:
             # traitement, quel que soit le rang de la ligne.
             derniere = next((
                 ligne for ligne in carriere.lignes_de(annee_liquidation)
-                if not codes_admis.isdisjoint(self.affiliations.regimes(
-                    ligne.affiliation, annee_liquidation,
+                if not codes_admis.isdisjoint(self._regimes_de(
+                    ligne, annee_liquidation,
                     carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu,
                     plafond=self.macro.plafond_securite_sociale(annee_liquidation)))
             ), None)
             if (derniere is not None and derniere.cotise
                     and derniere.fraction_annee > 0
-                    and not codes_admis.isdisjoint(self.affiliations.regimes(
-                        derniere.affiliation, annee_liquidation,
+                    and not codes_admis.isdisjoint(self._regimes_de(
+                        derniere, annee_liquidation,
                         carriere.date_entree(derniere.affiliation),
                         revenu=derniere.revenu,
                         plafond=self.macro.plafond_securite_sociale(annee_liquidation)))):
@@ -2944,6 +2982,162 @@ class ScenarioActuel:
         if civil:
             return self.REGIMES_CODE_DES_PENSIONS
         return self.REGIMES_CODE_DES_PENSIONS - {"fonction_publique_etat"}
+
+    #: LE RÉTABLISSEMENT. L'agent qui part sans droit à pension est « rétabli,
+    #: en ce qui concerne l'assurance vieillesse, dans la situation qu'il
+    #: aurait eue s'il avait été affilié au régime général [...] et à
+    #: l'Ircantec » (L. 65 du code des pensions, article 64 du décret
+    #: n° 2003-1306). Les régimes que D. 173-15 du code de la sécurité sociale
+    #: y soumet et que le catalogue porte : l'État, pensions civiles d'avant
+    #: 1948 comprises, la CNRACL, le FSPOEIE et la SEITA.
+    REGIMES_RETABLIS = frozenset({
+        "fonction_publique_etat", "pensions_civiles_1853", "cnracl", "fspoeie", "seita",
+    })
+    #: Pour qui a quitté son régime après le 28 janvier 1950 (décret
+    #: n° 50-133 ; circulaire Cnav 2011/38). Le droit d'avant n'a pas été lu :
+    #: l'agent parti plus tôt garde la pension au prorata que le modèle sert.
+    RETABLISSEMENT_DEPUIS = "1950-01-29"
+    #: Où vont ses années : là où le statut de contractuel du public les route
+    #: — le régime général et l'Ircantec, ou ses devancières de 1951 et de
+    #: 1959, que l'article 9 du décret n° 70-1277 nomme — et, avant 1945, aux
+    #: assurances sociales du salarié.
+    STATUTS_DU_RETABLISSEMENT = ("contractuel_public", "salarie_prive_non_cadre")
+
+    def _droit_a_pension(self, code: str, carriere: Carriere,
+                         annee_liquidation: int) -> _DroitPension | None:
+        """Ce régime peut-il pensionner cet agent ? ``None`` s'il n'y a pas servi.
+
+        La durée qui ouvre une pension (:class:`ServicesOuvrantPension`) se
+        compte sur les années que le régime a effectivement reçues — celles
+        des trois régimes interpénétrés ensemble, puisque chacun compte les
+        services des deux autres —, et se lit à la radiation : au 1er janvier
+        qui suit la dernière année de services, comme pour la pension
+        différée, ou au départ quand l'agent part en fonctions. Une carrière
+        d'État seulement militaire se lit à la règle des militaires (L. 6), et
+        à son premier engagement : les deux ans de R. 4-1 ne valent que pour
+        le militaire engagé depuis le 1er janvier 2014 (article 42, II, de la
+        loi n° 2014-40).
+        """
+        # Les pensions civiles d'avant 1948 sont celles de l'État.
+        if code == "pensions_civiles_1853":
+            code = "fonction_publique_etat"
+        interpenetres = self._regimes_interpenetres(carriere)
+        if code in interpenetres:
+            regimes, cle = set(interpenetres), code
+        elif code == "fonction_publique_etat":
+            regimes, cle = {code}, "militaires"
+        else:
+            regimes, cle = {code}, code
+        if "fonction_publique_etat" in regimes:
+            regimes.add("pensions_civiles_1853")
+        borne = self._borne_carriere(carriere)
+        par_annee: dict[int, AnneeCarriere] = {}
+        for ligne in carriere.lignes:
+            if not ligne.cotise or (borne is not None and ligne.annee > borne):
+                continue
+            if regimes.isdisjoint(self.affiliations.regimes(
+                    ligne.affiliation, ligne.annee,
+                    carriere.date_entree(ligne.affiliation))):
+                continue
+            retenue = par_annee.get(ligne.annee)
+            if retenue is None or ligne.fraction_annee > retenue.fraction_annee:
+                par_annee[ligne.annee] = ligne
+        if not par_annee:
+            return None
+        lignes = tuple(par_annee[annee] for annee in sorted(par_annee))
+        mois = (carriere.date_liquidation.mois
+                if carriere.age_liquidation is not None else 1)
+        depart = f"{annee_liquidation:04d}-{mois:02d}-01"
+        radiation = f"{lignes[-1].annee + 1:04d}-01-01"
+        en_fonctions = radiation >= depart
+        if en_fonctions:
+            radiation = depart
+        lue_le = f"{lignes[0].annee:04d}-01-01" if cle == "militaires" else radiation
+        regle = self.services_ouvrant_pension.annees(cle, lue_le, en_fonctions)
+        exigees, fiabilite = regle if regle is not None else (0.0, Fiabilite.ESTIMEE)
+        return _DroitPension(
+            regimes=frozenset(regimes), lignes=lignes,
+            servies=sum(ligne.fraction_annee for ligne in lignes),
+            exigees=exigees, fiabilite=fiabilite, radiation=radiation,
+        )
+
+    def _retablie(self, carriere: Carriere) -> Carriere:
+        """La carrière que le scénario 1 liquide, RÉTABLISSEMENT fait.
+
+        Le fonctionnaire qui part sans la durée qui ouvre une pension — deux
+        ans depuis 2011, quinze avant ; les trois régimes interpénétrés comptés
+        ensemble, de sorte qu'un retour dans l'un d'eux annule le
+        rétablissement (article 64, II, du décret n° 2003-1306) — n'a pas de
+        pension de son régime : ses années passent au régime général et à
+        l'Ircantec, comme s'il y avait été affilié. Le modèle les pensionnait
+        au prorata dans le régime spécial.
+
+        Deux assiettes, et les textes les séparent. Le régime général porte au
+        compte « des salaires reconstitués à partir des cotisations
+        rétroactives calculées sur la base des derniers émoluments ou de la
+        dernière solde soumis à retenues pour pension [...], dans la limite du
+        plafond en vigueur » chaque année (D. 173-16 ; circulaire Cnav
+        2011/38) : le dernier traitement, pour toutes les années, et la
+        période « entre en compte, quel qu'ait été le montant de sa
+        rémunération ». L'Ircantec, elle, valide « suivant sa propre
+        réglementation » (article 9 du décret n° 70-1277) : le traitement de
+        chaque année. Les primes restent au RAFP, que le rétablissement ne
+        touche pas.
+
+        Les années rétablies gardent leur statut : c'est leur champ
+        ``revenu_retabli`` qui les désigne, et :meth:`_regimes_de` qui les
+        route. La carrière est rendue telle quelle quand rien n'est rétabli.
+        """
+        if carriere.age_liquidation is None:
+            return carriere
+        annee_liquidation = carriere.annee_liquidation
+        vus: set[frozenset[str]] = set()
+        retablies: dict[int, float] = {}
+        for code in sorted(self.REGIMES_RETABLIS):
+            droit = self._droit_a_pension(code, carriere, annee_liquidation)
+            if droit is None or droit.regimes in vus:
+                continue
+            vus.add(droit.regimes)
+            if droit.pension or droit.radiation < self.RETABLISSEMENT_DEPUIS:
+                continue
+            derniere = droit.lignes[-1]
+            traitement = derniere.revenu_annualise * (1.0 - derniere.part_primes)
+            for ligne in carriere.lignes:
+                if (ligne.cotise and ligne.annee <= annee_liquidation
+                        and not droit.regimes.isdisjoint(self.affiliations.regimes(
+                            ligne.affiliation, ligne.annee,
+                            carriere.date_entree(ligne.affiliation)))):
+                    retablies[id(ligne)] = traitement * ligne.fraction_annee
+        if not retablies:
+            return carriere
+        return carriere.avec_lignes([
+            replace(ligne, revenu_retabli=retablies[id(ligne)])
+            if id(ligne) in retablies else ligne
+            for ligne in carriere.lignes
+        ])
+
+    def _regimes_de(self, ligne: AnneeCarriere, annee: int,
+                    annee_entree: int | DateMois | None = None,
+                    revenu: float | None = None,
+                    plafond: float | None = None) -> tuple[str, ...]:
+        """Les régimes auxquels cette ligne cotise cette année-là.
+
+        Ceux de son statut, sauf pour une année RÉTABLIE : elle quitte son
+        régime spécial pour le régime général et l'Ircantec — là où le
+        contractuel du public est routé —, et garde le RAFP. Voir
+        :meth:`_retablie`.
+        """
+        regimes = self.affiliations.regimes(
+            ligne.affiliation, annee, annee_entree, revenu=revenu, plafond=plafond)
+        if ligne.revenu_retabli <= 0:
+            return regimes
+        cibles: tuple[str, ...] = ()
+        for statut in self.STATUTS_DU_RETABLISSEMENT:
+            cibles = tuple(self.affiliations.regimes(statut, annee))
+            if cibles:
+                break
+        return cibles + tuple(code for code in regimes
+                              if code not in self.REGIMES_RETABLIS)
 
     def _lura_applicable(self, carriere: Carriere) -> bool:
         """La liquidation unique vaut-elle pour cette carrière ?
@@ -3387,8 +3581,8 @@ class ScenarioActuel:
         for ligne in carriere.lignes:
             if ligne.annee > annee_liquidation:
                 continue
-            codes.update(self.affiliations.regimes(
-                ligne.affiliation, ligne.annee,
+            codes.update(self._regimes_de(
+                ligne, ligne.annee,
                 carriere.date_entree(ligne.affiliation),
                 revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                 plafond=self.macro.plafond_securite_sociale(ligne.annee),
@@ -3428,6 +3622,7 @@ class ScenarioActuel:
         que le premier ne soit créé. L'appelant décide alors : il n'y a pas
         d'âge à proposer, et non un âge de zéro.
         """
+        carriere = self._retablie(carriere)
         annuites, autres = self._periodes_parcourues(carriere)
         autres = self._sans_ages_propres(autres)
         retenues = annuites or autres
@@ -3552,6 +3747,7 @@ class ScenarioActuel:
 
         ``None`` dans le même cas que :meth:`age_ouverture_droit`.
         """
+        carriere = self._retablie(carriere)
         annuites, autres = self._periodes_parcourues(carriere)
         autres = self._sans_ages_propres(autres)
         retenues = annuites or autres
@@ -4596,31 +4792,15 @@ class ScenarioActuel:
         Les trois régimes interpénétrés se lisent ensemble : la durée exigée
         porte sur tous les services de L. 5, et le recrutement comme la
         radiation sont ceux de la carrière publique entière
-        (:meth:`_regimes_interpenetres`).
+        (:meth:`_droit_a_pension`).
         """
-        regimes = self._regimes_interpenetres(carriere)
-        if periode.regime not in regimes:
-            regimes = frozenset((periode.regime,))
-        statuts = [code for code in self.affiliations.codes
-                   if not self._regimes_routes([code]).isdisjoint(regimes)]
-        borne = self._borne_carriere(carriere)
-        servies = carriere.duree_de_service(statuts, borne)
-        bornes = carriere.bornes_de_service(statuts, borne)
-        if bornes is None:
+        droit = self._droit_a_pension(periode.regime, carriere, annee_liquidation)
+        if droit is None:
             return None
-        recrutement, derniere = bornes
-        mois = (carriere.date_liquidation.mois
-                if carriere.age_liquidation is not None else 1)
-        depart = f"{annee_liquidation:04d}-{mois:02d}-01"
-        radiation = f"{derniere + 1:04d}-01-01"
-        en_fonctions = radiation >= depart
-        regle = self.services_ouvrant_pension.annees(
-            periode.regime, depart if en_fonctions else radiation, en_fonctions)
-        exigees, fiabilite = regle if regle is not None else (0.0, Fiabilite.ESTIMEE)
-        return (servies + 1e-9 >= exigees,
-                self._bonification_ouverte(carriere, recrutement, derniere,
-                                           annee_liquidation),
-                fiabilite)
+        return (droit.pension,
+                self._bonification_ouverte(carriere, droit.recrutement,
+                                           droit.derniere, annee_liquidation),
+                droit.fiabilite)
 
     @staticmethod
     def _bonification_ouverte(carriere: Carriere, recrutement: int, derniere: int,
@@ -4672,8 +4852,8 @@ class ScenarioActuel:
             if (ligne.annee > annee_liquidation
                     or carriere.trimestres_retenus(ligne) <= 0):
                 continue
-            for code in self.affiliations.regimes(
-                    ligne.affiliation, ligne.annee,
+            for code in self._regimes_de(
+                    ligne, ligne.annee,
                     carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                     plafond=self.macro.plafond_securite_sociale(ligne.annee)):
@@ -4779,7 +4959,11 @@ class ScenarioActuel:
         ``avantages_non_contributifs`` : la valorisation des droits acquis n'en
         veut pas, puisqu'elle mesure du contributif pur. Les recalculs de la
         cascade le fixent, eux, pour que chaque avantage soit retiré seul.
+
+        L'agent parti de la fonction publique sans droit à pension y est
+        RÉTABLI au régime général et à l'Ircantec (:meth:`_retablie`).
         """
+        carriere = self._retablie(carriere)
         if points_gratuits is None:
             points_gratuits = avantages_non_contributifs
         annee_liquidation = carriere.annee_liquidation
@@ -4891,8 +5075,8 @@ class ScenarioActuel:
                 )
                 services_ligne = min(services_ligne, restant)
                 budget_services_plafonnes[plafond] = restant - services_ligne
-            for code in self.affiliations.regimes(
-                    ligne.affiliation, ligne.annee,
+            for code in self._regimes_de(
+                    ligne, ligne.annee,
                     carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                     plafond=self.macro.plafond_securite_sociale(ligne.annee)):
@@ -4972,8 +5156,8 @@ class ScenarioActuel:
             familles_admises = (
                 None if ligne.cotise else set(ligne.familles_cotisantes)
             )
-            for code in self.affiliations.regimes(
-                    ligne.affiliation, ligne.annee,
+            for code in self._regimes_de(
+                    ligne, ligne.annee,
                     carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
                     plafond=self.macro.plafond_securite_sociale(ligne.annee)):
@@ -5007,6 +5191,11 @@ class ScenarioActuel:
                     # Traitement seul, primes seules — celles du RAFP dans la
                     # limite de 20 % du traitement : voir `part_du_revenu`.
                     base = periode.part_du_revenu(base_ligne, ligne.part_primes)
+                    if (ligne.revenu_retabli > 0
+                            and periode.assiette != "primes_uniquement"):
+                        # Une année RÉTABLIE : l'Ircantec valide le
+                        # traitement de l'année, les primes restent au RAFP.
+                        base = base_ligne * (1.0 - ligne.part_primes)
                     # L'assiette de la CAVAMAC est faite des commissions
                     # versées par les compagnies, celle de la CPRN des produits
                     # de l'office : le facteur les reconstitue depuis le

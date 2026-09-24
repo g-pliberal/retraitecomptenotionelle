@@ -19,7 +19,7 @@
  */
 
 import { DateMois, enMois } from "./calendrier.js";
-import { assietteMinimale, salaireMoyenAnnuel } from "./carriere.js";
+import { AnneeCarriere, assietteMinimale, salaireMoyenAnnuel } from "./carriere.js";
 import { formatFixe, formatPourcentage } from "./format.js";
 import {
   AgesAnnulationDecote, AgesCategorieActive, AgesJouissanceMilitaire,
@@ -75,6 +75,27 @@ const REGIMES_ALIGNES_TETE = "regimes_alignes";
  * UNIQUE. La clé sous laquelle ils se réunissent. Voir le Python.
  */
 const REGIMES_INTERPENETRES_TETE = "regimes_interpenetres";
+
+/**
+ * LE RÉTABLISSEMENT : l'agent qui part sans droit à pension est « rétabli [...]
+ * dans la situation qu'il aurait eue s'il avait été affilié au régime général
+ * [...] et à l'Ircantec » (L. 65 du code des pensions). Les régimes que
+ * D. 173-15 du code de la sécurité sociale y soumet et que le catalogue porte.
+ * Voir `_retablie` dans le Python.
+ */
+const REGIMES_RETABLIS = new Set([
+  "fonction_publique_etat", "pensions_civiles_1853", "cnracl", "fspoeie", "seita",
+]);
+/**
+ * Pour qui a quitté son régime après le 28 janvier 1950 (décret n° 50-133) ;
+ * l'agent parti plus tôt garde la pension au prorata que le modèle sert.
+ */
+const RETABLISSEMENT_DEPUIS = "1950-01-29";
+/**
+ * Où vont les années rétablies : là où le contractuel du public est routé, et
+ * avant 1945, aux assurances sociales du salarié.
+ */
+const STATUTS_DU_RETABLISSEMENT = ["contractuel_public", "salarie_prive_non_cadre"];
 /** Assurés nés à compter de 1953 (article 51 de la LFSS pour 2016). */
 const LURA_PREMIERE_GENERATION = 1953;
 /** Pensions prenant effet au 1er juillet 2017 (décret n° 2017-737, art. 4). */
@@ -366,6 +387,10 @@ export class ScenarioActuel {
   }
 
   assietteDeReference(periode, ligne) {
+    // Une année RÉTABLIE porte au compte le dernier traitement : voir `retablie`.
+    if (ligne.revenu_retabli > 0 && periode.assiette !== "primes_uniquement") {
+      return ligne.revenu_retabli;
+    }
     if (periode.assiette_grille) {
       const forfaitGrille = this.grilles.forfait(
         periode.assiette_grille, ligne.annee, ligne.revenuAnnualise,
@@ -444,8 +469,8 @@ export class ScenarioActuel {
       if (ligne.annee >= anneeLiquidation) {
         continue;
       }
-      if (!this.affiliations.regimes(
-        ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
+      if (!this.regimesDe(
+        ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
         ligne.cotise ? ligne.revenu : ligne.revenu_reference,
         this.macro.plafond_securite_sociale.valeur(ligne.annee),
       ).some((c) => codesAdmis.has(c))) {
@@ -531,8 +556,8 @@ export class ScenarioActuel {
       // La ligne du régime, et non l'activité principale : un fonctionnaire
       // qui cumule une activité libérale liquide son traitement.
       const derniere = carriere.lignesDe(anneeLiquidation).find(
-        (ligne) => this.affiliations.regimes(
-          ligne.affiliation, anneeLiquidation,
+        (ligne) => this.regimesDe(
+          ligne, anneeLiquidation,
           carriere.dateEntree(ligne.affiliation),
           ligne.revenu, this.macro.plafond_securite_sociale.valeur(anneeLiquidation))
           .some((c) => codesAdmis.has(c)),
@@ -926,6 +951,147 @@ export class ScenarioActuel {
     return regimes;
   }
 
+  /**
+   * Ce régime peut-il pensionner cet agent ? `null` s'il n'y a pas servi. La
+   * durée exigée se compte sur les années que le régime a effectivement
+   * reçues — celles des trois régimes interpénétrés ensemble —, et se lit à la
+   * radiation ; une carrière d'État seulement militaire se lit à la règle des
+   * militaires (L. 6), et à son premier engagement : les deux ans de R. 4-1
+   * ne valent que pour le militaire engagé depuis le 1er janvier 2014
+   * (article 42, II, de la loi n° 2014-40). Voir `_droit_a_pension` dans le
+   * Python.
+   */
+  droitAPension(code, carriere, anneeLiquidation) {
+    // Les pensions civiles d'avant 1948 sont celles de l'État.
+    const regime = code === "pensions_civiles_1853" ? "fonction_publique_etat" : code;
+    const interpenetres = this.regimesInterpenetres(carriere);
+    let regimes;
+    let cle;
+    if (interpenetres.has(regime)) {
+      regimes = new Set(interpenetres);
+      cle = regime;
+    } else if (regime === "fonction_publique_etat") {
+      regimes = new Set([regime]);
+      cle = "militaires";
+    } else {
+      regimes = new Set([regime]);
+      cle = regime;
+    }
+    if (regimes.has("fonction_publique_etat")) {
+      regimes.add("pensions_civiles_1853");
+    }
+    const borne = borneCarriere(carriere);
+    const parAnnee = new Map();
+    for (const ligne of carriere.lignes) {
+      if (!ligne.cotise || (borne !== null && ligne.annee > borne)) {
+        continue;
+      }
+      if (!this.affiliations.regimes(
+        ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
+      ).some((c) => regimes.has(c))) {
+        continue;
+      }
+      const retenue = parAnnee.get(ligne.annee);
+      if (retenue === undefined || ligne.fraction_annee > retenue.fraction_annee) {
+        parAnnee.set(ligne.annee, ligne);
+      }
+    }
+    if (parAnnee.size === 0) {
+      return null;
+    }
+    const lignes = [...parAnnee.keys()].sort((a, b) => a - b).map((a) => parAnnee.get(a));
+    const mois = carriere.age_liquidation !== null && carriere.age_liquidation !== undefined
+      ? carriere.dateLiquidation.mois : 1;
+    const depart = `${String(anneeLiquidation).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
+    let radiation = `${String(lignes[lignes.length - 1].annee + 1).padStart(4, "0")}-01-01`;
+    const enFonctions = radiation >= depart;
+    if (enFonctions) {
+      radiation = depart;
+    }
+    const lueLe = cle === "militaires"
+      ? `${String(lignes[0].annee).padStart(4, "0")}-01-01` : radiation;
+    const regle = this.servicesOuvrantPension.annees(cle, lueLe, enFonctions);
+    const [exigees, fiabilite] = regle ?? [0, Fiabilite.ESTIMEE];
+    const servies = lignes.reduce((total, ligne) => total + ligne.fraction_annee, 0);
+    return {
+      regimes,
+      cleRegimes: [...regimes].sort().join(","),
+      lignes,
+      servies,
+      exigees,
+      fiabilite,
+      radiation,
+      pension: servies + 1e-9 >= exigees,
+      recrutement: lignes[0].annee,
+      derniere: lignes[lignes.length - 1].annee,
+    };
+  }
+
+  /**
+   * La carrière que le scénario 1 liquide, RÉTABLISSEMENT fait : les années
+   * d'un fonctionnaire parti sans droit à pension passent au régime général et
+   * à l'Ircantec. Le régime général y porte le dernier traitement, dans la
+   * limite du plafond de chaque année (D. 173-16) ; l'Ircantec le traitement de
+   * chaque année ; les primes restent au RAFP. Voir `_retablie` dans le Python.
+   */
+  retablie(carriere) {
+    if (carriere.age_liquidation === null || carriere.age_liquidation === undefined) {
+      return carriere;
+    }
+    const anneeLiquidation = carriere.anneeLiquidation;
+    const vus = new Set();
+    const retablies = new Map();
+    for (const code of [...REGIMES_RETABLIS].sort()) {
+      const droit = this.droitAPension(code, carriere, anneeLiquidation);
+      if (droit === null || vus.has(droit.cleRegimes)) {
+        continue;
+      }
+      vus.add(droit.cleRegimes);
+      if (droit.pension || droit.radiation < RETABLISSEMENT_DEPUIS) {
+        continue;
+      }
+      const derniere = droit.lignes[droit.lignes.length - 1];
+      const traitement = derniere.revenuAnnualise * (1.0 - derniere.part_primes);
+      for (const ligne of carriere.lignes) {
+        if (ligne.cotise && ligne.annee <= anneeLiquidation && this.affiliations.regimes(
+          ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
+        ).some((c) => droit.regimes.has(c))) {
+          retablies.set(ligne, traitement * ligne.fraction_annee);
+        }
+      }
+    }
+    if (retablies.size === 0) {
+      return carriere;
+    }
+    return carriere.avecLignes(carriere.lignes.map((ligne) => (
+      retablies.has(ligne)
+        ? new AnneeCarriere({ ...ligne, revenu_retabli: retablies.get(ligne) })
+        : ligne
+    )));
+  }
+
+  /**
+   * Les régimes auxquels cette ligne cotise cette année-là : ceux de son
+   * statut, sauf pour une année RÉTABLIE, qui quitte son régime spécial pour le
+   * régime général et l'Ircantec et garde le RAFP. Voir `_regimes_de`.
+   */
+  regimesDe(ligne, annee, anneeEntree = null, revenu = null, plafond = null) {
+    const regimes = this.affiliations.regimes(
+      ligne.affiliation, annee, anneeEntree, revenu, plafond,
+    );
+    if (!(ligne.revenu_retabli > 0)) {
+      return regimes;
+    }
+    let cibles = [];
+    for (const statut of STATUTS_DU_RETABLISSEMENT) {
+      cibles = [...this.affiliations.regimes(statut, annee)];
+      if (cibles.length > 0) {
+        break;
+      }
+    }
+    return [...cibles, ...regimes.filter((code) => !REGIMES_RETABLIS.has(code))];
+  }
+
   /** Les membres dans l'ordre de la chaîne, du plus ancien à l'absorbant. */
   chaineDepuis(membres) {
     const restants = new Set(membres);
@@ -1282,8 +1448,8 @@ export class ScenarioActuel {
       if (ligne.annee > anneeLiquidation) {
         continue;
       }
-      for (const code of this.affiliations.regimes(
-        ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
+      for (const code of this.regimesDe(
+        ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
         ligne.cotise ? ligne.revenu : ligne.revenu_reference,
         this.macro.plafond_securite_sociale.valeur(ligne.annee),
       )) {
@@ -1320,7 +1486,8 @@ export class ScenarioActuel {
    * aucun — le libéral, dont le régime de base est en points —, les autres
    * répondent. `null` quand aucun régime connu n'est parcouru.
    */
-  ageOuvertureDroit(carriere) {
+  ageOuvertureDroit(carriereSaisie) {
+    const carriere = this.retablie(carriereSaisie);
     const { annuites, autres: enPoints } = this.periodesParcourues(carriere);
     const autres = this.sansAgesPropres(enPoints);
     const retenues = annuites.length > 0 ? annuites : autres;
@@ -1420,7 +1587,8 @@ export class ScenarioActuel {
     return communes.length > 0 ? communes : periodes;
   }
 
-  ageTauxPleinDroit(carriere) {
+  ageTauxPleinDroit(carriereSaisie) {
+    const carriere = this.retablie(carriereSaisie);
     const { annuites, autres: enPoints } = this.periodesParcourues(carriere);
     const autres = this.sansAgesPropres(enPoints);
     const retenues = annuites.length > 0 ? annuites : autres;
@@ -2227,44 +2395,15 @@ export class ScenarioActuel {
    * « estimée ».
    */
   droitRegimeSpecial(periode, carriere, anneeLiquidation) {
-    // Les trois régimes interpénétrés se lisent ensemble : la durée exigée
-    // porte sur tous les services de L. 5, et le recrutement comme la
-    // radiation sont ceux de la carrière publique entière.
-    let regimes = this.regimesInterpenetres(carriere);
-    if (!regimes.has(periode.regime)) {
-      regimes = new Set([periode.regime]);
-    }
-    const statuts = this.affiliations.codes.filter((code) => {
-      for (const route of this.regimesRoutes([code])) {
-        if (regimes.has(route)) {
-          return true;
-        }
-      }
-      return false;
-    });
-    const borne = borneCarriere(carriere);
-    const servies = carriere.dureeDeService(statuts, borne);
-    const bornes = carriere.bornesDeService(statuts, borne);
-    if (bornes === null) {
+    // Les trois régimes interpénétrés se lisent ensemble : voir `droitAPension`.
+    const droit = this.droitAPension(periode.regime, carriere, anneeLiquidation);
+    if (droit === null) {
       return null;
     }
-    const [recrutement, derniere] = bornes;
-    // La radiation au 1er janvier qui suit la dernière année de services ; si
-    // elle ne précède pas le départ, l'agent part en fonctions, et c'est le
-    // départ qui la date.
-    const mois = carriere.age_liquidation !== null && carriere.age_liquidation !== undefined
-      ? carriere.dateLiquidation.mois : 1;
-    const depart = `${String(anneeLiquidation).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
-    const radiation = `${String(derniere + 1).padStart(4, "0")}-01-01`;
-    const enFonctions = radiation >= depart;
-    const regle = this.servicesOuvrantPension.annees(
-      periode.regime, enFonctions ? depart : radiation, enFonctions,
-    );
-    const [exigees, fiabilite] = regle ?? [0, Fiabilite.ESTIMEE];
     return [
-      servies + 1e-9 >= exigees,
-      bonificationOuverte(carriere, recrutement, derniere, anneeLiquidation),
-      fiabilite,
+      droit.pension,
+      bonificationOuverte(carriere, droit.recrutement, droit.derniere, anneeLiquidation),
+      droit.fiabilite,
     ];
   }
 
@@ -2283,8 +2422,8 @@ export class ScenarioActuel {
       if (ligne.annee > anneeLiquidation || carriere.trimestresRetenus(ligne) <= 0) {
         continue;
       }
-      for (const code of this.affiliations.regimes(
-        ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
+      for (const code of this.regimesDe(
+        ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
         ligne.cotise ? ligne.revenu : ligne.revenu_reference,
         this.macro.plafond_securite_sociale.valeur(ligne.annee),
       )) {
@@ -2351,8 +2490,11 @@ export class ScenarioActuel {
     return [regle.points_par_annee * retenus / 4, fiabilite];
   }
 
-  calculer(carriere, ignorerPenaliteAge = false, avantagesNonContributifs = true,
+  calculer(carriereSaisie, ignorerPenaliteAge = false, avantagesNonContributifs = true,
     avpf = true, liquiderSuccessions = true, pointsGratuits = null) {
+    // L'agent parti de la fonction publique sans droit à pension y est RÉTABLI
+    // au régime général et à l'Ircantec : voir `retablie`.
+    const carriere = this.retablie(carriereSaisie);
     // `pointsGratuits` nul suit `avantagesNonContributifs` : voir le Python.
     const avecPointsGratuits = pointsGratuits ?? avantagesNonContributifs;
     const anneeLiquidation = carriere.anneeLiquidation;
@@ -2458,8 +2600,8 @@ export class ScenarioActuel {
         servicesLigne = Math.min(servicesLigne, restant);
         budgetServicesPlafonnes.set(plafond, restant - servicesLigne);
       }
-      for (const code of this.affiliations.regimes(
-        ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
+      for (const code of this.regimesDe(
+        ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
         ligne.cotise ? ligne.revenu : ligne.revenu_reference,
         this.macro.plafond_securite_sociale.valeur(ligne.annee),
       )) {
@@ -2536,8 +2678,8 @@ export class ScenarioActuel {
         baseLigne *= part / ligne.fraction_annee;
       }
       const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);
-      for (const code of this.affiliations.regimes(
-        ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
+      for (const code of this.regimesDe(
+        ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
         ligne.cotise ? ligne.revenu : ligne.revenu_reference,
         this.macro.plafond_securite_sociale.valeur(ligne.annee),
       )) {
@@ -2569,6 +2711,11 @@ export class ScenarioActuel {
           // Traitement seul, primes seules — celles du RAFP dans la limite de
           // 20 % du traitement : voir `partDuRevenu`.
           let base = periode.partDuRevenu(baseLigne, ligne.part_primes);
+          if (ligne.revenu_retabli > 0 && periode.assiette !== "primes_uniquement") {
+            // Une année RÉTABLIE : l'Ircantec valide le traitement de l'année,
+            // les primes restent au RAFP.
+            base = baseLigne * (1.0 - ligne.part_primes);
+          }
           // Commissions de la CAVAMAC, produits de l'office de la CPRN : le
           // facteur reconstitue l'assiette depuis le revenu, avant les bornes.
           if (periode.assiette_facteur_revenu !== null

@@ -5436,7 +5436,7 @@ Ce facteur vaut <!--chiffre:mesure(garantie?annee=2020&quoi=facteur)-->0,61<!--/
 <!--chiffre:mesure(part_pib?scenario=garantie&annee=2026)-->0,47<!--/--> % du PIB en 2026 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2026)-->14<!--/--> milliards d'euros de 2026, <!--chiffre:mesure(garantie?annee=2026&quoi=beneficiaires)-->2,8<!--/--> millions de
 bénéficiaires — et <!--chiffre:mesure(part_pib?scenario=garantie&annee=2070)-->0,30<!--/--> % en 2070 — <!--chiffre:mesure(cout_annee?scenario=garantie&annee=2070)-->12<!--/--> milliards, <!--chiffre:mesure(garantie?annee=2070&quoi=beneficiaires)-->2,3<!--/--> millions —, soit
 <!--chiffre:mesure(cumul_avenir?scenario=garantie)-->575<!--/--> milliards constants cumulés sur la projection ; le passé, où le même
-déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 438<!--/--> depuis 1959. Ces chiffres
+déplacement est appliqué à rebours, en porte <!--chiffre:mesure(cumul_passe?scenario=garantie)-->1 437<!--/--> depuis 1959. Ces chiffres
 sont bruts des reprises sur succession ; la sous-section qui suit dit comment
 chacun a été établi.
 
@@ -7392,6 +7392,66 @@ celui que désigne la chaîne des successions. Aucun exemple chiffré publié n'
 été trouvé. Le registre de veille porte la ligne
 `interpenetration_fonction_publique`.
 
+### Le fonctionnaire parti sans droit à pension n'en a pas : il est rétabli au régime général
+
+Qui quitte la fonction publique avant la durée qui ouvre une pension — quinze
+ans de services pour qui est radié avant 2011, deux depuis (R. 4-1 du code des
+pensions) — n'a pas de pension de son régime. Il est « rétabli, en ce qui
+concerne l'assurance vieillesse, dans la situation qu'il aurait eue s'il avait
+été affilié au régime général des assurances sociales et à [l'Ircantec]
+pendant la période où il a été soumis au présent régime » (L. 65 du code des
+pensions ; article 64 du décret n° 2003-1306 pour la CNRACL ; D. 173-15 et
+D. 173-16 du code de la sécurité sociale, qui nomment aussi les ouvriers de
+l'État et la SEITA). Le modèle lui servait une pension de son régime au
+prorata de ses années, comme s'il y avait eu droit, et le régime général ne
+voyait pas ces années.
+
+Deux assiettes, que les textes séparent. Le régime général porte au compte
+« des salaires reconstitués à partir des cotisations rétroactives calculées
+sur la base des derniers émoluments ou de la dernière solde soumis à retenues
+pour pension [...], dans la limite du plafond en vigueur » (circulaire Cnav
+2011/38) : le dernier traitement, pour toutes les années, écrêté au plafond de
+chacune. La période « entre en compte, quel qu'ait été le montant de sa
+rémunération » (D. 173-16). L'Ircantec valide « suivant sa propre
+réglementation » (article 9 du décret n° 70-1277), et le modèle y porte le
+traitement de chaque année. Les primes restent au RAFP, que le rétablissement
+ne touche pas. Le tout pour qui a quitté son régime après le 28 janvier 1950,
+date que la Cnav tient du décret n° 50-133, dont D. 173-16 est issu.
+
+Prenons un agent hospitalier entré à vingt-deux ans, parti au privé à
+trente-cinq, en 1997, et liquidant en 2026 : sans ses quinze ans, la CNRACL
+ne lui doit rien. Le modèle lui servait 6 171 € de la CNRACL, et un régime
+général proratisé sur ses seules années de privé. Rétabli, il reçoit 20 916 €
+du régime général, qui compte désormais ses treize années, et 2 103 € de
+l'Ircantec : sa pension passe de 26 312 à 28 718 €. Dix ans sous l'uniforme
+de 1980 à 1989 déplacent 2,0 %. Le sens peut s'inverser. La mère de deux
+enfants passée un an par l'État en 1984, qui a déjà sa durée au régime
+général, ne gagne rien au régime général et perd les 423 € de pension civile
+que le modèle lui servait sans qu'ils lui soient dus ; l'Ircantec lui en rend
+130.
+
+Le retour dans l'un des trois régimes interpénétrés annule le rétablissement
+(article 64, II, du décret n° 2003-1306) : c'est la même lecture des services
+des trois régimes ensemble, faite pour la pension unique, qui en décide. Les
+trimestres des enfants suivent R. 173-15 : la mère rétablie les reçoit du
+régime général. Et la lecture des textes a corrigé la durée des militaires,
+que le modèle ne distinguait pas des civils : ils ont gardé quinze ans, et la
+loi n° 2014-40 ne leur donne les deux ans de R. 4-1 que s'ils se sont engagés
+à compter du 1er janvier 2014 (article 42, II). Un militaire engagé en 2012 et
+parti en 2016 est donc rétabli.
+
+Ce que le modèle ne fait pas, et le dit. Le militaire reçoit au régime général
+sa dernière solde, et non les salaires forfaitaires par catégorie que la Cnav
+reporte (D. 173-17). L'Ircantec ne prend pas la NBI, qu'elle retient pourtant.
+Sa validation, faite sur demande pour qui a été radié avant 1990, est présumée
+demandée. Les services d'avant le 1er juillet 1930, que D. 173-16 exclut, sont
+rétablis comme les autres. L'agent parti avant le 29 janvier 1950 garde la
+pension au prorata que le modèle lui servait, le droit d'alors n'ayant pas été
+lu. Et les régimes spéciaux qui ont leur propre coordination — la pension de
+sécurité sociale de coordination de la RATP, de la SNCF, des IEG, la Banque de
+France — restent hors du modèle. Aucun exemple chiffré publié n'a été trouvé.
+Le registre de veille porte la ligne `retablissement_fonction_publique`.
+
 ---
 
 ## 5. Ce que le modèle ne calcule pas, et pourquoi
@@ -8600,7 +8660,7 @@ le 19 septembre 2026 :
    **le sens du biais annoncé n'était juste qu'à moitié**. On disait le rapport
    affiché « plutôt un plancher », les départs très précoces que le notionnel
    pénalise le plus étant surreprésentés. C'est vrai des scénarios qui portent
-   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,7<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,6<!--/--> % — et faux du
+   la part patronale — le scénario 4 passe de <!--chiffre:mesure(ecart_passe?scenario=4&ponderation=egale)-->−55,6<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=4)-->−52,6<!--/--> % — et faux du
    scénario 2, qui passe de <!--chiffre:mesure(ecart_passe?scenario=2&ponderation=egale)-->−75,7<!--/--> % à <!--chiffre:mesure(ecart_passe?scenario=2)-->−78,9<!--/--> % : la pondération donne aux
    carrières du privé, que le compte salarial seul pénalise davantage encore,
    les deux tiers du poids. C'était un plancher pour les uns, un plafond pour
@@ -9620,7 +9680,7 @@ barèmes.
   rétablies depuis l'historique du dépôt — le dernier commit où chaque fiche a
   changé —, ce qui est une borne basse : une série relue sans changement avant
   cette date n'a laissé aucune trace.
-- <!--chiffre:tests()-->2487<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
+- <!--chiffre:tests()-->2502<!--/--> tests couvrent le chargement, la fiabilité, la règle de certification, la
   concordance des tables de mortalité observées avec les espérances publiées, les
   propriétés du moteur et le comportement des scénarios : `python -m pytest`.
   Aucun test n'accède au réseau : les sources sont simulées.

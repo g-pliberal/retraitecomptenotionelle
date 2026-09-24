@@ -522,6 +522,7 @@ fichiers:
       "La pension différée d'un fonctionnaire suivait le point d'indice, et la loi la fait suivre les pensions": recit
       "Les trimestres des enfants : un seul régime les accorde, et R. 173-15 dit lequel": recit
       "L'État, la CNRACL et le FSPOEIE ne servent qu'une pension : celle du dernier régime": recit
+      "Le fonctionnaire parti sans droit à pension n'en a pas : il est rétabli au régime général": recit
   # Ce que le modèle calcule, et pourquoi ainsi : tout y est au présent, et une
   # méthodologie périmée décrit un autre modèle que celui qui tourne. Le régime
   # visé est donc `etat` de bout en bout, et ce qui l'empêche n'est jamais le

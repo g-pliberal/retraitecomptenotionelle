@@ -485,6 +485,38 @@ def _cas() -> list[dict]:
         "naissance": "1962", "statut": "militaire", "debut": "18",
         "metier2_debut": "38", "metier2_statut": "fonctionnaire_territorial_hospitalier",
     }))
+    # LE RÉTABLISSEMENT : qui part sans la durée qui ouvre une pension — quinze
+    # ans avant 2011, deux depuis — passe au régime général et à l'Ircantec,
+    # le premier portant le dernier traitement dans la limite du plafond de
+    # chaque année. Treize ans à l'hôpital partis en 1997, dix ans sous
+    # l'uniforme partis en 1990 ; la même hospitalière, que la fin de carrière
+    # sans activité fait entrer au salaire annuel moyen ; trois ans à l'État
+    # partis en 2013, qui ont leur pension ; et quatre ans sous l'uniforme
+    # partis en 2016, rétablis : engagé avant 2014, le militaire garde ses
+    # quinze ans (loi n° 2014-40, article 42, II).
+    cas.append(("metiers_hospitalier_treize_ans_puis_prive", {
+        "naissance": "1962", "statut": "fonctionnaire_territorial_hospitalier",
+        "metier2_debut": "35", "metier2_statut": "salarie_prive_non_cadre",
+    }))
+    cas.append(("metiers_hospitalier_treize_ans_puis_sans_activite", {
+        "naissance": "1962", "statut": "fonctionnaire_territorial_hospitalier",
+        "metier2_debut": "35", "metier2_statut": "salarie_prive_non_cadre",
+        "metier3_debut": "45", "metier3_statut": "sans_activite",
+    }))
+    cas.append(("metiers_militaire_dix_ans_puis_prive", {
+        "naissance": "1962", "statut": "militaire", "debut": "18",
+        "metier2_debut": "28", "metier2_statut": "salarie_prive_non_cadre",
+    }))
+    cas.append(("metiers_etat_trois_ans_depuis_2011", {
+        "naissance": "1985",
+        "metier2_debut": "25", "metier2_statut": "fonctionnaire_etat",
+        "metier3_debut": "28", "metier3_statut": "salarie_prive_non_cadre",
+    }))
+    cas.append(("metiers_militaire_engage_en_2012_quatre_ans", {
+        "naissance": "1985",
+        "metier2_debut": "27", "metier2_statut": "militaire",
+        "metier3_debut": "31", "metier3_statut": "salarie_prive_non_cadre",
+    }))
     # Six métiers : le maximum du formulaire, et cinq changements rapprochés —
     # une année entière ne revient alors à aucun métier en totalité.
     cas.append(("metiers_maximum", {

@@ -30,8 +30,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->6 498<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 435<!--/--> lignes), puis dans les
+(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->6 687<!--/--> lignes)
+et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 607<!--/--> lignes), puis dans les
 témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
@@ -13127,6 +13127,26 @@ d'enfants, se compte sur les trois. Le militaire garde sa pension militaire
 parcours entrent aux témoins. Reste le rétablissement de qui n'a pas la durée
 minimale. Récit dans `docs/limites.md`, « L'État, la CNRACL et le FSPOEIE ne
 servent qu'une pension » ; tests dans `tests/test_interpenetration.py`.
+
+**Puis le rétablissement.** Quatrième reste du lot, sur demande. L'agent qui
+quitte l'État, la CNRACL, le FSPOEIE ou la SEITA sans la durée qui ouvre une
+pension n'a pas de pension de son régime : il est rétabli au régime général et
+à l'Ircantec pour toute la période (L. 65 du code des pensions, D. 173-15 et
+D. 173-16 du code de la sécurité sociale, article 64 du décret n° 2003-1306,
+article 9 du décret n° 70-1277). Le moteur lui servait une pension au prorata.
+Les années rétablies gardent leur statut et changent de régimes : le régime
+général y porte le dernier traitement, écrêté au plafond de chaque année
+(circulaire Cnav 2011/38), l'Ircantec le traitement de l'année, le RAFP garde
+les primes. Un agent hospitalier parti au privé après treize ans passe de
+26 312 à 28 718 € ; la mère de deux enfants passée un an par l'État, qui avait
+déjà sa durée au régime général, perd au contraire une pension civile qui ne
+lui était pas due. La même table des durées a corrigé celle des militaires :
+quinze ans pour qui s'est engagé avant 2014, la loi n° 2014-40 ne donnant les
+deux ans qu'aux engagés depuis (article 42, II). Cinq parcours entrent aux
+témoins. Restent l'Ircantec sans la NBI, la solde militaire au lieu des
+salaires forfaitaires de D. 173-17, et les coordinations propres des autres
+régimes spéciaux. Récit dans `docs/limites.md`, « Le fonctionnaire parti sans
+droit à pension » ; tests dans `tests/test_retablissement.py`.
 
 **Fichiers.** `data/sources_a_explorer.yaml` (l'inventaire et son avancement),
 `docs/exploration_sources.md` (la méthode), `tests/test_sources_a_explorer.py`

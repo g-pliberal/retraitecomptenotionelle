@@ -951,7 +951,8 @@ export class ServicesOuvrantPension {
 
   /**
    * Années de services exigées de l'agent radié à cette date (ISO), et la
-   * fiabilité de la ligne ; null pour un régime que la table ne porte pas.
+   * fiabilité de la ligne ; null pour un régime que la table ne porte pas. La
+   * clé des militaires se lit, elle, à la date du premier engagement.
    * `enFonctions` dit que l'agent part en fonctions, sa radiation ne précédant
    * pas son départ : la SEITA n'exige alors plus rien (article 110 du décret
    * n° 62-766).

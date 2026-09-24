@@ -92,6 +92,12 @@ export class AnneeCarriere {
     //: ASSIETTE MINIMALE du régime de base d'un indépendant (D. 633-2,
     //: D. 642-4), en euros de l'année ; nulle pour tout autre statut.
     assiette_minimale_base = 0.0,
+    //: Salaire porté au compte du régime général quand l'année est RÉTABLIE :
+    //: celle d'un fonctionnaire parti sans droit à pension (L. 65 du code des
+    //: pensions) — le dernier traitement soumis à retenue, sur la fraction de
+    //: l'année (D. 173-16). Zéro ailleurs : seul le scénario 1 le renseigne,
+    //: sur sa propre copie de la carrière. Voir carriere.py.
+    revenu_retabli = 0.0,
   }) {
     Object.assign(this, {
       annee, revenu, affiliation, type_periode, quotite,
@@ -100,7 +106,7 @@ export class AnneeCarriere {
       fraction_annee,
       services_fonction_publique, services_plafond_trimestres_par_enfant,
       reputes_cotises_enveloppe, reputes_cotises_plafond,
-      assiette_minimale_base,
+      assiette_minimale_base, revenu_retabli,
     });
   }
 
@@ -463,6 +469,24 @@ export class Carriere {
    * fait l'autre hypothèse : l'attente se passe sans activité, aucune ligne
    * ne s'ajoute. Voir `carriere.py`.
    */
+  /**
+   * La même carrière, portant d'autres lignes : une carrière ne se modifie pas
+   * après son constructeur, qui veut en changer les lignes en construit une
+   * autre.
+   */
+  avecLignes(lignes) {
+    return new Carriere({
+      annee_naissance: this.annee_naissance,
+      sexe: this.sexe,
+      lignes: [...lignes],
+      mois_naissance: this.mois_naissance,
+      age_liquidation: this.age_liquidation,
+      nombre_enfants: this.nombre_enfants,
+      identifiant: this.identifiant,
+      dates_entree: { ...this.dates_entree },
+    });
+  }
+
   prolongee(ageLiquidation, macro, attenteTravaillee = true) {
     if (this.age_liquidation === null
         || enMois(ageLiquidation) <= enMois(this.age_liquidation)) {
