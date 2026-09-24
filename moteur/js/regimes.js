@@ -697,8 +697,16 @@ export class MinimumGaranti {
       Math.min(fiabiliteBareme, fiabilite)];
   }
 
-  /** Plancher opposable pour une durée de services donnée. */
-  montant(anneeLiquidation, trimestresServices) {
+  /**
+   * Plancher opposable pour une durée de services donnée.
+   *
+   * Sous quinze ans, deux règles : le c de L. 17 — un quinzième de 57,5 % par
+   * année — ne vaut plus, depuis la loi du 9 novembre 2010, que pour
+   * l'invalidité ; le d rapporte le montant plein, par année de services, à la
+   * durée qui ouvre le pourcentage maximum. `dureeMaximum` est ce dénominateur ;
+   * `null` garde le c.
+   */
+  montant(anneeLiquidation, trimestresServices, dureeMaximum = null) {
     const bareme = this.bareme(anneeLiquidation);
     const reference = this.reference(anneeLiquidation);
     if (bareme === null || bareme === undefined || reference === null) {
@@ -710,7 +718,9 @@ export class MinimumGaranti {
       return null;
     }
     let taux;
-    if (duree < MinimumGaranti.SEUIL_BAS) {
+    if (duree < MinimumGaranti.SEUIL_BAS && dureeMaximum) {
+      taux = duree / dureeMaximum;
+    } else if (duree < MinimumGaranti.SEUIL_BAS) {
       taux = part * duree / MinimumGaranti.SEUIL_BAS;
     } else if (duree >= MinimumGaranti.SEUIL_HAUT) {
       taux = 1.0;

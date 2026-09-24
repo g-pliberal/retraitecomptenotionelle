@@ -96992,8 +96992,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 63,646.30 € × taux 75.000% × 170/170",
-       "montant": 47734.72369186003,
+       "detail": "SR 63,646.30 € × taux 76.875% × 170/170",
+       "montant": 48928.091784156524,
        "regime": "fonction_publique_etat"
       },
       {
@@ -97002,12 +97002,12 @@
        "regime": "rafp"
       }
      ],
-     "pension_annuelle": 47734.72369186003,
-     "pension_annuelle_euros_constants": 38096.66687488912,
+     "pension_annuelle": 48928.091784156524,
+     "pension_annuelle_euros_constants": 39049.083546761336,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 3977.893640988336,
-     "taux_remplacement": 0.7320644216691069,
-     "total_contributif": 47734.72369186003
+     "pension_mensuelle": 4077.3409820130437,
+     "taux_remplacement": 0.7503660322108345,
+     "total_contributif": 48928.091784156524
     },
     "notionnel_liberal": {
      "annees_part_employeur": {
@@ -97070,7 +97070,7 @@
      "rente_capitalisation_obligatoire": 3633.7298320794166,
      "rente_capitalisation_volontaire": 1816.8649160397083,
      "taux_remplacement": 0.5539018056924125,
-     "variation_vs_actuel": -0.2381648173887535
+     "variation_vs_actuel": -0.2567461633061008
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
@@ -97100,7 +97100,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.4091006315010886,
-     "variation_vs_actuel": -0.441168537369513
+     "variation_vs_actuel": -0.4547985730434272
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
@@ -97130,7 +97130,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.4765628475690442,
-     "variation_vs_actuel": -0.34901515022068574
+     "variation_vs_actuel": -0.3648928294835957
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -97153,7 +97153,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10274272696596683,
-     "variation_vs_actuel": -0.8596534349644893
+     "variation_vs_actuel": -0.8630765219165749
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {
@@ -97179,7 +97179,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.5724147075720409,
-     "variation_vs_actuel": -0.2180815094565921
+     "variation_vs_actuel": -0.23715269215277268
     }
    },
    "unite": {
@@ -98830,8 +98830,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 49,963.58 € × taux 78.750% × 166/166",
-       "montant": 39346.31683117069,
+       "detail": "SR 49,963.58 € × taux 80.625% × 166/166",
+       "montant": 40283.13389857951,
        "regime": "fonction_publique_etat"
       },
       {
@@ -98840,12 +98840,12 @@
        "regime": "rafp"
       }
      ],
-     "pension_annuelle": 39346.31683117069,
-     "pension_annuelle_euros_constants": 37350.87936663514,
+     "pension_annuelle": 40283.13389857951,
+     "pension_annuelle_euros_constants": 38240.186018221684,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 3278.859735930891,
-     "taux_remplacement": 0.7686676427525623,
-     "total_contributif": 39346.31683117069
+     "pension_mensuelle": 3356.927824881626,
+     "taux_remplacement": 0.7869692532942898,
+     "total_contributif": 40283.13389857951
     },
     "notionnel_liberal": {
      "annees_part_employeur": {
@@ -98909,7 +98909,7 @@
      "rente_capitalisation_obligatoire": 794.8786001198401,
      "rente_capitalisation_volontaire": 397.4393000599201,
      "taux_remplacement": 0.6864618411367516,
-     "variation_vs_actuel": -0.10080197175137362
+     "variation_vs_actuel": -0.12171355380366711
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
@@ -98939,7 +98939,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.6443601790922043,
-     "variation_vs_actuel": -0.16171809081909427
+     "variation_vs_actuel": -0.1812130189395803
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
@@ -98969,7 +98969,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.6622735605866399,
-     "variation_vs_actuel": -0.13841363451300004
+     "variation_vs_actuel": -0.1584505267336278
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -98992,7 +98992,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10038724791767366,
-     "variation_vs_actuel": -0.8694009708042455
+     "variation_vs_actuel": -0.8724381575297282
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {
@@ -99019,7 +99019,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.677022461958635,
-     "variation_vs_actuel": -0.11922601615667117
+     "variation_vs_actuel": -0.13970913206000424
     }
    },
    "unite": {
@@ -105589,8 +105589,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 63,646.30 € × taux 75.000% × 170/170",
-       "montant": 47734.72369186003,
+       "detail": "SR 63,646.30 € × taux 76.875% × 170/170",
+       "montant": 48928.091784156524,
        "regime": "cnracl"
       },
       {
@@ -105599,12 +105599,12 @@
        "regime": "rafp"
       }
      ],
-     "pension_annuelle": 47734.72369186003,
-     "pension_annuelle_euros_constants": 38096.66687488912,
+     "pension_annuelle": 48928.091784156524,
+     "pension_annuelle_euros_constants": 39049.083546761336,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 3977.893640988336,
-     "taux_remplacement": 0.7320644216691069,
-     "total_contributif": 47734.72369186003
+     "pension_mensuelle": 4077.3409820130437,
+     "taux_remplacement": 0.7503660322108345,
+     "total_contributif": 48928.091784156524
     },
     "notionnel_liberal": {
      "annees_part_employeur": {
@@ -105666,7 +105666,7 @@
      "rente_capitalisation_obligatoire": 3633.7298320794166,
      "rente_capitalisation_volontaire": 1816.8649160397083,
      "taux_remplacement": 0.32520648623541537,
-     "variation_vs_actuel": -0.5527117978649456
+     "variation_vs_actuel": -0.5636212662097029
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
@@ -105696,7 +105696,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.4091006315010886,
-     "variation_vs_actuel": -0.441168537369513
+     "variation_vs_actuel": -0.4547985730434272
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
@@ -105726,7 +105726,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.4765628475690442,
-     "variation_vs_actuel": -0.34901515022068574
+     "variation_vs_actuel": -0.3648928294835957
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -105749,7 +105749,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10274272696596683,
-     "variation_vs_actuel": -0.8596534349644893
+     "variation_vs_actuel": -0.8630765219165749
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {
@@ -105774,7 +105774,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.34737276229411923,
-     "variation_vs_actuel": -0.5254888067062332
+     "variation_vs_actuel": -0.5370622504451055
     }
    },
    "unite": {
@@ -107411,8 +107411,8 @@
      "motif_ouverture": "age_legal",
      "par_regime": [
       {
-       "detail": "SR 49,963.58 € × taux 78.750% × 166/166",
-       "montant": 39346.31683117069,
+       "detail": "SR 49,963.58 € × taux 80.625% × 166/166",
+       "montant": 40283.13389857951,
        "regime": "cnracl"
       },
       {
@@ -107421,12 +107421,12 @@
        "regime": "rafp"
       }
      ],
-     "pension_annuelle": 39346.31683117069,
-     "pension_annuelle_euros_constants": 37350.87936663514,
+     "pension_annuelle": 40283.13389857951,
+     "pension_annuelle_euros_constants": 38240.186018221684,
      "pension_hors_repartition": 0.0,
-     "pension_mensuelle": 3278.859735930891,
-     "taux_remplacement": 0.7686676427525623,
-     "total_contributif": 39346.31683117069
+     "pension_mensuelle": 3356.927824881626,
+     "taux_remplacement": 0.7869692532942898,
+     "total_contributif": 40283.13389857951
     },
     "notionnel_liberal": {
      "annees_part_employeur": {
@@ -107488,7 +107488,7 @@
      "rente_capitalisation_obligatoire": 794.8786001198401,
      "rente_capitalisation_volontaire": 397.4393000599201,
      "taux_remplacement": 0.38942563651499157,
-     "variation_vs_actuel": -0.4898904155781204
+     "variation_vs_actuel": -0.5017534291693269
     },
     "notionnel_prospectif": {
      "annees_part_employeur": {},
@@ -107518,7 +107518,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.6443601790922043,
-     "variation_vs_actuel": -0.16171809081909427
+     "variation_vs_actuel": -0.1812130189395803
     },
     "notionnel_prospectif_employeur": {
      "annees_part_employeur": {},
@@ -107548,7 +107548,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.6622735605866399,
-     "variation_vs_actuel": -0.13841363451300004
+     "variation_vs_actuel": -0.1584505267336278
     },
     "notionnel_retroactif": {
      "annees_part_employeur": {},
@@ -107571,7 +107571,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.10038724791767366,
-     "variation_vs_actuel": -0.8694009708042455
+     "variation_vs_actuel": -0.8724381575297282
     },
     "notionnel_retroactif_employeur": {
      "annees_part_employeur": {
@@ -107596,7 +107596,7 @@
      "rente_capitalisation_obligatoire": 0.0,
      "rente_capitalisation_volontaire": 0.0,
      "taux_remplacement": 0.38488253206586515,
-     "variation_vs_actuel": -0.49928615352193173
+     "variation_vs_actuel": -0.510930661579561
     }
    },
    "unite": {

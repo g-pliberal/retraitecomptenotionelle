@@ -384,6 +384,36 @@ exemples:
     carriere: {naissance: "1962-05", sexe: F, affiliation: salarie_prive_non_cadre, liquidation: "2025-05", age_debut: 30, nombre_enfants: 3}
     attendu: {taux_liquidation: 0.4125, majoration_enfants_sur_pensions: 0.10}
 
+  # ---- Service des retraites de l'État -----------------------------------
+  # Les pages « La décote » et « La surcote » de retraitesdeletat.gouv.fr, lues
+  # le 24 septembre 2026 (action 89, lot de la fonction publique de l'État).
+  # La même fonctionnaire y sert deux fois. La date de la pension est celle
+  # que le SRE retient : le PREMIER DU MOIS qui suit la cessation — « 62 ans
+  # 6 mois 11 jours (âge auquel la pension est attribuée) » pour une
+  # fonctionnaire née le 20 mars 1962 et admise à la retraite le 20 septembre
+  # 2024, soit le 1er octobre 2024. Le modèle datant au mois, c'est ce mois-là
+  # qui s'écrit ici ; lu au mois de la cessation, le décompte au trimestre
+  # civil perdrait un trimestre de surcote que la caisse compte.
+  - id: sre_decote_brigitte
+    source: {editeur: "SRE", reference: "retraitesdeletat.gouv.fr, Actif, Le calcul de ma retraite, « La décote », exemple de Brigitte S.", verifie_le: "2026-09-24"}
+    enonce: >-
+      Brigitte S., sédentaire née le 20 mars 1962, admise à la retraite à
+      l'âge légal, 62 ans et 6 mois, avec 163 trimestres de durée d'assurance
+      pour 169 requis : 18 trimestres jusqu'à 67 ans, 6 jusqu'à la durée ; 6
+      trimestres de décote à 1,25 %, soit 7,5 % de la pension.
+    carriere: {naissance: "1962-03", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2024-10", trimestres_valides: 163}
+    attendu: {trimestres_requis: 169, taux_liquidation: 0.69375, motif_ouverture: age_legal}
+
+  - id: sre_surcote_brigitte
+    source: {editeur: "SRE", reference: "retraitesdeletat.gouv.fr, Actif, Le calcul de ma retraite, « La surcote », exemple de Brigitte S.", verifie_le: "2026-09-24"}
+    enonce: >-
+      La même, qui a ses 169 trimestres à 62 ans et 6 mois, poursuit son
+      activité jusqu'à ses 64 ans, le 20 mars 2026, et totalise alors 175
+      trimestres : 175 − 169 = 6 trimestres de surcote à 1,25 %, soit 7,5 %.
+      La pension prend effet le 1er avril 2026.
+    carriere: {naissance: "1962-03", sexe: F, affiliation: fonctionnaire_etat, liquidation: "2026-04", trimestres_valides: 175}
+    attendu: {trimestres_requis: 169, taux_liquidation: 0.80625}
+
   # ---- ENIM (régime des marins) ------------------------------------------
   # Les deux pages que l'Établissement national des invalides de la marine
   # consacre au calcul et aux conditions d'attribution, lues le 22 septembre
