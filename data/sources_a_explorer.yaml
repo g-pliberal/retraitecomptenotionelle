@@ -530,7 +530,7 @@ sources:
     a_en_tirer: >-
       La formule que la caisse applique : 75 %, traitement des six derniers
       mois, durée des services. La fiche du régime est `partiel` à l'inventaire.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_decote
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-decote
@@ -541,7 +541,7 @@ sources:
       Le barème de décote et son âge d'annulation, avec ses exemples chiffrés :
       matière directe pour exemples_officiels.yaml, à côté de la fiche F20349
       déjà rejouée.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_surcote
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-surcote
@@ -551,7 +551,7 @@ sources:
     a_en_tirer: >-
       La surcote de la fonction publique, ses trimestres entiers, et la
       surcote parentale ouverte en 2024.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_duree_assurance
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-duree-dassurance
@@ -561,7 +561,7 @@ sources:
     a_en_tirer: >-
       Ce qui distingue durée de SERVICES et durée d'ASSURANCE — la confusion
       la plus coûteuse du régime, puisque l'une proratise et l'autre décote.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_majoration_enfants
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-majoration-pour-enfants
@@ -571,7 +571,7 @@ sources:
     a_en_tirer: >-
       10 % pour trois enfants, 5 % par enfant au-delà, plafond au dernier
       traitement : à joindre à l'action 43.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_minimum_garanti
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/le-minimum-garanti
@@ -582,7 +582,7 @@ sources:
       Le barème du minimum garanti par années de services, et son indice
       majoré : le dépôt le projette (test_donnees.py le contrôle), il manque
       la lecture chez celui qui l'applique.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_bonifications
     url: https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/les-bonifications
@@ -593,7 +593,7 @@ sources:
       Les bonifications, que le commit du 22 septembre 2026 vient de distinguer
       des majorations : dépaysement, campagne, enfants nés avant 2004. À lire
       pour vérifier que la distinction tient chez la caisse.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_services_valables
     url: https://retraitesdeletat.gouv.fr/actif/carriere/les-services-valables-pour-ma-retraite
@@ -604,7 +604,7 @@ sources:
       Quels services comptent : stage, temps partiel, services auxiliaires
       validés. Le dépôt compte des années pleines ; voici ce que cette maille
       coûte.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_militaires
     url: https://retraitesdeletat.gouv.fr/actif/les-specificites-des-militaires/le-calcul-de-la-pension
@@ -615,7 +615,7 @@ sources:
       La pension militaire : jouissance immédiate, bonifications de campagne,
       durées de services minimales. Population que le dépôt range avec les
       civils, sans le dire.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ensap_rachat_etudes
     url: https://ensap.gouv.fr/web/calculette/rachatetudes
@@ -628,7 +628,7 @@ sources:
       la MÊME grandeur que le dépôt appelle neutralité actuarielle dans le
       système notionnel — le comparer au prix que l'État facture est un
       contrôle de premier ordre.
-    statut: a_explorer
+    statut: en_cours
 
   - id: ensap_pecari
     url: https://ensap.gouv.fr/calculette/pecari/
@@ -639,7 +639,7 @@ sources:
       Calculette officielle de l'ENSAP : identifier ce qu'elle calcule
       exactement et si elle tourne sans compte (l'adresse répond 200 hors
       connexion), puis la balayer.
-    statut: a_explorer
+    statut: en_cours
 
   # ---- CNRACL et Caisse des dépôts --------------------------------------
 
@@ -2327,7 +2327,7 @@ sources:
     a_en_tirer: >-
       Le montant de la retraite d'un agent public, avec exemples chiffrés :
       rejouables tels quels contre le scénario 1.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sp_f16336_montant_salarie
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F16336
@@ -2379,7 +2379,7 @@ sources:
     a_en_tirer: >-
       La durée d'assurance du fonctionnaire, et sa différence d'avec la durée
       de services — la distinction que le dépôt doit tenir des deux côtés.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sp_f2971_csg_crds
     url: https://www.service-public.gouv.fr/particuliers/vosdroits/F2971
@@ -2850,7 +2850,7 @@ sources:
       Carrière longue, catégorie active, invalidité, parent de trois enfants :
       les départs anticipés de la fonction publique, dont plusieurs ont été
       fermés par étapes. Le dépôt doit dater chaque fermeture.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_cumul_emploi_retraite
     url: https://retraitesdeletat.gouv.fr/actif/je-prepare-ma-retraite/jenvisage-dexercer-une-activite-pendant-ma-retraite
@@ -2860,7 +2860,7 @@ sources:
     a_en_tirer: >-
       Le cumul emploi-retraite d'un ancien fonctionnaire, avec son écrêtement
       propre : à mettre en regard de la CNRACL et de l'Agirc-Arrco.
-    statut: a_explorer
+    statut: en_cours
 
   - id: enim_reversion
     url: https://www.enim.eu/retraite/pension-de-reversion
@@ -3452,7 +3452,7 @@ sources:
       La retenue pour pension civile, sa série de taux et son assiette : la
       fiche de l'État est `partiel`, et la contribution employeur est portée à
       part dans `legislation/contribution_employeur_public.csv`.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_ameliorer_retraite
     url: https://retraitesdeletat.gouv.fr/actif/carriere/comment-ameliorer-ma-retraite
@@ -3463,7 +3463,7 @@ sources:
       Rachat d'études, surcotisation du temps partiel, prolongation : la liste
       des leviers, par le liquidateur, donc la liste de ce que le modèle doit
       savoir refuser ou appliquer.
-    statut: a_explorer
+    statut: en_cours
 
   - id: sre_retraite_progressive
     url: https://retraitesdeletat.gouv.fr/actif/lage-de-depart/la-retraite-progressive
@@ -3473,7 +3473,7 @@ sources:
     a_en_tirer: >-
       La retraite progressive des fonctionnaires d'État, ouverte en 2023 :
       conditions, quotité, et fraction de pension servie.
-    statut: a_explorer
+    statut: en_cours
 
   - id: surcot_ac_aix_marseille
     url: https://appli.ac-aix-marseille.fr/surcot/
@@ -3486,7 +3486,7 @@ sources:
       balayer donne le PRIX que l'État fait payer à un fonctionnaire pour
       racheter la quotité non travaillée — la grandeur que le système notionnel
       calcule, lui, par neutralité actuarielle.
-    statut: a_explorer
+    statut: en_cours
 
   - id: rafp_calcul_paiement_prestation
     url: https://www.rafp.fr/actif/activite/calcul-et-paiement-votre-prestation-rafp
@@ -3517,7 +3517,7 @@ sources:
     a_en_tirer: >-
       La FAQ de la DGAFP : elle tranche les cas que les fiches laissent
       ouverts, et elle vaut pour les trois versants de la fonction publique.
-    statut: a_explorer
+    statut: en_cours
 
   - id: fonction_publique_rafp_volontaire
     url: https://www.fonction-publique.gouv.fr/toutes-les-actualites/tout-savoir-sur-la-cotisation-volontaire-au-regime-de-retraite-additionnelle-de-la-fonction-publique
