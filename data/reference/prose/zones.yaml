@@ -153,6 +153,11 @@ fichiers:
       # d'un changement du modèle, en lignes de code des deux côtés.
       "Feuille de route — les actions qui font le plus progresser le modèle": etat
 
+  # L'archive de la feuille de route : ses actions closes et son journal,
+  # déplacés tels quels à la phase 1 (docs/architecture.md, § 9.3). Un récit.
+  docs/archives/feuille_de_route.md:
+    defaut: recit
+
   # ------------------------------------------------------------------------
   # Produit par un script, et déjà tenu par test_le_document_des_regimes_suit_l_inventaire.
   # ------------------------------------------------------------------------

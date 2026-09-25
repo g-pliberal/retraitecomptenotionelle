@@ -107,6 +107,7 @@ RACINE = Path(__file__).resolve().parents[1]
 CATALOGUE = RACINE / "data" / "reference" / "site" / "affirmations.yaml"
 TEMOINS = RACINE / "tests" / "temoins" / "pages.json"
 FEUILLE_DE_ROUTE = RACINE / "docs" / "feuille_de_route.md"
+ARCHIVE_DE_LA_FEUILLE = RACINE / "docs" / "archives" / "feuille_de_route.md"
 ETATS = ("verifiee", "contredite", "hors_modele", "sans_portee")
 #: Longueur minimale d'un extrait. Elle ne vise pas la précision — c'est le
 #: test de présence qui la donne — mais le hasard : une poignée de caractères
@@ -2582,10 +2583,12 @@ def _(m: Modele):
 
 
 def _etats_des_actions() -> dict[int, str]:
-    """Le numéro et l'état de chaque action de la feuille de route."""
+    """Le numéro et l'état de chaque action de la feuille de route, qu'elle
+    soit ouverte, dans la feuille, ou close, dans son archive."""
     motif = re.compile(r"^### (\d+)\. .* — `([^`]+)`\s*$", re.M)
     return {int(numero): etat
-            for numero, etat in motif.findall(FEUILLE_DE_ROUTE.read_text(encoding="utf-8"))}
+            for fichier in (ARCHIVE_DE_LA_FEUILLE, FEUILLE_DE_ROUTE)
+            for numero, etat in motif.findall(fichier.read_text(encoding="utf-8"))}
 
 
 def test_le_catalogue_est_bien_forme():

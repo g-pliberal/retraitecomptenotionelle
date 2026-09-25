@@ -152,6 +152,9 @@ def page() -> str:
     effectifs = lire_csv("data/reference/regimes/effectifs_retraites.csv")
     parts_derives = lire_csv("data/reference/macro/part_droits_derives.csv")
     feuille = (RACINE / "docs" / "feuille_de_route.md").read_text(encoding="utf-8")
+    # Les actions closes sont dans l'archive de la feuille de route (§ 9.3).
+    archive = RACINE / "docs" / "archives" / "feuille_de_route.md"
+    closes = archive.read_text(encoding="utf-8") if archive.is_file() else ""
 
     # Les effectifs de la dernière année, par caisse (DREES, EACR).
     annee_eff = max(r["annee"] for r in effectifs)
@@ -183,7 +186,7 @@ def page() -> str:
         for motif in ("src/**/*.py", "moteur/js/*.js") for p in sorted(RACINE.glob(motif)))
     citees = sum(1 for r in veille if r["id"] in code_source)
 
-    actions = re.findall(r"^### (\d+)\. (.*?) — `([^`]*)`", feuille, re.M)
+    actions = re.findall(r"^### (\d+)\. (.*?) — `([^`]*)`", closes + "\n" + feuille, re.M)
     statuts_actions = collections.Counter(s for _, _, s in actions)
 
     # La part de la réversion la même année que les effectifs.
@@ -276,7 +279,8 @@ def page() -> str:
     w("")
     w(f"**La feuille de route** compte {len(actions)} actions : "
       + ", ".join(f"{n} {s}" for s, n in statuts_actions.most_common()) + ". "
-      "Elle raconte ce qui a été fait ; ce qui reste à faire est ailleurs, dispersé.")
+      "Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui "
+      "reste à faire est ailleurs, dispersé.")
     w("")
     w("## 2. Ce qui ne va pas encore")
     w("")

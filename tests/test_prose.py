@@ -556,3 +556,27 @@ def test_aucun_paragraphe_n_est_repete_a_la_suite():
             if len(courant) > 40 and courant == paragraphes[rang - 1]:
                 doublons.append(f"{chemin.name} : « {courant[:60]}… »")
     assert not doublons, doublons
+
+
+def test_une_action_close_passe_a_l_archive_de_la_feuille_de_route():
+    """La feuille de route ne porte que ce qui vit (docs/architecture.md, § 9.3).
+
+    Une action faite, archivée ou abandonnée passe, telle quelle, à la fin de
+    `docs/archives/feuille_de_route.md` ; une action en cours reste dans la
+    feuille de route, où les sessions ouvrent les leurs. Deux numéros servent
+    deux fois, 37 et 38 : une action se reconnaît à son numéro et à son
+    titre, et n'est jamais des deux côtés.
+    """
+    motif = re.compile(r"^### (\d+)\. (.*) — `([^`]+)`\s*$", re.M)
+    vivantes = motif.findall(
+        (RACINE / "docs" / "feuille_de_route.md").read_text(encoding="utf-8"))
+    closes = motif.findall(
+        (RACINE / "docs" / "archives" / "feuille_de_route.md").read_text(encoding="utf-8"))
+    etats_clos = {"fait", "abandonnée", "archivée"}
+    restees = [f"{n}. {t}" for n, t, etat in vivantes if etat in etats_clos]
+    assert not restees, (
+        f"{restees} : une action close passe, telle quelle, à la fin de "
+        "docs/archives/feuille_de_route.md")
+    rouvertes = [f"{n}. {t}" for n, t, etat in closes if etat not in etats_clos]
+    assert not rouvertes, f"{rouvertes} : une action ouverte n'est pas dans l'archive"
+    assert not {(n, t) for n, t, _ in vivantes} & {(n, t) for n, t, _ in closes}
