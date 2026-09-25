@@ -14,15 +14,15 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | régime partiel | 4 268 431 | 11 % |
 | sections libérales, couverture mêlée | 424 386 | 1 % |
 
-*Modélisé ne veut pas dire exact* : les 24 règles approchées de la veille touchent aussi des régimes modélisés (section 2).
+*Modélisé ne veut pas dire exact* : les 25 règles approchées de la veille touchent aussi des régimes modélisés (section 2).
 
 **Les règles suivies en veille** : 98.
 
 | État | Règles |
 |---|---|
-| conformes | 44 |
+| conformes | 43 |
 | transcrites | 21 |
-| approchées | 24 |
+| approchées | 25 |
 | hors modèle | 5 |
 | manquantes | 3 |
 | à vérifier | 1 |
@@ -79,6 +79,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `cultes_salaire_annuel_moyen` | approximation | Le salaire annuel moyen est désormais fait du forfait de chaque année, dans les deux moteurs (`_assiette_de_reference`) : le ministre décla… |
 | `date_effet_mois_suivant` | approximation | Le modèle liquide au mois de l'anniversaire : un mois d'écart, visible là où un texte coupe au mois (nés en décembre 1965, carrière longue). |
 | `decote_crpn` | approximation | L'âge d'annulation passe de 65 à 60 ans pour toute liquidation depuis 2012, et la décote se compte sur la durée seule depuis 2022. |
+| `majoration_duree_assurance_enfants` | approximation | Le modèle sert d'un coup les huit trimestres par enfant que le décret de 2003 attribue un par un, de la naissance au septième anniversaire. |
 | `majoration_enfants_liberaux_avocats` | approximation | Les fiches de la CNAVPL, de la CNBF et de sa complémentaire ne la portaient pas : 10 % de pension en moins pour tout parent de trois enfant… |
 | `marins_salaire_de_reference` | approximation | Le modèle prend la catégorie de la DERNIÈRE année, rangée par le revenu, et compte les services au trimestre |
 | `minimum_vieillesse` | approximation | Les plus petites pensions |
@@ -89,7 +90,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `sections_liberales_majoration_enfants` | approximation | Aucune des trois fiches ne la portait : 10 % de complémentaire en moins pour tout parent de trois enfants. |
 | `un_statut_par_annee` | approximation | DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux moteurs : chacune verse à son régime, sur son revenu, et… |
 
-**Un état peut-être périmé.** Pour 17 des 24 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : la fiche séparera l'effet actuel de l'historique.
+**Un état peut-être périmé.** Pour 17 des 25 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : la fiche séparera l'effet actuel de l'historique.
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 

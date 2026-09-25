@@ -437,11 +437,33 @@ entrees:
       - {type: circulaire_cnav, reference: "circulaire carrière 2017-01 du 13 janvier 2017, fiche n° 6.2b, point 2 : « Quatre trimestres peuvent être attribués au titre de chaque majoration »", date: "2017-01-13"}
       - {type: service_public, reference: "fiche F16336, quatre trimestres de maternité et quatre d'éducation par enfant", date: "2026-08-14"}
       - {type: service_public, reference: "fiche F37311, bonification de la fonction publique : quatre trimestres par enfant né avant 2004, deux depuis", date: "2026-09-01"}
-    verifie_le: "2026-09-21"
+      - {type: legifrance, reference: "L. 351-4 CSS, ses quatorze rédactions dans l'index LEGI, de LEGIARTI000006742625 (1985) à LEGIARTI000053280393", date: "2025-12-31"}
+      - {type: legifrance, reference: "D. 351-1-7 CSS, version LEGIARTI000006736529 : un trimestre à la naissance, puis un à chacune des dates anniversaires, dans la limite de sept", date: "2003-12-30"}
+      - {type: legifrance, reference: "loi n° 75-3 du 3 janvier 1975, LEGITEXT000006068508, datée du 1er juillet 1974 dans l'index ; son article 11 (LEGIARTI000006755935) et son article 21 (LEGIARTI000006755945) : « A l'exclusion des articles du titre II, les dispositions de la présente loi s'appliquent au 1er juillet 1974 »", date: "1974-07-01"}
+      - {type: legifrance, reference: "décret n° 75-109 du 24 février 1975, article 20 (LEGIARTI000006762047) : ses articles 4 à 8 et 11 à 19, dont l'article 16 sur la majoration des mères (LEGIARTI000006762040), « s'appliquent aux avantages prenant effet postérieurement au 30 juin 1974 »", date: "1975-02-26"}
+      - {type: legifrance, reference: "L. 12 CPCMR, version LEGIARTI000006362696 (« interrompu ») et LEGIARTI000023096747 (« interrompu ou réduit »), et R. 13 CPCMR, version LEGIARTI000023449727", date: "2011-01-01"}
+    verifie_le: "2026-09-25"
     temoins: [sp_f16336_mda_deux_enfants, cnav_2017_01_mda_trois_enfants, sp_f37311_bonification_avant_2004, sp_f37311_bonification_depuis_2004]
     reformes: [parents_2026]
-    etat: conforme
-    effet: "Toute mère ; commande la décote, la proratisation, la surcote parentale et le SAM des parents. Dans la fonction publique, un trimestre change de case sans changer de nombre."
+    etat: approximation
+    effet: >-
+      Le modèle sert d'un coup les huit trimestres par enfant que le décret
+      de 2003 attribue un par un, de la naissance au septième anniversaire.
+      Entre le 30 décembre 2003, où cette version de D. 351-1-7 entre en
+      vigueur, et le 1er avril 2010, où la réécriture de L. 351-4 s'applique
+      aux pensions, la mère dont un enfant a moins de sept ans à la date
+      d'effet en reçoit donc trop ; effet non mesuré. Les pensions prenant
+      effet au second semestre 1974 reçoivent quatre trimestres par enfant, à
+      partir du deuxième, quand la loi n° 75-3, qui en donne huit dès le
+      premier, s'applique « au 1er juillet 1974 » hors son titre II
+      (article 21), et son décret aux avantages prenant effet après le
+      30 juin 1974 (décret n° 75-109, article 20). Les cinq rédactions de L. 351-4 qui
+      changent le droit depuis 2013 ne sont pas découpées en versions, sans
+      effet sur les résultats d'aujourd'hui, qui présument la mère seule
+      bénéficiaire. Relu dans l'index LEGI le 25 septembre 2026. La règle
+      touche toute mère : elle commande la décote, la proratisation, la
+      surcote parentale et le SAM des parents ; dans la fonction publique, un
+      trimestre change de case sans changer de nombre.
     a_faire: >-
       LU, ET LA RÉPONSE EST NON. La question posée ici était de savoir si la
       bonification d'un trimestre créée pour les enfants nés depuis 2004
@@ -473,6 +495,35 @@ entrees:
       et durée sera porté : c'est exactement la grandeur que ce partage ne
       déplace pas. Ce partage, lui, n'aura de témoin que le jour où une fiche
       de calcul publiée en donnera un prorata chiffré.
+      CONSTATS DU 25 SEPTEMBRE 2026, CONSIGNÉS SANS ÊTRE CORRIGÉS (la note
+      de décision 0001 les avait faits en écrivant ses fiches d'exemple, et
+      cette session les a relus mot à mot dans l'index LEGI) : (1) couper la
+      version de 2003 de L. 351-4 (LEGIARTI000006742627, « un trimestre pour
+      toute année durant laquelle elles ont élevé un enfant [...] dans la
+      limite de huit trimestres ») et de D. 351-1-7, qui attribue ces
+      trimestres un par un ; (2) avancer au 1er juillet 1974 la borne de
+      1975 : l'article 21 de la loi n° 75-3 l'applique « au 1er juillet 1974 »
+      à l'exclusion de son titre II, et l'article 20 du décret n° 75-109
+      applique ses articles 11 à 19, dont l'article 16 sur la majoration des
+      mères, aux avantages prenant effet après le 30 juin 1974. L'index ne
+      donne ni la structure de la loi ni l'article qui modifie L. 342-1 ; que
+      le titre II soit celui des articles 7 et 8, les seuls que l'index date
+      du 4 janvier 1975 (formation professionnelle, limites d'âge des emplois
+      publics), est à lire au Journal officiel du 4 janvier 1975, dont l'index
+      JORF n'a que les titres ; (3) couper L. 351-4 aux rédactions qui changent le droit :
+      les parents de même sexe (2013, LEGIARTI000027432121), le tuteur et le
+      délégataire de l'autorité parentale (2016, LEGIARTI000033713911), le
+      plancher de deux trimestres pour la mère et le décès de l'enfant avant
+      quatre ans (avril 2023, LEGIARTI000047453184), le retrait de l'autorité
+      parentale et la condamnation pénale (septembre 2023,
+      LEGIARTI000047456714), l'abrogation du IX pour les pensions prenant
+      effet à compter du 1er septembre 2026 (LEGIARTI000053280393) ; (4) dans
+      la fonction publique, du 1er janvier au 30 juin 2011, R. 13 admet déjà
+      « une interruption ou une réduction de l'activité » quand L. 12 b ne dit
+      « interrompu ou réduit » que pour les pensions prenant effet à compter
+      du 1er juillet 2011 (loi n° 2010-1330, article 118 II) : à trancher par
+      la circulaire d'application ; le modèle présume la condition remplie.
+      Aucun exemple publié n'a été trouvé pour ces fenêtres.
     prochaine_veille: "2026-12-31"
 
   - id: priorite_majorations_enfants
@@ -5844,3 +5895,44 @@ journal:
       NBI à l'Ircantec, les services d'avant juillet 1930, les départs d'avant
       le 29 janvier 1950 ; les coordinations propres de la SNCF, de la RATP,
       des IEG et de la Banque de France.
+
+  - date: "2026-09-25"
+    session: "architecture, après la phase 0 : les constats du scénario 1 que la note 0001 avait laissés"
+    consulte: >-
+      veille_droit.py, et la mise à jour de l'index LEGI : cinq incréments
+      jusqu'au 25 septembre 2026, L. 161-17-2 et L. 161-17-3 sans version
+      postérieure au 31 décembre 2025. Dans l'index LEGI : les quatorze
+      rédactions de L. 351-4 du code de la sécurité sociale depuis 1985, les
+      deux de D. 351-1-7, les huit de L. 12 et les six de R. 13 du code des
+      pensions civiles et militaires, la loi n° 75-3 du 3 janvier 1975
+      (LEGITEXT000006068508), ses articles 11 et 21, et le décret n° 75-109
+      du 24 février 1975. Dans l'index JORF, récupéré le même jour : la loi
+      et son décret, dont il n'a que les titres. Les pages de l'INSEE et de la
+      DREES qui publient le code de Destinie 2 et de TRAJECTOiRE. Les effets
+      des vingt-quatre règles déjà approchées au registre.
+    trouve: >-
+      Les six constats de docs/decisions/0001/phase_0.md, tous confirmés au
+      texte. De fin 2003 à 2010, D. 351-1-7 accorde les trimestres d'enfants
+      un par un, à la naissance puis à chaque anniversaire, huit au plus, et
+      le modèle en sert huit d'un coup. L'index date la loi n° 75-3 du
+      1er juillet 1974, son article 21 l'applique à cette date hors son
+      titre II, et l'article 20 de son décret applique aux avantages prenant
+      effet après le 30 juin 1974 l'article 16, sur la majoration des mères ;
+      le modèle fait partir en 1975 les huit trimestres par enfant. Cinq rédactions de L. 351-4 changent le droit depuis 2013
+      sans être découpées en versions. Au premier semestre 2011, R. 13 admet
+      la réduction d'activité que L. 12 b ne nomme qu'à partir des pensions
+      du 1er juillet. La ligne majoration_duree_assurance_enfants passe de
+      conforme à approximation, et le dit. La feuille de route, action 26,
+      disait TRAJECTOiRE et Destinie « pas publiés » : leur code l'est,
+      Destinie 2 sur GitHub (InseeFr/Destinie-2), TRAJECTOiRE à la DREES sous
+      licence EUPL. Et dix-sept des vingt-quatre règles déjà approchées racontent
+      l'erreur corrigée sans dire ce qui reste : le tableau de bord le compte.
+    reste: >-
+      Aucun constat n'est corrigé dans le modèle : la version de 2003 et son
+      décret, la borne de 1974, les cinq rédactions de L. 351-4, la question
+      de R. 13 au premier semestre 2011. Les effets des règles approchées sont
+      à réécrire au présent, un par un, à la lecture de chaque règle. Aucun
+      exemple publié pour ces fenêtres. Le Journal officiel du 4 janvier 1975
+      est à lire pour la structure de la loi n° 75-3, que l'index JORF ne
+      donne pas : c'est lui qui dira si la majoration des mères est hors du
+      titre II, et donc due dès le 1er juillet 1974.

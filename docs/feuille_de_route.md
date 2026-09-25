@@ -16797,9 +16797,8 @@ l'octet :
   erreur. Puis la documentation rangée par nature, et le contrôle de
   conservation.
 - Les constats faits en chemin sur le scénario 1, que
-  `docs/decisions/0001/phase_0.md` liste (« Ce qui vient après ») : à
-  consigner dans `veille.yaml` et ici par une session qui suit la procédure
-  de veille. Aucun n'est corrigé.
+  `docs/decisions/0001/phase_0.md` liste (« Ce qui vient après ») : consignés
+  le 25 septembre 2026 par la procédure de veille (plus bas), aucun corrigé.
 
 Le propriétaire a tranché le même jour ce que le § 10 laissait ouvert :
 `python -m pytest` reste la suite complète, qu'on passe avant d'envoyer sur
@@ -16831,3 +16830,36 @@ que GitHub exécutait sous Node 24 avec un avertissement, sont passées à leurs
 dernières versions, qui tournent sous Node 24 : `checkout@v7`,
 `setup-python@v7`, `setup-node@v7`. Aucune de leurs ruptures ne touche une
 option qu'emploient ces workflows.
+
+**Les constats du scénario 1, consignés sans être corrigés.** En écrivant ses
+fiches d'exemple, la note 0001 avait relevé sur le scénario 1 des écarts
+qu'elle ne corrigeait pas. Une session les a relus le 25 septembre 2026 dans
+l'index LEGI, mot à mot, par la procédure de veille, et ils tiennent tous.
+Pour les pensions prenant effet de la fin de 2003 au 1er avril 2010,
+`D. 351-1-7` attribue les trimestres d'enfants un par un, à la naissance puis
+à chaque anniversaire, huit au plus. Le modèle en sert huit d'un coup. La loi
+n° 75-3, qui porte la majoration à huit trimestres dès le premier enfant,
+s'applique « au 1er juillet 1974 » hors son titre II (article 21), et son
+décret applique aux avantages prenant effet après le 30 juin 1974 l'article
+sur la majoration des mères ; le modèle ne l'applique qu'à partir de 1975. Le
+Journal officiel du 4 janvier 1975 reste à lire, pour savoir ce que couvre le
+titre II : l'index n'a pas la structure de la loi. Cinq rédactions de `L. 351-4` changent le droit depuis 2013 sans être
+découpées en versions : les parents de même sexe, le tuteur, le plancher de
+deux trimestres pour la mère, le retrait de l'autorité parentale,
+l'abrogation du IX. Au premier semestre 2011 enfin, `R. 13` du code des
+pensions civiles et militaires admet la réduction d'activité, que `L. 12` b
+ne nomme que pour les pensions prenant effet à compter du 1er juillet. La
+ligne `majoration_duree_assurance_enfants` de `veille.yaml` passe donc de
+`conforme` à `approximation` : son effet dit ce que le modèle approche, son
+`a_faire` ce qu'il faut couper, avec les identifiants des versions. Le
+journal de veille dit ce qui a été lu. Aucun exemple publié n'a été trouvé
+pour ces fenêtres.
+
+Deux constats de plus. L'action 26 disait les modèles des administrations
+« pas publiés ». Le code de Destinie 2, de l'INSEE, l'est sur GitHub
+(`InseeFr/Destinie-2`, sous GPL) ; celui de TRAJECTOiRE, de la DREES, l'est
+sous EUPL. L'architecture les range déjà parmi les autres modèles (§ 3.4).
+Et pour dix-sept des vingt-quatre règles déjà approchées au registre, l'effet
+raconte l'erreur corrigée sans dire ce qui reste approché : le tableau de bord
+le compte. Chacun de ces effets est à réécrire au présent, à la relecture de
+sa règle.
