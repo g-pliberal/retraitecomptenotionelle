@@ -193,6 +193,10 @@ python -m pytest && bash scripts/pousser.sh
 Modèle de retraite français en comptes notionnels appliqué rétroactivement.
 Le livrable est le site statique ; voir `README.md`.
 
+**L'architecture du dépôt est décidée** : `docs/decisions/0001-architecture.md`,
+gelée. La session qui lance sa première phase commence par
+`docs/decisions/0001/phase_0.md`, qui dit quoi faire et dans quel ordre.
+
 - Modèle de référence, en Python : `src/`
 - Données (barèmes, régimes, séries) : `data/`
 - Tous les régimes, calculés ou non : `data/reference/regimes/inventaire.yaml`.

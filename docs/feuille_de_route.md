@@ -16750,3 +16750,22 @@ de règles des pages agrégées), `scripts/mesures_prose.py` (la sonde
 coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`,
 `README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
 fabriqués.
+
+### 130. L'architecture du dépôt : décidée, la phase 0 à lancer — `en cours`
+
+Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
+moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
+prose et de registres écrits à la main, et la suite de tests prenait dix
+minutes et demie. Une session du 25 septembre 2026 en a cherché la cause, puis
+a conçu une architecture. Trois séries de vérifications et une contre-épreuve
+l'ont éprouvée, et le propriétaire l'a décidée le même jour :
+`docs/decisions/0001-architecture.md`, version 5.4. Il y a élargi le principe
+des références à tous les modèles publics, gardé toutes les sources, et fixé
+la règle des simulateurs officiels : ne jamais solliciter les caisses. Rien du
+modèle n'a changé.
+
+**Ce qui reste ouvert.** La phase 0 : l'état de l'architecture dans
+`docs/architecture.md`, le tableau de bord, les tests sur GitHub, la suite
+rapide. Une nouvelle session la lance depuis `docs/decisions/0001/phase_0.md`.
+Ce fichier liste aussi les constats faits en chemin sur le scénario 1, à
+consigner par la procédure de veille.
