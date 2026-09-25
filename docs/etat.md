@@ -27,7 +27,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | manquantes | 3 |
 | à vérifier | 1 |
 
-- Confrontées à au moins un exemple officiel : **22 sur 98** (54 exemples, tous reproduits : le test n'admet pas d'exemple qui échoue).
+- Confrontées à au moins un exemple officiel : **22 sur 98** (54 exemples : 54 reproduits, aucun en écart connu).
 - Citées dans le code par leur identifiant : **12 sur 98**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Réformes du calendrier : 109, dont 11 déclarées non appliquées.
 
@@ -91,6 +91,8 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `un_statut_par_annee` | approximation | DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux moteurs : chacune verse à son régime, sur son revenu, et… |
 
 **Un état peut-être périmé.** Pour 17 des 25 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : la fiche séparera l'effet actuel de l'historique.
+
+**Aucun exemple officiel en écart connu** : le modèle reproduit tous ceux que le dépôt a transcrits. Un exemple qu'il ne reproduirait pas entrerait quand même, et se lirait ici.
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 

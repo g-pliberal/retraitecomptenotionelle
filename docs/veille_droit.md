@@ -81,7 +81,10 @@ Journal officiel par l'index DILA.
    arrondis, les dates d'effet.
 3. Chercher un exemple chiffré publié. S'il existe, il entre dans
    `exemples_officiels.yaml` et le test le rejoue. S'il n'existe pas, la ligne
-   du registre reste `transcrit`.
+   du registre reste `transcrit`. Si le modèle ne le reproduit pas, il entre
+   quand même, en écart connu : la valeur que rend le modèle et
+   l'explication, dans son champ `ecart_connu`, et la ligne du registre
+   passe à `approximation` ou `a_verifier`.
 4. Écrire la ligne du registre, ou la mettre à jour : sources, date, état.
 5. Donner à la donnée le niveau de fiabilité qu'elle mérite (`certifiee` si
    recontrôlée automatiquement, `haute` si lue, `moyenne` si lue mais

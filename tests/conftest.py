@@ -78,6 +78,7 @@ EXCEPTIONS = {
     # Les exemples officiels sont des règles, et la suite rapide les joue.
     ("test_oracle.py", "test_les_exemples_publies_par_les_caisses_sont_reproduits"): "rapide",
     ("test_oracle.py", "test_le_temoin_des_exemples_officiels_est_source"): "rapide",
+    ("test_oracle.py", "test_un_ecart_connu_entre_et_ne_change_pas_en_silence"): "rapide",
     # Le portage JavaScript, rejoué contre le Python : deux moteurs.
     ("test_cumul_activites.py",
      "test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard"): "complet",

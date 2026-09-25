@@ -64,6 +64,25 @@
 # l'impose. Les dates s'écrivent année-mois : le modèle ne connaît pas le jour,
 # et la pension prend effet le premier du mois.
 #
+# UN EXEMPLE QUE LE MODÈLE NE REPRODUIT PAS ENTRE QUAND MÊME, à l'état
+# « écart connu » (docs/architecture.md, § 9.2) : ce qu'on apprend n'est
+# jamais bloqué. Il porte alors un champ de plus :
+#
+#   ecart_connu:
+#     modele: {taux_liquidation: 0.4375}   # ce que rend le modèle, par grandeur
+#     explication: >-
+#       pourquoi le modèle s'écarte de la caisse, et ce qu'il faudrait changer
+#     veille: decote_regime_general        # la ligne de veille qui le déclare
+#     depuis: "2026-09-25"
+#
+# La ligne de veille nommée n'est ni `conforme` ni `transcrit`, et compte
+# l'exemple parmi ses `temoins` : l'écart est déclaré là où il va. Le test
+# vérifie que le modèle rend la valeur déclarée pour lui. S'il rend la valeur
+# publiée, l'écart est corrigé, et le champ se retire ; s'il rend autre chose,
+# le résultat a changé, et seul le diff de ce fichier peut l'accepter. Un
+# exemple qui passait ne devient donc pas « écart connu » en silence. Le
+# tableau de bord, docs/etat.md, compte et liste ces écarts.
+#
 # Ce que la confrontation a trouvé, et quand, est raconté dans
 # docs/limites.md, § « Ce que disent les exemples publiés par les caisses ».
 

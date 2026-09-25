@@ -1475,6 +1475,7 @@ def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
 # ---------------------------------------------------------------------------
 
 EXEMPLES_OFFICIELS = TEMOIN.parent / "exemples_officiels.yaml"
+VEILLE = TEMOINS.parents[1] / "data" / "reference" / "legislation" / "veille.yaml"
 
 
 def _charger_exemples() -> list[dict]:
@@ -1535,6 +1536,143 @@ def _carriere_exemple(simulateur: Simulateur, exemple: dict, decalage_mois: int 
     raise AssertionError(f"{exemple['id']} : aucune carrière ne donne {cible} trimestres")
 
 
+def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str):
+    """Ce que le scénario 1 rend pour une grandeur du témoin, écrit comme le
+    témoin l'écrit : c'est ce qui se compare à la valeur publiée, et, pour un
+    écart connu, à la valeur que le modèle rendait quand on l'a déclaré."""
+    from retraite_notionnelle.calendrier import en_mois
+
+    actuel = simulateur.scenario_actuel
+    if cle in ("trimestres_requis", "trimestres_valides", "taux_liquidation",
+               "motif_ouverture", "liquidation_ouverte"):
+        return getattr(resultat, cle)
+    if cle == "age_ouverture":
+        return actuel.age_ouverture_droit(carriere)
+    if cle == "date_age_legal":
+        atteint = carriere.date_naissance.plus_mois(
+            en_mois(actuel.age_ouverture_droit(carriere)))
+        return f"{atteint.annee}-{atteint.mois:02d}"
+    if cle == "trimestres_de_majoration_enfants":
+        # La caisse publie le nombre de trimestres qu'elle ajoute par
+        # enfant ; le test le mesure en rejouant la MÊME carrière sans
+        # enfant. C'est un écart, pas un total : il ne dépend ni de l'âge
+        # d'entrée ni de la durée requise de la génération.
+        _, sans = _carriere_exemple(simulateur, exemple, sans_enfants=True)
+        return resultat.trimestres_valides - sans.trimestres_valides
+    if cle == "majoration_enfants_sur_pensions":
+        # L'assiette de la majoration pour enfants, mesurée sur ce que le
+        # modèle sert : la circulaire dit qu'elle porte sur la retraite
+        # TELLE QUE CALCULÉE, surcote comprise. Appliquer les 10 % à la
+        # pension d'avant la surcote rendrait ici moins que le taux publié.
+        #
+        # Et sur la pension du RÉGIME DE BASE, dont la caisse publie
+        # l'exemple, non sur le total : le témoin divisait la majoration de
+        # tous les régimes par toutes les pensions, et ne valait 10 % que
+        # parce que le modèle servait aussi 10 % à tous les points de
+        # l'Agirc-Arrco — ce que l'accord ne fait pas (5 % aux points Arrco
+        # de 1999 à 2011).
+        majoration = next(
+            (a for a in resultat.avantages_appliques
+             if a.code == "majoration_enfants"), None)
+        if majoration is None:
+            return "aucune majoration pour enfants servie"
+        base = {p.regime: p.montant for p in resultat.pensions_par_regime
+                if p.type_calcul == "annuites"}
+        part = sum(montant for regime, montant in majoration.par_regime
+                   if regime in base)
+        return part / sum(base.values())
+    if cle == "non_ouverte_un_trimestre_plus_tot":
+        _, plus_tot = _carriere_exemple(simulateur, exemple, decalage_mois=-3)
+        return plus_tot.motif_ouverture == "non_ouverte"
+    if cle == "pension_base_sur_sam":
+        periode = simulateur.catalogue["regime_general"].periode(
+            carriere.annee_liquidation)
+        sam = actuel.salaire_de_reference(
+            "regime_general", carriere, periode, carriere.annee_liquidation,
+            True, carriere.annee_naissance)
+        base = next(p.montant for p in resultat.pensions_par_regime
+                    if p.regime == "regime_general")
+        return base / sam
+    if cle == "coefficients_des_regimes":
+        # Le coefficient d'anticipation ou de majoration qu'une section
+        # applique à sa complémentaire, tel que la formule affichée
+        # l'écrit ; aucun coefficient écrit vaut 1.
+        coefficients = {}
+        for p in resultat.pensions_par_regime:
+            lu = re.search(r"coefficient (?:d'anticipation|de majoration) ([0-9.]+)",
+                           p.detail)
+            coefficients[p.regime] = float(lu.group(1)) if lu else 1.0
+        return coefficients
+    if cle == "pension_regime_general_mensuelle":
+        base = next(p.montant for p in resultat.pensions_par_regime
+                    if p.regime == "regime_general")
+        return base / 12
+    if cle == "pensions_annuelles_des_regimes":
+        # La pension annuelle brute d'un régime nommé : ce que publie un
+        # régime dont la pension ne tient ni à un taux ni à un salaire.
+        return {p.regime: p.montant for p in resultat.pensions_par_regime}
+    raise AssertionError(f"grandeur inconnue dans le témoin : {cle}")
+
+
+#: Les grandeurs qui se comparent à une tolérance près ; les autres, à
+#: l'égalité. ``age_ouverture`` prend la tolérance relative de pytest.
+TOLERANCES = {
+    "taux_liquidation": {"abs": 1e-6},
+    "age_ouverture": {},
+    "majoration_enfants_sur_pensions": {"abs": 1e-9},
+    "pension_base_sur_sam": {"abs": 1e-9},
+    "coefficients_des_regimes": {"abs": 1e-9},
+    "pension_regime_general_mensuelle": {"abs": 0.05},
+    "pensions_annuelles_des_regimes": {"abs": 0.5},
+}
+
+
+def _concorde(cle: str, mesure, valeur) -> bool:
+    """La mesure du modèle vaut-elle la valeur écrite au témoin ?"""
+    if cle in ("liquidation_ouverte", "non_ouverte_un_trimestre_plus_tot"):
+        return mesure is bool(valeur)
+    if cle == "date_age_legal":
+        return mesure == f"{_mois(valeur).annee}-{_mois(valeur).mois:02d}"
+    if isinstance(mesure, str) and cle in TOLERANCES:
+        return False  # la mesure dit pourquoi elle n'en est pas une
+    if cle == "coefficients_des_regimes":
+        # Un régime nommé que le modèle ne sert pas n'a pas de coefficient.
+        return all(regime in mesure and mesure[regime] == pytest.approx(c, abs=1e-9)
+                   for regime, c in valeur.items())
+    if cle == "pensions_annuelles_des_regimes":
+        # Un régime nommé que le modèle ne sert pas lui verse zéro.
+        return all(mesure.get(regime, 0.0) == pytest.approx(montant, abs=0.5)
+                   for regime, montant in valeur.items())
+    if cle in TOLERANCES:
+        return mesure == pytest.approx(valeur, **TOLERANCES[cle])
+    return mesure == valeur
+
+
+def _confronter(simulateur: Simulateur, exemple: dict) -> list[tuple]:
+    """Ce qui sépare le modèle du témoin : rien, s'il concorde.
+
+    Une grandeur que l'exemple déclare en écart connu (``ecart_connu``) doit
+    rendre la valeur déclarée pour le modèle : si elle rend la valeur publiée,
+    l'écart est corrigé et sa déclaration se retire ; si elle rend autre
+    chose, le résultat a changé, et c'est le diff du témoin qui l'accepte.
+    """
+    carriere, resultat = _carriere_exemple(simulateur, exemple)
+    declares = (exemple.get("ecart_connu") or {}).get("modele") or {}
+    problemes = []
+    for cle, valeur in exemple["attendu"].items():
+        mesure = _mesurer(simulateur, exemple, carriere, resultat, cle)
+        if cle not in declares:
+            if not _concorde(cle, mesure, valeur):
+                problemes.append((cle, mesure, "au lieu de la valeur publiée", valeur))
+        elif _concorde(cle, mesure, valeur):
+            problemes.append((cle, mesure, "est la valeur publiée : l'écart connu est "
+                              "corrigé, sa déclaration se retire du témoin"))
+        elif not _concorde(cle, mesure, declares[cle]):
+            problemes.append((cle, mesure, "au lieu de la valeur que l'écart connu "
+                              "déclare", declares[cle]))
+    return problemes
+
+
 @pytest.mark.parametrize("exemple", _charger_exemples(), ids=lambda e: e["id"])
 def test_les_exemples_publies_par_les_caisses_sont_reproduits(simulateur, exemple):
     """Chaque exemple est une carrière minuscule dont la réponse est écrite
@@ -1543,101 +1681,58 @@ def test_les_exemples_publies_par_les_caisses_sont_reproduits(simulateur, exempl
     relecture du même code ni un autre modèle. Le témoin dit d'où vient chaque
     exemple et ce qu'il attend ; `docs/limites.md` dit ce que la confrontation
     a trouvé.
-    """
-    from retraite_notionnelle.calendrier import en_mois
 
-    actuel = simulateur.scenario_actuel
-    carriere, resultat = _carriere_exemple(simulateur, exemple)
-    attendu = exemple["attendu"]
-    for cle, valeur in attendu.items():
-        if cle == "trimestres_requis":
-            assert resultat.trimestres_requis == valeur, (cle, resultat.trimestres_requis)
-        elif cle == "trimestres_valides":
-            assert resultat.trimestres_valides == valeur, (cle, resultat.trimestres_valides)
-        elif cle == "taux_liquidation":
-            assert resultat.taux_liquidation == pytest.approx(valeur, abs=1e-6), (
-                cle, resultat.taux_liquidation)
-        elif cle == "motif_ouverture":
-            assert resultat.motif_ouverture == valeur, (cle, resultat.motif_ouverture)
-        elif cle == "liquidation_ouverte":
-            assert resultat.liquidation_ouverte is bool(valeur)
-        elif cle == "age_ouverture":
-            assert actuel.age_ouverture_droit(carriere) == pytest.approx(valeur)
-        elif cle == "date_age_legal":
-            atteint = carriere.date_naissance.plus_mois(
-                en_mois(actuel.age_ouverture_droit(carriere)))
-            assert (atteint.annee, atteint.mois) == (
-                _mois(valeur).annee, _mois(valeur).mois), (cle, str(atteint))
-        elif cle == "trimestres_de_majoration_enfants":
-            # La caisse publie le nombre de trimestres qu'elle ajoute par
-            # enfant ; le test le mesure en rejouant la MÊME carrière sans
-            # enfant. C'est un écart, pas un total : il ne dépend ni de l'âge
-            # d'entrée ni de la durée requise de la génération.
-            _, sans = _carriere_exemple(simulateur, exemple, sans_enfants=True)
-            assert resultat.trimestres_valides - sans.trimestres_valides == valeur, (
-                cle, resultat.trimestres_valides - sans.trimestres_valides)
-        elif cle == "majoration_enfants_sur_pensions":
-            # L'assiette de la majoration pour enfants, mesurée sur ce que le
-            # modèle sert : la circulaire dit qu'elle porte sur la retraite
-            # TELLE QUE CALCULÉE, surcote comprise. Appliquer les 10 % à la
-            # pension d'avant la surcote rendrait ici moins que le taux publié.
-            #
-            # Et sur la pension du RÉGIME DE BASE, dont la caisse publie
-            # l'exemple, non sur le total : le témoin divisait la majoration de
-            # tous les régimes par toutes les pensions, et ne valait 10 % que
-            # parce que le modèle servait aussi 10 % à tous les points de
-            # l'Agirc-Arrco — ce que l'accord ne fait pas (5 % aux points Arrco
-            # de 1999 à 2011).
-            majoration = next(
-                (a for a in resultat.avantages_appliques
-                 if a.code == "majoration_enfants"), None)
-            assert majoration is not None, "aucune majoration pour enfants servie"
-            base = {p.regime: p.montant for p in resultat.pensions_par_regime
-                    if p.type_calcul == "annuites"}
-            part = sum(montant for regime, montant in majoration.par_regime
-                       if regime in base)
-            assert part / sum(base.values()) == pytest.approx(valeur, abs=1e-9), (
-                cle, part / sum(base.values()))
-        elif cle == "non_ouverte_un_trimestre_plus_tot":
-            _, plus_tot = _carriere_exemple(simulateur, exemple, decalage_mois=-3)
-            assert plus_tot.motif_ouverture == "non_ouverte", plus_tot.motif_ouverture
-        elif cle == "pension_base_sur_sam":
-            periode = simulateur.catalogue["regime_general"].periode(
-                carriere.annee_liquidation)
-            sam = actuel.salaire_de_reference(
-                "regime_general", carriere, periode, carriere.annee_liquidation,
-                True, carriere.annee_naissance)
-            base = next(p.montant for p in resultat.pensions_par_regime
-                        if p.regime == "regime_general")
-            assert base / sam == pytest.approx(valeur, abs=1e-9)
-        elif cle == "coefficients_des_regimes":
-            # Le coefficient d'anticipation ou de majoration qu'une section
-            # applique à sa complémentaire, tel que la formule affichée
-            # l'écrit ; aucun coefficient écrit vaut 1.
-            pensions = {p.regime: p for p in resultat.pensions_par_regime}
-            for regime, coefficient in valeur.items():
-                detail = pensions[regime].detail
-                lu = re.search(r"coefficient (?:d'anticipation|de majoration) ([0-9.]+)",
-                               detail)
-                assert (float(lu.group(1)) if lu else 1.0) == pytest.approx(
-                    coefficient, abs=1e-9), (cle, regime, detail)
-        elif cle == "pension_regime_general_mensuelle":
-            base = next(p.montant for p in resultat.pensions_par_regime
-                        if p.regime == "regime_general")
-            assert base / 12 == pytest.approx(valeur, abs=0.05), base / 12
-        elif cle == "pensions_annuelles_des_regimes":
-            # La pension annuelle brute d'un régime nommé : ce que publie un
-            # régime dont la pension ne tient ni à un taux ni à un salaire.
-            pensions = {p.regime: p.montant for p in resultat.pensions_par_regime}
-            for regime, montant in valeur.items():
-                assert pensions.get(regime, 0.0) == pytest.approx(montant, abs=0.5), (
-                    cle, regime, pensions.get(regime))
-        else:
-            raise AssertionError(f"grandeur inconnue dans le témoin : {cle}")
+    Un exemple que le modèle ne reproduit pas entre quand même, en écart
+    connu (`docs/architecture.md`, § 9.2) : ce qu'on apprend n'est jamais
+    bloqué. Le test tient alors la valeur que le modèle rend, pour qu'aucun
+    résultat ne change sans le diff du témoin.
+    """
+    problemes = _confronter(simulateur, exemple)
+    assert not problemes, problemes
+
+
+def test_un_ecart_connu_entre_et_ne_change_pas_en_silence(simulateur):
+    """Le mécanisme de l'écart connu, sur un exemple réel qu'on fausse.
+
+    Le modèle reproduit la décote de la fiche F19666. On prête à l'exemple une
+    autre valeur publiée : sans déclaration, il est refusé ; déclaré en écart
+    connu, il passe ; déclaré avec une autre valeur du modèle, il est refusé,
+    puisque le résultat aurait changé sans le diff du témoin. Et l'exemple
+    vrai, déclaré en écart, est refusé aussi : l'écart est corrigé, sa
+    déclaration doit se retirer.
+    """
+    import copy
+
+    vrai = next(e for e in _charger_exemples() if e["id"] == "sp_f19666_decote")
+    modele = vrai["attendu"]["taux_liquidation"]
+
+    faux = copy.deepcopy(vrai)
+    faux["attendu"]["taux_liquidation"] = modele + 0.01
+    assert _confronter(simulateur, faux)
+    faux["ecart_connu"] = {"modele": {"taux_liquidation": modele}}
+    assert not _confronter(simulateur, faux)
+    faux["ecart_connu"]["modele"]["taux_liquidation"] = modele + 0.005
+    assert _confronter(simulateur, faux)
+
+    corrige = copy.deepcopy(vrai)
+    corrige["ecart_connu"] = {"modele": {"taux_liquidation": modele}}
+    ((cle, _, pourquoi),) = _confronter(simulateur, corrige)
+    assert cle == "taux_liquidation" and "corrigé" in pourquoi
 
 
 def test_le_temoin_des_exemples_officiels_est_source():
-    """Chaque exemple dit qui l'a publié, où, et quand il a été vérifié."""
+    """Chaque exemple dit qui l'a publié, où, et quand il a été vérifié.
+
+    Un écart connu dit en plus la valeur que rend le modèle, pourquoi, depuis
+    quand, et la ligne de veille qui le déclare : une règle qui n'est ni
+    `conforme` ni `transcrit`, et qui compte l'exemple parmi ses témoins. Ce
+    qu'un exemple révèle est déclaré là où il va (§ 9.2), et un écart ne
+    s'admet pas sans que sa règle le dise.
+    """
+    import yaml
+
+    veille = {entree["id"]: entree for entree in yaml.safe_load(
+        VEILLE.read_text(encoding="utf-8"))["entrees"]}
     for exemple in _charger_exemples():
         source = exemple["source"]
         assert source["editeur"] in (
@@ -1648,3 +1743,15 @@ def test_le_temoin_des_exemples_officiels_est_source():
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", source["verifie_le"]), exemple["id"]
         assert len(exemple["enonce"].split()) >= 12, exemple["id"]
         assert exemple["attendu"], exemple["id"]
+        ecart = exemple.get("ecart_connu")
+        if ecart is None:
+            continue
+        assert set(ecart) == {"modele", "explication", "veille", "depuis"}, exemple["id"]
+        assert ecart["modele"], exemple["id"]
+        assert set(ecart["modele"]) <= set(exemple["attendu"]), exemple["id"]
+        assert len(str(ecart["explication"]).split()) >= 12, exemple["id"]
+        assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(ecart["depuis"])), exemple["id"]
+        regle = veille.get(ecart["veille"])
+        assert regle is not None, (exemple["id"], ecart["veille"])
+        assert regle["etat"] not in ("conforme", "transcrit"), (exemple["id"], regle["etat"])
+        assert exemple["id"] in (regle.get("temoins") or []), (exemple["id"], regle["id"])

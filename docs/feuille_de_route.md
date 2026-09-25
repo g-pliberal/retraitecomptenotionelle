@@ -16791,11 +16791,9 @@ l'octet :
 
 **Ce qui reste ouvert.**
 
-- La phase 1 (§ 11), en tête : l'état « écart connu » des exemples
-  officiels (§ 9.2). `tests/test_oracle.py` exige aujourd'hui que tous
-  passent, ce qui empêche d'enregistrer un exemple qui montrerait une
-  erreur. Puis la documentation rangée par nature, et le contrôle de
-  conservation.
+- La phase 1 (§ 11) : la documentation rangée par nature, et le contrôle de
+  conservation. Son premier pas, l'état « écart connu » des exemples
+  officiels (§ 9.2), est fait (plus bas).
 - Les constats faits en chemin sur le scénario 1, que
   `docs/decisions/0001/phase_0.md` liste (« Ce qui vient après ») : consignés
   le 25 septembre 2026 par la procédure de veille (plus bas), aucun corrigé.
@@ -16863,3 +16861,17 @@ Et pour dix-sept des vingt-quatre règles déjà approchées au registre, l'effe
 raconte l'erreur corrigée sans dire ce qui reste approché : le tableau de bord
 le compte. Chacun de ces effets est à réécrire au présent, à la relecture de
 sa règle.
+
+**La phase 1, premier pas : l'écart connu.** Depuis le 25 septembre 2026, un
+exemple officiel que le modèle ne reproduit pas entre quand même dans
+`tests/temoins/exemples_officiels.yaml`, avec un champ `ecart_connu` : la
+valeur que rend le modèle, l'explication, la date, et la ligne de veille qui
+déclare l'écart. Cette ligne ne peut être ni `conforme` ni `transcrit`, et
+compte l'exemple parmi ses témoins. Le test compare chaque grandeur publiée à
+la mesure du modèle ; pour une grandeur en écart, il exige la valeur déclarée.
+Si le modèle rend la valeur publiée, l'écart est corrigé, et sa déclaration se
+retire ; s'il rend autre chose, le résultat a changé, et seul le diff du témoin
+l'accepte. Le tableau de bord compte et liste ces écarts ; aucun exemple n'y
+est ce jour-là. Pour s'assurer que rien ne se compare à vide, chacune des
+121 grandeurs publiées a été faussée tour à tour : toutes ont été détectées,
+et toutes, déclarées en écart avec la valeur du modèle, ont été admises.

@@ -113,6 +113,17 @@ def premiere(texte) -> str:
     return re.split(r"(?<=[.;:])\s", " ".join(str(texte or "").split()), maxsplit=1)[0]
 
 
+def grandeur(v) -> str:
+    """Une grandeur d'exemple officiel, telle qu'une cellule la montre."""
+    if isinstance(v, dict):
+        return ", ".join(f"{k} {grandeur(x)}" for k, x in v.items())
+    if isinstance(v, bool):
+        return "oui" if v else "non"
+    if isinstance(v, float):
+        return f"{v:g}".replace(".", ",")
+    return str(v)
+
+
 def pct(a: float, b: float) -> str:
     return f"{100 * a / b:.0f} %" if b else "—"
 
@@ -164,6 +175,9 @@ def page() -> str:
 
     etat = collections.Counter(r["etat"] for r in veille)
     avec_exemple = sum(1 for r in veille if r.get("temoins"))
+    # Un exemple que le modèle ne reproduit pas entre quand même, en écart
+    # connu (docs/architecture.md, § 9.2).
+    ecarts_connus = [e for e in exemples if e.get("ecart_connu")]
     code_source = "\n".join(
         p.read_text(encoding="utf-8", errors="ignore")
         for motif in ("src/**/*.py", "moteur/js/*.js") for p in sorted(RACINE.glob(motif)))
@@ -248,7 +262,9 @@ def page() -> str:
         w(f"| {nom} | {etat.get(cle, 0)} |")
     w("")
     w(f"- Confrontées à au moins un exemple officiel : **{avec_exemple} sur {len(veille)}** "
-      f"({len(exemples)} exemples, tous reproduits : le test n'admet pas d'exemple qui échoue).")
+      f"({len(exemples)} exemples : {len(exemples) - len(ecarts_connus)} reproduits, "
+      + (f"{len(ecarts_connus)} en écart connu, section 2)." if ecarts_connus
+         else "aucun en écart connu)."))
     w(f"- Citées dans le code par leur identifiant : **{citees} sur {len(veille)}**. "
       "Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.")
     w(f"- Réformes du calendrier : {len(reformes)}, dont {len(non_appliquees)} déclarées "
@@ -286,6 +302,22 @@ def page() -> str:
       "règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans "
       "dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : "
       "la fiche séparera l'effet actuel de l'historique.")
+    w("")
+    if ecarts_connus:
+        w("**Les exemples officiels que le modèle ne reproduit pas**, entrés en écart "
+          "connu, avec la règle qui le déclare :")
+        w("")
+        w("| Exemple | Grandeur | Publié | Modèle | Règle |")
+        w("|---|---|---|---|---|")
+        for e in ecarts_connus:
+            ecart = e["ecart_connu"]
+            for cle, valeur in ecart["modele"].items():
+                w(f"| `{e['id']}` | {cle} | {grandeur(e['attendu'][cle])} | "
+                  f"{grandeur(valeur)} | `{ecart['veille']}` |")
+    else:
+        w("**Aucun exemple officiel en écart connu** : le modèle reproduit tous ceux que "
+          "le dépôt a transcrits. Un exemple qu'il ne reproduirait pas entrerait quand même, "
+          "et se lirait ici.")
     w("")
     w("## 3. Ce qui reste à faire, et par quoi commencer")
     w("")

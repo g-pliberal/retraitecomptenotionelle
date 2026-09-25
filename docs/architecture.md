@@ -1439,10 +1439,12 @@ lecteur. Rien ne doit l'empêcher d'entrer, pas même le tableau de bord.
   Il ne bloque pas un écart déclaré.
 - **Un exemple officiel que le modèle ne reproduit pas entre quand même**, à
   l'état « écart connu », avec la valeur que donne le modèle et l'explication.
-  Aujourd'hui, le test exige que tous les exemples passent : un exemple qui
-  montrerait une erreur ne peut pas entrer tant qu'elle n'est pas corrigée.
-  L'inverse reste interdit : un exemple qui passait ne devient pas « écart
-  connu » en silence. Ce serait une régression, et le diff la montre.
+  Dans `tests/temoins/exemples_officiels.yaml`, c'est un champ `ecart_connu`,
+  qui nomme la ligne de veille déclarant l'écart, et que le tableau de bord
+  liste. Le test vérifie que le modèle rend la valeur déclarée : s'il rend la
+  valeur publiée, l'écart est corrigé et sa déclaration se retire. L'inverse
+  reste interdit : un exemple qui passait ne devient pas « écart connu » en
+  silence. Ce serait une régression, et le diff la montre.
 - **Les cliquets ne comptent que ce qui n'est pas déclaré**, jamais les
   problèmes connus. Une loi nouvelle ajoute des rédactions à l'index : le
   script qui les apporte les inscrit « à examiner », datées, et aucun cliquet
