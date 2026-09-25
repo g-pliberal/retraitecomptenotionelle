@@ -1490,11 +1490,13 @@ de la prose ; un script les affiche à la demande.
    données, la prose, la carte des règles (§ 6.7). Aucun ne refuse ce qui est
    déclaré (§ 9.2).
 
-Tout tourne sur GitHub à chaque envoi sur `main` ; en local, le premier niveau
-se lance seul. Les deux tests les plus longs, les chiffres ancrés et les
-témoins, sont découpés (leur durée, à sa date : note 0001, § 10). Les témoins
-se découpent par domaine et par étape. Les vues et les fichiers fabriqués se
-régénèrent ; ils ne se fusionnent jamais à la main.
+Tout tourne sur GitHub à chaque envoi sur `main`, par
+`.github/workflows/tests.yml`, dont le verdict se lit dans l'onglet Actions ;
+en local, le premier niveau se lance seul. Les deux tests les plus longs, les
+chiffres ancrés et les témoins, sont découpés (leur durée, à sa date : la
+note 0001, § 10). Les témoins se découpent par domaine et par étape. Les vues
+et les fichiers fabriqués se régénèrent ; ils ne se fusionnent jamais à la
+main.
 
 ---
 

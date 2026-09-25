@@ -1,0 +1,50 @@
+# La suite complète des tests, à chaque envoi sur main (docs/architecture.md,
+# § 10 : « Tout tourne sur GitHub à chaque envoi sur `main` »).
+#
+# Le dépôt pousse directement sur main, sans pull request (CLAUDE.md) : ce
+# workflow ne bloque rien. Il dit après coup si un envoi a cassé quelque
+# chose, et quel test : le verdict se lit dans l'onglet Actions, et sur la
+# page du commit, à côté de son message.
+#
+# C'est la suite COMPLÈTE, celle que `python -m pytest` lance : les témoins
+# joués par les deux moteurs, les pages, la prose, le chiffrage. Elle se
+# répartit d'elle-même sur les cœurs du runner (le greffon
+# `retraite_notionnelle.pytest_parallele`), et `node` y rejoue le portage
+# JavaScript. Chaque envoi a son exécution : deux envois rapprochés tournent
+# côte à côte, et aucun n'annule l'autre.
+#
+# Il se lance aussi à la main, sur n'importe quelle branche (onglet Actions,
+# « Run workflow »).
+
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Installer le paquet et ses outils de test
+        run: pip install -e '.[dev]'
+
+      - name: La suite complète
+        run: python -m pytest
