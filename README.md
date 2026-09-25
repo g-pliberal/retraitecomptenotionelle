@@ -1314,7 +1314,7 @@ docs/
   chiffrage_plf.md              dépenses, recettes et solde de la proposition, année par année,
                                 et les hypothèses fragiles (tableaux produits par script)
 
-tests/                          2520 tests Python
+tests/                          les tests : python -m pytest, et -m rapide en travaillant
   temoins/                      chiffres et pages figés depuis le modèle Python,
                                 et les relevés d'OpenFisca-France-Pension qui
                                 servent de contre-expertise au scénario 1
@@ -1370,13 +1370,13 @@ Sans cible, la suite se répartit d'elle-même sur les cœurs (pytest-xdist) ;
 avec une cible — un fichier, un test —, elle tourne en série, ce qui est plus
 lisible pour un seul test.
 
-<!--chiffre:tests()-->2520<!--/--> tests couvrent le chargement et la fiabilité des données, la
+Les tests couvrent le chargement et la fiabilité des données, la
 règle de certification, la calibration des tables de mortalité et sa concordance
 avec les tables observées, les propriétés du moteur (monotonie du diviseur,
 cliquet de l'âge de référence, règles de fusion), le comportement des scénarios,
-le rendu des pages et la fraîcheur de ce que charge le site. Ce compte-là est
-recalculé à chaque contrôle de la prose — un nombre que rien ne recoupe finit
-toujours par mentir. Aucun test n'accède au réseau : les sources sont simulées.
+le rendu des pages et la fraîcheur de ce que charge le site. Leur nombre, qui
+change à chaque session, ne s'écrit plus ici : `python scripts/tableau_de_bord.py
+--cout` l'affiche. Aucun test n'accède au réseau : les sources sont simulées.
 
 Une vingtaine d'entre eux tiennent l'accessibilité : contrastes mesurés dans les
 deux thèmes, titres et en-têtes de ligne des tableaux, étiquettes et groupes du

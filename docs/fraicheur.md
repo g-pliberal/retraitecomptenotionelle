@@ -134,9 +134,10 @@ chiffre du dépôt n'est un souvenir.
 Trois angles morts, nommés d'avance plutôt que découverts plus tard.
 
 - **Les blocs de code.** Une ancre y serait visible, puisque rien n'y est
-  masqué. L'arborescence du README annonce le nombre de tests dans un bloc :
-  elle reste tenue par `test_le_README_dit_le_vrai_nombre_de_tests`, écrit
-  pour elle. Un chiffre qui compte a intérêt à sortir du bloc. Un `#` de bloc
+  masqué. L'arborescence du README annonçait le nombre de tests dans un
+  bloc ; ce chiffre, qui décrit le dépôt lui-même, est sorti de la prose
+  (`docs/architecture.md`, § 9.3), et `test_le_README_ne_compte_plus_ses_tests`
+  y veille. Un chiffre qui compte a intérêt à sortir du bloc. Un `#` de bloc
   n'est en revanche plus pris pour un titre : les commentaires du README
   ouvraient autant de sections fantômes, qui gonflaient le cliquet et, plus
   grave, coupaient en deux la section réelle qui les contient.

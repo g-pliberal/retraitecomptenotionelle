@@ -55,10 +55,9 @@ def zonage():
 def test_aucun_chiffre_ancre_n_a_derive(zonage):
     """Chaque chiffre ancré est recalculé, et doit tomber juste.
 
-    C'est le contrôle qui remplace les tests écrits un par un : là où
-    `test_le_README_dit_le_vrai_nombre_de_tests` tient un chiffre et un seul,
-    celui-ci tient tous ceux qu'on a ancrés, et le suivant sans rien écrire de
-    plus que l'ancre.
+    C'est le contrôle qui remplace les tests écrits un par un : là où un test
+    tenait un chiffre et un seul, celui-ci tient tous ceux qu'on a ancrés, et
+    le suivant sans rien écrire de plus que l'ancre.
     """
     anomalies, _ = verifier_prose.controler(zonage, corriger=False)
     derives = [a for a in anomalies if a.genre == "derive"]

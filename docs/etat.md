@@ -122,4 +122,4 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 - **Ce que personne n'a encore noté.** Le dénominateur est aujourd'hui la mémoire des registres ; la liste de contrôle des textes (phase 2) en fera la loi elle-même.
 - **La réorganisation.** Les règles du code qui ont leur fiche, et les registres devenus des vues, se compteront quand la carte existera (phase 2).
 - **Les limites propres à une simulation.** Le site les montrera avec chaque résultat.
-- **Le coût du travail** se relève sur l'historique git, et change à chaque commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`.
+- **Le coût du travail** se relève sur l'historique git, et change à chaque commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`, avec la taille du dépôt — ses lignes, ses tests —, que la prose ne porte plus.

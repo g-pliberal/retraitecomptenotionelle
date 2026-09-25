@@ -3726,50 +3726,29 @@ def test_la_correction_des_trois_generations_se_retrouve(contexte):
         assert écrit in corps, f"« {écrit} » a disparu de la page"
 
 
-def test_le_README_dit_le_vrai_nombre_de_tests():
-    """Troisième chiffre de données annoncé en prose, et le plus volatil.
+def test_le_README_ne_compte_plus_ses_tests():
+    """Le nombre de tests décrit le dépôt lui-même, et il sort de la prose.
 
-    Le README annonçait 321 tests et `docs/limites.md` 390 : le dépôt en
-    comptait 520. Les deux phrases étaient vraies le jour où elles ont été
-    écrites, et aucune n'a suivi. C'est la même dérive que « 472 tests pour
-    485 », déjà corrigée à la main une fois — la corriger à la main ne suffit
-    donc pas, il faut que quelque chose compte.
-
-    Le décompte se fait par une collecte pytest dans un PROCESSUS SÉPARÉ.
-    Interroger la session courante donnerait un nombre faux dès que quelqu'un
-    lance un sous-ensemble (`-k`, un fichier) : le test échouerait sans qu'une
-    ligne du dépôt ait bougé.
-
-    Ce test ne survit que pour l'arborescence du README, qui annonce le compte
-    DANS UN BLOC DE CODE : une ancre y serait visible, et `verifier_prose.py`
-    n'y touche donc pas — c'est le premier de ses angles morts, nommé dans
-    `docs/fraicheur.md`. Les deux autres phrases qui donnaient ce compte, dans
-    le README et dans `limites.md`, portent maintenant la sonde `tests()` et se
-    corrigent toutes seules.
+    Le README annonçait 321 tests et `docs/limites.md` 390 quand le dépôt en
+    comptait 520. Une sonde, `tests()`, les avait ensuite tenus justes ; mais
+    le compte change à chaque session, et chaque test ajouté obligeait à
+    récrire trois phrases. L'architecture tranche (`docs/architecture.md`,
+    § 9.3) : les chiffres qui décrivent le dépôt lui-même — ses lignes, ses
+    tests — sortent de la prose, et un script les affiche à la demande,
+    `python scripts/tableau_de_bord.py --cout`. Ce test tient la règle là où
+    le compte s'écrivait : l'arborescence du README, qu'aucune ancre ne
+    pouvait tenir, et les deux phrases qui portaient la sonde.
     """
     import re
-    import subprocess
-    import sys
     from pathlib import Path
 
     racine = Path(__file__).resolve().parents[1]
-    collecte = subprocess.run(
-        [sys.executable, "-X", "utf8", "-m", "pytest", "--collect-only", "-q",
-         "-p", "no:cacheprovider", str(racine / "tests")],
-        capture_output=True, text=True, encoding="utf-8", cwd=racine,
-    )
-    compte = re.search(r"(\d+) tests? collected", collecte.stdout)
-    assert compte, f"collecte illisible : {collecte.stdout[-400:]}"
-    reels = int(compte.group(1))
-
-    texte = (racine / "README.md").read_text(encoding="utf-8")
-    annonces = re.findall(r"(\d+) tests Python", texte)
-    assert annonces, "l'arborescence du README n'annonce plus de nombre de tests"
-    for annonce in annonces:
-        assert int(annonce) == reels, (
-            f"l'arborescence du README annonce {annonce} tests, le dépôt en "
-            f"collecte {reels}"
-        )
+    for chemin in ("README.md", "docs/limites.md"):
+        texte = (racine / chemin).read_text(encoding="utf-8")
+        comptes = re.findall(r"\d[\d\s]*\s+tests (?:Python|couvrent)|<!--chiffre:tests\(\)-->", texte)
+        assert not comptes, (
+            f"{chemin} compte encore ses tests ({comptes}) : ce chiffre ne s'écrit "
+            "plus, `python scripts/tableau_de_bord.py --cout` l'affiche")
 
 
 def test_le_README_montre_la_simulation_que_le_modele_calcule_vraiment():

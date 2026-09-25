@@ -392,8 +392,10 @@ def sonde_tests(_: str = "") -> float:
     """Nombre de tests que pytest collecte, compté dans un autre processus.
 
     Dans celui-ci, le compte serait faux dès qu'on lance un sous-ensemble.
-    C'est la leçon de ``test_le_README_dit_le_vrai_nombre_de_tests``, que
-    cette sonde remplace en la rendant disponible à toute la prose.
+    C'était la leçon du test qui tenait le compte du README, que cette sonde a
+    rendue disponible à toute la prose. Le compte des tests en est depuis
+    sorti (``docs/architecture.md``, § 9.3) : ``tableau_de_bord.py --cout``
+    appelle cette sonde pour l'afficher à la demande.
     """
     if not _COMPTE_TESTS:
         collecte = subprocess.run(

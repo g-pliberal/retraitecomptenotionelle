@@ -30,9 +30,8 @@ même des scénarios notionnels, et l'étalon qu'est le scénario 1.
 
 Un coût transversal pèse sur l'ordre : chaque changement du MODÈLE se paie deux
 fois, dans `src/retraite_notionnelle/scenarios/actuel.py`
-(<!--chiffre:lignes(src/retraite_notionnelle/scenarios/actuel.py)-->6 687<!--/--> lignes)
-et dans le portage `moteur/js/` (<!--chiffre:lignes(moteur/js/*.js)-->38 607<!--/--> lignes), puis dans les
-témoins. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
+et dans le portage `moteur/js/`, puis dans les témoins ; leur taille
+s'affiche par `python scripts/tableau_de_bord.py --cout`. Les actions 1 à 3 et 6 n'ont touché que les données et la page Coût ;
 les actions 7, 9, 10 et 11 ont touché les deux moteurs, comme l'action 5, et
 l'action 4 ne les a touchés qu'en surface — deux lignes de chaque côté.
 L'action 13 n'a pas touché le modèle du tout : un script de certification, le
@@ -1656,8 +1655,10 @@ l'octet :
 **Ce qui reste ouvert.**
 
 - La phase 1 (§ 11) : la documentation rangée par nature. L'état « écart
-  connu » des exemples officiels (§ 9.2) et le contrôle de conservation
-  (§ 12) sont faits (plus bas).
+  connu » des exemples officiels (§ 9.2), le contrôle de conservation
+  (§ 12), l'archive de la feuille de route et la sortie des chiffres du
+  dépôt sont faits (plus bas) ; restent les récits de `limites.md` et
+  `CLAUDE.md`.
 - Les constats faits en chemin sur le scénario 1, que
   `docs/decisions/0001/phase_0.md` liste (« Ce qui vient après ») : consignés
   le 25 septembre 2026 par la procédure de veille (plus bas), aucun corrigé.
@@ -1754,3 +1755,17 @@ dièses d'un titre et aux valeurs des chiffres ancrés près. Un récit réécri
 apparaît comme perdu, et c'est voulu : un récit est gelé. S'il faut vraiment
 le réécrire, `--figer --accepter-les-pertes` refige la référence, et le commit
 dit pourquoi.
+
+**La feuille de route rangée**, le même jour. Ses 125 actions closes et son
+journal sont passés, tels quels, dans `docs/archives/feuille_de_route.md` :
+15 157 lignes, contre 1 748 qui restent ici. Le contrôle de conservation n'a
+rien trouvé de perdu, et le déplacement est un commit à lui seul. Le tableau
+de bord et le catalogue des affirmations lisent les deux côtés, et un test
+tient le partage : une action close passe à l'archive.
+
+**Les chiffres du dépôt sortis de la prose** (§ 9.3). Le nombre de tests
+s'écrivait à trois endroits, le README, son arborescence et `limites.md`, et
+chaque test ajouté obligeait à les récrire : trois fois en une journée. Il ne
+s'écrit plus, ni les lignes du moteur et du portage que citait le préambule
+de cette feuille de route ; `python scripts/tableau_de_bord.py --cout` les
+affiche. Le test qui tenait le compte du README tient maintenant son absence.

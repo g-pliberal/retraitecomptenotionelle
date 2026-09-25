@@ -354,7 +354,8 @@ def page() -> str:
     w("- **Les limites propres à une simulation.** Le site les montrera avec chaque "
       "résultat.")
     w("- **Le coût du travail** se relève sur l'historique git, et change à chaque "
-      "commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`.")
+      "commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`, "
+      "avec la taille du dépôt — ses lignes, ses tests —, que la prose ne porte plus.")
     return "\n".join(L) + "\n"
 
 
@@ -405,6 +406,25 @@ def cout(n: int = 400) -> str:
     return "\n".join(L) + "\n"
 
 
+def taille() -> str:
+    """Les chiffres qui décrivent le dépôt lui-même : la prose ne les porte
+    plus, puisqu'ils changent à chaque session (docs/architecture.md, § 9.3)."""
+    sys.path.insert(0, str(RACINE / "scripts"))
+    from verifier_prose import sonde_lignes, sonde_tests
+
+    moteur = sonde_lignes("src/retraite_notionnelle/scenarios/actuel.py")
+    portage = sonde_lignes("moteur/js/*.js")
+    return "\n".join([
+        "## La taille du dépôt",
+        "",
+        f"- le moteur du scénario 1 : {milliers(moteur)} lignes dans "
+        "`src/retraite_notionnelle/scenarios/actuel.py`, et "
+        f"{milliers(portage)} dans le portage `moteur/js/` ; chaque changement du "
+        "modèle se paie des deux côtés, puis dans les témoins ;",
+        f"- la suite : {milliers(sonde_tests())} tests (`python -m pytest`).",
+    ]) + "\n"
+
+
 # --------------------------------------------------------------------------
 
 
@@ -413,11 +433,12 @@ def main() -> int:
     analyseur.add_argument("--verifier", action="store_true",
                            help="échoue si docs/etat.md est périmé, sans rien écrire")
     analyseur.add_argument("--cout", action="store_true",
-                           help="imprime le coût du travail, relevé sur l'historique git")
+                           help="imprime le coût du travail, relevé sur l'historique git, "
+                                "et la taille du dépôt")
     arguments = analyseur.parse_args()
 
     if arguments.cout:
-        print(cout(), end="")
+        print(cout() + "\n" + taille(), end="")
         return 0
     voulu = page()
     actuel = PAGE.read_text(encoding="utf-8") if PAGE.exists() else ""
