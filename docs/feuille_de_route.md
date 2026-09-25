@@ -16802,13 +16802,15 @@ l'octet :
   de veille. Aucun n'est corrigé.
 - À relire sous l'angle des licences (§ 3.4) : `documents-apportes.yml`
   republie des documents publics sur une release.
-- Le § 10 veut la suite rapide « par défaut ». `python -m pytest` est resté
-  la suite complète : les recettes de `CLAUDE.md` et chaque session s'y
-  fient avant d'envoyer sur main. En faire la suite rapide est un choix à
-  prendre en réécrivant ces recettes, pas en passant.
 
-Le même jour, les actions des trois workflows, écrites pour Node 20 et que
-GitHub exécutait sous Node 24 avec un avertissement, sont passées à leurs
+Le propriétaire a tranché le même jour ce que le § 10 laissait ouvert :
+`python -m pytest` reste la suite complète, qu'on passe avant d'envoyer sur
+main, et la suite rapide est celle qu'on relance en travaillant
+(`docs/architecture.md`, version 5.5). Les recettes de `CLAUDE.md` n'ont
+donc pas à changer.
+
+Le même jour aussi, les actions des trois workflows, écrites pour Node 20 et
+que GitHub exécutait sous Node 24 avec un avertissement, sont passées à leurs
 dernières versions, qui tournent sous Node 24 : `checkout@v7`,
 `setup-python@v7`, `setup-node@v7`. Aucune de leurs ruptures ne touche une
 option qu'emploient ces workflows.

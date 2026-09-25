@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.4, décidée par le propriétaire le 25 septembre 2026. Ce document
+*Version 5.5, décidée par le propriétaire le 25 septembre 2026. Ce document
 dit l'état de l'architecture : il reste vrai tant qu'aucune décision ne le
 change, et la liste de ses changements est en bas (« Les versions »). Il est
 tiré de la note de décision
@@ -1480,8 +1480,9 @@ de la prose ; un script les affiche à la demande.
 
 ## 10. Les tests
 
-1. **Rapides, par défaut** (moins de deux minutes visées) : les règles —
-   exemples officiels et cas de bascule — et les étapes, chacune seule.
+1. **Rapides**, ceux qu'on relance en travaillant (moins de deux minutes
+   visées) : les règles — exemples officiels et cas de bascule — et les
+   étapes, chacune seule.
 2. **Complets** : les témoins, joués par les deux moteurs, et les agrégats de
    la page Coût. Les témoins comprennent des simulations, des pages, et des
    **suites d'événements** : un départ, puis un second ; un décès, puis une
@@ -1495,11 +1496,12 @@ Tout tourne sur GitHub à chaque envoi sur `main`, par
 en local, le premier niveau se lance seul, par `python -m pytest -m rapide`.
 `tests/conftest.py` range chaque fichier de tests dans son niveau ; un fichier
 qu'il ne nomme pas est rapide, puisque c'est d'ordinaire celui d'une règle.
-`python -m pytest`, sans rien choisir, joue les trois. Les deux tests les plus
-longs, les chiffres ancrés et les témoins, sont découpés (leur durée, à sa
-date : la note 0001, § 10). Les témoins se découpent par domaine et par étape.
-Les vues et les fichiers fabriqués se régénèrent ; ils ne se fusionnent jamais
-à la main.
+`python -m pytest`, sans rien choisir, joue les trois : c'est le défaut, la
+suite qu'on passe avant d'envoyer sur `main`. Les deux tests les plus longs,
+les chiffres ancrés et les témoins, sont découpés (leur durée, à sa date : la
+note 0001, § 10). Les témoins se découpent par domaine et par étape. Les vues
+et les fichiers fabriqués se régénèrent ; ils ne se fusionnent jamais à la
+main.
 
 ---
 
@@ -2326,6 +2328,12 @@ Rien ne s'y efface.
 
 ## Les versions
 
+- **5.5**, 25 septembre 2026 : la suite complète reste le défaut de
+  `python -m pytest`, et se passe avant tout envoi sur `main` ; la suite
+  rapide est celle qu'on relance en travaillant (§ 10). Le propriétaire l'a
+  décidé après la phase 0, plutôt que de faire de la suite rapide le défaut :
+  tout part sur `main` sans relecture, et ce qui se lance avant l'envoi doit
+  tout voir.
 - **5.4**, 25 septembre 2026 : l'usage des simulateurs officiels devient une
   règle, qui ne sollicite jamais les caisses (§ 3.5). C'est la version
   décidée ; la phase 0 en tire ce document.
