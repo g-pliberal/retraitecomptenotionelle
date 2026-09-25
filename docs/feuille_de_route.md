@@ -16,7 +16,7 @@ une ligne « ce que ça a déplacé » quand elle est faite, comme les tranches 
 `regimes.md`. Toute session qui touche au scénario 1 commence par
 `python scripts/veille_droit.py` et finit par une entrée au journal de
 `data/reference/legislation/veille.yaml` : voir `docs/veille_droit.md`. Une action qu'on abandonne ne disparaît pas : elle passe en bas,
-avec la raison. Une découverte faite en chemin qui mérite un chantier se note
+avec la raison, et l'action elle-même dans l'archive. Une découverte faite en chemin qui mérite un chantier se note
 ici, pas dans un commentaire de code.
 
 **Le constat de septembre 2026, qui fonde ce classement.** La couverture des
@@ -39,6 +39,14 @@ L'action 13 n'a pas touché le modèle du tout : un script de certification, le
 format de son journal, et une phrase de la page Données en deux exemplaires.
 Toutes sont faites ; ce paragraphe, écrit quand elles étaient à mener, est
 passé au passé le 23 septembre 2026.
+
+**Les actions closes sont dans l'archive**, `docs/archives/feuille_de_route.md`,
+avec le journal : faites, archivées ou abandonnées, elles y gardent leur
+numéro, leur texte et leur ordre (`docs/architecture.md`, § 9.3). Ce fichier
+ne garde que ce qui vit : ce qui est délibérément en bas, et les actions
+`en cours`, à la fin, où les sessions ouvrent les leurs. Une action qui se
+clôt passe, telle quelle, à la fin de l'archive ; un test refuse une action
+close ici, ou ouverte là-bas.
 
 ---
 
