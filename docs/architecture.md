@@ -1492,11 +1492,14 @@ de la prose ; un script les affiche à la demande.
 
 Tout tourne sur GitHub à chaque envoi sur `main`, par
 `.github/workflows/tests.yml`, dont le verdict se lit dans l'onglet Actions ;
-en local, le premier niveau se lance seul. Les deux tests les plus longs, les
-chiffres ancrés et les témoins, sont découpés (leur durée, à sa date : la
-note 0001, § 10). Les témoins se découpent par domaine et par étape. Les vues
-et les fichiers fabriqués se régénèrent ; ils ne se fusionnent jamais à la
-main.
+en local, le premier niveau se lance seul, par `python -m pytest -m rapide`.
+`tests/conftest.py` range chaque fichier de tests dans son niveau ; un fichier
+qu'il ne nomme pas est rapide, puisque c'est d'ordinaire celui d'une règle.
+`python -m pytest`, sans rien choisir, joue les trois. Les deux tests les plus
+longs, les chiffres ancrés et les témoins, sont découpés (leur durée, à sa
+date : la note 0001, § 10). Les témoins se découpent par domaine et par étape.
+Les vues et les fichiers fabriqués se régénèrent ; ils ne se fusionnent jamais
+à la main.
 
 ---
 

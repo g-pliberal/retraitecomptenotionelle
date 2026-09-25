@@ -220,6 +220,13 @@ gelée. La session qui lance sa première phase commence par
   un fichier ou un cas (`python -m pytest tests/test_moteur.py`) la garde en
   série, ce qui est plus lisible et plus rapide pour un seul test. Pour tout
   forcer en série : `PYTEST_SANS_XDIST=1`.
+  La suite rapide, `python -m pytest -m rapide`, ne joue que les règles et
+  les étapes, sous deux minutes, même en série : c'est elle qu'on relance en
+  travaillant. `python -m pytest` n'a pas changé : il lance toujours la suite
+  complète, qui passe avant tout envoi sur `main`, et que GitHub rejoue après
+  chaque envoi (onglet Actions). `tests/conftest.py` range chaque fichier dans
+  son niveau — rapide, complet ou contrôle — et un fichier lent qui naît s'y
+  range, sans quoi il alourdirait la suite rapide.
 - Mise en route d'une session : `pip install -e '.[dev]'`. Sans ça,
   `python -m pytest` répond « No module named pytest », puis ne collecte rien
   faute du paquet `retraite_notionnelle` — c'est ce qui coûtait le plus de
