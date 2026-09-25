@@ -16751,7 +16751,7 @@ coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`
 `README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
 fabriqués.
 
-### 130. L'architecture du dépôt : décidée, la phase 0 à lancer — `en cours`
+### 130. L'architecture du dépôt : décidée, la phase 0 faite, la phase 1 à lancer — `en cours`
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
@@ -16764,8 +16764,46 @@ des références à tous les modèles publics, gardé toutes les sources, et fix
 la règle des simulateurs officiels : ne jamais solliciter les caisses. Rien du
 modèle n'a changé.
 
-**Ce qui reste ouvert.** La phase 0 : l'état de l'architecture dans
-`docs/architecture.md`, le tableau de bord, les tests sur GitHub, la suite
-rapide. Une nouvelle session la lance depuis `docs/decisions/0001/phase_0.md`.
-Ce fichier liste aussi les constats faits en chemin sur le scénario 1, à
-consigner par la procédure de veille.
+**Ce que la phase 0 a fait**, le 25 septembre 2026, un commit par étape et
+sans qu'un seul résultat bouge — les témoins sont restés identiques à
+l'octet :
+
+1. `docs/architecture.md`, l'état tiré de la note 0001 : L'essentiel, les
+   § 2 à 13 et les annexes, dans la numérotation de la note, avec le numéro
+   de version et la liste des changements. Ses chiffres datés sont devenus
+   des ancres (l'inventaire des régimes, l'âge présumé aux naissances, le
+   prélèvement sur les pensions) ou des renvois à la note, qui les garde à
+   leur date ;
+2. le tableau de bord, `docs/etat.md`, que `scripts/tableau_de_bord.py`
+   fabrique depuis les registres, et qu'un test refuse périmé. Le coût du
+   travail, qui se lit sur l'historique git, s'affiche à la demande
+   (`--cout`) ;
+3. `.github/workflows/tests.yml`, qui rejoue la suite complète à chaque
+   envoi sur main : 2 503 tests passés en 13 min 39 à son premier passage ;
+4. la suite rapide, `python -m pytest -m rapide` : 769 tests en 18 s sur
+   quatre cœurs, 51 s en série. `tests/conftest.py` range chaque fichier de
+   tests dans son niveau, rapide, complet ou contrôle ;
+5. `CLAUDE.md` renvoie à l'architecture et au tableau de bord ;
+6. le repère git `phase-0`, sur ce dernier commit (§ 12).
+
+**Ce qui reste ouvert.**
+
+- La phase 1 (§ 11), en tête : l'état « écart connu » des exemples
+  officiels (§ 9.2). `tests/test_oracle.py` exige aujourd'hui que tous
+  passent, ce qui empêche d'enregistrer un exemple qui montrerait une
+  erreur. Puis la documentation rangée par nature, et le contrôle de
+  conservation.
+- Les constats faits en chemin sur le scénario 1, que
+  `docs/decisions/0001/phase_0.md` liste (« Ce qui vient après ») : à
+  consigner dans `veille.yaml` et ici par une session qui suit la procédure
+  de veille. Aucun n'est corrigé.
+- À relire sous l'angle des licences (§ 3.4) : `documents-apportes.yml`
+  republie des documents publics sur une release.
+- Le § 10 veut la suite rapide « par défaut ». `python -m pytest` est resté
+  la suite complète : les recettes de `CLAUDE.md` et chaque session s'y
+  fient avant d'envoyer sur main. En faire la suite rapide est un choix à
+  prendre en réécrivant ces recettes, pas en passant.
+- Les trois workflows appellent `checkout@v4` et `setup-python@v5`, et
+  celui des tests `setup-node@v4` : des actions écrites pour Node 20, que
+  GitHub exécute sous Node 24 avec un avertissement. Les monter à leurs
+  versions pour Node 24 quand on y touchera.
