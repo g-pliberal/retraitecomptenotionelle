@@ -68,9 +68,10 @@ CONTROLES = {
     # Les registres.
     "test_frontiere_contributive.py", "test_sources_a_explorer.py",
     "test_source_locale.py",
-    # L'outillage du dépôt : l'index de la DILA, la publication sur main, et
-    # ce partage-ci.
+    # L'outillage du dépôt : l'index de la DILA, la publication sur main, ce
+    # partage-ci, et le filet des déplacements (docs/architecture.md, § 12).
     "test_dila_index.py", "test_pousser.py", "test_niveaux.py",
+    "test_conservation.py",
 }
 
 #: Les tests qui ne sont pas du niveau de leur fichier.

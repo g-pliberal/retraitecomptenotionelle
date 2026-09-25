@@ -244,6 +244,12 @@ bord, `docs/etat.md`, que `python scripts/tableau_de_bord.py` fabrique.
   `data/reference/prose/zones.yaml`, et ses deux cliquets ne peuvent que
   décroître. Après toute modification de la prose :
   `python scripts/verifier_prose.py --corriger`.
+- Rien ne se perd pendant la réorganisation (`docs/architecture.md`, § 12) :
+  `python scripts/conservation.py --depuis HEAD` vérifie un déplacement avant
+  qu'on le commite, et `tests/test_conservation.py` refuse qu'un récit, une
+  note de décision, une archive ou une entrée de registre disparaisse ou soit
+  réécrit. Sa référence, `tests/temoins/conservation.json`, se refige par
+  `--figer`, qui refuse de le faire par-dessus une perte.
 - Ce que la proposition coûte et rapporte, année par année, pour un projet de
   loi de finances : `docs/chiffrage_plf.md`, dont tous les tableaux sont écrits
   par `python scripts/chiffrage_plf.py` et tenus par un test de péremption. Sa

@@ -16791,9 +16791,9 @@ l'octet :
 
 **Ce qui reste ouvert.**
 
-- La phase 1 (§ 11) : la documentation rangée par nature, et le contrôle de
-  conservation. Son premier pas, l'état « écart connu » des exemples
-  officiels (§ 9.2), est fait (plus bas).
+- La phase 1 (§ 11) : la documentation rangée par nature. L'état « écart
+  connu » des exemples officiels (§ 9.2) et le contrôle de conservation
+  (§ 12) sont faits (plus bas).
 - Les constats faits en chemin sur le scénario 1, que
   `docs/decisions/0001/phase_0.md` liste (« Ce qui vient après ») : consignés
   le 25 septembre 2026 par la procédure de veille (plus bas), aucun corrigé.
@@ -16875,3 +16875,18 @@ l'accepte. Le tableau de bord compte et liste ces écarts ; aucun exemple n'y
 est ce jour-là. Pour s'assurer que rien ne se compare à vide, chacune des
 121 grandeurs publiées a été faussée tour à tour : toutes ont été détectées,
 et toutes, déclarées en écart avec la valeur du modèle, ont été admises.
+
+**Le contrôle de conservation** (§ 12) est posé le même jour :
+`scripts/conservation.py`. Avant de commiter un déplacement, `--depuis HEAD`
+compare le dernier commit au répertoire de travail : tout paragraphe, toute
+entrée de registre qui ne se retrouve pas quelque part, à l'identique, est une
+perte. Le filet, lui, tourne à chaque envoi : `tests/test_conservation.py`
+tient, contre une référence figée, `tests/temoins/conservation.json`, les
+3 590 paragraphes gelés du dépôt et ses 1 290 entrées de registres. Sont
+gelés les paragraphes des récits, des notes de décision et des archives, hors
+les actions en cours de cette feuille de route et les tableaux que
+`chiffrage_plf.py` réécrit. Deux paragraphes sont les mêmes aux blancs, aux
+dièses d'un titre et aux valeurs des chiffres ancrés près. Un récit réécrit y
+apparaît comme perdu, et c'est voulu : un récit est gelé. S'il faut vraiment
+le réécrire, `--figer --accepter-les-pertes` refige la référence, et le commit
+dit pourquoi.

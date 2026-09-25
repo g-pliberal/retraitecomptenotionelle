@@ -1583,6 +1583,10 @@ mesure :
 - Un script de conservation vérifie que chaque paragraphe des documents et
   chaque entrée des registres d'aujourd'hui se retrouvent dans le nouveau
   rangement. Il se retire après la phase 8, quand plus rien ne se déplace.
+  C'est `scripts/conservation.py` : `--depuis HEAD` vérifie un déplacement
+  avant qu'on le commite, et un test tient, contre une référence figée
+  (`tests/temoins/conservation.json`), les récits, les notes de décision, les
+  archives et les entrées des registres.
 - L'historique git garde le reste.
 
 ---
