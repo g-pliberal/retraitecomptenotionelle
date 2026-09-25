@@ -486,9 +486,10 @@ fichiers:
   # recalculs qui avait motivé la mémoire de `Carriere`.
   CLAUDE.md:
     defaut: etat
-    paragraphes_recit:
-      - "Les quatorze branches `claude/*` qui restaient ont été auditées"
-      - "- `SerieAnnuelle` et `Carriere` sont immuables"
+
+  # Le CLAUDE.md d'avant la phase 1, gardé tel quel : l'histoire des règles.
+  docs/archives/conventions.md:
+    defaut: recit
 
 cliquet:
   # Nombre de sections dont personne n'a encore dit ce qu'elles affirment.

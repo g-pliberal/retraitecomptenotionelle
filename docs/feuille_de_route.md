@@ -1654,11 +1654,9 @@ l'octet :
 
 **Ce qui reste ouvert.**
 
-- La phase 1 (§ 11) : la documentation rangée par nature. L'état « écart
-  connu » des exemples officiels (§ 9.2), le contrôle de conservation
-  (§ 12), l'archive de la feuille de route et la sortie des chiffres du
-  dépôt sont faits (plus bas) ; restent les récits de `limites.md` et
-  `CLAUDE.md`.
+- La phase 1 (§ 11), faite pour l'essentiel (plus bas). Restent
+  `docs/fraicheur.md` en note de décision, `docs/veille_droit.md` raccourci,
+  les documents qui mêlent encore deux régimes, et le repère `phase-1`.
 - Les constats faits en chemin sur le scénario 1, que
   `docs/decisions/0001/phase_0.md` liste (« Ce qui vient après ») : consignés
   le 25 septembre 2026 par la procédure de veille (plus bas), aucun corrigé.
@@ -1769,3 +1767,33 @@ chaque test ajouté obligeait à les récrire : trois fois en une journée. Il n
 s'écrit plus, ni les lignes du moteur et du portage que citait le préambule
 de cette feuille de route ; `python scripts/tableau_de_bord.py --cout` les
 affiche. Le test qui tenait le compte du README tient maintenant son absence.
+
+**Les récits de `limites.md` et l'histoire de `CLAUDE.md`, rangés** le même
+jour. Les 80 sections de récit de `limites.md` sont passées dans
+`docs/archives/limites.md`, chacune sous les titres qui la contenaient. Il en
+reste 2 803 lignes d'état, et `zones.yaml` ne déclare plus ses 116 sections une
+à une : `etat` est son régime par défaut. `CLAUDE.md` est ramené à une page de
+règles, 169 lignes au lieu de 326. Le texte d'avant est gardé tel quel dans
+`docs/archives/conventions.md`, et non sous le nom `CLAUDE.md`, que Claude
+Code chargerait comme des consignes dès qu'une session lit un fichier de ce
+dossier. Chaque déplacement est un commit à lui seul, et le contrôle de
+conservation n'y a rien trouvé de perdu.
+
+**Ce que la phase 1 laisse ouvert.** L'annexe B veut `docs/fraicheur.md` en
+note de décision, avec un contrôle des chiffres allégé, et
+`docs/veille_droit.md` raccourci. Ces deux réécritures demandent de juger ce
+qui reste une règle, et n'ont pas été tentées. Plusieurs documents mêlent
+encore deux régimes, là où `zones.yaml` en voudrait un par fichier :
+- les 30 procès-verbaux enclavés dans les sections d'état de `limites.md` ;
+- les quatre paragraphes de récit du README ;
+- la section de récit de `fraicheur.md`, celle de `veille_droit.md`, celle de
+  l'intégration, et les deux d'`outillage_interface.md` ;
+- les trois sections d'état d'`avantages_non_contributifs.md`, et le
+  préambule d'état de cette feuille de route ;
+- la liste des versions de l'architecture, qui est un récit par
+  construction.
+
+Le journal de veille reste dans `veille.yaml` : l'annexe B ne le range en
+archive qu'avec le passage de ses entrées aux fiches, qui est la phase 2. Le
+repère `phase-1` n'est pas posé : comme pour `phase-0`, il y faut un workflow
+lancé une fois, et l'accord du propriétaire.

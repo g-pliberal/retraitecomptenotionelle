@@ -120,7 +120,9 @@ def test_tout_document_du_depot_est_declare(zonage):
     """Un document neuf ne peut pas entrer sans qu'on dise ce qu'il affirme."""
     connus = set(verifier_prose.documents(zonage))
     sur_disque = {"README.md", "CLAUDE.md"} | {
-        f"docs/{c.name}" for c in (RACINE / "docs").glob("*.md")
+        c.relative_to(RACINE).as_posix()
+        for dossier in (RACINE / "docs", RACINE / "docs" / "archives")
+        for c in dossier.glob("*.md")
     }
     assert not sur_disque - connus, (
         f"{sorted(sur_disque - connus)} : ajouter ces documents à "
