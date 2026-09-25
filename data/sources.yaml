@@ -37,10 +37,21 @@
 #   la release `documents-apportes` du dépôt ; l'adresse de l'asset devient
 #   alors le `miroir`, avec son `sha256`. Un jeu `refus` qui vise un fichier
 #   porte donc soit un `miroir`, soit une adresse de document que `--publier`
-#   sait traiter ; un test l'exige.
+#   sait traiter, soit une rediffusion `interdite` qui le laisse à apporter à
+#   la main ; un test l'exige.
 #   `python scripts/fetch/source_locale.py` imprime la liste et, pour chaque
 #   entrée, le chemin où son fichier est attendu. Un test refuse toute autre
 #   valeur, et refuse un blocage sans note qui dise ce qui a été essayé.
+#
+# Champ `rediffusion` (docs/architecture.md, § 3.2 et 3.4) : ce que la licence
+# d'un document permet au dépôt d'en faire. `statut` vaut `libre` (le
+# republier tel quel, en citant sa source, sa licence et sa date : `licence`
+# dit sous quel nom), `interdite` (jamais : la copie reste dans data/brut/,
+# que git ignore, et le `sha256` suffit à la vérifier) ou `a_lire` ; `texte`
+# cite la clause qui fonde le statut, `lu_dans` et `lu_le` disent où et
+# quand. Sans ce champ, le document est `a_lire`. `source_locale.py
+# --publier` ne dépose sur la release que les documents `libre`, et un test
+# refuse qu'un fichier de data/brut/ soit versionné.
 #
 # Champ `statut_integration` :
 #   certifie   -> data/reference/ est recontrôlé contre la source par
@@ -1504,6 +1515,18 @@ institutions:
         fichier_local: 20260922-Retraites-fonctionnaires-de-l-Etat.pdf
         miroir: https://github.com/g-pliberal/retraitecomptenotionelle/releases/download/documents-apportes/20260922-Retraites-fonctionnaires-de-l-Etat.pdf
         sha256: 3d0a439f5bdf86ad8a6fe8409123573fa16c89b274b9662482dd00c5178e41db
+        rediffusion:
+          statut: a_lire
+          note: >-
+            Le PDF et le zip sont sur la release documents-apportes depuis le
+            24 septembre 2026, déposés à la main. Aucun des deux ne porte de
+            mention de réutilisation. Les mentions légales de ccomptes.fr ne se
+            lisent pas depuis une session (connexion refusée ; 503 à l'outil de
+            lecture web, le 25 septembre 2026), et ce qu'en rendent les moteurs
+            de recherche — des documents officiels « librement réutilisables »
+            conformément au droit en vigueur, sauf droits de tiers — n'est pas
+            une lecture. À lire au texte depuis un poste, puis passer à `libre`
+            avec la citation, ou retirer les deux assets.
         statut_integration: saisi
         note: >-
           Cent dix-huit pages, lues en entier le 23 septembre 2026 depuis une
@@ -4147,6 +4170,19 @@ institutions:
         blocage: refus
         fichier_local: OPEF2026.pdf
         sha256: eca04bb11f03cfd4b17d3d388d9d5b71a198b71d44f281676147188db15c260e
+        rediffusion:
+          statut: interdite
+          texte: >-
+            « Aucune représentation ou reproduction, même partielle, autre que
+            celles prévues à l'article L. 122-5 2e et 3e a) du Code de la
+            propriété intellectuelle ne peut être faite de la présente
+            publication sans l'autorisation expresse du Secrétariat général du
+            Comité consultatif du secteur financier ou, le cas échéant, sans le
+            respect des modalités prévues à l'article L. 122-10 dudit Code.
+            © Secrétariat général du Comité consultatif du secteur financier –
+            2026 »
+          lu_dans: le document lui-même, page 180, à l'empreinte ci-dessus
+          lu_le: 2026-09-25
         recuperation: scripts/fetch/opef_frais_per.py
         statut_integration: saisi
         cible: data/reference/macro/frais_epargne_retraite.yaml
@@ -4178,9 +4214,11 @@ institutions:
           `saisi` et le niveau `haute` : la confrontation prouve la saisie,
           elle ne la remplace pas par une lecture tenue par
           scripts/verifier_donnees.py, et le document n'est pas sur le miroir
-          du dépôt — à déposer une fois, à la main, sur la release
-          documents-apportes sous le nom OPEF2026.pdf, avec cette empreinte ;
-          `--recuperer` le rapportera ensuite dans toute session.
+          du dépôt, où il ne doit pas aller : sa licence en interdit la
+          rediffusion (champ `rediffusion`). Versionné sous data/brut/ jusqu'au
+          25 septembre 2026, il en a été retiré ce jour-là ; une session qui
+          doit le relire se le fait apporter dans data/brut/, que git ignore,
+          où son empreinte le vérifie.
           CE QUE LE DOCUMENT AJOUTE À LA SAISIE : la moyenne des frais sur
           arrérages est non pondérée et ne porte que sur les 9 organismes (sur
           20) qui les facturent ; le frais sur versement du PER est le double

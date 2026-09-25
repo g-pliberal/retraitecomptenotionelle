@@ -249,7 +249,8 @@ def test_recuperer_ecrit_verifie_et_ne_refait_rien(tmp_path, monkeypatch, capsys
         {"id": "faux", "blocage": "refus", "url": "https://budget.example/file-download/2",
          "fichier_local": "faux.pdf", "miroir": "https://an.example/faux.pdf",
          "sha256": "0" * 64},
-        {"id": "sans_miroir", "blocage": "refus", "url": "https://x.example/a.pdf"},
+        {"id": "sans_miroir", "blocage": "refus", "url": "https://x.example/a.pdf",
+         "rediffusion": LIBRE},
         {"id": "eic", "blocage": "convention", "url": "https://drees.example/eic"},
     ]
     appels: list[str] = []
@@ -285,6 +286,11 @@ def test_recuperer_ecrit_verifie_et_ne_refait_rien(tmp_path, monkeypatch, capsys
 # ---------------------------------------------------------------------------
 
 
+#: La rediffusion d'un document fictif que la release peut porter.
+LIBRE = {"statut": "libre", "licence": "Licence Ouverte 2.0", "texte": "réutilisation libre",
+         "lu_dans": "la page du document", "lu_le": "2026-09-25"}
+
+
 def _http_error(code: int, url: str = "https://x.example/doc.pdf"):
     import urllib.error
 
@@ -294,8 +300,10 @@ def _http_error(code: int, url: str = "https://x.example/doc.pdf"):
 def test_tout_refus_visant_un_fichier_a_un_miroir_ou_un_document_publiable():
     """Un jeu `refus` qui vise un fichier se récupère sans personne : par un
     miroir déclaré, ou par la release que `--publier` alimente depuis son
-    adresse de document. Les entrées Légifrance ne visent pas un fichier :
-    leurs textes se lisent dans l'index DILA, rien n'est à apporter."""
+    adresse de document. Sauf quand sa licence en interdit la rediffusion :
+    il s'apporte alors à la main dans data/brut/, et son empreinte le vérifie.
+    Les entrées Légifrance ne visent pas un fichier : leurs textes se lisent
+    dans l'index DILA, rien n'est à apporter."""
     module = _module()
     for ident, jeu in _jeux().items():
         if jeu.get("blocage") != "refus":
@@ -304,9 +312,11 @@ def test_tout_refus_visant_un_fichier_a_un_miroir_ou_un_document_publiable():
             assert "fichier_local" not in jeu and "document" not in jeu, (
                 f"{ident} : un fichier est visé, mais l'adresse ne le nomme pas")
             continue
-        assert jeu.get("miroir") or module.a_publier([jeu]), (
+        assert (jeu.get("miroir") or module.a_publier([jeu])
+                or module.rediffusion(jeu) == "interdite"), (
             f"{ident} : ni miroir, ni adresse de document que --publier sait traiter "
-            "(document: quand url est une page)")
+            "(document: quand url est une page), ni rediffusion interdite qui le "
+            "laisse à apporter")
 
 
 def test_le_rapport_opef_declare_son_document_a_la_banque_de_france():
@@ -328,14 +338,85 @@ def test_a_publier_ne_retient_que_les_refus_sans_autre_miroir_que_la_release():
     assert ici == "https://github.com/g-pliberal/retraitecomptenotionelle/releases/download/documents-apportes/f.pdf"
     jeux = [
         {"id": "sans_miroir", "blocage": "refus", "url": "https://a.fr/page", "document": "https://a.fr/f.pdf",
-         "fichier_local": "f.pdf"},
-        {"id": "deja_ici", "blocage": "refus", "url": "https://a.fr/g.pdf", "miroir": ici, "sha256": "0" * 64},
-        {"id": "ailleurs", "blocage": "refus", "url": "https://a.fr/h.pdf", "miroir": "https://an.fr/h.pdf"},
-        {"id": "sans_fichier", "blocage": "refus", "url": "https://a.fr/page"},
-        {"id": "reseau", "blocage": "reseau", "url": "https://a.fr/i.pdf"},
-        {"id": "eic", "blocage": "convention", "url": "https://a.fr/j.pdf"},
+         "fichier_local": "f.pdf", "rediffusion": LIBRE},
+        {"id": "deja_ici", "blocage": "refus", "url": "https://a.fr/g.pdf", "miroir": ici, "sha256": "0" * 64,
+         "rediffusion": LIBRE},
+        {"id": "ailleurs", "blocage": "refus", "url": "https://a.fr/h.pdf", "miroir": "https://an.fr/h.pdf",
+         "rediffusion": LIBRE},
+        {"id": "sans_fichier", "blocage": "refus", "url": "https://a.fr/page", "rediffusion": LIBRE},
+        {"id": "reseau", "blocage": "reseau", "url": "https://a.fr/i.pdf", "rediffusion": LIBRE},
+        {"id": "eic", "blocage": "convention", "url": "https://a.fr/j.pdf", "rediffusion": LIBRE},
     ]
     assert [j["id"] for j in module.a_publier(jeux)] == ["sans_miroir", "deja_ici"]
+
+
+def test_un_document_ne_se_republie_que_si_sa_licence_le_permet():
+    """La release est publique : y déposer un document, c'est le rediffuser
+    (docs/architecture.md, § 3.4). Ce dont la licence l'interdit, et ce dont
+    personne n'a lu la licence, n'y va pas ; `--publier` dit pourquoi."""
+    module = _module()
+    def jeu(ident, **champs):
+        return {"id": ident, "blocage": "refus", "url": "https://a.fr/page",
+                "document": f"https://a.fr/{ident}.pdf", "fichier_local": f"{ident}.pdf", **champs}
+    jeux = [jeu("libre", rediffusion=LIBRE),
+            jeu("interdite", rediffusion={"statut": "interdite"}),
+            jeu("a_lire", rediffusion={"statut": "a_lire"}),
+            jeu("muet")]
+    assert [j["id"] for j in module.a_publier(jeux)] == ["libre"]
+    assert [j["id"] for j in module.retenus_par_la_licence(jeux)] == ["interdite", "a_lire", "muet"]
+    assert module.rediffusion(jeux[3]) == "a_lire", "une licence que rien ne dit est à lire"
+    assert set(module.REDIFFUSIONS) == {"libre", "interdite", "a_lire"}
+    ligne = module._ligne_release("f.pdf", "0" * 64, 10, "https://a.fr/f.pdf", "requête simple",
+                                  "Licence Ouverte 2.0")
+    assert ligne.endswith("republié sous Licence Ouverte 2.0.")
+
+
+def test_le_rapport_opef_ne_se_republie_pas_sa_licence_l_interdit():
+    """Sa page 180 réserve toute reproduction au Comité consultatif du
+    secteur financier : il ne va ni sur la release, ni dans git."""
+    module = _module()
+    jeu = _jeux()["opef_rapport_annuel"]
+    assert module.rediffusion(jeu) == "interdite"
+    assert "Aucune représentation ou reproduction, même partielle" in jeu["rediffusion"]["texte"]
+    assert "page 180" in jeu["rediffusion"]["lu_dans"]
+    assert not module.a_publier([{**jeu, "rediffusion": jeu["rediffusion"]}])
+
+
+def test_toute_rediffusion_declaree_dit_ce_qui_la_fonde():
+    """Un statut sans sa clause n'est qu'une affirmation. Un document que le
+    dépôt sert sur sa release déclare sa rediffusion, et elle n'est pas
+    interdite : le dépôt ne sert pas ce qu'il n'a pas le droit de servir."""
+    module = _module()
+    for ident, jeu in _jeux().items():
+        rediffusion = jeu.get("rediffusion")
+        if module.est_publie_ici(jeu.get("miroir")):
+            assert rediffusion, f"{ident} : servi par la release, sans rediffusion déclarée"
+            assert rediffusion["statut"] != "interdite", (
+                f"{ident} : servi par la release, alors que sa licence l'interdit")
+        if not rediffusion:
+            continue
+        statut = rediffusion.get("statut")
+        assert statut in module.REDIFFUSIONS, f"{ident} : rediffusion « {statut} » inconnue"
+        if statut in ("libre", "interdite"):
+            manquants = [c for c in ("texte", "lu_dans", "lu_le") if not rediffusion.get(c)]
+            assert not manquants, f"{ident} : rediffusion {statut} sans {manquants}"
+        if statut == "libre":
+            assert rediffusion.get("licence"), f"{ident} : rediffusion libre sans nom de licence à citer"
+        if statut == "a_lire":
+            assert rediffusion.get("note"), f"{ident} : rediffusion à lire sans note qui dise ce qui manque"
+
+
+def test_aucun_document_n_est_versionne_sous_data_brut():
+    """data/brut/ garde les documents tels que leur site les sert, pour la
+    session qui les a reçus : git l'ignore, et une licence qui interdit la
+    rediffusion interdit aussi de les versionner (docs/architecture.md, § 3.2).
+    Le rapport de l'OPEF y a été versionné une fois, puis retiré."""
+    import subprocess
+
+    racine = Path(__file__).resolve().parents[1]
+    suivis = subprocess.run(["git", "ls-files", "data/brut"], cwd=racine,
+                            capture_output=True, text=True, check=True).stdout.split()
+    assert suivis == ["data/brut/.gitkeep"], suivis
 
 
 def test_telecharger_document_essaie_la_requete_simple_puis_le_navigateur(capsys):
@@ -420,55 +501,57 @@ def test_publier_cree_la_release_depose_l_asset_et_ecrit_la_ligne(monkeypatch, c
     module = _module()
     github = _GitHubSimule(existe=False)
     monkeypatch.setattr(module, "_github", github)
-    contenu = b"%PDF opef"
+    contenu = b"%PDF rapport"
     jeux = [
-        {"id": "opef", "blocage": "refus", "url": "https://bdf.fr/page",
-         "document": "https://bdf.fr/OPEF2026.pdf", "fichier_local": "OPEF2026.pdf"},
+        {"id": "rapport", "blocage": "refus", "url": "https://exemple.fr/page",
+         "document": "https://exemple.fr/rapport.pdf", "fichier_local": "rapport.pdf",
+         "rediffusion": LIBRE},
         {"id": "jaune", "blocage": "refus", "url": "https://budget.fr/x", "fichier_local": "j.pdf",
-         "miroir": "https://an.fr/j.pdf", "sha256": "0" * 64},
+         "miroir": "https://an.fr/j.pdf", "sha256": "0" * 64, "rediffusion": LIBRE},
     ]
 
     def simple(url):
         raise _http_error(403, url)
 
     etats = module.publier(jeux, simple, lambda page, doc: contenu, jeton="t")
-    assert etats == {"opef": "publie"}
+    assert etats == {"rapport": "publie"}
     assert any(m == "POST" and u.endswith("/releases") for m, u in github.appels), (
         "la release est créée quand elle n'existe pas")
-    assert github.envoyes == {"OPEF2026.pdf": contenu}
-    assert github.assets == ["OPEF2026.pdf"]
-    lignes = [l for l in github.corps.splitlines() if l.startswith("- `OPEF2026.pdf`")]
+    assert github.envoyes == {"rapport.pdf": contenu}
+    assert github.assets == ["rapport.pdf"]
+    lignes = [l for l in github.corps.splitlines() if l.startswith("- `rapport.pdf`")]
     assert len(lignes) == 1
-    assert module.empreinte(contenu) in lignes[0] and "https://bdf.fr/OPEF2026.pdf" in lignes[0]
-    assert "(navigateur)" in lignes[0]
+    assert module.empreinte(contenu) in lignes[0] and "https://exemple.fr/rapport.pdf" in lignes[0]
+    assert "(navigateur)" in lignes[0] and "republié sous Licence Ouverte 2.0" in lignes[0]
     assert "Déposés par" in github.corps.splitlines()[0]
     sortie = capsys.readouterr().out
-    assert "opef : 403 à la requête simple" in sortie
-    assert "opef : OPEF2026.pdf publié" in sortie and module.empreinte(contenu) in sortie
+    assert "rapport : 403 à la requête simple" in sortie
+    assert "rapport : rapport.pdf publié" in sortie and module.empreinte(contenu) in sortie
 
     # Seconde publication : l'asset du même nom est remplacé, la ligne aussi, pas dupliquée.
-    contenu2 = b"%PDF opef v2"
+    contenu2 = b"%PDF rapport v2"
     etats = module.publier(jeux[:1], lambda url: contenu2, None, jeton="t")
-    assert etats == {"opef": "publie"}
-    assert ("DELETE", "https://api/assets/OPEF2026.pdf") in github.appels
-    assert github.assets == ["OPEF2026.pdf"] and github.envoyes["OPEF2026.pdf"] == contenu2
-    lignes = [l for l in github.corps.splitlines() if l.startswith("- `OPEF2026.pdf`")]
+    assert etats == {"rapport": "publie"}
+    assert ("DELETE", "https://api/assets/rapport.pdf") in github.appels
+    assert github.assets == ["rapport.pdf"] and github.envoyes["rapport.pdf"] == contenu2
+    lignes = [l for l in github.corps.splitlines() if l.startswith("- `rapport.pdf`")]
     assert len(lignes) == 1 and module.empreinte(contenu2) in lignes[0] and "(requête simple)" in lignes[0]
 
 
 def test_publier_ne_remplace_pas_un_document_dont_le_manifeste_porte_une_autre_empreinte(monkeypatch, capsys):
     module = _module()
-    github = _GitHubSimule(assets=["OPEF2026.pdf"], corps="- `OPEF2026.pdf` : ancien")
+    github = _GitHubSimule(assets=["rapport.pdf"], corps="- `rapport.pdf` : ancien")
     monkeypatch.setattr(module, "_github", github)
-    ici = module.url_publiee("OPEF2026.pdf")
-    jeu = {"id": "opef", "blocage": "refus", "url": "https://bdf.fr/page", "document": "https://bdf.fr/OPEF2026.pdf",
-           "fichier_local": "OPEF2026.pdf", "miroir": ici, "sha256": module.empreinte(b"edition lue")}
-    assert module.publier([jeu], lambda url: b"autre edition", None, jeton="t") == {"opef": "ecart"}
-    assert github.envoyes == {} and github.corps == "- `OPEF2026.pdf` : ancien"
-    assert "opef : ÉCART" in capsys.readouterr().out
+    ici = module.url_publiee("rapport.pdf")
+    jeu = {"id": "rapport", "blocage": "refus", "url": "https://exemple.fr/page",
+           "document": "https://exemple.fr/rapport.pdf", "fichier_local": "rapport.pdf", "miroir": ici,
+           "sha256": module.empreinte(b"edition lue"), "rediffusion": LIBRE}
+    assert module.publier([jeu], lambda url: b"autre edition", None, jeton="t") == {"rapport": "ecart"}
+    assert github.envoyes == {} and github.corps == "- `rapport.pdf` : ancien"
+    assert "rapport : ÉCART" in capsys.readouterr().out
     # La même édition : republiée, idempotent.
-    assert module.publier([jeu], lambda url: b"edition lue", None, jeton="t") == {"opef": "publie"}
-    assert github.envoyes == {"OPEF2026.pdf": b"edition lue"}
+    assert module.publier([jeu], lambda url: b"edition lue", None, jeton="t") == {"rapport": "publie"}
+    assert github.envoyes == {"rapport.pdf": b"edition lue"}
 
 
 def test_publier_dit_quand_il_faut_un_navigateur_et_quand_ca_echoue(monkeypatch, capsys):
@@ -476,9 +559,9 @@ def test_publier_dit_quand_il_faut_un_navigateur_et_quand_ca_echoue(monkeypatch,
     github = _GitHubSimule()
     monkeypatch.setattr(module, "_github", github)
     jeux = [
-        {"id": "refuse", "blocage": "refus", "url": "https://a.fr/a.pdf"},
-        {"id": "absent", "blocage": "refus", "url": "https://a.fr/b.pdf"},
-        {"id": "ok", "blocage": "refus", "url": "https://a.fr/c.pdf"},
+        {"id": "refuse", "blocage": "refus", "url": "https://a.fr/a.pdf", "rediffusion": LIBRE},
+        {"id": "absent", "blocage": "refus", "url": "https://a.fr/b.pdf", "rediffusion": LIBRE},
+        {"id": "ok", "blocage": "refus", "url": "https://a.fr/c.pdf", "rediffusion": LIBRE},
     ]
 
     def simple(url):
@@ -509,7 +592,7 @@ def test_publier_cree_la_release_meme_quand_tout_refuse(monkeypatch):
     module = _module()
     github = _GitHubSimule(existe=False)
     monkeypatch.setattr(module, "_github", github)
-    jeu = {"id": "refuse", "blocage": "refus", "url": "https://a.fr/a.pdf"}
+    jeu = {"id": "refuse", "blocage": "refus", "url": "https://a.fr/a.pdf", "rediffusion": LIBRE}
 
     def simple(url):
         raise _http_error(403, url)
@@ -527,9 +610,10 @@ def test_recuperer_cherche_la_release_quand_aucun_miroir_n_est_declare(tmp_path,
     module = _module()
     monkeypatch.setattr(module, "BRUT", tmp_path)
     monkeypatch.setattr(module, "RACINE", tmp_path)
-    jeu = {"id": "opef", "blocage": "refus", "url": "https://bdf.fr/page",
-           "document": "https://bdf.fr/OPEF2026.pdf", "fichier_local": "OPEF2026.pdf"}
-    ici = module.url_publiee("OPEF2026.pdf")
+    jeu = {"id": "rapport", "blocage": "refus", "url": "https://exemple.fr/page",
+           "document": "https://exemple.fr/rapport.pdf", "fichier_local": "rapport.pdf",
+           "rediffusion": LIBRE}
+    ici = module.url_publiee("rapport.pdf")
     appels: list[str] = []
 
     def rien(url):
@@ -540,12 +624,12 @@ def test_recuperer_cherche_la_release_quand_aucun_miroir_n_est_declare(tmp_path,
     assert appels == [ici]
     sortie = capsys.readouterr().out
     assert "lancer le workflow documents-apportes.yml" in sortie
-    assert "déposer OPEF2026.pdf sur la release à la main" in sortie
+    assert "déposer rapport.pdf sur la release à la main" in sortie
 
     def publie(url):
         return b"%PDF"
 
-    assert module.recuperer([jeu], publie) == [tmp_path / "OPEF2026.pdf"]
+    assert module.recuperer([jeu], publie) == [tmp_path / "rapport.pdf"]
     sortie = capsys.readouterr().out
     assert f"miroir: {ici}" in sortie and f"sha256: {module.empreinte(b'%PDF')}" in sortie
 

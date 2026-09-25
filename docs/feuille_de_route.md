@@ -16800,14 +16800,31 @@ l'octet :
   `docs/decisions/0001/phase_0.md` liste (« Ce qui vient après ») : à
   consigner dans `veille.yaml` et ici par une session qui suit la procédure
   de veille. Aucun n'est corrigé.
-- À relire sous l'angle des licences (§ 3.4) : `documents-apportes.yml`
-  republie des documents publics sur une release.
 
 Le propriétaire a tranché le même jour ce que le § 10 laissait ouvert :
 `python -m pytest` reste la suite complète, qu'on passe avant d'envoyer sur
 main, et la suite rapide est celle qu'on relance en travaillant
 (`docs/architecture.md`, version 5.5). Les recettes de `CLAUDE.md` n'ont
 donc pas à changer.
+
+Relu le même jour sous l'angle des licences (§ 3.4), `documents-apportes.yml`
+ne republie plus que ce que la licence permet. `source_locale.py --publier` ne
+dépose sur la release que les documents dont le manifeste dit la rediffusion
+`libre`, clause citée, et chaque ligne de la release nomme la licence ; un test
+refuse qu'un document servi par la release ait une rediffusion interdite ou
+non déclarée, et qu'un fichier de `data/brut/` soit versionné. Le seul document
+que le workflow aurait déposé, le rapport de l'OPEF, l'interdit en toutes
+lettres, page 180 : « Aucune représentation ou reproduction, même partielle,
+[…] ne peut être faite de la présente publication sans l'autorisation expresse
+du Secrétariat général du Comité consultatif du secteur financier ». Il était
+versionné sous `data/brut/` depuis que le propriétaire l'y avait déposé
+(action 51) ; il en est retiré, et son empreinte reste au manifeste.
+L'historique git le garde : seule une réécriture de tout l'historique l'en
+effacerait, et c'est au propriétaire d'en décider. Les deux fichiers de la Cour
+des comptes que la release sert, déposés à la main le 24 septembre 2026,
+restent `a_lire` : ses mentions légales ne se lisent pas depuis une session. Il
+reste à les lire depuis un poste, puis à passer ces documents à `libre`, clause
+citée, ou à retirer leurs assets.
 
 Le même jour aussi, les actions des trois workflows, écrites pour Node 20 et
 que GitHub exécutait sous Node 24 avec un avertissement, sont passées à leurs

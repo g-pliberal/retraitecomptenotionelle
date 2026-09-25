@@ -7,6 +7,13 @@
 # workflow, avec `contents: write`, l'a. Une session, elle, télécharge l'asset :
 # c'est le `miroir` du jeu dans le manifeste, et `--recuperer` le rapporte.
 #
+# La release est publique : y déposer un document, c'est le rediffuser. Seuls
+# partent ceux dont le manifeste dit `rediffusion: {statut: libre}`, clause
+# citée (docs/architecture.md, § 3.2 et 3.4) ; chaque ligne de la release
+# nomme alors la licence. Un document dont la licence interdit la
+# rediffusion, comme le rapport de l'OPEF, ou dont personne ne l'a lue, reste
+# à apporter à la main dans data/brut/, que git ignore.
+#
 # Deux passes : une requête simple sous l'identité du dépôt d'abord ; si un
 # site la refuse (code de sortie 3), Playwright et Chromium sont installés,
 # seulement alors, et la publication est reprise avec un navigateur headless

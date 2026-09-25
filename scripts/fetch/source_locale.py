@@ -47,6 +47,17 @@ un asset. Un document dont le manifeste porte déjà l'empreinte n'est pas
 remplacé par un fichier qui en porte une autre : le site a changé d'édition,
 et c'est un écart à lire, pas à propager.
 
+**UN DOCUMENT NE SE REPUBLIE QUE SI SA LICENCE LE PERMET.** La release est
+publique : y déposer un document, c'est le rediffuser. ``--publier`` ne prend
+donc que les jeux dont le manifeste dit ``rediffusion: {statut: libre}``, avec
+la citation qui le fonde, où elle a été lue et quand (``docs/architecture.md``,
+§ 3.2 et 3.4). Un document dont la licence interdit la rediffusion —
+``interdite`` — reste dans ``data/brut/``, que git ignore, et son empreinte
+suffit à le vérifier ; un document dont personne n'a lu la licence —
+``a_lire``, ou rien — ne se republie pas non plus. Le rapport de l'OPEF est
+dans ce cas : sa page 180 réserve toute reproduction au Comité consultatif du
+secteur financier.
+
 Trois gestes, et le manifeste qui les relie :
 
 * ``data/sources.yaml`` porte un champ ``blocage`` sur chaque jeu qu'une
@@ -215,6 +226,30 @@ def option_fichier(analyseur: argparse.ArgumentParser) -> None:
     )
 
 
+#: Ce que la licence d'un document permet au dépôt d'en faire. Un jeu qui ne
+#: déclare rien est ``a_lire`` : on ne republie pas ce dont on n'a pas lu la
+#: licence (``docs/architecture.md``, § 3.4).
+REDIFFUSIONS = {
+    "libre": (
+        "la licence permet de republier le document tel quel, en citant sa "
+        "source, sa licence et sa date"
+    ),
+    "interdite": (
+        "la licence interdit de le republier : la copie reste dans data/brut/, "
+        "que git ignore, et l'empreinte suffit à la vérifier"
+    ),
+    "a_lire": (
+        "personne n'a encore lu, au texte, ce que la licence permet : le "
+        "document ne se republie pas"
+    ),
+}
+
+
+def rediffusion(jeu: dict) -> str:
+    """Le statut de rediffusion d'un jeu : ``libre``, ``interdite`` ou ``a_lire``."""
+    return (jeu.get("rediffusion") or {}).get("statut") or "a_lire"
+
+
 def jeux_bloques(manifeste: Path = MANIFESTE) -> list[dict]:
     """Les jeux du manifeste qu'une session ne peut pas atteindre."""
     import yaml
@@ -238,6 +273,7 @@ def jeux_bloques(manifeste: Path = MANIFESTE) -> list[dict]:
                 "sha256": jeu.get("sha256"),
                 "statut_integration": jeu.get("statut_integration"),
                 "recuperation": jeu.get("recuperation"),
+                "rediffusion": jeu.get("rediffusion"),
             })
     return bloques
 
@@ -274,13 +310,26 @@ def est_publie_ici(miroir: str | None) -> bool:
 
 def a_publier(jeux: list[dict]) -> list[dict]:
     """Les jeux que ``--publier`` prend en charge : refusés à la session,
-    visant un fichier nommé, dont l'adresse de document est connue, et sans
-    autre miroir que la release du dépôt."""
+    visant un fichier nommé, dont l'adresse de document est connue, sans
+    autre miroir que la release du dépôt, et dont la licence permet la
+    rediffusion."""
     return [
         jeu for jeu in jeux
         if jeu["blocage"] == "refus" and ou_deposer(jeu) is not None
         and adresse_du_document(jeu) is not None
         and (not jeu.get("miroir") or est_publie_ici(jeu["miroir"]))
+        and rediffusion(jeu) == "libre"
+    ]
+
+
+def retenus_par_la_licence(jeux: list[dict]) -> list[dict]:
+    """Les jeux que ``--publier`` prendrait, si leur licence le permettait."""
+    return [
+        jeu for jeu in jeux
+        if jeu["blocage"] == "refus" and ou_deposer(jeu) is not None
+        and adresse_du_document(jeu) is not None
+        and (not jeu.get("miroir") or est_publie_ici(jeu["miroir"]))
+        and rediffusion(jeu) != "libre"
     ]
 
 
@@ -380,9 +429,11 @@ def _github(methode: str, url: str, jeton: str, donnees=None,
     return dila_index._github(methode, url, jeton, donnees, type_contenu, longueur)
 
 
-def _ligne_release(nom: str, sha256: str, taille: int, adresse: str, voie: str) -> str:
-    return (f"- `{nom}` : sha256 `{sha256}`, {taille / 1e6:.1f} Mo, téléchargé le "
-            f"{time.strftime('%Y-%m-%d')} depuis {adresse} ({voie}).")
+def _ligne_release(nom: str, sha256: str, taille: int, adresse: str, voie: str,
+                   licence: str | None = None) -> str:
+    ligne = (f"- `{nom}` : sha256 `{sha256}`, {taille / 1e6:.1f} Mo, téléchargé le "
+             f"{time.strftime('%Y-%m-%d')} depuis {adresse} ({voie})")
+    return ligne + (f" ; republié sous {licence}." if licence else ".")
 
 
 def publier(jeux: list[dict], telecharger: Callable[[str], bytes] = telecharger,
@@ -460,7 +511,8 @@ def publier(jeux: list[dict], telecharger: Callable[[str], bytes] = telecharger,
         envoi = release["upload_url"].split("{")[0] + f"?name={quote(nom)}"
         type_contenu = mimetypes.guess_type(nom)[0] or "application/octet-stream"
         actif = _github("POST", envoi, jeton, octets, type_contenu, len(octets))
-        ligne = _ligne_release(nom, empreinte(octets), len(octets), adresse_du_document(jeu), voie)
+        ligne = _ligne_release(nom, empreinte(octets), len(octets), adresse_du_document(jeu),
+                               voie, (jeu.get("rediffusion") or {}).get("licence"))
         corps = re.sub(rf"\n- `{re.escape(nom)}`[^\n]*", "", "\n" + corps).lstrip("\n")
         corps = corps.rstrip() + "\n" + ligne
         print(f"{jeu['id']} : {nom} publié, {len(octets) / 1e6:.1f} Mo, sha256 "
@@ -548,6 +600,9 @@ def main(argv: list[str] | None = None) -> int:
                 print("playwright absent : les sites qui refusent la requête simple "
                       "donneront le code 3", file=sys.stderr)
                 navigateur = None
+        for jeu in retenus_par_la_licence(bloques):
+            print(f"{jeu['id']} : non publié — rediffusion {rediffusion(jeu)} : "
+                  f"{REDIFFUSIONS[rediffusion(jeu)]}")
         etats = publier(bloques, navigateur=navigateur)
         candidats = a_publier(bloques)
         print(f"{sum(e == 'publie' for e in etats.values())} document(s) publié(s) "
@@ -587,6 +642,9 @@ def main(argv: list[str] | None = None) -> int:
                   f"release à la main, une fois")
         else:
             print(f"    aucun miroir connu : à apporter sous {attendu.relative_to(RACINE)}")
+            if jeu in retenus_par_la_licence([jeu]):
+                print(f"    jamais republié — rediffusion {rediffusion(jeu)} : "
+                      f"{REDIFFUSIONS[rediffusion(jeu)]}")
         if jeu["recuperation"]:
             print(f"    lu par {jeu['recuperation']}")
         else:
