@@ -126,6 +126,22 @@ fichiers:
       "6. Un coût n'est pas un solde, et le coefficient d'équilibre le dit": etat
 
   # ------------------------------------------------------------------------
+  # L'état de l'architecture, tiré de la note 0001 par la phase 0 : ce qui
+  # reste vrai tant qu'aucune décision ne le change. Ses sections ont été
+  # arbitrées une à une à son entrée, et toutes décrivent l'état, sauf la
+  # liste des versions, qui raconte. Les chiffres datés de la note y sont
+  # devenus des ancres — l'inventaire des régimes, l'âge présumé aux
+  # naissances, le prélèvement sur les pensions — ou des renvois à la note,
+  # qui les garde à leur date : le temps de calcul, les comptes de rédactions,
+  # le recensement des autres modèles. La note elle-même, gelée, est sous
+  # `docs/decisions/`, hors du contrôle.
+  # ------------------------------------------------------------------------
+  docs/architecture.md:
+    defaut: etat
+    sections:
+      Les versions: recit
+
+  # ------------------------------------------------------------------------
   # La feuille de route est un journal : ses actions décrivent ce qu'on VOULAIT
   # faire le jour où on l'a écrit, et ses bilans ce qu'on a mesuré ce jour-là.
   # Seul le préambule parle du dépôt d'aujourd'hui.
