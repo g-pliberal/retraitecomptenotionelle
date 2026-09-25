@@ -12,6 +12,10 @@ certains régimes, restent saisis à la main. Ce document dit exactement où pas
 la frontière, pour qu'aucun résultat ne soit cité sans savoir sur quoi il
 repose.
 
+Il ne dit que ce qui vaut aujourd'hui. Les récits — un défaut trouvé, sa
+correction, et ce qu'il valait ce jour-là — sont dans
+`docs/archives/limites.md`, sous les titres qui les contenaient ici.
+
 ---
 
 ## Paramètres du scénario 1, et ce qu'ils valent
