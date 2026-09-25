@@ -160,6 +160,15 @@ fichiers:
     defaut: produit
 
   # ------------------------------------------------------------------------
+  # Le tableau de bord (docs/architecture.md, § 9.1), écrit en entier par
+  # `scripts/tableau_de_bord.py` depuis les registres, et tenu par
+  # test_le_tableau_de_bord_n_est_pas_perime. Le coût du travail, qui se lit
+  # sur l'historique git et changerait à chaque commit, n'y entre pas.
+  # ------------------------------------------------------------------------
+  docs/etat.md:
+    defaut: produit
+
+  # ------------------------------------------------------------------------
   # Le chiffrage budgétaire : une prose DATÉE autour de tableaux que
   # `scripts/chiffrage_plf.py` recalcule. Le régime est donc `recit` — le
   # document raconte ce que ces chiffres voulaient dire le 22 septembre 2026,

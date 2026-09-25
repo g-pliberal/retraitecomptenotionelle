@@ -159,12 +159,12 @@ sûr. D'où quatre règles :
   le conflit éventuel se lit en trois lignes. Même chose pour le `journal` de
   `veille.yaml`, qui s'allonge par la fin.
 - **Un conflit sur un fichier fabriqué ne s'arbitre pas, il se relance.**
-  `.gitattributes` marque `-merge` les six fichiers qu'un script écrit
+  `.gitattributes` marque `-merge` les sept fichiers qu'un script écrit
   (`moteur/donnees.json`, `moteur/style.css`, `tests/temoins/pages.json`,
   `tests/temoins/simulations.json`, `data/derive/equilibre.json`,
-  `docs/chiffrage_plf.csv`) : git y déclare le conflit au lieu de
-  fusionner ligne à ligne et de rendre un fichier que ni l'une ni l'autre des
-  sessions n'a produit. La version de la branche courante reste dans le
+  `docs/chiffrage_plf.csv`, `docs/etat.md`) : git y déclare le conflit au
+  lieu de fusionner ligne à ligne et de rendre un fichier que ni l'une ni
+  l'autre des sessions n'a produit. La version de la branche courante reste dans le
   répertoire de travail, sans marqueurs, et la résolution est mécanique :
 
 ```bash
@@ -172,12 +172,13 @@ git rebase origin/main          # pousser.sh l'a refusé, on le reprend à la ma
 python scripts/construire_donnees.py
 python scripts/construire_temoins.py
 python scripts/chiffrage_plf.py     # ses tableaux, dans le .md, sont des chiffres ancrés
+python scripts/tableau_de_bord.py   # docs/etat.md, depuis les registres
 git add -A && git rebase --continue
 python -m pytest && bash scripts/pousser.sh
 ```
 
-  Le côté qu'on garde n'a pas d'importance, puisqu'on réécrit les quatre
-  fichiers depuis les sources rebasées. Même geste pour un conflit de prose
+  Le côté qu'on garde n'a pas d'importance, puisqu'on réécrit ces fichiers
+  depuis les sources rebasées. Même geste pour un conflit de prose
   qui ne porte que sur des chiffres ancrés (`<!--chiffre:…-->`) : garder UN
   côté, jamais les deux, puis `python scripts/verifier_prose.py --corriger`.
   Garder les deux a doublé deux fois un paragraphe de la feuille de route ;

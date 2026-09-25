@@ -19,7 +19,8 @@
 #
 # `pages.json`, `simulations.json`, `donnees.json` et `style.css` — plusieurs
 # mégaoctets pour les trois premiers —, `equilibre.json` et la série du
-# chiffrage budgétaire sont écrits par un script depuis le modèle Python.
+# chiffrage budgétaire sont écrits par un script depuis le modèle Python ; le
+# tableau de bord, `docs/etat.md`, par le sien depuis les registres.
 # Quand deux sessions les ont régénérés chacune de son côté, la fusion à trois
 # branches de git y réussit souvent — et c'est le danger : elle rend un fichier
 # que ni l'une ni l'autre n'a produit, qui ne correspond à aucun état du
@@ -32,8 +33,9 @@
 # sessions en parallèle », qu'on ne recopie pas ici pour qu'elles ne
 # divergent plus — ce fichier en donnait une autre jusqu'au 23 septembre 2026,
 # sans le rebasage ni le chiffrage. En résumé : reprendre le rebasage, relancer
-# `construire_donnees.py`, `construire_temoins.py` et `chiffrage_plf.py`,
-# `git add -A && git rebase --continue`, puis tester et pousser.
+# `construire_donnees.py`, `construire_temoins.py`, `chiffrage_plf.py` et
+# `tableau_de_bord.py`, `git add -A && git rebase --continue`, puis tester et
+# pousser.
 #
 # On ne touche pas à l'attribut `diff` : le diff chiffre par chiffre des
 # témoins est ce qui rend le portage JavaScript vérifiable, il doit rester
@@ -45,3 +47,4 @@ tests/temoins/pages.json       -merge
 tests/temoins/simulations.json -merge
 data/derive/equilibre.json     -merge
 docs/chiffrage_plf.csv         -merge
+docs/etat.md                   -merge

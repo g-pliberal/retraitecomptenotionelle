@@ -1415,7 +1415,10 @@ Le tableau n'attend pas la carte. Dès la phase 0, il se fabrique depuis les
 registres d'aujourd'hui : la veille, l'inventaire et les effectifs, les
 exemples officiels, les réformes, les sources à explorer, la feuille de route.
 À la phase 2, il passe à la carte, sans changer de questions. Une maquette l'a
-montré avant la phase 0 (note 0001, § 14.7).
+montré avant la phase 0 (note 0001, § 14.7) ; `scripts/tableau_de_bord.py` en
+est tiré. Le coût du travail, qui se relève sur l'historique git, périmerait la
+page à chaque commit : il s'affiche à la demande (`--cout`), hors de
+`docs/etat.md`.
 
 ### 9.2 Ce qu'on apprend n'est jamais bloqué
 

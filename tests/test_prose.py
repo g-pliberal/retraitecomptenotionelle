@@ -231,6 +231,41 @@ def test_les_tableaux_produits_ne_sont_pas_perimes():
     assert rendu.returncode == 0, rendu.stdout + rendu.stderr
 
 
+def test_le_tableau_de_bord_n_est_pas_perime():
+    """Où en est le dépôt ne s'écrit pas à la main.
+
+    `docs/etat.md` répond à trois questions — où en est-on, ce qui ne va pas
+    encore, ce qui reste à faire — et `scripts/tableau_de_bord.py` l'écrit en
+    entier depuis les registres : la veille, l'inventaire et les effectifs,
+    les exemples officiels, les réformes, les sources à explorer, la feuille
+    de route. Une règle qui change d'état dans la veille change la page ; ce
+    test refuse une page qui ne serait plus celle que les registres disent.
+    """
+    import subprocess
+
+    rendu = subprocess.run(
+        [sys.executable, "-X", "utf8", "scripts/tableau_de_bord.py", "--verifier"],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8")
+    assert rendu.returncode == 0, rendu.stdout + rendu.stderr
+
+
+def test_le_cout_du_travail_s_affiche_a_la_demande_et_hors_de_la_page():
+    """Le coût du travail se relève sur l'historique git : ses chiffres
+    changent à chaque commit, et une page qui les porterait serait périmée dès
+    le suivant. `--cout` l'affiche sans rien écrire ; `docs/etat.md` n'en
+    porte que le renvoi."""
+    import subprocess
+
+    rendu = subprocess.run(
+        [sys.executable, "-X", "utf8", "scripts/tableau_de_bord.py", "--cout"],
+        cwd=RACINE, capture_output=True, text=True, encoding="utf-8")
+    assert rendu.returncode == 0, rendu.stdout + rendu.stderr
+    assert rendu.stdout.startswith("## Le coût du travail"), rendu.stdout[:200]
+    page = (RACINE / "docs" / "etat.md").read_text(encoding="utf-8")
+    assert "## Le coût du travail" not in page
+    assert "--cout" in page
+
+
 def test_le_chiffrage_plf_n_est_pas_perime():
     """Un chiffrage budgétaire est le document qu'on oublie de relire.
 
