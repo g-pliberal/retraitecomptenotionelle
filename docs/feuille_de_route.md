@@ -16784,7 +16784,10 @@ l'octet :
    quatre cœurs, 51 s en série. `tests/conftest.py` range chaque fichier de
    tests dans son niveau, rapide, complet ou contrôle ;
 5. `CLAUDE.md` renvoie à l'architecture et au tableau de bord ;
-6. le repère git `phase-0`, sur ce dernier commit (§ 12).
+6. le repère git `phase-0`, sur dae2819, le dernier commit de la phase
+   (§ 12). Le jeton d'une session n'écrit pas de tag (HTTP 403) : à la
+   demande du propriétaire, un workflow lancé une fois l'a posé, puis a été
+   supprimé.
 
 **Ce qui reste ouvert.**
 
@@ -16803,7 +16806,9 @@ l'octet :
   la suite complète : les recettes de `CLAUDE.md` et chaque session s'y
   fient avant d'envoyer sur main. En faire la suite rapide est un choix à
   prendre en réécrivant ces recettes, pas en passant.
-- Les trois workflows appellent `checkout@v4` et `setup-python@v5`, et
-  celui des tests `setup-node@v4` : des actions écrites pour Node 20, que
-  GitHub exécute sous Node 24 avec un avertissement. Les monter à leurs
-  versions pour Node 24 quand on y touchera.
+
+Le même jour, les actions des trois workflows, écrites pour Node 20 et que
+GitHub exécutait sous Node 24 avec un avertissement, sont passées à leurs
+dernières versions, qui tournent sous Node 24 : `checkout@v7`,
+`setup-python@v7`, `setup-node@v7`. Aucune de leurs ruptures ne touche une
+option qu'emploient ces workflows.
