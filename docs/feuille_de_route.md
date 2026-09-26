@@ -1959,3 +1959,12 @@ Il reste atteignable par trois chemins, qu'une session ne peut pas fermer :
   support de GitHub. La référence de la pull request 1, d'avant la réécriture
   du 23 septembre, porte encore, elle, des adresses nominatives : la même
   demande peut la viser.
+
+Vérifié le même jour, depuis un clone neuf de GitHub, après le passage du
+propriétaire : les trois vieilles branches et les trois repères sont
+supprimés, et un clone ordinaire, toutes branches et tous tags compris, ne
+porte plus le document. Seules les références des pull requests fermées 2, 3
+et 4 l'atteignent encore, jusqu'à ce que le support de GitHub les purge. Les
+repères `phase-0`, `phase-1` et `phase-2` sont à reposer depuis un poste, sur
+4bb438f, fc285ad et 6fb8284 : ni le jeton d'une session ni celui d'un workflow
+ne peuvent les créer sur le nouvel historique.
