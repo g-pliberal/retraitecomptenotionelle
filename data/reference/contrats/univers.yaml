@@ -1,0 +1,33 @@
+# Contrat C.4 — la couche et l'univers (docs/architecture.md, annexe C, et
+# § 4.8). Un univers est une pile de couches, le droit réel en bas. La phase 7
+# réécrit la proposition en univers de droit sur ce contrat.
+
+contrat: univers
+schema_version: 1
+annexe: C.4
+
+objets:
+
+  couche:
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      id: {porte: "identifiant stable", type: identifiant, obligatoire: true}
+      nom: {porte: "son nom", type: texte, obligatoire: true}
+      operations: {porte: "garder, ajouter, remplacer une version, neutraliser, changer un paramètre, ajouter une transition — chacune vise une fiche nommée ou un sélecteur", type: liste, de: {objet: operation}, obligatoire: true}
+      depuis: {porte: "la date qu'elle lit pour agir, et sa valeur", type: libre, defaut: origine}
+      portee: {porte: "l'univers, ou un seul calcul", type: valeur, valeurs: portees_de_couche, defaut: univers}
+
+  operation:
+    ouvert: true
+    champs:
+      operation: {porte: "ce qu'elle fait", type: valeur, valeurs: operations_de_couche, obligatoire: true}
+      vise: {porte: "une fiche nommée, ou un sélecteur (étape, domaine, face, régime, contributivité)", type: libre, obligatoire: true}
+
+  univers:
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      id: {porte: "identifiant stable", type: identifiant, obligatoire: true}
+      nom: {porte: "le scénario", type: texte, obligatoire: true}
+      couches: {porte: "la pile, dans l'ordre, le droit réel en bas", type: liste, de: identifiant, defaut: [droit_reel]}
+      observation: {porte: "la date d'observation par défaut", type: date, defaut: null}
+      parametres_du_pilote: {porte: "les paramètres qui dépendent d'une population, déclarés comme tels", type: libre, defaut: {}}

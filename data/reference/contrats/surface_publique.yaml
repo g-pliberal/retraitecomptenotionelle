@@ -1,0 +1,18 @@
+# Contrat C.9 — la surface publique du site (docs/architecture.md, annexe C).
+# Ce qu'un hôte ou un lien extérieur peut tenir pour stable : les adresses,
+# les paramètres d'une simulation, ce qu'elle rend, les variables de thème.
+# `docs/integration-partiliberalfrancais.md` le dit à l'hôte d'aujourd'hui.
+
+contrat: surface_publique
+schema_version: 1
+annexe: C.9
+
+objets:
+
+  surface:
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      adresses: {porte: "les adresses du site, et celles qui restent lues après une refonte", type: liste, de: texte, obligatoire: true}
+      entree: {porte: "les paramètres d'une simulation dans l'adresse, chacun avec son format", type: libre, obligatoire: true}
+      sortie: {porte: "ce qu'une simulation rend", type: libre, obligatoire: true}
+      theme: {porte: "les variables de thème qu'un hôte peut redéfinir", type: liste, de: texte, obligatoire: true}

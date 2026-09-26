@@ -1,0 +1,46 @@
+# Contrat C.6 — la liquidation et ses composantes (docs/architecture.md,
+# annexe C, et § 7.3). `liquider(demande, état, contexte)` est une fonction
+# pure : ce contrat dit ce qu'elle rend. La phase 5 l'écrit.
+
+contrat: liquidation
+schema_version: 1
+annexe: C.6
+
+objets:
+
+  liquidation:
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      demande: {porte: "personne, régimes, date d'effet, événement qui l'appelle et sa date, motif, nature ; pour une révision, la liquidation reprise ; pour une réversion, le défunt", type: objet, objet: demande, obligatoire: true}
+      contexte: {porte: "univers, date d'observation, hypothèse", type: libre, defaut: {univers: droit_reel}}
+      composantes: {porte: "base, majorations, minima, composantes temporaires, capital", type: liste, de: {objet: composante}, obligatoire: true}
+      payeurs: {porte: "par composante et par échéance", type: libre, defaut: regime}
+      contributive: {porte: "par composante et par échéance", type: libre, defaut: true}
+      lignes_consommees: {porte: "les lignes du relevé qu'elle a utilisées", type: liste, de: identifiant, obligatoire: true}
+      decisions: {porte: "ce qu'elle fige pour d'autres liquidations", type: liste, de: libre, defaut: []}
+      origine: {porte: "calculée, ou observée", type: valeur, valeurs: origines_de_ligne, defaut: calculee}
+
+  demande:
+    ouvert: true
+    champs:
+      personne: {porte: "la personne", type: identifiant, obligatoire: true}
+      regimes: {porte: "les régimes", type: liste, de: identifiant, obligatoire: true}
+      date_effet: {porte: "la date d'effet", type: date, obligatoire: true}
+      evenement: {porte: "l'événement qui l'appelle, et sa date", type: libre, obligatoire: true}
+      motif: {porte: "vieillesse, invalidité, inaptitude, carrière longue, réversion…", type: valeur, valeurs: motifs, defaut: vieillesse}
+      nature: {porte: "provisoire, définitive, seconde, fictive", type: valeur, valeurs: natures, defaut: definitive}
+      reprend: {porte: "pour une révision, la liquidation reprise et la date d'où elle vaut", type: libre, defaut: null}
+      defunt: {porte: "pour une réversion, le défunt", type: identifiant, defaut: null}
+
+  composante:
+    ouvert: true
+    champs:
+      id: {porte: "identifiant stable", type: identifiant, obligatoire: true}
+      fiche: {porte: "sa fiche", type: identifiant, obligatoire: true}
+      version: {porte: "sa version", type: identifiant, obligatoire: true}
+      beneficiaire: {porte: "son bénéficiaire", type: identifiant, obligatoire: true}
+      montant: {porte: "son montant et sa monnaie", type: libre, obligatoire: true}
+      debut: {porte: "son début", type: date, obligatoire: true}
+      fin: {porte: "sa fin", type: date, defaut: null}
+      servie: {porte: "servie, ou seulement calculée", type: booleen, defaut: true}
+      nature: {porte: "ferme, ou en attente, et de quoi", type: valeur, valeurs: natures_de_ligne, defaut: ferme}

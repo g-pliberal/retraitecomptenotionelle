@@ -1,0 +1,38 @@
+# Contrat C.1 — la chronologie : le fait et le lien (docs/architecture.md,
+# annexe C, et § 5). Rien ne l'emploie encore : la phase 3 construit la
+# chronologie datée et le réseau de personnes sur ce contrat.
+
+contrat: chronologie
+schema_version: 1
+annexe: C.1
+
+objets:
+
+  fait:
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      id: {porte: "identifiant stable", type: identifiant, obligatoire: true}
+      personne: {porte: "la personne du réseau", type: identifiant, obligatoire: true}
+      sorte: {porte: "la sorte de fait", type: valeur, valeurs: sortes_de_fait, obligatoire: true}
+      debut: {porte: "la date au jour", type: date, obligatoire: true}
+      fin: {porte: "la date au jour ; vide pour un événement", type: date, defaut: null}
+      attributs: {porte: "selon la sorte — métier, statut, grade et corps, régime, revenu, quotité, motif, pays, taux…", type: libre, obligatoire: true}
+      montant: {porte: "un montant et sa monnaie", type: libre, defaut: null}
+      territoire: {porte: "métropole, un département ou une collectivité d'outre-mer, un pays", type: texte, defaut: metropole}
+      origine: {porte: "déclaré, présumé (nom de la présomption), simulé", type: valeur, valeurs: origines_de_fait, defaut: declare}
+      connu_le: {porte: "la date où le fait est connu", type: date, defaut: null}
+      fiabilite: {porte: "le niveau de la donnée", type: texte, obligatoire: true}
+
+  lien:
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      id: {porte: "identifiant stable", type: identifiant, obligatoire: true}
+      de: {porte: "la première personne", type: identifiant, obligatoire: true}
+      vers: {porte: "la seconde personne", type: identifiant, obligatoire: true}
+      sorte: {porte: "la sorte de lien", type: valeur, valeurs: sortes_de_lien, obligatoire: true}
+      forme: {porte: "pour une union, mariage, PACS, concubinage", type: valeur, valeurs: formes_d_union, obligatoire_si: {sorte: [union]}, defaut: null}
+      roles: {porte: "le rôle de chacun", type: libre, obligatoire: true}
+      debut: {porte: "la date au jour", type: date, obligatoire: true}
+      fin: {porte: "la date au jour, et sa cause ; vide tant que le lien dure", type: libre, defaut: null}
+      regime: {porte: "le régime qui lit ce lien, s'il est seul à le lire", type: identifiant, defaut: null}
+      origine: {porte: "comme pour un fait", type: valeur, valeurs: origines_de_fait, defaut: declare}

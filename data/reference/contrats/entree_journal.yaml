@@ -1,0 +1,20 @@
+# Contrat C.8 — l'entrée du journal (docs/architecture.md, annexe C, et
+# § 7.4). Le journal est l'état : on y ajoute, on n'efface jamais, et chaque
+# entrée porte son inscription et son effet. Il se lit de deux façons, et de
+# deux seulement : l'état à une date, et ce qui est servi pour une période.
+
+contrat: entree_journal
+schema_version: 1
+annexe: C.8
+
+objets:
+
+  entree:
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      id: {porte: "identifiant de l'entrée, unique dans le journal", type: identifiant, obligatoire: true}
+      inscrite: {porte: "l'événement qui l'a écrite, et sa date", type: libre, obligatoire: true}
+      effet: {porte: "la période sur laquelle elle vaut, [début, fin)", type: intervalle, obligatoire: true}
+      contenu: {porte: "un événement traité ou en attente, une liquidation, une composante, une décision figée", type: libre, obligatoire: true}
+      remplace: {porte: "l'entrée qu'elle révise", type: identifiant, defaut: null}
+      annule: {porte: "l'événement en attente qu'elle annule", type: identifiant, defaut: null}

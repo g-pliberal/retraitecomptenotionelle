@@ -1601,7 +1601,7 @@ dépôt. Il comprend :
 
 - **les neuf principes** ;
 - **neuf contrats de données**, écrits à l'annexe C avec leurs valeurs par
-  défaut :
+  défaut, et en schémas dans `data/reference/contrats/` :
   - la **chronologie**, faits et liens ;
   - la **fiche**, règle ou relation, et ses **versions** ;
   - la **table datée** d'un paramètre ou d'une série ;
@@ -2133,9 +2133,15 @@ Ce que les deux fiches montrent :
 ## Annexe C — Les neuf contrats de données
 
 Ce sont les formes que le noyau fixe (§ 13.1). Chaque contrat porte un
-`schema_version`. Les noms sont indicatifs jusqu'à la phase 2, où ils
-deviennent des schémas validés par les tests. Ce qui est fixé, c'est ce que
-chaque champ porte.
+`schema_version`. Depuis la phase 2, chacun est un schéma, dans
+`data/reference/contrats/`, que `src/retraite_notionnelle/noyau/contrats.py`
+applique et que `tests/test_contrats.py` tient à ces tables. Ce qui est fixé,
+c'est ce que chaque champ porte.
+
+Le validateur distingue deux constats. Un champ inconnu, une valeur hors du
+vocabulaire, un type faux sont des erreurs : un moteur s'y arrêterait, et les
+tests les refusent. Un champ obligatoire absent est un manque : la donnée
+n'est pas encore mûre, le tableau de bord le compte, et rien n'est bloqué.
 
 Un champ facultatif a une valeur par défaut, qui laisse les résultats
 d'aujourd'hui identiques ; on en ajoute d'autres sans décision (§ 13.3). Les

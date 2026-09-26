@@ -1,0 +1,125 @@
+# Contrat C.2 — la fiche et ses versions (docs/architecture.md, annexe C,
+# et § 4.1, § 6.1, § 6.2).
+#
+# Une fiche est une règle, ou une relation entre règles. Ses versions forment
+# un partage de ses dates qui décident, à chaque date d'observation. Ce schéma
+# fixe ce que chaque champ porte ; `src/retraite_notionnelle/noyau/contrats.py`
+# l'applique, et `tests/test_contrats.py` le confronte aux tables de l'annexe C.
+#
+# Un champ `obligatoire` qui manque est un MANQUE : la fiche n'est pas encore
+# mûre, et le tableau de bord le compte. Un champ inconnu, une valeur hors
+# vocabulaire, un type faux sont des ERREURS, que les tests refusent. Un champ
+# `additif` a été ajouté après la décision, sans elle (§ 13.3) : il est
+# facultatif, et sa valeur par défaut laisse les résultats identiques.
+
+contrat: fiche
+schema_version: 1
+annexe: C.2
+
+objets:
+
+  fiche:
+    champs:
+      schema_version: {porte: "la version du contrat que la fiche suit", type: entier, obligatoire: true}
+      id: {porte: "identifiant stable, jamais renommé", type: identifiant, obligatoire: true}
+      remplacee_par: {porte: "la fiche qui la remplace, si elle est dépréciée", type: identifiant, defaut: null}
+      intitule: {porte: "ce que la règle accorde ou exige, en une phrase", type: texte, obligatoire: true}
+      domaine: {porte: "le domaine de droit", type: valeur, valeurs: domaines, obligatoire: true}
+      regimes: {porte: "les régimes concernés", type: liste, de: identifiant, obligatoire: true}
+      etape: {porte: "l'étape qui l'applique, ou l'échéancier", type: valeur, valeurs: etapes, obligatoire: true}
+      face: {porte: "droit, cotisation ou financement", type: valeur, valeurs: faces, defaut: droit}
+      paie: {porte: "pour un financement, les fiches qu'elle paie", type: liste, de: identifiant, defaut: [], additif: "le § 6.1 le nomme, l'annexe C le range dans `face`"}
+      etat: {porte: "conforme, transcrite, approchée, manquante, pas encore modélisée", type: valeur, valeurs: etats_de_fiche, obligatoire: true}
+      lit: {porte: "faits, liens, lignes du relevé, entrées du journal, résultats", type: liste, de: texte, obligatoire: true}
+      ecrit: {porte: "ce qu'elle produit", type: liste, de: texte, obligatoire: true}
+      lit_sous_hypothese: {porte: "les résultats qui viennent plus loin, et leurs possibilités", type: liste, de: libre, defaut: []}
+      dates_qui_decident: {porte: "des dates nommées du vocabulaire", type: liste, de: date_nommee, obligatoire: true}
+      suit: {porte: "les événements qu'elle suit, les liens qu'elle lit, et jusqu'à quelle distance", type: libre, defaut: null}
+      neutralisee: {porte: "ce qu'elle écrit quand un univers la neutralise", type: libre, defaut: rien}
+      versions: {porte: "un partage, à chaque date d'observation", type: liste, de: {objet: version}, obligatoire: true}
+      approximations: {porte: "chacune avec sa version et son effet, ou « non mesuré »", type: liste, de: {objet: approximation}, defaut: [], obligatoire_si: {etat: [approchee]}}
+      presomptions: {porte: "les présomptions qu'elle pose, par date ou par fait", type: libre, defaut: {}}
+      invariants: {porte: "les bornes qu'une valeur ne peut pas franchir", type: liste, de: libre, defaut: []}
+      sources: {porte: "lue le, prochaine relecture, lectures divergentes, questions à relire", type: objet, objet: sources, defaut: {}}
+      textes_sans_effet: {porte: "les rédactions lues qui ne la changent pas", type: liste, de: {objet: texte}, defaut: []}
+      textes_a_rattacher: {porte: "celles qui la changent sans être encore coupées en versions", type: liste, de: {objet: texte}, defaut: []}
+      textes_a_relire: {porte: "celles dont l'effet reste à lire", type: liste, de: {objet: texte}, defaut: []}
+      code: {porte: "les fonctions des deux moteurs, les paramètres, les tests", type: libre, defaut: {}, obligatoire_sauf: {etat: [pas_encore_modelisee]}}
+      referents: {porte: "la correspondance avec chaque autre modèle, et les écarts justifiés", type: libre, defaut: {}}
+      historique: {porte: "les récits qui la concernent, repris des registres", type: liste, de: texte, defaut: []}
+      exemples: {porte: "les exemples officiels de la fiche tant que ses versions ne sont pas découpées", type: liste, de: identifiant, defaut: [], additif: "une fiche tirée d'un registre n'a pas encore de versions où les rattacher"}
+      reformes: {porte: "les entrées de reformes.yaml qu'elle couvre", type: liste, de: identifiant, defaut: [], additif: "le registre de veille les rattachait à la règle"}
+      effet: {porte: "qui la règle touche, et de combien", type: texte, defaut: null, additif: "le registre de veille le disait de chaque règle"}
+
+  relation:
+    # Une relation est une fiche : elle en porte tous les champs, et ceux-ci.
+    etend: fiche
+    champs:
+      sorte: {porte: "la sorte de relation", type: valeur, valeurs: sortes_de_relation, obligatoire: true}
+      fiches: {porte: "les fiches reliées, avec leur rôle", type: liste, de: {objet: relie}, obligatoire: true}
+      rang: {porte: "le rang d'application dans l'étape", type: entier, obligatoire: true}
+      methode: {porte: "pour un choix, comment on retient le plus favorable", type: libre, defaut: null, obligatoire_si: {sorte: [choix]}}
+      hypothese: {porte: "pour une lecture sous hypothèse, ses possibilités et son budget", type: libre, defaut: null}
+
+  version:
+    champs:
+      id: {porte: "identifiant immuable", type: identifiant, obligatoire: true}
+      statut: {porte: "lue, supposée", type: valeur, valeurs: statuts_de_version, defaut: lue}
+      hypothese: {porte: "pour une version ou une borne supposée, son hypothèse", type: texte, defaut: null, obligatoire_si: {statut: [supposee]}}
+      fiabilite: {porte: "pour une version supposée, sa fiabilité", type: texte, defaut: null, obligatoire_si: {statut: [supposee]}}
+      textes: {porte: "les textes qui la fondent", type: liste, de: {objet: texte}, defaut: [], obligatoire_si: {statut: [lue]}}
+      nee_de: {porte: "le texte qui la fait naître", type: texte, defaut: null}
+      requis: {porte: "les textes sans lesquels elle est inapplicable", type: liste, de: texte, defaut: []}
+      bornes: {porte: "un intervalle [début, fin) par date qui décide", type: bornes, obligatoire: true}
+      fermee_par: {porte: "pour une fin de borne, la version qui la ferme", type: libre, defaut: {}}
+      vise: {porte: "les pensions qui prennent effet, ou les pensions servies", type: valeur, valeurs: vise, defaut: pensions_qui_prennent_effet}
+      duree: {porte: "pour un effet temporaire, sa durée", type: texte, defaut: null}
+      exception_de: {porte: "la version qu'elle prime, s'il y a chevauchement", type: identifiant, defaut: null}
+      contenu: {porte: "droit accordé ou exigé, bénéficiaire, conditions, défauts légaux, paramètres lus", type: libre, obligatoire: true}
+      unites: {porte: "unité, arrondi, ancrage", type: libre, defaut: {}}
+      exemples: {porte: "les exemples officiels, ou « aucun trouvé »", type: exemples, obligatoire: true}
+
+  texte:
+    # Un texte cité : par son identifiant stable, ou, à défaut, par sa
+    # référence de publication déclarée (§ 4.1).
+    champs:
+      id: {porte: "identifiant stable (LEGIARTI, LEGITEXT, JORFTEXT, ELI, ECLI)", type: texte, defaut: null}
+      reference: {porte: "à défaut d'identifiant, la référence et le lieu de publication", type: texte, defaut: null}
+      article: {porte: "l'article cité, dans ce texte", type: texte, defaut: null}
+      en_vigueur: {porte: "l'entrée en vigueur de la rédaction", type: date, defaut: null}
+      publie_le: {porte: "la date de publication", type: date, defaut: null}
+      citation: {porte: "la citation exacte", type: texte, defaut: null}
+      lu_le: {porte: "la date de lecture", type: date, defaut: null}
+      empreinte: {porte: "hors du Journal officiel, l'empreinte de la copie datée", type: texte, defaut: null}
+      motif: {porte: "pour un texte sans effet, ce qui le montre", type: texte, defaut: null}
+      change: {porte: "pour un texte à rattacher, ce qu'il change", type: texte, defaut: null}
+      question: {porte: "pour un texte à relire, la question qu'il pose", type: texte, defaut: null}
+    un_des: [id, reference]
+
+  approximation:
+    champs:
+      version: {porte: "la ou les versions qu'elle touche", type: libre, defaut: null}
+      regime: {porte: "le régime qu'elle touche, s'il est seul", type: identifiant, defaut: null}
+      textes: {porte: "les textes qu'elle touche, ou la liste de la fiche qui les porte", type: libre, defaut: null}
+      ecart: {porte: "ce que le modèle fait autrement que le droit", type: texte, obligatoire: true}
+      effet: {porte: "son effet mesuré, ou « non mesuré »", type: texte, obligatoire: true}
+
+  sources:
+    ouvert: true
+    champs:
+      lu_le: {porte: "la date de la dernière lecture", type: date, defaut: null}
+      prochaine_relecture: {porte: "la date à laquelle relire, quoi qu'il arrive", type: date, defaut: null}
+      lectures: {porte: "ce qui a été lu, avec sa sorte et sa date", type: liste, de: {objet: lecture}, defaut: []}
+      lectures_divergentes: {porte: "les lectures qui ne concordent pas", type: liste, de: texte, defaut: []}
+      a_relire: {porte: "les questions ouvertes, que la vue de la veille lit", type: liste, de: texte, defaut: []}
+
+  lecture:
+    champs:
+      type: {porte: "la sorte de source lue", type: valeur, valeurs: types_de_source, obligatoire: true}
+      reference: {porte: "ce qui a été lu", type: texte, obligatoire: true}
+      date: {porte: "la date de la source", type: date, obligatoire: true}
+
+  relie:
+    champs:
+      fiche: {porte: "la fiche reliée", type: identifiant, obligatoire: true}
+      role: {porte: "son rôle — générale ou exception, prioritaire ou subsidiaire, ce que le plafond borne", type: texte, obligatoire: true}

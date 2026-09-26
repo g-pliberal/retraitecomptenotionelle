@@ -1,0 +1,31 @@
+# Contrat C.3 — la table datée d'un paramètre ou d'une série
+# (docs/architecture.md, annexe C, et § 4.1). Les tables de
+# data/reference/legislation/ en prendront la forme ; l'annexe B leur ajoute
+# deux colonnes facultatives, la date de publication et la dernière valeur
+# connue valable.
+
+contrat: table_datee
+schema_version: 1
+annexe: C.3
+
+objets:
+
+  table_datee:
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      id: {porte: "le paramètre ou la série", type: identifiant, obligatoire: true}
+      unite: {porte: "l'unité des valeurs", type: texte, obligatoire: true}
+      monnaie: {porte: "la monnaie des valeurs, s'il y en a une", type: texte, defaut: null}
+      indexee_par: {porte: "la date qui décide de sa valeur — l'année du revenu, la génération, la date d'effet, l'échéance…", type: date_nommee, obligatoire: true}
+      valeurs: {porte: "pour chacune, sa date d'application, sa source, sa date de publication, l'empreinte du fichier source", type: liste, de: {objet: valeur_datee}, obligatoire: true}
+      valable_jusqu_au: {porte: "jusqu'où la dernière valeur est connue valable", type: date, obligatoire: true}
+      origine: {porte: "texte, série publiée, autre modèle (lequel), prolongement supposé", type: texte, obligatoire: true}
+
+  valeur_datee:
+    ouvert: true
+    champs:
+      date: {porte: "sa date d'application", type: date, obligatoire: true}
+      valeur: {porte: "la valeur", type: libre, obligatoire: true}
+      source: {porte: "sa source", type: texte, defaut: null}
+      publie_le: {porte: "sa date de publication", type: date, defaut: null}
+      empreinte: {porte: "l'empreinte du fichier source", type: texte, defaut: null}

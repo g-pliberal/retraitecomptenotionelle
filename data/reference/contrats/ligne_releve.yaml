@@ -1,0 +1,30 @@
+# Contrat C.5 — la ligne du relevé des droits (docs/architecture.md,
+# annexe C, et § 7.6). Chaque ligne cite la fiche et la version qui l'ont
+# écrite : c'est ce qui permettra au tableau de bord de dire la part des
+# pensions qui ne passent que par des règles conformes (phases 4 et 5).
+
+contrat: ligne_releve
+schema_version: 1
+annexe: C.5
+
+objets:
+
+  ligne:
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      id: {porte: "la ligne", type: identifiant, obligatoire: true}
+      personne: {porte: "la personne qui en bénéficie", type: identifiant, obligatoire: true}
+      fait: {porte: "le fait qui ouvre le droit", type: identifiant, obligatoire: true}
+      date: {porte: "sa date", type: date, obligatoire: true}
+      fiche: {porte: "la règle appliquée", type: identifiant, obligatoire: true}
+      version: {porte: "sa version", type: identifiant, obligatoire: true}
+      texte: {porte: "le texte appliqué", type: texte, obligatoire: true}
+      droit: {porte: "quantité, unité, régime", type: libre, obligatoire: true}
+      face: {porte: "droit, cotisation, financement", type: valeur, valeurs: faces, defaut: droit}
+      payeurs: {porte: "pour un financement attaché à l'acquisition, les payeurs et leurs parts", type: libre, defaut: regime}
+      contributive: {porte: "oui ou non", type: booleen, defaut: true}
+      nature: {porte: "ferme, conditionnelle (et la condition), en attente (de quoi)", type: valeur, valeurs: natures_de_ligne, defaut: ferme}
+      filiation: {porte: "la ligne, la liquidation ou la personne d'origine, pour une transformation", type: libre, defaut: null}
+      origine: {porte: "calculée, observée", type: valeur, valeurs: origines_de_ligne, defaut: calculee}
+      presomptions: {porte: "les présomptions qui l'ont posée", type: liste, de: texte, obligatoire: true}
+      fiabilite: {porte: "le niveau de la donnée", type: texte, obligatoire: true}

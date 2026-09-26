@@ -1,0 +1,21 @@
+# Contrat C.7 — l'événement (docs/architecture.md, annexe C, et § 7.4).
+# L'échéancier les parcourt dans l'ordre des dates ; le vocabulaire dit, pour
+# chaque sorte, si elle appelle `liquider`.
+
+contrat: evenement
+schema_version: 1
+annexe: C.7
+
+objets:
+
+  evenement:
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      id: {porte: "identifiant de l'événement, unique dans l'échéancier", type: identifiant, obligatoire: true}
+      date: {porte: "sa date", type: date, obligatoire: true}
+      sorte: {porte: "la sorte d'événement", type: valeur, valeurs: sortes_d_evenement, defaut: depart}
+      personnes: {porte: "les personnes concernées", type: liste, de: identifiant, obligatoire: true}
+      vise: {porte: "un régime, une liquidation, une allocation", type: libre, obligatoire: true}
+      origine: {porte: "acte, simulé, observé, induit (fiche), publication", type: valeur, valeurs: origines_d_evenement, defaut: acte}
+      condition: {porte: "pour un événement induit inscrit d'avance, sa condition, et la fiche qui peut l'annuler", type: libre, defaut: null}
+      rang: {porte: "l'ordre dans la journée, selon la relation qui le déclare", type: entier, obligatoire: true}
