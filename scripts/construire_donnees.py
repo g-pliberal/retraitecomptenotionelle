@@ -71,6 +71,7 @@ from retraite_notionnelle.donnees.mortalite import (  # noqa: E402
     DonneesMortalite,
     serialiser_calibrations,
 )
+from retraite_notionnelle.noyau import vocabulaire  # noqa: E402
 from retraite_notionnelle.remuneration import charger_prelevements  # noqa: E402
 from retraite_notionnelle.restitution import POSTES_REMUNERATION  # noqa: E402
 from retraite_notionnelle.donnees.population import Population  # noqa: E402
@@ -1173,6 +1174,15 @@ def _majorations_enfants() -> list:
     ]
 
 
+def _presomptions() -> dict:
+    """Les présomptions du vocabulaire (docs/architecture.md, § 5.6) : ce que
+    chacune dit et sa valeur. La chronologie du site en lit la valeur quand
+    elle complète ce que la saisie ne dit pas, comme celle du Python la lit
+    au vocabulaire."""
+    return {nom: {"dit": presomption["dit"], "valeur": presomption["valeur"]}
+            for nom, presomption in sorted(vocabulaire.presomptions().items())}
+
+
 def _services_ouvrant_pension() -> dict:
     """Durée de services qui ouvre une pension, par régime spécial et par date
     de radiation : la condition de priorité de R. 173-15."""
@@ -1576,6 +1586,7 @@ def construire(bilan: bytes) -> bytes:
         "decote_regimes_speciaux": _decote_regimes_speciaux(),
         "carriere_longue": _carriere_longue(),
         "majorations_enfants": _majorations_enfants(),
+        "presomptions": _presomptions(),
         "services_ouvrant_pension": _services_ouvrant_pension(),
         "surcote_parentale": _surcote_parentale(),
         "majoration_enfants_points": _majoration_enfants_points(),

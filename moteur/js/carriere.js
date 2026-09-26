@@ -7,8 +7,14 @@
  * suppose ni profil ni progression), ou la suite des métiers exercés — statut,
  * âge de début et niveau de rémunération pour chacun. Une carrière d'un seul
  * métier en est le cas particulier.
+ *
+ * La carrière est la vue d'une chronologie (`chronologie.js`) : le relevé et
+ * le parcours déclarent des faits datés, les présomptions complètent ce
+ * qu'ils ne disent pas, et {@link Carriere.depuisChronologie} en tire les
+ * années que le moteur d'aujourd'hui liquide.
  */
 
+import * as chrono from "./chronologie.js";
 import {
   MOIS_PAR_AN,
   DateMois,
@@ -346,6 +352,14 @@ export class Carriere {
     nombre_enfants = 0,
     identifiant = "assuré",
     dates_entree = {},
+    //: La chronologie dont la carrière est la vue, complétée par les
+    //: présomptions. Une carrière construite ligne à ligne en reçoit une,
+    //: tirée de ses champs ; une copie de travail garde celle dont elle vient.
+    //: Le paquet ne passant pas par ici, une carrière construite ligne à ligne
+    //: AVEC des enfants reçoit sa chronologie complétée : le moteur n'en
+    //: construit aucune, seul un test pourrait le faire.
+    chronologie = null,
+    personne = chrono.ASSURE,
   }) {
     if (sexe !== "H" && sexe !== "F") {
       throw new Error(`sexe attendu 'H' ou 'F', reçu ${sexe}`);
@@ -388,6 +402,10 @@ export class Carriere {
       this._parAnnee.get(ligne.annee).push(ligne);
     }
     this._plafonds = null;
+    this.chronologie = chronologie ?? chrono.completer(chrono.duResume(
+      annee_naissance, sexe, mois_naissance, age_liquidation, nombre_enfants));
+    this.personne = personne;
+    this._naissanceDesEnfants = undefined;
   }
 
   // -- dates -----------------------------------------------------------------
@@ -402,6 +420,36 @@ export class Carriere {
 
   get dateNaissance() {
     return new DateMois(this.annee_naissance, this.mois_naissance);
+  }
+
+  /**
+   * L'année où naissent les enfants, telle que la chronologie la porte :
+   * présumée aux trente ans de l'assuré tant que rien n'est déclaré
+   * (présomption `naissance_des_enfants`). `null` sans enfant. Le moteur ne lit
+   * encore qu'une année pour tous : des naissances déclarées à des années
+   * différentes l'arrêtent. Voir `carriere.py`.
+   */
+  get anneeNaissanceDesEnfants() {
+    if (this._naissanceDesEnfants === undefined) {
+      const annees = new Set();
+      for (const enfant of chrono.enfants(this.chronologie, this.personne)) {
+        const naissance = chrono.naissance(this.chronologie, enfant);
+        if (naissance === null) {
+          throw new Error(`${this.identifiant} : la naissance de ${enfant} n'est `
+            + "ni déclarée ni présumée");
+        }
+        annees.add(chrono.anneeDe(naissance.debut));
+      }
+      if (annees.size > 1) {
+        throw new Error(
+          `${this.identifiant} : des enfants nés à des années différentes `
+          + `(${[...annees].sort((a, b) => a - b).join(", ")}) — le moteur ne lit `
+          + "encore qu'une année pour tous",
+        );
+      }
+      this._naissanceDesEnfants = annees.size ? [...annees][0] : null;
+    }
+    return this._naissanceDesEnfants;
   }
 
   /**
@@ -484,6 +532,8 @@ export class Carriere {
       nombre_enfants: this.nombre_enfants,
       identifiant: this.identifiant,
       dates_entree: { ...this.dates_entree },
+      chronologie: this.chronologie,
+      personne: this.personne,
     });
   }
 
@@ -502,6 +552,8 @@ export class Carriere {
         nombre_enfants: this.nombre_enfants,
         identifiant: this.identifiant,
         dates_entree: { ...this.dates_entree },
+        chronologie: this.chronologie,
+        personne: this.personne,
       });
     }
     const initiale = this.dateLiquidation;
@@ -575,6 +627,8 @@ export class Carriere {
       nombre_enfants: this.nombre_enfants,
       identifiant: this.identifiant,
       dates_entree: { ...this.dates_entree },
+      chronologie: this.chronologie,
+      personne: this.personne,
     });
   }
 
@@ -880,43 +934,11 @@ export class Carriere {
     part_primes = 0.0,
     identifiant = "assuré",
   }) {
-    if (!releve || releve.length === 0) {
-      throw new Error("un relevé compte au moins une ligne");
-    }
-    const dateNaissance = new DateMois(annee_naissance, mois_naissance);
-    // La pension prend effet ce mois-là : il n'est plus travaillé.
-    const fin = dateNaissance.plusMois(enMois(age_liquidation));
-
-    const lues = releve.map((ligne) => {
-      const mois = ligne.annee < fin.annee ? MOIS_PAR_AN : fin.mois - 1;
-      if (ligne.annee > fin.annee || mois <= 0) {
-        throw new Error(
-          `${identifiant} : l'année ${ligne.annee} du relevé est postérieure `
-          + `au départ à la retraite (${fin})`,
-        );
-      }
-      return ligneAnnuelle({
-        annee: ligne.annee,
-        revenu: ligne.revenu,
-        affiliation: ligne.affiliation,
-        type_periode: ligne.type_periode ?? "emploi",
-        macro,
-        part: mois / MOIS_PAR_AN,
-        part_primes,
-        trimestresMaximum: trimestresCivils(mois),
-        trimestresDeclares: ligne.trimestres ?? null,
-      });
-    });
-    const lignes = limiterChomageNonIndemnise(
-      lues, annee_naissance,
-      new Set(releve.filter((l) => l.trimestres !== null && l.trimestres !== undefined)
-        .map((l) => l.annee)),
-    );
-
-    return new Carriere({
-      annee_naissance, sexe, lignes, mois_naissance, age_liquidation,
-      nombre_enfants, identifiant,
-    });
+    const chronologie = chrono.completer(chrono.duReleve({
+      annee_naissance, sexe, releve, age_liquidation, mois_naissance,
+      nombre_enfants, part_primes,
+    }), macro.paquet.presomptions);
+    return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
 
   /**
@@ -971,178 +993,224 @@ export class Carriere {
     part_primes = 0.0,
     identifiant = "assuré",
   }) {
-    if (!metiers || metiers.length === 0) {
-      throw new Error("une carrière compte au moins un métier");
-    }
-    if (metiers[0].cumul) {
-      throw new Error(
-        "une activité cumulée s'ajoute à une activité principale : la "
-        + "carrière ne peut pas commencer par elle",
-      );
-    }
-    const cumuls = metiers.filter((metier) => metier.cumul);
-    metiers = metiers.filter((metier) => !metier.cumul);
+    const chronologie = chrono.completer(chrono.duParcours({
+      annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
+      profil_carriere, interruptions, nombre_enfants, part_primes,
+    }), macro.paquet.presomptions);
+    return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
+  }
 
-    const dateNaissance = new DateMois(annee_naissance, mois_naissance);
-    const bornes = metiers.map(
-      (metier) => dateNaissance.plusMois(enMois(metier.age_debut)),
-    );
-    const debut = bornes[0];
-    // La pension prend effet ce mois-là : il n'est plus travaillé, la borne
-    // est donc EXCLUE.
-    const fin = dateNaissance.plusMois(enMois(age_liquidation));
-    if (fin.rang <= debut.rang) {
-      throw new Error("âge de liquidation antérieur à l'âge de début d'activité");
+  /**
+   * La carrière qu'une chronologie complétée décrit : ses années, telles que
+   * le moteur d'aujourd'hui les liquide. La naissance donne l'année, le mois et
+   * le sexe ; le départ, l'âge déclaré ; les filiations, le nombre des enfants ;
+   * les périodes, les années — d'un relevé ligne à ligne, d'un parcours métier
+   * par métier. Voir `carriere.py`.
+   */
+  static depuisChronologie(chronologie, macro, personne = chrono.ASSURE,
+    identifiant = "assuré") {
+    const naissance = chrono.naissance(chronologie, personne);
+    if (naissance === null) {
+      throw new Error(`${identifiant} : la chronologie ne date pas la naissance `
+        + `de ${personne}`);
     }
-    // Chaque métier s'arrête où commence le suivant : les périodes se touchent
-    // bout à bout et couvrent la carrière exactement une fois. Un métier qui
-    // commencerait avant le précédent, ou après la liquidation, laisserait un
-    // trou ou un recouvrement — donc des mois comptés deux fois, ou pas du tout.
-    for (let i = 1; i < bornes.length; i += 1) {
-      if (bornes[i].rang <= bornes[i - 1].rang) {
-        throw new Error(
-          "les métiers doivent se suivre : chacun commence après le précédent",
-        );
-      }
+    const dateNaissance = chrono.moisDe(naissance.debut);
+    const acte = chrono.depart(chronologie, personne);
+    const ageLiquidation = acte === null ? null : acte.attributs.age;
+    const periodes = chrono.periodes(chronologie, personne);
+    const relevees = periodes.filter((p) => "revenu" in p.attributs);
+    let datesEntree = {};
+    let lignes = [];
+    if (periodes.length > 0 && acte === null) {
+      throw new Error(`${identifiant} : des périodes sans départ — la carrière `
+        + "s'arrête au départ, qui la date");
     }
-    if (bornes[bornes.length - 1].rang >= fin.rang) {
-      throw new Error("le dernier métier commence après la liquidation");
+    if (relevees.length > 0 && relevees.length !== periodes.length) {
+      throw new Error(`${identifiant} : la chronologie mêle un relevé et un `
+        + "parcours, que rien ne sait joindre");
     }
-    const periodes = metiers.map((metier, i) => ({
-      metier,
-      ouverture: bornes[i],
-      cloture: i + 1 < bornes.length ? bornes[i + 1] : fin,
-    }));
-
-    const anneeDebut = debut.annee;
-    const annees = [];
-    for (let annee = debut.annee; annee <= fin.annee; annee += 1) {
-      if (moisTravailles(annee, debut, fin) > 0) {
-        annees.push(annee);
-      }
+    if (relevees.length > 0) {
+      lignes = lignesDuReleve(dateNaissance, relevees, chrono.moisDe(acte.debut),
+        macro, identifiant);
+    } else if (periodes.length > 0) {
+      [lignes, datesEntree] = lignesDuParcours(dateNaissance, periodes,
+        chrono.moisDe(acte.debut), macro);
     }
-    const anneeFin = annees[annees.length - 1];
-
-    const plages = interruptions || new Map();
-    // LE PROFIL SE LIT À UN ÂGE ET À UNE ANNÉE, et c'est tout ce dont il
-    // dépend : le passé ne peut donc plus changer parce qu'on décide de
-    // travailler plus longtemps, et la pente est celle que l'INSEE observe
-    // pour la génération. Voir `carriere.py`, qui porte la mesure et le motif.
-    const salaireMoyen = indiceSalaireMoyen(macro, anneeDebut, anneeFin);
-
-    const lignes = [];
-    for (const annee of annees) {
-      const part = fractionAnnee(annee, debut, fin);
-      const trimestresMaximum = trimestresCivils(moisTravailles(annee, debut, fin));
-      // Le profil se lit MÉTIER PAR MÉTIER : l'affiliation peut changer en
-      // cours de carrière, et c'est elle qui le choisit.
-      const ageAnnee = annee - annee_naissance;
-      // Ce que chaque métier a occupé de l'année. La somme vaut les mois
-      // travaillés de l'année : les périodes la découpent sans reste.
-      const moisParMetier = periodes.map(
-        ({ ouverture, cloture }) => moisTravailles(annee, ouverture, cloture),
-      );
-      let revenu = 0;
-      periodes.forEach(({ metier }, i) => {
-        if (moisParMetier[i] > 0) {
-          revenu += metier.niveau_salaire
-            * profilSalaire(macro.paquet, profil_carriere, ageAnnee, annee,
-              metier.affiliation)
-            * salaireMoyen.get(annee)
-            * (moisParMetier[i] / MOIS_PAR_AN);
-        }
-      });
-      // Le moteur ne connaît qu'une ligne, donc qu'un statut, par année civile :
-      // les régimes liquident à l'année. L'année d'un changement de métier est
-      // donc rattachée à celui qui en occupe le plus de mois — et, à égalité, à
-      // celui qui l'ouvre. Le revenu, lui, reste la somme de ce que les deux ont
-      // réellement payé.
-      let dominant = 0;
-      moisParMetier.forEach((mois, i) => {
-        if (mois > moisParMetier[dominant]) {
-          dominant = i;
-        }
-      });
-      const affiliation = periodes[dominant].metier.affiliation;
-
-      lignes.push(ligneAnnuelle({
-        annee,
-        revenu,
-        affiliation,
-        type_periode: plages.get(annee) ?? "emploi",
-        macro,
-        part,
-        part_primes,
-        trimestresMaximum,
-      }));
-    }
-    const limitees = limiterChomageNonIndemnise(lignes, annee_naissance);
-
-    // LES ACTIVITÉS CUMULÉES, chacune sur ses propres mois. Elles ne
-    // déplacent rien de l'activité principale : une ligne de plus par année
-    // touchée, sous leur statut. Une interruption déclarée arrête l'activité
-    // principale, pas celle-ci.
-    const periodesCumulees = [];
-    for (const metier of cumuls) {
-      const ouverture = dateNaissance.plusMois(enMois(metier.age_debut));
-      const cloture = metier.age_fin === null || metier.age_fin === undefined
-        ? fin : dateNaissance.plusMois(enMois(metier.age_fin));
-      if (ouverture.rang < debut.rang) {
-        throw new Error(
-          "une activité cumulée commence après le début de la carrière : elle "
-          + "s'ajoute à une activité déjà là",
-        );
-      }
-      if (cloture.rang > fin.rang) {
-        throw new Error(
-          "une activité cumulée s'arrête au plus tard à la liquidation",
-        );
-      }
-      if (cloture.rang <= ouverture.rang) {
-        throw new Error(
-          "une activité cumulée doit s'arrêter après avoir commencé",
-        );
-      }
-      periodesCumulees.push({ metier, ouverture, cloture });
-      for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
-        const mois = moisTravailles(annee, ouverture, cloture);
-        if (mois <= 0) {
-          continue;
-        }
-        const revenu = metier.niveau_salaire
-          * profilSalaire(macro.paquet, profil_carriere, annee - annee_naissance,
-            annee, metier.affiliation)
-          * salaireMoyen.get(annee)
-          * (mois / MOIS_PAR_AN);
-        // Après la limite du chômage non indemnisé, qui ne regarde que
-        // l'activité principale — comme en Python.
-        limitees.push(ligneAnnuelle({
-          annee,
-          revenu,
-          affiliation: metier.affiliation,
-          type_periode: "emploi",
-          macro,
-          part: fractionAnnee(annee, ouverture, cloture),
-          part_primes,
-          trimestresMaximum: trimestresCivils(mois),
-        }));
-      }
-    }
-
-    const datesEntree = {};
-    const toutes = [...periodes, ...periodesCumulees]
-      .sort((a, b) => a.ouverture.rang - b.ouverture.rang);
-    for (const { metier, ouverture } of toutes) {
-      if (!Object.prototype.hasOwnProperty.call(datesEntree, metier.affiliation)) {
-        datesEntree[metier.affiliation] = ouverture;
-      }
-    }
-
     return new Carriere({
-      annee_naissance, sexe, lignes: limitees, mois_naissance, age_liquidation,
-      nombre_enfants, identifiant, dates_entree: datesEntree,
+      annee_naissance: dateNaissance.annee,
+      sexe: naissance.attributs.sexe,
+      lignes,
+      mois_naissance: dateNaissance.mois,
+      age_liquidation: ageLiquidation,
+      nombre_enfants: chrono.enfants(chronologie, personne).length,
+      identifiant,
+      dates_entree: datesEntree,
+      chronologie,
+      personne,
     });
   }
+}
+
+/**
+ * Les années d'un relevé, une par ligne : le revenu et les trimestres qu'il
+ * porte, sous le statut qu'il dit. Chaque ligne vaut une année civile PLEINE,
+ * sauf celle de la liquidation, que le mois du départ (`fin`, qui n'est plus
+ * travaillé) coupe. Voir `carriere.py`.
+ */
+function lignesDuReleve(dateNaissance, periodes, fin, macro, identifiant) {
+  const lues = periodes.map((periode) => {
+    const { attributs } = periode;
+    const annee = chrono.anneeDe(periode.debut);
+    const mois = annee < fin.annee ? MOIS_PAR_AN : fin.mois - 1;
+    if (annee > fin.annee || mois <= 0) {
+      throw new Error(
+        `${identifiant} : l'année ${annee} du relevé est postérieure `
+        + `au départ à la retraite (${fin})`,
+      );
+    }
+    return ligneAnnuelle({
+      annee,
+      revenu: attributs.revenu,
+      affiliation: attributs.affiliation,
+      type_periode: periode.sorte === chrono.EMPLOI ? "emploi" : attributs.motif,
+      macro,
+      part: mois / MOIS_PAR_AN,
+      part_primes: attributs.part_primes,
+      trimestresMaximum: trimestresCivils(mois),
+      trimestresDeclares: attributs.trimestres,
+    });
+  });
+  return limiterChomageNonIndemnise(
+    lues, dateNaissance.annee,
+    new Set(periodes.filter((p) => p.attributs.trimestres !== null)
+      .map((p) => chrono.anneeDe(p.debut))),
+  );
+}
+
+/**
+ * Les années d'un parcours, et le mois d'entrée dans chaque statut. Les
+ * métiers principaux couvrent la carrière bout à bout ; les activités
+ * cumulées s'y ajoutent, chacune sur ses mois ; une année d'interruption
+ * déclarée arrête l'activité principale, pas les cumulées. Voir `carriere.py`.
+ */
+function lignesDuParcours(dateNaissance, periodesDeclarees, fin, macro) {
+  const anneeNaissance = dateNaissance.annee;
+  const lire = (p) => ({
+    metier: p.attributs,
+    ouverture: chrono.moisDe(p.debut),
+    cloture: chrono.moisDe(p.fin),
+  });
+  const periodes = periodesDeclarees
+    .filter((p) => p.sorte === chrono.EMPLOI && !p.attributs.cumul).map(lire);
+  const cumuls = periodesDeclarees
+    .filter((p) => p.sorte === chrono.EMPLOI && p.attributs.cumul).map(lire);
+  const plages = new Map(periodesDeclarees
+    .filter((p) => p.sorte === chrono.INTERRUPTION)
+    .map((p) => [chrono.anneeDe(p.debut), p.attributs.motif]));
+  const debut = periodes[0].ouverture;
+
+  const anneeDebut = debut.annee;
+  const annees = [];
+  for (let annee = debut.annee; annee <= fin.annee; annee += 1) {
+    if (moisTravailles(annee, debut, fin) > 0) {
+      annees.push(annee);
+    }
+  }
+  const anneeFin = annees[annees.length - 1];
+
+  // LE PROFIL SE LIT À UN ÂGE ET À UNE ANNÉE, et c'est tout ce dont il
+  // dépend : le passé ne peut donc plus changer parce qu'on décide de
+  // travailler plus longtemps, et la pente est celle que l'INSEE observe
+  // pour la génération. Voir `carriere.py`, qui porte la mesure et le motif.
+  const salaireMoyen = indiceSalaireMoyen(macro, anneeDebut, anneeFin);
+
+  const lignes = [];
+  for (const annee of annees) {
+    const part = fractionAnnee(annee, debut, fin);
+    const trimestresMaximum = trimestresCivils(moisTravailles(annee, debut, fin));
+    // Le profil se lit MÉTIER PAR MÉTIER : l'affiliation peut changer en
+    // cours de carrière, et c'est elle qui le choisit.
+    const ageAnnee = annee - anneeNaissance;
+    // Ce que chaque métier a occupé de l'année. La somme vaut les mois
+    // travaillés de l'année : les périodes la découpent sans reste.
+    const moisParMetier = periodes.map(
+      ({ ouverture, cloture }) => moisTravailles(annee, ouverture, cloture),
+    );
+    let revenu = 0;
+    periodes.forEach(({ metier }, i) => {
+      if (moisParMetier[i] > 0) {
+        revenu += metier.niveau_salaire
+          * profilSalaire(macro.paquet, metier.profil, ageAnnee, annee,
+            metier.affiliation)
+          * salaireMoyen.get(annee)
+          * (moisParMetier[i] / MOIS_PAR_AN);
+      }
+    });
+    // Le moteur ne connaît qu'une ligne, donc qu'un statut, par année civile :
+    // les régimes liquident à l'année. L'année d'un changement de métier est
+    // donc rattachée à celui qui en occupe le plus de mois — et, à égalité, à
+    // celui qui l'ouvre. Le revenu, lui, reste la somme de ce que les deux ont
+    // réellement payé.
+    let dominant = 0;
+    moisParMetier.forEach((mois, i) => {
+      if (mois > moisParMetier[dominant]) {
+        dominant = i;
+      }
+    });
+    const principal = periodes[dominant].metier;
+
+    lignes.push(ligneAnnuelle({
+      annee,
+      revenu,
+      affiliation: principal.affiliation,
+      type_periode: plages.get(annee) ?? "emploi",
+      macro,
+      part,
+      part_primes: principal.part_primes,
+      trimestresMaximum,
+    }));
+  }
+  const limitees = limiterChomageNonIndemnise(lignes, anneeNaissance);
+
+  // LES ACTIVITÉS CUMULÉES, chacune sur ses propres mois. Elles ne
+  // déplacent rien de l'activité principale : une ligne de plus par année
+  // touchée, sous leur statut. Une interruption déclarée arrête l'activité
+  // principale, pas celle-ci.
+  for (const { metier, ouverture, cloture } of cumuls) {
+    for (let annee = ouverture.annee; annee <= cloture.annee; annee += 1) {
+      const mois = moisTravailles(annee, ouverture, cloture);
+      if (mois <= 0) {
+        continue;
+      }
+      const revenu = metier.niveau_salaire
+        * profilSalaire(macro.paquet, metier.profil, annee - anneeNaissance,
+          annee, metier.affiliation)
+        * salaireMoyen.get(annee)
+        * (mois / MOIS_PAR_AN);
+      // Après la limite du chômage non indemnisé, qui ne regarde que
+      // l'activité principale — comme en Python.
+      limitees.push(ligneAnnuelle({
+        annee,
+        revenu,
+        affiliation: metier.affiliation,
+        type_periode: "emploi",
+        macro,
+        part: fractionAnnee(annee, ouverture, cloture),
+        part_primes: metier.part_primes,
+        trimestresMaximum: trimestresCivils(mois),
+      }));
+    }
+  }
+
+  const datesEntree = {};
+  const toutes = [...periodes, ...cumuls]
+    .sort((a, b) => a.ouverture.rang - b.ouverture.rang);
+  for (const { metier, ouverture } of toutes) {
+    if (!Object.prototype.hasOwnProperty.call(datesEntree, metier.affiliation)) {
+      datesEntree[metier.affiliation] = ouverture;
+    }
+  }
+  return [limitees, datesEntree];
 }
 
 /**

@@ -226,3 +226,100 @@ def test_un_releve_et_un_parcours_ne_se_melent_pas(macro):
                                                "trimestres": None, "part_primes": 0.0}))
     with pytest.raises(ValueError, match="mêle un relevé et un parcours"):
         Carriere.depuis_chronologie(chronologie.completer(brute), macro)
+
+
+# -- le portage ------------------------------------------------------------------
+
+SAISIES = [
+    {"parcours": {**PARCOURS, "metiers": [
+        {"affiliation": m.affiliation, "age_debut": m.age_debut,
+         "niveau_salaire": m.niveau_salaire, "cumul": m.cumul, "age_fin": m.age_fin}
+        for m in PARCOURS["metiers"]]}},
+    {"parcours": {"annee_naissance": 1958, "sexe": "H", "age_liquidation": 62.0,
+                  "metiers": [{"affiliation": "agent_sncf", "age_debut": 19.0,
+                               "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]}},
+    {"parcours": {"annee_naissance": 1990, "sexe": "F", "mois_naissance": 2,
+                  "age_liquidation": 64.0, "nombre_enfants": 3,
+                  "metiers": [{"affiliation": "salarie_prive", "age_debut": 23.0,
+                               "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]}},
+    {"parcours": {"annee_naissance": 1970, "sexe": "F", "age_liquidation": 64.0,
+                  "metiers": [{"affiliation": "artisan", "age_debut": 20.0,
+                               "niveau_salaire": 1.0, "cumul": True, "age_fin": None}]}},
+    {"releve": {"annee_naissance": 1962, "sexe": "H", "age_liquidation": 63.0,
+                "nombre_enfants": 1, "part_primes": 0.1,
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"},
+                           {"annee": 1985, "affiliation": "salarie_prive", "revenu": 3000.0,
+                            "trimestres": None, "type_periode": "chomage_indemnise"}]}},
+    {"releve": {"annee_naissance": 1962, "sexe": "H", "age_liquidation": 63.0, "releve": []}},
+]
+
+
+def _python(saisie: dict) -> dict:
+    try:
+        if "parcours" in saisie:
+            options = dict(saisie["parcours"])
+            options["metiers"] = [Metier(**m) for m in options["metiers"]]
+            if options.get("interruptions"):
+                options["interruptions"] = {int(a): m for a, m in options["interruptions"].items()}
+            return {"chronologie": chronologie.completer(chronologie.du_parcours(**options))}
+        options = dict(saisie["releve"])
+        options["releve"] = [LigneRelevee(**l) for l in options["releve"]]
+        return {"chronologie": chronologie.completer(chronologie.du_releve(**options))}
+    except ValueError as erreur:
+        return {"erreur": str(erreur)}
+
+
+def test_le_portage_construit_la_meme_chronologie():
+    """Les deux moteurs échangent la même donnée (§ 7.1) : pour chaque saisie,
+    le JavaScript rend, au JSON près, la chronologie du Python — et refuse ce
+    qu'il refuse, avec les mêmes mots."""
+    import json
+    import subprocess
+    import tempfile
+    from pathlib import Path
+
+    racine = Path(__file__).resolve().parents[1]
+    with tempfile.NamedTemporaryFile("w", suffix=".json", encoding="utf-8",
+                                     delete=False) as fichier:
+        json.dump(SAISIES, fichier)
+        chemin = fichier.name
+    try:
+        execution = subprocess.run(
+            ["node", str(racine / "tests" / "js" / "comparer-chronologie.mjs"), chemin],
+            cwd=racine, capture_output=True, text=True, encoding="utf-8", check=False)
+    finally:
+        Path(chemin).unlink()
+    assert execution.returncode == 0, execution.stderr
+    obtenus = json.loads(execution.stdout)
+    attendus = [json.loads(json.dumps(_python(saisie))) for saisie in SAISIES]
+    assert len(obtenus) == len(attendus)
+    for numero, (obtenu, attendu) in enumerate(zip(obtenus, attendus)):
+        assert obtenu == attendu, f"saisie {numero}"
+
+
+def test_le_moteur_lit_la_naissance_que_la_chronologie_porte():
+    """Pour une fonctionnaire née en 1975, la présomption place ses enfants
+    en 2005, sous L. 12 bis : deux trimestres chacun, dont un de services
+    depuis le b ter. Déclarés nés en 2002, ils tombent sous L. 12 b : quatre
+    chacun, tous de services. Le moteur lit la chronologie, et rien
+    d'autre."""
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur()
+    actuel = simulateur.scenario_actuel
+
+    def trimestres(chronologie_complete: dict) -> tuple[int, int]:
+        carriere = Carriere.depuis_chronologie(chronologie_complete, simulateur.macro)
+        regimes = {"fonction_publique_etat": 4 * len(carriere.annees_cotisees)}
+        majoration = actuel._majoration_pour_enfants(carriere, regimes,
+                                                     carriere.annee_liquidation)
+        return majoration.trimestres, majoration.services
+
+    brute = chronologie.du_parcours(1975, "F", [Metier("fonctionnaire_etat", 22.0)],
+                                    age_liquidation=62.0, nombre_enfants=2)
+    assert trimestres(chronologie.completer(brute)) == (4, 2)
+    for enfant in ("enfant_1", "enfant_2"):
+        brute["faits"].append(chronologie.fait(f"naissance_{enfant}", enfant, "naissance",
+                                               "2002-03-01"))
+    assert trimestres(chronologie.completer(brute)) == (8, 8)

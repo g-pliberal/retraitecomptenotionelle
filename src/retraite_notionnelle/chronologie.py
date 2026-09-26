@@ -362,6 +362,7 @@ def enfants(chronologie: dict, personne: str) -> list[str]:
 
 
 def annee_de(jour: str) -> int:
+    """L'année d'une date de la chronologie."""
     return int(jour[:4])
 
 

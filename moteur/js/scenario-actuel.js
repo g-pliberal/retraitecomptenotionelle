@@ -189,14 +189,14 @@ function borneCarriere(carriere) {
 
 /**
  * Le droit aux trimestres d'enfants d'un régime spécial est-il ouvert ? Sur
- * les enfants que le modèle présume nés aux trente ans de leur mère : né depuis
+ * la naissance des enfants que la chronologie porte — présumée aux trente ans
+ * de leur mère tant que rien n'est déclaré : né depuis
  * 2004, après le recrutement (L. 12 bis) ; né avant, tout enfant jusqu'en 2003,
  * l'enfant né en service de 2004 à 2010, l'enfant né avant la radiation depuis
  * 2011 (R. 13). Voir `_bonification_ouverte` du Python.
  */
 function bonificationOuverte(carriere, recrutement, derniere, anneeLiquidation) {
-  const naissance = carriere.annee_naissance
-    + MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE;
+  const naissance = carriere.anneeNaissanceDesEnfants;
   if (naissance >= MAJORATION_APRES_RECRUTEMENT_DEPUIS) {
     return naissance >= recrutement;
   }
@@ -2330,7 +2330,7 @@ export class ScenarioActuel {
           continue;
         }
         const accorde = this.majorationsEnfants.parEnfant(
-          dispositif, carriere.sexe, carriere.annee_naissance, anneeLiquidation,
+          dispositif, carriere.sexe, carriere.anneeNaissanceDesEnfants, anneeLiquidation,
           carriere.nombre_enfants,
         );
         if (accorde === null) {

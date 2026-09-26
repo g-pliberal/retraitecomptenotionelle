@@ -898,7 +898,7 @@ export class MajorationsPourEnfants {
    *
    * @returns {[number, number, number]|null} trimestres, services, fiabilité.
    */
-  parEnfant(dispositif, sexe, anneeNaissance, anneeLiquidation, nombreEnfants) {
+  parEnfant(dispositif, sexe, naissanceDesEnfants, anneeLiquidation, nombreEnfants) {
     for (const [code, reference, debut, fin, trimestres, servicesTable,
       servicesDepuis, enfantsMinimum, beneficiaire, fiabilite] of this._table) {
       if (code !== dispositif) {
@@ -906,7 +906,7 @@ export class MajorationsPourEnfants {
       }
       const annee = reference === "liquidation"
         ? anneeLiquidation
-        : anneeNaissance + MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE;
+        : naissanceDesEnfants;
       if (annee < debut || annee > fin) {
         continue;
       }
@@ -927,13 +927,6 @@ export class MajorationsPourEnfants {
     return null;
   }
 }
-
-/**
- * Âge présumé de la mère à la naissance de ses enfants. Le modèle ne collecte
- * pas leur date de naissance ; il la déduit de cette convention, qui est l'âge
- * moyen des mères à l'accouchement.
- */
-MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE = 30;
 
 /**
  * La durée de services qui ouvre une pension dans chaque régime spécial.
