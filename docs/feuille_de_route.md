@@ -1971,4 +1971,6 @@ Les repères `phase-1` et `phase-2` sont reposés le même jour, sur fc285ad et
 workflow crée un tag quand les workflows du commit visé sont ceux de `main`.
 `phase-0` ne l'est pas : son commit, 4bb438f, porte des workflows plus
 anciens, et GitHub refuse d'y créer un tag au jeton d'un workflow comme à
-celui d'une session (HTTP 403). Seul le propriétaire peut le poser.
+celui d'une session (HTTP 403). Seul le propriétaire pourrait le poser, et
+il a décidé le même jour de le laisser absent : la fin de la phase 0 reste
+le commit 4bb438f, que cette note nomme.
