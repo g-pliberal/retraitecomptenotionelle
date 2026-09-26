@@ -2465,3 +2465,23 @@ des parents, l'enfant élevé neuf ans, l'interruption d'activité de la mère
 seule, la validation de l'Ircantec demandée — sont au même vocabulaire
 (`data/reference/vocabulaire/valeurs.yaml`), avec leur valeur et leur raison ;
 elles s'appliquent encore dans le code, jusqu'à l'étape qui posera leur fait.
+
+**Le relevé des droits.** Pour une liquidation, quatre étapes construisent le
+relevé des droits qu'elle fait valoir (`src/retraite_notionnelle/droit/`, et
+son jumeau JavaScript ; `docs/architecture.md`, § 7.2 et 7.6) : la
+chronologie préparée ; les affiliations coordonnées — l'agent parti de la
+fonction publique sans droit à pension rétabli au régime général et à
+l'Ircantec, chaque ligne routée vers les régimes qui la reçoivent, puis les
+régimes que le droit fait liquider ensemble ; les durées comptées —
+l'assurance, les services et les trimestres cotisés, régime par régime et
+année par année, et les trimestres des enfants dans le seul régime que la
+priorité entre régimes désigne ; les droits acquis — les points, chacun avec
+le taux de majoration pour enfants de son année d'acquisition, les
+cotisations des régimes dont le prix du point n'est pas connu, la durée
+qu'un régime plafonne, les points attribués sans cotisation. La liquidation
+ne lit que ce relevé. Il se publie en lignes : chacune dit le fait de la
+chronologie qui l'ouvre, sa quantité, son unité et son régime, et la fiche
+qui l'écrit quand la règle en a une. Le plafond d'une année — ses trimestres
+civils, toutes activités réunies — s'applique quand on lit les lignes, régime
+par régime ou groupe par groupe. Les salaires portés au compte restent
+choisis par la liquidation du régime, qui en fixe l'assiette.

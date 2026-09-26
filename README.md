@@ -1285,6 +1285,11 @@ src/retraite_notionnelle/
   moteur/                       indexation, âge de référence, conversion, fusion, compte,
                                 pilier de capitalisation obligatoire
   scenarios/                    système actuel, comptes notionnels
+  chronologie.py                la personne : ses faits datés, ses présomptions
+  droit/                        le système actuel en étapes : la chronologie
+                                préparée, les affiliations coordonnées, les
+                                durées comptées, les droits acquis — le relevé
+                                des droits que la liquidation lit
   simulateur.py                 façade et restitution
   remuneration.py               la fiche de paie d'un actif : coût du travail,
                                 revenu brut, revenu net, en quatre profils —

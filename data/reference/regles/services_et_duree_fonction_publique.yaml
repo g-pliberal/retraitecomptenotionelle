@@ -12,6 +12,7 @@ intitule: >-
   ; détachement. Le chômage n'est pas une position statutaire : il n'ouvre aucun
   service.
 etat: conforme
+etape: compter_les_durees
 effet: >-
   Toute carrière de fonctionnaire coupée par une interruption. Le moteur créditait
   le prorata de TOUTE période validée : cinq ans de chômage servaient exactement

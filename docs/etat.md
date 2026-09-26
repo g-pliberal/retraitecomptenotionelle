@@ -55,6 +55,15 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | `interruption_d_activite_par_la_mere` | remplie par la mère seule | `majoration_duree_assurance_enfants` | la colonne beneficiaire (mere) des lignes bonifications de majoration_duree_assurance.csv, lue par MajorationsPourEnfants.par_enfant ; son fait entrera à l'étape `compter_les_durees` |
 | `validation_ircantec_demandee` | demandée | `retablissement_fonction_publique` | retablir (droit/coordonner.py), et l'assiette de l'Ircantec des années rétablies (droit/acquerir.py) ; leurs jumeaux JavaScript ; son fait entrera à l'étape `coordonner_les_affiliations` |
 
+**Le relevé des droits** (§ 7.2 et 7.6) : pour chaque demande, quatre étapes le construisent, une par module dans `src/retraite_notionnelle/droit/` et son jumeau `moteur/js/droit/`, chacune écrivant la donnée que son schéma décrit (`data/reference/etapes/`) ; la liquidation du scénario 1 ne lit que lui. Les relevés des 13 cas types, à chacune de leurs générations — 91 relevés —, comptent 22 620 lignes, dont 733 citent la fiche qui les écrit (3 %) et aucune sa version : les fiches ne sont pas encore découpées en versions.
+
+| Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |
+|---|---|---|---|
+| `preparer_la_chronologie` | `droit/preparer.py` | la chronologie, présomptions posées (contrat C.1) | aucune encore |
+| `coordonner_les_affiliations` | `droit/coordonner.py` | les régimes qui reçoivent chaque ligne, les rétablissements, les groupes | `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `retablissement_fonction_publique` |
+| `compter_les_durees` | `droit/compter.py` | les trimestres de chaque compte, par régime et par année ; ceux des enfants | `majoration_duree_assurance_enfants`, `priorite_majorations_enfants`, `services_et_duree_fonction_publique` |
+| `acquerir_les_droits` | `droit/acquerir.py` | les points et les cotisations, la durée plafonnée, les points gratuits | `assiette_minimale_independants`, `asv_medecins_ajustement`, `rco_points_gratuits` |
+
 **La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : la veille. Restent des registres : la frontière contributive, l'inventaire des régimes.
 
 **Ce qui est hors du modèle.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR), et le modèle n'en calcule aucune.
@@ -130,7 +139,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
   - 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
-  - 130. L'architecture du dépôt : décidée, les phases 0 à 3 faites, la phase 4 à lancer
+  - 130. L'architecture du dépôt : décidée, les phases 0 à 4 faites, la phase 5 à lancer
 - **Les sources à exploiter** : 114 à explorer sur 260 (58 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Association des régimes de retraite complémentaire des salariés : 3 source(s) (agirc_arrco_majorations_enfants, agirc_arrco_textes_de_reference, agirc_arrco_parametres_statistiques)
   - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)
@@ -141,18 +150,18 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - Assurance vieillesse des non-salariés agricoles (MSA) : 1 source(s) (msa_reforme_25_meilleures_annees)
   - et 20 sources sans régime désigné.
 - **Les fiches sans exemple officiel** : 76.
-- **Faire mûrir la carte** : 805 champs obligatoires manquent, à 98 fiches. Par champ :
+- **Faire mûrir la carte** : 796 champs obligatoires manquent, à 98 fiches. Par champ :
 
   | Champ | Fiches à qui il manque |
   |---|---|
   | `dates_qui_decident` | 98 |
   | `domaine` | 98 |
   | `ecrit` | 98 |
-  | `etape` | 98 |
   | `lit` | 98 |
   | `regimes` | 98 |
   | `versions` | 98 |
   | `code` | 93 |
+  | `etape` | 89 |
   | `approximations` | 25 |
   | `rang` | 1 |
 

@@ -1614,7 +1614,7 @@ coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`
 `README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
 fabriqués.
 
-### 130. L'architecture du dépôt : décidée, les phases 0 à 3 faites, la phase 4 à lancer — `en cours`
+### 130. L'architecture du dépôt : décidée, les phases 0 à 4 faites, la phase 5 à lancer — `en cours`
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
@@ -2059,3 +2059,57 @@ après la suite complète :
 3. le portage, `moteur/js/droit/` ;
 4. chaque étape testée seule, et comparée seule entre les deux moteurs ;
 5. les vues, la mesure du budget, la documentation.
+
+**La phase 4, faite le 26 septembre 2026** (§ 11) : l'acquisition en étapes
+et le relevé des droits. Cinq commits, la suite complète avant chaque envoi
+sur main, et pas un résultat déplacé : les témoins Python sont restés
+identiques à l'octet, le portage les reproduit comme avant, et, sur les 535
+carrières des témoins, les deux moteurs écrivent la même donnée à chaque
+étape — 135 246 lignes de relevé, aucun écart (une vérification faite une
+fois, hors des tests ; le test en rejoue une requête sur cinq).
+
+1. **Les schémas**, écrits avant le code : un par étape dans
+   `data/reference/etapes/`, contrôlés comme les contrats, et l'enveloppe du
+   relevé (C.5). L'architecture passe en version 5.7.
+2. **`src/retraite_notionnelle/droit/`** : `preparer`, `coordonner`,
+   `compter`, `acquerir`, `releve`. Le code de l'acquisition quitte
+   `scenarios/actuel.py` tel quel, les sommes se font dans l'ordre d'avant,
+   et `calculer` ne lit que le relevé ; chaque ligne n'est plus routée
+   qu'une fois.
+3. **Le portage**, `moteur/js/droit/`, fonction pour fonction, préchargé par
+   la page.
+4. **Les tests** : chaque étape seule, chaque donnée contre son schéma, le
+   relevé contre le contrat C.5, et les deux moteurs comparés étape par
+   étape (`tests/test_droit.py`, `tests/js/comparer-droit.mjs`).
+5. **Les vues** : le tableau de bord montre les étapes, les fiches qui disent
+   les appliquer — neuf désormais —, et les lignes du relevé des cas types
+   qui citent leur fiche ; la méthodologie, l'architecture (annexes A et B,
+   § 7.8) et le README suivent ; `scripts/budget_calcul.py` refait la mesure
+   dans les deux moteurs.
+
+**Le budget**, mesuré dos à dos avant et après la phase, sur les 535
+carrières des témoins : en Python, 2,71 puis 2,52 ms pour le scénario 1, 21,8
+puis 21,3 ms pour les six scénarios ; en JavaScript, 0,56 puis 0,58 ms et 3,4
+puis 3,3 ms, dans le bruit de la mesure (cinq pour cent d'une passe à
+l'autre). La suite rapide passe de 14,7 à 14,9 secondes avec ses dix-huit
+tests de plus, et la suite complète reste sous onze minutes.
+
+**Ce qui reste ouvert.** Les salaires portés au compte restent calculés par
+la liquidation, qui en choisit l'assiette sur la fiche du régime qui liquide :
+ils entreront à l'étape « acquérir les droits » avec la liquidation en
+fonction pure (phase 5). Les points gratuits de la RCO s'acquièrent dans
+l'étape, mais lisent la durée requise et l'âge du taux plein par les
+fonctions de la liquidation. Les étapes lisent encore la chronologie par sa
+vue, la carrière — ses trimestres retenus, le plafond de ses années et la
+part de l'année du départ restent des méthodes de `Carriere` —, et les tables
+du scénario 1 par le moteur qui les tient, jusqu'aux fiches (phase 6). Les
+lignes du relevé ne citent ni la version de leur règle ni le texte appliqué,
+les fiches n'étant pas découpées en versions, et 3 % seulement citent leur
+fiche sur les cas types. Le relevé n'est pas encore montré sur le site
+(C.9), mais son écriture en lignes part avec le moteur, qui pèse 10 Ko
+compressés de plus (971) : elle pourrait se charger à la demande. Et
+`revalorisation.py` garde sa propre copie de la dernière année d'un régime,
+qu'il pourrait prendre à `droit/commun.py`. Le repère `phase-4` n'est pas
+posé : comme les précédents, il attend l'accord du propriétaire. La phase 5
+suit : la liquidation en fonction pure, le journal, l'échéancier et le
+pilote.

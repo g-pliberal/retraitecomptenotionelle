@@ -104,6 +104,16 @@ def controler(dossier: Path = REGLES) -> list[str]:
     return erreurs
 
 
+def fiches_par_etape(dossier: Path = REGLES) -> dict[str, list[str]]:
+    """Pour chaque étape du moteur, les fiches qui disent l'appliquer (C.2,
+    champ ``etape``) ; celles qui ne le disent pas encore n'y sont pas."""
+    par_etape: dict[str, list[str]] = {}
+    for nom, fiche in sorted(fiches(dossier).items()):
+        if fiche.get("etape"):
+            par_etape.setdefault(fiche["etape"], []).append(nom)
+    return par_etape
+
+
 def lecteurs_des_presomptions(dossier: Path = REGLES) -> dict[str, list[str]]:
     """Pour chaque présomption, les fiches qui la lisent."""
     lecteurs: dict[str, list[str]] = {}

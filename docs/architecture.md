@@ -1308,8 +1308,9 @@ eux-mêmes, mais à trois multiplications, que les règles ci-dessus ferment :
 
 Chaque témoin compte donc ses appels de `liquider`, liquidations d'essai
 comprises, et un test refuse qu'il dépasse le nombre déclaré. Chaque phase
-refait la mesure dans les deux moteurs, et celle de la suite de tests ; une
-phase qui les dégrade s'arrête le temps de les ramener. Le paquet du site se
+refait la mesure dans les deux moteurs (`scripts/budget_calcul.py`), et celle
+de la suite de tests ; une phase qui les dégrade s'arrête le temps de les
+ramener. Le paquet du site se
 découpe par domaine et se charge à la demande : le premier chargement ne
 grossit pas quand les domaines s'ajoutent.
 
@@ -1904,7 +1905,7 @@ code:
     droit/compter.py : majoration_pour_enfants, bonification_ouverte
   javascript: >-
     moteur/js/regimes.js : MajorationsPourEnfants ;
-    moteur/js/scenario-actuel.js : bonificationOuverte
+    moteur/js/droit/compter.js : bonificationOuverte
   parametres: data/reference/legislation/majoration_duree_assurance.csv
   tests: [tests/test_priorite_enfants.py, tests/test_scenarios_meres.py]
 
@@ -2117,9 +2118,9 @@ Ce que les deux fiches montrent :
 
 | Aujourd'hui | Demain |
 |---|---|
-| `src/retraite_notionnelle/scenarios/actuel.py` | découpé en étapes dans `src/retraite_notionnelle/droit/` ; ses commentaires suivent leur code |
+| `src/retraite_notionnelle/scenarios/actuel.py` | découpé en étapes dans `src/retraite_notionnelle/droit/` : l'acquisition depuis la phase 4 (`coordonner`, `compter`, `acquerir`, `releve`), la liquidation à la phase 5 ; ses commentaires suivent leur code |
 | `src/retraite_notionnelle/scenarios/notionnel.py`, `moteur/` (compte, conversion, capitalisation, fusion, indexation, âge de référence), `garantie.py`, `restitution.py` | les fiches et les couches des univers de la proposition (phase 7) |
-| `src/retraite_notionnelle/carriere.py` | la chronologie datée et le réseau de personnes : `chronologie.py` depuis la phase 3, dont la carrière n'est plus que la vue, jusqu'à l'acquisition en étapes (phase 4) ; `web/releve_lu.py` continue de l'alimenter |
+| `src/retraite_notionnelle/carriere.py` | la chronologie datée et le réseau de personnes : `chronologie.py` depuis la phase 3, dont la carrière n'est plus que la vue — celle que les étapes de l'acquisition lisent encore (phase 4), jusqu'à ce qu'elles lisent la chronologie elle-même ; `web/releve_lu.py` continue de l'alimenter |
 | `src/retraite_notionnelle/calendrier.py` | inchangé : le mois et ses arrondis (§ 4.6) |
 | `src/retraite_notionnelle/revalorisation.py` | l'étape « faire vivre » |
 | `src/retraite_notionnelle/remuneration.py` | les cotisations de l'acquisition, et le net de l'étape « foyer et net » |

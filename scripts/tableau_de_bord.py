@@ -82,6 +82,18 @@ REGISTRES = {
     "data/reference/regimes/inventaire.yaml", "data/reference/legislation/reformes.yaml",
     "data/reference/regimes/pivots.yaml",
 }
+#: Les étapes qui construisent le relevé des droits (docs/architecture.md, § 7.2) :
+#: leur module dans src/retraite_notionnelle/droit/, et ce qu'elles écrivent.
+ETAPES_ACQUISITION = [
+    ("preparer_la_chronologie", "preparer", "la chronologie, présomptions posées (contrat C.1)"),
+    ("coordonner_les_affiliations", "coordonner",
+     "les régimes qui reçoivent chaque ligne, les rétablissements, les groupes"),
+    ("compter_les_durees", "compter",
+     "les trimestres de chaque compte, par régime et par année ; ceux des enfants"),
+    ("acquerir_les_droits", "acquerir",
+     "les points et les cotisations, la durée plafonnée, les points gratuits"),
+]
+
 #: Les quatre fichiers que presque tout changement du moteur touche.
 LOURDS = ["docs/feuille_de_route.md", "docs/limites.md",
           "data/reference/legislation/veille.yaml", "README.md"]
@@ -144,6 +156,32 @@ def virgule(x: float, decimales: int = 1) -> str:
 # --------------------------------------------------------------------------
 # La page.
 # --------------------------------------------------------------------------
+
+
+def releves_des_cas_types() -> tuple[int, int, int, int, int]:
+    """Les relevés des droits des cas types, à chaque génération : les cas
+    types, les relevés, leurs lignes, celles qui citent leur fiche, celles qui
+    citent sa version."""
+    from retraite_notionnelle.castypes import CAS_TYPES, GENERATIONS
+    from retraite_notionnelle.droit import releve
+    from retraite_notionnelle.simulateur import Simulateur
+
+    simulateur = Simulateur()
+    releves = lignes = citant = versionnees = 0
+    for cas in CAS_TYPES:
+        for generation in GENERATIONS:
+            try:
+                carriere = cas.construire(simulateur, generation, "droit")
+                if carriere.annee_liquidation <= simulateur.parametres.annee_debut_repartition:
+                    continue
+                contenu = releve.construire(simulateur.scenario_actuel, carriere).lignes()
+            except (ValueError, KeyError):
+                continue
+            releves += 1
+            lignes += len(contenu)
+            citant += sum(1 for ligne in contenu if ligne.get("fiche"))
+            versionnees += sum(1 for ligne in contenu if ligne.get("version"))
+    return len(CAS_TYPES), releves, lignes, citant, versionnees
 
 
 def page() -> str:
@@ -352,6 +390,24 @@ def page() -> str:
         lues = ", ".join(f"`{f}`" for f in lecteurs.get(nom, [])) or "aucune"
         w(f"| `{nom}` | {p['valeur']}{' ' + p['unite'] if p.get('unite') else ''} "
           f"| {lues} | {ou} |")
+    w("")
+    cas, releves, lignes, citant, versionnees = releves_des_cas_types()
+    par_etape = carte.fiches_par_etape()
+    w("**Le relevé des droits** (§ 7.2 et 7.6) : pour chaque demande, quatre étapes le "
+      "construisent, une par module dans `src/retraite_notionnelle/droit/` et son jumeau "
+      "`moteur/js/droit/`, chacune écrivant la donnée que son schéma décrit "
+      "(`data/reference/etapes/`) ; la liquidation du scénario 1 ne lit que lui. "
+      f"Les relevés des {cas} cas types, à chacune de leurs générations — {releves} "
+      f"relevés —, comptent {milliers(lignes)} lignes, dont "
+      f"{milliers(citant)} citent la fiche qui les écrit ({pct(citant, lignes)}) et "
+      + (f"{milliers(versionnees)} sa version." if versionnees else
+         "aucune sa version : les fiches ne sont pas encore découpées en versions."))
+    w("")
+    w("| Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |")
+    w("|---|---|---|---|")
+    for etape, module, ecrit in ETAPES_ACQUISITION:
+        fiches = ", ".join(f"`{f}`" for f in par_etape.get(etape, [])) or "aucune encore"
+        w(f"| `{etape}` | `droit/{module}.py` | {ecrit} | {fiches} |")
     w("")
     vues = [nom for nom, vue in registres_en_vues if vue]
     restent = [nom for nom, vue in registres_en_vues if not vue]
