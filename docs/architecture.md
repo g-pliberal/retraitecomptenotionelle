@@ -432,7 +432,7 @@ calcule à partir d'elle.
 
 Il y en a **quatre sortes**, et cette liste est fermée : elle ne s'allonge que
 par une note de décision. Les dates elles-mêmes sont tenues dans un fichier de
-vocabulaire, chacune avec son nom (`enfant.naissance`, `conjoint.deces`,
+vocabulaire, `data/reference/vocabulaire/dates.yaml`, chacune avec son nom (`enfant.naissance`, `conjoint.deces`,
 `liquidation.date_effet`…). On y en ajoute sans décision, pourvu qu'elles
 relèvent d'une des quatre sortes. Chaque date vaut pour l'assuré comme pour
 une personne liée, désignée par le lien qui l'y rattache : la naissance de
@@ -1623,8 +1623,8 @@ dépôt. Il comprend :
 
 Les listes de valeurs n'en font pas partie : sortes de faits, d'événements et
 de relations, motifs, natures, statuts, faces, origines, et le vocabulaire des
-dates nommées. Elles vivent dans des fichiers de vocabulaire, qui s'allongent
-sans décision (§ 13.3).
+dates nommées. Elles vivent dans des fichiers de vocabulaire,
+`data/reference/vocabulaire/`, qui s'allongent sans décision (§ 13.3).
 
 ### 13.2 Le reste
 

@@ -1,0 +1,158 @@
+# Le vocabulaire des dates qui décident (docs/architecture.md, § 4.2).
+#
+# Une date qui décide est une date de la chronologie, ou une date qu'une fiche
+# calcule à partir d'elle. Une version de fiche écrit ses bornes sur ces noms,
+# et nulle part ailleurs (§ 4.1) : `enfant.naissance: [null, 2004-01-01]`.
+#
+# Les QUATRE SORTES forment une liste fermée : elle fait partie du noyau
+# (§ 13.1), et ne s'allonge que par une note de décision. Les DATES NOMMÉES,
+# elles, s'ajoutent sans décision (§ 13.2), pourvu que chacune relève d'une des
+# quatre sortes. Chaque date vaut pour l'assuré comme pour une personne liée,
+# désignée par le lien qui l'y rattache : `enfant.naissance`,
+# `conjoint.deces`. Une date dérivée dit de quelles dates elle se calcule
+# (`depuis`), et la fiche qui la calcule la nomme sous une version (§ 7.5).
+#
+# `tests/test_vocabulaire.py` tient la forme : les quatre sortes et elles
+# seules, chaque date dans l'une d'elles, chaque dérivée calculée depuis des
+# dates connues, chaque combinaison impossible entre dates connues.
+
+schema_version: 1
+
+sortes:
+  fait: >-
+    la date d'un fait de la chronologie : naissance, réelle ou prévue ;
+    adoption ; décès ; entrée dans un métier ou un régime ; titularisation ;
+    sortie d'un régime ; décision médicale ; début ou fin d'une période ;
+    chaque jour d'une période, l'année d'un revenu ; un acte de la personne ou
+    de la caisse
+  lien: >-
+    la date d'un lien : début ou fin d'une union, d'une filiation, d'une
+    éducation, d'une aide
+  liquidation: >-
+    la date d'une liquidation : la date d'effet de la pension dans ce régime ;
+    celle d'une autre liquidation, désignée par son régime, son motif et sa
+    nature ; l'échéance d'une pension servie
+  derivee: >-
+    une date calculée par une fiche à partir des autres : la génération, un
+    âge atteint, le jour où des conditions sont réunies, la date où un droit
+    est acquis
+
+dates:
+  # -- les faits de l'assuré ----------------------------------------------
+  assure.naissance:
+    sorte: fait
+    dit: la naissance de l'assuré, au jour quand il est connu
+  assure.deces:
+    sorte: fait
+    dit: le décès de l'assuré
+  entree_dans_un_regime:
+    sorte: fait
+    dit: >-
+      l'entrée dans un métier ou un régime : le premier jour d'affiliation,
+      qui ferme un régime aux recrutés après une date (RATP, depuis le
+      1er septembre 2023)
+  recrutement:
+    sorte: fait
+    dit: le recrutement dans la fonction publique ou un régime spécial
+  titularisation:
+    sorte: fait
+    dit: la titularisation d'un agent public
+  radiation:
+    sorte: fait
+    dit: la radiation des cadres, ou la sortie d'un régime
+  cessation_d_activite:
+    sorte: fait
+    dit: la cessation de toute activité, ou d'une activité dans un régime
+  decision_medicale:
+    sorte: fait
+    dit: une décision médicale — invalidité, inaptitude, consolidation
+  periode.debut:
+    sorte: fait
+    dit: le début d'une période de la chronologie (activité, période assimilée)
+  periode.fin:
+    sorte: fait
+    dit: la fin d'une période de la chronologie
+  revenu.annee:
+    sorte: fait
+    dit: l'année d'un revenu, qui décide du barème de ses cotisations
+  demande:
+    sorte: fait
+    dit: un acte de la personne — demande, option, renonciation, rachat
+  notification:
+    sorte: fait
+    dit: un acte de la caisse
+  # -- les faits d'une personne liée ---------------------------------------
+  enfant.naissance:
+    sorte: fait
+    dit: >-
+      la naissance d'un enfant, réelle ou prévue : L. 351-3 vise aussi les
+      enfants « dont la naissance était censée intervenir » après une date
+  enfant.adoption:
+    sorte: fait
+    dit: l'adoption d'un enfant, ou sa prise en charge effective
+  conjoint.deces:
+    sorte: fait
+    dit: le décès du conjoint, qui ouvre la réversion
+  # -- les liens -----------------------------------------------------------
+  union.debut:
+    sorte: lien
+    dit: le début d'une union — mariage, PACS, concubinage
+  union.fin:
+    sorte: lien
+    dit: la fin d'une union, qui dit sa cause (divorce, décès)
+  education.debut:
+    sorte: lien
+    dit: le début de l'éducation d'un enfant par la personne
+  education.fin:
+    sorte: lien
+    dit: la fin de l'éducation d'un enfant par la personne
+  aide.debut:
+    sorte: lien
+    dit: le début de l'aide apportée à une personne
+  aide.fin:
+    sorte: lien
+    dit: la fin de l'aide apportée à une personne
+  # -- les liquidations ----------------------------------------------------
+  liquidation.date_effet:
+    sorte: liquidation
+    dit: la date d'effet de la pension dans ce régime
+  liquidation.premiere_pension_de_base:
+    sorte: liquidation
+    dit: >-
+      la date d'effet de la première pension de vieillesse de base, dont
+      dépendent les règles de cumul et de seconde pension
+  pension.echeance:
+    sorte: liquidation
+    dit: l'échéance d'une pension servie, que vise une mesure sur les pensions versées
+  # -- les dates dérivées --------------------------------------------------
+  assure.generation:
+    sorte: derivee
+    depuis: [assure.naissance]
+    dit: l'année de naissance de l'assuré, sur laquelle se lisent les barèmes par génération
+  age_atteint:
+    sorte: derivee
+    depuis: [assure.naissance]
+    dit: le jour où un âge est atteint
+  ouverture_du_droit:
+    sorte: derivee
+    depuis: [assure.naissance, liquidation.date_effet]
+    dit: >-
+      le jour où le droit s'ouvre (âge légal, ou conditions d'un départ
+      anticipé) ; la décote de la fonction publique se lit à son année
+  conditions_reunies:
+    sorte: derivee
+    depuis: [assure.naissance, periode.debut, periode.fin]
+    dit: le jour où les conditions d'un droit sont réunies, qui décide d'un droit maintenu
+  droit_acquis:
+    sorte: derivee
+    depuis: [periode.debut, periode.fin, revenu.annee]
+    dit: la date où un droit est acquis, comme l'année d'acquisition de points
+
+#: Ce qui ne se présente pas : le partage des versions ne demande pas de
+#: version pour ces combinaisons (§ 4.1).
+combinaisons_impossibles:
+  - date: enfant.naissance
+    apres: liquidation.date_effet
+    dit: >-
+      un enfant né après la date d'effet de la pension : la liquidation est
+      faite, et aucune version n'a à dire ce qu'il en serait

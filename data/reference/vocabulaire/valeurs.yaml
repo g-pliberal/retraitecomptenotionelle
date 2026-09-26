@@ -1,0 +1,229 @@
+# Les listes de valeurs que les contrats de données emploient
+# (docs/architecture.md, § 13.1 et annexe C).
+#
+# Elles ne font pas partie du noyau : une valeur s'y AJOUTE sans décision
+# (§ 13.3, la règle additive). La retirer, la renommer ou en changer le sens
+# en demande une. Deux listes font exception, marquées `fermee: true` : les
+# étapes nommées, qui sont au noyau, et les statuts d'une rédaction de texte,
+# dont le cliquet des textes dépend (§ 6.6).
+#
+# Un contrat qui déclare un champ `valeurs: <liste>` n'admet que les valeurs de
+# cette liste, et un moteur qui en rencontre une autre s'arrête (§ 6.7) : c'est
+# ce qui rend l'ajout sans risque. Chaque valeur dit ce qu'elle veut dire.
+
+schema_version: 1
+
+listes:
+
+  etats_de_fiche:
+    valeurs:
+      conforme: lue dans son texte et dans son application, et rejouée par un exemple officiel quand il en existe un
+      transcrite: lue dans son texte, sans exemple publié qui la rejoue
+      approchee: appliquée avec une approximation déclarée, chacune avec son effet ou « non mesuré »
+      manquante: connue, et absente du modèle alors qu'elle touche ce qu'il calcule
+      pas_encore_modelisee: hors du modèle, dans un domaine qu'il ne calcule pas encore
+      a_verifier: ce qu'une session n'a pas pu finir de lire, et par où la suivante commence
+
+  faces:
+    valeurs:
+      droit: ce que la règle accorde à l'assuré
+      cotisation: ce que l'assuré ou son employeur verse
+      financement: ce qu'un tiers paie pour un droit ; la fiche désigne les fiches qu'elle paie
+
+  sortes_de_relation:
+    valeurs:
+      plafond: un plafond partagé, consommé dans un ordre déclaré
+      enveloppe: une enveloppe partagée, consommée dans un ordre déclaré
+      exception: une règle en remplace une autre quand ses conditions sont remplies
+      priorite: un régime passe avant un autre
+      choix: le plus favorable, par une méthode déclarée, la même dans les deux moteurs
+      cumul: deux droits se cumulent, sous une borne commune
+      non_cumul: deux droits s'excluent
+      sequence: des enveloppes consommées dans l'ordre des périodes
+      ordre_de_composition: l'ordre dans lequel des règles d'une même étape s'appliquent
+      ordre_des_evenements: l'ordre des événements d'une même date
+
+  statuts_de_version:
+    valeurs:
+      lue: la version repose sur un texte lu
+      supposee: le texte n'a pas été retrouvé, ou pas encore écrit ; elle énonce son hypothèse et sa fiabilité
+
+  vise:
+    valeurs:
+      pensions_qui_prennent_effet: les pensions dont la date d'effet tombe dans les bornes
+      pensions_servies: les échéances des pensions déjà servies, comprises dans les bornes
+
+  etapes:
+    fermee: true
+    valeurs:
+      preparer_la_chronologie: compléter par les présomptions, normaliser les dates
+      coordonner_les_affiliations: rétablissement, interpénétration, successions de régimes, liquidation unique, carrières hors de France
+      compter_les_durees: assurance, cotisée, services ; périodes assimilées, enfants, rachats ; plafonds et enveloppes
+      acquerir_les_droits: points, salaires portés au compte, cotisations
+      ouvrir_le_droit: âge légal, carrière longue, catégories actives, invalidité, inaptitude ; taux plein
+      liquider_chaque_regime: annuités, points, forfait ou capital ; décote, surcote, proratisation
+      completer_tous_regimes: minimum contributif et son écrêtement, minimum garanti, majorations pour enfants
+      faire_vivre: revalorisations, mesures sur les pensions versées, composantes qui s'éteignent
+      foyer_et_net: ASPA, récupération sur la succession, prélèvements selon le revenu du foyer
+      echeancier: l'échéancier lui-même, pour une règle sur l'ordre ou l'inscription des événements
+
+  domaines:
+    valeurs:
+      age: l'âge d'ouverture du droit et ses exceptions
+      duree: la durée requise, la durée d'assurance, les services
+      enfants: les droits attachés aux enfants
+      periodes_assimilees: les périodes validées sans cotisation
+      decote_surcote: la décote, la surcote, le taux plein
+      salaire_de_reference: le salaire annuel moyen, le traitement de référence
+      minima: les minima de pension et le minimum vieillesse
+      points: les régimes en points, leurs valeurs et leurs coefficients
+      cotisations: les taux et les assiettes de cotisation
+      coordination: les passages et les successions entre régimes
+      revalorisation: la vie de la pension après son départ
+      depart_anticipe: les départs avant l'âge légal
+      reversion: les droits du conjoint survivant
+      cumul: le cumul emploi-retraite, la retraite progressive
+      rachats: les rachats et les versements
+      veille: une règle de méthode, qui dit comment le dépôt lit le droit plutôt qu'un droit
+
+  sortes_de_fait:
+    valeurs:
+      periode_d_activite: une période d'activité, salariée ou non
+      periode_assimilee: une période validée sans cotisation
+      periode_a_l_etranger: une période d'activité hors de France
+      residence: une résidence
+      cessation_d_activite: la cessation d'une activité
+      naissance: une naissance, réelle ou prévue
+      adoption: une adoption
+      deces: un décès
+      recrutement: un recrutement
+      titularisation: une titularisation
+      radiation: une radiation
+      decision_medicale: une décision médicale
+      exposition: une exposition (pénibilité, amiante)
+      ressources: des ressources
+      acte_de_la_personne: une demande, une option, une renonciation, un rachat, un versement, un accord
+      acte_de_la_caisse: une notification
+
+  sortes_de_lien:
+    valeurs:
+      union: une union
+      filiation: une filiation
+      adoption: une adoption
+      education: l'éducation d'un enfant
+      aide: l'aide apportée à une personne
+      tutelle: une tutelle
+
+  formes_d_union:
+    valeurs:
+      mariage: un mariage
+      pacs: un pacte civil de solidarité
+      concubinage: un concubinage
+
+  sortes_d_evenement:
+    # Pour chaque sorte, si elle appelle `liquider`, et avec quel motif et
+    # quelle nature (§ 7.4).
+    valeurs:
+      depart: {dit: un départ en retraite, liquider: true, motif: vieillesse, nature: definitive}
+      pension_definitive: {dit: la pension définitive qui suit une retraite progressive, liquider: true, motif: vieillesse, nature: definitive}
+      seconde_pension: {dit: la seconde pension de qui retravaille, liquider: true, motif: vieillesse, nature: seconde}
+      reversion: {dit: l'ouverture d'une réversion, liquider: true, motif: reversion, nature: definitive}
+      revision: {dit: une révision, dont un changement de quotité ou de ressources, liquider: true}
+      annulation: {dit: l'annulation d'un droit, liquider: true}
+      transformation: {dit: une transformation, dont la bascule d'un univers, liquider: true, nature: fictive}
+      revalorisation: {dit: une revalorisation, liquider: false}
+      deces: {dit: un décès, liquider: false}
+      union: {dit: une union, liquider: false}
+      fin_d_union: {dit: une fin d'union, liquider: false}
+      changement_de_quotite: {dit: un changement de quotité, liquider: false}
+      changement_de_ressources: {dit: un changement de ressources, liquider: false}
+      debut_de_periode: {dit: le début d'une période, liquider: false}
+      fin_de_periode: {dit: la fin d'une période, liquider: false}
+      decision_medicale: {dit: une décision médicale, liquider: false}
+      demande_d_allocation: {dit: une demande d'allocation, liquider: false}
+      liquidation_observee: {dit: une liquidation connue, pas calculée, liquider: false}
+      debut_de_composante: {dit: le début d'une composante, liquider: false}
+      fin_de_composante: {dit: la fin d'une composante, liquider: false}
+      majorite_d_un_orphelin: {dit: la majorité d'un orphelin, liquider: false}
+      publication_d_une_version: {dit: la publication d'une version de règle, liquider: false}
+
+  motifs:
+    valeurs:
+      vieillesse: la pension de vieillesse
+      invalidite: la pension qui prend la suite d'une invalidité
+      inaptitude: la pension pour inaptitude
+      carriere_longue: le départ anticipé pour carrière longue
+      reversion: la pension de réversion
+
+  natures:
+    valeurs:
+      provisoire: la retraite progressive
+      definitive: la pension définitive
+      seconde: la seconde pension créée en 2023 pour qui retravaille
+      fictive: une liquidation calculée sans être servie, comme celle qui valorise les droits acquis à la bascule
+
+  origines_de_fait:
+    valeurs:
+      declare: dit par la personne ou lu dans un relevé
+      presume: posé par une présomption, qu'il nomme
+      simule: tiré par le pilote
+
+  origines_de_ligne:
+    valeurs:
+      calculee: écrite par une fiche
+      observee: lue dans un relevé ou une pension connue
+
+  origines_d_evenement:
+    valeurs:
+      acte: un acte de la personne
+      simule: tiré par le pilote
+      observe: connu, pas calculé
+      induit: inscrit par une fiche
+      publication: la publication d'une version
+
+  natures_de_ligne:
+    valeurs:
+      ferme: acquise, sans condition
+      conditionnelle: acquise sous une condition ouverte, que la ligne dit
+      en_attente: en attente d'une date ou d'un fait, que la ligne dit
+
+  unites:
+    valeurs:
+      jour: le jour
+      mois: le mois
+      trimestre: le trimestre
+      semestre: le semestre
+      annee: l'année civile
+
+  operations_de_couche:
+    valeurs:
+      garder: garder la fiche ou la version telle quelle
+      ajouter: ajouter une fiche ou une relation
+      remplacer_une_version: remplacer une version
+      neutraliser: neutraliser une fiche
+      changer_un_parametre: changer un paramètre
+      ajouter_une_transition: ajouter une transition
+
+  portees_de_couche:
+    valeurs:
+      univers: l'univers entier
+      calcul: le seul calcul que nomme la transition qui l'emploie
+
+  types_de_source:
+    # Les sortes de lecture que la veille enregistre.
+    valeurs:
+      legifrance: un texte lu sur Légifrance ou dans l'index LEGI
+      jorf: un texte lu au Journal officiel
+      circulaire_cnav: une circulaire de la Cnav
+      service_public: une fiche de service-public.gouv.fr
+      autre: une autre source, qu'elle nomme
+
+  statuts_de_texte:
+    fermee: true
+    # Le statut d'une rédaction d'article dans la liste de contrôle des textes
+    # (§ 6.6). Une rédaction sans statut est ce que le cliquet compte.
+    valeurs:
+      rattachee: rattachée à une version de fiche, qui la cite
+      sans_effet: lue mot à mot, et sans effet sur la fiche qu'elle touche
+      a_rattacher: elle change une fiche, qui ne l'a pas encore coupée en version
+      a_examiner: inscrite par le script qui suit l'index, et pas encore lue
