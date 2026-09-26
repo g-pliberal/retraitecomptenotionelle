@@ -2038,3 +2038,6 @@ contre la présomption. Le repère `phase-3` n'est pas posé : comme les
 précédents, il attend l'accord du propriétaire. La phase 4 suit :
 l'acquisition en étapes et le relevé des droits, qui liront la chronologie
 elle-même, et remplaceront le pont qu'est aujourd'hui la carrière.
+
+Le repère `phase-3` est posé sur 75b545a, le même jour, à la demande du
+propriétaire, par `repere-phase-3.yml`, lancé une fois puis supprimé.
