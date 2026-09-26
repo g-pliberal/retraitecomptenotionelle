@@ -1,0 +1,47 @@
+# Replace les repères phase-0, phase-1 et phase-2 sur leurs commits de
+# l'historique réécrit le 26 septembre 2026 pour en retirer le rapport de
+# l'OPEF (feuille de route, action 130). Chaque repère garde son commit :
+# seule son empreinte a changé, et l'arbre qu'il désigne est le même, sans le
+# PDF.
+#
+# Le jeton d'une session Claude Code n'écrit pas de tag (HTTP 403) ; celui
+# d'un workflow, avec `contents: write`, le peut. Lancé une fois, puis
+# supprimé, comme les workflows qui ont posé ces repères. Un repère qui
+# désigne déjà son commit n'est pas touché ; un commit absent fait échouer la
+# passe sans rien toucher d'autre.
+
+name: Repères après la réécriture
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reperes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reposer phase-0, phase-1 et phase-2
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPOT: ${{ github.repository }}
+        run: |
+          set -eu
+          while read -r tag commit; do
+            gh api "repos/$DEPOT/commits/$commit" --jq .sha >/dev/null
+            actuel=$(gh api "repos/$DEPOT/git/ref/tags/$tag" --jq .object.sha 2>/dev/null || true)
+            if [ "$actuel" = "$commit" ]; then
+              echo "$tag désigne déjà $commit : rien n'est touché"
+            elif [ -z "$actuel" ]; then
+              gh api "repos/$DEPOT/git/refs" -f ref="refs/tags/$tag" -f sha="$commit" --jq .object.sha
+              echo "$tag posé sur $commit"
+            else
+              gh api -X PATCH "repos/$DEPOT/git/refs/tags/$tag" -f sha="$commit" -F force=true --jq .object.sha
+              echo "$tag : $actuel → $commit"
+            fi
+          done <<'REPERES'
+          phase-0 4bb438f02dfda0398c8637c52ff7b147314eaf67
+          phase-1 fc285ad9623397712743dd48ee531825b9ebdf46
+          phase-2 6fb828491d14ba91b8ab78b0cfa79099ca023f44
+          REPERES
