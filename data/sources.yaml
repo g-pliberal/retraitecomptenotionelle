@@ -4307,9 +4307,11 @@ institutions:
           page 180 n'autorise pas, ni copie privée (L. 122-5, 2°), ni courte
           citation (3°, a). Le 26 septembre 2026, à la demande du
           propriétaire, l'historique a été réécrit pour l'en retirer, sous ses
-          deux noms (feuille de route, action 130). Seules les références des
-          pull requests fermées, que GitHub garde en lecture seule, le portent
-          encore : leur purge se demande au support de GitHub.
+          deux noms, et main remplacée (feuille de route, action 130). Il
+          reste atteignable par les anciens repères phase-0, phase-1 et
+          phase-2 et par trois vieilles branches, tant que le propriétaire ne
+          les a pas replacés et supprimés, et par les références des pull
+          requests fermées, tant que le support de GitHub ne les a pas purgées.
           CE QUE LE DOCUMENT AJOUTE À LA SAISIE : la moyenne des frais sur
           arrérages est non pondérée et ne porte que sur les 9 organismes (sur
           20) qui les facturent ; le frais sur versement du PER est le double

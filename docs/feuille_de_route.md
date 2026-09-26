@@ -1940,10 +1940,22 @@ par commit : sur 818 commits, 474 réécrits et un retiré, celui du dépôt du
 PDF, qui ne portait que lui ; aucun autre écart d'arbre, d'auteur ni de date,
 et l'arbre de `main` identique au bit près. Les empreintes que la prose citait
 sont reportées, et les récits gelés qui en citaient ont été refigés pour
-cette seule raison. Les repères suivent leurs commits : `phase-0` passe de
-dae2819 à 4bb438f, `phase-1` de 05ed5a9 à fc285ad, `phase-2` de 82463d5 à
-6fb8284. Restent les références des pull requests fermées 2, 3 et 4, que
-GitHub garde en lecture seule et qui portent encore le document : leur
-purge, avec celle des vues en cache, se demande au support de GitHub. La
-référence de la pull request 1, d'avant la réécriture du 23 septembre, porte
-encore, elle, des adresses nominatives : la même demande peut la viser.
+cette seule raison. `main` a été remplacée le même jour ; le document n'y
+est plus.
+
+Il reste atteignable par trois chemins, qu'une session ne peut pas fermer :
+- les repères, qui désignent encore l'ancien historique. Ils doivent passer,
+  `phase-0` de dae2819 à 4bb438f, `phase-1` de 05ed5a9 à fc285ad, `phase-2`
+  de 82463d5 à 6fb8284. Le jeton d'une session n'écrit pas de tag, et celui
+  d'un workflow n'a pu ni les déplacer ni en créer un sur le nouvel
+  historique (HTTP 403, deux passes de `reperes-reecriture.yml`, qui n'ont
+  rien touché, puis retiré) : c'est au propriétaire de les replacer depuis
+  son poste ;
+- les trois vieilles branches `age-legal-65`, `claude/taux-etat-retraite-seule`
+  et `claude/taux-etat-retraite-seule-7ggdie`, que le propriétaire supprime
+  depuis l'onglet Branches ;
+- les références des pull requests fermées 2, 3 et 4, que GitHub garde en
+  lecture seule : leur purge, avec celle des vues en cache, se demande au
+  support de GitHub. La référence de la pull request 1, d'avant la réécriture
+  du 23 septembre, porte encore, elle, des adresses nominatives : la même
+  demande peut la viser.
