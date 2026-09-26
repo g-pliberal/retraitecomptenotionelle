@@ -1,0 +1,50 @@
+# Repose les repères phase-0, phase-1 et phase-2 (docs/architecture.md,
+# § 12) sur leurs commits de l'historique réécrit le 26 septembre 2026, que
+# le propriétaire a supprimés faute de pouvoir les déplacer (feuille de route,
+# action 130).
+#
+# Le jeton d'une session Claude Code n'écrit pas de tag. Celui d'un workflow
+# en crée un quand les workflows du commit visé sont ceux de main : c'est le
+# cas de phase-1 et de phase-2. Le commit de phase-0 porte des workflows plus
+# anciens, et GitHub a refusé d'y créer un tag (HTTP 403) : il est tenté en
+# dernier, et son refus n'empêche pas les deux autres. Un repère qui existe
+# déjà n'est pas touché. Lancé une fois, puis supprimé.
+
+name: Repères des phases
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  reperes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Poser phase-2, phase-1 et phase-0
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPOT: ${{ github.repository }}
+        run: |
+          set -u
+          echec=0
+          while read -r tag commit; do
+            actuel=$(gh api "repos/$DEPOT/git/ref/tags/$tag" --jq .object.sha 2>/dev/null || true)
+            if [ "$actuel" = "$commit" ]; then
+              echo "$tag désigne déjà $commit : rien n'est touché"
+            elif [ -n "$actuel" ]; then
+              echo "$tag existe déjà, sur $actuel : rien n'est touché"
+              echec=1
+            elif gh api "repos/$DEPOT/git/refs" -f ref="refs/tags/$tag" -f sha="$commit" --jq .object.sha; then
+              echo "$tag posé sur $commit"
+            else
+              echo "$tag refusé sur $commit"
+              echec=1
+            fi
+          done <<'REPERES'
+          phase-2 6fb828491d14ba91b8ab78b0cfa79099ca023f44
+          phase-1 fc285ad9623397712743dd48ee531825b9ebdf46
+          phase-0 4bb438f02dfda0398c8637c52ff7b147314eaf67
+          REPERES
+          exit "$echec"
