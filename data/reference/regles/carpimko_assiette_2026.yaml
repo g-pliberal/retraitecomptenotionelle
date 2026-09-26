@@ -1,0 +1,38 @@
+schema_version: 1
+id: carpimko_assiette_2026
+intitule: >-
+  Complémentaire de la CARPIMKO depuis 2026 : 8,7 % du revenu entier, assiette relevée
+  à un demi-plafond et coupée à trois ; points au coût d'acquisition, 391 € en 2026
+  pour une valeur de service de 21,48 €.
+etat: approchee
+effet: >-
+  La fiche retranchait un demi-plafond de tout revenu et reconduisait le rendement
+  de 2025, 7,36 % : un tiers de points de trop au-dessus d'un demi-plafond, aucun
+  en dessous. Le coût du point n'est publié ni au Journal officiel ni sur le site
+  : il est lu sur la calculette, d'où l'état.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Remplacer 391 € par la valeur publiée dès qu'un texte ou un barème de la caisse
+    la donne.
+  lectures:
+  - type: jorf
+    reference: >-
+      décret n° 2025-1076, article 7 : « L'assiette de cette cotisation est comprise
+      entre un minimum et un maximum » ; article 14 : 8,7 %, seuil 50 % et plafond
+      trois fois le plafond annuel
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      CARPIMKO, page « selon mes revenus » : « entre 2 091 € et 12 544 € pour 2026
+      » ; calculette CalculCotisations2026 : 391 € le point, de 3 000 à 250 000
+      €
+    url: >-
+      https://www.carpimko.com/je-suis-en-activite/cotisations/selon-mes-revenus
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    décret n° 2025-1076, articles 7 et 14 (JORFARTI000052565540, JORFARTI000052565558)
+- reference: arrêté du 14 novembre 2025 approuvant les statuts (JORFARTI000052604992)

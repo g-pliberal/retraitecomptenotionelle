@@ -1,0 +1,52 @@
+schema_version: 1
+id: duree_opposee_aux_regimes_en_points
+intitule: >-
+  Les régimes de base EN POINTS opposent la durée d'assurance TOUS RÉGIMES, comme
+  les régimes en annuités : la pension est servie entière à qui a la durée requise,
+  et minorée par un coefficient de réduction à qui ne l'a pas. Vaut pour la CNAVPL
+  (professions libérales) et pour la MSA des non-salariés agricoles.
+etat: conforme
+effet: >-
+  Le coefficient de réduction était DÉJÀ appliqué par le moteur (`_abattement_points`
+  lit la décote de la fiche) ; ce qui manquait est que la règle qui DATE le départ
+  ne le voyait pas. `age_taux_plein_droit` rendait l'âge d'ouverture dès que la
+  carrière n'avait aucune période en annuités, si bien que le modèle faisait liquider
+  « au taux plein » des carrières qu'il servait minorées — le libéral né en 1955
+  partait à soixante-quatre ans avec cent quarante-huit trimestres sur cent soixante-six
+  requis. Les deux articles ci-dessus disent que la durée s'oppose, et la règle
+  les suit depuis le 21 septembre 2026.
+sources:
+  lu_le: 2026-09-21
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 643-3 CSS, LEGIARTI000053280388, version du 31 décembre 2025, lue par le
+      récupérateur dans l'index LEGI du dépôt à jour au 20 septembre 2026 : « Lorsque
+      l'intéressé a accompli la durée d'assurance fixée en application du deuxième
+      alinéa de l'article L. 351-1 dans le présent régime et dans un ou plusieurs
+      autres régimes d'assurance vieillesse de base, le montant de la pension de
+      retraite est égal au produit de la valeur du point par le nombre de points
+      acquis. Un décret en Conseil d'Etat fixe les coefficients de réduction de
+      la pension de retraite applicables en fonction de l'âge auquel est demandée
+      la liquidation et de la durée d'assurance lorsque l'intéressé ne justifie
+      pas de la durée prévue au deuxième alinéa. »
+    date: 2026-09-21
+  - type: legifrance
+    reference: >-
+      L. 732-24 du code rural, LEGIARTI000053280317, version du 1er janvier 2026,
+      II : « Pour les assurés qui ne justifient, ni dans le régime institué par
+      le présent chapitre ni dans un ou plusieurs autres régimes obligatoires, d'une
+      durée d'assurance et de périodes reconnues équivalentes au moins égale à la
+      durée mentionnée au deuxième alinéa de l'article L. 351-1 du code de la sécurité
+      sociale, un coefficient de minoration est appliqué aux montants prévus au
+      2° du I. »
+    date: 2026-09-21
+textes_a_rattacher:
+- reference: >-
+    L. 643-3 I CSS (professions libérales), version du 31 décembre 2025 issue de
+    la loi n° 2025-1403, applicable aux pensions prenant effet à compter du 1er
+    septembre 2026
+- reference: >-
+    L. 732-24 II du code rural (non-salariés agricoles), version du 1er janvier
+    2026

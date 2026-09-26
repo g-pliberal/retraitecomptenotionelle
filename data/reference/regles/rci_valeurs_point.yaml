@@ -1,0 +1,26 @@
+schema_version: 1
+id: rci_valeurs_point
+intitule: >-
+  Prix d'achat et valeur de service du point de la complémentaire des artisans et
+  commerçants (RCI), 2024 à 2026.
+etat: transcrite
+effet: >-
+  Faute de valeurs après 2023, le modèle achetait les points RCI au rendement de
+  2013 (6,74 %) au lieu de 6,20 % : 9 % de points de trop. Le récupérateur `cnav_baremes_rci.py`
+  relit aussi 2013-2023 et les trouve identiques à OpenFisca.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-01-15
+  a_relire:
+  - Ajouter la valeur 2027 à la circulaire de décembre 2026.
+  lectures:
+  - type: circulaire_cnav
+    reference: >-
+      barèmes rci_valeur_achat_point_bar et rci_valeur_point_bar de la base de législation
+      de la Cnav : 20,734 €, 21,532 €, 21,726 € ; 1,327 €, 1,335 €, 1,347 €
+    url: https://legislation.lassuranceretraite.fr/
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    délibérations du conseil de la protection sociale des travailleurs indépendants,
+    reprises par les circulaires Cnav 2023/33, 2024/36 et 2025/31

@@ -1,0 +1,37 @@
+schema_version: 1
+id: temps_partiel_fonction_publique
+intitule: >-
+  Le temps partiel compte à temps plein dans la durée d'assurance, et seulement
+  à sa quotité dans les services qui liquident la pension (L. 5 et L. 14 I CPCMR)
+  — sauf le temps partiel thérapeutique, le temps partiel de droit pour un enfant
+  né depuis 2004 (trois ans par enfant) et la surcotisation, quatre trimestres au
+  plus (L. 11 bis).
+etat: manquante
+effet: >-
+  Tout fonctionnaire qui a travaillé à temps partiel sans surcotiser : le modèle
+  compte chaque année à temps plein, aucune saisie ne portant la quotité (le champ
+  `quotite` des lignes de carrière n'est lu nulle part). Dix ans à 80 % valent huit
+  trimestres de services de trop : 3,5 points des 75 % du taux plein à 170 trimestres,
+  près d'un vingtième de la pension.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Porter la quotité dans la saisie et dans les services de la famille fonction_publique
+    ; la surcotisation se lit alors comme un choix, borné à quatre trimestres.
+  lectures:
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, pages « Les services valables pour ma retraite
+      », « Mes cotisations » et « La formule de calcul » (exemple de Pierre P.,
+      dix ans à 80 %)
+    date: 2026-09-24
+  - type: service_public
+    reference: fiche F21142, « 5 ans à temps partiel à 80 % comptent pour 4 ans
+      »
+    date: 2026-09-01
+textes_a_rattacher:
+- reference: L. 5 CPCMR
+- reference: L. 11 bis CPCMR
+- reference: L. 14 I CPCMR, avant-dernier alinéa

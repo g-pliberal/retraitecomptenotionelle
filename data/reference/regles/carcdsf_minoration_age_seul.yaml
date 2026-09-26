@@ -1,0 +1,69 @@
+schema_version: 1
+id: carcdsf_minoration_age_seul
+intitule: >-
+  Régime complémentaire de la CARCDSF : jusqu'en 2010, taux plein à 65 ans et minoration
+  de 5 % par année d'âge manquante ; de 2011 à 2023, taux plein à l'âge légal majoré
+  de cinq ans, minoration à l'âge seul de 5 % par année pour les nés avant juillet
+  1951, 1,50 % par trimestre pour les nés depuis 1955, un tableau entre les deux,
+  et majoration de 1 % par trimestre au-delà ; depuis 2024, taux plein à l'âge du
+  1° de L. 351-8, minoration de 1,25 % par trimestre dans la limite de 15 %, majoration
+  de 1,25 % par trimestre accompli depuis 2024 dans la limite de 25 %. Les affiliées
+  partent sans minoration une année plus tôt par enfant, cinq au plus. Majoration
+  de 10 % pour trois enfants.
+etat: approchee
+effet: >-
+  La fiche lisait 62 et 67 ans et la décote du régime de base, que la durée annule
+  : un dentiste parti à 64 ans avec sa durée ne perdait rien de sa complémentaire,
+  là où la caisse lui retire 15 % depuis 2024 et 18 % de 2017 à 2023. Depuis le
+  23 septembre 2026, `abattement_points: cavom` de 2008 à 2010, table `carcdsf_2011`,
+  `decote_annulee_par_la_duree: false`, `decote_trimestres_maximum: 12`, majoration
+  `par_age_seul` et `taux_plein_anticipe_par_enfant_annees`, dans les deux moteurs
+  ; tenu par tests/test_sections_sante.py. Approximations : le tableau des nés de
+  juillet 1951 à 1954 n'est pas lu (1,25 % en tient lieu) ; les nés avant juillet
+  1951 sont minorés par trimestre et non par année de 2011 à 2016 ; la majoration
+  sert un seul taux par année de liquidation ; les statuts d'avant 2007, au Bulletin
+  officiel, ne sont pas lus et la fiche garde avant 2008 la règle du régime de base.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Retrouver le tableau de l'arrêté du 9 juillet 2012 (JO n° 168, texte 3) et les
+    statuts d'avant 2007.
+  lectures:
+  - type: jorf
+    reference: >-
+      Les quatre arrêtés lus en entier dans l'index JORF du dépôt ; le tableau transitoire
+      de 2012 n'y est qu'une mention (« Vous pouvez consulter le tableau dans le
+      JO n° 168 du 21/07/2012 texte numéro 3 »), publié en image.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CARCDSF, page « A quel âge demander ses droits » : taux plein à 67 ans, «
+      1,25 % par trimestre manquant pour atteindre votre 67eme anniversaire », majoration
+      de « 1,25 % par trimestre civil cotisé dans la limite de 25 », dix pour cent
+      pour trois enfants, une année d'anticipation par enfant pour les femmes, «
+      si vous avez eu 2 enfants, vous pouvez bénéficier du taux plein pour ce régime
+      dès 65 ans » ; page « Montant des cotisations » 2026 (forfait de 3 210,60
+      €, 11,35 % de 0,65 à 5 plafonds), conforme à la fiche.
+    url: https://www.carcdsf.fr/retraite/a-quel-age-demander-ses-droits-56
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    statuts du régime complémentaire, articles 20 et 23, approuvés par l'arrêté
+    du 1er octobre 2007 (JORFTEXT000000252172)
+- reference: >-
+    statuts, article 19, approuvés par l'arrêté du 13 avril 2011 (JORFTEXT000023909782),
+    modifiés par l'arrêté du 9 juillet 2012 (JORFTEXT000026208359)
+- reference: >-
+    statuts, article 35, dans la rédaction de l'arrêté du 27 décembre 2023 (JORFTEXT000048880697)
+- reference: >-
+    règlement du régime, articles 1er à 5, approuvé par l'arrêté du 10 juillet 2026
+    (JORFTEXT000054435736)
+exemples:
+- carcdsf_deux_enfants_65_ans
+reformes:
+- carcdsf_statuts_2007
+- carcdsf_statuts_2011
+- carcdsf_bornes_2012
+- carcdsf_2024

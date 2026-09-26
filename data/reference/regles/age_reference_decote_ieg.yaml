@@ -1,0 +1,44 @@
+schema_version: 1
+id: age_reference_decote_ieg
+intitule: >-
+  Âge d'annulation de la décote du régime spécial des IEG : l'âge minimum d'ouverture
+  majoré de TROIS ans depuis le 1er janvier 2025, et soixante-deux ans pour les
+  agents en services actifs nés avant 1975.
+etat: conforme
+effet: >-
+  La fiche portait l'âge d'ouverture majoré de CINQ ans — 63,75 ans pour les liquidations
+  de 2025-2026, 64 ans ensuite —, règle d'avant la réforme de 2023. Un agent liquidant
+  à soixante-deux ans se voyait opposer sept trimestres de décote de trop, soit
+  8,75 % de pension. Corrigé à soixante-deux ans. Sur le cas type des IEG, l'écart
+  au système actuel passe de −23 % à −32 % pour la génération 1970 et de −38 % à
+  −45 % pour celle de 2000 : le cas type des IEG devient, en tête de la page Cas
+  types, la carrière la moins bien traitée par la proposition, à la place du militaire
+  non officier.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le 7° de l'article 16 des IEG garde les cinq ans, et la fiche ne distingue pas
+    cette population. La question posée ici pour la SNCF et la RATP a été menée
+    le 22 septembre 2026 : voir `age_reference_decote_sncf_ratp`.
+  lectures:
+  - type: legifrance
+    reference: >-
+      annexe 3 du statut national des IEG, version en vigueur au 6 août 2025, LEGIARTI000052046924,
+      lue dans l'index LEGI du dépôt
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      CNIEG, réglementation, « Âge d'annulation de la décote » : « à compter du
+      1er janvier 2025 […] âge minimum + 3 ans (sauf exceptions) », de façon à maintenir
+      cet âge au plus tard à soixante-sept ans
+    url: >-
+      https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/decote/age-annulation-decote.html
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    annexe 3 du décret n° 46-1541 du 22 juin 1946, article 10 I et article 45 (LEGIARTI000052046924)
+- reference: décret n° 2023-692 du 28 juillet 2023
+reformes:
+- reforme_2023

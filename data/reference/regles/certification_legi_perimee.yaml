@@ -1,0 +1,30 @@
+schema_version: 1
+id: certification_legi_perimee
+intitule: >-
+  Le récupérateur des paramètres du scénario 1 lit l'index LEGI du dépôt (dump global
+  du 13 juillet 2025 plus les incréments quotidiens de la DILA) ; tout ce qu'il
+  certifie l'est à la date du dernier incrément appliqué, que le fichier source
+  et le journal de certification écrivent.
+etat: conforme
+effet: >-
+  Toutes les séries lues dans LEGI ou dans le JORF le sont sur l'index à jour :
+  les seize récupérateurs dila_legi_*, jorf_* et sncf_contribution_employeur.py
+  y passent leur filtre, et --dump garde le dump global pour contrôle.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    À chaque session qui touche au scénario 1 : `dila_index.py legi --mettre-a-jour`
+    et `jorf --mettre-a-jour`, relancer les récupérateurs, puis `verifier_donnees.py
+    --appliquer`.
+  lectures:
+  - type: autre
+    reference: >-
+      index LEGI, incréments appliqués jusqu'au 20260916-214544 ; journal de certification
+      du 17 septembre 2026
+    date: 2026-09-17
+textes_a_rattacher:
+- reference: scripts/fetch/dila_legi_parametres_retraite.py
+- reference: scripts/fetch/dila_index.py
+- reference: data/derive/certification.json

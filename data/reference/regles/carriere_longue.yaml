@@ -1,0 +1,46 @@
+schema_version: 1
+id: carriere_longue
+intitule: >-
+  Quatre bornes d'entrée (16, 18, 20, 21 ans), cinq trimestres avant la fin de l'année
+  civile — quatre pour les nés au dernier trimestre —, durée requise cotisée ; la
+  borne des vingt ans par génération ; portes lues à la date d'effet.
+etat: conforme
+effet: >-
+  Tout départ avant l'âge légal. Les quatre-vingts portes de 2004 à 2026 sont lues
+  et certifiées (action 27) : celles de 2011 et de 2012 génération par génération
+  dans les versions abrogées (LEGIARTI000023397567, LEGIARTI000026139949), celles
+  de 2004 dans LEGIARTI000006736521. Le moteur retient désormais une porte par couple
+  (borne d'entrée, supplément) et non plus par borne seule.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2026-12-31
+  lectures:
+  - type: circulaire_cnav
+    reference: >-
+      2026-29 du 4 septembre 2026, point 1.1.1 et annexe 3, relue ligne à ligne
+      le 21 septembre 2026 : mêmes âges et mêmes durées que la 2026-17 qu'elle annule
+      et remplace
+    date: 2026-09-04
+  - type: legifrance
+    reference: >-
+      D. 351-1-1 CSS, versions du 1er septembre 2023 (LEGIARTI000047634571), du
+      1er janvier 2026 (LEGIARTI000053356023, sans changement de valeur) et du 1er
+      septembre 2026 (LEGIARTI000054059621), lues par le récupérateur dans l'index
+      LEGI, I et II
+    date: 2026-09-17
+  - type: service_public
+    reference: fiche F13845
+    date: 2026-09-01
+textes_a_rattacher:
+- reference: L. 351-1-1 CSS
+- reference: D. 351-1-1 CSS (décret n° 2026-345 du 7 mai 2026)
+exemples:
+- cnav_2026_29_racl_1964
+- cnav_2026_29_racl_1965_premier_trimestre
+- cnav_2026_29_racl_1965_apres_avril
+- cnav_2026_29_racl_1967
+- cnav_2026_29_racl_1970
+- cnav_2026_29_racl_1971
+reformes:
+- reforme_2023
+- lfss_2026_suspension

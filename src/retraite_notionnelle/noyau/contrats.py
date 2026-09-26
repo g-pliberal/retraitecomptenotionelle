@@ -15,8 +15,9 @@ objet :
 ``manque``
     Un champ obligatoire absent. La donnée n'est pas encore mûre — une fiche
     tirée d'un registre ne sait pas encore son étape —, et ce n'est pas une
-    faute : le tableau de bord le compte, et un cliquet l'empêche de croître
-    (§ 9.2 : ce qu'on apprend n'est jamais bloqué).
+    faute : le tableau de bord le compte, et rien ne bloque (§ 9.2 : ce qu'on
+    apprend n'est jamais bloqué, une règle découverte entre avant d'être
+    mûre).
 
 Les types : ``identifiant`` (minuscules, chiffres, soulignés), ``texte``,
 ``entier``, ``nombre``, ``booleen``, ``date`` (une date, ou rien),

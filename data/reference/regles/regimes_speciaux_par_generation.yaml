@@ -1,0 +1,57 @@
+schema_version: 1
+id: regimes_speciaux_par_generation
+intitule: >-
+  SNCF, RATP, IEG : les âges d'ouverture et de référence se lisent à la GÉNÉRATION,
+  pour tous les agents ; la durée requise au mois où l'agent réunit les conditions
+  — calendrier de 2008 (150 avant juillet 2008, 151 à 166 jusqu'en juillet 2018),
+  table de 2014 à compter du 1er juillet 2019, table de 2023 à compter du 1er janvier
+  2025.
+etat: conforme
+effet: >-
+  Les trois fiches portaient un âge par année de liquidation, celui de la seule
+  génération qui l'atteint cette année-là, et la table commune de durée par génération.
+  Leurs retraités de 2008 à 2024 et les générations qui ne partent pas à l'âge en
+  payaient l'écart : un agent de conduite né en 1960 parti en 2010 devait 154 trimestres,
+  le modèle lui en demandait 167 ; un agent des IEG né en 1960 ouvrait à 55 ans,
+  le modèle disait 55 ans et 4 mois. Corrigé par les tables d'âges par génération
+  et la durée lue au mois des conditions réunies ; les pensions de leurs retraités
+  remontent de 3 à 11 %.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Dix autres fiches portent encore un âge par année : voir l'action 121 de la
+    feuille de route.
+  lectures:
+  - type: legifrance
+    reference: >-
+      les trois articles de durée, versions de 2014 et en vigueur : « 151 trimestres
+      pour les personnes remplissant les conditions […] entre le 1er juillet et
+      le 31 décembre 2008 inclus […] elle augmente d'un trimestre au 1er janvier
+      et au 1er juillet de chaque année jusqu'au 1er juillet 2012 inclus, d'un trimestre
+      au 1er décembre 2012, puis d'un trimestre au 1er juillet de chaque année jusqu'à
+      atteindre la durée de 166 trimestres au 1er juillet 2018. A compter du 1er
+      juillet 2019, elle est fixée à » une table par génération. Lus dans l'index
+      LEGI du dépôt
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      SNCF, I bis de l'article 35 ; RATP, IX de l'article 51-1 ; IEG, I ter de l'article
+      45 : pour les assurés remplissant les conditions de liquidation avant le 1er
+      janvier 2025, l'âge et la durée « sont égaux à ceux applicables avant » les
+      décrets de 2023
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    décret n° 2008-639, articles 35 et 37-1 (LEGIARTI000029165209, LEGIARTI000048897024,
+    LEGIARTI000048896987)
+- reference: >-
+    décret n° 2008-637, articles 51 et 51-1 (LEGIARTI000029137521, LEGIARTI000052292971,
+    LEGIARTI000047914257)
+- reference: >-
+    annexe 3 du statut des IEG, article 45 (LEGIARTI000042597001, LEGIARTI000052046924)
+reformes:
+- regimes_speciaux_2008
+- speciaux_bornes_2017
+- reforme_2023

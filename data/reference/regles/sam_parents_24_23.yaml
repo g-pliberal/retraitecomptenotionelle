@@ -1,0 +1,26 @@
+schema_version: 1
+id: sam_parents_24_23
+intitule: >-
+  Vingt-quatre meilleures années pour qui bénéficie d'une majoration ou bonification
+  au titre d'un enfant, vingt-trois pour deux et plus, pensions prenant effet à
+  compter du 1er septembre 2026.
+etat: transcrite
+effet: >-
+  Mères (par défaut dans le modèle) liquidant depuis septembre 2026 : +1 à +2 %
+  de salaire de référence.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    Attendre la circulaire Cnav d'application et son exemple ; vérifier le sort
+    des pères qui détiennent la majoration.
+  lectures:
+  - type: legifrance
+    reference: décret n° 2026-699, JORFTEXT000054569098
+    date: 2026-07-29
+textes_a_rattacher:
+- reference: R. 173-3-2 I CSS (décret n° 2026-699 du 29 juillet 2026, article 1er)
+- reference: loi n° 2025-1403, article 103
+reformes:
+- parents_2026

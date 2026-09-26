@@ -1,0 +1,37 @@
+schema_version: 1
+id: ircantec_valeurs_point
+intitule: >-
+  Valeur de service, salaire de référence et pourcentage d'appel du point Ircantec
+  de 2022 à 2026 ; au-delà du dernier barème publié, les cotisations de l'Ircantec
+  et de l'Agirc-Arrco achètent des points au rendement de ce barème.
+etat: transcrite
+effet: >-
+  Toute pension Ircantec. La table s'arrêtait à la valeur de janvier 2022, 0,49241
+  €, et le rendement moyen de 2009 à 2021, 8,52 %, prolongeait tout le reste. Le
+  rendement au-delà de 2026 est désormais celui du barème de 2026, 7,63 %, et celui
+  de l'Agirc-Arrco celui du sien, 5,61 %, au lieu de la moyenne 2019-2026, 5,81
+  %. Mesuré sur un contractuel entré à 22 ans et parti à 64 : la part Ircantec gagne
+  2,8 % pour la génération 1960, que les valeurs de 2022 à 2026 relèvent, et perd
+  3,2 % pour 1975, 6,5 % pour 1985 et 10,5 % pour 2005, que le rendement de prolongation
+  abaisse. Les valeurs passent par `source_valeurs_point_ircantec_publiees` de `scripts/verifier_donnees.py`,
+  et non par une saisie dans le fichier, qui s'écrit par ce script.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Relire chaque 1er janvier la valeur du point et le salaire de référence de l'Ircantec,
+    que `scripts/fetch/cdc_ircantec.py` ne couvre que jusqu'en 2021.
+  lectures:
+  - type: autre
+    reference: >-
+      Ircantec, « Valeur du point » et paramètres du régime : valeur de service
+      0,51211 € fin 2022, 0,51621 € en 2023, 0,54357 € en 2024, 0,55553 € en 2025,
+      0,56053 € en 2026 ; salaire de référence de 5,329 € à 5,787 € ; pourcentage
+      d'appel de 125 %, puis 7,11 / 5,60 en 2026
+    url: https://www.ircantec.retraites.fr/retraite/valeur-point
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    arrêté du 30 décembre 1970, article 16 (délibérations annuelles du conseil d'administration
+    de l'Ircantec)

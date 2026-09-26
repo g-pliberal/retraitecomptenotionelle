@@ -1,0 +1,41 @@
+schema_version: 1
+id: regimes_speciaux_et_non_salaries
+intitule: >-
+  Fermetures de 2023 (RATP, IEG, clercs, Banque de France, CESE), réformes 2023-2026
+  des sections libérales, de la MSA, de Mayotte, de Saint-Pierre-et-Miquelon, des
+  collectivités du Pacifique.
+etat: transcrite
+effet: >-
+  Populations petites ; chaque fiche dit ce qu'elle ne porte pas (regimes.md, limites.md
+  § 4).
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Mayotte : la fiche est indexée par année, non par génération ; relire le décret
+    n° 2026-345, article 3 (62 ans et 6 mois de 1963 à 1965 jusqu'à 63 ans et 9
+    mois pour 1969) et vérifier les dernières périodes. La réforme agricole de 2026
+    reste non calculable.
+  lectures:
+  - type: autre
+    reference: docs/regimes.md, journal de la campagne sur les régimes
+    date: 2026-09-16
+textes_a_rattacher:
+- reference: >-
+    voir data/reference/legislation/reformes.yaml, entrées datées de 2023 et après
+reformes:
+- polynesie_2023
+- caledonie_2023
+- cese_2023
+- cnavpl_surcote_2023
+- clr_2023
+- avenant_17_2024
+- cprn_report_2024
+- rafep_2024
+- mayotte_2024
+- agricole_2025
+- assiette_liberaux_2026
+- asv_2026
+- cavec_report_2026
+- spm_2026

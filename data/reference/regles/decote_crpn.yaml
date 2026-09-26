@@ -1,0 +1,42 @@
+schema_version: 1
+id: decote_crpn
+intitule: >-
+  Navigants de l'aviation civile (CRPN) : taux plein à trente annuités, décote de
+  5 % par annuité manquante sur la seule durée depuis 2022, et aucune décote à partir
+  de soixante ans, l'âge du premier alinéa de L. 6521-4 du code des transports.
+etat: approchee
+effet: >-
+  L'âge d'annulation passe de 65 à 60 ans pour toute liquidation depuis 2012, et
+  la décote se compte sur la durée seule depuis 2022. Restent approchés : le dispositif
+  transitoire des navigants nés avant 1971 (taux plein à 55 ans avec 21 à 29 annuités),
+  les conditions montantes de 2012 à 2021 (âge et « couple » âge plus annuités),
+  le décompte au jour près, et les taux d'appel de 2016 à 2025, non publiés.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le dispositif transitoire et les conditions de 2012 à 2021 demandent une table
+    par génération et par année ; les taux d'appel annuels, les décisions du conseil
+    d'administration de la caisse.
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 6527-21 à R. 6527-23, lus dans l'index LEGI du dépôt ; L. 6521-4, lu sur
+      Légifrance (LEGIARTI000044191544) : « au-delà de l'âge de soixante ans ».
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CRPN, notices « Conditions de liquidation des droits à pension » applicables
+      à compter du 1er novembre 2023 (« pension à 60 ans sans décote ») et de 2012
+      à 2021 (« droit à pension différé à 60 ans ») ; « Comment calculer vos cotisations
+      2026 » (taux appelé à 111 %).
+    url: https://www.crpn.fr/je-suis-salarie/notices-et-formulaires/
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    R. 6527-21 à R. 6527-23 du code des transports (LEGIARTI000048325100, LEGIARTI000048325102,
+    LEGIARTI000048325104), depuis le 1er novembre 2023
+- reference: >-
+    R. 426-11 et R. 426-12 du code de l'aviation civile, de 2012 au 31 octobre 2023
+- reference: L. 6521-4 du code des transports, version du 10 octobre 2021

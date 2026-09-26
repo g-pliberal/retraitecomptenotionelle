@@ -1,0 +1,29 @@
+schema_version: 1
+id: fin_de_la_suspension_2028
+intitule: >-
+  La suspension court jusqu'au 1er janvier 2028 ; l'élection présidentielle de 2027
+  peut abroger, prolonger ou refaire le calendrier.
+etat: a_verifier
+effet: >-
+  Tout changement de calendrier touche les générations 1965 et suivantes. Relu le
+  24 septembre 2026, index LEGI à jour de l'incrément du 23 : la version du 31 décembre
+  2025 de L. 161-17-2 (LEGIARTI000053280889) et de L. 161-17-3 (LEGIARTI000053280903)
+  est toujours la dernière, sans date de fin. La suspension tient, et cette ligne
+  reste `a_verifier` parce que c'est un calendrier politique, non une lacune du
+  dépôt.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    À chaque session : `python scripts/fetch/dila_index.py legi --mettre-a-jour`,
+    puis vérifier que L. 161-17-2 et L. 161-17-3 n'ont pas de version postérieure
+    au 31 décembre 2025 (`dila_cherche.py legi --num L161-17-2`).
+  lectures:
+  - type: circulaire_cnav
+    reference: 2026-07 du 5 mars 2026, point 1.1
+    date: 2026-03-05
+textes_a_rattacher:
+- reference: loi n° 2025-1403, article 105 VI
+reformes:
+- lfss_2026_suspension

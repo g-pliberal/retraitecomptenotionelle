@@ -1,0 +1,26 @@
+schema_version: 1
+id: rachats_et_versements
+intitule: >-
+  Rachats de trimestres (années d'études, années incomplètes), versements pour la
+  retraite, surcotisation du temps partiel de la fonction publique.
+etat: pas_encore_modelisee
+effet: Non saisissables dans le simulateur.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-09-30
+  lectures:
+  - type: jorf
+    reference: >-
+      décret n° 2025-1340, article 1er (barème du rachat d'études de 20 à 66 ans,
+      en vigueur au 1er janvier 2026)
+    date: 2026-09-24
+  - type: autre
+    reference: >-
+      ENSAP, calculette du rachat d'études, qui applique encore en septembre 2026
+      le barème du décret n° 2003-1310 abrogé
+    date: 2026-09-24
+textes_a_rattacher:
+- reference: L. 351-14-1 CSS
+- reference: >-
+    L. 9 bis et D. 7-1 à D. 7-3 CPCMR (décret n° 2025-1340 du 26 décembre 2025)
+- reference: L. 11 bis CPCMR

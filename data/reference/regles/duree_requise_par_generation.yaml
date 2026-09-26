@@ -1,0 +1,87 @@
+schema_version: 1
+id: duree_requise_par_generation
+intitule: >-
+  Durée d'assurance requise pour le taux plein et dénominateur du prorata, par génération
+  ; pour les pensions prenant effet avant le 1er septembre 2026, les nés en 1964
+  et 1965 doivent celle de la loi de 2023, 171 et 172 trimestres ; pour les pensions
+  prenant effet avant le 1er septembre 2023, les nés à compter du 1er septembre
+  1961 doivent celle de la version de 2014 de L. 161-17-3, 168 trimestres jusqu'en
+  1963 et 169 de 1964 à 1966.
+etat: conforme
+effet: >-
+  Taux et proratisation de toute liquidation. Les vingt segments depuis 1958 sont
+  certifiés (action 27). Jusqu'au 23 septembre 2026, le modèle opposait la table
+  de la suspension à toute pension de ces générations, quelle que soit sa date d'effet
+  : un à deux trimestres de moins aux départs anticipés de 1964 et 1965 antérieurs
+  à septembre 2026. Table `duree_requise_avant_suspension.csv` ; les témoins de
+  carrière longue de la circulaire 2026-29, qui rejouaient sa règle en 2024 et 2025,
+  liquident désormais en septembre 2026. Et jusqu'au 24 septembre 2026, le modèle
+  opposait la table de 2023 aux nés de septembre 1961 à 1965 partis avant septembre
+  2023 — 169 trimestres au lieu de 168 au né en 1962 parti en carrière longue en
+  janvier 2022, 172 au lieu de 169 à un départ de 1965 : `duree_requise_avant_reforme_2023.csv`.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2026-12-31
+  a_relire:
+  - >-
+    La clause de sauvegarde de l'article 8 du décret n° 2023-436 — la carrière longue
+    aux conditions d'avant septembre 2023 pour les nés de septembre 1961 à 1963
+    qui avaient leur durée cotisée à cette date, proratisée sur la durée nouvelle
+    (circulaire Cnav 2023-14, point 9.2) — n'est pas appliquée.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 161-17-3 CSS, LEGIARTI000053280903, version du 31 décembre 2025, lue par
+      le récupérateur dans l'index LEGI à jour au 16 septembre 2026
+    date: 2026-09-17
+  - type: legifrance
+    reference: >-
+      L. 161-17-3 CSS, LEGIARTI000053280903 : « s'appliquent aux pensions prenant
+      effet à compter du 1er septembre 2026 » ; version du 1er septembre 2023, LEGIARTI000047452764
+      : « 171 trimestres, pour les assurés nés en 1964 ; 172 trimestres, pour les
+      assurés nés à partir du 1er janvier 1965 »
+    date: 2026-09-23
+  - type: circulaire_cnav
+    reference: >-
+      2026-07 du 5 mars 2026, point 2.1 : « La durée de 171 trimestres pour les
+      assurés nés en 1964 et celle de 172 trimestres pour les assurés nés en 1965
+      reste opposable aux assurés prenant leur retraite avant le 1er septembre 2026
+      »
+    date: 2026-03-05
+  - type: legifrance
+    reference: >-
+      L. 161-17-3 CSS, version du 22 janvier 2014, LEGIARTI000028494794 : « 168
+      trimestres, pour les assurés nés entre le 1er janvier 1961 et le 31 décembre
+      1963 ; 169 trimestres, pour les assurés nés entre le 1er janvier 1964 et le
+      31 décembre 1966 » ; loi n° 2023-270, article 10, XXX, B (LEGIARTI000053280920)
+      : « Les autres dispositions du présent article […] s'appliquent aux pensions
+      prenant effet à compter du 1er septembre 2023 »
+    date: 2026-09-24
+  - type: circulaire_cnav
+    reference: >-
+      2023-19 du 15 septembre 2023, point 2 : les nouvelles durées « s'appliquent
+      aux retraites personnelles prenant effet à compter du 1er septembre 2023 »
+      ; l'exemple de réversion oppose 169 trimestres à un assuré né en 1965 dont
+      la pension aurait pris effet avant cette date, 172 après
+    date: 2023-09-15
+  - type: service_public
+    reference: fiche F14044
+    date: 2026-08-14
+textes_a_rattacher:
+- reference: L. 161-17-3 CSS (réécrit par la loi n° 2025-1403, article 105)
+- reference: loi n° 2025-1403, article 105 VI
+- reference: L. 161-17-3 CSS, version du 22 janvier 2014 (LEGIARTI000028494794)
+- reference: loi n° 2023-270, article 10, XXX, B
+- reference: L. 351-1 CSS
+exemples:
+- cnav_2026_07_age_legal_1964
+- cnav_2026_07_age_legal_1965_apres_avril
+- sp_f19666_decote
+- sp_f21552_taux_plein_170
+- cnav_2026_07_duree_1964_avant_septembre
+- cnav_2026_07_duree_1965_avant_septembre
+- cnav_2023_19_duree_1962_avant_septembre
+- cnav_2023_19_duree_1963_avant_septembre
+reformes:
+- reforme_2023
+- lfss_2026_suspension

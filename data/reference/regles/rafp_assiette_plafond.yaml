@@ -1,0 +1,50 @@
+schema_version: 1
+id: rafp_assiette_plafond
+intitule: >-
+  Assiette du RAFP : les éléments de rémunération qui n'entrent pas dans celle de
+  la pension civile ou de la CNRACL — primes, indemnités, avantages en nature —,
+  « dans la limite de 20 % du traitement indiciaire brut total ou de la solde brute
+  totale perçus au cours de l'année considérée » ; cotisation de 10 %, moitié agent,
+  moitié employeur.
+etat: conforme
+effet: >-
+  Fonctionnaires, magistrats et militaires dont les primes dépassent le cinquième
+  du traitement, soit un sixième de la rémunération. Le modèle prenait toutes les
+  primes : à 22 % de primes, le RAFP ressortait trop haut de 41 %. Champ `plafond_primes_traitement`
+  de la fiche, lu par `PeriodeRegime.part_du_revenu` dans les deux moteurs, tenu
+  par `test_les_primes_au_dela_du_plafond_ne_cotisent_pas_au_rafp` et son pendant
+  JavaScript.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-09-30
+  a_relire:
+  - >-
+    Les deux exceptions de l'ERAFP ne sont pas portées : la GIPA, cotisée sans plafond,
+    et les jours de compte épargne-temps convertis en points ; ni la cotisation
+    volontaire des agents de l'État outre-mer (loi de finances pour 2024, article
+    201). Et l'article 76 de la loi de 2003 n'ouvre le régime qu'aux fonctionnaires
+    civils, aux magistrats et aux militaires, quand `affiliations.yaml` le donne
+    aussi aux deux statuts d'ouvrier de l'État.
+  lectures:
+  - type: legifrance
+    reference: >-
+      article 2 en vigueur (LEGIARTI000049424057) : « Ces éléments sont pris en
+      compte dans la limite de 20 % du traitement indiciaire brut total ou de la
+      solde brute totale perçus au cours de l'année considérée » ; même limite,
+      sans la solde avant 2019, dans les versions de 2004, 2017, 2018, 2019 et 2023
+      lues dans l'index LEGI du dépôt
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      ERAFP, « Calculer vos cotisations et vos points RAFP » : « L'assiette de cotisation
+      au RAFP est plafonnée à 20 % du traitement indiciaire brut », appréciée en
+      cumul depuis le 1er janvier, sauf la GIPA et les jours de CET convertis
+    url: >-
+      https://www.rafp.fr/actif/activite/calculer-vos-cotisations-et-vos-points-rafp
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    décret n° 2004-569, article 2, six versions de LEGIARTI000006453300 (2004) à
+    LEGIARTI000049424057 (en vigueur depuis le 17 avril 2024), la limite de 20 %
+    dans toutes
+- reference: 'loi n° 2003-775, article 76, II (LEGIARTI000048691415) : bénéficiaires'

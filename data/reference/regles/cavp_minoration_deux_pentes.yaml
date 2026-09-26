@@ -1,0 +1,53 @@
+schema_version: 1
+id: cavp_minoration_deux_pentes
+intitule: >-
+  Volet par répartition de la complémentaire de la CAVP : jusqu'en 2011, retraite
+  entière à 65 ans et anticipation de 1,25 % par trimestre à l'âge seul ; depuis
+  l'arrêté du 23 juin 2011, retraite entière à l'âge du 1° de L. 351-8 pour les
+  nés depuis 1956 (65 ans jusqu'en 1952, 66 ans de 1953 à 1955) et minoration de
+  1,25 % par trimestre jusqu'à 65 ans puis de 0,5 % de 65 ans à cet âge, que la
+  durée n'annule pas. Bonification d'un dixième pour trois enfants.
+etat: approchee
+effet: >-
+  La fiche lisait la décote du régime de base, que la durée annule : un pharmacien
+  parti à 64 ans avec sa durée ne perdait rien de sa complémentaire, là où la caisse
+  lui retire 9 %. Depuis le 23 septembre 2026, table `cavp`, `decote_annulee_par_la_duree:
+  false` et `decote_palier_age: 65`, dans les deux moteurs. Approximations : les
+  nés jusqu'en 1955 reçoivent les deux pentes depuis leur propre âge, leur tableau
+  n'étant pas lu ; la valeur de service n'est pas affectée de 0,96 ou de 0,96/0,98
+  pour ces générations ; le départ anticipé pour carrière longue, minoré « jusqu'à
+  l'âge de 65 ans » seulement depuis 2024, reçoit les deux pentes dans la limite
+  de vingt trimestres ; les statuts d'avant 2009 ne sont pas lus.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - Lire l'annexe des statuts de 2011 et les statuts d'avant 2009.
+  lectures:
+  - type: jorf
+    reference: >-
+      Les trois textes lus dans l'index JORF du dépôt ; le tableau des coefficients
+      des nés jusqu'en 1955, « en annexe des présents statuts » de 2011, n'y figure
+      pas.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CAVP, pages « Comment votre retraite de pharmacien libéral est-elle calculée
+      ? » (328,80 € par annuité en 2026, minoration avant l'âge du taux plein, majoration
+      de 10 % pour trois enfants) et « À quel âge prendre votre retraite ? » (taux
+      plein de la répartition à 67 ans pour les générations nées à compter de 1956).
+    url: >-
+      https://www.cavp.fr/pr%C3%A9parer-votre-retraite/comment-votre-retraite-est-elle-calcul%C3%A9e
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    statuts du régime complémentaire, articles 12, 15 et 17, approuvés par l'arrêté
+    du 11 mai 2009 (JORFTEXT000020694598)
+- reference: >-
+    statuts, articles 12 et 15, dans la rédaction de l'arrêté du 23 juin 2011 (JORFTEXT000024270202)
+- reference: >-
+    règlement du régime, articles 8, 12 et 15, approuvé par l'arrêté du 10 juillet
+    2026 (JORFTEXT000054436076)
+reformes:
+- cavp_statuts_2009
+- cavp_report_2011

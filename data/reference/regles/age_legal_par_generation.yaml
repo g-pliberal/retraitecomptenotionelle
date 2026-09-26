@@ -1,0 +1,46 @@
+schema_version: 1
+id: age_legal_par_generation
+intitule: >-
+  Âge d'ouverture du droit par génération, coupures au mois (1er juillet 1951, 1er
+  septembre 1961, 1er avril 1965).
+etat: conforme
+effet: >-
+  Toute liquidation. Les soixante-dix-neuf segments de la table sont certifiés :
+  lus dans L. 161-17-2 et D. 161-2-1-9, chaque version à sa date d'effet (action
+  27).
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2026-12-31
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 161-17-2 CSS, LEGIARTI000053280889, version du 31 décembre 2025, lue par
+      le récupérateur dans l'index LEGI à jour au 16 septembre 2026
+    date: 2026-09-17
+  - type: legifrance
+    reference: D. 161-2-1-9 CSS, LEGIARTI000047634502, version du 1er septembre
+      2023
+    date: 2026-09-17
+  - type: circulaire_cnav
+    reference: 2026-07 du 5 mars 2026, point 1.1 et annexe 1
+    date: 2026-03-05
+  - type: service_public
+    reference: fiches F14043 et F14044
+    date: 2026-08-14
+  - type: service_public
+    reference: actualité A18825, suspension de la réforme
+    date: 2026-02-27
+textes_a_rattacher:
+- reference: L. 161-17-2 CSS (réécrit par la loi n° 2025-1403, article 105)
+- reference: >-
+    D. 161-2-1-9 CSS (version 2023, que la loi laisse valoir pour les nés avant
+    le 1er septembre 1961)
+exemples:
+- cnav_2026_07_age_legal_1964
+- cnav_2026_07_age_legal_1965_premier_trimestre
+- cnav_2026_07_age_legal_1965_apres_avril
+- sp_f19643_surcote
+- sp_f16494_surcote_fonction_publique
+reformes:
+- reforme_2023
+- lfss_2026_suspension

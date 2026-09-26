@@ -1,0 +1,58 @@
+schema_version: 1
+id: duree_requise_carriere_longue_fonction_publique
+intitule: >-
+  Durée de services et bonifications requise d'un fonctionnaire sédentaire de l'État,
+  de la CNRACL ou du FSPOEIE dont la carrière longue ouvre le droit avant soixante
+  ans : celle des fonctionnaires qui atteignent soixante ans l'année où son droit
+  s'ouvre, s'il s'ouvre avant le 1er septembre 2023 ; 169 trimestres à compter de
+  cette date, 170 en 2025, 171 en 2027, la durée de sa génération à compter de 2028.
+  La condition de durée cotisée de la carrière longue reste celle de sa génération.
+etat: conforme
+effet: >-
+  Fonctionnaires sédentaires partis en carrière longue. Jusqu'au 24 septembre 2026,
+  le modèle leur opposait la durée de leur génération : 172 trimestres au lieu de
+  170 au fonctionnaire né en 1967 dont le droit s'ouvre à cinquante-huit ans en
+  2025, 168 au lieu de 167 à celui de 1961 ouvert à cinquante-neuf ans en 2020.
+  La pension n'en bouge que si les services n'atteignent pas la durée — une carrière
+  commencée ailleurs. tests/test_cnracl.py ; la Banque de France, qui n'est pas
+  au code des pensions, garde la durée de sa génération.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Les autres départs avant soixante ans que la CNRACL range sous la même règle
+    — invalidité, handicap, parents de trois enfants, conjoint ou enfant invalide
+    — ne sont pas modélisés.
+  lectures:
+  - type: legifrance
+    reference: >-
+      loi n° 2023-270, article 10, XXIV, A, B et C, lus dans l'index LEGI : le C
+      vise « les fonctionnaires civils, autres que ceux mentionnés aux A et B du
+      présent XXIV, et les militaires »
+    date: 2026-09-24
+  - type: legifrance
+    reference: >-
+      D. 16-1 CPCMR, LEGIARTI000054059616 : durée cotisée « au moins égale à la
+      durée mentionnée à l'article L. 161-17-3 »
+    date: 2026-09-24
+  - type: autre
+    reference: >-
+      CNRACL, juris-cnracl, « Durée d'assurance requise - Fonctionnaire bénéficiant
+      d'un départ anticipé avant 60 ans pour un autre motif » (mise à jour du 1er
+      septembre 2026) et « Maintien de l'ancienne réglementation »
+    date: 2026-09-24
+    url: >-
+      https://www.juris-cnracl.retraites.fr/pension-normale/calcul-de-la-pension/duree-dassurance-requise-pour-beneficier-du-taux-maximal-de/duree-dassurance-requise-fonctionnaire-beneficiant-dun-depart-anticipe-avant-60-ans-pour-un-autre
+textes_a_rattacher:
+- reference: >-
+    loi n° 2023-270 du 14 avril 2023, article 10, XXIV, C (LEGIARTI000053280920)
+- reference: >-
+    L. 13, III, du code des pensions civiles et militaires, version LEGIARTI000028498258
+- reference: >-
+    D. 16-1 du code des pensions, rédaction du décret n° 2026-345 (LEGIARTI000054059616)
+- reference: décret n° 2023-435, article 13, II, C (CNRACL)
+exemples:
+- cnracl_carriere_longue_avant_soixante_ans
+reformes:
+- reforme_2023

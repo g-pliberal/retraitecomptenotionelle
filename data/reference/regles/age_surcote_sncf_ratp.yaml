@@ -1,0 +1,47 @@
+schema_version: 1
+id: age_surcote_sncf_ratp
+intitule: >-
+  La surcote de la SNCF et de la RATP ne compte que les trimestres accomplis au-delà
+  d'un âge propre : soixante ans pour les nés avant 1957, puis l'âge légal décalé
+  de cinq générations, soixante-quatre ans à compter de 1970.
+etat: conforme
+effet: >-
+  Le modèle comptait la surcote depuis l'âge d'ouverture de la fiche — cinquante-quatre
+  ans pour un agent de conduite né en 1980. Le défaut ne se voyait pas tant que
+  la durée requise opposée était de 172 trimestres ; la table propre de la SNCF
+  l'a fait paraître sur le témoin de l'agent né en 1975 parti à soixante-quatre
+  ans avec 172 trimestres pour 170 requis, qui recevait deux trimestres de surcote
+  qu'il n'a pas accomplis au-delà de soixante-quatre ans. Corrigé par `legislation/age_surcote_regimes_speciaux.csv`
+  et le drapeau `age_surcote_regimes_speciaux` des deux fiches, sur toutes leurs
+  périodes à surcote.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639, article 37-1, IV en vigueur : « L'âge de soixante-quatre
+      ans déterminé en application du II de l'article 13 s'applique aux agents nés
+      à compter du 1er janvier 1970 », abaissé à soixante ans pour les nés avant
+      1957, puis de quatre mois, puis de trois mois par génération
+    date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      décret n° 2008-637, article 51-1, II, 3° en vigueur : même calendrier pour
+      l'âge de soixante-quatre ans du 4° du II de l'article 6, auquel renvoie le
+      II de l'article 24
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      CPRPSNCF, « Réforme des retraites 2023 » : « Pour les agents nés à partir
+      de 1970, l'âge à partir duquel la surcote sera possible est fixé à 64 ans
+      »
+    url: https://www.cprpf.fr/2023/10/24/reforme-des-retraites-2023/
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    décret n° 2008-639, article 13, II, et article 37-1, IV (LEGIARTI000048896987)
+- reference: >-
+    décret n° 2008-637, article 24, II, et article 51-1, II, 3° (LEGIARTI000047914257)
+reformes:
+- reforme_2023

@@ -1,0 +1,27 @@
+schema_version: 1
+id: parametres_annuels_2026
+intitule: >-
+  Plafond de la sécurité sociale, SMIC horaire (trimestres), coefficients de revalorisation
+  des salaires, montants des minima, valeur du point et salaire de référence Agirc-Arrco,
+  pour l'année en cours.
+etat: conforme
+effet: Toute liquidation de l'année.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Chaque janvier et chaque novembre : relancer les récupérateurs, lire les circulaires
+    de revalorisation.
+  lectures:
+  - type: autre
+    reference: >-
+      plafond 2026 (48 060 €) certifié, SMIC 2026 (12,02 €), colonne de revalorisation
+      au 1er janvier 2026, point Agirc-Arrco 2026
+    date: 2026-09-13
+textes_a_rattacher:
+- reference: arrêtés annuels
+- reference: circulaires Cnav
+- reference: délibérations Agirc-Arrco
+exemples:
+- sp_a15703_minimum_contributif_2026

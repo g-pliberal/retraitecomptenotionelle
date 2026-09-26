@@ -1,0 +1,35 @@
+schema_version: 1
+id: rafp_majoration_capital
+intitule: >-
+  RAFP : valeur de service modulée par l'âge de liquidation (1,00 à 62 ans jusqu'à
+  1,80 à 75) ; prestation versée en capital sous 5 125 points, au coefficient de
+  conversion de l'âge.
+etat: approchee
+effet: >-
+  Le modèle servait la valeur de service nue à tout âge : 22 % de moins à 67 ans.
+  Il sert maintenant la majoration par âge entier, et sous le seuil écrit le capital
+  dans le détail de la pension ; le montant annuel reste celui de la rente équivalente.
+  Le capital fractionné entre 4 900 et 5 124 points n'est pas distingué.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - Vérifier si l'ERAFP interpole la majoration au mois comme la conversion.
+  lectures:
+  - type: legifrance
+    reference: >-
+      article 8 : la valeur de service « est modulée en fonction de l'âge de liquidation
+      » ; article 9 : « servie sous forme de capital lorsque le nombre de points
+      acquis est inférieur à 5 125 »
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      ERAFP, « Valeurs des coefficients de majoration » et coefficients de conversion
+      en capital au 1er janvier 2022 ; page « calcul et paiement de votre prestation
+      » : 4 448 × 1,08 × 0,05671 × 25,57 = 6 965,93 €
+    url: >-
+      https://www.rafp.fr/actif/activite/calcul-et-paiement-votre-prestation-rafp
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: décret n° 2004-569, article 8 (LEGIARTI000037483754)
+- reference: décret n° 2004-569, article 9 (LEGIARTI000037483756)

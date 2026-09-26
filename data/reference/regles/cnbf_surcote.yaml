@@ -1,0 +1,41 @@
+schema_version: 1
+id: cnbf_surcote
+intitule: >-
+  Régime de base des avocats : la pension est majorée de 0,75 % par trimestre cotisé
+  accompli du 1er janvier 2004 au 30 juin 2010, et de 1,25 % par trimestre accompli
+  depuis le 1er juillet 2010, après l'âge de L. 351-1 et au-delà de la durée requise.
+etat: conforme
+effet: >-
+  La fiche servait 0,75 % à tout trimestre de surcote : un avocat né en 1945, parti
+  à 68 ans en 2013, recevait 24 % au lieu de 28,25 %. Depuis le 23 septembre 2026,
+  `surcote_bareme: cnbf` et deux lignes de `legislation/surcote_baremes.csv` ; tenu
+  par tests/test_sections_juridiques.py.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le second mode de calcul que le barème annonce, « majoration au-delà de 220
+    trimestres à la CNBF », n'est lu dans aucun article de l'index ; la surcote
+    parentale de 2023 (R. 653-3, dernier alinéa) n'est pas portée.
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 723-39 et R. 653-3 dans toutes leurs versions, lus dans l'index LEGI du
+      dépôt : « 0,75 % par trimestre accompli à compter du 1er janvier 2004 et avant
+      le 1er juillet 2010 et à 1,25 % par trimestre accompli à compter du 1er juillet
+      2010 ».
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CNBF, barèmes des cotisations et prestations de 2017 à 2026, même phrase sous
+      « majoration de pension éventuelle ».
+    url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=baremes
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    code de la sécurité sociale, R. 723-39, versions du 30 décembre 2004 (LEGIARTI000006752431)
+    et du 2 juillet 2010 (LEGIARTI000022417476)
+- reference: >-
+    code de la sécurité sociale, R. 653-3, versions du 8 juillet 2019 (LEGIARTI000038770288)
+    et du 1er septembre 2023 (LEGIARTI000047985846)

@@ -1,0 +1,55 @@
+schema_version: 1
+id: services_et_duree_fonction_publique
+intitule: >-
+  La pension de la fonction publique se proratise sur les SERVICES ET BONIFICATIONS,
+  non sur la durée d'assurance (L. 13 CPCMR), et l'article L. 9 écarte des services
+  « le temps passé dans une position statutaire ne comportant pas l'accomplissement
+  de services effectifs au sens de l'article L. 5 », hors la liste fermée qu'il
+  énumère : congé parental, temps partiel de droit et disponibilité pour élever
+  un enfant dans la limite de trois ans par enfant né ou adopté à partir du 1er
+  janvier 2004 ; congés de maladie, de maternité, d'accident de service et de maladie
+  professionnelle du fonctionnaire en activité ; congés de formation et congé civique
+  ; détachement. Le chômage n'est pas une position statutaire : il n'ouvre aucun
+  service.
+etat: conforme
+effet: >-
+  Toute carrière de fonctionnaire coupée par une interruption. Le moteur créditait
+  le prorata de TOUTE période validée : cinq ans de chômage servaient exactement
+  la même pension qu'une carrière pleine. Ils en retirent désormais vingt trimestres
+  de services, soit 11,9 % de pension sur une carrière de fonctionnaire d'État née
+  en 1975 et partie à soixante-quatre ans. La durée d'assurance, elle, ne bouge
+  pas : les mêmes cinq ans restent vingt trimestres assimilés pour la décote, et
+  le régime général continue de les compter dans sa propre proratisation.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    DEUX APPROXIMATIONS ASSUMÉES, toutes deux du côté généreux. La première : la
+    condition « né ou adopté à partir du 1er janvier 2004 » du 1° n'est pas appliquée,
+    le modèle ne collectant pas l'année de naissance des enfants — il la déduit
+    de l'âge de la mère. Un congé parental pris pour un enfant né avant 2004 ouvre
+    donc ici trois ans de services que L. 9 lui refuse. La seconde : les dix-huit
+    régimes spéciaux se proratisent eux aussi sur des services, mais leurs règlements
+    n'ont pas été lus, et la règle ne s'applique qu'à la famille `fonction_publique`
+    ; `docs/limites.md` le porte. Reste enfin à lire le 2° de L. 9 article par article
+    : la liste des congés exceptés est transcrite motif par motif dans `periodes_non_travaillees.csv`,
+    mais le modèle ne connaît pas la POSITION statutaire, seulement le motif, et
+    présume l'agent en activité.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 9 CPCMR, LEGIARTI000053279095, lu par le récupérateur dans l'index LEGI
+      du dépôt : « Le temps passé dans une position statutaire ne comportant pas
+      l'accomplissement de services effectifs au sens de l'article L. 5 ne peut
+      entrer en compte dans la constitution du droit à pension, sauf : 1° Dans la
+      limite de trois ans par enfant né ou adopté à partir du 1er janvier 2004 […]
+      »
+    date: 2026-09-22
+  - type: legifrance
+    reference: L. 5 CPCMR, LEGIARTI000047453644, liste des services retenus
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: L. 5 CPCMR
+- reference: L. 9 CPCMR
+- reference: L. 13 CPCMR

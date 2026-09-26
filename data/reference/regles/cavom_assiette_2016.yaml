@@ -1,0 +1,46 @@
+schema_version: 1
+id: cavom_assiette_2016
+intitule: >-
+  Depuis 2016, la cotisation au régime complémentaire de la CAVOM est de 12,5 %
+  du revenu professionnel dans la limite de huit plafonds de la Sécurité sociale,
+  que le décret n° 2015-1875 fait appeler « dans la limite d'un plafond égal à »
+  quatre plafonds en 2016, cinq en 2017, six en 2018 et sept en 2019 ; l'assiette
+  ne peut être inférieure au quart du plafond, puis à 19 % depuis le 1er janvier
+  2019.
+etat: transcrite
+effet: >-
+  La fiche portait huit plafonds dès 2016 et aucune assiette minimale : elle surestimait
+  le complémentaire des revenus supérieurs à quatre plafonds de 2016 à 2019, et
+  ne servait rien aux revenus nuls ou très bas que le décret fait cotiser. Coupée
+  en 2016, 2017, 2018, 2019 et 2020 le 23 septembre 2026 ; champs `assiette_minimale_pass`,
+  `plafonnee_6_pass` et `plafonnee_7_pass`.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Rien de plus sur l'assiette ; les classes d'avant 2016 restent hors de portée,
+    faute des bornes de revenu des statuts.
+  lectures:
+  - type: legifrance
+    reference: >-
+      Article 2 du décret n° 79-265 dans ses trois rédactions depuis 2016, lues
+      dans l'index LEGI du dépôt, avec la dérogation de l'article 1er, II, du décret
+      n° 2015-1875 que chacune reproduit.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CAVOM, page « Vous êtes professionnel libéral » et tableau des paramètres
+      2026 : 12,50 % jusqu'à 8 PASS, 384 480 € ; cotisation minimale sur 19 % du
+      PASS, 9 131 €, soit 1 141 €.
+    url: https://www.cavom.net/vos-cotisations/vous-etes-professionnel-liberal/
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    décret n° 79-265 du 27 mars 1979, article 2, rédactions du 1er janvier 2016
+    (LEGIARTI000031875318), du 1er janvier 2019 (LEGIARTI000038427708) et du 1er
+    juillet 2026 (LEGIARTI000054168585)
+- reference: >-
+    décret n° 2015-1875 du 30 décembre 2015, article 1er, II (JORFTEXT000031740732)
+reformes:
+- cavom_2016

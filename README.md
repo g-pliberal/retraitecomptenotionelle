@@ -1206,7 +1206,7 @@ python scripts/fetch/dila_legi_minimum_contributif.py   # minimum contributif (i
 python scripts/fetch/dila_legi_parametres_retraite.py   # âges, durées, décotes, carrière longue (index LEGI)
 python scripts/fetch/ined_vallin_mesle.py       # quotients de mortalité d'avant 1986
 python scripts/fetch/eurostat_hicp.py           # contrôle croisé de l'inflation
-python scripts/veille_droit.py                  # d'abord : ce qui a vieilli dans le registre du droit (veille.yaml)
+python scripts/veille_droit.py                  # d'abord : les règles à relire, dans la carte (data/reference/regles/)
 python scripts/fetch/openfisca_regime_general.py  # contre-expertise du scénario 1 : régime général
 python scripts/fetch/openfisca_fonction_publique.py  # la même, pension civile (État, CNRACL)
 python scripts/fetch/openfisca_arrco.py         # la même, Arrco 1999-2018

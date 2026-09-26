@@ -1,0 +1,32 @@
+schema_version: 1
+id: decote_fonction_publique
+intitule: >-
+  Décote propre de la pension civile : coefficient et âge d'annulation lus à l'année
+  d'ouverture du droit, montée en charge 2006-2020, limite d'âge du grade.
+etat: conforme
+effet: Fonctionnaires liquidant avant le taux plein.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-06-30
+  lectures:
+  - type: service_public
+    reference: fiche F20349
+    date: 2026-01-01
+  - type: autre
+    reference: >-
+      OpenFisca-France-Pension, témoins de la pension civile (tests/test_oracle.py)
+    date: 2026-09-13
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, page « La décote », exemple de Brigitte S.
+    date: 2026-09-24
+    url: >-
+      https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-decote
+textes_a_rattacher:
+- reference: L. 14 I et II CPCMR
+- reference: loi n° 2003-775, article 66 III
+exemples:
+- sp_f20349_decote_fonction_publique
+- sre_decote_brigitte
+reformes:
+- reforme_2023

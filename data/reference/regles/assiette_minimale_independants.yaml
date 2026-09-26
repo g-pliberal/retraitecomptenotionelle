@@ -1,0 +1,36 @@
+schema_version: 1
+id: assiette_minimale_independants
+intitule: >-
+  Assiette minimale de la cotisation de base des artisans, commerçants et libéraux
+  : 200 SMIC horaires jusqu'en 2011, 5,25 %, 7,70 % puis 11,5 % du plafond, 450
+  SMIC horaires depuis 2023, sous condition de 90 jours d'affiliation depuis 2012
+  ; le micro-entrepreneur n'y est pas soumis.
+etat: approchee
+effet: >-
+  Un indépendant à 3 000 € validait un trimestre au lieu de trois et n'avait ni
+  le salaire ni les points du minimum. Les exclusions du libéral dont l'activité
+  n'est pas principale ou déjà retraité ne sont pas opposées ; avant 1985 le dépôt
+  ne connaît aucun texte.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - Lire les versions de D. 633-2 antérieures à 1985 dans le JORF.
+  lectures:
+  - type: legifrance
+    reference: >-
+      D. 633-2 et D. 642-4, toutes les versions de l'index LEGI, lues le 22 septembre
+      2026
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      calculette de la CARPIMKO : 63,3 points CNAVPL et trois trimestres pour 3
+      000 € de revenu, soit l'assiette de 5 409 €
+    url: https://www.carpimko.com/
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    code de la sécurité sociale, D. 633-2 (LEGIARTI000006737877 à LEGIARTI000048838330)
+- reference: >-
+    code de la sécurité sociale, D. 642-4 (LEGIARTI000006738120 à LEGIARTI000048838321)
+- reference: décret n° 2023-1352 du 29 décembre 2023

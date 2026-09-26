@@ -1,0 +1,32 @@
+schema_version: 1
+id: baremes_cnbf
+intitule: >-
+  Pension forfaitaire de base, cotisation forfaitaire, taux proportionnel et grille
+  de cotisation du complémentaire des avocats (classe C1), année par année depuis
+  2016.
+etat: transcrite
+effet: >-
+  Tout avocat. La grille du complémentaire était celle de 2026 depuis 2019, alors
+  que le taux de première tranche est passé de 3,20 % en 2016 à 7,00 % en 2026 ;
+  la pension de base était celle de 2026 ramenée par les prix. Les deux sont lues
+  année par année, et ancrées sur 2016 avant.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-02-28
+  a_relire:
+  - >-
+    Aucun barème antérieur à 2016 n'est publié par la caisse ; le chercher dans
+    ses rapports annuels ou dans la presse professionnelle.
+  lectures:
+  - type: autre
+    reference: >-
+      CNBF, barèmes des cotisations et prestations 2016 à 2023, 2025 et 2026, en
+      ligne ; barème 2024 (« Bareme-CNBF-2024-01.20.pdf ») lu dans Internet Archive,
+      capture du 15 juillet 2024 à l'adresse d'origine.
+    url: https://www.cnbf.fr/medias/documents/?_sft_thematique-media=baremes
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    R. 723-43 CSS : le montant de la retraite de base est fixé par décision de l'assemblée
+    générale de la CNBF
+- reference: barèmes annuels des cotisations et prestations de la CNBF, 2016 à 2026

@@ -1,0 +1,45 @@
+schema_version: 1
+id: majoration_enfants_ircec
+intitule: >-
+  Majoration de 10 % de la pension de l'adhérent ayant eu ou élevé trois enfants
+  : au RAAP depuis le règlement de 2013, au RACD depuis l'arrêté du 17 avril 2024
+  ; aucune au RACL.
+etat: conforme
+effet: >-
+  Les fiches ne déclaraient aucune majoration : un auteur de trois enfants perdait
+  10 % de sa pension du RAAP, et depuis 2024 de celle du RACD. Portée depuis le
+  22 septembre 2026 par `majoration_enfants` dans les périodes datées, tenue par
+  tests/test_ircec_auteurs.py ; le témoin `auteur_dramatique_carriere_courte` la
+  fait jouer sur ses trois pensions contre le portage. La condition de neuf ans
+  d'éducation avant seize ans n'est pas opposée, le modèle ne connaissant que le
+  nombre d'enfants.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le règlement du RAAP d'avant 2014 en portait peut-être une, que le Journal officiel
+    ne reproduit pas : les liquidations antérieures n'en reçoivent aucune.
+  lectures:
+  - type: jorf
+    reference: >-
+      arrêtés du 21 novembre 2013 et du 17 avril 2024, annexes lues dans l'index
+      JORF : « Il est majoré de 10 % au profit de l'adhérent ayant eu au moins trois
+      enfants »
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      IRCEC, guide de la retraite 2026 (pages RAAP, RACD et RACL) et foire aux questions
+      : « une majoration familiale de 10 % » au RAAP et au RACD, aucune à la formule
+      du RACL
+    url: >-
+      https://www.ircec.fr/wp-content/uploads/2026/02/guide-de-la-retraite-ircec.pdf
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    règlement du RAAP, article 28 (arrêté du 21 novembre 2013, JORFARTI000028254004)
+- reference: >-
+    règlement du RACD, article 23 (arrêté du 17 avril 2024, JORFARTI000049490796)
+- reference: >-
+    règlement du RACL, article 22 (arrêté du 13 mai 2025, JORFARTI000051592840)
+    : aucune majoration

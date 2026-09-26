@@ -1,0 +1,32 @@
+schema_version: 1
+id: surcote_regime_general
+intitule: >-
+  Trimestres civils entiers cotisés après l'âge légal et au-delà de la durée requise,
+  depuis le trimestre qui suit l'âge légal ou le mois qui suit la durée ; taux à
+  la date de chaque trimestre (0,75 %, 1 %, 1,25 % après 65 ans, 1,25 % depuis 2009).
+etat: conforme
+effet: Toute liquidation après l'âge légal avec la durée requise.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-06-30
+  lectures:
+  - type: circulaire_cnav
+    reference: 2018-04 du 1er février 2018, points 2 et 3
+    date: 2018-02-01
+  - type: circulaire_cnav
+    reference: 2026-07 du 5 mars 2026, point 4.2
+    date: 2026-03-05
+  - type: service_public
+    reference: fiche F19643
+    date: 2026-01-01
+textes_a_rattacher:
+- reference: L. 351-1-2 CSS
+- reference: D. 351-1-4 CSS (versions 2004, 2007, 2009)
+exemples:
+- sp_f19643_surcote
+- cnav_2018_04_surcote_un_taux
+- cnav_2018_04_surcote_deux_taux
+- cnav_2018_04_surcote_trois_taux
+reformes:
+- surcote_2007
+- lfss_2009_surcote

@@ -45,6 +45,8 @@ from pathlib import Path
 
 import yaml
 
+from retraite_notionnelle.noyau import carte
+
 RACINE = Path(__file__).resolve().parents[1]
 PAGE = RACINE / "docs" / "etat.md"
 
@@ -67,8 +69,8 @@ CAISSES = {
 #: Les sections complémentaires des libéraux sont de couverture mêlée : comptées à part.
 MELEES = {"cnavpl_complementaire"}
 
-#: Les limites de la veille, de la plus grave à la moins grave.
-ORDRE_DES_LIMITES = {"manque": 0, "hors_modele": 1, "a_verifier": 2, "approximation": 3}
+#: Les limites que la carte déclare, de la plus grave à la moins grave.
+ORDRE_DES_LIMITES = {"manquante": 0, "pas_encore_modelisee": 1, "a_verifier": 2, "approchee": 3}
 
 #: Les registres que le coût du travail compte comme écrits à la main.
 REGISTRES = {
@@ -144,7 +146,8 @@ def virgule(x: float, decimales: int = 1) -> str:
 
 def page() -> str:
     """``docs/etat.md``, tel que les registres le disent aujourd'hui."""
-    veille = lire_yaml("data/reference/legislation/veille.yaml")["entrees"]
+    # Les règles suivies en veille sont les fiches de la carte (§ 6).
+    veille = list(carte.fiches().values())
     inventaire = lire_yaml("data/reference/regimes/inventaire.yaml")["inventaire"]
     exemples = lire_yaml("tests/temoins/exemples_officiels.yaml")["exemples"]
     reformes = lire_yaml("data/reference/legislation/reformes.yaml")["reformes"]
@@ -177,7 +180,7 @@ def page() -> str:
     total_caisses = sum(poids.values())
 
     etat = collections.Counter(r["etat"] for r in veille)
-    avec_exemple = sum(1 for r in veille if r.get("temoins"))
+    avec_exemple = sum(1 for r in veille if r.get("exemples"))
     # Un exemple que le modèle ne reproduit pas entre quand même, en écart
     # connu (docs/architecture.md, § 9.2).
     ecarts_connus = [e for e in exemples if e.get("ecart_connu")]
@@ -202,7 +205,7 @@ def page() -> str:
     limites_veille = sorted((r for r in veille if r["etat"] in ORDRE_DES_LIMITES),
                             key=lambda r: (ORDRE_DES_LIMITES[r["etat"]], r["id"]))
     non_appliquees = [r for r in reformes if r.get("non_appliquee")]
-    approchees = [r for r in veille if r["etat"] == "approximation"]
+    approchees = [r for r in veille if r["etat"] == "approchee"]
     # Un effet écrit à l'imparfait raconte l'erreur corrigée, pas ce qui reste.
     a_l_imparfait = [r["id"] for r in approchees
                      if re.search(r"\b\w+(ait|aient)\b", premiere(r.get("effet")))]
@@ -245,7 +248,7 @@ def page() -> str:
                      ("mêlée", "sections libérales, couverture mêlée")):
         w(f"| {nom} | {milliers(poids[cle])} | {pct(poids[cle], total_caisses)} |")
     w("")
-    w(f"*Modélisé ne veut pas dire exact* : les {etat.get('approximation', 0)} règles "
+    w(f"*Modélisé ne veut pas dire exact* : les {etat.get('approchee', 0)} règles "
       "approchées de la veille touchent aussi des régimes modélisés (section 2).")
     w("")
     if non_rattachees:
@@ -259,9 +262,10 @@ def page() -> str:
     w("")
     w("| État | Règles |")
     w("|---|---|")
-    for cle, nom in (("conforme", "conformes"), ("transcrit", "transcrites"),
-                     ("approximation", "approchées"), ("hors_modele", "hors modèle"),
-                     ("manque", "manquantes"), ("a_verifier", "à vérifier")):
+    for cle, nom in (("conforme", "conformes"), ("transcrite", "transcrites"),
+                     ("approchee", "approchées"),
+                     ("pas_encore_modelisee", "pas encore modélisées"),
+                     ("manquante", "manquantes"), ("a_verifier", "à vérifier")):
         w(f"| {nom} | {etat.get(cle, 0)} |")
     w("")
     w(f"- Confrontées à au moins un exemple officiel : **{avec_exemple} sur {len(veille)}** "
@@ -317,7 +321,7 @@ def page() -> str:
             ecart = e["ecart_connu"]
             for cle, valeur in ecart["modele"].items():
                 w(f"| `{e['id']}` | {cle} | {grandeur(e['attendu'][cle])} | "
-                  f"{grandeur(valeur)} | `{ecart['veille']}` |")
+                  f"{grandeur(valeur)} | `{ecart['fiche']}` |")
     else:
         w("**Aucun exemple officiel en écart connu** : le modèle reproduit tous ceux que "
           "le dépôt a transcrits. Un exemple qu'il ne reproduirait pas entrerait quand même, "
@@ -365,9 +369,9 @@ def page() -> str:
 
 
 def a_la_main(fichier: str) -> bool:
-    """De la prose ou un registre, écrits à la main."""
+    """De la prose, un registre ou une fiche de la carte, écrits à la main."""
     return (fichier.endswith(".md") and fichier != "docs/chiffrage_plf.md"
-            or fichier in REGISTRES)
+            or fichier in REGISTRES or fichier.startswith("data/reference/regles/"))
 
 
 def cout(n: int = 400) -> str:

@@ -1,0 +1,49 @@
+schema_version: 1
+id: duree_requise_sncf_ratp
+intitule: >-
+  Durée requise de la SNCF (agents de conduite) et de la RATP : chacune a SA table
+  par génération, que la suspension de 2026 ne touche pas ; la SNCF compte en outre
+  la décote par la durée sur une cible abaissée de deux à dix trimestres.
+etat: conforme
+effet: >-
+  Les deux fiches lisaient la table commune, suspension de 2026 comprise. Elles
+  lisent désormais la leur (`duree_requise_table`, dans `legislation/duree_requise_regimes_speciaux.csv`),
+  sur les périodes de 2025 et après ; en deçà de la première génération de la table,
+  la table commune reste le repli. L'agent de conduite né en 1975 doit 170 trimestres
+  et non 172 ; celui né en 1980 compte sa décote par la durée sur 162. La table
+  des agents SÉDENTAIRES de la SNCF (1° du I de l'article 35) n'est pas transcrite
+  : aucune fiche ne les modélise.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639, article 35 en vigueur : pour les agents du 1° du I de
+      l'article 1, « à compter du 1er janvier 2025 », 167 trimestres des nés du
+      1er novembre 1968 à 1969, 168 pour 1970-1971, 169 pour 1972, 170 pour 1973-1975,
+      171 pour 1976-1977, 172 à compter de 1978 ; et, « pour le calcul du nombre
+      de trimestres supplémentaires prévu au 2° du I de l'article 13 », deux trimestres
+      retranchés pour 1973, trois pour 1974-1975, cinq pour 1976, six pour 1977,
+      huit pour 1978, neuf pour 1979, dix à compter de 1980
+    date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      décret n° 2008-637, article 51 en vigueur (version du 27 septembre 2025) :
+      167 trimestres des nés du 1er juillet 1959 à 1960, 168 pour 1961-1962, 169
+      pour 1963, 170 pour 1964-1965, 171 pour 1966-1967, 172 à compter de 1968
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      CPRPSNCF, « Simuler sa retraite » : les trimestres requis augmentent « selon
+      un calendrier propre au régime spécial du personnel de la SNCF », un tableau
+      pour les agents de conduite, un autre pour les autres salariés
+    url: >-
+      https://www.cprpf.fr/actifs/preparer-ma-retraite/preparer-ma-retraite-rs/simuler-ma-retraite-rs/
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: décret n° 2008-639, article 35, I, 2° et II (LEGIARTI000048897024)
+- reference: décret n° 2008-637, article 51, I (LEGIARTI000052292971)
+reformes:
+- reforme_2023
+- lfss_2026_suspension

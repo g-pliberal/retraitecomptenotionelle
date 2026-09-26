@@ -150,7 +150,7 @@ avantages:
       Ils ne sont pas cotisés : ils effacent de la décote et relèvent le
       prorata, sans rien ajouter au salaire de référence.
     base_legale: [L. 351-4 CSS, L. 351-5 CSS]
-    veille: [majoration_duree_assurance_enfants]
+    fiches: [majoration_duree_assurance_enfants]
     creation: 1972
     fin: null
     regimes: régime général, régimes alignés, non-salariés
@@ -172,7 +172,7 @@ avantages:
       d'interruption d'activité ; deux trimestres pour les enfants nés depuis.
       C'est le pendant de la MDA pour les fonctionnaires, qui ne l'ont pas.
     base_legale: [L. 12 b et b bis CPCMR, L. 12 bis CPCMR]
-    veille: [majoration_duree_assurance_enfants]
+    fiches: [majoration_duree_assurance_enfants]
     creation: 1964
     fin: null
     regimes: fonction publique, régimes spéciaux
@@ -195,7 +195,7 @@ avantages:
       à la pension, donc croissante avec le revenu : c'est le seul avantage
       familial dont le montant augmente avec le salaire.
     base_legale: [L. 351-12 CSS, L. 18 CPCMR, accord national interprofessionnel Agirc-Arrco]
-    veille: [majoration_dix_pour_cent]
+    fiches: [majoration_dix_pour_cent]
     creation: 1945
     fin: null
     regimes: tous les régimes de base, Agirc-Arrco, Ircantec
@@ -222,7 +222,7 @@ avantages:
       au salaire de référence. D'où son effet, plus fort que celui de la MDA
       sur les carrières courtes.
     base_legale: [L. 381-1 CSS]
-    veille: [avpf]
+    fiches: [avpf]
     creation: 1972
     fin: null
     regimes: régime général, régimes alignés
@@ -246,7 +246,7 @@ avantages:
       contrepartie directe du recul de l'âge légal de 2023 : elle paie l'année
       que la surcote ordinaire ne récompensait pas.
     base_legale: [L. 351-1-2-1 CSS]
-    veille: [surcote_parentale]
+    fiches: [surcote_parentale]
     creation: 2023
     fin: null
     regimes: régime général, régimes alignés, fonction publique
@@ -271,7 +271,7 @@ avantages:
       plus, au lieu de vingt-cinq. Retirer une mauvaise année de la moyenne
       relève la pension sans qu'aucune cotisation l'ait payée.
     base_legale: [R. 173-3-2 I CSS (décret n° 2026-699 du 29 juillet 2026, article 1er)]
-    veille: [sam_parents_24_23]
+    fiches: [sam_parents_24_23]
     creation: 2026
     fin: null
     regimes: régime général, régimes alignés
@@ -305,7 +305,7 @@ avantages:
       quand elle est plus favorable que la MDA de l'article L. 351-4. Les deux
       ne se cumulent pas : le droit retient la plus avantageuse.
     base_legale: [L. 351-5 CSS]
-    veille: [majoration_duree_assurance_enfants]
+    fiches: [majoration_duree_assurance_enfants]
     creation: 1977
     fin: null
     regimes: régime général, régimes alignés
@@ -333,7 +333,7 @@ avantages:
       préjudice de la MDA ordinaire — les deux se cumulent, contrairement au
       congé parental.
     base_legale: [L. 351-4-1 CSS]
-    veille: []
+    fiches: []
     creation: 2003
     fin: null
     regimes: régime général, régimes alignés
@@ -360,7 +360,7 @@ avantages:
       par la durée COTISÉE. Le tout est écrêté par l'article L. 173-2 quand
       l'ensemble des pensions personnelles dépasse un plafond.
     base_legale: [L. 351-10 CSS, D. 351-2-1 CSS, L. 173-2 CSS]
-    veille: [minimum_contributif]
+    fiches: [minimum_contributif]
     creation: 1983
     fin: null
     regimes: régime général, régimes alignés, non-salariés
@@ -381,7 +381,7 @@ avantages:
       par durée de services, ouvert au taux plein — ou à qui atteignait l'âge
       d'ouverture de ses droits avant 2011.
     base_legale: [L. 17 CPCMR, loi n° 2003-775 article 66 V]
-    veille: [minimum_garanti]
+    fiches: [minimum_garanti]
     creation: 1964
     fin: null
     regimes: fonction publique, régimes spéciaux
@@ -405,7 +405,7 @@ avantages:
       pension : c'est un minimum social versé aux vieux, et il est ici parce
       qu'il entre dans le revenu des retraités que la comparaison mesure.
     base_legale: [L. 815-1 CSS et suivants, L. 816-2 CSS, L. 161-25 CSS]
-    veille: [minimum_vieillesse]
+    fiches: [minimum_vieillesse]
     creation: 1956
     fin: null
     regimes: hors régime — servi par le FSV
@@ -430,7 +430,7 @@ avantages:
       plafond ne suffisait pas à les acheter. Éteinte avec la fusion
       Agirc-Arrco du 1er janvier 2019.
     base_legale: [accord Agirc du 9 février 1988]
-    veille: []
+    fiches: []
     creation: 1989
     fin: 2018
     regimes: Agirc
@@ -464,7 +464,7 @@ avantages:
       agricoles, complété depuis 2015 par la garantie « 85 % du SMIC » puis par
       le complément différentiel de points de RCO.
     base_legale: [L. 732-54-1 code rural]
-    veille: []
+    fiches: []
     creation: 2002
     fin: null
     regimes: non-salariés agricoles (MSA)
@@ -496,7 +496,7 @@ avantages:
       d'assurance — donc contre la décote et pour le prorata — et jamais pour
       le salaire annuel moyen.
     base_legale: [L. 351-3 CSS, R. 351-12 CSS]
-    veille: []
+    fiches: []
     creation: 1945
     fin: null
     regimes: régime général, régimes alignés, non-salariés
@@ -538,7 +538,7 @@ avantages:
       ouvrent des points d'Agirc-Arrco et d'Ircantec que le salarié n'a pas
       payés ; l'Unédic verse la contrepartie pour le chômage.
     base_legale: [accords nationaux interprofessionnels Agirc-Arrco, décret Ircantec]
-    veille: []
+    fiches: []
     creation: 1962
     fin: null
     regimes: Agirc-Arrco, Ircantec
@@ -579,7 +579,7 @@ avantages:
       cotisées au régime de base, jamais à la complémentaire : c'est la
       complémentaire qui les reconstitue.
     base_legale: [L. 732-56 code rural, D. 732-151 code rural, D. 732-154 code rural]
-    veille: [rco_points_gratuits]
+    fiches: [rco_points_gratuits]
     creation: 2003
     fin: null
     regimes: non-salariés agricoles (RCO)
@@ -606,7 +606,7 @@ avantages:
       été versé, et c'est un tiers qui paie la différence — le Fonds de
       solidarité vieillesse jusqu'en 2025, la branche vieillesse depuis.
     base_legale: [L. 6243-3 code du travail (second alinéa), L. 222-2-1 7° CSS]
-    veille: []
+    fiches: []
     creation: 2014
     fin: null
     regimes: régime général, régimes alignés
@@ -641,7 +641,7 @@ avantages:
       sans cotisation et sans ouvrir de points de complémentaire. Dispositif en
       extinction, la conscription ayant été suspendue en 1997.
     base_legale: [L. 351-3 CSS]
-    veille: []
+    fiches: []
     creation: 1945
     fin: null
     regimes: tous
@@ -678,7 +678,7 @@ avantages:
       ressources — versée au conjoint survivant. C'est, de très loin, la
       première dépense non contributive du système.
     base_legale: [L. 353-1 CSS, L. 38 CPCMR]
-    veille: [reversion]
+    fiches: [reversion]
     creation: 1945
     fin: null
     regimes: tous — déclaré dans 756 périodes du catalogue, soit la quasi-totalité
@@ -725,7 +725,7 @@ avantages:
       d'annulation de la décote et dont l'ensemble des avantages de retraite ne
       dépasse pas un plafond, réduite à due concurrence du dépassement.
     base_legale: [L. 353-6 CSS]
-    veille: [reversion]
+    fiches: [reversion]
     creation: 2010
     fin: null
     regimes: régime général, régimes alignés
@@ -744,7 +744,7 @@ avantages:
       Un montant forfaitaire par enfant à charge, ajouté à la pension de
       réversion du conjoint survivant qui n'a pas atteint l'âge de la retraite.
     base_legale: [L. 353-1 CSS]
-    veille: [reversion]
+    fiches: [reversion]
     creation: 2010
     fin: null
     regimes: régime général, régimes alignés
@@ -766,7 +766,7 @@ avantages:
       Une allocation temporaire au conjoint survivant trop jeune pour la
       réversion, sous condition de ressources, servie deux ans au plus.
     base_legale: [L. 356-1 CSS]
-    veille: [reversion]
+    fiches: [reversion]
     creation: 1980
     fin: null
     regimes: régime général, régimes alignés
@@ -789,7 +789,7 @@ avantages:
       de moins de vingt et un ans. Les régimes spéciaux ont la leur ; le régime
       général n'en a pas.
     base_legale: [L. 40 CPCMR]
-    veille: [reversion]
+    fiches: [reversion]
     creation: 1964
     fin: null
     regimes: fonction publique, régimes spéciaux
@@ -815,7 +815,7 @@ avantages:
       exactement mesurable : c'est la différence entre le coefficient de
       conversion de l'âge réel et celui de l'âge légal.
     base_legale: [L. 24 I 1° CPCMR, L. 14 bis CPCMR, décret n° 2026-344 du 7 mai 2026 article 3 D]
-    veille: [categorie_active_super_active, categorie_active_duree_requise]
+    fiches: [categorie_active_super_active, categorie_active_duree_requise]
     creation: 1853
     fin: null
     regimes: fonction publique, ouvriers de l'État, régimes spéciaux
@@ -860,7 +860,7 @@ avantages:
       chômage, maladie, et depuis 2025 les trimestres d'enfants — sont
       « réputées cotisées » pour ouvrir ce droit.
     base_legale: [L. 351-1-1 CSS, D. 351-1-1 CSS, L. 351-1-1 3° CSS]
-    veille: [carriere_longue, carriere_longue_enfants_reputes_cotises, carriere_longue_reputes_cotises_autres]
+    fiches: [carriere_longue, carriere_longue_enfants_reputes_cotises, carriere_longue_reputes_cotises_autres]
     creation: 2003
     fin: null
     regimes: régime général, régimes alignés, non-salariés
@@ -896,7 +896,7 @@ avantages:
       condition d'âge. Un militaire peut ainsi percevoir sa pension à moins de
       quarante ans.
     base_legale: [L. 24 CPCMR, L. 25 CPCMR]
-    veille: [categorie_active_super_active]
+    fiches: [categorie_active_super_active]
     creation: 1831
     fin: null
     regimes: militaires
@@ -939,7 +939,7 @@ avantages:
       cinquante-neuf ans, et la bonification décroît d'une annuité par année
       supplémentaire servie.
     base_legale: [L. 12 i CPCMR]
-    veille: []
+    fiches: []
     creation: 1964
     fin: null
     regimes: militaires
@@ -980,7 +980,7 @@ avantages:
       8 avril 1957 art. 6, Loi n° 89-1007 du 31 décembre 1989 art. 5,
       Loi n° 96-452 du 28 mai 1996 art. 24, Loi n° 2003-1312 du
       30 décembre 2003 art. 93, R. 411-2 code de la sécurité intérieure]
-    veille: []
+    fiches: []
     creation: 1957
     fin: null
     regimes: fonction publique, catégories actives
@@ -1023,7 +1023,7 @@ avantages:
       des fonctionnaires civils de l'État.
     base_legale: [Décret n° 2008-639 du 30 juin 2008 art. 9 (SNCF),
       Décret n° 2008-637 du 30 juin 2008 art. 20 (RATP)]
-    veille: []
+    fiches: []
     creation: 2008
     fin: null
     regimes: SNCF, RATP
@@ -1067,7 +1067,7 @@ avantages:
       prises en compte dès lors que la pension rémunère au moins quinze années
       de services effectifs.
     base_legale: [L. 12 a CPCMR]
-    veille: []
+    fiches: []
     creation: 1964
     fin: null
     regimes: fonction publique
@@ -1099,7 +1099,7 @@ avantages:
       davantage. Avantage ancien, dont le coût se concentre sur les générations
       ayant servi en Afrique du Nord.
     base_legale: [L. 12 c CPCMR]
-    veille: []
+    fiches: []
     creation: 1964
     fin: null
     regimes: militaires, fonction publique
@@ -1132,7 +1132,7 @@ avantages:
       services sous-marins, selon des coefficients arrêtés à la date d'ouverture
       du droit.
     base_legale: [L. 12 d CPCMR]
-    veille: []
+    fiches: []
     creation: 1964
     fin: null
     regimes: militaires, personnel navigant
@@ -1165,7 +1165,7 @@ avantages:
       trimestre gratuit ni un âge abaissé : c'est la CIBLE qui recule, ce qui
       revient au même pour l'assuré et ne se lit sur aucune ligne de sa pension.
     base_legale: [L. 351-7-1 CSS, L. 311-1 CPMIVG]
-    veille: []
+    fiches: []
     creation: 1994
     fin: null
     regimes: régime général, régime des salariés agricoles
@@ -1199,7 +1199,7 @@ avantages:
       justifiant d'une incapacité permanente d'au moins 50 % pendant une durée
       d'assurance minimale.
     base_legale: [L. 351-1-3 CSS, D. 351-1-5 CSS, décret n° 2026-344 article 3 C et G]
-    veille: [retraite_anticipee_handicap]
+    fiches: [retraite_anticipee_handicap]
     creation: 2003
     fin: null
     regimes: tous
@@ -1225,7 +1225,7 @@ avantages:
       l'assuré reconnu inapte au travail ou titulaire d'une pension
       d'invalidité. C'est la suppression pure et simple de la décote.
     base_legale: [L. 351-8 1° bis CSS]
-    veille: [inaptitude_invalidite_penibilite_amiante]
+    fiches: [inaptitude_invalidite_penibilite_amiante]
     creation: 1945
     fin: null
     regimes: régime général, régimes alignés
@@ -1251,7 +1251,7 @@ avantages:
       maladie professionnelle ; les points du compte professionnel de prévention
       ouvrent, eux, un départ anticipé de deux ans au plus.
     base_legale: [L. 351-1-4 CSS, L. 4163-1 code du travail]
-    veille: [inaptitude_invalidite_penibilite_amiante]
+    fiches: [inaptitude_invalidite_penibilite_amiante]
     creation: 2010
     fin: null
     regimes: régime général, régimes alignés
@@ -1283,7 +1283,7 @@ avantages:
       la durée d'assurance remplie au plus tard à soixante-cinq ans.
     base_legale: [Loi n° 98-1194 du 23 décembre 1998 art. 41,
       L. 161-17-2 CSS]
-    veille: [inaptitude_invalidite_penibilite_amiante]
+    fiches: [inaptitude_invalidite_penibilite_amiante]
     creation: 1999
     fin: null
     regimes: régime général, régimes spéciaux
@@ -1321,7 +1321,7 @@ avantages:
       s'éteint par extinction de ses titulaires.
     base_legale: [Décret n° 52-1050 du 10 septembre 1952 art. 1, LOI n° 2008-1443
       du 30 décembre 2008 art. 137, Décret n° 2009-114 du 30 janvier 2009]
-    veille: []
+    fiches: []
     creation: 1952
     fin: null
     regimes: [fonction_publique_etat, fonction_publique_territoriale]
@@ -1346,7 +1346,7 @@ avantages:
       cotisation ; les comptes la rangent pourtant dans le risque
       vieillesse-survie, et donc dans la dépense que cette page décompose.
     base_legale: [L. 321-1 CPMIVG, L. 321-2 CPMIVG, D. 321-1 CPMIVG]
-    veille: []
+    fiches: []
     creation: 1930
     fin: null
     regimes: tous
@@ -1369,7 +1369,7 @@ avantages:
       même, dont il est distinct : l'un ouvre le droit plus tôt, l'autre
       augmente le montant.
     base_legale: [L. 351-1-3 CSS]
-    veille: []
+    fiches: []
     creation: 2005
     fin: null
     regimes: tous
@@ -1392,7 +1392,7 @@ avantages:
       seul les actes ordinaires de la vie. Servi au régime général comme dans la
       fonction publique.
     base_legale: [L. 355-1 CSS, L. 30 CPCMR]
-    veille: []
+    fiches: []
     creation: 1945
     fin: null
     regimes: tous
@@ -1413,7 +1413,7 @@ avantages:
       pensions prenant effet à compter du 1er janvier 2011 ; les droits ouverts
       avant continuent d'être servis.
     base_legale: [L. 351-13 CSS]
-    veille: []
+    fiches: []
     creation: 1945
     fin: 2010
     regimes: régime général, régimes alignés
@@ -1437,7 +1437,7 @@ avantages:
       majoration pour qui décalait. Dispositif supprimé pour les liquidations à
       compter du 1er décembre 2023.
     base_legale: [accord national interprofessionnel Agirc-Arrco du 30 octobre 2015]
-    veille: []
+    fiches: []
     creation: 2019
     fin: 2023
     regimes: Agirc-Arrco
@@ -1474,7 +1474,7 @@ avantages:
       l'année de plus rapporte. Partir tôt est donc subventionné par ceux qui
       partent tard, et cette subvention n'a aucun nom dans le droit.
     base_legale: [R. 351-27 CSS, L. 14 CPCMR, L. 351-1-2 CSS, D. 351-1-4 CSS]
-    veille: [decote_regime_general, decote_fonction_publique, surcote_regime_general, surcote_fonction_publique]
+    fiches: [decote_regime_general, decote_fonction_publique, surcote_regime_general, surcote_fonction_publique]
     creation: 1983
     fin: null
     regimes: tous
@@ -1520,7 +1520,7 @@ avantages:
       salaire de référence et une durée, non sur un compte. Un compte notionnel,
       lui, ne peut servir que ce que l'assiette porte.
     base_legale: []
-    veille: []
+    fiches: []
     creation: 1945
     fin: null
     regimes: tous
@@ -1560,7 +1560,7 @@ avantages:
       traitement en 2026, impôts et taxes affectés compensant les allègements,
       compensation démographique entre régimes.
     base_legale: []
-    veille: []
+    fiches: []
     creation: 1945
     fin: null
     regimes: régimes spéciaux, fonction publique, tous par les impôts affectés

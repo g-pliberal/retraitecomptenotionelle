@@ -1,0 +1,62 @@
+schema_version: 1
+id: minoration_ircec
+intitule: >-
+  Minoration des trois régimes de l'IRCEC (RAAP, RACD, RACL) : 2,5 % pour chacune
+  des deux premières années manquantes jusqu'à l'âge du 1° de L. 351-8, 5 % par
+  année au-delà, une année entamée comptant entière ; ou les coefficients du régime
+  de base s'ils sont plus favorables ; taux plein dès l'âge de L. 161-17-2 si la
+  pension du régime de base l'est. Le RACL n'y est venu qu'en 2025 : de 2014 à 2024,
+  5 % par année et l'âge seul.
+etat: approchee
+effet: >-
+  Tout départ anticipé d'un artiste-auteur, d'un auteur dramatique ou d'un compositeur
+  qui n'a pas sa durée : à soixante-deux ans, 20 % de minoration au lieu de 25.
+  La maille est l'année entamée, comme dans l'annexe de 2013. Restent approchés
+  : les liquidations d'avant 2014, sous la décote du régime de base faute du tableau
+  de l'ancien règlement, et les générations nées avant 1955 de 2014 à 2024, qui
+  avaient leurs propres coefficients (voir docs/limites.md).
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Le tableau d'anticipation des règlements d'avant 2014 n'est pas au Journal officiel
+    ; le chercher dans les archives de l'IRCEC ou dans les arrêtés de 1978 et de
+    1987.
+  lectures:
+  - type: jorf
+    reference: >-
+      Arrêté du 21 novembre 2013, annexe, lue dans l'index JORF du dépôt : article
+      27 b du RAAP, « pour les adhérents nés à compter du 1er janvier 1955, le coefficient
+      de minoration applicable est égal à : 2,5 % par année pour chacune des deux
+      premières années manquantes ; 5 % par année manquante supplémentaire. Toutefois,
+      si cela est plus favorable à l'adhérent, [...] les mêmes coefficients de minoration
+      que ceux appliqués à la pension du régime de base » ; même rédaction à l'article
+      21 du RACD ; « 5 % par année manquante » à l'article 21 du RACL. Les trois
+      annexes chiffrent le barème par trimestre d'anticipation, un à quatre trimestres
+      valant une année.
+    date: 2026-09-22
+  - type: jorf
+    reference: >-
+      Arrêté du 17 avril 2024, annexe : suppression des alinéas propres aux générations
+      nées avant 1955 et des trois annexes de coefficients. Arrêté du 13 mai 2025,
+      annexe : insertion au RACL de la marche à 2,5 %, du renvoi au régime de base
+      et du taux plein par la pension de base.
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      IRCEC, règlements du RAAP et du RACD approuvés par arrêté du 17 avril 2024
+      et du RACL du 13 mai 2025 (PDF de la caisse), guide de la retraite 2026 et
+      foire aux questions : même barème, et « il est retenu le coefficient le plus
+      favorable ».
+    url: https://www.ircec.fr/foire-aux-questions/
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    règlement du RAAP, art. 27 ; règlement du RACD, art. 20 et 21 ; règlement du
+    RACL, art. 21
+- reference: >-
+    arrêté du 21 novembre 2013 (JORFARTI000028254004), en vigueur au 1er janvier
+    2014
+- reference: arrêté du 17 avril 2024 (JORFARTI000049490796)
+- reference: arrêté du 13 mai 2025 (JORFARTI000051592840)

@@ -1,0 +1,44 @@
+schema_version: 1
+id: carpv_minoration_age_seul
+intitule: >-
+  Régime complémentaire de la CARPV : taux plein à 65 ans, anticipation dès 60 ans
+  à « 1,25 % par trimestre manquant avant l'âge de soixante-cinq ans », que la durée
+  n'annule pas ; aucune majoration pour report ; bonification de 10 % pour trois
+  enfants.
+etat: approchee
+effet: >-
+  La fiche écrivait la règle d'âge en laissant sa durée requise vide ; le moteur
+  opposait la durée de la carrière, qui annulait la minoration : un vétérinaire
+  parti à 64 ans avec sa durée ne perdait rien, là où la caisse lui retire 5 %.
+  `decote_annulee_par_la_duree: false` sur toutes les périodes, et `majoration_enfants`
+  depuis 2022. Approximation : la règle d'âge est supposée la même avant 2021, comme
+  la fiche le faisait déjà ; la bonification n'est servie qu'à partir de 2022.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Lire des statuts de la CARPV antérieurs à 2021 pour dater la bonification et
+    la règle d'âge.
+  lectures:
+  - type: jorf
+    reference: >-
+      Les deux textes lus dans l'index JORF du dépôt ; les modifications antérieures
+      (1999 à 2017) n'y portent que des titres ou des articles sans rapport.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CARPV, page « Comprendre vos cotisations et vos appels de cotisations » (classes
+      de 2026), conforme à la fiche.
+    url: >-
+      https://www.carpv.fr/vos-retraites/comprendre-vos-cotisations-et-vos-appels-de-cotisations/
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    statuts, articles 34 et 37, dans la rédaction de l'arrêté du 18 octobre 2021
+    (JORFTEXT000044220734)
+- reference: >-
+    règlement du régime, articles 2 et 5, approuvé par l'arrêté du 10 juillet 2026
+    (JORFTEXT000054436022)
+reformes:
+- carpv_statuts_2021

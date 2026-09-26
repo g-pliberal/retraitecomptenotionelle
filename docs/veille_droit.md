@@ -13,8 +13,8 @@ Trois principes la fondent.
    lecture, et un script dit lesquelles ont vieilli.
 2. **Une déduction n'est pas une lecture, une mémoire n'est pas une source.**
    Ce qui entre dans le scénario 1 a été lu dans le texte sur Légifrance, et
-   dans la circulaire ou la fiche qui l'applique. Sans les deux, la ligne le
-   dit (`transcrit`, `a_verifier`), et ce niveau remonte jusqu'au résultat
+   dans la circulaire ou la fiche qui l'applique. Sans les deux, la fiche le
+   dit (`transcrite`, `a_verifier`), et ce niveau remonte jusqu'au résultat
    affiché.
 3. **L'exemple publié par la caisse est la seule contre-expertise officielle
    et reproductible** : il se rejoue, et il entre même quand le modèle ne le
@@ -22,39 +22,44 @@ Trois principes la fondent.
 
 ## Les trois pièces
 
-**Le registre** : `data/reference/legislation/veille.yaml`. Une ligne par
-règle du scénario 1 — appliquée, approchée, omise ou pas encore lue — avec :
+**La carte des règles** : `data/reference/regles/`, une fiche par règle du
+scénario 1 — appliquée, approchée, omise ou pas encore lue. La fiche suit le
+contrat de l'architecture (`docs/architecture.md`, § 6 et annexe C) ; ce que
+la veille y lit :
 
 | Champ | Ce qu'il porte |
 |---|---|
-| `regle` | la règle en une phrase, telle que le droit l'écrit |
-| `textes` | les articles et lois qui la fondent |
-| `sources` | ce qui a été LU : Légifrance (texte, version), circulaire Cnav, fiche service-public, avec la date de la source |
-| `verifie_le` | le jour où le dépôt l'a relue |
-| `temoins` | les exemples publiés qui la rejouent (`tests/temoins/exemples_officiels.yaml`) |
+| `intitule` | la règle en une phrase, telle que le droit l'écrit |
+| `textes_a_rattacher` | les articles et lois qui la fondent, tant qu'ils ne sont pas coupés en versions |
+| `sources.lectures` | ce qui a été LU : Légifrance (texte, version), circulaire Cnav, fiche service-public, avec la date de la source |
+| `sources.lu_le` | le jour où le dépôt l'a relue |
+| `sources.prochaine_relecture` | la date à laquelle il faut relire, quoi qu'il arrive |
+| `sources.a_relire` | les questions ouvertes, le prochain geste |
+| `exemples` | les exemples publiés qui la rejouent (`tests/temoins/exemples_officiels.yaml`) |
 | `reformes` | les entrées de `reformes.yaml` qu'elle couvre |
-| `etat` | `conforme`, `transcrit`, `approximation`, `manque`, `hors_modele`, `a_verifier` |
+| `etat` | `conforme`, `transcrite`, `approchee`, `manquante`, `pas_encore_modelisee`, `a_verifier` |
 | `effet` | qui est touché, et de combien |
-| `a_faire` | le prochain geste, ou rien |
-| `prochaine_veille` | la date à laquelle il faut relire, quoi qu'il arrive |
 
-Le registre porte aussi les **sources à consulter** à chaque session, et un
-**journal** où chaque session consigne ce qu'elle a consulté, trouvé et laissé.
+Les fiches ont repris le 26 septembre 2026 les lignes du registre de veille,
+sous le même identifiant. Le registre, `data/reference/legislation/veille.yaml`,
+garde les **sources à consulter** à chaque session, et le **journal** où chaque
+session consigne ce qu'elle a consulté, trouvé et laissé.
 
-**Le script** : `python scripts/veille_droit.py`. Il imprime les lignes à
-revoir — état `a_verifier` ou `manque`, lecture de plus de cent vingt jours,
-date de veille passée — et la liste des sources. `--tout` imprime tout,
-`--strict` rend 1 s'il reste quelque chose à revoir.
+**Le script** : `python scripts/veille_droit.py`, une vue de la carte. Il
+imprime les fiches à relire — état `a_verifier` ou `manquante`, lecture de
+plus de cent vingt jours, date de relecture passée — et la liste des sources.
+`--tout` imprime tout, `--strict` rend 1 s'il reste quelque chose à relire.
 
-**Le test** : `tests/test_donnees.py` impose la forme du registre, exige que
-chaque témoin cité existe, et que toute réforme du calendrier
-(`reformes.yaml`) datée de 2023 ou après ait sa ligne. Ajouter une réforme
-sans la lire à la source et sans l'inscrire ici fait échouer la suite.
+**Les tests** : `tests/test_carte.py` impose la forme des fiches, exige que
+chaque exemple cité existe, et que toute réforme du calendrier
+(`reformes.yaml`) datée de 2023 ou après ait sa fiche ; `tests/test_donnees.py`
+tient le journal. Ajouter une réforme sans la lire à la source et sans
+l'inscrire dans une fiche fait échouer la suite.
 
 ## La règle, pour toute session qui touche au scénario 1
 
-**Au début.** Lancer `python scripts/veille_droit.py`. Lire les lignes à
-revoir. Consulter les sources listées pour tout texte paru depuis la dernière
+**Au début.** Lancer `python scripts/veille_droit.py`. Lire les fiches à
+relire. Consulter les sources listées pour tout texte paru depuis la dernière
 date du journal : loi de financement de l'année et ses décrets, circulaires
 Cnav, dates « Vérifié le » des fiches service-public, décrets retraite au
 Journal officiel par l'index DILA.
@@ -67,12 +72,12 @@ Journal officiel par l'index DILA.
    documentation SRE ou CNRACL. C'est là que sont les coupures au mois, les
    arrondis, les dates d'effet.
 3. Chercher un exemple chiffré publié. S'il existe, il entre dans
-   `exemples_officiels.yaml` et le test le rejoue. S'il n'existe pas, la ligne
-   du registre reste `transcrit`. Si le modèle ne le reproduit pas, il entre
+   `exemples_officiels.yaml` et le test le rejoue. S'il n'existe pas, la
+   fiche reste `transcrite`. Si le modèle ne le reproduit pas, il entre
    quand même, en écart connu : la valeur que rend le modèle et
-   l'explication, dans son champ `ecart_connu`, et la ligne du registre
-   passe à `approximation` ou `a_verifier`.
-4. Écrire la ligne du registre, ou la mettre à jour : sources, date, état.
+   l'explication, dans son champ `ecart_connu`, et la fiche passe à
+   `approchee` ou `a_verifier`.
+4. Écrire la fiche, ou la mettre à jour : lectures, dates, état.
 5. Donner à la donnée le niveau de fiabilité qu'elle mérite (`certifiee` si
    recontrôlée automatiquement, `haute` si lue, `moyenne` si lue mais
    susceptible d'être dépassée avant recontrôle), et laisser ce niveau
@@ -84,13 +89,13 @@ appliquer une règle à une population que le texte ne nomme pas, et laisser
 une table certifiée sans date.
 
 **À la fin.** Ajouter une entrée au `journal` : la date, ce qui a été
-consulté, ce qui a été trouvé, ce qui reste. Mettre à jour `verifie_le` et
-`prochaine_veille` des lignes relues. Régénérer les témoins, lancer la suite,
-commiter sur `main`.
+consulté, ce qui a été trouvé, ce qui reste. Mettre à jour `sources.lu_le`
+et `sources.prochaine_relecture` des fiches relues. Régénérer les témoins,
+lancer la suite, commiter sur `main`.
 
-Ce qui est `transcrit` attend son exemple. Ce qui est `manque` ou
-`approximation` est mesuré dans `limites.md`. Ce qui est `a_verifier` est ce
-que la session n'a pas pu finir de lire, et c'est par là que la suivante
-commence : `python scripts/veille_droit.py` le dit. Combien de règles le
-registre porte, dans quel état, et combien d'exemples les rejouent : le
-tableau de bord, `docs/etat.md`.
+Une fiche `transcrite` attend son exemple. Une fiche `manquante` ou
+`approchee` est mesurée dans `limites.md`. Une fiche `a_verifier` est ce que
+la session n'a pas pu finir de lire, et c'est par elle que la suivante
+commence : `python scripts/veille_droit.py` le dit. Combien de fiches la
+carte porte, dans quel état, et combien d'exemples les rejouent : le tableau
+de bord, `docs/etat.md`.

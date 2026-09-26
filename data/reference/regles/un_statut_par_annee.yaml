@@ -1,0 +1,50 @@
+schema_version: 1
+id: un_statut_par_annee
+intitule: >-
+  Une ligne de carrière par année et par ACTIVITÉ : l'activité principale d'abord,
+  puis chaque activité que l'assuré déclare cumulée, sous un autre statut. Trimestres
+  validés par le revenu (150 heures de SMIC), plafonnés aux trimestres civils de
+  l'année, et quatre au plus par année civile tous régimes confondus.
+etat: approchee
+effet: >-
+  DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux
+  moteurs : chacune verse à son régime, sur son revenu, et les régimes distincts
+  servent chacun leur pension ; la durée tous régimes, la durée cotisée et, dans
+  un groupe liquidé ensemble, la durée du groupe sont bornées à quatre trimestres
+  par année civile. Rien n'est supposé : une activité n'est cumulée que si elle
+  le déclare (`Metier.cumul`). Le formulaire du site le propose : un menu « remplace
+  / s'ajoute », réglé sur « remplace ». Reste une approximation : l'année d'un CHANGEMENT
+  de métier principal relève d'un seul régime, celui qui en occupe le plus de mois
+  ; limites.md le mesure.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-09-30
+  lectures:
+  - type: legifrance
+    reference: R. 351-9 CSS, certifié par le récupérateur
+    date: 2026-09-13
+  - type: legifrance
+    reference: >-
+      R. 351-5 CSS, LEGIARTI000006749346, version du 21 décembre 1985 toujours en
+      vigueur, lue dans l'index LEGI : les trimestres des articles R. 351-3 et R.
+      351-4 ne portent pas au-delà de quatre le nombre de trimestres d'assurance
+      d'une même année civile, majorations de durée exceptées
+    date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      R. 173-4-4-1 CSS, LEGIARTI000053335493, version du 1er janvier 2026, lue dans
+      l'index LEGI : « La limite de quatre trimestres d'assurance par année civile
+      fixée à l'article R. 351-5 […] s'apprécie en tenant compte des périodes mentionnées
+      au 1° » — celles des trois régimes alignés
+    date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      décret n° 2003-1306 du 26 décembre 2003, article 20, LEGIARTI000054590030,
+      version du 1er août 2026 : pour la durée d'assurance tous régimes, « une année
+      civile ne peut compter plus de quatre trimestres »
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: R. 351-9 CSS
+- reference: R. 351-5 CSS
+- reference: R. 173-4-4-1, 2° CSS
+- reference: décret n° 2003-1306, article 20

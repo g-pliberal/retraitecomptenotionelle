@@ -1,0 +1,61 @@
+schema_version: 1
+id: duree_requise_ieg
+intitule: >-
+  Durée d'assurance requise des agents actifs des IEG depuis le 1er janvier 2025
+  : une table par durée de services actifs (I bis de l'article 45), et en deçà de
+  sa première génération la table d'avant le décret n° 2023-692 ; ni la table commune
+  ni celle des sédentaires.
+etat: conforme
+effet: >-
+  La fiche lisait la table commune, suspension de 2026 comprise. Le cas type des
+  IEG part à l'âge légal abaissé de cinq ans, celui des dix-sept ans de services
+  actifs (2° du I de l'article 16) : il lit désormais leur table, `ieg_actif_17`
+  dans `legislation/duree_requise_regimes_speciaux.csv` — 169 trimestres pour les
+  nés de 1964 à 1966, 170 pour 1967 à 1970, 171 pour 1971-1972, 172 à compter de
+  1973. Un agent né en 1968 doit 170 trimestres au lieu de 172. Les quatre autres
+  tables, de cinq à quatorze ans, sont transcrites sans qu'aucune fiche ne les lise.
+  La lecture du 22 septembre, qui voulait brancher la table du I, se trompait de
+  population : elle est celle des sédentaires.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Une carrière qui déclarerait moins de dix-sept ans de services actifs devrait
+    lire une autre table et partir plus tard : le modèle ne compte pas les années
+    actives aux IEG, et la fiche ne porte qu'un âge. La table des sédentaires (le
+    I) n'est pas transcrite. Et l'âge d'ouverture de la fiche, 59 ans en 2027, n'a
+    pas été confronté à la suspension de 2026.
+  lectures:
+  - type: legifrance
+    reference: >-
+      annexe 3 du statut national des IEG, article 45, I bis, version du 6 août
+      2025 (LEGIARTI000052046924) : pour au moins cinq, huit, onze, quatorze et
+      dix-sept ans de services effectifs actifs, insalubres et militaires, 170 trimestres
+      à compter des générations 1964, 1965, 1966, 1967 et 1968, 171 trois ans plus
+      tard, 172 cinq ans plus tard ; « pour ceux nés avant », la durée « applicable
+      avant l'entrée en vigueur du décret n° 2023-692 ». Lu dans l'index LEGI du
+      dépôt
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      même article, version du 3 décembre 2020 (LEGIARTI000042597001), la table
+      d'avant le décret n° 2023-692 : 167 trimestres des nés du 1er juillet 1959
+      à 1960, 168 pour 1961-1963, 169 pour 1964-1966, 170 pour 1967-1969, 171 pour
+      1970-1972, 172 à compter de 1973
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CNIEG, réglementation, « Tableau des durées d'assurance » applicable à compter
+      du 1er janvier 2025, par génération et par motif d'anticipation
+    url: >-
+      https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/duree-assurance/tableau-duree-assurance.html
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    annexe 3 du décret n° 46-1541 du 22 juin 1946, article 45, I et I bis (LEGIARTI000052046924),
+    et article 16, I, 2°
+- reference: décret n° 2023-692 du 28 juillet 2023
+reformes:
+- reforme_2023
+- lfss_2026_suspension

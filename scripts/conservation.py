@@ -78,6 +78,22 @@ REGISTRES = {
 #: garde ses entrées.
 ARCHIVES_DES_REGISTRES: dict[str, list[str]] = {}
 
+#: Les registres dont les entrées sont passées dans la carte des règles
+#: (docs/architecture.md, § 6.5), et la vue qui les y retrouve. Tant que le
+#: registre porte la section, c'est elle qu'on lit.
+VUES_DES_REGISTRES = {
+    ("data/reference/legislation/veille.yaml", "entrees"): "veille_depuis_la_carte",
+}
+
+#: La carte : une fiche par dispositif.
+CARTE = "data/reference/regles"
+
+#: Les états d'une ligne de veille, sous le nom que le vocabulaire des fiches
+#: leur a donné.
+ETATS_DE_LA_VEILLE = {"conforme": "conforme", "transcrite": "transcrit",
+                      "approchee": "approximation", "manquante": "manque",
+                      "pas_encore_modelisee": "hors_modele", "a_verifier": "a_verifier"}
+
 #: Les documents dont les tableaux sont écrits par un script : leurs tableaux
 #: changent avec le modèle, leur prose non.
 TABLEAUX_PRODUITS = {"docs/chiffrage_plf.md"}
@@ -110,6 +126,19 @@ class Arbre:
             chemins = [c for c in sortie.splitlines() if c.endswith(".md")
                        and ("/" not in c or c.startswith("docs/"))]
         return sorted(set(chemins))
+
+    def fichiers(self, dossier: str) -> list[str]:
+        """Les fichiers d'un dossier du dépôt, sans descendre plus bas."""
+        if self.revision is None:
+            base = self.racine / dossier
+            if not base.is_dir():
+                return []
+            return sorted(p.relative_to(self.racine).as_posix()
+                          for p in base.iterdir() if p.is_file())
+        sortie = subprocess.run(
+            ["git", "ls-tree", "--name-only", f"{self.revision}:{dossier}"],
+            cwd=self.racine, capture_output=True, text=True).stdout
+        return sorted(f"{dossier}/{nom}" for nom in sortie.splitlines())
 
     def lire(self, chemin: str) -> str | None:
         if self.revision is None:
@@ -258,9 +287,46 @@ def _descendre(donnees: dict, section: str):
     return [e for n in niveaux for e in n]
 
 
+def veille_depuis_la_carte(arbre: Arbre) -> list[dict]:
+    """Les lignes de ``veille.yaml``, refaites depuis les fiches qui les ont
+    reprises le 26 septembre 2026, sous le même identifiant : le chemin
+    inverse de la reprise, champ pour champ. Une ligne conservée s'y retrouve
+    à l'identique ; une fiche qu'on a fait mûrir depuis s'en écarte, ce que
+    ``--depuis`` dit, et que la référence figée, qui ne tient que les
+    identifiants, admet."""
+    lignes = []
+    for chemin in arbre.fichiers(CARTE):
+        if not chemin.endswith(".yaml"):
+            continue
+        fiche = yaml.safe_load(arbre.lire(chemin) or "") or {}
+        sources = fiche.get("sources") or {}
+        a_relire = sources.get("a_relire") or []
+        lignes.append({
+            "id": fiche.get("id"),
+            "regle": fiche.get("intitule"),
+            "textes": [t.get("reference") for t in fiche.get("textes_a_rattacher") or []],
+            "sources": sources.get("lectures") or [],
+            "verifie_le": str(sources.get("lu_le")),
+            "temoins": fiche.get("exemples") or [],
+            "reformes": fiche.get("reformes") or [],
+            "etat": ETATS_DE_LA_VEILLE.get(fiche.get("etat"), fiche.get("etat")),
+            "effet": fiche.get("effet"),
+            "a_faire": " ".join(a_relire) if a_relire else None,
+            "prochaine_veille": str(sources.get("prochaine_relecture")),
+        })
+    return lignes
+
+
+def _empreinte_d_entree(valeur) -> str:
+    return hashlib.sha1(json.dumps(
+        valeur, sort_keys=True, ensure_ascii=False, default=str
+    ).encode("utf-8")).hexdigest()[:16]
+
+
 def entrees(arbre: Arbre) -> dict[str, dict[str, str]]:
     """Les entrées de chaque registre, par identifiant : l'empreinte de leur
-    contenu. La clé de premier niveau est ``fichier:section``."""
+    contenu. La clé de premier niveau est ``fichier:section``. Une section
+    passée dans la carte se lit dans sa vue."""
     sortie: dict[str, dict[str, str]] = {}
     for fichier, sections in REGISTRES.items():
         lieux = [fichier] + ARCHIVES_DES_REGISTRES.get(fichier, [])
@@ -277,9 +343,16 @@ def entrees(arbre: Arbre) -> dict[str, dict[str, str]]:
                             ((_cle(e, champs), e) for e in contenu))
                 cible = sortie.setdefault(f"{fichier}:{section}", {})
                 for cle, valeur in elements:
-                    cible[str(cle)] = hashlib.sha1(json.dumps(
-                        valeur, sort_keys=True, ensure_ascii=False, default=str
-                    ).encode("utf-8")).hexdigest()[:16]
+                    cible[str(cle)] = _empreinte_d_entree(valeur)
+    for (fichier, section), vue in VUES_DES_REGISTRES.items():
+        cle_du_registre = f"{fichier}:{section}"
+        if cle_du_registre in sortie:
+            continue
+        champs = REGISTRES[fichier][section]
+        lignes = globals()[vue](arbre)
+        if lignes:
+            sortie[cle_du_registre] = {_cle(ligne, champs): _empreinte_d_entree(ligne)
+                                       for ligne in lignes}
     return sortie
 
 

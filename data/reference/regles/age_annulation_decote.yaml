@@ -1,0 +1,25 @@
+schema_version: 1
+id: age_annulation_decote
+intitule: >-
+  Taux plein sans condition de durée à l'âge légal de droit commun augmenté de trois
+  ans : 67 ans depuis la génération 1955, inchangé par la suspension.
+etat: conforme
+effet: Décote et taux plein d'office.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-06-30
+  lectures:
+  - type: circulaire_cnav
+    reference: 2026-07 du 5 mars 2026, point 3
+    date: 2026-03-05
+  - type: service_public
+    reference: fiche F19666
+    date: 2026-01-01
+textes_a_rattacher:
+- reference: L. 351-8 1° CSS
+exemples:
+- sp_f19666_decote
+- sp_f21552_67_ans_158
+- cnav_2026_07_decote_1961
+reformes:
+- reforme_2023

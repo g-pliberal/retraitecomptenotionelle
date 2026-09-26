@@ -1,0 +1,64 @@
+schema_version: 1
+id: liquidation_unique_regimes_alignes
+intitule: >-
+  Liquidation unique des régimes alignés (LURA) depuis le 1er juillet 2017 : un
+  seul salaire annuel moyen, une seule durée, pour le régime général, la MSA des
+  salariés et la sécurité sociale des indépendants.
+etat: conforme
+effet: >-
+  SERVIE DEPUIS LE 22 SEPTEMBRE 2026, dans les deux moteurs. Les régimes alignés
+  que la carrière a traversés se liquident ensemble dès que les deux conditions
+  de la loi sont réunies — génération à compter de 1953, pension prenant effet au
+  1er juillet 2017, cette dernière opposée au MOIS près. Une carrière moitié privée
+  moitié agricole née en 1960 et partie à 64 ans reçoit « SR 40 749 € × 167/167
+  » au lieu de deux pensions, soit 20 629 € de base au lieu de 18 121 €. Aucun témoin
+  n''a bougé : la grille n''exerce qu''un statut à la fois, et la Lura ne se voit
+  que sur un polypensionné — d''où un essai dédié de chaque côté du portage. CE
+  QUI A ÉTÉ CONSTATÉ AVANT LA CORRECTION. Pour le couple régime général / indépendants
+  il donne le résultat de la LURA — un seul salaire de référence, une seule proratisation
+  — mais par un autre chemin : il réunit un régime et celui qui l'a ABSORBÉ, et
+  la CANCAVA, le RSI puis le régime général en font un. Carrière moitié privée moitié
+  artisanale, né en 1960, parti à 64 ans : « SR 40 748,99 € × 50,625 % × 167/167,
+  3 caisses liquidées ensemble ». Pour les salariés agricoles, dont le régime existe
+  toujours, il liquide DEUX pensions : la même carrière avec la MSA donne « SR 41
+  499,37 € × 88/167 » et « SR 29 069,36 € × 80/167 ». Le sens de l'écart n'est pas
+  déterminé sans refaire le calcul selon la règle ; les deux salaires de référence
+  encadrent celui que la caisse retiendrait. Les bornes de la règle manquent aussi,
+  et dans l'autre sens : la LURA vaut pour les générations à compter de 1953 et
+  les pensions prenant effet au 1er juillet 2017, quand l'absorption du RSI ne date
+  le regroupement qu'en 2018-2020 — une carrière liquidée entre ces deux dates est
+  coupée en deux par le modèle quand la caisse la liquide d'un coup.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Rien sur les deux premières conditions. Deux choses restent hors de portée d'une
+    carrière du dépôt, et `limites.md` les porte : la troisième condition — la LURA
+    ne s'applique pas à qui avait déjà obtenu, avant le 1er juillet 2017, une retraite
+    de même nature dans l'un des trois régimes —, qu'une carrière liquidant tout
+    à la fois ne peut pas produire ; et la somme des salaires et revenus d'une MÊME
+    année civile avant écrêtement au plafond, qu'un parcours à un métier à la fois
+    ne produisait jamais — elle est servie dans les deux moteurs depuis le 22 septembre
+    2026, quand l'assuré déclare deux activités à la fois. Aucun exemple chiffré
+    publié n'a été trouvé pour rejouer le calcul : la circulaire 2017/27 n'en donne
+    que de compétence.
+  lectures:
+  - type: legifrance
+    reference: L. 173-1-2 CSS
+    date: 2017-07-01
+  - type: legifrance
+    reference: >-
+      R. 173-4-4-1, 4° CSS (décret n° 2017-735 du 3 mai 2017) : le revenu annuel
+      moyen est déterminé à partir de la somme des salaires et revenus d'une même
+      année
+    date: 2017-05-03
+  - type: circulaire_cnav
+    reference: >-
+      2017/27 du 21 juillet 2017, « Liquidation unique des régimes alignés » — régime
+      compétent, revenu annuel moyen, proratisation ; ses exemples portent sur la
+      compétence, aucun ne chiffre une pension
+    date: 2017-07-21
+textes_a_rattacher:
+- reference: L. 173-1-2 CSS
+- reference: R. 173-3-2 CSS

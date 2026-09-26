@@ -1475,7 +1475,6 @@ def test_la_cesure_a_la_succession_reste_mesurable(oracle, simulateur):
 # ---------------------------------------------------------------------------
 
 EXEMPLES_OFFICIELS = TEMOIN.parent / "exemples_officiels.yaml"
-VEILLE = TEMOINS.parents[1] / "data" / "reference" / "legislation" / "veille.yaml"
 
 
 def _charger_exemples() -> list[dict]:
@@ -1724,15 +1723,14 @@ def test_le_temoin_des_exemples_officiels_est_source():
     """Chaque exemple dit qui l'a publié, où, et quand il a été vérifié.
 
     Un écart connu dit en plus la valeur que rend le modèle, pourquoi, depuis
-    quand, et la ligne de veille qui le déclare : une règle qui n'est ni
-    `conforme` ni `transcrit`, et qui compte l'exemple parmi ses témoins. Ce
+    quand, et la fiche de la carte qui le déclare : une règle qui n'est ni
+    `conforme` ni `transcrite`, et qui compte l'exemple parmi ses exemples. Ce
     qu'un exemple révèle est déclaré là où il va (§ 9.2), et un écart ne
     s'admet pas sans que sa règle le dise.
     """
-    import yaml
+    from retraite_notionnelle.noyau import carte
 
-    veille = {entree["id"]: entree for entree in yaml.safe_load(
-        VEILLE.read_text(encoding="utf-8"))["entrees"]}
+    fiches = carte.fiches()
     for exemple in _charger_exemples():
         source = exemple["source"]
         assert source["editeur"] in (
@@ -1746,12 +1744,12 @@ def test_le_temoin_des_exemples_officiels_est_source():
         ecart = exemple.get("ecart_connu")
         if ecart is None:
             continue
-        assert set(ecart) == {"modele", "explication", "veille", "depuis"}, exemple["id"]
+        assert set(ecart) == {"modele", "explication", "fiche", "depuis"}, exemple["id"]
         assert ecart["modele"], exemple["id"]
         assert set(ecart["modele"]) <= set(exemple["attendu"]), exemple["id"]
         assert len(str(ecart["explication"]).split()) >= 12, exemple["id"]
         assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(ecart["depuis"])), exemple["id"]
-        regle = veille.get(ecart["veille"])
-        assert regle is not None, (exemple["id"], ecart["veille"])
-        assert regle["etat"] not in ("conforme", "transcrit"), (exemple["id"], regle["etat"])
-        assert exemple["id"] in (regle.get("temoins") or []), (exemple["id"], regle["id"])
+        regle = fiches.get(ecart["fiche"])
+        assert regle is not None, (exemple["id"], ecart["fiche"])
+        assert regle["etat"] not in ("conforme", "transcrite"), (exemple["id"], regle["etat"])
+        assert exemple["id"] in (regle.get("exemples") or []), (exemple["id"], regle["id"])

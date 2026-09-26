@@ -1,0 +1,36 @@
+schema_version: 1
+id: asv_medecins_ajustement
+intitule: >-
+  ASV des médecins depuis 2012 : 27 points pour la cotisation forfaitaire, plus
+  18 fois la cotisation d'ajustement divisée par le forfait, neuf points au plus
+  par an.
+etat: approchee
+effet: >-
+  La fiche servait 36 points à tout médecin, soit jusqu'à 7,75 points de trop sous
+  70 000 €. Le forfait, revalorisé sur le revenu moyen des médecins que le dépôt
+  n'a pas, suit les prix : le modèle rend 28,21, 30,63, 32,81 et 35,46 points, à
+  moins de 1 % de la caisse.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - Porter le forfait publié chaque année par la CARMF.
+  lectures:
+  - type: legifrance
+    reference: >-
+      article 3 : « dans la limite de neuf points par an, égal au rapport [...]
+      entre le produit du montant de la cotisation d'ajustement et des deux tiers
+      du nombre de points acquis au titre de la cotisation forfaitaire [...] et
+      le montant de la cotisation forfaitaire »
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      calculette de la CARMF (showresultat.php), 22 septembre 2026 : 28,25 points
+      à 10 000 €, 30,76 à 30 000 €, 33,02 à 48 060 €, 35,76 à 70 000 €, 36 au-delà
+      de 90 000 €
+    url: https://www.carmf.fr/
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: décret n° 2011-1644, article 3 (LEGIARTI000024853554)
+- reference: 'décret n° 2011-1644, article 2 (LEGIARTI000052567960) : 4 % depuis
+    2026'

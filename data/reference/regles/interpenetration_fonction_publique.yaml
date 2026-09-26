@@ -1,0 +1,76 @@
+schema_version: 1
+id: interpenetration_fonction_publique
+intitule: >-
+  Les régimes de l'État, de la CNRACL et des ouvriers de l'État sont interpénétrés
+  : chacun compte, pour la constitution du droit comme pour la liquidation, les
+  services accomplis dans les deux autres, hors les services militaires déjà rémunérés
+  par une pension. Le régime de la dernière affiliation sert une pension unique,
+  sur le traitement détenu six mois à la fin de la carrière publique et sur tous
+  ses services. Le rétablissement au régime général de qui était parti sans droit
+  est annulé quand il revient dans un régime interpénétré. Le militaire titulaire
+  d'une pension militaire la garde, sauf renonciation (L. 77).
+etat: transcrite
+effet: >-
+  Tout fonctionnaire passé d'un des trois régimes à un autre. Jusqu'au 24 septembre
+  2026, le modèle liquidait chaque régime sur ses seules années et son propre traitement
+  : un fonctionnaire de l'État entré à vingt-deux ans, devenu territorial à quarante
+  et liquidant en 2026, touchait 28 123 € au lieu de 32 731 €, 14,1 % de moins.
+  tests/test_interpenetration.py, et cinq témoins de parcours rejouent la règle
+  dans les deux moteurs.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Aucun exemple chiffré publié n'a été trouvé. Quand deux régimes du groupe finissent
+    la même année, le modèle, qui ne date pas les lignes au mois, retient celui
+    que la chaîne des successions désigne. Il ne scinde pas la pension de l'État
+    entre services civils et militaires : un militaire devenu fonctionnaire civil
+    reçoit une pension unique, comme s'il avait renoncé à sa pension militaire.
+    Le rétablissement de qui n'a pas la durée minimale est fait depuis le 24 septembre
+    2026 (`retablissement_fonction_publique`), et c'est la même lecture des trois
+    régimes ensemble qui l'annule au retour dans l'un d'eux.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 5, L. 11, articles 8, 13 et 64 du décret n° 2003-1306, articles 4 et 10
+      du décret n° 2004-1056, lus dans l'index LEGI dans leurs versions depuis 1964
+      et 1965
+    date: 2026-09-24
+  - type: autre
+    reference: >-
+      CNRACL, juris-cnracl, « Les services effectifs » : sont pris en compte « les
+      services de titulaire ou de stagiaire accomplis dans la fonction publique
+      d'État » et ceux accomplis « en qualité d'affilié du FSPOEIE » ; « Périodes
+      de services effectifs et périodes assimilées » : services liquidés s'ils ont
+      été cotisés et ne sont pas « déjà rémunérés dans une autre pension »
+    date: 2026-09-24
+    url: >-
+      https://www.juris-cnracl.retraites.fr/pension-normale/constitution-du-droit/les-services-civils-valables/les-services-effectifs
+  - type: autre
+    reference: >-
+      CNRACL, juris-cnracl, « Règles de coordination avec les autres régimes » :
+      dans un régime interpénétré, « ce régime sert à l'agent une pension unique
+      qui rémunère l'ensemble de sa carrière » ; « Calcul de la surcote » : « régime
+      interpénétré (CNRACL - FSPOEIE - RPCMR) » ; « Annulation du rétablissement
+      d'un fonctionnaire titulaire »
+    date: 2026-09-24
+    url: >-
+      https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/regles-de-coordination-avec-les-autres-regimes
+textes_a_rattacher:
+- reference: >-
+    L. 5 du code des pensions civiles et militaires, versions de 1964 (LEGIARTI000006362668,
+    4° : « services accomplis dans les cadres permanents des administrations des
+    départements, des communes ») à 2023 (LEGIARTI000047453644, 1° : fonctionnaires
+    de l'article 2 de la loi n° 83-634) ; L. 11 (LEGIARTI000047453636)
+- reference: >-
+    décret n° 65-773, article 8 (LEGIARTI000006368193, 5° : services de L. 5, 1°
+    et 3°) ; décret n° 2003-1306, articles 8 (LEGIARTI000047633135), 13 (LEGIARTI000047633115)
+    et 64 (LEGIARTI000006400936)
+- reference: >-
+    décret n° 65-836, article 5 (LEGIARTI000006766746) ; décret n° 2004-1056, articles
+    4 (LEGIARTI000047633211) et 10 (LEGIARTI000047633200)
+- reference: >-
+    L. 24 du code des pensions (LEGIARTI000047452804) et article 25 du décret n°
+    2003-1306 (LEGIARTI000050941689) : dix-sept ans de services actifs « accomplis
+    indifféremment dans de tels emplois »

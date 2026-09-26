@@ -1,97 +1,85 @@
 #!/usr/bin/env python3
-"""Le registre de conformité du scénario 1 au droit, et ce qui y a vieilli.
+"""La veille du droit : les règles du scénario 1 à relire, et les sources à consulter.
 
-    python scripts/veille_droit.py            # état du registre, lignes à revoir
-    python scripts/veille_droit.py --tout     # toutes les lignes, par état
+    python scripts/veille_droit.py            # les fiches à relire, les sources
+    python scripts/veille_droit.py --tout     # toutes les fiches, par état
     python scripts/veille_droit.py --jours 90 # seuil d'ancienneté (défaut 120)
-    python scripts/veille_droit.py --strict   # code 1 si une ligne est à revoir
+    python scripts/veille_droit.py --strict   # code 1 si une fiche est à relire
 
-Le registre est ``data/reference/legislation/veille.yaml`` : une ligne par
-règle du scénario 1, avec le texte, la source officielle lue, la date de la
-lecture, l'exemple publié qui la rejoue, l'état. Ce script ne décide rien : il
-dit quelles lignes sont ``a_verifier`` ou ``manque``, lesquelles n'ont pas été
-relues depuis plus de ``--jours`` jours ou dont la date ``prochaine_veille``
-est passée, et quelles sources consulter avant de toucher au scénario 1.
+Les règles sont les fiches de la carte, ``data/reference/regles/`` : une par
+dispositif, avec les textes qui la fondent, les sources lues, la date de la
+dernière lecture et de la prochaine, les exemples publiés qui la rejouent,
+l'état. Ce script en est une vue, et ne décide rien : il dit quelles fiches
+sont ``a_verifier`` ou ``manquante``, lesquelles n'ont pas été relues depuis
+plus de ``--jours`` jours ou dont la date de relecture est passée, et quelles
+sources consulter avant de toucher au scénario 1. Les sources à consulter et
+le journal de chaque veille sont dans ``data/reference/legislation/veille.yaml``.
 
 C'est le premier geste d'une session qui touche au scénario 1, et le dernier :
 au début pour savoir quoi relire, à la fin pour ajouter au ``journal`` ce qui
-a été consulté, trouvé, et laissé. Une règle nouvelle sans ligne ici est
-refusée par ``tests/test_donnees.py``.
+a été consulté, trouvé, et laissé. ``tests/test_carte.py`` tient la forme des
+fiches ; ``docs/veille_droit.md`` dit la procédure.
 """
 
 from __future__ import annotations
 
 import argparse
+import collections
 import sys
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 
 import yaml
 
+from retraite_notionnelle.noyau import carte
+
 RACINE = Path(__file__).resolve().parents[1]
 REGISTRE = RACINE / "data" / "reference" / "legislation" / "veille.yaml"
 
-ETATS = ("conforme", "transcrit", "approximation", "manque", "hors_modele", "a_verifier")
-ORDRE = {etat: rang for rang, etat in enumerate(ETATS)}
-
 
 def charger() -> dict:
+    """Les sources à consulter et le journal de la veille."""
     return yaml.safe_load(REGISTRE.read_text(encoding="utf-8"))
-
-
-def a_revoir(entree: dict, aujourd_hui: date, jours: int) -> list[str]:
-    raisons = []
-    if entree["etat"] in ("a_verifier", "manque"):
-        raisons.append(entree["etat"])
-    verifie = date.fromisoformat(str(entree["verifie_le"]))
-    if aujourd_hui - verifie > timedelta(days=jours):
-        raisons.append(f"relu il y a {(aujourd_hui - verifie).days} jours")
-    prochaine = entree.get("prochaine_veille")
-    if prochaine and date.fromisoformat(str(prochaine)) <= aujourd_hui:
-        raisons.append(f"veille prévue le {prochaine}")
-    return raisons
 
 
 def main(argv: list[str] | None = None) -> int:
     analyseur = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
-    analyseur.add_argument("--tout", action="store_true", help="imprime toutes les lignes")
+    analyseur.add_argument("--tout", action="store_true", help="imprime toutes les fiches")
     analyseur.add_argument("--jours", type=int, default=120, help="ancienneté maximale d'une lecture")
-    analyseur.add_argument("--strict", action="store_true", help="code 1 si une ligne est à revoir")
+    analyseur.add_argument("--strict", action="store_true", help="code 1 si une fiche est à relire")
     analyseur.add_argument("--date", help="date du jour (AAAA-MM-JJ), pour rejouer")
     args = analyseur.parse_args(argv)
     aujourd_hui = date.fromisoformat(args.date) if args.date else date.today()
 
     registre = charger()
-    entrees = sorted(registre["entrees"], key=lambda e: (ORDRE[e["etat"]], e["id"]))
-    par_etat: dict[str, int] = {}
-    for entree in entrees:
-        par_etat[entree["etat"]] = par_etat.get(entree["etat"], 0) + 1
+    etats = carte.etats()
+    fiches = sorted(carte.fiches().values(), key=lambda f: (etats.index(f["etat"]), f["id"]))
+    par_etat = collections.Counter(f["etat"] for f in fiches)
     journal = registre.get("journal") or []
     derniere = max((str(j["date"]) for j in journal), default="jamais")
 
-    print(f"Registre : {len(entrees)} lignes — "
-          + ", ".join(f"{etat} {n}" for etat, n in sorted(par_etat.items(), key=lambda x: ORDRE[x[0]]))
+    print(f"Carte des règles : {len(fiches)} fiches — "
+          + ", ".join(f"{etat} {par_etat[etat]}" for etat in etats if par_etat[etat])
           + f". Dernière veille consignée : {derniere}.")
     print()
 
-    revoir = [(e, a_revoir(e, aujourd_hui, args.jours)) for e in entrees]
-    revoir = [(e, r) for e, r in revoir if r]
+    revoir = carte.a_relire(aujourd_hui, args.jours)
     if revoir:
-        print(f"À REVOIR ({len(revoir)}) :")
-        for entree, raisons in revoir:
-            print(f"  - {entree['id']} [{entree['etat']}] : {', '.join(raisons)}")
-            if entree.get("a_faire"):
-                print(f"      → {' '.join(str(entree['a_faire']).split())}")
+        print(f"À RELIRE ({len(revoir)}) :")
+        for fiche, raisons in revoir:
+            print(f"  - {fiche['id']} [{fiche['etat']}] : {', '.join(raisons)}")
+            for question in (fiche.get("sources") or {}).get("a_relire") or []:
+                print(f"      → {' '.join(str(question).split())}")
         print()
     else:
-        print("Rien à revoir au seuil demandé.\n")
+        print("Rien à relire au seuil demandé.\n")
 
     if args.tout:
-        for entree in entrees:
-            temoins = entree.get("temoins") or []
-            print(f"[{entree['etat']}] {entree['id']} — vérifié le {entree['verifie_le']}, "
-                  f"{len(temoins)} témoin(s)")
-            print(f"    {' '.join(str(entree['regle']).split())}")
+        for fiche in fiches:
+            sources = fiche.get("sources") or {}
+            print(f"[{fiche['etat']}] {fiche['id']} — lue le {sources.get('lu_le')}, "
+                  f"{len(fiche.get('exemples') or [])} exemple(s)")
+            print(f"    {' '.join(str(fiche['intitule']).split())}")
         print()
 
     print("Sources à consulter avant de toucher au scénario 1 :")

@@ -1,0 +1,30 @@
+schema_version: 1
+id: cipav_seconde_tranche
+intitule: >-
+  Complémentaire de la Cipav : 9 % puis 11 % jusqu'à un plafond, 22 % puis 21 %
+  au-delà, jusqu'à trois plafonds en 2023, trois et demi en 2024, quatre depuis
+  2025.
+etat: transcrite
+effet: >-
+  Un libéral de la Cipav au-delà de trois plafonds achetait trop peu de points depuis
+  2024 : la fiche coupait la seconde tranche à trois.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - Confronter à la calculette de la Cipav quand elle sera joignable.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 79-262, article 2, version en vigueur lue dans l'index LEGI : «
+      entre un et quatre plafonds » depuis 2025
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      calculette mon-entreprise de l'Urssaf, 22 septembre 2026 : seconde tranche
+      coupée à 3,5 plafonds, un exercice de retard sur le décret
+    url: https://mon-entreprise.urssaf.fr/
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: décret n° 79-262 du 21 mars 1979, article 2 (LEGIARTI000054168526)
+- reference: décret n° 2025-1076, article 12, 8° (taux et valeur d'achat de 2025)

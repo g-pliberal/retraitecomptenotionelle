@@ -1,0 +1,26 @@
+schema_version: 1
+id: cumul_emploi_retraite_et_retraite_progressive
+intitule: >-
+  Cumul emploi-retraite (trois régimes selon l'âge, seconde pension depuis 2023)
+  et retraite progressive (dès 60 ans depuis septembre 2025).
+etat: pas_encore_modelisee
+effet: >-
+  Le modèle liquide une fois, à une date ; il n'a pas de seconde pension ni de fraction.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-09-30
+  lectures:
+  - type: autre
+    reference: L'Assurance retraite, mesures de la LFSS 2026
+    date: 2026-01-01
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, pages du cumul (règles des pensions de 2027)
+      et de la retraite progressive ; FAQ de la DGAFP de 2025 ; calculette PECARI
+      de l'ENSAP (plafond de 8 198,04 € au 1er janvier 2026)
+    date: 2026-09-24
+textes_a_rattacher:
+- reference: L. 161-22 CSS et suivants
+- reference: L. 351-15 CSS
+- reference: L. 84 à L. 86 CPCMR
+- reference: L. 89 bis et D. 37-1 CPCMR

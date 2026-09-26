@@ -1,0 +1,75 @@
+schema_version: 1
+id: militaires_duree_requise
+intitule: >-
+  Durée de services et bonifications requise d'un militaire qui peut liquider avant
+  soixante ans : celle des fonctionnaires qui atteignent soixante ans l'année où
+  son droit s'ouvre (150 trimestres si c'est avant 2004, la table de la loi de 2003
+  de 2004 à 2008) ; et s'il peut liquider à compter du 1er septembre 2023, 169 trimestres,
+  170 en 2025, 171 en 2027, 172 à compter de 2028.
+etat: transcrite
+effet: >-
+  CORRIGÉ LE 23 SEPTEMBRE 2026. Le modèle opposait au militaire la durée de sa génération,
+  lue à l'année de sa liquidation : 172 trimestres au sous-officier né en 1970 dont
+  le droit s'ouvrait en 2002, là où la loi de 2003 lui en garde 150. Ce que la correction
+  rend, pour un militaire entré à dix-huit ans et parti à quarante-cinq : +14,67
+  % de pension au né en 1970, +3,58 % au né en 1980 (165 trimestres au lieu de 172)
+  ; rien aux nés de 1985 et 1990, dont les services atteignent déjà le pourcentage
+  maximum.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Aucun exemple chiffré publié : ni le SRE ni service-public ne donnent la durée
+    d'un militaire par année d'ouverture, et la Cour la décrit sans la chiffrer.
+    Les bonifications de service (cinquième, campagnes, services aériens), qui portent
+    un quart de la durée validée des militaires selon la Cour, restent hors du modèle
+    : c'est elles qui décideraient si la durée requise mord.
+  lectures:
+  - type: legifrance
+    reference: >-
+      Loi n° 2023-270, article 10, version LEGIARTI000053280920, XXIV, C, lu dans
+      l'index LEGI : « la durée de services et de bonifications requise pour les
+      fonctionnaires civils, autres que ceux mentionnés aux A et B du présent XXIV,
+      et les militaires remplissant les conditions de liquidation de la pension
+      avant l'âge de soixante ans est égale : 1° Pour ceux pouvant liquider leur
+      pension avant le 1er septembre 2023, à celle applicable avant l'entrée en
+      vigueur du présent XXIV ; 2° Pour ceux pouvant liquider leur pension à compter
+      du 1er septembre 2023, à 169 trimestres. Cette durée augmente d'un trimestre
+      au 1er janvier 2025 puis au 1er janvier 2027. A compter du 1er janvier 2028,
+      cette durée est égale à la durée mentionnée au 6° de l'article L. 161-17-3
+      du code de la sécurité sociale. »
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      L. 13 du code des pensions, version LEGIARTI000028498258, III (« des fonctionnaires
+      de l'Etat et des militaires qui remplissent les conditions de liquidation
+      d'une pension avant l'âge de soixante ans ») ; loi n° 2003-775, article 66,
+      version LEGIARTI000006758610, tableau « Jusqu'en 2003 : 150 ; 2004 : 152 […]
+      2008 : 160 » ; L. 161-17-3, version LEGIARTI000053280903, 6° : 172 trimestres.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      Cour des comptes, « Les retraites des fonctionnaires de l'État », septembre
+      2026, chapitre I, III, A : pour les militaires, la durée requise « n'est pas
+      déterminée […] en fonction de l'année de naissance, comme c'est le cas pour
+      les civils. Elle l'est en fonction de l'année où ils ont accompli le nombre
+      d'années de service requis pour bénéficier du droit à liquidation immédiate.
+      »
+    url: >-
+      https://www.ccomptes.fr/fr/publications/les-retraites-des-fonctionnaires-de-letat
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    loi n° 2003-775 du 21 août 2003, article 66 (tableau par année où sont réunies
+    les conditions de L. 24)
+- reference: >-
+    loi n° 2003-775 du 21 août 2003, article 5, VI, version du 11 novembre 2010
+- reference: >-
+    L. 13, III, du code des pensions civiles et militaires, version du 22 janvier
+    2014
+- reference: loi n° 2023-270 du 14 avril 2023, article 10, XXIV, C
+- reference: L. 161-17-3 CSS, 6°, version du 31 décembre 2025
+reformes:
+- reforme_2023
+- lfss_2026_suspension

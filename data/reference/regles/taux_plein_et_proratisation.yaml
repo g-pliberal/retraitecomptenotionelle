@@ -1,0 +1,21 @@
+schema_version: 1
+id: taux_plein_et_proratisation
+intitule: >-
+  Pension = salaire annuel moyen × taux × durée dans le régime / durée requise ;
+  durée de proratisation propre aux générations 1944-1948.
+etat: conforme
+effet: Toute pension du régime général et des régimes alignés.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-06-30
+  lectures:
+  - type: service_public
+    reference: fiches F21552 et F36464
+    date: 2026-09-01
+textes_a_rattacher:
+- reference: L. 351-1 CSS
+- reference: R. 351-6 CSS
+exemples:
+- sp_f21552_taux_plein_170
+- sp_f21552_67_ans_158
+- sp_f21552_65_ans_158

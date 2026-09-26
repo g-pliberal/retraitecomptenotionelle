@@ -1,0 +1,28 @@
+schema_version: 1
+id: majoration_enfants_plafond_fonction_publique
+intitule: >-
+  La pension civile majorée pour enfants ne peut excéder le traitement qui l'a liquidée,
+  revalorisé ; au-delà, pension et majoration sont réduites à due proportion.
+etat: manquante
+effet: >-
+  Ne mord qu'à partir de sept enfants au taux de 80 %, ou de six avec une surcote
+  que la caisse excepte : quelques familles, que le modèle majore sans plafond.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Lire le texte qui excepte la surcote, que L. 18 ne porte pas, avant d'appliquer
+    le plafond.
+  lectures:
+  - type: legifrance
+    reference: L. 18 CPCMR, version du 1er septembre 2023, lu dans l'index LEGI
+    date: 2026-09-24
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, page « La majoration pour enfants » : « limité
+      à 100 % de votre dernier traitement […] sauf en cas d'application d'une surcote
+      »
+    date: 2026-09-24
+textes_a_rattacher:
+- reference: L. 18, V, CPCMR (LEGIARTI000047456782)

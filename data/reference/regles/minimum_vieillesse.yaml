@@ -1,0 +1,27 @@
+schema_version: 1
+id: minimum_vieillesse
+intitule: >-
+  ASPA servie au barème d'une personne seule sans autre ressource, à tous, en ligne
+  séparée. Revalorisée sur les prix : L. 816-2 renvoie au coefficient de L. 161-25,
+  moyenne annuelle des prix hors tabac, plancher à 1.
+etat: approchee
+effet: >-
+  Les plus petites pensions ; la condition de ressources et le ménage sont ignorés,
+  ce que limites.md dit.
+sources:
+  lu_le: 2026-09-19
+  prochaine_relecture: 2027-01-31
+  lectures:
+  - type: service_public
+    reference: montants de l'ASPA 2026
+    date: 2026-01-01
+  - type: legifrance
+    reference: L. 816-2 CSS, LEGIARTI000036393188, en vigueur depuis le 2018-12-31
+    date: 2026-09-19
+  - type: legifrance
+    reference: L. 161-25 CSS, LEGIARTI000031781092, en vigueur depuis le 2016-01-01
+    date: 2026-09-19
+textes_a_rattacher:
+- reference: L. 815-1 CSS et suivants
+- reference: L. 816-2 CSS
+- reference: L. 161-25 CSS

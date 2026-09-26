@@ -1,0 +1,22 @@
+schema_version: 1
+id: retraite_anticipee_handicap
+intitule: >-
+  Départ anticipé des assurés handicapés, de 55 à 59 ans selon la durée et le taux
+  d'incapacité, calendrier propre revu par la suspension.
+etat: pas_encore_modelisee
+effet: >-
+  Demande une information médicale que le modèle ne collecte pas : l'assuré est
+  déclaré non ouvert.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-09-30
+  lectures:
+  - type: circulaire_cnav
+    reference: 2026-18 du 15 juin 2026
+    date: 2026-06-15
+textes_a_rattacher:
+- reference: L. 351-1-3 CSS
+- reference: D. 351-1-5 CSS (décret n° 2026-345)
+- reference: décret n° 2026-344, article 3 C et G
+reformes:
+- lfss_2026_suspension

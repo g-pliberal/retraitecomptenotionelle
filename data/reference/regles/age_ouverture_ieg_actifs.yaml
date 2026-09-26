@@ -1,0 +1,55 @@
+schema_version: 1
+id: age_ouverture_ieg_actifs
+intitule: >-
+  Âge d'ouverture des agents actifs des IEG (dix-sept ans de services actifs) :
+  le calendrier du 2° du V de l'article 45 de l'annexe 3 jusqu'à la génération 1974
+  — 57 ans pour 1967, trois mois de plus par génération jusqu'à 58 ans et 9 mois
+  —, puis l'âge de L. 161-17-2 abaissé de cinq ans, 59 ans, que la suspension de
+  2026 ne change pas ; la surcote au-delà de l'âge du 1° du I de l'article 16, 64
+  ans à compter de 1970.
+etat: conforme
+effet: >-
+  LA SUSPENSION NE CHANGE RIEN, MAIS LA FICHE ÉTAIT FAUSSE. Elle portait l'âge des
+  actifs lu dans le seul article 16 réécrit en 2023 : 58 ans et 9 mois dès 2025,
+  59 ans dès 2027, jusqu'à six trimestres trop tard pour les générations 1968 à
+  1974, que le 2° du V de l'article 45 laisse partir de 57 ans et 3 mois à 58 ans
+  et 9 mois. Elle suit désormais ce calendrier par année de liquidation, huit périodes
+  de 2025 à 2034. Et la surcote partait de l'âge d'ouverture de la fiche : elle
+  part de l'âge du 1° du I de l'article 16, par le drapeau `age_surcote_regimes_speciaux`,
+  le même calendrier qu'à la SNCF et à la RATP.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: legifrance
+    reference: >-
+      annexe 3 du statut national des IEG, version du 6 août 2025 (LEGIARTI000052046924),
+      article 45, V, 2° : « L'âge d'ouverture du droit à pension mentionné à la
+      première phrase du 2° du I de l'article 16 s'applique aux agents nés à compter
+      du 1er janvier 1975. Pour les agents nés antérieurement à cette date, cet
+      âge est abaissé » — cinquante-cinq ans avant 1962, puis quatre mois, puis
+      trois mois par génération jusqu'à cinquante-huit ans et neuf mois pour 1974
+      ; V, 1° : l'âge du 1° du I de l'article 16, soixante ans avant 1957, soixante-quatre
+      ans à compter de 1970. Lu dans l'index LEGI du dépôt
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      même annexe, article 10, II : la surcote ne compte que les trimestres « cotisés
+      et effectués après le 1er juillet 2008, au-delà de l'âge mentionné au 1° du
+      I de l'article 16 »
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      loi n° 2025-1403, article 105 : L. 161-17-2 suspendu pour les générations
+      1961 à 1968, soixante-quatre ans à compter de 1969 inchangé ; rien sur l'annexe
+      3
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    annexe 3 du décret n° 46-1541 du 22 juin 1946, article 16, I, 1° et 2°, article
+    10, II, et article 45, V, 1° et 2° (LEGIARTI000052046924)
+- reference: décret n° 2023-692 du 28 juillet 2023
+- reference: loi n° 2025-1403 du 30 décembre 2025, article 105
+reformes:
+- reforme_2023
+- lfss_2026_suspension

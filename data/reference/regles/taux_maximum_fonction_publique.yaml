@@ -1,0 +1,46 @@
+schema_version: 1
+id: taux_maximum_fonction_publique
+intitule: >-
+  Pourcentage maximum de la pension civile : 75 % du traitement, que les bonifications
+  seules peuvent porter jusqu'à 80 % ; les services restent plafonnés à la durée
+  requise.
+etat: conforme
+effet: >-
+  Fonctionnaires dont les services et les bonifications dépassent la durée requise,
+  mères surtout. Le module plafonnait les deux ENSEMBLE à la durée requise : une
+  mère de trois enfants nés avant 2004, 168 trimestres de services et 12 de bonification
+  pour 169 requis, était liquidée sur 169/169 et non sur 180/169, soit 6,5 % de
+  pension en moins. Le champ `taux_maximum_bonifie` des fiches porte les 80 % ;
+  `test_les_bonifications_portent_le_taux_au_dela_de_75_pour_cent` tient la règle.
+  Aucun exemple chiffré publié ne l'atteint.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Les règlements de la SNCF, de la RATP, des IEG, de l'Opéra et de la Comédie-Française
+    portent la même clause ; leurs bonifications ne sont pas modélisées, et leurs
+    fiches ne portent donc pas le champ.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 12 CPCMR, LEGIARTI000053280361 : « Le pourcentage maximum fixé à l'article
+      L 13 peut-être augmenté de cinq points du chef des bonifications »
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      décret n° 2003-1306, article 15, LEGIARTI000054590023, et décret n° 2004-1056,
+      article 12, LEGIARTI000054590048 : la même clause
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, « La formule de calcul » : « le pourcentage
+      maximal de 75 % peut être porté à 80 % »
+    url: >-
+      https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-formule-de-calcul
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: L. 12 CPCMR, dernier alinéa
+- reference: L. 13 CPCMR
+- reference: décret n° 2003-1306, article 15 III (CNRACL)
+- reference: décret n° 2004-1056, article 12 II (FSPOEIE)

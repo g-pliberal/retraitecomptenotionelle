@@ -1,0 +1,51 @@
+schema_version: 1
+id: chomage_non_indemnise
+intitule: >-
+  Le chômage involontaire non indemnisé ne valide rien avant 1980 ; la première
+  période, continue ou non, vaut quatre trimestres au plus pour les périodes d'avant
+  2011 et six depuis ; chaque période ultérieure ne compte que si elle suit sans
+  interruption un chômage indemnisé, quatre trimestres au plus, vingt pour l'assuré
+  de cinquante-cinq ans qui a vingt ans de cotisations et ne relève plus d'aucun
+  régime.
+etat: transcrite
+effet: >-
+  Carrières coupées de chômage non indemnisé. Le modèle validait quatre trimestres
+  par année ainsi déclarée, sans limite : huit ans en faisaient trente-deux, là
+  où le droit en compte six au plus. Les trimestres qu'un relevé de carrière porte
+  font foi et ne sont pas limités. `test_le_chomage_non_indemnise_ne_valide_que_dans_les_limites_de_r_351_12`
+  et son double JavaScript tiennent les sept cas.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Trois approximations. Les périodes se lisent à l'année civile, une série d'années
+    consécutives faisant une période. La condition d'âge — être plus jeune que l'âge
+    du taux plein de L. 351-8, 1° — n'est pas appliquée, les carrières du modèle
+    s'arrêtant avant. Et une première période qui suit un chômage indemnisé garde
+    la limite de la première période, sans l'extension de cinq ans que le texte
+    réserve aux périodes ultérieures. Chercher la circulaire Cnav d'application
+    de 2011 et son exemple.
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 351-12 CSS, LEGIARTI000054167657, version du 1er juillet 2026 : « la première
+      période de chômage non indemnisé, qu'elle soit continue ou non, est prise
+      en compte dans la limite d'un an et demi, sans que plus de six trimestres
+      d'assurance puissent être comptés à ce titre » ; la version du 1er novembre
+      2026, LEGIARTI000054425288, laisse le d inchangé
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      R. 351-12 CSS, LEGIARTI000006750030, version du 15 février 2004 : la première
+      période « dans la limite d'un an »
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      décret n° 2011-934, article 2, LEGIARTI000024436144 : la limite d'un an et
+      demi s'applique « aux périodes de chômage involontaire non indemnisé postérieures
+      au 31 décembre 2010 »
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: R. 351-12, 4°, d, CSS
+- reference: décret n° 2011-934 du 1er août 2011, article 2

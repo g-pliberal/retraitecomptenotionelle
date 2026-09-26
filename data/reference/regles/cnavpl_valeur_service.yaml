@@ -1,0 +1,36 @@
+schema_version: 1
+id: cnavpl_valeur_service
+intitule: >-
+  Valeur de service du point du régime de base des professions libérales, fixée
+  par la caisse et revalorisée comme les pensions du régime général : 0,484 € en
+  2004, 0,6599 € au 1er janvier 2026, deux valeurs en 2022 (0,5795 € au 1er janvier,
+  0,6027 € au 1er juillet).
+etat: transcrite
+effet: >-
+  Le dépôt ne lisait la valeur que dans les recueils, depuis 2021, et ramenait celle
+  de 2021 vers le passé par les prix : les pensions de base liquidées de 1989 à
+  2019 en sortaient trop basses de 1,4 à 5 %. La série est certifiée de 2004 à 2026
+  par `scripts/fetch/cnavpl_valeur_service.py` et `verifier_donnees.py`, à la valeur
+  en vigueur au 31 décembre.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - Rien d'autre que la valeur de 2027, quand la caisse l'aura publiée.
+  lectures:
+  - type: legifrance
+    reference: >-
+      D. 643-1, versions de 2004 et 2005, dans l'index LEGI du dépôt : les deux
+      seules valeurs que le droit écrit en toutes lettres.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CNAVPL, page « Cotiser pour sa retraite », tableau « Valeur de service du
+      point depuis 2004 », chaque valeur avec sa date d'effet ; recoupée avec les
+      recueils statistiques 2021 à 2025.
+    url: https://www.cnavpl.fr/preparer-sa-retraite/
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    D. 643-1 CSS dans ses rédactions de 2004 et 2005 (LEGIARTI000006738137, LEGIARTI000006738138)
+- reference: L. 161-23-1 CSS pour la revalorisation

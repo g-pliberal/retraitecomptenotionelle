@@ -1,0 +1,74 @@
+schema_version: 1
+id: surcote_fonction_publique
+intitule: >-
+  1,25 % par trimestre depuis 2009 sans plafond ; 0,75 % dans la limite de vingt
+  trimestres pour ceux d'avant 2009 ; décompte depuis l'âge légal de droit commun
+  pour le sédentaire, et pour l'emploi classé depuis l'âge anticipé majoré de cinq
+  ans (actifs nés depuis le 1er septembre 1966) ou l'âge minoré majoré de dix (super-actifs
+  nés depuis le 1er septembre 1971), soixante-deux ans avant ces générations ; trimestres
+  de DURÉE depuis le jour où les conditions sont réunies, et non trimestres civils,
+  chacun au taux de sa date d'achèvement.
+etat: conforme
+effet: >-
+  Fonctionnaires liquidant après l'âge légal avec la durée. Jusqu'au 24 septembre
+  2026, l'emploi classé attendait l'âge légal de SA génération : jusqu'à sept trimestres
+  de surcote perdus pour un actif né de 1966 à 1973. Et le décompte suivait la règle
+  du régime général — trimestres civils à compter de celui qui suit l'âge —, quand
+  la fonction publique compte des durées : une fonctionnaire à l'âge légal à la
+  mi-octobre 2024, partie en février 2026, avait quatre trimestres au lieu de cinq
+  (tests/test_cnracl.py).
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    La version de 2009 de L. 14 III (plafond de vingt trimestres) n'a pas été lue
+    sur Légifrance, seulement rapportée : la lire. Le modèle date au mois : la période
+    s'ouvre au premier du mois qui suit l'âge, ce qui est exact pour qui n'est pas
+    né le premier du mois — l'exemple 3 de la CNRACL, dont l'agent est né un 1er
+    janvier, a un trimestre de plus. Les exemples de la CNRACL pour les générations
+    1963 à 1966 datent d'avant la suspension de 2026 et ne sont pas transcrits.
+  lectures:
+  - type: legifrance
+    reference: L. 14 CPCMR, LEGIARTI000048844775
+    date: 2023-12-31
+  - type: legifrance
+    reference: >-
+      loi n° 2023-270, article 10, XXIV, D, lu dans l'index LEGI (versions du 16
+      avril 2023 et du 31 décembre 2025)
+    date: 2026-09-24
+  - type: service_public
+    reference: fiche F16494
+    date: 2026-05-18
+  - type: autre
+    reference: CNRACL, juris-cnracl, calcul de la surcote
+    date: 2026-09-17
+  - type: autre
+    reference: >-
+      CNRACL, juris-cnracl, « Calcul de la surcote » : trimestres « réalisés à partir
+      du moment où les trois conditions cumulatives […] sont remplies », « seuls
+      les trimestres entiers sont pris en compte », et l'exemple 3 de la surcote
+      de droit commun (« 6 trimestres supplémentaires de services effectifs à partir
+      du 01/07/2024 »)
+    date: 2026-09-24
+    url: >-
+      https://www.juris-cnracl.retraites.fr/pension-normale/duree-dassurance-decote-et-surcote/calcul-de-la-surcote-0
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, page « La surcote » : « âge d'ouverture des
+      droits + 5 ans », « + 10 ans », exemple de Brigitte S.
+    date: 2026-09-24
+    url: >-
+      https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/la-surcote
+textes_a_rattacher:
+- reference: L. 14 III CPCMR (version du 31 décembre 2023)
+- reference: loi n° 2008-1330, article 89
+- reference: loi n° 2023-270, article 10, XXIV, D (LEGIARTI000053280920)
+- reference: >-
+    décret n° 2023-435, article 13, II, D, dans la rédaction du décret n° 2026-344
+    (LEGIARTI000054059137)
+exemples:
+- sp_f16494_surcote_fonction_publique
+- sre_surcote_brigitte
+reformes:
+- lfss_2009_surcote

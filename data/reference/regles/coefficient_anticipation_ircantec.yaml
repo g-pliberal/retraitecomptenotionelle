@@ -1,0 +1,41 @@
+schema_version: 1
+id: coefficient_anticipation_ircantec
+intitule: >-
+  Coefficient d'anticipation de l'Ircantec : escalier à trois marches ancré sur
+  l'âge du taux plein, plancher 0,43 à dix ans d'anticipation, et seconde table
+  par la durée.
+etat: conforme
+effet: >-
+  Toute liquidation Ircantec anticipée. Les quarante et une lignes de la table publiée
+  sont rejouées par tests/test_ircantec_minoration.py et le modèle les rend toutes.
+  La table de la caisse ajoute ce que le texte ne disait pas : les ancrages sont
+  des ÂGES FIXES — 1 à 67 ans, 0,88 à 64, 0,78 à 62, 0,43 à 57 — identiques pour
+  les onze générations, alors que l'âge légal passe de 62 à 64 ans sur cette plage.
+  C'est l'âge du taux plein qui ancre l'escalier, jamais l'âge d'ouverture, et le
+  modèle fait déjà ainsi.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    La seconde table de l'article, celle qui lit la DURÉE manquante, n'a pas d'équivalent
+    publié : la colonne « durée d'assurance » des tableaux couple les deux lectures
+    au lieu de les séparer. Le modèle applique « la plus avantageuse des deux »
+    ; le vérifier demanderait un exemple chiffré de la caisse, qu'elle ne publie
+    pas.
+  lectures:
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, article 16, versions successives lues dans l'index
+      LEGI
+    date: 2026-09-18
+  - type: autre
+    reference: >-
+      Ircantec, base documentaire, annexe « Retraite à taux réduit — taux de minoration
+      », tableaux 2023, onze générations de 1955 à 1968 et au-delà
+    url: https://baseircantec.retraites.fr/
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    article 16 de l'arrêté du 30 décembre 1970 (LEGIARTI000006381606, LEGIARTI000024266924)
+- reference: L. 351-8 1° CSS

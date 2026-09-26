@@ -1,0 +1,69 @@
+schema_version: 1
+id: pension_mines
+intitule: >-
+  Pension de vieillesse des mines : trimestres de services, affectés du coefficient
+  de majoration de la date d'effet, multipliés par la valeur du trimestre de la
+  date d'effet ; valeur revalorisée comme les pensions du régime général ; cent
+  vingt trimestres au plus, sauf ceux accomplis avant cinquante-cinq ans ; ouverture
+  à cinquante-cinq ans, abaissée d'un an par quatre années au fond jusqu'à cinquante
+  ans pour trente années d'affiliation.
+etat: approchee
+effet: >-
+  Mineurs. Jusqu'au 24 septembre 2026, la fiche ne portait ni le coefficient de
+  majoration, ni la bonne indexation de la valeur du trimestre, ni le plafond de
+  cent vingt trimestres, et ouvrait la pension à cinquante ans à tous : trente ans
+  liquidés en 2026 valaient 12 299 € par an au lieu de 17 172, et l'exemple du COR
+  11 974 € au lieu de 16 347. La table `bareme_trimestre_mines.csv` porte valeur
+  et coefficient date par date ; `tests/test_mines.py` refait la chaîne des valeurs
+  depuis la revalorisation des pensions.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    L'âge du fond est prêté à tout mineur de trente années, et la bonification de
+    0,15 % par trimestre au fond (article 138) n'est pas servie : le modèle ne sait
+    pas où le mineur a travaillé. Les majorations de 0,5 à 14 % de l'article 131-2
+    pour les pensions de 1987 à 2000, dues à compter de 2001, ne passent pas dans
+    la pension d'aujourd'hui. Aucun arrêté trouvé pour 2002, 2005, 2014, 2016 et
+    2018. Lire l'arrêté de 2027 dès sa parution, et le tableau de la caisse, qui
+    retardait d'un arrêté en 2026.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 46-2769, articles 125, 127, 131, 131-1, 131-2, 136, 138 et 181,
+      versions lues dans l'index LEGI du dépôt
+    date: 2026-09-24
+  - type: jorf
+    reference: >-
+      arrêtés du coefficient de majoration des pensions minières : l'article 1er
+      de celui du 27 décembre 2021 et de celui du 9 février 2026 dans l'index JORF,
+      les autres sur Légifrance
+    date: 2026-09-24
+  - type: autre
+    reference: >-
+      Caisse des dépôts, Retraite des mines, tableaux « Barèmes et revalorisations
+      » de 2024, 2025 et 2026, et page « Droits directs »
+    date: 2026-09-24
+    url: >-
+      https://politiques-sociales.caissedesdepots.fr/retraite-des-mines/tableau-baremes-et-revalorisations-du-regime-des-mines
+  - type: autre
+    reference: >-
+      COR, rapport annuel de juin 2024, fiche « Le régime des Mines », paragraphe
+      1
+    date: 2026-09-24
+    url: >-
+      https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_CANSSM%20(MINES)_vf.pdf
+textes_a_rattacher:
+- reference: décret n° 46-2769, article 125 (LEGIARTI000006765005)
+- reference: article 127 (LEGIARTI000006765008)
+- reference: article 131 (LEGIARTI000031137562, et ses versions de 1993 et 2002)
+- reference: article 131-1 (LEGIARTI000022750128)
+- reference: article 131-2 (LEGIARTI000006765153)
+- reference: article 136 (LEGIARTI000006765029)
+- reference: article 138 (LEGIARTI000006765036)
+- reference: article 181 (LEGIARTI000031137595)
+- reference: décret n° 2002-800 du 3 mai 2002
+- reference: arrêtés annuels du coefficient de majoration, 2003 à 2026
+exemples:
+- cor_mines_cent_vingt_trimestres_2024

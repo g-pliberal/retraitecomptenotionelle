@@ -903,7 +903,7 @@ résultat dit qu'il mesure un transfert.
 
 La fiche rassemble ce qui est aujourd'hui dispersé :
 
-- la ligne de `veille.yaml` ;
+- la ligne de `veille.yaml`, que les fiches ont reprise à la phase 2 ;
 - les bascules de `frontiere_contributive.yaml` ;
 - les commentaires d'en-tête des tables de `data/reference/legislation/` ;
 - les récits de `limites.md` et les notes de la feuille de route qui la
@@ -1440,7 +1440,7 @@ lecteur. Rien ne doit l'empêcher d'entrer, pas même le tableau de bord.
 - **Un exemple officiel que le modèle ne reproduit pas entre quand même**, à
   l'état « écart connu », avec la valeur que donne le modèle et l'explication.
   Dans `tests/temoins/exemples_officiels.yaml`, c'est un champ `ecart_connu`,
-  qui nomme la ligne de veille déclarant l'écart, et que le tableau de bord
+  qui nomme la fiche déclarant l'écart, et que le tableau de bord
   liste. Le test vérifie que le modèle rend la valeur déclarée : s'il rend la
   valeur publiée, l'écart est corrigé et sa déclaration se retire. L'inverse
   reste interdit : un exemple qui passait ne devient pas « écart connu » en

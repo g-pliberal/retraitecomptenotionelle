@@ -1,0 +1,68 @@
+schema_version: 1
+id: minimum_garanti
+intitule: >-
+  Plancher de la pension civile, barème en escalier sur la durée de services, référence
+  gelée en 2004 puis indexée sur les prix. Sous quinze ans, depuis 2011, la référence
+  rapportée à la durée qui ouvre le pourcentage maximum (L. 17, d), le quinzième
+  de 57,5 % par année restant à l'invalidité et à qui avait atteint l'âge d'ouverture
+  avant 2011 (L. 17, c). Sans la durée, ouvert à l'âge d'annulation de la décote,
+  minoré de neuf, sept, cinq, trois et un trimestres pour un âge d'ouverture atteint
+  de 2011 à 2015.
+etat: conforme
+effet: >-
+  Fonctionnaires à carrière courte. Jusqu'au 24 septembre 2026, le modèle servait
+  à toute pension de moins de quinze ans le quinzième de 57,5 % de l'invalidité
+  : 680,90 € par mois pour treize ans en 2026, au lieu de 417,94 € (170 trimestres).
+  Les exemples publiés sont rejoués par tests/test_fonction_publique_etat.py, le
+  harnais des témoins officiels ne construisant qu'une affiliation.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    L'écrêtement du sixième alinéa de L. 17 — le minimum n'est servi que si le total
+    des pensions ne dépasse pas « un montant fixé par décret » — et la condition
+    d'avoir liquidé toutes ses pensions ne sont pas appliqués, et c'est le droit
+    : la CNRACL écrit de chacune que « cette mesure n'est pas appliquée en l'absence
+    de décret d'application » (lu le 24 septembre 2026). Surveiller la parution
+    de ce décret. Le montant de 2023 du fichier (1 248,33 € par mois) était celui
+    du 1er juillet 2022 : il est corrigé le 23 septembre 2026 à 1 258,32 €, valeur
+    du 1er janvier 2023, que deux chemins officiels donnent — la revalorisation
+    de 0,8 %, et le montant publié de 2024 divisé par la sienne. Aucune page lue
+    ne la publie en toutes lettres.
+  lectures:
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, référence du minimum garanti (sre_minimum_garanti.py)
+    date: 2026-09-13
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, page « Le minimum garanti », tables au 1er
+      janvier 2026
+    date: 2026-09-24
+    url: >-
+      https://retraitesdeletat.gouv.fr/actif/le-calcul-de-ma-retraite/le-minimum-garanti
+  - type: service_public
+    reference: >-
+      fiche F21142, trois exemples (35 ans ; 13 ans et 170 trimestres ; 13 ans en
+      invalidité)
+    date: 2026-09-01
+  - type: jorf
+    reference: >-
+      loi n° 2010-1330, articles 45 et 53, et décret n° 2010-1744, lus dans l'index
+      JORF
+    date: 2026-09-24
+  - type: autre
+    reference: >-
+      CNRACL, juris-cnracl, « Détermination du montant du minimum garanti en fonction
+      des ressources » et « Les conditions d'attribution » : « Cette mesure n'est
+      pas appliquée en l'absence de décret d'application »
+    date: 2026-09-24
+    url: https://www.juris-cnracl.retraites.fr/pension-normale/minimum-garanti
+textes_a_rattacher:
+- reference: >-
+    L. 17 CPCMR (versions LEGIARTI000006362712, LEGIARTI000023033916, LEGIARTI000048697797)
+- reference: loi n° 2003-775, article 66 V
+- reference: loi n° 2010-1330, articles 45 (IV et V) et 53 (V)
+- reference: >-
+    décret n° 2010-1744 du 30 décembre 2010, article 3 (JORFARTI000023334941)

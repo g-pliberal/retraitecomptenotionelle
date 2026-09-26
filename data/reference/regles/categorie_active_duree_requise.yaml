@@ -1,0 +1,120 @@
+schema_version: 1
+id: categorie_active_duree_requise
+intitule: >-
+  Durée de services et bonifications requise propre aux emplois classés, « par dérogation
+  à l'article L. 13 » : 169 trimestres des nés entre le 1er septembre 1966 et le
+  31 décembre 1967, 170 jusqu'au 31 mars 1970, 171 jusqu'à la fin de 1970, 172 à
+  compter de 1971 ; les mêmes marches cinq ans plus tard pour la super-active. Pour
+  ceux qui naissent avant, la durée est « celle applicable avant l'entrée en vigueur
+  » de la réforme de 2023 : non la durée de leur génération, mais celle des fonctionnaires
+  qui atteignent soixante ans l'année où leur droit s'ouvre (L. 13, III, version
+  de 2014).
+etat: conforme
+effet: >-
+  PORTÉ LE 22 SEPTEMBRE 2026 pour les marches de 2023, par une colonne de plus dans
+  `categorie_active.csv` ; CORRIGÉ LE 23 SEPTEMBRE 2026 pour les générations d'avant,
+  par `duree_requise_avant_soixante_ans.csv`, que `_duree_requise_avant_soixante_ans`
+  lit à l'année d'ouverture du droit. Le 22 septembre, ces générations recevaient
+  la durée de LEUR génération dans l'ancienne table : de un à quatre trimestres
+  de trop à l'actif né de 1954 à août 1966, de deux à six au super-actif né de 1959
+  à août 1971, et de douze à quinze au super-actif né de 1950 à 1953, dont le droit
+  s'ouvrait avant 2004 à 150 trimestres. Les générations dont le droit s'ouvrait
+  de 2004 à 2008 étaient justes : la table de la loi de 2003 se lisait déjà à l'année
+  d'ouverture. Ce que la correction rend, à soixante ans pour l'actif et à cinquante-sept
+  pour le super-actif, trente-huit ou trente-cinq ans de services : +1,22 % de pension
+  à l'actif né en 1957, +0,60 % à ceux nés en 1962 et 1965 ; +3,09 % au super-actif
+  né en 1960, +1,81 % à celui né en 1965, +1,79 % à celui né en 1970. La durée requise
+  commandant aussi la proratisation dans la fonction publique, le gain porte sur
+  le taux et sur le prorata à la fois.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    La « non-monotonie » que cette ligne disait assumée par le texte — 171 trimestres
+    pour un super-actif né en juin 1971, 169 pour un né en octobre — venait de la
+    lecture, pas du texte : sous L. 13, III, le premier doit 168 trimestres, et
+    la durée monte d'un cran au 1er septembre 1971 sans jamais redescendre. RESTE,
+    dans le C du XXIV, la durée des fonctionnaires CIVILS non classés qui peuvent
+    liquider avant soixante ans (parents de trois enfants, handicap) : le modèle
+    ne sert ces départs à personne. Celle des militaires est portée, ligne `militaires_duree_requise`.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 13 du code des pensions civiles et militaires, version LEGIARTI000028498258
+      (22 janvier 2014 – 1er septembre 2023), III, lu dans l'index LEGI : « Par
+      dérogation, la durée des services et bonifications exigée des fonctionnaires
+      de l'Etat et des militaires qui remplissent les conditions de liquidation
+      d'une pension avant l'âge de soixante ans est celle exigée des fonctionnaires
+      atteignant cet âge l'année à compter de laquelle la liquidation peut intervenir.
+      » C'est cette phrase que le « a) » garde en vigueur, et que la lecture du
+      22 septembre avait manquée.
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      Loi n° 2003-775, article 5, version LEGIARTI000023030932 (11 novembre 2010
+      – 22 janvier 2014), VI : la même règle, et son extension « aux fonctionnaires
+      affiliés à la Caisse nationale de retraites des agents des collectivités locales
+      et aux ouvriers des établissements industriels de l'Etat ».
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      Cour des comptes, « Les retraites des fonctionnaires de l'État », communication
+      à la commission des finances de l'Assemblée nationale, 22 septembre 2026,
+      annexe n° 3, tableau n° 20 (« Source : législation ») : super-active 166 trimestres
+      pour la génération 1965, 167 de 1966 à 1968, 168 de 1969 à août 1971, 169
+      ensuite ; active 168 pour 1965 et jusqu'en août 1966, 169 ensuite. Chaque
+      valeur est la durée de la génération qui a soixante ans l'année où le droit
+      s'ouvre, et aucune n'est celle de la génération de l'agent.
+    url: >-
+      https://www.ccomptes.fr/fr/publications/les-retraites-des-fonctionnaires-de-letat
+    date: 2026-09-22
+  - type: legifrance
+    reference: décret n° 2026-344, article 3 B
+    date: 2026-05-07
+  - type: legifrance
+    reference: >-
+      Loi n° 2023-270, article 10, version LEGIARTI000053280920 du 31 décembre 2025,
+      XXIV, B, lu dans l'index LEGI : « Par dérogation à l'article L. 13 du code
+      des pensions civiles et militaires de retraite et au A du présent XXIV : 1°
+      La durée de services et de bonifications requise pour les fonctionnaires bénéficiant,
+      au titre de la catégorie active, d'un droit au départ à l'âge anticipé est
+      égale : […] b) Pour ceux nés entre le 1er septembre 1966 et le 31 décembre
+      1967, à 169 trimestres […] »
+    date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      Décret n° 2023-435, article 13, version LEGIARTI000054059137 issue du décret
+      n° 2026-344 : même texte au mot près pour la CNRACL (décret n° 2003-1306,
+      article 16) et le FSPOEIE (décret n° 2004-1056, article 13).
+    date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      L. 161-17-3 CSS, version LEGIARTI000028494794 du 22 janvier 2014 : 167 trimestres
+      pour les nés de 1958 à 1960, 168 de 1961 à 1963, 169 de 1964 à 1966, 170 de
+      1967 à 1969, 171 de 1970 à 1972, 172 ensuite. Lue le 22 septembre comme la
+      table des « a) », elle n'en est que l'étage du dessous : ce qu'elle donne
+      pour la génération qui a soixante ans l'année où le droit de l'agent s'ouvre.
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    loi n° 2023-270 du 14 avril 2023, article 10, XXIV, B (fonction publique d'État)
+- reference: décret n° 2023-435 du 3 juin 2023, article 13, II, B (CNRACL et FSPOEIE)
+- reference: >-
+    L. 13, III, du code des pensions civiles et militaires, version du 22 janvier
+    2014
+- reference: >-
+    loi n° 2003-775 du 21 août 2003, article 5, VI, version du 11 novembre 2010
+- reference: L. 161-17-3 CSS, version du 22 janvier 2014
+exemples:
+- cdc_2026_tab20_super_active_1965
+- cdc_2026_tab20_super_active_1968
+- cdc_2026_tab20_super_active_1971_juin
+- cdc_2026_tab20_super_active_1971_octobre
+- cdc_2026_tab20_super_active_1975_juin
+- cdc_2026_tab20_active_1965
+- cdc_2026_tab20_active_1966_mars
+- cdc_2026_tab20_active_1966_octobre
+- cdc_2026_tab20_active_1968
+reformes:
+- lfss_2026_suspension

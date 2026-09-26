@@ -1,0 +1,46 @@
+schema_version: 1
+id: majoration_enfants_regimes_speciaux
+intitule: >-
+  Majoration pour enfants des régimes spéciaux : 10 % pour trois enfants et 5 %
+  par enfant au-delà à la SNCF, à la RATP, aux IEG, à la CRPCEN, au SEITA, à l'Opéra
+  et à la Comédie-Française ; 8,5 % puis 4,25 % à la Banque de France ; un dixième,
+  sans supplément, aux mines.
+etat: transcrite
+effet: >-
+  Parents de quatre enfants et plus dans ces régimes : le modèle servait 10 % quel
+  que soit le nombre d'enfants, 20 % sont dus à cinq ; la Banque de France servait
+  10 % au lieu de 8,5. Et rien du tout aux mineurs, à l'Opéra ni à la Comédie-Française,
+  dont les fiches ne déclaraient pas la majoration. Barème `taux_majoration_enfants`
+  de chaque période ; `test_les_regimes_speciaux_majorent_par_enfant_au_dela_de_trois`.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Les règlements d'avant les textes lus — SNCF et RATP avant juillet 2008, Banque
+    de France avant février 2007, CRPCEN avant 1990 — ne sont pas dans l'index LEGI
+    : le même barème leur est prêté. Le plafond de la pension majorée au traitement
+    ou à la rémunération n'est pas appliqué, comme dans la fonction publique. Le
+    CESE et les assemblées gardent 10 % sans supplément, faute de texte lu.
+  lectures:
+  - type: legifrance
+    reference: >-
+      SNCF LEGIARTI000048240189, RATP LEGIARTI000047910443, IEG LEGIARTI000052046924
+      et sa version de 1946 LEGIARTI000006632496, CRPCEN LEGIARTI000047909826, SEITA
+      LEGIARTI000006324645, lus dans l'index LEGI du dépôt
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      Opéra LEGIARTI000019138600, Comédie-Française LEGIARTI000006765450, Banque
+      de France LEGIARTI000047909725 (« 8, 5 % » et « 4, 25 % »), mines LEGIARTI000006765039
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: décret n° 2008-639, article 16
+- reference: décret n° 2008-637, article 25
+- reference: statut national des IEG, annexe 3, article 21
+- reference: décret n° 90-1215, article 94
+- reference: décret n° 62-766, article 118
+- reference: décret n° 68-382, article 18
+- reference: décret n° 68-960, article 16
+- reference: décret n° 2007-262, annexe, article 35
+- reference: décret n° 46-2769, article 139

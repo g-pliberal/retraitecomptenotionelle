@@ -1,0 +1,65 @@
+schema_version: 1
+id: bareme_minoration_regimes_en_points
+intitule: >-
+  Le coefficient de minoration des professions libérales est celui du régime général
+  : le plus petit des deux décomptes — trimestres jusqu'à l'âge d'annulation, trimestres
+  manquants pour la durée requise —, arrondi au chiffre supérieur, à 1,25 % par
+  trimestre, dans la limite de vingt trimestres.
+etat: conforme
+effet: >-
+  Le barème de la fiche `cnavpl` — 1,25 % par trimestre — est confirmé par le texte,
+  et `_trimestres_de_decote` appliquait déjà les trois règles de l'article : plus
+  petit des deux décomptes, arrondi de R. 351-27, plafond de vingt trimestres. Le
+  barème AGRICOLE l'est aussi, et il est générationnel : R. 732-61 donne les onze
+  mêmes valeurs que le II de R. 351-27, de 2,5 % avant 1944 à 1,25 % après 1952,
+  et la fiche `msa_non_salaries` porte déjà `decote_par_generation: true`, qui les
+  lit dans `coefficient_minoration.csv`. Son `decote_par_trimestre: 0.0125` n'est
+  que le repli. Aucune valeur n'a bougé, des deux côtés.
+sources:
+  lu_le: 2026-09-21
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 643-7 CSS, LEGIARTI000047633290, version du 1er septembre 2023, lue dans
+      l'index LEGI du dépôt : « La réduction prévue au troisième alinéa du I de
+      l'article L. 643-3 est fonction, soit du nombre de trimestres correspondant
+      à la durée séparant l'âge auquel la pension de retraite prend effet du soixante-cinquième
+      anniversaire […] ou, dans le cas contraire, de l'âge prévu au 1° de l'article
+      L. 351-8, soit du nombre de trimestres supplémentaires qui serait nécessaire
+      […] pour relever du deuxième alinéa du I de l'article L. 643-3. Le nombre
+      de trimestres correspondant est éventuellement arrondi au chiffre immédiatement
+      supérieur. Le plus petit de ces deux nombres est pris en considération. Le
+      coefficient de minoration est égal à 1,25 % par trimestre manquant dans la
+      limite de vingt trimestres. »
+    date: 2026-09-21
+  - type: legifrance
+    reference: >-
+      R. 732-39 du code rural, LEGIARTI000024113166 : pose la CONDITION du coefficient
+      — liquidation avant l'âge de L. 732-25 et sans la durée du deuxième alinéa
+      de L. 351-1 — et non son taux.
+    date: 2026-09-21
+  - type: legifrance
+    reference: >-
+      R. 732-61 du code rural, LEGIARTI000035918397, version du 28 octobre 2017
+      en vigueur jusqu'au 1er janvier 2026 : « La minoration est égale au produit
+      du plus petit de ces deux nombres, arrondis chacun au nombre immédiatement
+      supérieur, par le coefficient suivant : −2,5 % pour l'assuré né avant le 1er
+      janvier 1944 ; −2,375 % pour l'assuré né en 1944 ; −2,25 % en 1945 ; −2,125
+      % en 1946 ; −2 % en 1947 ; −1,875 % en 1948 ; −1,75 % en 1949 ; −1,625 % en
+      1950 ; −1,5 % en 1951 ; −1,375 % en 1952 ; −1,25 % pour l'assuré né après
+      1952. » Ces onze valeurs sont, génération par génération, celles du II de
+      R. 351-27 que porte déjà `coefficient_minoration.csv`.
+    date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      R. 732-68 du code rural, LEGIARTI000053336735, version du 1er janvier 2026
+      (décret n° 2025-1409 du 31 décembre 2025) : « Le coefficient de minoration
+      prévu au II de l'article L. 732-24 du présent code est déterminé dans les
+      mêmes conditions que celui mentionné au 2° du I de l'article R. 351-27 du
+      code de la sécurité sociale, y compris s'agissant du plafonnement mentionné
+      à l'article R. 351-27-1 du même code. » L'alignement sur le régime général
+      devient explicite.
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: R. 643-7 CSS, version du 1er septembre 2023

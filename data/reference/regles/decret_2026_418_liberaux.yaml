@@ -1,0 +1,47 @@
+schema_version: 1
+id: decret_2026_418_liberaux
+intitule: >-
+  Décret n° 2026-418 du 29 mai 2026 réécrivant les régimes complémentaires et d'invalidité-décès
+  des sections libérales, à confronter aux fiches.
+etat: transcrite
+effet: >-
+  Lu pour les sections juridiques (articles 2 et 22), les sections de santé (articles
+  3 à 6, 16 et 25), puis, le même jour, pour la CAVEC (8), la CAVAMAC (13) et la
+  Cipav (20 et 21) : aucun paramètre des fiches ne bouge. L'article 20 écrit la
+  majoration pour trois enfants de la Cipav, que la fiche porte désormais depuis
+  2000 (ligne `sections_liberales_majoration_enfants`).
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Non portés : l'inscription d'office en classe A la première année à la CAVEC,
+    l'option pour la classe supérieure et les rachats de points ; la condition de
+    trente années d'affiliation de la majoration pour report de la Cipav, qui ne
+    porte que sur les points de ces trente années, là où le modèle les majore tous
+    ; le versement forfaitaire unique des petites pensions.
+  lectures:
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, lu en partie dans l'index JORF le 22 septembre 2026 (articles
+      sur l'ASV des auxiliaires médicaux, les rachats de la CARMF)
+    date: 2026-09-22
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, articles 3, 4, 5, 6, 16 et 25 (CARMF, CAVP, CARCDSF, CARPV,
+      ASV des médecins, CARPIMKO), lus en entier dans l'index JORF : une codification
+      — affiliation, dispenses, rachats, classes, cotisations volontaires — qui
+      ne change aucun des paramètres que les fiches portent
+    date: 2026-09-23
+  - type: jorf
+    reference: >-
+      décret n° 2026-418, articles 8 (CAVEC), 13 (CAVAMAC), 20 et 21 (Cipav), lus
+      en entier dans l'index JORF : pour la CAVEC et la CAVAMAC, affiliation, option
+      pour la classe supérieure, exonérations, rachats, cotisation de fin de carrière,
+      et le renvoi des conditions de service à un règlement ; pour la Cipav, les
+      articles 5-1 à 5-6 du décret n° 79-262 — âges et minoration qui suivent le
+      régime de base, majoration de 10 % pour trois enfants, majoration pour report
+      réservée à trente années d'affiliation — et le régime d'invalidité-décès
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: décret n° 2026-418 du 29 mai 2026 (JORF du 31 mai 2026)

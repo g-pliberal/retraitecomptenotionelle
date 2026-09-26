@@ -140,12 +140,13 @@ pension, tel que la caisse l'applique. D'où trois obligations, décrites dans
   vigueur, identifiant) ET dans la circulaire ou la fiche qui l'applique, a
   son exemple chiffré publié dans `tests/temoins/exemples_officiels.yaml`
   quand il en existe un — en écart connu si le modèle ne le reproduit pas —,
-  et sa ligne dans `data/reference/legislation/veille.yaml`, avec la date de
-  lecture et l'état. Une déduction n'est pas une lecture ; une mémoire n'est
-  pas une source ; une table certifiée l'est à une date.
-- **À la fin**, consigner dans le `journal` de `veille.yaml` ce qui a été
-  consulté, trouvé et laissé. Un test refuse toute réforme du calendrier
-  datée de 2023 ou après sans sa ligne de veille.
+  et sa fiche dans `data/reference/regles/`, avec la date de lecture et
+  l'état. Une déduction n'est pas une lecture ; une mémoire n'est pas une
+  source ; une table certifiée l'est à une date.
+- **À la fin**, consigner dans le `journal` de
+  `data/reference/legislation/veille.yaml` ce qui a été consulté, trouvé et
+  laissé. Un test refuse toute réforme du calendrier datée de 2023 ou après
+  sans la fiche qui la couvre.
 
 ## Chercher dans le JORF ou LEGI
 

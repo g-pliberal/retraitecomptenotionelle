@@ -1,0 +1,36 @@
+schema_version: 1
+id: majoration_dix_pour_cent
+intitule: >-
+  Majoration de 10 % pour trois enfants au régime général, sur la retraite telle
+  que calculée ; plafonnée en euros à l'Agirc-Arrco, dont les taux sont ceux de
+  la ligne `majoration_enfants_agirc_arrco`.
+etat: conforme
+effet: Parents de trois enfants.
+sources:
+  lu_le: 2026-09-21
+  prochaine_relecture: 2026-11-30
+  a_relire:
+  - >-
+    Relire le plafond Agirc-Arrco chaque novembre — c'est la seule pièce du dispositif
+    qui ne soit tenue par aucun des trois témoins, ceux-ci mesurant le TAUX et son
+    assiette, pas l'écrêtement en euros de la complémentaire.
+  lectures:
+  - type: autre
+    reference: Agirc-Arrco, plafond de la majoration familiale (novembre 2025)
+    date: 2025-11-01
+  - type: circulaire_cnav
+    reference: >-
+      circulaire 2022-26 du 14 octobre 2022, Majoration pour enfants, point 3.2
+      : l'assiette est la retraite majorée par la surcote, 10 % × (600 + 22,50)
+      = 62,25
+    date: 2022-10-14
+  - type: service_public
+    reference: fiche F16336, majoration de 10 % pour trois enfants au régime général
+    date: 2026-08-14
+textes_a_rattacher:
+- reference: L. 351-12 CSS
+- reference: accord national interprofessionnel Agirc-Arrco
+exemples:
+- cnav_2022_26_majoration_enfants_sur_surcote
+- cnav_2022_26_majoration_enfants_au_taux_plein
+- cnav_2022_26_majoration_enfants_sur_decote

@@ -1,0 +1,47 @@
+schema_version: 1
+id: cnavpl_majoration_duree_assurance
+intitule: >-
+  Régime de base des professions libérales : majoration de durée d'assurance pour
+  enfants de L. 351-4 pour les pensions prenant effet depuis le 1er avril 2010 (L.
+  643-1-1), étendue à L. 351-4-1 et L. 351-4-2 en 2023 ; surcote parentale de L.
+  351-1-2-1 pour les pensions prenant effet depuis le 1er septembre 2023 (I de L.
+  643-3).
+etat: approchee
+effet: >-
+  La fiche les disait non portés, et le moteur ne cherchait la majoration de durée
+  que dans les régimes en annuités : une libérale qui n'avait cotisé qu'à sa section
+  perdait jusqu'à 1,25 % de sa pension par trimestre que la loi lui donne. Depuis
+  le 23 septembre 2026, `mda` sur les périodes de la CNAVPL depuis 2010, lu dans
+  toute fiche qui le porte — les bonifications restant aux annuités —, et `surcote_parentale`
+  depuis 2024 ; tenu par tests/test_sections_liberales.py et le témoin `enfants_liberale`.
+  Approximation : la maille est l'année, les pensions d'avril à décembre 2010 et
+  de septembre à décembre 2023 en sont privées.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Les cent points par trimestre d'accouchement de D. 643-1, que le modèle ne sait
+    pas dater faute de la date de naissance des enfants.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 643-1-1 dans ses versions de 2009 et de 2023, et L. 643-3 dans sa version
+      de 2023, lus dans l'index LEGI du dépôt.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CNAVPL, page « Comprendre sa retraite » et guide 2026, partie 1 : trimestres
+      pour enfants et surcote parentale ; CAVAMAC, page « Le calcul de ma pension
+      », qui la décrit pour « les générations nées à partir du 1er avril 1965 ».
+    url: https://www.cnavpl.fr/comprendre-sa-retraite/
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    loi n° 2009-1646 du 24 décembre 2009, article 65, VIII : L. 643-1-1 CSS (LEGIARTI000021537910)
+- reference: >-
+    loi n° 2023-270 du 14 avril 2023 : L. 643-1-1 CSS (LEGIARTI000047453363) et
+    I de L. 643-3 CSS (LEGIARTI000047453031)
+reformes:
+- cnavpl_mda_2010
+- majoration_enfants_liberaux_2023

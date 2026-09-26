@@ -118,6 +118,7 @@ objets:
       type: {porte: "la sorte de source lue", type: valeur, valeurs: types_de_source, obligatoire: true}
       reference: {porte: "ce qui a été lu", type: texte, obligatoire: true}
       date: {porte: "la date de la source", type: date, obligatoire: true}
+      url: {porte: "l'adresse où elle se lit, quand elle en a une", type: texte, defaut: null}
 
   relie:
     champs:

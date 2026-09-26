@@ -1,0 +1,74 @@
+schema_version: 1
+id: rco_points_gratuits
+intitule: >-
+  Points gratuits de la RCO agricole : le chef d'exploitation dont la retraite prend
+  effet après le 31 décembre 2002 reçoit, sans contrepartie de cotisations, 100
+  points pour chacune de ses années de chef à titre exclusif ou principal accomplies
+  avant le 1er janvier 2003, dans la limite de la différence entre 37,5 ans et ses
+  années d'affiliation à la RCO, s'il justifie à la date d'effet de 17,5 ans d'assurance
+  comme chef et du taux plein de son régime de base : la durée requise pour ce taux,
+  tous régimes, jusqu'au 31 août 2023 ; une pension liquidée au taux plein, par
+  la durée ou par l'âge, depuis le 1er septembre 2023.
+etat: conforme
+effet: >-
+  Chefs d'exploitation installés avant 2003 et partis au taux plein. Le modèle ne
+  leur servait que leurs points cotisés : installé en 1975 et parti en 2019 à la
+  moitié du salaire moyen, un chef perdait 2 150 points, plus de la moitié de sa
+  RCO — 729 € par an. Champ `points_gratuits` de la fiche `msa_rco`, lu par `_points_gratuits`
+  et `pointsGratuits` dans les deux moteurs, isolé par la ligne de cascade `points_gratuits_rco`,
+  tenu par `test_le_chef_d_exploitation_recoit_ses_points_gratuits_de_rco` et son
+  pendant JavaScript. Une année se compte en trimestres validés au régime de base
+  divisés par quatre.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-09-30
+  a_relire:
+  - >-
+    Les points du V et du VI de L. 732-56 — 66 par an, dix-sept annuités au plus
+    (D. 732-154-1 à -3) — pour les conjoints, aides familiaux et collaborateurs,
+    et pour le chef qui n'a pas dix-sept ans et demi comme chef : ils demandent
+    un statut que le modèle ne connaît pas. Les majorations de durée d'assurance
+    que D. 732-151 compte dans les dix-sept ans et demi depuis 2026 : le modèle
+    n'en attribue aucune au régime des non-salariés agricoles, dont la fiche n'en
+    déclare pas. La révision de 2023 des pensions prises avant le 1er septembre,
+    le modèle calculant la pension à sa date d'effet. La distinction entre activité
+    principale et secondaire.
+  lectures:
+  - type: legifrance
+    reference: >-
+      D. 732-154 en vigueur (LEGIARTI000053365870) : « 100 points de retraite complémentaire
+      pour chacune des années de chef d'exploitation ou d'entreprise agricole à
+      titre exclusif ou principal accomplies avant le 1er janvier 2003 [...] retenues
+      dans la limite de la différence entre trente-sept années et demie et le nombre
+      d'années ayant donné lieu à affiliation au régime de retraite complémentaire
+      obligatoire » ; L. 732-56 et D. 732-151 lus dans toutes leurs versions de
+      l'index LEGI du dépôt
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      MSA, « La retraite des non-salariés agricoles », onglet « RCO : comment est-elle
+      calculée ? », mis à jour le 17 août 2026 : « 100 points pour les années de
+      chef d'exploitation accomplies avant le 1er janvier 2003 dans la limite de
+      la différence entre 37,5 ans et le nombre d'années d'affiliation à la RCO
+      », sous condition de « la durée d'activité nécessaire tous régimes confondus
+      pour obtenir la liquidation de la retraite de base à taux plein [...] dont
+      17,5 années en qualité de chef d'exploitation » — la condition d'avant le
+      1er septembre 2023, que la page n'a pas mise à jour
+    url: https://www.msa.fr/lfp/retraite/non-salaries-agricoles
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    code rural, D. 732-154, trois versions (LEGIARTI000006597590 de 2005, LEGIARTI000047961251
+    du 1er septembre 2023, LEGIARTI000053365870 en vigueur depuis le 1er janvier
+    2026), la règle des cent points dans toutes
+- reference: >-
+    code rural, D. 732-151 (LEGIARTI000023395130 de 2011 à 2025, LEGIARTI000053365751
+    en vigueur) : dix-sept années et demie d'assurance comme chef
+- reference: >-
+    code rural, L. 732-56, II, 2° et III : « qui ont liquidé leur pension à taux
+    plein » depuis le 1er septembre 2023 (LEGIARTI000047453314, LEGIARTI000051289591)
+    ; avant, une durée d'assurance « au moins égale à celle requise par l'article
+    L. 732-25 pour ouvrir droit à une pension à taux plein » (LEGIARTI000046806448)
+- reference: >-
+    loi n° 2023-270 du 14 avril 2023, article 18, VI : en vigueur le 1er septembre
+    2023, et applicable aux pensions prises avant pour les arrérages dus depuis

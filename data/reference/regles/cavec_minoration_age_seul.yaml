@@ -1,0 +1,56 @@
+schema_version: 1
+id: cavec_minoration_age_seul
+intitule: >-
+  Régime complémentaire de la CAVEC : liquidation « à 65 ans à taux plein ; entre
+  60 et 65 ans, avec application d'un abattement définitif de 1,25 % par trimestre
+  manquant », sans condition de durée d'assurance, pour toutes les générations ;
+  65 ans depuis 1983 au moins.
+etat: approchee
+effet: >-
+  La note de la fiche disait la règle, mais la période laissait la durée annuler
+  la minoration, et lisait avant 2008 les âges du régime général : un expert-comptable
+  parti à 62 ans avec sa durée ne perdait rien, là où l'article 3.13 lui retire
+  15 %. Depuis le 23 septembre 2026, ouverture à 60 ans et taux plein à 65 ans pour
+  toutes les générations, `decote_annulee_par_la_duree: false` partout ; la loi
+  de 2010 et celle de 2023 sont déclarées `non_appliquee` à la section ; tenu par
+  tests/test_sections_liberales.py. Approximation : avant 2008, le taux de l'abattement
+  n'est pas connu, et celui de 2008 en tient lieu.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Dater le taux de l'abattement d'avant 2008, que seuls les statuts publiés au
+    Bulletin officiel portent.
+  lectures:
+  - type: jorf
+    reference: >-
+      L'arrêté de 2008, ceux qui l'ont modifié jusqu'au 4 juillet 2025, l'arrêté
+      du 10 juillet 2026 et l'article 8 du décret n° 2026-418, lus dans l'index
+      JORF du dépôt : ni la loi de 2010 ni celle de 2023 n'y déplacent les âges
+      de la section.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CAVEC, « Depuis 1949, une histoire d'avenir, le livre des 70 ans » : en 1983,
+      ses administrateurs « choisissent de ne pas abaisser l'âge de départ en retraite
+      à 60 ans (comme annoncé pour le régime général […]). Il reste et restera fixé
+      à 65 ans. » Guide « Bien préparer votre retraite » et page « Le calcul de
+      votre retraite » : mêmes âges.
+    url: >-
+      https://www.cavec.fr/wp-content/uploads/Cavec-depuis-1949-une-histoire-davenir-le-livre-des-70-ans.pdf
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    statuts, article 3.13, approuvés par l'arrêté du 22 février 2008 (JORFARTI000018197778)
+- reference: >-
+    statuts dans leurs rédactions de 2018 à 2025, et règlement du régime approuvé
+    par l'arrêté du 10 juillet 2026 (LEGIARTI000054437585)
+- reference: >-
+    décret du 21 mai 1953, dans la rédaction de l'article 8 du décret n° 2026-418
+    (JORFARTI000054153497)
+reformes:
+- cavec_report_2008
+- woerth_2010
+- reforme_2023
+- cavec_report_2026

@@ -1,0 +1,34 @@
+schema_version: 1
+id: carriere_longue_enfants_reputes_cotises
+intitule: >-
+  Deux trimestres au plus de majoration pour enfants (maternité, adoption, éducation,
+  congé parental, bonifications de la fonction publique) réputés cotisés pour la
+  carrière longue, pensions dès le 1er septembre 2026.
+etat: transcrite
+effet: Mères à carrière longue à qui il manque un ou deux trimestres cotisés.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - Chercher un exemple publié.
+  lectures:
+  - type: circulaire_cnav
+    reference: 2026-29 du 4 septembre 2026, point 1.2.3.8 et annexe 4
+    date: 2026-09-04
+  - type: legifrance
+    reference: >-
+      D. 16-2 CPCMR, version du 1er août 2026, lu dans l'index LEGI : « dans la
+      limite de deux trimestres »
+    date: 2026-09-24
+  - type: autre
+    reference: >-
+      Service des retraites de l'État, page « La retraite anticipée » : quatre trimestres
+      par enfant né avant 2004, deux depuis, sans la limite du décret
+    date: 2026-09-24
+textes_a_rattacher:
+- reference: L. 351-1-1 3° CSS (loi n° 2025-1403, article 104)
+- reference: D. 351-1-2-1 CSS (décret n° 2026-700 du 29 juillet 2026)
+- reference: L. 25 bis 4° CPCMR (LEGIARTI000053280372)
+- reference: D. 16-2, I, 4° CPCMR (décret n° 2026-700, LEGIARTI000054589198)
+reformes:
+- lfss_2026_suspension

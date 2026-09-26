@@ -1,0 +1,51 @@
+schema_version: 1
+id: carpimko_ages_2015
+intitule: >-
+  Régime complémentaire de la CARPIMKO depuis l'arrêté du 31 juillet 2015 : taux
+  plein à 65 ans pour les générations 1955 et antérieures, quatre mois de plus par
+  génération jusqu'à 67 ans en 1961, âge minimal de 60 à 62 ans du même pas ; taux
+  plein avant cet âge avec la durée du régime de base ; abattement de 1,25 % par
+  trimestre manquant au régime de base dans la limite des trimestres qui séparent
+  de l'âge du taux plein (jusqu'en 2023 : 4 % par année d'anticipation plus 0,25
+  % par trimestre manquant pour les générations 1955 et antérieures). Majoration
+  de 10 % pour trois enfants depuis 2024.
+etat: approchee
+effet: >-
+  La fiche lisait 67 ans dès la génération 1955 ; la table `carpimko_2016` arrête
+  la décote et fait partir la majoration à l'âge que l'article 12 quater écrit,
+  depuis 2016. Trois enfants majorent la pension depuis 2024. Approximations : l'abattement
+  des générations 1955 et antérieures de 2016 à 2023 (4 % par année plus 0,25 %
+  par trimestre) n'est pas porté, et la fiche leur applique 1,25 % par trimestre
+  depuis 65 ans ; les statuts d'avant 2015 ne sont pas lus.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Porter l'abattement des générations 1955 et antérieures si un témoin ou un cas
+    type l'exige ; lire les statuts d'avant 2015.
+  lectures:
+  - type: jorf
+    reference: >-
+      Les trois textes lus dans l'index JORF du dépôt ; les statuts antérieurs,
+      publiés au Bulletin officiel (arrêté du 20 novembre 1996), n'y sont pas.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CARPIMKO, page « Age de ma retraite » : 62 à 64 ans, taux plein à 67 ans ou
+      avec la durée, décote et surcote ; l'ASV des auxiliaires, 60 et 65 ans. Elle
+      ne décrit pas la table des générations d'avant septembre 1961.
+    url: >-
+      https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/age-de-ma-retraite
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    statuts, articles 11, 12, 12 ter et 12 quater, dans la rédaction de l'arrêté
+    du 31 juillet 2015 (JORFTEXT000031255542)
+- reference: arrêté du 27 décembre 2023 (JORFTEXT000048880637)
+- reference: >-
+    règlement du régime, articles 3 à 6, approuvé par l'arrêté du 10 juillet 2026
+    (JORFTEXT000054435904)
+reformes:
+- carpimko_report_2015
+- carpimko_2024

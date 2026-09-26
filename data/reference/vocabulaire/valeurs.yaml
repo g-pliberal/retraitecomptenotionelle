@@ -21,8 +21,8 @@ listes:
       transcrite: lue dans son texte, sans exemple publié qui la rejoue
       approchee: appliquée avec une approximation déclarée, chacune avec son effet ou « non mesuré »
       manquante: connue, et absente du modèle alors qu'elle touche ce qu'il calcule
-      pas_encore_modelisee: hors du modèle, dans un domaine qu'il ne calcule pas encore
-      a_verifier: ce qu'une session n'a pas pu finir de lire, et par où la suivante commence
+      pas_encore_modelisee: hors du modèle, dans un domaine qu'il ne calcule pas encore — le ménage, l'information médicale, un dispositif temporaire
+      a_verifier: signalée, pas encore lue à la source ; ce qu'une session n'a pas pu finir de lire, et par où la suivante commence
 
   faces:
     valeurs:

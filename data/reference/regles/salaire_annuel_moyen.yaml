@@ -1,0 +1,28 @@
+schema_version: 1
+id: salaire_annuel_moyen
+intitule: >-
+  Vingt-cinq meilleures années (dix à vingt-cinq par génération de 1934 à 1948),
+  salaires revalorisés par les coefficients de la circulaire annuelle, année du
+  départ exclue, plafond proratisé.
+etat: conforme
+effet: Toute pension en annuités du privé.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - >-
+    Relire la colonne de revalorisation à chaque 1er janvier (cnav_revalorisation_salaires.py).
+  lectures:
+  - type: circulaire_cnav
+    reference: circulaire de revalorisation des salaires, colonne au 1er janvier
+      2026
+    date: 2026-01-01
+  - type: legifrance
+    reference: R. 173-3-2 CSS, LEGIARTI000054059837
+    date: 2026-09-01
+textes_a_rattacher:
+- reference: R. 351-29 CSS
+- reference: R. 173-3-2 CSS (nombre d'années, depuis le décret n° 2025-1409)
+- reference: R. 351-29-1 CSS (générations d'avant 1948)
+exemples:
+- sp_f21552_taux_plein_170

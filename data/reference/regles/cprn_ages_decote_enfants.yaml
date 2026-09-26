@@ -1,0 +1,57 @@
+schema_version: 1
+id: cprn_ages_decote_enfants
+intitule: >-
+  Régime complémentaire de la CPRN. De 2014 à 2023 : ouverture à 60 ans et taux
+  plein à 65 pour les nés avant 1954, puis à l'âge de L. 161-17-2 « différé de vingt-quatre
+  mois » et à ce même âge « augmenté de cinq ans » — 64 et 69 ans pour les générations
+  1955 et suivantes. Depuis 2024 : l'âge de L. 161-17-2 et celui du 1° de L. 351-8.
+  Dans les deux cas, une décote de 1,25 % par trimestre séparant l'âge de l'affilié
+  de l'âge du taux plein, que la durée n'annule pas ; depuis 2024, une majoration
+  de 10 % pour trois enfants dans les conditions de L. 351-12.
+etat: transcrite
+effet: >-
+  La fiche lisait les âges du régime général et laissait la durée annuler la décote
+  : un notaire parti à l'âge légal avec sa durée ne perdait rien de sa section C,
+  là où les statuts lui retirent 1,25 % par trimestre jusqu'au taux plein — 15 %
+  à 64 ans depuis 2024, 25 % à 64 ans de 2014 à 2023 pour les générations d'après
+  1954, qui n'avaient le taux plein qu'à 69 ans. Depuis le 23 septembre 2026 : `age_table:
+  cprn_2014`, `decote_annulee_par_la_duree: false` et `majoration_enfants` ; tenu
+  par tests/test_sections_juridiques.py. Les périodes d'avant 2014 gardent la règle
+  d'avant, faute d'une version des statuts antérieure dans l'index.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    La majoration de 30 % par enfant à charge de moins de vingt et un ans n'est
+    pas portée ; les statuts d'avant 2014 restent à trouver.
+  lectures:
+  - type: jorf
+    reference: >-
+      Les quatre arrêtés lus dans l'index JORF du dépôt : âges « différés de vingt-quatre
+      mois » de 2014 à 2023, « 1,25 % par trimestre séparant l'âge de l'affilié
+      à la date de liquidation de l'âge du taux plein » dans chacune des rédactions,
+      majoration de 10 % pour trois enfants depuis 2024.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CPRN, statuts en vigueur (PDF de 2024, articles 18, 21 et 23) et page « L'âge
+      de départ à la retraite » : « une décote de 1,25 % par trimestre d'anticipation
+      est appliquée sur la pension dans la limite de 25 % ».
+    url: >-
+      https://cprn.fr/je-suis-affilie/je-suis-actif/preparer-sa-retraite-en-toute-serenite/lage-de-depart-a-la-retraite/
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    statuts de la CPRN, articles 15 et 16, rédaction de l'arrêté du 16 décembre
+    2013 (JORFTEXT000028387437), en vigueur au 1er janvier 2014, reprise par l'arrêté
+    du 31 mai 2017 (JORFARTI000034975971)
+- reference: >-
+    statuts, articles 18 et 23, rédaction de l'arrêté du 29 novembre 2023 (JORFTEXT000048679340),
+    en vigueur au 1er janvier 2024
+- reference: >-
+    règlement du régime complémentaire, articles 4, 7 et 9, approuvé par l'arrêté
+    du 10 juillet 2026 (JORFARTI000054435995)
+reformes:
+- cprn_report_2014
+- cprn_report_2024

@@ -1,0 +1,67 @@
+schema_version: 1
+id: cavamac_minoration_age_seul
+intitule: >-
+  Régime complémentaire de la CAVAMAC : jusqu'en 2023, taux plein à l'âge de L.
+  161-17-2 augmenté de cinq ans, liquidation dès l'âge légal avec une minoration
+  de 5 % par tranche de douze mois d'anticipation, que la durée d'assurance n'annule
+  pas, et majoration de 5 % par année pleine différée dans la limite de 25 % ; depuis
+  le 1er janvier 2024, taux plein à 67 ans, minoration de 1,25 % par trimestre manquant
+  pour l'atteindre, et majoration de 5 % par année pleine COTISÉE au-delà, hors
+  cumul emploi-retraite.
+etat: approchee
+effet: >-
+  La fiche opposait la décote du régime de base, que la durée annule : un agent
+  général parti à l'âge légal avec sa durée ne perdait rien de sa complémentaire,
+  là où ses statuts lui retirent de 5 à 25 %. Depuis le 23 septembre 2026, `abattement_points:
+  cavom` jusqu'en 2023, `decote_annulee_par_la_duree: false` partout, la surcote
+  par années pleines, et `surcote_trimestres_cotises` depuis 2024, qui ne compte
+  que les trimestres cotisés au-delà de 67 ans ; tenu par tests/test_sections_liberales.py.
+  Approximation : la règle de 2011 est supposée la même avant, faute des statuts
+  publiés ; la liquidation dès 62 ou 63 ans des carrières longues, à 15 % de minoration,
+  n'est pas portée — le modèle leur oppose la minoration ordinaire.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Lire les statuts d'avant 2011 au Bulletin officiel, s'ils sont numérisés ; lire
+    le règlement de la section, que le décret n° 2026-418 appelle, quand un arrêté
+    l'aura approuvé.
+  lectures:
+  - type: jorf
+    reference: >-
+      Les deux arrêtés et l'article 13 du décret n° 2026-418, lus en entier dans
+      l'index JORF du dépôt. Les statuts de 1967 et leurs modifications jusqu'en
+      2007 n'ont été publiés qu'au Bulletin officiel : le Journal officiel n'en
+      porte que des titres, ou des articles sans rapport avec l'âge.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CAVAMAC, « Mode de calcul de vos retraites RBL & RCO — Décotes & surcotes
+      : quelques exemples » : « au lieu d'une décote uniforme de 5 % par année civile
+      d'anticipation par rapport à l'âge du taux plein (67 ans) la décote est de
+      1,25 % par trimestre manquant, toujours par rapport à l'âge du taux plein
+      » ; un départ au 1er juillet 2026 d'un assuré né le 8 août 1960, 6,25 % ;
+      « une surcote de 5 % du nombre de points retraite est appliquée pour chaque
+      année pleine cotisée, dans la limite de 25 % ». Fiche « Calculer rapidement
+      l'ordre de grandeur de mes retraites » et guide 2026 de la CNAVPL, partie
+      2 : mêmes règles.
+    url: >-
+      https://www.cavamac.fr/documents/calcul-des-decotes-surcotes-rbl-rco-quelques-exemples/
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    statuts du régime complémentaire, articles 15 et 16, approuvés par l'arrêté
+    du 23 juin 2011 (JORFARTI000024270156, annexe JORFARTI000024270173)
+- reference: >-
+    statuts, articles 15 et 16, dans la rédaction de l'arrêté du 4 août 2023 (annexe
+    JORFARTI000047977908 ; dates d'effet à l'article 2, JORFARTI000047977903)
+- reference: >-
+    décret du 22 décembre 1967, dans la rédaction de l'article 13 du décret n° 2026-418
+    (JORFARTI000054153565), qui renvoie les conditions de service à un règlement
+    de la section
+exemples:
+- cavamac_rco_decote_cinq_trimestres
+reformes:
+- cavamac_statuts_2011
+- cavamac_2024

@@ -1,0 +1,39 @@
+schema_version: 1
+id: rci_seuil_premiere_tranche
+intitule: >-
+  De 2013 à 2024, la première tranche du RCI (7 %) s'arrête à un plafond propre
+  au régime — le plafond de la sécurité sociale de 2013, puis revalorisé du plus
+  petit des coefficients du revenu de référence et des pensions —, et non au plafond
+  de chaque année.
+etat: manquante
+effet: >-
+  Artisans et commerçants au-dessus du seuil, de 2014 à 2024 : la fiche coupe la
+  première tranche au plafond de chaque année (46 368 € en 2024), le texte à un
+  seuil plus bas (42 946 €), au-delà duquel le taux est de 8 % et non de 7. Sur
+  la tranche d'écart, un point de cotisation de moins : en 2024, une trentaine d'euros
+  de cotisation et deux euros de pension par an, moins d'un millième de la pension
+  RCI.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-06-30
+  a_relire:
+  - >-
+    Lire la série des seuils de 2014 à 2023, que le COR ne publie que pour 2024,
+    et porter une assiette propre à la première tranche.
+  lectures:
+  - type: legifrance
+    reference: >-
+      D. 635-7 CSS, LEGIARTI000025263581 (2013), LEGIARTI000034624601 (2017), LEGIARTI000041966498
+      (2020) : « Au titre de l'exercice 2013, le montant du plafond mentionné au
+      1° est fixé au plafond annuel […] en vigueur au 1er janvier 2013 »
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      COR, fiche « Régime complémentaire des indépendants » (juillet 2024) : 7 %
+      « jusqu'à un plafond spécifique (42 946 euros) » en 2024
+    url: https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_RCI_0.pdf
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: D. 635-7 CSS, versions du 1er janvier 2013 au 6 juillet 2024
+reformes:
+- rci_2013

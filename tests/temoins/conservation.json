@@ -894,6 +894,7 @@
    "cavom_guide",
    "cavp_mementos",
    "ccomptes_retraites_fpe_2026",
+   "ccomptes_retraites_fpe_2026_donnees",
    "ccsf_rapport_per_2021",
    "cdc_cnracl",
    "cdc_ircantec_baremes",
@@ -1318,11 +1319,6 @@
   ]
  },
  "paragraphes": {
-  "CLAUDE.md": {
-   "Git": [
-    "14cd42c5f1131dd3"
-   ]
-  },
   "README.md": {
    "5. Une réforme prospective ne fait rien économiser tout de suite, et beaucoup ensuite": [
     "b3513b53fccd6c32",
@@ -1341,1046 +1337,57 @@
     "8c472892f7610eb2"
    ]
   },
-  "docs/avantages_non_contributifs.md": {
-   "1. Pourquoi cette liste n'existait pas": [
-    "b0b48a06a9f264a3",
-    "b6dffd64e7021d8c",
-    "0a733eb435db641d",
-    "087815da58cf6c9f",
-    "9c5e1d976df85c17"
+  "docs/archives/conventions.md": {
+   "Chercher dans le JORF ou LEGI": [
+    "416d7756bcc8890f",
+    "15d15a350d67bbbf",
+    "3cbe19536c47f5d6",
+    "e194cb982097377f"
    ],
-   "4 bis. Les deux avantages qui ne se lisaient pas dans la cascade": [
-    "55f0d522e852ef6b",
-    "2ca120c11e8d8f66",
-    "daf7e6ee68346126",
-    "3d8a6bd756b58484",
-    "dff85480942e3313",
-    "9a54538ee8d0c155",
-    "c326cf63fd45ff2e",
-    "3250e22b6bfbc589",
-    "815306a4fcf99503",
-    "19028ca4469f3890",
-    "728f85a96454aa48",
-    "a3ea5aedd1bc5750",
-    "0f285b1766a09704",
-    "8a4ef8e75ab3edee"
+   "Conventions du dépôt": [
+    "774ed2815ab71867"
    ],
-   "4 quater. La réversion, lue et non calculée": [
-    "a848934bfcf8da14",
-    "0e85e77da569b86f",
-    "e6d077f03ef030cc"
+   "Git": [
+    "5819778898df55e3",
+    "4ec205c1653221b4",
+    "d862db5ad61c4590",
+    "08069e26b907fb53",
+    "5db89771dd03e4a0",
+    "f890c2419210c559",
+    "2de39499bc234635",
+    "fb1b41035356af10",
+    "aa7e49f938c58837",
+    "d01f42886d7abc28",
+    "3246cce98de3ab42",
+    "81ad406f1934b8d4",
+    "14cd42c5f1131dd3",
+    "aed9d3ff33b1e16b",
+    "95fecfda7d0e06c4",
+    "25e9b56216435d5d",
+    "333959dae3d72be3",
+    "52051ebfc6cc1353",
+    "26d9d7cb0b6ddea4",
+    "8b56a43a8d46be5a",
+    "8bdf338eff6546be"
    ],
-   "4 quinquies. Les postes que les comptes publient, et qui remplacent le modèle": [
-    "0b787f052de773ef",
-    "a08ce0c6b0114a11",
-    "52a6203f4e3cc4f9",
-    "367e05fadd9dffec",
-    "32d5ff425ac295c3"
+   "Le scénario 1 est le droit applicable, et rien d'autre": [
+    "0ac45e54ebdfed70",
+    "8838263095192346",
+    "2b6ac21d52b55dd0"
    ],
-   "4 sexies. Tous, et sur le plus d'années possibles": [
-    "c3bb245891de8345",
-    "117e13bef2260ef0"
+   "Les conventions du dépôt, telles que `CLAUDE.md` les disait le 25 septembre 2026": [
+    "7ce9abc9ec5a46bd",
+    "99b1add1ec022e5b"
    ],
-   "4 ter. Les neuf lignes « intégré » qui restaient": [
-    "98811efc1ce9d9e2",
-    "6d2d5046c754fb6c"
-   ],
-   "4. Comment on chiffre, et ce que ça a donné": [
-    "efcbf07a29c6c03e",
-    "bb891068557180af",
-    "edc0b6177ee7df3d",
-    "d46439ae8ec6f7c1",
-    "79faa8b23513f68c",
-    "f4b8aaa5a362df87",
-    "6c70e63e8e25be37"
-   ],
-   "5. Pourquoi, et c'est le vrai résultat de ce chantier": [
-    "e0978fc8321c0602",
-    "1db2c09a650b8611",
-    "cdd4ec90136cebe3",
-    "47fa1c0c7d0684c2",
-    "ad4b5be8c8d6a1b4",
-    "36d1c9e4b615c9fa",
-    "b189e9849637eb7f"
-   ],
-   "6. Ce qu'il faut faire, dans l'ordre": [
-    "96a5088540c3df54",
-    "5fd0746fd9ea18dd"
-   ],
-   "7. Une contradiction relevée au passage": [
-    "9506f4e7f6d3bbda",
-    "49fe6136bd31e148",
-    "df780403bdf00d94"
-   ],
-   "Ce qu'elle change au statut de la page": [
-    "65e20f48d26e0e65",
-    "7fbb31eefb7f1cc9",
-    "678eee51b26706d2",
-    "c5788e5831cc1d44"
-   ],
-   "Ce que cela donne au total": [
-    "acf637950b583c59",
-    "ac9199e51cd0805d",
-    "d56138b694ff03cd",
-    "c9071bff94bb2a22"
-   ],
-   "Ce que ces trois lignes apprennent": [
-    "18d5ca65c080416c",
-    "d54058b53184c61a",
-    "9c8338db038b1213"
-   ],
-   "Ce que chacune vaut": [
-    "5880bfc96eb155c9",
-    "c1eef52cf8fca920",
-    "6cc92ac0eb26d951",
-    "ce2da59645297741",
-    "24f0815701a9367e"
-   ],
-   "Ce que la page montre désormais": [
-    "c371054a6d4f7c08",
-    "bd3b7c40113b2e9f",
-    "214c99a5b66d6281",
-    "637351e212c8d83e",
-    "7752326c7115924f",
-    "22a8ea9d1c79d39b"
-   ],
-   "Ce que tout cela déplace dans l'agrégat : rien": [
-    "7269975207d82dae",
-    "1cd9ea9d0b3d6697"
-   ],
-   "Ce qui reste hors de portée": [
-    "269aff071388175e",
-    "d6b3215ed095eff8"
-   ],
-   "Elle ne se calcule pas, et c'est structurel": [
-    "c5d3f219ec2a6367",
-    "9a28886bfa604e0e",
-    "c5950680ee4d30df"
-   ],
-   "Il a fallu écrire le lecteur": [
-    "8e4767663ddbd0fa",
-    "5132a38428a0aef8",
-    "8dd12006e6a4b8a8"
-   ],
-   "L'ordre de grandeur, et pourquoi ce n'est pas un coût certifié": [
-    "2edc2ac8a5ccd2ca",
-    "340b3f0c59c64ec9",
-    "83c1cf225a367a52",
-    "78843146d948ef8b",
-    "1c1362dfe6ad31f1",
-    "4616809559c706cd",
-    "657cd739b21efe28"
-   ],
-   "L'édition 2026, lue par-dessus l'épaule": [
-    "0c5c92af741dc989",
-    "45f542c7a449229e",
-    "6706773ffe19a938",
-    "9e60e11d3be60e3e",
-    "1f53541b744fcb5e",
-    "5671c3c337416044",
-    "43d153bafed3fb55",
-    "b574829097d4cae3"
-   ],
-   "La dernière base légale, et ce qu'elle corrigeait": [
-    "e361246fa897954a",
-    "d6e9b8848ff98ac5",
-    "d7da18f827a45a00",
-    "9d12e235f63e38e8",
-    "fec50a3d658632be"
-   ],
-   "La masse est un produit, et chacun de ses termes vient d'une cellule": [
-    "ae57f3e4aed2dbb1",
-    "a984129590ac3dab",
-    "68a6c48be92f4106",
-    "d386758e681a6732",
-    "0a1ab996b535ed9b",
-    "81876a321b7c4317",
-    "161a66c6e32d2216"
-   ],
-   "Le choix : deux tracés plutôt qu'un compromis": [
-    "eb901f906d8749d3",
-    "005d7132f293b7c7",
-    "103662f9d50f719e",
-    "de2a21fe0403afb2",
-    "d0e35457915ae2eb",
-    "9a655e68e27a0e42",
-    "5a52dd564793e591"
-   ],
-   "Le défaut : une falaise cachée à l'intérieur d'une ligne": [
-    "a0b2f374b0728e8c",
-    "c918da1ed6e0b5e3",
-    "9559b262b82835ba"
-   ],
-   "Le premier recoupement d'un poste publié": [
-    "83f64a7ab3d44516",
-    "da3e99c65cb2ecc6",
-    "4e3860ab5ad2a22e",
-    "f3d1bd11c8920976",
-    "e2acd680ce768af9",
-    "31f701aeccf44002",
-    "dc8d8693c4d9bd2e"
-   ],
-   "Le rapport du SRE, lu : il ne porte pas les bonifications": [
-    "a6f0a7c86bfc0b66",
-    "cb59474f68836b2c",
-    "32d46fdc623a4c95",
-    "818b5b5a2f17cabd"
-   ],
-   "Le tableur du jaune, récupéré et lu": [
-    "218b4e76a42914d7",
-    "f0b63e156e0f8047",
-    "8eac6121163cd635",
-    "0c8420cb648a2dbf",
-    "7e3a3a84353545f9",
-    "ce97563a4e5c6674"
-   ],
-   "Les bonifications de la SNCF et de la RATP, lues dans les PAP 2026": [
-    "5f1d363d4d64a183",
-    "d749733e7e80f9ec",
-    "7fdc45fe44251090",
-    "51b206bfca289f83",
-    "88424d8f4ae983b1"
-   ],
-   "Les trois qui ne sont pas des dispositifs": [
-    "9115a19792fa3e94",
-    "b7ede869e80f9aee",
-    "d3f32c871b12e257",
-    "118c78e1a938534b",
-    "f99687cce60ff71a",
-    "f39cde6e7eefc16d",
-    "3815175ee8805c54"
-   ],
-   "Retirer pour mesurer, par trois voies et pas une de plus": [
-    "565d9e3ef01490e8",
-    "64eb563c79582e3a",
-    "543594713095e6fe",
-    "b30d53996966a567"
-   ],
-   "Trois dispositifs que l'inventaire ne portait pas": [
-    "bd0b26a5fef1ff48",
-    "759b994e712d3e1c",
-    "b7cb9fbad203af46",
-    "5a8ff108e5676cb2",
-    "d57625d4f0567e7a"
-   ],
-   "Trois pièges rencontrés, et ce qu'ils apprennent": [
-    "7fedee5b840d0cb1",
-    "25d8eb19e63c1c9b",
-    "5bfa21a4620b9da3",
-    "a6e0177875cba69b"
-   ],
-   "Trois résultats qu'on n'attendait pas": [
-    "1bbe189335784621",
-    "0b7db2fb3742ed9e",
-    "cd197d49fb050074",
-    "3a8fcea52b125ee1",
-    "a17b131e8ba1e07b"
+   "Projet": [
+    "a9de3a2603387172",
+    "aeeffd134d955af1",
+    "6d6c07da9490fc9e",
+    "f996047ce1490bbe",
+    "d2645ed40dfc4550"
    ]
   },
-  "docs/chiffrage_plf.md": {
-   "1. Les impôts et taxes affectés sortent du système, et le programme ne dit pas ce qu'ils deviennent": [
-    "fc97dbf54d7c4d86",
-    "2769baa856783612",
-    "3398815a5d425bbd",
-    "143d0d58400e9ac9",
-    "b4eac7bfe3c6c583",
-    "924711e909ce9a10",
-    "ec4bcef386402ed7"
-   ],
-   "10. Le pilier capitalisé ne porte aucun aléa de marché": [
-    "dab4ceedb38bff50",
-    "e93e3caeba358de2"
-   ],
-   "11. Ce qui reste ouvert au registre de veille": [
-    "c30ae4c67917d031",
-    "dacf3f53ce1034af"
-   ],
-   "12. La TVA à taux unique est chiffrée en statique": [
-    "e4059f77d03fef21",
-    "881226db197d6cba",
-    "2f9f9c0c7d4ec81f",
-    "2b62e207228f04a3",
-    "96e20fc2f2f70305",
-    "e394d098f8b9bcf8"
-   ],
-   "2. La variante par défaut est rétroactive, donc elle suppose une loi rétroactive": [
-    "1fddea31a6dbae01",
-    "8f651ebb93a79bfe"
-   ],
-   "3. Aucune règle de pilotage n'est appliquée": [
-    "9411521dd0ca5af3",
-    "50e06808706fc351",
-    "0200cf5a58af737b"
-   ],
-   "4. L'écart avec le COR à l'horizon 2070 n'est pas résolu": [
-    "c9e4fa735fd73a9e",
-    "584148b47bf8f5e7"
-   ],
-   "5. Ni comportement, ni emploi, ni retour de croissance": [
-    "dd4b5b6f07beb504",
-    "a66c8749d799073e"
-   ],
-   "6. La grille : treize carrières, plafonnées à 2,5 fois le salaire moyen": [
-    "fa8f4534e33b2453",
-    "dc2cd794fd968a30",
-    "c733b45ae948e155"
-   ],
-   "7. La garantie repose sur une distribution de 2020 déplacée, et sur un taux de recours conventionnel": [
-    "ceba850d5fa891c1",
-    "843de01e06984b33"
-   ],
-   "8. Ce que la garantie remplace est une borne basse": [
-    "50dfeec173a2ab98",
-    "a30c155d30ed3959",
-    "80afad92f3d020ca"
-   ],
-   "9. La suppression de la réversion n'est pas dans le programme écrit": [
-    "3c9345d70ed264f7",
-    "3c3d4d2efb316066"
-   ],
-   "A. Variante rétroactive — trajectoire annuelle": [
-    "62fcb7d6e384e81b",
-    "d50606c64938039f"
-   ],
-   "B. Variante rétroactive — horizon long": [
-    "67f4d456afbe6b13",
-    "74dd9878ab0b9a72"
-   ],
-   "C. Variante prospective — trajectoire annuelle": [
-    "e65674bcb7616e3d",
-    "c4abc6a7d7de51df"
-   ],
-   "Ce que ce document chiffre": [
-    "f1c720d56a34b301",
-    "cf84bd4d115f133d",
-    "46ff39b2549d2e9d",
-    "3dc9ed3e37f6ea1b",
-    "47ed186d45ddde2e",
-    "29309e58c3b1a780"
-   ],
-   "Chiffrage budgétaire de la proposition, pour un projet de loi de finances": [
-    "759b85acb92b427f",
-    "dad39ef4aff91df5",
-    "01beba813fa05f28"
-   ],
-   "Conventions de lecture": [
-    "01f70a12432b8eab",
-    "16d8bdf3d924c206"
-   ],
-   "D. Variante prospective — horizon long": [
-    "8ec8b25f52ed93b0",
-    "d7cda6edfee6a705"
-   ],
-   "E. Prélèvements retraite, avant et après, et ce que l'État verse à part": [
-    "a6dfa3327ee5520b",
-    "fca4e1c69ca99e88",
-    "0c27d772fdad7c82",
-    "4aa58becd59063b7"
-   ],
-   "F. Agrégats sur la projection": [
-    "cd46cd1b98356f10",
-    "fae96d4db29b8035",
-    "fb6154d0ac65fa4c",
-    "d03ed2f2b3511cf1",
-    "cd88f5527573a496",
-    "9f4346e64eca37f9",
-    "87aff3975d1dcf99",
-    "b1c1e2e38815fc6d",
-    "9652ff4f49004bfd",
-    "cf0a363f730aae71"
-   ],
-   "La pondération du recensement": [
-    "3771283806d15464",
-    "868696a45ed3f437",
-    "1955df5c1f0e8290"
-   ],
-   "Le fait central": [
-    "f501af9748046147",
-    "284a77fe7f6364f8",
-    "915c4cd55757c894",
-    "38d24341811d9f6d",
-    "80b8994a400b1630",
-    "80bad7d47ca47e86",
-    "c77914b83aecb2cc"
-   ],
-   "Les hypothèses fragiles, par ordre d'enjeu budgétaire": [
-    "abaee1db09589731"
-   ],
-   "Les quatre arbitrages qui déplacent le chiffrage": [
-    "6a3df91d91c32724",
-    "d1b055ed454ac1f9",
-    "87abdab584cc086e",
-    "7f72bc9081f3802e"
-   ],
-   "Reproduire ces chiffres": [
-    "56ea0b9805322a78",
-    "d8051a288aa85470"
-   ],
-   "Tableaux annuels": [
-    "2f632c4cdb2b1199"
-   ]
-  },
-  "docs/decisions/0001-architecture.md": {
-   "1. Pourquoi ce document": [
-    "e1dc08d2266b64b3",
-    "058c516b2bf4411c",
-    "ac45fe49e4cabe73",
-    "0959cee3b095aec7"
-   ],
-   "10. Les tests": [
-    "42caf4e8e8f963ba",
-    "3763036e0714fdda",
-    "3e4b17ad1861638b"
-   ],
-   "11. Le chemin": [
-    "2aaf3e253ca08fd5",
-    "38a9637f11dbe9b7",
-    "36d54eec900e515e",
-    "f16f7f11a9eb691a",
-    "3e09c9f29480340e",
-    "1ac8a158296137a6",
-    "0079e84359752763",
-    "a86fd6ecc97b06c2",
-    "3d7b354ec34aaa24"
-   ],
-   "12. Rien de cassé, rien de perdu": [
-    "739047db692d4622",
-    "f4d4d8112264c517",
-    "c644181bbde19ab4",
-    "0bb7401225b86a49",
-    "e6731c57d0c746a2"
-   ],
-   "13. La stabilité : ce qui ne bouge pas, et comment on change le reste": [
-    "4a84f434ebc004e9"
-   ],
-   "13.1 Le noyau": [
-    "8451c2e9bf0ae70d",
-    "14203a8203d9e6d4",
-    "c4db39de7e77ebe7",
-    "434ca594b423df4a"
-   ],
-   "13.2 Le reste": [
-    "9ccb42bb17ee292d",
-    "04c3b2b61cb90356",
-    "c1e28bef7a08af0f"
-   ],
-   "13.3 Comment le noyau change": [
-    "b28273febc4af465",
-    "2c8d2723fcbb40b5"
-   ],
-   "13.4 La règle d'arrêt": [
-    "0413511e3ed2e81a",
-    "a1d7667490d19cf0"
-   ],
-   "13.5 Ce qui entre maintenant, ce qui attend sans refonte": [
-    "5c106c957dc56e8e",
-    "9c2b10003f726012",
-    "94e4c0c3ec53b801",
-    "88bd9e1576e8cb08",
-    "2ef8ed344a4205ff",
-    "8357c70f7f0668f3",
-    "a81d78d09255a2d1"
-   ],
-   "14. Ce qui a été vérifié": [
-    "15d38d8e49701b40",
-    "00bd97349ebebb66"
-   ],
-   "14.1 L'histoire du dépôt": [
-    "81ae94b6fd684f41",
-    "d328e8a8a44f1234",
-    "1e71f27a538b189d",
-    "b02c1a0d95201b2c",
-    "54849fec550e3cb6",
-    "a3eb92bc2db4cdc2"
-   ],
-   "14.10 Les risques qui restent": [
-    "39dd5f87ac92f6de",
-    "c0fcc784467155ae"
-   ],
-   "14.2 Des cas de droit parmi les plus difficiles": [
-    "586555cbbddf6157",
-    "dc82fd9d1bc5b275",
-    "0f0d25262ca5f46d",
-    "69379c8f51f440de",
-    "21352be638ba8ba3",
-    "e13c6a8bae356528",
-    "77ba1d1cbefe2db7",
-    "1079177571c827a5",
-    "a56db9d2e9855d16",
-    "dbfb883c18954c38"
-   ],
-   "14.3 Dix ans de changements": [
-    "0a30283f3028b378",
-    "306f4318fc6990e4",
-    "f0a443a2081d9e75",
-    "92a77d97b6628424",
-    "12282ea935545752",
-    "f78f79b894b2f22d"
-   ],
-   "14.4 Les systèmes qui durent": [
-    "6b2d23eaffa90e4a",
-    "0b0c1436e8d2ad95",
-    "beed0fb779677266"
-   ],
-   "14.5 Des contrôles faits à la main": [
-    "97d9e5a0c2bbc75e",
-    "95543a3d598b7607",
-    "0871a448fdf96868"
-   ],
-   "14.6 La contre-épreuve de la version 5": [
-    "337c044786f7bc98",
-    "23655cc89ae33637",
-    "c2a026c8c5e79dda",
-    "d533f1296bf08ad9",
-    "24a52d24ca12fb73",
-    "0b465cd1030662a1"
-   ],
-   "14.7 Une maquette du tableau de bord": [
-    "71b22d09ba2cfb3d",
-    "845ab803ab804bae",
-    "78fe5997e69444e4",
-    "f1184ba1c042cb78",
-    "1a8cc9185bc680bc",
-    "ca788a1d1a38a1da"
-   ],
-   "14.8 Ce que coûte le travail aujourd'hui, et ce qui est déjà prouvé": [
-    "9425604876d96445",
-    "42c4593b613793ad",
-    "70e7d7e51387d545"
-   ],
-   "14.9 Les autres modèles, recensés": [
-    "e92a94fbe988334f",
-    "5a3d5daacdbaafe5",
-    "c31a2be326b8813f",
-    "07dccc2a6d53f19f",
-    "fd625d367131c26e"
-   ],
-   "2. Le périmètre : tout le droit des retraites": [
-    "4ec264868ea8dd7f",
-    "fb352d8631935737",
-    "f93a8b3a676ab4b4",
-    "c275ad5b3e0b2752",
-    "2baebe1d2a125573"
-   ],
-   "3. Les références et la preuve": [
-    "fc6450c0ec8bd1d8"
-   ],
-   "3.1 La hiérarchie": [
-    "12a7a5518fec2bd4",
-    "8c0363cb3ec3f8ec",
-    "314c26d457c67cf0",
-    "8b29d0253ed3db48"
-   ],
-   "3.2 La preuve": [
-    "577f4f6f82c5d49d",
-    "19c7054a300891c2",
-    "1b8cfdc79e924bc9",
-    "7ab2f948c0e1599e"
-   ],
-   "3.3 Trancher une divergence": [
-    "0c7f68bcf6cda82b",
-    "f00d1f3000dbcb6e",
-    "283805f4fccf4b30",
-    "74c0eaf7b0a6b92f"
-   ],
-   "3.4 Les autres modèles": [
-    "0359263d7b8dd900",
-    "78000b58aa9a7a78",
-    "a5553c77382dac4e",
-    "ae94152b4625a98c",
-    "225851a8ba1a7348",
-    "b3fa71a05aac4e4c",
-    "b5af2161e56b7789",
-    "b1d53080e5688aae",
-    "b070d629b7c61b7f"
-   ],
-   "3.5 Les simulateurs officiels, sans se faire bloquer": [
-    "8b889e705c29a7b1",
-    "9af68cdb81ff96f0",
-    "eb1c2b63cf15196f",
-    "e7f27f685dc906e3",
-    "40b35901366ef486",
-    "518036ca33490383"
-   ],
-   "4. Le temps": [
-    "e9e2a3d3bb6eb94c",
-    "481fd3a13331ee78"
-   ],
-   "4.1 Ce qu'une version dit d'elle-même": [
-    "5659392621beb2c0",
-    "af76f88666db2cb3",
-    "bdf351c1d8dac449",
-    "751f09af3e0de600",
-    "e47c6507858fa42a",
-    "14b03f6cf25692c9",
-    "5c676a7aea503729",
-    "1a613e392694866d"
-   ],
-   "4.10 Une réforme, une correction, une décision de justice": [
-    "8a488cb525a60ba1",
-    "18d2b399c9bf7524"
-   ],
-   "4.2 Les dates qui décident": [
-    "636663f4e9207b49",
-    "6e18e1fcfcd9311d",
-    "18a1183c53e4d288",
-    "ad0556ca14ee6115",
-    "5120824b574d1668",
-    "44b445306b45e5a5"
-   ],
-   "4.3 Les droits maintenus": [
-    "a34e6887061b1424",
-    "282731303156127b"
-   ],
-   "4.4 Les droits créés après coup": [
-    "548476ae3f7b0a83",
-    "2bf250c3b70894a6"
-   ],
-   "4.5 Les pensions déjà liquidées": [
-    "18d5baec9f51ce6c",
-    "8cbcdb3bae561c48",
-    "345a0c47db551cf7"
-   ],
-   "4.6 Unités, arrondis, ancrages": [
-    "47fe01a29bb02248",
-    "965e67568c916dd3",
-    "e62617307ad686c3",
-    "af4f9318e2605197"
-   ],
-   "4.7 Les hypothèses": [
-    "6985c075c8fd3b48",
-    "f5fdbb7a315393e9"
-   ],
-   "4.8 Les univers de droit": [
-    "842f02c0e20784db",
-    "d950a2e17257e6a1",
-    "c8aaa2f14e560cc5",
-    "eec03100ffe4d941",
-    "052b3147634fc78d",
-    "cb192510f2a7fd79",
-    "362cb75c50fa79db",
-    "bd770d0497f016ee",
-    "cb9041c71c9e631e"
-   ],
-   "4.9 La situation et l'observation": [
-    "3e4a3ebbd94b3ceb",
-    "0a5e77db6e72bdae",
-    "ffb917bb4a1bd606",
-    "952fcf640704b511",
-    "d4eadc80135c03c1",
-    "eaee21ac3b3d24d9",
-    "2b2e2559ed9904f8"
-   ],
-   "5. Les personnes et leurs faits": [
-    "bca20e0329680386"
-   ],
-   "5.1 Un réseau de personnes": [
-    "78929795b733a2c5",
-    "971603395f935480",
-    "caa9f5544668accf",
-    "48113c067aecf37b",
-    "97d19e87b3bccc3f",
-    "2cbe41642a097a67",
-    "89daab77bc4f6922",
-    "60b7c4951810fe24"
-   ],
-   "5.2 Des périodes": [
-    "2417dee887184fd7",
-    "a5f41a92fd433610",
-    "eab2928c14df88dd"
-   ],
-   "5.3 Des événements et des actes": [
-    "748162bb6ba3380c",
-    "9e3b4619a911ace3",
-    "94359ccaaa16e579"
-   ],
-   "5.4 Les ressources et les pensions d'ailleurs": [
-    "cb554581d77a3ee4",
-    "d33ae8a06c15e1a6",
-    "461e06f21da45873"
-   ],
-   "5.5 Les résultats observés": [
-    "7ca5bc4802d3b275",
-    "b6c2232fa2c12acb",
-    "d0f96c31179a93bb",
-    "7bda3b5a7b76c306"
-   ],
-   "5.6 Les présomptions, et ce que la loi décide à défaut": [
-    "6056fa493fb3df16",
-    "0264fc6c79838377"
-   ],
-   "5.7 D'où viennent les faits": [
-    "2ba4bd60f63611b0",
-    "4e9f80a32eef2472"
-   ],
-   "6. La carte des règles": [
-    "ce8e68cb8fbec026"
-   ],
-   "6.1 Une fiche par dispositif": [
-    "f5db765a44dba9af",
-    "a7def2b93ab7b93c",
-    "49ddc4048b5e6d7a",
-    "7fb42a5058398619",
-    "5bc3288ca71e5687",
-    "ba6bd4b9753eb785",
-    "6c4caf0bc928140d"
-   ],
-   "6.2 Les relations, fiches à part entière": [
-    "5c40cf6e6e15b4a5",
-    "0cd5a2b7ee349db8",
-    "ee11d1401142cc80",
-    "986e937b38f1d6b6",
-    "836783827a26b363",
-    "a88f9763e9f098e6",
-    "2f480d3c1af57f89"
-   ],
-   "6.3 Les transformations": [
-    "8f67b996fd6738af",
-    "48bf635bac3e1538",
-    "5c2491fe142c1310",
-    "e500e6f8350387cf"
-   ],
-   "6.4 Neutraliser une règle": [
-    "b40d9e8ddb76a2ca",
-    "c5014250615e87a3",
-    "ea4bcb04fd98bd7c"
-   ],
-   "6.5 Ce qu'elle remplace": [
-    "42f4ede6e22d4574",
-    "eb4e1dd4a689fc38",
-    "6cfd8e728b4a2c4f",
-    "dd3b4eb6dc905b96",
-    "ac195e5e0335a2fa"
-   ],
-   "6.6 Ne rien oublier : les textes comme liste de contrôle": [
-    "9792aa80d540e642",
-    "1124249ef2f35eb6",
-    "78ca89fad5227735",
-    "4f8183419c89c3e3",
-    "43ef40c8554cc593",
-    "cdba76b3f6b67609"
-   ],
-   "6.7 Ce que les tests exigent de la carte": [
-    "c9db67d3b564e2a2",
-    "aab2cb808fd9506c"
-   ],
-   "7. Le moteur": [
-    "4a810eb2f1fb0c80"
-   ],
-   "7.1 Des moteurs jumeaux, des étapes qui s'échangent des données": [
-    "327cb07d6c182681",
-    "7d3eb903107a5b90",
-    "ffdf42361f94bf7b"
-   ],
-   "7.2 Acquérir": [
-    "9b819706a5283c90",
-    "fe27d58a098eecc7",
-    "f29f28a39c409b2f",
-    "5d88f6c910842681",
-    "cd6b33bb40d900d9",
-    "3872d3bb88aa0437",
-    "c9e4a91326350f6e"
-   ],
-   "7.3 Liquider": [
-    "04dd381bd0231aa7",
-    "dc159a4e9bbbb601",
-    "63bb485c67cf32df",
-    "c2c8b73712d2e92e",
-    "d41a87c1e48e2cee",
-    "29d9189be2ab94ce",
-    "c6aff9d43bfacb23",
-    "b7a59b35ef2f1866",
-    "d920d43b03465f97",
-    "6fd0719c683f2607",
-    "cadb75942437e313"
-   ],
-   "7.4 L'échéancier": [
-    "7da434a0b6a06a24",
-    "263cf45404287eb3",
-    "6a03a394e783abed",
-    "01d848956e41e774",
-    "d1d81c315e565d80",
-    "333499e3eab42b37",
-    "b4fa7ce651d29f14",
-    "152c97960d8903e3",
-    "ed555953d406c095",
-    "39cf374657abfd65",
-    "0ccf98bbb14253bd",
-    "11a687afad4ab18b",
-    "fdf0ce474a5c9744"
-   ],
-   "7.5 L'ordre des calculs, les hypothèses, les dates calculées": [
-    "d0d2bcd96d6be52a",
-    "1afe3b9f4abf6118",
-    "2f7caf6e00c89512"
-   ],
-   "7.6 Le relevé des droits": [
-    "c39349bb81e742a7",
-    "686c13e9be406fc3",
-    "9099055b86042fcd",
-    "f6300fceb98e57f4"
-   ],
-   "7.7 Le pilote": [
-    "ff504b865550897d",
-    "70d63b206de8890a",
-    "59d9c3e225338e5a"
-   ],
-   "7.8 Le budget de calcul": [
-    "95eb604d4c6967a2",
-    "2be335eafb8330a9",
-    "b30ab6963e4cddbe",
-    "9034a06b65b7d902",
-    "8c8b2adb8b7c358f"
-   ],
-   "8. La proposition, la page Coût, le site": [
-    "9a54a271b4eefb39",
-    "2bd5d4ace8c5a07c"
-   ],
-   "9. Savoir où l'on en est": [
-    "3b04f8acf7511934"
-   ],
-   "9.1 Le tableau de bord": [
-    "2ff47daede904c7a",
-    "c035322b485fc1b1",
-    "19e725849a8494a6",
-    "10d4e727bc63d9d5",
-    "18735a59d9200ce4",
-    "082e8b03195792a6",
-    "3e8dec3895579a40",
-    "b4e65ee45213dfc4",
-    "32ffbae5b6c73c1e",
-    "9b4e091753323e46",
-    "6064c11388ca10c9",
-    "d040bdbbadef0856",
-    "5da04592cccb8694",
-    "da87673290b1332c",
-    "38ccb2769eee3c46"
-   ],
-   "9.2 Ce qu'on apprend n'est jamais bloqué": [
-    "9816abdda26a526f",
-    "523c599115f015b1",
-    "61b2cae5d0d27547",
-    "5a4b63e27d35cbab",
-    "d99d5009f853795a"
-   ],
-   "9.3 Les documents": [
-    "2274155edd1efb45",
-    "951a9ff1aee0bb47",
-    "48bc3b4d080f8357"
-   ],
-   "A.1 La fonction publique, en entier": [
-    "79fb74474664f530",
-    "7e63f6d23e00a1cc"
-   ],
-   "A.2 Le régime général, en résumé": [
-    "5c84839be1ec7d55",
-    "62e2ddfa0079fbd2",
-    "421b453a0120c982",
-    "e33c492eb77d91f0"
-   ],
-   "Annexe A — Deux fiches d'exemple : les trimestres des enfants": [
-    "5b9d8a341c91720e",
-    "16b2da07f0733a32"
-   ],
-   "Annexe B — Où va chaque fichier d'aujourd'hui": [
-    "6693e34102cb95f6",
-    "19e2475e63770061",
-    "eed1da23ad3de37a",
-    "c5c5bf520cdde3eb",
-    "f2580b431aacac52",
-    "d999f09f58581374",
-    "9592a09e99ba4c7d",
-    "7372decdd07ea84c",
-    "bce4cbabddb3734b"
-   ],
-   "Annexe C — Les neuf contrats de données": [
-    "da8ffa811b6ddb58",
-    "ac474dd1e1e1beb1",
-    "5a31968555d894bb"
-   ],
-   "Architecture du dépôt": [
-    "5c382d760eb2bebe",
-    "09acf252b4964ba2",
-    "4d2d99987e055097"
-   ],
-   "C.1 La chronologie : le fait et le lien": [
-    "b3e69956cddeef60",
-    "e25089a3121d2d07",
-    "044048e8adaa7462",
-    "4001ba130d3822a2",
-    "03a53cc520389ebb"
-   ],
-   "C.2 La fiche et ses versions": [
-    "f6a373a3d0b78b95",
-    "5b29c618c177f0e0",
-    "31ef470796ac76e0",
-    "0c632d9d1f4db253",
-    "932880669f8d0b9f",
-    "82161062a0f52d08",
-    "718e31b7641cdb14"
-   ],
-   "C.3 La table datée": [
-    "fc05acc65d763d53",
-    "85b2a95febca5848"
-   ],
-   "C.4 La couche et l'univers": [
-    "5cacf8d046a08ca6",
-    "924bdb2255210cd9",
-    "2c0ce790ddcf951a",
-    "1cb3a2b66e61f45c",
-    "14f1598fc3c74502"
-   ],
-   "C.5 La ligne du relevé": [
-    "04cc794299c8a1b2",
-    "79883ed55e4be603"
-   ],
-   "C.6 La liquidation": [
-    "fe5ab848e99b3f6a",
-    "9c6ad8f0a6f4dcd4"
-   ],
-   "C.7 L'événement": [
-    "828622a80fb8016b",
-    "e561830b743a7caf"
-   ],
-   "C.8 L'entrée du journal": [
-    "c820dbca18d1a047",
-    "57329070975e8257",
-    "e640017ee5490760",
-    "30c04144a98017a5",
-    "75d7906209442c9a"
-   ],
-   "C.9 La surface publique": [
-    "186a474fe0f91168",
-    "494720b4e5816aff"
-   ],
-   "L'essentiel": [
-    "b2de2082c0dbe512",
-    "6c1ee77276b40fc5",
-    "6a1b47c910491282",
-    "c2235bdbd93ef6dc",
-    "a2f7516281226b31",
-    "a79229f84f4c4d45",
-    "ca83bef1a918052b",
-    "de547ac417fb7981",
-    "ab1b26e218873d65"
-   ],
-   "Les deux règles d'exécution": [
-    "eedf2f0ac3b2c94f",
-    "53849784039e4f4f"
-   ]
-  },
-  "docs/decisions/0001/phase_0.md": {
-   "Ce que fait la phase 0": [
-    "c0b7f625c4d46471",
-    "1c35ad69159f7608",
-    "b706626412233b0b"
-   ],
-   "Ce qui est décidé, et ne se rediscute pas": [
-    "9bd9c82795eda78f",
-    "f9ea89d6df4e55cb",
-    "8d06baa2bc5fb112",
-    "1346a0ab579784cd"
-   ],
-   "Ce qui vient après, et pas maintenant": [
-    "b1d84e0d471796cc",
-    "75f168017c0992d0"
-   ],
-   "Comment vérifier, avant chaque envoi": [
-    "a9e0c18b988f6d46",
-    "9c426ccd6b352666"
-   ],
-   "Les outils laissés ici": [
-    "4176fa8d7363371e",
-    "ec4d74f6f021c75a"
-   ],
-   "Phase 0 de l'architecture — la passation": [
-    "30ac4079c3a6f5e5",
-    "b08121648292fa0e"
-   ],
-   "Travailler sobrement": [
-    "4e31ccde588717b3",
-    "d0493f2483c23b92"
-   ]
-  },
-  "docs/exploration_sources.md": {
-   "Ce qu'un simulateur vaut — et ce qu'il ne vaut pas": [
-    "c6e9a932186fa468",
-    "6ccd9dba33bc5f7e",
-    "b3111067f8035cfa",
-    "d7e5490d99336178",
-    "d2a967112efb429c"
-   ],
-   "Ce qu'une session obtient, mesuré et non supposé": [
-    "e383ecf468be01a0",
-    "17586a40b47e5ace"
-   ],
-   "Ce que le premier lot a appris": [
-    "c09f160dab29c428",
-    "9f4ff516b9463f9e",
-    "8df9cf7d46441a5d",
-    "8a3ab40184cf609d",
-    "75a1b5f2c1cfe6a0",
-    "0cda7e9098b9f800",
-    "f6cf452fdf802252",
-    "4795c3fb7c7b5684",
-    "a31878e30fe3ae7f",
-    "5a75d58c447f046c",
-    "eecb6ef8d55abc69",
-    "2aa0c35ce1a770db"
-   ],
-   "Comment une session prend sa part": [
-    "50bff8195e889086",
-    "485b335b4abcab43",
-    "5dc2f73d68e87dbd",
-    "01d9d0ad5ceb30f1"
-   ],
-   "Explorer les sources officielles — la méthode": [
-    "a20f4424d678428b",
-    "258318e43f7efd59",
-    "cac892f33b2bab53"
-   ],
-   "Où va ce qu'on en tire": [
-    "07aadc848e986964",
-    "e3027f15d1ff9684",
-    "8305cb842a6ce5d1",
-    "15925a015a24ecba"
-   ],
-   "Un simulateur est un oracle, pas un site à lire": [
-    "96ab79d5298bc2e7",
-    "9963e8dc97d627d1",
-    "b93dd33b772673d8",
-    "b967e5a40fe5b25f",
-    "b1d248a2567a7009",
-    "42f8c8930e0c05c5",
-    "2dc2628135407593"
-   ],
-   "`chaine_incomplete` — le certificat auquel il manque un maillon": [
-    "cdeab1f6967c9610",
-    "9fa2a30d1571eb2f",
-    "2defbdf1f2b6b1f0",
-    "711d0ba91535e671",
-    "933aea424a0aee95"
-   ],
-   "`git` — la page est refusée, le dépôt ne l'est pas": [
-    "1ad41dcb75b4bf41",
-    "2e2a72bb70ac7d0f"
-   ],
-   "`navigateur` — Cloudflare, ou une page qui se construit en JavaScript": [
-    "b882a98e5500e5f6",
-    "29398cd7e7aab532",
-    "072902857d616d2e"
-   ],
-   "`refus` et `ferme` — ce qui ne se contourne pas": [
-    "78ae7d3e0014e922",
-    "81f7afd18739f3cc",
-    "7ee61448d97b0f0c"
-   ],
-   "`session` — 252 adresses, rien à faire": [
-    "47e10d09321c169b",
-    "c0f57b24d227d8a2"
-   ]
-  },
-  "docs/feuille_de_route.md": {
+  "docs/archives/feuille_de_route.md": {
    "1. Expérience utilisateur": [
     "e1ec8d8c56622c04",
     "f66e57f8305b04ea",
@@ -4168,17 +3175,9 @@
     "709e76e1965a3c2c",
     "48e7387f83e2583b"
    ],
-   "Ce qui est délibérément en bas": [
-    "0ca4dff77b2c02dc",
-    "ac128040a02b580f",
-    "2e19089b8093fe5f",
-    "3034d5013d8a5ad2",
-    "bca67fefdb2c9e32",
-    "5019494f2e02399f",
-    "605590aee5df31a9",
-    "c1bb5476fc9e73e5",
-    "e9e063fff22f3561",
-    "48084d72c20a75ef"
+   "Feuille de route — les actions closes, et le journal": [
+    "3f93862ef653ced4",
+    "2cc28ed97cbaa603"
    ],
    "Journal": [
     "57d7f743bbd1a285",
@@ -4324,211 +3323,18 @@
     "286f88be8d4d211f"
    ]
   },
-  "docs/fraicheur.md": {
-   "Le constat": [
-    "ac5e8d763b2e81e7",
-    "9527ca8538ce54fc",
-    "a29758a5efb8b159",
-    "d93a2262fd2863c2",
-    "3ca5b4d07878dc2d"
-   ]
-  },
-  "docs/frontiere_contributive.md": {
-   "1. Le mot « contributif » en cache trois, et elles bougent séparément": [
-    "71d807c30f15c505",
-    "dea9f60d930a4ebe",
-    "da31bd40d33dcad8",
-    "8d7d561611d2e44e",
-    "7ce120a43146fe17",
-    "9b2d4a6ab05dee6d"
+  "docs/archives/limites.md": {
+   "1. État de certification des données": [
+    "380b771c5ef1d4f1"
    ],
-   "10. Ce que le législateur compte, et ce que le dépôt comptait": [
-    "bbe91cf2f25a288b",
-    "baaac1be5c3a7b58",
-    "fafa1a5ee12339ac",
-    "ef6748125fd30135",
-    "6cf635e315a4a08e",
-    "be07658cbb246f25",
-    "8184491a2262f1c0"
+   "2. La règle d'indexation domine le scénario rétroactif": [
+    "59a71c6ef8a8b876"
    ],
-   "11. Les régimes spéciaux : fermés une fois, élargis depuis": [
-    "fcd357ed04528e0e",
-    "f996f4fc696d5088",
-    "74af298f6b21ebfc",
-    "344980943142903a",
-    "f8a4b65f8be8e440",
-    "0eae752196509b97",
-    "d4dc881d8ec466f7",
-    "3ebd67d14ca6259c",
-    "87e6839e5d364a12",
-    "db668aca3102e6a1",
-    "fbe767c0404cb76a"
+   "3. Le scénario « système actuel » est une approximation": [
+    "5216ed49f0e4e931"
    ],
-   "2. La liste existait déjà, et le législateur la tenait lui-même": [
-    "43a1495fd92af455",
-    "e9bcf41ffea0c780",
-    "d0a5653aa45638ca",
-    "1fab960c232b57c0",
-    "1b83d52954ceb75c"
-   ],
-   "2004 : l'année par enfant devient une année méritée": [
-    "87f91d1a595cdb29",
-    "db51adde925cd0c9",
-    "deeb12d5bdbd1f02",
-    "be4bf4ae80efde13",
-    "bb77c19250e66ac6"
-   ],
-   "2011 : trois fermetures le même jour": [
-    "77f938fefb301abf",
-    "bdf40f6e6ef45167",
-    "908649857058af7b",
-    "d108e81082c99856",
-    "2d70bf212c97112d"
-   ],
-   "2023 : un plafond et une libération, dans la même version": [
-    "e2c42130bd3500ba",
-    "78775eaaec4dad3a",
-    "a0e643d8da66125f"
-   ],
-   "2026 : un trimestre change de case, et la veille du dépôt avait raison de demander": [
-    "b907cba7baf688fa",
-    "55f98cdc32126b39",
-    "fe64d71d409eec07",
-    "3dd0912977875023"
-   ],
-   "3. La liste disparaît le 1er janvier 2026": [
-    "9ad8554d1b373f48",
-    "7ebb4358fa8aaabd",
-    "15c1807b3a82a5c0",
-    "22687bbb4953196e",
-    "e6cedd56e72ba3be",
-    "1176dbbf35ce3cc6"
-   ],
-   "4. Le versant que le dépôt ne portait pas : cotiser sans rien acquérir": [
-    "09a36e7c922bbaf9",
-    "52b04b0fd08fbaff",
-    "1e7b98c6a48976d5",
-    "a64c5867081f3152",
-    "7db048c9b9b830a0"
-   ],
-   "5. Ce que la chronologie montre, et qu'aucune liste ne montrait": [
-    "601ac2cacb65de2e",
-    "ccded952c1f99f10",
-    "1a69f7b4bb98f5e8",
-    "de898779482ee9cf",
-    "3d763e7e85093a2c",
-    "dd30e7a4745e2d91",
-    "195e39458cea1298",
-    "0765073096fb2ba9",
-    "989cccb97c271ea3"
-   ],
-   "6. Trois corrections que ces lectures apportent à l'inventaire": [
-    "0100be59ac481459",
-    "71bd778e6c0da21f",
-    "351c53eb85bd8088",
-    "435c3012cbff24cd"
-   ],
-   "7. Ce qui reste à faire": [
-    "cef441eda3ae7fce",
-    "99450c67c2b7cfc0"
-   ],
-   "8. Combien : 17,9 milliards, et la correction d'une erreur écrite plus haut": [
-    "a84a750605b5bea1",
-    "a52e470e71cdcabc",
-    "b4bbc9a006fdfb76"
-   ],
-   "9. La fonction publique : le seul endroit où la frontière a reculé": [
-    "aa437fb3af434c3b",
-    "94252ff78a14c5c5"
-   ],
-   "Ce que ce total n'est pas": [
-    "a0dd8e3ac53c33c3",
-    "abc33df01fcb4694",
-    "e90c70400f85da77"
-   ],
-   "Ce que le modèle en fait, et ce qu'il n'en fait pas": [
-    "c258b06ef167bed2",
-    "108a2ddef3bc672d",
-    "39cfee4dccf9e0f6"
-   ],
-   "Ce qui a changé de côté": [
-    "ecb6422aed1f767a",
-    "4eed4d26091e6d4e",
-    "09976bcdc8d2938e"
-   ],
-   "Ce qui manque encore": [
-    "c58cc1bfacc8b5a2",
-    "6f4234405bd225b2"
-   ],
-   "L'assiette, chez celui qui la recouvre": [
-    "f4ce19a6ddae007f",
-    "ee5a3d9bbb62dfea",
-    "c4bafcd22d73728b"
-   ],
-   "La complémentaire : connue en proportion, pas en masse": [
-    "e6eba64cfb9edec7",
-    "54517d2b83875943",
-    "a8d30b48ffa937dd",
-    "e0c8d006c80a8fe6",
-    "281b8180a2e0bec1"
-   ],
-   "La liste des périodes financées n'est pas celle des périodes validées": [
-    "f0d9734ff7ee0a04",
-    "707cd7feb6eebdb5",
-    "9f0ed293f826fca8",
-    "d260c6675e56d6c2"
-   ],
-   "Le mécanisme a changé de signe": [
-    "e06f513951e09a79",
-    "3d3c4d33462a0a0a"
-   ],
-   "Le poste qu'on n'attendait pas : la branche paie une complémentaire": [
-    "abeacb62f70b8b03",
-    "802ebfca11470a47",
-    "558eb62fc68b2e4a"
-   ],
-   "Le renversement de 2023, et la seule pension purement contributive du droit français": [
-    "7a4ac4b6e9b8d8ef",
-    "d3be4548b1d85821",
-    "d8f7ad478d42aabf",
-    "66cc06d52233c34a",
-    "e83ea746b8d3afa4"
-   ],
-   "Le résultat": [
-    "06e452acb05b3739",
-    "8072785aa3d32fd3",
-    "d4ed2f8629febd5c",
-    "27935f8f3e14a444"
-   ],
-   "Un droit qui change quarante ans après coup": [
-    "128ff4c2d6536f29",
-    "07154955ddf4fb2c",
-    "c09fc08dc0ad27b1"
-   ],
-   "Un recoupement que rien n'avait préparé": [
-    "767d970c0351d2ff",
-    "ded8f739204dfe9f"
-   ],
-   "Une bascule qui n'en est pas une, et qu'il faut dire quand même": [
-    "4bdde5b8a8c10ab3",
-    "1425f120861b78c9",
-    "67bdf05edb0123cb"
-   ]
-  },
-  "docs/integration-partiliberalfrancais.md": {
-   "Ce qui a été observé le 17 septembre 2026": [
-    "202922dd1d7c3ab4",
-    "76f1f25d4012b99e",
-    "2e8b173a7c41eab7",
-    "4a35ceb6bed19215",
-    "8240004a4c5a022a"
-   ]
-  },
-  "docs/limites.md": {
-   "5 ante bis. La fiche de paie : neuf réserves, dont trois décisives, et deux que la restitution ajoute": [
-    "0a1b30b1364ef7e5",
-    "cb2abe28a7d903df",
-    "3f4993efee3f489d"
+   "4. Régimes incomplets, et de combien": [
+    "686fc6c6898412db"
    ],
    "5 ante quater. Le partage « moitié aux salaires, moitié à la dette » : ce qu'il affirme et ce que rien ne vérifie": [
     "44feeb3ccd6cf9a4",
@@ -4539,43 +3345,22 @@
     "24d9e7a8b83c6811",
     "9d9e9857649bc119"
    ],
-   "5 ante. Le pilier capitalisé : ce que sa rente suppose": [
-    "73e36662ff6cf508",
-    "8e3712cfcd9c65dd",
-    "374df3b9386f97b4",
-    "5e52d38461580d1f",
-    "1650bc5654b0936a",
-    "006b5dc05e9b9aa2"
-   ],
    "5 bis. Le coût agrégé : ce qui est observé, ce qui est estimé": [
-    "848cba2da938adc1",
-    "0e0cdc6ebcc5294b",
-    "dd6826fdc0054d11",
-    "7f24ac8a7988c215",
-    "7bb5229ab9b9cf57"
+    "29eda13fb9e20ece"
    ],
    "5 ter. La trajectoire projetée : ce qu'elle suppose, et ce qu'elle vaut": [
-    "a65f9485736bf8ce"
+    "dadd2913a019585c"
    ],
    "5. Ce que le modèle ne calcule pas, et pourquoi": [
-    "feab57168836c4e2",
-    "deb3eb23c91653ea"
+    "38b24dbd46d1d88a"
    ],
    "Avant 1967, la cotisation vieillesse n'existait pas séparément — et le dépôt lui prêtait 8,6 %": [
     "c30b886d9366d2d2",
     "b363fa7f373c2c76",
     "f716ac01ebf1d34b"
    ],
-   "Ce que disent les exemples publiés par les caisses": [
-    "77d5cef97ff57a82",
-    "8230fe6258f7aba5",
-    "3252f18119bcb91c"
-   ],
    "Ce que dit la confrontation à une seconde implémentation": [
-    "545a34c6841e6e51",
-    "798089c8229d67fa",
-    "b88d4d89f689b836",
-    "48d87e1e220e117c"
+    "1d360254e45954e4"
    ],
    "Ce que la chronologie de la CARMF a fini par dire": [
     "a54078002466aab2",
@@ -4752,7 +3537,7 @@
     "1a0b40bf9279fd47"
    ],
    "Ce que vaut une série qu'on ne peut pas certifier": [
-    "541b8ff1ba30f0b3"
+    "3c574332d55bb6f4"
    ],
    "Ce qui n'est pas de la répartition est sorti de la comparaison": [
     "837195c5eb7d6876",
@@ -5280,10 +4065,6 @@
     "1dc5b18dd1f8cb9f",
     "43a6624097ebc913"
    ],
-   "Le simulateur doit être juste à tout âge : où il ne l'est pas encore": [
-    "72cd85c3b5f0b32b",
-    "ef1b0eb7339c085a"
-   ],
    "Le stock : ce que le dépôt en montre, et ce qu'il ne calcule pas": [
     "bfc50227e6af6b78",
     "74237e312c9469d6",
@@ -5475,6 +4256,13 @@
     "4e48c81ecc9c7b86",
     "cb3b9cf800e157e0"
    ],
+   "Limites — les récits": [
+    "82f415a88aaabd02",
+    "a3b8df132f622cb1"
+   ],
+   "Limites — à lire avant d'utiliser un chiffre": [
+    "fac4cadec2a000f1"
+   ],
    "Sept pour cent jusqu'en 2003 : le taux de retenue du fonctionnaire était faux depuis 1991": [
     "31f33b3623354c79",
     "6b2cccf956e1cc83",
@@ -5503,9 +4291,6 @@
     "6d419768e8b795ee",
     "7c6ed808f3ae6a2c",
     "abd90bf0a5571dd5"
-   ],
-   "Un rendement unique là où il faudrait une série": [
-    "5a377ec35e167586"
    ],
    "Une seconde passe, et trois choses qu'elle a corrigées": [
     "3829d21fe23831b3",
@@ -5551,6 +4336,1434 @@
     "510c50ac4c28de5a",
     "6fcd88b6ea331d1d",
     "219bf3e277494a32"
+   ],
+   "Écarts avec le droit positif dans le scénario 1": [
+    "8f71d2ea2113d38c"
+   ]
+  },
+  "docs/archives/outillage_interface.md": {
+   "Ce qu'un navigateur ne débloque pas": [
+    "a5729c07eac44ad1",
+    "3936cadb150b0579",
+    "1b4b7adbd9573038",
+    "971659486fe90d58",
+    "b3f0c6a3e0ed08e8",
+    "4e68efda5cea1a57",
+    "c8ebc5e34b2e218e",
+    "a3ed7818efc3a37d",
+    "6717e684f03a57be"
+   ],
+   "Le navigateur ne voit rien hors de `localhost`, et il le dit mal": [
+    "ea96190757a1721e",
+    "51b0bbd1b07eaf8c",
+    "2a1fb05af9580c63",
+    "f228aea46aacc1b6",
+    "45131d41835c411c",
+    "a2b82f2edabea255",
+    "fadeac3d18903841",
+    "a6496ef64231f4f6"
+   ],
+   "Outillage d'audit d'interface — les récits": [
+    "3c959b480b830eda",
+    "e852d65c5c6077af"
+   ]
+  },
+  "docs/archives/veille_droit.md": {
+   "Ce que le registre porte aujourd'hui": [
+    "74df298ba56a190b",
+    "597db31b15c02e80",
+    "668a6c4066ac0015"
+   ],
+   "Ce qui s'est passé le 17 septembre 2026": [
+    "9e4655f0c437eb27",
+    "62fac199a6df5e1f",
+    "73a4b5fb1cfaa9fe",
+    "73b4486b7c2b88f3",
+    "c3e620c1244a79dc"
+   ],
+   "Veille du droit — ce qui l'a fait naître, et ce que le registre portait": [
+    "5dca4d9d51558497",
+    "f81c862ee81c68bd"
+   ]
+  },
+  "docs/archives/zones.md": {
+   "L'en-tête, et l'annonce de l'arbitrage section par section": [
+    "519c483c5ba3e811",
+    "4018642aa23826e2"
+   ],
+   "Les zones de la prose, section par section — archive": [
+    "9f503da093851ba5",
+    "1e43c7c512d9d957"
+   ],
+   "`README.md`": [
+    "190549786de3c46f",
+    "38d19db747baf73a"
+   ],
+   "`docs/fraicheur.md`": [
+    "137f886b025528d0",
+    "0b652c2704209ba3"
+   ],
+   "`docs/methodologie.md`": [
+    "bac24c47f99915ef",
+    "af70fabdf3139744"
+   ],
+   "`docs/outillage_interface.md`": [
+    "a5c877682696335b",
+    "09348257e1601f1e"
+   ],
+   "`docs/veille_droit.md`": [
+    "10b477d558ded4cc",
+    "0ed456faf03745f9"
+   ]
+  },
+  "docs/avantages_non_contributifs.md": {
+   "1. Pourquoi cette liste n'existait pas": [
+    "b0b48a06a9f264a3",
+    "b6dffd64e7021d8c",
+    "0a733eb435db641d",
+    "087815da58cf6c9f",
+    "9c5e1d976df85c17"
+   ],
+   "4 bis. Les deux avantages qui ne se lisaient pas dans la cascade": [
+    "55f0d522e852ef6b",
+    "2ca120c11e8d8f66",
+    "daf7e6ee68346126",
+    "3d8a6bd756b58484",
+    "dff85480942e3313",
+    "9a54538ee8d0c155",
+    "c326cf63fd45ff2e",
+    "3250e22b6bfbc589",
+    "815306a4fcf99503",
+    "19028ca4469f3890",
+    "728f85a96454aa48",
+    "a3ea5aedd1bc5750",
+    "0f285b1766a09704",
+    "8a4ef8e75ab3edee"
+   ],
+   "4 quater. La réversion, lue et non calculée": [
+    "a848934bfcf8da14",
+    "0e85e77da569b86f",
+    "e6d077f03ef030cc"
+   ],
+   "4 quinquies. Les postes que les comptes publient, et qui remplacent le modèle": [
+    "0b787f052de773ef",
+    "a08ce0c6b0114a11",
+    "52a6203f4e3cc4f9",
+    "367e05fadd9dffec",
+    "32d5ff425ac295c3"
+   ],
+   "4 sexies. Tous, et sur le plus d'années possibles": [
+    "c3bb245891de8345",
+    "117e13bef2260ef0"
+   ],
+   "4 ter. Les neuf lignes « intégré » qui restaient": [
+    "98811efc1ce9d9e2",
+    "6d2d5046c754fb6c"
+   ],
+   "4. Comment on chiffre, et ce que ça a donné": [
+    "efcbf07a29c6c03e",
+    "bb891068557180af",
+    "edc0b6177ee7df3d",
+    "d46439ae8ec6f7c1",
+    "79faa8b23513f68c",
+    "f4b8aaa5a362df87",
+    "6c70e63e8e25be37"
+   ],
+   "5. Pourquoi, et c'est le vrai résultat de ce chantier": [
+    "e0978fc8321c0602",
+    "1db2c09a650b8611",
+    "cdd4ec90136cebe3",
+    "47fa1c0c7d0684c2",
+    "ad4b5be8c8d6a1b4",
+    "36d1c9e4b615c9fa",
+    "b189e9849637eb7f"
+   ],
+   "6. Ce qu'il faut faire, dans l'ordre": [
+    "96a5088540c3df54",
+    "5fd0746fd9ea18dd"
+   ],
+   "7. Une contradiction relevée au passage": [
+    "9506f4e7f6d3bbda",
+    "49fe6136bd31e148",
+    "df780403bdf00d94"
+   ],
+   "Ce qu'elle change au statut de la page": [
+    "65e20f48d26e0e65",
+    "7fbb31eefb7f1cc9",
+    "678eee51b26706d2",
+    "c5788e5831cc1d44"
+   ],
+   "Ce que cela donne au total": [
+    "acf637950b583c59",
+    "ac9199e51cd0805d",
+    "d56138b694ff03cd",
+    "c9071bff94bb2a22"
+   ],
+   "Ce que ces trois lignes apprennent": [
+    "18d5ca65c080416c",
+    "d54058b53184c61a",
+    "9c8338db038b1213"
+   ],
+   "Ce que chacune vaut": [
+    "5880bfc96eb155c9",
+    "c1eef52cf8fca920",
+    "6cc92ac0eb26d951",
+    "ce2da59645297741",
+    "24f0815701a9367e"
+   ],
+   "Ce que la page montre désormais": [
+    "c371054a6d4f7c08",
+    "bd3b7c40113b2e9f",
+    "214c99a5b66d6281",
+    "637351e212c8d83e",
+    "7752326c7115924f",
+    "22a8ea9d1c79d39b"
+   ],
+   "Ce que tout cela déplace dans l'agrégat : rien": [
+    "7269975207d82dae",
+    "1cd9ea9d0b3d6697"
+   ],
+   "Ce qui reste hors de portée": [
+    "269aff071388175e",
+    "d6b3215ed095eff8"
+   ],
+   "Elle ne se calcule pas, et c'est structurel": [
+    "c5d3f219ec2a6367",
+    "9a28886bfa604e0e",
+    "c5950680ee4d30df"
+   ],
+   "Il a fallu écrire le lecteur": [
+    "8e4767663ddbd0fa",
+    "5132a38428a0aef8",
+    "8dd12006e6a4b8a8"
+   ],
+   "L'ordre de grandeur, et pourquoi ce n'est pas un coût certifié": [
+    "2edc2ac8a5ccd2ca",
+    "340b3f0c59c64ec9",
+    "83c1cf225a367a52",
+    "78843146d948ef8b",
+    "1c1362dfe6ad31f1",
+    "4616809559c706cd",
+    "657cd739b21efe28"
+   ],
+   "L'édition 2026, lue par-dessus l'épaule": [
+    "0c5c92af741dc989",
+    "45f542c7a449229e",
+    "6706773ffe19a938",
+    "9e60e11d3be60e3e",
+    "1f53541b744fcb5e",
+    "5671c3c337416044",
+    "43d153bafed3fb55",
+    "b574829097d4cae3"
+   ],
+   "La dernière base légale, et ce qu'elle corrigeait": [
+    "e361246fa897954a",
+    "d6e9b8848ff98ac5",
+    "d7da18f827a45a00",
+    "9d12e235f63e38e8",
+    "fec50a3d658632be"
+   ],
+   "La masse est un produit, et chacun de ses termes vient d'une cellule": [
+    "ae57f3e4aed2dbb1",
+    "a984129590ac3dab",
+    "68a6c48be92f4106",
+    "d386758e681a6732",
+    "0a1ab996b535ed9b",
+    "81876a321b7c4317",
+    "161a66c6e32d2216"
+   ],
+   "Le choix : deux tracés plutôt qu'un compromis": [
+    "eb901f906d8749d3",
+    "005d7132f293b7c7",
+    "103662f9d50f719e",
+    "de2a21fe0403afb2",
+    "d0e35457915ae2eb",
+    "9a655e68e27a0e42",
+    "5a52dd564793e591"
+   ],
+   "Le défaut : une falaise cachée à l'intérieur d'une ligne": [
+    "a0b2f374b0728e8c",
+    "c918da1ed6e0b5e3",
+    "9559b262b82835ba"
+   ],
+   "Le premier recoupement d'un poste publié": [
+    "83f64a7ab3d44516",
+    "da3e99c65cb2ecc6",
+    "4e3860ab5ad2a22e",
+    "f3d1bd11c8920976",
+    "e2acd680ce768af9",
+    "31f701aeccf44002",
+    "dc8d8693c4d9bd2e"
+   ],
+   "Le rapport du SRE, lu : il ne porte pas les bonifications": [
+    "a6f0a7c86bfc0b66",
+    "cb59474f68836b2c",
+    "32d46fdc623a4c95",
+    "818b5b5a2f17cabd"
+   ],
+   "Le tableur du jaune, récupéré et lu": [
+    "218b4e76a42914d7",
+    "f0b63e156e0f8047",
+    "8eac6121163cd635",
+    "0c8420cb648a2dbf",
+    "7e3a3a84353545f9",
+    "ce97563a4e5c6674"
+   ],
+   "Les bonifications de la SNCF et de la RATP, lues dans les PAP 2026": [
+    "5f1d363d4d64a183",
+    "d749733e7e80f9ec",
+    "7fdc45fe44251090",
+    "51b206bfca289f83",
+    "88424d8f4ae983b1"
+   ],
+   "Les trois qui ne sont pas des dispositifs": [
+    "9115a19792fa3e94",
+    "b7ede869e80f9aee",
+    "d3f32c871b12e257",
+    "118c78e1a938534b",
+    "f99687cce60ff71a",
+    "f39cde6e7eefc16d",
+    "3815175ee8805c54"
+   ],
+   "Retirer pour mesurer, par trois voies et pas une de plus": [
+    "565d9e3ef01490e8",
+    "64eb563c79582e3a",
+    "543594713095e6fe",
+    "b30d53996966a567"
+   ],
+   "Trois dispositifs que l'inventaire ne portait pas": [
+    "bd0b26a5fef1ff48",
+    "759b994e712d3e1c",
+    "b7cb9fbad203af46",
+    "5a8ff108e5676cb2",
+    "d57625d4f0567e7a"
+   ],
+   "Trois pièges rencontrés, et ce qu'ils apprennent": [
+    "7fedee5b840d0cb1",
+    "25d8eb19e63c1c9b",
+    "5bfa21a4620b9da3",
+    "a6e0177875cba69b"
+   ],
+   "Trois résultats qu'on n'attendait pas": [
+    "1bbe189335784621",
+    "0b7db2fb3742ed9e",
+    "cd197d49fb050074",
+    "3a8fcea52b125ee1",
+    "a17b131e8ba1e07b"
+   ]
+  },
+  "docs/chiffrage_plf.md": {
+   "1. Les impôts et taxes affectés sortent du système, et le programme ne dit pas ce qu'ils deviennent": [
+    "fc97dbf54d7c4d86",
+    "2769baa856783612",
+    "3398815a5d425bbd",
+    "143d0d58400e9ac9",
+    "b4eac7bfe3c6c583",
+    "924711e909ce9a10",
+    "ec4bcef386402ed7"
+   ],
+   "10. Le pilier capitalisé ne porte aucun aléa de marché": [
+    "dab4ceedb38bff50",
+    "e93e3caeba358de2"
+   ],
+   "11. Ce qui reste ouvert au registre de veille": [
+    "c30ae4c67917d031",
+    "dacf3f53ce1034af"
+   ],
+   "12. La TVA à taux unique est chiffrée en statique": [
+    "e4059f77d03fef21",
+    "881226db197d6cba",
+    "2f9f9c0c7d4ec81f",
+    "2b62e207228f04a3",
+    "96e20fc2f2f70305",
+    "e394d098f8b9bcf8"
+   ],
+   "2. La variante par défaut est rétroactive, donc elle suppose une loi rétroactive": [
+    "1fddea31a6dbae01",
+    "8f651ebb93a79bfe"
+   ],
+   "3. Aucune règle de pilotage n'est appliquée": [
+    "9411521dd0ca5af3",
+    "50e06808706fc351",
+    "0200cf5a58af737b"
+   ],
+   "4. L'écart avec le COR à l'horizon 2070 n'est pas résolu": [
+    "c9e4fa735fd73a9e",
+    "584148b47bf8f5e7"
+   ],
+   "5. Ni comportement, ni emploi, ni retour de croissance": [
+    "dd4b5b6f07beb504",
+    "a66c8749d799073e"
+   ],
+   "6. La grille : treize carrières, plafonnées à 2,5 fois le salaire moyen": [
+    "fa8f4534e33b2453",
+    "dc2cd794fd968a30",
+    "c733b45ae948e155"
+   ],
+   "7. La garantie repose sur une distribution de 2020 déplacée, et sur un taux de recours conventionnel": [
+    "ceba850d5fa891c1",
+    "843de01e06984b33"
+   ],
+   "8. Ce que la garantie remplace est une borne basse": [
+    "50dfeec173a2ab98",
+    "a30c155d30ed3959",
+    "80afad92f3d020ca"
+   ],
+   "9. La suppression de la réversion n'est pas dans le programme écrit": [
+    "3c9345d70ed264f7",
+    "3c3d4d2efb316066"
+   ],
+   "A. Variante rétroactive — trajectoire annuelle": [
+    "62fcb7d6e384e81b",
+    "d50606c64938039f"
+   ],
+   "B. Variante rétroactive — horizon long": [
+    "67f4d456afbe6b13",
+    "74dd9878ab0b9a72"
+   ],
+   "C. Variante prospective — trajectoire annuelle": [
+    "e65674bcb7616e3d",
+    "c4abc6a7d7de51df"
+   ],
+   "Ce que ce document chiffre": [
+    "f1c720d56a34b301",
+    "cf84bd4d115f133d",
+    "46ff39b2549d2e9d",
+    "3dc9ed3e37f6ea1b",
+    "47ed186d45ddde2e",
+    "29309e58c3b1a780"
+   ],
+   "Chiffrage budgétaire de la proposition, pour un projet de loi de finances": [
+    "759b85acb92b427f",
+    "dad39ef4aff91df5",
+    "01beba813fa05f28"
+   ],
+   "Conventions de lecture": [
+    "01f70a12432b8eab",
+    "16d8bdf3d924c206"
+   ],
+   "D. Variante prospective — horizon long": [
+    "8ec8b25f52ed93b0",
+    "d7cda6edfee6a705"
+   ],
+   "E. Prélèvements retraite, avant et après, et ce que l'État verse à part": [
+    "a6dfa3327ee5520b",
+    "fca4e1c69ca99e88",
+    "0c27d772fdad7c82",
+    "4aa58becd59063b7"
+   ],
+   "F. Agrégats sur la projection": [
+    "cd46cd1b98356f10",
+    "fae96d4db29b8035",
+    "fb6154d0ac65fa4c",
+    "d03ed2f2b3511cf1",
+    "cd88f5527573a496",
+    "9f4346e64eca37f9",
+    "87aff3975d1dcf99",
+    "b1c1e2e38815fc6d",
+    "9652ff4f49004bfd",
+    "cf0a363f730aae71"
+   ],
+   "La pondération du recensement": [
+    "3771283806d15464",
+    "868696a45ed3f437",
+    "1955df5c1f0e8290"
+   ],
+   "Le fait central": [
+    "f501af9748046147",
+    "284a77fe7f6364f8",
+    "915c4cd55757c894",
+    "38d24341811d9f6d",
+    "80b8994a400b1630",
+    "80bad7d47ca47e86",
+    "c77914b83aecb2cc"
+   ],
+   "Les hypothèses fragiles, par ordre d'enjeu budgétaire": [
+    "abaee1db09589731"
+   ],
+   "Les quatre arbitrages qui déplacent le chiffrage": [
+    "6a3df91d91c32724",
+    "d1b055ed454ac1f9",
+    "87abdab584cc086e",
+    "7f72bc9081f3802e"
+   ],
+   "Reproduire ces chiffres": [
+    "56ea0b9805322a78",
+    "d8051a288aa85470"
+   ],
+   "Tableaux annuels": [
+    "2f632c4cdb2b1199"
+   ]
+  },
+  "docs/decisions/0001-architecture.md": {
+   "1. Pourquoi ce document": [
+    "e1dc08d2266b64b3",
+    "058c516b2bf4411c",
+    "ac45fe49e4cabe73",
+    "0959cee3b095aec7"
+   ],
+   "10. Les tests": [
+    "42caf4e8e8f963ba",
+    "3763036e0714fdda",
+    "3e4b17ad1861638b"
+   ],
+   "11. Le chemin": [
+    "2aaf3e253ca08fd5",
+    "38a9637f11dbe9b7",
+    "36d54eec900e515e",
+    "f16f7f11a9eb691a",
+    "3e09c9f29480340e",
+    "1ac8a158296137a6",
+    "0079e84359752763",
+    "a86fd6ecc97b06c2",
+    "3d7b354ec34aaa24"
+   ],
+   "12. Rien de cassé, rien de perdu": [
+    "739047db692d4622",
+    "f4d4d8112264c517",
+    "c644181bbde19ab4",
+    "0bb7401225b86a49",
+    "e6731c57d0c746a2"
+   ],
+   "13. La stabilité : ce qui ne bouge pas, et comment on change le reste": [
+    "4a84f434ebc004e9"
+   ],
+   "13.1 Le noyau": [
+    "8451c2e9bf0ae70d",
+    "14203a8203d9e6d4",
+    "c4db39de7e77ebe7",
+    "434ca594b423df4a"
+   ],
+   "13.2 Le reste": [
+    "9ccb42bb17ee292d",
+    "04c3b2b61cb90356",
+    "c1e28bef7a08af0f"
+   ],
+   "13.3 Comment le noyau change": [
+    "b28273febc4af465",
+    "2c8d2723fcbb40b5"
+   ],
+   "13.4 La règle d'arrêt": [
+    "0413511e3ed2e81a",
+    "a1d7667490d19cf0"
+   ],
+   "13.5 Ce qui entre maintenant, ce qui attend sans refonte": [
+    "5c106c957dc56e8e",
+    "9c2b10003f726012",
+    "94e4c0c3ec53b801",
+    "88bd9e1576e8cb08",
+    "2ef8ed344a4205ff",
+    "8357c70f7f0668f3",
+    "a81d78d09255a2d1"
+   ],
+   "14. Ce qui a été vérifié": [
+    "15d38d8e49701b40",
+    "00bd97349ebebb66"
+   ],
+   "14.1 L'histoire du dépôt": [
+    "81ae94b6fd684f41",
+    "d328e8a8a44f1234",
+    "1e71f27a538b189d",
+    "b02c1a0d95201b2c",
+    "54849fec550e3cb6",
+    "a3eb92bc2db4cdc2"
+   ],
+   "14.10 Les risques qui restent": [
+    "39dd5f87ac92f6de",
+    "c0fcc784467155ae"
+   ],
+   "14.2 Des cas de droit parmi les plus difficiles": [
+    "586555cbbddf6157",
+    "dc82fd9d1bc5b275",
+    "0f0d25262ca5f46d",
+    "69379c8f51f440de",
+    "21352be638ba8ba3",
+    "e13c6a8bae356528",
+    "77ba1d1cbefe2db7",
+    "1079177571c827a5",
+    "a56db9d2e9855d16",
+    "dbfb883c18954c38"
+   ],
+   "14.3 Dix ans de changements": [
+    "0a30283f3028b378",
+    "306f4318fc6990e4",
+    "f0a443a2081d9e75",
+    "92a77d97b6628424",
+    "12282ea935545752",
+    "f78f79b894b2f22d"
+   ],
+   "14.4 Les systèmes qui durent": [
+    "6b2d23eaffa90e4a",
+    "0b0c1436e8d2ad95",
+    "beed0fb779677266"
+   ],
+   "14.5 Des contrôles faits à la main": [
+    "97d9e5a0c2bbc75e",
+    "95543a3d598b7607",
+    "0871a448fdf96868"
+   ],
+   "14.6 La contre-épreuve de la version 5": [
+    "337c044786f7bc98",
+    "23655cc89ae33637",
+    "c2a026c8c5e79dda",
+    "d533f1296bf08ad9",
+    "24a52d24ca12fb73",
+    "0b465cd1030662a1"
+   ],
+   "14.7 Une maquette du tableau de bord": [
+    "71b22d09ba2cfb3d",
+    "845ab803ab804bae",
+    "78fe5997e69444e4",
+    "f1184ba1c042cb78",
+    "1a8cc9185bc680bc",
+    "ca788a1d1a38a1da"
+   ],
+   "14.8 Ce que coûte le travail aujourd'hui, et ce qui est déjà prouvé": [
+    "9425604876d96445",
+    "42c4593b613793ad",
+    "70e7d7e51387d545"
+   ],
+   "14.9 Les autres modèles, recensés": [
+    "e92a94fbe988334f",
+    "5a3d5daacdbaafe5",
+    "c31a2be326b8813f",
+    "07dccc2a6d53f19f",
+    "fd625d367131c26e"
+   ],
+   "2. Le périmètre : tout le droit des retraites": [
+    "4ec264868ea8dd7f",
+    "fb352d8631935737",
+    "f93a8b3a676ab4b4",
+    "c275ad5b3e0b2752",
+    "2baebe1d2a125573"
+   ],
+   "3. Les références et la preuve": [
+    "fc6450c0ec8bd1d8"
+   ],
+   "3.1 La hiérarchie": [
+    "12a7a5518fec2bd4",
+    "8c0363cb3ec3f8ec",
+    "314c26d457c67cf0",
+    "8b29d0253ed3db48"
+   ],
+   "3.2 La preuve": [
+    "577f4f6f82c5d49d",
+    "19c7054a300891c2",
+    "1b8cfdc79e924bc9",
+    "7ab2f948c0e1599e"
+   ],
+   "3.3 Trancher une divergence": [
+    "0c7f68bcf6cda82b",
+    "f00d1f3000dbcb6e",
+    "283805f4fccf4b30",
+    "74c0eaf7b0a6b92f"
+   ],
+   "3.4 Les autres modèles": [
+    "0359263d7b8dd900",
+    "78000b58aa9a7a78",
+    "a5553c77382dac4e",
+    "ae94152b4625a98c",
+    "225851a8ba1a7348",
+    "b3fa71a05aac4e4c",
+    "b5af2161e56b7789",
+    "b1d53080e5688aae",
+    "b070d629b7c61b7f"
+   ],
+   "3.5 Les simulateurs officiels, sans se faire bloquer": [
+    "8b889e705c29a7b1",
+    "9af68cdb81ff96f0",
+    "eb1c2b63cf15196f",
+    "e7f27f685dc906e3",
+    "40b35901366ef486",
+    "518036ca33490383"
+   ],
+   "4. Le temps": [
+    "e9e2a3d3bb6eb94c",
+    "481fd3a13331ee78"
+   ],
+   "4.1 Ce qu'une version dit d'elle-même": [
+    "5659392621beb2c0",
+    "af76f88666db2cb3",
+    "bdf351c1d8dac449",
+    "751f09af3e0de600",
+    "e47c6507858fa42a",
+    "14b03f6cf25692c9",
+    "5c676a7aea503729",
+    "1a613e392694866d"
+   ],
+   "4.10 Une réforme, une correction, une décision de justice": [
+    "8a488cb525a60ba1",
+    "18d2b399c9bf7524"
+   ],
+   "4.2 Les dates qui décident": [
+    "636663f4e9207b49",
+    "6e18e1fcfcd9311d",
+    "18a1183c53e4d288",
+    "ad0556ca14ee6115",
+    "5120824b574d1668",
+    "44b445306b45e5a5"
+   ],
+   "4.3 Les droits maintenus": [
+    "a34e6887061b1424",
+    "282731303156127b"
+   ],
+   "4.4 Les droits créés après coup": [
+    "548476ae3f7b0a83",
+    "2bf250c3b70894a6"
+   ],
+   "4.5 Les pensions déjà liquidées": [
+    "18d5baec9f51ce6c",
+    "8cbcdb3bae561c48",
+    "345a0c47db551cf7"
+   ],
+   "4.6 Unités, arrondis, ancrages": [
+    "47fe01a29bb02248",
+    "965e67568c916dd3",
+    "e62617307ad686c3",
+    "af4f9318e2605197"
+   ],
+   "4.7 Les hypothèses": [
+    "6985c075c8fd3b48",
+    "f5fdbb7a315393e9"
+   ],
+   "4.8 Les univers de droit": [
+    "842f02c0e20784db",
+    "d950a2e17257e6a1",
+    "c8aaa2f14e560cc5",
+    "eec03100ffe4d941",
+    "052b3147634fc78d",
+    "cb192510f2a7fd79",
+    "362cb75c50fa79db",
+    "bd770d0497f016ee",
+    "cb9041c71c9e631e"
+   ],
+   "4.9 La situation et l'observation": [
+    "3e4a3ebbd94b3ceb",
+    "0a5e77db6e72bdae",
+    "ffb917bb4a1bd606",
+    "952fcf640704b511",
+    "d4eadc80135c03c1",
+    "eaee21ac3b3d24d9",
+    "2b2e2559ed9904f8"
+   ],
+   "5. Les personnes et leurs faits": [
+    "bca20e0329680386"
+   ],
+   "5.1 Un réseau de personnes": [
+    "78929795b733a2c5",
+    "971603395f935480",
+    "caa9f5544668accf",
+    "48113c067aecf37b",
+    "97d19e87b3bccc3f",
+    "2cbe41642a097a67",
+    "89daab77bc4f6922",
+    "60b7c4951810fe24"
+   ],
+   "5.2 Des périodes": [
+    "2417dee887184fd7",
+    "a5f41a92fd433610",
+    "eab2928c14df88dd"
+   ],
+   "5.3 Des événements et des actes": [
+    "748162bb6ba3380c",
+    "9e3b4619a911ace3",
+    "94359ccaaa16e579"
+   ],
+   "5.4 Les ressources et les pensions d'ailleurs": [
+    "cb554581d77a3ee4",
+    "d33ae8a06c15e1a6",
+    "461e06f21da45873"
+   ],
+   "5.5 Les résultats observés": [
+    "7ca5bc4802d3b275",
+    "b6c2232fa2c12acb",
+    "d0f96c31179a93bb",
+    "7bda3b5a7b76c306"
+   ],
+   "5.6 Les présomptions, et ce que la loi décide à défaut": [
+    "6056fa493fb3df16",
+    "0264fc6c79838377"
+   ],
+   "5.7 D'où viennent les faits": [
+    "2ba4bd60f63611b0",
+    "4e9f80a32eef2472"
+   ],
+   "6. La carte des règles": [
+    "ce8e68cb8fbec026"
+   ],
+   "6.1 Une fiche par dispositif": [
+    "f5db765a44dba9af",
+    "a7def2b93ab7b93c",
+    "49ddc4048b5e6d7a",
+    "7fb42a5058398619",
+    "5bc3288ca71e5687",
+    "ba6bd4b9753eb785",
+    "6c4caf0bc928140d"
+   ],
+   "6.2 Les relations, fiches à part entière": [
+    "5c40cf6e6e15b4a5",
+    "0cd5a2b7ee349db8",
+    "ee11d1401142cc80",
+    "986e937b38f1d6b6",
+    "836783827a26b363",
+    "a88f9763e9f098e6",
+    "2f480d3c1af57f89"
+   ],
+   "6.3 Les transformations": [
+    "8f67b996fd6738af",
+    "48bf635bac3e1538",
+    "5c2491fe142c1310",
+    "e500e6f8350387cf"
+   ],
+   "6.4 Neutraliser une règle": [
+    "b40d9e8ddb76a2ca",
+    "c5014250615e87a3",
+    "ea4bcb04fd98bd7c"
+   ],
+   "6.5 Ce qu'elle remplace": [
+    "42f4ede6e22d4574",
+    "eb4e1dd4a689fc38",
+    "6cfd8e728b4a2c4f",
+    "dd3b4eb6dc905b96",
+    "ac195e5e0335a2fa"
+   ],
+   "6.6 Ne rien oublier : les textes comme liste de contrôle": [
+    "9792aa80d540e642",
+    "1124249ef2f35eb6",
+    "78ca89fad5227735",
+    "4f8183419c89c3e3",
+    "43ef40c8554cc593",
+    "cdba76b3f6b67609"
+   ],
+   "6.7 Ce que les tests exigent de la carte": [
+    "c9db67d3b564e2a2",
+    "aab2cb808fd9506c"
+   ],
+   "7. Le moteur": [
+    "4a810eb2f1fb0c80"
+   ],
+   "7.1 Des moteurs jumeaux, des étapes qui s'échangent des données": [
+    "327cb07d6c182681",
+    "7d3eb903107a5b90",
+    "ffdf42361f94bf7b"
+   ],
+   "7.2 Acquérir": [
+    "9b819706a5283c90",
+    "fe27d58a098eecc7",
+    "f29f28a39c409b2f",
+    "5d88f6c910842681",
+    "cd6b33bb40d900d9",
+    "3872d3bb88aa0437",
+    "c9e4a91326350f6e"
+   ],
+   "7.3 Liquider": [
+    "04dd381bd0231aa7",
+    "dc159a4e9bbbb601",
+    "63bb485c67cf32df",
+    "c2c8b73712d2e92e",
+    "d41a87c1e48e2cee",
+    "29d9189be2ab94ce",
+    "c6aff9d43bfacb23",
+    "b7a59b35ef2f1866",
+    "d920d43b03465f97",
+    "6fd0719c683f2607",
+    "cadb75942437e313"
+   ],
+   "7.4 L'échéancier": [
+    "7da434a0b6a06a24",
+    "263cf45404287eb3",
+    "6a03a394e783abed",
+    "01d848956e41e774",
+    "d1d81c315e565d80",
+    "333499e3eab42b37",
+    "b4fa7ce651d29f14",
+    "152c97960d8903e3",
+    "ed555953d406c095",
+    "39cf374657abfd65",
+    "0ccf98bbb14253bd",
+    "11a687afad4ab18b",
+    "fdf0ce474a5c9744"
+   ],
+   "7.5 L'ordre des calculs, les hypothèses, les dates calculées": [
+    "d0d2bcd96d6be52a",
+    "1afe3b9f4abf6118",
+    "2f7caf6e00c89512"
+   ],
+   "7.6 Le relevé des droits": [
+    "c39349bb81e742a7",
+    "686c13e9be406fc3",
+    "9099055b86042fcd",
+    "f6300fceb98e57f4"
+   ],
+   "7.7 Le pilote": [
+    "ff504b865550897d",
+    "70d63b206de8890a",
+    "59d9c3e225338e5a"
+   ],
+   "7.8 Le budget de calcul": [
+    "95eb604d4c6967a2",
+    "2be335eafb8330a9",
+    "b30ab6963e4cddbe",
+    "9034a06b65b7d902",
+    "8c8b2adb8b7c358f"
+   ],
+   "8. La proposition, la page Coût, le site": [
+    "9a54a271b4eefb39",
+    "2bd5d4ace8c5a07c"
+   ],
+   "9. Savoir où l'on en est": [
+    "3b04f8acf7511934"
+   ],
+   "9.1 Le tableau de bord": [
+    "2ff47daede904c7a",
+    "c035322b485fc1b1",
+    "19e725849a8494a6",
+    "10d4e727bc63d9d5",
+    "18735a59d9200ce4",
+    "082e8b03195792a6",
+    "3e8dec3895579a40",
+    "b4e65ee45213dfc4",
+    "32ffbae5b6c73c1e",
+    "9b4e091753323e46",
+    "6064c11388ca10c9",
+    "d040bdbbadef0856",
+    "5da04592cccb8694",
+    "da87673290b1332c",
+    "38ccb2769eee3c46"
+   ],
+   "9.2 Ce qu'on apprend n'est jamais bloqué": [
+    "9816abdda26a526f",
+    "523c599115f015b1",
+    "61b2cae5d0d27547",
+    "5a4b63e27d35cbab",
+    "d99d5009f853795a"
+   ],
+   "9.3 Les documents": [
+    "2274155edd1efb45",
+    "951a9ff1aee0bb47",
+    "48bc3b4d080f8357"
+   ],
+   "A.1 La fonction publique, en entier": [
+    "79fb74474664f530",
+    "7e63f6d23e00a1cc"
+   ],
+   "A.2 Le régime général, en résumé": [
+    "5c84839be1ec7d55",
+    "62e2ddfa0079fbd2",
+    "421b453a0120c982",
+    "e33c492eb77d91f0"
+   ],
+   "Annexe A — Deux fiches d'exemple : les trimestres des enfants": [
+    "5b9d8a341c91720e",
+    "16b2da07f0733a32"
+   ],
+   "Annexe B — Où va chaque fichier d'aujourd'hui": [
+    "6693e34102cb95f6",
+    "19e2475e63770061",
+    "eed1da23ad3de37a",
+    "c5c5bf520cdde3eb",
+    "f2580b431aacac52",
+    "d999f09f58581374",
+    "9592a09e99ba4c7d",
+    "7372decdd07ea84c",
+    "bce4cbabddb3734b"
+   ],
+   "Annexe C — Les neuf contrats de données": [
+    "da8ffa811b6ddb58",
+    "ac474dd1e1e1beb1",
+    "5a31968555d894bb"
+   ],
+   "Architecture du dépôt": [
+    "5c382d760eb2bebe",
+    "09acf252b4964ba2",
+    "4d2d99987e055097"
+   ],
+   "C.1 La chronologie : le fait et le lien": [
+    "b3e69956cddeef60",
+    "e25089a3121d2d07",
+    "044048e8adaa7462",
+    "4001ba130d3822a2",
+    "03a53cc520389ebb"
+   ],
+   "C.2 La fiche et ses versions": [
+    "f6a373a3d0b78b95",
+    "5b29c618c177f0e0",
+    "31ef470796ac76e0",
+    "0c632d9d1f4db253",
+    "932880669f8d0b9f",
+    "82161062a0f52d08",
+    "718e31b7641cdb14"
+   ],
+   "C.3 La table datée": [
+    "fc05acc65d763d53",
+    "85b2a95febca5848"
+   ],
+   "C.4 La couche et l'univers": [
+    "5cacf8d046a08ca6",
+    "924bdb2255210cd9",
+    "2c0ce790ddcf951a",
+    "1cb3a2b66e61f45c",
+    "14f1598fc3c74502"
+   ],
+   "C.5 La ligne du relevé": [
+    "04cc794299c8a1b2",
+    "79883ed55e4be603"
+   ],
+   "C.6 La liquidation": [
+    "fe5ab848e99b3f6a",
+    "9c6ad8f0a6f4dcd4"
+   ],
+   "C.7 L'événement": [
+    "828622a80fb8016b",
+    "e561830b743a7caf"
+   ],
+   "C.8 L'entrée du journal": [
+    "c820dbca18d1a047",
+    "57329070975e8257",
+    "e640017ee5490760",
+    "30c04144a98017a5",
+    "75d7906209442c9a"
+   ],
+   "C.9 La surface publique": [
+    "186a474fe0f91168",
+    "494720b4e5816aff"
+   ],
+   "L'essentiel": [
+    "b2de2082c0dbe512",
+    "6c1ee77276b40fc5",
+    "6a1b47c910491282",
+    "c2235bdbd93ef6dc",
+    "a2f7516281226b31",
+    "a79229f84f4c4d45",
+    "ca83bef1a918052b",
+    "de547ac417fb7981",
+    "ab1b26e218873d65"
+   ],
+   "Les deux règles d'exécution": [
+    "eedf2f0ac3b2c94f",
+    "53849784039e4f4f"
+   ]
+  },
+  "docs/decisions/0001/phase_0.md": {
+   "Ce que fait la phase 0": [
+    "c0b7f625c4d46471",
+    "1c35ad69159f7608",
+    "b706626412233b0b"
+   ],
+   "Ce qui est décidé, et ne se rediscute pas": [
+    "9bd9c82795eda78f",
+    "f9ea89d6df4e55cb",
+    "8d06baa2bc5fb112",
+    "1346a0ab579784cd"
+   ],
+   "Ce qui vient après, et pas maintenant": [
+    "b1d84e0d471796cc",
+    "75f168017c0992d0"
+   ],
+   "Comment vérifier, avant chaque envoi": [
+    "a9e0c18b988f6d46",
+    "9c426ccd6b352666"
+   ],
+   "Les outils laissés ici": [
+    "4176fa8d7363371e",
+    "ec4d74f6f021c75a"
+   ],
+   "Phase 0 de l'architecture — la passation": [
+    "30ac4079c3a6f5e5",
+    "b08121648292fa0e"
+   ],
+   "Travailler sobrement": [
+    "4e31ccde588717b3",
+    "d0493f2483c23b92"
+   ]
+  },
+  "docs/decisions/0002-fraicheur-de-la-prose.md": {
+   "Ce qu'une session doit en faire": [
+    "97b84e936eead49b",
+    "8721abe74e9b6cda",
+    "0399500bb1587146"
+   ],
+   "Ce que le contrôle ne voit pas": [
+    "eaa756bca9dea9ae",
+    "0e1781735d325c22",
+    "1300385a6c58432e"
+   ],
+   "Fraîcheur de la prose : l'état, le récit, et ce qui les distingue": [
+    "6b6a29eb70a84ce9",
+    "a58f135188c2db18"
+   ],
+   "L'ancre": [
+    "4c4bfcd973a86158",
+    "33d668dbec089647",
+    "07aa2af5bc73b2fa",
+    "3f92cbcce8b3e4e9",
+    "64c2267e4a2836b1",
+    "e6171947cdfda9b5",
+    "35222e80aa78ffb3",
+    "2f6a1f5aa932c73d",
+    "b6da0953b563fcab",
+    "a6178de5612252bd",
+    "98eaebac6f39aab8",
+    "33615f1cd045b49d",
+    "8c4632f7dfd3c6b3"
+   ],
+   "Le constat": [
+    "ac5e8d763b2e81e7",
+    "9527ca8538ce54fc",
+    "a29758a5efb8b159",
+    "d93a2262fd2863c2",
+    "3ca5b4d07878dc2d"
+   ],
+   "Les deux cliquets": [
+    "7ccad13b676f208d",
+    "ae5c77d41d4ae54b",
+    "161610019d190ae2",
+    "c79902e9f8ae58cc"
+   ],
+   "Les quatre régimes": [
+    "c9e727f868d6bd3e",
+    "33860e4ad670110b",
+    "a2cd1c5efc1a6c3a"
+   ],
+   "Note de décision 0002 — la fraîcheur de la prose": [
+    "e7e2e38d47f07b6c",
+    "853f436dbc808c3e"
+   ]
+  },
+  "docs/exploration_sources.md": {
+   "Ce qu'un simulateur vaut — et ce qu'il ne vaut pas": [
+    "c6e9a932186fa468",
+    "6ccd9dba33bc5f7e",
+    "b3111067f8035cfa",
+    "d7e5490d99336178",
+    "d2a967112efb429c"
+   ],
+   "Ce qu'une session obtient, mesuré et non supposé": [
+    "e383ecf468be01a0",
+    "17586a40b47e5ace"
+   ],
+   "Ce que le premier lot a appris": [
+    "c09f160dab29c428",
+    "9f4ff516b9463f9e",
+    "8df9cf7d46441a5d",
+    "8a3ab40184cf609d",
+    "75a1b5f2c1cfe6a0",
+    "0cda7e9098b9f800",
+    "f6cf452fdf802252",
+    "4795c3fb7c7b5684",
+    "a31878e30fe3ae7f",
+    "5a75d58c447f046c",
+    "eecb6ef8d55abc69",
+    "2aa0c35ce1a770db"
+   ],
+   "Comment une session prend sa part": [
+    "50bff8195e889086",
+    "485b335b4abcab43",
+    "5dc2f73d68e87dbd",
+    "01d9d0ad5ceb30f1"
+   ],
+   "Explorer les sources officielles — la méthode": [
+    "a20f4424d678428b",
+    "258318e43f7efd59",
+    "cac892f33b2bab53"
+   ],
+   "Où va ce qu'on en tire": [
+    "07aadc848e986964",
+    "e3027f15d1ff9684",
+    "8305cb842a6ce5d1",
+    "15925a015a24ecba"
+   ],
+   "Un simulateur est un oracle, pas un site à lire": [
+    "96ab79d5298bc2e7",
+    "9963e8dc97d627d1",
+    "b93dd33b772673d8",
+    "b967e5a40fe5b25f",
+    "b1d248a2567a7009",
+    "42f8c8930e0c05c5",
+    "2dc2628135407593"
+   ],
+   "`chaine_incomplete` — le certificat auquel il manque un maillon": [
+    "cdeab1f6967c9610",
+    "9fa2a30d1571eb2f",
+    "2defbdf1f2b6b1f0",
+    "711d0ba91535e671",
+    "933aea424a0aee95"
+   ],
+   "`git` — la page est refusée, le dépôt ne l'est pas": [
+    "1ad41dcb75b4bf41",
+    "2e2a72bb70ac7d0f"
+   ],
+   "`navigateur` — Cloudflare, ou une page qui se construit en JavaScript": [
+    "b882a98e5500e5f6",
+    "29398cd7e7aab532",
+    "072902857d616d2e"
+   ],
+   "`refus` et `ferme` — ce qui ne se contourne pas": [
+    "78ae7d3e0014e922",
+    "81f7afd18739f3cc",
+    "7ee61448d97b0f0c"
+   ],
+   "`session` — 252 adresses, rien à faire": [
+    "47e10d09321c169b",
+    "c0f57b24d227d8a2"
+   ]
+  },
+  "docs/feuille_de_route.md": {
+   "Ce qui est délibérément en bas": [
+    "0ca4dff77b2c02dc",
+    "ac128040a02b580f",
+    "2e19089b8093fe5f",
+    "3034d5013d8a5ad2",
+    "bca67fefdb2c9e32",
+    "5019494f2e02399f",
+    "605590aee5df31a9",
+    "c1bb5476fc9e73e5",
+    "e9e063fff22f3561",
+    "48084d72c20a75ef"
+   ],
+   "Les actions en cours": [
+    "12843a9770b8672a"
+   ]
+  },
+  "docs/frontiere_contributive.md": {
+   "1. Le mot « contributif » en cache trois, et elles bougent séparément": [
+    "71d807c30f15c505",
+    "dea9f60d930a4ebe",
+    "da31bd40d33dcad8",
+    "8d7d561611d2e44e",
+    "7ce120a43146fe17",
+    "9b2d4a6ab05dee6d"
+   ],
+   "10. Ce que le législateur compte, et ce que le dépôt comptait": [
+    "bbe91cf2f25a288b",
+    "baaac1be5c3a7b58",
+    "fafa1a5ee12339ac",
+    "ef6748125fd30135",
+    "6cf635e315a4a08e",
+    "be07658cbb246f25",
+    "8184491a2262f1c0"
+   ],
+   "11. Les régimes spéciaux : fermés une fois, élargis depuis": [
+    "fcd357ed04528e0e",
+    "f996f4fc696d5088",
+    "74af298f6b21ebfc",
+    "344980943142903a",
+    "f8a4b65f8be8e440",
+    "0eae752196509b97",
+    "d4dc881d8ec466f7",
+    "3ebd67d14ca6259c",
+    "87e6839e5d364a12",
+    "db668aca3102e6a1",
+    "fbe767c0404cb76a"
+   ],
+   "2. La liste existait déjà, et le législateur la tenait lui-même": [
+    "43a1495fd92af455",
+    "e9bcf41ffea0c780",
+    "d0a5653aa45638ca",
+    "1fab960c232b57c0",
+    "1b83d52954ceb75c"
+   ],
+   "2004 : l'année par enfant devient une année méritée": [
+    "87f91d1a595cdb29",
+    "db51adde925cd0c9",
+    "deeb12d5bdbd1f02",
+    "be4bf4ae80efde13",
+    "bb77c19250e66ac6"
+   ],
+   "2011 : trois fermetures le même jour": [
+    "77f938fefb301abf",
+    "bdf40f6e6ef45167",
+    "908649857058af7b",
+    "d108e81082c99856",
+    "2d70bf212c97112d"
+   ],
+   "2023 : un plafond et une libération, dans la même version": [
+    "e2c42130bd3500ba",
+    "78775eaaec4dad3a",
+    "a0e643d8da66125f"
+   ],
+   "2026 : un trimestre change de case, et la veille du dépôt avait raison de demander": [
+    "b907cba7baf688fa",
+    "55f98cdc32126b39",
+    "fe64d71d409eec07",
+    "3dd0912977875023"
+   ],
+   "3. La liste disparaît le 1er janvier 2026": [
+    "9ad8554d1b373f48",
+    "7ebb4358fa8aaabd",
+    "15c1807b3a82a5c0",
+    "22687bbb4953196e",
+    "e6cedd56e72ba3be",
+    "1176dbbf35ce3cc6"
+   ],
+   "4. Le versant que le dépôt ne portait pas : cotiser sans rien acquérir": [
+    "09a36e7c922bbaf9",
+    "52b04b0fd08fbaff",
+    "1e7b98c6a48976d5",
+    "a64c5867081f3152",
+    "7db048c9b9b830a0"
+   ],
+   "5. Ce que la chronologie montre, et qu'aucune liste ne montrait": [
+    "601ac2cacb65de2e",
+    "ccded952c1f99f10",
+    "1a69f7b4bb98f5e8",
+    "de898779482ee9cf",
+    "3d763e7e85093a2c",
+    "dd30e7a4745e2d91",
+    "195e39458cea1298",
+    "0765073096fb2ba9",
+    "989cccb97c271ea3"
+   ],
+   "6. Trois corrections que ces lectures apportent à l'inventaire": [
+    "0100be59ac481459",
+    "71bd778e6c0da21f",
+    "351c53eb85bd8088",
+    "435c3012cbff24cd"
+   ],
+   "7. Ce qui reste à faire": [
+    "cef441eda3ae7fce",
+    "99450c67c2b7cfc0"
+   ],
+   "8. Combien : 17,9 milliards, et la correction d'une erreur écrite plus haut": [
+    "a84a750605b5bea1",
+    "a52e470e71cdcabc",
+    "b4bbc9a006fdfb76"
+   ],
+   "9. La fonction publique : le seul endroit où la frontière a reculé": [
+    "aa437fb3af434c3b",
+    "94252ff78a14c5c5"
+   ],
+   "Ce que ce total n'est pas": [
+    "a0dd8e3ac53c33c3",
+    "abc33df01fcb4694",
+    "e90c70400f85da77"
+   ],
+   "Ce que le modèle en fait, et ce qu'il n'en fait pas": [
+    "c258b06ef167bed2",
+    "108a2ddef3bc672d",
+    "39cfee4dccf9e0f6"
+   ],
+   "Ce qui a changé de côté": [
+    "ecb6422aed1f767a",
+    "4eed4d26091e6d4e",
+    "09976bcdc8d2938e"
+   ],
+   "Ce qui manque encore": [
+    "c58cc1bfacc8b5a2",
+    "6f4234405bd225b2"
+   ],
+   "L'assiette, chez celui qui la recouvre": [
+    "f4ce19a6ddae007f",
+    "ee5a3d9bbb62dfea",
+    "c4bafcd22d73728b"
+   ],
+   "La complémentaire : connue en proportion, pas en masse": [
+    "e6eba64cfb9edec7",
+    "54517d2b83875943",
+    "a8d30b48ffa937dd",
+    "e0c8d006c80a8fe6",
+    "281b8180a2e0bec1"
+   ],
+   "La liste des périodes financées n'est pas celle des périodes validées": [
+    "f0d9734ff7ee0a04",
+    "707cd7feb6eebdb5",
+    "9f0ed293f826fca8",
+    "d260c6675e56d6c2"
+   ],
+   "Le mécanisme a changé de signe": [
+    "e06f513951e09a79",
+    "3d3c4d33462a0a0a"
+   ],
+   "Le poste qu'on n'attendait pas : la branche paie une complémentaire": [
+    "abeacb62f70b8b03",
+    "802ebfca11470a47",
+    "558eb62fc68b2e4a"
+   ],
+   "Le renversement de 2023, et la seule pension purement contributive du droit français": [
+    "7a4ac4b6e9b8d8ef",
+    "d3be4548b1d85821",
+    "d8f7ad478d42aabf",
+    "66cc06d52233c34a",
+    "e83ea746b8d3afa4"
+   ],
+   "Le résultat": [
+    "06e452acb05b3739",
+    "8072785aa3d32fd3",
+    "d4ed2f8629febd5c",
+    "27935f8f3e14a444"
+   ],
+   "Un droit qui change quarante ans après coup": [
+    "128ff4c2d6536f29",
+    "07154955ddf4fb2c",
+    "c09fc08dc0ad27b1"
+   ],
+   "Un recoupement que rien n'avait préparé": [
+    "767d970c0351d2ff",
+    "ded8f739204dfe9f"
+   ],
+   "Une bascule qui n'en est pas une, et qu'il faut dire quand même": [
+    "4bdde5b8a8c10ab3",
+    "1425f120861b78c9",
+    "67bdf05edb0123cb"
+   ]
+  },
+  "docs/integration-partiliberalfrancais.md": {
+   "Ce qui a été observé le 17 septembre 2026": [
+    "202922dd1d7c3ab4",
+    "76f1f25d4012b99e",
+    "2e8b173a7c41eab7",
+    "4a35ceb6bed19215",
+    "8240004a4c5a022a"
+   ]
+  },
+  "docs/limites.md": {
+   "5 ante bis. La fiche de paie : neuf réserves, dont trois décisives, et deux que la restitution ajoute": [
+    "0a1b30b1364ef7e5",
+    "cb2abe28a7d903df",
+    "3f4993efee3f489d"
+   ],
+   "5 ante. Le pilier capitalisé : ce que sa rente suppose": [
+    "73e36662ff6cf508",
+    "8e3712cfcd9c65dd",
+    "374df3b9386f97b4",
+    "5e52d38461580d1f",
+    "1650bc5654b0936a",
+    "006b5dc05e9b9aa2"
+   ],
+   "5 bis. Le coût agrégé : ce qui est observé, ce qui est estimé": [
+    "848cba2da938adc1",
+    "0e0cdc6ebcc5294b",
+    "dd6826fdc0054d11",
+    "7f24ac8a7988c215",
+    "7bb5229ab9b9cf57"
+   ],
+   "5 ter. La trajectoire projetée : ce qu'elle suppose, et ce qu'elle vaut": [
+    "a65f9485736bf8ce"
+   ],
+   "5. Ce que le modèle ne calcule pas, et pourquoi": [
+    "feab57168836c4e2",
+    "deb3eb23c91653ea"
+   ],
+   "Ce que disent les exemples publiés par les caisses": [
+    "77d5cef97ff57a82",
+    "8230fe6258f7aba5",
+    "3252f18119bcb91c"
+   ],
+   "Ce que dit la confrontation à une seconde implémentation": [
+    "545a34c6841e6e51",
+    "798089c8229d67fa",
+    "b88d4d89f689b836",
+    "48d87e1e220e117c"
+   ],
+   "Ce que vaut une série qu'on ne peut pas certifier": [
+    "541b8ff1ba30f0b3"
+   ],
+   "Le simulateur doit être juste à tout âge : où il ne l'est pas encore": [
+    "72cd85c3b5f0b32b",
+    "ef1b0eb7339c085a"
+   ],
+   "Un rendement unique là où il faudrait une série": [
+    "5a377ec35e167586"
    ]
   },
   "docs/methodologie.md": {
@@ -5581,29 +5794,6 @@
    ],
    "Une carrière, plusieurs métiers": [
     "abd3104cda4c86e6"
-   ]
-  },
-  "docs/outillage_interface.md": {
-   "Ce qu'un navigateur ne débloque pas": [
-    "a5729c07eac44ad1",
-    "3936cadb150b0579",
-    "1b4b7adbd9573038",
-    "971659486fe90d58",
-    "b3f0c6a3e0ed08e8",
-    "4e68efda5cea1a57",
-    "c8ebc5e34b2e218e",
-    "a3ed7818efc3a37d",
-    "6717e684f03a57be"
-   ],
-   "Le navigateur ne voit rien hors de `localhost`, et il le dit mal": [
-    "ea96190757a1721e",
-    "51b0bbd1b07eaf8c",
-    "2a1fb05af9580c63",
-    "f228aea46aacc1b6",
-    "45131d41835c411c",
-    "a2b82f2edabea255",
-    "fadeac3d18903841",
-    "a6496ef64231f4f6"
    ]
   },
   "docs/parcours_presentation.md": {
@@ -5915,15 +6105,6 @@
    "États-Unis": [
     "a8071f358fbd21b9",
     "3f731104be72ec4b"
-   ]
-  },
-  "docs/veille_droit.md": {
-   "Ce qui s'est passé le 17 septembre 2026": [
-    "9e4655f0c437eb27",
-    "62fac199a6df5e1f",
-    "73a4b5fb1cfaa9fe",
-    "73b4486b7c2b88f3",
-    "c3e620c1244a79dc"
    ]
   }
  }

@@ -1,0 +1,16 @@
+schema_version: 1
+id: reversion
+intitule: >-
+  Pension de réversion, 54 % de la pension du défunt sous conditions de ressources
+  ; réforme annoncée pour 2026-2027.
+etat: pas_encore_modelisee
+effet: Le modèle décrit une carrière, pas un ménage.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Surveiller la réforme de la réversion : si elle touche le calcul du droit direct,
+    elle entre ici.
+textes_a_rattacher:
+- reference: L. 353-1 CSS

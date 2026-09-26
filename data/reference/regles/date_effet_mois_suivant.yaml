@@ -1,0 +1,21 @@
+schema_version: 1
+id: date_effet_mois_suivant
+intitule: >-
+  La pension prend effet le premier jour du mois suivant celui où l'âge est atteint,
+  sauf pour qui est né un premier.
+etat: approchee
+effet: >-
+  Le modèle liquide au mois de l'anniversaire : un mois d'écart, visible là où un
+  texte coupe au mois (nés en décembre 1965, carrière longue).
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Décider si date_liquidation devient le mois suivant ; mesurer sur les témoins.
+  lectures:
+  - type: circulaire_cnav
+    reference: 2026-07 du 5 mars 2026, exemples du point 1.1
+    date: 2026-03-05
+textes_a_rattacher:
+- reference: R. 351-37 CSS

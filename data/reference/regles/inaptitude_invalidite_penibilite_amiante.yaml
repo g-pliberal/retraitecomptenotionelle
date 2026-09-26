@@ -1,0 +1,14 @@
+schema_version: 1
+id: inaptitude_invalidite_penibilite_amiante
+intitule: >-
+  Taux plein à l'âge légal pour inaptitude ou invalidité, départ anticipé pour incapacité
+  permanente, compte professionnel de prévention, amiante.
+etat: pas_encore_modelisee
+effet: Assurés concernés déclarés non ouverts ou décotés à tort.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-09-30
+textes_a_rattacher:
+- reference: L. 351-1-4 CSS
+- reference: L. 351-8 1° bis et 6° CSS
+- reference: L. 4163-1 code du travail

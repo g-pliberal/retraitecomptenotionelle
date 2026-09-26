@@ -146,14 +146,16 @@ def _codes_declares(objet) -> set[str]:
     return set()
 
 
-def test_les_renvois_a_la_veille_existent(inventaire):
-    chemin = RACINE_DONNEES / "reference" / "legislation" / "veille.yaml"
-    with chemin.open(encoding="utf-8") as flux:
-        connues = {entree["id"] for entree in yaml.safe_load(flux)["entrees"]}
+def test_les_renvois_a_la_carte_existent(inventaire):
+    """Chaque avantage renvoie aux fiches de la carte qui le portent
+    (data/reference/regles/), et à des fiches qui existent."""
+    from retraite_notionnelle.noyau import carte
+
+    connues = set(carte.fiches())
     for avantage in inventaire["avantages"]:
-        inconnues = set(avantage.get("veille") or ()) - connues
+        inconnues = set(avantage.get("fiches") or ()) - connues
         assert inconnues == set(), (
-            f"{avantage['code']} : entrées de veille inconnues — "
+            f"{avantage['code']} : fiches inconnues de la carte — "
             + ", ".join(sorted(inconnues))
         )
 

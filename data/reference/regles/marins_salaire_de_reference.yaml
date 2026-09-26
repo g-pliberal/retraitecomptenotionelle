@@ -1,0 +1,38 @@
+schema_version: 1
+id: marins_salaire_de_reference
+intitule: >-
+  Salaire de référence des marins : forfait de la catégorie moyenne des trente-six
+  derniers mois, ou de fonctions supérieures tenues cinq ans ; services décomptés
+  au semestre.
+etat: approchee
+effet: >-
+  Le modèle prend la catégorie de la DERNIÈRE année, rangée par le revenu, et compte
+  les services au trimestre ; la caisse prend la catégorie moyenne de trente-six
+  mois et arrondit au semestre (R. 12 : quatorze ans huit mois et vingt-sept jours
+  font quatorze ans et demi). L'écart tient à une catégorie et à un trimestre au
+  plus. La grille elle-même est exacte : les vingt montants de 2026 publiés par
+  l'ENIM sont ceux du dépôt, au centime, comme les trois montants de 2024 que cite
+  son exemple.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-04-30
+  a_relire:
+  - >-
+    Un parcours ne porte pas de catégorie : la moyenne des trente-six mois et la
+    règle des cinq ans demanderaient d'en saisir une.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code des pensions de retraite des marins, R. 11, R. 12 et R. 31, versions
+      en vigueur lues dans l'index LEGI
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      ENIM, pages « Le mode de calcul » et « Les salaires forfaitaires » (grille
+      au 1er avril 2026)
+    url: https://www.enim.eu/employeur/salaires-forfaitaires
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    code des pensions de retraite des marins, R. 11 (LEGIARTI000006791987), R. 12
+    (LEGIARTI000006791988) et R. 31

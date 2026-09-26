@@ -1,0 +1,53 @@
+schema_version: 1
+id: minimum_contributif
+intitule: >-
+  Montant de base et montant majoré (120 trimestres cotisés), au prorata de la durée
+  d'assurance et de la durée cotisée, réservés au taux plein, écrêtement de l'ensemble
+  des pensions ; pour les pensions prenant effet depuis le 1er avril 2009, la surcote
+  se calcule sur la pension d'avant le minimum et s'y ajoute.
+etat: conforme
+effet: >-
+  Petites pensions au taux plein. Le plafond d'écrêtement de la ligne 2024 était
+  celui de novembre, 1 394,86 €, à côté des minima de janvier : il est celui de
+  janvier à octobre, 1 367,51 € — le plafond suit le SMIC, que le 1er novembre 2024
+  a relevé de 2 % : 1 367,51 × 1,02 = 1 394,86. Le test le fixe. Jusqu'au 23 septembre
+  2026, le module servait le minimum SURCOTÉ — le plancher multiplié par le coefficient
+  de surcote —, ce qu'aucune des deux règles ne fait : 661,20 € au lieu de 660,59
+  € dans l'exemple de la circulaire, et l'écart grandit avec la surcote et avec
+  la distance au plancher. Les deux exemples de la circulaire sont rejoués par `test_la_surcote_s_ajoute_au_minimum_comme_la_circulaire_le_calcule`
+  et par son double JavaScript.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-01-31
+  a_relire:
+  - Relire les montants à chaque revalorisation de janvier.
+  lectures:
+  - type: service_public
+    reference: actualité A15703, montants 2026
+    date: 2026-02-12
+  - type: legifrance
+    reference: >-
+      D. 351-2-1 CSS, LEGIARTI000047961314 : « La majoration prévue à l'article
+      L. 351-1-2 est calculée sur la base du montant de pension avant qu'il ne soit
+      porté au montant minimum » ; alinéa apparu dans la version du 1er avril 2009,
+      LEGIARTI000020090091
+    date: 2026-09-23
+  - type: legifrance
+    reference: >-
+      décret n° 2008-1509 du 30 décembre 2008, article 8, LEGIARTI000020057518 :
+      ses articles 6 et 7 « sont applicables aux pensions prenant effet à compter
+      du 1er avril 2009 »
+    date: 2026-09-23
+  - type: circulaire_cnav
+    reference: >-
+      2018-04 du 1er février 2018, points 3.4.1 et 3.4.2 : avant avril 2009, 621
+      × 1,015 = 630,31 € portés au minimum de 633,61 € ; depuis, 621 + (645,07 −
+      621) + 15,52 = 660,59 €
+    date: 2018-02-01
+textes_a_rattacher:
+- reference: L. 351-10 CSS
+- reference: D. 351-2-1 CSS, dernier alinéa (décret n° 2008-1509, articles 6 et
+    8)
+- reference: L. 173-2 CSS
+exemples:
+- sp_a15703_minimum_contributif_2026

@@ -1,0 +1,69 @@
+schema_version: 1
+id: age_reference_decote_sncf_ratp
+intitule: >-
+  Âge de référence de la décote à la SNCF et à la RATP depuis le 1er janvier 2025
+  : cinquante-sept ans pour les agents de conduite et le personnel roulant, soixante-deux
+  ans pour les autres agents, et non l'âge d'ouverture majoré de cinq ans.
+etat: conforme
+effet: >-
+  Les deux fiches faisaient monter l'âge de référence avec l'âge d'ouverture, cinq
+  ans au-dessus : 57,25 ans pour les liquidations de 2025, jusqu'à 59 ans à compter
+  de 2034. Un agent de conduite né en 1980 parti à cinquante-quatre ans se voyait
+  opposer vingt trimestres de décote au lieu de douze, un taux de 56,25 % au lieu
+  de 63,75 %, et une pension de 23 711 € au lieu de 26 872 € ; le même à la RATP,
+  à l'identique. Corrigé à cinquante-sept ans sur les périodes de 2025 et après.
+  Le cas type « Agent de conduite SNCF » passe, dans les deux dernières générations
+  de la page Cas types, de −17 % à −25 % et de −26 % à −34 % : sa pension actuelle
+  remonte, l'écart de la proposition se creuse. Les soixante-deux à soixante-quatre
+  ans des générations 1963 à 1970 que les deux fiches donnaient pour l'âge d'annulation
+  sont ceux de la SURCOTE (IV de l'article 37-1 pour la SNCF, 3° du II de l'article
+  51-1 pour la RATP).
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639, article 13 en vigueur (LEGIARTI000054622824, rédaction
+      du décret n° 2026-738 du 4 août 2026, qui ne touche pas le 1° du I) : « un
+      âge de référence fixé à cinquante-sept ans pour les agents mentionnés au 1°
+      du I de l'article 1 et à soixante-deux ans pour les agents mentionnés au 2°
+      » ; même phrase depuis la version du 22 octobre 2023 (LEGIARTI000048240205).
+      Lu dans l'index LEGI du dépôt
+    date: 2026-09-22
+  - type: legifrance
+    reference: >-
+      décret n° 2008-637, article 24 en vigueur (LEGIARTI000047914227) : « un âge
+      de référence correspondant à l'âge minimum d'ouverture du droit à pension
+      applicable à l'assuré majoré de trois ans à l'issue des dispositions prévues
+      aux 1°, 2° et 3° du II de l'article 51-1 » ; article 51-1, VII, 2° : de 2025
+      à 2033, l'âge d'annulation est l'âge de référence d'avant le décret n° 2023-690,
+      l'âge d'ouverture majoré de cinq ans. Lu dans l'index LEGI du dépôt
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      CPRPSNCF, « Réforme des retraites 2023 » : « L'âge d'annulation de la décote
+      est inchangé, il est de : 62 ans pour les agents (cas général) nés à compter
+      du 1er janvier 1972. 57 ans pour les agents de conduite nés à compter du 1er
+      janvier 1975 »
+    url: https://www.cprpf.fr/2023/10/24/reforme-des-retraites-2023/
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      CRP RATP, pages publiques « ouverture du droit », « réglementation » et foires
+      aux questions : la règle de la décote n'y est pas publiée, elle ne l'est que
+      dans l'espace des affiliés
+    url: >-
+      https://www.crpratp.fr/web/actif/preparez-votre-depart-a-la-retraite/ouverture-du-droit
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    décret n° 2008-639 du 30 juin 2008, article 13, I, 1° (LEGIARTI000054622824)
+- reference: >-
+    décret n° 2008-637 du 30 juin 2008, article 24, I, 1° (LEGIARTI000047914227),
+    et article 51-1, VII, 2° (LEGIARTI000047914257)
+- reference: >-
+    décrets n° 2023-967 du 20 octobre 2023 (SNCF) et n° 2023-690 du 28 juillet 2023
+    (RATP)
+reformes:
+- reforme_2023

@@ -1,0 +1,46 @@
+schema_version: 1
+id: marins_ouverture_cinquante_ans
+intitule: >-
+  Pension d'ancienneté des marins ouverte à cinquante ans pour vingt-cinq années
+  de services, plafonnée à vingt-cinq annuités avant cinquante-cinq ans, plafond
+  levé à cinquante-deux ans et demi pour trente-sept annuités et demie.
+etat: conforme
+effet: >-
+  La fiche opposait cinquante-cinq ans à tout marin : c'est l'âge qui borne l'entrée
+  en jouissance de celui qui CONTINUE à naviguer (L. 5552-5), non l'âge d'ouverture.
+  Le départ à cinquante ans que le plafond de R. 13 suppose était donc refusé. Il
+  est ouvert depuis le 22 septembre 2026 (`age_ouverture_services`), et l'exception
+  des cinquante-deux ans et demi est appliquée (`duree_maximum_levee_age`). Aucun
+  relèvement d'âge depuis 1968 : ni LEGI ni le JORF n'en portent, et la loi de 2023
+  laisse le régime où il était (reformes.yaml).
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    La pension SPÉCIALE (moins de quinze ans de services) entre en jouissance avec
+    l'autre pension de base, pas avant cinquante-cinq ans, et à soixante sans autre
+    pension (L. 5552-12, R. 5) : appliqué le même jour, tenu par tests/test_simulateur.py
+    et tests/js/moteur.test.js. La page de l'ENIM se contredit sur ce point — «
+    l'âge légal […] du régime général » dans le texte, « à 60 ans » dans l'exemple
+    d'Henry — et c'est R. 5 qui dit soixante. Reste la pension d'invalidité de L.
+    6 et R. 4, que le modèle ne liquide pas.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code des pensions de retraite des marins, R. 2, R. 3, R. 5, R. 13, versions
+      en vigueur lues dans l'index LEGI
+    date: 2026-09-22
+  - type: autre
+    reference: >-
+      ENIM, page « Les conditions d'attribution », pension d'ancienneté, exemple
+      de Gaspard
+    url: https://www.enim.eu/retraite/conditions-dattribution
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: >-
+    code des pensions de retraite des marins, R. 2 (LEGIARTI000006791972), R. 3,
+    R. 5 et R. 13 (LEGIARTI000006791990)
+- reference: code des transports, L. 5552-4, L. 5552-5 et L. 5552-19
+exemples:
+- enim_anciennete_a_cinquante_ans

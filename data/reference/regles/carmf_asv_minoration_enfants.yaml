@@ -1,0 +1,50 @@
+schema_version: 1
+id: carmf_asv_minoration_enfants
+intitule: >-
+  Complémentaire de la CARMF : de 2000 à 2016, taux plein à 65 ans et coefficients
+  d'anticipation par année d'âge — 0,75 à 60 ans jusqu'à 0,95 à 64 ans —, sans condition
+  de durée ; majoration pour trois enfants depuis l'arrêté du 16 janvier 1964, de
+  10 % selon le règlement de 2026. ASV des médecins : 10 % pour trois enfants sur
+  les prestations liquidées depuis le 1er janvier 1981.
+etat: approchee
+effet: >-
+  De 2000 à 2016, la fiche disait l'âge seul sans que le moteur le lise : un médecin
+  parti à 64 ans avec sa durée n'était pas minoré. Depuis le 23 septembre 2026,
+  `abattement_points: cavom` sur ces périodes, et `majoration_enfants` depuis 1964
+  à la complémentaire, depuis 1981 à l'ASV. Approximation : le taux de 1964 n'est
+  pas lu, seul le titre de l'arrêté l'étant.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Lire le texte de l'arrêté du 16 janvier 1964 (Bulletin officiel ou Journal officiel
+    en image) et la date d'origine de l'article 15 des statuts de la CARMF.
+  lectures:
+  - type: jorf
+    reference: >-
+      L'arrêté de 1964 (titre) et celui du 10 juillet 2026 (texte entier), dans
+      l'index JORF du dépôt.
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CARMF, pages « Âge de départ en retraite » (complémentaire et ASV dès l'âge
+      légal, majoration de 1,25 % par trimestre après 62 ans et de 0,75 % de 65
+      à 70 ans) et « Calculer votre retraite » (exemple d'un médecin né le 10 novembre
+      1960, parti à 65 ans : 12 trimestres de report, « 12 x 1,25 % = 15 % - coefficient
+      : 1,15 », « hors majoration familiale »).
+    url: https://www.carmf.fr/page.php?page=cdrom/retr/retr-calcul.htm
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    arrêté du 16 janvier 1964 portant adjonction d'un article 22 au règlement du
+    régime (JORFTEXT000000482076), titre seul dans l'index
+- reference: >-
+    règlement du régime complémentaire, article 23, et règlement du régime des prestations
+    complémentaires de vieillesse, article 8, approuvés par l'arrêté du 10 juillet
+    2026 (JORFTEXT000054435848)
+exemples:
+- carmf_report_62_65_ans
+reformes:
+- carmf_trois_enfants_1964
+- asv_trois_enfants_1981

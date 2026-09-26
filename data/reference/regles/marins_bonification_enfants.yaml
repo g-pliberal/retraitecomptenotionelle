@@ -1,0 +1,35 @@
+schema_version: 1
+id: marins_bonification_enfants
+intitule: >-
+  Bonification de la pension des marins pour enfants élevés neuf ans : 5 % pour
+  deux enfants, 10 % pour trois, 15 % au-delà.
+etat: conforme
+effet: >-
+  La fiche ne déclarait aucune majoration pour enfants : un marin père de deux enfants
+  perdait 5 % de pension, de trois enfants 10 %. Le barème propre est porté depuis
+  le 22 septembre 2026 (`taux_majoration_enfants`), et c'est le seul du catalogue
+  qui commence à DEUX enfants. La condition de neuf ans d'éducation avant seize
+  ans n'est pas opposée, le modèle ne connaissant que le nombre d'enfants.
+sources:
+  lu_le: 2026-09-22
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Rien sur la règle ; la condition de durée d'éducation reste celle de tout le
+    modèle.
+  lectures:
+  - type: legifrance
+    reference: >-
+      code des pensions de retraite des marins, R. 14, version du 15 septembre 1979
+      en vigueur, lue dans l'index LEGI
+    date: 2026-09-22
+  - type: autre
+    reference: ENIM, page « Le mode de calcul », exemple en vigueur au 1er avril
+      2024
+    url: https://www.enim.eu/retraite/mode-de-calcul
+    date: 2026-09-22
+textes_a_rattacher:
+- reference: code des pensions de retraite des marins, R. 14 (LEGIARTI000006791991)
+- reference: code des transports, L. 5552-22
+exemples:
+- enim_bonification_deux_enfants

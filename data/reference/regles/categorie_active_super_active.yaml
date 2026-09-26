@@ -1,0 +1,25 @@
+schema_version: 1
+id: categorie_active_super_active
+intitule: >-
+  Âge anticipé et minoré des emplois classés, par génération, décalé d'un trimestre
+  par la suspension ; âge d'annulation propre ; dix-sept et vingt-sept ans de services
+  classés.
+etat: transcrite
+effet: Fonctionnaires déclarés en catégorie active ou super-active.
+sources:
+  lu_le: 2026-09-17
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - Chercher un exemple publié (SRE ou CNRACL).
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2026-344, JORFTEXT000054047709, article 3 D lu alinéa par alinéa
+    date: 2026-05-07
+textes_a_rattacher:
+- reference: L. 24 I 1° CPCMR
+- reference: L. 14 bis CPCMR
+- reference: décret n° 2026-344 du 7 mai 2026, article 3 D
+reformes:
+- reforme_2023
+- lfss_2026_suspension

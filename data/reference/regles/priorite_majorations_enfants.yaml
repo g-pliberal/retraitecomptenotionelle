@@ -1,0 +1,107 @@
+schema_version: 1
+id: priorite_majorations_enfants
+intitule: >-
+  Un seul régime accorde les trimestres des enfants. Le régime spécial qui prévoit
+  une majoration ou une bonification pour enfants les accorde en priorité s'il peut
+  servir une pension à l'assurée selon ses propres règles — la durée de services
+  qu'il exige à la radiation — et si le droit y est ouvert pour ses enfants, même
+  quand le régime général accorderait plus. Sinon le régime général, prioritaire
+  parmi les régimes alignés ; sans lui, le régime de la dernière affiliation et,
+  entre affiliations simultanées, celui qui servirait la pension la plus élevée.
+  Le droit à la bonification pour un enfant né avant 2004 vaut pour tout enfant
+  jusqu'en 2003, pour l'enfant né en service de 2004 à 2010, pour l'enfant né avant
+  la radiation depuis 2011 ; la majoration pour un enfant né depuis 2004 suppose
+  d'avoir accouché après le recrutement.
+sorte: priorite
+fiches:
+- fiche: majoration_duree_assurance_enfants
+  role: >-
+    les trimestres d'enfants du régime général et la bonification de la fonction
+    publique, que cette fiche porte encore ensemble : le régime spécial les accorde
+    en priorité, le régime général ensuite, prioritaire parmi les régimes alignés
+etat: transcrite
+effet: >-
+  Toute mère passée par un régime spécial et par un régime aligné. Jusqu'au 24 septembre
+  2026, le modèle donnait les trimestres au régime qui en accordait le plus : une
+  fonctionnaire de l'État passée au privé recevait les seize trimestres du régime
+  général pour deux enfants nés avant 2004, au lieu des huit de sa bonification.
+  tests/test_priorite_enfants.py, et cinq témoins de parcours rejouent la règle
+  dans les deux moteurs.
+sources:
+  lu_le: 2026-09-24
+  prochaine_relecture: 2027-03-31
+  a_relire:
+  - >-
+    Aucun exemple chiffré publié n'a été trouvé. Quatre approximations sont assumées.
+    Le modèle date la radiation au 1er janvier qui suit la dernière année de services
+    et fait naître les enfants aux trente ans de leur mère. Il applique à tous les
+    régimes spéciaux les conditions de la fonction publique (L. 12 bis, R. 13),
+    comme il leur applique déjà sa table. Il ne lit la règle des militaires — quinze
+    ans pour qui s'est engagé avant le 1er janvier 2014 (L. 6 ; loi n° 2014-40,
+    article 42, II) — que pour une carrière d'État seulement militaire, depuis le
+    24 septembre 2026, et date le premier engagement au 1er janvier de sa première
+    année. Hors du modèle : l'exception de la CRPCEN, dont la fiche ne déclare pas
+    de bonification ; la pension statutaire liquidée avant la naissance ; l'enfant
+    handicapé, qui va au dernier régime spécial. Avant 1985, R. 173-15 n'est pas
+    dans l'index, et le modèle applique la même règle. Le rétablissement au régime
+    général de qui n'a pas la durée est fait depuis le 24 septembre 2026 (`retablissement_fonction_publique`)
+    : la mère rétablie reçoit les trimestres de ses enfants du régime général.
+  lectures:
+  - type: legifrance
+    reference: >-
+      R. 173-15 CSS, lu dans l'index LEGI : la majoration « est accordée en priorité
+      par le régime spécial si celui-ci est susceptible d'accorder en vertu de ses
+      propres règles une pension à l'intéressé » ; même phrase dans la version de
+      1985
+    date: 2026-09-24
+  - type: legifrance
+    reference: >-
+      durées de services de chaque régime spécial, lues dans l'index LEGI : quinze
+      ans, puis deux pour les fonctionnaires radiés depuis 2011 et un an pour les
+      agents de la SNCF, de la RATP, des IEG et de l'Opéra partis depuis le 1er
+      juillet 2008 ; aucune à la Banque de France depuis le 9 mai 2012 ; voir l'en-tête
+      de services_ouvrant_pension.csv
+    date: 2026-09-24
+  - type: autre
+    reference: >-
+      CNRACL, juris-cnracl, « Règles de coordination avec les autres régimes » :
+      la CNRACL accorde en priorité dès qu'elle peut servir une pension et que le
+      droit est ouvert ; « l'agent ne peut pas renoncer à une bonification ou une
+      majoration de durée d'assurance servie par la CNRACL pour qu'elle le soit
+      par un autre régime » (TA Amiens, 2 juin 2017, n° 1501559)
+    date: 2026-09-24
+    url: >-
+      https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/regles-de-coordination-avec-les-autres-regimes
+  - type: autre
+    reference: >-
+      CNRACL, juris-cnracl, « Bonification pour enfants » (enfants nés avant la
+      radiation des cadres ; interruption d'activité possible hors de la fonction
+      publique depuis le décret n° 2010-1741) et « Femmes fonctionnaires qui ont
+      accouché après le 01/01/2004 et après leur recrutement »
+    date: 2026-09-24
+    url: >-
+      https://www.juris-cnracl.retraites.fr/pension-normale/les-trimestres-liquidables/les-bonifications/bonification-pour-enfants
+  - type: autre
+    reference: >-
+      COR, fiches CPRPF (SNCF) et CRP RATP de juillet 2024 : quinze ans de services
+      exigés des agents partis avant le 1er juillet 2008 ; en deçà, à la RATP, une
+      pension de coordination calculée selon les règles du régime général
+    date: 2026-09-24
+    url: >-
+      https://www.cor-retraites.fr/sites/default/files/2024-07/Fiche_RATP_vf.pdf
+textes_a_rattacher:
+- reference: >-
+    R. 173-15 du code de la sécurité sociale, six versions de 1985 (LEGIARTI000006747882)
+    à celle du 6 mai 2017 (LEGIARTI000034595998)
+- reference: >-
+    R. 13 du code des pensions civiles et militaires, versions de 1964 (LEGIARTI000006362901),
+    2004 (LEGIARTI000006362902) et 2011 (LEGIARTI000023449727) ; L. 12 bis (LEGIARTI000006362697)
+- reference: >-
+    L. 4 (LEGIARTI000006362667, LEGIARTI000023096809) et R. 4-1 (LEGIARTI000023388607)
+    du code des pensions ; décret n° 2003-1306, article 7 ; décret n° 2004-1056,
+    article 3
+- reference: >-
+    décret n° 2008-639, article 3 ; décret n° 2008-637, article 6 ; décret n° 46-1541,
+    annexe 3 ; décret n° 2007-262, annexe, article 7 ; décret n° 68-382, article
+    6 ; décret n° 68-960, article 6 ; décret n° 62-766, articles 110 et 112 ; code
+    des transports, L. 5552-11

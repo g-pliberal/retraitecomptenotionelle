@@ -1,0 +1,71 @@
+schema_version: 1
+id: cultes_retraite_complementaire
+intitule: >-
+  Retraite complémentaire obligatoire des cultes : depuis le 1er janvier 2006, les
+  personnes du régime des cultes (L. 382-15) « qui bénéficient d'un revenu d'activité
+  perçu individuellement » sont affiliées à une institution de retraite complémentaire
+  (L. 921-1). La CAVIMAC recouvre la cotisation sur l'assiette forfaitaire de ses
+  autres cotisations, le SMIC mensuel, au « taux de base » de 10,02 % — les 7,87
+  % de l'Agirc-Arrco et les 2,15 % de sa contribution d'équilibre générale —, dont
+  les trois cinquièmes à la charge de la collectivité ; une institution de l'Arrco
+  calcule et sert les points.
+etat: conforme
+effet: >-
+  Ministres des cultes rémunérés, depuis 2006 : le modèle ne leur routait que la
+  CAVIMAC. Au statut du simulateur, le ministre né en 1975 gagne 14 % de pension
+  au scénario 1, celui né en 1955 6,2 %. Fiche `arrco_cultes` — points de l'Arrco
+  puis de l'Agirc-Arrco, assiette forfaitaire —, statut `ministre_du_culte` scindé
+  de `membre_congregation`, tenu par `test_le_ministre_du_culte_remunere_cotise_a_l_arrco_sur_le_forfait`
+  et son pendant JavaScript.
+sources:
+  lu_le: 2026-09-23
+  prochaine_relecture: 2027-09-30
+  a_relire:
+  - >-
+    Les huit taux spécifiques de la CAVIMAC, de 11,13 à 21,31 %. Le taux d'avant
+    2019, repris de l'Arrco faute de circulaire lisible antérieure à novembre 2021.
+    Le lecteur de relevé rattache encore toute ligne de la CAVIMAC au ministre rémunéré.
+  lectures:
+  - type: legifrance
+    reference: >-
+      L. 921-1 en vigueur (LEGIARTI000047452643) : « Ces dispositions sont applicables
+      aux personnes mentionnées à l'article L. 382-15 qui bénéficient d'un revenu
+      d'activité perçu individuellement »
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CAVIMAC, circulaire n° 2026/03 du 27 mai 2026 : « les assiettes forfaitaires
+      respectives des cotisations mensuelles d'assurance maladie – maternité – invalidité,
+      vieillesse et retraite complémentaire obligatoire des cultes » portées au
+      SMIC, 1 867 € ; « RCO — Tous cultes - taux de base » 10,02 %, part collective
+      6,01 %, part personnelle 4,01 % ; même règle dans chaque circulaire lisible
+      depuis la n° 2021/04 du 15 novembre 2021
+    url: https://www.cavimac.fr/publications
+    date: 2026-09-23
+  - type: autre
+    reference: >-
+      CAVIMAC, espace partenaires : « Il a été institué à compter du 1er janvier
+      2006 (Loi n° 2005 – 1579 du 19 décembre 2005) une couverture de retraite complémentaire
+      obligatoire pour les ministres des cultes. Tous les ministres des cultes,
+      quelle que soit leur nationalité, qui perçoivent des rémunérations individuelles
+      du fait de leur activité cultuelle, sont assujettis, à titre obligatoire »
+      ; gestion par des institutions de l'Arrco
+    url: https://www.cavimac.fr/bienvenue-sur-lespace-partenaires
+    date: 2026-09-23
+textes_a_rattacher:
+- reference: >-
+    loi n° 2005-1579 du 19 décembre 2005, article 75, VII (JORFARTI000002070677)
+- reference: >-
+    code de la sécurité sociale, L. 921-1, de sa version du 20 décembre 2005 (LEGIARTI000006745503)
+    à celle en vigueur depuis le 1er septembre 2023 (LEGIARTI000047452643), la phrase
+    dans toutes
+- reference: >-
+    code de la sécurité sociale, R. 382-89 et R. 382-90 : l'assiette forfaitaire
+    du régime des cultes
+- reference: >-
+    avenant n° 25 du 18 décembre 2024 à l'accord Agirc-Arrco, avis d'extension du
+    9 avril 2025 (JORFARTI000051439935) : il « complète la dernière phrase de l'article
+    2 de l'Annexe B pour tenir compte des ministres des cultes et des membres des
+    congrégations » ; le texte de l'accord n'est pas lu
+reformes:
+- cultes_arrco_2006
