@@ -19,6 +19,7 @@ import { dirname, join } from "node:path";
 import { Contexte, Saisie, rendre } from "../../moteur/js/pages.js";
 import { Affiliations } from "../../moteur/js/regimes.js";
 import { complementMinimum } from "../../moteur/js/droit/completer.js";
+import { appels } from "../../moteur/js/droit/liquidation.js";
 import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import { AnneeCarriere, limiterChomageNonIndemnise } from "../../moteur/js/carriere.js";
 import * as gabarit from "../../moteur/js/gabarit.js";
@@ -89,7 +90,14 @@ test("les simulations retrouvent les chiffres du modèle Python", () => {
   let cas = 0;
   for (const [nom, temoin] of Object.entries(temoinsSimulations)) {
     const saisie = Saisie.depuisRequete(temoin.requete);
+    const avant = appels();
     const obtenu = contexte.simuler(saisie).dictionnaire();
+    // Le témoin déclare ses appels de `liquider`, liquidations d'essai
+    // comprises (docs/architecture.md, § 7.8) : le portage fait les mêmes.
+    if (appels() - avant !== temoin.appels_liquider) {
+      ecarts.push(`${nom} : ${appels() - avant} appels de liquider, `
+        + `le témoin en déclare ${temoin.appels_liquider}`);
+    }
     comparer(obtenu, temoin.resultat, nom, ecarts);
     cas += 1;
   }

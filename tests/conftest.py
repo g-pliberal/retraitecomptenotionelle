@@ -86,6 +86,9 @@ EXCEPTIONS = {
     ("test_releve_lu.py", "test_le_portage_javascript_lit_les_memes_releves"): "complet",
     # Les étapes de l'acquisition, sur une requête sur cinq des témoins.
     ("test_droit.py", "test_les_deux_moteurs_ecrivent_les_memes_etapes"): "complet",
+    # Les étapes de la liquidation et le journal, sur la même requête sur cinq.
+    ("test_liquidation.py",
+     "test_les_deux_moteurs_liquident_et_journalisent_a_l_identique"): "complet",
 }
 
 

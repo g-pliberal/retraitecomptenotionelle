@@ -1,5 +1,6 @@
 {
  "age_reference_cliquet_legal": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "cliquet_legal",
    "bascule": "2026",
@@ -345,6 +346,7 @@
   }
  },
  "age_reference_cliquet_puis_esperance_vie": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "cliquet_puis_esperance_vie",
    "bascule": "2026",
@@ -690,6 +692,7 @@
   }
  },
  "age_reference_legal_sans_cliquet": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "legal_sans_cliquet",
    "bascule": "2026",
@@ -1035,6 +1038,7 @@
   }
  },
  "agent_general_surcote_cotisee": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -1370,6 +1374,7 @@
   }
  },
  "agent_general_surcote_sans_cotiser": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -1705,6 +1710,7 @@
   }
  },
  "auteur_dramatique_carriere_courte": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -2063,6 +2069,7 @@
   }
  },
  "bascule_1980": {
+  "appels_liquider": 1,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "1980",
@@ -2392,6 +2399,7 @@
   }
  },
  "bascule_2000": {
+  "appels_liquider": 1,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2000",
@@ -2726,6 +2734,7 @@
   }
  },
  "bascule_2026": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -3071,6 +3080,7 @@
   }
  },
  "bascule_2040": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2040",
@@ -3416,6 +3426,7 @@
   }
  },
  "bascule_2060": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2060",
@@ -3747,6 +3758,7 @@
   }
  },
  "base": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -4092,6 +4104,7 @@
   }
  },
  "carriere_longue_hachee": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -4488,6 +4501,7 @@
   }
  },
  "contribution_etat_entiere": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -4833,6 +4847,7 @@
   }
  },
  "contribution_etat_entiere_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -5216,6 +5231,7 @@
   }
  },
  "contribution_etat_entiere_militaire": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -5561,6 +5577,7 @@
   }
  },
  "conversion_acquis_liquidation": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -5906,6 +5923,7 @@
   }
  },
  "conversion_acquis_liquidation_tardive": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -6251,6 +6269,7 @@
   }
  },
  "creux_en_milieu_de_carriere": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -6593,6 +6612,7 @@
   }
  },
  "cumul_salarie_et_artisan_borne": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -6950,6 +6970,7 @@
   }
  },
  "cumul_salarie_et_liberal": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -7315,6 +7336,7 @@
   }
  },
  "deja_liquide": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -7711,6 +7733,7 @@
   }
  },
  "emploi_constant": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -8056,6 +8079,7 @@
   }
  },
  "enfants": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -8420,6 +8444,7 @@
   }
  },
  "enfants_avant_1972": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -8836,6 +8861,7 @@
   }
  },
  "enfants_carriere_incomplete": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -9194,6 +9220,7 @@
   }
  },
  "enfants_etat_et_territorial_un_an_chacun": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -9575,6 +9602,7 @@
   }
  },
  "enfants_fonction_publique_nes_avant_2004": {
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -9967,6 +9995,7 @@
   }
  },
  "enfants_fonction_publique_nes_depuis_2004": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -10321,6 +10350,7 @@
   }
  },
  "enfants_fonctionnaire_puis_prive": {
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -10681,6 +10711,7 @@
   }
  },
  "enfants_fonctionnaire_un_an_puis_prive": {
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -11033,6 +11064,7 @@
   }
  },
  "enfants_liberale": {
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -11361,6 +11393,7 @@
   }
  },
  "enfants_loi_boulin": {
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -11783,6 +11816,7 @@
   }
  },
  "enfants_loi_boulin_enfant_unique": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -12192,6 +12226,7 @@
   }
  },
  "enfants_pere": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -12544,6 +12579,7 @@
   }
  },
  "enfants_prive_puis_fonctionnaire_nes_avant_2004": {
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -12896,6 +12932,7 @@
   }
  },
  "enfants_prive_puis_fonctionnaire_nes_depuis_2004": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -13273,6 +13310,7 @@
   }
  },
  "enfants_regime_aligne": {
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -13669,6 +13707,7 @@
   }
  },
  "enfants_sncf_partie_avant_2008": {
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -14024,6 +14063,7 @@
   }
  },
  "euros_1980": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -14369,6 +14409,7 @@
   }
  },
  "euros_2000": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -14714,6 +14755,7 @@
   }
  },
  "euros_2050": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -15059,6 +15101,7 @@
   }
  },
  "fin_activite_chomage_indemnise": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -15392,6 +15435,7 @@
   }
  },
  "fin_activite_chomage_non_indemnise": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -15720,6 +15764,7 @@
   }
  },
  "fin_activite_sans_activite": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -16048,6 +16093,7 @@
   }
  },
  "fonctionnaire_interrompu": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -16402,6 +16448,7 @@
   }
  },
  "generation_1930": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -16798,6 +16845,7 @@
   }
  },
  "generation_1940": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -17181,6 +17229,7 @@
   }
  },
  "generation_1950": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -17564,6 +17613,7 @@
   }
  },
  "generation_1960": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -17960,6 +18010,7 @@
   }
  },
  "generation_1970": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -18305,6 +18356,7 @@
   }
  },
  "generation_1980": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -18650,6 +18702,7 @@
   }
  },
  "generation_1990": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -18995,6 +19048,7 @@
   }
  },
  "generation_2000": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -19330,6 +19384,7 @@
   }
  },
  "generation_2005": {
+  "appels_liquider": 1,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -19651,6 +19706,7 @@
   }
  },
  "generation_coupee_1951_apres": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -20035,6 +20091,7 @@
   }
  },
  "generation_coupee_1951_avant": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -20419,6 +20476,7 @@
   }
  },
  "generation_coupee_1961_apres": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -20816,6 +20874,7 @@
   }
  },
  "generation_coupee_1961_avant": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -21213,6 +21272,7 @@
   }
  },
  "ieg_depart_a_l_ouverture": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -21581,6 +21641,7 @@
   }
  },
  "ieg_duree_par_anciennete_active": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -21920,6 +21981,7 @@
   }
  },
  "ieg_generation_1965_partie_en_2025": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -22286,6 +22348,7 @@
   }
  },
  "indexation_mediane_trois_taux": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -22631,6 +22694,7 @@
   }
  },
  "indexation_moyenne_trois_taux": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -22976,6 +23040,7 @@
   }
  },
  "indexation_pib_nominal": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -23321,6 +23386,7 @@
   }
  },
  "indexation_prix": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -23666,6 +23732,7 @@
   }
  },
  "indexation_revalorisation_portee_au_compte": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -24011,6 +24078,7 @@
   }
  },
  "indexation_salaires": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -24356,6 +24424,7 @@
   }
  },
  "indexation_triple_lock_inverse": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -24701,6 +24770,7 @@
   }
  },
  "indexation_triple_lock_inverse_nominal": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -25046,6 +25116,7 @@
   }
  },
  "interruption_multiple": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -25391,6 +25462,7 @@
   }
  },
  "interruption_simple": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -25736,6 +25808,7 @@
   }
  },
  "liquidation_52": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -26081,6 +26154,7 @@
   }
  },
  "liquidation_57": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -26426,6 +26500,7 @@
   }
  },
  "liquidation_60": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -26771,6 +26846,7 @@
   }
  },
  "liquidation_62": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -27116,6 +27192,7 @@
   }
  },
  "liquidation_64": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -27461,6 +27538,7 @@
   }
  },
  "liquidation_67": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -27806,6 +27884,7 @@
   }
  },
  "liquidation_70": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -28151,6 +28230,7 @@
   }
  },
  "liquidation_a_la_bascule": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -28482,6 +28562,7 @@
   }
  },
  "liquidation_demi": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -28827,6 +28908,7 @@
   }
  },
  "liquidation_mois_00": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -29173,6 +29255,7 @@
   }
  },
  "liquidation_mois_01": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -29519,6 +29602,7 @@
   }
  },
  "liquidation_mois_02": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -29865,6 +29949,7 @@
   }
  },
  "liquidation_mois_03": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -30211,6 +30296,7 @@
   }
  },
  "liquidation_mois_04": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -30557,6 +30643,7 @@
   }
  },
  "liquidation_mois_05": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -30903,6 +30990,7 @@
   }
  },
  "liquidation_mois_06": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -31249,6 +31337,7 @@
   }
  },
  "liquidation_mois_07": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -31595,6 +31684,7 @@
   }
  },
  "liquidation_mois_08": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -31941,6 +32031,7 @@
   }
  },
  "liquidation_mois_09": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -32287,6 +32378,7 @@
   }
  },
  "liquidation_mois_10": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -32633,6 +32725,7 @@
   }
  },
  "liquidation_mois_11": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -32979,6 +33072,7 @@
   }
  },
  "lissage_17": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -33325,6 +33419,7 @@
   }
  },
  "lissage_2": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -33671,6 +33766,7 @@
   }
  },
  "lissage_5": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -34017,6 +34113,7 @@
   }
  },
  "lissage_regle_italienne": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -34363,6 +34460,7 @@
   }
  },
  "marin_avant_cinquante_cinq": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -34726,6 +34824,7 @@
   }
  },
  "metier_change_en_cours_d_annee": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -35080,6 +35179,7 @@
   }
  },
  "metiers_avec_interruption": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -35428,6 +35528,7 @@
   }
  },
  "metiers_changement_en_cours_d_annee_apres": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -35778,6 +35879,7 @@
   }
  },
  "metiers_changement_en_cours_d_annee_avant": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -36128,6 +36230,7 @@
   }
  },
  "metiers_changement_en_cours_d_annee_egalite": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -36478,6 +36581,7 @@
   }
  },
  "metiers_etat_prive_hospitalier": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -36829,6 +36933,7 @@
   }
  },
  "metiers_etat_puis_territorial": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -37165,6 +37270,7 @@
   }
  },
  "metiers_etat_trois_ans_depuis_2011": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -37538,6 +37644,7 @@
   }
  },
  "metiers_fonctionnaire_puis_prive": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -37891,6 +37998,7 @@
   }
  },
  "metiers_hospitalier_parti_avant_2004": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -38296,6 +38404,7 @@
   }
  },
  "metiers_hospitalier_treize_ans_puis_prive": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -38641,6 +38750,7 @@
   }
  },
  "metiers_hospitalier_treize_ans_puis_sans_activite": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -38983,6 +39093,7 @@
   }
  },
  "metiers_maximum": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -39494,6 +39605,7 @@
   }
  },
  "metiers_militaire_dix_ans_puis_prive": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -39839,6 +39951,7 @@
   }
  },
  "metiers_militaire_engage_en_2012_quatre_ans": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -40205,6 +40318,7 @@
   }
  },
  "metiers_militaire_puis_territorial": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -40546,6 +40660,7 @@
   }
  },
  "metiers_ouvrier_etat_puis_etat": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -40879,6 +40994,7 @@
   }
  },
  "metiers_prive_puis_fonctionnaire": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -41238,6 +41354,7 @@
   }
  },
  "metiers_prive_puis_independant": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -41592,6 +41709,7 @@
   }
  },
  "metiers_trois_statuts": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -41961,6 +42079,7 @@
   }
  },
  "mois_carriere_decalee": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -42309,6 +42428,7 @@
   }
  },
  "mois_carriere_decalee_au_calendrier": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -42654,6 +42774,7 @@
   }
  },
  "population_fonctionnaires_civils": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -42996,6 +43117,7 @@
   }
  },
  "population_fonctionnaires_civils_femme_par_sexe": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -43338,6 +43460,7 @@
   }
  },
  "population_niveau_de_vie_modeste": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -43684,6 +43807,7 @@
   }
  },
  "primes_fonction_publique": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -44025,6 +44149,7 @@
   }
  },
  "profil_fortement_ascendant": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -44370,6 +44495,7 @@
   }
  },
  "profil_plat": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -44715,6 +44841,7 @@
   }
  },
  "projection_cor_productivite_basse": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -45060,6 +45187,7 @@
   }
  },
  "projection_cor_productivite_haute": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -45405,6 +45533,7 @@
   }
  },
  "ratp_duree_propre": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -45730,6 +45859,7 @@
   }
  },
  "ratp_generation_1970": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -46055,6 +46185,7 @@
   }
  },
  "rattachement_pension": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -46401,6 +46532,7 @@
   }
  },
  "rattachement_pension_smic": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -46747,6 +46879,7 @@
   }
  },
  "releve_annee_du_depart_tronquee": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -47094,6 +47227,7 @@
   }
  },
  "releve_annees_manquantes": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -47441,6 +47575,7 @@
   }
  },
  "releve_avec_interruption": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -47787,6 +47922,7 @@
   }
  },
  "releve_deux_statuts": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -48145,6 +48281,7 @@
   }
  },
  "releve_fonction_publique": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -48487,6 +48624,7 @@
   }
  },
  "releve_generation_1950": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -48871,6 +49009,7 @@
   }
  },
  "releve_prive": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -49217,6 +49356,7 @@
   }
  },
  "releve_sans_trimestres": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -49563,6 +49703,7 @@
   }
  },
  "releve_trimestres_declares": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -49909,6 +50050,7 @@
   }
  },
  "retraite_cas_type_2012": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -50293,6 +50435,7 @@
   }
  },
  "revalorisation_juillet_2022_apres": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -50690,6 +50833,7 @@
   }
  },
  "revalorisation_juillet_2022_avant": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -51087,6 +51231,7 @@
   }
  },
  "revenu_en_euros": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -51433,6 +51578,7 @@
   }
  },
  "revenu_en_euros_par_metier": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -51788,6 +51934,7 @@
   }
  },
  "salaire_0.2": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -52133,6 +52280,7 @@
   }
  },
  "salaire_0.55": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -52478,6 +52626,7 @@
   }
  },
  "salaire_1.5": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -52823,6 +52972,7 @@
   }
  },
  "salaire_10": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -53168,6 +53318,7 @@
   }
  },
  "salaire_3": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -53513,6 +53664,7 @@
   }
  },
  "salaire_8": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -53858,6 +54010,7 @@
   }
  },
  "sncf_depart_a_l_ouverture": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -54194,6 +54347,7 @@
   }
  },
  "sncf_retraite_de_2010": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -54560,6 +54714,7 @@
   }
  },
  "sncf_surcote_apres_soixante_quatre_ans": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -54896,6 +55051,7 @@
   }
  },
  "statut_agent_banque_de_france": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -55232,6 +55388,7 @@
   }
  },
  "statut_agent_banque_de_france_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -55595,6 +55752,7 @@
   }
  },
  "statut_agent_banque_de_france_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -55958,6 +56116,7 @@
   }
  },
  "statut_agent_banque_de_france_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -56321,6 +56480,7 @@
   }
  },
  "statut_agent_banque_de_france_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -56684,6 +56844,7 @@
   }
  },
  "statut_agent_banque_de_france_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -57020,6 +57181,7 @@
   }
  },
  "statut_agent_chemins_fer_secondaires_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -57435,6 +57597,7 @@
   }
  },
  "statut_agent_chemins_fer_secondaires_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -57850,6 +58013,7 @@
   }
  },
  "statut_agent_general_assurance": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -58185,6 +58349,7 @@
   }
  },
  "statut_agent_general_assurance_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -58555,6 +58720,7 @@
   }
  },
  "statut_agent_general_assurance_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -58925,6 +59091,7 @@
   }
  },
  "statut_agent_general_assurance_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -59295,6 +59462,7 @@
   }
  },
  "statut_agent_general_assurance_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -59665,6 +59833,7 @@
   }
  },
  "statut_agent_general_assurance_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -60000,6 +60169,7 @@
   }
  },
  "statut_agent_ieg": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -60339,6 +60509,7 @@
   }
  },
  "statut_agent_ieg_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -60702,6 +60873,7 @@
   }
  },
  "statut_agent_ieg_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -61065,6 +61237,7 @@
   }
  },
  "statut_agent_ieg_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -61431,6 +61604,7 @@
   }
  },
  "statut_agent_ieg_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -61797,6 +61971,7 @@
   }
  },
  "statut_agent_ieg_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -62136,6 +62311,7 @@
   }
  },
  "statut_agent_port_strasbourg": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -62472,6 +62648,7 @@
   }
  },
  "statut_agent_port_strasbourg_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -62835,6 +63012,7 @@
   }
  },
  "statut_agent_port_strasbourg_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -63198,6 +63376,7 @@
   }
  },
  "statut_agent_port_strasbourg_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -63561,6 +63740,7 @@
   }
  },
  "statut_agent_port_strasbourg_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -63924,6 +64104,7 @@
   }
  },
  "statut_agent_port_strasbourg_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -64260,6 +64441,7 @@
   }
  },
  "statut_agent_ratp": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -64599,6 +64781,7 @@
   }
  },
  "statut_agent_ratp_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -64962,6 +65145,7 @@
   }
  },
  "statut_agent_ratp_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -65325,6 +65509,7 @@
   }
  },
  "statut_agent_ratp_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -65691,6 +65876,7 @@
   }
  },
  "statut_agent_ratp_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -66057,6 +66243,7 @@
   }
  },
  "statut_agent_ratp_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -66396,6 +66583,7 @@
   }
  },
  "statut_agent_seita_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -66759,6 +66947,7 @@
   }
  },
  "statut_agent_seita_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -67122,6 +67311,7 @@
   }
  },
  "statut_agent_seita_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -67485,6 +67675,7 @@
   }
  },
  "statut_agent_seita_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -67848,6 +68039,7 @@
   }
  },
  "statut_agent_seita_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -68184,6 +68376,7 @@
   }
  },
  "statut_agent_sncf": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -68520,6 +68713,7 @@
   }
  },
  "statut_agent_sncf_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -68883,6 +69077,7 @@
   }
  },
  "statut_agent_sncf_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -69249,6 +69444,7 @@
   }
  },
  "statut_agent_sncf_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -69615,6 +69811,7 @@
   }
  },
  "statut_agent_sncf_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -69981,6 +70178,7 @@
   }
  },
  "statut_agent_sncf_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -70320,6 +70518,7 @@
   }
  },
  "statut_artisan": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -70660,6 +70859,7 @@
   }
  },
  "statut_artisan_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -71030,6 +71230,7 @@
   }
  },
  "statut_artisan_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -71400,6 +71601,7 @@
   }
  },
  "statut_artisan_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -71770,6 +71972,7 @@
   }
  },
  "statut_artisan_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -72153,6 +72356,7 @@
   }
  },
  "statut_artisan_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -72493,6 +72697,7 @@
   }
  },
  "statut_artiste_auteur": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -72828,6 +73033,7 @@
   }
  },
  "statut_artiste_auteur_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -73198,6 +73404,7 @@
   }
  },
  "statut_artiste_auteur_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -73568,6 +73775,7 @@
   }
  },
  "statut_artiste_auteur_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -73938,6 +74146,7 @@
   }
  },
  "statut_artiste_auteur_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -74308,6 +74517,7 @@
   }
  },
  "statut_artiste_auteur_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -74643,6 +74853,7 @@
   }
  },
  "statut_auteur_dramatique": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -74988,6 +75199,7 @@
   }
  },
  "statut_auteur_dramatique_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -75371,6 +75583,7 @@
   }
  },
  "statut_auteur_dramatique_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -75754,6 +75967,7 @@
   }
  },
  "statut_auteur_dramatique_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -76137,6 +76351,7 @@
   }
  },
  "statut_auteur_dramatique_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -76533,6 +76748,7 @@
   }
  },
  "statut_auteur_dramatique_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -76878,6 +77094,7 @@
   }
  },
  "statut_auteur_lyrique": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -77223,6 +77440,7 @@
   }
  },
  "statut_auteur_lyrique_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -77606,6 +77824,7 @@
   }
  },
  "statut_auteur_lyrique_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -77989,6 +78208,7 @@
   }
  },
  "statut_auteur_lyrique_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -78372,6 +78592,7 @@
   }
  },
  "statut_auteur_lyrique_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -78768,6 +78989,7 @@
   }
  },
  "statut_auteur_lyrique_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -79113,6 +79335,7 @@
   }
  },
  "statut_auxiliaire_medical": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -79448,6 +79671,7 @@
   }
  },
  "statut_auxiliaire_medical_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -79818,6 +80042,7 @@
   }
  },
  "statut_auxiliaire_medical_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -80188,6 +80413,7 @@
   }
  },
  "statut_auxiliaire_medical_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -80558,6 +80784,7 @@
   }
  },
  "statut_auxiliaire_medical_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -80928,6 +81155,7 @@
   }
  },
  "statut_auxiliaire_medical_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -81263,6 +81491,7 @@
   }
  },
  "statut_avocat": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -81598,6 +81827,7 @@
   }
  },
  "statut_avocat_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -81968,6 +82198,7 @@
   }
  },
  "statut_avocat_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -82338,6 +82569,7 @@
   }
  },
  "statut_avocat_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -82708,6 +82940,7 @@
   }
  },
  "statut_avocat_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -83078,6 +83311,7 @@
   }
  },
  "statut_avocat_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -83413,6 +83647,7 @@
   }
  },
  "statut_chirurgien_dentiste_ou_sage_femme": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -83748,6 +83983,7 @@
   }
  },
  "statut_chirurgien_dentiste_ou_sage_femme_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -84118,6 +84354,7 @@
   }
  },
  "statut_chirurgien_dentiste_ou_sage_femme_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -84488,6 +84725,7 @@
   }
  },
  "statut_chirurgien_dentiste_ou_sage_femme_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -84858,6 +85096,7 @@
   }
  },
  "statut_chirurgien_dentiste_ou_sage_femme_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -85228,6 +85467,7 @@
   }
  },
  "statut_chirurgien_dentiste_ou_sage_femme_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -85563,6 +85803,7 @@
   }
  },
  "statut_clerc_de_notaire": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -85899,6 +86140,7 @@
   }
  },
  "statut_clerc_de_notaire_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -86262,6 +86504,7 @@
   }
  },
  "statut_clerc_de_notaire_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -86625,6 +86868,7 @@
   }
  },
  "statut_clerc_de_notaire_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -86988,6 +87232,7 @@
   }
  },
  "statut_clerc_de_notaire_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -87351,6 +87596,7 @@
   }
  },
  "statut_clerc_de_notaire_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -87687,6 +87933,7 @@
   }
  },
  "statut_commercant": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -88032,6 +88279,7 @@
   }
  },
  "statut_commercant_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -88402,6 +88650,7 @@
   }
  },
  "statut_commercant_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -88772,6 +89021,7 @@
   }
  },
  "statut_commercant_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -89155,6 +89405,7 @@
   }
  },
  "statut_commercant_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -89551,6 +89802,7 @@
   }
  },
  "statut_commercant_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -89896,6 +90148,7 @@
   }
  },
  "statut_contractuel_public": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -90231,6 +90484,7 @@
   }
  },
  "statut_contractuel_public_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -90627,6 +90881,7 @@
   }
  },
  "statut_contractuel_public_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -91023,6 +91278,7 @@
   }
  },
  "statut_contractuel_public_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -91419,6 +91675,7 @@
   }
  },
  "statut_contractuel_public_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -91789,6 +92046,7 @@
   }
  },
  "statut_contractuel_public_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -92124,6 +92382,7 @@
   }
  },
  "statut_elu_local": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -92459,6 +92718,7 @@
   }
  },
  "statut_elu_local_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -92816,6 +93076,7 @@
   }
  },
  "statut_elu_local_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -93173,6 +93434,7 @@
   }
  },
  "statut_elu_local_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -93530,6 +93792,7 @@
   }
  },
  "statut_elu_local_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -93900,6 +94163,7 @@
   }
  },
  "statut_elu_local_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -94235,6 +94499,7 @@
   }
  },
  "statut_expert_comptable": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -94570,6 +94835,7 @@
   }
  },
  "statut_expert_comptable_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -94940,6 +95206,7 @@
   }
  },
  "statut_expert_comptable_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -95310,6 +95577,7 @@
   }
  },
  "statut_expert_comptable_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -95680,6 +95948,7 @@
   }
  },
  "statut_expert_comptable_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -96050,6 +96319,7 @@
   }
  },
  "statut_expert_comptable_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -96385,6 +96655,7 @@
   }
  },
  "statut_exploitant_agricole": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -96727,6 +96998,7 @@
   }
  },
  "statut_exploitant_agricole_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -97084,6 +97356,7 @@
   }
  },
  "statut_exploitant_agricole_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -97441,6 +97714,7 @@
   }
  },
  "statut_exploitant_agricole_1945": {
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -97818,6 +98092,7 @@
   }
  },
  "statut_exploitant_agricole_1955": {
+  "appels_liquider": 6,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -98195,6 +98470,7 @@
   }
  },
  "statut_exploitant_agricole_1965": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -98537,6 +98813,7 @@
   }
  },
  "statut_fonctionnaire_etat": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -98878,6 +99155,7 @@
   }
  },
  "statut_fonctionnaire_etat_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -99241,6 +99519,7 @@
   }
  },
  "statut_fonctionnaire_etat_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -99607,6 +99886,7 @@
   }
  },
  "statut_fonctionnaire_etat_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -99986,6 +100266,7 @@
   }
  },
  "statut_fonctionnaire_etat_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -100365,6 +100646,7 @@
   }
  },
  "statut_fonctionnaire_etat_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -100709,6 +100991,7 @@
   }
  },
  "statut_fonctionnaire_etat_actif": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -101050,6 +101333,7 @@
   }
  },
  "statut_fonctionnaire_etat_actif_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -101413,6 +101697,7 @@
   }
  },
  "statut_fonctionnaire_etat_actif_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -101779,6 +102064,7 @@
   }
  },
  "statut_fonctionnaire_etat_actif_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -102158,6 +102444,7 @@
   }
  },
  "statut_fonctionnaire_etat_actif_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -102537,6 +102824,7 @@
   }
  },
  "statut_fonctionnaire_etat_actif_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -102881,6 +103169,7 @@
   }
  },
  "statut_fonctionnaire_etat_super_actif": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -103222,6 +103511,7 @@
   }
  },
  "statut_fonctionnaire_etat_super_actif_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -103585,6 +103875,7 @@
   }
  },
  "statut_fonctionnaire_etat_super_actif_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -103951,6 +104242,7 @@
   }
  },
  "statut_fonctionnaire_etat_super_actif_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -104330,6 +104622,7 @@
   }
  },
  "statut_fonctionnaire_etat_super_actif_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -104709,6 +105002,7 @@
   }
  },
  "statut_fonctionnaire_etat_super_actif_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -105053,6 +105347,7 @@
   }
  },
  "statut_fonctionnaire_pacifique": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -105383,6 +105678,7 @@
   }
  },
  "statut_fonctionnaire_pacifique_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -105740,6 +106036,7 @@
   }
  },
  "statut_fonctionnaire_pacifique_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -106097,6 +106394,7 @@
   }
  },
  "statut_fonctionnaire_pacifique_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -106454,6 +106752,7 @@
   }
  },
  "statut_fonctionnaire_pacifique_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -106811,6 +107110,7 @@
   }
  },
  "statut_fonctionnaire_pacifique_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -107141,6 +107441,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -107482,6 +107783,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -107848,6 +108150,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -108211,6 +108514,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -108587,6 +108891,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -108963,6 +109268,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -109304,6 +109610,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_actif": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -109645,6 +109952,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_actif_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -110011,6 +110319,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_actif_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -110374,6 +110683,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_actif_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -110750,6 +111060,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_actif_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -111126,6 +111437,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_actif_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -111467,6 +111779,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_super_actif": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -111808,6 +112121,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_super_actif_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -112174,6 +112488,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_super_actif_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -112537,6 +112852,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_super_actif_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -112913,6 +113229,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_super_actif_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -113289,6 +113606,7 @@
   }
  },
  "statut_fonctionnaire_territorial_hospitalier_super_actif_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -113630,6 +113948,7 @@
   }
  },
  "statut_gerant_debit_tabac": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -113980,6 +114299,7 @@
   }
  },
  "statut_gerant_debit_tabac_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -114363,6 +114683,7 @@
   }
  },
  "statut_gerant_debit_tabac_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -114746,6 +115067,7 @@
   }
  },
  "statut_gerant_debit_tabac_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -115142,6 +115464,7 @@
   }
  },
  "statut_gerant_debit_tabac_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -115551,6 +115874,7 @@
   }
  },
  "statut_gerant_debit_tabac_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -115901,6 +116225,7 @@
   }
  },
  "statut_liberal_non_reglemente": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -116236,6 +116561,7 @@
   }
  },
  "statut_liberal_non_reglemente_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -116606,6 +116932,7 @@
   }
  },
  "statut_liberal_non_reglemente_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -116976,6 +117303,7 @@
   }
  },
  "statut_liberal_non_reglemente_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -117346,6 +117674,7 @@
   }
  },
  "statut_liberal_non_reglemente_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -117716,6 +118045,7 @@
   }
  },
  "statut_liberal_non_reglemente_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -118051,6 +118381,7 @@
   }
  },
  "statut_maitre_enseignement_prive": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -118401,6 +118732,7 @@
   }
  },
  "statut_maitre_enseignement_prive_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -118797,6 +119129,7 @@
   }
  },
  "statut_maitre_enseignement_prive_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -119193,6 +119526,7 @@
   }
  },
  "statut_maitre_enseignement_prive_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -119589,6 +119923,7 @@
   }
  },
  "statut_maitre_enseignement_prive_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -119985,6 +120320,7 @@
   }
  },
  "statut_maitre_enseignement_prive_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -120335,6 +120671,7 @@
   }
  },
  "statut_marin": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -120671,6 +121008,7 @@
   }
  },
  "statut_marin_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -121034,6 +121372,7 @@
   }
  },
  "statut_marin_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -121397,6 +121736,7 @@
   }
  },
  "statut_marin_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -121760,6 +122100,7 @@
   }
  },
  "statut_marin_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -122123,6 +122464,7 @@
   }
  },
  "statut_marin_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -122459,6 +122801,7 @@
   }
  },
  "statut_medecin_liberal": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -122799,6 +123142,7 @@
   }
  },
  "statut_medecin_liberal_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -123182,6 +123526,7 @@
   }
  },
  "statut_medecin_liberal_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -123565,6 +123910,7 @@
   }
  },
  "statut_medecin_liberal_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -123948,6 +124294,7 @@
   }
  },
  "statut_medecin_liberal_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -124331,6 +124678,7 @@
   }
  },
  "statut_medecin_liberal_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -124671,6 +125019,7 @@
   }
  },
  "statut_membre_cese": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -125001,6 +125350,7 @@
   }
  },
  "statut_membre_cese_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -125358,6 +125708,7 @@
   }
  },
  "statut_membre_cese_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -125715,6 +126066,7 @@
   }
  },
  "statut_membre_cese_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -126072,6 +126424,7 @@
   }
  },
  "statut_membre_cese_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -126429,6 +126782,7 @@
   }
  },
  "statut_membre_cese_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -126759,6 +127113,7 @@
   }
  },
  "statut_membre_congregation": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -127096,6 +127451,7 @@
   }
  },
  "statut_membre_congregation_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -127460,6 +127816,7 @@
   }
  },
  "statut_membre_congregation_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -127824,6 +128181,7 @@
   }
  },
  "statut_membre_congregation_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -128188,6 +128546,7 @@
   }
  },
  "statut_membre_congregation_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -128552,6 +128911,7 @@
   }
  },
  "statut_membre_congregation_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -128889,6 +129249,7 @@
   }
  },
  "statut_micro_entrepreneur": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -129234,6 +129595,7 @@
   }
  },
  "statut_micro_entrepreneur_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -129604,6 +129966,7 @@
   }
  },
  "statut_micro_entrepreneur_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -129974,6 +130337,7 @@
   }
  },
  "statut_micro_entrepreneur_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -130357,6 +130721,7 @@
   }
  },
  "statut_micro_entrepreneur_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -130753,6 +131118,7 @@
   }
  },
  "statut_micro_entrepreneur_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -131098,6 +131464,7 @@
   }
  },
  "statut_militaire": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -131439,6 +131806,7 @@
   }
  },
  "statut_militaire_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -131802,6 +132170,7 @@
   }
  },
  "statut_militaire_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -132168,6 +132537,7 @@
   }
  },
  "statut_militaire_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -132547,6 +132917,7 @@
   }
  },
  "statut_militaire_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -132926,6 +133297,7 @@
   }
  },
  "statut_militaire_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -133270,6 +133642,7 @@
   }
  },
  "statut_militaire_officier": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -133611,6 +133984,7 @@
   }
  },
  "statut_militaire_officier_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -133974,6 +134348,7 @@
   }
  },
  "statut_militaire_officier_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -134340,6 +134715,7 @@
   }
  },
  "statut_militaire_officier_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -134719,6 +135095,7 @@
   }
  },
  "statut_militaire_officier_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -135098,6 +135475,7 @@
   }
  },
  "statut_militaire_officier_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -135442,6 +135820,7 @@
   }
  },
  "statut_mineur": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -135778,6 +136157,7 @@
   }
  },
  "statut_mineur_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -136144,6 +136524,7 @@
   }
  },
  "statut_mineur_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -136510,6 +136891,7 @@
   }
  },
  "statut_mineur_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -136876,6 +137258,7 @@
   }
  },
  "statut_mineur_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -137242,6 +137625,7 @@
   }
  },
  "statut_mineur_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -137578,6 +137962,7 @@
   }
  },
  "statut_ministre_du_culte": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -137920,6 +138305,7 @@
   }
  },
  "statut_ministre_du_culte_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -138284,6 +138670,7 @@
   }
  },
  "statut_ministre_du_culte_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -138648,6 +139035,7 @@
   }
  },
  "statut_ministre_du_culte_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -139025,6 +139413,7 @@
   }
  },
  "statut_ministre_du_culte_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -139402,6 +139791,7 @@
   }
  },
  "statut_ministre_du_culte_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -139744,6 +140134,7 @@
   }
  },
  "statut_notaire": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -140079,6 +140470,7 @@
   }
  },
  "statut_notaire_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -140449,6 +140841,7 @@
   }
  },
  "statut_notaire_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -140819,6 +141212,7 @@
   }
  },
  "statut_notaire_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -141189,6 +141583,7 @@
   }
  },
  "statut_notaire_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -141559,6 +141954,7 @@
   }
  },
  "statut_notaire_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -141894,6 +142290,7 @@
   }
  },
  "statut_officier_ministeriel": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -142229,6 +142626,7 @@
   }
  },
  "statut_officier_ministeriel_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -142599,6 +142997,7 @@
   }
  },
  "statut_officier_ministeriel_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -142969,6 +143368,7 @@
   }
  },
  "statut_officier_ministeriel_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -143339,6 +143739,7 @@
   }
  },
  "statut_officier_ministeriel_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -143709,6 +144110,7 @@
   }
  },
  "statut_officier_ministeriel_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -144044,6 +144446,7 @@
   }
  },
  "statut_ouvrier_etat": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -144385,6 +144788,7 @@
   }
  },
  "statut_ouvrier_etat_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -144748,6 +145152,7 @@
   }
  },
  "statut_ouvrier_etat_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -145111,6 +145516,7 @@
   }
  },
  "statut_ouvrier_etat_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -145487,6 +145893,7 @@
   }
  },
  "statut_ouvrier_etat_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -145863,6 +146270,7 @@
   }
  },
  "statut_ouvrier_etat_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -146204,6 +146612,7 @@
   }
  },
  "statut_ouvrier_etat_actif": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -146545,6 +146954,7 @@
   }
  },
  "statut_ouvrier_etat_actif_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -146908,6 +147318,7 @@
   }
  },
  "statut_ouvrier_etat_actif_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -147271,6 +147682,7 @@
   }
  },
  "statut_ouvrier_etat_actif_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -147647,6 +148059,7 @@
   }
  },
  "statut_ouvrier_etat_actif_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -148023,6 +148436,7 @@
   }
  },
  "statut_ouvrier_etat_actif_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -148364,6 +148778,7 @@
   }
  },
  "statut_parlementaire": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -148694,6 +149109,7 @@
   }
  },
  "statut_parlementaire_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -149051,6 +149467,7 @@
   }
  },
  "statut_parlementaire_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -149408,6 +149825,7 @@
   }
  },
  "statut_parlementaire_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -149765,6 +150183,7 @@
   }
  },
  "statut_parlementaire_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -150122,6 +150541,7 @@
   }
  },
  "statut_parlementaire_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -150452,6 +150872,7 @@
   }
  },
  "statut_personnel_comedie_francaise": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -150788,6 +151209,7 @@
   }
  },
  "statut_personnel_comedie_francaise_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -151151,6 +151573,7 @@
   }
  },
  "statut_personnel_comedie_francaise_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -151517,6 +151940,7 @@
   }
  },
  "statut_personnel_comedie_francaise_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -151883,6 +152307,7 @@
   }
  },
  "statut_personnel_comedie_francaise_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -152249,6 +152674,7 @@
   }
  },
  "statut_personnel_comedie_francaise_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -152588,6 +153014,7 @@
   }
  },
  "statut_personnel_navigant": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -152943,6 +153370,7 @@
   }
  },
  "statut_personnel_navigant_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -153352,6 +153780,7 @@
   }
  },
  "statut_personnel_navigant_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -153761,6 +154190,7 @@
   }
  },
  "statut_personnel_navigant_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -154170,6 +154600,7 @@
   }
  },
  "statut_personnel_navigant_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -154579,6 +155010,7 @@
   }
  },
  "statut_personnel_navigant_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -154934,6 +155366,7 @@
   }
  },
  "statut_personnel_opera": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -155270,6 +155703,7 @@
   }
  },
  "statut_personnel_opera_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -155633,6 +156067,7 @@
   }
  },
  "statut_personnel_opera_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -155999,6 +156434,7 @@
   }
  },
  "statut_personnel_opera_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -156365,6 +156801,7 @@
   }
  },
  "statut_personnel_opera_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -156731,6 +157168,7 @@
   }
  },
  "statut_personnel_opera_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -157070,6 +157508,7 @@
   }
  },
  "statut_pharmacien": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -157405,6 +157844,7 @@
   }
  },
  "statut_pharmacien_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -157775,6 +158215,7 @@
   }
  },
  "statut_pharmacien_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -158145,6 +158586,7 @@
   }
  },
  "statut_pharmacien_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -158515,6 +158957,7 @@
   }
  },
  "statut_pharmacien_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -158885,6 +159328,7 @@
   }
  },
  "statut_pharmacien_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -159220,6 +159664,7 @@
   }
  },
  "statut_profession_liberale": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -159555,6 +160000,7 @@
   }
  },
  "statut_profession_liberale_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -159925,6 +160371,7 @@
   }
  },
  "statut_profession_liberale_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -160295,6 +160742,7 @@
   }
  },
  "statut_profession_liberale_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -160665,6 +161113,7 @@
   }
  },
  "statut_profession_liberale_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -161035,6 +161484,7 @@
   }
  },
  "statut_profession_liberale_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -161370,6 +161820,7 @@
   }
  },
  "statut_salarie_agricole": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -161715,6 +162166,7 @@
   }
  },
  "statut_salarie_agricole_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -162098,6 +162550,7 @@
   }
  },
  "statut_salarie_agricole_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -162481,6 +162934,7 @@
   }
  },
  "statut_salarie_agricole_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -162864,6 +163318,7 @@
   }
  },
  "statut_salarie_agricole_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -163247,6 +163702,7 @@
   }
  },
  "statut_salarie_agricole_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -163592,6 +164048,7 @@
   }
  },
  "statut_salarie_mayotte": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -163922,6 +164379,7 @@
   }
  },
  "statut_salarie_mayotte_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -164279,6 +164737,7 @@
   }
  },
  "statut_salarie_mayotte_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -164636,6 +165095,7 @@
   }
  },
  "statut_salarie_mayotte_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -164993,6 +165453,7 @@
   }
  },
  "statut_salarie_mayotte_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -165350,6 +165811,7 @@
   }
  },
  "statut_salarie_mayotte_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -165680,6 +166142,7 @@
   }
  },
  "statut_salarie_nouvelle_caledonie": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -166025,6 +166488,7 @@
   }
  },
  "statut_salarie_nouvelle_caledonie_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -166408,6 +166872,7 @@
   }
  },
  "statut_salarie_nouvelle_caledonie_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -166791,6 +167256,7 @@
   }
  },
  "statut_salarie_nouvelle_caledonie_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -167174,6 +167640,7 @@
   }
  },
  "statut_salarie_nouvelle_caledonie_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -167557,6 +168024,7 @@
   }
  },
  "statut_salarie_nouvelle_caledonie_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -167902,6 +168370,7 @@
   }
  },
  "statut_salarie_polynesie": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -168237,6 +168706,7 @@
   }
  },
  "statut_salarie_polynesie_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -168594,6 +169064,7 @@
   }
  },
  "statut_salarie_polynesie_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -168964,6 +169435,7 @@
   }
  },
  "statut_salarie_polynesie_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -169334,6 +169806,7 @@
   }
  },
  "statut_salarie_polynesie_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -169704,6 +170177,7 @@
   }
  },
  "statut_salarie_polynesie_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -170039,6 +170513,7 @@
   }
  },
  "statut_salarie_prive_cadre": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -170384,6 +170859,7 @@
   }
  },
  "statut_salarie_prive_cadre_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -170767,6 +171243,7 @@
   }
  },
  "statut_salarie_prive_cadre_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -171150,6 +171627,7 @@
   }
  },
  "statut_salarie_prive_cadre_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -171533,6 +172011,7 @@
   }
  },
  "statut_salarie_prive_cadre_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -171916,6 +172395,7 @@
   }
  },
  "statut_salarie_prive_cadre_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -172261,6 +172741,7 @@
   }
  },
  "statut_salarie_prive_cadre_entreprise_recente": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -172606,6 +173087,7 @@
   }
  },
  "statut_salarie_prive_cadre_entreprise_recente_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -173002,6 +173484,7 @@
   }
  },
  "statut_salarie_prive_cadre_entreprise_recente_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -173398,6 +173881,7 @@
   }
  },
  "statut_salarie_prive_cadre_entreprise_recente_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -173794,6 +174278,7 @@
   }
  },
  "statut_salarie_prive_cadre_entreprise_recente_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -174190,6 +174675,7 @@
   }
  },
  "statut_salarie_prive_cadre_entreprise_recente_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -174535,6 +175021,7 @@
   }
  },
  "statut_salarie_prive_non_cadre": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -174880,6 +175367,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -175276,6 +175764,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -175672,6 +176161,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -176055,6 +176545,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -176438,6 +176929,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -176783,6 +177275,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_entreprise_recente": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -177128,6 +177621,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_entreprise_recente_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -177511,6 +178005,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_entreprise_recente_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -177907,6 +178402,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_entreprise_recente_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -178290,6 +178786,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_entreprise_recente_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -178673,6 +179170,7 @@
   }
  },
  "statut_salarie_prive_non_cadre_entreprise_recente_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -179018,6 +179516,7 @@
   }
  },
  "statut_salarie_regime_professionnel_integre": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -179368,6 +179867,7 @@
   }
  },
  "statut_salarie_regime_professionnel_integre_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -179738,6 +180238,7 @@
   }
  },
  "statut_salarie_regime_professionnel_integre_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -180134,6 +180635,7 @@
   }
  },
  "statut_salarie_regime_professionnel_integre_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -180530,6 +181032,7 @@
   }
  },
  "statut_salarie_regime_professionnel_integre_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -180926,6 +181429,7 @@
   }
  },
  "statut_salarie_regime_professionnel_integre_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -181276,6 +181780,7 @@
   }
  },
  "statut_salarie_saint_pierre_et_miquelon": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -181621,6 +182126,7 @@
   }
  },
  "statut_salarie_saint_pierre_et_miquelon_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -182004,6 +182510,7 @@
   }
  },
  "statut_salarie_saint_pierre_et_miquelon_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -182387,6 +182894,7 @@
   }
  },
  "statut_salarie_saint_pierre_et_miquelon_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -182770,6 +183278,7 @@
   }
  },
  "statut_salarie_saint_pierre_et_miquelon_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -183153,6 +183662,7 @@
   }
  },
  "statut_salarie_saint_pierre_et_miquelon_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -183498,6 +184008,7 @@
   }
  },
  "statut_salarie_wallis_et_futuna": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -183828,6 +184339,7 @@
   }
  },
  "statut_salarie_wallis_et_futuna_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -184185,6 +184697,7 @@
   }
  },
  "statut_salarie_wallis_et_futuna_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -184542,6 +185055,7 @@
   }
  },
  "statut_salarie_wallis_et_futuna_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -184899,6 +185413,7 @@
   }
  },
  "statut_salarie_wallis_et_futuna_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -185256,6 +185771,7 @@
   }
  },
  "statut_salarie_wallis_et_futuna_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -185586,6 +186102,7 @@
   }
  },
  "statut_sans_activite": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -185910,6 +186427,7 @@
   }
  },
  "statut_sans_activite_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -186252,6 +186770,7 @@
   }
  },
  "statut_sans_activite_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -186594,6 +187113,7 @@
   }
  },
  "statut_sans_activite_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -186936,6 +187456,7 @@
   }
  },
  "statut_sans_activite_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -187278,6 +187799,7 @@
   }
  },
  "statut_sans_activite_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -187602,6 +188124,7 @@
   }
  },
  "statut_veterinaire": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -187937,6 +188460,7 @@
   }
  },
  "statut_veterinaire_1925": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -188307,6 +188831,7 @@
   }
  },
  "statut_veterinaire_1935": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -188677,6 +189202,7 @@
   }
  },
  "statut_veterinaire_1945": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -189047,6 +189573,7 @@
   }
  },
  "statut_veterinaire_1955": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -189417,6 +189944,7 @@
   }
  },
  "statut_veterinaire_1965": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -189752,6 +190280,7 @@
   }
  },
  "surcote_parentale": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -190110,6 +190639,7 @@
   }
  },
  "surcote_parentale_avec_surcote_ordinaire": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -190468,6 +190998,7 @@
   }
  },
  "surcote_parentale_duree_incomplete": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -190820,6 +191351,7 @@
   }
  },
  "surcote_parentale_fonction_publique": {
+  "appels_liquider": 4,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -191177,6 +191709,7 @@
   }
  },
  "surcote_parentale_pere": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -191522,6 +192055,7 @@
   }
  },
  "table_par_sexe": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",
@@ -191867,6 +192401,7 @@
   }
  },
  "table_par_sexe_femme": {
+  "appels_liquider": 3,
   "requete": {
    "age_reference": "fixe_apres_bascule",
    "bascule": "2026",

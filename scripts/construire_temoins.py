@@ -32,6 +32,7 @@ sys.path.insert(0, str(RACINE / "src"))
 
 from retraite_notionnelle.carriere import Affiliations  # noqa: E402
 from retraite_notionnelle.config import RACINE_DONNEES  # noqa: E402
+from retraite_notionnelle.droit import liquidation as _liquidation  # noqa: E402
 from retraite_notionnelle.web.pages import (  # noqa: E402
     AGE_DEBUT_MINIMAL,
     Contexte,
@@ -749,12 +750,19 @@ def _fini(valeur):
 
 
 def _simulations(contexte: Contexte) -> dict:
+    """Chaque témoin : sa requête, son résultat, et les appels de ``liquider``
+    qu'il a faits, liquidations d'essai comprises (docs/architecture.md,
+    § 7.8). Le portage fait les mêmes (``tests/js/moteur.test.js``), et un test
+    refuse qu'un témoin dépasse le nombre déclaré (``tests/test_liquidation.py``)."""
     resultats = {}
     for cas in _cas():
         saisie = Saisie.depuis_requete(cas["requete"])
+        avant = _liquidation.appels()
+        resultat = _fini(contexte.simuler(saisie).dictionnaire())
         resultats[cas["nom"]] = {
             "requete": cas["requete"],
-            "resultat": _fini(contexte.simuler(saisie).dictionnaire()),
+            "resultat": resultat,
+            "appels_liquider": _liquidation.appels() - avant,
         }
     return resultats
 

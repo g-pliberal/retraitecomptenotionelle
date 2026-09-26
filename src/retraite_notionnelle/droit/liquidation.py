@@ -230,6 +230,16 @@ class Liquidation:
 #: Le nombre d'appels de :func:`liquider`, liquidations d'essai comprises.
 _appels = 0
 
+#: Le nombre déclaré (docs/architecture.md, § 7.8) : les appels de
+#: :func:`liquider` qu'une simulation des six scénarios s'accorde, liquidations
+#: d'essai comprises. Le départ en fait un, et un par avantage que la cascade
+#: mesure — les trimestres des enfants, l'AVPF, les points gratuits ; la
+#: valorisation des droits acquis, un par scénario prospectif ; et, pour qui
+#: est déjà parti à la bascule, les scénarios notionnels refont la liquidation
+#: du départ. Chaque témoin écrit les siens (``tests/temoins/simulations.json``),
+#: le portage les refait, et un test refuse qu'un seul dépasse ce nombre.
+APPELS_DECLARES = 6
+
 
 def appels() -> int:
     """Combien de liquidations ont été calculées depuis le lancement : le
