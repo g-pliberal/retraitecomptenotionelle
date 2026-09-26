@@ -4300,9 +4300,18 @@ institutions:
           rediffusion (champ `rediffusion`). Versionné sous data/brut/ jusqu'au
           25 septembre 2026, il en a été retiré ce jour-là ; une session qui
           doit le relire se le fait apporter dans data/brut/, que git ignore,
-          où son empreinte le vérifie. L'historique git garde la version
-          versionnée : le propriétaire a décidé, le 26 septembre 2026, de la
-          garder, et l'historique n'est pas réécrit pour l'en effacer.
+          où son empreinte le vérifie : c'est la copie qui sert les sources du
+          dépôt, vérifiée par son empreinte sans être reproduite. L'historique
+          git, lui, garde la version versionnée, et le dépôt est public :
+          depuis la réécriture du 23 septembre 2026, elle est dans le commit
+          racine, donc dans l'histoire de chaque branche et de chaque tag, et
+          l'arbre de phase-0 la porte. C'est une reproduction offerte à tous,
+          que la clause de la page 180 n'autorise pas : ni la copie privée
+          (L. 122-5, 2°), ni la courte citation (3°, a). Le propriétaire, qui
+          avait décidé le 26 septembre 2026 de garder cette version, a rouvert
+          la question le jour même ; l'effacer demande de réécrire tout
+          l'historique, ce qu'une session ne fait pas, et la décision lui
+          revient (feuille de route, action 130).
           CE QUE LE DOCUMENT AJOUTE À LA SAISIE : la moyenne des frais sur
           arrérages est non pondérée et ne porte que sur les 9 organismes (sur
           20) qui les facturent ; le frais sur versement du PER est le double
@@ -4317,11 +4326,12 @@ institutions:
           moyenne NON PONDÉRÉE des seuls facturants, dont on déduit 0,99 % sur
           les vingt déclarants et une médiane nulle. Aucune médiane n'est
           publiée pour les deux premiers.
-          DEPUIS, L'UTILISATEUR L'A DÉPOSÉ DANS LE DÉPÔT LUI-MÊME, le 20 septembre
-          2026, sous `data/brut/OPEF2026.pdf` — le seul fichier de ce répertoire
-          que git suive, à cause de ce refus — ; toute session l'a, et le lecteur
-          PDF du dépôt le rend désormais aussi (une police simple se lit par un
-          octet quoi que déclare sa table).
+          LE 20 SEPTEMBRE 2026, L'UTILISATEUR L'AVAIT DÉPOSÉ DANS LE DÉPÔT
+          LUI-MÊME, sous `data/brut/OPEF2026.pdf` — le seul fichier de ce
+          répertoire que git suivait, à cause de ce refus — ; il n'y est plus
+          depuis le 25 septembre (plus haut). Le lecteur PDF du dépôt le rend
+          aussi (une police simple se lit par un octet quoi que déclare sa
+          table).
 
       - id: ccsf_rapport_per_2021
         titre: >-

@@ -1897,3 +1897,31 @@ résultat qui bouge :
   la phase 1 qui l'annonçait pour la phase 2 allait trop vite.
 - Le repère `phase-2` n'est pas posé : comme pour les deux premiers, il y faut
   un workflow lancé une fois, et l'accord du propriétaire.
+
+**L'OPEF, rouvert le 26 septembre 2026.** Le propriétaire est revenu sur sa
+première réponse : garder, pour les sources, une copie vérifiée par son
+empreinte, ce n'est pas reproduire le rapport. Vérifié le même jour :
+- la copie qui sert les sources est le fichier de `data/brut/`, que git
+  ignore, et son empreinte SHA-256 au manifeste. La release
+  `documents-apportes` ne l'a jamais porté : elle ne sert que les deux
+  documents de la Cour des comptes ;
+- mais le PDF versionné du 20 au 25 septembre est dans le commit racine de
+  l'historique réécrit le 23 septembre, 9aced8d, donc dans l'histoire de
+  chaque branche, de chaque tag et des quatre références de pull request, et
+  l'arbre de `phase-0` le porte, comme l'archive que GitHub en sert. Le dépôt
+  est public : n'importe qui le télécharge ;
+- la clause de la page 180 n'admet que la copie privée et la courte citation
+  (code de la propriété intellectuelle, L. 122-5, 2° et 3°, a). Une copie
+  offerte à tous n'est ni l'une ni l'autre. Les trois valeurs saisies et les
+  extraits que citent les tests sont de courtes citations, source nommée :
+  ils restent.
+
+L'effacer demande de réécrire tout l'historique, ce qu'une session ne fait
+pas : `git filter-repo --invert-paths --path data/brut/OPEF2026.pdf` sur un
+clone miroir, une poussée forcée des branches et des tags, puis une demande
+au support de GitHub pour les références de pull request et les vues en
+cache. Toutes les empreintes changeraient, comme le 23 septembre : chaque
+clone serait à remplacer, et les empreintes que la prose cite, à reporter
+depuis la table de correspondance que `filter-repo` écrit. L'autre voie est
+de demander l'autorisation au secrétariat général du CCSF. La décision
+revient au propriétaire.
