@@ -68,7 +68,8 @@ from retraite_notionnelle.garantie import (
 )
 from retraite_notionnelle.moteur.indexation import Indexation
 from retraite_notionnelle.remuneration import AnneeComparee, charger_prelevements
-from retraite_notionnelle.scenarios.actuel import MinimumVieillesse, _coefficient_anticipation
+from retraite_notionnelle.droit.liquider import _coefficient_anticipation
+from retraite_notionnelle.scenarios.actuel import MinimumVieillesse
 from retraite_notionnelle.simulateur import Simulateur
 from retraite_notionnelle.web import gabarit as g
 from retraite_notionnelle.web.pages import (

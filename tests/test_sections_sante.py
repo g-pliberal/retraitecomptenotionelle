@@ -41,6 +41,7 @@ import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit import ouvrir
 
 
 @pytest.fixture(scope="module")
@@ -264,7 +265,7 @@ def test_une_complementaire_qui_a_ses_ages_n_ouvre_pas_le_droit(
         annee_naissance=naissance, sexe="H", affiliation=statut,
         age_debut=22.0, age_liquidation=64.0)
     actuel = simulateur.scenario_actuel
-    assert actuel.age_ouverture_droit(carriere) == pytest.approx(age)
+    assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(age)
     # Et le taux plein de la carrière est celui de la base, non les 65 ans de
     # la complémentaire.
-    assert actuel.age_taux_plein_droit(carriere) >= age
+    assert ouvrir.age_taux_plein_droit(actuel, carriere) >= age

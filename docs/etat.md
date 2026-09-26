@@ -28,7 +28,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | à vérifier | 1 |
 
 - Confrontées à au moins un exemple officiel : **22 sur 98** (54 exemples : 54 reproduits, aucun en écart connu).
-- Citées dans le code par leur identifiant : **16 sur 98**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Citées dans le code par leur identifiant : **17 sur 98**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Mûres, sans rien qui manque à leur contrat : **0 sur 98**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **aucune sur 98** ; le partage des versions, qui se contrôle sur chaque fiche, n'a encore rien à contrôler.
 - Réformes du calendrier : 109, dont 11 déclarées non appliquées.

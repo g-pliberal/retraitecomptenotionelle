@@ -62,6 +62,7 @@ from pathlib import Path
 
 from .config import RevalorisationStock, SituationFoyer
 from .donnees.chargement import Fiabilite
+from .droit import liquider
 
 
 # -- ce que le droit a servi depuis la liquidation ---------------------------
@@ -373,7 +374,7 @@ class PensionAujourdhui:
 
 def _derniere_valeur_publiee(actuel, code: str) -> int | None:
     """Dernière année dont la valeur de service est publiée, au bout de la
-    chaîne des fusions que :meth:`ScenarioActuel.valeur_du_point` remonte."""
+    chaîne des fusions que :func:`~retraite_notionnelle.droit.liquider.valeur_du_point` remonte."""
     courant = code
     for _ in range(len(actuel.catalogue) + 1):  # garde-fou : jamais de boucle
         derniere = actuel.valeurs_point.derniere_annee_servie(courant)
@@ -412,14 +413,14 @@ class PensionServie:
         if pension.type_calcul in ("points", "mixte"):
             periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
             bareme = (periode.points_de if periode is not None else None) or code
-            au_depart = self.actuel.valeur_du_point(bareme, annee_liquidation)
+            au_depart = liquider.valeur_du_point(self.actuel, bareme, annee_liquidation)
             publiee = _derniere_valeur_publiee(self.actuel, bareme)
             if au_depart is not None and au_depart[0] > 0 and publiee is not None:
                 # Au-delà de la dernière valeur publiée, la règle générale
                 # prend le relais : c'est celle du régime de base des
                 # libéraux, dont la série s'arrête en 2025.
                 ancre = min(jusqu_a.year, publiee)
-                a_l_ancre = self.actuel.valeur_du_point(bareme, ancre)
+                a_l_ancre = liquider.valeur_du_point(self.actuel, bareme, ancre)
                 # Un CHANGEMENT D'ÉCHELLE survenu depuis le départ convertit
                 # les points déjà servis : l'Arrco de 1999 a fait de chaque
                 # point de l'ancienne unité 0,387464 point de la nouvelle.

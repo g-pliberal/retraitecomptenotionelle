@@ -1351,6 +1351,7 @@ def ecart_openfisca(**reglages: str) -> float:
     import json
 
     from retraite_notionnelle.carriere import AnneeCarriere, Carriere
+    from retraite_notionnelle.droit import liquider
 
     simulateur = _simulateur(_parametres())
     scenario = simulateur.scenario_actuel
@@ -1368,7 +1369,7 @@ def ecart_openfisca(**reglages: str) -> float:
             age_liquidation=float(profil["liquidation"] - profil["naissance"]),
             identifiant=profil["code"])
         periode = simulateur.catalogue["regime_general"].periode(profil["liquidation"])
-        nous = scenario.salaire_de_reference(
+        nous = liquider.salaire_de_reference(scenario,
             "regime_general", carriere, periode, profil["liquidation"],
             True, profil["naissance"], True)
         ecarts.append(entree["openfisca"]["salaire_de_reference"] / nous - 1)

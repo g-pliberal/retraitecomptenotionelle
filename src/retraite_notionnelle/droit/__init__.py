@@ -1,4 +1,4 @@
-"""Le droit applicable, en étapes (docs/architecture.md, § 7.2).
+"""Le droit applicable, en étapes (docs/architecture.md, § 7.2 et 7.3).
 
 Le scénario 1 quitte ``scenarios/actuel.py`` pour ce paquet, une étape par
 module, et ``moteur/js/droit/`` le suit fonction pour fonction. Pour une
@@ -19,11 +19,26 @@ valoir :
 
 Chaque étape écrit une donnée que décrit son schéma, dans
 ``data/reference/etapes/`` ; :mod:`.releve` les enchaîne, et en tire les
-lignes du relevé (contrat C.5). La liquidation, qui reste dans
-``scenarios/actuel.py`` jusqu'à la phase 5, lit le relevé qu'il lui rend.
+lignes du relevé (contrat C.5).
 
-Jusque-là, les étapes lisent la chronologie par sa vue, la carrière, et les
-tables du scénario 1 par le moteur qui les tient — ``moteur``, un
+Puis la LIQUIDATION (§ 7.3) : :func:`.liquidation.liquider`, une fonction
+pure de la demande, de l'état et du contexte, fait l'acquisition et trois
+étapes de plus :
+
+* :mod:`.ouvrir` — ouvrir le droit : âge légal, catégories actives,
+  militaires, carrière longue ; durée requise et taux plein ;
+* :mod:`.liquider` — liquider chaque régime : annuités, points, forfait ou
+  capital ; décote, surcote, abattement, proratisation ;
+* :mod:`.completer` — compléter tous régimes : les deux minima, la surcote
+  parentale, la majoration pour enfants.
+
+Entre les deux dernières, elle mesure par des liquidations d'essai ce
+qu'apportent les trimestres des enfants, l'AVPF et les points gratuits.
+L'ASPA vient après, de l'étape « foyer et net » (:mod:`.foyer`), qui regarde
+toutes les ressources. :mod:`.commun` porte ce que les étapes partagent.
+
+Les étapes lisent la chronologie par sa vue, la carrière, et les tables du
+scénario 1 par le moteur qui les tient — ``moteur``, un
 :class:`~retraite_notionnelle.scenarios.actuel.ScenarioActuel`. Les fiches et
 leurs versions les remplaceront (phase 6).
 """

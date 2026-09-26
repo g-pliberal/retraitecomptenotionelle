@@ -88,6 +88,7 @@ from retraite_notionnelle.garantie import (
 )
 from retraite_notionnelle.revalorisation import RevalorisationServie
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit import ouvrir
 
 
 @pytest.fixture(scope="module")
@@ -947,7 +948,7 @@ def test_les_trimestres_pour_enfants_datent_le_taux_plein():
     for generation in (1950, 1960, 1965, 1975):
         age = cas.age_liquidation_pour(simulateur, generation)
         carriere = cas.construire(simulateur, generation)
-        assert age == pytest.approx(actuel.age_ouverture_droit(carriere))
+        assert age == pytest.approx(ouvrir.age_ouverture_droit(actuel, carriere))
         resultat = actuel.calculer(carriere)
         assert resultat.liquidation_ouverte
         assert resultat.taux_liquidation == pytest.approx(0.5)

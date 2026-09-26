@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING
 
 from .carriere import PROFIL_AUTOMATIQUE, Carriere
 from .simulateur import Comparaison, Simulateur
+from .droit import ouvrir
 
 if TYPE_CHECKING:  # pragma: no cover - annotation seulement
     from .donnees.effectifs import EffectifsRetraites
@@ -173,9 +174,9 @@ class CasType:
         actuel = simulateur.scenario_actuel
         carriere = self._carriere(simulateur, generation, age)
         reference = (
-            actuel.age_taux_plein_droit(carriere)
+            ouvrir.age_taux_plein_droit(actuel, carriere)
             if self.regle_liquidation == "taux_plein"
-            else actuel.age_ouverture_droit(carriere)
+            else ouvrir.age_ouverture_droit(actuel, carriere)
         )
         return None if reference is None else reference + self.ecart_liquidation
 

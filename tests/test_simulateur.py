@@ -29,6 +29,7 @@ from retraite_notionnelle.config import (
 )
 from retraite_notionnelle.donnees.chargement import Fiabilite
 from retraite_notionnelle.simulateur import SCENARIOS_NOTIONNELS, Simulateur
+from retraite_notionnelle.droit import liquider, ouvrir
 
 #: Témoins versionnés : ce que des sources extérieures ont réellement publié.
 RACINE_TEMOINS = Path(__file__).resolve().parent / "temoins"
@@ -1726,7 +1727,7 @@ def test_la_surcote_s_ajoute_au_minimum_comme_la_circulaire_le_calcule():
     10 % × (693,51 + 22,50) = 71,60 € pour une pension de 600 € surcotée de
     3,75 % et portée au minimum majoré de 2017.
     """
-    from retraite_notionnelle.scenarios.actuel import complement_minimum
+    from retraite_notionnelle.droit.completer import complement_minimum
 
     servie = 621 * 1.025 + complement_minimum(621, 645.07, 1.025, (2009, 10))
     assert servie == pytest.approx(660.59, abs=0.01)
@@ -1907,7 +1908,7 @@ def test_les_points_d_un_regime_fusionne_sont_convertis(simulateur):
     assert derniere_arrco == 2018
 
     avant, _ = valeurs.service("arrco", derniere_arrco)
-    apres, _ = scenario.valeur_du_point("arrco", 2022)
+    apres, _ = liquider.valeur_du_point(scenario, "arrco", 2022)
     assert apres > avant, "les points Arrco n'ont pas suivi la fusion de 2019"
 
     service_2022, _ = valeurs.service("agirc_arrco", 2022)
@@ -1919,7 +1920,7 @@ def test_les_points_d_un_regime_fusionne_sont_convertis(simulateur):
     # test_les_coefficients_de_fusion_se_recalculent_depuis_les_valeurs_de_point.
     service_agirc_2018, _ = valeurs.service("agirc", 2018)
     service_arrco_2018, _ = valeurs.service("arrco", 2018)
-    agirc, _ = scenario.valeur_du_point("agirc", 2022)
+    agirc, _ = liquider.valeur_du_point(scenario, "agirc", 2022)
     assert agirc / service_2022 == pytest.approx(
         service_agirc_2018 / service_arrco_2018, rel=1e-6)
 
@@ -1946,8 +1947,8 @@ def test_un_regime_ferme_ne_vaut_jamais_plus_que_son_successeur(simulateur):
         # La comparaison n'a de sens qu'à compter de la reprise : avant elle, le
         # successeur n'existe pas et sa « valeur » n'est qu'un repli sur les prix.
         for annee in range(reprise.annee_effet, 2061):
-            valeur = scenario.valeur_du_point(code, annee)
-            reference = scenario.valeur_du_point(successeur, annee)
+            valeur = liquider.valeur_du_point(scenario, code, annee)
+            reference = liquider.valeur_du_point(scenario, successeur, annee)
             if valeur is None or reference is None:
                 continue
             assert valeur[0] <= reference[0] * 1.001, (code, annee, valeur[0], reference[0])
@@ -1971,7 +1972,7 @@ def test_le_rendement_du_point_ne_saute_pas_d_une_annee_sur_l_autre(simulateur):
     # brusques sans être faux — le taux d'appel de l'Ircantec passe de 0,60 à
     # 0,80 en 1983, et c'est le droit.
     for code in ("arrco", "agirc", "ircantec"):
-        valeur_service = scenario.valeur_du_point(code, liquidation)
+        valeur_service = liquider.valeur_du_point(scenario, code, liquidation)
         assert valeur_service is not None
         precedent = None
         for annee in range(1962, 2019):
@@ -2008,8 +2009,8 @@ def test_la_duree_de_proratisation_n_est_pas_la_duree_requise(simulateur):
             annee_naissance=generation, sexe="H",
             affiliation="salarie_prive_non_cadre", age_debut=25, age_liquidation=62,
         )
-        requis, _ = scenario._duree_requise(periode, carriere)
-        proratisation, _ = scenario._duree_proratisation(periode, carriere, requis)
+        requis, _ = ouvrir.duree_requise(scenario, periode, carriere)
+        proratisation, _ = liquider.duree_proratisation(scenario, periode, carriere, requis)
         assert proratisation == trimestres, generation
         assert proratisation <= requis, generation
 
@@ -2021,8 +2022,8 @@ def test_la_duree_de_proratisation_n_est_pas_la_duree_requise(simulateur):
             annee_naissance=generation, sexe="H",
             affiliation="salarie_prive_non_cadre", age_debut=25, age_liquidation=62,
         )
-        requis, _ = scenario._duree_requise(periode, carriere)
-        proratisation, _ = scenario._duree_proratisation(periode, carriere, requis)
+        requis, _ = ouvrir.duree_requise(scenario, periode, carriere)
+        proratisation, _ = liquider.duree_proratisation(scenario, periode, carriere, requis)
         assert proratisation == requis, generation
 
 
@@ -2065,10 +2066,10 @@ def test_les_trimestres_de_decote_sont_des_entiers(simulateur):
                 affiliation="salarie_prive_non_cadre",
                 age_debut=30, age_liquidation=age_depart,
             )
-            _, age_annulation, _ = scenario._decote(
+            _, age_annulation, _ = liquider.decote_opposable(scenario,
                 periode, carriere, carriere.annee_liquidation
             )
-            retenus = scenario._trimestres_de_decote(
+            retenus = liquider.trimestres_de_decote(scenario,
                 periode, carriere, carriere.trimestres_actuels, 168, age_depart,
                 age_annulation,
             )
@@ -2727,7 +2728,7 @@ def test_le_dernier_traitement_ne_recoit_pas_les_coefficients_du_regime_general(
     periode = simulateur.catalogue["fonction_publique_etat"].periode(2020)
     assert periode.salaire_reference == "derniers_6_mois"
     assert periode.assiette == "hors_primes"
-    reference = scenario.salaire_de_reference(
+    reference = liquider.salaire_de_reference(scenario,
         "fonction_publique_etat", carriere, periode, 2020, False, 1958, True,
     )
     # Le dernier traitement, primes exclues, ramené en euros de l'année de
@@ -2780,10 +2781,10 @@ def test_le_nombre_d_annees_du_salaire_de_reference_suit_la_generation(simulateu
     periode_ancienne = catalogue["regime_general"].periode(
         ancien.annee_liquidation)
     periode_recente = catalogue["regime_general"].periode(recent.annee_liquidation)
-    dix = scenario.salaire_de_reference(
+    dix = liquider.salaire_de_reference(scenario,
         "regime_general", ancien, periode_ancienne,
         ancien.annee_liquidation, True, 1930)
-    vingt_cinq = scenario.salaire_de_reference(
+    vingt_cinq = liquider.salaire_de_reference(scenario,
         "regime_general", ancien, periode_ancienne,
         ancien.annee_liquidation, True, 1975)
     assert dix > vingt_cinq
@@ -2867,7 +2868,7 @@ def test_les_coefficients_d_anticipation_sont_ceux_de_l_agirc_arrco():
     155 trimestres sur 167 requis (0,88 pour douze trimestres manquants) se voit
     appliquer 0,88.
     """
-    from retraite_notionnelle.scenarios.actuel import _coefficient_anticipation
+    from retraite_notionnelle.droit.liquider import _coefficient_anticipation
 
     # Table des trimestres manquants : un point par trimestre jusqu'à douze,
     # un point et quart ensuite, et rien au-delà de vingt.
@@ -2900,12 +2901,12 @@ def test_l_abattement_de_la_complementaire_n_est_pas_celui_de_la_base(simulateur
     scenario = simulateur.scenario_actuel
     periode = simulateur.catalogue["agirc_arrco"].periode(2019)
     requis = scenario.durees_requises.trimestres(1965)[0]
-    abattement = scenario._abattement_points(
+    abattement = liquider.abattement_points(scenario,
         periode, carriere, 100, requis, 57.0, 2022)
     assert abattement == pytest.approx(0.43)
 
     # Au taux plein, aucun abattement, quel que soit l'âge.
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, requis, requis, 57.0, 2022) == pytest.approx(1.0)
 
 
@@ -2938,8 +2939,9 @@ def test_la_majoration_pour_enfants_de_la_complementaire_est_plafonnee(simulateu
     # point jusqu'à l'année de liquidation. L'inégalité seule passait un
     # plafond multiplié par 0,01 comme par 1,2 jusqu'au 23 septembre 2026.
     annee = carriere.annee_liquidation
-    valeur = simulateur.scenario_actuel.valeur_du_point
-    plafond = 2367.0 * valeur("agirc_arrco", annee)[0] / valeur("agirc_arrco", 2025)[0]
+    actuel = simulateur.scenario_actuel
+    plafond = (2367.0 * liquider.valeur_du_point(actuel, "agirc_arrco", annee)[0]
+               / liquider.valeur_du_point(actuel, "agirc_arrco", 2025)[0])
     par_regime = dict(majoration.par_regime)
     base = next(p.montant for p in resultat.pensions_par_regime
                 if p.regime == "regime_general")
@@ -3685,7 +3687,7 @@ def test_la_decote_de_la_fonction_publique_est_celle_de_l_article_l14(simulateur
         annee_naissance=1952, sexe="H", affiliation="fonctionnaire_etat",
         age_debut=25, age_liquidation=60, niveau_salaire=1.2,
     )
-    coefficient, age_annulation, _ = scenario._decote(periode, carriere, 2012)
+    coefficient, age_annulation, _ = liquider.decote_opposable(scenario, periode, carriere, 2012)
     assert coefficient == pytest.approx(0.00875)
     assert age_annulation == pytest.approx(65.75 - 2.0)
 
@@ -3696,7 +3698,7 @@ def test_la_decote_de_la_fonction_publique_est_celle_de_l_article_l14(simulateur
         annee_naissance=1960, sexe="H", affiliation="fonctionnaire_etat",
         age_debut=25, age_liquidation=60, niveau_salaire=1.2,
     )
-    coefficient, age_annulation, _ = scenario._decote(periode, carriere, 2020)
+    coefficient, age_annulation, _ = liquider.decote_opposable(scenario, periode, carriere, 2020)
     assert coefficient == pytest.approx(0.0125)
     assert age_annulation == pytest.approx(67.0)
 
@@ -3798,13 +3800,13 @@ def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
 
     # 2009 : le régime n'a pas encore de décote — droit ouvert à 50 ans en 2009.
     periode = simulateur.catalogue["sncf"].periode(2009)
-    coefficient, _, _ = scenario._decote(periode, agent(1959), 2009)
+    coefficient, _, _ = liquider.decote_opposable(scenario, periode, agent(1959), 2009)
     assert coefficient is None
 
     # Un droit ouvert en 2005 n'en acquiert pas une parce que le départ a lieu
     # en 2012 : les conditions étaient réunies avant le 1er juillet 2010.
     periode = simulateur.catalogue["sncf"].periode(2012)
-    coefficient, _, _ = scenario._decote(periode, agent(1955), 2012)
+    coefficient, _, _ = liquider.decote_opposable(scenario, periode, agent(1955), 2012)
     assert coefficient is None
 
     # Droit ouvert en 2012 : deux dixièmes du taux plein, soit 0,25 % — la
@@ -3813,7 +3815,7 @@ def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     # fonction publique quatre ans plus tôt, et le septième de celui que la
     # fiche servait. L'âge d'annulation est l'âge de référence du régime,
     # 55 ans, diminué de quatorze trimestres.
-    coefficient, age_annulation, _ = scenario._decote(periode, agent(1962), 2012)
+    coefficient, age_annulation, _ = liquider.decote_opposable(scenario, periode, agent(1962), 2012)
     assert coefficient == pytest.approx(0.0025)
     assert age_annulation == pytest.approx(55.0 - 14.0 / 4.0)
 
@@ -3824,11 +3826,11 @@ def test_la_decote_des_regimes_speciaux_arrive_quatre_ans_apres(simulateur):
     # monter cinq ans au-dessus de l'âge d'ouverture — 57,25 ans en 2025,
     # 59 ans à partir de 2034.
     periode = simulateur.catalogue["sncf"].periode(2025)
-    coefficient, age_annulation, _ = scenario._decote(periode, agent(1973), 2025)
+    coefficient, age_annulation, _ = liquider.decote_opposable(scenario, periode, agent(1973), 2025)
     assert coefficient == pytest.approx(0.0125)
     assert age_annulation == pytest.approx(57.0)
     periode = simulateur.catalogue["sncf"].periode(2034)
-    _, age_annulation, _ = scenario._decote(periode, agent(1980), 2034)
+    _, age_annulation, _ = liquider.decote_opposable(scenario, periode, agent(1980), 2034)
     assert age_annulation == pytest.approx(57.0)
 
 
@@ -3847,11 +3849,11 @@ def test_l_age_d_annulation_du_ballet_de_l_opera_est_quarante_deux_ans(simulateu
         age_debut=18, age_liquidation=40, niveau_salaire=1.0,
     )
     periode = simulateur.catalogue["opera_de_paris"].periode(2020)
-    coefficient, age_annulation, _ = scenario._decote(periode, carriere, 2020)
+    coefficient, age_annulation, _ = liquider.decote_opposable(scenario, periode, carriere, 2020)
     assert coefficient == pytest.approx(0.0125)
     assert age_annulation == pytest.approx(42.0)
 
-    trimestres = scenario._trimestres_de_decote(
+    trimestres = liquider.trimestres_de_decote(scenario,
         periode, carriere, trimestres=88, requis=172, age_liquidation=40.0,
         age_annulation=age_annulation,
     )
@@ -4206,12 +4208,12 @@ def test_avant_l_asf_de_1983_l_abattement_se_lit_a_l_age_seul(simulateur):
     avant = simulateur.catalogue["agirc"].periode(1980)
     assert avant.duree_requise_trimestres is None
     assert not avant.duree_requise_par_generation
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         avant, carriere, 168, 150, 62.0, 1982) == pytest.approx(0.88)
 
     apres = simulateur.catalogue["agirc"].periode(1984)
     assert apres.duree_requise_par_generation
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         apres, carriere, 168, 150, 62.0, 1984) == pytest.approx(1.0)
 
 
@@ -4235,13 +4237,13 @@ def test_la_surcote_ircantec_suit_les_deux_taux_de_l_arrete(simulateur):
         annee_naissance=1945, sexe="H", affiliation="contractuel_public",
         age_debut=26, age_liquidation=67,
     )
-    assert scenario._age_taux_plein(periode, carriere) == pytest.approx(65.0)
-    assert scenario._abattement_points(
+    assert ouvrir.age_taux_plein(scenario, periode, carriere) == pytest.approx(65.0)
+    assert liquider.abattement_points(scenario,
         periode, carriere, 164, 160, 67.0, 2012) == pytest.approx(1.06)
 
     # Le même, liquidé À l'âge du taux plein : le 1° ne donne rien, et le 2°
     # non plus — ses quatre trimestres de trop sont postérieurs à cet âge.
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 164, 160, 65.0, 2010) == pytest.approx(1.0)
 
 
@@ -4261,10 +4263,10 @@ def test_la_surcote_ircantec_ne_paie_pas_deux_fois_la_meme_periode(simulateur):
         annee_naissance=1945, sexe="H", affiliation="contractuel_public",
         age_debut=20, age_liquidation=67,
     )
-    a_l_age_du_taux_plein = scenario._abattement_points(
+    a_l_age_du_taux_plein = liquider.abattement_points(scenario,
         periode, carriere, 180, 160, 65.0, 2010)
     assert a_l_age_du_taux_plein == pytest.approx(1.0 + 0.00625 * 20)
-    deux_ans_plus_tard = scenario._abattement_points(
+    deux_ans_plus_tard = liquider.abattement_points(scenario,
         periode, carriere, 188, 160, 67.0, 2012)
     assert deux_ans_plus_tard == pytest.approx(1.0 + 0.00625 * 20 + 0.0075 * 8)
 
@@ -4284,12 +4286,12 @@ def test_la_surcote_ircantec_n_existe_pas_avant_2010(simulateur):
     )
     avant = simulateur.catalogue["ircantec"].periode(2009)
     assert avant.surcote_points == "aucune"
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         avant, carriere, 160, 160, 66.0, 2009) == pytest.approx(1.0)
 
     apres = simulateur.catalogue["ircantec"].periode(2010)
     assert apres.surcote_points == "ircantec"
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         apres, carriere, 160, 160, 66.0, 2010) == pytest.approx(1.03)
 
     porteurs = {
@@ -4315,7 +4317,7 @@ def test_un_abattement_ircantec_ne_se_transforme_jamais_en_majoration(simulateur
         annee_naissance=1950, sexe="H", affiliation="contractuel_public",
         age_debut=30, age_liquidation=62,
     )
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 128, 162, 62.0, 2012) < 1.0
 
 
@@ -4343,10 +4345,10 @@ def test_la_cnavpl_sert_la_surcote_du_regime_general(simulateur):
         annee_naissance=1953, sexe="H", affiliation="profession_liberale",
         age_debut=22, age_liquidation=64,
     )
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 173, 165, 64.0, 2017) == pytest.approx(1.0 + 0.0075 * 8)
     # Le même, sans excédent de durée : rien.
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 165, 165, 64.0, 2017) == pytest.approx(1.0)
     apres = _periode(simulateur, "cnavpl", 2024)
     assert apres.surcote_par_trimestre == pytest.approx(0.0125)
@@ -4369,26 +4371,26 @@ def test_la_carmf_majore_des_62_ans_puis_moins_apres_65_et_plus_rien_a_70(simula
         age_debut=30, age_liquidation=66,
     )
     # Douze trimestres à 1,25 % de 62 à 65 ans, quatre à 0,75 % ensuite.
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 144, 165, 66.0, 2020) == pytest.approx(1.0 + 0.0125 * 12 + 0.0075 * 4)
     # À soixante-douze ans, le compte s'arrête à soixante-dix : 15 % + 15 %.
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 168, 165, 72.0, 2026) == pytest.approx(1.30)
     # À soixante-deux ans, rien — et pas de décote non plus, quelle que soit
     # la durée : c'est la retraite en temps choisi.
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 100, 165, 62.0, 2016 + 1) == pytest.approx(1.0)
     # Avant 2017, le taux plein est à soixante-cinq ans, l'anticipation abat
     # 1,25 % par trimestre, et le différé se compte par années PLEINES.
     avant = _periode(simulateur, "carmf_complementaire", 2015)
     assert avant.surcote_pas_trimestres == 4
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         avant, carriere, 140, 165, 66.5, 2015) == pytest.approx(1.05)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         avant, carriere, 140, 165, 63.0, 2015) == pytest.approx(0.90)
     # L'ASV suit les mêmes mots.
     asv = _periode(simulateur, "asv_conventionnes", 2020)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         asv, carriere, 144, 165, 66.0, 2020) == pytest.approx(1.0 + 0.0125 * 12 + 0.0075 * 4)
 
 
@@ -4405,14 +4407,14 @@ def test_la_cavec_majore_vingt_trimestres_au_plus_apres_65_ans(simulateur):
     )
     periode = _periode(simulateur, "cavec_complementaire", 2020)
     assert periode.age_taux_plein == 65.0 and periode.duree_requise_trimestres is None
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 120, 165, 67.0, 2020) == pytest.approx(1.06)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 120, 165, 71.0, 2024) == pytest.approx(1.15)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         _periode(simulateur, "cavec_complementaire", 2027), carriere, 120, 165, 67.0, 2027,
     ) == pytest.approx(1.10)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         _periode(simulateur, "cavec_complementaire", 2000), carriere, 120, 165, 67.0, 2000,
     ) == pytest.approx(1.0)
 
@@ -4434,12 +4436,12 @@ def test_la_carpimko_majore_depuis_l_age_du_taux_plein_lu_a_la_generation(simula
         age_debut=25, age_liquidation=68,
     )
     periode = _periode(simulateur, "carpimko_complementaire", 2024)
-    assert scenario._age_taux_plein(periode, carriere) == pytest.approx(65 + 4 / 12)
-    assert scenario._abattement_points(
+    assert ouvrir.age_taux_plein(scenario, periode, carriere) == pytest.approx(65 + 4 / 12)
+    assert liquider.abattement_points(scenario,
         periode, carriere, 172, 169, 68.0, 2024) == pytest.approx(1.125)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 172, 169, 73.0, 2029) == pytest.approx(1.25)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         _periode(simulateur, "carpimko_complementaire", 2014), carriere, 172, 169, 68.0, 2014,
     ) == pytest.approx(1.0)
 
@@ -4456,9 +4458,9 @@ def test_la_cavp_majore_trois_ans_au_plus_a_un_demi_pour_cent(simulateur):
         age_debut=25, age_liquidation=69,
     )
     periode = _periode(simulateur, "cavp_complementaire", 2025)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 176, 169, 69.0, 2025) == pytest.approx(1.04)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 176, 169, 72.0, 2028) == pytest.approx(1.06)
 
 
@@ -4479,16 +4481,16 @@ def test_la_cprn_majore_un_demi_pour_cent_jusqu_a_70_ans_puis_un_pour_cent_sans_
     assert avant.surcote_age_maximum == 70.0
     # À 68 ans, un an AVANT le taux plein de 2014 : quatre trimestres de
     # décote, que la durée d'assurance n'annule pas.
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         avant, carriere, 176, 169, 68.0, 2023) == pytest.approx(0.95)
     # À 72 ans : de 69 à 70 ans seulement, quatre trimestres à 0,5 %.
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         avant, carriere, 176, 169, 72.0, 2023) == pytest.approx(1.02)
     apres = _periode(simulateur, "cprn_complementaire", 2025)
     assert apres.surcote_age_maximum is None
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         apres, carriere, 176, 169, 72.0, 2028) == pytest.approx(1.20)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         _periode(simulateur, "cprn_complementaire", 2010), carriere, 176, 165, 72.0, 2010,
     ) == pytest.approx(1.0)
 
@@ -4505,13 +4507,13 @@ def test_la_cipav_majore_par_annees_pleines_a_qui_a_trente_ans_de_caisse(simulat
     )
     periode = _periode(simulateur, "cipav_complementaire", 2024)
     assert periode.surcote_affiliation_minimale_trimestres == 120
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 172, 169, 68.5, 2024, trimestres_regime=160,
     ) == pytest.approx(1.05)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 172, 169, 69.0, 2025, trimestres_regime=160,
     ) == pytest.approx(1.10)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 172, 169, 69.0, 2025, trimestres_regime=116,
     ) == pytest.approx(1.0)
 
@@ -4529,7 +4531,7 @@ def test_les_exploitants_agricoles_ont_la_surcote_du_regime_general(simulateur):
     )
     periode = _periode(simulateur, "msa_non_salaries", 2017)
     assert periode.type_calcul == "mixte" and periode.surcote_points == "regime_general"
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 173, 165, 64.0, 2017) == pytest.approx(1.0 + 0.0125 * 8)
 
 
@@ -4615,7 +4617,7 @@ def test_les_ages_classes_suivent_les_deux_montees_en_charge(simulateur):
             age_debut=22, age_liquidation=62,
         )
         periode = simulateur.catalogue["fonction_publique_etat"].periode(2023)
-        return simulateur.scenario_actuel._age_ouverture(periode, carriere)
+        return ouvrir.age_ouverture(simulateur.scenario_actuel, periode, carriere)
 
     assert age(1950) == pytest.approx(55.0)
     assert age(1956, 3) == pytest.approx(55.0)
@@ -4674,7 +4676,7 @@ def test_l_age_d_annulation_de_la_decote_d_un_actif_est_sa_limite_d_age(simulate
         affiliation="fonctionnaire_territorial_hospitalier_actif",
         age_debut=22, age_liquidation=60,
     )
-    assert simulateur.scenario_actuel._age_taux_plein(periode, carriere) == (
+    assert ouvrir.age_taux_plein(simulateur.scenario_actuel, periode, carriere) == (
         pytest.approx(62.0))
 
     sedentaire = _pension_actuelle(
@@ -4768,8 +4770,8 @@ def test_la_surcote_d_un_actif_se_compte_depuis_l_age_legal_de_droit_commun(simu
         age_debut=22, age_liquidation=60,
     )
     scenario = simulateur.scenario_actuel
-    assert scenario._age_ouverture(periode, carriere) == pytest.approx(57.0)
-    assert scenario._age_ouverture_commun(periode, carriere) == pytest.approx(62.75)
+    assert ouvrir.age_ouverture(scenario, periode, carriere) == pytest.approx(57.0)
+    assert ouvrir.age_ouverture_commun(scenario, periode, carriere) == pytest.approx(62.75)
 
 
 def test_la_pension_militaire_s_ouvre_a_une_duree_et_non_a_un_age(simulateur):
@@ -4839,9 +4841,9 @@ def test_la_decote_du_militaire_est_celle_du_II_de_l_article_L_14(simulateur):
         annee_naissance=1990, sexe="H", affiliation="militaire",
         age_debut=18, age_liquidation=35,
     )
-    _, age_annulation, _ = scenario._decote(periode, carriere,
+    _, age_annulation, _ = liquider.decote_opposable(scenario, periode, carriere,
                                             carriere.annee_liquidation)
-    trimestres = scenario._trimestres_de_decote(
+    trimestres = liquider.trimestres_de_decote(scenario,
         periode, carriere, trimestres=68, requis=172, age_liquidation=35.0,
         age_annulation=age_annulation,
     )
@@ -4852,7 +4854,7 @@ def test_la_decote_du_militaire_est_celle_du_II_de_l_article_L_14(simulateur):
         annee_naissance=1990, sexe="H", affiliation="militaire",
         age_debut=18, age_liquidation=38,
     )
-    assert scenario._trimestres_de_decote(
+    assert liquider.trimestres_de_decote(scenario,
         periode, longue, trimestres=80, requis=172, age_liquidation=38.0,
         age_annulation=age_annulation,
     ) == 0
@@ -4896,10 +4898,10 @@ def test_la_derogation_ne_deborde_pas_sur_un_regime_special(simulateur):
     # L'âge SNCF est celui de SA génération — cinquante ans et cinquante-cinq
     # pour un agent de conduite né avant 1967 —, non celui de la génération
     # qui atteint l'âge en 2023, que la fiche portait par année (51,67).
-    assert scenario._age_ouverture(sncf, carriere) == pytest.approx(50.0)
-    assert scenario._age_ouverture(cnracl, carriere) == pytest.approx(57.0)
-    assert scenario._age_taux_plein(sncf, carriere) == pytest.approx(55.0)
-    assert scenario._age_taux_plein(cnracl, carriere) == pytest.approx(62.0)
+    assert ouvrir.age_ouverture(scenario, sncf, carriere) == pytest.approx(50.0)
+    assert ouvrir.age_ouverture(scenario, cnracl, carriere) == pytest.approx(57.0)
+    assert ouvrir.age_taux_plein(scenario, sncf, carriere) == pytest.approx(55.0)
+    assert ouvrir.age_taux_plein(scenario, cnracl, carriere) == pytest.approx(62.0)
 
 
 # -- un régime et celui qui lui succède (action 10 de la feuille de route) ------
@@ -5044,8 +5046,8 @@ def test_carriere_longue_quatre_trimestres_pour_qui_est_ne_au_dernier_trimestre(
     # et non les 171 de la suspension, réservée aux pensions de septembre 2026
     # et après (loi n° 2025-1403, article 105 VI). Le test attendait soixante
     # ans, sous la règle d'une date à venir.
-    assert actuel.age_ouverture_droit(septembre) == pytest.approx(60.75)
-    assert actuel.age_ouverture_droit(novembre) == pytest.approx(60.25)
+    assert ouvrir.age_ouverture_droit(actuel, septembre) == pytest.approx(60.75)
+    assert ouvrir.age_ouverture_droit(actuel, novembre) == pytest.approx(60.25)
 
 
 # --- Les périodes que le droit RÉPUTE cotisées (D. 351-1-2) ----------------
@@ -5383,7 +5385,7 @@ def test_les_ages_des_marins_suivent_la_duree_de_leurs_services(simulateur):
     assert scenario.calculer(marin(25, 50)).liquidation_ouverte
     assert not scenario.calculer(marin(25.25, 50)).liquidation_ouverte
     # Vingt ans : la proportionnelle attend cinquante-cinq ans.
-    assert scenario.age_ouverture_droit(marin(30, 50)) == 55
+    assert ouvrir.age_ouverture_droit(scenario, marin(30, 50)) == 55
     # Dix ans et aucune autre pension : soixante ans.
     assert not scenario.calculer(marin(49.75, 59.75)).liquidation_ouverte
     assert scenario.calculer(marin(50, 60)).liquidation_ouverte
@@ -5392,7 +5394,7 @@ def test_les_ages_des_marins_suivent_la_duree_de_leurs_services(simulateur):
     poly = simulateur.carriere_parcours(
         annee_naissance=1966, sexe="H", age_liquidation=55,
         metiers=[Metier("marin", 20, 1.0), Metier("salarie_prive_non_cadre", 30, 1.0)])
-    assert scenario.age_ouverture_droit(poly) > 60
+    assert ouvrir.age_ouverture_droit(scenario, poly) > 60
     assert not scenario.calculer(poly).liquidation_ouverte
 
     # Le plafond de vingt-cinq annuités, et sa levée à cinquante-deux ans et
@@ -5447,17 +5449,17 @@ def test_l_ircec_compte_des_annees_et_non_des_trimestres(simulateur):
         annee_naissance=1960, sexe="F", affiliation="artiste_auteur",
         age_debut=30, age_liquidation=62,
     )
-    assert scenario._age_taux_plein(periode, carriere) == pytest.approx(67.0)
-    assert scenario._abattement_points(
+    assert ouvrir.age_taux_plein(scenario, periode, carriere) == pytest.approx(67.0)
+    assert liquider.abattement_points(scenario,
         periode, carriere, 140, 172, 62.0, 2022) == pytest.approx(0.80)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 168, 172, 64.5, 2024) == pytest.approx(0.95)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 100, 172, 64.5, 2024) == pytest.approx(0.90)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 100, 172, 66.75, 2026) == pytest.approx(0.9875)
     # La durée réunie ouvre le taux plein dès l'âge légal.
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         periode, carriere, 172, 172, 62.0, 2022) == pytest.approx(1.0)
 
 
@@ -5476,14 +5478,14 @@ def test_le_racl_n_a_rejoint_les_deux_autres_qu_en_2025(simulateur):
     )
     ancien = _periode(simulateur, "ircec_racl", 2020)
     assert ancien.abattement_points == "ircec_age_seul"
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         ancien, carriere, 180, 172, 62.0, 2022) == pytest.approx(0.75)
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         ancien, carriere, 180, 172, 64.5, 2024) == pytest.approx(0.85)
 
     nouveau = _periode(simulateur, "ircec_racl", 2025)
     assert nouveau.abattement_points == "ircec"
-    assert scenario._abattement_points(
+    assert liquider.abattement_points(scenario,
         nouveau, carriere, 180, 172, 62.0, 2022) == pytest.approx(1.0)
 
     avant_2014 = _periode(simulateur, "ircec_racd", 2010)
@@ -5547,9 +5549,9 @@ def test_la_crpn_decote_par_la_duree_seule_jusqu_a_soixante_ans(simulateur):
         assert recente.decote_par_la_duree_seule
         assert recente.age_taux_plein == pytest.approx(60.0)
         assert recente.taux_cotisation_retraite == pytest.approx(0.2130 * 1.11, abs=1e-5)
-        assert scenario._trimestres_de_decote(
+        assert liquider.trimestres_de_decote(scenario,
             recente, carriere, 100, 120, 57.0, 60.0) == pytest.approx(20.0)
-        assert scenario._trimestres_de_decote(
+        assert liquider.trimestres_de_decote(scenario,
             recente, carriere, 100, 120, 60.0, 60.0) == 0.0
         avant = _periode(simulateur, code, 2018)
         assert not avant.decote_par_la_duree_seule

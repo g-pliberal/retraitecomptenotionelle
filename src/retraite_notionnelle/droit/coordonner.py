@@ -386,7 +386,7 @@ def tete_de_succession(moteur: ScenarioActuel, code: str, annee_liquidation: int
     l'arrête — les annuités des régimes professionnels intégrés ne se
     fondent pas dans les points de l'Agirc-Arrco —, et un régime en points
     n'y entre jamais : ses points se convertissent et s'additionnent déjà
-    (voir :meth:`ScenarioActuel.valeur_du_point`).
+    (voir :func:`~retraite_notionnelle.droit.liquider.valeur_du_point`).
 
     L'absorption ne se suit qu'à partir de l'année où le régime FERME à
     ses affiliés — celle où l'absorbant commence à recevoir leurs années.

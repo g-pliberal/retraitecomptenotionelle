@@ -986,7 +986,7 @@ précédent, et le modèle en prenait deux à l'envers.
    (L. 351-10). Deux durées le proratisent, et ce ne sont pas les mêmes : le
    montant de base suit la durée d'assurance acquise dans le régime, sa
    majoration au titre des périodes cotisées suit la seule durée cotisée
-   (D. 351-2-2), et cette majoration demande en outre <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=TRIMESTRES_COTISES_MINIMUM_MAJORE)-->120<!--/--> trimestres cotisés
+   (D. 351-2-2), et cette majoration demande en outre <!--chiffre:mesure(constante?de=retraite_notionnelle.droit.completer&nom=TRIMESTRES_COTISES_MINIMUM_MAJORE)-->120<!--/--> trimestres cotisés
    tous régimes. Il se compare à la pension AVANT surcote, et la surcote,
    calculée sur cette pension, s'ajoute au minimum pour les pensions prenant
    effet depuis le 1er avril 2009 (D. 351-2-1, dernier alinéa) ; avant, elle

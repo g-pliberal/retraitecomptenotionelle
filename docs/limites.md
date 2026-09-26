@@ -146,7 +146,7 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   grade et applique donc à tous le barème du II —, et la limite de durée de
   services, qui l'ouvre de la même façon. Conséquence : un officier supérieur
   radié par limite d'âge peut être déclaré non ouvert quand le droit l'ouvre, et
-  la décote d'un militaire parti très tôt est au plus de <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=TRIMESTRES_DECOTE_MILITAIRE&echelle=1.25)-->12,5<!--/--> %, jamais de <!--chiffre:illustration()-->25<!--/--> %.
+  la décote d'un militaire parti très tôt est au plus de <!--chiffre:mesure(constante?de=retraite_notionnelle.droit.ouvrir&nom=TRIMESTRES_DECOTE_MILITAIRE&echelle=1.25)-->12,5<!--/--> %, jamais de <!--chiffre:illustration()-->25<!--/--> %.
 - **Pension majorée de référence (PMR)** du régime des non-salariés agricoles.
   Le régime agricole est déjà le plus approché du catalogue — sa part
   forfaitaire, sa complémentaire obligatoire et ses valeurs de point ne sont que
@@ -502,8 +502,8 @@ l'Institut des politiques publiques (PENSIPP). Écarts connus :
   professions libérales, celui des avocats, et celui des exploitants
   agricoles. La SURCOTE de l'Ircantec, elle, en est sortie : le IV de
   l'article 16 de l'arrêté du 30 décembre 1970 est servi depuis le
-  1er janvier 2010, à ses deux taux — <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=_SURCOTE_IRCANTEC_AGE&echelle=100)-->0,75<!--/--> % par trimestre entier écoulé
-  au-delà de l'âge du taux plein, <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=_SURCOTE_IRCANTEC_DUREE&echelle=100)-->0,625<!--/--> % par trimestre cotisé au-delà de la
+  1er janvier 2010, à ses deux taux — <!--chiffre:mesure(constante?de=retraite_notionnelle.droit.liquider&nom=_SURCOTE_IRCANTEC_AGE&echelle=100)-->0,75<!--/--> % par trimestre entier écoulé
+  au-delà de l'âge du taux plein, <!--chiffre:mesure(constante?de=retraite_notionnelle.droit.liquider&nom=_SURCOTE_IRCANTEC_DUREE&echelle=100)-->0,625<!--/--> % par trimestre cotisé au-delà de la
   durée requise en deçà de cet âge —, et le coefficient d'un régime en points
   peut désormais dépasser un, des deux côtés du portage. Les neuf autres
   régimes en points dont la fiche écrit une surcote la servent aussi depuis

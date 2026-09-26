@@ -48,15 +48,18 @@ def par_code(inventaire) -> dict[str, dict]:
 
 
 def _codes_de_la_cascade() -> set[str]:
-    """Les codes que ``ScenarioActuel.calculer`` peut émettre.
+    """Les codes que ``ScenarioActuel.calculer`` peut émettre : ce que la
+    liquidation mesure par des liquidations d'essai, ce que l'étape qui
+    complète applique, et l'ASPA de l'étape « foyer et net ».
 
     Lus dans la SOURCE plutôt que par une simulation : une cascade ne rend que
     les avantages qu'une carrière donnée déclenche, et aucune carrière ne les
     déclenche tous. La source, elle, les porte tous.
     """
-    from retraite_notionnelle.scenarios import actuel
+    from retraite_notionnelle.droit import completer, foyer, liquidation
 
-    source = __import__("inspect").getsource(actuel)
+    source = "".join(__import__("inspect").getsource(module)
+                     for module in (liquidation, completer, foyer))
     return set(re.findall(r'AvantageApplique\(\s*code="([a-z_]+)"', source))
 
 

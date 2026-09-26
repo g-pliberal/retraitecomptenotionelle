@@ -30,6 +30,7 @@ from .. import chronologie as chrono
 from . import acquerir as _acquerir
 from . import compter as _compter
 from . import coordonner as _coordonner
+from .commun import date_d_effet as _date_d_effet
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -201,13 +202,6 @@ def construire(moteur: ScenarioActuel, carriere: Carriere, *,
         code for code in durees.par_annee["services"]
         if moteur.catalogue[code].famille == "fonction_publique")
     return Releve(coordination, durees, droits, groupes, services_lus)
-
-
-def _date_d_effet(carriere: Carriere) -> str | None:
-    if carriere.age_liquidation is None:
-        return None
-    date = carriere.date_liquidation
-    return f"{date.annee:04d}-{date.mois:02d}-01"
 
 
 def _ligne(ident: str, personne: str, fait: str | None, date: str | None,

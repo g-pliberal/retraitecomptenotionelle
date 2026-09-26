@@ -77,6 +77,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 from retraite_notionnelle import Parametres  # noqa: E402
 from retraite_notionnelle.carriere import salaire_moyen_annuel  # noqa: E402
+from retraite_notionnelle.droit import ouvrir  # noqa: E402
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite  # noqa: E402
 from retraite_notionnelle.simulateur import Comparaison, Simulateur  # noqa: E402
 
@@ -261,11 +262,11 @@ class Grille:
         if not isinstance(situation.depart, str):
             return float(situation.depart)
         actuel = self.simulateur.scenario_actuel
-        resoudre = (actuel.age_taux_plein_droit if situation.depart == "taux_plein"
-                    else actuel.age_ouverture_droit)
+        resoudre = (ouvrir.age_taux_plein_droit if situation.depart == "taux_plein"
+                    else ouvrir.age_ouverture_droit)
         age = self.age_reference
         for _ in range(PASSES_LIQUIDATION):
-            propose = resoudre(self._carriere(situation, nombre_enfants, motif, age))
+            propose = resoudre(actuel, self._carriere(situation, nombre_enfants, motif, age))
             if propose is None or abs(propose - age) < 1e-9:
                 break
             age = propose

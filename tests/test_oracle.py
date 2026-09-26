@@ -65,6 +65,7 @@ from retraite_notionnelle.carriere import AnneeCarriere, Carriere
 from retraite_notionnelle.config import Parametres
 from retraite_notionnelle.donnees.regimes import BORNES_ASSIETTE
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit import liquider, ouvrir
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"
 TEMOIN = TEMOINS / "openfisca_regime_general.json"
@@ -123,9 +124,9 @@ def _notre_calcul(simulateur: Simulateur, profil: dict) -> dict[str, float]:
     scenario = simulateur.scenario_actuel
     resultat = scenario.calculer(carriere)
     periode = simulateur.catalogue["regime_general"].periode(profil["liquidation"])
-    requis, _ = scenario._duree_requise(periode, carriere)
-    proratisation, _ = scenario._duree_proratisation(periode, carriere, requis)
-    _, age_annulation, _ = scenario._decote(
+    requis, _ = ouvrir.duree_requise(scenario, periode, carriere)
+    proratisation, _ = liquider.duree_proratisation(scenario, periode, carriere, requis)
+    _, age_annulation, _ = liquider.decote_opposable(scenario,
         periode, carriere, profil["liquidation"]
     )
     base = next(
@@ -133,14 +134,14 @@ def _notre_calcul(simulateur: Simulateur, profil: dict) -> dict[str, float]:
     )
     return {
         "duree_assurance": float(resultat.trimestres_valides),
-        "salaire_de_reference": scenario.salaire_de_reference(
+        "salaire_de_reference": liquider.salaire_de_reference(scenario,
             "regime_general", carriere, periode, profil["liquidation"],
             True, profil["naissance"], True,
         ),
         "coefficient_de_proratisation": (
             min(resultat.trimestres_valides, proratisation) / proratisation
         ),
-        "decote_trimestres": float(scenario._trimestres_de_decote(
+        "decote_trimestres": float(liquider.trimestres_de_decote(scenario,
             periode, carriere, resultat.trimestres_valides, requis,
             profil["liquidation"] - profil["naissance"], age_annulation,
         )),
@@ -300,9 +301,9 @@ def _notre_calcul_fonction_publique(simulateur: Simulateur, profil: dict
     scenario = simulateur.scenario_actuel
     resultat = scenario.calculer(carriere)
     periode = simulateur.catalogue[code].periode(profil["liquidation"])
-    requis, _ = scenario._duree_requise(periode, carriere)
-    proratisation, _ = scenario._duree_proratisation(periode, carriere, requis)
-    _, age_annulation, _ = scenario._decote(periode, carriere, profil["liquidation"])
+    requis, _ = ouvrir.duree_requise(scenario, periode, carriere)
+    proratisation, _ = liquider.duree_proratisation(scenario, periode, carriere, requis)
+    _, age_annulation, _ = liquider.decote_opposable(scenario, periode, carriere, profil["liquidation"])
     pension = next(p for p in resultat.pensions_par_regime if p.regime == code)
     # Le minimum garanti se SUBSTITUE à la pension quand il lui est supérieur,
     # et le complément est dit : la pension d'avant le plancher se retrouve en
@@ -319,12 +320,12 @@ def _notre_calcul_fonction_publique(simulateur: Simulateur, profil: dict
         "coefficient_de_proratisation": (
             min(resultat.trimestres_valides, proratisation) / proratisation
         ),
-        "decote_trimestres": float(scenario._trimestres_de_decote(
+        "decote_trimestres": float(liquider.trimestres_de_decote(scenario,
             periode, carriere, resultat.trimestres_valides, requis,
             profil["liquidation"] - profil["naissance"], age_annulation,
         )),
         "taux_de_liquidation": resultat.taux_liquidation,
-        "traitement_de_reference": scenario.salaire_de_reference(
+        "traitement_de_reference": liquider.salaire_de_reference(scenario,
             code, carriere, periode, profil["liquidation"], False,
             profil["naissance"], True,
         ),
@@ -1546,10 +1547,10 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
                "motif_ouverture", "liquidation_ouverte"):
         return getattr(resultat, cle)
     if cle == "age_ouverture":
-        return actuel.age_ouverture_droit(carriere)
+        return ouvrir.age_ouverture_droit(actuel, carriere)
     if cle == "date_age_legal":
         atteint = carriere.date_naissance.plus_mois(
-            en_mois(actuel.age_ouverture_droit(carriere)))
+            en_mois(ouvrir.age_ouverture_droit(actuel, carriere)))
         return f"{atteint.annee}-{atteint.mois:02d}"
     if cle == "trimestres_de_majoration_enfants":
         # La caisse publie le nombre de trimestres qu'elle ajoute par
@@ -1586,7 +1587,7 @@ def _mesurer(simulateur: Simulateur, exemple: dict, carriere, resultat, cle: str
     if cle == "pension_base_sur_sam":
         periode = simulateur.catalogue["regime_general"].periode(
             carriere.annee_liquidation)
-        sam = actuel.salaire_de_reference(
+        sam = liquider.salaire_de_reference(actuel,
             "regime_general", carriere, periode, carriere.annee_liquidation,
             True, carriere.annee_naissance)
         base = next(p.montant for p in resultat.pensions_par_regime

@@ -33,6 +33,7 @@ from ..donnees.chargement import (
 )
 from . import compter
 from .commun import derniere_annee
+from . import liquider, ouvrir
 
 if TYPE_CHECKING:
     from ..carriere import Carriere
@@ -91,7 +92,7 @@ def points_msa(moteur: ScenarioActuel, periode: PeriodeRegime, annee: int,
     """
     smic = moteur.macro.smic_horaire(annee)
     pass_annuel = moteur.macro.plafond_securite_sociale(annee)
-    valeur_point = moteur._valeur_point_fiche(periode, annee)
+    valeur_point = liquider.valeur_point_fiche(moteur, periode, annee)
     if smic <= 0 or pass_annuel <= 0 or valeur_point <= 0:
         return 0.0
     # L'AVTS est le montant de la retraite forfaitaire elle-même : la loi
@@ -158,12 +159,12 @@ def points_gratuits(moteur: ScenarioActuel, periode: PeriodeRegime,
 
     if valides(regle.regime) < regle.annees_minimum * 4:
         return 0.0, None
-    requis, fiabilite = moteur._duree_requise(periode_base, carriere)
+    requis, fiabilite = ouvrir.duree_requise(moteur, periode_base, carriere)
     taux_plein = trimestres >= requis
     if (not taux_plein and carriere.date_liquidation.rang
             >= DateMois(*regle.taux_plein_depuis).rang):
         taux_plein = (age_liquidation
-                      >= moteur._age_taux_plein(periode_base, carriere))
+                      >= ouvrir.age_taux_plein(moteur, periode_base, carriere))
     if not taux_plein:
         return 0.0, fiabilite
     retenus = min(

@@ -33,6 +33,7 @@ import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit import ouvrir
 
 
 @pytest.fixture(scope="module")
@@ -133,7 +134,7 @@ def test_l_age_du_minimum_est_minore_pendant_la_montee_en_charge(simulateur):
     décote diminué de neuf trimestres. Parti à 63 ans avec une décote, il
     reçoit le minimum ; le même parti deux ans et demi plus tôt, non.
     """
-    from retraite_notionnelle.scenarios.actuel import MINORATION_AGE_MINIMUM_GARANTI
+    from retraite_notionnelle.droit.liquider import MINORATION_AGE_MINIMUM_GARANTI
 
     assert MINORATION_AGE_MINIMUM_GARANTI == {
         2011: 9, 2012: 7, 2013: 5, 2014: 3, 2015: 1}
@@ -183,7 +184,7 @@ def test_l_emploi_classe_surcote_a_l_age_anticipe_majore(simulateur, statut,
     actuel = simulateur.scenario_actuel
     regime = ("cnracl" if "territorial" in statut else "fonction_publique_etat")
     periode = simulateur.catalogue[regime].periode(carriere.annee_liquidation)
-    assert actuel._age_surcote(periode, carriere) == pytest.approx(age)
+    assert ouvrir.age_surcote(actuel, periode, carriere) == pytest.approx(age)
 
 
 def test_le_sedentaire_surcote_toujours_a_l_age_legal(simulateur):
@@ -195,8 +196,8 @@ def test_le_sedentaire_surcote_toujours_a_l_age_legal(simulateur):
                                    naissance=naissance, mois=6, liquidation=64.0)
         periode = simulateur.catalogue["fonction_publique_etat"].periode(
             carriere.annee_liquidation)
-        assert actuel._age_surcote(periode, carriere) == pytest.approx(
-            actuel._age_ouverture_commun(periode, carriere))
+        assert ouvrir.age_surcote(actuel, periode, carriere) == pytest.approx(
+            ouvrir.age_ouverture_commun(actuel, periode, carriere))
     # Un actif qui n'a pas ses dix-sept ans de services classés reste au droit
     # commun : quinze ans d'emploi classé, puis un emploi sédentaire.
     carriere, _, _ = _calculer(
@@ -205,7 +206,7 @@ def test_le_sedentaire_surcote_toujours_a_l_age_legal(simulateur):
         naissance=1969, mois=6, liquidation=64.0)
     periode = simulateur.catalogue["fonction_publique_etat"].periode(
         carriere.annee_liquidation)
-    assert actuel._age_surcote(periode, carriere) == pytest.approx(64.0)
+    assert ouvrir.age_surcote(actuel, periode, carriere) == pytest.approx(64.0)
 
 
 def test_un_actif_ne_en_1969_surcote_des_62_ans_et_9_mois(simulateur):

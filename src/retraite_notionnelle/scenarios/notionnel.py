@@ -651,10 +651,13 @@ class ScenarioNotionnel:
             nombre_enfants=0,  # avantages familiaux neutralisés
             identifiant=f"{carriere.identifiant} (droits figés {bascule})",
         )
+        # Une liquidation FICTIVE (docs/architecture.md, § 7.3) : calculée
+        # sans être servie, au contributif seul, décote et surcote neutralisées.
         droits = self.scenario_actuel.calculer(
             carriere_tronquee,
             ignorer_penalite_age=True,
             avantages_non_contributifs=False,
+            nature="fictive",
         )
 
         if self.parametres.age_conversion_droits_acquis is AgeConversionDroitsAcquis.REFERENCE:

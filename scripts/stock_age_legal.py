@@ -28,7 +28,7 @@ TROIS VARIANTES
                   leur âge.
 ``tout_droit``    l'âge légal est celui que le droit de l'assuré lui ouvrait,
                   régime spécial et carrière longue compris — ce que
-                  ``ScenarioActuel.age_ouverture_droit`` rend. Personne parti
+                  ``droit.ouvrir.age_ouverture_droit`` rend. Personne parti
                   « à l'heure » de son propre régime ne paie l'âge.
 ``acquis``        la même règle pour les scénarios PROSPECTIFS 3 et 5, où
                   seuls les droits acquis avant la bascule sont convertis à
@@ -70,6 +70,7 @@ from retraite_notionnelle.donnees.population import Population  # noqa: E402
 from retraite_notionnelle.scenarios.actuel import AgesOuverture  # noqa: E402
 from retraite_notionnelle.scenarios.notionnel import ScenarioNotionnel  # noqa: E402
 from retraite_notionnelle.simulateur import Simulateur  # noqa: E402
+from retraite_notionnelle.droit import ouvrir
 
 VARIANTES: tuple[str, ...] = ("reference", "droit_commun", "tout_droit", "acquis")
 RETROACTIFS: tuple[str, ...] = (
@@ -101,7 +102,7 @@ class StockALAgeLegal:
 
     def age_legal(self, carriere) -> float | None:
         if self.variante == "tout_droit":
-            return self.simulateur.scenario_actuel.age_ouverture_droit(carriere)
+            return ouvrir.age_ouverture_droit(self.simulateur.scenario_actuel, carriere)
         valeur = self.ages.age(carriere.annee_naissance)
         return None if valeur is None else valeur[0]
 

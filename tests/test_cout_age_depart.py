@@ -24,6 +24,7 @@ from retraite_notionnelle.donnees.depenses import DepensesRetraite
 from retraite_notionnelle.donnees.equilibre import ComptesRetraite
 from retraite_notionnelle.donnees.population import Population
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit import ouvrir
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 
@@ -107,7 +108,7 @@ def test_une_carriere_tout_en_points_se_voit_opposer_sa_duree(simulateur):
     from dataclasses import replace
 
     cas = next(c for c in CAS_TYPES if c.code == "exploitant_agricole")
-    ouverture = simulateur.scenario_actuel.age_ouverture_droit(
+    ouverture = ouvrir.age_ouverture_droit(simulateur.scenario_actuel,
         cas.construire(simulateur, 1955, "droit"))
 
     tot = replace(cas, age_debut=20).age_liquidation_pour(simulateur, 1955)
@@ -152,7 +153,7 @@ def test_la_carriere_longue_est_ouverte_aux_regimes_en_points(simulateur):
     cas = next(c for c in CAS_TYPES if c.code == "exploitant_agricole")
     carriere = cas.construire(simulateur, 2000, "droit")
 
-    assert actuel.age_taux_plein_droit(carriere) >= actuel.age_ouverture_droit(carriere)
+    assert ouvrir.age_taux_plein_droit(actuel, carriere) >= ouvrir.age_ouverture_droit(actuel, carriere)
     resultat = actuel.calculer(carriere)
     assert resultat.motif_ouverture == "carriere_longue"
     assert resultat.liquidation_ouverte
@@ -233,24 +234,24 @@ def test_le_plafond_de_decote_ne_mord_sur_aucune_liquidation_ouverte(simulateur)
     """
     import dataclasses
 
-    from retraite_notionnelle.scenarios import actuel as A
+    from retraite_notionnelle.droit import liquider as L
 
-    original = A.ScenarioActuel._trimestres_de_decote
+    original = L.trimestres_de_decote
     mordu = {"oui": False}
 
-    def espion(self, periode, carriere, trimestres, requis, age_liquidation,
+    def espion(moteur, periode, carriere, trimestres, requis, age_liquidation,
                age_annulation):
-        borne = original(self, periode, carriere, trimestres, requis,
+        borne = original(moteur, periode, carriere, trimestres, requis,
                          age_liquidation, age_annulation)
         if periode.decote_trimestres_maximum is None or borne <= 0:
             return borne
         libre = dataclasses.replace(periode, decote_trimestres_maximum=None)
-        if original(self, libre, carriere, trimestres, requis, age_liquidation,
+        if original(moteur, libre, carriere, trimestres, requis, age_liquidation,
                     age_annulation) > borne + 1e-9:
             mordu["oui"] = True
         return borne
 
-    A.ScenarioActuel._trimestres_de_decote = espion
+    L.trimestres_de_decote = espion
     try:
         ouvertes = 0
         for cas in CAS_TYPES:
@@ -266,7 +267,7 @@ def test_le_plafond_de_decote_ne_mord_sur_aucune_liquidation_ouverte(simulateur)
                         f"{cas.code}, génération {generation}, départ à "
                         f"{quarts / 4} ans : le plafond a mordu")
     finally:
-        A.ScenarioActuel._trimestres_de_decote = original
+        L.trimestres_de_decote = original
     assert ouvertes > 500, "le balayage doit voir des liquidations ouvertes"
 
 
@@ -312,8 +313,8 @@ def test_le_liberal_retrouve_le_cas_type_du_COR(simulateur):
     assert fiche.ecart_liquidation == 0
 
     carriere = fiche.construire(simulateur, 1960, "droit")
-    assert actuel.age_ouverture_droit(carriere) == pytest.approx(62.0, abs=0.01)
-    assert actuel.age_taux_plein_droit(carriere) == pytest.approx(66.75, abs=0.3)
+    assert ouvrir.age_ouverture_droit(actuel, carriere) == pytest.approx(62.0, abs=0.01)
+    assert ouvrir.age_taux_plein_droit(actuel, carriere) == pytest.approx(66.75, abs=0.3)
 
 
 def test_le_militaire_est_seul_a_porter_un_ecart_de_liquidation():

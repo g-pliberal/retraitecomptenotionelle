@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import pytest
 
-from retraite_notionnelle.scenarios.actuel import (
+from retraite_notionnelle.droit.liquider import (
     _COEFFICIENT_ANTICIPATION_PLANCHER,
     _coefficient_anticipation,
 )

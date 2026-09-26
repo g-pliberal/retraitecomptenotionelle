@@ -35,6 +35,7 @@ import pytest
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.droit import coordonner
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit import liquider
 
 
 @pytest.fixture(scope="module")
@@ -199,7 +200,7 @@ def test_le_regime_general_porte_le_dernier_traitement(simulateur):
         * actuel.macro.coefficient_revalorisation_portee_au_compte(
             ligne.annee, annee_liquidation, carriere.mois_liquidation)
         for ligne in retablies), reverse=True)
-    reference = actuel.salaire_de_reference(
+    reference = liquider.salaire_de_reference(actuel,
         "regime_general", retablie, periode, annee_liquidation, True,
         carriere.annee_naissance)
     assert reference == pytest.approx(sum(attendus) / len(attendus), rel=1e-12)

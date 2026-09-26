@@ -41,6 +41,7 @@ import pytest
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.revalorisation import coefficient_traitement_differe
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit import liquider
 
 
 @pytest.fixture(scope="module")
@@ -191,9 +192,9 @@ def test_la_pension_differee_est_celle_du_depart_revalorisee(simulateur):
     immediate = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", age_liquidation=50, macro=simulateur.macro,
         metiers=[Metier(affiliation="fonctionnaire_etat", age_debut=22)])
-    en_2026 = actuel.salaire_de_reference(
+    en_2026 = liquider.salaire_de_reference(actuel,
         code, differee, simulateur.catalogue[code].periode(2026), 2026, False)
-    en_2012 = actuel.salaire_de_reference(
+    en_2012 = liquider.salaire_de_reference(actuel,
         code, immediate, simulateur.catalogue[code].periode(2012), 2012, False)
     revalorisations, _ = actuel.revalorisations_pensions.generale(
         date(2012, 1, 1), date(2026, 1, 1), False, 0.0)
@@ -216,9 +217,9 @@ def test_la_cnracl_et_le_fspoeie_ont_la_meme_regle(simulateur, affiliation, code
     immediate = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", age_liquidation=50, macro=simulateur.macro,
         metiers=[Metier(affiliation=affiliation, age_debut=22)])
-    en_2026 = actuel.salaire_de_reference(
+    en_2026 = liquider.salaire_de_reference(actuel,
         code, differee, simulateur.catalogue[code].periode(2026), 2026, False)
-    en_2012 = actuel.salaire_de_reference(
+    en_2012 = liquider.salaire_de_reference(actuel,
         code, immediate, simulateur.catalogue[code].periode(2012), 2012, False)
     revalorisations, _ = actuel.revalorisations_pensions.generale(
         date(2012, 1, 1), date(2026, 1, 1), False, 0.0)
@@ -235,9 +236,9 @@ def test_ni_la_carriere_complete_ni_la_banque_de_france_ne_bougent(simulateur):
         metiers=[Metier(affiliation="fonctionnaire_etat", age_debut=22)])
     periode = simulateur.catalogue["fonction_publique_etat"].periode(2026)
     ligne = next(l for l in complete.lignes if l.annee == 2025)
-    assert actuel.salaire_de_reference(
+    assert liquider.salaire_de_reference(actuel,
         "fonction_publique_etat", complete, periode, 2026, False
-    ) == pytest.approx(actuel._assiette_de_reference(periode, ligne)
+    ) == pytest.approx(liquider.assiette_de_reference(actuel, periode, ligne)
                        * actuel.minimum_garanti.ratio_point_indice(2025, 2026))
     banque = Carriere.depuis_parcours(
         annee_naissance=1962, sexe="H", age_liquidation=64, macro=simulateur.macro,
@@ -245,9 +246,9 @@ def test_ni_la_carriere_complete_ni_la_banque_de_france_ne_bougent(simulateur):
                  Metier(affiliation="salarie_prive_non_cadre", age_debut=50)])
     periode_bdf = simulateur.catalogue["banque_de_france"].periode(2026)
     ligne_bdf = next(l for l in banque.lignes if l.annee == 2011)
-    assert actuel.salaire_de_reference(
+    assert liquider.salaire_de_reference(actuel,
         "banque_de_france", banque, periode_bdf, 2026, False
-    ) == pytest.approx(actuel._assiette_de_reference(periode_bdf, ligne_bdf)
+    ) == pytest.approx(liquider.assiette_de_reference(actuel, periode_bdf, ligne_bdf)
                        * simulateur.macro.coefficient_revalorisation_salaires(2011, 2026))
     ancienne = Carriere.depuis_parcours(
         annee_naissance=1940, sexe="H", age_liquidation=61, macro=simulateur.macro,
@@ -255,7 +256,7 @@ def test_ni_la_carriere_complete_ni_la_banque_de_france_ne_bougent(simulateur):
                  Metier(affiliation="salarie_prive_non_cadre", age_debut=45)])
     periode_2001 = simulateur.catalogue["fonction_publique_etat"].periode(2001)
     ligne_1984 = next(l for l in ancienne.lignes if l.annee == 1984)
-    assert actuel.salaire_de_reference(
+    assert liquider.salaire_de_reference(actuel,
         "fonction_publique_etat", ancienne, periode_2001, 2001, False
-    ) == pytest.approx(actuel._assiette_de_reference(periode_2001, ligne_1984)
+    ) == pytest.approx(liquider.assiette_de_reference(actuel, periode_2001, ligne_1984)
                        * actuel.minimum_garanti.ratio_point_indice(1984, 2001))

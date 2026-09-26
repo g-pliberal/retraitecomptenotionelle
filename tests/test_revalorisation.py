@@ -36,6 +36,7 @@ from retraite_notionnelle.revalorisation import (
 )
 from retraite_notionnelle.config import RACINE_DONNEES
 from retraite_notionnelle.simulateur import Simulateur
+from retraite_notionnelle.droit import liquider
 
 TEMOINS = Path(__file__).resolve().parent / "temoins"
 
@@ -200,7 +201,7 @@ def test_les_points_d_avant_1999_changent_d_echelle_avec_l_arrco(simulateur):
                             affiliation="salarie_prive_cadre",
                             age_debut=20, age_liquidation=65, niveau_salaire=2.0)
     arrco = next(r for r in comparaison.aujourd_hui.actuel.regimes if r.regime == "arrco")
-    valeur_1990 = simulateur.scenario_actuel.valeur_du_point("arrco", 1990)[0]
+    valeur_1990 = liquider.valeur_du_point(simulateur.scenario_actuel, "arrco", 1990)[0]
     assert arrco.regle == REGLE_POINT
     assert arrco.coefficient == pytest.approx(0.387464 * 1.4386 / valeur_1990, rel=1e-12)
 
@@ -459,9 +460,9 @@ def _pouvoir_d_achat(simulateur, cas_type: str, composition: dict, generation: i
         if part == "cnav":
             return revalorisations.generale(date(depart, 1, 1), date(an, mois, 1),
                                             False, mensuel_2019)[0]
-        valeur = actuel.valeur_du_point(part, an if mois >= _mois_du_point(an) else an - 1)[0]
+        valeur = liquider.valeur_du_point(actuel, part, an if mois >= _mois_du_point(an) else an - 1)[0]
         echelle = actuel.conversions_points.echelle(part, depart, an)[0]
-        return echelle * valeur / actuel.valeur_du_point(part, depart - 1)[0]
+        return echelle * valeur / liquider.valeur_du_point(actuel, part, depart - 1)[0]
 
     def net(an: int) -> float:
         return sum(
