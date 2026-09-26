@@ -4301,17 +4301,15 @@ institutions:
           25 septembre 2026, il en a été retiré ce jour-là ; une session qui
           doit le relire se le fait apporter dans data/brut/, que git ignore,
           où son empreinte le vérifie : c'est la copie qui sert les sources du
-          dépôt, vérifiée par son empreinte sans être reproduite. L'historique
-          git, lui, garde la version versionnée, et le dépôt est public :
-          depuis la réécriture du 23 septembre 2026, elle est dans le commit
-          racine, donc dans l'histoire de chaque branche et de chaque tag, et
-          l'arbre de phase-0 la porte. C'est une reproduction offerte à tous,
-          que la clause de la page 180 n'autorise pas : ni la copie privée
-          (L. 122-5, 2°), ni la courte citation (3°, a). Le propriétaire, qui
-          avait décidé le 26 septembre 2026 de garder cette version, a rouvert
-          la question le jour même ; l'effacer demande de réécrire tout
-          l'historique, ce qu'une session ne fait pas, et la décision lui
-          revient (feuille de route, action 130).
+          dépôt, vérifiée par son empreinte sans être reproduite. La version
+          versionnée, elle, restait lisible dans l'historique public après son
+          retrait : une reproduction offerte à tous, que la clause de la
+          page 180 n'autorise pas, ni copie privée (L. 122-5, 2°), ni courte
+          citation (3°, a). Le 26 septembre 2026, à la demande du
+          propriétaire, l'historique a été réécrit pour l'en retirer, sous ses
+          deux noms (feuille de route, action 130). Seules les références des
+          pull requests fermées, que GitHub garde en lecture seule, le portent
+          encore : leur purge se demande au support de GitHub.
           CE QUE LE DOCUMENT AJOUTE À LA SAISIE : la moyenne des frais sur
           arrérages est non pondérée et ne porte que sur les 9 organismes (sur
           20) qui les facturent ; le frais sur versement du PER est le double

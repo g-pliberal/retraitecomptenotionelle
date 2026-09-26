@@ -36,9 +36,11 @@ divergé, et il faut comprendre pourquoi avant d'insister.
   `noreply` (Anthropic, GitHub). Sur un poste, dans chaque clone :
   `git config user.name "g-pliberal"` et
   `git config user.email "240225789+g-pliberal@users.noreply.github.com"`.
-- **Un clone d'avant le 23 septembre 2026** (l'historique a été réécrit) n'a
-  plus d'ancêtre commun avec `main`. Sans rien de non publié, le remplacer
-  par un clone neuf ; sinon, reporter ses commits, puis publier :
+- **Un clone d'avant le 26 septembre 2026** ne suit plus `main` : l'historique
+  a été réécrit le 23 septembre, pour en retirer des adresses nominatives,
+  puis le 26, pour en retirer un document que sa licence interdit de
+  republier. Sans rien de non publié, le remplacer par un clone neuf ; sinon,
+  reporter ses commits, puis publier :
   `git fetch origin main`,
   `git rebase --onto origin/main "$(git merge-base --fork-point origin/main HEAD)"`,
   `bash scripts/pousser.sh`.

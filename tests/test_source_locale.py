@@ -414,7 +414,8 @@ def test_aucun_document_n_est_versionne_sous_data_brut():
     """data/brut/ garde les documents tels que leur site les sert, pour la
     session qui les a reçus : git l'ignore, et une licence qui interdit la
     rediffusion interdit aussi de les versionner (docs/architecture.md, § 3.2).
-    Le rapport de l'OPEF y a été versionné une fois, puis retiré."""
+    Le rapport de l'OPEF y a été versionné une fois, puis retiré, et
+    l'historique réécrit le 26 septembre 2026 pour l'en effacer."""
     import subprocess
 
     racine = Path(__file__).resolve().parents[1]

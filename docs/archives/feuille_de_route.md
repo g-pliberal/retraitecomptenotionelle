@@ -804,14 +804,14 @@ système actuel. `limites.md` §5 porte les trois.
   scénario 6 rechiffré.** Demandé par l'utilisateur : le solde du scénario 6
   « n'est toujours pas bon », mettre à jour les graphiques de la page Coût et
   le rechiffrer. Trouvé en chemin : le commit qui a porté le réglage des frais
-  du pilier sur `main` (391dd61) avait été rebasé sur celui de la reprise
-  calculée sur le patrimoine (602bd3e) sans que ses cinq conflits soient
+  du pilier sur `main` (e911bca) avait été rebasé sur celui de la reprise
+  calculée sur le patrimoine (3115262) sans que ses cinq conflits soient
   résolus — `moteur/js/pages.js` et `web/pages.py` portaient encore leurs
   marqueurs, le site ne se chargeait plus depuis ce commit, et le site publié
-  en était resté au commit d'avant. C'est la seconde fois (voir edae501).
+  en était resté au commit d'avant. C'est la seconde fois (voir db13c0f).
   Réparé en gardant les deux côtés — la reprise calculée sur le patrimoine
   (`reprise` vide) ET le réglage `frais` — par deux sessions à la fois, à
-  l'identique : celle des frais a poussé la sienne (ebc6527) pendant que
+  l'identique : celle des frais a poussé la sienne (0ac63d8) pendant que
   celle-ci faisait la même, et le rebasage n'a laissé que le rechiffrage.
   Témoins régénérés — ceux du commit fautif avaient été produits avant le
   rebasage et ne portaient pas le champ des frais. *Rechiffré*,

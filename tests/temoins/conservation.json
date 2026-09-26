@@ -358,7 +358,8 @@
    "2026-09-24 | action 89, suite : la pension différée de la fonction publique",
    "2026-09-24 | action 89, suite : la priorité du régime spécial pour les trimestres des enfants",
    "2026-09-24 | action 89, suite : le rétablissement de la fonction publique",
-   "2026-09-25 | architecture, après la phase 0 : les constats du scénario 1 que la note 0001 avait laissés"
+   "2026-09-25 | architecture, après la phase 0 : les constats du scénario 1 que la note 0001 avait laissés",
+   "2026-09-26 | architecture, phase 2 : la carte des règles, les contrats, la liste de contrôle des textes"
   ],
   "data/reference/legislation/veille.yaml:sources_a_consulter": [
    "Agirc-Arrco, paramètres annuels",
@@ -2668,7 +2669,7 @@
     "5cc4921e8fe61c64",
     "08852bdead4ce49c",
     "d177d9c22766af7a",
-    "5c174151d9fee04e",
+    "bce860e385739923",
     "2142ffef291bc682",
     "8accc5e4f8a9f94d",
     "a27cbf0f1b8c37c0",
@@ -5245,7 +5246,7 @@
    ],
    "A.1 La fonction publique, en entier": [
     "79fb74474664f530",
-    "7e63f6d23e00a1cc"
+    "805792767170da58"
    ],
    "A.2 Le régime général, en résumé": [
     "5c84839be1ec7d55",

@@ -1917,7 +1917,7 @@ historique:       # repris des registres ; les originaux restent en archive
   - 2026-09-21 — le b ter est lu et porté (veille.yaml).
   - >-
     2026-09-22 — bonification et majoration séparées : 1,2 % de pension
-    rendus au droit (commit 7a685d8).
+    rendus au droit (commit 49cb9e5).
   - >-
     2026-09-25 — l'index LEGI, lu mot à mot : R. 13 a six rédactions, dont
     trois ne changent que des renvois ; la version de 2011 se coupe en deux,

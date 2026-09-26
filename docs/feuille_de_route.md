@@ -1389,7 +1389,7 @@ impute cinq points de l'écart à la seule différence d'année — environ 39 %
 2020 par sa méthode. La part « retraite seule » suit donc le taux d'équilibre.
 Pour 2020, la proportion donne 41,8 %, le taux fixe 44,1 %.
 
-**Ce qu'il déplace**, mesuré le 24 septembre 2026 sur `main` (cbe5678, la
+**Ce qu'il déplace**, mesuré le 24 septembre 2026 sur `main` (6081ae4, la
 proposition avec son âge légal de 65 ans). L'écart au système actuel de la
 fonctionnaire de l'exemple du README, née en 1975, passe de +45,0 % à −1,3 %
 dans le scénario 4, de +44,9 % à −3,4 % dans la proposition. Dans la
@@ -1647,7 +1647,7 @@ l'octet :
    quatre cœurs, 51 s en série. `tests/conftest.py` range chaque fichier de
    tests dans son niveau, rapide, complet ou contrôle ;
 5. `CLAUDE.md` renvoie à l'architecture et au tableau de bord ;
-6. le repère git `phase-0`, sur dae2819, le dernier commit de la phase
+6. le repère git `phase-0`, sur 4bb438f, le dernier commit de la phase
    (§ 12). Le jeton d'une session n'écrit pas de tag (HTTP 403) : à la
    demande du propriétaire, un workflow lancé une fois l'a posé, puis a été
    supprimé.
@@ -1845,7 +1845,7 @@ Le repère `phase-1` marquera le commit qui porte cette note, comme `phase-0`
 le dernier commit de la phase 0 : le propriétaire a demandé qu'on le pose, et
 un workflow lancé une fois le fait.
 
-Le repère `phase-1` est posé sur 05ed5a9, le même jour, par
+Le repère `phase-1` est posé sur fc285ad, le même jour, par
 `repere-phase-1.yml`, lancé une fois puis supprimé.
 
 **La phase 2 achevée**, le 26 septembre 2026, à la demande du propriétaire.
@@ -1905,11 +1905,14 @@ empreinte, ce n'est pas reproduire le rapport. Vérifié le même jour :
   ignore, et son empreinte SHA-256 au manifeste. La release
   `documents-apportes` ne l'a jamais porté : elle ne sert que les deux
   documents de la Cour des comptes ;
-- mais le PDF versionné du 20 au 25 septembre est dans le commit racine de
-  l'historique réécrit le 23 septembre, 9aced8d, donc dans l'histoire de
-  chaque branche, de chaque tag et des quatre références de pull request, et
-  l'arbre de `phase-0` le porte, comme l'archive que GitHub en sert. Le dépôt
-  est public : n'importe qui le télécharge ;
+- mais le PDF, déposé le 20 septembre par l'interface web de GitHub sous le
+  nom `OPEF2026_pdf.pdf`, renommé le jour même et retiré le 25, restait dans
+  l'historique : dans l'histoire de chaque branche, de chaque repère `phase-*`
+  et de trois des quatre références de pull request, et l'arbre de `phase-0`
+  le portait, comme l'archive que GitHub en sert. Le dépôt est public :
+  n'importe qui le téléchargeait. (Cette note disait d'abord le PDF dans le
+  commit racine : c'était la limite d'un clone de session, qui ne porte
+  qu'une partie de l'historique, et non la racine.)
 - la clause de la page 180 n'admet que la copie privée et la courte citation
   (code de la propriété intellectuelle, L. 122-5, 2° et 3°, a). Une copie
   offerte à tous n'est ni l'une ni l'autre. Les trois valeurs saisies et les
@@ -1926,5 +1929,21 @@ depuis la table de correspondance que `filter-repo` écrit. L'autre voie est
 de demander l'autorisation au secrétariat général du CCSF. La décision
 revient au propriétaire.
 
-Le repère `phase-2` est posé sur 82463d5, le même jour, à la demande du
+Le repère `phase-2` est posé sur 6fb8284, le même jour, à la demande du
 propriétaire, par `repere-phase-2.yml`, lancé une fois puis supprimé.
+
+**L'historique réécrit, le 26 septembre 2026**, à la demande du propriétaire,
+pour en retirer ce seul document, sous ses deux noms :
+`git filter-repo --invert-paths --path data/brut/OPEF2026.pdf --path
+data/brut/OPEF2026_pdf.pdf`, sur un miroir complet du dépôt. Vérifié commit
+par commit : sur 818 commits, 474 réécrits et un retiré, celui du dépôt du
+PDF, qui ne portait que lui ; aucun autre écart d'arbre, d'auteur ni de date,
+et l'arbre de `main` identique au bit près. Les empreintes que la prose citait
+sont reportées, et les récits gelés qui en citaient ont été refigés pour
+cette seule raison. Les repères suivent leurs commits : `phase-0` passe de
+dae2819 à 4bb438f, `phase-1` de 05ed5a9 à fc285ad, `phase-2` de 82463d5 à
+6fb8284. Restent les références des pull requests fermées 2, 3 et 4, que
+GitHub garde en lecture seule et qui portent encore le document : leur
+purge, avec celle des vues en cache, se demande au support de GitHub. La
+référence de la pull request 1, d'avant la réécriture du 23 septembre, porte
+encore, elle, des adresses nominatives : la même demande peut la viser.
