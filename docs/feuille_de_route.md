@@ -1925,3 +1925,6 @@ clone serait à remplacer, et les empreintes que la prose cite, à reporter
 depuis la table de correspondance que `filter-repo` écrit. L'autre voie est
 de demander l'autorisation au secrétariat général du CCSF. La décision
 revient au propriétaire.
+
+Le repère `phase-2` est posé sur 82463d5, le même jour, à la demande du
+propriétaire, par `repere-phase-2.yml`, lancé une fois puis supprimé.
