@@ -84,6 +84,8 @@ EXCEPTIONS = {
     ("test_cumul_activites.py",
      "test_le_portage_javascript_concorde_sur_des_cumuls_tires_au_hasard"): "complet",
     ("test_releve_lu.py", "test_le_portage_javascript_lit_les_memes_releves"): "complet",
+    # Les étapes de l'acquisition, sur une requête sur cinq des témoins.
+    ("test_droit.py", "test_les_deux_moteurs_ecrivent_les_memes_etapes"): "complet",
 }
 
 

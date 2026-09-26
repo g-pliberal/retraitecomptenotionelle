@@ -131,7 +131,7 @@ export class Releve {
           ...(PRESOMPTIONS_ENFANTS[enfants.dispositif] ?? []),
         ].sort();
         for (const [compte, trimestres] of Object.entries(parEnfant)) {
-          if (trimestres <= 0) {
+          if (trimestres <= 0 || (compte === "services" && !this.servicesLus.has(enfants.regime))) {
             continue;
           }
           lignes.push(ligneDuReleve(

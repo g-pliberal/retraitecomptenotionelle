@@ -133,7 +133,8 @@ class Releve:
                      else [])
                     + list(PRESOMPTIONS_ENFANTS.get(enfants.dispositif, ())))
                 for compte, trimestres in par_enfant.items():
-                    if trimestres <= 0:
+                    if trimestres <= 0 or (compte == "services"
+                                           and enfants.regime not in self.services_lus):
                         continue
                     lignes.append(_ligne(
                         f"enfants_{compte}_{enfants.regime}_{rang}", carriere.personne,
