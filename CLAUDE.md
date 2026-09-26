@@ -100,13 +100,14 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   coupe pas, `--carte` imprime le tableau des jeux de règles, et toute
   réforme qui touche un régime est coupée, absorbée ou déclarée
   `non_appliquee`.
-- **La prose** : chaque section est `etat` (tout chiffre y est ancré sur une
-  sonde), `recit` (vraie à sa date, gelée), `produit` ou `a_declarer`
-  (`docs/fraicheur.md`, `data/reference/prose/zones.yaml`, dont les deux
-  cliquets ne peuvent que décroître). Après toute modification de la prose :
-  `python scripts/verifier_prose.py --corriger`. Les tableaux de
-  `docs/chiffrage_plf.md` s'écrivent par `python scripts/chiffrage_plf.py`,
-  jamais à la main.
+- **La prose** : chaque document a son régime, déclaré dans
+  `data/reference/prose/zones.yaml` — `etat` (tout chiffre y est ancré sur
+  une sonde), `recit` (vrai à sa date, gelé) ou `produit` —, et ce qui s'en
+  écarte s'y déclare un à un (`docs/fraicheur.md`). Un récit ne s'écrit pas
+  au milieu d'un état : il va dans la feuille de route ou une archive. Après
+  toute modification de la prose : `python scripts/verifier_prose.py
+  --corriger`. Les tableaux de `docs/chiffrage_plf.md` s'écrivent par
+  `python scripts/chiffrage_plf.py`, jamais à la main.
 - **Rien ne se perd** (`docs/architecture.md`, § 12) : un récit ne se réécrit
   pas, et un déplacement de fichiers se vérifie avant d'être commité, par
   `python scripts/conservation.py --depuis HEAD`. Une seule session déplace

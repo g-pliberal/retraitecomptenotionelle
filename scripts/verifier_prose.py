@@ -35,6 +35,12 @@ D'où la distinction que ce script rend mécanique, et qui est tout son objet :
     Personne n'a encore tranché. Le cliquet de ``zones.yaml`` compte ces
     sections, et ce compte ne peut que décroître.
 
+Chaque document a UN régime, son défaut dans ``zones.yaml`` ; ce qui s'en
+écarte — une section, un paragraphe qui raconte au milieu d'un état, un bloc
+qu'un script écrit — s'y déclare un à un. La règle est dans
+``docs/fraicheur.md``, la décision qui l'a fait naître dans
+``docs/decisions/0002-fraicheur-de-la-prose.md``.
+
 L'ancre
 -------
 
