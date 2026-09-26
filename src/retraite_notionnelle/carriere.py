@@ -38,6 +38,7 @@ from .donnees.chargement import (
 )
 from .donnees.macro import DonneesMacro
 from . import chronologie as chrono
+from .droit.preparer import preparer
 
 #: Le profil que le modèle résout lui-même sur l'affiliation. C'est le défaut,
 #: et le seul que le site propose : les autres noms restent pour la grille de
@@ -150,7 +151,7 @@ class AnneeCarriere:
     #: dernier traitement soumis à retenue, sur la fraction de l'année
     #: (D. 173-16) ; le plafond de l'année s'applique ensuite. Zéro pour toute
     #: autre année : seul le scénario 1 le renseigne, sur sa propre copie de
-    #: la carrière (voir `ScenarioActuel._retablie`).
+    #: la carrière (voir `droit.coordonner.retablir`).
     revenu_retabli: float = 0.0
 
     @property
@@ -503,7 +504,7 @@ class Carriere:
                 )
             vues.add(cle)
         if self.chronologie is None:
-            object.__setattr__(self, "chronologie", chrono.completer(chrono.du_resume(
+            object.__setattr__(self, "chronologie", preparer(chrono.du_resume(
                 self.annee_naissance, self.sexe, self.mois_naissance,
                 self.age_liquidation, self.nombre_enfants)))
 
@@ -1069,7 +1070,7 @@ class Carriere:
         perçu mais le salaire de référence d'avant l'interruption, celui sur
         lequel les régimes complémentaires continuent d'acquérir des points.
         """
-        chronologie = chrono.completer(chrono.du_releve(
+        chronologie = preparer(chrono.du_releve(
             annee_naissance, sexe, releve, age_liquidation,
             mois_naissance=mois_naissance, nombre_enfants=nombre_enfants,
             part_primes=part_primes))
@@ -1166,7 +1167,7 @@ class Carriere:
         pour une, selon un arrondi — d'où une marche de plusieurs pour cent au
         milieu de l'année.
         """
-        chronologie = chrono.completer(chrono.du_parcours(
+        chronologie = preparer(chrono.du_parcours(
             annee_naissance, sexe, metiers, age_liquidation,
             mois_naissance=mois_naissance, profil_carriere=profil_carriere,
             interruptions=interruptions, nombre_enfants=nombre_enfants,

@@ -31,6 +31,7 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle.carriere import Carriere, LigneRelevee, Metier
+from retraite_notionnelle.droit import compter
 from retraite_notionnelle.simulateur import Simulateur
 
 
@@ -210,8 +211,8 @@ def test_la_majoration_de_duree_n_ouvre_pas_les_bonifications_des_mines(simulate
         age_liquidation=62.0, macro=simulateur.macro, nombre_enfants=2,
     )
     actuel = simulateur.scenario_actuel
-    assert actuel._majoration_pour_enfants(mere, {"mines": 160}, 2020) is None
-    porteur = actuel._majoration_pour_enfants(mere, {"cnavpl": 160}, 2020)
+    assert compter.majoration_pour_enfants(actuel, mere, {"mines": 160}, 2020) is None
+    porteur = compter.majoration_pour_enfants(actuel, mere, {"cnavpl": 160}, 2020)
     assert porteur is not None and porteur.regime == "cnavpl"
     assert porteur.trimestres == 16
 

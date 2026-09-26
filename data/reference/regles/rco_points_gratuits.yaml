@@ -14,7 +14,7 @@ effet: >-
   Chefs d'exploitation installés avant 2003 et partis au taux plein. Le modèle ne
   leur servait que leurs points cotisés : installé en 1975 et parti en 2019 à la
   moitié du salaire moyen, un chef perdait 2 150 points, plus de la moitié de sa
-  RCO — 729 € par an. Champ `points_gratuits` de la fiche `msa_rco`, lu par `_points_gratuits`
+  RCO — 729 € par an. Champ `points_gratuits` de la fiche `msa_rco`, lu par `droit.acquerir.points_gratuits`
   et `pointsGratuits` dans les deux moteurs, isolé par la ligne de cascade `points_gratuits_rco`,
   tenu par `test_le_chef_d_exploitation_recoit_ses_points_gratuits_de_rco` et son
   pendant JavaScript. Une année se compte en trimestres validés au régime de base

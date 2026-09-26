@@ -28,6 +28,7 @@ import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier
 from retraite_notionnelle.donnees.chargement import Fiabilite
+from retraite_notionnelle.droit import compter
 from retraite_notionnelle.simulateur import Simulateur
 
 
@@ -64,8 +65,8 @@ def _regimes(simulateur: Simulateur, carriere: Carriere) -> dict[str, int]:
 def _majoration(simulateur: Simulateur, naissance: int, metiers: list[tuple[str, float]],
                 liquidation: float, **kwargs):
     carriere = _carriere(simulateur, naissance, metiers, liquidation, **kwargs)
-    return simulateur.scenario_actuel._majoration_pour_enfants(
-        carriere, _regimes(simulateur, carriere), carriere.annee_liquidation)
+    return compter.majoration_pour_enfants(
+        simulateur.scenario_actuel, carriere, _regimes(simulateur, carriere), carriere.annee_liquidation)
 
 
 def _pension(resultat, regime: str):
@@ -126,8 +127,8 @@ def test_la_fonctionnaire_passee_au_prive_garde_sa_bonification(simulateur):
     carriere = _carriere(simulateur, 1962, [("fonctionnaire_etat", 22),
                                             ("salarie_prive_non_cadre", 50)], 64)
     actuel = simulateur.scenario_actuel
-    majoration = actuel._majoration_pour_enfants(
-        carriere, _regimes(simulateur, carriere), carriere.annee_liquidation)
+    majoration = compter.majoration_pour_enfants(
+        actuel, carriere, _regimes(simulateur, carriere), carriere.annee_liquidation)
     assert (majoration.regime, majoration.dispositif) == ("fonction_publique_etat",
                                                           "bonifications")
     assert (majoration.trimestres, majoration.services) == (8, 8)
@@ -235,7 +236,7 @@ def test_l_enfant_ne_apres_la_radiation(simulateur):
                                             ("salarie_prive_non_cadre", 23)], 64)
     actuel = simulateur.scenario_actuel
     periode = actuel.catalogue["fonction_publique_etat"].periode(2026)
-    pension, ouvert, _ = actuel._droit_regime_special(periode, carriere, 2026)
+    pension, ouvert, _ = compter.droit_regime_special(actuel, periode, carriere, 2026)
     assert not ouvert and not pension
 
 

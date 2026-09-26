@@ -211,7 +211,7 @@ listes:
       radiation_au_1er_janvier_suivant:
         dit: l'agent public est radié des cadres le 1er janvier qui suit sa dernière année de services
         valeur: le 1er janvier qui suit la dernière année de services, ou le départ s'il part en fonctions
-        appliquee_par: ScenarioActuel._droit_a_pension, et la revalorisation de la pension différée (scenarios/actuel.py, scenario-actuel.js)
+        appliquee_par: droit_a_pension (droit/coordonner.py), et la revalorisation de la pension différée (scenarios/actuel.py) ; leurs jumeaux JavaScript
         entrera_a: coordonner_les_affiliations
         raison: >-
           la carrière ne connaît que des années, et le formulaire ne demande
@@ -263,7 +263,7 @@ listes:
       validation_ircantec_demandee:
         dit: l'agent rétabli au régime général a demandé que l'Ircantec valide ses services
         valeur: demandée
-        appliquee_par: ScenarioActuel._retablie, et l'assiette de l'Ircantec des années rétablies (scenarios/actuel.py, scenario-actuel.js)
+        appliquee_par: retablir (droit/coordonner.py), et l'assiette de l'Ircantec des années rétablies (droit/acquerir.py) ; leurs jumeaux JavaScript
         entrera_a: coordonner_les_affiliations
         raison: >-
           la validation se fait sur demande pour qui a été radié avant le

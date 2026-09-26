@@ -12,6 +12,7 @@ import pytest
 
 from retraite_notionnelle import chronologie
 from retraite_notionnelle.carriere import Carriere, LigneRelevee, Metier
+from retraite_notionnelle.droit import compter
 from retraite_notionnelle.noyau import vocabulaire
 
 PARCOURS = dict(
@@ -312,7 +313,7 @@ def test_le_moteur_lit_la_naissance_que_la_chronologie_porte():
     def trimestres(chronologie_complete: dict) -> tuple[int, int]:
         carriere = Carriere.depuis_chronologie(chronologie_complete, simulateur.macro)
         regimes = {"fonction_publique_etat": 4 * len(carriere.annees_cotisees)}
-        majoration = actuel._majoration_pour_enfants(carriere, regimes,
+        majoration = compter.majoration_pour_enfants(actuel, carriere, regimes,
                                                      carriere.annee_liquidation)
         return majoration.trimestres, majoration.services
 

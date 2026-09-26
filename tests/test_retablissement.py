@@ -33,6 +33,7 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle.carriere import Carriere, Metier
+from retraite_notionnelle.droit import coordonner
 from retraite_notionnelle.simulateur import Simulateur
 
 
@@ -57,7 +58,7 @@ def _pensions(simulateur: Simulateur, carriere: Carriere) -> dict:
 
 
 def _retablies(simulateur: Simulateur, carriere: Carriere) -> list:
-    return [ligne for ligne in simulateur.scenario_actuel._retablie(carriere).lignes
+    return [ligne for ligne in coordonner.retablir(simulateur.scenario_actuel, carriere).lignes
             if ligne.revenu_retabli > 0]
 
 
@@ -90,7 +91,7 @@ def test_deux_ans_depuis_2011_ouvrent_une_pension(simulateur):
     carriere = _carriere(simulateur, [
         ("salarie_prive_non_cadre", 22), ("fonctionnaire_etat", 25),
         ("salarie_prive_non_cadre", 28)], naissance=1985)
-    assert simulateur.scenario_actuel._retablie(carriere) is carriere
+    assert coordonner.retablir(simulateur.scenario_actuel, carriere) is carriere
     assert "fonction_publique_etat" in _pensions(simulateur, carriere)
 
 
@@ -160,7 +161,7 @@ def test_avant_1950_rien_n_est_retabli(simulateur):
     carriere = _carriere(simulateur, [
         ("fonctionnaire_etat", 22), ("salarie_prive_non_cadre", 28)],
         naissance=1915, liquidation=65)
-    assert simulateur.scenario_actuel._retablie(carriere) is carriere
+    assert coordonner.retablir(simulateur.scenario_actuel, carriere) is carriere
 
 
 def test_la_mere_retablie_recoit_ses_trimestres_du_regime_general(simulateur):
@@ -189,7 +190,7 @@ def test_le_regime_general_porte_le_dernier_traitement(simulateur):
     # Le salaire annuel moyen ne porte que sur ces treize années : le dernier
     # traitement, écrêté au plafond de l'année, revalorisé.
     actuel = simulateur.scenario_actuel
-    retablie = actuel._retablie(carriere)
+    retablie = coordonner.retablir(actuel, carriere)
     annee_liquidation = carriere.annee_liquidation
     periode = actuel.catalogue["regime_general"].periode(annee_liquidation)
     attendus = sorted((
@@ -211,9 +212,9 @@ def test_les_annees_retablies_quittent_le_regime_special(simulateur):
         ("salarie_prive_non_cadre", 22), ("fonctionnaire_etat", 30),
         ("salarie_prive_non_cadre", 31)], naissance=1985)
     actuel = simulateur.scenario_actuel
-    ligne = next(l for l in actuel._retablie(carriere).lignes if l.revenu_retabli > 0)
+    ligne = next(l for l in coordonner.retablir(actuel, carriere).lignes if l.revenu_retabli > 0)
     assert ligne.affiliation == "fonctionnaire_etat"
-    assert set(actuel._regimes_de(ligne, ligne.annee)) == {"regime_general", "ircantec", "rafp"}
+    assert set(coordonner.regimes_de(actuel, ligne, ligne.annee)) == {"regime_general", "ircantec", "rafp"}
 
 
 def test_les_primes_restent_au_rafp(simulateur):
@@ -227,7 +228,7 @@ def test_les_primes_restent_au_rafp(simulateur):
         ("salarie_prive_non_cadre", 31)], naissance=1985)
     pensions = _pensions(simulateur, avec_primes)
     assert pensions["rafp"].montant > 0
-    ligne = next(l for l in simulateur.scenario_actuel._retablie(avec_primes).lignes
+    ligne = next(l for l in coordonner.retablir(simulateur.scenario_actuel, avec_primes).lignes
                  if l.revenu_retabli > 0)
     assert ligne.revenu_retabli == pytest.approx(ligne.revenu * 0.75)
     assert "rafp" not in _pensions(simulateur, sans_primes)

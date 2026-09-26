@@ -28,7 +28,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | à vérifier | 1 |
 
 - Confrontées à au moins un exemple officiel : **22 sur 98** (54 exemples : 54 reproduits, aucun en écart connu).
-- Citées dans le code par leur identifiant : **12 sur 98**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Citées dans le code par leur identifiant : **16 sur 98**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
 - Mûres, sans rien qui manque à leur contrat : **0 sur 98**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
 - Découpées en versions : **aucune sur 98** ; le partage des versions, qui se contrôle sur chaque fiche, n'a encore rien à contrôler.
 - Réformes du calendrier : 109, dont 11 déclarées non appliquées.
@@ -48,12 +48,12 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | Présomption | Valeur | Fiches qui la lisent | Où elle s'applique |
 |---|---|---|---|
 | `naissance_des_enfants` | 30 ans | `majoration_duree_assurance_enfants`, `priorite_majorations_enfants` | posée par la chronologie |
-| `radiation_au_1er_janvier_suivant` | le 1er janvier qui suit la dernière année de services, ou le départ s'il part en fonctions | `pension_differee_fonction_publique`, `priorite_majorations_enfants`, `retablissement_fonction_publique` | ScenarioActuel._droit_a_pension, et la revalorisation de la pension différée (scenarios/actuel.py, scenario-actuel.js) ; son fait entrera à l'étape `coordonner_les_affiliations` |
+| `radiation_au_1er_janvier_suivant` | le 1er janvier qui suit la dernière année de services, ou le départ s'il part en fonctions | `pension_differee_fonction_publique`, `priorite_majorations_enfants`, `retablissement_fonction_publique` | droit_a_pension (droit/coordonner.py), et la revalorisation de la pension différée (scenarios/actuel.py) ; leurs jumeaux JavaScript ; son fait entrera à l'étape `coordonner_les_affiliations` |
 | `agent_en_activite` | en activité, avec services effectifs | `services_et_duree_fonction_publique` | _ligne_annuelle, qui fait de toute année d'emploi une année de services (carriere.py, carriere.js) ; son fait entrera à l'étape `compter_les_durees` |
 | `pas_d_accord_des_parents` | aucun accord ; le défaut légal les donne à la mère | `majoration_duree_assurance_enfants` | la colonne beneficiaire de majoration_duree_assurance.csv, lue par MajorationsPourEnfants.par_enfant ; son fait entrera à l'étape `compter_les_durees` |
 | `enfant_eleve_neuf_ans` | élevé neuf ans | `majoration_duree_assurance_enfants` | les lignes mda de majoration_duree_assurance.csv, qui servent la majoration sans condition de durée d'éducation ; son fait entrera à l'étape `compter_les_durees` |
 | `interruption_d_activite_par_la_mere` | remplie par la mère seule | `majoration_duree_assurance_enfants` | la colonne beneficiaire (mere) des lignes bonifications de majoration_duree_assurance.csv, lue par MajorationsPourEnfants.par_enfant ; son fait entrera à l'étape `compter_les_durees` |
-| `validation_ircantec_demandee` | demandée | `retablissement_fonction_publique` | ScenarioActuel._retablie, et l'assiette de l'Ircantec des années rétablies (scenarios/actuel.py, scenario-actuel.js) ; son fait entrera à l'étape `coordonner_les_affiliations` |
+| `validation_ircantec_demandee` | demandée | `retablissement_fonction_publique` | retablir (droit/coordonner.py), et l'assiette de l'Ircantec des années rétablies (droit/acquerir.py) ; leurs jumeaux JavaScript ; son fait entrera à l'étape `coordonner_les_affiliations` |
 
 **La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : la veille. Restent des registres : la frontière contributive, l'inventaire des régimes.
 

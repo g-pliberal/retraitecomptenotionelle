@@ -54,11 +54,9 @@ from datetime import date
 from pathlib import Path
 
 from ..calendrier import DateMois, en_mois
-from ..carriere import Affiliations, AnneeCarriere, Carriere, salaire_moyen_annuel
+from ..carriere import Affiliations, Carriere, salaire_moyen_annuel
 from ..config import Parametres
 from ..donnees.chargement import (
-    assiette_minimale,
-    charger_assiettes_minimales,
     Fiabilite,
     charger_table_par_generation,
     valeur_par_generation,
@@ -66,6 +64,10 @@ from ..donnees.chargement import (
 from ..donnees.macro import DonneesMacro
 from ..donnees.regimes import (CatalogueRegimes, ClassesCotisation, SalairesForfaitaires,
                               PeriodeRegime)
+from ..droit import acquerir, compter, coordonner
+from ..droit import releve as _releve
+from ..droit.commun import derniere_annee as _derniere_annee
+from ..droit.compter import trimestres_de_la_ligne_entre as _trimestres_de_la_ligne_entre
 from ..revalorisation import (FIN_PEREQUATION, RevalorisationsPensions,
                               coefficient_traitement_differe)
 
@@ -99,57 +101,6 @@ class AvantageApplique:
     #: Part de chaque régime, dans l'ordre des pensions, quand l'avantage se
     #: répartit entre eux — la majoration pour enfants, plafond compris.
     par_regime: tuple[tuple[str, float], ...] = ()
-
-
-@dataclass(frozen=True)
-class _MajorationEnfants:
-    """Trimestres dus au titre des enfants, et régime qui les porte."""
-
-    #: Code du régime dans lequel le droit attribue les trimestres.
-    regime: str
-    #: Dispositif qui les accorde : ``mda`` ou ``bonifications``.
-    dispositif: str
-    #: Trimestres accordés au total, tous enfants confondus. Ils jouent sur la
-    #: durée d'assurance tous régimes, donc sur la décote et la surcote.
-    trimestres: int
-    #: Ceux d'entre eux qui entrent dans les SERVICES du régime, et relèvent
-    #: donc son prorata. Une bonification en est ; une majoration de durée
-    #: d'assurance n'en est pas — voir l'en-tête de
-    #: `legislation/majoration_duree_assurance.csv`.
-    services: int
-    fiabilite: Fiabilite
-
-
-@dataclass(frozen=True)
-class _DroitPension:
-    """Ce qu'un régime spécial doit à un agent : la durée qui ouvre une pension,
-    et ce qu'il en a servi. Voir :meth:`ScenarioActuel._droit_a_pension`."""
-
-    #: Les régimes dont les services se comptent ensemble — les trois
-    #: régimes interpénétrés, ou le seul régime demandé.
-    regimes: frozenset[str]
-    #: Les années servies, une par année civile, dans l'ordre.
-    lignes: tuple[AnneeCarriere, ...]
-    #: Services effectifs, en années.
-    servies: float
-    #: Durée exigée à la radiation, et fiabilité de la ligne qui la donne.
-    exigees: float
-    fiabilite: Fiabilite
-    #: Date de la radiation, ISO : le 1er janvier qui suit la dernière année
-    #: de services, ou le départ quand l'agent part en fonctions.
-    radiation: str
-
-    @property
-    def pension(self) -> bool:
-        return self.servies + 1e-9 >= self.exigees
-
-    @property
-    def recrutement(self) -> int:
-        return self.lignes[0].annee
-
-    @property
-    def derniere(self) -> int:
-        return self.lignes[-1].annee
 
 
 #: Ce que chaque dispositif s'appelle dans la cascade des avantages.
@@ -930,31 +881,6 @@ _ABATTEMENTS_IRCEC = ("ircec", "ircec_age_seul", "cavom")
 #: Ceux des précédents que seul l'âge annule : la durée d'assurance n'y ouvre
 #: pas le taux plein.
 _ABATTEMENTS_PAR_ANNEE_AGE_SEUL = ("ircec_age_seul", "cavom")
-
-#: Le seul dispositif pour enfants qu'un régime EN POINTS puisse porter : une
-#: majoration de durée d'assurance ne touche que la durée, qu'il oppose aussi ;
-#: une bonification entre aux services, qu'il n'a pas.
-_MAJORATION_DE_DUREE = "mda"
-
-#: Le régime à qui R. 173-15 donne la priorité parmi les régimes alignés.
-_REGIME_GENERAL = "regime_general"
-
-#: Quand le droit à la bonification d'un régime spécial est OUVERT, dans les
-#: trois versions de R. 13 du code des pensions. Jusqu'en 2003, elle vaut pour
-#: chacun des enfants (LEGIARTI000006362901). De 2004 à 2010, elle suppose une
-#: interruption d'activité dans un congé du statut — l'enfant est donc né en
-#: service (LEGIARTI000006362902). Depuis 2011, le congé de maternité du code
-#: de la sécurité sociale suffit (LEGIARTI000023449727), mais l'enfant doit
-#: être né avant la radiation des cadres (juris-cnracl, « Bonification pour
-#: enfants »). Les deux bornes se lisent à l'année de liquidation.
-_BONIFICATION_NE_EN_SERVICE_DEPUIS = 2004
-_BONIFICATION_NE_AVANT_RADIATION_DEPUIS = 2011
-
-#: Pour les enfants nés depuis 2004, la majoration de L. 12 bis ne va qu'aux
-#: femmes « ayant accouché postérieurement à leur recrutement » — condition
-#: que les régimes spéciaux reprennent mot pour mot (décrets n° 2003-1306,
-#: article 21 ; n° 2008-639, article 13 ; n° 2008-637, article 24…).
-_MAJORATION_APRES_RECRUTEMENT_DEPUIS = 2004
 
 #: Dernière ligne de la table des âges : dix ans d'anticipation. Au-delà, le
 #: barème ne descend plus.
@@ -2270,16 +2196,16 @@ class ScenarioActuel:
         #: Les régimes qui attribuent des POINTS GRATUITS, rangés sous le régime
         #: de base dont les années les ouvrent : une carrière qui n'a validé
         #: aucun trimestre dans ce dernier n'a rien à chercher. Voir
-        #: :meth:`_points_gratuits`.
-        self._points_gratuits_par_base: dict[str, tuple[str, ...]] = {}
+        #: :func:`~retraite_notionnelle.droit.acquerir.points_gratuits`.
+        self.points_gratuits_par_base: dict[str, tuple[str, ...]] = {}
         for regime in catalogue:
             for periode in regime.periodes:
                 if periode.points_gratuits is None:
                     continue
                 base = periode.points_gratuits.regime
-                attribuants = self._points_gratuits_par_base.get(base, ())
+                attribuants = self.points_gratuits_par_base.get(base, ())
                 if regime.code not in attribuants:
-                    self._points_gratuits_par_base[base] = (*attribuants, regime.code)
+                    self.points_gratuits_par_base[base] = (*attribuants, regime.code)
 
     # -- valorisation des points ---------------------------------------------
 
@@ -2360,21 +2286,6 @@ class ScenarioActuel:
 
     # -- salaire de référence ------------------------------------------------
 
-    def _assiette_minimale(self, codes, ligne) -> float:
-        """L'assiette minimale que la ligne oppose à l'un de ces régimes.
-
-        Celle du régime de BASE d'un indépendant (D. 633-2, D. 642-4), portée
-        par la ligne ; nulle pour tout autre régime — la complémentaire des
-        artisans et commerçants n'a pas de minimum.
-        """
-        if ligne.assiette_minimale_base <= 0:
-            return 0.0
-        regle = assiette_minimale(charger_assiettes_minimales(self.macro.racine),
-                                  ligne.affiliation, ligne.annee)
-        if regle is None or regle.regimes.isdisjoint(codes):
-            return 0.0
-        return ligne.assiette_minimale_base
-
     def _assiette_de_reference(self, periode: PeriodeRegime, ligne) -> float:
         """La rémunération que ce régime liquide : voir la fonction du même
         nom, et, pour un régime à grille, le salaire forfaitaire de la
@@ -2383,7 +2294,8 @@ class ScenarioActuel:
         Le forfait est proratisé sur les mois de l'année, comme le revenu.
 
         Une année RÉTABLIE porte au compte le dernier traitement de l'agent,
-        non ce qu'il a perçu cette année-là (voir :meth:`_retablie`).
+        non ce qu'il a perçu cette année-là (voir
+        :func:`~retraite_notionnelle.droit.coordonner.retablir`).
         """
         if ligne.revenu_retabli > 0 and periode.assiette != "primes_uniquement":
             return ligne.revenu_retabli
@@ -2428,7 +2340,8 @@ class ScenarioActuel:
         l'un des ``membres`` de sa chaîne de succession, quand ``code`` liquide
         pour un régime qu'il a absorbé : les années CANCAVA d'un artisan sont
         des années du RSI, puis du régime général, et n'entrent qu'une fois
-        dans un seul salaire annuel moyen. Voir :meth:`_groupes_de_succession`.
+        dans un seul salaire annuel moyen. Voir
+        :func:`~retraite_notionnelle.droit.coordonner.groupes_de_succession`.
 
         Un régime ne
         liquide que ce qui lui a été déclaré : la pension civile se calcule sur
@@ -2521,7 +2434,7 @@ class ScenarioActuel:
         for ligne in carriere.lignes:
             if ligne.annee >= annee_liquidation:
                 continue
-            if codes_admis.isdisjoint(self._regimes_de(
+            if codes_admis.isdisjoint(coordonner.regimes_de(self, 
                     ligne, ligne.annee,
                     carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
@@ -2539,7 +2452,7 @@ class ScenarioActuel:
                 revenu = ligne.revenu_avpf
             else:
                 revenu = max(self._assiette_de_reference(periode, ligne),
-                             self._assiette_minimale(codes_admis, ligne))
+                             acquerir.assiette_minimale(self, codes_admis, ligne))
             # TRANCHE DE SALAIRE. Un régime qui liquide TRANCHE PAR TRANCHE —
             # le personnel navigant, dont l'article R. 426-16-1 attribue
             # 1,85 % par annuité à la première et 1,4 % à la seconde — a
@@ -2616,7 +2529,7 @@ class ScenarioActuel:
             # traitement, quel que soit le rang de la ligne.
             derniere = next((
                 ligne for ligne in carriere.lignes_de(annee_liquidation)
-                if not codes_admis.isdisjoint(self._regimes_de(
+                if not codes_admis.isdisjoint(coordonner.regimes_de(self, 
                     ligne, annee_liquidation,
                     carriere.date_entree(ligne.affiliation),
                     revenu=ligne.revenu,
@@ -2624,7 +2537,7 @@ class ScenarioActuel:
             ), None)
             if (derniere is not None and derniere.cotise
                     and derniere.fraction_annee > 0
-                    and not codes_admis.isdisjoint(self._regimes_de(
+                    and not codes_admis.isdisjoint(coordonner.regimes_de(self, 
                         derniere, annee_liquidation,
                         carriere.date_entree(derniere.affiliation),
                         revenu=derniere.revenu,
@@ -2756,10 +2669,9 @@ class ScenarioActuel:
     #: Le XXIV, C, de l'article 10 de la loi du 14 avril 2023 ne vise que ceux
     #: qui peuvent liquider à compter de ce mois.
     DUREE_XXIV_C_DEPUIS = DateMois(2023, 9)
-    #: Les régimes que L. 13 du code des pensions et le XXIV visent : l'État,
-    #: et par renvoi la CNRACL et le FSPOEIE. La Banque de France, qui emprunte
-    #: le barème de leur décote, a son propre règlement.
-    REGIMES_CODE_DES_PENSIONS = frozenset({"fonction_publique_etat", "cnracl", "fspoeie"})
+    #: Les régimes que L. 13 du code des pensions et le XXIV visent : voir
+    #: :data:`~retraite_notionnelle.droit.coordonner.REGIMES_CODE_DES_PENSIONS`.
+    REGIMES_CODE_DES_PENSIONS = coordonner.REGIMES_CODE_DES_PENSIONS
 
     def _duree_requise_avant_soixante_ans(
             self, periode: PeriodeRegime, carriere: Carriere,
@@ -2896,357 +2808,6 @@ class ScenarioActuel:
             return requis, None
         return min(par_generation[0], requis), par_generation[1]
 
-    def _tete_de_succession(self, code: str, annee_liquidation: int) -> str:
-        """Le régime au bout de la chaîne d'absorption de ``code``, tant que
-        la chaîne reste en annuités : ``cancava`` et ``rsi`` rendent
-        ``regime_general``, ``pensions_civiles_1853`` rend
-        ``fonction_publique_etat``. Un régime en points au bout de la chaîne
-        l'arrête — les annuités des régimes professionnels intégrés ne se
-        fondent pas dans les points de l'Agirc-Arrco —, et un régime en points
-        n'y entre jamais : ses points se convertissent et s'additionnent déjà
-        (voir :meth:`valeur_du_point`).
-
-        L'absorption ne se suit qu'à partir de l'année où le régime FERME à
-        ses affiliés — celle où l'absorbant commence à recevoir leurs années.
-        Avant, ce sont deux régimes distincts, et un polypensionné en a deux :
-        un salarié devenu artisan qui liquide en 2010 a une pension du régime
-        général et une du RSI, comme le droit d'alors ; s'il liquide en 2020,
-        le RSI est le régime général, et il n'en a qu'une.
-        """
-        vu = {code}
-        courant = code
-        while True:
-            regime = self.catalogue[courant]
-            suivant = regime.integre_dans
-            borne = (regime.fermeture if regime.fermeture is not None
-                     else regime.extinction)
-            if (suivant is None or borne is None or annee_liquidation < borne
-                    or suivant not in self.catalogue or suivant in vu):
-                return courant
-            absorbant = self.catalogue[suivant]
-            periode = absorbant.periode(
-                min(annee_liquidation, _derniere_annee(absorbant))
-            )
-            if periode is None or periode.type_calcul != "annuites":
-                return courant
-            vu.add(suivant)
-            courant = suivant
-
-    #: Les trois régimes que la liquidation unique des régimes alignés réunit
-    #: — le régime général, les salariés agricoles et la sécurité sociale des
-    #: indépendants, sous ses trois noms successifs. Les exploitants agricoles
-    #: n'en sont pas : la LURA ne vise que les SALARIÉS agricoles.
-    REGIMES_ALIGNES = frozenset({
-        "regime_general", "msa_salaries", "cancava", "organic", "rsi",
-    })
-    #: La LURA ne vaut que pour les assurés nés à compter de 1953 (article 51
-    #: de la loi n° 2015-1702 de financement pour 2016) et pour les pensions
-    #: prenant effet à compter du 1er juillet 2017 (article 4 du décret
-    #: n° 2017-737 du 3 mai 2017).
-    LURA_PREMIERE_GENERATION = 1953
-    LURA_DATE_EFFET = DateMois(2017, 7)
-    #: La clé sous laquelle les régimes alignés se réunissent quand la LURA
-    #: s'applique : ce n'est pas un régime, c'est un groupe.
-    REGIMES_ALIGNES_TETE = "regimes_alignes"
-    #: LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS. Chacun compte
-    #: et liquide les services des deux autres — L. 5 et L. 11 du code des
-    #: pensions, articles 8 et 13 du décret n° 2003-1306, articles 4 et 10 du
-    #: décret n° 2004-1056 —, et c'est le régime de la dernière affiliation
-    #: qui sert une PENSION UNIQUE. Ils se réunissent sous cette clé comme les
-    #: régimes alignés sous la leur.
-    REGIMES_INTERPENETRES_TETE = "regimes_interpenetres"
-
-    def _regimes_interpenetres(self, carriere: Carriere) -> frozenset[str]:
-        """Les régimes du code des pensions que cette carrière réunit en une
-        pension unique.
-
-        Les trois, sauf l'État quand l'assuré n'y a servi que sous l'uniforme :
-        le militaire garde sa pension militaire, et n'y renonce pour une
-        pension unique que par un choix exprès (L. 77 du code des pensions,
-        article 57 du décret n° 2003-1306). Le modèle suit ce défaut. Les
-        services militaires d'un fonctionnaire civil de l'État restent, eux,
-        dans la pension de l'État, que le catalogue ne scinde pas.
-        """
-        militaires = self.affiliations.categories_militaires
-        etat = ("fonction_publique_etat", "pensions_civiles_1853")
-        civil = any(
-            ligne.cotise and ligne.affiliation not in militaires
-            and not self._regimes_routes([ligne.affiliation]).isdisjoint(etat)
-            for ligne in carriere.lignes
-        )
-        if civil:
-            return self.REGIMES_CODE_DES_PENSIONS
-        return self.REGIMES_CODE_DES_PENSIONS - {"fonction_publique_etat"}
-
-    #: LE RÉTABLISSEMENT. L'agent qui part sans droit à pension est « rétabli,
-    #: en ce qui concerne l'assurance vieillesse, dans la situation qu'il
-    #: aurait eue s'il avait été affilié au régime général [...] et à
-    #: l'Ircantec » (L. 65 du code des pensions, article 64 du décret
-    #: n° 2003-1306). Les régimes que D. 173-15 du code de la sécurité sociale
-    #: y soumet et que le catalogue porte : l'État, pensions civiles d'avant
-    #: 1948 comprises, la CNRACL, le FSPOEIE et la SEITA.
-    REGIMES_RETABLIS = frozenset({
-        "fonction_publique_etat", "pensions_civiles_1853", "cnracl", "fspoeie", "seita",
-    })
-    #: Pour qui a quitté son régime après le 28 janvier 1950 (décret
-    #: n° 50-133 ; circulaire Cnav 2011/38). Le droit d'avant n'a pas été lu :
-    #: l'agent parti plus tôt garde la pension au prorata que le modèle sert.
-    RETABLISSEMENT_DEPUIS = "1950-01-29"
-    #: Où vont ses années : là où le statut de contractuel du public les route
-    #: — le régime général et l'Ircantec, ou ses devancières de 1951 et de
-    #: 1959, que l'article 9 du décret n° 70-1277 nomme — et, avant 1945, aux
-    #: assurances sociales du salarié.
-    STATUTS_DU_RETABLISSEMENT = ("contractuel_public", "salarie_prive_non_cadre")
-
-    def _droit_a_pension(self, code: str, carriere: Carriere,
-                         annee_liquidation: int) -> _DroitPension | None:
-        """Ce régime peut-il pensionner cet agent ? ``None`` s'il n'y a pas servi.
-
-        La durée qui ouvre une pension (:class:`ServicesOuvrantPension`) se
-        compte sur les années que le régime a effectivement reçues — celles
-        des trois régimes interpénétrés ensemble, puisque chacun compte les
-        services des deux autres —, et se lit à la radiation : au 1er janvier
-        qui suit la dernière année de services, comme pour la pension
-        différée, ou au départ quand l'agent part en fonctions. Une carrière
-        d'État seulement militaire se lit à la règle des militaires (L. 6), et
-        à son premier engagement : les deux ans de R. 4-1 ne valent que pour
-        le militaire engagé depuis le 1er janvier 2014 (article 42, II, de la
-        loi n° 2014-40).
-        """
-        # Les pensions civiles d'avant 1948 sont celles de l'État.
-        if code == "pensions_civiles_1853":
-            code = "fonction_publique_etat"
-        interpenetres = self._regimes_interpenetres(carriere)
-        if code in interpenetres:
-            regimes, cle = set(interpenetres), code
-        elif code == "fonction_publique_etat":
-            regimes, cle = {code}, "militaires"
-        else:
-            regimes, cle = {code}, code
-        if "fonction_publique_etat" in regimes:
-            regimes.add("pensions_civiles_1853")
-        borne = self._borne_carriere(carriere)
-        par_annee: dict[int, AnneeCarriere] = {}
-        for ligne in carriere.lignes:
-            if not ligne.cotise or (borne is not None and ligne.annee > borne):
-                continue
-            if regimes.isdisjoint(self.affiliations.regimes(
-                    ligne.affiliation, ligne.annee,
-                    carriere.date_entree(ligne.affiliation))):
-                continue
-            retenue = par_annee.get(ligne.annee)
-            if retenue is None or ligne.fraction_annee > retenue.fraction_annee:
-                par_annee[ligne.annee] = ligne
-        if not par_annee:
-            return None
-        lignes = tuple(par_annee[annee] for annee in sorted(par_annee))
-        mois = (carriere.date_liquidation.mois
-                if carriere.age_liquidation is not None else 1)
-        depart = f"{annee_liquidation:04d}-{mois:02d}-01"
-        radiation = f"{lignes[-1].annee + 1:04d}-01-01"
-        en_fonctions = radiation >= depart
-        if en_fonctions:
-            radiation = depart
-        lue_le = f"{lignes[0].annee:04d}-01-01" if cle == "militaires" else radiation
-        regle = self.services_ouvrant_pension.annees(cle, lue_le, en_fonctions)
-        exigees, fiabilite = regle if regle is not None else (0.0, Fiabilite.ESTIMEE)
-        return _DroitPension(
-            regimes=frozenset(regimes), lignes=lignes,
-            servies=sum(ligne.fraction_annee for ligne in lignes),
-            exigees=exigees, fiabilite=fiabilite, radiation=radiation,
-        )
-
-    def _retablie(self, carriere: Carriere) -> Carriere:
-        """La carrière que le scénario 1 liquide, RÉTABLISSEMENT fait.
-
-        Le fonctionnaire qui part sans la durée qui ouvre une pension — deux
-        ans depuis 2011, quinze avant ; les trois régimes interpénétrés comptés
-        ensemble, de sorte qu'un retour dans l'un d'eux annule le
-        rétablissement (article 64, II, du décret n° 2003-1306) — n'a pas de
-        pension de son régime : ses années passent au régime général et à
-        l'Ircantec, comme s'il y avait été affilié. Le modèle les pensionnait
-        au prorata dans le régime spécial.
-
-        Deux assiettes, et les textes les séparent. Le régime général porte au
-        compte « des salaires reconstitués à partir des cotisations
-        rétroactives calculées sur la base des derniers émoluments ou de la
-        dernière solde soumis à retenues pour pension [...], dans la limite du
-        plafond en vigueur » chaque année (D. 173-16 ; circulaire Cnav
-        2011/38) : le dernier traitement, pour toutes les années, et la
-        période « entre en compte, quel qu'ait été le montant de sa
-        rémunération ». L'Ircantec, elle, valide « suivant sa propre
-        réglementation » (article 9 du décret n° 70-1277) : le traitement de
-        chaque année. Les primes restent au RAFP, que le rétablissement ne
-        touche pas.
-
-        Les années rétablies gardent leur statut : c'est leur champ
-        ``revenu_retabli`` qui les désigne, et :meth:`_regimes_de` qui les
-        route. La carrière est rendue telle quelle quand rien n'est rétabli.
-        """
-        if carriere.age_liquidation is None:
-            return carriere
-        annee_liquidation = carriere.annee_liquidation
-        vus: set[frozenset[str]] = set()
-        retablies: dict[int, float] = {}
-        for code in sorted(self.REGIMES_RETABLIS):
-            droit = self._droit_a_pension(code, carriere, annee_liquidation)
-            if droit is None or droit.regimes in vus:
-                continue
-            vus.add(droit.regimes)
-            if droit.pension or droit.radiation < self.RETABLISSEMENT_DEPUIS:
-                continue
-            derniere = droit.lignes[-1]
-            traitement = derniere.revenu_annualise * (1.0 - derniere.part_primes)
-            for ligne in carriere.lignes:
-                if (ligne.cotise and ligne.annee <= annee_liquidation
-                        and not droit.regimes.isdisjoint(self.affiliations.regimes(
-                            ligne.affiliation, ligne.annee,
-                            carriere.date_entree(ligne.affiliation)))):
-                    retablies[id(ligne)] = traitement * ligne.fraction_annee
-        if not retablies:
-            return carriere
-        return carriere.avec_lignes([
-            replace(ligne, revenu_retabli=retablies[id(ligne)])
-            if id(ligne) in retablies else ligne
-            for ligne in carriere.lignes
-        ])
-
-    def _regimes_de(self, ligne: AnneeCarriere, annee: int,
-                    annee_entree: int | DateMois | None = None,
-                    revenu: float | None = None,
-                    plafond: float | None = None) -> tuple[str, ...]:
-        """Les régimes auxquels cette ligne cotise cette année-là.
-
-        Ceux de son statut, sauf pour une année RÉTABLIE : elle quitte son
-        régime spécial pour le régime général et l'Ircantec — là où le
-        contractuel du public est routé —, et garde le RAFP. Voir
-        :meth:`_retablie`.
-        """
-        regimes = self.affiliations.regimes(
-            ligne.affiliation, annee, annee_entree, revenu=revenu, plafond=plafond)
-        if ligne.revenu_retabli <= 0:
-            return regimes
-        cibles: tuple[str, ...] = ()
-        for statut in self.STATUTS_DU_RETABLISSEMENT:
-            cibles = tuple(self.affiliations.regimes(statut, annee))
-            if cibles:
-                break
-        return cibles + tuple(code for code in regimes
-                              if code not in self.REGIMES_RETABLIS)
-
-    def _lura_applicable(self, carriere: Carriere) -> bool:
-        """La liquidation unique vaut-elle pour cette carrière ?
-
-        Deux conditions, et le modèle les porte toutes les deux : la
-        génération, et la date d'effet au mois près. Une troisième reste hors
-        du modèle — la LURA ne s'applique pas à qui avait déjà obtenu, avant
-        le 1er juillet 2017, une retraite de même nature dans l'un des trois
-        régimes —, parce qu'une carrière du dépôt liquide tout à la fois.
-        """
-        return (carriere.generation >= self.LURA_PREMIERE_GENERATION
-                and carriere.date_liquidation.rang >= self.LURA_DATE_EFFET.rang)
-
-    def _groupes_de_succession(
-            self, codes: list[str], annee_liquidation: int,
-            derniere_annee_par_regime: dict[str, int],
-            carriere: Carriere | None = None,
-    ) -> dict[str, tuple[str, ...]]:
-        """Les régimes d'annuités que la carrière a traversés, groupés par
-        chaîne de succession : pour chaque code d'un groupe d'au moins deux,
-        les membres du groupe, LE PREMIER ÉTANT CELUI QUI LIQUIDE.
-
-        **Un régime et celui qui lui succède ne sont pas deux régimes.** La
-        CANCAVA, le RSI et le régime général sont trois NOMS du même droit
-        pour un artisan : sa caisse calcule un seul salaire annuel moyen sur
-        toute la carrière et un seul coefficient de proratisation, et le
-        catalogue le sait, puisqu'il porte ``succede_a`` et ``integre_dans``.
-        Liquider chaque nom sur ses seules années — ce que le modèle faisait,
-        et qui est juste d'un polypensionné passé d'un régime à un AUTRE —
-        calculait deux salaires de référence là où la caisse n'en calcule
-        qu'un : un artisan payé 60 000 € de 1976 à 2015 recevait
-        « 30 077 € × 120/165 » plus « 36 778 € × 40/165 » au lieu de
-        « 34 152 € × 160/165 ». Mesuré contre l'oracle du régime général,
-        l'écart allait de −7,2 % à +0,3 %, dans les deux sens, les meilleures
-        années de chaque morceau pouvant être meilleures que celles de la
-        carrière entière.
-
-        Le groupe est liquidé par le membre de la DERNIÈRE période active de
-        la carrière — à égalité, par l'absorbant —, dont la fiche donne les
-        règles : c'est la caisse qui aurait le dossier, et c'est aussi ce que
-        la LURA prescrit (« le montant de la retraite unique est déterminé en
-        fonction des règles applicables au régime liquidateur »). Un assuré
-        qui n'a connu qu'un seul nom n'est pas touché.
-
-        **ET LES RÉGIMES ALIGNÉS DISTINCTS SE RÉUNISSENT AUSSI, DEPUIS 2017.**
-        La liquidation unique des régimes alignés (`L. 173-1-2` CSS) donne une
-        seule retraite à qui a cotisé à deux des trois régimes alignés : un
-        revenu annuel moyen formé de la somme des salaires et revenus d'une
-        même année, écrêtée au plafond, sur les vingt-cinq meilleures années,
-        et une proratisation qui tient compte de tous les trimestres des trois
-        régimes (`R. 173-4-4-1`, 1° et 4°, circulaire Cnav 2017/27). Le modèle
-        y arrivait déjà pour le couple régime général / indépendants, mais par
-        la chaîne d'absorption, qui ne ferme le RSI qu'en 2018 : une carrière
-        liquidée entre juillet 2017 et l'absorption était coupée en deux. Et
-        il ne le faisait pas du tout pour les salariés agricoles, dont le
-        régime existe toujours — « SR 41 499 € × 88/167 » plus
-        « SR 29 069 € × 80/167 » là où la caisse calcule un seul salaire de
-        référence. Les deux conditions de la loi sont opposées :
-        :meth:`_lura_applicable`.
-
-        **ET LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS.** L'État,
-        la CNRACL et le FSPOEIE comptent et liquident chacun les services des
-        deux autres, et le régime de la dernière affiliation sert une pension
-        unique : un traitement, celui des six derniers mois de la carrière
-        publique entière, et une proratisation sur tous ses services. Le modèle
-        liquidait chaque régime sur ses seules années : un fonctionnaire de
-        l'État devenu territorial touchait une pension de l'État sur son
-        traitement de départ, revalorisé comme une pension, et une de la CNRACL
-        au prorata de ses dernières années. Voir :meth:`_regimes_interpenetres`.
-        """
-        par_tete: dict[str, list[str]] = {}
-        lura = carriere is not None and self._lura_applicable(carriere)
-        interpenetres = (self._regimes_interpenetres(carriere)
-                         if carriere is not None else frozenset())
-        for code in codes:
-            regime = self.catalogue[code]
-            periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
-            if periode is None or periode.type_calcul != "annuites":
-                continue
-            tete = (self.REGIMES_ALIGNES_TETE if lura and code in self.REGIMES_ALIGNES
-                    else self._tete_de_succession(code, annee_liquidation))
-            if tete in interpenetres:
-                tete = self.REGIMES_INTERPENETRES_TETE
-            par_tete.setdefault(tete, []).append(code)
-        groupes: dict[str, tuple[str, ...]] = {}
-        for membres in par_tete.values():
-            if len(membres) < 2:
-                continue
-            rang = {code: i for i, code in enumerate(self._chaine_depuis(membres))}
-            liquidateur = max(
-                membres,
-                key=lambda code: (derniere_annee_par_regime.get(code, 0), rang[code]),
-            )
-            ordonnes = (liquidateur,) + tuple(
-                code for code in sorted(membres, key=rang.get) if code != liquidateur
-            )
-            for code in membres:
-                groupes[code] = ordonnes
-        return groupes
-
-    def _chaine_depuis(self, membres: list[str]) -> list[str]:
-        """Les membres dans l'ordre de la chaîne, du plus ancien à l'absorbant."""
-        restants = set(membres)
-        ordre: list[str] = []
-        for depart in sorted(membres):
-            courant = depart
-            chaine = []
-            while courant in restants and courant not in ordre:
-                chaine.append(courant)
-                courant = self.catalogue[courant].integre_dans
-            if len(chaine) > len(ordre):
-                ordre = chaine
-        return ordre + sorted(restants - set(ordre))
-
     # -- catégorie active et pension militaire -------------------------------
 
     def _statut_dominant(self, carriere: Carriere,
@@ -3279,7 +2840,8 @@ class ScenarioActuel:
         catégorie active — l'avoir dans ses ``avantages_non_contributifs`` ; le
         statut déclaré doit être classé ; le régime doit être l'un de ceux que
         ce statut route, sans quoi la dérogation déborderait sur un régime
-        spécial que la même carrière traverserait (cf. :meth:`_regimes_routes`) ;
+        spécial que la même carrière traverserait (cf.
+        :func:`~retraite_notionnelle.droit.coordonner.regimes_routes`) ;
         et la carrière doit porter la durée de services classés que l'article
         L. 24 exige — dix-sept ans, vingt-sept pour la super-active. Sans cette
         dernière, l'assuré reste au droit commun, ce qui est exactement ce que
@@ -3302,7 +2864,7 @@ class ScenarioActuel:
             return None
         statuts = [code for code, valeur in classements.items()
                    if valeur == classement]
-        if periode.regime not in self._regimes_routes(statuts):
+        if periode.regime not in coordonner.regimes_routes(self, statuts):
             return None
         servies = carriere.duree_de_service(statuts, self._borne_carriere(carriere))
         if servies + 1e-9 < derogation.services_requis:
@@ -3334,7 +2896,7 @@ class ScenarioActuel:
             return None
         statuts = [code for code, valeur in categories.items()
                    if valeur == categorie]
-        if periode.regime not in self._regimes_routes(statuts):
+        if periode.regime not in coordonner.regimes_routes(self, statuts):
             return None
         base = self.durees_services_militaires.duree_de_base(categorie)
         if base is None:
@@ -3368,30 +2930,9 @@ class ScenarioActuel:
             fiabilite=fiabilite,
         )
 
-    def _regimes_routes(self, statuts: list[str]) -> frozenset[str]:
-        """Les régimes que ces statuts atteignent, une année au moins.
-
-        C'est la seconde garde du droit dérogatoire, et elle n'est pas de
-        confort. Plusieurs régimes SPÉCIAUX servent eux aussi une catégorie
-        active — leur fiche le déclare, et c'est exact : la SNCF a ses agents
-        de conduite. Mais la catégorie active de la fonction publique n'a rien
-        à y voir : sans cette garde, un assuré ayant fait vingt ans d'emploi
-        classé après une carrière à la SNCF aurait vu son régime SNCF liquidé à
-        l'âge de la fonction publique, et décoté sur la limite d'âge d'un grade
-        qu'il n'a jamais eu.
-        """
-        return frozenset(
-            code
-            for statut in statuts
-            for periode in self.affiliations.periodes(statut)
-            for code in (periode.get("regimes") or ())
-        )
-
-    @staticmethod
-    def _borne_carriere(carriere: Carriere) -> int | None:
-        """Dernière année à compter dans les services, ``None`` si sans objet."""
-        return (carriere.annee_liquidation
-                if carriere.age_liquidation is not None else None)
+    #: Dernière année à compter dans les services : voir
+    #: :func:`~retraite_notionnelle.droit.coordonner.borne_carriere`.
+    _borne_carriere = staticmethod(coordonner.borne_carriere)
 
     def _age_ouverture(self, periode: PeriodeRegime, carriere: Carriere) -> float:
         """Âge légal opposable à cet assuré dans ce régime.
@@ -3421,7 +2962,7 @@ class ScenarioActuel:
         """Les statuts que le régime route, et les années servies dans ceux-ci
         jusqu'à la liquidation."""
         statuts = [code for code in self.affiliations.codes
-                   if periode.regime in self._regimes_routes([code])]
+                   if periode.regime in coordonner.regimes_routes(self, [code])]
         return statuts, carriere.duree_de_service(
             statuts, self._borne_carriere(carriere))
 
@@ -3576,7 +3117,7 @@ class ScenarioActuel:
         for ligne in carriere.lignes:
             if ligne.annee > annee_liquidation:
                 continue
-            codes.update(self._regimes_de(
+            codes.update(coordonner.regimes_de(self, 
                 ligne, ligne.annee,
                 carriere.date_entree(ligne.affiliation),
                 revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
@@ -3617,7 +3158,7 @@ class ScenarioActuel:
         que le premier ne soit créé. L'appelant décide alors : il n'y a pas
         d'âge à proposer, et non un âge de zéro.
         """
-        carriere = self._retablie(carriere)
+        carriere = coordonner.retablir(self, carriere)
         annuites, autres = self._periodes_parcourues(carriere)
         autres = self._sans_ages_propres(autres)
         retenues = annuites or autres
@@ -3694,7 +3235,7 @@ class ScenarioActuel:
             ligne for ligne in carriere.lignes
             if ligne.cotise and ligne.annee <= annee_liquidation
         )
-        majoration = self._majoration_pour_enfants(
+        majoration = compter.majoration_pour_enfants(self, 
             carriere, {code: cotises for code, _ in periodes}, annee_liquidation
         )
         cotises = self.carriere_longue.cotises_reputes(
@@ -3742,7 +3283,7 @@ class ScenarioActuel:
 
         ``None`` dans le même cas que :meth:`age_ouverture_droit`.
         """
-        carriere = self._retablie(carriere)
+        carriere = coordonner.retablir(self, carriere)
         annuites, autres = self._periodes_parcourues(carriere)
         autres = self._sans_ages_propres(autres)
         retenues = annuites or autres
@@ -3764,7 +3305,7 @@ class ScenarioActuel:
             ligne for ligne in carriere.lignes
             if ligne.annee <= annee_liquidation
         )
-        majoration = self._majoration_pour_enfants(
+        majoration = compter.majoration_pour_enfants(self, 
             carriere, {code: acquis for code, _ in opposent}, annee_liquidation
         )
         if majoration is not None:
@@ -4071,62 +3612,6 @@ class ScenarioActuel:
         return periode.valeur_point_euros * self.macro.coefficient_prix(
             periode.valeur_point_annee or annee, annee
         )
-
-    def _points_msa(self, periode: PeriodeRegime, annee: int,
-                    revenu: float) -> float:
-        """Points de retraite proportionnelle agricole d'une année (R. 732-71).
-
-        Le barème est un escalier à quatre marches, et chacune de ses bornes est
-        une grandeur que le modèle connaît déjà :
-
-        * jusqu'à **400 SMIC horaires**, quinze points, quel que soit le revenu ;
-        * de 400 à **800 SMIC**, une pente de quinze à trente points ;
-        * de 800 SMIC à **deux fois le minimum contributif** non majoré, trente
-          points, et le barème ne bouge pas sur toute cette plage ;
-        * au-delà, une pente de trente points au maximum **M** de l'année, que
-          l'article R. 732-70 définit par ``M = (PM − AVTS) / (37,5 × VP)`` —
-          PM étant la pension maximale du régime général, c'est-à-dire la moitié
-          du plafond, AVTS l'allocation aux vieux travailleurs salariés et VP la
-          valeur du point. Le plafond de revenu de cette dernière marche est le
-          plafond de la Sécurité sociale lui-même.
-
-        **Le barème s'auto-vérifie.** Au minimum d'assiette du chef
-        d'exploitation — six cents fois le SMIC horaire, D. 731-120 —, la deuxième marche
-        donne 22,5 points, et au plafond la quatrième en donne 113,4 en 2025 :
-        ce sont les « 23 à 113 points » que la MSA et le ministère annoncent
-        sans jamais publier la formule. Et la pension maximale qui en résulte
-        pour une carrière pleine vaut exactement ``PM − AVTS``, la valeur du
-        point s'annulant : le forfait complète la proportionnelle jusqu'à la
-        pension maximale du régime général, ce qui est bien la construction du
-        régime.
-        """
-        smic = self.macro.smic_horaire(annee)
-        pass_annuel = self.macro.plafond_securite_sociale(annee)
-        valeur_point = self._valeur_point_fiche(periode, annee)
-        if smic <= 0 or pass_annuel <= 0 or valeur_point <= 0:
-            return 0.0
-        # L'AVTS est le montant de la retraite forfaitaire elle-même : la loi
-        # les a égalés jusqu'en 2014 (L. 732-24), puis a figé le forfait sur
-        # l'AVTS de cette année-là. Les deux ont depuis divergé — 4 023,51 €
-        # d'AVTS au 1er janvier 2025 contre 3 850 € environ de forfait —, ce qui
-        # porte M à 115,1 points au lieu de 113,4 : un pour cent et demi de trop
-        # sur la marche la plus haute du barème. La fiche ne porte qu'un
-        # montant, et c'est celui-là ; le jour où l'AVTS entrera dans le dépôt,
-        # c'est ici qu'elle se substituera.
-        avts = (periode.pension_forfaitaire_annuelle or 0.0) * self.macro.coefficient_prix(
-            periode.pension_forfaitaire_annee or annee, annee
-        )
-        minimum_contributif, _, _, _ = self.minimum_contributif.valeurs(annee)
-        maximum = (0.5 * pass_annuel - avts) / (37.5 * valeur_point)
-        if revenu <= 400 * smic:
-            return 15.0
-        if revenu <= 800 * smic:
-            return min(30.0, 15.0 + 15.0 * (revenu - 400 * smic) / (400 * smic))
-        if revenu <= 2 * minimum_contributif or pass_annuel <= 2 * minimum_contributif:
-            return 30.0
-        return min(maximum, 30.0 + (maximum - 30.0)
-                   * (revenu - 2 * minimum_contributif)
-                   / (pass_annuel - 2 * minimum_contributif))
 
     def _abattement_points(self, periode: PeriodeRegime, carriere: Carriere,
                            trimestres: int, requis: int,
@@ -4648,270 +4133,6 @@ class ScenarioActuel:
             )
         return plafond * servie[0] / publiee[0]
 
-    def _majoration_pour_enfants(self, carriere: Carriere,
-                                 trimestres_par_regime: dict[str, int],
-                                 annee_liquidation: int
-                                 ) -> _MajorationEnfants | None:
-        """Trimestres dus au titre des enfants, et régime qui les porte.
-
-        Le droit n'attribue pas ces trimestres au-dessus des régimes : il les
-        donne DANS un régime. Ce qu'ils y font dépend de leur nature — une
-        bonification entre aux services et relève donc la proratisation, une
-        majoration de durée d'assurance ne joue que sur la décote tous régimes
-        confondus. C'est le champ `services` du résultat qui les sépare, et
-        c'est lui, non `trimestres`, que l'appelant ajoute au compte du régime.
-
-        **Un seul régime les accorde, et l'article R. 173-15 du code de la
-        sécurité sociale dit lequel.** Le modèle retenait celui qui accordait
-        le plus. Le droit suit un ordre, et ne laisse pas le choix à l'assurée :
-
-        1. un RÉGIME SPÉCIAL — une fiche qui déclare ``bonifications`` — passe
-           le premier « si celui-ci est susceptible d'accorder en vertu de ses
-           propres règles une pension à l'intéressé », c'est-à-dire si
-           l'assurée y a servi la durée qu'il exige
-           (:class:`ServicesOuvrantPension`) et si le droit y est ouvert pour
-           ses enfants (:meth:`_bonification_ouverte`). Il passe même quand il
-           accorde moins : la CNRACL le rappelle, jugement à l'appui (TA
-           Amiens, 2 juin 2017, n° 1501559), l'agent ne peut pas renoncer à sa
-           bonification pour les huit trimestres du régime général. Entre deux
-           régimes spéciaux, le dernier servi ;
-        2. sinon le RÉGIME GÉNÉRAL, prioritaire parmi les régimes alignés ;
-        3. sans lui, le régime de la dernière affiliation et, entre deux
-           affiliations simultanées, celui qui compte le plus de trimestres :
-           c'est ainsi que le modèle approche « le régime susceptible
-           d'attribuer la pension la plus élevée ».
-
-        Un régime spécial qui ne peut pas servir de pension rétablit l'agent au
-        régime général. Le modèle ne fait pas ce rétablissement et garde les
-        services dans le régime spécial : sans régime aligné pour recevoir la
-        majoration, c'est donc ce régime spécial qui la porte, faute de mieux.
-
-        **Un régime en points porte aussi la majoration de DURÉE.** Elle ne
-        joue que sur la durée d'assurance — la décote et la surcote —, et un
-        régime en points qui en oppose une s'en sert comme un régime en
-        annuités : c'est la CNAVPL, à qui L. 643-1-1 rend L. 351-4 depuis le
-        1er avril 2010. Le moteur ne la cherchait que dans les annuités, et une
-        libérale qui n'avait cotisé qu'à sa section n'en recevait aucun
-        trimestre. Une BONIFICATION, elle, entre aux services, que seul un
-        régime en annuités proratise : les mines, en points, en déclarent une,
-        et elle reste hors de ce décompte.
-
-        Renvoie ``None`` quand rien n'est dû : pas d'enfant, aucun régime
-        porteur, dispositif pas encore né, droit fermé, ou assuré qui n'en est
-        pas le bénéficiaire.
-        """
-        if carriere.nombre_enfants <= 0:
-            return None
-        # Les régimes spéciaux qui peuvent pensionner, ceux qui ne le peuvent
-        # pas, et les régimes alignés : (trimestres validés, majoration).
-        speciaux: dict[str, tuple[int, _MajorationEnfants]] = {}
-        sans_pension: dict[str, tuple[int, _MajorationEnfants]] = {}
-        alignes: dict[str, tuple[int, _MajorationEnfants]] = {}
-        # Ce qu'a coûté d'écarter un régime spécial : la fiabilité de la règle
-        # qui l'a écarté, que la majoration servie ailleurs hérite.
-        fiabilite_ecartes = Fiabilite.CERTIFIEE
-        for code, valides in trimestres_par_regime.items():
-            if code not in self.catalogue:
-                continue
-            regime = self.catalogue[code]
-            periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
-            if periode is None:
-                continue
-            for dispositif in periode.avantages_non_contributifs:
-                if (periode.type_calcul != "annuites"
-                        and dispositif != _MAJORATION_DE_DUREE):
-                    continue
-                accorde = self.majorations_enfants.par_enfant(
-                    dispositif, carriere.sexe, carriere.annee_naissance_des_enfants,
-                    annee_liquidation, carriere.nombre_enfants,
-                )
-                if accorde is None:
-                    continue
-                trimestres, services, fiabilite = accorde
-                majoration = _MajorationEnfants(
-                    regime=code, dispositif=dispositif,
-                    trimestres=trimestres * carriere.nombre_enfants,
-                    services=services * carriere.nombre_enfants,
-                    fiabilite=fiabilite,
-                )
-                if dispositif == _MAJORATION_DE_DUREE:
-                    alignes[code] = (valides, majoration)
-                    continue
-                droit = self._droit_regime_special(periode, carriere,
-                                                   annee_liquidation)
-                if droit is None:
-                    continue
-                pension, ouvert, fiabilite_regle = droit
-                if not ouvert:
-                    # Le droit fermé se lit sur la date de naissance que le
-                    # modèle prête aux enfants : la ligne le dit déjà.
-                    fiabilite_ecartes = min(fiabilite_ecartes, fiabilite)
-                    continue
-                majoration = replace(
-                    majoration, fiabilite=min(fiabilite, fiabilite_regle))
-                if pension:
-                    speciaux[code] = (valides, majoration)
-                else:
-                    fiabilite_ecartes = min(fiabilite_ecartes, fiabilite_regle)
-                    sans_pension[code] = (valides, majoration)
-        if speciaux:
-            return self._derniere_affiliation(carriere, speciaux, annee_liquidation)
-        if _REGIME_GENERAL in alignes:
-            retenue = alignes[_REGIME_GENERAL][1]
-        elif alignes:
-            retenue = self._derniere_affiliation(carriere, alignes, annee_liquidation)
-        elif sans_pension:
-            return self._derniere_affiliation(carriere, sans_pension, annee_liquidation)
-        else:
-            return None
-        if fiabilite_ecartes < retenue.fiabilite:
-            retenue = replace(retenue, fiabilite=fiabilite_ecartes)
-        return retenue
-
-    def _droit_regime_special(self, periode: PeriodeRegime, carriere: Carriere,
-                              annee_liquidation: int
-                              ) -> tuple[bool, bool, Fiabilite] | None:
-        """Ce que ce régime spécial peut pour les enfants de cette assurée.
-
-        Rend ``(pension, ouvert, fiabilite)`` : peut-il lui servir une pension
-        — a-t-elle servi la durée qu'il exige à la date de sa radiation —, le
-        droit y est-il ouvert pour ses enfants, et la fiabilité de la durée
-        exigée. ``None`` si elle n'y a jamais servi.
-
-        La radiation est datée comme pour la pension différée : au 1er janvier
-        qui suit la dernière année de services. Quand elle ne précède pas le
-        départ, l'agent part en fonctions, et c'est le départ qui la date. Un
-        régime que la table ne porte pas est présumé pouvoir pensionner, au
-        niveau ``estimee``.
-
-        Les trois régimes interpénétrés se lisent ensemble : la durée exigée
-        porte sur tous les services de L. 5, et le recrutement comme la
-        radiation sont ceux de la carrière publique entière
-        (:meth:`_droit_a_pension`).
-        """
-        droit = self._droit_a_pension(periode.regime, carriere, annee_liquidation)
-        if droit is None:
-            return None
-        return (droit.pension,
-                self._bonification_ouverte(carriere, droit.recrutement,
-                                           droit.derniere, annee_liquidation),
-                droit.fiabilite)
-
-    @staticmethod
-    def _bonification_ouverte(carriere: Carriere, recrutement: int, derniere: int,
-                              annee_liquidation: int) -> bool:
-        """Le droit aux trimestres d'enfants d'un régime spécial est-il ouvert ?
-
-        La chronologie date la naissance des enfants — présumée aux trente
-        ans de leur mère tant que rien n'est déclaré (présomption
-        ``naissance_des_enfants``, :attr:`Carriere.annee_naissance_des_enfants`)
-        —, et le modèle lit, sur cette date, la condition que le texte pose à
-        chaque génération d'enfants :
-
-        * né depuis 2004, la majoration de L. 12 bis ne va qu'à la femme
-          « ayant accouché postérieurement à [son] recrutement » ;
-        * né avant 2004, la bonification de L. 12 b vaut pour tout enfant
-          jusqu'en 2003, pour l'enfant né en service de 2004 à 2010 — R. 13
-          n'admet alors que les congés du statut —, pour l'enfant né avant la
-          radiation depuis 2011 — R. 13 admet le congé de maternité du code
-          de la sécurité sociale. Les deux bornes se lisent à la liquidation.
-
-        Hors la fonction publique, les régimes spéciaux reprennent la première
-        condition mot pour mot ; le modèle leur applique la seconde, comme il
-        leur applique déjà la table de la fonction publique.
-        """
-        naissance = carriere.annee_naissance_des_enfants
-        if naissance >= _MAJORATION_APRES_RECRUTEMENT_DEPUIS:
-            return naissance >= recrutement
-        if annee_liquidation >= _BONIFICATION_NE_AVANT_RADIATION_DEPUIS:
-            return naissance <= derniere
-        if annee_liquidation >= _BONIFICATION_NE_EN_SERVICE_DEPUIS:
-            return recrutement <= naissance <= derniere
-        return True
-
-    def _derniere_affiliation(self, carriere: Carriere,
-                              candidats: dict[str, tuple[int, _MajorationEnfants]],
-                              annee_liquidation: int) -> _MajorationEnfants:
-        """Le candidat du régime où l'assurée a été affiliée en dernier lieu.
-
-        À égalité — deux affiliations simultanées —, celui qui compte le plus
-        de trimestres, puis le dernier code par ordre alphabétique, pour que le
-        résultat ne dépende pas de l'ordre d'un dictionnaire. La dernière année
-        se lit sur les lignes que chaque régime reçoit ; on ne la cherche que
-        s'il faut départager.
-        """
-        if len(candidats) == 1:
-            return next(iter(candidats.values()))[1]
-        dernieres: dict[str, int] = {}
-        for ligne in carriere.lignes:
-            if (ligne.annee > annee_liquidation
-                    or carriere.trimestres_retenus(ligne) <= 0):
-                continue
-            for code in self._regimes_de(
-                    ligne, ligne.annee,
-                    carriere.date_entree(ligne.affiliation),
-                    revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
-                    plafond=self.macro.plafond_securite_sociale(ligne.annee)):
-                if code in candidats:
-                    dernieres[code] = max(dernieres.get(code, 0), ligne.annee)
-        code = max(candidats,
-                   key=lambda c: (dernieres.get(c, 0), candidats[c][0], c))
-        return candidats[code][1]
-
-    def _points_gratuits(self, periode: PeriodeRegime, carriere: Carriere,
-                         assurance: dict[str, dict[int, int]], trimestres: int,
-                         age_liquidation: float
-                         ) -> tuple[float, Fiabilite | None]:
-        """Points que ce régime attribue sans cotisation à la liquidation, et
-        la fiabilité de la durée requise qui les conditionne.
-
-        La RCO des non-salariés agricoles est née en 2003. Le chef
-        d'exploitation qui liquide depuis reçoit « 100 points de retraite
-        complémentaire pour chacune des années de chef d'exploitation [...]
-        accomplies avant le 1er janvier 2003 », retenues « dans la limite de
-        la différence entre trente-sept années et demie et le nombre d'années
-        ayant donné lieu à affiliation » à la RCO (D. 732-154). Deux
-        conditions, que le III de L. 732-56 prend au 2° de son II : dix-sept
-        ans et demi comme chef à la date d'effet, toute la carrière
-        (D. 732-151), et le taux plein du régime de base — en réunir la durée
-        requise, tous régimes, jusqu'au 31 août 2023 ; l'avoir LIQUIDÉ au taux
-        plein depuis, par la durée ou par l'âge (loi n° 2023-270, art. 18, VI).
-        Le modèle ne servait aucun de ces points : un chef installé en 1975 et
-        parti en 2019 perdait plus de la moitié de sa complémentaire.
-
-        Une année se compte en trimestres validés au régime de base, divisés
-        par quatre et bornés aux trimestres civils de l'année. Le modèle ne
-        distingue pas l'activité principale de la secondaire : toute année de
-        chef compte.
-        """
-        regle = periode.points_gratuits
-        base = self.catalogue[regle.regime]
-        periode_base = base.periode(
-            min(carriere.annee_liquidation, _derniere_annee(base)))
-        if periode_base is None:
-            return 0.0, None
-
-        def valides(code: str, avant: int | None = None) -> int:
-            return sum(min(nombre, carriere.plafond_trimestres(annee))
-                       for annee, nombre in assurance.get(code, {}).items()
-                       if avant is None or annee < avant)
-
-        if valides(regle.regime) < regle.annees_minimum * 4:
-            return 0.0, None
-        requis, fiabilite = self._duree_requise(periode_base, carriere)
-        taux_plein = trimestres >= requis
-        if (not taux_plein and carriere.date_liquidation.rang
-                >= DateMois(*regle.taux_plein_depuis).rang):
-            taux_plein = (age_liquidation
-                          >= self._age_taux_plein(periode_base, carriere))
-        if not taux_plein:
-            return 0.0, fiabilite
-        retenus = min(
-            valides(regle.regime, regle.avant),
-            max(0.0, regle.annees_maximum * 4 - valides(periode.regime)),
-        )
-        return regle.points_par_annee * retenus / 4, fiabilite
-
     # -- calcul --------------------------------------------------------------
 
     def calculer(self, carriere: Carriere,
@@ -4944,27 +4165,39 @@ class ScenarioActuel:
         en vigueur accorde.
 
         ``liquider_successions`` fait liquider ensemble un régime d'annuités et
-        celui qui lui succède (voir :meth:`_groupes_de_succession`). C'est le
+        celui qui lui succède (voir
+        :func:`~retraite_notionnelle.droit.coordonner.groupes_de_succession`). C'est le
         droit, et le défaut ; à FAUX, chaque nom de caisse est liquidé sur ses
         seules années, comme le modèle le faisait, et la variante ne sert qu'à
         mesurer ce que la correction déplace.
 
         ``points_gratuits`` commande les points que la RCO agricole attribue
-        sans cotisation (:meth:`_points_gratuits`). ``None`` suit
+        sans cotisation (:func:`~retraite_notionnelle.droit.acquerir.points_gratuits`).
+        ``None`` suit
         ``avantages_non_contributifs`` : la valorisation des droits acquis n'en
         veut pas, puisqu'elle mesure du contributif pur. Les recalculs de la
         cascade le fixent, eux, pour que chaque avantage soit retiré seul.
 
         L'agent parti de la fonction publique sans droit à pension y est
-        RÉTABLI au régime général et à l'Ircantec (:meth:`_retablie`).
+        RÉTABLI au régime général et à l'Ircantec
+        (:func:`~retraite_notionnelle.droit.coordonner.retablir`).
         """
-        carriere = self._retablie(carriere)
         if points_gratuits is None:
             points_gratuits = avantages_non_contributifs
+        # LE RELEVÉ DES DROITS : les étapes de l'acquisition le construisent
+        # (:mod:`retraite_notionnelle.droit`) — rétablir et router chaque
+        # ligne, compter les durées et les trimestres des enfants, acquérir
+        # les points et les cotisations, réunir les régimes liquidés
+        # ensemble —, et la liquidation qui suit ne lit que lui.
+        releve = _releve.construire(
+            self, carriere, avantages_non_contributifs=avantages_non_contributifs,
+            points_gratuits=points_gratuits, liquider_successions=liquider_successions)
+        carriere = releve.carriere
+        durees, droits = releve.durees, releve.droits
         annee_liquidation = carriere.annee_liquidation
         age_liquidation = carriere.age_liquidation or 0.0
 
-        trimestres = carriere.trimestres_actuels
+        trimestres = durees.trimestres
 
         pensions: list[PensionRegime] = []
         fiabilite_globale = Fiabilite.CERTIFIEE
@@ -4978,478 +4211,19 @@ class ScenarioActuel:
         #: Régimes de la fonction publique qui portent le minimum garanti.
         eligibles_garanti: list[_EligibleMinimumGaranti] = []
 
-        # Cotisations cumulées par régime, pour les régimes en points dont on
-        # n'a pas le prix d'achat du point ; points acquis pour les autres.
-        cumul_cotisations: dict[str, float] = {}
-        points_acquis: dict[str, float] = {}
-        # La majoration pour enfants des points de l'Agirc-Arrco dépend de leur
-        # année d'ACQUISITION : chaque point y entre avec son taux, et la
-        # pension du régime se majore au taux moyen de ses points.
-        majoration_points: dict[str, float] = {}
-        points_majores: dict[str, float] = {}
-
-        def crediter(code: str, annee: int, points: float) -> None:
-            points_acquis[code] = points_acquis.get(code, 0.0) + points
-            taux = self.majorations_enfants_points.taux(
-                code, annee, carriere.nombre_enfants)
-            if taux is not None:
-                majoration_points[code] = majoration_points.get(code, 0.0) + points * taux
-                points_majores[code] = points_majores.get(code, 0.0) + points
-        fiabilite_points: dict[str, Fiabilite] = {}
-        # Trimestres qu'un régime à la durée crédite, et ceux d'entre eux
-        # accomplis avant l'âge qui lève son plafond : voir
-        # `PeriodeRegime.trimestres_maximum`.
-        trimestres_plafonnables: dict[str, list[float]] = {}
-        # Durée d'assurance validée dans chaque régime, PÉRIODES ASSIMILÉES
-        # COMPRISES : le coefficient de proratisation du régime général porte
-        # sur la durée d'assurance, pas sur les seules années cotisées. Une
-        # année de chômage indemnisé ne verse rien au compte mais compte bien
-        # dans le rapport durée acquise / durée requise.
-        trimestres_par_regime: dict[str, int] = {}
-        # SERVICES accomplis dans chaque régime. La fonction publique ne
-        # proratise pas sa pension sur la durée d'assurance mais sur les
-        # services et bonifications (L. 13 du code des pensions), et l'article
-        # L. 9 écarte « le temps passé dans une position statutaire ne
-        # comportant pas l'accomplissement de services effectifs au sens de
-        # l'article L. 5 », hors la liste fermée qu'il énumère. Le moteur
-        # créditait ce prorata de TOUTE période validée : une carrière de
-        # fonctionnaire coupée de cinq ans de chômage servait exactement la
-        # même pension qu'une carrière pleine.
-        services_par_regime: dict[str, int] = {}
-        # Ce qui reste du budget de services que L. 9 ouvre dans une limite —
-        # trois ans par enfant pour le congé parental. Il se tient sur toute la
-        # carrière, et non année par année : deux congés de deux ans pour un
-        # seul enfant n'ouvrent que trois ans de services.
-        budget_services_plafonnes: dict[int, int] = {}
-        # Durée COTISÉE dans chaque régime : c'est elle, et non la durée
-        # d'assurance, qui proratise la majoration du minimum contributif au
-        # titre des périodes cotisées (D. 351-2-2).
-        trimestres_cotises_par_regime: dict[str, int] = {}
-        # Dernière année cotisée dans chaque régime : elle désigne, dans une
-        # chaîne de succession, la caisse qui liquide.
-        derniere_annee_par_regime: dict[str, int] = {}
-        # Les trois mêmes, ANNÉE PAR ANNÉE. Deux activités cumulées peuvent
-        # verser au même régime, ou à deux régimes liquidés ensemble : leurs
-        # trimestres s'y additionnent sans dépasser les trimestres civils de
-        # l'année. Une année d'une seule activité n'est pas touchée.
-        par_annee: dict[str, dict[str, dict[int, int]]] = {
-            "assurance": {}, "services": {}, "cotises": {},
-        }
-
-        def crediter_trimestres(table: str, code: str, annee: int,
-                                trimestres: int) -> None:
-            annees = par_annee[table].setdefault(code, {})
-            annees[annee] = annees.get(annee, 0) + trimestres
-
-        # Ce qui ne tient à aucune année — la majoration pour enfants — et
-        # s'ajoute donc hors plafond annuel.
-        hors_annee: dict[str, dict[str, int]] = {
-            "assurance": {}, "services": {}, "cotises": {},
-        }
-
-        def cumul_plafonne(table: str, membres: tuple[str, ...]) -> int:
-            sommes: dict[int, int] = {}
-            for membre in membres:
-                for annee, trimestres in par_annee[table].get(membre, {}).items():
-                    sommes[annee] = sommes.get(annee, 0) + trimestres
-            return (sum(min(somme, carriere.plafond_trimestres(annee))
-                        for annee, somme in sommes.items())
-                    + sum(hors_annee[table].get(membre, 0) for membre in membres))
-
-        for ligne in carriere.lignes:
-            retenus_ligne = carriere.trimestres_retenus(ligne)
-            if retenus_ligne <= 0:
-                continue
-            services_ligne = (
-                retenus_ligne if ligne.services_fonction_publique else 0
-            )
-            plafond = ligne.services_plafond_trimestres_par_enfant
-            if services_ligne and plafond:
-                restant = budget_services_plafonnes.setdefault(
-                    plafond, plafond * carriere.nombre_enfants
-                )
-                services_ligne = min(services_ligne, restant)
-                budget_services_plafonnes[plafond] = restant - services_ligne
-            for code in self._regimes_de(
-                    ligne, ligne.annee,
-                    carriere.date_entree(ligne.affiliation),
-                    revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
-                    plafond=self.macro.plafond_securite_sociale(ligne.annee)):
-                if code not in self.catalogue:
-                    continue
-                crediter_trimestres("assurance", code, ligne.annee, retenus_ligne)
-                if services_ligne:
-                    crediter_trimestres("services", code, ligne.annee, services_ligne)
-                if ligne.cotise:
-                    crediter_trimestres("cotises", code, ligne.annee, retenus_ligne)
-        for table, cible in (("assurance", trimestres_par_regime),
-                             ("services", services_par_regime),
-                             ("cotises", trimestres_cotises_par_regime)):
-            for code in par_annee[table]:
-                cible[code] = cumul_plafonne(table, (code,))
-
-        # Les trimestres accordés au titre des enfants ne flottent pas au-dessus
-        # des régimes : le droit les attribue DANS un régime, et ils comptent
-        # donc aussi dans sa proratisation, pas seulement dans la décote tous
-        # régimes confondus. Les ignorer là amputait la pension d'une mère de
-        # famille de la part que la majoration est censée lui rendre. UN SEUL
-        # régime les accorde, celui que désigne R. 173-15 : le régime spécial
-        # qui peut pensionner, sinon le régime général — voir
-        # `_majoration_pour_enfants`.
-        majoration_enfants = (
-            self._majoration_pour_enfants(
-                carriere, trimestres_par_regime, annee_liquidation
-            ) if avantages_non_contributifs else None
-        )
-        # Les BONIFICATIONS, à part des services : seules elles peuvent porter
-        # le taux au-delà du maximum (`taux_maximum_bonifie`).
-        bonifications_par_regime: dict[str, int] = {}
+        # Ce que les étapes ont écrit, sous les noms que la liquidation lit.
+        cumul_cotisations = droits.cumul_cotisations
+        points_acquis = droits.points_acquis
+        majoration_points = droits.majoration_points
+        points_majores = droits.points_majores
+        fiabilite_points = droits.fiabilite_points
+        gratuits_attribues = droits.gratuits
+        trimestres_par_regime = durees.trimestres_par_regime
+        bonifications_par_regime = durees.bonifications_par_regime
+        cumul_plafonne = durees.cumul_plafonne
+        majoration_enfants = durees.enfants
         if majoration_enfants is not None:
-            bonifications_par_regime[majoration_enfants.regime] = (
-                majoration_enfants.services
-            )
-        if majoration_enfants is not None:
-            # LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE, et la
-            # majoration se range dans les deux : tout ce qui est accordé joue
-            # sur la durée d'assurance — tous régimes, donc la décote, et celle
-            # du régime, donc sa proratisation — quand la seule part `services`
-            # entre aux services, qui proratisent la pension de la fonction
-            # publique. Ce module les confondait, et sur-créditait les mères
-            # fonctionnaires de deux trimestres de services par enfant né depuis
-            # 2004, là où L. 12 bis n'accorde qu'une majoration de durée.
-            trimestres += majoration_enfants.trimestres
-            trimestres_par_regime[majoration_enfants.regime] += (
-                majoration_enfants.trimestres
-            )
-            services_par_regime[majoration_enfants.regime] = (
-                services_par_regime.get(majoration_enfants.regime, 0)
-                + majoration_enfants.services
-            )
-            hors_annee["assurance"][majoration_enfants.regime] = (
-                majoration_enfants.trimestres
-            )
-            hors_annee["services"][majoration_enfants.regime] = (
-                majoration_enfants.services
-            )
             fiabilite_globale = min(fiabilite_globale, majoration_enfants.fiabilite)
-
-        for ligne in carriere.lignes:
-            # Une ligne postérieure à la liquidation décrit une activité
-            # exercée APRÈS le départ : elle n'ouvre pas de droits dans la
-            # pension qu'on liquide. L'année du départ, elle, ouvre ceux de ses
-            # mois qui l'ont précédé — ni zéro ni douze, mais le compte juste.
-            part = carriere.part_retenue_ligne(ligne)
-            if part <= 0:
-                continue
-            if not ligne.cotise and not ligne.familles_cotisantes:
-                continue
-            # Pendant une période indemnisée, seuls les régimes complémentaires
-            # encaissent, et sur le salaire d'avant l'interruption.
-            base_ligne = ligne.revenu if ligne.cotise else ligne.revenu_reference
-            if part < ligne.fraction_annee:
-                base_ligne *= part / ligne.fraction_annee
-            familles_admises = (
-                None if ligne.cotise else set(ligne.familles_cotisantes)
-            )
-            for code in self._regimes_de(
-                    ligne, ligne.annee,
-                    carriere.date_entree(ligne.affiliation),
-                    revenu=ligne.revenu if ligne.cotise else ligne.revenu_reference,
-                    plafond=self.macro.plafond_securite_sociale(ligne.annee)):
-                if code not in self.catalogue:
-                    continue
-                regime = self.catalogue[code]
-                if (familles_admises is not None
-                        and regime.famille not in familles_admises):
-                    continue
-                derniere_annee_par_regime[code] = max(
-                    derniere_annee_par_regime.get(code, 0), ligne.annee
-                )
-                for periode in regime.periodes_actives(ligne.annee):
-                    # BARÈME D'UN AUTRE RÉGIME : une tranche que tous les
-                    # affiliés ne cotisent pas forme une fiche à part, dont les
-                    # points restent ceux du régime d'origine. Voir `points_de`.
-                    bareme = periode.points_de or code
-                    # Les bornes d'assiette et le repère en points sont
-                    # ANNUELS : une année incomplète ne les atteint qu'à
-                    # proportion de ses mois, comme le plafond lui-même.
-                    pass_annuel = (
-                        self.macro.plafond_securite_sociale(ligne.annee) * part
-                    )
-                    borne_basse, borne_haute = periode.bornes_assiette_en_euros(
-                        self.macro.plafond_securite_sociale(ligne.annee)
-                    )
-                    if part < 1.0:
-                        borne_basse *= part
-                        borne_haute = (None if borne_haute is None
-                                       else borne_haute * part)
-                    # Traitement seul, primes seules — celles du RAFP dans la
-                    # limite de 20 % du traitement : voir `part_du_revenu`.
-                    base = periode.part_du_revenu(base_ligne, ligne.part_primes)
-                    if (ligne.revenu_retabli > 0
-                            and periode.assiette != "primes_uniquement"):
-                        # Une année RÉTABLIE : l'Ircantec valide le
-                        # traitement de l'année, les primes restent au RAFP.
-                        base = base_ligne * (1.0 - ligne.part_primes)
-                    # L'assiette de la CAVAMAC est faite des commissions
-                    # versées par les compagnies, celle de la CPRN des produits
-                    # de l'office : le facteur les reconstitue depuis le
-                    # revenu, avant les bornes. Voir `PeriodeRegime`.
-                    if periode.assiette_facteur_revenu is not None:
-                        base *= periode.assiette_facteur_revenu
-                    # Le marin cotise sur le salaire forfaitaire de sa
-                    # catégorie : voir `Compte.cotisation_annuelle`.
-                    if periode.assiette_grille:
-                        forfait_grille = self.grilles.forfait(
-                            periode.assiette_grille, ligne.annee,
-                            ligne.revenu_annualise,
-                            lambda a: salaire_moyen_annuel(self.macro, a),
-                        )
-                        if forfait_grille is not None:
-                            base = forfait_grille[0] * part
-                    # L'assiette minimale du régime de base d'un libéral :
-                    # 450 SMIC horaires depuis 2023 (D. 642-4), qui ouvrent
-                    # les points que ce montant ouvrirait.
-                    base = max(base, self._assiette_minimale((code,), ligne))
-                    plafond = base if borne_haute is None else borne_haute
-                    assiette = max(0.0, min(base, plafond) - borne_basse)
-                    repere = periode.repere_assiette(
-                        pass_annuel, self.macro.smic_horaire(ligne.annee)
-                    ) * (part if periode.assiette_repere_smic is not None else 1.0)
-                    if periode.assiette_forfaitaire:
-                        # Assiette FORFAITAIRE : le régime des cultes cotise sur
-                        # un forfait égal au SMIC mensuel, quel que soit le
-                        # revenu. Inconditionnel, là où `assiette_plancher` ne
-                        # relève que les assiettes trop basses.
-                        assiette = repere
-                    elif periode.assiette_plancher and assiette < repere:
-                        # Assiette minimale : la complémentaire agricole cotise
-                        # sur 1 820 SMIC même quand le revenu est en dessous,
-                        # et ouvre donc ses cent points malgré tout.
-                        assiette = repere
-                    if not periode.assiette_forfaitaire:
-                        # Assiette minimale en plafonds : la CARPIMKO appelle
-                        # depuis 2026 sa cotisation sur un demi-plafond au
-                        # moins, et les points suivent ce qui est appelé. Le
-                        # plafond est déjà proratisé sur les mois de l'année.
-                        assiette = max(assiette,
-                                       periode.assiette_minimale(pass_annuel))
-                    # La cotisation forfaitaire s'ajoute à la proportionnelle,
-                    # et elle est due quel que soit le revenu — cf.
-                    # `Compte._cotisation_forfaitaire`, même convention
-                    # d'indexation sur les prix.
-                    forfait = 0.0
-                    if periode.cotisation_forfaitaire_euros is not None:
-                        reference = (periode.cotisation_forfaitaire_annee
-                                     or ligne.annee)
-                        forfait = (periode.cotisation_forfaitaire_euros
-                                   * self.macro.coefficient_prix(
-                                       reference, ligne.annee))
-                    cotisation = (assiette * periode.taux_cotisation_retraite
-                                  + forfait)
-                    # COTISATION PAR CLASSES : la Cipav, avant 2023, appelait
-                    # le montant du palier où tombait le revenu, et non une
-                    # fraction d'une assiette. Ce montant achète des points
-                    # comme n'importe quelle cotisation — « 3 600 € / 47,40 € =
-                    # 75,9 points », écrit la caisse —, et c'est donc ici, avant
-                    # la conversion, qu'il se substitue.
-                    if periode.cotisation_par_classes:
-                        millesime = self.classes.annee_grille(code, ligne.annee)
-                        reference = (
-                            0.0 if millesime is None
-                            else self.macro.plafond_securite_sociale(millesime)
-                        )
-                        par_classe = (
-                            None if reference <= 0
-                            else self.classes.cotisation(
-                                code, ligne.annee, base,
-                                self.macro.plafond_securite_sociale(ligne.annee)
-                                / reference,
-                            )
-                        )
-                        if par_classe is not None:
-                            cotisation = par_classe[0] * part
-                    if periode.bareme_points == "msa_proportionnelle":
-                        # BARÈME NOMMÉ : le nombre de points ne se lit ni dans
-                        # un prix d'achat ni dans un repère d'assiette, mais
-                        # dans un escalier à quatre marches que R. 732-71 écrit
-                        # en SMIC, en minimum contributif et en plafond. Voir
-                        # `_points_msa`. C'est l'ASSIETTE qui y entre, et non le
-                        # revenu : la cotisation qui ouvre ces points est due
-                        # sur six cents SMIC horaires au moins (D. 731-120, 2°)
-                        # et sur un plafond au plus, et ce sont ces deux bornes
-                        # qui font les « 23 à 113 points ».
-                        echelle, fiabilite_echelle = self.conversions_points.echelle(
-                            bareme, ligne.annee, annee_liquidation
-                        )
-                        crediter(code, ligne.annee, (
-                            self._points_msa(periode, ligne.annee, assiette)
-                            * part * echelle
-                        ))
-                        fiabilite_points[code] = min(
-                            fiabilite_points.get(code, Fiabilite.CERTIFIEE),
-                            regime.fiabilite, fiabilite_echelle,
-                        )
-                        continue
-                    if periode.points_par_trimestre_valide is not None:
-                        # POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant.
-                        # Le régime de base des libéraux d'avant 2004 ne servait
-                        # pas une pension proportionnelle au revenu mais une
-                        # ALLOCATION : un quinzième de l'AVTS par année cotisée,
-                        # la même pour le notaire et pour le kinésithérapeute.
-                        # La réforme de 2003 l'a convertie en points « à raison
-                        # de cent points par trimestre » (D. 643-1), et c'est
-                        # cette conversion — non l'assiette, qu'on n'a pas —
-                        # qui porte le droit d'avant 2004.
-                        echelle, fiabilite_echelle = self.conversions_points.echelle(
-                            bareme, ligne.annee, annee_liquidation
-                        )
-                        points = (periode.points_par_trimestre_valide
-                                  * carriere.trimestres_retenus(ligne))
-                        if periode.trimestres_maximum is not None:
-                            # Le plafond se lit sur toute la durée : on note ici
-                            # les trimestres de la ligne, et ceux d'entre eux
-                            # qui précèdent l'âge qui le lève.
-                            suivi = trimestres_plafonnables.setdefault(code, [0.0, 0.0])
-                            suivi[0] += carriere.trimestres_retenus(ligne)
-                            if periode.trimestres_maximum_leve_avant_age is not None:
-                                suivi[1] += _trimestres_de_la_ligne_entre(
-                                    carriere, ligne, DateMois(carriere.annee_naissance, 1),
-                                    carriere.date_naissance.plus_mois(en_mois(
-                                        periode.trimestres_maximum_leve_avant_age)),
-                                )
-                        if (periode.points_ajustement_par_forfait is not None
-                                and forfait > 0):
-                            # Les points d'AJUSTEMENT de l'ASV des médecins :
-                            # 18 fois la cotisation proportionnelle sur le
-                            # forfait, neuf au plus (décret n° 2011-1644,
-                            # art. 3). Ils suivent le revenu, là où les 27
-                            # points du forfait ne suivent que la durée.
-                            ajustement = (periode.points_ajustement_par_forfait
-                                          * assiette
-                                          * periode.taux_cotisation_retraite
-                                          / forfait)
-                            if periode.points_ajustement_maximum is not None:
-                                ajustement = min(
-                                    ajustement,
-                                    periode.points_ajustement_maximum * part)
-                            points += ajustement
-                        crediter(code, ligne.annee, points * echelle)
-                        fiabilite_points[code] = min(
-                            fiabilite_points.get(code, Fiabilite.CERTIFIEE),
-                            regime.fiabilite, fiabilite_echelle,
-                        )
-                        continue
-                    if periode.points_maximum is not None and repere > 0:
-                        # Barème écrit en POINTS et non en prix d'achat : le
-                        # régime annonce combien de points ouvre une assiette
-                        # donnée — 525 points au plafond pour le régime de base
-                        # des libéraux, 100 points pour 1 820 SMIC à la
-                        # complémentaire agricole. Le nombre de points ne
-                        # dépend alors pas du taux de cotisation, et c'est
-                        # heureux : ce sont les barèmes qui sont publiés, pas
-                        # les prix d'achat.
-                        echelle, fiabilite_echelle = self.conversions_points.echelle(
-                            bareme, ligne.annee, annee_liquidation
-                        )
-                        crediter(code, ligne.annee,
-                                 periode.points_maximum * assiette / repere * echelle)
-                        fiabilite_points[code] = min(
-                            fiabilite_points.get(code, Fiabilite.CERTIFIEE),
-                            regime.fiabilite, fiabilite_echelle,
-                        )
-                        continue
-                    achat = (self.valeurs_point.achat(bareme, ligne.annee)
-                             if periode.type_calcul in ("points", "mixte") else None)
-                    if achat is not None:
-                        reference, taux_appel, fiabilite_achat = achat
-                        points_annee = cotisation / (taux_appel * reference)
-                        if periode.points_minimum_annuels is not None:
-                            # Garantie minimale de points de l'Agirc : tout
-                            # cadre cotisant en acquiert au moins 120 par an de
-                            # 1989 à 2018, même quand sa tranche B est nulle,
-                            # c'est-à-dire même quand son salaire ne dépasse pas
-                            # le plafond de la Sécurité sociale. La fiche la
-                            # déclarait ; le moteur ne la servait pas, et un
-                            # cadre payé sous le plafond n'acquérait rien à
-                            # l'Agirc là où le droit lui donnait ces points.
-                            points_annee = max(
-                                points_annee, periode.points_minimum_annuels
-                            )
-                        # Changement d'unité entre l'achat et le service : les
-                        # points Arrco d'avant 1999 sont ceux de l'UNIRS, et
-                        # valent 0,387464 point du régime unifié. Sans cette
-                        # conversion, cent euros cotisés en 1998 produisaient
-                        # 30,31 € de pension quand les mêmes cent euros de 1999
-                        # n'en produisaient que 11,15 — un facteur 2,7 en une
-                        # année, pour une unification qui était neutre.
-                        echelle, fiabilite_echelle = self.conversions_points.echelle(
-                            bareme, ligne.annee, annee_liquidation
-                        )
-                        crediter(code, ligne.annee, points_annee * echelle)
-                        fiabilite_points[code] = min(
-                            fiabilite_points.get(code, Fiabilite.CERTIFIEE),
-                            fiabilite_achat, fiabilite_echelle,
-                        )
-                    else:
-                        cumul_cotisations[code] = cumul_cotisations.get(code, 0.0) + (
-                            cotisation
-                            * self.macro.coefficient_prix(ligne.annee, annee_liquidation)
-                        )
-
-        # LE PLAFOND DE LA DURÉE, LEVÉ AVANT UN ÂGE. Cent vingt trimestres au
-        # plus aux mines, sauf ceux accomplis avant cinquante-cinq ans (article
-        # 136 du décret n° 46-2769, article 147 dans sa rédaction de 1974) : les
-        # trimestres retenus valent le plus petit du total et du plus grand du
-        # plafond et des trimestres d'avant l'âge. Le modèle les comptait tous,
-        # et payait au mineur entré à dix-huit ans et parti à soixante-deux ans
-        # sept années que la caisse ne liquide pas.
-        for code, (total, avant_age) in trimestres_plafonnables.items():
-            regime = self.catalogue[code]
-            periode = regime.periode(min(annee_liquidation, _derniere_annee(regime)))
-            if periode is None or periode.trimestres_maximum is None or total <= 0:
-                continue
-            retenus = min(total, max(float(periode.trimestres_maximum), avant_age))
-            if retenus < total and code in points_acquis:
-                rapport = retenus / total
-                points_acquis[code] *= rapport
-                if code in majoration_points:
-                    majoration_points[code] *= rapport
-                    points_majores[code] *= rapport
-
-        # POINTS GRATUITS : la RCO agricole attribue à la liquidation des
-        # points pour les années de chef d'exploitation d'avant sa création.
-        # Ils entrent au compte de points du régime comme des points acquis —
-        # un chef parti en janvier 2003 n'a encore rien cotisé à la RCO, et
-        # c'est ici qu'elle entre dans les régimes liquidés —, et la cascade
-        # les isole plus bas. Voir `_points_gratuits`.
-        #: Points attribués, et année avant laquelle comptent les années.
-        gratuits_attribues: dict[str, tuple[float, int]] = {}
-        if points_gratuits:
-            for base, attribuants in self._points_gratuits_par_base.items():
-                if base not in par_annee["assurance"]:
-                    continue
-                for code in attribuants:
-                    regime = self.catalogue[code]
-                    periode = regime.periode(
-                        min(annee_liquidation, _derniere_annee(regime)))
-                    if periode is None or periode.points_gratuits is None:
-                        continue
-                    gratuits, fiabilite_duree = self._points_gratuits(
-                        periode, carriere, par_annee["assurance"], trimestres,
-                        age_liquidation,
-                    )
-                    if gratuits <= 0:
-                        continue
-                    gratuits_attribues[code] = (
-                        gratuits, periode.points_gratuits.avant)
-                    points_acquis[code] = points_acquis.get(code, 0.0) + gratuits
-                    fiabilite_points[code] = min(
-                        fiabilite_points.get(code, Fiabilite.CERTIFIEE),
-                        regime.fiabilite,
-                        (Fiabilite.CERTIFIEE if fiabilite_duree is None
-                         else fiabilite_duree),
-                    )
 
         # Durée requise de référence : celle du régime de base. C'est elle qui
         # commande le taux plein, donc aussi l'abattement des complémentaires —
@@ -5462,15 +4236,11 @@ class ScenarioActuel:
         #: donc l'âge du régime le plus précoce — celui d'un régime spécial,
         #: quand il y en a un.
         age_ouverture_reference: float | None = None
-        codes = sorted(set(cumul_cotisations) | set(points_acquis))
+        codes = droits.codes
         # Un régime et celui qui lui succède liquident ensemble, sous les règles
         # de la caisse qui aurait le dossier : les autres membres du groupe
         # sont sautés partout où un régime liquide.
-        groupes = (
-            self._groupes_de_succession(
-                codes, annee_liquidation, derniere_annee_par_regime, carriere
-            ) if liquider_successions else {}
-        )
+        groupes = releve.groupes
         # DEUX PASSES, ET LA SECONDE NE SERT QU'À QUI N'A QUE DES POINTS.
         # Les régimes en ANNUITÉS commandent, comme partout ailleurs. Mais une
         # carrière entière en points n'en a aucun, et la boucle laissait alors
@@ -6483,26 +5253,6 @@ def _trimestres_entre_dates(carriere: Carriere, debut: DateMois, fin: DateMois,
     return int(total + 1e-9)
 
 
-def _trimestres_de_la_ligne_entre(carriere: Carriere, ligne, debut: DateMois,
-                                  fin: DateMois) -> float:
-    """Part des trimestres d'UNE ligne acquise entre deux dates, ``fin`` exclue.
-
-    Les trimestres de la ligne sont répartis sur ses mois — les premiers de
-    l'année pour celle du départ, les derniers pour celle de l'entrée —, comme
-    le fait :func:`_trimestres_entre_dates`, qui en fait la somme.
-    """
-    retenus = carriere.trimestres_retenus(ligne)
-    mois_ligne = round(carriere.part_retenue(ligne.annee) * 12)
-    if retenus <= 0 or mois_ligne <= 0:
-        return 0.0
-    premier = (DateMois(ligne.annee, 1)
-               if mois_ligne == 12 or ligne.annee == carriere.annee_liquidation
-               else DateMois(ligne.annee, 13 - mois_ligne))
-    dernier = premier.plus_mois(mois_ligne)
-    recouvrement = (min(fin.rang, dernier.rang) - max(debut.rang, premier.rang))
-    return retenus * recouvrement / mois_ligne if recouvrement > 0 else 0.0
-
-
 def _trimestres_cotises_entre(carriere: Carriere, age_bas: float, age_haut: float,
                               annee_liquidation: int) -> int:
     """Trimestres cotisés entre deux âges — bas inclus, haut exclu.
@@ -6530,12 +5280,6 @@ def _assiette_de_reference(periode: PeriodeRegime, ligne) -> float:
     au RAFP et à la pension civile — alors qu'elles n'en ouvrent qu'au RAFP.
     """
     return periode.part_du_revenu(ligne.revenu, ligne.part_primes)
-
-
-def _derniere_annee(regime) -> int:
-    """Dernière année pour laquelle le régime a des paramètres."""
-    annees = [p.fin if p.fin is not None else 9999 for p in regime.periodes]
-    return min(max(annees), 2100) if annees else 2100
 
 
 #: Durée cotisée, tous régimes, qui ouvre la majoration du minimum contributif

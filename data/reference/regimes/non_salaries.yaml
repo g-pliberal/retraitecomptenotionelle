@@ -9361,7 +9361,7 @@ regimes:
         notes: >-
           « À compter du 1er janvier 1990 » (R. 732-70), la cotisation ouvre un
           nombre de points qui dépend du revenu par un escalier à quatre marches
-          écrit à l'article R. 732-71 — voir `_points_msa` dans le moteur, et
+          écrit à l'article R. 732-71 — voir `points_msa` dans le moteur (droit/acquerir.py), et
           la section de docs/limites.md qui refait l'arithmétique.
           Âge de soixante ans depuis la loi du 6 janvier 1986, taux plein à
           soixante-cinq ans ou avec cent cinquante trimestres tous régimes

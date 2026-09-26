@@ -1900,8 +1900,8 @@ sources:
 
 code:
   python: >-
-    scenarios/actuel.py : MajorationsPourEnfants,
-    ScenarioActuel._majoration_pour_enfants, _bonification_ouverte
+    scenarios/actuel.py : MajorationsPourEnfants ;
+    droit/compter.py : majoration_pour_enfants, bonification_ouverte
   javascript: >-
     moteur/js/regimes.js : MajorationsPourEnfants ;
     moteur/js/scenario-actuel.js : bonificationOuverte
