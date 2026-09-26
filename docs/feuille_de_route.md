@@ -1614,7 +1614,7 @@ coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`
 `README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
 fabriqués.
 
-### 130. L'architecture du dépôt : décidée, les phases 0 et 1 faites, la phase 2 à lancer — `en cours`
+### 130. L'architecture du dépôt : décidée, les phases 0 à 2 faites, la phase 3 à lancer — `en cours`
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
@@ -1847,3 +1847,53 @@ un workflow lancé une fois le fait.
 
 Le repère `phase-1` est posé sur 05ed5a9, le même jour, par
 `repere-phase-1.yml`, lancé une fois puis supprimé.
+
+**La phase 2 achevée**, le 26 septembre 2026, à la demande du propriétaire.
+Six commits, la suite complète passée avant chaque envoi sur `main`, et aucun
+résultat qui bouge :
+1. le vocabulaire des dates qui décident, `data/reference/vocabulaire/dates.yaml`
+   — les quatre sortes, liste fermée, et trente dates nommées —, et les listes
+   de valeurs, `valeurs.yaml`, dont deux fermées : les étapes et les statuts
+   d'un texte ; un test les confronte au texte même de l'architecture ;
+2. les neuf contrats de l'annexe C en schémas, `data/reference/contrats/`, que
+   `src/retraite_notionnelle/noyau/contrats.py` applique : une erreur — champ
+   inconnu, valeur hors vocabulaire, type faux — est refusée, un manque —
+   champ obligatoire absent — est compté ;
+3. la carte des règles : les 98 entrées de `veille.yaml` sont devenues les 98
+   fiches de `data/reference/regles/`, sous le même identifiant, dont une
+   relation, la priorité entre régimes pour les trimestres d'enfants. La
+   veille en est une vue, et `veille.yaml` ne garde que ses sources et son
+   journal. `conservation.py` retrouve chaque entrée dans sa fiche, à
+   l'identique, et sa référence, refigée, tient désormais les archives ;
+4. le partage des versions, contrôlé sur chaque fiche par l'outil que la note
+   0001 avait laissé, qui rend sur les fiches de l'annexe A ce que rendait le
+   prototype ;
+5. la liste de contrôle des textes, `data/reference/textes/` : 10 738
+   rédactions de 33 textes, lues dans l'index LEGI, leur statut lu dans les
+   fiches, et le cliquet des rédactions sans statut posé à 10 549 ;
+6. le tableau de bord, qui lit la carte et la liste sans avoir changé de
+   questions.
+
+**Ce que la phase 2 laisse ouvert.**
+- Les fiches ne savent pas encore leur domaine, leurs régimes, leur étape, ce
+  qu'elles lisent et écrivent, leurs dates qui décident ni leurs versions :
+  805 manques, que le tableau de bord compte. Aucun cliquet ne les tient,
+  pour qu'une règle découverte puisse entrer avant d'être mûre. Elles
+  mûriront domaine par domaine (§ 11), à commencer par les dates des enfants.
+- Le cliquet des textes ne compte que les articles. Les situations des
+  fiches service-public et des circulaires n'ont pas de liste : il y faut
+  celle des fiches retraite de service-public et l'index des circulaires de
+  la Cnav, que le dépôt n'a pas. Les accords Agirc-Arrco et les statuts des
+  caisses ne sont pas dans l'index LEGI.
+- Le journal de veille reste dans `veille.yaml`, quand l'annexe B le rangeait
+  en archive avec cette phase : la procédure lit encore « la dernière date du
+  journal » pour savoir quoi consulter, et rien ne la remplace pour les
+  circulaires et service-public ; `data/reference/textes/inscription.yaml` le
+  fait déjà pour l'index LEGI. Il passera en archive quand la liste des
+  situations l'aura rendu inutile.
+- `avantages_non_contributifs.md` et `frontiere_contributive.md` deviendront
+  des vues quand les fiches porteront leurs faces et leurs neutralisations,
+  et l'inventaire des régimes quand chacune portera ses régimes : la note de
+  la phase 1 qui l'annonçait pour la phase 2 allait trop vite.
+- Le repère `phase-2` n'est pas posé : comme pour les deux premiers, il y faut
+  un workflow lancé une fois, et l'accord du propriétaire.

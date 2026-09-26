@@ -10,16 +10,18 @@ Ce qu'il fait
 
 ``docs/etat.md`` répond à trois questions, et à elles seules : où en est-on, ce
 qui ne va pas encore, ce qui reste à faire (``docs/architecture.md``, § 9.1).
-Personne ne l'écrit à la main : ce script le fabrique depuis les registres
-d'aujourd'hui — la veille, l'inventaire des régimes et leurs effectifs, les
-exemples officiels, les réformes, les sources à explorer, la feuille de route —
-et chaque nombre de la page est calculé ici. Une correction ne demande donc
-qu'un geste : corriger le registre, puis relancer le script.
-``tests/test_prose.py`` refuse une copie périmée.
+Personne ne l'écrit à la main : ce script le fabrique, et chaque nombre de la
+page est calculé ici. Depuis la phase 2, il lit la carte des règles
+(``data/reference/regles/``) et la liste de contrôle des textes
+(``data/reference/textes/``) ; les registres qui ne sont pas encore des vues le
+complètent — l'inventaire des régimes et leurs effectifs, les exemples
+officiels, les réformes, les sources à explorer, la feuille de route. Une
+correction ne demande donc qu'un geste : corriger la fiche ou le registre, puis
+relancer le script. ``tests/test_prose.py`` refuse une copie périmée.
 
-À la phase 2, le tableau passera à la carte des règles, sans changer de
-questions. Il part de la maquette qui a éprouvé l'architecture
-(``docs/decisions/0001/tableau_de_bord.py``, § 14.7 de la note 0001).
+Il part de la maquette qui a éprouvé l'architecture
+(``docs/decisions/0001/tableau_de_bord.py``, § 14.7 de la note 0001), et n'a
+pas changé de questions en passant à la carte.
 
 Ce qu'il n'écrit pas
 --------------------
@@ -45,7 +47,7 @@ from pathlib import Path
 
 import yaml
 
-from retraite_notionnelle.noyau import carte
+from retraite_notionnelle.noyau import carte, textes
 
 RACINE = Path(__file__).resolve().parents[1]
 PAGE = RACINE / "docs" / "etat.md"
@@ -148,6 +150,12 @@ def page() -> str:
     """``docs/etat.md``, tel que les registres le disent aujourd'hui."""
     # Les règles suivies en veille sont les fiches de la carte (§ 6).
     veille = list(carte.fiches().values())
+    manques = carte.manques()
+    redactions = textes.redactions()
+    statuts_textes = textes.statuts()
+    veille_brute = lire_yaml("data/reference/legislation/veille.yaml")
+    frontiere = lire_yaml("data/reference/legislation/frontiere_contributive.yaml")
+    inscription = lire_yaml("data/reference/textes/inscription.yaml")
     inventaire = lire_yaml("data/reference/regimes/inventaire.yaml")["inventaire"]
     exemples = lire_yaml("tests/temoins/exemples_officiels.yaml")["exemples"]
     reformes = lire_yaml("data/reference/legislation/reformes.yaml")["reformes"]
@@ -188,6 +196,23 @@ def page() -> str:
         p.read_text(encoding="utf-8", errors="ignore")
         for motif in ("src/**/*.py", "moteur/js/*.js") for p in sorted(RACINE.glob(motif)))
     citees = sum(1 for r in veille if r["id"] in code_source)
+    relations = [r for r in veille if carte.est_relation(r)]
+    mures = [r for r in veille if r["id"] not in manques]
+    decoupees = [r for r in veille if r.get("versions")]
+    versions = [v for r in decoupees for v in r["versions"]]
+    supposees = [v for v in versions if v.get("statut") == "supposee"]
+    statut_textes = collections.Counter(s or "sans_statut" for s in statuts_textes.values())
+    textes_par_cle = collections.Counter(r["texte"] for r in redactions)
+    sans_statut_par_cle = collections.Counter(
+        r["texte"] for r in redactions if statuts_textes[r["id"]] is None)
+    cliquet_textes = (lire_yaml("data/reference/textes/perimetre.yaml").get("cliquet") or {}
+                      ).get("redactions_sans_statut")
+    # Les registres que la carte doit remplacer (§ 6.5), et ceux qui le sont.
+    registres_en_vues = [
+        ("la veille", "entrees" not in veille_brute),
+        ("la frontière contributive", "bascules" not in frontiere),
+        ("l'inventaire des régimes", False),
+    ]
 
     actions = re.findall(r"^### (\d+)\. (.*?) — `([^`]*)`", closes + "\n" + feuille, re.M)
     statuts_actions = collections.Counter(s for _, _, s in actions)
@@ -206,6 +231,11 @@ def page() -> str:
                             key=lambda r: (ORDRE_DES_LIMITES[r["etat"]], r["id"]))
     non_appliquees = [r for r in reformes if r.get("non_appliquee")]
     approchees = [r for r in veille if r["etat"] == "approchee"]
+    sans_approximation = [r for r in approchees if not r.get("approximations")]
+    manques_par_champ = collections.Counter(
+        re.split(r"[.\[]", champ)[0] for absents in manques.values() for champ in absents)
+    prochaines = sorted((str((r.get("sources") or {}).get("prochaine_relecture")), r["id"])
+                        for r in veille)
     # Un effet écrit à l'imparfait raconte l'erreur corrigée, pas ce qui reste.
     a_l_imparfait = [r["id"] for r in approchees
                      if re.search(r"\b\w+(ait|aient)\b", premiere(r.get("effet")))]
@@ -229,9 +259,10 @@ def page() -> str:
     w("# État du dépôt")
     w("")
     w("*Le tableau de bord (`docs/architecture.md`, § 9.1). Fabriqué par "
-      "`scripts/tableau_de_bord.py` depuis les registres d'aujourd'hui : aucun nombre "
-      "n'y est écrit à la main. Pour le corriger, on corrige le registre, puis on relance "
-      "le script ; un test refuse une copie périmée.*")
+      "`scripts/tableau_de_bord.py` depuis la carte des règles, la liste de contrôle des "
+      "textes et les registres qui ne sont pas encore des vues : aucun nombre n'y est écrit "
+      "à la main. Pour le corriger, on corrige la fiche ou le registre, puis on relance le "
+      "script ; un test refuse une copie périmée.*")
     w("")
     w("## 1. Où en est-on")
     w("")
@@ -249,7 +280,7 @@ def page() -> str:
         w(f"| {nom} | {milliers(poids[cle])} | {pct(poids[cle], total_caisses)} |")
     w("")
     w(f"*Modélisé ne veut pas dire exact* : les {etat.get('approchee', 0)} règles "
-      "approchées de la veille touchent aussi des régimes modélisés (section 2).")
+      "approchées de la carte touchent aussi des régimes modélisés (section 2).")
     w("")
     if non_rattachees:
         w(f"Caisses de l'enquête non rattachées à l'inventaire : {', '.join(non_rattachees)}.")
@@ -258,9 +289,11 @@ def page() -> str:
         w("Régimes rattachés à l'enquête que l'inventaire ne porte plus : "
           f"{', '.join(codes_perdus)}.")
         w("")
-    w(f"**Les règles suivies en veille** : {len(veille)}.")
+    w(f"**La carte des règles** (`data/reference/regles/`) : {len(veille)} fiches, dont "
+      f"{len(relations)} relation{'s' if len(relations) > 1 else ''}. La veille en est une "
+      "vue (`python scripts/veille_droit.py`).")
     w("")
-    w("| État | Règles |")
+    w("| État | Fiches |")
     w("|---|---|")
     for cle, nom in (("conforme", "conformes"), ("transcrite", "transcrites"),
                      ("approchee", "approchées"),
@@ -274,8 +307,36 @@ def page() -> str:
          else "aucun en écart connu)."))
     w(f"- Citées dans le code par leur identifiant : **{citees} sur {len(veille)}**. "
       "Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.")
+    w(f"- Mûres, sans rien qui manque à leur contrat : **{len(mures)} sur {len(veille)}**. "
+      "Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape "
+      "ni ses versions : ce qui lui manque est à faire (section 3).")
+    if decoupees:
+        w(f"- Découpées en versions : **{len(decoupees)} sur {len(veille)}**, soit "
+          f"{len(versions)} versions, dont {len(supposees)} supposées ; le partage des "
+          "versions se contrôle sur chacune.")
+    else:
+        w(f"- Découpées en versions : **aucune sur {len(veille)}** ; le partage des versions, "
+          "qui se contrôle sur chaque fiche, n'a encore rien à contrôler.")
     w(f"- Réformes du calendrier : {len(reformes)}, dont {len(non_appliquees)} déclarées "
       "non appliquées.")
+    w("")
+    w(f"**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : "
+      f"{milliers(len(redactions))} rédactions d'articles, de {len(textes_par_cle)} textes, "
+      f"lues le {inscription['lu_le']} ({inscription['index']}). C'est le dénominateur de "
+      "l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.")
+    w("")
+    w("| Statut | Rédactions |")
+    w("|---|---|")
+    for cle, nom in (("rattachee", "rattachées à une version"), ("sans_effet", "sans effet"),
+                     ("a_rattacher", "à rattacher"), ("a_examiner", "à examiner"),
+                     ("sans_statut", "sans statut")):
+        w(f"| {nom} | {milliers(statut_textes[cle])} |")
+    w("")
+    vues = [nom for nom, vue in registres_en_vues if vue]
+    restent = [nom for nom, vue in registres_en_vues if not vue]
+    w("**La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : "
+      + (", ".join(vues) if vues else "aucun") + ". Restent des registres : "
+      + (", ".join(restent) if restent else "aucun") + ".")
     w("")
     w("**Ce qui est hors du modèle.** La réversion, par exemple, pèse "
       f"{virgule(100 * float(derniere_part['part']))} % de la masse des prestations en "
@@ -298,7 +359,7 @@ def page() -> str:
     w(f"Et {len(partiels_sans_effectif)} régimes partiels sans effectif dans l'enquête "
       "(outre-mer, sections libérales, régimes fermés…).")
     w("")
-    w("**Les règles approchées, absentes ou à vérifier**, avec ce que le registre dit "
+    w("**Les règles approchées, absentes ou à vérifier**, avec ce que leur fiche dit "
       "de leur effet :")
     w("")
     w("| Règle | État | Qui est touché |")
@@ -309,7 +370,16 @@ def page() -> str:
     w(f"**Un état peut-être périmé.** Pour {len(a_l_imparfait)} des {len(approchees)} "
       "règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans "
       "dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : "
-      "la fiche séparera l'effet actuel de l'historique.")
+      "leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le "
+      "récit dans son historique.")
+    w("")
+    if sans_approximation:
+        combien = (f"Aucune des {len(approchees)} fiches approchées ne déclare"
+                   if len(sans_approximation) == len(approchees)
+                   else f"{len(sans_approximation)} des {len(approchees)} fiches approchées "
+                        "ne déclarent")
+        w(f"**Des approximations non déclarées.** {combien} encore ses approximations, "
+          "chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.")
     w("")
     if ecarts_connus:
         w("**Les exemples officiels que le modèle ne reproduit pas**, entrés en écart "
@@ -340,21 +410,40 @@ def page() -> str:
         w(f"  - {par_code[reg]['nom']} : {len(ids)} source(s) "
           f"({', '.join(ids[:3])}{'…' if len(ids) > 3 else ''})")
     w(f"  - et {sans_regime} sources sans régime désigné.")
-    w(f"- **Les règles sans exemple officiel** : {len(veille) - avec_exemple}.")
+    w(f"- **Les fiches sans exemple officiel** : {len(veille) - avec_exemple}.")
+    w(f"- **Faire mûrir la carte** : {sum(len(m) for m in manques.values())} champs "
+      f"obligatoires manquent, à {len(manques)} fiches. Par champ :")
+    w("")
+    w("  | Champ | Fiches à qui il manque |")
+    w("  |---|---|")
+    for champ, n in sorted(manques_par_champ.items(), key=lambda x: (-x[1], x[0])):
+        w(f"  | `{champ}` | {n} |")
+    w("")
+    w(f"- **Les textes** : {milliers(statut_textes['a_rattacher'])} rédactions à rattacher "
+      f"à une version de la fiche qui les cite, {milliers(statut_textes['a_examiner'])} à "
+      f"examiner, et {milliers(statut_textes['sans_statut'])} sans statut, que le cliquet "
+      f"tient à {milliers(cliquet_textes or 0)} au plus. Les textes qui en ont le plus : "
+      + ", ".join(f"`{cle}` {milliers(n)}" for cle, n in
+                  sorted(sans_statut_par_cle.items(), key=lambda x: (-x[1], x[0]))[:5])
+      + " (`python scripts/textes.py`).")
+    w("- **Les relectures prévues les plus proches** : "
+      + " ; ".join(f"{quand} (`{nom}`)" for quand, nom in prochaines[:5]) + ".")
     w(f"- **Les régimes hors champ** : {len(hors_champ)}, chacun avec sa raison dans "
       "l'inventaire.")
     w("")
     w("## 4. Ce que ce tableau ne sait pas encore dire")
     w("")
-    w("- **L'effet chiffré de chaque limite.** Les registres le disent en mots. Le pilote "
+    w("- **L'effet chiffré de chaque limite.** Les fiches le disent en mots. Le pilote "
       "le mesurera, en neutralisant la règle sur les cas types pondérés.")
     w("- **La part des pensions qui ne passent que par des règles conformes.** Il faut "
       "pour cela que chaque ligne du relevé cite sa fiche, ce que l'architecture prévoit "
       "aux phases 4 et 5.")
-    w("- **Ce que personne n'a encore noté.** Le dénominateur est aujourd'hui la mémoire "
-      "des registres ; la liste de contrôle des textes (phase 2) en fera la loi elle-même.")
-    w("- **La réorganisation.** Les règles du code qui ont leur fiche, et les registres "
-      "devenus des vues, se compteront quand la carte existera (phase 2).")
+    w("- **Ce que personne n'a encore noté, hors des articles.** Pour les articles, le "
+      "dénominateur est la loi (section 1). Les situations des fiches service-public et des "
+      "circulaires, les accords Agirc-Arrco et les statuts des caisses n'ont pas encore de "
+      "liste.")
+    w("- **Les règles du code qui ont leur fiche.** Une fiche dira son code ; aucune ne le "
+      "dit encore, et le tableau compte en attendant les identifiants que le code cite.")
     w("- **Les limites propres à une simulation.** Le site les montrera avec chaque "
       "résultat.")
     w("- **Le coût du travail** se relève sur l'historique git, et change à chaque "

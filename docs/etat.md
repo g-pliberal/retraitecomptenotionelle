@@ -1,6 +1,6 @@
 # État du dépôt
 
-*Le tableau de bord (`docs/architecture.md`, § 9.1). Fabriqué par `scripts/tableau_de_bord.py` depuis les registres d'aujourd'hui : aucun nombre n'y est écrit à la main. Pour le corriger, on corrige le registre, puis on relance le script ; un test refuse une copie périmée.*
+*Le tableau de bord (`docs/architecture.md`, § 9.1). Fabriqué par `scripts/tableau_de_bord.py` depuis la carte des règles, la liste de contrôle des textes et les registres qui ne sont pas encore des vues : aucun nombre n'y est écrit à la main. Pour le corriger, on corrige la fiche ou le registre, puis on relance le script ; un test refuse une copie périmée.*
 
 ## 1. Où en est-on
 
@@ -14,11 +14,11 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | régime partiel | 4 268 431 | 11 % |
 | sections libérales, couverture mêlée | 424 386 | 1 % |
 
-*Modélisé ne veut pas dire exact* : les 25 règles approchées de la veille touchent aussi des régimes modélisés (section 2).
+*Modélisé ne veut pas dire exact* : les 25 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
 
-**Les règles suivies en veille** : 98.
+**La carte des règles** (`data/reference/regles/`) : 98 fiches, dont 1 relation. La veille en est une vue (`python scripts/veille_droit.py`).
 
-| État | Règles |
+| État | Fiches |
 |---|---|
 | conformes | 43 |
 | transcrites | 21 |
@@ -29,7 +29,21 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 - Confrontées à au moins un exemple officiel : **22 sur 98** (54 exemples : 54 reproduits, aucun en écart connu).
 - Citées dans le code par leur identifiant : **12 sur 98**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
+- Mûres, sans rien qui manque à leur contrat : **0 sur 98**. Une fiche tirée d'un registre ne sait pas encore son domaine, ses régimes, son étape ni ses versions : ce qui lui manque est à faire (section 3).
+- Découpées en versions : **aucune sur 98** ; le partage des versions, qui se contrôle sur chaque fiche, n'a encore rien à contrôler.
 - Réformes du calendrier : 109, dont 11 déclarées non appliquées.
+
+**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 10 738 rédactions d'articles, de 33 textes, lues le 2026-09-26 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20260925-214830). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
+
+| Statut | Rédactions |
+|---|---|
+| rattachées à une version | 0 |
+| sans effet | 0 |
+| à rattacher | 189 |
+| à examiner | 0 |
+| sans statut | 10 549 |
+
+**La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : la veille. Restent des registres : la frontière contributive, l'inventaire des régimes.
 
 **Ce qui est hors du modèle.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR), et le modèle n'en calcule aucune.
 
@@ -51,7 +65,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libérales, régimes fermés…).
 
-**Les règles approchées, absentes ou à vérifier**, avec ce que le registre dit de leur effet :
+**Les règles approchées, absentes ou à vérifier**, avec ce que leur fiche dit de leur effet :
 
 | Règle | État | Qui est touché |
 |---|---|---|
@@ -90,7 +104,9 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `sections_liberales_majoration_enfants` | approchee | Aucune des trois fiches ne la portait : 10 % de complémentaire en moins pour tout parent de trois enfants. |
 | `un_statut_par_annee` | approchee | DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux moteurs : chacune verse à son régime, sur son revenu, et… |
 
-**Un état peut-être périmé.** Pour 17 des 25 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : la fiche séparera l'effet actuel de l'historique.
+**Un état peut-être périmé.** Pour 17 des 25 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
+
+**Des approximations non déclarées.** Aucune des 25 fiches approchées ne déclare encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
 
 **Aucun exemple officiel en écart connu** : le modèle reproduit tous ceux que le dépôt a transcrits. Un exemple qu'il ne reproduirait pas entrerait quand même, et se lirait ici.
 
@@ -102,7 +118,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
   - 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
-  - 130. L'architecture du dépôt : décidée, les phases 0 et 1 faites, la phase 2 à lancer
+  - 130. L'architecture du dépôt : décidée, les phases 0 à 2 faites, la phase 3 à lancer
 - **Les sources à exploiter** : 114 à explorer sur 260 (58 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Association des régimes de retraite complémentaire des salariés : 3 source(s) (agirc_arrco_majorations_enfants, agirc_arrco_textes_de_reference, agirc_arrco_parametres_statistiques)
   - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)
@@ -112,14 +128,31 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - Régime des auteurs et compositeurs lyriques (IRCEC) : 1 source(s) (mon_entreprise_artiste_auteur)
   - Assurance vieillesse des non-salariés agricoles (MSA) : 1 source(s) (msa_reforme_25_meilleures_annees)
   - et 20 sources sans régime désigné.
-- **Les règles sans exemple officiel** : 76.
+- **Les fiches sans exemple officiel** : 76.
+- **Faire mûrir la carte** : 805 champs obligatoires manquent, à 98 fiches. Par champ :
+
+  | Champ | Fiches à qui il manque |
+  |---|---|
+  | `dates_qui_decident` | 98 |
+  | `domaine` | 98 |
+  | `ecrit` | 98 |
+  | `etape` | 98 |
+  | `lit` | 98 |
+  | `regimes` | 98 |
+  | `versions` | 98 |
+  | `code` | 93 |
+  | `approximations` | 25 |
+  | `rang` | 1 |
+
+- **Les textes** : 189 rédactions à rattacher à une version de la fiche qui les cite, 0 à examiner, et 10 549 sans statut, que le cliquet tient à 10 549 au plus. Les textes qui en ont le plus : `css` 5 367, `rural` 1 000, `decret_46_2769` 946, `cpcmr` 696, `decret_90_1215` 350 (`python scripts/textes.py`).
+- **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`) ; 2026-12-31 (`duree_requise_par_generation`).
 - **Les régimes hors champ** : 15, chacun avec sa raison dans l'inventaire.
 
 ## 4. Ce que ce tableau ne sait pas encore dire
 
-- **L'effet chiffré de chaque limite.** Les registres le disent en mots. Le pilote le mesurera, en neutralisant la règle sur les cas types pondérés.
+- **L'effet chiffré de chaque limite.** Les fiches le disent en mots. Le pilote le mesurera, en neutralisant la règle sur les cas types pondérés.
 - **La part des pensions qui ne passent que par des règles conformes.** Il faut pour cela que chaque ligne du relevé cite sa fiche, ce que l'architecture prévoit aux phases 4 et 5.
-- **Ce que personne n'a encore noté.** Le dénominateur est aujourd'hui la mémoire des registres ; la liste de contrôle des textes (phase 2) en fera la loi elle-même.
-- **La réorganisation.** Les règles du code qui ont leur fiche, et les registres devenus des vues, se compteront quand la carte existera (phase 2).
+- **Ce que personne n'a encore noté, hors des articles.** Pour les articles, le dénominateur est la loi (section 1). Les situations des fiches service-public et des circulaires, les accords Agirc-Arrco et les statuts des caisses n'ont pas encore de liste.
+- **Les règles du code qui ont leur fiche.** Une fiche dira son code ; aucune ne le dit encore, et le tableau compte en attendant les identifiants que le code cite.
 - **Les limites propres à une simulation.** Le site les montrera avec chaque résultat.
 - **Le coût du travail** se relève sur l'historique git, et change à chaque commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`, avec la taille du dépôt — ses lignes, ses tests —, que la prose ne porte plus.

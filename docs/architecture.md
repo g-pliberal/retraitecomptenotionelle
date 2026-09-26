@@ -1418,14 +1418,15 @@ propriétaire (une décision politique, une validation, un geste sur GitHub).
 La feuille de route ne garde que ce que la carte ne sait pas dire :
 l'outillage, le site, les décisions.
 
-Le tableau n'attend pas la carte. Dès la phase 0, il se fabrique depuis les
-registres d'aujourd'hui : la veille, l'inventaire et les effectifs, les
+Le tableau n'a pas attendu la carte : dès la phase 0, il se fabriquait depuis
+les registres. Depuis la phase 2, il lit la carte des règles et la liste de
+contrôle des textes, sans avoir changé de questions ; les registres qui ne sont
+pas encore des vues le complètent : l'inventaire et les effectifs, les
 exemples officiels, les réformes, les sources à explorer, la feuille de route.
-À la phase 2, il passe à la carte, sans changer de questions. Une maquette l'a
-montré avant la phase 0 (note 0001, § 14.7) ; `scripts/tableau_de_bord.py` en
-est tiré. Le coût du travail, qui se relève sur l'historique git, périmerait la
-page à chaque commit : il s'affiche à la demande (`--cout`), hors de
-`docs/etat.md`.
+Une maquette l'a montré avant la phase 0 (note 0001, § 14.7) ;
+`scripts/tableau_de_bord.py` en est tiré. Le coût du travail, qui se relève
+sur l'historique git, périmerait la page à chaque commit : il s'affiche à la
+demande (`--cout`), hors de `docs/etat.md`.
 
 ### 9.2 Ce qu'on apprend n'est jamais bloqué
 

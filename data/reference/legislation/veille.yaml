@@ -2770,3 +2770,39 @@ journal:
       est à lire pour la structure de la loi n° 75-3, que l'index JORF ne
       donne pas : c'est lui qui dira si la majoration des mères est hors du
       titre II, et donc due dès le 1er juillet 1974.
+  - date: "2026-09-26"
+    session: "architecture, phase 2 : la carte des règles, les contrats, la liste de contrôle des textes"
+    consulte: >-
+      veille_droit.py, puis l'index LEGI, mis à jour deux fois dans la journée
+      sans qu'aucun incrément ait paru depuis le 25 septembre 2026 à 21 h 48, et
+      l'index JORF, dix incréments jusqu'au 26 septembre. Au Journal officiel
+      du 24 septembre 2026, les quatre arrêtés du 21 septembre sur les
+      libéraux et les indépendants : CARMF (JORFTEXT000054888270), CAVP et
+      CARCDSF (JORFTEXT000054888282), régime complémentaire des indépendants
+      (JORFTEXT000054888294), indemnités des administrateurs de la CNAVPL
+      (JORFTEXT000054888256). Au Journal officiel du 26 septembre, le décret
+      n° 2026-897 du 24 septembre 2026 sur la sécurité sociale des
+      artistes-auteurs (JORFTEXT000054902736). Dans l'index LEGI, pour poser
+      la liste de contrôle des textes, les rédactions de son périmètre.
+    trouve: >-
+      Rien qui change une règle que le modèle calcule. L'arrêté CARMF réécrit
+      l'option de l'article 5 du règlement complémentaire, pour une retraite
+      de vingt points au plus. L'arrêté CAVP et CARCDSF corrige la rédaction
+      des prestations complémentaires des chirurgiens-dentistes et des
+      sages-femmes, et remplace, à l'article 16 d'un règlement de la CAVP, les
+      trois « premier » par « deuxième » ; le règlement visé n'est pas dit.
+      Celui des indépendants, au 1er janvier 2027, refuse le complément
+      différentiel à qui a reçu un versement forfaitaire unique et insère les
+      articles 9-7 et suivants. Le décret des artistes-auteurs vaut pour les
+      périodes d'activité postérieures au 1er janvier 2027. Par ailleurs, les
+      entrées de ce registre sont devenues les fiches de data/reference/regles/,
+      et la liste de contrôle des textes est posée : 10 738 rédactions, dont
+      189 qu'une fiche cite et 10 549 sans statut, le compte que son cliquet
+      tient.
+    reste: >-
+      L'article 16 du règlement de la CAVP, rangé dans la fiche
+      cavp_minoration_deux_pentes parmi ses textes à relire. Les articles 9-7 et
+      suivants du règlement des indépendants, à lire avant 2027. Les
+      rédactions sans statut de la liste, à rattacher ou déclarer sans effet
+      fiche par fiche, et ce que les fiches tirées du registre ne savent pas
+      encore : domaine, régimes, étape, versions.
