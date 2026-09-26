@@ -1,0 +1,37 @@
+# Pose le repère git `phase-1` (docs/architecture.md, § 12) sur le dernier
+# commit de la phase 1 de l'architecture, 05ed5a9, qui porte la note de sa
+# fin (feuille de route, action 130).
+#
+# Le jeton d'une session Claude Code n'a pas le droit d'écrire un tag :
+# `git push origin phase-1` y répond HTTP 403. Celui d'un workflow, avec
+# `contents: write`, l'a. D'où ce fichier, lancé une fois puis supprimé,
+# comme `repere-phase-0.yml` avant lui. Le propriétaire l'a demandé le
+# 26 septembre 2026.
+#
+# Le repère est un tag léger : il ne porte aucune identité, donc aucune
+# adresse. S'il existe déjà, le workflow le dit et n'y touche pas.
+
+name: Repère phase-1
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  repere:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Poser phase-1 sur 05ed5a9
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DEPOT: ${{ github.repository }}
+        run: |
+          commit=05ed5a93ce0730476a9f9da1d044e89fc9d4dfdb
+          if gh api "repos/$DEPOT/git/ref/tags/phase-1" --jq .object.sha 2>/dev/null; then
+            echo "phase-1 existe déjà : rien n'est touché"
+          else
+            gh api "repos/$DEPOT/git/refs" -f ref=refs/tags/phase-1 -f sha="$commit" --jq .object.sha
+            echo "phase-1 posé sur $commit"
+          fi
