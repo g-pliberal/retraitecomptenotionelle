@@ -1964,7 +1964,11 @@ Vérifié le même jour, depuis un clone neuf de GitHub, après le passage du
 propriétaire : les trois vieilles branches et les trois repères sont
 supprimés, et un clone ordinaire, toutes branches et tous tags compris, ne
 porte plus le document. Seules les références des pull requests fermées 2, 3
-et 4 l'atteignent encore, jusqu'à ce que le support de GitHub les purge. Les
-repères `phase-0`, `phase-1` et `phase-2` sont à reposer depuis un poste, sur
-4bb438f, fc285ad et 6fb8284 : ni le jeton d'une session ni celui d'un workflow
-ne peuvent les créer sur le nouvel historique.
+et 4 l'atteignent encore, jusqu'à ce que le support de GitHub les purge.
+
+Les repères `phase-1` et `phase-2` sont reposés le même jour, sur fc285ad et
+6fb8284, par `reperes-phases.yml`, lancé puis supprimé : le jeton d'un
+workflow crée un tag quand les workflows du commit visé sont ceux de `main`.
+`phase-0` ne l'est pas : son commit, 4bb438f, porte des workflows plus
+anciens, et GitHub refuse d'y créer un tag au jeton d'un workflow comme à
+celui d'une session (HTTP 403). Seul le propriétaire peut le poser.
