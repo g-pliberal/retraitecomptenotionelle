@@ -207,3 +207,20 @@ commentaires.
   # `limites.md` en porte deux cents à lui seul.
   # ------------------------------------------------------------------------
 ```
+
+## `docs/veille_droit.md`
+
+```yaml
+  # La procédure de veille, et ce que le registre porte. Elle est écrite pour
+  # être SUIVIE par la session d'après : périmée, elle enverrait relire ce qui
+  # l'a déjà été. Sa dernière section s'intitule « aujourd'hui » et donnait un
+  # compte figé au 17 septembre 2026 — vingt-deux exemples publiés pour 21 ;
+  # elle lit maintenant le registre et les témoins.
+  docs/veille_droit.md:
+    defaut: etat
+    sections:
+      # Le jour où le dépôt a servi des âges légaux certifiés et faux : le
+      # récit qui fonde les trois outils, et ses chiffres sont ceux de ce
+      # jour-là — dont le « 63 ans et 171 trimestres » qui était l'erreur.
+      Ce qui s'est passé le 17 septembre 2026: recit
+```

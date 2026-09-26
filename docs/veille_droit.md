@@ -1,37 +1,24 @@
 # Veille du droit : comment le scénario 1 reste le droit applicable
 
-Le scénario 1 est l'étalon de tout le dépôt, et il doit être le droit en
-vigueur, pas une lecture qu'on en aurait. Ce document dit comment on s'en
-assure, et ce qui s'est passé le jour où on ne s'en était pas assuré.
+Le scénario 1 est l'étalon de tout le dépôt : le droit en vigueur à la date
+d'effet de la pension, tel que la caisse l'applique, et non une lecture qu'on
+en aurait. Cette page dit la procédure qui s'en assure. Ce qui l'a fait
+naître — des âges légaux certifiés, et faux, le 17 septembre 2026 — est
+raconté dans `docs/archives/veille_droit.md`.
 
-## Ce qui s'est passé le 17 septembre 2026
+Trois principes la fondent.
 
-Les âges légaux et les durées requises du dépôt étaient **certifiés** : lus
-automatiquement dans la base LEGI, confrontés ligne à ligne, journalisés. Ils
-étaient faux pour tout assuré né de 1964 à 1968. La loi de financement de la
-sécurité sociale pour 2026, votée le 30 décembre 2025, avait suspendu la
-réforme de 2023 ; ses décrets étaient du 7 mai 2026 ; le dump LEGI que le
-récupérateur avait lu était du 13 juillet 2025. Une certification est vraie à
-une date, et rien dans le dépôt ne disait que cette date était dépassée.
-
-C'est le premier exemple chiffré publié par service-public qui l'a fait voir :
-« né en 1964, 62 ans et 9 mois, 170 trimestres », là où le dépôt disait
-63 ans et 171. Sans cet exemple, l'erreur aurait été servie à chaque
-utilisateur né dans ces années.
-
-Trois leçons, qui sont devenues trois outils.
-
-1. **Une valeur n'est pas juste parce qu'elle est certifiée : elle est juste
-   à la date de sa certification.** Chaque règle porte donc maintenant la
-   date de sa dernière lecture, et un script dit lesquelles ont vieilli.
+1. **Une valeur n'est pas juste parce qu'elle est certifiée : elle l'est à la
+   date de sa certification.** Chaque règle porte la date de sa dernière
+   lecture, et un script dit lesquelles ont vieilli.
 2. **Une déduction n'est pas une lecture, une mémoire n'est pas une source.**
    Ce qui entre dans le scénario 1 a été lu dans le texte sur Légifrance, et
    dans la circulaire ou la fiche qui l'applique. Sans les deux, la ligne le
    dit (`transcrit`, `a_verifier`), et ce niveau remonte jusqu'au résultat
    affiché.
 3. **L'exemple publié par la caisse est la seule contre-expertise officielle
-   et reproductible.** Il n'y a pas de simulateur officiel interrogeable ;
-   il y a des exemples, et ils se rejouent.
+   et reproductible** : il se rejoue, et il entre même quand le modèle ne le
+   reproduit pas, en écart connu.
 
 ## Les trois pièces
 
@@ -101,19 +88,9 @@ consulté, ce qui a été trouvé, ce qui reste. Mettre à jour `verifie_le` et
 `prochaine_veille` des lignes relues. Régénérer les témoins, lancer la suite,
 commiter sur `main`.
 
-## Ce que le registre porte aujourd'hui
-
-Le registre porte <!--chiffre:entrees(data/reference/legislation/veille.yaml:entrees)-->98<!--/--> lignes,
-et ce qui y est `conforme` a été lu dans le texte comme dans son application,
-puis rejoué par les <!--chiffre:entrees(tests/temoins/exemples_officiels.yaml:exemples)-->54<!--/--> exemples publiés
-que `exemples_officiels.yaml` transcrit. Le 17 septembre 2026, l'action 27 a
-fait relire au récupérateur, dans l'index LEGI du dépôt tenu à jour des
-incréments de la DILA, les articles que la suspension a réécrits : les lignes
-redescendues au niveau `moyenne` sont toutes redevenues `certifiee`, sans
-qu'un chiffre bouge, et le récupérateur ne lit plus le dump global de
-juillet 2025.
-
 Ce qui est `transcrit` attend son exemple. Ce qui est `manque` ou
 `approximation` est mesuré dans `limites.md`. Ce qui est `a_verifier` est ce
 que la session n'a pas pu finir de lire, et c'est par là que la suivante
-commence — `python scripts/veille_droit.py` le dit.
+commence : `python scripts/veille_droit.py` le dit. Combien de règles le
+registre porte, dans quel état, et combien d'exemples les rejouent : le
+tableau de bord, `docs/etat.md`.

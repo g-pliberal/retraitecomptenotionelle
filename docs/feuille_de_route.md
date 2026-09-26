@@ -1614,7 +1614,7 @@ coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`
 `README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
 fabriqués.
 
-### 130. L'architecture du dépôt : décidée, la phase 0 faite, la phase 1 à lancer — `en cours`
+### 130. L'architecture du dépôt : décidée, les phases 0 et 1 faites, la phase 2 à lancer — `en cours`
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
@@ -1654,9 +1654,11 @@ l'octet :
 
 **Ce qui reste ouvert.**
 
-- La phase 1 (§ 11), faite pour l'essentiel (plus bas). Restent
-  `docs/fraicheur.md` en note de décision, `docs/veille_droit.md` raccourci,
-  les documents qui mêlent encore deux régimes, et le repère `phase-1`.
+- La phase 2 (§ 11) : la carte des règles et des relations, tirée des
+  registres existants ; le vocabulaire des dates ; les contrats de
+  l'annexe C en schémas validés par les tests ; les cliquets des textes ;
+  le tableau de bord qui passe à la carte. Avec elle, les entrées de
+  `veille.yaml` passent dans les fiches, et son journal en archive.
 - Les constats faits en chemin sur le scénario 1, que
   `docs/decisions/0001/phase_0.md` liste (« Ce qui vient après ») : consignés
   le 25 septembre 2026 par la procédure de veille (plus bas), aucun corrigé.
@@ -1816,3 +1818,29 @@ source à côté de chaque document : `source_locale.py --mentions` l'écrit dan
 la ligne qui le décrit, sans toucher au fichier, et `documents-apportes.yml`
 le lance à chaque passe. Le rapport de l'OPEF, lui, reste dans l'historique
 git : le propriétaire le garde, et l'historique n'est pas réécrit.
+
+**La phase 1 achevée**, le 26 septembre 2026, à la demande du propriétaire.
+`docs/fraicheur.md` est devenu une note de décision,
+`docs/decisions/0002-fraicheur-de-la-prose.md`, qui en garde le texte entier,
+et une page courte qui dit la règle : un régime par document, et ses
+exceptions déclarées une à une. `zones.yaml` le suit. Le README, la
+méthodologie et l'outillage d'interface y passent à `etat` par défaut, sans
+plus déclarer leurs sections une à une, et le fichier passe de 500 lignes à
+360 ; ce qu'il perdait, commentaires compris, est gardé dans
+`docs/archives/zones.md`. Les récits d'`outillage_interface.md` et de
+`veille_droit.md` ont rejoint leurs archives, et la procédure de veille ne
+garde que la procédure : ses principes, ses trois pièces, sa règle, et le
+tableau de bord pour l'état du registre. Restent, par construction, des
+exceptions déclarées :
+- les paragraphes de récit du README, texte de la proposition, et de la
+  méthodologie ;
+- les procès-verbaux enclavés dans `limites.md` ;
+- la liste des versions de l'architecture, et le préambule d'état de cette
+  feuille de route ;
+- la section de récit de l'intégration, que l'annexe B garde inchangée ;
+- les trois sections d'état d'`avantages_non_contributifs.md`, qui deviendra
+  une vue à la phase 2.
+
+Le repère `phase-1` marquera le commit qui porte cette note, comme `phase-0`
+le dernier commit de la phase 0 : le propriétaire a demandé qu'on le pose, et
+un workflow lancé une fois le fait.
