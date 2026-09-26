@@ -40,6 +40,8 @@ from .donnees.macro import DonneesMacro
 from .donnees.mortalite import DonneesMortalite
 from .donnees.regimes import CatalogueRegimes
 from .donnees.taux import CourbeTauxSansRisque
+from .echeancier import Echeancier
+from .journal import Journal
 from .moteur.age_reference import AgeReference
 from .moteur.capitalisation import ConstructeurCapitalisation
 from .moteur.compte import ConstructeurCompte
@@ -51,7 +53,6 @@ from .revalorisation import (
     PensionAujourdhui,
     RevalorisationServie,
     RevalorisationsPensions,
-    actuel_aujourd_hui,
     pension_aujourd_hui,
 )
 from .scenarios.actuel import ResultatActuel, ScenarioActuel
@@ -185,6 +186,11 @@ class Comparaison:
     #: le dernier revenu du taux de remplacement.
     coefficient_euros_constants_liberal: float | None = None
     dernier_revenu_annualise_liberal: float | None = None
+    #: Le journal de l'échéancier du scénario 1 (docs/architecture.md, § 7.4) :
+    #: le départ, sa liquidation et ses composantes, l'ASPA du jour et, pour
+    #: qui a déjà liquidé, ce que l'échéance en a fait. Il n'entre dans aucune
+    #: sortie.
+    journal: Journal | None = None
 
     # -- indicateurs ---------------------------------------------------------
 
@@ -919,10 +925,20 @@ class Simulateur:
         lit sur son relevé, et non celle de son premier mois. Pour qui liquide
         cette année ou plus tard, c'est la pension du départ, dans ses euros.
         """
-        resultat = self.scenario_actuel.calculer(carriere)
-        if carriere.annee_liquidation >= self.parametres.annee_courante:
-            return resultat.pension_annuelle
-        return actuel_aujourd_hui(self, carriere, resultat).pension_annuelle
+        echeancier = self.echeancier(carriere)
+        if echeancier.aujourd_hui is None:
+            return echeancier.au_depart.pension_annuelle
+        return echeancier.aujourd_hui.pension_annuelle
+
+    def echeancier(self, carriere: Carriere) -> Echeancier:
+        """L'échéancier du scénario 1 parcouru pour ``carriere`` : son départ,
+        puis, pour qui a liquidé avant l'année courante, l'échéance de cette
+        année-là."""
+        echeancier = Echeancier(self)
+        echeancier.parcourir(carriere, echeance=(
+            self.parametres.annee_courante
+            if carriere.annee_liquidation < self.parametres.annee_courante else None))
+        return echeancier
 
     @cached_property
     def convertisseur(self) -> Convertisseur:
@@ -1181,7 +1197,12 @@ class Simulateur:
 
         fusionne = self.regime_fusionne if self.parametres.fusion_au_plus_defavorable else None
 
-        actuel = self.scenario_actuel.calculer(carriere)
+        # LE SCÉNARIO 1 PASSE PAR L'ÉCHÉANCIER (docs/architecture.md, § 7.4) :
+        # le départ appelle la liquidation, puis l'ASPA du jour ; l'échéance,
+        # pour qui a liquidé avant l'année courante, fait vivre les pensions
+        # jusque-là. Tout s'inscrit à son journal.
+        echeancier = self.echeancier(carriere)
+        actuel = echeancier.au_depart
         retroactif = self.scenario_notionnel.retroactif(carriere, fusionne)
         prospectif = self.scenario_notionnel.prospectif(carriere, self.regime_fusionne)
         retroactif_employeur = self.scenario_employeur.retroactif(
@@ -1227,8 +1248,10 @@ class Simulateur:
                 if reporte else None
             ),
         )
+        comparaison.journal = echeancier.journal
         if carriere.annee_liquidation < self.parametres.annee_courante:
-            comparaison.aujourd_hui = pension_aujourd_hui(self, comparaison)
+            comparaison.aujourd_hui = pension_aujourd_hui(self, comparaison,
+                                                          echeancier.aujourd_hui)
             comparaison.coefficient_euros_aujourd_hui = self.macro.coefficient_prix(
                 self.parametres.annee_courante, self.parametres.annee_euros_constants
             )

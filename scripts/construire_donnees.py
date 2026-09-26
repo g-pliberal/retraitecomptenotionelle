@@ -1183,6 +1183,22 @@ def _presomptions() -> dict:
             for nom, presomption in sorted(vocabulaire.presomptions().items())}
 
 
+def _sortes_d_evenement() -> dict:
+    """Ce que chaque sorte d'événement appelle (docs/architecture.md, § 7.4) :
+    ``liquider``, avec quel motif et quelle nature. L'échéancier du site le
+    lit, comme celui du Python le lit au vocabulaire."""
+    sortes = vocabulaire.valeurs()["listes"]["sortes_d_evenement"]["valeurs"]
+    return {nom: {cle: sorte[cle] for cle in ("liquider", "motif", "nature") if cle in sorte}
+            for nom, sorte in sorted(sortes.items())}
+
+
+def _neutralisations() -> list[str]:
+    """Ce qu'un calcul peut neutraliser (docs/architecture.md, § 4.8 et 6.4) :
+    le contexte de la liquidation du site refuse le reste, comme celui du
+    Python."""
+    return sorted(vocabulaire.liste("neutralisations"))
+
+
 def _services_ouvrant_pension() -> dict:
     """Durée de services qui ouvre une pension, par régime spécial et par date
     de radiation : la condition de priorité de R. 173-15."""
@@ -1587,6 +1603,8 @@ def construire(bilan: bytes) -> bytes:
         "carriere_longue": _carriere_longue(),
         "majorations_enfants": _majorations_enfants(),
         "presomptions": _presomptions(),
+        "sortes_d_evenement": _sortes_d_evenement(),
+        "neutralisations": _neutralisations(),
         "services_ouvrant_pension": _services_ouvrant_pension(),
         "surcote_parentale": _surcote_parentale(),
         "majoration_enfants_points": _majoration_enfants_points(),

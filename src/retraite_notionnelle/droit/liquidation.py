@@ -35,6 +35,7 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING
 
 from ..donnees.chargement import Fiabilite
+from ..noyau import vocabulaire
 from . import completer as _completer
 from . import liquider as _liquider
 from . import ouvrir as _ouvrir
@@ -54,8 +55,7 @@ SCHEMA_VERSION = 1
 
 #: Ce qu'un calcul peut neutraliser : la liste ``neutralisations`` du
 #: vocabulaire, que le contexte refuse de dépasser.
-NEUTRALISATIONS = frozenset({"avantages_non_contributifs", "avpf", "points_gratuits",
-                             "decote_surcote", "successions"})
+NEUTRALISATIONS = frozenset(vocabulaire.liste("neutralisations"))
 
 #: Ce que chaque dispositif s'appelle dans la cascade des avantages.
 _LIBELLE_MAJORATION = {
@@ -190,10 +190,10 @@ class Liquidation:
         """Les pensions de régime, complétées."""
         return self.complements.regimes
 
-    def donnees(self) -> dict:
-        """La liquidation, telle que le contrat C.6 la décrit : ses
-        composantes — la pension de chaque régime, puis la majoration pour
-        enfants —, les lignes du relevé qu'elle a lues, et ses mesures."""
+    def composantes(self) -> list[dict]:
+        """Ses composantes (contrat C.6) : la pension de chaque régime, puis
+        la majoration pour enfants. Chacune a un identifiant stable, que la
+        revalorisation reprend dans sa lignée au journal."""
         catalogue = self.contexte.univers.catalogue
         isoler = self.contexte.univers.parametres.isoler_capitalisation
         debut = self.demande.date_effet
@@ -210,11 +210,16 @@ class Liquidation:
                     "beneficiaire": self.demande.personne,
                     "montant": {"annuel": avantage.montant, "monnaie": "EUR"},
                     "debut": debut, "detail": avantage.detail})
+        return composantes
+
+    def donnees(self) -> dict:
+        """La liquidation, telle que le contrat C.6 la décrit : ses
+        composantes, les lignes du relevé qu'elle a lues, et ses mesures."""
         return {
             "schema_version": SCHEMA_VERSION,
             "demande": self.demande.donnees(),
             "contexte": self.contexte.donnees(),
-            "composantes": composantes,
+            "composantes": self.composantes(),
             "lignes_consommees": [ligne["id"] for ligne in self.releve.lignes()],
             "origine": "calculee",
             "mesures": [{"code": m.code, "neutralisation": m.neutralisation,

@@ -19,27 +19,11 @@ from typing import TYPE_CHECKING
 
 from .carriere import PROFIL_AUTOMATIQUE, Carriere
 from .simulateur import Comparaison, Simulateur
-from .droit import ouvrir
+from . import pilote
+from .pilote import VARIANTES_LIQUIDATION
 
 if TYPE_CHECKING:  # pragma: no cover - annotation seulement
     from .donnees.effectifs import EffectifsRetraites
-
-
-#: Les deux façons de dater le départ d'un cas type.
-#:
-#: ``droit`` est celle des résultats affichés : chaque génération liquide à
-#: l'âge que SON droit lui ouvre. ``absolu`` est l'ancienne, gardée non comme
-#: repli mais comme variante — l'âge écrit dans la grille, le même pour toutes
-#: les générations, qui faisait partir la génération 1940 à soixante-quatre ans
-#: en 2004 alors que la loi ne les lui a jamais demandés.
-VARIANTES_LIQUIDATION: tuple[str, ...] = ("droit", "absolu")
-
-#: Nombre de fois que l'âge de liquidation est rapproché de l'âge d'ouverture.
-#: Il en faut plus d'une : l'âge qu'une fiche de régime oppose dépend de
-#: l'ANNÉE de liquidation — celle de la SNCF et celle des IEG montent d'un
-#: trimestre par millésime —, si bien que déplacer l'âge déplace la réponse.
-#: Deux passes suffisent partout dans la grille ; les deux autres sont la marge.
-PASSES_LIQUIDATION = 4
 
 
 @dataclass(frozen=True)
@@ -107,78 +91,9 @@ class CasType:
 
     def age_liquidation_pour(self, simulateur: Simulateur, generation: int,
                              variante: str = "droit") -> float:
-        """L'âge auquel ce cas type liquide, étant née en ``generation``.
-
-        **Pourquoi ce n'est pas un nombre.** Un cas type décrit une carrière,
-        pas une date : « le salarié au salaire moyen » n'est pas « celui qui
-        part à soixante-quatre ans », c'est celui qui part quand la loi le lui
-        permet. Écrire l'âge revenait à faire partir à soixante-quatre ans une
-        génération née en 1940 — c'est-à-dire en 2004, sous un droit qui en
-        demandait soixante —, et à donner au modèle un stock de retraités trop
-        vieux au départ de la projection, donc trop rapide à croître.
-
-        **Comment la réponse est trouvée.** L'âge d'ouverture dépend de la
-        carrière, laquelle dépend de l'âge de liquidation : la question tourne
-        en rond, et on la résout par un POINT FIXE. On part de l'âge écrit, on
-        demande au scénario 1 ce que le droit oppose à cette liquidation-là, on
-        recommence. Deux garde-fous : le nombre de passes est borné, et une
-        descente n'est retenue que si l'âge plus précoce est lui-même ouvert.
-        Le second n'est pas décoratif — la CANCAVA ouvrait à soixante-cinq ans
-        jusqu'en 1972 et à soixante à partir de 1973, si bien qu'un artisan né
-        en 1910 « ouvre » à soixante ans un droit que son année de départ lui
-        refuse. Dans ce cas la règle ne descend pas plus bas que l'âge que ce
-        départ-là confirme, et reste où elle est s'il n'y en a pas de plus
-        précoce.
-        """
-        if variante not in VARIANTES_LIQUIDATION:
-            raise ValueError(
-                f"variante de liquidation inconnue : {variante!r} "
-                f"(attendu : {VARIANTES_LIQUIDATION})"
-            )
-        if variante == "absolu":
-            return self.age_liquidation
-        if self.regle_liquidation == "services":
-            return self.age_debut + self.ecart_liquidation
-        if self.regle_liquidation not in ("ouverture", "taux_plein"):
-            raise ValueError(
-                f"règle de liquidation inconnue : {self.regle_liquidation!r}"
-            )
-        age = self.age_liquidation
-        for _ in range(PASSES_LIQUIDATION):
-            propose = self._age_propose(simulateur, generation, age)
-            if propose is None or abs(propose - age) < 1e-9:
-                break
-            if propose > age:
-                age = propose
-                continue
-            confirme = self._age_propose(simulateur, generation, propose)
-            if confirme is None:
-                break
-            if confirme > propose + 1e-9:
-                # L'âge plus précoce n'est pas ouvert sous SES règles, mais le
-                # droit peut s'ouvrir entre les deux : depuis la suspension de
-                # 2026, la durée opposable dépend de la date d'effet, et un né
-                # en 1965 que la règle de 2027 ferait partir à 60 ans et 9 mois
-                # part à 61 ans sous celle de 2026. On essaie donc l'âge que le
-                # droit oppose alors, s'il reste plus précoce que l'âge retenu.
-                if confirme < age - 1e-9:
-                    age = confirme
-                    continue
-                break
-            age = propose
-        return age
-
-    def _age_propose(self, simulateur: Simulateur, generation: int,
-                     age: float) -> float | None:
-        """Ce que la règle oppose à cette carrière liquidée à ``age``, décalé."""
-        actuel = simulateur.scenario_actuel
-        carriere = self._carriere(simulateur, generation, age)
-        reference = (
-            ouvrir.age_taux_plein_droit(actuel, carriere)
-            if self.regle_liquidation == "taux_plein"
-            else ouvrir.age_ouverture_droit(actuel, carriere)
-        )
-        return None if reference is None else reference + self.ecart_liquidation
+        """L'âge auquel ce cas type liquide, étant né en ``generation`` : le
+        pilote le fixe (:func:`~retraite_notionnelle.pilote.age_de_depart`)."""
+        return pilote.age_de_depart(simulateur, self, generation, variante)
 
     def construire(self, simulateur: Simulateur, generation: int,
                    variante: str = "droit") -> Carriere:
@@ -430,8 +345,6 @@ def poids_egaux(cas_types: tuple[CasType, ...] = CAS_TYPES) -> dict[str, float]:
     combien elle les déplaçait, ce qu'aucun argument ne remplace.
     """
     return {cas.code: 1.0 / len(cas_types) for cas in cas_types}
-
-
 
 
 @dataclass

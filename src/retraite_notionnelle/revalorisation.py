@@ -63,6 +63,7 @@ from pathlib import Path
 from .config import RevalorisationStock, SituationFoyer
 from .donnees.chargement import Fiabilite
 from .droit import liquider
+from .droit.foyer import Foyer, foyer_et_net
 
 
 # -- ce que le droit a servi depuis la liquidation ---------------------------
@@ -296,6 +297,39 @@ class RegimeServi:
 
 
 @dataclass(frozen=True)
+class Revalorisee:
+    """Ce que l'étape « faire vivre » écrit : les pensions du système 1 menées
+    à une échéance. Son schéma : ``data/reference/etapes/faire_vivre.yaml``."""
+
+    personne: str
+    #: L'année de l'échéance, dont les euros sont ceux de tous les montants.
+    annee: int
+    regimes: tuple[RegimeServi, ...]
+    #: La majoration pour enfants à la liquidation, et le coefficient qui la
+    #: mène à l'échéance : chaque part à celui du régime qui la porte.
+    majoration_enfants: float
+    coefficient_majoration: float
+    #: Le montant total brut mensuel de décembre 2019 qui a choisi la tranche
+    #: de 2020, ou ``None`` quand la pension n'a pas traversé cette date.
+    mensuel_decembre_2019: float | None
+    fiabilite: Fiabilite
+
+    def donnees(self) -> dict:
+        """La revalorisation, telle que le schéma de l'étape la décrit."""
+        return {
+            "schema_version": 1,
+            "personne": self.personne,
+            "date": f"{self.annee:04d}-12-31",
+            "regimes": [{"regime": r.regime, "coefficient": r.coefficient,
+                         "regle": r.regle, "fiabilite": r.fiabilite.name.lower()}
+                        for r in self.regimes],
+            "majoration": self.coefficient_majoration,
+            "mensuel_decembre_2019": self.mensuel_decembre_2019,
+            "fiabilite": self.fiabilite.name.lower(),
+        }
+
+
+@dataclass(frozen=True)
 class ActuelAujourdhui:
     """Le système 1 aujourd'hui : ce que le droit sert, régime par régime."""
 
@@ -477,13 +511,14 @@ class PensionServie:
                 min(fiabilite, fiabilite_decrets, fiabilite_generale))
 
 
-def actuel_aujourd_hui(simulateur, carriere, resultat,
-                       annee: int | None = None) -> ActuelAujourdhui:
-    """Le système 1 servi en ``annee`` — l'année courante par défaut.
+def faire_vivre(simulateur, carriere, resultat, annee: int | None = None) -> Revalorisee:
+    """L'étape « faire vivre » (docs/architecture.md, § 7.4) : les pensions
+    du système 1 menées jusqu'en ``annee`` — l'année courante par défaut.
 
     ``resultat`` est le scénario 1 de ``carriere`` à la liquidation. Rien n'est
     recalculé de la carrière : seuls les montants de chaque régime sont
-    revalorisés, selon la règle de leur texte.
+    revalorisés, selon la règle de leur texte. Une revalorisation ne relance
+    jamais la liquidation.
     """
     parametres = simulateur.parametres
     annee = parametres.annee_courante if annee is None else annee
@@ -495,8 +530,6 @@ def actuel_aujourd_hui(simulateur, carriere, resultat,
     pensions = list(resultat.pensions_par_regime)
     majoration = sum(a.montant for a in resultat.avantages_appliques
                      if a.code == "majoration_enfants")
-    aspa_au_depart = sum(a.montant for a in resultat.avantages_appliques
-                         if a.code == "minimum_vieillesse")
 
     #: La part de chaque régime dans la majoration pour enfants, plafond
     #: compris (``AvantageApplique.par_regime``).
@@ -558,34 +591,56 @@ def actuel_aujourd_hui(simulateur, carriere, resultat,
             hors_repartition=isoler and simulateur.catalogue[pension.regime].hors_repartition,
         ))
     coefficient_majoration = coefficient_de_la_majoration(coefficients)
-
-    # L'ASPA D'AUJOURD'HUI, comme à la liquidation : différentielle, sur
-    # TOUTES les pensions — le RAFP compris —, et à 65 ans révolus dans
-    # l'année. Qui est parti à 62 ans l'a peut-être gagnée depuis.
-    aspa = 0.0
-    if (parametres.minimum_vieillesse_dans_le_scenario_actuel
-            and annee >= carriere.annee_naissance + MINIMUM_VIEILLESSE_AGE):
-        bareme = simulateur.scenario_actuel.minimum_vieillesse.plafond(annee)
-        if bareme is not None:
-            ressources = (sum(r.aujourd_hui for r in regimes)
-                          + majoration * coefficient_majoration)
-            aspa = max(0.0, bareme[0] - ressources)
-            if aspa > 0:
-                fiabilite = min(fiabilite, bareme[1])
-
-    return ActuelAujourdhui(
+    return Revalorisee(
+        personne=carriere.personne,
         annee=annee,
         regimes=tuple(regimes),
         majoration_enfants=majoration,
         coefficient_majoration=coefficient_majoration,
-        minimum_vieillesse_au_depart=aspa_au_depart,
-        minimum_vieillesse=aspa,
         mensuel_decembre_2019=mensuel_2019,
         fiabilite=fiabilite,
     )
 
 
-def pension_aujourd_hui(simulateur, comparaison) -> PensionAujourdhui:
+def foyer_a_l_echeance(simulateur, carriere, vivante: Revalorisee) -> Foyer:
+    """L'étape « foyer et net » à l'échéance de ``vivante`` : l'ASPA
+    d'aujourd'hui, comme à la liquidation, différentielle, sur TOUTES les
+    pensions — le RAFP compris —, et à 65 ans révolus dans l'année. Qui est
+    parti à 62 ans l'a peut-être gagnée depuis."""
+    ressources = (sum(r.aujourd_hui for r in vivante.regimes)
+                  + vivante.majoration_enfants * vivante.coefficient_majoration)
+    return foyer_et_net(
+        simulateur.scenario_actuel, carriere.personne, f"{vivante.annee:04d}-12-31",
+        vivante.annee, ressources,
+        vivante.annee >= carriere.annee_naissance + MINIMUM_VIEILLESSE_AGE)
+
+
+def aujourd_hui(vivante: Revalorisee, foyer: Foyer, resultat) -> ActuelAujourdhui:
+    """Le système 1 à l'échéance : les pensions que « faire vivre » a menées
+    jusque-là, et l'ASPA que « foyer et net » y ajoute."""
+    return ActuelAujourdhui(
+        annee=vivante.annee,
+        regimes=vivante.regimes,
+        majoration_enfants=vivante.majoration_enfants,
+        coefficient_majoration=vivante.coefficient_majoration,
+        minimum_vieillesse_au_depart=sum(a.montant for a in resultat.avantages_appliques
+                                         if a.code == "minimum_vieillesse"),
+        minimum_vieillesse=foyer.minimum_vieillesse,
+        mensuel_decembre_2019=vivante.mensuel_decembre_2019,
+        fiabilite=min(vivante.fiabilite, foyer.fiabilite),
+    )
+
+
+def actuel_aujourd_hui(simulateur, carriere, resultat,
+                       annee: int | None = None) -> ActuelAujourdhui:
+    """Le système 1 servi en ``annee`` — l'année courante par défaut : faire
+    vivre, puis foyer et net, comme l'échéancier les applique."""
+    vivante = faire_vivre(simulateur, carriere, resultat, annee)
+    return aujourd_hui(vivante, foyer_a_l_echeance(simulateur, carriere, vivante), resultat)
+
+
+def pension_aujourd_hui(simulateur, comparaison,
+                        actuel_servi: ActuelAujourdhui | None = None) -> PensionAujourdhui:
     """Les six systèmes servis l'année courante, pour qui a déjà liquidé.
 
     Le système 1 suit le droit (:func:`actuel_aujourd_hui`). Les deux
@@ -594,6 +649,9 @@ def pension_aujourd_hui(simulateur, comparaison) -> PensionAujourdhui:
     stock que ``revalorisation_stock`` choisit. Les trois rétroactifs suivent
     la règle du compte jusqu'à la bascule, puis celle du stock — la même
     convention que la page Coût.
+
+    ``actuel_servi`` est le système 1 à l'échéance, quand l'échéancier l'a
+    déjà mené jusque-là : il n'est pas refait.
     """
     parametres = simulateur.parametres
     carriere = comparaison.carriere
@@ -604,7 +662,8 @@ def pension_aujourd_hui(simulateur, comparaison) -> PensionAujourdhui:
     revalorisation = simulateur.revalorisation_servie
     vers_aujourd_hui = macro.coefficient_prix(liquidation, annee)
 
-    actuel = actuel_aujourd_hui(simulateur, carriere, comparaison.actuel, annee)
+    actuel = (actuel_servi if actuel_servi is not None
+              else actuel_aujourd_hui(simulateur, carriere, comparaison.actuel, annee))
     coefficient_actuel = (actuel.pension_annuelle / comparaison.actuel.pension_annuelle
                           if comparaison.actuel.pension_annuelle > 0 else 1.0)
 
