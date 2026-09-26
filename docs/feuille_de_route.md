@@ -1797,3 +1797,22 @@ Le journal de veille reste dans `veille.yaml` : l'annexe B ne le range en
 archive qu'avec le passage de ses entrées aux fiches, qui est la phase 2. Le
 repère `phase-1` n'est pas posé : comme pour `phase-0`, il y faut un workflow
 lancé une fois, et l'accord du propriétaire.
+
+**La Cour des comptes et l'OPEF, tranchés le 26 septembre 2026.** Les
+mentions légales de ccomptes.fr, que les sessions ne joignent pas, se lisent
+dans l'archive du web : deux copies, du 4 août 2025 et du 22 mars 2026,
+identiques au crédit des photographies près. « La reproduction des contenus
+de ce site est autorisée », pourvu que `www.ccomptes.fr` soit cité avec la
+date et l'intitulé du document, et que rien n'en soit altéré. Le rapport sur
+les retraites des fonctionnaires de l'État passe donc à `libre`, clause citée,
+avec le zip de ses données, qui a désormais son jeu au manifeste. Le PDF ne
+porte aucune photographie, que la clause exclut : ses images sont les
+graphiques et deux pages scannées d'une lettre. Une réserve est écrite au
+manifeste. La même rubrique exclut les contenus où figurent des données
+personnelles, sauf accord des intéressés, et le rapport nomme ses auteurs,
+lettre signée comprise. Le dépôt le reproduit entier, comme la clause
+l'exige, et l'asset se retire si la Cour le demande. La release doit citer la
+source à côté de chaque document : `source_locale.py --mentions` l'écrit dans
+la ligne qui le décrit, sans toucher au fichier, et `documents-apportes.yml`
+le lance à chaque passe. Le rapport de l'OPEF, lui, reste dans l'historique
+git : le propriétaire le garde, et l'historique n'est pas réécrit.

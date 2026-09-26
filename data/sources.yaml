@@ -49,7 +49,9 @@
 # dit sous quel nom), `interdite` (jamais : la copie reste dans data/brut/,
 # que git ignore, et le `sha256` suffit à la vérifier) ou `a_lire` ; `texte`
 # cite la clause qui fonde le statut, `lu_dans` et `lu_le` disent où et
-# quand. Sans ce champ, le document est `a_lire`. `source_locale.py
+# quand ; `mention`, ce que la licence exige de citer à côté du document —
+# la release l'écrit dans la ligne qui le décrit (`source_locale.py
+# --mentions`). Sans ce champ, le document est `a_lire`. `source_locale.py
 # --publier` ne dépose sur la release que les documents `libre`, et un test
 # refuse qu'un fichier de data/brut/ soit versionné.
 #
@@ -1516,17 +1518,48 @@ institutions:
         miroir: https://github.com/g-pliberal/retraitecomptenotionelle/releases/download/documents-apportes/20260922-Retraites-fonctionnaires-de-l-Etat.pdf
         sha256: 3d0a439f5bdf86ad8a6fe8409123573fa16c89b274b9662482dd00c5178e41db
         rediffusion:
-          statut: a_lire
+          statut: libre
+          licence: >-
+            les conditions de reproduction de www.ccomptes.fr (source citée,
+            document intact)
+          texte: >-
+            « À l'exception de l'iconographie (photos tmaubert - Cour des
+            comptes), sauf mention spécifiée (droits réservés), la reproduction
+            des contenus de ce site est autorisée, sous réserve du respect : de
+            la mention explicite du site www.ccomptes.fr comme source des
+            éléments reproduits et des mentions permettant de déterminer la
+            nature et l'origine des documents reproduits (date, intitulé,
+            formation juridictionnelle...) ; de l'intégrité des données qui
+            suppose que la teneur et la portée des textes et informations
+            reproduits ne soient pas altérées […] »
+          lu_dans: >-
+            les mentions légales de ccomptes.fr, rubrique « Crédits et
+            reproduction des contenus », dans les deux copies qu'en garde
+            l'archive du web, du 4 août 2025 et du 22 mars 2026
+            (https://web.archive.org/web/20260322100734/https://ccomptes.fr/fr/mentions-legales),
+            identiques au crédit des photographies près : la page elle-même
+            ne se joint pas depuis une session
+          lu_le: "2026-09-26"
+          mention: >-
+            Source : www.ccomptes.fr — Cour des comptes (première et sixième
+            chambres, en formation interchambres), « Les retraites des
+            fonctionnaires de l'État », communication à la commission des
+            finances de l'Assemblée nationale (article 58-2 de la LOLF),
+            22 septembre 2026. Reproduit tel quel.
           note: >-
-            Le PDF et le zip sont sur la release documents-apportes depuis le
-            24 septembre 2026, déposés à la main. Aucun des deux ne porte de
-            mention de réutilisation. Les mentions légales de ccomptes.fr ne se
-            lisent pas depuis une session (connexion refusée ; 503 à l'outil de
-            lecture web, le 25 septembre 2026), et ce qu'en rendent les moteurs
-            de recherche — des documents officiels « librement réutilisables »
-            conformément au droit en vigueur, sauf droits de tiers — n'est pas
-            une lecture. À lire au texte depuis un poste, puis passer à `libre`
-            avec la citation, ou retirer les deux assets.
+            Passé de `a_lire` à `libre` le 26 septembre 2026, sur la lecture
+            ci-dessus. Le PDF ne porte aucune photographie : ses soixante
+            images sont les vingt-six graphiques, leurs masques, et deux
+            pages scannées de la lettre du Premier président. Une réserve
+            reste : la même rubrique exclut « les contenus […] dans lesquels
+            figurent des données à caractère personnel », sauf accord des
+            intéressés, et le rapport nomme les magistrats et les agents qui
+            l'ont fait, lettre signée comprise. Ce sont des agents publics
+            nommés dans l'exercice de leurs fonctions, dans une communication
+            au Parlement que la Cour publie elle-même, et la clause exige
+            qu'on ne l'altère pas : le dépôt la reproduit entière, sans en
+            extraire aucune donnée personnelle. C'est une lecture, pas un
+            accord ; si la Cour le demande, l'asset se retire.
         statut_integration: saisi
         note: >-
           Cent dix-huit pages, lues en entier le 23 septembre 2026 depuis une
@@ -1580,6 +1613,55 @@ institutions:
           2026/16). Le reste du rapport — l'espérance de vie à 65 ans par
           catégorie, la part des primes, les effectifs — est versé à
           l'action 120 de la feuille de route.
+
+      - id: ccomptes_retraites_fpe_2026_donnees
+        titre: >-
+          Les retraites des fonctionnaires de l'État, 22 septembre 2026 : les
+          données des vingt-six graphiques, publiées en données ouvertes
+        url: https://www.ccomptes.fr/fr/publications/les-retraites-des-fonctionnaires-de-letat
+        document: https://www.ccomptes.fr/sites/default/files/2026-09/Open-data-58-2-Retraites-FPE.zip
+        acces: document
+        blocage: reseau
+        fichier_local: Open-data-58-2-Retraites-FPE.zip
+        miroir: https://github.com/g-pliberal/retraitecomptenotionelle/releases/download/documents-apportes/Open-data-58-2-Retraites-FPE.zip
+        sha256: 10d8ac5ba2e963438374c4bd1e59d5334254307fc445b8d119aaefc13799be9c
+        rediffusion:
+          statut: libre
+          licence: >-
+            les conditions de reproduction de www.ccomptes.fr (source citée,
+            données intactes)
+          texte: >-
+            « À l'exception de l'iconographie (photos tmaubert - Cour des
+            comptes), sauf mention spécifiée (droits réservés), la reproduction
+            des contenus de ce site est autorisée, sous réserve du respect : de
+            la mention explicite du site www.ccomptes.fr comme source des
+            éléments reproduits et des mentions permettant de déterminer la
+            nature et l'origine des documents reproduits (date, intitulé,
+            formation juridictionnelle...) ; de l'intégrité des données qui
+            suppose que la teneur et la portée des textes et informations
+            reproduits ne soient pas altérées […] »
+          lu_dans: >-
+            les mentions légales de ccomptes.fr, rubrique « Crédits et
+            reproduction des contenus », dans les deux copies qu'en garde
+            l'archive du web, du 4 août 2025 et du 22 mars 2026
+            (https://web.archive.org/web/20260322100734/https://ccomptes.fr/fr/mentions-legales),
+            identiques au crédit des photographies près : la page elle-même
+            ne se joint pas depuis une session
+          lu_le: "2026-09-26"
+          mention: >-
+            Source : www.ccomptes.fr — Cour des comptes (première et sixième
+            chambres, en formation interchambres), données des graphiques de
+            « Les retraites des fonctionnaires de l'État », communication à la
+            commission des finances de l'Assemblée nationale (article 58-2 de
+            la LOLF), 22 septembre 2026. Reproduites telles quelles.
+        statut_integration: a_faire
+        note: >-
+          Vingt-cinq fichiers CSV, un par graphique du rapport ci-dessus (le
+          onzième n'en a pas), sans donnée personnelle. Déposé à la main sur
+          la release le 24 septembre 2026 avec le rapport, qui le décrivait
+          dans sa note ; il a ici son jeu depuis le 26 septembre 2026, pour que
+          sa licence soit déclarée comme celle de tout document que la release
+          sert. Aucune valeur n'en est encore tirée.
 
   progedo_adisp:
     nom: Progedo — Archives de données issues de la statistique publique (ADISP)
@@ -4218,7 +4300,9 @@ institutions:
           rediffusion (champ `rediffusion`). Versionné sous data/brut/ jusqu'au
           25 septembre 2026, il en a été retiré ce jour-là ; une session qui
           doit le relire se le fait apporter dans data/brut/, que git ignore,
-          où son empreinte le vérifie.
+          où son empreinte le vérifie. L'historique git garde la version
+          versionnée : le propriétaire a décidé, le 26 septembre 2026, de la
+          garder, et l'historique n'est pas réécrit pour l'en effacer.
           CE QUE LE DOCUMENT AJOUTE À LA SAISIE : la moyenne des frais sur
           arrérages est non pondérée et ne porte que sur les 9 organismes (sur
           20) qui les facturent ; le frais sur versement du PER est le double

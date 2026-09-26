@@ -393,6 +393,10 @@ def test_toute_rediffusion_declaree_dit_ce_qui_la_fonde():
             assert rediffusion, f"{ident} : servi par la release, sans rediffusion déclarée"
             assert rediffusion["statut"] != "interdite", (
                 f"{ident} : servi par la release, alors que sa licence l'interdit")
+            if rediffusion["statut"] == "libre":
+                assert rediffusion.get("mention"), (
+                    f"{ident} : servi par la release sans la mention que sa licence "
+                    "exige de citer à côté de lui")
         if not rediffusion:
             continue
         statut = rediffusion.get("statut")
@@ -464,11 +468,13 @@ class _GitHubSimule:
         self.corps = corps
         self.appels: list[tuple] = []
         self.envoyes: dict[str, bytes] = {}
+        self.digests: dict[str, str] = {}
 
     def _release(self):
         return {"url": "https://api/releases/1", "upload_url": "https://uploads/releases/1/assets{?name,label}",
                 "body": self.corps,
-                "assets": [{"name": n, "url": f"https://api/assets/{n}"} for n in self.assets]}
+                "assets": [{"name": n, "url": f"https://api/assets/{n}",
+                            "digest": self.digests.get(n)} for n in self.assets]}
 
     def __call__(self, methode, url, jeton, donnees=None, type_contenu="application/json", longueur=None):
         import json
@@ -644,4 +650,65 @@ def test_le_workflow_documents_apportes_publie_avec_le_droit_d_ecrire():
     assert "workflow_dispatch" in declencheurs and "schedule" in declencheurs
     texte = chemin.read_text(encoding="utf-8")
     assert "source_locale.py --publier" in texte
+    assert "source_locale.py --mentions" in texte
     assert "playwright install" in texte
+
+
+def test_mentionner_cite_la_source_d_un_document_depose_a_la_main(monkeypatch, capsys):
+    """Un document déposé à la main garde sa ligne ; seule sa fin change, une
+    fois, et une seconde passe n'y touche plus. Un asset absent, ou qui porte
+    une autre empreinte que le manifeste, n'est pas mentionné."""
+    module = _module()
+    ligne = ("- `rapport.pdf` : sha256 `" + "a" * 64 + "`, 2.6 Mo, téléchargé le "
+             "2026-09-23 depuis https://exemple.fr/rapport.pdf (déposé à la main).")
+    github = _GitHubSimule(assets=["rapport.pdf", "autre.zip"], corps="Déposés par…\n" + ligne)
+    github.digests.update({"rapport.pdf": "sha256:" + "a" * 64, "autre.zip": "sha256:" + "c" * 64})
+    monkeypatch.setattr(module, "_github", github)
+    mention = "Source : exemple.fr — « Le rapport », 22 septembre 2026. Reproduit tel quel."
+    libre = {**LIBRE, "licence": "les conditions du site", "mention": mention}
+    jeux = [
+        {"id": "rapport", "blocage": "reseau", "url": "https://exemple.fr/page",
+         "document": "https://exemple.fr/rapport.pdf", "fichier_local": "rapport.pdf",
+         "miroir": module.url_publiee("rapport.pdf"), "sha256": "a" * 64, "rediffusion": libre},
+        {"id": "donnees", "blocage": "reseau", "url": "https://exemple.fr/page",
+         "document": "https://exemple.fr/autre.zip", "fichier_local": "autre.zip",
+         "miroir": module.url_publiee("autre.zip"), "sha256": "b" * 64, "rediffusion": libre},
+        {"id": "absent", "blocage": "reseau", "url": "https://exemple.fr/page",
+         "document": "https://exemple.fr/x.pdf", "fichier_local": "x.pdf",
+         "miroir": module.url_publiee("x.pdf"), "sha256": "d" * 64, "rediffusion": libre},
+        {"id": "a_lire", "blocage": "reseau", "url": "https://exemple.fr/page",
+         "document": "https://exemple.fr/y.pdf", "fichier_local": "y.pdf",
+         "miroir": module.url_publiee("y.pdf"), "sha256": "e" * 64},
+    ]
+    etats = module.mentionner(jeux, jeton="t")
+    assert etats == {"rapport": "mentionne", "donnees": "ecart", "absent": "absent"}
+    (nouvelle,) = [l for l in github.corps.splitlines() if l.startswith("- `rapport.pdf`")]
+    assert nouvelle == ligne[:-1] + " ; republié sous les conditions du site. " + mention
+    assert not [l for l in github.corps.splitlines() if l.startswith("- `autre.zip`")]
+    sortie = capsys.readouterr().out
+    assert "donnees : ÉCART" in sortie and "absent : x.pdf n'est pas sur la release" in sortie
+    assert not any(m in ("POST", "DELETE") for m, _ in github.appels), "rien n'est déposé"
+
+    # Une seconde passe ne double rien, et n'écrit rien.
+    avant = github.corps
+    patchs = sum(m == "PATCH" for m, _ in github.appels)
+    assert module.mentionner(jeux[:1], jeton="t") == {"rapport": "deja"}
+    assert github.corps == avant and sum(m == "PATCH" for m, _ in github.appels) == patchs
+
+
+def test_la_cour_des_comptes_se_republie_source_citee():
+    """Ses mentions légales autorisent la reproduction, pourvu que
+    www.ccomptes.fr soit cité avec la date et l'intitulé, et que rien ne soit
+    altéré. Le rapport et ses données, que la release sert, le déclarent."""
+    module = _module()
+    jeux = _jeux()
+    for ident in ("ccomptes_retraites_fpe_2026", "ccomptes_retraites_fpe_2026_donnees"):
+        jeu = jeux[ident]
+        assert module.est_publie_ici(jeu["miroir"]), ident
+        rediffusion = jeu["rediffusion"]
+        assert rediffusion["statut"] == "libre", ident
+        assert "la reproduction des contenus de ce site est autorisée" in " ".join(
+            rediffusion["texte"].split()), ident
+        assert "web.archive.org" in rediffusion["lu_dans"], ident
+        assert "www.ccomptes.fr" in rediffusion["mention"], ident
+        assert "22 septembre 2026" in rediffusion["mention"], ident

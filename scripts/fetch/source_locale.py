@@ -4,6 +4,7 @@
     python scripts/fetch/source_locale.py              # les sources bloquées, et où est leur fichier
     python scripts/fetch/source_locale.py --recuperer  # les télécharge depuis leurs miroirs dans data/brut/
     python scripts/fetch/source_locale.py --publier    # (workflow) dépose les documents sans miroir sur la release
+    python scripts/fetch/source_locale.py --mentions   # (workflow) y cite la source que chaque licence exige
     python scripts/fetch/erafp_valeurs_point.py --fichier ~/Téléchargements/RAFP-Evolution-valeurs-point.pdf
 
 Certaines sources ne se laissent pas lire depuis l'environnement où ce dépôt
@@ -57,6 +58,17 @@ suffit à le vérifier ; un document dont personne n'a lu la licence —
 ``a_lire``, ou rien — ne se republie pas non plus. Le rapport de l'OPEF est
 dans ce cas : sa page 180 réserve toute reproduction au Comité consultatif du
 secteur financier.
+
+**ET LA RELEASE CITE CE QUE LA LICENCE EXIGE.** Une licence qui permet de
+republier le fait à condition : citer la source, le titre, la date. Le
+manifeste porte cette mention sous ``rediffusion.mention``, et la ligne de la
+release qui décrit le document la reprend, après le nom de la licence.
+``--publier`` l'écrit en déposant un document ; ``--mentions`` l'écrit pour
+ceux qui sont déjà sur la release, déposés à la main ou par une passe qui ne
+la connaissait pas, sans toucher au fichier. Les deux documents de la Cour
+des comptes sont dans ce cas : ses mentions légales autorisent la
+reproduction, pourvu que ``www.ccomptes.fr`` soit cité comme source avec la
+date et l'intitulé du document, et que rien n'en soit altéré.
 
 Trois gestes, et le manifeste qui les relie :
 
@@ -429,11 +441,22 @@ def _github(methode: str, url: str, jeton: str, donnees=None,
     return dila_index._github(methode, url, jeton, donnees, type_contenu, longueur)
 
 
+def _citer(ligne: str, licence: str | None, mention: str | None = None) -> str:
+    """La ligne d'un document, finie par sa licence et la mention qu'elle exige.
+
+    Une seule fois : ce qu'une passe précédente avait écrit après
+    « ; republié sous » est remplacé, jamais doublé."""
+    ligne = ligne.split(" ; republié sous ", 1)[0].rstrip().rstrip(".")
+    if licence:
+        ligne += f" ; republié sous {licence}"
+    return ligne + "." + (f" {mention}" if mention else "")
+
+
 def _ligne_release(nom: str, sha256: str, taille: int, adresse: str, voie: str,
-                   licence: str | None = None) -> str:
+                   licence: str | None = None, mention: str | None = None) -> str:
     ligne = (f"- `{nom}` : sha256 `{sha256}`, {taille / 1e6:.1f} Mo, téléchargé le "
              f"{time.strftime('%Y-%m-%d')} depuis {adresse} ({voie})")
-    return ligne + (f" ; republié sous {licence}." if licence else ".")
+    return _citer(ligne, licence, mention)
 
 
 def publier(jeux: list[dict], telecharger: Callable[[str], bytes] = telecharger,
@@ -511,8 +534,9 @@ def publier(jeux: list[dict], telecharger: Callable[[str], bytes] = telecharger,
         envoi = release["upload_url"].split("{")[0] + f"?name={quote(nom)}"
         type_contenu = mimetypes.guess_type(nom)[0] or "application/octet-stream"
         actif = _github("POST", envoi, jeton, octets, type_contenu, len(octets))
+        licence = jeu.get("rediffusion") or {}
         ligne = _ligne_release(nom, empreinte(octets), len(octets), adresse_du_document(jeu),
-                               voie, (jeu.get("rediffusion") or {}).get("licence"))
+                               voie, licence.get("licence"), licence.get("mention"))
         corps = re.sub(rf"\n- `{re.escape(nom)}`[^\n]*", "", "\n" + corps).lstrip("\n")
         corps = corps.rstrip() + "\n" + ligne
         print(f"{jeu['id']} : {nom} publié, {len(octets) / 1e6:.1f} Mo, sha256 "
@@ -520,6 +544,65 @@ def publier(jeux: list[dict], telecharger: Callable[[str], bytes] = telecharger,
               file=sortie)
         etats[jeu["id"]] = "publie"
     _github("PATCH", release["url"], jeton, json.dumps({"body": corps}).encode())
+    return etats
+
+
+def mentionner(jeux: list[dict], *, jeton: str | None = None,
+               sortie=sys.stdout) -> dict[str, str]:
+    """Écrit, dans le corps de la release, ce que la licence de chaque
+    document qu'elle sert exige de citer : la licence, et sa mention.
+
+    Rien n'est téléchargé ni déposé : la ligne du document garde ce qu'elle
+    disait, et seule sa fin change ; un document sans ligne en reçoit une.
+    L'asset doit porter l'empreinte du manifeste, que l'API de GitHub donne
+    (``digest``) : une mention n'atteste pas un fichier qu'on n'a pas
+    vérifié. Rend l'état de chaque jeu : ``mentionne``, ``deja`` (rien à
+    changer), ``absent`` (l'asset manque) ou ``ecart`` (autre empreinte).
+    """
+    jeton = jeton or os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
+    if not jeton:
+        raise RuntimeError("GH_TOKEN ou GITHUB_TOKEN absent : impossible d'écrire la release")
+    cibles = [jeu for jeu in jeux
+              if est_publie_ici(jeu.get("miroir")) and rediffusion(jeu) == "libre"]
+    if not cibles:
+        return {}
+    api = f"https://api.github.com/repos/{DEPOT}"
+    release = _github("GET", f"{api}/releases/tags/{ETIQUETTE}", jeton)
+    actifs = {actif["name"]: actif for actif in release.get("assets", [])}
+    corps = release.get("body") or ""
+    etats: dict[str, str] = {}
+    for jeu in cibles:
+        nom = ou_deposer(jeu).name
+        actif = actifs.get(nom)
+        if actif is None:
+            print(f"{jeu['id']} : {nom} n'est pas sur la release, rien à citer", file=sortie)
+            etats[jeu["id"]] = "absent"
+            continue
+        porte = str(actif.get("digest") or "").removeprefix("sha256:")
+        if porte and jeu.get("sha256") and porte != jeu["sha256"]:
+            print(f"{jeu['id']} : ÉCART — la release porte {porte[:12]}…, le manifeste "
+                  f"attend {jeu['sha256'][:12]}… ; la mention n'est pas écrite", file=sortie)
+            etats[jeu["id"]] = "ecart"
+            continue
+        licence = jeu["rediffusion"]
+        trouve = re.search(rf"^- `{re.escape(nom)}`[^\n]*$", corps, re.M)
+        if trouve:
+            ligne = _citer(trouve.group(0), licence.get("licence"), licence.get("mention"))
+            if ligne == trouve.group(0):
+                etats[jeu["id"]] = "deja"
+                continue
+            corps = corps[: trouve.start()] + ligne + corps[trouve.end():]
+        else:
+            ligne = _citer(f"- `{nom}` : sha256 `{jeu.get('sha256') or porte}`, "
+                           f"{int(actif.get('size') or 0) / 1e6:.1f} Mo, depuis "
+                           f"{adresse_du_document(jeu)} (déposé à la main)",
+                           licence.get("licence"), licence.get("mention"))
+            corps = corps.rstrip() + "\n" + ligne
+        print(f"{jeu['id']} : la release cite sa source — "
+              f"{licence.get('mention') or licence.get('licence')}", file=sortie)
+        etats[jeu["id"]] = "mentionne"
+    if any(etat == "mentionne" for etat in etats.values()):
+        _github("PATCH", release["url"], jeton, json.dumps({"body": corps}).encode())
     return etats
 
 
@@ -583,6 +666,9 @@ def main(argv: list[str] | None = None) -> int:
     analyseur.add_argument("--publier", action="store_true",
                            help="dépose sur la release documents-apportes les documents refusés "
                                 "sans miroir (jeton d'un workflow GitHub Actions)")
+    analyseur.add_argument("--mentions", action="store_true",
+                           help="écrit sur la release la licence et la mention de source de "
+                                "chaque document qu'elle sert (jeton d'un workflow GitHub Actions)")
     analyseur.add_argument("--sans-navigateur", action="store_true",
                            help="avec --publier : ne pas ouvrir de navigateur ; un site qui "
                                 "refuse la requête simple donne le code de sortie 3")
@@ -611,6 +697,12 @@ def main(argv: list[str] | None = None) -> int:
         if any(e in ("echec", "ecart") for e in etats.values()):
             return 1
         return 3 if any(e == "navigateur" for e in etats.values()) else 0
+    if options.mentions:
+        etats = mentionner(bloques)
+        print(f"{sum(e == 'mentionne' for e in etats.values())} mention(s) écrite(s), "
+              f"{sum(e == 'deja' for e in etats.values())} déjà en place, sur "
+              f"{len(etats)} document(s) que la release sert sous une licence libre")
+        return 1 if any(e in ("absent", "ecart") for e in etats.values()) else 0
     if options.recuperer:
         faits = recuperer(bloques)
         attendus = [j for j in bloques if ou_deposer(j) is not None

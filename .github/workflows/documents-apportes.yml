@@ -12,7 +12,11 @@
 # citée (docs/architecture.md, § 3.2 et 3.4) ; chaque ligne de la release
 # nomme alors la licence. Un document dont la licence interdit la
 # rediffusion, comme le rapport de l'OPEF, ou dont personne ne l'a lue, reste
-# à apporter à la main dans data/brut/, que git ignore.
+# à apporter à la main dans data/brut/, que git ignore. Une licence qui permet
+# de republier demande souvent qu'on cite la source : la dernière étape écrit,
+# dans la ligne de chaque document que la release sert, la mention que le
+# manifeste déclare (`rediffusion.mention`), y compris pour ceux qui y ont été
+# déposés à la main, comme les deux fichiers de la Cour des comptes.
 #
 # Deux passes : une requête simple sous l'identité du dépôt d'abord ; si un
 # site la refuse (code de sortie 3), Playwright et Chromium sont installés,
@@ -71,3 +75,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: python scripts/fetch/source_locale.py --publier
+
+      - name: Citer la source de chaque document que la release sert
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python scripts/fetch/source_locale.py --mentions
