@@ -1,0 +1,26 @@
+# L'étape « foyer et net » (docs/architecture.md, § 7.4) : ce que le droit
+# sert en regardant toutes les ressources du bénéficiaire, et non une
+# pension. L'ASPA, allocation différentielle jusqu'au barème d'une personne
+# seule, ouverte à 65 ans, vient après les liquidations du jour et après
+# « faire vivre » : elle complète tout le reste, majorations comprises, et
+# se revoit à chaque échéance. Les prélèvements selon le revenu du foyer n'y
+# sont pas encore : le modèle compare des pensions brutes.
+#
+# src/retraite_notionnelle/droit/foyer.py, et son jumeau
+# moteur/js/droit/foyer.js.
+
+etape: foyer_et_net
+schema_version: 1
+lit: [liquidation, revalorisation]
+ecrit: foyer
+
+objets:
+
+  foyer:
+    champs:
+      schema_version: {porte: "la version de ce schéma", type: entier, obligatoire: true}
+      personne: {porte: "le bénéficiaire", type: identifiant, obligatoire: true}
+      date: {porte: "la date à laquelle les ressources sont lues : l'effet de la liquidation, ou l'échéance", type: date, obligatoire: true}
+      ressources: {porte: "toutes les pensions qu'il reçoit, régimes provisionnés et majorations compris, en euros annuels de cette date", type: nombre, obligatoire: true}
+      minimum_vieillesse: {porte: "l'ASPA : le complément jusqu'au barème, nul quand les ressources l'atteignent, quand l'âge n'est pas atteint, ou quand les avantages non contributifs sont neutralisés", type: nombre, obligatoire: true}
+      fiabilite: {porte: "le niveau du barème lu", type: texte, obligatoire: true}

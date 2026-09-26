@@ -236,15 +236,22 @@ def test_chaque_contrat_valide_une_donnee_minimale():
 ACQUISITION = ("preparer_la_chronologie", "coordonner_les_affiliations",
                "compter_les_durees", "acquerir_les_droits")
 
+#: Les trois étapes de la liquidation (§ 7.3), et les deux que l'échéancier
+#: applique sans liquider (§ 7.4) : la phase 5 les écrit.
+LIQUIDATION = ("ouvrir_le_droit", "liquider_chaque_regime", "completer_tous_regimes")
+ECHEANCIER = ("faire_vivre", "foyer_et_net")
+
 
 def test_les_schemas_des_etapes_tiennent():
     """Une étape ne lit d'une autre que des données décrites par un schéma
     (annexe C, « Les deux règles d'exécution ») : chacune des quatre de
-    l'acquisition a le sien, écrit avant son code, et chacun tient comme un
+    l'acquisition a le sien, chacune des trois de la liquidation et des deux
+    de l'échéancier aussi, écrits avant leur code, et chacun tient comme un
     contrat."""
     assert contrats.controler_etapes() == []
     presents = {p.stem for p in contrats.ETAPES.glob("*.yaml")}
-    assert set(ACQUISITION) <= presents, sorted(set(ACQUISITION) - presents)
+    attendus = set(ACQUISITION) | set(LIQUIDATION) | set(ECHEANCIER)
+    assert attendus <= presents, sorted(attendus - presents)
 
 
 def test_chaque_schema_d_etape_valide_une_donnee_minimale():

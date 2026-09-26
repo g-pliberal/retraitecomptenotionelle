@@ -1,0 +1,38 @@
+# L'étape « compléter tous régimes » (docs/architecture.md, § 7.3) : ce que
+# le droit ajoute aux pensions de régime en les regardant toutes ensemble,
+# dans l'ordre où il l'applique. Le minimum contributif, au taux plein, au
+# prorata de la durée acquise dans chaque régime, et son écrêtement tous
+# régimes confondus (L. 173-2) ; le minimum garanti de la fonction publique ;
+# la surcote parentale, sur la pension relevée ; la majoration pour enfants
+# enfin, sur ce plancher, plafonnée en euros à la complémentaire.
+#
+# L'ASPA n'en est pas : c'est l'étape « foyer et net » (§ 7.4).
+#
+# src/retraite_notionnelle/droit/completer.py, et son jumeau
+# moteur/js/droit/completer.js.
+
+etape: completer_tous_regimes
+schema_version: 1
+lit: [releve, ouverture, pensions]
+ecrit: complements
+
+objets:
+
+  complements:
+    champs:
+      schema_version: {porte: "la version de ce schéma", type: entier, obligatoire: true}
+      personne: {porte: "la personne dont les pensions sont complétées", type: identifiant, obligatoire: true}
+      dispositifs: {porte: "ce que chaque dispositif ajoute, dans l'ordre où le droit les applique", type: liste, de: {objet: dispositif}, defaut: []}
+      fiabilite: {porte: "le niveau des barèmes lus", type: texte, obligatoire: true}
+
+  dispositif:
+    champs:
+      code: {porte: "le dispositif, sous le code que la cascade des avantages lui donne", type: identifiant, obligatoire: true}
+      fiche: {porte: "la fiche de la carte qui l'écrit", type: identifiant, obligatoire: true}
+      montant: {porte: "ce qu'il ajoute, en euros annuels de la date d'effet, écrêtement et plafond faits", type: nombre, obligatoire: true}
+      parts: {porte: "sa part dans chaque régime, quand il s'y rattache", type: liste, de: {objet: part}, defaut: []}
+
+  part:
+    champs:
+      regime: {porte: "le régime", type: identifiant, obligatoire: true}
+      montant: {porte: "la part de ce régime", type: nombre, obligatoire: true}

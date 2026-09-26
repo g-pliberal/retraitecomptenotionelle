@@ -1,0 +1,37 @@
+# L'étape « faire vivre » (docs/architecture.md, § 7.4) : ce que devient une
+# pension liquidée, jusqu'à une échéance. Chaque régime suit la règle de son
+# texte : la valeur de service de son point, l'article L. 161-23-1 et ses
+# tranches de 2020, la péréquation puis les décrets de la fonction publique,
+# le taux des fonctionnaires pour les régimes spéciaux. La majoration pour
+# enfants suit les régimes qui la portent, chaque part au coefficient du sien.
+# Une revalorisation ne relance jamais la liquidation.
+#
+# L'échéancier l'applique à l'échéance qu'on lui demande, sur toutes les
+# pensions du bénéficiaire, après les liquidations du jour.
+#
+# src/retraite_notionnelle/revalorisation.py (`faire_vivre`), et son jumeau
+# moteur/js/revalorisation.js.
+
+etape: faire_vivre
+schema_version: 1
+lit: [liquidation]
+ecrit: revalorisation
+
+objets:
+
+  revalorisation:
+    champs:
+      schema_version: {porte: "la version de ce schéma", type: entier, obligatoire: true}
+      personne: {porte: "la personne dont les pensions sont servies", type: identifiant, obligatoire: true}
+      date: {porte: "l'échéance à laquelle les pensions sont menées", type: date, obligatoire: true}
+      regimes: {porte: "le coefficient nominal de chaque pension de régime, du départ à l'échéance", type: liste, de: {objet: regime}, defaut: []}
+      majoration: {porte: "le coefficient de la majoration pour enfants, chaque part à celui du régime qui la porte", type: nombre, obligatoire: true}
+      mensuel_decembre_2019: {porte: "le montant total brut mensuel de décembre 2019, qui a choisi la tranche de 2020, quand la pension a traversé cette date", type: nombre, defaut: null}
+      fiabilite: {porte: "le niveau des coefficients lus", type: texte, obligatoire: true}
+
+  regime:
+    champs:
+      regime: {porte: "le régime", type: identifiant, obligatoire: true}
+      coefficient: {porte: "le coefficient nominal qui mène sa pension du départ à l'échéance", type: nombre, obligatoire: true}
+      regle: {porte: "la règle suivie, sous le nom que la page lui donne (point, regime_general, fonction_publique, regime_special, par_defaut)", type: texte, obligatoire: true}
+      fiabilite: {porte: "le niveau de ce coefficient", type: texte, obligatoire: true}

@@ -175,6 +175,27 @@ listes:
       seconde: la seconde pension créée en 2023 pour qui retravaille
       fictive: une liquidation calculée sans être servie, comme celle qui valorise les droits acquis à la bascule
 
+  ouvertures:
+    # Ce qui ouvre une liquidation : l'étape « ouvrir le droit » l'écrit
+    # (data/reference/etapes/ouvrir_le_droit.yaml).
+    valeurs:
+      age_legal: l'âge légal de la génération, ou celui qu'un régime ouvre en propre
+      carriere_longue: le départ anticipé pour carrière longue, quand l'âge demandé précède tous les autres
+      non_ouverte: le droit n'ouvre pas la liquidation à cet âge ; le montant reste calculé, en contrefactuel
+
+  neutralisations:
+    # Ce qu'un calcul peut neutraliser (§ 4.8 et 6.4), le temps que les
+    # couches d'univers le disent par leurs opérations : une couche d'un seul
+    # calcul, que le contexte de `liquider` porte. La cascade des avantages
+    # en mesure l'apport, par des liquidations d'essai, et la valorisation des
+    # droits acquis calcule « au contributif seul ».
+    valeurs:
+      avantages_non_contributifs: les trimestres et bonifications pour enfants, les minima, la surcote parentale, la majoration pour enfants et l'ASPA
+      avpf: les salaires que l'assurance vieillesse des parents au foyer porte au compte
+      points_gratuits: les points que la complémentaire agricole attribue sans cotisation
+      decote_surcote: la décote, la surcote et les abattements liés à l'âge, pour valoriser des droits acquis à une date
+      successions: la liquidation commune d'un régime et de celui qui lui succède ; chaque caisse l'est alors sur ses seules années
+
   origines_de_fait:
     valeurs:
       declare: dit par la personne ou lu dans un relevé

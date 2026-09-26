@@ -1,0 +1,30 @@
+# L'étape « ouvrir le droit » (docs/architecture.md, § 7.3) : à quel âge le
+# droit ouvre la liquidation demandée, et à quelle durée il la sert au taux
+# plein. L'âge légal de la génération, celui qu'un régime a en propre, la
+# catégorie active, la jouissance militaire, les services qui ouvrent une
+# pension, et la carrière longue quand l'âge demandé précède tous les autres.
+#
+# Le pilote (§ 7.7) ne lit que cette étape quand il lui faut un âge
+# d'ouverture ou de taux plein : `age_ouverture_droit` et
+# `age_taux_plein_droit`, sur une carrière, sans rien liquider.
+#
+# src/retraite_notionnelle/droit/ouvrir.py, et son jumeau
+# moteur/js/droit/ouvrir.js.
+
+etape: ouvrir_le_droit
+schema_version: 1
+lit: [releve]
+ecrit: ouverture
+
+objets:
+
+  ouverture:
+    champs:
+      schema_version: {porte: "la version de ce schéma", type: entier, obligatoire: true}
+      personne: {porte: "la personne qui demande", type: identifiant, obligatoire: true}
+      date_effet: {porte: "la date d'effet de la demande", type: date, obligatoire: true}
+      requis: {porte: "la durée d'assurance requise que les régimes de base opposent, en trimestres : celle qui commande le taux plein, et l'abattement des complémentaires", type: entier, obligatoire: true}
+      age: {porte: "l'âge le plus précoce auquel le droit ouvre cette liquidation, tous dispositifs compris, carrière longue comprise", type: nombre, defaut: null}
+      motif: {porte: "ce qui ouvre la liquidation, ou qu'elle n'est pas ouverte : le montant reste alors calculé, en contrefactuel", type: valeur, valeurs: ouvertures, obligatoire: true}
+      trimestres_cotises: {porte: "les trimestres cotisés tous régimes, qui commandent la carrière longue et la majoration du minimum contributif", type: entier, obligatoire: true}
+      fiabilite: {porte: "le niveau des tables lues, celle de la carrière longue comprise", type: texte, obligatoire: true}

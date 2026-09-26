@@ -2375,6 +2375,16 @@ Rien ne s'y efface.
 
 ## Les versions
 
+- **5.8**, 26 septembre 2026 : la phase 5 écrit dans
+  `data/reference/etapes/` les schémas des trois étapes de la liquidation —
+  ouvrir le droit, liquider chaque régime, compléter tous régimes (§ 7.3) —
+  et des deux que l'échéancier applique sans liquider, faire vivre et foyer
+  et net (§ 7.4). Elle ajoute à la liquidation (C.6), par la règle additive,
+  les mesures qu'elle fait par des liquidations d'essai et, à chaque
+  composante, le régime qui la sert, sa formule, et si elle est servie hors
+  de la répartition. Le vocabulaire reçoit deux listes : ce qui ouvre une
+  liquidation, et ce qu'un calcul peut neutraliser.
+
 - **5.7**, 26 septembre 2026 : la phase 4 ajoute au relevé (C.5), par la
   règle additive, son enveloppe — la personne, la date de situation, les
   lignes, et les groupes de régimes que la coordination fait liquider

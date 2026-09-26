@@ -1,6 +1,15 @@
 # Contrat C.6 — la liquidation et ses composantes (docs/architecture.md,
 # annexe C, et § 7.3). `liquider(demande, état, contexte)` est une fonction
 # pure : ce contrat dit ce qu'elle rend. La phase 5 l'écrit.
+#
+# La phase 5 y ajoute, par la règle additive, ce que la liquidation du
+# scénario 1 rendait déjà : les mesures qu'elle fait par des liquidations
+# d'essai — ce qu'apportent les trimestres des enfants, l'AVPF et les points
+# gratuits, chacun sous une neutralisation de plus (`neutralisations`) —, et,
+# pour chaque composante, le régime qui la sert, la formule que la page en
+# écrit, et si elle est servie hors de la répartition.
+# src/retraite_notionnelle/droit/liquidation.py, et son jumeau
+# moteur/js/droit/liquidation.js.
 
 contrat: liquidation
 schema_version: 1
@@ -19,6 +28,13 @@ objets:
       lignes_consommees: {porte: "les lignes du relevé qu'elle a utilisées", type: liste, de: identifiant, obligatoire: true}
       decisions: {porte: "ce qu'elle fige pour d'autres liquidations", type: liste, de: libre, defaut: []}
       origine: {porte: "calculée, ou observée", type: valeur, valeurs: origines_de_ligne, defaut: calculee}
+      mesures: {porte: "ce que la liquidation mesure par des liquidations d'essai, chacune sous une neutralisation de plus", type: liste, de: {objet: mesure}, defaut: [], additif: "la phase 5 : la cascade des avantages que le scénario 1 mesurait déjà, dite comme des liquidations d'essai (§ 6.4)"}
+
+  mesure:
+    champs:
+      code: {porte: "l'avantage mesuré, sous le code que la cascade lui donne", type: identifiant, obligatoire: true}
+      neutralisation: {porte: "ce que la liquidation d'essai neutralise de plus que la précédente", type: valeur, valeurs: neutralisations, obligatoire: true}
+      montant: {porte: "ce qu'il apporte, en euros annuels de la date d'effet", type: nombre, obligatoire: true}
 
   demande:
     ouvert: true
@@ -44,3 +60,6 @@ objets:
       fin: {porte: "sa fin", type: date, defaut: null}
       servie: {porte: "servie, ou seulement calculée", type: booleen, defaut: true}
       nature: {porte: "ferme, ou en attente, et de quoi", type: valeur, valeurs: natures_de_ligne, defaut: ferme}
+      regime: {porte: "le régime qui la sert, quand elle en a un", type: identifiant, defaut: null, additif: "la phase 5 : les composantes du scénario 1 sont d'abord ses pensions de régime"}
+      detail: {porte: "la formule, telle que la page l'écrit", type: texte, defaut: null, additif: "la phase 5 : la page refait chaque montant devant le lecteur"}
+      hors_repartition: {porte: "servie à part, hors de la répartition : un régime provisionné comme le RAFP", type: booleen, defaut: false, additif: "la phase 5 : le scénario 1 sert à part ce qui n'est pas de la répartition"}

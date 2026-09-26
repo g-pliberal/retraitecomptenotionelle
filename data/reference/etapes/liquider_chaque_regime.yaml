@@ -1,0 +1,53 @@
+# L'étape « liquider chaque régime » (docs/architecture.md, § 7.3) : la
+# pension de chaque régime, sous ses propres règles. Les annuités — un
+# salaire de référence ou un forfait, un taux, une durée proratisée —, les
+# points à la valeur de service, le forfait d'un régime mixte ; la décote, la
+# surcote et l'abattement des régimes en points ; le capital du RAFP sous son
+# seuil. Un régime que la coordination réunit à celui qui lui succède est
+# liquidé par lui, sur leurs années réunies.
+#
+# Elle dit aussi ce que l'étape suivante lit pour compléter : pour chaque
+# régime qui porte le minimum contributif ou le minimum garanti, les durées
+# et la condition de taux plein qui les ouvrent.
+#
+# src/retraite_notionnelle/droit/liquider.py, et son jumeau
+# moteur/js/droit/liquider.js.
+
+etape: liquider_chaque_regime
+schema_version: 1
+lit: [releve, ouverture]
+ecrit: pensions
+
+objets:
+
+  pensions:
+    champs:
+      schema_version: {porte: "la version de ce schéma", type: entier, obligatoire: true}
+      personne: {porte: "la personne dont les pensions sont liquidées", type: identifiant, obligatoire: true}
+      regimes: {porte: "la pension de chaque régime qui liquide, dans l'ordre où le relevé les trouve", type: liste, de: {objet: pension}, defaut: []}
+      requis: {porte: "la plus longue des durées requises des régimes en annuités, en trimestres", type: entier, obligatoire: true}
+      taux: {porte: "le plus haut des taux de liquidation des régimes en annuités, décote et surcote comprises", type: nombre, obligatoire: true}
+      fiabilite: {porte: "le niveau des tables et des séries lues", type: texte, obligatoire: true}
+
+  pension:
+    champs:
+      regime: {porte: "le régime qui liquide", type: identifiant, obligatoire: true}
+      montant: {porte: "la pension annuelle brute à la date d'effet, en euros de cette année-là", type: nombre, obligatoire: true}
+      calcul: {porte: "le mode de liquidation, tel que la fiche du régime le nomme (data/reference/regimes/_schema.yaml) : annuités, points ou mixte", type: texte, obligatoire: true}
+      detail: {porte: "la formule, telle que la page l'écrit", type: texte, obligatoire: true}
+      fiabilite: {porte: "le niveau de ce qu'elle lit", type: texte, obligatoire: true}
+      minimum: {porte: "ce que le minimum contributif lit de ce régime, quand il le porte", type: objet, objet: minimum, defaut: null}
+      garanti: {porte: "ce que le minimum garanti lit de ce régime, quand il le porte", type: objet, objet: garanti, defaut: null}
+
+  minimum:
+    champs:
+      prorata_assurance: {porte: "la durée d'assurance acquise dans le régime, rapportée à sa durée de proratisation, bornée à un", type: nombre, obligatoire: true}
+      prorata_cotise: {porte: "la durée cotisée acquise dans le régime, rapportée à la même durée", type: nombre, obligatoire: true}
+      taux_plein: {porte: "la pension est-elle liquidée au taux plein dans ce régime", type: booleen, obligatoire: true}
+      surcote: {porte: "le coefficient de surcote déjà incorporé au montant, que le minimum retire avant de comparer", type: nombre, obligatoire: true}
+
+  garanti:
+    champs:
+      trimestres_services: {porte: "la durée des services acquise dans le régime, en trimestres", type: entier, obligatoire: true}
+      ouvert: {porte: "le minimum garanti est-il ouvert : taux plein, ou âge d'ouverture atteint avant 2011", type: booleen, obligatoire: true}
+      duree_maximum: {porte: "la durée qui ouvre le pourcentage maximum, que le d de L. 17 lit sous quinze ans de services", type: entier, defaut: null}
