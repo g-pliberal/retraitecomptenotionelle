@@ -15,6 +15,7 @@
  */
 
 import * as chrono from "./chronologie.js";
+import { preparer } from "./droit/preparer.js";
 import {
   MOIS_PAR_AN,
   DateMois,
@@ -402,7 +403,7 @@ export class Carriere {
       this._parAnnee.get(ligne.annee).push(ligne);
     }
     this._plafonds = null;
-    this.chronologie = chronologie ?? chrono.completer(chrono.duResume(
+    this.chronologie = chronologie ?? preparer(chrono.duResume(
       annee_naissance, sexe, mois_naissance, age_liquidation, nombre_enfants));
     this.personne = personne;
     this._naissanceDesEnfants = undefined;
@@ -934,7 +935,7 @@ export class Carriere {
     part_primes = 0.0,
     identifiant = "assuré",
   }) {
-    const chronologie = chrono.completer(chrono.duReleve({
+    const chronologie = preparer(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
       nombre_enfants, part_primes,
     }), macro.paquet.presomptions);
@@ -993,7 +994,7 @@ export class Carriere {
     part_primes = 0.0,
     identifiant = "assuré",
   }) {
-    const chronologie = chrono.completer(chrono.duParcours({
+    const chronologie = preparer(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
       profil_carriere, interruptions, nombre_enfants, part_primes,
     }), macro.paquet.presomptions);

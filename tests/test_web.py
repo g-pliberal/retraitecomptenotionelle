@@ -2811,11 +2811,13 @@ def test_les_modules_sont_tous_precharges():
     page = (racine / "index.html").read_text(encoding="utf-8")
 
     precharges = set(re.findall(
-        r'<link rel="modulepreload" href="moteur/js/([\w.-]+\.js)">', page))
+        r'<link rel="modulepreload" href="moteur/js/([\w./-]+\.js)">', page))
     a_la_demande = set(re.findall(
-        r'import\(\s*"\./moteur/js/([\w.-]+\.js)"\s*\)', page))
-    presents = {chemin.name for chemin in (racine / "moteur" / "js").iterdir()
-                if chemin.suffix == ".js"}
+        r'import\(\s*"\./moteur/js/([\w./-]+\.js)"\s*\)', page))
+    # Les étapes du droit ont leur dossier, moteur/js/droit/ : elles sont du
+    # graphe comme les autres modules.
+    dossier = racine / "moteur" / "js"
+    presents = {chemin.relative_to(dossier).as_posix() for chemin in dossier.rglob("*.js")}
 
     assert a_la_demande <= presents, (
         f"importés à la demande mais absents du dossier : {a_la_demande - presents}"
@@ -2923,12 +2925,15 @@ def test_le_moteur_javascript_est_versionne():
     assert attendus <= modules, f"manquant : {attendus - modules}"
 
     #: Le portage ne tire aucune bibliothèque : il ne doit rien importer
-    #: d'autre que lui-même.
-    for chemin in (moteur / "js").iterdir():
+    #: d'autre que lui-même — un module de moteur/js/droit/ remonte d'un cran,
+    #: sans sortir du dossier.
+    dossier = (moteur / "js").resolve()
+    for chemin in dossier.rglob("*.js"):
         for ligne in chemin.read_text(encoding="utf-8").splitlines():
             if ligne.startswith("import ") and " from " in ligne:
                 origine = ligne.rsplit(" from ", 1)[1].strip(' ;"')
-                assert origine.startswith("./"), (
+                cible = (chemin.parent / origine).resolve()
+                assert origine.startswith(("./", "../")) and dossier in cible.parents, (
                     f"{chemin.name} importe depuis l'extérieur : {origine}"
                 )
 

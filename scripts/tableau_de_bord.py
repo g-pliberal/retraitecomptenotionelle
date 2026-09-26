@@ -194,7 +194,7 @@ def page() -> str:
     ecarts_connus = [e for e in exemples if e.get("ecart_connu")]
     code_source = "\n".join(
         p.read_text(encoding="utf-8", errors="ignore")
-        for motif in ("src/**/*.py", "moteur/js/*.js") for p in sorted(RACINE.glob(motif)))
+        for motif in ("src/**/*.py", "moteur/js/**/*.js") for p in sorted(RACINE.glob(motif)))
     citees = sum(1 for r in veille if r["id"] in code_source)
     relations = [r for r in veille if carte.est_relation(r)]
     mures = [r for r in veille if r["id"] not in manques]
@@ -527,13 +527,14 @@ def taille() -> str:
     sys.path.insert(0, str(RACINE / "scripts"))
     from verifier_prose import sonde_lignes, sonde_tests
 
-    moteur = sonde_lignes("src/retraite_notionnelle/scenarios/actuel.py")
-    portage = sonde_lignes("moteur/js/*.js")
+    moteur = sonde_lignes("src/retraite_notionnelle/scenarios/actuel.py"
+                          " + src/retraite_notionnelle/droit/*.py")
+    portage = sonde_lignes("moteur/js/*.js + moteur/js/droit/*.js")
     return "\n".join([
         "## La taille du dépôt",
         "",
         f"- le moteur du scénario 1 : {milliers(moteur)} lignes dans "
-        "`src/retraite_notionnelle/scenarios/actuel.py`, et "
+        "`src/retraite_notionnelle/scenarios/actuel.py` et `droit/`, et "
         f"{milliers(portage)} dans le portage `moteur/js/` ; chaque changement du "
         "modèle se paie des deux côtés, puis dans les témoins ;",
         f"- la suite : {milliers(sonde_tests())} tests (`python -m pytest`).",

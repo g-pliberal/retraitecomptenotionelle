@@ -41,6 +41,13 @@ import {
   FIN_PEREQUATION, RevalorisationsPensions, coefficientTraitementDiffere, dateIso,
 } from "./revalorisation.js";
 import { Fiabilite } from "./serie.js";
+import * as acquerir from "./droit/acquerir.js";
+import { derniereAnnee } from "./droit/commun.js";
+import * as compter from "./droit/compter.js";
+import { trimestresDeLaLigneEntre } from "./droit/compter.js";
+import * as coordonner from "./droit/coordonner.js";
+import { borneCarriere, REGIMES_CODE_DES_PENSIONS } from "./droit/coordonner.js";
+import * as etapes from "./droit/releve.js";
 
 /** Premier trimestre que la surcote puisse compter (loi du 21 août 2003). */
 const SURCOTE_DEPUIS = new DateMois(2004, 1);
@@ -51,55 +58,9 @@ const SURCOTE_DEPUIS = new DateMois(2004, 1);
 const AGE_DUREE_A_L_OUVERTURE = 60.0;
 /** Le XXIV, C, de la loi du 14 avril 2023 ne vise que ceux qui peuvent liquider depuis ce mois. */
 const DUREE_XXIV_C_DEPUIS = new DateMois(2023, 9);
-/** Les régimes que L. 13 du code des pensions et le XXIV visent. */
-const REGIMES_CODE_DES_PENSIONS = new Set(["fonction_publique_etat", "cnracl", "fspoeie"]);
 /** Âge au-delà duquel le barème de 2007-2008 sert 1,25 %. */
 const SURCOTE_AGE_MAJORE = 65;
 
-/**
- * Les trois régimes que la liquidation unique des régimes alignés réunit — le
- * régime général, les salariés agricoles et la sécurité sociale des
- * indépendants sous ses trois noms. Les exploitants agricoles n'en sont pas :
- * la LURA ne vise que les SALARIÉS agricoles.
- */
-const REGIMES_ALIGNES = new Set([
-  "regime_general", "msa_salaries", "cancava", "organic", "rsi",
-]);
-/** La clé sous laquelle ils se réunissent : ce n'est pas un régime. */
-const REGIMES_ALIGNES_TETE = "regimes_alignes";
-/**
- * LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS : chacun compte et
- * liquide les services des deux autres (L. 5 et L. 11 du code des pensions,
- * articles 8 et 13 du décret n° 2003-1306, articles 4 et 10 du décret
- * n° 2004-1056), et le régime de la dernière affiliation sert une PENSION
- * UNIQUE. La clé sous laquelle ils se réunissent. Voir le Python.
- */
-const REGIMES_INTERPENETRES_TETE = "regimes_interpenetres";
-
-/**
- * LE RÉTABLISSEMENT : l'agent qui part sans droit à pension est « rétabli [...]
- * dans la situation qu'il aurait eue s'il avait été affilié au régime général
- * [...] et à l'Ircantec » (L. 65 du code des pensions). Les régimes que
- * D. 173-15 du code de la sécurité sociale y soumet et que le catalogue porte.
- * Voir `_retablie` dans le Python.
- */
-const REGIMES_RETABLIS = new Set([
-  "fonction_publique_etat", "pensions_civiles_1853", "cnracl", "fspoeie", "seita",
-]);
-/**
- * Pour qui a quitté son régime après le 28 janvier 1950 (décret n° 50-133) ;
- * l'agent parti plus tôt garde la pension au prorata que le modèle sert.
- */
-const RETABLISSEMENT_DEPUIS = "1950-01-29";
-/**
- * Où vont les années rétablies : là où le contractuel du public est routé, et
- * avant 1945, aux assurances sociales du salarié.
- */
-const STATUTS_DU_RETABLISSEMENT = ["contractuel_public", "salarie_prive_non_cadre"];
-/** Assurés nés à compter de 1953 (article 51 de la LFSS pour 2016). */
-const LURA_PREMIERE_GENERATION = 1953;
-/** Pensions prenant effet au 1er juillet 2017 (décret n° 2017-737, art. 4). */
-const LURA_DATE_EFFET = 2017 * 12 + 6;
 /** Rang du mois de septembre 2026 : premières pensions des parents à 24/23 ans. */
 const PARENTS_MEILLEURES_ANNEES_DEPUIS = 2026 * 12 + 8;
 
@@ -152,62 +113,6 @@ const SURCOTE_EMPLOIS_CLASSES = {
 
 /** Âge de la surcote d'avant la réforme de 2023, laissé aux classés plus âgés. */
 const AGE_SURCOTE_AVANT_2023 = 62.0;
-
-/**
- * Le seul dispositif pour enfants qu'un régime EN POINTS puisse porter : une
- * majoration de durée d'assurance ne touche que la durée, qu'il oppose aussi ;
- * une bonification entre aux services, qu'il n'a pas.
- */
-const MAJORATION_DE_DUREE = "mda";
-
-/** Le régime à qui R. 173-15 donne la priorité parmi les régimes alignés. */
-const REGIME_GENERAL = "regime_general";
-
-/**
- * Quand le droit à la bonification d'un régime spécial est OUVERT, dans les
- * trois versions de R. 13 du code des pensions : pour chacun des enfants
- * jusqu'en 2003 ; pour l'enfant né en service de 2004 à 2010, R. 13 n'admettant
- * que les congés du statut ; pour l'enfant né avant la radiation depuis 2011,
- * le congé de maternité du code de la sécurité sociale suffisant. Les deux
- * bornes se lisent à l'année de liquidation. Voir le Python.
- */
-const BONIFICATION_NE_EN_SERVICE_DEPUIS = 2004;
-const BONIFICATION_NE_AVANT_RADIATION_DEPUIS = 2011;
-
-/**
- * Pour les enfants nés depuis 2004, la majoration de L. 12 bis ne va qu'aux
- * femmes « ayant accouché postérieurement à leur recrutement ».
- */
-const MAJORATION_APRES_RECRUTEMENT_DEPUIS = 2004;
-
-/** Dernière année à compter dans les services, null si sans objet. */
-function borneCarriere(carriere) {
-  return carriere.age_liquidation === null || carriere.age_liquidation === undefined
-    ? null
-    : carriere.anneeLiquidation;
-}
-
-/**
- * Le droit aux trimestres d'enfants d'un régime spécial est-il ouvert ? Sur
- * la naissance des enfants que la chronologie porte — présumée aux trente ans
- * de leur mère tant que rien n'est déclaré : né depuis
- * 2004, après le recrutement (L. 12 bis) ; né avant, tout enfant jusqu'en 2003,
- * l'enfant né en service de 2004 à 2010, l'enfant né avant la radiation depuis
- * 2011 (R. 13). Voir `_bonification_ouverte` du Python.
- */
-function bonificationOuverte(carriere, recrutement, derniere, anneeLiquidation) {
-  const naissance = carriere.anneeNaissanceDesEnfants;
-  if (naissance >= MAJORATION_APRES_RECRUTEMENT_DEPUIS) {
-    return naissance >= recrutement;
-  }
-  if (anneeLiquidation >= BONIFICATION_NE_AVANT_RADIATION_DEPUIS) {
-    return naissance <= derniere;
-  }
-  if (anneeLiquidation >= BONIFICATION_NE_EN_SERVICE_DEPUIS) {
-    return recrutement <= naissance && naissance <= derniere;
-  }
-  return true;
-}
 
 export class ScenarioActuel {
   constructor(paquet, macro, catalogue, affiliations, parametres) {
@@ -371,23 +276,8 @@ export class ScenarioActuel {
    * « sur le salaire forfaitaire de la catégorie dans laquelle il a été
    * classé » (R. 11), non sur sa paie. Proratisé sur les mois de l'année.
    */
-  /**
-   * L'assiette minimale que la ligne oppose à l'un de ces régimes : celle du
-   * régime de BASE d'un indépendant (D. 633-2, D. 642-4), nulle ailleurs.
-   */
-  assietteMinimale(codes, ligne) {
-    if (!(ligne.assiette_minimale_base > 0)) {
-      return 0.0;
-    }
-    const regle = assietteMinimale(this.macro.paquet, ligne.affiliation, ligne.annee);
-    if (regle === null || !codes.some((c) => regle[1].includes(c))) {
-      return 0.0;
-    }
-    return ligne.assiette_minimale_base;
-  }
-
   assietteDeReference(periode, ligne) {
-    // Une année RÉTABLIE porte au compte le dernier traitement : voir `retablie`.
+    // Une année RÉTABLIE porte au compte le dernier traitement : voir `retablir` (`droit/coordonner.js`).
     if (ligne.revenu_retabli > 0 && periode.assiette !== "primes_uniquement") {
       return ligne.revenu_retabli;
     }
@@ -469,7 +359,7 @@ export class ScenarioActuel {
       if (ligne.annee >= anneeLiquidation) {
         continue;
       }
-      if (!this.regimesDe(
+      if (!coordonner.regimesDe(this, 
         ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
         ligne.cotise ? ligne.revenu : ligne.revenu_reference,
         this.macro.plafond_securite_sociale.valeur(ligne.annee),
@@ -488,7 +378,7 @@ export class ScenarioActuel {
         revenu = ligne.revenu_avpf;
       } else {
         revenu = Math.max(this.assietteDeReference(periode, ligne),
-          this.assietteMinimale([...codesAdmis], ligne));
+          acquerir.assietteMinimale(this, [...codesAdmis], ligne));
       }
       // TRANCHE DE SALAIRE. Un régime qui liquide tranche par tranche — le
       // personnel navigant, 1,85 % par annuité sur la première et 1,4 % sur la
@@ -556,7 +446,7 @@ export class ScenarioActuel {
       // La ligne du régime, et non l'activité principale : un fonctionnaire
       // qui cumule une activité libérale liquide son traitement.
       const derniere = carriere.lignesDe(anneeLiquidation).find(
-        (ligne) => this.regimesDe(
+        (ligne) => coordonner.regimesDe(this, 
           ligne, anneeLiquidation,
           carriere.dateEntree(ligne.affiliation),
           ligne.revenu, this.macro.plafond_securite_sociale.valeur(anneeLiquidation))
@@ -805,311 +695,6 @@ export class ScenarioActuel {
 
   // -- succession de régimes -------------------------------------------------
 
-  /**
-   * Le régime au bout de la chaîne d'absorption de `code`, tant que la chaîne
-   * reste en annuités : `cancava` et `rsi` rendent `regime_general`,
-   * `pensions_civiles_1853` rend `fonction_publique_etat`. Un régime en points
-   * au bout de la chaîne l'arrête, et un régime en points n'y entre jamais :
-   * ses points se convertissent et s'additionnent déjà (voir `valeurDuPoint`).
-   *
-   * L'absorption ne se suit qu'à partir de l'année où le régime FERME à ses
-   * affiliés — celle où l'absorbant commence à recevoir leurs années. Avant,
-   * ce sont deux régimes distincts, et un polypensionné en a deux.
-   */
-  teteDeSuccession(code, anneeLiquidation) {
-    const vu = new Set([code]);
-    let courant = code;
-    for (;;) {
-      const regime = this.catalogue.obtenir(courant);
-      const suivant = regime.integre_dans;
-      const borne = regime.fermeture !== null && regime.fermeture !== undefined
-        ? regime.fermeture
-        : regime.extinction;
-      if (suivant === null || suivant === undefined
-          || borne === null || borne === undefined || anneeLiquidation < borne
-          || !this.catalogue.contient(suivant) || vu.has(suivant)) {
-        return courant;
-      }
-      const absorbant = this.catalogue.obtenir(suivant);
-      const periode = absorbant.periode(
-        Math.min(anneeLiquidation, derniereAnnee(absorbant)),
-      );
-      if (periode === null || periode.type_calcul !== "annuites") {
-        return courant;
-      }
-      vu.add(suivant);
-      courant = suivant;
-    }
-  }
-
-  /**
-   * Les régimes d'annuités que la carrière a traversés, groupés par chaîne de
-   * succession : pour chaque code d'un groupe d'au moins deux, les membres du
-   * groupe, LE PREMIER ÉTANT CELUI QUI LIQUIDE.
-   *
-   * Un régime et celui qui lui succède ne sont pas deux régimes. La CANCAVA,
-   * le RSI et le régime général sont trois NOMS du même droit pour un
-   * artisan : sa caisse calcule un seul salaire annuel moyen sur toute la
-   * carrière et un seul coefficient de proratisation. Liquider chaque nom sur
-   * ses seules années calculait deux salaires de référence là où la caisse
-   * n'en calcule qu'un : « 30 077 € × 120/165 » plus « 36 778 € × 40/165 » au
-   * lieu de « 34 152 € × 160/165 », de −7,2 % à +0,3 % contre l'oracle du
-   * régime général.
-   *
-   * Le groupe est liquidé par le membre de la DERNIÈRE période active de la
-   * carrière — à égalité, par l'absorbant —, dont la fiche donne les règles,
-   * et c'est aussi ce que la LURA prescrit.
-   *
-   * ET LES RÉGIMES ALIGNÉS DISTINCTS SE RÉUNISSENT AUSSI, DEPUIS 2017. La
-   * liquidation unique des régimes alignés (L. 173-1-2 CSS) donne une seule
-   * retraite à qui a cotisé à deux des trois régimes alignés : un revenu
-   * annuel moyen formé de la somme des salaires et revenus d'une même année,
-   * sur les vingt-cinq meilleures, et une proratisation qui tient compte de
-   * tous leurs trimestres (R. 173-4-4-1, 1° et 4°). Le modèle y arrivait pour
-   * le couple régime général / indépendants par la chaîne d'absorption, qui
-   * ne ferme le RSI qu'en 2018, et pas du tout pour les salariés agricoles.
-   *
-   * ET LES TROIS RÉGIMES DU CODE DES PENSIONS SONT INTERPÉNÉTRÉS : l'État, la
-   * CNRACL et le FSPOEIE liquident chacun les services des deux autres, et le
-   * régime de la dernière affiliation sert une pension unique, sur le
-   * traitement des six derniers mois de la carrière publique entière. Voir
-   * `regimesInterpenetres`.
-   *
-   * @returns {Map<string, string[]>}
-   */
-  groupesDeSuccession(codes, anneeLiquidation, derniereAnneeParRegime, carriere = null) {
-    const parTete = new Map();
-    const lura = carriere !== null
-      && carriere.generation >= LURA_PREMIERE_GENERATION
-      && carriere.dateLiquidation.rang >= LURA_DATE_EFFET;
-    const interpenetres = carriere !== null ? this.regimesInterpenetres(carriere) : new Set();
-    for (const code of codes) {
-      const regime = this.catalogue.obtenir(code);
-      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
-      if (periode === null || periode.type_calcul !== "annuites") {
-        continue;
-      }
-      let tete = lura && REGIMES_ALIGNES.has(code)
-        ? REGIMES_ALIGNES_TETE
-        : this.teteDeSuccession(code, anneeLiquidation);
-      if (interpenetres.has(tete)) {
-        tete = REGIMES_INTERPENETRES_TETE;
-      }
-      if (!parTete.has(tete)) {
-        parTete.set(tete, []);
-      }
-      parTete.get(tete).push(code);
-    }
-    const groupes = new Map();
-    for (const membres of parTete.values()) {
-      if (membres.length < 2) {
-        continue;
-      }
-      const rang = new Map(this.chaineDepuis(membres).map((code, i) => [code, i]));
-      let liquidateur = membres[0];
-      for (const code of membres) {
-        const derniere = derniereAnneeParRegime.get(code) ?? 0;
-        const reference = derniereAnneeParRegime.get(liquidateur) ?? 0;
-        if (derniere > reference
-            || (derniere === reference && rang.get(code) > rang.get(liquidateur))) {
-          liquidateur = code;
-        }
-      }
-      const ordonnes = [
-        liquidateur,
-        ...[...membres].sort((a, b) => rang.get(a) - rang.get(b))
-          .filter((code) => code !== liquidateur),
-      ];
-      for (const code of membres) {
-        groupes.set(code, ordonnes);
-      }
-    }
-    return groupes;
-  }
-
-  /**
-   * Les régimes du code des pensions que cette carrière réunit en une pension
-   * unique : les trois, sauf l'État quand l'assuré n'y a servi que sous
-   * l'uniforme — le militaire garde sa pension militaire, et n'y renonce que
-   * par un choix exprès (L. 77). Voir `_regimes_interpenetres` du Python.
-   *
-   * @returns {Set<string>}
-   */
-  regimesInterpenetres(carriere) {
-    const militaires = this.affiliations.categoriesMilitaires;
-    const civil = carriere.lignes.some((ligne) => {
-      if (!ligne.cotise || Object.prototype.hasOwnProperty.call(militaires, ligne.affiliation)) {
-        return false;
-      }
-      const routes = this.regimesRoutes([ligne.affiliation]);
-      return routes.has("fonction_publique_etat") || routes.has("pensions_civiles_1853");
-    });
-    const regimes = new Set(REGIMES_CODE_DES_PENSIONS);
-    if (!civil) {
-      regimes.delete("fonction_publique_etat");
-    }
-    return regimes;
-  }
-
-  /**
-   * Ce régime peut-il pensionner cet agent ? `null` s'il n'y a pas servi. La
-   * durée exigée se compte sur les années que le régime a effectivement
-   * reçues — celles des trois régimes interpénétrés ensemble —, et se lit à la
-   * radiation ; une carrière d'État seulement militaire se lit à la règle des
-   * militaires (L. 6), et à son premier engagement : les deux ans de R. 4-1
-   * ne valent que pour le militaire engagé depuis le 1er janvier 2014
-   * (article 42, II, de la loi n° 2014-40). Voir `_droit_a_pension` dans le
-   * Python.
-   */
-  droitAPension(code, carriere, anneeLiquidation) {
-    // Les pensions civiles d'avant 1948 sont celles de l'État.
-    const regime = code === "pensions_civiles_1853" ? "fonction_publique_etat" : code;
-    const interpenetres = this.regimesInterpenetres(carriere);
-    let regimes;
-    let cle;
-    if (interpenetres.has(regime)) {
-      regimes = new Set(interpenetres);
-      cle = regime;
-    } else if (regime === "fonction_publique_etat") {
-      regimes = new Set([regime]);
-      cle = "militaires";
-    } else {
-      regimes = new Set([regime]);
-      cle = regime;
-    }
-    if (regimes.has("fonction_publique_etat")) {
-      regimes.add("pensions_civiles_1853");
-    }
-    const borne = borneCarriere(carriere);
-    const parAnnee = new Map();
-    for (const ligne of carriere.lignes) {
-      if (!ligne.cotise || (borne !== null && ligne.annee > borne)) {
-        continue;
-      }
-      if (!this.affiliations.regimes(
-        ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
-      ).some((c) => regimes.has(c))) {
-        continue;
-      }
-      const retenue = parAnnee.get(ligne.annee);
-      if (retenue === undefined || ligne.fraction_annee > retenue.fraction_annee) {
-        parAnnee.set(ligne.annee, ligne);
-      }
-    }
-    if (parAnnee.size === 0) {
-      return null;
-    }
-    const lignes = [...parAnnee.keys()].sort((a, b) => a - b).map((a) => parAnnee.get(a));
-    const mois = carriere.age_liquidation !== null && carriere.age_liquidation !== undefined
-      ? carriere.dateLiquidation.mois : 1;
-    const depart = `${String(anneeLiquidation).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
-    let radiation = `${String(lignes[lignes.length - 1].annee + 1).padStart(4, "0")}-01-01`;
-    const enFonctions = radiation >= depart;
-    if (enFonctions) {
-      radiation = depart;
-    }
-    const lueLe = cle === "militaires"
-      ? `${String(lignes[0].annee).padStart(4, "0")}-01-01` : radiation;
-    const regle = this.servicesOuvrantPension.annees(cle, lueLe, enFonctions);
-    const [exigees, fiabilite] = regle ?? [0, Fiabilite.ESTIMEE];
-    const servies = lignes.reduce((total, ligne) => total + ligne.fraction_annee, 0);
-    return {
-      regimes,
-      cleRegimes: [...regimes].sort().join(","),
-      lignes,
-      servies,
-      exigees,
-      fiabilite,
-      radiation,
-      pension: servies + 1e-9 >= exigees,
-      recrutement: lignes[0].annee,
-      derniere: lignes[lignes.length - 1].annee,
-    };
-  }
-
-  /**
-   * La carrière que le scénario 1 liquide, RÉTABLISSEMENT fait : les années
-   * d'un fonctionnaire parti sans droit à pension passent au régime général et
-   * à l'Ircantec. Le régime général y porte le dernier traitement, dans la
-   * limite du plafond de chaque année (D. 173-16) ; l'Ircantec le traitement de
-   * chaque année ; les primes restent au RAFP. Voir `_retablie` dans le Python.
-   */
-  retablie(carriere) {
-    if (carriere.age_liquidation === null || carriere.age_liquidation === undefined) {
-      return carriere;
-    }
-    const anneeLiquidation = carriere.anneeLiquidation;
-    const vus = new Set();
-    const retablies = new Map();
-    for (const code of [...REGIMES_RETABLIS].sort()) {
-      const droit = this.droitAPension(code, carriere, anneeLiquidation);
-      if (droit === null || vus.has(droit.cleRegimes)) {
-        continue;
-      }
-      vus.add(droit.cleRegimes);
-      if (droit.pension || droit.radiation < RETABLISSEMENT_DEPUIS) {
-        continue;
-      }
-      const derniere = droit.lignes[droit.lignes.length - 1];
-      const traitement = derniere.revenuAnnualise * (1.0 - derniere.part_primes);
-      for (const ligne of carriere.lignes) {
-        if (ligne.cotise && ligne.annee <= anneeLiquidation && this.affiliations.regimes(
-          ligne.affiliation, ligne.annee, carriere.dateEntree(ligne.affiliation),
-        ).some((c) => droit.regimes.has(c))) {
-          retablies.set(ligne, traitement * ligne.fraction_annee);
-        }
-      }
-    }
-    if (retablies.size === 0) {
-      return carriere;
-    }
-    return carriere.avecLignes(carriere.lignes.map((ligne) => (
-      retablies.has(ligne)
-        ? new AnneeCarriere({ ...ligne, revenu_retabli: retablies.get(ligne) })
-        : ligne
-    )));
-  }
-
-  /**
-   * Les régimes auxquels cette ligne cotise cette année-là : ceux de son
-   * statut, sauf pour une année RÉTABLIE, qui quitte son régime spécial pour le
-   * régime général et l'Ircantec et garde le RAFP. Voir `_regimes_de`.
-   */
-  regimesDe(ligne, annee, anneeEntree = null, revenu = null, plafond = null) {
-    const regimes = this.affiliations.regimes(
-      ligne.affiliation, annee, anneeEntree, revenu, plafond,
-    );
-    if (!(ligne.revenu_retabli > 0)) {
-      return regimes;
-    }
-    let cibles = [];
-    for (const statut of STATUTS_DU_RETABLISSEMENT) {
-      cibles = [...this.affiliations.regimes(statut, annee)];
-      if (cibles.length > 0) {
-        break;
-      }
-    }
-    return [...cibles, ...regimes.filter((code) => !REGIMES_RETABLIS.has(code))];
-  }
-
-  /** Les membres dans l'ordre de la chaîne, du plus ancien à l'absorbant. */
-  chaineDepuis(membres) {
-    const restants = new Set(membres);
-    let ordre = [];
-    for (const depart of [...membres].sort()) {
-      let courant = depart;
-      const chaine = [];
-      while (restants.has(courant) && !ordre.includes(courant)) {
-        chaine.push(courant);
-        courant = this.catalogue.obtenir(courant).integre_dans;
-      }
-      if (chaine.length > ordre.length) {
-        ordre = chaine;
-      }
-    }
-    return [...ordre, ...[...restants].filter((c) => !ordre.includes(c)).sort()];
-  }
-
   // -- catégorie active et pension militaire ---------------------------------
 
   /**
@@ -1147,28 +732,6 @@ export class ScenarioActuel {
   }
 
   /**
-   * Les régimes que ces statuts atteignent, une année au moins.
-   *
-   * C'est la seconde garde du droit dérogatoire, et elle n'est pas de confort.
-   * Plusieurs régimes SPÉCIAUX servent eux aussi une catégorie active — leur
-   * fiche le déclare, et c'est exact : la SNCF a ses agents de conduite. Mais
-   * la catégorie active de la fonction publique n'a rien à y voir : sans cette
-   * garde, un assuré ayant fait vingt ans d'emploi classé après une carrière à
-   * la SNCF aurait vu son régime SNCF liquidé à l'âge de la fonction publique.
-   */
-  regimesRoutes(statuts) {
-    const codes = new Set();
-    for (const statut of statuts) {
-      for (const periode of this.affiliations.periodes(statut)) {
-        for (const code of periode.regimes ?? []) {
-          codes.add(code);
-        }
-      }
-    }
-    return codes;
-  }
-
-  /**
    * L'âge anticipé que le classement de l'emploi ouvre, ou null.
    *
    * Quatre conditions, et la fiche en porte une : le régime doit servir la
@@ -1197,7 +760,7 @@ export class ScenarioActuel {
     }
     const statuts = Object.keys(classements)
       .filter((code) => classements[code] === classement);
-    if (!this.regimesRoutes(statuts).has(periode.regime)) {
+    if (!coordonner.regimesRoutes(this, statuts).has(periode.regime)) {
       return null;
     }
     const servies = carriere.dureeDeService(statuts, borneCarriere(carriere));
@@ -1227,7 +790,7 @@ export class ScenarioActuel {
     }
     const statuts = Object.keys(categories)
       .filter((code) => categories[code] === categorie);
-    if (!this.regimesRoutes(statuts).has(periode.regime)) {
+    if (!coordonner.regimesRoutes(this, statuts).has(periode.regime)) {
       return null;
     }
     const base = this.dureesServicesMilitaires.dureeDeBase(categorie);
@@ -1302,7 +865,7 @@ export class ScenarioActuel {
   /** Les statuts que le régime route, et les années servies dans ceux-ci. */
   servicesDansLeRegime(periode, carriere) {
     const statuts = this.affiliations.codes
-      .filter((code) => this.regimesRoutes([code]).has(periode.regime));
+      .filter((code) => coordonner.regimesRoutes(this, [code]).has(periode.regime));
     return { statuts, servies: carriere.dureeDeService(statuts, borneCarriere(carriere)) };
   }
 
@@ -1448,7 +1011,7 @@ export class ScenarioActuel {
       if (ligne.annee > anneeLiquidation) {
         continue;
       }
-      for (const code of this.regimesDe(
+      for (const code of coordonner.regimesDe(this, 
         ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
         ligne.cotise ? ligne.revenu : ligne.revenu_reference,
         this.macro.plafond_securite_sociale.valeur(ligne.annee),
@@ -1487,7 +1050,7 @@ export class ScenarioActuel {
    * répondent. `null` quand aucun régime connu n'est parcouru.
    */
   ageOuvertureDroit(carriereSaisie) {
-    const carriere = this.retablie(carriereSaisie);
+    const carriere = coordonner.retablir(this, carriereSaisie);
     const { annuites, autres: enPoints } = this.periodesParcourues(carriere);
     const autres = this.sansAgesPropres(enPoints);
     const retenues = annuites.length > 0 ? annuites : autres;
@@ -1533,7 +1096,7 @@ export class ScenarioActuel {
     let cotises = carriere.trimestresCumules(carriere.lignes.filter(
       (ligne) => ligne.cotise && ligne.annee <= anneeLiquidation,
     ));
-    const majoration = this.majorationPourEnfants(
+    const majoration = compter.majorationPourEnfants(this, 
       carriere, new Map(annuites.map(([code]) => [code, cotises])), anneeLiquidation,
     );
     cotises = this.carriereLongue.cotisesReputes(
@@ -1588,7 +1151,7 @@ export class ScenarioActuel {
   }
 
   ageTauxPleinDroit(carriereSaisie) {
-    const carriere = this.retablie(carriereSaisie);
+    const carriere = coordonner.retablir(this, carriereSaisie);
     const { annuites, autres: enPoints } = this.periodesParcourues(carriere);
     const autres = this.sansAgesPropres(enPoints);
     const retenues = annuites.length > 0 ? annuites : autres;
@@ -1629,7 +1192,7 @@ export class ScenarioActuel {
     // lus au régime qui les porte comme `calculer` le fait : sans eux, une
     // mère de deux enfants était datée trois ans après l'âge où sa pension
     // est entière.
-    const majoration = this.majorationPourEnfants(
+    const majoration = compter.majorationPourEnfants(this, 
       carriere, new Map(opposent.map(([code]) => [code, acquis])), anneeLiquidation,
     );
     if (majoration !== null) {
@@ -1868,38 +1431,6 @@ export class ScenarioActuel {
     return periode.valeur_point_euros * this.macro.coefficientPrix(
       periode.valeur_point_annee ?? annee, annee,
     );
-  }
-
-  /** Points de retraite proportionnelle agricole d'une année (R. 732-71).
-   *
-   * Escalier à quatre marches : quinze points jusqu'à 400 SMIC horaires, une
-   * pente jusqu'à trente à 800 SMIC, un plateau à trente jusqu'à deux fois le
-   * minimum contributif, puis une pente jusqu'au maximum M de l'année, que
-   * R. 732-70 définit par (PM − AVTS) / (37,5 × valeur du point).
-   */
-  pointsMsa(periode, annee, revenu) {
-    const smic = this.macro.smic_horaire.valeur(annee);
-    const passAnnuel = this.macro.plafond_securite_sociale.valeur(annee);
-    const valeurPoint = this.valeurPointFiche(periode, annee);
-    if (smic <= 0 || passAnnuel <= 0 || valeurPoint <= 0) {
-      return 0.0;
-    }
-    const avts = (periode.pension_forfaitaire_annuelle ?? 0.0)
-      * this.macro.coefficientPrix(periode.pension_forfaitaire_annee ?? annee, annee);
-    const minimumContributif = this.minimumContributif.valeurs(annee)[0];
-    const maximum = (0.5 * passAnnuel - avts) / (37.5 * valeurPoint);
-    if (revenu <= 400 * smic) {
-      return 15.0;
-    }
-    if (revenu <= 800 * smic) {
-      return Math.min(30.0, 15.0 + 15.0 * (revenu - 400 * smic) / (400 * smic));
-    }
-    if (revenu <= 2 * minimumContributif || passAnnuel <= 2 * minimumContributif) {
-      return 30.0;
-    }
-    return Math.min(maximum, 30.0 + (maximum - 30.0)
-      * (revenu - 2 * minimumContributif)
-      / (passAnnuel - 2 * minimumContributif));
   }
 
   /**
@@ -2278,229 +1809,24 @@ export class ScenarioActuel {
     return plafond * servie[0] / publiee[0];
   }
 
-  /**
-   * Trimestres dus au titre des enfants, et régime qui les porte.
-   *
-   * Le droit n'attribue pas ces trimestres au-dessus des régimes : il les donne
-   * DANS un régime, et ils comptent donc aussi dans sa proratisation. UN SEUL
-   * régime les accorde, et l'article R. 173-15 du code de la sécurité sociale
-   * dit lequel — le modèle retenait celui qui accordait le plus :
-   *
-   * 1. un RÉGIME SPÉCIAL, qui déclare `bonifications`, passe le premier s'il
-   *    peut servir une pension à l'assurée — la durée de services qu'il exige,
-   *    `ServicesOuvrantPension` — et si le droit y est ouvert pour ses enfants
-   *    (`bonificationOuverte`), même quand il accorde moins (TA Amiens, 2 juin
-   *    2017). Entre deux régimes spéciaux, le dernier servi ;
-   * 2. sinon le RÉGIME GÉNÉRAL, prioritaire parmi les régimes alignés ;
-   * 3. sans lui, le régime de la dernière affiliation, puis celui qui compte le
-   *    plus de trimestres.
-   *
-   * Le modèle ne rétablit pas au régime général l'agent qui n'a pas la durée :
-   * sans régime aligné, c'est le régime spécial qui porte la majoration.
-   *
-   * @returns {{regime: string, dispositif: string, trimestres: number,
-   *            services: number, fiabilite: number}|null}
-   */
-  majorationPourEnfants(carriere, trimestresParRegime, anneeLiquidation) {
-    if (carriere.nombre_enfants <= 0) {
-      return null;
-    }
-    // Les régimes spéciaux qui peuvent pensionner, ceux qui ne le peuvent pas,
-    // et les régimes alignés : code -> [trimestres validés, majoration].
-    const speciaux = new Map();
-    const sansPension = new Map();
-    const alignes = new Map();
-    // Ce qu'a coûté d'écarter un régime spécial : la fiabilité de la règle qui
-    // l'a écarté, que la majoration servie ailleurs hérite.
-    let fiabiliteEcartes = Fiabilite.CERTIFIEE;
-    for (const [code, valides] of trimestresParRegime) {
-      if (!this.catalogue.contient(code)) {
-        continue;
-      }
-      const regime = this.catalogue.obtenir(code);
-      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
-      if (periode === null) {
-        continue;
-      }
-      for (const dispositif of periode.avantages_non_contributifs) {
-        // Un régime EN POINTS ne porte que la majoration de DURÉE, qui ne joue
-        // que sur la durée d'assurance : la CNAVPL depuis 2010 (L. 643-1-1).
-        // Une bonification entre aux services, qu'il n'a pas.
-        if (periode.type_calcul !== "annuites" && dispositif !== MAJORATION_DE_DUREE) {
-          continue;
-        }
-        const accorde = this.majorationsEnfants.parEnfant(
-          dispositif, carriere.sexe, carriere.anneeNaissanceDesEnfants, anneeLiquidation,
-          carriere.nombre_enfants,
-        );
-        if (accorde === null) {
-          continue;
-        }
-        const [trimestres, services, fiabilite] = accorde;
-        const majoration = {
-          regime: code, dispositif,
-          trimestres: trimestres * carriere.nombre_enfants,
-          services: services * carriere.nombre_enfants,
-          fiabilite,
-        };
-        if (dispositif === MAJORATION_DE_DUREE) {
-          alignes.set(code, [valides, majoration]);
-          continue;
-        }
-        const droit = this.droitRegimeSpecial(periode, carriere, anneeLiquidation);
-        if (droit === null) {
-          continue;
-        }
-        const [pension, ouvert, fiabiliteRegle] = droit;
-        if (!ouvert) {
-          // Le droit fermé se lit sur la date de naissance que le modèle prête
-          // aux enfants : la ligne le dit déjà.
-          fiabiliteEcartes = Math.min(fiabiliteEcartes, fiabilite);
-          continue;
-        }
-        majoration.fiabilite = Math.min(fiabilite, fiabiliteRegle);
-        if (pension) {
-          speciaux.set(code, [valides, majoration]);
-        } else {
-          fiabiliteEcartes = Math.min(fiabiliteEcartes, fiabiliteRegle);
-          sansPension.set(code, [valides, majoration]);
-        }
-      }
-    }
-    if (speciaux.size > 0) {
-      return this.derniereAffiliation(carriere, speciaux, anneeLiquidation);
-    }
-    let retenue;
-    if (alignes.has(REGIME_GENERAL)) {
-      retenue = alignes.get(REGIME_GENERAL)[1];
-    } else if (alignes.size > 0) {
-      retenue = this.derniereAffiliation(carriere, alignes, anneeLiquidation);
-    } else if (sansPension.size > 0) {
-      return this.derniereAffiliation(carriere, sansPension, anneeLiquidation);
-    } else {
-      return null;
-    }
-    if (fiabiliteEcartes < retenue.fiabilite) {
-      retenue = { ...retenue, fiabilite: fiabiliteEcartes };
-    }
-    return retenue;
-  }
-
-  /**
-   * Ce que ce régime spécial peut pour les enfants de cette assurée :
-   * `[pension, ouvert, fiabilite]` — peut-il lui servir une pension, le droit
-   * y est-il ouvert, et la fiabilité de la durée exigée —, null si elle n'y a
-   * jamais servi. La radiation est datée comme pour la pension différée ; un
-   * régime que la table ne porte pas est présumé pouvoir pensionner, au niveau
-   * « estimée ».
-   */
-  droitRegimeSpecial(periode, carriere, anneeLiquidation) {
-    // Les trois régimes interpénétrés se lisent ensemble : voir `droitAPension`.
-    const droit = this.droitAPension(periode.regime, carriere, anneeLiquidation);
-    if (droit === null) {
-      return null;
-    }
-    return [
-      droit.pension,
-      bonificationOuverte(carriere, droit.recrutement, droit.derniere, anneeLiquidation),
-      droit.fiabilite,
-    ];
-  }
-
-  /**
-   * Le candidat du régime où l'assurée a été affiliée en dernier lieu ; à
-   * égalité, celui qui compte le plus de trimestres, puis le dernier code par
-   * ordre alphabétique. La dernière année se lit sur les lignes que chaque
-   * régime reçoit, et on ne la cherche que s'il faut départager.
-   */
-  derniereAffiliation(carriere, candidats, anneeLiquidation) {
-    if (candidats.size === 1) {
-      return [...candidats.values()][0][1];
-    }
-    const dernieres = new Map();
-    for (const ligne of carriere.lignes) {
-      if (ligne.annee > anneeLiquidation || carriere.trimestresRetenus(ligne) <= 0) {
-        continue;
-      }
-      for (const code of this.regimesDe(
-        ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
-        ligne.cotise ? ligne.revenu : ligne.revenu_reference,
-        this.macro.plafond_securite_sociale.valeur(ligne.annee),
-      )) {
-        if (candidats.has(code)) {
-          dernieres.set(code, Math.max(dernieres.get(code) ?? 0, ligne.annee));
-        }
-      }
-    }
-    let retenu = null;
-    for (const [code, [valides]] of candidats) {
-      const cle = [dernieres.get(code) ?? 0, valides, code];
-      if (retenu === null || cle[0] > retenu[0]
-          || (cle[0] === retenu[0] && (cle[1] > retenu[1]
-            || (cle[1] === retenu[1] && cle[2] > retenu[2])))) {
-        retenu = cle;
-      }
-    }
-    return candidats.get(retenu[2])[1];
-  }
-
-  /**
-   * Points que ce régime attribue sans cotisation à la liquidation, et la
-   * fiabilité de la durée requise qui les conditionne : cent points par année
-   * de chef d'exploitation d'avant 2003 à la RCO agricole (D. 732-154), dans
-   * la limite de 37,5 ans moins les années de RCO, à qui a dix-sept ans et
-   * demi comme chef (D. 732-151) et le taux plein de son régime de base
-   * (L. 732-56, II, 2°) — la durée requise jusqu'au 31 août 2023, la pension
-   * liquidée au taux plein depuis. Voir `_points_gratuits` dans le Python.
-   */
-  pointsGratuits(periode, carriere, assurance, trimestres, ageLiquidation) {
-    const regle = periode.points_gratuits;
-    const base = this.catalogue.obtenir(regle.regime);
-    const periodeBase = base.periode(
-      Math.min(carriere.anneeLiquidation, derniereAnnee(base)));
-    if (periodeBase === null) {
-      return [0.0, null];
-    }
-    const valides = (code, avant = null) => {
-      let total = 0;
-      for (const [annee, nombre] of assurance.get(code) ?? []) {
-        if (avant === null || annee < avant) {
-          total += Math.min(nombre, carriere.plafondTrimestres(annee));
-        }
-      }
-      return total;
-    };
-    if (valides(regle.regime) < regle.annees_minimum * 4) {
-      return [0.0, null];
-    }
-    const [requis, fiabilite] = this.dureeRequise(periodeBase, carriere);
-    let tauxPlein = trimestres >= requis;
-    const [anneeDepuis, moisDepuis] = regle.taux_plein_depuis;
-    if (!tauxPlein
-        && carriere.dateLiquidation.rang >= new DateMois(anneeDepuis, moisDepuis).rang) {
-      tauxPlein = ageLiquidation >= this.ageTauxPlein(periodeBase, carriere);
-    }
-    if (!tauxPlein) {
-      return [0.0, fiabilite];
-    }
-    const retenus = Math.min(
-      valides(regle.regime, regle.avant),
-      Math.max(0.0, regle.annees_maximum * 4 - valides(periode.regime)),
-    );
-    return [regle.points_par_annee * retenus / 4, fiabilite];
-  }
-
   calculer(carriereSaisie, ignorerPenaliteAge = false, avantagesNonContributifs = true,
     avpf = true, liquiderSuccessions = true, pointsGratuits = null) {
-    // L'agent parti de la fonction publique sans droit à pension y est RÉTABLI
-    // au régime général et à l'Ircantec : voir `retablie`.
-    const carriere = this.retablie(carriereSaisie);
     // `pointsGratuits` nul suit `avantagesNonContributifs` : voir le Python.
     const avecPointsGratuits = pointsGratuits ?? avantagesNonContributifs;
+    // LE RELEVÉ DES DROITS : les étapes de l'acquisition le construisent
+    // (`moteur/js/droit/`) — rétablir et router chaque ligne, compter les
+    // durées et les trimestres des enfants, acquérir les points et les
+    // cotisations, réunir les régimes liquidés ensemble —, et la liquidation
+    // qui suit ne lit que lui.
+    const releve = etapes.construire(this, carriereSaisie, {
+      avantagesNonContributifs, pointsGratuits: avecPointsGratuits, liquiderSuccessions,
+    });
+    const carriere = releve.carriere;
+    const { durees, droits } = releve;
     const anneeLiquidation = carriere.anneeLiquidation;
     const ageLiquidation = carriere.age_liquidation || 0.0;
 
-    let trimestres = carriere.trimestresActuels;
+    const trimestres = durees.trimestres;
 
     const pensions = [];
     let fiabiliteGlobale = Fiabilite.CERTIFIEE;
@@ -2514,454 +1840,21 @@ export class ScenarioActuel {
     // Régimes de la fonction publique qui portent le minimum garanti.
     const eligiblesGaranti = [];
 
-    // Cotisations cumulées par régime, pour les régimes en points dont on n'a
-    // pas le prix d'achat du point ; points acquis pour les autres.
-    const cumulCotisations = new Map();
-    const pointsAcquis = new Map();
-    // La majoration pour enfants des points de l'Agirc-Arrco dépend de leur
-    // année d'ACQUISITION : voir `crediter` dans le Python.
-    const majorationPoints = new Map();
-    const pointsMajores = new Map();
-    const crediter = (code, annee, points) => {
-      pointsAcquis.set(code, (pointsAcquis.get(code) ?? 0.0) + points);
-      const taux = this.majorationsEnfantsPoints.taux(code, annee, carriere.nombre_enfants);
-      if (taux !== null) {
-        majorationPoints.set(code, (majorationPoints.get(code) ?? 0.0) + points * taux);
-        pointsMajores.set(code, (pointsMajores.get(code) ?? 0.0) + points);
-      }
-    };
-    const fiabilitePoints = new Map();
-    // Trimestres qu'un régime à la durée crédite, et ceux d'entre eux
-    // accomplis avant l'âge qui lève son plafond : voir le Python.
-    const trimestresPlafonnables = new Map();
-    // Durée d'assurance validée dans chaque régime, PÉRIODES ASSIMILÉES
-    // COMPRISES : le coefficient de proratisation porte sur la durée
-    // d'assurance, pas sur les seules années cotisées.
-    const trimestresParRegime = new Map();
-    // SERVICES accomplis dans chaque régime. La fonction publique ne proratise
-    // pas sa pension sur la durée d'assurance mais sur les services et
-    // bonifications (L. 13 du code des pensions), et l'article L. 9 écarte « le
-    // temps passé dans une position statutaire ne comportant pas
-    // l'accomplissement de services effectifs au sens de l'article L. 5 », hors
-    // la liste fermée qu'il énumère. Le moteur créditait ce prorata de TOUTE
-    // période validée : une carrière de fonctionnaire coupée de cinq ans de
-    // chômage servait exactement la même pension qu'une carrière pleine.
-    const servicesParRegime = new Map();
-    // Ce qui reste du budget de services que L. 9 ouvre dans une limite — trois
-    // ans par enfant pour le congé parental. Il se tient sur toute la carrière,
-    // et non année par année.
-    const budgetServicesPlafonnes = new Map();
-    // Durée COTISÉE dans chaque régime : c'est elle, et non la durée
-    // d'assurance, qui proratise la majoration du minimum contributif au titre
-    // des périodes cotisées (D. 351-2-2).
-    const trimestresCotisesParRegime = new Map();
-    // Dernière année cotisée dans chaque régime : elle désigne, dans une
-    // chaîne de succession, la caisse qui liquide.
-    const derniereAnneeParRegime = new Map();
-    // Les trois mêmes, ANNÉE PAR ANNÉE. Deux activités cumulées peuvent
-    // verser au même régime, ou à deux régimes liquidés ensemble : leurs
-    // trimestres s'y additionnent sans dépasser les trimestres civils de
-    // l'année. Une année d'une seule activité n'est pas touchée.
-    const parAnnee = { assurance: new Map(), services: new Map(), cotises: new Map() };
-    // Ce qui ne tient à aucune année — la majoration pour enfants — et
-    // s'ajoute donc hors plafond annuel.
-    const horsAnnee = { assurance: new Map(), services: new Map(), cotises: new Map() };
-    const crediterTrimestres = (table, code, annee, trimestres) => {
-      if (!parAnnee[table].has(code)) {
-        parAnnee[table].set(code, new Map());
-      }
-      const annees = parAnnee[table].get(code);
-      annees.set(annee, (annees.get(annee) ?? 0) + trimestres);
-    };
-    const cumulPlafonne = (table, membres) => {
-      const sommes = new Map();
-      let total = 0;
-      for (const membre of membres) {
-        for (const [annee, trimestres] of parAnnee[table].get(membre) ?? []) {
-          sommes.set(annee, (sommes.get(annee) ?? 0) + trimestres);
-        }
-        total += horsAnnee[table].get(membre) ?? 0;
-      }
-      for (const [annee, somme] of sommes) {
-        total += Math.min(somme, carriere.plafondTrimestres(annee));
-      }
-      return total;
-    };
-    for (const ligne of carriere.lignes) {
-      const retenusLigne = carriere.trimestresRetenus(ligne);
-      if (retenusLigne <= 0) {
-        continue;
-      }
-      let servicesLigne = ligne.services_fonction_publique ? retenusLigne : 0;
-      const plafond = ligne.services_plafond_trimestres_par_enfant;
-      if (servicesLigne > 0 && plafond > 0) {
-        const restant = budgetServicesPlafonnes.get(plafond)
-          ?? plafond * carriere.nombre_enfants;
-        servicesLigne = Math.min(servicesLigne, restant);
-        budgetServicesPlafonnes.set(plafond, restant - servicesLigne);
-      }
-      for (const code of this.regimesDe(
-        ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
-        ligne.cotise ? ligne.revenu : ligne.revenu_reference,
-        this.macro.plafond_securite_sociale.valeur(ligne.annee),
-      )) {
-        if (!this.catalogue.contient(code)) {
-          continue;
-        }
-        crediterTrimestres("assurance", code, ligne.annee, retenusLigne);
-        if (servicesLigne > 0) {
-          crediterTrimestres("services", code, ligne.annee, servicesLigne);
-        }
-        if (ligne.cotise) {
-          crediterTrimestres("cotises", code, ligne.annee, retenusLigne);
-        }
-      }
-    }
-    for (const [table, cible] of [["assurance", trimestresParRegime],
-      ["services", servicesParRegime], ["cotises", trimestresCotisesParRegime]]) {
-      for (const code of parAnnee[table].keys()) {
-        cible.set(code, cumulPlafonne(table, [code]));
-      }
-    }
-
-    // Les trimestres accordés au titre des enfants ne flottent pas au-dessus des
-    // régimes : le droit les attribue DANS un régime, et ils comptent donc aussi
-    // dans sa proratisation, pas seulement dans la décote tous régimes
-    // confondus. UN SEUL régime les accorde, celui que désigne R. 173-15 : le
-    // régime spécial qui peut pensionner, sinon le régime général — voir
-    // `majorationPourEnfants`.
-    const majorationEnfants = avantagesNonContributifs
-      ? this.majorationPourEnfants(carriere, trimestresParRegime, anneeLiquidation)
-      : null;
-    // Les BONIFICATIONS, à part des services : seules elles peuvent porter le
-    // taux au-delà du maximum (`taux_maximum_bonifie`).
-    const bonificationsParRegime = new Map();
+    // Ce que les étapes ont écrit, sous les noms que la liquidation lit.
+    const cumulCotisations = droits.cumulCotisations;
+    const pointsAcquis = droits.pointsAcquis;
+    const majorationPoints = droits.majorationPoints;
+    const pointsMajores = droits.pointsMajores;
+    const fiabilitePoints = droits.fiabilitePoints;
+    const gratuitsAttribues = droits.gratuits;
+    const trimestresParRegime = durees.trimestresParRegime;
+    const bonificationsParRegime = durees.bonificationsParRegime;
+    const cumulPlafonne = (table, membres) => durees.cumulPlafonne(table, membres);
+    const majorationEnfants = durees.enfants;
     if (majorationEnfants !== null) {
-      bonificationsParRegime.set(majorationEnfants.regime, majorationEnfants.services);
-    }
-    if (majorationEnfants !== null) {
-      // LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE, et la majoration se
-      // range dans les deux : tout ce qui est accordé joue sur la durée
-      // d'assurance, tous régimes et dans le régime ; la seule part `services`
-      // entre aux services, qui proratisent la pension de la fonction publique.
-      trimestres += majorationEnfants.trimestres;
-      trimestresParRegime.set(
-        majorationEnfants.regime,
-        trimestresParRegime.get(majorationEnfants.regime) + majorationEnfants.trimestres,
-      );
-      servicesParRegime.set(
-        majorationEnfants.regime,
-        (servicesParRegime.get(majorationEnfants.regime) ?? 0)
-          + majorationEnfants.services,
-      );
-      horsAnnee.assurance.set(majorationEnfants.regime, majorationEnfants.trimestres);
-      horsAnnee.services.set(majorationEnfants.regime, majorationEnfants.services);
       fiabiliteGlobale = Math.min(fiabiliteGlobale, majorationEnfants.fiabilite);
     }
-
-    for (const ligne of carriere.lignes) {
-      // Une ligne postérieure à la liquidation décrit une activité exercée
-      // APRÈS le départ : elle n'ouvre pas de droits dans la pension qu'on
-      // liquide. L'année du départ, elle, ouvre ceux de ses mois qui l'ont
-      // précédé — ni zéro ni douze, mais le compte juste.
-      const part = carriere.partRetenueLigne(ligne);
-      if (part <= 0) {
-        continue;
-      }
-      if (!ligne.cotise && ligne.familles_cotisantes.length === 0) {
-        continue;
-      }
-      // Pendant une période indemnisée, seuls les régimes complémentaires
-      // encaissent, et sur le salaire d'avant l'interruption.
-      let baseLigne = ligne.cotise ? ligne.revenu : ligne.revenu_reference;
-      if (part < ligne.fraction_annee) {
-        baseLigne *= part / ligne.fraction_annee;
-      }
-      const famillesAdmises = ligne.cotise ? null : new Set(ligne.familles_cotisantes);
-      for (const code of this.regimesDe(
-        ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
-        ligne.cotise ? ligne.revenu : ligne.revenu_reference,
-        this.macro.plafond_securite_sociale.valeur(ligne.annee),
-      )) {
-        if (!this.catalogue.contient(code)) {
-          continue;
-        }
-        const regime = this.catalogue.obtenir(code);
-        if (famillesAdmises !== null && !famillesAdmises.has(regime.famille)) {
-          continue;
-        }
-        derniereAnneeParRegime.set(
-          code, Math.max(derniereAnneeParRegime.get(code) ?? 0, ligne.annee),
-        );
-        for (const periode of regime.periodesActives(ligne.annee)) {
-          // BARÈME D'UN AUTRE RÉGIME : une tranche que tous les affiliés ne
-          // cotisent pas forme une fiche à part, dont les points restent ceux
-          // du régime d'origine. Voir `points_de`.
-          const bareme = periode.points_de ?? code;
-          // Les bornes d'assiette et le repère en points sont ANNUELS : une
-          // année incomplète ne les atteint qu'à proportion de ses mois, comme
-          // le plafond lui-même.
-          const passPlein = this.macro.plafond_securite_sociale.valeur(ligne.annee);
-          const pass = passPlein * part;
-          let [borneBasse, borneHaute] = periode.bornesAssietteEnEuros(passPlein);
-          if (part < 1.0) {
-            borneBasse *= part;
-            borneHaute = borneHaute === null ? null : borneHaute * part;
-          }
-          // Traitement seul, primes seules — celles du RAFP dans la limite de
-          // 20 % du traitement : voir `partDuRevenu`.
-          let base = periode.partDuRevenu(baseLigne, ligne.part_primes);
-          if (ligne.revenu_retabli > 0 && periode.assiette !== "primes_uniquement") {
-            // Une année RÉTABLIE : l'Ircantec valide le traitement de l'année,
-            // les primes restent au RAFP.
-            base = baseLigne * (1.0 - ligne.part_primes);
-          }
-          // Commissions de la CAVAMAC, produits de l'office de la CPRN : le
-          // facteur reconstitue l'assiette depuis le revenu, avant les bornes.
-          if (periode.assiette_facteur_revenu !== null
-              && periode.assiette_facteur_revenu !== undefined) {
-            base *= periode.assiette_facteur_revenu;
-          }
-          // Le marin cotise sur le salaire forfaitaire de sa catégorie : voir
-          // `ConstructeurCompte.cotisationAnnuelle`.
-          if (periode.assiette_grille) {
-            const forfaitGrille = this.grilles.forfait(
-              periode.assiette_grille, ligne.annee, ligne.revenuAnnualise,
-              (a) => salaireMoyenAnnuel(this.macro, a),
-            );
-            if (forfaitGrille !== null) {
-              base = forfaitGrille[0] * part;
-            }
-          }
-          // L'assiette minimale du régime de base d'un libéral : 450 SMIC
-          // horaires depuis 2023 (D. 642-4), qui ouvrent leurs points.
-          base = Math.max(base, this.assietteMinimale([code], ligne));
-          const plafond = borneHaute === null ? base : borneHaute;
-          let assiette = Math.max(0.0, Math.min(base, plafond) - borneBasse);
-          const repere = periode.repereAssiette(
-            pass, this.macro.smic_horaire.valeur(ligne.annee),
-          ) * (periode.assiette_repere_smic !== null
-            && periode.assiette_repere_smic !== undefined ? part : 1.0);
-          if (periode.assiette_forfaitaire) {
-            // Assiette FORFAITAIRE : le régime des cultes cotise sur un
-            // forfait égal au SMIC mensuel, quel que soit le revenu —
-            // inconditionnel, là où assiette_plancher ne relève que les
-            // assiettes trop basses.
-            assiette = repere;
-          } else if (periode.assiette_plancher && assiette < repere) {
-            // Assiette minimale : la complémentaire agricole cotise sur
-            // 1 820 SMIC même quand le revenu est en dessous.
-            assiette = repere;
-          }
-          if (!periode.assiette_forfaitaire) {
-            // Assiette minimale en plafonds : la CARPIMKO appelle depuis 2026
-            // sa cotisation sur un demi-plafond au moins, et les points suivent
-            // ce qui est appelé. Le plafond est déjà proratisé sur les mois.
-            assiette = Math.max(assiette, periode.assietteMinimale(pass));
-          }
-          // La cotisation forfaitaire s'ajoute à la proportionnelle, et elle est
-          // due quel que soit le revenu — même convention que dans compte.js.
-          let forfait = 0.0;
-          if (periode.cotisation_forfaitaire_euros !== null
-              && periode.cotisation_forfaitaire_euros !== undefined) {
-            const reference = periode.cotisation_forfaitaire_annee || ligne.annee;
-            forfait = periode.cotisation_forfaitaire_euros
-              * this.macro.coefficientPrix(reference, ligne.annee);
-          }
-          let cotisation = assiette * periode.taux_cotisation_retraite + forfait;
-          // COTISATION PAR CLASSES : la Cipav, avant 2023, appelait le montant
-          // du palier où tombait le revenu, et non une fraction d'une assiette.
-          // Ce montant achète des points comme n'importe quelle cotisation —
-          // « 3 600 € / 47,40 € = 75,9 points », écrit la caisse —, et c'est
-          // donc ici, avant la conversion, qu'il se substitue.
-          if (periode.cotisation_par_classes) {
-            const millesime = this.classes.anneeGrille(code, ligne.annee);
-            const reference = millesime === null
-              ? 0.0
-              : this.macro.plafond_securite_sociale.valeur(millesime);
-            const parClasse = reference <= 0 ? null : this.classes.cotisation(
-              code, ligne.annee, base,
-              this.macro.plafond_securite_sociale.valeur(ligne.annee) / reference,
-            );
-            if (parClasse !== null) {
-              cotisation = parClasse[0] * part;
-            }
-          }
-          if (periode.bareme_points === "msa_proportionnelle") {
-            // BARÈME NOMMÉ : R. 732-71 écrit l'escalier, `pointsMsa` le sert.
-            // C'est l'ASSIETTE qui y entre : la cotisation est due sur six
-            // cents SMIC horaires au moins et sur un plafond au plus.
-            const [echelleMsa, fiabiliteEchelleMsa] = this.conversionsPoints
-              .echelle(bareme, ligne.annee, anneeLiquidation);
-            crediter(code, ligne.annee,
-              this.pointsMsa(periode, ligne.annee, assiette) * part * echelleMsa);
-            fiabilitePoints.set(code, Math.min(
-              fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
-              fiabiliteEchelleMsa,
-            ));
-            continue;
-          }
-          if (periode.points_par_trimestre_valide !== null
-              && periode.points_par_trimestre_valide !== undefined) {
-            // POINTS PAR TRIMESTRE VALIDÉ, sans égard au montant. Le régime de
-            // base des libéraux d'avant 2004 ne servait pas une pension
-            // proportionnelle au revenu mais une ALLOCATION : un quinzième de
-            // l'AVTS par année cotisée, la même pour tous. La réforme de 2003
-            // l'a convertie en points « à raison de cent points par trimestre »
-            // (D. 643-1), et c'est cette conversion qui porte le droit
-            // d'avant 2004.
-            const [echelleTrim, fiabiliteEchelleTrim] = this.conversionsPoints
-              .echelle(bareme, ligne.annee, anneeLiquidation);
-            let points = periode.points_par_trimestre_valide
-              * carriere.trimestresRetenus(ligne);
-            if (periode.trimestres_maximum !== null
-                && periode.trimestres_maximum !== undefined) {
-              // Le plafond se lit sur toute la durée : on note ici les
-              // trimestres de la ligne, et ceux d'entre eux qui précèdent l'âge
-              // qui le lève.
-              if (!trimestresPlafonnables.has(code)) {
-                trimestresPlafonnables.set(code, [0.0, 0.0]);
-              }
-              const suivi = trimestresPlafonnables.get(code);
-              suivi[0] += carriere.trimestresRetenus(ligne);
-              if (periode.trimestres_maximum_leve_avant_age !== null
-                  && periode.trimestres_maximum_leve_avant_age !== undefined) {
-                suivi[1] += trimestresDeLaLigneEntre(
-                  carriere, ligne, new DateMois(carriere.annee_naissance, 1),
-                  carriere.dateNaissance.plusMois(
-                    enMois(periode.trimestres_maximum_leve_avant_age)),
-                );
-              }
-            }
-            if (periode.points_ajustement_par_forfait !== null
-                && periode.points_ajustement_par_forfait !== undefined
-                && forfait > 0) {
-              // Les points d'AJUSTEMENT de l'ASV des médecins : 18 fois la
-              // cotisation proportionnelle sur le forfait, neuf au plus
-              // (décret n° 2011-1644, art. 3). Ils suivent le revenu, là où
-              // les 27 points du forfait ne suivent que la durée.
-              let ajustement = periode.points_ajustement_par_forfait * assiette
-                * periode.taux_cotisation_retraite / forfait;
-              if (periode.points_ajustement_maximum !== null
-                  && periode.points_ajustement_maximum !== undefined) {
-                ajustement = Math.min(ajustement,
-                  periode.points_ajustement_maximum * part);
-              }
-              points += ajustement;
-            }
-            crediter(code, ligne.annee, points * echelleTrim);
-            fiabilitePoints.set(code, Math.min(
-              fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
-              fiabiliteEchelleTrim,
-            ));
-            continue;
-          }
-          if (periode.points_maximum !== null && periode.points_maximum !== undefined
-              && repere > 0) {
-            // Barème écrit en POINTS et non en prix d'achat : le régime annonce
-            // combien de points ouvre une assiette donnée. Le nombre de points
-            // ne dépend alors pas du taux de cotisation, et c'est heureux : ce
-            // sont les barèmes qui sont publiés, pas les prix d'achat.
-            const [echelleBareme, fiabiliteEchelleBareme] = this.conversionsPoints
-              .echelle(bareme, ligne.annee, anneeLiquidation);
-            crediter(code, ligne.annee,
-              periode.points_maximum * assiette / repere * echelleBareme);
-            fiabilitePoints.set(code, Math.min(
-              fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, regime.fiabilite,
-              fiabiliteEchelleBareme,
-            ));
-            continue;
-          }
-          const achat = (periode.type_calcul === "points" || periode.type_calcul === "mixte")
-            ? this.valeursPoint.achat(bareme, ligne.annee)
-            : null;
-          if (achat !== null) {
-            const [reference, tauxAppel, fiabiliteAchat] = achat;
-            let pointsAnnee = cotisation / (tauxAppel * reference);
-            if (periode.points_minimum_annuels !== null
-                && periode.points_minimum_annuels !== undefined) {
-              // Garantie minimale de points de l'Agirc : tout cadre cotisant en
-              // acquiert au moins 120 par an de 1989 à 2018, même quand sa
-              // tranche B est nulle.
-              pointsAnnee = Math.max(pointsAnnee, periode.points_minimum_annuels);
-            }
-            // Changement d'unité entre l'achat et le service : les points
-            // Arrco d'avant 1999 sont ceux de l'UNIRS, et valent 0,387464 point
-            // du régime unifié. Sans cette conversion, cent euros cotisés en
-            // 1998 produisaient 30,31 € de pension quand les mêmes cent euros
-            // de 1999 n'en produisaient que 11,15.
-            const [echelle, fiabiliteEchelle] = this.conversionsPoints
-              .echelle(bareme, ligne.annee, anneeLiquidation);
-            crediter(code, ligne.annee, pointsAnnee * echelle);
-            fiabilitePoints.set(code, Math.min(
-              fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE, fiabiliteAchat,
-              fiabiliteEchelle,
-            ));
-          } else {
-            cumulCotisations.set(code, (cumulCotisations.get(code) ?? 0.0)
-              + cotisation * this.macro.coefficientPrix(ligne.annee, anneeLiquidation));
-          }
-        }
-      }
-    }
-
-    // LE PLAFOND DE LA DURÉE, LEVÉ AVANT UN ÂGE : cent vingt trimestres au plus
-    // aux mines, sauf ceux accomplis avant cinquante-cinq ans (article 136 du
-    // décret n° 46-2769). Voir le Python.
-    for (const [code, [total, avantAge]] of trimestresPlafonnables) {
-      const regime = this.catalogue.obtenir(code);
-      const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
-      if (periode === null || periode.trimestres_maximum === null
-          || periode.trimestres_maximum === undefined || total <= 0) {
-        continue;
-      }
-      const retenus = Math.min(total, Math.max(periode.trimestres_maximum, avantAge));
-      if (retenus < total && pointsAcquis.has(code)) {
-        const rapport = retenus / total;
-        pointsAcquis.set(code, pointsAcquis.get(code) * rapport);
-        if (majorationPoints.has(code)) {
-          majorationPoints.set(code, majorationPoints.get(code) * rapport);
-          pointsMajores.set(code, pointsMajores.get(code) * rapport);
-        }
-      }
-    }
-
-    // POINTS GRATUITS : la RCO agricole attribue à la liquidation des points
-    // pour les années de chef d'exploitation d'avant sa création. Ils entrent au
-    // compte de points du régime comme des points acquis, et la cascade les
-    // isole plus bas. Voir `pointsGratuits`.
-    // Points attribués, et année avant laquelle comptent les années.
-    const gratuitsAttribues = new Map();
-    if (avecPointsGratuits) {
-      for (const [base, attribuants] of this.pointsGratuitsParBase) {
-        if (!parAnnee.assurance.has(base)) {
-          continue;
-        }
-        for (const code of attribuants) {
-          const regime = this.catalogue.obtenir(code);
-          const periode = regime.periode(Math.min(anneeLiquidation, derniereAnnee(regime)));
-          if (periode === null || periode.points_gratuits === null
-              || periode.points_gratuits === undefined) {
-            continue;
-          }
-          const [gratuits, fiabiliteDuree] = this.pointsGratuits(
-            periode, carriere, parAnnee.assurance, trimestres, ageLiquidation,
-          );
-          if (gratuits <= 0) {
-            continue;
-          }
-          gratuitsAttribues.set(code, [gratuits, periode.points_gratuits.avant]);
-          pointsAcquis.set(code, (pointsAcquis.get(code) ?? 0.0) + gratuits);
-          fiabilitePoints.set(code, Math.min(
-            fiabilitePoints.get(code) ?? Fiabilite.CERTIFIEE,
-            regime.fiabilite,
-            fiabiliteDuree === null ? Fiabilite.CERTIFIEE : fiabiliteDuree,
-          ));
-        }
-      }
-    }
-
-    const codes = [...new Set([...cumulCotisations.keys(), ...pointsAcquis.keys()])].sort();
+    const codes = droits.codes;
 
     // Durée requise de référence : celle du régime de base. C'est elle qui
     // commande le taux plein, donc aussi l'abattement des complémentaires —
@@ -2977,10 +1870,7 @@ export class ScenarioActuel {
     // de la caisse qui aurait le dossier : les autres membres du groupe sont
     // sautés partout où un régime liquide. À FAUX, chaque nom de caisse est
     // liquidé sur ses seules années — variante qui ne sert qu'à mesurer.
-    const groupes = liquiderSuccessions
-      ? this.groupesDeSuccession(codes, anneeLiquidation, derniereAnneeParRegime,
-                                 carriere)
-      : new Map();
+    const groupes = releve.groupes;
     // DEUX PASSES, ET LA SECONDE NE SERT QU'À QUI N'A QUE DES POINTS. Les
     // régimes en annuités commandent ; mais une carrière entière en points
     // n'en a aucun, et `ageOuvertureReference` restait nul — aucun âge ne lui
@@ -3876,15 +2766,6 @@ export function complementMinimum(nue, plancher, coefficientSurcote, dateEffet) 
   return Math.max(0.0, plancher - nue * coefficientSurcote);
 }
 
-/** Dernière année pour laquelle le régime a des paramètres. */
-function derniereAnnee(regime) {
-  if (regime.periodes.length === 0) {
-    return 2100;
-  }
-  const annees = regime.periodes.map((p) => (p.fin === null ? 9999 : p.fin));
-  return Math.min(Math.max(...annees), 2100);
-}
-
 /**
  * Coefficients d'anticipation de l'Agirc-Arrco, sous leur forme de barème :
  * un point de pourcentage par trimestre jusqu'à douze, un point et quart
@@ -4075,25 +2956,6 @@ function trimestresEntreDates(carriere, debut, fin, cotisesSeulement) {
     total += trimestresDeLaLigneEntre(carriere, ligne, debut, fin);
   }
   return Math.floor(total + 1e-9);
-}
-
-/**
- * Part des trimestres d'UNE ligne acquise entre deux dates, `fin` exclue : ses
- * trimestres sont répartis sur ses mois, comme le fait `trimestresEntreDates`,
- * qui en fait la somme.
- */
-function trimestresDeLaLigneEntre(carriere, ligne, debut, fin) {
-  const retenus = carriere.trimestresRetenus(ligne);
-  const moisLigne = Math.round(carriere.partRetenue(ligne.annee) * 12);
-  if (retenus <= 0 || moisLigne <= 0) {
-    return 0.0;
-  }
-  const premier = (moisLigne === 12 || ligne.annee === carriere.anneeLiquidation)
-    ? new DateMois(ligne.annee, 1)
-    : new DateMois(ligne.annee, 13 - moisLigne);
-  const dernier = premier.plusMois(moisLigne);
-  const recouvrement = Math.min(fin.rang, dernier.rang) - Math.max(debut.rang, premier.rang);
-  return recouvrement > 0 ? retenus * recouvrement / moisLigne : 0.0;
 }
 
 /**
