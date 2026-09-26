@@ -29,7 +29,7 @@ PLAN = {
     "C.2": ("fiche", ["fiche", "relation", "version"]),
     "C.3": ("table_datee", ["table_datee"]),
     "C.4": ("univers", ["couche", "univers"]),
-    "C.5": ("ligne_releve", ["ligne"]),
+    "C.5": ("ligne_releve", ["releve", "ligne"]),
     "C.6": ("liquidation", ["liquidation"]),
     "C.7": ("evenement", ["evenement"]),
     "C.8": ("entree_journal", ["entree"]),
@@ -190,41 +190,97 @@ def test_un_champ_obligatoire_a_ses_conditions(validateur, fiche):
     assert not _genres(_constats(validateur, relation, "relation"), "relation.methode")
 
 
+_EXEMPLES = {"identifiant": "x1", "texte": "un texte", "entier": 1, "nombre": 1.5,
+             "booleen": True, "date": "2026-09-26", "intervalle": ["2026-01-01", None],
+             "bornes": {"liquidation.date_effet": [None, "2026-01-01"]},
+             "date_nommee": "liquidation.date_effet", "exemples": "aucun trouvé", "libre": {}}
+
+
+def _minimal(validateur, objet):
+    """Une donnée qui ne porte que les champs obligatoires de l'objet, chacun
+    d'une valeur de son type."""
+
+    def valeur(spec):
+        if spec["type"] == "valeur":
+            return sorted(validateur.listes[spec["valeurs"]])[0]
+        if spec["type"] == "objet":
+            return _minimal(validateur, spec["objet"])
+        if spec["type"] == "liste":
+            de = spec["de"]
+            return [_minimal(validateur, de["objet"]) if isinstance(de, dict) else _EXEMPLES[de]]
+        return _EXEMPLES[spec["type"]]
+
+    champs = validateur.objets[objet]["champs"]
+    donnee = {c: valeur(s) for c, s in champs.items() if s.get("obligatoire")}
+    donnee |= {c: valeur(s) for c, s in champs.items()
+               if c not in donnee and contrats.Validateur.obligatoire(s, donnee)}
+    if "schema_version" in champs:
+        donnee["schema_version"] = validateur.version
+    for champ in validateur.objets[objet].get("un_des", [])[:1]:
+        donnee[champ] = "x1"
+    return donnee
+
+
 def test_chaque_contrat_valide_une_donnee_minimale():
     """Pour chacun des neuf, une donnée qui ne porte que ses champs
     obligatoires, chacun d'une valeur de son type, passe sans constat : les
     schémas sont applicables tels qu'écrits."""
-    exemples = {"identifiant": "x1", "texte": "un texte", "entier": 1, "nombre": 1.5,
-                "booleen": True, "date": "2026-09-26", "intervalle": ["2026-01-01", None],
-                "bornes": {"liquidation.date_effet": [None, "2026-01-01"]},
-                "date_nommee": "liquidation.date_effet", "exemples": "aucun trouvé", "libre": {}}
     for nom in contrats.NOMS:
         validateur = contrats.Validateur(nom)
-
-        def valeur(spec):
-            if spec["type"] == "valeur":
-                return sorted(validateur.listes[spec["valeurs"]])[0]
-            if spec["type"] == "objet":
-                return minimal(spec["objet"])
-            if spec["type"] == "liste":
-                de = spec["de"]
-                return [minimal(de["objet"]) if isinstance(de, dict) else exemples[de]]
-            return exemples[spec["type"]]
-
-        def minimal(objet):
-            champs = validateur.objets[objet]["champs"]
-            donnee = {c: valeur(s) for c, s in champs.items() if s.get("obligatoire")}
-            donnee |= {c: valeur(s) for c, s in champs.items()
-                       if c not in donnee and contrats.Validateur.obligatoire(s, donnee)}
-            if "schema_version" in champs:
-                donnee["schema_version"] = validateur.version
-            for champ in validateur.objets[objet].get("un_des", [])[:1]:
-                donnee[champ] = "x1"
-            return donnee
-
         for objet in validateur.objets:
-            constats = validateur.valider(minimal(objet), objet)
+            constats = validateur.valider(_minimal(validateur, objet), objet)
             assert constats == [], f"{nom}.{objet} : " + "\n".join(map(str, constats))
+
+
+#: Les quatre étapes qui construisent le relevé des droits (§ 7.2).
+ACQUISITION = ("preparer_la_chronologie", "coordonner_les_affiliations",
+               "compter_les_durees", "acquerir_les_droits")
+
+
+def test_les_schemas_des_etapes_tiennent():
+    """Une étape ne lit d'une autre que des données décrites par un schéma
+    (annexe C, « Les deux règles d'exécution ») : chacune des quatre de
+    l'acquisition a le sien, écrit avant son code, et chacun tient comme un
+    contrat."""
+    assert contrats.controler_etapes() == []
+    presents = {p.stem for p in contrats.ETAPES.glob("*.yaml")}
+    assert set(ACQUISITION) <= presents, sorted(set(ACQUISITION) - presents)
+
+
+def test_chaque_schema_d_etape_valide_une_donnee_minimale():
+    """Comme un contrat, chaque schéma d'étape est applicable tel qu'écrit ;
+    celui qui renvoie à un contrat — la chronologie de C.1 — n'a rien à
+    décrire lui-même."""
+    for chemin in sorted(contrats.ETAPES.glob("*.yaml")):
+        validateur = contrats.Validateur(chemin.stem, contrats.ETAPES)
+        for objet in validateur.objets:
+            constats = validateur.valider(_minimal(validateur, objet), objet)
+            assert constats == [], f"{chemin.stem}.{objet} : " + "\n".join(map(str, constats))
+
+
+def test_le_controle_des_etapes_refuse_ce_qui_ne_tient_pas(tmp_path):
+    """Un schéma qui ne porte pas le nom d'une étape, qui écrit un objet qu'il
+    ne décrit pas, ou dont un champ vise une liste inconnue, est refusé."""
+    (tmp_path / "rever.yaml").write_text(
+        "etape: rever\nschema_version: 1\nlit: [chronologie]\necrit: songe\nobjets:\n"
+        "  reve:\n    champs:\n"
+        "      couleur: {porte: \"sa couleur\", type: valeur, valeurs: couleurs, obligatoire: true}\n",
+        encoding="utf-8")
+    erreurs = "\n".join(contrats.controler_etapes(tmp_path))
+    assert "porte le nom d'une étape" in erreurs
+    assert "« songe », est décrit" in erreurs
+    assert "« couleurs » inconnue" in erreurs
+
+
+def test_le_releve_a_son_enveloppe():
+    """Le relevé d'une demande (C.5) : la personne, la date de situation, ses
+    lignes, et les régimes que la coordination fait liquider ensemble."""
+    validateur = contrats.Validateur("ligne_releve")
+    releve = {"schema_version": 1, "personne": "assure", "date": "2039-06-01",
+              "lignes": [], "groupes": [{"regimes": ["rsi", "regime_general"]}]}
+    assert validateur.valider(releve, "releve") == []
+    releve["groupes"] = [{"regimes": "rsi"}]
+    assert [c.genre for c in validateur.valider(releve, "releve")] == ["erreur"]
 
 
 def test_un_fait_presume_nomme_sa_presomption():

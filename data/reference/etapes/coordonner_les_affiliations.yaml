@@ -1,0 +1,40 @@
+# L'étape « coordonner les affiliations » (docs/architecture.md, § 7.2) : ce
+# que chaque régime reçoit d'une carrière qui en a connu plusieurs. Le
+# rétablissement de l'agent parti de la fonction publique sans droit à
+# pension, et le routage de chaque ligne vers les régimes qui la reçoivent.
+# Les successions de régimes, la liquidation unique des régimes alignés et
+# l'interpénétration des trois régimes du code des pensions réunissent
+# ensuite, en groupes, les régimes où un droit est acquis : ce sont les
+# `groupes` du relevé (contrat C.5), puisqu'ils se lisent sur les droits.
+#
+# Jusqu'à ce que l'étape lise la chronologie elle-même, elle la lit par sa
+# vue, la carrière, dont elle suit les lignes dans leur ordre.
+# src/retraite_notionnelle/droit/coordonner.py, et son jumeau
+# moteur/js/droit/coordonner.js.
+
+etape: coordonner_les_affiliations
+schema_version: 1
+lit: [chronologie]
+ecrit: coordination
+
+objets:
+
+  coordination:
+    champs:
+      schema_version: {porte: "la version de ce schéma", type: entier, obligatoire: true}
+      personne: {porte: "la personne dont les affiliations sont coordonnées", type: identifiant, obligatoire: true}
+      retablissements: {porte: "les rétablissements faits : l'agent parti sans droit à pension, rétabli au régime général et à l'Ircantec", type: liste, de: {objet: retablissement}, defaut: []}
+      lignes: {porte: "chaque ligne de la carrière, dans son ordre, et les régimes qui la reçoivent", type: liste, de: {objet: ligne}, obligatoire: true}
+
+  retablissement:
+    champs:
+      regimes: {porte: "les régimes, comptés ensemble, que l'agent quitte sans droit à pension", type: liste, de: identifiant, obligatoire: true}
+      radiation: {porte: "la date de sa radiation des cadres", type: date, obligatoire: true}
+      traitement: {porte: "son dernier traitement annuel, hors primes, que le régime général porte au compte de chaque année rétablie", type: nombre, obligatoire: true}
+
+  ligne:
+    champs:
+      annee: {porte: "l'année de la ligne", type: entier, obligatoire: true}
+      affiliation: {porte: "le statut sous lequel l'activité est exercée", type: identifiant, obligatoire: true}
+      regimes: {porte: "les régimes qui la reçoivent, rétablissement fait", type: liste, de: identifiant, obligatoire: true}
+      revenu_retabli: {porte: "pour une année rétablie, le traitement que le régime général porte à son compte", type: nombre, defaut: 0}

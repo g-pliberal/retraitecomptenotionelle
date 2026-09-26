@@ -1,0 +1,15 @@
+# L'étape « préparer la chronologie » (docs/architecture.md, § 7.2) : la
+# première des quatre qui construisent le relevé des droits. Elle complète la
+# chronologie par les présomptions (§ 5.6) — le nom de chacune au fait qu'elle
+# pose, jamais à la place d'un fait déclaré — et normalise ses dates.
+#
+# Elle lit une chronologie et en écrit une : son schéma est celui du contrat
+# C.1, qui la décrit déjà. src/retraite_notionnelle/droit/preparer.py, et son
+# jumeau moteur/js/droit/preparer.js.
+
+etape: preparer_la_chronologie
+schema_version: 1
+lit: [chronologie]
+ecrit: chronologie
+contrat: chronologie
+objets: {}

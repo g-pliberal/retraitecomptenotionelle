@@ -30,6 +30,18 @@ listes:
       cotisation: ce que l'assuré ou son employeur verse
       financement: ce qu'un tiers paie pour un droit ; la fiche désigne les fiches qu'elle paie
 
+  unites_de_droit:
+    valeurs:
+      trimestre: une durée, en trimestres d'un compte — assurance, services ou cotisés
+      point: un point d'un régime qui en acquiert, dans l'unité où il le sert
+      euro: un montant, en euros de l'année que la ligne dit
+
+  comptes_de_duree:
+    valeurs:
+      assurance: la durée d'assurance, périodes assimilées comprises, qui commande le taux plein et proratise la pension du régime
+      services: les services, qui proratisent la pension de la fonction publique (L. 13 du code des pensions)
+      cotises: la durée cotisée, qui ouvre la carrière longue et majore le minimum contributif
+
   sortes_de_relation:
     valeurs:
       plafond: un plafond partagé, consommé dans un ordre déclaré

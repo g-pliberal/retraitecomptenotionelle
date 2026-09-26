@@ -2,12 +2,31 @@
 # annexe C, et § 7.6). Chaque ligne cite la fiche et la version qui l'ont
 # écrite : c'est ce qui permettra au tableau de bord de dire la part des
 # pensions qui ne passent que par des règles conformes (phases 4 et 5).
+#
+# La phase 4 y ajoute, par la règle additive, l'enveloppe : le relevé d'une
+# demande, que les quatre étapes de l'acquisition construisent
+# (src/retraite_notionnelle/droit/, et son jumeau moteur/js/droit/). Le droit
+# d'une ligne porte sa quantité, son unité (`unites_de_droit`), son régime et,
+# pour une durée, son compte (`comptes_de_duree`).
 
 contrat: ligne_releve
 schema_version: 1
 annexe: C.5
 
 objets:
+
+  releve:
+    # Le relevé d'une demande, arrêté à sa date d'effet (§ 7.2 et 7.6).
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      personne: {porte: "la personne dont c'est le relevé", type: identifiant, obligatoire: true}
+      date: {porte: "la date de situation, celle d'effet de la demande", type: date, obligatoire: true}
+      lignes: {porte: "les lignes du relevé", type: liste, de: {objet: ligne}, defaut: []}
+      groupes: {porte: "les régimes que la coordination réunit pour les liquider ensemble, le liquidateur en tête", type: liste, de: {objet: groupe}, defaut: []}
+
+  groupe:
+    champs:
+      regimes: {porte: "les régimes du groupe, celui qui liquide en tête", type: liste, de: identifiant, obligatoire: true}
 
   ligne:
     champs:

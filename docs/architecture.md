@@ -2284,6 +2284,16 @@ Une **relation** porte en plus :
 
 ### C.5 La ligne du relevé
 
+**Le relevé**, ce que les étapes de l'acquisition construisent pour une demande (§ 7.2)
+
+| Champ | Ce qu'il porte | Défaut |
+|---|---|---|
+| `personne`, `date` | la personne, et la date de situation : celle d'effet de la demande | — |
+| `lignes` | ses lignes | aucune |
+| `groupes` | les régimes que la coordination réunit pour les liquider ensemble, le liquidateur en tête | aucun |
+
+**La ligne**
+
 | Champ | Ce qu'il porte | Défaut |
 |---|---|---|
 | `id`, `personne` | la ligne, et la personne qui en bénéficie | — |
@@ -2356,11 +2366,20 @@ Rien ne s'y efface.
   porte son inscription et son effet (C.8).
 - **Une étape ne lit d'une autre que des données décrites par un schéma.** Le
   schéma s'écrit à la phase qui crée l'étape, avant tout code, et il évolue
-  par la règle additive, comme les contrats.
+  par la règle additive, comme les contrats. Les schémas sont dans
+  `data/reference/etapes/`, un par étape, dans la langue des contrats, et
+  `src/retraite_notionnelle/noyau/contrats.py` les contrôle comme eux.
 
 ---
 
 ## Les versions
+
+- **5.7**, 26 septembre 2026 : la phase 4 ajoute au relevé (C.5), par la
+  règle additive, son enveloppe — la personne, la date de situation, les
+  lignes, et les groupes de régimes que la coordination fait liquider
+  ensemble —, et écrit les schémas des quatre étapes de l'acquisition dans
+  `data/reference/etapes/` (§ 7.2). Le droit d'une ligne dit son unité et,
+  pour une durée, son compte : deux listes du vocabulaire.
 
 - **5.6**, 26 septembre 2026 : la phase 3 ajoute à la chronologie (C.1),
   par la règle additive (§ 13.3), ce qui la fait passer d'une étape à

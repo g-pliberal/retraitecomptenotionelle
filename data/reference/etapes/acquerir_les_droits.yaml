@@ -1,0 +1,58 @@
+# L'étape « acquérir les droits » (docs/architecture.md, § 7.2) : les points
+# crédités année par année, les cotisations des régimes dont on n'a pas le
+# prix d'achat du point, la durée qu'un régime plafonne, les points attribués
+# sans cotisation à la liquidation. Les salaires portés au compte restent,
+# jusqu'à la phase 5, calculés par la liquidation du régime, qui en choisit
+# l'assiette : ils ne sont pas encore une donnée de l'étape.
+#
+# src/retraite_notionnelle/droit/acquerir.py, et son jumeau
+# moteur/js/droit/acquerir.js.
+
+etape: acquerir_les_droits
+schema_version: 1
+lit: [coordination, durees]
+ecrit: droits
+
+objets:
+
+  droits:
+    champs:
+      schema_version: {porte: "la version de ce schéma", type: entier, obligatoire: true}
+      personne: {porte: "la personne dont les droits sont acquis", type: identifiant, obligatoire: true}
+      regimes: {porte: "chaque régime qu'une ligne atteint : sa dernière année, et la fiabilité de ses points", type: liste, de: {objet: regime}, obligatoire: true}
+      points: {porte: "les points crédités, dans l'ordre où ils le sont", type: liste, de: {objet: points}, defaut: []}
+      cotisations: {porte: "les cotisations revalorisées aux prix de l'année de liquidation, pour les régimes dont on n'a pas le prix d'achat du point", type: liste, de: {objet: cotisation}, defaut: []}
+      plafonds: {porte: "la durée qu'un régime plafonne, et la part de ses points qu'il retient", type: liste, de: {objet: plafond}, defaut: []}
+      gratuits: {porte: "les points attribués sans cotisation à la liquidation", type: liste, de: {objet: gratuits}, defaut: []}
+
+  regime:
+    champs:
+      regime: {porte: "le régime", type: identifiant, obligatoire: true}
+      derniere_annee: {porte: "la dernière année qui lui verse", type: entier, obligatoire: true}
+      fiabilite: {porte: "le niveau de ses points, quand il en crédite", type: texte, defaut: null}
+
+  points:
+    champs:
+      regime: {porte: "le régime qui les crédite", type: identifiant, obligatoire: true}
+      annee: {porte: "l'année d'acquisition", type: entier, obligatoire: true}
+      points: {porte: "les points, dans l'unité où le régime les sert", type: nombre, obligatoire: true}
+      majoration: {porte: "le taux de majoration pour enfants attaché à l'année d'acquisition", type: nombre, defaut: null}
+
+  cotisation:
+    champs:
+      regime: {porte: "le régime qui l'encaisse", type: identifiant, obligatoire: true}
+      annee: {porte: "l'année où elle est versée", type: entier, obligatoire: true}
+      montant: {porte: "la cotisation, en euros de l'année de liquidation", type: nombre, obligatoire: true}
+
+  plafond:
+    champs:
+      regime: {porte: "le régime qui plafonne sa durée", type: identifiant, obligatoire: true}
+      trimestres: {porte: "les trimestres que ses points rémunèrent", type: nombre, obligatoire: true}
+      avant_age: {porte: "ceux d'entre eux qui précèdent l'âge qui lève le plafond", type: nombre, obligatoire: true}
+      retenus: {porte: "les trimestres qu'il retient", type: nombre, obligatoire: true}
+
+  gratuits:
+    champs:
+      regime: {porte: "le régime qui les attribue", type: identifiant, obligatoire: true}
+      points: {porte: "les points attribués", type: nombre, obligatoire: true}
+      avant: {porte: "l'année avant laquelle comptent les années qui les ouvrent", type: entier, obligatoire: true}

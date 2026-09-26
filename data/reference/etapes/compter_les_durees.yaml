@@ -1,0 +1,41 @@
+# L'étape « compter les durées » (docs/architecture.md, § 7.2) : les
+# trimestres de chaque compte — l'assurance, périodes assimilées comprises ;
+# les services, qui proratisent la pension de la fonction publique ; la durée
+# cotisée —, régime par régime et année par année ; les trimestres dus au
+# titre des enfants, dans le seul régime que la priorité entre régimes
+# désigne (R. 173-15). Deux activités d'une même année s'y additionnent : le
+# plafond de l'année, ses trimestres civils, s'applique quand on les lit,
+# régime par régime ou groupe par groupe.
+#
+# src/retraite_notionnelle/droit/compter.py, et son jumeau
+# moteur/js/droit/compter.js.
+
+etape: compter_les_durees
+schema_version: 1
+lit: [coordination]
+ecrit: durees
+
+objets:
+
+  durees:
+    champs:
+      schema_version: {porte: "la version de ce schéma", type: entier, obligatoire: true}
+      personne: {porte: "la personne dont les durées sont comptées", type: identifiant, obligatoire: true}
+      comptes: {porte: "les trimestres crédités à chaque compte, par régime et par année, avant le plafond de l'année", type: liste, de: {objet: credit}, obligatoire: true}
+      enfants: {porte: "les trimestres dus au titre des enfants, et le régime qui les porte", type: objet, objet: enfants, defaut: null}
+      trimestres: {porte: "la durée d'assurance tous régimes, plafonnée année par année, enfants compris", type: entier, obligatoire: true}
+
+  credit:
+    champs:
+      compte: {porte: "le compte : assurance, services ou cotisés", type: valeur, valeurs: comptes_de_duree, obligatoire: true}
+      regime: {porte: "le régime qui les reçoit", type: identifiant, obligatoire: true}
+      annee: {porte: "l'année qui les ouvre", type: entier, obligatoire: true}
+      trimestres: {porte: "les trimestres crédités", type: entier, obligatoire: true}
+
+  enfants:
+    champs:
+      regime: {porte: "le régime que la priorité entre régimes désigne", type: identifiant, obligatoire: true}
+      dispositif: {porte: "la majoration de durée ou la bonification qu'il accorde", type: identifiant, obligatoire: true}
+      trimestres: {porte: "les trimestres d'assurance, tous enfants", type: entier, obligatoire: true}
+      services: {porte: "ceux d'entre eux qui entrent aux services", type: entier, obligatoire: true}
+      fiabilite: {porte: "le niveau de la donnée", type: texte, obligatoire: true}

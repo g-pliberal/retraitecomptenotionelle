@@ -27,6 +27,12 @@ la liste de vocabulaire que ``valeurs`` nomme), ``liste`` (dont chaque élément
 est du type ou de l'objet que ``de`` dit), ``objet`` (un autre objet du même
 contrat), ``exemples`` (des identifiants d'exemples, ou « aucun trouvé ») et
 ``libre``.
+
+Les étapes du moteur s'échangent des données que décrit, chacune, un schéma
+écrit dans la même langue (annexe C, « Les deux règles d'exécution ») : un
+fichier par étape dans ``data/reference/etapes/``, que le même validateur
+applique — ``Validateur(etape, ETAPES)`` — et que :func:`controler_etapes`
+contrôle comme :func:`controler` contrôle les contrats.
 """
 
 from __future__ import annotations
@@ -41,6 +47,8 @@ from ..donnees.chargement import charger_yaml
 from . import vocabulaire
 
 CONTRATS = RACINE_DONNEES / "reference" / "contrats"
+#: Les schémas des données que les étapes s'échangent, un par étape.
+ETAPES = RACINE_DONNEES / "reference" / "etapes"
 
 #: Les neuf contrats de l'annexe C, par leur fichier.
 NOMS = ("chronologie", "fiche", "table_datee", "univers", "ligne_releve",
@@ -246,28 +254,69 @@ def controler(dossier: Path = CONTRATS, dossier_vocabulaire: Path = vocabulaire.
             erreurs.append(f"{nom} : il dit son nom et son schema_version")
         if not re.fullmatch(r"C\.\d", str(brut.get("annexe", ""))):
             erreurs.append(f"{nom} : il dit la section de l'annexe C qu'il suit")
+        erreurs += _controler_champs(nom, objets(nom, dossier), listes)
+    return erreurs
+
+
+def _controler_champs(nom: str, tous: dict[str, dict], listes: set[str]) -> list[str]:
+    """Ce qui ne va pas dans les champs des objets d'un schéma."""
+    erreurs = []
+    for objet, spec in tous.items():
+        for champ, c in spec["champs"].items():
+            ou = f"{nom}.{objet}.{champ}"
+            if len(str(c.get("porte", "")).split()) < 2:
+                erreurs.append(f"{ou} : il dit ce qu'il porte")
+            if c.get("type") not in TYPES:
+                erreurs.append(f"{ou} : type « {c.get('type')} » inconnu")
+            if c.get("type") == "valeur" and c.get("valeurs") not in listes:
+                erreurs.append(f"{ou} : liste de vocabulaire « {c.get('valeurs')} » inconnue")
+            de = c.get("de")
+            cible = c.get("objet") or (de.get("objet") if isinstance(de, dict) else None)
+            if cible and cible not in tous:
+                erreurs.append(f"{ou} : objet « {cible} » inconnu du contrat")
+            if c.get("type") == "liste" and not (isinstance(de, str) and de in TYPES or cible):
+                erreurs.append(f"{ou} : une liste dit de quoi, un type ou un objet")
+            if c.get("type") == "objet" and not c.get("objet"):
+                erreurs.append(f"{ou} : un objet dit lequel")
+            if c.get("obligatoire") and "defaut" in c:
+                erreurs.append(f"{ou} : obligatoire, il n'a pas de valeur par défaut")
+            if not c.get("obligatoire") and "defaut" not in c:
+                erreurs.append(f"{ou} : facultatif, il a une valeur par défaut")
+            if c.get("additif") and (c.get("obligatoire") or len(str(c["additif"]).split()) < 3):
+                erreurs.append(f"{ou} : un champ additif est facultatif, et dit pourquoi il est venu")
+    return erreurs
+
+
+def controler_etapes(dossier: Path = ETAPES, contrats: Path = CONTRATS,
+                     dossier_vocabulaire: Path = vocabulaire.VOCABULAIRE) -> list[str]:
+    """Ce qui ne va pas dans les schémas des étapes : rien, s'ils tiennent.
+
+    Chaque fichier porte le nom d'une étape du vocabulaire, qu'il dit, avec
+    son ``schema_version``, les données qu'elle lit et l'objet qu'elle écrit.
+    Cet objet est décrit dans le fichier, ou par le contrat qu'il nomme — la
+    chronologie que « préparer la chronologie » lit et écrit est celle de C.1 ;
+    ses champs suivent les mêmes règles que ceux d'un contrat.
+    """
+    erreurs = []
+    listes = set(vocabulaire.valeurs(dossier_vocabulaire)["listes"])
+    etapes = set(vocabulaire.valeurs(dossier_vocabulaire)["listes"]["etapes"]["valeurs"])
+    for chemin in sorted(dossier.glob("*.yaml")):
+        nom = chemin.stem
+        brut = contrat(nom, dossier)
+        if nom not in etapes or brut.get("etape") != nom:
+            erreurs.append(f"{nom} : le schéma porte le nom d'une étape du vocabulaire, et le dit")
+        if not isinstance(brut.get("schema_version"), int):
+            erreurs.append(f"{nom} : il dit son schema_version")
+        if not isinstance(brut.get("lit"), list) or not brut.get("lit"):
+            erreurs.append(f"{nom} : il dit les données que l'étape lit")
         tous = objets(nom, dossier)
-        for objet, spec in tous.items():
-            for champ, c in spec["champs"].items():
-                ou = f"{nom}.{objet}.{champ}"
-                if len(str(c.get("porte", "")).split()) < 2:
-                    erreurs.append(f"{ou} : il dit ce qu'il porte")
-                if c.get("type") not in TYPES:
-                    erreurs.append(f"{ou} : type « {c.get('type')} » inconnu")
-                if c.get("type") == "valeur" and c.get("valeurs") not in listes:
-                    erreurs.append(f"{ou} : liste de vocabulaire « {c.get('valeurs')} » inconnue")
-                de = c.get("de")
-                cible = c.get("objet") or (de.get("objet") if isinstance(de, dict) else None)
-                if cible and cible not in tous:
-                    erreurs.append(f"{ou} : objet « {cible} » inconnu du contrat")
-                if c.get("type") == "liste" and not (isinstance(de, str) and de in TYPES or cible):
-                    erreurs.append(f"{ou} : une liste dit de quoi, un type ou un objet")
-                if c.get("type") == "objet" and not c.get("objet"):
-                    erreurs.append(f"{ou} : un objet dit lequel")
-                if c.get("obligatoire") and "defaut" in c:
-                    erreurs.append(f"{ou} : obligatoire, il n'a pas de valeur par défaut")
-                if not c.get("obligatoire") and "defaut" not in c:
-                    erreurs.append(f"{ou} : facultatif, il a une valeur par défaut")
-                if c.get("additif") and (c.get("obligatoire") or len(str(c["additif"]).split()) < 3):
-                    erreurs.append(f"{ou} : un champ additif est facultatif, et dit pourquoi il est venu")
+        ecrit = brut.get("ecrit")
+        if brut.get("contrat"):
+            if brut["contrat"] not in NOMS:
+                erreurs.append(f"{nom} : contrat « {brut['contrat']} » inconnu")
+            elif ecrit not in objets(brut["contrat"], contrats):
+                erreurs.append(f"{nom} : le contrat {brut['contrat']} n'a pas d'objet « {ecrit} »")
+        elif ecrit not in tous:
+            erreurs.append(f"{nom} : l'objet écrit, « {ecrit} », est décrit dans le schéma")
+        erreurs += _controler_champs(nom, tous, listes)
     return erreurs

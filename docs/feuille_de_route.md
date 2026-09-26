@@ -2041,3 +2041,21 @@ elle-même, et remplaceront le pont qu'est aujourd'hui la carrière.
 
 Le repère `phase-3` est posé sur 75b545a, le même jour, à la demande du
 propriétaire, par `repere-phase-3.yml`, lancé une fois puis supprimé.
+
+**La phase 4, lancée le 26 septembre 2026** (§ 11) : l'acquisition en étapes
+et le relevé des droits, sans qu'un résultat bouge. Mesuré avant d'y toucher,
+par carrière, sur les 535 que les témoins simulent, données chargées
+(§ 7.8) : 3,05 ms pour le scénario 1 en Python et 0,60 en JavaScript ; 25,8
+et 4,05 ms pour les six scénarios. Cinq étapes, chacune envoyée sur main
+après la suite complète :
+
+1. les schémas des données que les étapes s'échangent, écrits avant leur
+   code : un par étape dans `data/reference/etapes/`, contrôlés comme les
+   contrats, et l'enveloppe du relevé (C.5) ;
+2. `src/retraite_notionnelle/droit/` : le scénario 1 y déplace ce qui
+   construit le relevé — le rétablissement et le routage de chaque ligne,
+   les durées et les trimestres des enfants, les points et les cotisations —,
+   et sa liquidation le lit ; les témoins restent identiques à l'octet ;
+3. le portage, `moteur/js/droit/` ;
+4. chaque étape testée seule, et comparée seule entre les deux moteurs ;
+5. les vues, la mesure du budget, la documentation.
