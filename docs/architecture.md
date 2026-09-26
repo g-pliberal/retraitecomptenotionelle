@@ -2033,7 +2033,8 @@ Ce que les deux fiches montrent :
   entre L. 12 b et L. 12 bis ; la date d'effet de la pension choisit la
   rédaction de R. 13 et l'entrée en vigueur du b ter. Un programme le vérifie
   à chaque date où une version paraît, et fabrique les cas de bascule
-  (note 0001, § 14.5).
+  (note 0001, § 14.5) : `src/retraite_notionnelle/noyau/partage.py`, que le
+  contrôle de la carte joue sur chaque fiche.
 - **Une borne ne ferme une version que lorsque sa suivante est connue.** Avant
   la loi du 30 décembre 2025, la version `l12bis` valait aussi pour les
   pensions prenant effet après le 1er septembre 2026. Rien de plus ne

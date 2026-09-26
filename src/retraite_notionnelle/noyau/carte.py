@@ -23,7 +23,7 @@ from pathlib import Path
 
 from ..config import RACINE_DONNEES
 from ..donnees.chargement import charger_yaml
-from . import contrats, vocabulaire
+from . import contrats, partage, vocabulaire
 
 REGLES = RACINE_DONNEES / "reference" / "regles"
 
@@ -69,11 +69,15 @@ def controler(dossier: Path = REGLES) -> list[str]:
     """Ce qui ne va pas dans la carte : rien, si elle tient.
 
     Chaque fiche porte le nom de son fichier et suit son contrat sans erreur ;
-    une relation relie des fiches qui existent, autres qu'elle-même (§ 6.7) ;
-    une fiche dépréciée renvoie à une fiche qui existe.
+    ses versions forment un partage à chaque date d'observation ; une relation
+    relie des fiches qui existent, autres qu'elle-même (§ 6.7) ; une fiche
+    dépréciée renvoie à une fiche qui existe.
     """
     toutes = fiches(dossier)
-    erreurs = [str(c) for c in constats(dossier) if c.genre == "erreur"]
+    fautives = [c for c in constats(dossier) if c.genre == "erreur"]
+    erreurs = [str(c) for c in fautives]
+    # Le partage ne se joue que sur une fiche que son contrat accepte.
+    a_partager = set(toutes) - {c.chemin.split(".")[0].split("[")[0] for c in fautives}
     for nom, fiche in toutes.items():
         if fiche.get("id") != nom:
             erreurs.append(f"{nom} : la fiche s'appelle « {fiche.get('id')} », "
@@ -88,6 +92,8 @@ def controler(dossier: Path = REGLES) -> list[str]:
         if remplacante is not None and remplacante not in toutes:
             erreurs.append(f"{nom} : remplacée par « {remplacante} », "
                            "qui n'est pas une fiche de la carte")
+        if nom in a_partager:
+            erreurs += partage.controler(fiche)
     return erreurs
 
 
