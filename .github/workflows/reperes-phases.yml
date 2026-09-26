@@ -30,7 +30,11 @@ jobs:
           set -u
           echec=0
           while read -r tag commit; do
-            actuel=$(gh api "repos/$DEPOT/git/ref/tags/$tag" --jq .object.sha 2>/dev/null || true)
+            # Un tag absent fait rendre à gh le message d'erreur sur la sortie
+            # standard : seul son code de retour dit que le tag n'existe pas.
+            if ! actuel=$(gh api "repos/$DEPOT/git/ref/tags/$tag" --jq .object.sha 2>/dev/null); then
+              actuel=""
+            fi
             if [ "$actuel" = "$commit" ]; then
               echo "$tag désigne déjà $commit : rien n'est touché"
             elif [ -n "$actuel" ]; then
