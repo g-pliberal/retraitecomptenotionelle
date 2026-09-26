@@ -1844,3 +1844,6 @@ exceptions déclarées :
 Le repère `phase-1` marquera le commit qui porte cette note, comme `phase-0`
 le dernier commit de la phase 0 : le propriétaire a demandé qu'on le pose, et
 un workflow lancé une fois le fait.
+
+Le repère `phase-1` est posé sur 05ed5a9, le même jour, par
+`repere-phase-1.yml`, lancé une fois puis supprimé.
