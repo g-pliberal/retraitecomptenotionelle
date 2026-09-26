@@ -2113,3 +2113,6 @@ qu'il pourrait prendre à `droit/commun.py`. Le repère `phase-4` n'est pas
 posé : comme les précédents, il attend l'accord du propriétaire. La phase 5
 suit : la liquidation en fonction pure, le journal, l'échéancier et le
 pilote.
+
+Le repère `phase-4` est posé sur d9e44fe, le même jour, à la demande du
+propriétaire, par `repere-phase-4.yml`, lancé une fois puis supprimé.
