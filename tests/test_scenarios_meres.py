@@ -92,11 +92,13 @@ def test_le_solde_vie_entiere_se_recompose(lignes):
 
 def _par_enfant(dispositif: str, naissance_mere: int, liquidation: int):
     """Ce que la table accorde à une mère, en durée et en services."""
+    from retraite_notionnelle import chronologie
     from retraite_notionnelle.config import RACINE_DONNEES
     from retraite_notionnelle.scenarios.actuel import MajorationsPourEnfants
 
+    naissance_des_enfants = naissance_mere + chronologie.valeur("naissance_des_enfants")
     return MajorationsPourEnfants(RACINE_DONNEES).par_enfant(
-        dispositif, "F", naissance_mere, liquidation, 2)
+        dispositif, "F", naissance_des_enfants, liquidation, 2)
 
 
 def test_la_majoration_de_la_fonction_publique_ne_compte_pas_en_services():

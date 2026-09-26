@@ -13,6 +13,13 @@ niveaux d'entrée sont proposés, du plus précis au plus sommaire :
 3. :meth:`Carriere.depuis_profil` — le cas d'un seul métier, exercé de bout en
    bout : c'est :meth:`depuis_parcours` avec un métier unique ;
 4. :func:`carriere_type` — cas types prédéfinis (cf. :mod:`castypes`).
+
+**La carrière est la vue d'une chronologie** (:mod:`chronologie`,
+``docs/architecture.md``, § 5). Le relevé et le parcours déclarent des faits
+datés, les présomptions complètent ce qu'ils ne disent pas, et
+:meth:`Carriere.depuis_chronologie` en tire les années que le moteur
+d'aujourd'hui liquide. C'est un pont : la phase 4 fera lire la chronologie
+elle-même par l'acquisition en étapes.
 """
 
 from __future__ import annotations
@@ -30,6 +37,7 @@ from .donnees.chargement import (
     charger_yaml,
 )
 from .donnees.macro import DonneesMacro
+from . import chronologie as chrono
 
 #: Le profil que le modèle résout lui-même sur l'affiliation. C'est le défaut,
 #: et le seul que le site propose : les autres noms restent pour la grille de
@@ -466,6 +474,14 @@ class Carriere:
     #: est fermé aux recrutés depuis septembre 2023. C'est la date qui décide
     #: de la clause du grand-père, pas la première ligne.
     dates_entree: dict[str, DateMois] = field(default_factory=dict)
+    #: La chronologie dont la carrière est la vue, complétée par les
+    #: présomptions (:mod:`chronologie`). Une carrière construite ligne à ligne
+    #: en reçoit une, tirée de ses champs : sa naissance, ses enfants et son
+    #: départ. Une copie de travail — rétablie, prolongée — garde celle dont
+    #: elle vient : ce que le moteur en fait n'est pas un fait de la personne.
+    chronologie: dict | None = field(default=None, compare=False, repr=False)
+    #: La personne de la chronologie dont la carrière est la vue.
+    personne: str = field(default=chrono.ASSURE, compare=False, repr=False)
 
     def __post_init__(self) -> None:
         if self.sexe not in ("H", "F"):
@@ -486,6 +502,10 @@ class Carriere:
                     "statut font une seule ligne, dont le revenu est la somme"
                 )
             vues.add(cle)
+        if self.chronologie is None:
+            object.__setattr__(self, "chronologie", chrono.completer(chrono.du_resume(
+                self.annee_naissance, self.sexe, self.mois_naissance,
+                self.age_liquidation, self.nombre_enfants)))
 
     # -- dates ---------------------------------------------------------------
 
@@ -504,6 +524,32 @@ class Carriere:
     @cached_property
     def date_naissance(self) -> DateMois:
         return DateMois(self.annee_naissance, self.mois_naissance)
+
+    @cached_property
+    def annee_naissance_des_enfants(self) -> int | None:
+        """L'année où naissent les enfants, telle que la chronologie la porte :
+        présumée aux trente ans de l'assuré tant que rien n'est déclaré
+        (présomption ``naissance_des_enfants``, § 5.6). ``None`` sans enfant.
+
+        Le moteur d'aujourd'hui lit une seule année pour tous les enfants.
+        Des naissances déclarées à des années différentes relèvent du domaine
+        « les dates des enfants » (§ 11) : elles l'arrêtent, plutôt que de
+        laisser le moteur en choisir une.
+        """
+        annees = set()
+        for enfant in chrono.enfants(self.chronologie, self.personne):
+            naissance = chrono.naissance(self.chronologie, enfant)
+            if naissance is None:
+                raise ValueError(f"{self.identifiant} : la naissance de {enfant} n'est "
+                                 "ni déclarée ni présumée")
+            annees.add(chrono.annee_de(naissance["debut"]))
+        if len(annees) > 1:
+            raise ValueError(
+                f"{self.identifiant} : des enfants nés à des années différentes "
+                f"({', '.join(map(str, sorted(annees)))}) — le moteur ne lit "
+                "encore qu'une année pour tous"
+            )
+        return annees.pop() if annees else None
 
     @property
     def generation(self) -> float:
@@ -837,6 +883,8 @@ class Carriere:
             nombre_enfants=self.nombre_enfants,
             identifiant=self.identifiant,
             dates_entree=dict(self.dates_entree),
+            chronologie=self.chronologie,
+            personne=self.personne,
         )
 
     def prolongee(self, age_liquidation: float, macro: DonneesMacro,
@@ -889,6 +937,8 @@ class Carriere:
                 nombre_enfants=self.nombre_enfants,
                 identifiant=self.identifiant,
                 dates_entree=dict(self.dates_entree),
+                chronologie=self.chronologie,
+                personne=self.personne,
             )
         initiale = self.date_liquidation
         fin = self.date_naissance.plus_mois(en_mois(age_liquidation))
@@ -970,6 +1020,8 @@ class Carriere:
             nombre_enfants=self.nombre_enfants,
             identifiant=self.identifiant,
             dates_entree=dict(self.dates_entree),
+            chronologie=self.chronologie,
+            personne=self.personne,
         )
 
     # -- constructeurs -------------------------------------------------------
@@ -1017,48 +1069,11 @@ class Carriere:
         perçu mais le salaire de référence d'avant l'interruption, celui sur
         lequel les régimes complémentaires continuent d'acquérir des points.
         """
-        if not releve:
-            raise ValueError("un relevé compte au moins une ligne")
-
-        date_naissance = DateMois(annee_naissance, mois_naissance)
-        # La pension prend effet ce mois-là : il n'est plus travaillé.
-        fin = date_naissance.plus_mois(en_mois(age_liquidation))
-        motifs = charger_periodes_non_travaillees(macro.racine)
-
-        lignes: list[AnneeCarriere] = []
-        for ligne in releve:
-            mois = MOIS_PAR_AN if ligne.annee < fin.annee else fin.mois - 1
-            if ligne.annee > fin.annee or mois <= 0:
-                raise ValueError(
-                    f"{identifiant} : l'année {ligne.annee} du relevé est "
-                    f"postérieure au départ à la retraite ({fin})"
-                )
-            lignes.append(_ligne_annuelle(
-                annee=ligne.annee,
-                revenu=ligne.revenu,
-                affiliation=ligne.affiliation,
-                type_periode=ligne.type_periode,
-                macro=macro,
-                motifs=motifs,
-                part=mois / MOIS_PAR_AN,
-                part_primes=part_primes,
-                trimestres_maximum=trimestres_civils(mois),
-                trimestres_declares=ligne.trimestres,
-            ))
-        lignes = limiter_chomage_non_indemnise(
-            lignes, annee_naissance,
-            frozenset(l.annee for l in releve if l.trimestres is not None),
-        )
-
-        return cls(
-            annee_naissance=annee_naissance,
-            sexe=sexe,
-            lignes=lignes,
-            mois_naissance=mois_naissance,
-            age_liquidation=age_liquidation,
-            nombre_enfants=nombre_enfants,
-            identifiant=identifiant,
-        )
+        chronologie = chrono.completer(chrono.du_releve(
+            annee_naissance, sexe, releve, age_liquidation,
+            mois_naissance=mois_naissance, nombre_enfants=nombre_enfants,
+            part_primes=part_primes))
+        return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
     def depuis_profil(
@@ -1151,175 +1166,241 @@ class Carriere:
         pour une, selon un arrondi — d'où une marche de plusieurs pour cent au
         milieu de l'année.
         """
-        if not metiers:
-            raise ValueError("une carrière compte au moins un métier")
-        if metiers[0].cumul:
+        chronologie = chrono.completer(chrono.du_parcours(
+            annee_naissance, sexe, metiers, age_liquidation,
+            mois_naissance=mois_naissance, profil_carriere=profil_carriere,
+            interruptions=interruptions, nombre_enfants=nombre_enfants,
+            part_primes=part_primes))
+        return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
+
+    @classmethod
+    def depuis_chronologie(cls, chronologie: dict, macro: DonneesMacro,
+                           personne: str = chrono.ASSURE,
+                           identifiant: str = "assuré") -> "Carriere":
+        """La carrière qu'une chronologie complétée décrit : ses années, telles
+        que le moteur d'aujourd'hui les liquide.
+
+        La naissance donne l'année, le mois et le sexe ; le départ, l'âge de
+        liquidation que la personne a déclaré ; les filiations, le nombre des
+        enfants. Les périodes donnent les années : celles d'un relevé, ligne à
+        ligne, avec le revenu qu'il porte (:func:`_lignes_du_releve`) ; celles
+        d'un parcours, métier par métier, avec le revenu que le profil déduit
+        du niveau déclaré (:func:`_lignes_du_parcours`). Une chronologie qui
+        mêlerait les deux n'a pas de lecture : aucune saisie ne la produit.
+        """
+        naissance = chrono.naissance(chronologie, personne)
+        if naissance is None:
+            raise ValueError(f"{identifiant} : la chronologie ne date pas la "
+                             f"naissance de {personne}")
+        date_naissance = chrono.mois_de(naissance["debut"])
+        acte = chrono.depart(chronologie, personne)
+        age_liquidation = None if acte is None else acte["attributs"]["age"]
+        periodes = chrono.periodes(chronologie, personne)
+        relevees = [p for p in periodes if "revenu" in p["attributs"]]
+        dates_entree: dict[str, DateMois] = {}
+        if periodes and acte is None:
+            raise ValueError(f"{identifiant} : des périodes sans départ — la "
+                             "carrière s'arrête au départ, qui la date")
+        if relevees and len(relevees) != len(periodes):
+            raise ValueError(f"{identifiant} : la chronologie mêle un relevé et un "
+                             "parcours, que rien ne sait joindre")
+        if relevees:
+            lignes = _lignes_du_releve(date_naissance, relevees,
+                                       chrono.mois_de(acte["debut"]), macro, identifiant)
+        elif periodes:
+            lignes, dates_entree = _lignes_du_parcours(
+                date_naissance, periodes, chrono.mois_de(acte["debut"]), macro)
+        else:
+            lignes = []
+        return cls(
+            annee_naissance=date_naissance.annee,
+            sexe=naissance["attributs"]["sexe"],
+            lignes=lignes,
+            mois_naissance=date_naissance.mois,
+            age_liquidation=age_liquidation,
+            nombre_enfants=len(chrono.enfants(chronologie, personne)),
+            identifiant=identifiant,
+            dates_entree=dates_entree,
+            chronologie=chronologie,
+            personne=personne,
+        )
+
+
+def _lignes_du_releve(date_naissance: DateMois, periodes: list[dict], fin: DateMois,
+                      macro: DonneesMacro, identifiant: str) -> list[AnneeCarriere]:
+    """Les années d'un relevé, une par ligne : le revenu et les trimestres
+    qu'il porte, sous le statut qu'il dit.
+
+    **Ce qui est lu, et ce qui ne l'est pas.** Le relevé donne l'année ; il
+    ne donne pas le mois. Chaque ligne vaut donc une année civile PLEINE,
+    sauf celle de la liquidation, dont la pension coupe le millésime à une
+    date que le modèle, lui, connaît (``fin``, le mois du départ, qui n'est
+    plus travaillé).
+    """
+    motifs = charger_periodes_non_travaillees(macro.racine)
+    lignes: list[AnneeCarriere] = []
+    for periode in periodes:
+        attributs = periode["attributs"]
+        annee = chrono.annee_de(periode["debut"])
+        mois = MOIS_PAR_AN if annee < fin.annee else fin.mois - 1
+        if annee > fin.annee or mois <= 0:
             raise ValueError(
-                "une activité cumulée s'ajoute à une activité principale : la "
-                "carrière ne peut pas commencer par elle"
+                f"{identifiant} : l'année {annee} du relevé est "
+                f"postérieure au départ à la retraite ({fin})"
             )
-        cumuls = [metier for metier in metiers if metier.cumul]
-        metiers = [metier for metier in metiers if not metier.cumul]
+        lignes.append(_ligne_annuelle(
+            annee=annee,
+            revenu=attributs["revenu"],
+            affiliation=attributs["affiliation"],
+            type_periode=("emploi" if periode["sorte"] == chrono.EMPLOI
+                          else attributs["motif"]),
+            macro=macro,
+            motifs=motifs,
+            part=mois / MOIS_PAR_AN,
+            part_primes=attributs["part_primes"],
+            trimestres_maximum=trimestres_civils(mois),
+            trimestres_declares=attributs["trimestres"],
+        ))
+    return limiter_chomage_non_indemnise(
+        lignes, date_naissance.annee,
+        frozenset(chrono.annee_de(p["debut"]) for p in periodes
+                  if p["attributs"]["trimestres"] is not None),
+    )
 
-        date_naissance = DateMois(annee_naissance, mois_naissance)
-        bornes = [date_naissance.plus_mois(en_mois(metier.age_debut))
-                  for metier in metiers]
-        debut = bornes[0]
-        # La pension prend effet ce mois-là : il n'est plus travaillé, la borne
-        # est donc EXCLUE.
-        fin = date_naissance.plus_mois(en_mois(age_liquidation))
-        if fin.rang <= debut.rang:
-            raise ValueError("âge de liquidation antérieur à l'âge de début d'activité")
-        # Chaque métier s'arrête où commence le suivant : les périodes se
-        # touchent bout à bout et couvrent la carrière exactement une fois. Un
-        # métier qui commencerait avant le précédent, ou après la liquidation,
-        # laisserait un trou ou un recouvrement — donc des mois comptés deux
-        # fois, ou pas du tout.
-        for precedente, suivante in zip(bornes, bornes[1:]):
-            if suivante.rang <= precedente.rang:
-                raise ValueError(
-                    "les métiers doivent se suivre : chacun commence après le "
-                    "précédent"
-                )
-        if bornes[-1].rang >= fin.rang:
-            raise ValueError("le dernier métier commence après la liquidation")
-        periodes = list(zip(metiers, bornes, bornes[1:] + [fin]))
 
-        annee_debut = debut.annee
-        annees = [
-            annee for annee in range(debut.annee, fin.annee + 1)
-            if mois_travailles(annee, debut, fin) > 0
-        ]
-        annee_fin = annees[-1]
+def _lignes_du_parcours(date_naissance: DateMois, periodes: list[dict], fin: DateMois,
+                        macro: DonneesMacro
+                        ) -> tuple[list[AnneeCarriere], dict[str, DateMois]]:
+    """Les années d'un parcours, et le mois d'entrée dans chaque statut.
 
-        interruptions = interruptions or {}
-        motifs = charger_periodes_non_travaillees(macro.racine)
-        # LE PROFIL SE LIT À UN ÂGE ET À UNE ANNÉE, et c'est tout ce dont il
-        # dépend. Il valait auparavant trois nombres écrits à la main — 60 % du
-        # niveau saisi au premier emploi, 130 % au dernier —, appliqués le long
-        # de la carrière de l'assuré. Deux défauts en découlaient, tous deux
-        # mesurés le 19 septembre 2026 :
-        #
-        # 1. le dénominateur étant la carrière de l'assuré, allonger celle-ci
-        #    rabaissait le salaire de toutes les années ANTÉRIEURES — de 5,2 %
-        #    entre 60 et 67 ans en profil ascendant, 8,4 % en fortement
-        #    ascendant —, ce qui surestimait de quatre points le gain à
-        #    travailler plus longtemps dans le système actuel, dont le salaire
-        #    de référence ne retient que les meilleures années ;
-        # 2. la pente elle-même était trop forte d'un tiers, et la même pour
-        #    toutes les générations, quand l'INSEE observe ×1,30 de 26 à 55 ans
-        #    pour un employé et ×1,86 pour un cadre, et une prime à l'âge qui a
-        #    varié de 1,19 en 1962 à 1,47 en 2000.
-        #
-        # Lire le profil à (âge, année) règle les deux d'un coup : le passé ne
-        # peut plus dépendre d'une décision future, et l'effet de génération
-        # vient de la série longue au lieu d'être supposé nul.
-        salaire_moyen_reference = indice_salaire_moyen(macro, annee_debut, annee_fin)
+    Les métiers principaux couvrent la carrière bout à bout, du premier jour
+    au départ ; les activités cumulées s'y ajoutent, chacune sur ses mois ;
+    une année d'interruption déclarée arrête l'activité principale, pas les
+    cumulées.
 
-        lignes: list[AnneeCarriere] = []
-        for annee in annees:
-            part = fraction_annee(annee, debut, fin)
-            trimestres_maximum = trimestres_civils(mois_travailles(annee, debut, fin))
-            # Le profil se lit MÉTIER PAR MÉTIER, parce que l'affiliation peut
-            # changer en cours de carrière et qu'elle est ce qui le choisit.
-            # Rien n'est remis à zéro pour autant : un profil lu à l'âge ne
-            # connaît pas la durée déjà parcourue, et passer du privé au public
-            # déplace la pente sans effacer ce qui précède.
-            age_annee = annee - annee_naissance
-            # Ce que chaque métier a occupé de l'année. La somme vaut les mois
-            # travaillés de l'année : les périodes la découpent sans reste.
-            mois_par_metier = [mois_travailles(annee, ouverture, cloture)
-                               for _, ouverture, cloture in periodes]
-            revenu = sum(
-                metier.niveau_salaire
-                * profil_salaire(macro.racine, profil_carriere, age_annee,
-                                 annee, metier.affiliation)
-                * salaire_moyen_reference[annee] * (mois / MOIS_PAR_AN)
-                for (metier, _, _), mois in zip(periodes, mois_par_metier)
-                if mois > 0
-            )
-            # Le moteur ne connaît qu'une ligne, donc qu'un statut, par année
-            # civile : les régimes liquident à l'année. L'année d'un changement
-            # de métier est donc rattachée à celui qui en occupe le plus de
-            # mois — et, à égalité, à celui qui l'ouvre. Le revenu, lui, reste
-            # la somme de ce que les deux ont réellement payé.
-            affiliation = periodes[
-                max(range(len(periodes)), key=mois_par_metier.__getitem__)
-            ][0].affiliation
+    Les deux bords sont des années INCOMPLÈTES et sont construites comme
+    telles : celui qui entre en septembre ne travaille que quatre mois de
+    son année d'entrée, celui qui part en août n'en travaille que sept de
+    son année de départ. Le modèle comptait ces deux années pour zéro ou
+    pour une, selon un arrondi — d'où une marche de plusieurs pour cent au
+    milieu de l'année.
+    """
+    annee_naissance = date_naissance.annee
+    principaux = [(p["attributs"], chrono.mois_de(p["debut"]), chrono.mois_de(p["fin"]))
+                  for p in periodes
+                  if p["sorte"] == chrono.EMPLOI and not p["attributs"].get("cumul")]
+    cumuls = [(p["attributs"], chrono.mois_de(p["debut"]), chrono.mois_de(p["fin"]))
+              for p in periodes
+              if p["sorte"] == chrono.EMPLOI and p["attributs"].get("cumul")]
+    interruptions = {chrono.annee_de(p["debut"]): p["attributs"]["motif"]
+                     for p in periodes if p["sorte"] == chrono.INTERRUPTION}
+    debut = principaux[0][1]
 
+    annee_debut = debut.annee
+    annees = [
+        annee for annee in range(debut.annee, fin.annee + 1)
+        if mois_travailles(annee, debut, fin) > 0
+    ]
+    annee_fin = annees[-1]
+
+    motifs = charger_periodes_non_travaillees(macro.racine)
+    # LE PROFIL SE LIT À UN ÂGE ET À UNE ANNÉE, et c'est tout ce dont il
+    # dépend. Il valait auparavant trois nombres écrits à la main — 60 % du
+    # niveau saisi au premier emploi, 130 % au dernier —, appliqués le long
+    # de la carrière de l'assuré. Deux défauts en découlaient, tous deux
+    # mesurés le 19 septembre 2026 :
+    #
+    # 1. le dénominateur étant la carrière de l'assuré, allonger celle-ci
+    #    rabaissait le salaire de toutes les années ANTÉRIEURES — de 5,2 %
+    #    entre 60 et 67 ans en profil ascendant, 8,4 % en fortement
+    #    ascendant —, ce qui surestimait de quatre points le gain à
+    #    travailler plus longtemps dans le système actuel, dont le salaire
+    #    de référence ne retient que les meilleures années ;
+    # 2. la pente elle-même était trop forte d'un tiers, et la même pour
+    #    toutes les générations, quand l'INSEE observe ×1,30 de 26 à 55 ans
+    #    pour un employé et ×1,86 pour un cadre, et une prime à l'âge qui a
+    #    varié de 1,19 en 1962 à 1,47 en 2000.
+    #
+    # Lire le profil à (âge, année) règle les deux d'un coup : le passé ne
+    # peut plus dépendre d'une décision future, et l'effet de génération
+    # vient de la série longue au lieu d'être supposé nul.
+    salaire_moyen_reference = indice_salaire_moyen(macro, annee_debut, annee_fin)
+
+    lignes: list[AnneeCarriere] = []
+    for annee in annees:
+        part = fraction_annee(annee, debut, fin)
+        trimestres_maximum = trimestres_civils(mois_travailles(annee, debut, fin))
+        # Le profil se lit MÉTIER PAR MÉTIER, parce que l'affiliation peut
+        # changer en cours de carrière et qu'elle est ce qui le choisit.
+        # Rien n'est remis à zéro pour autant : un profil lu à l'âge ne
+        # connaît pas la durée déjà parcourue, et passer du privé au public
+        # déplace la pente sans effacer ce qui précède.
+        age_annee = annee - annee_naissance
+        # Ce que chaque métier a occupé de l'année. La somme vaut les mois
+        # travaillés de l'année : les périodes la découpent sans reste.
+        mois_par_metier = [mois_travailles(annee, ouverture, cloture)
+                           for _, ouverture, cloture in principaux]
+        revenu = sum(
+            metier["niveau_salaire"]
+            * profil_salaire(macro.racine, metier["profil"], age_annee,
+                             annee, metier["affiliation"])
+            * salaire_moyen_reference[annee] * (mois / MOIS_PAR_AN)
+            for (metier, _, _), mois in zip(principaux, mois_par_metier)
+            if mois > 0
+        )
+        # Le moteur ne connaît qu'une ligne, donc qu'un statut, par année
+        # civile : les régimes liquident à l'année. L'année d'un changement
+        # de métier est donc rattachée à celui qui en occupe le plus de
+        # mois — et, à égalité, à celui qui l'ouvre. Le revenu, lui, reste
+        # la somme de ce que les deux ont réellement payé.
+        dominant = principaux[
+            max(range(len(principaux)), key=mois_par_metier.__getitem__)
+        ][0]
+
+        lignes.append(_ligne_annuelle(
+            annee=annee,
+            revenu=revenu,
+            affiliation=dominant["affiliation"],
+            type_periode=interruptions.get(annee, "emploi"),
+            macro=macro,
+            motifs=motifs,
+            part=part,
+            part_primes=dominant["part_primes"],
+            trimestres_maximum=trimestres_maximum,
+        ))
+    lignes = limiter_chomage_non_indemnise(lignes, annee_naissance)
+
+    # LES ACTIVITÉS CUMULÉES, chacune sur ses propres mois. Elles ne
+    # déplacent rien de l'activité principale : elles ajoutent à chaque
+    # année qu'elles touchent une ligne de plus, sous leur statut, avec le
+    # revenu qu'elles ont payé et les trimestres que ce revenu valide. Une
+    # interruption déclarée arrête l'activité principale, pas celle-ci.
+    for metier, ouverture, cloture in cumuls:
+        for annee in range(ouverture.annee, cloture.annee + 1):
+            mois = mois_travailles(annee, ouverture, cloture)
+            if mois <= 0:
+                continue
+            revenu = (metier["niveau_salaire"]
+                      * profil_salaire(macro.racine, metier["profil"],
+                                       annee - annee_naissance, annee,
+                                       metier["affiliation"])
+                      * salaire_moyen_reference[annee] * (mois / MOIS_PAR_AN))
             lignes.append(_ligne_annuelle(
                 annee=annee,
                 revenu=revenu,
-                affiliation=affiliation,
-                type_periode=interruptions.get(annee, "emploi"),
+                affiliation=metier["affiliation"],
+                type_periode="emploi",
                 macro=macro,
                 motifs=motifs,
-                part=part,
-                part_primes=part_primes,
-                trimestres_maximum=trimestres_maximum,
+                part=fraction_annee(annee, ouverture, cloture),
+                part_primes=metier["part_primes"],
+                trimestres_maximum=trimestres_civils(mois),
             ))
-        lignes = limiter_chomage_non_indemnise(lignes, annee_naissance)
 
-        # LES ACTIVITÉS CUMULÉES, chacune sur ses propres mois. Elles ne
-        # déplacent rien de l'activité principale : elles ajoutent à chaque
-        # année qu'elles touchent une ligne de plus, sous leur statut, avec le
-        # revenu qu'elles ont payé et les trimestres que ce revenu valide. Une
-        # interruption déclarée arrête l'activité principale, pas celle-ci.
-        periodes_cumulees = []
-        for metier in cumuls:
-            ouverture = date_naissance.plus_mois(en_mois(metier.age_debut))
-            cloture = (fin if metier.age_fin is None
-                       else date_naissance.plus_mois(en_mois(metier.age_fin)))
-            if ouverture.rang < debut.rang:
-                raise ValueError(
-                    "une activité cumulée commence après le début de la "
-                    "carrière : elle s'ajoute à une activité déjà là"
-                )
-            if cloture.rang > fin.rang:
-                raise ValueError(
-                    "une activité cumulée s'arrête au plus tard à la liquidation"
-                )
-            if cloture.rang <= ouverture.rang:
-                raise ValueError(
-                    "une activité cumulée doit s'arrêter après avoir commencé"
-                )
-            periodes_cumulees.append((metier, ouverture, cloture))
-            for annee in range(ouverture.annee, cloture.annee + 1):
-                mois = mois_travailles(annee, ouverture, cloture)
-                if mois <= 0:
-                    continue
-                revenu = (metier.niveau_salaire
-                          * profil_salaire(macro.racine, profil_carriere,
-                                           annee - annee_naissance, annee,
-                                           metier.affiliation)
-                          * salaire_moyen_reference[annee] * (mois / MOIS_PAR_AN))
-                lignes.append(_ligne_annuelle(
-                    annee=annee,
-                    revenu=revenu,
-                    affiliation=metier.affiliation,
-                    type_periode="emploi",
-                    macro=macro,
-                    motifs=motifs,
-                    part=fraction_annee(annee, ouverture, cloture),
-                    part_primes=part_primes,
-                    trimestres_maximum=trimestres_civils(mois),
-                ))
-
-        dates_entree: dict[str, DateMois] = {}
-        for metier, ouverture, _ in sorted(
-                periodes + periodes_cumulees, key=lambda p: p[1].rang):
-            dates_entree.setdefault(metier.affiliation, ouverture)
-
-        return cls(
-            annee_naissance=annee_naissance,
-            sexe=sexe,
-            lignes=lignes,
-            mois_naissance=mois_naissance,
-            age_liquidation=age_liquidation,
-            nombre_enfants=nombre_enfants,
-            identifiant=identifiant,
-            dates_entree=dates_entree,
-        )
+    dates_entree: dict[str, DateMois] = {}
+    for metier, ouverture, _ in sorted(principaux + cumuls, key=lambda p: p[1].rang):
+        dates_entree.setdefault(metier["affiliation"], ouverture)
+    return lignes, dates_entree
 
 
 #: La catégorie socioprofessionnelle dont chaque profil emprunte sa FORME, dans

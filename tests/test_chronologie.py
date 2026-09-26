@@ -11,7 +11,7 @@ from __future__ import annotations
 import pytest
 
 from retraite_notionnelle import chronologie
-from retraite_notionnelle.carriere import LigneRelevee, Metier
+from retraite_notionnelle.carriere import Carriere, LigneRelevee, Metier
 from retraite_notionnelle.noyau import vocabulaire
 
 PARCOURS = dict(
@@ -157,3 +157,72 @@ def test_le_controle_trouve_ce_qui_ne_tient_pas():
     assert any("deux faits portent l'identifiant naissance_assure" in e for e in erreurs), erreurs
     assert any("filiation_enfant_1 : la filiation commence" in e for e in erreurs), erreurs
     assert any("inconnu n'a pas de naissance" in e for e in erreurs), erreurs
+
+
+# -- la carrière, vue de la chronologie ------------------------------------------
+
+@pytest.fixture(scope="module")
+def macro():
+    from retraite_notionnelle.config import RACINE_DONNEES
+    from retraite_notionnelle.donnees.macro import DonneesMacro
+
+    return DonneesMacro(RACINE_DONNEES)
+
+
+def test_la_carriere_porte_la_chronologie_dont_elle_est_la_vue(macro):
+    """Le parcours passe par la chronologie : la carrière la garde, complétée,
+    et en tire sa naissance, son départ et ses enfants."""
+    carriere = Carriere.depuis_parcours(macro=macro, **PARCOURS)
+    assert carriere.chronologie == _complete()
+    assert (carriere.annee_naissance, carriere.mois_naissance, carriere.sexe) == (1965, 3, "F")
+    assert (carriere.age_liquidation, carriere.nombre_enfants) == (64.25, 2)
+    assert carriere.annee_naissance_des_enfants == 1995
+    assert carriere.date_entree("fonctionnaire_etat").mois == 3
+
+
+def test_une_carriere_construite_ligne_a_ligne_recoit_sa_chronologie():
+    """Sans périodes : sa naissance, ses enfants et son départ, et les
+    présomptions qui les complètent."""
+    carriere = Carriere(annee_naissance=1980, sexe="F", nombre_enfants=3, age_liquidation=64.0)
+    assert chronologie.enfants(carriere.chronologie, "assure") == ["enfant_1", "enfant_2", "enfant_3"]
+    assert carriere.annee_naissance_des_enfants == 2010
+    assert Carriere(annee_naissance=1980, sexe="H").annee_naissance_des_enfants is None
+
+
+def test_une_naissance_declaree_remplace_la_presomption(macro):
+    """La présomption n'est qu'un défaut : une naissance déclarée prend sa
+    place, et le moteur la lit."""
+    brute = chronologie.du_parcours(**PARCOURS)
+    for enfant in ("enfant_1", "enfant_2"):
+        brute["faits"].append(chronologie.fait(f"naissance_{enfant}", enfant, "naissance",
+                                               "2002-05-01"))
+    carriere = Carriere.depuis_chronologie(chronologie.completer(brute), macro)
+    assert carriere.annee_naissance_des_enfants == 2002
+    assert chronologie.presomptions_employees(carriere.chronologie) == []
+
+
+def test_des_naissances_a_des_annees_differentes_arretent_le_moteur(macro):
+    """Le moteur ne lit encore qu'une année pour tous les enfants : il
+    s'arrête plutôt que d'en choisir une (§ 6.7)."""
+    brute = chronologie.du_parcours(**PARCOURS)
+    brute["faits"].append(chronologie.fait("naissance_enfant_1", "enfant_1", "naissance",
+                                           "1993-07-14"))
+    carriere = Carriere.depuis_chronologie(chronologie.completer(brute), macro)
+    with pytest.raises(ValueError, match="années différentes"):
+        carriere.annee_naissance_des_enfants
+
+
+def test_les_copies_de_travail_gardent_leur_chronologie(macro):
+    carriere = Carriere.depuis_parcours(macro=macro, **PARCOURS)
+    assert carriere.avec_lignes(carriere.lignes).chronologie is carriere.chronologie
+    assert carriere.prolongee(66.0, macro).chronologie is carriere.chronologie
+
+
+def test_un_releve_et_un_parcours_ne_se_melent_pas(macro):
+    brute = chronologie.du_parcours(**PARCOURS)
+    brute["faits"].insert(1, chronologie.fait("releve_1", "assure", "periode_d_activite",
+                                              "1985-01-01", "1986-01-01",
+                                              {"affiliation": "salarie_prive", "revenu": 1.0,
+                                               "trimestres": None, "part_primes": 0.0}))
+    with pytest.raises(ValueError, match="mêle un relevé et un parcours"):
+        Carriere.depuis_chronologie(chronologie.completer(brute), macro)

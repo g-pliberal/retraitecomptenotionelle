@@ -1117,15 +1117,6 @@ class MajorationsPourEnfants:
     l'article désigne expressément.
     """
 
-    #: Âge présumé de la mère à la naissance de ses enfants. Le modèle ne
-    #: collecte pas leur date de naissance ; il la déduit de cette convention,
-    #: qui est l'âge moyen des mères à l'accouchement (vingt-huit ans dans les
-    #: années 1980, trente et un aujourd'hui — INSEE, état civil). Elle ne
-    #: commande qu'une bascule, celle des quatre trimestres aux deux
-    #: trimestres de la fonction publique, et c'est pourquoi les lignes qui en
-    #: dépendent sont au niveau « moyenne ».
-    AGE_PRESUME_A_LA_NAISSANCE = 30
-
     def __init__(self, racine: Path) -> None:
         self._table: list[
             tuple[str, str, int, int, int, int, int | None, int, str, Fiabilite]
@@ -1151,10 +1142,14 @@ class MajorationsPourEnfants:
                     Fiabilite.depuis_texte(ligne["fiabilite"]),
                 ))
 
-    def par_enfant(self, dispositif: str, sexe: str, annee_naissance: int,
+    def par_enfant(self, dispositif: str, sexe: str, naissance_des_enfants: int,
                    annee_liquidation: int,
                    nombre_enfants: int) -> tuple[int, int, Fiabilite] | None:
         """Trimestres accordés PAR ENFANT, dont ceux qui comptent en SERVICES.
+
+        ``naissance_des_enfants`` est l'année où ils naissent, telle que la
+        chronologie la porte (:attr:`Carriere.annee_naissance_des_enfants`) :
+        présumée aux trente ans de la mère tant que rien n'est déclaré.
 
         Rend ``(trimestres, services, fiabilite)``. Les premiers jouent sur la
         durée d'assurance, les seconds — qui en sont un sous-ensemble — sur le
@@ -1173,7 +1168,7 @@ class MajorationsPourEnfants:
             if code != dispositif:
                 continue
             annee = (annee_liquidation if reference == "liquidation"
-                     else annee_naissance + self.AGE_PRESUME_A_LA_NAISSANCE)
+                     else naissance_des_enfants)
             if not debut <= annee <= fin:
                 continue
             if beneficiaire == "mere" and sexe != "F":
@@ -4727,7 +4722,7 @@ class ScenarioActuel:
                         and dispositif != _MAJORATION_DE_DUREE):
                     continue
                 accorde = self.majorations_enfants.par_enfant(
-                    dispositif, carriere.sexe, carriere.annee_naissance,
+                    dispositif, carriere.sexe, carriere.annee_naissance_des_enfants,
                     annee_liquidation, carriere.nombre_enfants,
                 )
                 if accorde is None:
@@ -4807,10 +4802,11 @@ class ScenarioActuel:
                               annee_liquidation: int) -> bool:
         """Le droit aux trimestres d'enfants d'un régime spécial est-il ouvert ?
 
-        Le modèle présume les enfants nés aux trente ans de leur mère
-        (:attr:`MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE`) et lit, sur
-        cette date, la condition que le texte pose à chaque génération
-        d'enfants :
+        La chronologie date la naissance des enfants — présumée aux trente
+        ans de leur mère tant que rien n'est déclaré (présomption
+        ``naissance_des_enfants``, :attr:`Carriere.annee_naissance_des_enfants`)
+        —, et le modèle lit, sur cette date, la condition que le texte pose à
+        chaque génération d'enfants :
 
         * né depuis 2004, la majoration de L. 12 bis ne va qu'à la femme
           « ayant accouché postérieurement à [son] recrutement » ;
@@ -4824,8 +4820,7 @@ class ScenarioActuel:
         condition mot pour mot ; le modèle leur applique la seconde, comme il
         leur applique déjà la table de la fonction publique.
         """
-        naissance = (carriere.annee_naissance
-                     + MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE)
+        naissance = carriere.annee_naissance_des_enfants
         if naissance >= _MAJORATION_APRES_RECRUTEMENT_DEPUIS:
             return naissance >= recrutement
         if annee_liquidation >= _BONIFICATION_NE_AVANT_RADIATION_DEPUIS:

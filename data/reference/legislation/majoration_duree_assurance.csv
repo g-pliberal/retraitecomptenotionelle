@@ -105,9 +105,9 @@
 # 1980 et de trente et un ans aujourd'hui (INSEE, statistiques de l'état civil).
 # La convention ne déplace qu'une chose : le passage des quatre trimestres aux
 # deux trimestres de la fonction publique, qui bascule ainsi pour les mères nées
-# à partir de 1974. Elle est écrite dans le code sous le nom
-# `MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE`, et c'est pourquoi les
-# lignes qu'elle commande sont au niveau `moyenne` et non `haute`.
+# à partir de 1974. C'est la présomption `naissance_des_enfants` du vocabulaire
+# (data/reference/vocabulaire/valeurs.yaml), que la chronologie pose, et c'est
+# pourquoi les lignes qu'elle commande sont au niveau `moyenne` et non `haute`.
 #
 # `beneficiaire` : `mere` réserve les trimestres aux femmes, `deux_parents` les
 # ouvre à l'un comme à l'autre. Aucune ligne n'utilise aujourd'hui la seconde
