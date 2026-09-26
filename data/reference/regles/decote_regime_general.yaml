@@ -4,6 +4,7 @@ intitule: >-
   1,25 % du taux plein par trimestre manquant, le plus petit des deux décomptes
   (durée, âge), arrondi au trimestre supérieur, vingt trimestres au plus.
 etat: conforme
+etape: liquider_chaque_regime
 effet: >-
   Toute liquidation avant le taux plein. Le coefficient par génération de la table
   (2,5 % à 1,375 % pour les nés avant 1953) ne concerne plus personne : ces générations

@@ -1284,12 +1284,18 @@ src/retraite_notionnelle/
                                 courbe des taux sans risque et frais d'épargne retraite
   moteur/                       indexation, âge de référence, conversion, fusion, compte,
                                 pilier de capitalisation obligatoire
-  scenarios/                    système actuel, comptes notionnels
+  scenarios/                    système actuel (ses tables), comptes notionnels
   chronologie.py                la personne : ses faits datés, ses présomptions
   droit/                        le système actuel en étapes : la chronologie
                                 préparée, les affiliations coordonnées, les
                                 durées comptées, les droits acquis — le relevé
-                                des droits que la liquidation lit
+                                des droits —, puis la liquidation, une fonction
+                                pure : le droit ouvert, chaque régime liquidé,
+                                les compléments de tous les régimes, l'ASPA
+  echeancier.py                 les événements dans l'ordre des dates : le départ
+                                liquidé, puis les pensions menées à l'échéance
+  journal.py                    l'état de l'échéancier, où l'on ajoute sans effacer
+  pilote.py                     ce que le droit ne décide pas : l'âge de départ des cas types
   simulateur.py                 façade et restitution
   remuneration.py               la fiche de paie d'un actif : coût du travail,
                                 revenu brut, revenu net, en quatre profils —

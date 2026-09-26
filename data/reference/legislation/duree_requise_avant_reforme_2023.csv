@@ -28,7 +28,7 @@
 # trois trimestres de trop.
 #
 # Ne sert que pour ces générations et ces dates : voir
-# `ScenarioActuel._duree_requise`.
+# `duree_requise`, dans `droit/ouvrir.py`.
 generation,trimestres,fiabilite
 1961.667,168,certifiee
 1964,169,certifiee

@@ -154,7 +154,8 @@ class PeriodeRegime:
     """Jeu de paramètres d'un régime sur une plage d'années."""
 
     #: Code du régime dont cette période vient. Une période circule seule dans
-    #: le moteur — `_age_ouverture(periode, carriere)` ne reçoit qu'elle —, et
+    #: le moteur — `ouvrir.age_ouverture(moteur, periode, carriere)` ne reçoit
+    #: qu'elle —, et
     #: certaines règles ont besoin de savoir DE QUEL RÉGIME elle est : la
     #: catégorie active et la pension militaire n'avancent l'âge que dans les
     #: régimes que leur statut route, non dans un régime spécial que la même

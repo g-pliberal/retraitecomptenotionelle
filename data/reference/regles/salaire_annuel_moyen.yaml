@@ -5,6 +5,7 @@ intitule: >-
   salaires revalorisés par les coefficients de la circulaire annuelle, année du
   départ exclue, plafond proratisé.
 etat: conforme
+etape: liquider_chaque_regime
 effet: Toute pension en annuités du privé.
 sources:
   lu_le: 2026-09-17

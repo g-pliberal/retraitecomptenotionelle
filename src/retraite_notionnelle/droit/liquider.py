@@ -73,7 +73,7 @@ _PALIERS_ANTICIPATION: tuple[tuple[int, float], ...] = (
 
 #: Les barèmes de minoration qui comptent des ANNÉES manquantes et non des
 #: trimestres : les deux de l'IRCEC (RAAP, RACD, RACL) et celui de la CAVOM,
-#: qui est le second sous un autre nom. Voir ``_abattement_ircec``.
+#: qui est le second sous un autre nom. Voir ``abattement_ircec``.
 _ABATTEMENTS_IRCEC = ("ircec", "ircec_age_seul", "cavom")
 
 #: Ceux des précédents que seul l'âge annule : la durée d'assurance n'y ouvre

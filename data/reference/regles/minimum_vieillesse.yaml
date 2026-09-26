@@ -5,6 +5,7 @@ intitule: >-
   séparée. Revalorisée sur les prix : L. 816-2 renvoie au coefficient de L. 161-25,
   moyenne annuelle des prix hors tabac, plancher à 1.
 etat: approchee
+etape: foyer_et_net
 effet: >-
   Les plus petites pensions ; la condition de ressources et le ménage sont ignorés,
   ce que limites.md dit.

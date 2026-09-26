@@ -1307,7 +1307,10 @@ eux-mêmes, mais à trois multiplications, que les règles ci-dessus ferment :
 - énumérer sans borne dans un choix du plus favorable.
 
 Chaque témoin compte donc ses appels de `liquider`, liquidations d'essai
-comprises, et un test refuse qu'il dépasse le nombre déclaré. Chaque phase
+comprises, et un test refuse qu'il dépasse le nombre déclaré : les témoins
+écrivent les leurs (`tests/temoins/simulations.json`), le portage les refait,
+et le nombre déclaré est `APPELS_DECLARES`, dans
+`src/retraite_notionnelle/droit/liquidation.py`. Chaque phase
 refait la mesure dans les deux moteurs (`scripts/budget_calcul.py`), et celle
 de la suite de tests ; une phase qui les dégrade s'arrête le temps de les
 ramener. Le paquet du site se
@@ -2118,17 +2121,17 @@ Ce que les deux fiches montrent :
 
 | Aujourd'hui | Demain |
 |---|---|
-| `src/retraite_notionnelle/scenarios/actuel.py` | découpé en étapes dans `src/retraite_notionnelle/droit/` : l'acquisition depuis la phase 4 (`coordonner`, `compter`, `acquerir`, `releve`), la liquidation à la phase 5 ; ses commentaires suivent leur code |
+| `src/retraite_notionnelle/scenarios/actuel.py` | découpé en étapes dans `src/retraite_notionnelle/droit/` : l'acquisition depuis la phase 4 (`coordonner`, `compter`, `acquerir`, `releve`), la liquidation depuis la phase 5 (`ouvrir`, `liquider`, `completer`, `foyer`, et `liquidation`, qui les enchaîne) ; il ne garde que les tables du droit en vigueur ; ses commentaires suivent leur code |
 | `src/retraite_notionnelle/scenarios/notionnel.py`, `moteur/` (compte, conversion, capitalisation, fusion, indexation, âge de référence), `garantie.py`, `restitution.py` | les fiches et les couches des univers de la proposition (phase 7) |
 | `src/retraite_notionnelle/carriere.py` | la chronologie datée et le réseau de personnes : `chronologie.py` depuis la phase 3, dont la carrière n'est plus que la vue — celle que les étapes de l'acquisition lisent encore (phase 4), jusqu'à ce qu'elles lisent la chronologie elle-même ; `web/releve_lu.py` continue de l'alimenter |
 | `src/retraite_notionnelle/calendrier.py` | inchangé : le mois et ses arrondis (§ 4.6) |
-| `src/retraite_notionnelle/revalorisation.py` | l'étape « faire vivre » |
+| `src/retraite_notionnelle/revalorisation.py` | l'étape « faire vivre » (`faire_vivre`, depuis la phase 5) |
 | `src/retraite_notionnelle/remuneration.py` | les cotisations de l'acquisition, et le net de l'étape « foyer et net » |
 | `src/retraite_notionnelle/avantages.py`, `frontiere.py` | les cascades de neutralisations du pilote, et les vues de la frontière contributive |
-| `src/retraite_notionnelle/castypes.py` | son point fixe passe au pilote |
+| `src/retraite_notionnelle/castypes.py` | son point fixe est passé au pilote (`pilote.py`, phase 5) |
 | `src/retraite_notionnelle/cout.py`, `donnees/` | le pilote de population et la page Coût |
 | `src/retraite_notionnelle/config.py` | ses décisions de modélisation deviennent des paramètres de couche ou des notes de décision |
-| `src/retraite_notionnelle/simulateur.py` | l'échéancier, et l'entrée des univers |
+| `src/retraite_notionnelle/simulateur.py` | l'échéancier (`echeancier.py`, et son journal, `journal.py`, depuis la phase 5), et l'entrée des univers |
 | `src/retraite_notionnelle/web/pages.py`, `web/gabarit.py` | retirés à la phase 8 : leur rendu est déjà comparé à l'identique à celui de `pages.js` et `gabarit.js` (`tests/js/comparer-pages.mjs`) |
 | `moteur/js/` | le même découpage que le Python, fichier pour fichier ; `scenario-actuel.js` découpé dans `moteur/js/droit/` |
 | `moteur/donnees.json`, `moteur/style.css` | fabriqués, comme aujourd'hui ; le paquet se découpe par domaine |
@@ -2374,6 +2377,11 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.9**, 26 septembre 2026 : la phase 5 faite, l'annexe B dit où son code
+  est allé — les étapes de la liquidation dans `droit/`, « faire vivre » dans
+  `revalorisation.py`, l'échéancier et son journal, le pilote —, et le § 7.8
+  où le nombre déclaré d'appels de `liquider` est tenu.
 
 - **5.8**, 26 septembre 2026 : la phase 5 écrit dans
   `data/reference/etapes/` les schémas des trois étapes de la liquidation —

@@ -21,7 +21,7 @@
 # opposait la table de la suspension, un ou deux trimestres de moins.
 #
 # Ne sert que pour ces deux générations et ces dates : voir
-# `ScenarioActuel._duree_requise`.
+# `duree_requise`, dans `droit/ouvrir.py`.
 generation,trimestres,fiabilite
 1964,171,haute
 1965,172,haute

@@ -96,7 +96,7 @@ def test_une_carriere_tout_en_points_se_voit_opposer_sa_duree(simulateur):
 
     `age_taux_plein_droit` rendait l'âge d'ouverture dès que la carrière
     n'avait aucune période en annuités — le modèle faisait donc liquider « au
-    taux plein » des carrières que `_abattement_points` servait minorées. Le
+    taux plein » des carrières que `liquider.abattement_points` servait minorées. Le
     droit oppose bien cette durée aux régimes en points : L. 643-3 I du code de
     la sécurité sociale pour les professions libérales, L. 732-24 II du code
     rural pour les non-salariés agricoles.

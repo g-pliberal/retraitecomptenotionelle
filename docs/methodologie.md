@@ -2485,3 +2485,27 @@ qui l'écrit quand la règle en a une. Le plafond d'une année — ses trimestre
 civils, toutes activités réunies — s'applique quand on lit les lignes, régime
 par régime ou groupe par groupe. Les salaires portés au compte restent
 choisis par la liquidation du régime, qui en fixe l'assiette.
+
+**La liquidation, puis l'échéancier.** La liquidation est une fonction pure,
+`liquider(demande, état, contexte)` (`src/retraite_notionnelle/droit/liquidation.py`,
+et son jumeau JavaScript ; `docs/architecture.md`, § 7.3, 7.4 et 7.7) : elle ne lit
+que la demande — la personne, la date d'effet, le motif, la nature —, l'état
+— la carrière, et le journal — et le contexte — les tables du droit en
+vigueur, et ce que le calcul neutralise. Après le relevé, trois étapes :
+ouvrir le droit — l'âge d'ouverture et son motif, la durée requise —,
+liquider chaque régime — le salaire de référence ou les points, le taux,
+décote et surcote faites, la proratisation —, compléter tous régimes — les
+deux minima, la surcote parentale, la majoration pour enfants. Ce
+qu'apporte un avantage non contributif se mesure par une liquidation
+d'essai, la même demande sous une neutralisation de plus : les trimestres
+des enfants, puis l'AVPF, puis les points gratuits de la complémentaire
+agricole ; la liquidation dit ce qu'elle a mesuré. L'échéancier
+(`echeancier.py`) l'appelle au départ, puis ajoute l'ASPA, qui regarde
+toutes les ressources (« foyer et net ») ; pour qui a déjà liquidé, il mène
+les pensions jusqu'à l'année courante (« faire vivre ») et revoit l'ASPA,
+sans jamais relancer la liquidation. Tout ce qu'il calcule s'inscrit à son
+journal (`journal.py`), où l'on ajoute sans jamais effacer. La valorisation
+des droits acquis du scénario prospectif est une liquidation fictive,
+calculée sans être servie ; l'âge de départ d'un cas type, un point fixe que
+le pilote (`pilote.py`) trouve en n'interrogeant que l'étape qui ouvre le
+droit.

@@ -4,6 +4,7 @@ intitule: >-
   Pension = salaire annuel moyen × taux × durée dans le régime / durée requise ;
   durée de proratisation propre aux générations 1944-1948.
 etat: conforme
+etape: liquider_chaque_regime
 effet: Toute pension du régime général et des régimes alignés.
 sources:
   lu_le: 2026-09-17

@@ -5,6 +5,7 @@ intitule: >-
   depuis le trimestre qui suit l'âge légal ou le mois qui suit la durée ; taux à
   la date de chaque trimestre (0,75 %, 1 %, 1,25 % après 65 ans, 1,25 % depuis 2009).
 etat: conforme
+etape: liquider_chaque_regime
 effet: Toute liquidation après l'âge légal avec la durée requise.
 sources:
   lu_le: 2026-09-17

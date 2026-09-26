@@ -1614,7 +1614,7 @@ coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`
 `README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
 fabriqués.
 
-### 130. L'architecture du dépôt : décidée, les phases 0 à 4 faites, la phase 5 à lancer — `en cours`
+### 130. L'architecture du dépôt : décidée, les phases 0 à 5 faites, la phase 6 à lancer — `en cours`
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
@@ -2116,3 +2116,75 @@ pilote.
 
 Le repère `phase-4` est posé sur d9e44fe, le même jour, à la demande du
 propriétaire, par `repere-phase-4.yml`, lancé une fois puis supprimé.
+
+**La phase 5, faite le 26 septembre 2026** (§ 11) : la liquidation en
+fonction pure, le journal, l'échéancier et le pilote. Six commits, la suite
+complète avant chaque envoi sur main, et pas un résultat déplacé. Les témoins
+Python sont restés identiques à l'octet. Sur les 535 témoins, les sorties du
+portage sont identiques au bit près avant et après, et les deux moteurs
+appellent `liquider` le même nombre de fois, témoin par témoin.
+
+1. **Les schémas**, écrits avant le code : les trois étapes de la liquidation
+   — ouvrir le droit, liquider chaque régime, compléter tous régimes — et les
+   deux que l'échéancier applique sans liquider, faire vivre et foyer et net.
+   La liquidation (C.6) reçoit ses mesures, et l'architecture passe en
+   version 5.8.
+2. **`liquider(demande, état, contexte)`**, en Python : `droit/ouvrir.py`,
+   `liquider.py`, `completer.py`, `foyer.py`, et `liquidation.py`, qui les
+   enchaîne. Le code de la liquidation quitte `scenarios/actuel.py` tel quel.
+   `calculer` en devient la façade, et ses drapeaux des neutralisations du
+   contexte. Chaque avantage non contributif se mesure par une liquidation
+   d'essai, et la liquidation dit ce qu'elle a mesuré.
+3. **Le journal, l'échéancier, le pilote** : `journal.py`, `echeancier.py`,
+   `pilote.py`. Le simulateur fait passer le scénario 1 par l'échéancier.
+   « Faire vivre » devient une étape de `revalorisation.py`, l'ASPA de
+   l'échéance passe par « foyer et net », et le point fixe des cas types
+   passe au pilote.
+4. **Le portage**, fonction pour fonction : `moteur/js/droit/` et
+   `journal.js`, `echeancier.js`, `pilote.js`, préchargés par la page.
+5. **Les tests** : chaque étape seule contre son schéma, la liquidation contre
+   le contrat C.6, l'événement contre le C.7, le journal contre le C.8. Les
+   deux moteurs sont comparés sur les étapes et sur le journal
+   (`tests/test_liquidation.py`, `tests/js/comparer-liquidation.mjs`). Chaque
+   témoin déclare ses appels de `liquider` : de 1 à 6, et aucun au-delà des 6
+   du nombre déclaré (`APPELS_DECLARES`, § 7.8).
+6. **Les vues** : treize fiches disent l'étape de la liquidation ou de
+   l'échéancier qui les applique, vingt-deux avec celles de l'acquisition. Le
+   tableau de bord montre ces étapes et les appels déclarés. La méthodologie,
+   l'architecture (annexe B, § 7.8 ; version 5.9) et les renvois des
+   registres suivent, et `scripts/budget_calcul.py` refait la mesure.
+
+**Le budget**, mesuré dos à dos avant et après la phase, le meilleur de deux
+tours, sur les 535 carrières des témoins : en Python, 2,45 puis 2,39 ms pour
+le scénario 1, 20,6 puis 20,1 ms pour les six scénarios ; en JavaScript, 0,50
+puis 0,51 ms et 3,0 puis 3,0 ms, dans le bruit de la mesure. La suite rapide
+passe de 13,4 à 13,7 secondes avec ses vingt-neuf tests de plus, et la suite
+complète tient en neuf minutes et demie. Le moteur pèse 16 Ko compressés de plus
+(987) : les étapes écrivent leurs données, et l'échéancier tient son journal.
+
+**Ce qui reste ouvert.**
+
+- **L'échéancier ne connaît que le départ**, tiré de la carrière. Les autres
+  sortes d'événements du vocabulaire (seconde pension, réversion, révision)
+  attendent leurs domaines.
+- **« Faire vivre » applique d'un coup**, à l'échéance, les revalorisations
+  publiées depuis le départ, dans l'ordre où `revalorisation.py` les compose.
+  Une revalorisation par date, que chaque fiche inscrirait à la sienne,
+  changerait l'ordre des produits, donc les derniers chiffres des pensions :
+  elle viendra avec les fiches.
+- **Pour qui est déjà parti à la bascule**, les scénarios notionnels refont
+  la liquidation du départ (`_deja_liquide`), deux fois, liquidations d'essai
+  comprises : ces témoins liquident trois fois le même départ, que
+  l'échéancier pourrait leur donner.
+- **L'essai sans l'AVPF ne déplace la pension d'aucun témoin** : la période
+  d'éducation valide ses trimestres d'elle-même, et le salaire au SMIC que
+  l'AVPF porte au compte ne joue que sur le salaire de référence. L'essai
+  tourne, et coûte un appel, sans qu'aucun témoin montre ce qu'il mesure.
+- **Les étapes lisent encore les tables** du scénario 1 par le moteur qui les
+  tient, jusqu'aux fiches (phase 6). La demande ne nomme pas encore les
+  régimes qu'elle vise, un manque du contrat C.6, et le contexte n'a ni date
+  d'observation ni hypothèse. Les salaires portés au compte restent choisis
+  par la liquidation, et non par l'acquisition.
+- **Le repère `phase-5` n'est pas posé** : comme les précédents, il attend
+  l'accord du propriétaire. La phase 6 suit : un fichier par régime, et les
+  interrupteurs deviennent des renvois aux fiches.

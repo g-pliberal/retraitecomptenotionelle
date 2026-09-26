@@ -5,6 +5,7 @@ intitule: >-
   que calculée ; plafonnée en euros à l'Agirc-Arrco, dont les taux sont ceux de
   la ligne `majoration_enfants_agirc_arrco`.
 etat: conforme
+etape: completer_tous_regimes
 effet: Parents de trois enfants.
 sources:
   lu_le: 2026-09-21

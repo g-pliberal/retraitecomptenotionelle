@@ -39,6 +39,7 @@ import argparse
 import collections
 import csv
 import io
+import json
 import re
 import statistics
 import subprocess
@@ -92,6 +93,21 @@ ETAPES_ACQUISITION = [
      "les trimestres de chaque compte, par régime et par année ; ceux des enfants"),
     ("acquerir_les_droits", "acquerir",
      "les points et les cotisations, la durée plafonnée, les points gratuits"),
+]
+
+#: Les étapes de la liquidation, et les deux que l'échéancier applique sans
+#: liquider (docs/architecture.md, § 7.3 et 7.4) : chacune, son module et ce
+#: qu'elle écrit.
+ETAPES_LIQUIDATION = [
+    ("ouvrir_le_droit", "droit/ouvrir.py",
+     "l'âge d'ouverture et son motif, la durée requise, les trimestres cotisés"),
+    ("liquider_chaque_regime", "droit/liquider.py",
+     "la pension de chaque régime et sa formule, les régimes qui portent les minima"),
+    ("completer_tous_regimes", "droit/completer.py",
+     "les minima, la surcote parentale, la majoration pour enfants"),
+    ("faire_vivre", "revalorisation.py",
+     "le coefficient de chaque pension, du départ à l'échéance"),
+    ("foyer_et_net", "droit/foyer.py", "l'ASPA, au départ puis à chaque échéance"),
 ]
 
 #: Les quatre fichiers que presque tout changement du moteur touche.
@@ -409,6 +425,27 @@ def page() -> str:
         fiches = ", ".join(f"`{f}`" for f in par_etape.get(etape, [])) or "aucune encore"
         w(f"| `{etape}` | `droit/{module}.py` | {ecrit} | {fiches} |")
     w("")
+    from retraite_notionnelle.droit import liquidation
+
+    temoins = json.loads((RACINE / "tests" / "temoins" / "simulations.json")
+                         .read_text(encoding="utf-8"))
+    appels = [t["appels_liquider"] for t in temoins.values()]
+    w("**La liquidation** (§ 7.3, 7.4 et 7.7) : `liquider(demande, état, contexte)`, une "
+      "fonction pure (`src/retraite_notionnelle/droit/liquidation.py`, et son jumeau), "
+      "enchaîne l'acquisition et trois étapes, et mesure par des liquidations d'essai "
+      "ce qu'apporte chaque avantage. L'échéancier (`echeancier.py`) l'appelle au départ, "
+      "applique à l'échéance les deux étapes qui ne liquident rien, et inscrit tout à son "
+      "journal (`journal.py`) ; le pilote (`pilote.py`) date les départs des cas types "
+      f"sans rien liquider. Les {len(appels)} témoins font chacun de {min(appels)} à "
+      f"{max(appels)} appels de `liquider`, liquidations d'essai comprises ; aucun ne "
+      f"dépasse les {liquidation.APPELS_DECLARES} que le nombre déclaré accorde (§ 7.8).")
+    w("")
+    w("| Étape | Module | Ce qu'elle écrit | Fiches qui disent l'appliquer |")
+    w("|---|---|---|---|")
+    for etape, module, ecrit in ETAPES_LIQUIDATION:
+        fiches = ", ".join(f"`{f}`" for f in par_etape.get(etape, [])) or "aucune encore"
+        w(f"| `{etape}` | `{module}` | {ecrit} | {fiches} |")
+    w("")
     vues = [nom for nom, vue in registres_en_vues if vue]
     restent = [nom for nom, vue in registres_en_vues if not vue]
     w("**La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : "
@@ -555,7 +592,11 @@ def cout(n: int = 400) -> str:
     if not changes:
         w("Aucun commit à relever.")
         return "\n".join(L) + "\n"
-    moteur = [c for c in changes if "src/retraite_notionnelle/scenarios/actuel.py" in c]
+    # Le moteur du scénario 1 : son module d'origine, et ses étapes depuis les
+    # phases 4 et 5 (docs/architecture.md, § 7).
+    moteur = [c for c in changes
+              if any(f == "src/retraite_notionnelle/scenarios/actuel.py"
+                     or f.startswith("src/retraite_notionnelle/droit/") for f in c)]
     w(f"Relevé sur les {len(changes)} derniers commits :")
     w("")
     w(f"- un commit touche en médiane {statistics.median(len(c) for c in changes):.0f} "

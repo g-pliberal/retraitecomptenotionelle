@@ -20,7 +20,8 @@
 #      (data/reference/regimes/*.yaml) — seize codes, DATÉS et par régime,
 #      que le moteur lit vraiment, mais dont six ne commandent aucun calcul.
 #   3. La cascade `AvantageApplique`
-#      (src/retraite_notionnelle/scenarios/actuel.py) — huit codes, et les
+#      (src/retraite_notionnelle/droit/liquidation.py, completer.py et
+#      foyer.py) — huit codes, et les
 #      seuls CHIFFRÉS en euros : c'est la seule des trois qui réponde à
 #      « combien ».
 #
@@ -869,7 +870,7 @@ avantages:
     pourquoi_pas_chiffre: >-
       Même nature que la catégorie active : un âge, pas un montant. Le modèle
       le sert par `legislation/carriere_longue.csv` et par
-      `_age_carriere_longue`.
+      `age_carriere_longue`, dans `droit/ouvrir.py`.
     sans_chiffre: >-
       ne vaut rien sur le montant : un assuré entré tôt réunit sa durée de
       toute façon. Son prix est en annuités, et le dernier tracé le donne
@@ -1032,7 +1033,7 @@ avantages:
     pourquoi_pas_chiffre: >-
       Les fiches de la SNCF et de la RATP déclarent le code `bonifications`,
       mais le moteur le lit comme la bonification pour ENFANTS de la fonction
-      publique (`actuel.py`), et rien ne compte les années de conduite ni les
+      publique (`droit/compter.py`), et rien ne compte les années de conduite ni les
       emplois du tableau B, que le simulateur ne saisit pas. La date de
       création est celle des décrets de 2008, qui reprennent des règlements
       antérieurs que la base LEGI ne porte pas.

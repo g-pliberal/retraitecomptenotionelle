@@ -967,7 +967,7 @@ def periodes_opposant_une_duree(
     Une carrière entière en points n'a aucune période en annuités, et la
     règle du taux plein rendait alors l'âge d'OUVERTURE — c'est-à-dire
     qu'elle faisait liquider au premier âge permis, sans regarder la durée.
-    La pension, elle, était bien abattue : ``_abattement_points`` lit la
+    La pension, elle, était bien abattue : ``liquider.abattement_points`` lit la
     décote de la fiche. Le modèle faisait donc partir au taux plein des
     carrières que le même modèle servait minorées. Le libéral né en 1955
     partait à soixante-quatre ans avec cent quarante-huit trimestres sur
@@ -986,7 +986,7 @@ def periodes_opposant_une_duree(
     Deux familles sont écartées, et c'est le sens de cette fonction.
     L'Agirc-Arrco et l'Ircantec n'opposent PAS la durée du régime de base :
     elles ont leurs propres coefficients d'anticipation, en deux tables
-    dont ``_abattement_points`` retient la plus avantageuse. Elles ne sont
+    dont ``liquider.abattement_points`` retient la plus avantageuse. Elles ne sont
     de toute façon jamais seules — ce sont des complémentaires, et la
     carrière qui les porte a des périodes en annuités.
     """
