@@ -71,8 +71,10 @@ def controler(dossier: Path = REGLES) -> list[str]:
     Chaque fiche porte le nom de son fichier et suit son contrat sans erreur ;
     ses versions forment un partage à chaque date d'observation ; une relation
     relie des fiches qui existent, autres qu'elle-même (§ 6.7) ; une fiche
-    dépréciée renvoie à une fiche qui existe.
+    dépréciée renvoie à une fiche qui existe ; une fiche ne lit que des
+    présomptions que le vocabulaire nomme (§ 5.6).
     """
+    connues = set(vocabulaire.presomptions())
     toutes = fiches(dossier)
     fautives = [c for c in constats(dossier) if c.genre == "erreur"]
     erreurs = [str(c) for c in fautives]
@@ -92,9 +94,24 @@ def controler(dossier: Path = REGLES) -> list[str]:
         if remplacante is not None and remplacante not in toutes:
             erreurs.append(f"{nom} : remplacée par « {remplacante} », "
                            "qui n'est pas une fiche de la carte")
+        presomptions = fiche.get("presomptions") or {}
+        for presomption in presomptions if isinstance(presomptions, dict) else []:
+            if presomption not in connues:
+                erreurs.append(f"{nom} : lit la présomption « {presomption} », que le "
+                               "vocabulaire ne nomme pas")
         if nom in a_partager:
             erreurs += partage.controler(fiche)
     return erreurs
+
+
+def lecteurs_des_presomptions(dossier: Path = REGLES) -> dict[str, list[str]]:
+    """Pour chaque présomption, les fiches qui la lisent."""
+    lecteurs: dict[str, list[str]] = {}
+    for nom, fiche in sorted(fiches(dossier).items()):
+        presomptions = fiche.get("presomptions") or {}
+        for presomption in presomptions if isinstance(presomptions, dict) else []:
+            lecteurs.setdefault(presomption, []).append(nom)
+    return lecteurs
 
 
 def _date(valeur) -> date | None:

@@ -23,8 +23,11 @@ Le script rattrape `origin/main` en avance rapide, rebase au besoin les
 commits de la session qu'une autre session a devancés, pousse `HEAD` sur
 `main`, puis fait suivre la branche de la session. Il refuse, sans rien
 pousser : un conflit, plus de vingt commits d'écart, des modifications non
-commitées, aucun ancêtre commun avec `main` (le cas grave), un commit signé
-d'une adresse nominative. À la main, la recette reste
+commitées quand il doit rebaser, aucun ancêtre commun avec `main` (le cas
+grave), un commit signé d'une adresse nominative. En avance sur `main`, il
+pousse tout ce qui est commité, même si d'autres modifications attendent :
+ne commiter qu'une fois la suite complète passée, puisque le hook publie à
+chaque fin de tour. À la main, la recette reste
 `git fetch origin`, `git merge --ff-only origin/main`,
 `git push origin HEAD:main` ; si l'avance rapide est refusée, la session a
 divergé, et il faut comprendre pourquoi avant d'insister.

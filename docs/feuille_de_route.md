@@ -1614,7 +1614,7 @@ coût), `tests/test_simulateur.py`, `tests/test_donnees.py`, `data/sources.yaml`
 `README.md`, `docs/limites.md`, `docs/methodologie.md`, et les fichiers
 fabriqués.
 
-### 130. L'architecture du dépôt : décidée, les phases 0 à 2 faites, la phase 3 à lancer — `en cours`
+### 130. L'architecture du dépôt : décidée, les phases 0 à 3 faites, la phase 4 à lancer — `en cours`
 
 Le dépôt devenait de plus en plus lourd à faire avancer. Une modification du
 moteur du scénario 1 touchait vingt fichiers en médiane, dont sept ou huit de
@@ -1974,3 +1974,67 @@ anciens, et GitHub refuse d'y créer un tag au jeton d'un workflow comme à
 celui d'une session (HTTP 403). Seul le propriétaire pourrait le poser, et
 il a décidé le même jour de le laisser absent : la fin de la phase 0 reste
 le commit 4bb438f, que cette note nomme.
+
+**La phase 3, le 26 septembre 2026** (§ 11) : la chronologie datée et le
+réseau de personnes, les présomptions d'aujourd'hui par défaut. Cinq commits,
+et pas un résultat déplacé : les témoins sont restés identiques à l'octet, le
+portage les reproduit comme avant, et 600 carrières tirées au hasard — des
+parcours de un à quatre métiers, avec activités cumulées et interruptions, et
+des relevés — donnent, par l'ancien chemin et par le nouveau, les mêmes années
+au bit près (une vérification faite une fois, hors des tests). La suite
+complète a passé avant chaque envoi sur main, sauf pour l'étape 4 : le hook
+de fin de tour l'a envoyée pendant que tournait la suite qui la couvrait —
+`pousser.sh` ne refuse des modifications non commitées que lorsqu'il doit
+rebaser —, et cette suite a passé ensuite, avec l'étape 5.
+
+1. **Le contrat et le vocabulaire.** La chronologie (C.1) reçoit, par la
+   règle additive, son enveloppe — ses faits et ses liens, ce qu'une étape
+   passe à la suivante — et le nom de la présomption qui pose un fait ; une
+   période y vaut [début, fin). Les cinq présomptions du § 5.6 entrent au
+   vocabulaire, chacune avec sa valeur et sa raison, et avec le fait qu'elle
+   pose ou, à défaut, le code qui l'applique et l'étape où son fait entrera ;
+   deux autres, que l'annexe A nommait sans que le § 5.6 les liste, les
+   rejoignent à l'étape 5 : l'enfant élevé neuf ans, l'interruption
+   d'activité de la mère seule.
+   Une sorte de fait s'ajoute : la période où l'emploi s'interrompt, avec son
+   motif. L'architecture passe en version 5.6.
+2. **La chronologie** : `src/retraite_notionnelle/chronologie.py`. Le
+   parcours et le relevé y deviennent des faits datés au jour ; les enfants,
+   des personnes reliées à l'assuré par une filiation ; `completer` pose ce
+   que la saisie ne dit pas, au nom de la présomption, sans jamais remplacer
+   un fait déclaré.
+3. **La carrière, vue de la chronologie.** Les constructeurs de `Carriere`
+   passent par elle, et `Carriere.depuis_chronologie` en tire les années que
+   le moteur liquide ; la carrière garde sa chronologie, et ses copies de
+   travail aussi. Le moteur lit la naissance des enfants dans la chronologie :
+   la constante `AGE_PRESUME_A_LA_NAISSANCE` quitte le code, et sa valeur ne
+   vit plus qu'au vocabulaire. Une naissance déclarée prendrait la place de
+   la présomption, et le moteur la lirait ; des naissances à des années
+   différentes l'arrêtent, puisqu'il ne lit encore qu'une année pour tous.
+4. **Le portage.** `moteur/js/chronologie.js`, fonction pour fonction ; le
+   paquet de données porte les présomptions, et un test compare, au JSON
+   près, les chronologies des deux moteurs.
+5. **Les vues.** Cinq fiches de la carte disent les présomptions qu'elles
+   lisent, sous leur nom au vocabulaire, et la carte refuse un nom qu'il ne
+   connaît pas ; chaque présomption est lue par au moins une fiche. Le
+   tableau de bord montre chacune, sa valeur, les fiches qui la lisent et
+   où elle s'applique ; la méthodologie et les limites disent la
+   chronologie.
+
+**Ce qui reste ouvert.** Six présomptions sur sept s'appliquent encore
+dans le code, faute de pouvoir poser leur fait avant leur étape : la
+radiation se date par régime, les trois interpénétrés ensemble, et
+l'Ircantec ne valide qu'au rétablissement — c'est la coordination des
+affiliations (phase 4) ; la position statutaire de l'agent et l'accord des
+parents, l'éducation de l'enfant et l'interruption d'activité se liront au
+compte des durées. Le site ne montre pas encore les
+présomptions qu'une simulation emploie : la chronologie les liste, la sortie
+publique (C.9) les portera. Un régime spécial absent de la table des
+services est présumé pouvoir pensionner : c'est une hypothèse sur le droit
+(§ 4.7), pas sur la personne, et elle attend sa version supposée. Et
+`scripts/scenarios_meres.py` place le premier enfant à vingt-huit ans en se
+disant l'hypothèse du scénario 1, qui présume trente : sa grille est à relire
+contre la présomption. Le repère `phase-3` n'est pas posé : comme les
+précédents, il attend l'accord du propriétaire. La phase 4 suit :
+l'acquisition en étapes et le relevé des droits, qui liront la chronologie
+elle-même, et remplaceront le pont qu'est aujourd'hui la carrière.

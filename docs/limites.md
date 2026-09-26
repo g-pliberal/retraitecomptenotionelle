@@ -217,9 +217,11 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   par chaque fiche.
 - **Année de naissance des enfants.** Le modèle ne la collecte pas : il présume
   les enfants nés aux trente ans de leur mère, l'âge moyen des mères à
-  l'accouchement. La convention ne déplace qu'une chose, la bascule des quatre
-  aux deux trimestres de la fonction publique, qui tombe ainsi sur les
-  générations nées à partir de 1974. Elle ne peut pas non plus savoir si les
+  l'accouchement (la présomption `naissance_des_enfants`, que la chronologie
+  pose et que le moteur lit ; une naissance déclarée la remplacerait). La
+  convention ne déplace qu'une chose, la bascule des quatre aux deux
+  trimestres de la fonction publique, qui tombe ainsi sur les générations nées
+  à partir de 1974. Elle ne peut pas non plus savoir si les
   parents ont attribué au père les quatre trimestres d'éducation ouverts en
   2010, ni si un père fonctionnaire a interrompu son activité les deux mois
   qu'exige la bonification depuis 2003 : dans les deux cas le modèle retient

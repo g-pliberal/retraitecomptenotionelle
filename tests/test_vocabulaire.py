@@ -106,6 +106,8 @@ PRESOMPTIONS_DU_5_6 = {
     "radiation au 1er janvier suivant": "radiation_au_1er_janvier_suivant",
     "agent présumé en activité": "agent_en_activite",
     "pas d'accord des parents": "pas_d_accord_des_parents",
+    "enfant élevé neuf ans": "enfant_eleve_neuf_ans",
+    "interruption d'activité remplie par la mère seule": "interruption_d_activite_par_la_mere",
     "validation de l'Ircantec présumée demandée": "validation_ircantec_demandee",
 }
 

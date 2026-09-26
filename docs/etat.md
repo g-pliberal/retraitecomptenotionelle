@@ -43,6 +43,18 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | à examiner | 0 |
 | sans statut | 10 549 |
 
+**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré et ses enfants —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 7 présomptions au vocabulaire, dont 1 pose son fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
+
+| Présomption | Valeur | Fiches qui la lisent | Où elle s'applique |
+|---|---|---|---|
+| `naissance_des_enfants` | 30 ans | `majoration_duree_assurance_enfants`, `priorite_majorations_enfants` | posée par la chronologie |
+| `radiation_au_1er_janvier_suivant` | le 1er janvier qui suit la dernière année de services, ou le départ s'il part en fonctions | `pension_differee_fonction_publique`, `priorite_majorations_enfants`, `retablissement_fonction_publique` | ScenarioActuel._droit_a_pension, et la revalorisation de la pension différée (scenarios/actuel.py, scenario-actuel.js) ; son fait entrera à l'étape `coordonner_les_affiliations` |
+| `agent_en_activite` | en activité, avec services effectifs | `services_et_duree_fonction_publique` | _ligne_annuelle, qui fait de toute année d'emploi une année de services (carriere.py, carriere.js) ; son fait entrera à l'étape `compter_les_durees` |
+| `pas_d_accord_des_parents` | aucun accord ; le défaut légal les donne à la mère | `majoration_duree_assurance_enfants` | la colonne beneficiaire de majoration_duree_assurance.csv, lue par MajorationsPourEnfants.par_enfant ; son fait entrera à l'étape `compter_les_durees` |
+| `enfant_eleve_neuf_ans` | élevé neuf ans | `majoration_duree_assurance_enfants` | les lignes mda de majoration_duree_assurance.csv, qui servent la majoration sans condition de durée d'éducation ; son fait entrera à l'étape `compter_les_durees` |
+| `interruption_d_activite_par_la_mere` | remplie par la mère seule | `majoration_duree_assurance_enfants` | la colonne beneficiaire (mere) des lignes bonifications de majoration_duree_assurance.csv, lue par MajorationsPourEnfants.par_enfant ; son fait entrera à l'étape `compter_les_durees` |
+| `validation_ircantec_demandee` | demandée | `retablissement_fonction_publique` | ScenarioActuel._retablie, et l'assiette de l'Ircantec des années rétablies (scenarios/actuel.py, scenario-actuel.js) ; son fait entrera à l'étape `coordonner_les_affiliations` |
+
 **La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : la veille. Restent des registres : la frontière contributive, l'inventaire des régimes.
 
 **Ce qui est hors du modèle.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR), et le modèle n'en calcule aucune.
@@ -118,7 +130,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
   - 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
-  - 130. L'architecture du dépôt : décidée, les phases 0 à 2 faites, la phase 3 à lancer
+  - 130. L'architecture du dépôt : décidée, les phases 0 à 3 faites, la phase 4 à lancer
 - **Les sources à exploiter** : 114 à explorer sur 260 (58 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Association des régimes de retraite complémentaire des salariés : 3 source(s) (agirc_arrco_majorations_enfants, agirc_arrco_textes_de_reference, agirc_arrco_parametres_statistiques)
   - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)
@@ -154,5 +166,5 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 - **La part des pensions qui ne passent que par des règles conformes.** Il faut pour cela que chaque ligne du relevé cite sa fiche, ce que l'architecture prévoit aux phases 4 et 5.
 - **Ce que personne n'a encore noté, hors des articles.** Pour les articles, le dénominateur est la loi (section 1). Les situations des fiches service-public et des circulaires, les accords Agirc-Arrco et les statuts des caisses n'ont pas encore de liste.
 - **Les règles du code qui ont leur fiche.** Une fiche dira son code ; aucune ne le dit encore, et le tableau compte en attendant les identifiants que le code cite.
-- **Les limites propres à une simulation.** Le site les montrera avec chaque résultat.
+- **Les limites propres à une simulation.** Le site les montrera avec chaque résultat, et les présomptions qu'elle emploie : la chronologie les liste, le site ne les affiche pas encore.
 - **Le coût du travail** se relève sur l'historique git, et change à chaque commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`, avec la taille du dépôt — ses lignes, ses tests —, que la prose ne porte plus.

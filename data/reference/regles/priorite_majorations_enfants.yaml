@@ -27,6 +27,11 @@ effet: >-
   général pour deux enfants nés avant 2004, au lieu des huit de sa bonification.
   tests/test_priorite_enfants.py, et cinq témoins de parcours rejouent la règle
   dans les deux moteurs.
+presomptions:
+  naissance_des_enfants: >-
+    la naissance de l'enfant, avant ou après 2004, le recrutement et la radiation, qui ouvre le droit dans le régime spécial
+  radiation_au_1er_janvier_suivant: >-
+    la date à laquelle se lit la durée de services qui ouvre une pension
 sources:
   lu_le: 2026-09-24
   prochaine_relecture: 2027-03-31

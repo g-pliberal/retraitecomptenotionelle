@@ -2448,3 +2448,20 @@ n'est reconstitué, ni le revenu de chaque année ni les trimestres qu'elle a
 validés. C'est le seul chemin où l'euro n'est converti par rien — le formulaire
 paramétrique saisit un revenu d'aujourd'hui que le modèle promène ensuite le
 long du salaire moyen, quand le relevé donne déjà les euros de chaque année.
+
+**Derrière la carrière, une chronologie.** Ce que le formulaire ou le relevé
+déclare devient d'abord une chronologie (`chronologie.py`, et son jumeau
+JavaScript ; `docs/architecture.md`, § 5 et contrat C.1) : des faits datés —
+la naissance, chaque métier ou chaque ligne du relevé, chaque année
+d'interruption, le départ — et un réseau de personnes, l'assuré et ses
+enfants, que des filiations relient. Ce que la saisie ne dit pas, une
+présomption le pose, en son nom : le formulaire demande le nombre des enfants,
+pas leurs dates, et leur naissance est présumée aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.naissance_des_enfants.valeur)-->30<!--/--> ans de l'assuré.
+La carrière que le moteur liquide est la vue de cette chronologie : une
+naissance déclarée prendrait la place de la présomption, et le moteur la
+lirait. Les autres présomptions du modèle — la radiation au 1er janvier qui
+suit la dernière année de services, l'agent en activité, l'absence d'accord
+des parents, l'enfant élevé neuf ans, l'interruption d'activité de la mère
+seule, la validation de l'Ircantec demandée — sont au même vocabulaire
+(`data/reference/vocabulaire/valeurs.yaml`), avec leur valeur et leur raison ;
+elles s'appliquent encore dans le code, jusqu'à l'étape qui posera leur fait.

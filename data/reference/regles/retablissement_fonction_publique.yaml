@@ -22,6 +22,11 @@ effet: >-
   par l'État en 1984, qui a déjà sa durée au régime général, touchait une pension
   civile qui ne lui était pas due, 1,0 % de trop. tests/test_retablissement.py,
   et six témoins de parcours rejouent la règle dans les deux moteurs.
+presomptions:
+  radiation_au_1er_janvier_suivant: >-
+    la date à laquelle se lit la durée de services qui ouvre une pension
+  validation_ircantec_demandee: >-
+    la validation des services à l'Ircantec, faite sur demande pour qui a été radié avant 1990
 sources:
   lu_le: 2026-09-24
   prochaine_relecture: 2027-03-31

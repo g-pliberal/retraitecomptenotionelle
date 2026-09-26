@@ -229,6 +229,25 @@ listes:
           la loi donne les trimestres à la mère. L'accord est un acte de la
           personne, daté, et son défaut légal s'écrit dans la version de la
           règle (§ 5.6)
+      enfant_eleve_neuf_ans:
+        dit: chaque enfant a été élevé neuf ans avant son seizième anniversaire
+        valeur: élevé neuf ans
+        appliquee_par: les lignes mda de majoration_duree_assurance.csv, qui servent la majoration sans condition de durée d'éducation
+        entrera_a: compter_les_durees
+        raison: >-
+          la loi n° 75-3 ouvre la majoration dès le premier enfant à condition
+          qu'il ait été élevé neuf ans avant ses seize ans ; le formulaire ne
+          demande pas qui a élevé l'enfant, ni combien de temps
+      interruption_d_activite_par_la_mere:
+        dit: la mère a interrompu ou réduit son activité pour chaque enfant, et elle seule
+        valeur: remplie par la mère seule
+        appliquee_par: la colonne beneficiaire (mere) des lignes bonifications de majoration_duree_assurance.csv, lue par MajorationsPourEnfants.par_enfant
+        entrera_a: compter_les_durees
+        raison: >-
+          depuis la loi du 21 août 2003, la bonification de L. 12 b va à chaque
+          parent qui a interrompu ou réduit son activité, dans les conditions
+          de R. 13 ; le formulaire ne demande ni les congés ni la quotité de
+          chacun
       validation_ircantec_demandee:
         dit: l'agent rétabli au régime général a demandé que l'Ircantec valide ses services
         valeur: demandée

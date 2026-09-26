@@ -22,6 +22,16 @@ effet: >-
   touche toute mère : elle commande la décote, la proratisation, la surcote parentale
   et le SAM des parents ; dans la fonction publique, un trimestre change de case
   sans changer de nombre.
+presomptions:
+  naissance_des_enfants: >-
+    l'année de naissance de l'enfant, qui choisit la bonification de la fonction publique (L. 12 b ou L. 12 bis)
+  pas_d_accord_des_parents: >-
+    le bénéficiaire des trimestres, la mère à défaut d'accord
+  enfant_eleve_neuf_ans: >-
+    la condition d'éducation de la majoration, depuis la loi n° 75-3
+  interruption_d_activite_par_la_mere: >-
+    la condition d'interruption ou de réduction d'activité de la bonification,
+    depuis 2003
 sources:
   lu_le: 2026-09-25
   prochaine_relecture: 2026-12-31

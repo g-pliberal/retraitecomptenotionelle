@@ -144,3 +144,27 @@ def test_la_veille_est_une_vue_de_la_carte(tmp_path):
     assert raisons[0] == "a_verifier"
     assert any("268 jours" in r for r in raisons), raisons
     assert any("2026-06-30" in r for r in raisons), raisons
+
+
+def test_une_fiche_ne_lit_que_des_presomptions_nommees(tmp_path):
+    """Le champ `presomptions` d'une fiche nomme les présomptions qu'elle lit,
+    sous leur nom au vocabulaire (§ 5.6) : un nom inconnu est refusé."""
+    import shutil
+
+    shutil.copytree(carte.REGLES, tmp_path, dirs_exist_ok=True)
+    chemin = tmp_path / "pension_differee_fonction_publique.yaml"
+    fiche = yaml.safe_load(chemin.read_text(encoding="utf-8"))
+    fiche["presomptions"]["intuition"] = "ce que la fiche devine"
+    chemin.write_text(yaml.safe_dump(fiche, allow_unicode=True), encoding="utf-8")
+    erreurs = carte.controler(tmp_path)
+    assert any("« intuition »" in e for e in erreurs), erreurs
+
+
+def test_chaque_presomption_est_lue_par_une_fiche():
+    """Une présomption que nulle fiche ne lit serait une valeur par défaut
+    sans règle : chacune dit, par ses fiches, ce qu'elle décide."""
+    from retraite_notionnelle.noyau import vocabulaire
+
+    lecteurs = carte.lecteurs_des_presomptions()
+    orphelines = sorted(set(vocabulaire.presomptions()) - set(lecteurs))
+    assert not orphelines, orphelines

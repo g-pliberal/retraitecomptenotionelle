@@ -744,6 +744,8 @@ Le relevé des droits et le résultat le signalent.
   - radiation au 1er janvier suivant ;
   - agent présumé en activité ;
   - pas d'accord des parents ;
+  - enfant élevé neuf ans ;
+  - interruption d'activité remplie par la mère seule ;
   - validation de l'Ircantec présumée demandée.
 - **Un défaut légal** n'est pas une présomption : c'est la loi qui décide
   quand la personne n'a rien fait. Il s'écrit dans la version de la règle,
@@ -1878,9 +1880,9 @@ approximations:
   - {regime: regimes_speciaux, ecart: les conditions de la fonction publique leur sont prêtées, effet: non mesuré}
 
 presomptions:     # celles d'aujourd'hui, qui deviennent les valeurs par défaut
-  enfant.naissance: aux 30 ans de l'assuré
-  interruption_d_activite: remplie par la mère seule
-  radiation: au 1er janvier suivant la dernière année de services
+  naissance_des_enfants: aux 30 ans de l'assuré
+  interruption_d_activite_par_la_mere: remplie par la mère seule
+  radiation_au_1er_janvier_suivant: au 1er janvier suivant la dernière année de services
 
 sources:
   lu_le: 2026-09-25
@@ -2024,7 +2026,7 @@ approximations:
   - {textes: textes_a_rattacher, ecart: pas encore modélisés, effet: "aucun sur les résultats d'aujourd'hui, qui présument la mère seule bénéficiaire"}
 presomptions:
   enfant_eleve_neuf_ans: présumé
-  accord_des_parents: aucun (le défaut légal s'applique)
+  pas_d_accord_des_parents: aucun (le défaut légal s'applique)
 sources:
   lu_le: 2026-09-25
   prochaine_relecture: 2027-03-31
@@ -2117,7 +2119,7 @@ Ce que les deux fiches montrent :
 |---|---|
 | `src/retraite_notionnelle/scenarios/actuel.py` | découpé en étapes dans `src/retraite_notionnelle/droit/` ; ses commentaires suivent leur code |
 | `src/retraite_notionnelle/scenarios/notionnel.py`, `moteur/` (compte, conversion, capitalisation, fusion, indexation, âge de référence), `garantie.py`, `restitution.py` | les fiches et les couches des univers de la proposition (phase 7) |
-| `src/retraite_notionnelle/carriere.py` | la chronologie datée et le réseau de personnes (phase 3) ; `web/releve_lu.py` continue de l'alimenter |
+| `src/retraite_notionnelle/carriere.py` | la chronologie datée et le réseau de personnes : `chronologie.py` depuis la phase 3, dont la carrière n'est plus que la vue, jusqu'à l'acquisition en étapes (phase 4) ; `web/releve_lu.py` continue de l'alimenter |
 | `src/retraite_notionnelle/calendrier.py` | inchangé : le mois et ses arrondis (§ 4.6) |
 | `src/retraite_notionnelle/revalorisation.py` | l'étape « faire vivre » |
 | `src/retraite_notionnelle/remuneration.py` | les cotisations de l'acquisition, et le net de l'étape « foyer et net » |

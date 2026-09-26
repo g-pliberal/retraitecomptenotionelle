@@ -16,6 +16,9 @@ effet: >-
   et liquidant en janvier 2026, un traitement de référence de 34 739 € au lieu de
   39 913, 14,9 % de moins — le point est resté gelé de 2010 à 2016. tests/test_cnracl.py,
   et deux témoins de parcours rejouent la règle dans les deux moteurs.
+presomptions:
+  radiation_au_1er_janvier_suivant: >-
+    le jour d'où le traitement suit la revalorisation des pensions
 sources:
   lu_le: 2026-09-24
   prochaine_relecture: 2027-03-31

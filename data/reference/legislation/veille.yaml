@@ -2806,3 +2806,27 @@ journal:
       rédactions sans statut de la liste, à rattacher ou déclarer sans effet
       fiche par fiche, et ce que les fiches tirées du registre ne savent pas
       encore : domaine, régimes, étape, versions.
+  - date: "2026-09-26"
+    session: >-
+      architecture, phase 3 : la chronologie datée et le réseau de personnes,
+      les présomptions d'aujourd'hui par défaut
+    consulte: >-
+      veille_droit.py, au début de la session : quatre fiches à relire, et la
+      dernière veille du jour même. L'index LEGI, mis à jour : aucun incrément
+      paru depuis le 25 septembre 2026 à 21 h 48 ; l'index JORF, aucun depuis
+      le 26 septembre à 0 h 25 ; textes.py --inscrire : aucune rédaction
+      nouvelle. Pour la fiche fin_de_la_suspension_2028, les rédactions de
+      L. 161-17-2 et de L. 161-17-3 dans l'index LEGI.
+    trouve: >-
+      Rien de nouveau au Journal officiel. L. 161-17-2 et L. 161-17-3 n'ont
+      pas de rédaction postérieure à celles du 31 décembre 2025
+      (LEGIARTI000053280889, LEGIARTI000053280903) : la suspension court
+      toujours. La phase 3 ne touche aucune règle :
+      la présomption de la naissance des enfants quitte le code pour le
+      vocabulaire, et la chronologie la pose ; les six autres présomptions
+      du § 5.6 y sont décrites, avec le code qui les applique encore.
+    reste: >-
+      Les quatre fiches à relire que veille_droit.py liste, et ce que
+      l'entrée précédente laissait : l'article 16 du règlement de la CAVP,
+      les articles 9-7 et suivants du règlement des indépendants, les
+      rédactions sans statut de la liste des textes.

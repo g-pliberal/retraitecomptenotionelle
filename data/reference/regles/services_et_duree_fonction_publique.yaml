@@ -20,6 +20,9 @@ effet: >-
   en 1975 et partie à soixante-quatre ans. La durée d'assurance, elle, ne bouge
   pas : les mêmes cinq ans restent vingt trimestres assimilés pour la décote, et
   le régime général continue de les compter dans sa propre proratisation.
+presomptions:
+  agent_en_activite: >-
+    les années d'emploi, qui sont toutes des années de services
 sources:
   lu_le: 2026-09-22
   prochaine_relecture: 2027-06-30

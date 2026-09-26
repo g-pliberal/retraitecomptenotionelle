@@ -47,7 +47,7 @@ from pathlib import Path
 
 import yaml
 
-from retraite_notionnelle.noyau import carte, textes
+from retraite_notionnelle.noyau import carte, textes, vocabulaire
 
 RACINE = Path(__file__).resolve().parents[1]
 PAGE = RACINE / "docs" / "etat.md"
@@ -332,6 +332,27 @@ def page() -> str:
                      ("sans_statut", "sans statut")):
         w(f"| {nom} | {milliers(statut_textes[cle])} |")
     w("")
+    presomptions = vocabulaire.presomptions()
+    posees = [nom for nom, p in presomptions.items() if p.get("pose")]
+    w(f"**La personne** (§ 5) : une chronologie de faits datés, dans un réseau de "
+      "personnes — aujourd'hui l'assuré et ses enfants —, que le relevé et le parcours "
+      "déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière "
+      "que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : "
+      f"{len(presomptions)} présomptions au vocabulaire, dont {len(posees)} "
+      f"pose{'nt' if len(posees) > 1 else ''} son fait dans la chronologie ; les autres "
+      "s'appliquent dans le code, jusqu'à l'étape qui posera le leur.")
+    w("")
+    lecteurs = carte.lecteurs_des_presomptions()
+    w("| Présomption | Valeur | Fiches qui la lisent | Où elle s'applique |")
+    w("|---|---|---|---|")
+    for nom, p in presomptions.items():
+        ou = ("posée par la chronologie" if p.get("pose")
+              else f"{p['appliquee_par']} ; son fait entrera à l'étape "
+                   f"`{p['entrera_a']}`")
+        lues = ", ".join(f"`{f}`" for f in lecteurs.get(nom, [])) or "aucune"
+        w(f"| `{nom}` | {p['valeur']}{' ' + p['unite'] if p.get('unite') else ''} "
+          f"| {lues} | {ou} |")
+    w("")
     vues = [nom for nom, vue in registres_en_vues if vue]
     restent = [nom for nom, vue in registres_en_vues if not vue]
     w("**La réorganisation** (§ 6.5, § 11). Les registres devenus des vues de la carte : "
@@ -445,7 +466,8 @@ def page() -> str:
     w("- **Les règles du code qui ont leur fiche.** Une fiche dira son code ; aucune ne le "
       "dit encore, et le tableau compte en attendant les identifiants que le code cite.")
     w("- **Les limites propres à une simulation.** Le site les montrera avec chaque "
-      "résultat.")
+      "résultat, et les présomptions qu'elle emploie : la chronologie les liste, le site "
+      "ne les affiche pas encore.")
     w("- **Le coût du travail** se relève sur l'historique git, et change à chaque "
       "commit : il s'affiche à la demande, par `python scripts/tableau_de_bord.py --cout`, "
       "avec la taille du dépôt — ses lignes, ses tests —, que la prose ne porte plus.")
