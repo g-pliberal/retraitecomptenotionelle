@@ -1,0 +1,68 @@
+# La liste de contrôle des textes (docs/architecture.md, § 6.6)
+# ==============================================================
+# La carte part des textes, pas de la mémoire. Ce fichier déclare les
+# articles que la liste tient, rédaction par rédaction :
+#   - les codes, aux chapitres qui touchent les retraites (ci-dessous) ;
+#   - tout article dont une fiche de la carte cite une rédaction, avec toutes
+#     ses rédactions, même hors de ces chapitres ;
+#   - en entier, tout décret, loi ou arrêté dont une fiche cite une rédaction :
+#     les décrets des régimes y entrent par là.
+# `python scripts/textes.py` lit l'index LEGI du dépôt et tient la liste :
+# redactions.csv, une ligne par rédaction ; textes.csv, le titre de chaque
+# texte sous sa clé ; inscription.yaml, jusqu'où l'index a été lu. Le statut
+# de chaque rédaction se lit dans les fiches, jamais ici
+# (src/retraite_notionnelle/noyau/textes.py) : rattachée à une version, sans
+# effet, à rattacher, à examiner.
+#
+# LE CLIQUET, en bas, compte les rédactions qui n'ont aucun statut. Il ne peut
+# que décroître, et devient un refus à zéro. Une loi nouvelle ne le fait pas
+# monter : `python scripts/textes.py --inscrire` apporte ses rédactions « à
+# examiner », datées. Élargir le périmètre non plus : les rédactions qu'il
+# ajoute entrent de la même façon. Le faire décroître, c'est donner un statut
+# à une rédaction dans la fiche qu'elle touche.
+#
+# Ce que la liste ne tient pas encore : les accords Agirc-Arrco et les statuts
+# des caisses, qui ne sont pas dans l'index ; les situations que décrivent les
+# fiches service-public et les circulaires des caisses (§ 6.6), dont le dépôt
+# n'a pas de liste ; les prélèvements sur les pensions (L. 136-8, la CSG).
+
+schema_version: 1
+
+codes:
+  - cle: css
+    titre: Code de la sécurité sociale
+    articles: '^[LRD](161-(1[7-9]|2[0-5])|17[1-3]|341|35[1-7]|38[12]|63[45]|64[1-5]|72[1-3]|81[45]|92[12])(-|$)'
+    pourquoi: >-
+      les dispositions communes aux pensions (L. 161-17 à L. 161-25 : âge,
+      durée, périodes assimilées, cumul, revalorisation), la coordination entre
+      régimes (L. 171 à L. 173), l'invalidité qui mène à la pension (L. 341),
+      l'assurance vieillesse et l'assurance veuvage (L. 351 à L. 357), l'AVPF
+      et les affiliations particulières (L. 381, L. 382), les non-salariés —
+      artisans et commerçants (L. 634, L. 635), professions libérales (L. 641
+      à L. 645), cultes, praticiens et avocats (L. 721 à L. 723) —, le minimum
+      vieillesse (L. 814, L. 815) et les complémentaires (L. 921, L. 922) ;
+      leurs articles réglementaires, en R et en D, avec eux
+  - cle: cpcmr
+    titre: Code des pensions civiles et militaires de retraite
+    pourquoi: le code entier
+  - cle: rural
+    titre: Code rural (nouveau)
+    articles: '^[LRD](732|742)-'
+    pourquoi: >-
+      les prestations des non-salariés agricoles (L. 732), dont la vieillesse
+      et la retraite complémentaire obligatoire, et les assurances sociales
+      des salariés agricoles (L. 742)
+  - cle: transports
+    titre: Code des transports
+    articles: '^[LRD]5552-'
+    pourquoi: les pensions des marins (L. 5552)
+  - cle: marins
+    titre: Code des pensions de retraite des marins français du commerce, de pêche ou de plaisance
+    pourquoi: le code entier
+
+#: Les articles et les textes que les fiches citent entrent dans la liste.
+textes_cites: true
+
+cliquet:
+  # Les rédactions sans aucun statut. Il ne peut que décroître.
+  redactions_sans_statut: 10549

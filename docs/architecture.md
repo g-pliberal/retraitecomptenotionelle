@@ -937,6 +937,13 @@ La carte part des textes, pas de la mémoire.
   nouvelle ne fait donc jamais monter le cliquet, elle allonge ce qui reste à
   faire (§ 9.2). Le dépôt fait déjà ainsi pour les réformes, avec
   `reformes.yaml`.
+- **Où elle vit.** Depuis la phase 2, la liste des rédactions est dans
+  `data/reference/textes/` : son périmètre déclaré (`perimetre.yaml`, où se
+  tient le cliquet), la liste elle-même (`redactions.csv`), et ce que
+  `python scripts/textes.py --inscrire` y apporte de l'index. Le statut d'une
+  rédaction ne s'y écrit pas : il se lit dans les fiches qui la citent
+  (`src/retraite_notionnelle/noyau/textes.py`). Les situations des fiches
+  service-public et des circulaires attendent encore leur liste.
 
 La liste a déjà servi, et elle a montré ce que la mémoire laisse passer :
 pour écrire l'annexe A, on a comparé mot à mot, dans l'index LEGI, les

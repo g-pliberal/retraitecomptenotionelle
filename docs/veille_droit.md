@@ -59,10 +59,13 @@ l'inscrire dans une fiche fait échouer la suite.
 ## La règle, pour toute session qui touche au scénario 1
 
 **Au début.** Lancer `python scripts/veille_droit.py`. Lire les fiches à
-relire. Consulter les sources listées pour tout texte paru depuis la dernière
-date du journal : loi de financement de l'année et ses décrets, circulaires
-Cnav, dates « Vérifié le » des fiches service-public, décrets retraite au
-Journal officiel par l'index DILA.
+relire. Mettre à jour l'index LEGI (`python scripts/fetch/dila_index.py legi
+--mettre-a-jour`), puis `python scripts/textes.py --inscrire` : les
+rédactions parues depuis entrent dans la liste de contrôle des textes, « à
+examiner ». Consulter les sources listées pour tout texte paru depuis la
+dernière date du journal : loi de financement de l'année et ses décrets,
+circulaires Cnav, dates « Vérifié le » des fiches service-public, décrets
+retraite au Journal officiel par l'index DILA.
 
 **Pour chaque règle qu'on écrit ou modifie.**
 
@@ -77,7 +80,10 @@ Journal officiel par l'index DILA.
    quand même, en écart connu : la valeur que rend le modèle et
    l'explication, dans son champ `ecart_connu`, et la fiche passe à
    `approchee` ou `a_verifier`.
-4. Écrire la fiche, ou la mettre à jour : lectures, dates, état.
+4. Écrire la fiche, ou la mettre à jour : lectures, dates, état. Chaque
+   rédaction lue y prend son statut, par son identifiant : citée par une
+   version, sans effet avec le mot à mot qui le montre, ou à rattacher. C'est
+   ce qui fait baisser le cliquet des textes (`python scripts/textes.py`).
 5. Donner à la donnée le niveau de fiabilité qu'elle mérite (`certifiee` si
    recontrôlée automatiquement, `haute` si lue, `moyenne` si lue mais
    susceptible d'être dépassée avant recontrôle), et laisser ce niveau
