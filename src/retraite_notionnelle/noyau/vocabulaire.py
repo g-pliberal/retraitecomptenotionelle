@@ -104,4 +104,37 @@ def controler(dossier: Path = VOCABULAIRE) -> list[str]:
             texte = sens.get("dit") if isinstance(sens, dict) else sens
             if len(str(texte or "").split()) < 2:
                 erreurs.append(f"liste {nom} : la valeur {valeur} dit ce qu'elle veut dire")
+    listes = valeurs(dossier).get("listes") or {}
+    etapes = set((listes.get("etapes") or {}).get("valeurs") or {})
+    sortes = set((listes.get("sortes_de_fait") or {}).get("valeurs") or {})
+    for nom, presomption in presomptions(dossier).items():
+        erreurs += [f"présomption {nom} : {e}" for e in _presomption(presomption, etapes, sortes)]
+    return erreurs
+
+
+def presomptions(dossier: Path = VOCABULAIRE) -> dict[str, dict]:
+    """Les présomptions, par nom : ce qu'elles disent, leur valeur, leur
+    raison, et le fait qu'elles posent ou le code qui les applique (§ 5.6)."""
+    listes = valeurs(dossier).get("listes") or {}
+    return dict((listes.get("presomptions") or {}).get("valeurs") or {})
+
+
+def _presomption(presomption, etapes: set[str], sortes: set[str]) -> list[str]:
+    """Une présomption a un nom, une valeur et une raison (§ 5.6) ; elle pose
+    un fait de la chronologie, ou dit le code qui l'applique à sa place et
+    l'étape où son fait entrera."""
+    if not isinstance(presomption, dict):
+        return ["une présomption est une table : dit, valeur, raison, pose ou appliquee_par"]
+    erreurs = []
+    if presomption.get("valeur") in (None, ""):
+        erreurs.append("sans valeur")
+    if len(str(presomption.get("raison") or "").split()) < 5:
+        erreurs.append("une présomption dit sa raison")
+    pose, appliquee = presomption.get("pose"), presomption.get("appliquee_par")
+    if bool(pose) == bool(appliquee):
+        erreurs.append("elle pose un fait de la chronologie, ou dit le code qui l'applique : l'un des deux")
+    if pose and not (isinstance(pose, dict) and pose.get("sorte") in sortes and pose.get("personne")):
+        erreurs.append("`pose` dit la sorte du fait, une sorte du vocabulaire, et la personne qui le porte")
+    if appliquee and presomption.get("entrera_a") not in etapes:
+        erreurs.append("appliquée par le code, elle dit l'étape où son fait entrera (`entrera_a`)")
     return erreurs

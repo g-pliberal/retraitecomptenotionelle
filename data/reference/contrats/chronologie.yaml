@@ -1,12 +1,22 @@
 # Contrat C.1 — la chronologie : le fait et le lien (docs/architecture.md,
-# annexe C, et § 5). Rien ne l'emploie encore : la phase 3 construit la
-# chronologie datée et le réseau de personnes sur ce contrat.
+# annexe C, et § 5). La phase 3 construit sur lui la chronologie datée et le
+# réseau de personnes (src/retraite_notionnelle/chronologie.py, et son jumeau
+# moteur/js/chronologie.js) : ce que la personne déclare, et ce que les
+# présomptions posent à défaut (§ 5.6), le nom de chacune au fait qu'elle pose.
 
 contrat: chronologie
 schema_version: 1
 annexe: C.1
 
 objets:
+
+  chronologie:
+    # Ce qu'une étape passe à la suivante (§ 7.1) : les faits de toutes les
+    # personnes du réseau, et les liens qui les relient.
+    champs:
+      schema_version: {porte: "la version du contrat", type: entier, obligatoire: true}
+      faits: {porte: "les faits de toutes les personnes du réseau", type: liste, de: {objet: fait}, defaut: []}
+      liens: {porte: "les liens qui relient ces personnes", type: liste, de: {objet: lien}, defaut: []}
 
   fait:
     champs:
@@ -20,6 +30,7 @@ objets:
       montant: {porte: "un montant et sa monnaie", type: libre, defaut: null}
       territoire: {porte: "métropole, un département ou une collectivité d'outre-mer, un pays", type: texte, defaut: metropole}
       origine: {porte: "déclaré, présumé (nom de la présomption), simulé", type: valeur, valeurs: origines_de_fait, defaut: declare}
+      presomption: {porte: "pour un fait présumé, la présomption qui le pose", type: valeur, valeurs: presomptions, obligatoire_si: {origine: [presume]}, defaut: null}
       connu_le: {porte: "la date où le fait est connu", type: date, defaut: null}
       fiabilite: {porte: "le niveau de la donnée", type: texte, obligatoire: true}
 
@@ -36,3 +47,4 @@ objets:
       fin: {porte: "la date au jour, et sa cause ; vide tant que le lien dure", type: libre, defaut: null}
       regime: {porte: "le régime qui lit ce lien, s'il est seul à le lire", type: identifiant, defaut: null}
       origine: {porte: "comme pour un fait", type: valeur, valeurs: origines_de_fait, defaut: declare}
+      presomption: {porte: "pour un lien présumé, la présomption qui le pose", type: valeur, valeurs: presomptions, obligatoire_si: {origine: [presume]}, defaut: null}

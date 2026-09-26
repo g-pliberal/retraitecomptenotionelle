@@ -25,7 +25,7 @@ ARCHITECTURE = (RACINE / "docs" / "architecture.md").read_text(encoding="utf-8")
 #: Pour chaque section de l'annexe C, le contrat et, dans l'ordre de ses
 #: tables, les objets qu'elles décrivent.
 PLAN = {
-    "C.1": ("chronologie", ["fait", "lien"]),
+    "C.1": ("chronologie", ["chronologie", "fait", "lien"]),
     "C.2": ("fiche", ["fiche", "relation", "version"]),
     "C.3": ("table_datee", ["table_datee"]),
     "C.4": ("univers", ["couche", "univers"]),
@@ -225,3 +225,21 @@ def test_chaque_contrat_valide_une_donnee_minimale():
         for objet in validateur.objets:
             constats = validateur.valider(minimal(objet), objet)
             assert constats == [], f"{nom}.{objet} : " + "\n".join(map(str, constats))
+
+
+def test_un_fait_presume_nomme_sa_presomption():
+    """Le fait qu'une présomption pose porte son nom (§ 5.6) : sans lui, c'est
+    un manque ; un nom que le vocabulaire ne connaît pas est une erreur."""
+    validateur = contrats.Validateur("chronologie")
+    fait = {"schema_version": 1, "id": "naissance_enfant_1", "personne": "enfant_1",
+            "sorte": "naissance", "debut": "1990-01-01", "attributs": {},
+            "origine": "presume", "fiabilite": "estimee"}
+    assert [(c.chemin, c.genre) for c in validateur.valider(fait, "fait")] == [
+        ("fait.presomption", "manque")]
+    fait["presomption"] = "naissance_des_enfants"
+    assert validateur.valider(fait, "fait") == []
+    fait["presomption"] = "intuition"
+    assert [c.genre for c in validateur.valider(fait, "fait")] == ["erreur"]
+    chronologie = {"schema_version": 1, "faits": [{**fait, "presomption": "naissance_des_enfants"}],
+                   "liens": []}
+    assert validateur.valider(chronologie, "chronologie") == []

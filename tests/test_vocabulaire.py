@@ -96,3 +96,53 @@ def test_le_controle_refuse_ce_qui_sortirait_du_noyau(tmp_path):
     assert any("assure.retraite_revee" in e and "dérivée" in e for e in erreurs), erreurs
     assert any("licorne.naissance" in e for e in erreurs), erreurs
     assert any("muette" in e for e in erreurs), erreurs
+
+
+#: Les présomptions que le § 5.6 donne pour celles d'aujourd'hui, et leur nom
+#: au vocabulaire. La liste s'allonge sans décision ; celles-ci n'en sortent
+#: que par une décision, puisque les résultats d'aujourd'hui en dépendent.
+PRESOMPTIONS_DU_5_6 = {
+    "enfants nés aux": "naissance_des_enfants",
+    "radiation au 1er janvier suivant": "radiation_au_1er_janvier_suivant",
+    "agent présumé en activité": "agent_en_activite",
+    "pas d'accord des parents": "pas_d_accord_des_parents",
+    "validation de l'Ircantec présumée demandée": "validation_ircantec_demandee",
+}
+
+
+def test_les_presomptions_du_5_6_sont_au_vocabulaire():
+    """Chaque présomption que le § 5.6 énumère a son nom, sa valeur et sa
+    raison au vocabulaire, et le § 5.6 n'en énumère pas d'autre."""
+    section = _section("### 5.6 Les présomptions")
+    puces = re.findall(r"^  - (.+?)(?: ;| \.|\.)?$", section, re.M)
+    assert len(puces) == len(PRESOMPTIONS_DU_5_6), puces
+    for debut, nom in PRESOMPTIONS_DU_5_6.items():
+        assert any(p.startswith(debut) for p in puces), (debut, puces)
+        assert nom in vocabulaire.presomptions(), nom
+
+
+def test_une_presomption_pose_un_fait_ou_dit_qui_l_applique(tmp_path):
+    """Sans valeur, sans raison, ni fait posé ni code qui l'applique, ou
+    appliquée sans l'étape où son fait entrera : le contrôle le dit."""
+    shutil.copytree(vocabulaire.VOCABULAIRE, tmp_path, dirs_exist_ok=True)
+    valeurs = yaml.safe_load((tmp_path / "valeurs.yaml").read_text(encoding="utf-8"))
+    liste = valeurs["listes"]["presomptions"]["valeurs"]
+    liste["muette"] = {"dit": "une présomption sans rien"}
+    liste["bavarde"] = {"dit": "une présomption qui fait tout", "valeur": 1,
+                        "raison": "parce qu'il faut bien une raison écrite",
+                        "pose": {"sorte": "naissance", "personne": "enfant"},
+                        "appliquee_par": "partout"}
+    liste["orpheline"] = {"dit": "une présomption appliquée", "valeur": 1,
+                          "raison": "parce qu'il faut bien une raison écrite",
+                          "appliquee_par": "quelque part"}
+    liste["licorne"] = {"dit": "une présomption fantaisiste", "valeur": 1,
+                        "raison": "parce qu'il faut bien une raison écrite",
+                        "pose": {"sorte": "envol", "personne": "assure"}}
+    (tmp_path / "valeurs.yaml").write_text(yaml.safe_dump(valeurs, allow_unicode=True),
+                                           encoding="utf-8")
+    erreurs = vocabulaire.controler(tmp_path)
+    assert any("muette : sans valeur" in e for e in erreurs), erreurs
+    assert any("muette : une présomption dit sa raison" in e for e in erreurs), erreurs
+    assert any("bavarde" in e and "l'un des deux" in e for e in erreurs), erreurs
+    assert any("orpheline" in e and "entrera_a" in e for e in erreurs), erreurs
+    assert any("licorne" in e and "sorte du vocabulaire" in e for e in erreurs), erreurs

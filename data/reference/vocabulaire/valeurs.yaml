@@ -90,6 +90,7 @@ listes:
     valeurs:
       periode_d_activite: une période d'activité, salariée ou non
       periode_assimilee: une période validée sans cotisation
+      periode_d_interruption: une période où l'emploi s'interrompt, avec son motif — chômage indemnisé ou non, maladie, maternité, invalidité, accident du travail, service militaire, éducation d'un enfant, sans activité ; ce qu'elle valide, les règles le disent
       periode_a_l_etranger: une période d'activité hors de France
       residence: une résidence
       cessation_d_activite: la cessation d'une activité
@@ -167,6 +168,76 @@ listes:
       declare: dit par la personne ou lu dans un relevé
       presume: posé par une présomption, qu'il nomme
       simule: tiré par le pilote
+
+  presomptions:
+    # Une présomption remplace un fait inconnu (§ 5.6). Elle a un nom, une
+    # valeur et une raison ; le fait qu'elle pose porte `origine: presume` et
+    # son nom, et le résultat liste celles qu'il a employées. Celles
+    # d'aujourd'hui sont les valeurs par défaut : les résultats ne bougent pas
+    # tant que rien de nouveau n'est saisi.
+    #
+    # `pose` dit le fait qu'elle pose dans la chronologie, que
+    # `chronologie.completer` écrit (src/retraite_notionnelle/chronologie.py,
+    # et son jumeau). Une présomption dont le fait n'y entre pas encore dit
+    # plutôt, sous `appliquee_par`, le code qui l'applique à sa place, et
+    # l'étape où son fait entrera : la radiation se date par régime, ce que
+    # seule la coordination des affiliations saura faire (phase 4).
+    valeurs:
+      naissance_des_enfants:
+        dit: chaque enfant est né aux trente ans de l'assuré
+        valeur: 30
+        unite: ans
+        pose: {sorte: naissance, personne: enfant}
+        raison: >-
+          le formulaire demande le nombre des enfants, pas leurs dates ;
+          trente ans est l'âge moyen des mères à l'accouchement, vingt-huit
+          dans les années 1980 et trente et un aujourd'hui (INSEE, état
+          civil). La date place l'enfant avant ou après ce qui change ses
+          droits — 2004 dans la fonction publique, le recrutement, la
+          radiation —, et les lignes qui en dépendent sont au niveau
+          « moyenne »
+      radiation_au_1er_janvier_suivant:
+        dit: l'agent public est radié des cadres le 1er janvier qui suit sa dernière année de services
+        valeur: le 1er janvier qui suit la dernière année de services, ou le départ s'il part en fonctions
+        appliquee_par: ScenarioActuel._droit_a_pension, et la revalorisation de la pension différée (scenarios/actuel.py, scenario-actuel.js)
+        entrera_a: coordonner_les_affiliations
+        raison: >-
+          la carrière ne connaît que des années, et le formulaire ne demande
+          pas la date de radiation ; elle décide pourtant de la durée qui
+          ouvre une pension, du rétablissement au régime général et de la
+          revalorisation d'une pension différée. Elle se date régime par
+          régime, les trois régimes interpénétrés ensemble : c'est la
+          coordination des affiliations qui saura la poser
+      agent_en_activite:
+        dit: l'agent public est en position d'activité pendant chacune de ses années d'emploi
+        valeur: en activité, avec services effectifs
+        appliquee_par: _ligne_annuelle, qui fait de toute année d'emploi une année de services (carriere.py, carriere.js)
+        entrera_a: compter_les_durees
+        raison: >-
+          le formulaire ne demande pas la position statutaire ; L. 9 du code
+          des pensions écarte des services le temps passé dans une position
+          sans services effectifs (disponibilité, hors quelques congés), que
+          seule une période déclarée comme telle pourra dire
+      pas_d_accord_des_parents:
+        dit: les parents n'ont conclu aucun accord sur les trimestres de leurs enfants
+        valeur: aucun accord ; le défaut légal les donne à la mère
+        appliquee_par: la colonne beneficiaire de majoration_duree_assurance.csv, lue par MajorationsPourEnfants.par_enfant
+        entrera_a: compter_les_durees
+        raison: >-
+          le partage ouvert en 2003 et en 2010 suppose un accord ou une
+          interruption d'activité que le formulaire ne demande pas ; à défaut,
+          la loi donne les trimestres à la mère. L'accord est un acte de la
+          personne, daté, et son défaut légal s'écrit dans la version de la
+          règle (§ 5.6)
+      validation_ircantec_demandee:
+        dit: l'agent rétabli au régime général a demandé que l'Ircantec valide ses services
+        valeur: demandée
+        appliquee_par: ScenarioActuel._retablie, et l'assiette de l'Ircantec des années rétablies (scenarios/actuel.py, scenario-actuel.js)
+        entrera_a: coordonner_les_affiliations
+        raison: >-
+          la validation se fait sur demande pour qui a été radié avant le
+          1er janvier 1990, et d'office depuis (article 9, II, du décret
+          n° 70-1277) ; le formulaire ne demande pas cet acte
 
   origines_de_ligne:
     valeurs:

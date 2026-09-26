@@ -112,7 +112,7 @@ couverture demande à l'architecture.
 | Domaine | Aujourd'hui | Ce que la couverture demande |
 |---|---|---|
 | Régimes, droits propres | <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire)-->91<!--/--> lignes d'inventaire : <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=modelise)-->35<!--/--> modélisées, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=partiel)-->39<!--/--> partielles, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=hors_champ)-->15<!--/--> hors champ, <!--chiffre:entrees(data/reference/regimes/inventaire.yaml:inventaire?couverture=routage)-->2<!--/--> routages | compléter les partielles ; ouvrir les hors champ (Alsace-Moselle, fonctionnaires de Mayotte, anciens régimes coloniaux, ORTF, Crédit foncier…) |
-| Enfants | un nombre ; naissances présumées aux <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE)-->30<!--/--> ans de l'assuré | naissances et adoptions datées, et la date prévue d'une naissance ; qui élève l'enfant ; interruptions d'activité ; accord des parents, parents de même sexe, retrait de l'autorité parentale |
+| Enfants | un nombre ; naissances présumées aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.naissance_des_enfants.valeur)-->30<!--/--> ans de l'assuré | naissances et adoptions datées, et la date prévue d'une naissance ; qui élève l'enfant ; interruptions d'activité ; accord des parents, parents de même sexe, retrait de l'autorité parentale |
 | Périodes assimilées | en partie (chômage, maladie, maternité, AVPF…) ; apprentissage, stages, sportifs de haut niveau, TUC, congé de naissance non appliqués | chaque période datée, avec son motif ; validations rétroactives |
 | Temps partiel | quotité non saisie | quotité de chaque période ; surcotisation |
 | Départs anticipés | carrière longue, catégories actives, militaires : oui ; parents de trois enfants de la fonction publique : non ; handicap : hors modèle | tous, dont incapacité permanente, pénibilité, amiante |
@@ -735,10 +735,12 @@ Le relevé des droits et le résultat le signalent.
 ### 5.6 Les présomptions, et ce que la loi décide à défaut
 
 - **Une présomption** remplace un fait inconnu. Elle a un nom, une valeur et
-  une raison. Les présomptions d'aujourd'hui deviennent les valeurs par
-  défaut, si bien que les résultats ne bougent pas tant que rien de nouveau
-  n'est saisi :
-  - enfants nés aux <!--chiffre:mesure(constante?de=retraite_notionnelle.scenarios.actuel&nom=MajorationsPourEnfants.AGE_PRESUME_A_LA_NAISSANCE)-->30<!--/--> ans de l'assuré ;
+  une raison, que le vocabulaire porte (`presomptions`, dans
+  `data/reference/vocabulaire/valeurs.yaml`), et le fait qu'elle pose le dit
+  (C.1). Les présomptions d'aujourd'hui deviennent les valeurs par défaut, si
+  bien que les résultats ne bougent pas tant que rien de nouveau n'est
+  saisi :
+  - enfants nés aux <!--chiffre:valeur(data/reference/vocabulaire/valeurs.yaml:listes.presomptions.valeurs.naissance_des_enfants.valeur)-->30<!--/--> ans de l'assuré ;
   - radiation au 1er janvier suivant ;
   - agent présumé en activité ;
   - pas d'accord des parents ;
@@ -2160,18 +2162,26 @@ d'aujourd'hui, et elles s'allongent sans décision.
 
 ### C.1 La chronologie : le fait et le lien
 
+**La chronologie**, ce qu'une étape passe à la suivante (§ 7.1)
+
+| Champ | Ce qu'il porte | Défaut |
+|---|---|---|
+| `faits` | les faits de toutes les personnes du réseau | aucun |
+| `liens` | les liens qui les relient | aucun |
+
 **Le fait**
 
 | Champ | Ce qu'il porte | Défaut |
 |---|---|---|
 | `id` | identifiant stable | — |
 | `personne` | la personne du réseau | — |
-| `sorte` | aujourd'hui : période d'activité, période assimilée, période à l'étranger, résidence, cessation d'activité, naissance (réelle ou prévue), adoption, décès, recrutement, titularisation, radiation, décision médicale, exposition, ressources, acte de la personne (demande, option, renonciation, rachat, versement, accord) ou de la caisse (notification) | — |
-| `debut`, `fin` | dates au jour ; `fin` vide pour un événement | — |
+| `sorte` | aujourd'hui : période d'activité, période où l'emploi s'interrompt (avec son motif), période assimilée, période à l'étranger, résidence, cessation d'activité, naissance (réelle ou prévue), adoption, décès, recrutement, titularisation, radiation, décision médicale, exposition, ressources, acte de la personne (demande, option, renonciation, rachat, versement, accord) ou de la caisse (notification) | — |
+| `debut`, `fin` | dates au jour ; une période vaut [début, fin), et `fin` est vide pour un événement | — |
 | `attributs` | selon la sorte : métier, statut, grade et corps, régime, revenu, quotité, motif, pays, taux… | — |
 | `montant` | un montant et sa monnaie | la monnaie de la date |
 | `territoire` | métropole, un département ou une collectivité d'outre-mer, un pays | métropole |
-| `origine` | déclaré, présumé (nom de la présomption), simulé ; ce qu'une règle inscrit va au journal (C.8) | déclaré |
+| `origine` | déclaré, présumé, simulé ; ce qu'une règle inscrit va au journal (C.8) | déclaré |
+| `presomption` | pour un fait présumé, le nom de la présomption qui le pose (§ 5.6) | — |
 | `connu_le` | la date où le fait est connu (§ 5.1) | à mesure qu'il se produit |
 | `fiabilite` | niveau de la donnée | — |
 
@@ -2185,7 +2195,7 @@ d'aujourd'hui, et elles s'allongent sans décision.
 | `roles` | le rôle de chacun (mère, père, conjoint, aidant, tuteur…) | — |
 | `debut`, `fin` | dates au jour ; la fin dit sa cause (divorce, décès) | — |
 | `regime` | le régime qui lit ce lien, s'il est seul à le lire | tous |
-| `origine` | comme pour un fait | déclaré |
+| `origine`, `presomption` | comme pour un fait | déclaré |
 
 ### C.2 La fiche et ses versions
 
@@ -2349,6 +2359,13 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.6**, 26 septembre 2026 : la phase 3 ajoute à la chronologie (C.1),
+  par la règle additive (§ 13.3), ce qui la fait passer d'une étape à
+  l'autre — son enveloppe, ses faits et ses liens — et le nom de la
+  présomption qui pose un fait ; une période y vaut [début, fin), comme les
+  bornes des versions. Les présomptions d'aujourd'hui entrent au
+  vocabulaire, chacune avec sa valeur et sa raison (§ 5.6).
 
 - **5.5**, 25 septembre 2026 : la suite complète reste le défaut de
   `python -m pytest`, et se passe avant tout envoi sur `main` ; la suite
