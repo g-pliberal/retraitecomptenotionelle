@@ -572,7 +572,7 @@ export class MinimumContributif {
  * LIMITE D'ÂGE pour obtenir l'âge d'annulation, de seize en 2006 à zéro en
  * 2020. Rien avant 2006 : la décote n'existait pas dans la fonction publique.
  * Les deux se lisent à l'année où le droit s'ouvre, non à celle du départ :
- * c'est `ScenarioActuel.anneeOuvertureDesDroits` qui la fournit.
+ * c'est `anneeOuvertureDesDroits` (`droit/ouvrir.js`) qui la fournit.
  */
 export class DecoteFonctionPublique {
   /** @param {object} paquet @param {string} cle table du paquet à lire. */

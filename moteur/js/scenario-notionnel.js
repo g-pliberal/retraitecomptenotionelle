@@ -340,7 +340,10 @@ export class ScenarioNotionnel {
       nombre_enfants: 0, // avantages familiaux neutralisés
       identifiant: `${carriere.identifiant} (droits figés ${bascule})`,
     });
-    const droits = this.scenarioActuel.calculer(carriereTronquee, true, false);
+    // Une liquidation FICTIVE (docs/architecture.md, § 7.3) : calculée sans
+    // être servie, au contributif seul, décote et surcote neutralisées.
+    const droits = this.scenarioActuel.calculer(
+      carriereTronquee, true, false, true, true, null, "fictive");
 
     const ageConversion = this.parametres.age_conversion_droits_acquis
         === AgeConversionDroitsAcquis.REFERENCE

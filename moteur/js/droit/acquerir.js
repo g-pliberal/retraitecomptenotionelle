@@ -15,6 +15,8 @@ import { assietteMinimale as assietteMinimaleDe, salaireMoyenAnnuel } from "../c
 import { nomFiabilite, Fiabilite } from "../serie.js";
 import { derniereAnnee } from "./commun.js";
 import * as compter from "./compter.js";
+import * as liquider from "./liquider.js";
+import * as ouvrir from "./ouvrir.js";
 
 /** La version du schéma de l'étape. */
 export const SCHEMA_VERSION = 1;
@@ -44,7 +46,7 @@ export function assietteMinimale(moteur, codes, ligne) {
 export function pointsMsa(moteur, periode, annee, revenu) {
   const smic = moteur.macro.smic_horaire.valeur(annee);
   const passAnnuel = moteur.macro.plafond_securite_sociale.valeur(annee);
-  const valeurPoint = moteur.valeurPointFiche(periode, annee);
+  const valeurPoint = liquider.valeurPointFiche(moteur, periode, annee);
   if (smic <= 0 || passAnnuel <= 0 || valeurPoint <= 0) {
     return 0.0;
   }
@@ -95,12 +97,12 @@ export function pointsGratuits(moteur, periode, carriere, assurance, trimestres,
   if (valides(regle.regime) < regle.annees_minimum * 4) {
     return [0.0, null];
   }
-  const [requis, fiabilite] = moteur.dureeRequise(periodeBase, carriere);
+  const [requis, fiabilite] = ouvrir.dureeRequise(moteur, periodeBase, carriere);
   let tauxPlein = trimestres >= requis;
   const [anneeDepuis, moisDepuis] = regle.taux_plein_depuis;
   if (!tauxPlein
       && carriere.dateLiquidation.rang >= new DateMois(anneeDepuis, moisDepuis).rang) {
-    tauxPlein = ageLiquidation >= moteur.ageTauxPlein(periodeBase, carriere);
+    tauxPlein = ageLiquidation >= ouvrir.ageTauxPlein(moteur, periodeBase, carriere);
   }
   if (!tauxPlein) {
     return [0.0, fiabilite];

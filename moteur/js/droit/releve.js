@@ -11,6 +11,7 @@
 import * as chrono from "../chronologie.js";
 import { nomFiabilite } from "../serie.js";
 import * as acquerirEtape from "./acquerir.js";
+import { dateDEffet } from "./commun.js";
 import * as compterEtape from "./compter.js";
 import * as coordonnerEtape from "./coordonner.js";
 
@@ -209,14 +210,6 @@ export function construire(moteur, carriere, {
     (code) => moteur.catalogue.obtenir(code).famille === "fonction_publique",
   ));
   return new Releve(coordination, durees, droits, groupes, servicesLus);
-}
-
-function dateDEffet(carriere) {
-  if (carriere.age_liquidation === null || carriere.age_liquidation === undefined) {
-    return null;
-  }
-  const date = carriere.dateLiquidation;
-  return `${String(date.annee).padStart(4, "0")}-${String(date.mois).padStart(2, "0")}-01`;
 }
 
 /**

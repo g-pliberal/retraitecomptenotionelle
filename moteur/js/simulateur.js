@@ -16,6 +16,7 @@ import { AgeReference } from "./age-reference.js";
 import { DonneesMacro } from "./macro.js";
 import { DonneesMortalite } from "./mortalite.js";
 import { Indexation } from "./indexation.js";
+import { Echeancier } from "./echeancier.js";
 import { ScenarioActuel } from "./scenario-actuel.js";
 import { ScenarioNotionnel } from "./scenario-notionnel.js";
 import { Affiliations, CatalogueRegimes } from "./regimes.js";
@@ -28,7 +29,7 @@ import { EffectifsCotisants, EffectifsRetraites } from "./effectifs.js";
 import { fusionner } from "./fusion.js";
 import { BaremePrelevements, remunerationDeLaCarriere } from "./remuneration.js";
 import {
-  RevalorisationServie, RevalorisationsPensions, actuelAujourdhui, pensionAujourdhui,
+  RevalorisationServie, RevalorisationsPensions, pensionAujourdhui,
 } from "./revalorisation.js";
 import {
   DonneeInsuffisante, Fiabilite, fiabiliteDepuisTexte, nomFiabilite,
@@ -111,6 +112,11 @@ export class Comparaison {
     //: du scénario 6 quand elle est reportée.
     this.coefficient_euros_constants_liberal = coefficientEurosConstantsLiberal;
     this.dernier_revenu_annualise_liberal = dernierRevenuAnnualiseLiberal;
+    //: Le journal de l'échéancier du scénario 1 (docs/architecture.md, § 7.4) :
+    //: le départ, sa liquidation et ses composantes, l'ASPA du jour et, pour
+    //: qui a déjà liquidé, ce que l'échéance en a fait. Il n'entre dans aucune
+    //: sortie.
+    this.journal = null;
   }
 
   /** L'âge légal de la proposition reporte-t-il le départ du scénario 6 ? */
@@ -660,11 +666,23 @@ export class Simulateur {
    * année ou plus tard, c'est la pension du départ.
    */
   pensionActuelleAujourdhui(carriere) {
-    const resultat = this.scenarioActuel.calculer(carriere);
-    if (carriere.anneeLiquidation >= this.parametres.annee_courante) {
-      return resultat.pension_annuelle;
+    const echeancier = this.echeancier(carriere);
+    if (echeancier.aujourdhui === null) {
+      return echeancier.auDepart.pension_annuelle;
     }
-    return actuelAujourdhui(this, carriere, resultat).pension_annuelle;
+    return echeancier.aujourdhui.pension_annuelle;
+  }
+
+  /**
+   * L'échéancier du scénario 1 parcouru pour `carriere` : son départ, puis,
+   * pour qui a liquidé avant l'année courante, l'échéance de cette année-là.
+   */
+  echeancier(carriere) {
+    const echeancier = new Echeancier(this);
+    echeancier.parcourir(carriere,
+      carriere.anneeLiquidation < this.parametres.annee_courante
+        ? this.parametres.annee_courante : null);
+    return echeancier;
   }
 
   get regimeFusionne() {
@@ -762,9 +780,14 @@ export class Simulateur {
 
     const fusionne = this.parametres.fusion_au_plus_defavorable ? this.regimeFusionne : null;
 
+    // LE SCÉNARIO 1 PASSE PAR L'ÉCHÉANCIER (docs/architecture.md, § 7.4) : le
+    // départ appelle la liquidation, puis l'ASPA du jour ; l'échéance, pour qui
+    // a liquidé avant l'année courante, fait vivre les pensions jusque-là. Tout
+    // s'inscrit à son journal.
+    const echeancier = this.echeancier(carriere);
     const comparaison = new Comparaison({
       carriere,
-      actuel: this.scenarioActuel.calculer(carriere),
+      actuel: echeancier.auDepart,
       notionnelRetroactif: this.scenarioNotionnel.retroactif(carriere, fusionne),
       notionnelProspectif: this.scenarioNotionnel.prospectif(carriere, this.regimeFusionne),
       notionnelRetroactifEmployeur: this.scenarioEmployeur.retroactif(
@@ -796,8 +819,9 @@ export class Simulateur {
         ? dernierRevenuAnnualise(proposition, this.macro)
         : null,
     });
+    comparaison.journal = echeancier.journal;
     if (carriere.anneeLiquidation < this.parametres.annee_courante) {
-      comparaison.aujourd_hui = pensionAujourdhui(this, comparaison);
+      comparaison.aujourd_hui = pensionAujourdhui(this, comparaison, echeancier.aujourdhui);
       comparaison.coefficient_euros_aujourd_hui = this.macro.coefficientPrix(
         this.parametres.annee_courante, this.parametres.annee_euros_constants,
       );

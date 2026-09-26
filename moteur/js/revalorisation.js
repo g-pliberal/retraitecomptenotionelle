@@ -17,7 +17,9 @@
  */
 
 import { RevalorisationStock, SituationFoyer } from "./config.js";
-import { Fiabilite } from "./serie.js";
+import * as liquider from "./droit/liquider.js";
+import { foyerEtNet } from "./droit/foyer.js";
+import { Fiabilite, nomFiabilite } from "./serie.js";
 
 /** Fin de la péréquation des pensions civiles et militaires. */
 export const FIN_PEREQUATION = "2004-01-01";
@@ -199,12 +201,12 @@ export class PensionServie {
     if (pension.type_calcul === "points" || pension.type_calcul === "mixte") {
       const periode = regime.periode(Math.min(anneeLiquidation, derniereAnneeRegime(regime)));
       const bareme = (periode !== null ? periode.points_de : null) || code;
-      const auDepart = this.actuel.valeurDuPoint(bareme, anneeLiquidation);
+      const auDepart = liquider.valeurDuPoint(this.actuel, bareme, anneeLiquidation);
       const publiee = derniereValeurPubliee(this.actuel, bareme);
       if (auDepart !== null && auDepart[0] > 0 && publiee !== null) {
         const anneeFin = Number(jusqua.slice(0, 4));
         const ancre = Math.min(anneeFin, publiee);
-        const aLAncre = this.actuel.valeurDuPoint(bareme, ancre);
+        const aLAncre = liquider.valeurDuPoint(this.actuel, bareme, ancre);
         const [echelle, fiabiliteEchelle] = this.actuel.conversionsPoints.echelle(
           bareme, anneeLiquidation, ancre,
         );
@@ -282,8 +284,41 @@ export class ActuelAujourdhui {
   }
 }
 
-/** Le système 1 servi en `annee` — l'année courante par défaut. */
-export function actuelAujourdhui(simulateur, carriere, resultat, annee = null) {
+/**
+ * Ce que l'étape « faire vivre » écrit : les pensions du système 1 menées à
+ * une échéance, dont l'année donne les euros de tous les montants. Son schéma :
+ * `data/reference/etapes/faire_vivre.yaml`.
+ */
+export class Revalorisee {
+  constructor(champs) {
+    Object.assign(this, champs);
+  }
+
+  /** La revalorisation, telle que le schéma de l'étape la décrit. */
+  donnees() {
+    return {
+      schema_version: 1,
+      personne: this.personne,
+      date: dateIso(this.annee, 12, 31),
+      regimes: this.regimes.map((r) => ({
+        regime: r.regime, coefficient: r.coefficient, regle: r.regle,
+        fiabilite: nomFiabilite(r.fiabilite),
+      })),
+      majoration: this.coefficient_majoration,
+      mensuel_decembre_2019: this.mensuel_decembre_2019,
+      fiabilite: nomFiabilite(this.fiabilite),
+    };
+  }
+}
+
+/**
+ * L'étape « faire vivre » (docs/architecture.md, § 7.4) : les pensions du
+ * système 1 menées jusqu'en `annee` — l'année courante par défaut. Rien n'est
+ * recalculé de la carrière : seuls les montants de chaque régime sont
+ * revalorisés, selon la règle de leur texte. Une revalorisation ne relance
+ * jamais la liquidation.
+ */
+export function faireVivre(simulateur, carriere, resultat, annee = null) {
   const parametres = simulateur.parametres;
   const an = annee === null ? parametres.annee_courante : annee;
   const servie = new PensionServie(simulateur);
@@ -295,7 +330,6 @@ export function actuelAujourdhui(simulateur, carriere, resultat, annee = null) {
   const horsRepartition = (p) => isoler
     && Boolean(simulateur.catalogue.obtenir(p.regime).hors_repartition);
   let majoration = 0;
-  let aspaAuDepart = 0;
   // La part de chaque régime dans la majoration pour enfants, plafond compris.
   const partsMajoration = [];
   for (const a of resultat.avantages_appliques) {
@@ -303,7 +337,6 @@ export function actuelAujourdhui(simulateur, carriere, resultat, annee = null) {
       majoration += a.montant;
       partsMajoration.push(...(a.par_regime ?? []));
     }
-    if (a.code === "minimum_vieillesse") aspaAuDepart += a.montant;
   }
 
   const coefficientMoyen = (coefficients) => {
@@ -368,29 +401,62 @@ export function actuelAujourdhui(simulateur, carriere, resultat, annee = null) {
   }
   const coefficientMajoration = coefficientDeLaMajoration(coefficients);
 
-  let aspa = 0.0;
-  if (parametres.minimum_vieillesse_dans_le_scenario_actuel
-      && an >= carriere.annee_naissance + MINIMUM_VIEILLESSE_AGE) {
-    const bareme = simulateur.scenarioActuel.minimumVieillesse.plafond(an);
-    if (bareme !== null) {
-      let ressources = 0;
-      for (const r of regimes) ressources += r.aujourd_hui;
-      ressources += majoration * coefficientMajoration;
-      aspa = Math.max(0.0, bareme[0] - ressources);
-      if (aspa > 0) fiabilite = Math.min(fiabilite, bareme[1]);
-    }
-  }
-
-  return new ActuelAujourdhui({
+  return new Revalorisee({
+    personne: carriere.personne,
     annee: an,
     regimes,
     majoration_enfants: majoration,
     coefficient_majoration: coefficientMajoration,
-    minimum_vieillesse_au_depart: aspaAuDepart,
-    minimum_vieillesse: aspa,
     mensuel_decembre_2019: mensuel2019,
     fiabilite,
   });
+}
+
+/**
+ * L'étape « foyer et net » à l'échéance de `vivante` : l'ASPA d'aujourd'hui,
+ * comme à la liquidation, différentielle, sur TOUTES les pensions — le RAFP
+ * compris —, et à 65 ans révolus dans l'année. Qui est parti à 62 ans l'a
+ * peut-être gagnée depuis.
+ */
+export function foyerALEcheance(simulateur, carriere, vivante) {
+  let ressources = 0;
+  for (const r of vivante.regimes) ressources += r.aujourd_hui;
+  ressources += vivante.majoration_enfants * vivante.coefficient_majoration;
+  return foyerEtNet(
+    simulateur.scenarioActuel, carriere.personne, dateIso(vivante.annee, 12, 31),
+    vivante.annee, ressources,
+    vivante.annee >= carriere.annee_naissance + MINIMUM_VIEILLESSE_AGE,
+  );
+}
+
+/**
+ * Le système 1 à l'échéance : les pensions que « faire vivre » a menées
+ * jusque-là, et l'ASPA que « foyer et net » y ajoute.
+ */
+export function aujourdHui(vivante, foyer, resultat) {
+  let aspaAuDepart = 0;
+  for (const a of resultat.avantages_appliques) {
+    if (a.code === "minimum_vieillesse") aspaAuDepart += a.montant;
+  }
+  return new ActuelAujourdhui({
+    annee: vivante.annee,
+    regimes: vivante.regimes,
+    majoration_enfants: vivante.majoration_enfants,
+    coefficient_majoration: vivante.coefficient_majoration,
+    minimum_vieillesse_au_depart: aspaAuDepart,
+    minimum_vieillesse: foyer.minimumVieillesse,
+    mensuel_decembre_2019: vivante.mensuel_decembre_2019,
+    fiabilite: Math.min(vivante.fiabilite, foyer.fiabilite),
+  });
+}
+
+/**
+ * Le système 1 servi en `annee` — l'année courante par défaut : faire vivre,
+ * puis foyer et net, comme l'échéancier les applique.
+ */
+export function actuelAujourdhui(simulateur, carriere, resultat, annee = null) {
+  const vivante = faireVivre(simulateur, carriere, resultat, annee);
+  return aujourdHui(vivante, foyerALEcheance(simulateur, carriere, vivante), resultat);
 }
 
 /** Ce qu'un retraité touche aujourd'hui, dans chacun des six systèmes. */
@@ -411,8 +477,12 @@ export class PensionAujourdhui {
   }
 }
 
-/** Les six systèmes servis l'année courante, pour qui a déjà liquidé. */
-export function pensionAujourdhui(simulateur, comparaison) {
+/**
+ * Les six systèmes servis l'année courante, pour qui a déjà liquidé.
+ * `actuelServi` est le système 1 à l'échéance, quand l'échéancier l'a déjà mené
+ * jusque-là : il n'est pas refait.
+ */
+export function pensionAujourdhui(simulateur, comparaison, actuelServi = null) {
   const parametres = simulateur.parametres;
   const carriere = comparaison.carriere;
   const annee = parametres.annee_courante;
@@ -422,7 +492,8 @@ export function pensionAujourdhui(simulateur, comparaison) {
   const revalorisation = simulateur.revalorisationServie;
   const versAujourdhui = macro.coefficientPrix(liquidation, annee);
 
-  const actuel = actuelAujourdhui(simulateur, carriere, comparaison.actuel, annee);
+  const actuel = actuelServi !== null
+    ? actuelServi : actuelAujourdhui(simulateur, carriere, comparaison.actuel, annee);
   const coefficientActuel = comparaison.actuel.pension_annuelle > 0
     ? actuel.pension_annuelle / comparaison.actuel.pension_annuelle
     : 1.0;

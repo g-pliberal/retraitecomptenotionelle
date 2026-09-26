@@ -18,7 +18,8 @@ import { dirname, join } from "node:path";
 
 import { Contexte, Saisie, rendre } from "../../moteur/js/pages.js";
 import { Affiliations } from "../../moteur/js/regimes.js";
-import { complementMinimum } from "../../moteur/js/scenario-actuel.js";
+import { complementMinimum } from "../../moteur/js/droit/completer.js";
+import * as ouvrir from "../../moteur/js/droit/ouvrir.js";
 import { AnneeCarriere, limiterChomageNonIndemnise } from "../../moteur/js/carriere.js";
 import * as gabarit from "../../moteur/js/gabarit.js";
 import { Fiabilite, SerieAnnuelle } from "../../moteur/js/serie.js";
@@ -219,7 +220,7 @@ test("les âges et la bonification des marins sont ceux du Python", () => {
 
   assert.equal(scenario.calculer(marin(25, 50)).liquidation_ouverte, true);
   assert.equal(scenario.calculer(marin(25.25, 50)).liquidation_ouverte, false);
-  assert.equal(scenario.ageOuvertureDroit(marin(30, 50)), 55);
+  assert.equal(ouvrir.ageOuvertureDroit(scenario, marin(30, 50)), 55);
   assert.equal(scenario.calculer(marin(49.75, 59.75)).liquidation_ouverte, false);
   assert.equal(scenario.calculer(marin(50, 60)).liquidation_ouverte, true);
 
@@ -227,7 +228,7 @@ test("les âges et la bonification des marins sont ceux du Python", () => {
     { affiliation: "marin", age_debut: 20, niveau_salaire: 1 },
     { affiliation: "salarie_prive_non_cadre", age_debut: 30, niveau_salaire: 1 },
   ], 55);
-  assert.ok(scenario.ageOuvertureDroit(poly) > 60);
+  assert.ok(ouvrir.ageOuvertureDroit(scenario, poly) > 60);
   assert.equal(scenario.calculer(poly).liquidation_ouverte, false);
 
   assert.match(scenario.calculer(marin(15.25, 52.5, 1970)).pensions_par_regime[0].detail, /100\/150/);
@@ -302,7 +303,7 @@ test("les sections de santé minorent comme leurs règlements", () => {
     profil_carriere: "ascendant",
     metiers: [{ affiliation: "officier_ministeriel", age_debut: 22, niveau_salaire: 1 }],
   });
-  assert.equal(scenario.ageOuvertureDroit(officier), 62);
+  assert.equal(ouvrir.ageOuvertureDroit(scenario, officier), 62);
 });
 
 test("le seuil d'affiliation de l'élu local est lu comme en Python", () => {
