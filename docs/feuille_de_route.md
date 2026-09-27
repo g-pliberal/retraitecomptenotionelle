@@ -2325,3 +2325,6 @@ les poids du paquet que la prose annonçait, et de9e6a6 l'a réparé, rejoué pa
 GitHub sans échec. Le message de d15d401 dit « N tests passés » : c'était
 2 660, et cet échec. Une session qui commite avant que la suite complète ait
 fini ne finit pas son tour : le hook publierait le commit.
+
+Le repère `phase-7` est posé sur 17b54f3, le 27 septembre 2026, à la demande
+du propriétaire, par `repere-phase-7.yml`, lancé une fois puis supprimé.
