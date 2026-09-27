@@ -1,34 +1,398 @@
 schema_version: 1
 id: decote_regimes_speciaux
 intitule: >-
-  Décote des régimes spéciaux depuis leur réforme de 2008 : le barème de la fonction publique
-  avec quatre ans de retard, rien avant le 1er juillet 2010, et un âge d'annulation tiré
-  de l'âge de référence du régime.
-etat: a_verifier
+  Décote des régimes spéciaux réformés en 2008, SNCF, RATP, IEG, CRPCEN et Comédie-Française :
+  le taux de la fonction publique, 1,25 % par trimestre manquant dans la limite de vingt,
+  n'est opposable qu'à qui réunit les conditions d'ouverture à compter du 1er juillet 2010,
+  au dixième la première année puis d'un dixième de plus chaque 1er juillet ; l'âge
+  d'annulation est l'âge de référence du régime diminué de seize trimestres, diminution
+  réduite de deux trimestres chaque 1er juillet jusqu'en 2013, puis d'un jusqu'au 30 juin
+  2024.
+etat: approchee
 etape: liquider_chaque_regime
 effet: >-
-  Les agents de la SNCF, de la RATP, des IEG, de la CRPCEN et de la Comédie-Française
-  qui réunissent les conditions d'ouverture après le 1er juillet 2010. Fiche née à la
-  phase 6 (docs/architecture.md, § 11) de ce que le schéma des régimes disait de l'interrupteur
-  `bareme_decote` : elle dit la règle que le moteur applique déjà, et les textes que le
-  dépôt citait pour elle ; elle reste à relire à la source.
+  Les agents de la SNCF, de la RATP, des IEG, de la CRPCEN et de la Comédie-Française qui
+  réunissent les conditions d'ouverture à compter du 1er juillet 2010. Les cinq décrets
+  écrivent le même calendrier, aux mêmes dates et aux mêmes pas, seul le renvoi à
+  l'article du taux changeant ; les quinze lignes de
+  `legislation/decote_regimes_speciaux.csv` le reprennent exactement, et la CNIEG publie
+  les mêmes tables. Quatre écarts. Le moteur lit la table à l'ANNÉE où les conditions sont
+  réunies, et sert au second semestre la marche d'avant : rien au second semestre 2010,
+  puis un huitième de point de moins par trimestre et un ou deux trimestres de moins à
+  l'âge d'annulation, jusqu'à trois points de pension en faveur de l'assuré (quatorze
+  trimestres à 1,125 % au lieu de quinze à 1,25 % au second semestre 2019). Il ne porte
+  pas la borne du 2° de chaque article, durée requise moins 150 : effet non mesuré, de
+  l'ordre d'un trimestre de trop, pour qui réunit les conditions à compter de juillet 2023
+  sans cotiser au-delà. IEG : la CNIEG garde les paramètres d'avant la réforme de 2023 à
+  qui a ouvert son droit avant le 1er janvier 2025, « quelle que soit la date d'effet » ;
+  le moteur retranche la diminution de soixante-deux ans pour toute pension de 2025 et
+  après, et oppose jusqu'à trois trimestres de trop (3,75 points) aux agents nés en 1964
+  et 1965, un ou deux à ceux de 1966. CRPCEN : depuis 2025, la diminution se retranche de
+  l'âge de référence d'avant le décret n° 2023-689, l'âge d'ouverture de l'article 84
+  majoré de cinq ans, comme la caisse le publie ; le moteur la retranche de soixante-sept ans,
+  et oppose jusqu'à quatre trimestres de trop (cinq points) aux générations 1959 et 1960,
+  un ou deux à celle de 1961.
 sources:
   lu_le: 2026-09-27
-  prochaine_relecture: 2026-12-31
+  prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Relire, régime par régime, l'article de décote du décret de réforme de 2008 (SNCF,
-    RATP, IEG, CRPCEN, Comédie-Française) dans l'index LEGI, et rattacher chacun : `legislation/decote_regimes_speciaux.csv`
-    ne cite mot pour mot que celui de l'Opéra, et écrit que la même phrase se lit dans
-    les autres.
+    Après la phase 7 : lire le barème au MOIS où les conditions sont réunies, comme la durée
+    requise (`ouvrir.mois_ouverture_des_droits`), et non à l'année : la ligne d'une année vaut
+    du 1er juillet précédent au 30 juin, et le second semestre reçoit aujourd'hui la marche
+    d'avant.
+  - >-
+    Après la phase 7 : IEG, garder à toute date d'effet l'âge d'annulation d'avant la réforme
+    de 2023, l'âge minimum majoré de vingt trimestres moins la diminution, à qui a ouvert son
+    droit avant le 1er janvier 2025, comme la CNIEG (circulaire 2024/15, § 3), et réserver
+    soixante-deux ans sans diminution à qui l'ouvre ensuite ; à reprendre avec
+    `age_reference_decote_ieg`, dont la table de 2025 prête soixante-deux ans à toutes les
+    générations. Le II de l'article 45 écrit « Pour les pensions prenant effet avant le 1er
+    janvier 2025 », et la caisse s'appuie sur le I ter : lecture divergente, inscrite
+    ci-dessous.
+  - >-
+    Après la phase 7 : CRPCEN, pour les pensions de 2025 et après, retrancher la diminution de
+    l'âge d'ouverture de l'article 84 d'avant le décret n° 2023-689 (LEGIARTI000047909844)
+    majoré de cinq ans, et non de soixante-sept ans, comme la caisse le publie : 65 ans et 4
+    mois à 66 ans et 9 mois pour les assurés nés de 1960 au 30 juin 1962.
+  - >-
+    Après la phase 7 : porter la borne du 2° de chaque article, le décompte par la durée ne
+    pouvant excéder la durée requise moins 150, réduite des trimestres cotisés au-delà de
+    l'âge d'ouverture, que la CNIEG applique (circulaire 2024/15, § 4).
+  - >-
+    Après la phase 7 : l'en-tête du CSV écrit que « La même phrase se lit, aux mêmes dates »
+    dans les autres décrets ; c'est vrai des dates et des pas, non du mot à mot (« son taux est
+    fixé […] au premier alinéa du I de l'article 13 » à la SNCF), ni, depuis 2025, des IEG et
+    de la CRPCEN.
+  - >-
+    RATP : le 2° du VII de l'article 51-1 fixe l'âge d'annulation, de 2025 à 2033, à l'âge de
+    référence d'avant le décret n° 2023-690, sans dire si la diminution du II de l'article 51
+    vaut encore pour qui a réuni les conditions avant juillet 2024 ; le moteur la retranche,
+    comme la CNIEG le fait aux IEG. La CRP RATP et la CPRPSNCF ne publient pas la décote sur
+    leurs pages publiques : chercher une circulaire.
+  - >-
+    Rejouer un exemple publié : la CNIEG (page « Décote », circulaire 2024/15) et la CRPCEN
+    (page « La décote ») en publient. La fiche reste `approchee` tant que les écarts ci-dessus
+    demeurent.
+  lectures_divergentes:
+  - >-
+    IEG, âge d'annulation de la décote des pensions de 2025 et après : le II de l'article 45
+    de l'annexe 3 (LEGIARTI000052046924) écrit « Pour les pensions prenant effet avant le 1er
+    janvier 2025, l'âge auquel le coefficient de minoration s'annule correspond [...] à l'âge
+    de référence [...] diminué de seize trimestres » ; la CNIEG (circulaire n° 2024/15, § 3)
+    garde les paramètres d'avant la réforme de 2023 à qui a ouvert son droit avant le 1er
+    janvier 2025, « quelle que soit la date d'effet de la retraite IEG », en s'appuyant sur
+    le I ter du même article. La hiérarchie retient ce que la caisse applique et documente
+    (docs/architecture.md, § 3.3) ; le moteur ne suit pas encore celle de la caisse pour les
+    agents nés de 1964 à 1966 (voir l'effet).
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 2008-639 (SNCF), article 35, II, en vigueur depuis le 7 janvier 2024
+      (LEGIARTI000048897024) : « Le coefficient de minoration prévu au I de l'article 13 n'est
+      applicable qu'aux personnes remplissant les conditions définies aux articles 1er et 3 à
+      compter du 1er juillet 2010. Pour les personnes remplissant les conditions définies aux
+      articles 1er et 3 entre le 1er juillet 2010 et le 30 juin 2011 inclus, son taux est fixé
+      par trimestre manquant à un dixième du taux prévu au premier alinéa du I de l'article
+      13. Pour les personnes remplissant les conditions définies aux articles 1er et 3
+      postérieurement au 30 juin 2011, il augmente du même montant au 1er juillet de chaque
+      année jusqu'à égaler le taux prévu au premier alinéa du I de l'article 13. L'âge auquel
+      le coefficient de minoration s'annule correspond, pour la période comprise entre le 1er
+      juillet 2010 et le 30 juin 2011 inclus, à l'âge de référence mentionné au 1° du I de
+      l'article 13 diminué de seize trimestres. Pour les périodes postérieures au 30 juin 2011,
+      cette diminution est réduite de deux trimestres au 1er juillet de chaque année jusqu'au
+      30 juin 2013 inclus puis d'un trimestre au 1er juillet de chaque année jusqu'au 30 juin
+      2024 inclus » ; même paragraphe, au mot près, dans les rédactions du 1er juillet 2008
+      (LEGIARTI000019108289), du 1er janvier 2009, du 29 juin 2014 (LEGIARTI000029165209) et
+      du 22 octobre 2023. Article 13, I, inchangé sur ce point depuis le 1er juillet 2008
+      (LEGIARTI000019108313 à LEGIARTI000054622824) : « un coefficient de minoration, dont le
+      taux est celui prévu pour les fonctionnaires de l'Etat en application du I de l'article
+      L. 14 du code des pensions civiles et militaires de retraite, s'applique au montant de
+      la pension calculée en application de l'article 12, dans la limite de vingt
+      trimestres ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 2008-637 (RATP), article 51, II, en vigueur depuis le 27 septembre 2025
+      (LEGIARTI000052292971) : « Le coefficient de minoration prévu au I de l'article 24 n'est
+      applicable qu'aux personnes remplissant les conditions définies aux articles 6 et 8 à 12
+      à compter du 1er juillet 2010 », puis le même calendrier, renvoyant au « premier alinéa
+      du I de l'article 24 », au mot près dans les six rédactions depuis le 1er juillet 2008
+      (LEGIARTI000019104897, et celle du 26 juin 2014, LEGIARTI000029137521). Article 24, I,
+      en vigueur depuis le 1er janvier 2025 (LEGIARTI000047914227) : « un coefficient de
+      minoration égal à celui prévu au I de l'article L. 14 du code des pensions civiles et
+      militaires de retraite s'applique […] dans la limite de vingt trimestres », phrase de
+      2008 (LEGIARTI000019104847). Article 51-1, VII, 2° (LEGIARTI000047914257) : « A compter
+      du 1er janvier 2025 et jusqu'au 31 décembre 2033 inclus, l'âge auquel le coefficient de
+      minoration s'annule correspond à l'âge de référence mentionné au 1° du I de l'article 24
+      applicable avant l'entrée en vigueur du décret n° 2023-690 du 28 juillet 2023 ». Lu dans
+      l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 46-1541, annexe 3 (IEG), rédaction en vigueur depuis le 6 août 2025
+      (LEGIARTI000052046924), comme celle du 1er janvier 2025 (LEGIARTI000047909955). Article
+      45, II : le même calendrier, renvoyant à l'article 10 et à l'article 16, mais « Pour les
+      pensions prenant effet avant le 1er janvier 2025 » ; « Pour les pensions prenant effet à
+      compter du 1er janvier 2025, l'âge auquel le coefficient de minoration s'annule est égal
+      à : - soixante-deux ans pour les agents mentionnés au 2° du I de l'article 16 nés avant
+      le 1er janvier 1975 ; […] - soixante-sept ans pour les agents mentionnés au 1° du I de
+      l'article 16 nés avant le 1er janvier 1970 ». Article 45, I ter : l'âge d'ouverture et
+      la durée des « assurés remplissant les conditions de liquidation de la pension avant le
+      1er janvier 2025 sont égaux à ceux applicables avant l'entrée en vigueur du décret n°
+      2023-692 ». Article 10, I : « un coefficient de minoration, dont le taux est celui prévu
+      pour les fonctionnaires de l'Etat par le I de l'article L. 14 […] dans la limite de
+      vingt trimestres », jusqu'à l'âge minimum « majoré de trois ans ou, lorsque celui-ci
+      relève du 7° de l'article 16, de cinq ans ». Du 30 juin 2008 (LEGIARTI000019226006) au
+      1er janvier 2025 (LEGIARTI000042597001, LEGIARTI000047908882), le II de l'article 45
+      est le même, sans les pensions de 2025, et l'âge de référence l'âge minimum « majoré de
+      cinq ans ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 90-1215 (CRPCEN), article 85-2, II, en vigueur depuis le 1er janvier 2025
+      (LEGIARTI000047909829) : le même calendrier, renvoyant à l'article 85-1 et au I de
+      l'article 84, mais la diminution porte sur « l'âge de référence mentionné au 1° du I de
+      l'article 85-1 dans sa rédaction antérieure au décret n° 2023-689 du 28 juillet 2023
+      relatif au régime spécial des clercs et employés de notaires » ; le paragraphe est le
+      même, sans ces mots, depuis le 1er juillet 2008 (LEGIARTI000018129109). Article 85-1,
+      I (LEGIARTI000047909834), applicable aux pensions prenant effet à compter du 1er janvier
+      2025 (V de l'article 2 du décret n° 2023-689) : le taux « prévu pour les fonctionnaires
+      de l'Etat par le I de l'article L. 14 », « dans la limite de vingt trimestres », et le
+      décompte jusqu'à « l'âge de soixante-sept ans » ; auparavant jusqu'à l'âge minimum
+      « majoré de cinq ans »
+      (LEGIARTI000018129112 à LEGIARTI000030058989). Article 84, rédaction du 1er septembre
+      2023 (LEGIARTI000047909844) : « à soixante ans et quatre mois pour les assurés nés en
+      1957 » jusqu'à « soixante et un ans et huit mois pour les assurés nés en 1961 ». Lu dans
+      l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 68-960 (Comédie-Française), article 12, en vigueur depuis le 1er janvier 2017
+      (LEGIARTI000029134341). II : « un coefficient de minoration égal à celui prévu pour les
+      fonctionnaires de l'Etat en application du I de l'article L. 14 du code des pensions
+      civiles et militaires s'applique […] dans la limite de vingt trimestres », jusqu'à l'âge
+      minimum « majoré de cinq ans » ; V : le même calendrier, « il est fixé par trimestre
+      manquant à un dixième du taux prévu au premier alinéa du II ci-dessus », au mot près
+      dans les sept rédactions depuis le 1er juillet 2008 (LEGIARTI000018253625). Lu dans
+      l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      code des pensions civiles et militaires de retraite, L. 14, I, en vigueur
+      (LEGIARTI000048844775) : « un coefficient de minoration de 1,25 % par trimestre
+      s'applique au montant de la pension […] dans la limite de vingt trimestres », comme
+      depuis le 1er janvier 2004 (LEGIARTI000006362704, LEGIARTI000019959691) : c'est le taux
+      dont les décrets servent le dixième la première année. Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CNIEG, circulaire n° 2024/15 du 30 octobre 2024, « La décote » : le taux par « Période
+      au cours de laquelle l'agent remplit les conditions nécessaires pour liquider sa
+      pension », « 0.125 % » du 1er juillet 2010 au 30 juin 2011 jusqu'à « 1.250 % » « A
+      compter du 1er juillet 2019 » ; l'âge d'annulation, « Age minimum d'ouverture du droit
+      + 4 trimestres » la première année, jusqu'à « + 20 trimestres » du 1er juillet au 31
+      décembre 2024 ; « les assurés dont la date d'ouverture de droit est fixée jusqu'au 31
+      décembre 2024 bénéficient du maintien des paramètres en vigueur avant la réforme,
+      quelle que soit la date d'effet de la retraite IEG (cf art. 45- I ter de l'annexe
+      III) » ; le décompte par la durée « plafonné à la différence existant entre […] le
+      nombre de trimestres requis tous régimes et […] 150 »
+    url: >-
+      https://www.cnieg.fr/files/live/sites/portail/files/documents/Juridique/circulaire2024/J_Circulaire2024_15_Decote.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CNIEG, réglementation, pages « Décote », « Coefficient » et « Âge d'annulation de la
+      décote » : les mêmes tables ; l'âge d'annulation est « l'âge minimum auquel vous ouvrez
+      droit, au plus tôt, à votre retraite, auquel s'ajoute une durée comprise entre quatre et
+      vingt trimestres, déterminée en fonction de la date à laquelle vous ouvrez droit, au plus
+      tôt, à votre retraite »
+    url: >-
+      https://www.cnieg.fr/accueil/reglementation/particulier/droit-retraite/calcul/decote.html
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CRPCEN, « La décote », mise à jour le 16 janvier 2026 : l'âge d'annulation par date de
+      naissance, « 65 ans et 4 mois » (janvier et février 1960), « 65 ans et 7 mois » (mars à
+      décembre 1960), « 66 ans et 2 mois » (janvier à octobre 1961), « 66 ans et 5 mois »
+      (novembre et décembre 1961), « 66 ans et 9 mois » (premier semestre 1962), « 67 ans »
+      ensuite ; « Le montant de votre pension de retraite est réduit de 1,25% par trimestre
+      manquant »
+    url: https://www.crpcen.fr/affilies/la-decote
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CPRPSNCF, « Comprendre vos droits » : la décote n'y est pas chiffrée
+    url: >-
+      https://www.cprpf.fr/actifs/preparer-ma-retraite/preparer-ma-retraite-rs/comprendre-vos-droits/
+    date: 2026-09-27
 textes_a_rattacher:
 - reference: >-
-    décret n° 68-382 du 5 avril 1968 (Opéra national de Paris), article 14 V, cité mot
-    pour mot par legislation/decote_regimes_speciaux.csv
+    décret n° 2008-639 (SNCF), article 13, I : rédactions du 1er juillet 2008
+    (LEGIARTI000019108313), où naissent le taux, le plafond et l'âge de référence, et en
+    vigueur depuis le 7 août 2026 (LEGIARTI000054622824)
+- id: LEGIARTI000045021319
+  reference: décret n° 2008-639, article 13, rédaction du 2 janvier 2022
+  change: >-
+    les exemptions seules : pas de minoration des pensions liquidées « en application des
+    articles 2, 2 bis, 4 et 5 »
+- id: LEGIARTI000048240205
+  reference: décret n° 2008-639, article 13, rédaction du 22 octobre 2023
+  change: >-
+    l'âge de référence que diminue l'article 35 est « fixé à cinquante-sept ans » ou à
+    soixante-deux ans (voir `age_reference_decote_sncf_ratp`)
 - reference: >-
-    décret n° 2008-639 du 30 juin 2008 relatif au régime spécial de retraite du personnel
-    de la SNCF
-- reference: décret n° 2008-637 du 30 juin 2008 (RATP)
+    décret n° 2008-639, article 35, II : rédactions du 1er juillet 2008
+    (LEGIARTI000019108289) et en vigueur depuis le 7 janvier 2024 (LEGIARTI000048897024)
+- reference: >-
+    décret n° 2008-637 (RATP), article 24, I : rédactions du 1er juillet 2008
+    (LEGIARTI000019104847) et en vigueur depuis le 1er janvier 2025 (LEGIARTI000047914227),
+    âge minimum « majoré de trois ans » après la transition du II de l'article 51-1
+- id: LEGIARTI000023732931
+  reference: décret n° 2008-637, article 24, rédaction du 1er janvier 2017
+  change: >-
+    les exemptions seules : « c) Aux agents âgés d'au moins soixante-cinq ans » qui ont élevé
+    ou aidé un enfant handicapé
+- id: LEGIARTI000050710687
+  reference: décret n° 2008-637, article 24, rédaction du 4 décembre 2024
+  change: >-
+    les exemptions seules : « a) Aux assurés relevant des articles 7,7-1,13 et 14 »
+- reference: >-
+    décret n° 2008-637, article 51, II : rédactions du 1er juillet 2008
+    (LEGIARTI000019104897) et en vigueur depuis le 27 septembre 2025 (LEGIARTI000052292971) ;
+    article 51-1, VII, 2°, depuis le 1er janvier 2025 (LEGIARTI000047914257)
+- reference: >-
+    décret n° 46-1541, annexe 3 (IEG), articles 10, I, et 45, II : rédaction du 30 juin 2008
+    (LEGIARTI000019226006)
+- id: LEGIARTI000030058926
+  reference: décret n° 46-1541, annexe 3, rédaction du 1er janvier 2015
+  change: >-
+    les exemptions seules : l'incapacité permanente « au moins égale à 50 % », et non plus
+    80 %
+- id: LEGIARTI000029150204
+  reference: décret n° 46-1541, annexe 3, rédaction du 1er janvier 2017
+  change: >-
+    les exemptions seules : « e) Aux agents âgés d'au moins soixante-cinq ans » qui ont élevé
+    ou aidé un enfant handicapé
+- reference: >-
+    décret n° 46-1541, annexe 3, rédactions du 1er janvier 2025 (LEGIARTI000047909955) et du
+    6 août 2025 (LEGIARTI000052046924)
+  change: >-
+    l'âge de référence majoré de trois ans ; la diminution réservée aux « pensions prenant
+    effet avant le 1er janvier 2025 », et une liste d'âges d'annulation pour les suivantes ;
+    une exemption de plus, « f) Aux agents bénéficiant d'un abaissement de l'âge d'ouverture
+    du droit à pension en application de l'article 17-1 »
+- reference: >-
+    décret n° 90-1215 (CRPCEN), article 85-1, I, rédaction du 1er juillet 2008
+    (LEGIARTI000018129112), et article 85-2, II, rédaction du 1er juillet 2008
+    (LEGIARTI000018129109)
+- id: LEGIARTI000019375547
+  reference: décret n° 90-1215, article 85-1, rédaction du 24 août 2008
+  change: >-
+    la borne du 2° se réduit aussi des trimestres cotisés « au-delà de l'âge d'ouverture de
+    droit fixé au 1° du I de l'article 84 » ; pas de minoration des « pensions pour inaptitude
+    au travail »
+- id: LEGIARTI000024573568
+  reference: décret n° 90-1215, article 85-1, rédaction du 19 septembre 2011
+  change: >-
+    les exemptions seules : « c) Aux assurés âgés d'au moins soixante-cinq ans » qui ont élevé
+    ou aidé un enfant handicapé
+- id: LEGIARTI000030058989
+  reference: décret n° 90-1215, article 85-1, rédaction du 1er janvier 2015
+  change: >-
+    les exemptions seules : l'incapacité permanente « au moins égale à 50 % », et non plus
+    80 %, et les assurés « mis en inactivité suite à une invalidité »
+- reference: >-
+    décret n° 90-1215, articles 85-1 et 85-2, rédactions du 1er janvier 2025
+    (LEGIARTI000047909834, LEGIARTI000047909829)
+  change: >-
+    le décompte par l'âge jusqu'à « l'âge de soixante-sept ans » ; la diminution portée sur
+    l'âge de référence d'avant le décret n° 2023-689 ; une exemption pour l'abaissement de
+    l'âge du III de l'article 84
+- reference: >-
+    décret n° 68-960 (Comédie-Française), article 12, II et V : rédactions du 1er juillet
+    2008 (LEGIARTI000018253625) et en vigueur depuis le 1er janvier 2017
+    (LEGIARTI000029134341)
+- id: LEGIARTI000024579850
+  reference: décret n° 68-960, article 12, rédaction du 23 septembre 2011
+  change: >-
+    les exemptions seules : « c) Aux assurés âgés d'au moins soixante-cinq ans » qui ont élevé
+    ou aidé un enfant handicapé
+- id: LEGIARTI000030058972
+  reference: décret n° 68-960, article 12, rédaction du 1er janvier 2015
+  change: >-
+    les exemptions seules : l'incapacité permanente « au moins égale à 50 % », et non plus
+    80 %, et les assurés « mis en inactivité suite à une invalidité »
+textes_sans_effet:
+- reference: >-
+    décret n° 2008-639, article 13, rédactions du 1er janvier 2009 (LEGIARTI000020085562),
+    du 21 mars 2011 (LEGIARTI000023733121), du 24 juillet 2016 (LEGIARTI000032935163), du 1er
+    janvier 2017 (LEGIARTI000023733189), du 1er janvier 2020 (LEGIARTI000041417130), du 3
+    décembre 2020 (LEGIARTI000042597040) et du 7 janvier 2024 (LEGIARTI000048897107)
+  motif: >-
+    le paragraphe de la minoration y est celui de la rédaction précédente au mot près, « dont
+    le taux est celui prévu pour les fonctionnaires de l'Etat en application du I de l'article
+    L. 14 […] dans la limite de vingt trimestres » ; seules changent la ponctuation et, en
+    2011, l'âge de la surcote
+- reference: >-
+    décret n° 2008-639, article 35, rédactions du 1er janvier 2009 (LEGIARTI000020085571) et du
+    22 octobre 2023 (LEGIARTI000048240179)
+  motif: >-
+    le II y est celui du 1er juillet 2008 au mot près, de « Le coefficient de minoration prévu
+    au I de l'article 13 n'est applicable » à « jusqu'au 30 juin 2024 inclus »
+- reference: >-
+    décret n° 2008-637, article 24, rédactions du 1er janvier 2009 (LEGIARTI000020085589), du
+    21 mars 2011 (LEGIARTI000023732870) et du 1er septembre 2023 (LEGIARTI000047910472)
+  motif: >-
+    la minoration y est celle de la rédaction précédente au mot près, « un coefficient de
+    minoration égal à celui prévu au I de l'article L. 14 […] dans la limite de vingt
+    trimestres », âge minimum « majoré de cinq ans » ; seuls changent la ponctuation et l'âge
+    de la surcote
+- reference: >-
+    décret n° 2008-637, article 51, rédactions du 1er janvier 2009 (LEGIARTI000020085597), du
+    1er septembre 2023 (LEGIARTI000047910458) et du 1er janvier 2025 (LEGIARTI000047914242)
+  motif: >-
+    le II y est celui du 1er juillet 2008 au mot près, de « Le coefficient de minoration prévu
+    au I de l'article 24 n'est applicable » à « jusqu'au 30 juin 2024 inclus »
+- reference: >-
+    décret n° 46-1541, annexe 3, rédactions du 1er janvier 2009 (LEGIARTI000020085612), du 21
+    mars 2011 (LEGIARTI000023733902), du 26 septembre 2011 (LEGIARTI000024588157), du 1er
+    avril 2013 (LEGIARTI000026950690), du 28 juin 2014 (LEGIARTI000029150159), du 1er janvier
+    2016 (LEGIARTI000031535066, LEGIARTI000031800065), et du 1er janvier 2018 au 1er janvier
+    2025 (LEGIARTI000034764555, LEGIARTI000036755043, LEGIARTI000038189976,
+    LEGIARTI000047908882)
+  motif: >-
+    le I de l'article 10, jusqu'à la surcote, et le II de l'article 45, de « Le coefficient de
+    minoration prévu au I de l'article 10 n'est applicable » à « jusqu'au 30 juin 2024
+    inclus », y sont ceux de la rédaction précédente au mot près ; en 2011 ne changent que
+    l'âge de la surcote et un renvoi de l'article 8 à l'article 9
+- reference: >-
+    décret n° 46-1541, annexe 3, rédactions dont la fin précède le début, jamais en vigueur :
+    « 1er juillet 2008 → 30 juin 2008 » (LEGIARTI000019225997), « 1er janvier 2017 → 21 mars
+    2014 » (LEGIARTI000028024540) et « 1er janvier 2017 → 28 juin 2014 »
+    (LEGIARTI000028751952)
+  motif: >-
+    la première porte le même calendrier sous l'ancienne numérotation (« Le coefficient de
+    minoration prévu au I de l'article 3-1 n'est applicable ») ; les deux autres, le I de
+    l'article 10 avec une exemption « e) » et le taux d'incapacité de 80 %
+- id: LEGIARTI000020057012
+  reference: décret n° 90-1215, article 85-1, rédaction du 1er janvier 2009
+  motif: >-
+    le paragraphe de la minoration y est celui du 24 août 2008 au mot près ; seule change
+    une espace avant le point (« inaptitude au travail. »)
+- reference: >-
+    décret n° 90-1215, article 85-2, rédactions du 19 septembre 2011 (LEGIARTI000024573571) et
+    du 26 juin 2014 (LEGIARTI000029134271)
+  motif: >-
+    le II y est celui du 1er juillet 2008 au mot près, de « Le coefficient de minoration prévu
+    au I de l'article 85-1 n'est applicable » à « jusqu'au 30 juin 2024 inclus »
+- reference: >-
+    décret n° 68-960, article 12, rédactions du 5 juillet 2008 (LEGIARTI000019122583), du 1er
+    janvier 2009 (LEGIARTI000020057002) et du 26 juin 2014 (LEGIARTI000029134312)
+  motif: >-
+    le II, jusqu'à la surcote, et le V de la décote, de « Le coefficient de minoration prévu
+    au II ci-dessus n'est applicable » à « jusqu'au 30 juin 2024 inclus », y sont ceux de la
+    rédaction précédente au mot près
 code:
   interrupteurs:
     bareme_decote: regimes_speciaux

@@ -1,27 +1,256 @@
 schema_version: 1
 id: coefficients_anticipation_agirc_arrco
 intitule: >-
-  Coefficients d'anticipation de l'Agirc-Arrco, et avant elle de l'Agirc et de l'Arrco
-  : deux tables, l'une par trimestre manquant, l'autre par année d'âge manquante, dont
-  la plus avantageuse est retenue.
-etat: a_verifier
+  Coefficients d'anticipation de l'Agirc-Arrco, et avant elle de l'Agirc et de l'Arrco :
+  liquidée avant l'âge du 1° de l'article L. 351-8 sans le taux plein du régime général
+  ou agricole, la pension est multipliée par un coefficient viager qui descend par
+  trimestre d'anticipation, de 0,99 à 0,43 dix ans avant ; s'il manque vingt trimestres
+  au plus, celui des trimestres manquants, de 0,99 à 0,78, s'applique quand il est plus
+  avantageux.
+etat: approchee
 etape: liquider_chaque_regime
 effet: >-
-  Toute liquidation anticipée d'une complémentaire des salariés du privé. Fiche née à
-  la phase 6 (docs/architecture.md, § 11) de ce que le schéma des régimes disait de l'interrupteur
-  `abattement_points` : elle dit la règle que le moteur applique déjà, et les textes que
-  le dépôt citait pour elle ; elle reste à relire à la source.
+  Toute liquidation anticipée d'une complémentaire des salariés du privé : 1 % à 22 % de
+  moins sur vingt trimestres, jusqu'à 57 % dix ans avant l'âge du 1° de l'article
+  L. 351-8, 67 ans depuis la génération 1955. Les soixante lignes du moteur — quarante
+  par l'âge, vingt par les trimestres manquants — sont, à la décimale, celles de l'accord
+  du 17 novembre 2017, de la convention de 1947, de l'accord de 1961 et des tables de la
+  caisse de septembre 2026 ; son arrondi au trimestre supérieur rend la ligne de l'âge
+  atteint, comme l'exemple de la caisse (63 ans et 11 mois : 0,8675). UN ÉCART : les
+  points Agirc de la tranche C acquis avant 2016, sur la part du salaire entre quatre et
+  huit plafonds (au-delà de 152 160 € en 2015), gardent le coefficient pour âge avant
+  67 ans même au taux plein, sauf report sans abattement à cet âge ; le moteur ne les
+  distingue pas et les sert sans coefficient dès le taux plein. Effet non mesuré, borné
+  aux plus hauts salaires de cadre et à ces seuls points : 22 % de moins à 62 ans, 12 % à
+  64 ans. Deux questions restent ouvertes : l'âge de référence des liquidations de 2011
+  à 2018, et les assurés dont la base n'est ni le régime général ni le régime agricole.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    Relire les deux tables publiées par la caisse (source `agirc_arrco_coefficients` de
-    data/sources.yaml) et leur fondement dans les accords, et les rattacher.
+    Après la phase 7 : appliquer aux points Agirc de la tranche C acquis avant 2016 le
+    coefficient pour âge de l'article 84, 2 de l'accord du 17 novembre 2017 quand la
+    liquidation précède l'âge du 1° de l'article L. 351-8, même au taux plein, ou servir
+    ces points sans abattement à cet âge (article 102) ; il faut pour cela les distinguer
+    à la liquidation. Avant 2019, l'annexe V de la convention de 1947 et les accords du
+    13 novembre 2003 et du 18 mars 2011 (« sur les tranches A et B ») disent la même
+    chose.
+  - >-
+    À trancher : de juillet 2011 à 2018, l'âge de référence de l'Agirc et de l'Arrco est
+    celui du 1° de L. 351-8 « dans la rédaction au 18 mars 2011 » (accord du 18 mars
+    2011, article 3), où l'âge légal montait « à raison de quatre mois par génération »
+    jusqu'à 62 ans pour la génération 1956. Le moteur lit l'âge d'annulation du régime de
+    base, qui suit la rédaction du 23 décembre 2011 : 65,75 ans pour 1952, 66,17 pour
+    1953, 66,58 pour 1954, 67 pour 1955. Par déduction — le décret des âges de 2010 n'est
+    pas lu —, la rédaction figée donnerait 65 ans et 8 mois, 66 ans, 66 ans et 4 mois et
+    66 ans et 8 mois : jusqu'à deux trimestres d'anticipation de trop pour ces générations
+    liquidées avant 2019. Chercher une publication de la caisse de ces années qui donne
+    l'âge par génération ; si elle confirme, après la phase 7 : une table d'âges propre à
+    ces périodes.
+  - >-
+    À lire : les articles 84, 3 et 85, 3 nomment le régime général et le régime des
+    assurances sociales agricoles ; le moteur accorde l'exonération et la table des
+    trimestres manquants sur la durée de la base, quelle qu'elle soit. Ce que la caisse
+    fait pour les statuts du régime dont la base est un régime spécial, clercs de notaire
+    ou mineurs, n'a pas été lu.
+  - >-
+    Non lus : la version consolidée de l'accord au 1er janvier 2026, sur Calaméo, qui
+    refuse la requête — ses avenants l'ont été par les circulaires de la caisse, sauf
+    2023-01-DRJ, dont le lien mène à une autre circulaire ; l'accord du 4 février 1983
+    (ASF) et les textes d'origine de 1947 et de 1961. Ni l'âge seul d'avant 1983, ni la
+    table des trimestres manquants dès 1983, que le moteur applique, ne sont donc
+    confirmés : les plus anciens textes lus sont l'accord Arrco du 25 avril 1996 pour
+    l'âge (65 ans, 0,43 à 55 ans, à compter de 1999) et les annexes E et V de 2018 pour
+    les trimestres.
+  - >-
+    Porter dans tests/temoins/exemples_officiels.yaml l'exemple du dépliant de la caisse
+    « Décrypter la retraite Agirc tranche C » (01/2025) : 63 ans et 11 mois, coefficient
+    0,8675. La table de septembre 2026 en donne un second, à 61 ans sans la retraite de
+    base : « vous percevrez 71 % ».
+  lectures:
+  - type: autre
+    reference: >-
+      Agirc-Arrco, « Les coefficients de minoration applicables à la retraite
+      complémentaire Agirc-Arrco », table datée « Septembre 2026 » : tableau 2,
+      « Coefficients d'anticipation pour carrière courte », de « 1 trim. 0,99 » à
+      « 12 trim. 0,88 », puis « 20 trim. 0,78 » ; tableau 3, « Coefficients
+      d'anticipation pour âge », de « 66 ans et 9 mois 0,99 » à « 62 ans 0,78 », puis
+      0,43 à 57 ans ; « votre retraite sera calculée avec la plus faible minoration des
+      deux » ; la tranche C d'avant 2016 « sera affectée d'un coefficient d'anticipation
+      pour âge qui est définitif ». L'adresse date de 2024, le document du 17 août 2026
+    url: https://www.agirc-arrco.fr/storage/2024/10/Coefficients-de-minorations-AA.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Réglementation Agirc-Arrco, barèmes « Coefficients d'anticipation pour âge »
+      (« Barème en vigueur », quarante lignes, de « 66 ans et 9 mois » 0,99 à « 57 ans »
+      0,43) et « Coefficients d'anticipation pour carrière courte » (« Coefficients
+      applicables en fonction du nombre de trimestres manquants », vingt lignes, de 0,99
+      à 0,78) : les valeurs de la table de septembre 2026, ligne pour ligne
+    url: https://reglementation.agirc-arrco.fr/home/baremes/listes-area/baremes-1/coefficients-d-anticipation-pour-age.html
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Accord national interprofessionnel du 17 novembre 2017, version « Applicable au
+      1er janvier 2019 » jointe à la circulaire Agirc-Arrco 2018-09-DC du 19 décembre
+      2018. Article 84, 1 : pension « sans abattement dès lors qu'il a atteint l'âge visé
+      au 1° de l'article L. 351-8 du code de la sécurité sociale » ; 84, 2 : « au plus tôt
+      10 ans avant cet âge. Dans ce cas, le coefficient d'anticipation viager est appliqué
+      aux points », table de « moins 10 ans 0,43 » à « moins 1 trimestre 0,99 » ; 84, 3 :
+      sans coefficient « à l'âge auquel il a obtenu la pension d'assurance vieillesse du
+      régime général ou du régime des assurances sociales agricoles à taux plein ».
+      85, 3, « Carrières courtes » : « durée d'assurance inférieure de 20 trimestres au
+      plus », table de 0,78 pour vingt trimestres manquants à 0,99 pour un, et
+      « l'allocation ainsi obtenue ne pourra être inférieure à celle qui serait versée
+      après application du coefficient d'anticipation correspondant à l'âge atteint ».
+      102 : pour « les points constitués sur la tranche C des rémunérations avant 2016
+      dans l'ancien régime AGIRC », « le report de la liquidation de ces points, sans
+      abattement, à l'âge mentionné au 1° de l'article L. 351-8 »
+    url: https://www.agirc-arrco.fr/storage/2024/09/201809dc_ANI_du_17_novembre_2017.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Circulaire Agirc-Arrco 2023-03-DRJ du 5 avril 2023 et avenant n° 15 du 16 mars
+      2023 : à l'article 85, 3, les mots « Les participants, ayant un âge compris entre
+      celui visé à l'article L. 161-17-2 du code de la sécurité sociale et » sont
+      remplacés par « Les participants, ayant un âge inférieur à » ; « Toute liquidation
+      de la retraite du régime de base à taux minoré entraîne l'application de l'article
+      85 de l'ANI lorsque la retraite complémentaire prend effet à la même date ou à une
+      date ultérieure que celle du régime de base » ; « Cette mesure est d'application
+      immédiate »
+    url: https://www.agirc-arrco.fr/storage/2024/09/2023-03-DRJ_Actualisation_texte_de_base.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Circulaires « Actualisation du texte de base » de 2019 à 2025 (2019-10, 2019-15,
+      2020-06, 2020-10, 2021-02, 2022-07, 2023-11, 2023-12, 2024-04, 2024-08, 2024-09,
+      2024-10, 2025-01, 2025-02, 2025-03, 2025-06, 2025-08, 2025-09, 2025-10, 2025-12,
+      2025-17, 2025-19) : aucune ne touche aux articles 84, 85, 3 et 102, hormis
+      l'avenant n° 15 ; l'avenant n° 17 (2023-11-DRJ) complète l'article 100 pour écarter
+      les coefficients de solidarité et majorants, l'avenant n° 30 (2025-17) ne modifie
+      que le 2 de l'article 85, la retraite progressive
+    url: https://www.agirc-arrco.fr/nous-connaitre/nos-etudes-et-publications/documentation-institutionnelle/circulaires-agirc-arrco/
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      Arrêté du 24 avril 2018 portant extension et élargissement de l'accord « conclu le
+      17 novembre 2017, publié au Journal officiel du 1er mars 2018 »
+      (JORFTEXT000036847920) ; arrêté du 11 juillet 2023 pour l'avenant n° 15
+      (JORFTEXT000047816528) ; avis d'extension des avenants n° 24 (« articles 32 et
+      35 »), n° 29 (« article 45 »), n° 30 (« article 85 ») et n° 31 du 11 décembre 2025
+      (« article 40 »). Lus dans l'index JORF du dépôt
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Convention collective nationale du 14 mars 1947, « Mise à jour au 1 janvier
+      2018 ». Annexe I, article 6, § 1er : « L'âge de la retraite dans le régime géré
+      par l'AGIRC est égal à celui visé au 1° de l'article L. 351-8 du Code de la
+      sécurité sociale (dans la rédaction au 18 mars 2011 de l'article L. 351-8-1° et de
+      l'article L. 161-17-2 du Code de la sécurité sociale auquel celui-ci se réfère) »,
+      anticipation « au plus tôt 10 ans avant », même table de quarante lignes ; § 3 a) :
+      les coefficients s'appliquent « sur les droits du participant constitués sur la
+      tranche C jusqu'au 31 décembre 2015 ». Annexe V : elle « n'est pas applicable aux
+      droits constitués jusqu'au 31 décembre 2015 sur la tranche C des rémunérations » ;
+      article 4 : à qui manquent « 20 trimestres au plus », le coefficient de l'article 6
+      « en assimilant à l'âge visé au 1er alinéa de l'article 6 de l'annexe I l'âge auquel
+      les intéressés auraient effectivement compté le nombre de trimestres d'assurance
+      requis », sans descendre sous celui de l'âge atteint
+    url: https://www.agirc-arrco.fr/storage/2021/11/CCN_14mars1947-1.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Accord national interprofessionnel du 8 décembre 1961, « Mise à jour au 1 janvier
+      2018 ». Annexe A, article 18 : même âge, « dans la rédaction au 18 mars 2011 »,
+      même table ; annexe E, article 1er : allocations « calculés en supprimant les
+      coefficients d'anticipation prévus par l'article 18 de l'annexe A » pour qui a le
+      taux plein du régime général ou agricole ; article 4 : la même règle des vingt
+      trimestres manquants ; l'annexe s'applique « pour toute liquidation prenant effet
+      à compter du 1er juillet 2011 »
+    url: https://www.agirc-arrco.fr/storage/2021/11/Accord_8dec1961-1.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Recueil de la caisse « Accords nationaux des partenaires sociaux ». Accord Arrco du
+      25 avril 1996, article 10 : « La retraite est calculée à l'âge de 65 ans »,
+      « l'anticipation au plus tôt à 55 ans », « coefficient 0,43 », « majoré de 0,0175
+      par trimestre écoulé entre l'âge de 55 ans et l'âge atteint lors de la
+      liquidation », puis 0,0125 de 60 à 62 ans et 0,01 de 62 à 65 ans. Accord du
+      18 mars 2011 : article 1er, liquidation au taux plein « sans abattement, sur les
+      tranches A et B des rémunérations » ; article 3, l'âge du 1° de L. 351-8 « dans les
+      rédactions respectives des articles L. 351-8, 1°, et L. 161-17-2 du code de la
+      Sécurité sociale en vigueur à la date du présent accord ». Accord du 30 octobre
+      2015, article 3 : pour la tranche C, « annulation des coefficients d'anticipation
+      viagers au titre de leurs seuls droits constitués à compter du 1er janvier 2016 »
+    url: https://www.agirc-arrco.fr/storage/2021/11/liste_accords_paritaires_Agirc_Arrco.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Accord du 13 novembre 2003, article 1er : de 60 à 65 ans, avec la pension du régime
+      général ou agricole « à taux plein », liquidation « sans abattement sur les
+      tranches A et B des rémunérations »
+    url: https://www.agirc-arrco.fr/storage/2021/11/accords_Agirc_Arcco_13112003-1.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Dépliant « Décrypter la retraite complémentaire Agirc tranche C » (01/2025) : « la
+      retraite tranche C – correspondant aux points Agirc obtenus avant 2016 sur la
+      tranche C – est versée avec une minoration définitive avant l'âge de 67 ans » ; les
+      coefficients « évoluent par palier de 3 mois. Par exemple : si j'ai 63 ans et 11
+      mois à la date de mon départ à la retraite, le coefficient retenu est celui
+      correspondant à l'âge de 63 ans et 9 mois, soit 0,8675 »
+    url: https://www.agirc-arrco.fr/storage/Decrypter_Retraite_Agirc_TrancheC.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Agirc-Arrco, « Conditions d'ouverture de mes droits » (modifiée le 27 juillet
+      2026) : « s'il vous manque au maximum 20 trimestres pour obtenir votre retraite de
+      base à taux plein, la minoration définitive est déterminée en fonction de votre âge
+      ou de votre nombre de trimestres manquants. C'est la solution la plus favorable
+      pour vous qui sera retenue » ; « Les droits tranche C obtenus avant 2016 ne peuvent
+      pas être attribués à taux plein avant l'âge de 67 ans »
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/demander-ma-retraite/conditions-douverture-de-mes-droits/
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Agirc-Arrco, « Ma retraite : à quel âge, pour quel montant ? » (modifiée le 12 mars
+      2026) : retraite complémentaire sans la retraite de base « sous réserve que vous
+      ayez au minimum 57 ans » ; « La minoration dépend de l'âge que vous avez atteint au
+      moment du départ à la retraite »
+    url: https://www.agirc-arrco.fr/particuliers/ma-retraite/comprendre-ma-retraite/ma-retraite-a-quel-age-pour-quel-montant/
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      Code de la sécurité sociale, L. 351-8 (LEGIARTI000023030950, du 1er juillet 2011
+      au 22 janvier 2014) : « 1° Les assurés qui atteignent l'âge prévu à l'article
+      L. 161-17-2 augmenté de cinq années » ; L. 161-17-2 (LEGIARTI000023030935, du
+      1er juillet au 23 décembre 2011) : « soixante-deux ans pour les assurés nés à
+      compter du 1er janvier 1956 », « de manière croissante à raison de quatre mois par
+      génération » ; rédaction suivante (LEGIARTI000025014605) : « A raison de cinq mois
+      par génération pour les assurés nés entre le 1er janvier 1952 et le 31 décembre
+      1954 ». Lus dans l'index LEGI du dépôt
+    date: 2026-09-27
 textes_a_rattacher:
 - reference: >-
-    accord national interprofessionnel du 17 novembre 2017 (régime Agirc-Arrco), et les
-    tables de coefficients de minoration publiées par la caisse
+    accord national interprofessionnel du 17 novembre 2017 instituant le régime
+    Agirc-Arrco, articles 84, 85, 3 et 102, étendu et élargi par l'arrêté du 24 avril
+    2018 (JORFTEXT000036847920)
+- reference: >-
+    avenant n° 15 du 16 mars 2023 à cet accord, article 85, 3, étendu par l'arrêté du
+    11 juillet 2023 (JORFTEXT000047816528)
+- reference: >-
+    convention collective nationale du 14 mars 1947, annexe I, article 6, § 1er et
+    § 3 a), et annexe V, préambule et article 4, dans leur rédaction au 1er janvier 2018
+- reference: >-
+    accord national interprofessionnel du 8 décembre 1961, annexe A, article 18, et
+    annexe E, articles 1er, 2 et 4, dans leur rédaction au 1er janvier 2018
+- reference: >-
+    accords du 25 avril 1996 (Arrco), article 10, du 13 novembre 2003, article 1er, du
+    18 mars 2011, articles 1er et 3, et du 30 octobre 2015, article 3
+- reference: >-
+    code de la sécurité sociale, L. 351-8, 1° (LEGIARTI000023030950) et L. 161-17-2
+    (LEGIARTI000023030935), dans la rédaction que l'accord du 18 mars 2011 fige pour
+    l'âge de référence de 2011 à 2018
 code:
   interrupteurs:
     abattement_points: agirc_arrco

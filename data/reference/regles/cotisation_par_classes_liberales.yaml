@@ -1,29 +1,243 @@
 schema_version: 1
 id: cotisation_par_classes_liberales
 intitule: >-
-  Cotisation par classes de trois complémentaires libérales : un montant par palier de
-  revenu, et non un taux, à la CARPV, à la CAVEC et à la Cipav jusqu'en 2022.
-etat: a_verifier
+  Cotisation par classes de trois complémentaires libérales : un montant par classe de
+  revenu, et non un taux, à la CAVEC, à la Cipav de 1979 à 2022 et à la CARPV depuis 1998 ;
+  la CARPV appelait auparavant un nombre d'actes médicaux fixé selon l'âge.
+etat: approchee
 etape: acquerir_les_droits
 effet: >-
-  Les vétérinaires, les experts-comptables et les affiliés de la Cipav. Fiche née à la
-  phase 6 (docs/architecture.md, § 11) de ce que le schéma des régimes disait de l'interrupteur
-  `cotisation_par_classes` : elle dit la règle que le moteur applique déjà, et les textes
-  que le dépôt citait pour elle ; elle reste à relire à la source. Les notes des périodes
-  disent ce qui a été lu de chaque décret.
+  Les vétérinaires, les experts-comptables et commissaires aux comptes, et les affiliés de
+  la Cipav jusqu'en 2022. L'article 2 des trois décrets est lu version par version. La
+  grille du moteur a la forme du texte à la CARPV depuis 1998 (trois classes à 16, 20 et 24
+  points, quatre à 17, 21, 25 et 28 points depuis 2026), à la Cipav de 2013 à 2022 (huit
+  classes, d'une à treize fois la classe A) et à la CAVEC en 2026 (neuf classes, de 54 à
+  1 841 points). Mais hors des millésimes publiés, la CARPV depuis 2016, la Cipav en 2022 et
+  la CAVEC en 2026, le moteur reporte une seule grille par le rapport des plafonds, et les
+  textes la démentent. Cipav : six classes, d'une à dix fois la classe 1, jusqu'en 2012, et
+  non huit jusqu'à treize fois ; à rang égal, la première classe du moteur passe celle du
+  décret annuel de 84 % en 1990, 72 % en 2001, 34 % en 2008, 16 % en 2013 et 5 % en 2021.
+  CAVEC : six classes de 48 à 180 points en 1980, sept jusqu'à 216 points en 1987, huit de
+  48 à 1 500 points de 2008 à 2025, et le moteur en sert neuf, de 54 à 1 841 points ; sa
+  classe A passe celle du décret de 24 % en 2012 et de 12,5 % en 2025, et en 1992 il appelle
+  de 411 € à 13 996 € quand le décret fixait de 1 045 € (classe 3) à 6 273 € (classe 18).
+  CARPV : avant 1998, un nombre d'actes selon l'âge, sans égard au revenu ; de 1998 à 2015,
+  des actes médicaux au taux d'appel du décret annuel (77 % en 1998, 104 % en 2015), que rien
+  ne publie en euros ; le moteur y reporte la grille de 2016. Partout, le moteur range
+  l'assuré sur le revenu de l'année, quand les textes prennent celui de l'avant-dernière
+  année (CARPV jusqu'en 2021) ou de l'année précédente (CARPV depuis 2022, CAVEC en 2026).
+  Les points suivent la cotisation ; l'effet sur les pensions n'est pas mesuré.
 sources:
   lu_le: 2026-09-27
-  prochaine_relecture: 2026-12-31
+  prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Rattacher l'article 2 de chacun des deux décrets, dont les notes des périodes citent
-    les versions lues, et le texte qui fixe les classes de la CAVEC, que ses notes ne
-    citent pas ; puis dire l'état.
+    Après la phase 7 : servir à chaque exercice la grille de son texte plutôt qu'une grille
+    reportée. Les points de chaque classe sont dans l'article 2, version par version ; les
+    montants, dans les décrets annuels de l'index LEGI (classe 1 puis A de la Cipav, classe
+    A de la CAVEC, taux d'appel puis valeur d'achat du point de la CARPV). Manquent les
+    bornes de revenu, que fixent les statuts, et la valeur de l'acte médical vétérinaire.
+  - >-
+    Après la phase 7 : ranger l'assuré sur le revenu de l'année que le texte désigne, et
+    appeler la première année d'activité en classe B à la CARPV et en classe A à la CAVEC
+    depuis 2026.
+  - >-
+    Chercher les bornes de revenu des classes dans les statuts approuvés par arrêté (index
+    JORF). Pour la CAVEC d'avant 1980, l'index LEGI ne porte pas l'article 2, et l'index
+    JORF n'a que les titres des décrets qui l'ont modifié de 1966 à 1977.
+  - >-
+    Relire l'exemple de la fiche pratique 2022 de la Cipav que cite classes_cotisation.csv
+    (27 000 € de revenus, classe B, 3 055 €) : elle n'est plus sur lacipav.fr, et l'Internet
+    Archive n'a pas répondu le 27 septembre 2026. Puis l'inscrire aux exemples officiels.
+  - >-
+    Après la phase 7 : corriger les notes des périodes. CARPV : la grille y est dite
+    « indexée sur les prix », le moteur la ramène par le rapport des plafonds ; les décrets
+    modificatifs sont le n° 97-1112 du 26 novembre 1997 et le n° 2015-712 du 22 juin 2015.
+    Cipav : la version de 1985 ne touche pas l'option, elle ouvre un « appel réduit », à
+    80 % au moins, et porte de 15 à 25 % la cotisation facultative du conjoint.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 50-1318 du 21 octobre 1950, article 2 (CARPV), ses onze versions. De 1950 à
+      1997 (LEGIARTI000006776818, LEGIARTI000006776819, LEGIARTI000006776820,
+      LEGIARTI000006776821, LEGIARTI000006776822) : « La cotisation annuelle des vétérinaires
+      est calculée en fonction d'un certain nombre d'actes médicaux, compte tenu de l'âge des
+      intéressés ». Version du 2 décembre 1997 (LEGIARTI000006776823) : « Chaque vétérinaire
+      doit verser sa cotisation dans une classe déterminée selon son revenu professionnel
+      libéral net imposable de l'avant-dernière année » ; classe B à 480 AMV sous 4 500 AMV
+      de revenu, C à 600 AMV jusqu'à 6 000 AMV, D à 720 AMV au-delà, pour 16, 20 et 24
+      points ; « Le taux d'appel des cotisations est fixé chaque année par décret ». Mêmes
+      classes le 30 décembre 2012 (LEGIARTI000026885093). Version du 25 juin 2015
+      (LEGIARTI000030774327) : « La cotisation annuelle est égale au prix d'achat du point
+      (PA) multiplié par le nombre de points correspondant à la tranche de revenu », B 16 ×
+      PA, C 20 × PA, D 24 × PA. Revenu « de l'année précédente » le 1er janvier 2022
+      (LEGIARTI000044223137). Pour les périodes courant à compter du 1er janvier 2026
+      (LEGIARTI000052567915, puis LEGIARTI000054168212 le 1er juillet 2026) : B 17, C 21,
+      D 25 et E 28 × PA, E au-delà de 7 500 × IR, et « La cotisation est appelée sur la base
+      de la classe B la première année civile d'activité ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 53-506 du 21 mai 1953, article 2 (CAVEC), le texte qui fixe les classes.
+      Version de 1980 (LEGIARTI000006770087) : « six classes de cotisations », de « Classe 4
+      correspondant à 48 points de retraite » à « Classe 15 correspondant à 180 points de
+      retraite », la cotisation étant « celle de la classe à laquelle correspond, dans les
+      conditions fixées par les statuts prévus à l'article 5, son revenu professionnel net ».
+      Version du 13 mars 1987 (LEGIARTI000006770088) : une septième, « Classe 18
+      correspondant à 216 points de retraite ». Versions du 28 janvier 2008
+      (LEGIARTI000018042862) et du 30 décembre 2012 (LEGIARTI000026885098) : « sept classes
+      de cotisations », dont le texte énumère huit, de « Classe A correspondant à 48 points
+      de retraite » à « Classe H correspondant à 1 500 points de retraite ». Pour les
+      cotisations de 2026 (LEGIARTI000052567925, puis LEGIARTI000054168240 le 1er juillet
+      2026) : « neuf classes de cotisations », de 54 à 1 841 points ; « Le conseil
+      d'administration fixe, chaque année, les tranches de revenu professionnel issu de
+      l'activité non salariée non agricole de l'exercice précédent », et « Sauf option pour
+      la classe B, l'affilié est inscrit d'office en classe A pour sa première année civile
+      d'exercice ». Avant 1980, l'article n'est pas dans l'index. Lu dans l'index LEGI du
+      dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 79-262 du 21 mars 1979, article 2 (Cipav). Version de 1979
+      (LEGIARTI000006767473) : « six classes de cotisation », de la « Classe 1 portant
+      attribution de quatre points de retraite » à la « Classe 10 portant attribution de
+      quarante points de retraite », leurs montants « respectivement égaux à deux, trois,
+      cinq, sept et dix fois le montant de la cotisation de la classe 1 », les classes 5, 7
+      et 10 obligatoires en 1980, 1981 et 1982. Version du 21 juin 1985
+      (LEGIARTI000006767474) : mêmes classes, et « La cotisation ainsi fixée peut faire
+      l'objet d'un appel réduit », dont « le taux d'appel, qui ne peut être inférieur à 80 p.
+      100 ». Version du 1er janvier 2013 (LEGIARTI000026892951) : « huit classes de
+      cotisation », de 36 à 468 points, leurs montants « respectivement égaux à
+      2,3,5,7,11,12 et 13 fois le montant de la cotisation de la classe A ». Version du 1er
+      janvier 2023 (LEGIARTI000046875038) : la cotisation « est calculée sur la base de deux
+      tranches du revenu d'activité », et les classes cessent. Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décrets annuels des cotisations des complémentaires libérales. Cipav : « Classe 1
+      (classe de référence) : 2 640 F » en 1990 (décret n° 90-311, art. 1,
+      LEGIARTI000006774899), « Classe 1 : 3 872 F » en 2001 (décret n° 2001-1182, art. 4,
+      LEGIARTI000006780641), « Classe 1 : 924 € » en 2008 (décret n° 2008-1303, art. 1,
+      LEGIARTI000019908651), « Classe 1 : 1 184 euros » en 2013 (décret n° 2013-1081,
+      art. 1, LEGIARTI000028255086), « cotisation forfaitaire de la classe A : 1 457 euros »
+      en 2021 (décret n° 2021-945, art. 4, LEGIARTI000043802982), 1 527 euros en 2022
+      (décret n° 2022-1633, art. 7, LEGIARTI000046809720). CAVEC : de « classe 3 : 6 858 F »
+      à « classe 18 : 41 148 F » en 1992 (décret n° 92-326, art. 1, LEGIARTI000006776246),
+      « classe A : 549 euros » en 2012 (décret n° 2012-478, art. 1, LEGIARTI000025691651),
+      « cotisation forfaitaire de la classe A : 782 euros » en 2025 (décret n° 2025-1076,
+      art. 12, LEGIARTI000052566419). CARPV : « Taux d'appel de la cotisation : 77 % » en
+      1998 (décret n° 98-599, art. 4, LEGIARTI000006772562) et 104 % en 2015 (décret
+      n° 2015-1802, art. 1, LEGIARTI000031845891) ; « Valeur d'achat du point : 446 euros »
+      en 2016 (même décret, art. 2, LEGIARTI000031845892), 503,74 euros en 2022, 591,36
+      euros en 2025. Pour 2026, le décret n° 2025-1076 ne fixe ni la CARPV ni la CAVEC
+      (art. 14, LEGIARTI000052566423). Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CAVEC, Guide de la retraite et de la prévoyance 2026 : « Votre cotisation est fixée
+      selon un barème, en fonction des revenus 2025 » ; neuf classes, de « Classe A De 0 € à
+      14 919 € 898 € 54 pts » à « Classe I Au-delà de 181 208 € 30 616 € 1 841 pts », celles
+      de classes_cotisation.csv à l'euro près
+    url: https://www.cavec.fr/wp-content/uploads/Guide-annuel-retraite-prevoyance.pdf
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CARPV, « Comprendre vos cotisations et vos appels de cotisations » : « Les cotisations
+      sont fixées selon des classes, en fonction du revenu non salarié de l'année N-1 » ;
+      de « Classe B jusqu'à 76 994 € 10 234 € 17 » à « Classe E à partir de 128 325 €
+      16 856 € 28 », celles de classes_cotisation.csv à l'euro près
+    url: >-
+      https://www.carpv.fr/vos-retraites/comprendre-vos-cotisations-et-vos-appels-de-cotisations/
+    date: 2026-09-27
 textes_a_rattacher:
-- reference: décret n° 50-1318 du 21 octobre 1950, article 2 (CARPV)
+- id: LEGIARTI000006776818
+  reference: >-
+    décret n° 50-1318 du 21 octobre 1950, article 2, version de 1950 (CARPV) : des actes
+    médicaux selon l'âge, sans tableau
+- id: LEGIARTI000006776819
+  reference: >-
+    décret n° 50-1318, article 2, version du 14 octobre 1954 : 50, 80 et 50 actes selon l'âge
+- id: LEGIARTI000006776820
+  reference: >-
+    décret n° 50-1318, article 2, version du 20 août 1967 : 95, 152 et 95 actes selon l'âge
+- id: LEGIARTI000006776821
+  reference: >-
+    décret n° 50-1318, article 2, version du 4 août 1982 : 144, 228 et 144 actes, classe A
+    obligatoire, classes spéciales I et II sur option
+- id: LEGIARTI000006776822
+  reference: >-
+    décret n° 50-1318, article 2, version du 1er janvier 1993 : 144 actes avant trente-deux
+    ans ou après soixante-cinq, 228 entre les deux
+- id: LEGIARTI000006776823
+  reference: >-
+    décret n° 50-1318, article 2, version du 2 décembre 1997 (décret n° 97-1112) : classes B,
+    C et D selon le revenu de l'avant-dernière année, 480, 600 et 720 AMV
+- id: LEGIARTI000026885093
+  reference: >-
+    décret n° 50-1318, article 2, version du 30 décembre 2012 : mêmes classes, sur le revenu
+    de l'article L. 131-6
+- id: LEGIARTI000030774327
+  reference: >-
+    décret n° 50-1318, article 2, version du 25 juin 2015 (décret n° 2015-712) : 16, 20 et 24
+    fois le prix d'achat du point
+- id: LEGIARTI000044223137
+  reference: >-
+    décret n° 50-1318, article 2, version du 1er janvier 2022 (décret n° 2021-1358) : revenu
+    de l'année précédente
+- id: LEGIARTI000052567915
+  reference: >-
+    décret n° 50-1318, article 2, version du 14 novembre 2025 (décret n° 2025-1076), pour les
+    périodes de 2026 : 17, 21, 25 et 28 points, classe E créée
+- id: LEGIARTI000054168212
+  reference: >-
+    décret n° 50-1318, article 2, version du 1er juillet 2026 (décret n° 2026-418) : classe B
+    la première année, cotisation proratisée par trimestre
+- id: LEGIARTI000006770087
+  reference: >-
+    décret n° 53-506 du 21 mai 1953, article 2, version de 1980 (CAVEC) : six classes, de 48
+    à 180 points
+- id: LEGIARTI000006770088
+  reference: >-
+    décret n° 53-506, article 2, version du 13 mars 1987 : sept classes, de 48 à 216 points
+- id: LEGIARTI000018042862
+  reference: >-
+    décret n° 53-506, article 2, version du 28 janvier 2008 : classes A à H, de 48 à 1 500
+    points
+- id: LEGIARTI000026885098
+  reference: >-
+    décret n° 53-506, article 2, version du 30 décembre 2012 : mêmes classes, sur le revenu
+    de l'article L. 131-6, jusqu'aux cotisations de 2025
+- id: LEGIARTI000052567925
+  reference: >-
+    décret n° 53-506, article 2, version du 14 novembre 2025 (décret n° 2025-1076), pour les
+    périodes de 2026 : neuf classes, de 54 à 1 841 points
+- id: LEGIARTI000054168240
+  reference: >-
+    décret n° 53-506, article 2, version du 1er juillet 2026 (décret n° 2026-418) : classe A
+    d'office la première année, tranches fixées sur le revenu de l'exercice précédent
+- id: LEGIARTI000006767473
+  reference: >-
+    décret n° 79-262 du 21 mars 1979, article 2, version de 1979 (Cipav) : six classes, d'une
+    à dix fois la classe 1
+- id: LEGIARTI000006767474
+  reference: >-
+    décret n° 79-262, article 2, version du 21 juin 1985 : mêmes classes, appel réduit à
+    80 % au moins
 - id: LEGIARTI000026892951
   reference: >-
-    décret n° 79-262 du 21 mars 1979, article 2, version du 1er janvier 2013 (Cipav)
+    décret n° 79-262 du 21 mars 1979, article 2, version du 1er janvier 2013 (Cipav) : huit
+    classes, d'une à treize fois la classe A
+- id: LEGIARTI000046875038
+  reference: >-
+    décret n° 79-262, article 2, version du 1er janvier 2023 : deux tranches
+    proportionnelles, fin des classes à la Cipav
+textes_sans_effet:
+- id: LEGIARTI000026885130
+  reference: >-
+    décret n° 79-262, article 2, version du 30 décembre 2012, en vigueur deux jours
+  motif: >-
+    « six classes de cotisation » et mêmes montants qu'en 1985 ; seul le revenu devient
+    celui « tel que défini à l'article L. 131-6 du code de la sécurité sociale »
 code:
   interrupteurs:
     cotisation_par_classes: true

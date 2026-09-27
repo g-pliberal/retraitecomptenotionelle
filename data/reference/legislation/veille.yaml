@@ -2949,3 +2949,73 @@ journal:
       entrées précédentes laissaient : l'article 16 du règlement de la CAVP,
       les articles 9-7 et suivants du règlement des indépendants, les
       rédactions sans statut de la liste des textes.
+  - date: "2026-09-27"
+    session: >-
+      relecture à la source des dix fiches nées à la phase 6, menée pendant la
+      phase 7 sans rien lui prendre
+    consulte: >-
+      veille_droit.py au début : quatorze fiches à relire, et la dernière
+      veille du jour même. Les index LEGI et JORF, récupérés puis mis à jour :
+      aucun incrément paru depuis le 26 septembre 2026 à 21 h 07 pour LEGI et
+      le 27 septembre à 0 h 22 pour le JORF ; textes.py --inscrire, au début :
+      aucune rédaction nouvelle. Pour la fiche fin_de_la_suspension_2028, L.
+      161-17-2 et L. 161-17-3 dans l'index LEGI. Pour les dix fiches, dans les
+      index : R. 732-70, R. 732-71, D. 731-120, L. 732-59 et D. 732-155 du code
+      rural, et les décrets qui les ont précédés ; l'article de décote des
+      décrets de réforme de 2008 des régimes spéciaux et l'article 14 du décret
+      n° 68-382 ; l'ordonnance n° 82-270 et le décret du 29 décembre 1945 ;
+      l'article 16 de l'arrêté du 30 décembre 1970 ; l'article 2 des décrets
+      n° 50-1318, 53-506 et 79-262 et les décrets annuels de cotisation ;
+      l'article 21 du règlement du RACL ; les statuts et règlements des
+      sections libérales. Sur les sites des caisses : l'accord national
+      interprofessionnel Agirc-Arrco et ses tables, et les pages et guides de
+      la MSA, de la CNIEG, de la CRPCEN, de l'Ircantec, de l'IRCEC, de la
+      CARMF, de la CARPIMKO, de la CAVEC, de la CAVP, de la CARPV, de la Cipav
+      et de la CPRN. Légifrance répond 403 : l'index LEGI du dépôt en tient
+      lieu.
+    trouve: >-
+      Rien de nouveau au Journal officiel ; L. 161-17-2 et L. 161-17-3 n'ont
+      pas de rédaction postérieure à celles du 31 décembre 2025 : la
+      suspension court toujours. Les dix fiches passent à `approchee` : le
+      moteur s'écarte du texte sur chacune, et rien n'est corrigé, pour ne
+      déplacer aucun résultat pendant la phase 7 ; témoins et paquet restent
+      identiques. Les écarts les plus lourds : les points de la complémentaire
+      agricole au minimum, 100 par an depuis 2017 au lieu de 117 puis 133 (D.
+      732-155) ; l'assiette minimale de la base agricole, 600 SMIC dès 1990
+      quand les textes en fixent 400 jusqu'en 2003 au moins ; la première
+      classe de la Cipav, au-dessus de celle des décrets annuels de 84 % en
+      1990 à 5 % en 2021, et celles de la CAVEC ; les femmes de 150
+      trimestres, au taux de soixante-cinq ans dès soixante ans de 1979 au 31
+      mars 1983, que le moteur sert à moitié ; la décote des IEG et de la
+      CRPCEN depuis 2025, jusqu'à trois et quatre trimestres de trop ; la
+      minoration du RACL, 6 % et non 5 % pour les nés avant 1953 ; les points
+      de tranche C d'avant 2016, que l'Agirc-Arrco minore même au taux plein ;
+      les bornes de la surcote de la CAVP et de la Cipav, et ses dates à la
+      CAVEC. Deux lectures divergentes entre le texte et la caisse, inscrites
+      dans leurs fiches : l'âge d'annulation de la décote aux IEG depuis 2025,
+      et la borne de soixante-dix ans de la surcote de la CPRN. Deux notes de
+      fichiers de régimes sont fausses : msa_non_salaries dit absent de
+      l'index le décret de la réforme de 2026, qui y est (n° 2025-1409 et
+      2025-1410) ; msa_rco applique 4 % à toutes les années, quand D. 732-165
+      donne 2,97 % jusqu'en 2009, 3 % jusqu'en 2016 et 3,5 % en 2017.
+      textes.py --inscrire butait sur deux arrêtés du 10 juillet 2026 sous la
+      même clé : un texte nouveau prend désormais le sigle de sa section, et
+      les 767 rédactions des textes que les fiches citent entrent « à examiner
+      » ; le cliquet des rédactions sans statut descend de 10 547 à 10 440.
+    reste: >-
+      Les corrections, dans l'a_relire de chaque fiche : elles déplacent des
+      résultats, chacune en commit à part avec le diff de ses témoins, et
+      jamais pendant une phase de réorganisation, qui doit garder les siens au
+      bit près (feuille de route, action 131). Le champ `approximations`, que
+      le contrat exige des fiches approchées et qu'aucune ne porte. Les
+      exemples publiés trouvés, à porter dans exemples_officiels.yaml : la
+      CNIEG (page « Décote », circulaire 2024/15), la CRPCEN (« La décote »),
+      le dépliant Agirc-Arrco de la tranche C, le guide de la CARMF, la page
+      de la MSA sur la réforme de 2026. Ce qui n'a pu être lu : le droit de
+      1945 à 1972, les statuts de la CARMF d'avant 2017 et de la Cipav d'avant
+      juillet 2026, l'histoire de l'Agirc-Arrco d'avant 1999, les bornes de
+      revenu des classes. Et ce que les entrées précédentes laissaient :
+      l'assiette minimale des indépendants dans le compte, l'article 16 du
+      règlement de la CAVP, les articles 9-7 et suivants du règlement des
+      indépendants, les quatre fiches à relire, la rédaction nouvelle de R.
+      382-24, les rédactions sans statut de la liste des textes.

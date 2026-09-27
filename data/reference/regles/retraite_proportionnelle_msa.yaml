@@ -1,24 +1,184 @@
 schema_version: 1
 id: retraite_proportionnelle_msa
 intitule: >-
-  Retraite proportionnelle des non-salariés agricoles : des points par palier d'assiette
-  en SMIC horaires, quinze jusqu'à 400 SMIC, trente de 800 SMIC à deux fois le minimum
-  contributif, puis une pente jusqu'au maximum.
-etat: a_verifier
+  Retraite proportionnelle des non-salariés agricoles : depuis 1990, des points par année
+  selon le revenu retenu pour la cotisation, quinze jusqu'à 400 SMIC horaires, une pente
+  jusqu'à trente à 800 SMIC, trente jusqu'à deux fois le minimum contributif, puis une
+  pente jusqu'au maximum M au plafond, arrondis à l'entier le plus proche ; pour les
+  pensions prenant effet depuis 2026, les points d'avant 2016 ne comptent plus que par la
+  moyenne des meilleures années.
+etat: approchee
 etape: acquerir_les_droits
 effet: >-
-  Les chefs d'exploitation, depuis 1990. Fiche née à la phase 6 (docs/architecture.md,
-  § 11) de ce que le schéma des régimes disait de l'interrupteur `bareme_points` : elle
-  dit la règle que le moteur applique déjà, et les textes que le dépôt citait pour elle
-  ; elle reste à relire à la source.
+  Les chefs d'exploitation, pour leurs années depuis 1990. Le barème du moteur est celui
+  que le décret n° 80-808, puis R. 732-70 et R. 732-71, écrivent depuis 1990, à deux
+  écarts près. Il n'arrondit pas les points à l'entier : 22,5 au plancher de 600 SMIC, et
+  non 23, soit 2,2 % de moins. Il calcule le maximum M avec la retraite forfaitaire de la
+  fiche, ramenée sur les prix, au lieu de l'allocation aux vieux travailleurs salariés :
+  115,1 points au plafond en 2025, quand la MSA publie une échelle « comprise entre 23 et
+  113 points ». Pour les pensions prenant effet depuis le 1er janvier 2026, l'écart est
+  plus large, et non mesuré : la part d'avant 2016 se liquide par la moyenne des points
+  des meilleures années, multipliée par le nombre d'années, ce que le moteur ne fait pas ;
+  dans l'exemple de la MSA, 682 points au lieu des 633 de la somme, 7,7 % de plus. Les
+  pensions de 2026 et 2027 sont recalculées au plus tard le 31 mars 2028, et celles de
+  2028 et après calculées d'emblée, sur le revenu annuel moyen des meilleures années
+  depuis 2016, qui remplace leurs points ; le moteur somme encore les points de toutes
+  les années.
 sources:
   lu_le: 2026-09-27
-  prochaine_relecture: 2026-12-31
+  prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Relire R. 732-70 et R. 732-71 du code rural dans l'index LEGI et les rattacher.
+    Après la phase 7 : arrondir à l'entier le plus proche les points de chaque année
+    (R. 732-71, dernier alinéa, comme déjà l'article 8-1 du décret n° 80-808), et calculer
+    le maximum M avec l'allocation aux vieux travailleurs salariés de l'année, qu'il faut
+    d'abord faire entrer au dépôt, au lieu de la retraite forfaitaire.
+  - >-
+    Après la phase 7 : pour les pensions prenant effet depuis le 1er janvier 2026, servir
+    la part d'avant 2016 par la moyenne des points des meilleures années, en nombre fixé
+    par R. 173-3-2 du code de la sécurité sociale, arrondie à l'entier, multipliée par le
+    quart des trimestres validés avant 2016 et par cent cinquante sur la durée requise
+    (R. 732-66, I à III) ; pour celles de 2026 et 2027, compter par le barème les points
+    de 2016 à 2027 (décret n° 2025-1410, article 13), puis retenir le plus favorable avec
+    le calcul de 2028 ; pour celles de 2028 et après, remplacer les points des années
+    depuis 2016 par le revenu annuel moyen (L. 732-24, I, 1°, et L. 732-18). Reprendre
+    avec elles les notes de `msa_non_salaries`, qui tiennent le décret d'application pour
+    absent de la base : les décrets n° 2025-1409 et n° 2025-1410 du 30 décembre 2025 y
+    sont.
+  - >-
+    Lire R. 173-3-2 du code de la sécurité sociale, que cette relecture n'a pas ouvert,
+    avant la correction.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 80-808 du 14 octobre 1980, article 8-1 (LEGIARTI000006769212, du 21
+      septembre 1990 au 18 septembre 1991 ; LEGIARTI000006769213, jusqu'au 25 août 2004 ;
+      LEGIARTI000006769214, jusqu'au 22 avril 2005) : « A compter du 1er janvier 1990, le
+      versement de la cotisation visée au b de l'article 1123 du code rural donne droit,
+      pour l'année au titre de laquelle elle est due, à un nombre de points » ; le barème
+      et l'arrondi sont ceux que R. 732-70 et R. 732-71 reprennent en 2005. Lu dans l'index
+      LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      R. 732-70 (LEGIARTI000006597479, du 22 avril 2005 au 3 juin 2011 ;
+      LEGIARTI000024113180, du 3 juin 2011 au 1er janvier 2026) : « Le nombre de points est
+      compris entre un minimum fixé à 15 et un maximum M », « M = PM-AVTS/37,5 x VP », PM
+      étant « le montant maximal de la pension de vieillesse du régime général de la
+      sécurité sociale », liquidable « à soixante-cinq ans » puis « à l'âge prévu à
+      l'article L. 732-25 », et AVTS « le montant de l'allocation aux vieux travailleurs
+      salariés ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      R. 732-71 (LEGIARTI000006597480, du 22 avril 2005 au 28 octobre 2017 ;
+      LEGIARTI000035918339, du 28 octobre 2017 au 1er janvier 2026) : 15 points « au plus
+      égal à quatre cents fois le taux horaire du salaire minimum de croissance », « P = 15
+      + 15 x (R-400 SMIC/400 SMIC) » jusqu'à huit cents fois, 30 jusqu'à « deux fois
+      l'intégralité du montant annuel minimal non majoré de pension garanti », puis « P =
+      30 + (M-30) x (R-2 MC/ PL-2 MC) » jusqu'à douze fois le plafond mensuel ; R est « le
+      montant des revenus professionnels retenus en vue du calcul des cotisations » ; « Le
+      nombre de points résultant de l'application des formules énoncées ci-dessus est
+      arrondi au nombre entier le plus proche », et les grandeurs sont « ceux en vigueur au
+      1er janvier de l'année considérée ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      R. 732-66 (LEGIARTI000006597474, du 22 avril 2005 au 8 septembre 2007 ;
+      LEGIARTI000006597475, jusqu'au 28 octobre 2017 ; LEGIARTI000035918379, jusqu'au 1er
+      janvier 2026) : la retraite proportionnelle est « le produit du nombre total de
+      points acquis par l'assuré [...] par la valeur du point de retraite proportionnelle
+      auquel est appliqué le rapport de trente-sept et demi sur » la durée de la
+      génération, que R. 732-61 (LEGIARTI000035918397) fixe « à 37,5 années pour l'assuré
+      né avant le 1er janvier 1944 », de 38 à 40 années de 1944 à 1948, puis à la durée
+      du régime général. Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      décret n° 2025-1409 du 30 décembre 2025 (JORFTEXT000053227462, Journal officiel du 31
+      décembre 2025), article 1, I, 6° : « Sont abrogés : [...] b) Les articles [...] R.
+      732-69 à D. 732-77 » ; II : « Le b du 6° [...] s'appliquent aux pensions et aux
+      allocations prenant effet à compter du 1er janvier 2026 » ; article 6
+      (JORFARTI000053227599) : la section 3, « dans leur rédaction antérieure au présent
+      décret, continuent de s'appliquer aux pensions [...] prenant effet entre le 1er
+      janvier 2026 et le 31 décembre 2027 ». Lu dans l'index JORF du dépôt ; l'index LEGI
+      clôt les deux articles au 1er janvier 2026, sans rédaction nouvelle
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      loi n° 2025-199 du 28 février 2025, article 87, VIII, B (JORFARTI000051269910) : «
+      Toutefois, pour les pensions prenant effet à compter du 1er janvier 2026, les
+      pensions de retraite proportionnelle [...] dues au titre des périodes d'assurance
+      antérieures à 2016 sont liquidées dans les conditions prévues au b du 2° du I du même
+      article L. 732-24 » ; « au plus tard le 31 mars 2028, les pensions mentionnées au
+      premier alinéa du présent B font l'objet d'un nouveau calcul », révisées s'il est
+      supérieur. Lu dans l'index JORF du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      R. 732-66 depuis 2026 (LEGIARTI000053336689, du 1er janvier au 9 mai 2026 ;
+      LEGIARTI000054059787, rédaction du décret n° 2026-346 du 7 mai 2026) : la part
+      d'avant 2016 est « le produit de la moyenne [...] du nombre de points annuels
+      attribués à l'assuré en matière de retraite proportionnelle en application des
+      articles R. 732-69 à R. 732-77 [...] dans leur rédaction antérieure au décret n°
+      2025-1409 [...], du quart du nombre de trimestres mentionné au III et de la valeur du
+      point », la moyenne portant sur les années « dont la prise en considération est la
+      plus avantageuse pour l'assuré », « arrondi à l'entier le plus proche » ; L. 732-24,
+      I (LEGIARTI000053280317) : « 1° Un montant calculé dans les conditions prévues à
+      l'article L. 732-18 du présent code sur les bases des seuls revenus des années à
+      compter du 1er janvier 2016 », L. 732-18 (LEGIARTI000051289367) y remplaçant le «
+      salaire annuel de base » par le « revenu annuel moyen ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      décret n° 2025-1410 du 30 décembre 2025, article 13 (JORFARTI000053227751) : « le
+      nombre de points acquis au titre des périodes d'assurance comprises entre 2026 et
+      2027 [...] est déterminé dans les conditions fixées à l'article R. 732-71 du même
+      code dans sa rédaction antérieure au décret n° 2025-1409 du 30 décembre 2025 » ; «
+      La date prévue au B du VIII du même article 87 [...] est fixée au 31 mars 2028 ». Lu
+      dans l'index JORF du dépôt
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      MSA, « Réforme de la retraite des exploitants : 25 meilleures années », mis à jour le
+      27 avril 2026, question 7 : pour les chefs, « le nombre de points dépendait
+      directement des revenus, sur une échelle comprise entre 23 et 113 points » ; page 3,
+      un assuré de 1994 à 2015 : « TOTAL 22 ans 633 pts » à l'ancien calcul, puis « 403 pts
+      / 13 ans = 31 pts » et « 31 pts x 22 ans = 682 pts » ; « pour les départs en retraite
+      en 2026 et 2027, le calcul est hybride et provisoire »
+    url: https://www.msa.fr/lfp/retraite/reforme-exploitants-25-meilleures-annees
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      MSA, « La retraite des non-salariés agricoles », mis à jour le 17 août 2026 : «
+      Nombre de points X Valeur du point X (Durée d'assurance de 37,5 ans / Durée
+      d'assurance fixée en fonction de l'année de naissance) » pour les pensions prenant
+      effet jusqu'au 31 décembre 2025 ; « Pour les pensions prenant effet en 2026 ou en
+      2027 », une part proportionnelle « déterminée par les meilleures années de points de
+      retraite proportionnelle pour les années antérieures à 2016 et les points acquis à
+      compter de 2016 »
+    url: https://www.msa.fr/lfp/retraite/non-salaries-agricoles
+    date: 2026-09-27
 textes_a_rattacher:
-- reference: code rural et de la pêche maritime, R. 732-70 et R. 732-71
+- reference: >-
+    décret n° 80-808 du 14 octobre 1980, article 8-1 (LEGIARTI000006769212,
+    LEGIARTI000006769213, LEGIARTI000006769214), de 1990 à 2005
+- reference: >-
+    code rural et de la pêche maritime, R. 732-70 (LEGIARTI000006597479,
+    LEGIARTI000024113180) et R. 732-71 (LEGIARTI000006597480, LEGIARTI000035918339),
+    jusqu'au 1er janvier 2026, et dans cette rédaction pour les points d'avant 2016 et,
+    à titre provisoire, pour ceux de 2016 à 2027
+- reference: >-
+    code rural et de la pêche maritime, R. 732-66 (LEGIARTI000006597474,
+    LEGIARTI000006597475, LEGIARTI000035918379), puis dans sa rédaction de 2026
+    (LEGIARTI000053336689, LEGIARTI000054059787)
+- reference: >-
+    loi n° 2025-199 du 28 février 2025, article 87, VIII, B (JORFARTI000051269910), et L.
+    732-24 dans sa rédaction de 2026 (LEGIARTI000053280317)
+- reference: >-
+    décret n° 2025-1409 du 30 décembre 2025, article 1, I, 6° b et II, et article 6
+    (JORFTEXT000053227462) ; décret n° 2025-1410 du 30 décembre 2025, article 13
+    (JORFARTI000053227751)
 code:
   interrupteurs:
     bareme_points: msa_proportionnelle

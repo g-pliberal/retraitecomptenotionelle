@@ -1,30 +1,251 @@
 schema_version: 1
 id: decote_avant_1983
 intitule: >-
-  Jusqu'en 1982, la durée d'assurance n'annulait pas la décote au régime général et dans
-  les régimes alignés : le taux ne dépendait que de l'âge, et le taux plein s'obtenait
-  à soixante-cinq ans.
-etat: a_verifier
+  Jusqu'au 31 mars 1983, au régime général et chez les salariés agricoles, le taux de la
+  pension croissait avec l'âge seul — de 1973 à 1983, 25 % du salaire annuel moyen à
+  soixante ans pour 150 trimestres, majorés de 5 points par année postérieure — ; la durée
+  n'ouvrait le taux de soixante-cinq ans qu'à des catégories nommées, dont, depuis 1978,
+  les femmes justifiant de trente-sept ans et demi d'assurance.
+etat: approchee
 etape: liquider_chaque_regime
 effet: >-
-  Les pensions du régime général, des salariés agricoles, des artisans et des commerçants
-  liquidées avant 1983. Fiche née à la phase 6 (docs/architecture.md, § 11) de ce que
-  le schéma des régimes disait de l'interrupteur `decote_annulee_par_la_duree` : elle
-  dit la règle que le moteur applique déjà, et les textes que le dépôt citait pour elle
-  ; elle reste à relire à la source.
+  Les pensions du régime général et des salariés agricoles liquidées avant 1983, et celles
+  des artisans et commerçants de 1973 à 1982 : le moteur leur oppose une décote comptée
+  sur l'âge seul, 2,5 % du taux plein par trimestre manquant jusqu'à soixante-cinq ans,
+  soit, sur un taux plein de 50 %, les 25 % à soixante ans et les 5 points par année de
+  l'article 70 lu depuis 1973. Il s'écarte du texte en quatre points, aucun mesuré. Les
+  femmes de 150 trimestres au régime général et chez les salariés agricoles avaient le
+  taux de soixante-cinq ans dès soixante-trois ans en 1978, dès soixante ans de 1979 au 31
+  mars 1983 : à soixante ans, le moteur ne leur sert que la moitié de ce taux. Une pension
+  de janvier à mars 1983 relève encore de l'âge seul : le moteur, qui choisit la période à
+  l'année, lui applique la règle d'avril et sert le taux plein à soixante ans à qui a 150
+  trimestres. Avant le 1er avril 1983, le taux croissait encore après soixante-cinq ans
+  (« coefficients d'ajournement ») : le moteur l'arrête au taux plein. Et il compte au
+  trimestre la majoration que le texte écrit « par année postérieure ». Les autres taux
+  pleins d'avant 1983 — inaptitude, déportation, services de guerre, travail manuel,
+  ouvrières mères de famille, agents non titulaires de soixante-trois ans dès le 1er
+  juillet 1982 — tiennent à des faits que le modèle ne porte pas. Pour les artisans et
+  commerçants, le moteur passe à la règle nouvelle en 1983, quand les textes lus datent
+  leur taux plein à soixante ans du 1er juillet 1984 ; la date de leur part alignée reste
+  à lire.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    Lire à la source l'ordonnance n° 82-270 du 26 mars 1982 et le droit qu'elle remplace,
-    dans l'index JORF du dépôt : le taux selon l'âge seul avant elle, et la date à laquelle
-    la durée commence d'annuler la décote.
+    Après la phase 7 : servir le taux de soixante-cinq ans aux femmes qui justifient de
+    150 trimestres au régime général et chez les salariés agricoles (ces deux régimes
+    seuls comptent), dès soixante-trois ans pour une pension prenant effet en 1978, dès
+    soixante ans du 1er janvier 1979 au 31 mars 1983 (article 70-2, c, du décret du 29
+    décembre 1945 ; article 1er bis du décret n° 51-727).
+  - >-
+    Après la phase 7 : couper au 1er avril 1983 la période de 1983 du régime général et
+    des salariés agricoles (ordonnance, article 9 ; décret n° 82-1054, article 2), et
+    servir avant cette date la majoration au-delà de soixante-cinq ans que l'article 70 ne
+    borne pas (décret n° 82-628, article 16 : « coefficients de majoration acquis au 31
+    mars 1983 ») ; sa limite éventuelle reste à lire.
+  - >-
+    Artisans et commerçants : le décret n° 84-560 (article 12-2 du décret n° 73-937) ouvre
+    le 1er juillet 1984 le taux plein à soixante ans, pour 150 trimestres, aux prestations
+    de l'article L. 663-5, et l'article 12 de la loi n° 84-575 règle, à partir du même
+    jour, le service des pensions artisanales et commerciales prises dès soixante ans ; le
+    moteur ouvre ce taux plein dès 1983 dans les fiches cancava et organic. Lire, pour la
+    part alignée (L. 663-1), l'ancien article L. 663-1, les articles 1 à 4, 6 et 7 de
+    l'ordonnance et l'article 2 du décret n° 73-937 avant le 24 février 1984, que l'index
+    ne porte pas ; si rien n'avance la date, après la phase 7, décaler au 1er juillet 1984
+    la période de 1983 de ces deux fiches.
+  - >-
+    Lire le droit de 1945 à 1972, absent des deux index : les articles 63 à 72 de
+    l'ordonnance n° 45-2454 du 19 octobre 1945, les rédactions des articles 70 et 71 du
+    décret du 29 décembre 1945 antérieures au 1er janvier 1973 (les 20 % à soixante ans et
+    les 4 points par année que la fiche du régime général écrit sans source lue), et
+    l'article 55 du décret n° 50-1225 avant le 1er juillet 1972.
+  - >-
+    Lire comment la caisse comptait une fraction d'année entre deux anniversaires :
+    l'article 70 majore « par année postérieure à cet âge », le moteur au trimestre, 1,25
+    point par trimestre (circulaire de la Cnav d'avant 1983).
+  lectures:
+  - type: legifrance
+    reference: >-
+      ordonnance n° 82-270 du 26 mars 1982 (LEGITEXT000006069322), article 9, en vigueur
+      depuis le 1er juillet 1982 (LEGIARTI000006275868) : « Les dispositions de la
+      présente ordonnance entreront en vigueur le 1er avril 1983. Toutefois, les
+      personnels visés aux articles L. 351-16 et L. 351-17 du code du travail, âgés d'au
+      moins soixante-trois ans et justifiant d'une durée d'assurance de 150 trimestres,
+      bénéficient, dès le 1er juillet 1982, du taux plein défini à l'article 1er de la
+      présente ordonnance » ; article 8 (LEGIARTI000006275867) : « Les dispositions de la
+      présente ordonnance sont applicables aux salariés agricoles ». Lu dans l'index LEGI
+      du dépôt ; les articles 1 à 4, 6 et 7, qui modifient le code, n'y sont pas, et
+      l'index JORF ne porte que les titres des articles du Journal officiel du 28 mars
+      1982
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      ordonnance n° 82-270, rapport au Président de la République (LEGIARTI000006759661) :
+      « le service à soixante ans d'une pension calculée au taux prévu à soixante-cinq ans
+      a été accordée à quelques catégories d'assurés : inaptes au travail, anciens
+      déportés et internés, anciens combattants et prisonniers de guerre, travailleurs
+      manuels et ouvrières mères de famille, femmes justifiant de 37,5 années d'assurance
+      dans le régime général et celui des salariés agricoles » ; « Au-delà de
+      soixante-cinq ans, les coefficients d'ajournement seront remplacés par une
+      majoration de la durée d'assurance » ; « les taux de pension plus élevés qui auront
+      été acquis avant le 1er avril 1983 seront maintenus » ; « La concertation […]
+      permettra de déterminer dans quels délais et selon quelles modalités les professions
+      artisanales et commerciales pourront bénéficier de la retraite à soixante ans ». Lu
+      dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179 du 29 décembre 1945, article 70, rédaction du 1er janvier 1973 au
+      23 juillet 1982 (LEGIARTI000006760656) : « Pour les assurés qui justifient d'au
+      moins trente-sept années et demie d'assurance (soit 150 trimestres), la pension
+      liquidée à l'âge de soixante ans est égale à 25 p. 100 du salaire annuel moyen de
+      base. Lorsque l'assuré demande la liquidation de sa pension après l'âge de soixante
+      ans, la pension est majorée de 5 p. 100 du salaire annuel moyen de base par année
+      postérieure à cet âge. » ; article 70-1, même période (LEGIARTI000006760672) : 50 %
+      entre soixante et soixante-cinq ans aux inaptes et aux anciens déportés de 150
+      trimestres ; article 70-5, du 12 mai 1976 au 23 juillet 1982
+      (LEGIARTI000006760665) : la pension réduite à « autant de 150° » que de trimestres.
+      Lu dans l'index LEGI du dépôt ; aucune rédaction de ces articles antérieure au 1er
+      janvier 1973 n'y figure
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179, article 70-2, rédaction du 16 mars 1978 au 23 juillet 1982
+      (LEGIARTI000006760658) : « La pension est également calculée au taux normalement
+      applicable à soixante-cinq ans au profit : […] c) Des femmes assurées […] qui
+      réunissent trente-sept ans et demi d'assurance dans le régime général ou dans ce
+      régime et celui des salariés agricoles : Lorsque la pension prend effet à une date
+      comprise dans la période du 1er janvier au 31 décembre 1978 et qu'à cette date
+      l'intéressée a atteint l'âge de soixante-trois ans ; Lorsque la pension prend effet
+      à une date postérieure au 31 décembre 1978 et qu'à cette date l'intéressée a atteint
+      l'âge de soixante ans » ; ses a et b : les travailleurs manuels de quarante et un
+      ans d'assurance (quarante-trois avant le 1er juillet 1977) et les mères de famille
+      de trente ans, avec cinq ans de travaux désignés. Loi n° 77-774 du 12 juillet 1977
+      (LEGITEXT000006068610), dont l'index ne porte que le titre et l'article 2. Lu dans
+      l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      décret n° 45-0179, article 70, rédaction du 23 juillet 1982 au 21 décembre 1985
+      (LEGIARTI000006760657) : le taux plein de 50 % pour 150 trimestres, sinon une
+      minoration comptée jusqu'à soixante-cinq ans ou jusqu'à la durée : « Le plus petit
+      de ces deux nombres est pris en considération. Pour chaque trimestre ainsi retenu,
+      le coefficient de minoration à appliquer au "taux plein" est 2,5 p. 100. » ; décret
+      n° 82-628 du 21 juillet 1982, article 16 (LEGIARTI000006763438) : « les assurés âgés
+      de plus de soixante-cinq ans au 1er avril 1983 pourront […] conserver le bénéfice
+      des coefficients de majoration acquis au 31 mars 1983 ». Lu dans l'index LEGI du
+      dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      salariés agricoles : décret n° 50-1225 du 21 septembre 1950, article 55, rédaction
+      du 1er juillet 1972 au 15 décembre 1982 (LEGIARTI000006774001), la phrase de
+      l'article 70 de 1973 mot pour mot, et sa rédaction du 15 décembre 1982
+      (LEGIARTI000006774002), la règle nouvelle ; décret n° 51-727 du 6 juin 1951, article
+      1er bis, rédaction du 26 août 1977 au 15 décembre 1982 (LEGIARTI000006773767) : « Le
+      montant de la pension résulte de l'application au salaire annuel de base d'un taux
+      croissant en fonction de l'âge auquel est demandée la liquidation de cette
+      pension », et le taux de soixante-cinq ans aux femmes de trente-sept ans et demi
+      d'assurance « A un âge compris entre soixante-trois et soixante-cinq ans lorsque
+      cette pension prend effet à compter du 1er janvier 1978 ; A un âge compris entre
+      soixante et soixante-cinq ans lorsque cette pension prend effet à compter du 1er
+      janvier 1979 » ; décret n° 82-1054 du 13 décembre 1982, article 2
+      (LEGIARTI000006272103) : « Les dispositions de l'article 1er du présent décret
+      entreront en vigueur le 1er avril 1983. » Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      loi n° 71-1132 du 31 décembre 1971 (loi Boulin), article 11 (LEGIARTI000006756030) :
+      « La présente loi prendra effet au 1er janvier 1972. » ; ses articles de fond, qui
+      modifient le code, ne sont pas dans l'index. Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      artisans et commerçants : décret n° 73-937 du 2 octobre 1973, article 12-2,
+      rédaction du 1er juillet 1984 au 1er janvier 1990 (LEGIARTI000006765853) : « Les
+      prestations visées à l'article 663-5 du Code de la sécurité sociale peuvent être
+      liquidées à compter de l'âge de soixante ans. I - Pour les assurés qui justifient
+      […] d'une durée au moins égale à 150 trimestres, il n'est appliqué aucun abattement
+      sur le montant de la pension » ; article 2, rédaction du 24 février 1984
+      (LEGIARTI000006765813), qui rend l'article 70 du décret de 1945 applicable aux
+      régimes de l'article L. 663-1 ; loi n° 84-575 du 9 juillet 1984, article 12
+      (LEGIARTI000006681641) : « Le service d'une pension de vieillesse prenant effet
+      postérieurement au 30 juin 1984, liquidée au titre des régimes d'assurance
+      vieillesse des professions artisanales, industrielles et commerciales et dont
+      l'entrée en jouissance intervient à compter du soixantième anniversaire de l'assuré
+      […] ». Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      décret n° 84-560 du 28 juin 1984 (JORFTEXT000000520712, Journal officiel du 5
+      juillet 1984), résumé que porte l'index : « ABAISSEMENT DE L'AGE DE LA RETRAITE A 60
+      ANS POUR LES ASSURES POUVANT JUSTIFIER DE 150 TRIMESTRES D'ASSURANCE OU DE PERIODES
+      EQUIVALENTES DANS L'ENSEMBLE DES REGIMES DE BASE. […] APPLICATION A COMPTER DU
+      01-07-1984 ». Lu dans l'index JORF du dépôt
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Assemblée nationale, question écrite n° 32721, réponse publiée au Journal officiel
+      le 25 janvier 1988, page 354 : « la loi no 84-575 du 9 juillet 1984 a etendu aux
+      artisans et aux commercants le dispositif temporaire […] de limitation de cumul
+      entre revenus d'activite et retraite accompagnant pour ces professions comme cela
+      etait le cas pour les salaries, l'abaissement de l'age d'ouverture du droit a la
+      retraite de base au taux plein a soixante ans »
+    url: https://questions.assemblee-nationale.fr/dyn/8/questions/QANR5L8QE32721.pdf
+    date: 2026-09-27
 textes_a_rattacher:
+- id: LEGIARTI000006760656
+  reference: >-
+    décret n° 45-0179 du 29 décembre 1945, article 70, rédaction du 1er janvier 1973 au 23
+    juillet 1982 : 25 % à soixante ans pour 150 trimestres, 5 points par année postérieure
+- id: LEGIARTI000006760672
+  reference: >-
+    décret n° 45-0179, article 70-1, rédaction du 1er janvier 1973 au 23 juillet 1982 : le
+    taux de soixante-cinq ans aux inaptes et aux anciens déportés de 150 trimestres
+- id: LEGIARTI000006760658
+  reference: >-
+    décret n° 45-0179, article 70-2, rédaction du 16 mars 1978 au 23 juillet 1982 : le
+    taux de soixante-cinq ans aux travailleurs manuels, aux mères de famille ouvrières et
+    aux femmes de trente-sept ans et demi d'assurance
+- id: LEGIARTI000006774001
+  reference: >-
+    décret n° 50-1225 du 21 septembre 1950, article 55, rédaction du 1er juillet 1972 au
+    15 décembre 1982 : le même taux chez les salariés agricoles
+- id: LEGIARTI000006773767
+  reference: >-
+    décret n° 51-727 du 6 juin 1951, article 1er bis, rédaction du 26 août 1977 au 15
+    décembre 1982 : le taux croissant avec l'âge, et ses exceptions, chez les salariés
+    agricoles
 - id: JORFTEXT000000888522
   reference: >-
     ordonnance n° 82-270 du 26 mars 1982 relative à l'abaissement de l'âge de la retraite
     des assurés du régime général et du régime des assurances sociales agricoles
+- id: LEGIARTI000006275868
+  reference: >-
+    ordonnance n° 82-270, article 9 : entrée en vigueur le 1er avril 1983, et dès le 1er
+    juillet 1982 pour les personnels des articles L. 351-16 et L. 351-17 du code du
+    travail
+- id: LEGIARTI000006760657
+  reference: >-
+    décret n° 45-0179, article 70, rédaction du 23 juillet 1982 au 21 décembre 1985 : la
+    durée annule la décote, le plus petit des deux nombres de trimestres
+- id: LEGIARTI000006774002
+  reference: >-
+    décret n° 50-1225, article 55, rédaction du 15 décembre 1982 : la même règle chez les
+    salariés agricoles
+- id: LEGIARTI000006272103
+  reference: >-
+    décret n° 82-1054 du 13 décembre 1982, article 2 : entrée en vigueur le 1er avril 1983
+    chez les salariés agricoles
+- id: LEGIARTI000006765853
+  reference: >-
+    décret n° 73-937 du 2 octobre 1973, article 12-2, rédaction du 1er juillet 1984
+    (décret n° 84-560) : le taux plein à soixante ans pour 150 trimestres, artisans et
+    commerçants
+- id: LEGIARTI000006756030
+  reference: >-
+    loi n° 71-1132 du 31 décembre 1971, article 11 : effet au 1er janvier 1972
 code:
   interrupteurs:
     decote_annulee_par_la_duree: false

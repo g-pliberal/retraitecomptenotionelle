@@ -2328,3 +2328,61 @@ fini ne finit pas son tour : le hook publierait le commit.
 
 Le repère `phase-7` est posé sur 17b54f3, le 27 septembre 2026, à la demande
 du propriétaire, par `repere-phase-7.yml`, lancé une fois puis supprimé.
+
+### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
+
+**La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
+session, à la demande du propriétaire, après avoir vérifié qu'elle ne lui
+prenait rien : ni fichier commun, ni fichier déplacé, ni résultat. Les dix
+fiches que la phase 6 avait fait naître « à vérifier » ont été lues à la
+source, dans l'index LEGI ou JORF du dépôt et sur le site de chaque caisse.
+Toutes passent à `approchee` : le moteur s'écarte du texte sur chacune. Rien
+n'est corrigé : la phase 7 devait garder ses témoins au bit près, et deux de
+ces fiches, `assiette_minimale_agricole` et `cotisation_par_classes_liberales`,
+sont gardées par leur nom dans la couche des comptes notionnels. Ce que le
+moteur lit d'une fiche, son `code` et son étape, n'a pas bougé ; témoins et
+paquet sont restés identiques. Le journal de veille dit ce qui a été lu ;
+chaque fiche, ses lectures, ses textes, ses écarts, et deux lectures
+divergentes entre le texte et la caisse (la décote des IEG depuis 2025, la
+borne de la surcote de la CPRN).
+
+**En chemin**, `scripts/textes.py --inscrire` butait sur deux arrêtés du
+10 juillet 2026 sous la même clé datée : un texte nouveau prend désormais le
+sigle de sa section (`arrete_2026_07_10_carmf`), un texte déjà inscrit garde
+la sienne, et un test le tient. Les 767 rédactions des textes que les fiches
+citent sont entrées « à examiner », et le cliquet des rédactions sans statut
+est descendu de 10 547 à 10 440.
+
+**Ce qui reste : les corrections**, chacune écrite dans l'`a_relire` de sa
+fiche, « Après la phase 7 : ». Elles déplacent des résultats : chacune se fait
+dans un commit à part, avec le diff de ses témoins, et jamais pendant une
+phase de réorganisation, qui doit garder les siens au bit près. Des plus
+lourdes aux moindres :
+
+- `assiette_minimale_agricole` : les points de la complémentaire au minimum,
+  100 par an depuis 2017 au lieu de 117 puis 133, et ses minima de 2003 à
+  2005 ; la base au plancher de 600 SMIC dès 1990, quand les textes en fixent
+  400 jusqu'en 2003 au moins.
+- `cotisation_par_classes_liberales` : les grilles de chaque époque de la
+  Cipav et de la CAVEC, que le moteur tire d'une seule par le rapport des
+  plafonds ; la CARPV d'avant 1998 et son taux d'appel ; l'année de revenu que
+  le texte désigne.
+- `decote_avant_1983` : le taux de soixante-cinq ans aux femmes de 150
+  trimestres, dès soixante ans de 1979 au 31 mars 1983, et la coupure au
+  1er avril 1983.
+- `decote_regimes_speciaux` : les IEG et la CRPCEN depuis 2025, la borne par
+  la durée, et la lecture à l'année des pas de 2010 à 2024.
+- `coefficients_anticipation_agirc_arrco` : les points de tranche C d'avant
+  2016, minorés même au taux plein.
+- `surcote_par_age_seul` : les bornes de la CAVP et de la Cipav, les dates de
+  la CAVEC, le départ de la CARPIMKO, les trimestres d'exercice de la CPRN.
+- `minoration_racl_2014_2024`, `retraite_proportionnelle_msa`,
+  `surcote_ircantec`, `decote_opera_de_paris` : des écarts moindres, chacun
+  dit dans sa fiche.
+
+Deux notes de fichiers de régimes sont à corriger avec elles (`msa_non_salaries`,
+`msa_rco`), et les exemples publiés trouvés sont à porter dans
+`tests/temoins/exemples_officiels.yaml` : la CNIEG, la CRPCEN, le dépliant de
+la tranche C d'Agirc-Arrco, le guide de la CARMF, la page de la MSA sur la
+réforme de 2026. `python scripts/veille_droit.py` ne liste plus ces fiches,
+lues ce jour : c'est cette action qui les tient.

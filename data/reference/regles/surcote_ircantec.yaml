@@ -1,28 +1,124 @@
 schema_version: 1
 id: surcote_ircantec
 intitule: >-
-  Majoration de l'Ircantec pour une liquidation après le taux plein, depuis 2010 : 0,75
-  % par trimestre entier au-delà de l'âge du taux plein, 0,625 % par trimestre cotisé
-  au-delà de la durée requise avant cet âge.
-etat: a_verifier
+  Majoration des points de l'Ircantec depuis le 1er janvier 2010 : 0,75 % par trimestre
+  entier écoulé entre l'âge du taux plein automatique et l'entrée en jouissance, 0,625 %
+  par trimestre cotisé après l'âge légal et au-delà de la durée requise, avant cet âge ;
+  les deux s'ajoutent.
+etat: approchee
 etape: liquider_chaque_regime
 effet: >-
-  Les agents non titulaires qui liquident l'Ircantec après l'âge légal. Fiche née à la
-  phase 6 (docs/architecture.md, § 11) de ce que le schéma des régimes disait de l'interrupteur
-  `surcote_points` : elle dit la règle que le moteur applique déjà, et les textes que
-  le dépôt citait pour elle ; elle reste à relire à la source.
+  Les affiliés de l'Ircantec qui cotisent après l'âge légal au-delà de la durée requise,
+  ou qui liquident après l'âge du taux plein automatique : deux ans après cet âge valent
+  6 % de points en plus, cinq ans cotisés au-delà de la durée avant lui 12,5 %, et les
+  deux s'additionnent. Le moteur suit le texte pour les deux taux, leurs bornes d'âge
+  (soixante et soixante-cinq ans jusqu'au 30 juin 2011, puis les âges des articles
+  L. 161-17-2 et L. 351-8, 1°, à la génération), la date du 1er janvier 2010 et la somme
+  des deux majorations. Il s'en écarte sur la fenêtre du 2° : il la compte par année
+  civile, à l'âge atteint dans l'année, et non d'anniversaire à anniversaire en trimestres
+  de 90 jours ; l'année de l'âge du taux plein en sort entière, avec le trimestre à cheval
+  que la rédaction du 14 septembre 2023 range au 2°. L'écart, de quelques trimestres au
+  plus à 0,625 % chacun, n'est pas mesuré.
 sources:
   lu_le: 2026-09-27
-  prochaine_relecture: 2026-12-31
+  prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Relire le IV de l'article 16 de l'arrêté du 30 décembre 1970 dans l'index LEGI et
-    le rattacher.
+    Après la phase 7 : compter la fenêtre du 2° d'anniversaire à anniversaire, au mois
+    près comme le 1°, en trimestres de 90 jours, et y ranger le trimestre à cheval sur
+    l'âge du taux plein (IV de la rédaction du 14 septembre 2023) ; mesurer l'écart sur
+    les témoins.
+  - >-
+    Les deux pages lues du régime ne donnent pas d'exemple chiffré : en chercher un
+    (autres pages de la base documentaire, guide du régime) qui rejoue les deux taux.
+  lectures:
+  - type: legifrance
+    reference: >-
+      arrêté du 30 décembre 1970, article 16, rédaction du 25 septembre 2008 au 1er
+      juillet 2011 (LEGIARTI000019511923), paragraphe 4 : « A compter du 1er janvier 2010,
+      lorsque la liquidation de la pension est demandée par le participant après l'âge
+      normal de soixante-cinq ans, le nombre total de points est majoré de 0, 75 % par
+      trimestre entier écoulé entre le soixante-cinquième anniversaire de l'assuré et la
+      date d'entrée en jouissance de la pension mentionnée à l'article 17. En outre, la
+      durée d'assurance ayant donné lieu à cotisations à la charge de l'assuré accomplie
+      après l'âge et la limite prévus à l'article L. 351-1 du code de la sécurité sociale
+      et avant l'âge de soixante-cinq ans donne lieu à une majoration du total des points
+      égale à 0, 625 % par trimestre accompli. » Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      article 16, rédaction du 1er juillet 2011 au 31 mars 2018 (LEGIARTI000024266924),
+      paragraphe 4 : la majoration du 1° court « après l'âge prévu au 1° de l'article
+      L. 351-8 du code de la sécurité sociale », celle du 2° pour la durée « accomplie
+      après l'âge prévu à l'article L. 161-17-2 du code de la sécurité sociale et la
+      limite prévue à l'article L. 351-1 du même code et avant l'âge prévu au 1° de
+      l'article L. 351-8 du même code » ; le même texte, devenu le IV, dans les rédactions
+      du 31 mars 2018 (LEGIARTI000036755233) et du 21 décembre 2018
+      (LEGIARTI000037845437). Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      article 16, rédaction du 14 septembre 2023, en vigueur (LEGIARTI000048065521), IV :
+      le 1° et le 2° de 2011, et « Lorsque le trimestre ayant donné lieu à cotisation
+      débute avant l'âge prévu au 1° et se termine après l'atteinte de ce même âge, le
+      trimestre accompli est pris en compte dans la durée d'assurance donnant lieu à la
+      majoration du total des points prévus au présent 2°. En aucun cas une même période
+      ne peut donner lieu à la fois à l'attribution de la majoration prévue au 1° et à
+      celle prévue au 2° du présent article. 3° Pour l'application du présent IV, un
+      trimestre équivaut à une période de 90 jours. » Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Ircantec, « La prolongation de mon activité professionnelle » : « Majoration de
+      0,625 % de votre nombre total de points acquis par trimestre d'assurance
+      supplémentaire ayant donné lieu à cotisations » ; « Majoration de 0,75 % de votre
+      nombre total de points acquis par trimestre entier écoulé, entre votre 67 ème
+      anniversaire et la date de votre retraite Ircantec » ; « les points acquis au titre
+      d'une surcote n'entrent pas dans la base de calcul de la deuxième surcote » ; « pour
+      l'attribution des surcotes 1 et 2, un trimestre équivaut à une période de 90 jours »
+    url: https://www.ircantec.retraites.fr/actif/acquisition-droits/prolongation-activite
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      base documentaire de l'Ircantec, « La surcote — Définition », du 31 août 2026 :
+      « pour la surcote 1, de l'ensemble des trimestres d'assurance accomplis
+      postérieurement à date à laquelle est atteint le taux plein, y compris les
+      trimestres accomplis avant le 1er janvier 2010 » ; « pour la surcote 2, de
+      l'ensemble des trimestres écoulés au delà de l'âge de 67 ans, y compris les
+      trimestres écoulés avant le 1er janvier 2010 » ; « la surcote est accordée même si
+      la dernière activité exercée par l'agent ne relève pas de l'Ircantec »
+    url: https://baseircantec.retraites.fr/demander-sa-retraite/liquidation-de-la-retraite/la-surcote/definition
+    date: 2026-09-27
 textes_a_rattacher:
+- id: LEGIARTI000019511923
+  reference: >-
+    arrêté du 30 décembre 1970, article 16, paragraphe 4, rédaction du 25 septembre 2008
+    au 1er juillet 2011 : les deux majorations, « A compter du 1er janvier 2010 » ; la
+    première après soixante-cinq ans, la seconde entre soixante et soixante-cinq ans,
+    au-delà de la durée
+- id: LEGIARTI000024266924
+  reference: >-
+    article 16, paragraphe 4, rédaction du 1er juillet 2011 au 31 mars 2018 : les âges des
+    articles L. 161-17-2 et L. 351-8, 1°, au lieu de soixante et soixante-cinq ans
 - id: LEGIARTI000048065521
   reference: >-
-    arrêté du 30 décembre 1970 relatif aux modalités de fonctionnement du régime (Ircantec),
-    article 16, IV, état courant
+    article 16, IV, rédaction du 14 septembre 2023, en vigueur : le trimestre à cheval
+    compté au 2°, le non-cumul des deux majorations, le trimestre de 90 jours
+textes_sans_effet:
+- id: LEGIARTI000036755233
+  article: arrêté du 30 décembre 1970, article 16
+  en_vigueur: 2018-03-31
+  motif: >-
+    le paragraphe 4 de 2011, renuméroté IV, mot pour mot : « IV. A compter du 1er janvier
+    2010, lorsque la liquidation de la pension est demandée par le participant après l'âge
+    prévu au 1° de l'article L. 351-8 […] » ; la rédaction touche le I (agents handicapés)
+    et le III (retraite progressive)
+- id: LEGIARTI000037845437
+  article: arrêté du 30 décembre 1970, article 16
+  en_vigueur: 2018-12-21
+  motif: >-
+    le IV de la rédaction du 31 mars 2018, mot pour mot ; la rédaction ajoute un f au 1°
+    du I, les agents de l'article L. 161-17-4
 code:
   interrupteurs:
     surcote_points: ircantec

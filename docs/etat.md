@@ -14,7 +14,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 | régime partiel | 4 268 431 | 11 % |
 | sections libérales, couverture mêlée | 424 386 | 1 % |
 
-*Modélisé ne veut pas dire exact* : les 25 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
+*Modélisé ne veut pas dire exact* : les 35 règles approchées de la carte touchent aussi des régimes modélisés (section 2).
 
 **La carte des règles** (`data/reference/regles/`) : 108 fiches, dont 1 relation. La veille en est une vue (`python scripts/veille_droit.py`).
 
@@ -22,10 +22,10 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 |---|---|
 | conformes | 43 |
 | transcrites | 21 |
-| approchées | 25 |
+| approchées | 35 |
 | pas encore modélisées | 5 |
 | manquantes | 3 |
-| à vérifier | 11 |
+| à vérifier | 1 |
 
 - Confrontées à au moins un exemple officiel : **22 sur 108** (54 exemples : 54 reproduits, aucun en écart connu).
 - Citées dans le code par leur identifiant : **19 sur 108**. Le lien entre une règle et le code qui l'applique n'existe pas encore pour les autres.
@@ -34,15 +34,15 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 - Découpées en versions : **aucune sur 108** ; le partage des versions, qui se contrôle sur chaque fiche, n'a encore rien à contrôler.
 - Réformes du calendrier : 109, dont 11 déclarées non appliquées.
 
-**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 10 738 rédactions d'articles, de 33 textes, lues le 2026-09-27 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20260926-210736). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
+**La loi, rédaction par rédaction** (`data/reference/textes/`, § 6.6) : 11 505 rédactions d'articles, de 65 textes, lues le 2026-09-27 (index LEGI du dépôt : Freemium_legi_global_20250713-140000.tar.gz, incréments appliqués jusqu'au 20260926-210736). C'est le dénominateur de l'avancement : ce que les fiches ont lu, contre ce que la loi a écrit.
 
 | Statut | Rédactions |
 |---|---|
 | rattachées à une version | 0 |
-| sans effet | 0 |
-| à rattacher | 191 |
-| à examiner | 0 |
-| sans statut | 10 547 |
+| sans effet | 43 |
+| à rattacher | 322 |
+| à examiner | 700 |
+| sans statut | 10 440 |
 
 **La personne** (§ 5) : une chronologie de faits datés, dans un réseau de personnes — aujourd'hui l'assuré et ses enfants —, que le relevé et le parcours déclarent (`src/retraite_notionnelle/chronologie.py`, et son jumeau). La carrière que le moteur liquide en est la vue. Ce que la saisie ne dit pas est présumé : 7 présomptions au vocabulaire, dont 1 pose son fait dans la chronologie ; les autres s'appliquent dans le code, jusqu'à l'étape qui posera le leur.
 
@@ -90,7 +90,7 @@ Pesés par leurs retraités de droit direct (2024, enquête EACR de la DREES, o�
 
 **Ce qui est hors du modèle.** La réversion, par exemple, pèse 10,4 % de la masse des prestations en 2024 (COR), et le modèle n'en calcule aucune.
 
-**La feuille de route** compte 131 actions : 123 fait, 6 en cours, 1 archivée, 1 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
+**La feuille de route** compte 132 actions : 123 fait, 7 en cours, 1 archivée, 1 abandonnée. Les closes sont dans son archive, `docs/archives/feuille_de_route.md` ; ce qui reste à faire est ailleurs, dispersé.
 
 ## 2. Ce qui ne va pas encore
 
@@ -120,17 +120,8 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `rachats_et_versements` | pas_encore_modelisee | Non saisissables dans le simulateur. |
 | `retraite_anticipee_handicap` | pas_encore_modelisee | Demande une information médicale que le modèle ne collecte pas : l'assuré est déclaré non ouvert. |
 | `reversion` | pas_encore_modelisee | Le modèle décrit une carrière, pas un ménage. |
-| `assiette_minimale_agricole` | a_verifier | Les chefs d'exploitation aux revenus faibles. |
-| `coefficients_anticipation_agirc_arrco` | a_verifier | Toute liquidation anticipée d'une complémentaire des salariés du privé. |
-| `cotisation_par_classes_liberales` | a_verifier | Les vétérinaires, les experts-comptables et les affiliés de la Cipav. |
-| `decote_avant_1983` | a_verifier | Les pensions du régime général, des salariés agricoles, des artisans et des commerçants liquidées avant 1983. |
-| `decote_opera_de_paris` | a_verifier | Les danseurs et les musiciens de l'Opéra national de Paris. |
-| `decote_regimes_speciaux` | a_verifier | Les agents de la SNCF, de la RATP, des IEG, de la CRPCEN et de la Comédie-Française qui réunissent les conditions d'ouverture après le 1er… |
 | `fin_de_la_suspension_2028` | a_verifier | Tout changement de calendrier touche les générations 1965 et suivantes. |
-| `minoration_racl_2014_2024` | a_verifier | Les auteurs et compositeurs lyriques partis avant l'âge du taux plein de 2014 à 2024. |
-| `retraite_proportionnelle_msa` | a_verifier | Les chefs d'exploitation, depuis 1990. |
-| `surcote_ircantec` | a_verifier | Les agents non titulaires qui liquident l'Ircantec après l'âge légal. |
-| `surcote_par_age_seul` | a_verifier | Les complémentaires de la CARMF, de la CARCDSF, de la CAVP, de la CARPIMKO, de la CAVAMAC, de la CAVEC, de la Cipav et de la CPRN, et l'ASV. |
+| `assiette_minimale_agricole` | approchee | Les chefs d'exploitation aux revenus faibles, et, à la complémentaire, tous les chefs qui cotisent depuis 2017. |
 | `assiette_minimale_independants` | approchee | Un indépendant à 3 000 € validait un trimestre au lieu de trois et n'avait ni le salaire ni les points du minimum. |
 | `asv_medecins_ajustement` | approchee | La fiche servait 36 points à tout médecin, soit jusqu'à 7,75 points de trop sous 70 000 €. |
 | `carcdsf_minoration_age_seul` | approchee | La fiche lisait 62 et 67 ans et la décote du régime de base, que la durée annule : un dentiste parti à 64 ans avec sa durée ne perdait rien… |
@@ -143,35 +134,45 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
 | `cavom_ages_minoration` | approchee | La fiche lisait les tables du régime général et la décote du régime de base, que la durée annule : un officier ministériel parti à l'âge lé… |
 | `cavp_minoration_deux_pentes` | approchee | La fiche lisait la décote du régime de base, que la durée annule : un pharmacien parti à 64 ans avec sa durée ne perdait rien de sa complém… |
 | `cnavpl_majoration_duree_assurance` | approchee | La fiche les disait non portés, et le moteur ne cherchait la majoration de durée que dans les régimes en annuités : une libérale qui n'avai… |
+| `coefficients_anticipation_agirc_arrco` | approchee | Toute liquidation anticipée d'une complémentaire des salariés du privé : 1 % à 22 % de moins sur vingt trimestres, jusqu'à 57 % dix ans ava… |
+| `cotisation_par_classes_liberales` | approchee | Les vétérinaires, les experts-comptables et commissaires aux comptes, et les affiliés de la Cipav jusqu'en 2022. |
 | `cultes_salaire_annuel_moyen` | approchee | Le salaire annuel moyen est désormais fait du forfait de chaque année, dans les deux moteurs (`_assiette_de_reference`) : le ministre décla… |
 | `date_effet_mois_suivant` | approchee | Le modèle liquide au mois de l'anniversaire : un mois d'écart, visible là où un texte coupe au mois (nés en décembre 1965, carrière longue). |
+| `decote_avant_1983` | approchee | Les pensions du régime général et des salariés agricoles liquidées avant 1983, et celles des artisans et commerçants de 1973 à 1982 : le mo… |
 | `decote_crpn` | approchee | L'âge d'annulation passe de 65 à 60 ans pour toute liquidation depuis 2012, et la décote se compte sur la durée seule depuis 2022. |
+| `decote_opera_de_paris` | approchee | Les artistes du ballet de l'Opéra national de Paris, seul emploi de l'Opéra que le modèle porte, qui ont quarante ans, leur âge d'ouverture… |
+| `decote_regimes_speciaux` | approchee | Les agents de la SNCF, de la RATP, des IEG, de la CRPCEN et de la Comédie-Française qui réunissent les conditions d'ouverture à compter du… |
 | `majoration_duree_assurance_enfants` | approchee | Le modèle sert d'un coup les huit trimestres par enfant que le décret de 2003 attribue un par un, de la naissance au septième anniversaire. |
 | `majoration_enfants_liberaux_avocats` | approchee | Les fiches de la CNAVPL, de la CNBF et de sa complémentaire ne la portaient pas : 10 % de pension en moins pour tout parent de trois enfant… |
 | `marins_salaire_de_reference` | approchee | Le modèle prend la catégorie de la DERNIÈRE année, rangée par le revenu, et compte les services au trimestre |
 | `minimum_vieillesse` | approchee | Les plus petites pensions |
 | `minoration_ircec` | approchee | Tout départ anticipé d'un artiste-auteur, d'un auteur dramatique ou d'un compositeur qui n'a pas sa durée : à soixante-deux ans, 20 % de mi… |
+| `minoration_racl_2014_2024` | approchee | Les auteurs et compositeurs lyriques partis avant l'âge du taux plein, de 2014 à mai 2025. |
 | `pension_mines` | approchee | Mineurs. |
 | `raap_classe_speciale` | approchee | La fiche prélevait 8 % du revenu avant 2016 — un taux qu'aucun texte ne porte — et servait donc, à un revenu moyen, quatre à six fois les p… |
 | `rafp_majoration_capital` | approchee | Le modèle servait la valeur de service nue à tout âge : 22 % de moins à 67 ans. |
+| `retraite_proportionnelle_msa` | approchee | Les chefs d'exploitation, pour leurs années depuis 1990. |
 | `sections_liberales_majoration_enfants` | approchee | Aucune des trois fiches ne la portait : 10 % de complémentaire en moins pour tout parent de trois enfants. |
+| `surcote_ircantec` | approchee | Les affiliés de l'Ircantec qui cotisent après l'âge légal au-delà de la durée requise, ou qui liquident après l'âge du taux plein automatiq… |
+| `surcote_par_age_seul` | approchee | Les complémentaires de la CARMF, de la CARPIMKO, de la CAVEC, de la CAVP, de la Cipav et de la CPRN, et l'ASV des médecins, dont les périod… |
 | `un_statut_par_annee` | approchee | DEPUIS LE 22 SEPTEMBRE 2026, DEUX ACTIVITÉS À LA FOIS se décrivent, dans les deux moteurs : chacune verse à son régime, sur son revenu, et… |
 
-**Un état peut-être périmé.** Pour 17 des 25 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
+**Un état peut-être périmé.** Pour 17 des 35 règles approchées, l'effet raconte à l'imparfait l'erreur qui a été corrigée, sans dire ce qui reste. Le tableau ne peut pas savoir si elles sont encore approchées : leur fiche le dira quand elle mûrira, l'écart actuel dans ses approximations, le récit dans son historique.
 
-**Des approximations non déclarées.** Aucune des 25 fiches approchées ne déclare encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
+**Des approximations non déclarées.** Aucune des 35 fiches approchées ne déclare encore ses approximations, chacune avec son effet ou « non mesuré » : l'effet n'en est dit qu'en mots.
 
 **Aucun exemple officiel en écart connu** : le modèle reproduit tous ceux que le dépôt a transcrits. Un exemple qu'il ne reproduirait pas entrerait quand même, et se lirait ici.
 
 ## 3. Ce qui reste à faire, et par quoi commencer
 
-- **Les 6 actions en cours** de la feuille de route :
+- **Les 7 actions en cours** de la feuille de route :
   - 47. La garantie vieillesse est une avance : la reprise sur succession, sa règle et son chiffrage
   - 89. Dépouiller les 260 sources officielles remises le 22 septembre 2026
   - 119. Les complémentaires relues : le plafond du RAFP, les points gratuits de la RCO, l'Arrco des cultes, et trois trous que rien ne disait
   - 121. Le droit de chacun, et non celui de la génération de l'année : toutes les personnes vivantes
   - 129. Le taux de l'État ramené à sa part « retraite seule » : un réglage, puis le défaut
   - 130. L'architecture du dépôt : décidée, les phases 0 à 7 faites, la phase 8 à lancer
+  - 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger
 - **Les sources à exploiter** : 114 à explorer sur 260 (58 explorées, 88 épuisées). 9 d'entre elles visent un régime partiel, et pourraient le compléter :
   - Association des régimes de retraite complémentaire des salariés : 3 source(s) (agirc_arrco_majorations_enfants, agirc_arrco_textes_de_reference, agirc_arrco_parametres_statistiques)
   - Caisse de retraite et de prévoyance des clercs et employés de notaires : 2 source(s) (crpcen_montant_pension, crpcen_rachat_etudes)
@@ -183,7 +184,7 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   - et 20 sources sans régime désigné.
 - **Les fiches sans exemple officiel** : 86.
 - **Les domaines sans décision** (§ 8) : 66 fiches du droit réel qu'aucun des 5 univers de la proposition ne décide. 6 disent leur étape, et c'est une décision qui manque : `assiette_minimale_independants`, `asv_medecins_ajustement`, `interpenetration_fonction_publique`, `liquidation_unique_regimes_alignes`, `retablissement_fonction_publique`, `retraite_proportionnelle_msa`. Les 60 autres ne disent pas encore leur étape, et une couche ne les atteint que par leur nom : la plupart sont des règles de la liquidation, que le compte notionnel remplace, et leur étape les rangera.
-- **Faire mûrir la carte** : 815 champs obligatoires manquent, à 108 fiches. Par champ :
+- **Faire mûrir la carte** : 825 champs obligatoires manquent, à 108 fiches. Par champ :
 
   | Champ | Fiches à qui il manque |
   |---|---|
@@ -195,11 +196,11 @@ Et 32 régimes partiels sans effectif dans l'enquête (outre-mer, sections libé
   | `versions` | 108 |
   | `etape` | 76 |
   | `code` | 65 |
-  | `approximations` | 25 |
+  | `approximations` | 35 |
   | `rang` | 1 |
 
-- **Les textes** : 191 rédactions à rattacher à une version de la fiche qui les cite, 0 à examiner, et 10 547 sans statut, que le cliquet tient à 10 547 au plus. Les textes qui en ont le plus : `css` 5 367, `rural` 1 000, `decret_46_2769` 946, `cpcmr` 696, `decret_90_1215` 350 (`python scripts/textes.py`).
-- **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`assiette_minimale_agricole`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`).
+- **Les textes** : 322 rédactions à rattacher à une version de la fiche qui les cite, 700 à examiner, et 10 440 sans statut, que le cliquet tient à 10 440 au plus. Les textes qui en ont le plus : `css` 5 364, `rural` 975, `decret_46_2769` 946, `cpcmr` 694, `decret_90_1215` 339 (`python scripts/textes.py`).
+- **Les relectures prévues les plus proches** : 2026-11-30 (`majoration_dix_pour_cent`) ; 2026-12-31 (`age_legal_par_generation`) ; 2026-12-31 (`carriere_longue`) ; 2026-12-31 (`certification_legi_perimee`) ; 2026-12-31 (`coefficients_anticipation_agirc_arrco`).
 - **Les régimes hors champ** : 15, chacun avec sa raison dans l'inventaire.
 
 ## 4. Ce que ce tableau ne sait pas encore dire

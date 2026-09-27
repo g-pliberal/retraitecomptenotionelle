@@ -1,28 +1,177 @@
 schema_version: 1
 id: assiette_minimale_agricole
 intitule: >-
-  Assiette minimale des non-salariés agricoles : un revenu inférieur au repère est relevé
-  jusqu'à lui, à la retraite proportionnelle depuis 1990 comme à la complémentaire obligatoire
-  depuis 2003.
-etat: a_verifier
+  Assiette minimale des chefs d'exploitation agricole : la cotisation qui ouvre les points
+  de la retraite proportionnelle est due sur 400 SMIC horaires au moins depuis 1990, sur
+  600 depuis le décret n° 2004-783 du 29 juillet 2004 ; celle de la complémentaire
+  obligatoire sur 2 028 SMIC en 2003, 1 957 en 2004, 1 888 en 2005 et 1 820 depuis 2006,
+  qui ouvrent 100 points par an, 117 en 2017 et 133 depuis 2018.
+etat: approchee
 etape: acquerir_les_droits
 effet: >-
-  Les chefs d'exploitation aux revenus faibles. Fiche née à la phase 6 (docs/architecture.md,
-  § 11) de ce que le schéma des régimes disait de l'interrupteur `assiette_plancher` :
-  elle dit la règle que le moteur applique déjà, et les textes que le dépôt citait pour
-  elle ; elle reste à relire à la source.
+  Les chefs d'exploitation aux revenus faibles, et, à la complémentaire, tous les chefs
+  qui cotisent depuis 2017. Le moteur s'écarte du texte en trois points. À la base, il
+  relève le revenu à 600 SMIC horaires dès 1990, quand les textes ne le relevaient qu'à
+  400 SMIC avant le décret n° 2004-783 : de 1990 à 2003 au moins, un chef sous 400 SMIC
+  reçoit 22,5 points au lieu de 15, la moitié en plus, et porte au compte une cotisation
+  assise sur une fois et demie l'assiette due. À la complémentaire, le minimum était de
+  2 028 SMIC en 2003, 1 957 en 2004 et 1 888 en 2005, et non de 1 820 : au-dessus, le
+  moteur compte jusqu'à 11,4 %, 7,5 % et 3,7 % de points de trop, et au minimum une
+  cotisation plus faible de 10,3 %, 7,0 % et 3,6 %. Surtout, l'assiette minimale ouvre
+  117 points en 2017 et 133 depuis 2018, et non 100, et les points au-dessus suivent («
+  P = N x RP/1820 SMIC ») : le moteur en compte 14,5 % de moins en 2017 et 24,8 % de
+  moins depuis 2018. Un chef au minimum de 2003 à 2025 a 2 581 points cotisés ; le
+  moteur lui en donne 2 300, 10,9 % de moins. Depuis 2026, le plancher de la base reste
+  de 600 SMIC, celui de la complémentaire de 1 820 SMIC, qui ouvrent 133 points.
 sources:
   lu_le: 2026-09-27
-  prochaine_relecture: 2026-12-31
+  prochaine_relecture: 2027-03-31
   a_relire:
   - >-
-    Relire R. 732-70 et R. 732-71 du code rural pour la base, et l'article qui fixe l'assiette
-    minimale de la complémentaire obligatoire (L. 732-56 et suivants), dans l'index LEGI,
-    et les rattacher.
+    Après la phase 7 : relever l'assiette de la base à 400 SMIC horaires, et non 600, pour
+    les cotisations d'avant le décret n° 2004-783, en scindant la période 1990-2002 de
+    `msa_non_salaries` ; porter le repère de `msa_rco` à 2 028 SMIC en 2003, 1 957 en 2004
+    et 1 888 en 2005 ; faire ouvrir à ce repère 117 points en 2017 et 133 depuis 2018, au
+    lieu de `points_maximum: 100`, qui ne vaut que de 2003 à 2016.
+  - >-
+    Dire la première année de cotisation assise sur 600 SMIC : le décret n° 2004-783,
+    publié au Journal officiel du 1er août 2004, ne la nomme pas dans ce qui en a été lu,
+    et 2004 comme 2005 restent possibles.
+  lectures:
+  - type: legifrance
+    reference: >-
+      décret n° 90-498 du 21 juin 1990, article 9, II (LEGIARTI000006774785, du 23 juin
+      1990 au 9 octobre 1992) : « Le montant des cotisations annuelles d'assurance
+      vieillesse prévues au a et au b de l'article 1123 du code rural [...] ne peut être
+      inférieur à celui des cotisations qui seraient calculées respectivement sur un revenu
+      égal à 800 et 400 fois le montant du salaire minimum de croissance » ; le b est «
+      Une cotisation due pour chaque chef d'exploitation ou d'entreprise » (article 1123,
+      LEGIARTI000006581059), celle qui ouvre les points (décret n° 80-808, article 8-1).
+      Toujours 400 fois pour les cotisations du b et du c dans la rédaction du 9 octobre
+      1992 (LEGIARTI000006774786), au décret n° 94-690, article 14, II
+      (LEGIARTI000006777408, jusqu'au 6 juillet 2001), puis « pour les cotisations visées
+      aux 2° et 3° » au décret n° 2001-584, article 11, II (LEGIARTI000006780202, jusqu'au
+      1er août 2004). Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      décret n° 2004-783 du 29 juillet 2004 (JORFTEXT000000235454, Journal officiel du 1er
+      août 2004), article 1 : « 600 fois le montant du salaire minimum de croissance en
+      vigueur au 1er janvier de l'année considérée pour les cotisations mentionnées aux 2°
+      (a) et 3° », repris à l'article 11 du décret n° 2001-584 (LEGIARTI000006780203) ; le
+      texte lu ne dit pas la première année de cotisation qu'il vise. Lu dans l'index JORF
+      du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      D. 731-120 (LEGIARTI000006597336, du 22 avril 2005 au 1er janvier 2014 ;
+      LEGIARTI000028393446, jusqu'au 7 juillet 2024 ; LEGIARTI000049904749, jusqu'au 1er
+      janvier 2026) : « 600 fois le montant du salaire minimum de croissance en vigueur au
+      1er janvier de l'année considérée pour les cotisations mentionnées aux 2° a) et 3° ».
+      Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      décret n° 2025-1417 du 30 décembre 2025, article 4, 2° (JORFARTI000053228364), pour
+      les cotisations des périodes courant depuis le 1er janvier 2026 (article 5, I) : D.
+      731-120 devient « La cotisation d'assurance vieillesse prévue au 1° de l'article L.
+      731-42 est assise sur une assiette au moins égale à 600 fois le montant horaire du
+      salaire minimum de croissance en vigueur le 1er janvier de l'année considérée » ;
+      l'index LEGI du dépôt n'a pas cette rédaction. Lu dans l'index JORF du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      L. 732-59, ses six rédactions depuis le 1er janvier 2003 (LEGIARTI000006585656 à
+      LEGIARTI000051289570) : les cotisations de la complémentaire sont calculées « sans
+      que l'assiette puisse être inférieure à un minimum fixé par décret ». Lu dans l'index
+      LEGI du dépôt
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      le minimum de la complémentaire, année par année : « 2 028 fois le montant du salaire
+      minimum de croissance en vigueur au 1er janvier 2003 » (décret n° 2003-147 du 20
+      février 2003, article 1, JORFARTI000001271159 ; décret n° 2003-146, article 5,
+      LEGIARTI000006780983) ; 1 957 fois « pour l'année 2004 » (décret n° 2004-1068 du 7
+      octobre 2004, article 1, JORFARTI000001097282 ; décret n° 2003-146, article 5,
+      LEGIARTI000006780984) ; 1 888 fois « pour l'année 2005 » (décret n° 2005-1408 du 15
+      novembre 2005, article 1, JORFARTI000001718126) ; 1820 fois « pour l'année 2006 »
+      (D. 732-165, LEGIARTI000006597606). Lu dans les index JORF et LEGI du dépôt
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      D. 732-155, ses six rédactions (LEGIARTI000006597591 à LEGIARTI000049904715), dont
+      celle du 5 mai 2017 (LEGIARTI000034578860) : « Lorsque l'assiette des cotisations
+      [...] est inférieure au minimum [...], elle est portée à ce minimum et le nombre de
+      points de retraite complémentaire obligatoire est égal à 100 par an pour les périodes
+      postérieures au 31 décembre 2002 et antérieures au 1er janvier 2017, à 117 par an
+      pour l'année 2017, à 133 par an à compter de l'année 2018 » ; au-dessus, « P = N x
+      RP/1820 SMIC ». Pour les cotisations des périodes courant depuis 2026
+      (LEGIARTI000049904715) : « P = C/ [(1820 SMIC x T)/ N] », N étant « égal à 133 ».
+      Lu dans l'index LEGI du dépôt
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      décret n° 2017-716 du 2 mai 2017 (JORFTEXT000034567505), notice : « à compter de
+      2017, ce nombre augmente dans les mêmes proportions que les taux de cotisations ». Lu
+      dans l'index JORF du dépôt
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      MSA, « La retraite des non-salariés agricoles », mis à jour le 17 août 2026, onglet «
+      RCO : comment est-elle calculée ? » : « Le paiement d'une cotisation assise sur
+      l'assiette minimum permet d'acquérir 100 points de retraite complémentaire » et,
+      au-dessus, « Revenus professionnels x (100/1820 SMIC horaire) » ; la page s'en tient
+      aux 100 points que D. 732-155 ne donne plus que jusqu'en 2016
+    url: https://www.msa.fr/lfp/retraite/non-salaries-agricoles
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      MSA, « Réforme de la retraite des exploitants : 25 meilleures années », mis à jour le
+      27 avril 2026, question 7 : pour les chefs, le nombre de points de la proportionnelle
+      « dépendait directement des revenus, sur une échelle comprise entre 23 et 113 points
+      » ; 23 est le barème de R. 732-71 à 600 SMIC, 22,5, arrondi
+    url: https://www.msa.fr/lfp/retraite/reforme-exploitants-25-meilleures-annees
+    date: 2026-09-27
 textes_a_rattacher:
-- reference: code rural et de la pêche maritime, R. 732-70 et R. 732-71
 - reference: >-
-    loi du 4 mars 2002, code rural et de la pêche maritime, L. 732-56 et suivants
+    base, de 1990 à 2005 : décret n° 90-498 du 21 juin 1990, article 9, II
+    (LEGIARTI000006774785, LEGIARTI000006774786) ; décret n° 94-690 du 9 août 1994, article
+    14, II (LEGIARTI000006777408) ; décret n° 2001-584 du 4 juillet 2001, article 11, II
+    (LEGIARTI000006780202, puis LEGIARTI000006780203 dans la rédaction du décret n°
+    2004-783 du 29 juillet 2004)
+- reference: >-
+    base, depuis 2005 : code rural et de la pêche maritime, D. 731-120
+    (LEGIARTI000006597336, LEGIARTI000028393446, LEGIARTI000049904749), puis dans la
+    rédaction du décret n° 2025-1417 du 30 décembre 2025, article 4, 2°, pour les
+    cotisations depuis 2026
+- reference: >-
+    code rural et de la pêche maritime, R. 732-71 (LEGIARTI000006597480,
+    LEGIARTI000035918339) : R, « le montant des revenus professionnels retenus en vue du
+    calcul des cotisations », fait entrer le plancher dans le barème des points
+- reference: >-
+    complémentaire, créée par la loi n° 2002-308 du 4 mars 2002 : code rural et de la
+    pêche maritime, L. 732-59 (LEGIARTI000006585656, LEGIARTI000006585657,
+    LEGIARTI000023034495, LEGIARTI000028499005, LEGIARTI000048683771,
+    LEGIARTI000051289570)
+- reference: >-
+    complémentaire, de 2003 à 2006 : décret n° 2003-146 du 20 février 2003, article 5
+    (LEGIARTI000006780983, LEGIARTI000006780984) ; décrets n° 2003-147 du 20 février 2003,
+    n° 2004-1068 du 7 octobre 2004 et n° 2005-1408 du 15 novembre 2005, article 1 ; D.
+    732-165 pour 2006 (LEGIARTI000006597606)
+- reference: >-
+    complémentaire : code rural et de la pêche maritime, D. 732-155 (LEGIARTI000006597591,
+    LEGIARTI000006597592, LEGIARTI000006597593, LEGIARTI000023395107,
+    LEGIARTI000034578860, LEGIARTI000049904715), et décret n° 2017-716 du 2 mai 2017
+textes_sans_effet:
+- id: LEGIARTI000033824916
+  motif: >-
+    D. 732-165 pour 2016 à 2018 : le taux passe à 3 %, 3,5 % puis 4 %, et l'assiette ne
+    peut toujours « être inférieure à 1820 fois le montant du salaire minimum de croissance
+    en vigueur au 1er janvier de l'année au titre de laquelle la cotisation est due »
+- id: LEGIARTI000041404706
+  motif: >-
+    D. 732-165 depuis 2019 : le taux est de 4 %, « sans que cette assiette puisse être
+    inférieure à 1820 fois le montant du salaire minimum de croissance »
 code:
   interrupteurs:
     assiette_plancher: true

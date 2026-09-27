@@ -1,27 +1,366 @@
 schema_version: 1
 id: surcote_par_age_seul
 intitule: >-
-  Majoration des complémentaires libérales liquidées après l'âge du taux plein : par trimestre
-  civil entier écoulé depuis cet âge, sans condition de durée ni de cotisation.
-etat: a_verifier
+  Majoration de la pension des complémentaires libérales liquidées après l'âge du taux
+  plein, par trimestre ou par année pleine de report, au taux et dans les bornes que
+  fixent les statuts de chaque section : depuis 2017, 1,25 % par trimestre après 62 ans,
+  0,75 % après 65 ans, jusqu'à 70 ans (CARMF, ASV des médecins) ; 1,25 % par trimestre
+  civil entier dans la limite de vingt trimestres (CARPIMKO) ; au-delà de 65 ans, 1,25 %
+  par trimestre plein dans la limite de 25 %, 0,75 % et 15 % de septembre 2018 à juillet
+  2025 (CAVEC) ; 0,5 % par trimestre pendant trois ans au plus, moins pour les nés avant
+  1956 (CAVP) ; 5 % par année entière de report, d'un à cinq ans, avec trente années
+  d'affiliation, sur les points des trente premières années (Cipav) ; aux notaires qui
+  continuent d'exercer, 0,5 % jusqu'à 70 ans, puis 1 % jusqu'à la fin d'activité depuis
+  2024 (CPRN).
+etat: approchee
 etape: liquider_chaque_regime
 effet: >-
-  Les complémentaires de la CARMF, de la CARCDSF, de la CAVP, de la CARPIMKO, de la CAVAMAC,
-  de la CAVEC, de la Cipav et de la CPRN, et l'ASV. Fiche née à la phase 6 (docs/architecture.md,
-  § 11) de ce que le schéma des régimes disait de l'interrupteur `surcote_points` : elle
-  dit la règle que le moteur applique déjà, et les textes que le dépôt citait pour elle
-  ; elle reste à relire à la source.
+  Les complémentaires de la CARMF, de la CARPIMKO, de la CAVEC, de la CAVP, de la Cipav et
+  de la CPRN, et l'ASV des médecins, dont les périodes renvoient à cette fiche ; la
+  CARCDSF et la CAVAMAC, par leurs propres fiches. Relue à la source le 27 septembre 2026,
+  caisse par caisse. La CARMF et l'ASV sont servies comme leurs textes, qui comptent
+  « après l'âge de 62 ans » depuis l'arrêté du 22 mars 2017 (trois mois plus tôt, depuis
+  l'âge légal ; la caisse écrit 62 ans dès 2017). Ailleurs, taux et âges sont ceux des
+  textes, à cinq écarts près, que rien ne corrige encore. CARPIMKO : la majoration court
+  de « l'âge auquel elle aurait pu être liquidée sans abattement », l'âge légal pour qui a
+  la durée du régime de base, et la caisse la sert « au-delà de 62 ans » ; le moteur part
+  de l'âge du taux plein de la table, 67 ans depuis la génération 1961 : jusqu'à vingt
+  trimestres, 25 points de pension, de moins pour qui a sa durée avant et diffère, non
+  mesuré sur la population. CAVP : rien pour les nés jusqu'au 30 juin 1951, rien au-delà
+  de 66 ans pour les nés de juillet 1951 à 1952, ni de 68 ans pour ceux de 1953 à 1955 ;
+  le moteur leur sert douze trimestres, jusqu'à 6, 4 et 2 points de trop. Cipav : un
+  report « de 1 à 5 ans » depuis le 1er juillet 2026, que le moteur ne borne pas, 5 points
+  de trop par année au-delà de 72 ans. CAVEC : 0,75 % dès le 4 septembre 2018 et 1,25 %
+  dès le 6 juillet 2025, que le moteur sert en 2019 et en 2026, jusqu'à 10 points d'écart
+  aux liquidations du 1er octobre 2018 et du 1er octobre 2025 ; jusqu'en septembre 2018,
+  les points acquis après 65 ans n'étaient pas majorés, et le moteur les majore, non
+  mesuré. CPRN : seuls comptent les trimestres d'exercice ; le moteur compte le temps
+  jusqu'à la liquidation, trop pour qui cesse d'exercer avant de liquider, non mesuré.
+  Restent à lire dans leurs statuts la CARMF de 2000 à 2016 et la Cipav avant juillet
+  2026.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    Relire, caisse par caisse, l'article des statuts qui majore la pension différée, et
-    le rattacher ; les fiches de la CARCDSF et de la CAVAMAC le font déjà pour leur caisse.
+    Après la phase 7 : CARPIMKO, faire courir la majoration de l'âge où l'assuré pouvait
+    liquider sans abattement — celui de L. 161-17-2 quand il a la durée du régime de base
+    (règlement de 2026, articles 3, 2°, et 5 ; statuts de 2015, articles 11 et 12 ter) —,
+    et non de la seule table `carpimko_2016`.
+  - >-
+    Après la phase 7 : CAVP, borner la majoration par génération — rien pour les nés
+    jusqu'au 30 juin 1951, jusqu'à 66 ans pour les nés du 1er juillet 1951 à 1952, jusqu'à
+    68 ans pour ceux de 1953 à 1955 (annexe à l'article 15 des statuts de 2011, article 12
+    du règlement de 2026).
+  - >-
+    Après la phase 7 : Cipav, borner le report à vingt trimestres sur les liquidations du
+    1er juillet 2026 et après. Puis lire l'article 3.15 des statuts d'avant le décret
+    n° 2026-418, que l'index ne porte que par son complément de 2023, pour dater la borne
+    et la règle que la fiche de régime sert depuis 2013.
+  - >-
+    Après la phase 7 : CAVEC, servir 0,75 % dès le 4 septembre 2018 et 1,25 % dès le 6
+    juillet 2025. Le retour à 1,25 % vient de l'arrêté du 4 juillet 2025, et non du
+    règlement de 2026, auquel la note de la fiche de régime et `cavec_report_2026`
+    l'attribuent. Jusqu'au 4 septembre 2018, ne majorer que les points acquis jusqu'à la
+    fin de l'année, puis, depuis 2012, du trimestre du 65e anniversaire.
+  - >-
+    Après la phase 7 : CPRN, ne compter que les trimestres d'exercice
+    (`surcote_trimestres_cotises`).
+  - >-
+    CPRN : trancher la lecture divergente de la borne de 70 ans par ce que la caisse publie
+    d'autre de la règle qu'elle applique, sans la solliciter (docs/architecture.md, § 3.5).
+  - >-
+    Après la phase 7 : CARMF, corriger la note des périodes de 2017 et après, qui croit la
+    majoration comptée depuis l'âge légal de 2023 à 2025 : l'arrêté du 22 mars 2017 écrit
+    « après l'âge de 62 ans ». Lire les statuts d'avant 2017, dont l'article 32 (« 5 % par
+    année pleine de différé » après 65 ans), que la fiche de régime sert de 2000 à 2016
+    sans l'avoir lu au Journal officiel ; l'index ne les porte pas.
+  - >-
+    CARCDSF : l'article 35 de ses statuts, dans la rédaction de l'arrêté du 27 décembre
+    2023, ne compte que les trimestres « d'exercice libéral », que `par_age_seul` confond
+    avec le temps écoulé : à reprendre dans la fiche `carcdsf_minoration_age_seul`.
+  lectures_divergentes:
+  - >-
+    CPRN, borne de la majoration depuis le 1er janvier 2024 : l'arrêté du 29 novembre 2023
+    remplace « 70 ans » par « fin d'activité », et le règlement de 2026 (article 9, 1°)
+    écrit « jusqu'à l'âge de fin d'activité » ; la page de la caisse, mise à jour le 26
+    janvier 2026, écrit encore « jusqu'au 70e anniversaire ». Rien de publié ne dit encore
+    laquelle la caisse applique (docs/architecture.md, § 3.3) ; le moteur suit les textes :
+    depuis 2024, sa période de `cprn_complementaire` ne porte plus de borne d'âge.
+  lectures:
+  - type: jorf
+    reference: >-
+      CARMF et ASV, index JORF du dépôt. Arrêté du 30 novembre 2016
+      (JORFARTI000033521562), article 15 des statuts du régime complémentaire, « A compter
+      du 1er janvier 2017 » : « Etre âgé de l'âge prévu au premier alinéa de l'article
+      L. 351-1 du code de la sécurité sociale. Si le médecin demande à bénéficier de la
+      retraite complémentaire après cet âge, il est fait application d'un coefficient de
+      majoration de 1,25 % par trimestre séparant le premier jour du trimestre civil
+      suivant celui où le médecin atteint cet âge de la date d'effet de la retraite » ;
+      « Le coefficient de majoration est le cas échéant réduit à 0,75 % par trimestre à
+      partir du premier jour du trimestre civil suivant celui où le médecin atteint l'âge
+      de 65 ans, sans pouvoir s'appliquer au-delà du premier jour du trimestre civil
+      suivant le soixante dixième anniversaire du médecin ». Arrêté du 1er décembre 2016
+      (JORFARTI000033538061), article 12 des statuts de l'ASV : la même règle, dans les
+      mêmes termes. Arrêté du 22 mars 2017 (JORFARTI000034298521), aux deux articles :
+      « les mots : « après cet âge » sont remplacés par les mots : « après l'âge de 62
+      ans » ». Aucun arrêté suivant, jusqu'au règlement de 2026, ne touche ces phrases ;
+      les statuts d'avant 2017 ne sont pas dans l'index.
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      CARMF et ASV, index LEGI : arrêté du 10 juillet 2026, règlement du régime
+      complémentaire, article 2 (LEGIARTI000054437501, puis LEGIARTI000054890209, version
+      en vigueur depuis le 25 septembre 2026) : « Si le médecin demande à bénéficier de la
+      retraite complémentaire après l'âge de 62 ans, il est fait application d'un
+      coefficient de majoration de 1,25 % par trimestre, séparant le premier jour du
+      trimestre civil suivant celui où le médecin atteint cet âge de la date d'effet de la
+      retraite », avec la même réduction à 0,75 % après 65 ans et la même borne du
+      soixante-dixième anniversaire ; règlement des prestations complémentaires de
+      vieillesse, article 2 (LEGIARTI000054890209) : la même règle, dans les mêmes termes.
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CARMF, guide « Préparez votre retraite en temps choisi », juin 2026, régimes
+      complémentaire et ASV : « La retraite est majorée de 1,25 % par trimestre de report
+      de la retraite de 62 ans jusqu'à 65 ans, soit 5 % par an, de 0,75 % par trimestre de
+      report entre 65 et 70 ans soit 3 % par an » ; chronologie 2025 : depuis 2017,
+      « coefficients de majoration (1,25 % par trimestre de report de prise de leur
+      retraite de 62 à 65 ans et 0,75 % de 65 à 70 ans) ».
+    url: https://www.carmf.fr/doc/documents/guides/guide-retraite.pdf
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      CARPIMKO, arrêté du 31 juillet 2015 (JORFARTI000031255547, Journal officiel du 2
+      octobre 2015, sans date d'effet propre), article 12 ter : « Lorsque la liquidation
+      de la retraite est ajournée au-delà de l'âge auquel elle aurait pu être liquidée
+      sans abattement, les assurés peuvent bénéficier d'une majoration de leur pension.
+      Cette majoration est égale à 1,25 % par trimestre civil entier d'ajournement
+      postérieur à l'âge du taux plein dans la limite de vingt trimestres » ; article 11 :
+      « La retraite est attribuée à taux plein : 1° A 67 ans pour les assurés nés à
+      compter du 1er janvier 1961 ; 2° A partir de 62 ans et avant 67 ans au profit : a)
+      Des assurés nés à compter du 1er janvier 1961 liquidant leur pension du régime de
+      base sans abattement ». Les arrêtés suivants, jusqu'en 2025, n'en changent pas les
+      deux phrases ; celui du 27 décembre 2023 (JORFARTI000048880643) renomme l'intitulé
+      « Majoration de la pension » et y ajoute les trois enfants.
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      CARPIMKO, règlement approuvé par l'arrêté du 10 juillet 2026 (LEGIARTI000054437557),
+      article 5, « Surcote » : les deux phrases de l'article 12 ter, mot pour mot ;
+      article 3 : « La retraite est attribuée à taux plein : 1) A l'âge prévu au 1° de
+      l'article L. 351-8 du code de la sécurité sociale ; 2) A partir de l'âge prévu à
+      l'article L. 161-17-2 du même code et avant l'âge mentionné au 1 au profit des
+      assurés remplissant les conditions leur permettant de liquider leur pension du
+      régime de base sans abattement » ; article 6 : « Age du taux plein » de 65 ans
+      (générations 1955 et antérieures) à 67 ans (1961, nés jusqu'au 31 août), que la
+      table `carpimko_2016` reprend.
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CARPIMKO, page « Calcul de ma retraite », tableau récapitulatif : « Surcote (En cas
+      de poursuite de l'activité au-delà de 62 ans, sans demander sa retraite, et si
+      l'affilié a effectué le nombre de trimestres requis) », pour le régime
+      complémentaire « 1,25% par trimestre civil après l'âge du taux plein dans la limite
+      de 20 trimestre » ; page « Age de ma retraite », régime de base et complémentaire,
+      entre 62 et 67 ans : « Avec surcote : à condition de totaliser plus que le nombre de
+      trimestres requis ».
+    url: >-
+      https://www.carpimko.com/je-prepare-ma-retraite/mes-regimes-de-retraite/calcul-de-ma-retraite
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      CAVEC, index JORF. Arrêté du 22 février 2008 (JORFARTI000018197778), article 3.14 :
+      « Le compte de points de l'assuré qui diffère la liquidation de la retraite au-delà
+      du 65e anniversaire est majoré de 1,25 % par trimestre plein de prorogation dans la
+      limite de 25 %. La majoration s'applique au compte de points arrêté au 31 décembre
+      de l'année du 65e anniversaire. Les points provenant des cotisations versées pendant
+      cette période de prorogation ne bénéficient pas de cette majoration. » Arrêté du 9
+      février 2012 (JORFARTI000025395367) : « les mots : « au 31 décembre de l'année »
+      sont remplacés par les mots : « à la fin du trimestre » ». Arrêté du 20 août 2018
+      (JORFARTI000037363871, Journal officiel du 4 septembre 2018, sans date d'effet
+      propre), article 13 : « une majoration de 0,75 % par trimestre plein de prorogation
+      au-delà de cet âge, dans la limite maximale de 15 % » ; « La majoration s'applique
+      sur le nombre de points acquis par cotisations et rachat, arrêté à la date de
+      liquidation ». Arrêté du 4 juillet 2025 (JORFARTI000051849616, Journal officiel du 6
+      juillet 2025, sans date d'effet propre), article 13 : « le nombre : « 0,75 » est
+      remplacé par le nombre : « 1,25 » ; - le nombre : « 15 » est remplacé par le
+      nombre : « 25 » ». Les arrêtés de 2019, de 2024 et du 16 décembre 2025 n'y touchent
+      pas.
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      CAVEC, règlement approuvé par l'arrêté du 10 juillet 2026 (LEGIARTI000054437585),
+      article 1.1.4 : « Le cotisant qui diffère la liquidation de la retraite au-delà du
+      65 e anniversaire obtient une majoration de 1,25 % par trimestre plein de
+      prorogation au-delà de cet âge, dans la limite maximale de 25 %. »
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CAVEC, statuts publiés, « Version du 16/12/2025 », article 13 : « L'affilié qui
+      diffère la liquidation de la retraite au-delà du 65ème anniversaire obtient une
+      majoration de 1,25 % par trimestre plein de prorogation au-delà de cet âge, dans la
+      limite maximale de 25% » ; « Guide du départ à la retraite 2026 » : « Après 65 ans
+      avec 1,25 % de majoration par trimestre civil supplémentaire ».
+    url: https://www.cavec.fr/wp-content/uploads/LesstatutsdelaCavec.pdf
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      CAVP, arrêté du 23 juin 2011 (JORFARTI000024270214), article 12 des statuts du
+      régime complémentaire : « La pension de retraite est majorée lorsqu'elle est
+      liquidée au-delà de l'âge permettant d'obtenir une retraite à taux plein et jusqu'à
+      cet âge augmenté de 3 ans pour les affiliés nés à compter du 1er janvier 1956. Cette
+      majoration est égale à 0,5 % par trimestre » ; nés jusqu'en 1952, « uniquement
+      jusqu'à l'âge permettant d'obtenir une retraite entière augmenté d'un an », de 1953
+      à 1955, « augmenté de deux ans » ; annexe à l'article 15 : nés jusqu'au 30 juin
+      1951, « Pas de majoration de pension pour un départ après 65 ans », du 1er juillet
+      1951 à 1952, « après 66 ans », de 1953 à 1955, « après 68 ans ». Les arrêtés
+      suivants, jusqu'en 2025, ne touchent pas ces phrases.
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      CAVP, règlement approuvé par l'arrêté du 10 juillet 2026, article 12
+      (LEGIARTI000054437738, puis LEGIARTI000054890978 depuis le 25 septembre 2026) : « La
+      pension de retraite est majorée lorsqu'elle est liquidée au-delà de l'âge du taux
+      plein fixé à l'article 8 du présent règlement et jusqu'à cet âge augmenté de trois
+      ans pour les affiliés nés à compter du 1 er janvier 1956. Cette majoration est égale
+      à 0,5 % par trimestre » ; « les affiliés nés avant le 30 juin 1951 inclus ne
+      bénéficient pas d'une majoration de leur pension de retraite pour un départ après 65
+      ans », ceux du 1er juillet 1951 à 1952 « uniquement jusqu'à 66 ans », ceux de 1953 à
+      1955 « uniquement jusqu'à 68 ans » ; article 8 : l'âge du 1° de L. 351-8, 66 ans de
+      1953 à 1955, 65 ans avant.
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CAVP, page « Comment votre retraite est-elle calculée ? » : « Une minoration est
+      appliquée si vous n'avez pas atteint l'âge du taux plein. Au-delà de cet âge, une
+      surcote est appliquée », sans taux ni borne.
+    url: >-
+      https://www.cavp.fr/préparer-votre-retraite/comment-votre-retraite-est-elle-calculée
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      Cipav, décret n° 79-262, article 5, de 2004 au 1er juillet 2026
+      (LEGIARTI000006767480) : « Le régime d'assurance vieillesse complémentaire institué
+      par le présent décret est établi par les statuts de la section professionnelle
+      mentionnée à l'article 1er » ; article 5-2, II, dans la rédaction du décret
+      n° 2026-418, en vigueur le 1er juillet 2026 (LEGIARTI000054168515) : « L'affilié qui
+      a atteint l'âge prévu au a du 1° de l'article 5-1 et comptant un minimum de trente
+      années d'affiliation à la CIPAV, peut différer la date d'entrée en jouissance de la
+      pension de retraite complémentaire de 1 à 5 ans. Le compte de points qui est alors
+      établi est majoré de 5% par année entière de prorogation. Cette majoration
+      s'applique uniquement aux points acquis au titre des trente premières années de
+      cotisation à la CIPAV » ; article 5-1 (LEGIARTI000054168518) : « A partir de l'âge
+      du taux plein prévu au 1° de l'article L. 351-8 du code de la sécurité sociale ».
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      Cipav, arrêté du 20 mars 2023 (JORFARTI000047334800), 17° : l'article 3.15 des
+      statuts est complété par « Pour la détermination des trente années de cotisation,
+      les années au titre desquelles l'adhérent a obtenu une exonération ou une réduction
+      de cotisation sont prises en compte. » L'article 3.15 lui-même n'est dans aucun des
+      arrêtés de l'index, de 2012 à 2025.
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      Cipav, fiche pratique 2026 « Comment est calculée la retraite ? » : « À partir de 67
+      ans si vous avez 30 années d'affiliation à la Cipav et si vous différez la date
+      d'effet de votre pension de 1 à 5 ans, vous bénéficierez d'une majoration de 5 % par
+      année pleine de report sur les points acquis au titre des 30 premières années
+      d'affiliation » ; guide pratique 2023 : « de 5 % par année pleine de report différé
+      si, à 67 ans, vous réunissez 30 années d'affiliation à la Cipav », sans borne de
+      durée. Le site de la caisse a répondu.
+    url: >-
+      https://www.lacipav.fr/sites/default/files/2026-03/Comment%20est%20calcul%C3%A9e%20la%20retraite%20-%20Fiche%20pratique%202026.pdf
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      CPRN, arrêté du 16 décembre 2013 (JORFARTI000028387445, effet au 1er janvier 2014),
+      article 16 : « Si la demande de retraite intervient après l'âge du taux plein, un
+      coefficient de majoration est appliqué à la pension des notaires ayant continué à
+      exercer et à cotiser dans les conditions de l'article 15. Le coefficient de
+      majoration est fixé à 0,5 % par trimestre au-delà de l'âge du taux plein, jusqu'à
+      l'âge de 70 ans » ; arrêté du 31 mai 2017 (JORFARTI000034975971), article 23 : « La
+      surcote est fixée à 0,5 % par trimestre au-delà de l'âge du taux plein, jusqu'à
+      l'âge de 70 ans » ; arrêté du 29 novembre 2023 (JORFARTI000048679350), en vigueur le
+      1er janvier 2024 : « le pourcentage : « 0,5 % » est remplacé par le pourcentage :
+      « 1 % » et les mots : « 70 ans » sont remplacés par les mots : « fin d'activité » »,
+      et le taux plein à « l'âge mentionné au 1° de l'article L. 351-8 ».
+    date: 2026-09-27
+  - type: legifrance
+    reference: >-
+      CPRN, règlement approuvé par l'arrêté du 10 juillet 2026 (LEGIARTI000054437637),
+      article 9, 1° : « une surcote est appliquée à la pension des notaires ayant continué
+      à exercer et à cotiser dans les conditions définies par le présent règlement. La
+      surcote est fixée à 1 % par trimestre au-delà de l'âge du taux plein, jusqu'à l'âge
+      de fin d'activité » ; article 5 : « Le droit à l'allocation est fixé au premier jour
+      du mois civil qui suit la date de fin d'exercice ou la date souhaitée par
+      l'affilié ».
+    date: 2026-09-27
+  - type: autre
+    reference: >-
+      CPRN, page « L'âge de départ à la retraite », mise à jour le 26 janvier 2026 : « Si
+      au moment de la fin d'activité, l'âge de l'affilié est supérieur à celui du taux
+      plein, une surcote de 1 % par trimestre d'exercice supplémentaire est appliquée sur
+      la pension, jusqu'au 70e anniversaire », borne que les textes ne portent plus depuis
+      2024.
+    url: >-
+      https://cprn.fr/je-suis-affilie/je-suis-actif/preparer-sa-retraite-en-toute-serenite/lage-de-depart-a-la-retraite/
+    date: 2026-09-27
+  - type: jorf
+    reference: >-
+      CARCDSF et CAVAMAC : lectures des fiches `carcdsf_minoration_age_seul` et
+      `cavamac_minoration_age_seul`, du 23 septembre 2026, reprises sans les modifier —
+      CARCDSF, 1 % par trimestre dans la limite de 20 % avant 2024, 1,25 % dans la limite
+      de 25 % depuis ; CAVAMAC, 5 % par année pleine différée dans la limite de 25 %, puis
+      par année pleine cotisée depuis 2024. Relu ce jour, l'article 35 des statuts de la
+      CARCDSF dans la rédaction de l'arrêté du 27 décembre 2023 (JORFARTI000048880707) :
+      « Cette majoration est égale à 1,25 % par trimestre civil entier d'exercice libéral
+      suivant le dernier jour du trimestre civil incluant l'âge mentionné au deuxième
+      alinéa du présent c et accompli à compter du 1er janvier 2024, dans la limite de
+      25 % ».
+    date: 2026-09-27
 textes_a_rattacher:
 - reference: >-
-    statuts des régimes complémentaires des sections professionnelles libérales, article
-    de la majoration pour liquidation différée
+    CARMF : statuts du régime complémentaire, article 15, dans la rédaction des arrêtés du
+    30 novembre 2016 (JORFARTI000033521562) et du 22 mars 2017 (JORFARTI000034298521) ;
+    règlement du régime, article 2, approuvé par l'arrêté du 10 juillet 2026
+    (JORFTEXT000054435848 ; LEGIARTI000054890209)
+- reference: >-
+    ASV des médecins : statuts des prestations supplémentaires de vieillesse, article 12,
+    dans la rédaction des arrêtés du 1er décembre 2016 (JORFARTI000033538061) et du 22
+    mars 2017 (JORFARTI000034298521) ; règlement des prestations complémentaires de
+    vieillesse, article 2, approuvé par le même arrêté du 10 juillet 2026
+    (LEGIARTI000054890209)
+- reference: >-
+    CARPIMKO : statuts, articles 11 et 12 ter, dans la rédaction de l'arrêté du 31 juillet
+    2015 (JORFARTI000031255547) ; règlement, articles 3, 5 et 6, approuvé par l'arrêté du
+    10 juillet 2026 (LEGIARTI000054437557)
+- reference: >-
+    CAVEC : statuts, article 3.14, dans la rédaction des arrêtés du 22 février 2008
+    (JORFARTI000018197778) et du 9 février 2012 (JORFARTI000025395367), puis article 13,
+    dans celle des arrêtés du 20 août 2018 (JORFARTI000037363871) et du 4 juillet 2025
+    (JORFARTI000051849616) ; règlement, article 1.1.4, approuvé par l'arrêté du 10 juillet
+    2026 (LEGIARTI000054437585)
+- reference: >-
+    CAVP : statuts, article 12 et annexe à l'article 15, dans la rédaction de l'arrêté du
+    23 juin 2011 (JORFARTI000024270214) ; règlement, articles 8 et 12, approuvé par
+    l'arrêté du 10 juillet 2026 (LEGIARTI000054890978)
+- reference: >-
+    Cipav : statuts, article 3.15, complété par l'arrêté du 20 mars 2023
+    (JORFARTI000047334800), sous l'article 5 du décret n° 79-262 (LEGIARTI000006767480) ;
+    puis décret n° 79-262, articles 5-1 et 5-2, II, dans la rédaction du décret
+    n° 2026-418, en vigueur le 1er juillet 2026 (LEGIARTI000054168518,
+    LEGIARTI000054168515)
+- reference: >-
+    CPRN : statuts, article 16, dans la rédaction de l'arrêté du 16 décembre 2013
+    (JORFARTI000028387445), puis article 23, dans celle des arrêtés du 31 mai 2017
+    (JORFARTI000034975971) et du 29 novembre 2023 (JORFARTI000048679350) ; règlement,
+    articles 4, 5 et 9, approuvé par l'arrêté du 10 juillet 2026 (LEGIARTI000054437637)
+- reference: >-
+    CARCDSF et CAVAMAC : les textes que rattachent leurs fiches, dont l'article 35 des
+    statuts de la CARCDSF dans la rédaction de l'arrêté du 27 décembre 2023
+    (JORFTEXT000048880697)
 code:
   interrupteurs:
     surcote_points: par_age_seul
