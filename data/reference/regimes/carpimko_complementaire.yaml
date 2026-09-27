@@ -392,6 +392,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -411,8 +412,10 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.
       SES ÂGES, DEPUIS L'ARRÊTÉ DU 31 JUILLET 2015 (JORFTEXT000031255542).
       Article 12 quater, repris par l'arrêté du 27 décembre 2023 et par
       l'article 6 du règlement du 10 juillet 2026 : taux plein à 65 ans
@@ -449,6 +452,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -468,8 +472,10 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.
   - debut: 2018
     fin: 2018
     type_calcul: points
@@ -485,6 +491,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -504,8 +511,10 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.
   - debut: 2019
     fin: 2019
     type_calcul: points
@@ -521,6 +530,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -540,8 +550,10 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.
   - debut: 2020
     fin: 2020
     type_calcul: points
@@ -557,6 +569,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -576,8 +589,10 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.
   - debut: 2021
     fin: 2021
     type_calcul: points
@@ -593,6 +608,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -612,8 +628,10 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.
   - debut: 2022
     fin: 2022
     type_calcul: points
@@ -629,6 +647,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -648,8 +667,10 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.
   - debut: 2023
     fin: 2023
     type_calcul: points
@@ -665,6 +686,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion]
     assiette: plafonnee_5_pass
@@ -684,8 +706,10 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.
   - debut: 2024
     fin: 2024
     type_calcul: points
@@ -701,6 +725,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee_5_pass
@@ -720,8 +745,10 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.
       TROIS ENFANTS DEPUIS L'ARRÊTÉ DU 27 DÉCEMBRE 2023
       (JORFTEXT000048880637) : « le montant de la pension des assurés
       ayant eu au moins trois enfants est majoré de 10 % dans les mêmes
@@ -743,6 +770,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee_5_pass
@@ -763,8 +791,10 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.
   - debut: 2026
     fin: null
     type_calcul: points
@@ -780,6 +810,7 @@ periodes:
     decote_par_trimestre: 0.0125
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
+    surcote_depuis_la_duree: surcote_par_age_seul
     surcote_trimestres_maximum: 20
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee_3_pass
@@ -818,5 +849,7 @@ periodes:
       le règlement du 10 juillet 2026 (LEGIARTI000054437557, article 5)
       reprend mot pour mot. La fiche portait 0,75 %, le taux du régime
       de BASE, que le moteur ne lisait pas ; elle sert 1,25 % depuis
-      l'âge du taux plein lu à la génération, à partir de 2016, première
-      année pleine.
+      l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal dès que la durée du régime de base est atteinte, l'âge du taux
+      plein de la génération sinon (`surcote_depuis_la_duree`) —, à
+      partir de 2016, première année pleine.

@@ -152,7 +152,7 @@ periodes:
       la suppose identique depuis 2000. Avant, rien n'est lu, rien n'est
       servi.
   - debut: 2013
-    fin: 2022
+    fin: 2021
     type_calcul: points
     age_ouverture: 62
     age_ouverture_par_generation: age_legal_par_generation
@@ -166,6 +166,8 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
+    surcote_age_debut: 65
+    surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee_3_pass
@@ -209,12 +211,41 @@ periodes:
       vous réunissez 30 années d'affiliation à la Cipav », et entre 62
       et 67 ans « le même abattement que celui appliqué à votre retraite
       de base ». Le moteur retient 1,25 % par trimestre, par années
-      pleines, depuis l'âge du taux plein lu à la génération, sous
+      pleines, depuis soixante-cinq ans : jusqu'au 31 décembre 2021,
+      l'article 3.15 des statuts vise l'adhérent « âgé de 65 ans », et il
+      borne le report « de 1 à 5 ans », cinq années au plus ; sous
       condition de cent vingt trimestres dans le régime ; il majore TOUS
       les points et non ceux des trente premières années, ce que rien
       dans le modèle ne distingue. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
       période, et rien avant.
+  - debut: 2022
+    fin: 2022
+    type_calcul: points
+    age_ouverture: 62
+    age_ouverture_par_generation: age_legal_par_generation
+    age_taux_plein: 67
+    age_taux_plein_par_generation: age_annulation_decote
+    duree_requise_trimestres: 172
+    duree_requise_par_generation: duree_requise_par_generation
+    taux_plein: 1.0
+    salaire_reference: carriere_entiere
+    decote_par_trimestre: 0.0125
+    surcote_par_trimestre: 0.0125
+    surcote_points: surcote_par_age_seul
+    surcote_pas_trimestres: 4
+    surcote_trimestres_maximum: 20
+    surcote_affiliation_minimale_trimestres: 120
+    avantages_non_contributifs: [reversion, majoration_enfants]
+    assiette: plafonnee_3_pass
+    taux_cotisation_retraite: 0.0
+    cotisation_par_classes: cotisation_par_classes_liberales
+    notes: >-
+      Les règles de 2013, le report compté de l'âge du taux plein depuis
+      le 1er janvier 2022 : l'arrêté du 16 décembre 2021 remplace, à
+      l'article 3.15, « âgé de 65 ans » par « qui a atteint l'âge prévu
+      au deuxième alinéa du 1° de l'article 3.13 », l'âge du 1° de
+      L. 351-8, et laisse la borne « de 1 à 5 ans ».
   - debut: 2023
     fin: 2024
     type_calcul: points
@@ -230,6 +261,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
+    surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee
@@ -253,8 +285,9 @@ periodes:
       vous réunissez 30 années d'affiliation à la Cipav », et entre 62
       et 67 ans « le même abattement que celui appliqué à votre retraite
       de base ». Le moteur retient 1,25 % par trimestre, par années
-      pleines, depuis l'âge du taux plein lu à la génération, sous
-      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      pleines, depuis l'âge du taux plein lu à la génération, cinq années
+      au plus (« de 1 à 5 ans »), sous condition de cent vingt trimestres
+      dans le régime ; il majore TOUS
       les points et non ceux des trente premières années, ce que rien
       dans le modèle ne distingue. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
@@ -274,6 +307,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
+    surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_1_3_pass
@@ -296,8 +330,9 @@ periodes:
       vous réunissez 30 années d'affiliation à la Cipav », et entre 62
       et 67 ans « le même abattement que celui appliqué à votre retraite
       de base ». Le moteur retient 1,25 % par trimestre, par années
-      pleines, depuis l'âge du taux plein lu à la génération, sous
-      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      pleines, depuis l'âge du taux plein lu à la génération, cinq années
+      au plus (« de 1 à 5 ans »), sous condition de cent vingt trimestres
+      dans le régime ; il majore TOUS
       les points et non ceux des trente premières années, ce que rien
       dans le modèle ne distingue. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
@@ -318,6 +353,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
+    surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_1_3_5_pass
@@ -334,8 +370,9 @@ periodes:
       vous réunissez 30 années d'affiliation à la Cipav », et entre 62
       et 67 ans « le même abattement que celui appliqué à votre retraite
       de base ». Le moteur retient 1,25 % par trimestre, par années
-      pleines, depuis l'âge du taux plein lu à la génération, sous
-      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      pleines, depuis l'âge du taux plein lu à la génération, cinq années
+      au plus (« de 1 à 5 ans »), sous condition de cent vingt trimestres
+      dans le régime ; il majore TOUS
       les points et non ceux des trente premières années, ce que rien
       dans le modèle ne distingue. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
@@ -356,6 +393,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
+    surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: plafonnee
@@ -380,8 +418,9 @@ periodes:
       vous réunissez 30 années d'affiliation à la Cipav », et entre 62
       et 67 ans « le même abattement que celui appliqué à votre retraite
       de base ». Le moteur retient 1,25 % par trimestre, par années
-      pleines, depuis l'âge du taux plein lu à la génération, sous
-      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      pleines, depuis l'âge du taux plein lu à la génération, cinq années
+      au plus (« de 1 à 5 ans »), sous condition de cent vingt trimestres
+      dans le régime ; il majore TOUS
       les points et non ceux des trente premières années, ce que rien
       dans le modèle ne distingue. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de
@@ -401,6 +440,7 @@ periodes:
     surcote_par_trimestre: 0.0125
     surcote_points: surcote_par_age_seul
     surcote_pas_trimestres: 4
+    surcote_trimestres_maximum: 20
     surcote_affiliation_minimale_trimestres: 120
     avantages_non_contributifs: [reversion, majoration_enfants]
     assiette: tranche_1_4_pass
@@ -420,8 +460,9 @@ periodes:
       vous réunissez 30 années d'affiliation à la Cipav », et entre 62
       et 67 ans « le même abattement que celui appliqué à votre retraite
       de base ». Le moteur retient 1,25 % par trimestre, par années
-      pleines, depuis l'âge du taux plein lu à la génération, sous
-      condition de cent vingt trimestres dans le régime ; il majore TOUS
+      pleines, depuis l'âge du taux plein lu à la génération, cinq années
+      au plus (« de 1 à 5 ans »), sous condition de cent vingt trimestres
+      dans le régime ; il majore TOUS
       les points et non ceux des trente premières années, ce que rien
       dans le modèle ne distingue. Aucun statut de la caisse ne date la
       règle dans l'index : elle est servie depuis 2013, borne de

@@ -1290,6 +1290,34 @@ export function abattementPoints(moteur, periode, carriere, trimestres, requis, 
 }
 
 /**
+ * Le premier âge, depuis l'âge légal de droit commun et de trimestre en
+ * trimestre, où la durée d'assurance atteint la durée requise ; `null` si elle
+ * ne l'atteint pas avant la liquidation. La CARPIMKO majore la pension
+ * « lorsque la liquidation de la retraite est ajournée au-delà de l'âge auquel
+ * elle aurait pu être liquidée sans abattement » (règlement de 2026, article
+ * 5). La durée à un âge est celle de la liquidation, moins ce que les lignes
+ * de la carrière ont validé depuis, au mois près.
+ */
+export function ageDeLaDureeAtteinte(moteur, periode, carriere, trimestres, requis) {
+  const legal = ouvrir.ageOuvertureCommun(moteur, periode, carriere);
+  const fin = carriere.dateLiquidation;
+  for (let trimestre = 0; ; trimestre += 1) {
+    const age = legal + trimestre / 4.0;
+    const debut = carriere.dateNaissance.plusMois(enMois(age));
+    if (debut.rang >= fin.rang) {
+      return null;
+    }
+    let depuis = 0;
+    for (const ligne of carriere.lignes) {
+      depuis += trimestresDeLaLigneEntre(carriere, ligne, debut, fin);
+    }
+    if (trimestres - depuis + 1e-9 >= requis) {
+      return age;
+    }
+  }
+}
+
+/**
  * Coefficient de surcote, trimestre civil par trimestre civil.
  *
  * Règle de la circulaire Cnav 2018-04 (point 2) : la PÉRIODE DE RÉFÉRENCE
@@ -1418,9 +1446,22 @@ export function surcotePoints(moteur, periode, carriere, trimestres, requis, age
   if (debut === null || debut === undefined) {
     debut = ouvrir.ageTauxPlein(moteur, periode, carriere);
   }
+  if (periode.surcote_depuis_la_duree) {
+    const parLaDuree = ageDeLaDureeAtteinte(moteur, periode, carriere, trimestres, requis);
+    if (parLaDuree !== null) {
+      debut = Math.min(debut, parLaDuree);
+    }
+  }
   let fin = ageLiquidation;
   if (periode.surcote_age_maximum !== null && periode.surcote_age_maximum !== undefined) {
     fin = Math.min(fin, periode.surcote_age_maximum);
+  }
+  if (periode.age_table) {
+    // La borne que le règlement écrit par génération (la CAVP).
+    const borne = moteur.agesRegimes.ageSurcoteMaximum(periode.age_table, carriere.generation);
+    if (borne !== null) {
+      fin = Math.min(fin, borne);
+    }
   }
   // Des trimestres civils ENTIERS : deux mois de plus ne valent rien.
   let ecoules = Math.floor((Math.max(0.0, fin - debut) + 1e-9) * 4);

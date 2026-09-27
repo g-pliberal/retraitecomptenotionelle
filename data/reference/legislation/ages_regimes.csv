@@ -14,7 +14,9 @@
 # la fiche lit par ses drapeaux `*_par_generation`, qui répondent. La colonne
 # `decote_par_trimestre`, quand elle est remplie, donne le coefficient de
 # minoration que le règlement écrit pour la génération ; vide, la fiche garde
-# le sien.
+# le sien. La colonne `age_surcote_maximum`, de même, donne l'âge au-delà
+# duquel la majoration ne court plus, quand le règlement le fait dépendre de
+# la génération ; vide, la fiche garde ses bornes `surcote_*`.
 #
 # `cavom` — régime complémentaire de la CAVOM. Article 14 des statuts, dans la
 #   rédaction de l'arrêté du 12 décembre 2024 (JORF du 24 décembre 2024), puis
@@ -51,7 +53,13 @@
 #   affiliés nés en 1953, 1954 et 1955 ». Avant 2011, soixante-cinq ans pour
 #   tous (statuts approuvés le 11 mai 2009, article 12) : la table le rend
 #   aussi, les générations 1953 et suivantes n'ayant pu liquider avant. L'âge
-#   d'ouverture est celui de L. 161-17-2 (article 15) : case vide.
+#   d'ouverture est celui de L. 161-17-2 (article 15) : case vide. La
+#   majoration court « jusqu'à cet âge augmenté de 3 ans pour les affiliés nés
+#   à compter du 1er janvier 1956 » (même article 12) ; l'annexe à l'article
+#   15 la refuse « pour un départ après 65 ans » aux nés jusqu'au 30 juin
+#   1951, « après 66 ans » à ceux du 1er juillet 1951 à 1952, « après 68 ans »
+#   à ceux de 1953 à 1955, et le règlement de 2026 le reprend (article 12) :
+#   la colonne `age_surcote_maximum`, d'où la ligne de juillet 1951.
 #
 # `carcdsf_2011` — complémentaire des chirurgiens-dentistes et des
 #   sages-femmes, de 2011 à 2023. Article 19 de ses statuts approuvés le 13
@@ -127,7 +135,7 @@
 #       référence d'avant, que la diminution de l'article 85-2, II, réduit : la
 #       période de 2025 la lit dans celle de l'année où le droit s'ouvre
 #       (`age_taux_plein_a_l_ouverture`).
-table,generation,age_ouverture,age_taux_plein,fiabilite,decote_par_trimestre
+table,generation,age_ouverture,age_taux_plein,fiabilite,decote_par_trimestre,age_surcote_maximum
 cavom,1900,60,65,certifiee,
 cavom,1956,60.5,65.5,certifiee,
 cavom,1957,61,66,certifiee,
@@ -140,9 +148,10 @@ cavom,1968,64,67,certifiee,
 cprn_2014,1900,60,65,certifiee,
 cprn_2014,1954,63.583333,68.583333,certifiee,
 cprn_2014,1955,64,69,certifiee,
-cavp,1900,,65,certifiee,
-cavp,1953,,66,certifiee,
-cavp,1956,,67,certifiee,
+cavp,1900,,65,certifiee,,65
+cavp,1951.5,,65,certifiee,,66
+cavp,1953,,66,certifiee,,68
+cavp,1956,,67,certifiee,,70
 carcdsf_2011,1900,,,certifiee,0.0125
 carcdsf_2011,1951.5,,,estimee,0.0125
 carcdsf_2011,1955,,,certifiee,0.015

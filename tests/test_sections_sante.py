@@ -215,9 +215,10 @@ def test_la_carpimko_arrete_sa_minoration_a_son_propre_age(simulateur):
 
 
 def test_la_carpimko_majore_depuis_son_age(simulateur):
-    """Née en 1960, taux plein à 66 ans et 8 mois : un trimestre civil entier
-    avant 67 ans, 1,25 %."""
-    _, pensions = _calculer(simulateur, "auxiliaire_medical", 1960, 67.0)
+    """Née en 1960, taux plein à 66 ans et 8 mois pour qui n'a pas la durée du
+    régime de base : un trimestre civil entier avant 67 ans, 1,25 %. Qui l'a
+    plus tôt est majoré dès qu'il l'atteint (article 12 ter)."""
+    _, pensions = _calculer(simulateur, "auxiliaire_medical", 1960, 67.0, debut=30.0)
     assert _coefficient(pensions["carpimko_complementaire"].detail) == pytest.approx(1.0125)
 
 

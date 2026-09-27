@@ -943,9 +943,17 @@ reformes:
     absorbee_par: []
     non_appliquee: {}
 
+  - code: cavec_report_2025
+    date: 2025-07-06
+    texte: {reference: "arrêté du 4 juillet 2025 portant approbation des modifications apportées aux statuts de la section professionnelle des experts comptables et commissaires aux comptes (CAVEC), article 13 des statuts : « le nombre : « 0,75 » est remplacé par le nombre : « 1,25 » ; - le nombre : « 15 » est remplacé par le nombre : « 25 » », la majoration de report rétablie à 1,25 % par trimestre dans la limite de 25 %", id: JORFARTI000051849616}
+    parametres: [surcote_par_trimestre]
+    regimes: [cavec_complementaire]
+    absorbee_par: []
+    non_appliquee: {}
+
   - code: cavec_report_2026
     date: 2026-07-17
-    texte: {reference: "arrêté du 10 juillet 2026 portant approbation des règlements d'assurance vieillesse complémentaire et d'assurance invalidité-décès de la section professionnelle des experts-comptables et des commissaires aux comptes (CAVEC)", id: LEGIARTI000054437585}
+    texte: {reference: "arrêté du 10 juillet 2026 portant approbation des règlements d'assurance vieillesse complémentaire et d'assurance invalidité-décès de la section professionnelle des experts-comptables et des commissaires aux comptes (CAVEC), article 1.1.4 du règlement : la majoration de 1,25 % que l'arrêté du 4 juillet 2025 avait rétablie (cavec_report_2025), reprise mot pour mot", id: LEGIARTI000054437585}
     parametres: [surcote_par_trimestre]
     regimes: [cavec_complementaire]
     absorbee_par: []

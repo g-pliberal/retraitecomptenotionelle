@@ -373,6 +373,13 @@ class PeriodeRegime:
     #: départ du décompte, et non le temps écoulé : la CAVAMAC majore depuis
     #: 2024 « pour chaque année pleine cotisée dans le présent régime ».
     surcote_trimestres_cotises: bool
+    #: ``par_age_seul`` court de l'âge où la pension pouvait être liquidée
+    #: sans abattement : l'âge légal de droit commun dès que la durée du
+    #: régime de base est atteinte, l'âge du taux plein sinon. La CARPIMKO
+    #: majore « au-delà de l'âge auquel elle aurait pu être liquidée sans
+    #: abattement » (statuts de 2015, article 12 ter ; règlement de 2026,
+    #: article 5).
+    surcote_depuis_la_duree: bool
     #: Plafond en euros de la majoration pour enfants, et année à laquelle il
     #: est publié. Le plafond suit ensuite la valeur de service du point.
     plafond_majoration_enfants: float | None
@@ -1159,6 +1166,7 @@ INTERRUPTEURS: dict[str, object] = {
     "ajournement_par_annee_d_assurance": False,
     "decote_par_la_duree_seule": False,
     "surcote_trimestres_cotises": False,
+    "surcote_depuis_la_duree": False,
     "assiette_plancher": False,
     "assiette_forfaitaire": False,
     "cotisation_par_classes": False,
@@ -1505,6 +1513,7 @@ class CatalogueRegimes:
                     else int(p["surcote_affiliation_minimale_trimestres"])
                 ),
                 surcote_trimestres_cotises=bool(p.get("surcote_trimestres_cotises", False)),
+                surcote_depuis_la_duree=bool(p.get("surcote_depuis_la_duree", False)),
                 plafond_majoration_enfants=(
                     None if p.get("plafond_majoration_enfants") is None
                     else float(p["plafond_majoration_enfants"])

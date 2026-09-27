@@ -2051,9 +2051,22 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
     debut = periode.surcote_age_debut
     if debut is None:
         debut = ouvrir.age_taux_plein(moteur, periode, carriere)
+    if periode.surcote_depuis_la_duree:
+        par_la_duree = age_de_la_duree_atteinte(moteur, periode, carriere,
+                                                trimestres, requis)
+        if par_la_duree is not None:
+            debut = min(debut, par_la_duree)
     fin = age_liquidation
     if periode.surcote_age_maximum is not None:
         fin = min(fin, periode.surcote_age_maximum)
+    if periode.age_table:
+        # La borne que le règlement écrit par génération : la CAVP s'arrête
+        # à soixante-six ans pour les nés de juillet 1951 à 1952, à
+        # soixante-huit pour ceux de 1953 à 1955, et ne majore rien avant.
+        borne = moteur.ages_regimes.age_surcote_maximum(
+            periode.age_table, carriere.generation)
+        if borne is not None:
+            fin = min(fin, borne)
     # Des trimestres civils ENTIERS : deux mois de plus ne valent rien.
     ecoules = int((max(0.0, fin - debut) + 1e-9) * 4)
     if periode.surcote_trimestres_cotises:
@@ -2076,6 +2089,39 @@ def surcote_points(moteur, periode: PeriodeRegime, carriere: Carriere,
             + taux * avant_palier
             + periode.surcote_par_trimestre_apres_palier
             * (ecoules - avant_palier))
+
+
+def age_de_la_duree_atteinte(moteur, periode: PeriodeRegime, carriere: Carriere,
+                             trimestres: int, requis: int) -> float | None:
+    """Le premier âge, depuis l'âge légal de droit commun et de trimestre en
+    trimestre, où la durée d'assurance atteint la durée requise ; ``None`` si
+    elle ne l'atteint pas avant la liquidation.
+
+    La CARPIMKO majore la pension « lorsque la liquidation de la retraite est
+    ajournée au-delà de l'âge auquel elle aurait pu être liquidée sans
+    abattement », et sert le taux plein « à partir de l'âge prévu à l'article
+    L. 161-17-2 […] au profit des assurés remplissant les conditions leur
+    permettant de liquider leur pension du régime de base sans abattement »
+    (règlement de 2026, articles 5 et 3 ; statuts de 2015, articles 12 ter et
+    11). La caisse écrit la surcote « au-delà de 62 ans […] si l'affilié a
+    effectué le nombre de trimestres requis ». Le moteur la comptait de l'âge
+    du taux plein de sa table, soixante-sept ans depuis la génération 1961.
+    La durée à un âge est celle de la liquidation, moins ce que les lignes de
+    la carrière ont validé depuis, au mois près.
+    """
+    legal = ouvrir.age_ouverture_commun(moteur, periode, carriere)
+    fin = carriere.date_liquidation
+    trimestre = 0
+    while True:
+        age = legal + trimestre / 4.0
+        debut = carriere.date_naissance.plus_mois(en_mois(age))
+        if debut.rang >= fin.rang:
+            return None
+        depuis = sum(trimestres_de_la_ligne_entre(carriere, ligne, debut, fin)
+                     for ligne in carriere.lignes)
+        if trimestres - depuis + 1e-9 >= requis:
+            return age
+        trimestre += 1
 
 
 def surcote_ircantec(moteur, periode: PeriodeRegime, carriere: Carriere,

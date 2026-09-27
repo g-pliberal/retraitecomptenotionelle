@@ -333,6 +333,16 @@ export class AgesRegimes {
     }
     return [ligne[3], ligne[2]];
   }
+
+  /**
+   * Âge au-delà duquel la majoration ne court plus, que la table écrit pour
+   * cette génération — la CAVP, selon la génération —, ou `null`.
+   */
+  ageSurcoteMaximum(table, generation) {
+    const lue = this._tables.get(table);
+    const ligne = lue ? lue.valeur(generation) : null;
+    return ligne && ligne[4] !== null && ligne[4] !== undefined ? ligne[4] : null;
+  }
 }
 
 /**

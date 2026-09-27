@@ -715,6 +715,8 @@ def _regles_des_sections(p) -> dict:
         "taux_plein_anticipe_maximum_annees": p.taux_plein_anticipe_maximum_annees,
         # La surcote de la CAVAMAC depuis 2024, par années COTISÉES.
         "surcote_trimestres_cotises": p.surcote_trimestres_cotises or None,
+        # La surcote de la CARPIMKO, depuis l'âge où la durée est atteinte.
+        "surcote_depuis_la_duree": p.surcote_depuis_la_duree or None,
     }
     return {cle: valeur for cle, valeur in champs.items() if valeur is not None}
 
@@ -1008,7 +1010,8 @@ def _table_par_generation(classe) -> dict:
 
 def _ages_regimes() -> dict:
     """Âges propres à un régime, par génération : ouverture, taux plein,
-    fiabilité et, quand la table en écrit un, coefficient de minoration."""
+    fiabilité et, quand la table en écrit un, coefficient de minoration et âge
+    au-delà duquel la majoration ne court plus."""
     from retraite_notionnelle.scenarios.actuel import AgesRegimes
 
     ages = AgesRegimes(DONNEES)
@@ -1016,7 +1019,8 @@ def _ages_regimes() -> dict:
         table: {
             (str(int(generation)) if float(generation).is_integer()
              else str(generation)): [ouverture, taux_plein, int(fiabilite),
-                                     ages._decotes[table].get(generation)]
+                                     ages._decotes[table].get(generation),
+                                     ages._surcotes[table].get(generation)]
             for generation, (ouverture, taux_plein, fiabilite)
             in sorted(lignes.items())
         }

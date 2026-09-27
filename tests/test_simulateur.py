@@ -4845,7 +4845,7 @@ def test_la_cprn_majore_un_demi_pour_cent_jusqu_a_70_ans_puis_un_pour_cent_sans_
         avant, carriere, 176, 169, 68.0, 2023) == pytest.approx(0.95)
     # À 72 ans : de 69 à 70 ans seulement, quatre trimestres à 0,5 %.
     assert liquider.abattement_points(scenario,
-        avant, carriere, 176, 169, 72.0, 2023) == pytest.approx(1.02)
+        avant, carriere, 176, 169, 72.0, 2028) == pytest.approx(1.02)
     apres = _periode(simulateur, "cprn_complementaire", 2025)
     assert apres.surcote_age_maximum is None
     assert liquider.abattement_points(scenario,
@@ -4877,6 +4877,105 @@ def test_la_cipav_majore_par_annees_pleines_a_qui_a_trente_ans_de_caisse(simulat
         periode, carriere, 172, 169, 69.0, 2025, trimestres_regime=116,
     ) == pytest.approx(1.0)
 
+
+
+def test_la_cavp_borne_sa_majoration_par_generation(simulateur):
+    """Annexe à l'article 15 des statuts (arrêté du 23 juin 2011), reprise par
+    l'article 12 du règlement de 2026 : nés jusqu'au 30 juin 1951, « Pas de
+    majoration de pension pour un départ après 65 ans » ; du 1er juillet 1951
+    à 1952, rien « après 66 ans » ; de 1953 à 1955, rien « après 68 ans », le
+    taux plein étant à 66 ans. Le moteur leur servait douze trimestres.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def coefficient(annee, mois, age):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=annee, mois_naissance=mois, sexe="H",
+            affiliation="pharmacien", age_debut=25, age_liquidation=age,
+        )
+        return liquider.abattement_points(
+            scenario, _periode(simulateur, "cavp_complementaire", carriere.annee_liquidation),
+            carriere, 176, 166, age, carriere.annee_liquidation)
+
+    assert coefficient(1951, 6, 67.0) == pytest.approx(1.0)
+    assert coefficient(1951, 7, 67.0) == pytest.approx(1.02)
+    assert coefficient(1952, 1, 68.0) == pytest.approx(1.02)
+    assert coefficient(1954, 1, 69.0) == pytest.approx(1.04)
+    assert coefficient(1957, 1, 71.0) == pytest.approx(1.06)
+
+
+def test_la_cipav_borne_le_report_a_cinq_ans_et_le_comptait_de_65_ans(simulateur):
+    """« peut différer la date d'entrée en jouissance de la pension de retraite
+    complémentaire de 1 à 5 ans » (statuts, article 3.15, et décret
+    n° 79-262, article 5-2, depuis le 1er juillet 2026) ; jusqu'au 31 décembre
+    2021, l'article visait l'adhérent « âgé de 65 ans », que l'arrêté du 16
+    décembre 2021 remplace par l'âge du taux plein.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def coefficient(annee, age):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=annee, sexe="F", affiliation="profession_liberale",
+            age_debut=25, age_liquidation=age,
+        )
+        return liquider.abattement_points(
+            scenario, _periode(simulateur, "cipav_complementaire", carriere.annee_liquidation),
+            carriere, 176, 166, age, carriere.annee_liquidation, trimestres_regime=160)
+
+    # 2019 : deux années pleines depuis 65 ans, non depuis l'âge de la génération.
+    assert coefficient(1952, 67.0) == pytest.approx(1.10)
+    # 2021 : six ans depuis 65 ans, cinq retenus.
+    assert coefficient(1950, 71.0) == pytest.approx(1.25)
+    # 2032 : sept ans depuis 67 ans, cinq retenus.
+    assert coefficient(1958, 74.0) == pytest.approx(1.25)
+
+
+def test_la_cprn_ne_majore_que_les_trimestres_d_exercice(simulateur):
+    """« un coefficient de majoration est appliqué à la pension des notaires
+    ayant continué à exercer et à cotiser » (statuts de 2013, article 16 ;
+    règlement de 2026, article 9) : la caisse écrit « une surcote de 1 % par
+    trimestre d'exercice supplémentaire ». Le notaire qui cesse d'exercer à
+    l'âge du taux plein et liquide trois ans plus tard n'a rien ; celui qui
+    exerce jusqu'au bout a ses douze trimestres.
+    """
+    scenario = simulateur.scenario_actuel
+
+    def coefficient(interruptions):
+        carriere = simulateur.carriere_simple(
+            annee_naissance=1956, sexe="H", affiliation="notaire", age_debut=27,
+            age_liquidation=70, interruptions=interruptions,
+        )
+        return liquider.abattement_points(
+            scenario, _periode(simulateur, "cprn_complementaire", 2026),
+            carriere, 172, 169, 70.0, 2026)
+
+    assert coefficient(None) == pytest.approx(1.12)
+    assert coefficient({annee: "sans_activite" for annee in range(2023, 2027)}) == (
+        pytest.approx(1.0))
+
+
+def test_la_carpimko_majore_des_que_la_duree_du_regime_de_base_est_atteinte(simulateur):
+    """Article 12 ter des statuts, puis article 5 du règlement de 2026 : la
+    majoration court « au-delà de l'âge auquel elle aurait pu être liquidée
+    sans abattement », et la retraite est à taux plein « à partir de l'âge
+    prévu à l'article L. 161-17-2 […] au profit des assurés remplissant les
+    conditions leur permettant de liquider leur pension du régime de base sans
+    abattement » (article 3). Né en 1961 et assuré dès vingt ans, un
+    masseur-kinésithérapeute a sa durée avant 62 ans : parti à 64 ans, il a
+    huit trimestres de majoration, et non rien, faute des 67 ans de la table.
+    """
+    scenario = simulateur.scenario_actuel
+    carriere = simulateur.carriere_simple(
+        annee_naissance=1961, sexe="H", affiliation="auxiliaire_medical",
+        age_debut=20, age_liquidation=64,
+    )
+    periode = _periode(simulateur, "carpimko_complementaire", 2025)
+    assert liquider.age_de_la_duree_atteinte(scenario, periode, carriere, 176, 168) == (
+        pytest.approx(62.0))
+    assert liquider.abattement_points(
+        scenario, periode, carriere, 176, 168, 64.0, 2025) == pytest.approx(1.10)
+    # Sans la durée, l'âge du taux plein de la table, 67 ans : l'abattement.
+    assert liquider.age_de_la_duree_atteinte(scenario, periode, carriere, 150, 168) is None
 
 def test_les_exploitants_agricoles_ont_la_surcote_du_regime_general(simulateur):
     """D. 732-42 : la durée « accomplie à compter du 1er janvier 2004, au-delà

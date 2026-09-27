@@ -341,6 +341,7 @@ periodes:
     decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
+    surcote_trimestres_cotises: surcote_par_age_seul
     surcote_age_maximum: 70
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -407,7 +408,9 @@ periodes:
       plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
       (JORFARTI000034975971, article 23) le répète. La fiche portait 1
       %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
-      lisait pas.
+      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
+      l'âge du taux plein, ceux des notaires « ayant continué à exercer
+      et à cotiser » (`surcote_trimestres_cotises`).
       LES ÂGES DE 2014 À 2023 NE SONT PAS CEUX DU RÉGIME GÉNÉRAL. L'article
       18 des statuts, dans la rédaction de l'arrêté du 16 décembre 2013
       (JORFTEXT000028387437, en vigueur au 1er janvier 2014) reprise par
@@ -438,6 +441,7 @@ periodes:
     decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
+    surcote_trimestres_cotises: surcote_par_age_seul
     surcote_age_maximum: 70
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -454,7 +458,9 @@ periodes:
       plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
       (JORFARTI000034975971, article 23) le répète. La fiche portait 1
       %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
-      lisait pas.
+      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
+      l'âge du taux plein, ceux des notaires « ayant continué à exercer
+      et à cotiser » (`surcote_trimestres_cotises`).
   - debut: 2018
     fin: 2018
     type_calcul: points
@@ -473,6 +479,7 @@ periodes:
     decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
+    surcote_trimestres_cotises: surcote_par_age_seul
     surcote_age_maximum: 70
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -486,7 +493,9 @@ periodes:
       plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
       (JORFARTI000034975971, article 23) le répète. La fiche portait 1
       %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
-      lisait pas.
+      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
+      l'âge du taux plein, ceux des notaires « ayant continué à exercer
+      et à cotiser » (`surcote_trimestres_cotises`).
   - debut: 2019
     fin: 2021
     type_calcul: points
@@ -505,6 +514,7 @@ periodes:
     decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
+    surcote_trimestres_cotises: surcote_par_age_seul
     surcote_age_maximum: 70
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -520,7 +530,9 @@ periodes:
       plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
       (JORFARTI000034975971, article 23) le répète. La fiche portait 1
       %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
-      lisait pas.
+      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
+      l'âge du taux plein, ceux des notaires « ayant continué à exercer
+      et à cotiser » (`surcote_trimestres_cotises`).
   - debut: 2022
     fin: 2023
     type_calcul: points
@@ -539,6 +551,7 @@ periodes:
     decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.005
     surcote_points: surcote_par_age_seul
+    surcote_trimestres_cotises: surcote_par_age_seul
     surcote_age_maximum: 70
     avantages_non_contributifs: [reversion]
     notes: >-
@@ -568,7 +581,9 @@ periodes:
       plein, jusqu'à l'âge de 70 ans » —, et l'arrêté du 31 mai 2017
       (JORFARTI000034975971, article 23) le répète. La fiche portait 1
       %, le taux d'aujourd'hui reporté en arrière, que le moteur ne
-      lisait pas.
+      lisait pas. Et il ne compte que les trimestres cotisés au-delà de
+      l'âge du taux plein, ceux des notaires « ayant continué à exercer
+      et à cotiser » (`surcote_trimestres_cotises`).
   - debut: 2024
     fin: null
     type_calcul: points
@@ -586,6 +601,7 @@ periodes:
     decote_annulee_par_la_duree: cprn_ages_decote_enfants
     surcote_par_trimestre: 0.01
     surcote_points: surcote_par_age_seul
+    surcote_trimestres_cotises: surcote_par_age_seul
     avantages_non_contributifs: [reversion, majoration_enfants]
     notes: >-
       4,10 % DEPUIS 2022, sur la moyenne des produits de base des trois

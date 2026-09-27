@@ -393,6 +393,7 @@ class AgesRegimes:
     def __init__(self, racine: Path) -> None:
         self._table: dict[str, dict[float, tuple[float, float, Fiabilite]]] = {}
         self._decotes: dict[str, dict[float, float | None]] = {}
+        self._surcotes: dict[str, dict[float, float | None]] = {}
         chemin = racine / "reference" / "legislation" / self.FICHIER
         if chemin.exists():
             with chemin.open(encoding="utf-8") as flux:
@@ -407,6 +408,10 @@ class AgesRegimes:
                     decote = (ligne.get("decote_par_trimestre") or "").strip()
                     self._decotes.setdefault(ligne["table"], {})[generation] = (
                         float(decote) if decote else None
+                    )
+                    borne = (ligne.get("age_surcote_maximum") or "").strip()
+                    self._surcotes.setdefault(ligne["table"], {})[generation] = (
+                        float(borne) if borne else None
                     )
         self._generations = {cle: tuple(sorted(valeurs))
                              for cle, valeurs in self._table.items()}
@@ -439,6 +444,18 @@ class AgesRegimes:
         if decote is None:
             return None
         return decote, self._table[table][cle][2]
+
+
+    def age_surcote_maximum(self, table: str, generation: float) -> float | None:
+        """Âge au-delà duquel la majoration ne court plus, que la table écrit
+        pour cette génération ; ``None`` si la ligne n'en porte pas. La CAVP
+        la borne à soixante-cinq, soixante-six, puis soixante-huit ans selon
+        la génération (statuts de 2011, annexe à l'article 15)."""
+        generations = self._generations.get(table)
+        if not generations or generation < generations[0]:
+            return None
+        cle = generations[bisect_right(generations, generation) - 1]
+        return self._surcotes[table].get(cle)
 
 
 class DureesRequisesFonctionPublique:

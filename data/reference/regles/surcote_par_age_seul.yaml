@@ -19,69 +19,47 @@ effet: >-
   de la CPRN, et l'ASV des médecins, dont les périodes renvoient à cette fiche ; la
   CARCDSF et la CAVAMAC, par leurs propres fiches. Relue à la source le 27 septembre 2026,
   caisse par caisse. La CARMF et l'ASV sont servies comme leurs textes, qui comptent
-  « après l'âge de 62 ans » depuis l'arrêté du 22 mars 2017 (trois mois plus tôt, depuis
-  l'âge légal ; la caisse écrit 62 ans dès 2017). Ailleurs, taux et âges sont ceux des
-  textes, à cinq écarts près, que rien ne corrige encore. CARPIMKO : la majoration court
-  de « l'âge auquel elle aurait pu être liquidée sans abattement », l'âge légal pour qui a
-  la durée du régime de base, et la caisse la sert « au-delà de 62 ans » ; le moteur part
-  de l'âge du taux plein de la table, 67 ans depuis la génération 1961 : jusqu'à vingt
-  trimestres, 25 points de pension, de moins pour qui a sa durée avant et diffère, non
-  mesuré sur la population. CAVP : rien pour les nés jusqu'au 30 juin 1951, rien au-delà
-  de 66 ans pour les nés de juillet 1951 à 1952, ni de 68 ans pour ceux de 1953 à 1955 ;
-  le moteur leur sert douze trimestres, jusqu'à 6, 4 et 2 points de trop. Cipav : un
-  report « de 1 à 5 ans », borne que ses statuts portaient avant 2022 et que le décret
-  n° 79-262 reprend depuis le 1er juillet 2026, compté de 65 ans jusqu'au 31 décembre
-  2021 ; le moteur, qui le sert depuis 2013 de l'âge d'annulation de la génération et
-  sans borne, donne avant 2022 jusqu'à 10 points de moins aux générations 1953 et 1954,
-  et 5 points de trop par année au-delà de cinq ans de report. CAVEC : 0,75 % dès le 4 septembre 2018 et 1,25 %
-  dès le 6 juillet 2025, que le moteur sert en 2019 et en 2026, jusqu'à 10 points d'écart
-  aux liquidations du 1er octobre 2018 et du 1er octobre 2025 ; jusqu'en septembre 2018,
-  les points acquis après 65 ans n'étaient pas majorés, et le moteur les majore, non
-  mesuré. CPRN : seuls comptent les trimestres d'exercice ; le moteur compte le temps
-  jusqu'à la liquidation, trop pour qui cesse d'exercer avant de liquider, non mesuré.
-  Restent à lire la rédaction d'origine de l'article 32 des statuts de la CARMF et
-  l'article 3.15 des statuts de la Cipav de 2006, publiés au Bulletin officiel.
+  « après l'âge de 62 ans » depuis l'arrêté du 22 mars 2017. La CARPIMKO majore depuis
+  l'âge où la pension pouvait être liquidée sans abattement, l'âge légal dès que la durée
+  du régime de base est atteinte (`surcote_depuis_la_duree`) ; la CAVP, dans les bornes
+  de la génération — rien pour les nés jusqu'au 30 juin 1951, jusqu'à 66 ans pour ceux du
+  1er juillet 1951 à 1952, jusqu'à 68 ans pour ceux de 1953 à 1955, trois ans au-delà du
+  taux plein ensuite (`age_surcote_maximum` de la table `cavp`) ; la Cipav, cinq années
+  au plus, comptées de 65 ans jusqu'en 2021 et de l'âge du taux plein ensuite ; la CPRN,
+  les seuls trimestres d'exercice (`surcote_trimestres_cotises`). Deux écarts restent, à
+  la CAVEC, qui attendent ce que le modèle ne sait pas encore faire. Ses taux changent le
+  4 septembre 2018 (0,75 %) et le 6 juillet 2025 (1,25 %), que le moteur sert en 2019 et
+  en 2026, faute de couper une période au mois (docs/architecture.md, § 4.6) : jusqu'à 10
+  points d'écart aux liquidations de septembre à décembre 2018 et de juillet à décembre
+  2025. Et jusqu'au 4 septembre 2018, seuls les points acquis jusqu'à la fin de l'année,
+  puis, depuis 2012, du trimestre du 65e anniversaire, étaient majorés : le moteur, qui
+  ne garde pas les points année par année, les majore tous, non mesuré. Restent à lire la
+  rédaction d'origine de l'article 32 des statuts de la CARMF et l'article 3.15 des
+  statuts de la Cipav de 2006, publiés au Bulletin officiel.
 sources:
   lu_le: 2026-09-27
   prochaine_relecture: 2026-12-31
   a_relire:
   - >-
-    Après la phase 8 : CARPIMKO, faire courir la majoration de l'âge où l'assuré pouvait
-    liquider sans abattement — celui de L. 161-17-2 quand il a la durée du régime de base
-    (règlement de 2026, articles 3, 2°, et 5 ; statuts de 2015, articles 11 et 12 ter) —,
-    et non de la seule table `carpimko_2016`.
+    CAVEC : servir 0,75 % dès le 4 septembre 2018 et 1,25 % dès le 6 juillet 2025 quand le
+    moteur saura dater une règle au mois (docs/architecture.md, § 4.6) ; et, jusqu'au 4
+    septembre 2018, ne majorer que les points acquis jusqu'à la fin de l'année du 65e
+    anniversaire, puis, depuis 2012, de son trimestre, quand il gardera les points année
+    par année.
   - >-
-    Après la phase 8 : CAVP, borner la majoration par génération — rien pour les nés
-    jusqu'au 30 juin 1951, jusqu'à 66 ans pour les nés du 1er juillet 1951 à 1952, jusqu'à
-    68 ans pour ceux de 1953 à 1955 (annexe à l'article 15 des statuts de 2011, article 12
-    du règlement de 2026).
-  - >-
-    Après la phase 8 : Cipav, borner le report à cinq années entières, borne que les
-    statuts portaient avant 2022 (ni l'arrêté du 16 décembre 2021 ni celui du 20 mars
-    2023 ne l'y ont mise), et le compter de 65 ans jusqu'au 31 décembre 2021, de l'âge
-    du 1° de L. 351-8 ensuite. Puis lire l'article 3.15 des statuts de 2006 (arrêté du 3
-    octobre 2006, publié au Bulletin officiel d'octobre 2006), pour dater la borne.
-  - >-
-    Après la phase 8 : CAVEC, servir 0,75 % dès le 4 septembre 2018 et 1,25 % dès le 6
-    juillet 2025. Le retour à 1,25 % vient de l'arrêté du 4 juillet 2025, et non du
-    règlement de 2026, auquel la note de la fiche de régime et `cavec_report_2026`
-    l'attribuent. Jusqu'au 4 septembre 2018, ne majorer que les points acquis jusqu'à la
-    fin de l'année, puis, depuis 2012, du trimestre du 65e anniversaire.
-  - >-
-    Après la phase 8 : CPRN, ne compter que les trimestres d'exercice
-    (`surcote_trimestres_cotises`).
+    Cipav : lire l'article 3.15 des statuts de 2006 (arrêté du 3 octobre 2006, publié au
+    Bulletin officiel d'octobre 2006), pour dater la borne « de 1 à 5 ans », que le moteur
+    sert depuis 2013 ; et dire si la majoration des seuls points des trente premières
+    années pèse, que le modèle ne distingue pas.
   - >-
     CPRN : trancher la lecture divergente de la borne de 70 ans par ce que la caisse publie
     d'autre de la règle qu'elle applique, sans la solliciter (docs/architecture.md, § 3.5).
   - >-
-    Après la phase 8 : CARMF, corriger la note des périodes de 2017 et après, qui croit la
-    majoration comptée depuis l'âge légal de 2023 à 2025 : l'arrêté du 22 mars 2017 écrit
-    « après l'âge de 62 ans ». L'article 32 des statuts, que la fiche de régime sert de
-    2000 à 2016, est lu dans les statuts que publie la caisse, à jour de l'arrêté du 7
-    janvier 2025 : « 5 % par année pleine de différé » pour le médecin « remplissant
-    toutes les conditions », sans nommer 65 ans. Dater sa rédaction d'origine (Bulletin
-    officiel), et dire si la caisse l'a cumulé avec la majoration de l'article 15 de 2017
-    à 2026.
+    CARMF : l'article 32 des statuts, lu dans les statuts que publie la caisse, à jour de
+    l'arrêté du 7 janvier 2025 : « 5 % par année pleine de différé » pour le médecin
+    « remplissant toutes les conditions », sans nommer 65 ans, que la fiche de régime sert
+    de 2000 à 2016. Dater sa rédaction d'origine (Bulletin officiel), et dire si la caisse
+    l'a cumulé avec la majoration de l'article 15 de 2017 à 2026.
   - >-
     CARCDSF : l'article 35 de ses statuts, dans la rédaction de l'arrêté du 27 décembre
     2023, ne compte que les trimestres « d'exercice libéral », que `par_age_seul` confond
@@ -436,6 +414,8 @@ textes_a_rattacher:
     CARCDSF et CAVAMAC : les textes que rattachent leurs fiches, dont l'article 35 des
     statuts de la CARCDSF dans la rédaction de l'arrêté du 27 décembre 2023
     (JORFTEXT000048880697)
+reformes:
+- cavec_report_2025
 exemples:
 - carmf_2026_temps_choisi_63_ans
 - carmf_2026_temps_choisi_65_ans
@@ -443,9 +423,15 @@ exemples:
 code:
   interrupteurs:
     surcote_points: par_age_seul
+    surcote_trimestres_cotises: true
+    surcote_depuis_la_duree: true
   moteur: >-
     `surcote_points: par_age_seul` : trimestres civils ENTIERS écoulés entre `surcote_age_debut`
     — l'âge du taux plein de la période, lu à la génération, si le champ est nul — et
     la liquidation, sans condition de durée ni de cotisation, au taux `surcote_par_trimestre`
     ; c'est la forme qu'écrivent les statuts des sections libérales, bornée par les autres
-    champs `surcote_*` de la période.
+    champs `surcote_*` de la période, et par l'`age_surcote_maximum` que la table d'âges
+    de la période écrit pour la génération (la CAVP). `surcote_trimestres_cotises: true`
+    ne compte que les trimestres cotisés depuis le début du décompte (la CPRN) ;
+    `surcote_depuis_la_duree: true` le fait partir de l'âge légal dès que la durée du
+    régime de base est atteinte (`liquider.age_de_la_duree_atteinte`, la CARPIMKO).

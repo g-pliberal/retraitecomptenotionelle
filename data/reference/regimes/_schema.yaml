@@ -679,6 +679,17 @@ champs_periode:
     valeurs: [true]
     defaut: false
 
+  surcote_depuis_la_duree:
+    description: >-
+      Avec `surcote_points` en `par_age_seul` seulement : le décompte part-il
+      de l'âge où la pension pouvait être liquidée sans abattement — l'âge
+      légal de droit commun dès que la durée du régime de base est atteinte —,
+      et non du seul âge du taux plein ? La CARPIMKO majore « au-delà de l'âge
+      auquel elle aurait pu être liquidée sans abattement ».
+    renvoi: true
+    valeurs: [true]
+    defaut: false
+
   taux_majoration_enfants:
     description: >-
       Barème PROPRE de la majoration pour enfants, par nombre d'enfants à
