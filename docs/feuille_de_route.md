@@ -2792,6 +2792,69 @@ lecture au mois des pas de 2010 à 2024), `coefficients_anticipation_agirc_arrco
 `trimestres_retenus_1972_1974` ; et les notes de `carmf_complementaire`,
 `cavec_complementaire`, `ircec_racl` et `opera_de_paris`.
 
+**La suite des corrections, le 27 septembre 2026 dans la soirée**, à la demande
+du propriétaire. Chacune a son commit, le diff de ses témoins et la suite
+complète ; les rebasages sur les commits de l'autre session ont relancé les
+fichiers fabriqués à chaque arrêt :
+- **Les régimes spéciaux** (`decote_regimes_speciaux`, qui passe `conforme`) :
+  le barème de la décote lu au mois où le droit s'ouvre, et le décompte par la
+  durée borné à la durée requise moins 150 ; la surcote, pour les seuls
+  trimestres d'après le 1er juillet 2008 et dès 160 trimestres (neuf témoins) ;
+  la CRPCEN, l'âge et la durée de ses textes par génération et l'âge de
+  référence de 2025, qui rendent la table que la caisse publie et l'exemple de
+  Maria (trois clercs témoins, de −1,2 % à +9,3 %).
+- **L'Opéra** (`decote_opera_de_paris`, qui passe `transcrite`) : l'âge
+  d'annulation du ballet, 41, 41,5 puis 42 ans de 2010 à 2012.
+- **La loi Boulin** (`trimestres_retenus_1972_1974`, qui passe `transcrite`) :
+  128, 136 puis 144 trimestres retenus, au régime général et chez les salariés
+  agricoles, que l'article 72-1 du décret de 1945 et l'article 59-1 du décret
+  n° 50-1225 écrivent, trouvés dans l'index LEGI.
+- **Avant avril 1983** (`decote_avant_1983`) : le taux qui croît au-delà de 65
+  ans, le taux acquis au 31 mars 1983, les femmes de 150 trimestres dès 63 puis
+  60 ans, les années d'assurance avant 1951 ; les trois exemples de la
+  circulaire Cnav n° 22/83 entrent au témoin. Le bilan ne bouge que sur les
+  années passées, et l'écart du scénario 4 sur les générations passées passe de
+  −52,6 % à −52,8 %.
+- **Les sections libérales** (`surcote_par_age_seul`) : le départ de la
+  CARPIMKO à la durée atteinte, les bornes de la CAVP par génération, les cinq
+  ans de la Cipav comptés de 65 ans jusqu'en 2021, les trimestres d'exercice de
+  la CPRN ; les notes de la CARMF et de la CAVEC, et `cavec_report_2025` au
+  calendrier (deux témoins, +1,9 % et +0,6 %).
+- **Le RACL et l'Ircantec** (`minoration_racl_2014_2024` ; `surcote_ircantec`,
+  qui passe `transcrite`) : l'annexe de 2013 par génération, la fenêtre de la
+  surcote comptée au mois ; la note du RACL (un témoin, +0,06 %).
+- **La MSA** (`retraite_proportionnelle_msa`) : les points arrondis à l'entier ;
+  le motif de non-application de la réforme de 2026 mis à jour (six témoins,
+  moins de 0,05 %).
+- **Les classes libérales** : les notes de la CARPV et de la Cipav.
+
+Une règle manquante trouvée en chemin est déclarée :
+`majoration_duree_apres_65_ans`, la durée « corrigée » de 2,5 % par trimestre
+après 65 ans, de l'article 70-6 du décret de 1945 à R. 351-7, avec le premier
+exemple de la circulaire n° 22/83 en écart connu.
+
+**Ce qui reste de l'action, et pourquoi.**
+- Les coupures au mois : le 1er avril 1983 au régime général et chez les
+  salariés agricoles, le 4 septembre 2018 et le 6 juillet 2025 à la CAVEC, le
+  15 mai 2025 au RACL. Le moteur choisit ses périodes à l'année, partout ; elles
+  attendent les versions datées (`docs/architecture.md`, § 4.6), que le domaine
+  des enfants vient d'ouvrir.
+- `majoration_duree_apres_65_ans`, à porter : elle touche toute liquidation
+  après 65 ans sans la durée, depuis 1983.
+- `retraite_proportionnelle_msa` : le maximum M avec l'allocation aux vieux
+  travailleurs salariés, dont la série est à faire entrer (zone des données) ;
+  la réforme des vingt-cinq meilleures années, en vigueur depuis 2026, un
+  chantier à part (R. 173-3-2 lu).
+- `cotisation_par_classes_liberales` : les grilles de chaque époque (les points
+  des classes intermédiaires dans chaque rédaction de l'article 2, les montants
+  des décrets annuels, les bornes que publient les caisses), l'année de revenu
+  et la classe de début d'activité, la CAVEC d'avant 1980, l'exemple de la
+  Cipav de 2022, qui demande à l'oracle une grandeur de cotisation.
+- `coefficients_anticipation_agirc_arrco` : les points de tranche C d'avant
+  2016, à suivre de l'acquisition à la liquidation à travers la fusion de 2019.
+- `decote_avant_1983` : le maximum des pensions, l'ajournement des artisans et
+  commerçants, et les « soixante et un ans » des salariés agricoles.
+
 ### 133. La retraite de base et ses complémentaires, sous le montant du système 1 — `en cours`
 
 **Demande**, le 27 septembre 2026. « On ne montre pas réellement le découpage
