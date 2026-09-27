@@ -325,6 +325,7 @@ class Contexte:
                 profil_carriere=saisie.profil,
                 interruptions=saisie.interruptions_de_carriere(motifs),
                 nombre_enfants=saisie.enfants,
+                naissances_enfants=saisie.naissances_enfants(),
                 part_primes=saisie.primes,
                 identifiant="assuré",
             )
@@ -414,6 +415,7 @@ class Contexte:
             mois_naissance=saisie.naissance_mois,
             age_liquidation=saisie.liquidation,
             nombre_enfants=saisie.enfants,
+            naissances_enfants=saisie.naissances_enfants(),
             part_primes=saisie.primes,
             identifiant="assuré",
         )

@@ -63,6 +63,21 @@ _LIBELLE_MAJORATION = {
     "bonifications": "Bonification pour enfants",
 }
 
+
+def _libelle_majoration(dispositifs: list[str]) -> str:
+    """Le libellé des trimestres d'enfants : celui du dispositif, ou des deux
+    quand les enfants relèvent de deux régimes."""
+    libelles = [_LIBELLE_MAJORATION[d] for d in dispositifs]
+    return " et ".join([libelles[0]] + [l[0].lower() + l[1:] for l in libelles[1:]])
+
+
+def _au_titre_des_regimes(regimes: list[str]) -> str:
+    """« au titre du régime « X » », ou des régimes quand il y en a plusieurs."""
+    noms = [f"« {regime} »" for regime in regimes]
+    if len(noms) == 1:
+        return f"au titre du régime {noms[0]}"
+    return f"au titre des régimes {', '.join(noms[:-1])} et {noms[-1]}"
+
 #: Ce que chaque mesure de la cascade neutralise de plus que la précédente.
 NEUTRALISATION_MESUREE = {
     "majoration_duree_assurance": "avantages_non_contributifs",
@@ -324,12 +339,12 @@ def liquider(demande: Demande, etat: Etat, contexte: Contexte) -> Liquidation:
         if abs(effet) > 1e-9:
             avantages.append(AvantageApplique(
                 code="majoration_duree_assurance",
-                libelle=_LIBELLE_MAJORATION[majoration_enfants.dispositif],
+                libelle=_libelle_majoration(majoration_enfants.dispositifs),
                 montant=effet,
                 detail=f"{majoration_enfants.trimestres} trimestres pour "
                        f"{carriere.nombre_enfants} enfant"
                        f"{'s' if carriere.nombre_enfants > 1 else ''}, "
-                       f"au titre du régime « {majoration_enfants.regime} »",
+                       f"{_au_titre_des_regimes(majoration_enfants.regimes)}",
             ))
 
     if (avantages_non_contributifs and avpf

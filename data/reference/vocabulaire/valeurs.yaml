@@ -222,13 +222,14 @@ listes:
         unite: ans
         pose: {sorte: naissance, personne: enfant}
         raison: >-
-          le formulaire demande le nombre des enfants, pas leurs dates ;
-          trente ans est l'âge moyen des mères à l'accouchement, vingt-huit
-          dans les années 1980 et trente et un aujourd'hui (INSEE, état
-          civil). La date place l'enfant avant ou après ce qui change ses
-          droits — 2004 dans la fonction publique, le recrutement, la
-          radiation —, et les lignes qui en dépendent sont au niveau
-          « moyenne »
+          le formulaire demande le nombre des enfants, et leurs naissances
+          seulement à qui veut les dire ; celles qui ne sont pas dites sont
+          présumées. Trente ans est l'âge moyen des mères à l'accouchement,
+          vingt-huit dans les années 1980 et trente et un aujourd'hui (INSEE,
+          état civil). La date place l'enfant avant ou après ce qui change ses
+          droits — 2004 dans la fonction publique, 2010 au régime général, le
+          recrutement, la radiation —, et les lignes qui en dépendent sont au
+          niveau « moyenne »
       radiation_au_1er_janvier_suivant:
         dit: l'agent public est radié des cadres le 1er janvier qui suit sa dernière année de services
         valeur: le 1er janvier qui suit la dernière année de services, ou le départ s'il part en fonctions
@@ -254,7 +255,7 @@ listes:
       pas_d_accord_des_parents:
         dit: les parents n'ont conclu aucun accord sur les trimestres de leurs enfants
         valeur: aucun accord ; le défaut légal les donne à la mère
-        appliquee_par: la colonne beneficiaire de majoration_duree_assurance.csv, lue par MajorationsPourEnfants.par_enfant
+        appliquee_par: le paramètre beneficiaire des versions de la fiche majoration_duree_assurance_enfants, lu par MajorationsPourEnfants.par_enfant
         entrera_a: compter_les_durees
         raison: >-
           le partage ouvert en 2003 et en 2010 suppose un accord ou une
@@ -265,7 +266,7 @@ listes:
       enfant_eleve_neuf_ans:
         dit: chaque enfant a été élevé neuf ans avant son seizième anniversaire
         valeur: élevé neuf ans
-        appliquee_par: les lignes mda de majoration_duree_assurance.csv, qui servent la majoration sans condition de durée d'éducation
+        appliquee_par: les versions mda_1972 et mda_1975 de la fiche majoration_duree_assurance_enfants, qui servent la majoration sans condition de durée d'éducation
         entrera_a: compter_les_durees
         raison: >-
           la loi n° 75-3 ouvre la majoration dès le premier enfant à condition
@@ -274,7 +275,7 @@ listes:
       interruption_d_activite_par_la_mere:
         dit: la mère a interrompu ou réduit son activité pour chaque enfant, et elle seule
         valeur: remplie par la mère seule
-        appliquee_par: la colonne beneficiaire (mere) des lignes bonifications de majoration_duree_assurance.csv, lue par MajorationsPourEnfants.par_enfant
+        appliquee_par: le paramètre beneficiaire (mere) des versions de la fiche enfants_fonction_publique, lu par MajorationsPourEnfants.par_enfant
         entrera_a: compter_les_durees
         raison: >-
           depuis la loi du 21 août 2003, la bonification de L. 12 b va à chaque

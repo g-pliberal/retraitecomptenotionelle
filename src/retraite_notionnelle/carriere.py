@@ -467,6 +467,11 @@ class Carriere:
     #: Nombre d'enfants — sans effet dans les scénarios notionnels, utilisé par
     #: le seul scénario « système actuel » (majorations, MDA).
     nombre_enfants: int = 0
+    #: Les naissances déclarées des premiers enfants, dans l'ordre (AAAA,
+    #: AAAA-MM ou AAAA-MM-JJ) : celles des autres sont présumées. Elles
+    #: n'entrent que dans la chronologie qu'une carrière construite ligne à
+    #: ligne reçoit ; une carrière tirée d'une chronologie les y lit.
+    naissances_enfants: tuple[str, ...] = ()
     identifiant: str = "assuré"
     #: Mois d'entrée dans chaque statut, tel que le parcours le date. Les
     #: lignes ne connaissent que l'année, et l'année d'un changement de métier
@@ -506,7 +511,8 @@ class Carriere:
         if self.chronologie is None:
             object.__setattr__(self, "chronologie", preparer(chrono.du_resume(
                 self.annee_naissance, self.sexe, self.mois_naissance,
-                self.age_liquidation, self.nombre_enfants)))
+                self.age_liquidation, self.nombre_enfants,
+                self.naissances_enfants)))
 
     # -- dates ---------------------------------------------------------------
 
@@ -527,30 +533,23 @@ class Carriere:
         return DateMois(self.annee_naissance, self.mois_naissance)
 
     @cached_property
-    def annee_naissance_des_enfants(self) -> int | None:
-        """L'année où naissent les enfants, telle que la chronologie la porte :
-        présumée aux trente ans de l'assuré tant que rien n'est déclaré
-        (présomption ``naissance_des_enfants``, § 5.6). ``None`` sans enfant.
+    def naissances_des_enfants(self) -> tuple[tuple[str, str], ...]:
+        """Chaque enfant et sa naissance (AAAA-MM-JJ), dans l'ordre de leurs
+        filiations, telles que la chronologie les porte : déclarées, ou
+        présumées aux trente ans de l'assuré tant que rien n'est déclaré
+        (présomption ``naissance_des_enfants``, § 5.6). Vide sans enfant.
 
-        Le moteur d'aujourd'hui lit une seule année pour tous les enfants.
-        Des naissances déclarées à des années différentes relèvent du domaine
-        « les dates des enfants » (§ 11) : elles l'arrêtent, plutôt que de
-        laisser le moteur en choisir une.
+        Chaque enfant compte à sa date : c'est elle qui choisit la version
+        des règles qui lui accordent des trimestres (``droit/compter.py``).
         """
-        annees = set()
+        naissances = []
         for enfant in chrono.enfants(self.chronologie, self.personne):
             naissance = chrono.naissance(self.chronologie, enfant)
             if naissance is None:
                 raise ValueError(f"{self.identifiant} : la naissance de {enfant} n'est "
                                  "ni déclarée ni présumée")
-            annees.add(chrono.annee_de(naissance["debut"]))
-        if len(annees) > 1:
-            raise ValueError(
-                f"{self.identifiant} : des enfants nés à des années différentes "
-                f"({', '.join(map(str, sorted(annees)))}) — le moteur ne lit "
-                "encore qu'une année pour tous"
-            )
-        return annees.pop() if annees else None
+            naissances.append((enfant, naissance["debut"]))
+        return tuple(naissances)
 
     @property
     def generation(self) -> float:
@@ -882,6 +881,7 @@ class Carriere:
             mois_naissance=self.mois_naissance,
             age_liquidation=self.age_liquidation,
             nombre_enfants=self.nombre_enfants,
+            naissances_enfants=self.naissances_enfants,
             identifiant=self.identifiant,
             dates_entree=dict(self.dates_entree),
             chronologie=self.chronologie,
@@ -936,6 +936,7 @@ class Carriere:
                 mois_naissance=self.mois_naissance,
                 age_liquidation=age_liquidation,
                 nombre_enfants=self.nombre_enfants,
+                naissances_enfants=self.naissances_enfants,
                 identifiant=self.identifiant,
                 dates_entree=dict(self.dates_entree),
                 chronologie=self.chronologie,
@@ -1019,6 +1020,7 @@ class Carriere:
             mois_naissance=self.mois_naissance,
             age_liquidation=age_liquidation,
             nombre_enfants=self.nombre_enfants,
+            naissances_enfants=self.naissances_enfants,
             identifiant=self.identifiant,
             dates_entree=dict(self.dates_entree),
             chronologie=self.chronologie,
@@ -1044,6 +1046,7 @@ class Carriere:
         nombre_enfants: int = 0,
         part_primes: float = 0.0,
         identifiant: str = "assuré",
+        naissances_enfants: tuple[str, ...] | list[str] = (),
     ) -> "Carriere":
         """Construit une carrière à partir d'un relevé, ligne par ligne.
 
@@ -1073,7 +1076,7 @@ class Carriere:
         chronologie = preparer(chrono.du_releve(
             annee_naissance, sexe, releve, age_liquidation,
             mois_naissance=mois_naissance, nombre_enfants=nombre_enfants,
-            part_primes=part_primes))
+            part_primes=part_primes, naissances_enfants=naissances_enfants))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1092,6 +1095,7 @@ class Carriere:
         nombre_enfants: int = 0,
         part_primes: float = 0.0,
         identifiant: str = "assuré",
+        naissances_enfants: tuple[str, ...] | list[str] = (),
     ) -> "Carriere":
         """Carrière d'un seul métier, exercé du premier au dernier jour.
 
@@ -1111,6 +1115,7 @@ class Carriere:
             nombre_enfants=nombre_enfants,
             part_primes=part_primes,
             identifiant=identifiant,
+            naissances_enfants=naissances_enfants,
         )
 
     @classmethod
@@ -1127,6 +1132,7 @@ class Carriere:
         nombre_enfants: int = 0,
         part_primes: float = 0.0,
         identifiant: str = "assuré",
+        naissances_enfants: tuple[str, ...] | list[str] = (),
     ) -> "Carriere":
         """Construit une carrière à partir de la suite des métiers exercés.
 
@@ -1171,7 +1177,7 @@ class Carriere:
             annee_naissance, sexe, metiers, age_liquidation,
             mois_naissance=mois_naissance, profil_carriere=profil_carriere,
             interruptions=interruptions, nombre_enfants=nombre_enfants,
-            part_primes=part_primes))
+            part_primes=part_primes, naissances_enfants=naissances_enfants))
         return cls.depuis_chronologie(chronologie, macro, identifiant=identifiant)
 
     @classmethod
@@ -1220,11 +1226,24 @@ class Carriere:
             mois_naissance=date_naissance.mois,
             age_liquidation=age_liquidation,
             nombre_enfants=len(chrono.enfants(chronologie, personne)),
+            naissances_enfants=_naissances_declarees(chronologie, personne),
             identifiant=identifiant,
             dates_entree=dates_entree,
             chronologie=chronologie,
             personne=personne,
         )
+
+
+def _naissances_declarees(chronologie: dict, personne: str) -> tuple[str, ...]:
+    """Les naissances déclarées des premiers enfants d'une personne, dans
+    l'ordre de leurs filiations : la chronologie présume les suivantes."""
+    declarees = []
+    for enfant in chrono.enfants(chronologie, personne):
+        naissance = chrono.naissance(chronologie, enfant)
+        if naissance is None or naissance.get("origine") != "declare":
+            break
+        declarees.append(naissance["debut"])
+    return tuple(declarees)
 
 
 def _lignes_du_releve(date_naissance: DateMois, periodes: list[dict], fin: DateMois,

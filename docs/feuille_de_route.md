@@ -2525,6 +2525,64 @@ qu'un script refait. Il ne l'est plus depuis e483229. Un conflit sur lui
 aurait gardé un seul côté, sans script pour refaire l'autre ; il se
 fusionne désormais comme tout texte écrit à la main.
 
+**Le premier domaine, les dates des enfants, ouvert le 27 septembre 2026**
+(§ 11), à la demande du propriétaire. L'ordre se mesure au moment de choisir,
+sur les sources publiques ; le premier l'a été ce jour-là :
+- les enfants : près de 90 % des retraitées des générations 1930 à 1953 ont
+  validé des trimestres à ce titre, la majoration pour trois enfants va à
+  38 % des retraités nés en 1953, et plus d'une femme sur deux née de 1954 au
+  début des années 1980 a des droits à l'AVPF (COR, rapport « Droits
+  familiaux et conjugaux » de novembre 2025, publié en avril 2026, partie 1,
+  chapitre 3, sur l'EIR 2020) ;
+- la réversion : 4,4 millions de bénéficiaires en 2023, 24,3 % des retraités
+  (même rapport, sur l'EACR) ;
+- l'invalidité et l'inaptitude : 19 % des nouveaux retraités du régime
+  général en 2024 (COR, rapport annuel de juin 2026) — un flux, que la
+  mesure du domaine suivant devra ramener à un effectif.
+
+Les enfants passent donc les premiers, et la réversion paraît devoir
+précéder l'invalidité. Le site de la DREES ne répond pas d'une session : les
+autres domaines se mesureront chacun à son tour.
+
+**Première étape : chaque enfant compte à sa date.** Aucun témoin ne bouge,
+et le modèle sait désormais ce qu'il ne savait pas :
+1. **Les fiches en versions.** `majoration_duree_assurance_enfants` ne porte
+   plus que la majoration du régime général (L. 351-4), en six versions ; la
+   fonction publique a sa fiche, `enfants_fonction_publique`, en sept, celles
+   de l'annexe A. Ce sont les deux premières fiches découpées de la carte,
+   et le moteur les lit : `noyau/versions.py` choisit la version par les
+   dates qui décident, et son jumeau `moteur/js/versions.js` fait de même sur
+   le paquet, qui les porte. `majoration_duree_assurance.csv` disparaît, son
+   en-tête passé dans leur historique. Leurs bornes reproduisent d'abord le
+   modèle : le b ter au 1er janvier 2026, la loi n° 75-3 au 1er janvier 1975,
+   huit trimestres d'un coup de 2004 à 2010. Ce sont des approximations
+   déclarées, que les étapes suivantes corrigent une à une, chacune avec le
+   diff de ses témoins.
+2. **La chronologie** date chaque enfant : la saisie peut déclarer la
+   naissance des premiers (`naissances=1999,2004-11`), à l'année ou au mois,
+   et la présomption ne pose que celles qui manquent. La carrière ne s'arrête
+   plus sur des enfants nés à des années différentes.
+3. **L'étape `compter_les_durees`** (schéma en version 2) compte les enfants
+   un par un : la version de chacun se lit sur sa naissance et sur la date
+   d'effet de la pension, et la priorité entre régimes se lit pour chacun —
+   le régime général accorde l'enfant qui n'ouvre pas droit dans le régime
+   spécial, comme l'écrit la circulaire Cnav 2017-01 (fiches 6.2a et 6.2b,
+   « Compétence »). Chaque ligne d'enfant du relevé cite sa fiche, sa version
+   et le texte appliqué : les premières de la carte à le faire.
+4. **Les témoins** : trois de plus, aux enfants datés, que les deux moteurs
+   rendent à l'identique, étape par étape ; les 535 d'avant restent
+   identiques à l'octet, et les pages aussi.
+
+Lu en chemin, dans l'index LEGI et au Journal officiel : le décret
+n° 2003-1280, article 3, applique le trimestre par anniversaire aux pensions
+prenant effet à compter du 1er janvier 2004, ce que l'annexe A laissait en
+hypothèse ; la loi n° 75-3 s'applique au 1er juillet 1974, l'index ne datant du
+4 janvier 1975 que ses articles 7 et 8, son titre II ; la loi n° 2009-1646,
+article 65, VIII et IX, pour les pensions depuis le 1er avril 2010 et les
+enfants nés avant 2010. Restent de ce domaine : le bloc du formulaire, les
+trois corrections, les exemples publiés aux enfants datés, la page Coût et la
+décision de la proposition, puis la référence de conservation à refiger.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

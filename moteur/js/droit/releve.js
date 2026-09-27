@@ -21,7 +21,6 @@ export const SCHEMA_VERSION = 1;
 /** Les fiches de la carte que certaines lignes appliquent. */
 export const FICHE_RETABLISSEMENT = "retablissement_fonction_publique";
 export const FICHE_SERVICES = "services_et_duree_fonction_publique";
-export const FICHE_ENFANTS = "majoration_duree_assurance_enfants";
 export const FICHE_POINTS_GRATUITS = "rco_points_gratuits";
 
 /** Les présomptions que chaque dispositif pour enfants applique dans le code. */
@@ -120,31 +119,27 @@ export class Releve {
       }
     }
     const enfants = this.durees.enfants;
-    if (enfants !== null && carriere.nombre_enfants > 0) {
-      const parEnfant = {
-        assurance: Math.floor(enfants.trimestres / carriere.nombre_enfants),
-        services: Math.floor(enfants.services / carriere.nombre_enfants),
-      };
-      for (let rang = 1; rang <= carriere.nombre_enfants; rang += 1) {
-        const naissance = faits.naissance(`enfant_${rang}`);
-        const presomptions = [
-          ...(naissance && naissance.presomption ? [naissance.presomption] : []),
-          ...(PRESOMPTIONS_ENFANTS[enfants.dispositif] ?? []),
-        ].sort();
-        for (const [compte, trimestres] of Object.entries(parEnfant)) {
-          if (trimestres <= 0 || (compte === "services" && !this.servicesLus.has(enfants.regime))) {
-            continue;
-          }
-          lignes.push(ligneDuReleve(
-            `enfants_${compte}_${enfants.regime}_${rang}`, carriere.personne,
-            naissance ? naissance.id : null, naissance ? naissance.debut : null,
-            { quantite: trimestres, unite: "trimestre", regime: enfants.regime, compte },
-            {
-              fiche: FICHE_ENFANTS, contributive: false, presomptions,
-              fiabilite: nomFiabilite(enfants.fiabilite),
-            },
-          ));
+    for (const ouvre of enfants !== null ? enfants.enfants : []) {
+      const naissance = faits.naissance(ouvre.enfant);
+      const rang = ouvre.enfant.slice(ouvre.enfant.lastIndexOf("_") + 1);
+      const presomptions = [
+        ...(naissance && naissance.presomption ? [naissance.presomption] : []),
+        ...(PRESOMPTIONS_ENFANTS[ouvre.dispositif] ?? []),
+      ].sort();
+      for (const [compte, trimestres] of [["assurance", ouvre.trimestres],
+        ["services", ouvre.services]]) {
+        if (trimestres <= 0 || (compte === "services" && !this.servicesLus.has(ouvre.regime))) {
+          continue;
         }
+        lignes.push(ligneDuReleve(
+          `enfants_${compte}_${ouvre.regime}_${rang}`, carriere.personne,
+          naissance ? naissance.id : null, naissance ? naissance.debut : null,
+          { quantite: trimestres, unite: "trimestre", regime: ouvre.regime, compte },
+          {
+            fiche: ouvre.fiche, version: ouvre.version, texte: ouvre.texte,
+            contributive: false, presomptions, fiabilite: nomFiabilite(ouvre.fiabilite),
+          },
+        ));
       }
     }
     const droits = this.droits;
@@ -218,8 +213,8 @@ export function construire(moteur, carriere, {
  * pas : c'est un manque, pas une erreur.
  */
 function ligneDuReleve(ident, personne, fait, date, droit, {
-  fiche = null, face = "droit", contributive = true, origine = "calculee",
-  presomptions = [], fiabilite = null,
+  fiche = null, version = null, texte = null, face = "droit", contributive = true,
+  origine = "calculee", presomptions = [], fiabilite = null,
 } = {}) {
   const ligne = { schema_version: SCHEMA_VERSION, id: ident, personne };
   if (fait !== null) {
@@ -230,6 +225,12 @@ function ligneDuReleve(ident, personne, fait, date, droit, {
   }
   if (fiche !== null) {
     ligne.fiche = fiche;
+  }
+  if (version !== null) {
+    ligne.version = version;
+  }
+  if (texte !== null) {
+    ligne.texte = texte;
   }
   Object.assign(ligne, {
     droit, face, contributive, nature: "ferme", origine, presomptions: presomptions ?? [],

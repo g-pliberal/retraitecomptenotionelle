@@ -1,5 +1,6 @@
 import { DateMois } from "./calendrier.js";
-import { Fiabilite } from "./serie.js";
+import { Fiabilite, fiabiliteDepuisTexte } from "./serie.js";
+import { applicable } from "./versions.js";
 
 /**
  * Durée d'assurance requise pour le taux plein, PAR GÉNÉRATION.
@@ -882,7 +883,8 @@ export class MinimumVieillesse {
 MinimumVieillesse.AGE_OUVERTURE = 65;
 
 /**
- * Trimestres accordés au titre des enfants, dispositif par dispositif.
+ * Trimestres accordés au titre des enfants, enfant par enfant, lus dans les
+ * versions des fiches qui les portent (docs/architecture.md, § 4.1).
  *
  * Le module en servait huit par enfant, à tout assuré, à toute date et dans
  * tout régime. Le droit n'en a jamais servi autant : la majoration de durée
@@ -891,54 +893,77 @@ MinimumVieillesse.AGE_OUVERTURE = 65;
  * pas — elle a sa propre bonification, qui vaut un an par enfant né avant 2004
  * et deux trimestres pour les enfants nés depuis.
  *
- * Deux horloges, et la distinction est dans les textes : la MDA se lit à
- * l'ANNÉE DE LIQUIDATION, la bonification à l'ANNÉE DE NAISSANCE DE L'ENFANT.
+ * Chaque dispositif a sa fiche, que le paquet porte préparée
+ * (`versions_des_fiches`) : ses versions forment un partage de la date d'effet
+ * de la pension et de la naissance de l'enfant. Voir `actuel.py`.
  */
 export class MajorationsPourEnfants {
   constructor(paquet) {
-    this._table = paquet.majorations_enfants ?? [];
+    const fiches = paquet.versions_des_fiches ?? {};
+    this._fiches = new Map();
+    for (const [dispositif, nom] of Object.entries(MajorationsPourEnfants.FICHES)) {
+      if (nom in fiches) {
+        this._fiches.set(dispositif, fiches[nom]);
+      }
+    }
   }
 
   /**
-   * Trimestres accordés PAR ENFANT, dont ceux qui comptent en SERVICES.
-   *
-   * Les premiers jouent sur la durée d'assurance, les seconds — qui en sont un
-   * sous-ensemble — sur le prorata du régime. Ils ne coïncident que là où le
-   * droit accorde une bonification ; une majoration de durée d'assurance rend
-   * `services` nul. Voir l'en-tête de
-   * `legislation/majoration_duree_assurance.csv`.
-   *
-   * @returns {[number, number, number]|null} trimestres, services, fiabilité.
+   * Ce que le dispositif accorde pour un enfant né ce jour (AAAA-MM-JJ), à une
+   * pension qui prend effet à `dateEffet` : `{fiche, version, texte,
+   * trimestres, services, condition, fiabilite}`, ou `null` quand le droit ne
+   * donne rien — dispositif pas encore né ou jamais né dans ce régime, assuré
+   * qui n'en est pas le bénéficiaire, nombre d'enfants que la version exige
+   * non atteint. Voir `par_enfant` du Python.
    */
-  parEnfant(dispositif, sexe, naissanceDesEnfants, anneeLiquidation, nombreEnfants) {
-    for (const [code, reference, debut, fin, trimestres, servicesTable,
-      servicesDepuis, enfantsMinimum, beneficiaire, fiabilite] of this._table) {
-      if (code !== dispositif) {
-        continue;
-      }
-      const annee = reference === "liquidation"
-        ? anneeLiquidation
-        : naissanceDesEnfants;
-      if (annee < debut || annee > fin) {
-        continue;
-      }
-      if (beneficiaire === "mere" && sexe !== "F") {
-        return null;
-      }
-      if (nombreEnfants < enfantsMinimum) {
-        return null;
-      }
-      // La part qui compte en services peut n'entrer en vigueur qu'à une
-      // SECONDE date, celle de la liquidation, quand la première est celle de
-      // la naissance de l'enfant : c'est le cas du b ter de L. 12.
-      const services = (servicesDepuis !== null && anneeLiquidation < servicesDepuis)
-        ? 0
-        : servicesTable;
-      return [trimestres, services, fiabilite];
+  parEnfant(dispositif, sexe, naissance, dateEffet, nombreEnfants) {
+    const fiche = this._fiches.get(dispositif);
+    if (fiche === undefined) {
+      return null;
     }
-    return null;
+    const situation = { "enfant.naissance": naissance, "liquidation.date_effet": dateEffet };
+    const dates = {};
+    for (const nom of fiche.dates_qui_decident) {
+      dates[nom] = situation[nom];
+    }
+    const version = applicable(fiche, dates);
+    if (version === null) {
+      return null;
+    }
+    const parametres = version.parametres;
+    const trimestres = Number(parametres.trimestres_par_enfant);
+    if (trimestres <= 0) {
+      return null;
+    }
+    const beneficiaire = parametres.beneficiaire;
+    if (!MajorationsPourEnfants.BENEFICIAIRES.includes(beneficiaire)) {
+      throw new Error(`${fiche.id}.${version.id} : bénéficiaire inconnu, '${beneficiaire}'`);
+    }
+    if (beneficiaire === "mere" && sexe !== "F") {
+      return null;
+    }
+    if (nombreEnfants < Number(parametres.enfants_minimum ?? 1)) {
+      return null;
+    }
+    return {
+      fiche: fiche.id,
+      version: version.id,
+      texte: version.texte,
+      trimestres,
+      services: Number(parametres.services_par_enfant),
+      condition: parametres.condition ?? "tout_enfant",
+      fiabilite: fiabiliteDepuisTexte(parametres.fiabilite),
+    };
   }
 }
+
+/** La fiche de chaque dispositif, dans `data/reference/regles/`. */
+MajorationsPourEnfants.FICHES = Object.freeze({
+  mda: "majoration_duree_assurance_enfants",
+  bonifications: "enfants_fonction_publique",
+});
+/** Les bénéficiaires qu'une version peut désigner. */
+MajorationsPourEnfants.BENEFICIAIRES = Object.freeze(["mere"]);
 
 /**
  * La durée de services qui ouvre une pension dans chaque régime spécial.

@@ -30,8 +30,10 @@ vaut [début, fin), comme les bornes des versions.
 
 Ce que les faits portent, par sorte :
 
-* ``naissance`` — ``sexe`` et ``precision`` pour l'assuré ; rien pour un
-  enfant dont la naissance est présumée ;
+* ``naissance`` — ``sexe`` et ``precision`` pour l'assuré ; ``precision``
+  pour un enfant dont la naissance est déclarée — l'année, le mois ou le
+  jour, la date tombant au premier jour de ce qui n'est pas dit ; rien pour
+  un enfant dont la naissance est présumée ;
 * ``periode_d_activite`` — ``affiliation`` ; d'un parcours, le
   ``niveau_salaire`` (en multiples du salaire moyen par tête de l'année) et le
   ``profil`` de progression, et ``cumul`` pour une activité qui s'ajoute à la
@@ -50,6 +52,7 @@ observés, que la phase 4 fera entrer au relevé des droits, là où ils auraien
 
 from __future__ import annotations
 
+import datetime
 from functools import lru_cache
 from typing import TYPE_CHECKING
 
@@ -129,40 +132,89 @@ def lien(ident: str, de: str, vers: str, sorte: str, roles: dict,
 
 # -- construire : ce que la personne déclare -----------------------------------
 
+def naissance_declaree(valeur) -> tuple[str, str]:
+    """La naissance déclarée d'un enfant : sa date (AAAA-MM-JJ) et sa
+    précision. On déclare une année (``1995``), un mois (``1995-06``) ou un
+    jour (``1995-06-14``) ; ce qui n'est pas dit tombe au premier du mois, ou
+    au 1er janvier, comme pour le mois de naissance de l'assuré."""
+    texte = str(valeur).strip()
+    morceaux = texte.split("-")
+    try:
+        nombres = [int(m) for m in morceaux]
+    except ValueError:
+        nombres = []
+    if not 1 <= len(nombres) <= 3 or any(len(m) != n for m, n in zip(morceaux, (4, 2, 2))):
+        raise ValueError(f"naissance d'un enfant attendue en AAAA, AAAA-MM ou "
+                         f"AAAA-MM-JJ, reçu {valeur!r}")
+    annee, mois, jour = (nombres + [1, 1])[:3]
+    try:
+        date = _date(annee, mois, jour)
+    except ValueError:
+        raise ValueError(f"naissance d'un enfant impossible : {valeur!r}") from None
+    return date, ("annee", "mois", "jour")[len(nombres) - 1]
+
+
+def _date(annee: int, mois: int, jour: int) -> str:
+    """Une date AAAA-MM-JJ, contrôlée."""
+    return datetime.date(annee, mois, jour).isoformat()
+
+
 def _personne(annee_naissance: int, mois_naissance: int, sexe: str,
-              age_liquidation: float | None, nombre_enfants: int
+              age_liquidation: float | None, nombre_enfants: int,
+              naissances_enfants: list | tuple = ()
               ) -> tuple[list[dict], list[dict], list[dict]]:
     """Ce que toute saisie déclare de l'assuré : sa naissance, son départ et
-    ses enfants. Rend la naissance, le départ (vide sans âge de départ) et les
-    liens de filiation, que :func:`completer` datera."""
+    ses enfants. Rend les naissances — celle de l'assuré, puis celles des
+    enfants qu'elle déclare —, le départ (vide sans âge de départ) et les
+    liens de filiation.
+
+    ``naissances_enfants`` déclare la naissance des premiers enfants, dans
+    l'ordre (:func:`naissance_declaree`) ; :func:`completer` présume celles
+    des autres, et date leur filiation."""
     naissance = DateMois(annee_naissance, mois_naissance)
     faits_naissance = [fait(f"naissance_{ASSURE}", ASSURE, "naissance", _jour(naissance),
                             attributs={"sexe": sexe, "precision": "mois"})]
+    if len(naissances_enfants) > nombre_enfants:
+        raise ValueError(
+            f"{len(naissances_enfants)} naissances d'enfants déclarées pour "
+            f"{nombre_enfants} enfant{'s' if nombre_enfants > 1 else ''}")
+    declarees = [naissance_declaree(valeur) for valeur in naissances_enfants]
+    for jour, _ in declarees:
+        if jour <= _jour(naissance):
+            raise ValueError(f"un enfant né le {jour}, avant son parent")
+    faits_naissance += [
+        fait(f"naissance_enfant_{rang}", f"enfant_{rang}", "naissance", jour,
+             attributs={"precision": precision})
+        for rang, (jour, precision) in enumerate(declarees, 1)]
     depart = [] if age_liquidation is None else [
         fait(f"depart_{ASSURE}", ASSURE, "acte_de_la_personne",
              _jour(naissance.plus_mois(en_mois(age_liquidation))),
              attributs={"acte": "depart", "motif": "vieillesse", "age": age_liquidation})]
     role = "mere" if sexe == "F" else "pere"
     liens = [lien(f"filiation_enfant_{rang}", ASSURE, f"enfant_{rang}", "filiation",
-                  {ASSURE: role, f"enfant_{rang}": "enfant"})
+                  {ASSURE: role, f"enfant_{rang}": "enfant"},
+                  debut=declarees[rang - 1][0] if rang <= len(declarees) else None)
              for rang in range(1, nombre_enfants + 1)]
     return faits_naissance, depart, liens
 
 
 def du_resume(annee_naissance: int, sexe: str, mois_naissance: int = 1,
-              age_liquidation: float | None = None, nombre_enfants: int = 0) -> dict:
+              age_liquidation: float | None = None, nombre_enfants: int = 0,
+              naissances_enfants: list | tuple = ()) -> dict:
     """La chronologie d'une carrière construite ligne à ligne : la naissance,
     le départ et les enfants, sans ses périodes, que l'appelant a déjà
     traduites en années."""
     naissance, depart, liens = _personne(annee_naissance, mois_naissance, sexe,
-                                         age_liquidation, nombre_enfants)
+                                         age_liquidation, nombre_enfants,
+                                         naissances_enfants)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + depart, "liens": liens}
 
 
 def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                 age_liquidation: float, mois_naissance: int = 1,
                 profil_carriere: str = "auto", interruptions: dict[int, str] | None = None,
-                nombre_enfants: int = 0, part_primes: float = 0.0) -> dict:
+                nombre_enfants: int = 0, part_primes: float = 0.0,
+                naissances_enfants: list | tuple = ()) -> dict:
     """La chronologie d'un parcours : un fait par métier, daté au mois, et un
     par année d'interruption.
 
@@ -232,14 +284,16 @@ def du_parcours(annee_naissance: int, sexe: str, metiers: list["Metier"],
                              {"motif": interruptions[annee]}))
 
     naissance, depart, liens = _personne(annee_naissance, mois_naissance, sexe,
-                                         age_liquidation, nombre_enfants)
+                                         age_liquidation, nombre_enfants,
+                                         naissances_enfants)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + periodes + depart,
             "liens": liens}
 
 
 def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
               age_liquidation: float, mois_naissance: int = 1,
-              nombre_enfants: int = 0, part_primes: float = 0.0) -> dict:
+              nombre_enfants: int = 0, part_primes: float = 0.0,
+              naissances_enfants: list | tuple = ()) -> dict:
     """La chronologie d'un relevé : un fait par ligne, une année civile
     chacun, dans l'ordre du relevé — la première ligne d'une année est
     l'activité principale."""
@@ -256,7 +310,8 @@ def du_releve(annee_naissance: int, sexe: str, releve: list["LigneRelevee"],
                              f"{ligne.annee:04d}-01-01", f"{ligne.annee + 1:04d}-01-01",
                              attributs))
     naissance, depart, liens = _personne(annee_naissance, mois_naissance, sexe,
-                                         age_liquidation, nombre_enfants)
+                                         age_liquidation, nombre_enfants,
+                                         naissances_enfants)
     return {"schema_version": SCHEMA_VERSION, "faits": naissance + periodes + depart,
             "liens": liens}
 

@@ -1754,4 +1754,4 @@ def test_le_temoin_des_exemples_officiels_est_source():
         regle = fiches.get(ecart["fiche"])
         assert regle is not None, (exemple["id"], ecart["fiche"])
         assert regle["etat"] not in ("conforme", "transcrite"), (exemple["id"], regle["etat"])
-        assert exemple["id"] in (regle.get("exemples") or []), (exemple["id"], regle["id"])
+        assert exemple["id"] in carte.exemples_de(regle), (exemple["id"], regle["id"])

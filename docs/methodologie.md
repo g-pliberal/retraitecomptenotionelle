@@ -970,18 +970,26 @@ précédent, et le modèle en prenait deux à l'envers.
    s'ajoutent aux années retenues au lieu de les remplacer, et abaissent la
    moyenne. C'est la règle, et le modèle la montre telle qu'elle est.
 2. **Trimestres accordés au titre des enfants** — datés, sexués, et propres à
-   chaque famille de régimes (`legislation/majoration_duree_assurance.csv`). La
-   majoration de durée d'assurance de l'article L. 351-4 naît avec la loi du
-   31 décembre 1971 à un an par enfant, passe à deux ans en 1975, et va à la
-   mère : le partage ouvert en 2010 entre maternité et éducation laisse à la
-   mère, à défaut d'accord des parents, les mêmes huit trimestres. La fonction
-   publique et les régimes spéciaux ne l'appliquent pas : ils servent la
-   bonification de l'article L. 12 b, un an par enfant né avant 2004, puis les
-   deux trimestres de l'article L. 12 bis pour les enfants nés depuis. Les
-   régimes alignés — artisans, commerçants, salariés agricoles — suivent le
-   régime général (L. 634-2). Dans tous les cas ces trimestres sont attribués
-   DANS un régime et non au-dessus d'eux : ils comptent donc aussi dans sa
-   proratisation, pas seulement dans la décote tous régimes confondus.
+   chaque famille de régimes : les versions des fiches
+   `majoration_duree_assurance_enfants` et `enfants_fonction_publique`
+   (`data/reference/regles/`), que le moteur lit enfant par enfant, à la
+   naissance de chacun et à la date d'effet de la pension. La majoration de
+   durée d'assurance de l'article L. 351-4 naît avec la loi du 31 décembre 1971
+   à un an par enfant, passe à deux ans en 1975, et va à la mère : le partage
+   ouvert en 2010 entre maternité et éducation laisse à la mère, à défaut
+   d'accord des parents, les mêmes huit trimestres. La fonction publique et les
+   régimes spéciaux ne l'appliquent pas : ils servent la bonification de
+   l'article L. 12 b, un an par enfant né avant 2004, puis les deux trimestres
+   de l'article L. 12 bis pour les enfants nés depuis. Les régimes alignés —
+   artisans, commerçants, salariés agricoles — suivent le régime général
+   (L. 634-2). Dans tous les cas ces trimestres sont attribués DANS un régime et
+   non au-dessus d'eux : ils comptent donc aussi dans sa proratisation, pas
+   seulement dans la décote tous régimes confondus. Le régime qui les accorde
+   se désigne pour chaque enfant (R. 173-15) : le régime spécial où l'enfant
+   ouvre le droit, sinon le régime général, qui accorde par exemple les
+   trimestres d'un enfant né avant le recrutement de sa mère fonctionnaire.
+   Les naissances que le formulaire ne dit pas sont présumées aux trente ans
+   du parent.
 3. **Minimum contributif** — réservé aux pensions liquidées AU TAUX PLEIN
    (L. 351-10). Deux durées le proratisent, et ce ne sont pas les mêmes : le
    montant de base suit la durée d'assurance acquise dans le régime, sa

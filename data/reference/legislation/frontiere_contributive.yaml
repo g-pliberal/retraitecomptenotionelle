@@ -838,9 +838,10 @@ bascules:
     lu_le: 2026-09-21
     portee_modele: applique
     effet_modele: >-
-      Le dépôt porte les deux régimes dans `majoration_duree_assurance.csv` et
-      les applique par date de naissance. C'est l'une des rares bascules de ce
-      fichier que le modèle rejoue vraiment.
+      Le dépôt porte les deux régimes dans les versions de la fiche
+      `enfants_fonction_publique` et les applique enfant par enfant, par date
+      de naissance. C'est l'une des rares bascules de ce fichier que le modèle
+      rejoue vraiment.
 
   - code: interruption_ou_reduction_fp
     date: 2011-07-01

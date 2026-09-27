@@ -51,6 +51,17 @@ def est_relation(fiche: dict) -> bool:
     return "sorte" in fiche
 
 
+def exemples_de(fiche: dict) -> list[str]:
+    """Les exemples officiels d'une fiche : ceux de ses versions, et ceux
+    qu'elle porte encore elle-même tant qu'elle n'est pas découpée (C.2,
+    champ ``exemples``). Chacun une fois, dans l'ordre où la fiche les cite."""
+    cites = list(fiche.get("exemples") or [])
+    for version in fiche.get("versions") or []:
+        exemples = version.get("exemples")
+        cites += exemples if isinstance(exemples, list) else []
+    return list(dict.fromkeys(cites))
+
+
 def etats() -> list[str]:
     """Les états d'une fiche, dans l'ordre du vocabulaire : du plus sûr au
     moins sûr."""

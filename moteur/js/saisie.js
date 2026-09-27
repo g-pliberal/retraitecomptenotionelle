@@ -15,6 +15,7 @@ import {
   PartCotisation, SituationFoyer, TableConversion, avec, sousRegimeFrais,
   sousRegimeTaux,
 } from "./config.js";
+import { naissanceDeclaree } from "./chronologie.js";
 import { formatG } from "./format.js";
 import * as g from "./gabarit.js";
 
@@ -412,6 +413,9 @@ export const DEFAUTS = Object.freeze({
   profil: "auto",
   primes: 0.0,
   enfants: 0,
+  //: Les naissances des premiers enfants, dans l'ordre : « 1995, 1998-06 ».
+  //: Celles qui ne sont pas dites sont présumées. Voir `naissancesEnfants`.
+  naissances: "",
   interruptions: "",
   indexation: "masse_salariale",
   lissage: 1,
@@ -503,6 +507,7 @@ export class Saisie {
       profil: parmi(parametres, "profil", PROFILS, DEFAUTS.profil),
       primes: reel(parametres, "primes", DEFAUTS.primes),
       enfants: entier(parametres, "enfants", DEFAUTS.enfants),
+      naissances: (parametres.naissances || "").trim(),
       interruptions: (parametres.interruptions || "").trim(),
       indexation: parmi(parametres, "indexation", INDEXATIONS, DEFAUTS.indexation),
       lissage: entier(parametres, "lissage", DEFAUTS.lissage),
@@ -586,6 +591,7 @@ export class Saisie {
         `Nombre d'enfants attendu entre 0 et ${ENFANTS_MAXIMUM}.`,
       );
     }
+    this.verifierNaissances();
     if (!(this.bascule >= ANNEE_MINIMALE && this.bascule <= ANNEE_MAXIMALE)) {
       throw new ErreurSaisie(
         `Année de bascule attendue entre ${ANNEE_MINIMALE} et `
@@ -1206,7 +1212,55 @@ export class Saisie {
     return `en ${this.dateDe(age_)}, soit ${age(age_)}`;
   }
 
+  /**
+   * Les naissances déclarées des premiers enfants, dans l'ordre :
+   * « 1995, 1998-06 » → `["1995", "1998-06"]`. Une virgule, un point-virgule ou
+   * un blanc les sépare.
+   */
+  naissancesEnfants() {
+    return this.naissances.split(/[\s,;]+/).filter((morceau) => morceau);
+  }
+
+  /**
+   * Pas plus de naissances que d'enfants ; chacune une année ou un mois, après
+   * la naissance de l'assuré et avant son départ. Voir `_verifier_naissances`
+   * du Python.
+   */
+  verifierNaissances() {
+    const naissances = this.naissancesEnfants();
+    if (naissances.length > this.enfants) {
+      throw new ErreurSaisie(
+        `Naissances des enfants : ${naissances.length} déclarée`
+        + `${naissances.length > 1 ? "s" : ""} pour ${this.enfants} enfant`
+        + `${this.enfants > 1 ? "s" : ""}.`,
+      );
+    }
+    for (const valeur of naissances) {
+      let jour;
+      try {
+        [jour] = naissanceDeclaree(valeur);
+      } catch {
+        throw new ErreurSaisie(
+          `Naissance d'un enfant « ${valeur} » : attendue en AAAA ou `
+          + "AAAA-MM, par exemple 1995 ou 1995-06.",
+        );
+      }
+      if (jour <= this.naissanceIso) {
+        throw new ErreurSaisie(
+          `Naissance d'un enfant « ${valeur} » : elle précède la vôtre.`,
+        );
+      }
+      if (jour >= this.jourDe(this.liquidation)) {
+        throw new ErreurSaisie(
+          `Naissance d'un enfant « ${valeur} » : elle suit le départ à la `
+          + `retraite, fixé en ${this.dateDe(this.liquidation)}.`,
+        );
+      }
+    }
+  }
+
   requete(remplacements = {}) {
+    const naissances = this.naissancesEnfants();
     const champs = {
       naissance: this.naissanceIso,
       sexe: this.sexe, statut: this.statut,
@@ -1220,6 +1274,7 @@ export class Saisie {
       salaire: nombreBrut(this.salaire), profil: this.profil,
       releve: this.releve,
       primes: nombreBrut(this.primes), enfants: this.enfants,
+      ...(naissances.length ? { naissances: naissances.join(",") } : {}),
       interruptions: this.interruptions, indexation: this.indexation,
       lissage: this.lissage,
       age_reference: this.age_reference, table: this.table,

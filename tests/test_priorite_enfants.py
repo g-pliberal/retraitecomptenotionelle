@@ -38,11 +38,13 @@ def simulateur() -> Simulateur:
 
 
 def _carriere(simulateur: Simulateur, naissance: int, metiers: list[tuple[str, float]],
-              liquidation: float, enfants: int = 2, sexe: str = "F") -> Carriere:
+              liquidation: float, enfants: int = 2, sexe: str = "F",
+              naissances: tuple[str, ...] = ()) -> Carriere:
     return Carriere.depuis_parcours(
         annee_naissance=naissance, sexe=sexe,
         metiers=[Metier(affiliation=statut, age_debut=debut) for statut, debut in metiers],
         age_liquidation=liquidation, macro=simulateur.macro, nombre_enfants=enfants,
+        naissances_enfants=naissances,
     )
 
 
@@ -67,6 +69,12 @@ def _majoration(simulateur: Simulateur, naissance: int, metiers: list[tuple[str,
     carriere = _carriere(simulateur, naissance, metiers, liquidation, **kwargs)
     return compter.majoration_pour_enfants(
         simulateur.scenario_actuel, carriere, _regimes(simulateur, carriere), carriere.annee_liquidation)
+
+
+def _seul(valeurs: list[str]) -> str:
+    """Le seul régime, ou le seul dispositif, que portent tous les enfants."""
+    (valeur,) = valeurs
+    return valeur
 
 
 def _pension(resultat, regime: str):
@@ -129,12 +137,12 @@ def test_la_fonctionnaire_passee_au_prive_garde_sa_bonification(simulateur):
     actuel = simulateur.scenario_actuel
     majoration = compter.majoration_pour_enfants(
         actuel, carriere, _regimes(simulateur, carriere), carriere.annee_liquidation)
-    assert (majoration.regime, majoration.dispositif) == ("fonction_publique_etat",
+    assert (_seul(majoration.regimes), _seul(majoration.dispositifs)) == ("fonction_publique_etat",
                                                           "bonifications")
     assert (majoration.trimestres, majoration.services) == (8, 8)
     # Le régime général en aurait accordé deux fois plus.
-    mda, _, _ = actuel.majorations_enfants.par_enfant("mda", "F", 1962, 2026, 2)
-    assert mda * 2 == 16 > majoration.trimestres
+    mda = actuel.majorations_enfants.par_enfant("mda", "F", "1992-01-01", "2026-01-01", 2)
+    assert mda.trimestres * 2 == 16 > majoration.trimestres
     resultat = actuel.calculer(carriere)
     assert _pension(resultat, "fonction_publique_etat").detail.endswith("× 120/169")
     assert _pension(resultat, "regime_general").detail.endswith("× 56/169")
@@ -146,7 +154,7 @@ def test_deux_ans_de_services_suffisent_depuis_2011(simulateur):
     majoration = _majoration(simulateur, 1962, [
         ("salarie_prive_non_cadre", 22), ("fonctionnaire_etat", 48),
         ("salarie_prive_non_cadre", 50)], 64)
-    assert majoration.regime == "fonction_publique_etat"
+    assert _seul(majoration.regimes) == "fonction_publique_etat"
 
 
 @pytest.mark.parametrize("metiers", [
@@ -161,7 +169,7 @@ def test_sans_la_duree_le_regime_general_accorde(simulateur, metiers):
     """Le régime spécial qui ne peut pas pensionner rétablit l'agent au régime
     général : c'est lui qui accorde, et ses huit trimestres par enfant."""
     majoration = _majoration(simulateur, 1962, metiers, 64)
-    assert (majoration.regime, majoration.dispositif) == ("regime_general", "mda")
+    assert (_seul(majoration.regimes), _seul(majoration.dispositifs)) == ("regime_general", "mda")
     assert majoration.trimestres == 16
 
 
@@ -172,13 +180,13 @@ def test_la_sncf_quittee_avant_juillet_2008_sans_quinze_ans(simulateur):
     n° 2008-639) : la SNCF accorde."""
     avant = _majoration(simulateur, 1962, [("agent_sncf", 22),
                                            ("salarie_prive_non_cadre", 35)], 64)
-    assert avant.regime == "regime_general"
+    assert _seul(avant.regimes) == "regime_general"
     # La ligne d'avant 2008 vient de la fiche du COR : le résultat le dit.
     assert avant.fiabilite == Fiabilite.MOYENNE
     apres = _majoration(simulateur, 1970, [
         ("salarie_prive_non_cadre", 22), ("agent_sncf", 40),
         ("salarie_prive_non_cadre", 45)], 64)
-    assert (apres.regime, apres.dispositif) == ("sncf", "bonifications")
+    assert (_seul(apres.regimes), _seul(apres.dispositifs)) == ("sncf", "bonifications")
 
 
 @pytest.mark.parametrize("fin_seita, regime", [(60, "seita"), (58, "regime_general")])
@@ -189,13 +197,13 @@ def test_la_seita_ne_demande_rien_a_qui_part_en_fonctions(simulateur, fin_seita,
     metiers = [("salarie_prive_non_cadre", 22), ("agent_seita", 48)]
     if fin_seita < 60:
         metiers.append(("salarie_prive_non_cadre", fin_seita))
-    assert _majoration(simulateur, 1930, metiers, 60).regime == regime
+    assert _seul(_majoration(simulateur, 1930, metiers, 60).regimes) == regime
 
 
 def test_entre_deux_regimes_speciaux_le_dernier_servi(simulateur):
     majoration = _majoration(simulateur, 1962, [
         ("fonctionnaire_territorial_hospitalier", 22), ("fonctionnaire_etat", 40)], 64)
-    assert majoration.regime == "fonction_publique_etat"
+    assert _seul(majoration.regimes) == "fonction_publique_etat"
 
 
 # -- le droit ouvert ----------------------------------------------------------
@@ -208,7 +216,7 @@ def test_l_enfant_ne_depuis_2004_avant_le_recrutement(simulateur):
     date de naissance que le modèle prête aux enfants."""
     majoration = _majoration(simulateur, 1980, [("salarie_prive_non_cadre", 22),
                                                 ("fonctionnaire_etat", 40)], 64)
-    assert (majoration.regime, majoration.trimestres) == ("regime_general", 16)
+    assert (_seul(majoration.regimes), majoration.trimestres) == ("regime_general", 16)
     assert majoration.fiabilite == Fiabilite.MOYENNE
 
 
@@ -226,7 +234,7 @@ def test_l_enfant_ne_avant_2004_selon_la_version_de_r13(simulateur, naissance,
                                                         liquidation, regime):
     majoration = _majoration(simulateur, naissance, [
         ("salarie_prive_non_cadre", 22), ("fonctionnaire_etat", 35)], liquidation)
-    assert majoration.regime == regime
+    assert _seul(majoration.regimes) == regime
 
 
 def test_l_enfant_ne_apres_la_radiation(simulateur):
@@ -236,7 +244,8 @@ def test_l_enfant_ne_apres_la_radiation(simulateur):
                                             ("salarie_prive_non_cadre", 23)], 64)
     actuel = simulateur.scenario_actuel
     periode = actuel.catalogue["fonction_publique_etat"].periode(2026)
-    pension, ouvert, _ = compter.droit_regime_special(actuel, periode, carriere, 2026)
+    pension, ouvert, _ = compter.droit_regime_special(
+        actuel, periode, carriere, 2026, "ne_avant_radiation", 1992)
     assert not ouvert and not pension
 
 
@@ -249,19 +258,94 @@ def test_le_regime_general_passe_avant_le_regime_des_artisans(simulateur):
     donnait au régime qui comptait le plus de trimestres."""
     majoration = _majoration(simulateur, 1950, [("artisan", 22),
                                                 ("salarie_prive_non_cadre", 50)], 62)
-    assert majoration.regime == "regime_general"
+    assert _seul(majoration.regimes) == "regime_general"
 
 
 def test_sans_regime_general_le_regime_de_la_derniere_affiliation(simulateur):
     majoration = _majoration(simulateur, 1950, [("salarie_agricole", 22),
                                                 ("artisan", 40)], 62)
-    assert majoration.regime == "rsi"
+    assert _seul(majoration.regimes) == "rsi"
 
 
 def test_une_carriere_d_un_seul_regime_ne_bouge_pas(simulateur):
     """Le cas ordinaire : une fonctionnaire de toute une carrière, une salariée
     du privé. Rien ne change pour elles."""
     fonctionnaire = _majoration(simulateur, 1962, [("fonctionnaire_etat", 22)], 64)
-    assert (fonctionnaire.regime, fonctionnaire.trimestres) == ("fonction_publique_etat", 8)
+    assert (_seul(fonctionnaire.regimes), fonctionnaire.trimestres) == ("fonction_publique_etat", 8)
     salariee = _majoration(simulateur, 1962, [("salarie_prive_non_cadre", 22)], 64)
-    assert (salariee.regime, salariee.trimestres) == ("regime_general", 16)
+    assert (_seul(salariee.regimes), salariee.trimestres) == ("regime_general", 16)
+
+
+# -- chaque enfant compte à sa date -------------------------------------------
+#
+# Le domaine « les dates des enfants » (docs/architecture.md, § 11) : la
+# priorité se lit enfant par enfant. Le régime général est compétent « si un ou
+# plusieurs enfants n'ouvrent pas droit à majoration » dans le régime spécial
+# (circulaire Cnav 2017-01, fiches n° 6.2a et 6.2b, point 3 « Compétence »).
+
+def test_l_enfant_ne_avant_le_recrutement_compte_au_regime_general(simulateur):
+    """Salariée à vingt-deux ans, fonctionnaire à trente, en 2010 : l'enfant
+    né en 2006 précède son recrutement, et L. 12 bis ne va qu'à la femme qui a
+    accouché après ; le régime général lui sert ses huit trimestres. L'enfant
+    né en 2012 ouvre la majoration de l'État : deux trimestres, dont un de
+    services depuis le b ter."""
+    majoration = _majoration(simulateur, 1980, [("salarie_prive_non_cadre", 22),
+                                                ("fonctionnaire_etat", 30)], 64,
+                             naissances=("2006", "2012"))
+    assert [(e.enfant, e.regime, e.version, e.trimestres, e.services)
+            for e in majoration.enfants] == [
+        ("enfant_1", "regime_general", "mda_2010_nes_avant", 8, 8),
+        ("enfant_2", "fonction_publique_etat", "l12bter", 2, 1)]
+    assert majoration.par_regime() == {"regime_general": (8, 8),
+                                       "fonction_publique_etat": (2, 1)}
+    assert majoration.dispositifs == ["mda", "bonifications"]
+
+
+def test_deux_enfants_de_part_et_d_autre_de_2004(simulateur):
+    """Une fonctionnaire de toute une carrière : l'enfant né en 1999 reçoit la
+    bonification de L. 12 b, un an en services ; celui né en 2006, la
+    majoration de L. 12 bis. La présomption, qui les faisait naître la même
+    année, ne savait servir que l'une ou l'autre aux deux."""
+    majoration = _majoration(simulateur, 1970, [("fonctionnaire_etat", 22)], 64,
+                             naissances=("1999-05", "2006-02"))
+    assert [(e.version, e.trimestres, e.services) for e in majoration.enfants] == [
+        ("l12b_2011", 4, 4), ("l12bter", 2, 1)]
+    assert (majoration.trimestres, majoration.services) == (6, 5)
+
+
+def test_un_enfant_ne_apres_la_date_d_effet_n_ouvre_rien(simulateur):
+    """Le vocabulaire tient pour impossible un enfant né après la date d'effet
+    de la pension (§ 4.2) : le moteur ne lui compte rien, et compte les
+    autres."""
+    carriere = _carriere(simulateur, 1962, [("salarie_prive_non_cadre", 22)], 64,
+                         naissances=("1990",))
+    avant = compter.majoration_pour_enfants(
+        simulateur.scenario_actuel, carriere, _regimes(simulateur, carriere),
+        carriere.annee_liquidation)
+    apres = compter.majoration_pour_enfants(
+        simulateur.scenario_actuel, carriere, _regimes(simulateur, carriere), 1991)
+    assert [e.enfant for e in avant.enfants] == ["enfant_1", "enfant_2"]
+    assert [e.enfant for e in apres.enfants] == ["enfant_1"]
+
+
+def test_la_liquidation_nomme_les_deux_regimes(simulateur):
+    """L'avantage que la cascade mesure dit les deux dispositifs et les deux
+    régimes, quand les enfants en relèvent de deux."""
+    carriere = _carriere(simulateur, 1980, [("salarie_prive_non_cadre", 22),
+                                            ("fonctionnaire_etat", 30)], 64,
+                         naissances=("2006", "2012"))
+    resultat = simulateur.scenario_actuel.calculer(carriere)
+    avantage = next(a for a in resultat.avantages_appliques
+                    if a.code == "majoration_duree_assurance")
+    assert avantage.libelle == ("Majoration de durée d'assurance et bonification "
+                                "pour enfants")
+    assert avantage.detail.endswith("au titre des régimes « regime_general » et "
+                                    "« fonction_publique_etat »")
+
+
+def test_une_condition_inconnue_arrete_le_moteur():
+    """Une version qui pose à l'enfant une condition que le moteur ne connaît
+    pas l'arrête, plutôt que de la traiter en silence comme une autre (§ 6.7)."""
+    assert compter.bonification_ouverte("tout_enfant", 1990, 2000, 2010)
+    with pytest.raises(ValueError, match="condition inconnue"):
+        compter.bonification_ouverte("ne_un_dimanche", 1990, 2000, 2010)

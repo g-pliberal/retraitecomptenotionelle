@@ -14,9 +14,11 @@ une durée, son compte —, sa face, et les présomptions qu'elle emploie. Les
 lignes sont les crédits, année par année : le plafond d'une année — ses
 trimestres civils, toutes activités d'un régime ou d'un groupe réunies — et
 celui de la durée qu'un régime rémunère s'appliquent quand on les lit. Une
-ligne cite la fiche de la carte qui l'écrit quand la règle en a une ; sa
-version et le texte appliqué attendent que les fiches soient découpées en
-versions : ce sont des manques, que le tableau de bord compte.
+ligne cite la fiche de la carte qui l'écrit quand la règle en a une, et, si
+la fiche est découpée en versions, la version appliquée et le texte qui la
+fait naître : les trimestres des enfants, depuis le 27 septembre 2026. Les
+autres attendent que leurs fiches le soient : ce sont des manques, que le
+tableau de bord compte.
 
 Son jumeau est ``moteur/js/droit/releve.js``.
 """
@@ -45,7 +47,6 @@ SCHEMA_VERSION = 1
 #: Les fiches de la carte que certaines lignes appliquent (data/reference/regles/).
 FICHE_RETABLISSEMENT = "retablissement_fonction_publique"
 FICHE_SERVICES = "services_et_duree_fonction_publique"
-FICHE_ENFANTS = "majoration_duree_assurance_enfants"
 FICHE_POINTS_GRATUITS = "rco_points_gratuits"
 
 #: Les présomptions que chaque dispositif pour enfants applique dans le code
@@ -124,28 +125,27 @@ class Releve:
                         presomptions=faits.presomptions(fait),
                         fiabilite=faits.fiabilite(fait)))
         enfants = self.durees.enfants
-        if enfants is not None and carriere.nombre_enfants > 0:
-            par_enfant = {"assurance": enfants.trimestres // carriere.nombre_enfants,
-                          "services": enfants.services // carriere.nombre_enfants}
-            for rang in range(1, carriere.nombre_enfants + 1):
-                naissance = faits.naissance(f"enfant_{rang}")
-                presomptions = sorted(
-                    ([naissance["presomption"]] if naissance and naissance.get("presomption")
-                     else [])
-                    + list(PRESOMPTIONS_ENFANTS.get(enfants.dispositif, ())))
-                for compte, trimestres in par_enfant.items():
-                    if trimestres <= 0 or (compte == "services"
-                                           and enfants.regime not in self.services_lus):
-                        continue
-                    lignes.append(_ligne(
-                        f"enfants_{compte}_{enfants.regime}_{rang}", carriere.personne,
-                        naissance["id"] if naissance else None,
-                        naissance["debut"] if naissance else None,
-                        {"quantite": trimestres, "unite": "trimestre",
-                         "regime": enfants.regime, "compte": compte},
-                        fiche=FICHE_ENFANTS, contributive=False,
-                        presomptions=presomptions,
-                        fiabilite=enfants.fiabilite.name.lower()))
+        for ouvre in enfants.enfants if enfants is not None else ():
+            naissance = faits.naissance(ouvre.enfant)
+            rang = ouvre.enfant.rpartition("_")[2]
+            presomptions = sorted(
+                ([naissance["presomption"]] if naissance and naissance.get("presomption")
+                 else [])
+                + list(PRESOMPTIONS_ENFANTS.get(ouvre.dispositif, ())))
+            for compte, trimestres in (("assurance", ouvre.trimestres),
+                                       ("services", ouvre.services)):
+                if trimestres <= 0 or (compte == "services"
+                                       and ouvre.regime not in self.services_lus):
+                    continue
+                lignes.append(_ligne(
+                    f"enfants_{compte}_{ouvre.regime}_{rang}", carriere.personne,
+                    naissance["id"] if naissance else None,
+                    naissance["debut"] if naissance else None,
+                    {"quantite": trimestres, "unite": "trimestre",
+                     "regime": ouvre.regime, "compte": compte},
+                    fiche=ouvre.fiche, version=ouvre.version, texte=ouvre.texte,
+                    contributive=False, presomptions=presomptions,
+                    fiabilite=ouvre.fiabilite.name.lower()))
         droits = self.droits
         vus: dict[str, int] = {}
         for code, annee, points, _ in droits.points:
@@ -205,13 +205,15 @@ def construire(moteur: ScenarioActuel, carriere: Carriere, *,
 
 
 def _ligne(ident: str, personne: str, fait: str | None, date: str | None,
-           droit: dict, *, fiche: str | None = None, face: str = "droit",
+           droit: dict, *, fiche: str | None = None, version: str | None = None,
+           texte: str | None = None, face: str = "droit",
            contributive: bool = True, origine: str = "calculee",
            presomptions: list[str] | None = None,
            fiabilite: str | None = None) -> dict:
     """Une ligne du contrat C.5. Ce qui n'est pas encore su — la version de
-    la fiche, le texte appliqué, une fiche que la règle n'a pas encore — n'y
-    figure pas : c'est un manque, pas une erreur."""
+    la fiche et le texte appliqué quand la fiche n'est pas découpée, une
+    fiche que la règle n'a pas encore — n'y figure pas : c'est un manque,
+    pas une erreur."""
     ligne = {"schema_version": SCHEMA_VERSION, "id": ident, "personne": personne}
     if fait is not None:
         ligne["fait"] = fait
@@ -219,6 +221,10 @@ def _ligne(ident: str, personne: str, fait: str | None, date: str | None,
         ligne["date"] = date
     if fiche is not None:
         ligne["fiche"] = fiche
+    if version is not None:
+        ligne["version"] = version
+    if texte is not None:
+        ligne["texte"] = texte
     ligne |= {"droit": droit, "face": face, "contributive": contributive,
               "nature": "ferme", "origine": origine,
               "presomptions": presomptions or []}

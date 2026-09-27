@@ -78,7 +78,7 @@ def main(argv: list[str] | None = None) -> int:
         for fiche in fiches:
             sources = fiche.get("sources") or {}
             print(f"[{fiche['etat']}] {fiche['id']} — lue le {sources.get('lu_le')}, "
-                  f"{len(fiche.get('exemples') or [])} exemple(s)")
+                  f"{len(carte.exemples_de(fiche))} exemple(s)")
             print(f"    {' '.join(str(fiche['intitule']).split())}")
         print()
 

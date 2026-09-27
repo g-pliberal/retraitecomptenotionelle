@@ -11,12 +11,16 @@
  */
 
 import { DateMois } from "../calendrier.js";
+import * as chrono from "../chronologie.js";
 import { nomFiabilite, Fiabilite } from "../serie.js";
 import { derniereAnnee } from "./commun.js";
 import * as coordonner from "./coordonner.js";
 
-/** La version du schéma de l'étape. */
-export const SCHEMA_VERSION = 1;
+/**
+ * La version du schéma de l'étape : la deuxième compte les trimestres des
+ * enfants enfant par enfant, chacun dans son régime.
+ */
+export const SCHEMA_VERSION = 2;
 
 /** Les trois comptes, dans l'ordre où l'étape les écrit. */
 export const COMPTES = ["assurance", "services", "cotises"];
@@ -32,21 +36,63 @@ const MAJORATION_DE_DUREE = "mda";
 const REGIME_GENERAL = "regime_general";
 
 /**
- * Quand le droit à la bonification d'un régime spécial est OUVERT, dans les
- * trois versions de R. 13 du code des pensions : pour chacun des enfants
- * jusqu'en 2003 ; pour l'enfant né en service de 2004 à 2010, R. 13 n'admettant
- * que les congés du statut ; pour l'enfant né avant la radiation depuis 2011,
- * le congé de maternité du code de la sécurité sociale suffisant. Les deux
- * bornes se lisent à l'année de liquidation. Voir le Python.
+ * Les conditions qu'une version de la bonification ou de la majoration de la
+ * fonction publique pose à l'enfant (`contenu.parametres.condition` de la fiche
+ * `enfants_fonction_publique`). Voir `CONDITIONS` du Python.
  */
-const BONIFICATION_NE_EN_SERVICE_DEPUIS = 2004;
-const BONIFICATION_NE_AVANT_RADIATION_DEPUIS = 2011;
+export const CONDITIONS = Object.freeze([
+  "tout_enfant", "ne_en_service", "ne_avant_radiation", "accouchement_apres_recrutement",
+]);
 
 /**
- * Pour les enfants nés depuis 2004, la majoration de L. 12 bis ne va qu'aux
- * femmes « ayant accouché postérieurement à leur recrutement ».
+ * Les trimestres dus au titre des enfants, enfant par enfant : chacun a son
+ * régime, que la priorité entre régimes désigne pour lui. Voir
+ * `MajorationEnfants` du Python.
  */
-const MAJORATION_APRES_RECRUTEMENT_DEPUIS = 2004;
+export class MajorationEnfants {
+  constructor(enfants) {
+    /** Les enfants qui ouvrent un droit, dans l'ordre de leurs filiations. */
+    this.enfants = enfants;
+  }
+
+  /** Trimestres accordés au total, tous enfants confondus. */
+  get trimestres() {
+    return this.enfants.reduce((somme, enfant) => somme + enfant.trimestres, 0);
+  }
+
+  /** Ceux d'entre eux qui entrent aux services, tous enfants confondus. */
+  get services() {
+    return this.enfants.reduce((somme, enfant) => somme + enfant.services, 0);
+  }
+
+  /** La fiabilité la plus basse des enfants. */
+  get fiabilite() {
+    return Math.min(...this.enfants.map((enfant) => enfant.fiabilite));
+  }
+
+  /**
+   * Les trimestres et les services que porte chaque régime, `[trimestres,
+   * services]`, dans l'ordre de son premier enfant.
+   */
+  parRegime() {
+    const sommes = new Map();
+    for (const enfant of this.enfants) {
+      const [trimestres, services] = sommes.get(enfant.regime) ?? [0, 0];
+      sommes.set(enfant.regime, [trimestres + enfant.trimestres, services + enfant.services]);
+    }
+    return sommes;
+  }
+
+  /** Les régimes qui portent des trimestres d'enfants. */
+  get regimes() {
+    return [...this.parRegime().keys()];
+  }
+
+  /** Les dispositifs qui les accordent, dans l'ordre des enfants. */
+  get dispositifs() {
+    return [...new Set(this.enfants.map((enfant) => enfant.dispositif))];
+  }
+}
 
 /**
  * Ce que l'étape écrit. Son schéma :
@@ -108,9 +154,15 @@ export class Durees {
       personne: this.carriere.personne,
       comptes,
       enfants: enfants === null ? null : {
-        regime: enfants.regime, dispositif: enfants.dispositif,
-        trimestres: enfants.trimestres, services: enfants.services,
+        trimestres: enfants.trimestres,
+        services: enfants.services,
         fiabilite: nomFiabilite(enfants.fiabilite),
+        par_enfant: enfants.enfants.map((e) => ({
+          enfant: e.enfant, naissance: e.naissance, regime: e.regime,
+          dispositif: e.dispositif, fiche: e.fiche, version: e.version,
+          trimestres: e.trimestres, services: e.services,
+          fiabilite: nomFiabilite(e.fiabilite),
+        })),
       },
       trimestres: this.trimestres,
     };
@@ -184,25 +236,24 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
   }
   // Les trimestres accordés au titre des enfants ne flottent pas au-dessus
   // des régimes : le droit les attribue DANS un régime, et ils comptent donc
-  // aussi dans sa proratisation. UN SEUL régime les accorde, celui que
-  // désigne R. 173-15 : voir `majorationPourEnfants`.
+  // aussi dans sa proratisation. Pour chaque enfant, UN SEUL régime les
+  // accorde, celui que désigne R. 173-15 : voir `majorationPourEnfants`.
   const majorationEnfants = avantagesNonContributifs
     ? majorationPourEnfants(moteur, carriere, trimestresParRegime, anneeLiquidation)
     : null;
   const bonificationsParRegime = new Map();
   if (majorationEnfants !== null) {
-    bonificationsParRegime.set(majorationEnfants.regime, majorationEnfants.services);
     // LA DURÉE ET LES SERVICES NE SONT PAS LA MÊME CASE, et la majoration se
     // range dans les deux : tout ce qui est accordé joue sur la durée
     // d'assurance, tous régimes et dans le régime ; la seule part `services`
     // entre aux services, qui proratisent la pension de la fonction publique.
     trimestres += majorationEnfants.trimestres;
-    trimestresParRegime.set(
-      majorationEnfants.regime,
-      trimestresParRegime.get(majorationEnfants.regime) + majorationEnfants.trimestres,
-    );
-    horsAnnee.assurance.set(majorationEnfants.regime, majorationEnfants.trimestres);
-    horsAnnee.services.set(majorationEnfants.regime, majorationEnfants.services);
+    for (const [regime, [accordes, services]] of majorationEnfants.parRegime()) {
+      bonificationsParRegime.set(regime, services);
+      trimestresParRegime.set(regime, trimestresParRegime.get(regime) + accordes);
+      horsAnnee.assurance.set(regime, accordes);
+      horsAnnee.services.set(regime, services);
+    }
   }
   return new Durees({
     carriere, parAnnee, horsAnnee, enfants: majorationEnfants, trimestres,
@@ -211,40 +262,39 @@ export function compter(moteur, coordination, avantagesNonContributifs = true) {
 }
 
 /**
- * Trimestres dus au titre des enfants, et régime qui les porte.
+ * Trimestres dus au titre des enfants, enfant par enfant, et régime qui porte
+ * ceux de chacun. Voir `majoration_pour_enfants` du Python.
  *
- * Le droit n'attribue pas ces trimestres au-dessus des régimes : il les donne
- * DANS un régime, et ils comptent donc aussi dans sa proratisation. UN SEUL
- * régime les accorde, et l'article R. 173-15 du code de la sécurité sociale
- * dit lequel — le modèle retenait celui qui accordait le plus :
+ * Chaque enfant compte à sa date : la version de la fiche se lit sur sa
+ * naissance et sur la date d'effet de la pension, et la condition qu'elle lui
+ * pose sur sa naissance. Un enfant né à la date d'effet ou après n'ouvre rien.
+ * Pour chaque enfant, un seul régime les accorde, et R. 173-15 dit lequel :
  *
  * 1. un RÉGIME SPÉCIAL, qui déclare `bonifications`, passe le premier s'il
  *    peut servir une pension à l'assurée — la durée de services qu'il exige,
- *    `ServicesOuvrantPension` — et si le droit y est ouvert pour ses enfants
+ *    `ServicesOuvrantPension` — et si l'enfant y ouvre le droit
  *    (`bonificationOuverte`), même quand il accorde moins (TA Amiens, 2 juin
  *    2017). Entre deux régimes spéciaux, le dernier servi ;
- * 2. sinon le RÉGIME GÉNÉRAL, prioritaire parmi les régimes alignés ;
+ * 2. sinon le RÉGIME GÉNÉRAL, prioritaire parmi les régimes alignés, et
+ *    compétent pour l'enfant qui n'ouvre pas droit dans le régime spécial
+ *    (circulaire Cnav 2017-01, fiches n° 6.2a et 6.2b) ;
  * 3. sans lui, le régime de la dernière affiliation, puis celui qui compte le
  *    plus de trimestres.
  *
- * Le modèle ne rétablit pas au régime général l'agent qui n'a pas la durée :
- * sans régime aligné, c'est le régime spécial qui porte la majoration.
- *
- * @returns {{regime: string, dispositif: string, trimestres: number,
- *            services: number, fiabilite: number}|null}
+ * @returns {MajorationEnfants|null}
  */
 export function majorationPourEnfants(moteur, carriere, trimestresParRegime, anneeLiquidation) {
-  if (carriere.nombre_enfants <= 0) {
+  // La date d'effet de la pension, au mois de la liquidation : l'année est
+  // celle que l'appelant demande, comme pour le droit à pension.
+  const mois = carriere.age_liquidation !== null ? carriere.dateLiquidation.mois : 1;
+  const dateEffet = `${String(anneeLiquidation).padStart(4, "0")}-${String(mois).padStart(2, "0")}-01`;
+  const nes = carriere.naissancesDesEnfants.filter(([, naissance]) => naissance < dateEffet);
+  if (nes.length === 0) {
     return null;
   }
-  // Les régimes spéciaux qui peuvent pensionner, ceux qui ne le peuvent pas,
-  // et les régimes alignés : code -> [trimestres validés, majoration].
-  const speciaux = new Map();
-  const sansPension = new Map();
-  const alignes = new Map();
-  // Ce qu'a coûté d'écarter un régime spécial : la fiabilité de la règle qui
-  // l'a écarté, que la majoration servie ailleurs hérite.
-  let fiabiliteEcartes = Fiabilite.CERTIFIEE;
+  // Les régimes qui peuvent porter les trimestres, et le dispositif de
+  // chacun, lus une fois pour tous les enfants.
+  const candidats = [];
   for (const [code, valides] of trimestresParRegime) {
     if (!moteur.catalogue.contient(code)) {
       continue;
@@ -255,78 +305,114 @@ export function majorationPourEnfants(moteur, carriere, trimestresParRegime, ann
       continue;
     }
     for (const dispositif of periode.avantages_non_contributifs) {
+      if (!(dispositif in moteur.majorationsEnfants.constructor.FICHES)) {
+        continue;
+      }
       // Un régime EN POINTS ne porte que la majoration de DURÉE, qui ne joue
       // que sur la durée d'assurance : la CNAVPL depuis 2010 (L. 643-1-1).
       // Une bonification entre aux services, qu'il n'a pas.
       if (periode.type_calcul !== "annuites" && dispositif !== MAJORATION_DE_DUREE) {
         continue;
       }
+      candidats.push([code, valides, dispositif, periode]);
+    }
+  }
+  // Le droit à pension de chaque régime spécial, et la dernière année de
+  // chaque régime : lus une fois, et seulement s'il le faut.
+  const droits = new Map();
+  let dernieres = null;
+  const droitDe = (periode) => {
+    if (!droits.has(periode.regime)) {
+      droits.set(periode.regime,
+        coordonner.droitAPension(moteur, periode.regime, carriere, anneeLiquidation));
+    }
+    return droits.get(periode.regime);
+  };
+  const retenir = (parmi) => {
+    if (parmi.size > 1 && dernieres === null) {
+      dernieres = dernieresAnnees(moteur, carriere, anneeLiquidation);
+    }
+    return choisir(parmi, dernieres ?? new Map());
+  };
+
+  const enfants = [];
+  for (const [enfant, naissance] of nes) {
+    // Les régimes spéciaux qui peuvent pensionner, ceux qui ne le peuvent pas,
+    // et les régimes alignés : code -> [trimestres validés, ce que l'enfant y
+    // ouvre].
+    const speciaux = new Map();
+    const sansPension = new Map();
+    const alignes = new Map();
+    // Ce qu'a coûté d'écarter un régime spécial : la fiabilité de la règle qui
+    // l'a écarté, que la majoration servie ailleurs hérite.
+    let fiabiliteEcartes = Fiabilite.CERTIFIEE;
+    for (const [code, valides, dispositif, periode] of candidats) {
       const accorde = moteur.majorationsEnfants.parEnfant(
-        dispositif, carriere.sexe, carriere.anneeNaissanceDesEnfants, anneeLiquidation,
-        carriere.nombre_enfants,
+        dispositif, carriere.sexe, naissance, dateEffet, nes.length,
       );
       if (accorde === null) {
         continue;
       }
-      const [trimestres, services, fiabilite] = accorde;
-      const majoration = {
-        regime: code, dispositif,
-        trimestres: trimestres * carriere.nombre_enfants,
-        services: services * carriere.nombre_enfants,
-        fiabilite,
+      let ouvre = {
+        enfant, naissance, regime: code, dispositif,
+        fiche: accorde.fiche, version: accorde.version, texte: accorde.texte,
+        trimestres: accorde.trimestres, services: accorde.services,
+        fiabilite: accorde.fiabilite,
       };
       if (dispositif === MAJORATION_DE_DUREE) {
-        alignes.set(code, [valides, majoration]);
+        alignes.set(code, [valides, ouvre]);
         continue;
       }
-      const droit = droitRegimeSpecial(moteur, periode, carriere, anneeLiquidation);
+      const droit = droitDe(periode);
       if (droit === null) {
         continue;
       }
-      const [pension, ouvert, fiabiliteRegle] = droit;
-      if (!ouvert) {
-        // Le droit fermé se lit sur la date de naissance que le modèle prête
-        // aux enfants : la ligne le dit déjà.
-        fiabiliteEcartes = Math.min(fiabiliteEcartes, fiabilite);
+      if (!bonificationOuverte(accorde.condition, chrono.anneeDe(naissance),
+        droit.recrutement, droit.derniere)) {
+        // Le droit fermé se lit sur la date de naissance de l'enfant, présumée
+        // ou déclarée : la version le dit déjà.
+        fiabiliteEcartes = Math.min(fiabiliteEcartes, accorde.fiabilite);
         continue;
       }
-      majoration.fiabilite = Math.min(fiabilite, fiabiliteRegle);
-      if (pension) {
-        speciaux.set(code, [valides, majoration]);
+      ouvre = { ...ouvre, fiabilite: Math.min(accorde.fiabilite, droit.fiabilite) };
+      if (droit.pension) {
+        speciaux.set(code, [valides, ouvre]);
       } else {
-        fiabiliteEcartes = Math.min(fiabiliteEcartes, fiabiliteRegle);
-        sansPension.set(code, [valides, majoration]);
+        fiabiliteEcartes = Math.min(fiabiliteEcartes, droit.fiabilite);
+        sansPension.set(code, [valides, ouvre]);
       }
     }
+    if (speciaux.size > 0) {
+      enfants.push(retenir(speciaux));
+      continue;
+    }
+    let retenue;
+    if (alignes.has(REGIME_GENERAL)) {
+      retenue = alignes.get(REGIME_GENERAL)[1];
+    } else if (alignes.size > 0) {
+      retenue = retenir(alignes);
+    } else if (sansPension.size > 0) {
+      enfants.push(retenir(sansPension));
+      continue;
+    } else {
+      continue;
+    }
+    if (fiabiliteEcartes < retenue.fiabilite) {
+      retenue = { ...retenue, fiabilite: fiabiliteEcartes };
+    }
+    enfants.push(retenue);
   }
-  if (speciaux.size > 0) {
-    return derniereAffiliation(moteur, carriere, speciaux, anneeLiquidation);
-  }
-  let retenue;
-  if (alignes.has(REGIME_GENERAL)) {
-    retenue = alignes.get(REGIME_GENERAL)[1];
-  } else if (alignes.size > 0) {
-    retenue = derniereAffiliation(moteur, carriere, alignes, anneeLiquidation);
-  } else if (sansPension.size > 0) {
-    return derniereAffiliation(moteur, carriere, sansPension, anneeLiquidation);
-  } else {
-    return null;
-  }
-  if (fiabiliteEcartes < retenue.fiabilite) {
-    retenue = { ...retenue, fiabilite: fiabiliteEcartes };
-  }
-  return retenue;
+  return enfants.length > 0 ? new MajorationEnfants(enfants) : null;
 }
 
 /**
- * Ce que ce régime spécial peut pour les enfants de cette assurée :
- * `[pension, ouvert, fiabilite]` — peut-il lui servir une pension, le droit
- * y est-il ouvert, et la fiabilité de la durée exigée —, null si elle n'y a
- * jamais servi. La radiation est datée comme pour la pension différée ; un
- * régime que la table ne porte pas est présumé pouvoir pensionner, au niveau
- * « estimée ».
+ * Ce que ce régime spécial peut pour un enfant de cette assurée, né cette
+ * année-là, sous la condition que la version de la fiche lui pose :
+ * `[pension, ouvert, fiabilite]`, null si elle n'y a jamais servi. Voir
+ * `droit_regime_special` du Python.
  */
-export function droitRegimeSpecial(moteur, periode, carriere, anneeLiquidation) {
+export function droitRegimeSpecial(moteur, periode, carriere, anneeLiquidation, condition,
+  naissance) {
   // Les trois régimes interpénétrés se lisent ensemble : voir `droitAPension`.
   const droit = coordonner.droitAPension(moteur, periode.regime, carriere, anneeLiquidation);
   if (droit === null) {
@@ -334,57 +420,63 @@ export function droitRegimeSpecial(moteur, periode, carriere, anneeLiquidation) 
   }
   return [
     droit.pension,
-    bonificationOuverte(carriere, droit.recrutement, droit.derniere, anneeLiquidation),
+    bonificationOuverte(condition, naissance, droit.recrutement, droit.derniere),
     droit.fiabilite,
   ];
 }
 
 /**
- * Le droit aux trimestres d'enfants d'un régime spécial est-il ouvert ? Sur
- * la naissance des enfants que la chronologie porte — présumée aux trente ans
- * de leur mère tant que rien n'est déclaré : né depuis
- * 2004, après le recrutement (L. 12 bis) ; né avant, tout enfant jusqu'en 2003,
- * l'enfant né en service de 2004 à 2010, l'enfant né avant la radiation depuis
- * 2011 (R. 13). Voir `bonification_ouverte` du Python.
+ * L'enfant né cette année-là ouvre-t-il le droit dans le régime spécial ? La
+ * condition est celle que la version de la fiche lui pose (`CONDITIONS`), et la
+ * naissance se compare, à l'année près, au recrutement et à la dernière année
+ * de services. Une condition inconnue arrête le calcul. Voir
+ * `bonification_ouverte` du Python.
  */
-export function bonificationOuverte(carriere, recrutement, derniere, anneeLiquidation) {
-  const naissance = carriere.anneeNaissanceDesEnfants;
-  if (naissance >= MAJORATION_APRES_RECRUTEMENT_DEPUIS) {
-    return naissance >= recrutement;
+export function bonificationOuverte(condition, naissance, recrutement, derniere) {
+  if (condition === "tout_enfant") {
+    return true;
   }
-  if (anneeLiquidation >= BONIFICATION_NE_AVANT_RADIATION_DEPUIS) {
-    return naissance <= derniere;
-  }
-  if (anneeLiquidation >= BONIFICATION_NE_EN_SERVICE_DEPUIS) {
+  if (condition === "ne_en_service") {
     return recrutement <= naissance && naissance <= derniere;
   }
-  return true;
+  if (condition === "ne_avant_radiation") {
+    return naissance <= derniere;
+  }
+  if (condition === "accouchement_apres_recrutement") {
+    return naissance >= recrutement;
+  }
+  throw new Error(`condition inconnue pour les trimestres d'un enfant : '${condition}'`);
 }
 
 /**
- * Le candidat du régime où l'assurée a été affiliée en dernier lieu ; à
- * égalité, celui qui compte le plus de trimestres, puis le dernier code par
- * ordre alphabétique. La dernière année se lit sur les lignes que chaque
- * régime reçoit, et on ne la cherche que s'il faut départager.
+ * La dernière année où chaque régime reçoit une ligne de la carrière, jusqu'à
+ * la liquidation : l'affiliation « en dernier lieu » de R. 173-15.
  */
-export function derniereAffiliation(moteur, carriere, candidats, anneeLiquidation) {
-  if (candidats.size === 1) {
-    return [...candidats.values()][0][1];
-  }
+export function dernieresAnnees(moteur, carriere, anneeLiquidation) {
   const dernieres = new Map();
   for (const ligne of carriere.lignes) {
     if (ligne.annee > anneeLiquidation || carriere.trimestresRetenus(ligne) <= 0) {
       continue;
     }
-    for (const code of coordonner.regimesDe(moteur, 
+    for (const code of coordonner.regimesDe(moteur,
       ligne, ligne.annee, carriere.dateEntree(ligne.affiliation),
       ligne.cotise ? ligne.revenu : ligne.revenu_reference,
       moteur.macro.plafond_securite_sociale.valeur(ligne.annee),
     )) {
-      if (candidats.has(code)) {
-        dernieres.set(code, Math.max(dernieres.get(code) ?? 0, ligne.annee));
-      }
+      dernieres.set(code, Math.max(dernieres.get(code) ?? 0, ligne.annee));
     }
+  }
+  return dernieres;
+}
+
+/**
+ * Le candidat du régime où l'assurée a été affiliée en dernier lieu ; à
+ * égalité, celui qui compte le plus de trimestres, puis le dernier code par
+ * ordre alphabétique.
+ */
+export function choisir(candidats, dernieres) {
+  if (candidats.size === 1) {
+    return [...candidats.values()][0][1];
   }
   let retenu = null;
   for (const [code, [valides]] of candidats) {

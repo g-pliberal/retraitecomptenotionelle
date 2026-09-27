@@ -1,6 +1,6 @@
 # Architecture du dépôt
 
-*Version 5.13, du 27 septembre 2026 ; l'architecture a été décidée par le
+*Version 5.14, du 27 septembre 2026 ; l'architecture a été décidée par le
 propriétaire le 25 septembre 2026. Ce document dit son état : il reste
 vrai tant qu'aucune décision ne le change, et la liste de ses changements
 est en bas (« Les versions »). Il est
@@ -1569,8 +1569,9 @@ Chaque domaine suit le même gabarit :
 Un domaine se clôt en refigeant la référence de conservation (§ 12).
 
 L'ordre se fixe par le nombre de personnes concernées, mesuré sur les sources
-publiques au moment de choisir. En première lecture, à confirmer par cette
-mesure :
+publiques au moment de choisir. Le premier l'a été le 27 septembre 2026, et
+s'est ouvert ce jour-là (feuille de route, action 130) ; les suivants le seront
+chacun à son tour. En première lecture :
 
 1. les dates des enfants ;
 2. les périodes assimilées manquantes ;
@@ -2118,7 +2119,7 @@ Ce que les deux fiches montrent :
 |---|---|
 | `data/reference/legislation/veille.yaml` | ses entrées dans les fiches ; son journal en archive ; ses sources à consulter dans la procédure |
 | `data/reference/legislation/frontiere_contributive.yaml` | ses bascules dans les versions et les faces des fiches ; le fichier devient une vue |
-| `data/reference/legislation/*.csv` | les tables datées, inchangées, avec deux colonnes facultatives de plus : la date de publication, la dernière valeur connue valable ; les fiches y renvoient |
+| `data/reference/legislation/*.csv` | les tables datées, inchangées, avec deux colonnes facultatives de plus : la date de publication, la dernière valeur connue valable ; les fiches y renvoient. Une table qui ne dit que les versions d'une règle passe dans la fiche, que le moteur lit alors (§ 4.1) : `majoration_duree_assurance.csv`, au premier domaine, dans `majoration_duree_assurance_enfants` et `enfants_fonction_publique` |
 | `data/reference/legislation/reformes.yaml`, `data/reference/regimes/pivots.yaml` | inchangés, reliés aux versions |
 | `data/reference/regimes/*.yaml` (les fichiers de régimes) | un fichier par régime, calculé ou non, nommé de son code, depuis la phase 6 ; son `rang` garde l'ordre du catalogue, qui départage la fusion ; ses interrupteurs renvoient aux fiches, qui déclarent leur valeur (`code.interrupteurs`) et disent ce que le moteur en fait (`code.moteur`) |
 | `data/reference/regimes/_schema.yaml` | réduit à la phase 6 : chaque interrupteur n'y garde que sa définition ; ce qu'il disait de chaque cas est passé dans la fiche à laquelle la période renvoie, et dix fiches sont nées pour les règles qu'aucune ne décrivait |
@@ -2390,6 +2391,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.14**, 27 septembre 2026 : le premier domaine, les dates des enfants, mesuré et ouvert (§ 11). Deux fiches sont découpées en versions, et le moteur les lit, enfant par enfant, à la place de la table qu'elles remplacent (annexe B) ; le schéma de l'étape « compter les durées » passe en version 2, qui compte les enfants un par un.
 
 - **5.13**, 27 septembre 2026 : le contrôle de conservation reste après la phase 8, à la demande du propriétaire : les domaines déplacent encore des fichiers, et un récit ne se réécrit pas, quelle que soit la phase. Sa référence se refige à la fin de chaque domaine (§ 11 et § 12).
 

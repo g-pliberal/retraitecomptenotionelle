@@ -29,6 +29,25 @@ const LIBELLE_MAJORATION = {
   bonifications: "Bonification pour enfants",
 };
 
+/**
+ * Le libellé des trimestres d'enfants : celui du dispositif, ou des deux quand
+ * les enfants relèvent de deux régimes. Voir `_libelle_majoration` du Python.
+ */
+function libelleMajoration(dispositifs) {
+  const libelles = dispositifs.map((d) => LIBELLE_MAJORATION[d]);
+  return [libelles[0], ...libelles.slice(1).map((l) => l[0].toLowerCase() + l.slice(1))]
+    .join(" et ");
+}
+
+/** « au titre du régime « X » », ou des régimes quand il y en a plusieurs. */
+function auTitreDesRegimes(regimes) {
+  const noms = regimes.map((regime) => `« ${regime} »`);
+  if (noms.length === 1) {
+    return `au titre du régime ${noms[0]}`;
+  }
+  return `au titre des régimes ${noms.slice(0, -1).join(", ")} et ${noms[noms.length - 1]}`;
+}
+
 /** Ce que chaque mesure de la cascade neutralise de plus que la précédente. */
 export const NEUTRALISATION_MESUREE = {
   majoration_duree_assurance: "avantages_non_contributifs",
@@ -256,12 +275,12 @@ export function liquider(demande, etat, contexte) {
     if (Math.abs(effet) > 1e-9) {
       avantages.push({
         code: "majoration_duree_assurance",
-        libelle: LIBELLE_MAJORATION[majorationEnfants.dispositif],
+        libelle: libelleMajoration(majorationEnfants.dispositifs),
         montant: effet,
         detail: `${majorationEnfants.trimestres} trimestres pour `
           + `${carriere.nombre_enfants} enfant`
           + `${carriere.nombre_enfants > 1 ? "s" : ""}, `
-          + `au titre du régime « ${majorationEnfants.regime} »`,
+          + auTitreDesRegimes(majorationEnfants.regimes),
       });
     }
   }

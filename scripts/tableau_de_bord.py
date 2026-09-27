@@ -244,7 +244,7 @@ def page() -> str:
     total_caisses = sum(poids.values())
 
     etat = collections.Counter(r["etat"] for r in veille)
-    avec_exemple = sum(1 for r in veille if r.get("exemples"))
+    avec_exemple = sum(1 for r in veille if carte.exemples_de(r))
     # Un exemple que le modèle ne reproduit pas entre quand même, en écart
     # connu (docs/architecture.md, § 9.2).
     ecarts_connus = [e for e in exemples if e.get("ecart_connu")]

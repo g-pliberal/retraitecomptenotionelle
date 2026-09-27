@@ -97,8 +97,9 @@ def _par_enfant(dispositif: str, naissance_mere: int, liquidation: int):
     from retraite_notionnelle.scenarios.actuel import MajorationsPourEnfants
 
     naissance_des_enfants = naissance_mere + chronologie.valeur("naissance_des_enfants")
-    return MajorationsPourEnfants(RACINE_DONNEES).par_enfant(
-        dispositif, "F", naissance_des_enfants, liquidation, 2)
+    accorde = MajorationsPourEnfants(RACINE_DONNEES).par_enfant(
+        dispositif, "F", f"{naissance_des_enfants}-01-01", f"{liquidation}-01-01", 2)
+    return accorde.trimestres, accorde.services, accorde.fiabilite
 
 
 def test_la_majoration_de_la_fonction_publique_ne_compte_pas_en_services():

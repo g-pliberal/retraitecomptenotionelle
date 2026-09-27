@@ -25,6 +25,7 @@ from urllib.parse import urlencode
 from .calendrier import (
     MOIS_PAR_AN, NOMS_DE_MOIS, DateMois, en_mois, formater_age, mois_travailles,
 )
+from . import chronologie
 from .carriere import LigneRelevee, Metier
 from .config import (
     AgeConversionDroitsAcquis,
@@ -509,6 +510,12 @@ class Saisie:
     profil: str = "auto"
     primes: float = 0.0
     enfants: int = 0
+    #: Les naissances des premiers enfants, dans l'ordre : « 1995, 1998-06 ».
+    #: Celles qui ne sont pas dites sont présumées (docs/architecture.md,
+    #: § 5.6) ; celles qui le sont choisissent, enfant par enfant, la version
+    #: des règles qui lui accordent des trimestres. Voir
+    #: :meth:`naissances_enfants`.
+    naissances: str = ""
     interruptions: str = ""
     indexation: str = "masse_salariale"
     lissage: int = 1
@@ -605,6 +612,7 @@ class Saisie:
             profil=_parmi(parametres, "profil", PROFILS, defauts.profil),
             primes=_reel(parametres, "primes", defauts.primes),
             enfants=_entier(parametres, "enfants", defauts.enfants),
+            naissances=(parametres.get("naissances") or "").strip(),
             interruptions=(parametres.get("interruptions") or "").strip(),
             indexation=_parmi(parametres, "indexation", INDEXATIONS, defauts.indexation),
             lissage=_entier(parametres, "lissage", defauts.lissage),
@@ -683,6 +691,7 @@ class Saisie:
             raise ErreurSaisie(
                 f"Nombre d'enfants attendu entre 0 et {ENFANTS_MAXIMUM}."
             )
+        self._verifier_naissances()
         if not ANNEE_MINIMALE <= self.bascule <= ANNEE_MAXIMALE:
             raise ErreurSaisie(
                 f"Année de bascule attendue entre {ANNEE_MINIMALE} et "
@@ -1257,6 +1266,41 @@ class Saisie:
             ))
         return lignes
 
+    def naissances_enfants(self) -> list[str]:
+        """Les naissances déclarées des premiers enfants, dans l'ordre :
+        « 1995, 1998-06 » → ``["1995", "1998-06"]``. Une virgule, un
+        point-virgule ou un blanc les sépare."""
+        return [morceau for morceau in re.split(r"[\s,;]+", self.naissances) if morceau]
+
+    def _verifier_naissances(self) -> None:
+        """Pas plus de naissances que d'enfants ; chacune une année ou un mois,
+        après la naissance de l'assuré et avant son départ, où elle ne
+        compterait plus pour rien."""
+        naissances = self.naissances_enfants()
+        if len(naissances) > self.enfants:
+            raise ErreurSaisie(
+                f"Naissances des enfants : {len(naissances)} déclarée"
+                f"{'s' if len(naissances) > 1 else ''} pour {self.enfants} enfant"
+                f"{'s' if self.enfants > 1 else ''}."
+            )
+        for valeur in naissances:
+            try:
+                jour, _ = chronologie.naissance_declaree(valeur)
+            except ValueError:
+                raise ErreurSaisie(
+                    f"Naissance d'un enfant « {valeur} » : attendue en AAAA ou "
+                    "AAAA-MM, par exemple 1995 ou 1995-06."
+                ) from None
+            if jour <= self.naissance_iso:
+                raise ErreurSaisie(
+                    f"Naissance d'un enfant « {valeur} » : elle précède la vôtre."
+                )
+            if jour >= self.jour_de(self.liquidation):
+                raise ErreurSaisie(
+                    f"Naissance d'un enfant « {valeur} » : elle suit le départ à la "
+                    f"retraite, fixé en {self.date_de(self.liquidation)}."
+                )
+
     def requete(self, **remplacements) -> str:
         champs = {
             "naissance": self.naissance_iso,
@@ -1271,6 +1315,8 @@ class Saisie:
             "salaire": _nombre(self.salaire), "profil": self.profil,
             "releve": self.releve,
             "primes": _nombre(self.primes), "enfants": self.enfants,
+            **({"naissances": ",".join(self.naissances_enfants())}
+               if self.naissances_enfants() else {}),
             "interruptions": self.interruptions, "indexation": self.indexation,
             "lissage": self.lissage,
             "age_reference": self.age_reference, "table": self.table,

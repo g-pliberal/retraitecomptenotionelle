@@ -93,14 +93,57 @@ export function lien(ident, de, vers, sorte, roles, debut = null) {
 // -- construire : ce que la personne déclare -----------------------------------
 
 /**
- * Ce que toute saisie déclare de l'assuré : sa naissance, son départ et ses
- * enfants. Rend la naissance, le départ (vide sans âge de départ) et les liens
- * de filiation, que {@link completer} datera.
+ * La naissance déclarée d'un enfant : `[date, précision]`. On déclare une
+ * année (`1995`), un mois (`1995-06`) ou un jour (`1995-06-14`) ; ce qui n'est
+ * pas dit tombe au premier du mois, ou au 1er janvier. Voir
+ * `naissance_declaree` du Python.
  */
-function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnfants) {
+export function naissanceDeclaree(valeur) {
+  const texte = String(valeur).trim();
+  const morceaux = texte.split("-");
+  const longueurs = [4, 2, 2];
+  const valide = morceaux.length >= 1 && morceaux.length <= 3
+    && morceaux.every((m, i) => /^[0-9]+$/.test(m) && m.length === longueurs[i]);
+  if (!valide) {
+    throw new Error(`naissance d'un enfant attendue en AAAA, AAAA-MM ou AAAA-MM-JJ, reçu '${valeur}'`);
+  }
+  const [annee, mois, quantieme] = [...morceaux.map(Number), 1, 1].slice(0, 3);
+  const date = new Date(Date.UTC(annee, mois - 1, quantieme));
+  if (date.getUTCFullYear() !== annee || date.getUTCMonth() !== mois - 1
+      || date.getUTCDate() !== quantieme) {
+    throw new Error(`naissance d'un enfant impossible : '${valeur}'`);
+  }
+  return [`${quatre(annee)}-${deux(mois)}-${deux(quantieme)}`,
+    ["annee", "mois", "jour"][morceaux.length - 1]];
+}
+
+/**
+ * Ce que toute saisie déclare de l'assuré : sa naissance, son départ et ses
+ * enfants. Rend les naissances — celle de l'assuré, puis celles des enfants
+ * qu'elle déclare —, le départ (vide sans âge de départ) et les liens de
+ * filiation. `naissancesEnfants` déclare la naissance des premiers enfants,
+ * dans l'ordre ; {@link completer} présume celles des autres, et date leur
+ * filiation.
+ */
+function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnfants,
+  naissancesEnfants = []) {
   const naissance = new DateMois(anneeNaissance, moisNaissance);
   const faitsNaissance = [fait(`naissance_${ASSURE}`, ASSURE, "naissance", jour(naissance),
     null, { sexe, precision: "mois" })];
+  if (naissancesEnfants.length > nombreEnfants) {
+    throw new Error(`${naissancesEnfants.length} naissances d'enfants déclarées pour `
+      + `${nombreEnfants} enfant${nombreEnfants > 1 ? "s" : ""}`);
+  }
+  const declarees = naissancesEnfants.map(naissanceDeclaree);
+  for (const [date] of declarees) {
+    if (date <= jour(naissance)) {
+      throw new Error(`un enfant né le ${date}, avant son parent`);
+    }
+  }
+  declarees.forEach(([date, precision], i) => {
+    faitsNaissance.push(fait(`naissance_enfant_${i + 1}`, `enfant_${i + 1}`, "naissance",
+      date, null, { precision }));
+  });
   const depart = ageLiquidation === null || ageLiquidation === undefined ? [] : [
     fait(`depart_${ASSURE}`, ASSURE, "acte_de_la_personne",
       jour(naissance.plusMois(enMois(ageLiquidation))), null,
@@ -109,7 +152,8 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
   const liens = [];
   for (let rang = 1; rang <= nombreEnfants; rang += 1) {
     liens.push(lien(`filiation_enfant_${rang}`, ASSURE, `enfant_${rang}`, "filiation",
-      { [ASSURE]: role, [`enfant_${rang}`]: "enfant" }));
+      { [ASSURE]: role, [`enfant_${rang}`]: "enfant" },
+      rang <= declarees.length ? declarees[rang - 1][0] : null));
   }
   return [faitsNaissance, depart, liens];
 }
@@ -120,9 +164,9 @@ function personne(anneeNaissance, moisNaissance, sexe, ageLiquidation, nombreEnf
  * années.
  */
 export function duResume(anneeNaissance, sexe, moisNaissance = 1, ageLiquidation = null,
-  nombreEnfants = 0) {
+  nombreEnfants = 0, naissancesEnfants = []) {
   const [naissance, depart, liens] = personne(anneeNaissance, moisNaissance, sexe,
-    ageLiquidation, nombreEnfants);
+    ageLiquidation, nombreEnfants, naissancesEnfants);
   return { schema_version: SCHEMA_VERSION, faits: [...naissance, ...depart], liens };
 }
 
@@ -141,6 +185,7 @@ export function duParcours({
   interruptions = null,
   nombre_enfants = 0,
   part_primes = 0.0,
+  naissances_enfants = [],
 }) {
   if (!metiers || metiers.length === 0) {
     throw new Error("une carrière compte au moins un métier");
@@ -220,7 +265,7 @@ export function duParcours({
   }
 
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
-    age_liquidation, nombre_enfants);
+    age_liquidation, nombre_enfants, naissances_enfants);
   return {
     schema_version: SCHEMA_VERSION,
     faits: [...naissance, ...periodes, ...depart],
@@ -241,6 +286,7 @@ export function duReleve({
   mois_naissance = 1,
   nombre_enfants = 0,
   part_primes = 0.0,
+  naissances_enfants = [],
 }) {
   if (!releve || releve.length === 0) {
     throw new Error("un relevé compte au moins une ligne");
@@ -261,7 +307,7 @@ export function duReleve({
       `${quatre(ligne.annee)}-01-01`, `${quatre(ligne.annee + 1)}-01-01`, attributs);
   });
   const [naissance, depart, liens] = personne(annee_naissance, mois_naissance, sexe,
-    age_liquidation, nombre_enfants);
+    age_liquidation, nombre_enfants, naissances_enfants);
   return {
     schema_version: SCHEMA_VERSION,
     faits: [...naissance, ...periodes, ...depart],

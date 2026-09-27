@@ -62,7 +62,7 @@ def test_chaque_regle_du_scenario_1_est_lue_et_datee(fiches):
             assert len(str(lecture["reference"]).split()) >= 2, (nom, lecture)
         if fiche["etat"] == "conforme":
             assert sources.get("lectures"), (nom, "conforme sans source lue")
-        inconnus = set(fiche.get("exemples") or []) - connus
+        inconnus = set(carte.exemples_de(fiche)) - connus
         assert not inconnus, (nom, sorted(inconnus))
         assert len(str(fiche.get("effet") or "").split()) >= 3, (nom, "effet non dit")
 

@@ -177,7 +177,8 @@ def test_la_carriere_porte_la_chronologie_dont_elle_est_la_vue(macro):
     assert carriere.chronologie == _complete()
     assert (carriere.annee_naissance, carriere.mois_naissance, carriere.sexe) == (1965, 3, "F")
     assert (carriere.age_liquidation, carriere.nombre_enfants) == (64.25, 2)
-    assert carriere.annee_naissance_des_enfants == 1995
+    assert carriere.naissances_des_enfants == (("enfant_1", "1995-03-01"),
+                                               ("enfant_2", "1995-03-01"))
     assert carriere.date_entree("fonctionnaire_etat").mois == 3
 
 
@@ -186,8 +187,8 @@ def test_une_carriere_construite_ligne_a_ligne_recoit_sa_chronologie():
     présomptions qui les complètent."""
     carriere = Carriere(annee_naissance=1980, sexe="F", nombre_enfants=3, age_liquidation=64.0)
     assert chronologie.enfants(carriere.chronologie, "assure") == ["enfant_1", "enfant_2", "enfant_3"]
-    assert carriere.annee_naissance_des_enfants == 2010
-    assert Carriere(annee_naissance=1980, sexe="H").annee_naissance_des_enfants is None
+    assert {naissance for _, naissance in carriere.naissances_des_enfants} == {"2010-01-01"}
+    assert Carriere(annee_naissance=1980, sexe="H").naissances_des_enfants == ()
 
 
 def test_une_naissance_declaree_remplace_la_presomption(macro):
@@ -198,19 +199,63 @@ def test_une_naissance_declaree_remplace_la_presomption(macro):
         brute["faits"].append(chronologie.fait(f"naissance_{enfant}", enfant, "naissance",
                                                "2002-05-01"))
     carriere = Carriere.depuis_chronologie(chronologie.completer(brute), macro)
-    assert carriere.annee_naissance_des_enfants == 2002
+    assert carriere.naissances_des_enfants == (("enfant_1", "2002-05-01"),
+                                               ("enfant_2", "2002-05-01"))
     assert chronologie.presomptions_employees(carriere.chronologie) == []
 
 
-def test_des_naissances_a_des_annees_differentes_arretent_le_moteur(macro):
-    """Le moteur ne lit encore qu'une année pour tous les enfants : il
-    s'arrête plutôt que d'en choisir une (§ 6.7)."""
+def test_chaque_enfant_garde_sa_date(macro):
+    """Une naissance déclarée, une présumée, à des années différentes : le
+    moteur lit chacune, et n'en choisit aucune pour tous (domaine « les dates
+    des enfants », § 11)."""
     brute = chronologie.du_parcours(**PARCOURS)
     brute["faits"].append(chronologie.fait("naissance_enfant_1", "enfant_1", "naissance",
                                            "1993-07-14"))
     carriere = Carriere.depuis_chronologie(chronologie.completer(brute), macro)
-    with pytest.raises(ValueError, match="années différentes"):
-        carriere.annee_naissance_des_enfants
+    assert carriere.naissances_des_enfants == (("enfant_1", "1993-07-14"),
+                                               ("enfant_2", "1995-03-01"))
+    assert chronologie.presomptions_employees(carriere.chronologie) == ["naissance_des_enfants"]
+
+
+def test_la_saisie_declare_la_naissance_des_premiers_enfants(macro):
+    """Une année, un mois ou un jour, pour les premiers enfants dans l'ordre ;
+    le fait dit sa précision, la filiation commence avec lui, et la
+    présomption ne pose que les naissances qui manquent. La carrière les
+    retrouve, et les copies de travail les gardent."""
+    brute = chronologie.du_parcours(**{**PARCOURS, "nombre_enfants": 3},
+                                    naissances_enfants=["1990", "1993-06"])
+    faits = {f["id"]: f for f in brute["faits"]}
+    assert (faits["naissance_enfant_1"]["debut"],
+            faits["naissance_enfant_1"]["attributs"]) == ("1990-01-01", {"precision": "annee"})
+    assert (faits["naissance_enfant_2"]["debut"],
+            faits["naissance_enfant_2"]["attributs"]) == ("1993-06-01", {"precision": "mois"})
+    assert "naissance_enfant_3" not in faits
+    assert [l["debut"] for l in brute["liens"]] == ["1990-01-01", "1993-06-01", None]
+    complete = chronologie.completer(brute)
+    assert chronologie.controler(complete) == []
+    carriere = Carriere.depuis_parcours(macro=macro, **{**PARCOURS, "nombre_enfants": 3},
+                                        naissances_enfants=["1990", "1993-06"])
+    assert carriere.naissances_des_enfants == (
+        ("enfant_1", "1990-01-01"), ("enfant_2", "1993-06-01"), ("enfant_3", "1995-03-01"))
+    assert carriere.naissances_enfants == ("1990-01-01", "1993-06-01")
+    assert carriere.avec_lignes(carriere.lignes).naissances_des_enfants == carriere.naissances_des_enfants
+    ligne_a_ligne = Carriere(annee_naissance=1965, sexe="F", nombre_enfants=2,
+                             naissances_enfants=("1991-02-03",), age_liquidation=64.0)
+    assert ligne_a_ligne.naissances_des_enfants == (("enfant_1", "1991-02-03"),
+                                                    ("enfant_2", "1995-01-01"))
+
+
+@pytest.mark.parametrize("naissances, message", [
+    (["95"], "attendue en AAAA, AAAA-MM ou AAAA-MM-JJ"),
+    (["1995-6"], "attendue en AAAA, AAAA-MM ou AAAA-MM-JJ"),
+    (["1995-13"], "impossible"),
+    (["1987-02-29"], "impossible"),
+    (["1990", "1991", "1992"], "3 naissances d'enfants déclarées pour 2 enfants"),
+    (["1960"], "avant son parent"),
+])
+def test_une_naissance_mal_declaree_est_refusee(naissances, message):
+    with pytest.raises(ValueError, match=message):
+        chronologie.du_parcours(**PARCOURS, naissances_enfants=naissances)
 
 
 def test_les_copies_de_travail_gardent_leur_chronologie(macro):
@@ -253,6 +298,30 @@ SAISIES = [
                            {"annee": 1985, "affiliation": "salarie_prive", "revenu": 3000.0,
                             "trimestres": None, "type_periode": "chomage_indemnise"}]}},
     {"releve": {"annee_naissance": 1962, "sexe": "H", "age_liquidation": 63.0, "releve": []}},
+    {"parcours": {"annee_naissance": 1972, "sexe": "F", "age_liquidation": 64.0,
+                  "nombre_enfants": 3, "naissances_enfants": ["1999", "2004-11"],
+                  "metiers": [{"affiliation": "fonctionnaire_etat", "age_debut": 23.0,
+                               "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]}},
+    {"releve": {"annee_naissance": 1962, "sexe": "F", "age_liquidation": 63.0,
+                "nombre_enfants": 1, "naissances_enfants": ["1990-05-17"],
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"parcours": {"annee_naissance": 1972, "sexe": "F", "age_liquidation": 64.0,
+                  "nombre_enfants": 1, "naissances_enfants": ["1999-6"],
+                  "metiers": [{"affiliation": "salarie_prive", "age_debut": 23.0,
+                               "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]}},
+    {"parcours": {"annee_naissance": 1972, "sexe": "F", "age_liquidation": 64.0,
+                  "nombre_enfants": 1, "naissances_enfants": ["1999", "2001"],
+                  "metiers": [{"affiliation": "salarie_prive", "age_debut": 23.0,
+                               "niveau_salaire": 1.0, "cumul": False, "age_fin": None}]}},
+    {"releve": {"annee_naissance": 1962, "sexe": "F", "age_liquidation": 63.0,
+                "nombre_enfants": 1, "naissances_enfants": ["1987-02-29"],
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
+    {"releve": {"annee_naissance": 1962, "sexe": "F", "age_liquidation": 63.0,
+                "nombre_enfants": 1, "naissances_enfants": ["1961"],
+                "releve": [{"annee": 1984, "affiliation": "salarie_prive", "revenu": 9000.0,
+                            "trimestres": 4, "type_periode": "emploi"}]}},
 ]
 
 
@@ -328,3 +397,9 @@ def test_le_moteur_lit_la_naissance_que_la_chronologie_porte():
         brute["faits"].append(chronologie.fait(f"naissance_{enfant}", enfant, "naissance",
                                                "2002-03-01"))
     assert trimestres(chronologie.completer(brute)) == (8, 8)
+    # Un enfant de chaque côté de 2004 : chacun reçoit ce que sa version
+    # accorde, quatre et quatre de services, puis deux dont un de services.
+    deux_dates = chronologie.du_parcours(1975, "F", [Metier("fonctionnaire_etat", 22.0)],
+                                         age_liquidation=62.0, nombre_enfants=2,
+                                         naissances_enfants=["2002-03", "2006-09"])
+    assert trimestres(chronologie.completer(deux_dates)) == (6, 5)

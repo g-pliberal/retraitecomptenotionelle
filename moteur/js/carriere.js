@@ -351,6 +351,9 @@ export class Carriere {
     age_liquidation = null,
     //: Sans effet notionnel : utilisé par le seul scénario « système actuel ».
     nombre_enfants = 0,
+    //: Les naissances déclarées des premiers enfants, dans l'ordre : celles
+    //: des autres sont présumées. Voir `carriere.py`.
+    naissances_enfants = [],
     identifiant = "assuré",
     dates_entree = {},
     //: La chronologie dont la carrière est la vue, complétée par les
@@ -376,6 +379,7 @@ export class Carriere {
     this.lignes = [...lignes].sort((a, b) => a.annee - b.annee);
     this.age_liquidation = age_liquidation;
     this.nombre_enfants = nombre_enfants;
+    this.naissances_enfants = [...naissances_enfants];
     this.identifiant = identifiant;
     // Mois d'entrée dans chaque statut, tel que le parcours le date. Les
     // lignes ne connaissent que l'année, et l'année d'un changement de métier
@@ -404,9 +408,10 @@ export class Carriere {
     }
     this._plafonds = null;
     this.chronologie = chronologie ?? preparer(chrono.duResume(
-      annee_naissance, sexe, mois_naissance, age_liquidation, nombre_enfants));
+      annee_naissance, sexe, mois_naissance, age_liquidation, nombre_enfants,
+      naissances_enfants));
     this.personne = personne;
-    this._naissanceDesEnfants = undefined;
+    this._naissancesDesEnfants = undefined;
   }
 
   // -- dates -----------------------------------------------------------------
@@ -424,33 +429,26 @@ export class Carriere {
   }
 
   /**
-   * L'année où naissent les enfants, telle que la chronologie la porte :
-   * présumée aux trente ans de l'assuré tant que rien n'est déclaré
-   * (présomption `naissance_des_enfants`). `null` sans enfant. Le moteur ne lit
-   * encore qu'une année pour tous : des naissances déclarées à des années
-   * différentes l'arrêtent. Voir `carriere.py`.
+   * Chaque enfant et sa naissance (AAAA-MM-JJ), `[enfant, naissance]`, dans
+   * l'ordre de leurs filiations, telles que la chronologie les porte :
+   * déclarées, ou présumées aux trente ans de l'assuré tant que rien n'est
+   * déclaré (présomption `naissance_des_enfants`). Vide sans enfant. Chaque
+   * enfant compte à sa date. Voir `carriere.py`.
    */
-  get anneeNaissanceDesEnfants() {
-    if (this._naissanceDesEnfants === undefined) {
-      const annees = new Set();
+  get naissancesDesEnfants() {
+    if (this._naissancesDesEnfants === undefined) {
+      const naissances = [];
       for (const enfant of chrono.enfants(this.chronologie, this.personne)) {
         const naissance = chrono.naissance(this.chronologie, enfant);
         if (naissance === null) {
           throw new Error(`${this.identifiant} : la naissance de ${enfant} n'est `
             + "ni déclarée ni présumée");
         }
-        annees.add(chrono.anneeDe(naissance.debut));
+        naissances.push([enfant, naissance.debut]);
       }
-      if (annees.size > 1) {
-        throw new Error(
-          `${this.identifiant} : des enfants nés à des années différentes `
-          + `(${[...annees].sort((a, b) => a - b).join(", ")}) — le moteur ne lit `
-          + "encore qu'une année pour tous",
-        );
-      }
-      this._naissanceDesEnfants = annees.size ? [...annees][0] : null;
+      this._naissancesDesEnfants = naissances;
     }
-    return this._naissanceDesEnfants;
+    return this._naissancesDesEnfants;
   }
 
   /**
@@ -531,6 +529,7 @@ export class Carriere {
       mois_naissance: this.mois_naissance,
       age_liquidation: this.age_liquidation,
       nombre_enfants: this.nombre_enfants,
+      naissances_enfants: this.naissances_enfants,
       identifiant: this.identifiant,
       dates_entree: { ...this.dates_entree },
       chronologie: this.chronologie,
@@ -551,6 +550,7 @@ export class Carriere {
         mois_naissance: this.mois_naissance,
         age_liquidation: ageLiquidation,
         nombre_enfants: this.nombre_enfants,
+        naissances_enfants: this.naissances_enfants,
         identifiant: this.identifiant,
         dates_entree: { ...this.dates_entree },
         chronologie: this.chronologie,
@@ -626,6 +626,7 @@ export class Carriere {
       mois_naissance: this.mois_naissance,
       age_liquidation: ageLiquidation,
       nombre_enfants: this.nombre_enfants,
+      naissances_enfants: this.naissances_enfants,
       identifiant: this.identifiant,
       dates_entree: { ...this.dates_entree },
       chronologie: this.chronologie,
@@ -934,10 +935,11 @@ export class Carriere {
     nombre_enfants = 0,
     part_primes = 0.0,
     identifiant = "assuré",
+    naissances_enfants = [],
   }) {
     const chronologie = preparer(chrono.duReleve({
       annee_naissance, sexe, releve, age_liquidation, mois_naissance,
-      nombre_enfants, part_primes,
+      nombre_enfants, part_primes, naissances_enfants,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -993,10 +995,11 @@ export class Carriere {
     nombre_enfants = 0,
     part_primes = 0.0,
     identifiant = "assuré",
+    naissances_enfants = [],
   }) {
     const chronologie = preparer(chrono.duParcours({
       annee_naissance, sexe, metiers, age_liquidation, mois_naissance,
-      profil_carriere, interruptions, nombre_enfants, part_primes,
+      profil_carriere, interruptions, nombre_enfants, part_primes, naissances_enfants,
     }), macro.paquet.presomptions);
     return Carriere.depuisChronologie(chronologie, macro, chrono.ASSURE, identifiant);
   }
@@ -1044,12 +1047,29 @@ export class Carriere {
       mois_naissance: dateNaissance.mois,
       age_liquidation: ageLiquidation,
       nombre_enfants: chrono.enfants(chronologie, personne).length,
+      naissances_enfants: naissancesDeclarees(chronologie, personne),
       identifiant,
       dates_entree: datesEntree,
       chronologie,
       personne,
     });
   }
+}
+
+/**
+ * Les naissances déclarées des premiers enfants d'une personne, dans l'ordre de
+ * leurs filiations : la chronologie présume les suivantes.
+ */
+function naissancesDeclarees(chronologie, personne) {
+  const declarees = [];
+  for (const enfant of chrono.enfants(chronologie, personne)) {
+    const naissance = chrono.naissance(chronologie, enfant);
+    if (naissance === null || naissance.origine !== "declare") {
+      break;
+    }
+    declarees.push(naissance.debut);
+  }
+  return declarees;
 }
 
 /**

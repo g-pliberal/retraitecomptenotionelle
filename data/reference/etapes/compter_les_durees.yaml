@@ -2,16 +2,20 @@
 # trimestres de chaque compte — l'assurance, périodes assimilées comprises ;
 # les services, qui proratisent la pension de la fonction publique ; la durée
 # cotisée —, régime par régime et année par année ; les trimestres dus au
-# titre des enfants, dans le seul régime que la priorité entre régimes
-# désigne (R. 173-15). Deux activités d'une même année s'y additionnent : le
-# plafond de l'année, ses trimestres civils, s'applique quand on les lit,
-# régime par régime ou groupe par groupe.
+# titre des enfants, enfant par enfant, chacun dans le seul régime que la
+# priorité entre régimes désigne pour lui (R. 173-15). Deux activités d'une
+# même année s'y additionnent : le plafond de l'année, ses trimestres
+# civils, s'applique quand on les lit, régime par régime ou groupe par groupe.
+#
+# La version 2 (27 septembre 2026) compte les enfants un par un : chacun
+# porte sa naissance, son régime, la fiche et la version qui lui accordent
+# ses trimestres ; le régime et le dispositif ne sont plus ceux de tous.
 #
 # src/retraite_notionnelle/droit/compter.py, et son jumeau
 # moteur/js/droit/compter.js.
 
 etape: compter_les_durees
-schema_version: 1
+schema_version: 2
 lit: [coordination]
 ecrit: durees
 
@@ -22,7 +26,7 @@ objets:
       schema_version: {porte: "la version de ce schéma", type: entier, obligatoire: true}
       personne: {porte: "la personne dont les durées sont comptées", type: identifiant, obligatoire: true}
       comptes: {porte: "les trimestres crédités à chaque compte, par régime et par année, avant le plafond de l'année", type: liste, de: {objet: credit}, obligatoire: true}
-      enfants: {porte: "les trimestres dus au titre des enfants, et le régime qui les porte", type: objet, objet: enfants, defaut: null}
+      enfants: {porte: "les trimestres dus au titre des enfants, enfant par enfant", type: objet, objet: enfants, defaut: null}
       trimestres: {porte: "la durée d'assurance tous régimes, plafonnée année par année, enfants compris", type: entier, obligatoire: true}
 
   credit:
@@ -34,8 +38,19 @@ objets:
 
   enfants:
     champs:
-      regime: {porte: "le régime que la priorité entre régimes désigne", type: identifiant, obligatoire: true}
-      dispositif: {porte: "la majoration de durée ou la bonification qu'il accorde", type: identifiant, obligatoire: true}
       trimestres: {porte: "les trimestres d'assurance, tous enfants", type: entier, obligatoire: true}
+      services: {porte: "ceux d'entre eux qui entrent aux services", type: entier, obligatoire: true}
+      fiabilite: {porte: "le niveau de la donnée, le plus bas des enfants", type: texte, obligatoire: true}
+      par_enfant: {porte: "ce que chaque enfant ouvre, dans l'ordre des filiations", type: liste, de: {objet: enfant}, obligatoire: true}
+
+  enfant:
+    champs:
+      enfant: {porte: "l'enfant, tel que la chronologie le nomme", type: identifiant, obligatoire: true}
+      naissance: {porte: "sa naissance, déclarée ou présumée", type: date, obligatoire: true}
+      regime: {porte: "le régime que la priorité entre régimes désigne pour lui", type: identifiant, obligatoire: true}
+      dispositif: {porte: "la majoration de durée ou la bonification qu'il accorde", type: identifiant, obligatoire: true}
+      fiche: {porte: "la fiche qui la porte", type: identifiant, obligatoire: true}
+      version: {porte: "la version de la fiche qui s'applique à lui", type: identifiant, obligatoire: true}
+      trimestres: {porte: "les trimestres d'assurance qu'il ouvre", type: entier, obligatoire: true}
       services: {porte: "ceux d'entre eux qui entrent aux services", type: entier, obligatoire: true}
       fiabilite: {porte: "le niveau de la donnée", type: texte, obligatoire: true}

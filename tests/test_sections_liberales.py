@@ -213,7 +213,7 @@ def test_la_majoration_de_duree_n_ouvre_pas_les_bonifications_des_mines(simulate
     actuel = simulateur.scenario_actuel
     assert compter.majoration_pour_enfants(actuel, mere, {"mines": 160}, 2020) is None
     porteur = compter.majoration_pour_enfants(actuel, mere, {"cnavpl": 160}, 2020)
-    assert porteur is not None and porteur.regime == "cnavpl"
+    assert porteur is not None and porteur.regimes == ["cnavpl"]
     assert porteur.trimestres == 16
 
 

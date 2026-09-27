@@ -69,6 +69,7 @@ from ..config import Parametres
 from ..donnees.chargement import (
     Fiabilite,
     charger_table_par_generation,
+    charger_yaml,
     valeur_par_generation,
 )
 from ..donnees.macro import DonneesMacro
@@ -78,6 +79,7 @@ from ..droit import foyer as _foyer
 from ..droit import liquidation as _liquidation
 # Ce que les étapes créent, que les appelants du scénario 1 lisent ici.
 from ..droit.commun import AvantageApplique, PensionRegime  # noqa: F401
+from ..noyau import versions
 from ..revalorisation import RevalorisationsPensions
 
 if TYPE_CHECKING:
@@ -782,8 +784,28 @@ class AnneesSalaireReference(TableParGeneration):
         return None if valeur is None else (int(valeur[0]), valeur[1])
 
 
+@dataclass(frozen=True)
+class TrimestresAccordes:
+    """Ce qu'une version de fiche accorde pour UN enfant, et ce qu'elle exige.
+
+    ``trimestres`` joue sur la durée d'assurance ; ``services``, qui en est un
+    sous-ensemble, entre au prorata du régime qui les porte. ``condition``
+    compare la naissance de l'enfant au recrutement et à la radiation, dans un
+    régime spécial ; ``compter.bonification_ouverte`` la lit.
+    """
+
+    fiche: str
+    version: str
+    texte: str | None
+    trimestres: int
+    services: int
+    condition: str
+    fiabilite: Fiabilite
+
+
 class MajorationsPourEnfants:
-    """Trimestres accordés au titre des enfants, dispositif par dispositif.
+    """Trimestres accordés au titre des enfants, enfant par enfant, lus dans
+    les versions des fiches qui les portent (docs/architecture.md, § 4.1).
 
     Le module en servait huit par enfant, à tout assuré, à toute date et dans
     tout régime. Le droit n'en a jamais servi autant : la majoration de durée
@@ -794,84 +816,70 @@ class MajorationsPourEnfants:
     enfants recevait ainsi douze trimestres que la loi ne lui a jamais donnés,
     de quoi effacer une décote entière.
 
-    Le fichier ``legislation/majoration_duree_assurance.csv`` porte ces règles
-    et leurs dates ; le ``dispositif`` de chaque ligne reprend le code que la
-    fiche de régime déclare dans ``avantages_non_contributifs``, de sorte que
-    c'est la fiche qui dit quel régime accorde quoi, et la table combien.
-
-    Deux horloges, et la distinction est dans les textes : la MDA se lit à
-    l'ANNÉE DE LIQUIDATION, puisque c'est le droit en vigueur au départ qui la
-    sert ; la bonification se lit à l'ANNÉE DE NAISSANCE DE L'ENFANT, que
-    l'article désigne expressément.
+    Chaque dispositif a sa fiche, et ses versions forment un partage de leurs
+    dates qui décident : la date d'effet de la pension et la naissance de
+    l'enfant. Le ``dispositif`` est le code que la fiche de régime déclare
+    dans ``avantages_non_contributifs`` : c'est elle qui dit quel régime
+    accorde quoi, et la fiche combien.
     """
 
+    #: La fiche de chaque dispositif, dans ``data/reference/regles/``.
+    FICHES = {
+        "mda": "majoration_duree_assurance_enfants",
+        "bonifications": "enfants_fonction_publique",
+    }
+    #: Les bénéficiaires qu'une version peut désigner.
+    BENEFICIAIRES = ("mere",)
+
     def __init__(self, racine: Path) -> None:
-        self._table: list[
-            tuple[str, str, int, int, int, int, int | None, int, str, Fiabilite]
-        ] = []
-        chemin = (racine / "reference" / "legislation"
-                  / "majoration_duree_assurance.csv")
-        if not chemin.exists():
-            return
-        with chemin.open(encoding="utf-8") as flux:
-            lignes = (l for l in flux if not l.lstrip().startswith("#"))
-            for ligne in csv.DictReader(lignes):
-                depuis = (ligne["services_depuis"] or "").strip()
-                self._table.append((
-                    ligne["dispositif"],
-                    ligne["reference"],
-                    int(ligne["debut"]),
-                    int(ligne["fin"]),
-                    int(ligne["trimestres_par_enfant"]),
-                    int(ligne["services_par_enfant"]),
-                    int(depuis) if depuis else None,
-                    int(ligne["enfants_minimum"]),
-                    ligne["beneficiaire"],
-                    Fiabilite.depuis_texte(ligne["fiabilite"]),
-                ))
+        self._fiches: dict[str, dict] = {}
+        for dispositif, nom in self.FICHES.items():
+            chemin = racine / "reference" / "regles" / f"{nom}.yaml"
+            if chemin.exists():
+                self._fiches[dispositif] = versions.preparer(charger_yaml(chemin))
 
-    def par_enfant(self, dispositif: str, sexe: str, naissance_des_enfants: int,
-                   annee_liquidation: int,
-                   nombre_enfants: int) -> tuple[int, int, Fiabilite] | None:
-        """Trimestres accordés PAR ENFANT, dont ceux qui comptent en SERVICES.
+    def fiches(self) -> dict[str, dict]:
+        """Les fiches préparées, sous leur nom : ce que le paquet du site porte."""
+        return {fiche["id"]: fiche for fiche in self._fiches.values()}
 
-        ``naissance_des_enfants`` est l'année où ils naissent, telle que la
-        chronologie la porte (:attr:`Carriere.annee_naissance_des_enfants`) :
-        présumée aux trente ans de la mère tant que rien n'est déclaré.
+    def par_enfant(self, dispositif: str, sexe: str, naissance: str, date_effet: str,
+                   nombre_enfants: int) -> TrimestresAccordes | None:
+        """Ce que le dispositif accorde pour un enfant né ce jour (AAAA-MM-JJ),
+        à une pension qui prend effet à ``date_effet``.
 
-        Rend ``(trimestres, services, fiabilite)``. Les premiers jouent sur la
-        durée d'assurance, les seconds — qui en sont un sous-ensemble — sur le
-        prorata du régime. Ils ne coïncident que là où le droit accorde une
-        bonification ; une majoration de durée d'assurance rend ``services``
-        nul, et c'est tout l'objet de cette distinction.
+        ``nombre_enfants`` est celui des enfants de l'assurée : la loi Boulin
+        n'accordait rien à la mère d'un seul enfant.
 
         ``None`` couvre les quatre cas où le droit ne donne rien : le
-        dispositif n'existe pas encore à la date qui le commande, il n'a jamais
-        existé dans ce régime, l'assuré n'en est pas le bénéficiaire, ou il n'a
-        pas élevé le nombre d'enfants que la ligne exige — la loi Boulin
-        demandait deux enfants là où les suivantes se contentent d'un.
+        dispositif n'existe pas encore à ces dates, il n'a jamais existé dans ce
+        régime, l'assurée n'en est pas la bénéficiaire, ou elle n'a pas le
+        nombre d'enfants que la version exige.
         """
-        for (code, reference, debut, fin, trimestres, services, services_depuis,
-             enfants_minimum, beneficiaire, fiabilite) in self._table:
-            if code != dispositif:
-                continue
-            annee = (annee_liquidation if reference == "liquidation"
-                     else naissance_des_enfants)
-            if not debut <= annee <= fin:
-                continue
-            if beneficiaire == "mere" and sexe != "F":
-                return None
-            if nombre_enfants < enfants_minimum:
-                return None
-            # La part qui compte en services peut n'entrer en vigueur qu'à une
-            # SECONDE date, celle de la liquidation, quand la première est
-            # celle de la naissance de l'enfant. C'est le cas du b ter de
-            # L. 12, qui convertit un trimestre de majoration en bonification
-            # pour les pensions prenant effet à compter de septembre 2026.
-            if services_depuis is not None and annee_liquidation < services_depuis:
-                services = 0
-            return trimestres, services, fiabilite
-        return None
+        fiche = self._fiches.get(dispositif)
+        if fiche is None:
+            return None
+        situation = {"enfant.naissance": naissance, "liquidation.date_effet": date_effet}
+        version = versions.applicable(
+            fiche, {nom: situation[nom] for nom in fiche["dates_qui_decident"]})
+        if version is None:
+            return None
+        parametres = version["parametres"]
+        trimestres = int(parametres["trimestres_par_enfant"])
+        if trimestres <= 0:
+            return None
+        beneficiaire = parametres["beneficiaire"]
+        if beneficiaire not in self.BENEFICIAIRES:
+            raise ValueError(f"{fiche['id']}.{version['id']} : bénéficiaire inconnu, "
+                             f"{beneficiaire!r}")
+        if beneficiaire == "mere" and sexe != "F":
+            return None
+        if nombre_enfants < int(parametres.get("enfants_minimum", 1)):
+            return None
+        return TrimestresAccordes(
+            fiche=fiche["id"], version=version["id"], texte=version["texte"],
+            trimestres=trimestres, services=int(parametres["services_par_enfant"]),
+            condition=parametres.get("condition", "tout_enfant"),
+            fiabilite=Fiabilite.depuis_texte(parametres["fiabilite"]))
 
 
 class ServicesOuvrantPension:

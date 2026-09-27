@@ -666,6 +666,27 @@ def _cas() -> list[dict]:
     cas.append(("enfants_regime_aligne", {
         **enfants, "statut": "artisan", "naissance": "1950",
     }))
+    # CHAQUE ENFANT COMPTE À SA DATE (le domaine « les dates des enfants »,
+    # docs/architecture.md, § 11). Une fonctionnaire dont un enfant naît avant
+    # 2004 et deux après reçoit, enfant par enfant, la bonification de L. 12 b
+    # puis la majoration de L. 12 bis. Celle qui a eu un enfant avant son
+    # recrutement, né depuis 2004, le voit compter au régime général, et le
+    # suivant, né en service, à l'État : le régime général est compétent « si
+    # un ou plusieurs enfants n'ouvrent pas droit à majoration » dans le régime
+    # spécial (circulaire Cnav 2017-01, fiches n° 6.2a et 6.2b). Une seule
+    # naissance déclarée : la présomption pose les autres.
+    cas.append(("enfants_dates_de_part_et_d_autre_de_2004", {
+        **enfants, "statut": "fonctionnaire_etat", "naissance": "1972",
+        "naissances": "1999,2004-11,2008",
+    }))
+    cas.append(("enfants_dates_avant_et_apres_le_recrutement", {
+        **mixte, "naissance": "1980", "naissances": "2006,2012",
+        "metier2_debut": "30", "metier2_statut": "fonctionnaire_etat",
+    }))
+    cas.append(("enfants_une_naissance_declaree", {
+        **enfants, "statut": "fonctionnaire_etat", "naissance": "1975",
+        "naissances": "1998",
+    }))
     # La loi Boulin ne visait que les mères d'AU MOINS DEUX enfants : le même
     # départ, avec un enfant, ne donne rien.
     cas.append(("enfants_loi_boulin_enfant_unique", {

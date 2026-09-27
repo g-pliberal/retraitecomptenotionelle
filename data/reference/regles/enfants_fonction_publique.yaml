@@ -1,0 +1,324 @@
+schema_version: 1
+id: enfants_fonction_publique
+intitule: >-
+  Trimestres des enfants dans la fonction publique : bonification de L. 12 b du code
+  des pensions, un an par enfant né avant 2004, en services et en durée ; majoration
+  de L. 12 bis, deux trimestres par enfant né depuis, en durée seulement, dont l'un
+  compte en services au titre du b ter pour les pensions prenant effet à compter
+  du 1er septembre 2026. Les régimes spéciaux qui déclarent une bonification en
+  reçoivent les conditions.
+domaine: enfants
+regimes:
+- fonction_publique_etat
+- cnracl
+- fspoeie
+- fonctionnaires_pacifique
+- pensions_civiles_1853
+- banque_de_france
+- chemins_fer_secondaires
+- comedie_francaise
+- ieg
+- marins
+- mines
+- opera_de_paris
+- port_strasbourg
+- ratp
+- seita
+- sncf
+etape: compter_les_durees
+face: droit
+etat: approchee
+lit:
+- enfant.naissance
+- le sexe de l'assurée, qui accouche
+- recrutement
+- radiation
+- liquidation.date_effet
+ecrit:
+- les trimestres de chaque enfant, en durée d'assurance et en services, dans le régime
+  que la priorité entre régimes désigne (priorite_majorations_enfants)
+dates_qui_decident:
+- enfant.naissance
+- liquidation.date_effet
+# Les versions forment un partage de ces deux dates (§ 4.1) : la naissance de
+# l'enfant choisit entre L. 12 b et L. 12 bis, la date d'effet de la pension la
+# rédaction de R. 13 et l'entrée en vigueur du b ter. `contenu.parametres` est
+# ce que le moteur lit (droit/compter.py et son jumeau) : les trimestres par
+# enfant, ceux d'entre eux qui entrent aux services, la bénéficiaire, et la
+# condition que la version pose à l'enfant — elle compare sa naissance au
+# recrutement et à la radiation, lus à l'année. Une condition que le moteur ne
+# connaît pas l'arrête.
+versions:
+- id: l12b_avant_1964
+  statut: supposee
+  hypothese: >-
+    le texte d'avant le code des pensions de 1964 n'a pas été relu ; on lui prête
+    la règle de 1964
+  fiabilite: faible
+  bornes:
+    enfant.naissance: [null, 2004-01-01]
+    liquidation.date_effet: [null, 1964-12-01]
+  contenu:
+    droit: 4 trimestres par enfant, en services et en durée
+    beneficiaire: la mère
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: tout_enfant
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: l12b_1964
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362901, article: R. 13, en_vigueur: 1964-12-01}
+  - {id: LEGIARTI000006362695, article: L. 12, en_vigueur: 1982-07-14}
+  nee_de: LEGIARTI000006362901
+  bornes:
+    enfant.naissance: [null, 2004-01-01]
+    liquidation.date_effet: [1964-12-01, 2004-01-01]
+  contenu:
+    droit: 4 trimestres par enfant, en services et en durée
+    beneficiaire: la mère (« en faveur des femmes fonctionnaires »)
+    conditions: chacun des enfants
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: tout_enfant
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: l12b_2004
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362696, article: L. 12, en_vigueur: 2004-01-01}
+  - {id: LEGIARTI000006362902, article: R. 13, en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006362696
+  bornes:
+    enfant.naissance: [null, 2004-01-01]
+    liquidation.date_effet: [2004-01-01, 2011-01-01]
+  contenu:
+    droit: 4 trimestres par enfant né en service
+    beneficiaire: >-
+      l'un ou l'autre parent, après une interruption d'activité continue d'au moins
+      deux mois, dans les seuls congés du statut
+    conditions: l'enfant naît entre le recrutement et la radiation
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: ne_en_service
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: l12b_2011_decret
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023449727, article: R. 13, en_vigueur: 2011-01-01}
+  - {id: LEGIARTI000006362696, article: L. 12, en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000023449727
+  bornes:
+    enfant.naissance: [null, 2004-01-01]
+    liquidation.date_effet: [2011-01-01, 2011-07-01]
+  contenu:
+    droit: 4 trimestres par enfant né avant la radiation
+    beneficiaire: >-
+      l'un ou l'autre parent, après une interruption d'activité (la loi) ou une interruption
+      ou une réduction (le décret)
+    conditions: l'enfant naît avant la radiation
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: ne_avant_radiation
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: l12b_2011
+  statut: lue
+  textes:
+  - {id: LEGIARTI000023096747, article: L. 12, en_vigueur: 2011-07-01}
+  - {id: LEGIARTI000023449727, article: R. 13, en_vigueur: 2011-01-01}
+  nee_de: LEGIARTI000023096747
+  bornes:
+    enfant.naissance: [null, 2004-01-01]
+    liquidation.date_effet: [2011-07-01, null]
+  contenu:
+    droit: 4 trimestres par enfant né avant la radiation
+    beneficiaire: >-
+      l'un ou l'autre parent, après une interruption ou une réduction d'activité ;
+      le congé de maternité du code de la sécurité sociale est admis
+    conditions: l'enfant naît avant la radiation
+    parametres:
+      trimestres_par_enfant: 4
+      services_par_enfant: 4
+      beneficiaire: mere
+      condition: ne_avant_radiation
+      fiabilite: moyenne
+  exemples: [sp_f37311_bonification_avant_2004]
+- id: l12bis
+  statut: lue
+  textes:
+  - {id: LEGIARTI000006362697, article: L. 12 bis, en_vigueur: 2004-01-01}
+  nee_de: LEGIARTI000006362697
+  bornes:
+    enfant.naissance: [2004-01-01, null]
+    liquidation.date_effet: [2004-01-01, 2026-01-01]
+  contenu:
+    droit: 2 trimestres par enfant, en durée seulement
+    beneficiaire: la mère, si elle a accouché après son recrutement
+    conditions: l'enfant naît après le recrutement
+    parametres:
+      trimestres_par_enfant: 2
+      services_par_enfant: 0
+      beneficiaire: mere
+      condition: accouchement_apres_recrutement
+      fiabilite: moyenne
+  exemples: aucun trouvé
+- id: l12bter
+  statut: lue
+  textes:
+  - {id: LEGIARTI000053280361, article: L. 12 (b ter), en_vigueur: 2025-12-31}
+  - {id: LEGIARTI000053280367, article: L. 12 bis, en_vigueur: 2025-12-31}
+  - {id: LEGITEXT000053265238, article: "loi n° 2025-1403, article 104", en_vigueur: 2025-12-31}
+  - {id: LEGITEXT000054586750, article: "décret n° 2026-699 (CNRACL, FSPOEIE)", en_vigueur: 2026-08-01}
+  nee_de: LEGIARTI000053280361
+  bornes:
+    enfant.naissance: [2004-01-01, null]
+    liquidation.date_effet: [2026-01-01, null]
+  contenu:
+    droit: 2 trimestres par enfant, dont 1 en services
+    beneficiaire: la mère, si elle a accouché après son recrutement
+    conditions: l'enfant naît après le recrutement
+    parametres:
+      trimestres_par_enfant: 2
+      services_par_enfant: 1
+      beneficiaire: mere
+      condition: accouchement_apres_recrutement
+      fiabilite: moyenne
+  exemples: [sp_f37311_bonification_depuis_2004]
+approximations:
+- version: [l12bis, l12bter]
+  ecart: >-
+    le b ter vaut pour les pensions prenant effet à compter du 1er septembre 2026 ;
+    la borne de la version est posée au 1er janvier 2026, comme le modèle datait
+    jusqu'ici la liquidation à l'année
+  effet: >-
+    un trimestre de services de trop aux mères dont un enfant est né depuis 2004 et
+    dont la pension prend effet de janvier à août 2026 ; non mesuré
+- version: [l12b_2004, l12b_2011_decret, l12b_2011]
+  ecart: >-
+    les conditions d'interruption ou de réduction d'activité sont présumées remplies
+    par la mère
+  effet: non mesuré
+- version: [l12b_2004, l12b_2011_decret, l12b_2011, l12bis, l12bter]
+  ecart: >-
+    la naissance de l'enfant se compare au recrutement et à la radiation à l'année
+    près
+  effet: non mesuré
+- ecart: >-
+    les régimes spéciaux reçoivent les conditions de la fonction publique, qu'ils reprennent
+    mot pour mot pour L. 12 bis (décrets n° 2003-1306, article 21 ; n° 2008-639, article
+    13 ; n° 2008-637, article 24) ; le modèle leur prête aussi celles de R. 13
+  effet: non mesuré
+presomptions:
+  naissance_des_enfants: >-
+    la naissance de chaque enfant dont la date n'est pas déclarée, qui choisit entre
+    L. 12 b et L. 12 bis et se compare au recrutement et à la radiation
+  interruption_d_activite_par_la_mere: >-
+    la condition d'interruption ou de réduction d'activité de la bonification, depuis
+    2004
+  radiation_au_1er_janvier_suivant: >-
+    la radiation à laquelle se compare la naissance de l'enfant
+sources:
+  lu_le: 2026-09-27
+  prochaine_relecture: 2027-03-31
+  lectures_divergentes:
+  - >-
+    Du 1er janvier au 30 juin 2011, R. 13 admet déjà « une interruption ou une réduction
+    de l'activité », alors que L. 12 ne dit « interrompu ou réduit » que pour les
+    pensions prenant effet à compter du 1er juillet 2011 (loi n° 2010-1330, article
+    118 II). À trancher par la circulaire du service des retraites de l'État ; le
+    modèle présume la condition remplie, et les deux versions servent le même nombre.
+  a_relire:
+  - >-
+    Né le 27 septembre 2026 de la fiche majoration_duree_assurance_enfants, qui portait
+    ensemble les trimestres du régime général et ceux de la fonction publique : deux
+    dispositifs, deux fiches d'un même domaine (docs/architecture.md, § 6.1 et annexe
+    A.1). Ses versions sont celles de l'annexe A.1, relues le même jour, et le moteur
+    les lit enfant par enfant.
+  - >-
+    L'adoption n'est pas portée : L. 12 b vaut aussi pour les enfants adoptés avant
+    2004, et la chronologie ne connaît encore que des naissances.
+  lectures:
+  - type: legifrance
+    reference: L. 12 CPCMR, version LEGIARTI000053280361
+    date: 2026-09-21
+  - type: legifrance
+    reference: L. 12 bis CPCMR, version LEGIARTI000053280367
+    date: 2026-09-21
+  - type: service_public
+    reference: >-
+      fiche F37311, bonification de la fonction publique : quatre trimestres par
+      enfant né avant 2004, deux depuis
+    date: 2026-09-01
+  - type: legifrance
+    reference: >-
+      L. 12 CPCMR, version LEGIARTI000006362696 (« interrompu ») et LEGIARTI000023096747
+      (« interrompu ou réduit »), et R. 13 CPCMR, version LEGIARTI000023449727
+    date: 2011-01-01
+  - type: legifrance
+    reference: >-
+      R. 13 CPCMR, ses six rédactions dans l'index LEGI (LEGIARTI000006362901 à LEGIARTI000051969102),
+      dont trois ne changent que des renvois
+    date: 2025-10-01
+  - type: circulaire_cnav
+    reference: >-
+      circulaire carrière 2017-01 du 13 janvier 2017, fiches n° 6.2a et 6.2b, point
+      3 « Compétence » : le régime spécial est compétent dès que la retraite est attribuée
+      selon ses propres règles, le régime général « si un ou plusieurs enfants n'ouvrent
+      pas droit à majoration » dans le régime spécial
+    date: 2017-01-13
+    url: https://legislation.lassuranceretraite.fr/Pdf/circulaire_cnav_2017_01_13012017_fiche_6_2b.pdf
+textes_sans_effet:
+- {id: LEGIARTI000006362903, article: R. 13, en_vigueur: 2006-05-12, motif: renvoi mis à jour (article 40 bis)}
+- {id: LEGIARTI000020532497, article: R. 13, en_vigueur: 2009-04-19, motif: renvois au code de la défense}
+- {id: LEGIARTI000051969102, article: R. 13, en_vigueur: 2025-10-01, motif: renvois au code général de la fonction publique}
+- {id: LEGIARTI000030949157, article: L. 12, en_vigueur: 2015-07-30, motif: b inchangé}
+- {id: LEGIARTI000037200561, article: L. 12, en_vigueur: 2018-07-15, motif: b inchangé}
+- {id: LEGIARTI000047926152, article: L. 12, en_vigueur: 2023-08-03, motif: b inchangé}
+- {id: LEGIARTI000047452833, article: L. 12, en_vigueur: 2023-09-01, motif: b inchangé}
+code:
+  python: >-
+    scenarios/actuel.py : MajorationsPourEnfants, qui lit les versions de cette fiche
+    ; droit/compter.py : majoration_pour_enfants, bonification_ouverte
+  javascript: >-
+    moteur/js/regimes.js : MajorationsPourEnfants ; moteur/js/droit/compter.js : majorationPourEnfants,
+    bonificationOuverte
+  parametres: les versions de cette fiche (contenu.parametres), que le paquet du site porte
+  tests: [tests/test_priorite_enfants.py, tests/test_scenarios_meres.py]
+referents:
+  openfisca_france_pension:
+    equivalent: variable nombre_enfants (un nombre, sans dates)
+    confrontation: aucune ; les profils de l'oracle sont sans enfant
+  destinie_2: à confronter (réversion et enfants y sont modélisés)
+historique:
+- >-
+  La fonction publique recevait la majoration du régime général, huit trimestres par
+  enfant ; corrigé (en-tête de majoration_duree_assurance.csv).
+- 2026-09-21 — le b ter est lu et porté (veille.yaml).
+- >-
+  2026-09-22 — bonification et majoration séparées : 1,2 % de pension rendus au droit
+  (commit 49cb9e5).
+- >-
+  2026-09-25 — l'index LEGI, lu mot à mot : R. 13 a six rédactions, dont trois ne
+  changent que des renvois ; la version de 2011 se coupe en deux, au 1er janvier (le
+  décret) et au 1er juillet (la loi).
+- >-
+  2026-09-27 — la fiche naît de majoration_duree_assurance_enfants, avec les versions
+  de l'annexe A.1 ; le moteur les lit, enfant par enfant, à la place des deux lignes
+  `bonifications` de majoration_duree_assurance.csv, qui disparaît.
+effet: >-
+  Toute mère fonctionnaire ou agente d'un régime spécial : quatre trimestres par enfant
+  né avant 2004, en services, donc au prorata de la pension ; deux par enfant né depuis,
+  en durée seulement, dont un en services pour les pensions prenant effet à compter
+  du 1er septembre 2026. Une mère de trois enfants passés de part et d'autre de 2004
+  reçoit, enfant par enfant, ce que la version de chacun accorde.

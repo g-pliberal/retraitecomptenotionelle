@@ -109,12 +109,18 @@ def test_compter_donne_les_trimestres_des_enfants_au_regime_que_la_priorite_desi
     actuel = simulateur.scenario_actuel
     releve_ = releve.construire(actuel, carriere)
     enfants = releve_.durees.enfants
-    assert (enfants.regime, enfants.dispositif, enfants.trimestres) == ("regime_general", "mda", 24)
+    assert (enfants.regimes, enfants.dispositifs, enfants.trimestres) == (
+        ["regime_general"], ["mda"], 24)
+    assert [(e.enfant, e.naissance, e.version) for e in enfants.enfants] == [
+        (f"enfant_{rang}", "2000-01-01", "mda_2010_nes_avant") for rang in (1, 2, 3)]
     assert releve_.durees.hors_annee["assurance"] == {"regime_general": 24}
     lignes = [ligne for ligne in releve_.lignes() if ligne["id"].startswith("enfants_")]
     assert [ligne["fait"] for ligne in lignes] == [
         "naissance_enfant_1", "naissance_enfant_2", "naissance_enfant_3"]
-    assert all(ligne["droit"]["quantite"] == 8 and ligne["fiche"] == releve.FICHE_ENFANTS
+    assert all(ligne["droit"]["quantite"] == 8
+               and ligne["fiche"] == "majoration_duree_assurance_enfants"
+               and ligne["version"] == "mda_2010_nes_avant"
+               and ligne["texte"] == "LEGIARTI000021537916"
                and not ligne["contributive"]
                and "naissance_des_enfants" in ligne["presomptions"] for ligne in lignes)
     sans = compter.compter(actuel, releve_.coordination, avantages_non_contributifs=False)
@@ -259,13 +265,16 @@ def test_la_liquidation_ne_lit_que_le_releve(simulateur):
 # -- les deux moteurs ----------------------------------------------------------
 
 #: Une requête sur cinq des témoins : tous les statuts y passent, et la
-#: comparaison reste sous la minute.
+#: comparaison reste sous la minute. S'y ajoutent tous ceux des enfants, dont
+#: les dates choisissent, enfant par enfant, la version et le régime.
 PAS = 5
 
 
 def _requetes() -> list[dict]:
     temoins = json.loads((RACINE / "tests" / "temoins" / "simulations.json").read_text(encoding="utf-8"))
-    return [temoin["requete"] for temoin in list(temoins.values())[::PAS]]
+    noms = list(temoins)
+    retenus = set(noms[::PAS]) | {nom for nom in noms if nom.startswith("enfants")}
+    return [temoins[nom]["requete"] for nom in noms if nom in retenus]
 
 
 def _python(requetes: list[dict]) -> list[dict]:

@@ -1194,15 +1194,12 @@ def _minimum_vieillesse(couple: bool = False) -> dict:
             for annee, (valeur, fiabilite) in sorted(table.items())}
 
 
-def _majorations_enfants() -> list:
-    """Trimestres accordés au titre des enfants, dispositif par dispositif."""
-    return [
-        [dispositif, reference, debut, fin, trimestres, services, services_depuis,
-         enfants_minimum, beneficiaire, int(fiabilite)]
-        for dispositif, reference, debut, fin, trimestres, services,
-        services_depuis, enfants_minimum, beneficiaire, fiabilite
-        in MajorationsPourEnfants(DONNEES)._table
-    ]
+def _versions_des_fiches() -> dict:
+    """Les fiches de la carte que le moteur lit, réduites à ce qu'il en lit :
+    leurs dates qui décident, et chaque version avec ses bornes, son texte et
+    ses paramètres (``noyau/versions.py``). Aujourd'hui, les trimestres des
+    enfants."""
+    return MajorationsPourEnfants(DONNEES).fiches()
 
 
 def _presomptions() -> dict:
@@ -1647,7 +1644,7 @@ def construire(bilan: bytes) -> bytes:
         "decote_fonction_publique": _decote_fonction_publique(),
         "decote_regimes_speciaux": _decote_regimes_speciaux(),
         "carriere_longue": _carriere_longue(),
-        "majorations_enfants": _majorations_enfants(),
+        "versions_des_fiches": _versions_des_fiches(),
         "presomptions": _presomptions(),
         "sortes_d_evenement": _sortes_d_evenement(),
         "neutralisations": _neutralisations(),

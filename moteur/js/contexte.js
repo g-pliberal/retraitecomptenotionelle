@@ -308,6 +308,7 @@ export class Contexte {
       profil_carriere: saisie.profil,
       interruptions: saisie.interruptionsDeCarriere(motifs),
       nombre_enfants: saisie.enfants,
+      naissances_enfants: saisie.naissancesEnfants(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
@@ -397,6 +398,7 @@ export class Contexte {
       releve,
       age_liquidation: saisie.liquidation,
       nombre_enfants: saisie.enfants,
+      naissances_enfants: saisie.naissancesEnfants(),
       part_primes: saisie.primes,
       identifiant: "assuré",
     });
