@@ -182,8 +182,8 @@ peu de chose — est dans `docs/integration-partiliberalfrancais.md`.
 Rien à installer, rien à lancer : une adresse à ouvrir. Le modèle et ses données
 de référence s'exécutent **dans votre navigateur**. Aucune donnée saisie ne
 quitte votre machine, puisqu'il n'y a pas de serveur de calcul. Le premier
-chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->992<!--/--> Ko compressés
-(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 567<!--/--> Ko bruts) et prend quelques dixièmes
+chargement transfère <!--chiffre:poids_comprime(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->1014<!--/--> Ko compressés
+(<!--chiffre:poids(moteur/donnees.json + moteur/style.css + moteur/js/*.js + moteur/js/droit/*.js + index.html - moteur/js/lecture-pdf.js - moteur/js/releve-lu.js)-->5 627<!--/--> Ko bruts) et prend quelques dixièmes
 de seconde ; les suivants sont immédiats.
 
 Huit pages, en deux voix. Celles de l'électeur d'abord : **Programme**,
@@ -1311,16 +1311,22 @@ src/retraite_notionnelle/
   castypes.py                   cas général
   cout.py                       ce que chaque système a coûté, coûterait,
                                 et le solde qu'il laisserait
+  saisie.py                     la saisie d'une simulation : ce que l'adresse
+                                dit, lu en carrière et en règles
+  contexte.py                   le contexte du site : ses données, et le jeu de
+                                règles sous lequel il calcule
   web/
-    pages.py                    contenu des pages — sans autre dépendance que le moteur
-    gabarit.py                  rendu HTML et feuille de style
+    site.py                     le site lu depuis le Python, par node : ses
+                                pages et ses modules, pour les tests et la prose
+    releve_lu.py                la lecture d'un relevé de carrière officiel
 
 index.html                      le site : charge les données, puis le moteur JavaScript
 .nojekyll                       servir les fichiers sans transformation
 moteur/                         ce que le navigateur charge, et rien d'autre
   donnees.json                  séries, tables, régimes et inventaire (produit par script)
-  style.css                     extraite de gabarit.py (produite par script)
-  js/                           portage du modèle, sans bibliothèque ni étape de build
+  style.css                     la feuille de style, écrite une fois
+  js/                           portage du modèle, et texte du site, écrit une fois :
+                                sans bibliothèque ni étape de build
 
 docs/
   methodologie.md               ce que le modèle calcule, et pourquoi ainsi

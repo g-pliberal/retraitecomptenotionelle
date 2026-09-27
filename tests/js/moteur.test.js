@@ -132,7 +132,7 @@ test("une faute de programme n'est pas présentée comme une faute de saisie", (
   }
 });
 
-test("les pages rendent le même HTML que le modèle Python", () => {
+test("les pages rendent le HTML que leurs témoins ont figé", () => {
   const contexte = new Contexte(paquet);
   for (const [nom, temoin] of Object.entries(temoinsPages)) {
     const [titre, corps] = rendre(contexte, temoin.chemin, temoin.parametres);

@@ -1,5 +1,7 @@
-/* Extrait de src/retraite_notionnelle/web/gabarit.py par
-   scripts/construire_donnees.py — ne pas modifier ici. */
+/* La feuille de style du site, écrite ici et nulle part ailleurs : le site la
+   charge telle quelle, et aucun script ne la fabrique (docs/architecture.md,
+   § 8). Ses variables de thème sont de la surface publique (annexe C.9) : un
+   hôte les redéfinit, et elles ne changent pas sans décision. */
 /* La page est un outil du site partiliberalfrancais.fr, servi sous /retraite/.
    Elle ne charge rien de ce site — ni feuille, ni police, ni script — et ne lui
    ressemble plus : c'est une RUPTURE assumée, décidée en septembre 2026. Le

@@ -51,8 +51,9 @@ PREMIERE_ANNEE_EN_EUROS = 2002
 #: La première année en nouveaux francs.
 PREMIERE_ANNEE_EN_NOUVEAUX_FRANCS = 1960
 
-#: Les bornes de `pages.py`, reprises ici pour ne pas lire comme une année de
-#: carrière un nombre à quatre chiffres qui n'en est pas une.
+#: Les bornes des années qu'une carrière peut couvrir (``ANNEE_CARRIERE_MINIMALE``
+#: et ``ANNEE_CARRIERE_MAXIMALE`` de ``saisie.py``), reprises ici pour ne pas lire
+#: comme une année de carrière un nombre à quatre chiffres qui n'en est pas une.
 ANNEE_MINIMALE = 1914
 ANNEE_MAXIMALE = 2095
 

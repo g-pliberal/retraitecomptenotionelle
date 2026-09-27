@@ -47,10 +47,9 @@ premier « œ » d'une page, et jamais sur les autres. Les quatre fichiers pèse
 
 ## Les remplacer ou en ajouter une
 
-Les `@font-face` sont en tête de `FEUILLE_DE_STYLE`, dans
-`src/retraite_notionnelle/web/gabarit.py` — le seul endroit où la feuille
-existe ; `moteur/style.css` en est extrait par
-`python scripts/construire_donnees.py` et ne se modifie jamais à la main.
+Les `@font-face` sont en tête de `moteur/style.css`, le seul endroit où la
+feuille existe : elle s'y écrit à la main, et aucun script ne la fabrique
+depuis la phase 8.
 
 Pour récupérer un fichier depuis Google Fonts sans laisser le site en dépendre :
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fabrique ce que le site charge : ``moteur/donnees.json`` et ``moteur/style.css``.
+"""Fabrique ce que le site charge : ``moteur/donnees.json``, le paquet de données.
 
 Et deux tables que le modèle Python relit comme des données :
 ``data/derive/equilibre.json``, le bilan figé, et
@@ -17,18 +17,16 @@ Faire passer les données par le modèle Python plutôt que de relire les fichie
 régimes, niveaux de fiabilité) n'existe qu'à un seul endroit, et le paquet ne
 peut pas diverger de ce que calcule la référence.
 
-La feuille de style suit le même chemin : elle est écrite une seule fois, dans
-``web/gabarit.py``, et extraite ici vers ``moteur/style.css`` que la page charge
-directement. Le rendu de référence et le site ne peuvent donc pas diverger
-d'apparence.
+La feuille de style, elle, ne se fabrique plus : ``moteur/style.css`` est sa
+source, écrite une fois, comme tout le texte du site depuis la phase 8. Ce script
+l'extrayait du rendu Python, ``web/gabarit.py``, que la phase a retiré.
 
-    python scripts/construire_donnees.py            # reconstruit les deux fichiers
+    python scripts/construire_donnees.py            # reconstruit les fichiers
     python scripts/construire_donnees.py --verifier # échoue s'ils sont périmés
 
 Ils sont versionnés dans le dépôt, pour que le site n'ait aucune étape de
 construction : ouvrir l'adresse suffit. Il faut donc les reconstruire après toute
-modification des données ou du style — le test ``test_le_paquet_est_a_jour`` y
-veille.
+modification des données — le test ``test_le_paquet_est_a_jour`` y veille.
 """
 
 from __future__ import annotations
@@ -101,7 +99,6 @@ from retraite_notionnelle.scenarios.actuel import (  # noqa: E402
 
 DONNEES = RACINE / "data"
 PAQUET = RACINE / "moteur" / "donnees.json"
-STYLE = RACINE / "moteur" / "style.css"
 #: Le bilan des quatre systèmes, figé sous les réglages de référence. Versionné
 #: dans ``data/`` parce que le modèle Python le relit comme une donnée — voir
 #: ``donnees/bilan.py`` —, et embarqué tel quel dans le paquet du navigateur.
@@ -1654,19 +1651,8 @@ def construire(bilan: bytes) -> bytes:
     return (texte + "\n").encode("utf-8")
 
 
-def construire_style() -> bytes:
-    """Feuille de style extraite du module Python, seule source du style."""
-    from retraite_notionnelle.web import gabarit
-
-    entete = (
-        "/* Extrait de src/retraite_notionnelle/web/gabarit.py par\n"
-        "   scripts/construire_donnees.py — ne pas modifier ici. */\n"
-    )
-    return (entete + gabarit.FEUILLE_DE_STYLE.lstrip("\n")).encode("utf-8")
-
-
 def sorties(contexte=None) -> dict[Path, bytes]:
-    """Les quatre fichiers versionnés, dans l'ordre où ils se construisent.
+    """Les trois fichiers versionnés, dans l'ordre où ils se construisent.
 
     Le bilan vient d'abord, et le paquet reçoit ses octets plutôt que de le
     recalculer : la table de ``data/`` et celle du navigateur ne peuvent alors
@@ -1674,7 +1660,6 @@ def sorties(contexte=None) -> dict[Path, bytes]:
     """
     bilan = construire_bilan(contexte)
     return {EQUILIBRE: bilan, PAQUET: construire(bilan),
-            STYLE: construire_style(),
             CALIBRATIONS: serialiser_calibrations(_table_calibrations()).encode("utf-8")}
 
 
@@ -1698,7 +1683,7 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"{chemin.relative_to(RACINE)} est périmé — lancer "
                       "python scripts/construire_donnees.py", file=sys.stderr)
                 return 1
-        print("paquet et feuille de style à jour")
+        print("paquet à jour")
         return 0
 
     for chemin, contenu in attendus.items():

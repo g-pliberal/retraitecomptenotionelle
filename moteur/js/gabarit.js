@@ -1,14 +1,19 @@
 /**
  * Rendu HTML, sans moteur de gabarits.
  *
- * Portage de ``src/retraite_notionnelle/web/gabarit.py``. Les fonctions
- * ci-dessous assemblent du HTML et échappent systématiquement ce qui vient de
- * l'utilisateur.
+ * Le gabarit du site : l'en-tête, le pied, et les pièces dont ``pages.js``
+ * compose les pages — nombres, champs, tableaux, graphiques. Il est écrit une
+ * fois, en JavaScript, comme tout le texte du site (docs/architecture.md, § 8).
+ * Le portage JavaScript n'a aucune dépendance, et on ne lui en ajoute pas une
+ * pour produire quelques pages : les fonctions ci-dessous assemblent du HTML et
+ * échappent systématiquement ce qui vient de l'utilisateur.
  *
- * La feuille de style, elle, n'est pas dupliquée ici : elle reste écrite dans
- * le module Python, d'où ``scripts/construire_donnees.py`` l'extrait vers
- * ``moteur/style.css``, que la page charge directement. Une seule source, deux
- * consommateurs.
+ * La feuille de style n'est pas ici : ``moteur/style.css`` est sa source,
+ * écrite une fois, que la page charge telle quelle et qu'aucun script ne
+ * fabrique.
+ *
+ * L'ancien gabarit Python, ``web/gabarit.py``, se relit dans l'historique git
+ * au repère `phase-7` : ses docstrings y gardent l'histoire complète des choix.
  */
 
 import { echapper, formatFixe } from "./format.js";
@@ -17,7 +22,8 @@ export const DEPOT = "https://github.com/g-pliberal/retraitecomptenotionelle";
 
 /**
  * Le site dont cette page est un outil. Il la sert sous `/retraite/` ; elle ne
- * charge rien de lui, et n'y renvoie que par ce lien — en tête et en pied.
+ * charge rien de lui, et n'y renvoie que par ce lien, en pied de page, pour
+ * qui a tout lu. Le bandeau n'y renvoie plus.
  */
 export const SITE_PARENT = "https://partiliberalfrancais.fr/";
 
@@ -43,14 +49,33 @@ const FINE = "\u202f";
 
 /**
  * La navigation, en deux voix : ce que l'électeur vient chercher, puis ce qui
- * permet de le vérifier, derrière une étiquette qui se voit. Copie de
- * `GROUPES_NAVIGATION` dans `web/gabarit.py`, qui dit pourquoi.
+ * permet de le vérifier, derrière une étiquette qui se voit. `LIENS` en est la
+ * liste à plat, pour qui n'a besoin que des pages.
+ *
+ * Dix onglets de même poids ne disaient pas à l'électeur par où commencer, et
+ * cinq d'entre eux ne répondaient qu'à celui qui veut vérifier. Les pages qui
+ * répondent à SES questions — le programme, sa retraite, le coût, pourquoi
+ * changer — restent des onglets ; celles qui PROUVENT passent derrière une
+ * étiquette qui se voit, « Pour vérifier », en plus petit. Les deux autres
+ * étiquettes restent DITES aux synthèses vocales, qui les lisent comme la
+ * structure du menu, et le style les sort de l'écran.
+ *
+ * Les libellés disent ce qu'on trouve derrière : « Avantages » se lisait comme
+ * les avantages de la réforme, « Risque » ne disait pas de quoi, « Trajectoire »
+ * et « Cas types » étaient des mots du modèle, « Données » un mot d'ingénieur.
  */
 export const GROUPES_NAVIGATION = [
   ["L'essentiel", [["/", "Programme"], ["/simuler", "Simuler"],
     ["/cout", "Coût"], ["/risque", "Pourquoi changer"]]],
+  // Partager n'est ni une réponse ni une preuve : c'est ce qu'on fait APRÈS
+  // avoir lu. La barre de partage de chaque graphique y renvoie déjà sans
+  // passer par ici ; la page tient la liste complète des cartes, pour qui les
+  // veut toutes.
   ["Faire connaître", [["/partager", "Partager"]]],
-  // Huit pages, et non plus dix : voir `GROUPES_NAVIGATION` en Python.
+  // HUIT PAGES, ET NON PLUS DIX, depuis le 23 septembre 2026 : « Cumul versé »
+  // redisait un dépliant des résultats, et « Sources » est devenue la fin de la
+  // page Méthode. Leurs adresses mènent là où leur contenu est allé — voir
+  // `ANCIENNES_ROUTES` dans `pages.js`.
   ["Pour vérifier", [["/cas-types", "Carrières types"],
     ["/avantages", "Droits non cotisés"], ["/methode", "Méthode et sources"]]],
 ];
@@ -116,8 +141,14 @@ export function route(chemin) {
   return `#${chemin}`;
 }
 
+/**
+ * Les liens du bandeau, par groupe : une étiquette, puis les pages.
+ *
+ * L'étiquette est du texte, lu par tout le monde — pas un `aria-label` qu'une
+ * synthèse vocale serait seule à entendre. Elle est petite, et se lit comme un
+ * intertitre de menu.
+ */
 export function navigation(cheminActif = "/") {
-  // Les liens du bandeau, par groupe : une étiquette, puis les pages.
   const liensDuGroupe = (liens) => liens.map(([chemin, libelle]) => `<a href="${lien(chemin)}"`
     + (chemin === cheminActif ? ' aria-current="page"' : "")
     + `>${echapper(libelle)}</a>`).join("");
@@ -127,8 +158,12 @@ export function navigation(cheminActif = "/") {
       return `<span class="groupe">${entree}`
         + `<span class="liens">${liensDuGroupe(liens)}</span></span>`;
     }
-    // Sur un téléphone, le groupe se replie derrière un bouton, ouvert de
-    // lui-même quand la page courante en est. Voir `navigation` en Python.
+    // SUR UN TÉLÉPHONE, LE GROUPE SE REPLIE DERRIÈRE UN BOUTON. Ses liens y
+    // prenaient deux rangées de plus, avant même le titre de la page : quatre
+    // rangées d'onglets au total (23 septembre 2026). Le bouton porte le nom
+    // du groupe et son état, et n'existe qu'à l'écran étroit ; au-delà,
+    // l'étiquette reste un texte et les liens restent sous les yeux. Le groupe
+    // s'ouvre de lui-même quand la page courante en est.
     const ouvert = liens.some(([chemin]) => chemin === cheminActif);
     const bouton = '<button type="button" class="deplier" '
       + `aria-expanded="${ouvert ? "true" : "false"}" `
@@ -161,11 +196,20 @@ export function entete(cheminActif = "/") {
  * Le bloc de tête d'une page : sur-titre, titre massif, chapeau.
  *
  * C'est l'unité qui fait de chaque page une affiche, et elle est la même
- * partout pour que les huit se reconnaissent comme un seul site. Le titre est
- * le `<h1>` de la page — le seul, depuis que le nom du site a cédé la place —,
- * et il est mis en capitales par le STYLE, jamais dans le texte.
+ * partout pour que les huit se reconnaissent comme un seul site.
  *
- * Copie d'`affiche` dans `web/gabarit.py`.
+ * - le SUR-TITRE, deux ou trois mots en or et en capitales, dit où l'on est.
+ *   Le titre ne le dit plus : c'est devenu une phrase, et une phrase ne se
+ *   repère pas dans une barre d'onglets ;
+ * - le TITRE est le `<h1>` de la page — le seul, depuis que le nom du site a
+ *   cédé la place. Il est mis en capitales PAR LE STYLE, jamais dans le texte :
+ *   certaines synthèses vocales épellent lettre à lettre un mot écrit en
+ *   majuscules, et le titre d'une page n'a pas à s'entendre « P.R.O.G. » ;
+ * - le CHAPEAU, en serif, est la seule chose que lira celui qui ne lit que
+ *   deux lignes.
+ *
+ * `titre` et `chapeau` sont du HTML : ils portent les passages en or, les liens
+ * et les mots du glossaire. `surtitre` est du texte.
  */
 export function affiche(surtitre, titre, chapeau) {
   return `<div class="affiche"><p class="surtitre">${echapper(surtitre)}</p>`
@@ -239,8 +283,13 @@ export function pourcentage(valeur, signe = false, decimales = 1) {
 
 /**
  * Un montant en millions d'euros, écrit en milliards à la précision qui se lit :
- * une décimale sous dix milliards, aucune au-dessus. Portage de `milliards`
- * dans `gabarit.py`, qui dit pourquoi le seuil est posé à 9,95 milliards.
+ * une décimale sous dix milliards, aucune au-dessus — « 5,1 Md € », « 422 Md € ».
+ *
+ * C'est l'unité où une part du PIB se dit en euros, partout sur le site : la
+ * part porte la précision, les milliards l'ordre de grandeur. Le seuil est posé
+ * sur la valeur NON arrondie, à 9,95 milliards, pour qu'aucun montant ne
+ * s'écrive « 10,0 ». `signe` écrit le « + » des montants positifs, pour
+ * accompagner une part qui le porte.
  */
 export function milliards(millions, signe = false) {
   const decimales = Math.abs(millions) < 9950.0 ? 1 : 0;
@@ -291,8 +340,16 @@ export function bulle(sujet, texte) {
 
 /**
  * Le glossaire du site : un mot de spécialiste, sa définition en une ou deux
- * phrases de français courant. Copie de `GLOSSAIRE` dans `web/gabarit.py`,
- * entrée pour entrée — les témoins des pages le vérifient.
+ * phrases de français courant, sans renvoi obligé vers la page Méthode.
+ *
+ * Il existe pour qu'un terme soit défini UNE fois et de la même façon partout
+ * où il reparaît — « répartition » se définissait en deux endroits, avec deux
+ * textes. Un mot qui manque ici ne peut pas être posé par `terme`.
+ *
+ * Aucun chiffre qui bouge n'y figure : un plafond, une durée requise ou un taux
+ * de décote écrit ici dériverait sans que rien ne le recoupe, et un test y
+ * veille. Les définitions que les pages emploient sont figées avec elles, dans
+ * leurs témoins.
  */
 export const GLOSSAIRE = Object.freeze({
   "compte notionnel":
@@ -607,8 +664,12 @@ export function tableau(entetes, lignes, classesColonnes = null, titre = "",
  * une infobulle de survol ne s'ouvre ni au clavier, ni au doigt, ni sous une
  * synthèse vocale. Sorties du tableau, elles se lisent dans tous les cas.
  */
-/** Ce qu'un niveau de fiabilité s'appelle sous les yeux du lecteur : les clés
- * restent sans accent dans les attributs et les adresses. Voir le Python. */
+/**
+ * Ce qu'un niveau de fiabilité s'appelle sous les yeux du lecteur. Les clés —
+ * « estimee », « certifiee » — voyagent dans les attributs de filtre et les
+ * adresses, sans accent parce que ce sont des identifiants ; à l'écran, un
+ * badge « ESTIMEE » se lisait comme une faute.
+ */
 const FIABILITE_EN_CLAIR = {
   estimee: "estimée", moyenne: "moyenne", haute: "haute", certifiee: "certifiée",
 };
@@ -661,7 +722,7 @@ export function fiche(etiquette, valeur, precision = "", definition = "") {
  * aucune bibliothèque, et la page ne demande aucune ressource tierce — un test
  * du dépôt l'exige. Les originaux sont recopiés sans
  * retouche dans `moteur/icones/`, et un test vérifie que cette table dit
- * exactement ce qu'ils disent, des deux côtés du portage.
+ * exactement ce qu'ils disent.
  *
  * Les clés sont les noms de Lucide, en anglais comme les fichiers : c'est ce
  * qui permet de retrouver l'original d'un coup d'œil, et au test de l'ouvrir.
@@ -737,15 +798,24 @@ export function sommaire(texte) {
  * clavier, ni au doigt, ni sous une synthèse vocale, et un test du dépôt
  * l'interdit d'ailleurs sur tout le site.
  *
- * Ce n'est pas non plus un `<details>` : celui-ci fait partie des balises dont
- * l'analyseur HTML FERME un `<p>` ouvert, et un mot du glossaire posé au milieu
- * d'une phrase coupait donc le paragraphe en deux. Un `<button>` est du contenu
- * de phrase — il ne ferme rien —, et il porte en plus le bon état. Le
- * basculement est dans `index.html`, en écoute déléguée.
+ * Ce n'est pas non plus un `<details>`, et il a fallu s'y reprendre à deux fois
+ * pour le comprendre : celui-ci fait partie des balises dont l'analyseur HTML
+ * FERME un `<p>` ouvert. Un mot du glossaire posé au milieu d'une phrase coupait
+ * donc le paragraphe en deux, et la fin de la phrase tombait à la ligne, hors du
+ * paragraphe. Un `<button>` est du contenu de phrase — il ne ferme rien —, et il
+ * porte en plus le bon état : `aria-expanded` dit si la définition est ouverte,
+ * ce qu'un dépliant bricolé ne dirait pas. Le basculement est dans `index.html`,
+ * en écoute déléguée : le contenu de la page est remplacé en bloc à chaque
+ * rendu, et un écouteur posé sur chaque mot disparaîtrait avec lui.
  */
 export function mot(terme, definition) {
-  // Un `<span role="button">`, et non un `<button>` : Chromium rend tout bouton
-  // en bloc en ligne, qui ne coule pas dans une phrase. Voir `mot` en Python.
+  // Ce n'est plus un `<button>` non plus, mais un `<span role="button"
+  // tabindex="0">` : Chromium rend tout bouton en bloc en ligne, quoi qu'on lui
+  // dise, et un bloc ne coule pas dans une phrase — dans une case étroite,
+  // « vos 25 meilleures années, un taux » se brisait en quatre lignes autour du
+  // mot. Le rôle et la tabulation lui rendent ce que la balise donnait ; Entrée
+  // et Espace, c'est `index.html` qui les écoute. L'appel de bulle (`bulle`),
+  // lui, reste un vrai bouton : c'est un pictogramme, pas un mot de la phrase.
   return '<span class="mot"><span class="terme" role="button" tabindex="0" '
     + `aria-expanded="false">${echapper(terme)}</span>`
     + `<span class="bulle" role="note" hidden>${echapper(definition)}</span></span>`;
@@ -830,11 +900,21 @@ const SECTION_DU_PLAN = new RegExp(
 /**
  * Le sommaire d'une page longue, DÉDUIT de ses sections.
  *
- * Il est lu dans le HTML déjà rendu, où chaque dépliant identifié porte son
- * titre : il ne peut donc pas dériver, et il est identique des deux côtés du
- * portage. Les liens ne touchent pas à l'adresse — ici l'adresse EST la route —
- * : `data-vers` désigne la section, et le script d'`index.html` l'ouvre, y
- * pose le focus et y fait défiler. Voir `plan` dans `web/gabarit.py`.
+ * Il n'est pas écrit à la main : il est lu dans le HTML déjà rendu, où chaque
+ * dépliant identifié porte son titre. C'est ce qui garantit qu'il ne peut pas
+ * dériver — un titre changé, une section ajoutée, et le plan suit sans qu'on y
+ * pense.
+ *
+ * Les liens ne touchent pas à l'adresse. Ici l'adresse EST la route (`#/cout`),
+ * et un `href="#une-section"` renverrait le lecteur à l'accueil ; le lien porte
+ * donc la route de la page, qui ne change rien, et `data-vers` désigne la
+ * section. Le script d'`index.html` l'ouvre, y pose le focus et y fait défiler
+ * — c'est le mécanisme du lien d'évitement, étendu au corps de la page. Sans
+ * script, le lien ne fait rien, et le plan reste ce qu'il est : la liste de ce
+ * que la page contient.
+ *
+ * Une page sans section identifiée n'a pas de plan : le vide, plutôt qu'une
+ * liste vide.
  */
 export function plan(corps, chemin, etiquette = "Dans cette page") {
   const entrees = [...corps.matchAll(SECTION_DU_PLAN)]
@@ -854,10 +934,11 @@ export function plan(corps, chemin, etiquette = "Dans cette page") {
  * Les deux gestes du partage, sous une carte ou sous une image à publier.
  *
  * Une seule écriture pour les deux endroits où l'on partage — la carte d'un
- * graphique et la carte de la page Partager. Le comportement est dans
- * `index.html`, en écoute déléguée sur ces classes.
+ * graphique et la carte de la page Partager. Elles n'avaient rien en commun :
+ * l'une posait trois boutons, l'autre demandait une capture d'écran. Le lecteur
+ * ne voit plus qu'un geste, au même endroit, avec le même libellé.
  *
- * Copie de `barre_partage` dans `web/gabarit.py`.
+ * Le comportement est dans `index.html`, en écoute déléguée sur ces classes.
  */
 export function barrePartage() {
   return '<p class="partage">'
@@ -913,15 +994,22 @@ export function cle(question, reponse, corps, source = "", identifiant = "") {
 //
 // Le dépôt n'a pas de bibliothèque de tracé, et n'en aura pas : le site charge
 // ses propres fichiers et rien d'autre. Les graphiques sont donc du SVG écrit à
-// la main, en deux exemplaires — ici et dans ``web/gabarit.py`` —, et comparés
-// caractère par caractère par les témoins. D'où deux règles de construction
-// qu'il ne faut pas enfreindre :
+// la main, ici seulement, et figés avec les pages dans leurs témoins
+// (``tests/temoins/pages.json``). Deux règles de construction datent du temps
+// où ils étaient écrits en deux exemplaires, en Python et ici, et comparés
+// caractère par caractère. Elles restent, parce qu'y manquer déplacerait des
+// coordonnées dans les témoins :
 //
 //   * toutes les coordonnées passent par ``nombreBrut``, qui arrondit comme
-//     Python le fait, pour que les deux rendus produisent la même chaîne ;
+//     Python le fait — au pair, sur la valeur exacte du flottant ;
 //   * le pas des graduations est cherché par ITÉRATION sur une échelle de
-//     valeurs rondes, jamais par un logarithme, dont les deux langages ne
-//     garantissent pas le même dernier bit.
+//     valeurs rondes, jamais par un logarithme : Python et JavaScript ne
+//     garantissaient pas le même dernier bit du logarithme, et la norme de
+//     JavaScript le laisse à chaque moteur — celui qui fige les témoins n'est
+//     pas forcément celui du lecteur.
+//
+// Les couleurs sont des variables CSS : le graphique suit le thème clair ou
+// sombre sans que rien ne soit recalculé.
 
 /** Cadre de tracé, en unités du ``viewBox``. */
 export const LARGEUR_TRACE = 720;
@@ -945,8 +1033,10 @@ export const MARGE_DROITE = 28;
  * unités du viewBox, et deux étiquettes séparées de douze s'y chevauchaient.
  */
 export const ESPACEMENT_ETIQUETTES = 22.0;
-// 34 et non 26 : voir le Python — sur téléphone, les textes grossis se
-// recouvraient en haut et en bas du cadre.
+// 34 et non 26 : sur téléphone les textes du repère font 18 unités, et l'unité
+// de l'axe (« % du PIB »), posée au-dessus du cadre, recouvrait la graduation
+// du haut. Même raison en bas : le « 0 » de l'axe vertical et la première année
+// se chevauchaient, et les années descendent d'autant.
 export const MARGE_HAUT = 34;
 export const MARGE_BAS = 34;
 
@@ -1033,8 +1123,10 @@ function abscisse(annee, premiere, derniere) {
   if (derniere === premiere) {
     return MARGE_GAUCHE + largeur / 2;
   }
-  // Le même ordre d'opérations que `_abscisse` dans gabarit.py : l'autre
-  // tombait parfois de l'autre côté d'un arrondi au dixième.
+  // Multiplier, puis diviser : c'est l'ordre du rendu Python, auquel ce tracé a
+  // été comparé caractère par caractère jusqu'à la phase 8, et un autre ordre
+  // tombait parfois de l'autre côté d'un arrondi au dixième. En changer
+  // déplacerait des abscisses dans les témoins de pages.
   return MARGE_GAUCHE + largeur * (annee - premiere) / (derniere - premiere);
 }
 
@@ -1218,18 +1310,27 @@ function airesEcart(haute, basse, annees, sommet, plancher = 0.0) {
 /** Sommet de l'axe vertical et pas de graduation. */
 /**
  * Sommet, pas et plancher de l'axe vertical. Le plancher est zéro tant
- * qu'aucune valeur n'est négative — l'échelle de tous les graphiques du site.
- * Une valeur négative étend l'échelle vers le bas : le pas est choisi pour
- * que l'AMPLITUDE tienne dans le même nombre de divisions, puis chaque borne
- * est arrondie au pas, si bien que zéro tombe toujours sur une graduation.
+ * qu'aucune valeur n'est négative, et le sommet est alors `DIVISIONS_Y` pas
+ * ronds — l'échelle de tous les graphiques du site. Une valeur négative — une
+ * réserve, sur le graphique de la dette — étend l'échelle vers le bas : le pas
+ * est choisi pour que l'AMPLITUDE tienne dans le même nombre de divisions, puis
+ * chaque borne est arrondie au pas, vers le bas pour le plancher et vers le haut
+ * pour le sommet, si bien que zéro tombe toujours sur une graduation.
  */
 /**
  * Sommet de l'axe vertical, pas de graduation, et plancher.
  *
- * `sommetMinimal` fige une échelle que les données ne doivent pas rétrécir.
- * Un axe qui suit ses données est le bon défaut ; il devient un piège dès que
- * le lecteur COMPARE deux tracés du même graphique sous deux hypothèses. Voir
- * le portage Python, qui porte la mesure de ce que cela coûtait.
+ * `sommetMinimal` FIGE UNE ÉCHELLE QUE LES DONNÉES NE DOIVENT PAS RÉTRÉCIR, et
+ * il existe pour une raison mesurée. Un axe qui suit ses données est le bon
+ * défaut : il remplit le cadre. Il devient un piège dès que le lecteur COMPARE
+ * deux tracés du même graphique sous deux hypothèses — le 21 septembre 2026, la
+ * carte du solde montait à 20 % du PIB sous le scénario de référence et à 15 %
+ * sous la variante haute de productivité, si bien que l'écart de 2070, qui perd
+ * 29 % de sa valeur entre les deux, n'en perdait que 5 % de sa hauteur à
+ * l'écran. Le chiffre disait le vrai, le dessin le contredisait, et c'est le
+ * dessin qu'on regarde d'abord. Qui passe cet argument donne à toutes les
+ * variantes le sommet de la plus haute, et les tracés redeviennent
+ * superposables.
  */
 function sommetEchelle(series, empile, sommetMinimal = 0.0) {
   let maximum = sommetMinimal;
@@ -1295,7 +1396,9 @@ function etiquettesDeFin(series, sommet, etiquettes, plancher = 0.0) {
   if (!poses.length) return "";
 
   // Tri sur (ordonnée, rang) : le rang départage deux courbes de même hauteur,
-  // pour que les deux portages posent les étiquettes dans le même ordre.
+  // et l'ordre ne dépend donc pas de la stabilité du tri. Posé pour que les
+  // rendus Python et JavaScript, comparés jusqu'à la phase 8, rangent les
+  // étiquettes de la même façon, il garde aux témoins de pages leur ordre.
   poses.sort((a, b) => (a.y - b.y) || (a.rang - b.rang));
   const ecartees = [];
   let precedent = -Infinity;
@@ -1378,8 +1481,9 @@ export function graphique(titre, annees, series, unite = "", empile = false,
     }
   }
 
-  // L'unité part du bord gauche du repère : ancrée à `end` sur l'axe, une
-  // unité longue débordait du cadre. Voir le Python.
+  // L'unité de l'axe part du bord gauche du repère, et non de l'axe vers la
+  // gauche : ancrée à `end` sur l'axe, « Md€ courants » débordait de quarante
+  // unités hors du cadre, et se trouvait coupée sur un téléphone.
   const uniteHtml = unite
     ? `<text class="graduation" x="0" `
       + `y="${nombreBrut(MARGE_HAUT - 16)}" text-anchor="start">${echapper(unite)}</text>`
@@ -1391,8 +1495,9 @@ export function graphique(titre, annees, series, unite = "", empile = false,
   if (repere !== null && repere >= annees[0] && repere <= derniereAnnee) {
     const position = abscisse(repere, annees[0], derniereAnnee);
     const x = nombreBrut(position);
-    // Du côté où il reste de la place : à gauche du trait dans la seconde
-    // moitié du tracé, comme en Python.
+    // L'étiquette se pose du côté où il reste de la place : à droite du trait
+    // dans la première moitié du tracé, à gauche dans la seconde, faute de
+    // quoi « espérance de vie : 89,7 ans » sortait du cadre.
     const aGauche = repere > (annees[0] + derniereAnnee) / 2;
     const etiquette = libelleRepere
       ? `<text class="graduation" x="${nombreBrut(position + (aGauche ? -5 : 5))}" `
@@ -1432,8 +1537,9 @@ export function graphique(titre, annees, series, unite = "", empile = false,
 
 /**
  * Un pourcentage du PIB, et ce qu'il vaut en milliards : « 14,1 % · 422 Md € ».
- * `valeur` est en POURCENTAGE, `pib` en millions d'euros. Portage de
- * `part_et_milliards`.
+ * `valeur` est en POURCENTAGE (14,1 et non 0,141), comme les séries des
+ * graphiques ; `pib` en millions d'euros. Les milliards ont la précision que
+ * leur donne `milliards`.
  */
 export function partEtMilliards(valeur, pib, decimales = 1) {
   return `${nombre(valeur, decimales)}${FINE}% · ${milliards(valeur * pib / 100.0)}`;
@@ -1486,8 +1592,18 @@ export function donneesDuGraphique(titre, annees, series, unite = "",
 }
 
 /**
- * Géométrie de la frise des flux, en unités SVG : une colonne par année, un
- * point de PIB vaut `ECHELLE_FRISE` pixels. Portage de `frise_flux`.
+ * Géométrie de la frise des flux, en unités SVG. Une colonne par année : trois
+ * barres — ce qui rentre, la caisse, ce qui sort —, deux rubans entre elles, et
+ * sous la caisse ce qui manque ou ce qui reste. Un point de PIB vaut
+ * `ECHELLE_FRISE` pixels, le même pour toutes les années et tous les systèmes,
+ * pour que deux colonnes se comparent à l'œil.
+ *
+ * 260 et non 200 depuis que chaque chiffre s'y lit aussi en milliards : les
+ * milliards du stock s'alignent à droite de la colonne, face à leur part, et la
+ * réserve du système 2, plus de cinq fois le PIB en 2070, doit y tenir sans que
+ * les deux textes se touchent — mesuré au navigateur, il reste au plus serré
+ * vingt unités de blanc. Les milliards des flux ajoutent une ligne, d'où seize
+ * unités de plus en hauteur.
  */
 const COLONNE_FRISE = 260;
 const MARGE_FRISE = 16;
@@ -1516,9 +1632,26 @@ export class AnneeFrise {
 }
 
 /**
- * La frise des stocks et des flux, année par année, pour un système. Chaque
- * colonne est un compte qui tombe juste : ce qui rentre, la caisse, ce qui
- * sort, et dessous le stock en chiffres. Voir `frise_flux` dans `gabarit.py`.
+ * La frise des stocks et des flux, année par année, pour un système.
+ *
+ * CHAQUE COLONNE EST UN COMPTE QUI TOMBE JUSTE. À gauche ce qui rentre, au
+ * milieu la caisse, à droite ce qui sort ; la caisse est aussi haute que le plus
+ * grand des deux, et son pied est coloré de ce qui manque — emprunté — ou de ce
+ * qui reste — placé. Dessous, en chiffres, le stock : ce qu'il était au
+ * 1er janvier, rapporté au PIB de l'année, plus les intérêts, plus l'emprunt ou
+ * moins le placement, et ce qu'il est au 31 décembre. Le stock n'est pas dessiné
+ * à l'échelle des flux : il en vaut jusqu'à cinquante fois un, et une barre à
+ * cette hauteur écraserait tout le reste.
+ *
+ * Tout est en part du PIB, et chaque part se lit aussi en milliards : sous
+ * chaque flux, et en face de chaque ligne du stock, alignés à droite. Une valeur
+ * négative du stock est une réserve.
+ *
+ * Le dessin est rendu dans une boîte qui défile, à largeur fixe : c'est le
+ * lecteur qui avance dans les années, comme il tournerait les pages d'un
+ * registre. Ses chiffres sont redits dans un tableau replié dessous, ligne par
+ * ligne, parce qu'un dessin est une image et qu'une image ne se lit pas au
+ * clavier.
  */
 export function friseFlux(titre, annees) {
   if (!annees.length) return "";
@@ -1552,6 +1685,7 @@ export function friseFlux(titre, annees) {
       + `x2="${nombreBrut(x)}" y2="${nombreBrut(HAUTEUR_FRISE - 10)}"/>`
       + `<text class="titre" x="${nombreBrut(x + COLONNE_FRISE / 2)}" y="22" `
       + `text-anchor="middle">${ligne.annee}</text>`
+      // Les rubans d'abord : ils sont un fond.
       + `<path class="ruban rentre" d="M${gauche} ${haut} L${milieu} ${haut} `
       + `L${milieu} ${nombreBrut(HAUT_FRISE + hRentre)} `
       + `L${gauche} ${nombreBrut(HAUT_FRISE + hRentre)} Z"/>`
@@ -1628,20 +1762,38 @@ export function friseFlux(titre, annees) {
 }
 
 /**
- * Géométrie de la cascade, en unités du `viewBox`. Portage de `cascade` dans
- * `gabarit.py`, dont le docstring porte le raisonnement : le cadre est plus
- * haut que celui des courbes parce que les libellés sont posés en biais sous
- * l'axe, et le débord est mesuré au navigateur à la taille de texte du
- * téléphone.
+ * Géométrie de la cascade, en unités du `viewBox` — un repère, pas des pixels.
+ * Le cadre est plus haut que celui des courbes parce que les libellés sont
+ * posés en biais SOUS l'axe : une marche s'appelle « La part patronale portée
+ * au compte », et sept intitulés de cette longueur ne tiennent pas côte à côte
+ * à l'horizontale, fût-ce sur trois lignes.
  */
 const LARGEUR_CASCADE = 760;
 const HAUTEUR_CASCADE = 430;
 const MARGE_GAUCHE_CASCADE = 58;
 const MARGE_DROITE_CASCADE = 16;
 const MARGE_HAUT_CASCADE = 40;
+// Ce qui reste sous l'axe pour les libellés inclinés : de quoi loger trente
+// caractères à trente-cinq degrés, la plus longue étiquette de la page Coût.
 const MARGE_BAS_CASCADE = 150;
+// Inclinaison des libellés, en degrés. Trente-cinq est la pente où l'œil suit
+// encore la ligne sans tourner la tête, et où huit étiquettes cessent de se
+// chevaucher. La valeur passe telle quelle dans le SVG : aucune trigonométrie
+// n'est calculée ici — du temps où les rendus Python et JavaScript étaient
+// comparés, c'est ce qui les empêchait de diverger sur un dernier bit.
 const PENTE_CASCADE = -35;
+// Part de la colonne qu'occupe la barre. Le reste est le blanc qui sépare deux
+// marches, et par lequel passe le trait de liaison.
 const PART_BARRE_CASCADE = 0.62;
+// Ce que les étiquettes inclinées débordent du cadre : à gauche, sous la
+// première colonne, dont l'étiquette part vers l'extérieur ; en bas, sous la
+// dernière ligne de texte. Le viewBox s'ouvre d'autant, plutôt que le dessin se
+// rétrécisse pour faire de la place à du texte.
+//
+// Les deux nombres sont MESURÉS, au navigateur, à la taille de texte du
+// TÉLÉPHONE — la plus grande des deux, où l'étiquette de la première colonne
+// sortait de vingt-deux unités et la dernière ligne frôlait le bord à deux
+// unités près. Les changer sans remesurer recoupe le texte.
 const DEBORD_GAUCHE_CASCADE = 34;
 const DEBORD_BAS_CASCADE = 14;
 
@@ -1672,9 +1824,12 @@ function ordonneeCascade(valeur, sommet, plancher) {
 }
 
 /**
- * Un montant signé, au moins typographique, et jamais « −0,0 ». Le test porte
- * sur le TEXTE et non sur le nombre : c'est le texte qui sera lu, et c'est le
- * seul essai que les deux portages font à coup sûr de la même façon.
+ * Un montant signé, au moins typographique, et jamais « −0,0 ». Une marche plus
+ * petite qu'un demi-dixième s'écrit « 0,0 » sans signe : « −0,0 » se lit comme
+ * une baisse, et ce n'en est pas une. Le test porte sur le TEXTE et non sur le
+ * nombre : c'est le texte qui sera lu — et, du temps où les rendus Python et
+ * JavaScript étaient comparés, c'était le seul essai que les deux faisaient à
+ * coup sûr de la même façon.
  */
 export function signeCascade(valeur, decimales) {
   const texte = nombre(Math.abs(valeur), decimales);
@@ -1697,11 +1852,31 @@ function sensCascade(valeur, decimales) {
 }
 
 /**
- * Le pont d'un total à un autre, marche par marche. Voir `cascade` dans
- * `gabarit.py` : la première barre part de zéro, chaque marche reprend le cumul
- * où la précédente l'a laissé, et la dernière retombe sur zéro. Le dessin ne
- * tient que si le compte tombe juste, et c'est ce qui en fait une vérification
- * autant qu'une figure.
+ * Le pont d'un total à un autre, marche par marche.
+ *
+ * UNE CASCADE RÉPOND À UNE SEULE QUESTION, et c'est ce qui la rend meilleure
+ * qu'un tableau ici : de tous les changements qui séparent ces deux nombres,
+ * lequel pèse, et dans quel sens ? Deux colonnes de chiffres laissent ce travail
+ * au lecteur — il doit soustraire de tête, et il ne le fait pas. La cascade le
+ * montre : la première barre part de zéro, chaque marche reprend le cumul où la
+ * précédente l'a laissé, et la dernière barre retombe sur zéro.
+ *
+ * LE DESSIN NE TIENT QUE SI LE COMPTE TOMBE JUSTE, et c'est ce qui en fait une
+ * vérification autant qu'une figure. Les marches somment exactement à l'écart
+ * des deux totaux, ou la dernière barre ne retombe pas où elle devrait — et
+ * cela se VOIT. Un contrôle des affirmations refait la somme en plus du dessin,
+ * parce qu'un écart d'un millième s'y verrait mal : `cascade_somme_exactement`,
+ * dans ``tests/test_affirmations.py``.
+ *
+ * LA COULEUR DIT LE SENS, et pas toute seule : une marche qui monte est rouge,
+ * une marche qui descend est verte, le signe est écrit contre le chiffre, et
+ * l'ordre des marches est celui du tableau posé dessous. C'est la paire du
+ * ruban d'écart du graphique de bilan — `--manque` et `--reste` —, pour qu'une
+ * couleur désigne partout la même chose : ce qui coûte, et ce qui rend.
+ *
+ * Les libellés sont posés en biais. À l'horizontale, chacun demanderait
+ * quatre-vingts unités de large, qu'une cascade de huit colonnes n'a pas ; à la
+ * verticale, ils se liraient la tête penchée.
  */
 export function cascade(titre, marches, unite = "", decimales = 1,
                         decimalesAxe = 0, libelleMarche = "Étape") {
@@ -1710,7 +1885,8 @@ export function cascade(titre, marches, unite = "", decimales = 1,
   }
 
   // Les niveaux : le cumul AVANT et APRÈS chaque marche. Un total n'est pas un
-  // déplacement — il est posé sur zéro, et il REMET le cumul à sa valeur.
+  // déplacement — il est posé sur zéro, et il REMET le cumul à sa valeur, de
+  // sorte qu'une cascade puisse en enchaîner plusieurs sans se décaler.
   const niveaux = [];
   let cumul = 0.0;
   for (const marche of marches) {
@@ -1723,6 +1899,8 @@ export function cascade(titre, marches, unite = "", decimales = 1,
     }
   }
 
+  // L'échelle couvre TOUS les niveaux traversés, et pas seulement les totaux :
+  // une marche qui descend sous zéro avant de remonter sortirait du cadre.
   const bornes = niveaux.flat().concat([0.0]);
   const maximum = Math.max(...bornes);
   const minimum = Math.min(...bornes);
@@ -1768,7 +1946,9 @@ export function cascade(titre, marches, unite = "", decimales = 1,
     const haut = ordonneeCascade(Math.max(debut, fin), sommet, plancher);
     const pied = ordonneeCascade(Math.min(debut, fin), sommet, plancher);
     // Une marche nulle ne dessinerait rien, et une colonne vide se lit comme
-    // une colonne oubliée. Un filet d'une unité dit « mesuré, et nul ».
+    // une colonne oubliée. Un filet d'une unité dit « mesuré, et nul », ce qui
+    // n'est pas la même chose que « pas mesuré » — et c'est justement ce que la
+    // cotisation unique vaut l'année d'avant sa bascule.
     const hauteur = Math.max(pied - haut, 1.0);
     const sens = sensCascade(marche.valeur, decimales);
     let classe;
@@ -1784,8 +1964,9 @@ export function cascade(titre, marches, unite = "", decimales = 1,
       + `x="${nombreBrut(x)}" y="${nombreBrut(haut)}" `
       + `width="${nombreBrut(largeurBarre)}" `
       + `height="${nombreBrut(hauteur)}"/>`);
-    // Le trait de liaison s'arrête devant un total, qui repart de zéro et ne
-    // continue donc rien.
+    // Le trait de liaison part du sommet de la marche et rejoint la suivante :
+    // sans lui, huit barres flottantes ne se lisent pas comme une suite. Il
+    // s'arrête devant un total, qui repart de zéro et ne continue donc rien.
     if (rang + 1 < marches.length && !marches[rang + 1].total) {
       const y = nombreBrut(ordonneeCascade(fin, sommet, plancher));
       const suivante = abscisseCascade(rang + 1, marches.length) - largeurBarre / 2;
@@ -1795,11 +1976,15 @@ export function cascade(titre, marches, unite = "", decimales = 1,
     const montant = marche.total
       ? nombre(marche.valeur, decimales)
       : signeCascade(marche.valeur, decimales);
+    // Le chiffre est posé DEHORS : au-dessus de ce qui monte, au-dessous de ce
+    // qui descend. Dedans, il tombait dans le vide dès qu'une marche valait
+    // moins d'un dixième de l'échelle.
     const classeTexte = marche.total ? "valeur" : `valeur ${sens}`;
     const yValeur = (sens === "descend" && !marche.total) ? pied + 20 : haut - 9;
     textes.push(`<text class="${classeTexte}" x="${nombreBrut(centre)}" `
       + `y="${nombreBrut(yValeur)}" text-anchor="middle">${montant}</text>`);
-    // Le libellé, en biais, ancré par sa FIN sous le centre de la colonne.
+    // Le libellé, en biais, ancré par sa FIN sous le centre de la colonne :
+    // c'est ce qui le fait finir sous sa propre barre plutôt que sous la voisine.
     const pivotX = nombreBrut(centre);
     const pivotY = nombreBrut(yLibelles);
     textes.push(`<text class="etiquette${marche.total ? " total" : ""}" `
@@ -1820,7 +2005,9 @@ export function cascade(titre, marches, unite = "", decimales = 1,
     + "</ul></figcaption>";
 
   // Le tableau des chiffres, tiré des mêmes marches : la description détaillée
-  // qu'un dessin complexe doit au RGAA, et le seul endroit où le CUMUL se lit.
+  // qu'un dessin complexe doit au RGAA. Pour une cascade, c'est la suite des
+  // marches ET le cumul qu'elles laissent — c'est le cumul qui dit que le compte
+  // tombe juste, et c'est lui qu'on ne peut pas lire sur le tracé.
   const enTete = unite ? ` (${echapper(unite)})` : "";
   const lignes = marches.map((marche, rang) => [
     echapper(marche.libelle)
@@ -1854,28 +2041,69 @@ export function cascade(titre, marches, unite = "", decimales = 1,
 
 // -- le schéma de Sankey ------------------------------------------------------
 //
-// Ce qui paie à gauche, la caisse au milieu, ce qu'elle verse à droite, chaque
-// ruban de l'épaisseur de son montant. Voir `sankey` dans `gabarit.py`, dont ce
-// portage reprend les nombres ET l'ordre des opérations : les deux rendus sont
-// comparés caractère par caractère.
+// CE QUI PAIE, LA CAISSE QUI REÇOIT, CE QU'ELLE VERSE. Les courbes disent
+// combien entre et combien sort ; elles ne disent pas qui apporte quelle part
+// d'un même argent, ni où chaque part s'en va. Un schéma de Sankey le montre
+// d'un coup : ce qui paie à gauche, la caisse au milieu, ce qu'elle verse à
+// droite, chaque ruban de l'épaisseur de son montant — et c'est toute sa règle.
+//
+// IL EST FAIT DE CAISSES, et non d'un réseau quelconque. Chacune a ses payeurs
+// à gauche, ses usages à droite et elle-même au milieu ; plusieurs caisses
+// s'empilent de haut en bas. C'est ce qu'il faut pour dire les deux systèmes
+// que la page Coût compare — un seul pot aujourd'hui, trois caisses séparées
+// dans la proposition —, et c'est ce qui rend le placement trivial : les rubans
+// d'une caisse s'y empilent dans l'ordre de leurs nœuds, si bien qu'aucun n'en
+// croise un autre, et aucune étiquette n'est à écarter après coup, puisque
+// l'écart entre deux nœuds est déjà la hauteur de deux étiquettes.
+//
+// L'ÉCHELLE EST UN PARAMÈTRE. Deux schémas qu'on compare doivent peindre le
+// même milliard de la même épaisseur : c'est l'appelant, qui les connaît tous
+// les deux, qui la fixe, et `echelleSankey` la tire du plus gros.
+//
+// Les nombres et l'ordre des opérations sont ceux du rendu Python, auquel ce
+// schéma a été comparé caractère par caractère jusqu'à la phase 8 : en changer
+// déplacerait des coordonnées dans les témoins de pages.
 
+// Géométrie du schéma, en unités du `viewBox`. La largeur est celle des
+// courbes : posé dans la même colonne qu'un graphique, le schéma s'affiche à la
+// même échelle, et ses textes à la même taille.
 const LARGEUR_SANKEY = 720;
 export const LARGEUR_NOEUD_SANKEY = 14;
+// Abscisses des deux colonnes extrêmes. Ce qui reste de part et d'autre loge
+// les étiquettes, et les deux nombres y sont taillés : 144 unités à gauche pour
+// « Capitalisation 5 % », 170 à droite pour « Pensions de réversion ». Taillés
+// sur la police de REPLI et non sur Public Sans : l'image que compose le bouton
+// « Partager » dessine le SVG hors de la page, où la police du site n'est pas
+// chargée, et la police du système, plus large, y rognait le « C » de
+// « Capitalisation » — mesuré au navigateur, 130 unités contre 112.
 const X_SOURCES_SANKEY = 152;
 const X_USAGES_SANKEY = 528;
+// La caisse, à mi-chemin des deux colonnes.
 export const X_CAISSE_SANKEY = Math.floor(
   (X_SOURCES_SANKEY + LARGEUR_NOEUD_SANKEY + X_USAGES_SANKEY - LARGEUR_NOEUD_SANKEY) / 2,
 );
+// L'écart entre deux nœuds d'une même colonne. Deux étiquettes de deux lignes y
+// tiennent l'une sous l'autre même quand leurs nœuds sont des filets : c'est ce
+// qui dispense de les écarter après coup.
 export const ECART_NOEUDS_SANKEY = 32;
+// L'écart entre deux caisses : l'étiquette de la seconde se pose dedans.
 const ECART_CAISSES_SANKEY = 64;
+// Au-dessus de la première caisse, son étiquette et les titres des colonnes ;
+// sous la dernière, ce que déborde l'étiquette d'un nœud trop mince pour la
+// porter.
 const MARGE_HAUT_SANKEY = 44;
 const MARGE_BAS_SANKEY = 6;
+// L'épaisseur, empilée, de tout ce que brasse le plus gros des schémas
+// comparés. Les autres prennent la leur à la même échelle.
 export const HAUTEUR_SANKEY = 240;
+// Ce qui sépare une étiquette de son nœud.
 const RETRAIT_SANKEY = 8;
 
 /**
  * Un payeur ou un usage : un libellé, un montant, une couleur. `valeur` décide
- * de l'épaisseur, `montant` est ce qui s'écrit sous le libellé.
+ * de l'épaisseur, `montant` est ce qui s'écrit sous le libellé — « 274 Md € ».
+ * L'un et l'autre viennent de l'appelant : lui seul sait dans quelle unité il
+ * compte, et le schéma n'a pas à le deviner.
  */
 export class NoeudSankey {
   constructor(libelle, valeur, montant, couleur) {
@@ -1887,9 +2115,13 @@ export class NoeudSankey {
 }
 
 /**
- * Une caisse, ce qui l'alimente à gauche et ce qu'elle verse à droite. Le
- * compte doit tomber juste : `valeur` vaut la somme des sources et celle des
- * usages, le déficit porté parmi les sources, l'excédent parmi les usages.
+ * Une caisse, ce qui l'alimente à gauche et ce qu'elle verse à droite.
+ *
+ * LE COMPTE DOIT TOMBER JUSTE : `valeur` vaut la somme des sources ET celle des
+ * usages, et c'est à l'appelant d'y veiller, en portant le déficit parmi les
+ * sources — ce qui manque est emprunté, c'est donc une source — ou l'excédent
+ * parmi les usages. Un compte qui ne tombe pas juste se VOIT : les rubans ne
+ * remplissent plus la caisse, ou la débordent.
  */
 export class CaisseSankey {
   constructor(libelle, valeur, montant, sources, usages) {
@@ -1901,13 +2133,21 @@ export class CaisseSankey {
   }
 }
 
-/** L'échelle commune de plusieurs schémas : le plus gros prend `HAUTEUR_SANKEY`. */
+/**
+ * L'échelle commune de plusieurs schémas, en unités de repère par unité. Le plus
+ * gros des totaux prend `HAUTEUR_SANKEY` ; les autres, l'épaisseur que leur
+ * montant leur donne à la même échelle. Zéro s'il n'y a rien à dessiner.
+ */
 export function echelleSankey(...totaux) {
   const plusGros = totaux.length ? Math.max(...totaux) : 0.0;
   return plusGros > 0.0 ? HAUTEUR_SANKEY / plusGros : 0.0;
 }
 
-/** Un ruban d'épaisseur constante : deux courbes de Bézier et deux bords. */
+/**
+ * Un ruban d'épaisseur constante : deux courbes de Bézier et deux bords. Les
+ * points de contrôle sont à mi-chemin, à la hauteur de chaque bout : le ruban
+ * part et arrive à l'horizontale, et ne se pince jamais en route.
+ */
 function rubanSankey(x1, haut1, x2, haut2, epaisseur) {
   const gauche = nombreBrut(x1);
   const droite = nombreBrut(x2);
@@ -1943,10 +2183,21 @@ function colonneSankey(noeuds, haut, echelle) {
 }
 
 /**
- * Un schéma de Sankey : d'où vient l'argent, où il va, caisse par caisse. Tout
- * est aligné en haut de la caisse — ses payeurs, elle-même, ses usages —, si
- * bien qu'aucun ruban ne passe sous l'étiquette qu'elle porte au-dessus d'elle.
- * Le tableau des flux, replié dessous, en est la description détaillée.
+ * Un schéma de Sankey : d'où vient l'argent, où il va, caisse par caisse.
+ *
+ * `titre` nomme le schéma pour qui ne le voit pas — il est aussi la légende du
+ * tableau des chiffres —, `nom` est le titre court écrit au-dessus. `colonnes`
+ * titre la colonne des payeurs et celle des usages, au-dessus de la première
+ * caisse.
+ *
+ * TOUT EST ALIGNÉ EN HAUT DE LA CAISSE : ses payeurs, elle-même, ses usages.
+ * Aucun ruban ne monte donc au-dessus d'elle, et son étiquette, posée
+ * au-dessus, ne se trouve jamais sur un ruban — ce qu'elle faisait, centrée,
+ * dès que les payeurs étaient plus nombreux que les usages.
+ *
+ * Le dessin a son tableau, replié dessous : flux par flux, de qui à qui, et
+ * combien. Un schéma est une image, et le RGAA demande pour une image complexe
+ * une description détaillée ; pour un Sankey, c'est la liste de ses rubans.
  */
 export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""]) {
   if (!caisses.length) {
@@ -1984,7 +2235,9 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""]) {
     const usages = colonneSankey(caisse.usages, haut, echelle);
     const epaisseurCaisse = caisse.valeur * echelle;
 
-    // Les rubans d'abord, dans l'ordre de leurs nœuds : ils ne se croisent pas.
+    // Les rubans d'abord : ils sont un fond, et les nœuds se posent dessus. Ils
+    // entrent dans la caisse et en sortent dans l'ordre de leurs nœuds : c'est
+    // ce qui les empêche de se croiser.
     let entree = haut;
     for (const [noeud, y, epaisseur] of sources) {
       rubans.push(`<path class="ruban" fill="${noeud.couleur}" `
@@ -1998,7 +2251,8 @@ export function sankey(titre, nom, caisses, echelle, colonnes = ["", ""]) {
       sortie = sortie + epaisseur;
     }
 
-    // Un nœud minuscule reste un filet d'une unité.
+    // Un nœud minuscule reste un filet d'une unité : invisible, son étiquette
+    // flotterait à côté de rien.
     for (const [x, places] of [[X_SOURCES_SANKEY, sources], [X_USAGES_SANKEY, usages]]) {
       for (const [noeud, y, epaisseur] of places) {
         noeuds.push(`<rect class="noeud" fill="${noeud.couleur}" `

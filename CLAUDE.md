@@ -98,7 +98,12 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
 - **Le Python de `src/` fait foi.** Toute modification du modèle se porte
   dans `moteur/js/`, puis `python scripts/construire_temoins.py` : le diff des
   témoins montre, chiffre par chiffre, ce qu'elle déplace. Après toute
-  modification des données ou du style : `python scripts/construire_donnees.py`.
+  modification des données : `python scripts/construire_donnees.py`.
+- **Le texte du site ne s'écrit qu'en JavaScript** : `moteur/js/pages.js`,
+  `gabarit.js`, et `moteur/style.css`, sa propre source. Le Python le lit par
+  `web/site.py`, qui le fait rendre par node ; les témoins de pages se refont
+  par `construire_temoins.py`, après le paquet, et leur diff montre ce qu'une
+  page a changé.
 - **Les données** sont dans `data/`. Tous les régimes, calculés ou non : un
   fichier par régime dans `data/reference/regimes/`, qui porte sa ligne
   d'inventaire ; `inventaire.yaml`, qui les énumère, s'en fabrique par
@@ -128,6 +133,8 @@ entier d'un côté, et efface ce que l'autre session y a écrit.
   des fichiers à la fois.
 - **Les dépendances** : PyYAML seul hors bibliothèque standard ; le portage
   JavaScript n'en a aucune ; pytest et pytest-xdist ne servent qu'aux tests.
+  Node, qui fait tourner le portage, sert aussi au Python qui lit le site :
+  les tests des pages, les témoins, la prose et le paquet.
 - **Les temps tiennent à des mémoires** qu'il ne faut pas contourner :
   `charger_yaml` (qui rend une copie), `charger_serie_annuelle` et la table
   des quotients de mortalité, indexées sur la signature du fichier, partagées

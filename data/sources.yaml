@@ -951,7 +951,7 @@ institutions:
         url: https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/les-dossiers-de-la-drees/le-non-recours-au-minimum-vieillesse-des
         acces: page
         statut_integration: saisi
-        cible: src/retraite_notionnelle/web/pages.py
+        cible: moteur/js/pages.js
         note: >-
           Lu le 20 septembre 2026, pour la page Coût. Fin 2016, une personne
           seule éligible sur deux ne recourt pas au minimum vieillesse :
@@ -970,7 +970,7 @@ institutions:
         url: https://www.fsv.fr/pdf/RA2024.pdf
         acces: document
         statut_integration: saisi
-        cible: src/retraite_notionnelle/web/pages.py
+        cible: moteur/js/pages.js
         note: >-
           Lu le 20 septembre 2026, pour la page Coût. Les récupérations sur
           succession de l'ensemble des allocations du minimum vieillesse ont

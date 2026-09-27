@@ -2375,7 +2375,7 @@ def test_les_selecteurs_du_resume_vocal_existent_dans_le_html():
     """Le résumé lu par les synthèses vocales vise des classes du HTML rendu.
 
     Elles vivent dans deux fichiers que rien ne relie : le sélecteur est écrit
-    dans ``index.html``, la classe dans ``pages.py``. « .mensuel » y a été visé
+    dans ``index.html``, la classe dans ``moteur/js/pages.js``. « .mensuel » y a été visé
     pendant tout ce temps sans jamais exister, si bien que l'annonce se
     réduisait au titre — exactement ce que cette région est là pour éviter.
     """
@@ -4071,27 +4071,6 @@ def test_les_pictogrammes_disent_ce_que_leurs_fichiers_disent():
         assert g.ICONES[nom] == trace, f"le tracé de « {nom} » s'écarte de son fichier"
 
 
-def test_les_deux_portages_dessinent_les_memes_pictogrammes():
-    """Un chevron qui différerait d'un moteur à l'autre ne se verrait pas dans
-    les témoins de page — ils sont rendus par les deux, mais comparés entre
-    eux. La table est donc LUE dans le portage, et non relue à l'œil."""
-    import json
-    import shutil
-    import subprocess
-    from pathlib import Path
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    lecture = subprocess.run(
-        ["node", "--input-type=module", "-e",
-         'import { ICONES } from "./moteur/js/gabarit.js";'
-         "process.stdout.write(JSON.stringify(ICONES));"],
-        cwd=racine, capture_output=True, text=True, encoding="utf-8", check=True,
-    )
-    assert json.loads(lecture.stdout) == dict(g.ICONES)
-
-
 # -- le pont vers le site parent ---------------------------------------------
 #
 # La page est servie sous partiliberalfrancais.fr/retraite/, et parfois dans un
@@ -4121,29 +4100,6 @@ def test_le_pont_vers_le_site_parent_ressort_de_tout_cadre():
     # Dans le cadre, le site pose ``plf-embedded`` sur ``<body>`` ; sa propre
     # navigation est alors juste au-dessus, et le pont ferait doublon.
     assert "body.plf-embedded footer .retour-site" in FEUILLE_DE_STYLE
-
-
-def test_la_coquille_est_la_meme_des_deux_cotes_du_portage():
-    """L'en-tête et le pied sont écrits deux fois, en Python et en JavaScript.
-
-    Les témoins de page ne comparent que le corps : c'est ici, et seulement
-    ici, qu'un lien ajouté d'un seul côté se verrait.
-    """
-    import json
-    import shutil
-    import subprocess
-    from pathlib import Path
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    lecture = subprocess.run(
-        ["node", "--input-type=module", "-e",
-         'import { entete, pied } from "./moteur/js/gabarit.js";'
-         'process.stdout.write(JSON.stringify([entete("/cout"), pied()]));'],
-        cwd=racine, capture_output=True, text=True, encoding="utf-8", check=True,
-    )
-    assert json.loads(lecture.stdout) == [g.entete("/cout"), g.pied()]
 
 
 def test_le_site_ne_dessine_plus_aucun_pictogramme_a_la_main():
@@ -5149,32 +5105,15 @@ def test_le_filigrane_ne_paraît_qu_une_fois_et_traverse_l_image():
 # -- la revue du 15 septembre 2026 : le thème « expérience utilisateur » --------
 
 
-def test_le_glossaire_est_le_meme_des_deux_cotes_du_portage():
-    """Un mot défini deux fois, de deux façons, n'est plus un glossaire.
+def test_le_glossaire_ne_porte_aucun_chiffre_qui_bouge():
+    """Une définition ne porte aucun montant qui dériverait.
 
-    La table est écrite dans le gabarit Python et recopiée dans le portage ;
-    ce test lit la copie et la compare entrée pour entrée, comme pour les
-    pictogrammes. Les témoins de page l'auraient vu aussi, mais seulement pour
-    les mots qu'une page emploie.
+    Un plafond, une durée requise, un taux de décote y vieilliraient sans que
+    rien ne les recoupe. Les seuls nombres admis sont ceux d'un exemple ou
+    d'une date. La table n'est écrite qu'une fois, dans le gabarit du site ;
+    elle était recopiée dans le rendu Python, et un test comparait les deux
+    copies, jusqu'à ce que la phase 8 retire la seconde.
     """
-    import json
-    import shutil
-    import subprocess
-    from pathlib import Path
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    racine = Path(__file__).resolve().parents[1]
-    lecture = subprocess.run(
-        ["node", "--input-type=module", "-e",
-         'import { GLOSSAIRE } from "./moteur/js/gabarit.js";'
-         "process.stdout.write(JSON.stringify(GLOSSAIRE));"],
-        cwd=racine, capture_output=True, text=True, encoding="utf-8", check=True,
-    )
-    assert json.loads(lecture.stdout) == dict(g.GLOSSAIRE)
-    # Et aucune définition ne porte un chiffre qui bouge : un plafond, une
-    # durée requise, un taux de décote y dériveraient sans que rien ne les
-    # recoupe. Les seuls nombres admis sont ceux d'un exemple ou d'une date.
     for terme, definition in g.GLOSSAIRE.items():
         assert not re.search(r"\d[\d\u202f]{3,}\s*€", definition), (
             f"« {terme} » : un montant en euros dans une définition"
@@ -6539,10 +6478,7 @@ def test_la_page_donnees_se_lit_comme_une_base():
 
 def test_chaque_route_porte_sa_description():
     """Une méta-description par page, que le routeur pose comme il pose le
-    titre — et la même table des deux côtés du portage."""
-    import json
-    import shutil
-    import subprocess
+    titre."""
     from pathlib import Path
 
     DESCRIPTIONS = pages.DESCRIPTIONS
@@ -6557,16 +6493,6 @@ def test_chaque_route_porte_sa_description():
     # La description de l'accueil est celle que le HTML servi porte déjà : la
     # première page ne doit pas changer de description en s'ouvrant.
     assert f'<meta name="description" content="{DESCRIPTIONS["/"]}">' in page
-
-    if shutil.which("node") is None:
-        pytest.skip("node absent : le portage JavaScript n'est pas vérifiable ici")
-    lecture = subprocess.run(
-        ["node", "--input-type=module", "-e",
-         'import { DESCRIPTIONS } from "./moteur/js/pages.js";'
-         "process.stdout.write(JSON.stringify(DESCRIPTIONS));"],
-        cwd=racine, capture_output=True, text=True, encoding="utf-8", check=True,
-    )
-    assert json.loads(lecture.stdout) == DESCRIPTIONS
 
 
 # -- la revue du 15 septembre 2026 : le thème « gommer la touche IA » ----------

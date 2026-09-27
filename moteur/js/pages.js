@@ -1,9 +1,19 @@
 /**
  * Contenu des pages : formulaire, résultats, cas types, méthode, données.
  *
- * Portage de ``src/retraite_notionnelle/web/pages.py``. Le rendu doit être
- * identique à celui de la référence Python au caractère près : c'est ce que
- * vérifient les témoins de ``tests/temoins/pages.json``.
+ * C'est le texte du site, écrit une fois, en JavaScript (docs/architecture.md,
+ * § 8). Ce qui est du calcul n'est pas ici : la lecture de la saisie vit dans
+ * ``saisie.js``, le contexte du site dans ``contexte.js``, portages de
+ * ``src/retraite_notionnelle/saisie.py`` et ``contexte.py``.
+ *
+ * Les pages sont figées en témoins, dans ``tests/temoins/pages.json``, par
+ * ``scripts/construire_temoins.py``, qui les fait rendre par ce fichier ;
+ * ``tests/js/moteur.test.js`` les rejoue, et un changement de texte se lit, mot
+ * par mot, dans le diff de ces témoins.
+ *
+ * L'ancien rendu Python, ``web/pages.py``, se relit dans l'historique git au
+ * repère `phase-7` : ses docstrings y gardent l'histoire complète des choix que
+ * les commentaires ci-dessous résument.
  */
 
 import {
@@ -135,10 +145,23 @@ export const AGE_MAXIMUM_TRAJECTOIRE = 105;
 /**
  * LES QUATRE SYSTÈMES QUE LE SITE COMPARE, dans l'ordre où il les montre.
  *
- * Le modèle en calcule six et continue de le faire : ses deux variantes
- * « dès la bascule » restent dans `Comparaison` et dans `cout.SCENARIOS`.
- * Elles ne sont plus MONTRÉES — le site ne pose plus la question à laquelle
- * elles répondaient. Copie de `SCENARIOS_MONTRES` dans `web/pages.py`.
+ * Le modèle en calcule six et continue de le faire : ses deux variantes « dès
+ * la bascule » — droits acquis convertis en capital, règles notionnelles
+ * ensuite — restent dans `Comparaison`, dans `cout.SCENARIOS` et dans les tests
+ * du moteur. Ce sont les seules qui lisent l'âge de référence, et c'est ce qui
+ * les rendait utiles : elles mesuraient le coût d'une bascule sans
+ * rétroactivité.
+ *
+ * Elles ne sont plus MONTRÉES. Le site ne pose plus la question à laquelle
+ * elles répondaient : la proposition du parti est rétroactive, et offrir six
+ * comparaisons quand quatre suffisent faisait payer au lecteur le prix d'une
+ * hésitation qui n'est plus la nôtre. Retirer leur affichage retire avec elles
+ * toute la mécanique de conversion des droits acquis — la fiche de l'âge de
+ * référence, son avertissement, le dépliant « ligne à ligne » et deux options
+ * du formulaire —, ce qui a été décidé en connaissance de cause.
+ *
+ * Un seul endroit décide, et tout le site le lit : les barres de Simuler, les
+ * courbes de la Trajectoire, les grilles de Cas types, le comparatif de Coût.
  */
 export const SCENARIOS_MONTRES = [
   "actuel",
@@ -148,9 +171,14 @@ export const SCENARIOS_MONTRES = [
 ];
 
 /**
- * Le libellé de chaque système partout où le site le NOMME. La nomenclature du
- * modèle, elle, ne bouge pas : `cout.SCENARIOS` numérote toujours de 1 à 6.
- * Copie de `LIBELLES_SYSTEMES` dans `web/pages.py`.
+ * Le libellé de chaque système partout où le site le NOMME — tableaux de la
+ * page Coût, légendes des graphiques, en-têtes de ligne. Court, parce qu'il
+ * tient dans une cellule ; numéroté de 1 à 4, comme les barres de Simuler.
+ *
+ * La nomenclature du MODÈLE, elle, ne bouge pas : `cout.SCENARIOS` numérote
+ * toujours ses six scénarios de 1 à 6, et c'est elle que lisent les tests du
+ * moteur et les fichiers de données. Les deux ne se rencontrent jamais —
+ * aucune page n'affiche plus un libellé venu du modèle.
  */
 const LIBELLES_SYSTEMES = {
   actuel: "1. Système de répartition actuel",
@@ -204,8 +232,10 @@ export function dateEnClair(iso) {
 /**
  * Ce que `round(valeur, decimales)` fait en Python : l'arrondi au pair, sur le
  * développement décimal exact du flottant. `Math.round` monterait les demis,
- * là où Python les envoie au chiffre pair — et le rendu des deux moteurs est
- * comparé caractère par caractère.
+ * là où Python les envoie au chiffre pair. La règle date du temps où les
+ * rendus des deux moteurs étaient comparés caractère par caractère ; elle
+ * reste, pour que les nombres qu'une page écrit dans ses adresses soient ceux
+ * que ses témoins ont figés.
  */
 function arrondir(valeur, decimales) {
   return Number(formatFixe(valeur, decimales));
@@ -214,8 +244,11 @@ function arrondir(valeur, decimales) {
 /** Titre de chaque page, dans l'ordre de la navigation. */
 /**
  * La description de chaque page, pour la balise `<meta name="description">`
- * que le routeur d'`index.html` réécrit à chaque rendu. Copie de
- * `DESCRIPTIONS` dans `web/pages.py`.
+ * que le routeur d'`index.html` réécrit à chaque rendu — comme il réécrit le
+ * titre. Une phrase par page, qui dit ce qu'on y trouve. Le site tient dans une
+ * seule page servie une fois : c'est le navigateur, et non le serveur, qui
+ * pose cette description, ce qui vaut pour qui partage ou enregistre la page,
+ * et moins pour un robot qui n'exécute pas le script.
  */
 export const DESCRIPTIONS = {
   "/": "Le programme du Parti libéral français pour les retraites : un régime "
@@ -259,8 +292,15 @@ export const TITRES = {
 /**
  * Les adresses de deux pages qui n'existent plus, et ce qu'elles montrent
  * désormais : la page, et la section à ouvrir. Le routeur d'`index.html` la
- * lit pour ouvrir cette section. Copie de `ANCIENNES_ROUTES` dans
- * `web/pages.py`.
+ * lit pour ouvrir cette section.
+ *
+ * HUIT PAGES AU LIEU DE DIX, depuis le 23 septembre 2026 : « Cumul versé »
+ * redisait, sur une page à elle, le dépliant « Ce que chaque système finit par
+ * verser » des résultats — le même graphique, calculé par la même fonction ;
+ * « Sources » répondait à la question que pose la page Méthode, « comment le
+ * sait-on ? ». Leurs adresses restent valides — le site parent et des partages
+ * les portent — et mènent à ce qui les a remplacées : les résultats du
+ * simulateur, cumul ouvert, et la partie Sources de la page Méthode.
  */
 export const ANCIENNES_ROUTES = {
   "/trajectoire": ["/simuler", "cumul"],
@@ -392,8 +432,14 @@ export function rendre(contexte, cheminDemande, parametres = null) {
 /**
  * Ce qu'une page REGARDE, page par page — à distinguer des RÉGLAGES, qui disent
  * sous quelles règles le modèle tourne et voyagent vers toutes les pages. Un
- * regard ne change aucun chiffre : il choisit lequel on montre, et il ne vaut
- * que pour sa page. Copie de `_VUES_DE_PAGE` dans `web/pages.py`.
+ * regard ne change aucun chiffre : il choisit lequel on montre, il ne vaut que
+ * pour sa page, et une adresse qui en porte un pour une autre page est ignorée
+ * plutôt que subie.
+ *
+ * `cascade` est l'année que la cascade de la page Coût décompose. Il est écrit
+ * ici, et non dans `Saisie` : une année de lecture n'est pas une règle de
+ * calcul, et la mettre parmi les réglages l'aurait fait voyager vers Cas types
+ * et Avantages, qui n'ont rien à en faire.
  */
 export const VUES_DE_PAGE = {
   "/cout": ["cascade", "flux"],
@@ -412,8 +458,9 @@ export const PAGES_AGREGEES = {
 /**
  * `requete` passe en plus des réglages, et ne dit RIEN des règles : elle porte
  * ce qu'une page REGARDE — l'année que la cascade de Coût décompose — là où les
- * réglages disent sous quelles règles elle se calcule. Voir `_agregee` dans
- * `web/pages.py`.
+ * réglages disent sous quelles règles elle se calcule. Les deux ne se mélangent
+ * pas : un réglage change le modèle, et voyage vers toutes les pages ; un
+ * regard ne change rien, et ne vaut que pour la sienne.
  */
 function agregee(chemin, contexte, saisie, requete = null) {
   const vues = VUES_DE_PAGE[chemin] || [];
@@ -517,12 +564,12 @@ export function statuts(contexte) {
  *
  * Le portage attrapait tout et affichait « Saisie refusée » : un TypeError du
  * moteur accusait donc le lecteur d'une erreur qui n'était pas la sienne — et
- * un bug du portage passait pour une adresse mal formée. Le Python de
- * référence, lui, ne nomme dans son « except » que les fautes prévues :
- * ErreurSaisie, DonneeInsuffisante, KeyError, ValueError. Les exceptions
- * ci-dessous sont l'équivalent JavaScript de ce que Python ne rattrape pas ;
- * elles remontent jusqu'à index.html, qui dit « Le calcul a échoué » et en
- * montre le détail, sans mettre la faute sur personne.
+ * un bug du portage passait pour une adresse mal formée. Le rendu Python, qui
+ * servait de référence jusqu'à la phase 8, ne nommait dans son « except » que
+ * les fautes prévues : ErreurSaisie, DonneeInsuffisante, KeyError, ValueError.
+ * Les exceptions ci-dessous sont l'équivalent JavaScript de ce qu'il ne
+ * rattrapait pas ; elles remontent jusqu'à index.html, qui dit « Le calcul a
+ * échoué » et en montre le détail, sans mettre la faute sur personne.
  */
 /**
  * La saisie refusée, lue sans rien vérifier, pour être remontrée dans le
@@ -1132,8 +1179,12 @@ function champRevenu(nom, saisie, echelle, valeur, bref = false) {
  * rend utilisable sans rien convertir : pour un retraité, la pension qu'il
  * touche AUJOURD'HUI, celle de son relevé bancaire. Le simulateur calcule sa
  * pension de départ, la revalorise comme chaque régime l'a fait depuis, et
- * c'est à cette pension-là qu'il compare le montant saisi. Voir
- * `_champ_pension` dans `pages.py` pour ce qu'il supposait avant.
+ * c'est à cette pension-là qu'il compare le montant saisi.
+ *
+ * Il a longtemps supposé l'inverse — qu'une pension qui a suivi les prix garde
+ * son pouvoir d'achat, si bien que la première pension ramenée en euros
+ * d'aujourd'hui ÉTAIT celle qu'on touche. Les pensions n'ont pas suivi les
+ * prix, et le revenu que la page en déduisait était trop bas d'autant.
  */
 function champPension(saisie) {
   // Deux accords pour un seul mode : la PENSION est nette, les EUROS sont
@@ -1841,14 +1892,23 @@ function trajectoire(contexte, comparaison, saisie) {
 }
 
 /**
- * Une carte 1200 × 675, au format de X et de LinkedIn. Ce que la page montre
- * est l'APERÇU de la carte, réduit à la largeur de sa colonne ; ce qui se
- * publie est l'image composée par le bouton, aux vraies dimensions. Le pied est
- * ce qui compte le plus — une image qui quitte le site n'a plus ni barre
- * d'adresse ni page autour —, et le filigrane de l'image le redit en travers du
- * cadre : le pied se recadre tout seul, le filigrane coûte la carte.
+ * Une carte 1200 × 675, au format de X et de LinkedIn.
  *
- * Copie de `_carte_partage` dans `web/pages.py`.
+ * Ce que la page montre est l'APERÇU de la carte, réduit à la largeur de sa
+ * colonne ; ce qui se publie est l'image composée par le bouton, aux vraies
+ * dimensions. Elle a d'abord été rendue à sa taille réelle dans un cadre qui
+ * défilait, à charge pour le lecteur d'en faire une capture d'écran : deux
+ * gestes, un outil de capture, et un recadrage à la main pour une image que le
+ * site savait composer lui-même.
+ *
+ * Le pied est ce qui compte le plus : une image qui quitte le site n'a plus ni
+ * barre d'adresse ni page autour, et sans ces deux lignes elle circule sans
+ * dire d'où elle vient. Le premier qui la republie en devient la source. Le
+ * filigrane de l'image téléchargée le redit en travers du cadre : le pied se
+ * recadre tout seul, le filigrane coûte la carte.
+ *
+ * `nom` est le nom de la carte, lu AVANT elle : c'est ce qui permet de choisir
+ * laquelle publier sans les regarder toutes.
  */
 function cartePartage(nom, surtitre, chiffre, phrase, detail, classes = "") {
   const boite = `carte-partage ${classes}`.trim();
@@ -1866,14 +1926,20 @@ function cartePartage(nom, surtitre, chiffre, phrase, detail, classes = "") {
 /**
  * Les chiffres du programme, au format des réseaux sociaux.
  *
- * Cette page a d'abord été LE dispositif de partage, et c'était une erreur :
- * personne ne la trouvait. Le partage est descendu sur les pages elles-mêmes ;
- * ce qui reste ici est ce que la barre de partage ne peut pas donner — les
- * chiffres du programme, qui ne sont le résultat d'aucun graphique. Elle
- * demandait encore une capture d'écran ; elle porte maintenant la même barre
- * que les graphiques du site.
+ * Cette page a failli ne pas exister sous cette forme. Elle a d'abord été LE
+ * dispositif de partage, et c'était une erreur : « pas grand monde ne va
+ * l'utiliser à part les militants qui sont au courant qu'elle existe ». Le
+ * partage est donc descendu sur les pages elles-mêmes — une barre sous chaque
+ * graphique, qui compose l'image de CE qu'on vient de lire. Ce qui reste ici
+ * est ce que cette barre ne peut pas donner : les chiffres du programme, qui
+ * ne sont le résultat d'aucun graphique.
  *
- * Copie de `_partager` dans `web/pages.py`.
+ * Elle demandait encore une capture d'écran. Elle n'en demande plus : chaque
+ * carte porte la MÊME barre que les graphiques du site, et rend la même chose
+ * — une image et son message.
+ *
+ * Les valeurs viennent du modèle, comme partout ailleurs : changer un
+ * paramètre change les cartes.
  */
 function partager(contexte) {
   const base = contexte.base;
@@ -2054,14 +2120,23 @@ const SCENARIOS_DES_BARRES = {
 
 /**
  * Ce que les comptes financent de chacun des quatre montants affichés.
- * Portage de `_financements`.
  *
  * Le coefficient d'équilibre ne dépend pas de la carrière — c'est une grandeur
  * du SYSTÈME, un rapport de masses. De la carrière, il ne prend que deux
  * choses : l'année du départ, et la courbe de survie qui dit combien de temps
- * la pension sera servie.
+ * la pension sera servie. C'est donc la même table pour tout le monde, lue à
+ * des dates différentes.
  *
- * Vide quand le départ précède les comptes du COR, qui commencent en 2002.
+ * Vide quand le départ précède les comptes du COR, qui commencent en 2002 :
+ * afficher un coefficient tiré d'années postérieures au départ, sous un montant
+ * qui est celui du premier mois de retraite, ferait dire à la page ce qu'aucun
+ * compte ne dit.
+ *
+ * POUR UN RETRAITÉ, LA LECTURE COMMENCE AUJOURD'HUI. Le montant affiché est sa
+ * pension d'aujourd'hui, et ce que les comptes en financent se lit sur les
+ * années qui lui restent, pas sur celles qu'il a déjà touchées : la fenêtre part
+ * de l'année courante, et chaque année pèse la part des partants encore en vie
+ * — la même courbe, prise où il en est.
  */
 function financements(contexte, comparaison) {
   const carriere = comparaison.carriere;
@@ -2103,8 +2178,7 @@ function financements(contexte, comparaison) {
 }
 
 /**
- * La clause que la glose gagne : ce que les comptes en financent. Portage de
- * `_glose_financement`.
+ * La clause que la glose gagne : ce que les comptes en financent.
  *
  * Écrite dans les deux sens, parce que le coefficient se lit dans les deux —
  * un manque sous un, une marge au-dessus. La marge n'est jamais convertie en
@@ -2122,15 +2196,31 @@ function gloseFinancement(finance) {
 }
 
 /**
- * Le dépliant qui dit d'où vient le second chiffre, et ce qu'il n'est pas.
- * Portage de `_financement`.
+ * Le dépliant qui dit d'où vient le troisième chiffre, et ce qu'il n'est pas.
  *
  * C'est le seul endroit du simulateur où le site dit que le montant du
- * système 1 est une PROMESSE et non une prévision. Il dit donc trois choses et
- * les distingue : ce que les comptes portent, qui est un fait ; ce qu'il
- * faudrait faire pour que l'année tombe juste, qui est une arithmétique à
+ * système 1 est une PROMESSE et non une prévision. Il doit donc dire trois
+ * choses et les distinguer : ce que les comptes portent, qui est un fait ; ce
+ * qu'il faudrait faire pour que l'année tombe juste, qui est une arithmétique à
  * trois branches dont aucune n'est décidée ; et ce que l'histoire des réformes
- * apprend de la branche qu'on choisit, qui est une régularité observée.
+ * apprend de la branche qu'on choisit, qui est une régularité observée, pas une
+ * loi.
+ *
+ * IL A ÉTÉ ÉCRIT DEUX FOIS. La première version ouvrait sur le coefficient
+ * d'équilibre et deux tableaux de nombres sans dimension — 0,90 puis 0,87, des
+ * points d'assiette, des parts de PIB. Tout y était vrai et rien n'y était
+ * lisible : un électeur n'a pas de repère pour « 3,5 points d'assiette », il en
+ * a un pour « 122 € prélevés chaque mois sur un salaire moyen ». Les trois
+ * leviers sont donc désormais donnés dans les unités où on les vit — une
+ * pension mensuelle, une fiche de paie, des milliards —, et le tableau des
+ * coefficients est descendu sous eux, pour qui veut refaire le calcul.
+ *
+ * UNE DIFFICULTÉ QU'IL FAUT TENIR PLUTÔT QUE MASQUER. Les leviers sont chiffrés
+ * à l'année du départ, où ils partagent un seul dénominateur et se déduisent
+ * l'un de l'autre. Le troisième chiffre des résultats, lui, moyenne toute la
+ * durée de la retraite, où le manque grandit : il est donc plus sévère. La page
+ * l'écrit, et ne donne le manque en euros qu'à un seul endroit — sous le
+ * chiffre — pour que deux sommes voisines ne se disputent pas le même rôle.
  */
 function financement(contexte, comparaison, finances, montants) {
   if (!Object.keys(finances).length) return "";
@@ -2370,12 +2460,26 @@ function secondRevenu(comparaison, montants, deduit) {
  * Ce que l'électeur est venu chercher, en trois phrases, avant les barres.
  *
  * Les quatre barres répondent à tout, et c'est leur défaut pour qui n'a pas lu
- * la page Méthode : dix nombres, et rien qui dise lesquels comparer. Ces
- * phrases répondent avec les nombres des barres, arrondis à l'euro, et avec
- * eux seuls. Elles sont SYMÉTRIQUES : le manque de financement est dit pour le
- * système actuel ET pour la proposition, dans les mêmes mots. Le salaire est
- * le NET, quel que soit le mode : c'est lui qui arrive sur le compte. Voir
- * `_en_bref` dans `web/pages.py`.
+ * la page Méthode : dix nombres, trois étiquettes, quatre gloses, et rien qui
+ * dise lesquels comparer. Sa question tient pourtant en une ligne — combien
+ * aujourd'hui, combien avec la proposition, et ce que ça change sur ma fiche
+ * de paie. Ces phrases y répondent avec les nombres des barres, arrondis à
+ * l'euro, et avec eux seuls : le résumé ne calcule rien que la carte ne montre
+ * juste en dessous.
+ *
+ * ELLES SONT SYMÉTRIQUES, et c'est la règle qui a coûté à écrire. Le manque de
+ * financement est dit pour le système actuel ET pour la proposition, dans les
+ * mêmes mots et la même unité : le taire pour l'une aurait flatté l'autre.
+ * C'est la décision de l'action 62, appliquée au résumé.
+ *
+ * Le salaire est le NET, quel que soit le mode : c'est lui qui arrive sur le
+ * compte, et c'est celui que la section « Et pendant que vous cotisez »
+ * chiffre. En brut, la proposition déplace surtout ce que l'employeur verse,
+ * et « votre salaire brut baisse de 6 € » disait vrai d'une fiche de paie où
+ * le net monte de trois cents.
+ *
+ * Les systèmes 2 et 3 n'y sont pas : ce ne sont pas des choix offerts à
+ * l'électeur, mais des étalons, et la clé de lecture le dit juste dessous.
  */
 function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
   capitalise, finances) {
@@ -2494,9 +2598,11 @@ function enBref(comparaison, saisie, montants, constants, capitaliseVolontaire,
 }
 
 /**
- * Les quatre pensions que la page affiche, et la rente capitalisée — du
- * départ pour qui n'est pas encore parti, d'aujourd'hui pour qui l'est.
- * Portage de `_montants_affiches`.
+ * Les quatre pensions que la page affiche, et la rente capitalisée.
+ *
+ * En euros constants de l'année de référence, et DE QUAND ? Du départ pour qui
+ * n'est pas encore parti ; d'aujourd'hui pour qui l'est, parce que c'est la
+ * pension qu'il touche et celle qu'il compare. Voir `lectureDesMontants`.
  */
 function montantsAffiches(comparaison) {
   const aujourdhui = comparaison.aujourd_hui;
@@ -2554,9 +2660,11 @@ function montantsAffiches(comparaison) {
 }
 
 /**
- * L'écart de chaque système au système actuel, tel que les barres le montrent :
- * sur les pensions d'aujourd'hui pour un retraité, au départ pour un actif.
- * Portage de `_ecarts_affiches`.
+ * L'écart de chaque système au système actuel, tel que les barres le montrent.
+ *
+ * Pour un retraité, il se lit sur les pensions d'AUJOURD'HUI, celles que les
+ * barres portent : un écart pris au départ démentirait les deux montants qu'il
+ * est censé relier. Pour un actif, c'est celui du modèle, au départ.
  */
 function ecartsAffiches(comparaison, constants) {
   if (comparaison.aujourd_hui === null) {
@@ -3046,10 +3154,18 @@ const REGLE_PAR_DEFAUT_EN_CLAIR = "règle du régime général, faute de série 
 const ANNEE_FIN_PEREQUATION = 2004;
 
 /**
- * De la pension du départ à celle d'aujourd'hui, régime par régime. Portage de
- * `_pension_d_aujourd_hui`, dont le raisonnement est écrit en entier : un
- * retraité lit désormais la pension qu'il touche, et ce dépliant refait le
- * chemin, en brut et par mois.
+ * De la pension du départ à celle d'aujourd'hui, régime par régime.
+ *
+ * C'EST LE CALCUL QUI MANQUAIT À LA PAGE. Un retraité y lisait sa pension du
+ * premier mois, ramenée en euros d'aujourd'hui par l'indice des prix ; il y lit
+ * désormais celle qu'il touche, et ce dépliant refait le chemin : le montant de
+ * chaque régime au départ, le coefficient que son texte lui a appliqué depuis,
+ * le montant d'aujourd'hui. En BRUT et par mois, parce que la CSG d'il y a
+ * quinze ans n'est plus celle d'aujourd'hui, et qu'un net du départ calculé au
+ * taux de 2026 serait un nombre que personne n'a vu.
+ *
+ * La dernière phrase dit ce que la page affichait avant, et de combien elle se
+ * trompait : c'est l'écart entre les revalorisations et les prix.
  */
 function pensionDAujourdhui(contexte, comparaison, saisie) {
   const aujourdhui = comparaison.aujourd_hui;
@@ -3134,6 +3250,8 @@ function pensionDAujourdhui(contexte, comparaison, saisie) {
       + "près, et certaines années n'en ont connu aucune.</p>";
   }
 
+  // Seul qui touchait déjà sa retraite en décembre 2019 a vu la tranche
+  // choisie sur ce montant.
   let tranche = "";
   if (actuel.mensuel_decembre_2019) {
     const [hausse] = contexte.simulateur().revalorisations.generale(
@@ -3201,10 +3319,13 @@ ${reserve}
 }
 
 /**
- * Ce que l'âge légal de la proposition fait au départ, quand il le reporte. Le
- * montant du système 4 n'est alors pas servi à la même date que les trois
- * autres : le taire ferait lire côte à côte deux pensions qui ne commencent
- * pas le même mois. Voir `_report_proposition` dans pages.py.
+ * Ce que l'âge légal de la proposition fait au départ, quand il le reporte.
+ *
+ * Le montant du système 4 n'est alors pas servi à la même date que les trois
+ * autres : il l'est à 65 ans, après des années de travail et de cotisation que
+ * les autres ne comptent pas. Le taire ferait lire côte à côte deux pensions
+ * qui ne commencent pas le même mois, et prendre pour un gain du compte ce qui
+ * est d'abord un départ plus tardif.
  */
 function reportProposition(comparaison) {
   if (!comparaison.departReporte) return "";
@@ -3236,7 +3357,11 @@ export const NATURES_PART_EMPLOYEUR = {
  */
 /**
  * Ce que la garantie sert AUJOURD'HUI à un retraité — le montant d'en haut.
- * Portage de `_garantie_d_aujourd_hui`.
+ *
+ * Le tableau refait la garantie à la date du départ, parce que c'est là que la
+ * chaîne se lit. Pour qui est déjà parti, le montant affiché plus haut est
+ * celui d'aujourd'hui : la garantie s'y calcule sur la pension de cette année
+ * et sur le plancher de cette année, et cette phrase dit les deux.
  */
 function garantieDAujourdhui(comparaison) {
   const aujourdhui = comparaison.aujourd_hui;
@@ -3380,20 +3505,27 @@ function remplacementsMontants(saisie, echelle, tauxPension) {
 /**
  * Ce qu'un actif touche PENDANT qu'il cotise, dans les deux systèmes.
  *
- * Portage de `_salaire_net` de `web/pages.py`. Le reste de la page compare des
- * pensions, c'est-à-dire des montants qu'on touchera dans trente ans ; ce bloc
- * compare des salaires, c'est-à-dire des montants qu'on touche le mois
- * prochain. C'est la seule ligne du site où une réforme des retraites se lit
- * sur une fiche de paie.
+ * Le reste de la page compare des pensions, c'est-à-dire des montants qu'on
+ * touchera dans trente ans ; ce bloc compare des salaires, c'est-à-dire des
+ * montants qu'on touche le mois prochain. C'est la seule ligne du site où une
+ * réforme des retraites se lit sur une fiche de paie.
+ *
+ * Il ne s'affiche pas pour tout le monde : un retraité ne cotise plus, et
+ * quatre familles de statut n'ont pas les taux hors retraite du régime
+ * général — la MSA, l'outre-mer, les élus, et qui n'a pas d'emploi. Hors de ces
+ * deux cas, il n'y a rien à montrer, et mieux vaut ne rien montrer qu'un net
+ * faux.
  *
  * Trois chiffres ouverts, le reste replié : la page de résultats tient un
- * budget de mots et n'ouvre aucun tableau.
+ * budget de mots et n'ouvre aucun tableau. Le net d'aujourd'hui, celui de la
+ * proposition, l'écart — puis la fiche de paie entière, ligne à ligne, pour
+ * qui déplie.
  *
  * Quatre profils, et un libellé par profil : ce qui s'écrit « salaire » pour un
  * salarié du privé s'écrit « traitement » pour un fonctionnaire et « revenu
  * professionnel » pour un indépendant ; et la ligne « coût du travail » ne
  * s'affiche que là où ce que verse l'employeur est un prix du travail, non un
- * taux d'équilibre.
+ * taux d'équilibre. ``remuneration.py`` porte la décision, ce bloc l'écrit.
  */
 function salaireNet(comparaison, saisie) {
   const remuneration = comparaison.remuneration;
@@ -3434,8 +3566,10 @@ function salaireNet(comparaison, saisie) {
   } else {
     sousQuelleHypothese = `à ${echapper(remuneration.libelleAssiette.toLowerCase())} inchangé`;
   }
-  // D'où vient l'écart est une explication : repliée, elle se lit à la
-  // demande, et le chiffre reste ouvert.
+  // D'où vient l'écart — la CSG allégée, le taux d'équilibre d'un employeur
+  // public — est une explication, et elle faisait deux paragraphes de plus
+  // entre le chiffre et la fiche de paie. Repliée, elle se lit à la demande ;
+  // le chiffre, lui, reste ouvert.
   let rendu = salaireNetRendu(remuneration, net);
   if (rendu) {
     rendu = g.depliant("D'où vient cet écart de salaire", rendu);
@@ -3939,8 +4073,8 @@ const EXEMPLES_GARANTIE = [
 /**
  * Le pilier capitalisé : ce qu'il reçoit, ce qu'il rend, ce qu'il lègue.
  *
- * Portage de `_pilier_capitalise`. C'est la seule ligne de tout le site où de
- * l'argent est réellement placé : le bloc doit donc dire où va l'argent, ce
+ * C'est la seule ligne de tout le site où de l'argent est réellement placé. Le
+ * bloc doit donc dire trois choses qu'aucune autre ne dit : où va l'argent, ce
  * qu'il coûte, et ce qu'il devient si l'assuré meurt avant d'avoir liquidé.
  * La dernière n'est pas un détail de présentation : c'est ce que la
  * capitalisation donne et que la répartition ne donne pas, et c'est aussi ce
@@ -4657,16 +4791,30 @@ const GRILLES_CAS_TYPES = [
 /**
  * Treize carrières types croisées avec sept générations.
  *
- * LA PAGE NE MONTRE QU'UNE GRILLE À LA FOIS, ET C'EST LA PROPOSITION : les
- * cinq grilles sont derrière des onglets — des boutons radio, dont le panneau
- * suit en CSS —, et l'onglet ouvert est le système 4. Voir `_cas_types` dans
- * `web/pages.py`.
+ * LA PAGE NE MONTRE QU'UNE GRILLE À LA FOIS, ET C'EST LA PROPOSITION. Elle en
+ * montrait cinq à la file, puis une seule — un contrefactuel — avec les quatre
+ * autres dans un dépliant ; un lecteur pressé s'arrêtait donc sur un
+ * contrefactuel, et repartait en croyant avoir vu la proposition. Les cinq
+ * grilles sont désormais derrière des onglets, et l'onglet ouvert est le
+ * système 4 : c'est lui que le site existe pour montrer.
+ *
+ * Les onglets sont des boutons radio, et le panneau suit en CSS (`:has()`) : le
+ * clavier les parcourt aux flèches comme tout groupe de radios, aucun script ne
+ * tourne, et l'adresse ne change pas — ce que la route affiche reste ce que la
+ * route affiche. Les panneaux repliés sont dans la page, `hidden` : là où
+ * `:has()` n'existe pas, le premier reste visible et les autres restent cachés,
+ * ce qui dit moins mais rien de faux.
  *
  * CE QU'ELLE DIT SE LIT CONTRE UNE PROMESSE, celle du système actuel à la même
- * carrière. Ce que la grille mesure le plus sûrement est l'écart entre ses
+ * carrière. Elle a dit « jamais un niveau » jusqu'au 23 septembre 2026, et sa
+ * clé de lecture ouvrait sur « ces pourcentages ne sont pas des baisses de
+ * pension » : la phrase datait d'un coefficient de la proposition qu'on croyait
+ * supérieur à un, une marge qui aurait relevé ses cases. Il est passé sous un,
+ * et l'accueil dit désormais l'ordre de grandeur de la baisse, lu sur cette
+ * grille : la nier ici, un clic plus loin, aurait fait dire au site deux
+ * choses. Ce que la grille mesure le plus sûrement reste l'écart entre ses
  * lignes ; le niveau dépend AUSSI du coefficient d'équilibre, que le modèle
- * n'applique pas. C'est écrit en tête, et non en note de bas de page. Voir
- * `_cas_types` : l'accueil lit sur cette grille l'ordre de grandeur de la baisse.
+ * n'applique pas, et la clé le dit en tête, non en note de bas de page.
  */
 /**
  * « proposition » sur le système 4, « contrefactuel » sur les autres, rien
@@ -4718,9 +4866,11 @@ export function reglageProposition(solde) {
 }
 
 /**
- * Assez de décimales pour qu'un coefficient sous un ne s'écrive pas 1,00 : avec
- * la TVA à taux unique, le plus bas de la proposition est de 0,999. Copie de
- * `_decimales_sous_un`.
+ * Assez de décimales pour qu'un coefficient sous un ne s'écrive pas 1,00.
+ *
+ * Avec la TVA à taux unique, le plus bas de la proposition est de 0,999 : à
+ * deux décimales, la page écrivait « au plus bas 1,00 » d'un facteur qu'elle
+ * venait de dire inférieur à un, et « un manque de 0 % ».
  */
 export function decimalesSousUn(valeur) {
   for (const decimales of [2, 3, 4]) {
@@ -4797,17 +4947,28 @@ qui sont la seule chose que ce site mesure.</div>`;
 /**
  * De combien les écarts de la grille bougeraient si chaque système était
  * ramené à SON équilibre — déplacement médian en points, et cases mesurées.
- * Portage de `_deplacement_des_ecarts`.
  *
- * La page Cas types disait que le coefficient d'équilibre « multiplierait les
- * cases par le même facteur », et le catalogue des affirmations la tenait pour
- * vérifiée sous un contrôle qui vérifiait tout autre chose. La phrase était
- * fausse deux fois : un facteur COMMUN laisserait ces cases inchangées, une
- * case étant déjà un rapport de deux pensions, et il n'y a pas un facteur mais
- * quatre — chaque système a le sien.
+ * CETTE FONCTION A ÉTÉ ÉCRITE POUR RÉPARER UNE PHRASE. La page Cas types
+ * disait que le coefficient d'équilibre « multiplierait les cases par le même
+ * facteur », et le catalogue des affirmations la tenait pour vérifiée sous un
+ * contrôle qui vérifiait tout autre chose — que le coefficient n'est pas
+ * appliqué. Or la phrase est fausse deux fois. Un même facteur appliqué à tous
+ * les systèmes laisserait ces cases INCHANGÉES, puisqu'une case est déjà un
+ * rapport de deux pensions et qu'un facteur commun se simplifie. Et il n'y a
+ * pas un facteur mais quatre : chaque système a son coefficient, et les
+ * ramener chacun à son équilibre déplace les écarts du RAPPORT de ces
+ * coefficients.
  *
- * Médiane basse — l'élément de rang `n / 2` arrondi vers le bas — pour que les
- * deux implémentations retrouvent le même nombre sans convention de départage.
+ * Mesuré plutôt qu'argumenté, donc, et la page écrit le nombre.
+ *
+ * LA MÉDIANE, ET NON LA MOYENNE : le déplacement est énorme sur les
+ * générations déjà liquidées, où la proposition encaisse deux à trois fois ce
+ * qu'elle verse parce qu'elle ne verse presque rien, et une moyenne n'y dirait
+ * que ces cas-là. Médiane basse — l'élément de rang `n / 2` arrondi vers le
+ * bas —, pour tomber sur un nombre sans convention de départage : c'est ce qui
+ * accordait les rendus Python et JavaScript, du temps où on les comparait, et
+ * c'est la convention des médianes que ``castypes.py`` tire de la même grille
+ * (`EcartsMedians`).
  */
 export function deplacementDesEcarts(resultat, solde, scenario) {
   const deplacements = [];
@@ -5064,10 +5225,25 @@ export function milliards(millions, decimales = 0) {
 }
 
 /**
- * Le PIB, en millions d'euros, qui dit en euros une part du PIB de `annee` :
- * celui de l'année quand l'INSEE le publie, celui de la dernière année publiée
- * sinon — la même part de l'économie d'aujourd'hui. Portage de
- * `_pib_de_conversion`, dont le docstring porte la règle et ce qui la fonde.
+ * Le PIB, en millions d'euros, qui dit en euros une part du PIB de `annee`.
+ *
+ * UNE PART DU PIB SE DIT AUSSI EN EUROS, partout sur le site : tout le monde
+ * n'a pas le PIB pour repère, tout le monde en a un pour « soixante-dix
+ * milliards ». La règle est la même d'un bout à l'autre, pour que deux montants
+ * de deux pages se comparent :
+ *
+ * - une année dont l'INSEE publie le PIB est convertie au PIB de cette
+ *   année-là : c'est ce qui a réellement été versé, encaissé ou dû ;
+ * - une année projetée est convertie au PIB de la DERNIÈRE année publiée : la
+ *   même part de l'économie d'aujourd'hui, et la page l'écrit — « au PIB de
+ *   2025 ». Un PIB de 2070 serait une hypothèse de croissance déguisée en
+ *   observation, et des euros de 2070 gonfleraient de toute l'inflation d'ici
+ *   là les montants lointains. C'est la règle que le tableau poste par poste et
+ *   le simulateur suivaient déjà.
+ *
+ * Seule la trajectoire du modèle y échappe, dans le dépliant des quatre
+ * systèmes : elle est tenue en euros constants depuis toujours, ses tableaux le
+ * disent, et ses parts de PIB en sont tirées plutôt que l'inverse.
  */
 export function pibDeConversion(comptes, annee) {
   return comptes.pib.valeur(Math.min(annee, comptes.pib.derniereAnnee));
@@ -5255,8 +5431,10 @@ function cout(contexte, regards = null) {
     pibDesAnnees(comptes, anneesToutes),
   );
   const equilibre = solde.premiereAnneeEquilibree(reforme);
-  // L'étalon des années projetées, dans une bulle : la carte est au plafond de
-  // son budget de lecture. Voir le Python.
+  // L'étalon des années projetées, dit sous la carte : ce que vaut un point.
+  // Dans une bulle et non dans la phrase : la carte est au plafond de son
+  // budget de lecture, et la lecture au survol montre déjà les milliards — la
+  // bulle dit seulement lesquels.
   const anneePib = comptes.pib.derniereAnnee;
   const pointDePib = milliards(comptes.pib.valeur(anneePib) / 100, 1);
   const enMilliardsBulle = g.bulle(
@@ -5466,16 +5644,47 @@ const LIBELLES_ETATS = {
 /**
  * Tous les avantages non contributifs, depuis quand, et ce qu'ils coûtent.
  *
+ * CETTE PAGE RÉPOND À UNE QUESTION QU'ON POSE SOUVENT SANS Y RÉPONDRE :
+ * pourquoi les pensions d'aujourd'hui dépassent-elles ce que les gens ont
+ * cotisé ? Une partie de la réponse tient en une liste, et cette liste
+ * n'existait nulle part — pas même dans ce dépôt, qui en portait trois
+ * partielles et discordantes.
+ *
  * TROIS GRAPHIQUES, ET ILS N'ONT PAS LE MÊME STATUT. C'est la contrainte de
- * construction de cette page, et elle décide de l'ordre : le premier est une
- * DONNÉE — combien de dispositifs existent chaque année —, le deuxième une
- * MESURE et un plancher très bas, le troisième mesure autre chose, les annuités
- * servies avant l'âge légal. Voir la référence Python pour le détail.
+ * construction de cette page, et elle décide de l'ordre :
+ *
+ * - Le premier est une DONNÉE. Combien de dispositifs non contributifs
+ *   existent chaque année, par famille. Rien n'y est calculé : chaque barre
+ *   est la somme des lignes de l'inventaire dont la date de création est
+ *   passée et la date de fin ne l'est pas. Il est donc exact, et c'est
+ *   pourquoi il mène.
+ * - Le deuxième est une MESURE, et un plancher très bas. Ce que coûtent les
+ *   dispositifs que le modèle sait chiffrer. La grille de cas types n'est pas
+ *   une population — un seul de ses treize cas types a des enfants, aucun ne
+ *   connaît le chômage —, et le chiffre vaut 3 % de la dépense là où le COR
+ *   chiffre les droits de solidarité à « de l'ordre d'un cinquième ». La carte
+ *   le dit avant de montrer la courbe, et non après.
+ * - Le troisième mesure autre chose, et c'est le résultat le moins attendu :
+ *   les annuités servies avant l'âge légal. Un avantage d'âge agit deux fois —
+ *   sur le montant, et sur la durée —, et la seconde pèse bien plus que la
+ *   première : le rapport, qui a valu quinze, se compte plus bas. La décote
+ *   étant plafonnée à vingt trimestres, l'agent parti cinq ans trop tôt et
+ *   l'agent parti à l'heure butent sur le même plafond : le montant ne sait
+ *   pas les distinguer, la durée le sait.
+ *
+ * LA LISTE ENTIÈRE EST DANS LA PAGE, repliée, avec pour chaque ligne sa base
+ * légale et l'état du modèle à son égard. Une page qui ne peut pas se
+ * justifier n'est pas honnête, et celle-ci affirme qu'il en existe plus de
+ * quarante : elle doit pouvoir les nommer.
  */
 /**
- * Ce que le classement ajoute, par an, à la pension d'un agent parti à 57 ans :
- * le cas type actif contre la même carrière déclassée, au même âge. Calculé
- * depuis le 22 septembre 2026 — voir `_ecart_plafond_decote` en Python.
+ * Ce que le classement ajoute, par an, à la pension d'un agent parti à 57 ans.
+ *
+ * Le cas type actif contre la même carrière déclassée, au même âge : la décote
+ * plafonnée à vingt trimestres rattrape presque tout l'écart d'âge, et ce qui
+ * reste est ce que le montant sait dire de l'avantage. Ce chiffre était écrit
+ * en dur dans la page — 825 € pour 1960, 102 € pour 1965 — et avait dérivé
+ * sans que rien ne le dise ; il est calculé depuis le 22 septembre 2026.
  */
 function ecartPlafondDecote(simulateur, generation) {
   const cas = CAS_TYPES.find((c) => c.code === "fonctionnaire_actif");
@@ -5488,10 +5697,14 @@ function ecartPlafondDecote(simulateur, generation) {
 }
 
 /**
- * De combien le classement abaisse la durée requise, au même départ : les deux
- * mêmes carrières. Un droit ouvert avant soixante ans a la durée de la
- * génération qui a soixante ans cette année-là (L. 13, III) ; l'écart se
- * calcule — voir `_ecart_duree_classement` en Python.
+ * De combien le classement abaisse la durée requise, au même départ.
+ *
+ * Les deux mêmes carrières que `ecartPlafondDecote`. Un droit ouvert avant
+ * soixante ans se voit opposer la durée de la génération qui a soixante ans
+ * cette année-là (L. 13, III, du code des pensions), et non celle de l'agent :
+ * l'écart n'est donc pas fixe, et la phrase le disait « d'un trimestre » pour
+ * la génération 1965, qui en perd quatre depuis que le modèle lit cette règle
+ * (23 septembre 2026). Il se calcule.
  */
 function ecartDureeClassement(simulateur, generation) {
   const cas = CAS_TYPES.find((c) => c.code === "fonctionnaire_actif");
@@ -5508,8 +5721,12 @@ function avantages(contexte, regards = null) {
   const inventaire = contexte.inventaireAvantages();
   const c = contexte.avantages();
   const derniere = c.derniere;
-  // Ce que la page annonce est ce que son tableau montre : les dispositifs qui
-  // PORTENT un chiffre, et non ceux que le modèle sait chiffrer. Voir pages.py.
+  // CE QUE LA PAGE ANNONCE EST CE QUE SON TABLEAU MONTRE : les dispositifs qui
+  // PORTENT un chiffre, et non ceux que le modèle SAIT chiffrer. Ce n'est pas
+  // la même chose : un avantage éteint, ou que nul cas type ne porte, se mesure
+  // très bien et vaut zéro. Annoncer les seconds au-dessus d'un tableau qui
+  // montre les premiers, c'était promettre vingt-deux cases pleines et en
+  // donner quinze.
   const total = inventaire.avantages.length;
   const chiffres = inventaire.avantages.filter(
     (avantage) => c.derniere
@@ -5576,24 +5793,37 @@ function avantages(contexte, regards = null) {
 
   // -- deuxième graphique : ce qu'ils coûtent ------------------------------
   // LA FENÊTRE EST CELLE OÙ TOUTES LES LIGNES SONT PUBLIÉES, et non celle de
-  // la plus ancienne. Les lignes calculées remontent à 1959 ; la réversion,
-  // qui est lue et non calculée, commence en 2004. Les empiler sur la fenêtre
-  // longue dessinerait une falaise de vingt-cinq milliards cette année-là, et
-  // le lecteur y verrait un saut de dépense là où il n'y a qu'un début de
-  // publication.
+  // la plus ancienne. Les lignes que le modèle REFAIT existent dès qu'il sert
+  // une pension, en 1959 ; celles qu'il LIT commencent le jour où leur
+  // producteur les publie, et pas avant. Les empiler hors de leur fenêtre
+  // commune dessinerait une falaise — de vingt-cinq milliards en 2004, tant que
+  // la réversion était la seule ligne lue ; de quarante milliards en 2020,
+  // depuis que d'autres l'ont rejointe —, et le lecteur y verrait une explosion
+  // de la dépense là où il n'y a qu'un début de publication.
   //
   // La fenêtre se CALCULE au lieu de s'écrire : elle est l'intersection des
   // fenêtres de publication des lignes LUES — 2004 pour la réversion, 2020
-  // pour les sous-postes des comptes. Elle s'est resserrée d'elle-même le jour
-  // où huit postes publiés ont rejoint la réversion. Voir pages.py.
+  // pour les sous-postes des comptes de la protection sociale. Elle est donc
+  // courte, cinq points, et c'est le prix de l'honnêteté : calculée sur la
+  // seule réversion tant que celle-ci était la seule ligne lue, elle s'est
+  // resserrée d'elle-même le jour où huit postes publiés l'ont rejointe.
+  // L'HISTOIRE LONGUE N'EST PAS PERDUE : le premier graphique de la page compte
+  // les dispositifs depuis 1800, et la commande d'analyse du dépôt imprime les
+  // lignes calculées depuis 1959 — un minimum vieillesse qui pesait le tiers de
+  // la dépense en 1960 et qui s'est éteint depuis.
   const anneesCout = c.annees.map((ligne) => ligne.annee);
   const lues = LIGNES_LUES.filter((ligne) => c.lignes.includes(ligne));
   const fenetre = c.annees.filter(
     (ligne) => lues.every((lue) => ligne.lignes[lue] !== undefined));
   const anneesPubliees = fenetre.map((ligne) => ligne.annee);
-  // Le tracé empile les FAMILLES, pas les lignes : quinze lignes pour neuf
-  // couleurs, c'est six bandes qui portent la couleur d'une autre. Voir
-  // pages.py pour le raisonnement complet.
+  // LE TRACÉ EMPILE LES FAMILLES, PAS LES LIGNES. Quinze lignes pour neuf
+  // couleurs, c'est six bandes qui portent la couleur d'une autre : une légende
+  // qu'on ne peut pas suivre, et les six plus petites tiennent de toute façon
+  // dans l'épaisseur du trait. Les familles sont le découpage que l'inventaire
+  // porte lui-même, et celui des tableaux qui suivent ; elles sont sept, la
+  // palette en a neuf, et le détail ligne à ligne est juste en dessous. Une
+  // ligne sans famille — il ne devrait pas y en avoir — serait tue plutôt que
+  // rangée au hasard.
   const parFamille = new Map();
   for (const ligne of c.lignes) {
     const famille = inventaire.familleDeLigne(ligne);
@@ -5624,8 +5854,20 @@ function avantages(contexte, regards = null) {
   );
 
   // -- graphique long : le modèle seul, sur toute sa longueur --------------
-  // Le tracé précédent est juste mais court, celui-ci long mais étroit : les
-  // deux ne s'additionnent jamais. Voir pages.py pour le raisonnement complet.
+  //
+  // LE TRACÉ PRÉCÉDENT EST JUSTE MAIS COURT, celui-ci est long mais étroit, et
+  // aucun des deux ne peut être les deux à la fois. Les postes publiés donnent
+  // le bon NIVEAU sur cinq ans ; le modèle donne la bonne FORME sur
+  // soixante-six, parce qu'il calcule la même chose de la même façon depuis la
+  // première pension servie. Les mêler dans une seule ligne, c'était le défaut
+  // que le minimum vieillesse portait : 0,02 milliard en 2019 par le modèle,
+  // 4,01 en 2020 par les comptes.
+  //
+  // Les deux séries ne s'additionnent donc jamais et ne se comparent pas terme
+  // à terme : `modele` porte les lignes calculées, `lignes` le meilleur chiffre
+  // disponible. La carte le dit en toutes lettres, parce qu'un lecteur qui
+  // verrait 3,1 % ici et 22,1 % au-dessus conclurait que les avantages ont
+  // fondu, quand c'est le champ de la mesure qui change.
   const anneesModele = c.annees.map((a) => a.annee);
   const famillesModele = new Map();
   for (const ligne of c.lignesModele) {
@@ -5757,8 +5999,12 @@ par année.`,
   const partClassement = derniere.anticipee > 0
     ? (derniere.anticipees.classement || 0) / derniere.anticipee
     : 0;
-  // Ce que les mêmes dispositifs ajoutent au MONTANT des pensions : les
-  // lignes d'âge que le modèle calcule. Compté, jamais écrit : voir le Python.
+  // Ce que les mêmes dispositifs ajoutent au MONTANT des pensions : les lignes
+  // d'âge que le modèle calcule — la catégorie active ; la carrière longue et
+  // les âges des régimes spéciaux ne se mesurent que par la durée. Le rapport
+  // était écrit « treize fois » ; il a valu quinze, puis vingt-sept, sans que
+  // la phrase bouge. Il est compté, et le catalogue des affirmations du site le
+  // tient.
   const montantAge = c.lignesModele
     .filter((ligne) => inventaire.familleDeLigne(ligne) === "age_et_bonifications")
     .reduce((somme, ligne) => somme + (derniere.lignes[ligne] || 0), 0);
@@ -5872,9 +6118,23 @@ ${detail}
 /**
  * L'autre côté de la frontière : ce qu'on verse sans rien acquérir.
  *
- * Port de `_avantages_carte_versement` de pages.py, dont le docstring porte
- * les raisons : toute la page décrit ce que le système SERT au-delà de la
- * cotisation, et la question symétrique n'était posée nulle part.
+ * POURQUOI CETTE CARTE EXISTE. Toute la page décrit ce que le système SERT
+ * au-delà de la cotisation. La question symétrique — que cotise-t-on sans que
+ * rien ne soit servi ? — n'était posée nulle part, et elle a la même réponse :
+ * beaucoup, et personne ne le dit. Une page qui n'énonce qu'un côté laisse
+ * croire que le compte est à sens unique.
+ *
+ * LES DEUX GRANDEURS NE SE COMPENSENT PAS, et la carte le dit plutôt que de
+ * laisser le lecteur les soustraire. Elles portent sur deux faces différentes
+ * de la même frontière : l'une dit ce que le système donne sans qu'on ait
+ * payé, l'autre ce qu'on paie sans rien recevoir. Elles ne se rencontrent pas
+ * dans la même poche — un cadre reçoit les secondes sans toucher les
+ * premières.
+ *
+ * LE PIÈGE D'ASSIETTE EST DIT, parce qu'il a été commis. On croit que la
+ * cotisation déplafonnée ne porte que sur la part du salaire au-dessus du
+ * plafond ; elle porte sur la totalité, dès le premier euro, et l'écart vaut
+ * un facteur dix.
  */
 function avantagesCarteVersement(contexte) {
   const frontiere = contexte.frontiere();
@@ -5970,8 +6230,11 @@ function avantagesTableComplete(contexte) {
   const derniere = c.derniere;
   const montants = derniere === null ? {} : derniere.lignes;
 
-  // Deux dispositifs peuvent partager une ligne, et le montant ne doit alors
-  // paraître qu'une fois : voir pages.py.
+  // DEUX DISPOSITIFS PEUVENT PARTAGER UNE LIGNE, et le montant ne doit alors
+  // paraître qu'une fois. La MDA du privé et la bonification pour enfants de la
+  // fonction publique sont le même trimestre gratuit sous deux textes : la
+  // cascade n'en tient qu'une ligne, et l'imprimer deux fois inviterait à
+  // l'additionner.
   const vues = new Set();
 
   const blocs = [];
@@ -5981,8 +6244,8 @@ function avantagesTableComplete(contexte) {
       const ligne = avantage.ligne_cascade || avantage.code;
       const montant = montants[ligne];
       if (montant && vues.has(ligne)) {
-        // Deux dispositifs peuvent partager une ligne : le premier porte le
-        // chiffre, le second dit où il est. Voir pages.py.
+        // Deux dispositifs partagent cette ligne : le premier porte le chiffre,
+        // le second dit où il est.
         const porteur = inventaire.avantages.find(
           (a) => (a.ligne_cascade || a.code) === ligne).libelle;
         lignes.push([
@@ -6087,13 +6350,25 @@ function avantagesDetailEtats(contexte) {
   );
 }
 
-/** Les trois réserves de la page, et pourquoi elles y sont. */
+/**
+ * Les trois réserves de la page, et pourquoi elles y sont.
+ *
+ * LE COMPTE DES LIGNES « À CERTIFIER » SE CALCULE, et il l'a appris à ses
+ * dépens : il était écrit en toutes lettres, et la phrase qui le portait
+ * donnait une raison — « leurs textes sont éclatés dans des statuts de corps »
+ * — qui n'a cessé d'être vraie que pour la moitié d'entre elles le jour où le
+ * texte de la police a été lu. Un compte écrit en prose se périme ; une raison
+ * écrite en prose se périme plus discrètement encore.
+ */
 function avantagesDetailLimites(contexte) {
-  // Le compte des lignes « à certifier » se calcule : voir pages.py.
+  // Le compte des lignes « à certifier » se calcule, et ne s'écrit pas.
   const aCertifier = contexte.inventaireAvantages().avantages.filter(
     (avantage) => avantage.base_legale.some((t) => t.includes("certifier")),
   ).length;
-  // Zéro est un résultat, et il demande une autre phrase. Voir pages.py.
+  // ZÉRO EST UN RÉSULTAT, et il demande une autre phrase. Le compte a valu deux
+  // pendant tout le chantier, puis un, puis zéro le jour où l'article de
+  // l'amiante a été lu. « 0 lignes portent encore la mention » se lirait comme
+  // une négligence de gabarit là où c'est l'inventaire qui est allé au bout.
   const reserveLegale = aCertifier
     ? `${aCertifier} lignes portent encore la mention « à certifier » :
 leurs textes vivent dans des statuts de corps ou des lois de circonstance qui
@@ -6476,7 +6751,10 @@ function coutDetailScenarios(contexte) {
   const derniere = depenses.derniereAnnee;
   const annees = c.annees.map((ligne) => ligne.annee);
   const bascule = contexte.base.annee_bascule;
-  // Le repère extérieur, LU dans le compte du COR : voir le Python.
+  // Le repère extérieur : ce que le COR projette pour le système actuel à
+  // l'horizon, LU dans son compte du système de retraite (scénario de
+  // référence du dernier rapport). La constante qui le tenait, 14,2 %, était
+  // celle du rapport de juin 2025 quand le dépôt porte celui de juin 2026.
   const corHorizon = contexte.comptes().depense(avenir.derniereAnnee);
 
   // Un scénario dont la courbe est exactement celle du système actuel serait
@@ -6776,13 +7054,19 @@ euros constants de ${euros} : ceux de la trajectoire du modèle.</p>
 
 /**
  * Ce que chaque système AJOUTE à la cascade par rapport à celui qui le précède
- * dans `SCENARIOS_MONTRES`. Copie de `MARCHES_SYSTEMES` dans `web/pages.py`.
+ * dans `SCENARIOS_MONTRES` : son étiquette, posée sous la colonne, et ce que
+ * l'étiquette ne peut pas dire, redit dans le tableau des chiffres.
  *
- * LA CHAÎNE N'EST PAS ÉCRITE ICI : l'ordre des marches est celui de
- * `SCENARIOS_MONTRES`, seul endroit du site où les systèmes sont listés, et ce
- * dictionnaire ne fait que les NOMMER. Les accolades sont remplies par
- * `libellesCascade` — aucun nombre n'est écrit en toutes lettres, sous peine
- * qu'un réglage de la page démente son étiquette.
+ * LA CHAÎNE N'EST PAS ÉCRITE ICI, et c'est tout l'objet de ce dictionnaire.
+ * L'ordre des marches est celui de `SCENARIOS_MONTRES`, seul endroit du site
+ * où les systèmes sont listés ; ce dictionnaire ne fait que NOMMER chacun
+ * d'eux. Ajouter un système à la liste ajoute donc sa marche, et `test_web`
+ * refuse un système qui n'aurait pas son nom ici — c'est la seule chose qu'une
+ * main doive écrire.
+ *
+ * Les accolades sont remplies par `libellesCascade` : un taux, une année, une
+ * part qui change d'une année à l'autre. Aucun nombre n'est écrit en toutes
+ * lettres, sous peine qu'un réglage de la page démente son étiquette.
  */
 export const MARCHES_SYSTEMES = {
   notionnel_retroactif: [
@@ -6867,8 +7151,26 @@ function marcheCascade(code, valeur, libelles) {
 
 /**
  * Les marches qui vont du système actuel à la proposition, dans l'ordre de
- * `SCENARIOS_MONTRES`. Voir `_marches_cascade` dans `web/pages.py` : elles sont
- * exactement additives, et `test_web` le vérifie.
+ * `SCENARIOS_MONTRES`.
+ *
+ * ELLES SONT EXACTEMENT ADDITIVES, et ce n'est pas un hasard : `masseDuScenario`
+ * écrit la masse d'un système comme la part DIRECTE de la base multipliée par
+ * son rapport, plus la réversion s'il la sert. Une différence de deux rapports
+ * appliquée à la même part directe est donc la contribution propre du
+ * changement qui les sépare, et leur somme vaut l'écart des deux totaux au
+ * centime. Un contrôle des affirmations le vérifie plutôt que d'en croire ce
+ * commentaire (`cascade_somme_exactement`, dans ``tests/test_affirmations.py``).
+ *
+ * L'ORDRE EST CELUI DE `SCENARIOS_MONTRES`, et il n'est écrit nulle part
+ * ailleurs. C'est ce qui fait que la figure suit le site : le jour où un
+ * système entre dans la liste ou en sort, la cascade gagne ou perd sa marche
+ * sans qu'on ait à rouvrir cette fonction.
+ *
+ * `partReprise` est ce que les successions rendent de la garantie, en fraction
+ * de ce qu'elle a versé. Une FRACTION, et non un montant : le compte du COR ne
+ * porte pas les reprises, et le seul emprunt qu'on fasse au modèle est celui
+ * qu'on lui fait partout ailleurs dans cette page — un rapport sans dimension,
+ * jamais un niveau.
  */
 export function marchesCascade(base, partDerives, rapports, libelles, partReprise = 0.0) {
   const directe = base * (1.0 - partDerives);
@@ -6891,12 +7193,18 @@ export function marchesCascade(base, partDerives, rapports, libelles, partRepris
 
 /**
  * Les années que le sélecteur de la cascade propose : l'année mesurée, celle de
- * la bascule, puis les décennies jusqu'à l'horizon. Voir `PAS_ANNEES_CASCADE`
- * dans `web/pages.py`.
+ * la bascule, puis les décennies jusqu'à l'horizon. Pas toutes les années du
+ * compte — quarante-six liens ne se lisent pas, et rien ne distingue 2043 de
+ * 2044.
  */
 const PAS_ANNEES_CASCADE = 10;
 
-/** Les millésimes offerts, dans l'ordre, sans doublon. */
+/**
+ * Les millésimes offerts, dans l'ordre, sans doublon. L'année MESURÉE ouvre la
+ * liste : c'est la seule qui ne soit pas une projection, et c'est d'elle que
+ * vient le chiffre que tout le monde cite. La BASCULE suit, parce que c'est la
+ * première année où la proposition s'applique. Le reste est décennal.
+ */
 export function anneesCascade(solde, bascule) {
   const obs = solde.derniereAnneeObservee;
   const fin = solde.derniereAnnee;
@@ -6929,9 +7237,11 @@ function anneeCascade(solde, bascule, regards) {
 }
 
 /**
- * Les millésimes que les schémas de Sankey proposent : ceux de la cascade, à
- * compter de la bascule — avant elle, la proposition n'est pas appliquée. Voir
- * `_annees_flux` dans `web/pages.py`.
+ * Les millésimes que les schémas de Sankey proposent : CEUX DE LA CASCADE, À
+ * COMPTER DE LA BASCULE. Avant elle, la proposition n'est pas appliquée, et son
+ * schéma serait celui du système actuel sous un autre nom : l'année mesurée
+ * n'est donc offerte que si la bascule l'a précédée. La liste n'est jamais vide
+ * — la bascule est bornée à l'horizon du compte.
  */
 export function anneesFlux(solde, bascule) {
   return anneesCascade(solde, bascule).filter((annee) => annee >= bascule);
@@ -6948,11 +7258,23 @@ export function anneeFlux(solde, bascule, regards) {
 }
 
 /**
- * Le PIB qui convertit une part en milliards, et s'il est celui de l'année. Le
- * compte du COR tient ses deux bouts en part du PIB de 2002 à 2070 ; le PIB,
- * lui, n'est publié que jusqu'à l'année mesurée, et au-delà la cascade suit la
- * règle du site entier, `pibDeConversion`. Voir `_pib_cascade`, qui dit ce
- * qu'elle suivait avant le 23 septembre 2026, et pourquoi c'était faux.
+ * Le PIB qui convertit une part en milliards, et s'il est celui de l'année.
+ *
+ * LE COMPTE DU COR TIENT SES DEUX BOUTS EN PART DU PIB, de 2002 à 2070 ; le
+ * PIB, lui, n'est publié que jusqu'à l'année mesurée. Au-delà, la cascade suit
+ * la règle du site entier, `pibDeConversion` : la même part du PIB de la
+ * dernière année publiée.
+ *
+ * ELLE EN SUIVAIT UNE AUTRE JUSQU'AU 23 SEPTEMBRE 2026 : le PIB que le modèle
+ * projette, en euros courants de l'année. La dépense de 2070 y valait
+ * 1 278 milliards, quand la carte du haut en donne 458 au même endroit, pour la
+ * même part du PIB, et rien sur la page ne permettait de réconcilier les deux
+ * montants — l'un portait quarante-cinq ans d'inflation et de croissance
+ * supposées, l'autre aucune.
+ *
+ * Le second terme du couple dit lequel des deux on a pris, et la page l'écrit
+ * sous la figure : un milliard de 2060 n'est pas une dépense de 2060, c'est la
+ * même part de l'économie d'aujourd'hui, et cela ne se devine pas.
  */
 function pibCascade(contexte, annee) {
   const comptes = contexte.comptes();
@@ -6961,8 +7283,12 @@ function pibCascade(contexte, annee) {
 
 /**
  * Les regards que l'adresse de la page Coût porte, chacun ramené à une année
- * offerte : deux sélecteurs, et l'un garde l'autre. Seules les années RAMENÉES
- * voyagent, jamais le texte de l'adresse. Copie de `_vues_cout`.
+ * offerte.
+ *
+ * DEUX SÉLECTEURS, ET L'UN GARDE L'AUTRE : choisir l'année des schémas ne doit
+ * pas ramener la cascade à la sienne, ni l'inverse. Seules les années RAMENÉES
+ * voyagent, jamais le texte de l'adresse : recopié dans un lien, il y porterait
+ * n'importe quoi.
  */
 function vuesCout(contexte, regards) {
   const demandes = regards || {};
@@ -6987,10 +7313,35 @@ function lienVue(vues, cle, annee) {
 }
 
 /**
- * De la dépense d'une année à celle de la proposition, mesure par mesure. Voir
- * `_cout_detail_cascade` dans `web/pages.py` : un seul périmètre de bout en
- * bout — le compte du COR —, et l'année se choisit, parce qu'à l'année mesurée
- * la cotisation unique ne déplace encore rien.
+ * De la dépense d'une année à celle de la proposition, mesure par mesure.
+ *
+ * CE QUE CETTE SECTION AJOUTE AUX TABLEAUX QUI LA PRÉCÈDENT, c'est le CHEMIN.
+ * Les quatre systèmes y sont comparés deux à deux, ce qui dit de combien ils
+ * s'écartent et jamais par quoi ; le lecteur doit soustraire de tête quatre
+ * fois pour savoir laquelle des décisions du programme pèse. Une cascade le
+ * montre d'un coup, et elle porte en plus une vérification que le tableau n'a
+ * pas : les marches somment exactement à l'écart des deux totaux, ou la
+ * dernière barre ne retombe pas où elle devrait.
+ *
+ * L'ANNÉE SE CHOISIT, et il le fallait. À l'année mesurée, la cotisation unique
+ * ne déplace rien : elle ne vaut que pour les droits acquis à compter de la
+ * bascule, et aucun retraité de cette année-là n'en a acquis un seul sous
+ * elle. Une cascade figée sur cette année montrerait donc la mesure centrale du
+ * programme à zéro, sans rien dire. Une cascade figée sur l'horizon perdrait le
+ * chiffre que tout le monde cite. Le sélecteur rend les deux, et les
+ * quarante-cinq années entre elles.
+ *
+ * UN SEUL PÉRIMÈTRE, DE BOUT EN BOUT : le compte du COR, qui tient ses deux
+ * bouts de 2002 à 2070. La page portait deux cascades sur deux périmètres,
+ * dont l'une empruntait son niveau à la trajectoire du modèle ; il n'en reste
+ * qu'une, et rien ne traverse plus d'une série à l'autre. Ce qu'on emprunte
+ * encore au modèle est ce qu'on lui emprunte partout ailleurs sur cette page :
+ * des RAPPORTS sans dimension — les masses relatives des systèmes, et la part
+ * de la garantie que les successions rendent.
+ *
+ * `regards` porte l'année demandée. C'est une VUE et non un réglage : elle ne
+ * change aucun chiffre, elle choisit lequel on montre, et elle ne voyage pas
+ * vers les autres pages — voir `VUES_DE_PAGE`.
  */
 function coutDetailCascade(contexte, regards = null) {
   const c = contexte.cout();
@@ -7007,8 +7358,13 @@ function coutDetailCascade(contexte, regards = null) {
   const comptes = contexte.comptes();
   const anneePib = comptes.pib.derniereAnnee;
 
+  // La dépense de l'année, en millions : une part du PIB multipliée par le
+  // PIB. À l'année mesurée, cela redonne exactement ce que le COR publie.
   const depense = ligne.depense("actuel") * pib;
   const partDirecte = depense * (1.0 - ligne.partDerives);
+  // Ce que les successions rendent de la garantie, en fraction de ce qu'elle a
+  // versé : un rapport, seule chose que le compte du COR ne porte pas et qu'on
+  // aille chercher dans la trajectoire.
   const projetee = avenir.annee(annee);
   const garantieModele = projetee ? projetee.coutConstants(COMPOSANTE_GARANTIE) : 0.0;
   const partReprise = (projetee && garantieModele)
@@ -7136,7 +7492,10 @@ function coutDetailEquilibre(contexte) {
     ];
   });
   // La dernière note SUIT LE SIGNE du coefficient, sous peine de démentir le
-  // nombre qu'elle commente : voir le modèle Python.
+  // nombre qu'elle commente. Elle ne connaissait qu'une marge, et le jour où la
+  // recette de la proposition est devenue ses 18 % sur l'assiette, le facteur
+  // est passé sous un : la page lisait « une économie de −9 % » au-dessus d'un
+  // 0,92. Le catalogue des affirmations du site le tient.
   const coefficient = horizon.coefficient("notionnel_liberal");
   const lectureCoefficient = coefficient >= 1.0
     ? "<strong>Un coefficient supérieur à un est une marge, et une "
@@ -7236,20 +7595,48 @@ ${noteLectureCoefficient(reglageProposition(solde))}
 const ECART_TAUX_DETTE = 0.01;
 
 // Les systèmes que le graphique de la dette publique trace : le droit en
-// vigueur et la proposition, ceux entre lesquels la décision se prend. Copie
-// de `SYSTEMES_DETTE_PUBLIQUE` dans `web/pages.py`, qui dit pourquoi les deux
-// notionnels « à droits constants » n'y sont pas.
+// vigueur et la proposition, ceux entre lesquels la décision se prend. Les deux
+// notionnels « à droits constants » n'y sont pas — non qu'ils soient cachés,
+// leur stock est dans le graphique et le tableau du dessus, mais une réserve de
+// cinq fois le PIB posée sous une dette de 116 % dessine un pays qui aurait
+// remboursé quatre fois sa dette, ce qu'aucun système notionnel ne ferait, le
+// coefficient d'équilibre rendant cette marge aux pensions ; et l'échelle
+// qu'elle imposerait écraserait l'écart qui compte.
 const SYSTEMES_DETTE_PUBLIQUE = ["actuel", "notionnel_liberal"];
 
 /**
  * Ce que le déficit accumule : la dette, si rien ne s'ajuste.
  *
- * LE SOLDE DIT LE FLUX, CETTE SECTION DIT LE STOCK : le cumul des soldes
- * projetés, avec intérêts, rapporté à un PIB qui grandit — la récurrence de
- * toute dette publique. Elle part de zéro à la dernière année observée ; un
- * stock négatif est une réserve, et le graphique descend sous l'axe pour le
- * montrer. Le taux est le forward à un an de la courbe sans risque, celui du
- * pilier capitalisé. Copie de `_cout_detail_dette` dans `web/pages.py`.
+ * LE SOLDE DIT LE FLUX, CETTE SECTION DIT LE STOCK. La section précédente
+ * donne, année par année, ce qui manque ou ce qui reste ; celle-ci cumule, avec
+ * intérêts, et rapporte le cumul à un PIB qui grandit. C'est la récurrence de
+ * toute dette publique, et elle ajoute une chose que le solde ne montre pas :
+ * l'effet boule de neige, quand le taux dépasse la croissance.
+ *
+ * ELLE PART DE ZÉRO, à la dernière année observée, et ne compte donc ni la
+ * dette ni les réserves que le système porte aujourd'hui : elle dit ce que les
+ * soldes À VENIR ajoutent, jamais ce que le système détient.
+ *
+ * UN STOCK NÉGATIF EST UNE RÉSERVE, et le graphique descend sous l'axe pour le
+ * montrer — c'est le seul du site à le faire. Les deux systèmes notionnels « à
+ * droits constants » encaissent plus qu'ils ne servent : leur courbe plonge, et
+ * ce n'est pas une économie mais la marge que le coefficient d'équilibre
+ * aurait à distribuer, comme la section précédente le dit du coefficient
+ * lui-même.
+ *
+ * LE TAUX EST LU, PAS CHOISI : le forward à un an de la courbe sans risque de
+ * la BCE, celui-là même auquel le pilier capitalisé du système 4 place ses
+ * versements. La seule sensibilité montrée est donc celle-là — un point de taux
+ * en plus ou en moins —, en deux colonnes de plus dans le tableau.
+ *
+ * PUIS LA DETTE DU PAYS, POUR L'ÉCHELLE. Un second graphique pose la dette des
+ * administrations publiques, telle que l'INSEE la publie depuis 1995, et la
+ * prolonge à plat, en part de PIB, en y ajoutant le seul stock du système de
+ * retraite : le droit en vigueur d'un côté, la proposition de l'autre. Ce n'est
+ * pas une prévision de la dette publique — le reste du budget n'est pas
+ * modélisé —, c'est ce qui permet de lire un stock de soixante points de PIB à
+ * l'échelle des cent seize que le pays porte déjà, et de voir, d'un coup d'œil,
+ * si la proposition fait mieux ou moins bien que le système actuel.
  */
 /**
  * Les lignes du tableau poste par poste, dans l'ordre du tableau 2.2 du
@@ -7291,11 +7678,17 @@ function pourcentageTva(taux) {
   return g.pourcentage(taux, false, Math.round(taux * 1000) % 10 === 0 ? 0 : 1);
 }
 
+/**
+ * Ce que la proposition ajoute : une TVA à taux unique, et où elle va.
+ *
+ * Décision du Parti libéral le 23 septembre 2026, retirée le 24 : la TVA n'est
+ * plus réformée par défaut, et la note ne parle que pour la variante. Le
+ * tableau du dessus en porte la part qui entre au régime ; cette note dit le
+ * tout, ce que la garantie en prend d'abord, et ce que le chiffrage ne compte
+ * pas. Elle se tait quand la TVA n'est pas réformée, ou pas encore : il n'y a
+ * alors rien à raconter.
+ */
 function coutNoteTva(contexte, annee, ligne, pib, anneePib) {
-  // Ce que la proposition ajoute : une TVA à taux unique (Parti libéral,
-  // 23 septembre 2026), ce que la garantie en prend d'abord, et ce que le
-  // chiffrage ne compte pas. Copie de `_cout_note_tva` ; se tait quand la TVA
-  // n'est pas réformée, ou pas encore.
   const garantie = ligne.tvaGarantie("notionnel_liberal");
   const regime = ligne.tvaDe("notionnel_liberal");
   const total = garantie + regime;
@@ -7303,7 +7696,8 @@ function coutNoteTva(contexte, annee, ligne, pib, anneePib) {
   const tva = new AssietteTva(contexte.paquet);
   const taux = contexte.base.taux_tva_liberal;
   const hausse = (tauxActuel) => g.nombre(tva.variationPrix(taux, tauxActuel) * 100, 1);
-  // Au taux normal, le prix ne bouge pas ; sous lui, il BAISSE.
+  // Au taux normal, le prix ne bouge pas ; sous lui, il BAISSE : « monteraient
+  // de −0,2 % » ne se lirait pas.
   const normal = tva.variationPrix(taux, 0.20);
   let auTauxNormal;
   if (Math.abs(normal) < 1e-12) {
@@ -7314,7 +7708,8 @@ function coutNoteTva(contexte, annee, ligne, pib, anneePib) {
         : `baisseraient de ${g.nombre(-normal * 100, 1)} %`);
   }
   // La règle qui a fixé le taux jusqu'au 24 septembre 2026, devenue un
-  // indicateur. Voir `_cout_note_tva`.
+  // indicateur : ce que les hypothèses de la page demanderaient, à côté du
+  // taux fixé, qui ne les suit plus.
   const [requis, anneeRequise] = tauxTvaRequis(contexte.cout().solde, contexte.base, tva);
   let indicateur = "";
   if (anneeRequise) {
@@ -7393,9 +7788,15 @@ const SYSTEMES_BILAN = ["actuel", "notionnel_liberal"];
  * Le compte de l'année de bascule, poste par poste, et ce qui est hors du
  * compte : la garantie vieillesse que la trajectoire compte cette année-là, en
  * millions d'euros, et le pilier capitalisé, en part de PIB. C'est ce que le
- * tableau poste par poste écrit ; la carte des flux lit `compteFlux`, à l'année
- * qu'on lui choisit, et dit la même garantie à la bascule. Copie de
- * `_bilan_bascule`.
+ * tableau « Recettes et dépenses, poste par poste » écrit : la ligne du solde
+ * de la bascule, et ses deux lignes « pour mémoire ». La carte des flux lit
+ * `compteFlux`, à l'année qu'on lui choisit ; à celle de la bascule, les deux
+ * disent la même garantie.
+ *
+ * L'année est celle de la bascule, bornée à la fenêtre du compte : c'est la
+ * première où la proposition s'applique, et c'est de là que la décision se
+ * prend. Le compte du COR y est projeté, et le PIB n'y est pas publié ; les
+ * milliards sont donc ceux d'un point de PIB de la dernière année publiée.
  */
 function bilanBascule(contexte) {
   const comptes = contexte.comptes();
@@ -7406,14 +7807,21 @@ function bilanBascule(contexte) {
                          solde.derniereAnnee);
   const ligne = solde.annee(annee);
   // Le PIB qui convertit les parts en milliards : celui de l'année quand
-  // l'INSEE le publie, celui de la dernière année publiée sinon. Voir le Python.
+  // l'INSEE le publie, celui de la dernière année publiée sinon — la règle de
+  // tout le site, `pibDeConversion`. Une bascule réglée sur une année passée
+  // lisait jusqu'ici le PIB de 2025, et la note affirmait qu'un PIB publié ne
+  // l'était pas.
   const anneePib = Math.min(annee, comptes.pib.derniereAnnee);
 
   // La garantie vieillesse de l'ANNÉE, celle que la trajectoire compte et que
   // la carte des flux dessine : une part de PIB, convertie comme toutes les
-  // lignes du tableau. Voir le Python pour ce qu'elle remplace.
+  // lignes du tableau. Jusqu'au 23 septembre 2026, la ligne lisait la
+  // distribution de l'enquête sous le plancher de base, sans année, et en y
+  // comptant les retraités partis à l'étranger, que l'ASPA exclut : 12,9 Md € à
+  // la bascule, là où la carte des flux en dessinait 13,7.
   const garantie = ligne.postesDepenses("notionnel_liberal").garantie_vieillesse;
-  // Le pilier capitalisé : 5 % de la même assiette que les 18 %.
+  // Le pilier capitalisé : 5 % de la même assiette que les 18 %, donc les
+  // cotisations de la proposition multipliées par le rapport des deux taux.
   const capitalise = ligne.recetteParAssiette
     ? ligne.postesRessources("notionnel_liberal").cotisations
       * base.taux_capitalisation_obligatoire / base.taux_cotisation_liberal
@@ -7446,10 +7854,17 @@ function montantFlux(meur) {
 }
 
 /**
- * La caisse de répartition d'un système : ses payeurs, lus sur
- * `postesRessources` par groupe, ce qui manque — emprunté, donc une source —,
- * ses pensions, et ce qui reste — placé, donc un usage. `pib` est celui de la
- * dernière année publiée. Copie de `_caisse_flux`.
+ * La caisse de répartition d'un système : ses payeurs, ses pensions.
+ *
+ * Les payeurs sont les quatre groupes de `GROUPES`, lus sur `postesRessources`
+ * — la même règle que le tableau poste par poste, donc les mêmes nombres ; un
+ * groupe que le système n'encaisse pas n'a pas de nœud. Ce qui manque pour
+ * payer les pensions est EMPRUNTÉ : c'est donc une source, en rouge comme le
+ * ruban d'écart du bilan ; ce qui reste est placé, et c'est un usage, en vert.
+ * Le compte tombe ainsi juste des deux côtés.
+ *
+ * `pib` convertit les parts en millions d'euros : celui que `compteFlux` tient
+ * de la règle du site, `pibDeConversion`.
  */
 export function caisseFlux(ligne, pib, systeme, libelle, cotisations) {
   const postes = ligne.postesRessources(systeme);
@@ -7458,7 +7873,8 @@ export function caisseFlux(ligne, pib, systeme, libelle, cotisations) {
     const part = groupe.postes.reduce((somme, code) => somme + postes[code], 0);
     if (part > 0.0) {
       // Dans la variante qui porte une TVA à taux unique, l'impôt de la
-      // proposition n'est qu'elle : il est nommé.
+      // proposition n'est qu'elle : il est nommé, et non « impôts » comme le
+      // mélange d'aujourd'hui.
       let nom = LIBELLES_FLUX[groupe.code];
       if (groupe.code === "salaires") nom = cotisations;
       else if (groupe.code === "impots" && ligne.tvaDe(systeme) > 0.0) nom = "TVA";
@@ -7486,11 +7902,22 @@ export function caisseFlux(ligne, pib, systeme, libelle, cotisations) {
 }
 
 /**
- * Ce que les schémas de Sankey dessinent, une année donnée : tout en part du
- * PIB de l'année, converti par la règle du site, `pibDeConversion` ; la garantie
- * vieillesse de la trajectoire, portée au compte du COR comme dans la cascade,
- * et ce que les successions en rendent ; le pilier capitalisé. Copie de
- * `_compte_flux`.
+ * Ce que les schémas de Sankey dessinent, une année donnée.
+ *
+ * TOUT Y EST EN PART DU PIB DE L'ANNÉE, converti en milliards par la règle du
+ * site entier, `pibDeConversion` : au PIB de l'année quand l'INSEE le publie, à
+ * celui de la dernière année publiée sinon. Un milliard de 2070 au PIB de 2070
+ * serait une part multipliée par une hypothèse de croissance et d'inflation, et
+ * le schéma de 2070 paraîtrait près de trois fois plus gros que celui de 2026
+ * pour une même part. Au PIB publié, deux années se comparent flux à flux.
+ *
+ * LA GARANTIE SUIT LA TRAJECTOIRE, portée au compte du COR par son rapport —
+ * la même que la cascade, et que `postesDepenses` redit pour la proposition —,
+ * comme la ligne pour mémoire du tableau poste par poste, qui la lit la même
+ * année. La trajectoire déplace la distribution d'année en année — c'est celle
+ * que la cascade pose —, et ce que les successions rendent des avances de la
+ * garantie n'y vaut presque rien à la bascule, puis la moitié de la garantie
+ * passé 2050. Le pilier capitalisé obligatoire est en part de PIB.
  */
 export function compteFlux(contexte, annee) {
   const comptes = contexte.comptes();
@@ -7504,7 +7931,8 @@ export function compteFlux(contexte, annee) {
   const garantieModele = projetee ? projetee.coutConstants(COMPOSANTE_GARANTIE) : 0.0;
   const partReprise = (projetee && garantieModele)
     ? projetee.reprisesConstants() / garantieModele : 0.0;
-  // Le pilier capitalisé : 5 % de la même assiette que les 18 %.
+  // Le pilier capitalisé : 5 % de la même assiette que les 18 %, donc les
+  // cotisations de la proposition multipliées par le rapport des deux taux.
   const capitalise = ligne.recetteParAssiette
     ? ligne.postesRessources("notionnel_liberal").cotisations
       * base.taux_capitalisation_obligatoire / base.taux_cotisation_liberal
@@ -7522,11 +7950,32 @@ export function compteFlux(contexte, annee) {
 
 /**
  * Qui paie quoi : le système actuel et la proposition, en deux schémas de
- * Sankey à la même échelle. Aujourd'hui un seul pot ; dans la proposition,
- * trois caisses — le régime unique, où n'entre aucun impôt (sauf la TVA à
- * taux unique, dans la variante qui la porte), la garantie vieillesse que
- * paient l'impôt et les successions, le pilier capitalisé. L'année se choisit, comme celle de
- * la cascade. Copie de `_cout_carte_flux`, où l'argument est développé.
+ * Sankey.
+ *
+ * CE QUE LES DEUX COURBES DU HAUT NE MONTRENT PAS. Elles disent combien rentre
+ * et combien sort, année après année ; elles ne disent ni qui apporte quelle
+ * part, ni à quoi chaque part sert. Deux schémas de Sankey le disent, sur le
+ * compte même du tableau poste par poste : aujourd'hui, un seul pot où
+ * cotisations, impôts et versements d'autres caisses se mêlent ; dans la
+ * proposition, trois caisses — le régime unique, où n'entre aucun impôt (sauf
+ * la TVA à taux unique, dans la variante qui la porte), la garantie
+ * vieillesse, que paient l'impôt et ce que les successions en rendent, et le
+ * pilier capitalisé, placé au nom de chacun.
+ *
+ * LA MÊME ÉCHELLE POUR LES DEUX : un milliard y a la même épaisseur. Sans elle,
+ * chaque schéma remplirait son cadre, et un système qui brasse deux tiers de
+ * l'autre paraîtrait aussi gros.
+ *
+ * L'ANNÉE SE CHOISIT, comme celle de la cascade, et `regards` la porte. Par
+ * défaut c'est la bascule, première année où la proposition s'applique ; le
+ * sélecteur offre ensuite les décennies jusqu'à l'horizon du compte, jamais une
+ * année d'avant la bascule, où la proposition n'est pas encore appliquée et où
+ * son schéma serait celui du système actuel sous un autre nom. Le déficit de
+ * chaque année est celui des courbes, et il n'est pas caché : il est un payeur,
+ * en rouge.
+ *
+ * Demandée le 23 septembre 2026, et son année le même jour : la page tenait
+ * jusque-là en deux graphiques, et cette carte est la troisième.
  */
 function coutCarteFlux(contexte, regards = null) {
   const base = contexte.base;
@@ -7661,7 +8110,8 @@ function coutDetailPostes(contexte) {
   if (ligne.recetteParAssiette && ligne.facteurAssiette > 1.0 + 1e-9) {
     const ageLegal = age(base.age_legal_liberal || 0.0);
     // La part des reportés en emploi : tous par défaut, et c'est alors un
-    // plafond. Voir le Python.
+    // plafond ; une part seulement si on la règle, le reste attendant sans
+    // activité.
     const part = base.part_reportes_en_emploi ?? 1.0;
     const tous = part >= 1.0;
     const qui = tous
@@ -7954,7 +8404,20 @@ ${g.milliards(plus.horizon("actuel") * pibFin)}${auPibFin}.</div>
 
 /**
  * La dette du pays, et ce que chaque système y ajoute : l'échelle du stock.
- * Copie de `_cout_dette_publique` dans `web/pages.py`.
+ *
+ * LA DETTE OBSERVÉE D'ABORD, telle que l'INSEE la publie au sens de Maastricht
+ * — toutes administrations publiques, brute, consolidée — depuis 1995 et
+ * jusqu'à l'année de départ ; PUIS, à compter de là, cette dette tenue à plat
+ * en part de PIB, à laquelle chaque système ajoute son seul stock. Deux
+ * systèmes, ceux entre lesquels la décision se prend ; les deux autres sont
+ * dans le graphique et le tableau du dessus, et la constante
+ * `SYSTEMES_DETTE_PUBLIQUE` dit pourquoi ils ne sont pas ici.
+ *
+ * L'HYPOTHÈSE EST DITE, PAS CACHÉE : le reste des administrations publiques a
+ * son propre solde, que le site ne modélise pas. Une dette qui monterait pour
+ * d'autres raisons décalerait les courbes d'un même bloc sans changer leur
+ * écart, et c'est cet écart — ce que la proposition ajoute ou retire par
+ * rapport au droit en vigueur — que le graphique donne à lire.
  */
 function coutDettePublique(dette, fin, comptes) {
   const observee = dette.dettePubliqueObservee;
@@ -8051,8 +8514,18 @@ coefficient d'équilibre rend cette marge aux pensions ; et son échelle
 
 /**
  * La frise des flux : chaque année, ce qui rentre, ce qui sort, ce qui reste.
- * Une colonne par année et par système, un système à la fois par les onglets
- * des grilles de Cas types. Copie de `_cout_detail_frise` dans `web/pages.py`.
+ *
+ * LA SECTION PRÉCÉDENTE DONNE LA COURBE ; CELLE-CI DONNE LE REGISTRE. Une
+ * colonne par année et par système, où l'on voit passer l'argent : ce qui
+ * rentre dans la caisse, ce qui en sort, et le pied de la caisse — emprunté
+ * quand il manque, placé quand il reste — qui va grossir ou réduire le stock
+ * écrit dessous. Le stock au 1er janvier est celui du 31 décembre précédent,
+ * rapporté au PIB de l'année : c'est ce qui fait que chaque colonne tombe
+ * juste, au dixième près, avec les mêmes nombres que la courbe.
+ *
+ * Un système à la fois, par les mêmes onglets que les grilles de Cas types :
+ * quatre frises rendues, une seule visible, et le premier onglet reste visible
+ * là où `:has()` n'existe pas.
  */
 function coutDetailFrise(contexte) {
   const c = contexte.cout();
@@ -8585,7 +9058,9 @@ système 4, dont la moitié la réclamerait.</div>
  * Une page qui compte ce qui rentre et ce qui sort d'un système en répartition
  * doit dire ce qu'elle fait d'un prélèvement qui n'y entre pas. Le pilier ne
  * finance aucune pension d'aujourd'hui : il constitue un capital, au nom de
- * celui qui verse. Copie de `_cout_detail_capitalisation` dans `web/pages.py`.
+ * celui qui verse. Il ne change donc ni les ressources, ni les dépenses, ni le
+ * solde d'aucun des quatre systèmes comparés — mais il change ce que coûte le
+ * travail, et c'est cela qu'il faut chiffrer.
  */
 // Les années où la trajectoire du pilier est lue : la bascule, puis tous les
 // dix ans jusqu'à l'horizon.
@@ -8593,9 +9068,13 @@ const ETAPES_PILIER = [0, 4, 14, 24, 34, 44];
 
 /**
  * Ce que le pilier de TOUS les cotisants collecte, prélève, détient et sert,
- * année par année, sous le régime de frais réglé. Portage de
- * `_cout_pilier_trajectoire` : le niveau vient du compte du COR, la grille ne
- * fournit que des rapports par euro versé.
+ * année par année, sous le régime de frais réglé.
+ *
+ * LE NIVEAU VIENT DU COMPTE DU COR, PAS DE LA GRILLE. Les versements du pilier
+ * sont les cotisations du système 4 — 18 % de l'assiette, ancrés sur les
+ * ressources publiées — multipliées par le rapport des deux taux ; la grille ne
+ * fournit que des rapports par euro versé : frais, encours, rentes. C'est la
+ * règle de toute la page, et le pilier ne la contourne pas.
  */
 function coutPilierTrajectoire(contexte) {
   const base = contexte.base;
@@ -9150,7 +9629,10 @@ export function cumulsIndexation(contexte) {
 
 /**
  * Les trois niveaux de salaire de la page Risque, sur une même carrière de
- * référence. Voir `NIVEAUX_RISQUE` dans `web/pages.py`.
+ * référence : un salarié du privé né en 1990, entré à 22 ans, qui part à 64.
+ * Ce n'est pas un cas type de la page Coût — elle ne pèse dans aucun
+ * agrégat —, c'est un EXEMPLE, et la page le dit. Qui veut le sien a le
+ * simulateur.
  */
 export const NIVEAUX_RISQUE = [
   ["Au SMIC", 0.55],
@@ -9178,10 +9660,32 @@ function risqueExemple(contexte, niveau) {
 /**
  * Ce que la répartition prélève, et ce qu'elle ne rendra pas.
  *
- * Portage de `_risque` dans `web/pages.py`, dont le commentaire dit ce que la
- * page fait et ne fait pas. Trois chiffres viennent du modèle — ce qu'un
- * salarié verse, ce que ses cotisations financent de la pension promise, et le
- * solde du système — et tout le reste est cité, le plus souvent du COR.
+ * C'EST LE PREMIER ARGUMENT DE LA PROPOSITION, et le site ne le regardait pas :
+ * il chiffrait ce que chaque système verse et ce qu'il coûte, jamais ce que le
+ * système en place prend, ni à qui, ni ce qu'il ne tiendra pas. La page pose
+ * les deux questions dans l'ordre où un électeur les pose — combien on me
+ * prélève, et est-ce que je le reverrai — puis range sous des dépliants ce que
+ * la recherche établit, référence par référence.
+ *
+ * ELLE S'ADRESSE À QUELQU'UN QUI N'A PAS FAIT D'ÉCONOMIE, comme la page Coût,
+ * et obéit aux mêmes règles : une question par carte, sa réponse en deux
+ * phrases, le tableau qui la montre ; les mots de spécialiste portent leur
+ * définition ; tout le reste est replié.
+ *
+ * TROIS CHIFFRES VIENNENT DU MODÈLE plutôt que d'une source extérieure : ce
+ * qu'un salarié verse chaque mois pour sa retraite, à trois niveaux de
+ * salaire ; ce que ces cotisations financeraient au rendement qu'une
+ * répartition peut servir sans changer son taux ; et le solde du système, lu
+ * dans les comptes du COR comme sur la page Coût.
+ *
+ * LE RESTE EST CITÉ, ET LA PLUPART DU TEMPS CITÉ DU COR. C'est la règle de
+ * construction de la section qui répond au « il n'y a pas de problème » : à
+ * chaque fois qu'un chiffre du Conseil d'orientation des retraites suffit, il
+ * est préféré à un travail académique, parce qu'on ne peut pas le récuser
+ * comme partisan. La bibliographie entière est dans ``docs/risque_de_defaut.md``.
+ *
+ * CE QUE LA PAGE NE FAIT PAS : elle ne calcule aucune probabilité de défaut. La
+ * recherche n'en connaît pas, et le dire vaut mieux que d'en inventer une.
  */
 function risque(contexte) {
   const solde = contexte.cout().solde;
@@ -9201,7 +9705,12 @@ function risque(contexte) {
   const ficheMoyen = moyen.remuneration.reference.droitEnVigueur;
   const verseMensuel = ficheMoyen.retraiteTotale / MOIS_PAR_AN;
 
-  // Ce que la promesse doit à quelqu'un d'autre : voir `_risque` en Python.
+  // Ce que la promesse doit à quelqu'un d'autre : l'écart entre ce que le droit
+  // promet à cet assuré et ce que ses propres cotisations financeraient au
+  // rendement d'équilibre. C'est `notionnel_retroactif_employeur` — le
+  // système 3 du site, le scénario 4 du modèle —, sous la règle par défaut, et
+  // l'écart se lit dans les deux sens : une promesse plus élevée que son
+  // financement est une promesse dont quelqu'un d'autre répond.
   const constants = moyen.coefficient_euros_constants;
   const promis = moyen.actuel.pension_annuelle * constants / MOIS_PAR_AN;
   const finance = moyen.notionnel_retroactif_employeur.pension_annuelle
@@ -9368,7 +9877,13 @@ ${detail}
 
 /**
  * L'incidence : la cotisation retraite est prise sur le salaire.
- * Portage de `_risque_salaire`.
+ *
+ * C'est le résultat le moins connu du public et le mieux établi de la
+ * littérature récente, et il tient à une distinction que le débat français
+ * ignore : ce qui décide de qui paie n'est pas le partage légal, c'est la force
+ * du lien entre la cotisation et le droit qu'elle ouvre. La retraite est la
+ * cotisation la plus contributive du barème, donc celle qui est la plus
+ * intégralement prise sur le salaire.
  */
 function risqueSalaire(contexte) {
   const moyen = risqueExemple(contexte, 1.0);
@@ -9422,7 +9937,14 @@ l'autre est une inférence.</p>`,
 
 /**
  * Ce que le financement de la répartition coûte à la croissance.
- * Portage de `_risque_croissance`.
+ *
+ * L'argument n'a pas besoin d'un travail contesté : le COR le porte lui-même,
+ * sur trois modèles indépendants, et il nomme les dépenses que l'effet
+ * récessif met en difficulté. Le reste de la section suit l'ordre de la
+ * solidité des résultats, du plus établi au plus discuté, et le dit.
+ *
+ * Les points de PIB cités sont dits aussi en milliards, au PIB de la dernière
+ * année publiée : `pointsEnMilliards`.
  */
 function risqueCroissance(comptes) {
   return g.depliant(
@@ -9518,7 +10040,7 @@ compte aujourd'hui comme un droit.</p>`,
     "risque-croissance",
   );
 }
-/** Qui paie le plus, rapporté à ce qu'il en retire. Portage de `_risque_pauvres`. */
+/** Qui paie le plus, rapporté à ce qu'il en retire. */
 function risquePauvres() {
   return g.depliant(
     "Ce sont les plus pauvres qui y perdent le plus",
@@ -9561,7 +10083,7 @@ active 42 %.</p>`,
   );
 }
 
-/** Ce que les jeunes versent, et ce qu'ils récupèrent. Portage de `_risque_jeunes`. */
+/** Ce que les jeunes versent, et ce qu'ils récupèrent. */
 function risqueJeunes() {
   return g.depliant(
     "Les jeunes cotisent plus pour recevoir moins",
@@ -9610,7 +10132,12 @@ dans un pillage.</p>`,
   );
 }
 
-/** Le premier poste de la dépense publique, et ce qui recule à côté. Portage de `_risque_evince`. */
+/**
+ * Le premier poste de la dépense publique, et ce qui recule à côté. Les parts
+ * de PIB citées sont dites aussi en milliards, au PIB de la dernière année
+ * publiée : c'est ce qui rend comparables deux années que trente ans séparent,
+ * et un pays qui n'est pas le nôtre.
+ */
 function risqueEvince(comptes) {
   const anneePib = comptes.pib.derniereAnnee;
   return g.depliant(
@@ -9647,7 +10174,11 @@ autres que les retraites, à l'instar de l'école, la santé ou la sécurité »
   );
 }
 
-/** Le défaut silencieux : ce que les réformes ont déjà retiré. Portage de `_risque_deja_eu_lieu`. */
+/**
+ * Le défaut silencieux : ce que les réformes ont déjà retiré. Les points de PIB
+ * que l'INSEE chiffre sont dits aussi en milliards : au PIB de 2018 pour 2018,
+ * au PIB de la dernière année publiée pour 2070.
+ */
 function risqueDejaEuLieu(comptes) {
   return g.depliant(
     "La promesse a déjà été rompue : 1993, 2003, 2010, 2014, 2023",
@@ -9684,7 +10215,7 @@ rupture de promesse : la mesure était négociée, et elle est passée.</p>`,
   );
 }
 
-/** Ce qui arrive aux pays qui attendent trop. Portage de `_risque_ailleurs`. */
+/** Ce qui arrive aux pays qui attendent trop. */
 function risqueAilleurs() {
   return g.depliant(
     "Ce qui arrive quand on attend trop longtemps",
@@ -9717,7 +10248,7 @@ baissé de moitié.</p>`,
   );
 }
 
-/** Ce que le droit garantit, et ce qu'il ne garantit pas. Portage de `_risque_droit`. */
+/** Ce que le droit garantit, et ce qu'il ne garantit pas. */
 function risqueDroit() {
   return g.depliant(
     "Ce que la loi ne vous garantit pas",
@@ -9750,13 +10281,19 @@ facile de faire défaut sur une promesse de retraite que sur une obligation,
 }
 /**
  * Le cœur de la page : ce qu'on répond au « il n'y a pas de problème ».
- * Portage de `_risque_objections`.
+ *
+ * Chaque objection est citée dans les termes de ceux qui la portent, et la
+ * réponse est tirée du COR partout où c'est possible : une source qu'on ne
+ * peut pas récuser comme partisane, et qui se trouve dire, chiffres à l'appui,
+ * l'inverse de ce qu'on lui fait porter.
  */
 function risqueObjections(contexte) {
   const solde = contexte.cout().solde;
   const fin = solde.derniereAnnee;
   // Les points de PIB que le COR publie, dits aussi en milliards au PIB de la
-  // dernière année publiée ; les « 2,4 » sont le solde de l'horizon du compte.
+  // dernière année publiée. Les « 2,4 » qui reviennent trois fois sont le solde
+  // de l'horizon que le site lit dans le même compte : ses milliards sont ceux
+  // de la page Coût, au lieu d'un arrondi d'arrondi.
   const comptes = contexte.comptes();
   const anneePib = comptes.pib.derniereAnnee;
   const md = (points) => pointsEnMilliards(comptes, points);
@@ -9831,7 +10368,7 @@ trajectoire le dément toute seule.</p>`,
   );
 }
 
-/** Les références citées, telles qu'elles ont été lues. Portage de `_risque_sources`. */
+/** Les références citées, telles qu'elles ont été lues. */
 function risqueSources() {
   return g.depliant(
     "Sources",
@@ -9998,10 +10535,10 @@ ${methodeSources(contexte)}
 /**
  * Le pilier capitalisé : où va l'argent, à quel taux, à quel prix.
  *
- * Portage de `_methode_capitalisation`. C'est la seule partie du modèle qui
- * place réellement de l'argent, et donc la seule qui dépende d'un marché :
- * elle doit dire d'où viennent les taux, ce que le placement suppose, et ce
- * que la transmission change à la comparaison avec la répartition.
+ * C'est la seule partie du modèle qui place réellement de l'argent, et donc la
+ * seule qui dépende d'un marché. Elle doit dire trois choses qu'aucune autre
+ * section n'a à dire : d'où viennent les taux, ce que le placement suppose, et
+ * ce que la transmission change à la comparaison avec la répartition.
  */
 function methodeCapitalisation(contexte) {
   const base = contexte.base;
@@ -10406,9 +10943,14 @@ date opposée est celle de l'entrée dans le métier, au mois près : qui est en
 
 /** Brut et pas net, multiples du salaire moyen, et le périmètre. */
 /**
- * Comment ce site est construit, et comment on le vérifie : l'argument de
- * confiance d'un public technique, là où le lecteur est déjà dans le détail.
- * Voir `_methode_construction` dans `web/pages.py`.
+ * Comment ce site est construit, et comment on le vérifie.
+ *
+ * C'est l'argument de confiance d'un public technique — un modèle de
+ * référence, un portage sans bibliothèque, des témoins comparés au bit près —,
+ * et il n'était accessible que par le lien GitHub en bas de l'accueil. Il est
+ * ici, là où le lecteur est déjà dans le détail. Aucun nombre de tests ni de
+ * témoins n'y est écrit : ils bougent à chaque session, et le README les
+ * porte, recalculés par un test.
  */
 function methodeConstruction() {
   return g.depliant("Comment ce site est construit, et comment on le vérifie", `
@@ -10518,10 +11060,23 @@ function periodeInventaire(creation, fermeture, extinction) {
 /**
  * Tous les régimes, calculés ou non — la liste qui manquait au dépôt.
  *
- * UNE SEULE TABLE, et non cinq, qui se filtre et se trie sur place : le
- * comportement est dans `index.html`, en écoute déléguée ; sans lui, la table
- * se lit entière, dans l'ordre du fichier. Voir `_inventaire_section` dans
- * `web/pages.py`. `catalogue` donne la fiabilité des fiches calculées.
+ * UNE SEULE TABLE, et non cinq : quatre-vingt-neuf lignes en cinq tableaux de
+ * prose ne se cherchaient qu'au Ctrl+F. La table porte tout ce que l'inventaire
+ * sait d'un régime — sa famille, ce qu'il est dans le modèle, la fiabilité de
+ * sa fiche quand il en a une, ses dates, ses statuts, ce qui lui manque —, et
+ * elle se filtre et se trie sur place : un champ de recherche, un menu par
+ * famille, un menu par couverture, et chaque en-tête de colonne est un bouton
+ * de tri. Le comportement est dans `index.html`, en écoute déléguée ; sans lui,
+ * la table se lit entière, dans l'ordre du fichier, ce qui est exactement ce
+ * qu'elle était.
+ *
+ * Deux garde-fous. Un filtre se remet à « tout » d'un geste, et une ligne
+ * filtrée n'est que masquée : rien de ce que l'inventaire dit ne devient
+ * inatteignable. Et la table reste dans sa section repliée — c'est une annexe,
+ * qui ne s'impose pas à qui vient seulement savoir ce que valent les chiffres.
+ *
+ * `catalogue` donne la fiabilité des fiches calculées : l'inventaire ne la
+ * connaît pas, le catalogue si, et c'est ici que les deux se rejoignent.
  */
 function inventaireSection(lignes, catalogue) {
   const fiabilites = new Map();
@@ -10611,18 +11166,25 @@ ${table}`, "donnees-inventaire");
 /**
  * Ce que valent les chiffres du site : la seconde partie de la page Méthode.
  *
- * Elle a été une page à elle, « Sources », jusqu'au 23 septembre 2026 ; elle
- * est la fin de la page Méthode, sous son propre titre, que l'ancienne
- * adresse `#/donnees` vise (`ANCIENNES_ROUTES`). Son « En clair » est devenu
- * son introduction, et son plan est parti. Voir `_methode_sources`.
+ * Elle a été une page à elle, « Sources », jusqu'au 23 septembre 2026. Elle
+ * répondait pourtant à la question que la méthode laisse ouverte — comment
+ * sait-on ce que valent ces chiffres ? —, et un nouveau venu passait de l'une à
+ * l'autre sans savoir laquelle ouvrir. Elle est donc la fin de la page Méthode,
+ * sous son propre titre, que l'ancienne adresse `#/donnees` vise
+ * (`ANCIENNES_ROUTES`). Son « En clair » est devenu son introduction — une
+ * page ne porte qu'un chapeau —, et son plan est parti : il annonçait cinq
+ * dépliants posés juste sous lui.
  *
  * ELLE RÉPOND À UNE SEULE QUESTION, ET ELLE Y RÉPOND EN TROIS CHIFFRES :
  * combien de valeurs ont été recontrôlées contre le fichier de l'institution qui
  * les produit, combien de régimes sont recensés, et à quelle date. Tout le reste
- * est une pièce justificative, et une pièce justificative se range.
+ * est une pièce justificative — la liste des séries certifiées, la fiabilité
+ * décennie par décennie, les quatre-vingt-neuf régimes un par un —, et une
+ * pièce justificative se range.
  *
- * Elle pesait 5 851 mots et huit tableaux dépliés. Rien n'en est retiré : ce qui
- * rend un chiffre vérifiable doit rester lisible, et l'est, à un clic.
+ * Elle pesait 5 851 mots et huit tableaux dépliés, davantage que la page Coût
+ * avant sa refonte. Rien n'en est retiré : ce qui rend un chiffre vérifiable
+ * doit rester lisible, et l'est, à un clic.
  */
 function methodeSources(contexte) {
   const simulateur = contexte.simulateur();
@@ -10657,9 +11219,9 @@ function methodeSources(contexte) {
     ]);
 
   const journal = contexte.paquet.certification || {};
-  // Le compte des institutions était écrit en dur des deux côtés — « 28 »
-  // pour 36 : il vient maintenant du paquet, que `construire_donnees.py`
-  // remplit depuis `data/sources.yaml`.
+  // Le compte des institutions était écrit en dur, dans le rendu Python comme
+  // ici — « 28 » quand le manifeste en portait 36 : il vient maintenant du
+  // paquet, que `construire_donnees.py` remplit depuis `data/sources.yaml`.
   const institutions = String(contexte.paquet.institutions_citees ?? 0);
   const series = journal.series || {};
   const certifications = Object.entries(series)
@@ -10872,8 +11434,9 @@ ${detail}
  * ELLE SE LIT EN UNE MINUTE. C'est la contrainte, et elle tient à ce qu'est
  * cette page : un programme politique, lu par quelqu'un qui n'a pas demandé à le
  * lire. Quatre propositions, un tableau qui les oppose terme à terme au système
- * actuel, et un lien pour vérifier. Le reste est replié : présent pour qui veut,
- * hors du chemin pour qui n'a que trente secondes.
+ * actuel, les questions de l'électeur, et un lien pour vérifier. Le reste est
+ * replié : présent pour qui veut, hors du chemin pour qui n'a que trente
+ * secondes.
  */
 function programme(contexte) {
   const base = contexte.base;
@@ -10911,7 +11474,8 @@ function programme(contexte) {
         "un chiffre publié chaque année"],
       // La transmission est le seul point où les deux systèmes ne promettent
       // pas la même NATURE de droit : une pension s'éteint, un capital se
-      // lègue. Le dire ici, et non dans un dépliant.
+      // lègue. Le dire ici, et non dans un dépliant, parce que c'est ce que la
+      // part capitalisée ajoute et qu'aucune autre ligne du tableau ne porte.
       ["Si vous mourez avant la retraite",
         "vos cotisations restent au système",
         "le capital de la part capitalisée revient à vos héritiers"],
@@ -10923,7 +11487,8 @@ function programme(contexte) {
 
   // Les trois gestes du calcul. Ils étaient au format du texte courant, et se
   // lisaient comme une note de bas de page à côté du tableau qui leur fait
-  // face — alors qu'ils pèsent autant.
+  // face — alors qu'ils pèsent autant. Chiffres de 50 px, texte de 24, un filet
+  // entre chacun.
   const gestes = [
     "<strong>On inscrit</strong> chaque cotisation sur votre compte, "
     + "au premier euro, sans plafond.",
@@ -10945,10 +11510,21 @@ function programme(contexte) {
     + "pas de surprise.</strong>",
   );
 
-  // Une seule liste repliée, et chaque sujet à un seul endroit : les neuf
-  // dépliants « Pour aller plus loin » sont rangés sous les questions qu'ils
-  // traitent, et les trois gestes portent l'identifiant « le-calcul » que
-  // visait le dépliant du calcul, parti. Voir `_programme`.
+  // UNE SEULE LISTE REPLIÉE, ET CHAQUE SUJET À UN SEUL ENDROIT. La page en
+  // alignait deux, l'une sous l'autre : onze questions de l'électeur, puis neuf
+  // dépliants « Pour aller plus loin » qui traitaient les mêmes sujets dans la
+  // voix du programme — le plancher, la part capitalisée, le coût —, et chaque
+  // réponse courte renvoyait plus bas vers l'un d'eux : vingt titres, et le
+  // lecteur ne savait laquelle des deux piles ouvrir. Chaque développement est
+  // désormais rangé sous la question à laquelle il répond
+  // (`programmeQuestions`), et les deux dépliants qui ne faisaient que redire
+  // ont disparu : le calcul, que les trois gestes disent en clair plus haut, et
+  // le plan du site, que le bandeau porte sur chaque page (23 septembre 2026).
+  //
+  // Les trois gestes portent l'identifiant « le-calcul », que visait le
+  // dépliant « Comment une pension serait calculée » : la réponse sur les
+  // trimestres y renvoie, et le script de la page y pose le focus — d'où
+  // `tabindex="-1"`, qu'un bloc sans lien ni champ n'a pas de naissance.
   return `
 ${tete}
 
@@ -10993,7 +11569,9 @@ retraite</a><a href="${g.lien("/cout")}">Ce que ça coûte, et qui paie</a></p>
 
 /**
  * Pourquoi le système actuel ne va pas : la réponse à « Pourquoi changer de
- * système ? ». Portage de `_programme_pourquoi`.
+ * système ? ». C'était le premier des neuf dépliants « Pour aller plus loin ».
+ * Il répond à une question que l'électeur pose dans ses mots, et il est rangé
+ * sous elle, suivi de ce qui la prolonge : en quoi le compte serait plus juste.
  */
 function programmePourquoi(contexte) {
   const regimes = contexte.simulateur().catalogue.taille;
@@ -11021,8 +11599,11 @@ retraite par répartition ? C'est l'objet de la page
 }
 
 /**
- * La note signée, sous « Ces chiffres sont-ils fiables ? ». Portage de
- * `_programme_signature`.
+ * La note signée, sous « Ces chiffres sont-ils fiables ? » : qui publie ce
+ * site, pourquoi, et avec quelles réserves. Elle était dans le dépliant « Tout
+ * vérifier, page par page », avec une liste des huit autres pages que le
+ * bandeau porte déjà, en tête de chacune. La liste est partie ; la note reste,
+ * sous cette question, parce que c'est la même question.
  */
 function programmeSignature() {
   return `
@@ -11042,8 +11623,8 @@ licence libre : <a href="${g.DEPOT}">le dépôt</a>.</p>`;
 }
 
 /**
- * Les fractions dans lesquelles l'accueil dit un ordre de grandeur. Copie de
- * `FRACTIONS_EN_MOTS` dans `web/pages.py`.
+ * Les fractions dans lesquelles l'accueil dit un ordre de grandeur. « 31 % » se
+ * lit ; « un tiers » se retient, et c'est ce qu'on répète en sortant.
  */
 const FRACTIONS_EN_MOTS = [
   [1 / 10, "un dixième"], [1 / 5, "un cinquième"], [1 / 4, "un quart"],
@@ -11063,9 +11644,14 @@ export function fractionEnMots(part) {
 }
 
 /**
- * « de l'ordre d'un quart à un tiers » : la baisse, dite en fractions — celles
- * des deux écarts médians de ce qu'on touche sans rien ajouter. Portage de
- * `_ordre_de_grandeur`.
+ * « de l'ordre d'un quart à un tiers » : la baisse, dite en fractions.
+ *
+ * CALCULÉE, ET NON ÉCRITE : les bornes sont les fractions les plus proches des
+ * deux écarts médians de ce qu'on touche sans rien ajouter — la carrière à
+ * venir, la pension déjà versée. Les cinq points volontaires n'y entrent pas :
+ * un ordre de grandeur annoncé en tête ne suppose pas une épargne que personne
+ * n'oblige. Le signe, lui, n'est pas lu ici : c'est le contrôle
+ * `ordre_de_grandeur_de_la_baisse` qui refuse une « baisse » positive.
  */
 export function ordreDeGrandeur(ecarts) {
   const parts = [-ecarts.aVenir, -ecarts.dejaLiquidees].sort((a, b) => a - b);
@@ -11075,8 +11661,13 @@ export function ordreDeGrandeur(ecarts) {
 }
 
 /**
- * La ligne « Votre retraite » du tableau de l'accueil, ou aucune : ce que
- * cela donne, que le tableau taisait. Portage de `_ligne_du_montant`.
+ * La ligne « Votre retraite » du tableau de l'accueil, ou aucune.
+ *
+ * CE QUE CELA DONNE, que le tableau taisait : il opposait les deux systèmes
+ * terme à terme sans dire le seul terme que tout le monde cherche. L'ordre de
+ * grandeur est celui de la première question, lu au même endroit ; la réponse
+ * en donne le détail. Sans écarts dans le bilan — un paquet d'avant eux —, la
+ * ligne n'est pas écrite.
  */
 function ligneDuMontant(ecarts) {
   if (ecarts === null) return [];
@@ -11088,12 +11679,41 @@ function ligneDuMontant(ecarts) {
 /**
  * Les questions qu'un électeur pose, et la réponse en quelques lignes.
  *
- * L'accueil exposait le programme dans l'ordre de celui qui l'a écrit ;
- * l'électeur arrive avec d'autres questions, dans un autre ordre. Chaque
- * réponse ne dit que ce que le site établit ailleurs : la phrase en gras est au
- * catalogue des affirmations, le lien de fin mène à la preuve, et rien n'y est
- * simulé — les écarts médians de la première réponse sont lus dans le bilan
- * figé. Voir `_programme_questions` dans `web/pages.py`.
+ * L'accueil exposait le programme dans l'ordre de celui qui l'a écrit :
+ * pourquoi changer, comment on calcule, en quoi c'est plus juste. L'électeur
+ * arrive avec d'autres questions, dans un autre ordre : ma retraite va-t-elle
+ * baisser, et la mienne si je suis déjà parti, que deviennent mes trimestres, à
+ * quel âge pourrai-je partir. Aucune n'avait de réponse directe sur la page ; la
+ * plupart en avaient une, rangée sous un autre titre, dans un dépliant qu'il
+ * fallait savoir ouvrir.
+ *
+ * Chaque réponse tient en trois ou quatre phrases et ne dit que ce que le site
+ * établit ailleurs. La phrase en gras est au catalogue des affirmations, sous
+ * le contrôle qui la vérifie sur le modèle ; le lien de fin mène à la preuve.
+ * Les chiffres sont ceux des paramètres (changer la garantie change la
+ * réponse), et rien n'y est simulé : l'accueil ne lance aucun calcul.
+ *
+ * LA PREMIÈRE RÉPONSE EST CELLE QUI COÛTE, et elle est écrite comme le
+ * simulateur la montrera : le plus souvent, la pension de la proposition est
+ * plus basse que la promesse du système actuel. L'électeur l'apprendrait en
+ * trois clics ; la lui taire ici lui ferait lire le reste comme une réclame.
+ * Elle dit DE COMBIEN depuis le 23 septembre 2026 — « pour que les gens aient
+ * une idée de la baisse » : un ordre de grandeur en fractions, puis les trois
+ * écarts médians de la grille des cas types. Ceux-là ne sont pas simulés ici
+ * non plus : l'accueil les lit dans le bilan figé, où
+ * ``scripts/construire_donnees.py`` les a écrits sous les réglages de
+ * référence — ceux sous lesquels l'accueil se rend toujours.
+ *
+ * LA RÉPONSE COURTE D'ABORD, LE DÉVELOPPEMENT ENSUITE, DANS LE MÊME DÉPLIANT.
+ * Les neuf dépliants « Pour aller plus loin » répondaient aux mêmes questions,
+ * plus bas, dans la voix du programme, et chaque réponse courte finissait par
+ * un renvoi vers l'un d'eux. Ils sont maintenant rangés sous la question qu'ils
+ * traitent, derrière la réponse courte et sous leur titre d'origine : le
+ * plancher sous les petites retraites, la part capitalisée sous la Bourse, les
+ * impôts supprimés sous la fiche de paie, les points de blocage sous le coût,
+ * la note signée sous la fiabilité. Deux questions s'ajoutent pour ceux qui
+ * n'en avaient aucune : pourquoi changer, et comment on passe d'un système à
+ * l'autre. Treize questions en une liste, au lieu de vingt titres en deux.
  */
 function programmeQuestions(contexte) {
   const base = contexte.base;
@@ -11125,9 +11745,9 @@ function programmeQuestions(contexte) {
   const veuve = vers("la-veuve", "Ce que cela change pour une veuve");
   const methode = `<a href="${g.lien("/methode")}">Le détail du calcul</a>`;
   const cout = `<a href="${g.lien("/cout")}">La page Coût</a>`;
-  // Qui paie la baisse de la cotisation : une TVA à taux unique du 23 au
-  // 24 septembre 2026 ; sans elle, le déficit se lit contre celui du système
-  // actuel. Voir `_programme_questions`.
+  // Qui paie la baisse de la cotisation. Une TVA à taux unique l'a payée du 23
+  // au 24 septembre 2026 ; sans elle, le déficit de transition se lit contre
+  // celui du système actuel, sur les mesures des points de blocage.
   let quiPaie;
   if (base.taux_tva_liberal > 0.0) {
     quiPaie = `Baisser la cotisation à ${taux} a un prix, et la consommation le `
@@ -11165,9 +11785,9 @@ function programmeQuestions(contexte) {
 
   // De combien : trois médianes de la grille des cas types, lues dans le
   // bilan figé. Des BAISSES, dites sans signe : la phrase porte le sens. Un
-  // paquet d'avant elles — gardé en cache par le navigateur — n'en porte pas,
-  // et les deux réponses se taisent alors sur le chiffre plutôt que d'emporter
-  // la page. Voir `_programme_questions`.
+  // paquet d'avant elles — celui d'avant le 23 septembre 2026, qu'un navigateur
+  // a pu garder en cache — n'en porte pas, et les deux réponses se taisent
+  // alors sur le chiffre plutôt que d'emporter la page.
   const ecarts = contexte.bilan().ecarts;
   let ordre = "";
   let combien = "";
@@ -11336,8 +11956,20 @@ sans que personne ne l'ait voté.</p>
  */
 /**
  * Le taux de cotisation retraite d'aujourd'hui, parts salariale et patronale
- * additionnées. Copie de `TAUX_ACTUEL_*` dans `web/pages.py`, où la
- * décomposition ligne à ligne est écrite.
+ * additionnées — la base sur laquelle les 18 % de la proposition se comparent.
+ * Ce n'est pas une moyenne inter-régimes : c'est le total du CAS LE PLUS
+ * COURANT, un salarié non cadre du privé sous le plafond, décomposé ainsi :
+ *
+ *     retraite de base plafonnée       6,90 %  +  8,55 %  = 15,45 %
+ *     retraite de base déplafonnée     0,40 %  +  2,11 %  =  2,51 %
+ *     Agirc-Arrco tranche 1            3,15 %  +  4,72 %  =  7,87 %
+ *     CEG                              0,86 %  +  1,29 %  =  2,15 %
+ *     -------------------------------------------------------------
+ *     total                           11,31 %  + 16,67 %  = 27,98 %
+ *
+ * Les pages arrondissent à 28 %, 11,3 % et 16,7 %. Tout autre statut cotise
+ * autrement, et c'est dit partout où le chiffre paraît : « pour un salarié du
+ * privé », jamais « en moyenne ».
  */
 export const TAUX_ACTUEL_SALARIAL = 0.1131;
 export const TAUX_ACTUEL_PATRONAL = 0.1667;
@@ -11349,13 +11981,23 @@ const AGE_OUVERTURE_GARANTIE = 65;
 /**
  * Les quatre engagements du programme, chiffrés, numérotés 01 à 04.
  *
- * Trois niveaux par carte : le CHIFFRE en or attire l'œil, la PROMESSE en
- * serif porte le message — c'est elle qui se perdait quand les cartes n'en
- * avaient que deux —, le DÉTAIL technique répond à qui veut savoir comment. Un
- * ou deux passages en or par carte, jamais plus, et doublés d'un demi-gras
- * pour survivre en niveaux de gris.
+ * C'est la section qui porte le message, et elle a mis trois états à le porter.
+ * D'abord quatre chiffres nus, qu'on lisait comme des statistiques orphelines ;
+ * puis les mêmes sous un titre, qui redisait ce que le titre de la page disait
+ * déjà ; enfin ceux-ci — numérotés, sur trois niveaux nets.
  *
- * Copie de `_engagements` dans `web/pages.py`.
+ * Les trois niveaux sont le fond de l'affaire. Le CHIFFRE en or attire l'œil ;
+ * la PROMESSE en serif, en crème plein contraste, porte le message, et c'est
+ * elle qui se perdait quand les cartes n'avaient que deux niveaux ; le DÉTAIL
+ * technique, plus discret mais à 18 px — pas 15 —, répond à celui qui veut
+ * savoir comment.
+ *
+ * Dans chaque carte, un ou deux passages en or, jamais plus : au-delà,
+ * l'emphase ne désigne plus rien. Ils sont doublés d'un demi-gras, pour
+ * survivre en niveaux de gris comme en daltonisme.
+ *
+ * Les quatre valeurs sont celles du MODÈLE, et non des nombres écrits ici :
+ * changer `garantie_vieillesse_mensuelle` change la page.
  */
 function engagements(contexte) {
   const base = contexte.base;
@@ -11366,6 +12008,10 @@ function engagements(contexte) {
   );
   const garantie = base.garantie_vieillesse_mensuelle;
   const isolement = base.allocation_isolement_mensuelle;
+  // Seul : la garantie plus l'allocation d'isolement. En couple : la garantie
+  // pour chacun, et rien de plus — l'isolement ne se verse qu'à qui vit seul.
+  // « Une garantie de 800 € » était trompeur : c'est le plancher par personne,
+  // pas ce que touche quelqu'un.
   const seul = g.euros(garantie + isolement);
   const couple = g.euros(2 * garantie);
 
@@ -11381,8 +12027,14 @@ function engagements(contexte) {
       "de cotisation : la répartition, "
       + '<strong class="cle-texte">plus un capital à votre nom</strong>.',
       // Le taux d'aujourd'hui D'ABORD, puis ce que deviennent ses points :
-      // 18 + 5 + 5. Sa décomposition, 11,3 % + 16,7 %, est partie le
-      // 23 septembre 2026. Voir `_engagements` en Python.
+      // 18 + 5 + 5. Dans l'autre ordre, trois pourcentages arrivaient avant le
+      // repère qui permet de les lire, et « restent 5 % rendus » laissait
+      // l'électeur chercher d'où ils restaient.
+      //
+      // La décomposition du taux d'aujourd'hui — 11,3 % + 16,7 % — est partie
+      // le 23 septembre 2026 : deux pourcentages de plus dans la carte qui en
+      // comptait déjà quatre, pour une précision que la fiche de paie du
+      // simulateur donne ligne à ligne.
       `Aujourd'hui, ${g.pourcentage(TAUX_ACTUEL_TOTAL, false, 0)} du `
       + "salaire brut d'un salarié du privé, employeur compris. Demain, "
       + '<strong class="cle-texte">le même taux pour tout le monde</strong> : '
@@ -11416,14 +12068,21 @@ function engagements(contexte) {
 /**
  * Le formulaire court de l'accueil : quatre champs, et « Calculer ».
  *
- * Il est SOUS LE TITRE, avant même les engagements : la preuve est mise à
- * hauteur de la promesse. Les noms des champs sont exactement ceux du grand
- * formulaire, parce que c'est la même adresse qui les reçoit.
+ * Le site est un simulateur, et rien du premier écran ne le disait : le mot
+ * n'était que dans un onglet, et le seul bouton arrivait au troisième écran —
+ * au cinquième sur un téléphone. Il est maintenant SOUS LE TITRE, sur le
+ * panneau crème, avant même les engagements : la preuve est mise à hauteur de
+ * la promesse.
+ *
+ * Quatre champs et non douze. Ce sont ceux qui suffisent à une carrière
+ * ordinaire ; la page Simuler porte le formulaire entier, et le lien y mène
+ * pour une carrière hachée. Les noms des champs sont exactement ceux du grand
+ * formulaire (`naissance`, `debut`, `statut`, `liquidation`), parce que c'est
+ * la même adresse qui les reçoit — et que l'écoute de soumission d'`index.html`
+ * lit l'`action`, sans rien savoir du formulaire.
  *
  * `vers` est la page qui reçoit la saisie : l'accueil renvoie au simulateur,
  * la page Trajectoire se renvoie à elle-même.
- *
- * Copie de `_simulateur_court` dans `web/pages.py`.
  */
 export function simulateurCourt(contexte, vers = "/simuler") {
   const saisie = new Saisie();
@@ -11444,6 +12103,9 @@ export function simulateurCourt(contexte, vers = "/simuler") {
         max: saisie.jourDe(AGE_DEBUT_MAXIMAL),
         data_age_min: String(AGE_DEBUT_MINIMAL),
         data_age_max: String(AGE_DEBUT_MAXIMAL) }),
+    // Une ligne d'aide, comme sous chaque date : sans elle, l'étiquette était
+    // plus courte d'une ligne et le menu partait plus bas que les champs
+    // voisins.
     g.liste("statut", "Statut",
       optionsStatuts(affiliations, saisie.dateDe(saisie.debut)),
       saisie.statut, "celui du premier emploi"),
@@ -11475,9 +12137,15 @@ export const FOYERS_GARANTIE = [[300, 300], [300, 1500], [900, 900], [300, 5000]
 
 /**
  * Ce que le plancher individualisé change, en cinq lignes : l'argument le
- * plus immédiatement parlant du site, en haut de l'accueil. Les deux colonnes
- * sont calculées : l'ASPA sur ses deux barèmes lus, la garantie sur ses deux
- * montants — voir le Python.
+ * plus immédiatement parlant du site, en haut de l'accueil, et non plus dans
+ * un dépliant après trois tableaux denses.
+ *
+ * LES DEUX COLONNES SONT CALCULÉES. L'ASPA sur ses deux barèmes lus — une
+ * personne seule, un couple d'allocataires —, la garantie sur ses deux
+ * montants. Jusqu'au 23 septembre 2026, la première colonne recopiait la
+ * seconde appliquée au foyer : elle cachait qu'un couple à 300 et 300 euros
+ * reçoit aujourd'hui 1 020 euros et en recevrait 1 000, et qu'une personne
+ * seule à 300 euros en reçoit 744 et en recevrait 750.
  */
 export function tableauGarantie(contexte) {
   const base = contexte.base;
@@ -11637,8 +12305,9 @@ distribution réelle des pensions, non sur des cas types.</p>`;
  * La part capitalisée, expliquée à qui n'a pas ouvert la page Méthode.
  *
  * Trois questions et trois seulement : ce que c'est, ce que cela change pour
- * celui qui cotise, et ce que cela ne fait pas. Copie de
- * `_programme_capitalisation` dans `web/pages.py`.
+ * celui qui cotise, et ce que cela ne fait pas. Le détail — la courbe des
+ * taux, l'échelle de maturités, le barème de frais — est sur la page Méthode ;
+ * ici, on répond à « qu'est-ce que ça me fait ? ».
  */
 function programmeCapitalisation(contexte) {
   const base = contexte.base;
@@ -11649,8 +12318,11 @@ function programmeCapitalisation(contexte) {
     base.taux_cotisation_liberal + base.taux_capitalisation_obligatoire, false, 0,
   );
   const propose = g.pourcentage(tauxRetraitePropose(base), false, 0);
-  // Le titre sépare ce qui est imposé de ce qui est libre. Voir
-  // `_programme_capitalisation`.
+  // LE TITRE SÉPARE CE QUI EST IMPOSÉ DE CE QUI EST LIBRE. Il disait « 10 % qui
+  // vous appartiennent », sous une réponse qui venait de dire « 5 %, et ce que
+  // vous y ajoutez » et à côté des « 18 % + 5 % » de la carte : deux chiffres
+  // pour une même chose, qu'un nouveau venu ne réconciliait pas
+  // (23 septembre 2026).
   const libre = base.taux_capitalisation_volontaire > 0
     ? `, et ${volontaire} de plus si vous le voulez` : "";
   return `
@@ -11825,12 +12497,35 @@ contienne, et elle n'est pas petite.</p>`;
 
 /**
  * Ce que la section des points de blocage CITE, à la précision où elle le
- * cite : la table `MESURES_BLOCAGES` du Python, que des tests recalculent.
- * Les deux doivent rester identiques, et les témoins de page le vérifient.
+ * cite. La page d'accueil ne calcule rien : ces valeurs viennent de trois
+ * scripts du dépôt — ``solde_fusion.py``, ``stock_age_legal.py``,
+ * ``proposition_prospective.py`` —, de ``donnees/tva.py`` et du coût par
+ * défaut, et chacune est RECALCULÉE par un test Python
+ * (``test_solde_fusion.py``, ``test_stock_age_legal.py``,
+ * ``test_proposition_prospective.py``, ``test_tva.py``), qui lit cette table
+ * par ``web/site.py`` : un changement du modèle qui en déplace une fait échouer
+ * la suite au lieu de laisser la page dire faux. Jusqu'au 23 septembre 2026
+ * elles étaient écrites dans le texte, et quatre avaient vieilli sans que rien
+ * ne le dise — un solde de −1,5 point, une dette de 103 % du PIB, un
+ * coefficient de 0,92, une variante prospective à −3,9.
  */
 export const MESURES_BLOCAGES = {
+  // solde_fusion.py, hypothèse A : le taux du régime unique du modèle, en %.
   taux_regime_unique: 25.8,
+  // Le scénario 4 du modèle (`notionnel_retroactif_employeur`) sous A moins la
+  // proposition, solde moyen 2026-2070, en points de PIB : ce que coûtent les
+  // 18 %, l'âge légal de 65 ans de la proposition compris — il en rend un
+  // demi-point.
   cout_18_pour_cent: 1.9,
+  // Le coût par défaut : soldes moyens 2026-2070, dette et coefficient à
+  // l'horizon, en points de PIB, en % du PIB et en valeur. Mesurés avec l'âge
+  // légal de 65 ans et SANS TVA à taux unique : la proposition ne réforme plus
+  // la TVA depuis le 24 septembre 2026. Avec une TVA (`tva_affectee`
+  // positive), l'accueil lit ces mêmes clés autrement, une dette négative y
+  // étant des réserves. Et le compte d'un agent de l'État ne reçoit, jusqu'à
+  // la bascule, que la part « retraite seule » du taux que l'État verse — le
+  // défaut depuis le même jour : sous le taux entier, la proposition était à
+  // −0,9, 59 % et 0,85, et 1,03 en 2070.
   solde_moyen_proposition: -0.5,
   solde_moyen_actuel: -1.1,
   dette_2070_proposition: 33,
@@ -11838,21 +12533,37 @@ export const MESURES_BLOCAGES = {
   coefficient_minimum: 0.9,
   decennie_coefficient_minimum: 2040,
   coefficient_2070: 1.06,
+  // donnees/tva.py : ce que la TVA à taux unique rapporte de plus que les
+  // quatre taux d'aujourd'hui, en points de PIB ; zéro, la TVA n'étant pas
+  // réformée.
   tva_affectee: 0.0,
+  // proposition_prospective.py : le solde moyen de la variante qui laisse le
+  // stock intact, en points de PIB.
   solde_moyen_prospectif: -2.7,
+  // stock_age_legal.py : ce que coûte le diviseur de l'âge de l'assuré au lieu
+  // de celui de 65 ans, en points de PIB par an.
   cout_diviseur_age_legal: 0.2,
 };
 
 /**
  * Les points de blocage regardés avant de choisir, et ce qu'on en a fait.
  *
- * Les chiffres sont CITÉS, et la page le dit : ils viennent de trois scripts
- * du dépôt que le portage ne porte pas, et du coût par défaut. La page
- * d'accueil ne calcule rien, et cette section pas davantage.
+ * Les chiffres sont CITÉS, et la page le dit : ils viennent de trois scripts du
+ * dépôt qui refont le solde sous d'autres régimes uniques, sous un autre
+ * traitement du stock et sous une version prospective de la proposition —
+ * vingt secondes de calcul chacun, et des points d'entrée que le portage ne
+ * porte pas —, et du coût par défaut. La page d'accueil ne calcule rien, et
+ * cette section pas davantage : elle cite `MESURES_BLOCAGES`, que des tests
+ * recalculent.
+ *
+ * Les points de PIB mesurés sont dits aussi en milliards, au PIB de la
+ * dernière année publiée — la règle de tout le site, `pibDeConversion`. Ce
+ * n'est pas un calcul de plus : c'est la même mesure, dans l'unité où on la
+ * lit.
  */
 function programmeBlocages(contexte) {
   // Les points de PIB mesurés, dits aussi en milliards au PIB de la dernière
-  // année publiée. Voir le Python.
+  // année publiée : la même mesure, dans l'unité où on la lit.
   const comptes = contexte.comptes();
   const auPibDe = `au PIB de ${comptes.pib.derniereAnnee}`;
   const m = MESURES_BLOCAGES;
@@ -11860,9 +12571,11 @@ function programmeBlocages(contexte) {
   const pt = (valeur, decimales = 1) => g.nombre(valeur, decimales).replace("-", "−");
   // « 1,9 point », « 2,2 points » : le pluriel à partir de deux.
   const accordPoint = (valeur) => (Math.abs(valeur) < 2 ? "point" : "points");
-  // La TVA à taux unique, quand la proposition la porte ; sans elle — le
-  // défaut depuis le 24 septembre 2026 —, le solde se lit contre celui du
-  // système actuel. Voir `_programme_blocages`.
+  // La TVA à taux unique, quand la proposition la porte : les mesures le
+  // disent, et deux lignes en changent de lecture. Sans elle — le défaut
+  // depuis le 24 septembre 2026, les quatre taux restant ceux d'aujourd'hui —,
+  // le solde se lit contre celui du système actuel, et le pilotage revient au
+  // coefficient d'équilibre.
   const avecTva = m.tva_affectee > 0.0;
   const prospectif = "Le recalcul est maintenu. La version qui laisse le stock intact a été "
     + "chiffrée et écartée : "

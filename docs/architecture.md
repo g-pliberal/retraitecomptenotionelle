@@ -1599,8 +1599,9 @@ mesure :
 - Rien de ce qui porte une information ne se perd : tout est déplacé, et
   l'annexe B dit où.
 - Un fichier ne se retire que si son contenu existe ailleurs à l'identique,
-  vérifié. C'est le cas de `web/pages.py` et de `web/gabarit.py`, à la
-  phase 8.
+  vérifié. Ce fut le cas de `web/pages.py` et de `web/gabarit.py`, retirés à
+  la phase 8 : leur rendu était celui du portage, caractère pour caractère, et
+  leur calcul est passé dans `saisie.py` et `contexte.py`.
 - Un script de conservation vérifie que chaque paragraphe des documents et
   chaque entrée des registres d'aujourd'hui se retrouvent dans le nouveau
   rangement. Il se retire après la phase 8, quand plus rien ne se déplace.
@@ -2136,9 +2137,9 @@ Ce que les deux fiches montrent :
 | `src/retraite_notionnelle/cout.py`, `donnees/` | le pilote de population et la page Coût |
 | `src/retraite_notionnelle/config.py` | ses décisions de modélisation deviennent des paramètres de couche ou des notes de décision |
 | `src/retraite_notionnelle/simulateur.py` | l'échéancier (`echeancier.py`, et son journal, `journal.py`, depuis la phase 5), et l'entrée des univers, depuis la phase 7 : il bâtit les scénarios 2 à 6 depuis eux, et le paquet du site les porte résolus |
-| `src/retraite_notionnelle/web/pages.py`, `web/gabarit.py` | retirés à la phase 8 : leur rendu est déjà comparé à l'identique à celui de `pages.js` et `gabarit.js` (`tests/js/comparer-pages.mjs`) |
-| `moteur/js/` | le même découpage que le Python, fichier pour fichier ; `scenario-actuel.js` découpé dans `moteur/js/droit/` |
-| `moteur/donnees.json`, `moteur/style.css` | fabriqués, comme aujourd'hui ; le paquet se découpe par domaine |
+| `src/retraite_notionnelle/web/pages.py`, `web/gabarit.py` | retirés à la phase 8, leur rendu étant celui de `pages.js` et `gabarit.js` au caractère près. Ce qui était du calcul est passé dans `saisie.py` (la saisie : ce que l'adresse dit) et `contexte.py` (les données du site et le jeu de règles sous lequel il calcule), que `moteur/js/saisie.js` et `contexte.js` portent. Le texte du site n'est plus écrit qu'en JavaScript ; le Python le lit par `web/site.py`, qui le fait rendre par node : les tests des pages, les témoins de pages, les sondes de la prose. La feuille de style est sa propre source, `moteur/style.css` |
+| `moteur/js/` | le même découpage que le Python, fichier pour fichier ; `scenario-actuel.js` découpé dans `moteur/js/droit/` ; `pages.js` et `gabarit.js`, le texte du site, sans double en Python depuis la phase 8 |
+| `moteur/donnees.json`, `moteur/style.css` | le paquet, fabriqué comme aujourd'hui, et qui se découpe par domaine ; la feuille de style, sa propre source depuis la phase 8, que rien ne fabrique plus |
 | `scripts/` | inchangés ; `scripts/fetch/` reste l'outillage de récupération et de certification |
 
 **Les tests**
@@ -2381,6 +2382,8 @@ Rien ne s'y efface.
 ---
 
 ## Les versions
+
+- **5.12**, 27 septembre 2026 : la phase 8 faite. Le texte du site n'est écrit qu'une fois, en JavaScript : `web/pages.py` et `web/gabarit.py` sont retirés, leur calcul passé dans `saisie.py` et `contexte.py` et dans leurs portages, la feuille de style devenue sa propre source ; le Python lit le site par `web/site.py`. L'annexe B dit où chaque chose est allée.
 
 - **5.11**, 27 septembre 2026 : la phase 7 faite. Les six scénarios sont des univers de droit, et le § 4.8 dit qu'une transition coupe le temps de l'univers. Le contrat C.4 gagne, par la règle additive, le paramètre, la valeur et le motif d'une opération, le numéro et le libellé d'un univers ; le vocabulaire, la liste des sélecteurs. L'annexe B dit où la proposition est allée.
 
