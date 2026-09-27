@@ -893,10 +893,10 @@ class ClassesCotisation:
     la première forme entre ici.
 
     ANNÉES SANS GRILLE PUBLIÉE : c'est la grille la plus récente qui précède
-    l'exercice qui s'applique, bornes et montants indexés sur les prix par
-    l'appelant — la convention déjà retenue pour la cotisation forfaitaire. Un
-    exercice antérieur à toute grille connue prend la plus ancienne, indexée de
-    la même façon.
+    l'exercice qui s'applique, bornes et montants ramenés par l'appelant au
+    rapport des plafonds de la Sécurité sociale des deux années, parce que les
+    grilles sont écrites en plafonds. Un exercice antérieur à toute grille
+    connue prend la plus ancienne, ramenée de la même façon.
     """
 
     def __init__(self, racine: Path) -> None:

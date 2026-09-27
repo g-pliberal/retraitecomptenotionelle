@@ -34,8 +34,8 @@ inventaire:
     50-1318 (actes médicaux par âge de 1950 à 1997, classes de revenu en
     AMV de 1998 à 2014, points depuis 2015), mais aucun montant d'époque
     n'est dans le texte — la valeur de l'acte et le prix du point sont
-    fixés hors index — : la grille de 2016 indexée sur les prix tient lieu
-    de montant avant 2016. La règle d'âge — taux plein à 65 ans, 1,25 % par
+    fixés hors index — : la grille de 2016, ramenée par le rapport des
+    plafonds, tient lieu de montant avant 2016. La règle d'âge — taux plein à 65 ans, 1,25 % par
     trimestre avant, que la durée n'annule pas — et la bonification pour
     trois enfants ne sont lues que dans les statuts de 2021 : la première
     est supposée la même avant, la seconde n'est servie que depuis 2022.
@@ -61,7 +61,8 @@ periodes:
       chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
       (AMV) est fixé par l'ordre, le prix d'achat du point par décret
       annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
-      indexée sur les prix, tient lieu de montant, et la période dit ce
+      ramenée par le rapport des plafonds de la Sécurité sociale, tient lieu
+      de montant, et la période dit ce
       que le droit exigeait. 1950-1953 (LEGIARTI000006776818) : « la
       cotisation annuelle des vétérinaires est calculée en fonction d'un
       certain nombre d'actes médicaux, compte tenu de l'âge des intéressés
@@ -87,7 +88,8 @@ periodes:
       chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
       (AMV) est fixé par l'ordre, le prix d'achat du point par décret
       annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
-      indexée sur les prix, tient lieu de montant, et la période dit ce
+      ramenée par le rapport des plafonds de la Sécurité sociale, tient lieu
+      de montant, et la période dit ce
       que le droit exigeait. 1954-1966 (LEGIARTI000006776819) : premier
       tableau par âge — 50 actes avant trente-cinq ans, 80 de trente-cinq
       à soixante-cinq ans, 50 au-delà ; coefficients de réduction
@@ -114,7 +116,8 @@ periodes:
       chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
       (AMV) est fixé par l'ordre, le prix d'achat du point par décret
       annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
-      indexée sur les prix, tient lieu de montant, et la période dit ce
+      ramenée par le rapport des plafonds de la Sécurité sociale, tient lieu
+      de montant, et la période dit ce
       que le droit exigeait. 1967-1981 (LEGIARTI000006776820) : tableau
       par âge relevé — 95 actes avant trente-cinq ans, 152 de trente-cinq
       à soixante-cinq ans, 95 au-delà.
@@ -139,7 +142,8 @@ periodes:
       chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
       (AMV) est fixé par l'ordre, le prix d'achat du point par décret
       annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
-      indexée sur les prix, tient lieu de montant, et la période dit ce
+      ramenée par le rapport des plafonds de la Sécurité sociale, tient lieu
+      de montant, et la période dit ce
       que le droit exigeait. 1982-1992 (LEGIARTI000006776821) : 144 / 228
       / 144 actes selon l'âge, qui forment la classe obligatoire A ; deux
       classes spéciales I et II ouvertes aux revenus inférieurs aux
@@ -165,7 +169,8 @@ periodes:
       chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
       (AMV) est fixé par l'ordre, le prix d'achat du point par décret
       annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
-      indexée sur les prix, tient lieu de montant, et la période dit ce
+      ramenée par le rapport des plafonds de la Sécurité sociale, tient lieu
+      de montant, et la période dit ce
       que le droit exigeait. 1993-1997 (LEGIARTI000006776822) : 144 actes
       avant trente-deux ans ou après soixante-cinq, 228 entre les deux ;
       classes spéciales I (48 actes) et II.
@@ -190,9 +195,10 @@ periodes:
       chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
       (AMV) est fixé par l'ordre, le prix d'achat du point par décret
       annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
-      indexée sur les prix, tient lieu de montant, et la période dit ce
-      que le droit exigeait. 1998-2012 (LEGIARTI000006776823, décret du 2
-      décembre 1997) : PASSAGE AUX CLASSES DE REVENU — classe B (revenu
+      ramenée par le rapport des plafonds de la Sécurité sociale, tient lieu
+      de montant, et la période dit ce
+      que le droit exigeait. 1998-2012 (LEGIARTI000006776823, décret n°
+      97-1112 du 26 novembre 1997) : PASSAGE AUX CLASSES DE REVENU — classe B (revenu
       inférieur à 4 500 AMV) 480 AMV, classe C (4 500 à 6 000 AMV) 600
       AMV, classe D (au-delà) 720 AMV ; classes réduites super spéciale I
       (60 AMV) à A (360 AMV) sous 3 000 AMV de revenu. C'est la première
@@ -218,7 +224,8 @@ periodes:
       chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
       (AMV) est fixé par l'ordre, le prix d'achat du point par décret
       annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
-      indexée sur les prix, tient lieu de montant, et la période dit ce
+      ramenée par le rapport des plafonds de la Sécurité sociale, tient lieu
+      de montant, et la période dit ce
       que le droit exigeait. 2013-2014 (LEGIARTI000026885093) : mêmes
       classes et montants, l'assiette devient le revenu d'activité de
       l'article L. 131-6.
@@ -243,9 +250,10 @@ periodes:
       chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
       (AMV) est fixé par l'ordre, le prix d'achat du point par décret
       annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
-      indexée sur les prix, tient lieu de montant, et la période dit ce
-      que le droit exigeait. 2015-2021 (LEGIARTI000030774327, décret du 23
-      juin 2015) : PASSAGE AU POINT — la cotisation est « le prix d'achat
+      ramenée par le rapport des plafonds de la Sécurité sociale, tient lieu
+      de montant, et la période dit ce
+      que le droit exigeait. 2015-2021 (LEGIARTI000030774327, décret n°
+      2015-712 du 22 juin 2015) : PASSAGE AU POINT — la cotisation est « le prix d'achat
       du point (PA) multiplié par le nombre de points correspondant à la
       tranche de revenu » : classe B 16 PA (revenu inférieur à 4 500 ×
       IR), C 20 PA, D 24 PA ; l'indice de référence IR est fixé par le
@@ -271,7 +279,8 @@ periodes:
       chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
       (AMV) est fixé par l'ordre, le prix d'achat du point par décret
       annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
-      indexée sur les prix, tient lieu de montant, et la période dit ce
+      ramenée par le rapport des plafonds de la Sécurité sociale, tient lieu
+      de montant, et la période dit ce
       que le droit exigeait. 2022-2025 (LEGIARTI000044223137, décret n°
       2021-1358) : l'assiette passe de l'avant-dernière à l'année
       précédente ; classes inchangées. COTISATION PAR CLASSES, et la
@@ -368,7 +377,8 @@ periodes:
       chaque époque ne sont pas dans le texte — l'acte médical vétérinaire
       (AMV) est fixé par l'ordre, le prix d'achat du point par décret
       annuel — : la grille de `classes_cotisation.csv` la plus ancienne,
-      indexée sur les prix, tient lieu de montant, et la période dit ce
+      ramenée par le rapport des plafonds de la Sécurité sociale, tient lieu
+      de montant, et la période dit ce
       que le droit exigeait. Depuis 2026 (LEGIARTI000052567915, décret n°
       2025-1076, périodes courant à compter du 1er janvier 2026 ; puis
       LEGIARTI000054168212, décret n° 2026-418 du 29 mai 2026, en vigueur
