@@ -2413,6 +2413,9 @@ fois. Cinq commits. Un seul résultat bouge, celui que la phase rendait faux :
   faire, chacune dans son commit, avec le diff de ses témoins. Les phases de
   réorganisation sont finies ; les domaines suivent, un à la fois (§ 11).
 
+Le repère `phase-8` est posé sur 9799ba4, le 27 septembre 2026, avec l'accord
+du propriétaire, par `repere-phase-8.yml`, lancé une fois puis supprimé.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
