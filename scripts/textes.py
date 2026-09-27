@@ -67,6 +67,19 @@ def cle_de(titre: str) -> str:
     return simple[:60].rstrip("_")
 
 
+def cle_libre(cle: str, titre: str, prises: dict[str, str]) -> str:
+    """Une clé qu'aucun autre texte ne tient. Deux arrêtés du même jour ont la
+    même clé datée : le 10 juillet 2026, un arrêté par section libérale en
+    approuve les règlements. Le sigle entre parenthèses qui finit le titre les
+    distingue (``arrete_2026_07_10_carmf``), et, à défaut, un rang."""
+    sigle = re.search(r"\(([^()]*)\)\s*$", titre)
+    base = f"{cle}_{_simple(sigle.group(1))}" if sigle and _simple(sigle.group(1)) else cle
+    libre, rang = base, 2
+    while prises.get(libre, titre) != titre:
+        libre, rang = f"{base}_{rang}", rang + 1
+    return libre
+
+
 def _cle_d_article(article: str):
     """L351-4 avant L351-10 : les nombres se comparent en nombres."""
     return [(0, int(x)) if x.isdigit() else (1, x) for x in re.split(r"(\d+)", article or "")]
@@ -77,11 +90,15 @@ def _ligne(ident, cle, article, debut, fin, inscrite_le="") -> dict:
             "fin": "" if fin in ("", None, EN_VIGUEUR) else fin, "inscrite_le": inscrite_le}
 
 
-def selection(db, perimetre: dict, fiches: dict[str, dict]) -> tuple[dict[str, dict], dict[str, str]]:
+def selection(db, perimetre: dict, fiches: dict[str, dict],
+              connus: dict[str, str] | None = None) -> tuple[dict[str, dict], dict[str, str]]:
     """Les rédactions du périmètre que l'index porte, par identifiant, et le
-    titre de chaque texte, par clé."""
+    titre de chaque texte, par clé. Un texte déjà inscrit (``connus``, clé →
+    titre) garde sa clé ; un texte nouveau n'en prend jamais une déjà tenue."""
     lignes: dict[str, dict] = {}
     titres: dict[str, str] = {}
+    connus = connus or {}
+    cle_connue = {titre: cle for cle, titre in connus.items()}
     codes = {code["titre"]: code for code in perimetre["codes"]}
     requete = "SELECT id, num, date, fin FROM doc WHERE titre = ? AND id LIKE 'LEGIARTI%'"
     for code in perimetre["codes"]:
@@ -100,10 +117,11 @@ def selection(db, perimetre: dict, fiches: dict[str, dict]) -> tuple[dict[str, d
                 cle = codes[titre]["cle"] if titre in codes else cle_de(titre)
                 rangs = db.execute(requete + " AND num = ?", (titre, num))
             else:
-                cle = cle_de(titre)
+                cle = cle_connue.get(titre) or cle_de(titre)
                 rangs = db.execute(requete, (titre,))
-            if titres.get(cle, titre) != titre:
-                raise ValueError(f"deux textes sous la clé {cle} : {titres[cle]!r} et {titre!r}")
+            prises = {**connus, **titres}
+            if prises.get(cle, titre) != titre:
+                cle = cle_libre(cle, titre, prises)
             titres[cle] = titre
             for autre, numero, debut, fin in rangs:
                 lignes.setdefault(autre, _ligne(autre, cle, numero, debut, fin))
@@ -145,7 +163,7 @@ def poser(db, source: str, jour: str) -> int:
 def inscrire(db, source: str, jour: str) -> int:
     actuelles = {l["id"]: l for l in textes.redactions()}
     connus = textes.titres()
-    lignes, titres = selection(db, textes.perimetre(), carte.fiches())
+    lignes, titres = selection(db, textes.perimetre(), carte.fiches(), connus)
     nouvelles = sorted(set(lignes) - set(actuelles))
     remplacees = 0
     for ident, ligne in lignes.items():

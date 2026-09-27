@@ -113,3 +113,42 @@ def test_le_controle_suit_une_liste_copiee(tmp_path):
     """Le contrôle ne lit que les fichiers de la liste : une copie le rejoue."""
     shutil.copytree(textes.TEXTES, tmp_path, dirs_exist_ok=True)
     assert textes.controler(tmp_path) == []
+
+
+def test_deux_textes_du_meme_jour_ne_partagent_pas_une_cle():
+    """Le 10 juillet 2026, un arrêté par section libérale approuve ses
+    règlements : tous ont la clé datée ``arrete_2026_07_10``. Le texte déjà
+    inscrit garde la sienne ; un texte nouveau prend le sigle qui finit son
+    titre, ou un rang, et jamais la clé d'un autre."""
+    import importlib.util
+    import sqlite3
+    from pathlib import Path
+
+    chemin = Path(__file__).resolve().parents[1] / "scripts" / "textes.py"
+    spec = importlib.util.spec_from_file_location("script_textes", chemin)
+    script = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(script)
+
+    cavec = "Arrêté du 10 juillet 2026 portant approbation des règlements (CAVEC)"
+    carmf = "Arrêté du 10 juillet 2026 portant approbation des règlements (CARMF)"
+    carpimko = "Arrêté du 10 juillet 2026 portant approbation des règlements (CARPIMKO)"
+    db = sqlite3.connect(":memory:")
+    db.execute("CREATE TABLE doc (id TEXT, titre TEXT, num TEXT, date TEXT, fin TEXT)")
+    db.executemany("INSERT INTO doc VALUES (?, ?, ?, ?, ?)", [
+        (A, cavec, "2", "2026-07-11", "2999-01-01"),
+        (B, carmf, "2", "2026-07-11", "2999-01-01"),
+        (C, carpimko, "5", "2026-07-11", "2999-01-01"),
+    ])
+    fiches = {"f": {"textes_a_rattacher": [{"reference": f"{A}, {B} et {C}"}]}}
+    lignes, titres = script.selection(db, {"codes": [], "textes_cites": True}, fiches,
+                                      {"arrete_2026_07_10": cavec})
+    assert titres == {"arrete_2026_07_10": cavec, "arrete_2026_07_10_carmf": carmf,
+                      "arrete_2026_07_10_carpimko": carpimko}
+    assert {ident: ligne["texte"] for ident, ligne in lignes.items()} == {
+        A: "arrete_2026_07_10", B: "arrete_2026_07_10_carmf",
+        C: "arrete_2026_07_10_carpimko"}
+    assert script.cle_libre("arrete_2026_07_10", "Arrêté du 10 juillet 2026 (CARMF)",
+                            {**titres, "arrete_2026_07_10_carmf": carmf}) == \
+        "arrete_2026_07_10_carmf_2"
+    assert script.cle_libre("arrete_2026_07_10", "Arrêté du 10 juillet 2026 sans sigle",
+                            titres) == "arrete_2026_07_10_2"
