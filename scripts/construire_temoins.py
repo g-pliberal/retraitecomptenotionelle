@@ -687,6 +687,30 @@ def _cas() -> list[dict]:
         **enfants, "statut": "fonctionnaire_etat", "naissance": "1975",
         "naissances": "1998",
     }))
+    # LES BASCULES DES VERSIONS, là où le modèle datait à l'année ce que le
+    # droit date au jour : la veille et le lendemain de trois bornes que les
+    # fiches du domaine déclarent approchées. Chaque témoin fige ce que le
+    # modèle rend, et la correction qui suivra le fera bouger, chiffre par
+    # chiffre. Le b ter vaut pour les pensions prenant effet à compter du
+    # 1er septembre 2026 ; la loi n° 75-3, pour celles d'après le 30 juin
+    # 1974, avec sa condition de neuf ans d'éducation ; le décret de 2003 donne
+    # un trimestre par année d'éducation de 2004 à mars 2010.
+    cas.append(("enfants_b_ter_avant_septembre_2026", {
+        **enfants, "enfants": "2", "statut": "fonctionnaire_etat_super_actif",
+        "naissance": "1972", "debut": "22", "liquidation": "54.25",
+        "naissances": "1998,2005",
+    }))
+    cas.append(("enfants_loi_75_3_juillet_1974", {
+        **enfants, "enfants": "1", "naissance": "1914", "liquidation": "60.5",
+    }))
+    cas.append(("enfants_neuf_ans_d_education_avant_2004", {
+        **enfants, "enfants": "2", "naissance": "1930", "liquidation": "60",
+        "naissances": "1955,1985",
+    }))
+    cas.append(("enfants_un_trimestre_par_annee_d_education", {
+        **enfants, "enfants": "2", "naissance": "1948", "liquidation": "60",
+        "naissances": "1975,2004",
+    }))
     # La loi Boulin ne visait que les mères d'AU MOINS DEUX enfants : le même
     # départ, avec un enfant, ne donne rien.
     cas.append(("enfants_loi_boulin_enfant_unique", {

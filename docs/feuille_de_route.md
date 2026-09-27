@@ -2583,6 +2583,20 @@ enfants nés avant 2010. Restent de ce domaine : le bloc du formulaire, les
 trois corrections, les exemples publiés aux enfants datés, la page Coût et la
 décision de la proposition, puis la référence de conservation à refiger.
 
+**Deuxième étape : le bloc du formulaire**, le même jour. Le champ
+« Naissance des enfants », facultatif, suit le nombre d'enfants parmi les
+options : « 1995, 1998-06 », dans l'ordre des enfants ; ceux qu'il ne date
+pas restent présumés, et sa bulle dit à quel âge. Les pages du simulateur
+en changent, rien d'autre. Quatre témoins de plus fixent, aux bornes que les
+fiches déclarent approchées, ce que le modèle rend avant que chaque
+correction le déplace : une pension de la fonction publique d'avril 2026 et
+un enfant né en 2005, pour le b ter ; une pension de juillet 1974 et un
+enfant unique, pour la loi n° 75-3 ; une pension de 1990 et un enfant de
+cinq ans, pour la condition des neuf ans d'éducation ; une pension de 2008
+et un enfant de quatre ans, pour le trimestre par année d'éducation.
+`docs/limites.md`, `docs/methodologie.md` et l'architecture le disent : les
+naissances se déclarent, et la présomption ne pose que celles qu'on tait.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

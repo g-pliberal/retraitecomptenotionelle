@@ -145,6 +145,7 @@ SAISIES = {
     },
     "le relevé, les options": {
         **BASE, "sexe": "F", "profil": "plat", "primes": "0.2", "enfants": "3",
+        "naissances": "1996,1999-04",
         "interruptions": "1995:1996:education_enfant",
         "releve": "1998:salarie_prive_non_cadre:14200:4\n"
                   "1999:salarie_prive_non_cadre:15100:4",

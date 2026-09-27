@@ -102,8 +102,8 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   et la somme n'a jamais lieu.
 - **Bonifications de service.** Bonifications de dépaysement, de campagne
   militaire, du cinquième pour les emplois de sécurité. La bonification POUR
-  ENFANTS, elle, est servie : elle ne demande que le nombre d'enfants. Les
-  autres supposent de connaître le CORPS d'appartenance et le détail des
+  ENFANTS, elle, est servie : elle demande le nombre d'enfants et, à qui la
+  connaît, la naissance de chacun. Les autres supposent de connaître le CORPS d'appartenance et le détail des
   services, que la saisie ne demande pas.
 - **Le temps partiel.** Il compte à temps plein dans la durée d'assurance, et
   seulement à sa quotité dans les services qui liquident une pension de la
@@ -215,13 +215,15 @@ modèle n'a pas, ou décrit un dispositif qu'il représenterait faussement.
   selon un calendrier qui lui est propre, régime par régime. Le modèle applique
   d'emblée le coefficient plein à partir de la date d'entrée en vigueur portée
   par chaque fiche.
-- **Année de naissance des enfants.** Le modèle ne la collecte pas : il présume
-  les enfants nés aux trente ans de leur mère, l'âge moyen des mères à
-  l'accouchement (la présomption `naissance_des_enfants`, que la chronologie
-  pose et que le moteur lit ; une naissance déclarée la remplacerait). La
-  convention ne déplace qu'une chose, la bascule des quatre aux deux
-  trimestres de la fonction publique, qui tombe ainsi sur les générations nées
-  à partir de 1974. Elle ne peut pas non plus savoir si les
+- **Naissance des enfants.** Le formulaire la demande à qui veut la dire, à
+  l'année ou au mois, dans l'ordre des enfants ; celle qu'il ne dit pas est
+  présumée aux trente ans de la mère, l'âge moyen des mères à l'accouchement
+  (la présomption `naissance_des_enfants`, que la chronologie pose et que le
+  moteur lit, enfant par enfant). La présomption place l'enfant avant ou après
+  ce qui change ses droits : la bascule des quatre aux deux trimestres de la
+  fonction publique tombe ainsi sur les générations nées à partir de 1974,
+  quand chaque naissance déclarée la place à sa date. Le modèle ne peut pas
+  non plus savoir si les
   parents ont attribué au père les quatre trimestres d'éducation ouverts en
   2010, ni si un père fonctionnaire a interrompu son activité les deux mois
   qu'exige la bonification depuis 2003 : dans les deux cas le modèle retient

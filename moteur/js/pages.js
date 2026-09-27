@@ -966,6 +966,19 @@ export function formulaire(saisie, contexte) {
     g.champ("enfants", "Nombre d'enfants", saisie.enfants,
       "sans effet notionnel : les majorations sont supprimées", "number",
       { min: "0", max: String(ENFANTS_MAXIMUM), step: "1" }),
+    // LE BLOC DES DATES DES ENFANTS (docs/architecture.md, § 11) : facultatif,
+    // comme tout bloc d'un domaine. Ce qui n'y est pas dit est présumé, et la
+    // présomption se lit au paquet, où le vocabulaire l'écrit une fois.
+    g.champ("naissances", "Naissance des enfants", saisie.naissances,
+      "facultatif : « 1995, 1998-06 », dans l'ordre des enfants", "text",
+      { autocomplete: "off", spellcheck: "false" },
+      "Chaque enfant compte à sa date, qui choisit ce qu'il vaut dans le système "
+      + "actuel : dans la fonction publique, un an s'il est né avant 2004, deux "
+      + "trimestres s'il est né depuis et après votre recrutement — sinon, c'est "
+      + "le régime général qui les accorde, si vous y avez cotisé. Une année "
+      + "suffit ; un mois se donne si on le connaît. Les naissances que vous ne "
+      + "dites pas sont présumées à vos "
+      + `${contexte.paquet.presomptions.naissance_des_enfants.valeur} ans.`),
     g.champ("interruptions", "Interruptions", saisie.interruptions,
       "« 1995:1999:education_enfant », séparées par des virgules"),
   ].join("") + champsModelisation(saisie);
