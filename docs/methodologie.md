@@ -977,7 +977,9 @@ précédent, et le modèle en prenait deux à l'envers.
    durée d'assurance de l'article L. 351-4 naît avec la loi du 31 décembre 1971
    à un an par enfant, passe à deux ans pour les pensions prenant effet après
    le 30 juin 1974 (loi du 3 janvier 1975), pour l'enfant élevé neuf ans avant
-   ses seize ans, et va à la mère : le partage
+   ses seize ans, et va à la mère ; de 2004 à mars 2010, ces huit trimestres
+   s'acquièrent un à un, à la naissance puis au terme de chaque année
+   d'éducation, sans plus de condition de durée ; le partage
    ouvert en 2010 entre maternité et éducation laisse à la mère, à défaut
    d'accord des parents, les mêmes huit trimestres. La fonction publique et les
    régimes spéciaux ne l'appliquent pas : ils servent la bonification de

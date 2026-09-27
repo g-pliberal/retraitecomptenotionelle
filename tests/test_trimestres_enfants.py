@@ -93,3 +93,31 @@ def test_sous_la_loi_boulin_seuls_comptent_les_enfants_eleves_neuf_ans(majoratio
     assert _accorde(majorations, "mda", "1968-01-01", "1973-01-01", naissances) is None
     assert _accorde(majorations, "mda", "1960-01-01", "1974-06-01",
                     ["1960-01-01", "1964-01-01"]) == ("mda_1972", 4, 4)
+
+
+@pytest.mark.parametrize("date_effet, attendu", [
+    ("2003-12-01", None),
+    ("2004-01-01", ("mda_2003", 5, 5)),
+    ("2004-05-01", ("mda_2003", 5, 5)),
+    ("2004-06-01", ("mda_2003", 6, 6)),
+])
+def test_de_2004_a_2010_un_trimestre_par_annee_d_education(majorations, date_effet, attendu):
+    """D. 351-1-7, pour les pensions prenant effet à compter du 1er janvier 2004
+    (décret n° 2003-1280, article 3) : un trimestre à la naissance, puis un au
+    terme de chaque année d'éducation, huit au plus, et la condition des neuf
+    ans disparaît (circulaire Cnav n° 2004/22). Un enfant né le 1er juin 1999
+    n'ouvrait rien en décembre 2003 ; il vaut cinq trimestres en janvier 2004,
+    six le jour de ses cinq ans. Le modèle en servait huit d'un coup."""
+    assert _accorde(majorations, "mda", "1999-06-01", date_effet) == attendu
+
+
+@pytest.mark.parametrize("date_effet, attendu", [
+    ("2010-03-01", ("mda_2003", 6, 6)),
+    ("2010-04-01", ("mda_2010_nes_avant", 8, 8)),
+])
+def test_depuis_avril_2010_quatre_et_quatre(majorations, date_effet, attendu):
+    """L. 351-4 de la loi n° 2009-1646, pour les pensions prenant effet à
+    compter du 1er avril 2010 : quatre trimestres de maternité et quatre
+    d'éducation, que la mère d'un enfant né avant 2010 reçoit, sauf preuve du
+    père. La veille, le décret de 2003 en comptait six à l'enfant de cinq ans."""
+    assert _accorde(majorations, "mda", "2004-09-01", date_effet) == attendu

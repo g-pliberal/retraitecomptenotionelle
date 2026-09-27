@@ -118,11 +118,20 @@ versions:
       un trimestre à la naissance ou à l'adoption, puis un à chaque anniversaire jusqu'aux
       seize ans de l'enfant, huit au plus
     beneficiaire: la mère qui en a assumé la charge effective et permanente
+    conditions: >-
+      la condition de neuf ans d'éducation est supprimée ; un trimestre au terme de
+      chaque année d'éducation accomplie avant la date d'effet (circulaire Cnav
+      n° 2004/22)
     parametres:
       trimestres_par_enfant: 8
       services_par_enfant: 8
+      par_annee_d_education: true
       beneficiaire: mere
       fiabilite: haute
+  unites:
+    ancrage: >-
+      l'anniversaire qui tombe le jour de la date d'effet compte : l'année d'éducation
+      qu'il clôt est accomplie la veille
   exemples: aucun trouvé
 - id: mda_2010_nes_avant
   statut: lue
@@ -169,13 +178,6 @@ versions:
       fiabilite: haute
   exemples: aucun trouvé
 approximations:
-- version: mda_2003
-  ecart: >-
-    le modèle sert d'un coup les huit trimestres que D. 351-1-7 attribue un par un,
-    à la naissance puis à chaque anniversaire de l'enfant
-  effet: >-
-    les mères dont un enfant a moins de sept ans à la date d'effet, de 2004 au 31 mars
-    2010 ; non mesuré
 - version: [mda_2010_nes_avant, mda_2010]
   ecart: >-
     la majoration d'éducation d'un enfant de moins de quatre ans à la date d'effet
@@ -204,8 +206,8 @@ sources:
     la bonification de la fonction publique : celle-ci a désormais sa fiche, enfants_fonction_publique
     (docs/architecture.md, § 6.1 et annexe A).
   - >-
-    CONSTATS DU 25 SEPTEMBRE 2026, CONSIGNÉS SANS ÊTRE CORRIGÉS, que ses versions
-    et ses approximations disent désormais : (1) la version de 2003 de L. 351-4 (LEGIARTI000006742627,
+    CONSTATS DU 25 SEPTEMBRE 2026, les deux premiers corrigés le 27 (historique),
+    le troisième encore ouvert : (1) la version de 2003 de L. 351-4 (LEGIARTI000006742627,
     « un trimestre pour toute année durant laquelle elles ont élevé un enfant [...]
     dans la limite de huit trimestres ») et D. 351-1-7 attribuent ces trimestres
     un par un ; le décret n° 2003-1280, article 3, lu le 27 septembre 2026, l'applique
@@ -260,6 +262,15 @@ sources:
       applicable aux pensions de vieillesse prenant effet à compter du 1er janvier
       2004
     date: 2003-12-30
+  - type: circulaire_cnav
+    reference: >-
+      circulaire Cnav n° 2004/22 du 30 avril 2004, § 3 et 4.2 : un trimestre à la
+      naissance, puis « au terme de chaque année d'éducation », sept au plus ; « La condition
+      de durée minimum d'éducation de 9 ans est supprimée » ; § 5, pensions prenant
+      effet à compter du 1er janvier 2004. Lue dans une copie publiée par un particulier,
+      la base de la Cnav ne la servant pas à l'adresse attendue
+    date: 2004-04-30
+    url: http://lenfantsansnom.free.fr/page/PJ%20circulaire%20de%202004.htm
   - type: jorf
     reference: >-
       loi n° 2009-1646 du 24 décembre 2009, article 65 (JORFARTI000021529299) : VIII,
@@ -353,11 +364,16 @@ historique:
   à 2003 se lit sur l'âge de l'enfant à la date d'effet, qui ne peut avoir été élevé
   neuf ans s'il n'en a pas neuf. La présomption ne porte plus que sur ce qu'on ne
   sait pas : que la mère l'a élevé.
+- >-
+  2026-09-27 — de 2004 au 31 mars 2010, un trimestre à la naissance puis un au terme
+  de chaque année d'éducation, huit au plus (D. 351-1-7, circulaire Cnav n° 2004/22),
+  et non huit d'un coup : la mère d'un enfant de moins de sept ans à la date d'effet
+  en reçoit moins.
 reformes:
 - parents_2026
 effet: >-
   Toute mère affiliée au régime général ou à un régime aligné : la règle commande la
   décote, la proratisation, la surcote parentale et le salaire annuel moyen des parents.
-  Le modèle sert d'un coup les huit trimestres par enfant que le décret de 2003 attribue
-  un par un de 2004 à mars 2010 : un effet non mesuré, qui ne touche que les mères
-  d'enfants de moins de sept ans à la date d'effet.
+  Chaque enfant compte à sa date : les trimestres qu'il vaut dépendent de la loi en
+  vigueur à la date d'effet de la pension et, de 1972 à mars 2010, de son âge à cette
+  date.

@@ -878,6 +878,12 @@ class MajorationsPourEnfants:
                     or chronologie.annees_revolues(jour, date_effet) >= int(age_minimum))
 
         trimestres = int(parametres["trimestres_par_enfant"])
+        services = int(parametres["services_par_enfant"])
+        if parametres.get("par_annee_d_education"):
+            # D. 351-1-7 : un trimestre à la naissance, puis un au terme de
+            # chaque année d'éducation, dans la limite de la version.
+            trimestres = min(trimestres, 1 + chronologie.annees_revolues(naissance, date_effet))
+            services = min(services, trimestres)
         if trimestres <= 0 or not eleve(naissance):
             return None
         beneficiaire = parametres["beneficiaire"]
@@ -890,7 +896,7 @@ class MajorationsPourEnfants:
             return None
         return TrimestresAccordes(
             fiche=fiche["id"], version=version["id"], texte=version["texte"],
-            trimestres=trimestres, services=int(parametres["services_par_enfant"]),
+            trimestres=trimestres, services=services,
             condition=parametres.get("condition", "tout_enfant"),
             fiabilite=Fiabilite.depuis_texte(parametres["fiabilite"]))
 

@@ -2631,6 +2631,21 @@ ramenés à huit, taux de 32,5 % ramené à 25 %, 5 791 euros par an au lieu de
 7 460). `par_enfant` reçoit désormais les naissances de tous les enfants,
 et les deux chronologies savent compter des années révolues.
 
+**Troisième correction : de 2004 à mars 2010, un trimestre par année
+d'éducation.** D. 351-1-7, que le décret n° 2003-1280 applique aux pensions
+prenant effet à compter du 1er janvier 2004, accorde un trimestre à la
+naissance, puis un « au terme de chaque année d'éducation », huit au plus,
+et la circulaire Cnav n° 2004/22 ajoute que « la condition de durée minimum
+d'éducation de 9 ans est supprimée ». La version `mda_2003` les compte
+désormais un à un, à la date d'effet ; l'anniversaire qui tombe ce jour-là
+compte, l'année qu'il clôt étant accomplie la veille (`unites.ancrage` de la
+version). Un témoin bouge, celui de la bascule : la mère partie en 2008
+reçoit cinq trimestres, et non huit, pour son enfant de quatre ans (treize
+au lieu de seize pour ses deux enfants, 133 cent-soixantièmes au lieu de
+136, 10 313 euros par an au lieu de 10 475). Les trois corrections faites,
+les constats du 25 septembre consignés dans la fiche sont clos, sauf le
+dernier : les rédactions de L. 351-4 depuis 2013, à couper en versions.
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre

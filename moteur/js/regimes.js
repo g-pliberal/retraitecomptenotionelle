@@ -937,7 +937,14 @@ export class MajorationsPourEnfants {
     const ageMinimum = parametres.age_minimum ?? null;
     const eleve = (jour) => ageMinimum === null
       || anneesRevolues(jour, dateEffet) >= Number(ageMinimum);
-    const trimestres = Number(parametres.trimestres_par_enfant);
+    let trimestres = Number(parametres.trimestres_par_enfant);
+    let services = Number(parametres.services_par_enfant);
+    if (parametres.par_annee_d_education) {
+      // D. 351-1-7 : un trimestre à la naissance, puis un au terme de chaque
+      // année d'éducation, dans la limite de la version.
+      trimestres = Math.min(trimestres, 1 + anneesRevolues(naissance, dateEffet));
+      services = Math.min(services, trimestres);
+    }
     if (trimestres <= 0 || !eleve(naissance)) {
       return null;
     }
@@ -956,7 +963,7 @@ export class MajorationsPourEnfants {
       version: version.id,
       texte: version.texte,
       trimestres,
-      services: Number(parametres.services_par_enfant),
+      services,
       condition: parametres.condition ?? "tout_enfant",
       fiabilite: fiabiliteDepuisTexte(parametres.fiabilite),
     };
