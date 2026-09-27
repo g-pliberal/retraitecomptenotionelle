@@ -2241,3 +2241,6 @@ fiche par fiche, chacune lue une fois par chargement.
 - **Le repère `phase-6` n'est pas posé** : comme les précédents, il attend
   l'accord du propriétaire. La phase 7 suit : la proposition réécrite en
   univers de droit.
+
+Le repère `phase-6` est posé sur 49a01da, le 27 septembre 2026, à la demande
+du propriétaire, par `repere-phase-6.yml`, lancé une fois puis supprimé.
