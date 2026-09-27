@@ -54,7 +54,7 @@ def test_la_fiche_preparee_ne_garde_que_ce_que_le_moteur_lit():
     assert l12bis == {
         "id": "l12bis",
         "bornes": {"enfant.naissance": ["2004-01-01", None],
-                   "liquidation.date_effet": ["2004-01-01", "2026-01-01"]},
+                   "liquidation.date_effet": ["2004-01-01", "2026-09-01"]},
         "exception_de": None,
         "texte": "LEGIARTI000006362697",
         "parametres": {"trimestres_par_enfant": 2, "services_par_enfant": 0,

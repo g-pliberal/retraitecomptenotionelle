@@ -2597,6 +2597,19 @@ et un enfant de quatre ans, pour le trimestre par année d'éducation.
 `docs/limites.md`, `docs/methodologie.md` et l'architecture le disent : les
 naissances se déclarent, et la présomption ne pose que celles qu'on tait.
 
+**Première correction : le b ter à sa date.** L. 12 b ter vaut pour les
+pensions prenant effet à compter du 1er septembre 2026 (loi n° 2025-1403,
+article 104), et non dès janvier, comme le modèle le faisait en datant à
+l'année : les versions `l12bis` et `l12bter` se coupent désormais au
+1er septembre, et l'approximation se retire de la fiche. La fiche F37311 de
+service-public.gouv.fr, relue le même jour, dit la même règle : des deux
+trimestres d'un enfant né depuis 2004, « l'autre trimestre est pris en compte
+[…] pour le calcul de votre pension ». Un seul témoin bouge, celui de la
+bascule : la fonctionnaire partie en avril 2026 perd le trimestre de services
+de son enfant né en 2005, 133 cent-soixante-neuvièmes au lieu de 134, et sa
+pension passe de 23 561 à 23 386 euros par an. Un test tient la veille et le
+jour de la borne (`tests/test_trimestres_enfants.py`).
+
 ### 131. Les dix fiches nées à la phase 6, relues à la source : les écarts qu'elles montrent, à corriger — `en cours`
 
 **La relecture, le 27 septembre 2026**, menée pendant la phase 7 par une autre
